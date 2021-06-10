@@ -1,0 +1,118 @@
+R"(
+    //////////////////////////////////////////
+    vec3 ConvertRGBToHSV(float _r, float _g, float _b)
+    {
+        float cmax = max(_r, max(_g, _b));
+        float cmin = min(_r, min(_g, _b));
+        float diff = cmax - cmin;
+        float h = -1.0;
+        float s = -1.0;
+
+        if (cmax == cmin)
+            h = 0.0;
+        else 
+        if (cmax == _r)
+            h = float(int(60.0 * ((_g - _b) / diff) + 360.0) % 360);
+        else
+        if (cmax == _g)
+            h = float(int(60.0 * ((_b - _r) / diff) + 120.0) % 360);
+        else
+        if (cmax == _b)
+            h = float(int(60.0 * ((_r - _g) / diff) + 240.0) % 360);
+
+        if (cmax == 0.0)
+            s = 0.0;
+        else
+            s = (diff / cmax);
+
+        float v = cmax;
+
+        return vec3(h, s, v);
+    }
+
+    //////////////////////////////////////////
+    vec3 ConvertRGBToHSV(vec3 _rgb)
+    {
+        return ConvertRGBToHSV(_rgb.x, _rgb.y, _rgb.z);
+    }
+
+    //////////////////////////////////////////
+    vec3 ConvertHSVToRGB(float _h, float _s, float _v)
+    {
+        float hh;
+        float p;
+        float q;
+        float t;
+        float ff;
+        int i;
+        vec3 rgb;
+
+        if (_s <= 0.0)
+        {
+            rgb.x = _v;
+            rgb.y = _v;
+            rgb.z = _v;
+            return rgb;
+        }
+
+        hh = _h;
+
+        if (hh >= 360.0)
+            hh = float(int(hh) % 360);
+
+        hh /= 60.0;
+        i = int(hh);
+        ff = hh - float(i);
+        p = _v * (1.0 - _s);
+        q = _v * (1.0 - (_s * ff));
+        t = _v * (1.0 - (_s * (1.0 - ff)));
+
+        switch (i) 
+        {
+        case 0:
+            rgb.x = _v;
+            rgb.y = t;
+            rgb.z = p;
+            break;
+
+        case 1:
+            rgb.x = q;
+            rgb.y = _v;
+            rgb.z = p;
+            break;
+
+        case 2:
+            rgb.x = p;
+            rgb.y = _v;
+            rgb.z = t;
+            break;
+
+        case 3:
+            rgb.x = p;
+            rgb.y = q;
+            rgb.z = _v;
+            break;
+
+        case 4:
+            rgb.x = t;
+            rgb.y = p;
+            rgb.z = _v;
+            break;
+
+        case 5:
+        default:
+            rgb.x = _v;
+            rgb.y = p;
+            rgb.z = q;
+            break;
+        }
+
+        return rgb;
+    }
+
+    //////////////////////////////////////////
+    vec3 ConvertHSVToRGB(vec3 _hsv)
+    {
+        return ConvertHSVToRGB(_hsv.x, _hsv.y, _hsv.z);
+    }
+)"

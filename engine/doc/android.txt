@@ -1,0 +1,2 @@
+1. Download Android SDK https://developer.android.com/sdk/
+2. Download Android NDK https://developer.android.com/ndk/downloads

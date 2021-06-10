@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Material>
+    <RenderPass 
+        passType="Default"
+        renderQueueIndex="2000"
+        shader="UnlitColor00.mzshader"
+        blendOperation="Add"
+        blendSrcFactor="One"
+        blendDestFactor="Zero"
+        depthTestCompareFunction="LessEqual"
+        depthWriteEnabled="1"
+        cullMode="Back"/>
+</Material>

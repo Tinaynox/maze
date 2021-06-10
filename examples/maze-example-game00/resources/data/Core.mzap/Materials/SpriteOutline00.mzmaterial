@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Material>
+    <ShaderUniformVariant name="u_baseMap" type="UniformTexture2D" value="" />
+    <ShaderUniformVariant name="u_color" type="UniformVec4DF" value="1.0;1.0;1.0;1.0" />
+    <RenderPass 
+        passType="Default"
+        renderQueueIndex="3000"
+        shader="SpriteOutline00.mzshader"
+        blendOperation="Add"
+        blendSrcFactor="SrcAlpha"
+        blendDestFactor="OneMinusSrcAlpha"
+        depthTestCompareFunction="Always"
+        depthWriteEnabled="0"
+        cullMode="Off"/>
+</Material>

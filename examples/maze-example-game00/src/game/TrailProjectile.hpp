@@ -1,0 +1,143 @@
+//////////////////////////////////////////
+//
+// Maze Engine
+// Copyright (C) 2021 Dmitriy "Tinaynox" Nosov (tinaynox@gmail.com)
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented;
+//    you must not claim that you wrote the original software.
+//    If you use this software in a product, an acknowledgment
+//    in the product documentation would be appreciated but is not required.
+//
+// 2. Altered source versions must be plainly marked as such,
+//    and must not be misrepresented as being the original software.
+//
+// 3. This notice may not be removed or altered from any source distribution.
+//
+//////////////////////////////////////////
+
+
+//////////////////////////////////////////
+#pragma once
+#if (!defined(_TrailProjectile_hpp_))
+#define _TrailProjectile_hpp_
+
+
+//////////////////////////////////////////
+#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/math/MazeQuaternion.hpp"
+#include "maze-graphics/MazeMesh.hpp"
+#include "maze-graphics/MazeShader.hpp"
+#include "maze-graphics/MazeTexture2D.hpp"
+#include "maze-graphics/MazeMaterial.hpp"
+#include "maze-graphics/MazeRenderPass.hpp"
+#include "maze-graphics/MazeRenderTarget.hpp"
+#include "maze-graphics/MazeColorF128.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeCanvas.hpp"
+#include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
+#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
+
+
+//////////////////////////////////////////
+namespace Maze
+{
+    //////////////////////////////////////////
+    MAZE_USING_SHARED_PTR(TrailProjectile);
+    MAZE_USING_SHARED_PTR(Projectile);
+    MAZE_USING_SHARED_PTR(TrailRenderer3D);
+
+
+    //////////////////////////////////////////
+    // Class TrailProjectile
+    //
+    //////////////////////////////////////////
+    class TrailProjectile
+        : public Component
+        , public MultiDelegateCallbackReceiver
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(TrailProjectile, Component);
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_MEMORY_ALLOCATION(TrailProjectile);
+
+        //////////////////////////////////////////
+        friend class Entity;
+
+    public:
+
+        //////////////////////////////////////////
+        virtual ~TrailProjectile();
+
+        //////////////////////////////////////////
+        static TrailProjectilePtr Create();
+
+
+        //////////////////////////////////////////
+        void update(F32 _dt);
+
+
+        //////////////////////////////////////////
+        inline void setStartColor(ColorF128 const& _startColor) { m_startColor = _startColor; }
+
+        //////////////////////////////////////////
+        inline ColorF128 const& getStartColor() const { return m_startColor; }
+
+        //////////////////////////////////////////
+        inline void setEndColor(ColorF128 const& _endColor) { m_endColor = _endColor; }
+
+        //////////////////////////////////////////
+        inline ColorF128 const& getEndColor() const { return m_endColor; }
+
+        //////////////////////////////////////////
+        inline void setEndColorTime(F32 _endColor) { m_endColorTime = _endColor; }
+
+        //////////////////////////////////////////
+        inline F32 getEndColorTime() const { return m_endColorTime; }
+
+    protected:
+
+        //////////////////////////////////////////
+        TrailProjectile();
+
+        //////////////////////////////////////////
+        using Component::init;
+        
+        //////////////////////////////////////////
+        bool init();
+
+        //////////////////////////////////////////
+        virtual void processComponentAdded() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        void notifyProjectilePrepare();
+
+    protected:
+        TrailRenderer3DPtr m_trailRenderer;
+        ProjectilePtr m_projectile;
+
+        ColorF128 m_startColor;
+        ColorF128 m_endColor;
+        F32 m_endColorTime;
+    };
+
+
+} // namespace Maze
+//////////////////////////////////////////
+
+
+#endif // _TrailProjectile_hpp_
+//////////////////////////////////////////

@@ -1,0 +1,7 @@
+*.o
+*.d
+*.user
+tile
+Makefile
+moc_*
+ui_*.h

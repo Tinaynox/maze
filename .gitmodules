@@ -1,0 +1,15 @@
+[submodule "engine/third-party/tinyxml2"]
+	path = engine/third-party/tinyxml2
+	url = git@github.com:Tinaynox/tinyxml2.git
+[submodule "engine/third-party/libpng"]
+	path = engine/third-party/libpng
+	url = git@github.com:Tinaynox/libpng.git
+[submodule "engine/third-party/zlib"]
+	path = engine/third-party/zlib
+	url = git@github.com:Tinaynox/zlib.git
+[submodule "engine/third-party/box2d"]
+	path = engine/third-party/box2d
+	url = git@github.com:Tinaynox/box2d.git
+[submodule "engine/third-party/jsoncpp"]
+	path = engine/third-party/jsoncpp
+	url = git@github.com:Tinaynox/jsoncpp.git

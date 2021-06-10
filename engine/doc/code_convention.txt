@@ -1,0 +1,13 @@
+Function specifiers order:
+MAZE_API_* extern/static inline constexpr
+
+Variables Nomenclature:
+
+someName - struct members, local variables
+_someName - function arguments
+__someName - macro arguments
+___someName - macro local variables
+m_someName - class members
+s_someName - static variables
+c_someName - constants
+g_someName - global variables;

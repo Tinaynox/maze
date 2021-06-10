@@ -1,0 +1,87 @@
+R"(
+    //////////////////////////////////////////
+    #type vertex
+
+)"
+#include "MazeVertexCommon.mzglsl"
+R"(
+
+    //////////////////////////////////////////
+    uniform mat4 u_projectionMatrix;
+    uniform mat4 u_viewMatrix;
+
+    //////////////////////////////////////////
+    IN vec3 a_position;
+    IN vec2 a_texCoords0;
+    
+    //////////////////////////////////////////
+    OUT vec3 v_positionOS;
+    OUT vec3 v_positionWS;
+    OUT vec3 v_positionVS;
+    OUT vec2 v_uv0;
+    
+    //////////////////////////////////////////
+    void main()
+    {
+    
+        int instanceId = gl_InstanceID;
+    
+        mat4 modelMatrix = GetModelMatrix(instanceId);
+
+        vec4 positionOS = vec4(a_position, 1.0);
+        vec4 positionWS = positionOS * modelMatrix;
+        vec4 positionVS = positionWS * u_viewMatrix;
+        vec4 positionCS = positionVS * u_projectionMatrix;
+        
+    #if (MAZE_LHCS)
+        positionCS.z = -positionCS.z;
+    #endif
+    
+        v_positionOS = positionOS.xyz;
+        v_positionWS = positionWS.xyz;
+        v_positionVS = positionVS.xyz;
+
+        v_uv0 = a_texCoords0;
+
+        gl_Position = positionCS;
+    }
+
+    //////////////////////////////////////////
+    #type fragment
+
+)"
+#include "MazeFragmentCommon.mzglsl"
+R"(
+    //////////////////////////////////////////
+    uniform vec4 u_color;
+    uniform int u_channel;
+
+    //////////////////////////////////////////
+    IN vec2 v_uv0;
+
+    //////////////////////////////////////////
+    layout(location=0) out vec4 out_color;
+
+    //////////////////////////////////////////
+    void main()
+    {
+        vec4 color = u_color;
+
+        if (u_channel == 0)
+            color.r = v_uv0.x;
+        else
+        if (u_channel == 1)
+            color.g = v_uv0.x;
+        else
+        if (u_channel == 2)
+            color.b = v_uv0.x;
+        else
+        if (u_channel == 3)
+            color.a = v_uv0.x;
+
+        if (u_channel != 3)
+            color.a = 1.0;
+
+        out_color = color;
+    }
+)"

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Shader>
+    <GLSL shader="BloomDownscale00.mzglsl" />
+</Shader>

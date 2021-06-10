@@ -1,0 +1,65 @@
+apply plugin: 'com.android.application'
+
+
+
+android {
+
+	compileSdkVersion 29
+	buildToolsVersion "29.0.1"
+	defaultConfig {
+		applicationId "com.maze.example_hello_world"
+		minSdkVersion 21
+		targetSdkVersion 29
+		versionCode 1
+		versionName "1.0"
+		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+		externalNativeBuild {
+			cmake {
+				arguments "-DBOX2D_BUILD_EXAMPLES=OFF", "-DBOX2D_BUILD_TESTBED=OFF", "-DBOX2D_BUILD_UNIT_TESTS=OFF"
+				cppFlags "-std=c++11"
+			}
+		}
+	}
+	
+	//packagingOptions {
+	//	pickFirst 'lib/armeabi-v7a/libmaze-render-system-gl3-d.so'
+	//}
+
+  // Encapsulates your external native build configurations.
+  externalNativeBuild {
+
+    // Encapsulates your CMake build configurations.
+    cmake {
+
+      // Provides a relative path to your CMake build script.
+      path "CMakeLists.txt"
+    }
+  }
+}
+
+
+sourceSets {
+	main {
+		java {
+			srcDir 'src'
+		}
+	}
+}
+
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+}
+
+
+task copyFiles(type: Copy) {
+	from '../../../../prj/resources/resources-x1.0-nc/data'
+	into 'src/main/assets/data'
+}
+
+preBuild.dependsOn(copyFiles)

@@ -1,0 +1,196 @@
+//////////////////////////////////////////
+//
+// Maze Engine
+// Copyright (C) 2021 Dmitriy "Tinaynox" Nosov (tinaynox@gmail.com)
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented;
+//    you must not claim that you wrote the original software.
+//    If you use this software in a product, an acknowledgment
+//    in the product documentation would be appreciated but is not required.
+//
+// 2. Altered source versions must be plainly marked as such,
+//    and must not be misrepresented as being the original software.
+//
+// 3. This notice may not be removed or altered from any source distribution.
+//
+//////////////////////////////////////////
+
+
+//////////////////////////////////////////
+#pragma once
+#if (!defined(_MazeKeyCode_hpp_))
+#define _MazeKeyCode_hpp_
+
+//////////////////////////////////////////
+#include "maze-core/MazeCoreHeader.hpp"
+
+
+//////////////////////////////////////////
+namespace Maze
+{
+    //////////////////////////////////////////
+    enum class KeyCode
+    {
+        None                  = 0,            //
+        Escape                = 1,            //
+        F1                    = 2,            //
+        F2                    = 3,            //
+        F3                    = 4,            //
+        F4                    = 5,            //
+        F5                    = 6,            //
+        F6                    = 7,            //
+        F7                    = 8,            //
+        F8                    = 9,            //
+        F9                    = 10,           //
+        F10                   = 11,           //
+        F11                   = 12,           //
+        F12                   = 13,           //
+        F13                   = 14,           // (NEC PC98)
+        F14                   = 15,           // (NEC PC98)
+        F15                   = 16,           // (NEC PC98)
+
+        Grave                 = 30,           // ~
+        Number1               = 31,           //
+        Number2               = 32,           //
+        Number3               = 33,           //
+        Number4               = 34,           //
+        Number5               = 35,           //
+        Number6               = 36,           //
+        Number7               = 37,           //
+        Number8               = 38,           //
+        Number9               = 39,           //
+        Number0               = 40,           //
+        Minus                 = 41,           // - on main keyboard
+        Equals                = 42,           //
+        Backspace             = 43,           // Backspace
+
+        Tab                   = 60,           //
+        Q                     = 61,           //
+        W                     = 62,           //
+        E                     = 63,           //
+        R                     = 64,           //
+        T                     = 65,           //
+        Y                     = 66,           //
+        U                     = 67,           //
+        I                     = 68,           //
+        O                     = 69,           //
+        P                     = 70,           //
+        LBracket              = 71,           //
+        RBracket              = 72,           //
+        Backslash             = 73,           //
+
+        CapsLock              = 90,           // Caps Lock
+        A                     = 91,           //
+        S                     = 92,           //
+        D                     = 93,           //
+        F                     = 94,           //
+        G                     = 95,           //
+        H                     = 96,           //
+        J                     = 97,           //
+        K                     = 98,           //
+        L                     = 99,           //
+        Semicolon             = 100,          // ;
+        Apostrophe            = 101,          // '
+        Enter                 = 102,          //
+
+        LShift                = 120,          //
+        Z                     = 121,          //
+        X                     = 122,          //
+        C                     = 123,          //
+        V                     = 124,          //
+        B                     = 125,          //
+        N                     = 126,          //
+        M                     = 127,          //
+        Comma                 = 128,          // ,
+        Period                = 129,          // . on main keyboard
+        Slash                 = 130,          // / on main keyboard
+        RShift                = 131,          //
+        LFn                   = 132,          //
+        RFn                   = 133,          //
+
+
+        LControl              = 150,          //
+        LCommand              = 151,          // Left Windows/OSX
+        LAlt                  = 152,          // Left Alt
+        Space                 = 153,          //
+        RAlt                  = 154,          // Right Alt
+        RCommand              = 155,          // Right Windows/OSX
+        Apps                  = 156,          // AppMenu key
+        RControl              = 157,          //
+        MoreLess              = 158,          //  < > | on UK/Germany keyboards
+
+        PrintScreen           = 170,          //
+        ScrollLock            = 171,          // Scroll Lock
+        Pause                 = 172,          // Pause
+
+        Insert                = 190,          //
+        Home                  = 191,          //
+        PageUp                = 192,          //
+        Delete                = 193,          //
+        End                   = 194,          //
+        PageDown              = 195,          //
+
+        Up                    = 210,          //
+        Left                  = 211,          //
+        Down                  = 212,          //
+        Right                 = 213,          //
+
+        NumLock               = 230,          //
+        NumpadDivide          = 231,          // / on numeric keypad
+        NumpadMultiply        = 232,          // * on numeric keypad
+        NumpadMinus           = 233,          // - on numeric keypad
+        NumpadPlus            = 234,          // + on numeric keypad
+        Numpad7               = 235,          //
+        Numpad8               = 236,          //
+        Numpad9               = 237,          //
+        Numpad4               = 238,          //
+        Numpad5               = 239,          //
+        Numpad6               = 240,          //
+        Numpad1               = 241,          //
+        Numpad2               = 242,          //
+        Numpad3               = 243,          //
+        Numpad0               = 244,          //
+        NumpadDecimal         = 245,          // . on numeric keypad
+        NumpadEnter           = 246,          // Enter on numeric keypad
+
+        LaunchMail            = 300,          // Launch Mail
+        LaunchMedia           = 301,          // Launch Media
+        LaunchApp1            = 302,          // Launch Application1
+        LaunchApp2            = 303,          // Launch Application2
+
+        VolumeMute            = 320,          // Volume Mute
+        VolumeDown            = 321,          // Volume -
+        VolumeUp              = 322,          // Volume +
+
+        MediaNextTrack        = 330,          // Media Next Track
+        MediaPrevTrack        = 331,          // Media Previous Track
+        MediaStop             = 332,          // Media Stop
+        MediaPlayPause        = 333,          // Media Play/Pause
+
+        WebBack               = 350,          // Web Back
+        WebForward            = 351,          // Web Forward
+        WebRefresh            = 352,          // Web Refresh
+        WebStop               = 353,          // Web Stop
+        WebSearch             = 354,          // Web Search
+        WebFavorites          = 355,          // Web Favorites
+        WebHome               = 356,          // Web home
+
+        ExclamationMark       = 400,          // ! $
+
+        MAX
+    };
+
+
+} // namespace Maze
+//////////////////////////////////////////
+
+
+#endif // _MazeMutex_hpp_
+//////////////////////////////////////////

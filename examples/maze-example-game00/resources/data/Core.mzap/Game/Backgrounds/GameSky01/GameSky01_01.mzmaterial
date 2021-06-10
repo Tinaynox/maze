@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Material>
+    <ShaderUniformVariant name="u_baseMapFar0" type="UniformTexture2D" value="BackgroundFar_02.mztexture" />
+    <ShaderUniformVariant name="u_color" type="UniformVec4DF" value="1.0;1.0;1.0;1.0" />
+    <RenderPass 
+        passType="Default"
+        renderQueueIndex="2000"
+        shader="GameSky00.mzshader"
+        blendOperation="Add"
+        blendSrcFactor="SrcAlpha"
+        blendDestFactor="OneMinusSrcAlpha"
+        depthTestCompareFunction="LessEqual"
+        depthWriteEnabled="1"
+        cullMode="Back"/>
+</Material>

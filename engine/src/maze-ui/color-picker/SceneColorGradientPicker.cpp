@@ -1,0 +1,1200 @@
+//////////////////////////////////////////
+//
+// Maze Engine
+// Copyright (C) 2021 Dmitriy "Tinaynox" Nosov (tinaynox@gmail.com)
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented;
+//    you must not claim that you wrote the original software.
+//    If you use this software in a product, an acknowledgment
+//    in the product documentation would be appreciated but is not required.
+//
+// 2. Altered source versions must be plainly marked as such,
+//    and must not be misrepresented as being the original software.
+//
+// 3. This notice may not be removed or altered from any source distribution.
+//
+//////////////////////////////////////////
+
+
+//////////////////////////////////////////
+#include "MazeUIHeader.hpp"
+#include "maze-ui/color-picker/SceneColorGradientPicker.hpp"
+#include "maze-core/services/MazeLogStream.hpp"
+#include "maze-core/ecs/MazeEntity.hpp"
+#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/managers/MazeSceneManager.hpp"
+#include "maze-core/managers/MazeEntityManager.hpp"
+#include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeInputManager.hpp"
+#include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-graphics/ecs/components/MazeCamera3D.hpp"
+#include "maze-graphics/ecs/components/MazeCanvas.hpp"
+#include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
+#include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
+#include "maze-graphics/ecs/components/MazeRenderMask.hpp"
+#include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
+#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
+#include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeCanvasRenderer.hpp"
+#include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/helpers/MazeMeshHelper.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
+#include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-core/math/MazeMath.hpp"
+#include "maze-core/math/MazeMathAlgebra.hpp"
+#include "maze-core/math/MazeMathGeometry.hpp"
+#include "maze-graphics/MazeMesh.hpp"
+#include "maze-graphics/MazeSubMesh.hpp"
+#include "maze-graphics/MazeVertexArrayObject.hpp"
+#include "maze-graphics/managers/MazeGraphicsManager.hpp"
+#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/loaders/texture/MazeLoaderPNG.hpp"
+#include "maze-graphics/MazeTexture2D.hpp"
+#include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
+#include "maze-graphics/MazeGPUTextureBuffer.hpp"
+#include "maze-graphics/helpers/MazeMeshHelper.hpp"
+#include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
+#include "maze-graphics/MazeRenderMesh.hpp"
+#include "maze-graphics/MazeSprite.hpp"
+#include "maze-graphics/managers/MazeSpriteManager.hpp"
+#include "maze-graphics/managers/MazeGizmosManager.hpp"
+#include "maze-graphics/helpers/MazeColorHelper.hpp"
+#include "maze-ui/ecs/components/MazeClickButton2D.hpp"
+#include "maze-ui/ecs/components/MazeUIElement2D.hpp"
+#include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
+#include "maze-ui/managers/MazeColorGradientPickerManager.hpp"
+#include "maze-ui/managers/MazeUIManager.hpp"
+#include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeTexture2DOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeShaderUniformOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeStateMachineOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
+
+
+//////////////////////////////////////////
+namespace Maze
+{
+    //////////////////////////////////////////
+    F32 const c_intensityMax = 32.0f;
+
+    //////////////////////////////////////////
+    // Class SceneColorGradientPicker
+    //
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneColorGradientPicker, ECSRenderScene);
+
+    //////////////////////////////////////////
+    SceneColorGradientPicker::SceneColorGradientPicker()
+    {
+    }
+
+    //////////////////////////////////////////
+    SceneColorGradientPicker::~SceneColorGradientPicker()
+    {
+        ColorGradientPickerManager::GetInstancePtr()->eventGradientChanged.unsubscribe(this);
+
+        while (!m_alphaTags.empty())
+        {
+            if (m_alphaTags.back()->getEntityRaw())
+            {
+                m_alphaTags.back()->getToggleButton()->eventClick.unsubscribe(this);
+                m_alphaTags.back()->getToggleButton()->eventPressedChanged.unsubscribe(this);
+                m_alphaTags.back()->getToggleButton()->eventCursorPressIn.unsubscribe(this);
+
+                m_alphaTags.back()->getEntityRaw()->removeFromECSWorld();
+            }
+
+            m_alphaTags.pop_back();
+        }
+
+        while (!m_colorTags.empty())
+        {
+            if (m_colorTags.back()->getEntityRaw())
+            {
+                m_colorTags.back()->getToggleButton()->eventClick.unsubscribe(this);
+                m_colorTags.back()->getToggleButton()->eventPressedChanged.unsubscribe(this);
+                m_colorTags.back()->getToggleButton()->eventCursorPressIn.unsubscribe(this);
+
+                m_colorTags.back()->getEntityRaw()->removeFromECSWorld();
+            }
+
+            m_colorTags.pop_back();
+        }
+
+        if (m_gradientRenderer)
+        {
+            m_gradientRenderer->setCustomRenderCallback(nullptr);
+            m_gradientRenderer.reset();
+        }
+
+        if (m_gradientClickButton)
+        {
+            m_gradientClickButton->eventClick.unsubscribe(this);
+            m_gradientClickButton->getUIElement()->eventCursorPressIn.unsubscribe(this);
+        }
+        
+        if (m_modeDropdown)
+        {
+            m_modeDropdown->eventValueChanged.unsubscribe(this);
+        }
+
+
+        if (m_colorEdit)
+            m_colorEdit->eventColorChanged.unsubscribe(this);
+
+
+        if (m_canvasUIElement)
+        {
+            m_canvasUIElement->eventCursorReleaseIn.unsubscribe(this);
+            m_canvasUIElement->eventCursorReleaseOut.unsubscribe(this);
+        }
+
+        m_canvas.reset();
+    }
+
+    //////////////////////////////////////////
+    SceneColorGradientPickerPtr SceneColorGradientPicker::Create(RenderTargetPtr const& _renderTarget)
+    {
+        SceneColorGradientPickerPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(SceneColorGradientPicker, object, init(_renderTarget));
+        return object;
+    }
+
+    //////////////////////////////////////////
+    bool SceneColorGradientPicker::init(RenderTargetPtr const& _renderTarget)
+    {
+        if (!ECSRenderScene::init(_renderTarget))
+            return false;
+
+        create2D();
+        
+        ColorGradientPickerManager::GetInstancePtr()->eventGradientChanged.subscribe(this, &SceneColorGradientPicker::notifyGradientChanged);
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::setup()
+    {
+        
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::update(F32 _dt)
+    {
+        if (m_draggingTag)
+        {
+            if (m_colorTagIndex >= 0)
+            {
+                Vec2DF const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
+
+                ColorGradient const& gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
+
+                if (m_editMode == EditMode::AlphaTag)
+                {
+                    if (m_colorTagIndex < gradient.getKeysAlpha().size())
+                    {
+                        Vec2DF localPosition = m_gradientRenderer->getTransform()->getWorldTransform().inversedCopy().transformAffine(cursorPosition);
+
+                        F32 t = Math::Clamp01(localPosition.x / m_gradientRenderer->getTransform()->getWidth());
+                        changeCurrentAlphaTagTime(t);
+                    }
+                }
+                else
+                if (m_editMode == EditMode::ColorTag)
+                {
+                    if (m_colorTagIndex < gradient.getKeysRGB().size())
+                    {
+                        Vec2DF localPosition = m_gradientRenderer->getTransform()->getWorldTransform().inversedCopy().transformAffine(cursorPosition);
+
+                        F32 t = Math::Clamp01(localPosition.x / m_gradientRenderer->getTransform()->getWidth());
+                        changeCurrentColorTagTime(t);
+                    }
+                }
+            }
+        }
+    }
+
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::create2D()
+    {
+        ColorU32 bandColor(176, 176, 176);
+
+        EntityPtr canvasEntity = createEntity();
+        m_canvas = canvasEntity->createComponent<Canvas>();
+        m_canvas->setClearColorFlag(true);
+        m_canvas->setClearDepthFlag(true);
+        m_canvas->setClearColor(ColorU32(203, 203, 203, 255));
+        m_canvas->setRenderTarget(m_renderTarget);
+        m_canvasUIElement = canvasEntity->ensureComponent<UIElement2D>();
+        m_canvasUIElement->eventCursorReleaseIn.subscribe(this, &SceneColorGradientPicker::notifyCanvasCursorReleaseIn);
+        m_canvasUIElement->eventCursorReleaseOut.subscribe(this, &SceneColorGradientPicker::notifyCanvasCursorReleaseOut);
+
+        ColorGradient const& gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
+
+        // Mode
+        {
+
+            HorizontalLayout2DPtr rowLayout = UIHelper::CreateHorizontalLayout(
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Top,
+                Vec2DF(336.0f, 18.0f),
+                Vec2DF(12.0f, -10.0f),
+                m_canvas->getTransform(),
+                this,
+                Vec2DF(0.0f, 1.0f),
+                Vec2DF(0.0f, 1.0f));
+            rowLayout->setExpand(true);
+            rowLayout->setAutoWidth(false);
+
+            SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+                "Mode",
+                8,
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Middle,
+                { 8.0f, 18.0f },
+                Vec2DF::c_zero,
+                GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
+                rowLayout->getTransform(),
+                this);
+            label->setColor(ColorU32::c_black);
+
+            m_modeDropdown = UIHelper::CreateDefaultDropdown(
+                Vec2DF(188.0f, 18.0f),
+                Vec2DF(0.0f, 0.0f),
+                rowLayout->getTransform(),
+                this);
+            m_modeDropdown->eventValueChanged.subscribe(this, &SceneColorGradientPicker::notifyModeChanged);
+
+            m_modeDropdown->addOption("Fixed");
+            m_modeDropdown->addOption("Linear");
+
+            m_modeDropdown->setValue((S32)gradient.getMode());
+        }
+
+        // Gradient
+        {
+            m_gradientRendererHolder = SpriteHelper::CreateSprite(
+                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Frame01),
+                Vec2DF(340.0f, 44.0f),
+                Vec2DF(10.0f, -50.0f),
+                GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
+                m_canvas->getTransform(),
+                this,
+                Vec2DF(0.0f, 1.0f),
+                Vec2DF(0.0f, 1.0f));
+            m_gradientRendererHolder->setColor(bandColor);
+
+            SpriteRenderer2DPtr chessRenderer = SpriteHelper::CreateSprite(
+                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::TransparentChess),
+                m_gradientRendererHolder->getTransform()->getSize() - Vec2DF(2.0f, 2.0f),
+                Vec2DF(1.0f, 1.0f),
+                GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
+                m_gradientRendererHolder->getTransform(),
+                this,
+                Vec2DF(0.0f, 0.0f),
+                Vec2DF(0.0f, 0.0f));
+            chessRenderer->getMaterial()->setUniform(
+                "u_baseMapST",
+                Vec4DF(
+                    chessRenderer->getTransform()->getWidth() / 8.0f,
+                    chessRenderer->getTransform()->getHeight() / 8.0f,
+                    0.0f,
+                    0.0f));
+
+            m_gradientRenderer = SpriteHelper::CreateSprite(
+                ColorU32::c_white,
+                m_gradientRendererHolder->getTransform()->getSize() - Vec2DF(2.0f, 2.0f),
+                Vec2DF(1.0f, 1.0f),
+                GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
+                m_gradientRendererHolder->getTransform(),
+                this,
+                Vec2DF(0.0f, 0.0f),
+                Vec2DF(0.0f, 0.0f));
+
+            m_gradientRenderer->setCustomRenderCallback(
+                [](SpriteRenderer2D* _spriteRenderer) -> MeshPtr
+                {
+                    ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
+                    gradient.clamp01();
+                    gradient.addKey(0.0f, gradient.evaluate(0.0f));
+                    gradient.addKey(1.0f, gradient.evaluate(1.0f));
+
+                    Vec2DF const& size = _spriteRenderer->getTransform()->getSize();
+                    Vec4DF uv = Vec4DF(0.0f, 0.0f, 1.0f, 1.0f);
+                    F32 canvasRendererAlpha = _spriteRenderer->getCanvasRenderer()->getAlpha();
+                    FastVector<Pair<F32, Vec4DF>> gradientColors = gradient.toRawColors();
+                    Size gradientColorsCount = gradientColors.size();
+
+                    F32 startTime = gradientColors.front().first;
+                    F32 deltaTime = gradientColors.back().first - gradientColors.front().first;
+
+                    MeshPtr mesh = Mesh::Create();
+
+                    SubMeshPtr subMesh = SubMesh::Create();
+                    subMesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
+
+                    Vector<Vec3DF> positions;
+                    Vector<Vec3DF> normals;
+                    Vector<Vec4DF> colors;
+                    Vector<Vec2DF> uvs;
+
+                    Vector<U32> indices;
+
+                    for (Size i = 0, in = gradientColors.size() - 1; i < in; ++i)
+                    {
+                        F32 t0 = gradientColors[i].first;
+                        F32 t1 = gradientColors[i + 1].first;
+
+                        F32 p0 = (t0 - startTime) / deltaTime;
+                        F32 p1 = (t1 - startTime) / deltaTime;
+
+                        Vec4DF color0 = gradientColors[i].second;
+                        Vec4DF color1 = gradientColors[i + 1].second;
+
+                        color0.w *= canvasRendererAlpha;
+                        color1.w *= canvasRendererAlpha;
+
+                        F32 x0 = p0 * size.x;
+                        F32 x1 = p1 * size.x;
+
+                        positions.emplace_back(Vec3DF(x1, size.y, 0.0f));    // Top right
+                        positions.emplace_back(Vec3DF(x1, 0.0f, 0.0f));      // Bottom right
+                        positions.emplace_back(Vec3DF(x0, 0.0f, 0.0f));      // Bottom left
+                        positions.emplace_back(Vec3DF(x0, size.y, 0.0f));    // Top left
+
+                        normals.emplace_back(Vec3DF(+0.0f, +0.0f, +1.0f));   // Top right
+                        normals.emplace_back(Vec3DF(+0.0f, +0.0f, +1.0f));   // Bottom right
+                        normals.emplace_back(Vec3DF(+0.0f, +0.0f, +1.0f));   // Bottom left
+                        normals.emplace_back(Vec3DF(+0.0f, +0.0f, +1.0f));   // Top left                    
+
+                        if (gradient.getMode() == ColorGradient::EvaluateMode::Fixed)
+                        {
+                            colors.emplace_back(color0);    // Top right
+                            colors.emplace_back(color0);    // Bottom right
+                            colors.emplace_back(color0);    // Bottom left
+                            colors.emplace_back(color0);    // Top left
+                        }
+                        else
+                        {
+                            colors.emplace_back(color1);    // Top right
+                            colors.emplace_back(color1);    // Bottom right
+                            colors.emplace_back(color0);    // Bottom left
+                            colors.emplace_back(color0);    // Top left
+                        }
+
+                        uvs.emplace_back(Vec2DF(uv.z, uv.w));    // Top right
+                        uvs.emplace_back(Vec2DF(uv.z, uv.y));    // Bottom right
+                        uvs.emplace_back(Vec2DF(uv.x, uv.y));    // Bottom left
+                        uvs.emplace_back(Vec2DF(uv.x, uv.w));    // Top left
+
+                        U32 quadStart = (U32)i * 4;
+                        indices.emplace_back(0 + quadStart);
+                        indices.emplace_back(1 + quadStart);
+                        indices.emplace_back(3 + quadStart);
+                        indices.emplace_back(1 + quadStart);
+                        indices.emplace_back(2 + quadStart);
+                        indices.emplace_back(3 + quadStart);
+                    }
+
+                    subMesh->setPositions(positions);
+                    subMesh->setNormals(normals);
+                    subMesh->setColors(colors);
+                    subMesh->setTexCoords(0, uvs);
+
+                    subMesh->setIndices(indices);
+
+                    mesh->addSubMesh(subMesh);
+
+                    return mesh;
+                });
+            m_gradientRenderer->setRenderMode(SpriteRenderMode::Custom);
+
+            m_gradientClickButton = UIHelper::CreateDefaultClickButton(
+                nullptr,
+                Vec2DF(m_gradientRenderer->getTransform()->getWidth() + 8, m_gradientRenderer->getTransform()->getHeight() + 30),
+                Vec2DF::c_zero,
+                m_gradientRenderer->getTransform(),
+                this);
+            m_gradientClickButton->eventClick.subscribe(this, &SceneColorGradientPicker::notifyGradientClickButtonClick);
+            m_gradientClickButton->getUIElement()->eventCursorPressIn.subscribe(this, &SceneColorGradientPicker::notifyGradientClickButtonCursorPressIn);
+            m_gradientClickButton->setNormalColor(ColorU32::c_transparent);
+            m_gradientClickButton->setFocusedColor(ColorU32::c_transparent);
+            m_gradientClickButton->setPressedColor(ColorU32::c_transparent);
+            m_gradientClickButton->setSelectedColor(ColorU32::c_transparent);
+            m_gradientClickButton->getTransitionSprite()->setColor(ColorU32::c_transparent);
+        }
+
+        // Alpha
+        {
+            m_alphaHolder = createEntity();
+            m_alphaHolder->setActiveSelf(false);
+            Transform2DPtr alphaHolderTransform = m_alphaHolder->ensureComponent<Transform2D>();
+            alphaHolderTransform->setParent(m_canvas->getTransform());
+            alphaHolderTransform->setSize(m_canvas->getTransform()->getSize());
+            alphaHolderTransform->setAnchor(0.0f, 0.0f);
+            alphaHolderTransform->setPivot(0.0f, 0.0f);
+
+            HorizontalLayout2DPtr rowLayout = UIHelper::CreateHorizontalLayout(
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Middle,
+                Vec2DF(155.0f, 18.0f),
+                Vec2DF(20.0f, -120.0f),
+                alphaHolderTransform,
+                this,
+                Vec2DF(0.0f, 1.0f),
+                Vec2DF(0.0f, 1.0f));
+            rowLayout->setExpand(true);
+            rowLayout->setAutoWidth(false);
+
+            SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+                "Alpha",
+                8,
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Middle,
+                { 8.0f * 5.0f, 18.0f },
+                Vec2DF::c_zero,
+                GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
+                rowLayout->getTransform(),
+                this);
+            label->setColor(ColorU32::c_black);
+
+            m_alphaSlider = UIHelper::CreateDefaultSlider(
+                0.0f,
+                Vec2DF(60.0f, 18.0f),
+                Vec2DF::c_zero,
+                rowLayout->getTransform(),
+                this);
+            m_alphaSlider->eventValueChanged.subscribe(this, &SceneColorGradientPicker::notifyAlphaSliderValueChanged);
+
+            m_alphaEdit = UIHelper::CreateDefaultEditBox(
+                "255",
+                Vec2DF(30.0f, 18.0f),
+                Vec2DF::c_zero,
+                rowLayout->getTransform(),
+                this);
+            m_alphaEdit->getSystemTextRenderer()->setHorizontalAlignment(HorizontalAlignment2D::Center);
+            m_alphaEdit->eventTextInput.subscribe(this, &SceneColorGradientPicker::notifyAlphaEditTextInput);
+        }
+
+        // Color
+        {
+            m_colorHolder = createEntity();
+            Transform2DPtr colorHolderTransform = m_colorHolder->ensureComponent<Transform2D>();
+            colorHolderTransform->setParent(m_canvas->getTransform());
+            colorHolderTransform->setSize(m_canvas->getTransform()->getSize());
+            colorHolderTransform->setAnchor(0.0f, 0.0f);
+            colorHolderTransform->setPivot(0.0f, 0.0f);
+
+            HorizontalLayout2DPtr rowLayout = UIHelper::CreateHorizontalLayout(
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Middle,
+                Vec2DF(125.0f, 18.0f),
+                Vec2DF(30.0f, -120.0f),
+                colorHolderTransform,
+                this,
+                Vec2DF(0.0f, 1.0f),
+                Vec2DF(0.0f, 1.0f));
+            rowLayout->setExpand(true);
+            rowLayout->setAutoWidth(false);
+
+            SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+                "Color",
+                8,
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Middle,
+                { 8.0f * 5, 18.0f },
+                Vec2DF::c_zero,
+                GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
+                rowLayout->getTransform(),
+                this);
+            label->setColor(ColorU32::c_black);
+
+            m_colorEdit = UIHelper::CreateDefaultColorHDREdit(
+                ColorF128::c_red,
+                Vec2DF(60.0f, 18.0f),
+                Vec2DF::c_zero,
+                rowLayout->getTransform(),
+                this,
+                Vec2DF(0.5f, 0.5f),
+                Vec2DF(0.5f, 0.5f),
+                false,
+                false);
+            m_colorEdit->eventColorChanged.subscribe(this, &SceneColorGradientPicker::notifyColorEditColorChanged);
+        }
+
+        // Location
+        {
+            m_locationHolder = createEntity();
+            Transform2DPtr locationHolderTransform = m_locationHolder->ensureComponent<Transform2D>();
+            locationHolderTransform->setParent(m_canvas->getTransform());
+            locationHolderTransform->setSize(m_canvas->getTransform()->getSize());
+            locationHolderTransform->setAnchor(0.0f, 0.0f);
+            locationHolderTransform->setPivot(0.0f, 0.0f);
+
+            HorizontalLayout2DPtr rowLayout = UIHelper::CreateHorizontalLayout(
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Middle,
+                Vec2DF(135.0f, 18.0f),
+                Vec2DF(200.0f, -120.0f),
+                locationHolderTransform,
+                this,
+                Vec2DF(0.0f, 1.0f),
+                Vec2DF(0.0f, 1.0f));
+            rowLayout->setExpand(true);
+            rowLayout->setAutoWidth(false);
+
+            SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+                "Location",
+                8,
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Middle,
+                { 8.0f * 8.0f, 18.0f },
+                Vec2DF::c_zero,
+                GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
+                rowLayout->getTransform(),
+                this);
+            label->setColor(ColorU32::c_black);
+
+            m_locationEdit = UIHelper::CreateDefaultEditBox(
+                "51.5",
+                Vec2DF(45.0f, 18.0f),
+                Vec2DF::c_zero,
+                rowLayout->getTransform(),
+                this);
+            m_locationEdit->eventTextInput.subscribe(this, &SceneColorGradientPicker::notifyLocationEditTextInput);
+
+            SystemTextRenderer2DPtr label2 = SpriteHelper::CreateSystemText(
+                "%",
+                8,
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Middle,
+                { 8.0f, 18.0f },
+                Vec2DF::c_zero,
+                GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
+                rowLayout->getTransform(),
+                this);
+            label2->setColor(ColorU32::c_black);
+        }
+
+        updateUI();
+        updateEditModeUI();
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::notifyGradientChanged(ColorGradient const& _gradient)
+    {
+        updateUI();
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::updateUI()
+    {
+        m_gradientRenderer->updateMesh();
+        updateColorSliderTags();
+        updateColorTagUI();
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::notifyModeChanged(SystemTextDropdown2D* _dropdown, S32 _index)
+    {
+        ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
+
+        gradient.setMode((ColorGradient::EvaluateMode)_index);
+
+        ColorGradientPickerManager::GetInstancePtr()->setGradient(gradient);
+    }
+
+    //////////////////////////////////////////
+    ColorSliderTag2DPtr SceneColorGradientPicker::createColorSliderTag(bool _down)
+    {
+        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+
+        Vec2DF size(9.0f, 14.0f);
+
+        EntityPtr entity = createEntity();
+        entity->ensureComponent<Name>("ClickButton");
+
+        ColorSliderTag2DPtr colorSliderTag = entity->createComponent<ColorSliderTag2D>();
+        colorSliderTag->getTransform()->setSize(size);
+        colorSliderTag->getTransform()->setParent(m_gradientRenderer->getTransform());
+        
+        SpriteRenderer2DPtr colorRenderer = SpriteHelper::CreateSprite(
+            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::ColorSliderTagBody),
+            size,
+            Vec2DF::c_zero,
+            renderSystem->getMaterialManager()->getColorTextureMaterial(),
+            colorSliderTag->getTransform(),
+            this);
+        colorSliderTag->setColorRenderer(colorRenderer);
+
+        ToggleButton2DPtr button = UIHelper::CreateToggleButton(
+            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::ColorSliderTagFrame),
+            size,
+            Vec2DF::c_zero,
+            colorSliderTag->getTransform(),
+            this,
+            Vec2DF(0.5f, 0.5f),
+            Vec2DF(0.5f, 0.5f),
+            { 100, 100, 100 },
+            { 30, 175, 255 },
+            { 0, 145, 255 },
+            { 30, 175, 255 });
+        button->setCheckByClick(false);
+        colorSliderTag->setToggleButton(button);
+
+
+        if (_down)
+        {
+            colorSliderTag->getTransform()->setPivot(0.5f, 0.0f);
+        }
+        else
+        {
+            colorSliderTag->getTransform()->setPivot(0.5f, 1.0f);
+            colorRenderer->getTransform()->setLocalScale({ 1.0f, -1.0f });
+            button->getTransitionSprite()->getTransform()->setLocalScale({ 1.0f, -1.0f });
+        }
+
+        return colorSliderTag;
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::updateColorSliderTags()
+    {
+        ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
+        gradient.clamp01();
+
+        F32 startTime = gradient.getStartTime();
+        F32 endTime = gradient.getEndTime();
+        F32 deltaTime = gradient.getTime();
+
+        // Alpha
+        Size alphaTagsCount = gradient.getKeysAlpha().size();
+
+        while (alphaTagsCount < m_alphaTags.size())
+        {
+            m_alphaTags.back()->getToggleButton()->eventClick.unsubscribe(this);
+            m_alphaTags.back()->getToggleButton()->eventPressedChanged.unsubscribe(this);
+            m_alphaTags.back()->getToggleButton()->eventCursorPressIn.unsubscribe(this);
+            m_alphaTags.back()->getEntityRaw()->removeFromECSWorld();
+            m_alphaTags.pop_back();
+        }
+
+        while (alphaTagsCount > m_alphaTags.size())
+        {
+            ColorSliderTag2DPtr alphaSliderTag = createColorSliderTag(true);
+            alphaSliderTag->getTransform()->setAnchor(0.0f, 1.0f);
+            alphaSliderTag->getToggleButton()->eventClick.subscribe(this, &SceneColorGradientPicker::notifyColorSliderTagClick);
+            alphaSliderTag->getToggleButton()->eventPressedChanged.subscribe(this, &SceneColorGradientPicker::notifyColorSliderTagPressedChanged);
+            alphaSliderTag->getToggleButton()->eventCursorPressIn.subscribe(this, &SceneColorGradientPicker::notifyColorSliderTagCursorPressIn);
+            m_alphaTags.push_back(alphaSliderTag);
+        }
+
+        for (Size i = 0; i < alphaTagsCount; ++i)
+        {
+            ColorGradient::KeyframeAlpha const& keyframe = gradient.getKeysAlpha()[i];
+
+            ColorSliderTag2DPtr const& alphaSliderTag = m_alphaTags[i];
+            alphaSliderTag->getTransform()->setLocalX(keyframe.time * m_gradientRenderer->getTransform()->getWidth());
+            alphaSliderTag->getTransform()->setLocalY(1.0f);
+            alphaSliderTag->getColorRenderer()->setColor(
+                ColorU32::Lerp(ColorU32::c_black, ColorU32::c_white, keyframe.value));
+
+            if (m_editMode == EditMode::AlphaTag)
+                alphaSliderTag->getToggleButton()->setChecked(i == m_colorTagIndex);
+            else
+                alphaSliderTag->getToggleButton()->setChecked(false);
+        }
+
+
+        // RGB
+        Size colorTagsCount = gradient.getKeysRGB().size();
+
+        while (colorTagsCount < m_colorTags.size())
+        {
+            m_colorTags.back()->getToggleButton()->eventClick.unsubscribe(this);
+            m_colorTags.back()->getToggleButton()->eventPressedChanged.unsubscribe(this);
+            m_colorTags.back()->getToggleButton()->eventCursorPressIn.unsubscribe(this);
+            m_colorTags.back()->getEntityRaw()->removeFromECSWorld();
+            m_colorTags.pop_back();
+        }
+
+        while (colorTagsCount > m_colorTags.size())
+        {
+            ColorSliderTag2DPtr colorSliderTag = createColorSliderTag(false);
+            colorSliderTag->getTransform()->setAnchor(0.0f, 0.0f);
+            colorSliderTag->getToggleButton()->eventClick.subscribe(this, &SceneColorGradientPicker::notifyColorSliderTagClick);
+            colorSliderTag->getToggleButton()->eventPressedChanged.subscribe(this, &SceneColorGradientPicker::notifyColorSliderTagPressedChanged);
+            colorSliderTag->getToggleButton()->eventCursorPressIn.subscribe(this, &SceneColorGradientPicker::notifyColorSliderTagCursorPressIn);
+            m_colorTags.push_back(colorSliderTag);
+        }
+
+        for (Size i = 0; i < colorTagsCount; ++i)
+        {
+            ColorGradient::KeyframeRGB const& keyframe = gradient.getKeysRGB()[i];
+
+            ColorSliderTag2DPtr const& colorSliderTag = m_colorTags[i];
+            colorSliderTag->getTransform()->setLocalX(keyframe.time * m_gradientRenderer->getTransform()->getWidth());
+            colorSliderTag->getTransform()->setLocalY(-1.0f);
+
+            colorSliderTag->getColorRenderer()->setColor(ColorU32::FromVec4DF(keyframe.value));
+
+            if (m_editMode == EditMode::ColorTag)
+                colorSliderTag->getToggleButton()->setChecked(i == m_colorTagIndex);
+            else
+                colorSliderTag->getToggleButton()->setChecked(false);
+        }
+        
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::notifyColorSliderTagClick(Button2D* _button, CursorInputEvent const& _event)
+    {
+        
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::notifyColorSliderTagPressedChanged(Button2D* _button, bool _pressed)
+    {
+        
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::notifyColorSliderTagCursorPressIn(Button2D* _button, Vec2DF const& _positionOS, CursorInputEvent const& _event)
+    {
+        if (m_draggingTag)
+            return;
+
+        Vector<ColorSliderTag2DPtr>::iterator it =
+            std::find_if(
+                m_alphaTags.begin(),
+                m_alphaTags.end(),
+                [_button](ColorSliderTag2DPtr const& _tag)
+                {
+                    if (_tag->getToggleButton().get() == _button)
+                        return true;
+
+                    return false;
+                });
+
+        if (it != m_alphaTags.end())
+        {
+            Size index = it - m_alphaTags.begin();
+
+            processAlphaColorSliderTagClick(index, _event.button);
+
+            return;
+        }
+
+        it =
+            std::find_if(
+                m_colorTags.begin(),
+                m_colorTags.end(),
+                [_button](ColorSliderTag2DPtr const& _tag)
+                {
+                    if (_tag->getToggleButton().get() == _button)
+                        return true;
+
+                    return false;
+                });
+
+        if (it != m_colorTags.end())
+        {
+            Size index = it - m_colorTags.begin();
+
+            processRGBColorSliderTagClick(index, _event.button);            
+
+            return;
+        }
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::processAlphaColorSliderTagClick(Size _index, S32 _buttonId)
+    {
+        if (_buttonId == 0)
+        {
+            setEditMode(EditMode::AlphaTag);
+            m_colorTagIndex = _index;
+
+            updateColorSliderTags();
+            updateColorTagUI();
+
+            m_draggingTag = true;
+        }
+        else
+        if (_buttonId == 1)
+        {
+            ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
+
+            if (_index >= 0 && _index < gradient.getKeysAlpha().size())
+            {
+                if (gradient.getKeysAlpha().size() > 1)
+                {
+                    setEditMode(EditMode::None);
+                    m_colorTagIndex = -1;
+
+                    gradient.removeKeyAlpha(_index);
+
+                    ColorGradientPickerManager::GetInstancePtr()->setGradient(gradient);
+                }
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::processRGBColorSliderTagClick(Size _index, S32 _buttonId)
+    {
+        if (_buttonId == 0)
+        {
+            setEditMode(EditMode::ColorTag);
+            m_colorTagIndex = _index;
+
+            updateColorSliderTags();
+            updateColorTagUI();
+
+            m_draggingTag = true;
+        }
+        else
+        if (_buttonId == 1)
+        {
+            ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
+
+            if (_index >= 0 && _index < gradient.getKeysRGB().size())
+            {
+                if (gradient.getKeysRGB().size() > 1)
+                {
+                    setEditMode(EditMode::None);
+                    m_colorTagIndex = -1;
+
+                    gradient.removeKeyRGB(_index);
+
+                    ColorGradientPickerManager::GetInstancePtr()->setGradient(gradient);
+                }
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::setEditMode(EditMode _value)
+    {
+        if (m_editMode == _value)
+            return;
+
+        m_editMode = _value;
+
+        updateEditModeUI();
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::updateEditModeUI()
+    {
+        bool  alphaHolderVisible = false;
+        bool  colorHolderVisible = false;
+        bool  locationHolderVisible = false;
+
+        switch (m_editMode)
+        {    
+            case EditMode::AlphaTag:
+            {
+                alphaHolderVisible = true;
+                locationHolderVisible = true;
+                break;
+            }
+            case EditMode::ColorTag:
+            {
+                colorHolderVisible = true;
+                locationHolderVisible = true;
+                break;
+            }
+            default:
+            {
+                break;
+            }
+        }
+
+        m_alphaHolder->setActiveSelf(alphaHolderVisible);
+        m_colorHolder->setActiveSelf(colorHolderVisible);
+        m_locationHolder->setActiveSelf(locationHolderVisible);
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::updateColorTagUI()
+    {
+        if (m_colorTagIndex < 0)
+            return;
+
+        ColorGradient const& gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
+
+
+        if (m_editMode == EditMode::AlphaTag)
+        {
+            if (m_colorTagIndex < gradient.getKeysAlpha().size())
+            {
+                ColorGradient::KeyframeAlpha const& keyframe = gradient.getKeysAlpha()[m_colorTagIndex];
+
+                if (!m_alphaEdit->getSelected())
+                    m_alphaEdit->setText(StringHelper::ToString((S32)(keyframe.value * 255.0f)));
+
+                if (!m_alphaSlider->getSelected())
+                    m_alphaSlider->setValue(keyframe.value);
+
+                if (!m_locationEdit->getSelected())
+                    m_locationEdit->setText(StringHelper::F32ToStringFormatted(keyframe.time * 100.0f, 1));
+            }
+        }
+        else
+        if (m_editMode == EditMode::ColorTag)
+        {
+            if (m_colorTagIndex < gradient.getKeysRGB().size())
+            {
+                ColorGradient::KeyframeRGB const& keyframe = gradient.getKeysRGB()[m_colorTagIndex];
+
+                m_colorEdit->setColor(keyframe.value);
+
+                if (!m_locationEdit->getSelected())
+                    m_locationEdit->setText(StringHelper::F32ToStringFormatted(keyframe.time * 100.0f, 1));
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::notifyColorEditColorChanged(ColorHDREdit2D* _edit, ColorF128 const& _color)
+    {
+        if (m_colorTagIndex < 0)
+            return;
+
+        if (m_editMode == EditMode::ColorTag)
+        {
+            ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
+
+            if (m_colorTagIndex < gradient.getKeysRGB().size())
+            {
+                gradient.setKeyRGB(m_colorTagIndex, { _color.r, _color.g, _color.b });
+                
+                ColorGradientPickerManager::GetInstancePtr()->setGradient(gradient);
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::notifyAlphaSliderValueChanged(Slider2D* _slider, F32 _value)
+    {
+        if (m_colorTagIndex < 0)
+            return;
+
+        if (m_editMode == EditMode::AlphaTag)
+        {
+            ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
+
+            if (m_colorTagIndex < gradient.getKeysAlpha().size())
+            {
+                gradient.setKeyAlpha(m_colorTagIndex, _value);
+
+                ColorGradientPickerManager::GetInstancePtr()->setGradient(gradient);
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::notifyAlphaEditTextInput(SystemTextEditBox2D* _edit)
+    {
+        if (m_colorTagIndex < 0)
+            return;
+
+        if (m_editMode == EditMode::AlphaTag)
+        {
+            ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
+
+            if (m_colorTagIndex < gradient.getKeysAlpha().size())
+            {
+                _edit->setText(StringHelper::ToString(Math::Clamp(StringHelper::StringToS32(_edit->getText()), 0, 255)));
+
+                F32 value = StringHelper::StringToF32(_edit->getText()) / 255.0f;
+
+                gradient.setKeyAlpha(m_colorTagIndex, value);
+
+                ColorGradientPickerManager::GetInstancePtr()->setGradient(gradient);
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::notifyLocationEditTextInput(SystemTextEditBox2D* _edit)
+    {
+        if (m_colorTagIndex < 0)
+            return;
+
+        if (m_editMode == EditMode::None)
+            return;
+        
+        ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
+
+        if (m_editMode == EditMode::AlphaTag)
+        {
+            if (m_colorTagIndex < gradient.getKeysAlpha().size())
+            {
+                if (StringHelper::IsF32Number(_edit->getText()))
+                    _edit->setText(StringHelper::F32ToStringFormatted(Math::Clamp(StringHelper::StringToF32(_edit->getText()), 0.0f, 100.0f), 1));
+                else
+                    _edit->setText("0");
+
+                F32 newTime = StringHelper::StringToF32(_edit->getText()) / 100.0f;
+
+                changeCurrentAlphaTagTime(newTime);
+            }
+        }
+        else
+        if (m_editMode == EditMode::ColorTag)
+        {
+            if (m_colorTagIndex < gradient.getKeysRGB().size())
+            {
+                if (StringHelper::IsF32Number(_edit->getText()))
+                    _edit->setText(StringHelper::F32ToStringFormatted(Math::Clamp(StringHelper::StringToF32(_edit->getText()), 0.0f, 100.0f), 1));
+                else
+                    _edit->setText("0");
+
+                F32 newTime = StringHelper::StringToF32(_edit->getText()) / 100.0f;
+
+                changeCurrentColorTagTime(newTime);
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::changeCurrentAlphaTagTime(F32 _newTime)
+    {
+        ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
+
+        // Fix key collision
+        bool fixDirection = (_newTime >= 0.5f);
+        while (gradient.hasKeyAlphaTime(_newTime))
+        {
+            if (fixDirection)
+                _newTime -= std::numeric_limits<F32>::epsilon();
+            else
+                _newTime += std::numeric_limits<F32>::epsilon();
+        }
+
+        F32 prevTime = gradient.getKeysAlpha()[m_colorTagIndex].time;
+        F32 prevValue = gradient.getKeysAlpha()[m_colorTagIndex].value;
+        Size insertionIndex = gradient.getInsertionIndexAlpha(_newTime);
+
+        gradient.setKeyAlphaTime(m_colorTagIndex, _newTime);
+
+        if (_newTime < prevTime)
+            m_colorTagIndex = insertionIndex;
+        else
+            m_colorTagIndex = insertionIndex - 1;
+
+        updateColorTagUI();
+
+        ColorGradientPickerManager::GetInstancePtr()->setGradient(gradient);
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::changeCurrentColorTagTime(F32 _newTime)
+    {
+        ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
+
+        // Fix key collision
+        bool fixDirection = (_newTime >= 0.5f);
+        while (gradient.hasKeyRGBTime(_newTime))
+        {
+            if (fixDirection)
+                _newTime -= std::numeric_limits<F32>::epsilon();
+            else
+                _newTime += std::numeric_limits<F32>::epsilon();
+        }
+
+        F32 prevTime = gradient.getKeysRGB()[m_colorTagIndex].time;
+        Vec3DF prevValue = gradient.getKeysRGB()[m_colorTagIndex].value;
+        Size insertionIndex = gradient.getInsertionIndexRGB(_newTime);
+
+        gradient.setKeyRGBTime(m_colorTagIndex, _newTime);
+
+        if (_newTime < prevTime)
+            m_colorTagIndex = insertionIndex;
+        else
+            m_colorTagIndex = insertionIndex - 1;
+
+        updateColorTagUI();
+
+        ColorGradientPickerManager::GetInstancePtr()->setGradient(gradient);
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::notifyCanvasCursorReleaseIn(Vec2DF const& _positionOS, CursorInputEvent const& _event)
+    {
+        m_draggingTag = false;
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::notifyCanvasCursorReleaseOut(CursorInputEvent const& _event)
+    {
+        m_draggingTag = false;
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::notifyGradientClickButtonClick(Button2D* _button, CursorInputEvent const& _event)
+    {
+        if (_event.button == 0)
+        {
+            if ((_event.position - m_gradientClickPosition).squaredLength() <= 2.0f * 2.0f)
+            {
+                ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
+
+                Vec2DF localPosition = m_gradientRenderer->getTransform()->getWorldTransform().inversedCopy().transformAffine(_event.position);
+
+                F32 t = Math::Clamp01(localPosition.x / m_gradientRenderer->getTransform()->getWidth());
+
+                F32 y = Math::Clamp01(localPosition.y / m_gradientRenderer->getTransform()->getHeight());
+
+                if (y <= 0.5f)
+                {
+                    gradient.addKeyRGB(t, gradient.evaluateRGB(t));
+
+                    for (Size i = 0, in = gradient.getKeysRGB().size(); i < in; ++i)
+                        if (gradient.getKeysRGB()[i].time == t)
+                        {
+                            setEditMode(EditMode::ColorTag);
+                            m_colorTagIndex = i;
+                        }
+                }
+                else
+                {
+                    gradient.addKeyAlpha(t, gradient.evaluateAlpha(t));
+
+                    for (Size i = 0, in = gradient.getKeysAlpha().size(); i < in; ++i)
+                        if (gradient.getKeysAlpha()[i].time == t)
+                        {
+                            setEditMode(EditMode::AlphaTag);
+                            m_colorTagIndex = i;
+                        }
+                }
+
+                ColorGradientPickerManager::GetInstancePtr()->setGradient(gradient);
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void SceneColorGradientPicker::notifyGradientClickButtonCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _event)
+    {
+        m_gradientClickPosition = _event.position;
+    }
+
+} // namespace Maze
+//////////////////////////////////////////

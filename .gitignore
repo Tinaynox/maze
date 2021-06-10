@@ -1,0 +1,55 @@
+# =========== #
+# Maze Engine #
+# =========== #
+engine/lib/
+engine/bin/
+
+# ============= #
+# Maze Examples #
+# ============= #
+examples/bin/log.log
+examples/bin/*.dll
+examples/bin/*.app
+
+# =============== #
+# Generated Files #
+# =============== #
+/prj
+prj.vs17-x86-static
+prj.vs17-x86-shared
+prj.vs17-x64-static
+prj.vs17-x64-shared
+prj.vs19-x86-static
+prj.vs19-x86-shared
+prj.vs19-x64-static
+prj.vs19-x64-shared
+prj.vs17-arm-static
+prj.vs17-arm-shared
+prj.vs17-arm64-static
+prj.vs17-arm64-shared
+prj.vs19-arm-static
+prj.vs19-arm-shared
+prj.vs19-arm64-static
+prj.vs19-arm64-shared
+prj.ninja
+prj.gradle-android-ninja
+prj.gradle-android
+prj.emscripten-static
+prj.emscripten-shared
+prj.xcode-osx-static
+prj.xcode-osx-shared
+prj.xcode-ios-static
+prj.xcode-ios-shared
+prj.xcode-ios-simulator-static
+prj.xcode-ios-simulator-shared
+prj.codeblocks-makefiles-static
+prj.codeblocks-makefiles-shared
+prj.codeblocks-ninja-static
+prj.codeblocks-ninja-shared
+prj.makefiles
+build.x86
+build.x64
+build.emscripten
+
+__pycache__
+*.pyc

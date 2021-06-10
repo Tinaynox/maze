@@ -1,0 +1,624 @@
+//////////////////////////////////////////
+//
+// Maze Engine
+// Copyright (C) 2021 Dmitriy "Tinaynox" Nosov (tinaynox@gmail.com)
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented;
+//    you must not claim that you wrote the original software.
+//    If you use this software in a product, an acknowledgment
+//    in the product documentation would be appreciated but is not required.
+//
+// 2. Altered source versions must be plainly marked as such,
+//    and must not be misrepresented as being the original software.
+//
+// 3. This notice may not be removed or altered from any source distribution.
+//
+//////////////////////////////////////////
+
+
+//////////////////////////////////////////
+#include "MazeParticlesHeader.hpp"
+#include "maze-particles/property-drawers/MazePropertyDrawerParticleSystemParameterColor.hpp"
+#include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
+#include "maze-core/memory/MazeMemory.hpp"
+#include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
+#include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
+#include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
+#include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
+#include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
+#include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
+#include "maze-ui/ecs/components/MazeSystemTextDropdown2D.hpp"
+#include "maze-ui/managers/MazeUIManager.hpp"
+#include "maze-graphics/managers/MazeGraphicsManager.hpp"
+#include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-debugger/layout/MazeDebuggerLayout.hpp"
+#include "maze-debugger/helpers/MazeDebuggerHelper.hpp"
+
+
+//////////////////////////////////////////
+namespace Maze
+{
+
+
+    //////////////////////////////////////////
+    // Class PropertyDrawerParticleSystemParameterColor
+    //
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PropertyDrawerParticleSystemParameterColor, PropertyDrawer);
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(PropertyDrawerParticleSystemParameterColor);
+
+    //////////////////////////////////////////
+    PropertyDrawerParticleSystemParameterColor::PropertyDrawerParticleSystemParameterColor()
+    {
+        
+    }
+
+    //////////////////////////////////////////
+    PropertyDrawerParticleSystemParameterColor::~PropertyDrawerParticleSystemParameterColor()
+    {
+        if (m_colorFrom)
+        {
+            m_colorFrom->eventColorChanged.unsubscribe(this);
+        }
+
+        if (m_colorTo)
+        {
+            m_colorTo->eventColorChanged.unsubscribe(this);
+        }
+
+        if (m_gradientFrom)
+            m_gradientFrom->eventGradientChanged.unsubscribe(this);
+
+        if (m_gradientTo)
+            m_gradientTo->eventGradientChanged.unsubscribe(this);
+
+        if (m_modeDropdown)
+        {
+            m_modeDropdown->eventValueChanged.unsubscribe(this);
+        }
+    }
+
+    //////////////////////////////////////////
+    PropertyDrawerParticleSystemParameterColorPtr PropertyDrawerParticleSystemParameterColor::Create(String const& _label)
+    {
+        PropertyDrawerParticleSystemParameterColorPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerParticleSystemParameterColor, object, init(_label));
+        return object;
+    }
+
+    //////////////////////////////////////////
+    bool PropertyDrawerParticleSystemParameterColor::init(String const& _label)
+    {
+        if (!PropertyDrawer::init(_label))
+            return false;
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void PropertyDrawerParticleSystemParameterColor::buildUI(
+        Transform2DPtr const& _parent,
+        CString _label)
+    {
+        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+        MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
+
+        HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
+            HorizontalAlignment2D::Left,
+            VerticalAlignment2D::Middle,
+            Vec2DF(_parent->getWidth(), 18),
+            Vec2DF(0, 0),
+            _parent,
+            _parent->getEntityRaw()->getECSScene(),
+            Vec2DF(0.0f, 1.0f),
+            Vec2DF(0.0f, 1.0f));
+        layout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
+        layout->setAutoWidth(false);
+        layout->setExpand(true);
+        m_rootEntity = layout->getEntity();
+
+        SystemTextRenderer2DPtr systemText = SpriteHelper::CreateSystemText(
+            DebuggerHelper::BuildPropertyName(m_label.c_str(), _label).c_str(),
+            DebuggerLayout::c_inspectorPropertyFontSize,
+            HorizontalAlignment2D::Left,
+            VerticalAlignment2D::Middle,
+            Vec2DF(8, 18),
+            Vec2DF(0, 0),
+            materialManager->getColorTextureMaterial(),
+            layout->getTransform(),
+            _parent->getEntityRaw()->getECSScene(),
+            Vec2DF(0.0f, 0.5f),
+            Vec2DF::c_zero);
+        systemText->setColor(DebuggerLayout::c_inspectorPropertyColor);
+
+        m_layout = UIHelper::CreateHorizontalLayout(
+            HorizontalAlignment2D::Left,
+            VerticalAlignment2D::Middle,
+            Vec2DF(_parent->getWidth(), 18),
+            Vec2DF(0, 0),
+            layout->getTransform(),
+            _parent->getEntityRaw()->getECSScene(),
+            Vec2DF(0.0f, 1.0f),
+            Vec2DF(0.0f, 1.0f));
+        m_layout->setAutoWidth(true);
+        m_layout->setAutoHeight(false);
+        m_layout->setExpand(false);
+
+        {
+            m_colorFrom = UIHelper::CreateDefaultColorHDREdit(
+                ColorF128::c_white,
+                Vec2DF(60, 18),
+                Vec2DF(0, 0),
+                m_layout->getTransform(),
+                _parent->getEntityRaw()->getECSScene(),
+                Vec2DF(0.5f, 0.5f),
+                Vec2DF::c_zero);
+            m_colorFrom->eventColorChanged.subscribe(this, &PropertyDrawerParticleSystemParameterColor::notifyColorChanged);
+
+            m_colorTo = UIHelper::CreateDefaultColorHDREdit(
+                ColorF128::c_white,
+                Vec2DF(60, 18),
+                Vec2DF(0, 0),
+                m_layout->getTransform(),
+                _parent->getEntityRaw()->getECSScene(),
+                Vec2DF(0.5f, 0.5f),
+                Vec2DF::c_zero);
+            m_colorTo->eventColorChanged.subscribe(this, &PropertyDrawerParticleSystemParameterColor::notifyColorChanged);
+        }
+
+        {
+            m_gradientFrom = UIHelper::CreateDefaultColorGradientEdit(
+                ColorGradient(),
+                Vec2DF(60, 18),
+                Vec2DF(0, 0),
+                m_layout->getTransform(),
+                _parent->getEntityRaw()->getECSScene(),
+                Vec2DF(0.5f, 0.5f),
+                Vec2DF::c_zero);
+            m_gradientFrom->eventGradientChanged.subscribe(this, &PropertyDrawerParticleSystemParameterColor::notifyGradientChanged);
+
+            m_gradientTo = UIHelper::CreateDefaultColorGradientEdit(
+                ColorGradient(),
+                Vec2DF(60, 18),
+                Vec2DF(0, 0),
+                m_layout->getTransform(),
+                _parent->getEntityRaw()->getECSScene(),
+                Vec2DF(0.5f, 0.5f),
+                Vec2DF::c_zero);
+            m_gradientTo->eventGradientChanged.subscribe(this, &PropertyDrawerParticleSystemParameterColor::notifyGradientChanged);
+        }
+
+        createModeDropdown();
+
+        updateModeUI();
+    }
+
+    //////////////////////////////////////////
+    void PropertyDrawerParticleSystemParameterColor::setString(String const& _value)
+    {
+        ParticleSystemParameterColor value;
+        ValueFromString(value, _value.c_str(), _value.size());
+        setValue(value);
+    }
+
+    //////////////////////////////////////////
+    String PropertyDrawerParticleSystemParameterColor::getString()
+    {
+        String value;
+        ValueToString(getValue(), value);
+        return value;
+    }
+
+    //////////////////////////////////////////
+    void PropertyDrawerParticleSystemParameterColor::notifyColorChanged(ColorHDREdit2D* _edit, ColorF128 const& _color)
+    {
+        eventUIData();
+    }
+
+    //////////////////////////////////////////
+    void PropertyDrawerParticleSystemParameterColor::notifyGradientChanged(ColorGradientEdit2D* _edit, ColorGradient const& _gradient)
+    {
+        eventUIData();
+    }
+
+    //////////////////////////////////////////
+    void PropertyDrawerParticleSystemParameterColor::setValue(ParticleSystemParameterColor const& _value)
+    {
+        m_parameter = _value;
+        setMode(_value.getMode());
+
+        switch (_value.getMode())
+        {
+            case ParticleSystemParameterColorSamplingMode::Color:
+            {
+                if (!m_colorTo->getSelected())
+                    m_colorTo->setColor(_value.getColor0());
+                break;
+            }
+            case ParticleSystemParameterColorSamplingMode::Gradient:
+            {
+                if (!m_gradientTo->getSelected())
+                    m_gradientTo->setGradient(_value.getGradient0());
+
+                break;
+            }
+            case ParticleSystemParameterColorSamplingMode::RandomBetweenColors:
+            {
+                if (!m_colorFrom->getSelected())
+                    m_colorFrom->setColor(_value.getColor0());
+
+                if (!m_colorTo->getSelected())
+                    m_colorTo->setColor(_value.getColor1());
+                break;
+            }
+            case ParticleSystemParameterColorSamplingMode::RandomBetweenGradients:
+            {
+                if (!m_gradientFrom->getSelected())
+                    m_gradientFrom->setGradient(_value.getGradient0());
+
+                if (!m_gradientTo->getSelected())
+                    m_gradientTo->setGradient(_value.getGradient1());
+
+                break;
+            }
+            default:
+            {
+                break;
+            }
+        }
+
+        if (!m_modeDropdown->getSelected())
+            m_modeDropdown->setValue(_value.getMode().toString());
+    }
+
+    //////////////////////////////////////////
+    ParticleSystemParameterColor PropertyDrawerParticleSystemParameterColor::getValue() const
+    {
+        ParticleSystemParameterColor parameter = m_parameter;
+
+        switch (m_mode)
+        {
+            case ParticleSystemParameterColorSamplingMode::Color:
+            {
+                ColorF128 color0 = m_colorTo->getColor();
+                parameter.setColor(color0);
+                break;
+            }
+            case ParticleSystemParameterColorSamplingMode::Gradient:
+            {
+                ColorGradient gradient0 = m_gradientTo->getGradient();
+
+                if (gradient0.empty())
+                {
+                    gradient0.addKey(0.0f, Vec4DF::c_one);
+                    gradient0.addKey(1.0f, Vec4DF::c_one);
+                }
+                
+                parameter.setGradient(gradient0);
+                break;
+            }
+            case ParticleSystemParameterColorSamplingMode::RandomBetweenColors:
+            {
+                ColorF128 color0 = m_colorFrom->getColor();
+                ColorF128 color1 = m_colorTo->getColor();
+                parameter.setRandomBetweenColors(color0, color1);
+                break;
+            }
+            case ParticleSystemParameterColorSamplingMode::RandomBetweenGradients:
+            {
+                ColorGradient gradient0 = m_gradientFrom->getGradient();
+                ColorGradient gradient1 = m_gradientTo->getGradient();
+
+                if (gradient0.empty())
+                {
+                    gradient0.addKey(0.0f, Vec4DF::c_one);
+                    gradient0.addKey(1.0f, Vec4DF::c_one);
+                }
+                if (gradient1.empty())
+                {
+                    gradient1.addKey(0.0f, Vec4DF::c_one);
+                    gradient1.addKey(1.0f, Vec4DF::c_one);
+                }
+
+                parameter.setRandomBetweenGradients(gradient0, gradient1);
+                break;
+            }
+            default:
+            {
+                break;
+            }
+        }
+
+        return parameter;
+    }
+
+    //////////////////////////////////////////
+    void PropertyDrawerParticleSystemParameterColor::setMode(ParticleSystemParameterColorSamplingMode _mode)
+    {
+        if (m_mode == _mode)
+            return;
+
+        m_mode = _mode;
+
+        updateModeUI();
+    }
+
+    //////////////////////////////////////////
+    void PropertyDrawerParticleSystemParameterColor::updateModeUI()
+    {
+        bool colorFromActive = false;
+        bool colorToActive = false;
+        bool gradientFromActive = false;
+        bool gradientToActive = false;
+
+        switch (m_mode)
+        {
+            case ParticleSystemParameterColorSamplingMode::Color:
+            {
+                colorToActive = true;
+                break;
+            }
+            case ParticleSystemParameterColorSamplingMode::Gradient:
+            {
+                gradientToActive = true;
+                break;
+            }
+            case ParticleSystemParameterColorSamplingMode::RandomBetweenColors:
+            {
+                colorFromActive = true;
+                colorToActive = true;
+                break;
+            }
+            case ParticleSystemParameterColorSamplingMode::RandomBetweenGradients:
+            {
+                gradientFromActive = true;
+                gradientToActive = true;
+                break;
+            }
+            default:
+            {
+                break;
+            }
+        }
+
+        m_colorFrom->getEntityRaw()->setActiveSelf(colorFromActive);
+        m_colorTo->getEntityRaw()->setActiveSelf(colorToActive);
+        m_gradientFrom->getEntityRaw()->setActiveSelf(gradientFromActive);
+        m_gradientTo->getEntityRaw()->setActiveSelf(gradientToActive);
+    }
+
+    //////////////////////////////////////////
+    void PropertyDrawerParticleSystemParameterColor::createModeDropdown()
+    {
+        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+
+        EntityPtr dropdownEntity = m_layout->getEntityRaw()->getECSScene()->createEntity();
+        dropdownEntity->ensureComponent<Name>("Dropdown");
+
+        m_modeDropdown = dropdownEntity->createComponent<SystemTextDropdown2D>();
+
+        Transform2DPtr const& transform = m_modeDropdown->getTransform();
+        transform->setParent(m_layout->getTransform());
+        transform->setSize(18.0f, 18.0f);
+        
+        SpriteRenderer2DPtr spriteRenderer = dropdownEntity->createComponent<SpriteRenderer2D>();
+        SpriteRenderer2D* spriteRendererRaw = spriteRenderer.get();
+        spriteRenderer->setSprite(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));
+        spriteRenderer->setMaterial(
+            renderSystem->getMaterialManager()->getColorTextureMaterial());
+        spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
+        spriteRenderer->setColor(ColorU32(250, 250, 250, 100));
+
+        auto updateDropdownState =
+            [](
+                SystemTextDropdown2D* _dropdown,
+                SpriteRenderer2D* _spriteRenderer,
+                Entity* _listEntity)
+        {
+            _listEntity->setActiveSelf(_dropdown->getSelected());
+
+            Transform2DPtr transform = _listEntity->getComponent<Transform2D>();
+            Canvas* rootCanvas = transform->getLastTrunkComponent<Canvas>();
+            if (rootCanvas)
+            {
+                Transform2D* root = rootCanvas->getTransform().get();
+                Vec2DF const& rootSize = root->getSize();
+
+                
+                Vec2DF positionOS(
+                    transform->getWidth(),
+                    transform->getHeight());
+
+                Vec2DF positionWS = transform->getWorldTransform().transformAffine(positionOS);
+                positionWS.y = Math::Clamp(positionWS.y, transform->getHeight(), rootSize.y);
+
+                Vec2DF menuListPositionOS = transform->getParent()->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
+
+                transform->setPivot(1.0f, 1.0f);
+                transform->setAnchor(0.0f, 0.0f);
+                transform->setLocalPosition(menuListPositionOS);
+            }
+
+            if (_dropdown->getSelected())
+            {
+                _spriteRenderer->setSprite(
+                    UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Selected));
+            }
+            else
+            {
+                if (_dropdown->getFocused())
+                {
+                    _spriteRenderer->setSprite(
+                        UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Focused));
+                }
+                else
+                {
+                    _spriteRenderer->setSprite(
+                        UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));
+                }
+            }
+        };
+
+        SpriteRenderer2DPtr expandButtonSprite = SpriteHelper::CreateSprite(
+            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::DropDownButtonExpanded),
+            Vec2DF(8.0f, 8.0f) * 1.75f,
+            Vec2DF(0.0f, 0.0f),
+            renderSystem->getMaterialManager()->getColorTextureMaterial(),
+            transform,
+            spriteRenderer->getEntityRaw()->getECSScene(),
+            Vec2DF(0.5f, 0.5f),
+            Vec2DF(0.5f, 0.5f));
+        expandButtonSprite->setColor(ColorU32::c_black);
+
+        F32 width = 200.0f;
+
+        // List entity
+        Entity* listEntity = nullptr;
+        {
+
+            SpriteRenderer2DPtr listTemplateSpriteRenderer = SpriteHelper::CreateSprite(
+                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
+                Vec2DF(width, 140.0f),
+                Vec2DF::c_zero,
+                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                transform,
+                m_layout->getEntityRaw()->getECSScene(),
+                Vec2DF(1.0f, 0.0f),
+                Vec2DF(1.0f, 1.0f));
+            listTemplateSpriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
+
+            listEntity = listTemplateSpriteRenderer->getEntityRaw();
+
+            Transform2DPtr const& listTemplateTransform = listTemplateSpriteRenderer->getTransform();
+
+            CanvasPtr canvas = listEntity->ensureComponent<Canvas>();
+
+            canvas->setClearColor(ColorU32::c_red);
+            canvas->setClearColorFlag(false);
+            canvas->setSortOrder(300000);
+            canvas->getCanvasScaler()->setScaleMode(CanvasScaler::ScaleMode::None);
+            canvas->setViewportTransformPolicy(ViewportTransformPolicy::TransformToViewport);
+
+
+            UIElement2DPtr uiElement = listEntity->ensureComponent<UIElement2D>();
+            uiElement->setCaptureCursorHits(true);
+
+            m_modeDropdown->setListCanvas(canvas);
+
+            // Item Prefab
+            {
+                Transform2DPtr itemPrefabTransform = SpriteHelper::CreateTransform2D(
+                    Vec2DF(width - 2.0f, 20.0f),
+                    Vec2DF(1.0f, 0.0f),
+                    transform,
+                    m_layout->getEntityRaw()->getECSScene(),
+                    Vec2DF(0.0f, 1.0f),
+                    Vec2DF(0.0f, 1.0f));
+
+                itemPrefabTransform->getEntityRaw()->setActiveSelf(false);
+
+                SizePolicy2DPtr itemPrefabSizePolicy = itemPrefabTransform->getEntityRaw()->ensureComponent<SizePolicy2D>();
+                itemPrefabSizePolicy->setFlag(SizePolicy2D::Height, false);
+                itemPrefabSizePolicy->setSizeDelta(-4.0f, 0.0f);
+
+                SpriteRenderer2DPtr backgroundSpriteRenderer = SpriteHelper::CreateSprite(
+                    ColorU32::c_white,
+                    Vec2DF(width, 20.0f - 4.0f),
+                    Vec2DF(0.0f, 2.0f),
+                    renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                    itemPrefabTransform,
+                    m_layout->getEntityRaw()->getECSScene());
+                backgroundSpriteRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Background");
+                backgroundSpriteRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
+                SpriteRenderer2D* backgroundSpriteRendererRaw = backgroundSpriteRenderer.get();
+
+                SpriteRenderer2DPtr checkMarkSprite = SpriteHelper::CreateSprite(
+                    UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::CheckMark),
+                    Vec2DF(8.0f, 8.0f) * 1.75f,
+                    Vec2DF(10.0f, 10.0f),
+                    renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                    itemPrefabTransform,
+                    spriteRenderer->getEntityRaw()->getECSScene(),
+                    Vec2DF(0.0f, 0.0f),
+                    Vec2DF(0.5f, 0.5f));
+                checkMarkSprite->getEntityRaw()->ensureComponent<Name>()->setName("CheckMark");
+                SpriteRenderer2D* checkMarkSpriteRaw = checkMarkSprite.get();
+                checkMarkSprite->setColor(ColorU32::c_black);
+
+                SystemTextRenderer2DPtr itemTextRenderer = SpriteHelper::CreateSystemText(
+                    "Option 1",
+                    8,
+                    HorizontalAlignment2D::Left,
+                    VerticalAlignment2D::Middle,
+                    Vec2DF(width, 20.0f),
+                    Vec2DF(20.0f, 0.0f),
+                    renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                    itemPrefabTransform,
+                    m_layout->getEntityRaw()->getECSScene(),
+                    Vec2DF::c_zero,
+                    Vec2DF::c_zero);
+                itemTextRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Label");
+                itemTextRenderer->setColor(ColorU32::c_black);
+                ScissorMask2DPtr scissorMask = itemTextRenderer->getEntityRaw()->createComponent<ScissorMask2D>();
+                SizePolicy2DPtr itemTextRendererSizePolicy = itemTextRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
+                itemTextRendererSizePolicy->setSizeDelta(-20.0f, -2.0f);
+
+                ClickButton2DPtr button = itemPrefabTransform->getEntityRaw()->createComponent<ClickButton2D>();
+                button->getUIElement()->setCaptureCursorHits(false);
+
+
+
+                m_modeDropdown->setItemPrefabTransform(itemPrefabTransform);
+
+            }
+        }
+
+        m_modeDropdown->eventFocusChanged.subscribe(
+            [=](SystemTextDropdown2D* _dropdown, bool _value)
+            {
+                updateDropdownState(_dropdown, spriteRendererRaw, listEntity);
+            });
+
+        m_modeDropdown->eventSelectedChanged.subscribe(
+            [=](SystemTextDropdown2D* _dropdown, bool _value)
+            {
+                updateDropdownState(_dropdown, spriteRendererRaw, listEntity);
+            });
+
+        updateDropdownState(m_modeDropdown.get(), spriteRendererRaw, listEntity);
+
+
+        for (ParticleSystemParameterColorSamplingMode mode : ParticleSystemParameterColorSamplingMode::All())
+        {
+            if (mode == ParticleSystemParameterColorSamplingMode::None)
+                continue;
+
+            m_modeDropdown->addOption(mode.toString());
+        }
+
+        m_modeDropdown->eventValueChanged.subscribe(this, &PropertyDrawerParticleSystemParameterColor::notifyDropdownValueChanged);
+    }
+
+    //////////////////////////////////////////
+    void PropertyDrawerParticleSystemParameterColor::notifyDropdownValueChanged(SystemTextDropdown2D* _dropdown, S32 _index)
+    {
+        ParticleSystemParameterColorSamplingMode mode = ParticleSystemParameterColorSamplingMode(_index + 1);
+        setMode(mode);
+
+        eventUIData();
+    }
+
+
+} // namespace Maze
+//////////////////////////////////////////

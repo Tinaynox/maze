@@ -1,0 +1,407 @@
+//////////////////////////////////////////
+//
+// Maze Engine
+// Copyright (C) 2021 Dmitriy "Tinaynox" Nosov (tinaynox@gmail.com)
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented;
+//    you must not claim that you wrote the original software.
+//    If you use this software in a product, an acknowledgment
+//    in the product documentation would be appreciated but is not required.
+//
+// 2. Altered source versions must be plainly marked as such,
+//    and must not be misrepresented as being the original software.
+//
+// 3. This notice may not be removed or altered from any source distribution.
+//
+//////////////////////////////////////////
+
+
+//////////////////////////////////////////
+#pragma once
+#if (!defined(_MazeShaderUniformVariant_hpp_))
+#define _MazeShaderUniformVariant_hpp_
+
+
+//////////////////////////////////////////
+#include "maze-graphics/MazeGraphicsHeader.hpp"
+#include "maze-graphics/MazeRenderWindow.hpp"
+#include "maze-graphics/MazeTexture2D.hpp"
+#include "maze-graphics/MazeColorF128.hpp"
+#include "maze-core/utils/MazeMultiDelegate.hpp"
+#include "maze-core/utils/MazeEnumClass.hpp"
+#include "maze-core/system/MazeWindowVideoMode.hpp"
+#include "maze-core/system/MazeWindow.hpp"
+#include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/system/MazeInputEvent.hpp"
+#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeVec3D.hpp"
+#include "maze-core/math/MazeVec4D.hpp"
+#include "maze-core/math/MazeMat3D.hpp"
+#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/serialization/MazeXMLSerializable.hpp"
+
+
+//////////////////////////////////////////
+namespace Maze
+{
+    //////////////////////////////////////////
+    MAZE_USING_SHARED_PTR(RenderSystem);
+    MAZE_USING_SHARED_PTR(ShaderUniform);
+    MAZE_USING_SHARED_PTR(Shader);
+    MAZE_USING_SHARED_PTR(Texture2D);
+    MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_SHARED_PTR(ShaderUniformVariant);
+    
+
+    //////////////////////////////////////////
+    MAZE_DECLARE_ENUMCLASS_16_API(MAZE_GRAPHICS_API, ShaderUniformType,
+        UniformS32,
+        UniformF32,
+        UniformF64,
+        UniformTexture2D,
+        UniformVec2DS,
+        UniformVec3DS,
+        UniformVec4DS,
+        UniformVec2DU,
+        UniformVec3DU,
+        UniformVec4DU,
+        UniformVec2DF,
+        UniformVec3DF,
+        UniformVec4DF,
+        UniformMat3DF,
+        UniformMat4DF,
+        UniformColorF128);
+
+
+    //////////////////////////////////////////
+    // Class ShaderUniformVariant
+    //
+    //////////////////////////////////////////
+    class MAZE_GRAPHICS_API ShaderUniformVariant
+        : public IXMLElementSerializable
+    {
+    public:
+
+        //////////////////////////////////////////
+        friend class ShaderUniform;
+
+    public:
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(
+            RenderSystem* _renderSystem = nullptr,
+            ShaderUniformType _type = ShaderUniformType::None,
+            String const& _name = String());
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, S32 _value);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, F32 _value);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, F64 _value);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Texture2D* _value);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Texture2DPtr const& _value);
+
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec2DF const& _value);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec3DF const& _value);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec4DF const& _value);
+
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec2DS const& _value);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec3DS const& _value);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec4DS const& _value);
+
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec2DU const& _value);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec3DU const& _value);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec4DU const& _value);
+
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Mat3DF const& _value);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Mat4DF const& _value);
+
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, ColorF128 const& _value);
+
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(ShaderUniformVariant const& _variant);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, ShaderUniformVariant const& _variant);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, ShaderUniformVariant&& _variant);
+        
+        //////////////////////////////////////////
+        virtual ~ShaderUniformVariant();
+
+
+        //////////////////////////////////////////
+        inline ShaderUniformType getType() const { return m_type; }
+
+
+
+        //////////////////////////////////////////
+        inline S32 getS32() const { return m_S32; }
+
+        //////////////////////////////////////////
+        inline F32 getF32() const { return m_F32; }
+
+        //////////////////////////////////////////
+        inline F64 getF64() const { return m_F64; }
+
+        //////////////////////////////////////////
+        inline Texture2DPtr const& getTexture2D() const { return m_texture2D; }
+
+        //////////////////////////////////////////
+        inline Vec4DF const& getVecF() const { return m_vectorF; }
+
+        //////////////////////////////////////////
+        inline Vec2DF getVec2DF() const { return { m_vectorF.x, m_vectorF.y }; }
+
+        //////////////////////////////////////////
+        inline Vec3DF getVec3DF() const { return { m_vectorF.x, m_vectorF.y, m_vectorF.z }; }
+
+        //////////////////////////////////////////
+        inline Vec4DF getVec4DF() const { return m_vectorF; }
+
+
+        //////////////////////////////////////////
+        inline Vec4DS const& getVecS() const { return m_vectorS; }
+
+        //////////////////////////////////////////
+        inline Vec2DS getVec2DS() const { return { m_vectorS.x, m_vectorS.y }; }
+
+        //////////////////////////////////////////
+        inline Vec3DS getVec3DS() const { return { m_vectorS.x, m_vectorS.y, m_vectorS.z }; }
+
+        //////////////////////////////////////////
+        inline Vec4DS getVec4DS() const { return m_vectorS; }
+
+
+        //////////////////////////////////////////
+        inline Vec4DU const& getVecU() const { return m_vectorU; }
+
+        //////////////////////////////////////////
+        inline Vec2DU getVec2DU() const { return { m_vectorU.x, m_vectorU.y }; }
+
+        //////////////////////////////////////////
+        inline Vec3DU getVec3DU() const { return { m_vectorU.x, m_vectorU.y, m_vectorU.z }; }
+
+        //////////////////////////////////////////
+        inline Vec4DU getVec4DU() const { return m_vectorU; }
+
+        
+        //////////////////////////////////////////
+        inline Mat3DF const& getMat3DF() const { return m_matrix3DF; }
+        
+        //////////////////////////////////////////
+        inline Mat4DF const& getMat4DF() const { return m_matrix4DF; }
+
+
+        //////////////////////////////////////////
+        inline ColorF128 getColorF128() const { return m_vectorF; }
+
+
+        //////////////////////////////////////////
+        inline void reset() { m_type = ShaderUniformType::None; }
+
+        //////////////////////////////////////////
+        inline void set(S32 _value) { m_S32 = _value; m_type = ShaderUniformType::UniformS32; }
+        
+        //////////////////////////////////////////
+        inline void set(F32 _value) { m_F32 = _value; m_type = ShaderUniformType::UniformF32; }
+        
+        //////////////////////////////////////////
+        inline void set(F64 _value) { m_F64 = _value; m_type = ShaderUniformType::UniformF64; }
+        
+        //////////////////////////////////////////
+        inline void set(Texture2DPtr const& _texture2D) { m_texture2D = _texture2D; m_type = ShaderUniformType::UniformTexture2D; }
+
+        //////////////////////////////////////////
+        inline void set(Texture2D* _texture2D) { return set(_texture2D ? _texture2D->cast<Texture2D>() : nullptr); }
+        
+        //////////////////////////////////////////
+        inline void set(Vec2DF const& _vector) { m_vectorF = _vector; m_type = ShaderUniformType::UniformVec2DF; }
+        
+        //////////////////////////////////////////
+        inline void set(Vec3DF const& _vector) { m_vectorF = _vector; m_type = ShaderUniformType::UniformVec3DF; }
+        
+        //////////////////////////////////////////
+        inline void set(Vec4DF const& _vector) { m_vectorF = _vector; m_type = ShaderUniformType::UniformVec4DF; }
+
+
+        //////////////////////////////////////////
+        inline void set(Vec2DS const& _vector) { m_vectorS = _vector; m_type = ShaderUniformType::UniformVec2DS; }
+        
+        //////////////////////////////////////////
+        inline void set(Vec3DS const& _vector) { m_vectorS = _vector; m_type = ShaderUniformType::UniformVec3DS; }
+        
+        //////////////////////////////////////////
+        inline void set(Vec4DS const& _vector) { m_vectorS = _vector; m_type = ShaderUniformType::UniformVec4DS; }
+
+
+        //////////////////////////////////////////
+        inline void set(Vec2DU const& _vector) { m_vectorU = _vector; m_type = ShaderUniformType::UniformVec2DU; }
+        
+        //////////////////////////////////////////
+        inline void set(Vec3DU const& _vector) { m_vectorU = _vector; m_type = ShaderUniformType::UniformVec3DU; }
+        
+        //////////////////////////////////////////
+        inline void set(Vec4DU const& _vector) { m_vectorU = _vector; m_type = ShaderUniformType::UniformVec4DU; }
+
+        
+        //////////////////////////////////////////
+        inline void set(Mat3DF const& _matrix) { m_matrix3DF = _matrix; m_type = ShaderUniformType::UniformMat3DF; }
+                
+        ////////////////////////////////////
+        inline void set(Mat4DF const& _matrix) { m_matrix4DF = _matrix; m_type = ShaderUniformType::UniformMat4DF; }
+        
+
+        //////////////////////////////////////////
+        inline void set(ColorF128 const& _color) { m_vectorF = _color.toVec4DF(); m_type = ShaderUniformType::UniformColorF128; }
+
+        //////////////////////////////////////////
+        inline void setColor(Vec4DF const& _vector) { m_vectorF = _vector; m_type = ShaderUniformType::UniformColorF128; }
+
+
+        //////////////////////////////////////////
+        void setTexture2D(AssetFilePtr const& _assetFile);
+
+        //////////////////////////////////////////
+        void setTexture2D(String const& _textureName);
+
+        //////////////////////////////////////////
+        U32 calculateCRC32(U32 _seed = 0) const;
+
+        //////////////////////////////////////////
+        void setString(ShaderUniformType _type, CString _data, Size _count);
+
+        //////////////////////////////////////////
+        String toStringValue() const;
+
+        //////////////////////////////////////////
+        bool operator==(ShaderUniformVariant const& _variant) const;
+
+        //////////////////////////////////////////
+        bool operator!=(ShaderUniformVariant const& _variant) const;
+
+        //////////////////////////////////////////
+        ShaderUniformVariant& operator=(ShaderUniformVariant const& _variant);
+        
+        //////////////////////////////////////////
+        ShaderUniformVariant& operator=(ShaderUniformVariant&& _variant) noexcept;
+
+
+        //////////////////////////////////////////
+        inline void setName(String const& _name)
+        {
+            if (m_name == _name)
+                return;
+
+            m_name = _name;
+
+            generateNameHash();
+        }
+
+        //////////////////////////////////////////
+        inline String const& getName() const { return m_name; }
+
+        //////////////////////////////////////////
+        inline Size getNameHash() const { return m_nameHash; }
+
+    public:
+
+        //////////////////////////////////////////
+        virtual void loadFromXMLElement(tinyxml2::XMLElement const* _element) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual tinyxml2::XMLElement* toXMLElement(tinyxml2::XMLDocument& _doc) const MAZE_OVERRIDE;
+
+    protected:
+
+        //////////////////////////////////////////
+        inline void setType(ShaderUniformType _type) { m_type = _type; }
+
+        //////////////////////////////////////////
+        void generateNameHash();
+
+    protected:
+        RenderSystem* m_renderSystem;
+
+        ShaderUniformType m_type;
+
+        Texture2DPtr m_texture2D;
+
+        union
+        {
+            S32 m_S32;
+            F32 m_F32;
+            F64 m_F64;
+        
+            Vec4DF m_vectorF;
+            Vec4DS m_vectorS;
+            Vec4DU m_vectorU;
+            Mat3DF m_matrix3DF;
+            Mat4DF m_matrix4DF;
+        };
+        
+        String m_name;
+        Size m_nameHash;
+    };
+
+
+    //////////////////////////////////////////
+    std::ostream& operator<<(
+        std::ostream& _o,
+        ShaderUniformVariant const& _variant);
+
+
+    //////////////////////////////////////////
+    inline std::ostream& operator<<(
+        std::ostream& _o,
+        ShaderUniformVariantPtr const& _variant)
+    {
+        return _o << *_variant.get();
+    }
+
+} // namespace Maze
+//////////////////////////////////////////
+
+
+#endif // _MazeShaderUniformVariant_hpp_
+//////////////////////////////////////////

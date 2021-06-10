@@ -1,0 +1,333 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		77458C3B1E1D7A300084F310 /* QtCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77458C391E1D7A300084F310 /* QtCore.framework */; };
+		77458C3C1E1D7A300084F310 /* QtGui.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77458C3A1E1D7A300084F310 /* QtGui.framework */; };
+		77458C3E1E1D7A670084F310 /* QtWidgets.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77458C3D1E1D7A670084F310 /* QtWidgets.framework */; };
+		77458C421E1D7D610084F310 /* libqcocoa.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 77458C401E1D7D610084F310 /* libqcocoa.dylib */; };
+		776B5C8F1E1D723E001893D9 /* imagecompare.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 776B5C831E1D722B001893D9 /* imagecompare.cpp */; };
+		776B5C901E1D7240001893D9 /* imagecrop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 776B5C841E1D722B001893D9 /* imagecrop.cpp */; };
+		776B5C911E1D7242001893D9 /* imagepacker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 776B5C851E1D722B001893D9 /* imagepacker.cpp */; };
+		776B5C921E1D7244001893D9 /* imagesort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 776B5C871E1D722B001893D9 /* imagesort.cpp */; };
+		776B5C931E1D7246001893D9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 776B5C881E1D722B001893D9 /* main.cpp */; };
+		776B5C941E1D7247001893D9 /* maxrects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 776B5C891E1D722B001893D9 /* maxrects.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		776B5C591E1D71C0001893D9 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		77458C391E1D7A300084F310 /* QtCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtCore.framework; path = ../../../../../../../../Libraries/Qt/5.5/clang_64/lib/QtCore.framework; sourceTree = "<group>"; };
+		77458C3A1E1D7A300084F310 /* QtGui.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtGui.framework; path = ../../../../../../../../Libraries/Qt/5.5/clang_64/lib/QtGui.framework; sourceTree = "<group>"; };
+		77458C3D1E1D7A670084F310 /* QtWidgets.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtWidgets.framework; path = ../../../../../../../../Libraries/Qt/5.5/clang_64/lib/QtWidgets.framework; sourceTree = "<group>"; };
+		77458C3F1E1D7D600084F310 /* libqcocoa_debug.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libqcocoa_debug.dylib; path = ../../../../../../../../Libraries/Qt/5.5/clang_64/plugins/platforms/libqcocoa_debug.dylib; sourceTree = "<group>"; };
+		77458C401E1D7D610084F310 /* libqcocoa.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libqcocoa.dylib; path = ../../../../../../../../Libraries/Qt/5.5/clang_64/plugins/platforms/libqcocoa.dylib; sourceTree = "<group>"; };
+		776B5C5B1E1D71C0001893D9 /* Cheetah-Texture-Packer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Cheetah-Texture-Packer"; sourceTree = BUILT_PRODUCTS_DIR; };
+		776B5C831E1D722B001893D9 /* imagecompare.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = imagecompare.cpp; sourceTree = "<group>"; };
+		776B5C841E1D722B001893D9 /* imagecrop.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = imagecrop.cpp; sourceTree = "<group>"; };
+		776B5C851E1D722B001893D9 /* imagepacker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = imagepacker.cpp; sourceTree = "<group>"; };
+		776B5C861E1D722B001893D9 /* imagepacker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = imagepacker.h; sourceTree = "<group>"; };
+		776B5C871E1D722B001893D9 /* imagesort.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = imagesort.cpp; sourceTree = "<group>"; };
+		776B5C881E1D722B001893D9 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		776B5C891E1D722B001893D9 /* maxrects.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = maxrects.cpp; sourceTree = "<group>"; };
+		776B5C8A1E1D722B001893D9 /* maxrects.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = maxrects.h; sourceTree = "<group>"; };
+		776B5C8C1E1D722B001893D9 /* tile_ru.qm */ = {isa = PBXFileReference; lastKnownFileType = file; path = tile_ru.qm; sourceTree = "<group>"; };
+		776B5C8D1E1D722B001893D9 /* tile.pro */ = {isa = PBXFileReference; lastKnownFileType = text; path = tile.pro; sourceTree = "<group>"; };
+		776B5C8E1E1D722B001893D9 /* tile_ru.ts */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = tile_ru.ts; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		776B5C581E1D71C0001893D9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				77458C421E1D7D610084F310 /* libqcocoa.dylib in Frameworks */,
+				77458C3E1E1D7A670084F310 /* QtWidgets.framework in Frameworks */,
+				77458C3B1E1D7A300084F310 /* QtCore.framework in Frameworks */,
+				77458C3C1E1D7A300084F310 /* QtGui.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		77458C381E1D7A300084F310 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				77458C3F1E1D7D600084F310 /* libqcocoa_debug.dylib */,
+				77458C401E1D7D610084F310 /* libqcocoa.dylib */,
+				77458C3D1E1D7A670084F310 /* QtWidgets.framework */,
+				77458C391E1D7A300084F310 /* QtCore.framework */,
+				77458C3A1E1D7A300084F310 /* QtGui.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		776B5C521E1D71C0001893D9 = {
+			isa = PBXGroup;
+			children = (
+				776B5C821E1D722B001893D9 /* src */,
+				776B5C5C1E1D71C0001893D9 /* Products */,
+				77458C381E1D7A300084F310 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		776B5C5C1E1D71C0001893D9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				776B5C5B1E1D71C0001893D9 /* Cheetah-Texture-Packer */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		776B5C821E1D722B001893D9 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				776B5C831E1D722B001893D9 /* imagecompare.cpp */,
+				776B5C841E1D722B001893D9 /* imagecrop.cpp */,
+				776B5C851E1D722B001893D9 /* imagepacker.cpp */,
+				776B5C861E1D722B001893D9 /* imagepacker.h */,
+				776B5C871E1D722B001893D9 /* imagesort.cpp */,
+				776B5C881E1D722B001893D9 /* main.cpp */,
+				776B5C891E1D722B001893D9 /* maxrects.cpp */,
+				776B5C8A1E1D722B001893D9 /* maxrects.h */,
+				776B5C8B1E1D722B001893D9 /* qm */,
+				776B5C8D1E1D722B001893D9 /* tile.pro */,
+				776B5C8E1E1D722B001893D9 /* tile_ru.ts */,
+			);
+			name = src;
+			path = ../../../src;
+			sourceTree = "<group>";
+		};
+		776B5C8B1E1D722B001893D9 /* qm */ = {
+			isa = PBXGroup;
+			children = (
+				776B5C8C1E1D722B001893D9 /* tile_ru.qm */,
+			);
+			path = qm;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		776B5C5A1E1D71C0001893D9 /* Cheetah-Texture-Packer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 776B5C621E1D71C0001893D9 /* Build configuration list for PBXNativeTarget "Cheetah-Texture-Packer" */;
+			buildPhases = (
+				776B5C571E1D71C0001893D9 /* Sources */,
+				776B5C581E1D71C0001893D9 /* Frameworks */,
+				776B5C591E1D71C0001893D9 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Cheetah-Texture-Packer";
+			productName = "Cheetah-Texture-Packer";
+			productReference = 776B5C5B1E1D71C0001893D9 /* Cheetah-Texture-Packer */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		776B5C531E1D71C0001893D9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0820;
+				ORGANIZATIONNAME = "Tinaynox Team";
+				TargetAttributes = {
+					776B5C5A1E1D71C0001893D9 = {
+						CreatedOnToolsVersion = 8.2.1;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 776B5C561E1D71C0001893D9 /* Build configuration list for PBXProject "Cheetah-Texture-Packer" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 776B5C521E1D71C0001893D9;
+			productRefGroup = 776B5C5C1E1D71C0001893D9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				776B5C5A1E1D71C0001893D9 /* Cheetah-Texture-Packer */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		776B5C571E1D71C0001893D9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				776B5C8F1E1D723E001893D9 /* imagecompare.cpp in Sources */,
+				776B5C921E1D7244001893D9 /* imagesort.cpp in Sources */,
+				776B5C941E1D7247001893D9 /* maxrects.cpp in Sources */,
+				776B5C911E1D7242001893D9 /* imagepacker.cpp in Sources */,
+				776B5C931E1D7246001893D9 /* main.cpp in Sources */,
+				776B5C901E1D7240001893D9 /* imagecrop.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		776B5C601E1D71C0001893D9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		776B5C611E1D71C0001893D9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		776B5C631E1D71C0001893D9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = /Users/Tinaynox/Libraries/Qt/5.5/clang_64/lib/;
+				HEADER_SEARCH_PATHS = (
+					/Users/Tinaynox/Libraries/Qt/5.5/Src/qtbase/include/QtCore,
+					/Users/Tinaynox/Libraries/Qt/5.5/Src/qtbase/include,
+					/Users/Tinaynox/Libraries/Qt/5.5/Src/qtbase/include/QtGui,
+				);
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path @loader_path";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		776B5C641E1D71C0001893D9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = /Users/Tinaynox/Libraries/Qt/5.5/clang_64/lib/;
+				HEADER_SEARCH_PATHS = (
+					/Users/Tinaynox/Libraries/Qt/5.5/Src/qtbase/include/QtCore,
+					/Users/Tinaynox/Libraries/Qt/5.5/Src/qtbase/include,
+					/Users/Tinaynox/Libraries/Qt/5.5/Src/qtbase/include/QtGui,
+				);
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path @loader_path";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		776B5C561E1D71C0001893D9 /* Build configuration list for PBXProject "Cheetah-Texture-Packer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				776B5C601E1D71C0001893D9 /* Debug */,
+				776B5C611E1D71C0001893D9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		776B5C621E1D71C0001893D9 /* Build configuration list for PBXNativeTarget "Cheetah-Texture-Packer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				776B5C631E1D71C0001893D9 /* Debug */,
+				776B5C641E1D71C0001893D9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 776B5C531E1D71C0001893D9 /* Project object */;
+}

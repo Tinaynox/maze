@@ -1,0 +1,154 @@
+//////////////////////////////////////////
+//
+// Maze Engine
+// Copyright (C) 2021 Dmitriy "Tinaynox" Nosov (tinaynox@gmail.com)
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented;
+//    you must not claim that you wrote the original software.
+//    If you use this software in a product, an acknowledgment
+//    in the product documentation would be appreciated but is not required.
+//
+// 2. Altered source versions must be plainly marked as such,
+//    and must not be misrepresented as being the original software.
+//
+// 3. This notice may not be removed or altered from any source distribution.
+//
+//////////////////////////////////////////
+
+
+//////////////////////////////////////////
+#pragma once
+#if (!defined(_LevelSpawnDataUnit_hpp_))
+#define _LevelSpawnDataUnit_hpp_
+
+
+//////////////////////////////////////////
+#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/math/MazeQuaternion.hpp"
+#include "maze-graphics/MazeMesh.hpp"
+#include "maze-graphics/MazeShader.hpp"
+#include "maze-graphics/MazeTexture2D.hpp"
+#include "maze-graphics/MazeMaterial.hpp"
+#include "maze-graphics/MazeRenderPass.hpp"
+#include "maze-graphics/MazeRenderTarget.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeCanvas.hpp"
+#include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
+#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
+#include "game/level/LevelSpawnData.hpp"
+#include "game/SpaceObjectAvatarType.hpp"
+#include "game/PlayerOwner.hpp"
+
+
+//////////////////////////////////////////
+namespace Maze
+{
+    //////////////////////////////////////////
+    MAZE_USING_SHARED_PTR(LevelSpawnDataUnit);
+
+
+    //////////////////////////////////////////
+    // Class LevelSpawnDataUnit
+    //
+    //////////////////////////////////////////
+    class LevelSpawnDataUnit
+        : public LevelSpawnData
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(LevelSpawnDataUnit, LevelSpawnData);
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_MEMORY_ALLOCATION(LevelSpawnDataUnit);
+        
+    public:
+
+        //////////////////////////////////////////
+        virtual ~LevelSpawnDataUnit();
+
+        //////////////////////////////////////////
+        static LevelSpawnDataUnitPtr Create(
+            F32 _time = 10.0f,
+            SpaceObjectAvatarType _spaceObjectAvatarType = SpaceObjectAvatarType::Drone000,
+            F32 _spawnX = 1.0f,
+            F32 _spawnY = 0.5f);
+
+        //////////////////////////////////////////
+        inline SpaceObjectAvatarType getAvatarType() const { return m_avatarType; }
+
+        //////////////////////////////////////////
+        inline void setAvatarType(SpaceObjectAvatarType _avatarType) { m_avatarType = _avatarType; }
+
+
+        //////////////////////////////////////////
+        inline F32 getSpawnX() const { return m_spawnX; }
+
+        //////////////////////////////////////////
+        inline void setSpawnX(F32 _spawnX) { m_spawnX = _spawnX; }
+
+        //////////////////////////////////////////
+        inline F32 getSpawnY() const { return m_spawnY; }
+
+        //////////////////////////////////////////
+        inline void setSpawnY(F32 _spawnY) { m_spawnY = _spawnY; }
+
+
+        //////////////////////////////////////////
+        inline F32 getStartRotation() const { return m_startRotation; }
+
+        //////////////////////////////////////////
+        inline void setStartRotation(F32 _startRotation) { m_startRotation = _startRotation; }
+
+
+        //////////////////////////////////////////
+        inline PlayerIndex getPlayer() const { return m_player; }
+
+        //////////////////////////////////////////
+        inline void setPlayer(PlayerIndex _player) { m_player = _player; }
+
+        //////////////////////////////////////////
+        void loadFromXMLElement(tinyxml2::XMLElement const* _element);
+
+        //////////////////////////////////////////
+        virtual void spawn(LevelAdapterPtr const& _levelAdapter) MAZE_OVERRIDE;
+
+    protected:
+
+        //////////////////////////////////////////
+        LevelSpawnDataUnit();
+        
+        //////////////////////////////////////////
+        bool init(
+            F32 _time = 10.0f,
+            SpaceObjectAvatarType _spaceObject = SpaceObjectAvatarType::Drone000,
+            F32 _spawnX = 1.0f,
+            F32 _spawnY = 0.5f);
+
+    protected:
+        SpaceObjectAvatarType m_avatarType;
+        F32 m_spawnX;
+        F32 m_spawnY;
+        F32 m_startRotation;
+
+        PlayerIndex m_player;
+    };
+
+
+} // namespace Maze
+//////////////////////////////////////////
+
+
+#endif // _LevelSpawnDataUnit_hpp_
+//////////////////////////////////////////

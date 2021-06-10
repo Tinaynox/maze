@@ -1,0 +1,467 @@
+//////////////////////////////////////////
+//
+// Maze Engine
+// Copyright (C) 2021 Dmitriy "Tinaynox" Nosov (tinaynox@gmail.com)
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented;
+//    you must not claim that you wrote the original software.
+//    If you use this software in a product, an acknowledgment
+//    in the product documentation would be appreciated but is not required.
+//
+// 2. Altered source versions must be plainly marked as such,
+//    and must not be misrepresented as being the original software.
+//
+// 3. This notice may not be removed or altered from any source distribution.
+//
+//////////////////////////////////////////
+
+
+//////////////////////////////////////////
+#pragma once
+#if (!defined(_MazeEntity_hpp_))
+#define _MazeEntity_hpp_
+
+
+//////////////////////////////////////////
+#include "maze-core/MazeCoreHeader.hpp"
+#include "maze-core/MazeTypes.hpp"
+#include "maze-core/ecs/MazeECSTypes.hpp"
+#include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-core/utils/MazeSharedObject.hpp"
+#include "maze-core/reflection/MazeMetaClass.hpp"
+#include "maze-core/memory/MazeMemory.hpp"
+#include "maze-core/containers/MazeFastVector.hpp"
+#include "maze-core/managers/MazeEventManager.hpp"
+
+
+//////////////////////////////////////////
+namespace Maze
+{
+    //////////////////////////////////////////
+    MAZE_USING_SHARED_PTR(Entity);
+    MAZE_USING_SHARED_PTR(ECSWorld);
+    MAZE_USING_SHARED_PTR(ECSScene);
+    MAZE_USING_SHARED_PTR(ComponentEntityLinker);
+
+
+    //////////////////////////////////////////
+    // Class Entity
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API Entity
+        : public SharedObject<Entity>
+        , public IEventReceiver
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS(Entity);
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_MEMORY_ALLOCATION(Entity);
+
+        //////////////////////////////////////////
+        using ComponentsContainer = Map<ClassUID, ComponentPtr>;
+
+        //////////////////////////////////////////
+        friend class ECSWorld;
+        friend class Component;
+
+        //////////////////////////////////////////
+        enum class Flags
+        {
+            None = 0,
+            
+            ActiveSelf = MAZE_BIT(0),
+            DisabledByHierarchy = MAZE_BIT(1),
+            ActiveInHierarchyPrevFrame = MAZE_BIT(2),
+            ComponentsMaskDirty = MAZE_BIT(3),
+        };
+
+        //////////////////////////////////////////
+        enum class TransitionFlags
+        {
+            None = 0,
+            
+            Adding = MAZE_BIT(0),
+            Removing = MAZE_BIT(1),
+            ComponentsChanged = MAZE_BIT(2),
+            ActiveChanged = MAZE_BIT(3),
+            AwakeForbidden = MAZE_BIT(4),
+            Awakened = MAZE_BIT(5),
+            Started = MAZE_BIT(6),
+        };
+
+    public:
+
+        //////////////////////////////////////////
+        virtual ~Entity();
+
+        //////////////////////////////////////////
+        static EntityPtr Create();
+
+        //////////////////////////////////////////
+        static EntityPtr Create(
+            Entity* _entity,
+            ECSWorld* _world = nullptr,
+            EntityCopyData _copyData = EntityCopyData());
+
+        //////////////////////////////////////////
+        inline static EntityPtr Create(
+            EntityPtr const& _entity,
+            ECSWorld* _world = nullptr,
+            EntityCopyData _copyData = EntityCopyData())
+        {
+            return Create(_entity.get(), _world, _copyData);
+        }
+
+
+        //////////////////////////////////////////
+        inline EntityPtr createCopy(
+            ECSWorld* _world = nullptr,
+            EntityCopyData _copyData = EntityCopyData())
+        {
+            return Create(this, _world, _copyData);
+        }
+
+        //////////////////////////////////////////
+        virtual void processEvent(Event* _event) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        inline EntityId getId() const { return m_id; }
+        
+       
+        //////////////////////////////////////////
+        inline ECSWorld* getECSWorld() const { return m_world; }
+
+        //////////////////////////////////////////
+        void setECSScene(ECSScene* _scene);
+
+        //////////////////////////////////////////
+        inline ECSScene* getECSScene() { return m_scene; }
+
+        //////////////////////////////////////////
+        void removeFromECSWorld();
+
+
+        //////////////////////////////////////////
+        inline ComponentsContainer const& getComponents() const { return m_components; }
+
+        //////////////////////////////////////////
+        inline Size getComponentsCount() const { return m_components.size(); }
+
+        //////////////////////////////////////////
+        inline ComponentPtr const& getComponentByUID(ClassUID _uid) const
+        {
+            ComponentsContainer::const_iterator it = m_components.find(_uid);
+            
+            static ComponentPtr nullPointer;
+            if (it == m_components.end())
+            {
+                return nullPointer;
+            }
+            
+            return it->second;
+        }
+
+        //////////////////////////////////////////
+        template <typename TComponent>
+        inline SharedPtr<TComponent> getComponent() const
+        {
+            auto& component = getComponentByUID(ClassInfo<TComponent>::UID());
+                
+            if (!component)
+                return nullptr;
+
+            return component->template cast<TComponent>();
+        }
+
+        //////////////////////////////////////////
+        template <typename TComponent>
+        inline TComponent* getComponentRaw() const
+        {
+            auto& component = getComponentByUID(ClassInfo<TComponent>::UID());
+
+            if (!component)
+                return nullptr;
+
+            return component->template castRaw<TComponent>();
+        }
+
+        //////////////////////////////////////////
+        template <typename TComponent>
+        inline SharedPtr<TComponent> getComponentInheritedFrom() const
+        {
+            for (auto const& componentData : m_components)
+                if (componentData.second->getMetaClass()->template isInheritedFrom<TComponent>())
+                    return componentData.second->cast<TComponent>();
+
+            return SharedPtr<TComponent>();
+        }
+
+        //////////////////////////////////////////
+        template <typename TComponent>
+        inline TComponent* getComponentRawInheritedFrom() const
+        {
+            for (auto const& componentData : m_components)
+                if (componentData.second->getMetaClass()->template isInheritedFrom<TComponent>())
+                    return componentData.second->castRaw<TComponent>();
+
+            return nullptr;
+        }
+
+        //////////////////////////////////////////
+        template <typename TComponent, typename ...TArgs>
+        inline SharedPtr<TComponent> ensureComponent(TArgs... _args)
+        {
+            ComponentPtr const& component = getComponentByUID(ClassInfo<TComponent>::UID());
+            if (component)
+                return component->template cast<TComponent>();
+
+            return createComponent<TComponent, TArgs...>(_args...);
+        }
+
+        
+        //////////////////////////////////////////
+        ComponentPtr const& addComponent(ComponentPtr const& component);
+
+        //////////////////////////////////////////
+        bool removeComponent(ClassUID _componentUID);
+
+        //////////////////////////////////////////
+        inline bool removeComponent(ComponentPtr const& _component)
+        {
+            return removeComponent(_component->getClassUID());
+        }
+
+        //////////////////////////////////////////
+        template <typename TComponent>
+        inline bool removeComponent()
+        {
+            return removeComponent(ClassInfo<TComponent>::UID());
+        }
+
+        //////////////////////////////////////////
+        template <typename TComponent, typename ...TArgs>
+        SharedPtr<TComponent> createComponent(TArgs... _args)
+        {
+            ComponentPtr const& component = getComponentByUID(ClassInfo<TComponent>::UID());
+            if (component)
+            {
+                MAZE_ERROR("Component %s already exists!", ClassInfo<TComponent>::Name());
+                return std::static_pointer_cast<TComponent>(component);
+            }
+            
+            return addComponent(TComponent::Create(_args...))->template cast<TComponent>();
+        }
+
+        
+        //////////////////////////////////////////
+        inline bool getTransitionFlag(TransitionFlags flag) const { return (m_transitionFlags & static_cast<U8>(flag)) != 0; }
+
+        //////////////////////////////////////////
+        bool getRemoving() const { return getTransitionFlag(TransitionFlags::Removing); }
+        
+        //////////////////////////////////////////
+        bool getAdding() const { return getTransitionFlag(TransitionFlags::Adding); }
+
+        //////////////////////////////////////////
+        bool getComponentsChanged() const { return getTransitionFlag(TransitionFlags::ComponentsChanged); }
+
+        //////////////////////////////////////////
+        bool getActiveChanged() const { return getTransitionFlag(TransitionFlags::ActiveChanged); }
+
+        //////////////////////////////////////////
+        void setAwakeForbidden(bool _value) { setTransitionFlag(TransitionFlags::AwakeForbidden, _value); }
+
+        //////////////////////////////////////////
+        bool getAwakeForbidden() const { return getTransitionFlag(TransitionFlags::AwakeForbidden); }
+
+
+        //////////////////////////////////////////
+        inline U8 getFlags() const { return m_flags; }
+        
+        //////////////////////////////////////////
+        void setFlags(U8 flags);
+        
+        //////////////////////////////////////////
+        inline void setFlag(Flags flag, bool value)
+        {
+            if (value)
+                setFlags(m_flags | static_cast<U8>(flag));
+            else
+                setFlags(m_flags & ~static_cast<U8>(flag));
+        }
+
+        //////////////////////////////////////////
+        inline bool getFlag(Flags flag) const { return (m_flags & static_cast<U8>(flag)) != 0; }
+
+        //////////////////////////////////////////
+        inline void setActiveSelf(bool _active) { setFlag(Flags::ActiveSelf, _active); }
+        
+        //////////////////////////////////////////
+        inline bool getActiveSelf() const { return getFlag(Flags::ActiveSelf); }
+
+        //////////////////////////////////////////
+        inline bool getActiveInHierarchy() const { return getFlag(Flags::ActiveSelf) && !getFlag(Flags::DisabledByHierarchy); }
+
+
+        //////////////////////////////////////////
+        inline void setDisabledByHierarchy(bool _value) { setFlag(Flags::DisabledByHierarchy, _value); }
+
+        //////////////////////////////////////////
+        inline bool getDisabledByHierarchy() const { return getFlag(Flags::DisabledByHierarchy); }
+
+
+        //////////////////////////////////////////
+        Set<ClassUID> const& getComponentUIDs() const { return m_componentUIDs; }
+
+        //////////////////////////////////////////
+        inline S64 getComponentsMask()
+        {
+            if (m_flags & (U8)Flags::ComponentsMaskDirty)
+            {
+                m_componentsMask = 0;
+                for (ClassUID componentUID : m_componentUIDs)
+                {
+                    m_componentsMask |= (S64)1 << U32(componentUID % 64);
+                }
+
+                m_flags &= ~(U8)Flags::ComponentsMaskDirty;
+            }
+
+            return m_componentsMask;
+        }
+        
+        //////////////////////////////////////////
+        void tryAwake();
+
+    protected:
+
+        //////////////////////////////////////////
+        Entity();
+
+        //////////////////////////////////////////
+        bool init();
+
+        //////////////////////////////////////////
+        bool init(
+            Entity* _entity,
+            ECSWorld* _world,
+            EntityCopyData _copyData = EntityCopyData());
+
+        
+        //////////////////////////////////////////
+        inline void setId(EntityId _id) { m_id = _id; }
+
+
+        //////////////////////////////////////////
+        inline void setTransitionFlag(TransitionFlags _flag, bool _value)
+        {
+            if (_value)
+                m_transitionFlags |= static_cast<U8>(_flag);
+            else
+                m_transitionFlags &= ~static_cast<U8>(_flag);
+        }
+                
+        //////////////////////////////////////////
+        void setRemoving(bool _value) { setTransitionFlag(TransitionFlags::Removing, _value); }
+        
+        //////////////////////////////////////////
+        void setAdding(bool _value) { setTransitionFlag(TransitionFlags::Adding, _value); }
+        
+
+        //////////////////////////////////////////
+        void tryStart();
+
+        //////////////////////////////////////////
+        void setComponentsChanged(bool _value) { setTransitionFlag(TransitionFlags::ComponentsChanged, _value); }
+
+        //////////////////////////////////////////
+        void setActiveChanged(bool _value) { setTransitionFlag(TransitionFlags::ActiveChanged, _value); }
+        
+        
+        //////////////////////////////////////////
+        void setECSWorld(ECSWorld* _world);
+
+
+        //////////////////////////////////////////
+        virtual void processAdded();
+
+        //////////////////////////////////////////
+        virtual void processRemoved();
+
+        //////////////////////////////////////////
+        void processComponentAdded(ComponentPtr const& _component);
+
+        //////////////////////////////////////////
+        void processComponentWillBeRemoved(ComponentPtr const& _component);
+
+
+        //////////////////////////////////////////
+        inline void setActiveInHierarchyPrevFrame(bool _active) { setFlag(Flags::ActiveInHierarchyPrevFrame, _active); }
+
+        //////////////////////////////////////////
+        inline bool getActiveInHierarchyPrevFrame() const { return getFlag(Flags::ActiveInHierarchyPrevFrame); }
+
+    protected:
+        ECSWorld* m_world;
+        ECSScene* m_scene;
+        EntityId m_id;
+        ComponentsContainer m_components;
+        Set<ClassUID> m_componentUIDs;
+        U8 m_flags;
+
+        FastVector<Component*> m_updatableComponents;
+
+        S64 m_componentsMask;
+
+    protected:
+        U8 m_transitionFlags;
+    };
+
+
+    //////////////////////////////////////////
+    // Serialization
+    //
+    //////////////////////////////////////////
+    inline void ValueToString(Entity const& _value, String& _data)
+    {
+        MAZE_TODO;
+    }
+
+    inline void ValueFromString(Entity& _value, CString _data, Size _count)
+    {
+        MAZE_TODO;
+    }
+
+    inline U32 GetValueSerializationSize(Entity const& _value)
+    {
+        MAZE_TODO;
+        return 0;
+    }
+
+    inline void SerializeValue(Entity const& _value, U8* _data)
+    {
+        MAZE_TODO;
+    }
+
+    inline void DeserializeValue(Entity& _value, U8 const* _data)
+    {
+        MAZE_TODO;        
+    }
+
+
+} // namespace Maze
+//////////////////////////////////////////
+
+
+#endif // _MazeEntity_hpp_
+//////////////////////////////////////////

@@ -1,0 +1,155 @@
+//////////////////////////////////////////
+// Vertex Shader
+//
+//////////////////////////////////////////
+#type vertex
+
+//////////////////////////////////////////
+#include "Utils/PrecisionHigh.mzglsl"
+
+
+//////////////////////////////////////////
+uniform mat4 u_projectionMatrix;
+uniform mat4 u_viewMatrix;
+uniform vec3 u_viewPosition;
+
+
+//////////////////////////////////////////
+IN vec3 a_position;
+IN vec3 a_normal;
+IN vec4 a_color;
+IN vec2 a_texCoords0;
+
+
+//////////////////////////////////////////
+OUT vec3 v_positionOS;
+OUT vec3 v_positionWS;
+OUT vec3 v_positionVS;
+OUT vec4 v_color;
+OUT vec2 v_uv0;
+
+
+//////////////////////////////////////////
+#include "Utils/Core.mzglsl"
+
+
+//////////////////////////////////////////
+// Main
+void main()
+{
+    
+    int instanceId = gl_InstanceID;
+    
+    mat4 modelMatrix = GetModelMatrix(instanceId);
+
+    vec4 positionOS = vec4(a_position, 1.0);
+    vec4 positionWS = positionOS * modelMatrix;
+    vec4 positionVS = positionWS * u_viewMatrix;
+    vec4 positionCS = positionVS * u_projectionMatrix;
+        
+#if (MAZE_LHCS)
+    positionCS.z = -positionCS.z;
+#endif
+    
+    v_positionOS = positionOS.xyz;
+    v_positionWS = positionWS.xyz;
+    v_positionVS = positionVS.xyz;
+    v_color = a_color;
+    v_uv0 = a_texCoords0;
+
+    gl_Position = positionCS;
+}
+
+
+
+//////////////////////////////////////////
+// Fragment Shader
+//
+//////////////////////////////////////////
+#type fragment
+
+//////////////////////////////////////////
+#include "Utils/PrecisionHigh.mzglsl"
+#include "Utils/Color.mzglsl"
+
+
+//////////////////////////////////////////
+uniform sampler2D u_baseMapFar0;
+uniform sampler2D u_baseMapFar1;
+uniform sampler2D u_baseMapNear0;
+uniform sampler2D u_baseMapNear1;
+uniform vec3 u_viewPosition;
+uniform vec4 u_color;
+uniform float u_time;
+uniform float u_hue;
+uniform float u_sectorsCount;
+
+
+//////////////////////////////////////////
+IN vec3 v_positionOS;
+IN vec3 v_positionWS;
+IN vec3 v_positionVS;
+IN vec3 v_normalOS;
+IN vec3 v_normalWS;
+IN vec4 v_color;
+IN vec2 v_uv0;
+
+
+//////////////////////////////////////////
+layout(location=0) out vec4 out_color;
+
+
+//////////////////////////////////////////
+uniform sampler2D u_modelMatricesTexture;
+
+
+//////////////////////////////////////////
+// Main
+void main()
+{
+    // Far texture
+    vec2 uvFar = v_uv0 + vec2(u_time * 0.009, 0.0);
+    vec2 sectorFarUV = uvFar;
+    sectorFarUV.x = fract(uvFar.x * u_sectorsCount);
+    float sectorFarId = floor(uvFar.x * u_sectorsCount);
+    
+    vec4 farTextureColor;
+    if (int(sectorFarId) % 2 == 0)
+        farTextureColor = texture(u_baseMapFar0, sectorFarUV);
+    else
+        farTextureColor = texture(u_baseMapFar1, sectorFarUV);
+    
+    
+    // Near texture
+    vec2 uvNear = v_uv0 + vec2(u_time * 0.013 * 1.05, 0.0);
+    vec2 sectorNearUV = uvNear;
+    sectorNearUV.x = fract(uvNear.x * u_sectorsCount);
+    float sectorNearId = floor(uvNear.x * u_sectorsCount);
+    
+    vec4 nearTextureColor;
+    if (int(sectorNearId) % 2 == 0)
+        nearTextureColor = texture(u_baseMapNear0, sectorNearUV);
+    else
+        nearTextureColor = texture(u_baseMapNear1, sectorNearUV);
+    
+    
+    // Diffuse color
+    vec3 textureColor = mix(farTextureColor.rgb, nearTextureColor.rgb, nearTextureColor.a);
+    vec3 diffuseColor = textureColor * v_color.rgb * u_color.rgb;
+    
+    // HSV
+    float hueBase = 241.0;
+    float hueDiff = u_hue - hueBase;
+    vec3 hsv = ConvertRGBToHSV(diffuseColor);
+    hsv.r += hueDiff;
+    if (hsv.r < 0.0)
+        hsv.r += 360.0;
+    vec3 rgb = ConvertHSVToRGB(hsv);
+    diffuseColor = rgb;
+        
+    // Linear color
+    vec3 linearColor = diffuseColor;
+    
+    out_color = vec4(linearColor, 1.0);
+    // out_color = out_color * 0.00001 + vec4(0.0, 1.0, 0.0, 1.0);
+}

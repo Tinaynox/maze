@@ -1,0 +1,694 @@
+//////////////////////////////////////////
+//
+// Maze Engine
+// Copyright (C) 2021 Dmitriy "Tinaynox" Nosov (tinaynox@gmail.com)
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented;
+//    you must not claim that you wrote the original software.
+//    If you use this software in a product, an acknowledgment
+//    in the product documentation would be appreciated but is not required.
+//
+// 2. Altered source versions must be plainly marked as such,
+//    and must not be misrepresented as being the original software.
+//
+// 3. This notice may not be removed or altered from any source distribution.
+//
+//////////////////////////////////////////
+
+
+//////////////////////////////////////////
+#include "MazeRenderSystemOpenGLCoreHeader.hpp"
+#include "maze-render-system-opengl-core/MazeTexture2DOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeRenderSystemOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazePixelFormatOpenGL.hpp"
+#include "maze-core/services/MazeLogStream.hpp"
+
+
+//////////////////////////////////////////
+namespace Maze
+{
+    //////////////////////////////////////////
+    U8 ConvertPixelChannelDataToU8(const U8* _channelPointer, PixelFormat::Enum _pixelFormat)
+    {
+        switch (_pixelFormat)
+        {
+            case PixelFormat::R_S8:
+            case PixelFormat::RG_S8:
+            case PixelFormat::RGB_S8:
+            case PixelFormat::RGBA_S8:
+            case PixelFormat::R_U8:
+            case PixelFormat::RG_U8:
+            case PixelFormat::RGB_U8:
+            case PixelFormat::RGBA_U8:
+            {
+                U8 sourcePixel = *_channelPointer;
+                return sourcePixel;
+            }
+
+            case PixelFormat::R_S16:
+            case PixelFormat::RG_S16:
+            case PixelFormat::RGBA_S16:
+            case PixelFormat::R_U16:
+            case PixelFormat::RG_U16:
+            case PixelFormat::RGBA_U16:
+            {
+                U16 sourcePixel = *(U16*)_channelPointer;
+                return static_cast<U8>(sourcePixel);
+            }
+
+            case PixelFormat::R_S32:
+            case PixelFormat::RG_S32:
+            case PixelFormat::R_U32:
+            case PixelFormat::RG_U32:
+            {
+                U32 sourcePixel = *(U32*)_channelPointer;
+                return static_cast<U8>(sourcePixel);
+            }
+
+            case PixelFormat::R_F16:
+            case PixelFormat::RG_F16:
+            case PixelFormat::RGBA_F16:
+            {
+                F32 sourcePixel = *(F32*)_channelPointer;
+                return static_cast<U8>(sourcePixel);
+            }
+
+            case PixelFormat::R_F32:
+            case PixelFormat::RG_F32:
+            case PixelFormat::RGB_F32:
+            case PixelFormat::RGBA_F32:
+            {
+                F32 sourcePixel = *(F32*)_channelPointer;
+                return static_cast<U8>(sourcePixel);
+            }
+            default:
+            {
+                MAZE_ERROR("Unsupported PixelFormat!");
+            }
+        }
+
+        return 0;
+    }
+
+    //////////////////////////////////////////
+    MZGLuint GetOpenGLFilter(TextureFilter _value)
+    {
+
+        switch (_value)
+        {
+            case TextureFilter::Nearest: return MAZE_GL_NEAREST;
+            case TextureFilter::Linear: return MAZE_GL_LINEAR;
+            case TextureFilter::NearestMipmapNearest: return MAZE_GL_NEAREST_MIPMAP_NEAREST;
+            case TextureFilter::LinearMipmapNearest: return MAZE_GL_LINEAR_MIPMAP_NEAREST;
+            case TextureFilter::NearestMipmapLinear: return MAZE_GL_NEAREST_MIPMAP_LINEAR;
+            case TextureFilter::LinearMipmapLinear: return MAZE_GL_LINEAR_MIPMAP_LINEAR;
+            default:
+            {
+                MAZE_ERROR("Unsupported TextureFilter: %d", (S32)_value);
+            }
+        }
+
+        return MAZE_GL_LINEAR;
+    }
+
+    //////////////////////////////////////////
+    MZGLuint GetOpenGLWrap(TextureWrap _value)
+    {
+        switch (_value)
+        {
+            case TextureWrap::Repeat: return MAZE_GL_REPEAT;
+            case TextureWrap::MirroredRepeat: return MAZE_GL_MIRRORED_REPEAT;
+            case TextureWrap::ClampToEdge: return MAZE_GL_CLAMP_TO_EDGE;
+            case TextureWrap::ClampToBorder: return MAZE_GL_CLAMP_TO_BORDER;
+
+            default:
+            {
+                MAZE_ERROR("Unsupported TextureWrap: %d", (S32)_value);
+                break;
+            }
+        }
+
+        return MAZE_GL_REPEAT;
+    }
+
+    //////////////////////////////////////////
+    // Class Texture2DOpenGLScopeBind
+    //
+    //////////////////////////////////////////
+    Texture2DOpenGLScopeBind::Texture2DOpenGLScopeBind(Texture2DOpenGL* _newTexture)
+        : m_context(nullptr)
+    {
+        RenderSystemOpenGL* rs = _newTexture->getRenderSystemOpenGLRaw();
+        ContextOpenGL* context = rs->ensureCurrentContext();
+        if (context)
+        {
+            
+            m_activeTextureIndex = context->getActiveTexture();
+            context->activeTexture(0);
+            m_prevTexture0 = context->getBindedTexture2D();
+
+            context->bindTexture2D(_newTexture);
+
+            m_context = context;
+        }
+    }
+
+    //////////////////////////////////////////
+    Texture2DOpenGLScopeBind::Texture2DOpenGLScopeBind(Texture2DOpenGLPtr const& _newTexture)
+        : Texture2DOpenGLScopeBind(_newTexture.get())
+    {
+    }
+
+    //////////////////////////////////////////
+    Texture2DOpenGLScopeBind::~Texture2DOpenGLScopeBind()
+    {
+        if (m_context)
+        {
+            m_context->activeTexture(0);
+            m_context->bindTexture2D(m_prevTexture0);
+            m_context->activeTexture(m_activeTextureIndex);
+
+        }
+    }
+
+
+    //////////////////////////////////////////
+    // Class Texture2DOpenGL
+    //
+    //////////////////////////////////////////
+    Texture2DOpenGL::Texture2DOpenGL()
+        : m_context(nullptr)
+        , m_glTexture(0)
+        , m_hasPresetMipmaps(false)
+    {
+    }
+
+    //////////////////////////////////////////
+    Texture2DOpenGL::~Texture2DOpenGL()
+    {
+        setContextOpenGL(nullptr);
+    }
+
+    //////////////////////////////////////////
+    Texture2DOpenGLPtr Texture2DOpenGL::Create(
+        RenderSystem* _renderSystem,
+        ContextOpenGL* _contextOpenGL)
+    {
+        Texture2DOpenGLPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(Texture2DOpenGL, object, init(_renderSystem, _contextOpenGL));
+        return object;
+    }
+
+    //////////////////////////////////////////
+    bool Texture2DOpenGL::init(
+        RenderSystem* _renderSystem,
+        ContextOpenGL* _contextOpenGL)
+    {
+        if (!Texture2D::init(_renderSystem))
+            return false;
+
+        setContextOpenGL(_contextOpenGL);
+
+        generateGLObjects();
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool Texture2DOpenGL::isValid()
+    {
+        return (m_glTexture != 0);
+    }
+
+    //////////////////////////////////////////
+    void Texture2DOpenGL::generateGLObjects()
+    {
+        if (m_glTexture)
+        {
+            deleteGLObjects();
+        }
+
+        ContextOpenGLScopeBind contextScopedBind(m_context);
+
+        MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+
+        MAZE_GL_CALL(mzglGenTextures(1, &m_glTexture));
+    }
+
+    //////////////////////////////////////////
+    void Texture2DOpenGL::deleteGLObjects()
+    {
+        if (!m_context || !m_context->isValid())
+        {
+            m_glTexture = 0;
+            return;
+        }
+
+        ContextOpenGLScopeBind contextScopedBind(m_context);
+        MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+
+        MAZE_GL_CALL(mzglDeleteTextures(1, &m_glTexture));
+        m_glTexture = 0;
+    }
+
+    //////////////////////////////////////////
+    bool Texture2DOpenGL::loadTexture(
+        Vector<PixelSheet2D> const& pixelSheets,
+        PixelFormat::Enum internalPixelFormat)
+    {
+        if (pixelSheets.empty())
+            return false;
+
+        m_pixelSheetsTEMP = pixelSheets;
+
+        PixelSheet2D const& pixelSheet0 = pixelSheets[0];
+
+        if (internalPixelFormat == PixelFormat::None)
+            internalPixelFormat = pixelSheet0.getFormat();
+
+        MZGLint internalFormat = GetOpenGLInternalFormat(internalPixelFormat);
+        if (0 == internalFormat)
+        {
+            m_internalPixelFormat = PixelFormat::None;
+            return false;
+        }
+
+        m_internalPixelFormat = internalPixelFormat;
+
+        
+        if (m_glTexture == 0)
+        {
+            generateGLObjects();
+        }
+
+
+        ContextOpenGLScopeBind contextScopedBind(m_context);
+        MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+        Texture2DOpenGLScopeBind textureScopedBind(this);
+
+        
+
+        m_size = pixelSheet0.getSize();
+        m_hasPresetMipmaps = (pixelSheets.size() > 1);
+
+
+#if (MAZE_DEBUG_GL)
+        {
+            MZGLboolean isTexture = MAZE_GL_FALSE;
+            MAZE_GL_CALL(isTexture = mzglIsTexture(m_glTexture));
+            if (isTexture == MAZE_GL_FALSE)
+            {
+                MAZE_ERROR("Texture %u is invalid texture Id!", (U32)m_glTexture);
+                return false;
+            }
+        }
+#endif        
+
+        Vec2DU size = m_size;
+        for (Size mipmapLevel = 0, in = pixelSheets.size(); mipmapLevel < in; ++mipmapLevel)
+        {
+            PixelSheet2D const& pixelSheet = pixelSheets[mipmapLevel];
+            PixelFormat::Enum mipmapPixelFormat = pixelSheet.getFormat();
+
+            MZGLint originFormat = GetOpenGLOriginFormat(mipmapPixelFormat);
+            MZGLint dataType = GetOpenGLDataType(mipmapPixelFormat);
+
+            MZGLsizei dataSize = (MZGLsizei)pixelSheet.getTotalBytesCount();
+            U8 const* data = pixelSheet.getDataPointer();
+
+            if (PixelFormat::IsCompressed(mipmapPixelFormat))
+            {
+                MAZE_GL_CALL(
+                    mzglCompressedTexImage2D(
+                        MAZE_GL_TEXTURE_2D,
+                        (MZGLint)mipmapLevel,
+                        internalFormat,
+                        size.x,
+                        size.y,
+                        0,
+                        dataSize,
+                        data));
+
+                if (mzglGetTexLevelParameteriv)
+                {
+                    MZGLint param = 0;
+                    MAZE_GL_CALL(mzglGetTexLevelParameteriv(MAZE_GL_TEXTURE_2D, (MZGLint)mipmapLevel, MAZE_GL_TEXTURE_COMPRESSED_ARB, &param));
+                    MAZE_ERROR_IF(param == 0, "Texture compression failed");
+                }
+            }
+            else
+            {
+                if (    originFormat == MAZE_GL_DEPTH_COMPONENT
+                    ||    originFormat == MAZE_GL_DEPTH_STENCIL)
+                {
+                    MAZE_GL_CALL(mzglTexImage2D(MAZE_GL_TEXTURE_2D, (MZGLint)mipmapLevel, internalFormat, size.x, size.y, 0, originFormat, dataType, 0));
+                }
+                else
+                {
+                    // #TODO:
+                    MAZE_GL_CALL(mzglPixelStorei(MAZE_GL_UNPACK_ALIGNMENT, 1));
+                    MAZE_GL_CALL(mzglTexImage2D(MAZE_GL_TEXTURE_2D, (MZGLint)mipmapLevel, internalFormat, size.x, size.y, 0, originFormat, dataType, data));
+                }
+            }
+
+            size /= 2;
+            size.x = Math::Max(size.x, 1u);
+            size.y = Math::Max(size.y, 1u);
+        }
+    
+#if (MAZE_DEBUG_GL)
+        {
+            MZGLboolean isTexture = MAZE_GL_FALSE;
+            MAZE_GL_CALL(isTexture = mzglIsTexture(m_glTexture));
+            if (isTexture == MAZE_GL_FALSE)
+            {
+                MAZE_ERROR("Texture %u is invalid texture Id!", (U32)m_glTexture);
+                return false;
+            }
+        }
+#endif
+
+        MAZE_GL_CALL(mzglTexParameteri(MAZE_GL_TEXTURE_2D, MAZE_GL_TEXTURE_MAG_FILTER, GetOpenGLFilter(m_magFilter)));
+        MAZE_GL_CALL(mzglTexParameteri(MAZE_GL_TEXTURE_2D, MAZE_GL_TEXTURE_MIN_FILTER, GetOpenGLFilter(m_minFilter)));
+        MAZE_GL_CALL(mzglTexParameteri(MAZE_GL_TEXTURE_2D, MAZE_GL_TEXTURE_WRAP_S, GetOpenGLWrap(m_wrapS)));
+        MAZE_GL_CALL(mzglTexParameteri(MAZE_GL_TEXTURE_2D, MAZE_GL_TEXTURE_WRAP_T, GetOpenGLWrap(m_wrapT)));
+    
+        generateMipmaps();
+
+        return true;
+    }
+
+    ////////////////////////////////////
+    bool Texture2DOpenGL::setMagFilter(TextureFilter _value)
+    {
+        if (m_magFilter == _value)
+            return true;
+
+        m_magFilter = _value;
+
+        {
+            ContextOpenGLScopeBind contextScopedBind(m_context);
+            MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+            Texture2DOpenGLScopeBind textureScopedBind(this);
+
+            MAZE_GL_CALL(mzglTexParameteri(MAZE_GL_TEXTURE_2D, MAZE_GL_TEXTURE_MAG_FILTER, GetOpenGLFilter(m_magFilter)));
+        }
+
+        return true;
+    }
+
+    ////////////////////////////////////
+    bool Texture2DOpenGL::setMinFilter(TextureFilter _value)
+    {
+        if (m_minFilter == _value)
+            return true;
+
+        m_minFilter = _value;
+
+        {
+            ContextOpenGLScopeBind contextScopedBind(m_context);
+            MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+            Texture2DOpenGLScopeBind textureScopedBind(this);
+
+            MAZE_GL_CALL(mzglTexParameteri(MAZE_GL_TEXTURE_2D, MAZE_GL_TEXTURE_MIN_FILTER, GetOpenGLFilter(m_minFilter)));
+        }
+
+        generateMipmaps();
+
+        return true;
+    }
+    ////////////////////////////////////
+    bool Texture2DOpenGL::setWrapS(TextureWrap _value)
+    {
+        if (m_wrapS == _value)
+            return true;
+
+        m_wrapS = _value;
+
+        {
+            ContextOpenGLScopeBind contextScopedBind(m_context);
+            MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+            Texture2DOpenGLScopeBind textureScopedBind(this);
+
+            MAZE_GL_CALL(mzglTexParameteri(MAZE_GL_TEXTURE_2D, MAZE_GL_TEXTURE_WRAP_S, GetOpenGLWrap(m_wrapS)));
+        }
+
+
+        return true;
+    }
+
+    ////////////////////////////////////
+    bool Texture2DOpenGL::setWrapT(TextureWrap _value)
+    {
+        if (m_wrapT == _value)
+            return true;
+
+        m_wrapT = _value;
+
+        {
+            ContextOpenGLScopeBind contextScopedBind(m_context);
+            MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+            Texture2DOpenGLScopeBind textureScopedBind(this);
+
+            MAZE_GL_CALL(mzglTexParameteri(MAZE_GL_TEXTURE_2D, MAZE_GL_TEXTURE_WRAP_T, GetOpenGLWrap(m_wrapT)));
+        }
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void Texture2DOpenGL::saveToFileAsTGA(String const& _fileName, Vec2DU _size)
+    {
+        ContextOpenGLScopeBind contextScopedBind(m_context);
+        MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+        Texture2DOpenGLScopeBind textureScopedBind(this);
+
+        if (Vec2DU::c_zero == _size)
+        {
+            _size = m_size;
+        }
+
+#if (MAZE_DEBUG_GL)
+        {
+            MZGLint value;
+            MAZE_GL_CALL(mzglGetIntegerv(MAZE_GL_ACTIVE_TEXTURE, &value));
+            MAZE_DEBUG_BP_IF(value != MAZE_GL_TEXTURE0);
+        }
+        {
+            MZGLint value;
+            MAZE_GL_CALL(mzglGetIntegerv(MAZE_GL_TEXTURE_BINDING_2D, &value));
+            MAZE_DEBUG_BP_IF(value != m_glTexture);
+        }
+#endif
+
+        MZGLint w, h;
+        MZGLint miplevel = 0;
+        MAZE_GL_CALL(mzglGetTexLevelParameteriv(MAZE_GL_TEXTURE_2D, miplevel, MAZE_GL_TEXTURE_WIDTH, &w));
+        MAZE_GL_CALL(mzglGetTexLevelParameteriv(MAZE_GL_TEXTURE_2D, miplevel, MAZE_GL_TEXTURE_HEIGHT, &h));
+        MAZE_DEBUG_BP_IF(w != m_size.x);
+        MAZE_DEBUG_BP_IF(h != m_size.y);
+
+
+        PixelFormat::Enum pixelFormat = m_internalPixelFormat;
+        pixelFormat = PixelFormat::RGBA_U8;
+
+        U32 bytesPerPixel = PixelFormat::GetBytesPerPixel(pixelFormat);
+        U32 channelsPerPixel = PixelFormat::GetChannelsPerPixel(pixelFormat);
+        U32 bytesPerChannel = bytesPerPixel / channelsPerPixel;
+        MZGLint originFormat = GetOpenGLOriginFormat(pixelFormat);
+
+
+        MZGLint dataType = GetOpenGLDataType(pixelFormat);
+
+        if (!mzglGetTexImage)
+            return;
+
+        ByteBuffer data(_size.x * _size.y * bytesPerPixel);
+        MAZE_GL_CALL(mzglGetTexImage(MAZE_GL_TEXTURE_2D, 0, originFormat, dataType, data.getDataPointer()));        
+        U32 bytesPerRow = bytesPerPixel * _size.x;
+
+        ByteBuffer tgaData(_size.x * _size.y * 4);
+
+        U8* tgaDataPointer = tgaData.getDataPointer();
+
+        for (Size r = 0; r < _size.y; ++r)
+        {
+            for (Size c = 0; c < _size.x; ++c)
+            {
+                U32 offset = bytesPerRow * (U32)r + bytesPerPixel * (U32)c;
+                const U8* pixel = data.getDataPointer() + offset;
+
+                U8 r = 0;
+                U8 g = 0;
+                U8 b = 0;
+                U8 a = 0;
+
+                if (channelsPerPixel > 0)
+                    r = ConvertPixelChannelDataToU8(pixel + 0 * bytesPerChannel, pixelFormat);
+
+                if (channelsPerPixel > 1)
+                    g = ConvertPixelChannelDataToU8(pixel + 1 * bytesPerChannel, pixelFormat);
+
+                if (channelsPerPixel > 2)
+                    b = ConvertPixelChannelDataToU8(pixel + 2 * bytesPerChannel, pixelFormat);
+
+                if (channelsPerPixel > 3)
+                    a = ConvertPixelChannelDataToU8(pixel + 3 * bytesPerChannel, pixelFormat);
+
+                // BGRA
+                *(tgaDataPointer++) = b;
+                *(tgaDataPointer++) = g;
+                *(tgaDataPointer++) = r;
+                *(tgaDataPointer++) = a;
+            }
+        }
+
+        U32 xa = _size.x % 256;
+        U32 xb = (_size.x - xa) / 256;
+        U32 ya = _size.y % 256;
+        U32 yb = (_size.y - ya) / 256;
+
+        U8 header[18] = { 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, (U8)xa, (U8)xb, (U8)ya, (U8)yb, 32, 0 };
+
+        std::fstream file(_fileName.c_str(), std::ios::out | std::ios::binary);
+        file.write(reinterpret_cast<CString>(header), sizeof(S8) * 18);
+        file.write(reinterpret_cast<CString>(tgaData.getDataPointer()), sizeof(S8) * tgaData.getSize());
+        file.close();
+    }
+
+    //////////////////////////////////////////
+    void Texture2DOpenGL::copyImageFrom(
+        U8 const* _pixels,
+        PixelFormat::Enum _pixelFormat,
+        U32 _width,
+        U32 _height,
+        U32 _x,
+        U32 _y)
+    {
+        MAZE_ERROR_RETURN_IF((S32)_x + (S32)_width > m_size.x, "Can't copy image!");
+        MAZE_ERROR_RETURN_IF((S32)_y + (S32)_height > m_size.y, "Can't copy image!");
+
+        ContextOpenGLScopeBind contextScopedBind(m_context);
+        MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+        Texture2DOpenGLScopeBind textureScopedBind(this);
+
+        MZGLint originFormat = GetOpenGLOriginFormat(_pixelFormat);
+        MZGLint dataType = GetOpenGLDataType(_pixelFormat);
+
+        MAZE_GL_CALL(mzglTexSubImage2D(MAZE_GL_TEXTURE_2D, 0, _x, _y, _width, _height, originFormat, dataType, _pixels));
+
+        // #TODO: Brute GPU synchronization
+        MAZE_GL_CALL(mzglFinish());
+
+        generateMipmaps();
+    }
+
+    //////////////////////////////////////////
+    void Texture2DOpenGL::notifyContextOpenGLDestroyed(ContextOpenGL* _contextOpenGL)
+    {
+        m_context = nullptr;
+
+        m_glTexture = 0;
+    }
+
+    //////////////////////////////////////////
+    void Texture2DOpenGL::notifyContextOpenGLContextWillBeDestroyed(ContextOpenGL* _contextOpenGL)
+    {
+        m_glTexture = 0;
+    }
+
+    //////////////////////////////////////////
+    void Texture2DOpenGL::notifyContextOpenGLContextSetup(ContextOpenGL* _contextOpenGL)
+    {
+        if (m_glTexture == 0)
+        {
+            generateGLObjects();
+
+            reload();
+        }
+    }
+
+    //////////////////////////////////////////
+    void Texture2DOpenGL::setContextOpenGL(ContextOpenGL* _contextOpenGL)
+    {
+        if (m_context == _contextOpenGL)
+            return;
+
+        if (m_context)
+        {
+            deleteGLObjects();
+
+            m_context->eventDestroyed.unsubscribe(this);
+            m_context->eventGLContextWillBeDestroyed.unsubscribe(this);
+            m_context->eventGLContextSetup.unsubscribe(this);
+        }
+
+        m_context = _contextOpenGL;
+
+        if (m_context)
+        {
+            m_context->eventDestroyed.subscribe(this, &Texture2DOpenGL::notifyContextOpenGLDestroyed);
+            m_context->eventDestroyed.updateDelegatesList();
+            m_context->eventGLContextWillBeDestroyed.subscribe(this, &Texture2DOpenGL::notifyContextOpenGLContextWillBeDestroyed);
+            m_context->eventGLContextWillBeDestroyed.updateDelegatesList();
+            m_context->eventGLContextSetup.subscribe(this, &Texture2DOpenGL::notifyContextOpenGLContextSetup);
+            m_context->eventGLContextSetup.updateDelegatesList();
+        }
+    }
+
+    //////////////////////////////////////////
+    void Texture2DOpenGL::generateMipmaps()
+    {
+        if (m_glTexture == 0)
+            return;
+
+        //if (m_hasPresetMipmaps)
+        //    return;
+
+        if (   m_minFilter == TextureFilter::LinearMipmapLinear
+            || m_minFilter == TextureFilter::LinearMipmapNearest
+            || m_minFilter == TextureFilter::NearestMipmapLinear
+            || m_minFilter == TextureFilter::NearestMipmapNearest)
+        {            
+            ContextOpenGLScopeBind contextScopedBind(m_context);
+            MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+            Texture2DOpenGLScopeBind textureScopedBind(this);           
+
+            if (mzglGenerateMipmap)
+            {
+                Debug::log << getName() << ": mzglGenerateMipmap started..." << endl;
+                MAZE_GL_CALL(mzglGenerateMipmap(MAZE_GL_TEXTURE_2D));
+                Debug::log << getName() << ": mzglGenerateMipmap finished." << endl;
+            }
+            else
+            {
+                MAZE_WARNING("Autogenerated mipmaps is not available!");
+            }            
+        }
+    }
+
+    //////////////////////////////////////////
+    void Texture2DOpenGL::reload()
+    {
+        if (m_assetFile)
+        {
+            loadFromAssetFile(m_assetFile);
+        }
+        else
+        if (!m_pixelSheetsTEMP.empty())
+        {
+            loadTexture(m_pixelSheetsTEMP, m_internalPixelFormat);
+        }
+    }
+
+    
+} // namespace Maze
+//////////////////////////////////////////

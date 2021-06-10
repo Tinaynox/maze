@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Material>
+    <ShaderUniformVariant name="u_baseMap" type="UniformTexture2D" value="PlayerShip00_Diffuse.mztexture" />
+    <ShaderUniformVariant name="u_normalMap" type="UniformTexture2D" value="PlayerShip00_Normal.mztexture" />
+    <ShaderUniformVariant name="u_specularMap" type="UniformTexture2D" value="PlayerShip00_Specular.mztexture" />
+    <ShaderUniformVariant name="u_emissionMap" type="UniformTexture2D" value="PlayerShip00_Emission.mztexture" />
+    <ShaderUniformVariant name="u_shotMap" type="UniformTexture2D" value="PlayerShip00_Shot.mztexture" />
+    <ShaderUniformVariant name="u_emissionColor" type="UniformColorF128" value="1.45;1.45;1.45;1.0" />
+    <ShaderUniformVariant name="u_color" type="UniformColorF128" value="1.0;1.0;1.0;1.0" />
+    <ShaderUniformVariant name="u_ambientLightColor" type="UniformColorF128" value="0.1;0.1;0.1;1.0" />
+    <ShaderUniformVariant name="u_shininess" type="UniformF32" value="1.0" />
+    <ShaderUniformVariant name="u_specularColor" type="UniformColorF128" value="0.27;0.27;0.27;1.0" />
+    
+    <RenderPass 
+        passType="Default"
+        renderQueueIndex="2000"
+        shader="PlayerShip00.mzshader"
+        blendOperation="Add"
+        blendSrcFactor="One"
+        blendDestFactor="Zero"
+        depthTestCompareFunction="Less"
+        depthWriteEnabled="1"
+        cullMode="Back"/>
+</Material>

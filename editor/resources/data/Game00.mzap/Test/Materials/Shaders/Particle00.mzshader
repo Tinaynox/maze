@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Shader>
+    <Feature name="MAZE_COLOR_STREAM" />
+    <Feature name="MAZE_UV_STREAM" />
+    
+    <Uniform name="u_baseMapST" type="UniformVec4DF" value="1.0;1.0;0.0;0.0" />
+    <Uniform name="u_color" type="UniformVec4DF" value="1.0;1.0;1.0;1.0" />
+    <Uniform name="u_emissionColor" type="UniformVec4DF" value="1.0;1.0;1.0;1.0" />
+    
+    <GLSL shader="Particle00.mzglsl" />
+</Shader>

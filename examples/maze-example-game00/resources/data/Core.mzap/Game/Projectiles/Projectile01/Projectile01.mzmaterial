@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Material>
+    <ShaderUniformVariant name="u_baseMap" type="UniformTexture2D" value="PlayerShipShot01.mztexture" />
+    <!--ShaderUniformVariant name="u_color" type="UniformVec4DF" value="1.3;1.0;1.75;1.0" /-->
+    <!--ShaderUniformVariant name="u_color" type="UniformVec4DF" value="1.3;1.3;1.3;1.0" /-->
+    <ShaderUniformVariant name="u_color" type="UniformVec4DF" value="1.0;1.0;1.0;1.0" />
+    <RenderPass 
+        passType="Default"
+        renderQueueIndex="3000"
+        shader="Unlit00.mzshader"
+        blendOperation="Add"
+        blendSrcFactor="One"
+        blendDestFactor="One"
+        depthTestCompareFunction="Always"
+        depthWriteEnabled="0"
+        cullMode="Off"/>
+</Material>

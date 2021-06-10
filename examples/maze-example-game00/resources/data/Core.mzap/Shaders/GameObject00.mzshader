@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Shader>
+    <Uniform name="u_mainLightColor" type="UniformVec4DF" value="1.0;0.957;0.84;1.0" />
+    <Uniform name="u_mainLightDirection" type="UniformVec3DF" value="0.577;-0.577;0.577" />
+    <Uniform name="u_color" type="UniformVec4DF" value="1.0;1.0;1.0;1.0" />
+    <Uniform name="u_ambientLightColor" type="UniformVec4DF" value="0.1;0.1;0.1;1.0" />
+    <Uniform name="u_shininess" type="UniformF32" value="0.03" />
+    <Uniform name="u_specularColor" type="UniformVec4DF" value="0.8;0.8;0.8;1.0" />
+    
+    <Feature name="BACK_LIGHT" />
+    <Uniform name="u_backLightColor" type="UniformVec4DF" value="0.65;0.70;0.75;1.0" />
+    <Uniform name="u_backLightDirection" type="UniformVec3DF" value="0.0;0.0;-1.0" />
+    <Uniform name="u_backLightBend" type="UniformF32" value="0.75" />
+    
+    <GLSL shader="GameObject00.mzglsl" />
+</Shader>
