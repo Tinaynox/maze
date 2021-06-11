@@ -229,7 +229,8 @@ namespace Maze
 
         m_canvas->setViewport(_mainRenderWindowViewport);
 
-        m_renderBuffer->setSize(Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize());
+        if(!Example::GetInstancePtr()->isDebugEditorProgress())
+            m_renderBuffer->setSize(Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize());
     }
 
     //////////////////////////////////////////

@@ -443,17 +443,15 @@ namespace Maze
     //////////////////////////////////////////
     void SceneGame::notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport)
     {
-        if (    !Game::GetInstancePtr()->getRunning()
-            ||  !Game::GetInstancePtr()->getMainRenderWindow()
-            ||  !Game::GetInstancePtr()->getMainRenderWindow()->getWindow()->isOpened()
-            ||  Game::GetInstancePtr()->getMainRenderWindow()->getWindow()->getMinimized())
+        if (!Game::GetInstancePtr()->isMainWindowReadyToRender())
             return;
 
         m_canvas->setViewport(_mainRenderWindowViewport);
 
         if (SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>()->getPostProcessEnabled())
         {
-            m_renderBuffer->setSize(Game::GetInstancePtr()->getMainRenderWindowAbsoluteSize());
+            if (!Game::GetInstancePtr()->isDebugEditorProgress())
+                m_renderBuffer->setSize(Game::GetInstancePtr()->getMainRenderWindowAbsoluteSize());
         }
         else
         {
@@ -471,10 +469,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneGame::notifyRenderTargetResized(RenderTarget* _renderTarget)
     {
-        if (   !Game::GetInstancePtr()->getRunning()
-            || !Game::GetInstancePtr()->getMainRenderWindow()
-            || !Game::GetInstancePtr()->getMainRenderWindow()->getWindow()->isOpened()
-            || Game::GetInstancePtr()->getMainRenderWindow()->getWindow()->getMinimized())
+        if (!Game::GetInstancePtr()->isMainWindowReadyToRender())
             return;
 
         if (SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>()->getPostProcessEnabled())
