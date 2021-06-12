@@ -194,6 +194,13 @@ namespace Maze
         );
         m_debugAxisShader->setName("debug_axis");
 
+        m_skyboxShader = ShaderOpenGL::CreateFromSource(
+            m_renderSystem.lock(),
+            getRenderSystemOpenGL()->ensureCurrentContext(),
+#include "shaders/MazeSkyboxShader.mzglsl"
+        );
+        m_skyboxShader->setName("skybox");
+
         processSystemInited();
     }
 

@@ -42,6 +42,12 @@ namespace Maze
     MAZE_IMPLEMENT_ENUMCLASS(TextureWrap);
 
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_ENUMCLASS(TextureType);
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS(Texture);
+
+    //////////////////////////////////////////
     Texture::Texture()
         : m_renderSystem(nullptr)
     {

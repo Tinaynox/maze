@@ -25,97 +25,74 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeTexture_hpp_))
-#define _MazeTexture_hpp_
+#if (!defined(_MazeLightingSettings_hpp_))
+#define _MazeLightingSettings_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-graphics/MazeGraphicsHeader.hpp"
-#include "maze-graphics/MazeRenderWindow.hpp"
-#include "maze-core/utils/MazeMultiDelegate.hpp"
-#include "maze-core/utils/MazeEnumClass.hpp"
-#include "maze-core/system/MazeWindowVideoMode.hpp"
-#include "maze-core/system/MazeWindow.hpp"
-#include "maze-core/utils/MazeUpdater.hpp"
-#include "maze-core/system/MazeInputEvent.hpp"
+#include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/math/MazeRect2D.hpp"
+#include "maze-graphics/MazeColorU32.hpp"
+#include "maze-graphics/ecs/MazeLightingSettings.hpp"
+#include "maze-graphics/MazeMaterial.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(Texture);
-    
-
-    //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_6_API(MAZE_GRAPHICS_API, TextureFilter,
-        Nearest,
-        Linear,
-        NearestMipmapNearest,
-        LinearMipmapNearest,
-        NearestMipmapLinear,
-        LinearMipmapLinear);
-
-    //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_4_API(MAZE_GRAPHICS_API, TextureWrap,
-        Repeat,
-        MirroredRepeat,
-        ClampToEdge,
-        ClampToBorder);
-
-    //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_4_API(MAZE_GRAPHICS_API, TextureType,
-        SingleDimensional,
-        TwoDimensional,
-        ThreeDimensional,
-        Cube);
+    MAZE_USING_SHARED_PTR(RenderTarget);
+    MAZE_USING_SHARED_PTR(LightingSettings);
+    MAZE_USING_SHARED_PTR(Transform3D);
 
 
     //////////////////////////////////////////
-    // Class Texture
+    // Class LightingSettings
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API Texture
-        : public SharedObject<Texture>
+    class MAZE_GRAPHICS_API LightingSettings
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS(Texture);
+        MAZE_DECLARE_METACLASS(LightingSettings);
+
+        //////////////////////////////////////////
+        friend class Entity;
 
     public:
 
         //////////////////////////////////////////
-        virtual ~Texture();
+        virtual ~LightingSettings();
 
         //////////////////////////////////////////
-        inline String const& getName() const { return m_name; }
+        static LightingSettingsPtr Create();
+
 
         //////////////////////////////////////////
-        inline void setName(String const& _name) { m_name = _name; }
+        inline MaterialPtr const& getSkyBoxMaterial() const { return m_skyBoxMaterial; }
 
         //////////////////////////////////////////
-        inline TextureType getType() const { return m_type; }
+        inline void setSkyBoxMaterial(MaterialPtr const& _value) { m_skyBoxMaterial = _value; }
 
     protected:
 
         //////////////////////////////////////////
-        Texture();
-
+        LightingSettings();
+        
         //////////////////////////////////////////
-        virtual bool init(RenderSystem* _renderSystem);
-    
+        bool init();
+
     protected:
-        RenderSystem* m_renderSystem;
-
-        String m_name;
-
-        TextureType m_type = TextureType::None;
+        MaterialPtr m_skyBoxMaterial;
     };
+
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeTexture_hpp_
+#endif // _MazeLightingSettings_hpp_
 //////////////////////////////////////////

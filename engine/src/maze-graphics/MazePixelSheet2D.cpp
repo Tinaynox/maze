@@ -66,7 +66,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PixelSheet2D::PixelSheet2D(PixelSheet2D&& _other)
+    PixelSheet2D::PixelSheet2D(PixelSheet2D&& _other) noexcept
         : m_size(std::move(_other.m_size))
         , m_data(std::move(_other.m_data))
         , m_format(std::move(_other.m_format))

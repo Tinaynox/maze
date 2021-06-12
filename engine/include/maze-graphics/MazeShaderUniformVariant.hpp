@@ -33,6 +33,7 @@
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-graphics/MazeRenderWindow.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
+#include "maze-graphics/MazeTextureCube.hpp"
 #include "maze-graphics/MazeColorF128.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
@@ -61,11 +62,12 @@ namespace Maze
     
 
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_16_API(MAZE_GRAPHICS_API, ShaderUniformType,
+    MAZE_DECLARE_ENUMCLASS_17_API(MAZE_GRAPHICS_API, ShaderUniformType,
         UniformS32,
         UniformF32,
         UniformF64,
         UniformTexture2D,
+        UniformTextureCube,
         UniformVec2DS,
         UniformVec3DS,
         UniformVec4DS,
@@ -114,6 +116,12 @@ namespace Maze
 
         //////////////////////////////////////////
         ShaderUniformVariant(RenderSystem* _renderSystem, Texture2DPtr const& _value);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, TextureCube* _value);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, TextureCubePtr const& _value);
 
 
         //////////////////////////////////////////
@@ -185,7 +193,13 @@ namespace Maze
         inline F64 getF64() const { return m_F64; }
 
         //////////////////////////////////////////
-        inline Texture2DPtr const& getTexture2D() const { return m_texture2D; }
+        inline TexturePtr const& getTexture() const { return m_texture; }
+
+        //////////////////////////////////////////
+        inline Texture2DPtr getTexture2D() const { return std::static_pointer_cast<Texture2D>(m_texture); }
+
+        //////////////////////////////////////////
+        inline TextureCubePtr getTextureCube() const { return std::static_pointer_cast<TextureCube>(m_texture); }
 
         //////////////////////////////////////////
         inline Vec4DF const& getVecF() const { return m_vectorF; }
@@ -250,10 +264,16 @@ namespace Maze
         inline void set(F64 _value) { m_F64 = _value; m_type = ShaderUniformType::UniformF64; }
         
         //////////////////////////////////////////
-        inline void set(Texture2DPtr const& _texture2D) { m_texture2D = _texture2D; m_type = ShaderUniformType::UniformTexture2D; }
+        inline void set(Texture2DPtr const& _texture) { m_texture = _texture; m_type = ShaderUniformType::UniformTexture2D; }
+
+        //////////////////////////////////////////
+        inline void set(TextureCubePtr const& _texture) { m_texture = _texture; m_type = ShaderUniformType::UniformTextureCube; }
 
         //////////////////////////////////////////
         inline void set(Texture2D* _texture2D) { return set(_texture2D ? _texture2D->cast<Texture2D>() : nullptr); }
+
+        //////////////////////////////////////////
+        inline void set(TextureCube* _textureCube) { return set(_textureCube ? _textureCube->cast<TextureCube>() : nullptr); }
         
         //////////////////////////////////////////
         inline void set(Vec2DF const& _vector) { m_vectorF = _vector; m_type = ShaderUniformType::UniformVec2DF; }
@@ -304,6 +324,12 @@ namespace Maze
 
         //////////////////////////////////////////
         void setTexture2D(String const& _textureName);
+
+        //////////////////////////////////////////
+        void setTextureCube(AssetFilePtr const& _assetFile);
+
+        //////////////////////////////////////////
+        void setTextureCube(String const& _textureName);
 
         //////////////////////////////////////////
         U32 calculateCRC32(U32 _seed = 0) const;
@@ -365,7 +391,7 @@ namespace Maze
 
         ShaderUniformType m_type;
 
-        Texture2DPtr m_texture2D;
+        TexturePtr m_texture;
 
         union
         {

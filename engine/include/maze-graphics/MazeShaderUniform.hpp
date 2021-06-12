@@ -90,7 +90,10 @@ namespace Maze
         inline F64 getF64() const { return m_value.getF64(); }
 
         //////////////////////////////////////////
-        inline Texture2DPtr const& getTexture2D() const { return m_value.getTexture2D(); }
+        inline Texture2DPtr getTexture2D() const { return std::static_pointer_cast<Texture2D>(m_value.getTexture()); }
+
+        //////////////////////////////////////////
+        inline TextureCubePtr getTextureCube() const { return std::static_pointer_cast<TextureCube>(m_value.getTexture()); }
 
         //////////////////////////////////////////
         inline Vec4DF const& getVecF() const { return m_value.getVecF(); }
@@ -157,6 +160,15 @@ namespace Maze
         inline bool set(Texture2D* _texture2D)
         {
             return set(_texture2D->cast<Texture2D>());
+        }
+
+        //////////////////////////////////////////
+        bool set(TextureCubePtr const& _textureCube);
+
+        //////////////////////////////////////////
+        inline bool set(TextureCube* _textureCube)
+        {
+            return set(_textureCube->cast<TextureCube>());
         }
         
         //////////////////////////////////////////

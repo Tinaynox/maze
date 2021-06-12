@@ -24,62 +24,52 @@
 
 
 //////////////////////////////////////////
-#pragma once
-#if (!defined(_MazeTexture3D_hpp_))
-#define _MazeTexture3D_hpp_
-
-
-//////////////////////////////////////////
-#include "maze-graphics/MazeGraphicsHeader.hpp"
-#include "maze-graphics/MazeRenderWindow.hpp"
-#include "maze-graphics/MazeTexture.hpp"
-#include "maze-core/utils/MazeMultiDelegate.hpp"
-#include "maze-core/utils/MazeEnumClass.hpp"
-#include "maze-core/system/MazeWindowVideoMode.hpp"
-#include "maze-core/system/MazeWindow.hpp"
-#include "maze-core/utils/MazeUpdater.hpp"
-#include "maze-core/system/MazeInputEvent.hpp"
+#include "MazeGraphicsHeader.hpp"
+#include "maze-graphics/ecs/MazeLightingSettings.hpp"
+#include "maze-core/math/MazeMathAlgebra.hpp"
+#include "maze-core/ecs/MazeEntity.hpp"
+#include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/managers/MazeEntityManager.hpp"
+#include "maze-graphics/MazeRenderTarget.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(Texture3D);
-    
-
-    //////////////////////////////////////////
-    // Class Texture3D
+    // Class LightingSettings
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API Texture3D
-        : public Texture
+    MAZE_IMPLEMENT_METACLASS(LightingSettings);
+
+    //////////////////////////////////////////
+    LightingSettings::LightingSettings()
     {
-    public:
 
-        //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(Texture3D, Texture);
+    }
 
-    public:
+    //////////////////////////////////////////
+    LightingSettings::~LightingSettings()
+    {
 
-        //////////////////////////////////////////
-        virtual ~Texture3D();
+    }
 
-    protected:
+    //////////////////////////////////////////
+    LightingSettingsPtr LightingSettings::Create()
+    {
+        LightingSettingsPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(LightingSettings, object, init());
+        return object;
+    }
 
-        //////////////////////////////////////////
-        Texture3D();
+    //////////////////////////////////////////
+    bool LightingSettings::init()
+    {
 
-        //////////////////////////////////////////
-        virtual bool init(RenderSystem* _renderSystem);
+        return true;
+    }
+
     
-    protected:
-        
-    };
-
 } // namespace Maze
-//////////////////////////////////////////
-
-
-#endif // _MazeTexture3D_hpp_
 //////////////////////////////////////////

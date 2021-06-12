@@ -165,6 +165,7 @@ namespace Maze
         renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getColorShader());
         renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
         renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
+        renderPass->setRenderQueueIndex(3000);
         m_colorMaterial->setUniform("u_color", Vec4DF(1.0f, 1.0f, 1.0f, 1.0f));
         addMaterial(m_colorMaterial);
 
@@ -174,6 +175,7 @@ namespace Maze
         renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getColorTextureShader());
         renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
         renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
+        renderPass->setRenderQueueIndex(3000);
         m_colorTextureMaterial->setUniform("u_color", Vec4DF(1.0f, 1.0f, 1.0f, 1.0f));
         m_colorTextureMaterial->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteTexture());
         m_colorTextureMaterial->setUniform("u_baseMapST", Vec4DF(1.0f, 1.0f, 0.0f, 0.0f));
@@ -185,6 +187,7 @@ namespace Maze
         renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getColorTextureCustomUVShader());
         renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
         renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
+        renderPass->setRenderQueueIndex(3000);
         m_colorTextureCustomUVMaterial->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteTexture());
         m_colorTextureCustomUVMaterial->setUniform("u_color", Vec4DF(1.0f, 1.0f, 1.0f, 1.0f));
 
@@ -194,6 +197,7 @@ namespace Maze
         renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getColorHDRShader());
         renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
         renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
+        renderPass->setRenderQueueIndex(3000);
         m_colorHDRMaterial->setUniform("u_color", Vec4DF(1.0f, 1.0f, 1.0f, 1.0f));
         m_colorHDRMaterial->setUniform("u_intensity", 0.0f);
 
@@ -213,6 +217,7 @@ namespace Maze
         renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getColorPickerChannelShader());
         renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
         renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
+        renderPass->setRenderQueueIndex(3000);
 
         m_debugGridMaterial = Material::Create(m_renderSystemRaw);
         m_debugGridMaterial->setName("DebugGrid");
@@ -220,6 +225,7 @@ namespace Maze
         renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getDebugGridShader());
         renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
         renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
+        renderPass->setRenderQueueIndex(3000);
         m_debugGridMaterial->setUniform("u_color", Vec4DF(1.0f, 1.0f, 1.0f, 1.0f));
 
         m_debugAxisMaterial = Material::Create(m_renderSystemRaw);
@@ -228,8 +234,21 @@ namespace Maze
         renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getDebugAxisShader());
         renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
         renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
+        renderPass->setRenderQueueIndex(3000);
         m_debugAxisMaterial->setUniform("u_color", Vec4DF(1.0f, 1.0f, 1.0f, 1.0f));
 
+
+        m_skyboxMaterial = Material::Create(m_renderSystemRaw);
+        m_skyboxMaterial->setName("Skybox");
+        renderPass = m_skyboxMaterial->createRenderPass();
+        renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getSkyboxShader());
+        renderPass->setBlendSrcFactor(BlendFactor::One);
+        renderPass->setBlendDestFactor(BlendFactor::Zero);
+        renderPass->setDepthWriteEnabled(false);
+        renderPass->setRenderQueueIndex(1000);
+        m_skyboxMaterial->setUniform("u_color", Vec4DF(1.0f, 1.0f, 1.0f, 1.0f));
+        m_skyboxMaterial->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteCubeTexture());
+        addMaterial(m_skyboxMaterial);
     }
 
     //////////////////////////////////////////

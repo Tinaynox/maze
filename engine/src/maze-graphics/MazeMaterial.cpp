@@ -293,6 +293,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void Material::setUniform(String const& _uniformName, TextureCubePtr const& _textureCube)
+    {
+        ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
+        uniformVariant->set(_textureCube);
+    }
+
+    //////////////////////////////////////////
     void Material::setUniform(String const& _uniformName, Vec2DF const& _vector)
     {
         ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);

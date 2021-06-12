@@ -126,6 +126,9 @@ namespace Maze
         //////////////////////////////////////////
         ShaderPtr const& getDebugAxisShader() const { return m_debugAxisShader; }
 
+        //////////////////////////////////////////
+        ShaderPtr const& getSkyboxShader() const { return m_skyboxShader; }
+
 
         //////////////////////////////////////////
         inline Size stringToHash(String const& _string) { return m_hashGenerator.stringToHash(_string); }
@@ -171,6 +174,7 @@ namespace Maze
         ShaderPtr m_colorPickerChannelShader;
         ShaderPtr m_debugGridShader;
         ShaderPtr m_debugAxisShader;
+        ShaderPtr m_skyboxShader;
 
         StringPerfectHashGenerator m_hashGenerator;
     };

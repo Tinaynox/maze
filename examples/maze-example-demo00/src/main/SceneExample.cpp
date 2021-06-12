@@ -206,17 +206,37 @@ namespace Maze
         m_camera3D = cameraEntity->createComponent<Camera3D>();
         m_camera3D->getTransform()->setLocalPosition(Vec3DF(0.0f, 0.5f, -18.0f));
         m_camera3D->setFOV(Math::DegreesToRadians(30));
-        m_camera3D->setClearColor(ColorU32(20, 20, 20));
+        // m_camera3D->setClearColor(ColorU32(20, 20, 20));
         m_camera3D->setRenderTarget(m_renderBuffer);
-        m_camera3D->setRenderMask(m_camera3D->getRenderMask() & ~(S32)DefaultRenderMask::Gizmos);
+        // m_camera3D->setRenderMask(m_camera3D->getRenderMask() & ~(S32)DefaultRenderMask::Gizmos);
         m_camera3D->getEntityRaw()->ensureComponent<Name>("Camera");
         m_camera3D->setNearZ(0.01f);
-        m_camera3D->setFarZ(100.0f);
+        m_camera3D->setFarZ(500.0f);
 
         m_bloomController = LevelBloomController::Create(this);
 
 
-        createParticleSystem();
+        // Skybox
+        EntityPtr skyBoxEntity = createEntity("Test");
+        Transform3DPtr skyBoxTransform = skyBoxEntity->ensureComponent<Transform3D>();
+        MeshRendererPtr meshRenderer = skyBoxEntity->createComponent<MeshRenderer>();
+        meshRenderer->setRenderMesh(renderSystem->getRenderMeshManager()->getDefaultCubeMesh());
+        skyBoxTransform->setLocalScale(150.0f);
+        
+        
+        MaterialPtr skyboxMaterial = renderSystem->getMaterialManager()->getSkyboxMaterial()->createCopy();
+        TextureCubePtr texture = TextureCube::Create();
+        texture->loadTexture(
+            "Skybox00Right.mztexture",
+            "Skybox00Left.mztexture",
+            "Skybox00Top.mztexture",
+            "Skybox00Bottom.mztexture",
+            "Skybox00Front.mztexture",
+            "Skybox00Back.mztexture");
+        skyboxMaterial->setUniform("u_baseMap", texture);
+        meshRenderer->setMaterial(skyboxMaterial);
+
+        // createParticleSystem();
 
         return true;
     }

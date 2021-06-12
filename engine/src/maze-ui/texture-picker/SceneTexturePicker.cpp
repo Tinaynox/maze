@@ -208,7 +208,7 @@ namespace Maze
     {
         clearPreviews();
 
-        Vector<Texture2DPtr> materials = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getTextureManager()->getTexturesSorted();
+        Vector<Texture2DPtr> materials = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getTextureManager()->getTextures2DSorted();
         materials.insert(materials.begin(), Texture2DPtr());
 
         m_layout->getTransform()->removeAllChildren();

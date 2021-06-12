@@ -37,6 +37,7 @@
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
+#include "maze-graphics/MazePixelSheet2D.hpp"
 
 
 //////////////////////////////////////////
@@ -47,6 +48,8 @@ namespace Maze
     MAZE_USING_SHARED_PTR(RenderSystem);
     MAZE_USING_SHARED_PTR(AssetFile);
     MAZE_USING_SHARED_PTR(Texture2D);
+    MAZE_USING_SHARED_PTR(Texture3D);
+    MAZE_USING_SHARED_PTR(TextureCube);
 
 
     //////////////////////////////////////////
@@ -83,12 +86,31 @@ namespace Maze
         //////////////////////////////////////////
         Texture2DPtr const& getSystemFontTexture() const { return m_systemFontTexture; }
 
-
         //////////////////////////////////////////
         Texture2DPtr const& addTexture(Texture2DPtr const& _texture);
 
         //////////////////////////////////////////
-        Vector<Texture2DPtr> getTexturesSorted();
+        Vector<Texture2DPtr> getTextures2DSorted();
+
+
+        //////////////////////////////////////////
+        Vector<PixelSheet2D> loadPixelSheets2D(AssetFilePtr const& _assetFile);
+
+        //////////////////////////////////////////
+        Vector<PixelSheet2D> loadPixelSheets2D(String const& _assetFileName);
+
+
+        //////////////////////////////////////////
+        TextureCubePtr const& getTextureCube(String const& _assetFileName);
+
+        //////////////////////////////////////////
+        TextureCubePtr const& getTextureCube(AssetFilePtr const& _assetFile);
+
+        //////////////////////////////////////////
+        TextureCubePtr const& getWhiteCubeTexture() const { return m_whiteCubeTexture; }
+
+        //////////////////////////////////////////
+        TextureCubePtr const& addTexture(TextureCubePtr const& _texture);
 
 
         //////////////////////////////////////////
@@ -112,12 +134,15 @@ namespace Maze
         RenderSystemWPtr m_renderSystem;
         RenderSystem* m_renderSystemRaw;
 
-        UnorderedMap<String, Texture2DPtr> m_texturesByName;
+        UnorderedMap<String, Texture2DPtr> m_textures2DByName;
+        UnorderedMap<String, TextureCubePtr> m_texturesCubeByName;
 
         Texture2DPtr m_whiteTexture;
         Texture2DPtr m_blackTexture;
         Texture2DPtr m_errorTexture;
         Texture2DPtr m_systemFontTexture;
+
+        TextureCubePtr m_whiteCubeTexture;
     };
 
 } // namespace Maze

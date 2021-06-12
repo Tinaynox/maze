@@ -65,6 +65,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(VertexArrayObject);
     MAZE_USING_SHARED_PTR(VertexBufferObject);
     MAZE_USING_SHARED_PTR(Texture2D);
+    MAZE_USING_SHARED_PTR(TextureCube);
     MAZE_USING_SHARED_PTR(Material);
     MAZE_USING_SHARED_PTR(RenderPass);
     MAZE_USING_SHARED_PTR(RenderQueue);
@@ -133,6 +134,9 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual Texture2DPtr createTexture2D() MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual TextureCubePtr createTextureCube() MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual MaterialPtr createMaterial() MAZE_ABSTRACT;

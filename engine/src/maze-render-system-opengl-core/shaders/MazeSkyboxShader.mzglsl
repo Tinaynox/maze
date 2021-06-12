@@ -1,0 +1,75 @@
+R"(
+    //////////////////////////////////////////
+    #type vertex
+
+)"
+#include "MazeVertexCommon.mzglsl"
+R"(
+    
+    //////////////////////////////////////////
+    uniform mat4 u_projectionMatrix;
+    uniform mat4 u_viewMatrix;
+
+    //////////////////////////////////////////
+    IN vec3 a_position;
+    IN vec4 a_color;
+
+    //////////////////////////////////////////
+    OUT vec3 v_positionOS;
+    OUT vec3 v_positionWS;
+    OUT vec3 v_positionVS;
+    OUT vec4 v_color;
+	OUT vec3 v_cubeCoords;
+
+    //////////////////////////////////////////
+    void main()
+    {
+        int instanceId = gl_InstanceID;
+    
+        mat4 modelMatrix = GetModelMatrix(instanceId);
+
+        vec4 positionOS = vec4(a_position, 1.0);
+        vec4 positionWS = positionOS * modelMatrix;
+        vec4 positionVS = positionWS * u_viewMatrix;
+        vec4 positionCS = positionVS * u_projectionMatrix;
+        
+    #if (MAZE_LHCS)
+        positionCS.z = -positionCS.z;
+    #endif
+    
+        v_positionOS = positionOS.xyz;
+        v_positionWS = positionWS.xyz;
+        v_positionVS = positionVS.xyz;
+
+        v_color = a_color;
+
+		v_cubeCoords = a_position;
+
+        gl_Position = positionCS.xyzw;
+    }
+
+    //////////////////////////////////////////
+    #type fragment
+
+)"
+#include "MazeFragmentCommon.mzglsl"
+R"(
+
+    //////////////////////////////////////////
+    uniform samplerCube u_baseMap;
+    uniform vec4 u_color;
+
+    //////////////////////////////////////////
+    IN vec4 v_color;
+	IN vec3 v_cubeCoords;
+
+    //////////////////////////////////////////
+    layout(location=0) out vec4 out_color;
+
+    //////////////////////////////////////////
+    void main()
+    {
+		vec3 cubeCoords = v_cubeCoords;
+        out_color = v_color * texture(u_baseMap, cubeCoords) * u_color;
+    }
+)"

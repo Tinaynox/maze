@@ -61,6 +61,11 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(Texture2D, Texture);
+
+    public:
+
+        //////////////////////////////////////////
         virtual ~Texture2D();
 
         //////////////////////////////////////////

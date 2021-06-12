@@ -35,6 +35,8 @@
 #include "maze-render-system-opengl-core/MazeStateMachineOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeFunctionsOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeModelMatricesArchitectureOpenGL.hpp"
+#include "maze-graphics/MazeTexture2D.hpp"
+#include "maze-graphics/MazeTextureCube.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
 #include "maze-core/utils/MazeDelegate.hpp"
 
@@ -289,17 +291,37 @@ namespace Maze
         //////////////////////////////////////////
         void activeTexture(S32 _index);
 
+
         //////////////////////////////////////////
         inline S32 getActiveTexture() const { return m_stateMachine->getActiveTexture() - MAZE_GL_TEXTURE0; }
 
-        //////////////////////////////////////////
-        inline void bindTexture2D(Texture2D* _texture2D) { m_stateMachine->bindTexture2D(_texture2D); }
 
         //////////////////////////////////////////
-        inline void bindTexture2D(Texture2DPtr _texture2D) { bindTexture2D(_texture2D.get()); }
+        inline void bindTexture(Texture* _texture) { m_stateMachine->bindTexture(_texture); }
 
         //////////////////////////////////////////
-        inline Texture2D* getBindedTexture2D() const { return m_stateMachine->getCurrentTexture2D(getActiveTexture()); }
+        inline void bindTexture(TexturePtr const& _texture) { bindTexture(_texture.get()); }
+
+
+
+        //////////////////////////////////////////
+        inline void bindTexture2D(Texture2D* _texture) { m_stateMachine->bindTexture2D(_texture); }
+
+        //////////////////////////////////////////
+        inline void bindTexture2D(Texture2DPtr const& _texture2D) { bindTexture2D(_texture2D.get()); }
+
+        //////////////////////////////////////////
+        inline Texture* getBindedTexture() const
+        {
+            return m_stateMachine->getCurrentTexture(getActiveTexture());
+        }
+
+
+        //////////////////////////////////////////
+        inline void bindTextureCube(TextureCube* _textureCube) { m_stateMachine->bindTextureCube(_textureCube); }
+
+        //////////////////////////////////////////
+        inline void bindTextureCube(TextureCubePtr const& _textureCube) { bindTextureCube(_textureCube.get()); }
 
 
         //////////////////////////////////////////

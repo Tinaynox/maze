@@ -55,6 +55,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(RenderPass);
     MAZE_USING_SHARED_PTR(Shader);
     MAZE_USING_SHARED_PTR(Texture2D);
+    MAZE_USING_SHARED_PTR(TextureCube);
     MAZE_USING_SHARED_PTR(AssetFile);
         
 
@@ -143,6 +144,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void setUniform(String const& _uniformName, Texture2DPtr const& _texture2D);
+
+        //////////////////////////////////////////
+        void setUniform(String const& _uniformName, TextureCubePtr const& _textureCube);
 
         //////////////////////////////////////////
         void setUniform(String const& _uniformName, Vec2DF const& _vector);

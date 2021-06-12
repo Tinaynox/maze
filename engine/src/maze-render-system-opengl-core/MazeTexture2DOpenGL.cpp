@@ -29,6 +29,7 @@
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderSystemOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazePixelFormatOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeTextureOpenGL.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 
 
@@ -99,47 +100,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MZGLuint GetOpenGLFilter(TextureFilter _value)
-    {
-
-        switch (_value)
-        {
-            case TextureFilter::Nearest: return MAZE_GL_NEAREST;
-            case TextureFilter::Linear: return MAZE_GL_LINEAR;
-            case TextureFilter::NearestMipmapNearest: return MAZE_GL_NEAREST_MIPMAP_NEAREST;
-            case TextureFilter::LinearMipmapNearest: return MAZE_GL_LINEAR_MIPMAP_NEAREST;
-            case TextureFilter::NearestMipmapLinear: return MAZE_GL_NEAREST_MIPMAP_LINEAR;
-            case TextureFilter::LinearMipmapLinear: return MAZE_GL_LINEAR_MIPMAP_LINEAR;
-            default:
-            {
-                MAZE_ERROR("Unsupported TextureFilter: %d", (S32)_value);
-            }
-        }
-
-        return MAZE_GL_LINEAR;
-    }
-
-    //////////////////////////////////////////
-    MZGLuint GetOpenGLWrap(TextureWrap _value)
-    {
-        switch (_value)
-        {
-            case TextureWrap::Repeat: return MAZE_GL_REPEAT;
-            case TextureWrap::MirroredRepeat: return MAZE_GL_MIRRORED_REPEAT;
-            case TextureWrap::ClampToEdge: return MAZE_GL_CLAMP_TO_EDGE;
-            case TextureWrap::ClampToBorder: return MAZE_GL_CLAMP_TO_BORDER;
-
-            default:
-            {
-                MAZE_ERROR("Unsupported TextureWrap: %d", (S32)_value);
-                break;
-            }
-        }
-
-        return MAZE_GL_REPEAT;
-    }
-
-    //////////////////////////////////////////
     // Class Texture2DOpenGLScopeBind
     //
     //////////////////////////////////////////
@@ -153,7 +113,7 @@ namespace Maze
             
             m_activeTextureIndex = context->getActiveTexture();
             context->activeTexture(0);
-            m_prevTexture0 = context->getBindedTexture2D();
+            m_prevTexture0 = context->getBindedTexture();
 
             context->bindTexture2D(_newTexture);
 
@@ -173,11 +133,15 @@ namespace Maze
         if (m_context)
         {
             m_context->activeTexture(0);
-            m_context->bindTexture2D(m_prevTexture0);
+            m_context->bindTexture(m_prevTexture0);
             m_context->activeTexture(m_activeTextureIndex);
 
         }
     }
+
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Texture2DOpenGL, Texture2D);
 
 
     //////////////////////////////////////////
@@ -261,27 +225,27 @@ namespace Maze
 
     //////////////////////////////////////////
     bool Texture2DOpenGL::loadTexture(
-        Vector<PixelSheet2D> const& pixelSheets,
-        PixelFormat::Enum internalPixelFormat)
+        Vector<PixelSheet2D> const& _pixelSheets,
+        PixelFormat::Enum _internalPixelFormat)
     {
-        if (pixelSheets.empty())
+        if (_pixelSheets.empty())
             return false;
 
-        m_pixelSheetsTEMP = pixelSheets;
+        m_pixelSheetsTEMP = _pixelSheets;
 
-        PixelSheet2D const& pixelSheet0 = pixelSheets[0];
+        PixelSheet2D const& pixelSheet0 = _pixelSheets[0];
 
-        if (internalPixelFormat == PixelFormat::None)
-            internalPixelFormat = pixelSheet0.getFormat();
+        if (_internalPixelFormat == PixelFormat::None)
+            _internalPixelFormat = pixelSheet0.getFormat();
 
-        MZGLint internalFormat = GetOpenGLInternalFormat(internalPixelFormat);
+        MZGLint internalFormat = GetOpenGLInternalFormat(_internalPixelFormat);
         if (0 == internalFormat)
         {
             m_internalPixelFormat = PixelFormat::None;
             return false;
         }
 
-        m_internalPixelFormat = internalPixelFormat;
+        m_internalPixelFormat = _internalPixelFormat;
 
         
         if (m_glTexture == 0)
@@ -297,7 +261,7 @@ namespace Maze
         
 
         m_size = pixelSheet0.getSize();
-        m_hasPresetMipmaps = (pixelSheets.size() > 1);
+        m_hasPresetMipmaps = (_pixelSheets.size() > 1);
 
 
 #if (MAZE_DEBUG_GL)
@@ -313,9 +277,9 @@ namespace Maze
 #endif        
 
         Vec2DU size = m_size;
-        for (Size mipmapLevel = 0, in = pixelSheets.size(); mipmapLevel < in; ++mipmapLevel)
+        for (Size mipmapLevel = 0, in = _pixelSheets.size(); mipmapLevel < in; ++mipmapLevel)
         {
-            PixelSheet2D const& pixelSheet = pixelSheets[mipmapLevel];
+            PixelSheet2D const& pixelSheet = _pixelSheets[mipmapLevel];
             PixelFormat::Enum mipmapPixelFormat = pixelSheet.getFormat();
 
             MZGLint originFormat = GetOpenGLOriginFormat(mipmapPixelFormat);

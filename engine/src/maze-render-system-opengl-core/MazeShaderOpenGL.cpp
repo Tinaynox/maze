@@ -718,7 +718,8 @@ namespace Maze
             if (!uniform)
                 continue;
 
-            if (uniform->getType() == ShaderUniformType::UniformTexture2D)
+            if (    uniform->getType() == ShaderUniformType::UniformTexture2D
+                || uniform->getType() == ShaderUniformType::UniformTextureCube)
             {
                 uniform->castRaw<ShaderUniformOpenGL>()->setTextureIndex(textureIndex);
                 ++textureIndex;
@@ -744,6 +745,16 @@ namespace Maze
 
                 m_context->activeTexture(textureIndex);
                 m_context->bindTexture2D(uniform->getTexture2D());
+            }
+            else
+            if (uniform->getType() == ShaderUniformType::UniformTextureCube)
+            {
+                Maze::ContextOpenGLScopeBind contextOpenGLScopedLock(m_context);
+
+                MZGLint textureIndex = uniform->castRaw<ShaderUniformOpenGL>()->getTextureIndex();
+
+                m_context->activeTexture(textureIndex);
+                m_context->bindTextureCube(uniform->getTextureCube());
             }
         }
     }

@@ -68,7 +68,7 @@ namespace Maze
         PixelSheet2D(PixelSheet2D const& _other);
 
         //////////////////////////////////////////
-        PixelSheet2D(PixelSheet2D&& _other);
+        PixelSheet2D(PixelSheet2D&& _other) noexcept;
 
         //////////////////////////////////////////
         void setSize(Vec2DS const& _size);

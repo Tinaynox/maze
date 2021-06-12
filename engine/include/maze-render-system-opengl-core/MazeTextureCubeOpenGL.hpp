@@ -25,15 +25,15 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeTexture2DOpenGL_hpp_))
-#define _MazeTexture2DOpenGL_hpp_
+#if (!defined(_MazeTextureCubeOpenGL_hpp_))
+#define _MazeTextureCubeOpenGL_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-render-system-opengl-core/MazeRenderSystemOpenGLCoreHeader.hpp"
 #include "maze-render-system-opengl-core/MazeHeaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderSystemOpenGL.hpp"
-#include "maze-graphics/MazeTexture2D.hpp"
+#include "maze-graphics/MazeTextureCube.hpp"
 #include "maze-graphics/MazePixelSheet2D.hpp"
 #include "maze-graphics/MazePixelFormat.hpp"
 
@@ -42,55 +42,55 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(Texture2DOpenGL);
+    MAZE_USING_SHARED_PTR(TextureCubeOpenGL);
     MAZE_USING_SHARED_PTR(ContextOpenGL);
     
 
     ////////////////////////////////////
-    // Class Texture2DOpenGLScopeBind
+    // Class TextureCubeOpenGLScopeBind
     //
     ////////////////////////////////////
-    class Texture2DOpenGLScopeBind
+    class TextureCubeOpenGLScopeBind
     {
     public:
 
         ////////////////////////////////////    
-        Texture2DOpenGLScopeBind(Texture2DOpenGL* _newTexture);
+        TextureCubeOpenGLScopeBind(TextureCubeOpenGL* _newTexture);
 
         ////////////////////////////////////
-        Texture2DOpenGLScopeBind(Texture2DOpenGLPtr const& _newTexture);
+        TextureCubeOpenGLScopeBind(TextureCubeOpenGLPtr const& _newTexture);
 
         ////////////////////////////////////
-        ~Texture2DOpenGLScopeBind();
+        ~TextureCubeOpenGLScopeBind();
 
     private:
         ContextOpenGL* m_context;
 
-        Texture* m_prevTexture0;
-        S32 m_activeTextureIndex;
+        Texture* m_prevTexture0 = nullptr;
+        S32 m_activeTextureIndex = 0;
     };
 
 
     //////////////////////////////////////////
-    // Class Texture2DOpenGL
+    // Class TextureCubeOpenGL
     //
     //////////////////////////////////////////
-    class MAZE_RENDER_SYSTEM_OPENGL_CORE_API Texture2DOpenGL
-        : public Texture2D
+    class MAZE_RENDER_SYSTEM_OPENGL_CORE_API TextureCubeOpenGL
+        : public TextureCube
         , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(Texture2DOpenGL, Texture2D);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(TextureCubeOpenGL, TextureCube);
 
     public:
 
         //////////////////////////////////////////
-        virtual ~Texture2DOpenGL();
+        virtual ~TextureCubeOpenGL();
 
         //////////////////////////////////////////
-        static Texture2DOpenGLPtr Create(
+        static TextureCubeOpenGLPtr Create(
             RenderSystem* _renderSystem,
             ContextOpenGL* _contextOpenGL);
 
@@ -111,11 +111,11 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        using Texture2D::loadTexture;
+        using TextureCube::loadTexture;
 
         //////////////////////////////////////////
         virtual bool loadTexture(
-            Vector<PixelSheet2D> const& _pixelSheets,
+            Vector<PixelSheet2D> const _pixelSheets[6],
             PixelFormat::Enum _internalPixelFormat = PixelFormat::None) MAZE_OVERRIDE;
 
         ////////////////////////////////////
@@ -130,23 +130,14 @@ namespace Maze
         ////////////////////////////////////
         virtual bool setWrapT(TextureWrap _value) MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        virtual void saveToFileAsTGA(String const& _fileName, Vec2DU _size = Vec2DU::c_zero) MAZE_OVERRIDE;
+        ////////////////////////////////////
+        virtual bool setWrapR(TextureWrap _value) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         RenderSystemOpenGL* getRenderSystemOpenGLRaw()
         {
             return m_renderSystem->castRaw<RenderSystemOpenGL>();
         }
-
-        //////////////////////////////////////////
-        virtual void copyImageFrom(
-            U8 const* _pixels,
-            PixelFormat::Enum _pixelFormat,
-            U32 _width,
-            U32 _height,
-            U32 _x,
-            U32 _y) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual void generateMipmaps() MAZE_OVERRIDE;
@@ -157,10 +148,10 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        Texture2DOpenGL();
+        TextureCubeOpenGL();
 
         //////////////////////////////////////////
-        using Texture2D::init;
+        using TextureCube::init;
 
         //////////////////////////////////////////
         virtual bool init(
@@ -193,12 +184,12 @@ namespace Maze
 
         bool m_hasPresetMipmaps;
 
-        Vector<PixelSheet2D> m_pixelSheetsTEMP;
+        Vector<PixelSheet2D> m_pixelSheetsTEMP[6];
     };
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeTexture2DOpenGL_hpp_
+#endif // _MazeTextureCubeOpenGL_hpp_
 //////////////////////////////////////////

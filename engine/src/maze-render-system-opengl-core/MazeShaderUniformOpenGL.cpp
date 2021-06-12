@@ -116,6 +116,7 @@ namespace Maze
             }
 
             case ShaderUniformType::UniformTexture2D:
+            case ShaderUniformType::UniformTextureCube:
             {
                 m_textureIndex = -1;
                 m_shaderRaw->castRaw<ShaderOpenGL>()->assignUniformTextureIndexes();
@@ -370,7 +371,8 @@ namespace Maze
 
         m_textureIndex = _textureIndex;
 
-        if (getType() == ShaderUniformType::UniformTexture2D)
+        if (    getType() == ShaderUniformType::UniformTexture2D
+            ||  getType() == ShaderUniformType::UniformTextureCube)
         {
             ShaderOpenGLScopeBind scopeBind(m_shaderRaw);
 

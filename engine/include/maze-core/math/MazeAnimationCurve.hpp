@@ -135,10 +135,10 @@ namespace Maze
             //////////////////////////////////////////
             virtual Json::Value toJSONValue() const MAZE_OVERRIDE;
 
-            F32 time;
-            F32 value;
-            F32 inTangent;
-            F32 outTangent;
+            F32 time = 0.0f;
+            F32 value = 0.0f;
+            F32 inTangent = 0.0f;
+            F32 outTangent = 0.0f;
         };
 
     public:

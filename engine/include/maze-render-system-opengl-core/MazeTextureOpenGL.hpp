@@ -25,61 +25,31 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeTexture3D_hpp_))
-#define _MazeTexture3D_hpp_
+#if (!defined(_MazeTextureOpenGL_hpp_))
+#define _MazeTextureOpenGL_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-graphics/MazeGraphicsHeader.hpp"
-#include "maze-graphics/MazeRenderWindow.hpp"
+#include "maze-render-system-opengl-core/MazeRenderSystemOpenGLCoreHeader.hpp"
+#include "maze-render-system-opengl-core/MazeHeaderOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeRenderSystemOpenGL.hpp"
 #include "maze-graphics/MazeTexture.hpp"
-#include "maze-core/utils/MazeMultiDelegate.hpp"
-#include "maze-core/utils/MazeEnumClass.hpp"
-#include "maze-core/system/MazeWindowVideoMode.hpp"
-#include "maze-core/system/MazeWindow.hpp"
-#include "maze-core/utils/MazeUpdater.hpp"
-#include "maze-core/system/MazeInputEvent.hpp"
+#include "maze-graphics/MazePixelSheet2D.hpp"
+#include "maze-graphics/MazePixelFormat.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(Texture3D);
-    
+    MAZE_RENDER_SYSTEM_OPENGL_CORE_API MZGLuint GetOpenGLFilter(TextureFilter _value);
 
     //////////////////////////////////////////
-    // Class Texture3D
-    //
-    //////////////////////////////////////////
-    class MAZE_GRAPHICS_API Texture3D
-        : public Texture
-    {
-    public:
-
-        //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(Texture3D, Texture);
-
-    public:
-
-        //////////////////////////////////////////
-        virtual ~Texture3D();
-
-    protected:
-
-        //////////////////////////////////////////
-        Texture3D();
-
-        //////////////////////////////////////////
-        virtual bool init(RenderSystem* _renderSystem);
-    
-    protected:
-        
-    };
+    MAZE_RENDER_SYSTEM_OPENGL_CORE_API MZGLuint GetOpenGLWrap(TextureWrap _value);
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeTexture3D_hpp_
+#endif // _MazeTextureOpenGL_hpp_
 //////////////////////////////////////////

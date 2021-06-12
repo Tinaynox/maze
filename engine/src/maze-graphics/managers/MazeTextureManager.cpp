@@ -34,7 +34,10 @@
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
+#include "maze-graphics/MazeTextureCube.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
+#include "maze-graphics/loaders/texture/MazeLoaderPNG.hpp"
+#include "maze-graphics/loaders/texture/MazeLoaderBMP.hpp"
 
 
 //////////////////////////////////////////
@@ -86,8 +89,8 @@ namespace Maze
     {
         static Texture2DPtr nullPointer;
 
-        UnorderedMap<String, Texture2DPtr>::const_iterator it = m_texturesByName.find(_textureName);
-        if (it != m_texturesByName.end())
+        UnorderedMap<String, Texture2DPtr>::const_iterator it = m_textures2DByName.find(_textureName);
+        if (it != m_textures2DByName.end())
             return it->second;
 
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_textureName);
@@ -100,8 +103,8 @@ namespace Maze
     //////////////////////////////////////////
     Texture2DPtr const& TextureManager::getTexture2D(AssetFilePtr const& _assetFile)
     {
-        UnorderedMap<String, Texture2DPtr>::const_iterator it = m_texturesByName.find(_assetFile->getFileName());
-        if (it != m_texturesByName.end())
+        UnorderedMap<String, Texture2DPtr>::const_iterator it = m_textures2DByName.find(_assetFile->getFileName());
+        if (it != m_textures2DByName.end())
             return it->second;
 
         Texture2DPtr texture2D = Texture2D::Create(_assetFile, m_renderSystemRaw);
@@ -156,12 +159,36 @@ namespace Maze
         m_systemFontTexture->setMagFilter(TextureFilter::Nearest);
         m_systemFontTexture->setMinFilter(TextureFilter::LinearMipmapLinear);
         addTexture(m_systemFontTexture);
+
+
+        m_whiteCubeTexture = TextureCube::Create(m_renderSystemRaw);
+        m_whiteCubeTexture->setName("white_cube");
+        {
+            PixelSheet2D faces[6] = 
+                { 
+                    PixelSheet2D(Vec2DS(1, 1), PixelFormat::RGBA_U8),
+                    PixelSheet2D(Vec2DS(1, 1), PixelFormat::RGBA_U8),
+                    PixelSheet2D(Vec2DS(1, 1), PixelFormat::RGBA_U8),
+                    PixelSheet2D(Vec2DS(1, 1), PixelFormat::RGBA_U8),
+                    PixelSheet2D(Vec2DS(1, 1), PixelFormat::RGBA_U8),
+                    PixelSheet2D(Vec2DS(1, 1), PixelFormat::RGBA_U8),
+                };
+            faces[0].fill(ColorU32::c_red);
+            faces[1].fill(ColorU32::c_green);
+            faces[2].fill(ColorU32::c_blue);
+            faces[3].fill(ColorU32::c_cyan);
+            faces[4].fill(ColorU32::c_yellow);
+            faces[5].fill(ColorU32::c_magenta);
+
+            m_whiteCubeTexture->loadTexture(faces);
+        }
+        addTexture(m_whiteCubeTexture);
     }
 
     //////////////////////////////////////////
     Texture2DPtr const& TextureManager::addTexture(Texture2DPtr const& _texture)
     {
-        auto it2 = m_texturesByName.emplace(
+        auto it2 = m_textures2DByName.emplace(
             std::piecewise_construct,
             std::forward_as_tuple(_texture->getName()),
             std::forward_as_tuple(_texture));
@@ -170,11 +197,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vector<Texture2DPtr> TextureManager::getTexturesSorted()
+    Vector<Texture2DPtr> TextureManager::getTextures2DSorted()
     {
         Vector<Texture2DPtr> result;
 
-        for (auto const& value : m_texturesByName)
+        for (auto const& value : m_textures2DByName)
             result.emplace_back(value.second);
 
         std::sort(
@@ -186,6 +213,113 @@ namespace Maze
             });
 
         return result;
+    }
+
+    //////////////////////////////////////////
+    Vector<PixelSheet2D> TextureManager::loadPixelSheets2D(AssetFilePtr const& _assetFile)
+    {
+        Vector<PixelSheet2D> pixelSheets;
+
+        if (!_assetFile)
+            return pixelSheets;
+
+        UnorderedMap<String, String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
+
+        if (metaData.empty())
+        {
+            if (Maze::IsBMPFile(_assetFile))
+            {
+                MAZE_ERROR_IF(!Maze::LoadBMP(_assetFile, pixelSheets), "PixelSheet is not loaded - '%s'", _assetFile->getFileName().c_str());
+            }
+            else
+            if (Maze::IsPNGFile(_assetFile))
+            {
+                MAZE_ERROR_IF(!Maze::LoadPNG(_assetFile, pixelSheets), "PixelSheet is not loaded - '%s'", _assetFile->getFileName().c_str());
+            }
+            else
+            {
+                MAZE_ERROR("Unsupported texture format!");
+            }
+        }
+        else
+        {
+            String fileExtension = StringHelper::ToLower(metaData["ext"]);
+            if (fileExtension == "bmp")
+            {
+                MAZE_ERROR_IF(!Maze::LoadBMP(_assetFile, pixelSheets), "PixelSheet is not loaded - '%s'", _assetFile->getFileName().c_str());
+            }
+            else
+            if (fileExtension == "png")
+            {
+                MAZE_ERROR_IF(!Maze::LoadPNG(_assetFile, pixelSheets), "PixelSheet is not loaded - '%s'", _assetFile->getFileName().c_str());
+            }
+            else
+            {
+                MAZE_ERROR("Unsupported texture format!");
+            }
+        }
+
+        return pixelSheets;
+    }
+
+    //////////////////////////////////////////
+    Vector<PixelSheet2D> TextureManager::loadPixelSheets2D(String const& _assetFileName)
+    {
+        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_assetFileName);
+        return loadPixelSheets2D(assetFile);
+    }
+
+
+    //////////////////////////////////////////
+    TextureCubePtr const& TextureManager::getTextureCube(String const& _textureName)
+    {
+        static TextureCubePtr nullPointer;
+
+        UnorderedMap<String, TextureCubePtr>::const_iterator it = m_texturesCubeByName.find(_textureName);
+        if (it != m_texturesCubeByName.end())
+            return it->second;
+
+        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_textureName);
+        if (!assetFile)
+            return nullPointer;
+
+        return getTextureCube(assetFile);
+    }
+
+    //////////////////////////////////////////
+    TextureCubePtr const& TextureManager::getTextureCube(AssetFilePtr const& _assetFile)
+    {
+        UnorderedMap<String, TextureCubePtr>::const_iterator it = m_texturesCubeByName.find(_assetFile->getFileName());
+        if (it != m_texturesCubeByName.end())
+            return it->second;
+
+        TextureCubePtr textureCube = TextureCube::Create(_assetFile, m_renderSystemRaw);
+        textureCube->setName(_assetFile->getFileName());
+
+        UnorderedMap<String, String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
+        if (metaData["magFilter"] != String())
+            textureCube->setMagFilter(TextureFilter::FromString(metaData["magFilter"]));
+        if (metaData["minFilter"] != String())
+            textureCube->setMinFilter(TextureFilter::FromString(metaData["minFilter"]));
+        if (metaData["wrapS"] != String())
+            textureCube->setWrapS(TextureWrap::FromString(metaData["wrapS"]));
+        if (metaData["wrapT"] != String())
+            textureCube->setWrapT(TextureWrap::FromString(metaData["wrapT"]));
+        if (metaData["wrapR"] != String())
+            textureCube->setWrapR(TextureWrap::FromString(metaData["wrapR"]));
+
+        return addTexture(textureCube);
+    }
+
+    //////////////////////////////////////////
+    TextureCubePtr const& TextureManager::addTexture(TextureCubePtr const& _texture)
+    {
+        auto it2 = m_texturesCubeByName.emplace(
+            std::piecewise_construct,
+            std::forward_as_tuple(_texture->getName()),
+            std::forward_as_tuple(_texture));
+
+        return it2.first->second;
     }
 
     //////////////////////////////////////////
