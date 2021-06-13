@@ -45,6 +45,9 @@
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeGizmosManager.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
+#include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
@@ -329,6 +332,10 @@ namespace Maze
         ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
 
         shaderSystem->findAssetShadersAndAddToCache();
+
+        renderSystem->getTextureManager()->loadAllAssetTextures();
+        renderSystem->getMaterialManager()->loadAllAssetMaterials();
+        renderSystem->getRenderMeshManager()->loadAllAssetRenderMeshes();
 
         m_uiManager->createUIElements();
         m_graphicsManager->getGizmosManager()->createGizmosElements();

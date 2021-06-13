@@ -327,6 +327,8 @@ namespace Maze
             size.x = Math::Max(size.x, 1u);
             size.y = Math::Max(size.y, 1u);
         }
+
+        MAZE_GL_CALL(mzglPixelStorei(MAZE_GL_UNPACK_ALIGNMENT, 4));
     
 #if (MAZE_DEBUG_GL)
         {

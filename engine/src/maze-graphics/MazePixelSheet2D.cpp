@@ -56,6 +56,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    PixelSheet2D::PixelSheet2D(
+        Vec2DS const& _size,
+        ColorU32 const& _color)
+        : PixelSheet2D(_size, PixelFormat::RGBA_U8)
+    {
+        fill(_color);
+    }
+
+    //////////////////////////////////////////
     PixelSheet2D::PixelSheet2D(PixelSheet2D const& _other)
         : m_size(_other.m_size)
         , m_data(_other.m_data)

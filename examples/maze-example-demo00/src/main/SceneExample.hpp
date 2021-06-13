@@ -113,6 +113,11 @@ namespace Maze
         RenderBufferPtr m_renderBuffer;
 
         LevelBloomControllerPtr m_bloomController;
+
+        F32 m_yawAngle = 0.0f;
+        F32 m_pitchAngle = 0.0f;
+        Vec2DF m_cursorPositionLastFrame = Vec2DF::c_zero;
+        bool m_cursorDrag = false;
     };
 
 

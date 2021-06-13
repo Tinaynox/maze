@@ -71,7 +71,7 @@ namespace Maze
         Texture3D();
 
         //////////////////////////////////////////
-        virtual bool init(RenderSystem* _renderSystem);
+        virtual bool init(RenderSystem* _renderSystem) MAZE_OVERRIDE;
     
     protected:
         

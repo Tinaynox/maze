@@ -283,7 +283,7 @@ namespace Maze
         inline void bindTexture2D(MZGLuint _textureId) { bindTexture(MAZE_GL_TEXTURE_2D, _textureId); }
 
         //////////////////////////////////////////
-        inline void bindTextureCube(MZGLuint _textureId) { bindTexture(MAZE_GL_TEXTURE_2D, _textureId); }
+        inline void bindTextureCube(MZGLuint _textureId) { bindTexture(MAZE_GL_TEXTURE_CUBE_MAP, _textureId); }
     
     protected:
         ContextOpenGL* m_context;

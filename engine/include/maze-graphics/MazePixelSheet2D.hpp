@@ -65,6 +65,11 @@ namespace Maze
             PixelFormat::Enum _pixelFormat = PixelFormat::RGBA_U8);
 
         //////////////////////////////////////////
+        PixelSheet2D(
+            Vec2DS const& _size,
+            ColorU32 const& _color);
+
+        //////////////////////////////////////////
         PixelSheet2D(PixelSheet2D const& _other);
 
         //////////////////////////////////////////

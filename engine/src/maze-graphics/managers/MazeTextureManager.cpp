@@ -128,25 +128,21 @@ namespace Maze
     {
         m_whiteTexture = Texture2D::Create(m_renderSystemRaw);
         m_whiteTexture->setName("white");
-        PixelSheet2D pixelSheet(Vec2DS(1,1), PixelFormat::RGBA_U8);
-        pixelSheet.fill(ColorU32::c_white);
-        m_whiteTexture->loadTexture(pixelSheet);
+        m_whiteTexture->loadTexture(PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white));
         m_whiteTexture->setMagFilter(TextureFilter::Nearest);
         m_whiteTexture->setMinFilter(TextureFilter::Nearest);
         addTexture(m_whiteTexture);
 
         m_blackTexture = Texture2D::Create(m_renderSystemRaw);
         m_blackTexture->setName("black");
-        pixelSheet.fill(ColorU32::c_black);
-        m_blackTexture->loadTexture(pixelSheet);
+        m_blackTexture->loadTexture(PixelSheet2D(Vec2DS(1, 1), ColorU32::c_black));
         m_blackTexture->setMagFilter(TextureFilter::Nearest);
         m_blackTexture->setMinFilter(TextureFilter::Nearest);
         addTexture(m_blackTexture);
 
         m_errorTexture = Texture2D::Create(m_renderSystemRaw);
         m_errorTexture->setName("error");
-        pixelSheet.fill(ColorU32::c_magenta);
-        m_errorTexture->loadTexture(pixelSheet);
+        m_errorTexture->loadTexture(PixelSheet2D(Vec2DS(1, 1), ColorU32::c_magenta));
         m_errorTexture->setMagFilter(TextureFilter::Nearest);
         m_errorTexture->setMinFilter(TextureFilter::Nearest);
         addTexture(m_errorTexture);
@@ -166,23 +162,34 @@ namespace Maze
         {
             PixelSheet2D faces[6] = 
                 { 
-                    PixelSheet2D(Vec2DS(1, 1), PixelFormat::RGBA_U8),
-                    PixelSheet2D(Vec2DS(1, 1), PixelFormat::RGBA_U8),
-                    PixelSheet2D(Vec2DS(1, 1), PixelFormat::RGBA_U8),
-                    PixelSheet2D(Vec2DS(1, 1), PixelFormat::RGBA_U8),
-                    PixelSheet2D(Vec2DS(1, 1), PixelFormat::RGBA_U8),
-                    PixelSheet2D(Vec2DS(1, 1), PixelFormat::RGBA_U8),
+                    PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
+                    PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
+                    PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
+                    PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
+                    PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
+                    PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
                 };
-            faces[0].fill(ColorU32::c_red);
-            faces[1].fill(ColorU32::c_green);
-            faces[2].fill(ColorU32::c_blue);
-            faces[3].fill(ColorU32::c_cyan);
-            faces[4].fill(ColorU32::c_yellow);
-            faces[5].fill(ColorU32::c_magenta);
 
             m_whiteCubeTexture->loadTexture(faces);
         }
         addTexture(m_whiteCubeTexture);
+
+        m_testCubeTexture = TextureCube::Create(m_renderSystemRaw);
+        m_testCubeTexture->setName("test_cube");
+        {
+            PixelSheet2D faces[6] =
+            {
+                PixelSheet2D(Vec2DS(1, 1), ColorU32::c_red),
+                PixelSheet2D(Vec2DS(1, 1), ColorU32::c_green),
+                PixelSheet2D(Vec2DS(1, 1), ColorU32::c_blue),
+                PixelSheet2D(Vec2DS(1, 1), ColorU32::c_cyan),
+                PixelSheet2D(Vec2DS(1, 1), ColorU32::c_magenta),
+                PixelSheet2D(Vec2DS(1, 1), ColorU32::c_yellow),
+            };
+            
+            m_testCubeTexture->loadTexture(faces);
+        }
+        addTexture(m_testCubeTexture);
     }
 
     //////////////////////////////////////////
@@ -266,6 +273,9 @@ namespace Maze
     Vector<PixelSheet2D> TextureManager::loadPixelSheets2D(String const& _assetFileName)
     {
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_assetFileName);
+
+        MAZE_WARNING_IF(!assetFile, "Undefined asset: %s", _assetFileName.c_str());
+
         return loadPixelSheets2D(assetFile);
     }
 
@@ -325,10 +335,20 @@ namespace Maze
     //////////////////////////////////////////
     void TextureManager::loadAllAssetTextures()
     {
-        Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions({ "mztexture" });
-        for (AssetFilePtr const& assetFile : assetFiles)
         {
-            getTexture2D(assetFile);
+            Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions({ "mztexture" });
+            for (AssetFilePtr const& assetFile : assetFiles)
+            {
+                getTexture2D(assetFile);
+            }
+        }
+
+        {
+            Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions({ "mzcubemap" });
+            for (AssetFilePtr const& assetFile : assetFiles)
+            {
+                getTextureCube(assetFile);
+            }
         }
     }
 

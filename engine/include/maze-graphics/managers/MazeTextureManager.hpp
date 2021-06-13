@@ -110,6 +110,9 @@ namespace Maze
         TextureCubePtr const& getWhiteCubeTexture() const { return m_whiteCubeTexture; }
 
         //////////////////////////////////////////
+        TextureCubePtr const& getTestCubeTexture() const { return m_testCubeTexture; }
+
+        //////////////////////////////////////////
         TextureCubePtr const& addTexture(TextureCubePtr const& _texture);
 
 
@@ -143,6 +146,7 @@ namespace Maze
         Texture2DPtr m_systemFontTexture;
 
         TextureCubePtr m_whiteCubeTexture;
+        TextureCubePtr m_testCubeTexture;
     };
 
 } // namespace Maze

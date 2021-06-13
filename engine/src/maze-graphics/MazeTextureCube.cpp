@@ -109,11 +109,23 @@ namespace Maze
     {
         m_assetFile = _assetFile;
 
-        Maze::Vector<Maze::PixelSheet2D> pixelSheets[6];
+        String assetFileString;
+        _assetFile->readToString(assetFileString);
 
-        MAZE_NOT_IMPLEMENTED;
+        StringHelper::RemoveSymbols(assetFileString, "\r");
 
-        loadTexture(pixelSheets);
+        Vector<String> lines;
+        StringHelper::SplitWords(assetFileString, lines, '\n');
+
+        MAZE_ERROR_RETURN_IF(lines.size() < 6, "Invalid cubemap file syntax:\n%s", assetFileString.c_str());
+
+        loadTexture(
+            lines[0],
+            lines[1],
+            lines[2],
+            lines[3],
+            lines[4],
+            lines[5]);
     }
 
     //////////////////////////////////////////

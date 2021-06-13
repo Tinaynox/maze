@@ -410,24 +410,24 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void StateMachineOpenGL::bindTexture(MZGLenum _textureTarget, MZGLuint _texture2DId)
+    void StateMachineOpenGL::bindTexture(MZGLenum _textureTarget, MZGLuint _textureId)
     {
-        MAZE_DEBUG_ERROR_IF(_texture2DId == 0, "Texture is not created yet!");
+        MAZE_DEBUG_ERROR_IF(_textureId == 0, "Texture is not created yet!");
 
         S32 activeTextureIndex = m_activeTexture - MAZE_GL_TEXTURE0;
 
-        if (m_bindTextureIds[activeTextureIndex] == _texture2DId)
+        if (m_bindTextureIds[activeTextureIndex] == _textureId)
             return;
 
         m_bindTextureTargets[activeTextureIndex] = _textureTarget;
-        m_bindTextureIds[activeTextureIndex] = _texture2DId;
+        m_bindTextureIds[activeTextureIndex] = _textureId;
 
 #if (MAZE_DEBUG_GL)
         m_context->_validateIsCurrentGLContext();
 #endif
 
         MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
-        MAZE_GL_CALL(mzglBindTexture(_textureTarget, _texture2DId));
+        MAZE_GL_CALL(mzglBindTexture(_textureTarget, _textureId));
     }
 
     //////////////////////////////////////////

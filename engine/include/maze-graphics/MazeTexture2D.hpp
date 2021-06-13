@@ -179,7 +179,7 @@ namespace Maze
         Texture2D();
 
         //////////////////////////////////////////
-        virtual bool init(RenderSystem* _renderSystem);
+        virtual bool init(RenderSystem* _renderSystem) MAZE_OVERRIDE;
     
     protected:
         Vec2DS m_size;

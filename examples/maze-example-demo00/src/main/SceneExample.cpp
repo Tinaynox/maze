@@ -42,6 +42,7 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeLight3D.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
@@ -86,7 +87,7 @@ namespace Maze
     //////////////////////////////////////////
     String GetExampleName()
     {
-        return "Particles";
+        return "Sky, Terrain and Water";
     }
 
     //////////////////////////////////////////
@@ -223,20 +224,13 @@ namespace Maze
         meshRenderer->setRenderMesh(renderSystem->getRenderMeshManager()->getDefaultCubeMesh());
         skyBoxTransform->setLocalScale(150.0f);
         
-        
         MaterialPtr skyboxMaterial = renderSystem->getMaterialManager()->getSkyboxMaterial()->createCopy();
-        TextureCubePtr texture = TextureCube::Create();
-        texture->loadTexture(
-            "Skybox00Right.mztexture",
-            "Skybox00Left.mztexture",
-            "Skybox00Top.mztexture",
-            "Skybox00Bottom.mztexture",
-            "Skybox00Front.mztexture",
-            "Skybox00Back.mztexture");
-        skyboxMaterial->setUniform("u_baseMap", texture);
+        skyboxMaterial->setUniform("u_baseMap", renderSystem->getTextureManager()->getTextureCube("Skybox00.mzcubemap"));
+        // skyboxMaterial->setUniform("u_baseMap", renderSystem->getTextureManager()->getTestCubeTexture());
+        
         meshRenderer->setMaterial(skyboxMaterial);
 
-        // createParticleSystem();
+        createParticleSystem();
 
         return true;
     }
@@ -272,6 +266,10 @@ namespace Maze
             "u_bloomMap",
             ShaderUniformType::UniformTexture2D)->set(
                 m_bloomController->getBloomRenderBuffer()->getColorTexture());
+
+        m_yawAngle += _dt * Math::c_halfPi * 0.25f;
+
+        m_camera3D->getTransform()->setLocalRotation(Quaternion(m_pitchAngle, m_yawAngle, 0.0f));
     }
 
     //////////////////////////////////////////
