@@ -103,6 +103,12 @@ namespace Maze
         //////////////////////////////////////////
         void createParticleSystem();
 
+        //////////////////////////////////////////
+        void notifyMouse(InputEventMouseData const& _data);
+
+        //////////////////////////////////////////
+        void notifyTouch(InputEventTouchData const& _data);
+
     protected:
         CanvasPtr m_canvas;
         Camera3DPtr m_camera3D;

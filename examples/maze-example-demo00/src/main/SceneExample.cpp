@@ -115,6 +115,7 @@ namespace Maze
         if (inputManager)
         {
             inputManager->eventMouse.unsubscribe(this);
+            inputManager->eventTouch.unsubscribe(this);
         }
 
         Example::GetInstancePtr()->eventMainRenderWindowViewportChanged.unsubscribe(this);
@@ -134,6 +135,10 @@ namespace Maze
     {
         if (!ECSRenderScene::init(Example::GetInstancePtr()->getMainRenderWindow()))
             return false;
+
+        InputManager* inputManager = InputManager::GetInstancePtr();
+        inputManager->eventMouse.subscribe(this, &SceneExample::notifyMouse);
+        inputManager->eventTouch.subscribe(this, &SceneExample::notifyTouch);
 
         Vec2DU renderBufferSize = Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize();
         m_renderBuffer = RenderBuffer::Create(
@@ -177,8 +182,6 @@ namespace Maze
         S32 p0 = EntityManager::GetInstancePtr()->getComponentPriority<Transform3D>();
         S32 p1 = EntityManager::GetInstancePtr()->getComponentPriority<Camera3D>();
 
-
-        InputManager* inputManager = InputManager::GetInstancePtr();
 
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
         ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
@@ -227,7 +230,6 @@ namespace Maze
         MaterialPtr skyboxMaterial = renderSystem->getMaterialManager()->getSkyboxMaterial()->createCopy();
         skyboxMaterial->setUniform("u_baseMap", renderSystem->getTextureManager()->getTextureCube("Skybox00.mzcubemap"));
         // skyboxMaterial->setUniform("u_baseMap", renderSystem->getTextureManager()->getTestCubeTexture());
-        
         meshRenderer->setMaterial(skyboxMaterial);
 
         createParticleSystem();
@@ -267,9 +269,11 @@ namespace Maze
             ShaderUniformType::UniformTexture2D)->set(
                 m_bloomController->getBloomRenderBuffer()->getColorTexture());
 
-        m_yawAngle += _dt * Math::c_halfPi * 0.25f;
-
-        m_camera3D->getTransform()->setLocalRotation(Quaternion(m_pitchAngle, m_yawAngle, 0.0f));
+        Quaternion q = Quaternion::Slerp(
+            24.0f * _dt,
+            m_camera3D->getTransform()->getLocalRotation(),
+            Quaternion(m_pitchAngle, m_yawAngle, 0.0f));
+        m_camera3D->getTransform()->setLocalRotation(q);
     }
 
     //////////////////////////////////////////
@@ -314,6 +318,116 @@ namespace Maze
         ps->setMaterial(material);
         ps->play();
         psEntity->ensureComponent<Name>("ParticleSystem");
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::notifyMouse(InputEventMouseData const& _data)
+    {
+        switch (_data.type)
+        {
+            case InputEventMouseType::Move:
+            {
+                Vec2DF cursorPosition = Vec2DF((F32)_data.x, (F32)_data.y);
+
+                if (m_cursorDrag)
+                {
+                    Vec2DF deltaPosition = cursorPosition - m_cursorPositionLastFrame;
+
+                    m_yawAngle += deltaPosition.x * 0.0075f * 0.25f;
+                    m_pitchAngle -= deltaPosition.y * 0.0075f * 0.25f;
+                }
+
+                m_cursorPositionLastFrame = cursorPosition;
+                break;
+            }
+            case InputEventMouseType::ButtonDown:
+            {
+                if (_data.buttonId == 1)
+                {
+                    Vec2DF cursorPosition = Vec2DF((F32)_data.x, (F32)_data.y);
+                    Rect2DF viewportRect(
+                        m_camera3D->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
+                        m_camera3D->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
+                        m_camera3D->getViewport().size.x * m_renderTarget->getRenderTargetSize().x,
+                        m_camera3D->getViewport().size.y * m_renderTarget->getRenderTargetSize().y);
+
+                    m_cursorPositionLastFrame = cursorPosition;
+
+                    if (viewportRect.contains(cursorPosition))
+                    {
+                        m_cursorDrag = true;
+                    }
+                }
+                break;
+            }
+            case InputEventMouseType::ButtonUp:
+            {
+                if (_data.buttonId == 1)
+                {
+                    m_cursorDrag = false;
+                }
+                break;
+            }
+            default:
+            {
+                break;
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::notifyTouch(InputEventTouchData const& _data)
+    {
+        switch (_data.type)
+        {
+            case InputEventTouchType::Move:
+            {
+                Vec2DF cursorPosition = Vec2DF((F32)_data.x, (F32)_data.y);
+
+                if (m_cursorDrag)
+                {
+                    Vec2DF deltaPosition = cursorPosition - m_cursorPositionLastFrame;
+
+                    m_yawAngle += deltaPosition.x * 0.0075f * 0.25f;
+                    m_pitchAngle -= deltaPosition.y * 0.0075f * 0.25f;
+                }
+
+                m_cursorPositionLastFrame = cursorPosition;
+                break;
+            }
+            case InputEventTouchType::Press:
+            {
+                if (_data.index == 0)
+                {
+                    Vec2DF cursorPosition = Vec2DF((F32)_data.x, (F32)_data.y);
+                    Rect2DF viewportRect(
+                        m_camera3D->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
+                        m_camera3D->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
+                        m_camera3D->getViewport().size.x * m_renderTarget->getRenderTargetSize().x,
+                        m_camera3D->getViewport().size.y * m_renderTarget->getRenderTargetSize().y);
+
+                    m_cursorPositionLastFrame = cursorPosition;
+
+                    if (viewportRect.contains(cursorPosition))
+                    {
+                        m_cursorDrag = true;
+                    }
+                }
+                break;
+            }
+            case InputEventTouchType::Release:
+            {
+                if (_data.index == 0)
+                {
+                    m_cursorDrag = false;
+                }
+                break;
+            }
+            default:
+            {
+                break;
+            }
+        }
     }
 
 } // namespace Maze
