@@ -134,6 +134,9 @@ namespace Maze
         virtual void saveToFileAsTGA(String const& _fileName, Vec2DU _size = Vec2DU::c_zero) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
+        virtual PixelSheet2D readAsPixelSheet() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
         RenderSystemOpenGL* getRenderSystemOpenGLRaw()
         {
             return m_renderSystem->castRaw<RenderSystemOpenGL>();

@@ -333,8 +333,8 @@ namespace Maze
 
         shaderSystem->findAssetShadersAndAddToCache();
 
-        renderSystem->getTextureManager()->loadAllAssetTextures();
-        renderSystem->getMaterialManager()->loadAllAssetMaterials();
+        // renderSystem->getTextureManager()->loadAllAssetTextures();
+        // renderSystem->getMaterialManager()->loadAllAssetMaterials();
         // renderSystem->getRenderMeshManager()->loadAllAssetRenderMeshes();
 
         m_uiManager->createUIElements();

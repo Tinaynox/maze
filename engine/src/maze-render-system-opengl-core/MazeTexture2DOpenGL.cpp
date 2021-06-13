@@ -531,6 +531,34 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    PixelSheet2D Texture2DOpenGL::readAsPixelSheet()
+    {
+        PixelSheet2D result;
+
+        ContextOpenGLScopeBind contextScopedBind(m_context);
+        MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+        Texture2DOpenGLScopeBind textureScopedBind(this);
+
+        PixelFormat::Enum pixelFormat = m_internalPixelFormat;
+        result.setFormat(pixelFormat);
+        result.setSize(m_size);
+
+        U32 bytesPerPixel = PixelFormat::GetBytesPerPixel(pixelFormat);
+        U32 channelsPerPixel = PixelFormat::GetChannelsPerPixel(pixelFormat);
+        U32 bytesPerChannel = bytesPerPixel / channelsPerPixel;
+        MZGLint originFormat = GetOpenGLOriginFormat(pixelFormat);
+
+        MZGLint dataType = GetOpenGLDataType(pixelFormat);
+
+        if (!mzglGetTexImage)
+            return result;
+
+        MAZE_GL_CALL(mzglGetTexImage(MAZE_GL_TEXTURE_2D, 0, originFormat, dataType, result.getDataPointer()));
+
+        return result;
+    }
+
+    //////////////////////////////////////////
     void Texture2DOpenGL::copyImageFrom(
         U8 const* _pixels,
         PixelFormat::Enum _pixelFormat,

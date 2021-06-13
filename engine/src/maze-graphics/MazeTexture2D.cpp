@@ -168,6 +168,29 @@ namespace Maze
         }
     }
 
+    //////////////////////////////////////////
+    String Texture2D::toString() const
+    {
+        MAZE_NOT_IMPLEMENTED;
+        return String();
+    }
+
+    //////////////////////////////////////////
+    void Texture2D::setString(CString _data, Size _count)
+    {
+        MAZE_NOT_IMPLEMENTED;
+    }
+
+    //////////////////////////////////////////
+    Texture2DPtr const& Texture2D::FromString(CString _data, Size _count)
+    {
+        static Texture2DPtr nullPointer;
+
+        MAZE_NOT_IMPLEMENTED;
+
+        return nullPointer;
+    }
+
 
 } // namespace Maze
 //////////////////////////////////////////

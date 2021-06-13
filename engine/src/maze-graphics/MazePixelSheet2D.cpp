@@ -147,13 +147,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void const* PixelSheet2D::getPixel(S32 _x, S32 _y) const
+    {
+        Size offset = (Size)_y * (Size)m_bytesPerRow + (Size)_x * (Size)m_bytesPerPixel;
+        MAZE_DEBUG_ERROR_RETURN_VALUE_IF(offset >= m_data.getSize(), nullptr, "Offset is out of bounds!");
+        void const* pixelData = &m_data[offset];
+
+        return pixelData;
+    }
+
+    //////////////////////////////////////////
     ColorU32 PixelSheet2D::getPixelRGBA_U8(S32 _x, S32 _y) const
     {
         ColorU32 color;
-
-        Size offset = (Size)_y * (Size)m_bytesPerRow + (Size)_x * (Size)m_bytesPerPixel;
-        MAZE_DEBUG_ERROR_RETURN_VALUE_IF(offset >= m_data.getSize(), ColorU32::c_zero, "Offset is out of bounds!");
-        void const* pixelData = &m_data[offset];
+        void const* pixelData = getPixel(_x, _y);
         color.setRGBA_U8(*((U32*)pixelData));
         return color;
     }

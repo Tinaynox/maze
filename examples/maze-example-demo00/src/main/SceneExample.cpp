@@ -41,6 +41,7 @@
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeLight3D.hpp"
+#include "maze-graphics/ecs/components/MazeTerrainMesh3D.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-core/math/MazeMath.hpp"
@@ -197,16 +198,15 @@ namespace Maze
 
 
         // Light
-        EntityPtr lightEntity = createEntity();
+        EntityPtr lightEntity = createEntity("Light");
         Light3DPtr mainLight3D = lightEntity->createComponent<Light3D>();
         mainLight3D->setColor(ColorU32(255, 244, 214));
         mainLight3D->getTransform()->setLocalDirection(0.577f, -0.577f, 0.577f);
         mainLight3D->getTransform()->setLocalPosition(0.0f, 5.0f, -5.0f);
-        lightEntity->ensureComponent<Name>("Light");
 
 
         // Camera
-        EntityPtr cameraEntity = createEntity();
+        EntityPtr cameraEntity = createEntity("Camera");
         m_camera3D = cameraEntity->createComponent<Camera3D>();
         m_camera3D->getTransform()->setLocalPosition(Vec3DF(0.0f, 0.5f, -18.0f));
         m_camera3D->setFOV(Math::DegreesToRadians(30));
@@ -215,7 +215,6 @@ namespace Maze
         // m_camera3D->setClearColor(ColorU32(20, 20, 20));
         m_camera3D->setRenderTarget(m_renderBuffer);
         // m_camera3D->setRenderMask(m_camera3D->getRenderMask() & ~(S32)DefaultRenderMask::Gizmos);
-        m_camera3D->getEntityRaw()->ensureComponent<Name>("Camera");
         m_camera3D->setNearZ(0.01f);
         m_camera3D->setFarZ(100.0f);
 
@@ -226,7 +225,11 @@ namespace Maze
         getLightingSettings()->setSkyBoxMaterial(skyboxMaterial);
 
 
-        createParticleSystem();
+        // Terrain
+        EntityPtr terrainEntity = createEntity("Terrain");
+        terrainEntity->ensureComponent<TerrainMesh3D>();
+
+        // createParticleSystem();
 
         return true;
     }

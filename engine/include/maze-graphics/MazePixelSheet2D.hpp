@@ -103,6 +103,9 @@ namespace Maze
         inline PixelFormat::Enum getFormat() const { return m_format; }
 
         //////////////////////////////////////////
+        void const* getPixel(S32 _x, S32 _y) const;
+
+        //////////////////////////////////////////
         ColorU32 getPixelRGBA_U8(S32 _x, S32 _y) const;
 
         //////////////////////////////////////////
@@ -260,6 +263,12 @@ namespace Maze
 
         //////////////////////////////////////////
         inline Size getDataSize() { return m_data.getSize(); }
+
+        //////////////////////////////////////////
+        inline S32 getBytesPerPixel() const { return m_bytesPerPixel; }
+
+        //////////////////////////////////////////
+        inline S32 getBytesPerRow() const { return m_bytesPerRow; }
 
         //////////////////////////////////////////
         PixelSheet2D& operator=(PixelSheet2D const& _copy);
