@@ -35,7 +35,7 @@
 #include "maze-core/ecs/MazeECSScene.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
 #include "maze-graphics/MazeColorU32.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-graphics/ecs/MazeLightingSettings.hpp"
 
 
 //////////////////////////////////////////
@@ -73,6 +73,9 @@ namespace Maze
         //////////////////////////////////////////
         inline RenderTargetPtr const& getRenderTarget() const { return m_renderTarget; }
 
+        //////////////////////////////////////////
+        LightingSettingsPtr const& getLightingSettings() const { return m_lightingSettings; }
+
     protected:
 
         //////////////////////////////////////////
@@ -88,6 +91,8 @@ namespace Maze
 
     protected:
         RenderTargetPtr m_renderTarget;
+
+        LightingSettingsPtr m_lightingSettings;
     };
 
 

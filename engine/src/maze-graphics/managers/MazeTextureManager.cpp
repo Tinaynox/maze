@@ -230,6 +230,8 @@ namespace Maze
         if (!_assetFile)
             return pixelSheets;
 
+        Debug::Log("Loading texture pixel sheet: %s...", _assetFile->getFileName().c_str());
+
         UnorderedMap<String, String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
 
         if (metaData.empty())
@@ -265,6 +267,8 @@ namespace Maze
                 MAZE_ERROR("Unsupported texture format!");
             }
         }
+
+        Debug::Log("Loaded.", _assetFile->getFileName().c_str());
 
         return pixelSheets;
     }

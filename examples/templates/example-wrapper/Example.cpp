@@ -335,7 +335,7 @@ namespace Maze
 
         renderSystem->getTextureManager()->loadAllAssetTextures();
         renderSystem->getMaterialManager()->loadAllAssetMaterials();
-        renderSystem->getRenderMeshManager()->loadAllAssetRenderMeshes();
+        // renderSystem->getRenderMeshManager()->loadAllAssetRenderMeshes();
 
         m_uiManager->createUIElements();
         m_graphicsManager->getGizmosManager()->createGizmosElements();

@@ -210,27 +210,21 @@ namespace Maze
         m_camera3D = cameraEntity->createComponent<Camera3D>();
         m_camera3D->getTransform()->setLocalPosition(Vec3DF(0.0f, 0.5f, -18.0f));
         m_camera3D->setFOV(Math::DegreesToRadians(30));
+        m_camera3D->setClearColorFlag(false);
+        m_camera3D->setClearSkyBoxFlag(true);
         // m_camera3D->setClearColor(ColorU32(20, 20, 20));
         m_camera3D->setRenderTarget(m_renderBuffer);
         // m_camera3D->setRenderMask(m_camera3D->getRenderMask() & ~(S32)DefaultRenderMask::Gizmos);
         m_camera3D->getEntityRaw()->ensureComponent<Name>("Camera");
         m_camera3D->setNearZ(0.01f);
-        m_camera3D->setFarZ(500.0f);
+        m_camera3D->setFarZ(100.0f);
 
         m_bloomController = LevelBloomController::Create(this);
 
-
-        // Skybox
-        EntityPtr skyBoxEntity = createEntity("Test");
-        Transform3DPtr skyBoxTransform = skyBoxEntity->ensureComponent<Transform3D>();
-        MeshRendererPtr meshRenderer = skyBoxEntity->createComponent<MeshRenderer>();
-        meshRenderer->setRenderMesh(renderSystem->getRenderMeshManager()->getDefaultCubeMesh());
-        skyBoxTransform->setLocalScale(150.0f);
-        
         MaterialPtr skyboxMaterial = renderSystem->getMaterialManager()->getSkyboxMaterial()->createCopy();
         skyboxMaterial->setUniform("u_baseMap", renderSystem->getTextureManager()->getTextureCube("Skybox00.mzcubemap"));
-        // skyboxMaterial->setUniform("u_baseMap", renderSystem->getTextureManager()->getTestCubeTexture());
-        meshRenderer->setMaterial(skyboxMaterial);
+        getLightingSettings()->setSkyBoxMaterial(skyboxMaterial);
+
 
         createParticleSystem();
 
@@ -346,10 +340,10 @@ namespace Maze
                 {
                     Vec2DF cursorPosition = Vec2DF((F32)_data.x, (F32)_data.y);
                     Rect2DF viewportRect(
-                        m_camera3D->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
-                        m_camera3D->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
-                        m_camera3D->getViewport().size.x * m_renderTarget->getRenderTargetSize().x,
-                        m_camera3D->getViewport().size.y * m_renderTarget->getRenderTargetSize().y);
+                        m_canvas->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
+                        m_canvas->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
+                        m_canvas->getViewport().size.x * m_renderTarget->getRenderTargetSize().x,
+                        m_canvas->getViewport().size.y * m_renderTarget->getRenderTargetSize().y);
 
                     m_cursorPositionLastFrame = cursorPosition;
 
@@ -401,10 +395,10 @@ namespace Maze
                 {
                     Vec2DF cursorPosition = Vec2DF((F32)_data.x, (F32)_data.y);
                     Rect2DF viewportRect(
-                        m_camera3D->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
-                        m_camera3D->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
-                        m_camera3D->getViewport().size.x * m_renderTarget->getRenderTargetSize().x,
-                        m_camera3D->getViewport().size.y * m_renderTarget->getRenderTargetSize().y);
+                        m_canvas->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
+                        m_canvas->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
+                        m_canvas->getViewport().size.x * m_renderTarget->getRenderTargetSize().x,
+                        m_canvas->getViewport().size.y * m_renderTarget->getRenderTargetSize().y);
 
                     m_cursorPositionLastFrame = cursorPosition;
 

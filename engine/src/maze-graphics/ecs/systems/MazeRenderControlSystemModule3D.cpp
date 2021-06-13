@@ -32,6 +32,7 @@
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/ecs/components/MazeTrailRenderer3D.hpp"
+#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-graphics/MazeRenderQueue.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
@@ -39,6 +40,7 @@
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeShader.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 
@@ -135,6 +137,7 @@ namespace Maze
 
                     bool clearColorFlag = _camera3D->getClearColorFlag();
                     bool clearDepthFlag = _camera3D->getClearDepthFlag();
+                    bool clearSkyBoxFlag = _camera3D->getClearSkyBoxFlag();
 
                     if (clearColorFlag)
                         renderTarget->setClearColor(_camera3D->getClearColor());
@@ -162,6 +165,42 @@ namespace Maze
                     renderTarget->setViewPosition(cameraPosition);
 
                     Vector<RenderUnit> renderData;
+
+                    // Skybox
+                    if (clearSkyBoxFlag)
+                    {
+                        ECSScene* cameraScene = _camera3D->getEntityRaw()->getECSScene();
+                        if (cameraScene)
+                        {
+                            MAZE_DEBUG_ERROR_IF(!cameraScene->getMetaClass()->isInheritedFrom<ECSRenderScene>(), "It is not a render scene!");
+                            ECSRenderScene* renderScene = cameraScene->castRaw<ECSRenderScene>();
+
+                            LightingSettingsPtr const& lightingSettings = renderScene->getLightingSettings();
+                            if (lightingSettings)
+                            {
+                                MaterialPtr const& skyBoxMaterial = lightingSettings->getSkyBoxMaterial();
+                                if (skyBoxMaterial)
+                                {
+                                    RenderMeshPtr const& cubeMesh = _camera3D->getRenderTarget()->getRenderSystem()->getRenderMeshManager()->getDefaultCubeMesh();
+                                    Vector<VertexArrayObjectPtr> const& vaos = cubeMesh->getVertexArrayObjects();
+
+                                    renderQueue->pushSelectRenderPassCommand(skyBoxMaterial->getFirstRenderPass());
+
+                                    F32 skyboxScale = (2.0f * _camera3D->getFarZ() / Math::Sqrt(3.0f)) - 1.0f;
+
+                                    Mat4DF skyboxTransform = Mat4DF(
+                                        skyboxScale, 0, 0, cameraPosition.x,
+                                        0, skyboxScale, 0, cameraPosition.y,
+                                        0, 0, skyboxScale, cameraPosition.z,
+                                        0, 0, 0, 1);
+                                    renderQueue->pushDrawVAOInstancedCommand(
+                                        vaos[0],
+                                        1,
+                                        &skyboxTransform);
+                                }
+                            }
+                        }
+                    }
 
                     m_meshRenderers->process(
                         [&](Entity* _entity, MeshRenderer* _meshRenderer, Transform3D* _transform3D)

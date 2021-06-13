@@ -77,6 +77,8 @@ namespace Maze
         m_renderTarget = _renderTarget;
         MAZE_ERROR_RETURN_VALUE_IF(!m_renderTarget, false, "Render target is null!");
 
+        m_lightingSettings = LightingSettings::Create();
+
         return true;
     }
 

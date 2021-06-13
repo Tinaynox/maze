@@ -137,6 +137,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline bool getClearSkyBoxFlag() const { return m_clearSkyBoxFlag; }
+
+        //////////////////////////////////////////
+        inline void setClearSkyBoxFlag(bool _clearSkyBoxFlag) { m_clearSkyBoxFlag = _clearSkyBoxFlag; }
+
+
+        //////////////////////////////////////////
         inline S32 getRenderMask() const { return m_renderMask; }
 
         //////////////////////////////////////////
@@ -171,6 +178,8 @@ namespace Maze
         ColorU32 m_clearColor;
 
         bool m_clearDepthFlag;
+
+        bool m_clearSkyBoxFlag;
 
         S32 m_renderMask;
     };
