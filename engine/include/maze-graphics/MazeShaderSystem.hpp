@@ -100,6 +100,9 @@ namespace Maze
         ShaderPtr const& getUVShader() const { return m_uvShader; }
 
         //////////////////////////////////////////
+        ShaderPtr const& getNormalShader() const { return m_normalShader; }
+
+        //////////////////////////////////////////
         ShaderPtr const& getColorShader() const { return m_colorShader; }
 
         //////////////////////////////////////////
@@ -165,6 +168,7 @@ namespace Maze
 
         ShaderPtr m_errorShader;
         ShaderPtr m_uvShader;
+        ShaderPtr m_normalShader;
         ShaderPtr m_colorShader;
         ShaderPtr m_colorTextureShader;
         ShaderPtr m_colorTextureCustomUVShader;

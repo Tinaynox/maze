@@ -82,6 +82,9 @@ namespace Maze
         MaterialPtr const& getUVMaterial() const { return m_uvMaterial; }
 
         //////////////////////////////////////////
+        MaterialPtr const& getNormalMaterial() const { return m_normalMaterial; }
+
+        //////////////////////////////////////////
         MaterialPtr const& getColorMaterial() const { return m_colorMaterial; }
 
         //////////////////////////////////////////
@@ -147,6 +150,7 @@ namespace Maze
 
         MaterialPtr m_errorMaterial;
         MaterialPtr m_uvMaterial;
+        MaterialPtr m_normalMaterial;
         MaterialPtr m_colorMaterial;
         MaterialPtr m_colorTextureMaterial;
         MaterialPtr m_colorTextureCustomUVMaterial;

@@ -41,6 +41,7 @@
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
+#include "maze-graphics/helpers/MazeSubMeshHelper.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
@@ -168,6 +169,7 @@ namespace Maze
         m_meshRenderer->clearMesh();
     }
 
+    //////////////////////////////////////////
     Vec2DF Random2(Vec2DF st)
     {
         st = Vec2DF(
@@ -176,6 +178,7 @@ namespace Maze
         return -1.0f + 2.0f * (Vec2DF(Math::Fract(sin(st.x) * 43758.5453123f), Math::Fract(sin(st.y) * 43758.5453123f)));
     }
 
+    //////////////////////////////////////////
     F32 GradientNoise(Vec2DF st)
     {
         Vec2DF i = { Math::Floor(st.x), Math::Floor(st.y) };
@@ -209,8 +212,8 @@ namespace Maze
         if (!m_meshRenderer)
             return;
 
-        // if (!m_heightMap)
-        //    return;
+        if (!m_heightMap)
+            return;
 
         if (m_cellsCount.x <= 0 || m_cellsCount.y <= 0)
             return;
@@ -218,7 +221,6 @@ namespace Maze
         if (m_size.x <= 0 || m_size.y <= 0)
             return;
 
-        /*
         PixelSheet2D pixelSheet = m_heightMap->readAsPixelSheet();
 
         if (pixelSheet.getSize().x <= 0 || pixelSheet.getSize().y <= 0)
@@ -235,9 +237,15 @@ namespace Maze
             {
                 fetchHeightCoef = [&](S32 _r, S32 _c) -> F32
                 {
-                    void const* pixelData = pixelSheet.getPixel(_c, _r);
-                    U8 r = *((U8*)pixelData);
-                    return (F32)r / 255.0f;
+                    F32 x = (F32)_c / ((F32)m_cellsCount.x + 1.0f);
+                    F32 y = (F32)_r / ((F32)m_cellsCount.y + 1.0f);
+
+                    x *= pixelSheet.getColumnsCount();
+                    y *= pixelSheet.getRowsCount();
+
+                    void const* pixelData = pixelSheet.getPixel((S32)x, (S32)y);
+                    U8 red = *((U8*)pixelData);
+                    return (F32)red / 255.0f;
                 };
                 break;
             }
@@ -247,20 +255,25 @@ namespace Maze
                 return;
             }
         }
-        */
-
-        std::function<F32(S32 _r, S32 _c)> fetchHeightCoef = [&](S32 _r, S32 _c) -> F32 { return GradientNoise({(F32)_r / 10.0f, (F32)_c / 10.0f }); };
 
         SubMeshPtr subMesh = SubMesh::Create();
-        subMesh->setRenderDrawTopology(RenderDrawTopology::Points);
+        subMesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
+
+        std::function<S32(S32 _r, S32 _c)> fetchVertexIndex = [&](S32 _r, S32 _c) -> S32 { return _r * ((S32)m_cellsCount.x + 1) + _c; };
 
         Size verticesCount = (m_cellsCount.y + 1) * (m_cellsCount.x + 1);
-        Size indicesCount = verticesCount;
+        Size indicesCount = verticesCount * 6;
 
         Vector<Vec3DF> positions;
-        positions.resize(verticesCount);
-
+        Vector<Vec3DF> normals;
+        Vector<Vec4DF> colors;
+        Vector<Vec2DF> uvs0;
         Vector<U32> indices;
+
+        positions.resize(verticesCount);
+        normals.resize(verticesCount);
+        colors.resize(verticesCount);
+        uvs0.resize(verticesCount);
         indices.resize(indicesCount);
 
         F32 cellWidth = m_size.x / m_cellsCount.x;
@@ -270,18 +283,112 @@ namespace Maze
         {
             for (S32 c = 0; c < (S32)m_cellsCount.x + 1; ++c)
             {
-                S32 vertexIndex = r * ((S32)m_cellsCount.x + 1) + c;
+                S32 vertexIndex = fetchVertexIndex(r, c);
 
                 F32 heightCoef = fetchHeightCoef(r, c);
                 F32 height = m_height * heightCoef;
 
                 positions[vertexIndex] = Vec3DF(c * cellWidth - m_size.x * 0.5f, height, r * cellHeight - m_size.y * 0.5f);
+                colors[vertexIndex] = Vec4DF(1.0f, 1.0f, 1.0f, 1.0f);
+                uvs0[vertexIndex] = Vec2DF((F32)c / m_cellsCount.x, (F32)r / m_cellsCount.y);
+            }
+        }
 
-                indices[vertexIndex] = vertexIndex;
+        // Calculate normals
+        for (S32 r = 0; r < (S32)m_cellsCount.y + 1; ++r)
+        {
+            for (S32 c = 0; c < (S32)m_cellsCount.x + 1; ++c)
+            {
+                S32 vertexIndex = fetchVertexIndex(r, c);
+
+                Vec3DF mPos = positions[vertexIndex];
+
+                Vec3DF normalsSum = Vec3DF::c_zero;
+                S32 normalsCount = 0;
+
+                // Left
+                if (c != 0)
+                {
+                    Vec3DF lPos = positions[fetchVertexIndex(r, c - 1)];
+                    Vec3DF normal = (mPos - lPos).crossProduct(Vec3DF::c_negativeUnitZ);
+                    normalsSum += normal;
+                    ++normalsCount;
+                }
+
+                // Right
+                if (c != (S32)m_cellsCount.x)
+                {
+                    Vec3DF rPos = positions[fetchVertexIndex(r, c + 1)];
+                    Vec3DF normal = (rPos - mPos).crossProduct(Vec3DF::c_negativeUnitZ);
+                    normalsSum += normal;
+                    ++normalsCount;
+                }
+
+                // Down
+                if (r != 0)
+                {
+                    Vec3DF dPos = positions[fetchVertexIndex(r - 1, c)];
+                    Vec3DF normal = (mPos - dPos).crossProduct(Vec3DF::c_unitX);
+                    normalsSum += normal;
+                    ++normalsCount;
+                }
+
+                // Up
+                if (r != (S32)m_cellsCount.y)
+                {
+                    Vec3DF uPos = positions[fetchVertexIndex(r + 1, c)];
+                    Vec3DF normal = (uPos - mPos).crossProduct(Vec3DF::c_unitX);
+                    normalsSum += normal;
+                    ++normalsCount;
+                }
+                
+                Vec3DF normal = normalsSum / (F32)normalsCount;
+                normals[vertexIndex] = normal.normalizedCopy();
+            }
+        }
+
+        Vector<Vec3DF> tangents;
+        Vector<Vec3DF> bitangents;
+        if (SubMeshHelper::GenerateTangentsAndBitangents(
+            &indices[0],
+            indicesCount,
+            &positions[0],
+            &uvs0[0],
+            &normals[0],
+            4,
+            tangents,
+            bitangents))
+        {
+            subMesh->setTangents(tangents);
+            subMesh->setBitangents(bitangents);
+        }
+
+        S32 index = 0;
+        
+        for (S32 r = 0; r < (S32)m_cellsCount.y; ++r)
+        {
+            for (S32 c = 0; c < (S32)m_cellsCount.x; ++c)
+            {
+                S32 lb = fetchVertexIndex(r, c);
+                S32 rb = fetchVertexIndex(r, c + 1);
+                S32 rt = fetchVertexIndex(r + 1, c + 1);
+                S32 lt = fetchVertexIndex(r + 1, c);
+
+                indices[index++] = lb;
+                indices[index++] = rb;
+                indices[index++] = rt;
+
+                indices[index++] = lb;
+                indices[index++] = rt;
+                indices[index++] = lt;
+                
             }
         }
 
         subMesh->setPositions(positions);
+        subMesh->setNormals(normals);
+        subMesh->setColors(colors);
+        subMesh->setTexCoords(0, uvs0);
         subMesh->setIndices(indices);
 
         MeshPtr mesh = Mesh::Create();

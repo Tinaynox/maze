@@ -326,11 +326,16 @@ namespace Maze
             {
                 ShaderUniformPtr const& uniform = renderPass->getShader()->ensureUniform("u_baseMapST");
 
-                Texture2DPtr texture = materialCopy->getUniform("u_baseMap")->getTexture2D();
+                TexturePtr const& texture = materialCopy->getUniform("u_baseMap")->getTexture();
+
                 if (texture)
                 {
-                    SpritePtr fakeSprite = Sprite::Create(texture);
-                    sprite->setSprite(fakeSprite);
+                    if (texture->getClassUID() == ClassInfo<Texture2D>::UID())
+                    {
+                        Texture2DPtr texture2D = texture->cast<Texture2D>();
+                        SpritePtr fakeSprite = Sprite::Create(texture2D);
+                        sprite->setSprite(fakeSprite);
+                    }
                 }
             }
 

@@ -76,6 +76,12 @@ namespace Maze
             m_vectorSizeDrawer->eventUIData.unsubscribe(this);
             m_vectorSizeDrawer.reset();
         }
+
+        while (!m_itemDrawers.empty())
+        {
+            m_itemDrawers.back()->eventUIData.unsubscribe(this);
+            m_itemDrawers.pop_back();
+        }
     }
 
     //////////////////////////////////////////
@@ -302,6 +308,7 @@ namespace Maze
         {
             while (itemDrawersCount > _count)
             {
+                m_itemDrawers.back()->eventUIData.unsubscribe(this);
                 m_itemDrawers.pop_back();
 
                 --itemDrawersCount;
@@ -321,6 +328,7 @@ namespace Maze
 
                 if (itemDrawer)
                 {
+                    itemDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerVector::processDataFromUI);
                     m_itemDrawers.push_back(itemDrawer);
                 }
 
@@ -379,6 +387,16 @@ namespace Maze
             m_metaProperty->setVectorSize(metaInstance, vectorSize);
 
         ensureItemDrawers(vectorSize);
+
+        Vector<String> values;
+
+        for (Size i = 0, in = m_itemDrawers.size(); i < in; ++i)
+            values.push_back(m_itemDrawers[i]->getString());
+
+        String value;
+        ValueToString(values, value);
+        for (MetaInstance const& metaInstance : m_metaInstances)
+            m_metaProperty->setString(metaInstance, value);
     }
 
     //////////////////////////////////////////

@@ -42,6 +42,7 @@
 #include "maze-debugger/property-drawers/MazePropertyDrawerF32.hpp"
 #include "maze-debugger/property-drawers/MazePropertyDrawerVec2DF.hpp"
 #include "maze-debugger/property-drawers/MazePropertyDrawerVec2DS.hpp"
+#include "maze-debugger/property-drawers/MazePropertyDrawerVec2DU.hpp"
 #include "maze-debugger/property-drawers/MazePropertyDrawerVec3DF.hpp"
 #include "maze-debugger/property-drawers/MazePropertyDrawerRect2DF.hpp"
 #include "maze-debugger/property-drawers/MazePropertyDrawerString.hpp"
@@ -54,6 +55,7 @@
 #include "maze-debugger/property-drawers/MazePropertyDrawerMaterial.hpp"
 #include "maze-debugger/property-drawers/MazePropertyDrawerRenderMesh.hpp"
 #include "maze-debugger/property-drawers/MazePropertyDrawerRadians.hpp"
+#include "maze-debugger/property-drawers/MazePropertyDrawerTexture2D.hpp"
 #include "maze-debugger/meta-property-drawers/MazeMetaPropertyDrawerBool.hpp"
 #include "maze-debugger/meta-property-drawers/MazeMetaPropertyDrawerS32.hpp"
 #include "maze-debugger/meta-property-drawers/MazeMetaPropertyDrawerF32.hpp"
@@ -108,6 +110,36 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    using MetaPropertyDrawerVec2DS =
+        MetaPropertyDrawerDefault<
+        Vec2DS,
+        PropertyDrawerVec2DU>;
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerVec2DS, MetaPropertyDrawer);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK_TEMPLATE(MetaPropertyDrawerVec2DS);
+    template class MAZE_DEBUGGER_API MetaPropertyDrawerDefault<Vec2DS, PropertyDrawerVec2DU>;
+
+
+    //////////////////////////////////////////
+    using MetaPropertyDrawerVec2DU =
+        MetaPropertyDrawerDefault<
+        Vec2DU,
+        PropertyDrawerVec2DU>;
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerVec2DU, MetaPropertyDrawer);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK_TEMPLATE(MetaPropertyDrawerVec2DU);
+    template class MAZE_DEBUGGER_API MetaPropertyDrawerDefault<Vec2DU, PropertyDrawerVec2DU>;
+
+
+    //////////////////////////////////////////
+    using MetaPropertyDrawerTexture2D =
+        MetaPropertyDrawerDefault<
+        Texture2DPtr,
+        PropertyDrawerTexture2D>;
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerTexture2D, MetaPropertyDrawer);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK_TEMPLATE(MetaPropertyDrawerTexture2D);
+    template class MAZE_DEBUGGER_API MetaPropertyDrawerDefault<Texture2DPtr, PropertyDrawerTexture2D>;
+
+
+    //////////////////////////////////////////
     // Class InspectorManager
     //
     //////////////////////////////////////////
@@ -140,6 +172,7 @@ namespace Maze
         registerPropertyDrawer<F32, PropertyDrawerF32>();
         registerPropertyDrawer<Vec2DF, PropertyDrawerVec2DF>();
         registerPropertyDrawer<Vec2DS, PropertyDrawerVec2DS>();
+        registerPropertyDrawer<Vec2DU, PropertyDrawerVec2DU>();
         registerPropertyDrawer<Vec3DF, PropertyDrawerVec3DF>();
         registerPropertyDrawer<Rect2DF, PropertyDrawerRect2DF>();
         registerPropertyDrawer<String, PropertyDrawerString>();
@@ -150,11 +183,14 @@ namespace Maze
         registerPropertyDrawer<AnimationCurve, PropertyDrawerAnimationCurve>();
         registerPropertyDrawer<MaterialPtr, PropertyDrawerMaterial>();
         registerPropertyDrawer<RenderMeshPtr, PropertyDrawerRenderMesh>();
+        registerPropertyDrawer<Texture2DPtr, PropertyDrawerTexture2D>();
 
         registerMetaPropertyDrawer<bool, MetaPropertyDrawerBool>();
         registerMetaPropertyDrawer<S32, MetaPropertyDrawerS32>();
         registerMetaPropertyDrawer<F32, MetaPropertyDrawerF32>();
         registerMetaPropertyDrawer<Vec2DF, MetaPropertyDrawerVec2DF>();
+        registerMetaPropertyDrawer<Vec2DS, MetaPropertyDrawerVec2DS>();
+        registerMetaPropertyDrawer<Vec2DU, MetaPropertyDrawerVec2DU>();
         registerMetaPropertyDrawer<Vec3DF, MetaPropertyDrawerVec3DF>();
         registerMetaPropertyDrawer<Rect2DF, MetaPropertyDrawerRect2DF>();
         registerMetaPropertyDrawer<String, MetaPropertyDrawerString>();
@@ -165,6 +201,7 @@ namespace Maze
         registerMetaPropertyDrawer<AnimationCurve, MetaPropertyDrawerAnimationCurve>();
         registerMetaPropertyDrawer<MaterialPtr, MetaPropertyDrawerMaterial>();
         registerMetaPropertyDrawer<RenderMeshPtr, MetaPropertyDrawerRenderMesh>();
+        registerMetaPropertyDrawer<Texture2DPtr, MetaPropertyDrawerTexture2D>();
 
         registerComponentEditor<Transform3D, ComponentEditorTransform3D>();
         registerComponentEditor<Camera3D, ComponentEditorCamera3D>();

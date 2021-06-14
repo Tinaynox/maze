@@ -130,6 +130,13 @@ namespace Maze
             );
         m_uvShader->setName("uv");
 
+        m_normalShader = ShaderOpenGL::CreateFromSource(
+            m_renderSystem.lock(),
+            getRenderSystemOpenGL()->ensureCurrentContext(),
+#include "shaders/MazeNormalShader.mzglsl"
+        );
+        m_normalShader->setName("normal");
+
 
         m_colorShader = ShaderOpenGL::CreateFromSource(
             m_renderSystem.lock(),
