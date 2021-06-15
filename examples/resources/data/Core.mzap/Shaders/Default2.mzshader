@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Shader>
+    <Uniform name="u_baseMapST" type="UniformVec4DF" value="1.0;1.0;0.0;0.0" />
     <Uniform name="u_color" type="UniformVec4DF" value="1.0;1.0;1.0;1.0" />
     <Uniform name="u_ambientLightColor" type="UniformVec4DF" value="0.45;0.45;0.45;1.0" />
     <Uniform name="u_shininess" type="UniformF32" value="0.1" />

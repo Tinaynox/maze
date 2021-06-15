@@ -652,10 +652,12 @@ namespace Maze
             if (_type == MAZE_GL_VERTEX_SHADER)
             {
                 Debug::LogError("Vertex Shader: %s", logForOpenGLShader(_shader).c_str());
+                MAZE_BP;
             }
             else
             {
                 Debug::LogError("Fragment Shader: %s", logForOpenGLShader(_shader).c_str());
+                MAZE_BP;
             }
         }
 

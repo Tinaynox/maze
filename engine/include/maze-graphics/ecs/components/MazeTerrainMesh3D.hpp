@@ -144,7 +144,7 @@ namespace Maze
 
         Vec2DU m_cellsCount = { 100, 100 };
         Vec2DF m_size = { 10.0f, 10.0f };
-        F32 m_height = 5.0f;
+        F32 m_height = 1.0f;
     };
 
 

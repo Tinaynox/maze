@@ -1,0 +1,4 @@
+minFilter=Linear
+magFilter=Linear
+wrapS=Repeat
+wrapT=Repeat

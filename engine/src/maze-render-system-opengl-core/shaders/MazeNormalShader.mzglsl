@@ -62,7 +62,7 @@ R"(
     //////////////////////////////////////////
     void main()
     {
-		vec3 normal = (v_normal + 1.0f) * 0.5f;
+		vec3 normal = (normalize(v_normal) + 1.0f) * 0.5f;
         out_color = vec4(normal, 1.0);
     }
 )"

@@ -97,6 +97,8 @@ namespace Maze
     //////////////////////////////////////////
     Example::~Example()
     {
+        m_uiManager.reset();
+
         m_sceneManager.reset();
 
         m_mainRenderWindow.reset();

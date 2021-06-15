@@ -208,7 +208,7 @@ namespace Maze
         // Camera
         EntityPtr cameraEntity = createEntity("Camera");
         m_camera3D = cameraEntity->createComponent<Camera3D>();
-        m_camera3D->getTransform()->setLocalPosition(Vec3DF(0.0f, 0.5f, -18.0f));
+        m_camera3D->getTransform()->setLocalPosition(Vec3DF(8.0f, 4.0f, 8.0f));
         m_camera3D->setFOV(Math::DegreesToRadians(30));
         m_camera3D->setClearColorFlag(false);
         m_camera3D->setClearSkyBoxFlag(true);
@@ -227,7 +227,13 @@ namespace Maze
 
         // Terrain
         EntityPtr terrainEntity = createEntity("Terrain");
-        terrainEntity->ensureComponent<TerrainMesh3D>();
+        TerrainMesh3DPtr terrainMesh = terrainEntity->ensureComponent<TerrainMesh3D>();
+        terrainMesh->setCellsCount({ 50, 50 });
+        terrainMesh->setSize({ 20, 20 });
+        terrainMesh->setHeight(2.25f);
+        terrainMesh->setHeightMap(renderSystem->getTextureManager()->getTexture2D("Heightmap02.mztexture"));
+        MeshRendererPtr terrainMeshRenderer = terrainEntity->ensureComponent<MeshRenderer>();
+        terrainMeshRenderer->setMaterial("Terrain00.mzmaterial");
 
         // createParticleSystem();
 
@@ -265,6 +271,7 @@ namespace Maze
             "u_bloomMap",
             ShaderUniformType::UniformTexture2D)->set(
                 m_bloomController->getBloomRenderBuffer()->getColorTexture());
+
 
         Quaternion q = Quaternion::Slerp(
             24.0f * _dt,

@@ -59,7 +59,7 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Texture2DPtr, heightMap, Texture2DPtr(), getHeightMap, setHeightMap),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2DU, cellsCount, Vec2DU(10, 10), getCellsCount, setCellsCount),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2DF, size, Vec2DF(10.0f, 10.0f), getSize, setSize),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, height, 5.0f, getHeight, setHeight));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, height, 1.0f, getHeight, setHeight));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(TerrainMesh3D);
@@ -294,6 +294,9 @@ namespace Maze
             }
         }
 
+        Vec3DF const unitPXNZ = Vec3DF(1.0f, 0.0f, -1.0f).normalizedCopy();
+        Vec3DF const unitPXPZ = Vec3DF(1.0f, 0.0f, 1.0f).normalizedCopy();
+
         // Calculate normals
         for (S32 r = 0; r < (S32)m_cellsCount.y + 1; ++r)
         {
@@ -309,8 +312,8 @@ namespace Maze
                 // Left
                 if (c != 0)
                 {
-                    Vec3DF lPos = positions[fetchVertexIndex(r, c - 1)];
-                    Vec3DF normal = (mPos - lPos).crossProduct(Vec3DF::c_negativeUnitZ);
+                    Vec3DF pos = positions[fetchVertexIndex(r, c - 1)];
+                    Vec3DF normal = (mPos - pos).normalizedCopy().crossProduct(Vec3DF::c_negativeUnitZ);
                     normalsSum += normal;
                     ++normalsCount;
                 }
@@ -318,8 +321,8 @@ namespace Maze
                 // Right
                 if (c != (S32)m_cellsCount.x)
                 {
-                    Vec3DF rPos = positions[fetchVertexIndex(r, c + 1)];
-                    Vec3DF normal = (rPos - mPos).crossProduct(Vec3DF::c_negativeUnitZ);
+                    Vec3DF pos = positions[fetchVertexIndex(r, c + 1)];
+                    Vec3DF normal = (pos - mPos).normalizedCopy().crossProduct(Vec3DF::c_negativeUnitZ);
                     normalsSum += normal;
                     ++normalsCount;
                 }
@@ -327,8 +330,8 @@ namespace Maze
                 // Down
                 if (r != 0)
                 {
-                    Vec3DF dPos = positions[fetchVertexIndex(r - 1, c)];
-                    Vec3DF normal = (mPos - dPos).crossProduct(Vec3DF::c_unitX);
+                    Vec3DF pos = positions[fetchVertexIndex(r - 1, c)];
+                    Vec3DF normal = (mPos - pos).normalizedCopy().crossProduct(Vec3DF::c_unitX);
                     normalsSum += normal;
                     ++normalsCount;
                 }
@@ -336,16 +339,112 @@ namespace Maze
                 // Up
                 if (r != (S32)m_cellsCount.y)
                 {
-                    Vec3DF uPos = positions[fetchVertexIndex(r + 1, c)];
-                    Vec3DF normal = (uPos - mPos).crossProduct(Vec3DF::c_unitX);
+                    Vec3DF pos = positions[fetchVertexIndex(r + 1, c)];
+                    Vec3DF normal = (pos - mPos).normalizedCopy().crossProduct(Vec3DF::c_unitX);
                     normalsSum += normal;
                     ++normalsCount;
                 }
                 
-                Vec3DF normal = normalsSum / (F32)normalsCount;
-                normals[vertexIndex] = normal.normalizedCopy();
+                // Left Down
+                if (c != 0 && r != 0)
+                {
+                    Vec3DF pos = positions[fetchVertexIndex(r - 1, c - 1)];
+                    Vec3DF normal = (mPos - pos).normalizedCopy().crossProduct(unitPXNZ);
+                    normalsSum += normal;
+                    ++normalsCount;
+                }
+                
+                // Right Down
+                if (c != (S32)m_cellsCount.x && r != 0)
+                {
+                    Vec3DF pos = positions[fetchVertexIndex(r - 1, c + 1)];
+                    Vec3DF normal = (mPos - pos).normalizedCopy().crossProduct(unitPXPZ);
+                    normalsSum += normal;
+                    ++normalsCount;
+                }
+                
+                // Right Up
+                if (c != (S32)m_cellsCount.x && r != (S32)m_cellsCount.y)
+                {
+                    Vec3DF pos = positions[fetchVertexIndex(r + 1, c + 1)];
+                    Vec3DF normal = (pos - mPos).normalizedCopy().crossProduct(unitPXNZ);
+                    normalsSum += normal;
+                    ++normalsCount;
+                }
+
+                // Left Up
+                if (c != 0 && r != (S32)m_cellsCount.y)
+                {
+                    Vec3DF pos = positions[fetchVertexIndex(r + 1, c - 1)];
+                    Vec3DF normal = (pos - mPos).normalizedCopy().crossProduct(unitPXPZ);
+                    normalsSum += normal;
+                    ++normalsCount;
+                }
+                
+                if (normalsCount)
+                {
+                    Vec3DF normal = normalsSum / (F32)normalsCount;
+                    normals[vertexIndex] = normal.normalizedCopy();
+                }
+                else
+                {
+                    normals[vertexIndex] = Vec3DF::c_unitY;
+                }
             }
         }
+        
+        S32 index = 0;
+
+        for (S32 r = 0; r < (S32)m_cellsCount.y; ++r)
+        {
+            for (S32 c = 0; c < (S32)m_cellsCount.x; ++c)
+            {
+                S32 lb = fetchVertexIndex(r, c);
+                S32 rb = fetchVertexIndex(r, c + 1);
+                S32 rt = fetchVertexIndex(r + 1, c + 1);
+                S32 lt = fetchVertexIndex(r + 1, c);
+
+                indices[index++] = lb;
+                indices[index++] = rb;
+                indices[index++] = rt;
+
+                indices[index++] = lb;
+                indices[index++] = rt;
+                indices[index++] = lt;
+            }
+        }
+
+        // Debug normals
+        /*
+        for (S32 r = 0; r < (S32)m_cellsCount.y + 1; ++r)
+        {
+            for (S32 c = 0; c < (S32)m_cellsCount.x + 1; ++c)
+            {
+                S32 vertexIndex = fetchVertexIndex(r, c);
+                Vec3DF pos = positions[vertexIndex];
+                Vec3DF normal = normals[vertexIndex];
+
+                Vec3DF p0 = positions[vertexIndex];
+                Vec3DF p1 = p0 + normal * 0.2f;
+
+                indices.push_back((U32)positions.size());
+                positions.push_back(p0);
+
+                indices.push_back((U32)positions.size());
+                positions.push_back(p1);
+
+                indices.push_back((U32)positions.size());
+                positions.push_back(p1 + normal.crossProduct(Vec3DF::c_unitZ) * 0.003f);
+
+                for (S32 i = 0; i < 3; ++i)
+                {
+                    normals.push_back(normal);
+                    colors.push_back(Vec4DF(0.0f, 0.0f, 0.0f, 1.0f));
+                    uvs0.push_back(Vec2DF::c_zero);
+                }
+            }
+        }
+        */
 
         Vector<Vec3DF> tangents;
         Vector<Vec3DF> bitangents;
@@ -363,27 +462,7 @@ namespace Maze
             subMesh->setBitangents(bitangents);
         }
 
-        S32 index = 0;
         
-        for (S32 r = 0; r < (S32)m_cellsCount.y; ++r)
-        {
-            for (S32 c = 0; c < (S32)m_cellsCount.x; ++c)
-            {
-                S32 lb = fetchVertexIndex(r, c);
-                S32 rb = fetchVertexIndex(r, c + 1);
-                S32 rt = fetchVertexIndex(r + 1, c + 1);
-                S32 lt = fetchVertexIndex(r + 1, c);
-
-                indices[index++] = lb;
-                indices[index++] = rb;
-                indices[index++] = rt;
-
-                indices[index++] = lb;
-                indices[index++] = rt;
-                indices[index++] = lt;
-                
-            }
-        }
 
         subMesh->setPositions(positions);
         subMesh->setNormals(normals);

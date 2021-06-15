@@ -12,7 +12,9 @@
 uniform mat4 u_projectionMatrix;
 uniform mat4 u_viewMatrix;
 uniform vec3 u_viewPosition;
-uniform vec4 u_baseMapST;
+uniform vec4 u_baseMap0ST;
+uniform vec4 u_baseMap1ST;
+uniform vec4 u_baseMap2ST;
 
 
 //////////////////////////////////////////
@@ -34,6 +36,8 @@ OUT vec3 v_tangentWS;
 OUT vec3 v_bitangentWS;
 OUT vec4 v_color;
 OUT vec2 v_uv0;
+OUT vec2 v_uv1;
+OUT vec2 v_uv2;
 OUT vec3 v_viewDirWS;
 
 
@@ -86,7 +90,9 @@ void main()
     
     v_color = a_color;
        
-    v_uv0 = u_baseMapST.xy * a_texCoords0 + u_baseMapST.zw;
+    v_uv0 = u_baseMap0ST.xy * a_texCoords0 + u_baseMap0ST.zw;
+    v_uv1 = u_baseMap1ST.xy * a_texCoords0 + u_baseMap1ST.zw;
+    v_uv2 = u_baseMap2ST.xy * a_texCoords0 + u_baseMap2ST.zw;
 
     v_viewDirWS = u_viewPosition - v_positionWS;
 
@@ -106,7 +112,9 @@ void main()
 
 
 //////////////////////////////////////////
-uniform sampler2D u_baseMap;
+uniform sampler2D u_baseMap0;
+uniform sampler2D u_baseMap1;
+uniform sampler2D u_baseMap2;
 uniform vec4 u_color;
 uniform vec3 u_viewPosition;
 uniform vec4 u_mainLightColor;
@@ -114,6 +122,9 @@ uniform vec3 u_mainLightDirection;
 uniform vec4 u_ambientLightColor;
 uniform float u_shininess;
 uniform vec4 u_specularColor;
+uniform float u_height0;
+uniform float u_height1;
+uniform float u_height2;
 
 // EMISSION_MAP
 uniform sampler2D u_emissionMap;
@@ -145,6 +156,8 @@ IN vec3 v_tangentWS;
 IN vec3 v_bitangentWS;
 IN vec4 v_color;
 IN vec2 v_uv0;
+IN vec2 v_uv1;
+IN vec2 v_uv2;
 IN vec3 v_viewDirWS;
 
 
@@ -222,7 +235,17 @@ void main()
     vec3 ambientLightColor = u_ambientLightColor.rgb;
     
     // Albedo
-    vec4 albedo = MAZE_GET_TEXEL2D(u_baseMap, v_uv0) * u_color;
+    vec4 albedo0 = MAZE_GET_TEXEL2D(u_baseMap0, v_uv0);
+    vec4 albedo1 = MAZE_GET_TEXEL2D(u_baseMap1, v_uv1);
+    vec4 albedo2 = MAZE_GET_TEXEL2D(u_baseMap2, v_uv2);
+    
+    float height = v_positionOS.y;
+    
+    vec4 albedo = albedo0;
+    albedo = mix(albedo, albedo1, smoothstep(u_height0, u_height1, height));
+    albedo = mix(albedo, albedo2, smoothstep(u_height1, u_height2, height));
+
+    albedo = albedo * u_color;
     
     // Diffuse color
     vec3 diffuseColor = albedo.rgb;
