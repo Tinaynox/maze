@@ -532,30 +532,111 @@ namespace Maze
 
     //////////////////////////////////////////
     PixelSheet2D Texture2DOpenGL::readAsPixelSheet()
-    {
-        PixelSheet2D result;
+    {        
+        if (mzglGetTexImage)
+        {
+            PixelSheet2D result;
 
-        ContextOpenGLScopeBind contextScopedBind(m_context);
-        MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
-        Texture2DOpenGLScopeBind textureScopedBind(this);
+            PixelFormat::Enum pixelFormat = m_internalPixelFormat;
+            result.setFormat(pixelFormat);
+            result.setSize(m_size);
 
-        PixelFormat::Enum pixelFormat = m_internalPixelFormat;
-        result.setFormat(pixelFormat);
-        result.setSize(m_size);
+            U32 bytesPerPixel = PixelFormat::GetBytesPerPixel(pixelFormat);
+            U32 channelsPerPixel = PixelFormat::GetChannelsPerPixel(pixelFormat);
+            U32 bytesPerChannel = bytesPerPixel / channelsPerPixel;
+            MZGLint originFormat = GetOpenGLOriginFormat(pixelFormat);
 
-        U32 bytesPerPixel = PixelFormat::GetBytesPerPixel(pixelFormat);
-        U32 channelsPerPixel = PixelFormat::GetChannelsPerPixel(pixelFormat);
-        U32 bytesPerChannel = bytesPerPixel / channelsPerPixel;
-        MZGLint originFormat = GetOpenGLOriginFormat(pixelFormat);
+            MZGLint dataType = GetOpenGLDataType(pixelFormat);
 
-        MZGLint dataType = GetOpenGLDataType(pixelFormat);
+            ContextOpenGLScopeBind contextScopedBind(m_context);
+            MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+            Texture2DOpenGLScopeBind textureScopedBind(this);
 
-        if (!mzglGetTexImage)
+            MAZE_GL_CALL(mzglGetTexImage(MAZE_GL_TEXTURE_2D, 0, originFormat, dataType, result.getDataPointer()));
+
             return result;
+        }
 
-        MAZE_GL_CALL(mzglGetTexImage(MAZE_GL_TEXTURE_2D, 0, originFormat, dataType, result.getDataPointer()));
+        if (mzglFramebufferTexture2D)
+        {
+            MAZE_GL_CALL(mzglPixelStorei(MAZE_GL_PACK_ALIGNMENT, 1));
 
-        return result;
+
+            MZGLint currentFBO = 0;
+            MZGLuint tempFBO = 0;
+            MAZE_GL_CALL(mzglGetIntegerv(MAZE_GL_FRAMEBUFFER_BINDING, &currentFBO));
+            MAZE_GL_CALL(mzglGenFramebuffers(1, &tempFBO));
+            MAZE_GL_CALL(mzglBindFramebuffer(MAZE_GL_FRAMEBUFFER, tempFBO));
+
+            PixelSheet2D result;
+            result.setFormat(PixelFormat::RGBA_U8);
+            result.setSize(m_size);
+
+            MAZE_GL_CALL(mzglFramebufferTexture2D(MAZE_GL_FRAMEBUFFER, MAZE_GL_COLOR_ATTACHMENT0, MAZE_GL_TEXTURE_2D, m_glTexture, 0));
+            MAZE_GL_CALL(mzglCheckFramebufferStatus(MAZE_GL_FRAMEBUFFER));
+            MAZE_GL_CALL(
+                mzglReadPixels(
+                    0,
+                    0,
+                    result.getWidth(),
+                    result.getHeight(),
+                    MAZE_GL_RGBA,
+                    MAZE_GL_UNSIGNED_BYTE,
+                    result.getDataPointer()));
+
+            MAZE_GL_CALL(mzglPixelStorei(MAZE_GL_PACK_ALIGNMENT, 4));
+            MAZE_GL_CALL(mzglBindFramebuffer(MAZE_GL_FRAMEBUFFER, currentFBO));
+            MAZE_GL_CALL(mzglDeleteFramebuffers(1, &tempFBO));
+
+            return result;
+        }
+
+        /*
+        if (mzglMapBufferRange)
+        {
+            PixelSheet2D result;
+
+            PixelFormat::Enum pixelFormat = m_internalPixelFormat;
+            result.setFormat(pixelFormat);
+            result.setSize(m_size);
+
+            ContextOpenGLScopeBind contextScopedBind(m_context);
+            MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+
+            MZGLuint bufferId;
+            MAZE_GL_CALL(mzglGenBuffers(1, &bufferId));
+            MAZE_GL_CALL(mzglBindBuffer(MAZE_GL_PIXEL_PACK_BUFFER, bufferId));
+
+            MAZE_GL_CALL(
+                mzglBufferData(
+                    MAZE_GL_PIXEL_PACK_BUFFER,
+                    result.getTotalBytesCount(),
+                    NULL,
+                    MAZE_GL_STREAM_DRAW));
+            
+            Texture2DOpenGLScopeBind textureScopedBind(this);
+            
+            void* buffer;
+            Size offsetInBytes = 0;
+            MAZE_GL_CALL(buffer = mzglMapBufferRange(MAZE_GL_PIXEL_PACK_BUFFER, offsetInBytes, result.getTotalBytesCount(), MAZE_GL_MAP_READ_BIT));
+
+            MAZE_ERROR_RETURN_VALUE_IF(buffer == 0, result, "Out of memory!");
+
+            memcpy(result.getDataPointer(), buffer, result.getTotalBytesCount());
+
+            MZGLboolean mapped;
+            MAZE_GL_CALL(mapped = mzglUnmapBuffer(MAZE_GL_PIXEL_PACK_BUFFER));
+            MAZE_ERROR_RETURN_VALUE_IF(!mapped, result, "Buffer data corrupted, please reload");
+
+            MAZE_GL_CALL(mzglBindBuffer(MAZE_GL_PIXEL_PACK_BUFFER, 0));
+            MAZE_GL_CALL(mzglDeleteBuffers(1, &bufferId));
+        }
+        */
+
+
+        MAZE_WARNING("Not supported!");
+
+        return PixelSheet2D();
     }
 
     //////////////////////////////////////////

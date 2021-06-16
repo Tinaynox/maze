@@ -88,6 +88,12 @@ namespace Maze
         inline Vec2DS const& getSize() const { return m_size; }
 
         //////////////////////////////////////////
+        inline S32 const& getWidth() const { return m_size.x; }
+
+        //////////////////////////////////////////
+        inline S32 const& getHeight() const { return m_size.y; }
+
+        //////////////////////////////////////////
         inline S32 getRowsCount() const { return m_size.y; }
 
         //////////////////////////////////////////
