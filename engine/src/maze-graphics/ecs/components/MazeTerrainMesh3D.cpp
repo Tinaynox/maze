@@ -169,6 +169,7 @@ namespace Maze
         m_meshRenderer->clearMesh();
     }
 
+    /*
     //////////////////////////////////////////
     Vec2DF Random2(Vec2DF st)
     {
@@ -203,6 +204,7 @@ namespace Maze
             b,
             u.y).x;
     }
+    */
 
     //////////////////////////////////////////
     void TerrainMesh3D::buildMesh()

@@ -66,6 +66,7 @@
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeWaterRenderer3D.hpp"
 #include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
 #include "maze-particles/MazeParticleSystemParameterF32.hpp"
 #include "maze-particles/MazeParticleSystemParameterColor.hpp"
@@ -235,6 +236,18 @@ namespace Maze
         MeshRendererPtr terrainMeshRenderer = terrainEntity->ensureComponent<MeshRenderer>();
         terrainMeshRenderer->setMaterial("Terrain00.mzmaterial");
 
+
+        // Water
+        EntityPtr waterEntity = createEntity("Water");
+        WaterRenderer3DPtr waterRenderer = waterEntity->ensureComponent<WaterRenderer3D>();
+        Transform3DPtr waterTransform = waterEntity->ensureComponent<Transform3D>();
+        waterTransform->setLocalScale({ 20.0f, 20.0f, 1.0f });
+        waterTransform->setLocalY(0.75f);
+        waterTransform->setLocalRotation(Quaternion(Math::DegreesToRadians(90), Vec3DF::c_unitX));
+        MeshRendererPtr waterMeshRenderer = waterEntity->ensureComponent<MeshRenderer>();
+        waterMeshRenderer->setRenderMesh(renderSystem->getRenderMeshManager()->getDefaultQuadMesh());
+        waterMeshRenderer->setMaterial("Water00.mzmaterial");
+        
         // createParticleSystem();
 
         return true;
