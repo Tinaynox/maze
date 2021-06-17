@@ -9,9 +9,11 @@
 
 
 //////////////////////////////////////////
+uniform vec4 u_clipDistance0;
 uniform mat4 u_projectionMatrix;
 uniform mat4 u_viewMatrix;
 uniform vec3 u_viewPosition;
+uniform float u_tiling;
 
 
 //////////////////////////////////////////
@@ -27,10 +29,12 @@ IN vec2 a_texCoords0;
 OUT vec3 v_positionOS;
 OUT vec3 v_positionWS;
 OUT vec3 v_positionVS;
+OUT vec4 v_positionCS;
 OUT vec3 v_normalOS;
 OUT vec3 v_normalWS;
 OUT vec3 v_tangentWS;
 OUT vec3 v_bitangentWS;
+OUT vec2 v_uv0;
 OUT vec3 v_viewDirWS;
 
 
@@ -49,6 +53,7 @@ void main()
 
     vec4 positionOS = vec4(a_position, 1.0);
     vec4 positionWS = positionOS * modelMatrix;
+    MAZE_CLIP_DISTANCE(positionWS);
     vec4 positionVS = positionWS * u_viewMatrix;
     vec4 positionCS = positionVS * u_projectionMatrix;
     
@@ -67,12 +72,22 @@ void main()
     v_positionOS = positionOS.xyz;
     v_positionWS = positionWS.xyz;
     v_positionVS = positionVS.xyz;
+    v_positionCS = positionCS;
     
     vec3 normalWS = normalize(normalOS * normalMatrix).xyz;
+        
+#if defined(NORMAL_MAP) && (NORMAL_MAP)
+    vec3 tangentWS = normalize(tangentOS * normalMatrix).xyz;
+    vec3 bitangentWS = normalize(bitangentOS * normalMatrix).xyz;
+    
+    v_tangentWS = tangentWS.xyz;
+    v_bitangentWS = bitangentWS.xyz;
+#endif
         
     v_normalOS = normalOS.xyz;
     v_normalWS = normalWS.xyz;
     
+    v_uv0 = a_texCoords0 * u_tiling;
     
     v_viewDirWS = u_viewPosition - v_positionWS;
 
@@ -92,9 +107,10 @@ void main()
 
 
 //////////////////////////////////////////
-uniform sampler2D u_baseMap0;
-uniform sampler2D u_baseMap1;
-uniform sampler2D u_baseMap2;
+uniform sampler2D u_reflectionMap;
+uniform sampler2D u_refractionMap;
+uniform sampler2D u_depthMap;
+uniform sampler2D u_dudvMap;
 uniform vec4 u_color;
 uniform vec3 u_viewPosition;
 uniform vec4 u_mainLightColor;
@@ -102,42 +118,28 @@ uniform vec3 u_mainLightDirection;
 uniform vec4 u_ambientLightColor;
 uniform float u_shininess;
 uniform vec4 u_specularColor;
-uniform float u_height0;
-uniform float u_height1;
-uniform float u_height2;
-
-// EMISSION_MAP
-uniform sampler2D u_emissionMap;
-uniform vec4 u_emissionColor;
-
-// SPECULAR_MAP
-uniform sampler2D u_specularMap;
+uniform float u_waveStrength;
+uniform float u_waveSpeed;
+uniform float u_refractiveFactor;
+uniform float u_time;
 
 // NORMAL_MAP
 uniform sampler2D u_normalMap;
 uniform float u_normalScale;
 
-// BACK_LIGHT
-uniform vec4 u_backLightColor;
-uniform vec3 u_backLightDirection;
-uniform float u_backLightBend;
-
-// LAMBERT_THRESHOLD
-uniform float u_lambertThreshold;
 
 
 //////////////////////////////////////////
 IN vec3 v_positionOS;
 IN vec3 v_positionWS;
 IN vec3 v_positionVS;
+IN vec4 v_positionCS;
 IN vec3 v_normalOS;
 IN vec3 v_normalWS;
 IN vec3 v_tangentWS;
 IN vec3 v_bitangentWS;
 IN vec4 v_color;
 IN vec2 v_uv0;
-IN vec2 v_uv1;
-IN vec2 v_uv2;
 IN vec3 v_viewDirWS;
 
 
@@ -152,15 +154,61 @@ void main()
     // View direction
     vec3 fragmentToViewDirection = normalize(v_viewDirWS);
 
+    float waveSpeed = u_waveSpeed * u_time;
+    vec2 distortedUV = MAZE_GET_TEXEL2D(u_dudvMap, vec2(v_uv0.x + waveSpeed, v_uv0.y)).rg * 0.1;
+    distortedUV = v_uv0 + vec2(distortedUV.x, distortedUV.y + waveSpeed);
+    
+
     // Normal
 #if defined(NORMAL_MAP) && (NORMAL_MAP)
-    vec3 normalTS = SampleNormalTS(u_normalMap, v_uv0, u_normalScale);
-    mat3 tangentToWorld = mat3(v_tangentWS, v_bitangentWS, v_normalWS);
+    vec3 normalTS = SampleNormalTS(u_normalMap, distortedUV, u_normalScale);
+    mat3 tangentToWorld = mat3(normalize(v_tangentWS), normalize(v_bitangentWS), normalize(v_normalWS));
     vec3 normalWS = normalize(TransformTangentToWorld(normalTS, tangentToWorld));
 #else
     vec3 normalWS = normalize(v_normalWS);
 #endif
+
+    normalWS.y *= 6.0;
+    normalWS = normalize(normalWS);
     
-        
-    out_color = vec4(0.0, 0.6, 1.0, 0.3);
+
+    vec2 screenUV = (v_positionCS.xy / v_positionCS.w) * 0.5 + 0.5;
+    
+    vec2 reflectionUV = vec2(screenUV.x, 1.0 - screenUV.y);
+    vec2 refractionUV = screenUV;
+    
+    // Depth
+    float near = 0.01;
+    float far = 100.0;
+    float depth = MAZE_GET_TEXEL2D(u_depthMap, screenUV).r;
+    float floorDistance = 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
+    depth = gl_FragCoord.z;
+    float waterDistance = 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
+    float waterDepth = floorDistance - waterDistance;
+    
+    vec2 totalDistortion = (MAZE_GET_TEXEL2D(u_dudvMap, distortedUV).rg * 2.0 - 1.0) * u_waveStrength * clamp(waterDepth/20.0, 0.0, 1.0);
+    
+    reflectionUV += totalDistortion;
+    reflectionUV = clamp(reflectionUV, 0.001, 0.999);
+    
+    refractionUV += totalDistortion;
+    refractionUV = clamp(refractionUV, 0.001, 0.999);
+    
+    vec4 reflectionColor = MAZE_GET_TEXEL2D(u_reflectionMap, reflectionUV);
+    vec4 refractionColor = MAZE_GET_TEXEL2D(u_refractionMap, refractionUV);
+    
+    float refractiveFactor = clamp(dot(fragmentToViewDirection, normalWS), 0.001, 1.0);
+    refractiveFactor = pow(refractiveFactor, u_refractiveFactor);
+    
+    
+    // Light
+    vec3 lightToFragment = normalize(u_mainLightDirection);
+    vec3 reflectedLight = reflect(lightToFragment, normalWS);
+    float specular = max(dot(reflectedLight, fragmentToViewDirection), 0.0);
+    specular = pow(specular, 20.0);
+    vec3 specularHighlights = u_mainLightColor.rgb * specular * 0.5 * clamp(waterDepth/2.0, 0.0, 1.0);
+    
+    vec3 waterColor = mix(reflectionColor.rgb, refractionColor.rgb, refractiveFactor);
+    waterColor = mix(waterColor, u_color.rgb, u_color.a);
+    out_color = vec4(waterColor.rgb + specularHighlights.rgb, clamp(waterDepth/2.5, 0.0, 1.0));
 }

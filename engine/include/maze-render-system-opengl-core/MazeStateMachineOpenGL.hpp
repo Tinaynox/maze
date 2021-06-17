@@ -91,6 +91,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline bool getClipDistanceEnabled(S32 _i) const { return m_clipDistances[_i]; }
+
+        //////////////////////////////////////////
+        void setClipDistanceEnabled(S32 _i, bool _value);
+
+
+        //////////////////////////////////////////
         inline bool getBlendEnabled() const { return m_blendEnabled; }
 
         //////////////////////////////////////////
@@ -291,6 +298,7 @@ namespace Maze
         MZGLenum m_activeTexture;
         MZGLenum m_bindTextureTargets[MAZE_GL_MAX_TEXTURES_COUNT];
         MZGLuint m_bindTextureIds[MAZE_GL_MAX_TEXTURES_COUNT];
+        bool m_clipDistances[MAZE_GL_MAX_CLIP_DISTANCES_COUNT];
         MZGLuint m_program;
         MZGLuint m_frameBuffer;
         MZGLuint m_vertexArrayObject;

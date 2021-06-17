@@ -97,7 +97,10 @@ namespace Maze
         virtual void processUpdate(F32 _dt) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        void notifyGatherRenderUnits(Camera3D* _camera3D, Vector<RenderUnit>& _renderData);
+        void notifyGatherRenderUnits(
+            RenderTarget* _renderTarget,
+            DefaultPassParams const& _params,
+            Vector<RenderUnit>& _renderData);
 
     protected:
         RenderSystemPtr m_renderSystem;

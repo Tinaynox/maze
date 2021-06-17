@@ -668,6 +668,7 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::assignDefaultUniforms()
     {
+        m_clipDistance0Uniform = ensureUniform("u_clipDistance0");
         m_projectionMatrixUniform = ensureUniform("u_projectionMatrix");
         m_viewMatrixUniform = ensureUniform("u_viewMatrix");
         m_modelMatricesUniform = ensureUniform("u_modelMatrices");

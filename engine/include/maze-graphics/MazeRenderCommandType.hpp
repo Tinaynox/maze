@@ -50,6 +50,8 @@ namespace Maze
         ClearCurrentRenderTarget,
         PushScissorRect,
         PopScissorRect,
+        EnableClipPlane,
+        DisableClipPlane,
     };
     
 

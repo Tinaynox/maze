@@ -113,7 +113,9 @@ namespace Maze
         virtual ~RenderControlSystemModule2D();
 
         //////////////////////////////////////////
-        static RenderControlSystemModule2DPtr Create(ECSWorldPtr const& _world);
+        static RenderControlSystemModule2DPtr Create(
+            ECSWorldPtr const& _world,
+            RenderSystemPtr const& _renderSystem);
 
 
         //////////////////////////////////////////
@@ -132,7 +134,9 @@ namespace Maze
         RenderControlSystemModule2D();
 
         //////////////////////////////////////////
-        bool init(ECSWorldPtr const& _world);        
+        bool init(
+            ECSWorldPtr const& _world,
+            RenderSystemPtr const& _renderSystem);
 
         //////////////////////////////////////////
         void processCanvasEntityAdded(Entity* _entity, Canvas* _canvas);
@@ -154,6 +158,7 @@ namespace Maze
 
     protected:
         ECSWorld* m_world;
+        RenderSystemPtr m_renderSystem;
 
         SharedPtr<GenericInclusiveEntitiesSample<Transform2D>> m_transform2Ds;
         SharedPtr<GenericInclusiveEntitiesSample<MeshRenderer, Transform2D>> m_meshRenderersSample;

@@ -116,6 +116,9 @@ namespace Maze
         SpriteRenderer2DPtr m_renderColorSprite;
         SpriteRenderer2DPtr m_renderDepthSprite;
 
+        SpriteRenderer2DPtr m_testSprite1;
+        SpriteRenderer2DPtr m_testSprite2;
+
         RenderBufferPtr m_renderBuffer;
 
         LevelBloomControllerPtr m_bloomController;

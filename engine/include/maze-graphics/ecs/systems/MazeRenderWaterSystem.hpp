@@ -25,44 +25,49 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeWaterRenderer3D_hpp_))
-#define _MazeWaterRenderer3D_hpp_
+#if (!defined(_MazeRenderWaterSystem_hpp_))
+#define _MazeRenderWaterSystem_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-graphics/MazeGraphicsHeader.hpp"
+#include "maze-core/ecs/MazeComponentSystem.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-graphics/MazeAlignment2D.hpp"
+#include "maze-core/ecs/MazeEntitiesSample.hpp"
+#include "maze-graphics/ecs/components/MazeCanvas.hpp"
+#include "maze-graphics/ecs/components/MazeCamera3D.hpp"
+#include "maze-graphics/ecs/components/MazeWaterRenderer3D.hpp"
+#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
+#include "maze-graphics/ecs/systems/MazeRenderControlSystemModule3D.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(Material);
-    MAZE_USING_SHARED_PTR(Mesh);
-    MAZE_USING_SHARED_PTR(SubMesh);
-    MAZE_USING_SHARED_PTR(WaterRenderer3D);
-    MAZE_USING_SHARED_PTR(Transform3D);
+    MAZE_USING_SHARED_PTR(RenderSystem);
+    MAZE_USING_SHARED_PTR(EntitiesSample);
+    MAZE_USING_SHARED_PTR(RenderWaterSystem);
+    MAZE_USING_SHARED_PTR(Camera3D);
     MAZE_USING_SHARED_PTR(MeshRenderer);
-    MAZE_USING_SHARED_PTR(CanvasRenderer);
-
+    MAZE_USING_SHARED_PTR(Transform3D);
+    
 
     //////////////////////////////////////////
-    // Class WaterRenderer3D
+    // Class RenderWaterSystem
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API WaterRenderer3D
-        : public Component
+    class MAZE_GRAPHICS_API RenderWaterSystem
+        : public ComponentSystem
+        , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(WaterRenderer3D, Component);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(RenderWaterSystem, ComponentSystem);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(WaterRenderer3D);
+        MAZE_DECLARE_MEMORY_ALLOCATION(RenderWaterSystem);
 
         //////////////////////////////////////////
         friend class Entity;
@@ -70,59 +75,48 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~WaterRenderer3D();
+        virtual ~RenderWaterSystem();
 
         //////////////////////////////////////////
-        static WaterRenderer3DPtr Create(RenderSystem* _renderSystem = nullptr);
-
-
-        //////////////////////////////////////////
-        Transform3DPtr const& getTransform() const { return m_transform; }
+        static RenderWaterSystemPtr Create();
 
         //////////////////////////////////////////
-        MeshRendererPtr const& getMeshRenderer() const { return m_meshRenderer; }
+        virtual S32 getOrder() const MAZE_OVERRIDE { return 46000; }
 
 
         //////////////////////////////////////////
-        void setMaterial(MaterialPtr const& _material);
+        inline RenderBufferPtr const& getReflectionBuffer() const { return m_reflectionBuffer; }
 
         //////////////////////////////////////////
-        void setMaterial(String const& _materialName);
-
-
-        //////////////////////////////////////////
-        void prepare(
-            RenderBuffer* _reflectionBuffer,
-            RenderBuffer* _refractionBuffer);
+        inline RenderBufferPtr const& getRefractionBuffer() const { return m_refractionBuffer; }
 
     protected:
 
         //////////////////////////////////////////
-        WaterRenderer3D();
+        RenderWaterSystem();
 
         //////////////////////////////////////////
-        using Component::init;
-        
-        //////////////////////////////////////////
-        bool init(RenderSystem* _renderSystem = nullptr);
+        bool init();
 
         //////////////////////////////////////////
-        virtual bool init(
-            Component* _component,
-            ECSWorld* _world,
-            EntityCopyData _copyData) MAZE_OVERRIDE;
+        virtual void processSystemAdded() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void processEntityAwakened() MAZE_OVERRIDE;
+        virtual void processUpdate(F32 _dt) MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
+        void notifyRenderPrePass(
+            RenderTarget* _renderTarget,
+            DefaultPassParams const& _params);
 
     protected:
-        RenderSystem* m_renderSystem = nullptr;
+        SharedPtr<GenericInclusiveEntitiesSample<WaterRenderer3D>> m_waterRenderersSample;
 
-        Transform3DPtr m_transform;
-        MeshRendererPtr m_meshRenderer;
+        RenderControlSystemPtr m_renderControlSystem;
 
-        RenderBuffer* m_reflectionBuffer;
-        RenderBuffer* m_refractionBuffer;
+        RenderBufferPtr m_reflectionBuffer;
+        RenderBufferPtr m_refractionBuffer;
     };
 
 
@@ -130,5 +124,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeWaterRenderer3D_hpp_
+#endif // _MazeRenderWaterSystem_hpp_
 //////////////////////////////////////////

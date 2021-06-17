@@ -505,5 +505,11 @@ namespace Maze
         m_stateMachine->setScissorTestEnabled(_value);
     }
 
+    //////////////////////////////////////////
+    void ContextOpenGL::setClipDistanceEnabled(S32 _i, bool _value)
+    {
+        m_stateMachine->setClipDistanceEnabled(_i, _value);
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

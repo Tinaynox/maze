@@ -98,16 +98,16 @@ namespace Maze
         inline bool empty() const { return m_renderCommandsBuffer.empty(); }
 
         //////////////////////////////////////////
-        void pushSelectRenderPassCommand(RenderPass* _materialPass);
+        void addSelectRenderPassCommand(RenderPass* _materialPass);
 
         //////////////////////////////////////////
-        inline void pushSelectRenderPassCommand(RenderPassPtr const& _materialPass)
+        inline void addSelectRenderPassCommand(RenderPassPtr const& _materialPass)
         {
-            pushSelectRenderPassCommand(_materialPass.get());
+            addSelectRenderPassCommand(_materialPass.get());
         }
 
         //////////////////////////////////////////
-        inline void pushDrawVAOInstancedCommand(
+        inline void addDrawVAOInstancedCommand(
             VertexArrayObject* _vao,
             Mat4DF const& _modelMatrix = Mat4DF::c_identity,
             Vec4DF const* _color = nullptr,
@@ -141,7 +141,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline void pushDrawVAOInstancedCommand(
+        inline void addDrawVAOInstancedCommand(
             VertexArrayObject* _vao,
             S32 _count,
             Mat4DF const* _modelMatricies,
@@ -176,27 +176,27 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline void pushDrawVAOInstancedCommand(
+        inline void addDrawVAOInstancedCommand(
             VertexArrayObjectPtr const& _vao,
             Mat4DF const& _modelMatrix = Mat4DF::c_identity,
             Vec4DF const* _color = nullptr)
         {
-            pushDrawVAOInstancedCommand(_vao.get(), _modelMatrix, _color);
+            addDrawVAOInstancedCommand(_vao.get(), _modelMatrix, _color);
         }
 
         //////////////////////////////////////////
-        inline void pushDrawVAOInstancedCommand(
+        inline void addDrawVAOInstancedCommand(
             VertexArrayObjectPtr const& _vao,
             S32 _count,
             Mat4DF const* _modelMatricies,
             Vec4DF const* _colors = nullptr,
             Vec4DF const* _uvs = nullptr)
         {
-            pushDrawVAOInstancedCommand(_vao.get(), _count, _modelMatricies, _colors, _uvs);
+            addDrawVAOInstancedCommand(_vao.get(), _count, _modelMatricies, _colors, _uvs);
         }
 
         //////////////////////////////////////////
-        inline void pushClearCurrentRenderTargetCommand(
+        inline void addClearCurrentRenderTargetCommand(
             bool _colorBuffer = true,
             bool _depthBuffer = true)
         {
@@ -204,7 +204,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline void pushPushScissorRectCommand(
+        inline void addPushScissorRectCommand(
             Rect2DF const& _scissorRect)
         {
             MAZE_DEBUG_ERROR_IF(_scissorRect.size.x < 0.0f || _scissorRect.size.y < 0.0f, "Scissor size is cannot be negative!");
@@ -212,9 +212,23 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline void pushPopScissorRectCommand()
+        inline void addPopScissorRectCommand()
         {
             m_renderCommandsBuffer.createCommand<RenderCommandPopScissorRect>();
+        }
+
+        //////////////////////////////////////////
+        inline void addEnableClipPlaneCommand(
+            S32 _index,
+            Vec4DF const& _plane)
+        {
+            m_renderCommandsBuffer.createCommand<RenderCommandEnableClipPlane>(_index, _plane);
+        }
+
+        //////////////////////////////////////////
+        inline void addDisableClipPlaneCommand(S32 _index)
+        {
+            m_renderCommandsBuffer.createCommand<RenderCommandDisableClipPlane>(_index);
         }
 
 

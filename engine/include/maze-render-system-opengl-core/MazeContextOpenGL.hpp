@@ -387,6 +387,14 @@ namespace Maze
         //////////////////////////////////////////
         inline bool getScissorTestEnabled() const { return m_stateMachine->getScissorTestEnabled(); }
 
+
+        //////////////////////////////////////////
+        void setClipDistanceEnabled(S32 _i, bool _value);
+
+        //////////////////////////////////////////
+        inline bool getClipDistanceEnabled(S32 _i) const { return m_stateMachine->getClipDistanceEnabled(_i); }
+
+
         //////////////////////////////////////////
         inline ContextOpenGLConfig const& getConfig() const { return m_config; }
 

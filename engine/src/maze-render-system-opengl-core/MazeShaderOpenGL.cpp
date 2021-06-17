@@ -61,6 +61,8 @@ namespace Maze
                                                         "#    define IN attribute                      \n"
                                                         "#    define OUT varying                       \n"
                                                         "#endif                                        \n"
+                                                        "                                              \n"
+                                                        "#define MAZE_CLIP_DISTANCE(_pos) gl_ClipDistance[0] = dot(_pos, u_clipDistance0) \n"
                                                         "                                              \n";
 
     static const String c_fragmentShaderHeader = c_commonShaderHeader +

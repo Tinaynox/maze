@@ -34,6 +34,7 @@
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
 #include "maze-graphics/MazeColorU32.hpp"
+#include "maze-graphics/ecs/MazeLightingSettings.hpp"
 
 
 //////////////////////////////////////////
@@ -149,6 +150,9 @@ namespace Maze
         //////////////////////////////////////////
         inline void setRenderMask(S32 _renderMask) { m_renderMask = _renderMask; }
 
+
+        //////////////////////////////////////////
+        LightingSettingsPtr const& getLightingSettings();
 
     protected:
 

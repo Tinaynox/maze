@@ -275,6 +275,23 @@ namespace Maze
 
                         break;
                     }
+                    case RenderCommandType::EnableClipPlane:
+                    {
+                        RenderCommandEnableClipPlane* command = static_cast<RenderCommandEnableClipPlane*>(_command);
+
+                        m_context->setClipDistanceEnabled(command->index, true);
+                        m_clipPlanes[command->index] = command->plane;
+
+                        break;
+                    }
+                    case RenderCommandType::DisableClipPlane:
+                    {
+                        RenderCommandEnableClipPlane* command = static_cast<RenderCommandEnableClipPlane*>(_command);
+
+                        m_context->setClipDistanceEnabled(command->index, false);
+
+                        break;
+                    }
                     default:
                     {
                         Debug::LogError("Unsupported RenderCommand: %d", (S32)_command->type);
@@ -354,6 +371,13 @@ namespace Maze
         if (shaderOpenGL->getViewMatrixUniform())
         {
             shaderOpenGL->getViewMatrixUniform()->set(m_renderTarget->getViewMatrix());
+        }
+
+        // Clip distances
+        if (m_context->getClipDistanceEnabled(0))
+        {
+            if (shaderOpenGL->getClipDistance0Uniform())
+                shaderOpenGL->getClipDistance0Uniform()->set(m_clipPlanes[0]);
         }
 
         // Projection matrix

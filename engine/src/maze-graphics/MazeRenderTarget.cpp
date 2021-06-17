@@ -127,7 +127,7 @@ namespace Maze
             RenderQueuePtr const& renderQueue = renderTarget->getRenderQueue();
 
             renderQueue->clear();
-            renderQueue->pushPushScissorRectCommand(viewport);
+            renderQueue->addPushScissorRectCommand(viewport);
 
             bool const clearColorFlag = true;
             bool const clearDepthFlag = false;
@@ -137,7 +137,7 @@ namespace Maze
 
             if (clearColorFlag || clearDepthFlag)
             {
-                renderQueue->pushClearCurrentRenderTargetCommand(
+                renderQueue->addClearCurrentRenderTargetCommand(
                     clearColorFlag,
                     clearDepthFlag);
             }
@@ -167,8 +167,8 @@ namespace Maze
 
             RenderMeshPtr const& quad = m_renderSystem->getRenderMeshManager()->getDefaultQuadMesh();
             VertexArrayObject* vao = quad->getVertexArrayObjects().front().get();
-            renderQueue->pushSelectRenderPassCommand(_material->getRenderPass(RenderPassType::Default, _renderPassIndex));
-            renderQueue->pushDrawVAOInstancedCommand(
+            renderQueue->addSelectRenderPassCommand(_material->getRenderPass(RenderPassType::Default, _renderPassIndex));
+            renderQueue->addDrawVAOInstancedCommand(
                 vao, 
                 Mat4DF(
                     viewportWidth,   0.0f,                0.0f,    viewportWidth * 0.5f,
@@ -177,7 +177,7 @@ namespace Maze
                     0.0f,            0.0f,                0.0f,    1.0f));
             
 
-            renderQueue->pushPopScissorRectCommand();
+            renderQueue->addPopScissorRectCommand();
             renderQueue->draw();
 
             endDraw();

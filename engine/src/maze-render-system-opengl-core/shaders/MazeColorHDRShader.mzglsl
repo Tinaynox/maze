@@ -7,6 +7,7 @@ R"(
 R"(
 
     //////////////////////////////////////////
+	uniform vec4 u_clipDistance0;
     uniform mat4 u_projectionMatrix;
     uniform mat4 u_viewMatrix;
 
@@ -32,6 +33,7 @@ R"(
 
         vec4 positionOS = vec4(a_position, 1.0);
         vec4 positionWS = positionOS * modelMatrix;
+		MAZE_CLIP_DISTANCE(positionWS);
         vec4 positionVS = positionWS * u_viewMatrix;
         vec4 positionCS = positionVS * u_projectionMatrix;
         

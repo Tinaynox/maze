@@ -114,15 +114,20 @@ namespace Maze
 
     //////////////////////////////////////////
     void ParticlesDrawerSystem::notifyGatherRenderUnits(
-        Camera3D* _camera3D,
+        RenderTarget* _renderTarget,
+        DefaultPassParams const& _params,
         Vector<RenderUnit>& _renderData)
     {
-        Vec3DF cameraPosition = _camera3D->getTransform()->getWorldPosition();
-        Vec3DF cameraForward = _camera3D->getTransform()->getWorldForwardDirection();
-        Vec3DF cameraUp = _camera3D->getTransform()->getWorldUpDirection();
+        Vec3DF cameraPosition = _params.cameraTransform.getAffineTranslation();
+        Mat4DF cameraTransform = _params.cameraTransform;
+        cameraTransform[0][3] = 0.0f;
+        cameraTransform[1][3] = 0.0f;
+        cameraTransform[2][3] = 0.0f;
+        Vec3DF cameraForward = (cameraTransform.transformAffine(Vec3DF::c_unitZ)).normalizedCopy();
+        Vec3DF cameraUp = (cameraTransform.transformAffine(Vec3DF::c_unitY)).normalizedCopy();
 
         m_particleSystem3DSample->process(
-            [_camera3D, &_renderData, &cameraPosition, &cameraForward, &cameraUp](Entity* _entity, ParticleSystem3D* _particleSystem)
+            [_renderTarget, &_renderData, &cameraPosition, &cameraForward, &cameraUp](Entity* _entity, ParticleSystem3D* _particleSystem)
             {
                 S32 aliveParticles = _particleSystem->getAliveParticles();
 
@@ -131,14 +136,14 @@ namespace Maze
 
                 MaterialPtr const* material = nullptr;
                 if (!_particleSystem->getRendererModule().getMaterial())
-                    material = &_camera3D->getRenderTarget()->getRenderSystem()->getMaterialManager()->getErrorMaterial();
+                    material = &_renderTarget->getRenderSystem()->getMaterialManager()->getErrorMaterial();
                 else
                     material = &_particleSystem->getRendererModule().getMaterial();
 
                 RenderMesh const* renderMesh = _particleSystem->getRendererModule().getRenderMesh().get();
                 if (!renderMesh)
                 {
-                    RenderMeshPtr const& quad = _camera3D->getRenderTarget()->getRenderSystem()->getRenderMeshManager()->getDefaultQuadMesh();
+                    RenderMeshPtr const& quad = _renderTarget->getRenderSystem()->getRenderMeshManager()->getDefaultQuadMesh();
                     renderMesh = quad.get();
                 }
 

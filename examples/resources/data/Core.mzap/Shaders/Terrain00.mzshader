@@ -10,6 +10,6 @@
     <Uniform name="u_ambientLightColor" type="UniformColorF128" value="0.45;0.45;0.45;1.0" />
     <Uniform name="u_shininess" type="UniformF32" value="0.1" />
     <Uniform name="u_specularColor" type="UniformColorF128" value="0.6;0.6;0.6;1.0" />
-    
+        
     <GLSL shader="Terrain00.mzglsl" />
 </Shader>

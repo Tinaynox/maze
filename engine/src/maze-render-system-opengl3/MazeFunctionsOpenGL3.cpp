@@ -198,6 +198,7 @@ namespace Maze
         AssignOpenGLFunction(_renderContext, mzglDepthMask, "glDepthMask");
         AssignOpenGLFunction(_renderContext, mzglCullFace, "glCullFace");
         AssignOpenGLFunction(_renderContext, mzglFrontFace, "glFrontFace");
+        AssignOpenGLFunction(_renderContext, mzglClipPlane, "glClipPlane");
 
         AssignOpenGLFunction(_renderContext, mzglDebugMessageControl, "glDebugMessageControl");
         AssignOpenGLFunction(_renderContext, mzglDebugMessageCallback, "glDebugMessageCallback");
@@ -330,6 +331,7 @@ namespace Maze
         AssignOpenGLFunction(_renderContext, mzglDepthMask, "glDepthMask");
         AssignOpenGLFunction(_renderContext, mzglCullFace, "glCullFace");
         AssignOpenGLFunction(_renderContext, mzglFrontFace, "glFrontFace");
+        AssignOpenGLFunction(_renderContext, mzglClipPlane, "glClipPlane");
                              _
 #   if (MAZE_PLATFORM != MAZE__PLATFORM_ANDROID)
         AssignOpenGLFunction(_renderContext, mzglBindRenderbuffer, "glBindRenderbufferOES");
@@ -484,6 +486,7 @@ namespace Maze
         AssignOpenGLFunction(_renderContext, mzglDepthMask, glDepthMask);
         AssignOpenGLFunction(_renderContext, mzglCullFace, glCullFace);
         AssignOpenGLFunction(_renderContext, mzglFrontFace, glFrontFace);
+        AssignOpenGLFunction(_renderContext, mzglClipPlane, glClipPlane);
 
 #   endif
         

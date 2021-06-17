@@ -39,6 +39,7 @@
 //////////////////////////////////////////
 #define MAZE_GL_MAX_RENDER_TARGETS_COUNT    (4)
 #define MAZE_GL_MAX_TEXTURES_COUNT          (16)
+#define MAZE_GL_MAX_CLIP_DISTANCES_COUNT    (6)
 
 
 #endif // _MazeConfigOpenGL_hpp_

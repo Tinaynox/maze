@@ -179,13 +179,14 @@ namespace Maze
                 return sqrDistanceToCameraA > sqrDistanceToCameraB;
             });
 
+        /*
         // Render transform callback
         std::function<Mat4DF(Mat4DF const& _lookAtMatrix)> renderTransformCallback;
         switch (_transformPolicy)
         {
             case ParticleSystemTransformPolicy::Local:
             {
-                renderTransformCallback = [&_particleSystemWorldTransform](Mat4DF const& _lookAtMatrix) { return _particleSystemWorldTransform * _lookAtMatrix; };
+                renderTransformCallback = [&_particleSystemWorldTransform](Mat4DF const& _lookAtMatrix) { return _lookAtMatrix; };
                 break;
             }
             case ParticleSystemTransformPolicy::World:
@@ -199,6 +200,7 @@ namespace Maze
                 break;
             }
         }
+        */
 
 
         // Render UV callback
@@ -259,6 +261,12 @@ namespace Maze
                 _cameraUp);
             */
 
+            // #REWORK
+            if (_transformPolicy == ParticleSystemTransformPolicy::Local)
+            {
+                position = _particleSystemWorldTransform.transformAffine(position);
+            }
+
             Mat4DF mat = Mat4DF::CreateLookAtMatrix(
                 position,
                 position - _cameraForward,
@@ -291,7 +299,7 @@ namespace Maze
 #endif
             
 
-            renderTransform = renderTransformCallback(mat);
+            renderTransform = mat;
             renderColor = colorCurrent;
 
 

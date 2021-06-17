@@ -8,7 +8,6 @@
 
 //////////////////////////////////////////
 uniform sampler2D u_baseMap;
-uniform sampler2D u_baseMap2;
 uniform vec3 u_viewPosition;
 uniform vec4 u_color;
 

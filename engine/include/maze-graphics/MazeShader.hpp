@@ -196,6 +196,8 @@ namespace Maze
         virtual bool loadFromSources(String const& _vertexShaderSource, String const& _fragmentShaderSource) MAZE_ABSTRACT;
 
 
+        //////////////////////////////////////////
+        ShaderUniformPtr const& getClipDistance0Uniform() const { return m_clipDistance0Uniform; }
 
         //////////////////////////////////////////
         ShaderUniformPtr const& getProjectionMatrixUniform() const { return m_projectionMatrixUniform; }
@@ -292,6 +294,7 @@ namespace Maze
         RenderSystemWPtr m_renderSystem;
         RenderSystem* m_renderSystemRaw;
 
+        ShaderUniformPtr m_clipDistance0Uniform;
         ShaderUniformPtr m_projectionMatrixUniform;
         ShaderUniformPtr m_viewMatrixUniform;
         ShaderUniformPtr m_modelMatricesUniform;

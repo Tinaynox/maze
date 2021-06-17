@@ -33,6 +33,7 @@
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
@@ -41,6 +42,8 @@
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
+#include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/helpers/MazeSubMeshHelper.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
@@ -117,9 +120,40 @@ namespace Maze
     {
         m_transform = getEntityRaw()->ensureComponent<Transform3D>();
         m_meshRenderer = getEntityRaw()->ensureComponent<MeshRenderer>();
+        m_meshRenderer->getRenderMask()->setMask(DefaultRenderMask::Water);
 
         m_meshRenderer->setRenderMesh(RenderMeshPtr());
         
+    }
+
+    //////////////////////////////////////////
+    void WaterRenderer3D::setMaterial(MaterialPtr const& _material)
+    {
+        m_meshRenderer->setMaterial(_material ? _material->createCopy() : nullptr);
+    }
+
+    //////////////////////////////////////////
+    void WaterRenderer3D::setMaterial(String const& _materialName)
+    {
+        MaterialPtr const& material = m_renderSystem->getMaterialManager()->getMaterial(_materialName);
+        setMaterial(material);
+    }
+
+    //////////////////////////////////////////
+    void WaterRenderer3D::prepare(
+        RenderBuffer* _reflectionBuffer,
+        RenderBuffer* _refractionBuffer)
+    {
+        m_reflectionBuffer = _reflectionBuffer;
+        m_refractionBuffer = _refractionBuffer;
+
+        MaterialPtr const& material = m_meshRenderer->getMaterial();
+        if (material)
+        {
+            material->setUniform("u_reflectionMap", m_reflectionBuffer->getColorTexture());
+            material->setUniform("u_refractionMap", m_refractionBuffer->getColorTexture());
+            material->setUniform("u_depthMap", m_refractionBuffer->getDepthTexture());
+        }
     }
             
     

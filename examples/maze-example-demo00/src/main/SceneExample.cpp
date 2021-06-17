@@ -67,6 +67,7 @@
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeWaterRenderer3D.hpp"
+#include "maze-graphics/ecs/systems/MazeRenderWaterSystem.hpp"
 #include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
 #include "maze-particles/MazeParticleSystemParameterF32.hpp"
 #include "maze-particles/MazeParticleSystemParameterColor.hpp"
@@ -180,6 +181,30 @@ namespace Maze
         m_renderColorSprite->getEntityRaw()->ensureComponent<Name>("RenderColorSprite");
         m_renderColorSprite->getEntityRaw()->ensureComponent<SizePolicy2D>();
 
+#if (0)
+        m_testSprite1 = SpriteHelper::CreateSprite(
+            Sprite::Create(m_world->getSystem<RenderWaterSystem>()->getReflectionBuffer()->getColorTexture()),
+            {256, 256},
+            Vec2DF::c_zero,
+            GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getColorTextureMaterial(),
+            m_canvas->getTransform(),
+            this,
+            { 0.0f, 1.0f },
+            { 0.0f, 1.0f });
+        m_testSprite1->getTransform()->setZ(10000);
+
+        m_testSprite2 = SpriteHelper::CreateSprite(
+            Sprite::Create(m_world->getSystem<RenderWaterSystem>()->getRefractionBuffer()->getColorTexture()),
+            { 256, 256 },
+            { 256, 0 },
+            GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getColorTextureMaterial(),
+            m_canvas->getTransform(),
+            this,
+            { 0.0f, 1.0f },
+            { 0.0f, 1.0f });
+        m_testSprite2->getTransform()->setZ(10000);
+#endif
+
 
         S32 p0 = EntityManager::GetInstancePtr()->getComponentPriority<Transform3D>();
         S32 p1 = EntityManager::GetInstancePtr()->getComponentPriority<Camera3D>();
@@ -246,9 +271,9 @@ namespace Maze
         waterTransform->setLocalRotation(Quaternion(Math::DegreesToRadians(90), Vec3DF::c_unitX));
         MeshRendererPtr waterMeshRenderer = waterEntity->ensureComponent<MeshRenderer>();
         waterMeshRenderer->setRenderMesh(renderSystem->getRenderMeshManager()->getDefaultQuadMesh());
-        waterMeshRenderer->setMaterial("Water00.mzmaterial");
+        waterRenderer->setMaterial("Water00.mzmaterial");
         
-        // createParticleSystem();
+        createParticleSystem();
 
         return true;
     }
@@ -300,13 +325,14 @@ namespace Maze
         EntityPtr psEntity = createEntity();
         ParticleSystem3DPtr ps = psEntity->ensureComponent<ParticleSystem3D>();
         ps->getTransform()->rotate(Vec3DF::c_unitX, -Math::c_halfPi);
+        ps->getTransform()->setLocalY(2.0f);
 
-        ps->getMainModule().setTransformPolicy(ParticleSystemTransformPolicy::World);
+        ps->getMainModule().setTransformPolicy(ParticleSystemTransformPolicy::Local);
         ps->getMainModule().getLifetime().setConstant(0.9f);
-        ps->getMainModule().getSpeed().setConstant(2.0f);
+        ps->getMainModule().getSpeed().setConstant(1.0f);
         ps->getMainModule().getRotation().setRandomBetweenConstants(0.0f, Math::c_twoPi);
         ps->getMainModule().getGravity().setConstant(0.0f);
-        ps->getMainModule().getSize().setRandomBetweenConstants(2.0f, 3.0f);
+        ps->getMainModule().getSize().setRandomBetweenConstants(1.0f, 2.0f);
         ps->getMainModule().getRotationOverLifetime().enabled = true;
 
         MaterialPtr material = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getMaterial("Fireball00.mzmaterial");
@@ -329,7 +355,7 @@ namespace Maze
         ps->getShapeModule().setType(ParticleSystem3DZoneType::Cone);
         ps->getShapeModule().getZoneData().cone.angle = 0.436f;
         ps->getShapeModule().getZoneData().cone.length = 0.001f;
-        ps->getShapeModule().getZoneData().cone.radius = 0.619f;
+        ps->getShapeModule().getZoneData().cone.radius = 0.119f;
         ps->getShapeModule().setShapeVolume(true);
 
         ps->setMaterial(material);
