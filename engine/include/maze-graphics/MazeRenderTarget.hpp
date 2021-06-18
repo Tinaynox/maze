@@ -205,6 +205,18 @@ namespace Maze
             F32 _w,
             F32 _h);
 
+        //////////////////////////////////////////
+        inline void setNear(F32 _value) { m_near = _value; }
+
+        //////////////////////////////////////////
+        inline F32 getNear() const { return m_near; }
+
+        //////////////////////////////////////////
+        inline void setFar(F32 _value) { m_far = _value; }
+
+        //////////////////////////////////////////
+        inline F32 getFar() const { return m_far; }
+
 
         //////////////////////////////////////////
         void clearDrawCalls();
@@ -249,7 +261,10 @@ namespace Maze
         Rect2DF m_viewport;
         Vec3DF m_viewPosition;
         Mat4DF m_viewMatrix;
+
         Mat4DF m_projectionMatrix;
+        F32 m_near;
+        F32 m_far;
 
         RenderMeshPoolPtr m_renderMeshPool;
         RenderBufferPoolPtr m_renderBufferPool;

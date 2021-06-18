@@ -80,7 +80,7 @@ namespace Maze
     {
         m_reflectionBuffer = RenderBuffer::Create(
             {
-                {512, 512},
+                {1024, 1024},
                 PixelFormat::RGBA_F16,
                 PixelFormat::DEPTH_U24
             });
@@ -89,7 +89,7 @@ namespace Maze
 
         m_refractionBuffer = RenderBuffer::Create(
             {
-                {512, 512},
+                {1024, 1024},
                 PixelFormat::RGBA_F16,
                 PixelFormat::DEPTH_U24
             });
@@ -127,8 +127,8 @@ namespace Maze
                 F32 waterY = _waterRenderer->getTransform()->getWorldPosition().y;
 
                 DefaultPassParams params = _params;
-                // params.clearColorFlag = true;
-                // params.clearColor = ColorU32::c_black;
+                params.clearColorFlag = true;
+                params.clearColor = ColorU32::c_transparent;
                 params.renderMask &= ~(S32)DefaultRenderMask::Water;
                 params.viewport = Rect2DF(0.0f, 0.0f, 1.0f, 1.0f);
 
@@ -141,7 +141,7 @@ namespace Maze
                     {
                         _renderQueue->addEnableClipPlaneCommand(
                             0,
-                            { 0.0f, -1.0f, 0.0f, waterY + 0.02f });
+                            { 0.0f, -1.0f, 0.0f, waterY + 0.2f });
                     },
                     [](RenderQueuePtr const& _renderQueue)
                     {
@@ -158,6 +158,8 @@ namespace Maze
                 params.cameraTransform = params.cameraTransform * Quaternion(cameraRotation).toRotationMatrix();
                 params.cameraTransform = params.cameraTransform * Mat4DF::CreateScaleMatrix(cameraScale);               
                 
+                if (params.clearSkyBoxFlag)
+                    params.clearColorFlag = false;
 
                 // Reflection buffer (Above the water level)
                 m_renderControlSystem->getModule3D()->drawDefaultPass(

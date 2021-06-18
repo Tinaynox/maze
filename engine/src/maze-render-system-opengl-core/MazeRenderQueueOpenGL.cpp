@@ -383,6 +383,13 @@ namespace Maze
         // Projection matrix
         shaderOpenGL->getProjectionMatrixUniform()->set(m_renderTarget->getProjectionMatrix());
 
+        // Projection params
+        if (shaderOpenGL->getProjectionParamsUniform())
+        {
+            shaderOpenGL->getProjectionParamsUniform()->set(
+                Vec4DF{ m_renderTarget->getNear(), m_renderTarget->getFar(), 0.0f, 0.0f });
+        }
+
         // View direction
         if (shaderOpenGL->getViewPositionUniform())
         {

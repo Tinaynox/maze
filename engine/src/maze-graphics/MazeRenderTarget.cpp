@@ -56,6 +56,8 @@ namespace Maze
         , m_viewPosition(Vec3DF::c_zero)
         , m_viewMatrix(Mat4DF::c_identity)
         , m_projectionMatrix(Mat4DF::c_identity)
+        , m_near(0.0f)
+        , m_far(0.0f)
     {
     }
     
@@ -190,6 +192,9 @@ namespace Maze
         F32 _nearZ,
         F32 _farZ)
     {
+        setNear(_nearZ);
+        setFar(_farZ);
+
         Vec2DU const& renderTargetSize = getRenderTargetSize();
 
         F32 aspectRatio = (m_viewport.size.x * (F32)renderTargetSize.x) / (m_viewport.size.y * (F32)renderTargetSize.y);
@@ -209,6 +214,9 @@ namespace Maze
         F32 _w,
         F32 _h)
     {
+        setNear(0.0f);
+        setFar(1.0f);
+
         setProjectionMatrix(
             Mat4DF::CreateProjection2DMatrix(_x, _y, _w, _h));
     }

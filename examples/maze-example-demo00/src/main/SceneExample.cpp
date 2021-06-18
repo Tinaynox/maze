@@ -184,7 +184,7 @@ namespace Maze
 #if (0)
         m_testSprite1 = SpriteHelper::CreateSprite(
             Sprite::Create(m_world->getSystem<RenderWaterSystem>()->getReflectionBuffer()->getColorTexture()),
-            {256, 256},
+            {128, 128 },
             Vec2DF::c_zero,
             GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getColorTextureMaterial(),
             m_canvas->getTransform(),
@@ -195,8 +195,8 @@ namespace Maze
 
         m_testSprite2 = SpriteHelper::CreateSprite(
             Sprite::Create(m_world->getSystem<RenderWaterSystem>()->getRefractionBuffer()->getColorTexture()),
-            { 256, 256 },
-            { 256, 0 },
+            { 128, 128 },
+            { 128, 0 },
             GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getColorTextureMaterial(),
             m_canvas->getTransform(),
             this,
@@ -272,7 +272,46 @@ namespace Maze
         MeshRendererPtr waterMeshRenderer = waterEntity->ensureComponent<MeshRenderer>();
         waterMeshRenderer->setRenderMesh(renderSystem->getRenderMeshManager()->getDefaultQuadMesh());
         waterRenderer->setMaterial("Water00.mzmaterial");
+        waterRenderer->getMeshRenderer()->getMaterial()->getFirstRenderPass()->setRenderQueueIndex(2500);
         
+
+        // Barrel
+        {
+            EntityPtr barrelEntity = createEntity("Barrel");
+            Transform3DPtr barrelTransform = barrelEntity->createComponent<Transform3D>();
+            MeshRendererPtr barrelMeshRenderer = barrelEntity->createComponent<MeshRenderer>();
+            barrelMeshRenderer->setRenderMesh("Barrel00.obj");
+            barrelMeshRenderer->setMaterial("Barrel00.mzmaterial");
+            barrelTransform->setLocalY(0.05f);
+            barrelTransform->setLocalZ(-1.0f);
+            barrelTransform->setLocalRotation(Quaternion(Math::c_halfPi, 0.0f, 0.0f));
+            barrelTransform->setLocalScale({ 0.025f, 0.025f, 0.025f });
+        }
+
+        // Barrel
+        {
+            EntityPtr barrelEntity = createEntity("Barrel");
+            Transform3DPtr barrelTransform = barrelEntity->createComponent<Transform3D>();
+            MeshRendererPtr barrelMeshRenderer = barrelEntity->createComponent<MeshRenderer>();
+            barrelMeshRenderer->setRenderMesh("Barrel00.obj");
+            barrelMeshRenderer->setMaterial("Barrel00.mzmaterial");
+            barrelTransform->setLocalPosition({2.5f, 0.3f, -5.0f});
+            barrelTransform->setLocalRotation(Quaternion(0.0f, Math::c_halfPi, Math::c_halfPi * 0.1f));
+            barrelTransform->setLocalScale({ 0.025f, 0.025f, 0.025f });
+        }
+
+        // Barrel
+        {
+            EntityPtr barrelEntity = createEntity("Barrel");
+            Transform3DPtr barrelTransform = barrelEntity->createComponent<Transform3D>();
+            MeshRendererPtr barrelMeshRenderer = barrelEntity->createComponent<MeshRenderer>();
+            barrelMeshRenderer->setRenderMesh("Barrel00.obj");
+            barrelMeshRenderer->setMaterial("Barrel00.mzmaterial");
+            barrelTransform->setLocalPosition({ -1.0f, 1.8f, -7.0f });
+            barrelTransform->setLocalRotation(Quaternion(0.0f, Math::c_halfPi + 0.1f, Math::c_halfPi));
+            barrelTransform->setLocalScale({ 0.025f, 0.025f, 0.025f });
+        }
+
         createParticleSystem();
 
         return true;
@@ -316,6 +355,17 @@ namespace Maze
             m_camera3D->getTransform()->getLocalRotation(),
             Quaternion(m_pitchAngle, m_yawAngle, 0.0f));
         m_camera3D->getTransform()->setLocalRotation(q);
+
+
+        if (m_particleSystem)
+        {
+            static F32 timer = 0.0f;
+            timer += _dt;
+            F32 x = 2 * Math::Sin(1.4f * timer) + 2.0f;
+            F32 z = 2 * Math::Cos(1.4f * timer) - 2.0f;
+            m_particleSystem->getTransform()->setLocalPosition(
+                {x, 2.5f + Math::Sin(2.0f * timer), z});
+        }
     }
 
     //////////////////////////////////////////
@@ -324,15 +374,18 @@ namespace Maze
         // Particle System
         EntityPtr psEntity = createEntity();
         ParticleSystem3DPtr ps = psEntity->ensureComponent<ParticleSystem3D>();
+        m_particleSystem = ps;
         ps->getTransform()->rotate(Vec3DF::c_unitX, -Math::c_halfPi);
         ps->getTransform()->setLocalY(2.0f);
 
-        ps->getMainModule().setTransformPolicy(ParticleSystemTransformPolicy::Local);
-        ps->getMainModule().getLifetime().setConstant(0.9f);
+        ps->getMainModule().setTransformPolicy(ParticleSystemTransformPolicy::World);
+        ps->getMainModule().getLifetime().setConstant(1.0f);
         ps->getMainModule().getSpeed().setConstant(1.0f);
         ps->getMainModule().getRotation().setRandomBetweenConstants(0.0f, Math::c_twoPi);
         ps->getMainModule().getGravity().setConstant(0.0f);
-        ps->getMainModule().getSize().setRandomBetweenConstants(1.0f, 2.0f);
+        ps->getMainModule().getSize().setRandomBetweenConstants(0.5f, 1.0f);
+        ps->getMainModule().getColor().setColor({ 1.2f * 63.0f / 255.0f, 1.2f * 255.0f / 255.0f, 1.2f * 79.0f / 255.0f, 0.4f });
+        //ps->getMainModule().getSize().setConstant(0.5f);
         ps->getMainModule().getRotationOverLifetime().enabled = true;
 
         MaterialPtr material = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getMaterial("Fireball00.mzmaterial");
@@ -349,8 +402,19 @@ namespace Maze
             ps->getRendererModule().getTextureSheetAnimation().frameOverTime.setCurve(curve);
         }
 
+        {
+            ColorGradient gradient;
+            gradient.addKeyRGB(0.0f, Vec3DF::c_one);
+            gradient.addKeyAlpha(0.23f, 0.0f);
+            gradient.addKeyAlpha(0.42f, 1.0f);
+            gradient.addKeyAlpha(0.71f, 1.0f);
+            gradient.addKeyAlpha(0.88f, 0.0f);
+            ps->getMainModule().getColorOverLifetime().setEnabled(true);
+            ps->getMainModule().getColorOverLifetime().setParameter({ gradient });
+        }
+
         ps->getRendererModule().setParticlesMaxCount(10000);
-        ps->getMainModule().getEmission().emissionPerSecond.setConstant(10.0f);
+        ps->getMainModule().getEmission().emissionPerSecond.setConstant(150.0f);
 
         ps->getShapeModule().setType(ParticleSystem3DZoneType::Cone);
         ps->getShapeModule().getZoneData().cone.angle = 0.436f;

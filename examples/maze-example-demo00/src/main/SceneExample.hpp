@@ -56,6 +56,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Rigidbody2D);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(LevelBloomController);
+    MAZE_USING_SHARED_PTR(ParticleSystem3D);
 
 
     //////////////////////////////////////////
@@ -122,6 +123,8 @@ namespace Maze
         RenderBufferPtr m_renderBuffer;
 
         LevelBloomControllerPtr m_bloomController;
+
+        ParticleSystem3DPtr m_particleSystem;
 
         F32 m_yawAngle = -2.565f;
         F32 m_pitchAngle = 0.253f;

@@ -107,6 +107,7 @@ void main()
 
 
 //////////////////////////////////////////
+uniform vec4 u_projectionParams;
 uniform sampler2D u_reflectionMap;
 uniform sampler2D u_refractionMap;
 uniform sampler2D u_depthMap;
@@ -122,6 +123,8 @@ uniform float u_waveStrength;
 uniform float u_waveSpeed;
 uniform float u_refractiveFactor;
 uniform float u_time;
+uniform float u_depthDistortionFactor;
+uniform float u_depthTransparencyFactor;
 
 // NORMAL_MAP
 uniform sampler2D u_normalMap;
@@ -178,15 +181,15 @@ void main()
     vec2 refractionUV = screenUV;
     
     // Depth
-    float near = 0.01;
-    float far = 100.0;
+    float near = u_projectionParams[0];
+    float far = u_projectionParams[1];
     float depth = MAZE_GET_TEXEL2D(u_depthMap, screenUV).r;
     float floorDistance = 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
     depth = gl_FragCoord.z;
     float waterDistance = 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
     float waterDepth = floorDistance - waterDistance;
     
-    vec2 totalDistortion = (MAZE_GET_TEXEL2D(u_dudvMap, distortedUV).rg * 2.0 - 1.0) * u_waveStrength * clamp(waterDepth/20.0, 0.0, 1.0);
+    vec2 totalDistortion = (MAZE_GET_TEXEL2D(u_dudvMap, distortedUV).rg * 2.0 - 1.0) * u_waveStrength * clamp(waterDepth/u_depthDistortionFactor, 0.0, 1.0);
     
     reflectionUV += totalDistortion;
     reflectionUV = clamp(reflectionUV, 0.001, 0.999);
@@ -206,9 +209,11 @@ void main()
     vec3 reflectedLight = reflect(lightToFragment, normalWS);
     float specular = max(dot(reflectedLight, fragmentToViewDirection), 0.0);
     specular = pow(specular, 20.0);
-    vec3 specularHighlights = u_mainLightColor.rgb * specular * 0.5 * clamp(waterDepth/2.0, 0.0, 1.0);
+    vec3 specularHighlights = u_mainLightColor.rgb * specular * 0.5 * clamp(waterDepth/u_depthTransparencyFactor, 0.0, 1.0);
     
+    float waterAlpha = clamp(waterDepth/u_depthTransparencyFactor, 0.0, 1.0);
     vec3 waterColor = mix(reflectionColor.rgb, refractionColor.rgb, refractiveFactor);
+    
     waterColor = mix(waterColor, u_color.rgb, u_color.a);
-    out_color = vec4(waterColor.rgb + specularHighlights.rgb, clamp(waterDepth/2.5, 0.0, 1.0));
+    out_color = vec4(waterColor.rgb + specularHighlights.rgb, waterAlpha);
 }

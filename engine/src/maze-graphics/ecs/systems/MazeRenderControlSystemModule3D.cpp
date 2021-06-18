@@ -148,6 +148,8 @@ namespace Maze
 
             // Projection matrix
             _renderTarget->setProjectionMatrix(_params.projectionMatrix);
+            _renderTarget->setNear(_params.nearZ);
+            _renderTarget->setFar(_params.farZ);
 
             // View matrix
             Mat4DF viewMatrix = _params.cameraTransform.inversedAffineCopy();

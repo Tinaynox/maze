@@ -203,6 +203,9 @@ namespace Maze
         ShaderUniformPtr const& getProjectionMatrixUniform() const { return m_projectionMatrixUniform; }
 
         //////////////////////////////////////////
+        ShaderUniformPtr const& getProjectionParamsUniform() const { return m_projectionParamsUniform; }
+
+        //////////////////////////////////////////
         ShaderUniformPtr const& getViewMatrixUniform() const { return m_viewMatrixUniform; }
 
         //////////////////////////////////////////
@@ -296,6 +299,7 @@ namespace Maze
 
         ShaderUniformPtr m_clipDistance0Uniform;
         ShaderUniformPtr m_projectionMatrixUniform;
+        ShaderUniformPtr m_projectionParamsUniform;
         ShaderUniformPtr m_viewMatrixUniform;
         ShaderUniformPtr m_modelMatricesUniform;
         ShaderUniformPtr m_modelMatricesTextureUniform;

@@ -670,6 +670,7 @@ namespace Maze
     {
         m_clipDistance0Uniform = ensureUniform("u_clipDistance0");
         m_projectionMatrixUniform = ensureUniform("u_projectionMatrix");
+        m_projectionParamsUniform = ensureUniform("u_projectionParams");
         m_viewMatrixUniform = ensureUniform("u_viewMatrix");
         m_modelMatricesUniform = ensureUniform("u_modelMatrices");
         m_modelMatricesTextureUniform = ensureUniform("u_modelMatricesTexture");
