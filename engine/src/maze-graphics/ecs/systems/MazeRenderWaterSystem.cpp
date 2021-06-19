@@ -149,9 +149,14 @@ namespace Maze
 
                 F32 cameraTranslation = 2.0f * (cameraPosition.y - waterY);
                 cameraPosition.y -= cameraTranslation;
+
                 Vec3DF cameraRotation = params.cameraTransform.getAffineRotationEulerAngles();
+
                 Vec3DF cameraScale = params.cameraTransform.getAffineScale();
+
                 cameraRotation.x = -cameraRotation.x;
+                cameraRotation.z = -cameraRotation.z;
+                                
                 params.cameraTransform = Mat4DF::CreateTranslationMatrix(cameraPosition);
                 params.cameraTransform = params.cameraTransform * Quaternion(cameraRotation).toRotationMatrix();
                 params.cameraTransform = params.cameraTransform * Mat4DF::CreateScaleMatrix(cameraScale);               

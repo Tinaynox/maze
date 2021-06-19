@@ -106,8 +106,6 @@ namespace Maze
             // LHCS (It's actually CCW, but because of inverted Z axis we should set CW)
             MAZE_GL_CALL(mzglFrontFace(MAZE_GL_CW));
         }
-
-        MAZE_GL_CALL(mzglEnable(MAZE_GL_CLIP_DISTANCE0));
     }
 
     //////////////////////////////////////////

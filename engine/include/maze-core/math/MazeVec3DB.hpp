@@ -220,6 +220,8 @@ namespace Maze
             x = _vec.x;
             y = _vec.y;
             z = false;
+
+            return *this;
         }
 
         //////////////////////////////////////////
