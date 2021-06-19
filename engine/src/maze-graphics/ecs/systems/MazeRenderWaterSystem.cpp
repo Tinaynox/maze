@@ -127,8 +127,6 @@ namespace Maze
                 F32 waterY = _waterRenderer->getTransform()->getWorldPosition().y;
 
                 DefaultPassParams params = _params;
-                params.clearColorFlag = true;
-                params.clearColor = ColorU32::c_transparent;
                 params.renderMask &= ~(S32)DefaultRenderMask::Water;
                 params.viewport = Rect2DF(0.0f, 0.0f, 1.0f, 1.0f);
 
@@ -158,9 +156,6 @@ namespace Maze
                 params.cameraTransform = params.cameraTransform * Quaternion(cameraRotation).toRotationMatrix();
                 params.cameraTransform = params.cameraTransform * Mat4DF::CreateScaleMatrix(cameraScale);               
                 
-                if (params.clearSkyBoxFlag)
-                    params.clearColorFlag = false;
-
                 // Reflection buffer (Above the water level)
                 m_renderControlSystem->getModule3D()->drawDefaultPass(
                     m_reflectionBuffer.get(),

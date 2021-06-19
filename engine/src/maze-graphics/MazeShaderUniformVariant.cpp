@@ -81,6 +81,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, bool _value)
+        : m_renderSystem(_renderSystem)
+        , m_type(ShaderUniformType::UniformBool)
+        , m_bool(_value)
+    {
+
+    }
+
+    //////////////////////////////////////////
     ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, Texture2D* _value)
         : m_renderSystem(_renderSystem)
         , m_type(ShaderUniformType::UniformTexture2D)
@@ -183,6 +192,31 @@ namespace Maze
         : m_renderSystem(_renderSystem)
         , m_type(ShaderUniformType::UniformVec4DU)
         , m_vectorU(_value)
+    {
+    }
+
+
+    //////////////////////////////////////////
+    ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, Vec2DB const& _value)
+        : m_renderSystem(_renderSystem)
+        , m_type(ShaderUniformType::UniformVec2DB)
+        , m_vectorB(_value)
+    {
+    }
+
+    //////////////////////////////////////////
+    ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, Vec3DB const& _value)
+        : m_renderSystem(_renderSystem)
+        , m_type(ShaderUniformType::UniformVec3DB)
+        , m_vectorB(_value)
+    {
+    }
+
+    //////////////////////////////////////////
+    ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, Vec4DB const& _value)
+        : m_renderSystem(_renderSystem)
+        , m_type(ShaderUniformType::UniformVec4DB)
+        , m_vectorB(_value)
     {
     }
 
@@ -300,6 +334,11 @@ namespace Maze
                 return CalculateCRC32((const S8*)&m_F64, sizeof(F64), _seed);
                 break;
             }
+            case ShaderUniformType::UniformBool:
+            {
+                return CalculateCRC32((const S8*)&m_bool, sizeof(bool), _seed);
+                break;
+            }
             case ShaderUniformType::UniformTexture2D:
             case ShaderUniformType::UniformTextureCube:
             {
@@ -336,6 +375,21 @@ namespace Maze
             case ShaderUniformType::UniformVec4DU:
             {
                 return CalculateCRC32((const S8*)&m_vectorU, sizeof(Vec4DU), _seed);
+                break;
+            }
+            case ShaderUniformType::UniformVec2DB:
+            {
+                return CalculateCRC32((const S8*)&m_vectorB, sizeof(Vec2DB), _seed);
+                break;
+            }
+            case ShaderUniformType::UniformVec3DB:
+            {
+                return CalculateCRC32((const S8*)&m_vectorB, sizeof(Vec3DB), _seed);
+                break;
+            }
+            case ShaderUniformType::UniformVec4DB:
+            {
+                return CalculateCRC32((const S8*)&m_vectorB, sizeof(Vec4DB), _seed);
                 break;
             }
             case ShaderUniformType::UniformVec2DF:
@@ -403,6 +457,13 @@ namespace Maze
                 set(value);
                 return;
             }
+            case ShaderUniformType::UniformBool:
+            {
+                bool value;
+                ValueFromString(value, _data, _count);
+                set(value);
+                return;
+            }
             case ShaderUniformType::UniformTexture2D:
             {
                 String value;
@@ -455,6 +516,27 @@ namespace Maze
             case ShaderUniformType::UniformVec4DU:
             {
                 Vec4DU value;
+                ValueFromString(value, _data, _count);
+                set(value);
+                return;
+            }
+            case ShaderUniformType::UniformVec2DB:
+            {
+                Vec2DB value;
+                ValueFromString(value, _data, _count);
+                set(value);
+                return;
+            }
+            case ShaderUniformType::UniformVec3DB:
+            {
+                Vec3DB value;
+                ValueFromString(value, _data, _count);
+                set(value);
+                return;
+            }
+            case ShaderUniformType::UniformVec4DB:
+            {
+                Vec4DB value;
                 ValueFromString(value, _data, _count);
                 set(value);
                 return;
@@ -530,6 +612,11 @@ namespace Maze
                 ValueToString(m_F64, data);
                 return data;
             }
+            case ShaderUniformType::UniformBool:
+            {
+                ValueToString(m_bool, data);
+                return data;
+            }
             case ShaderUniformType::UniformTexture2D:
             {
                 if (m_texture)
@@ -570,6 +657,21 @@ namespace Maze
             case ShaderUniformType::UniformVec4DU:
             {
                 ValueToString(getVec4DU(), data);
+                return data;
+            }
+            case ShaderUniformType::UniformVec2DB:
+            {
+                ValueToString(getVec2DB(), data);
+                return data;
+            }
+            case ShaderUniformType::UniformVec3DB:
+            {
+                ValueToString(getVec3DB(), data);
+                return data;
+            }
+            case ShaderUniformType::UniformVec4DB:
+            {
+                ValueToString(getVec4DB(), data);
                 return data;
             }
             case ShaderUniformType::UniformVec2DF:
@@ -632,6 +734,11 @@ namespace Maze
             case ShaderUniformType::UniformF64:
             {
                 return m_F64 == _variant.m_F64;
+                break;
+            }
+            case ShaderUniformType::UniformBool:
+            {
+                return m_bool == _variant.m_bool;
                 break;
             }
             case ShaderUniformType::UniformTexture2D:
@@ -703,6 +810,27 @@ namespace Maze
                         &&    (m_vectorF.w == _variant.m_vectorF.w);
                 break;
             }
+            case ShaderUniformType::UniformVec2DB:
+            {
+                return        (m_vectorB.x == _variant.m_vectorB.x)
+                    &&        (m_vectorB.y == _variant.m_vectorB.y);
+                break;
+            }
+            case ShaderUniformType::UniformVec3DB:
+            {
+                return        (m_vectorB.x == _variant.m_vectorB.x)
+                    &&        (m_vectorB.y == _variant.m_vectorB.y)
+                    &&        (m_vectorB.z == _variant.m_vectorB.z);
+                break;
+            }
+            case ShaderUniformType::UniformVec4DB:
+            {
+                return        (m_vectorB.x == _variant.m_vectorB.x)
+                    &&        (m_vectorB.y == _variant.m_vectorB.y)
+                    &&        (m_vectorB.z == _variant.m_vectorB.z)
+                    &&        (m_vectorB.w == _variant.m_vectorB.w);
+                break;
+            }
             case ShaderUniformType::UniformMat3DF:
             {
                 return m_matrix3DF == _variant.m_matrix3DF;
@@ -747,6 +875,7 @@ namespace Maze
             case ShaderUniformType::UniformS32:           set(_variant.getS32()); break;
             case ShaderUniformType::UniformF32:           set(_variant.getF32()); break;
             case ShaderUniformType::UniformF64:           set(_variant.getF64()); break;
+            case ShaderUniformType::UniformBool:          set(_variant.getBool()); break;
             case ShaderUniformType::UniformTexture2D:     set(std::static_pointer_cast<Texture2D>(_variant.getTexture())); break;
             case ShaderUniformType::UniformTextureCube:   set(std::static_pointer_cast<TextureCube>(_variant.getTexture())); break;
             case ShaderUniformType::UniformVec2DS:        set(_variant.getVec2DS()); break;
@@ -758,6 +887,9 @@ namespace Maze
             case ShaderUniformType::UniformVec2DF:        set(_variant.getVec2DF()); break;
             case ShaderUniformType::UniformVec3DF:        set(_variant.getVec3DF()); break;
             case ShaderUniformType::UniformVec4DF:        set(_variant.getVec4DF()); break;
+            case ShaderUniformType::UniformVec2DB:        set(_variant.getVec2DB()); break;
+            case ShaderUniformType::UniformVec3DB:        set(_variant.getVec3DB()); break;
+            case ShaderUniformType::UniformVec4DB:        set(_variant.getVec4DB()); break;
             case ShaderUniformType::UniformMat3DF:        set(_variant.getMat3DF()); break;
             case ShaderUniformType::UniformMat4DF:        set(_variant.getMat4DF()); break;
             case ShaderUniformType::UniformColorF128:     set(_variant.getColorF128()); break;

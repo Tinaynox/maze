@@ -164,19 +164,23 @@ namespace Maze
             m_program = 0;
         }
 
-        for (S32 i = 0; i < MAZE_GL_MAX_CLIP_DISTANCES_COUNT; ++i)
+        if (m_context->getExtensionsRaw() &&
+            m_context->getExtensionsRaw()->getSupportClipDistance())
         {
-            if (m_clipDistances[i])
+            for (S32 i = 0; i < MAZE_GL_MAX_CLIP_DISTANCES_COUNT; ++i)
             {
-                if (mzglEnable)
-                    MAZE_GL_CALL(mzglEnable(MAZE_GL_CLIP_DISTANCE0 + i));
+                if (m_clipDistances[i])
+                {
+                    if (mzglEnable)
+                        MAZE_GL_CALL(mzglEnable(MAZE_GL_CLIP_DISTANCE0 + i));
+                    else
+                        m_clipDistances[i] = 0;
+                }
                 else
-                    m_clipDistances[i] = 0;
-            }
-            else
-            {
-                if (mzglDisable)
-                    MAZE_GL_CALL(mzglDisable(MAZE_GL_CLIP_DISTANCE0 + i));
+                {
+                    if (mzglDisable)
+                        MAZE_GL_CALL(mzglDisable(MAZE_GL_CLIP_DISTANCE0 + i));
+                }
             }
         }
         
@@ -484,20 +488,23 @@ namespace Maze
     {
         if (m_clipDistances[_i] == _value)
             return;
-
+            
         m_clipDistances[_i] = _value;
 
 #if (MAZE_DEBUG_GL)
         m_context->_validateIsCurrentGLContext();
 #endif
 
-        if (_value)
+        if (m_context->getExtensionsRaw()->getSupportClipDistance())
         {
-            MAZE_GL_CALL(mzglEnable(MAZE_GL_CLIP_DISTANCE0 + _i));
-        }
-        else
-        {
-            MAZE_GL_CALL(mzglDisable(MAZE_GL_CLIP_DISTANCE0 + _i));
+            if (_value)
+            {
+                MAZE_GL_CALL(mzglEnable(MAZE_GL_CLIP_DISTANCE0 + _i));
+            }
+            else
+            {
+                MAZE_GL_CALL(mzglDisable(MAZE_GL_CLIP_DISTANCE0 + _i));
+            }
         }
     }
 

@@ -1,0 +1,328 @@
+//////////////////////////////////////////
+//
+// Maze Engine
+// Copyright (C) 2021 Dmitriy "Tinaynox" Nosov (tinaynox@gmail.com)
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented;
+//    you must not claim that you wrote the original software.
+//    If you use this software in a product, an acknowledgment
+//    in the product documentation would be appreciated but is not required.
+//
+// 2. Altered source versions must be plainly marked as such,
+//    and must not be misrepresented as being the original software.
+//
+// 3. This notice may not be removed or altered from any source distribution.
+//
+//////////////////////////////////////////
+
+
+//////////////////////////////////////////
+#pragma once
+#if (!defined(_MazeVec3DB_hpp_))
+#define _MazeVec3DB_hpp_
+
+
+//////////////////////////////////////////
+#include "maze-core/MazeCoreHeader.hpp"
+#include "maze-core/MazeBaseTypes.hpp"
+#include "maze-core/math/MazeMath.hpp"
+#include "maze-core/math/MazeVec2DB.hpp"
+#include "maze-core/math/MazeVec3D.hpp"
+#include <ostream>
+
+
+//////////////////////////////////////////
+namespace Maze
+{
+
+    //////////////////////////////////////////
+    // Class Vec3DB
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API Vec3DB
+    {
+    public:
+
+        ////////////////////////////////////
+        static Vec3DB const c_false;
+        static Vec3DB const c_true;
+
+    public:
+
+        //////////////////////////////////////////
+        inline Vec3DB()
+        {}
+
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR Vec3DB(
+            bool _x,
+            bool _y,
+            bool _z)
+            : x(_x)
+            , y(_y)
+            , z(_z)
+        {}
+
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR explicit Vec3DB(bool _x)
+            : x(_x)
+            , y(_x)
+            , z(_x)
+        {}
+
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR explicit Vec3DB(bool* const _arr)
+            : x(_arr[0])
+            , y(_arr[1])
+            , z(_arr[2])
+        {}
+
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR Vec3DB(Vec3DB const& _vec)
+            : x(_vec.x)
+            , y(_vec.y)
+            , z(_vec.z)
+        {}
+
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR Vec3DB(Vec3DB&& _vec) noexcept
+            : x(_vec.x)
+            , y(_vec.y)
+            , z(_vec.z)
+        {}
+
+        //////////////////////////////////////////
+        template <class UValue>
+        inline MAZE_CONSTEXPR Vec3DB(Vec3D<UValue> const& _vec)
+            : x(static_cast<bool>(_vec.x))
+            , y(static_cast<bool>(_vec.y))
+            , z(static_cast<bool>(_vec.z))
+        {
+        }
+
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR Vec3DB(Vec2DB const& _vec, bool _z = 0)
+            : x(_vec.x)
+            , y(_vec.y)
+            , z(_z)
+        {
+        }
+
+        ////////////////////////////////////
+        template <class UValue>
+        inline MAZE_CONSTEXPR Vec3DB(Vec2D<UValue> const& _vec, UValue _z = 0)
+            : x(static_cast<bool>(_vec.x))
+            , y(static_cast<bool>(_vec.y))
+            , z(static_cast<bool>(_z))
+        {
+        }
+
+        //////////////////////////////////////////
+        inline void set(
+            bool _x,
+            bool _y,
+            bool _z)
+        {
+            x = _x;
+            y = _y;
+            z = _z;
+        }
+
+        //////////////////////////////////////////
+        inline void set(bool _x)
+        {
+            x = _x;
+            y = _x;
+            z = _x;
+        }
+
+        //////////////////////////////////////////
+        inline void setX(bool _x) { x = _x; }
+
+        //////////////////////////////////////////
+        inline void setY(bool _y) { y = _y; }
+
+        //////////////////////////////////////////
+        inline void setZ(bool _z) { z = _z; }
+
+        //////////////////////////////////////////
+        inline bool getX() const { return x; }
+
+        //////////////////////////////////////////
+        inline bool getY() const { return y; }
+
+        //////////////////////////////////////////
+        inline bool getZ() const { return z; }
+
+        //////////////////////////////////////////
+        inline Vec2DB xy() const { return { x, y }; }
+
+        //////////////////////////////////////////
+        inline void swap(Vec3DB& _other)
+        {
+            std::swap(x, _other.x);
+            std::swap(y, _other.y);
+            std::swap(z, _other.z);
+        }
+
+        //////////////////////////////////////////
+        inline bool operator[](Size const _i) const { return *(&x + _i); }
+
+        //////////////////////////////////////////
+        inline bool& operator[](Size const _i) { return *(&x + _i); }
+
+        //////////////////////////////////////////
+        inline bool* ptr() { return &x; }
+
+        //////////////////////////////////////////
+        inline const bool* ptr() const { return &x; }
+
+        //////////////////////////////////////////
+        inline Vec3DB& operator=(Vec3DB const& _vec)
+        {
+            x = _vec.x;
+            y = _vec.y;
+            z = _vec.z;
+
+            return *this;
+        }
+
+        //////////////////////////////////////////
+        inline Vec3DB& operator=(Vec3DB&& _vec) noexcept
+        {
+            x = _vec.x;
+            y = _vec.y;
+            z = _vec.z;
+
+            return *this;
+        }
+
+        //////////////////////////////////////////
+        inline Vec3DB& operator=(bool _value)
+        {
+            x = _value;
+            y = _value;
+            z = _value;
+
+            return *this;
+        }
+
+        //////////////////////////////////////////
+        inline Vec3DB& operator=(Vec2DB const& _vec)
+        {
+            x = _vec.x;
+            y = _vec.y;
+            z = false;
+        }
+
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR bool operator==(Vec3DB const& _vec) const
+        {
+            return (x == _vec.x && y == _vec.y && z == _vec.z);
+        }
+
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR bool operator!=(Vec3DB const& _vec) const
+        {
+            return (x != _vec.x || y != _vec.y || z != _vec.z);
+        }
+
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR bool operator<(Vec3DB const& _vec) const
+        {
+            return (x < _vec.x&& y < _vec.y&& z < _vec.z);
+        }
+
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR bool operator>(Vec3DB const& _vec) const
+        {
+            return (x > _vec.x && y > _vec.y && z > _vec.z);
+        }
+
+        //////////////////////////////////////////
+        inline String toString() const { return StringHelper::ToString(x) + ";" + StringHelper::ToString(y) + ";" + StringHelper::ToString(z); }
+
+        //////////////////////////////////////////
+        static Vec3DB FromString(String const& _string)
+        {
+            Vector<String> words;
+            StringHelper::SplitWords(_string, words, ';');
+            if (words.size() == 3)
+            {
+                return Vec3DB(
+                    static_cast<bool>(StringHelper::StringToBool(words[0])),
+                    static_cast<bool>(StringHelper::StringToBool(words[1])),
+                    static_cast<bool>(StringHelper::StringToBool(words[2])));
+            }
+
+            return Vec3DB::c_false;
+        }
+
+    public:
+        bool x;
+        bool y;
+        bool z;
+    }; 
+
+
+    //////////////////////////////////////////
+    template <class TValue> 
+    inline std::ostream& operator<<(std::ostream& _o, Vec3DB const& _v)
+    {
+        _o << "Vec3DB(" << _v.x << ", " << _v.y << ", " << _v.z <<  ")";
+        return _o;
+    }
+
+
+    //////////////////////////////////////////
+    template <>
+    struct IsVec3D<Vec3DB> : std::true_type {};
+
+
+    //////////////////////////////////////////
+    // Serialization
+    //
+    //////////////////////////////////////////
+    inline void ValueToString(Vec3DB const& _value, String& _data)
+    {
+        _data = _value.toString();
+    }
+
+    //////////////////////////////////////////
+    inline void ValueFromString(Vec3DB& _value, CString _data, Size _count)
+    {
+        _value = Vec3DB::FromString(String(_data, _count));
+    }
+
+    //////////////////////////////////////////
+    inline U32 GetValueSerializationSize(Vec3DB const& _value)
+    {
+        return sizeof(Vec3DB);
+    }
+
+    //////////////////////////////////////////
+    inline void SerializeValue(Vec3DB const& _value, U8* _data)
+    {
+        memcpy(_data, (U8 const*)(&_value), sizeof(Vec3DB));
+    }
+
+    //////////////////////////////////////////
+    inline void DeserializeValue(Vec3DB& _value, U8 const* _data)
+    {
+        memcpy((U8*)&_value, _data, sizeof(Vec3DB));
+    }
+
+
+} // namespace Maze
+//////////////////////////////////////////
+
+
+#endif // _MazeVec3DB_hpp_
+//////////////////////////////////////////

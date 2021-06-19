@@ -8,4 +8,3 @@ R"(
     #endif
 
 )"
-#include "MazeInstanceStream.mzglsl"

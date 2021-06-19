@@ -180,6 +180,26 @@ namespace Maze
                 break;
             }
 
+
+            case ShaderUniformType::UniformVec2DB:
+            {
+                MAZE_GL_CALL(mzglUniform2i((MZGLint)m_location, (MZGLint)getVecB().x, (MZGLint)getVecB().y));
+                break;
+            }
+
+            case ShaderUniformType::UniformVec3DB:
+            {
+                MAZE_GL_CALL(mzglUniform3i((MZGLint)m_location, (MZGLint)getVecB().x, (MZGLint)getVecB().y, (MZGLint)getVecB().z));
+                break;
+            }
+
+            case ShaderUniformType::UniformVec4DB:
+            {
+                MAZE_GL_CALL(mzglUniform4i((MZGLint)m_location, (MZGLint)getVecB().x, (MZGLint)getVecB().y, (MZGLint)getVecB().z, (MZGLint)getVecB().w));
+                break;
+            }
+
+
             case ShaderUniformType::UniformMat3DF:
             {
                 MAZE_GL_CALL(mzglUniformMatrix3fv((MZGLint)m_location, 1, MAZE_GL_FALSE, getMat3DF().getPlaneMatrix()));
@@ -299,6 +319,24 @@ namespace Maze
             case ShaderUniformType::UniformVec4DU:
             {
                 
+                break;
+            }
+
+            case ShaderUniformType::UniformVec2DB:
+            {
+
+                break;
+            }
+
+            case ShaderUniformType::UniformVec3DB:
+            {
+
+                break;
+            }
+
+            case ShaderUniformType::UniformVec4DB:
+            {
+
                 break;
             }
 

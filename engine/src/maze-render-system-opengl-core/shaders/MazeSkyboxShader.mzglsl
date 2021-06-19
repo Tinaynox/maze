@@ -3,13 +3,9 @@ R"(
     #type vertex
 
 )"
-#include "MazeVertexCommon.mzglsl"
+#include "MazePrecisionHigh.mzglsl"
+#include "MazeVertex.mzglsl"
 R"(
-    
-    //////////////////////////////////////////
-	uniform vec4 u_clipDistance0;
-    uniform mat4 u_projectionMatrix;
-    uniform mat4 u_viewMatrix;
 
     //////////////////////////////////////////
     IN vec3 a_position;
@@ -31,7 +27,7 @@ R"(
 
         vec4 positionOS = vec4(a_position, 1.0);
         vec4 positionWS = positionOS * modelMatrix;
-		MAZE_CLIP_DISTANCE(positionWS);
+		MAZE_CLIP_DISTANCE_VERTEX(positionWS);
         vec4 positionVS = positionWS * u_viewMatrix;
         vec4 positionCS = positionVS * u_projectionMatrix;
         
@@ -54,7 +50,8 @@ R"(
     #type fragment
 
 )"
-#include "MazeFragmentCommon.mzglsl"
+#include "MazePrecisionHigh.mzglsl"
+#include "MazeFragment.mzglsl"
 R"(
 
     //////////////////////////////////////////
@@ -71,6 +68,8 @@ R"(
     //////////////////////////////////////////
     void main()
     {
+        MAZE_CLIP_DISTANCE_FRAGMENT;
+
 		vec3 cubeCoords = v_cubeCoords;
         out_color = v_color * texture(u_baseMap, cubeCoords) * u_color;
     }

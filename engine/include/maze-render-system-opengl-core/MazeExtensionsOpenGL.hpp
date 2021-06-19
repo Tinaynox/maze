@@ -74,6 +74,9 @@ namespace Maze
         //////////////////////////////////////////
         inline bool getSupportMultisample() const { return m_supportMultisample; }
 
+        //////////////////////////////////////////
+        inline bool getSupportClipDistance() const { return m_supportClipDistance; }
+
     protected:
 
         //////////////////////////////////////////
@@ -90,10 +93,11 @@ namespace Maze
 
         Set<String> m_extensions;
 
-        bool m_extensionsLoaded;
+        bool m_extensionsLoaded = false;
 
-        bool m_supportArbBufferStorage;
-        bool m_supportMultisample;
+        bool m_supportArbBufferStorage = false;
+        bool m_supportMultisample = false;
+        bool m_supportClipDistance = false;
     };
 
 } // namespace Maze

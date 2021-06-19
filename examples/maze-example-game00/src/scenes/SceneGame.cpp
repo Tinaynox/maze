@@ -319,13 +319,6 @@ namespace Maze
         m_camera3D->setNearZ(0.01f);
         m_camera3D->setFarZ(30.0f);
 
-        if (m_renderDepthSprite)
-        {
-            ShaderPtr const& depthBufferShader = m_renderDepthSprite->getMaterial()->getFirstRenderPass()->getShader();
-            depthBufferShader->ensureUniform("u_cameraNear")->set(m_camera3D->getNearZ());
-            depthBufferShader->ensureUniform("u_cameraFar")->set(m_camera3D->getFarZ());
-        }
-
         updateGameplayBounds();
     }
 

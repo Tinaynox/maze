@@ -44,6 +44,9 @@
 #include "maze-core/math/MazeVec2D.hpp"
 #include "maze-core/math/MazeVec3D.hpp"
 #include "maze-core/math/MazeVec4D.hpp"
+#include "maze-core/math/MazeVec2DB.hpp"
+#include "maze-core/math/MazeVec3DB.hpp"
+#include "maze-core/math/MazeVec4DB.hpp"
 #include "maze-core/math/MazeMat3D.hpp"
 #include "maze-core/math/MazeMat4D.hpp"
 #include "maze-core/serialization/MazeXMLSerializable.hpp"
@@ -62,10 +65,11 @@ namespace Maze
     
 
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_17_API(MAZE_GRAPHICS_API, ShaderUniformType,
+    MAZE_DECLARE_ENUMCLASS_21_API(MAZE_GRAPHICS_API, ShaderUniformType,
         UniformS32,
         UniformF32,
         UniformF64,
+        UniformBool,
         UniformTexture2D,
         UniformTextureCube,
         UniformVec2DS,
@@ -77,6 +81,9 @@ namespace Maze
         UniformVec2DF,
         UniformVec3DF,
         UniformVec4DF,
+        UniformVec2DB,
+        UniformVec3DB,
+        UniformVec4DB,
         UniformMat3DF,
         UniformMat4DF,
         UniformColorF128);
@@ -110,6 +117,9 @@ namespace Maze
 
         //////////////////////////////////////////
         ShaderUniformVariant(RenderSystem* _renderSystem, F64 _value);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, bool _value);
 
         //////////////////////////////////////////
         ShaderUniformVariant(RenderSystem* _renderSystem, Texture2D* _value);
@@ -155,6 +165,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec2DB const& _value);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec3DB const& _value);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec4DB const& _value);
+
+
+        //////////////////////////////////////////
         ShaderUniformVariant(RenderSystem* _renderSystem, Mat3DF const& _value);
 
         //////////////////////////////////////////
@@ -191,6 +211,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline F64 getF64() const { return m_F64; }
+
+        //////////////////////////////////////////
+        inline bool getBool() const { return m_bool; }
 
         //////////////////////////////////////////
         inline TexturePtr const& getTexture() const { return m_texture; }
@@ -239,6 +262,19 @@ namespace Maze
         //////////////////////////////////////////
         inline Vec4DU getVec4DU() const { return m_vectorU; }
 
+
+        //////////////////////////////////////////
+        inline Vec4DB const& getVecB() const { return m_vectorB; }
+
+        //////////////////////////////////////////
+        inline Vec2DB getVec2DB() const { return { m_vectorB.x, m_vectorB.y }; }
+
+        //////////////////////////////////////////
+        inline Vec3DB getVec3DB() const { return { m_vectorB.x, m_vectorB.y, m_vectorB.z }; }
+
+        //////////////////////////////////////////
+        inline Vec4DB getVec4DB() const { return m_vectorB; }
+
         
         //////////////////////////////////////////
         inline Mat3DF const& getMat3DF() const { return m_matrix3DF; }
@@ -262,6 +298,9 @@ namespace Maze
         
         //////////////////////////////////////////
         inline void set(F64 _value) { m_F64 = _value; m_type = ShaderUniformType::UniformF64; }
+
+        //////////////////////////////////////////
+        inline void set(bool _value) { m_bool = _value; m_type = ShaderUniformType::UniformBool; }
         
         //////////////////////////////////////////
         inline void set(Texture2DPtr const& _texture) { m_texture = _texture; m_type = ShaderUniformType::UniformTexture2D; }
@@ -304,6 +343,16 @@ namespace Maze
         //////////////////////////////////////////
         inline void set(Vec4DU const& _vector) { m_vectorU = _vector; m_type = ShaderUniformType::UniformVec4DU; }
 
+
+        //////////////////////////////////////////
+        inline void set(Vec2DB const& _vector) { m_vectorB = _vector; m_type = ShaderUniformType::UniformVec2DB; }
+
+        //////////////////////////////////////////
+        inline void set(Vec3DB const& _vector) { m_vectorB = _vector; m_type = ShaderUniformType::UniformVec3DB; }
+
+        //////////////////////////////////////////
+        inline void set(Vec4DB const& _vector) { m_vectorB = _vector; m_type = ShaderUniformType::UniformVec4DB; }
+        
         
         //////////////////////////////////////////
         inline void set(Mat3DF const& _matrix) { m_matrix3DF = _matrix; m_type = ShaderUniformType::UniformMat3DF; }
@@ -398,10 +447,12 @@ namespace Maze
             S32 m_S32;
             F32 m_F32;
             F64 m_F64;
+            bool m_bool;
         
             Vec4DF m_vectorF;
             Vec4DS m_vectorS;
             Vec4DU m_vectorU;
+            Vec4DB m_vectorB;
             Mat3DF m_matrix3DF;
             Mat4DF m_matrix4DF;
         };

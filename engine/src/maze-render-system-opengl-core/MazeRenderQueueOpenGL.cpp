@@ -374,7 +374,12 @@ namespace Maze
         }
 
         // Clip distances
-        if (m_context->getClipDistanceEnabled(0))
+        bool clipDistance0 = m_context->getClipDistanceEnabled(0);
+
+        if (shaderOpenGL->getClipDistanceEnableUniform())
+            shaderOpenGL->getClipDistanceEnableUniform()->set(Vec4DB{ clipDistance0, false, false, false });
+
+        if (clipDistance0)
         {
             if (shaderOpenGL->getClipDistance0Uniform())
                 shaderOpenGL->getClipDistance0Uniform()->set(m_clipPlanes[0]);

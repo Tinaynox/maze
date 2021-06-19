@@ -33,6 +33,7 @@
 #include "maze-render-system-opengl-core/MazeShaderUniformOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderSystemOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderUniformOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeExtensionsOpenGL.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/helpers/MazeMetaClassHelper.hpp"
@@ -61,9 +62,8 @@ namespace Maze
                                                         "#    define IN attribute                      \n"
                                                         "#    define OUT varying                       \n"
                                                         "#endif                                        \n"
-                                                        "                                              \n"
-                                                        "#define MAZE_CLIP_DISTANCE(_pos) gl_ClipDistance[0] = dot(_pos, u_clipDistance0) \n"
                                                         "                                              \n";
+                                                        
 
     static const String c_fragmentShaderHeader = c_commonShaderHeader +
                                                         "#if (MAZE_GLSL_VERSION > 120)                 \n"
@@ -389,13 +389,27 @@ namespace Maze
         shaderVersion += "\n#define MAZE_INSTANCE_STREAM_VIA_TEXTURE ";
         shaderVersion += (currentContext->getModelMatricesArchitecture() == ModelMatricesArchitectureOpenGL::UniformTexture) ? "(1)" : "(0)";
 
+
+        String vertexExtensionFeatures;
+        if (currentContext->getExtensionsRaw()->getSupportClipDistance())
+        {
+            vertexExtensionFeatures += "#define MAZE_CLIP_DISTANCE_VERTEX(_pos) gl_ClipDistance[0] = dot(_pos, u_clipDistance0); \n";
+        }
+        else
+        {
+            vertexExtensionFeatures += "#define MAZE_CLIP_DISTANCE_VERTEX(_pos) v_clipDistance0 = dot(positionWS, u_clipDistance0); \n";
+        }
+
         String completeVertexShader =
             shaderVersion + '\n' +
             c_vertexShaderHeader + '\n' + 
+            vertexExtensionFeatures + '\n' +
             buildLocalShaderFeatures() + '\n' +
             makeInternalShaderPreprocessing(_vertexShaderSource);
 
         
+        
+
 
         if (!compileGLShader(vertexShaderId, MAZE_GL_VERTEX_SHADER, completeVertexShader.c_str()))
         {
@@ -417,9 +431,21 @@ namespace Maze
             return false;
         }
 
+
+        String fragmentExtensionFeatures;
+        if (currentContext->getExtensionsRaw()->getSupportClipDistance())
+        {
+            fragmentExtensionFeatures += "#define MAZE_CLIP_DISTANCE_FRAGMENT \n";
+        }
+        else
+        {
+            fragmentExtensionFeatures += "#define MAZE_CLIP_DISTANCE_FRAGMENT if (u_clipDistanceEnable[0] && v_clipDistance0 < 0.0) discard; \n";
+        }
+
         String completeFragmentShader = 
             shaderVersion + '\n' +
             c_fragmentShaderHeader + '\n' + 
+            fragmentExtensionFeatures + '\n' +
             buildLocalShaderFeatures() + '\n' +
             makeInternalShaderPreprocessing(_fragmentShaderSource);
 

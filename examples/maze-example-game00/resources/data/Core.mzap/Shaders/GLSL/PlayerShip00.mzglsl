@@ -6,13 +6,7 @@
 
 //////////////////////////////////////////
 #include "Utils/PrecisionHigh.mzglsl"
-
-
-//////////////////////////////////////////
-uniform vec4 u_clipDistance0;
-uniform mat4 u_projectionMatrix;
-uniform mat4 u_viewMatrix;
-uniform vec3 u_viewPosition;
+#include "Utils/Vertex.mzglsl"
 
 
 //////////////////////////////////////////
@@ -52,7 +46,7 @@ void main()
 
     vec4 positionOS = vec4(a_position, 1.0);
     vec4 positionWS = positionOS * modelMatrix;
-    MAZE_CLIP_DISTANCE(positionWS);
+    MAZE_CLIP_DISTANCE_VERTEX(positionWS);
     vec4 positionVS = positionWS * u_viewMatrix;
     vec4 positionCS = positionVS * u_projectionMatrix;
     
@@ -102,15 +96,13 @@ void main()
 
 //////////////////////////////////////////
 #include "Utils/PrecisionHigh.mzglsl"
+#include "Utils/Fragment.mzglsl"
 #include "Utils/Core.mzglsl"
 
 
 //////////////////////////////////////////
 uniform sampler2D u_baseMap;
 uniform vec4 u_color;
-uniform vec3 u_viewPosition;
-uniform vec4 u_mainLightColor;
-uniform vec3 u_mainLightDirection;
 uniform vec4 u_ambientLightColor;
 uniform float u_shininess;
 uniform vec4 u_specularColor;
@@ -262,6 +254,8 @@ vec3 BackLighting(
 // Main
 void main()
 {
+    MAZE_CLIP_DISTANCE_FRAGMENT;
+    
     // View direction
     vec3 fragmentToViewDirection = normalize(v_viewDirWS);
 

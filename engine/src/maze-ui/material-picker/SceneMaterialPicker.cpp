@@ -213,7 +213,7 @@ namespace Maze
 
         HorizontalLayout2DPtr horizontalLayout;
 
-        for (S32 i = 0; i < materials.size(); ++i)
+        for (S32 i = 0; i < (S32)materials.size(); ++i)
         {
             MaterialPtr const& material = materials[i];
 

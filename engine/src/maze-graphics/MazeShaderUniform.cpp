@@ -116,6 +116,22 @@ namespace Maze
         
         return true;
     }
+
+    //////////////////////////////////////////
+    bool ShaderUniform::set(bool _value)
+    {
+        if (   getBool() == _value
+            && getType() == ShaderUniformType::UniformBool)
+            return false;
+
+        processUniformWillBeChanged();
+
+        m_value.set(_value);
+
+        processSimpleUniformChanged();
+
+        return true;
+    }
         
     //////////////////////////////////////////
     bool ShaderUniform::set(Texture2DPtr const& _texture2D)
@@ -292,6 +308,55 @@ namespace Maze
         
         processSimpleUniformChanged();
         
+        return true;
+    }
+
+
+    //////////////////////////////////////////
+    bool ShaderUniform::set(Vec2DB const& _vector)
+    {
+        if (   getVec2DB() == _vector
+            && getType() == ShaderUniformType::UniformVec2DB)
+            return false;
+
+        processUniformWillBeChanged();
+
+        m_value.set(_vector);
+
+        processSimpleUniformChanged();
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool ShaderUniform::set(Vec3DB const& _vector)
+    {
+        if (   getVec3DB() == _vector
+            && getType() == ShaderUniformType::UniformVec3DB)
+            return false;
+
+        processUniformWillBeChanged();
+
+        m_value.set(_vector);
+
+        processSimpleUniformChanged();
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool ShaderUniform::set(Vec4DB const& _vector)
+    {
+        if (   getVec4DB() == _vector
+            && getType() == ShaderUniformType::UniformVec4DB)
+            return false;
+
+        processUniformWillBeChanged();
+
+        m_value.set(_vector);
+
+        processSimpleUniformChanged();
+
         return true;
     }
         

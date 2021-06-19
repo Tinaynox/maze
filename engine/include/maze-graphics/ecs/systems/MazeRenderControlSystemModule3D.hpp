@@ -176,7 +176,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void RenderControlSystemModule3D::notifyGatherRenderUnits(
+        void notifyGatherRenderUnits(
             RenderTarget* _renderTarget,
             DefaultPassParams const& _params,
             Vector<RenderUnit>& _renderData);

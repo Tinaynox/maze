@@ -181,7 +181,7 @@ namespace Maze
         m_renderColorSprite->getEntityRaw()->ensureComponent<Name>("RenderColorSprite");
         m_renderColorSprite->getEntityRaw()->ensureComponent<SizePolicy2D>();
 
-#if (0)
+#if (1)
         m_testSprite1 = SpriteHelper::CreateSprite(
             Sprite::Create(m_world->getSystem<RenderWaterSystem>()->getReflectionBuffer()->getColorTexture()),
             {128, 128 },
