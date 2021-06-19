@@ -114,9 +114,6 @@ namespace Maze
     protected:
         ContextOpenGL* m_context;
 
-        U32 m_maxInstancesPerDrawCall = 0;
-        U32 m_maxInstancesPerDraw = 0;
-
         Timer m_timer;
         F32 m_drawTime;
 

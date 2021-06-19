@@ -151,28 +151,65 @@ namespace Maze
             bool useColorStream = (_colors != nullptr);
             bool useUVStream = (_uvs != nullptr);
 
+            S32 maxInstancesPerDrawCall = m_maxInstancesPerDrawCall;
+
             if (   m_lastDrawVAOInstancedCommand
                 && m_lastDrawVAOInstancedCommand->vao == _vao
-                && m_lastDrawVAOInstancedCommand->count < (S32)m_maxInstancesPerDrawCall
+                && m_lastDrawVAOInstancedCommand->count + _count <= maxInstancesPerDrawCall
                 && useColorStream == (m_instanceStreamColor->getOffset() > 0)
                 && useUVStream == (m_instanceStreamUV->getOffset() > 0))
             {
                 m_lastDrawVAOInstancedCommand->count += _count;
+
+                pushInstanceModelMatricies(_modelMatricies, _count);
+
+                if (useColorStream)
+                    pushInstanceColors(_colors, _count);
+
+                if (useUVStream)
+                    pushInstanceUVs(_uvs, _count);
             }
             else
             {
+                while (_count > maxInstancesPerDrawCall)
+                {
+                    m_lastDrawVAOInstancedCommand = m_renderCommandsBuffer.createCommand<RenderCommandDrawVAOInstanced>(_vao, maxInstancesPerDrawCall);
+                    m_lastDrawVAOInstancedCommand->useColorStream = useColorStream;
+                    m_lastDrawVAOInstancedCommand->useUVStream = useUVStream;
+
+                    pushInstanceModelMatricies(_modelMatricies, maxInstancesPerDrawCall);
+                    _modelMatricies += maxInstancesPerDrawCall;
+
+                    if (useColorStream)
+                    {
+                        pushInstanceColors(_colors, maxInstancesPerDrawCall);
+                        _colors += maxInstancesPerDrawCall;
+                    }
+
+                    if (useUVStream)
+                    {
+                        pushInstanceUVs(_uvs, maxInstancesPerDrawCall);
+                        _uvs += maxInstancesPerDrawCall;
+                    }
+
+                    _count -= maxInstancesPerDrawCall;
+                }
+                
+                
                 m_lastDrawVAOInstancedCommand = m_renderCommandsBuffer.createCommand<RenderCommandDrawVAOInstanced>(_vao, _count);
                 m_lastDrawVAOInstancedCommand->useColorStream = useColorStream;
                 m_lastDrawVAOInstancedCommand->useUVStream = useUVStream;
+
+                pushInstanceModelMatricies(_modelMatricies, _count);
+
+                if (useColorStream)
+                    pushInstanceColors(_colors, _count);
+
+                if (useUVStream)
+                    pushInstanceUVs(_uvs, _count);
             }
 
-            pushInstanceModelMatricies(_modelMatricies, _count);
-
-            if (useColorStream)
-                pushInstanceColors(_colors, _count);
-
-            if (useUVStream)
-                pushInstanceUVs(_uvs, _count);
+            
         }
 
         //////////////////////////////////////////
