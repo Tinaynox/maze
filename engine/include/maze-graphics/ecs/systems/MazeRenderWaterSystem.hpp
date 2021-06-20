@@ -110,6 +110,10 @@ namespace Maze
             RenderTarget* _renderTarget,
             DefaultPassParams const& _params);
 
+
+        //////////////////////////////////////////
+        void createBuffers(Vec2DU const& _size);
+
     protected:
         SharedPtr<GenericInclusiveEntitiesSample<WaterRenderer3D>> m_waterRenderersSample;
 

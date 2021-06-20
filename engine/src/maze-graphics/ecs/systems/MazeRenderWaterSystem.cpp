@@ -78,23 +78,7 @@ namespace Maze
     //////////////////////////////////////////
     bool RenderWaterSystem::init()
     {
-        m_reflectionBuffer = RenderBuffer::Create(
-            {
-                {1024, 1024},
-                PixelFormat::RGBA_F16,
-                PixelFormat::DEPTH_U24
-            });
-        m_reflectionBuffer->getColorTexture()->setMinFilter(TextureFilter::Linear);
-        m_reflectionBuffer->getColorTexture()->setMagFilter(TextureFilter::Linear);
-
-        m_refractionBuffer = RenderBuffer::Create(
-            {
-                {1024, 1024},
-                PixelFormat::RGBA_F16,
-                PixelFormat::DEPTH_U24
-            });
-        m_refractionBuffer->getColorTexture()->setMinFilter(TextureFilter::Linear);
-        m_refractionBuffer->getColorTexture()->setMagFilter(TextureFilter::Linear);
+        
 
         return true;
     }
@@ -115,10 +99,37 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void RenderWaterSystem::createBuffers(Vec2DU const& _size)
+    {
+        m_reflectionBuffer = RenderBuffer::Create(
+            {
+                {_size.x, _size.y},
+                PixelFormat::RGBA_F16,
+                PixelFormat::DEPTH_U24
+            });
+        m_reflectionBuffer->getColorTexture()->setMinFilter(TextureFilter::Linear);
+        m_reflectionBuffer->getColorTexture()->setMagFilter(TextureFilter::Linear);
+
+        m_refractionBuffer = RenderBuffer::Create(
+            {
+                {_size.x, _size.y},
+                PixelFormat::RGBA_F16,
+                PixelFormat::DEPTH_U24
+            });
+        m_refractionBuffer->getColorTexture()->setMinFilter(TextureFilter::Linear);
+        m_refractionBuffer->getColorTexture()->setMagFilter(TextureFilter::Linear);
+    }
+
+    //////////////////////////////////////////
     void RenderWaterSystem::notifyRenderPrePass(
         RenderTarget* _renderTarget,
         DefaultPassParams const& _params)
     {
+        if (!m_reflectionBuffer || !m_refractionBuffer)
+        {
+            createBuffers(_renderTarget->getRenderTargetSize() / 2);
+        }
+
         Vec3DF cameraPosition = _params.cameraTransform.getAffineTranslation();
 
         m_waterRenderersSample->process(

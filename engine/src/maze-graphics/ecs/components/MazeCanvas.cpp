@@ -156,7 +156,9 @@ namespace Maze
 
                 m_originPosition = m_viewport.position * (Vec2DF)m_renderTarget->getRenderTargetSize();
 
-                m_canvasScaler.lock()->updateCanvasScale();
+                auto canvasScaler = m_canvasScaler.lock();
+                if (canvasScaler)
+                    canvasScaler->updateCanvasScale();
 
                 break;
             }

@@ -9,7 +9,11 @@
     <Uniform name="u_refractiveFactor" type="UniformF32" value="0.5" />
     <Uniform name="u_color" type="UniformColorF128" value="0.2;0.3;0.4;0.2" />
     <Uniform name="u_depthDistortionFactor" type="UniformF32" value="20.0" />
+    <Uniform name="u_depthSpecularFactor" type="UniformF32" value="2.5" />
     <Uniform name="u_depthTransparencyFactor" type="UniformF32" value="2.5" />
+    <Uniform name="u_shininess" type="UniformF32" value="20.0" />    
+    <Uniform name="u_specularColor" type="UniformColorF128" value="0.5;0.5;0.5;1.0" />
+    <Uniform name="u_normalYFactor" type="UniformF32" value="6.0" />
     
     <Feature name="NORMAL_MAP" />
     

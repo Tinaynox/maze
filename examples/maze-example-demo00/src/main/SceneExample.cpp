@@ -247,7 +247,7 @@ namespace Maze
         m_bloomController = LevelBloomController::Create(this);
 
         MaterialPtr skyboxMaterial = renderSystem->getMaterialManager()->getSkyboxMaterial()->createCopy();
-        skyboxMaterial->setUniform("u_baseMap", renderSystem->getTextureManager()->getTextureCube("Skybox00.mzcubemap"));
+        skyboxMaterial->setUniform("u_baseMap", renderSystem->getTextureManager()->getTextureCube("Skybox01.mzcubemap"));
         getLightingSettings()->setSkyBoxMaterial(skyboxMaterial);
 
 

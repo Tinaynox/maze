@@ -117,7 +117,9 @@ uniform float u_waveStrength;
 uniform float u_waveSpeed;
 uniform float u_refractiveFactor;
 uniform float u_depthDistortionFactor;
+uniform float u_depthSpecularFactor;
 uniform float u_depthTransparencyFactor;
+uniform float u_normalYFactor;
 
 // NORMAL_MAP
 uniform sampler2D u_normalMap;
@@ -166,7 +168,7 @@ void main()
     vec3 normalWS = normalize(v_normalWS);
 #endif
 
-    normalWS.y *= 6.0;
+    normalWS.y *= u_normalYFactor;
     normalWS = normalize(normalWS);
     
 
@@ -203,8 +205,8 @@ void main()
     vec3 lightToFragment = normalize(u_mainLightDirection);
     vec3 reflectedLight = reflect(lightToFragment, normalWS);
     float specular = max(dot(reflectedLight, fragmentToViewDirection), 0.0);
-    specular = pow(specular, 20.0);
-    vec3 specularHighlights = u_mainLightColor.rgb * specular * 0.5 * clamp(waterDepth/u_depthTransparencyFactor, 0.0, 1.0);
+    specular = pow(specular, u_shininess);
+    vec3 specularHighlights = u_mainLightColor.rgb * specular * u_specularColor.rgb * clamp(waterDepth/u_depthSpecularFactor, 0.0, 1.0);
     
     float waterAlpha = clamp(waterDepth/u_depthTransparencyFactor, 0.0, 1.0);
     vec3 waterColor = mix(reflectionColor.rgb, refractionColor.rgb, refractiveFactor);
