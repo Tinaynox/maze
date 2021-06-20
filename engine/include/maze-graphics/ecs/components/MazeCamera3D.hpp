@@ -34,6 +34,7 @@
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
 #include "maze-graphics/MazeColorU32.hpp"
+#include "maze-graphics/ecs/MazeLightingSettings.hpp"
 
 
 //////////////////////////////////////////
@@ -137,11 +138,21 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline bool getClearSkyBoxFlag() const { return m_clearSkyBoxFlag; }
+
+        //////////////////////////////////////////
+        inline void setClearSkyBoxFlag(bool _clearSkyBoxFlag) { m_clearSkyBoxFlag = _clearSkyBoxFlag; }
+
+
+        //////////////////////////////////////////
         inline S32 getRenderMask() const { return m_renderMask; }
 
         //////////////////////////////////////////
         inline void setRenderMask(S32 _renderMask) { m_renderMask = _renderMask; }
 
+
+        //////////////////////////////////////////
+        LightingSettingsPtr const& getLightingSettings();
 
     protected:
 
@@ -171,6 +182,8 @@ namespace Maze
         ColorU32 m_clearColor;
 
         bool m_clearDepthFlag;
+
+        bool m_clearSkyBoxFlag;
 
         S32 m_renderMask;
     };

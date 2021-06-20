@@ -90,7 +90,13 @@ namespace Maze
         inline F64 getF64() const { return m_value.getF64(); }
 
         //////////////////////////////////////////
-        inline Texture2DPtr const& getTexture2D() const { return m_value.getTexture2D(); }
+        inline bool getBool() const { return m_value.getBool(); }
+
+        //////////////////////////////////////////
+        inline Texture2DPtr getTexture2D() const { return std::static_pointer_cast<Texture2D>(m_value.getTexture()); }
+
+        //////////////////////////////////////////
+        inline TextureCubePtr getTextureCube() const { return std::static_pointer_cast<TextureCube>(m_value.getTexture()); }
 
         //////////////////////////////////////////
         inline Vec4DF const& getVecF() const { return m_value.getVecF(); }
@@ -129,6 +135,19 @@ namespace Maze
 
         //////////////////////////////////////////
         inline Vec4DU getVec4DU() const { return m_value.getVec4DU(); }
+
+
+        //////////////////////////////////////////
+        inline Vec4DB const& getVecB() const { return m_value.getVecB(); }
+
+        //////////////////////////////////////////
+        inline Vec2DB getVec2DB() const { return m_value.getVec2DB(); }
+
+        //////////////////////////////////////////
+        inline Vec3DB getVec3DB() const { return m_value.getVec3DB(); }
+
+        //////////////////////////////////////////
+        inline Vec4DB getVec4DB() const { return m_value.getVec4DB(); }
         
 
         
@@ -149,6 +168,9 @@ namespace Maze
         
         //////////////////////////////////////////
         bool set(F64 _value);
+
+        //////////////////////////////////////////
+        bool set(bool _value);
         
         //////////////////////////////////////////
         bool set(Texture2DPtr const& _texture2D);
@@ -157,6 +179,15 @@ namespace Maze
         inline bool set(Texture2D* _texture2D)
         {
             return set(_texture2D->cast<Texture2D>());
+        }
+
+        //////////////////////////////////////////
+        bool set(TextureCubePtr const& _textureCube);
+
+        //////////////////////////////////////////
+        inline bool set(TextureCube* _textureCube)
+        {
+            return set(_textureCube->cast<TextureCube>());
         }
         
         //////////////////////////////////////////
@@ -187,7 +218,17 @@ namespace Maze
         
         //////////////////////////////////////////
         bool set(Vec4DU const& _vector);
-        
+
+
+        //////////////////////////////////////////
+        bool set(Vec2DB const& _vector);
+
+        //////////////////////////////////////////
+        bool set(Vec3DB const& _vector);
+
+        //////////////////////////////////////////
+        bool set(Vec4DB const& _vector);
+
 
         //////////////////////////////////////////
         bool set(Mat3DF const& _matrix);
@@ -250,6 +291,7 @@ namespace Maze
         //////////////////////////////////////////
         virtual void uploadArrayUniform(F32 const* _value, Size _count) MAZE_ABSTRACT;
 
+
         //////////////////////////////////////////
         virtual void uploadArrayUniform(Vec2DF const* _vectors, Size _count) MAZE_ABSTRACT;
 
@@ -258,6 +300,7 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual void uploadArrayUniform(Vec4DF const* _vectors, Size _count) MAZE_ABSTRACT;
+
 
         //////////////////////////////////////////
         virtual void uploadArrayUniform(Mat3DF const* _matrices, Size _count) MAZE_ABSTRACT;

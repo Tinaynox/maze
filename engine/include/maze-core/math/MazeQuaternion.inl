@@ -103,6 +103,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline Quaternion::Quaternion(Vec3DF const& _eulerAngles)
+    {
+        setEulerAngles(_eulerAngles.x, _eulerAngles.y, _eulerAngles.z);
+    }
+
+    //////////////////////////////////////////
     inline Quaternion::Quaternion(
         Vec3DF const& _fromVector,
         Vec3DF const& _toVector)

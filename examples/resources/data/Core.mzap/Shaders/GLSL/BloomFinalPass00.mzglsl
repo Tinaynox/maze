@@ -6,12 +6,10 @@
 
 //////////////////////////////////////////
 #include "Utils/PrecisionHigh.mzglsl"
+#include "Utils/Vertex.mzglsl"
 
 
 //////////////////////////////////////////
-uniform mat4 u_projectionMatrix;
-uniform mat4 u_viewMatrix;
-uniform vec3 u_viewPosition;
 uniform vec2 u_baseMapTexelSize;
 uniform float u_bloomSpread;
 
@@ -50,6 +48,7 @@ void main()
 
     vec4 positionOS = vec4(a_position, 1.0);
     vec4 positionWS = positionOS * modelMatrix;
+    MAZE_CLIP_DISTANCE_VERTEX(positionWS);
     vec4 positionVS = positionWS * u_viewMatrix;
     vec4 positionCS = positionVS * u_projectionMatrix;
         
@@ -85,11 +84,11 @@ void main()
 
 //////////////////////////////////////////
 #include "Utils/PrecisionHigh.mzglsl"
+#include "Utils/Fragment.mzglsl"
 
 
 //////////////////////////////////////////
 uniform sampler2D u_baseMap;
-uniform vec3 u_viewPosition;
 uniform vec4 u_color;
 uniform float u_bloomThreshold;
 uniform sampler2D u_prevBloomMap;
@@ -121,6 +120,8 @@ uniform sampler2D u_modelMatricesTexture;
 // Main
 void main()
 {
+    MAZE_CLIP_DISTANCE_FRAGMENT;
+
     const float halfSix = 0.1666666 * 0.5;
     const float halfThree = 0.3333333 * 0.5;
 

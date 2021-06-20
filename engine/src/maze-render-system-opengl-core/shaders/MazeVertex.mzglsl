@@ -1,0 +1,16 @@
+#include "MazeUniform.mzglsl"
+R"(
+    //////////////////////////////////////////
+    OUT float v_clipDistance0;
+
+)"
+#include "MazeInstanceStream.mzglsl"
+R"(
+    //////////////////////////////////////////
+    #ifndef MAZE_COLOR_STREAM
+    #define MAZE_COLOR_STREAM (0)
+    #endif
+    #ifndef MAZE_UV_STREAM
+    #define MAZE_UV_STREAM (0)
+    #endif
+)"

@@ -46,7 +46,8 @@ namespace Maze
     enum class DefaultRenderMask
     {
         Default = MAZE_BIT(0),
-        Gizmos = MAZE_BIT(1)
+        Gizmos = MAZE_BIT(1),
+        Water = MAZE_BIT(2),
     };
 
 

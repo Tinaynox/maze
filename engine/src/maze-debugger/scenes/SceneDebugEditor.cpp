@@ -284,6 +284,7 @@ namespace Maze
         // DebugGrid
         EntityPtr debugGridRendererEntity = createEntity();
         debugGridRendererEntity->createComponent<DebugGridRenderer>(m_camera3D);
+        debugGridRendererEntity->getComponent<RenderMask>()->setMask(DefaultRenderMask::Gizmos);
     
         // Axes
         EntityPtr axesMeshRendererEntity = createEntity();

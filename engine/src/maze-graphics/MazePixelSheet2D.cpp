@@ -56,6 +56,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    PixelSheet2D::PixelSheet2D(
+        Vec2DS const& _size,
+        ColorU32 const& _color)
+        : PixelSheet2D(_size, PixelFormat::RGBA_U8)
+    {
+        fill(_color);
+    }
+
+    //////////////////////////////////////////
     PixelSheet2D::PixelSheet2D(PixelSheet2D const& _other)
         : m_size(_other.m_size)
         , m_data(_other.m_data)
@@ -66,7 +75,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PixelSheet2D::PixelSheet2D(PixelSheet2D&& _other)
+    PixelSheet2D::PixelSheet2D(PixelSheet2D&& _other) noexcept
         : m_size(std::move(_other.m_size))
         , m_data(std::move(_other.m_data))
         , m_format(std::move(_other.m_format))
@@ -138,13 +147,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void const* PixelSheet2D::getPixel(S32 _x, S32 _y) const
+    {
+        Size offset = (Size)_y * (Size)m_bytesPerRow + (Size)_x * (Size)m_bytesPerPixel;
+        MAZE_DEBUG_ERROR_RETURN_VALUE_IF(offset >= m_data.getSize(), nullptr, "Offset is out of bounds!");
+        void const* pixelData = &m_data[offset];
+
+        return pixelData;
+    }
+
+    //////////////////////////////////////////
     ColorU32 PixelSheet2D::getPixelRGBA_U8(S32 _x, S32 _y) const
     {
         ColorU32 color;
-
-        Size offset = (Size)_y * (Size)m_bytesPerRow + (Size)_x * (Size)m_bytesPerPixel;
-        MAZE_DEBUG_ERROR_RETURN_VALUE_IF(offset >= m_data.getSize(), ColorU32::c_zero, "Offset is out of bounds!");
-        void const* pixelData = &m_data[offset];
+        void const* pixelData = getPixel(_x, _y);
         color.setRGBA_U8(*((U32*)pixelData));
         return color;
     }

@@ -71,17 +71,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    RenderControlSystemModule2DPtr RenderControlSystemModule2D::Create(ECSWorldPtr const& _world)
+    RenderControlSystemModule2DPtr RenderControlSystemModule2D::Create(
+        ECSWorldPtr const& _world,
+        RenderSystemPtr const& _renderSystem)
     {
         RenderControlSystemModule2DPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(RenderControlSystemModule2D, object, init(_world));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(RenderControlSystemModule2D, object, init(_world, _renderSystem));
         return object;
     }
 
     //////////////////////////////////////////
-    bool RenderControlSystemModule2D::init(ECSWorldPtr const& _world)
+    bool RenderControlSystemModule2D::init(
+        ECSWorldPtr const& _world,
+        RenderSystemPtr const& _renderSystem)
     {
         m_world = _world.get();
+        m_renderSystem = _renderSystem;
 
         m_transform2Ds = _world->requestInclusiveSample<Transform2D>();
         m_meshRenderersSample = _world->requestInclusiveSample<MeshRenderer, Transform2D>();
@@ -128,12 +133,12 @@ namespace Maze
                 renderQueue->clear();
                 if (canvas == rootCanvas)
                 {
-                    renderQueue->pushPushScissorRectCommand(viewport);
+                    renderQueue->addPushScissorRectCommand(viewport);
                 }
                 else
                 {
                     Rect2DF p = viewport.intersectedCopy(rootViewport);
-                    renderQueue->pushPushScissorRectCommand(p);
+                    renderQueue->addPushScissorRectCommand(p);
                 }
 
                 bool clearColorFlag = canvas->getClearColorFlag();
@@ -144,7 +149,7 @@ namespace Maze
 
                 if (clearColorFlag || clearDepthFlag)
                 {
-                    renderQueue->pushClearCurrentRenderTargetCommand(
+                    renderQueue->addClearCurrentRenderTargetCommand(
                         clearColorFlag,
                         clearDepthFlag);
                 }
@@ -209,11 +214,11 @@ namespace Maze
                                 if (!material || !*material)
                                     material = &renderTarget->getRenderSystem()->getMaterialManager()->getErrorMaterial();
 
-                                renderQueue->pushSelectRenderPassCommand((*material)->getFirstRenderPass());
+                                renderQueue->addSelectRenderPassCommand((*material)->getFirstRenderPass());
 
                                 Mat4DF const& worldTransform = transform2D->getWorldTransform();
 
-                                renderQueue->pushDrawVAOInstancedCommand(vao, worldTransform);
+                                renderQueue->addDrawVAOInstancedCommand(vao, worldTransform);
                             }
 
                             break;
@@ -229,13 +234,13 @@ namespace Maze
                             rect.position /= renderTargetSize;
                             rect.size /= renderTargetSize;
                             rect.position += rootViewport.position;
-                            renderQueue->pushPushScissorRectCommand(rect);
+                            renderQueue->addPushScissorRectCommand(rect);
                             break;
                         }
 
                         case CanvasRenderCommandType::PopScissorMask:
                         {
-                            renderQueue->pushPopScissorRectCommand();
+                            renderQueue->addPopScissorRectCommand();
                             break;
                         }
 
@@ -245,7 +250,7 @@ namespace Maze
                     }
                 }
                                         
-                renderQueue->pushPopScissorRectCommand();
+                renderQueue->addPopScissorRectCommand();
                 renderQueue->draw();
                     
                 renderTarget->endDraw();

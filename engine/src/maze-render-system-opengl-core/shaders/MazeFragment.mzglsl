@@ -1,0 +1,6 @@
+#include "MazeUniform.mzglsl"
+R"(
+
+    //////////////////////////////////////////
+    IN float v_clipDistance0;
+)"

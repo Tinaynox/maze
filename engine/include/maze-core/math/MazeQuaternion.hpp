@@ -92,6 +92,9 @@ namespace Maze
         inline Quaternion(F32 _xAngle, F32 _yAngle, F32 _zAngle);
 
         //////////////////////////////////////////
+        inline Quaternion(Vec3DF const& _eulerAngles);
+
+        //////////////////////////////////////////
         inline Quaternion(Vec3DF const& _fromVector, Vec3DF const& _toVector);
 
 
@@ -120,6 +123,14 @@ namespace Maze
 
         //////////////////////////////////////////
         void toRotationMatrix(Mat4DF& _rotationMatrix) const;
+
+        //////////////////////////////////////////
+        inline Mat4DF toRotationMatrix() const
+        {
+            Mat4DF result;
+            toRotationMatrix(result);
+            return result;
+        }
 
         //////////////////////////////////////////
         void setAngleAxis(F32 const& _angle, Vec3DF const& _axis);

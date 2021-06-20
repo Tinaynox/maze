@@ -119,10 +119,10 @@ namespace Maze
 
                 Maze::Vec3DF normals[] = {
                     // Front
-                    Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Top right
-                    Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Bottom right
-                    Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Bottom left
-                    Maze::Vec3DF(+0.0f, +0.0f, +1.0f)     // Top left
+                    Maze::Vec3DF(+0.0f, +0.0f, -1.0f),    // Top right
+                    Maze::Vec3DF(+0.0f, +0.0f, -1.0f),    // Bottom right
+                    Maze::Vec3DF(+0.0f, +0.0f, -1.0f),    // Bottom left
+                    Maze::Vec3DF(+0.0f, +0.0f, -1.0f)     // Top left
                 };
                 mesh->setNormals(normals, 4);
 

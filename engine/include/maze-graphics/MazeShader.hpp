@@ -101,6 +101,9 @@ namespace Maze
         void setUniform(String const& _uniformName, F32 _value, bool _warningIfNotExists = false);
 
         //////////////////////////////////////////
+        void setUniform(String const& _uniformName, bool _value, bool _warningIfNotExists = false);
+
+        //////////////////////////////////////////
         void setUniform(String const& _uniformName, Texture2DPtr const& _texture2D, bool _warningIfNotExists = false);
 
         //////////////////////////////////////////
@@ -131,6 +134,16 @@ namespace Maze
 
         //////////////////////////////////////////
         void setUniform(String const& _uniformName, Vec4DU const& _vector, bool _warningIfNotExists = false);
+
+
+        //////////////////////////////////////////
+        void setUniform(String const& _uniformName, Vec2DB const& _vector, bool _warningIfNotExists = false);
+
+        //////////////////////////////////////////
+        void setUniform(String const& _uniformName, Vec3DB const& _vector, bool _warningIfNotExists = false);
+
+        //////////////////////////////////////////
+        void setUniform(String const& _uniformName, Vec4DB const& _vector, bool _warningIfNotExists = false);
 
 
         //////////////////////////////////////////
@@ -196,9 +209,17 @@ namespace Maze
         virtual bool loadFromSources(String const& _vertexShaderSource, String const& _fragmentShaderSource) MAZE_ABSTRACT;
 
 
+        //////////////////////////////////////////
+        ShaderUniformPtr const& getClipDistance0Uniform() const { return m_clipDistance0Uniform; }
+
+        //////////////////////////////////////////
+        ShaderUniformPtr const& getClipDistanceEnableUniform() const { return m_clipDistanceEnableUniform; }
 
         //////////////////////////////////////////
         ShaderUniformPtr const& getProjectionMatrixUniform() const { return m_projectionMatrixUniform; }
+
+        //////////////////////////////////////////
+        ShaderUniformPtr const& getProjectionParamsUniform() const { return m_projectionParamsUniform; }
 
         //////////////////////////////////////////
         ShaderUniformPtr const& getViewMatrixUniform() const { return m_viewMatrixUniform; }
@@ -292,7 +313,10 @@ namespace Maze
         RenderSystemWPtr m_renderSystem;
         RenderSystem* m_renderSystemRaw;
 
+        ShaderUniformPtr m_clipDistance0Uniform;
+        ShaderUniformPtr m_clipDistanceEnableUniform;
         ShaderUniformPtr m_projectionMatrixUniform;
+        ShaderUniformPtr m_projectionParamsUniform;
         ShaderUniformPtr m_viewMatrixUniform;
         ShaderUniformPtr m_modelMatricesUniform;
         ShaderUniformPtr m_modelMatricesTextureUniform;

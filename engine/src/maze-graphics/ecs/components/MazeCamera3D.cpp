@@ -31,6 +31,7 @@
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
+#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
 
 
 //////////////////////////////////////////
@@ -48,6 +49,7 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, clearColorFlag, true, getClearColorFlag, setClearColorFlag),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, clearColor, ColorU32(99, 101, 140, 255), getClearColor, setClearColor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, clearDepthFlag, true, getClearDepthFlag, setClearDepthFlag),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, clearSkyBoxFlag, false, getClearSkyBoxFlag, setClearSkyBoxFlag),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, renderMask, 0xFFFFFFFF, getRenderMask, setRenderMask));
 
     //////////////////////////////////////////
@@ -62,6 +64,7 @@ namespace Maze
         , m_clearColorFlag(true)
         , m_clearColor(ColorU32(99, 101, 140, 255))
         , m_clearDepthFlag(true)
+        , m_clearSkyBoxFlag(false)
         , m_renderMask(~S32(DefaultRenderMask::Gizmos))
     {
 
@@ -105,6 +108,24 @@ namespace Maze
         F32 h = m_viewport.size.y * m_renderTarget->getRenderTargetHeight();
 
         return w / h;
+    }
+
+    //////////////////////////////////////////
+    LightingSettingsPtr const& Camera3D::getLightingSettings()
+    {
+        static LightingSettingsPtr nullPointer;
+
+        ECSScene* cameraScene = getEntityRaw()->getECSScene();
+        if (cameraScene)
+        {
+            MAZE_DEBUG_ERROR_IF(!cameraScene->getMetaClass()->isInheritedFrom<ECSRenderScene>(), "It is not a render scene!");
+            ECSRenderScene* renderScene = cameraScene->castRaw<ECSRenderScene>();
+
+            LightingSettingsPtr const& lightingSettings = renderScene->getLightingSettings();
+            return lightingSettings;
+        }
+
+        return nullPointer;
     }
     
     

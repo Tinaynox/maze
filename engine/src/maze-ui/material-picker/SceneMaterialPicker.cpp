@@ -213,7 +213,7 @@ namespace Maze
 
         HorizontalLayout2DPtr horizontalLayout;
 
-        for (S32 i = 0; i < materials.size(); ++i)
+        for (S32 i = 0; i < (S32)materials.size(); ++i)
         {
             MaterialPtr const& material = materials[i];
 
@@ -326,11 +326,16 @@ namespace Maze
             {
                 ShaderUniformPtr const& uniform = renderPass->getShader()->ensureUniform("u_baseMapST");
 
-                Texture2DPtr const& texture = materialCopy->getUniform("u_baseMap")->getTexture2D();
+                TexturePtr const& texture = materialCopy->getUniform("u_baseMap")->getTexture();
+
                 if (texture)
                 {
-                    SpritePtr fakeSprite = Sprite::Create(texture);
-                    sprite->setSprite(fakeSprite);
+                    if (texture->getClassUID() == ClassInfo<Texture2D>::UID())
+                    {
+                        Texture2DPtr texture2D = texture->cast<Texture2D>();
+                        SpritePtr fakeSprite = Sprite::Create(texture2D);
+                        sprite->setSprite(fakeSprite);
+                    }
                 }
             }
 

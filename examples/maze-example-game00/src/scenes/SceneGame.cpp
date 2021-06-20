@@ -319,13 +319,6 @@ namespace Maze
         m_camera3D->setNearZ(0.01f);
         m_camera3D->setFarZ(30.0f);
 
-        if (m_renderDepthSprite)
-        {
-            ShaderPtr const& depthBufferShader = m_renderDepthSprite->getMaterial()->getFirstRenderPass()->getShader();
-            depthBufferShader->ensureUniform("u_cameraNear")->set(m_camera3D->getNearZ());
-            depthBufferShader->ensureUniform("u_cameraFar")->set(m_camera3D->getFarZ());
-        }
-
         updateGameplayBounds();
     }
 
@@ -443,17 +436,15 @@ namespace Maze
     //////////////////////////////////////////
     void SceneGame::notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport)
     {
-        if (    !Game::GetInstancePtr()->getRunning()
-            ||  !Game::GetInstancePtr()->getMainRenderWindow()
-            ||  !Game::GetInstancePtr()->getMainRenderWindow()->getWindow()->isOpened()
-            ||  Game::GetInstancePtr()->getMainRenderWindow()->getWindow()->getMinimized())
+        if (!Game::GetInstancePtr()->isMainWindowReadyToRender())
             return;
 
         m_canvas->setViewport(_mainRenderWindowViewport);
 
         if (SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>()->getPostProcessEnabled())
         {
-            m_renderBuffer->setSize(Game::GetInstancePtr()->getMainRenderWindowAbsoluteSize());
+            if (!Game::GetInstancePtr()->isDebugEditorProgress())
+                m_renderBuffer->setSize(Game::GetInstancePtr()->getMainRenderWindowAbsoluteSize());
         }
         else
         {
@@ -471,10 +462,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneGame::notifyRenderTargetResized(RenderTarget* _renderTarget)
     {
-        if (   !Game::GetInstancePtr()->getRunning()
-            || !Game::GetInstancePtr()->getMainRenderWindow()
-            || !Game::GetInstancePtr()->getMainRenderWindow()->getWindow()->isOpened()
-            || Game::GetInstancePtr()->getMainRenderWindow()->getWindow()->getMinimized())
+        if (!Game::GetInstancePtr()->isMainWindowReadyToRender())
             return;
 
         if (SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>()->getPostProcessEnabled())

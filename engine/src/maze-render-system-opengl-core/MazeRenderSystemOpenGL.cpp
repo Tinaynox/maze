@@ -33,6 +33,7 @@
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeVertexBufferObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeTexture2DOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeTextureCubeOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderUniformOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeMaterialOpenGL.hpp"
@@ -359,6 +360,12 @@ namespace Maze
     Texture2DPtr RenderSystemOpenGL::createTexture2D()
     {
         return Texture2DOpenGL::Create(this, ensureCurrentContext());
+    }
+
+    //////////////////////////////////////////
+    TextureCubePtr RenderSystemOpenGL::createTextureCube()
+    {
+        return TextureCubeOpenGL::Create(this, ensureCurrentContext());
     }
 
     //////////////////////////////////////////

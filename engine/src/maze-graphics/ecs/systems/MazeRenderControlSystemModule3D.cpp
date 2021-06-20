@@ -32,6 +32,7 @@
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/ecs/components/MazeTrailRenderer3D.hpp"
+#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-graphics/MazeRenderQueue.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
@@ -39,6 +40,7 @@
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeShader.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 
@@ -63,25 +65,200 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    RenderControlSystemModule3DPtr RenderControlSystemModule3D::Create(ECSWorldPtr const& _world)
+    RenderControlSystemModule3DPtr RenderControlSystemModule3D::Create(
+        ECSWorldPtr const& _world,
+        RenderSystemPtr const& _renderSystem)
     {
         RenderControlSystemModule3DPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(RenderControlSystemModule3D, object, init(_world));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(RenderControlSystemModule3D, object, init(_world, _renderSystem));
         return object;
     }
 
     //////////////////////////////////////////
-    bool RenderControlSystemModule3D::init(ECSWorldPtr const& _world)
+    bool RenderControlSystemModule3D::init(
+        ECSWorldPtr const& _world,
+        RenderSystemPtr const& _renderSystem)
     {
         m_world = _world.get();
+        m_renderSystem = _renderSystem;
 
         m_meshRenderers = _world->requestInclusiveSample<MeshRenderer, Transform3D>();
         m_trailRenderers3DSample = _world->requestInclusiveSample<TrailRenderer3D, Transform3D>();
         m_cameras3DSample = _world->requestInclusiveSample<Camera3D>();
         m_lights3DSample = _world->requestInclusiveSample<Light3D>();
         
+        eventGatherRenderUnits.subscribe(this, &RenderControlSystemModule3D::notifyGatherRenderUnits);
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    void RenderControlSystemModule3D::drawDefaultPass(
+        RenderTarget* _renderTarget,
+        DefaultPassParams const& _params,
+        std::function<void(RenderQueuePtr const&)> _beginRenderQueueCallback,
+        std::function<void(RenderQueuePtr const&)> _beginDrawCallback,
+        std::function<void(RenderQueuePtr const&)> _endDrawCallback,
+        std::function<void(RenderQueuePtr const&)> _endRenderQueueCallback)
+    {
+        Vec3DF cameraPosition = _params.cameraTransform.getAffineTranslation();
+
+        Vector<Light3D*> lights3D;
+        Light3D* mainLight = nullptr;
+        Vec4DF mainLightColor = Vec4DF::c_zero;
+        Vec3DF mainLightDirection = Vec3DF::c_unitZ;
+        m_lights3DSample->process(
+            [&](Entity* _entity, Light3D* _light3D)
+            {
+                if (_params.renderMask & _light3D->getRenderMask()->getMask())
+                {
+                    lights3D.emplace_back(_light3D);
+
+                    if (!mainLight && _light3D->getLightType() == Light3DType::Directional)
+                    {
+                        mainLight = _light3D;
+                        mainLightColor = mainLight->getColor().toVec4DF();
+                        mainLightDirection = mainLight->getTransform()->getWorldForwardDirection();
+                    }
+                }
+            });
+
+        RenderQueuePtr const& renderQueue = _renderTarget->getRenderQueue();
+
+        if (_renderTarget->beginDraw())
+        {
+            renderQueue->clear();
+
+            if (_beginRenderQueueCallback)
+                _beginRenderQueueCallback(renderQueue);
+
+            renderQueue->addPushScissorRectCommand(_params.viewport);
+
+            if (_params.clearColorFlag)
+                _renderTarget->setClearColor(_params.clearColor);
+
+            if (_params.clearColorFlag || _params.clearDepthFlag)
+            {
+                renderQueue->addClearCurrentRenderTargetCommand(
+                    _params.clearColorFlag,
+                    _params.clearDepthFlag);
+            }
+
+            _renderTarget->setViewport(_params.viewport);
+
+            // Projection matrix
+            _renderTarget->setProjectionMatrix(_params.projectionMatrix);
+            _renderTarget->setNear(_params.nearZ);
+            _renderTarget->setFar(_params.farZ);
+
+            // View matrix
+            Mat4DF viewMatrix = _params.cameraTransform.inversedAffineCopy();
+            _renderTarget->setViewMatrix(viewMatrix);
+
+            // View position
+            _renderTarget->setViewPosition(cameraPosition);
+
+            Vector<RenderUnit> renderData;
+
+            // Skybox
+            if (_params.clearSkyBoxFlag)
+            {
+                if (_params.lightingSettings)
+                {
+                    MaterialPtr const& skyBoxMaterial = _params.lightingSettings->getSkyBoxMaterial();
+                    if (skyBoxMaterial)
+                    {
+                        RenderMeshPtr const& cubeMesh = m_renderSystem->getRenderMeshManager()->getDefaultCubeMesh();
+                        Vector<VertexArrayObjectPtr> const& vaos = cubeMesh->getVertexArrayObjects();
+
+                        renderQueue->addSelectRenderPassCommand(skyBoxMaterial->getFirstRenderPass());
+
+                        F32 skyboxScale = (2.0f * _params.farZ / Math::Sqrt(3.0f)) - 1.0f;
+
+                        Mat4DF skyboxTransform = Mat4DF(
+                            skyboxScale, 0, 0, cameraPosition.x,
+                            0, skyboxScale, 0, cameraPosition.y,
+                            0, 0, skyboxScale, cameraPosition.z,
+                            0, 0, 0, 1);
+                        renderQueue->addDrawVAOInstancedCommand(
+                            vaos[0],
+                            1,
+                            &skyboxTransform);
+                    }
+                }
+            }           
+
+            eventGatherRenderUnits(_renderTarget, _params, renderData);
+
+            for (RenderUnit& data : renderData)
+                data.sqrDistanceToCamera = (cameraPosition - data.worldPosition).squaredLength();
+
+            // Sort render queue
+            std::sort(
+                renderData.begin(),
+                renderData.end(),
+                [](
+                    RenderUnit const& _a,
+                    RenderUnit const& _b)
+                {
+                    if (_a.renderPass->getRenderQueueIndex() < _b.renderPass->getRenderQueueIndex())
+                        return true;
+
+                    if (_a.renderPass->getRenderQueueIndex() > _b.renderPass->getRenderQueueIndex())
+                        return false;
+
+                    if (_a.renderPass->getRenderQueueIndex() < (S32)RenderQueueIndex::Transparent)
+                        return _a.sqrDistanceToCamera < _b.sqrDistanceToCamera;
+                    else
+                        return _a.sqrDistanceToCamera > _b.sqrDistanceToCamera;
+                });
+
+
+            if (_beginDrawCallback)
+                _beginDrawCallback(renderQueue);
+
+            S32 prevRenderQueueIndex = -1;
+
+            for (RenderUnit const& data : renderData)
+            {
+                RenderPassPtr const& renderPass = data.renderPass;
+                ShaderPtr const& shader = renderPass->getShader();
+
+                S32 currentRenderQueueIndex = renderPass->getRenderQueueIndex();
+
+                VertexArrayObjectPtr const& vao = data.vao;
+
+                if (shader->getMainLightColorUniform())
+                    shader->getMainLightColorUniform()->set(mainLightColor);
+
+                if (shader->getMainLightDirectionUniform())
+                    shader->getMainLightDirectionUniform()->set(mainLightDirection);
+
+
+                renderQueue->addSelectRenderPassCommand(renderPass);
+
+                renderQueue->addDrawVAOInstancedCommand(
+                    vao,
+                    data.count,
+                    data.modelMatricies,
+                    data.colorStream,
+                    data.uvStream);
+
+                prevRenderQueueIndex = currentRenderQueueIndex;
+            }
+
+            if (_endDrawCallback)
+                _endDrawCallback(renderQueue);
+
+            renderQueue->addPopScissorRectCommand();
+
+            if (_endRenderQueueCallback)
+                _endRenderQueueCallback(renderQueue);
+
+            renderQueue->draw();
+
+            _renderTarget->endDraw();
+        }
     }
 
     //////////////////////////////////////////
@@ -95,220 +272,40 @@ namespace Maze
                 if (_renderTarget != renderTarget.get())
                     return;
 
-                Vector<Light3D*> lights3D;
-                Light3D* mainLight = nullptr;
-                Vec4DF mainLightColor = Vec4DF::c_zero;
-                Vec3DF mainLightDirection = Vec3DF::c_unitZ;
-                m_lights3DSample->process(
-                    [&](Entity* _entity, Light3D* _light3D)
-                {
-                    if (_camera3D->getRenderMask() & _light3D->getRenderMask()->getMask())
-                    {
-                        lights3D.emplace_back(_light3D);
+                Vec2DU const& renderTargetSize = renderTarget->getRenderTargetSize();
 
-                        if (!mainLight && _light3D->getLightType() == Light3DType::Directional)
-                        {
-                            mainLight = _light3D;
-                            mainLightColor = mainLight->getColor().toVec4DF();
-                            mainLightDirection = mainLight->getTransform()->getWorldForwardDirection();
-                        }
-                    }
-                });
+                F32 aspectRatio = (_camera3D->getViewport().size.x * (F32)renderTargetSize.x) / (_camera3D->getViewport().size.y * (F32)renderTargetSize.y);
 
+                DefaultPassParams params;
+
+                params.renderMask = _camera3D->getRenderMask();
+                params.cameraTransform = _camera3D->getTransform()->getWorldTransform();
+                params.projectionMatrix = Mat4DF::CreateProjectionPerspectiveLHMatrix(
+                    _camera3D->getFOV(),
+                    aspectRatio,
+                    _camera3D->getNearZ(),
+                    _camera3D->getFarZ());
+                params.viewport = _camera3D->getViewport();
+                params.nearZ = _camera3D->getNearZ();
+                params.farZ = _camera3D->getFarZ();
+                params.clearColorFlag = _camera3D->getClearColorFlag();
+                params.clearColor = _camera3D->getClearColor();
+                params.clearDepthFlag = _camera3D->getClearDepthFlag();
+                params.clearSkyBoxFlag = _camera3D->getClearSkyBoxFlag();
+                params.lightingSettings = _camera3D->getLightingSettings();
+
+                eventPrePass(
+                    _renderTarget,
+                    params);
+
+                drawDefaultPass(
+                    _renderTarget,
+                    params);
+
+                eventPostPass(
+                    _renderTarget,
+                    params);
                 
-
-                Transform3DPtr const& _cameraTransform3D = _camera3D->getTransform();
-                Vec3DF cameraPosition = _cameraTransform3D->getWorldPosition();
-                Mat4DF const& cameraWorldTransform = _cameraTransform3D->getWorldTransform();
-                S32 renderMask = _camera3D->getRenderMask();
-
-                Rect2DF const& viewport = _camera3D->getViewport();
-
-                
-
-                RenderQueuePtr const& renderQueue = renderTarget->getRenderQueue();
-
-                if (renderTarget->beginDraw())
-                {
-                    renderQueue->clear();
-                    renderQueue->pushPushScissorRectCommand(viewport);
-
-                    bool clearColorFlag = _camera3D->getClearColorFlag();
-                    bool clearDepthFlag = _camera3D->getClearDepthFlag();
-
-                    if (clearColorFlag)
-                        renderTarget->setClearColor(_camera3D->getClearColor());
-
-                    if (clearColorFlag || clearDepthFlag)
-                    {
-                        renderQueue->pushClearCurrentRenderTargetCommand(
-                            clearColorFlag,
-                            clearDepthFlag);
-                    }
-
-                    renderTarget->setViewport(viewport);
-
-                    // Projection matrix
-                    renderTarget->setProjectionMatrixPerspective(
-                        _camera3D->getFOV(),
-                        _camera3D->getNearZ(),
-                        _camera3D->getFarZ());
-
-                    // View matrix
-                    Mat4DF viewMatrix = cameraWorldTransform.inversedAffineCopy();
-                    renderTarget->setViewMatrix(viewMatrix);
-
-                    // View position
-                    renderTarget->setViewPosition(cameraPosition);
-
-                    Vector<RenderUnit> renderData;
-
-                    m_meshRenderers->process(
-                        [&](Entity* _entity, MeshRenderer* _meshRenderer, Transform3D* _transform3D)
-                        {
-                            if (!_meshRenderer->getEnabled())
-                                return;
-
-                            if (_meshRenderer->getRenderMask()->getMask() & renderMask)
-                            {
-                                if (_meshRenderer->getRenderMesh())
-                                {
-                                    Vector<MaterialPtr> const& materials = _meshRenderer->getMaterials();
-                                    Vector<VertexArrayObjectPtr> const& vaos = _meshRenderer->getRenderMesh()->getVertexArrayObjects();
-
-                                    if (vaos.empty())
-                                        return;
-
-                                    Size c = Math::Max(vaos.size(), materials.size());
-
-                                    for (Size i = 0, in = c; i < in; ++i)
-                                    {
-                                        VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
-
-                                        MaterialPtr const* material = nullptr;
-                                        if (!materials.empty())
-                                            material = &materials[i % materials.size()];
-
-                                        if (!material || !*material)
-                                            material = &_camera3D->getRenderTarget()->getRenderSystem()->getMaterialManager()->getErrorMaterial();
-
-                                        renderData.emplace_back(
-                                            RenderUnit
-                                            {
-                                                (*material)->getFirstRenderPass(),
-                                                vao,
-                                                _transform3D->getWorldPosition(),
-                                                1,
-                                                &_transform3D->getWorldTransform()
-                                            });
-
-                                    }
-                                }
-                            }
-                        });
-
-                    m_trailRenderers3DSample->process(
-                        [&](Entity* _entity, TrailRenderer3D* _trailRenderer, Transform3D* _transform3D)
-                        {
-                            if (_trailRenderer->getRenderMask()->getMask() & renderMask)
-                            {
-                                if (_trailRenderer->getRenderMesh())
-                                {
-                                    Vector<MaterialPtr> const& materials = _trailRenderer->getMaterials();
-                                    Vector<VertexArrayObjectPtr> const& vaos = _trailRenderer->getRenderMesh()->getVertexArrayObjects();
-
-                                    if (vaos.empty())
-                                        return;
-
-                                    Size c = Math::Max(vaos.size(), materials.size());
-
-                                    for (Size i = 0, in = c; i < in; ++i)
-                                    {
-                                        VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
-
-                                        MaterialPtr const* material = nullptr;
-                                        if (materials.empty())
-                                            material = &_camera3D->getRenderTarget()->getRenderSystem()->getMaterialManager()->getErrorMaterial();
-                                        else
-                                            material = &materials[i % materials.size()];
-
-                                        renderData.emplace_back(
-                                            RenderUnit
-                                            {
-                                                (*material)->getFirstRenderPass(),
-                                                vao,
-                                                _trailRenderer->getWorldPosition(),
-                                                1,
-                                                &Mat4DF::c_identity
-                                            });
-                                        
-                                    }
-                                }
-                            }
-                        });
-
-                    eventGatherRenderUnits(_camera3D, renderData);
-
-
-                    for (RenderUnit& data : renderData)
-                        data.sqrDistanceToCamera = (cameraPosition - data.worldPosition).squaredLength();
-
-                    // Sort render queue
-                    std::sort(
-                        renderData.begin(),
-                        renderData.end(),
-                        [](
-                            RenderUnit const& _a,
-                            RenderUnit const& _b)
-                        {
-                            if (_a.renderPass->getRenderQueueIndex() < _b.renderPass->getRenderQueueIndex())
-                                return true;
-
-                            if (_a.renderPass->getRenderQueueIndex() > _b.renderPass->getRenderQueueIndex())
-                                return false;
-
-                            if (_a.renderPass->getRenderQueueIndex() < (S32)RenderQueueIndex::Transparent)
-                                return _a.sqrDistanceToCamera < _b.sqrDistanceToCamera;
-                            else
-                                return _a.sqrDistanceToCamera > _b.sqrDistanceToCamera;
-                        });
-
-                    S32 prevRenderQueueIndex = -1;
-
-                    for (RenderUnit const& data : renderData)
-                    {
-                        RenderPassPtr const& renderPass = data.renderPass;
-                        ShaderPtr const& shader = renderPass->getShader();
-
-                        S32 currentRenderQueueIndex = renderPass->getRenderQueueIndex();
-
-                        VertexArrayObjectPtr const& vao = data.vao;
-
-                        if (shader->getMainLightColorUniform())
-                            shader->getMainLightColorUniform()->set(mainLightColor);
-
-                        if (shader->getMainLightDirectionUniform())
-                            shader->getMainLightDirectionUniform()->set(mainLightDirection);
-
-
-                        renderQueue->pushSelectRenderPassCommand(renderPass);
-
-                        renderQueue->pushDrawVAOInstancedCommand(
-                            vao,
-                            data.count,
-                            data.modelMatricies,
-                            data.colorStream,
-                            data.uvStream);
-
-                        prevRenderQueueIndex = currentRenderQueueIndex;
-                    }
-
-                    renderQueue->pushPopScissorRectCommand();
-
-                    renderQueue->draw();
-
-                    renderTarget->endDraw();
-                }
             });
     }
 
@@ -328,6 +325,98 @@ namespace Maze
 
     }
     
+    //////////////////////////////////////////
+    void RenderControlSystemModule3D::notifyGatherRenderUnits(
+        RenderTarget* _renderTarget,
+        DefaultPassParams const& _params,
+        Vector<RenderUnit>& _renderData)
+    {
+        // Meshes
+        m_meshRenderers->process(
+            [&](Entity* _entity, MeshRenderer* _meshRenderer, Transform3D* _transform3D)
+            {
+                if (!_meshRenderer->getEnabled())
+                    return;
+
+                if (_meshRenderer->getRenderMask()->getMask() & _params.renderMask)
+                {
+                    if (_meshRenderer->getRenderMesh())
+                    {
+                        Vector<MaterialPtr> const& materials = _meshRenderer->getMaterials();
+                        Vector<VertexArrayObjectPtr> const& vaos = _meshRenderer->getRenderMesh()->getVertexArrayObjects();
+
+                        if (vaos.empty())
+                            return;
+
+                        Size c = Math::Max(vaos.size(), materials.size());
+
+                        for (Size i = 0, in = c; i < in; ++i)
+                        {
+                            VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
+
+                            MaterialPtr const* material = nullptr;
+                            if (!materials.empty())
+                                material = &materials[i % materials.size()];
+
+                            if (!material || !*material)
+                                material = &m_renderSystem->getMaterialManager()->getErrorMaterial();
+
+                            _renderData.emplace_back(
+                                RenderUnit
+                                {
+                                    (*material)->getFirstRenderPass(),
+                                    vao,
+                                    _transform3D->getWorldPosition(),
+                                    1,
+                                    &_transform3D->getWorldTransform()
+                                });
+
+                        }
+                    }
+                }
+            });
+
+        // Trails
+        m_trailRenderers3DSample->process(
+            [&](Entity* _entity, TrailRenderer3D* _trailRenderer, Transform3D* _transform3D)
+            {
+                if (_trailRenderer->getRenderMask()->getMask() & _params.renderMask)
+                {
+                    if (_trailRenderer->getRenderMesh())
+                    {
+                        Vector<MaterialPtr> const& materials = _trailRenderer->getMaterials();
+                        Vector<VertexArrayObjectPtr> const& vaos = _trailRenderer->getRenderMesh()->getVertexArrayObjects();
+
+                        if (vaos.empty())
+                            return;
+
+                        Size c = Math::Max(vaos.size(), materials.size());
+
+                        for (Size i = 0, in = c; i < in; ++i)
+                        {
+                            VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
+
+                            MaterialPtr const* material = nullptr;
+                            if (materials.empty())
+                                material = &m_renderSystem->getMaterialManager()->getErrorMaterial();
+                            else
+                                material = &materials[i % materials.size()];
+
+                            _renderData.emplace_back(
+                                RenderUnit
+                                {
+                                    (*material)->getFirstRenderPass(),
+                                    vao,
+                                    _trailRenderer->getWorldPosition(),
+                                    1,
+                                    &Mat4DF::c_identity
+                                });
+
+                        }
+                    }
+                }
+            });
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

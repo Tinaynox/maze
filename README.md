@@ -65,12 +65,20 @@ Start by cloning the repository with `git clone --recursive https://github.com/T
 
 ## Features Demonstration
 <details>
+  <summary>Water, Terrain, and Sky</summary>
+  <img src="/res/art/Demo00.gif" loading="lazy" />
+</details>
+<details>
   <summary>Particles</summary>
   <img src="/res/art/Particles00.gif" loading="lazy" />
 </details>
 <details>
   <summary>Particle Editor</summary>
   <img src="/res/art/ParticleEditor00.gif" loading="lazy" />
+</details>
+<details>
+  <summary>Terrain Generator</summary>
+  <img src="/res/art/Terrain00.gif" loading="lazy" />
 </details>
 <details>
   <summary>Trail Renderer</summary>

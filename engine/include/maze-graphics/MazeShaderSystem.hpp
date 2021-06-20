@@ -100,6 +100,9 @@ namespace Maze
         ShaderPtr const& getUVShader() const { return m_uvShader; }
 
         //////////////////////////////////////////
+        ShaderPtr const& getNormalShader() const { return m_normalShader; }
+
+        //////////////////////////////////////////
         ShaderPtr const& getColorShader() const { return m_colorShader; }
 
         //////////////////////////////////////////
@@ -125,6 +128,9 @@ namespace Maze
 
         //////////////////////////////////////////
         ShaderPtr const& getDebugAxisShader() const { return m_debugAxisShader; }
+
+        //////////////////////////////////////////
+        ShaderPtr const& getSkyboxShader() const { return m_skyboxShader; }
 
 
         //////////////////////////////////////////
@@ -162,6 +168,7 @@ namespace Maze
 
         ShaderPtr m_errorShader;
         ShaderPtr m_uvShader;
+        ShaderPtr m_normalShader;
         ShaderPtr m_colorShader;
         ShaderPtr m_colorTextureShader;
         ShaderPtr m_colorTextureCustomUVShader;
@@ -171,6 +178,7 @@ namespace Maze
         ShaderPtr m_colorPickerChannelShader;
         ShaderPtr m_debugGridShader;
         ShaderPtr m_debugAxisShader;
+        ShaderPtr m_skyboxShader;
 
         StringPerfectHashGenerator m_hashGenerator;
     };

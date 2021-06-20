@@ -156,6 +156,50 @@ namespace Maze
 
     public:
     };
+
+
+    //////////////////////////////////////////
+    // Struct RenderCommandEnableClipPlane
+    //
+    //////////////////////////////////////////
+    struct MAZE_GRAPHICS_API RenderCommandEnableClipPlane
+        : public RenderCommand
+    {
+    public:
+
+        //////////////////////////////////////////
+        inline RenderCommandEnableClipPlane(
+            S32 _index,
+            Vec4DF const& _plane)
+            : RenderCommand(RenderCommandType::EnableClipPlane)
+            , index(_index)
+            , plane(_plane)
+        {}
+
+    public:
+        S32 index;
+        Vec4DF plane;
+    };
+
+    //////////////////////////////////////////
+    // Struct RenderCommandDisableClipPlane
+    //
+    //////////////////////////////////////////
+    struct MAZE_GRAPHICS_API RenderCommandDisableClipPlane
+        : public RenderCommand
+    {
+    public:
+
+        //////////////////////////////////////////
+        inline RenderCommandDisableClipPlane(
+            S32 _index)
+            : RenderCommand(RenderCommandType::DisableClipPlane)
+            , index(_index)
+        {}
+
+    public:
+        S32 index;
+    };
     
 
 } // namespace Maze

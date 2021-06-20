@@ -173,6 +173,7 @@ MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglDepthFunc)(
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglDepthMask)(MZGLboolean _flag);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglCullFace)(MZGLenum _mode);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglFrontFace)(MZGLenum _mode);
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglClipPlane)(MZGLenum _plane, MZGLdouble const* _equation);
 
 using GLDEBUGPROCKHR = void (MAZE_GL_FUNCPTR *)(MZGLenum _source, MZGLenum _type, MZGLuint _id, MZGLenum _severity, MZGLsizei _length, const MZGLchar* _message, const void* _userParam);
 

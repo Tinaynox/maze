@@ -33,6 +33,7 @@
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-graphics/MazeRenderWindow.hpp"
 #include "maze-graphics/MazeTexture.hpp"
+#include "maze-graphics/MazePixelSheet2D.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/system/MazeWindowVideoMode.hpp"
@@ -58,7 +59,93 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(TextureCube, Texture);
+
+    public:
+
+        //////////////////////////////////////////
         virtual ~TextureCube();
+
+        //////////////////////////////////////////
+        static TextureCubePtr Create(RenderSystem* _renderSystem = nullptr);
+
+        //////////////////////////////////////////
+        static TextureCubePtr Create(
+            AssetFilePtr const& _assetFile,
+            RenderSystem* _renderSystem = nullptr);
+
+        //////////////////////////////////////////
+        static TextureCubePtr Create(
+            String const& _assetFileName,
+            RenderSystem* _renderSystem = nullptr);
+
+
+        //////////////////////////////////////////
+        virtual bool isValid() MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        void loadFromAssetFile(AssetFilePtr const& _assetFile);
+
+        //////////////////////////////////////////
+        void loadFromAssetFile(String const& _assetFileName);
+
+
+        //////////////////////////////////////////
+        String const& getAssetFileName() const;
+
+
+        //////////////////////////////////////////
+        virtual bool loadTexture(
+            Vector<PixelSheet2D> const _pixelSheets[6],
+            PixelFormat::Enum _internalPixelFormat = PixelFormat::None) MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        bool loadTexture(
+            PixelSheet2D _pixelSheet[6],
+            PixelFormat::Enum _internalPixelFormat = PixelFormat::None);
+
+        //////////////////////////////////////////
+        bool loadTexture(
+            String const& _rightName,
+            String const& _leftName,
+            String const& _topName,
+            String const& _bottomName,
+            String const& _frontName,
+            String const& _backName,
+            PixelFormat::Enum _internalPixelFormat = PixelFormat::None);
+
+
+        ////////////////////////////////////
+        virtual bool setMagFilter(TextureFilter _value) MAZE_ABSTRACT;
+
+        ////////////////////////////////////
+        virtual bool setMinFilter(TextureFilter _value) MAZE_ABSTRACT;
+
+        ////////////////////////////////////
+        virtual bool setWrapS(TextureWrap _value) MAZE_ABSTRACT;
+
+        ////////////////////////////////////
+        virtual bool setWrapT(TextureWrap _value) MAZE_ABSTRACT;
+
+        ////////////////////////////////////
+        virtual bool setWrapR(TextureWrap _value) MAZE_ABSTRACT;
+
+
+        //////////////////////////////////////////
+        inline Vec2DS const& getSize() const { return m_size; }
+
+        //////////////////////////////////////////
+        inline S32 getWidth() const { return m_size.x; }
+
+        //////////////////////////////////////////
+        inline S32 getHeight() const { return m_size.y; }
+
+
+        //////////////////////////////////////////
+        virtual void generateMipmaps() MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual void reload() MAZE_ABSTRACT;
 
     protected:
 
@@ -66,10 +153,21 @@ namespace Maze
         TextureCube();
 
         //////////////////////////////////////////
-        virtual bool init(RenderSystem* _renderSystem);
+        virtual bool init(RenderSystem* _renderSystem) MAZE_OVERRIDE;
     
+
     protected:
-        
+        Vec2DS m_size = Vec2DS::c_zero;
+
+        TextureFilter m_magFilter = TextureFilter::Linear;
+        TextureFilter m_minFilter = TextureFilter::Linear;
+        TextureWrap m_wrapS = TextureWrap::ClampToEdge;
+        TextureWrap m_wrapT = TextureWrap::ClampToEdge;
+        TextureWrap m_wrapR = TextureWrap::ClampToEdge;
+
+        PixelFormat::Enum m_internalPixelFormat;
+
+        AssetFilePtr m_assetFile;
     };
 
 } // namespace Maze

@@ -275,6 +275,23 @@ namespace Maze
 
                         break;
                     }
+                    case RenderCommandType::EnableClipPlane:
+                    {
+                        RenderCommandEnableClipPlane* command = static_cast<RenderCommandEnableClipPlane*>(_command);
+
+                        m_context->setClipDistanceEnabled(command->index, true);
+                        m_clipPlanes[command->index] = command->plane;
+
+                        break;
+                    }
+                    case RenderCommandType::DisableClipPlane:
+                    {
+                        RenderCommandEnableClipPlane* command = static_cast<RenderCommandEnableClipPlane*>(_command);
+
+                        m_context->setClipDistanceEnabled(command->index, false);
+
+                        break;
+                    }
                     default:
                     {
                         Debug::LogError("Unsupported RenderCommand: %d", (S32)_command->type);
@@ -356,8 +373,27 @@ namespace Maze
             shaderOpenGL->getViewMatrixUniform()->set(m_renderTarget->getViewMatrix());
         }
 
+        // Clip distances
+        bool clipDistance0 = m_context->getClipDistanceEnabled(0);
+
+        if (shaderOpenGL->getClipDistanceEnableUniform())
+            shaderOpenGL->getClipDistanceEnableUniform()->set(Vec4DB{ clipDistance0, false, false, false });
+
+        if (clipDistance0)
+        {
+            if (shaderOpenGL->getClipDistance0Uniform())
+                shaderOpenGL->getClipDistance0Uniform()->set(m_clipPlanes[0]);
+        }
+
         // Projection matrix
         shaderOpenGL->getProjectionMatrixUniform()->set(m_renderTarget->getProjectionMatrix());
+
+        // Projection params
+        if (shaderOpenGL->getProjectionParamsUniform())
+        {
+            shaderOpenGL->getProjectionParamsUniform()->set(
+                Vec4DF{ m_renderTarget->getNear(), m_renderTarget->getFar(), 0.0f, 0.0f });
+        }
 
         // View direction
         if (shaderOpenGL->getViewPositionUniform())

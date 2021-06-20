@@ -456,12 +456,12 @@ namespace Maze
         inline TValue Sign(TValue const& _value)
         {
             if (_value > 0)
-                return 1;
+                return (TValue)1;
 
             if (_value < 0)
-                return -1;
+                return (TValue)-1;
 
-            return 0;
+            return (TValue)0;
         }
 
         //////////////////////////////////////////

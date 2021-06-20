@@ -114,13 +114,12 @@ namespace Maze
     protected:
         ContextOpenGL* m_context;
 
-        U32 m_maxInstancesPerDrawCall = 0;
-        U32 m_maxInstancesPerDraw = 0;
-
         Timer m_timer;
         F32 m_drawTime;
 
         Stack<Rect2DS> m_scissorRects;
+
+        Vec4DF m_clipPlanes[MAZE_GL_MAX_CLIP_DISTANCES_COUNT] = { Vec4DF::c_zero };
     };
 
 } // namespace Maze

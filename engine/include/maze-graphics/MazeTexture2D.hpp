@@ -61,6 +61,11 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(Texture2D, Texture);
+
+    public:
+
+        //////////////////////////////////////////
         virtual ~Texture2D();
 
         //////////////////////////////////////////
@@ -148,6 +153,8 @@ namespace Maze
             U32 _x,
             U32 _y) MAZE_ABSTRACT;
 
+        
+
         //////////////////////////////////////////
         inline Vec2DS const& getSize() const { return m_size; }
 
@@ -166,7 +173,22 @@ namespace Maze
         virtual void saveToFileAsTGA(String const& _fileName, Vec2DU _size = Vec2DU::c_zero) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
+        virtual PixelSheet2D readAsPixelSheet() MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
         virtual void generateMipmaps() MAZE_ABSTRACT;
+
+
+    public:
+
+        //////////////////////////////////////////
+        virtual String toString() const;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count);
+
+        //////////////////////////////////////////
+        static Texture2DPtr const& FromString(CString _data, Size _count);
 
     protected:
 
@@ -174,7 +196,7 @@ namespace Maze
         Texture2D();
 
         //////////////////////////////////////////
-        virtual bool init(RenderSystem* _renderSystem);
+        virtual bool init(RenderSystem* _renderSystem) MAZE_OVERRIDE;
     
     protected:
         Vec2DS m_size;
@@ -188,6 +210,50 @@ namespace Maze
 
         AssetFilePtr m_assetFile;
     };
+
+    //////////////////////////////////////////
+    MAZE_NOT_IMPLEMENTED_SERIALIZATION(Texture2D);
+
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<Texture2DPtr>::value), void>::type
+        ValueToString(Texture2DPtr const& _value, String& _data)
+    {
+        _data = _value->toString();
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<Texture2DPtr>::value), void>::type
+        ValueFromString(Texture2DPtr& _value, CString _data, Size _count)
+    {
+        _value = Texture2D::FromString(_data, _count);
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<Texture2DPtr>::value), U32>::type
+        GetValueSerializationSize(Texture2DPtr const& _value)
+    {
+        MAZE_NOT_IMPLEMENTED_RETURN_VALUE(0);
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<Texture2DPtr>::value), void>::type
+        SerializeValue(Texture2DPtr const& _value, U8* _data)
+    {
+        MAZE_NOT_IMPLEMENTED;
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<Texture2DPtr>::value), void>::type
+        DeserializeValue(Texture2DPtr& _value, U8 const* _data)
+    {
+        MAZE_NOT_IMPLEMENTED;
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

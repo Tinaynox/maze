@@ -37,6 +37,7 @@
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderBufferOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeTexture2DOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeTextureCubeOpenGL.hpp"
 
 
 //////////////////////////////////////////
@@ -50,7 +51,9 @@ namespace Maze
     StateMachineOpenGL::StateMachineOpenGL(ContextOpenGL* _context)
         : m_context(_context)
         , m_activeTexture(MAZE_GL_TEXTURE0)
-        , m_bindTexture2D{ 0 }
+        , m_bindTextureIds{ 0 }
+        , m_bindTextureTargets{ 0 }
+        , m_clipDistances{ 0 }
         , m_program(0)
         , m_frameBuffer(0)
         , m_vertexArrayObject(0)
@@ -72,7 +75,7 @@ namespace Maze
         , m_antialiasingLevelSupport(0)
         , m_sRgbSupport(false)
         , m_currentShader(nullptr)
-        , m_currentTexture2D{ nullptr }
+        , m_currentTextures{ nullptr }
         , m_currentRenderBuffer(nullptr)
         , m_pixelBufferSize(Vec2DU::c_zero)
     {
@@ -128,8 +131,11 @@ namespace Maze
         {
             if (mzglActiveTexture && mzglBindTexture)
             {
-                MAZE_GL_CALL(mzglActiveTexture(MAZE_GL_TEXTURE0 + i));
-                MAZE_GL_CALL(mzglBindTexture(MAZE_GL_TEXTURE_2D, m_bindTexture2D[i]));
+                if (m_bindTextureTargets[i])
+                {
+                    MAZE_GL_CALL(mzglActiveTexture(MAZE_GL_TEXTURE0 + i));
+                    MAZE_GL_CALL(mzglBindTexture(m_bindTextureTargets[i], m_bindTextureIds[i]));
+                }
             }
         }
 
@@ -154,6 +160,26 @@ namespace Maze
         else
         {
             m_program = 0;
+        }
+
+        if (m_context->getExtensionsRaw() &&
+            m_context->getExtensionsRaw()->getSupportClipDistance())
+        {
+            for (S32 i = 0; i < MAZE_GL_MAX_CLIP_DISTANCES_COUNT; ++i)
+            {
+                if (m_clipDistances[i])
+                {
+                    if (mzglEnable)
+                        MAZE_GL_CALL(mzglEnable(MAZE_GL_CLIP_DISTANCE0 + i));
+                    else
+                        m_clipDistances[i] = 0;
+                }
+                else
+                {
+                    if (mzglDisable)
+                        MAZE_GL_CALL(mzglDisable(MAZE_GL_CLIP_DISTANCE0 + i));
+                }
+            }
         }
         
         if (m_blendEnabled)
@@ -359,8 +385,16 @@ namespace Maze
     {
         m_activeTexture = MAZE_GL_TEXTURE0;
 
-        for (U32 i = 0; i < MAZE_GL_MAX_TEXTURES_COUNT; ++i)
-            m_bindTexture2D[i] = 0;
+        for (S32 i = 0; i < MAZE_GL_MAX_TEXTURES_COUNT; ++i)
+        {
+            m_bindTextureTargets[i] = 0;
+            m_bindTextureIds[i] = 0;
+        }
+
+        for (S32 i = 0; i < MAZE_GL_MAX_CLIP_DISTANCES_COUNT; ++i)
+        {
+            m_clipDistances[i] = 0;
+        }
             
         m_program = 0;
         m_frameBuffer = 0;
@@ -402,23 +436,24 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void StateMachineOpenGL::bindTexture2D(MZGLuint _texture2DId)
+    void StateMachineOpenGL::bindTexture(MZGLenum _textureTarget, MZGLuint _textureId)
     {
-        MAZE_DEBUG_ERROR_IF(_texture2DId == 0, "Texture is not created yet!");
+        MAZE_DEBUG_ERROR_IF(_textureId == 0, "Texture is not created yet!");
 
         S32 activeTextureIndex = m_activeTexture - MAZE_GL_TEXTURE0;
 
-        if (m_bindTexture2D[activeTextureIndex] == _texture2DId)
+        if (m_bindTextureIds[activeTextureIndex] == _textureId)
             return;
 
-        m_bindTexture2D[activeTextureIndex] = _texture2DId;
+        m_bindTextureTargets[activeTextureIndex] = _textureTarget;
+        m_bindTextureIds[activeTextureIndex] = _textureId;
 
 #if (MAZE_DEBUG_GL)
         m_context->_validateIsCurrentGLContext();
 #endif
 
         MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
-        MAZE_GL_CALL(mzglBindTexture(MAZE_GL_TEXTURE_2D, _texture2DId));
+        MAZE_GL_CALL(mzglBindTexture(_textureTarget, _textureId));
     }
 
     //////////////////////////////////////////
@@ -443,6 +478,31 @@ namespace Maze
         else
         {
             MAZE_GL_CALL(mzglDisable(MAZE_GL_BLEND));
+        }
+    }
+
+    //////////////////////////////////////////
+    void StateMachineOpenGL::setClipDistanceEnabled(S32 _i, bool _value)
+    {
+        if (m_clipDistances[_i] == _value)
+            return;
+            
+        m_clipDistances[_i] = _value;
+
+#if (MAZE_DEBUG_GL)
+        m_context->_validateIsCurrentGLContext();
+#endif
+
+        if (m_context->getExtensionsRaw()->getSupportClipDistance())
+        {
+            if (_value)
+            {
+                MAZE_GL_CALL(mzglEnable(MAZE_GL_CLIP_DISTANCE0 + _i));
+            }
+            else
+            {
+                MAZE_GL_CALL(mzglDisable(MAZE_GL_CLIP_DISTANCE0 + _i));
+            }
         }
     }
 
@@ -874,21 +934,71 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void StateMachineOpenGL::bindTexture2D(Texture2D* _texture2D)
+    void StateMachineOpenGL::bindTexture(Texture* _texture)
+    {
+        if (!_texture)
+        {
+            MZGLenum activeTexture = getActiveTexture();
+            Size activeTextureIndex = activeTexture - MAZE_GL_TEXTURE0;
+
+            Texture* currentTexture = m_currentTextures[activeTextureIndex];
+            if (currentTexture == _texture)
+                return;
+
+            m_currentTextures[activeTextureIndex] = _texture;
+
+            return;
+        }
+
+        switch (_texture->getType())
+        {
+            case TextureType::TwoDimensional:
+            {
+                bindTexture2D(_texture->castRaw<Texture2D>());
+                break;
+            }
+            case TextureType::Cube:
+            {
+                bindTextureCube(_texture->castRaw<TextureCube>());
+                break;
+            }
+            default:
+            {
+                MAZE_NOT_IMPLEMENTED;
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void StateMachineOpenGL::bindTexture2D(Texture2D* _texture)
     {
         MZGLenum activeTexture = getActiveTexture();
         Size activeTextureIndex = activeTexture - MAZE_GL_TEXTURE0;
 
-        Texture2D* currentTexture2D = m_currentTexture2D[activeTextureIndex];
-        if (currentTexture2D == _texture2D)
+        Texture* currentTexture = m_currentTextures[activeTextureIndex];
+        if (currentTexture == _texture)
             return;
 
-        m_currentTexture2D[activeTextureIndex] = _texture2D;
+        m_currentTextures[activeTextureIndex] = _texture;
 
-        if (_texture2D)
-        {
-            bindTexture2D(_texture2D->castRaw<Texture2DOpenGL>()->getGLTexture());
-        }
+        if (_texture)
+            bindTexture2D(_texture->castRaw<Texture2DOpenGL>()->getGLTexture());
+    }
+
+    //////////////////////////////////////////
+    void StateMachineOpenGL::bindTextureCube(TextureCube* _texture)
+    {
+        MZGLenum activeTexture = getActiveTexture();
+        Size activeTextureIndex = activeTexture - MAZE_GL_TEXTURE0;
+
+        Texture* currentTexture = m_currentTextures[activeTextureIndex];
+        if (currentTexture == _texture)
+            return;
+
+        m_currentTextures[activeTextureIndex] = _texture;
+
+        if (_texture)
+            bindTextureCube(_texture->castRaw<TextureCubeOpenGL>()->getGLTexture());
     }
 
     //////////////////////////////////////////
@@ -898,7 +1008,7 @@ namespace Maze
         m_sRgbSupport = false;
         m_currentShader = nullptr;
         for (Size i = 0; i < MAZE_GL_MAX_TEXTURES_COUNT; ++i)
-            m_currentTexture2D[i] = nullptr;
+            m_currentTextures[i] = nullptr;
     }
 
 } // namespace Maze

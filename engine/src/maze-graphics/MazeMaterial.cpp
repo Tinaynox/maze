@@ -293,6 +293,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void Material::setUniform(String const& _uniformName, TextureCubePtr const& _textureCube)
+    {
+        ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
+        uniformVariant->set(_textureCube);
+    }
+
+    //////////////////////////////////////////
     void Material::setUniform(String const& _uniformName, Vec2DF const& _vector)
     {
         ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
@@ -515,7 +522,7 @@ namespace Maze
 
         if (StringHelper::IsStartsWith(_data, "ptr:"))
         {
-            String data(_data, _data + _count - 4);
+            String data = String(_data + 4, _data + _count);
 
             void* ptr;
             std::stringstream ss;
@@ -557,7 +564,7 @@ namespace Maze
         }
         else
         {
-            StringHelper::FormatString(_data, "ptr:%x", reinterpret_cast<void*>(_value.get()));
+            StringHelper::FormatString(_data, "ptr:%p", _value.get());            
         }
     }
 

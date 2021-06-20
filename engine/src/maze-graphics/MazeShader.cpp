@@ -158,6 +158,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void Shader::setUniform(String const& _uniformName, bool _value, bool _warningIfNotExists)
+    {
+        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+
+        if (!uniform)
+        {
+            MAZE_WARNING_IF(_warningIfNotExists, "Undefined Shader Uniform with name '%s'!", _uniformName.c_str());
+            return;
+        }
+
+        uniform->set(_value);
+    }
+
+    //////////////////////////////////////////
     void Shader::setUniform(String const& _uniformName, Texture2DPtr const& _texture2D, bool _warningIfNotExists)
     {
         const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
@@ -299,6 +313,47 @@ namespace Maze
         uniform->set(_vector);
     }
 
+    //////////////////////////////////////////
+    void Shader::setUniform(String const& _uniformName, Vec2DB const& _vector, bool _warningIfNotExists)
+    {
+        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+
+        if (!uniform)
+        {
+            MAZE_WARNING_IF(_warningIfNotExists, "Undefined Shader Uniform with name '%s'!", _uniformName.c_str());
+            return;
+        }
+
+        uniform->set(_vector);
+    }
+
+    //////////////////////////////////////////
+    void Shader::setUniform(String const& _uniformName, Vec3DB const& _vector, bool _warningIfNotExists)
+    {
+        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+
+        if (!uniform)
+        {
+            MAZE_WARNING_IF(_warningIfNotExists, "Undefined Shader Uniform with name '%s'!", _uniformName.c_str());
+            return;
+        }
+
+        uniform->set(_vector);
+    }
+
+    //////////////////////////////////////////
+    void Shader::setUniform(String const& _uniformName, Vec4DB const& _vector, bool _warningIfNotExists)
+    {
+        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+
+        if (!uniform)
+        {
+            MAZE_WARNING_IF(_warningIfNotExists, "Undefined Shader Uniform with name '%s'!", _uniformName.c_str());
+            return;
+        }
+
+        uniform->set(_vector);
+    }
 
     //////////////////////////////////////////
     void Shader::setUniform(String const& _uniformName, Mat3DF const& _matrix, bool _warningIfNotExists)
@@ -541,6 +596,12 @@ namespace Maze
                     break;
                 }
 
+                case ShaderUniformType::UniformBool:
+                {
+                    setUniform(uniformData.name, StringHelper::StringToBool(uniformData.value));
+                    break;
+                }
+
                 case ShaderUniformType::UniformTexture2D:
                 {
                     Texture2DPtr const& texture2D = textureManager->getTexture2D(uniformData.value);
@@ -610,6 +671,24 @@ namespace Maze
                     break;
                 }
 
+                case ShaderUniformType::UniformVec2DB:
+                {
+                    setUniform(uniformData.name, Vec2DB::FromString(uniformData.value));
+                    break;
+                }
+
+                case ShaderUniformType::UniformVec3DB:
+                {
+                    setUniform(uniformData.name, Vec3DB::FromString(uniformData.value));
+                    break;
+                }
+
+                case ShaderUniformType::UniformVec4DB:
+                {
+                    setUniform(uniformData.name, Vec4DB::FromString(uniformData.value));
+                    break;
+                }
+
                 case ShaderUniformType::UniformMat3DF:
                 {
                     setUniform(uniformData.name, Mat3DF::FromString(uniformData.value));
@@ -668,7 +747,10 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::assignDefaultUniforms()
     {
+        m_clipDistance0Uniform = ensureUniform("u_clipDistance0");
+        m_clipDistanceEnableUniform = ensureUniform("u_clipDistanceEnable");
         m_projectionMatrixUniform = ensureUniform("u_projectionMatrix");
+        m_projectionParamsUniform = ensureUniform("u_projectionParams");
         m_viewMatrixUniform = ensureUniform("u_viewMatrix");
         m_modelMatricesUniform = ensureUniform("u_modelMatrices");
         m_modelMatricesTextureUniform = ensureUniform("u_modelMatricesTexture");

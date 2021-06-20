@@ -6,12 +6,11 @@
 
 //////////////////////////////////////////
 #include "Utils/PrecisionHigh.mzglsl"
+#include "Utils/Vertex.mzglsl"
 
 
 //////////////////////////////////////////
-uniform mat4 u_projectionMatrix;
-uniform mat4 u_viewMatrix;
-uniform vec3 u_viewPosition;
+uniform vec4 u_baseMapST;
 
 
 //////////////////////////////////////////
@@ -31,7 +30,7 @@ OUT vec3 v_normalOS;
 OUT vec3 v_normalWS;
 OUT vec3 v_tangentWS;
 OUT vec3 v_bitangentWS;
-OUT vec4 v_color0;
+OUT vec4 v_color;
 OUT vec2 v_uv0;
 OUT vec3 v_viewDirWS;
 
@@ -51,6 +50,7 @@ void main()
 
     vec4 positionOS = vec4(a_position, 1.0);
     vec4 positionWS = positionOS * modelMatrix;
+    MAZE_CLIP_DISTANCE_VERTEX(positionWS);
     vec4 positionVS = positionWS * u_viewMatrix;
     vec4 positionCS = positionVS * u_projectionMatrix;
     
@@ -83,8 +83,9 @@ void main()
     v_normalOS = normalOS.xyz;
     v_normalWS = normalWS.xyz;
     
-    v_color0 = a_color;
-    v_uv0 = a_texCoords0;
+    v_color = a_color;
+       
+    v_uv0 = u_baseMapST.xy * a_texCoords0 + u_baseMapST.zw;
 
     v_viewDirWS = u_viewPosition - v_positionWS;
 
@@ -100,15 +101,13 @@ void main()
 
 //////////////////////////////////////////
 #include "Utils/PrecisionHigh.mzglsl"
+#include "Utils/Fragment.mzglsl"
 #include "Utils/Core.mzglsl"
 
 
 //////////////////////////////////////////
 uniform sampler2D u_baseMap;
 uniform vec4 u_color;
-uniform vec3 u_viewPosition;
-uniform vec4 u_mainLightColor;
-uniform vec3 u_mainLightDirection;
 uniform vec4 u_ambientLightColor;
 uniform float u_shininess;
 uniform vec4 u_specularColor;
@@ -141,7 +140,7 @@ IN vec3 v_normalOS;
 IN vec3 v_normalWS;
 IN vec3 v_tangentWS;
 IN vec3 v_bitangentWS;
-IN vec4 v_color0;
+IN vec4 v_color;
 IN vec2 v_uv0;
 IN vec3 v_viewDirWS;
 
@@ -204,13 +203,15 @@ vec3 BlinnPhongLighting(
 // Main
 void main()
 {
+    MAZE_CLIP_DISTANCE_FRAGMENT;
+    
     // View direction
     vec3 fragmentToViewDirection = normalize(v_viewDirWS);
 
     // Normal
 #if defined(NORMAL_MAP) && (NORMAL_MAP)
     vec3 normalTS = SampleNormalTS(u_normalMap, v_uv0, u_normalScale);
-    mat3 tangentToWorld = mat3(v_tangentWS, v_bitangentWS, v_normalWS);
+    mat3 tangentToWorld = mat3(normalize(v_tangentWS), normalize(v_bitangentWS), normalize(v_normalWS));
     vec3 normalWS = normalize(TransformTangentToWorld(normalTS, tangentToWorld));
 #else
     vec3 normalWS = normalize(v_normalWS);

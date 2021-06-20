@@ -65,10 +65,15 @@ namespace Maze
             PixelFormat::Enum _pixelFormat = PixelFormat::RGBA_U8);
 
         //////////////////////////////////////////
+        PixelSheet2D(
+            Vec2DS const& _size,
+            ColorU32 const& _color);
+
+        //////////////////////////////////////////
         PixelSheet2D(PixelSheet2D const& _other);
 
         //////////////////////////////////////////
-        PixelSheet2D(PixelSheet2D&& _other);
+        PixelSheet2D(PixelSheet2D&& _other) noexcept;
 
         //////////////////////////////////////////
         void setSize(Vec2DS const& _size);
@@ -81,6 +86,12 @@ namespace Maze
 
         //////////////////////////////////////////
         inline Vec2DS const& getSize() const { return m_size; }
+
+        //////////////////////////////////////////
+        inline S32 const& getWidth() const { return m_size.x; }
+
+        //////////////////////////////////////////
+        inline S32 const& getHeight() const { return m_size.y; }
 
         //////////////////////////////////////////
         inline S32 getRowsCount() const { return m_size.y; }
@@ -96,6 +107,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline PixelFormat::Enum getFormat() const { return m_format; }
+
+        //////////////////////////////////////////
+        void const* getPixel(S32 _x, S32 _y) const;
 
         //////////////////////////////////////////
         ColorU32 getPixelRGBA_U8(S32 _x, S32 _y) const;
@@ -255,6 +269,12 @@ namespace Maze
 
         //////////////////////////////////////////
         inline Size getDataSize() { return m_data.getSize(); }
+
+        //////////////////////////////////////////
+        inline S32 getBytesPerPixel() const { return m_bytesPerPixel; }
+
+        //////////////////////////////////////////
+        inline S32 getBytesPerRow() const { return m_bytesPerRow; }
 
         //////////////////////////////////////////
         PixelSheet2D& operator=(PixelSheet2D const& _copy);

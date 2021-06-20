@@ -58,6 +58,11 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(Texture3D, Texture);
+
+    public:
+
+        //////////////////////////////////////////
         virtual ~Texture3D();
 
     protected:
@@ -66,7 +71,7 @@ namespace Maze
         Texture3D();
 
         //////////////////////////////////////////
-        virtual bool init(RenderSystem* _renderSystem);
+        virtual bool init(RenderSystem* _renderSystem) MAZE_OVERRIDE;
     
     protected:
         

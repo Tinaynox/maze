@@ -116,6 +116,22 @@ namespace Maze
         
         return true;
     }
+
+    //////////////////////////////////////////
+    bool ShaderUniform::set(bool _value)
+    {
+        if (   getBool() == _value
+            && getType() == ShaderUniformType::UniformBool)
+            return false;
+
+        processUniformWillBeChanged();
+
+        m_value.set(_value);
+
+        processSimpleUniformChanged();
+
+        return true;
+    }
         
     //////////////////////////////////////////
     bool ShaderUniform::set(Texture2DPtr const& _texture2D)
@@ -128,6 +144,22 @@ namespace Maze
         
         m_value.set(_texture2D); 
         
+        processSimpleUniformChanged();
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool ShaderUniform::set(TextureCubePtr const& _textureCube)
+    {
+        if (   getTextureCube() == _textureCube
+            && getType() == ShaderUniformType::UniformTextureCube)
+            return false;
+
+        processUniformWillBeChanged();
+
+        m_value.set(_textureCube);
+
         processSimpleUniformChanged();
 
         return true;
@@ -278,6 +310,55 @@ namespace Maze
         
         return true;
     }
+
+
+    //////////////////////////////////////////
+    bool ShaderUniform::set(Vec2DB const& _vector)
+    {
+        if (   getVec2DB() == _vector
+            && getType() == ShaderUniformType::UniformVec2DB)
+            return false;
+
+        processUniformWillBeChanged();
+
+        m_value.set(_vector);
+
+        processSimpleUniformChanged();
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool ShaderUniform::set(Vec3DB const& _vector)
+    {
+        if (   getVec3DB() == _vector
+            && getType() == ShaderUniformType::UniformVec3DB)
+            return false;
+
+        processUniformWillBeChanged();
+
+        m_value.set(_vector);
+
+        processSimpleUniformChanged();
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool ShaderUniform::set(Vec4DB const& _vector)
+    {
+        if (   getVec4DB() == _vector
+            && getType() == ShaderUniformType::UniformVec4DB)
+            return false;
+
+        processUniformWillBeChanged();
+
+        m_value.set(_vector);
+
+        processSimpleUniformChanged();
+
+        return true;
+    }
         
 
     //////////////////////////////////////////
@@ -405,7 +486,8 @@ namespace Maze
             case ShaderUniformType::UniformS32:           return set(_variant.getS32());
             case ShaderUniformType::UniformF32:           return set(_variant.getF32());
             case ShaderUniformType::UniformF64:           return set(_variant.getF64());
-            case ShaderUniformType::UniformTexture2D:     return set(_variant.getTexture2D());
+            case ShaderUniformType::UniformTexture2D:     return set(std::static_pointer_cast<Texture2D>(_variant.getTexture()));
+            case ShaderUniformType::UniformTextureCube:   return set(std::static_pointer_cast<TextureCube>(_variant.getTexture()));
             case ShaderUniformType::UniformVec2DS:        return set(_variant.getVec2DS());
             case ShaderUniformType::UniformVec3DS:        return set(_variant.getVec3DS());
             case ShaderUniformType::UniformVec4DS:        return set(_variant.getVec4DS());

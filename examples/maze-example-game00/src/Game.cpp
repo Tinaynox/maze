@@ -427,5 +427,23 @@ namespace Maze
         }
     }
 
+    //////////////////////////////////////////
+    bool Game::isMainWindowReadyToRender()
+    {
+        if (!getRunning())
+            return false;
+
+        if (!getMainRenderWindow())
+            return false;
+
+        if (!getMainRenderWindow()->getWindow()->isOpened())
+            return false;
+
+        if (getMainRenderWindow()->getWindow()->getMinimized())
+            return false;
+
+        return true;
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

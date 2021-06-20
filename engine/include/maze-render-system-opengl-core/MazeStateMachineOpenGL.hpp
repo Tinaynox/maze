@@ -36,6 +36,8 @@
 #include "maze-graphics/MazeBlendMode.hpp"
 #include "maze-graphics/MazeCullMode.hpp"
 #include "maze-graphics/MazeCompareFunction.hpp"
+#include "maze-graphics/MazeTexture2D.hpp"
+#include "maze-graphics/MazeTextureCube.hpp"
 #include "maze-render-system-opengl-core/MazeConfigOpenGL.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
 #include "maze-core/math/MazeVec4D.hpp"
@@ -81,11 +83,18 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline MZGLuint getBindedTexture2D(MZGLuint _texture2DId) const
+        inline MZGLuint getBindedTexture() const
         {
             S32 activeTextureIndex = m_activeTexture - MAZE_GL_TEXTURE0;
-            return m_bindTexture2D[activeTextureIndex];
+            return m_bindTextureIds[activeTextureIndex];
         }
+
+
+        //////////////////////////////////////////
+        inline bool getClipDistanceEnabled(S32 _i) const { return m_clipDistances[_i]; }
+
+        //////////////////////////////////////////
+        void setClipDistanceEnabled(S32 _i, bool _value);
 
 
         //////////////////////////////////////////
@@ -232,10 +241,16 @@ namespace Maze
         void setCurrentShader(Shader* _value);
 
         //////////////////////////////////////////
-        inline Texture2D* getCurrentTexture2D(Size _i) { return m_currentTexture2D[_i]; }
+        inline Texture* getCurrentTexture(Size _i) { return m_currentTextures[_i]; }
+
+        //////////////////////////////////////////
+        void bindTexture(Texture* _texture);
 
         //////////////////////////////////////////
         void bindTexture2D(Texture2D* _texture);
+
+        //////////////////////////////////////////
+        void bindTextureCube(TextureCube* _texture);
 
         //////////////////////////////////////////
         inline RenderBuffer* getCurrentRenderBuffer() const { return m_currentRenderBuffer; }
@@ -269,13 +284,21 @@ namespace Maze
         void bindFrameBuffer(MZGLuint _frameBuffer);
 
         //////////////////////////////////////////
-        void bindTexture2D(MZGLuint _texture2DId);
+        void bindTexture(MZGLenum _textureTarget, MZGLuint _textureId);
+
+        //////////////////////////////////////////
+        inline void bindTexture2D(MZGLuint _textureId) { bindTexture(MAZE_GL_TEXTURE_2D, _textureId); }
+
+        //////////////////////////////////////////
+        inline void bindTextureCube(MZGLuint _textureId) { bindTexture(MAZE_GL_TEXTURE_CUBE_MAP, _textureId); }
     
     protected:
         ContextOpenGL* m_context;
 
         MZGLenum m_activeTexture;
-        MZGLuint m_bindTexture2D[MAZE_GL_MAX_TEXTURES_COUNT];
+        MZGLenum m_bindTextureTargets[MAZE_GL_MAX_TEXTURES_COUNT];
+        MZGLuint m_bindTextureIds[MAZE_GL_MAX_TEXTURES_COUNT];
+        bool m_clipDistances[MAZE_GL_MAX_CLIP_DISTANCES_COUNT];
         MZGLuint m_program;
         MZGLuint m_frameBuffer;
         MZGLuint m_vertexArrayObject;
@@ -311,7 +334,7 @@ namespace Maze
         bool m_sRgbSupport;
 
         Shader* m_currentShader;
-        Texture2D* m_currentTexture2D[MAZE_GL_MAX_TEXTURES_COUNT];
+        Texture* m_currentTextures[MAZE_GL_MAX_TEXTURES_COUNT];
         RenderBuffer* m_currentRenderBuffer;
         Vec2DU m_pixelBufferSize;
     };

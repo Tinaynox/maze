@@ -108,8 +108,8 @@ namespace Maze
         m_cameras3DSample->eventEntityAdded.subscribe(this, &RenderControlSystem::processCameraEntityAdded);
         m_cameras3DSample->eventEntityRemoved.subscribe(this, &RenderControlSystem::processCameraEntityRemoved);
 
-        m_module3D = RenderControlSystemModule3D::Create(getWorld());
-        m_module2D = RenderControlSystemModule2D::Create(getWorld());
+        m_module3D = RenderControlSystemModule3D::Create(getWorld(), m_renderSystem);
+        m_module2D = RenderControlSystemModule2D::Create(getWorld(), m_renderSystem);
     }
 
     //////////////////////////////////////////

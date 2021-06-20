@@ -146,6 +146,9 @@ namespace Maze
         virtual Texture2DPtr createTexture2D() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
+        virtual TextureCubePtr createTextureCube() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
         virtual MaterialPtr createMaterial() MAZE_OVERRIDE;
 
         //////////////////////////////////////////

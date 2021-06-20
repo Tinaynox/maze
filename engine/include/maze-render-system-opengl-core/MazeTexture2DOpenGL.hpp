@@ -66,7 +66,7 @@ namespace Maze
     private:
         ContextOpenGL* m_context;
 
-        Texture2D* m_prevTexture0;
+        Texture* m_prevTexture0;
         S32 m_activeTextureIndex;
     };
 
@@ -79,6 +79,11 @@ namespace Maze
         : public Texture2D
         , public MultiDelegateCallbackReceiver
     {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(Texture2DOpenGL, Texture2D);
+
     public:
 
         //////////////////////////////////////////
@@ -127,6 +132,9 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual void saveToFileAsTGA(String const& _fileName, Vec2DU _size = Vec2DU::c_zero) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual PixelSheet2D readAsPixelSheet() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         RenderSystemOpenGL* getRenderSystemOpenGLRaw()

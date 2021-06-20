@@ -130,6 +130,13 @@ namespace Maze
             );
         m_uvShader->setName("uv");
 
+        m_normalShader = ShaderOpenGL::CreateFromSource(
+            m_renderSystem.lock(),
+            getRenderSystemOpenGL()->ensureCurrentContext(),
+#include "shaders/MazeNormalShader.mzglsl"
+        );
+        m_normalShader->setName("normal");
+
 
         m_colorShader = ShaderOpenGL::CreateFromSource(
             m_renderSystem.lock(),
@@ -193,6 +200,13 @@ namespace Maze
 #include "shaders/MazeDebugAxisShader.mzglsl"
         );
         m_debugAxisShader->setName("debug_axis");
+
+        m_skyboxShader = ShaderOpenGL::CreateFromSource(
+            m_renderSystem.lock(),
+            getRenderSystemOpenGL()->ensureCurrentContext(),
+#include "shaders/MazeSkyboxShader.mzglsl"
+        );
+        m_skyboxShader->setName("skybox");
 
         processSystemInited();
     }

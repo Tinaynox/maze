@@ -224,12 +224,20 @@ namespace Maze
     //////////////////////////////////////////
     void SceneExample::notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport)
     {
+        if (!Example::GetInstancePtr()->isMainWindowReadyToRender())
+            return;
+
+        m_canvas->setViewport(_mainRenderWindowViewport);
+
         m_renderBuffer->setSize(Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize());
     }
 
     //////////////////////////////////////////
     void SceneExample::notifyRenderTargetResized(RenderTarget* _renderTarget)
     {
+        if (!Example::GetInstancePtr()->isMainWindowReadyToRender())
+            return;
+
         m_renderBuffer->setSize(Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize());
     }
 

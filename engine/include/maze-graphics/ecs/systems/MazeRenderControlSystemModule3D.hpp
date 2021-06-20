@@ -39,6 +39,7 @@
 #include "maze-core/math/MazeMat4D.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include <functional>
 
 
 //////////////////////////////////////////
@@ -54,6 +55,27 @@ namespace Maze
     MAZE_USING_SHARED_PTR(TrailRenderer3D);
     MAZE_USING_SHARED_PTR(RenderPass);
     MAZE_USING_SHARED_PTR(VertexArrayObject);
+    MAZE_USING_SHARED_PTR(LightingSettings);
+
+
+    //////////////////////////////////////////
+    // Struct
+    //
+    //////////////////////////////////////////
+    struct MAZE_GRAPHICS_API DefaultPassParams
+    {
+        S32 renderMask;
+        Mat4DF cameraTransform;
+        Mat4DF projectionMatrix;
+        Rect2DF viewport;
+        F32 nearZ;
+        F32 farZ;
+        bool clearColorFlag;
+        ColorU32 clearColor;
+        bool clearDepthFlag;
+        bool clearSkyBoxFlag;
+        LightingSettingsPtr lightingSettings;
+    };
 
 
     //////////////////////////////////////////
@@ -111,8 +133,19 @@ namespace Maze
         virtual ~RenderControlSystemModule3D();
 
         //////////////////////////////////////////
-        static RenderControlSystemModule3DPtr Create(ECSWorldPtr const& _world);
+        static RenderControlSystemModule3DPtr Create(
+            ECSWorldPtr const& _world,
+            RenderSystemPtr const& _renderSystem);
 
+
+        //////////////////////////////////////////
+        void drawDefaultPass(
+            RenderTarget* _renderTarget,
+            DefaultPassParams const& _params,
+            std::function<void(RenderQueuePtr const&)> _beginRenderQueueCallback = nullptr,
+            std::function<void(RenderQueuePtr const&)> _beginDrawCallback = nullptr,
+            std::function<void(RenderQueuePtr const&)> _endDrawCallback = nullptr,
+            std::function<void(RenderQueuePtr const&)> _endRenderQueueCallback = nullptr);
 
         //////////////////////////////////////////
         void draw(RenderTarget* _renderTarget);
@@ -125,8 +158,11 @@ namespace Maze
 
     public:
 
+
         //////////////////////////////////////////
-        MultiDelegate<Camera3D*, Vector<RenderUnit>&> eventGatherRenderUnits;
+        MultiDelegate<RenderTarget*, DefaultPassParams const&> eventPrePass;
+        MultiDelegate<RenderTarget*, DefaultPassParams const&, Vector<RenderUnit>&> eventGatherRenderUnits;
+        MultiDelegate<RenderTarget*, DefaultPassParams const&> eventPostPass;
 
     protected:
 
@@ -134,11 +170,20 @@ namespace Maze
         RenderControlSystemModule3D();
 
         //////////////////////////////////////////
-        bool init(ECSWorldPtr const& _world);
+        bool init(
+            ECSWorldPtr const& _world,
+            RenderSystemPtr const& _renderSystem);
 
+
+        //////////////////////////////////////////
+        void notifyGatherRenderUnits(
+            RenderTarget* _renderTarget,
+            DefaultPassParams const& _params,
+            Vector<RenderUnit>& _renderData);
 
     protected:
         ECSWorld* m_world;
+        RenderSystemPtr m_renderSystem;
 
         SharedPtr<GenericInclusiveEntitiesSample<MeshRenderer, Transform3D>> m_meshRenderers;
         SharedPtr<GenericInclusiveEntitiesSample<TrailRenderer3D, Transform3D>> m_trailRenderers3DSample;

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Material>
     <ShaderUniformVariant name="u_baseMap" type="UniformTexture2D" value="white" />
-    <ShaderUniformVariant name="u_color" type="UniformVec4DF" value="0.85;0.65;0.85;1.0" />
+    <ShaderUniformVariant name="u_color" type="UniformColorF128" value="0.85;0.65;0.85;1.0" />
+    <ShaderUniformVariant name="u_ambientLightColor" type="UniformColorF128" value="0.45;0.45;0.45;1.0" />
+    <ShaderUniformVariant name="u_shininess" type="UniformF32" value="0.1" />
+    <ShaderUniformVariant name="u_specularColor" type="UniformColorF128" value="0.6;0.6;0.6;1.0" />
     <RenderPass 
         passType="Default"
         renderQueueIndex="2000"

@@ -63,6 +63,13 @@ namespace Maze
         ClampToEdge,
         ClampToBorder);
 
+    //////////////////////////////////////////
+    MAZE_DECLARE_ENUMCLASS_4_API(MAZE_GRAPHICS_API, TextureType,
+        SingleDimensional,
+        TwoDimensional,
+        ThreeDimensional,
+        Cube);
+
 
     //////////////////////////////////////////
     // Class Texture
@@ -74,6 +81,11 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS(Texture);
+
+    public:
+
+        //////////////////////////////////////////
         virtual ~Texture();
 
         //////////////////////////////////////////
@@ -81,6 +93,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void setName(String const& _name) { m_name = _name; }
+
+        //////////////////////////////////////////
+        inline TextureType getType() const { return m_type; }
 
     protected:
 
@@ -94,6 +109,8 @@ namespace Maze
         RenderSystem* m_renderSystem;
 
         String m_name;
+
+        TextureType m_type = TextureType::None;
     };
 
 } // namespace Maze

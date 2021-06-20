@@ -116,6 +116,7 @@ namespace Maze
             }
 
             case ShaderUniformType::UniformTexture2D:
+            case ShaderUniformType::UniformTextureCube:
             {
                 m_textureIndex = -1;
                 m_shaderRaw->castRaw<ShaderOpenGL>()->assignUniformTextureIndexes();
@@ -178,6 +179,26 @@ namespace Maze
                 MAZE_GL_CALL(mzglUniform4ui((MZGLint)m_location, getVecU().x, getVecU().y, getVecU().z, getVecU().w));
                 break;
             }
+
+
+            case ShaderUniformType::UniformVec2DB:
+            {
+                MAZE_GL_CALL(mzglUniform2i((MZGLint)m_location, (MZGLint)getVecB().x, (MZGLint)getVecB().y));
+                break;
+            }
+
+            case ShaderUniformType::UniformVec3DB:
+            {
+                MAZE_GL_CALL(mzglUniform3i((MZGLint)m_location, (MZGLint)getVecB().x, (MZGLint)getVecB().y, (MZGLint)getVecB().z));
+                break;
+            }
+
+            case ShaderUniformType::UniformVec4DB:
+            {
+                MAZE_GL_CALL(mzglUniform4i((MZGLint)m_location, (MZGLint)getVecB().x, (MZGLint)getVecB().y, (MZGLint)getVecB().z, (MZGLint)getVecB().w));
+                break;
+            }
+
 
             case ShaderUniformType::UniformMat3DF:
             {
@@ -301,6 +322,24 @@ namespace Maze
                 break;
             }
 
+            case ShaderUniformType::UniformVec2DB:
+            {
+
+                break;
+            }
+
+            case ShaderUniformType::UniformVec3DB:
+            {
+
+                break;
+            }
+
+            case ShaderUniformType::UniformVec4DB:
+            {
+
+                break;
+            }
+
             case ShaderUniformType::UniformMat3DF:
             {
                 
@@ -370,7 +409,8 @@ namespace Maze
 
         m_textureIndex = _textureIndex;
 
-        if (getType() == ShaderUniformType::UniformTexture2D)
+        if (    getType() == ShaderUniformType::UniformTexture2D
+            ||  getType() == ShaderUniformType::UniformTextureCube)
         {
             ShaderOpenGLScopeBind scopeBind(m_shaderRaw);
 

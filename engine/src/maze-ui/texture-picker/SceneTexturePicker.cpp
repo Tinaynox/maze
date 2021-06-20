@@ -208,14 +208,14 @@ namespace Maze
     {
         clearPreviews();
 
-        Vector<Texture2DPtr> materials = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getTextureManager()->getTexturesSorted();
+        Vector<Texture2DPtr> materials = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getTextureManager()->getTextures2DSorted();
         materials.insert(materials.begin(), Texture2DPtr());
 
         m_layout->getTransform()->removeAllChildren();
 
         HorizontalLayout2DPtr horizontalLayout;
 
-        for (S32 i = 0; i < materials.size(); ++i)
+        for (S32 i = 0; i < (S32)materials.size(); ++i)
         {
             Texture2DPtr const& material = materials[i];
 

@@ -41,9 +41,6 @@ namespace Maze
     //
     //////////////////////////////////////////
     ExtensionsOpenGL::ExtensionsOpenGL()
-        : m_extensionsLoaded(false)
-        , m_supportArbBufferStorage(false)
-        , m_supportMultisample(false)
     {
 
     }
@@ -125,6 +122,7 @@ namespace Maze
     {
         m_supportArbBufferStorage = m_context->hasMinVersion(4, 4) || hasGLExtension("GL_ARB_buffer_storage");
         m_supportMultisample = hasGLExtension("EXT_multisample_compatibility");
+        m_supportClipDistance = hasGLExtension("GL_ARB_cull_distance") || hasGLExtension("GL_APPLE_clip_distance");
     }
 
 

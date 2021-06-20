@@ -45,6 +45,9 @@
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeGizmosManager.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
+#include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
@@ -94,6 +97,8 @@ namespace Maze
     //////////////////////////////////////////
     Example::~Example()
     {
+        m_uiManager.reset();
+
         m_sceneManager.reset();
 
         m_mainRenderWindow.reset();
@@ -330,6 +335,10 @@ namespace Maze
 
         shaderSystem->findAssetShadersAndAddToCache();
 
+        renderSystem->getTextureManager()->loadAllAssetTextures();
+        renderSystem->getMaterialManager()->loadAllAssetMaterials();
+        // renderSystem->getRenderMeshManager()->loadAllAssetRenderMeshes();
+
         m_uiManager->createUIElements();
         m_graphicsManager->getGizmosManager()->createGizmosElements();
         m_particlesManager->createParticlesElements();
@@ -419,6 +428,24 @@ namespace Maze
                 break;
             }
         }
+    }
+
+    //////////////////////////////////////////
+    bool Example::isMainWindowReadyToRender()
+    {
+        if (!getRunning())
+            return false;
+
+        if (!getMainRenderWindow())
+            return false;
+
+        if (!getMainRenderWindow()->getWindow()->isOpened())
+            return false;
+
+        if (getMainRenderWindow()->getWindow()->getMinimized())
+            return false;
+
+        return true;
     }
 
 } // namespace Maze

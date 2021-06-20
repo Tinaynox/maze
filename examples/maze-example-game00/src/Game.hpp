@@ -104,6 +104,15 @@ namespace Maze
         //////////////////////////////////////////
         void updateDebugEditor();
 
+        //////////////////////////////////////////
+        bool isMainWindowReadyToRender();
+
+        //////////////////////////////////////////
+        inline F32 getDebugEditorProgress() const { return m_debugEditorProgress; }
+
+        //////////////////////////////////////////
+        inline bool isDebugEditorProgress() const { return m_debugEditorProgress > 0.0f && m_debugEditorProgress < 1.0f; }
+
     public:
 
         //////////////////////////////////////////

@@ -93,7 +93,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderQueue::pushSelectRenderPassCommand(RenderPass* _renderPass)
+    void RenderQueue::addSelectRenderPassCommand(RenderPass* _renderPass)
     {
         if (m_currentRenderPass == _renderPass)
             return;

@@ -90,7 +90,7 @@ namespace Maze
         {
             case InstanceStreamModeOpenGL::UniformArray:
             {
-                m_maxInstancesPerDrawCall = 128;
+                m_maxInstancesPerDrawCall = 32;
                 break;
             }
             case InstanceStreamModeOpenGL::UniformTexture:
