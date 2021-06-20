@@ -65,7 +65,7 @@ Start by cloning the repository with `git clone --recursive https://github.com/T
 
 ## Features Demonstration
 <details>
-  <summary>Water, Terrain and Sky</summary>
+  <summary>Water, Terrain, and Sky</summary>
   <img src="/res/art/Demo00.gif" loading="lazy" />
 </details>
 <details>
