@@ -238,17 +238,14 @@ namespace Maze
         m_camera3D->setFOV(Math::DegreesToRadians(30));
         m_camera3D->setClearColorFlag(false);
         m_camera3D->setClearSkyBoxFlag(true);
-        // m_camera3D->setClearColor(ColorU32(20, 20, 20));
         m_camera3D->setRenderTarget(m_renderBuffer);
-        // m_camera3D->setRenderMask(m_camera3D->getRenderMask() & ~(S32)DefaultRenderMask::Gizmos);
+        m_camera3D->setRenderMask(m_camera3D->getRenderMask() & ~(S32)DefaultRenderMask::Gizmos);
         m_camera3D->setNearZ(0.01f);
         m_camera3D->setFarZ(100.0f);
 
         m_bloomController = LevelBloomController::Create(this);
 
-        MaterialPtr skyboxMaterial = renderSystem->getMaterialManager()->getSkyboxMaterial()->createCopy();
-        skyboxMaterial->setUniform("u_baseMap", renderSystem->getTextureManager()->getTextureCube("Skybox01.mzcubemap"));
-        getLightingSettings()->setSkyBoxMaterial(skyboxMaterial);
+        getLightingSettings()->setSkyBoxMaterial("Skybox00.mzmaterial");
 
 
         // Terrain

@@ -127,7 +127,7 @@ namespace Maze
     {
         if (!m_reflectionBuffer || !m_refractionBuffer)
         {
-            createBuffers(_renderTarget->getRenderTargetSize() / 2);
+            createBuffers(_renderTarget->getRenderTargetSize());
         }
 
         Vec3DF cameraPosition = _params.cameraTransform.getAffineTranslation();

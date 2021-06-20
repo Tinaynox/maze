@@ -31,6 +31,7 @@
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/managers/MazeGraphicsManager.hpp"
 
 
 //////////////////////////////////////////
@@ -67,6 +68,12 @@ namespace Maze
         MaterialManager::Initialize(m_materialManager, getSharedPtr());
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    RenderSystem* RenderSystem::GetCurrentInstancePtr()
+    {
+        return GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw();
     }
 
     //////////////////////////////////////////

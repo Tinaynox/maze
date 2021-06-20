@@ -64,6 +64,9 @@ namespace Maze
         //////////////////////////////////////////
         static void Initialize(MaterialManagerPtr& _textureManager, RenderSystemPtr const& _renderSystem);
 
+        //////////////////////////////////////////
+        static MaterialManagerPtr const& GetCurrentInstance();
+
 
         //////////////////////////////////////////
         MaterialPtr const& getMaterial(String const& _assetFileName);

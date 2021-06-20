@@ -32,6 +32,7 @@
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-graphics/MazeRenderTarget.hpp"
+#include "maze-graphics/managers/MazeMaterialManager.hpp"
 
 
 //////////////////////////////////////////
@@ -68,6 +69,13 @@ namespace Maze
     {
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    void LightingSettings::setSkyBoxMaterial(String const& _id)
+    {
+        MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getMaterial(_id);
+        setSkyBoxMaterial(material);
     }
 
     

@@ -72,6 +72,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    MaterialManagerPtr const& MaterialManager::GetCurrentInstance()
+    {
+        return RenderSystem::GetCurrentInstancePtr()->getMaterialManager();
+    }
+
+    //////////////////////////////////////////
     bool MaterialManager::init(RenderSystemPtr const& _renderSystem)
     {
         m_renderSystem = _renderSystem;

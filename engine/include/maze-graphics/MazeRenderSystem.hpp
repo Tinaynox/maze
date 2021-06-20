@@ -96,6 +96,8 @@ namespace Maze
         //////////////////////////////////////////
         virtual ~RenderSystem();
 
+        //////////////////////////////////////////
+        static RenderSystem* GetCurrentInstancePtr();
 
         //////////////////////////////////////////
         inline bool getSystemInited() const { return m_systemInited; }

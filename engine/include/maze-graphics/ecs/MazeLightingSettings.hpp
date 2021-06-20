@@ -77,6 +77,9 @@ namespace Maze
         //////////////////////////////////////////
         inline void setSkyBoxMaterial(MaterialPtr const& _value) { m_skyBoxMaterial = _value; }
 
+        //////////////////////////////////////////
+        void setSkyBoxMaterial(String const& _id);
+
     protected:
 
         //////////////////////////////////////////
