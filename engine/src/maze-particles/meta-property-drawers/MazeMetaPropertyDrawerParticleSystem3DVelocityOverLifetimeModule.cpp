@@ -173,20 +173,27 @@ namespace Maze
         bool isMultiValue;
         fetchPropertyValue(value, isMultiValue);
 
-        m_linearXParameterDrawer->setValue(value.getLinearXParameter());
-        m_linearYParameterDrawer->setValue(value.getLinearYParameter());
-        m_linearZParameterDrawer->setValue(value.getLinearZParameter());
+        m_processingDataToUI = true;
+        {
+            m_linearXParameterDrawer->setValue(value.getLinearXParameter());
+            m_linearYParameterDrawer->setValue(value.getLinearYParameter());
+            m_linearZParameterDrawer->setValue(value.getLinearZParameter());
 
-        m_enabledDrawer->setValue(value.getEnabled());
+            m_enabledDrawer->setValue(value.getEnabled());
 
-        m_linearXParameterDrawer->getRootEntity()->setActiveSelf(value.getEnabled());
-        m_linearYParameterDrawer->getRootEntity()->setActiveSelf(value.getEnabled());
-        m_linearZParameterDrawer->getRootEntity()->setActiveSelf(value.getEnabled());
+            m_linearXParameterDrawer->getRootEntity()->setActiveSelf(value.getEnabled());
+            m_linearYParameterDrawer->getRootEntity()->setActiveSelf(value.getEnabled());
+            m_linearZParameterDrawer->getRootEntity()->setActiveSelf(value.getEnabled());
+        }
+        m_processingDataToUI = false;
     }
 
     //////////////////////////////////////////
     void MetaPropertyDrawerParticleSystem3DVelocityOverLifetimeModule::processDataFromUI()
     {
+        if (m_processingDataToUI)
+            return;
+
         ParticleSystem3DMainModule::VelocityOverLifetimeModule value;
         value.setEnabled(m_enabledDrawer->getValue());
         value.setLinearXParameter(m_linearXParameterDrawer->getValue());

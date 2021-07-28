@@ -108,6 +108,8 @@ namespace Maze
 
     protected:
         PropertyDrawerSliderF32Ptr m_drawer;
+
+        bool m_processingDataToUI = false;
     };
 
 

@@ -68,6 +68,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    TextureManagerPtr const& TextureManager::GetCurrentInstancePtr()
+    {
+        return RenderSystem::GetCurrentInstancePtr()->getTextureManager();
+    }
+
+    //////////////////////////////////////////
     bool TextureManager::init(RenderSystemPtr const& _renderSystem)
     {
         m_renderSystem = _renderSystem;

@@ -110,6 +110,8 @@ namespace Maze
 
     protected:
         PropertyDrawerSliderRadiansPtr m_drawer;
+
+        bool m_processingDataToUI = false;
     };
 
 

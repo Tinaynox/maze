@@ -95,6 +95,8 @@ namespace Maze
 
     protected:
         PropertyDrawerQuaternionPtr m_drawer;
+
+        bool m_processingDataToUI = false;
     };
 
 

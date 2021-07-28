@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeMetaPropertyDrawerVector_hpp_))
-#define _MazeMetaPropertyDrawerVector_hpp_
+#if (!defined(_MazePropertyDrawerVector_hpp_))
+#define _MazePropertyDrawerVector_hpp_
 
 
 //////////////////////////////////////////
@@ -46,7 +46,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(MetaPropertyDrawerVector);
+    MAZE_USING_SHARED_PTR(PropertyDrawerVector);
     MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
     MAZE_USING_SHARED_PTR(SystemTextDropdown2D);
     MAZE_USING_SHARED_PTR(SystemTextRenderer2D);
@@ -57,82 +57,114 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class MetaPropertyDrawerVector
+    // Class PropertyDrawerVector
     //
     //////////////////////////////////////////
-    class MAZE_DEBUGGER_API MetaPropertyDrawerVector
-        : public MetaPropertyDrawer
+    class MAZE_DEBUGGER_API PropertyDrawerVector
+        : public PropertyDrawer
         , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(MetaPropertyDrawerVector, MetaPropertyDrawer);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(PropertyDrawerVector, PropertyDrawer);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(MetaPropertyDrawerVector);
+        MAZE_DECLARE_MEMORY_ALLOCATION(PropertyDrawerVector);
 
     public:
 
         //////////////////////////////////////////
-        virtual ~MetaPropertyDrawerVector();
+        virtual ~PropertyDrawerVector();
 
         //////////////////////////////////////////
-        static MetaPropertyDrawerVectorPtr Create(
-            MetaProperty* _metaProperty);
-
-
-        //////////////////////////////////////////
-        virtual void processDataToUI() MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void processDataFromUI() MAZE_OVERRIDE;
+        static PropertyDrawerVectorPtr Create(
+            ClassUID _childPropertyClassUID,
+            String const& _label);
 
 
         //////////////////////////////////////////
         virtual void buildUI(
             Transform2DPtr const& _parent,
-            CString _label) MAZE_OVERRIDE;
+            CString _label = nullptr) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(String const& _value) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual String getString() MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
+        inline Vector<String> getVector()
+        {
+            String string = getString();
+
+            Vector<String> result;
+            ValueFromString(result, string.c_str(), string.size());
+            return result;
+        }
+
+        //////////////////////////////////////////
+        template <typename TVectorChild>
+        inline Vector<TVectorChild> getVector()
+        {
+            String string = getString();
+
+            Vector<TVectorChild> result;
+            ValueFromString(result, string.c_str(), string.size());
+            return result;
+        }
+
+
+        //////////////////////////////////////////
+        inline void setVector(Vector<String> const& _vector)
+        {
+            String value;
+            ValueToString(_vector, value);
+            setString(value);
+        }
+
+        //////////////////////////////////////////
+        template <typename TVectorChild>
+        inline void setVector(Vector<TVectorChild> const& _vector)
+        {
+            String value;
+            ValueToString(_vector, value);
+            setString(value);
+        }
+        
+        //////////////////////////////////////////
+        Vector<PropertyDrawerPtr> const& getItemDrawers() const { return m_itemDrawers; }
 
     protected:
 
         //////////////////////////////////////////
-        MetaPropertyDrawerVector();
-
-        //////////////////////////////////////////
-        using MetaPropertyDrawer::init;
+        PropertyDrawerVector();
 
         //////////////////////////////////////////
         virtual bool init(
-            MetaProperty* _metaProperty) MAZE_OVERRIDE;
-
-
-        //////////////////////////////////////////
-        bool fetchVectorSizeValue(
-            Size& _value,
-            bool& _isMultiValue);
+            ClassUID _childPropertyClassUID,
+            String const& _label);
 
         //////////////////////////////////////////
-        bool fetchVectorElementClassUID(
-            ClassUID& _value,
-            bool& _isMultiValue);
-
-        //////////////////////////////////////////
-        bool fetchVectorElementValue(
-            Size _index,
-            String& _value,
-            bool& _isMultiValue);
+        using PropertyDrawer::init;
 
         //////////////////////////////////////////
         void notifyExpandButtonClick(Button2D* _button, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
-        void notifyValueChanged(SystemTextDropdown2D* _dropdown, S32 _value);
+        void notifyVectorSizeChanged();
 
         //////////////////////////////////////////
         void ensureItemDrawers(Size _count);
 
+        //////////////////////////////////////////
+        void processItemPropertyUIData();
+
     protected:
+        ClassUID m_childPropertyClassUID = 0;
+
         SpriteRenderer2DPtr m_expandButtonSprite;
         ClickButton2DPtr m_expandButton;
         VerticalLayout2DPtr m_bodyLayout;
@@ -140,8 +172,6 @@ namespace Maze
 
         VerticalLayout2DPtr m_itemsLayout;
         Vector<PropertyDrawerPtr> m_itemDrawers;
-
-        bool m_processingDataToUI = false;
     };
 
 
@@ -149,5 +179,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeMetaPropertyDrawerVector_hpp_
+#endif // _MazePropertyDrawerVector_hpp_
 //////////////////////////////////////////

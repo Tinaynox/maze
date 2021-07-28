@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeMetaPropertyDrawerParticleSystem3DEmissionModule_hpp_))
-#define _MazeMetaPropertyDrawerParticleSystem3DEmissionModule_hpp_
+#if (!defined(_MazePropertyDrawerParticleSystemBurst_hpp_))
+#define _MazePropertyDrawerParticleSystemBurst_hpp_
 
 
 //////////////////////////////////////////
@@ -36,85 +36,105 @@
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
-#include "maze-debugger/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
-#include "maze-debugger/meta-property-drawers/MazeMetaPropertyDrawerVector.hpp"
-#include "maze-debugger/property-drawers/MazePropertyDrawerF32.hpp"
-#include "maze-debugger/property-drawers/MazePropertyDrawerBool.hpp"
-#include "maze-debugger/property-drawers/MazePropertyDrawerVector.hpp"
-#include "maze-particles/particle-modules/MazeParticleSystem3DMainModule.hpp"
-#include "maze-particles/meta-property-drawers/MazeMetaPropertyDrawerParticleSystem3DModule.hpp"
-#include "maze-particles/property-drawers/MazePropertyDrawerParticleSystemParameterF32.hpp"
+#include "maze-graphics/MazeColorGradient.hpp"
+#include "maze-debugger/property-drawers/MazePropertyDrawer.hpp"
+#include "maze-debugger/property-drawers/MazePropertyDrawerColorGradient.hpp"
+#include "maze-debugger/property-drawers/MazePropertyDrawerColorGradient.hpp"
+#include "maze-ui/ecs/components/MazeColorGradientEdit2D.hpp"
+#include "maze-ui/ecs/components/MazeColorHDREdit2D.hpp"
+#include "maze-particles/MazeParticleSystemBurst.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(MetaPropertyDrawerParticleSystem3DEmissionModule);
     MAZE_USING_SHARED_PTR(PropertyDrawerParticleSystemBurst);
-    MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
-    MAZE_USING_SHARED_PTR(ToggleButton2D);
     MAZE_USING_SHARED_PTR(HorizontalLayout2D);
-
+    
 
     //////////////////////////////////////////
-    // Class MetaPropertyDrawerParticleSystem3DEmissionModule
+    // Class PropertyDrawerParticleSystemBurst
     //
     //////////////////////////////////////////
-    class MAZE_PARTICLES_API MetaPropertyDrawerParticleSystem3DEmissionModule
-        : public MetaPropertyDrawerParticleSystem3DModule<ParticleSystem3DMainModule::EmissionModule>
+    class MAZE_PARTICLES_API PropertyDrawerParticleSystemBurst
+        : public GenericPropertyDrawer<ParticleSystemBurst>
         , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(MetaPropertyDrawerParticleSystem3DEmissionModule, MetaPropertyDrawer);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(PropertyDrawerParticleSystemBurst, PropertyDrawer);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(MetaPropertyDrawerParticleSystem3DEmissionModule);
+        MAZE_DECLARE_MEMORY_ALLOCATION(PropertyDrawerParticleSystemBurst);
 
     public:
 
         //////////////////////////////////////////
-        virtual ~MetaPropertyDrawerParticleSystem3DEmissionModule();
+        virtual ~PropertyDrawerParticleSystemBurst();
 
         //////////////////////////////////////////
-        static MetaPropertyDrawerParticleSystem3DEmissionModulePtr Create(MetaProperty* _metaProperty);
+        static PropertyDrawerParticleSystemBurstPtr Create(String const& _label);
 
 
         //////////////////////////////////////////
-        virtual void processDataToUI() MAZE_OVERRIDE;
+        virtual void setValue(ParticleSystemBurst const& _value) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void processDataFromUI() MAZE_OVERRIDE;
+        virtual ParticleSystemBurst getValue() const MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        virtual void processMetaInstancesChanged() MAZE_OVERRIDE;
-
-    protected:
-
-        //////////////////////////////////////////
-        MetaPropertyDrawerParticleSystem3DEmissionModule();
-
-        //////////////////////////////////////////
-        virtual bool init(MetaProperty* _metaProperty) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual void buildUI(
             Transform2DPtr const& _parent,
-            CString _label) MAZE_OVERRIDE;
+            CString _label = nullptr) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(String const& _value) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual String getString() MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
+        EntityPtr const& getRootEntity() const { return m_rootEntity; }
+
+        //////////////////////////////////////////
+        void resetSelection();
 
     protected:
-        PropertyDrawerBoolPtr m_enabledDrawer;
-        PropertyDrawerParticleSystemParameterF32Ptr m_emissionPerSecondDrawer;
-        PropertyDrawerVectorPtr m_burstsDrawer;
 
-        bool m_processingDataToUI = false;
+        //////////////////////////////////////////
+        PropertyDrawerParticleSystemBurst();
+
+        //////////////////////////////////////////
+        virtual bool init(String const& _label) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        SystemTextEditBox2DPtr createEdit(
+            CString _name,
+            Transform2DPtr const& _parent);
+
+        //////////////////////////////////////////
+        void notifyTextInput(SystemTextEditBox2D* _edit);
+
+        //////////////////////////////////////////
+        void notifySelectedChanged(SystemTextEditBox2D* _edit, bool _selected);
+
+    protected:
+        EntityPtr m_rootEntity;
+        HorizontalLayout2DPtr m_layout;
+        
+        SystemTextEditBox2DPtr m_editBoxTime;
+        SystemTextEditBox2DPtr m_editBoxMinCount;
+        SystemTextEditBox2DPtr m_editBoxMaxCount;
     };
+
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeMetaPropertyDrawerParticleSystem3DEmissionModule_hpp_
+#endif // _MazePropertyDrawerParticleSystemBurst_hpp_
 //////////////////////////////////////////

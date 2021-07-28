@@ -25,18 +25,19 @@
 
 //////////////////////////////////////////
 #include "MazeDebuggerHeader.hpp"
-#include "maze-debugger/meta-property-drawers/MazeMetaPropertyDrawerVector.hpp"
+#include "maze-debugger/property-drawers/MazePropertyDrawerVector.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
-#include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/services/MazeLogStream.hpp"
+#include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
-#include "maze-ui/ecs/components/MazeSystemTextDropdown2D.hpp"
+#include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
@@ -51,60 +52,54 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class MetaPropertyDrawerVector
+    // Class PropertyDrawerVector
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(MetaPropertyDrawerVector, MetaPropertyDrawer);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PropertyDrawerVector, PropertyDrawer);
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(MetaPropertyDrawerVector);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(PropertyDrawerVector);
 
     //////////////////////////////////////////
-    MetaPropertyDrawerVector::MetaPropertyDrawerVector()
+    PropertyDrawerVector::PropertyDrawerVector()
     {
         
     }
 
     //////////////////////////////////////////
-    MetaPropertyDrawerVector::~MetaPropertyDrawerVector()
+    PropertyDrawerVector::~PropertyDrawerVector()
     {
+        ensureItemDrawers(0);
+
         if (m_expandButton)
             m_expandButton->eventClick.unsubscribe(this);
-
-        if (m_vectorSizeDrawer)
-        {
-            m_vectorSizeDrawer->eventUIData.unsubscribe(this);
-            m_vectorSizeDrawer.reset();
-        }
-
-        while (!m_itemDrawers.empty())
-        {
-            m_itemDrawers.back()->eventUIData.unsubscribe(this);
-            m_itemDrawers.pop_back();
-        }
     }
 
     //////////////////////////////////////////
-    MetaPropertyDrawerVectorPtr MetaPropertyDrawerVector::Create(
-        MetaProperty* _metaProperty)
+    PropertyDrawerVectorPtr PropertyDrawerVector::Create(
+        ClassUID _childPropertyClassUID,
+        String const& _label)
     {
-        MetaPropertyDrawerVectorPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(MetaPropertyDrawerVector, object, init(_metaProperty));
+        PropertyDrawerVectorPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerVector, object, init(_childPropertyClassUID, _label));
         return object;
     }
 
     //////////////////////////////////////////
-    bool MetaPropertyDrawerVector::init(
-        MetaProperty* _metaProperty)
+    bool PropertyDrawerVector::init(
+        ClassUID _childPropertyClassUID,
+        String const& _label)
     {
-        if (!MetaPropertyDrawer::init(_metaProperty))
+        if (!PropertyDrawer::init(_label))
             return false;
+
+        m_childPropertyClassUID = _childPropertyClassUID;
 
         return true;
     }
 
     //////////////////////////////////////////
-    void MetaPropertyDrawerVector::buildUI(
+    void PropertyDrawerVector::buildUI(
         Transform2DPtr const& _parent,
         CString _label)
     {
@@ -148,10 +143,10 @@ namespace Maze
             Vec2DF(0.5f, 0.5f));
         m_expandButtonSprite->setColor(ColorU32::c_black);
         m_expandButton = m_expandButtonSprite->getEntityRaw()->ensureComponent<ClickButton2D>();
-        m_expandButton->eventClick.subscribe(this, &MetaPropertyDrawerVector::notifyExpandButtonClick);
+        m_expandButton->eventClick.subscribe(this, &PropertyDrawerVector::notifyExpandButtonClick);
 
         SystemTextRenderer2DPtr systemText = SpriteHelper::CreateSystemText(
-            DebuggerHelper::BuildPropertyName(m_metaProperty->getName(), _label).c_str(),
+            _label,
             DebuggerLayout::c_inspectorPropertyFontSize,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
@@ -183,7 +178,7 @@ namespace Maze
 
         m_vectorSizeDrawer = PropertyDrawerS32::Create("Size");
         m_vectorSizeDrawer->buildUI(m_bodyLayout->getTransform());
-        m_vectorSizeDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerVector::processDataFromUI);
+        m_vectorSizeDrawer->eventUIData.subscribe(this, &PropertyDrawerVector::notifyVectorSizeChanged);
 
         m_itemsLayout = UIHelper::CreateVerticalLayout(
             HorizontalAlignment2D::Left,
@@ -196,107 +191,66 @@ namespace Maze
             Vec2DF(0.0f, 1.0f));
         m_itemsLayout->setSpacing(2.0f);
         m_itemsLayout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
+    }
+
+    //////////////////////////////////////////
+    void PropertyDrawerVector::setString(String const& _value)
+    {
+        Vector<String> childValues;
+        ValueFromString(childValues, _value.c_str(), _value.size());
+
+        ensureItemDrawers(childValues.size());
+
+        m_vectorSizeDrawer->setValue((S32)childValues.size());
+
+        for (Size i = 0, in = m_itemDrawers.size(); i < in; ++i)
+        {
+            PropertyDrawerPtr const& propertyDrawer = m_itemDrawers[i];
+            String const& childValue = childValues[i];
+
+            propertyDrawer->setString(childValue);
+        }
+    }
+
+    //////////////////////////////////////////
+    String PropertyDrawerVector::getString()
+    {
+        S32 vectorSize = (S32)m_vectorSizeDrawer->getValue();
+
+        String value;
         
-    }
+        Vector<String> childValues;
 
-    //////////////////////////////////////////
-    bool MetaPropertyDrawerVector::fetchVectorSizeValue(
-        Size& _value,
-        bool& _isMultiValue)
-    {
-        _isMultiValue = false;
-
-        if (!m_metaInstances.empty())
+        S32 itemDrawersCount = (S32)m_itemDrawers.size();
+        for (S32 i = 0; i < vectorSize; ++i)
         {
-            _value = m_metaProperty->getVectorSize(*m_metaInstances.begin());
-            for (Set<MetaInstance>::const_iterator    it = ++m_metaInstances.begin(),
-                end = m_metaInstances.end();
-                it != end;
-                ++it)
-            {
-                Size value = m_metaProperty->getVectorSize(*it);
-                if (value != _value)
-                {
-                    _isMultiValue = true;
-                    return true;
-                }
-            }
 
-            return true;
+            if (i < itemDrawersCount)
+                childValues.emplace_back(m_itemDrawers[i]->getString());
+            else
+                childValues.emplace_back(String());
         }
 
-        return false;
+        ValueToString(childValues, value);
+
+        return value;
     }
 
     //////////////////////////////////////////
-    bool MetaPropertyDrawerVector::fetchVectorElementClassUID(
-        ClassUID& _value,
-        bool& _isMultiValue)
+    void PropertyDrawerVector::notifyExpandButtonClick(Button2D* _button, CursorInputEvent const& _inputEvent)
     {
-        _isMultiValue = false;
-
-        if (!m_metaInstances.empty())
-        {
-            _value = m_metaProperty->getVectorElementClassUID(*m_metaInstances.begin());
-            for (Set<MetaInstance>::const_iterator    it = ++m_metaInstances.begin(),
-                end = m_metaInstances.end();
-                it != end;
-                ++it)
-            {
-                Size value = m_metaProperty->getVectorElementClassUID(*it);
-                if (value != _value)
-                {
-                    _isMultiValue = true;
-                    return true;
-                }
-            }
-
-            return true;
-        }
-
-        return false;
     }
 
     //////////////////////////////////////////
-    bool MetaPropertyDrawerVector::fetchVectorElementValue(
-        Size _index,
-        String& _value,
-        bool& _isMultiValue)
+    void PropertyDrawerVector::notifyVectorSizeChanged()
     {
-        _isMultiValue = false;
+        eventUIData();
 
-        if (!m_metaInstances.empty())
-        {
-            
-            String serializedList = m_metaProperty->toString(*m_metaInstances.begin());
-            Vector<String> elements;
-            ValueFromString(elements, serializedList.c_str(), serializedList.size());
-            _value = _index < elements.size() ? elements[_index] : "";
-
-            for (Set<MetaInstance>::const_iterator    it = ++m_metaInstances.begin(),
-                end = m_metaInstances.end();
-                it != end;
-                ++it)
-            {
-                String serializedList = m_metaProperty->toString(*it);
-                ValueFromString(elements, serializedList.c_str(), serializedList.size());
-                String value = _index < elements.size() ? elements[_index] : "";
-
-                if (value != _value)
-                {
-                    _isMultiValue = true;
-                    return true;
-                }
-            }
-
-            return true;
-        }
-
-        return false;
+        ensureItemDrawers(m_vectorSizeDrawer->getValue());
     }
 
     //////////////////////////////////////////
-    void MetaPropertyDrawerVector::ensureItemDrawers(Size _count)
+    void PropertyDrawerVector::ensureItemDrawers(Size _count)
     {
         Size itemDrawersCount = m_itemDrawers.size();
 
@@ -316,19 +270,15 @@ namespace Maze
         }
         else
         {
-            ClassUID vectorItemClassUID = 0;
-            bool isMultiValue = false;
-            fetchVectorElementClassUID(vectorItemClassUID, isMultiValue);
-
             while (itemDrawersCount < _count)
             {
                 PropertyDrawerPtr itemDrawer = InspectorManager::GetInstancePtr()->createPropertyDrawer(
-                    vectorItemClassUID,
+                    m_childPropertyClassUID,
                     "Element" + StringHelper::ToString((U32)m_itemDrawers.size()));
 
                 if (itemDrawer)
                 {
-                    itemDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerVector::processDataFromUI);
+                    itemDrawer->eventUIData.subscribe(this, &PropertyDrawerVector::processItemPropertyUIData);
                     m_itemDrawers.push_back(itemDrawer);
                 }
 
@@ -345,70 +295,14 @@ namespace Maze
                 itemDrawer->buildUI(m_itemsLayout->getTransform());
             }
         }
+
+        m_itemsLayout->alignChildren();
     }
 
     //////////////////////////////////////////
-    void MetaPropertyDrawerVector::notifyExpandButtonClick(Button2D* _button, CursorInputEvent const& _inputEvent)
+    void PropertyDrawerVector::processItemPropertyUIData()
     {
-    }
-
-    //////////////////////////////////////////
-    void MetaPropertyDrawerVector::processDataToUI()
-    {
-        m_processingDataToUI = true;
-        {
-            {
-                Size vectorSize = 0;
-                bool isMultiValue;
-                fetchVectorSizeValue(vectorSize, isMultiValue);
-                m_vectorSizeDrawer->setValue((S32)vectorSize);
-
-                ensureItemDrawers(vectorSize);
-            }
-
-            {
-                for (Size i = 0, in = m_itemDrawers.size(); i < in; ++i)
-                {
-                    String value;
-                    bool isMultiValue = false;
-                    fetchVectorElementValue(i, value, isMultiValue);
-
-                    m_itemDrawers[i]->setString(value);
-                }
-
-            }
-        }
-        m_processingDataToUI = false;
-    }
-
-    //////////////////////////////////////////
-    void MetaPropertyDrawerVector::processDataFromUI()
-    {
-        if (m_processingDataToUI)
-            return;
-
-        Size vectorSize = (Size)Math::Max(m_vectorSizeDrawer->getValue(), 0);
-
-        for (MetaInstance const& metaInstance : m_metaInstances)
-            m_metaProperty->setVectorSize(metaInstance, vectorSize);
-
-        ensureItemDrawers(vectorSize);
-
-        Vector<String> values;
-
-        for (Size i = 0, in = m_itemDrawers.size(); i < in; ++i)
-            values.push_back(m_itemDrawers[i]->getString());
-
-        String value;
-        ValueToString(values, value);
-        for (MetaInstance const& metaInstance : m_metaInstances)
-            m_metaProperty->setString(metaInstance, value);
-    }
-
-    //////////////////////////////////////////
-    void MetaPropertyDrawerVector::notifyValueChanged(SystemTextDropdown2D* _dropdown, S32 _value)
-    {
-        processDataFromUI();
+        eventUIData();
     }
 
 } // namespace Maze

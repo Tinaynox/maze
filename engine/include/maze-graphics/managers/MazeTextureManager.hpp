@@ -67,6 +67,9 @@ namespace Maze
         //////////////////////////////////////////
         static void Initialize(TextureManagerPtr& _textureManager, RenderSystemPtr const& _renderSystem);
 
+        //////////////////////////////////////////
+        static TextureManagerPtr const& GetCurrentInstancePtr();
+
 
         //////////////////////////////////////////
         Texture2DPtr const& getTexture2D(String const& _assetFileName);

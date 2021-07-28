@@ -96,6 +96,8 @@ namespace Maze
 
     protected:
         PropertyDrawerBoolPtr m_drawer;
+
+        bool m_processingDataToUI = false;
     };
 
 

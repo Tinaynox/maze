@@ -36,6 +36,7 @@
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
+#include "maze-core/utils/MazeSharedObject.hpp"
 
 
 //////////////////////////////////////////
@@ -51,6 +52,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_DEBUGGER_API PropertyDrawer
+        : public SharedObject<PropertyDrawer>
     {
     public:
 

@@ -40,6 +40,7 @@
 #include "maze-particles/inspectors/entities/MazeComponentEditorParticleSystem3D.hpp"
 #include "maze-particles/property-drawers/MazePropertyDrawerParticleSystemParameterF32.hpp"
 #include "maze-particles/property-drawers/MazePropertyDrawerParticleSystemParameterColor.hpp"
+#include "maze-particles/property-drawers/MazePropertyDrawerParticleSystemBurst.hpp"
 #include "maze-particles/meta-property-drawers/MazeMetaPropertyDrawerParticleSystem3DMainModule.hpp"
 #include "maze-particles/meta-property-drawers/MazeMetaPropertyDrawerParticleSystem3DRendererModule.hpp"
 #include "maze-particles/meta-property-drawers/MazeMetaPropertyDrawerParticleSystem3DShapeModule.hpp"
@@ -116,8 +117,13 @@ namespace Maze
     {
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<ParticleSystem3D>("FX");
 
+
         InspectorManager::GetInstancePtr()->registerPropertyDrawer<ParticleSystemParameterF32, PropertyDrawerParticleSystemParameterF32>();
         InspectorManager::GetInstancePtr()->registerPropertyDrawer<ParticleSystemParameterColor, PropertyDrawerParticleSystemParameterColor>();
+
+        InspectorManager::GetInstancePtr()->registerPropertyDrawer<ParticleSystemBurst, PropertyDrawerParticleSystemBurst>();
+
+
 
         InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystemParameterF32, MetaPropertyDraweParticleSystemParameterF32>();
         InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystemParameterColor, MetaPropertyDraweParticleSystemParameterColor>();
@@ -127,6 +133,7 @@ namespace Maze
         InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystem3DShapeModule, MetaPropertyDrawerParticleSystem3DShapeModule>();
 
         InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystem3DZoneData, MetaPropertyDrawerParticleSystem3DZoneData>();
+
 
 
         InspectorManager::GetInstancePtr()->registerComponentEditor<ParticleSystem3D, ComponentEditorParticleSystem3D>();

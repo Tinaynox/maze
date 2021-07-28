@@ -103,6 +103,8 @@ namespace Maze
         PropertyDrawerParticleSystemParameterF32Ptr m_linearXParameterDrawer;
         PropertyDrawerParticleSystemParameterF32Ptr m_linearYParameterDrawer;
         PropertyDrawerParticleSystemParameterF32Ptr m_linearZParameterDrawer;
+
+        bool m_processingDataToUI = false;
     };
 
 } // namespace Maze

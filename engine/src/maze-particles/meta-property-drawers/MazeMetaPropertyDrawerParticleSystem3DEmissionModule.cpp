@@ -43,7 +43,9 @@
 #include "maze-debugger/layout/MazeDebuggerLayout.hpp"
 #include "maze-debugger/helpers/MazeDebuggerHelper.hpp"
 #include "maze-debugger/managers/MazeInspectorManager.hpp"
+#include "maze-debugger/property-drawers/MazePropertyDrawer.hpp"
 #include "maze-particles/property-drawers/MazePropertyDrawerParticleSystemParameterF32.hpp"
+#include "maze-particles/property-drawers/MazePropertyDrawerParticleSystemBurst.hpp"
 
 
 //////////////////////////////////////////
@@ -102,6 +104,11 @@ namespace Maze
         m_emissionPerSecondDrawer = PropertyDrawerParticleSystemParameterF32Positive::Create("Per Second");
         m_emissionPerSecondDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DEmissionModule::processDataFromUI);
 
+        m_burstsDrawer = PropertyDrawerVector::Create(
+            ParticleSystemBurst::GetMetaClass()->getClassUID(),
+            "Bursts");
+        m_burstsDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DEmissionModule::processDataFromUI);
+
         return true;
     }
 
@@ -144,6 +151,7 @@ namespace Maze
         
         m_enabledDrawer->buildUI(verticalLayout->getTransform(), _label);
         m_emissionPerSecondDrawer->buildUI(verticalLayout->getTransform(), _label);
+        m_burstsDrawer->buildUI(verticalLayout->getTransform(), "Bursts");
     }
 
     //////////////////////////////////////////
@@ -153,21 +161,56 @@ namespace Maze
         bool isMultiValue;
         fetchPropertyValue(value, isMultiValue);
 
-        m_emissionPerSecondDrawer->setValue(value.getEmissionPerSecond());
-        m_enabledDrawer->setValue(value.getEnabled());
+        m_processingDataToUI = true;
+        {
+            m_emissionPerSecondDrawer->setValue(value.getEmissionPerSecond());
+            m_enabledDrawer->setValue(value.getEnabled());
 
-        m_emissionPerSecondDrawer->getRootEntity()->setActiveSelf(value.getEnabled());
+            m_emissionPerSecondDrawer->getRootEntity()->setActiveSelf(value.getEnabled());
+
+            m_burstsDrawer->setVector(value.getBursts());
+        }
+        m_processingDataToUI = false;
     }
 
     //////////////////////////////////////////
     void MetaPropertyDrawerParticleSystem3DEmissionModule::processDataFromUI()
     {
+        if (m_processingDataToUI)
+            return;
+
         ParticleSystem3DMainModule::EmissionModule value;
         value.setEnabled(m_enabledDrawer->getValue());
         value.setEmissionPerSecond(m_emissionPerSecondDrawer->getValue());
 
+        Vector<ParticleSystemBurst> bursts = m_burstsDrawer->getVector<ParticleSystemBurst>();
+        bool burstsInderectOrder = false;
+        for (S32 i = 0, in = (S32)bursts.size(); i < in - 1; ++i)
+        {
+            if (bursts[i].time > bursts[i + 1].time)
+            {
+                burstsInderectOrder = true;
+                break;
+            }
+        }
+
+        if (burstsInderectOrder)
+        {
+            for (PropertyDrawerPtr const& itemDrawer : m_burstsDrawer->getItemDrawers())
+                itemDrawer->castRaw<PropertyDrawerParticleSystemBurst>()->resetSelection();
+        }
+
+        value.setBursts(bursts);
+
         for (MetaInstance const& metaInstance : m_metaInstances)
             m_metaProperty->setValue(metaInstance, &value);
+
+    }
+
+    //////////////////////////////////////////
+    void MetaPropertyDrawerParticleSystem3DEmissionModule::processMetaInstancesChanged()
+    {
+        
     }
 
 

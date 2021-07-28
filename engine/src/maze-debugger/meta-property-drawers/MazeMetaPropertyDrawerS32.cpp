@@ -105,12 +105,19 @@ namespace Maze
         bool isMultiValue;
         fetchPropertyValue(value, isMultiValue);
 
-        m_drawer->setValue(value);
+        m_processingDataToUI = true;
+        {
+            m_drawer->setValue(value);
+        }
+        m_processingDataToUI = false;
     }
 
     //////////////////////////////////////////
     void MetaPropertyDrawerS32::processDataFromUI()
     {
+        if (m_processingDataToUI)
+            return;
+
         S32 value = m_drawer->getValue();
 
         for (MetaInstance const& metaInstance : m_metaInstances)

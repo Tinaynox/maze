@@ -39,6 +39,9 @@
 #include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-core/serialization/MazeBinarySerializable.hpp"
 #include "maze-core/serialization/MazeStringSerializable.hpp"
+#include "maze-core/helpers/MazeJSONHelper.hpp"
+// #include <json/reader.h>
+// #include <json/writer.h>
 
 
 //////////////////////////////////////////
@@ -264,18 +267,18 @@ namespace Maze
     {
         _data.clear();
 
+        Json::Value json;
+        
         for (TIterator it = _first; it != _last; ++it)
         {
             TValue const& childValue = (*it);
 
-            if (!_data.empty())
-                _data += ',';
-            
             String childValueString;
             ValueToString(childValue, childValueString);
-            _data += childValueString;
+            json.append(childValueString.c_str());
         }
-        _data = '[' + _data + ']';
+
+        _data = JSONHelper::ToString(json);
     }
 
     //////////////////////////////////////////
@@ -284,51 +287,16 @@ namespace Maze
         TIterator _it,
         String const& _data)
     {
-        String data = _data;
-        if (!data.empty() && data.front() == '[')
-            data.erase(data.begin());
-        if (!data.empty() && data.back() == ']')
-            data.erase(data.end() - 1);
+        Json::Value value = JSONHelper::FromString(_data);
 
-        Size nestingLevel = 0;
-        for (char c : data)
-        {
-            if (c == '[')
-                ++nestingLevel;
-            else
-                break;
-        }
+        if (value.isNull())
+            return;
 
-        Vector<String> words;
-        if (nestingLevel > 0)
-        {
-            String separator = ",";
-            for (S32 i = 0; i < (S32)nestingLevel; ++i)
-                separator = ']' + separator + '[';
-            Size separatorSize = separator.size();
-
-            Size pos = 0;
-            Size prevPos = 0;
-
-            while ((pos = data.find(separator, pos)) != String::npos)
-            {
-                words.push_back(
-                    data.substr(prevPos, pos - prevPos + nestingLevel));
-                pos += separatorSize - nestingLevel;
-                prevPos = pos;
-            }
-
-            words.push_back(data.substr(prevPos, pos - prevPos + nestingLevel));
-        }
-        else
-        {
-            StringHelper::SplitWords(data, words, ',');
-        }
-
-        for (String const& word : words)
+        for (Json::Value const& child : value)
         {
             TValue value;
-            ValueFromString(value, word.c_str(), word.size());
+            Json::String str = child.asString();
+            ValueFromString(value, str.c_str(), str.size());
 
             *_it++ = value;
         }

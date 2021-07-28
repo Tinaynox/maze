@@ -364,9 +364,10 @@ namespace Maze
             menuBar->addOption("Edit", "Create/Prefab/2D", [](String const& _text) { EditorHelper::CreateNewPrefab2D(); });
             menuBar->addOption("Edit", "Create/Prefab/3D", [](String const& _text) { EditorHelper::CreateNewPrefab3D(); });
 
-            menuBar->addOption("Entity", "Create Empty", [](String const& _text) { EditorHelper::CreateEntity("Entity"); });
-            menuBar->addOption("Entity", "Create 2D", [](String const& _text) { EditorHelper::CreateEntity2D("Entity"); });
-            menuBar->addOption("Entity", "Create 3D", [](String const& _text) { EditorHelper::CreateEntity3D("Entity"); });
+            menuBar->addOption("Entity", "Create/Empty", [](String const& _text) { EditorHelper::CreateEntity("Entity"); });
+            menuBar->addOption("Entity", "Create/2D", [](String const& _text) { EditorHelper::CreateEntity2D("Entity"); });
+            menuBar->addOption("Entity", "Create/3D", [](String const& _text) { EditorHelper::CreateEntity3D("Entity"); });
+            menuBar->addOption("Entity", "Create/FX/Particle System", [](String const& _text) { EditorHelper::CreateNewParticleSystem3D("Particle System"); });
                         
 
             menuBar->addOption("Component", "Add", [](String const& _text) { Debug::Log("Add"); });

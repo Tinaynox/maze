@@ -50,6 +50,9 @@ namespace Maze
         {
             Json::Value value;
 
+            if (_value.empty())
+                return Json::Value::null;
+
             Json::CharReaderBuilder builder;
             CString begin = &(*_value.begin());
             CString end = begin + _value.size();

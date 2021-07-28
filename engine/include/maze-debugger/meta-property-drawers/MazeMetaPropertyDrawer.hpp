@@ -84,6 +84,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual void processDataFromUI() MAZE_ABSTRACT;
 
+        //////////////////////////////////////////
+        virtual void processMetaInstancesChanged() {};
+
     protected:
 
         //////////////////////////////////////////
@@ -125,10 +128,10 @@ namespace Maze
             if (!m_metaInstances.empty())
             {
                 m_metaProperty->getValue(*m_metaInstances.begin(), _value);
-                for (Set<MetaInstance>::const_iterator    it = ++m_metaInstances.begin(),
-                    end = m_metaInstances.end();
-                    it != end;
-                    ++it)
+                for (Set<MetaInstance>::const_iterator  it = ++m_metaInstances.begin(),
+                                                        end = m_metaInstances.end();
+                                                        it != end;
+                                                        ++it)
                 {
                     TProperty value;
                     m_metaProperty->getValue(*it, value);
@@ -142,6 +145,7 @@ namespace Maze
 
             return false;
         }
+
 
     protected:
 

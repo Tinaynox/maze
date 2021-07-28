@@ -153,15 +153,22 @@ namespace Maze
         bool isMultiValue;
         fetchPropertyValue(value, isMultiValue);
 
-        m_parameterDrawer->setValue(value.getParameter());
-        m_enabledDrawer->setValue(value.getEnabled());
+        m_processingDataToUI = true;
+        {
+            m_parameterDrawer->setValue(value.getParameter());
+            m_enabledDrawer->setValue(value.getEnabled());
 
-        m_parameterDrawer->getRootEntity()->setActiveSelf(value.getEnabled());
+            m_parameterDrawer->getRootEntity()->setActiveSelf(value.getEnabled());
+        }
+        m_processingDataToUI = false;
     }
 
     //////////////////////////////////////////
     void MetaPropertyDrawerParticleSystem3DColorOverLifetimeModule::processDataFromUI()
     {
+        if (m_processingDataToUI)
+            return;
+
         ParticleSystem3DMainModule::ColorOverLifetimeModule value;
         value.setEnabled(m_enabledDrawer->getValue());
         value.setParameter(m_parameterDrawer->getValue());

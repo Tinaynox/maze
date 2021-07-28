@@ -102,6 +102,8 @@ namespace Maze
 
     protected:
         PropertyDrawerAnimationCurvePtr m_drawer;
+
+        bool m_processingDataToUI = false;
     };
 
 

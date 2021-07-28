@@ -192,35 +192,42 @@ namespace Maze
         bool isMultiValue;
         fetchPropertyValue(value, isMultiValue);
 
-        if (value.getType() != ParticleSystem3DZoneType::None)
+        m_processingDataToUI = true;
         {
-            Set<MetaInstance> mainModulesMetaInstances;
 
-            for (MetaInstance metaInstance : m_metaInstances)
+            if (value.getType() != ParticleSystem3DZoneType::None)
             {
-                ParticleSystem3D* obj = metaInstance.staticObjectCast<ParticleSystem3D>();
+                Set<MetaInstance> mainModulesMetaInstances;
 
-                ParticleSystem3DShapeModule& value = obj->getShapeModule();
+                for (MetaInstance metaInstance : m_metaInstances)
+                {
+                    ParticleSystem3D* obj = metaInstance.staticObjectCast<ParticleSystem3D>();
 
-                m_zoneMetaPropertyDrawer->setZoneType(value.getType());
+                    ParticleSystem3DShapeModule& value = obj->getShapeModule();
 
-                mainModulesMetaInstances.insert(value.getMetaInstance());
+                    m_zoneMetaPropertyDrawer->setZoneType(value.getType());
+
+                    mainModulesMetaInstances.insert(value.getMetaInstance());
+                }
+
+                for (MetaPropertyDrawerPtr property : m_propertyDrawers)
+                {
+                    property->linkMetaInstances(mainModulesMetaInstances);
+                    property->processDataToUI();
+                }
             }
 
-            for (MetaPropertyDrawerPtr property : m_propertyDrawers)
-            {
-                property->linkMetaInstances(mainModulesMetaInstances);
-                property->processDataToUI();
-            }
+            m_enabledDrawer->setValue(value.getType() != ParticleSystem3DZoneType::None);
+            m_propertyDrawersLayoutEntity->setActiveSelf(value.getType() != ParticleSystem3DZoneType::None);
         }
-
-        m_enabledDrawer->setValue(value.getType() != ParticleSystem3DZoneType::None);
-        m_propertyDrawersLayoutEntity->setActiveSelf(value.getType() != ParticleSystem3DZoneType::None);
+        m_processingDataToUI = false;
     }
 
     //////////////////////////////////////////
     void MetaPropertyDrawerParticleSystem3DShapeModule::processDataFromUI()
     {
+        if (m_processingDataToUI)
+            return;
         
         for (MetaInstance const& metaInstance : m_metaInstances)
         {

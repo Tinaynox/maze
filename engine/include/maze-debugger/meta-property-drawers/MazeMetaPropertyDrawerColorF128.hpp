@@ -98,6 +98,8 @@ namespace Maze
 
     protected:
         PropertyDrawerColorF128Ptr m_drawer;
+
+        bool m_processingDataToUI = false;
     };
 
 

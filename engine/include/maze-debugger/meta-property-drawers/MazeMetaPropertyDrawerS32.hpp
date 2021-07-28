@@ -95,6 +95,8 @@ namespace Maze
 
     protected:
         PropertyDrawerS32Ptr m_drawer;
+
+        bool m_processingDataToUI = false;
     };
 
 

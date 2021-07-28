@@ -65,6 +65,8 @@
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
+#include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
@@ -79,6 +81,7 @@
 #include "maze-debugger/ecs/components/MazeInspectorController.hpp"
 #include "maze-debugger/ecs/components/MazeAssetsController.hpp"
 #include "maze-debugger/helpers/MazeDebuggerHelper.hpp"
+#include "maze-particles/managers/MazeParticlesManager.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorPrefabManager.hpp"
 #include "Editor.hpp"
@@ -180,6 +183,22 @@ namespace Maze
                     return EntityPtr();
                 }
             }
+        }
+
+        //////////////////////////////////////////
+        EntityPtr CreateNewParticleSystem3D(CString _entityName)
+        {
+            EntityPtr gameObject = CreateEntity3D(_entityName);
+            if (!gameObject)
+                return EntityPtr();
+
+            ParticleSystem3DPtr particleSystem = gameObject->ensureComponent<ParticleSystem3D>();
+            
+            particleSystem->getMainModule().getSpeed().setConstant(5.0f);
+            particleSystem->setMaterial(ParticlesManager::GetInstancePtr()->getDefaultParticleMaterial());
+            particleSystem->getMainModule().getEmission().emissionPerSecond.setConstant(30.0f);
+
+            return gameObject;
         }
 
         //////////////////////////////////////////

@@ -37,6 +37,7 @@
 #include "maze-particles/MazeParticleSystemState.hpp"
 #include "maze-particles/MazeParticleSystemParameterF32.hpp"
 #include "maze-particles/MazeParticleSystemParameterColor.hpp"
+#include "maze-particles/MazeParticleSystemBurst.hpp"
 #include "maze-core/serialization/MazeJSONSerializable.hpp"
 #include "maze-core/helpers/MazeJSONHelper.hpp"
 
@@ -95,11 +96,35 @@ namespace Maze
             //////////////////////////////////////////
             inline ParticleSystemParameterF32 const& getEmissionPerSecond() const { return emissionPerSecond; }
 
-            //////////////////////////////////////////
-            inline bool operator==(EmissionModule const& _value) { return enabled == _value.enabled && emissionPerSecond == _value.emissionPerSecond; }
 
             //////////////////////////////////////////
-            inline bool operator!=(EmissionModule const& _value) { return !this->operator==(_value); }
+            inline void setBursts(Vector<ParticleSystemBurst> const& _value)
+            {
+                bursts = _value;
+                sortBursts();
+            }
+
+            //////////////////////////////////////////
+            inline Vector<ParticleSystemBurst>& getBursts() { return bursts; }
+
+            //////////////////////////////////////////
+            inline Vector<ParticleSystemBurst> const& getBursts() const { return bursts; }
+
+
+            //////////////////////////////////////////
+            inline bool operator==(EmissionModule const& _value)
+            {
+                if (bursts != _value.bursts)
+                    return false;
+
+                return enabled == _value.enabled && emissionPerSecond == _value.emissionPerSecond;
+            }
+
+            //////////////////////////////////////////
+            inline bool operator!=(EmissionModule const& _value){ return !this->operator==(_value); }
+
+            //////////////////////////////////////////
+            void sortBursts();
 
         public:
 
@@ -119,6 +144,7 @@ namespace Maze
 
             bool enabled = true;
             ParticleSystemParameterF32 emissionPerSecond = ParticleSystemParameterF32(1.0f);
+            Vector<ParticleSystemBurst> bursts;
         };
 
         //////////////////////////////////////////

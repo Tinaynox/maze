@@ -233,6 +233,7 @@ namespace Maze
         F32 m_time;
         F32 m_timeEmission;
         S32 m_iteration = 0;
+        S32 m_currentBurstIndex = 0;
 
         ParticleSystem3DMainModule m_mainModule;
         ParticleSystem3DShapeModule m_shapeModule;

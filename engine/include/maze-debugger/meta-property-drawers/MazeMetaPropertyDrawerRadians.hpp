@@ -95,6 +95,8 @@ namespace Maze
 
     protected:
         PropertyDrawerRadiansPtr m_drawer;
+
+        bool m_processingDataToUI = false;
     };
 
 

@@ -105,12 +105,19 @@ namespace Maze
         bool isMultiValue;
         fetchPropertyValue(value, isMultiValue);
 
-        m_drawer->setValue(value);
+        m_processingDataToUI = true;
+        {
+            m_drawer->setValue(value);
+        }
+        m_processingDataToUI = false;
     }
 
     //////////////////////////////////////////
     void MetaPropertyDrawerRect2DF::processDataFromUI()
     {
+        if (m_processingDataToUI)
+            return;
+
         Rect2DF value = m_drawer->getValue();
 
         for (MetaInstance const& metaInstance : m_metaInstances)

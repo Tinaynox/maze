@@ -104,6 +104,8 @@ namespace Maze
         PropertyDrawerVec2DSPtr m_tilesDrawer;
         PropertyDrawerParticleSystemParameterF32Ptr m_startFrameDrawer;
         PropertyDrawerParticleSystemParameterF32Ptr m_frameOverTimeDrawer;
+
+        bool m_processingDataToUI = false;
     };
 
 } // namespace Maze

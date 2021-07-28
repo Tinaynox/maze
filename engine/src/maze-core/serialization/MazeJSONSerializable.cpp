@@ -60,6 +60,9 @@ namespace Maze
         Maze::MetaInstance _metaInstance,
         Json::Value const& _value)
     {
+        if (_value.isNull() || !_value.isObject())
+            return;
+
         for (Maze::MetaClass* metaClass : _metaClass->getAllSuperMetaClasses())
         {
             for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)

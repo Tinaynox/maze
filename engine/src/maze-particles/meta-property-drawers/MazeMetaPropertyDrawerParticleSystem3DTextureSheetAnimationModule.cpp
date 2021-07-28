@@ -173,19 +173,26 @@ namespace Maze
         bool isMultiValue;
         fetchPropertyValue(value, isMultiValue);
 
-        m_tilesDrawer->setValue(value.getTiles());
-        m_startFrameDrawer->setValue(value.getStartFrame());
-        m_frameOverTimeDrawer->setValue(value.getFrameOverTime());
-        m_enabledDrawer->setValue(value.getEnabled());
+        m_processingDataToUI = true;
+        {
+            m_tilesDrawer->setValue(value.getTiles());
+            m_startFrameDrawer->setValue(value.getStartFrame());
+            m_frameOverTimeDrawer->setValue(value.getFrameOverTime());
+            m_enabledDrawer->setValue(value.getEnabled());
 
-        m_tilesDrawer->getRootEntity()->setActiveSelf(value.getEnabled());
-        m_startFrameDrawer->getRootEntity()->setActiveSelf(value.getEnabled());
-        m_frameOverTimeDrawer->getRootEntity()->setActiveSelf(value.getEnabled());
+            m_tilesDrawer->getRootEntity()->setActiveSelf(value.getEnabled());
+            m_startFrameDrawer->getRootEntity()->setActiveSelf(value.getEnabled());
+            m_frameOverTimeDrawer->getRootEntity()->setActiveSelf(value.getEnabled());
+        }
+        m_processingDataToUI = false;
     }
 
     //////////////////////////////////////////
     void MetaPropertyDrawerParticleSystem3DTextureSheetAnimationModule::processDataFromUI()
     {
+        if (m_processingDataToUI)
+            return;
+
         ParticleSystem3DRendererModule::TextureSheetAnimation value;
         value.setEnabled(m_enabledDrawer->getValue());
         value.setTiles(m_tilesDrawer->getValue());

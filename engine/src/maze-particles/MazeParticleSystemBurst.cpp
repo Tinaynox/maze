@@ -24,55 +24,19 @@
 
 
 //////////////////////////////////////////
-#include "MazeDebuggerHeader.hpp"
-#include "maze-debugger/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
-#include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
-#include "maze-core/memory/MazeMemory.hpp"
+#include "MazeParticlesHeader.hpp"
+#include "maze-particles/MazeParticleSystemBurst.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
-{
-
-
+{    
     //////////////////////////////////////////
-    // Class MetaPropertyDrawer
-    //
-    //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS(MetaPropertyDrawer);
+    MAZE_IMPLEMENT_METACLASS(ParticleSystemBurst,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, time, 0.0f, getTime, setTime),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, minCount, 0, getMinCount, setMinCount),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, maxCount, 0, getMaxCount, setMaxCount));
 
-    //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(MetaPropertyDrawer);
-
-    //////////////////////////////////////////
-    MetaPropertyDrawer::MetaPropertyDrawer()
-        : m_metaProperty(nullptr)
-    {
-        
-    }
-
-    //////////////////////////////////////////
-    MetaPropertyDrawer::~MetaPropertyDrawer()
-    {
-    }
-
-    //////////////////////////////////////////
-    bool MetaPropertyDrawer::init(MetaProperty* _metaProperty)
-    {
-        m_metaProperty = _metaProperty;
-
-        return true;
-    }
-
-    //////////////////////////////////////////
-    void MetaPropertyDrawer::linkMetaInstances(
-        Set<MetaInstance> const& _metaInstances)
-    {
-        m_metaInstances = _metaInstances;
-
-        processMetaInstancesChanged();
-    }
-
-
+    
 } // namespace Maze
 //////////////////////////////////////////

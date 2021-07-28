@@ -159,7 +159,7 @@ namespace Maze
             S32 maxCount = m_rendererModule.getParticlesMaxCount();
             S32 maxCountToEmit = maxCount > aliveCount ? maxCount - aliveCount : 0;
 
-            if (maxCountToEmit && m_mainModule.getEmission().enabled)
+            if (maxCountToEmit && m_mainModule.getEmission().enabled && m_state == ParticleSystemState::Playing)
             {
                 F32 iterationProgress = m_time / m_mainModule.getDuration();
                 S32 emissionCount = calculateEmissionCount(iterationProgress, maxCountToEmit, _iterationFinished);
@@ -212,21 +212,26 @@ namespace Maze
             }
         }
 
-        // #TODO: Bursts
-        /*
         //  Emit particles by bursts
-        for (Size i = 0, n = m_bursts.size(); i < n; i++)
+        Vector<ParticleSystemBurst> const& bursts = m_mainModule.getEmission().bursts;
+        if (!bursts.empty())
         {
-            if (m_bursts[i].lastIteration == m_iteration)
-                continue;
-
-            if (m_bursts[i].time <= m_time)
+            S32 burstsCount = (S32)bursts.size();
+            for (S32 i = m_currentBurstIndex; i < burstsCount; i++)
             {
-                count += RangeRandom(m_bursts[i].minCount, m_bursts[i].maxCount);
-                m_bursts[i].lastIteration = m_iteration;
+                if (bursts[i].time <= m_time)
+                {
+                    S32 minCount = bursts[i].minCount;
+                    S32 maxCount = bursts[i].maxCount;
+
+                    if (minCount > maxCount)
+                        std::swap(minCount, maxCount);
+
+                    count += Math::RangeRandom(minCount, maxCount + 1);
+                    ++m_currentBurstIndex;
+                }
             }
         }
-        */
 
         count = Math::Min(_maxCountToEmit, count);
 
@@ -274,10 +279,16 @@ namespace Maze
         {
             m_iteration++;
             m_time -= Math::Floor(m_time / m_mainModule.getDuration()) * m_mainModule.getDuration();
+            m_currentBurstIndex = 0;
         }
         else
         {
             m_time = m_mainModule.getDuration();
+
+            if (getAliveParticles() == 0)
+            {
+                stop();
+            }
         }
 
         _iterationFinished = true;
@@ -369,6 +380,7 @@ namespace Maze
         m_time = 0.0f;
         m_timeEmission = 0.0f;
         m_iteration = 0;
+        m_currentBurstIndex = 0;
 
         m_particles.setAliveCount(0);
         setState(ParticleSystemState::None);

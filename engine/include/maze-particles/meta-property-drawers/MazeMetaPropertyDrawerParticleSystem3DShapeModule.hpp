@@ -107,6 +107,8 @@ namespace Maze
 
         MetaPropertyDrawerParticleSystem3DZoneDataPtr m_zoneMetaPropertyDrawer;
         MetaPropertyDrawerEnumClassPtr m_typePropertyDrawer;
+
+        bool m_processingDataToUI = false;
     };
 
 } // namespace Maze

@@ -95,6 +95,8 @@ namespace Maze
 
     protected:
         PropertyDrawerVec3DFPtr m_drawer;
+
+        bool m_processingDataToUI = false;
     };
 
 

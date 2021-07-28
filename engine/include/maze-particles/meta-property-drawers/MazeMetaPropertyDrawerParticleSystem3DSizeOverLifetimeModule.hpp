@@ -101,6 +101,8 @@ namespace Maze
     protected:
         PropertyDrawerBoolPtr m_enabledDrawer;
         PropertyDrawerParticleSystemParameterF32Ptr m_parameterDrawer;
+
+        bool m_processingDataToUI = false;
     };
 
 } // namespace Maze
