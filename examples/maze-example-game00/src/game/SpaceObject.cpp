@@ -291,14 +291,14 @@ namespace Maze
             case SpaceObjectAvatarDirection::Right:
             {
                 if (m_avatar)
-                    m_avatar->getTransform()->setLocalRotation(Quaternion(0.0f, -Math::c_halfPi, 0.0f));
+                    m_avatar->getTransform()->setLocalRotation(Quaternion(0.0f, Math::c_halfPi, 0.0f));
 
                 break;
             }
             case SpaceObjectAvatarDirection::Left:
             {
                 if (m_avatar)
-                    m_avatar->getTransform()->setLocalRotation(Quaternion(0.0f, Math::c_halfPi, 0.0f));
+                    m_avatar->getTransform()->setLocalRotation(Quaternion(0.0f, -Math::c_halfPi, 0.0f));
 
                 break;
             }

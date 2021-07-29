@@ -56,7 +56,7 @@ namespace Maze
         : m_avatarType(SpaceObjectAvatarType::None)
         , m_spawnX(0.0f)
         , m_spawnY(0.5f)
-        , m_startRotation(Math::c_halfPi)
+        , m_startRotation(-Math::c_halfPi)
         , m_player(PlayerIndex::Enemy0)
     {
 

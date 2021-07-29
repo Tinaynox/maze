@@ -192,6 +192,7 @@ namespace Maze
 
                     meshTransform->setParent(avatarTransform);
                     meshTransform->setLocalScale(0.0015f);
+                    meshTransform->setLocalRotation(Quaternion(0.0f, Math::c_pi, 0.0f));
 
                     UnitMeshPartRendererPtr unitMeshPartRenderer = meshEntity->ensureComponent<UnitMeshPartRenderer>();
                     unitMeshPartRenderer->setExtraMaterials(myPlayerExtraMaterials);
@@ -258,6 +259,7 @@ namespace Maze
 
                     meshTransform->setParent(avatarTransform);
                     meshTransform->setLocalScale(0.6f);
+                    meshTransform->setLocalRotation(Quaternion(0.0f, Math::c_pi, 0.0f));
 
                     UnitMeshPartRendererPtr unitMeshPartRenderer = meshEntity->ensureComponent<UnitMeshPartRenderer>();
                     unitMeshPartRenderer->setExtraMaterials(defaultExtraMaterials);
@@ -325,6 +327,7 @@ namespace Maze
 
                     meshTransform->setParent(avatarTransform);
                     meshTransform->setLocalScale(0.175f);
+                    meshTransform->setLocalRotation(Quaternion(0.0f, Math::c_pi, 0.0f));
 
                     UnitMeshPartRendererPtr unitMeshPartRenderer = meshEntity->ensureComponent<UnitMeshPartRenderer>();
                     unitMeshPartRenderer->setExtraMaterials(defaultExtraMaterials);
@@ -392,6 +395,7 @@ namespace Maze
 
                     meshTransform->setParent(avatarTransform);
                     meshTransform->setLocalScale(0.006f);
+                    meshTransform->setLocalRotation(Quaternion(0.0f, Math::c_pi, 0.0f));
 
                     UnitMeshPartRendererPtr unitMeshPartRenderer = meshEntity->ensureComponent<UnitMeshPartRenderer>();
                     unitMeshPartRenderer->setExtraMaterials(defaultExtraMaterials);
@@ -459,6 +463,7 @@ namespace Maze
 
                     meshTransform->setParent(transform);
                     meshTransform->setLocalScale(0.01f);
+                    meshTransform->setLocalRotation(Quaternion(0.0f, Math::c_pi, 0.0f));
 
                     UnitMeshPartRendererPtr unitMeshPartRenderer = meshEntity->ensureComponent<UnitMeshPartRenderer>();
                     unitMeshPartRenderer->setExtraMaterials(defaultExtraMaterials);
