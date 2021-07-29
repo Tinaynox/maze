@@ -159,7 +159,7 @@ namespace Maze
 
         m_selectedEntities.insert(_object);
 
-        m_selectionType = SelectionType::Entities;
+        setSelectionType(SelectionType::Entities);
 
         if (_throwEvent)
             eventSelectionChanged();
@@ -284,7 +284,23 @@ namespace Maze
         if (m_selectionType == _value)
             return;
 
+        switch (m_selectionType)
+        {
+            case SelectionType::Entities:
+            {
+                selectObject(EntityPtr());
+                break;
+            }
+            case SelectionType::Objects:
+            {
+                selectObject(ObjectPtr());
+                break;
+            }
+        }
+
         m_selectionType = _value;
+
+        
     }
     
 } // namespace Maze
