@@ -146,6 +146,9 @@ namespace Maze
     void UIManager::createUIElements()
     {
         S32 const chunkSize = 32;
+        S32 const gap = 1;
+
+        auto startPosFunc = [&](Vec2DS const& _pos) { return (chunkSize * _pos) + Vec2DS((_pos.x + 1) * gap, (_pos.y + 1) * gap); };
 
         PixelSheet2D uiElementsSheet(Vec2DS(8, 8) * chunkSize, PixelFormat::RGBA_U8);
         uiElementsSheet.fill(ColorU32::c_transparent);
@@ -157,7 +160,7 @@ namespace Maze
         // Drop down button collapsed
         {
             Vec2DS sheetPos(0, 0);
-            Vec2DS startPos = chunkSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
 
             uiElementsSheet.drawFilledTriangle(
                 Vec2DS(10, 6) + startPos,
@@ -174,7 +177,7 @@ namespace Maze
         // Drop down button expanded
         {
             Vec2DS sheetPos(1, 0);
-            Vec2DS startPos = chunkSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
 
             uiElementsSheet.drawFilledTriangle(
                 Vec2DS(8, 20) + startPos,
@@ -191,7 +194,7 @@ namespace Maze
         // Entity Object
         {
             Vec2DS sheetPos(2, 0);
-            Vec2DS startPos = chunkSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
 
             Vec2DS outerBottom(14, 2);
             Vec2DS outerTop(14, 29);
@@ -263,7 +266,7 @@ namespace Maze
         // Scene
         {
             Vec2DS sheetPos(3, 0);
-            Vec2DS startPos = chunkSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
 
             uiElementsSheet.drawFilledRect(
                 Vec2DS(2, 2) + startPos,
@@ -289,7 +292,7 @@ namespace Maze
         // Panel00
         {
             Vec2DS sheetPos(0, 1);
-            Vec2DS startPos = chunkSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
             Vec2DS size(7, 7);
             SpriteSliceBorder sliceBorder(3, 3, 3, 3);
 
@@ -389,7 +392,7 @@ namespace Maze
         // Panel01
         {
             Vec2DS sheetPos(1, 1);
-            Vec2DS startPos = chunkSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
             Vec2DS size(7, 7);
             SpriteSliceBorder sliceBorder(3, 3, 3, 3);
 
@@ -466,7 +469,7 @@ namespace Maze
         // Check Mark
         {
             Vec2DS sheetPos(0, 1);
-            Vec2DS startPos = chunkSize * sheetPos + Vec2DS(0, 16);
+            Vec2DS startPos = startPosFunc(sheetPos) + Vec2DS(0, 16);
 
             uiElementsSheet.drawLine(
                 Vec2DS(4, 6) + startPos,
@@ -508,7 +511,7 @@ namespace Maze
         // Slider Handle
         {
             Vec2DS sheetPos(1, 1);
-            Vec2DS startPos = chunkSize * sheetPos + Vec2DS(0, 16);
+            Vec2DS startPos = startPosFunc(sheetPos) + Vec2DS(0, 16);
 
             uiElementsSheet.drawFilledCircle(
                 Vec2DS(8, 8) + startPos,
@@ -529,7 +532,7 @@ namespace Maze
         // ScaleMark
         {
             Vec2DS sheetPos(0, 2);
-            Vec2DS startPos = chunkSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
 
             ColorU32 borderColor(116, 116, 116);
 
@@ -585,7 +588,7 @@ namespace Maze
         // ColorSliderTagFrame
         {
             Vec2DS sheetPos(0, 2);
-            Vec2DS startPos = chunkSize * sheetPos + Vec2DS(0, 10);
+            Vec2DS startPos = startPosFunc(sheetPos) + Vec2DS(0, 10);
 
             ColorU32 borderColor(255, 255, 255);
 
@@ -625,7 +628,7 @@ namespace Maze
         // ColorSliderTagBody
         {
             Vec2DS sheetPos(0, 2);
-            Vec2DS startPos = chunkSize * sheetPos + Vec2DS(16, 10);
+            Vec2DS startPos = startPosFunc(sheetPos) + Vec2DS(16, 10);
 
             ColorU32 color(255, 255, 255);
 
@@ -651,7 +654,7 @@ namespace Maze
         // SubMenuMark
         {
             Vec2DS sheetPos(0, 2);
-            Vec2DS startPos = chunkSize * sheetPos + Vec2DS(16, 0);
+            Vec2DS startPos = startPosFunc(sheetPos) + Vec2DS(16, 0);
 
             uiElementsSheet.drawFilledTriangle(
                 Vec2DS(0, 0) + startPos,
@@ -670,7 +673,7 @@ namespace Maze
         // Panel02
         {
             Vec2DS sheetPos(2, 1);
-            Vec2DS startPos = chunkSize * sheetPos + Vec2DS(0, 16);
+            Vec2DS startPos = startPosFunc(sheetPos) + Vec2DS(0, 16);
             SpriteSliceBorder sliceBorder(3, 3, 3, 3);
 
             ColorU32 const borderColor(230, 230, 230);
@@ -711,7 +714,7 @@ namespace Maze
         // Panel02
         {
             Vec2DS sheetPos(2, 1);
-            Vec2DS startPos = chunkSize * sheetPos + Vec2DS(16, 16);
+            Vec2DS startPos = startPosFunc(sheetPos) + Vec2DS(16, 16);
             SpriteSliceBorder sliceBorder(3, 3, 3, 3);
 
             ColorU32 const borderColor(160, 160, 160);
@@ -752,7 +755,7 @@ namespace Maze
         // Frame01
         {
             Vec2DS sheetPos(2, 1);
-            Vec2DS startPos = chunkSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
             SpriteSliceBorder sliceBorder(3, 3, 3, 3);
 
             uiElementsSheet.drawLine(
@@ -804,7 +807,7 @@ namespace Maze
         // ColorPickerCircle
         {
             Vec2DS sheetPos(3, 1);
-            Vec2DS startPos = chunkSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
 
 
             uiElementsSheet.drawCircle(
@@ -824,7 +827,7 @@ namespace Maze
         // MainScene
         {
             Vec2DS sheetPos(0, 3);
-            Vec2DS startPos = chunkSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
 
             uiElementsSheet.drawFilledRect(
                 Vec2DS(2, 2) + startPos,
@@ -869,7 +872,7 @@ namespace Maze
         // EntityObject2D
         {
             Vec2DS sheetPos(1, 3);
-            Vec2DS startPos = chunkSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
 
             uiElementsSheet.drawFilledRect(
                 Vec2DS(2, 2) + startPos,
@@ -900,7 +903,7 @@ namespace Maze
         // EntityObject
         {
             Vec2DS sheetPos(2, 3);
-            Vec2DS startPos = chunkSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
 
             uiElementsSheet.drawFilledRect(
                 Vec2DS(2, 2) + startPos,
@@ -921,7 +924,7 @@ namespace Maze
         // FolderClosed
         {
             Vec2DS sheetPos(3, 3);
-            Vec2DS startPos = chunkSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
             ColorU32 mainColor(112, 112, 112);
 
             uiElementsSheet.drawFilledRect(
@@ -948,7 +951,7 @@ namespace Maze
         // FolderOpened
         {
             Vec2DS sheetPos(3, 2);
-            Vec2DS startPos = chunkSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
             ColorU32 mainColor(112, 112, 112);
             ColorU32 innerColor(255, 255, 255);
 
@@ -998,7 +1001,7 @@ namespace Maze
         // File
         {
             Vec2DS sheetPos(4, 0);
-            Vec2DS startPos = chunkSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
             ColorU32 mainColor(173, 173, 173);
             ColorU32 innerColor(216, 216, 216);
             ColorU32 fillColor(255, 255, 255);
@@ -1063,7 +1066,7 @@ namespace Maze
         // TextFile
         {
             Vec2DS sheetPos(4, 1);
-            Vec2DS startPos = chunkSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
             ColorU32 mainColor(173, 173, 173);
             ColorU32 innerColor(216, 216, 216);
             ColorU32 fillColor(255, 255, 255);
@@ -1167,7 +1170,7 @@ namespace Maze
         // Material
         {
             Vec2DS sheetPos(4, 2);
-            Vec2DS startPos = chunkSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
             ColorU32 mainColor(14, 109, 203);
 
             uiElementsSheet.drawFilledCircle(
@@ -1189,7 +1192,7 @@ namespace Maze
         // Mesh
         {
             Vec2DS sheetPos(4, 3);
-            Vec2DS startPos = chunkSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
             ColorU32 color0(14, 109, 203);
             ColorU32 color1(97, 174, 254);
             ColorU32 color2(62, 143, 225);
@@ -1258,7 +1261,7 @@ namespace Maze
         // PhysicsMaterial2D
         {
             Vec2DS sheetPos(5, 3);
-            Vec2DS startPos = chunkSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
 
             ColorU32 color0(48, 126, 52);
 
@@ -1281,7 +1284,7 @@ namespace Maze
         // Shader
         {
             Vec2DS sheetPos(5, 2);
-            Vec2DS startPos = chunkSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
             ColorU32 mainColor(173, 173, 173);
             ColorU32 innerColor(216, 216, 216);
             ColorU32 fillColor(255, 255, 255);
@@ -1408,7 +1411,7 @@ namespace Maze
         {
 
             Vec2DS sheetPos(5, 1);
-            Vec2DS startPos = chunkSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
             ColorU32 mainColor(255, 255, 255);
 
             uiElementsSheet.drawFilledCircle(
@@ -1444,10 +1447,10 @@ namespace Maze
         transparentChessSheet.fill(ColorU32::c_transparent);
 
         m_transparentChessTexture = Texture2D::Create();
-        m_transparentChessTexture->setMagFilter(TextureFilter::Nearest);
-        m_transparentChessTexture->setMinFilter(TextureFilter::Nearest);
-        m_transparentChessTexture->setWrapS(TextureWrap::Repeat);
-        m_transparentChessTexture->setWrapT(TextureWrap::Repeat);
+        m_transparentChessTexture->setMagFilter(TextureFilter::Linear);
+        m_transparentChessTexture->setMinFilter(TextureFilter::LinearMipmapLinear);
+        m_transparentChessTexture->setWrapS(TextureWrap::ClampToEdge);
+        m_transparentChessTexture->setWrapT(TextureWrap::ClampToEdge);
 
         // TransparentChess
         {
@@ -1480,7 +1483,7 @@ namespace Maze
         }
 
         m_transparentChessTexture->loadTexture(transparentChessSheet);
-
+        m_transparentChessTexture->generateMipmaps();
 
         for (DefaultUISprite spriteType = DefaultUISprite(0); spriteType < DefaultUISprite::MAX; spriteType = DefaultUISprite((S32)spriteType + 1))
         {

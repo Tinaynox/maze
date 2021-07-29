@@ -95,6 +95,9 @@ namespace Maze
     void GizmosManager::createGizmosElements()
     {
         S32 const iconSize = 32;
+        S32 const gap = 1;
+
+        auto startPosFunc = [&](Vec2DS const& _pos) { return (iconSize * _pos) + Vec2DS((_pos.x + 1) * gap, (_pos.y + 1) * gap); };
 
         PixelSheet2D uiElementsSheet(Vec2DS(4, 4) * iconSize, PixelFormat::RGBA_U8);
         uiElementsSheet.fill(ColorU32::c_transparent);
@@ -102,21 +105,23 @@ namespace Maze
         m_gizmosElementsTexture = Texture2D::Create();
         m_gizmosElementsTexture->setMagFilter(TextureFilter::Linear);
         m_gizmosElementsTexture->setMinFilter(TextureFilter::Linear);
+        m_gizmosElementsTexture->setWrapS(TextureWrap::ClampToEdge);
+        m_gizmosElementsTexture->setWrapT(TextureWrap::ClampToEdge);
 
 
         // Light Gizmo
         {
             Vec2DS sheetPos(0, 1);
 
-            Vec2DS startPoint = iconSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
 
             F32 const radius = 7.0f;
             uiElementsSheet.drawFilledCircle(
-                Vec2DS(16, 16) + startPoint,
+                Vec2DS(16, 16) + startPos,
                 (S32)radius,
                 ColorU32::c_white);
 
-            Vec2DS centerPoint = startPoint + Vec2DS(16, 16);
+            Vec2DS centerPoint = startPos + Vec2DS(16, 16);
 
             MAZE_CONSTEXPR F32 const angleDelta = Math::DegreesToRadians(30.0f);
             for (F32 i = 0; i < Math::c_twoPi - angleDelta * 0.5f; i += angleDelta)
@@ -149,28 +154,28 @@ namespace Maze
         {
             Vec2DS sheetPos(1, 1);
 
-            Vec2DS startPoint = iconSize * sheetPos;
+            Vec2DS startPos = startPosFunc(sheetPos);
 
             uiElementsSheet.drawFilledRect(
-                startPoint + Vec2DS(8, 8),
+                startPos + Vec2DS(8, 8),
                 Vec2DS(17, 11),
                 ColorU32::c_white);
 
             F32 const radius = 5.0f;
             uiElementsSheet.drawFilledCircle(
-                Vec2DS(7, 17) + startPoint,
+                Vec2DS(7, 17) + startPos,
                 (S32)radius,
                 ColorU32::c_white);
 
             uiElementsSheet.drawFilledCircle(
-                Vec2DS(16, 22) + startPoint,
+                Vec2DS(16, 22) + startPos,
                 (S32)radius,
                 ColorU32::c_white);
 
             uiElementsSheet.drawFilledTriangle(
-                Vec2DS(23, 14) + startPoint,
-                Vec2DS(29, 17) + startPoint,
-                Vec2DS(29, 11) + startPoint,
+                Vec2DS(23, 14) + startPos,
+                Vec2DS(29, 17) + startPos,
+                Vec2DS(29, 11) + startPos,
                 ColorU32::c_white);
 
             m_defaultGizmosSprites[(Size)DefaultGizmosSprite::CameraGizmo] = Sprite::Create(
