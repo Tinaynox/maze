@@ -231,27 +231,34 @@ namespace Maze
     //////////////////////////////////////////
     void PropertyDrawerQuaternion::setValue(Quaternion const& _value)
     {
-        F32 roll = _value.getRoll(false);
         F32 pitch = _value.getPitch(false);
         F32 yaw = _value.getYaw(false);
+        F32 roll = _value.getRoll(false);
 
-        if (!m_editBoxX->getSelected())
-            m_editBoxX->setText(StringHelper::F32ToStringFormatted(Math::RadiansToDegrees(roll), 4));
-
-        if (!m_editBoxY->getSelected())
-            m_editBoxY->setText(StringHelper::F32ToStringFormatted(Math::RadiansToDegrees(pitch), 4));
-
-        if (!m_editBoxZ->getSelected())
-            m_editBoxZ->setText(StringHelper::F32ToStringFormatted(Math::RadiansToDegrees(yaw), 4));
+        if (!m_editBoxX->getSelected() && !m_editBoxY->getSelected() && !m_editBoxZ->getSelected())
+        {
+            F32 pitchDegrees = Math::RadiansToDegrees(pitch);
+            F32 yawDegrees = Math::RadiansToDegrees(yaw);
+            F32 rollDegrees = Math::RadiansToDegrees(roll);
+            
+            m_editBoxX->setText(StringHelper::F32ToStringFormatted(pitchDegrees, 4));
+            m_editBoxY->setText(StringHelper::F32ToStringFormatted(yawDegrees, 4));
+            m_editBoxZ->setText(StringHelper::F32ToStringFormatted(rollDegrees, 4));
+        }
     }
 
     //////////////////////////////////////////
     Quaternion PropertyDrawerQuaternion::getValue() const
     {
-        F32 roll = StringHelper::StringToF32(m_editBoxX->getText());
-        F32 pitch = StringHelper::StringToF32(m_editBoxY->getText());
-        F32 yaw = StringHelper::StringToF32(m_editBoxZ->getText());
-        Quaternion q(roll, pitch, yaw);
+        F32 pitchDegrees = StringHelper::StringToF32(m_editBoxX->getText());
+        F32 yawDegrees = StringHelper::StringToF32(m_editBoxY->getText());
+        F32 rollDegrees = StringHelper::StringToF32(m_editBoxZ->getText());
+
+        F32 pitch = Math::DegreesToRadians(pitchDegrees);
+        F32 yaw = Math::DegreesToRadians(yawDegrees);
+        F32 roll = Math::DegreesToRadians(rollDegrees);
+
+        Quaternion q = Quaternion(pitch, yaw, roll);
 
         return q;
     }
