@@ -115,9 +115,10 @@ namespace Maze
         Particles3D& _particles,
         S32 _first,
         S32 _last,
-        F32 _emitterTimePercent)
+        F32 _emitterTimePercent,
+        Mat4DF const& _particleSystemWorldTransform)
     {
-        
+        Mat4DF invParticleSystemWorldTransform = _particleSystemWorldTransform.inversedAffineCopy();
         
         // Life
         {
@@ -187,7 +188,7 @@ namespace Maze
                 Particles3D::ParticleMovement& movement = _particles.accessMovement(i);
                 Vec3DF& direction = _particles.accessDirection(i);
                 movement.velocity = direction * speedValue;
-                movement.acceleration = Vec3DF::c_unitY * gravityValue;
+                movement.acceleration = invParticleSystemWorldTransform.transformAffine(Vec3DF::c_unitY) * gravityValue;
             }
         }
     }

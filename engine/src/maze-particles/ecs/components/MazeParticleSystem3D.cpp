@@ -256,7 +256,13 @@ namespace Maze
             m_mainModule.getTransformPolicy(),
             m_transform->getWorldTransform());
 
-        m_mainModule.updateInitial(m_particles, _first, _last, _emitterTimePercent);
+        m_mainModule.updateInitial(
+            m_particles,
+            _first,
+            _last,
+            _emitterTimePercent,
+            m_transform->getWorldTransform());
+
         m_rendererModule.updateInitial(m_particles, _first, _last, _emitterTimePercent);
         
     }

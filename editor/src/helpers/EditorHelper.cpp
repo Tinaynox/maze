@@ -238,7 +238,9 @@ namespace Maze
                 return EntityPtr();
 
             ParticleSystem3DPtr particleSystem = gameObject->ensureComponent<ParticleSystem3D>();
-            
+
+            particleSystem->getTransform()->setLocalRotation(Quaternion(-Math::c_halfPi, 0.0f, 0.0f));
+            particleSystem->getShapeModule().setType(ParticleSystem3DZoneType::Hemisphere);
             particleSystem->getMainModule().getSpeed().setConstant(5.0f);
             particleSystem->setMaterial(ParticlesManager::GetInstancePtr()->getDefaultParticleMaterial());
             particleSystem->getMainModule().getEmission().emissionPerSecond.setConstant(30.0f);

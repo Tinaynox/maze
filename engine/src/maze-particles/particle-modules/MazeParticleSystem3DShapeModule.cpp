@@ -137,7 +137,8 @@ namespace Maze
         Vec3DF const& _center) const
     {
         _result.position = _center;
-        _result.direction = Vec3DF::RandomDirection();
+        //_result.direction = Vec3DF::RandomDirection();
+        _result.direction = Vec3DF::c_unitZ;
     }
 
     //////////////////////////////////////////

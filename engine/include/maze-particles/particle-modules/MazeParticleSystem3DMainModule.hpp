@@ -581,7 +581,8 @@ namespace Maze
             Particles3D& _particles,
             S32 _first,
             S32 _last,
-            F32 _emitterTimePercent);
+            F32 _emitterTimePercent,
+            Mat4DF const& _particleSystemWorldTransform);
 
         //////////////////////////////////////////
         void updateLifetime(
