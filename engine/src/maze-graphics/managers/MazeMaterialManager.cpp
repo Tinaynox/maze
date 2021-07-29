@@ -168,7 +168,7 @@ namespace Maze
         renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getUVShader());
         renderPass->setDepthWriteEnabled(true);
         renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
-        renderPass->setCullMode(CullMode::Back);
+        renderPass->setCullMode(CullMode::Off);
         renderPass->setRenderQueueIndex(2000);
         addMaterial(m_uvMaterial);
 
@@ -178,7 +178,7 @@ namespace Maze
         renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getNormalShader());
         renderPass->setDepthWriteEnabled(true);
         renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
-        renderPass->setCullMode(CullMode::Back);
+        renderPass->setCullMode(CullMode::Off);
         renderPass->setRenderQueueIndex(2000);
         addMaterial(m_normalMaterial);
                 
@@ -190,7 +190,7 @@ namespace Maze
         renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
         renderPass->setDepthWriteEnabled(false);
         renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
-        renderPass->setCullMode(CullMode::Back);
+        renderPass->setCullMode(CullMode::Off);
         renderPass->setRenderQueueIndex(3000);
         m_colorMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
         addMaterial(m_colorMaterial);
@@ -203,7 +203,7 @@ namespace Maze
         renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
         renderPass->setDepthWriteEnabled(false);
         renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
-        renderPass->setCullMode(CullMode::Back);
+        renderPass->setCullMode(CullMode::Off);
         renderPass->setRenderQueueIndex(3000);
         m_colorTextureMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
         m_colorTextureMaterial->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteTexture());
@@ -218,7 +218,7 @@ namespace Maze
         renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
         renderPass->setDepthWriteEnabled(false);
         renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
-        renderPass->setCullMode(CullMode::Back);
+        renderPass->setCullMode(CullMode::Off);
         renderPass->setRenderQueueIndex(3000);
         m_colorTextureCustomUVMaterial->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteTexture());
         m_colorTextureCustomUVMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
@@ -231,7 +231,7 @@ namespace Maze
         renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
         renderPass->setDepthWriteEnabled(false);
         renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
-        renderPass->setCullMode(CullMode::Back);
+        renderPass->setCullMode(CullMode::Off);
         renderPass->setRenderQueueIndex(3000);
         m_colorHDRMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
         m_colorHDRMaterial->setUniform("u_intensity", 0.0f);
@@ -254,7 +254,7 @@ namespace Maze
         renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
         renderPass->setDepthWriteEnabled(false);
         renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
-        renderPass->setCullMode(CullMode::Back);
+        renderPass->setCullMode(CullMode::Off);
         renderPass->setRenderQueueIndex(3000);
 
         m_debugGridMaterial = Material::Create(m_renderSystemRaw);
@@ -265,7 +265,7 @@ namespace Maze
         renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
         renderPass->setDepthWriteEnabled(false);
         renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
-        renderPass->setCullMode(CullMode::Back);
+        renderPass->setCullMode(CullMode::Off);
         renderPass->setRenderQueueIndex(3000);
         m_debugGridMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
 
@@ -277,7 +277,7 @@ namespace Maze
         renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
         renderPass->setDepthWriteEnabled(false);
         renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
-        renderPass->setCullMode(CullMode::Back);
+        renderPass->setCullMode(CullMode::Off);
         renderPass->setRenderQueueIndex(3000);
         m_debugAxisMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
 
