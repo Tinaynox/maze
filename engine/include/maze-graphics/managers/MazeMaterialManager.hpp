@@ -116,6 +116,9 @@ namespace Maze
 
         //////////////////////////////////////////
         MaterialPtr const& getSkyboxMaterial() const { return m_skyboxMaterial; }
+
+        //////////////////////////////////////////
+        MaterialPtr const& getSpecularMaterial() const { return m_specularMaterial; }
         
 
         //////////////////////////////////////////
@@ -164,6 +167,7 @@ namespace Maze
         MaterialPtr m_debugGridMaterial;
         MaterialPtr m_debugAxisMaterial;
         MaterialPtr m_skyboxMaterial;
+        MaterialPtr m_specularMaterial;
     };
 
 } // namespace Maze

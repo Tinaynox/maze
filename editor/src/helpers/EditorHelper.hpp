@@ -74,6 +74,15 @@ namespace Maze
         EntityPtr CreateEntity3D(CString _entityName);
 
         //////////////////////////////////////////
+        EntityPtr CreateCube(CString _entityName);
+
+        //////////////////////////////////////////
+        EntityPtr CreateSphere(CString _entityName);
+
+        //////////////////////////////////////////
+        EntityPtr CreateDirectionalLight(CString _entityName);
+
+        //////////////////////////////////////////
         EntityPtr CreateNewParticleSystem3D(CString _entityName);
 
         //////////////////////////////////////////

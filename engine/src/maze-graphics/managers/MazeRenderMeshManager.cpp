@@ -26,6 +26,8 @@
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
+#include "maze-graphics/managers/MazeGraphicsManager.hpp"
+#include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
@@ -61,6 +63,12 @@ namespace Maze
     void RenderMeshManager::Initialize(RenderMeshManagerPtr& _renderMeshManager, RenderSystemPtr const& _renderSystem)
     {
         MAZE_CREATE_AND_INIT_SHARED_PTR(RenderMeshManager, _renderMeshManager, init(_renderSystem));
+    }
+
+    //////////////////////////////////////////
+    RenderMeshManagerPtr const& RenderMeshManager::GetCurrentInstancePtr()
+    {
+        return RenderSystem::GetCurrentInstancePtr()->getRenderMeshManager();
     }
 
     //////////////////////////////////////////

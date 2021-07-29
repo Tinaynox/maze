@@ -208,6 +208,13 @@ namespace Maze
         );
         m_skyboxShader->setName("skybox");
 
+        m_specularShader = ShaderOpenGL::CreateFromSource(
+            m_renderSystem.lock(),
+            getRenderSystemOpenGL()->ensureCurrentContext(),
+#include "shaders/MazeSpecularShader.mzglsl"
+        );
+        m_specularShader->setName("specular");
+
         processSystemInited();
     }
 

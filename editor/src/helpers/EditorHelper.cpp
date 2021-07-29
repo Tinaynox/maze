@@ -45,6 +45,7 @@
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeLight3D.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
@@ -66,6 +67,7 @@
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
@@ -183,6 +185,49 @@ namespace Maze
                     return EntityPtr();
                 }
             }
+        }
+
+        //////////////////////////////////////////
+        EntityPtr CreateCube(CString _entityName)
+        {
+            EntityPtr gameObject = CreateEntity3D(_entityName);
+            if (!gameObject)
+                return EntityPtr();
+
+            MeshRendererPtr meshRenderer = gameObject->ensureComponent<MeshRenderer>();
+            meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultCubeMesh());
+            meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getSpecularMaterial());
+
+            return gameObject;
+        }
+
+        //////////////////////////////////////////
+        EntityPtr CreateSphere(CString _entityName)
+        {
+            EntityPtr gameObject = CreateEntity3D(_entityName);
+            if (!gameObject)
+                return EntityPtr();
+
+            MeshRendererPtr meshRenderer = gameObject->ensureComponent<MeshRenderer>();
+            meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultSphereMesh());
+            meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getSpecularMaterial());
+
+            return gameObject;
+        }
+
+        //////////////////////////////////////////
+        EntityPtr CreateDirectionalLight(CString _entityName)
+        {
+            EntityPtr gameObject = CreateEntity3D(_entityName);
+            if (!gameObject)
+                return EntityPtr();
+
+            Light3DPtr light3D = gameObject->ensureComponent<Light3D>();
+            light3D->setLightType(Light3DType::Directional);
+            light3D->setColor(ColorU32(255, 244, 214));
+            light3D->getTransform()->setLocalDirection(0.377f, -0.777f, 0.577f);
+
+            return gameObject;
         }
 
         //////////////////////////////////////////

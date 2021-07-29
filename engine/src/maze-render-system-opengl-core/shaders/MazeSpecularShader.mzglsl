@@ -1,0 +1,172 @@
+R"(
+    //////////////////////////////////////////
+    #type vertex
+
+)"
+#include "MazePrecisionHigh.mzglsl"
+#include "MazeVertex.mzglsl"
+R"(
+    //////////////////////////////////////////
+    uniform vec4 u_baseMapST;
+
+    //////////////////////////////////////////
+    IN vec3 a_position;
+    IN vec3 a_normal;
+    IN vec3 a_tangent;
+    IN vec3 a_bitangent;
+    IN vec4 a_color;
+    IN vec2 a_texCoords0;
+
+    //////////////////////////////////////////
+    OUT vec3 v_positionOS;
+    OUT vec3 v_positionWS;
+    OUT vec3 v_positionVS;
+    OUT vec3 v_normalOS;
+    OUT vec3 v_normalWS;
+    OUT vec3 v_tangentWS;
+    OUT vec3 v_bitangentWS;
+    OUT vec4 v_color;
+    OUT vec2 v_uv0;
+    OUT vec3 v_viewDirWS;
+
+    //////////////////////////////////////////
+    void main()
+    {
+        int instanceId = gl_InstanceID;
+    
+        mat4 modelMatrix = GetModelMatrix(instanceId);
+
+        vec4 positionOS = vec4(a_position, 1.0);
+        vec4 positionWS = positionOS * modelMatrix;
+        MAZE_CLIP_DISTANCE_VERTEX(positionWS);
+        vec4 positionVS = positionWS * u_viewMatrix;
+        vec4 positionCS = positionVS * u_projectionMatrix;
+    
+        vec4 normalOS = vec4(a_normal, 1.0);
+        vec4 tangentOS = vec4(a_tangent, 1.0);
+        vec4 bitangentOS = vec4(a_bitangent, 1.0);
+    
+        mat4 normalMatrix = transpose(inverse(modelMatrix));
+    
+        
+    #if (MAZE_LHCS)
+        positionCS.z = -positionCS.z;
+    #endif
+    
+        v_positionOS = positionOS.xyz;
+        v_positionWS = positionWS.xyz;
+        v_positionVS = positionVS.xyz;
+    
+        vec3 normalWS = normalize(normalOS * normalMatrix).xyz;  
+    
+        v_normalOS = normalOS.xyz;
+        v_normalWS = normalWS.xyz;
+    
+        v_color = a_color;
+       
+        v_uv0 = u_baseMapST.xy * a_texCoords0 + u_baseMapST.zw;
+
+        v_viewDirWS = u_viewPosition - v_positionWS;
+
+        gl_Position = positionCS;
+    }
+
+    //////////////////////////////////////////
+    #type fragment
+
+)"
+#include "MazePrecisionHigh.mzglsl"
+#include "MazeFragment.mzglsl"
+R"(
+
+    //////////////////////////////////////////
+    uniform sampler2D u_baseMap;
+    uniform vec4 u_color;
+    uniform vec4 u_ambientLightColor;
+    uniform float u_shininess;
+    uniform vec4 u_specularColor;
+
+    //////////////////////////////////////////
+    IN vec3 v_positionOS;
+    IN vec3 v_positionWS;
+    IN vec3 v_positionVS;
+    IN vec3 v_normalOS;
+    IN vec3 v_normalWS;
+    IN vec3 v_tangentWS;
+    IN vec3 v_bitangentWS;
+    IN vec4 v_color;
+    IN vec2 v_uv0;
+    IN vec3 v_viewDirWS;
+
+    //////////////////////////////////////////
+    layout(location=0) out vec4 out_color;
+
+    //////////////////////////////////////////
+    vec3 BlinnPhongLighting(
+        vec3 diffuseColor,
+        vec3 normalWS,
+        vec3 fragmentToViewDirection,
+        vec3 lightDirection,
+        vec3 lightColor)
+    {
+        // Light
+        vec3 fragmentToLightDirection = -lightDirection;
+        float lightAttenuation = 1.0;
+    
+        // Lambertian
+        float NdotL = dot(normalWS, fragmentToLightDirection);
+        float lambertian = clamp(NdotL, 0.0, 1.0);
+        
+        // Light final
+        vec3 lightColorFinal = lightColor * lightAttenuation;
+    
+        // Half vector
+        vec3 H = normalize(fragmentToLightDirection + fragmentToViewDirection);
+    
+        // Shininess
+        float shininess = u_shininess;
+        
+        // Specular
+        float NdotH = dot(normalWS, H);    
+        float specular = pow(clamp(NdotH, 0.0, 1.0), shininess * 512.0);
+        vec3 specularColor = u_specularColor.rgb * specular;    
+    
+        return 
+            diffuseColor * lambertian * lightColorFinal +
+            specularColor * lightColorFinal;
+    }
+
+    //////////////////////////////////////////
+    void main()
+    {
+        MAZE_CLIP_DISTANCE_FRAGMENT;
+
+        // View direction
+        vec3 fragmentToViewDirection = normalize(v_viewDirWS);
+
+        // Normal
+        vec3 normalWS = normalize(v_normalWS);
+
+        // Ambient light
+        vec3 ambientLightColor = u_ambientLightColor.rgb;
+
+        // Albedo
+        vec4 albedo = MAZE_GET_TEXEL2D(u_baseMap, v_uv0) * u_color;
+
+        // Diffuse color
+        vec3 diffuseColor = albedo.rgb;
+
+        // Linear color
+        vec3 linearColor = diffuseColor * ambientLightColor;
+
+        // Main light
+        linearColor += BlinnPhongLighting(diffuseColor, normalWS, fragmentToViewDirection, normalize(u_mainLightDirection), u_mainLightColor.rgb);
+    
+        // Reset to LDR
+        linearColor.r = min(linearColor.r, 1.0);
+        linearColor.g = min(linearColor.g, 1.0);
+        linearColor.b = min(linearColor.b, 1.0);
+
+        out_color = vec4(linearColor, albedo.a);
+    }
+)"

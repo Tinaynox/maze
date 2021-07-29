@@ -179,26 +179,31 @@ namespace Maze
             Vec3DF cameraForwardDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3DF::c_unitZ;
             Vec3DF cameraRightDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3DF::c_unitX;
 
-            F32 speed = 2.0f;
+            F32 speed = 3.0f;
+
+            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::LShift) || InputManager::GetInstancePtr()->getKeyState(KeyCode::RShift))
+            {
+                speed *= 3.0f;
+            }
 
             if (GetAsyncKeyState(87) & 0x8000)
             {
-                m_camera3D->getTransform()->translate(cameraForwardDirection * _dt * speed);
+                m_camera3DTargetPosition += cameraForwardDirection * _dt * speed;
             }
             else
             if (GetAsyncKeyState(83) & 0x8000)
             {
-                m_camera3D->getTransform()->translate(-cameraForwardDirection * _dt * speed);
+                m_camera3DTargetPosition += -cameraForwardDirection * _dt * speed;
             }
 
             if (GetAsyncKeyState(65) & 0x8000)
             {
-                m_camera3D->getTransform()->translate(-cameraRightDirection * _dt * speed);
+                m_camera3DTargetPosition += -cameraRightDirection * _dt * speed;
             }
             else
             if (GetAsyncKeyState(68) & 0x8000)
             {
-                m_camera3D->getTransform()->translate(cameraRightDirection * _dt * speed);
+                m_camera3DTargetPosition += cameraRightDirection * _dt * speed;
             }
             else
             if (GetAsyncKeyState('Q') & 0x8000)
@@ -215,7 +220,19 @@ namespace Maze
 
 
         if (m_camera3D)
-            m_camera3D->getTransform()->setLocalRotation(Quaternion(m_pitchAngle, m_yawAngle, 0.0f));
+        {
+            m_camera3D->getTransform()->setLocalPosition(
+                Math::Lerp(
+                    m_camera3D->getTransform()->getLocalPosition(),
+                    m_camera3DTargetPosition,
+                    _dt * 16.0f));
+
+            Quaternion q = Quaternion::Slerp(
+                36.0f * _dt,
+                m_camera3D->getTransform()->getLocalRotation(),
+                Quaternion(m_pitchAngle, m_yawAngle, 0.0f));
+            m_camera3D->getTransform()->setLocalRotation(q);
+        }
     }
 
     //////////////////////////////////////////
@@ -294,7 +311,8 @@ namespace Maze
         // Camera
         EntityPtr cameraEntity = createEntity();
         m_camera3D = cameraEntity->createComponent<Camera3D>();
-        m_camera3D->getTransform()->setLocalPosition(Vec3DF(3.0f, 3.0f, -5.0f));
+        m_camera3DTargetPosition = Vec3DF(3.0f, 3.0f, -5.0f);
+        m_camera3D->getTransform()->setLocalPosition(m_camera3DTargetPosition);
         m_yawAngle = Math::DegreesToRadians(-30.0f);
         m_pitchAngle = Math::DegreesToRadians(20.0f);
         m_camera3D->getTransform()->setLocalRotation(Quaternion(m_pitchAngle, m_yawAngle, 0.0f));
@@ -364,10 +382,13 @@ namespace Maze
             menuBar->addOption("Edit", "Create/Prefab/2D", [](String const& _text) { EditorHelper::CreateNewPrefab2D(); });
             menuBar->addOption("Edit", "Create/Prefab/3D", [](String const& _text) { EditorHelper::CreateNewPrefab3D(); });
 
-            menuBar->addOption("Entity", "Create/Empty", [](String const& _text) { EditorHelper::CreateEntity("Entity"); });
-            menuBar->addOption("Entity", "Create/2D", [](String const& _text) { EditorHelper::CreateEntity2D("Entity"); });
-            menuBar->addOption("Entity", "Create/3D", [](String const& _text) { EditorHelper::CreateEntity3D("Entity"); });
-            menuBar->addOption("Entity", "Create/FX/Particle System", [](String const& _text) { EditorHelper::CreateNewParticleSystem3D("Particle System"); });
+            // menuBar->addOption("Entity", "Create/Empty", [](String const& _text) { EditorHelper::CreateEntity("Entity"); });
+            menuBar->addOption("Entity", "Create/2D/Empty", [](String const& _text) { EditorHelper::CreateEntity2D("Entity"); });
+            menuBar->addOption("Entity", "Create/3D/Empty", [](String const& _text) { EditorHelper::CreateEntity3D("Entity"); });
+            menuBar->addOption("Entity", "Create/3D/Light/Directional Light", [](String const& _text) { EditorHelper::CreateDirectionalLight("Directional Light"); });
+            menuBar->addOption("Entity", "Create/3D/Mesh/Cube", [](String const& _text) { EditorHelper::CreateCube("Cube"); });
+            menuBar->addOption("Entity", "Create/3D/Mesh/Sphere", [](String const& _text) { EditorHelper::CreateSphere("Sphere"); });
+            menuBar->addOption("Entity", "Create/3D/FX/Particle System", [](String const& _text) { EditorHelper::CreateNewParticleSystem3D("Particle System"); });
                         
 
             menuBar->addOption("Component", "Add", [](String const& _text) { Debug::Log("Add"); });

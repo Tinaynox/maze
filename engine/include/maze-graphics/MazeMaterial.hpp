@@ -185,6 +185,9 @@ namespace Maze
         void setUniform(String const& _uniformName, Mat4DF const& _matrix);
 
         //////////////////////////////////////////
+        void setUniform(String const& _uniformName, ColorF128 const& _color);
+
+        //////////////////////////////////////////
         void setUniform(String const& _uniformName, ShaderUniformVariant const& _shaderUniformVariant);
 
 

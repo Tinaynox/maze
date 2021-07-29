@@ -1448,9 +1448,9 @@ namespace Maze
 
         m_transparentChessTexture = Texture2D::Create();
         m_transparentChessTexture->setMagFilter(TextureFilter::Linear);
-        m_transparentChessTexture->setMinFilter(TextureFilter::LinearMipmapLinear);
-        m_transparentChessTexture->setWrapS(TextureWrap::ClampToEdge);
-        m_transparentChessTexture->setWrapT(TextureWrap::ClampToEdge);
+        m_transparentChessTexture->setMinFilter(TextureFilter::Linear);
+        m_transparentChessTexture->setWrapS(TextureWrap::Repeat);
+        m_transparentChessTexture->setWrapT(TextureWrap::Repeat);
 
         // TransparentChess
         {

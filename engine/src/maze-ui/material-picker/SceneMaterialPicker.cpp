@@ -313,34 +313,37 @@ namespace Maze
             RenderPassPtr const& renderPass = materialCopy->getFirstRenderPass();
 
             ShaderPtr shader0 = renderPass->getShader();
-            ShaderPtr shader = shader0->createCopy();
-            renderPass->setShader(shader);
-            
-            renderPass->getShader()->removeLocalFeature("MAZE_COLOR_STREAM");
-            renderPass->getShader()->removeLocalFeature("MAZE_UV_STREAM");
-            renderPass->getShader()->recompile();
-             
-
-            // #TODO: REWORK
-            if (materialCopy->getUniform("u_baseMap"))
+            if (shader0)
             {
-                ShaderUniformPtr const& uniform = renderPass->getShader()->ensureUniform("u_baseMapST");
+                ShaderPtr shader = shader0->createCopy();
+                renderPass->setShader(shader);
 
-                TexturePtr const& texture = materialCopy->getUniform("u_baseMap")->getTexture();
+                renderPass->getShader()->removeLocalFeature("MAZE_COLOR_STREAM");
+                renderPass->getShader()->removeLocalFeature("MAZE_UV_STREAM");
+                renderPass->getShader()->recompile();
 
-                if (texture)
+
+                // #TODO: REWORK
+                if (materialCopy->getUniform("u_baseMap"))
                 {
-                    if (texture->getClassUID() == ClassInfo<Texture2D>::UID())
+                    ShaderUniformPtr const& uniform = renderPass->getShader()->ensureUniform("u_baseMapST");
+
+                    TexturePtr const& texture = materialCopy->getUniform("u_baseMap")->getTexture();
+
+                    if (texture)
                     {
-                        Texture2DPtr texture2D = texture->cast<Texture2D>();
-                        SpritePtr fakeSprite = Sprite::Create(texture2D);
-                        sprite->setSprite(fakeSprite);
+                        if (texture->getClassUID() == ClassInfo<Texture2D>::UID())
+                        {
+                            Texture2DPtr texture2D = texture->cast<Texture2D>();
+                            SpritePtr fakeSprite = Sprite::Create(texture2D);
+                            sprite->setSprite(fakeSprite);
+                        }
                     }
                 }
-            }
 
-            sprite->setRenderMode(SpriteRenderMode::Simple);
-            sprite->setMaterial(materialCopy);
+                sprite->setRenderMode(SpriteRenderMode::Simple);
+                sprite->setMaterial(materialCopy);
+            }
         }
 
         String materialName = _material ? _material->getName() : "None";

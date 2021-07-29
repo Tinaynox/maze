@@ -377,12 +377,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void Material::setUniform(String const& _uniformName, ColorF128 const& _color)
+    {
+        ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
+        uniformVariant->set(_color);
+    }
+
+
+    //////////////////////////////////////////
     void Material::setUniform(String const& _uniformName, ShaderUniformVariant const& _shaderUniformVariant)
     {
         ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
         *uniformVariant = _shaderUniformVariant;
     }
-
+        
     //////////////////////////////////////////
     void Material::setUniform(ShaderUniformVariant const& _uniformVariant)
     {

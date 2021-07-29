@@ -172,7 +172,7 @@
 #    if (MAZE_ARCH == MAZE_ARCH_X64)
 #        include <crtdbg.h>
 #        if (MAZE_DEBUG)
-#            define MAZE_BP_IF(__condition) if (__condition) { _CrtDbgBreak(); }
+#            define MAZE_BP_IF(__condition) if (__condition) { if (IsDebuggerPresent()) { _CrtDbgBreak(); } }
 #        else
 #            define MAZE_BP_IF(__condition) if (__condition) { __debugbreak(); }
 #        endif

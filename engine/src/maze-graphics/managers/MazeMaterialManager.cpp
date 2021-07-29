@@ -168,6 +168,7 @@ namespace Maze
         renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getUVShader());
         renderPass->setDepthWriteEnabled(true);
         renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
+        renderPass->setCullMode(CullMode::Back);
         renderPass->setRenderQueueIndex(2000);
         addMaterial(m_uvMaterial);
 
@@ -177,6 +178,7 @@ namespace Maze
         renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getNormalShader());
         renderPass->setDepthWriteEnabled(true);
         renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
+        renderPass->setCullMode(CullMode::Back);
         renderPass->setRenderQueueIndex(2000);
         addMaterial(m_normalMaterial);
                 
@@ -188,8 +190,9 @@ namespace Maze
         renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
         renderPass->setDepthWriteEnabled(false);
         renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
+        renderPass->setCullMode(CullMode::Back);
         renderPass->setRenderQueueIndex(3000);
-        m_colorMaterial->setUniform("u_color", Vec4DF(1.0f, 1.0f, 1.0f, 1.0f));
+        m_colorMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
         addMaterial(m_colorMaterial);
 
         m_colorTextureMaterial = Material::Create(m_renderSystemRaw);
@@ -200,8 +203,9 @@ namespace Maze
         renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
         renderPass->setDepthWriteEnabled(false);
         renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
+        renderPass->setCullMode(CullMode::Back);
         renderPass->setRenderQueueIndex(3000);
-        m_colorTextureMaterial->setUniform("u_color", Vec4DF(1.0f, 1.0f, 1.0f, 1.0f));
+        m_colorTextureMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
         m_colorTextureMaterial->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteTexture());
         m_colorTextureMaterial->setUniform("u_baseMapST", Vec4DF(1.0f, 1.0f, 0.0f, 0.0f));
         addMaterial(m_colorTextureMaterial);
@@ -214,9 +218,10 @@ namespace Maze
         renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
         renderPass->setDepthWriteEnabled(false);
         renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
+        renderPass->setCullMode(CullMode::Back);
         renderPass->setRenderQueueIndex(3000);
         m_colorTextureCustomUVMaterial->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteTexture());
-        m_colorTextureCustomUVMaterial->setUniform("u_color", Vec4DF(1.0f, 1.0f, 1.0f, 1.0f));
+        m_colorTextureCustomUVMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
 
         m_colorHDRMaterial = Material::Create(m_renderSystemRaw);
         m_colorHDRMaterial->setName("ColorHDR");
@@ -226,8 +231,9 @@ namespace Maze
         renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
         renderPass->setDepthWriteEnabled(false);
         renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
+        renderPass->setCullMode(CullMode::Back);
         renderPass->setRenderQueueIndex(3000);
-        m_colorHDRMaterial->setUniform("u_color", Vec4DF(1.0f, 1.0f, 1.0f, 1.0f));
+        m_colorHDRMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
         m_colorHDRMaterial->setUniform("u_intensity", 0.0f);
 
         m_hsvRectMaterial = Material::Create(m_renderSystemRaw);
@@ -248,6 +254,7 @@ namespace Maze
         renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
         renderPass->setDepthWriteEnabled(false);
         renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
+        renderPass->setCullMode(CullMode::Back);
         renderPass->setRenderQueueIndex(3000);
 
         m_debugGridMaterial = Material::Create(m_renderSystemRaw);
@@ -257,9 +264,10 @@ namespace Maze
         renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
         renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
         renderPass->setDepthWriteEnabled(false);
-        renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
+        renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
+        renderPass->setCullMode(CullMode::Back);
         renderPass->setRenderQueueIndex(3000);
-        m_debugGridMaterial->setUniform("u_color", Vec4DF(1.0f, 1.0f, 1.0f, 1.0f));
+        m_debugGridMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
 
         m_debugAxisMaterial = Material::Create(m_renderSystemRaw);
         m_debugAxisMaterial->setName("DebugAxis");
@@ -268,9 +276,10 @@ namespace Maze
         renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
         renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
         renderPass->setDepthWriteEnabled(false);
-        renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
+        renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
+        renderPass->setCullMode(CullMode::Back);
         renderPass->setRenderQueueIndex(3000);
-        m_debugAxisMaterial->setUniform("u_color", Vec4DF(1.0f, 1.0f, 1.0f, 1.0f));
+        m_debugAxisMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
 
 
         m_skyboxMaterial = Material::Create(m_renderSystemRaw);
@@ -281,10 +290,30 @@ namespace Maze
         renderPass->setBlendDestFactor(BlendFactor::Zero);
         renderPass->setDepthWriteEnabled(false);
         renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
+        renderPass->setCullMode(CullMode::Back);
         renderPass->setRenderQueueIndex(1000);
-        m_skyboxMaterial->setUniform("u_color", Vec4DF(1.0f, 1.0f, 1.0f, 1.0f));
+        m_skyboxMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
         m_skyboxMaterial->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteCubeTexture());
         addMaterial(m_skyboxMaterial);
+
+
+        m_specularMaterial = Material::Create(m_renderSystemRaw);
+        m_specularMaterial->setName("Specular");
+        renderPass = m_specularMaterial->createRenderPass();
+        renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getSpecularShader());
+        renderPass->setBlendSrcFactor(BlendFactor::One);
+        renderPass->setBlendDestFactor(BlendFactor::Zero);
+        renderPass->setDepthWriteEnabled(true);
+        renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
+        renderPass->setCullMode(CullMode::Back);
+        renderPass->setRenderQueueIndex(2000);
+        m_specularMaterial->setUniform("u_baseMapST", Vec4DF(1.0f, 1.0f, 0.0f, 0.0f));
+        m_specularMaterial->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteTexture());
+        m_specularMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
+        m_specularMaterial->setUniform("u_ambientLightColor", ColorF128(0.1f, 0.1f, 0.1f, 1.0f));
+        m_specularMaterial->setUniform("u_shininess", 0.1f);
+        m_specularMaterial->setUniform("u_specularColor", ColorF128(0.3f, 0.3f, 0.3f, 1.0f));
+        addMaterial(m_specularMaterial);
     }
 
     //////////////////////////////////////////

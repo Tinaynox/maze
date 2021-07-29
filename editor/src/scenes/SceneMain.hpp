@@ -102,6 +102,7 @@ namespace Maze
 
     protected:
         Camera3DPtr m_camera3D;
+        Vec3DF m_camera3DTargetPosition = Vec3DF::c_zero;
         CanvasPtr m_mainCanvas;
 
         CanvasPtr m_topMenuBarCanvas;

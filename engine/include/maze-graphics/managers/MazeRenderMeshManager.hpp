@@ -65,6 +65,9 @@ namespace Maze
         //////////////////////////////////////////
         static void Initialize(RenderMeshManagerPtr& _renderMeshManager, RenderSystemPtr const& _renderSystem);
 
+        //////////////////////////////////////////
+        static RenderMeshManagerPtr const& GetCurrentInstancePtr();
+
 
         //////////////////////////////////////////
         inline RenderMeshPtr const& getDefaultQuadMesh() const { return m_defaultQuadMesh; }
