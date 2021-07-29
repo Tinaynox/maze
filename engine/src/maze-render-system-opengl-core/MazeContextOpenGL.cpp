@@ -416,7 +416,7 @@ namespace Maze
         }
 #endif
 
-        if (getExtensionsRaw()->getSupportArbBufferStorage())
+        if (getExtensionsRaw()->getSupportArbBufferStorage() && 0) // #TODO: UniformTexture streams
         {
             Debug::Log("Model Matrices Arch: Uniform Texture");
             m_modelMatricesArchitecture = ModelMatricesArchitectureOpenGL::UniformTexture;
