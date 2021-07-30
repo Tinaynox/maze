@@ -119,6 +119,8 @@ namespace Maze
         Mat4DF const& _particleSystemWorldTransform)
     {
         Mat4DF invParticleSystemWorldTransform = _particleSystemWorldTransform.inversedAffineCopy();
+        invParticleSystemWorldTransform[0][3] = 0.0f;
+        invParticleSystemWorldTransform[1][3] = 0.0f;
         
         // Life
         {

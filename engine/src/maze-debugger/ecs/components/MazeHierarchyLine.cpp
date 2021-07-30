@@ -53,6 +53,7 @@
 #include "maze-debugger/layout/MazeDebuggerLayout.hpp"
 #include "maze-debugger/scenes/SceneDebugEditor.hpp"
 #include "maze-debugger/managers/MazeSelectionManager.hpp"
+#include "maze-debugger/managers/MazeDebuggerManager.hpp"
 #include "maze-debugger/helpers/MazeDebuggerHelper.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
@@ -200,6 +201,10 @@ namespace Maze
                     EntityId entityId = (EntityId)(reinterpret_cast<Size>(getUserData()));
 
                     EntityPtr const& entity = EntityManager::GetInstancePtr()->getDefaultWorldRaw()->getEntityById(entityId);
+
+                    if (!entity)
+                        return;
+
                     EntityWPtr entityWeak = entity;
 
                     _menuListTree->addItem(
@@ -217,7 +222,7 @@ namespace Maze
                     if (transform3D)
                     {
                         _menuListTree->addItem(
-                            "Create 3D",
+                            "Add Child/3D/Empty",
                             [this, transform3D](String const& _text)
                             {
                                 EntityPtr newEntity = DebuggerHelper::CreateEntity3D("Entity");
@@ -232,7 +237,7 @@ namespace Maze
                         if (transform2D)
                         {
                             _menuListTree->addItem(
-                                "Create 2D",
+                                "Add Child/2D/Empty",
                                 [this, transform2D](String const& _text)
                                 {
                                     EntityPtr newEntity = DebuggerHelper::CreateEntity2D("Entity");
@@ -243,6 +248,30 @@ namespace Maze
                         }
                     }
                 
+                    DebuggerManager::GetInstancePtr()->eventHierarchyLineEntityContextMenu(_menuListTree, entity.get());
+                }
+                else
+                if (m_type == HierarchyLineType::Scene)
+                {
+                    ECSScene* ecsScene = static_cast<ECSScene*>(getUserData());
+
+                    _menuListTree->addItem(
+                        "Add Child/3D/Empty",
+                        [ecsScene](String const& _text)
+                        {
+                            EntityPtr newEntity = ecsScene->createEntity("Entity");
+                            newEntity->ensureComponent<Transform3D>();
+                        });
+
+                    _menuListTree->addItem(
+                        "Add Child/2D/Empty",
+                        [ecsScene](String const& _text)
+                        {
+                            EntityPtr newEntity = ecsScene->createEntity("Entity");
+                            newEntity->ensureComponent<Transform2D>();
+                        });
+
+                    DebuggerManager::GetInstancePtr()->eventHierarchyLineSceneContextMenu(_menuListTree, ecsScene);
                 }
             });
     }

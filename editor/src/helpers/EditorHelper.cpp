@@ -227,6 +227,8 @@ namespace Maze
             light3D->setColor(ColorU32(255, 244, 214));
             light3D->getTransform()->setLocalDirection(0.377f, -0.777f, 0.577f);
 
+            light3D->getTransform()->setLocalY(5.0f);
+
             return gameObject;
         }
 

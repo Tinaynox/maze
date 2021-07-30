@@ -51,6 +51,8 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Component);
     MAZE_USING_SHARED_PTR(GizmosSystem);
     MAZE_USING_SHARED_PTR(ComponentSystem);
+    MAZE_USING_SHARED_PTR(MenuListTree2D);
+    MAZE_USING_SHARED_PTR(ECSScene);
 
 
     //////////////////////////////////////////
@@ -105,6 +107,12 @@ namespace Maze
             Entity* _entity,
             ComponentPtr const& _component,
             GizmosDrawer* _drawer);
+
+    public:
+
+        //////////////////////////////////////////
+        MultiDelegate<MenuListTree2DPtr const&, Entity*> eventHierarchyLineEntityContextMenu;
+        MultiDelegate<MenuListTree2DPtr const&, ECSScene*> eventHierarchyLineSceneContextMenu;
 
     protected:
 

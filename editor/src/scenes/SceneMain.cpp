@@ -83,6 +83,7 @@
 #include "maze-debugger/ecs/components/MazePreviewController.hpp"
 #include "maze-debugger/ecs/components/MazeDebugGridRenderer.hpp"
 #include "maze-debugger/helpers/MazeDebuggerHelper.hpp"
+#include "maze-debugger/managers/MazeDebuggerManager.hpp"
 #include "ecs/components/EditorHierarchyController.hpp"
 #include "ecs/components/EditorMainCanvasController.hpp"
 #include "Editor.hpp"
@@ -359,6 +360,7 @@ namespace Maze
             m_topMenuBarCanvas->setRenderTarget(m_renderTarget);
             m_topMenuBarCanvas->setSortOrder(-100000);
 
+            // Menu Bar
             MenuBar2DPtr menuBar = UIHelper::CreateDefaultMenuBarList(
                 Vec2DF((F32)renderWindow->getRenderTargetWidth(), EditorLayout::c_menuBarHeight + 1),
                 Vec2DF::c_zero,
@@ -367,33 +369,132 @@ namespace Maze
                 Vec2DF::c_zero,
                 Vec2DF::c_zero);
             menuBar->getEntityRaw()->ensureComponent<SizePolicy2D>();
+            
+            menuBar->addOption(
+                "File", "Save",
+                [](String const& _text) { EditorHelper::Save(); });
+            menuBar->addOption(
+                "File", "Save As...",
+                [](String const& _text) { EditorHelper::SaveAs(); });
+            menuBar->addOption(
+                "File", "Load",
+                [](String const& _text) { EditorHelper::Load(); });
+            menuBar->addOption(
+                "File", "Clear",
+                [](String const& _text) { EditorHelper::Clear(); });
+            menuBar->addOption(
+                "File", "Exit",
+                [](String const& _text) { Editor::GetInstancePtr()->getMainRenderWindow()->getWindow()->close(); });
 
-            // menuBar->addOption("File", "New Scene", [](String const& _text) { Log("New Scene"); });
-            // menuBar->addOption("File", "Open Scene", [](String const& _text) { Log("Open Scene"); });
-            menuBar->addOption("File", "Save", [](String const& _text) { EditorHelper::Save(); });
-            menuBar->addOption("File", "Save As...", [](String const& _text) { EditorHelper::SaveAs(); });
-            menuBar->addOption("File", "Load", [](String const& _text) { EditorHelper::Load(); });
-            menuBar->addOption("File", "Clear", [](String const& _text) { EditorHelper::Clear(); });
-            menuBar->addOption("File", "Exit", [](String const& _text) { Editor::GetInstancePtr()->getMainRenderWindow()->getWindow()->close(); });
+            menuBar->addOption(
+                "Edit", "Play",
+                [](String const& _text) { Debug::Log("Play"); });
+            menuBar->addOption(
+                "Edit", "Pause",
+                [](String const& _text) { Debug::Log("Pause"); });
 
-            menuBar->addOption("Edit", "Play", [](String const& _text) { Debug::Log("Play"); });
-            menuBar->addOption("Edit", "Pause", [](String const& _text) { Debug::Log("Pause"); });
+            menuBar->addOption(
+                "Edit", "Create/Prefab/2D",
+                [](String const& _text) { EditorHelper::CreateNewPrefab2D(); });
+            menuBar->addOption(
+                "Edit", "Create/Prefab/3D",
+                [](String const& _text) { EditorHelper::CreateNewPrefab3D(); });
 
-            menuBar->addOption("Edit", "Create/Prefab/2D", [](String const& _text) { EditorHelper::CreateNewPrefab2D(); });
-            menuBar->addOption("Edit", "Create/Prefab/3D", [](String const& _text) { EditorHelper::CreateNewPrefab3D(); });
-
-            // menuBar->addOption("Entity", "Create/Empty", [](String const& _text) { EditorHelper::CreateEntity("Entity"); });
-            menuBar->addOption("Entity", "Create/2D/Empty", [](String const& _text) { EditorHelper::CreateEntity2D("Entity"); });
-            menuBar->addOption("Entity", "Create/3D/Empty", [](String const& _text) { EditorHelper::CreateEntity3D("Entity"); });
-            menuBar->addOption("Entity", "Create/3D/Light/Directional Light", [](String const& _text) { EditorHelper::CreateDirectionalLight("Directional Light"); });
-            menuBar->addOption("Entity", "Create/3D/Mesh/Cube", [](String const& _text) { EditorHelper::CreateCube("Cube"); });
-            menuBar->addOption("Entity", "Create/3D/Mesh/Sphere", [](String const& _text) { EditorHelper::CreateSphere("Sphere"); });
-            menuBar->addOption("Entity", "Create/3D/FX/Particle System", [](String const& _text) { EditorHelper::CreateNewParticleSystem3D("Particle System"); });
+            menuBar->addOption(
+                "Entity", "Create/2D/Empty",
+                [](String const& _text) { EditorHelper::CreateEntity2D("Entity"); });
+            menuBar->addOption(
+                "Entity", "Create/3D/Empty",
+                [](String const& _text) { EditorHelper::CreateEntity3D("Entity"); });
+            menuBar->addOption(
+                "Entity", "Create/3D/Light/Directional",
+                [](String const& _text) { EditorHelper::CreateDirectionalLight("Directional Light"); });
+            menuBar->addOption(
+                "Entity", "Create/3D/Mesh/Cube",
+                [](String const& _text) { EditorHelper::CreateCube("Cube"); });
+            menuBar->addOption(
+                "Entity", "Create/3D/Mesh/Sphere",
+                [](String const& _text) { EditorHelper::CreateSphere("Sphere"); });
+            menuBar->addOption(
+                "Entity", "Create/3D/FX/Particle System",
+                [](String const& _text) { EditorHelper::CreateNewParticleSystem3D("Particle System"); });
                         
 
-            menuBar->addOption("Component", "Add", [](String const& _text) { Debug::Log("Add"); });
+            menuBar->addOption("Component", "Add",
+                [](String const& _text) { Debug::Log("Add"); });
 
-            menuBar->addOption("Help", "About", [](String const& _text) { Debug::Log("About"); });
+            menuBar->addOption("Help", "About",
+                [](String const& _text) { Debug::Log("About"); });
+
+
+            // Hierarchy line - Entity
+            DebuggerManager::GetInstancePtr()->eventHierarchyLineEntityContextMenu.subscribe(
+                [](MenuListTree2DPtr const& _menuListTree, Entity* _entity)
+                {                 
+                    Transform3D* transform3D = _entity->getComponentRaw<Transform3D>();
+                    if (transform3D)
+                    {
+                        _menuListTree->addItem(
+                            "Add Child/3D/Light/Directional",
+                            [_entity, transform3D](String const& _text)
+                            {
+                                EntityPtr child = EditorHelper::CreateDirectionalLight("Directional Light");
+                                child->ensureComponent<Transform3D>()->setParent(transform3D->getSharedPtr());
+                            });
+                        _menuListTree->addItem(
+                            "Add Child/3D/Mesh/Cube",
+                            [_entity, transform3D](String const& _text)
+                            {
+                                EntityPtr child = EditorHelper::CreateCube("Cube");
+                                child->ensureComponent<Transform3D>()->setParent(transform3D->getSharedPtr());
+                            });
+                        _menuListTree->addItem(
+                            "Add Child/3D/Mesh/Sphere",
+                            [_entity, transform3D](String const& _text)
+                            {
+                                EntityPtr child = EditorHelper::CreateCube("Sphere");
+                                child->ensureComponent<Transform3D>()->setParent(transform3D->getSharedPtr());
+                            });
+                        _menuListTree->addItem(
+                            "Add Child/3D/FX/Particle System",
+                            [_entity, transform3D](String const& _text)
+                            {
+                                EntityPtr child = EditorHelper::CreateNewParticleSystem3D("Particle System");
+                                child->ensureComponent<Transform3D>()->setParent(transform3D->getSharedPtr());
+                            });
+                    }
+                    
+                });
+
+            // Hierarchy line - Scene
+            DebuggerManager::GetInstancePtr()->eventHierarchyLineSceneContextMenu.subscribe(
+                [](MenuListTree2DPtr const& _menuListTree, ECSScene* _scene)
+                {
+                    _menuListTree->addItem(
+                        "Add Child/3D/Light/Directional",
+                        [](String const& _text)
+                        {
+                            EditorHelper::CreateDirectionalLight("Directional Light");
+                        });
+                    _menuListTree->addItem(
+                        "Add Child/3D/Mesh/Cube",
+                        [](String const& _text)
+                        {
+                            EditorHelper::CreateCube("Cube");
+                        });
+                    _menuListTree->addItem(
+                        "Add Child/3D/Mesh/Sphere",
+                        [](String const& _text)
+                        {
+                            EditorHelper::CreateCube("Sphere");
+                        });
+                    _menuListTree->addItem(
+                        "Add Child/3D/FX/Particle System",
+                        [](String const& _text)
+                        {
+                            EditorHelper::CreateNewParticleSystem3D("Particle System");
+                        });
+                });
         }
 
         {

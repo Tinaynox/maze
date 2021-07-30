@@ -311,6 +311,7 @@ namespace Maze
             Entity* entity = m_removingEntities.front();
             m_removingEntities.pop_front();
             
+            entity->setECSScene(nullptr);
             entity->setECSWorld(nullptr);
             entity->setRemoving(false);
 

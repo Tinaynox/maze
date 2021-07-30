@@ -142,7 +142,8 @@ namespace Maze
         m_renderBuffer = RenderBuffer::Create(
             {
                 m_canvas->getTransform()->getSize(),
-                PixelFormat::RGBA_U8
+                PixelFormat::RGBA_U8,
+                PixelFormat::DEPTH_U24
             });
 
         m_scene = SceneManager::GetInstancePtr()->loadScene<SceneDebugPreview>(true, m_renderBuffer);
