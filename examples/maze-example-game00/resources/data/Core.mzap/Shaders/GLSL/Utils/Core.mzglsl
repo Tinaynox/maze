@@ -34,6 +34,69 @@
 
 #endif
 
+
+//////////////////////////////////////////
+#if (MAZE_INSTANCE_STREAM_VIA_TEXTURE)
+    uniform sampler2D u_colorsStreamTexture;
+    uniform int u_colorsStreamTextureSize;
+    uniform int u_colorsStreamOffset;
+
+
+    //////////////////////////////////////////
+    vec4 GetColorStream(int instanceId)
+    {
+        int colorIndex = instanceId + u_colorsStreamOffset;
+        int r = colorIndex / u_colorsStreamTextureSize;
+        int c = colorIndex % u_colorsStreamTextureSize;
+
+        ivec2 pos = ivec2(c, r);
+    
+        return texelFetch(u_colorsStreamTexture, pos, 0).xyzw;
+    }
+
+#elif (MAZE_INSTANCE_STREAM_VIA_ARRAY)
+    uniform vec4 u_colorsStream[32];
+
+    //////////////////////////////////////////
+    vec4 GetColorStream(int instanceId)
+    {
+        return u_colorsStream[instanceId];
+    }
+
+#endif
+
+
+//////////////////////////////////////////
+#if (MAZE_INSTANCE_STREAM_VIA_TEXTURE)
+    uniform sampler2D u_uvStreamTexture;
+    uniform int u_uvStreamTextureSize;
+    uniform int u_uvStreamOffset;
+
+
+    //////////////////////////////////////////
+    vec4 GetUVStream(int instanceId)
+    {
+        int uvIndex = instanceId + u_uvStreamOffset;
+        int r = uvIndex / u_uvStreamTextureSize;
+        int c = uvIndex % u_uvStreamTextureSize;
+
+        ivec2 pos = ivec2(c, r);
+    
+        return texelFetch(u_uvStreamTexture, pos, 0).xyzw;
+    }
+
+#elif (MAZE_INSTANCE_STREAM_VIA_ARRAY)
+    uniform vec4 u_uvStream[32];
+
+    //////////////////////////////////////////
+    vec4 GetUVStream(int instanceId)
+    {
+        return u_uvStream[instanceId];
+    }
+
+#endif
+
+
 //////////////////////////////////////////
 vec3 SampleNormalTS(
     sampler2D normalMap,

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Material>
     <ShaderUniformVariant name="u_baseMap" type="UniformTexture2D" value="ViperRed00.mztexture" />
-    <ShaderUniformVariant name="u_color" type="UniformVec4DF" value="1.0;1.0;1.0;1.0" />
+    <ShaderUniformVariant name="u_color" type="UniformColorF128" value="1.0;1.0;1.0;1.0" />
     <ShaderUniformVariant name="u_wavesNoise" type="UniformF32" value="15.0" />
     <ShaderUniformVariant name="u_dissolveProgress" type="UniformF32" value="0.5" />
     <ShaderUniformVariant name="u_edgeWidth" type="UniformF32" value="0.05" />
-    <ShaderUniformVariant name="u_edgeColor" type="UniformVec4DF" value="1.0;0.62;0.0;1.0" />
+    <ShaderUniformVariant name="u_edgeColor" type="UniformColorF128" value="1.4;0.9;0.0;1.0" />
     <RenderPass 
         passType="Default"
         renderQueueIndex="2000"

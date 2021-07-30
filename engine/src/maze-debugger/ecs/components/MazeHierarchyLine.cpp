@@ -218,9 +218,23 @@ namespace Maze
                             }
                         });
 
+
                     Transform3D* transform3D = entity->getComponentRaw<Transform3D>();
                     if (transform3D)
                     {
+                        _menuListTree->addItem(
+                            "Duplicate",
+                            [this, entityWeak](String const& _text)
+                            {
+                                EntityPtr entity = entityWeak.lock();
+                                if (entity)
+                                {
+                                    EntityPtr entityCopy = entity->createCopy();
+                                    entityCopy->ensureComponent<Transform3D>()->setParent(
+                                        entity->ensureComponent<Transform3D>()->getParent());
+                                }
+                            });
+
                         _menuListTree->addItem(
                             "Add Child/3D/Empty",
                             [this, transform3D](String const& _text)

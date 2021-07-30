@@ -332,7 +332,7 @@ namespace Maze
 
             if (!fullPath.empty())
             {
-                EntityPtr const& prefab = EntitySerializationManager::GetInstancePtr()->loadPrefabFromXMLFile(fullPath);
+                EntityPtr prefab = EntitySerializationManager::GetInstancePtr()->loadPrefabFromXMLFile(fullPath);
                 EditorPrefabManager::GetInstancePtr()->setPrefabEntity(prefab);
                 EditorManager::GetInstancePtr()->setMode(EditorMode::Prefab);
 

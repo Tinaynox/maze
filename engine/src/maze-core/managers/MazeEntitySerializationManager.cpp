@@ -199,7 +199,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    EntityPtr EntitySerializationManager::loadPrefabFromXMLFile(String const& _fileFullPath) const
+    EntityPtr EntitySerializationManager::loadPrefabFromXMLFile(
+        String const& _fileFullPath,
+        ECSWorld* _world,
+        ECSScene* _scene) const
     {
         static EntityPtr nullPointer;
 
@@ -226,11 +229,34 @@ namespace Maze
             return nullPointer;
         }
 
-        return loadPrefabFromXMLElement(rootNode->NextSibling()->ToElement());
+        return loadPrefabFromXMLElement(rootNode->NextSibling()->ToElement(), _world, _scene);
     }
 
     //////////////////////////////////////////
-    EntityPtr EntitySerializationManager::loadPrefabFromXMLElement(tinyxml2::XMLElement* _element) const
+    EntityPtr EntitySerializationManager::loadPrefab(
+        String const& _assetFileName,
+        ECSWorld* _world,
+        ECSScene* _scene) const
+    {
+        tinyxml2::XMLDocument doc;
+        if (!AssetManager::GetInstancePtr()->openXMLDocumentAssetFile(doc, _assetFileName, true))
+            return nullptr;
+
+        tinyxml2::XMLNode* rootNode = doc.FirstChild();
+        if (!rootNode)
+        {
+            MAZE_ERROR("File '%s' loading error - empty root node!", _assetFileName.c_str());
+            return nullptr;
+        }
+
+        return loadPrefabFromXMLElement(rootNode->NextSibling()->ToElement(), _world, _scene);
+    }
+
+    //////////////////////////////////////////
+    EntityPtr EntitySerializationManager::loadPrefabFromXMLElement(
+        tinyxml2::XMLElement* _element,
+        ECSWorld* _world,
+        ECSScene* _scene) const
     {
         static EntityPtr nullPointer;
 
@@ -244,7 +270,11 @@ namespace Maze
         if (rootIndexAttribute == nullptr)
             return nullPointer;
 
-        ECSScenePtr const& scene = SceneManager::GetInstancePtr()->getMainScene();
+        ECSScene* scene = _scene    ? _scene 
+                                    : (_world ? nullptr : SceneManager::GetInstancePtr()->getMainScene().get());
+
+        ECSWorld* world = _world    ? _world 
+                                    : (scene ? scene->getWorld() : nullptr);
 
         Map<S32, EntityPtr> entities;
         Map<S32, ComponentPtr> components;
@@ -274,7 +304,7 @@ namespace Maze
 
                 EntityPtr entity = Entity::Create();
                 entity->setAwakeForbidden(true);
-                scene->getWorld()->addEntity(entity);
+                world->addEntity(entity);
 
                 entities[entityIndex] = entity;
 
@@ -411,7 +441,7 @@ namespace Maze
 
         // Add to ECS scene
         for (auto entityData : entities)
-            entityData.second->setECSScene(scene.get());
+            entityData.second->setECSScene(scene);
 
         // Awake
         for (auto entityData : entities)

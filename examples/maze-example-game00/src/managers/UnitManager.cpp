@@ -32,6 +32,7 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
+#include "maze-core/managers/MazeEntitySerializationManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeRotor3D.hpp"
@@ -163,7 +164,7 @@ namespace Maze
             spaceObject->setDamage(60.0f);
             spaceObject->setWeaponPoint({ 0.95f, -0.275f });
             spaceObject->setProjectileAvatar(ProjectileAvatarType::Plasma00);
-            spaceObject->setEngineForce(Vec2DF(80.0f, 60.0f));
+            spaceObject->setEngineForce(Vec2DF(80.0f, 60.0f) * 2.5f);
 
 
             // Avatar
@@ -202,6 +203,21 @@ namespace Maze
                         spaceshipMaterial,
                         spaceshipDeathMaterial);
                 }
+
+                // FX
+                {
+                    EntityPtr exhaust00 = EntitySerializationManager::GetInstancePtr()->loadPrefab(
+                        "Exhaust01.mzprefab",
+                        world);
+                    Transform3DPtr exhaustTransform = exhaust00->ensureComponent<Transform3D>();
+                    exhaustTransform->setParent(avatarTransform);
+                    exhaustTransform->setLocalPosition(0.5f, -0.175f, -0.95f);
+
+                    EntityPtr exhaust01 = exhaust00->createCopy();
+                    exhaustTransform = exhaust01->ensureComponent<Transform3D>();
+                    exhaustTransform->setParent(avatarTransform);
+                    exhaustTransform->setLocalPosition(-0.5f, -0.175f, -0.95f);
+                }
             }
 
 
@@ -209,7 +225,7 @@ namespace Maze
             
             boxCollider->setSize(1.8f, 0.55f);
 
-            spaceObject->getRigidbody2D()->setLinearDamping(6.0f);
+            spaceObject->getRigidbody2D()->setLinearDamping(16.0f);
 
             m_spaceshipPrefabs[SpaceObjectAvatarType::PlayerShip000] = entity;
         }

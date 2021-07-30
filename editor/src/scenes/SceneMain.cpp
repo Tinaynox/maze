@@ -174,8 +174,14 @@ namespace Maze
         if (!Editor::GetInstancePtr()->getMainRenderWindow()->getFocused())
             return;
 
+        Rect2DF viewportRect = m_camera3D->getViewport();
+        viewportRect.position *= (Vec2DF)m_camera3D->getRenderTarget()->getRenderTargetSize();
+        viewportRect.size *= (Vec2DF)m_camera3D->getRenderTarget()->getRenderTargetSize();
+
+        AABB2D aabb = AABB2D::FromRect2D(viewportRect);
+
 #if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
-        if (m_camera3D)
+        if (m_camera3D && aabb.contains(InputManager::GetInstancePtr()->getCursorPosition(0)))
         {
             Vec3DF cameraForwardDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3DF::c_unitZ;
             Vec3DF cameraRightDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3DF::c_unitX;

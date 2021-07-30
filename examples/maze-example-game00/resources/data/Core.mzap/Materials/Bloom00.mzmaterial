@@ -2,7 +2,7 @@
 <Material>
     <ShaderUniformVariant name="u_baseMap" type="UniformTexture2D" value="white" />
     <ShaderUniformVariant name="u_bloomSpread" type="UniformF32" value="1.0" />
-    <ShaderUniformVariant name="u_bloomThreshold" type="UniformF32" value="1.0" />
+    <ShaderUniformVariant name="u_bloomThreshold" type="UniformF32" value="1.5" />
     <RenderPass 
         passType="Default"
         renderQueueIndex="3000"
