@@ -206,6 +206,38 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
+    inline Mat4D<TValue> Mat4D<TValue>::CreateRotationMatrix(F32 _angleX, F32 _angleY, F32 _angleZ)
+    {
+        // CCW rotation
+        F32 cx = cosf(_angleX);
+        F32 sx = sinf(_angleX);
+
+        F32 cy = cosf(_angleY);
+        F32 sy = sinf(_angleY);
+
+        F32 cz = cosf(_angleZ);
+        F32 sz = sinf(_angleZ);
+
+        return 
+            Mat4D(
+                (TValue)1, (TValue)0, (TValue)0, (TValue)0,
+                (TValue)0, (TValue)cx, (TValue)-sx, (TValue)0,
+                (TValue)0, (TValue)sx, (TValue)cx, (TValue)0,
+                (TValue)0, (TValue)0, (TValue)0, (TValue)1) *
+            Mat4D(
+                (TValue)cy, (TValue)0, (TValue)sy, (TValue)0,
+                (TValue)0, (TValue)1, (TValue)0, (TValue)0,
+                (TValue)-sy, (TValue)0, (TValue)cy, (TValue)0,
+                (TValue)0, (TValue)0, (TValue)0, (TValue)1) *
+            Mat4D(
+                (TValue)cz, (TValue)-sz, (TValue)0, (TValue)0,
+                (TValue)sz, (TValue)cz, (TValue)0, (TValue)0,
+                (TValue)0, (TValue)0, (TValue)1, (TValue)0,
+                (TValue)0, (TValue)0, (TValue)0, (TValue)1);
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
     inline MAZE_CONSTEXPR Mat4D<TValue> Mat4D<TValue>::CreateScaleMatrix(TValue _x, TValue _y, TValue _z)
     {
         return Mat4D(
@@ -645,14 +677,16 @@ namespace Maze
     template <class TValue>
     inline MAZE_CONSTEXPR14 Vec3D<TValue> Mat4D<TValue>::getAffineRotationEulerAngles() const
     {
+        Vec3D<TValue> invAffineScale = 1.0f / getAffineScale();
+
         Vec3D<TValue> euler;
-        TValue m31 = this->m[2][0];
-        TValue m11 = this->m[0][0];
-        TValue m12 = this->m[0][1];
-        TValue m13 = this->m[0][2];
-        TValue m32 = this->m[2][1];
-        TValue m33 = this->m[2][2];
-        TValue m21 = this->m[1][0];
+        TValue m11 = this->m[0][0] * invAffineScale.x;
+        TValue m12 = this->m[0][1] * invAffineScale.y;
+        TValue m13 = this->m[0][2] * invAffineScale.z;
+        TValue m21 = this->m[1][0] * invAffineScale.x;
+        TValue m31 = this->m[2][0] * invAffineScale.x;
+        TValue m32 = this->m[2][1] * invAffineScale.y;
+        TValue m33 = this->m[2][2] * invAffineScale.z;
 
         if (Math::Abs(m31) >= (TValue)1.0)
         {

@@ -116,6 +116,15 @@ namespace Maze
         static inline Mat4D CreateRotationZMatrix(F32 _angle);
 
         //////////////////////////////////////////
+        static inline Mat4D CreateRotationMatrix(F32 _angleX, F32 _angleY, F32 _angleZ);
+
+        //////////////////////////////////////////
+        static inline Mat4D CreateRotationMatrix(Vec3DF const& _angles)
+        {
+            return CreateRotationMatrix(_angles.x, _angles.y, _angles.z);
+        }
+
+        //////////////////////////////////////////
         static inline MAZE_CONSTEXPR Mat4D CreateScaleMatrix(TValue _x, TValue _y, TValue _z = 1);
 
         //////////////////////////////////////////

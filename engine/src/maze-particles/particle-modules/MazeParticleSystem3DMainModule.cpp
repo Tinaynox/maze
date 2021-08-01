@@ -56,7 +56,8 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, looped, true, getLooped, setLooped),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, prewarm, true, getPrewarm, setPrewarm),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, playOnAwake, true, getPlayOnAwake, setPlayOnAwake),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystemTransformPolicy, transformPolicy, ParticleSystemTransformPolicy::Local, getTransformPolicy, setTransformPolicy),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystemSimulationSpace, simulationSpace , ParticleSystemSimulationSpace::Local, getTransformPolicy, setTransformPolicy),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystemScalingMode, scalingMode, ParticleSystemScalingMode::Hierarchy, getScalingMode, setScalingMode),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystemParameterF32, lifetime, ParticleSystemParameterF32(), getLifetime, setLifetime),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystemParameterF32, size, ParticleSystemParameterF32(), getSize, setSize),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystemParameterColor, color, ParticleSystemParameterColor(), getColor, setColor),
@@ -121,6 +122,7 @@ namespace Maze
         Mat4DF invParticleSystemWorldTransform = _particleSystemWorldTransform.inversedAffineCopy();
         invParticleSystemWorldTransform[0][3] = 0.0f;
         invParticleSystemWorldTransform[1][3] = 0.0f;
+        Vec3DF gravityVector = invParticleSystemWorldTransform.transformAffine(Vec3DF::c_unitY);
         
         // Life
         {
@@ -190,7 +192,7 @@ namespace Maze
                 Particles3D::ParticleMovement& movement = _particles.accessMovement(i);
                 Vec3DF& direction = _particles.accessDirection(i);
                 movement.velocity = direction * speedValue;
-                movement.acceleration = invParticleSystemWorldTransform.transformAffine(Vec3DF::c_unitY) * gravityValue;
+                movement.acceleration = gravityVector * gravityValue;
             }
         }
     }

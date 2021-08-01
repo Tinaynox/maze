@@ -124,7 +124,7 @@ namespace Maze
 
         S32 aliveCount = 0;
 
-        if (ParticleSystemTransformPolicy::World == m_mainModule.getTransformPolicy())
+        if (ParticleSystemSimulationSpace::World == m_mainModule.getTransformPolicy())
         {
             aliveCount = updateEmitter(
                 _dt,
@@ -254,6 +254,8 @@ namespace Maze
             _last,
             _emitterTimePercent,
             m_mainModule.getTransformPolicy(),
+            m_mainModule.getScalingMode(),
+            m_transform->getLocalTransform(),
             m_transform->getWorldTransform());
 
         m_mainModule.updateInitial(
@@ -309,6 +311,8 @@ namespace Maze
         m_rendererModule.prepareToRender(
             m_particles,
             m_mainModule.getTransformPolicy(),
+            m_mainModule.getScalingMode(),
+            m_transform->getLocalTransform(),
             m_transform->getWorldTransform(),
             _cameraPosition,
             _cameraForward,

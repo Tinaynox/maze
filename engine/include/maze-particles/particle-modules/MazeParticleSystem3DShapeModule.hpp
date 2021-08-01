@@ -114,7 +114,9 @@ namespace Maze
             S32 _first,
             S32 _last,
             F32 _emitterTimePercent,
-            ParticleSystemTransformPolicy _transformPolicy,
+            ParticleSystemSimulationSpace _simulationSpace,
+            ParticleSystemScalingMode _scalingMode,
+            Mat4DF const& _particleSystemLocalTransform,
             Mat4DF const& _particleSystemWorldTransform);
 
 

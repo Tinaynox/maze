@@ -449,10 +449,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline ParticleSystemTransformPolicy getTransformPolicy() const { return m_transformPolicy; }
+        inline ParticleSystemSimulationSpace getTransformPolicy() const { return m_transformPolicy; }
 
         //////////////////////////////////////////
-        inline void setTransformPolicy(ParticleSystemTransformPolicy _value) { m_transformPolicy = _value; }
+        inline void setTransformPolicy(ParticleSystemSimulationSpace _value) { m_transformPolicy = _value; }
+
+        //////////////////////////////////////////
+        inline ParticleSystemScalingMode getScalingMode() const { return m_scalingMode; }
+
+        //////////////////////////////////////////
+        inline void setScalingMode(ParticleSystemScalingMode _value) { m_scalingMode = _value; }
 
 
         //////////////////////////////////////////
@@ -611,7 +617,8 @@ namespace Maze
         bool m_looped = true;
         bool m_prewarm = false;
         bool m_playOnAwake = true;
-        ParticleSystemTransformPolicy m_transformPolicy = ParticleSystemTransformPolicy::Local;
+        ParticleSystemSimulationSpace m_transformPolicy = ParticleSystemSimulationSpace::Local;
+        ParticleSystemScalingMode m_scalingMode = ParticleSystemScalingMode::Hierarchy;
 
         ParticleSystemParameterF32 m_lifetime = ParticleSystemParameterF32(1.0f);
         ParticleSystemParameterF32 m_size = ParticleSystemParameterF32(1.0f);

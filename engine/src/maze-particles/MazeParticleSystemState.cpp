@@ -35,7 +35,13 @@ namespace Maze
     MAZE_IMPLEMENT_ENUMCLASS(ParticleSystemState);
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_ENUMCLASS(ParticleSystemTransformPolicy);
+    MAZE_IMPLEMENT_ENUMCLASS(ParticleSystemSimulationSpace);
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_ENUMCLASS(ParticleSystemScalingMode);
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_ENUMCLASS(ParticleSystemRenderAlignment);
     
     
 } // namespace Maze

@@ -168,6 +168,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline ParticleSystemRenderAlignment getRenderAlignment() const { return m_renderAlignment; }
+
+        //////////////////////////////////////////
+        inline void setRenderAlignment(ParticleSystemRenderAlignment _value) { m_renderAlignment = _value; }
+
+
+        //////////////////////////////////////////
         void updateInitial(
             Particles3D& _particles,
             S32 _first,
@@ -184,7 +191,9 @@ namespace Maze
         //////////////////////////////////////////
         void prepareToRender(
             Particles3D& _particles,
-            ParticleSystemTransformPolicy _transformPolicy,
+            ParticleSystemSimulationSpace _transformPolicy,
+            ParticleSystemScalingMode _scalingMode,
+            Mat4DF const& _particleSystemLocalTransform,
             Mat4DF const& _particleSystemWorldTransform,
             Vec3DF const& _cameraPosition,
             Vec3DF const& _cameraForward,
@@ -208,6 +217,8 @@ namespace Maze
         S32 m_particlesMaxCount = 1000;
         RenderMeshPtr m_renderMesh;
         MaterialPtr m_material;
+
+        ParticleSystemRenderAlignment m_renderAlignment = ParticleSystemRenderAlignment::View;
 
         TextureSheetAnimation m_textureSheetAnimation;
     };

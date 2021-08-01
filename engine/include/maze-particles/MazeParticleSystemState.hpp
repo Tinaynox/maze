@@ -46,7 +46,18 @@ namespace Maze
         Ended);
 
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_2_API(MAZE_PARTICLES_API, ParticleSystemTransformPolicy,
+    MAZE_DECLARE_ENUMCLASS_2_API(MAZE_PARTICLES_API, ParticleSystemSimulationSpace,
+        Local,
+        World);
+
+    //////////////////////////////////////////
+    MAZE_DECLARE_ENUMCLASS_2_API(MAZE_PARTICLES_API, ParticleSystemScalingMode,
+        Hierarchy,
+        Local);
+
+    //////////////////////////////////////////
+    MAZE_DECLARE_ENUMCLASS_3_API(MAZE_PARTICLES_API, ParticleSystemRenderAlignment,
+        View,
         Local,
         World);
 

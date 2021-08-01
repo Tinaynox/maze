@@ -93,14 +93,36 @@ namespace Maze
         S32 _first,
         S32 _last,
         F32 _emitterTimePercent,
-        ParticleSystemTransformPolicy _transformPolicy,
+        ParticleSystemSimulationSpace _transformPolicy,
+        ParticleSystemScalingMode _scalingMode,
+        Mat4DF const& _particleSystemLocalTransform,
         Mat4DF const& _particleSystemWorldTransform)
     {
         ParticleSystem3DZoneEmissionPoint point;
 
+        Mat4DF directionTransformMat;
+
+        if (_transformPolicy == ParticleSystemSimulationSpace::World)
+        {
+            if (_scalingMode == ParticleSystemScalingMode::Hierarchy)
+            {
+                directionTransformMat = _particleSystemWorldTransform;
+                directionTransformMat[0][3] = 0.0f;
+                directionTransformMat[1][3] = 0.0f;
+                directionTransformMat[2][3] = 0.0f;
+            }
+            else
+            {
+                Vec3DF rotation = _particleSystemWorldTransform.getAffineRotationEulerAngles();
+                directionTransformMat = Mat4DF::CreateRotationMatrix(rotation);
+            }
+            
+            
+        }
+
         switch (_transformPolicy)
         {
-            case ParticleSystemTransformPolicy::Local:
+            case ParticleSystemSimulationSpace::Local:
             {
                 for (S32 i = _first; i < _last; i++)
                 {
@@ -111,13 +133,13 @@ namespace Maze
                 }
                 break;
             }
-            case ParticleSystemTransformPolicy::World:
+            case ParticleSystemSimulationSpace::World:
             {
                 for (S32 i = _first; i < _last; i++)
                 {
                     generateRandomPoint(point, _emitterPosition);
                     _particles.accessPosition(i) = point.position;
-                    _particles.accessDirection(i) = point.direction;
+                    _particles.accessDirection(i) = directionTransformMat.transformAffine(point.direction).normalizedCopy();
                     _particles.accessSeed(i) = rand() % c_particleSystemParametersCount;
                 }
                 break;

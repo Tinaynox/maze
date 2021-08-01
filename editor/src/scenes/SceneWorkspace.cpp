@@ -219,7 +219,7 @@ namespace Maze
 
         m_psTransform = ps->getTransform();
 
-        ps->getMainModule().setTransformPolicy(ParticleSystemTransformPolicy::World);
+        ps->getMainModule().setTransformPolicy(ParticleSystemSimulationSpace::World);
         // ps->getMainModule().getLifetime().setConstant(1.0f);
         ps->getMainModule().getLifetime().setConstant(5.0f);
         // ps->getMainModule().getSpeed().setConstant(1.35f);
