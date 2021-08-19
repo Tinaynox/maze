@@ -385,6 +385,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void ParticleSystem3D::play(bool _recursive)
+    {
+        play();
+
+        if (!_recursive)
+            return;
+
+        iterateChildParticleSystems(
+            [_recursive](ParticleSystem3D* _particleSystem)
+            {
+                _particleSystem->play(_recursive);
+            });
+        
+    }
+
+    //////////////////////////////////////////
     void ParticleSystem3D::stop()
     {
         m_time = 0.0f;
@@ -397,6 +413,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void ParticleSystem3D::stop(bool _recursive)
+    {
+        stop();
+
+        if (!_recursive)
+            return;
+
+        iterateChildParticleSystems(
+            [_recursive](ParticleSystem3D* _particleSystem)
+            {
+                _particleSystem->stop(_recursive);
+            });
+
+    }
+
+    //////////////////////////////////////////
     void ParticleSystem3D::restart()
     {
         stop();
@@ -404,9 +436,41 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void ParticleSystem3D::restart(bool _recursive)
+    {
+        restart();
+
+        if (!_recursive)
+            return;
+
+        iterateChildParticleSystems(
+            [_recursive](ParticleSystem3D* _particleSystem)
+            {
+                _particleSystem->restart(_recursive);
+            });
+
+    }
+
+    //////////////////////////////////////////
     void ParticleSystem3D::pause()
     {
         setState(ParticleSystemState::Waiting);
+    }
+
+    //////////////////////////////////////////
+    void ParticleSystem3D::pause(bool _recursive)
+    {
+        pause();
+
+        if (!_recursive)            
+            return;
+
+        iterateChildParticleSystems(
+            [_recursive](ParticleSystem3D* _particleSystem)
+            {
+                _particleSystem->pause(_recursive);
+            });
+
     }
 
     //////////////////////////////////////////
@@ -421,6 +485,18 @@ namespace Maze
         m_rendererModule.setRenderMesh(RenderMeshPtr());
     }
 
+    //////////////////////////////////////////
+    void ParticleSystem3D::iterateChildParticleSystems(std::function<void(ParticleSystem3D*)> _callback)
+    {
+        for (Transform3D* transform : m_transform->getChildren())
+        {
+            ParticleSystem3D* subParticleSystem = transform->getEntityRaw()->getComponentRaw<ParticleSystem3D>();
+            if (subParticleSystem)
+            {
+                _callback(subParticleSystem);
+            }
+        }
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

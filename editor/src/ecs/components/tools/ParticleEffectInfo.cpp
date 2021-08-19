@@ -57,6 +57,7 @@
 #include "maze-debugger/managers/MazeSelectionManager.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeScrollRect2D.hpp"
+#include "maze-ui/ecs/components/MazeToggleButton2D.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
 #include "managers/EditorManager.hpp"
@@ -129,7 +130,7 @@ namespace Maze
 
         m_transform->setAnchor(1.0f, 0.0f);
         m_transform->setPivot(1.0f, 0.0f);
-        m_transform->setSize(200.0f, 100.0f);
+        m_transform->setSize(200.0f, 120.0f);
         m_transform->setLocalPosition(-10.0f, 10.0f);
 
         
@@ -303,6 +304,35 @@ namespace Maze
             }
         }
 
+        {
+            {
+                SystemTextRenderer2DPtr text = SpriteHelper::CreateSystemText(
+                    "Recursive",
+                    8,
+                    HorizontalAlignment2D::Left,
+                    VerticalAlignment2D::Middle,
+                    Vec2DF(20.0f, 20.0f),
+                    Vec2DF(8.0f, yStart + textGap * 3.5f),
+                    GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getColorTextureMaterial(),
+                    backgroundSprite->getTransform(),
+                    m_transform->getEntityRaw()->getECSScene(),
+                    { 0.0f, 1.0f },
+                    { 0.0f, 1.0f });
+                text->setColor(ColorU32::c_black);
+            }
+
+            {
+                m_recursiveButton = UIHelper::CreateDefaultToggleButton(
+                    { 108.0f, yStart + textGap * 3.5f },
+                    backgroundSprite->getTransform(),
+                    m_transform->getEntityRaw()->getECSScene(),
+                    { 0.0f, 1.0f },
+                    { 0.0f, 1.0f });
+                m_recursiveButton->setChecked(true);
+
+            }
+        }
+
         updateActive();
     }
 
@@ -366,7 +396,7 @@ namespace Maze
             ParticleSystem3D* particleSystem = (*selectedEntities.begin())->getComponentRaw<ParticleSystem3D>();
             if (particleSystem)
             {
-                particleSystem->stop();
+                particleSystem->stop(m_recursiveButton->getChecked());
             }
         }
     }
@@ -381,7 +411,7 @@ namespace Maze
             ParticleSystem3D* particleSystem = (*selectedEntities.begin())->getComponentRaw<ParticleSystem3D>();
             if (particleSystem)
             {
-                particleSystem->play();
+                particleSystem->play(m_recursiveButton->getChecked());
             }
         }
     }
@@ -396,7 +426,7 @@ namespace Maze
             ParticleSystem3D* particleSystem = (*selectedEntities.begin())->getComponentRaw<ParticleSystem3D>();
             if (particleSystem)
             {
-                particleSystem->restart();
+                particleSystem->restart(m_recursiveButton->getChecked());
             }
         }
     }
@@ -411,7 +441,7 @@ namespace Maze
             ParticleSystem3D* particleSystem = (*selectedEntities.begin())->getComponentRaw<ParticleSystem3D>();
             if (particleSystem)
             {
-                particleSystem->pause();
+                particleSystem->pause(m_recursiveButton->getChecked());
             }
         }
     }

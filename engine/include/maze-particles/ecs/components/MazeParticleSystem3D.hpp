@@ -126,13 +126,25 @@ namespace Maze
         void play();
 
         //////////////////////////////////////////
+        void play(bool _recursive);
+
+        //////////////////////////////////////////
         void stop();
+
+        //////////////////////////////////////////
+        void stop(bool _recursive);
 
         //////////////////////////////////////////
         void restart();
 
         //////////////////////////////////////////
+        void restart(bool _recursive);
+
+        //////////////////////////////////////////
         void pause();
+
+        //////////////////////////////////////////
+        void pause(bool _recursive);
 
 
         //////////////////////////////////////////
@@ -223,6 +235,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void updateTime(F32 _dt, bool& _iterationFinished);
+
+        //////////////////////////////////////////
+        void iterateChildParticleSystems(std::function<void(ParticleSystem3D*)> _callback);
 
     protected:
         RenderSystem* m_renderSystem;

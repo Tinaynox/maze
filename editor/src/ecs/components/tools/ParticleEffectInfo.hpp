@@ -53,6 +53,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(HierarchyLine);
     MAZE_USING_SHARED_PTR(ECSScene);
     MAZE_USING_SHARED_PTR(ClickButton2D);
+    MAZE_USING_SHARED_PTR(ToggleButton2D);
     MAZE_USING_SHARED_PTR(SystemTextRenderer2D);
 
 
@@ -131,6 +132,7 @@ namespace Maze
         ClickButton2DPtr m_playButton;
         ClickButton2DPtr m_restartButton;
         ClickButton2DPtr m_pauseButton;
+        ToggleButton2DPtr m_recursiveButton;
 
         SystemTextRenderer2DPtr m_particlesValueText;
         SystemTextRenderer2DPtr m_timeValueText;
