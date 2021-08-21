@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_GameManager_hpp_))
-#define _GameManager_hpp_
+#if (!defined(_SpecialEffectManager_hpp_))
+#define _SpecialEffectManager_hpp_
 
 
 //////////////////////////////////////////
@@ -47,81 +47,64 @@
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "input/PlayerGamepad.hpp"
+#include "game/SpecialEffectType.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(GameManager);
-    MAZE_USING_SHARED_PTR(RenderMesh);
-    MAZE_USING_SHARED_PTR(ProjectileManager);
-    MAZE_USING_SHARED_PTR(UnitManager);
     MAZE_USING_SHARED_PTR(SpecialEffectManager);
+    MAZE_USING_SHARED_PTR(RenderMesh);
 
 
     //////////////////////////////////////////
-    // Class GameManager
+    // Class SpecialEffectManager
     //
     //////////////////////////////////////////
-    class GameManager
+    class SpecialEffectManager
         : public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        ~GameManager();
+        ~SpecialEffectManager();
 
         //////////////////////////////////////////
-        static void Initialize(GameManagerPtr& _gameManager);
+        static void Initialize(SpecialEffectManagerPtr& _gameManager);
         
 
         //////////////////////////////////////////
-        static inline GameManager* GetInstancePtr(){ return s_instance; }
+        static inline SpecialEffectManager* GetInstancePtr(){ return s_instance; }
 
         //////////////////////////////////////////
-        static inline GameManager& GetInstance(){ return *s_instance; }
+        static inline SpecialEffectManager& GetInstance(){ return *s_instance; }
 
+
+        /////////////////////////////////////////
+        inline EntityPtr const& getSpecialEffectPrefab(SpecialEffectType _type) const { return m_projectilePrefabs[_type]; }
+
+        /////////////////////////////////////////
+        EntityPtr createSpecialEffect(SpecialEffectType _type, ECSScene* _scene);
 
         //////////////////////////////////////////
-        void setDrawCallsMaxCount(S32 _drawCallsMaxCount) { m_drawCallsMaxCount = _drawCallsMaxCount; }
+        void createSpecialEffectPrefabs();
 
     protected:
 
         //////////////////////////////////////////
-        GameManager();
+        SpecialEffectManager();
 
         //////////////////////////////////////////
         bool init();
 
         //////////////////////////////////////////
-        void notifyKeyboardEvent(InputEventKeyboardData const& _event);
-
-        //////////////////////////////////////////
-        void updateDrawCallsLimit();
-
-        //////////////////////////////////////////
-        void incDrawCallsLimit();
-
-        //////////////////////////////////////////
-        void decDrawCallsLimit();
-
-
-        //////////////////////////////////////////
-        void setDrawCallsLimit(S32 _drawCallsLimit);
-
-        //////////////////////////////////////////
-        inline S32 getDrawCallsLimit() const { return m_drawCallsLimit; }
+        void notifyCoreGameResourcesLoaded();
 
     protected:
-        static GameManager* s_instance;
+        static SpecialEffectManager* s_instance;
 
-        ProjectileManagerPtr m_projectileManager;
-        UnitManagerPtr m_unitManager;
-        SpecialEffectManagerPtr m_specialEffectManager;
-
-        S32 m_drawCallsLimit;
-        S32 m_drawCallsMaxCount;
+        EntityPtr m_projectilePrefabs[SpecialEffectType::MAX];
     };
 
 
@@ -129,5 +112,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _GameManager_hpp_
+#endif // _SpecialEffectManager_hpp_
 //////////////////////////////////////////

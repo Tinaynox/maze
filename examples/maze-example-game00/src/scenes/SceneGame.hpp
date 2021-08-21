@@ -71,6 +71,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(LevelAdapter);
     MAZE_USING_SHARED_PTR(ProjectilePool);
     MAZE_USING_SHARED_PTR(SpaceObjectPool);
+    MAZE_USING_SHARED_PTR(SpecialEffectPool);
     MAZE_USING_SHARED_PTR(RenderBuffer);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
 
@@ -201,6 +202,7 @@ namespace Maze
         
         ProjectilePoolPtr m_projectilePool;
         SpaceObjectPoolPtr m_spaceObjectPool;
+        SpecialEffectPoolPtr m_specialEffectPool;
 
         GameplaySystemPtr m_gameplaySystem;
 

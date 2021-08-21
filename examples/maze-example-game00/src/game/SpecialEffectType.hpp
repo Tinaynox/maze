@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_GameManager_hpp_))
-#define _GameManager_hpp_
+#if (!defined(_SpecialEffectType_hpp_))
+#define _SpecialEffectType_hpp_
 
 
 //////////////////////////////////////////
@@ -46,88 +46,22 @@
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
-#include "input/PlayerGamepad.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(GameManager);
-    MAZE_USING_SHARED_PTR(RenderMesh);
-    MAZE_USING_SHARED_PTR(ProjectileManager);
-    MAZE_USING_SHARED_PTR(UnitManager);
-    MAZE_USING_SHARED_PTR(SpecialEffectManager);
-
+    MAZE_DECLARE_ENUMCLASS_1(SpecialEffectType,
+        Explosion00);
 
     //////////////////////////////////////////
-    // Class GameManager
-    //
-    //////////////////////////////////////////
-    class GameManager
-        : public MultiDelegateCallbackReceiver
-    {
-    public:
-
-        //////////////////////////////////////////
-        ~GameManager();
-
-        //////////////////////////////////////////
-        static void Initialize(GameManagerPtr& _gameManager);
-        
-
-        //////////////////////////////////////////
-        static inline GameManager* GetInstancePtr(){ return s_instance; }
-
-        //////////////////////////////////////////
-        static inline GameManager& GetInstance(){ return *s_instance; }
-
-
-        //////////////////////////////////////////
-        void setDrawCallsMaxCount(S32 _drawCallsMaxCount) { m_drawCallsMaxCount = _drawCallsMaxCount; }
-
-    protected:
-
-        //////////////////////////////////////////
-        GameManager();
-
-        //////////////////////////////////////////
-        bool init();
-
-        //////////////////////////////////////////
-        void notifyKeyboardEvent(InputEventKeyboardData const& _event);
-
-        //////////////////////////////////////////
-        void updateDrawCallsLimit();
-
-        //////////////////////////////////////////
-        void incDrawCallsLimit();
-
-        //////////////////////////////////////////
-        void decDrawCallsLimit();
-
-
-        //////////////////////////////////////////
-        void setDrawCallsLimit(S32 _drawCallsLimit);
-
-        //////////////////////////////////////////
-        inline S32 getDrawCallsLimit() const { return m_drawCallsLimit; }
-
-    protected:
-        static GameManager* s_instance;
-
-        ProjectileManagerPtr m_projectileManager;
-        UnitManagerPtr m_unitManager;
-        SpecialEffectManagerPtr m_specialEffectManager;
-
-        S32 m_drawCallsLimit;
-        S32 m_drawCallsMaxCount;
-    };
+    MAZE_IMPLEMENT_ENUMCLASS_SERIALIZATION(SpecialEffectType);
 
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _GameManager_hpp_
+#endif // _SpecialEffectType_hpp_
 //////////////////////////////////////////

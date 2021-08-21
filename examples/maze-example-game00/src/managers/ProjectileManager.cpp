@@ -182,6 +182,8 @@ namespace Maze
             // projectile->getUnitBounds()->setSize(0.25f, 0.25f);
             projectile->getTransform()->setLocalScale(0.7f);
 
+            projectile->setDestroyEffect(SpecialEffectType::Explosion00);
+
             m_projectilePrefabs[ProjectileAvatarType::Plasma00] = entity;
         }
     }

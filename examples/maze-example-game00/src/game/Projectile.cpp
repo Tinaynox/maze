@@ -31,6 +31,8 @@
 #include "game/PlayerOwner.hpp"
 #include "game/SpaceObject.hpp"
 #include "game/Health.hpp"
+#include "game/LevelAdapter.hpp"
+#include "game/SpecialEffectPool.hpp"
 #include "maze-graphics/ecs/components/MazeTrailRenderer3D.hpp"
 #include "maze-physics2d/helpers/MazePhysics2DHelper.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
@@ -48,7 +50,8 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, speed, 15.0f, getSpeed, setSpeed),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, damage, 50.0f, getDamage, setDamage),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2DF, extraSpeed, Vec2DF::c_zero, getExtraSpeed, setExtraSpeed),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2DF, direction, Vec2DF::c_unitX, getDirection, setDirection));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2DF, direction, Vec2DF::c_unitX, getDirection, setDirection),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(SpecialEffectType, destroyEffect, SpecialEffectType::None, getDestroyEffect, setDestroyEffect));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(Projectile);
@@ -119,6 +122,12 @@ namespace Maze
             {
                 if (spaceObject->getHealth()->doDamage(getDamage()))
                 {
+                    if (m_destroyEffect != SpecialEffectType::None)
+                    {
+                        SpecialEffectPtr effect = m_levelAdapter->getSpecialEffectPool()->createSpecialEffect(m_destroyEffect);
+                        effect->getTransform()->setLocalPosition(getTransform()->getLocalPosition());
+                    }
+
                     release();
                     return;
                 }
@@ -136,8 +145,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Projectile::setup()
+    void Projectile::setup(LevelAdapter* _levelAdapater)
     {
+        m_levelAdapter = _levelAdapater;
+
         if (!m_poolObject)
             m_poolObject = getEntityRaw()->getComponent<ComponentPoolObject<Projectile>>();
     }

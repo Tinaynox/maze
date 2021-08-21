@@ -98,6 +98,7 @@
 #include "game/LevelAdapter.hpp"
 #include "game/ProjectilePool.hpp"
 #include "game/SpaceObjectPool.hpp"
+#include "game/SpecialEffectPool.hpp"
 #include "game/UnitMeshPartRenderer.hpp"
 #include "game/level/LevelSpawnDataUnit.hpp"
 #include "managers/PlayerManager.hpp"
@@ -296,6 +297,10 @@ namespace Maze
         EntityPtr spaceObjectPoolEntity = createEntity("SpaceObject Pool");
         m_spaceObjectPool = spaceObjectPoolEntity->ensureComponent<SpaceObjectPool>(m_levelAdapter.get());
         m_levelAdapter->setSpaceObjectPool(m_spaceObjectPool);
+
+        EntityPtr specialEffectPoolEntity = createEntity("SpecialEffect Pool");
+        m_specialEffectPool = spaceObjectPoolEntity->ensureComponent<SpecialEffectPool>(m_levelAdapter.get());
+        m_levelAdapter->setSpecialEffectPool(m_specialEffectPool);
 
     }
 

@@ -56,6 +56,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Transform3D);
     MAZE_USING_SHARED_PTR(ProjectilePool);
     MAZE_USING_SHARED_PTR(SpaceObjectPool);
+    MAZE_USING_SHARED_PTR(SpecialEffectPool);
     MAZE_USING_SHARED_PTR(SceneGame);
 
 
@@ -102,6 +103,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline void setSpecialEffectPool(SpecialEffectPoolPtr const& _specialEffectPool) { m_specialEffectPool = _specialEffectPool; }
+
+        //////////////////////////////////////////
+        inline SpecialEffectPoolPtr const& getSpecialEffectPool() const { return m_specialEffectPool; }
+
+
+        //////////////////////////////////////////
         Rect2DF const& getGameplayBounds() const;
 
     protected:
@@ -119,6 +127,7 @@ namespace Maze
 
         ProjectilePoolPtr m_projectilePool;
         SpaceObjectPoolPtr m_spaceshipPool;
+        SpecialEffectPoolPtr m_specialEffectPool;
 
         SceneGame* m_sceneGame;
     };

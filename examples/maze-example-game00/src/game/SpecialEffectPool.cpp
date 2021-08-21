@@ -24,80 +24,80 @@
 
 
 //////////////////////////////////////////
-#include "ProjectilePool.hpp"
+#include "SpecialEffectPool.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/utils/MazeComponentPool.hpp"
-#include "managers/ProjectileManager.hpp"
 #include "game/LevelAdapter.hpp"
+#include "managers/SpecialEffectManager.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(ComponentPoolObject<Projectile>, Component);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(ComponentPoolObject<SpecialEffect>, Component);
 
 
     //////////////////////////////////////////
-    // Class ProjectilePool
+    // Class SpecialEffectPool
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(ProjectilePool, Component);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SpecialEffectPool, Component);
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(ProjectilePool);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(SpecialEffectPool);
 
     //////////////////////////////////////////
-    ProjectilePool::ProjectilePool()        
+    SpecialEffectPool::SpecialEffectPool()        
     {
     }
 
     //////////////////////////////////////////
-    ProjectilePool::~ProjectilePool()
+    SpecialEffectPool::~SpecialEffectPool()
     {
 
     }
 
     //////////////////////////////////////////
-    ProjectilePoolPtr ProjectilePool::Create(LevelAdapter* _levelAdapter)
+    SpecialEffectPoolPtr SpecialEffectPool::Create(LevelAdapter* _levelAdapter)
     {
-        ProjectilePoolPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(ProjectilePool, object, init(_levelAdapter));
+        SpecialEffectPoolPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(SpecialEffectPool, object, init(_levelAdapter));
         return object; 
     }
 
     //////////////////////////////////////////
-    bool ProjectilePool::init(LevelAdapter* _levelAdapter)
+    bool SpecialEffectPool::init(LevelAdapter* _levelAdapter)
     {
         m_levelAdapter = _levelAdapter;
 
-        for (ProjectileAvatarType avatarType = ProjectileAvatarType::None; avatarType < ProjectileAvatarType::MAX; ++avatarType)
+        for (SpecialEffectType avatarType = SpecialEffectType::None; avatarType < SpecialEffectType::MAX; ++avatarType)
         {
-            m_projectilePools[avatarType] = SharedPtr<SharedObjectPool<Projectile>>(
-                new SharedObjectPool<Projectile>(
-                    [this,  avatarType]() -> ProjectilePtr 
+            m_specialEffectPools[avatarType] = SharedPtr<SharedObjectPool<SpecialEffect>>(
+                new SharedObjectPool<SpecialEffect>(
+                    [this,  avatarType]() -> SpecialEffectPtr 
                     {
-                        EntityPtr entity = ProjectileManager::GetInstancePtr()->createProjectile(avatarType, getEntityRaw()->getECSScene());
-                        entity->ensureComponent<ComponentPoolObject<Projectile>>(m_projectilePools[avatarType]);
-                        ProjectilePtr projectile = entity->getComponent<Projectile>();
-                        projectile->getTransform()->setParent(m_transform);
+                        EntityPtr entity = SpecialEffectManager::GetInstancePtr()->createSpecialEffect(avatarType, getEntityRaw()->getECSScene());
+                        entity->ensureComponent<ComponentPoolObject<SpecialEffect>>(m_specialEffectPools[avatarType]);
+                        SpecialEffectPtr effect = entity->getComponent<SpecialEffect>();
+                        effect->getTransform()->setParent(m_transform);
 
-                        projectile->setup(m_levelAdapter);
+                        effect->setup();
 
-                        return projectile;
+                        return effect;
                     },
-                    [](ProjectilePtr const& _projectile)
+                    [](SpecialEffectPtr const& _effect)
                     {
-                        _projectile->getEntityRaw()->setActiveSelf(true);
-                        _projectile->prepare();
+                        _effect->getEntityRaw()->setActiveSelf(true);
+                        _effect->prepare();
                     },
-                    [](ProjectilePtr const& _projectile)
+                    [](SpecialEffectPtr const& _effect)
                     {
-                        _projectile->getEntityRaw()->setActiveSelf(false);
+                        _effect->getEntityRaw()->setActiveSelf(false);
                     },
-                    [](ProjectilePtr const& _projectile)
+                    [](SpecialEffectPtr const& _effect)
                     {
-                        _projectile->getEntityRaw()->removeFromECSWorld();
+                        _effect->getEntityRaw()->removeFromECSWorld();
                     }));
         }
 
@@ -105,13 +105,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ProjectilePtr ProjectilePool::createProjectile(ProjectileAvatarType _type)
+    SpecialEffectPtr SpecialEffectPool::createSpecialEffect(SpecialEffectType _type)
     {
-        return m_projectilePools[_type]->fetch();
+        return m_specialEffectPools[_type]->fetch();
     }
     
     //////////////////////////////////////////
-    void ProjectilePool::processComponentAdded()
+    void SpecialEffectPool::processComponentAdded()
     {
         m_transform = getEntityRaw()->ensureComponent<Transform3D>();
     }
