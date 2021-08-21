@@ -40,8 +40,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(TrailProjectile, Component,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorGradient, gradient, ColorGradient(), getGradient, setGradient),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, endColorTime, 1.0f, getEndColorTime, setEndColorTime)
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorGradient, gradient, ColorGradient(), getGradient, setGradient)
     );
 
     //////////////////////////////////////////
@@ -50,7 +49,6 @@ namespace Maze
     //////////////////////////////////////////
     TrailProjectile::TrailProjectile()
         : m_gradient(0.0f, { 1.3f, 1.3f, 1.3f, 1.0f }, 1.0f, { 1.3f, 1.0f, 1.75f, 1.0f })
-        , m_endColorTime(1.0f)
     {
     }
 
@@ -79,7 +77,7 @@ namespace Maze
     //////////////////////////////////////////
     void TrailProjectile::update(F32 _dt)
     {
-        ColorF128 color = m_gradient.evaluate(Math::Clamp01(m_trailRenderer->getTimer() / m_endColorTime));
+        ColorF128 color = m_gradient.evaluate(m_trailRenderer->getTimer());
 
         m_trailRenderer->setColor(color);
     }

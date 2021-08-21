@@ -97,13 +97,6 @@ namespace Maze
         //////////////////////////////////////////
         inline ColorGradient const& getGradient() const { return m_gradient; }
 
-
-        //////////////////////////////////////////
-        inline void setEndColorTime(F32 _endColor) { m_endColorTime = _endColor; }
-
-        //////////////////////////////////////////
-        inline F32 getEndColorTime() const { return m_endColorTime; }
-
     protected:
 
         //////////////////////////////////////////
@@ -126,7 +119,6 @@ namespace Maze
         ProjectilePtr m_projectile;
 
         ColorGradient m_gradient;
-        F32 m_endColorTime;
     };
 
 

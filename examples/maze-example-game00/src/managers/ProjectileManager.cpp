@@ -177,10 +177,6 @@ namespace Maze
             gradient.addKey(1.0f, { 1.3f, 0.6f, 2.75f, 1.0f });
 
             trailProjectile->setGradient(gradient);
-            trailProjectile->setEndColorTime(1.0f);
-            // trailProjectile->setStartTrailTime(0.5f);
-            // trailProjectile->setTargetTrailTime(0.085f);
-
 
             ProjectilePtr projectile = entity->ensureComponent<Projectile>();
             // projectile->getUnitBounds()->setSize(0.25f, 0.25f);
