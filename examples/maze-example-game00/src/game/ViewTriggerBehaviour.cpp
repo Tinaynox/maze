@@ -24,47 +24,39 @@
 
 
 //////////////////////////////////////////
-#pragma once
-#if (!defined(_MazeParticleSystemState_hpp_))
-#define _MazeParticleSystemState_hpp_
-
-
-//////////////////////////////////////////
-#include "maze-particles/MazeParticlesHeader.hpp"
-#include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-particles/MazeParticles3D.hpp"
+#include "ViewTriggerBehaviour.hpp"
+#include "maze-core/ecs/MazeEntity.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_3_API(MAZE_PARTICLES_API, ParticleSystemState,
-        Playing,
-        Pause,
-        Ended);
+    // Class ViewTriggerBehaviour
+    //
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(ViewTriggerBehaviour, Component);
 
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_2_API(MAZE_PARTICLES_API, ParticleSystemSimulationSpace,
-        Local,
-        World);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(ViewTriggerBehaviour);
 
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_2_API(MAZE_PARTICLES_API, ParticleSystemScalingMode,
-        Hierarchy,
-        Local);
+    ViewTriggerBehaviour::ViewTriggerBehaviour()
+    {
+    }
 
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_3_API(MAZE_PARTICLES_API, ParticleSystemRenderAlignment,
-        View,
-        Local,
-        World);
+    ViewTriggerBehaviour::~ViewTriggerBehaviour()
+    {
 
+    }
+
+    //////////////////////////////////////////
+    bool ViewTriggerBehaviour::init()
+    {
+
+        return true;
+    }    
 
 } // namespace Maze
-//////////////////////////////////////////
-
-
-#endif // _MazeParticleSystemState_hpp_
 //////////////////////////////////////////

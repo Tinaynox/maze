@@ -92,6 +92,11 @@ namespace Maze
                 if (!isMetaPropertyCopyable(metaProperty))
                     continue;
 
+                if (ClassInfo<Vector<ComponentPtr>>::UID() == metaProperty->getValueClassUID())
+                {
+                    MAZE_NOT_IMPLEMENTED;
+                }
+                else
                 if (ClassInfo<ComponentPtr>::UID() == metaProperty->getValueClassUID())
                 {
                     _copyData.getComponentProperties().emplace_back(

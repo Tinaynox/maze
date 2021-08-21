@@ -46,6 +46,7 @@
 #include "game/UnitMeshPartRenderer.hpp"
 #include "game/TrailProjectile.hpp"
 #include "game/UnitPartRenderer.hpp"
+#include "game/ViewTriggerBehaviour.hpp"
 
 
 //////////////////////////////////////////
@@ -90,6 +91,8 @@ namespace Maze
     //////////////////////////////////////////
     void SpaceObjectAvatar::prepare()
     {
+        m_viewTriggers = m_transform->getAllComponents<ViewTriggerBehaviour>();
+
         collectUnitPartRenderers();
 
         for (UnitPartRendererPtr const& unitPartRenderer : m_partRenderers)
@@ -108,6 +111,13 @@ namespace Maze
     {
         for (UnitPartRendererPtr const& unitPartRenderer : m_partRenderers)
             unitPartRenderer->increaseExtraMaterialTimer(UnitExtraMaterialType::DamageHit, 0.1f);
+    }
+
+    //////////////////////////////////////////
+    void SpaceObjectAvatar::invokeViewTrigger(ViewTriggerPtr const& _viewTrigger)
+    {
+        for (ViewTriggerBehaviourPtr const& trigger : m_viewTriggers)
+            trigger->processTrigger(_viewTrigger);
     }
 
     //////////////////////////////////////////

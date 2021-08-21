@@ -24,47 +24,21 @@
 
 
 //////////////////////////////////////////
-#pragma once
-#if (!defined(_MazeParticleSystemState_hpp_))
-#define _MazeParticleSystemState_hpp_
-
-
-//////////////////////////////////////////
-#include "maze-particles/MazeParticlesHeader.hpp"
-#include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-particles/MazeParticles3D.hpp"
+#include "ViewTrigger.hpp"
+#include "maze-core/ecs/MazeEntity.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_3_API(MAZE_PARTICLES_API, ParticleSystemState,
-        Playing,
-        Pause,
-        Ended);
-
+    // Class ViewTrigger
+    //
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_2_API(MAZE_PARTICLES_API, ParticleSystemSimulationSpace,
-        Local,
-        World);
-
-    //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_2_API(MAZE_PARTICLES_API, ParticleSystemScalingMode,
-        Hierarchy,
-        Local);
-
-    //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_3_API(MAZE_PARTICLES_API, ParticleSystemRenderAlignment,
-        View,
-        Local,
-        World);
-
+    ViewTriggerPtr ViewTrigger::Create()
+    {
+        return std::make_shared<ViewTrigger>();
+    }
 
 } // namespace Maze
-//////////////////////////////////////////
-
-
-#endif // _MazeParticleSystemState_hpp_
 //////////////////////////////////////////

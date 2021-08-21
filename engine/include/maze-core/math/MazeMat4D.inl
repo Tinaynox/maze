@@ -220,9 +220,9 @@ namespace Maze
 
         return 
             Mat4D(
-                (TValue)1, (TValue)0, (TValue)0, (TValue)0,
-                (TValue)0, (TValue)cx, (TValue)-sx, (TValue)0,
-                (TValue)0, (TValue)sx, (TValue)cx, (TValue)0,
+                (TValue)cz, (TValue)-sz, (TValue)0, (TValue)0,
+                (TValue)sz, (TValue)cz, (TValue)0, (TValue)0,
+                (TValue)0, (TValue)0, (TValue)1, (TValue)0,
                 (TValue)0, (TValue)0, (TValue)0, (TValue)1) *
             Mat4D(
                 (TValue)cy, (TValue)0, (TValue)sy, (TValue)0,
@@ -230,9 +230,9 @@ namespace Maze
                 (TValue)-sy, (TValue)0, (TValue)cy, (TValue)0,
                 (TValue)0, (TValue)0, (TValue)0, (TValue)1) *
             Mat4D(
-                (TValue)cz, (TValue)-sz, (TValue)0, (TValue)0,
-                (TValue)sz, (TValue)cz, (TValue)0, (TValue)0,
-                (TValue)0, (TValue)0, (TValue)1, (TValue)0,
+                (TValue)1, (TValue)0, (TValue)0, (TValue)0,
+                (TValue)0, (TValue)cx, (TValue)-sx, (TValue)0,
+                (TValue)0, (TValue)sx, (TValue)cx, (TValue)0,
                 (TValue)0, (TValue)0, (TValue)0, (TValue)1);
     }
 

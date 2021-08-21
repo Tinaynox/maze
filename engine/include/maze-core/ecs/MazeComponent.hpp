@@ -78,6 +78,7 @@ namespace Maze
         inline EntityCopyData()
             : m_stackDepth(0)
         {
+            // #TODO: OPTIMIZE
             m_entities.reset(new Map<Entity*, Entity*>());
             m_components.reset(new Map<Component*, Component*>());
             m_componentProperties.reset(new Vector<ComponentPropertyData>());

@@ -141,8 +141,8 @@ namespace Maze
     //////////////////////////////////////////
     S32 ParticleSystem3D::updateEmitter(F32 _dt, const Vec3DF& _position)
     {
-        bool _iterationFinished;
-        updateTime(_dt, _iterationFinished);
+        bool iterationFinished;
+        updateTime(_dt, iterationFinished);
 
         S32 aliveCount = m_particles.getAliveCount();
 
@@ -162,7 +162,7 @@ namespace Maze
             if (maxCountToEmit && m_mainModule.getEmission().enabled && m_state == ParticleSystemState::Playing)
             {
                 F32 iterationProgress = m_time / m_mainModule.getDuration();
-                S32 emissionCount = calculateEmissionCount(iterationProgress, maxCountToEmit, _iterationFinished);
+                S32 emissionCount = calculateEmissionCount(iterationProgress, maxCountToEmit, iterationFinished);
 
                 if (emissionCount > 0)
                 {
@@ -176,6 +176,14 @@ namespace Maze
 
                     aliveCount += emissionCount;
                 }
+            }
+        }
+
+        if (!m_mainModule.getLooped())
+        {
+            if (iterationFinished && aliveCount == 0)
+            {
+                stop();
             }
         }
 
@@ -292,11 +300,6 @@ namespace Maze
         else
         {
             m_time = m_mainModule.getDuration();
-
-            if (getAliveParticles() == 0)
-            {
-                stop();
-            }
         }
 
         _iterationFinished = true;
@@ -371,13 +374,24 @@ namespace Maze
     void ParticleSystem3D::play()
     {
         if (getState() == ParticleSystemState::Playing)
+        {
+            // Reset particle system, but don't remove alive particles
+            if (m_time >= m_mainModule.getDuration())
+            {
+                m_time = 0.0f;
+                m_timeEmission = 0.0f;
+                m_iteration = 0;
+                m_currentBurstIndex = 0;
+            }
+
             return;
+        }
 
         setState(ParticleSystemState::Playing);
 
-        if (m_mainModule.getPrewarm())
+        if (m_mainModule.getPrewarm() && m_mainModule.getLooped())
         {
-            while (m_iteration == 0)
+            while (m_iteration == 0 && getState() == ParticleSystemState::Playing)
             {
                 update(1.0f / 40.0f);
             }
@@ -454,7 +468,7 @@ namespace Maze
     //////////////////////////////////////////
     void ParticleSystem3D::pause()
     {
-        setState(ParticleSystemState::Waiting);
+        setState(ParticleSystemState::Pause);
     }
 
     //////////////////////////////////////////
@@ -486,10 +500,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ParticleSystem3D::iterateChildParticleSystems(std::function<void(ParticleSystem3D*)> _callback)
+    void ParticleSystem3D::iterateChildParticleSystems(
+        std::function<void(ParticleSystem3D*)> _callback,
+        bool _includeInactive)
     {
         for (Transform3D* transform : m_transform->getChildren())
         {
+            if (!_includeInactive && !transform->getEntityRaw()->getActiveSelf())
+                continue;
+
             ParticleSystem3D* subParticleSystem = transform->getEntityRaw()->getComponentRaw<ParticleSystem3D>();
             if (subParticleSystem)
             {

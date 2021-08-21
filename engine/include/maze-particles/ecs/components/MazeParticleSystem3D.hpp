@@ -237,7 +237,9 @@ namespace Maze
         void updateTime(F32 _dt, bool& _iterationFinished);
 
         //////////////////////////////////////////
-        void iterateChildParticleSystems(std::function<void(ParticleSystem3D*)> _callback);
+        void iterateChildParticleSystems(
+            std::function<void(ParticleSystem3D*)> _callback,
+            bool _includeInactive = false);
 
     protected:
         RenderSystem* m_renderSystem;

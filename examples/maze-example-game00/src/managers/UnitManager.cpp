@@ -92,6 +92,8 @@
 #include "game/Health.hpp"
 #include "game/AI/SpaceObjectAI_SinMovement.hpp"
 #include "game/SpaceObjectAvatar.hpp"
+#include "game/ViewTriggerParticleSystems.hpp"
+#include "game/ViewTriggers.hpp"
 
 
 //////////////////////////////////////////
@@ -217,6 +219,20 @@ namespace Maze
                     exhaustTransform = exhaust01->ensureComponent<Transform3D>();
                     exhaustTransform->setParent(avatarTransform);
                     exhaustTransform->setLocalPosition(-0.5f, -0.175f, -0.95f);
+                }
+                
+
+                // Muzzle Flash
+                {
+                    EntityPtr muzzleFlash00 = EntitySerializationManager::GetInstancePtr()->loadPrefab(
+                        "MuzzleFlash00.mzprefab",
+                        world);
+                    Transform3DPtr muzzleFlashTransform = muzzleFlash00->ensureComponent<Transform3D>();
+                    muzzleFlashTransform->setParent(avatarTransform);
+                    muzzleFlashTransform->setLocalPosition(0.0f, -0.275f, 1.185f);
+
+                    ViewTriggerParticleSystemsPtr trigger = muzzleFlash00->ensureComponent<ViewTriggerParticleSystems>();
+                    trigger->setTrigger(ViewTriggers::g_fire);
                 }
             }
 

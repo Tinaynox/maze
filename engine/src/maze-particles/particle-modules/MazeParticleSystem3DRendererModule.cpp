@@ -248,6 +248,32 @@ namespace Maze
         // PS Rotation
         Vec3DF particleSystemWorldRotation = _particleSystemWorldTransform.getAffineRotationEulerAngles();
         Mat4DF particleSystemWorldRotationMatrix = Mat4DF::CreateRotationMatrix(particleSystemWorldRotation);
+        /*
+        F32 cx = cosf(particleSystemWorldRotation.x);
+        F32 sx = sinf(particleSystemWorldRotation.x);
+
+        F32 cy = cosf(particleSystemWorldRotation.y);
+        F32 sy = sinf(particleSystemWorldRotation.y);
+
+        F32 cz = cosf(particleSystemWorldRotation.z);
+        F32 sz = sinf(particleSystemWorldRotation.z);
+
+        Mat4DF particleSystemWorldRotationMatrix = 
+            Mat4DF(
+                (F32)cz, (F32)-sz, (F32)0, (F32)0,
+                (F32)sz, (F32)cz, (F32)0, (F32)0,
+                (F32)0, (F32)0, (F32)1, (F32)0,
+                (F32)0, (F32)0, (F32)0, (F32)1) *
+            Mat4DF(
+                (F32)cy, (F32)0, (F32)sy, (F32)0,
+                (F32)0, (F32)1, (F32)0, (F32)0,
+                (F32)-sy, (F32)0, (F32)cy, (F32)0,
+                (F32)0, (F32)0, (F32)0, (F32)1) *
+            Mat4DF(
+                (F32)1, (F32)0, (F32)0, (F32)0,
+                (F32)0, (F32)cx, (F32)-sx, (F32)0,
+                (F32)0, (F32)sx, (F32)cx, (F32)0,
+                (F32)0, (F32)0, (F32)0, (F32)1);*/
 
         // PS Scale
         Vec3DF particleSystemWorldScale = _particleSystemWorldTransform.getAffineScale();
@@ -328,7 +354,7 @@ namespace Maze
                 c, -s, 0.0f, 0.0f,
                 s, c, 0.0f, 0.0f,
                 0.0f, 0.0f, 1.0f, 0.0f,
-                0.0f, 0.0f, 0.0f, 1.0f);            
+                0.0f, 0.0f, 0.0f, 1.0f);
             
 
             // Apply particle size

@@ -25,46 +25,72 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeParticleSystemState_hpp_))
-#define _MazeParticleSystemState_hpp_
+#if (!defined(_ViewTriggerBehaviour_hpp_))
+#define _ViewTriggerBehaviour_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-particles/MazeParticlesHeader.hpp"
+#include "maze-core/preprocessor/MazePreprocessor_CPlusPlus.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-particles/MazeParticles3D.hpp"
+#include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/memory/MazeMemory.hpp"
+#include "maze-core/math/MazeAABB2D.hpp"
+#include "game/DamageData.hpp"
+#include "game/ViewTrigger.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_3_API(MAZE_PARTICLES_API, ParticleSystemState,
-        Playing,
-        Pause,
-        Ended);
+    MAZE_USING_SHARED_PTR(ViewTriggerBehaviour);
+
 
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_2_API(MAZE_PARTICLES_API, ParticleSystemSimulationSpace,
-        Local,
-        World);
-
+    // Class ViewTriggerBehaviour
+    //
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_2_API(MAZE_PARTICLES_API, ParticleSystemScalingMode,
-        Hierarchy,
-        Local);
+    class ViewTriggerBehaviour
+        : public Component
+    {
+    public:
 
-    //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_3_API(MAZE_PARTICLES_API, ParticleSystemRenderAlignment,
-        View,
-        Local,
-        World);
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(ViewTriggerBehaviour, Component);
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_MEMORY_ALLOCATION(ViewTriggerBehaviour);
+
+        //////////////////////////////////////////
+        friend class Entity;
+
+    public:
+
+        //////////////////////////////////////////
+        virtual ~ViewTriggerBehaviour();
+
+        //////////////////////////////////////////
+        virtual void processTrigger(ViewTriggerPtr const& _trigger) MAZE_ABSTRACT;
+        
+    protected:
+
+        //////////////////////////////////////////
+        ViewTriggerBehaviour();
+
+        //////////////////////////////////////////
+        using Component::init;
+        
+        //////////////////////////////////////////
+        virtual bool init();
+
+    protected:
+
+    };
 
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeParticleSystemState_hpp_
+#endif // _ViewTriggerBehaviour_hpp_
 //////////////////////////////////////////

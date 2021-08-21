@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_SpaceObjectAvatar_hpp_))
-#define _SpaceObjectAvatar_hpp_
+#if (!defined(_ViewTriggerParticleSystems_hpp_))
+#define _ViewTriggerParticleSystems_hpp_
 
 
 //////////////////////////////////////////
@@ -34,38 +34,35 @@
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
-#include "maze-core/utils/MazeComponentPool.hpp"
-#include "game/SpaceObjectAvatar.hpp"
+#include "maze-core/math/MazeAABB2D.hpp"
+#include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
 #include "game/DamageData.hpp"
-#include "game/ProjectileAvatarType.hpp"
-#include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
+#include "game/ViewTriggerBehaviour.hpp"
+#include <algorithm>
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(SpaceObjectAvatar);
-    MAZE_USING_SHARED_PTR(UnitPartRenderer);
-    MAZE_USING_SHARED_PTR(ViewTriggerBehaviour);
+    MAZE_USING_SHARED_PTR(ViewTriggerParticleSystems);
     MAZE_USING_SHARED_PTR(ViewTrigger);
 
 
     //////////////////////////////////////////
-    // Class SpaceObjectAvatar
+    // Class ViewTriggerBehaviour
     //
     //////////////////////////////////////////
-    class SpaceObjectAvatar
-        : public Component
-        , public MultiDelegateCallbackReceiver
+    class ViewTriggerParticleSystems
+        : public ViewTriggerBehaviour
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SpaceObjectAvatar, Component);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(ViewTriggerParticleSystems, ViewTriggerBehaviour);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(SpaceObjectAvatar);
+        MAZE_DECLARE_MEMORY_ALLOCATION(ViewTriggerParticleSystems);
 
         //////////////////////////////////////////
         friend class Entity;
@@ -73,56 +70,67 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~SpaceObjectAvatar();
+        virtual ~ViewTriggerParticleSystems();
 
         //////////////////////////////////////////
-        static SpaceObjectAvatarPtr Create();
-
-
-        //////////////////////////////////////////
-        void prepare();
+        static ViewTriggerParticleSystemsPtr Create();
 
         //////////////////////////////////////////
-        void processDeath();
+        virtual void processTrigger(ViewTriggerPtr const& _trigger) MAZE_OVERRIDE;
+        
+        //////////////////////////////////////////
+        inline Vector<ParticleSystem3DPtr> const& getParticleSystems() const { return m_particleSystems; }
 
         //////////////////////////////////////////
-        void processDamage();
+        inline void setParticleSystems(Vector<ParticleSystem3DPtr> const& _particleSystems) { m_particleSystems = _particleSystems; }
 
         //////////////////////////////////////////
-        void invokeViewTrigger(ViewTriggerPtr const& _viewTrigger);
-
+        inline Vector<ComponentPtr> getParticleSystemsComponents() const 
+        {
+            Vector<ComponentPtr> value;
+            std::for_each(m_particleSystems.begin(), m_particleSystems.end(), [&value](ParticleSystem3DPtr const& _value) { value.push_back(_value); });
+            return value;
+        }
 
         //////////////////////////////////////////
-        inline Transform3DPtr const& getTransform() const { return m_transform; }
-
+        inline void setParticleSystems(Vector<ComponentPtr> _particleSystems)
+        {
+            Vector<ParticleSystem3DPtr> value;
+            std::for_each(_particleSystems.begin(), _particleSystems.end(), [&value](ComponentPtr const& _value) { value.push_back(_value->cast<ParticleSystem3D>()); });
+            setParticleSystems(value);
+        }
 
         //////////////////////////////////////////
-        bool isDeathAnimationFinished();
+        inline ViewTriggerPtr const& getTrigger() const { return m_trigger; }
+
+        //////////////////////////////////////////
+        inline void setTrigger(ViewTriggerPtr const& _trigger) { m_trigger = _trigger; }
+
+        //////////////////////////////////////////
+        inline bool getRecursive() const { return m_recursive; }
+
+        //////////////////////////////////////////
+        inline void setRecursive(bool _recursive) { m_recursive = _recursive; }
+
 
     protected:
 
         //////////////////////////////////////////
-        SpaceObjectAvatar();
+        ViewTriggerParticleSystems();
 
         //////////////////////////////////////////
         using Component::init;
         
         //////////////////////////////////////////
-        bool init();
+        virtual bool init();
 
         //////////////////////////////////////////
-        virtual void processComponentAdded() MAZE_OVERRIDE;
-
-
-        //////////////////////////////////////////
-        void collectUnitPartRenderers();
-
+        virtual void processEntityAwakened();
 
     protected:
-        Transform3DPtr m_transform;
-        
-        Vector<UnitPartRendererPtr> m_partRenderers;
-        Vector<ViewTriggerBehaviourPtr> m_viewTriggers;
+        Vector<ParticleSystem3DPtr> m_particleSystems;
+        ViewTriggerPtr m_trigger;
+        bool m_recursive = true;
     };
 
 
@@ -130,5 +138,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _SpaceObjectAvatar_hpp_
+#endif // _ViewTriggerParticleSystems_hpp_
 //////////////////////////////////////////

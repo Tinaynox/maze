@@ -50,6 +50,7 @@
 #include "game/TrailProjectile.hpp"
 #include "game/UnitPartRenderer.hpp"
 #include "game/SpaceObjectAvatar.hpp"
+#include "game/ViewTriggers.hpp"
 
 
 //////////////////////////////////////////
@@ -268,6 +269,7 @@ namespace Maze
                 velocity.y * 0.35f,
             });
         
+        m_avatar->invokeViewTrigger(ViewTriggers::g_fire);
 
         eventProjectileSpawned(projectile);
     }
