@@ -41,6 +41,7 @@
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/MazeColorF128.hpp"
+#include "maze-graphics/MazeColorGradient.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
@@ -91,16 +92,11 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setStartColor(ColorF128 const& _startColor) { m_startColor = _startColor; }
+        inline void setGradient(ColorGradient const& _gradient) { m_gradient = _gradient; }
 
         //////////////////////////////////////////
-        inline ColorF128 const& getStartColor() const { return m_startColor; }
+        inline ColorGradient const& getGradient() const { return m_gradient; }
 
-        //////////////////////////////////////////
-        inline void setEndColor(ColorF128 const& _endColor) { m_endColor = _endColor; }
-
-        //////////////////////////////////////////
-        inline ColorF128 const& getEndColor() const { return m_endColor; }
 
         //////////////////////////////////////////
         inline void setEndColorTime(F32 _endColor) { m_endColorTime = _endColor; }
@@ -129,8 +125,7 @@ namespace Maze
         TrailRenderer3DPtr m_trailRenderer;
         ProjectilePtr m_projectile;
 
-        ColorF128 m_startColor;
-        ColorF128 m_endColor;
+        ColorGradient m_gradient;
         F32 m_endColorTime;
     };
 

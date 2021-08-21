@@ -220,7 +220,6 @@ namespace Maze
                     exhaustTransform->setParent(avatarTransform);
                     exhaustTransform->setLocalPosition(-0.5f, -0.175f, -0.95f);
                 }
-                
 
                 // Muzzle Flash
                 {
@@ -300,6 +299,30 @@ namespace Maze
                     unitMeshPartRenderer->setMaterials(
                         spaceshipMaterial,
                         spaceshipDeathMaterial);
+                }
+
+                // Muzzle Flash
+                {
+                    EntityPtr muzzleFlash = EntitySerializationManager::GetInstancePtr()->loadPrefab(
+                        "MuzzleFlash01.mzprefab",
+                        world);
+                    Transform3DPtr muzzleFlashTransform = muzzleFlash->ensureComponent<Transform3D>();
+                    muzzleFlashTransform->setParent(avatarTransform);
+                    muzzleFlashTransform->setLocalPosition(0.3f, -0.1f, 0.63f);
+
+                    ViewTriggerParticleSystemsPtr trigger = muzzleFlash->ensureComponent<ViewTriggerParticleSystems>();
+                    trigger->setTrigger(ViewTriggers::g_fire);
+                }
+                {
+                    EntityPtr muzzleFlash = EntitySerializationManager::GetInstancePtr()->loadPrefab(
+                        "MuzzleFlash01.mzprefab",
+                        world);
+                    Transform3DPtr muzzleFlashTransform = muzzleFlash->ensureComponent<Transform3D>();
+                    muzzleFlashTransform->setParent(avatarTransform);
+                    muzzleFlashTransform->setLocalPosition(-0.3f, -0.1f, 0.63f);
+
+                    ViewTriggerParticleSystemsPtr trigger = muzzleFlash->ensureComponent<ViewTriggerParticleSystems>();
+                    trigger->setTrigger(ViewTriggers::g_fire);
                 }
             }
 

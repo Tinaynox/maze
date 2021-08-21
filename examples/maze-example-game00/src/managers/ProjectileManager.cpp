@@ -170,8 +170,13 @@ namespace Maze
             trailRenderer->setTime(0.085f);
 
             TrailProjectilePtr trailProjectile = entity->ensureComponent<TrailProjectile>();
-            trailProjectile->setStartColor({ 1.5f, 1.5f, 2.0f, 1.0f });
-            trailProjectile->setEndColor({1.3f, 0.6f, 2.75f, 1.0f});
+
+            ColorGradient gradient;
+            gradient.addKey(0.0f, { 0.0f, 0.0f, 0.0f, 1.0f });
+            gradient.addKey(0.1f, { 1.5f, 1.5f, 2.0f, 1.0f });
+            gradient.addKey(1.0f, { 1.3f, 0.6f, 2.75f, 1.0f });
+
+            trailProjectile->setGradient(gradient);
             trailProjectile->setEndColorTime(1.0f);
             // trailProjectile->setStartTrailTime(0.5f);
             // trailProjectile->setTargetTrailTime(0.085f);
