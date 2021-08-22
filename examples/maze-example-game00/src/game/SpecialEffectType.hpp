@@ -52,8 +52,9 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_1(SpecialEffectType,
-        Explosion00);
+    MAZE_DECLARE_ENUMCLASS_2(SpecialEffectType,
+        Explosion00,
+        Explosion01);
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_ENUMCLASS_SERIALIZATION(SpecialEffectType);

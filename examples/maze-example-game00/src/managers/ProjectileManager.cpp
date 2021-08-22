@@ -156,6 +156,8 @@ namespace Maze
             projectile->setSpeed(5.0f);
             projectile->getTransform()->setLocalScale(0.35f);
 
+            projectile->setDestroyEffect(SpecialEffectType::Explosion01);
+
             m_projectilePrefabs[ProjectileAvatarType::YellowFlare00] = entity;
         }
 

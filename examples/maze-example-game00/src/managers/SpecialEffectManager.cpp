@@ -138,6 +138,15 @@ namespace Maze
             m_projectilePrefabs[SpecialEffectType::Explosion00] = entity;
         }
 
+        {
+            EntityPtr entity = EntitySerializationManager::GetInstancePtr()->loadPrefab(
+                "Explosion01.mzprefab",
+                world);
+
+            SpecialEffectPtr effect = entity->ensureComponent<SpecialEffect>();
+
+            m_projectilePrefabs[SpecialEffectType::Explosion01] = entity;
+        }
     }
 
     //////////////////////////////////////////

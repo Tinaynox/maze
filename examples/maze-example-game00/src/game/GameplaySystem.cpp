@@ -39,6 +39,7 @@
 #include "game/Health.hpp"
 #include "game/UnitMeshPartRenderer.hpp"
 #include "game/TrailProjectile.hpp"
+#include "game/SpecialEffect.hpp"
 #include "scenes/SceneGame.hpp"
 #include "Game.hpp"
 
@@ -88,6 +89,7 @@ namespace Maze
         m_spaceObjects = _world->requestInclusiveSample<SpaceObject>();
         m_spaceObjectAI_SinMovements = _world->requestInclusiveSample<SpaceObjectAI_SinMovement>();
         m_projectiles = _world->requestInclusiveSample<Projectile>();
+        m_specialEffects = _world->requestInclusiveSample<SpecialEffect>();
         m_trailProjectiles = _world->requestInclusiveSample<TrailProjectile>();
         m_unitMeshPartRenderers = _world->requestInclusiveSample<UnitMeshPartRenderer>();
 
@@ -171,7 +173,13 @@ namespace Maze
                 }
             });
 
-        
+        m_specialEffects->process(
+            [_dt](
+                Entity* _entity,
+                SpecialEffect* _effect)
+            {
+                _effect->update(_dt);
+            });
 
         m_trailProjectiles->process(
             [_dt](

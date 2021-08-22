@@ -299,7 +299,7 @@ namespace Maze
         m_levelAdapter->setSpaceObjectPool(m_spaceObjectPool);
 
         EntityPtr specialEffectPoolEntity = createEntity("SpecialEffect Pool");
-        m_specialEffectPool = spaceObjectPoolEntity->ensureComponent<SpecialEffectPool>(m_levelAdapter.get());
+        m_specialEffectPool = specialEffectPoolEntity->ensureComponent<SpecialEffectPool>(m_levelAdapter.get());
         m_levelAdapter->setSpecialEffectPool(m_specialEffectPool);
 
     }

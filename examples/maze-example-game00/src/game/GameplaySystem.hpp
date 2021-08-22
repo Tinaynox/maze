@@ -50,6 +50,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(SpaceObject);
     MAZE_USING_SHARED_PTR(SpaceObjectAI_SinMovement);
     MAZE_USING_SHARED_PTR(Projectile);
+    MAZE_USING_SHARED_PTR(SpecialEffect);
     MAZE_USING_SHARED_PTR(SceneGame);
     MAZE_USING_SHARED_PTR(UnitMeshPartRenderer);
     MAZE_USING_SHARED_PTR(TrailProjectile);
@@ -115,6 +116,7 @@ namespace Maze
         SharedPtr<GenericInclusiveEntitiesSample<SpaceObject>> m_spaceObjects;
         SharedPtr<GenericInclusiveEntitiesSample<SpaceObjectAI_SinMovement>> m_spaceObjectAI_SinMovements;
         SharedPtr<GenericInclusiveEntitiesSample<Projectile>> m_projectiles;
+        SharedPtr<GenericInclusiveEntitiesSample<SpecialEffect>> m_specialEffects;
         SharedPtr<GenericInclusiveEntitiesSample<TrailProjectile>> m_trailProjectiles;
         SharedPtr<GenericInclusiveEntitiesSample<UnitMeshPartRenderer>> m_unitMeshPartRenderers;
     };

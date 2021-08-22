@@ -82,6 +82,9 @@ namespace Maze
         bool isFinished = true;
         for (ParticleSystem3DPtr const& particleSystem : m_particleSystems)
         {
+            if (!particleSystem->getEntity()->getActiveSelf())
+                continue;
+
             if (particleSystem->getState() == ParticleSystemState::Playing ||
                 particleSystem->getState() == ParticleSystemState::Pause)
             {
