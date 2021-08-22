@@ -126,27 +126,26 @@ namespace Maze
     //////////////////////////////////////////
     void SpecialEffectManager::createSpecialEffectPrefabs()
     {
-        ECSWorld* world = EntityManager::GetInstancePtr()->getLibraryWorldRaw();
+        
 
-        {
-            EntityPtr entity = EntitySerializationManager::GetInstancePtr()->loadPrefab(
-                "Explosion00.mzprefab",
-                world);
-            
-            SpecialEffectPtr effect = entity->ensureComponent<SpecialEffect>();
-            
-            m_projectilePrefabs[SpecialEffectType::Explosion00] = entity;
-        }
+        auto loadPrefabFunc = 
+            [this](String const& _prefabName, SpecialEffectType _type)
+            {
+                ECSWorld* world = EntityManager::GetInstancePtr()->getLibraryWorldRaw();
 
-        {
-            EntityPtr entity = EntitySerializationManager::GetInstancePtr()->loadPrefab(
-                "Explosion01.mzprefab",
-                world);
+                EntityPtr entity = EntitySerializationManager::GetInstancePtr()->loadPrefab(
+                    _prefabName,
+                    world);
 
-            SpecialEffectPtr effect = entity->ensureComponent<SpecialEffect>();
+                SpecialEffectPtr effect = entity->ensureComponent<SpecialEffect>();
 
-            m_projectilePrefabs[SpecialEffectType::Explosion01] = entity;
-        }
+                m_projectilePrefabs[_type] = entity;
+            };
+
+        loadPrefabFunc("Explosion00.mzprefab", SpecialEffectType::Explosion00);
+        loadPrefabFunc("Explosion01.mzprefab", SpecialEffectType::Explosion01);
+        loadPrefabFunc("UnitExplosion00.mzprefab", SpecialEffectType::UnitExplosion00);
+        loadPrefabFunc("UnitExplosion01.mzprefab", SpecialEffectType::UnitExplosion01);
     }
 
     //////////////////////////////////////////

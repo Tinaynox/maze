@@ -38,6 +38,7 @@
 #include "game/SpaceObjectAvatar.hpp"
 #include "game/DamageData.hpp"
 #include "game/ProjectileAvatarType.hpp"
+#include "game/SpecialEffectType.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
 
 
@@ -49,6 +50,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(UnitPartRenderer);
     MAZE_USING_SHARED_PTR(ViewTriggerBehaviour);
     MAZE_USING_SHARED_PTR(ViewTrigger);
+    MAZE_USING_SHARED_PTR(LevelAdapter);
 
 
     //////////////////////////////////////////
@@ -80,6 +82,9 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void setup(LevelAdapter* _levelAdapter);
+
+        //////////////////////////////////////////
         void prepare();
 
         //////////////////////////////////////////
@@ -98,6 +103,19 @@ namespace Maze
 
         //////////////////////////////////////////
         bool isDeathAnimationFinished();
+
+
+        //////////////////////////////////////////
+        inline SpecialEffectType getDestroyEffect() const { return m_destroyEffect; }
+
+        //////////////////////////////////////////
+        inline void setDestroyEffect(SpecialEffectType _value) { m_destroyEffect = _value; }
+
+        //////////////////////////////////////////
+        inline F32 getDestroyEffectScale() const { return m_destroyEffectScale; }
+
+        //////////////////////////////////////////
+        inline void setDestroyEffectScale(F32 _value) { m_destroyEffectScale = _value; }
 
     protected:
 
@@ -123,6 +141,11 @@ namespace Maze
         
         Vector<UnitPartRendererPtr> m_partRenderers;
         Vector<ViewTriggerBehaviourPtr> m_viewTriggers;
+
+        LevelAdapter* m_levelAdapter = nullptr;
+
+        SpecialEffectType m_destroyEffect = SpecialEffectType::None;
+        F32 m_destroyEffectScale = 1.0f;
     };
 
 

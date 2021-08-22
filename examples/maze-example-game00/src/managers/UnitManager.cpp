@@ -176,6 +176,8 @@ namespace Maze
                 SpaceObjectAvatarPtr avatar = avatarEntity->ensureComponent<SpaceObjectAvatar>();
                 Transform3DPtr const& avatarTransform = avatar->getTransform();
 
+                avatar->setDestroyEffect(SpecialEffectType::UnitExplosion00);
+
                 avatarTransform->setParent(transform);
                 spaceObject->setAvatar(avatar);
 
@@ -235,9 +237,9 @@ namespace Maze
                 }
             }
 
+            
 
             BoxCollider2DPtr const& boxCollider = entity->createComponent<BoxCollider2D>();
-            
             boxCollider->setSize(1.8f, 0.55f);
 
             spaceObject->getRigidbody2D()->setLinearDamping(16.0f);
@@ -260,7 +262,7 @@ namespace Maze
             spaceObject->setDamage(20.0f);
             spaceObject->setWeaponPoint({ 0.375f, -0.11f });
             spaceObject->setProjectileAvatar(ProjectileAvatarType::YellowFlare00);
-            spaceObject->setFireCooldown(2.5f);
+            spaceObject->setFireCooldown(2.85f);
             spaceObject->setEngineForce(Vec2DF(80.0f, 60.0f) * 0.15f);
 
 
@@ -270,6 +272,9 @@ namespace Maze
                 avatarEntity->ensureComponent<Name>("Avatar");
                 SpaceObjectAvatarPtr avatar = avatarEntity->ensureComponent<SpaceObjectAvatar>();
                 Transform3DPtr const& avatarTransform = avatar->getTransform();
+
+                avatar->setDestroyEffect(SpecialEffectType::UnitExplosion01);
+                avatar->setDestroyEffectScale(0.65f);
 
                 avatarTransform->setParent(transform);
                 spaceObject->setAvatar(avatar);
@@ -326,7 +331,6 @@ namespace Maze
                 }
             }
 
-
             BoxCollider2DPtr const& boxCollider = entity->createComponent<BoxCollider2D>();
             boxCollider->setSize(0.75f, 0.75f);
 
@@ -361,6 +365,9 @@ namespace Maze
                 avatarEntity->ensureComponent<Name>("Avatar");
                 SpaceObjectAvatarPtr avatar = avatarEntity->ensureComponent<SpaceObjectAvatar>();
                 Transform3DPtr const& avatarTransform = avatar->getTransform();
+
+                avatar->setDestroyEffect(SpecialEffectType::UnitExplosion00);
+                avatar->setDestroyEffectScale(0.65f);
 
                 avatarTransform->setParent(transform);
                 spaceObject->setAvatar(avatar);
@@ -430,6 +437,9 @@ namespace Maze
                 SpaceObjectAvatarPtr avatar = avatarEntity->ensureComponent<SpaceObjectAvatar>();
                 Transform3DPtr const& avatarTransform = avatar->getTransform();
 
+                avatar->setDestroyEffect(SpecialEffectType::UnitExplosion01);
+                avatar->setDestroyEffectScale(0.65f);
+
                 avatarTransform->setParent(transform);
                 spaceObject->setAvatar(avatar);
 
@@ -497,6 +507,9 @@ namespace Maze
                 avatarEntity->ensureComponent<Name>("Avatar");
                 SpaceObjectAvatarPtr avatar = avatarEntity->ensureComponent<SpaceObjectAvatar>();
                 Transform3DPtr const& avatarTransform = avatar->getTransform();
+
+                avatar->setDestroyEffect(SpecialEffectType::UnitExplosion01);
+                avatar->setDestroyEffectScale(0.65f);
 
                 avatarTransform->setParent(transform);
                 spaceObject->setAvatar(avatar);

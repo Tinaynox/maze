@@ -39,6 +39,7 @@
 #include "game/DamageData.hpp"
 #include "game/ProjectileAvatarType.hpp"
 #include "game/SpaceObjectAvatar.hpp"
+#include "game/SpecialEffectType.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
 
 
@@ -237,7 +238,6 @@ namespace Maze
 
         //////////////////////////////////////////
         inline SpaceObjectAvatarDirection getDirection() const { return m_direction; }
-
 
 
         //////////////////////////////////////////

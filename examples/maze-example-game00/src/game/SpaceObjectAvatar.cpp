@@ -47,6 +47,7 @@
 #include "game/TrailProjectile.hpp"
 #include "game/UnitPartRenderer.hpp"
 #include "game/ViewTriggerBehaviour.hpp"
+#include "game/SpecialEffectPool.hpp"
 
 
 //////////////////////////////////////////
@@ -57,7 +58,9 @@ namespace Maze
     // Class SpaceObjectAvatar
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SpaceObjectAvatar, Component);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SpaceObjectAvatar, Component,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(SpecialEffectType, destroyEffect, SpecialEffectType::None, getDestroyEffect, setDestroyEffect),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, destroyEffectScale, 1.0f, getDestroyEffectScale, setDestroyEffectScale));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(SpaceObjectAvatar);
@@ -89,6 +92,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void SpaceObjectAvatar::setup(LevelAdapter* _levelAdapter)
+    {
+        m_levelAdapter = _levelAdapter;
+    }
+
+    //////////////////////////////////////////
     void SpaceObjectAvatar::prepare()
     {
         m_viewTriggers = m_transform->getAllComponents<ViewTriggerBehaviour>();
@@ -104,6 +113,13 @@ namespace Maze
     {
         for (UnitPartRendererPtr const& unitPartRenderer : m_partRenderers)
             unitPartRenderer->setState(UnitPartRendererState::DeathProgress);
+
+        if (m_destroyEffect != SpecialEffectType::None)
+        {
+            SpecialEffectPtr effect = m_levelAdapter->getSpecialEffectPool()->createSpecialEffect(m_destroyEffect);
+            effect->getTransform()->setLocalPosition(getTransform()->getWorldPosition());
+            effect->getTransform()->setLocalScale(m_destroyEffectScale);
+        }
     }
 
     //////////////////////////////////////////

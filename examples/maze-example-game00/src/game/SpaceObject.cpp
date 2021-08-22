@@ -51,6 +51,7 @@
 #include "game/UnitPartRenderer.hpp"
 #include "game/SpaceObjectAvatar.hpp"
 #include "game/ViewTriggers.hpp"
+#include "game/SpecialEffectPool.hpp"
 
 
 //////////////////////////////////////////
@@ -193,6 +194,8 @@ namespace Maze
     {
         if (!m_poolObject)
             m_poolObject = getEntityRaw()->getComponent<ComponentPoolObject<SpaceObject>>();
+
+        m_avatar->setup(m_levelAdapter.get());
     }
 
     //////////////////////////////////////////
