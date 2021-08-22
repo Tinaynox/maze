@@ -447,6 +447,12 @@ namespace Maze
         //////////////////////////////////////////
         inline void setPlayOnAwake(bool _value) { m_playOnAwake = _value; }
 
+        //////////////////////////////////////////
+        inline bool getAlignToDirection() const { return m_alignToDirection; }
+
+        //////////////////////////////////////////
+        inline void setAlignToDirection(bool _value) { m_alignToDirection = _value; }
+
 
         //////////////////////////////////////////
         inline ParticleSystemSimulationSpace getTransformPolicy() const { return m_transformPolicy; }
@@ -626,6 +632,7 @@ namespace Maze
         ParticleSystemParameterF32 m_speed = ParticleSystemParameterF32(0.0f);
         ParticleSystemParameterF32 m_gravity = ParticleSystemParameterF32(-9.8f);
         ParticleSystemParameterF32 m_rotation = ParticleSystemParameterF32(0.0f);
+        bool m_alignToDirection = false;
 
         EmissionModule m_emission;
 

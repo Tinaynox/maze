@@ -154,6 +154,11 @@ namespace Maze
             ParticleSystem3DZoneBox::GetMetaClass(),
             verticalLayout->getTransform());
 
+        createZoneDrawer(
+            ParticleSystem3DZoneType::Circle,
+            ParticleSystem3DZoneCircle::GetMetaClass(),
+            verticalLayout->getTransform());
+
         updateZoneType();
     }
 
@@ -186,7 +191,11 @@ namespace Maze
                 case ParticleSystem3DZoneType::Box:
                     mainModulesMetaInstances.insert(value.box.getMetaInstance());
                     break;
+                case ParticleSystem3DZoneType::Circle:
+                    mainModulesMetaInstances.insert(value.circle.getMetaInstance());
+                    break;
                 default:
+                    MAZE_NOT_IMPLEMENTED;
                     break;
             }
             

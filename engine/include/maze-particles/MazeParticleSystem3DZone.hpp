@@ -42,12 +42,13 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_5_API(MAZE_PARTICLES_API, ParticleSystem3DZoneType,
+    MAZE_DECLARE_ENUMCLASS_6_API(MAZE_PARTICLES_API, ParticleSystem3DZoneType,
         Sphere,
         Hemisphere,
         Cone,
         Torus,
-        Box);
+        Box,
+        Circle);
 
 
     //////////////////////////////////////////
@@ -489,6 +490,82 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Class ParticleSystem3DZoneCircle
+    //
+    //////////////////////////////////////////
+    class MAZE_PARTICLES_API ParticleSystem3DZoneCircle
+        : public IJSONValueSerializable
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS(ParticleSystem3DZoneCircle);
+
+        //////////////////////////////////////////
+        MAZE_JSON_STRING_SERIALIZATION(ParticleSystem3DZoneCircle);
+
+        //////////////////////////////////////////
+        ParticleSystem3DZoneCircle()
+        {}
+
+
+        //////////////////////////////////////////
+        inline void setPosition(Vec3DF const& _value) { position = _value; }
+
+        //////////////////////////////////////////
+        inline Vec3DF const& getPosition() const { return position; }
+
+        //////////////////////////////////////////
+        inline void setScale(Vec3DF const& _value) { scale = _value; }
+
+        //////////////////////////////////////////
+        inline Vec3DF const& getScale() const { return scale; }
+
+        //////////////////////////////////////////
+        inline void setRadius(F32 _value) { radius = _value; }
+
+        //////////////////////////////////////////
+        inline F32 getRadius() const { return radius; }
+
+
+        //////////////////////////////////////////
+        inline bool operator==(ParticleSystem3DZoneCircle const& _value) const
+        {
+            return
+                position == _value.position && scale == _value.scale &&
+                radius == _value.radius;
+        }
+
+        //////////////////////////////////////////
+        inline bool operator!=(ParticleSystem3DZoneCircle const& _value) const
+        {
+            return !this->operator==(_value);
+        }
+
+    public:
+
+        //////////////////////////////////////////
+        virtual void loadFromJSONValue(Json::Value const& _value) MAZE_OVERRIDE
+        {
+            DeserializeMetaInstanceFromJSONValue(getMetaClass(), getMetaInstance(), _value);
+        }
+
+        //////////////////////////////////////////
+        virtual Json::Value toJSONValue() const MAZE_OVERRIDE
+        {
+            return SerializeMetaInstanceToJSONValue(getMetaClass(), getMetaInstance());
+        }
+
+    public:
+
+        Vec3DF position = Vec3DF::c_zero;
+        Vec3DF scale = Vec3DF::c_one;
+
+        F32 radius = 1.0f;
+    };
+
+
+    //////////////////////////////////////////
     // Class ParticleSystem3DZoneData
     //
     //////////////////////////////////////////
@@ -539,6 +616,12 @@ namespace Maze
         //////////////////////////////////////////
         inline ParticleSystem3DZoneBox const& getBox() const { return box; }
 
+        //////////////////////////////////////////
+        inline void setCircle(ParticleSystem3DZoneCircle const& _value) { circle = _value; }
+
+        //////////////////////////////////////////
+        inline ParticleSystem3DZoneCircle const& getCircle() const { return circle; }
+
 
         //////////////////////////////////////////
         inline bool operator==(ParticleSystem3DZoneData const& _value) const
@@ -576,6 +659,7 @@ namespace Maze
         ParticleSystem3DZoneTorus torus;
         ParticleSystem3DZoneCone cone;
         ParticleSystem3DZoneBox box;
+        ParticleSystem3DZoneCircle circle;
     };
 
 
@@ -585,6 +669,7 @@ namespace Maze
     MAZE_STRING_ONLY_SERIALIZATION(ParticleSystem3DZoneTorus);
     MAZE_STRING_ONLY_SERIALIZATION(ParticleSystem3DZoneCone);
     MAZE_STRING_ONLY_SERIALIZATION(ParticleSystem3DZoneBox);
+    MAZE_STRING_ONLY_SERIALIZATION(ParticleSystem3DZoneCircle);
     MAZE_STRING_ONLY_SERIALIZATION(ParticleSystem3DZoneData);
 
 } // namespace Maze

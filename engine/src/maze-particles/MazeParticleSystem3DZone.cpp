@@ -73,12 +73,19 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, scale, Vec3DF::c_one, getScale, setScale));
 
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS(ParticleSystem3DZoneCircle,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, position, Vec3DF::c_zero, getPosition, setPosition),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, scale, Vec3DF::c_one, getScale, setScale),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, radius, 1.0f, getRadius, setRadius));
+
+    //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS(ParticleSystem3DZoneData,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystem3DZoneSphere, sphere, ParticleSystem3DZoneSphere(), getSphere, setSphere),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystem3DZoneHemisphere, hemisphere, ParticleSystem3DZoneHemisphere(), getHemisphere, setHemisphere),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystem3DZoneTorus, torus, ParticleSystem3DZoneTorus(), getTorus, setTorus),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystem3DZoneCone, cone, ParticleSystem3DZoneCone(), getCone, setCone),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystem3DZoneBox, box, ParticleSystem3DZoneBox(), getBox, setBox));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystem3DZoneBox, box, ParticleSystem3DZoneBox(), getBox, setBox),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystem3DZoneCircle, circle, ParticleSystem3DZoneCircle(), getCircle, setCircle));
     
     
 } // namespace Maze

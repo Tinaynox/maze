@@ -167,6 +167,16 @@ namespace Maze
             Vec3DF const& _center) const;
 
         //////////////////////////////////////////
+        void generateRandomPointCircleVolume(
+            ParticleSystem3DZoneEmissionPoint& _result,
+            Vec3DF const& _center) const;
+
+        //////////////////////////////////////////
+        void generateRandomPointCircleShell(
+            ParticleSystem3DZoneEmissionPoint& _result,
+            Vec3DF const& _center) const;
+
+        //////////////////////////////////////////
         void generateRandomPointHemisphereVolume(
             ParticleSystem3DZoneEmissionPoint& _result,
             Vec3DF const& _center) const;

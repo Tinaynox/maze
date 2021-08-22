@@ -188,6 +188,30 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void ParticleSystem3DShapeModule::generateRandomPointCircleVolume(
+        ParticleSystem3DZoneEmissionPoint& _result,
+        Vec3DF const& _center) const
+    {
+        ParticleSystem3DZoneCircle const& zone = m_zoneData.circle;
+
+        Vec2DF direction = Vec2DF::RandomDirection();
+        _result.direction = direction;
+        _result.position = _center + direction * zone.radius * Math::UnitRandom();
+    }
+
+    //////////////////////////////////////////
+    void ParticleSystem3DShapeModule::generateRandomPointCircleShell(
+        ParticleSystem3DZoneEmissionPoint& _result,
+        Vec3DF const& _center) const
+    {
+        ParticleSystem3DZoneCircle const& zone = m_zoneData.circle;
+
+        Vec2DF direction = Vec2DF::RandomDirection();
+        _result.direction = direction;
+        _result.position = _center + direction * zone.radius;
+    }
+
+    //////////////////////////////////////////
     void ParticleSystem3DShapeModule::generateRandomPointHemisphereVolume(
         ParticleSystem3DZoneEmissionPoint& _result,
         Vec3DF const& _center) const
@@ -455,6 +479,15 @@ namespace Maze
                     m_generateRandomPointCallback = &ParticleSystem3DShapeModule::generateRandomPointBoxVolume;
                 else
                     m_generateRandomPointCallback = &ParticleSystem3DShapeModule::generateRandomPointBoxShell;
+                break;
+            }
+            case ParticleSystem3DZoneType::Circle:
+            {
+                if (m_shapeVolume)
+                    m_generateRandomPointCallback = &ParticleSystem3DShapeModule::generateRandomPointCircleVolume;
+                else
+                    m_generateRandomPointCallback = &ParticleSystem3DShapeModule::generateRandomPointCircleShell;
+
                 break;
             }
             default:

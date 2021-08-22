@@ -64,6 +64,7 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystemParameterF32, speed, ParticleSystemParameterF32(), getSpeed, setSpeed),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystemParameterF32, gravity, ParticleSystemParameterF32(), getGravity, setGravity),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystemParameterF32, rotation, ParticleSystemParameterF32(), getRotation, setRotation),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, alignToDirection, false, getAlignToDirection, setAlignToDirection),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(EmissionModule, emission, EmissionModule(), getEmission, setEmission),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(SizeOverLifetimeModule, sizeOverLifetime, SizeOverLifetimeModule(), getSizeOverLifetime, setSizeOverLifetime),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(VelocityOverLifetimeModule, velocityOverLifetime, VelocityOverLifetimeModule(), getVelocityOverLifetime, setVelocityOverLifetime),
@@ -153,6 +154,23 @@ namespace Maze
         }
 
         // Rotation
+        if (m_alignToDirection)
+        {
+            F32 valueF32;
+            for (S32 i = _first; i < _last; ++i)
+            {
+                S32 seed = _particles.accessSeed(i);
+                m_rotation.sample(seed, _emitterTimePercent, valueF32);
+
+                Vec3DF& direction = _particles.accessDirection(i);
+                valueF32 += Vec2DF(direction.x, direction.y).normalizedCopy().toAngle();
+
+                Particles3D::ParticleRotation& rotation = _particles.accessRotation(i);
+                rotation.initial = valueF32;
+                rotation.current = valueF32;
+            }
+        }
+        else
         {
             F32 valueF32;
             for (S32 i = _first; i < _last; ++i)
