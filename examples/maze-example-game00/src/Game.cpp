@@ -312,14 +312,21 @@ namespace Maze
             return false;
         }
 
-        // m_mainRenderWindow->getWindow()->maximizeFullscreen();
+        GameGraphicsSettingsPtr const& graphicsSettings = m_settingsManager->getSettings<GameGraphicsSettings>();
+
+#if MAZE_RELEASE
+        if (graphicsSettings->getFullscreen())
+            m_mainRenderWindow->getWindow()->maximizeFullscreen();
+#else
+        graphicsSettings->setFullscreen(false);
+#endif
 
 #if (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN) || \
     (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
-        m_mainRenderWindow->setVSync(1);
-#else
-        m_mainRenderWindow->setVSync(0);
+        graphicsSettings->setVSync(1)
 #endif
+
+        m_mainRenderWindow->setVSync(graphicsSettings->getVSync());
         
         Debug::log << m_windowManager->constructWindowsInfo();
     

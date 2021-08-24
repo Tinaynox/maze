@@ -84,6 +84,7 @@
 #include "managers/GameManager.hpp"
 #include "game/SpaceObject.hpp"
 #include "ui/UIHelper.hpp"
+#include "settings/GameGraphicsSettings.hpp"
 
 
 //////////////////////////////////////////
@@ -113,6 +114,11 @@ namespace Maze
         {
             inputManager->eventMouse.unsubscribe(this);
         }
+
+        GameGraphicsSettingsPtr const& graphicsSettings = SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>();
+        graphicsSettings->getFullscreenChangedEvent().unsubscribe(this);
+        graphicsSettings->getVSyncChangedEvent().unsubscribe(this);
+        graphicsSettings->getPostProcessEnabledChangedEvent().unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -133,6 +139,11 @@ namespace Maze
         Game::GetInstancePtr()->eventMainRenderWindowViewportChanged.subscribe(this, &SceneSettings::notifyMainRenderWindowViewportChanged);
 
         create2D();
+
+        GameGraphicsSettingsPtr const& graphicsSettings = SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>();
+        graphicsSettings->getFullscreenChangedEvent().subscribe(this, &SceneSettings::notifyVideoMenuPropertyChanged);
+        graphicsSettings->getVSyncChangedEvent().subscribe(this, &SceneSettings::notifyVideoMenuPropertyChanged);
+        graphicsSettings->getPostProcessEnabledChangedEvent().subscribe(this, &SceneSettings::notifyVideoMenuPropertyChanged);
 
         return true;
     }
@@ -185,14 +196,32 @@ namespace Maze
 
 
         // Bottom menu
+        HorizontalLayout2DPtr bottomMenuLayout = UIHelper::CreateHorizontalLayout(
+            HorizontalAlignment2D::Center,
+            VerticalAlignment2D::Middle,
+            Vec2DF(menuBackgroundSprite->getTransform()->getWidth(), 60.0f),
+            Vec2DF(0, 15.0f),
+            menuBackgroundSprite->getTransform(),
+            this,
+            Vec2DF(0.5f, 0.0f),
+            Vec2DF(0.5f, 0.0f));
+        bottomMenuLayout->setExpand(false);
+
+        ClickButton2DPtr resetButton = UIHelper::CreateDefaultGameClickButton(
+            this,
+            bottomMenuLayout->getTransform(),
+            { 0.0f, 0.0f },
+            { 238 * 0.75f, 60 * 0.75f },
+            "RESET",
+            CreateDelegate(this, &SceneSettings::notifyResetButtonClick));
+
         ClickButton2DPtr closeButton = UIHelper::CreateDefaultGameClickButton(
             this,
-            menuBackgroundSprite->getTransform(),
-            {0.0f, 50.0f},
+            bottomMenuLayout->getTransform(),
+            {0.0f, 0.0f},
             {238 * 0.75f, 60 * 0.75f},
             "CLOSE",
             CreateDelegate(this, &SceneSettings::notifyCloseButtonClick));
-        closeButton->getTransform()->setAnchor(0.5f, 0.0f);
 
         // Top menu
         HorizontalLayout2DPtr topMenuLayout = UIHelper::CreateHorizontalLayout(
@@ -254,11 +283,12 @@ namespace Maze
         Transform2DPtr gameMenu = createMenuFunc(SettingsMode::Game);
         Transform2DPtr controlsMenu = createMenuFunc(SettingsMode::Controls);
 
+        // Fullscreen
         {
             HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
                 HorizontalAlignment2D::Center,
                 VerticalAlignment2D::Middle,
-                Vec2DF(menuWidth, 10.0f),
+                Vec2DF(menuWidth, 20.0f),
                 Vec2DF(0, 0),
                 videoMenu,
                 this);
@@ -275,20 +305,91 @@ namespace Maze
                 this);
             label->setColor(ColorU32(255, 150, 0));
 
-            ToggleButton2DPtr fullscreenToggle = UIHelper::CreateDefaultToggleButton(
+            m_fullscreenToggle = UIHelper::CreateDefaultToggleButton(
                 { 0.0f, 0.0f },
                 layout->getTransform(),
                 this);
-            fullscreenToggle->setChecked(Game::GetInstancePtr()->getMainRenderWindow()->getWindow()->getFullscreen());
-            fullscreenToggle->eventCheckedChanged.subscribe(
+            m_fullscreenToggle->eventCheckedChanged.subscribe(
                 [](ToggleButton2D* _toggle, bool _value)
                 {
-                    if (!_value)
-                        Game::GetInstancePtr()->getMainRenderWindow()->getWindow()->setFullscreen(false);
-                    else
-                        Game::GetInstancePtr()->getMainRenderWindow()->getWindow()->maximizeFullscreen();
+                    GameGraphicsSettingsPtr const& graphicsSettings = SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>();
+                    graphicsSettings->setFullscreen(_value);
+
+                    SettingsManager::GetInstancePtr()->saveSettings();
                 });
         }
+        // VSync
+        {
+            HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
+                HorizontalAlignment2D::Center,
+                VerticalAlignment2D::Middle,
+                Vec2DF(menuWidth, 20.0f),
+                Vec2DF(0, 0),
+                videoMenu,
+                this);
+
+            SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+                "VSYNC",
+                10,
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Top,
+                { 200.0f, 10.0f },
+                { 0.0f, 0.0f },
+                nullptr,
+                layout->getTransform(),
+                this);
+            label->setColor(ColorU32(255, 150, 0));
+
+            m_vsyncToggle = UIHelper::CreateDefaultToggleButton(
+                { 0.0f, 0.0f },
+                layout->getTransform(),
+                this);
+            m_vsyncToggle->eventCheckedChanged.subscribe(
+                [](ToggleButton2D* _toggle, bool _value)
+                {
+                    GameGraphicsSettingsPtr const& graphicsSettings = SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>();
+                    graphicsSettings->setVSync(_value);
+
+                    SettingsManager::GetInstancePtr()->saveSettings();
+                });
+        }
+        // PostProcessFX
+        {
+            HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
+                HorizontalAlignment2D::Center,
+                VerticalAlignment2D::Middle,
+                Vec2DF(menuWidth, 20.0f),
+                Vec2DF(0, 0),
+                videoMenu,
+                this);
+
+            SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+                "POST PROCESS FX",
+                10,
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Top,
+                { 200.0f, 10.0f },
+                { 0.0f, 0.0f },
+                nullptr,
+                layout->getTransform(),
+                this);
+            label->setColor(ColorU32(255, 150, 0));
+
+            m_postProcessFXToggle = UIHelper::CreateDefaultToggleButton(
+                { 0.0f, 0.0f },
+                layout->getTransform(),
+                this);
+            m_postProcessFXToggle->eventCheckedChanged.subscribe(
+                [](ToggleButton2D* _toggle, bool _value)
+                {
+                    GameGraphicsSettingsPtr const& graphicsSettings = SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>();
+                    graphicsSettings->setPostProcessEnabled(_value);
+
+                    SettingsManager::GetInstancePtr()->saveSettings();
+                });
+        }
+
+        updateVideoMenuProperties();
     }
 
     //////////////////////////////////////////
@@ -305,6 +406,35 @@ namespace Maze
             case ECSSceneState::Active:
             {
                 m_canvasTransition->show();
+                break;
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void SceneSettings::notifyResetButtonClick(Button2D* _button, CursorInputEvent const& _inputEvent)
+    {
+        switch (m_settingsMode)
+        {
+            case SettingsMode::Video:
+            {
+                GameGraphicsSettingsPtr const& graphicsSettings = SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>();
+                graphicsSettings->setFullscreen(false);
+                graphicsSettings->setVSync(true);
+                graphicsSettings->setPostProcessEnabled(true);
+
+                break;
+            }
+            case SettingsMode::Sound:
+            {
+                break;
+            }
+            case SettingsMode::Game:
+            {
+                break;
+            }
+            case SettingsMode::Controls:
+            {
                 break;
             }
         }
@@ -362,6 +492,28 @@ namespace Maze
             button->setChecked(m_settingsMode == (SettingsMode)i);
             menu->getEntityRaw()->setActiveSelf(m_settingsMode == (SettingsMode)i);
         }
+    }
+
+    //////////////////////////////////////////
+    void SceneSettings::updateVideoMenuProperties()
+    {
+        GameGraphicsSettingsPtr const& graphicsSettings = SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>();
+
+        m_fullscreenToggle->setChecked(graphicsSettings->getFullscreen());
+        m_vsyncToggle->setChecked(graphicsSettings->getVSync());
+        m_postProcessFXToggle->setChecked(graphicsSettings->getPostProcessEnabled());
+    }
+
+    //////////////////////////////////////////
+    void SceneSettings::notifyVideoMenuPropertyChanged(bool const& _value)
+    {
+        updateVideoMenuProperties();
+    }
+
+    //////////////////////////////////////////
+    void SceneSettings::notifyVideoMenuPropertyChanged(int const& _value)
+    {
+        updateVideoMenuProperties();
     }
 
 } // namespace Maze

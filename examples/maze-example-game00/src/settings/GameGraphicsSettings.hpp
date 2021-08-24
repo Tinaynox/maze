@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
+#include "maze-core/utils/MazeObservableValue.hpp"
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
@@ -68,7 +69,33 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setPostProcessEnabled(bool _postProcessEnabled);
+        void setFullscreen(bool _fullscreen) { m_fullscreen = _fullscreen; }
+
+        //////////////////////////////////////////
+        inline bool getFullscreen() const { return m_fullscreen; }
+
+        //////////////////////////////////////////
+        inline void switchFullscreen() { setFullscreen(!getFullscreen()); }
+
+        //////////////////////////////////////////
+        inline auto& getFullscreenChangedEvent() { return m_fullscreen.eventValueChanged; }
+
+
+        //////////////////////////////////////////
+        void setVSync(int _value) { m_vsync = _value; }
+
+        //////////////////////////////////////////
+        inline int getVSync() const { return m_vsync; }
+
+        //////////////////////////////////////////
+        inline void switchVSync() { setVSync(!getVSync()); }
+
+        //////////////////////////////////////////
+        inline auto& getVSyncChangedEvent() { return m_vsync.eventValueChanged; }
+
+
+        //////////////////////////////////////////
+        void setPostProcessEnabled(bool _postProcessEnabled) { m_postProcessEnabled = _postProcessEnabled; }
 
         //////////////////////////////////////////
         inline bool getPostProcessEnabled() const { return m_postProcessEnabled; }
@@ -76,13 +103,13 @@ namespace Maze
         //////////////////////////////////////////
         inline void switchPostProcessEnabled() { setPostProcessEnabled(!getPostProcessEnabled()); }
 
-    public:
-
-        MultiDelegate<bool> eventPostProcessEnabledChanged;
+        //////////////////////////////////////////
+        inline auto& getPostProcessEnabledChangedEvent() { return m_postProcessEnabled.eventValueChanged; }
 
     protected:
-
-        bool m_postProcessEnabled;
+        ObservableValue<bool> m_fullscreen = false;
+        ObservableValue<int> m_vsync = 1;
+        ObservableValue<bool> m_postProcessEnabled = true;
     };
 
 } // namespace Maze

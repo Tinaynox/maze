@@ -113,6 +113,13 @@ namespace Maze
         //////////////////////////////////////////
         inline S32 getDrawCallsLimit() const { return m_drawCallsLimit; }
 
+
+        //////////////////////////////////////////
+        void notifyFullscreenChanged(bool const& _value);
+
+        //////////////////////////////////////////
+        void notifyVSyncChanged(int const& _value);
+
     protected:
         static GameManager* s_instance;
 

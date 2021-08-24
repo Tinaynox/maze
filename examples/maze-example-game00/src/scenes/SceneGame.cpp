@@ -166,7 +166,7 @@ namespace Maze
         if (!ECSRenderScene::init(renderWindow))
             return false;
 
-        SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>()->setPostProcessEnabled(true);
+        // SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>()->setPostProcessEnabled(true);
 
         Game::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &SceneGame::notifyRenderTargetResized);
         Game::GetInstancePtr()->eventMainRenderWindowViewportChanged.subscribe(this, &SceneGame::notifyMainRenderWindowViewportChanged);

@@ -39,6 +39,8 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(GameGraphicsSettings, Settings,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, fullscreen, false, getFullscreen, setFullscreen),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(int, vsync, 1, getVSync, setVSync),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, postProcessEnabled, true, getPostProcessEnabled, setPostProcessEnabled));
 
     //////////////////////////////////////////
@@ -46,7 +48,6 @@ namespace Maze
 
     //////////////////////////////////////////
     GameGraphicsSettings::GameGraphicsSettings()
-        : m_postProcessEnabled(true)
     {
 
     }
@@ -54,17 +55,6 @@ namespace Maze
     //////////////////////////////////////////
     GameGraphicsSettings::~GameGraphicsSettings()
     {
-    }
-
-    //////////////////////////////////////////
-    void GameGraphicsSettings::setPostProcessEnabled(bool _postProcessEnabled)
-    {
-        if (m_postProcessEnabled == _postProcessEnabled)
-            return;
-
-        m_postProcessEnabled = _postProcessEnabled;
-
-        eventPostProcessEnabledChanged(m_postProcessEnabled);
     }
 
 } // namespace Maze

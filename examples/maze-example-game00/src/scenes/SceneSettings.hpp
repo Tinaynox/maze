@@ -115,6 +115,10 @@ namespace Maze
         virtual void processSceneStateChanged(ECSSceneState _state) MAZE_OVERRIDE;
 
 
+
+        //////////////////////////////////////////
+        void notifyResetButtonClick(Button2D* _button, CursorInputEvent const& _inputEvent);
+
         //////////////////////////////////////////
         void notifyCloseButtonClick(Button2D* _button, CursorInputEvent const& _inputEvent);
 
@@ -128,6 +132,16 @@ namespace Maze
         //////////////////////////////////////////
         void updateMenus();
 
+        //////////////////////////////////////////
+        void updateVideoMenuProperties();
+
+
+        //////////////////////////////////////////
+        void notifyVideoMenuPropertyChanged(bool const& _value);
+
+        //////////////////////////////////////////
+        void notifyVideoMenuPropertyChanged(int const& _value);
+
     protected:
         CanvasPtr m_canvas;
 
@@ -137,6 +151,10 @@ namespace Maze
         Array<ToggleButton2DPtr, (Size)SettingsMode::MAX> m_menuButtons;
         Array<Transform2DPtr, (Size)SettingsMode::MAX> m_menus;
         
+        // Video settings
+        ToggleButton2DPtr m_fullscreenToggle;
+        ToggleButton2DPtr m_vsyncToggle;
+        ToggleButton2DPtr m_postProcessFXToggle;
     };
 
 

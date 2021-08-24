@@ -81,6 +81,7 @@
 #include "managers/SpecialEffectManager.hpp"
 #include "game/SpaceObject.hpp"
 #include "game/gizmos/SpaceObjectGizmos.hpp"
+#include "settings/GameGraphicsSettings.hpp"
 
 
 //////////////////////////////////////////
@@ -110,6 +111,9 @@ namespace Maze
         {
             InputManager::GetInstancePtr()->eventKeyboard.unsubscribe(this);
         }
+
+        SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>()->getFullscreenChangedEvent().unsubscribe(this);
+        SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>()->getVSyncChangedEvent().unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -138,6 +142,10 @@ namespace Maze
         InputManager::GetInstancePtr()->eventKeyboard.subscribe(this, &GameManager::notifyKeyboardEvent);
 
         updateDrawCallsLimit();
+
+
+        SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>()->getFullscreenChangedEvent().subscribe(this, &GameManager::notifyFullscreenChanged);
+        SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>()->getVSyncChangedEvent().subscribe(this, &GameManager::notifyVSyncChanged);
 
         return true;
     }
@@ -214,6 +222,21 @@ namespace Maze
 
         updateDrawCallsLimit();
         Debug::Log("DC: %d/%d", m_drawCallsLimit, m_drawCallsMaxCount);
+    }
+
+    //////////////////////////////////////////
+    void GameManager::notifyFullscreenChanged(bool const& _value)
+    {
+        if (_value)
+            Game::GetInstancePtr()->getMainRenderWindow()->getWindow()->maximizeFullscreen();
+        else
+            Game::GetInstancePtr()->getMainRenderWindow()->getWindow()->setFullscreen(false); 
+    }
+
+    //////////////////////////////////////////
+    void GameManager::notifyVSyncChanged(int const& _value)
+    {
+        Game::GetInstancePtr()->getMainRenderWindow()->setVSync(_value);
     }
 
 } // namespace Maze
