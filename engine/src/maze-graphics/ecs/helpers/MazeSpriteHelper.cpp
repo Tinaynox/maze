@@ -34,7 +34,9 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
+#include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 
@@ -114,7 +116,10 @@ namespace Maze
         
             Maze::SpriteRenderer2DPtr spriteRenderer = spriteRendererEntity->createComponent<Maze::SpriteRenderer2D>();
             spriteRenderer->setSprite(_spriteName);
-            spriteRenderer->setMaterial(_material);
+            spriteRenderer->setMaterial(_material ? _material : SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial());
+
+            if (spriteRenderer->getSprite()->getSliceBorder().isBorderExists())
+                spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
 
             Maze::Transform2DPtr const& transform = spriteRenderer->getTransform();
             transform->setParent(_parent);
@@ -141,7 +146,8 @@ namespace Maze
                 _spriteName,
                 _size,
                 _position,
-                GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getMaterial(_materialName),
+                _materialName   ? MaterialManager::GetCurrentInstance()->getMaterial(_materialName)
+                                : SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial(),
                 _parent,
                 _ecsScene,
                 _anchor,
@@ -164,7 +170,7 @@ namespace Maze
         
             Maze::SpriteRenderer2DPtr spriteRenderer = spriteRendererEntity->createComponent<Maze::SpriteRenderer2D>();
             spriteRenderer->setColor(_color);
-            spriteRenderer->setMaterial(_material);
+            spriteRenderer->setMaterial(_material ? _material : MaterialManager::GetCurrentInstance()->getColorMaterial());
 
             Maze::Transform2DPtr const& transform = spriteRenderer->getTransform();
             transform->setParent(_parent);
@@ -196,7 +202,7 @@ namespace Maze
             Maze::SystemTextRenderer2DPtr textRenderer = textRendererEntity->createComponent<Maze::SystemTextRenderer2D>();
             textRenderer->setText(_text);
             textRenderer->setFontSize(_fontSize);
-            textRenderer->setMaterial(_material);
+            textRenderer->setMaterial(_material ? _material : SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial());
             textRenderer->setHorizontalAlignment(_horizontalAlignment);
             textRenderer->setVerticalAlignment(_verticalAlignment);
 

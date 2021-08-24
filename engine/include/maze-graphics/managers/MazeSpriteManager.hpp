@@ -63,6 +63,8 @@ namespace Maze
         //////////////////////////////////////////
         static void Initialize(SpriteManagerPtr& _textureManager, RenderSystemPtr const& _renderSystem);
 
+        //////////////////////////////////////////
+        static SpriteManagerPtr const& GetCurrentInstance();
 
         //////////////////////////////////////////
         SpritePtr const& getSprite(String const& _imageName);

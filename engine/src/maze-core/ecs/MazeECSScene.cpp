@@ -108,6 +108,8 @@ namespace Maze
                 break;
             }
         }
+
+        processSceneStateChanged(m_state);
     }
 
     //////////////////////////////////////////

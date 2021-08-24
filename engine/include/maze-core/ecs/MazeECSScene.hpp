@@ -196,6 +196,9 @@ namespace Maze
         void setState(ECSSceneState _state);
 
         //////////////////////////////////////////
+        virtual void processSceneStateChanged(ECSSceneState _state) {}
+
+        //////////////////////////////////////////
         void processSceneWillBeDestroyed();
 
         //////////////////////////////////////////

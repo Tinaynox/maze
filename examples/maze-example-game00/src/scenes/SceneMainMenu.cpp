@@ -78,9 +78,11 @@
 #include "Game.hpp"
 #include "scenes/SceneFadePreloader.hpp"
 #include "scenes/SceneGame.hpp"
+#include "scenes/SceneSettings.hpp"
 #include "managers/PlayerManager.hpp"
 #include "input/PlayerGamepad.hpp"
 #include "player/Player.hpp"
+#include "ui/UIHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -186,112 +188,17 @@ namespace Maze
         String const& _label,
         Delegate<void, Button2D*, CursorInputEvent const&> _onClickDelegate)
     {
-        EntityPtr buttonEntity = createEntity();
-        Transform2DPtr buttonEntityTransform = buttonEntity->ensureComponent<Transform2D>();
-        buttonEntityTransform->setSize(Vec2DF(238, 60));
-        buttonEntityTransform->setParent(m_canvas->getTransform());
-        buttonEntityTransform->setLocalPosition(_position);
-        buttonEntityTransform->setLocalScale(0.75f);
-        ClickButton2DPtr button = buttonEntity->ensureComponent<ClickButton2D>();
-        button->eventClick.subscribe(_onClickDelegate);
-        buttonEntity->ensureComponent<Name>("Button");
+        ClickButton2DPtr clickButton = UIHelper::CreateDefaultGameClickButton(
+            this,
+            m_canvas->getTransform(),
+            _position,
+            {238 * 0.75f, 60 * 0.75f},
+            _label,
+            _onClickDelegate);
 
-        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        // ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
-        SpriteManagerPtr const& spriteManager = renderSystem->getSpriteManager();
-        
+        // clickButton->getTransform()->setLocalScale(0.75f);
 
-        SpriteRenderer2DPtr buttonSprite = SpriteHelper::CreateSprite(
-            "Button00.mztexture",
-            buttonEntityTransform->getSize(),
-            Vec2DF::c_zero,
-            spriteManager->getDefaultSpriteMaterial(),
-            buttonEntityTransform,
-            this);
-        buttonSprite->getEntityRaw()->ensureComponent<Name>("ButtonSpriteDefault");
-        UITweenTransitionScalePtr const& pressedTransition = buttonSprite->getEntityRaw()->ensureComponent<UITweenTransitionScale>();
-        pressedTransition->setHiddenScale(Vec2DF(1.0f, 1.0f));
-        pressedTransition->setShownScale(Vec2DF(0.95f, 0.9f));
-        pressedTransition->setShowTime(0.2f);
-        pressedTransition->hideInstantly();
-
-        SpriteRenderer2DPtr buttonFocusedSprite = SpriteHelper::CreateSprite(
-            "Button00Focused.mztexture",
-            buttonEntityTransform->getSize(),
-            Vec2DF::c_zero,
-            spriteManager->getDefaultSpriteMaterial(),
-            buttonSprite->getTransform(),
-            this);
-        buttonFocusedSprite->getEntityRaw()->ensureComponent<Name>("ButtonSpriteFocused");
-        UITweenTransitionAlphaPtr const& focusedTransition = buttonFocusedSprite->getEntityRaw()->ensureComponent<UITweenTransitionAlpha>();
-        focusedTransition->setShowTime(0.3f);
-        focusedTransition->setAlphaPower(1.0f);
-        focusedTransition->setHidden(!button->getFocused());
-
-        button->eventFocusChanged.subscribe(
-            [focusedTransition](Button2D* _button, bool _value)
-            {
-                focusedTransition->setHidden(!_value);
-            });
-
-        button->eventPressedChanged.subscribe(
-            [pressedTransition](Button2D* _button, bool _value)
-            {
-                pressedTransition->setHidden(!_value);
-            });
-    
-    
-        EntityPtr labelEntity = createEntity();
-        Transform2DPtr labelEntityTransform = labelEntity->ensureComponent<Transform2D>();
-        labelEntityTransform->setSize(buttonSprite->getTransform()->getSize());
-        labelEntityTransform->setParent(buttonSprite->getTransform());
-        labelEntityTransform->setLocalScale(Vec2DF(0.85f, 1.0f));
-        labelEntity->ensureComponent<Name>("LabelEntity");
-
-        for (S32 i = 0; i < 8; ++i)
-        {
-            F32 outlineOffset = 1.75f;
-            Vec2DF offset;
-            switch (i)
-            {
-                case 0: offset = Vec2DF(-outlineOffset, 0.0f); break;
-                case 1: offset = Vec2DF(+outlineOffset, 0.0f); break;
-                case 2: offset = Vec2DF(0.0f, -outlineOffset); break;
-                case 3: offset = Vec2DF(0.0f, +outlineOffset); break;
-                case 4: offset = Vec2DF(-outlineOffset, +outlineOffset); break;
-                case 5: offset = Vec2DF(+outlineOffset, +outlineOffset); break;
-                case 6: offset = Vec2DF(-outlineOffset, -outlineOffset); break;
-                case 7: offset = Vec2DF(+outlineOffset, -outlineOffset); break;
-            }
-
-            SystemTextRenderer2DPtr systemText = SpriteHelper::CreateSystemText(
-                _label.c_str(),
-                16,
-                HorizontalAlignment2D::Center,
-                VerticalAlignment2D::Middle,
-                buttonSprite->getTransform()->getSize(),
-                Vec2DF(0.0f, 2.0f) + offset,
-                spriteManager->getDefaultSpriteMaterial(),
-                labelEntityTransform,
-                this);
-            systemText->setColor(ColorU32(38, 32, 27, 255));
-            systemText->getEntityRaw()->ensureComponent<Name>("Shadow");
-        }
-
-        SystemTextRenderer2DPtr systemText = SpriteHelper::CreateSystemText(
-            _label.c_str(),
-            16,
-            HorizontalAlignment2D::Center,
-            VerticalAlignment2D::Middle,
-            buttonSprite->getTransform()->getSize(),
-            Vec2DF(0.0f, 2.0f),
-            spriteManager->getDefaultSpriteMaterial(),
-            labelEntityTransform,
-            this);
-        systemText->setColor(ColorU32(255, 160, 0, 255));
-        systemText->getEntityRaw()->ensureComponent<Name>("Text");
-
-        return button;
+        return clickButton;
     }
 
     //////////////////////////////////////////
@@ -322,7 +229,8 @@ namespace Maze
     //////////////////////////////////////////
     void SceneMainMenu::notifySettingsButtonClick(Button2D* _button, CursorInputEvent const& _inputEvent)
     {
-    
+        if (!SceneManager::GetInstancePtr()->getScene<SceneSettings>())
+            SceneManager::GetInstancePtr()->loadScene<SceneSettings>();
     }
 
     //////////////////////////////////////////

@@ -27,6 +27,7 @@
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
+#include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/helpers/MazeWindowHelper.hpp"
@@ -71,6 +72,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    SpriteManagerPtr const& SpriteManager::GetCurrentInstance()
+    {
+        return RenderSystem::GetCurrentInstancePtr()->getSpriteManager();
+    }
+
+    //////////////////////////////////////////
     SpritePtr const& SpriteManager::getSprite(String const& _imageName)
     {
         static SpritePtr nullPointer;
@@ -84,11 +91,33 @@ namespace Maze
         Texture2DPtr texture2D = textureManager->getTexture2D(_imageName);
         if (texture2D)
         {
-            SpritePtr image = Sprite::Create(texture2D);
+            
+            SpritePtr sprite = Sprite::Create(texture2D);
             auto it2 = m_imagesByName.emplace(
                 std::piecewise_construct,
                 std::forward_as_tuple(_imageName),
-                std::forward_as_tuple(image));
+                std::forward_as_tuple(sprite));
+
+            if (texture2D->getAssetFile())
+            {
+                UnorderedMap<String, String> metaData = AssetManager::GetInstancePtr()->getMetaData(texture2D->getAssetFile());
+                auto metaDataIt = metaData.find("sliceBorder");
+                if (metaDataIt != metaData.end())
+                {
+                    String const& borderData = metaDataIt->second;
+                    Vector<String> words;
+                    StringHelper::SplitWords(borderData, words, ',');
+                    if (words.size() == 4)
+                    {
+                        sprite->setSliceBorder(
+                            StringHelper::StringToF32(words[0]),
+                            StringHelper::StringToF32(words[1]),
+                            StringHelper::StringToF32(words[2]),
+                            StringHelper::StringToF32(words[3]));
+                    }
+                }
+            }
+
             return it2.first->second;
         }
 
