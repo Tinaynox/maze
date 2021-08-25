@@ -146,6 +146,7 @@ namespace Maze
                                                                                         static Vector<S32> AllS32();\
                                                                                         \
                                                                                         static Vector<String> AllStrings();\
+                                                                                        static Vector<String> AllStringsWithNone();\
                                                                                         \
                                                                                     public:\
                                                                                         virtual Vector<String> getAllValuesVectorString() const MAZE_OVERRIDE;\
@@ -243,6 +244,13 @@ namespace Maze
                                                                                     {\
                                                                                         Vector<String> result;\
                                                                                         for (DEnumClassName e = DEnumClassName(1); e < DEnumClassName::MAX; ++e)\
+                                                                                            result.push_back(ToString(e));\
+                                                                                        return result;\
+                                                                                    }\
+                                                                                    Vector<String> DEnumClassName::AllStringsWithNone()\
+                                                                                    {\
+                                                                                        Vector<String> result;\
+                                                                                        for (DEnumClassName e = DEnumClassName(0); e < DEnumClassName::MAX; ++e)\
                                                                                             result.push_back(ToString(e));\
                                                                                         return result;\
                                                                                     }\

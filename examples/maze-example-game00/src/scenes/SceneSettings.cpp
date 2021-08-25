@@ -83,8 +83,11 @@
 #include "scenes/SceneDebug.hpp"
 #include "managers/GameManager.hpp"
 #include "game/SpaceObject.hpp"
+#include "game/SpaceObjectAvatarType.hpp"
 #include "ui/UIHelper.hpp"
 #include "settings/GameGraphicsSettings.hpp"
+#include "settings/GameDebugSettings.hpp"
+#include "configs/GameConfig.hpp"
 
 
 //////////////////////////////////////////
@@ -115,10 +118,14 @@ namespace Maze
             inputManager->eventMouse.unsubscribe(this);
         }
 
-        GameGraphicsSettingsPtr const& graphicsSettings = SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>();
+        GameGraphicsSettingsPtr graphicsSettings = SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>();
         graphicsSettings->getFullscreenChangedEvent().unsubscribe(this);
         graphicsSettings->getVSyncChangedEvent().unsubscribe(this);
         graphicsSettings->getPostProcessEnabledChangedEvent().unsubscribe(this);
+
+        GameDebugSettingsPtr debugSettings = SettingsManager::GetInstancePtr()->getSettings<GameDebugSettings>();
+        debugSettings->getDisableEnemiesSpawnChangedEvent().unsubscribe(this);
+        debugSettings->getForcePlayerAvatarChangedEvent().unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -140,10 +147,14 @@ namespace Maze
 
         create2D();
 
-        GameGraphicsSettingsPtr const& graphicsSettings = SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>();
+        GameGraphicsSettingsPtr graphicsSettings = SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>();
         graphicsSettings->getFullscreenChangedEvent().subscribe(this, &SceneSettings::notifyVideoMenuPropertyChanged);
         graphicsSettings->getVSyncChangedEvent().subscribe(this, &SceneSettings::notifyVideoMenuPropertyChanged);
         graphicsSettings->getPostProcessEnabledChangedEvent().subscribe(this, &SceneSettings::notifyVideoMenuPropertyChanged);
+
+        GameDebugSettingsPtr debugSettings = SettingsManager::GetInstancePtr()->getSettings<GameDebugSettings>();
+        debugSettings->getDisableEnemiesSpawnChangedEvent().subscribe(this, &SceneSettings::notifyGameMenuPropertyChanged);
+        debugSettings->getForcePlayerAvatarChangedEvent().subscribe(this, &SceneSettings::notifyGameMenuPropertyChanged);
 
         return true;
     }
@@ -169,6 +180,7 @@ namespace Maze
         m_canvasTransition->hideInstantly();
 
         CanvasScalerPtr canvasScaler = canvasEntity->ensureComponent<CanvasScaler>();
+        canvasScaler->setReferenceResolution(c_canvasReferenceResolution);
         canvasScaler->setScaleMode(CanvasScaler::ScaleMode::ScaleWithViewportSize);
         canvasScaler->setScreenMatchMode(CanvasScaler::ScreenMatchMode::MatchWidthOrHeight);
         canvasScaler->setMatchWidthOrHeight(1.0f);
@@ -187,7 +199,7 @@ namespace Maze
 
         SpriteRenderer2DPtr menuBackgroundSprite = SpriteHelper::CreateSprite(
             "Button00.mztexture",
-            {400.0f, 500.0f},
+            {400.0f, 400.0f},
             Vec2DF::c_zero,
             nullptr,
             m_canvas->getTransform(),
@@ -283,113 +295,212 @@ namespace Maze
         Transform2DPtr gameMenu = createMenuFunc(SettingsMode::Game);
         Transform2DPtr controlsMenu = createMenuFunc(SettingsMode::Controls);
 
-        // Fullscreen
+        // Video Menu
         {
-            HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
-                HorizontalAlignment2D::Center,
-                VerticalAlignment2D::Middle,
-                Vec2DF(menuWidth, 20.0f),
-                Vec2DF(0, 0),
-                videoMenu,
-                this);
+            // Fullscreen
+            {
+                HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
+                    HorizontalAlignment2D::Center,
+                    VerticalAlignment2D::Middle,
+                    Vec2DF(menuWidth, 20.0f),
+                    Vec2DF(0, 0),
+                    videoMenu,
+                    this);
 
-            SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
-                "FULLSCREEN",
-                10,
-                HorizontalAlignment2D::Left,
-                VerticalAlignment2D::Top,
-                { 200.0f, 10.0f },
-                { 0.0f, 0.0f },
-                nullptr,
-                layout->getTransform(),
-                this);
-            label->setColor(ColorU32(255, 150, 0));
+                SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+                    "FULLSCREEN",
+                    10,
+                    HorizontalAlignment2D::Left,
+                    VerticalAlignment2D::Top,
+                    { 200.0f, 10.0f },
+                    { 0.0f, 0.0f },
+                    nullptr,
+                    layout->getTransform(),
+                    this);
+                label->setColor(ColorU32(255, 150, 0));
 
-            m_fullscreenToggle = UIHelper::CreateDefaultToggleButton(
-                { 0.0f, 0.0f },
-                layout->getTransform(),
-                this);
-            m_fullscreenToggle->eventCheckedChanged.subscribe(
-                [](ToggleButton2D* _toggle, bool _value)
-                {
-                    GameGraphicsSettingsPtr const& graphicsSettings = SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>();
-                    graphicsSettings->setFullscreen(_value);
+                m_fullscreenToggle = UIHelper::CreateDefaultToggleButton(
+                    { 0.0f, 0.0f },
+                    layout->getTransform(),
+                    this);
+                m_fullscreenToggle->eventCheckedChanged.subscribe(
+                    [](ToggleButton2D* _toggle, bool _value)
+                    {
+                        GameGraphicsSettings* graphicsSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<GameGraphicsSettings>();
+                        graphicsSettings->setFullscreen(_value);
 
-                    SettingsManager::GetInstancePtr()->saveSettings();
-                });
+                        SettingsManager::GetInstancePtr()->saveSettings();
+                    });
+            }
+            // VSync
+            {
+                HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
+                    HorizontalAlignment2D::Center,
+                    VerticalAlignment2D::Middle,
+                    Vec2DF(menuWidth, 20.0f),
+                    Vec2DF(0, 0),
+                    videoMenu,
+                    this);
+
+                SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+                    "VSYNC",
+                    10,
+                    HorizontalAlignment2D::Left,
+                    VerticalAlignment2D::Top,
+                    { 200.0f, 10.0f },
+                    { 0.0f, 0.0f },
+                    nullptr,
+                    layout->getTransform(),
+                    this);
+                label->setColor(ColorU32(255, 150, 0));
+
+                m_vsyncToggle = UIHelper::CreateDefaultToggleButton(
+                    { 0.0f, 0.0f },
+                    layout->getTransform(),
+                    this);
+                m_vsyncToggle->eventCheckedChanged.subscribe(
+                    [](ToggleButton2D* _toggle, bool _value)
+                    {
+                        GameGraphicsSettings* graphicsSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<GameGraphicsSettings>();
+                        graphicsSettings->setVSync(_value ? 1 : 0);
+
+                        SettingsManager::GetInstancePtr()->saveSettings();
+                    });
+            }
+            // PostProcessFX
+            {
+                HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
+                    HorizontalAlignment2D::Center,
+                    VerticalAlignment2D::Middle,
+                    Vec2DF(menuWidth, 20.0f),
+                    Vec2DF(0, 0),
+                    videoMenu,
+                    this);
+
+                SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+                    "POST PROCESS FX",
+                    10,
+                    HorizontalAlignment2D::Left,
+                    VerticalAlignment2D::Top,
+                    { 200.0f, 10.0f },
+                    { 0.0f, 0.0f },
+                    nullptr,
+                    layout->getTransform(),
+                    this);
+                label->setColor(ColorU32(255, 150, 0));
+
+                m_postProcessFXToggle = UIHelper::CreateDefaultToggleButton(
+                    { 0.0f, 0.0f },
+                    layout->getTransform(),
+                    this);
+                m_postProcessFXToggle->eventCheckedChanged.subscribe(
+                    [](ToggleButton2D* _toggle, bool _value)
+                    {
+                        GameGraphicsSettings* graphicsSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<GameGraphicsSettings>();
+                        graphicsSettings->setPostProcessEnabled(_value);
+
+                        SettingsManager::GetInstancePtr()->saveSettings();
+                    });
+            }
         }
-        // VSync
+
+        // Game Menu
         {
-            HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
-                HorizontalAlignment2D::Center,
-                VerticalAlignment2D::Middle,
-                Vec2DF(menuWidth, 20.0f),
-                Vec2DF(0, 0),
-                videoMenu,
-                this);
+            // Debug options
+            {
+                SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+                    "DEBUG OPTIONS",
+                    10,
+                    HorizontalAlignment2D::Left,
+                    VerticalAlignment2D::Middle,
+                    { 200.0f, 20.0f },
+                    { 0.0f, 0.0f },
+                    nullptr,
+                    gameMenu,
+                    this);
+                label->setColor(ColorU32(255, 0, 0));
+            }
+            // Disable enemies spawn
+            {
+                HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
+                    HorizontalAlignment2D::Center,
+                    VerticalAlignment2D::Middle,
+                    Vec2DF(menuWidth, 20.0f),
+                    Vec2DF(0, 0),
+                    gameMenu,
+                    this);
 
-            SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
-                "VSYNC",
-                10,
-                HorizontalAlignment2D::Left,
-                VerticalAlignment2D::Top,
-                { 200.0f, 10.0f },
-                { 0.0f, 0.0f },
-                nullptr,
-                layout->getTransform(),
-                this);
-            label->setColor(ColorU32(255, 150, 0));
+                SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+                    "DISABLE ENEMIES",
+                    10,
+                    HorizontalAlignment2D::Left,
+                    VerticalAlignment2D::Top,
+                    { 200.0f, 10.0f },
+                    { 0.0f, 0.0f },
+                    nullptr,
+                    layout->getTransform(),
+                    this);
+                label->setColor(ColorU32(255, 150, 0));
 
-            m_vsyncToggle = UIHelper::CreateDefaultToggleButton(
-                { 0.0f, 0.0f },
-                layout->getTransform(),
-                this);
-            m_vsyncToggle->eventCheckedChanged.subscribe(
-                [](ToggleButton2D* _toggle, bool _value)
-                {
-                    GameGraphicsSettingsPtr const& graphicsSettings = SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>();
-                    graphicsSettings->setVSync(_value);
+                m_disableEnemiesSpawnToggle = UIHelper::CreateDefaultToggleButton(
+                    { 0.0f, 0.0f },
+                    layout->getTransform(),
+                    this);
+                m_disableEnemiesSpawnToggle->eventCheckedChanged.subscribe(
+                    [](ToggleButton2D* _toggle, bool _value)
+                    {
+                        GameDebugSettings* debugSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<GameDebugSettings>();
+                        debugSettings->setDisableEnemiesSpawn(_value);
 
-                    SettingsManager::GetInstancePtr()->saveSettings();
-                });
-        }
-        // PostProcessFX
-        {
-            HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
-                HorizontalAlignment2D::Center,
-                VerticalAlignment2D::Middle,
-                Vec2DF(menuWidth, 20.0f),
-                Vec2DF(0, 0),
-                videoMenu,
-                this);
+                        SettingsManager::GetInstancePtr()->saveSettings();
+                    });
+            }
+            // Disable enemies spawn
+            {
+                HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
+                    HorizontalAlignment2D::Center,
+                    VerticalAlignment2D::Middle,
+                    Vec2DF(menuWidth, 20.0f),
+                    Vec2DF(0, 0),
+                    gameMenu,
+                    this);
 
-            SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
-                "POST PROCESS FX",
-                10,
-                HorizontalAlignment2D::Left,
-                VerticalAlignment2D::Top,
-                { 200.0f, 10.0f },
-                { 0.0f, 0.0f },
-                nullptr,
-                layout->getTransform(),
-                this);
-            label->setColor(ColorU32(255, 150, 0));
+                SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+                    "FORCE AVATAR",
+                    10,
+                    HorizontalAlignment2D::Left,
+                    VerticalAlignment2D::Top,
+                    { 200.0f, 10.0f },
+                    { 0.0f, 0.0f },
+                    nullptr,
+                    layout->getTransform(),
+                    this);
+                label->setColor(ColorU32(255, 150, 0));
 
-            m_postProcessFXToggle = UIHelper::CreateDefaultToggleButton(
-                { 0.0f, 0.0f },
-                layout->getTransform(),
-                this);
-            m_postProcessFXToggle->eventCheckedChanged.subscribe(
-                [](ToggleButton2D* _toggle, bool _value)
-                {
-                    GameGraphicsSettingsPtr const& graphicsSettings = SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>();
-                    graphicsSettings->setPostProcessEnabled(_value);
+                m_forcePlayerAvatarDropdown = UIHelper::CreateDefaultDropdown(
+                    Vec2DF(150, 18),
+                    Vec2DF(0, 0),
+                    layout->getTransform(),
+                    this);
+                m_forcePlayerAvatarDropdown->addOptions(SpaceObjectAvatarType::AllStringsWithNone());
+                m_forcePlayerAvatarDropdown->eventValueChanged.subscribe(
+                    [](SystemTextDropdown2D* _dropdown, S32 _value)
+                    {
+                        GameDebugSettings* debugSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<GameDebugSettings>();
 
-                    SettingsManager::GetInstancePtr()->saveSettings();
-                });
+                        if (_value == -1)
+                            debugSettings->setForcePlayerAvatar(SpaceObjectAvatarType::None);
+                        else
+                            debugSettings->setForcePlayerAvatar((SpaceObjectAvatarType)_value);
+
+                        SettingsManager::GetInstancePtr()->saveSettings();
+                    });
+
+            }
         }
 
         updateVideoMenuProperties();
+        updateGameMenuProperties();
     }
 
     //////////////////////////////////////////
@@ -418,7 +529,7 @@ namespace Maze
         {
             case SettingsMode::Video:
             {
-                GameGraphicsSettingsPtr const& graphicsSettings = SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>();
+                GameGraphicsSettings* graphicsSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<GameGraphicsSettings>();
                 graphicsSettings->setFullscreen(false);
                 graphicsSettings->setVSync(true);
                 graphicsSettings->setPostProcessEnabled(true);
@@ -431,6 +542,10 @@ namespace Maze
             }
             case SettingsMode::Game:
             {
+                GameDebugSettings* debugSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<GameDebugSettings>();
+                debugSettings->setDisableEnemiesSpawn(false);
+                debugSettings->setForcePlayerAvatar(SpaceObjectAvatarType::None);
+
                 break;
             }
             case SettingsMode::Controls:
@@ -497,11 +612,20 @@ namespace Maze
     //////////////////////////////////////////
     void SceneSettings::updateVideoMenuProperties()
     {
-        GameGraphicsSettingsPtr const& graphicsSettings = SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>();
+        GameGraphicsSettingsPtr graphicsSettings = SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>();
 
         m_fullscreenToggle->setChecked(graphicsSettings->getFullscreen());
-        m_vsyncToggle->setChecked(graphicsSettings->getVSync());
+        m_vsyncToggle->setChecked(graphicsSettings->getVSync() != 0);
         m_postProcessFXToggle->setChecked(graphicsSettings->getPostProcessEnabled());
+    }
+
+    //////////////////////////////////////////
+    void SceneSettings::updateGameMenuProperties()
+    {
+        GameDebugSettingsPtr debugSettings = SettingsManager::GetInstancePtr()->getSettings<GameDebugSettings>();
+
+        m_disableEnemiesSpawnToggle->setChecked(debugSettings->getDisableEnemiesSpawn());
+        m_forcePlayerAvatarDropdown->setValue(debugSettings->getForcePlayerAvatar().toString());
     }
 
     //////////////////////////////////////////
@@ -515,6 +639,25 @@ namespace Maze
     {
         updateVideoMenuProperties();
     }
+
+    //////////////////////////////////////////
+    void SceneSettings::notifyGameMenuPropertyChanged(bool const& _value)
+    {
+        updateGameMenuProperties();
+    }
+
+    //////////////////////////////////////////
+    void SceneSettings::notifyGameMenuPropertyChanged(int const& _value)
+    {
+        updateGameMenuProperties();
+    }
+
+    //////////////////////////////////////////
+    void SceneSettings::notifyGameMenuPropertyChanged(SpaceObjectAvatarType const& _value)
+    {
+        updateGameMenuProperties();
+    }
+       
 
 } // namespace Maze
 //////////////////////////////////////////

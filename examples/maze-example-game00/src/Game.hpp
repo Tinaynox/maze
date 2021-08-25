@@ -113,6 +113,32 @@ namespace Maze
         //////////////////////////////////////////
         inline bool isDebugEditorProgress() const { return m_debugEditorProgress > 0.0f && m_debugEditorProgress < 1.0f; }
 
+
+        //////////////////////////////////////////
+        /*
+        template <typename TScene>
+        inline void goToSceneThroughPreloader(ECSScenePtr const& _sceneToUnload)
+        {
+            ECSSceneWPtr sceneWeak = getSharedPtr();
+
+            SceneFadePreloaderPtr sceneFadePreloader = SceneManager::GetInstancePtr()->loadScene<SceneFadePreloader>();
+            SceneFadePreloaderWPtr sceneFadePreloaderWeak = sceneFadePreloader;
+            sceneFadePreloader->eventFade.subscribe(
+                [sceneFadePreloaderWeak, sceneWeak, this]()
+                {
+                    SceneManager::GetInstancePtr()->loadScene<SceneMainMenu>();
+
+                    ECSScenePtr scene = sceneWeak.lock();
+                    if (scene)
+                    {
+                        SceneManager::GetInstancePtr()->destroyScene(scene);
+                    }
+
+                    sceneFadePreloaderWeak.lock()->fadeOut();
+                });
+        }
+        */
+
     public:
 
         //////////////////////////////////////////

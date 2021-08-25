@@ -106,6 +106,8 @@
 #include "input/PlayerGamepad.hpp"
 #include "player/Player.hpp"
 #include "settings/GameGraphicsSettings.hpp"
+#include "helpers/SceneHelper.hpp"
+#include "configs/GameConfig.hpp"
 
 
 //////////////////////////////////////////
@@ -148,6 +150,7 @@ namespace Maze
         if (inputManager)
         {
             inputManager->eventMouse.unsubscribe(this);
+            inputManager->eventKeyboard.unsubscribe(this);
         }
     }
 
@@ -174,6 +177,7 @@ namespace Maze
 
         InputManager* inputManager = InputManager::GetInstancePtr();
         inputManager->eventMouse.subscribe(this, &SceneGame::notifyMouse);
+        inputManager->eventKeyboard.subscribe(this, &SceneGame::notifyKeyboard);
 
 
         createControllers();
@@ -214,27 +218,7 @@ namespace Maze
         {
             if (!m_playerController->getPlayerSpaceObject()->getHealth()->isAlive())
             {
-                if (!SceneManager::GetInstancePtr()->getScene<SceneFadePreloader>())
-                {
-                    ECSSceneWPtr sceneWeak = getSharedPtr();
-
-                    SceneFadePreloaderPtr sceneFadePreloader = SceneManager::GetInstancePtr()->loadScene<SceneFadePreloader>();
-                    SceneFadePreloaderWPtr sceneFadePreloaderWeak = sceneFadePreloader;
-                    sceneFadePreloader->eventFade.subscribe(
-                        [sceneFadePreloaderWeak, sceneWeak, this]()
-                        {
-                            SceneManager::GetInstancePtr()->loadScene<SceneMainMenu>();
-
-                            ECSScenePtr scene = sceneWeak.lock();
-                            if (scene)
-                            {
-                                SceneManager::GetInstancePtr()->destroyScene(scene);
-                            }
-
-                            sceneFadePreloaderWeak.lock()->fadeOut();
-                        });
-                }
-
+                SceneHelper::LoadSceneWithPreloader<SceneMainMenu>(getSharedPtr());
                 return;
             }
         }
@@ -243,26 +227,7 @@ namespace Maze
         {
             if (m_spaceObjectPool->getCountActive() == 1) 
             {
-                if (!SceneManager::GetInstancePtr()->getScene<SceneFadePreloader>())
-                {
-                    ECSSceneWPtr sceneWeak = getSharedPtr();
-
-                    SceneFadePreloaderPtr sceneFadePreloader =  SceneManager::GetInstancePtr()->loadScene<SceneFadePreloader>();
-                    SceneFadePreloaderWPtr sceneFadePreloaderWeak = sceneFadePreloader;
-                    sceneFadePreloader->eventFade.subscribe(
-                        [sceneFadePreloaderWeak, sceneWeak, this]()
-                        {
-                            SceneManager::GetInstancePtr()->loadScene<SceneMainMenu>();
-
-                            ECSScenePtr scene = sceneWeak.lock();
-                            if (scene)
-                            {
-                                SceneManager::GetInstancePtr()->destroyScene(scene);
-                            }
-
-                            sceneFadePreloaderWeak.lock()->fadeOut();
-                        });
-                }
+                SceneHelper::LoadSceneWithPreloader<SceneMainMenu>(getSharedPtr());
                 return;
             }
         }
@@ -282,6 +247,25 @@ namespace Maze
     void SceneGame::notifyMouse(InputEventMouseData const& _data)
     {
         
+    }
+
+    //////////////////////////////////////////
+    void SceneGame::notifyKeyboard(InputEventKeyboardData const& _data)
+    {
+        switch (_data.type)
+        {
+            case InputEventKeyboardType::KeyDown:
+            {
+                if (_data.keyCode == KeyCode::Escape)
+                {
+                    SceneHelper::LoadSceneWithPreloader<SceneMainMenu>(getSharedPtr());
+                }
+
+                break;
+            }
+            default:
+                break;
+        }
     }
 
     //////////////////////////////////////////
@@ -350,6 +334,7 @@ namespace Maze
         m_canvas->setClearColor(ColorU32::c_zero);
 
         CanvasScalerPtr canvasScaler = canvasEntity->ensureComponent<CanvasScaler>();
+        canvasScaler->setReferenceResolution(c_canvasReferenceResolution);
         canvasScaler->setScaleMode(CanvasScaler::ScaleMode::ScaleWithViewportSize);
         canvasScaler->setScreenMatchMode(CanvasScaler::ScreenMatchMode::MatchWidthOrHeight);
         canvasScaler->setMatchWidthOrHeight(1.0f);

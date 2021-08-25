@@ -154,6 +154,9 @@ namespace Maze
         void notifyMouse(InputEventMouseData const& _data);
 
         //////////////////////////////////////////
+        void notifyKeyboard(InputEventKeyboardData const& _data);
+
+        //////////////////////////////////////////
         void createControllers();
 
         //////////////////////////////////////////
@@ -183,7 +186,6 @@ namespace Maze
         //////////////////////////////////////////
         void loadLevel(String const& _levelFileName);
         
-
     protected:
         F32 m_gameTimer;
 

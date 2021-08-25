@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_GameGraphicsSettings_hpp_))
-#define _GameGraphicsSettings_hpp_
+#if (!defined(_GameDebugSettings_hpp_))
+#define _GameDebugSettings_hpp_
 
 
 //////////////////////////////////////////
@@ -36,82 +36,67 @@
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
+#include "game/SpaceObjectAvatarType.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(GameGraphicsSettings);
+    MAZE_USING_SHARED_PTR(GameDebugSettings);
 
     //////////////////////////////////////////
-    // Class GameGraphicsSettings
+    // Class GameDebugSettings
     //
     //////////////////////////////////////////
-    class GameGraphicsSettings
+    class GameDebugSettings
         : public Settings
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(GameGraphicsSettings, Settings);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(GameDebugSettings, Settings);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(GameGraphicsSettings);
+        MAZE_DECLARE_MEMORY_ALLOCATION(GameDebugSettings);
 
     public:
 
         //////////////////////////////////////////
-        GameGraphicsSettings();
+        GameDebugSettings();
 
         //////////////////////////////////////////
-        virtual ~GameGraphicsSettings();
-
-
-        //////////////////////////////////////////
-        inline void setFullscreen(bool _fullscreen) { m_fullscreen = _fullscreen; }
-
-        //////////////////////////////////////////
-        inline bool getFullscreen() const { return m_fullscreen; }
-
-        //////////////////////////////////////////
-        inline void switchFullscreen() { setFullscreen(!getFullscreen()); }
-
-        //////////////////////////////////////////
-        inline auto& getFullscreenChangedEvent() { return m_fullscreen.eventValueChanged; }
+        virtual ~GameDebugSettings();
 
 
         //////////////////////////////////////////
-        inline void setVSync(int _value) { m_vsync = _value; }
+        inline void setDisableEnemiesSpawn(bool _value) { m_disableEnemiesSpawn = _value; }
 
         //////////////////////////////////////////
-        inline int getVSync() const { return m_vsync; }
+        inline bool getDisableEnemiesSpawn() const { return m_disableEnemiesSpawn; }
 
         //////////////////////////////////////////
-        inline auto& getVSyncChangedEvent() { return m_vsync.eventValueChanged; }
+        inline auto& getDisableEnemiesSpawnChangedEvent() { return m_disableEnemiesSpawn.eventValueChanged; }
 
 
         //////////////////////////////////////////
-        inline void setPostProcessEnabled(bool _postProcessEnabled) { m_postProcessEnabled = _postProcessEnabled; }
+        inline void setForcePlayerAvatar(SpaceObjectAvatarType _value) { m_forcePlayerAvatar = _value; }
 
         //////////////////////////////////////////
-        inline bool getPostProcessEnabled() const { return m_postProcessEnabled; }
+        inline SpaceObjectAvatarType getForcePlayerAvatar() const { return m_forcePlayerAvatar; }
 
         //////////////////////////////////////////
-        inline void switchPostProcessEnabled() { setPostProcessEnabled(!getPostProcessEnabled()); }
+        inline auto& getForcePlayerAvatarChangedEvent() { return m_forcePlayerAvatar.eventValueChanged; }
 
-        //////////////////////////////////////////
-        inline auto& getPostProcessEnabledChangedEvent() { return m_postProcessEnabled.eventValueChanged; }
 
     protected:
-        ObservableValue<bool> m_fullscreen = false;
-        ObservableValue<int> m_vsync = 1;
-        ObservableValue<bool> m_postProcessEnabled = true;
+        ObservableValue<bool> m_disableEnemiesSpawn = false;
+        ObservableValue<SpaceObjectAvatarType> m_forcePlayerAvatar = SpaceObjectAvatarType::None;
     };
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _GameGraphicsSettings_hpp_
+#endif // _GameDebugSettings_hpp_
 //////////////////////////////////////////

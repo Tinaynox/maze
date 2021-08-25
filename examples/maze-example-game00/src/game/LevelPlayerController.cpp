@@ -27,6 +27,7 @@
 #include "LevelPlayerController.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
+#include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-graphics/helpers/MazeColorHelper.hpp"
 #include "maze-graphics/ecs/components/MazeLight3D.hpp"
 #include "maze-graphics/ecs/components/MazeTrailRenderer3D.hpp"
@@ -50,6 +51,7 @@
 #include "maze-render-system-opengl-core/MazeShaderUniformOpenGL.hpp"
 #include "game/LevelAdapter.hpp"
 #include "game/SpaceObjectPool.hpp"
+#include "settings/GameDebugSettings.hpp"
 
 
 //////////////////////////////////////////
@@ -101,7 +103,19 @@ namespace Maze
         MaterialPtr spaceshipMaterial = renderSystem->getMaterialManager()->getMaterial("PlayerShip00.mzmaterial");        
         m_shotValueUniform = spaceshipMaterial->getFirstRenderPass()->getShader()->ensureUniform("u_shotValue");
 
-        m_spaceObject = m_sceneGame->getLevelAdapter()->getSpaceObjectPool()->createSpaceObject(SpaceObjectAvatarType::PlayerShip000);
+
+        SpaceObjectAvatarType playerAvatar = SpaceObjectAvatarType::PlayerShip000;
+
+        GameDebugSettings* debugSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<GameDebugSettings>();
+        if (debugSettings)
+        {
+            if (debugSettings->getForcePlayerAvatar() != SpaceObjectAvatarType::None)
+            {
+                playerAvatar = debugSettings->getForcePlayerAvatar();
+            }
+        }
+
+        m_spaceObject = m_sceneGame->getLevelAdapter()->getSpaceObjectPool()->createSpaceObject(playerAvatar);
         m_spaceObject->eventProjectileSpawned.subscribe(this, &LevelPlayerController::notifyProjectileSpawned);
         m_spaceObject->getEntityRaw()->ensureComponent<PlayerOwner>(PlayerIndex::Player0);            
         m_spaceObject->setDirection(SpaceObjectAvatarDirection::Right);        

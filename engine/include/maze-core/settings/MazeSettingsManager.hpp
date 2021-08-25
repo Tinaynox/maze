@@ -91,6 +91,19 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        template <class TSettings>
+        inline TSettings* getSettingsRaw() const
+        {
+            MetaClass* metaClass = TSettings::GetMetaClass();
+
+            auto const it = m_settings.find(metaClass);
+            if (it == m_settings.end())
+                return nullptr;
+
+            return static_cast<TSettings*>(it->second.get());
+        }
+
+        //////////////////////////////////////////
         bool loadSettings();
 
         //////////////////////////////////////////

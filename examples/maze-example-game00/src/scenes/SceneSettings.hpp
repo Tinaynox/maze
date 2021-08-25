@@ -49,6 +49,8 @@
 #include "maze-ui/MazeCursorInputEvent.hpp"
 #include "maze-ui/ecs/components/MazeButton2D.hpp"
 #include "maze-ui/ecs/components/MazeToggleButton2D.hpp"
+#include "maze-ui/ecs/components/MazeSystemTextDropdown2D.hpp"
+#include "game/SpaceObjectAvatarType.hpp"
 
 
 //////////////////////////////////////////
@@ -132,8 +134,12 @@ namespace Maze
         //////////////////////////////////////////
         void updateMenus();
 
+
         //////////////////////////////////////////
         void updateVideoMenuProperties();
+
+        //////////////////////////////////////////
+        void updateGameMenuProperties();
 
 
         //////////////////////////////////////////
@@ -141,6 +147,16 @@ namespace Maze
 
         //////////////////////////////////////////
         void notifyVideoMenuPropertyChanged(int const& _value);
+
+
+        //////////////////////////////////////////
+        void notifyGameMenuPropertyChanged(bool const& _value);
+
+        //////////////////////////////////////////
+        void notifyGameMenuPropertyChanged(int const& _value);
+
+        //////////////////////////////////////////
+        void notifyGameMenuPropertyChanged(SpaceObjectAvatarType const& _value);
 
     protected:
         CanvasPtr m_canvas;
@@ -155,6 +171,10 @@ namespace Maze
         ToggleButton2DPtr m_fullscreenToggle;
         ToggleButton2DPtr m_vsyncToggle;
         ToggleButton2DPtr m_postProcessFXToggle;
+
+        // Debug settings
+        ToggleButton2DPtr m_disableEnemiesSpawnToggle;
+        SystemTextDropdown2DPtr m_forcePlayerAvatarDropdown;
     };
 
 

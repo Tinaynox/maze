@@ -83,6 +83,7 @@
 #include "input/PlayerGamepad.hpp"
 #include "player/Player.hpp"
 #include "ui/UIHelper.hpp"
+#include "configs/GameConfig.hpp"
 
 
 //////////////////////////////////////////
@@ -159,7 +160,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneMainMenu::createMainMenuButtons()
     {
-        F32 gap = 42.0f;
+        F32 gap = 42.0f * 1.33f;
         m_buttonStartGame = createButton(
             Vec2DF(0.0f, -gap * 0),
             "START GAME",
@@ -196,7 +197,7 @@ namespace Maze
             _label,
             _onClickDelegate);
 
-        // clickButton->getTransform()->setLocalScale(0.75f);
+        clickButton->getTransform()->setLocalScale(1.33f);
 
         return clickButton;
     }
@@ -264,13 +265,14 @@ namespace Maze
         m_canvas->getEntityRaw()->ensureComponent<Name>("Canvas");
 
         CanvasScalerPtr canvasScaler = canvasEntity->ensureComponent<CanvasScaler>();
+        canvasScaler->setReferenceResolution(c_canvasReferenceResolution);
         canvasScaler->setScaleMode(CanvasScaler::ScaleMode::ScaleWithViewportSize);
         canvasScaler->setScreenMatchMode(CanvasScaler::ScreenMatchMode::MatchWidthOrHeight);
         canvasScaler->setMatchWidthOrHeight(1.0f);
 
         m_splashSprite = SpriteHelper::CreateSprite(
             "Sky.mztexture",
-            Vec2DF(1200, 600),
+            Vec2DF(1600, 800),
             Vec2DF::c_zero,
             "MenuSky00.mzmaterial",
             m_canvas->getTransform(),

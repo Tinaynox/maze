@@ -70,6 +70,7 @@
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
 #include "Game.hpp"
+#include "configs/GameConfig.hpp"
 
 
 //////////////////////////////////////////
@@ -188,6 +189,7 @@ namespace Maze
         m_canvas->getEntityRaw()->ensureComponent<Name>("Canvas");
 
         CanvasScalerPtr canvasScaler = canvasEntity->ensureComponent<CanvasScaler>();
+        canvasScaler->setReferenceResolution(c_canvasReferenceResolution);
         canvasScaler->setScaleMode(CanvasScaler::ScaleMode::ScaleWithViewportSize);
         canvasScaler->setScreenMatchMode(CanvasScaler::ScreenMatchMode::MatchWidthOrHeight);
         canvasScaler->setMatchWidthOrHeight(1.0f);

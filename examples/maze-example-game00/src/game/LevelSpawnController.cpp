@@ -26,8 +26,11 @@
 //////////////////////////////////////////
 #include "LevelSpawnController.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
+#include "maze-core/settings/MazeSettingsManager.hpp"
+
 #include "game/level/LevelSpawnDataUnit.hpp"
 #include "scenes/SceneGame.hpp"
+#include "settings/GameDebugSettings.hpp"
 
 
 //////////////////////////////////////////
@@ -67,6 +70,11 @@ namespace Maze
     //////////////////////////////////////////
     void LevelSpawnController::update(F32 _dt)
     {
+        GameDebugSettings* debugSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<GameDebugSettings>();
+        if (debugSettings->getDisableEnemiesSpawn())
+            return;
+
+
         while (!m_spawnData.empty() && m_spawnData.front()->getTime() <= m_sceneGame->getGameTimer())
         {
             m_spawnData.front()->spawn(m_sceneGame->getLevelAdapter());

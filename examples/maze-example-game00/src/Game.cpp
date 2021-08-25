@@ -63,6 +63,7 @@
 #include "maze-physics2d/ecs/systems/MazePhysicsControlSystem2D.hpp"
 #include "maze-physics2d/managers/MazePhysics2DManager.hpp"
 #include "settings/GameGraphicsSettings.hpp"
+#include "settings/GameDebugSettings.hpp"
 #include "scenes/SceneSplash.hpp"
 #include "scenes/SceneDebug.hpp"
 #include "scenes/SceneTest00.hpp"
@@ -211,6 +212,7 @@ namespace Maze
         m_inputManager->eventKeyboard.subscribe(this, &Game::notifyKeyboard);
 
         m_settingsManager->registerSettings<GameGraphicsSettings>();
+        m_settingsManager->registerSettings<GameDebugSettings>();
         m_settingsManager->loadSettings();
         m_settingsManager->getSettings<DebuggerSettings>()->eventActiveChanged.subscribe(this, &Game::notifyDebuggerActiveChanged);
 
