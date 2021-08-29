@@ -50,12 +50,6 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../../engine" "${CMAKE_CURRENT_BIN
 
 
 ##########################################
-include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Config.cmake")
-include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Macros.cmake")
-include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Utils.cmake")
-
-
-##########################################
 maze_add_sources(${CMAKE_CURRENT_SOURCE_DIR}/src EXAMPLE_FILES)
 maze_sort_sources("${EXAMPLE_FILES}" EXAMPLE_FILES)
 
