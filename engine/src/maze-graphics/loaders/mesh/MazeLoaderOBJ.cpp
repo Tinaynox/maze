@@ -107,6 +107,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    static Vec2DF NormalizeUV(Vec2DF const& _uv)
+    {
+        Vec2DF uv = _uv;
+        while (uv.x > 1.0f) uv.x -= 1.0f;
+        while (uv.x < 0.0f) uv.x += 1.0f;
+        while (uv.y > 1.0f) uv.y -= 1.0f;
+        while (uv.y < 0.0f) uv.y += 1.0f;
+        return uv;
+    }
+
+    //////////////////////////////////////////
     void MAZE_GRAPHICS_API GenVerticesFromRawOBJ(
         Vector<Vec3DF>& _outPositions,
         Vector<Vec2DF>& _outUVs,
@@ -183,7 +194,7 @@ namespace Maze
                 case 2:
                 {
                     Vec3DF finalPosition = GetElement(_positions, svert[0]);
-                    Vec2DF finalUV = GetElement(_uvs, svert[1]);
+                    Vec2DF finalUV = NormalizeUV(GetElement(_uvs, svert[1]));
                     noNormal = true;
                     
                     _outPositions.push_back(finalPosition);
@@ -209,7 +220,7 @@ namespace Maze
                 case 4:
                 {
                     Vec3DF finalPosition = GetElement(_positions, svert[0]);
-                    Vec2DF finalUV = GetElement(_uvs, svert[1]);
+                    Vec2DF finalUV = NormalizeUV(GetElement(_uvs, svert[1]));
                     Vec3DF finalNormal = GetElement(_normals, svert[2]);
 
                     _outPositions.push_back(finalPosition);
