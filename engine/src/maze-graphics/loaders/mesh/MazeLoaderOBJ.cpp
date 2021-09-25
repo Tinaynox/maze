@@ -331,6 +331,27 @@ namespace Maze
                 }
                 if (positions.size() == 4)
                 {
+                    Vec3DF fourthPosition;
+                    for (S32 j = 0; j < S32(positions.size()); ++j)
+                    {
+                        if (   positions[j] != currentPosition
+                            && positions[j] != prevPosition
+                            && positions[j] != nextPosition)
+                        {
+                            fourthPosition = positions[j];
+                            break;
+                        }
+                    }
+
+                    // Degenerate triangle 
+                    if (Math::IsPointOnSegment(prevPosition, currentPosition, nextPosition) ||
+                        Math::IsPointOnSegment(currentPosition, nextPosition, prevPosition) ||
+                        Math::IsPointOnSegment(nextPosition, prevPosition, currentPosition))
+                    {
+                        std::swap(currentPosition, fourthPosition);
+                    }
+
+
                     // Cur-Prev-Next
                     for (S32 j = 0; j < S32(positions.size()); ++j)
                     {
@@ -344,16 +365,13 @@ namespace Maze
                             _outIndices.push_back(j);
                     }
 
-                    Vec3DF tempVec;
-                    for (S32 j = 0; j < S32(positions.size()); ++j)
+                    // Included triangle 
+                    if (Math::IsPointOnSegment(prevPosition, currentPosition, fourthPosition) ||
+                        Math::IsPointOnSegment(currentPosition, nextPosition, fourthPosition) ||
+                        Math::IsPointOnSegment(nextPosition, prevPosition, fourthPosition))
                     {
-                        if (    positions[j] != currentPosition
-                            &&    positions[j] != prevPosition
-                            &&    positions[j] != nextPosition)
-                        {
-                            tempVec = positions[j];
-                            break;
-                        }
+                        positions.clear();
+                        break;
                     }
 
                     // Prev-Next-Temp
@@ -365,7 +383,7 @@ namespace Maze
                         if (positions[j] == nextPosition)
                             _outIndices.push_back(j);
 
-                        if (positions[j] == tempVec)
+                        if (positions[j] == fourthPosition)
                             _outIndices.push_back(j);
                     }
 

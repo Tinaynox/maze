@@ -215,6 +215,8 @@ namespace Maze
 
         SpriteRenderer2DPtr m_hsvBandRenderer;
 
+        SystemTextRenderer2DPtr m_floatLabel;
+
         SpriteRenderer2DPtr m_rgbaRenderers[4];
         UIElement2DPtr m_rgbaButtons[4];
         SpriteRenderer2DPtr m_rgbaCarriages[4];

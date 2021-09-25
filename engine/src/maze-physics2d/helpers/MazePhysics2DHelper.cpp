@@ -152,16 +152,19 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MAZE_PHYSICS2D_API OverlapHit2DPtr OverlapPoint(
-            Vec2DF const& _position)
+        MAZE_PHYSICS2D_API OverlapHit2DPtr OverlapRect(
+            Vec2DF const& _position,
+            Vec2DF const& _size)
         {
+            Vec2DF const halfSize = _size * 0.5f;
+
             PhysicsWorld2DPtr const& world = Physics2DManager::GetInstancePtr()->getWorld();
 
             b2Vec2 pos = Box2DHelper::ToVec2(world->convertUnitsToMeters(_position));
 
             b2AABB aabb;
-            aabb.lowerBound.Set(_position.x - 0.00001f, _position.y - 0.00001f);
-            aabb.upperBound.Set(_position.x + 0.00001f, _position.y + 0.00001f);
+            aabb.lowerBound.Set(_position.x - halfSize.x, _position.y - halfSize.y);
+            aabb.upperBound.Set(_position.x + halfSize.x, _position.y + halfSize.y);
 
             OverlapHit2DPtr result;
 
@@ -184,6 +187,13 @@ namespace Maze
             world->getBox2DWorld()->QueryAABB(&callback, aabb);
 
             return result;
+        }
+
+        //////////////////////////////////////////
+        MAZE_PHYSICS2D_API OverlapHit2DPtr OverlapPoint(
+            Vec2DF const& _position)
+        {
+            return OverlapRect(_position, { 0.00002f, 0.00002f });
         }
 
     } // namespace Physics2DHelper

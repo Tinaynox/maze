@@ -340,6 +340,21 @@ namespace Maze
             Vec2DF(1.0f, 0.5f));
         rightScaleMarkRenderer->getTransform()->setLocalScale(-1.0f, 1.0f);
 
+
+        m_floatLabel = SpriteHelper::CreateSystemText(
+            "",
+            8,
+            HorizontalAlignment2D::Left,
+            VerticalAlignment2D::Middle,
+            { 8.0f, 18.0f },
+            { 10.0f, 200.0f },
+            GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
+            m_canvas->getTransform(),
+            this,
+            Vec2DF::c_zero,
+            Vec2DF(0.0f, 1.0f));
+        m_floatLabel->setColor(ColorU32::c_black);
+
         
         VerticalLayout2DPtr layout = UIHelper::CreateVerticalLayout(
             HorizontalAlignment2D::Left,
@@ -762,6 +777,19 @@ namespace Maze
         else
             colorPickerColor = ColorPickerManager::GetInstancePtr()->getColor();
 
+        F32 floatR = (F32)colorPickerColor.r / 255.0f;
+        F32 floatG = (F32)colorPickerColor.g / 255.0f;
+        F32 floatB = (F32)colorPickerColor.b / 255.0f;
+        F32 floatA = (F32)colorPickerColor.a / 255.0f;
+
+        ColorF128 colorF128 = ColorF128::FromColorU32AndIntensity(colorPickerColor, intensity);
+        m_floatLabel->setText(
+            "4DF: " +
+            StringHelper::F32ToStringFormatted(colorF128.r, 2) + " " +
+            StringHelper::F32ToStringFormatted(colorF128.g, 2) + " " +
+            StringHelper::F32ToStringFormatted(colorF128.b, 2) + " " +
+            StringHelper::F32ToStringFormatted(colorF128.a, 2));
+
         for (Size i = 0; i < 4; ++i)
         {
             m_rgbaTextEdits[i]->setText(StringHelper::ToString(colorPickerColor[i]));
@@ -771,13 +799,13 @@ namespace Maze
         m_hexadecimalTextEdit->setText(StringHelper::ToUpper(colorPickerColor.toStringHex()));
 
         m_rgbaCarriages[0]->getTransform()->setLocalX(
-            m_rgbaCarriages[0]->getTransform()->getParent()->getWidth() * (F32)colorPickerColor.r / 255.0f);
+            m_rgbaCarriages[0]->getTransform()->getParent()->getWidth() * floatR);
         m_rgbaCarriages[1]->getTransform()->setLocalX(
-            m_rgbaCarriages[1]->getTransform()->getParent()->getWidth() * (F32)colorPickerColor.g / 255.0f);
+            m_rgbaCarriages[1]->getTransform()->getParent()->getWidth() * floatG);
         m_rgbaCarriages[2]->getTransform()->setLocalX(
-            m_rgbaCarriages[2]->getTransform()->getParent()->getWidth() * (F32)colorPickerColor.b / 255.0f);
+            m_rgbaCarriages[2]->getTransform()->getParent()->getWidth() * floatB);
         m_rgbaCarriages[3]->getTransform()->setLocalX(
-            m_rgbaCarriages[3]->getTransform()->getParent()->getWidth() * (F32)colorPickerColor.a / 255.0f);
+            m_rgbaCarriages[3]->getTransform()->getParent()->getWidth() * floatA);
 
         m_intensityTextEdit->setText(StringHelper::F32ToString(intensity, 2));
         m_intensitySlider->setValue(intensity / c_intensityMax);

@@ -148,6 +148,11 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        MAZE_PHYSICS2D_API OverlapHit2DPtr OverlapRect(
+            Vec2DF const& _position,
+            Vec2DF const& _size);
+
+        //////////////////////////////////////////
         MAZE_PHYSICS2D_API OverlapHit2DPtr OverlapPoint(
             Vec2DF const& _position);
         

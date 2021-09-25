@@ -181,7 +181,20 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API inline Vec3DF ClosestPointOnLine(
+        MAZE_CORE_API inline bool IsPointOnSegment(
+            Vec3DF const& _segmentPointA,
+            Vec3DF const& _segmentPointB,
+            Vec3DF const& _point,
+            F32 _epsilon = 0.00001f)
+        {
+            F32 ab = (_segmentPointB - _segmentPointA).length();
+            F32 ac = (_point - _segmentPointA).length();
+            F32 cb = (_segmentPointB - _point).length();
+            return (fabs(ab - ac - cb) <= _epsilon);
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API inline Vec3DF ClosestPointOnSegment(
             Vec3DF const& _segmentPointA,
             Vec3DF const& _segmentPointB,
             Vec3DF const& _point)
@@ -206,7 +219,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API inline Vec3DF Ortogonalize(Vec3DF const& _v1, Vec3DF const& _v2)
         {
-            Vec3DF v2ProjV1 = ClosestPointOnLine(_v1, -_v1, _v2);
+            Vec3DF v2ProjV1 = ClosestPointOnSegment(_v1, -_v1, _v2);
             Vec3DF res = _v2 - v2ProjV1;
             res.normalize();
             return res;
