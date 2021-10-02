@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
-#include "maze-graphics/ecs/components/MazeTrailRenderer3D.hpp"
+#include "maze-graphics/ecs/components/MazeLineRenderer3D.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
@@ -82,47 +82,43 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class TrailRenderer3D
+    // Class LineRenderer3D
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(TrailRenderer3D, Component,
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(LineRenderer3D, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<MaterialPtr>, materials, Vector<MaterialPtr>(), getMaterials, setMaterials),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, time, 2.0f, getTime, setTime),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, minVertexDistance, 0.35f, getMinVertexDistance, setMinVertexDistance),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, width, 1.0f, getWidth, setWidth),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorF128, color, ColorF128::c_white, getColor, setColor));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorF128, color, ColorF128::c_white, getColor, setColor),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Vec3DF>, positions, Vector<Vec3DF>(), getPositions, setPositions));
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(TrailRenderer3D);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(LineRenderer3D);
 
 
     //////////////////////////////////////////
-    TrailRenderer3D::TrailRenderer3D()
+    LineRenderer3D::LineRenderer3D()
         : m_renderSystem(nullptr)
-        , m_time(2.0f)
-        , m_timer(0.0f)
         , m_width(1.0f)
         , m_color(ColorF128::c_white)
     {
-        setMinVertexDistance(0.35f);
     }
 
     //////////////////////////////////////////
-    TrailRenderer3D::~TrailRenderer3D()
+    LineRenderer3D::~LineRenderer3D()
     {
         
     }
 
     //////////////////////////////////////////
-    TrailRenderer3DPtr TrailRenderer3D::Create(RenderSystem* _renderSystem)
+    LineRenderer3DPtr LineRenderer3D::Create(RenderSystem* _renderSystem)
     {
-        TrailRenderer3DPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(TrailRenderer3D, object, init(_renderSystem));
+        LineRenderer3DPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(LineRenderer3D, object, init(_renderSystem));
         return object;
     }
 
     //////////////////////////////////////////
-    bool TrailRenderer3D::init(RenderSystem* _renderSystem)
+    bool LineRenderer3D::init(RenderSystem* _renderSystem)
     {
         if (!_renderSystem)
             _renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw();
@@ -133,12 +129,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool TrailRenderer3D::init(
+    bool LineRenderer3D::init(
         Component* _component,
         ECSWorld* _world,
         EntityCopyData _copyData)
     {
-        m_renderSystem = _component->castRaw<TrailRenderer3D>()->m_renderSystem;
+        m_renderSystem = _component->castRaw<LineRenderer3D>()->m_renderSystem;
 
         if (!Component::init(_component, _world, _copyData))
             return false;
@@ -147,14 +143,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void TrailRenderer3D::setMaterial(MaterialPtr const& _material)
+    void LineRenderer3D::setMaterial(MaterialPtr const& _material)
     {
         Vector<MaterialPtr> materials = { _material };
         setMaterials(materials);
     }
 
     //////////////////////////////////////////
-    void TrailRenderer3D::setMaterial(String const& _materialName)
+    void LineRenderer3D::setMaterial(String const& _materialName)
     {
         MaterialPtr const& material = m_renderSystem->getMaterialManager()->getMaterial(_materialName);
         MAZE_ERROR_IF(!material, "Undefined material: %s", _materialName.c_str());
@@ -162,100 +158,58 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void TrailRenderer3D::update(F32 _dt)
+    void LineRenderer3D::rebuildMesh()
     {
-        m_timer += _dt;
+        if (!m_vao)
+            return;
 
-        for (S32 i = 0; i < (S32)m_edges.size() - 1;)
-        {
-            if (m_timer - m_edges[i + (S32)1].time > m_time)
-            {
-                m_edges.pop_front();
-            }
-            else
-            {
-                break;
-            }
-        }
-
-        Vec3DF worldPosition = getTransform()->getWorldPosition();
-        if (m_edges.size() < 2)
-        {
-            addEdge(m_timer, worldPosition);
-        }
-        else
-        {
-            Size edgesCount = m_edges.size();
-            
-            TrailEdge& lastKeyframe = m_edges[edgesCount - 1];
-            TrailEdge& penultimateKeyframe = m_edges[edgesCount - 2];
-            
-            lastKeyframe.position = worldPosition;
-
-            Vec3DF penultimateToLast = (lastKeyframe.position - penultimateKeyframe.position);
-            F32 penultimateToLastLength = penultimateToLast.length();
-            Vec3DF direction = penultimateToLast / penultimateToLastLength;
-            lastKeyframe.direction = direction;
-
-            F32 width = getTrailWidth(0.0f);
-            F32 halfWidth = width * 0.5f;
-
-            if (edgesCount > 2)
-            {
-                TrailEdge& beforePenultimateKeyframe = m_edges[edgesCount - 3];
-
-                Vec3DF prevDirection = (penultimateKeyframe.position - beforePenultimateKeyframe.position).normalizedCopy();
-                F32 dotProduct = prevDirection.dotProduct(direction);
-                F32 crossProductZ = prevDirection.crossProduct(direction).z;
-
-                if (dotProduct >= 0.0f)
-                {
-                    penultimateKeyframe.direction = ((prevDirection + direction) * 0.5f).normalizedCopy();
-                }
-                else
-                {
-                    if (crossProductZ > 0.0)
-                        penultimateKeyframe.direction = ((prevDirection.crossProduct(Vec3DF::c_negativeUnitZ) + prevDirection) * 0.5f).normalizedCopy();
-                    else
-                        penultimateKeyframe.direction = ((prevDirection.crossProduct(Vec3DF::c_unitZ) + prevDirection) * 0.5f).normalizedCopy();
-                }
-            }
-            else
-            {
-                penultimateKeyframe.direction = direction;
-            }
-
-            penultimateKeyframe.distanceToNextEdge = penultimateToLastLength;
-
-            rebuildMesh();
-
-            if (lastKeyframe.position.squaredDistance(penultimateKeyframe.position) >= m_minVertexDistanceSqr)
-            {
-                addEdge(m_timer, worldPosition);
-            }
-        }
-    }
-
-    //////////////////////////////////////////
-    void TrailRenderer3D::rebuildMesh()
-    {
-        S32 quadsCount = (S32)m_edges.size() - 1;
+        S32 quadsCount = (S32)m_positions.size() - 1;
         if (quadsCount <= 0)
         {
             m_vao->clear();
             return;
         }
 
-        F32 t = m_timer - m_time;
-        F32 firstEdgeTime = m_edges[0].time;
-        F32 secondEdgeTime = m_edges[1].time;
+        struct EdgeData
+        {
+            F32 progress;
+            Vec3DF direction;
+            F32 halfWidth;
+            F32 distanceToNextEdge;
+        };
 
-        F32 p = Math::Clamp01((t - firstEdgeTime) / (secondEdgeTime - firstEdgeTime));
+        F32 totalLength = 0.0f;
 
-        F32 firstQuadLength = m_edges[0].distanceToNextEdge * (1.0f - p);
-        F32 trailLength = firstQuadLength;
-        for (S32 i = 1; i < (S32)(quadsCount); ++i)
-            trailLength += m_edges[i].distanceToNextEdge;
+        Vector<EdgeData> edges;
+        edges.resize((Size)quadsCount);
+        for (S32 i = 0, in = quadsCount; i < in; ++i)
+        {
+            EdgeData& edge = edges[i];
+
+            Vec3DF toNextEdge = m_positions[i + 1] - m_positions[i];
+            F32 toNextEdgeLength = toNextEdge.length();
+            edge.direction = (toNextEdgeLength != 0.0f) ? (toNextEdge / toNextEdgeLength) : Vec3DF::c_zero;
+
+            if (i >= 1)
+            {
+                Vec3DF prevDirection = (m_positions[i] - m_positions[i - 1]).normalizedCopy();
+                edge.direction = ((prevDirection + edge.direction) * 0.5f).normalizedCopy();
+            }
+
+            edge.distanceToNextEdge = toNextEdgeLength;
+
+            totalLength += toNextEdgeLength;
+        }
+
+        F32 l = 0.0f;
+        for (S32 i = 0, in = quadsCount; i < in; ++i)
+        {
+            EdgeData& edge = edges[i];
+
+            l += edge.distanceToNextEdge;
+            edge.progress = l / totalLength;
+            edge.halfWidth = getTrailWidth(edge.progress);
+        }
 
 
         U32 verticesCount = 2 * quadsCount + 2;
@@ -274,45 +228,40 @@ namespace Maze
         Vec3DF vertexB;
         F32 width;
         F32 halfWidth;
-        F32 currentLength = 0.0f;
 
-        Vec3DF currentPosition = Math::Lerp(m_edges[0].position, m_edges[1].position, p);
+        Vec3DF currentPosition = m_positions[0];
         Vec3DF nextPosition;
         for (S32 i = 0; i < (S32)(quadsCount); ++i)
         {
-            F32 progress = currentLength / trailLength;
-            width = getTrailWidth(progress);
+            EdgeData& edge = edges[i];
+
+            width = getTrailWidth(edge.progress);
             halfWidth = width * 0.5f;
 
-            nextPosition = m_edges[i + 1].position;
-            direction = m_edges[i].direction;
+            nextPosition = m_positions[i + 1];
+            direction = edge.direction;
             
             perpendicular = direction.crossProduct(Vec3DF::c_unitZ);
             vertexA = currentPosition + perpendicular * halfWidth;
             vertexB = currentPosition - perpendicular * halfWidth;
 
             m_vertices[vertex] = vertexA;
-            m_uvs[vertex] = Vec2DF(progress, 0.0f);
+            m_uvs[vertex] = Vec2DF(edge.progress, 0.0f);
             m_colors[vertex] = m_color.value;
             ++vertex;
 
             m_vertices[vertex] = vertexB;
-            m_uvs[vertex] = Vec2DF(progress, 1.0f);
+            m_uvs[vertex] = Vec2DF(edge.progress, 1.0f);
             m_colors[vertex] = m_color.value;
             ++vertex;
 
             
             currentPosition = nextPosition;
-
-            if (i == 0)
-                currentLength += firstQuadLength;
-            else
-                currentLength += m_edges[i].distanceToNextEdge;
         }
         
         width = getTrailWidth(1.0f);
         halfWidth = width * 0.5f;
-        direction = (m_edges.back().position - m_edges[m_edges.size() - 2].position).normalizedCopy();
+        direction = (m_positions.back() - m_positions[m_positions.size() - 2]).normalizedCopy();
         perpendicular = direction.crossProduct(Vec3DF::c_unitZ);
         vertexA = currentPosition + perpendicular * halfWidth;
         vertexB = currentPosition - perpendicular * halfWidth;
@@ -348,14 +297,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void TrailRenderer3D::processEntityAwakened()
+    void LineRenderer3D::processEntityAwakened()
     {
         m_renderMask = getEntityRaw()->ensureComponent<RenderMask>();
         m_transform = getEntityRaw()->ensureComponent<Transform3D>();
     }
 
     //////////////////////////////////////////
-    void TrailRenderer3D::processSceneSet()
+    void LineRenderer3D::processSceneSet()
     {
         MAZE_ERROR_RETURN_IF(!getEntityRaw(), "Entity is null");
         MAZE_ERROR_RETURN_IF(!getEntityRaw()->getECSScene(), "Entity Scene is null");
@@ -369,38 +318,27 @@ namespace Maze
         m_vao = VertexArrayObject::Create(m_renderSystem);
         m_renderMesh = renderTarget->createRenderMeshFromPool(1);
         m_renderMesh->setVertexArrayObject(m_vao);
+
+        rebuildMesh();
     }
 
     //////////////////////////////////////////
-    void TrailRenderer3D::processEntityRemoved()
+    void LineRenderer3D::processEntityRemoved()
     {
         m_renderMesh.reset();
     }
     
     //////////////////////////////////////////
-    void TrailRenderer3D::addEdge(
-        F32 _time,
-        Vec3DF const& _position)
-    {
-        TrailEdge trailEdge(
-            _time,
-            _position);
-
-        m_edges.push_back(trailEdge);
-    }
-
-    //////////////////////////////////////////
-    F32 TrailRenderer3D::getTrailWidth(F32 _progress)
+    F32 LineRenderer3D::getTrailWidth(F32 _progress)
     {
         return m_width;
     }
     
     //////////////////////////////////////////
-    void TrailRenderer3D::clear()
+    void LineRenderer3D::clear()
     {
-        m_edges.clear();
-        m_vao->clear();
-        m_timer = 0.0f;
+        m_positions.clear();
+        m_vao->clear();        
     }
 
 } // namespace Maze

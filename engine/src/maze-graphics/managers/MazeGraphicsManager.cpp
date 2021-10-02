@@ -47,6 +47,7 @@
 #include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeLineRenderer3D.hpp"
 #include "maze-graphics/ecs/components/MazeTrailRenderer3D.hpp"
 #include "maze-graphics/ecs/components/MazeTerrainMesh3D.hpp"
 
@@ -105,6 +106,7 @@ namespace Maze
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<GizmoBillboard3D>("3D");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<Light3D>("3D");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<TrailRenderer3D>("3D");
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<LineRenderer3D>("3D");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<TerrainMesh3D>("3D");
 
         // Renderer

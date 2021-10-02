@@ -32,6 +32,7 @@
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/ecs/components/MazeTrailRenderer3D.hpp"
+#include "maze-graphics/ecs/components/MazeLineRenderer3D.hpp"
 #include "maze-graphics/ecs/MazeECSRenderScene.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-graphics/MazeRenderQueue.hpp"
@@ -84,6 +85,7 @@ namespace Maze
 
         m_meshRenderers = _world->requestInclusiveSample<MeshRenderer, Transform3D>();
         m_trailRenderers3DSample = _world->requestInclusiveSample<TrailRenderer3D, Transform3D>();
+        m_lineRenderers3DSample = _world->requestInclusiveSample<LineRenderer3D, Transform3D>();
         m_cameras3DSample = _world->requestInclusiveSample<Camera3D>();
         m_lights3DSample = _world->requestInclusiveSample<Light3D>();
         
@@ -416,6 +418,47 @@ namespace Maze
                     }
                 }
             });
+
+        // Lines
+        m_lineRenderers3DSample->process(
+            [&](Entity* _entity, LineRenderer3D* _lineRenderer, Transform3D* _transform3D)
+        {
+            if (_lineRenderer->getRenderMask()->getMask() & _params.renderMask)
+            {
+                if (_lineRenderer->getRenderMesh())
+                {
+                    Vector<MaterialPtr> const& materials = _lineRenderer->getMaterials();
+                    Vector<VertexArrayObjectPtr> const& vaos = _lineRenderer->getRenderMesh()->getVertexArrayObjects();
+
+                    if (vaos.empty())
+                        return;
+
+                    Size c = Math::Max(vaos.size(), materials.size());
+
+                    for (Size i = 0, in = c; i < in; ++i)
+                    {
+                        VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
+
+                        MaterialPtr const* material = nullptr;
+                        if (materials.empty())
+                            material = &m_renderSystem->getMaterialManager()->getErrorMaterial();
+                        else
+                            material = &materials[i % materials.size()];
+
+                        _renderData.emplace_back(
+                            RenderUnit
+                            {
+                                (*material)->getFirstRenderPass(),
+                                vao,
+                                _transform3D->getWorldPosition(),
+                                1,
+                                &_transform3D->getWorldTransform()
+                            });
+
+                    }
+                }
+            }
+        });
     }
     
 } // namespace Maze
