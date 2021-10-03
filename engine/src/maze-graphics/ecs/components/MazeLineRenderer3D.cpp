@@ -88,7 +88,7 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(LineRenderer3D, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<MaterialPtr>, materials, Vector<MaterialPtr>(), getMaterials, setMaterials),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, width, 1.0f, getWidth, setWidth),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorF128, color, ColorF128::c_white, getColor, setColor),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorGradient, color, ColorGradient(), getColor, setColor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Vec3DF>, positions, Vector<Vec3DF>(), getPositions, setPositions));
 
     //////////////////////////////////////////
@@ -164,7 +164,7 @@ namespace Maze
             return;
 
         S32 quadsCount = (S32)m_positions.size() - 1;
-        if (quadsCount <= 0)
+        if (quadsCount <= 0 || m_width <= 0.0f)
         {
             m_vao->clear();
             return;
@@ -206,9 +206,10 @@ namespace Maze
         {
             EdgeData& edge = edges[i];
 
-            l += edge.distanceToNextEdge;
             edge.progress = l / totalLength;
             edge.halfWidth = getTrailWidth(edge.progress);
+
+            l += edge.distanceToNextEdge;
         }
 
 
@@ -228,6 +229,7 @@ namespace Maze
         Vec3DF vertexB;
         F32 width;
         F32 halfWidth;
+        ColorF128 color;
 
         Vec3DF currentPosition = m_positions[0];
         Vec3DF nextPosition;
@@ -236,6 +238,7 @@ namespace Maze
             EdgeData& edge = edges[i];
 
             width = getTrailWidth(edge.progress);
+            color = m_color.evaluate(edge.progress);
             halfWidth = width * 0.5f;
 
             nextPosition = m_positions[i + 1];
@@ -247,12 +250,12 @@ namespace Maze
 
             m_vertices[vertex] = vertexA;
             m_uvs[vertex] = Vec2DF(edge.progress, 0.0f);
-            m_colors[vertex] = m_color.value;
+            m_colors[vertex] = color;
             ++vertex;
 
             m_vertices[vertex] = vertexB;
             m_uvs[vertex] = Vec2DF(edge.progress, 1.0f);
-            m_colors[vertex] = m_color.value;
+            m_colors[vertex] = color;
             ++vertex;
 
             
@@ -260,6 +263,7 @@ namespace Maze
         }
         
         width = getTrailWidth(1.0f);
+        color = m_color.evaluate(1.0f);
         halfWidth = width * 0.5f;
         direction = (m_positions.back() - m_positions[m_positions.size() - 2]).normalizedCopy();
         perpendicular = direction.crossProduct(Vec3DF::c_unitZ);
@@ -268,12 +272,12 @@ namespace Maze
 
         m_vertices[vertex] = vertexA;
         m_uvs[vertex] = Vec2DF(1.0f, 0.0f);
-        m_colors[vertex] = m_color.value;
+        m_colors[vertex] = color;
         ++vertex;
 
         m_vertices[vertex] = vertexB;
         m_uvs[vertex] = Vec2DF(1.0f, 1.0f);
-        m_colors[vertex] = m_color.value;
+        m_colors[vertex] = color;
         ++vertex;
 
         m_vao->setVerticesData((U8 const*)&m_vertices[0], c_positionDescription, verticesCount);

@@ -41,6 +41,20 @@ namespace Maze
     //////////////////////////////////////////
     inline ColorGradient::ColorGradient(
         F32 _time0,
+        Vec4DF const& _color0)
+    {
+        addKey(_time0, _color0);
+    }
+
+    //////////////////////////////////////////
+    inline ColorGradient::ColorGradient(Vec4DF const& _color0)
+    {
+        addKey(0.0f, _color0);
+    }
+
+    //////////////////////////////////////////
+    inline ColorGradient::ColorGradient(
+        F32 _time0,
         Vec4DF const& _color0,
         F32 _time1,
         Vec4DF const& _color1)

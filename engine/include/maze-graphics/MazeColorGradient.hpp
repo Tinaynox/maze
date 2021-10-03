@@ -192,6 +192,14 @@ namespace Maze
         //////////////////////////////////////////
         inline ColorGradient(
             F32 _time0,
+            Vec4DF const& _color0);
+
+        //////////////////////////////////////////
+        inline ColorGradient(Vec4DF const& _color0);
+
+        //////////////////////////////////////////
+        inline ColorGradient(
+            F32 _time0,
             Vec4DF const& _color0,
             F32 _time1,
             Vec4DF const& _color1);

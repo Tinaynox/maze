@@ -152,41 +152,95 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        MAZE_PHYSICS2D_API OverlapHit2DPtr OverlapZone(
+            Vec2DF const& _from,
+            Vec2DF const& _to)
+        {
+            PhysicsWorld2DPtr const& world = Physics2DManager::GetInstancePtr()->getWorld();
+
+            b2Vec2 posFrom = Box2DHelper::ToVec2(world->convertUnitsToMeters(_from));
+            b2Vec2 posTo = Box2DHelper::ToVec2(world->convertUnitsToMeters(_to));
+
+            b2AABB aabb;
+            aabb.lowerBound.Set(posFrom.x, posFrom.y);
+            aabb.upperBound.Set(posTo.x, posTo.y);
+
+            OverlapHit2DPtr result;
+
+            Box2DHelper::CustomOverlapCallback callback(
+                [&](b2Fixture* _fixture) -> bool
+            {
+                b2Body* body = _fixture->GetBody();
+
+                Collider2D* collider = static_cast<Collider2D*>((void*)_fixture->GetUserData().pointer);
+                Rigidbody2D* rigidbody = reinterpret_cast<Rigidbody2D*>(body->GetUserData().pointer);
+
+                result = std::make_shared<OverlapHit2D>(
+                    collider,
+                    rigidbody);
+
+                return true;
+            });
+
+            world->getBox2DWorld()->QueryAABB(&callback, aabb);
+
+            return result;
+        }
+
+        //////////////////////////////////////////
         MAZE_PHYSICS2D_API OverlapHit2DPtr OverlapRect(
             Vec2DF const& _position,
             Vec2DF const& _size)
         {
             Vec2DF const halfSize = _size * 0.5f;
 
+            return OverlapZone(_position - halfSize, _position + halfSize);
+        }
+
+        //////////////////////////////////////////
+        MAZE_PHYSICS2D_API Vector<OverlapHit2DPtr> OverlapZoneAll(
+            Vec2DF const& _from,
+            Vec2DF const& _to)
+        {
             PhysicsWorld2DPtr const& world = Physics2DManager::GetInstancePtr()->getWorld();
 
-            b2Vec2 pos = Box2DHelper::ToVec2(world->convertUnitsToMeters(_position));
+            b2Vec2 posFrom = Box2DHelper::ToVec2(world->convertUnitsToMeters(_from));
+            b2Vec2 posTo = Box2DHelper::ToVec2(world->convertUnitsToMeters(_to));
 
             b2AABB aabb;
-            aabb.lowerBound.Set(_position.x - halfSize.x, _position.y - halfSize.y);
-            aabb.upperBound.Set(_position.x + halfSize.x, _position.y + halfSize.y);
+            aabb.lowerBound.Set(posFrom.x, posFrom.y);
+            aabb.upperBound.Set(posTo.x, posTo.y);
 
-            OverlapHit2DPtr result;
+            Vector<OverlapHit2DPtr> result;
 
-            Box2DHelper::CheckOverlapCallback callback(
-                pos, 
+            Box2DHelper::CustomOverlapCallback callback(
                 [&](b2Fixture* _fixture) -> bool
-                {
-                    b2Body* body = _fixture->GetBody();
+            {
+                b2Body* body = _fixture->GetBody();
 
-                    Collider2D* collider = static_cast<Collider2D*>((void*)_fixture->GetUserData().pointer);
-                    Rigidbody2D* rigidbody = reinterpret_cast<Rigidbody2D*>(body->GetUserData().pointer);
+                Collider2D* collider = static_cast<Collider2D*>((void*)_fixture->GetUserData().pointer);
+                Rigidbody2D* rigidbody = reinterpret_cast<Rigidbody2D*>(body->GetUserData().pointer);
 
-                    result = std::make_shared<OverlapHit2D>(
-                        collider,
-                        rigidbody);
+                result.emplace_back(
+                    std::make_shared<OverlapHit2D>(
+                    collider,
+                    rigidbody));
 
-                    return true;
-                });
+                return false;
+            });
 
             world->getBox2DWorld()->QueryAABB(&callback, aabb);
 
             return result;
+        }
+
+        //////////////////////////////////////////
+        MAZE_PHYSICS2D_API Vector<OverlapHit2DPtr> OverlapRectAll(
+            Vec2DF const& _position,
+            Vec2DF const& _size)
+        {
+            Vec2DF const halfSize = _size * 0.5f;
+            return OverlapZoneAll(_position - halfSize, _position + halfSize);
         }
 
         //////////////////////////////////////////

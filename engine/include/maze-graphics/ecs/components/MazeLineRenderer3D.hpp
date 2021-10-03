@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-graphics/MazeColorGradient.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/MazeColorF128.hpp"
@@ -101,10 +102,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setColor(ColorF128 const& _color) { m_color = _color; rebuildMesh(); }
+        inline void setColor(ColorF128 const& _color)
+        {
+            setColor(ColorGradient(0.0f, _color.toVec3DF()));
+        }
 
         //////////////////////////////////////////
-        inline ColorF128 const& getColor() const { return m_color; }
+        inline void setColor(ColorGradient const& _color) { m_color = _color; rebuildMesh(); }
+
+        //////////////////////////////////////////
+        inline ColorGradient const& getColor() const { return m_color; }
 
 
         //////////////////////////////////////////
@@ -166,7 +173,7 @@ namespace Maze
         Vector<MaterialPtr> m_materials;
 
         F32 m_width;
-        ColorF128 m_color;
+        ColorGradient m_color;
 
         VertexArrayObjectPtr m_vao;
         RenderMeshPtr m_renderMesh;
