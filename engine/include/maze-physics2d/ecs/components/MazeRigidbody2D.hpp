@@ -341,14 +341,19 @@ namespace Maze
         void applyImpulse(Vec2DF const& _impulse, bool _multiplyMass = true)
         {
             if (!m_body)
-                return;
+            {
+                rebuildBody();
+
+                if (!m_body)
+                    return;
+            }
 
             b2Vec2 i = Box2DHelper::ToVec2(m_world->convertUnitsToMeters(_impulse));
             if (_multiplyMass)
                 i *= m_body->GetMass();
 
             m_body->ApplyLinearImpulseToCenter(
-                Box2DHelper::ToVec2(m_world->convertUnitsToMeters(_impulse)),
+                i,
                 true);
         }
 
@@ -356,7 +361,12 @@ namespace Maze
         void applyForce(Vec2DF const& _force, bool _multiplyMass = true)
         {
             if (!m_body)
-                return;
+            {
+                rebuildBody();
+
+                if (!m_body)
+                    return;
+            }
 
             b2Vec2 f = Box2DHelper::ToVec2(m_world->convertUnitsToMeters(_force));
             if (_multiplyMass)
@@ -371,7 +381,12 @@ namespace Maze
         inline void setVelocity(Vec2DF const& _velocity)
         {
             if (!m_body)
-                return;
+            {
+                rebuildBody();
+
+                if (!m_body)
+                    return;
+            }
 
             m_body->SetLinearVelocity(Box2DHelper::ToVec2(m_world->convertUnitsToMeters(_velocity)));
         }
