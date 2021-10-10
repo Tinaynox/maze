@@ -37,6 +37,7 @@
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 
@@ -205,6 +206,7 @@ namespace Maze
             textRenderer->setMaterial(_material ? _material : SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial());
             textRenderer->setHorizontalAlignment(_horizontalAlignment);
             textRenderer->setVerticalAlignment(_verticalAlignment);
+            textRenderer->setSystemFont(TextureManager::GetCurrentInstancePtr()->getSystemFont());
 
             Transform2DPtr transform = textRendererEntity->ensureComponent<Transform2D>();
             transform->setParent(_parent);

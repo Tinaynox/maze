@@ -76,7 +76,7 @@ namespace Maze
     {
         UpdateManager::GetInstancePtr()->addUpdatable(this);
         
-        GraphicsUtilsHelper::ConstructSystemFont();
+        GraphicsUtilsHelper::ConstructAsciiSymbolsSheet8x8();
 
         registerGizmos<Light3D, Light3DGizmos>();
         registerGizmos<Camera3D, Camera3DGizmos>();

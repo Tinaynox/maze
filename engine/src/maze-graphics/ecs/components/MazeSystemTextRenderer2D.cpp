@@ -57,6 +57,7 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(String, text, String(), getText, setText),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(MaterialPtr, material, MaterialPtr(), getMaterial, setMaterial),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, color, ColorU32::c_white, getColor, setColor),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(SystemFontPtr, systemFont, SystemFontPtr(), getSystemFont, setSystemFont),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(U32, fontSize, 32, getFontSize, setFontSize),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(HorizontalAlignment2D, horizontalAlignment, HorizontalAlignment2D::Left, getHorizontalAlignment, setHorizontalAlignment),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(VerticalAlignment2D, verticalAlignment, VerticalAlignment2D::Top, getVerticalAlignment, setVerticalAlignment));
@@ -161,6 +162,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void SystemTextRenderer2D::setSystemFont(SystemFontPtr const& _systemFont)
+    {
+        if (m_systemFont == _systemFont)
+            return;
+
+        m_systemFont = _systemFont;
+
+        updateMaterial();
+    }
+
+    //////////////////////////////////////////
     void SystemTextRenderer2D::updateMesh()
     {
         if (!m_canvasRenderer)
@@ -169,16 +181,19 @@ namespace Maze
         if (!m_meshRenderer)
             return;
 
+        if (!m_systemFont)
+            return;
+
         Vec4DF vertexColor = Vec4DF(1.0f, 1.0f, 1.0f, m_canvasRenderer->getAlpha());
 
         Vec2DF const& size = m_transform->getSize();
 
-        Texture2DPtr const& systemFontTexture = m_renderSystem->getTextureManager()->getSystemFontTexture();
+        Texture2DPtr const& systemFontTexture = m_systemFont->texture;
 
 
-        F32 fontScale = (F32)m_fontSize / 8.0f;
+        F32 fontScale = (F32)m_fontSize / (F32)(m_systemFont->charSize.x - m_systemFont->outline * 2);
 
-        S32 const rowSize = 8;
+        S32 const rowSize = m_systemFont->charSize.y;
 
         S32 rowsCount = 1;
         S32 maxColumnsCount = 0;
@@ -236,31 +251,31 @@ namespace Maze
 
                 F32 border = 0.00001f;
                 Vec4DF uv(
-                    (F32(ox * 8) / (F32)systemFontTexture->getWidth()) + border,
-                    (F32(oy * 8) / (F32)systemFontTexture->getHeight()) + border,
-                    (F32(ox * 8 + 8) / (F32)systemFontTexture->getWidth()) - border,
-                    (F32(oy * 8 + 8) / (F32)systemFontTexture->getHeight()) - border
+                    (F32(ox * m_systemFont->stroke.x + m_systemFont->offset.x) / (F32)systemFontTexture->getWidth()) + border,
+                    (F32(oy * m_systemFont->stroke.y + m_systemFont->offset.y) / (F32)systemFontTexture->getHeight()) + border,
+                    (F32(ox * m_systemFont->stroke.x + m_systemFont->charSize.x + m_systemFont->offset.x) / (F32)systemFontTexture->getWidth()) - border,
+                    (F32(oy * m_systemFont->stroke.y + m_systemFont->charSize.y + m_systemFont->offset.y) / (F32)systemFontTexture->getHeight()) - border
                 );
 
                 Vec2DF positionShift;
                 switch (m_horizontalAlignment)
                 {
                     case HorizontalAlignment2D::Left: positionShift.x = 0.0f; break;
-                    case HorizontalAlignment2D::Center: positionShift.x = (size.x - columnsCount * 8.0f * fontScale) * 0.5f; break;
-                    case HorizontalAlignment2D::Right: positionShift.x = size.x - columnsCount * 8.0f * fontScale; break;
+                    case HorizontalAlignment2D::Center: positionShift.x = (size.x - (columnsCount * (m_systemFont->charSize.x - m_systemFont->outline) + m_systemFont->outline) * fontScale) * 0.5f; break;
+                    case HorizontalAlignment2D::Right: positionShift.x = size.x - (columnsCount * (m_systemFont->charSize.x - m_systemFont->outline) + m_systemFont->outline) * fontScale; break;
                     default: break;
                 }
                 switch (m_verticalAlignment)
                 {
                     case VerticalAlignment2D::Top: positionShift.y = size.y; break;
-                    case VerticalAlignment2D::Middle: positionShift.y = (size.y + rowsCount * 8.0f * fontScale) * 0.5f; break;
-                    case VerticalAlignment2D::Bottom: positionShift.y = rowsCount * 8.0f * fontScale; break;
+                    case VerticalAlignment2D::Middle: positionShift.y = (size.y + (rowsCount * (m_systemFont->charSize.y - m_systemFont->outline) + m_systemFont->outline) * fontScale) * 0.5f; break;
+                    case VerticalAlignment2D::Bottom: positionShift.y = (rowsCount * (m_systemFont->charSize.y - m_systemFont->outline) + m_systemFont->outline) * fontScale; break;
                     default: break;
                 }
                     
-                positionShift += 0.5f * 8.0f * fontScale;
+                positionShift += 0.5f * m_systemFont->charSize.y * fontScale;
 
-                Vec2DF sizeV = Vec2DF(8.0f, 8.0f) * fontScale;
+                Vec2DF sizeV = m_systemFont->charSize * fontScale;
                 Vec2DF positionShiftV = Vec2DF((F32)sx, (F32)sy) * fontScale + positionShift;
 
 
@@ -289,7 +304,7 @@ namespace Maze
                 charVerticesIndex += 4;
                 charIndicesIndex += 6;
 
-                sx += 8;
+                sx += m_systemFont->charSize.x - m_systemFont->outline;
             }
 
             ++p;
@@ -318,9 +333,9 @@ namespace Maze
 
         m_meshRenderer->setMaterial(m_material);
 
-        if (m_material)
+        if (m_material && m_systemFont)
         {
-            Texture2DPtr texture = m_material->getRenderSystem()->getTextureManager()->getSystemFontTexture();
+            Texture2DPtr texture = m_systemFont->texture;
 
             m_colorUniform->set(m_color.toVec4DF());
             m_baseMapUniform->set(texture);
@@ -332,9 +347,9 @@ namespace Maze
     Vec2DF SystemTextRenderer2D::getTextEnd(Size _rowIndex)
     {
         Vec2DF const& size = m_transform->getSize();
-        F32 fontScale = (F32)m_fontSize / 8.0f;
+        F32 fontScale = (F32)m_fontSize / (F32)(m_systemFont->charSize.x - m_systemFont->outline * 2);
 
-        S32 const rowSize = 8;
+        S32 const rowSize = m_systemFont->charSize.y;
 
         S32 rowsCount = 1;
         S32 maxColumnsCount = 0;
@@ -381,21 +396,21 @@ namespace Maze
         switch (m_horizontalAlignment)
         {
             case HorizontalAlignment2D::Left: positionShift.x = 0.0f; break;
-            case HorizontalAlignment2D::Center: positionShift.x = (size.x - columnsCount * 8.0f * fontScale) * 0.5f; break;
-            case HorizontalAlignment2D::Right: positionShift.x = size.x - columnsCount * 8.0f * fontScale; break;
+            case HorizontalAlignment2D::Center: positionShift.x = (size.x - (columnsCount * (m_systemFont->charSize.x - m_systemFont->outline) + m_systemFont->outline) * fontScale) * 0.5f; break;
+            case HorizontalAlignment2D::Right: positionShift.x = size.x - (columnsCount * (m_systemFont->charSize.x - m_systemFont->outline) + m_systemFont->outline) * fontScale; break;
             default: break;
         }
         switch (m_verticalAlignment)
         {
             case VerticalAlignment2D::Top: positionShift.y = size.y; break;
-            case VerticalAlignment2D::Middle: positionShift.y = (size.y + rowsCount * 8.0f * fontScale) * 0.5f; break;
-            case VerticalAlignment2D::Bottom: positionShift.y = rowsCount * 8.0f * fontScale; break;
+            case VerticalAlignment2D::Middle: positionShift.y = (size.y + (rowsCount * (m_systemFont->charSize.y - m_systemFont->outline) + m_systemFont->outline) * fontScale) * 0.5f; break;
+            case VerticalAlignment2D::Bottom: positionShift.y = (rowsCount * (m_systemFont->charSize.y - m_systemFont->outline) + m_systemFont->outline) * fontScale; break;
             default: break;
         }
 
-        positionShift += 0.5f * 8.0f * fontScale;
+        positionShift += 0.5f * m_systemFont->charSize.x * fontScale;
 
-        Vec2DF sizeV = Vec2DF(8.0f, 8.0f) * fontScale;
+        Vec2DF sizeV = m_systemFont->charSize * fontScale;
         Vec2DF positionShiftV = Vec2DF((F32)sx, (F32)sy) * fontScale + positionShift;
 
         return Vec2DF(-0.5f + columnsCount, -0.5f) * sizeV + positionShiftV;

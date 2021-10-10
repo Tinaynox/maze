@@ -633,7 +633,7 @@ namespace Maze
         S32 _horizontalAlignment,
         S32 _verticalAlignment)
     {
-        PixelSheet2D const& systemFontSHeet = GraphicsUtilsHelper::GetSystemFontSheet();
+        PixelSheet2D const& asciiSymbols = GraphicsUtilsHelper::GetAsciiSymbolsSheet8x8();
 
         S32 rowSize = 8 * (S32)_scale;
         S32 columnSize = 8 * (S32)_scale;
@@ -711,7 +711,7 @@ namespace Maze
                 {
                     for (U32 i = 0; i < 8; i++)
                         for (U32 j = 0; j < 8; j++)
-                            if (systemFontSHeet.getPixelRGBA_U8(i + ox * 8, j + oy * 8).r > 0)
+                            if (asciiSymbols.getPixelRGBA_U8(i + ox * 8, j + oy * 8).r > 0)
                                 for (U32 is = 0; is < _scale; is++)
                                     for (U32 js = 0; js < _scale; js++)
                                         setPixelSafe(_x + sx + (i * _scale) + is, _y + sy + (j * _scale) + js, _color);
@@ -720,7 +720,7 @@ namespace Maze
                 {
                     for (U32 i = 0; i < 8; i++)
                         for (U32 j = 0; j < 8; j++)
-                            if (systemFontSHeet.getPixelRGBA_U8(i + ox * 8, j + oy * 8).r > 0)
+                            if (asciiSymbols.getPixelRGBA_U8(i + ox * 8, j + oy * 8).r > 0)
                                 setPixelSafe(_x + sx + i,_y + sy + j, _color);
                 }
                 sx += 8 * _scale;

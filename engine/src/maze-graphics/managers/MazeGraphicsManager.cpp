@@ -85,7 +85,7 @@ namespace Maze
     {
         UpdateManager::GetInstancePtr()->addUpdatable(this);
         
-        GraphicsUtilsHelper::ConstructSystemFont();
+        GraphicsUtilsHelper::ConstructAsciiSymbolsSheet8x8();
 
         GizmosManager::Initialize(m_gizmosManager);
         if (!m_gizmosManager)

@@ -25,6 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
+#include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-graphics/loaders/texture/MazeLoaderPNG.hpp"
 #include "maze-graphics/MazePixelFormat.hpp"
 #include <png.h>
@@ -37,10 +38,10 @@ namespace Maze
     namespace GraphicsUtilsHelper
     {
         //////////////////////////////////////////
-        MAZE_GRAPHICS_API PixelSheet2D g_systemFontSheet(Vec2DS(128, 48), PixelFormat::RGBA_U8);
+        MAZE_GRAPHICS_API PixelSheet2D g_asciiSymbolsSheet8x8(Vec2DS(128, 48), PixelFormat::RGBA_U8);
 
         //////////////////////////////////////////
-        MAZE_GRAPHICS_API PixelSheet2D const& GetSystemFontSheet() { return g_systemFontSheet;  }
+        MAZE_GRAPHICS_API PixelSheet2D const& GetAsciiSymbolsSheet8x8() { return g_asciiSymbolsSheet8x8;  }
 
         //////////////////////////////////////////
         // Tables of ASCII symbols (code symbols - 32-127)
@@ -52,7 +53,7 @@ namespace Maze
         // | `abcdefghijklmno |
         // | pqrstuvwxyz{|}~^ |
         //////////////////////////////////////////
-        MAZE_GRAPHICS_API void ConstructSystemFont()
+        MAZE_GRAPHICS_API void ConstructAsciiSymbolsSheet8x8()
         {
             String data;
             data += "?Q`0001oOch0o01o@F40o0<AGD4090LAGD<090@A7ch0?00O7Q`0600>00000000";
@@ -72,8 +73,8 @@ namespace Maze
             data += "O`000P08Od400g`<3V=P0G`673IP0`@3>1`00P@6O`P00g`<O`000GP800000000";
             data += "?P9PL020O`<`N3R0@E4HC7b0@ET<ATB0@@l6C4B0O`H3N7b0?P01L3R000000020";
 
-            g_systemFontSheet.setFormat(PixelFormat::RGBA_U8);
-            g_systemFontSheet.setSize(128, 48);
+            g_asciiSymbolsSheet8x8.setFormat(PixelFormat::RGBA_U8);
+            g_asciiSymbolsSheet8x8.setSize(128, 48);
 
             S32 px = 0;
             S32 py = 0;
@@ -90,7 +91,7 @@ namespace Maze
                 {
                     U8 k = r & (1 << i) ? 255 : 0;
 
-                    g_systemFontSheet.setPixel(px, py, ColorU32(k, k, k, k));
+                    g_asciiSymbolsSheet8x8.setPixel(px, py, ColorU32(k, k, k, k));
 
                     if (++py == 48)
                     {
@@ -100,8 +101,203 @@ namespace Maze
                 }
             }
 
-            g_systemFontSheet.flipY();
+            g_asciiSymbolsSheet8x8.flipY();
         }
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API PixelSheet2D GenerateSystemFontExtrude(
+            PixelSheet2D const& _inSheet,
+            S8 columns,
+            S8 rows,
+            S8 charWidth,
+            S8 charHeight)
+        {
+            S32 const extrude = 1;
+
+            S32 extraPixelsWidth = 2 * extrude * columns;
+            S32 extraPixelsHeight = 2 * extrude * rows;
+
+            PixelSheet2D systemFontSheet;
+            systemFontSheet.setFormat(PixelFormat::RGBA_U8);
+            S32 newWidth = Math::GetNextPowerOfTwo(_inSheet.getWidth() + extraPixelsWidth);
+            S32 newHeight = Math::GetNextPowerOfTwo(_inSheet.getHeight() + extraPixelsHeight);
+            systemFontSheet.setSize(newWidth, newHeight);
+
+            for (S32 c = 0; c < columns; ++c)
+            {
+                for (S32 r = 0; r < rows; ++r)
+                {
+                    S32 sheetCharX = c * (charWidth + extrude * 2) + extrude;
+                    S32 sheetCharY = r * (charHeight + extrude * 2) + extrude;
+
+                    S32 packedSheetCharX = c * charWidth;
+                    S32 packedSheetCharY = r * charHeight;
+
+                    for (S32 y = 0; y < charHeight; ++y)
+                    {
+                        for (S32 x = 0; x < charWidth; ++x)
+                        {
+                            ColorU32 packedSheetCharColor = _inSheet.getPixelRGBA_U8(
+                                packedSheetCharX + x,
+                                packedSheetCharY + y);
+                            systemFontSheet.setPixel(
+                                sheetCharX + x,
+                                sheetCharY + y,
+                                packedSheetCharColor);
+                        }
+                    }
+
+                    // Horizontal extrude
+                    for (S32 y = 0; y < charHeight; ++y)
+                    {
+                        systemFontSheet.setPixel(sheetCharX - 1, sheetCharY + y,
+                            _inSheet.getPixelRGBA_U8(packedSheetCharX, packedSheetCharY + y));
+
+                        systemFontSheet.setPixel(sheetCharX + charWidth, sheetCharY + y,
+                            _inSheet.getPixelRGBA_U8(packedSheetCharX + charWidth - 1, packedSheetCharY + y));
+                    }
+
+                    // Vertical extrude
+                    for (S32 x = 0; x < charWidth; ++x)
+                    {
+                        systemFontSheet.setPixel(sheetCharX + x, sheetCharY - 1,
+                            _inSheet.getPixelRGBA_U8(packedSheetCharX + x, packedSheetCharY));
+
+                        systemFontSheet.setPixel(sheetCharX + x, sheetCharY + charHeight,
+                            _inSheet.getPixelRGBA_U8(packedSheetCharX + x, packedSheetCharY + charHeight - 1));
+                    }
+                }
+            }
+
+            return systemFontSheet;
+        }
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API PixelSheet2D GenerateSystemFontExtrudeOutlined(
+            PixelSheet2D const& _inSheet,
+            S8 columns,
+            S8 rows,
+            S8 charWidth,
+            S8 charHeight,
+            ColorU32 const& _outlineColor)
+        {
+            S32 const extrude = 1;
+            S32 const outline = 1;
+
+            S32 extraPixelsWidth = 2 * (extrude + outline) * columns;
+            S32 extraPixelsHeight = 2 * (extrude + outline) * rows;
+
+            PixelSheet2D systemFontSheet;
+            systemFontSheet.setFormat(PixelFormat::RGBA_U8);
+            S32 newWidth = Math::GetNextPowerOfTwo(_inSheet.getWidth() + extraPixelsWidth);
+            S32 newHeight = Math::GetNextPowerOfTwo(_inSheet.getHeight() + extraPixelsHeight);
+            systemFontSheet.setSize(newWidth, newHeight);
+
+            for (S32 c = 0; c < columns; ++c)
+            {
+                for (S32 r = 0; r < rows; ++r)
+                {
+                    S32 packedSheetCharX = c * charWidth;
+                    S32 packedSheetCharY = r * charHeight;
+
+                    for (S32 d = 0; d < 8; d += 1)
+                    {
+                        S32 ox = 0;
+                        S32 oy = 0;
+
+                        switch (d)
+                        {
+                            case 0: ox += 1; break;
+                            case 1: ox -= 1; break;
+                            case 2: oy += 1; break;
+                            case 3: oy -= 1; break;
+                            case 4: ox += 1; oy += 1; break;
+                            case 5: ox -= 1; oy += 1; break;
+                            case 6: ox += 1; oy -= 1; break;
+                            case 7: ox -= 1; oy -= 1; break;
+                        }
+
+                        S32 sheetCharX = c * (charWidth + (extrude + outline) * 2) + (extrude + outline) + ox;
+                        S32 sheetCharY = r * (charHeight + (extrude + outline) * 2) + (extrude + outline) + oy;
+
+                        for (S32 y = 0; y < charHeight; ++y)
+                        {
+                            for (S32 x = 0; x < charWidth; ++x)
+                            {
+                                ColorU32 packedSheetCharColor = _inSheet.getPixelRGBA_U8(
+                                    packedSheetCharX + x,
+                                    packedSheetCharY + y);
+
+                                if (packedSheetCharColor.a > 0)
+                                {
+                                    systemFontSheet.setPixel(
+                                        sheetCharX + x,
+                                        sheetCharY + y,
+                                        _outlineColor);
+                                }
+                            }
+                        }
+                    }
+
+                    S32 sheetCharX = c * (charWidth + (extrude + outline) * 2) + (extrude + outline);
+                    S32 sheetCharY = r * (charHeight + (extrude + outline) * 2) + (extrude + outline);
+
+
+                    // Horizontal extrude
+                    for (S32 y = -outline; y < charHeight + outline; ++y)
+                    {
+                        systemFontSheet.setPixel(sheetCharX - outline - 1, sheetCharY + y,
+                            systemFontSheet.getPixelRGBA_U8(sheetCharX - outline, sheetCharY + y));
+
+                        systemFontSheet.setPixel(sheetCharX + outline + charWidth, sheetCharY + y,
+                            systemFontSheet.getPixelRGBA_U8(sheetCharX + outline + charWidth - 1, sheetCharY + y));
+                    }
+                    
+                    // Vertical extrude
+                    for (S32 x = -outline; x < charWidth + outline; ++x)
+                    {
+                        systemFontSheet.setPixel(sheetCharX + x, sheetCharY - outline - 1,
+                            systemFontSheet.getPixelRGBA_U8(sheetCharX + x, sheetCharY - outline));
+
+                        systemFontSheet.setPixel(sheetCharX + x, sheetCharY + outline + charHeight,
+                            systemFontSheet.getPixelRGBA_U8(sheetCharX + x, sheetCharY + outline + charHeight - 1));
+                    }
+                }
+            }
+
+            for (S32 c = 0; c < columns; ++c)
+            {
+                for (S32 r = 0; r < rows; ++r)
+                {
+                    S32 sheetCharX = c * (charWidth + (extrude + outline) * 2) + (extrude + outline);
+                    S32 sheetCharY = r * (charHeight + (extrude + outline) * 2) + (extrude + outline);
+
+                    S32 packedSheetCharX = c * charWidth;
+                    S32 packedSheetCharY = r * charHeight;
+
+                    for (S32 y = 0; y < charHeight; ++y)
+                    {
+                        for (S32 x = 0; x < charWidth; ++x)
+                        {
+                            ColorU32 packedSheetCharColor = _inSheet.getPixelRGBA_U8(
+                                packedSheetCharX + x,
+                                packedSheetCharY + y);
+
+                            if (packedSheetCharColor.a == 255)
+                            {
+                                systemFontSheet.setPixel(
+                                    sheetCharX + x,
+                                    sheetCharY + y,
+                                    packedSheetCharColor);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return systemFontSheet;
+        }
+
 
     } // namespace GraphicsUtilsHelper
     //////////////////////////////////////////

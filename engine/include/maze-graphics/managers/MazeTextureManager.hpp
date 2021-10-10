@@ -38,6 +38,7 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-graphics/MazePixelSheet2D.hpp"
+#include "maze-graphics/MazeSystemFont.hpp"
 
 
 //////////////////////////////////////////
@@ -87,7 +88,10 @@ namespace Maze
         Texture2DPtr const& getErrorTexture() const { return m_errorTexture; }
 
         //////////////////////////////////////////
-        Texture2DPtr const& getSystemFontTexture() const { return m_systemFontTexture; }
+        SystemFontPtr const& getSystemFont() const { return m_systemFont; }
+
+        //////////////////////////////////////////
+        SystemFontPtr const& getSystemFontOutlined() const { return m_systemFontOutlined; }
 
         //////////////////////////////////////////
         Texture2DPtr const& addTexture(Texture2DPtr const& _texture);
@@ -122,6 +126,12 @@ namespace Maze
         //////////////////////////////////////////
         void loadAllAssetTextures();
 
+
+        //////////////////////////////////////////
+        SystemFontPtr createSystemFontOutlined(
+            String const& _name,
+            ColorU32 const& _outlineColor);
+
     protected:
 
         //////////////////////////////////////////
@@ -132,6 +142,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void notifyRenderSystemInited();
+
+        //////////////////////////////////////////
+        void createSystemFontTextures();
 
         //////////////////////////////////////////
         void createSpecialTextures();
@@ -146,7 +159,8 @@ namespace Maze
         Texture2DPtr m_whiteTexture;
         Texture2DPtr m_blackTexture;
         Texture2DPtr m_errorTexture;
-        Texture2DPtr m_systemFontTexture;
+        SystemFontPtr m_systemFont;
+        SystemFontPtr m_systemFontOutlined;
 
         TextureCubePtr m_whiteCubeTexture;
         TextureCubePtr m_testCubeTexture;

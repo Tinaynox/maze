@@ -34,6 +34,7 @@
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeAlignment2D.hpp"
+#include "maze-graphics/MazeSystemFont.hpp"
 
 
 //////////////////////////////////////////
@@ -106,6 +107,13 @@ namespace Maze
 
         //////////////////////////////////////////
         inline ColorU32 getColor() const { return m_color; }            
+
+
+        //////////////////////////////////////////
+        inline SystemFontPtr const& getSystemFont() const { return m_systemFont; }
+
+        //////////////////////////////////////////
+        void setSystemFont(SystemFontPtr const& _systemFont);
 
 
         //////////////////////////////////////////
@@ -197,6 +205,7 @@ namespace Maze
 
         ColorU32 m_color;
 
+        SystemFontPtr m_systemFont;
         U32 m_fontSize;
 
         HorizontalAlignment2D m_horizontalAlignment;

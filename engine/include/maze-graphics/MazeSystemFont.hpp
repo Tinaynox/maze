@@ -25,52 +25,45 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeGraphicsUtilsHelper_hpp_))
-#define _MazeGraphicsUtilsHelper_hpp_
+#if (!defined(_MazeSystemFontParams_hpp_))
+#define _MazeSystemFontParams_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-graphics/MazeGraphicsHeader.hpp"
-#include "maze-graphics/MazePixelSheet2D.hpp"
-#include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/utils/MazeMultiDelegate.hpp"
+#include "maze-core/utils/MazeEnumClass.hpp"
+#include "maze-core/system/MazeWindowVideoMode.hpp"
+#include "maze-core/system/MazeWindow.hpp"
+#include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/system/MazeInputEvent.hpp"
+#include "maze-core/math/MazeVec3D.hpp"
+#include "maze-core/helpers/MazeStringHelper.hpp"
+#include "maze-graphics/MazeTexture2D.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    namespace GraphicsUtilsHelper
-    {
-        //////////////////////////////////////////
-        MAZE_GRAPHICS_API PixelSheet2D const& GetAsciiSymbolsSheet8x8();
+    using SystemFontPtr = Maze::SharedPtr<struct SystemFont>;
 
-        //////////////////////////////////////////
-        MAZE_GRAPHICS_API void ConstructAsciiSymbolsSheet8x8();
-
-        //////////////////////////////////////////
-        MAZE_GRAPHICS_API PixelSheet2D GenerateSystemFontExtrude(
-            PixelSheet2D const& _inSheet,
-            S8 columns,
-            S8 rows,
-            S8 charWidth,
-            S8 charHeight);
-
-        //////////////////////////////////////////
-        MAZE_GRAPHICS_API PixelSheet2D GenerateSystemFontExtrudeOutlined(
-            PixelSheet2D const& _inSheet,
-            S8 columns,
-            S8 rows,
-            S8 charWidth,
-            S8 charHeight,
-            ColorU32 const& _outlineColor);
-
-    } // namespace GraphicsUtilsHelper
     //////////////////////////////////////////
+    struct MAZE_GRAPHICS_API SystemFont
+    {
+        Texture2DPtr texture;
+        Vec2DS charSize = Vec2DS::c_zero;
+        Vec2DS stroke = Vec2DS::c_zero;
+        Vec2DS offset = Vec2DS::c_zero;
+        S32 outline = 0;
+    };
 
+    //////////////////////////////////////////
+    MAZE_NOT_IMPLEMENTED_SERIALIZATION(SystemFont);
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeGraphicsUtilsHelper_hpp_
+#endif // _MazeSystemFontParams_hpp_
 //////////////////////////////////////////
