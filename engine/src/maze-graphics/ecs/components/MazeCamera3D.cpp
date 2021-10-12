@@ -29,6 +29,7 @@
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/services/MazeLogStream.hpp"
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/ecs/MazeECSRenderScene.hpp"
@@ -126,6 +127,22 @@ namespace Maze
         }
 
         return nullPointer;
+    }
+
+    //////////////////////////////////////////
+    Vec2DF Camera3D::convertWorldCoordsToViewportCoords(Vec3DF const& _positionWS) const
+    {
+        if (!m_renderTarget)
+            return Vec2DF::c_zero;
+
+        Vec4DF positionWS = Vec4DF(_positionWS, 1.0f);
+        Vec4DF positionVS = getTransform()->getWorldTransform().inversedAffineCopy() * _positionWS;
+        Vec4DF positionCS = m_renderTarget->getProjectionMatrix() * positionVS;
+
+        Vec2DF positionV = Vec2DF(positionCS.x, positionCS.y) / positionCS.w;
+        positionV = (positionV + 1.0f) * 0.5f * (Vec2DF)m_renderTarget->getRenderTargetSize();
+
+        return positionV;
     }
     
     

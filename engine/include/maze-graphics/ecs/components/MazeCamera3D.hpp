@@ -154,6 +154,10 @@ namespace Maze
         //////////////////////////////////////////
         LightingSettingsPtr const& getLightingSettings();
 
+
+        //////////////////////////////////////////
+        Vec2DF convertWorldCoordsToViewportCoords(Vec3DF const& _positionWS) const;
+
     protected:
 
         //////////////////////////////////////////
