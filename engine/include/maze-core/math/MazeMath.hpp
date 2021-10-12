@@ -203,6 +203,67 @@ namespace Maze
             return _value * _value * (3 - 2 * _value);
         }
 
+        // 1|y     **
+        //  |    *    *
+        //  |   *      *
+        //  |  *        *
+        //  | *          *
+        //  |*            *
+        //  |*____________*_x
+        //  0      0.5    1
+        //
+        // Inverse parabolic interpolation (x = [0;1])
+        template <typename TValue>
+        inline TValue LerpInvParabola(TValue _x)
+        {
+            TValue xt = (_x * TValue(2.0) - TValue(1.0));
+            TValue y = -(xt * xt) + TValue(1.0);
+            return y;
+        }
+
+
+        // 1|y     **
+        //  |    *    *
+        //  |   *      *
+        //  |   *      *
+        //  |   *      *
+        //  |  *        *
+        //  |*____________*_x
+        //  0      0.5    1
+        //
+        // Smooth inverse parabolic interpolation (x = [0;1])
+        template <typename TValue>
+        inline TValue LerpInvParabolaSmooth(TValue _x)
+        {
+            if (_x <= TValue(0.5))
+            {
+                return SmoothStep(TValue(0.0), TValue(1.0), _x / TValue(0.5));
+            }
+            else
+            {
+                return SmoothStep(TValue(1.0), TValue(0.0), ((_x - TValue(0.5)) / TValue(0.5)));
+            }
+        }
+
+        // Smooth inverse parabolic interpolation (x = [0;1])
+        template <typename TValue>
+        inline TValue LerpInvParabolaSmoothShift(
+            TValue _x,
+            TValue _xShift = TValue(0.5),
+            TValue _yBegin = TValue(0.0),
+            TValue _yPeak = TValue(1.0),
+            TValue _yEnd = TValue(0.0))
+        {
+            if (_x <= _xShift)
+            {
+                return SmoothStep(_yBegin, _yPeak, _x / _xShift);
+            }
+            else
+            {
+                return SmoothStep(_yPeak, _yEnd, ((_x - _xShift) / (TValue(1.0) - _xShift)));
+            }
+        }
+
 
         //////////////////////////////////////////
         template <class TValue = F32>
