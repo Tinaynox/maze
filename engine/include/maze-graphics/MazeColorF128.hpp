@@ -110,6 +110,16 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline ColorF128(
+            ColorU32 const& _color)
+            : r(_color.r / 255.0f)
+            , g(_color.g / 255.0f)
+            , b(_color.b / 255.0f)
+            , a(_color.a / 255.0f)
+        {
+        }
+
+        //////////////////////////////////////////
         inline ColorF128(Vec4DF const& _value)
             : value(_value)
         {
@@ -299,6 +309,15 @@ namespace Maze
                 _color = ColorU32::FromVec4DF(value);
                 _intensity = 0.0f;
             }
+        }
+
+        //////////////////////////////////////////
+        inline ColorU32 getColorU32() const
+        {
+            ColorU32 color;
+            F32 unused;
+            toColorU32AndIntensity(color, unused);
+            return color;
         }
 
         //////////////////////////////////////////
