@@ -236,13 +236,9 @@ namespace Maze
         inline TValue LerpInvParabolaSmooth(TValue _x)
         {
             if (_x <= TValue(0.5))
-            {
-                return SmoothStep(TValue(0.0), TValue(1.0), _x / TValue(0.5));
-            }
+                return SmoothStep(TValue(0.0), TValue(1.0), _x);
             else
-            {
-                return SmoothStep(TValue(1.0), TValue(0.0), ((_x - TValue(0.5)) / TValue(0.5)));
-            }
+                return SmoothStep(TValue(1.0), TValue(0.0), _x);
         }
 
         // Smooth inverse parabolic interpolation (x = [0;1])
@@ -255,13 +251,9 @@ namespace Maze
             TValue _yEnd = TValue(0.0))
         {
             if (_x <= _xShift)
-            {
-                return SmoothStep(_yBegin, _yPeak, _x / _xShift);
-            }
+                return SmoothStep(_yBegin, _yPeak, _x);
             else
-            {
-                return SmoothStep(_yPeak, _yEnd, ((_x - _xShift) / (TValue(1.0) - _xShift)));
-            }
+                return SmoothStep(_yPeak, _yEnd, _x);
         }
 
 
