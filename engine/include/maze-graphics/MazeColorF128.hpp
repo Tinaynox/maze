@@ -228,6 +228,9 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline Vec3DF getRGB() const { return { r, g, b }; }
+
+        //////////////////////////////////////////
         inline void setRGBA(F32 _r, F32 _g, F32 _b, F32 _a)
         {
             this->r = _r;
