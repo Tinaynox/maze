@@ -111,6 +111,11 @@ namespace Maze
         
         switch (bpp)
         {
+            case 8:
+            {
+                pixelSheet.setFormat(PixelFormat::R_U8);
+                break;
+            }
             case 24:
             {
                 pixelSheet.setFormat(PixelFormat::RGB_U8);
@@ -133,8 +138,11 @@ namespace Maze
         memcpy(pixelSheet.getDataPointer(), _fileData->getData() + bufferShift, imageSize);
             
         // Turn BGR to RGB
-        for (S32 i = 0; i < (S32)imageSize; i += bytesPP) 
-            pixelSheet.swapBytes(i, i + 2);
+        if (bpp >= 24)
+        {
+            for (S32 i = 0; i < (S32)imageSize; i += bytesPP)
+                pixelSheet.swapBytes(i, i + 2);
+        }
 
         return true;
     }
