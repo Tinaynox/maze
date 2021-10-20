@@ -286,6 +286,28 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void Material::setUniform(String const& _uniformName, TexturePtr const& _texture)
+    {
+        MAZE_ERROR_RETURN_IF(!_texture, "Null texture");
+
+        switch (_texture->getType())
+        {
+            case TextureType::TwoDimensional:
+            {
+                setUniform(_uniformName, _texture->cast<Texture2D>());
+                break;
+            }
+            case TextureType::Cube:
+            {
+                setUniform(_uniformName, _texture->cast<TextureCube>());
+                break;
+            }
+        default:
+            MAZE_NOT_IMPLEMENTED;
+        }
+    }
+
+    //////////////////////////////////////////
     void Material::setUniform(String const& _uniformName, Texture2DPtr const& _texture2D)
     {
         ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);

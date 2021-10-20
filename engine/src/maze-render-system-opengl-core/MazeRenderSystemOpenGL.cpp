@@ -33,6 +33,7 @@
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeVertexBufferObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeTexture2DOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeTexture2DMSOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeTextureCubeOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderUniformOpenGL.hpp"
@@ -264,6 +265,8 @@ namespace Maze
             return m_currentContext;
         }
 
+        MAZE_DEBUG_ERROR("Null context");
+
         return nullptr;
     }
 
@@ -325,7 +328,9 @@ namespace Maze
     VertexArrayObjectPtr RenderSystemOpenGL::createVertexArrayObject(RenderTarget* _renderTarget)
     {
         ContextOpenGL* contextOpenGL = ensureDefaultContext(_renderTarget);
-        return VertexArrayObjectOpenGL::Create(this, contextOpenGL);
+        VertexArrayObjectOpenGLPtr vao = VertexArrayObjectOpenGL::Create(this, contextOpenGL);
+        MAZE_DEBUG_ERROR_IF(!vao, "VAO is null");
+        return vao;
     }
 
     //////////////////////////////////////////
@@ -360,6 +365,12 @@ namespace Maze
     Texture2DPtr RenderSystemOpenGL::createTexture2D()
     {
         return Texture2DOpenGL::Create(this, ensureCurrentContext());
+    }
+
+    //////////////////////////////////////////
+    Texture2DMSPtr RenderSystemOpenGL::createTexture2DMS()
+    {
+        return Texture2DMSOpenGL::Create(this, ensureCurrentContext());
     }
 
     //////////////////////////////////////////
@@ -471,12 +482,24 @@ namespace Maze
             return;
 
         m_defaultRenderContext = _context; 
+
+        eventDefaultContextSet(m_defaultRenderContext);
     }
 
     //////////////////////////////////////////
     bool RenderSystemOpenGL::isTextureFormatSupported(PixelFormat::Enum _pixelFormat)
     {
+        // #TODO:
         return true;
+    }
+
+    //////////////////////////////////////////
+    S32 RenderSystemOpenGL::getAntialiasingLevelSupport()
+    {
+        if (!m_defaultRenderContext)
+            return 0;
+
+        return m_defaultRenderContext->getStateMachine()->getAntialiasingLevelSupport();
     }
     
 

@@ -40,6 +40,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(ContextOpenGL3WGL);
+    MAZE_USING_SHARED_PTR(ExtensionsOpenGL3WGL);
 
 
     //////////////////////////////////////////
@@ -143,14 +144,17 @@ namespace Maze
         void createExtensions();
 
         //////////////////////////////////////////
-        S32 selectBestPixelFormat(
+        S32 findBestPixelFormat(
             HDC _deviceContext,
             U32 _bitsPerPixel,
             const ContextOpenGLConfig& _config,
             bool _pbuffer = false);
 
         //////////////////////////////////////////
-        void setDevicePixelFormat(U32 _bitsPerPixel);
+        void selectBestDevicePixelFormat(U32 _bitsPerPixel);
+
+        //////////////////////////////////////////
+        void setDevicePixelFormat(S32 _format);
 
         //////////////////////////////////////////
         void updateSettingsFromPixelFormat();
@@ -164,6 +168,9 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool makeCurrent() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        ExtensionsOpenGL3WGL* getAnyExtensions();
 
     protected:
 

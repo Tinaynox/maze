@@ -65,6 +65,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(VertexArrayObject);
     MAZE_USING_SHARED_PTR(VertexBufferObject);
     MAZE_USING_SHARED_PTR(Texture2D);
+    MAZE_USING_SHARED_PTR(Texture2DMS);
     MAZE_USING_SHARED_PTR(TextureCube);
     MAZE_USING_SHARED_PTR(Material);
     MAZE_USING_SHARED_PTR(RenderPass);
@@ -109,6 +110,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool isTextureFormatSupported(PixelFormat::Enum _pixelFormat) MAZE_ABSTRACT;
 
+        //////////////////////////////////////////
+        virtual S32 getAntialiasingLevelSupport() MAZE_ABSTRACT;
+
 
         //////////////////////////////////////////
         virtual bool setCurrentRenderTarget(RenderTarget* _renderTarget) MAZE_ABSTRACT;
@@ -136,6 +140,9 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual Texture2DPtr createTexture2D() MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual Texture2DMSPtr createTexture2DMS() MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual TextureCubePtr createTextureCube() MAZE_ABSTRACT;

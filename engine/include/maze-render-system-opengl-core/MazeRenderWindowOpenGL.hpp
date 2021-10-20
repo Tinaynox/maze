@@ -87,7 +87,7 @@ namespace Maze
         ContextOpenGLPtr const& getContextOpenGL() const { return m_context; }
 
         //////////////////////////////////////////
-        void ensureContext();
+        void ensureContext(S32 _antialiasingLevel = 0);
 
         //////////////////////////////////////////
         void destroyContext();

@@ -25,145 +25,141 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeRenderBufferOpenGL_hpp_))
-#define _MazeRenderBufferOpenGL_hpp_
+#if (!defined(_MazeTexture2DMSOpenGL_hpp_))
+#define _MazeTexture2DMSOpenGL_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-render-system-opengl-core/MazeRenderSystemOpenGLCoreHeader.hpp"
-#include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-graphics/MazeRenderBuffer.hpp"
+#include "maze-render-system-opengl-core/MazeHeaderOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeRenderSystemOpenGL.hpp"
+#include "maze-graphics/MazeTexture2DMS.hpp"
+#include "maze-graphics/MazePixelSheet2D.hpp"
+#include "maze-graphics/MazePixelFormat.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(RenderBufferOpenGL);
-    MAZE_USING_SHARED_PTR(RenderSystemOpenGL);
+    MAZE_USING_SHARED_PTR(Texture2DMSOpenGL);
     MAZE_USING_SHARED_PTR(ContextOpenGL);
+    
 
-
-    //////////////////////////////////////////
-    // Class RenderBufferOpenGLScopeBind
+    ////////////////////////////////////
+    // Class Texture2DMSOpenGLScopeBind
     //
-    //////////////////////////////////////////
-    class MAZE_RENDER_SYSTEM_OPENGL_CORE_API RenderBufferOpenGLScopeBind
+    ////////////////////////////////////
+    class Texture2DMSOpenGLScopeBind
     {
     public:
 
-        ////////////////////////////////////
-        RenderBufferOpenGLScopeBind(RenderBuffer* _newRenderBuffer);
+        ////////////////////////////////////    
+        Texture2DMSOpenGLScopeBind(Texture2DMSOpenGL* _newTexture);
 
         ////////////////////////////////////
-        ~RenderBufferOpenGLScopeBind();
+        Texture2DMSOpenGLScopeBind(Texture2DMSOpenGLPtr const& _newTexture);
+
+        ////////////////////////////////////
+        ~Texture2DMSOpenGLScopeBind();
 
     private:
         ContextOpenGL* m_context;
-        RenderBuffer* m_prevRenderBuffer;
+
+        Texture* m_prevTexture0;
+        S32 m_activeTextureIndex;
     };
 
 
     //////////////////////////////////////////
-    // Class RenderBufferOpenGL
+    // Class Texture2DMSOpenGL
     //
     //////////////////////////////////////////
-    class MAZE_RENDER_SYSTEM_OPENGL_CORE_API RenderBufferOpenGL
-        : public RenderBuffer
+    class MAZE_RENDER_SYSTEM_OPENGL_CORE_API Texture2DMSOpenGL
+        : public Texture2DMS
+        , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(RenderBufferOpenGL, RenderBuffer);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(Texture2DMSOpenGL, Texture2DMS);
 
     public:
 
         //////////////////////////////////////////
-        virtual ~RenderBufferOpenGL();
+        virtual ~Texture2DMSOpenGL();
 
         //////////////////////////////////////////
-        static RenderBufferPtr Create(
+        static Texture2DMSOpenGLPtr Create(
             RenderSystem* _renderSystem,
-            ContextOpenGL* _contextOpenGL,
-            RenderBufferDeleter const& _deleter = DefaultDelete<RenderBuffer>());
-
-        //////////////////////////////////////////
-        static RenderBufferPtr Create(
-            RenderBufferOpenGLPtr const& _renderBuffer,
-            RenderBufferDeleter const& _deleter = DefaultDelete<RenderBuffer>());
-
-        //////////////////////////////////////////
-        virtual RenderBufferPtr createCopy() MAZE_OVERRIDE;
+            ContextOpenGL* _contextOpenGL);
 
 
         //////////////////////////////////////////
-        RenderSystemOpenGL* getRenderSystemOpenGLRaw();
-        
+        virtual bool isValid() MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        virtual bool setSize(Vec2DU const& _size) MAZE_OVERRIDE;
-
-
-        //////////////////////////////////////////
-        virtual bool processRenderTargetWillSet() MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void processRenderTargetSet() MAZE_OVERRIDE;
         
         //////////////////////////////////////////
-        virtual void processRenderTargetWillReset() MAZE_OVERRIDE;
+        inline ContextOpenGL* getContextOpenGL() const { return m_context; }
 
         //////////////////////////////////////////
-        virtual void* getRenderContext() MAZE_OVERRIDE { return m_context; }
-
-        //////////////////////////////////////////
-        virtual bool beginDraw() MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void endDraw() MAZE_OVERRIDE;
+        inline RenderSystemOpenGL* getRenderSystemOpenGL() const { return m_renderSystem->castRaw<RenderSystemOpenGL>(); }
 
 
         //////////////////////////////////////////
-        virtual void blit(RenderBufferPtr const& _srcBuffer) MAZE_OVERRIDE;
+        inline MZGLuint getGLTexture() const { return m_glTexture; }
 
 
         //////////////////////////////////////////
-        virtual void setColorTexture(U32 _index, TexturePtr const& _texture) MAZE_OVERRIDE;
+        using Texture2DMS::loadEmpty;
 
         //////////////////////////////////////////
-        virtual void setDepthTexture(TexturePtr const& _texture) MAZE_OVERRIDE;
+        virtual bool loadEmpty(
+            Vec2DU const& _size,
+            PixelFormat::Enum _internalPixelFormat = PixelFormat::None,
+            S32 _samples = 0) MAZE_OVERRIDE;
+
+        
+        //////////////////////////////////////////
+        virtual void saveToFileAsTGA(String const& _fileName, Vec2DU _size = Vec2DU::c_zero) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void setStencilTexture(TexturePtr const& _texture) MAZE_OVERRIDE;
-
+        virtual PixelSheet2D readAsPixelSheet() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        inline MZGLuint getFramebufferId() const { return m_frameBufferId; }
+        RenderSystemOpenGL* getRenderSystemOpenGLRaw()
+        {
+            return m_renderSystem->castRaw<RenderSystemOpenGL>();
+        }
+
+        //////////////////////////////////////////
+        virtual void copyImageFrom(
+            U8 const* _pixels,
+            PixelFormat::Enum _pixelFormat,
+            U32 _width,
+            U32 _height,
+            U32 _x,
+            U32 _y) MAZE_OVERRIDE;
 
     protected:
 
         //////////////////////////////////////////
-        RenderBufferOpenGL();
+        Texture2DMSOpenGL();
 
         //////////////////////////////////////////
-        using RenderBuffer::init;
-        
+        using Texture2DMS::init;
+
         //////////////////////////////////////////
         virtual bool init(
             RenderSystem* _renderSystem,
             ContextOpenGL* _contextOpenGL);
 
         //////////////////////////////////////////
-        virtual bool init(RenderBufferOpenGLPtr const& _renderBuffer);
+        void generateGLObjects();
+
+        //////////////////////////////////////////
+        void deleteGLObjects();
     
-
-        //////////////////////////////////////////
-        ContextOpenGL* getContextOpenGL() const { return m_context; }
-
-
-        //////////////////////////////////////////
-        void setContextOpenGL(ContextOpenGL* _contextOpenGL);
-
 
         //////////////////////////////////////////
         void notifyContextOpenGLDestroyed(ContextOpenGL* _contextOpenGL);
@@ -175,29 +171,17 @@ namespace Maze
         void notifyContextOpenGLContextSetup(ContextOpenGL* _contextOpenGL);
 
         //////////////////////////////////////////
-        void generateGLObjects();
-
-        //////////////////////////////////////////
-        void deleteGLObjects();
-
-        //////////////////////////////////////////
-        bool check();
-
-        //////////////////////////////////////////
-        void reloadTexture(TexturePtr const& _texture);
-
-        //////////////////////////////////////////
-        void resizeTexture(TexturePtr const& _texture, Vec2DU const& _size);
+        void setContextOpenGL(ContextOpenGL* _contextOpenGL);
 
     protected:
         ContextOpenGL* m_context;
 
-        MZGLuint m_frameBufferId;
+        MZGLuint m_glTexture;
     };
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeRenderBufferOpenGL_hpp_
+#endif // _MazeTexture2DMSOpenGL_hpp_
 //////////////////////////////////////////

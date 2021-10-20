@@ -59,7 +59,7 @@ namespace Maze
     }
 
     ////////////////////////////////////
-    bool ExtensionsOpenGL::loadGLExtensions()
+    bool ExtensionsOpenGL::loadGLExtensionsImpl()
     {
         m_extensions.clear();
 
@@ -99,8 +99,6 @@ namespace Maze
             }
         }
 
-        m_extensionsLoaded = true;
-
         saveCommonChecks();
 
         return true;
@@ -118,10 +116,24 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool ExtensionsOpenGL::loadGLExtensions()
+    {
+        bool result = loadGLExtensionsImpl();
+
+        if (result)
+        {
+            m_extensionsLoaded = true;
+            eventLoaded();
+        }
+
+        return result;
+    }
+
+    //////////////////////////////////////////
     void ExtensionsOpenGL::saveCommonChecks()
     {
         m_supportArbBufferStorage = m_context->hasMinVersion(4, 4) || hasGLExtension("GL_ARB_buffer_storage");
-        m_supportMultisample = hasGLExtension("EXT_multisample_compatibility");
+        m_supportMultisample = m_context->hasMinVersion(3, 3) || hasGLExtension("EXT_multisample_compatibility");
         m_supportClipDistance = hasGLExtension("GL_ARB_cull_distance") || hasGLExtension("GL_APPLE_clip_distance");
     }
 

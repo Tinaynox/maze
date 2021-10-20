@@ -66,7 +66,7 @@ namespace Maze
         virtual bool init(ContextOpenGL* _context) MAZE_OVERRIDE;
         
         //////////////////////////////////////////
-        virtual bool loadGLExtensions() MAZE_OVERRIDE;
+        virtual bool loadGLExtensionsImpl() MAZE_OVERRIDE;
     
     };
 

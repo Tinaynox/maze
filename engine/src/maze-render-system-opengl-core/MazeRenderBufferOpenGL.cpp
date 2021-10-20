@@ -32,6 +32,7 @@
 #include "maze-render-system-opengl-core/MazeFunctionsOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderSystemOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeTexture2DOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeTexture2DMSOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
@@ -215,18 +216,14 @@ namespace Maze
 
         for (Size i = 0; i < c_renderBufferColorTexturesMax; ++i)
         {
-            if (m_colorTextures[i] && !m_colorTextures[i]->isValid())
-                m_colorTextures[i]->reload();
-
+            reloadTexture(m_colorTextures[i]);
             setColorTexture((U32)i, m_colorTextures[i]);
         }
 
-        if (m_depthTexture && !m_depthTexture->isValid())
-            m_depthTexture->reload();
+        reloadTexture(m_depthTexture);
         setDepthTexture(m_depthTexture);
 
-        if (m_stencilTexture && !m_stencilTexture->isValid())
-            m_stencilTexture->reload();
+        reloadTexture(m_stencilTexture);
         setStencilTexture(m_stencilTexture);
     }
 
@@ -260,15 +257,10 @@ namespace Maze
             return false;
 
         for (Size i = 0; i < c_renderBufferColorTexturesMax; ++i)
-            if (m_colorTextures[i])
-                m_colorTextures[i]->loadEmpty(_size.x, _size.y, m_colorTextures[i]->getInternalPixelFormat());
+            resizeTexture(m_colorTextures[i], _size);
 
-        if (m_depthTexture)
-            m_depthTexture->loadEmpty(_size.x, _size.y, m_depthTexture->getInternalPixelFormat());
-
-        if (m_stencilTexture)
-            m_stencilTexture->loadEmpty(_size.x, _size.y, m_stencilTexture->getInternalPixelFormat());
-
+        resizeTexture(m_depthTexture, _size);
+        resizeTexture(m_stencilTexture, _size);
 
         eventRenderBufferSizeChanged(cast<RenderBuffer>());
 
@@ -323,6 +315,61 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void RenderBufferOpenGL::blit(RenderBufferPtr const& _srcBuffer)
+    {
+        TexturePtr const& destColorTexture = getColorTexture(0);
+        TexturePtr const& srcColorTexture = _srcBuffer->getColorTexture(0);
+        MAZE_ERROR_RETURN_IF(!destColorTexture, "Color Texture is null");
+        MAZE_ERROR_RETURN_IF(!srcColorTexture, "Color Texture in src buffer is null");
+
+        Vec2DS destColorTextureSize;
+        switch (destColorTexture->getType())
+        {
+            case TextureType::TwoDimensional:
+            {
+                destColorTextureSize = destColorTexture->castRaw<Texture2D>()->getSize();
+                break;
+            }
+            case TextureType::TwoDimensionalMultisample:
+            {
+                destColorTextureSize = destColorTexture->castRaw<Texture2DMS>()->getSize();
+                break;
+            }
+            default:
+            {
+                MAZE_NOT_IMPLEMENTED;
+            }
+        }
+
+        Vec2DS srcColorTextureSize;
+        switch (srcColorTexture->getType())
+        {
+            case TextureType::TwoDimensional:
+            {
+                srcColorTextureSize = srcColorTexture->castRaw<Texture2D>()->getSize();
+                break;
+            }
+            case TextureType::TwoDimensionalMultisample:
+            {
+                srcColorTextureSize = srcColorTexture->castRaw<Texture2DMS>()->getSize();
+                break;
+            }
+            default:
+            {
+                MAZE_NOT_IMPLEMENTED;
+            }
+        }
+
+        MAZE_GL_CALL(mzglBindFramebuffer(MAZE_GL_READ_FRAMEBUFFER, _srcBuffer->castRaw<RenderBufferOpenGL>()->m_frameBufferId));
+        MAZE_GL_CALL(mzglBindFramebuffer(MAZE_GL_DRAW_FRAMEBUFFER, m_frameBufferId));
+
+        MAZE_GL_CALL(mzglBlitFramebuffer(
+            0, 0, srcColorTextureSize.x, srcColorTextureSize.y,
+            0, 0, destColorTextureSize.x, destColorTextureSize.y,
+            MAZE_GL_COLOR_BUFFER_BIT, MAZE_GL_NEAREST));
+    }
+
+    //////////////////////////////////////////
     void RenderBufferOpenGL::generateGLObjects()
     {
         deleteGLObjects();
@@ -361,12 +408,36 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderBufferOpenGL::setColorTexture(U32 _index, Texture2DPtr const& _texture)
+    void RenderBufferOpenGL::setColorTexture(U32 _index, TexturePtr const& _texture)
     {
         RenderBuffer::setColorTexture(_index, _texture);
 
         {
-            MZGLint textureId = _texture ? ((Texture2DOpenGL*)_texture.get())->getGLTexture() : 0;
+            MZGLint textureId = 0;
+            MZGLenum textureTarget = MAZE_GL_TEXTURE_2D;
+
+            if (_texture)
+            {
+                switch (_texture->getType())
+                {
+                    case TextureType::TwoDimensional:
+                    {
+                        textureId = _texture->castRaw<Texture2DOpenGL>()->getGLTexture();
+                        textureTarget = MAZE_GL_TEXTURE_2D;
+                        break;
+                    }
+                    case TextureType::TwoDimensionalMultisample:
+                    {
+                        textureId = _texture->castRaw<Texture2DMSOpenGL>()->getGLTexture();
+                        textureTarget = MAZE_GL_TEXTURE_2D_MULTISAMPLE;
+                        break;
+                    }
+                    default:
+                    {
+                        MAZE_NOT_IMPLEMENTED;
+                    }
+                }
+            }
 
             if (textureId)
             {
@@ -382,7 +453,7 @@ namespace Maze
                     mzglFramebufferTexture2D(
                         MAZE_GL_FRAMEBUFFER,
                         MAZE_GL_COLOR_ATTACHMENT0 + _index,
-                        MAZE_GL_TEXTURE_2D,
+                        textureTarget,
                         textureId, 0));
 
                 m_context->activeTexture(activeTextureIndex);
@@ -392,12 +463,36 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderBufferOpenGL::setDepthTexture(Texture2DPtr const& _texture)
+    void RenderBufferOpenGL::setDepthTexture(TexturePtr const& _texture)
     {
         RenderBuffer::setDepthTexture(_texture);
 
         {
-            MZGLint textureId = _texture ? ((Texture2DOpenGL*)_texture.get())->getGLTexture() : 0;
+            MZGLint textureId = 0;
+            MZGLenum textureTarget = MAZE_GL_TEXTURE_2D;
+
+            if (_texture)
+            {
+                switch (_texture->getType())
+                {
+                    case TextureType::TwoDimensional:
+                    {
+                        textureId = _texture->castRaw<Texture2DOpenGL>()->getGLTexture();
+                        textureTarget = MAZE_GL_TEXTURE_2D;
+                        break;
+                    }
+                    case TextureType::TwoDimensionalMultisample:
+                    {
+                        textureId = _texture->castRaw<Texture2DMSOpenGL>()->getGLTexture();
+                        textureTarget = MAZE_GL_TEXTURE_2D_MULTISAMPLE;
+                        break;
+                    }
+                    default:
+                    {
+                        MAZE_NOT_IMPLEMENTED;
+                    }
+                }
+            }
 
             if (textureId)
             {
@@ -412,7 +507,7 @@ namespace Maze
                     mzglFramebufferTexture2D(
                         MAZE_GL_FRAMEBUFFER,
                         MAZE_GL_DEPTH_ATTACHMENT,
-                        MAZE_GL_TEXTURE_2D,
+                        textureTarget,
                         textureId, 0));
 
                 m_context->activeTexture(activeTextureIndex);
@@ -422,12 +517,36 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderBufferOpenGL::setStencilTexture(Texture2DPtr const& _texture)
+    void RenderBufferOpenGL::setStencilTexture(TexturePtr const& _texture)
     {
         RenderBuffer::setStencilTexture(_texture);
 
         {
-            MZGLint textureId = _texture ? ((Texture2DOpenGL*)_texture.get())->getGLTexture() : 0;
+            MZGLint textureId = 0;
+            MZGLenum textureTarget = MAZE_GL_TEXTURE_2D;
+
+            if (_texture)
+            {
+                switch (_texture->getType())
+                {
+                    case TextureType::TwoDimensional:
+                    {
+                        textureId = _texture->castRaw<Texture2DOpenGL>()->getGLTexture();
+                        textureTarget = MAZE_GL_TEXTURE_2D;
+                        break;
+                    }
+                    case TextureType::TwoDimensionalMultisample:
+                    {
+                        textureId = _texture->castRaw<Texture2DMSOpenGL>()->getGLTexture();
+                        textureTarget = MAZE_GL_TEXTURE_2D_MULTISAMPLE;
+                        break;
+                    }
+                    default:
+                    {
+                        MAZE_NOT_IMPLEMENTED;
+                    }
+                }
+            }
 
             if (textureId)
             {
@@ -442,7 +561,7 @@ namespace Maze
                     mzglFramebufferTexture2D(
                         MAZE_GL_FRAMEBUFFER,
                         MAZE_GL_STENCIL_ATTACHMENT,
-                        MAZE_GL_TEXTURE_2D,
+                        textureTarget,
                         textureId, 0));
 
                 m_context->activeTexture(activeTextureIndex);
@@ -484,6 +603,62 @@ namespace Maze
         }
 
         return status == MAZE_GL_FRAMEBUFFER_COMPLETE;   
+    }
+
+    //////////////////////////////////////////
+    void RenderBufferOpenGL::reloadTexture(TexturePtr const& _texture)
+    {
+        if (!_texture)
+            return;
+
+        switch (_texture->getType())
+        {
+            case TextureType::TwoDimensional:
+            {
+                Texture2D* texture2D = _texture->castRaw<Texture2D>();
+                if (texture2D->isValid())
+                    texture2D->reload();
+                break;
+            }
+            case TextureType::TwoDimensionalMultisample:
+            {
+                Texture2DMS* texture2D = _texture->castRaw<Texture2DMS>();
+                if (texture2D->isValid())
+                    texture2D->reload();
+                break;
+            }
+            default:
+            {
+                MAZE_NOT_IMPLEMENTED;
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void RenderBufferOpenGL::resizeTexture(TexturePtr const& _texture, Vec2DU const& _size)
+    {
+        if (!_texture)
+            return;
+
+        switch (_texture->getType())
+        {
+            case TextureType::TwoDimensional:
+            {
+                Texture2D* texture2D = _texture->castRaw<Texture2D>();
+                texture2D->loadEmpty(_size.x, _size.y, texture2D->getInternalPixelFormat());
+                break;
+            }
+            case TextureType::TwoDimensionalMultisample:
+            {
+                Texture2DMS* texture2D = _texture->castRaw<Texture2DMS>();
+                texture2D->loadEmpty({ _size.x, _size.y }, texture2D->getInternalPixelFormat(), texture2D->getSamples());
+                break;
+            }
+            default:
+            {
+                MAZE_NOT_IMPLEMENTED;
+            }
+        }
     }
 
 } // namespace Maze

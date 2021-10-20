@@ -230,6 +230,8 @@ namespace Maze
 
                 VertexArrayObjectPtr const& vao = data.vao;
 
+                MAZE_DEBUG_ERROR_IF(vao == nullptr, "VAO is null!");
+
                 if (shader->getMainLightColorUniform())
                     shader->getMainLightColorUniform()->set(mainLightColor);
 
@@ -356,6 +358,8 @@ namespace Maze
                         {
                             VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
 
+                            MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
+
                             MaterialPtr const* material = nullptr;
                             if (!materials.empty())
                                 material = &materials[i % materials.size()];
@@ -398,6 +402,8 @@ namespace Maze
                         {
                             VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
 
+                            MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
+
                             MaterialPtr const* material = nullptr;
                             if (materials.empty())
                                 material = &m_renderSystem->getMaterialManager()->getErrorMaterial();
@@ -438,6 +444,8 @@ namespace Maze
                     for (Size i = 0, in = c; i < in; ++i)
                     {
                         VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
+
+                        MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
 
                         MaterialPtr const* material = nullptr;
                         if (materials.empty())

@@ -99,14 +99,13 @@ namespace Maze
         if (!RenderSystemOpenGL::init(_config))
             return false;
 
-
-        if (false) // OBSOLETE shared context arch
+        if (m_config.useDummyContext)
         {
-            Debug::Log("Creating Shared Context...");
-            m_sharedContext = ContextOpenGL::Create(cast<RenderSystemOpenGL>());
-            m_sharedContext->setName("Shared Context");
+            Debug::Log("Creating Dummy Context...");
+            m_dummyContext = ContextOpenGL::Create(cast<RenderSystemOpenGL>());
+            m_dummyContext->setName("Dummy Context");
 
-            assignGLFunctions(m_sharedContext);
+            assignGLFunctions(m_dummyContext);
 
 
             MAZE_GL_CALL(Debug::Log("GL_VERSION:    %s",               (CString)mzglGetString(MAZE_GL_VERSION)));
@@ -114,42 +113,37 @@ namespace Maze
             MAZE_GL_CALL(Debug::Log("GL_VENDOR:     %s",               (CString)mzglGetString(MAZE_GL_VENDOR)));
             MAZE_GL_CALL(Debug::Log("GL_SHADING_LANGUAGE_VERSION: %s", (CString)mzglGetString(MAZE_GL_SHADING_LANGUAGE_VERSION)));
 
-            m_sharedContext->getExtensions()->loadGLExtensions();
+            m_dummyContext->getExtensions()->loadGLExtensions();
 
 #if (MAZE_PLATFORM != MAZE_PLATFORM_EMSCRIPTEN)
-            m_sharedContext->getExtensions()->printGLExtensions();
+            m_dummyContext->getExtensions()->printGLExtensions();
 #endif
 
-            m_sharedContext->flushConfig();
+            m_dummyContext->flushConfig();
 
-            m_sharedContext->makeCurrentContext(false);
+            m_dummyContext->makeCurrentContext(false);
 
 
-            if (!m_sharedContext || m_sharedContext->getMajorVersion() <= 1)
+            if (!m_dummyContext || m_dummyContext->getMajorVersion() <= 1)
             {
-                if (!m_sharedContext)
+                if (!m_dummyContext)
                 {
-                    MAZE_ERROR("Shared Context cannot be created!");
+                    MAZE_ERROR("Dummy Context cannot be created!");
                 }
                 else
                 {
-                    MAZE_ERROR("Shared Context version %u.%u is not supported!", m_sharedContext->getMajorVersion(), m_sharedContext->getMinorVersion());
+                    MAZE_ERROR("Dummy Context version %u.%u is not supported!", m_dummyContext->getMajorVersion(), m_dummyContext->getMinorVersion());
                 }
 
-                MAZE_GL_CALL(MAZE_ERROR("GL_VERSION:    %s",                    (CString)mzglGetString(MAZE_GL_VERSION)));
-                MAZE_GL_CALL(MAZE_ERROR("GL_RENDERER:   %s",                    (CString)mzglGetString(MAZE_GL_RENDERER)));
-                MAZE_GL_CALL(MAZE_ERROR("GL_VENDOR:     %s",                    (CString)mzglGetString(MAZE_GL_VENDOR)));
-                MAZE_GL_CALL(MAZE_ERROR("GL_SHADING_LANGUAGE_VERSION: %s",    (CString)mzglGetString(MAZE_GL_SHADING_LANGUAGE_VERSION)));
+                MAZE_GL_CALL(MAZE_ERROR("GL_VERSION:    %s",               (CString)mzglGetString(MAZE_GL_VERSION)));
+                MAZE_GL_CALL(MAZE_ERROR("GL_RENDERER:   %s",               (CString)mzglGetString(MAZE_GL_RENDERER)));
+                MAZE_GL_CALL(MAZE_ERROR("GL_VENDOR:     %s",               (CString)mzglGetString(MAZE_GL_VENDOR)));
+                MAZE_GL_CALL(MAZE_ERROR("GL_SHADING_LANGUAGE_VERSION: %s", (CString)mzglGetString(MAZE_GL_SHADING_LANGUAGE_VERSION)));
 
                 return false;
             }
 
-            Debug::Log("Shared Context created. Version: %u.%u", m_sharedContext->getMajorVersion(), m_sharedContext->getMinorVersion());
-
-            if (!setupSystem(m_sharedContext))
-                return false;
-
-            m_sharedContext->setupDefaultStates();
+            Debug::Log("Shared Context created. Version: %u.%u", m_dummyContext->getMajorVersion(), m_dummyContext->getMinorVersion());
         }
 
         return true;
@@ -188,7 +182,8 @@ namespace Maze
 
         if (m_config.multiContextPolicy == OpenGLMultiContextPolicy::Shared)
         {
-            m_sharedContext = _context;
+            if (!m_sharedContext)
+                m_sharedContext = _context;
         }
 
 

@@ -74,9 +74,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ExtensionsOpenGL3WGL::loadGLExtensions()
+    bool ExtensionsOpenGL3WGL::loadGLExtensionsImpl()
     {
-        if (!ExtensionsOpenGL3::loadGLExtensions())
+        if (!ExtensionsOpenGL3::loadGLExtensionsImpl())
             return false;
 
         MAZE_LOG("Loading WGL Extensions...");
@@ -88,7 +88,20 @@ namespace Maze
         }
 
         m_context->makeCurrentContext(true);
-        const char* strExtList = reinterpret_cast<const char*>(mzwglGetExtensionsString(m_context->cast< ContextOpenGL3WGL>()->getDeviceContext()));
+        HDC deviceContext = m_context->cast<ContextOpenGL3WGL>()->getDeviceContext();
+        if (!deviceContext)
+        {
+            MAZE_ERROR("Loading GL Extension error - null device context!");
+            return false;
+        }
+
+        if (mzwglGetExtensionsString == nullptr)
+        {
+            MAZE_ERROR("Loading GL Extension error - null mzwglGetExtensionsString!");
+            return false;
+        }
+
+        const char* strExtList = reinterpret_cast<const char*>(mzwglGetExtensionsString(deviceContext));
         if (strExtList)
         {
             Vector<String> words;

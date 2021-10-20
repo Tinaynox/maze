@@ -64,9 +64,10 @@ namespace Maze
         ClampToBorder);
 
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_4_API(MAZE_GRAPHICS_API, TextureType,
+    MAZE_DECLARE_ENUMCLASS_5_API(MAZE_GRAPHICS_API, TextureType,
         SingleDimensional,
         TwoDimensional,
+        TwoDimensionalMultisample,
         ThreeDimensional,
         Cube);
 

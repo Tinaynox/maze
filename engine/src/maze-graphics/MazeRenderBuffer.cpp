@@ -27,6 +27,7 @@
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/MazeRenderBuffer.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
+#include "maze-graphics/MazeTexture2DMS.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/helpers/MazeMetaClassHelper.hpp"
@@ -80,32 +81,74 @@ namespace Maze
 
         for (Size i = 0; i < c_renderBufferColorTexturesMax; ++i)
         {
-            if (_specification.colorTextureFormats[i] != PixelFormat::None)
+            RenderBufferSpecification::TextureFormat const& textureFormat = _specification.colorTextureFormats[i];
+
+            if (textureFormat.pixelFormat != PixelFormat::None)
             {
-                Texture2DPtr colorTexture0 = Texture2D::Create();
-                colorTexture0->loadEmpty(_specification.size, _specification.colorTextureFormats[i]);
-                colorTexture0->setMinFilter(TextureFilter::Nearest);
-                colorTexture0->setMagFilter(TextureFilter::Nearest);
+                TexturePtr colorTexture0;
+                if (textureFormat.samples == 0)
+                {
+                    Texture2DPtr texture = Texture2D::Create();
+                    texture->loadEmpty(_specification.size, textureFormat.pixelFormat);
+                    texture->setMinFilter(TextureFilter::Nearest);
+                    texture->setMagFilter(TextureFilter::Nearest);
+                    colorTexture0 = texture;
+                }
+                else
+                {
+                    Texture2DMSPtr texture = Texture2DMS::Create();
+                    texture->loadEmpty(_specification.size, textureFormat.pixelFormat, textureFormat.samples);
+                    colorTexture0 = texture;
+                }
+
                 renderBuffer->setColorTexture(0, colorTexture0);
             }
         }
 
-        if (_specification.depthTextureFormat != PixelFormat::None)
         {
-            Texture2DPtr depthTexture = Texture2D::Create();
-            depthTexture->loadEmpty(_specification.size, _specification.depthTextureFormat);
-            depthTexture->setMinFilter(TextureFilter::Nearest);
-            depthTexture->setMagFilter(TextureFilter::Nearest);
-            renderBuffer->setDepthTexture(depthTexture);
+            RenderBufferSpecification::TextureFormat const& textureFormat = _specification.depthTextureFormat;
+            if (textureFormat.pixelFormat != PixelFormat::None)
+            {
+                TexturePtr depthTexture;
+                if (textureFormat.samples == 0)
+                {
+                    Texture2DPtr texture = Texture2D::Create();
+                    texture->loadEmpty(_specification.size, textureFormat.pixelFormat);
+                    texture->setMinFilter(TextureFilter::Nearest);
+                    texture->setMagFilter(TextureFilter::Nearest);
+                    depthTexture = texture;
+                }
+                else
+                {
+                    Texture2DMSPtr texture = Texture2DMS::Create();
+                    texture->loadEmpty(_specification.size, textureFormat.pixelFormat, textureFormat.samples);
+                    depthTexture = texture;
+                }
+                renderBuffer->setDepthTexture(depthTexture);
+            }
         }
 
-        if (_specification.stencilTextureFormat != PixelFormat::None)
         {
-            Texture2DPtr stencilTexture = Texture2D::Create();
-            stencilTexture->loadEmpty(_specification.size, _specification.stencilTextureFormat);
-            stencilTexture->setMinFilter(TextureFilter::Nearest);
-            stencilTexture->setMagFilter(TextureFilter::Nearest);
-            renderBuffer->setStencilTexture(stencilTexture);
+            RenderBufferSpecification::TextureFormat const& textureFormat = _specification.stencilTextureFormat;
+            if (textureFormat.pixelFormat != PixelFormat::None)
+            {
+                TexturePtr stencilTexture;
+                if (textureFormat.samples == 0)
+                {
+                    Texture2DPtr texture = Texture2D::Create();
+                    texture->loadEmpty(_specification.size, textureFormat.pixelFormat);
+                    texture->setMinFilter(TextureFilter::Nearest);
+                    texture->setMagFilter(TextureFilter::Nearest);
+                    stencilTexture = texture;
+                }
+                else
+                {
+                    Texture2DMSPtr texture = Texture2DMS::Create();
+                    texture->loadEmpty(_specification.size, textureFormat.pixelFormat, textureFormat.samples);
+                    stencilTexture = texture;
+                }
+                renderBuffer->setStencilTexture(stencilTexture);
+            }
         }
 
         renderBuffer->setSize(_specification.size);
@@ -146,8 +189,8 @@ namespace Maze
     {
         for (Size i = 0; i < c_renderBufferColorTexturesMax; ++i)
         {
-            if (getColorTexture((U32)i))
-                getColorTexture((U32)i)->generateMipmaps();
+            if (getColorTexture((U32)i) && getColorTexture((U32)i)->getType() == TextureType::TwoDimensional)
+                getColorTexture((U32)i)->castRaw<Texture2D>()->generateMipmaps();
         }
 
         RenderTarget::endDraw();
@@ -167,21 +210,38 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderBuffer::setColorTexture(U32 _index, Texture2DPtr const& _texture)
+    void RenderBuffer::setColorTexture(U32 _index, TexturePtr const& _texture)
     {
         m_colorTextures[_index] = _texture;
     }
 
     //////////////////////////////////////////
-    void RenderBuffer::setDepthTexture(Texture2DPtr const& _texture)
+    void RenderBuffer::setDepthTexture(TexturePtr const& _texture)
     {
         m_depthTexture = _texture;
     }
 
     //////////////////////////////////////////
-    void RenderBuffer::setStencilTexture(Texture2DPtr const& _texture)
+    void RenderBuffer::setStencilTexture(TexturePtr const& _texture)
     {
         m_stencilTexture = _texture;
+    }
+
+    //////////////////////////////////////////
+    static inline RenderBufferSpecification::TextureFormat GetTextureFormat(TexturePtr const& _texture)
+    {
+        switch (_texture->getType())
+        {
+        case TextureType::TwoDimensional:
+            return { _texture->castRaw<Texture2D>()->getInternalPixelFormat(), 0 };
+        case TextureType::TwoDimensionalMultisample:
+            return {
+                _texture->castRaw<Texture2DMS>()->getInternalPixelFormat(),
+                _texture->castRaw<Texture2DMS>()->getSamples() };
+        default:
+            MAZE_NOT_IMPLEMENTED;
+            return RenderBufferSpecification::TextureFormat();
+        }
     }
 
     //////////////////////////////////////////
@@ -193,17 +253,17 @@ namespace Maze
         for (Size i = 0; i < c_renderBufferColorTexturesMax; ++i)
         {
             if (m_colorTextures[i])
-                specification.colorTextureFormats[i] = m_colorTextures[i]->getInternalPixelFormat();
+                specification.colorTextureFormats[i] = GetTextureFormat(m_colorTextures[i]);
             else
                 specification.colorTextureFormats[i] = PixelFormat::None;
 
             if (m_depthTexture)
-                specification.depthTextureFormat = m_depthTexture->getInternalPixelFormat();
+                specification.depthTextureFormat = GetTextureFormat(m_depthTexture);
             else
                 specification.depthTextureFormat = PixelFormat::None;
 
             if (m_stencilTexture)
-                specification.stencilTextureFormat = m_stencilTexture->getInternalPixelFormat();
+                specification.stencilTextureFormat = GetTextureFormat(m_stencilTexture);
             else
                 specification.stencilTextureFormat = PixelFormat::None;
         }

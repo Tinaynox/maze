@@ -55,10 +55,12 @@ namespace Maze
         ////////////////////////////////////
         explicit RenderSystemOpenGLConfig(
             OpenGLMultiContextPolicy _multiContextPolicy = OpenGLMultiContextPolicy::Unified,
-            bool _useNullContexts = false);
+            bool _useNullContexts = false,
+            bool _useDummyContext = false);
 
         OpenGLMultiContextPolicy multiContextPolicy;
         bool useNullContexts;
+        bool useDummyContext;
     };
 
 

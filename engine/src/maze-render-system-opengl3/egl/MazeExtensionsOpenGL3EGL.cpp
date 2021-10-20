@@ -74,9 +74,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ExtensionsOpenGL3EGL::loadGLExtensions()
+    bool ExtensionsOpenGL3EGL::loadGLExtensionsImpl()
     {
-        if (!ExtensionsOpenGL3::loadGLExtensions())
+        if (!ExtensionsOpenGL3::loadGLExtensionsImpl())
             return false;
 
 

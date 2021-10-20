@@ -207,6 +207,8 @@ namespace Maze
                             {
                                 VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
 
+                                MAZE_DEBUG_ERROR_IF(vao == nullptr, "VAO is null");
+
                                 MaterialPtr const* material = nullptr;
                                 if (!materials.empty())
                                     material = &materials[i % materials.size()];

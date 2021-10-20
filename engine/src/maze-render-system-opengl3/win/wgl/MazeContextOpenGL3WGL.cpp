@@ -152,11 +152,9 @@ namespace Maze
         destroyGLContext();
 
         WindowManager* windowManager = WindowManager::GetInstancePtr();
+        U32 bpp = windowManager->getPrimaryDisplayVideoMode().bpp;
 
-        createSurface(
-            m_stateMachine->getPixelBufferSize().x,
-            m_stateMachine->getPixelBufferSize().y,
-            windowManager->getPrimaryDisplayVideoMode().bpp);
+        createSurface(1, 1, bpp);
 
         if (m_deviceContext)
             createWGLContext();
@@ -346,12 +344,12 @@ namespace Maze
         ContextOpenGLPtr const& sharedContext = getRenderSystemRaw()->cast<RenderSystemOpenGL>()->getSharedContext();
         HDC sharedDeviceContext = sharedContext ? sharedContext->cast<ContextOpenGL3WGL>()->m_deviceContext : nullptr;
 
-        ExtensionsOpenGL3WGL* extensions = static_cast<ExtensionsOpenGL3WGL*>(getExtensionsRaw());
+        ExtensionsOpenGL3WGL* extensions = getAnyExtensions();
 
         // Check if the shared context already exists and pbuffers are supported
         if (sharedDeviceContext && extensions && extensions->hasGLExtension("WGL_ARB_pbuffer"))
         {
-            S32 bestFormat = selectBestPixelFormat(sharedDeviceContext, _bitsPerPixel, m_config, true);
+            S32 bestFormat = findBestPixelFormat(sharedDeviceContext, _bitsPerPixel, m_config, true);
 
             if (bestFormat > 0)
             {
@@ -361,7 +359,7 @@ namespace Maze
 
                 if (m_pbuffer)
                 {
-                    m_windowHandle = sharedContext->cast< ContextOpenGL3WGL>()->m_windowHandle;
+                    m_windowHandle = sharedContext->cast<ContextOpenGL3WGL>()->m_windowHandle;
                     m_deviceContext = mzwglGetPbufferDC(m_pbuffer);
 
                     if (!m_deviceContext)
@@ -387,13 +385,13 @@ namespace Maze
             m_ownsWindow = true;
 
             // Set the pixel format of the device context
-            setDevicePixelFormat(_bitsPerPixel);
+            selectBestDevicePixelFormat(_bitsPerPixel);
         }
 
         MAZE_ERROR_IF(!m_deviceContext, "Context cannot be created!");
 
         // Update context settings from the selected pixel format
-        updateSettingsFromPixelFormat();
+        // updateSettingsFromPixelFormat();
     }
 
     //////////////////////////////////////////
@@ -404,10 +402,10 @@ namespace Maze
         MAZE_ERROR_IF(!m_deviceContext, "Context cannot be created!");
 
         // Set the pixel format of the device context
-        setDevicePixelFormat(_bitsPerPixel);
+        selectBestDevicePixelFormat(_bitsPerPixel);
 
         // Update context settings from the selected pixel format
-        updateSettingsFromPixelFormat();
+        // updateSettingsFromPixelFormat();
     }
 
     //////////////////////////////////////////
@@ -446,7 +444,7 @@ namespace Maze
 
         RenderTarget* prevRenderTarget = renderSystemOpenGL->getCurrentRenderTarget();
         ContextOpenGL* prevRenderContext = renderSystemOpenGL->getCurrentContext();
-        ExtensionsOpenGL3WGL* extensions = static_cast<ExtensionsOpenGL3WGL*>(getExtensionsRaw());
+        ExtensionsOpenGL3WGL* extensions = getAnyExtensions();
 
         // Get the context to share display lists with
         ContextOpenGLPtr const& sharedContext = renderSystemOpenGL->getSharedContext();
@@ -595,6 +593,7 @@ namespace Maze
         getRenderSystemRaw()->setCurrentRenderTarget(prevRenderTarget);
 
         createExtensions();
+
         m_stateMachine.reset(new StateMachineOpenGL(this));
     }
 
@@ -606,25 +605,30 @@ namespace Maze
         if (getRenderSystemRaw()->getSystemInited())
         {
             m_extensions->loadGLExtensions();
+
+            flushConfig();
         }
         else
         {
             getRenderSystemRaw()->eventSystemInited.subscribe(
                 [&]()
                 {
-                    m_extensions->loadGLExtensions();
+                    if (!m_extensions->isLoaded())
+                        m_extensions->loadGLExtensions();
+
+                    flushConfig();
                 });
         }
     }
 
     //////////////////////////////////////////
-    S32 ContextOpenGL3WGL::selectBestPixelFormat(
+    S32 ContextOpenGL3WGL::findBestPixelFormat(
         HDC _deviceContext,
         U32 _bitsPerPixel,
         ContextOpenGLConfig const& _config,
         bool _pbuffer)
     {
-        ExtensionsOpenGL3WGL* extensions = static_cast<ExtensionsOpenGL3WGL*>(getExtensionsRaw());
+        ExtensionsOpenGL3WGL* extensions = getAnyExtensions();
         
         S32 bestFormat = 0;
         if (extensions && extensions->hasGLExtension("WGL_ARB_pixel_format"))
@@ -773,9 +777,9 @@ namespace Maze
     }
 
     ////////////////////////////////////
-    void ContextOpenGL3WGL::setDevicePixelFormat(U32 _bitsPerPixel)
+    void ContextOpenGL3WGL::selectBestDevicePixelFormat(U32 _bitsPerPixel)
     {
-        S32 bestFormat = selectBestPixelFormat(m_deviceContext, _bitsPerPixel, m_config);
+        S32 bestFormat = findBestPixelFormat(m_deviceContext, _bitsPerPixel, m_config);
 
         if (bestFormat == 0)
         {
@@ -786,12 +790,18 @@ namespace Maze
             return;
         }
 
+        setDevicePixelFormat(bestFormat);
+    }
+
+    //////////////////////////////////////////
+    void ContextOpenGL3WGL::setDevicePixelFormat(S32 _format)
+    {
         PIXELFORMATDESCRIPTOR actualFormat;
         actualFormat.nSize = sizeof(actualFormat);
         actualFormat.nVersion = 1;
-        DescribePixelFormat(m_deviceContext, bestFormat, sizeof(actualFormat), &actualFormat);
+        DescribePixelFormat(m_deviceContext, _format, sizeof(actualFormat), &actualFormat);
 
-        if (!SetPixelFormat(m_deviceContext, bestFormat, &actualFormat))
+        if (!SetPixelFormat(m_deviceContext, _format, &actualFormat))
         {
             MAZE_ERROR(
                 "Failed to set pixel format for device context: %s",
@@ -804,6 +814,9 @@ namespace Maze
     //////////////////////////////////////////
     void ContextOpenGL3WGL::updateSettingsFromPixelFormat()
     {
+        if (!m_stateMachine)
+            return;
+
         S32 format = GetPixelFormat(m_deviceContext);
 
         PIXELFORMATDESCRIPTOR actualFormat;
@@ -817,7 +830,7 @@ namespace Maze
             return;
         }
 
-        ExtensionsOpenGL3WGL* extensions = static_cast<ExtensionsOpenGL3WGL*>(getExtensionsRaw());
+        ExtensionsOpenGL3WGL* extensions = getAnyExtensions();
 
         if (extensions && extensions->hasGLExtension("WGL_ARB_pixel_format"))
         {
@@ -962,6 +975,8 @@ namespace Maze
     //////////////////////////////////////////
     void ContextOpenGL3WGL::flushConfig()
     {
+        updateSettingsFromPixelFormat();
+
         RenderSystemOpenGL* renderSystem = getRenderSystemRaw();
         ExtensionsOpenGL3WGL* extensions = static_cast<ExtensionsOpenGL3WGL*>(getExtensionsRaw());
 
@@ -1044,33 +1059,36 @@ namespace Maze
                 }
             }
         }
-
-        if ((m_config.antialiasingLevel > 0) && m_stateMachine->getAntialiasingLevelSupport() > 0)
+        
+        if (m_stateMachine && m_extensions && m_extensions->isLoaded())
         {
-            m_stateMachine->setMultiSampleEnabled(true);
-        }
-        else
-        {
-            m_config.antialiasingLevel = 0;
-        }
-
-        if (m_config.sRgbCapable && m_stateMachine->getSRGBSupport())
-        {
-            MAZE_GL_MUTEX_SCOPED_LOCK(getRenderSystemRaw());
-            
-            MAZE_GL_CALL(mzglEnable(MAZE_GL_FRAMEBUFFER_SRGB));
-
-            GLboolean isSRGBEnabled = MAZE_GL_FALSE;
-            MAZE_GL_CALL(isSRGBEnabled = mzglIsEnabled(MAZE_GL_FRAMEBUFFER_SRGB));
-            if (isSRGBEnabled == MAZE_GL_FALSE)
+            if ((m_config.antialiasingLevel > 0) && m_stateMachine->getAntialiasingLevelSupport() > 0)
             {
-                MAZE_WARNING("Failed to enable GL_FRAMEBUFFER_SRGB");
+                m_stateMachine->setMultiSampleEnabled(true);
+            }
+            else
+            {
+                m_config.antialiasingLevel = 0;
+            }
+
+            if (m_config.sRgbCapable && m_stateMachine->getSRGBSupport())
+            {
+                MAZE_GL_MUTEX_SCOPED_LOCK(getRenderSystemRaw());
+
+                MAZE_GL_CALL(mzglEnable(MAZE_GL_FRAMEBUFFER_SRGB));
+
+                GLboolean isSRGBEnabled = MAZE_GL_FALSE;
+                MAZE_GL_CALL(isSRGBEnabled = mzglIsEnabled(MAZE_GL_FRAMEBUFFER_SRGB));
+                if (isSRGBEnabled == MAZE_GL_FALSE)
+                {
+                    MAZE_WARNING("Failed to enable GL_FRAMEBUFFER_SRGB");
+                    m_config.sRgbCapable = false;
+                }
+            }
+            else
+            {
                 m_config.sRgbCapable = false;
             }
-        }
-        else
-        {
-            m_config.sRgbCapable = false;
         }
     
 
@@ -1079,6 +1097,27 @@ namespace Maze
             getRenderSystemRaw()->makeCurrentContext(prevRenderContext);
             getRenderSystemRaw()->setCurrentRenderTarget(prevRenderTarget);
         }
+    }
+
+    //////////////////////////////////////////
+    ExtensionsOpenGL3WGL* ContextOpenGL3WGL::getAnyExtensions()
+    {
+        ExtensionsOpenGL3WGL* extensions = static_cast<ExtensionsOpenGL3WGL*>(getExtensionsRaw());
+        if (!extensions)
+        {
+            ContextOpenGLPtr const& sharedContext = getRenderSystemRaw()->getSharedContext();
+            if (sharedContext)
+                extensions = static_cast<ExtensionsOpenGL3WGL*>(sharedContext->getExtensionsRaw());
+        }
+
+        if (!extensions)
+        {
+            ContextOpenGLPtr const& dummyContext = getRenderSystemRaw()->getDummyContext();
+            if (dummyContext)
+                extensions = static_cast<ExtensionsOpenGL3WGL*>(dummyContext->getExtensionsRaw());
+        }
+
+        return extensions;
     }
 
 

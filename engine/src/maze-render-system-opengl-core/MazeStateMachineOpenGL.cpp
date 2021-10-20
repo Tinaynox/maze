@@ -37,6 +37,7 @@
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderBufferOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeTexture2DOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeTexture2DMSOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeTextureCubeOpenGL.hpp"
 
 
@@ -983,6 +984,22 @@ namespace Maze
 
         if (_texture)
             bindTexture2D(_texture->castRaw<Texture2DOpenGL>()->getGLTexture());
+    }
+
+    //////////////////////////////////////////
+    void StateMachineOpenGL::bindTexture2DMS(Texture2DMS* _texture)
+    {
+        MZGLenum activeTexture = getActiveTexture();
+        Size activeTextureIndex = activeTexture - MAZE_GL_TEXTURE0;
+
+        Texture* currentTexture = m_currentTextures[activeTextureIndex];
+        if (currentTexture == _texture)
+            return;
+
+        m_currentTextures[activeTextureIndex] = _texture;
+
+        if (_texture)
+            bindTexture2DMS(_texture->castRaw<Texture2DMSOpenGL>()->getGLTexture());
     }
 
     //////////////////////////////////////////

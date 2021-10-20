@@ -57,9 +57,6 @@ namespace Maze
         //////////////////////////////////////////
         static ExtensionsOpenGL3WGLPtr Create(ContextOpenGL* _context);
 
-        //////////////////////////////////////////
-        virtual bool loadGLExtensions() MAZE_OVERRIDE;
-
     protected:
 
         //////////////////////////////////////////
@@ -67,6 +64,9 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool init(ContextOpenGL* _context) MAZE_OVERRIDE;
+        
+        //////////////////////////////////////////
+        virtual bool loadGLExtensionsImpl() MAZE_OVERRIDE;
     
     };
 

@@ -67,7 +67,7 @@ namespace Maze
         if (!RenderWindow::init(_params))
             return false;
 
-        ensureContext();
+        ensureContext(_params.antialiasingLevel);
         MAZE_ERROR_RETURN_VALUE_IF(!m_context, false, "Context is not created!");
 
         return true;
@@ -123,13 +123,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderWindowOpenGL::ensureContext()
+    void RenderWindowOpenGL::ensureContext(S32 _antialiasingLevel)
     {
         static S32 s_contextCounter = 0;
 
         if (!m_context)
         {
-            m_context = ContextOpenGL::Create(getRenderSystem()->cast<RenderSystemOpenGL>(), m_window);
+            ContextOpenGLConfig contextConfig;
+            contextConfig.antialiasingLevel = _antialiasingLevel;
+
+            m_context = ContextOpenGL::Create(
+                getRenderSystem()->cast<RenderSystemOpenGL>(),
+                m_window,
+                &contextConfig);
             String contextName = "RenderWindow_" + StringHelper::ToString(s_contextCounter++);
             m_context->setName(contextName);
             m_renderQueue = RenderQueueOpenGL::Create(this, m_context.get());

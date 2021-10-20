@@ -54,9 +54,11 @@ namespace Maze
         ////////////////////////////////////
         inline RenderWindowParams(
             RenderSystemPtr const& _renderSystem = RenderSystemPtr(),
-            WindowParamsPtr _windowParams = WindowParamsPtr())
+            WindowParamsPtr _windowParams = WindowParamsPtr(),
+            S32 _antialiasingLevel = 0)
             : renderSystem(_renderSystem)
             , windowParams(_windowParams)
+            , antialiasingLevel(_antialiasingLevel)
         {
         }
 
@@ -64,15 +66,14 @@ namespace Maze
         inline WindowParamsPtr const& EnsureWindowParams()
         {
             if (!windowParams)
-            {
                 windowParams = WindowParams::Create();
-            }
 
             return windowParams;
         }
 
         RenderSystemPtr renderSystem;
         WindowParamsPtr windowParams;
+        S32 antialiasingLevel;
     };
 
 

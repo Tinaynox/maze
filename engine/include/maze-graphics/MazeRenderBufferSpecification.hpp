@@ -66,13 +66,33 @@ namespace Maze
     struct MAZE_GRAPHICS_API RenderBufferSpecification
     {
         //////////////////////////////////////////
+        struct MAZE_GRAPHICS_API TextureFormat
+        {
+            TextureFormat(
+                PixelFormat::Enum _pixelFormat = PixelFormat::None,
+                S32 _samples = 0)
+                : pixelFormat(_pixelFormat)
+                , samples(_samples)
+            {}
+
+            //////////////////////////////////////////
+            inline bool operator==(TextureFormat const& _other) const
+            {
+                return pixelFormat == _other.pixelFormat && samples == _other.samples;
+            }
+
+            PixelFormat::Enum pixelFormat = PixelFormat::None;
+            S32 samples = 0;
+        };
+
+        //////////////////////////////////////////
         RenderBufferSpecification()
         { }
 
         //////////////////////////////////////////
         RenderBufferSpecification(
             Vec2DU const& _size,
-            PixelFormat::Enum _colorTextureFormat)
+            TextureFormat _colorTextureFormat)
             : size(_size)
             , colorTextureFormats{_colorTextureFormat, PixelFormat::None}
             , _hash(calculateHash())
@@ -82,8 +102,8 @@ namespace Maze
         //////////////////////////////////////////
         RenderBufferSpecification(
             Vec2DU const& _size,
-            PixelFormat::Enum _colorTextureFormat,
-            PixelFormat::Enum _depthTextureFormat)
+            TextureFormat _colorTextureFormat,
+            TextureFormat _depthTextureFormat)
             : size(_size)
             , colorTextureFormats{_colorTextureFormat, PixelFormat::None}
             , depthTextureFormat(_depthTextureFormat)
@@ -104,7 +124,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline bool operator==(RenderBufferSpecification const& _other)
+        inline bool operator==(RenderBufferSpecification const& _other) const
         {
             if (_hash != _other._hash)
                 return false;
@@ -117,9 +137,9 @@ namespace Maze
         }
 
         Vec2DU size;
-        PixelFormat::Enum colorTextureFormats[c_renderBufferColorTexturesMax] = {PixelFormat::None};
-        PixelFormat::Enum depthTextureFormat = PixelFormat::None;
-        PixelFormat::Enum stencilTextureFormat = PixelFormat::None;
+        TextureFormat colorTextureFormats[c_renderBufferColorTexturesMax] = { {PixelFormat::None, 0} };
+        TextureFormat depthTextureFormat = { PixelFormat::None, 0 };
+        TextureFormat stencilTextureFormat = { PixelFormat::None, 0 };
 
         U32 _hash;
     };

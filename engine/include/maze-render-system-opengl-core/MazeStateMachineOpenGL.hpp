@@ -37,6 +37,7 @@
 #include "maze-graphics/MazeCullMode.hpp"
 #include "maze-graphics/MazeCompareFunction.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
+#include "maze-graphics/MazeTexture2DMS.hpp"
 #include "maze-graphics/MazeTextureCube.hpp"
 #include "maze-render-system-opengl-core/MazeConfigOpenGL.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
@@ -250,6 +251,9 @@ namespace Maze
         void bindTexture2D(Texture2D* _texture);
 
         //////////////////////////////////////////
+        void bindTexture2DMS(Texture2DMS* _texture);
+
+        //////////////////////////////////////////
         void bindTextureCube(TextureCube* _texture);
 
         //////////////////////////////////////////
@@ -288,6 +292,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void bindTexture2D(MZGLuint _textureId) { bindTexture(MAZE_GL_TEXTURE_2D, _textureId); }
+
+        //////////////////////////////////////////
+        inline void bindTexture2DMS(MZGLuint _textureId) { bindTexture(MAZE_GL_TEXTURE_2D_MULTISAMPLE, _textureId); }
 
         //////////////////////////////////////////
         inline void bindTextureCube(MZGLuint _textureId) { bindTexture(MAZE_GL_TEXTURE_CUBE_MAP, _textureId); }

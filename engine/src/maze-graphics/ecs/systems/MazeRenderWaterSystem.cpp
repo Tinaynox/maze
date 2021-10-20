@@ -107,8 +107,8 @@ namespace Maze
                 PixelFormat::RGBA_F16,
                 PixelFormat::DEPTH_U24
             });
-        m_reflectionBuffer->getColorTexture()->setMinFilter(TextureFilter::Linear);
-        m_reflectionBuffer->getColorTexture()->setMagFilter(TextureFilter::Linear);
+        m_reflectionBuffer->getColorTexture()->castRaw<Texture2D>()->setMinFilter(TextureFilter::Linear);
+        m_reflectionBuffer->getColorTexture()->castRaw<Texture2D>()->setMagFilter(TextureFilter::Linear);
 
         m_refractionBuffer = RenderBuffer::Create(
             {
@@ -116,8 +116,8 @@ namespace Maze
                 PixelFormat::RGBA_F16,
                 PixelFormat::DEPTH_U24
             });
-        m_refractionBuffer->getColorTexture()->setMinFilter(TextureFilter::Linear);
-        m_refractionBuffer->getColorTexture()->setMagFilter(TextureFilter::Linear);
+        m_refractionBuffer->getColorTexture()->castRaw<Texture2D>()->setMinFilter(TextureFilter::Linear);
+        m_refractionBuffer->getColorTexture()->castRaw<Texture2D>()->setMagFilter(TextureFilter::Linear);
     }
 
     //////////////////////////////////////////

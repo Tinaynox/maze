@@ -63,7 +63,7 @@ namespace Maze
             U32 _minorVersion = 0,
             U32 _depth = 8,
             U32 _stencil = 8,
-            U32 _antialiasingLevel = 0,
+            U32 _antialiasingLevel = 4,
             bool _sRgb = false,
             bool _transparentBackground = false);
 

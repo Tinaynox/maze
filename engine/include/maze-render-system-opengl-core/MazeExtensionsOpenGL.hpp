@@ -61,11 +61,16 @@ namespace Maze
         //////////////////////////////////////////
         inline bool hasGLExtension(String const& _ext) { return m_extensions.count(_ext) != 0; }
         
+
         //////////////////////////////////////////
-        virtual bool loadGLExtensions();
+        inline bool isLoaded() const { return m_extensionsLoaded; }
 
         //////////////////////////////////////////
         void printGLExtensions();
+
+
+        //////////////////////////////////////////
+        bool loadGLExtensions();
 
 
         //////////////////////////////////////////
@@ -76,6 +81,11 @@ namespace Maze
 
         //////////////////////////////////////////
         inline bool getSupportClipDistance() const { return m_supportClipDistance; }
+
+    public:
+
+        //////////////////////////////////////////
+        MultiDelegate<> eventLoaded;
 
     protected:
 
@@ -88,6 +98,9 @@ namespace Maze
         //////////////////////////////////////////
         void saveCommonChecks();
     
+        //////////////////////////////////////////
+        virtual bool loadGLExtensionsImpl();
+
     protected:
         ContextOpenGL* m_context;
 

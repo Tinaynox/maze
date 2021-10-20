@@ -85,6 +85,9 @@ namespace Maze
         inline ContextOpenGLPtr const& getSharedContext() const { return m_sharedContext; }
 
         //////////////////////////////////////////
+        inline ContextOpenGLPtr const& getDummyContext() const { return m_dummyContext; }
+
+        //////////////////////////////////////////
         inline ContextOpenGLPtr const& getDefaultContext() const { return m_defaultRenderContext; }
 
         //////////////////////////////////////////
@@ -101,6 +104,9 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool isTextureFormatSupported(PixelFormat::Enum _pixelFormat) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual S32 getAntialiasingLevelSupport() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         inline void lockGLMutex() { m_glMutex.lock(); }
@@ -144,6 +150,9 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual Texture2DPtr createTexture2D() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual Texture2DMSPtr createTexture2DMS() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual TextureCubePtr createTextureCube() MAZE_OVERRIDE;
@@ -200,6 +209,10 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual void setDefaultRenderContext(const ContextOpenGLPtr& _context);
+        
+    public:
+
+        MultiDelegate<ContextOpenGLPtr const&> eventDefaultContextSet;
 
     protected:
 
@@ -226,6 +239,7 @@ namespace Maze
     protected:
         RenderSystemOpenGLConfig m_config;
 
+        ContextOpenGLPtr m_dummyContext;
         ContextOpenGLPtr m_sharedContext;
         ThreadLocalPointer<ContextOpenGL> m_currentContext;
         ThreadLocalPointer<ContextOpenGL> m_nullContext;

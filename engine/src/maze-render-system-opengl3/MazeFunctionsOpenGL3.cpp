@@ -180,6 +180,7 @@ namespace Maze
         AssignOpenGLFunction(_renderContext, mzglCompressedTexImage2D, "glCompressedTexImage2D");
         AssignOpenGLFunction(_renderContext, mzglGetTexLevelParameteriv, "glGetTexLevelParameteriv");
         AssignOpenGLFunction(_renderContext, mzglTexImage2D, "glTexImage2D");
+        AssignOpenGLFunction(_renderContext, mzglTexImage2DMultisample, "glTexImage2DMultisample");
         AssignOpenGLFunction(_renderContext, mzglGetTexImage, "glGetTexImage");
         AssignOpenGLFunction(_renderContext, mzglCheckFramebufferStatus, "glCheckFramebufferStatus");
         AssignOpenGLFunction(_renderContext, mzglBlitFramebuffer, "glBlitFramebuffer");
@@ -313,6 +314,7 @@ namespace Maze
         AssignOpenGLFunction(_renderContext, mzglCompressedTexImage2D, "glCompressedTexImage2D");
         AssignOpenGLFunction(_renderContext, mzglGetTexLevelParameteriv, "glGetTexLevelParameteriv");
         AssignOpenGLFunction(_renderContext, mzglTexImage2D, "glTexImage2D");
+        AssignOpenGLFunction(_renderContext, mzglTexImage2DMultisample, "glTexImage2DMultisample");
         AssignOpenGLFunction(_renderContext, mzglGetTexImage, "glGetTexImage");
         AssignOpenGLFunction(_renderContext, mzglCheckFramebufferStatus, "glCheckFramebufferStatus");
         AssignOpenGLFunction(_renderContext, mzglBlitFramebuffer, "glBlitFramebuffer");
@@ -468,6 +470,7 @@ namespace Maze
         AssignOpenGLFunction(_renderContext, mzglCompressedTexImage2D, glCompressedTexImage2D);
         AssignOpenGLFunction(_renderContext, mzglGetTexLevelParameteriv, MAZE_NULL);
         AssignOpenGLFunction(_renderContext, mzglTexImage2D, glTexImage2D);
+        AssignOpenGLFunction(_renderContext, mzglTexImage2DMultisample, glTexImage2DMultisample);
         AssignOpenGLFunction(_renderContext, mzglGetTexImage, MAZE_NULL);
         AssignOpenGLFunction(_renderContext, mzglCheckFramebufferStatus, glCheckFramebufferStatus);
         AssignOpenGLFunction(_renderContext, mzglBlitFramebuffer, glBlitFramebuffer);

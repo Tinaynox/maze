@@ -57,6 +57,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(RenderBuffer);
     MAZE_USING_SHARED_PTR(RenderBufferUniform);
     MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_SHARED_PTR(Texture);
     MAZE_USING_SHARED_PTR(Texture2D);
   
 
@@ -102,6 +103,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        using RenderTarget::blit;
+
+        //////////////////////////////////////////
+        virtual void blit(RenderBufferPtr const& _srcBuffer) MAZE_ABSTRACT;
+
+
+        //////////////////////////////////////////
         virtual Vec2DU getRenderTargetSize() const MAZE_OVERRIDE { return getSize(); }
 
 
@@ -120,22 +128,22 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Texture2DPtr const& getColorTexture(U32 _index = 0) const { return m_colorTextures[_index]; }
+        inline TexturePtr const& getColorTexture(U32 _index = 0) const { return m_colorTextures[_index]; }
 
         //////////////////////////////////////////
-        virtual void setColorTexture(U32 _index, Texture2DPtr const& _texture);
+        virtual void setColorTexture(U32 _index, TexturePtr const& _texture);
 
         //////////////////////////////////////////
-        inline Texture2DPtr const& getDepthTexture() const { return m_depthTexture; }
+        inline TexturePtr const& getDepthTexture() const { return m_depthTexture; }
 
         //////////////////////////////////////////
-        virtual void setDepthTexture(Texture2DPtr const& _texture);
+        virtual void setDepthTexture(TexturePtr const& _texture);
 
         //////////////////////////////////////////
-        inline Texture2DPtr const& getStencilTexture() const { return m_stencilTexture; }
+        inline TexturePtr const& getStencilTexture() const { return m_stencilTexture; }
 
         //////////////////////////////////////////
-        virtual void setStencilTexture(Texture2DPtr const& _texture);
+        virtual void setStencilTexture(TexturePtr const& _texture);
 
 
         //////////////////////////////////////////
@@ -162,9 +170,9 @@ namespace Maze
     protected:
 
         Vec2DU m_size;
-        Texture2DPtr m_colorTextures[c_renderBufferColorTexturesMax];
-        Texture2DPtr m_depthTexture;
-        Texture2DPtr m_stencilTexture;
+        TexturePtr m_colorTextures[c_renderBufferColorTexturesMax];
+        TexturePtr m_depthTexture;
+        TexturePtr m_stencilTexture;
     };
 
 

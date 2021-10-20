@@ -177,7 +177,7 @@ namespace Maze
             Vec2DF(0.0f, 0.5f));
         hierarchyText->setColor(ColorU32::c_black);
 
-        m_bodySprite = Sprite::Create(m_renderBuffer->getColorTexture());
+        m_bodySprite = Sprite::Create(m_renderBuffer->getColorTexture()->cast<Texture2D>());
         m_bodyBackground = SpriteHelper::CreateSprite(
             // m_bodySprite,
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),

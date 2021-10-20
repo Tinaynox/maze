@@ -38,9 +38,11 @@ namespace Maze
     //////////////////////////////////////////
     RenderSystemOpenGLConfig::RenderSystemOpenGLConfig(
         OpenGLMultiContextPolicy _multiContextPolicy,
-        bool _useNullContexts)
+        bool _useNullContexts,
+        bool _useDummyContext)
         : multiContextPolicy(_multiContextPolicy)
         , useNullContexts(_useNullContexts)
+        , useDummyContext(_useDummyContext)
     {
     }
     

@@ -143,6 +143,9 @@ namespace Maze
         void setUniform(String const& _uniformName, F32 _value);
 
         //////////////////////////////////////////
+        void setUniform(String const& _uniformName, TexturePtr const& _texture);
+
+        //////////////////////////////////////////
         void setUniform(String const& _uniformName, Texture2DPtr const& _texture2D);
 
         //////////////////////////////////////////
