@@ -106,7 +106,10 @@ namespace Maze
         virtual bool isTextureFormatSupported(PixelFormat::Enum _pixelFormat) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual S32 getAntialiasingLevelSupport() MAZE_OVERRIDE;
+        virtual S32 getMaxAntialiasingLevelSupport() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual S32 getCurrentAntialiasingLevelSupport() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         inline void lockGLMutex() { m_glMutex.lock(); }

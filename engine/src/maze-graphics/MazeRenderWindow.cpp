@@ -178,6 +178,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void RenderWindow::close()
+    {
+        destroySystemWindow();
+    }
+
+    //////////////////////////////////////////
     bool RenderWindow::getFocused() const
     {
         if (!m_window)

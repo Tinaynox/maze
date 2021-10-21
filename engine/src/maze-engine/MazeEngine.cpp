@@ -286,6 +286,5 @@ namespace Maze
         _world->addSystem(RenderWaterSystem::Create());
     }
 
-
 } // namespace Maze
 //////////////////////////////////////////

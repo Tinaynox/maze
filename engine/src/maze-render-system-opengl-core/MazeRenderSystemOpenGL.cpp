@@ -494,12 +494,27 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    S32 RenderSystemOpenGL::getAntialiasingLevelSupport()
+    S32 RenderSystemOpenGL::getMaxAntialiasingLevelSupport()
     {
-        if (!m_defaultRenderContext)
-            return 0;
+        if (m_defaultRenderContext)
+            return m_defaultRenderContext->getMaxAntialiasingLevelSupport();
 
-        return m_defaultRenderContext->getStateMachine()->getAntialiasingLevelSupport();
+        if (m_dummyContext)
+            return m_dummyContext->getMaxAntialiasingLevelSupport();
+
+        return 0;
+    }
+
+    //////////////////////////////////////////
+    S32 RenderSystemOpenGL::getCurrentAntialiasingLevelSupport()
+    {
+        if (m_defaultRenderContext)
+            return m_defaultRenderContext->getStateMachine()->getAntialiasingLevelSupport();
+
+        if (m_dummyContext)
+            return m_dummyContext->getStateMachine()->getAntialiasingLevelSupport();
+
+        return 0;
     }
     
 

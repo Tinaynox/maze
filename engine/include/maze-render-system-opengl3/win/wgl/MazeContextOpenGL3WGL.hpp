@@ -172,6 +172,9 @@ namespace Maze
         //////////////////////////////////////////
         ExtensionsOpenGL3WGL* getAnyExtensions();
 
+        //////////////////////////////////////////
+        S32 findMaxAntialisingLevelSupport();
+
     protected:
 
         // Handle to a pbuffer if one was created

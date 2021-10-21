@@ -65,6 +65,7 @@ namespace Maze
         //////////////////////////////////////////
         ContextOpenGLPtr const& getContext() const { return m_context; }
 
+
         //////////////////////////////////////////
         virtual void swapBuffers() MAZE_OVERRIDE;
 

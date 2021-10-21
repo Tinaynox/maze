@@ -409,6 +409,10 @@ namespace Maze
         //////////////////////////////////////////
         inline ModelMatricesArchitectureOpenGL getModelMatricesArchitecture() const { return m_modelMatricesArchitecture; }
 
+
+        //////////////////////////////////////////
+        inline S32 getMaxAntialiasingLevelSupport() const { return m_maxAntialiasingLevelSupport; }
+
     public:
 
         //////////////////////////////////////////
@@ -512,6 +516,8 @@ namespace Maze
         bool m_ownsOpenGLContext;
 
         ModelMatricesArchitectureOpenGL m_modelMatricesArchitecture;
+
+        S32 m_maxAntialiasingLevelSupport = 0;
     };
 
 } // namespace Maze

@@ -776,6 +776,92 @@ namespace Maze
         return bestFormat;
     }
 
+    //////////////////////////////////////////
+    S32 ContextOpenGL3WGL::findMaxAntialisingLevelSupport()
+    {
+        ExtensionsOpenGL3WGL* extensions = getAnyExtensions();
+
+        S32 bestAntialisingLevelSupport = 0;
+        if (extensions && extensions->hasGLExtension("WGL_ARB_pixel_format"))
+        {
+            S32 intAttributes[] =
+            {
+                MAZE_WGL_DRAW_TO_WINDOW_ARB, MAZE_GL_TRUE,
+                MAZE_WGL_SUPPORT_OPENGL_ARB, MAZE_GL_TRUE,
+                MAZE_WGL_DOUBLE_BUFFER_ARB,  MAZE_GL_TRUE,
+                MAZE_WGL_PIXEL_TYPE_ARB,     MAZE_WGL_TYPE_RGBA_ARB,
+                0,                      0
+            };
+
+            S32 formats[512];
+            UINT nbFormats;
+            bool isValid = false;
+
+            {
+                MAZE_GL_MUTEX_SCOPED_LOCK(getRenderSystemRaw());
+                isValid = mzwglChoosePixelFormat(m_deviceContext, intAttributes, nullptr, 512, formats, &nbFormats) != 0;
+            }
+
+            if (isValid && (nbFormats > 0))
+            {
+                for (UINT i = 0; i < nbFormats; ++i)
+                {
+                    S32 values[7];
+                    S32 const attributes[] =
+                    {
+                        MAZE_WGL_RED_BITS_ARB,
+                        MAZE_WGL_GREEN_BITS_ARB,
+                        MAZE_WGL_BLUE_BITS_ARB,
+                        MAZE_WGL_ALPHA_BITS_ARB,
+                        MAZE_WGL_DEPTH_BITS_ARB,
+                        MAZE_WGL_STENCIL_BITS_ARB,
+                        MAZE_WGL_ACCELERATION_ARB
+                    };
+
+                    {
+                        MAZE_GL_MUTEX_SCOPED_LOCK(getRenderSystemRaw());
+                        if (!mzwglGetPixelFormatAttribiv(m_deviceContext, formats[i], PFD_MAIN_PLANE, 7, attributes, values))
+                        {
+                            MAZE_ERROR(
+                                "Failed to retrieve pixel format information: %s",
+                                GetErrorString(GetLastError()).c_str());
+                            break;
+                        }
+                    }
+
+                    S32 sampleValues[2] = { 0, 0 };
+                    if (extensions->hasGLExtension("WGL_ARB_multisample"))
+                    {
+                        S32 const sampleAttributes[] =
+                        {
+                            MAZE_WGL_SAMPLE_BUFFERS_ARB,
+                            MAZE_WGL_SAMPLES_ARB
+                        };
+
+                        {
+                            MAZE_GL_MUTEX_SCOPED_LOCK(getRenderSystemRaw());
+                            if (!mzwglGetPixelFormatAttribiv(m_deviceContext, formats[i], PFD_MAIN_PLANE, 2, sampleAttributes, sampleValues))
+                            {
+                                MAZE_ERROR(
+                                    "Failed to retrieve pixel format multisampling information: %s",
+                                    GetErrorString(GetLastError()).c_str());
+                                break;
+                            }
+                        }
+                    }
+
+
+                    S32 score = (sampleValues[0] ? sampleValues[1] : 0);
+
+                    if (score >= bestAntialisingLevelSupport)
+                        bestAntialisingLevelSupport = score;
+                }
+            }
+        }
+
+        return bestAntialisingLevelSupport;
+    }
+
     ////////////////////////////////////
     void ContextOpenGL3WGL::selectBestDevicePixelFormat(U32 _bitsPerPixel)
     {
@@ -1062,6 +1148,8 @@ namespace Maze
         
         if (m_stateMachine && m_extensions && m_extensions->isLoaded())
         {
+            m_maxAntialiasingLevelSupport = findMaxAntialisingLevelSupport();
+
             if ((m_config.antialiasingLevel > 0) && m_stateMachine->getAntialiasingLevelSupport() > 0)
             {
                 m_stateMachine->setMultiSampleEnabled(true);

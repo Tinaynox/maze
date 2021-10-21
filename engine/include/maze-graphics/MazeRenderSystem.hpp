@@ -110,8 +110,12 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool isTextureFormatSupported(PixelFormat::Enum _pixelFormat) MAZE_ABSTRACT;
 
+
         //////////////////////////////////////////
-        virtual S32 getAntialiasingLevelSupport() MAZE_ABSTRACT;
+        virtual S32 getMaxAntialiasingLevelSupport() MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual S32 getCurrentAntialiasingLevelSupport() MAZE_ABSTRACT;
 
 
         //////////////////////////////////////////

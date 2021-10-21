@@ -94,6 +94,7 @@ namespace Maze
         //////////////////////////////////////////
         virtual Vec2DU getRenderTargetSize() const MAZE_ABSTRACT;
 
+
         //////////////////////////////////////////
         inline U32 getRenderTargetWidth() const { return getRenderTargetSize().x; }
 
