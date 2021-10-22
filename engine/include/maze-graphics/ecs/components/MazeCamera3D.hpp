@@ -158,6 +158,9 @@ namespace Maze
         //////////////////////////////////////////
         Vec2DF convertWorldCoordsToViewportCoords(Vec3DF const& _positionWS) const;
 
+        //////////////////////////////////////////
+        Mat4DF calculateProjectionMatrix(RenderTargetPtr const& _renderTarget) const;
+
     protected:
 
         //////////////////////////////////////////

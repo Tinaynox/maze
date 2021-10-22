@@ -278,17 +278,11 @@ namespace Maze
 
                 Vec2DU const& renderTargetSize = renderTarget->getRenderTargetSize();
 
-                F32 aspectRatio = (_camera3D->getViewport().size.x * (F32)renderTargetSize.x) / (_camera3D->getViewport().size.y * (F32)renderTargetSize.y);
-
                 DefaultPassParams params;
 
                 params.renderMask = _camera3D->getRenderMask();
                 params.cameraTransform = _camera3D->getTransform()->getWorldTransform();
-                params.projectionMatrix = Mat4DF::CreateProjectionPerspectiveLHMatrix(
-                    _camera3D->getFOV(),
-                    aspectRatio,
-                    _camera3D->getNearZ(),
-                    _camera3D->getFarZ());
+                params.projectionMatrix = _camera3D->calculateProjectionMatrix(renderTarget);
                 params.viewport = _camera3D->getViewport();
                 params.nearZ = _camera3D->getNearZ();
                 params.farZ = _camera3D->getFarZ();

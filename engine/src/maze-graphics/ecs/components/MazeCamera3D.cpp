@@ -136,13 +136,32 @@ namespace Maze
             return Vec2DF::c_zero;
 
         Vec4DF positionWS = Vec4DF(_positionWS, 1.0f);
-        Vec4DF positionVS = getTransform()->getWorldTransform().inversedAffineCopy() * _positionWS;
-        Vec4DF positionCS = m_renderTarget->getProjectionMatrix() * positionVS;
+        Mat4DF const& cameraTransform = getTransform()->getWorldTransform();
+        Vec4DF positionVS = cameraTransform.inversedAffineCopy() * _positionWS;
+        Mat4DF projectionMatrix = calculateProjectionMatrix(getRenderTarget());
+        Vec4DF positionCS = projectionMatrix * positionVS;
 
         Vec2DF positionV = Vec2DF(positionCS.x, positionCS.y) / positionCS.w;
-        positionV = (positionV + 1.0f) * 0.5f * (Vec2DF)m_renderTarget->getRenderTargetSize();
+        Vec2DU renderTargetSize = m_renderTarget->getRenderTargetSize();
+        positionV = (positionV + 1.0f) * 0.5f * (Vec2DF)renderTargetSize;
 
         return positionV;
+    }
+
+    //////////////////////////////////////////
+    Mat4DF Camera3D::calculateProjectionMatrix(RenderTargetPtr const& _renderTarget) const
+    {
+        Vec2DU const& renderTargetSize = _renderTarget->getRenderTargetSize();
+
+        F32 aspectRatio = (getViewport().size.x * (F32)renderTargetSize.x) / (getViewport().size.y * (F32)renderTargetSize.y);
+
+        Mat4DF projectionMatrix = Mat4DF::CreateProjectionPerspectiveLHMatrix(
+            getFOV(),
+            aspectRatio,
+            getNearZ(),
+            getFarZ());
+
+        return projectionMatrix;    
     }
     
     
