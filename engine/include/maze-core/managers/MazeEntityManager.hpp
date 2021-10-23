@@ -102,6 +102,10 @@ namespace Maze
         //////////////////////////////////////////
         ComponentFactoryPtr const& getComponentFactory() const { return m_componentFactory; }
 
+
+        //////////////////////////////////////////
+        virtual S32 getUpdatableOrder() const { return 20000; }
+
     protected:
 
         //////////////////////////////////////////
