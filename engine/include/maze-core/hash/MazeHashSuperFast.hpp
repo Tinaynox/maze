@@ -43,12 +43,12 @@ namespace Maze
     MAZE_CORE_API U32 SuperFastHashIncremental(Char const* _data, S32 _len, U32 _lastHash);
 
     //////////////////////////////////////////
-    MAZE_CORE_API inline U32 CalculateSuperFastHash(Char const* _text, S32 _length)
+    MAZE_CORE_API inline U32 CalculateSuperFastHash(Char const* _text, S32 _length, U32 _lastHash)
     {
         static S32 const c_incrementalReadBlock = 65536;
 
         S32 bytesRemaining = _length;
-        U32 lastHash = _length;
+        U32 lastHash = _lastHash;
         S32 offset = 0;
 
         while (bytesRemaining >= c_incrementalReadBlock)
@@ -64,6 +64,12 @@ namespace Maze
         }
 
         return lastHash;
+    }
+
+    //////////////////////////////////////////
+    MAZE_CORE_API inline U32 CalculateSuperFastHash(Char const* _text, S32 _length)
+    {
+        return CalculateSuperFastHash(_text, _length, _length);
     }
 
     //////////////////////////////////////////

@@ -116,9 +116,9 @@ namespace Maze
         {
             U32 hash = 0;
             hash = CalculateSuperFastHash((Char const*)&size, sizeof(size));
-            hash ^= CalculateSuperFastHash((Char const*)&colorTextureFormats, sizeof(colorTextureFormats));
-            hash ^= CalculateSuperFastHash((Char const*)&depthTextureFormat, sizeof(depthTextureFormat));
-            hash ^= CalculateSuperFastHash((Char const*)&stencilTextureFormat, sizeof(stencilTextureFormat));
+            hash = CalculateSuperFastHash((Char const*)&colorTextureFormats, sizeof(colorTextureFormats), hash);
+            hash = CalculateSuperFastHash((Char const*)&depthTextureFormat, sizeof(depthTextureFormat), hash);
+            hash = CalculateSuperFastHash((Char const*)&stencilTextureFormat, sizeof(stencilTextureFormat), hash);
 
             return hash;
         }
