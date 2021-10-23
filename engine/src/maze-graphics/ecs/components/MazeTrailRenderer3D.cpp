@@ -164,6 +164,9 @@ namespace Maze
     //////////////////////////////////////////
     void TrailRenderer3D::update(F32 _dt)
     {
+        if (_dt == 0.0f)
+            return;
+
         m_timer += _dt;
 
         for (S32 i = 0; i < (S32)m_edges.size() - 1;)
