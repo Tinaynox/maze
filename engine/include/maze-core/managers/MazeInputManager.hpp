@@ -133,6 +133,10 @@ namespace Maze
         //////////////////////////////////////////
         static inline InputManager& GetInstance() { return *s_instance; }
 
+
+        //////////////////////////////////////////
+        virtual S32 getUpdatableOrder() const MAZE_OVERRIDE { return -1000; }
+
     public:
 
         MultiDelegate<InputEventMouseData const&> eventMouse;

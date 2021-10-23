@@ -188,9 +188,6 @@ namespace Maze
         //////////////////////////////////////////
         void resetSmoothStates();
 
-        //////////////////////////////////////////
-        void smoothStates();
-
 
         ////////////////////////////////////
         virtual void BeginContact(b2Contact* _contact) MAZE_OVERRIDE;

@@ -79,6 +79,7 @@ namespace Maze
         MAZE_DEBUG_BP_IF(_updatable->m_updater);
 
         m_updatables.push_back(_updatable);
+        sortUpdatables();
         _updatable->m_updater = this;
     }
 
@@ -103,6 +104,7 @@ namespace Maze
             return;
 
         m_updatables.push_back(_updatable);
+        sortUpdatables();
         _updatable->m_updater = this;
     }
 
@@ -134,6 +136,24 @@ namespace Maze
 
             m_updatablesDirty = false;
         }
+    }
+
+    //////////////////////////////////////////
+    void Updater::sortUpdatables()
+    {
+        std::sort(
+            m_updatables.begin(),
+            m_updatables.end(),
+            [](Updatable* _updatable0, Updatable* _updatable1)
+        {
+            if (_updatable1 == nullptr)
+                return true;
+
+            if (_updatable0 == nullptr)
+                return false;
+
+            return _updatable0->getUpdatableOrder() < _updatable1->getUpdatableOrder();
+        });
     }
 
 

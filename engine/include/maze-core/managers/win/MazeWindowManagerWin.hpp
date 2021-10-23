@@ -68,6 +68,10 @@ namespace Maze
         //////////////////////////////////////////
         void setProcessWindowsMessages(bool _processWindowsMessages) { m_processWindowsMessages = _processWindowsMessages; }
 
+
+        //////////////////////////////////////////
+        virtual S32 getUpdatableOrder() const MAZE_OVERRIDE { return -5000; }
+
     protected:
 
         //////////////////////////////////////////

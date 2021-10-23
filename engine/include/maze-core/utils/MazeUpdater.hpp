@@ -65,6 +65,9 @@ namespace Maze
         //////////////////////////////////////////
         bool isUpdatable() const { return (m_updater != nullptr); }
 
+        //////////////////////////////////////////
+        virtual S32 getUpdatableOrder() const { return 0; }
+
     protected:
 
         //////////////////////////////////////////
@@ -105,6 +108,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void processUpdate(F32 _dt);
+
+        //////////////////////////////////////////
+        void sortUpdatables();
 
     private:
         Vector<Updatable*> m_updatables;

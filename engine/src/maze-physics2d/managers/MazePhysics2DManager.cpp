@@ -73,7 +73,7 @@ namespace Maze
     //////////////////////////////////////////
     bool Physics2DManager::init(PhysicsWorld2DConfig const& _defaultWorldConfig)
     {
-        m_world = PhysicsWorld2D::Create();
+        m_world = PhysicsWorld2D::Create(_defaultWorldConfig);
 
         GizmosManager::GetInstancePtr()->registerGizmos<BoxCollider2D, BoxCollider2DGizmos>();
         GizmosManager::GetInstancePtr()->registerGizmos<CircleCollider2D, CircleCollider2DGizmos>();

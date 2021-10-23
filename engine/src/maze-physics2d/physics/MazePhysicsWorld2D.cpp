@@ -154,26 +154,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PhysicsWorld2D::smoothStates()
-    {
-        if (!m_world)
-            return;
-
-        for (b2Body* b = m_world->GetBodyList(); b != nullptr; b = b->GetNext())
-        {
-            if (b->GetType() == b2_staticBody)
-                continue;
-
-            void* userData = (void*)b->GetUserData().pointer;
-            if (!userData)
-                continue;
-
-            Rigidbody2D* rigidbody2D = static_cast<Rigidbody2D*>(userData);
-            Entity* entity = rigidbody2D->getEntityRaw();
-        }
-    }
-
-    //////////////////////////////////////////
     void PhysicsWorld2D::createWorld()
     {
         destroyWorld();
