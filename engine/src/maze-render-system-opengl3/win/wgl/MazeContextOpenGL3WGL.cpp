@@ -349,7 +349,32 @@ namespace Maze
         // Check if the shared context already exists and pbuffers are supported
         if (sharedDeviceContext && extensions && extensions->hasGLExtension("WGL_ARB_pbuffer"))
         {
-            S32 bestFormat = findBestPixelFormat(sharedDeviceContext, _bitsPerPixel, m_config, true);
+            S32 bestFormat = 0;
+            
+            RenderSystemOpenGL* renderSystemOpenGL = getRenderSystemRaw()->castRaw<RenderSystemOpenGL>();
+
+            switch (renderSystemOpenGL->getConfig().multiContextPolicy)
+            {
+                case OpenGLMultiContextPolicy::Unified:
+                {
+                    if (renderSystemOpenGL->getDefaultContext())
+                    {
+                        ContextOpenGL3WGL* defaultContext = renderSystemOpenGL->getDefaultContext()->castRaw<ContextOpenGL3WGL>();
+                        bestFormat = GetPixelFormat(defaultContext->m_deviceContext);
+                    }
+                    else
+                    {
+                        bestFormat = findBestPixelFormat(sharedDeviceContext, _bitsPerPixel, m_config, true);
+                    }
+
+                    break;
+                }
+                default:
+                {
+                    bestFormat = findBestPixelFormat(sharedDeviceContext, _bitsPerPixel, m_config, true);
+                    break;
+                }
+            }        
 
             if (bestFormat > 0)
             {
@@ -865,7 +890,31 @@ namespace Maze
     ////////////////////////////////////
     void ContextOpenGL3WGL::selectBestDevicePixelFormat(U32 _bitsPerPixel)
     {
-        S32 bestFormat = findBestPixelFormat(m_deviceContext, _bitsPerPixel, m_config);
+        S32 bestFormat = 0;
+        
+        RenderSystemOpenGL* renderSystemOpenGL = getRenderSystemRaw()->castRaw<RenderSystemOpenGL>();
+        switch (renderSystemOpenGL->getConfig().multiContextPolicy)
+        {
+            case OpenGLMultiContextPolicy::Unified:
+            {
+                if (renderSystemOpenGL->getDefaultContext())
+                {
+                    ContextOpenGL3WGL* defaultContext = renderSystemOpenGL->getDefaultContext()->castRaw<ContextOpenGL3WGL>();
+                    bestFormat = GetPixelFormat(defaultContext->m_deviceContext);
+                }
+                else
+                {
+                    bestFormat = findBestPixelFormat(m_deviceContext, _bitsPerPixel, m_config);
+                }
+
+                break;
+            }
+            default:
+            {
+                bestFormat = findBestPixelFormat(m_deviceContext, _bitsPerPixel, m_config);
+                break;
+            }
+        }    
 
         if (bestFormat == 0)
         {
