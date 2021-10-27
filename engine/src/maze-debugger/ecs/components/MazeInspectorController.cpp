@@ -197,6 +197,7 @@ namespace Maze
         SizePolicy2DPtr layoutSizePolicy = m_layout->getEntityRaw()->ensureComponent<SizePolicy2D>();
         layoutSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
         
+        notifySelectionChanged();
     }
 
     //////////////////////////////////////////
@@ -318,8 +319,12 @@ namespace Maze
     //////////////////////////////////////////
     void InspectorController::clearEditor()
     {
-        m_layout->getTransform()->destroyAllChildren();
-        m_layout->alignChildren();
+        if (m_layout)
+        {
+            m_layout->getTransform()->destroyAllChildren();
+            m_layout->alignChildren();
+        }
+
         m_inspector.reset();
     }
     

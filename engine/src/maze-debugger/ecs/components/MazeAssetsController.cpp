@@ -226,6 +226,30 @@ namespace Maze
         assetsFolderLayoutSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
 
         updateAssetsTree();
+
+        Set<AssetFilePtr> const& assetFiles = SelectionManager::GetInstancePtr()->getSelectedAssetFiles();
+        if (!assetFiles.empty())
+        {
+            String selectedDirectory;
+            for (AssetFilePtr const& assetFile : assetFiles)
+            {
+                String directory = FileHelper::GetDirectoryInPath(assetFile->getFullPath());
+
+                if (selectedDirectory.empty())
+                    selectedDirectory = directory;
+                else
+                if (selectedDirectory != directory)
+                {
+                    selectedDirectory.clear();
+                    break;
+                }
+            }
+
+            if (!selectedDirectory.empty())
+                setSelectedAssetFolder(selectedDirectory);
+        }
+
+        notifySelectionManagerSelectionChanged();
     }
 
     //////////////////////////////////////////
