@@ -126,6 +126,9 @@ namespace Maze
         //////////////////////////////////////////
         void loadAllAssetTextures();
 
+        //////////////////////////////////////////
+        void reloadAllAssetTextures();
+
 
         //////////////////////////////////////////
         SystemFontPtr createSystemFontOutlined(

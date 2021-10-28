@@ -385,6 +385,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void TextureManager::reloadAllAssetTextures()
+    {
+        for (auto const& textureData : m_textures2DByName)
+        {
+            if (textureData.second->getAssetFile())
+                textureData.second->reload();
+        }
+    }
+
+    //////////////////////////////////////////
     SystemFontPtr TextureManager::createSystemFontOutlined(
         String const& _name,
         ColorU32 const& _outlineColor)
