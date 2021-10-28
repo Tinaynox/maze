@@ -95,9 +95,26 @@ class MakeData:
 
             dir_name = copy_to.replace(file_name, '')
 
+            change_extension_enabled = True
+
             final_full_path_name = copy_to
             if is_texture and self.need_to_change_textures_extensions:
-                final_full_path_name = dir_name + name + maze_config.maze_texture_extension
+            
+                parameters = []
+                if os.path.exists(info_file_path):
+                    self.cache.is_up_to_date(info_file_path)
+                    info_input_file = open(info_file_path)
+                    content = info_input_file.read()
+                    info_input_file.close()
+                    
+                    for entry in content.split('\n'):
+                        parameters.append(entry)
+                    
+                    if 'change-extension=0' in parameters:
+                        change_extension_enabled = False
+                    
+                if change_extension_enabled:
+                    final_full_path_name = dir_name + name + maze_config.maze_texture_extension
 
             if is_up_to_date:
                 if not os.path.exists(final_full_path_name):
@@ -149,7 +166,7 @@ class MakeData:
                         copy_to = self.texture_compressor.compress_texture(copy_to)
                 compressed_name, compressed_ext = os.path.splitext(copy_to)
 
-                if is_texture and self.need_to_change_textures_extensions:
+                if is_texture and self.need_to_change_textures_extensions and change_extension_enabled:
                     if os.path.exists(final_full_path_name):
                         os.remove(final_full_path_name)
                     os.rename(copy_to, final_full_path_name)
@@ -292,6 +309,10 @@ class MakeData:
                     compression_enabled = True
                     if 'compress=disabled' in parameters:
                         compression_enabled = False
+                        
+                    change_extension_enabled = True
+                    if 'change-extension=0' in parameters:
+                        change_extension_enabled = False
 
                     if self.texture_compression:
                         additional_params = additional_params + ' --square'
@@ -325,7 +346,7 @@ class MakeData:
                                     full_name = self.texture_compressor.compress_texture(full_name)
                                 compressed_name, compressed_ext = os.path.splitext(full_name)
 
-                                if self.need_to_change_textures_extensions:
+                                if self.need_to_change_textures_extensions and change_extension_enabled:
                                     new_name = output_folder + local_name + maze_config.maze_texture_extension
                                     if os.path.exists(new_name):
                                         os.remove(new_name)
