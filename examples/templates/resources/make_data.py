@@ -110,7 +110,7 @@ class MakeData:
                     for entry in content.split('\n'):
                         parameters.append(entry)
                     
-                    if 'change-extension=0' in parameters:
+                    if 'changeExtension=0' in parameters:
                         change_extension_enabled = False
                     
                 if change_extension_enabled:
@@ -311,7 +311,7 @@ class MakeData:
                         compression_enabled = False
                         
                     change_extension_enabled = True
-                    if 'change-extension=0' in parameters:
+                    if 'changeExtension=0' in parameters:
                         change_extension_enabled = False
 
                     if self.texture_compression:
