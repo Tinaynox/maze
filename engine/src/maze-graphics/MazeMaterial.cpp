@@ -34,6 +34,7 @@
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
+#include "maze-core/helpers/MazeXMLHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -499,6 +500,9 @@ namespace Maze
     {
         tinyxml2::XMLElement* element = SerializeMetaInstanceToXMLElement(getMetaClass(), getMetaInstance(), _doc);
 
+        for (ShaderUniformVariantPtr const& uniformVariant : m_uniforms)
+            element->InsertEndChild(uniformVariant->toXMLElement(_doc));
+
         for (RenderPassType passType = RenderPassType(1); passType < RenderPassType::MAX; ++passType)
             for (RenderPassPtr const& renderPass : m_passes[passType])
             {
@@ -506,6 +510,12 @@ namespace Maze
             }
 
         return element;
+    }
+
+    //////////////////////////////////////////
+    bool Material::saveToFile(String const& _fullpath)
+    {
+        return XMLHelper::SaveXMLFile(_fullpath, this);
     }
 
     //////////////////////////////////////////

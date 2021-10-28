@@ -233,6 +233,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual tinyxml2::XMLElement* toXMLElement(tinyxml2::XMLDocument& _doc) const MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        bool saveToFile(String const& _fullpath);
+
     public:
 
         //////////////////////////////////////////

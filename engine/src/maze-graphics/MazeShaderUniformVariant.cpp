@@ -920,9 +920,9 @@ namespace Maze
     //////////////////////////////////////////
     void ShaderUniformVariant::loadFromXMLElement(tinyxml2::XMLElement const* _element)
     {
+        CString name = _element->Attribute("name");
         CString type = _element->Attribute("type");
         CString value = _element->Attribute("value");
-        CString name = _element->Attribute("name");
 
         ShaderUniformType shaderUniformType = ShaderUniformType::FromString(type);
 
@@ -939,6 +939,7 @@ namespace Maze
 
         String value = toStringValue();
 
+        element->SetAttribute("name", m_name.c_str());
         element->SetAttribute("type", m_type.toCString());
         element->SetAttribute("value", value.c_str());
 

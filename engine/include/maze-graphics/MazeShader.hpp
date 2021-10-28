@@ -45,6 +45,7 @@
 #include "maze-core/math/MazeVec4D.hpp"
 #include "maze-core/math/MazeMat3D.hpp"
 #include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/assets/MazeAssetFile.hpp"
 
 
 //////////////////////////////////////////
@@ -336,7 +337,10 @@ namespace Maze
     inline typename ::std::enable_if<(IsSharedPtr<ShaderPtr>::value), void>::type
         ValueToString(ShaderPtr const& _value, String& _data)
     {
-        MAZE_NOT_IMPLEMENTED;
+        if (_value->getAssetFile())
+            _data = _value->getAssetFile()->getFileName();
+        else
+            _data = _value->getName();
     }
 
     //////////////////////////////////////////

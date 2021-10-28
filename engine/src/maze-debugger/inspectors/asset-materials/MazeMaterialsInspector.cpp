@@ -34,7 +34,9 @@
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSScene.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
+#include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeComponentFactory.hpp"
+#include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeContextMenuCanvas2D.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
@@ -140,6 +142,7 @@ namespace Maze
 
         createRenderPassDrawers();
         createUniformVariantsDrawers();
+        createSaveMaterialButton();
         m_materialsPropertiesListDirty = false;
     }
 
@@ -308,6 +311,64 @@ namespace Maze
 
             for (ShaderUniformVariantDrawerPtr const& drawer : m_shaderUniformVariantsDrawers)
                 drawer->buildUI(m_shaderUniformVariantsLayout);
+        }
+    }
+
+    //////////////////////////////////////////
+    void MaterialsInspector::clearSaveMaterialButton()
+    {
+        if (m_saveMaterialButtonRoot)
+        {
+            m_saveMaterialButtonRoot->getEntityRaw()->removeFromECSWorld();
+            m_saveMaterialButtonRoot.reset();
+        }
+    }
+
+    //////////////////////////////////////////
+    void MaterialsInspector::createSaveMaterialButton()
+    {
+        clearSaveMaterialButton();
+
+        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+
+        Set<MaterialPtr> materials = getMaterials();
+
+        // #TODO: Multi material editor
+        if (materials.size() == 1)
+        {
+            MaterialPtr const& material = *materials.begin();
+
+            String assetFileName = material->getName();
+            AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(assetFileName);
+            if (assetFile)
+            {
+                String assetFileFullPath = assetFile->getFullPath();
+
+                m_saveMaterialButtonRoot = SpriteHelper::CreateTransform2D(
+                    Vec2DF(m_parent->getWidth(), 22.0f),
+                    Vec2DF::c_zero,
+                    m_parent,
+                    m_parent->getEntityRaw()->getECSScene(),
+                    Vec2DF(0.0f, 1.0f),
+                    Vec2DF(0.0f, 1.0f));
+                SizePolicy2DPtr sizePolicy = m_saveMaterialButtonRoot->getEntityRaw()->ensureComponent<SizePolicy2D>();
+                sizePolicy->setFlag(SizePolicy2D::Height, false);
+
+                ClickButton2DPtr button = UIHelper::CreateDefaultClickButton(
+                    (String("Save ") + material->getName()).c_str(),
+                    Vec2DF(250, 18),
+                    Vec2DF::c_zero,
+                    m_saveMaterialButtonRoot,
+                    m_parent->getEntityRaw()->getECSScene());
+
+                button->eventClick.subscribe(
+                    [assetFileName, assetFileFullPath](Button2D* _button, CursorInputEvent const& _event)
+                    {
+                        MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getMaterial(assetFileName);
+                        if (material)
+                            material->saveToFile(assetFileFullPath);
+                    });
+            }
         }
     }
 

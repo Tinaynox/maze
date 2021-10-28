@@ -120,6 +120,12 @@ namespace Maze
         //////////////////////////////////////////
         void createUniformVariantsDrawers();
 
+        //////////////////////////////////////////
+        void clearSaveMaterialButton();
+
+        //////////////////////////////////////////
+        void createSaveMaterialButton();
+
     protected:
         Set<MaterialPtr> m_materials;
 
@@ -128,6 +134,7 @@ namespace Maze
 
         Transform2DPtr m_shaderUniformVariantsRoot;
         Transform2DPtr m_shaderUniformVariantsLayout;
+        Transform2DPtr m_saveMaterialButtonRoot;
 
         bool m_materialsPropertiesListDirty;
     };
