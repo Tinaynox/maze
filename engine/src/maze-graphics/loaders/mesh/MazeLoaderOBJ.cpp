@@ -314,15 +314,15 @@ namespace Maze
                 // if so this is the last triangle
                 if (positions.size() == 3)
                 {
-                    for (S32 j = 0; j < S32(positions.size()); ++j)
+                    for (S32 j = 0; j < S32(_positions.size()); ++j)
                     {
-                        if (positions[j] == currentPosition)
+                        if (_positions[j] == currentPosition)
                             _outIndices.push_back(j);
 
-                        if (positions[j] == prevPosition)
+                        if (_positions[j] == prevPosition)
                             _outIndices.push_back(j);
 
-                        if (positions[j] == nextPosition)
+                        if (_positions[j] == nextPosition)
                             _outIndices.push_back(j);
                     }
 
@@ -353,15 +353,15 @@ namespace Maze
 
 
                     // Cur-Prev-Next
-                    for (S32 j = 0; j < S32(positions.size()); ++j)
+                    for (S32 j = 0; j < S32(_positions.size()); ++j)
                     {
-                        if (positions[j] == currentPosition)
+                        if (_positions[j] == currentPosition)
                             _outIndices.push_back(j);
 
-                        if (positions[j] == prevPosition)
+                        if (_positions[j] == prevPosition)
                             _outIndices.push_back(j);
 
-                        if (positions[j] == nextPosition)
+                        if (_positions[j] == nextPosition)
                             _outIndices.push_back(j);
                     }
 
@@ -375,15 +375,15 @@ namespace Maze
                     }
 
                     // Prev-Next-Temp
-                    for (S32 j = 0; j < S32(positions.size()); ++j)
+                    for (S32 j = 0; j < S32(_positions.size()); ++j)
                     {
-                        if (positions[j] == prevPosition)
+                        if (_positions[j] == prevPosition)
                             _outIndices.push_back(j);
 
-                        if (positions[j] == nextPosition)
+                        if (_positions[j] == nextPosition)
                             _outIndices.push_back(j);
 
-                        if (positions[j] == fourthPosition)
+                        if (_positions[j] == fourthPosition)
                             _outIndices.push_back(j);
                     }
 
@@ -421,15 +421,15 @@ namespace Maze
                     continue;
 
                 // Create a triangle from currentPosition, prevPosition, nextPosition
-                for (S32 j = 0; j < S32(positions.size()); ++j)
+                for (S32 j = 0; j < S32(_positions.size()); ++j)
                 {
-                    if (positions[j] == currentPosition)
+                    if (_positions[j] == currentPosition)
                         _outIndices.push_back(j);
 
-                    if (positions[j] == prevPosition)
+                    if (_positions[j] == prevPosition)
                         _outIndices.push_back(j);
 
-                    if (positions[j] == nextPosition)
+                    if (_positions[j] == nextPosition)
                         _outIndices.push_back(j);
                 }
 
