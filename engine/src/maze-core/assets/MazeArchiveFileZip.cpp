@@ -117,7 +117,10 @@ namespace Maze
 
         while (err == UNZ_OK)
         {
-            if (unzGetCurrentFileInfo(m_zipHandle, nullptr, currentFileName, sizeof(currentFileName) - 1, nullptr, 0, nullptr, 0) != UNZ_OK)
+            unz_file_info fileInfo;
+            memset(&fileInfo, 0, sizeof(unz_file_info));
+
+            if (unzGetCurrentFileInfo(m_zipHandle, &fileInfo, currentFileName, sizeof(currentFileName) - 1, nullptr, 0, nullptr, 0) != UNZ_OK)
             {
                 MAZE_ERROR("unzGetCurrentFileInfo isn't OK!");
                 return false;
@@ -127,32 +130,11 @@ namespace Maze
             FileHelper::NormalizeFilePath(currentFilePathNormalized);
             fileName = FileHelper::GetFileNameInPath(currentFilePathNormalized);
 
-            if (tryUnzOpenCurrentFile(fileName, m_zipHandle) == UNZ_OK)
-            {
-                S32 readBytes = unzReadCurrentFile(m_zipHandle, &tempByte, 1);
-                if (readBytes > 0)
-                {
-                    unz_file_info fileInfo;
-                    memset(&fileInfo, 0, sizeof(unz_file_info));
-
-                    if (unzGetCurrentFileInfo(m_zipHandle, &fileInfo, nullptr, 0, nullptr, 0, nullptr, 0) != UNZ_OK)
-                    {
-                        MAZE_ERROR("unzGetCurrentFileInfo isn't OK!");
-                        return false;
-                    }
-
-                    ZipFileInfo& zipFileInfo = m_zipNavigationMap[currentFilePathNormalized];
-                    zipFileInfo.fileName = fileName;
-                    zipFileInfo.fullPath = currentFilePathNormalized;
-                    zipFileInfo.uncompressedSize = fileInfo.uncompressed_size;
-                    unzGetFilePos(m_zipHandle, &zipFileInfo.filePos);
-                }
-            }
-            else
-            {
-                MAZE_ERROR("tryUnzOpenCurrentFile isn't OK!");
-                return false;
-            }
+            ZipFileInfo& zipFileInfo = m_zipNavigationMap[currentFilePathNormalized];
+            zipFileInfo.fileName = fileName;
+            zipFileInfo.fullPath = currentFilePathNormalized;
+            zipFileInfo.uncompressedSize = fileInfo.uncompressed_size;
+            unzGetFilePos(m_zipHandle, &zipFileInfo.filePos);
 
             err = unzGoToNextFile(m_zipHandle);
         }
