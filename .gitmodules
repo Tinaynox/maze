@@ -13,3 +13,6 @@
 [submodule "engine/third-party/jsoncpp"]
 	path = engine/third-party/jsoncpp
 	url = git@github.com:Tinaynox/jsoncpp.git
+[submodule "engine/third-party/minizip-ng"]
+	path = engine/third-party/minizip-ng
+	url = git@github.com:Tinaynox/minizip-ng.git

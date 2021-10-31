@@ -25,59 +25,79 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeAssetRegularFile_hpp_))
-#define _MazeAssetRegularFile_hpp_
+#if (!defined(_MazeAssetArchivedFile_hpp_))
+#define _MazeAssetArchivedFile_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
+#include "maze-core/utils/MazeMultiDelegate.hpp"
+#include "maze-core/utils/MazeEnumClass.hpp"
+#include "maze-core/system/MazeWindowVideoMode.hpp"
+#include "maze-core/system/MazeWindow.hpp"
+#include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/system/MazeInputEvent.hpp"
+#include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/reflection/MazeMetaClass.hpp"
+#include "maze-core/utils/MazeSharedObject.hpp"
+#include "maze-core/data/MazeByteBuffer.hpp"
+#include "maze-core/MazeObject.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
-#include <tinyxml2.h>
+#include "maze-core/assets/MazeArchiveFileZip.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(AssetRegularFile);
+    MAZE_USING_SHARED_PTR(AssetRegularArchive);
+    MAZE_USING_SHARED_PTR(AssetArchivedFile);   
 
 
     //////////////////////////////////////////
-    // Class AssetRegularFile
+    // Class AssetArchivedFile
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API AssetRegularFile
+    class MAZE_CORE_API AssetArchivedFile
         : public AssetFile
     {
     public:
         
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(AssetRegularFile, AssetFile);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(AssetArchivedFile, AssetFile);
         
     public:
 
         //////////////////////////////////////////
-        friend class AssetManager;
+        friend class AssetManager;        
+        friend class AssetRegularArchive;
 
     public:
 
         //////////////////////////////////////////
-        virtual ~AssetRegularFile();
+        virtual ~AssetArchivedFile();
 
-        
         //////////////////////////////////////////
-        virtual String const& getFullPath() const MAZE_OVERRIDE { return m_fullPath; }
-        
-        //////////////////////////////////////////
-        virtual String const& getFileName() const MAZE_OVERRIDE { return m_fileName; }
+        ArchiveFileZipPtr const& getAssetArchive() const { return m_archive; }
 
+        //////////////////////////////////////////
+        String const& getZipArchiveFilePath() const { return m_zipArchiveFilePath; }
+
+        //////////////////////////////////////////
+        String const& getFileName() const MAZE_OVERRIDE { return m_fileName; }
+
+        //////////////////////////////////////////
+        String const& getFullPath() const MAZE_OVERRIDE { return m_fullPath; }
 
         //////////////////////////////////////////
         virtual Size getFileSize() MAZE_OVERRIDE;
 
 
         //////////////////////////////////////////
-        virtual Size readToString(String& string) MAZE_OVERRIDE;
+        virtual UnorderedMap<String, AssetFilePtr> const* getChildrenAssets() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual Size readToString(String& _string) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual bool readToXMLDocument(tinyxml2::XMLDocument& _doc) MAZE_OVERRIDE;
@@ -88,30 +108,27 @@ namespace Maze
     protected:
 
         ////////////////////////////////////
-        static AssetRegularFilePtr Create(String const& _fullPath);
+        static AssetArchivedFilePtr Create(
+            ArchiveFileZipPtr const& _archive,
+            String const& _zipArchiveFilePath);
 
         //////////////////////////////////////////
-        AssetRegularFile();
+        AssetArchivedFile();
 
         //////////////////////////////////////////
         using AssetFile::init;
-        
-        //////////////////////////////////////////
-        virtual bool init(String const& _fullPath, bool _normalizePath = true);
 
-        
         //////////////////////////////////////////
-        void setFullPath(String const& _fullPath, bool _normalizePath = true);
-    
-        //////////////////////////////////////////
-        void updateFileName();
-        
+        virtual bool init(
+            ArchiveFileZipPtr const& _archive,
+            String const& _zipArchiveFilePath);
+
     
     protected:
-        String m_fullPath;
-        
-    private:
+        ArchiveFileZipPtr m_archive;
+        String m_zipArchiveFilePath;
         String m_fileName;
+        String m_fullPath;
     };
 
 
@@ -119,5 +136,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeAssetRegularFile_hpp_
+#endif // _MazeAssetArchivedFile_hpp_
 //////////////////////////////////////////

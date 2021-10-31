@@ -76,10 +76,13 @@ namespace Maze
         
         //////////////////////////////////////////
         virtual String const& getFileName() const MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual Size getFileSize() MAZE_ABSTRACT;
         
+
         //////////////////////////////////////////
         virtual UnorderedMap<String, AssetFilePtr> const* getChildrenAssets() const;
-
 
         //////////////////////////////////////////
         virtual Size readToString(String& _string) { return 0; }
@@ -92,6 +95,7 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool readToByteBuffer(ByteBuffer& _byteBuffer) { return 0; }
+
 
         //////////////////////////////////////////
         bool readToByteBuffer(ByteBufferPtr const& _byteBuffer);

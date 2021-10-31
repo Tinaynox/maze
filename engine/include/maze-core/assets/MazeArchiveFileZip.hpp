@@ -25,99 +25,113 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeAssetRegularFile_hpp_))
-#define _MazeAssetRegularFile_hpp_
+#if (!defined(_MazeArchiveFileZip_hpp_))
+#define _MazeArchiveFileZip_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
-#include "maze-core/assets/MazeAssetFile.hpp"
-#include <tinyxml2.h>
+#include "maze-core/assets/MazeArchiveFile.hpp"
+#include <mz.h>
+#include <mz_compat.h>
+#include <mz_crypt.h>
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(AssetRegularFile);
+    MAZE_USING_SHARED_PTR(ArchiveFileZip);   
 
 
     //////////////////////////////////////////
-    // Class AssetRegularFile
+    // Class ArchiveFileZip
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API AssetRegularFile
-        : public AssetFile
+    class MAZE_CORE_API ArchiveFileZip
+        : public ArchiveFile
     {
     public:
         
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(AssetRegularFile, AssetFile);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(ArchiveFileZip, ArchiveFile);
         
     public:
 
         //////////////////////////////////////////
-        friend class AssetManager;
+        struct ZipFileInfo
+        {
+            unz_file_pos filePos;
+            U32 uncompressedSize;
+            String fullPath;
+            String fileName;
+        };
+
+        //////////////////////////////////////////
+        using ZipNavigationMap = UnorderedMap<String, ZipFileInfo>;
 
     public:
 
         //////////////////////////////////////////
-        virtual ~AssetRegularFile();
-
-        
-        //////////////////////////////////////////
-        virtual String const& getFullPath() const MAZE_OVERRIDE { return m_fullPath; }
-        
-        //////////////////////////////////////////
-        virtual String const& getFileName() const MAZE_OVERRIDE { return m_fileName; }
-
-
-        //////////////////////////////////////////
-        virtual Size getFileSize() MAZE_OVERRIDE;
-
-
-        //////////////////////////////////////////
-        virtual Size readToString(String& string) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual bool readToXMLDocument(tinyxml2::XMLDocument& _doc) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual bool readToByteBuffer(ByteBuffer& _byteBuffer) MAZE_OVERRIDE;
-
-    protected:
+        virtual ~ArchiveFileZip();
 
         ////////////////////////////////////
-        static AssetRegularFilePtr Create(String const& _fullPath);
+        static ArchiveFileZipPtr Create(String const& _fullPath);
+
 
         //////////////////////////////////////////
-        AssetRegularFile();
+        inline String const& getFullPath() const { return m_fullPath; }
+
 
         //////////////////////////////////////////
-        using AssetFile::init;
-        
-        //////////////////////////////////////////
-        virtual bool init(String const& _fullPath, bool _normalizePath = true);
+        bool updateZipNavigationMap();
 
-        
         //////////////////////////////////////////
-        void setFullPath(String const& _fullPath, bool _normalizePath = true);
+        Vector<String> getArchivedFilePathes();
+
+        ////////////////////////////////////
+        Size readArchivedFileToBuffer(String const& _filePath, U8* _bytes, Size _bufferSize);
+
+        ////////////////////////////////////
+        Size readArchivedFileToString(String const& _filePath, String& _stringBuffer);
+
+        ////////////////////////////////////
+        ByteBufferPtr readArchivedFileAsByteBuffer(String const& _filePath);
+
+        ////////////////////////////////////
+        Size getArchivedFileLength(String const& _filePath);
+
+    protected:
+
+        //////////////////////////////////////////
+        ArchiveFileZip();
+
+        //////////////////////////////////////////
+        virtual bool init(String const& _fullPath);
+
+
+        //////////////////////////////////////////
+        bool openZip(String const& _fullPath);
+
+        //////////////////////////////////////////
+        void closeZip();
     
-        //////////////////////////////////////////
-        void updateFileName();
-        
-    
+        ////////////////////////////////////
+        S32 tryUnzOpenCurrentFile(String const& _fileName, unzFile _file);
+
     protected:
         String m_fullPath;
-        
-    private:
-        String m_fileName;
-    };
+        unzFile m_zipHandle = nullptr;
 
+        ZipNavigationMap m_zipNavigationMap;
+        bool m_zipNavigationMapDirty = false;
+
+        Mutex m_zipMutex;
+    };
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeAssetRegularFile_hpp_
+#endif // _MazeArchiveFileZip_hpp_
 //////////////////////////////////////////

@@ -25,93 +25,89 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeAssetRegularFile_hpp_))
-#define _MazeAssetRegularFile_hpp_
+#if (!defined(_MazeAssetRegularArchive_hpp_))
+#define _MazeAssetRegularArchive_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
-#include "maze-core/assets/MazeAssetFile.hpp"
-#include <tinyxml2.h>
+#include "maze-core/utils/MazeMultiDelegate.hpp"
+#include "maze-core/utils/MazeEnumClass.hpp"
+#include "maze-core/system/MazeWindowVideoMode.hpp"
+#include "maze-core/system/MazeWindow.hpp"
+#include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/system/MazeInputEvent.hpp"
+#include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/reflection/MazeMetaClass.hpp"
+#include "maze-core/utils/MazeSharedObject.hpp"
+#include "maze-core/data/MazeByteBuffer.hpp"
+#include "maze-core/MazeObject.hpp"
+#include "maze-core/assets/MazeAssetRegularFile.hpp"
+#include "maze-core/assets/MazeArchiveFileZip.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(AssetRegularFile);
+    MAZE_USING_SHARED_PTR(AssetRegularArchive);   
+    MAZE_USING_SHARED_PTR(AssetFile);
 
 
     //////////////////////////////////////////
-    // Class AssetRegularFile
+    // Class AssetRegularArchive
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API AssetRegularFile
-        : public AssetFile
+    class MAZE_CORE_API AssetRegularArchive
+        : public AssetRegularFile
     {
     public:
         
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(AssetRegularFile, AssetFile);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(AssetRegularArchive, AssetRegularFile);
         
     public:
 
         //////////////////////////////////////////
         friend class AssetManager;
+        friend class AssetDirectory;
 
     public:
 
         //////////////////////////////////////////
-        virtual ~AssetRegularFile();
+        virtual ~AssetRegularArchive();
 
-        
         //////////////////////////////////////////
-        virtual String const& getFullPath() const MAZE_OVERRIDE { return m_fullPath; }
-        
-        //////////////////////////////////////////
-        virtual String const& getFileName() const MAZE_OVERRIDE { return m_fileName; }
+        inline ArchiveFileZipPtr const& getArchive() const { return m_archive; }
 
 
         //////////////////////////////////////////
-        virtual Size getFileSize() MAZE_OVERRIDE;
+        virtual UnorderedMap<String, AssetFilePtr> const* getChildrenAssets() const MAZE_OVERRIDE { return &m_childrenAssets; }
 
 
         //////////////////////////////////////////
-        virtual Size readToString(String& string) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual bool readToXMLDocument(tinyxml2::XMLDocument& _doc) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual bool readToByteBuffer(ByteBuffer& _byteBuffer) MAZE_OVERRIDE;
+        void updateChildrenAssets(
+            Vector<AssetFilePtr>* _addedFiles,
+            Vector<AssetFilePtr>* _removedFiles);
 
     protected:
 
         ////////////////////////////////////
-        static AssetRegularFilePtr Create(String const& _fullPath);
+        static AssetRegularArchivePtr Create(String const& _fullPath);
 
         //////////////////////////////////////////
-        AssetRegularFile();
+        AssetRegularArchive();
 
         //////////////////////////////////////////
         using AssetFile::init;
-        
+
         //////////////////////////////////////////
         virtual bool init(String const& _fullPath, bool _normalizePath = true);
 
-        
-        //////////////////////////////////////////
-        void setFullPath(String const& _fullPath, bool _normalizePath = true);
-    
-        //////////////////////////////////////////
-        void updateFileName();
-        
     
     protected:
-        String m_fullPath;
-        
-    private:
-        String m_fileName;
+        ArchiveFileZipPtr m_archive;
+        UnorderedMap<String, AssetFilePtr> m_childrenAssets;
     };
 
 
@@ -119,5 +115,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeAssetRegularFile_hpp_
+#endif // _MazeAssetRegularArchive_hpp_
 //////////////////////////////////////////

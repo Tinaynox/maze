@@ -25,13 +25,23 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeAssetRegularFile_hpp_))
-#define _MazeAssetRegularFile_hpp_
+#if (!defined(_MazeArchiveFile_hpp_))
+#define _MazeArchiveFile_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
-#include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/utils/MazeMultiDelegate.hpp"
+#include "maze-core/utils/MazeEnumClass.hpp"
+#include "maze-core/system/MazeWindowVideoMode.hpp"
+#include "maze-core/system/MazeWindow.hpp"
+#include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/system/MazeInputEvent.hpp"
+#include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/reflection/MazeMetaClass.hpp"
+#include "maze-core/utils/MazeSharedObject.hpp"
+#include "maze-core/data/MazeByteBuffer.hpp"
+#include "maze-core/MazeObject.hpp"
 #include <tinyxml2.h>
 
 
@@ -39,85 +49,52 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(AssetRegularFile);
+    MAZE_USING_SHARED_PTR(ArchiveFile);   
 
 
     //////////////////////////////////////////
-    // Class AssetRegularFile
+    // Class ArchiveFile
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API AssetRegularFile
-        : public AssetFile
+    class MAZE_CORE_API ArchiveFile
+        : public SharedObject<ArchiveFile>
+        , public Object
     {
     public:
         
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(AssetRegularFile, AssetFile);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(ArchiveFile, Object);
         
     public:
 
         //////////////////////////////////////////
-        friend class AssetManager;
+        using ArchivePasswordFunction = String(*)(String const&);
 
     public:
 
         //////////////////////////////////////////
-        virtual ~AssetRegularFile();
-
-        
-        //////////////////////////////////////////
-        virtual String const& getFullPath() const MAZE_OVERRIDE { return m_fullPath; }
-        
-        //////////////////////////////////////////
-        virtual String const& getFileName() const MAZE_OVERRIDE { return m_fileName; }
+        virtual ~ArchiveFile();
 
 
         //////////////////////////////////////////
-        virtual Size getFileSize() MAZE_OVERRIDE;
-
-
-        //////////////////////////////////////////
-        virtual Size readToString(String& string) MAZE_OVERRIDE;
+        inline void setPasswordFunction(ArchivePasswordFunction _passwordFunction) { m_passwordFunction = _passwordFunction; }
 
         //////////////////////////////////////////
-        virtual bool readToXMLDocument(tinyxml2::XMLDocument& _doc) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual bool readToByteBuffer(ByteBuffer& _byteBuffer) MAZE_OVERRIDE;
+        inline ArchivePasswordFunction getPasswordFunction() const { return m_passwordFunction; }
 
     protected:
 
-        ////////////////////////////////////
-        static AssetRegularFilePtr Create(String const& _fullPath);
+        //////////////////////////////////////////
+        ArchiveFile();
 
-        //////////////////////////////////////////
-        AssetRegularFile();
-
-        //////////////////////////////////////////
-        using AssetFile::init;
-        
-        //////////////////////////////////////////
-        virtual bool init(String const& _fullPath, bool _normalizePath = true);
-
-        
-        //////////////////////////////////////////
-        void setFullPath(String const& _fullPath, bool _normalizePath = true);
-    
-        //////////////////////////////////////////
-        void updateFileName();
-        
     
     protected:
-        String m_fullPath;
-        
-    private:
-        String m_fileName;
+        ArchivePasswordFunction m_passwordFunction = nullptr;
     };
-
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeAssetRegularFile_hpp_
+#endif // _MazeArchiveFile_hpp_
 //////////////////////////////////////////

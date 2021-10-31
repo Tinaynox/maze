@@ -26,9 +26,13 @@
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
 #include "maze-core/assets/MazeAssetDirectory.hpp"
+#include "maze-core/assets/MazeArchiveFileZip.hpp"
+#include "maze-core/assets/MazeAssetObfuscation.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
-
+#include "maze-core/assets/MazeAssetRegularArchive.hpp"
+#include "maze-core/assets/MazeAssetArchivedFile.hpp"
+#include "maze-core/assets/MazeAssetRegularArchive.hpp"
 
 
 //////////////////////////////////////////
@@ -93,7 +97,6 @@ namespace Maze
 
             confirmedFileFullPathes.emplace(fileFullPath);
 
-
             auto it = m_childrenAssets.find(fileFullPath);
             if (it == m_childrenAssets.end())
             {
@@ -112,7 +115,19 @@ namespace Maze
                 {
                     String const extension = FileHelper::GetFileExtension(fileFullPath);
 
-                    file = AssetRegularFile::Create(fileFullPath);
+                    if (extension == "mzap")
+                    {
+                        AssetRegularArchivePtr assetArchive = AssetRegularArchive::Create(fileFullPath);
+                        MAZE_WARNING_RETURN_IF(!assetArchive, "Zip archive %s is corrupted!", fileNames[i].c_str());
+
+                        assetArchive->updateChildrenAssets(_addedFiles, _removedFiles);
+
+                        file = assetArchive;
+                    }
+                    else
+                    {
+                        file = AssetRegularFile::Create(fileFullPath);
+                    }
                 }
 
                 if (file)
