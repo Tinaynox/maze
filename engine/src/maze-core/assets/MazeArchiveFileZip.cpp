@@ -113,8 +113,6 @@ namespace Maze
         
         S32 err = unzGoToFirstFile(m_zipHandle);
 
-        U8 tempByte;
-
         while (err == UNZ_OK)
         {
             unz_file_info fileInfo;
