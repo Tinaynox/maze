@@ -132,7 +132,7 @@ namespace Maze
 
         m_mainLayout = getEntityRaw()->ensureComponent<VerticalLayout2D>();
         m_mainLayout->setHorizontalAlignment(HorizontalAlignment2D::Right);
-        m_mainLayout->setSpacing(3.0f);
+        m_mainLayout->setSpacing(5.0f);
 
         m_mainTransform = SpriteHelper::CreateTransform2D(
             m_transform->getSize(),
@@ -200,7 +200,7 @@ namespace Maze
             getEntityRaw()->getECSScene(),
             Vec2DF(0.0f, 1.0f),
             Vec2DF(0.0f, 1.0f));
-        m_childrenLayout->setSpacing(3.0f);
+        m_childrenLayout->setSpacing(5.0f);
         m_childrenTransform = m_childrenLayout->getTransform();
 
         SizePolicy2DPtr childrenLayoutSizePolicy = m_childrenLayout->getEntityRaw()->ensureComponent<SizePolicy2D>();
