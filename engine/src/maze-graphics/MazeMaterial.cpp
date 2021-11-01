@@ -79,7 +79,8 @@ namespace Maze
 
         if (material)
         {
-            material->loadFromAssetFile(_assetFile);
+            if (!material->loadFromAssetFile(_assetFile))
+                return nullptr;
 
             String name = _assetFile->getFileName();
             StringHelper::RemoveSubstring(name, String(".mzmaterial"));
@@ -97,7 +98,8 @@ namespace Maze
 
         if (material)
         {
-            material->loadFromAssetFile(_assetFileName);
+            if (!material->loadFromAssetFile(_assetFileName))
+                return nullptr;
 
             String name = _assetFileName;
             StringHelper::RemoveSubstring(name, String(".mzmaterial"));
@@ -219,19 +221,23 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Material::loadFromAssetFile(AssetFilePtr const& _assetFile)
+    bool Material::loadFromAssetFile(AssetFilePtr const& _assetFile)
     {
+        MAZE_ERROR_RETURN_VALUE_IF(!_assetFile, false, "Asset File is null!");
+
         tinyxml2::XMLDocument doc;
         MAZE_LOG("Loading %s...", _assetFile->getFileName().c_str());
         _assetFile->readToXMLDocument(doc);
         loadFromXMLDocument(doc);
+
+        return true;
     }
 
     //////////////////////////////////////////
-    void Material::loadFromAssetFile(String const& _assetFileName)
+    bool Material::loadFromAssetFile(String const& _assetFileName)
     {
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_assetFileName);
-        loadFromAssetFile(assetFile);
+        return loadFromAssetFile(assetFile);
     }
 
     //////////////////////////////////////////

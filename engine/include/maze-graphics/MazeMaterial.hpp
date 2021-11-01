@@ -126,10 +126,10 @@ namespace Maze
         void loadFromXMLDocument(tinyxml2::XMLDocument& _doc);
 
         //////////////////////////////////////////
-        void loadFromAssetFile(AssetFilePtr const& _assetFile);
+        bool loadFromAssetFile(AssetFilePtr const& _assetFile);
 
         //////////////////////////////////////////
-        void loadFromAssetFile(String const& _assetFileName);
+        bool loadFromAssetFile(String const& _assetFileName);
 
 
         //////////////////////////////////////////
