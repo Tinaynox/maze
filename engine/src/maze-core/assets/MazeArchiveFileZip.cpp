@@ -176,7 +176,7 @@ namespace Maze
         unzGoToFilePos(m_zipHandle, const_cast<unz_file_pos*>(&zipFileInfo.filePos));
         if (tryUnzOpenCurrentFile(zipFileInfo.fileName, m_zipHandle) == UNZ_OK)
         {
-            S32 readBytes = unzReadCurrentFile(m_zipHandle, _bytes, _bufferSize);
+            S32 readBytes = unzReadCurrentFile(m_zipHandle, _bytes, uint32_t(_bufferSize));
             if (readBytes <= 0)
             {
                 MAZE_ERROR("unzReadCurrentFile isn't OK! error=%d", readBytes);
