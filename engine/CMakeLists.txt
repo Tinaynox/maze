@@ -298,6 +298,13 @@ include("MazeParticles.cmake")
 
 
 ##########################################
+# Maze Sound
+#
+##########################################
+include("MazeSound.cmake")
+
+
+##########################################
 # Maze Engine
 #
 ##########################################
@@ -324,4 +331,14 @@ if(MAZE_RENDER_SYSTEM_OPENGL_ENABLED)
     ##########################################
     include("MazeRenderSystemOpenGL3.cmake")
     
+endif()
+
+
+
+##########################################
+# Maze Sound System OpenAL
+#
+##########################################
+if(MAZE_SOUND_SYSTEM_OPENAL_ENABLED)
+    include("MazeSoundSystemOpenAL.cmake")
 endif()

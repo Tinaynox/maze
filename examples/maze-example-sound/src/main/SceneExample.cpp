@@ -1,0 +1,240 @@
+//////////////////////////////////////////
+//
+// Maze Engine
+// Copyright (C) 2021 Dmitriy "Tinaynox" Nosov (tinaynox@gmail.com)
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it freely,
+// subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented;
+//    you must not claim that you wrote the original software.
+//    If you use this software in a product, an acknowledgment
+//    in the product documentation would be appreciated but is not required.
+//
+// 2. Altered source versions must be plainly marked as such,
+//    and must not be misrepresented as being the original software.
+//
+// 3. This notice may not be removed or altered from any source distribution.
+//
+//////////////////////////////////////////
+
+
+//////////////////////////////////////////
+#include "SceneExample.hpp"
+#include "maze-core/services/MazeLogStream.hpp"
+#include "maze-core/ecs/MazeEntity.hpp"
+#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/managers/MazeEntityManager.hpp"
+#include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeInputManager.hpp"
+#include "maze-core/managers/MazeSceneManager.hpp"
+#include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/ecs/components/MazeName.hpp"
+#include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
+#include "maze-graphics/ecs/components/MazeCamera3D.hpp"
+#include "maze-graphics/ecs/components/MazeCanvas.hpp"
+#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
+#include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeLight3D.hpp"
+#include "maze-core/math/MazeMath.hpp"
+#include "maze-core/math/MazeMathAlgebra.hpp"
+#include "maze-core/math/MazeMathGeometry.hpp"
+#include "maze-graphics/MazeMesh.hpp"
+#include "maze-graphics/MazeSubMesh.hpp"
+#include "maze-graphics/MazeVertexArrayObject.hpp"
+#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
+#include "maze-graphics/managers/MazeGraphicsManager.hpp"
+#include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/MazeTexture2D.hpp"
+#include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
+#include "maze-graphics/MazeGPUTextureBuffer.hpp"
+#include "maze-graphics/helpers/MazeMeshHelper.hpp"
+#include "maze-graphics/MazeRenderMesh.hpp"
+#include "maze-graphics/MazeSprite.hpp"
+#include "maze-graphics/managers/MazeSpriteManager.hpp"
+#include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/ecs/components/MazeRenderMask.hpp"
+#include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeTexture2DOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeShaderUniformOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeStateMachineOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
+#include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/components/MazeCanvas.hpp"
+#include "maze-ui/managers/MazeUIManager.hpp"
+#include "maze-ui/managers/MazeColorPickerManager.hpp"
+#include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
+#include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
+#include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
+#include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
+#include "maze-sound/managers/MazeSoundManager.hpp"
+#include "maze-sound-system-openal/MazeSoundSystemOpenALPlugin.hpp"
+#include "Example.hpp"
+
+
+//////////////////////////////////////////
+namespace Maze
+{
+    //////////////////////////////////////////
+    String GetExampleName()
+    {
+        return "Sound";
+    }
+
+    //////////////////////////////////////////
+    void LoadFirstExampleScene(SceneManager* _sceneManager)
+    {
+        _sceneManager->loadScene<SceneExample>();
+    }
+
+
+    //////////////////////////////////////////
+    // Class SceneExample
+    //
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneExample, ECSRenderScene);
+
+    //////////////////////////////////////////
+    SceneExample::SceneExample()
+    {
+    }
+
+    //////////////////////////////////////////
+    SceneExample::~SceneExample()
+    {
+        InputManager* inputManager = InputManager::GetInstancePtr();
+        if (inputManager)
+        {
+            inputManager->eventMouse.unsubscribe(this);
+        }
+
+        Example::GetInstancePtr()->eventMainRenderWindowViewportChanged.unsubscribe(this);
+    }
+
+    //////////////////////////////////////////
+    SceneExamplePtr SceneExample::Create()
+    {
+        SceneExamplePtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(SceneExample, object, init());
+        return object;
+    }
+
+    //////////////////////////////////////////
+    bool SceneExample::init()
+    {
+        if (!ECSRenderScene::init(Example::GetInstancePtr()->getMainRenderWindow()))
+            return false;
+
+        SoundManager::Initialize(m_soundManager);
+        if (!m_soundManager)
+            return false;
+
+        if (!loadPlugins())
+            return false;
+
+        create2D();
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool SceneExample::loadPlugins()
+    {
+#if (MAZE_STATIC)
+
+        Debug::log << "Plugins Static installation..." << endl;
+        SoundSystemOpenALConfig config;
+        InstallSoundSystemOpenALPlugin(config);
+        Debug::log << "Plugins Static installation finished." << endl;
+
+#else
+
+#    if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
+#        if (MAZE_ARCH == MAZE_ARCH_X86)
+        PluginManager::GetInstancePtr()->loadPlugin("maze-sound-system-openal-x86-d");
+#        else
+        PluginManager::GetInstancePtr()->loadPlugin("maze-sound-system-openal-x64-d");
+#        endif
+#    elif (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
+        PluginManager::GetInstancePtr()->loadPlugin("libmaze-sound-system-openal-d");
+#    elif (MAZE_PLATFORM == MAZE_PLATFORM_OSX)
+        PluginManager::GetInstancePtr()->loadPlugin("libmaze-sound-system-openal-d");
+#    else
+        PluginManager::GetInstancePtr()->loadPlugin("maze-sound-system-openal-d");
+#    endif
+#endif
+
+        Debug::log << "Available Sound Systems: " << endl;
+        for (auto const& soundSystemData : m_soundManager->getSoundSystems())
+        {
+            Debug::log << "\t" << soundSystemData.first;
+
+            if (soundSystemData.second == m_soundManager->getDefaultSoundSystem())
+                Debug::log << " [Default]";
+
+            Debug::log << endl;
+        }
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport)
+    {        
+        m_canvas->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::update(F32 _dt)
+    {
+        ECSRenderScene::update(_dt);
+
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::create2D()
+    {
+        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+        ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
+        SpriteManagerPtr const& spriteManager = renderSystem->getSpriteManager();
+        RenderMeshManagerPtr const& renderMeshManager = renderSystem->getRenderMeshManager();
+        MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
+
+        RenderWindowPtr const& renderTarget = Example::GetInstancePtr()->getMainRenderWindow();
+
+        // Canvas
+        Maze::EntityPtr canvasEntity = createEntity();
+        Maze::Transform2DPtr canvasTransform2D = canvasEntity->createComponent<Maze::Transform2D>();
+        m_canvas = canvasEntity->createComponent<Maze::Canvas>();
+        m_canvas->setRenderTarget(renderTarget);
+        m_canvas->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
+        m_canvas->setClearColorFlag(true);
+
+        Maze::SpritePtr sprite = spriteManager->getSprite("Panel00.mztexture");
+        sprite->setSliceBorder(
+            40.0f,
+            34.0f,
+            40.0f,
+            34.0f);
+
+        
+        SpriteRenderer2DPtr panel00 = SpriteHelper::CreateSprite(
+            ColorU32(203, 203, 203),
+            Vec2DF(640, 480),
+            Vec2DF(0, 0),
+            materialManager->getColorTextureMaterial(),
+            canvasTransform2D,
+            this);
+    
+    }
+
+} // namespace Maze
+//////////////////////////////////////////
