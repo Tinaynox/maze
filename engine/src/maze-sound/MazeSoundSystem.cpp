@@ -68,20 +68,27 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SoundSourcePtr SoundSystem::play(SoundPtr const& _sound, bool _cycled)
+    SoundSourcePtr SoundSystem::play(
+        SoundPtr const& _sound,
+        bool _cycled,
+        SoundGroupPtr const& _soundGroup)
     {
         SoundSourcePtr soundSource = createSoundSource(_sound);
         soundSource->setCycled(_cycled);
+        soundSource->setSoundGroup(_soundGroup);
         soundSource->play();
         return soundSource;
     }
 
     //////////////////////////////////////////
-    SoundSourcePtr SoundSystem::play(String const& _soundAssetName, bool _cycled)
+    SoundSourcePtr SoundSystem::play(
+        String const& _soundAssetName,
+        bool _cycled,
+        SoundGroupPtr const& _soundGroup)
     {
         SoundPtr const& sound = SoundManager::GetInstancePtr()->getSound(_soundAssetName);
         MAZE_ERROR_RETURN_VALUE_IF(!sound, nullptr, "Sound is not found - %s", _soundAssetName.c_str());
-        return play(sound, _cycled);
+        return play(sound, _cycled, _soundGroup);
     }
 
     //////////////////////////////////////////

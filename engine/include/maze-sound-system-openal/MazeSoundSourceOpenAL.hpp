@@ -73,7 +73,7 @@ namespace Maze
         bool update(F32 _dt);
 
         //////////////////////////////////////////
-        void setVolume(F32 _volume);
+        virtual void setVolume(F32 _volume) MAZE_OVERRIDE;
 
     protected:
 
@@ -93,6 +93,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void bindSound(MZALuint _bufferID);
+
+        //////////////////////////////////////////
+        virtual void updateVolume() MAZE_OVERRIDE;
 
     protected:
         MZALuint m_sourceID = 0;

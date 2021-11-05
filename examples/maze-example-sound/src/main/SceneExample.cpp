@@ -227,6 +227,9 @@ namespace Maze
             40.0f,
             34.0f);
 
+        m_soundGroup = SoundGroup::Create();
+        m_musicGroup = SoundGroup::Create();
+
         
         SpriteRenderer2DPtr panel00 = SpriteHelper::CreateSprite(
             ColorU32(203, 203, 203),
@@ -244,9 +247,9 @@ namespace Maze
             this,
             { 0.0f, 0.0f });
         m_playSoundButton->eventClick.subscribe(
-            [](Button2D* _button, CursorInputEvent const& _event)
+            [&](Button2D* _button, CursorInputEvent const& _event)
             {
-                SoundSystem::GetCurrentInstancePtr()->play("Farm00.wav");
+                SoundSystem::GetCurrentInstancePtr()->play("Farm00.wav", false, m_soundGroup);
             });
 
         m_playMusicButton = UIHelper::CreateDefaultClickButton(
@@ -266,8 +269,34 @@ namespace Maze
                 }
                 else
                 {
-                    m_music = SoundSystem::GetCurrentInstancePtr()->play("Music00.wav");
+                    m_music = SoundSystem::GetCurrentInstancePtr()->play("Music00.wav", false, m_musicGroup);
                 }
+            });
+
+        m_soundVolumeSlider = UIHelper::CreateDefaultSlider(
+            1.0f,
+            { 90.0f, 18.0f },
+            { 180.0f, 450.0f },
+            panel00->getTransform(),
+            this,
+            { 0.0f, 0.0f });
+        m_soundVolumeSlider->eventValueChanged.subscribe(
+            [&](Slider2D* _slider, F32 _value)
+            {
+                m_soundGroup->setVolume(_value);
+            });
+
+        m_musicVolumeSlider = UIHelper::CreateDefaultSlider(
+            1.0f,
+            { 90.0f, 18.0f },
+            { 180.0f, 420.0f },
+            panel00->getTransform(),
+            this,
+            { 0.0f, 0.0f });
+        m_musicVolumeSlider->eventValueChanged.subscribe(
+            [&](Slider2D* _slider, F32 _value)
+            {
+                m_musicGroup->setVolume(_value);
             });
     }
 

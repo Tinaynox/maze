@@ -74,6 +74,8 @@ namespace Maze
         if (_sound)
             bindSound(_sound->castRaw<SoundOpenAL>()->getBufferID());
 
+        updateVolume();
+
         return true;
     }
 
@@ -113,7 +115,19 @@ namespace Maze
     //////////////////////////////////////////
     void SoundSourceOpenAL::setVolume(F32 _volume)
     {
-        MAZE_AL_CALL(mzalSourcef(m_sourceID, AL_GAIN, _volume));
+        SoundSource::setVolume(_volume);
+        updateVolume();
+    }
+
+    //////////////////////////////////////////
+    void SoundSourceOpenAL::updateVolume()
+    {
+        F32 volume = m_volume;
+
+        if (m_soundGroup)
+            volume *= m_soundGroup->getVolume();
+
+        MAZE_AL_CALL(mzalSourcef(m_sourceID, AL_GAIN, volume));
     }
 
     //////////////////////////////////////////

@@ -53,11 +53,31 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    SoundGroupPtr SoundGroup::Create(SoundSystem* _soundSystem)
+    {
+        if (!_soundSystem)
+            _soundSystem = SoundSystem::GetCurrentInstancePtr();
+
+        return _soundSystem->createSoundGroup();
+    }
+
+    //////////////////////////////////////////
     bool SoundGroup::init(SoundSystem* _soundSystem)
     {
         m_soundSystem = _soundSystem;
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    void SoundGroup::setVolume(F32 _volume)
+    {
+        if (m_volume == _volume)
+            return;
+
+        m_volume = _volume;
+
+        eventVolumeChanged(m_volume);
     }
 
 } // namespace Maze

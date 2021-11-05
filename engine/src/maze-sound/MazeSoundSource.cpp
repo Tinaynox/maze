@@ -49,7 +49,11 @@ namespace Maze
     //////////////////////////////////////////
     SoundSource::~SoundSource()
     {
-        
+        if (m_soundGroup)
+        {
+            m_soundGroup->eventVolumeChanged.unsubscribe(this);
+            m_soundGroup.reset();
+        }
     }
 
     //////////////////////////////////////////
@@ -59,6 +63,33 @@ namespace Maze
         m_soundSystem = _soundSystem;
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    void SoundSource::setSoundGroup(SoundGroupPtr const& _soundGroup)
+    {
+        if (m_soundGroup == _soundGroup)
+            return;
+
+        if (m_soundGroup)
+        {
+            m_soundGroup->eventVolumeChanged.unsubscribe(this);
+        }
+
+        m_soundGroup = _soundGroup;
+
+        if (m_soundGroup)
+        {
+            m_soundGroup->eventVolumeChanged.subscribe(this, &SoundSource::notifySoundGroupVolumeChanged);
+        }
+
+        updateVolume();
+    }
+
+    //////////////////////////////////////////
+    void SoundSource::notifySoundGroupVolumeChanged(F32 _volume)
+    {
+        updateVolume();
     }
 
 } // namespace Maze

@@ -44,8 +44,10 @@
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/MazeECSRenderScene.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
+#include "maze-ui/ecs/components/MazeSlider2D.hpp"
 #include "maze-sound/managers/MazeSoundManager.hpp"
 #include "maze-sound/MazeSoundSource.hpp"
+#include "maze-sound/MazeSoundGroup.hpp"
 
 
 //////////////////////////////////////////
@@ -114,6 +116,13 @@ namespace Maze
 
         ClickButton2DPtr m_playSoundButton;
         ClickButton2DPtr m_playMusicButton;
+
+        Slider2DPtr m_soundVolumeSlider;
+        Slider2DPtr m_musicVolumeSlider;
+
+
+        SoundGroupPtr m_soundGroup;
+        SoundGroupPtr m_musicGroup;
 
         SoundSourcePtr m_music;
     };

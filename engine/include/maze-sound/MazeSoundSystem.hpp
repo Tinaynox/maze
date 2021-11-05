@@ -82,10 +82,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        SoundSourcePtr play(SoundPtr const& _sound, bool _cycled = false);
+        SoundSourcePtr play(
+            SoundPtr const& _sound,
+            bool _cycled = false,
+            SoundGroupPtr const& _soundGroup = nullptr);
 
         //////////////////////////////////////////
-        SoundSourcePtr play(String const& _soundAssetName, bool _cycled = false);
+        SoundSourcePtr play(
+            String const& _soundAssetName,
+            bool _cycled = false,
+            SoundGroupPtr const& _soundGroup = nullptr);
 
 
         //////////////////////////////////////////

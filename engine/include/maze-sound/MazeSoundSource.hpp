@@ -35,6 +35,7 @@
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-sound/MazeSoundData.hpp"
 #include "maze-sound/MazeSoundSystem.hpp"
+#include "maze-sound/MazeSoundGroup.hpp"
 
 
 //////////////////////////////////////////
@@ -50,6 +51,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_SOUND_API SoundSource
         : public SharedObject<SoundSource>
+        , public MultiDelegateCallbackReceiver
     {
     public:
 
@@ -60,6 +62,14 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual ~SoundSource();
+
+
+        //////////////////////////////////////////
+        virtual void setVolume(F32 _volume) { m_volume = _volume; }
+
+        //////////////////////////////////////////
+        inline F32 getVolume() const { return m_volume; }
+
 
         //////////////////////////////////////////
         inline void setCycled(bool _cycled) { m_cycled = _cycled; }
@@ -74,6 +84,14 @@ namespace Maze
         //////////////////////////////////////////
         virtual void stop() MAZE_ABSTRACT;
 
+
+        //////////////////////////////////////////
+        void setSoundGroup(SoundGroupPtr const& _soundGroup);
+
+        //////////////////////////////////////////
+        inline SoundGroupPtr const& getSoundGroup() const { return m_soundGroup; }
+
+
     protected:
 
         //////////////////////////////////////////
@@ -82,10 +100,19 @@ namespace Maze
         //////////////////////////////////////////
         bool init(SoundPtr const& _sound, SoundSystem* _soundSystem);
 
+        //////////////////////////////////////////
+        virtual void updateVolume() MAZE_ABSTRACT;
+
+
+        //////////////////////////////////////////
+        void notifySoundGroupVolumeChanged(F32 _volume);
+
     protected:
         SoundSystem* m_soundSystem = nullptr;
         SoundPtr m_sound;
+        SoundGroupPtr m_soundGroup;
 
+        F32 m_volume = 1.0f;
         bool m_cycled = false;
     };
     

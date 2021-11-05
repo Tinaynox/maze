@@ -59,6 +59,21 @@ namespace Maze
         //////////////////////////////////////////
         virtual ~SoundGroup();
 
+        //////////////////////////////////////////
+        static SoundGroupPtr Create(SoundSystem* _soundSystem = nullptr);
+
+
+        //////////////////////////////////////////
+        void setVolume(F32 _volume);
+
+        //////////////////////////////////////////
+        inline F32 getVolume() const { return m_volume; }
+
+    public:
+
+        //////////////////////////////////////////
+        MultiDelegate<F32> eventVolumeChanged;
+
     protected:
 
         //////////////////////////////////////////
@@ -67,8 +82,10 @@ namespace Maze
         //////////////////////////////////////////
         bool init(SoundSystem* _soundSystem);
 
+
     protected:
         SoundSystem* m_soundSystem = nullptr;
+        F32 m_volume = 1.0f;
     };
     
 
