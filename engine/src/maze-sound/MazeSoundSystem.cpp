@@ -26,8 +26,10 @@
 //////////////////////////////////////////
 #include "MazeSoundHeader.hpp"
 #include "maze-sound/MazeSoundSystem.hpp"
+#include "maze-sound/MazeSound.hpp"
 #include "maze-sound/managers/MazeSoundManager.hpp"
 #include "maze-sound/loaders/MazeLoaderWAV.hpp"
+#include "maze-sound/MazeSoundSource.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 
 
@@ -63,6 +65,23 @@ namespace Maze
     SoundSystem* SoundSystem::GetCurrentInstancePtr()
     {
         return SoundManager::GetInstancePtr()->getDefaultSoundSystemRaw();
+    }
+
+    //////////////////////////////////////////
+    SoundSourcePtr SoundSystem::play(SoundPtr const& _sound, bool _cycled)
+    {
+        SoundSourcePtr soundSource = createSoundSource(_sound);
+        soundSource->setCycled(_cycled);
+        soundSource->play();
+        return soundSource;
+    }
+
+    //////////////////////////////////////////
+    SoundSourcePtr SoundSystem::play(String const& _soundAssetName, bool _cycled)
+    {
+        SoundPtr const& sound = SoundManager::GetInstancePtr()->getSound(_soundAssetName);
+        MAZE_ERROR_RETURN_VALUE_IF(!sound, nullptr, "Sound is not found - %s", _soundAssetName.c_str());
+        return play(sound, _cycled);
     }
 
     //////////////////////////////////////////

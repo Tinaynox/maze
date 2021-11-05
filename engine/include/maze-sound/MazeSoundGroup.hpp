@@ -25,90 +25,50 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeSound_hpp_))
-#define _MazeSound_hpp_
+#if (!defined(_MazeSoundGroup_hpp_))
+#define _MazeSoundGroup_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-sound/MazeSoundHeader.hpp"
-#include "maze-sound/MazeSoundData.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
-#include "maze-core/utils/MazeSharedObject.hpp"
+#include "maze-sound/MazeSoundSystem.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(Sound);
-    MAZE_USING_SHARED_PTR(SoundSource);
-    MAZE_USING_SHARED_PTR(SoundSystem);
-    MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_SHARED_PTR(SoundGroup);
 
 
     //////////////////////////////////////////
-    // Class Sound
+    // Class SoundGroup
     //
     //////////////////////////////////////////
-    class MAZE_SOUND_API Sound
-        : public SharedObject<Sound>
+    class MAZE_SOUND_API SoundGroup
+        : public SharedObject<SoundGroup>
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS(Sound);
+        MAZE_DECLARE_METACLASS(SoundGroup);
 
     public:
 
         //////////////////////////////////////////
-        virtual ~Sound();
-
-        //////////////////////////////////////////
-        static SoundPtr Create(SoundSystem* _soundSystem = nullptr);
-
-        //////////////////////////////////////////
-        static SoundPtr Create(
-            AssetFilePtr const& _assetFile,
-            SoundSystem* _soundSystem = nullptr);
-
-        //////////////////////////////////////////
-        static SoundPtr Create(
-            String const& _assetFileName,
-            SoundSystem* _soundSystem = nullptr);
-
-
-        //////////////////////////////////////////
-        inline String const& getName() const { return m_name; }
-
-        //////////////////////////////////////////
-        inline void setName(String const& _name) { m_name = _name; }
-
-
-        //////////////////////////////////////////
-        void loadFromAssetFile(AssetFilePtr const& _assetFile);
-
-        //////////////////////////////////////////
-        void loadFromAssetFile(String const& _assetFileName);
-
-        //////////////////////////////////////////
-        virtual bool loadSound(SoundDataPtr const& _soundData) MAZE_ABSTRACT;
-
-
-        //////////////////////////////////////////
-        SoundSourcePtr play();
+        virtual ~SoundGroup();
 
     protected:
 
         //////////////////////////////////////////
-        Sound();
+        SoundGroup();
 
         //////////////////////////////////////////
-        virtual bool init(SoundSystem* _soundSystem);
+        bool init(SoundSystem* _soundSystem);
 
     protected:
-        SoundSystem* m_soundSystem;
-
-        String m_name;
+        SoundSystem* m_soundSystem = nullptr;
     };
     
 
@@ -116,5 +76,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeSound_hpp_
+#endif // _MazeSoundGroup_hpp_
 //////////////////////////////////////////

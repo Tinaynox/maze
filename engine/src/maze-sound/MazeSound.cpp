@@ -113,5 +113,11 @@ namespace Maze
         loadFromAssetFile(assetFile);
     }
 
+    //////////////////////////////////////////
+    SoundSourcePtr Sound::play()
+    {
+        return m_soundSystem->play(cast<Sound>());
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

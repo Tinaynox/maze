@@ -175,9 +175,11 @@ namespace Maze
         AssignOpenALFunction(_soundContext, mzalGetSourcefv, "alGetSourcefv");
         AssignOpenALFunction(_soundContext, mzalSourcePlayv, "alSourcePlayv");
         AssignOpenALFunction(_soundContext, mzalSourceStopv, "alSourceStopv");
+        AssignOpenALFunction(_soundContext, mzalSourceRewindv, "alSourceRewindv");
         AssignOpenALFunction(_soundContext, mzalSourcePlay, "alSourcePlay");
         AssignOpenALFunction(_soundContext, mzalSourcePause, "alSourcePause");
         AssignOpenALFunction(_soundContext, mzalSourceStop, "alSourceStop");
+        AssignOpenALFunction(_soundContext, mzalSourceRewind, "alSourceRewind");
         AssignOpenALFunction(_soundContext, mzalGenBuffers, "alGenBuffers");
         AssignOpenALFunction(_soundContext, mzalDeleteBuffers, "alDeleteBuffers");
         AssignOpenALFunction(_soundContext, mzalIsBuffer, "alIsBuffer");

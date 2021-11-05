@@ -27,7 +27,10 @@
 #include "MazeSoundSystemOpenALHeader.hpp"
 #include "maze-sound-system-openal/MazeSoundSystemOpenAL.hpp"
 #include "maze-sound-system-openal/MazeSoundOpenAL.hpp"
+#include "maze-sound-system-openal/MazeSoundGroupOpenAL.hpp"
+#include "maze-sound-system-openal/MazeSoundSourceOpenAL.hpp"
 #include "maze-sound-system-openal/MazeFunctionsOpenAL.hpp"
+#include "maze-core/managers/MazeUpdateManager.hpp"
 
 #if MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS
 #   include "maze-sound-system-openal/win/MazeContextOpenALWin.hpp"
@@ -69,8 +72,27 @@ namespace Maze
 
         if (!setupSystem())
             return false;
+
+        UpdateManager::GetInstancePtr()->addUpdatable(this);
         
         return true;
+    }
+
+    //////////////////////////////////////////
+    void SoundSystemOpenAL::update(F32 _dt)
+    {
+        Stack<Size> deadSourceIds;
+        for (Size i = 0, in = m_soundSources.size(); i != in; ++i)
+        {
+            if (!m_soundSources[i]->update(_dt))
+                deadSourceIds.push(i);
+        }
+
+        while (!deadSourceIds.empty())
+        {
+            m_soundSources.eraseUnordered(m_soundSources.begin() + deadSourceIds.top());
+            deadSourceIds.pop();
+        }
     }
 
     //////////////////////////////////////////
@@ -95,6 +117,20 @@ namespace Maze
     SoundPtr SoundSystemOpenAL::createSound()
     {
         return SoundOpenAL::Create();
+    }
+
+    //////////////////////////////////////////
+    SoundGroupPtr SoundSystemOpenAL::createSoundGroup()
+    {
+        return SoundGroupOpenAL::Create();
+    }
+
+    //////////////////////////////////////////
+    SoundSourcePtr SoundSystemOpenAL::createSoundSource(SoundPtr const& _sound)
+    {
+        SoundSourceOpenALPtr soundSource = SoundSourceOpenAL::Create(_sound);
+        m_soundSources.push_back(soundSource);
+        return soundSource;
     }
 
     //////////////////////////////////////////

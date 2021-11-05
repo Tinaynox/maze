@@ -75,6 +75,7 @@
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
+#include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-sound/managers/MazeSoundManager.hpp"
 #include "maze-sound-system-openal/MazeSoundSystemOpenALPlugin.hpp"
 #include "maze-sound/MazeSound.hpp"
@@ -234,8 +235,40 @@ namespace Maze
             materialManager->getColorTextureMaterial(),
             canvasTransform2D,
             this);
-    
-        SoundPtr sound = Sound::Create("Farm00.wav");
+
+        m_playSoundButton = UIHelper::CreateDefaultClickButton(
+            "Sound",
+            { 90.0f, 18.0f },
+            { 80.0f, 450.0f },
+            panel00->getTransform(),
+            this,
+            { 0.0f, 0.0f });
+        m_playSoundButton->eventClick.subscribe(
+            [](Button2D* _button, CursorInputEvent const& _event)
+            {
+                SoundSystem::GetCurrentInstancePtr()->play("Farm00.wav");
+            });
+
+        m_playMusicButton = UIHelper::CreateDefaultClickButton(
+            "Music",
+            { 90.0f, 18.0f },
+            { 80.0f, 420.0f },
+            panel00->getTransform(),
+            this,
+            { 0.0f, 0.0f });
+        m_playMusicButton->eventClick.subscribe(
+            [&](Button2D* _button, CursorInputEvent const& _event)
+            {
+                if (m_music)
+                {
+                    m_music->stop();
+                    m_music.reset();
+                }
+                else
+                {
+                    m_music = SoundSystem::GetCurrentInstancePtr()->play("Music00.wav");
+                }
+            });
     }
 
 } // namespace Maze

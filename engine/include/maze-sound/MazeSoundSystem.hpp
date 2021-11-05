@@ -42,6 +42,8 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(SoundSystem);
     MAZE_USING_SHARED_PTR(Sound);
+    MAZE_USING_SHARED_PTR(SoundGroup);
+    MAZE_USING_SHARED_PTR(SoundSource);
 
     //////////////////////////////////////////
     // Class SoundSystem
@@ -71,6 +73,20 @@ namespace Maze
         //////////////////////////////////////////
         virtual SoundPtr createSound() MAZE_ABSTRACT;
 
+        //////////////////////////////////////////
+        virtual SoundGroupPtr createSoundGroup() MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual SoundSourcePtr createSoundSource(SoundPtr const& _sound) MAZE_ABSTRACT;
+
+
+
+        //////////////////////////////////////////
+        SoundSourcePtr play(SoundPtr const& _sound, bool _cycled = false);
+
+        //////////////////////////////////////////
+        SoundSourcePtr play(String const& _soundAssetName, bool _cycled = false);
+
 
         //////////////////////////////////////////
         SoundDataPtr loadSoundData(AssetFilePtr const& _assetFile);
@@ -91,5 +107,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeSoundManager_hpp_
+#endif // _MazeSoundSystem_hpp_
 //////////////////////////////////////////

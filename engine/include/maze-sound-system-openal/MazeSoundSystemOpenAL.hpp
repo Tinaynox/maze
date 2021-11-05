@@ -43,6 +43,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(SoundSystemOpenAL);
     MAZE_USING_SHARED_PTR(Sound);
+    MAZE_USING_SHARED_PTR(SoundSourceOpenAL);
     MAZE_USING_SHARED_PTR(ContextOpenAL);
 
 
@@ -52,6 +53,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_SOUND_SYSTEM_OPENAL_API SoundSystemOpenAL
         : public SoundSystem
+        , public Updatable
     {
     public:
 
@@ -66,6 +68,11 @@ namespace Maze
         //////////////////////////////////////////
         static SoundSystemOpenALPtr Create(
             SoundSystemOpenALConfig const& _config = SoundSystemOpenALConfig());
+
+
+        //////////////////////////////////////////
+        virtual void update(F32 _dt) MAZE_OVERRIDE;
+
 
         //////////////////////////////////////////
         virtual String const& getName() MAZE_OVERRIDE;
@@ -83,6 +90,12 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual SoundPtr createSound() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual SoundGroupPtr createSoundGroup() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual SoundSourcePtr createSoundSource(SoundPtr const& _sound) MAZE_OVERRIDE;
 
 
 
@@ -132,6 +145,8 @@ namespace Maze
         Vector<DeviceInfoOpenAL> m_devicesInfo;
         bool m_devicesInfoLoaded = false;
         S32 m_defaultDeviceIndex = 0;
+
+        FastVector<SoundSourceOpenALPtr> m_soundSources;
     };
 
 } // namespace Maze

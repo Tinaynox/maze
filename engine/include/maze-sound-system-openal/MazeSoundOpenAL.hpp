@@ -67,7 +67,7 @@ namespace Maze
         virtual bool loadSound(SoundDataPtr const& _soundData) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        inline ALuint getBufferID() const { return m_bufferID; }
+        inline MZALuint getBufferID() const { return m_bufferID; }
 
     protected:
 
@@ -85,9 +85,8 @@ namespace Maze
         void deleteALObjects();
 
     protected:
-        ALuint m_bufferID = 0;
-        ALenum m_bufferFormat = 0;
-        ALenum m_XRAMBufferMode = 0;
+        MZALuint m_bufferID = 0;
+        MZALenum m_bufferFormat = 0;
     };
 
 } // namespace Maze
