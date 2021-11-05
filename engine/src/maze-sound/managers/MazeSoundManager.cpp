@@ -28,6 +28,9 @@
 #include "maze-sound/managers/MazeSoundManager.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
+#include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-sound/MazeSound.hpp"
 
 
 //////////////////////////////////////////
@@ -111,6 +114,46 @@ namespace Maze
         MAZE_ERROR_RETURN_IF(it == m_soundSystems.end(), "SoundSystem %s is not in SoundSystems list!", _soundSystem->getName().c_str());
 
         m_defaultSoundSystem = _soundSystem;
+    }
+
+    //////////////////////////////////////////
+    SoundPtr const& SoundManager::getSound(String const& _assetFileName)
+    {
+        static SoundPtr nullPointer;
+
+        UnorderedMap<String, SoundPtr>::const_iterator it = m_soundsByName.find(_assetFileName);
+        if (it != m_soundsByName.end())
+            return it->second;
+
+        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_assetFileName);
+        if (!assetFile)
+            return nullPointer;
+
+        return getSound(assetFile);
+    }
+
+    //////////////////////////////////////////
+    SoundPtr const& SoundManager::getSound(AssetFilePtr const& _assetFile)
+    {
+        UnorderedMap<String, SoundPtr>::const_iterator it = m_soundsByName.find(_assetFile->getFileName());
+        if (it != m_soundsByName.end())
+            return it->second;
+
+        SoundPtr sound = Sound::Create(_assetFile, m_defaultSoundSystem.get());
+        sound->setName(_assetFile->getFileName());
+
+        return addSound(sound);
+    }
+
+    //////////////////////////////////////////
+    SoundPtr const& SoundManager::addSound(SoundPtr const& _sound)
+    {
+        auto it2 = m_soundsByName.emplace(
+            std::piecewise_construct,
+            std::forward_as_tuple(_sound->getName()),
+            std::forward_as_tuple(_sound));
+
+        return it2.first->second;
     }
     
 } // namespace Maze

@@ -32,6 +32,8 @@
 //////////////////////////////////////////
 #include "maze-sound/MazeSoundHeader.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
+#include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-sound/MazeSoundData.hpp"
 
 
 //////////////////////////////////////////
@@ -39,12 +41,14 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(SoundSystem);
+    MAZE_USING_SHARED_PTR(Sound);
 
     //////////////////////////////////////////
     // Class SoundSystem
     //
     //////////////////////////////////////////
     class MAZE_SOUND_API SoundSystem
+        : public SharedObject<SoundSystem>
     {
     public:
 
@@ -62,6 +66,14 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual String const& getName() MAZE_ABSTRACT;
+
+
+        //////////////////////////////////////////
+        virtual SoundPtr createSound() MAZE_ABSTRACT;
+
+
+        //////////////////////////////////////////
+        SoundDataPtr loadSoundData(AssetFilePtr const& _assetFile);
 
     protected:
 

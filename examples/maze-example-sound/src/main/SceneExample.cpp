@@ -77,6 +77,7 @@
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
 #include "maze-sound/managers/MazeSoundManager.hpp"
 #include "maze-sound-system-openal/MazeSoundSystemOpenALPlugin.hpp"
+#include "maze-sound/MazeSound.hpp"
 #include "Example.hpp"
 
 
@@ -234,6 +235,7 @@ namespace Maze
             canvasTransform2D,
             this);
     
+        SoundPtr sound = Sound::Create("Farm00.wav");
     }
 
 } // namespace Maze

@@ -85,6 +85,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool readToByteBuffer(ByteBuffer& _byteBuffer) MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        virtual bool readHeaderToByteBuffer(ByteBuffer& _byteBuffer, Size _size) MAZE_OVERRIDE;
+
     protected:
 
         ////////////////////////////////////

@@ -27,6 +27,8 @@
 #include "MazeSoundHeader.hpp"
 #include "maze-sound/MazeSoundSystem.hpp"
 #include "maze-sound/managers/MazeSoundManager.hpp"
+#include "maze-sound/loaders/MazeLoaderWAV.hpp"
+#include "maze-core/managers/MazeAssetManager.hpp"
 
 
 //////////////////////////////////////////
@@ -61,6 +63,44 @@ namespace Maze
     SoundSystem* SoundSystem::GetCurrentInstancePtr()
     {
         return SoundManager::GetInstancePtr()->getDefaultSoundSystemRaw();
+    }
+
+    //////////////////////////////////////////
+    SoundDataPtr SoundSystem::loadSoundData(AssetFilePtr const& _assetFile)
+    {
+        SoundDataPtr soundData;
+
+        Debug::Log("Loading texture pixel sheet: %s...", _assetFile->getFileName().c_str());
+
+        UnorderedMap<String, String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
+
+        if (metaData.empty())
+        {
+            if (Maze::IsWAVFile(_assetFile))
+            {
+                MAZE_ERROR_IF(!Maze::LoadWAV(_assetFile, soundData), "SoundData is not loaded - '%s'", _assetFile->getFileName().c_str());
+            }
+            else
+            {
+                MAZE_ERROR("Unsupported sound format!");
+            }
+        }
+        else
+        {
+            String fileExtension = StringHelper::ToLower(metaData["ext"]);
+            if (fileExtension == "wav")
+            {
+                MAZE_ERROR_IF(!Maze::LoadWAV(_assetFile, soundData), "SoundData is not loaded - '%s'", _assetFile->getFileName().c_str());
+            }
+            else
+            {
+                MAZE_ERROR("Unsupported sound format!");
+            }
+        }
+
+        Debug::Log("Loaded.", _assetFile->getFileName().c_str());
+
+        return soundData;
     }
 
 } // namespace Maze

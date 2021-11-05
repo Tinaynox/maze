@@ -137,6 +137,21 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline U32 readUnsafe(U32 _srcOffset, void* _dst, U32 _size)
+        {
+            MAZE_DEBUG_BP_IF((U32)_srcOffset + _size > m_size);
+            memcpy(_dst, m_data + _srcOffset, _size);
+            return _size;
+        }
+
+        //////////////////////////////////////////
+        inline U32 read(U32 _srcOffset, void* _dst, U32 _size)
+        {
+            _size = Math::Min(_size, m_size - _srcOffset);
+            return readUnsafe(_srcOffset, _dst, _size);
+        }
+
+        //////////////////////////////////////////
         U8& operator [](Size _i)
         {
             MAZE_DEBUG_BP_IF((_i < 0) || ((U32)_i >= m_size));

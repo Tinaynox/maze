@@ -86,10 +86,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool AssetFile::readToByteBuffer(ByteBufferPtr const& byteBuffer)
+    bool AssetFile::readToByteBuffer(ByteBufferPtr const& _byteBuffer)
     {
-        ByteBuffer& buffer = *byteBuffer.get();
+        ByteBuffer& buffer = *_byteBuffer.get();
         return readToByteBuffer(buffer);
+    }
+
+    //////////////////////////////////////////
+    bool AssetFile::readHeaderToByteBuffer(ByteBufferPtr const& _byteBuffer, Size _size)
+    {
+        ByteBuffer& buffer = *_byteBuffer.get();
+        return readHeaderToByteBuffer(buffer, _size);
     }
     
     //////////////////////////////////////////
@@ -97,6 +104,15 @@ namespace Maze
     {
         ByteBufferPtr byteBuffer = ByteBuffer::Create();
         readToByteBuffer(byteBuffer);
+
+        return byteBuffer;
+    }
+
+    //////////////////////////////////////////
+    ByteBufferPtr AssetFile::readHeaderAsByteBuffer(Size _size)
+    {
+        ByteBufferPtr byteBuffer = ByteBuffer::Create(_size);
+        readHeaderToByteBuffer(byteBuffer, _size);
 
         return byteBuffer;
     }

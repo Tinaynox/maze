@@ -152,9 +152,23 @@ namespace Maze
 
         fclose(fileHandler);
 
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool AssetRegularFile::readHeaderToByteBuffer(ByteBuffer& _byteBuffer, Size _size)
+    {
+        FILE* fileHandler = StdHelper::OpenFile(m_fullPath.c_str(), "rb");
+        if (!fileHandler)
+            return false;
+
+        _byteBuffer.resize(_size);
+        fread(_byteBuffer.getDataPointer(), sizeof(U8), _size, fileHandler);
+
+        fclose(fileHandler);
 
         return true;
-    }    
+    }
 
 
 } // namespace Maze

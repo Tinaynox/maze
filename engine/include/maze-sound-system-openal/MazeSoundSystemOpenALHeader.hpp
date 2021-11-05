@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeSoundSystemOpenGL3Header_hpp_))
-#define _MazeSoundSystemOpenGL3Header_hpp_
+#if (!defined(_MazeSoundSystemOpenALHeader_hpp_))
+#define _MazeSoundSystemOpenALHeader_hpp_
 
 
 //////////////////////////////////////////
@@ -35,7 +35,7 @@
 
 
 //////////////////////////////////////////
-#if defined(MAZE_SOUND_SYSTEM_OPENGL3_EXPORTS)
+#if defined(MAZE_SOUND_SYSTEM_OPENAL_EXPORTS)
 #   define MAZE_SOUND_SYSTEM_OPENAL_API MAZE_API_EXPORT
 #else
 #   define MAZE_SOUND_SYSTEM_OPENAL_API MAZE_API_IMPORT
@@ -64,5 +64,5 @@
 #endif
 
 
-#endif // _MazeSoundSystemOpenGL3Header_hpp_
+#endif // _MazeSoundSystemOpenALHeader_hpp_
 //////////////////////////////////////////

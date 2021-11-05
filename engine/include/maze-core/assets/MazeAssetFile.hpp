@@ -94,14 +94,23 @@ namespace Maze
         virtual bool readToXMLDocument(tinyxml2::XMLDocument& _doc) { return false; }
 
         //////////////////////////////////////////
-        virtual bool readToByteBuffer(ByteBuffer& _byteBuffer) { return 0; }
+        virtual bool readToByteBuffer(ByteBuffer& _byteBuffer) { MAZE_NOT_IMPLEMENTED; return 0; }
+
+        //////////////////////////////////////////
+        virtual bool readHeaderToByteBuffer(ByteBuffer& _byteBuffer, Size _size) { MAZE_NOT_IMPLEMENTED; return 0; }
 
 
         //////////////////////////////////////////
         bool readToByteBuffer(ByteBufferPtr const& _byteBuffer);
 
         //////////////////////////////////////////
+        bool readHeaderToByteBuffer(ByteBufferPtr const& _byteBuffer, Size _size);
+
+        //////////////////////////////////////////
         ByteBufferPtr readAsByteBuffer();
+
+        //////////////////////////////////////////
+        ByteBufferPtr readHeaderAsByteBuffer(Size _size);
 
         //////////////////////////////////////////
         String getExtension() const;

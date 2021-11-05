@@ -187,25 +187,6 @@ namespace Maze
         
         bool hasErrors = false;
 
-        // Debug
-#if (0)
-        if (GraphicsManager::GetInstancePtr())
-        {
-            RenderSystem* renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw();
-            if (renderSystem)
-            {
-                RenderSystemOpenGL* renderSystemGL = renderSystem->castRaw<RenderSystemOpenGL>();
-                String currentContext = renderSystemGL->getCurrentContext() ? renderSystemGL->getCurrentContext()->getName() : "[Null]";
-                Debug::Log("%s %s", currentContext.c_str(), expression);
-
-                if (renderSystemGL->getCurrentContext()->getName() == "RenderWindow_1")
-                {
-                    S32 a = 0;
-                }
-            }
-        }
-#endif
-
         do 
         {
             MZGLenum error = mzglGetError();
@@ -263,12 +244,12 @@ namespace Maze
         if (mzglGetError)
         {
             MZGLenum error = mzglGetError();
-            MAZE_ERROR_IF(error != MAZE_GL_NO_ERROR, "GL Error occurred before GL_DEBUG_GL call!") ;
+            MAZE_ERROR_IF(error != MAZE_GL_NO_ERROR, "GL Error occurred before MAZE_DEBUG_GL call!") ;
         }
     }
 
     ////////////////////////////////////
-    MAZE_RENDER_SYSTEM_OPENGL_CORE_API void GLCallEnded(CString file, U32 line, CString expression)
+    MAZE_RENDER_SYSTEM_OPENGL_CORE_API void GLCallEnded(CString _file, U32 _line, CString _expression)
     {
         
     }

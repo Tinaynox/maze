@@ -42,7 +42,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    bool AssignFunctionsOpenGL3(ContextOpenGLPtr const& renderContext);
+    bool AssignFunctionsOpenGL3(ContextOpenGLPtr const& _renderContext);
 
 } // namespace Maze
 //////////////////////////////////////////

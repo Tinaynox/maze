@@ -130,5 +130,16 @@ namespace Maze
         return false;
     }
 
+    //////////////////////////////////////////
+    bool AssetArchivedFile::readHeaderToByteBuffer(ByteBuffer& _byteBuffer, Size _size)
+    {
+        _byteBuffer.resize(_size);
+        return m_archive->readArchivedFileToBuffer(
+            m_zipArchiveFilePath,
+            _byteBuffer.getDataPointer(),
+            _byteBuffer.getSize());
+        return false;
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

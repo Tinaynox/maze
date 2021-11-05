@@ -41,6 +41,8 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(SoundManager);
     MAZE_USING_SHARED_PTR(SoundSystem);
+    MAZE_USING_SHARED_PTR(AssetFile);
+
 
     //////////////////////////////////////////
     // Class SoundManager
@@ -72,6 +74,12 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        SoundPtr const& getSound(String const& _assetFileName);
+
+        //////////////////////////////////////////
+        SoundPtr const& getSound(AssetFilePtr const& _assetFile);
+
+        //////////////////////////////////////////
         inline UnorderedMap<String, SoundSystemPtr> const& getSoundSystems() const { return m_soundSystems; }
 
 
@@ -92,11 +100,16 @@ namespace Maze
         //////////////////////////////////////////
         bool init();
 
+        //////////////////////////////////////////
+        SoundPtr const& addSound(SoundPtr const& _sound);
+
     protected:
         static SoundManager* s_instance;
 
         UnorderedMap<String, SoundSystemPtr> m_soundSystems;
         SoundSystemPtr m_defaultSoundSystem;
+
+        UnorderedMap<String, SoundPtr> m_soundsByName;
     };
     
 

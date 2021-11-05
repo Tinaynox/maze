@@ -32,6 +32,8 @@
 //////////////////////////////////////////
 #include "maze-sound-system-openal/MazeSoundSystemOpenALHeader.hpp"
 #include "maze-sound-system-openal/MazeSoundSystemOpenALConfig.hpp"
+#include "maze-sound-system-openal/MazeHeaderOpenAL.hpp"
+#include "maze-sound-system-openal/MazeDeviceInfoOpenAL.hpp"
 #include "maze-sound/MazeSoundSystem.hpp"
 
 
@@ -40,11 +42,12 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(SoundSystemOpenAL);
-    MAZE_USING_SHARED_PTR(ContextOpenGL);
+    MAZE_USING_SHARED_PTR(Sound);
+    MAZE_USING_SHARED_PTR(ContextOpenAL);
 
 
     //////////////////////////////////////////
-    // Class SoundSystemOpenGL3
+    // Class SoundSystemOpenAL
     //
     //////////////////////////////////////////
     class MAZE_SOUND_SYSTEM_OPENAL_API SoundSystemOpenAL
@@ -67,6 +70,37 @@ namespace Maze
         //////////////////////////////////////////
         virtual String const& getName() MAZE_OVERRIDE;
 
+
+        //////////////////////////////////////////
+        inline ContextOpenALPtr const& getDummyContext() const { return m_dummyContext; }
+
+        //////////////////////////////////////////
+        inline ContextOpenALPtr const& getMainContext() const { return m_mainContext; }
+
+
+        //////////////////////////////////////////
+        virtual ContextOpenALPtr createContext(S32 _deviceIndex = -1);
+
+        //////////////////////////////////////////
+        virtual SoundPtr createSound() MAZE_OVERRIDE;
+
+
+
+        //////////////////////////////////////////
+        inline bool getFunctionsAssigned() const { return m_functionsAssigned; }
+
+        //////////////////////////////////////////
+        Vector<DeviceInfoOpenAL> const& getDevicesInfo() const { return m_devicesInfo; }
+
+        //////////////////////////////////////////
+        DeviceInfoOpenAL const* getDeviceInfo(Size _index) const;
+
+    public:
+
+        //////////////////////////////////////////
+        MultiDelegate<> eventFunctionsAssigned;
+        MultiDelegate<> eventDevicesInfoLoaded;
+
     protected:
 
         //////////////////////////////////////////
@@ -75,12 +109,34 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init(SoundSystemOpenALConfig const& _config);
 
+        //////////////////////////////////////////
+        bool setupSystem();
+
+        //////////////////////////////////////////
+        void assignFunctionsOpenAL(ContextOpenALPtr const& _soundContext);
+
+        //////////////////////////////////////////
+        void updateDevicesInfo();
+
+        //////////////////////////////////////////
+        U32 testMaxNumSources();
+
     protected:
+        SoundSystemOpenALConfig m_config;
+
+        ContextOpenALPtr m_dummyContext;
+        ContextOpenALPtr m_mainContext;
+
+        bool m_functionsAssigned = false;
+
+        Vector<DeviceInfoOpenAL> m_devicesInfo;
+        bool m_devicesInfoLoaded = false;
+        S32 m_defaultDeviceIndex = 0;
     };
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeSoundSystemOpenGL3_hpp_
+#endif // _MazeSoundSystemOpenAL_hpp_
 //////////////////////////////////////////
