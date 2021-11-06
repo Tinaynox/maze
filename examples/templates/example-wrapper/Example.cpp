@@ -65,8 +65,16 @@
 #include "maze-debugger/managers/MazeDebuggerManager.hpp"
 #include "maze-debugger/settings/MazeDebuggerSettings.hpp"
 #include "maze-physics2d/ecs/systems/MazePhysicsControlSystem2D.hpp"
-#include "maze-render-system-opengl3/MazeRenderSystemOpenGL3.hpp"
 #include "maze-particles/managers/MazeParticlesManager.hpp"
+#include "maze-sound/managers/MazeSoundManager.hpp"
+
+#if MAZE_RENDER_SYSTEM_OPENGL_ENABLED
+#   include "maze-render-system-opengl3/MazeRenderSystemOpenGL3.hpp"
+#endif
+
+#if MAZE_SOUND_SYSTEM_OPENAL_ENABLED
+#   include "maze-sound-system-openal/MazeSoundSystemOpenALPlugin.hpp"
+#endif
 
 
 //////////////////////////////////////////
@@ -233,31 +241,30 @@ namespace Maze
     //////////////////////////////////////////
     bool Example::loadPlugins()
     {
-        RenderSystemOpenGLConfig config;
-        config.multiContextPolicy = OpenGLMultiContextPolicy::Unified;
 
 #if (MAZE_STATIC)
-
         Debug::log << "Plugins Static installation..." << endl;
-        InstallRenderSystemOpenGL3Plugin(config);
+#   if MAZE_RENDER_SYSTEM_OPENGL_ENABLED
+        {
+            RenderSystemOpenGLConfig config;
+            config.multiContextPolicy = OpenGLMultiContextPolicy::Unified;
+            InstallRenderSystemOpenGL3Plugin(config);
+        }
+#   endif
+#if MAZE_SOUND_SYSTEM_OPENAL_ENABLED
+        {
+            SoundSystemOpenALConfig config;
+            InstallSoundSystemOpenALPlugin(config);
+        }
+#   endif
         Debug::log << "Plugins Static installation finished." << endl;
-
 #else
-
-#    if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
-#        if (MAZE_ARCH == MAZE_ARCH_X86)
-        m_pluginManager->loadPlugin("maze-render-system-opengl3-x86-d");
-#        else
-        m_pluginManager->loadPlugin("maze-render-system-opengl3-x64-d");
-#        endif
-#    elif (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
-        //g_pluginManager->loadPlugin(FileHelper::GetLibDirectory() + "/" + "libmaze-render-system-gl3-d.so");
-        m_pluginManager->loadPlugin("libmaze-render-system-opengl3-d");
-#    elif (MAZE_PLATFORM == MAZE_PLATFORM_OSX)
-        m_pluginManager->loadPlugin("libmaze-render-system-opengl3-d");
-#    else
-        m_pluginManager->loadPlugin("maze-render-system-opengl3-d");
-#    endif
+#   if MAZE_RENDER_SYSTEM_OPENGL_ENABLED
+        m_pluginManager->loadPlatformPlugin("maze-render-system-opengl3");
+#   endif
+#if MAZE_SOUND_SYSTEM_OPENAL_ENABLED
+        m_pluginManager->loadPlatformPlugin("maze-sound-system-openal");
+#   endif
 #endif
 
         Debug::log << "Available Render Systems: " << endl;
@@ -271,6 +278,16 @@ namespace Maze
             Debug::log << endl;
         }
 
+        Debug::log << "Available Sound Systems: " << endl;
+        for (auto const& soundSystemData : m_soundManager->getSoundSystems())
+        {
+            Debug::log << "\t" << soundSystemData.first;
+
+            if (soundSystemData.second == m_soundManager->getDefaultSoundSystem())
+                Debug::log << " [Default]";
+
+            Debug::log << endl;
+        }
 
         Debug::log << PlatformHelper::ConstructPlatformInfo();
         Debug::log << PlatformHelper::ConstructEngineInfo();

@@ -96,7 +96,7 @@ MAZE_SOUND_SYSTEM_OPENAL_API extern void (MAZE_AL_FUNCPTR* mzalSourceUnqueueBuff
 MAZE_SOUND_SYSTEM_OPENAL_API extern void (MAZE_AL_FUNCPTR* mzalGenBuffers)(MZALsizei _n, MZALuint* _buffers);
 MAZE_SOUND_SYSTEM_OPENAL_API extern void (MAZE_AL_FUNCPTR* mzalDeleteBuffers)(MZALsizei _n, MZALuint const* _buffers);
 MAZE_SOUND_SYSTEM_OPENAL_API extern MZALboolean (MAZE_AL_FUNCPTR* mzalIsBuffer)(MZALuint _bid);
-MAZE_SOUND_SYSTEM_OPENAL_API extern void (MAZE_AL_FUNCPTR* mzalBufferData)(MZALuint _bid, MZALenum _format, ALvoid const* _data, MZALsizei _size, MZALsizei _freq);
+MAZE_SOUND_SYSTEM_OPENAL_API extern void (MAZE_AL_FUNCPTR* mzalBufferData)(MZALuint _bid, MZALenum _format, MZALvoid const* _data, MZALsizei _size, MZALsizei _freq);
 MAZE_SOUND_SYSTEM_OPENAL_API extern void (MAZE_AL_FUNCPTR* mzalGetBufferf)(MZALuint _bid, MZALenum _param, MZALfloat* _value);
 MAZE_SOUND_SYSTEM_OPENAL_API extern void (MAZE_AL_FUNCPTR* mzalGetBufferi)(MZALuint _bid, MZALenum _param, MZALint* _value);
 MAZE_SOUND_SYSTEM_OPENAL_API extern void (MAZE_AL_FUNCPTR* mzalDopplerFactor)(MZALfloat _value);

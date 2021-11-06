@@ -133,7 +133,7 @@ namespace Maze
 
         // First downscale
         {
-            Texture2DPtr const& baseMap = m_sceneGame->getRenderBuffer()->getColorTexture();
+            Texture2D* baseMap = m_sceneGame->getRenderBuffer()->getColorTexture()->castRaw<Texture2D>();
             m_bloomBaseMapUniform->set(baseMap);
             m_bloomBaseMapTexelSizeUniform->set(1.0f / (Vec2DF)baseMap->getSize());
             currentRenderBuffer->blit(m_bloomMaterial, 0);
@@ -145,7 +145,7 @@ namespace Maze
         {
             RenderBufferPtr bloomMipMapRenderBuffer = m_bloomMipMapRenderBuffers[i];
 
-            Texture2DPtr const& baseMap = srcBuffer->getColorTexture();
+            Texture2D* baseMap = srcBuffer->getColorTexture()->castRaw<Texture2D>();
             m_bloomBaseMapUniform->set(baseMap);
             m_bloomBaseMapTexelSizeUniform->set(1.0f / (Vec2DF)baseMap->getSize());
             bloomMipMapRenderBuffer->blit(m_bloomMaterial, 1);
@@ -153,15 +153,13 @@ namespace Maze
             srcBuffer = bloomMipMapRenderBuffer;
         }
 
-        // srcBuffer->getColorTexture()->saveToFileAsTGA("test6.tga");
-
         // Upscale
         for (Size i = 1; i < m_blurIterations - 1; ++i)
         {
             Size j = m_blurIterations - 2 - i;
             RenderBufferPtr bloomMipMapRenderBuffer = m_bloomMipMapRenderBuffers[j];
 
-            Texture2DPtr const& baseMap = srcBuffer->getColorTexture();
+            Texture2D* baseMap = srcBuffer->getColorTexture()->castRaw<Texture2D>();
             m_bloomBaseMapUniform->set(baseMap);
             m_bloomBaseMapTexelSizeUniform->set(1.0f / (Vec2DF)baseMap->getSize());
             bloomMipMapRenderBuffer->blit(m_bloomMaterial, 2);
@@ -169,13 +167,11 @@ namespace Maze
             srcBuffer = bloomMipMapRenderBuffer;
         }
 
-        // srcBuffer->getColorTexture()->saveToFileAsTGA("test7.tga");
-
         // Final upscale
         {
-            m_bloomPrevBloomMapUniform->set(prevRenderBuffer->getColorTexture());
+            m_bloomPrevBloomMapUniform->set(prevRenderBuffer->getColorTexture()->cast<Texture2D>());
 
-            Texture2DPtr const& baseMap = srcBuffer->getColorTexture();
+            Texture2D* baseMap = srcBuffer->getColorTexture()->castRaw<Texture2D>();
             m_bloomBaseMapUniform->set(baseMap);
             m_bloomBaseMapTexelSizeUniform->set(1.0f / (Vec2DF)baseMap->getSize());
             currentRenderBuffer->blit(m_bloomMaterial, 3);
@@ -200,8 +196,8 @@ namespace Maze
                     bloomRenderBufferSize,
                     PixelFormat::RGBA_U8
                 });
-            m_bloomRenderBuffer[i]->getColorTexture()->setMinFilter(TextureFilter::Linear);
-            m_bloomRenderBuffer[i]->getColorTexture()->setMagFilter(TextureFilter::Linear);
+            m_bloomRenderBuffer[i]->getColorTexture()->castRaw<Texture2D>()->setMinFilter(TextureFilter::Linear);
+            m_bloomRenderBuffer[i]->getColorTexture()->castRaw<Texture2D>()->setMagFilter(TextureFilter::Linear);
         }
 
         m_bloomMipMapRenderBuffers.clear();
@@ -215,8 +211,8 @@ namespace Maze
                 },
                 PixelFormat::RGBA_U8
             });
-            renderBuffer->getColorTexture()->setMinFilter(TextureFilter::Linear);
-            renderBuffer->getColorTexture()->setMagFilter(TextureFilter::Linear);
+            renderBuffer->getColorTexture()->castRaw<Texture2D>()->setMinFilter(TextureFilter::Linear);
+            renderBuffer->getColorTexture()->castRaw<Texture2D>()->setMagFilter(TextureFilter::Linear);
             m_bloomMipMapRenderBuffers.push_back(renderBuffer);
         }
     }

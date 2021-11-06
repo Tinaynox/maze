@@ -101,18 +101,12 @@ namespace Maze
         //////////////////////////////////////////
         void create2D();
 
-
-        //////////////////////////////////////////
-        bool loadPlugins();
-
     protected:
         CanvasPtr m_canvas;
 
         MenuListTree2DPtr m_menuListTree;
 
         ScrollRect2DPtr m_scrollRect;
-
-        SoundManagerPtr m_soundManager;
 
         ClickButton2DPtr m_playSoundButton;
         ClickButton2DPtr m_playMusicButton;

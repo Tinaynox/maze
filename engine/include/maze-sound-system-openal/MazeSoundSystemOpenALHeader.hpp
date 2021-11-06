@@ -59,10 +59,6 @@
 #   define FAR
 #endif
 
-#if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
-#   include <al.h>
-#endif
-
 
 #endif // _MazeSoundSystemOpenALHeader_hpp_
 //////////////////////////////////////////

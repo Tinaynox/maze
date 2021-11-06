@@ -135,55 +135,7 @@ namespace Maze
         if (!ECSRenderScene::init(Example::GetInstancePtr()->getMainRenderWindow()))
             return false;
 
-        SoundManager::Initialize(m_soundManager);
-        if (!m_soundManager)
-            return false;
-
-        if (!loadPlugins())
-            return false;
-
         create2D();
-
-        return true;
-    }
-
-    //////////////////////////////////////////
-    bool SceneExample::loadPlugins()
-    {
-#if (MAZE_STATIC)
-
-        Debug::log << "Plugins Static installation..." << endl;
-        SoundSystemOpenALConfig config;
-        InstallSoundSystemOpenALPlugin(config);
-        Debug::log << "Plugins Static installation finished." << endl;
-
-#else
-
-#    if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
-#        if (MAZE_ARCH == MAZE_ARCH_X86)
-        PluginManager::GetInstancePtr()->loadPlugin("maze-sound-system-openal-x86-d");
-#        else
-        PluginManager::GetInstancePtr()->loadPlugin("maze-sound-system-openal-x64-d");
-#        endif
-#    elif (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
-        PluginManager::GetInstancePtr()->loadPlugin("libmaze-sound-system-openal-d");
-#    elif (MAZE_PLATFORM == MAZE_PLATFORM_OSX)
-        PluginManager::GetInstancePtr()->loadPlugin("libmaze-sound-system-openal-d");
-#    else
-        PluginManager::GetInstancePtr()->loadPlugin("maze-sound-system-openal-d");
-#    endif
-#endif
-
-        Debug::log << "Available Sound Systems: " << endl;
-        for (auto const& soundSystemData : m_soundManager->getSoundSystems())
-        {
-            Debug::log << "\t" << soundSystemData.first;
-
-            if (soundSystemData.second == m_soundManager->getDefaultSoundSystem())
-                Debug::log << " [Default]";
-
-            Debug::log << endl;
-        }
 
         return true;
     }

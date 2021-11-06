@@ -132,6 +132,28 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool PluginManager::loadPlatformPlugin(String const& _pluginName)
+    {
+        String pluginName = _pluginName;
+
+#if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
+#   if (MAZE_ARCH == MAZE_ARCH_X86)
+        pluginName += "-x86-d";
+#   else
+        pluginName += "-x64-d";
+#   endif
+#elif (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
+        pluginName = "lib" + pluginName + "-d";
+#elif (MAZE_PLATFORM == MAZE_PLATFORM_OSX)
+        pluginName = "lib" + pluginName + "-d";
+#else
+        pluginName += "-d";
+#endif
+
+        return loadPlugin(pluginName);
+    }
+
+    //////////////////////////////////////////
     void PluginManager::installPlugin(PluginPtr const& _plugin)
     {
         Debug::log << "Installing plugin: " << _plugin->getName() << "..." << endl;

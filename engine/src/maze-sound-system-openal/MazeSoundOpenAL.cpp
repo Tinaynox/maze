@@ -121,8 +121,8 @@ namespace Maze
                 m_bufferID,
                 m_bufferFormat,
                 _soundData->getData()->getData(),
-                _soundData->getData()->getSize(),
-                _soundData->getFrequency()));
+                (MZALsizei)_soundData->getData()->getSize(),
+                (MZALsizei)_soundData->getFrequency()));
         return true;
     }
 

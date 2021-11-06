@@ -70,6 +70,9 @@ namespace Maze
         //////////////////////////////////////////
         void unloadPlugin(String const& _pluginLibraryFullPath);
 
+        //////////////////////////////////////////
+        bool loadPlatformPlugin(String const& _pluginName);
+
 
         //////////////////////////////////////////
         static inline PluginManager* GetInstancePtr() { return s_instance; }

@@ -30,19 +30,13 @@ project(maze-example-demo00)
 
 ##########################################
 set(EXAMPLE_NAME "${PROJECT_NAME}")
-set(EXAMPLE_MAZE_LIBS maze-core maze-graphics maze-ui maze-engine maze-debugger maze-particles)
+set(EXAMPLE_MAZE_LIBS maze-core maze-graphics maze-ui maze-engine maze-sound maze-debugger maze-particles)
 
 
 ##########################################
 include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Utils.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Config.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Macros.cmake")
-
-
-##########################################
-if(MAZE_RENDER_SYSTEM_OPENGL_ENABLED)
-    list(APPEND EXAMPLE_MAZE_LIBS maze-render-system-opengl-core maze-render-system-opengl3)
-endif()
 
 
 ##########################################

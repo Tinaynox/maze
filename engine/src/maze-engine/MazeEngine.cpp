@@ -66,6 +66,7 @@
 #include "maze-physics2d/ecs/systems/MazePhysicsControlSystem2D.hpp"
 #include "maze-particles/ecs/systems/MazeParticlesDrawerSystem.hpp"
 #include "maze-particles/managers/MazeParticlesManager.hpp"
+#include "maze-sound/managers/MazeSoundManager.hpp"
 
 
 //////////////////////////////////////////
@@ -249,6 +250,10 @@ namespace Maze
 
         UIManager::Initialize(m_uiManager);
         if (!m_uiManager)
+            return false;
+
+        SoundManager::Initialize(m_soundManager);
+        if (!m_soundManager)
             return false;
 
         DebuggerManager::Initialize(m_debuggerManager);

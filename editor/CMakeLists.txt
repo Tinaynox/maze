@@ -30,7 +30,7 @@ project(maze-editor)
 
 ##########################################
 set(EXAMPLE_NAME "${PROJECT_NAME}")
-set(EXAMPLE_MAZE_LIBS maze-core maze-graphics maze-ui maze-gamepad maze-engine maze-debugger)
+set(EXAMPLE_MAZE_LIBS maze-core maze-graphics maze-ui maze-gamepad maze-engine maze-sound maze-debugger)
 
 
 ##########################################
@@ -42,6 +42,11 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/../engine/cmake/Macros.cmake")
 ##########################################
 if(MAZE_RENDER_SYSTEM_OPENGL_ENABLED)
     list(APPEND EXAMPLE_MAZE_LIBS maze-render-system-opengl-core maze-render-system-opengl3)
+endif()
+
+##########################################
+if(MAZE_SOUND_SYSTEM_OPENAL_ENABLED)
+    list(APPEND EXAMPLE_MAZE_LIBS maze-sound-system-openal)
 endif()
 
 

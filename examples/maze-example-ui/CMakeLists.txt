@@ -40,12 +40,6 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Macros.cmake")
 
 
 ##########################################
-if(MAZE_RENDER_SYSTEM_OPENGL_ENABLED)
-    list(APPEND EXAMPLE_MAZE_LIBS maze-render-system-opengl-core maze-render-system-opengl3)
-endif()
-
-
-##########################################
 maze_add_sources(${CMAKE_CURRENT_SOURCE_DIR}/../templates/example-wrapper ADDITIONAL_EXAMPLE_FILES)
 maze_sort_sources("${ADDITIONAL_EXAMPLE_FILES}" ADDITIONAL_EXAMPLE_FILES)
 

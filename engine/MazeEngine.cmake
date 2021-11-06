@@ -29,12 +29,23 @@ maze_add_module(
     INCLUDE_DIR "include/maze-engine"
     SRC_DIR "src/maze-engine"
     FORWARD_HEADER MazeEngineHeader)
-    
-target_link_libraries(
-    maze-engine
-    PUBLIC maze-core
-    PUBLIC maze-graphics
-    PUBLIC maze-particles
-    PUBLIC maze-physics2d
-    PUBLIC maze-gamepad
-    PUBLIC maze-debugger)
+
+
+##########################################
+set(ENGINE_LIBS maze-core maze-graphics maze-particles maze-physics2d maze-sound maze-gamepad maze-debugger)
+
+
+##########################################
+if(MAZE_RENDER_SYSTEM_OPENGL_ENABLED)
+    list(APPEND ENGINE_LIBS maze-render-system-opengl-core maze-render-system-opengl3)
+endif()
+
+
+##########################################
+if(MAZE_SOUND_SYSTEM_OPENAL_ENABLED)
+    list(APPEND ENGINE_LIBS maze-sound-system-openal)
+endif()
+
+
+##########################################
+target_link_libraries(maze-engine ${ENGINE_LIBS})
