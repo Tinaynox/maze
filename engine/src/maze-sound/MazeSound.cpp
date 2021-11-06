@@ -121,5 +121,35 @@ namespace Maze
         return m_soundSystem->play(cast<Sound>(), _cycled, _soundGroup);
     }
 
+    //////////////////////////////////////////
+    String Sound::toString() const
+    {
+        MAZE_NOT_IMPLEMENTED;
+        return String();
+    }
+
+    //////////////////////////////////////////
+    void Sound::setString(CString _data, Size _count)
+    {
+        MAZE_NOT_IMPLEMENTED;
+    }
+
+    //////////////////////////////////////////
+    SoundPtr const& Sound::FromString(CString _data, Size _count)
+    {
+        if (_count == 0)
+            _count = strlen(_data);
+
+        SoundPtr const& value = SoundManager::GetInstancePtr()->getSound(_data);
+        if (!value)
+        {
+            if (_data && strcmp(_data, "") != 0)
+            {
+                MAZE_ERROR("Undefined sound - %s!", _data);
+            }
+        }
+        return value;
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

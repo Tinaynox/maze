@@ -100,6 +100,17 @@ namespace Maze
             bool _cycled = false,
             SoundGroupPtr const& _soundGroup = nullptr);
 
+    public:
+
+        //////////////////////////////////////////
+        virtual String toString() const;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count);
+
+        //////////////////////////////////////////
+        static SoundPtr const& FromString(CString _data, Size _count);
+
     protected:
 
         //////////////////////////////////////////
@@ -113,6 +124,51 @@ namespace Maze
 
         String m_name;
     };
+
+
+    //////////////////////////////////////////
+    MAZE_NOT_IMPLEMENTED_SERIALIZATION(Sound);
+
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<SoundPtr>::value), void>::type
+        ValueToString(SoundPtr const& _value, String& _data)
+    {
+        _data = _value->toString();
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<SoundPtr>::value), void>::type
+        ValueFromString(SoundPtr& _value, CString _data, Size _count)
+    {
+        _value = Sound::FromString(_data, _count);
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<SoundPtr>::value), U32>::type
+        GetValueSerializationSize(SoundPtr const& _value)
+    {
+        MAZE_NOT_IMPLEMENTED_RETURN_VALUE(0);
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<SoundPtr>::value), void>::type
+        SerializeValue(SoundPtr const& _value, U8* _data)
+    {
+        MAZE_NOT_IMPLEMENTED;
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<SoundPtr>::value), void>::type
+        DeserializeValue(SoundPtr& _value, U8 const* _data)
+    {
+        MAZE_NOT_IMPLEMENTED;
+    }
     
 
 } // namespace Maze
