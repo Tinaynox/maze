@@ -92,6 +92,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool SoundSourceOpenAL::isPlaying()
+    {
+        MZALint state;
+        MAZE_AL_CALL(mzalGetSourcei(m_sourceID, AL_SOURCE_STATE, &state));
+        return (state != AL_STOPPED);
+    }
+
+    //////////////////////////////////////////
     bool SoundSourceOpenAL::update(F32 _dt)
     {
         MZALint state;

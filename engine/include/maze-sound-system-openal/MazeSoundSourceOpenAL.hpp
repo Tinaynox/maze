@@ -70,6 +70,9 @@ namespace Maze
         virtual void stop() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
+        virtual bool isPlaying() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
         bool update(F32 _dt);
 
         //////////////////////////////////////////

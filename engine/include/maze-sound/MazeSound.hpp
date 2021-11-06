@@ -42,6 +42,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(Sound);
     MAZE_USING_SHARED_PTR(SoundSource);
+    MAZE_USING_SHARED_PTR(SoundGroup);
     MAZE_USING_SHARED_PTR(SoundSystem);
     MAZE_USING_SHARED_PTR(AssetFile);
 
@@ -95,7 +96,9 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        SoundSourcePtr play();
+        SoundSourcePtr play(
+            bool _cycled = false,
+            SoundGroupPtr const& _soundGroup = nullptr);
 
     protected:
 

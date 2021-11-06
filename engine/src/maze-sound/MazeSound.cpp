@@ -114,9 +114,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SoundSourcePtr Sound::play()
+    SoundSourcePtr Sound::play(
+        bool _cycled,
+        SoundGroupPtr const& _soundGroup)
     {
-        return m_soundSystem->play(cast<Sound>());
+        return m_soundSystem->play(cast<Sound>(), _cycled, _soundGroup);
     }
 
 } // namespace Maze

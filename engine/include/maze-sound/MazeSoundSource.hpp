@@ -84,9 +84,14 @@ namespace Maze
         //////////////////////////////////////////
         virtual void stop() MAZE_ABSTRACT;
 
+        //////////////////////////////////////////
+        virtual bool isPlaying() MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         void setSoundGroup(SoundGroupPtr const& _soundGroup);
+
+        //////////////////////////////////////////
+        inline SoundPtr const& getSound() const { return m_sound; }
 
         //////////////////////////////////////////
         inline SoundGroupPtr const& getSoundGroup() const { return m_soundGroup; }
