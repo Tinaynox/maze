@@ -65,6 +65,12 @@ namespace Maze
             CString _soundName,
             F32 _volume = 1.0f);
 
+        //////////////////////////////////////////
+        SoundSet(
+            CString _soundName00,
+            CString _soundName01,
+            F32 _volume = 1.0f);
+
 
         //////////////////////////////////////////
         inline void setSounds(FastVector<SoundPtr> const& _value) { m_sounds = _value; }
@@ -90,6 +96,7 @@ namespace Maze
         FastVector<SoundPtr> m_sounds;
         F32 m_volume = 1.0f;
         S32 m_prevFetchIndex = -1;
+        bool m_noRepeats = false;
     };
 
 

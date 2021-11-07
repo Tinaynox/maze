@@ -64,7 +64,19 @@ namespace Maze
         addSound(sound);
     }
 
-    
+    //////////////////////////////////////////
+    SoundSet::SoundSet(
+        CString _soundName00,
+        CString _soundName01,
+        F32 _volume)
+        : m_volume(_volume)
+    {
+        SoundPtr const& sound00 = SoundManager::GetInstancePtr()->getSound(_soundName00);
+        addSound(sound00);
+
+        SoundPtr const& sound01 = SoundManager::GetInstancePtr()->getSound(_soundName01);
+        addSound(sound01);
+    }
 
     //////////////////////////////////////////
     void SoundSet::addSound(SoundPtr const& _sound)
@@ -85,7 +97,7 @@ namespace Maze
             return m_sounds[0];
 
         S32 fetchIndex = Math::RangeRandom(0, (S32)m_sounds.size());
-        if (fetchIndex == m_prevFetchIndex)
+        if (m_noRepeats && fetchIndex == m_prevFetchIndex)
             fetchIndex = (fetchIndex + 1) % (S32)m_sounds.size();
 
         m_prevFetchIndex = fetchIndex;
