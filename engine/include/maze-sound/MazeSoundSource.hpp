@@ -72,10 +72,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setCycled(bool _cycled) { m_cycled = _cycled; }
+        virtual void setLooped(bool _looped) { m_looped = _looped; }
 
         //////////////////////////////////////////
-        inline bool getCycled() const { return m_cycled; }
+        inline bool getLooped() const { return m_looped; }
 
 
         //////////////////////////////////////////
@@ -108,6 +108,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual void updateVolume() MAZE_ABSTRACT;
 
+        //////////////////////////////////////////
+        virtual void updateLooped() MAZE_ABSTRACT;
+
 
         //////////////////////////////////////////
         void notifySoundGroupVolumeChanged(F32 _volume);
@@ -118,7 +121,7 @@ namespace Maze
         SoundGroupPtr m_soundGroup;
 
         F32 m_volume = 1.0f;
-        bool m_cycled = false;
+        bool m_looped = false;
     };
     
 

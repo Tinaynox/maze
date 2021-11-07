@@ -115,10 +115,11 @@ namespace Maze
 
     //////////////////////////////////////////
     SoundSourcePtr Sound::play(
-        bool _cycled,
-        SoundGroupPtr const& _soundGroup)
+        bool _looped,
+        SoundGroupPtr const& _soundGroup,
+        F32 _volume)
     {
-        return m_soundSystem->play(cast<Sound>(), _cycled, _soundGroup);
+        return m_soundSystem->play(cast<Sound>(), _looped, _soundGroup, _volume);
     }
 
     //////////////////////////////////////////

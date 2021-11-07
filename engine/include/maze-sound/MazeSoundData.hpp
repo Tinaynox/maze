@@ -46,7 +46,7 @@ namespace Maze
     // Class SoundData
     //
     //////////////////////////////////////////
-    class SoundData
+    class MAZE_SOUND_API SoundData
     {
     public:
 

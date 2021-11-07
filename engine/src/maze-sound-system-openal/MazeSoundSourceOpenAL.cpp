@@ -75,6 +75,7 @@ namespace Maze
             bindSound(_sound->castRaw<SoundOpenAL>()->getBufferID());
 
         updateVolume();
+        updateLooped();
 
         return true;
     }
@@ -89,6 +90,7 @@ namespace Maze
     void SoundSourceOpenAL::stop()
     {
         MAZE_AL_CALL(mzalSourceStop(m_sourceID));
+        // setCycled(false);
     }
 
     //////////////////////////////////////////
@@ -106,18 +108,27 @@ namespace Maze
         MAZE_AL_CALL(mzalGetSourcei(m_sourceID, AL_SOURCE_STATE, &state));
         if (state == AL_STOPPED)
         {
-            if (m_cycled)
+            /*
+            if (m_looped)
             {
                 MAZE_AL_CALL(mzalSourceRewind(m_sourceID));
                 play();
             }
             else
+            */
             {
                 return false;
             }
         }
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    void SoundSourceOpenAL::setLooped(bool _cycled)
+    {
+        SoundSource::setLooped(_cycled);
+        updateLooped();
     }
 
     //////////////////////////////////////////
@@ -136,6 +147,12 @@ namespace Maze
             volume *= m_soundGroup->getVolume();
 
         MAZE_AL_CALL(mzalSourcef(m_sourceID, AL_GAIN, volume));
+    }
+
+    //////////////////////////////////////////
+    void SoundSourceOpenAL::updateLooped()
+    {
+        MAZE_AL_CALL(mzalSourcei(m_sourceID, AL_LOOPING, m_looped ? 1 : 0));
     }
 
     //////////////////////////////////////////

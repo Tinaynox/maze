@@ -97,8 +97,9 @@ namespace Maze
 
         //////////////////////////////////////////
         SoundSourcePtr play(
-            bool _cycled = false,
-            SoundGroupPtr const& _soundGroup = nullptr);
+            bool _looped = false,
+            SoundGroupPtr const& _soundGroup = nullptr,
+            F32 _volume = 1.0f);
 
     public:
 

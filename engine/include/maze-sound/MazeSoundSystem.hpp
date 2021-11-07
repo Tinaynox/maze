@@ -44,6 +44,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Sound);
     MAZE_USING_SHARED_PTR(SoundGroup);
     MAZE_USING_SHARED_PTR(SoundSource);
+    MAZE_USING_SHARED_PTR(SoundSet);
 
     //////////////////////////////////////////
     // Class SoundSystem
@@ -84,13 +85,21 @@ namespace Maze
         //////////////////////////////////////////
         SoundSourcePtr play(
             SoundPtr const& _sound,
-            bool _cycled = false,
-            SoundGroupPtr const& _soundGroup = nullptr);
+            bool _looped = false,
+            SoundGroupPtr const& _soundGroup = nullptr,
+            F32 _volume = 1.0f);
 
         //////////////////////////////////////////
         SoundSourcePtr play(
             String const& _soundAssetName,
-            bool _cycled = false,
+            bool _looped = false,
+            SoundGroupPtr const& _soundGroup = nullptr,
+            F32 _volume = 1.0f);
+
+        //////////////////////////////////////////
+        SoundSourcePtr play(
+            SoundSetPtr const& _soundSet,
+            bool _looped = false,
             SoundGroupPtr const& _soundGroup = nullptr);
 
 

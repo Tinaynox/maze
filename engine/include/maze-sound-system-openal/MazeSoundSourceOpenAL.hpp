@@ -76,6 +76,9 @@ namespace Maze
         bool update(F32 _dt);
 
         //////////////////////////////////////////
+        virtual void setLooped(bool _looped) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
         virtual void setVolume(F32 _volume) MAZE_OVERRIDE;
 
     protected:
@@ -99,6 +102,9 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual void updateVolume() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void updateLooped() MAZE_OVERRIDE;
 
     protected:
         MZALuint m_sourceID = 0;

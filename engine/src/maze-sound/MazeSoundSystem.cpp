@@ -30,6 +30,7 @@
 #include "maze-sound/managers/MazeSoundManager.hpp"
 #include "maze-sound/loaders/MazeLoaderWAV.hpp"
 #include "maze-sound/MazeSoundSource.hpp"
+#include "maze-sound/MazeSoundSet.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 
 
@@ -70,12 +71,14 @@ namespace Maze
     //////////////////////////////////////////
     SoundSourcePtr SoundSystem::play(
         SoundPtr const& _sound,
-        bool _cycled,
-        SoundGroupPtr const& _soundGroup)
+        bool _looped,
+        SoundGroupPtr const& _soundGroup,
+        F32 _volume)
     {
         SoundSourcePtr soundSource = createSoundSource(_sound);
-        soundSource->setCycled(_cycled);
+        soundSource->setLooped(_looped);
         soundSource->setSoundGroup(_soundGroup);
+        soundSource->setVolume(_volume);
         soundSource->play();
         return soundSource;
     }
@@ -83,12 +86,22 @@ namespace Maze
     //////////////////////////////////////////
     SoundSourcePtr SoundSystem::play(
         String const& _soundAssetName,
-        bool _cycled,
-        SoundGroupPtr const& _soundGroup)
+        bool _looped,
+        SoundGroupPtr const& _soundGroup,
+        F32 _volume)
     {
         SoundPtr const& sound = SoundManager::GetInstancePtr()->getSound(_soundAssetName);
         MAZE_ERROR_RETURN_VALUE_IF(!sound, nullptr, "Sound is not found - %s", _soundAssetName.c_str());
-        return play(sound, _cycled, _soundGroup);
+        return play(sound, _looped, _soundGroup, _volume);
+    }
+
+    //////////////////////////////////////////
+    SoundSourcePtr SoundSystem::play(
+        SoundSetPtr const& _soundSet,
+        bool _looped,
+        SoundGroupPtr const& _soundGroup)
+    {
+        return play(_soundSet->fetch(), _looped, _soundGroup, _soundSet->getVolume());
     }
 
     //////////////////////////////////////////
