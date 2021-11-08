@@ -203,6 +203,14 @@ namespace Maze
             return _value * _value * (3 - 2 * _value);
         }
 
+        //////////////////////////////////////////
+        template <typename TValue>
+        inline TValue SmoothLerp(TValue _v0, TValue _v1, TValue _progress)
+        {
+            _progress = _progress * _progress * (3 - 2 * _progress);
+            return Lerp<TValue>(_v0, _v1, _progress);
+        }
+
         // 1|y     **
         //  |    *    *
         //  |   *      *

@@ -275,7 +275,7 @@ namespace Maze
                     
                 positionShift += 0.5f * m_systemFont->charSize.y * fontScale;
 
-                Vec2DF sizeV = m_systemFont->charSize * fontScale;
+                Vec2DF sizeV = (Vec2DF)m_systemFont->charSize * fontScale;
                 Vec2DF positionShiftV = Vec2DF((F32)sx, (F32)sy) * fontScale + positionShift;
 
 
@@ -410,7 +410,7 @@ namespace Maze
 
         positionShift += 0.5f * m_systemFont->charSize.x * fontScale;
 
-        Vec2DF sizeV = m_systemFont->charSize * fontScale;
+        Vec2DF sizeV = (Vec2DF)m_systemFont->charSize * fontScale;
         Vec2DF positionShiftV = Vec2DF((F32)sx, (F32)sy) * fontScale + positionShift;
 
         return Vec2DF(-0.5f + columnsCount, -0.5f) * sizeV + positionShiftV;
