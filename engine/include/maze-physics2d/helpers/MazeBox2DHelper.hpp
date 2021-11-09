@@ -34,6 +34,7 @@
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/math/MazeVec2D.hpp"
+#include "maze-graphics/MazeColorF128.hpp"
 #include <box2d/box2d.h>
 #include <functional>
 
@@ -65,6 +66,12 @@ namespace Maze
         MAZE_PHYSICS2D_API inline Vec2DF ToVec2DF(b2Vec2 const& _vec)
         {
             return Vec2DF(_vec.x, _vec.y);
+        }
+
+        //////////////////////////////////////////
+        MAZE_PHYSICS2D_API inline ColorF128 ToColor128F(b2Color const& _color)
+        {
+            return ColorF128(_color.r, _color.g, _color.b, _color.a);
         }
 
 
