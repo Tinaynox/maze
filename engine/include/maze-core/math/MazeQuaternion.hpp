@@ -284,13 +284,16 @@ namespace Maze
         static Quaternion LookRotation(Vec3DF const& _forward, Vec3DF const& _up);
 
         //////////////////////////////////////////
-        F32 getRoll(bool _reprojectAxis) const;
+        inline F32 getRoll() const { return getEuler().z; }
 
         //////////////////////////////////////////
-        F32 getPitch(bool _reprojectAxis) const;
+        inline F32 getPitch() const { return getEuler().x; }
 
         //////////////////////////////////////////
-        F32 getYaw(bool _reprojectAxis) const;
+        inline F32 getYaw() const { return getEuler().y; }
+
+        //////////////////////////////////////////
+        Vec3DF getEuler() const;
 
         //////////////////////////////////////////
         inline bool isNaN() const

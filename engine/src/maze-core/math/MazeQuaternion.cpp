@@ -216,21 +216,23 @@ namespace Maze
         F32 _yAngle,
         F32 _zAngle)
     {
-        F32 x2 = _xAngle * 0.5f;
-        F32 y2 = _yAngle * 0.5f;
-        F32 z2 = _zAngle * 0.5f;
+        F32 pitch = _xAngle;
+        F32 yaw = _yAngle;
+        F32 roll = _zAngle;
 
-        F32 sinx2 = Math::Sin(x2);
-        F32 cosx2 = Math::Cos(x2);
-        F32 siny2 = Math::Sin(y2);
-        F32 cosy2 = Math::Cos(y2);
-        F32 sinz2 = Math::Sin(z2);
-        F32 cosz2 = Math::Cos(z2);
-
-        w = cosx2 * cosy2 * cosz2 + sinx2 * siny2 * sinz2;
-        x = sinx2 * cosy2 * cosz2 - cosx2 * siny2 * sinz2;
-        y = cosx2 * siny2 * cosz2 + sinx2 * cosy2 * sinz2,
-        z = cosx2 * cosy2 * sinz2 - sinx2 * siny2 * cosz2;
+        F32 rollOver2 = roll * 0.5f;
+        F32 sinRollOver2 = Math::Sin(rollOver2);
+        F32 cosRollOver2 = Math::Cos(rollOver2);
+        F32 pitchOver2 = pitch * 0.5f;
+        F32 sinPitchOver2 = Math::Sin(pitchOver2);
+        F32 cosPitchOver2 = Math::Cos(pitchOver2);
+        F32 yawOver2 = yaw * 0.5f;
+        F32 sinYawOver2 = Math::Sin(yawOver2);
+        F32 cosYawOver2 = Math::Cos(yawOver2);
+        w = cosYawOver2 * cosPitchOver2 * cosRollOver2 + sinYawOver2 * sinPitchOver2 * sinRollOver2;
+        x = cosYawOver2 * sinPitchOver2 * cosRollOver2 + sinYawOver2 * cosPitchOver2 * sinRollOver2;
+        y = sinYawOver2 * cosPitchOver2 * cosRollOver2 - cosYawOver2 * sinPitchOver2 * sinRollOver2;
+        z = cosYawOver2 * cosPitchOver2 * sinRollOver2 - sinYawOver2 * sinPitchOver2 * cosRollOver2;
     }
 
     //////////////////////////////////////////
@@ -565,66 +567,40 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    F32 Quaternion::getRoll(bool _reprojectAxis) const
+    Vec3DF Quaternion::getEuler() const
     {
-        if (_reprojectAxis)
+        // If the input quaternion is normalized, this is exactly one. Otherwise, this acts as a correction factor for the quaternion not-normalizedness
+        F32 unit = (x * x) + (y * y) + (z * z) + (w * w);
+
+        // This will have a magnitude of 0.5 or greater if and only if this is a singularity case
+        F32 test = x * w - y * z;
+
+        Vec3DF euler;
+
+        // Singularity at north pole
+        if (test > 0.4995f * unit)
         {
-            F32 ty = 2.0f * y;
-            F32 tz = 2.0f * z;
-            F32 twz = tz * w;
-            F32 txy = ty * x;
-            F32 tyy = ty * y;
-            F32 tzz = tz * z;
-
-            return F32(Math::ATan2(txy + twz, 1.0f - (tyy + tzz)));
-
+            euler.x = Math::c_halfPi;
+            euler.y = 2.0f * Math::ATan2(y, x);
+            euler.z = 0;
         }
         else
+        // Singularity at south pole
+        if (test < -0.4995f * unit)
         {
-            return F32(Math::ATan2(2 * (x * y + w * z), w * w + x * x - y * y - z * z));
+            euler.x = -Math::c_halfPi;
+            euler.y = -2.0f * Math::ATan2(y, x);
+            euler.z = 0;
         }
-    }
-
-    //////////////////////////////////////////
-    F32 Quaternion::getPitch(bool _reprojectAxis) const
-    {
-        if (_reprojectAxis)
-        {
-            F32 tx = 2.0f * x;
-            F32 tz = 2.0f * z;
-            F32 twx = tx * w;
-            F32 txx = tx * x;
-            F32 tyz = tz * y;
-            F32 tzz = tz * z;
-
-            return F32(Math::ATan2(tyz + twx, 1.0f - (txx + tzz)));
-        }
+        // No singularity - this is the majority of cases
         else
         {
-            return F32(Math::ATan2(2 * (y * z + w * x), w * w - x * x - y * y + z * z));
+            euler.x = Math::ASin(2.0f * (w * x - y * z));
+            euler.y = Math::ATan2(2.0f * w * y + 2.0f * z * x, 1.0f - 2.0f * (x * x + y * y));
+            euler.z = Math::ATan2(2.0f * w * z + 2.0f * x * y, 1.0f - 2.0f * (z * z + x * x));
         }
-    }
 
-    //////////////////////////////////////////
-    F32 Quaternion::getYaw(bool _reprojectAxis) const
-    {
-        if (_reprojectAxis)
-        {
-            F32 tx = 2.0f * x;
-            F32 ty = 2.0f * y;
-            F32 tz = 2.0f * z;
-            F32 twy = ty * w;
-            F32 txx = tx * x;
-            F32 txz = tz * x;
-            F32 tyy = ty * y;
-
-            return F32(Math::ATan2(txz + twy, 1.0f - (txx + tyy)));
-
-        }
-        else
-        {
-            return F32(Math::ASin(-2 * (x * z - w * y)));
-        }
+        return euler;
     }
 
     //////////////////////////////////////////
