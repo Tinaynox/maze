@@ -231,9 +231,9 @@ namespace Maze
     //////////////////////////////////////////
     void PropertyDrawerQuaternion::setValue(Quaternion const& _value)
     {
-        F32 pitch = _value.getPitch(false);
-        F32 yaw = _value.getYaw(false);
-        F32 roll = _value.getRoll(false);
+        F32 pitch = _value.getPitch();
+        F32 yaw = _value.getYaw();
+        F32 roll = _value.getRoll();
 
         if (!m_editBoxX->getSelected() && !m_editBoxY->getSelected() && !m_editBoxZ->getSelected())
         {
