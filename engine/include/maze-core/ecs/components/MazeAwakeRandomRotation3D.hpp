@@ -33,6 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeVec3DB.hpp"
 #include "maze-core/math/MazeRotation2D.hpp"
 
 
@@ -68,7 +69,13 @@ namespace Maze
         virtual ~AwakeRandomRotation3D();
 
         //////////////////////////////////////////
-        static AwakeRandomRotation3DPtr Create();
+        static AwakeRandomRotation3DPtr Create(Vec3DB const& _axes = Vec3DB::c_true);
+
+        //////////////////////////////////////////
+        inline void setAxes(Vec3DB const& _axes) { m_axes = _axes; }
+
+        //////////////////////////////////////////
+        inline Vec3DB const& getAxes() const { return m_axes; }
 
     protected:
 
@@ -79,12 +86,13 @@ namespace Maze
         using Component::init;
         
         //////////////////////////////////////////
-        bool init();
+        bool init(Vec3DB const& _axes = Vec3DB::c_true);
 
         //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
 
     protected:
+        Vec3DB m_axes = Vec3DB::c_true;
     };
 
 

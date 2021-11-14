@@ -40,7 +40,8 @@ namespace Maze
     // Class AwakeRandomRotation3D
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(AwakeRandomRotation3D, Component);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(AwakeRandomRotation3D, Component,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DB, axes, Vec3DB::c_true, getAxes, setAxes));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(AwakeRandomRotation3D);
@@ -56,27 +57,38 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    AwakeRandomRotation3DPtr AwakeRandomRotation3D::Create()
+    AwakeRandomRotation3DPtr AwakeRandomRotation3D::Create(Vec3DB const& _axes)
     {
         AwakeRandomRotation3DPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(AwakeRandomRotation3D, object, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(AwakeRandomRotation3D, object, init(_axes));
         return object;
     }
 
     //////////////////////////////////////////
-    bool AwakeRandomRotation3D::init()
+    bool AwakeRandomRotation3D::init(Vec3DB const& _axes)
     {
-
+        m_axes = _axes;
         return true;
     }
 
     //////////////////////////////////////////
     void AwakeRandomRotation3D::processEntityAwakened()
     {
-        getEntityRaw()->ensureComponent<Transform3D>()->setLocalRotation(
-			Quaternion(
-				Vec3DF::c_unitZ,
-				Vec3DF::RandomDirection()));
+        if (m_axes == Vec3DB::c_true)
+        {
+            getEntityRaw()->ensureComponent<Transform3D>()->setLocalRotation(
+                Quaternion(
+                    Vec3DF::c_unitZ,
+                    Vec3DF::RandomDirection()));
+        }
+        else
+        {
+            Vec3DF angles = Vec3DF::c_zero;
+            for (Size i = 0; i < 3; ++i)
+                if (m_axes[i])
+                    angles[i] = Math::RangeRandom(-Math::c_pi, Math::c_pi);
+            getEntityRaw()->ensureComponent<Transform3D>()->setLocalRotation(angles);
+        }
     }
     
 } // namespace Maze

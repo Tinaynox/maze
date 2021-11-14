@@ -35,6 +35,8 @@
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/math/MazeMat4D.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
+#include "maze-core/math/MazeMath.hpp"
+#include "maze-core/math/MazeMathAlgebra.hpp"
 
 
 //////////////////////////////////////////
@@ -121,6 +123,27 @@ namespace Maze
 
         //////////////////////////////////////////
         void setLocalRotation(Quaternion const& _localRotation);
+
+        //////////////////////////////////////////
+        inline void setLocalRotation(F32 _x, F32 _y, F32 _z)
+        {
+            setLocalRotation(Quaternion(_x, _y, _z));
+        }
+
+        //////////////////////////////////////////
+        inline void setLocalRotation(Vec3DF const& _euler)
+        {
+            setLocalRotation(_euler.x, _euler.y, _euler.z);
+        }
+
+        //////////////////////////////////////////
+        inline void setLocalRotationDegrees(F32 _x, F32 _y, F32 _z)
+        {
+            setLocalRotation(
+                Math::DegreesToRadians(_x),
+                Math::DegreesToRadians(_y),
+                Math::DegreesToRadians(_z));
+        }
 
         //////////////////////////////////////////
         void setLocalDirection(Vec3DF const& _localDirection);
