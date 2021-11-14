@@ -32,20 +32,20 @@ maze_add_module(
 
 
 ##########################################
-set(ENGINE_LIBS maze-core maze-graphics maze-particles maze-physics2d maze-sound maze-gamepad maze-debugger)
+set(MODULE_LIBS maze-core maze-graphics maze-particles maze-physics2d maze-sound maze-gamepad maze-debugger)
 
 
 ##########################################
 if(MAZE_RENDER_SYSTEM_OPENGL_ENABLED)
-    list(APPEND ENGINE_LIBS maze-render-system-opengl-core maze-render-system-opengl3)
+    list(APPEND MODULE_LIBS maze-render-system-opengl-core maze-render-system-opengl3)
 endif()
 
 
 ##########################################
 if(MAZE_SOUND_SYSTEM_OPENAL_ENABLED)
-    list(APPEND ENGINE_LIBS maze-sound-system-openal)
+    list(APPEND MODULE_LIBS maze-sound-system-openal)
 endif()
 
 
 ##########################################
-target_link_libraries(maze-engine ${ENGINE_LIBS})
+target_link_libraries(maze-engine ${MODULE_LIBS})

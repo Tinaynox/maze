@@ -29,7 +29,12 @@
 #include "maze-core/helpers/MazeTextHelper.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeSystemManager.hpp"
+#include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-gamepad/gamepad/MazeGamepad.hpp"
+
+#if (MAZE_LIBSTEM_GAMEPAD_ENABLED)
+#   include "maze-gamepad/providers/MazeGamepadProviderLibstem.hpp"
+#endif
 
 
 //////////////////////////////////////////
@@ -64,12 +69,19 @@ namespace Maze
     bool GamepadManager::init()
     {
         DeviceCategory deviceCategory = SystemManager::GetInstancePtr()->getDeviceCategory();
-        if (   deviceCategory == DeviceCategory::Phone 
-            || deviceCategory == DeviceCategory::Pad
-            )
+        if (deviceCategory == DeviceCategory::Phone ||
+            deviceCategory == DeviceCategory::Pad)
         {
             m_virtualGamepad = attachGamepad(s_virtualGamepadDeviceId, "Virtual Gamepad", 0, 0, 8, 8);
         }
+
+        UpdateManager::GetInstancePtr()->addUpdatable(this);
+
+#if (MAZE_LIBSTEM_GAMEPAD_ENABLED)
+        m_gamepadProviders.emplace_back(GamepadProviderLibstem::Create());
+#endif
+
+        detectGamepads();
 
         return true;
     }
@@ -77,11 +89,15 @@ namespace Maze
     //////////////////////////////////////////
     void GamepadManager::update(F32 _dt)
     {
+        for (GamepadProviderPtr const& gamepadProvider : m_gamepadProviders)
+            gamepadProvider->update(_dt);
     }
 
     //////////////////////////////////////////
     void GamepadManager::detectGamepads()
     {
+        for (GamepadProviderPtr const& gamepadProvider : m_gamepadProviders)
+            gamepadProvider->detectGamepads();
     }
 
     //////////////////////////////////////////
@@ -124,6 +140,8 @@ namespace Maze
         m_gamepads.insert(GamepadListByDeviceId::value_type(_deviceId, gamepad));
         gamepad->setConnected(true);
 
+        eventGamepadsChanged();
+
         return gamepad;
     }
 
@@ -142,10 +160,10 @@ namespace Maze
     {
         static GamepadPtr nullGamepad;
 
-        for (GamepadListByDeviceId::const_iterator    it = m_gamepads.begin(),
-                                                    end = m_gamepads.end();
-                                                    it != end;
-                                                    ++it)
+        for (GamepadListByDeviceId::const_iterator it = m_gamepads.begin(),
+                                                   end = m_gamepads.end();
+                                                   it != end;
+                                                   ++it)
         {
             if (!it->second)
                 continue;
@@ -161,10 +179,10 @@ namespace Maze
     Vector<GamepadPtr> GamepadManager::getGamepadsByProductId(U32 _vid, U32 _pid) const
     {
         Vector<GamepadPtr> result;
-        for( GamepadListByDeviceId::const_iterator    it = m_gamepads.begin(),
-                                                    end = m_gamepads.end();
-                                                    it != end;
-                                                    ++it )
+        for( GamepadListByDeviceId::const_iterator it = m_gamepads.begin(),
+                                                   end = m_gamepads.end();
+                                                   it != end;
+                                                   ++it )
         {
             if (!it->second)
                 continue;

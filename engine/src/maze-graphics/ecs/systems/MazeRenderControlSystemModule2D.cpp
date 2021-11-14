@@ -117,8 +117,9 @@ namespace Maze
         {
             Canvas* canvas = canvasRenderData.canvas;
             Canvas* rootCanvas = canvasRenderData.rootCanvas;
-
-                
+            if (!canvas || !rootCanvas)
+                continue;
+                            
             Rect2DF const& viewport = canvas->getViewport();
             Rect2DF const& rootViewport = rootCanvas->getViewport();
 

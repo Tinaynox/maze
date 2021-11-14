@@ -42,6 +42,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(GamepadManager);
     MAZE_USING_SHARED_PTR(Gamepad);
+    MAZE_USING_SHARED_PTR(GamepadProvider);
 
 
     //////////////////////////////////////////
@@ -55,6 +56,12 @@ namespace Maze
 
         //////////////////////////////////////////
         static U32 const s_virtualGamepadDeviceId;
+
+    public:
+
+        //////////////////////////////////////////
+        using GamepadListByDeviceId = Map<U32, GamepadPtr>;
+
 
     public:
 
@@ -108,6 +115,9 @@ namespace Maze
         Vector<GamepadPtr> getGamepadsByProductId(U32 _vid, U32 _pid) const;
 
         //////////////////////////////////////////
+        GamepadListByDeviceId const& getGamepads() const { return m_gamepads; }
+
+        //////////////////////////////////////////
         Size getGamepadsCount() const { return m_gamepads.size(); }
 
         //////////////////////////////////////////
@@ -116,7 +126,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        using GamepadListByDeviceId = Map<U32, GamepadPtr>;
+        MultiDelegate<> eventGamepadsChanged;
 
     protected:
 
@@ -131,6 +141,8 @@ namespace Maze
 
         GamepadListByDeviceId m_gamepads;
         GamepadPtr m_virtualGamepad;
+
+        Vector<GamepadProviderPtr> m_gamepadProviders;
     };
 
 

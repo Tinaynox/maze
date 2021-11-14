@@ -114,6 +114,9 @@ namespace Maze
         //////////////////////////////////////////
         inline void setClearColor(ColorU32 const& _clearColor) { m_clearColor = _clearColor; }
 
+        //////////////////////////////////////////
+        inline void setClearColor(U8 _r, U8 _g, U8 _b) { setClearColor({ _r, _g, _b }); }
+
 
         //////////////////////////////////////////
         inline bool getClearDepthFlag() const { return m_clearDepthFlag; }

@@ -21,35 +21,34 @@
 # 3. This notice may not be removed or altered from any source distribution.
 #
 ##########################################
+cmake_minimum_required(VERSION 3.6)
 
 
 ##########################################
-maze_add_module(
-    maze-gamepad
-    INCLUDE_DIR "include/maze-gamepad"
-    SRC_DIR "src/maze-gamepad"
-    FORWARD_HEADER MazeGamepadHeader)
+project(maze-example-gamepad)
 
 
 ##########################################
-set(MODULE_LIBS maze-core maze-graphics)
+set(EXAMPLE_NAME "${PROJECT_NAME}")
+set(EXAMPLE_MAZE_LIBS maze-core maze-gamepad maze-graphics maze-ui maze-engine maze-debugger)
 
 
 ##########################################
-if(MAZE_TARGET_PLATFORM_IS_WINDOWS OR MAZE_TARGET_PLATFORM_IS_OSX OR MAZE_TARGET_PLATFORM_IS_LINUX)
-   list(APPEND MODULE_LIBS libstem_gamepad)
-endif()
+include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Utils.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Config.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Macros.cmake")
 
 
 ##########################################
-target_link_libraries(maze-gamepad ${MODULE_LIBS})
+maze_add_sources(${CMAKE_CURRENT_SOURCE_DIR}/../templates/example-wrapper ADDITIONAL_EXAMPLE_FILES)
+maze_sort_sources("${ADDITIONAL_EXAMPLE_FILES}" ADDITIONAL_EXAMPLE_FILES)
 
 
-##########################################        
+##########################################
+include("${CMAKE_CURRENT_SOURCE_DIR}/../templates/CMakeExampleTemplate.cmake")
+
+
+##########################################
 target_include_directories(
-    maze-gamepad
-    PUBLIC "${PROJECT_SOURCE_DIR}/third-party/zlib"
-    PUBLIC "${PROJECT_BINARY_DIR}/third-party/zlib"
-    PUBLIC "${PROJECT_SOURCE_DIR}/third-party/libpng"
-    PUBLIC "${PROJECT_BINARY_DIR}/third-party/libpng"
-    PUBLIC "${PROJECT_BINARY_DIR}/third-party/libstem_gamepad/source")
+    ${EXAMPLE_NAME}
+    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../templates/example-wrapper")

@@ -21,35 +21,29 @@
 # 3. This notice may not be removed or altered from any source distribution.
 #
 ##########################################
+cmake_minimum_required(VERSION 3.6)
 
 
 ##########################################
-maze_add_module(
-    maze-gamepad
-    INCLUDE_DIR "include/maze-gamepad"
-    SRC_DIR "src/maze-gamepad"
-    FORWARD_HEADER MazeGamepadHeader)
+project(maze-android-native-lib)
 
 
 ##########################################
-set(MODULE_LIBS maze-core maze-graphics)
+set(EXAMPLE_NAME "maze-example-gamepad")
+set(EXAMPLE_LIB "${EXAMPLE_NAME}")
 
 
 ##########################################
-if(MAZE_TARGET_PLATFORM_IS_WINDOWS OR MAZE_TARGET_PLATFORM_IS_OSX OR MAZE_TARGET_PLATFORM_IS_LINUX)
-   list(APPEND MODULE_LIBS libstem_gamepad)
-endif()
+get_filename_component(BUILD_ARCH_FOLDER ${CMAKE_CURRENT_BINARY_DIR} NAME)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../../../../examples/${EXAMPLE_NAME}" "${CMAKE_CURRENT_BINARY_DIR}/../../../../../cmake/${BUILD_ARCH_FOLDER}")
+
+set(CMAKE_SHARED_LINKER_FLAGS
+    "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_onCreate")
 
 
-##########################################
-target_link_libraries(maze-gamepad ${MODULE_LIBS})
-
-
-##########################################        
-target_include_directories(
-    maze-gamepad
-    PUBLIC "${PROJECT_SOURCE_DIR}/third-party/zlib"
-    PUBLIC "${PROJECT_BINARY_DIR}/third-party/zlib"
-    PUBLIC "${PROJECT_SOURCE_DIR}/third-party/libpng"
-    PUBLIC "${PROJECT_BINARY_DIR}/third-party/libpng"
-    PUBLIC "${PROJECT_BINARY_DIR}/third-party/libstem_gamepad/source")
+add_library(maze-native-lib
+            SHARED
+            src/main/cpp/AndroidMain.cpp)
+        
+target_link_libraries(maze-native-lib
+    ${EXAMPLE_LIB})
