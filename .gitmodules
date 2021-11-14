@@ -16,3 +16,6 @@
 [submodule "engine/third-party/minizip-ng"]
 	path = engine/third-party/minizip-ng
 	url = git@github.com:Tinaynox/minizip-ng.git
+[submodule "engine/third-party/libstem_gamepad"]
+	path = engine/third-party/libstem_gamepad
+	url = git@github.com:Tinaynox/libstem_gamepad.git
