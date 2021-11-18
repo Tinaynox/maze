@@ -51,7 +51,6 @@ namespace Maze
         Mouse,
         Keyboard,
         Touch,
-        Gamepad,
         Text,
         MAX
     };
@@ -89,19 +88,6 @@ namespace Maze
         Press,
         Release,
         Cancel,
-        MAX
-    };
-
-
-    //////////////////////////////////////////
-    enum class InputEventGamepadType
-    {
-        None = 0,
-        GamepadAttached,
-        GamepadDetached,
-        ButtonDown,
-        ButtonUp,
-        AxisMove,
         MAX
     };
 
@@ -233,27 +219,6 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    struct InputEventGamepadData
-    {
-        InputEventGamepadType type;
-        U32 id;
-        U32 deviceId;
-        union
-        {
-            U32 buttonId;
-
-            struct
-            {
-                S32 axisId;
-                F32 value;
-                F32 lastValue;
-            } axisData;
-        };
-
-    };
-
-
-    //////////////////////////////////////////
     struct InputEventTextData
     {
         InputEventTextType type;
@@ -299,13 +264,6 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        InputEvent(InputEventGamepadData&& _event) noexcept
-            : type(InputEventType::Gamepad)
-            , joystick(std::move(_event))
-        {
-        }
-
-        //////////////////////////////////////////
         InputEvent(InputEventTextData&& _event) noexcept
             : type(InputEventType::Text)
             , text(std::move(_event))
@@ -320,7 +278,6 @@ namespace Maze
             InputEventMouseData mouse;
             InputEventKeyboardData keyboard;
             InputEventTouchData touch;
-            InputEventGamepadData joystick;
             InputEventTextData text;
         };
     };

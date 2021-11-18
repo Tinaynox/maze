@@ -34,6 +34,7 @@
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/math/MazeVec2D.hpp"
+#include "maze-gamepad/gamepad/MazeGamepad.hpp"
 
 
 //////////////////////////////////////////
@@ -88,7 +89,7 @@ namespace Maze
         //////////////////////////////////////////
         GamepadPtr attachGamepad(
             U32 _deviceId,
-            String const& _desc,
+            String const& _name,
             U32 _vendorId,
             U32 _productId,
             U32 _axesCount,
@@ -106,6 +107,41 @@ namespace Maze
                 return nullPointer;
             
             return (*it).second;
+        }
+
+        //////////////////////////////////////////
+        GamepadPtr getGamepadByVendorAndProduct(U32 _vendorId, U32 _productId) const
+        {
+            Vector<GamepadPtr> results;
+            for (auto& gamepadData : m_gamepads)
+                if (gamepadData.second->getVendorId() == _vendorId && gamepadData.second->getProductId() == _productId)
+                    results.emplace_back(gamepadData.second);
+
+            if (results.empty())
+                return nullptr;
+
+            std::sort(
+                results.begin(),
+                results.end(),
+                [](GamepadPtr const& _gamepad0, GamepadPtr const& _gamepad1)
+                {
+                    if (_gamepad0->getConnected() && !_gamepad1->getConnected())
+                        return true;
+                    return false;
+                });
+
+            return results.front();
+        }
+
+        //////////////////////////////////////////
+        inline GamepadPtr const& getFirstActiveGamepad() const
+        {
+            static GamepadPtr nullPointer;
+            for (auto& gamepadData : m_gamepads)
+                if (gamepadData.second->getConnected())
+                    return gamepadData.second;
+
+            return nullPointer;
         }
 
         //////////////////////////////////////////
@@ -127,6 +163,8 @@ namespace Maze
 
         //////////////////////////////////////////
         MultiDelegate<> eventGamepadsChanged;
+        MultiDelegate<GamepadPtr const&> eventGamepadAdded;
+        MultiDelegate<GamepadPtr const&> eventGamepadWillBeRemoved;
 
     protected:
 

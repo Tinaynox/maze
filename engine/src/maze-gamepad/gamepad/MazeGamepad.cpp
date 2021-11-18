@@ -41,7 +41,6 @@ namespace Maze
         : m_id(0)
         , m_deviceId(0)
         , m_connected(false)
-        , m_iconSymbol(0xE307)
         , m_vendorId(0)
         , m_productId(0)
         , m_axesCount(0)
@@ -57,7 +56,7 @@ namespace Maze
     //////////////////////////////////////////
     GamepadPtr Gamepad::Create(
         U32 _deviceId,
-        String const& _description,
+        String const& _name,
         S32 _vendorId,
         S32 _productId,
         U32 _axesCount,
@@ -69,7 +68,7 @@ namespace Maze
             gamepad,
             init(
                 _deviceId,
-                _description,
+                _name,
                 _vendorId,
                 _productId,
                 _axesCount,
@@ -80,7 +79,7 @@ namespace Maze
     //////////////////////////////////////////
     bool Gamepad::init(
         U32 _deviceId,
-        String const& _description,
+        String const& _name,
         S32 _vendorId,
         S32 _productId,
         Size _axesCount,
@@ -90,7 +89,7 @@ namespace Maze
         m_id = s_id++;
 
         m_deviceId = _deviceId;
-        m_description = _description;
+        m_name = _name;
         m_vendorId = _vendorId;
         m_productId = _productId;
         setAxesAndButtonsCount(_axesCount, _buttonsCount);
@@ -103,7 +102,6 @@ namespace Maze
         Size _axesCount,
         Size _buttonsCount)
     {
-
         m_axesCount = _axesCount;
         m_axisStates.resize(m_axesCount);
         for (Size i = 0; i < m_axesCount; ++i)
@@ -116,43 +114,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    String Gamepad::getDescriptionWithIcons()
-    {
-        String result;
-        
-        if (!getConnected())
-            result.append(" #{255,100,100}");
-        result.append(m_description);
-
-        if (!getConnected())
-        {
-            result.append(" #{255,255,255}");
-            result.append(TextHelper::UTF8CodePointToBFString(0xE30F));
-        }
-
-        return result;
-    }
-
-    //////////////////////////////////////////
     void Gamepad::setConnected(bool _connected)
     {
         m_connected = _connected;
 
-        InputEventGamepadData eventData;
-        eventData.type = m_connected ? InputEventGamepadType::GamepadAttached : InputEventGamepadType::GamepadDetached;
-        eventData.id = m_id;
-        eventData.deviceId = m_deviceId;
-        InputManager::GetInstancePtr()->generateInputEvent(eventData);
+        eventConnectedChanged(this, m_connected);
 
         if (m_connected)
         {
-            Debug::Log("Gamepad%u: %s - Attached with deviceId=%u (0x%X 0x%X)", m_id, m_description.c_str(), m_deviceId, m_vendorId, m_productId);
+            Debug::Log("Gamepad%u: %s - Attached with deviceId=%u (0x%X 0x%X)", m_id, m_name.c_str(), m_deviceId, m_vendorId, m_productId);
             Debug::Log("\tButtons count: %u", m_buttonsCount);
             Debug::Log("\tAxes count: %u", m_axesCount);
         }
         else
         {
-            Debug::Log("Gamepad%u: %s - Removed", m_id, m_description.c_str());
+            Debug::Log("Gamepad%u: %s - Removed", m_id, m_name.c_str());
         }
     }
 
@@ -167,15 +143,7 @@ namespace Maze
         F32 lastState = m_axisStates[_axisId];
         m_axisStates[_axisId] = _axisState;
 
-        InputEventGamepadData eventData;
-        eventData.type = InputEventGamepadType::AxisMove;
-        eventData.id = m_id;
-        eventData.deviceId = m_deviceId;
-        eventData.axisData.axisId = _axisId;
-        eventData.axisData.value = _axisState;
-        eventData.axisData.lastValue = lastState;
-        InputManager::GetInstancePtr()->generateInputEvent(eventData);
-    
+        eventAxisValueChanged(this, _axisId, _axisState);
     }
 
     //////////////////////////////////////////
@@ -188,13 +156,7 @@ namespace Maze
 
         m_buttonStates[_buttonId] = _buttonState;
 
-        InputEventGamepadData eventData;
-        eventData.id = m_id;
-        eventData.deviceId = m_deviceId;
-        eventData.type = _buttonState ? InputEventGamepadType::ButtonDown : InputEventGamepadType::ButtonUp;
-        eventData.buttonId = _buttonId;
-        InputManager::GetInstancePtr()->generateInputEvent(eventData);
-    
+        eventButtonValueChanged(this, _buttonId, _buttonState);
     }
     
 } // namespace Maze

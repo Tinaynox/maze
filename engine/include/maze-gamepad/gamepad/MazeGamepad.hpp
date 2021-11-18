@@ -56,7 +56,7 @@ namespace Maze
         //////////////////////////////////////////
         static GamepadPtr Create(
             U32 _deviceId,
-            String const& _description,
+            String const& _name,
             S32 _vendorId,
             S32 _productId,
             U32 _axesCount,
@@ -83,13 +83,7 @@ namespace Maze
         inline bool getConnected() const { return m_connected; }
 
         //////////////////////////////////////////
-        inline U32 getIconSymbol() const { return m_iconSymbol; }
-
-        //////////////////////////////////////////
-        inline String const& getDescription() const { return m_description; }
-
-        //////////////////////////////////////////
-        String getDescriptionWithIcons();
+        inline String const& getName() const { return m_name; }
 
         //////////////////////////////////////////
         inline S32 getVendorId() const { return m_vendorId; }
@@ -119,8 +113,9 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        MultiDelegate<S32> eventAxisEvent;
-        MultiDelegate<S32> eventButtonEvent;
+        MultiDelegate<Gamepad*, bool> eventConnectedChanged;
+        MultiDelegate<Gamepad*, S32, F32> eventAxisValueChanged;
+        MultiDelegate<Gamepad*, S32, bool> eventButtonValueChanged;
 
     protected:
 
@@ -140,8 +135,7 @@ namespace Maze
         U32 m_id;
         U32 m_deviceId;
         bool m_connected;
-        U32 m_iconSymbol;
-        String m_description;
+        String m_name;
 
         S32 m_vendorId;
         S32 m_productId;

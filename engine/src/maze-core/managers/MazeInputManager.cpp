@@ -166,11 +166,6 @@ namespace Maze
                     eventTouch(event.touch);
                     break;
                 }
-                case InputEventType::Gamepad:        
-                {
-                    eventGamepad(event.joystick);
-                    break;
-                }
                 case InputEventType::Text:
                 {
                     eventText(event.text);

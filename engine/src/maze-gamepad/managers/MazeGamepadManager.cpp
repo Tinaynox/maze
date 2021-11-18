@@ -57,6 +57,12 @@ namespace Maze
     GamepadManager::~GamepadManager()
     {
         s_instance = nullptr;
+
+        while (!m_gamepads.empty())
+        {
+            eventGamepadWillBeRemoved(m_gamepads.begin()->second);
+            m_gamepads.erase(m_gamepads.begin());
+        }
     }
 
     //////////////////////////////////////////
@@ -103,7 +109,7 @@ namespace Maze
     //////////////////////////////////////////
     GamepadPtr GamepadManager::attachGamepad(
         U32 _deviceId,
-        String const& _desc,
+        String const& _name,
         U32 _vendorId,
         U32 _productId,
         U32 _axesCount,
@@ -111,16 +117,16 @@ namespace Maze
     {
         GamepadPtr gamepad;
 
-        for (GamepadListByDeviceId::iterator    it = m_gamepads.begin(),
-                                                end = m_gamepads.end();
-                                                it != end;
-                                                ++it)
+        for (GamepadListByDeviceId::iterator it = m_gamepads.begin(),
+                                             end = m_gamepads.end();
+                                             it != end;
+                                             ++it)
         {
             if (!it->second)
                 continue;
             
             if (false == it->second->getConnected()
-                && it->second->getDescription() == _desc
+                && it->second->getName() == _name
                 && it->second->getVendorId() == _vendorId
                 && it->second->getProductId() == _productId
                 && it->second->getAxesCount() == _axesCount
@@ -129,17 +135,20 @@ namespace Maze
                 // Gamepad reconnected with new deviceId
                 gamepad = it->second;
                 gamepad->setDeviceId(_deviceId);
+
+                eventGamepadWillBeRemoved(gamepad);
                 m_gamepads.erase(it);
                 break;
             }
         }
 
         if (!gamepad)
-            gamepad = Gamepad::Create(_deviceId, _desc, _vendorId, _productId, _axesCount, _buttonsCount);
+            gamepad = Gamepad::Create(_deviceId, _name, _vendorId, _productId, _axesCount, _buttonsCount);
 
         m_gamepads.insert(GamepadListByDeviceId::value_type(_deviceId, gamepad));
         gamepad->setConnected(true);
 
+        eventGamepadAdded(gamepad);
         eventGamepadsChanged();
 
         return gamepad;
@@ -153,6 +162,8 @@ namespace Maze
             return;
 
         it->second->setConnected(false);
+
+        eventGamepadsChanged();
     }
 
     //////////////////////////////////////////

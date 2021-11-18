@@ -142,7 +142,6 @@ namespace Maze
         MultiDelegate<InputEventMouseData const&> eventMouse;
         MultiDelegate<InputEventKeyboardData const&> eventKeyboard;
         MultiDelegate<InputEventTouchData const&> eventTouch;
-        MultiDelegate<InputEventGamepadData const&> eventGamepad;
         MultiDelegate<InputEventTextData const&> eventText;
 
     protected:
