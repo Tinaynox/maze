@@ -154,7 +154,7 @@ namespace Maze
         auto end = m_transform->getChildren().end();
         for (; it != end; ++it)
         {
-            if (!(*it)->getEntityRaw()->getActiveInHierarchy())
+            if (!(*it)->getEntityRaw()->getActiveSelf())
                 continue;
 
             ++result;
