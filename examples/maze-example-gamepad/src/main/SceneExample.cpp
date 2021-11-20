@@ -260,7 +260,7 @@ namespace Maze
         S32 index = 0;
         Vector<String> gamepadNames;
         for (auto const& gamepadData : gamepads)
-            gamepadNames.emplace_back(StringHelper::ToString(++index) + " - " + gamepadData.second->getDescription());
+            gamepadNames.emplace_back(StringHelper::ToString(++index) + " - " + gamepadData.second->getName());
 
         if (m_selectedGamepadIndex >= (S32)gamepads.size())
             m_selectedGamepadIndex = 0;
@@ -315,7 +315,7 @@ namespace Maze
         }
 
         {
-            String str = "Name: " + gamepad->getDescription();
+            String str = "Name: " + gamepad->getName();
             SystemTextRenderer2DPtr text = SpriteHelper::CreateSystemText(
                 str.c_str(),
                 8,
