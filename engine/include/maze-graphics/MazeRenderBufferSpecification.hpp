@@ -81,6 +81,12 @@ namespace Maze
                 return pixelFormat == _other.pixelFormat && samples == _other.samples;
             }
 
+            //////////////////////////////////////////
+            inline bool operator!=(TextureFormat const& _other) const
+            {
+                return !this->operator==(_other);
+            }
+
             PixelFormat::Enum pixelFormat = PixelFormat::None;
             S32 samples = 0;
         };
@@ -129,11 +135,12 @@ namespace Maze
             if (_hash != _other._hash)
                 return false;
 
-            if (memcmp(&colorTextureFormats, &_other.colorTextureFormats, sizeof(colorTextureFormats)) != 0)
-                return false;
+            for (S32 i = 0; i < (S32)c_renderBufferColorTexturesMax; ++i)
+                if (colorTextureFormats[i] != _other.colorTextureFormats[i])
+                    return false;
 
-            return        (depthTextureFormat == _other.depthTextureFormat)
-                    &&    (stencilTextureFormat == _other.stencilTextureFormat);
+            return (depthTextureFormat == _other.depthTextureFormat) &&
+                   (stencilTextureFormat == _other.stencilTextureFormat);
         }
 
         Vec2DU size;

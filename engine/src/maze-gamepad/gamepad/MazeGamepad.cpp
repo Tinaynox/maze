@@ -122,7 +122,7 @@ namespace Maze
 
         if (m_connected)
         {
-            Debug::Log("Gamepad%u: %s - Attached with deviceId=%u (0x%X 0x%X)", m_id, m_name.c_str(), m_deviceId, m_vendorId, m_productId);
+            Debug::Log("Gamepad%u: %s - Attached with deviceId=%u (0x%d 0x%d)", m_id, m_name.c_str(), m_deviceId, m_vendorId, m_productId);
             Debug::Log("\tButtons count: %u", m_buttonsCount);
             Debug::Log("\tAxes count: %u", m_axesCount);
         }
