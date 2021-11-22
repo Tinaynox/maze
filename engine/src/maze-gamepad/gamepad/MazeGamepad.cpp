@@ -135,7 +135,7 @@ namespace Maze
     //////////////////////////////////////////
     void Gamepad::setAxisState(S32 _axisId, F32 _axisState)
     {
-        MAZE_DEBUG_BP_IF(_axisId >= (S32)m_axesCount);
+        MAZE_DEBUG_BP_RETURN_IF(_axisId >= (S32)m_axesCount);
 
         if (m_axisStates[_axisId] == _axisState)
             return;
@@ -149,7 +149,7 @@ namespace Maze
     //////////////////////////////////////////
     void Gamepad::setButtonState(S32 _buttonId, bool _buttonState)
     {
-        MAZE_DEBUG_BP_IF(_buttonId >= (S32)m_buttonsCount);
+        MAZE_DEBUG_BP_RETURN_IF(_buttonId >= (S32)m_buttonsCount);
 
         if (m_buttonStates[_buttonId] == _buttonState)
             return;
