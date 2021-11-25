@@ -483,7 +483,7 @@ namespace Maze
                 subMesh->setName(meshName);
 
                 // Flip X for LHCS
-                for (S32 i = 0, in = indices.size(); i < in; i += 3)
+                for (S32 i = 0, in = (S32)indices.size(); i < in; i += 3)
                     std::swap(indices[i], indices[i + 2]);
                 for (Vec3DF& finalPosition : finalPositions)
                     finalPosition.x = -finalPosition.x;

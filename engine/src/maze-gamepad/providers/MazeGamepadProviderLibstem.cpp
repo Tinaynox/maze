@@ -49,10 +49,10 @@ namespace Maze
             return nullptr;
 
         for (Size i = 0; i < (Size)_device->numAxes; ++i)
-            newGamepad->setAxisState(i, _device->axisStates[i]);
+            newGamepad->setAxisState((S32)i, _device->axisStates[i]);
 
         for (Size i = 0; i < (Size)_device->numButtons; ++i)
-            newGamepad->setButtonState(i, _device->buttonStates[i] != 0);
+            newGamepad->setButtonState((S32)i, _device->buttonStates[i] != 0);
 
         return newGamepad;
     }
