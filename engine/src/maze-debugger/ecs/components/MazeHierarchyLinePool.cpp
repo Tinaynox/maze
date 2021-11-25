@@ -103,6 +103,7 @@ namespace Maze
                     [](HierarchyLinePtr const& _hierarchyLine)
                     {
                         _hierarchyLine->getEntityRaw()->setActiveSelf(false);
+                        _hierarchyLine->setUserData(nullptr);
                     },
                     [](HierarchyLinePtr const& _hierarchyLine)
                     {

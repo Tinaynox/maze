@@ -475,6 +475,52 @@ namespace Maze
         bool listening = false;
         String meshName;
 
+        auto processCreateSubMesh =
+            [&]()
+            {
+                // Create Mesh
+                SubMeshPtr subMesh = SubMesh::Create();
+                subMesh->setName(meshName);
+
+                // Flip X for LHCS
+                for (S32 i = 0, in = indices.size(); i < in; i += 3)
+                    std::swap(indices[i], indices[i + 2]);
+                for (Vec3DF& finalPosition : finalPositions)
+                    finalPosition.x = -finalPosition.x;
+                for (Vec3DF& finalNormal : finalNormals)
+                    finalNormal.x = -finalNormal.x;
+
+                subMesh->setIndices(&indices[0], indices.size());
+                subMesh->setPositions(&finalPositions[0], finalPositions.size());
+                subMesh->setNormals(&finalNormals[0], finalNormals.size());
+                subMesh->setTexCoords(0, &finalUVs[0], finalUVs.size());
+
+                // Generate tangents and bitangents
+                Vector<Vec3DF> tangents;
+                Vector<Vec3DF> bitangents;
+                if (SubMeshHelper::GenerateTangentsAndBitangents(
+                    &indices[0],
+                    indices.size(),
+                    &finalPositions[0],
+                    &finalUVs[0],
+                    &finalNormals[0],
+                    finalPositions.size(),
+                    tangents,
+                    bitangents))
+                {
+                    subMesh->setTangents(&tangents[0], tangents.size());
+                    subMesh->setBitangents(&bitangents[0], bitangents.size());
+                }
+
+                _mesh->addSubMesh(subMesh);
+
+                // Cleanup
+                finalPositions.clear();
+                finalUVs.clear();
+                finalNormals.clear();
+                indices.clear();
+            };
+
         auto processOBJLine =
             [&](String& _line)
             {
@@ -504,38 +550,7 @@ namespace Maze
                         if (!indices.empty() && !finalPositions.empty())
                         {
                             // Create Mesh
-                            SubMeshPtr subMesh = SubMesh::Create();
-                            subMesh->setName(meshName);
-                            
-                            subMesh->setIndices(&indices[0], indices.size());
-                            subMesh->setPositions(&finalPositions[0], finalPositions.size());
-                            subMesh->setNormals(&finalNormals[0], finalNormals.size());
-                            subMesh->setTexCoords(0, &finalUVs[0], finalUVs.size());
-
-                            // Generate tangents and bitangents
-                            Vector<Vec3DF> tangents;
-                            Vector<Vec3DF> bitangents;
-                            if (SubMeshHelper::GenerateTangentsAndBitangents(
-                                &indices[0],
-                                indices.size(),
-                                &finalPositions[0],
-                                &finalUVs[0],
-                                &finalNormals[0],
-                                finalPositions.size(),
-                                tangents,
-                                bitangents))
-                            {
-                                subMesh->setTangents(&tangents[0], tangents.size());
-                                subMesh->setBitangents(&bitangents[0], bitangents.size());
-                            }
-
-                            _mesh->addSubMesh(subMesh);
-
-                            // Cleanup
-                            finalPositions.clear();
-                            finalUVs.clear();
-                            finalNormals.clear();
-                            indices.clear();
+                            processCreateSubMesh();
 
                             meshName = tail;
                         }
@@ -728,38 +743,7 @@ namespace Maze
         if (!indices.empty() && !finalPositions.empty())
         {
             // Create Mesh
-            SubMeshPtr subMesh = SubMesh::Create();
-            subMesh->setName(meshName);
-
-            subMesh->setIndices(&indices[0], indices.size());
-            subMesh->setPositions(&finalPositions[0], finalPositions.size());
-            subMesh->setNormals(&finalNormals[0], finalNormals.size());
-            subMesh->setTexCoords(0, &finalUVs[0], finalUVs.size());
-
-            // Generate tangents and bitangents
-            Vector<Vec3DF> tangents;
-            Vector<Vec3DF> bitangents;
-            if (SubMeshHelper::GenerateTangentsAndBitangents(
-                &indices[0],
-                indices.size(),
-                &finalPositions[0],
-                &finalUVs[0],
-                &finalNormals[0],
-                finalPositions.size(),
-                tangents,
-                bitangents))
-            {
-                subMesh->setTangents(&tangents[0], tangents.size());
-                subMesh->setBitangents(&bitangents[0], bitangents.size());
-            }
-
-            _mesh->addSubMesh(subMesh);
-
-            // Cleanup
-            finalPositions.clear();
-            finalUVs.clear();
-            finalNormals.clear();
-            indices.clear();
+            processCreateSubMesh();
         }
 
         return true;
