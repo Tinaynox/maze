@@ -115,6 +115,16 @@ namespace Maze
         //////////////////////////////////////////
         String getExtension() const;
 
+
+        //////////////////////////////////////////
+        inline void setTags(Set<String> const& _tags) { m_tags = _tags; }
+
+        //////////////////////////////////////////
+        inline Set<String> const& getTags() const { return m_tags; }
+
+        //////////////////////////////////////////
+        inline bool hasTag(String const& _tag) { return m_tags.find(_tag) != m_tags.end(); }
+
     protected:
 
         //////////////////////////////////////////
@@ -125,6 +135,7 @@ namespace Maze
 
     
     protected:
+        Set<String> m_tags;
     };
 
 

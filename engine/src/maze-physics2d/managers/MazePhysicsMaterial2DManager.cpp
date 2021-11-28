@@ -113,6 +113,19 @@ namespace Maze
         return it2.first->second;
     }
 
+    //////////////////////////////////////////
+    String const& PhysicsMaterial2DManager::getMaterialName(PhysicsMaterial2D const* _material)
+    {
+        static String nullPointer;
+
+        for (auto const& materialData : m_materialsByName)
+        {
+            if (materialData.second.get() == _material)
+                return materialData.first;
+        }
+
+        return nullPointer;
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

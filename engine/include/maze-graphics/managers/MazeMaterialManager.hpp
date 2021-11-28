@@ -75,7 +75,7 @@ namespace Maze
         MaterialPtr const& getMaterial(AssetFilePtr const& _assetFile);
 
         //////////////////////////////////////////
-        String const& getMaterialName(MaterialPtr const& _material);
+        String const& getMaterialName(Material const* _material);
 
 
         //////////////////////////////////////////

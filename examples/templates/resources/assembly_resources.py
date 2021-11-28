@@ -48,8 +48,8 @@ class AssemblyResources:
                 if not os.path.exists(dir_name):
                     mkdir_p(dir_name)
 
-                    print('Processing: ' + copy_from)
-                    shutil.copy2(copy_from, copy_to)
+                print('Processing: ' + copy_from)
+                shutil.copy2(copy_from, copy_to)
 
         def it_folder_function(full_path, folder_name):
             name, ext = os.path.splitext(folder_name)

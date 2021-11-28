@@ -129,6 +129,14 @@ namespace Maze
         //////////////////////////////////////////
         virtual tinyxml2::XMLElement* toXMLElement(tinyxml2::XMLDocument& _doc) const MAZE_OVERRIDE;
 
+    public:
+
+        //////////////////////////////////////////
+        static void FromString(PhysicsMaterial2DPtr& _value, CString _data, Size _count);
+
+        //////////////////////////////////////////
+        static void ToString(PhysicsMaterial2D const* _value, String& _data);
+
     protected:
 
         //////////////////////////////////////////
@@ -152,6 +160,47 @@ namespace Maze
     
     //////////////////////////////////////////
     MAZE_NOT_IMPLEMENTED_SERIALIZATION(PhysicsMaterial2D);
+
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<PhysicsMaterial2DPtr>::value), void>::type
+        ValueToString(PhysicsMaterial2DPtr const& _value, String& _data)
+    {
+        PhysicsMaterial2D::ToString(_value.get(), _data);
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<PhysicsMaterial2DPtr>::value), void>::type
+        ValueFromString(PhysicsMaterial2DPtr& _value, CString _data, Size _count)
+    {
+        PhysicsMaterial2D::FromString(_value, _data, _count);
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<PhysicsMaterial2DPtr>::value), U32>::type
+        GetValueSerializationSize(PhysicsMaterial2DPtr const& _value)
+    {
+        MAZE_NOT_IMPLEMENTED_RETURN_VALUE(0);
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<PhysicsMaterial2DPtr>::value), void>::type
+        SerializeValue(PhysicsMaterial2DPtr const& _value, U8* _data)
+    {
+        MAZE_NOT_IMPLEMENTED;
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<PhysicsMaterial2DPtr>::value), void>::type
+        DeserializeValue(PhysicsMaterial2DPtr& _value, U8 const* _data)
+    {
+        MAZE_NOT_IMPLEMENTED;
+    }
 
 
 } // namespace Maze

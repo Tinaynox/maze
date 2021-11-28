@@ -138,13 +138,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    String const& MaterialManager::getMaterialName(MaterialPtr const& _material)
+    String const& MaterialManager::getMaterialName(Material const* _material)
     {
         static String nullPointer;
 
         for (auto const& materialData : m_materialsByName)
         {
-            if (materialData.second == _material)
+            if (materialData.second.get() == _material)
                 return materialData.first;
         }
 

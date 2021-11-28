@@ -242,7 +242,7 @@ namespace Maze
         static void FromString(MaterialPtr& _value, CString _data, Size _count);
 
         //////////////////////////////////////////
-        static void ToString(MaterialPtr const& _value, String& _data);
+        static void ToString(Material const* _value, String& _data);
 
     protected:
 
@@ -278,7 +278,7 @@ namespace Maze
     inline typename ::std::enable_if<(IsSharedPtr<MaterialPtr>::value), void>::type
         ValueToString(MaterialPtr const& _value, String& _data)
     {
-        Material::ToString(_value, _data);
+        Material::ToString(_value.get(), _data);
     }
 
     //////////////////////////////////////////

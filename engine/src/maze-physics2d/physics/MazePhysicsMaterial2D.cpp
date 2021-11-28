@@ -34,6 +34,7 @@
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-physics2d/helpers/MazeBox2DHelper.hpp"
+#include "maze-physics2d/managers/MazePhysicsMaterial2DManager.hpp"
 
 
 //////////////////////////////////////////
@@ -170,6 +171,49 @@ namespace Maze
         tinyxml2::XMLElement* element = SerializeMetaInstanceToXMLElement(getMetaClass(), getMetaInstance(), _doc);
 
         return element;
+    }
+
+    //////////////////////////////////////////
+    void PhysicsMaterial2D::FromString(PhysicsMaterial2DPtr& _value, CString _data, Size _count)
+    {
+        if (!_data || strcmp(_data, "") == 0)
+        {
+            _value.reset();
+            return;
+        }
+
+        if (_count == 0)
+            _count = strlen(_data);
+
+        if (StringHelper::IsStartsWith(_data, "ptr:"))
+        {
+            String data = String(_data + 4, _data + _count);
+            StringHelper::StringToObjectPtr(_value, data);
+        }
+        else
+        {
+            _value = PhysicsMaterial2DManager::GetInstancePtr()->getMaterial(_data);
+        }
+    }
+
+    //////////////////////////////////////////
+    void PhysicsMaterial2D::ToString(PhysicsMaterial2D const* _value, String& _data)
+    {
+        if (!_value)
+        {
+            _data.clear();
+            return;
+        }
+
+        String const& materialName = PhysicsMaterial2DManager::GetInstancePtr()->getMaterialName(_value);
+        if (!materialName.empty())
+        {
+            _data = materialName;
+        }
+        else
+        {
+            StringHelper::FormatString(_data, "ptr:%p", _value);
+        }
     }
 
 } // namespace Maze

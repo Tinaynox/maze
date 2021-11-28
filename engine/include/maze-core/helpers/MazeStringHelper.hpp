@@ -1130,11 +1130,27 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        #define MAZE_FORMAT_VA_STRING(__text, __destString)                            \
-        {                                                                            \
+        template <typename TClass>
+        inline void StringToObjectPtr(SharedPtr<TClass>& _value, String const& _str)
+        {
+            void* ptr;
+            std::stringstream ss;
+            ss << std::hex << _str;
+            ss >> ptr;
+
+            TClass* object = reinterpret_cast<TClass*>(ptr);
+            if (object)
+                _value = object->getSharedPtr();
+            else
+                _value.reset();
+        }
+
+        //////////////////////////////////////////
+        #define MAZE_FORMAT_VA_STRING(__text, __destString)                         \
+        {                                                                           \
             va_list ___args;                                                        \
-            va_start(___args, __text);                                                \
-            Maze::StringHelper::FormatVAString(__text, ___args, __destString);        \
+            va_start(___args, __text);                                              \
+            Maze::StringHelper::FormatVAString(__text, ___args, __destString);      \
             va_end(___args);                                                        \
         }
 

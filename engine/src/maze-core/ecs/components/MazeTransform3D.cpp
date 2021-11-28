@@ -90,6 +90,7 @@ namespace Maze
 
         Transform3D* transform3D = static_cast<Transform3D*>(_component);
         m_flags = transform3D->m_flags;
+        m_flags |= (Flags::LocalTransformDirty | Flags::LocalTransformChangedCurrentFrame);
 
         for (Transform3D* childTransform : transform3D->m_children)
         {

@@ -80,6 +80,9 @@ namespace Maze
         SoundPtr const& getSound(AssetFilePtr const& _assetFile);
 
         //////////////////////////////////////////
+        String const& getSoundName(Sound const* _sound);
+
+        //////////////////////////////////////////
         inline UnorderedMap<String, SoundSystemPtr> const& getSoundSystems() const { return m_soundSystems; }
 
 

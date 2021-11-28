@@ -280,6 +280,8 @@ namespace Maze
         Map<S32, ComponentPtr> components;
 
         S32 rootIndex = StringHelper::StringToS32(rootIndexAttribute);
+        S32 autoEntityIndexCounter = 0;
+        S32 autoComponentIndexCounter = 0;
 
         // Prepare
         {
@@ -294,58 +296,153 @@ namespace Maze
                     continue;
                 }
 
-                if (strcmp(entityElement->Name(), "Entity") != 0)
+                if (strcmp(entityElement->Name(), "Entity") == 0)
                 {
-                    entityNode = entityNode->NextSibling();
-                    continue;
+                    S32 entityIndex = entityElement->IntAttribute("_i");
+                    if (entityIndex == 0)
+                        entityIndex = --autoEntityIndexCounter;
+
+                    EntityPtr entity = Entity::Create();
+                    entity->setAwakeForbidden(true);
+                    world->addEntity(entity);
+
+                    entities[entityIndex] = entity;
+
+                    tinyxml2::XMLNode* componentNode = entityNode->FirstChild();
+                    while (componentNode)
+                    {
+                        tinyxml2::XMLElement* componentElement = componentNode->ToElement();
+
+                        if (!componentElement)
+                        {
+                            componentNode = componentNode->NextSibling();
+                            continue;
+                        }
+
+                        if (strcmp(componentElement->Name(), "Component") != 0)
+                        {
+                            componentNode = componentNode->NextSibling();
+                            continue;
+                        }
+
+                        S32 componentIndex = componentElement->IntAttribute("_i");
+                        if (componentIndex == 0)
+                            componentIndex = --autoComponentIndexCounter;
+
+                        CString componentClassName = componentElement->Attribute("_t");
+                        ComponentPtr component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentClassName);
+
+                        if (!component)
+                        {
+                            MAZE_ERROR("Component %s cannot be created!", componentClassName);
+                            componentNode = componentNode->NextSibling();
+                            continue;
+                        }
+
+                        components[componentIndex] = component;
+
+                        entity->addComponent(component);
+
+                        componentNode = componentNode->NextSibling();
+                    }
                 }
-
-                S32 entityIndex = entityElement->IntAttribute("_i");
-
-                EntityPtr entity = Entity::Create();
-                entity->setAwakeForbidden(true);
-                world->addEntity(entity);
-
-                entities[entityIndex] = entity;
-
-                tinyxml2::XMLNode* componentNode = entityNode->FirstChild();
-                while (componentNode)
+                else if (strcmp(entityElement->Name(), "PrefabInstance") == 0)
                 {
-                    tinyxml2::XMLElement* componentElement = componentNode->ToElement();
+                    S32 entityIndex = entityElement->IntAttribute("_i");
+                    if (entityIndex == 0)
+                        entityIndex = --autoEntityIndexCounter;
 
-                    if (!componentElement)
+                    CString prefabName = entityElement->Attribute("source");
+
+                    if (prefabName)
                     {
-                        componentNode = componentNode->NextSibling();
-                        continue;
-                    }
+                        EntityPtr entity = loadPrefab(prefabName, world, scene);
+                        entities[entityIndex] = entity;
 
-                    if (strcmp(componentElement->Name(), "Component") != 0)
+                        tinyxml2::XMLNode* prefabChildNode = entityNode->FirstChild();
+                        while (prefabChildNode)
+                        {
+                            tinyxml2::XMLElement* prefabChildElement = prefabChildNode->ToElement();
+
+                            if (!prefabChildElement)
+                            {
+                                prefabChildNode = prefabChildNode->NextSibling();
+                                continue;
+                            }
+
+                            if (strcmp(prefabChildElement->Name(), "Modification") == 0)
+                            {
+                                CString componentClassName = prefabChildElement->Attribute("component");
+                                CString componentPropertyName = prefabChildElement->Attribute("property");
+                                CString componentPropertyValue = prefabChildElement->Attribute("value");
+
+                                if (componentClassName && componentPropertyName && componentPropertyValue)
+                                {
+                                    ClassUID componentUID = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentUID(componentClassName);
+                                    ComponentPtr const& component = entity->getComponentByUID(componentUID);
+                                    MetaProperty* metaProperty = component->getMetaClass()->getProperty(componentPropertyName);
+                                    if (metaProperty)
+                                    {
+                                        MetaClass const* metaPropertyMetaClass = metaProperty->getMetaClass();
+                                        if (metaPropertyMetaClass)
+                                        {
+                                            if (metaPropertyMetaClass == Component::GetMetaClass())
+                                            {
+                                                S32 valueIndex = StringHelper::StringToS32(componentPropertyValue);
+                                                metaProperty->setValue(component->getMetaInstance(), &components[valueIndex]);
+
+                                                prefabChildNode = prefabChildNode->NextSibling();
+                                                continue;
+                                            }
+                                            else
+                                            if (metaPropertyMetaClass == Entity::GetMetaClass())
+                                            {
+                                                S32 valueIndex = StringHelper::StringToS32(componentPropertyValue);
+                                                metaProperty->setValue(component->getMetaInstance(), &entities[valueIndex]);
+
+                                                prefabChildNode = prefabChildNode->NextSibling();
+                                                continue;
+                                            }
+                                        }
+
+                                        metaProperty->setString(component->getMetaInstance(), componentPropertyValue);
+                                    }
+                                }
+                            }
+                            else if (strcmp(prefabChildElement->Name(), "Component") == 0)
+                            {
+                                S32 componentIndex = prefabChildElement->IntAttribute("_i");
+                                if (componentIndex == 0)
+                                    componentIndex = --autoComponentIndexCounter;
+
+                                CString componentClassName = prefabChildElement->Attribute("_t");
+                                ComponentPtr component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentClassName);
+
+                                if (component)
+                                {
+                                    components[componentIndex] = component;
+                                    entity->addComponent(component);
+                                }
+                                else
+                                {
+                                    MAZE_ERROR("Component %s cannot be created!", componentClassName);
+                                }
+                            }
+
+                            prefabChildNode = prefabChildNode->NextSibling();
+                        }
+                    }
+                    else
                     {
-                        componentNode = componentNode->NextSibling();
-                        continue;
+                        MAZE_ERROR("PrefabInstance without source!");
                     }
-
-                    S32 componentIndex = componentElement->IntAttribute("_i");
-                    CString componentClassName = componentElement->Attribute("_t");
-                    ComponentPtr component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentClassName);
-                    
-                    if (!component)
-                    {
-                        MAZE_ERROR("Component %s cannot be created!", componentClassName);
-                        componentNode = componentNode->NextSibling();
-                        continue;
-                    }
-
-                    components[componentIndex] = component;
-
-                    entity->addComponent(component);
-
-                    componentNode = componentNode->NextSibling();
                 }
 
                 entityNode = entityNode->NextSibling();
             }
         }
+
+        autoComponentIndexCounter = 0;
 
         // Load
         {
@@ -360,79 +457,77 @@ namespace Maze
                     continue;
                 }
 
-                if (strcmp(entityElement->Name(), "Entity") != 0)
+                if (strcmp(entityElement->Name(), "Entity") != 0 ||
+                    strcmp(entityElement->Name(), "PrefabInstance") != 0)
                 {
-                    entityNode = entityNode->NextSibling();
-                    continue;
-                }
+                    S32 entityIndex = entityElement->IntAttribute("_i");
+                    EntityPtr const& entity = entities[entityIndex];
 
-                S32 entityIndex = entityElement->IntAttribute("_i");
-                EntityPtr const& entity = entities[entityIndex];
+                    CString entityActiveAttribute = entityElement->Attribute("active");
+                    if (entityActiveAttribute)
+                        entity->setActiveSelf(StringHelper::StringToBool(entityActiveAttribute));
 
-                CString entityActiveAttribute = entityElement->Attribute("active");
-                if (entityActiveAttribute)
-                    entity->setActiveSelf(StringHelper::StringToBool(entityActiveAttribute));
-
-                tinyxml2::XMLNode* componentNode = entityNode->FirstChild();
-                while (componentNode)
-                {
-                    tinyxml2::XMLElement* componentElement = componentNode->ToElement();
-
-                    if (!componentElement)
+                    tinyxml2::XMLNode* componentNode = entityNode->FirstChild();
+                    while (componentNode)
                     {
-                        componentNode = componentNode->NextSibling();
-                        continue;
-                    }
+                        tinyxml2::XMLElement* componentElement = componentNode->ToElement();
 
-                    if (strcmp(componentElement->Name(), "Component") != 0)
-                    {
-                        componentNode = componentNode->NextSibling();
-                        continue;
-                    }
-
-                    S32 componentIndex = componentElement->IntAttribute("_i");
-                    ComponentPtr const& component = components[componentIndex];
-
-                    MetaClass const* componentMetaClass = component->getMetaClass();
-                    MetaInstance componentMetaInstance = component->getMetaInstance();
-
-                    for (Maze::MetaClass* metaClass : componentMetaClass->getAllSuperMetaClasses())
-                    {
-                        for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
+                        if (!componentElement)
                         {
-                            Maze::MetaProperty* metaProperty = metaClass->getProperty(i);
-
-                            Maze::CString propertyName = metaProperty->getName();
-
-                            CString attributeValue = componentElement->Attribute(propertyName);
-                            if (attributeValue)
-                            {
-                                MetaClass const* metaPropertyMetaClass = metaProperty->getMetaClass();
-                                if (metaPropertyMetaClass)
-                                {
-                                    if (metaPropertyMetaClass == Component::GetMetaClass())
-                                    {
-                                        S32 valueIndex = StringHelper::StringToS32(attributeValue);
-                                        metaProperty->setValue(componentMetaInstance, &components[valueIndex]);
-                                        continue;
-                                    }
-                                    else
-                                    if (metaPropertyMetaClass == Entity::GetMetaClass())
-                                    {
-                                        S32 valueIndex = StringHelper::StringToS32(attributeValue);
-                                        metaProperty->setValue(componentMetaInstance, &entities[valueIndex]);
-                                        continue;
-                                    }
-                                }
-
-                                metaProperty->setString(componentMetaInstance, attributeValue);
-                            }
-                            
-                                
+                            componentNode = componentNode->NextSibling();
+                            continue;
                         }
-                    }
 
-                    componentNode = componentNode->NextSibling();
+                        if (strcmp(componentElement->Name(), "Component") == 0)
+                        {
+                            S32 componentIndex = componentElement->IntAttribute("_i");
+                            if (componentIndex == 0)
+                                componentIndex = --autoComponentIndexCounter;
+
+                            ComponentPtr const& component = components[componentIndex];
+
+                            MetaClass const* componentMetaClass = component->getMetaClass();
+                            MetaInstance componentMetaInstance = component->getMetaInstance();
+
+                            for (Maze::MetaClass* metaClass : componentMetaClass->getAllSuperMetaClasses())
+                            {
+                                for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
+                                {
+                                    Maze::MetaProperty* metaProperty = metaClass->getProperty(i);
+
+                                    Maze::CString propertyName = metaProperty->getName();
+
+                                    CString attributeValue = componentElement->Attribute(propertyName);
+                                    if (attributeValue)
+                                    {
+                                        MetaClass const* metaPropertyMetaClass = metaProperty->getMetaClass();
+                                        if (metaPropertyMetaClass)
+                                        {
+                                            if (metaPropertyMetaClass == Component::GetMetaClass())
+                                            {
+                                                S32 valueIndex = StringHelper::StringToS32(attributeValue);
+                                                metaProperty->setValue(componentMetaInstance, &components[valueIndex]);
+                                                continue;
+                                            }
+                                            else
+                                            if (metaPropertyMetaClass == Entity::GetMetaClass())
+                                            {
+                                                S32 valueIndex = StringHelper::StringToS32(attributeValue);
+                                                metaProperty->setValue(componentMetaInstance, &entities[valueIndex]);
+                                                continue;
+                                            }
+                                        }
+
+                                        metaProperty->setString(componentMetaInstance, attributeValue);
+                                    }
+
+
+                                }
+                            }
+                        }
+
+                        componentNode = componentNode->NextSibling();
+                    }
                 }
 
                 entityNode = entityNode->NextSibling();

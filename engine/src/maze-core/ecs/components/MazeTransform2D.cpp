@@ -101,10 +101,9 @@ namespace Maze
         if (!Component::init(_component, _world, _copyData))
             return false;
 
-        m_flags |= (Flags::LocalTransformDirty | Flags::LocalTransformChangedCurrentFrame);
-
         Transform2D* transform2D = static_cast<Transform2D*>(_component);
         m_flags = transform2D->m_flags;
+        m_flags |= (Flags::LocalTransformDirty | Flags::LocalTransformChangedCurrentFrame);
 
         for (Size i = 0, in = transform2D->m_children.size(); i < in; ++i)
         {

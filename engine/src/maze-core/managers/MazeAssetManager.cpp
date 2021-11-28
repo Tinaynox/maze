@@ -109,6 +109,9 @@ namespace Maze
         for (AssetFilePtr const& addFile : addedFiles)
             processAddFile(addFile);
 
+        for (AssetFilePtr const& addFile : addedFiles)
+            updateFileInfo(addFile);
+
         for (AssetFilePtr const& removeFile : removedFiles)
             processRemoveFile(removeFile);
     }
@@ -180,6 +183,24 @@ namespace Maze
     {
         m_assetFilesByFileName.erase(_file->getFileName());
         m_assetFilesByFileName.erase(_file->getFullPath());
+    }
+
+    ////////////////////////////////////
+    void AssetManager::updateFileInfo(AssetFilePtr const& _file)
+    {
+        Set<String> tags;
+
+        UnorderedMap<String, String> metaData = getMetaData(_file);
+        String const& tagsString = metaData["tags"];
+        if (!tagsString.empty())
+        {
+            Vector<String> words;
+            StringHelper::SplitWords(tagsString, words, ',');
+            for (String const& word : words)
+                tags.emplace(word);
+        }
+
+        _file->setTags(tags);
     }
 
     //////////////////////////////////////////

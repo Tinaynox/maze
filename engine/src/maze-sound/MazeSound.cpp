@@ -29,6 +29,7 @@
 #include "maze-sound/managers/MazeSoundManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/helpers/MazeStringHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -125,31 +126,58 @@ namespace Maze
     //////////////////////////////////////////
     String Sound::toString() const
     {
-        MAZE_NOT_IMPLEMENTED;
-        return String();
+        String str;
+        ToString(this, str);
+        return str;
     }
 
     //////////////////////////////////////////
     void Sound::setString(CString _data, Size _count)
     {
-        MAZE_NOT_IMPLEMENTED;
+        loadFromJSONValue(JSONHelper::FromString(String(_data, _data + _count)));
     }
 
     //////////////////////////////////////////
-    SoundPtr const& Sound::FromString(CString _data, Size _count)
+    void Sound::FromString(SoundPtr& _value, CString _data, Size _count)
     {
+        if (!_data || strcmp(_data, "") == 0)
+        {
+            _value.reset();
+            return;
+        }
+
         if (_count == 0)
             _count = strlen(_data);
 
-        SoundPtr const& value = SoundManager::GetInstancePtr()->getSound(_data);
-        if (!value)
+        if (StringHelper::IsStartsWith(_data, "ptr:"))
         {
-            if (_data && strcmp(_data, "") != 0)
-            {
-                MAZE_ERROR("Undefined sound - %s!", _data);
-            }
+            String data = String(_data + 4, _data + _count);
+            StringHelper::StringToObjectPtr(_value, data);
         }
-        return value;
+        else
+        {
+            _value = SoundManager::GetInstancePtr()->getSound(_data);
+        }
+    }
+
+    //////////////////////////////////////////
+    void Sound::ToString(Sound const* _value, String& _data)
+    {
+        if (!_value)
+        {
+            _data.clear();
+            return;
+        }
+        
+        String const& soundName = SoundManager::GetInstancePtr()->getSoundName(_value);
+        if (!soundName.empty())
+        {
+            _data = soundName;
+        }
+        else
+        {
+            StringHelper::FormatString(_data, "ptr:%p", _value);
+        }
     }
 
 } // namespace Maze

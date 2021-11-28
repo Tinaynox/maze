@@ -137,6 +137,9 @@ namespace Maze
         ////////////////////////////////////
         void processRemoveFile(AssetFilePtr const& _file);
 
+        ////////////////////////////////////
+        void updateFileInfo(AssetFilePtr const& _file);
+
     
     protected:
         static AssetManager* s_instance;

@@ -32,6 +32,8 @@
 //////////////////////////////////////////
 #include "maze-sound/MazeSoundHeader.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
+#include "maze-core/serialization/MazeStringSerializable.hpp"
+#include "maze-core/serialization/MazeJSONSerializable.hpp"
 #include "maze-sound/MazeSound.hpp"
 
 
@@ -47,12 +49,20 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_SOUND_API SoundSet
+        : public SharedObject<SoundSet>
+        , public IJSONValueSerializable
+        , public IStringSerializable
     {
     public:
 
         //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS(SoundSet);
+
+    public:
+
+        //////////////////////////////////////////
         SoundSet(
-            FastVector<SoundPtr> const& _sounds = FastVector<SoundPtr>(),
+            Vector<SoundPtr> const& _sounds = Vector<SoundPtr>(),
             F32 _volume = 1.0f);
 
         //////////////////////////////////////////
@@ -73,10 +83,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setSounds(FastVector<SoundPtr> const& _value) { m_sounds = _value; }
+        inline void setSounds(Vector<SoundPtr> const& _value) { m_sounds = _value; }
 
         //////////////////////////////////////////
-        inline FastVector<SoundPtr> const& getSounds() const { return m_sounds; }
+        inline Vector<SoundPtr> const& getSounds() const { return m_sounds; }
 
         //////////////////////////////////////////
         void addSound(SoundPtr const& _sound);
@@ -90,10 +100,53 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline void setNoRepeats(bool _value) { m_noRepeats = _value; }
+
+        //////////////////////////////////////////
+        inline bool getNoRepeats() const { return m_noRepeats; }
+
+
+        //////////////////////////////////////////
         SoundPtr const& fetch();
 
+    public:
+
+        //////////////////////////////////////////
+        virtual void loadFromJSONValue(Json::Value const& _value) MAZE_OVERRIDE
+        {
+            DeserializeMetaInstanceFromJSONValue(getMetaClass(), getMetaInstance(), _value);
+        }
+
+        //////////////////////////////////////////
+        virtual Json::Value toJSONValue() const MAZE_OVERRIDE
+        {
+            return SerializeMetaInstanceToJSONValue(getMetaClass(), getMetaInstance());
+        }
+
+    public:
+
+        //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        static void FromString(SoundSetPtr& _value, CString _data, Size _count);
+
+        //////////////////////////////////////////
+        static void ToString(SoundSet const* _value, String& _data);
+
     protected:
-        FastVector<SoundPtr> m_sounds;
+
+        //////////////////////////////////////////
+        inline void setPrevFetchIndex(S32 _value) { m_prevFetchIndex = _value; }
+
+        //////////////////////////////////////////
+        inline S32 getPrevFetchIndex() const { return m_prevFetchIndex; }
+
+    protected:
+        Vector<SoundPtr> m_sounds;
         F32 m_volume = 1.0f;
         S32 m_prevFetchIndex = -1;
         bool m_noRepeats = false;
@@ -109,7 +162,7 @@ namespace Maze
     inline typename ::std::enable_if<(IsSharedPtr<SoundSetPtr>::value), void>::type
         ValueToString(SoundSetPtr const& _value, String& _data)
     {
-        MAZE_NOT_IMPLEMENTED;
+        SoundSet::ToString(_value.get(), _data);
     }
 
     //////////////////////////////////////////
@@ -117,7 +170,7 @@ namespace Maze
     inline typename ::std::enable_if<(IsSharedPtr<SoundSetPtr>::value), void>::type
         ValueFromString(SoundSetPtr& _value, CString _data, Size _count)
     {
-        MAZE_NOT_IMPLEMENTED;
+        SoundSet::FromString(_value, _data, _count);
     }
 
     //////////////////////////////////////////

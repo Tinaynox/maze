@@ -569,21 +569,7 @@ namespace Maze
         if (StringHelper::IsStartsWith(_data, "ptr:"))
         {
             String data = String(_data + 4, _data + _count);
-
-            void* ptr;
-            std::stringstream ss;
-            ss << std::hex << data;
-            ss >> ptr;
-
-            Material* material = reinterpret_cast<Material*>(ptr);
-            if (material)
-            {
-                _value = material->getSharedPtr();
-            }
-            else
-            {
-                _value.reset();
-            }
+            StringHelper::StringToObjectPtr(_value, data);
         }
         else
         {
@@ -592,7 +578,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Material::ToString(MaterialPtr const& _value, String& _data)
+    void Material::ToString(Material const* _value, String& _data)
     {
         if (!_value)
         {
@@ -610,7 +596,7 @@ namespace Maze
         }
         else
         {
-            StringHelper::FormatString(_data, "ptr:%p", _value.get());            
+            StringHelper::FormatString(_data, "ptr:%p", _value);            
         }
     }
 

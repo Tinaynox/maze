@@ -34,6 +34,8 @@
 #include "maze-sound/MazeSoundData.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
+#include "maze-core/serialization/MazeStringSerializable.hpp"
+#include "maze-core/serialization/MazeJSONSerializable.hpp"
 
 
 //////////////////////////////////////////
@@ -53,6 +55,8 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_SOUND_API Sound
         : public SharedObject<Sound>
+        , public IJSONValueSerializable
+        , public IStringSerializable
     {
     public:
 
@@ -104,13 +108,30 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual String toString() const;
+        virtual void loadFromJSONValue(Json::Value const& _value) MAZE_OVERRIDE
+        {
+            DeserializeMetaInstanceFromJSONValue(getMetaClass(), getMetaInstance(), _value);
+        }
 
         //////////////////////////////////////////
-        virtual void setString(CString _data, Size _count);
+        virtual Json::Value toJSONValue() const MAZE_OVERRIDE
+        {
+            return SerializeMetaInstanceToJSONValue(getMetaClass(), getMetaInstance());
+        }
+
+    public:
 
         //////////////////////////////////////////
-        static SoundPtr const& FromString(CString _data, Size _count);
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        static void FromString(SoundPtr& _value, CString _data, Size _count);
+
+        //////////////////////////////////////////
+        static void ToString(Sound const* _value, String& _data);
 
     protected:
 
@@ -136,7 +157,7 @@ namespace Maze
     inline typename ::std::enable_if<(IsSharedPtr<SoundPtr>::value), void>::type
         ValueToString(SoundPtr const& _value, String& _data)
     {
-        _data = _value->toString();
+        Sound::ToString(_value.get(), _data);
     }
 
     //////////////////////////////////////////
@@ -144,7 +165,7 @@ namespace Maze
     inline typename ::std::enable_if<(IsSharedPtr<SoundPtr>::value), void>::type
         ValueFromString(SoundPtr& _value, CString _data, Size _count)
     {
-        _value = Sound::FromString(_data, _count);
+        Sound::FromString(_value, _data, _count);
     }
 
     //////////////////////////////////////////

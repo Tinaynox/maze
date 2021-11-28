@@ -36,8 +36,15 @@ namespace Maze
     // Class SoundSet
     //
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS(SoundSet,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<SoundPtr>, sounds, Vector<SoundPtr>(), getSounds, setSounds),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, volume, 1.0, getVolume, setVolume),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, prevFetchIndex, -1, getPrevFetchIndex, setPrevFetchIndex),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, noRepeats, false, getNoRepeats, setNoRepeats));
+
+    //////////////////////////////////////////
     SoundSet::SoundSet(
-        FastVector<SoundPtr> const& _sounds,
+        Vector<SoundPtr> const& _sounds,
         F32 _volume)
         : m_sounds(_sounds)
         , m_volume(_volume)
@@ -103,6 +110,67 @@ namespace Maze
         m_prevFetchIndex = fetchIndex;
 
         return m_sounds[fetchIndex];
+    }
+
+    //////////////////////////////////////////
+    String SoundSet::toString() const
+    {
+        String str;
+        ToString(this, str);
+        return str;
+    }
+
+    //////////////////////////////////////////
+    void SoundSet::setString(CString _data, Size _count)
+    {
+        loadFromJSONValue(JSONHelper::FromString(String(_data, _data + _count)));
+    }
+
+    //////////////////////////////////////////
+    void SoundSet::FromString(SoundSetPtr& _value, CString _data, Size _count)
+    {
+        if (!_data || strcmp(_data, "") == 0)
+        {
+            _value.reset();
+            return;
+        }
+
+        if (_count == 0)
+            _count = strlen(_data);
+
+        if (StringHelper::IsStartsWith(_data, "ptr:"))
+        {
+            String data = String(_data + 4, _data + _count);
+            StringHelper::StringToObjectPtr(_value, data);
+        }
+        else if (StringHelper::IsStartsWith(_data, "json:"))
+        {
+            _value = std::make_shared<SoundSet>();
+            _value->setString(_data + 5, _count - 5);
+        }
+        else
+        {
+            MAZE_NOT_IMPLEMENTED;
+        }
+    }
+
+    //////////////////////////////////////////
+    void SoundSet::ToString(SoundSet const* _value, String& _data)
+    {
+        if (!_value)
+        {
+            _data.clear();
+            return;
+        }
+
+        if (true)
+        {
+            StringHelper::FormatString(_data, "json:%s", JSONHelper::ToString(_value->toJSONValue()).c_str());
+        }
+        else
+        {
+            StringHelper::FormatString(_data, "ptr:%p", _value);
+        }
     }
 
 } // namespace Maze

@@ -44,6 +44,8 @@ class MakeData:
         self.texture_compressor = None
         self.resource_encryptor = None
 
+        self.tags_by_folder = {}
+
     def prepare(self):
         cache_dir = os.path.dirname(self.cache_name)
         if not os.path.exists(cache_dir):
@@ -124,6 +126,12 @@ class MakeData:
                 if os.path.exists(info_file_path):
                     is_up_to_date = self.cache.is_up_to_date(info_file_path)
 
+            tags = []
+            for folder in self.tags_by_folder:
+                if full_path.startswith(folder):
+                    tags = self.tags_by_folder[folder]
+                    break
+
             if not is_up_to_date:
                 print('\tCOPYING FILE: ' + file_name)
 
@@ -132,6 +140,14 @@ class MakeData:
 
                 parameters = []
                 compression_enabled = True
+
+                if len(tags) > 0:
+                    tags_value = ''
+                    for tag in tags:
+                        if tags_value != '':
+                            tags_value += ','
+                        tags_value += tag
+                    parameters.append("tags={0}".format(tags_value))
 
                 if os.path.exists(info_file_path):
                     self.cache.is_up_to_date(info_file_path)
@@ -196,7 +212,7 @@ class MakeData:
                 self.cache.save_cache()
 
                 info_file_path_folder = '{0}/{1}'.format(self.input, full_path)
-                info_file_path = '{0}.meta'.format(info_file_path_folder)
+                info_file_path = '{0}/mzap.meta'.format(info_file_path_folder)
 
                 is_up_to_date = True
 
@@ -205,6 +221,7 @@ class MakeData:
                         is_up_to_date = self.cache.is_up_to_date(info_file_path)
 
                 parameters = []
+                tags = []
 
                 if os.path.exists(info_file_path):
                     info_input_file = open(info_file_path)
@@ -218,7 +235,11 @@ class MakeData:
                                 if required_build_tag not in self.build_tags:
                                     print('\tSKIPPED(' + required_build_tag + ')')
                                     return False
+                        elif entry.startswith('tags'):
+                            tags = entry.split('=')[1].split(',')
                         parameters.append(entry)
+
+                self.tags_by_folder[full_path] = tags
 
                 if not is_up_to_date:
 

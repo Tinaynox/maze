@@ -220,7 +220,7 @@ namespace Maze
         {
             RenderSystemPtr const& renderSystem = Maze::GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
             MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
-            String const& materialName = materialManager->getMaterialName(m_material);
+            String const& materialName = materialManager->getMaterialName(m_material.get());
             if (!materialName.empty())
             {
                 AssetFilePtr const& materialAsset = AssetManager::GetInstancePtr()->getAssetFileByFileName(materialName);

@@ -78,6 +78,9 @@ namespace Maze
         //////////////////////////////////////////
         PhysicsMaterial2DPtr const& getMaterial(AssetFilePtr const& _assetFile);
 
+        //////////////////////////////////////////
+        String const& getMaterialName(PhysicsMaterial2D const* _material);
+
     protected:
 
         //////////////////////////////////////////

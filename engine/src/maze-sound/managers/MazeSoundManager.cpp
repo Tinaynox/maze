@@ -155,6 +155,20 @@ namespace Maze
 
         return it2.first->second;
     }
+
+    //////////////////////////////////////////
+    String const& SoundManager::getSoundName(Sound const* _sound)
+    {
+        static String nullPointer;
+
+        for (auto const& soundData : m_soundsByName)
+        {
+            if (soundData.second.get() == _sound)
+                return soundData.first;
+        }
+
+        return nullPointer;
+    }
     
 } // namespace Maze
 //////////////////////////////////////////
