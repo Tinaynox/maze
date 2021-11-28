@@ -32,7 +32,7 @@
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/assets/MazeArchiveFile.hpp"
-#include "maze-core/data/MazeStringKeyMap.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 #include <mz.h>
 #include <mz_compat.h>
 #include <mz_crypt.h>

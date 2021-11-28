@@ -40,8 +40,7 @@
 #include "maze-core/serialization/MazeBinarySerializable.hpp"
 #include "maze-core/serialization/MazeStringSerializable.hpp"
 #include "maze-core/helpers/MazeJSONHelper.hpp"
-// #include <json/reader.h>
-// #include <json/writer.h>
+#include "maze-core/data/MazeHashedString.hpp"
 
 
 //////////////////////////////////////////
@@ -252,6 +251,42 @@ namespace Maze
 
         _value.resize(containerSize);
         memcpy((U8*)&_value[0], _data, containerSize);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: HashedString
+    //
+    //////////////////////////////////////////
+    inline void ValueToString(HashedString const& _value, String& _data)
+    {
+        _data = _value.getString();
+    }
+
+    //////////////////////////////////////////
+    inline void ValueFromString(HashedString& _value, CString _data, Size _count)
+    {
+        _value = HashedString(_data, _count);
+    }
+
+    //////////////////////////////////////////
+    inline U32 GetValueSerializationSize(HashedString const& _value)
+    {
+        return GetValueSerializationSize(_value.getString());
+    }
+
+    //////////////////////////////////////////
+    inline void SerializeValue(HashedString const& _value, U8* _data)
+    {
+        SerializeValue(_value.getString(), _data);
+    }
+
+    //////////////////////////////////////////
+    inline void DeserializeValue(HashedString& _value, U8 const* _data)
+    {
+        String str;
+        DeserializeValue(str, _data);
+        _value = HashedString(str);
     }
 
 

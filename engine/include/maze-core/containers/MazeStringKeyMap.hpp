@@ -36,6 +36,7 @@
 #include "maze-core/preprocessor/MazePreprocessor_CPlusPlus.hpp"
 #include "maze-core/data/MazeHashedCString.hpp"
 #include <cstring>
+#include <cassert>
 
 
 //////////////////////////////////////////
@@ -49,6 +50,77 @@ namespace Maze
     class StringKeyMap
     {
     public:
+
+        //////////////////////////////////////////
+        using MapType = UnorderedMap<HashedCString, Pair<String, TValue>>;
+
+        //////////////////////////////////////////
+        class StringKeyMapIterator
+        {
+        public:
+
+            //////////////////////////////////////////
+            StringKeyMapIterator()
+            {}
+
+            //////////////////////////////////////////
+            StringKeyMapIterator(typename MapType::iterator&& _iterator)
+                : m_iterator(_iterator)
+            {}
+
+            //////////////////////////////////////////
+            inline StringKeyMapIterator& operator++() { ++m_iterator; return (*this); }
+
+            //////////////////////////////////////////
+            inline StringKeyMapIterator& operator--() { --m_iterator; return (*this); }
+
+            //////////////////////////////////////////
+            inline bool operator!=(StringKeyMapIterator const& _other) const { return m_iterator != _other.m_iterator; }
+
+            //////////////////////////////////////////
+            inline bool operator==(StringKeyMapIterator const& _other) const { return m_iterator == _other.m_iterator; }
+
+            //////////////////////////////////////////
+            inline HashedCString key() const { return m_iterator->first; }
+
+            //////////////////////////////////////////
+            inline TValue& value() { return m_iterator->second.second; }
+
+            //////////////////////////////////////////
+            inline TValue& value() const { return m_iterator->second.second; }
+
+            //////////////////////////////////////////
+            TValue& operator*() { return value(); }
+
+            //////////////////////////////////////////
+            const TValue& operator*() const { return value(); }
+
+            //////////////////////////////////////////
+            TValue* operator->() { return &m_iterator->second.second; }
+
+        protected:
+            typename MapType::iterator m_iterator;
+        };
+
+
+        //////////////////////////////////////////
+        using iterator = StringKeyMapIterator;
+
+    public:
+
+
+        //////////////////////////////////////////
+        inline iterator begin()
+        {
+            return m_map.begin();
+        }
+
+        //////////////////////////////////////////
+        inline iterator end()
+        {
+            return m_map.end();
+        }
+
 
         //////////////////////////////////////////
         inline void insert(String const& _key, TValue&& _value) { insert(MAZE_HASHED_CSTRING(_key.c_str()), std::move(_value)); }
@@ -188,6 +260,30 @@ namespace Maze
         //////////////////////////////////////////
         inline TValue& operator[](HashedCString _key) { return ensure(_key); }
 
+        //////////////////////////////////////////
+        inline TValue const& operator[](String const& _key) const
+        {
+            TValue const* value = find(_key);
+            MAZE_ASSERT(value != nullptr);
+            return *value;
+        }
+
+        //////////////////////////////////////////
+        inline TValue const& operator[](CString _key) const
+        {
+            TValue const* value = find(_key);
+            MAZE_ASSERT(value != nullptr);
+            return *value;
+        }
+
+        //////////////////////////////////////////
+        inline TValue const& operator[](HashedCString _key) const
+        {
+            TValue const* value = find(_key);
+            MAZE_ASSERT(value != nullptr);
+            return *value;
+        }
+
 
         //////////////////////////////////////////
         inline void clear() { m_map.clear(); }
@@ -195,10 +291,10 @@ namespace Maze
         //////////////////////////////////////////
         inline void iterate(std::function<bool(HashedCString, TValue&)> _func)
         {
-            for (UnorderedMap<HashedCString, Pair<String, TValue>>::iterator it = m_map.begin(),
-                                                                             end = m_map.end();
-                                                                             it != end;
-                                                                             ++it)
+            for (MapType::iterator it = m_map.begin(),
+                                   end = m_map.end();
+                                   it != end;
+                                   ++it)
             {
                 if (!_func(it->first, it->second.second))
                     break;
@@ -208,10 +304,10 @@ namespace Maze
         //////////////////////////////////////////
         inline void iterate(std::function<bool(HashedCString, TValue const&)> _func) const
         {
-            for (UnorderedMap<HashedCString, Pair<String, TValue>>::const_iterator it = m_map.begin(),
-                                                                                   end = m_map.end();
-                                                                                   it != end;
-                                                                                   ++it)
+            for (MapType::const_iterator it = m_map.begin(),
+                                         end = m_map.end();
+                                         it != end;
+                                         ++it)
             {
                 if (!_func(it->first, it->second.second))
                     break;
@@ -219,7 +315,7 @@ namespace Maze
         }
 
     private:
-        UnorderedMap<HashedCString, Pair<String, TValue>> m_map;
+        MapType m_map;
     };
 
 
