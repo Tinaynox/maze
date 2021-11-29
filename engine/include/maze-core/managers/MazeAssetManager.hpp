@@ -98,6 +98,9 @@ namespace Maze
         Vector<AssetFilePtr> getAssetFilesWithExtension(String const& _extension);
 
         //////////////////////////////////////////
+        Vector<AssetFilePtr> getAssetFilesWithExtension(String const& _extension, std::function<bool(AssetFilePtr const&)> _pred);
+
+        //////////////////////////////////////////
         Vector<AssetFilePtr> getAssetFilesWithExtensions(Set<String> const& _extensions);
 
         //////////////////////////////////////////

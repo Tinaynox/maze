@@ -125,6 +125,15 @@ namespace Maze
         //////////////////////////////////////////
         inline bool hasTag(String const& _tag) { return m_tags.find(_tag) != m_tags.end(); }
 
+        //////////////////////////////////////////
+        inline bool hasAnyOfTags(Set<String> const& _tags)
+        {
+            for (auto it = m_tags.begin(), end = m_tags.end(); it != end; ++it)
+                return _tags.find(*it) != _tags.end();
+
+            return false;
+        }
+
     protected:
 
         //////////////////////////////////////////

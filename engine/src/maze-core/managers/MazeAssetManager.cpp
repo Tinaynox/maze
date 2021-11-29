@@ -222,6 +222,14 @@ namespace Maze
     //////////////////////////////////////////
     Vector<AssetFilePtr> AssetManager::getAssetFilesWithExtension(String const& _extension)
     {
+        return getAssetFilesWithExtension(_extension, [](AssetFilePtr const& _assetFile) { return true; });
+    }
+
+    //////////////////////////////////////////
+    Vector<AssetFilePtr> AssetManager::getAssetFilesWithExtension(
+        String const& _extension,
+        std::function<bool(AssetFilePtr const&)> _pred)
+    {
         Vector<AssetFilePtr> result;
 
         UnorderedMap<String, AssetFilePtr>::iterator it = m_assetFilesByFullPath.begin();
@@ -229,7 +237,10 @@ namespace Maze
         for (; it != end; ++it)
         {
             if ((*it).second->getExtension() == _extension)
-                result.push_back((*it).second);
+            {
+                if (_pred((*it).second))
+                    result.push_back((*it).second);
+            }
         }
 
         return result;
