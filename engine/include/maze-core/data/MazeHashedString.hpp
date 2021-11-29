@@ -123,6 +123,9 @@ namespace Maze
         //////////////////////////////////////////
         inline operator String() const { return getString(); }
 
+        //////////////////////////////////////////
+        inline bool empty() const { return m_string.empty(); }
+
     protected:
         String m_string;
         U32 m_hash;
