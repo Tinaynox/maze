@@ -225,7 +225,7 @@ namespace Maze
             if (m_ignoreScenes.find(sceneUID) != m_ignoreScenes.end())
                 continue;
 
-            HierarchyLineSceneData& hierarchyLineData = m_hierarchyLinesPerScene[scene->getClassName()];
+            HierarchyLineSceneData& hierarchyLineData = m_hierarchyLinesPerScene[scene.get()];
             HierarchyLinePtr hierarchyLine = createHierarchyLine(scene);
             hierarchyLine->setLabel(scene->getClassName());
             hierarchyLine->getTransform()->setParent(m_layoutTransform);
@@ -486,7 +486,7 @@ namespace Maze
     //////////////////////////////////////////
     HierarchyLinePtr HierarchyController::createHierarchyLine(ECSScenePtr const& _scene)
     {
-        HierarchyLineSceneData& hierarchyLineData = m_hierarchyLinesPerScene[_scene->getClassName()];
+        HierarchyLineSceneData& hierarchyLineData = m_hierarchyLinesPerScene[_scene.get()];
         HierarchyLinePtr& hierarchyLine = hierarchyLineData.line;
 
         if (!hierarchyLine)
@@ -511,7 +511,7 @@ namespace Maze
             case HierarchyLineType::Scene:
             {
                 ECSScene* ecsScene = static_cast<ECSScene*>(_hierarchyLine->getUserData());
-                HierarchyLineSceneData& hierarchyLineData = m_hierarchyLinesPerScene[ecsScene->getClassName()];
+                HierarchyLineSceneData& hierarchyLineData = m_hierarchyLinesPerScene[ecsScene];
                 hierarchyLineData.expanded = !hierarchyLineData.expanded;
                 break;
             }

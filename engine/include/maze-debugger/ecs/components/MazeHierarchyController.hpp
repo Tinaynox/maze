@@ -198,7 +198,7 @@ namespace Maze
         ECSWorld* m_world;
 
         Map<EntityId, HierarchyLineEntityData> m_hierarchyLinesPerEntity;
-        UnorderedMap<String, HierarchyLineSceneData> m_hierarchyLinesPerScene;
+        UnorderedMap<ECSScene*, HierarchyLineSceneData> m_hierarchyLinesPerScene;
 
         Set<ClassUID> m_ignoreScenes;
     };
