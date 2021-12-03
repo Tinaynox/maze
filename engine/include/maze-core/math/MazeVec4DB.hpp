@@ -99,7 +99,7 @@ namespace Maze
         {}
 
         //////////////////////////////////////////
-        inline MAZE_CONSTEXPR Vec4DB(Vec4DB&& _vec)
+        inline MAZE_CONSTEXPR Vec4DB(Vec4DB&& _vec) noexcept
             : x(_vec.x)
             , y(_vec.y)
             , z(_vec.z)
@@ -278,7 +278,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline Vec4DB& operator=(Vec4DB&& _vec)
+        inline Vec4DB& operator=(Vec4DB&& _vec) noexcept
         {
             x = _vec.x;
             y = _vec.y;

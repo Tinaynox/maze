@@ -380,6 +380,9 @@ namespace Maze
         m_trailRenderers3DSample->process(
             [&](Entity* _entity, TrailRenderer3D* _trailRenderer, Transform3D* _transform3D)
             {
+                if (_trailRenderer->getEdgesCount() == 0)
+                    return;
+
                 if (_trailRenderer->getRenderMask()->getMask() & _params.renderMask)
                 {
                     if (_trailRenderer->getRenderMesh())

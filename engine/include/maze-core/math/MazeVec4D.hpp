@@ -258,7 +258,7 @@ namespace Maze
         inline Vec4D& operator=(Vec4D const& _vec);
 
         //////////////////////////////////////////
-        inline Vec4D& operator=(Vec4D&& _vec);
+        inline Vec4D& operator=(Vec4D&& _vec) noexcept;
 
         //////////////////////////////////////////
         inline Vec4D& operator=(TValue const _value);

@@ -224,6 +224,16 @@ namespace Maze
             return (mat.transformAffine(Vec3DF::c_unitY)).normalizedCopy();
         }
 
+        //////////////////////////////////////////
+        inline Vec3DF getWorldRightDirection()
+        {
+            Mat4DF mat = getWorldTransform();
+            mat[0][3] = 0.0f;
+            mat[1][3] = 0.0f;
+            mat[2][3] = 0.0f;
+            return (mat.transformAffine(Vec3DF::c_unitX)).normalizedCopy();
+        }
+
 
         //////////////////////////////////////////
         inline bool isParentChangedCurrentFrame() { return m_flags & Flags::ParentChangedCurrentFrame; }

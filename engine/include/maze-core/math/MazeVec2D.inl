@@ -195,7 +195,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    inline Vec2D<TValue>& Vec2D<TValue>::operator=(Vec2D<TValue>&& _vec)
+    inline Vec2D<TValue>& Vec2D<TValue>::operator=(Vec2D<TValue>&& _vec) noexcept
     {
         x = std::move(_vec.x);
         y = std::move(_vec.y);

@@ -153,7 +153,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline Vec2DB& operator=(Vec2DB&& _vec)
+        inline Vec2DB& operator=(Vec2DB&& _vec) noexcept
         {
             x = _vec.x;
             y = _vec.y;

@@ -303,6 +303,9 @@ namespace Maze
         //////////////////////////////////////////
         inline Vec3D& operator/=(Vec2D<TValue> const& _vec);
 
+        //////////////////////////////////////////
+        inline operator Vec2D<TValue>() const { return Vec2D<TValue>(x, y); }
+
 
         //////////////////////////////////////////
         inline MAZE_CONSTEXPR TValue length() const;

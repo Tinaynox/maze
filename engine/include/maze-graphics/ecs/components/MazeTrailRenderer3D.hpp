@@ -169,6 +169,9 @@ namespace Maze
             return m_edges.back().position;
         }
 
+        //////////////////////////////////////////
+        inline Size getEdgesCount() const { return m_edges.size(); }
+
     protected:
 
         //////////////////////////////////////////
