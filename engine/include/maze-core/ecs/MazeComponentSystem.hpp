@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/ecs/MazeECSTypes.hpp"
+#include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
@@ -44,7 +45,9 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(Entity);
     MAZE_USING_SHARED_PTR(ComponentSystem);
+    MAZE_USING_SHARED_PTR(SimpleComponentSystem);
     MAZE_USING_SHARED_PTR(ECSWorld);
+    MAZE_USING_SHARED_PTR(IEntitiesSample);
 
 
     //////////////////////////////////////////
@@ -104,6 +107,56 @@ namespace Maze
     protected:
         ECSWorldWPtr m_world;
         ECSWorld* m_worldRaw;
+    };
+
+
+    //////////////////////////////////////////
+    // Class SimpleComponentSystem
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API SimpleComponentSystem
+        : public ComponentSystem
+    {
+    public:
+
+        //////////////////////////////////////////
+        using Func = void (*)();
+
+        //////////////////////////////////////////
+        static inline SimpleComponentSystemPtr Create(
+            IEntitiesSamplePtr _sample,
+            Func _func,
+            S32 _order = 0)
+        {
+            return MAZE_CREATE_SHARED_PTR_WITH_ARGS(SimpleComponentSystem, _sample, _func, _order);
+        }
+
+    protected:
+
+        //////////////////////////////////////////
+        SimpleComponentSystem(
+            IEntitiesSamplePtr _sample = nullptr,
+            Func _func = nullptr,
+            S32 _order = 0)
+            : m_sample(_sample)
+            , m_func(_func)
+            , m_order(_order)
+        {}
+
+        //////////////////////////////////////////
+        virtual void processUpdate(F32 _dt) MAZE_OVERRIDE
+        {
+            m_sample->processUpdate(_dt, m_func);
+        }
+
+        //////////////////////////////////////////
+        virtual S32 getOrder() const MAZE_OVERRIDE { return m_order; }
+
+    protected:
+
+        IEntitiesSamplePtr m_sample;
+        Func m_func = nullptr;
+        S32 m_order = 0;
     };
 
 

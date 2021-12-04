@@ -184,6 +184,20 @@ namespace Maze
             return sample;
         }
 
+        //////////////////////////////////////////
+        template<typename ...TComponents>
+        SimpleComponentSystemPtr addSystem(
+            void (*_func)(F32, Entity*, TComponents* ...),
+            S32 _order = 0)
+        {
+            SimpleComponentSystemPtr system = SimpleComponentSystem::Create(
+                requestInclusiveSample<TComponents...>(),
+                (SimpleComponentSystem::Func)_func,
+                _order);
+            addSystem(system);
+            return system;
+        }
+
     public:
 
         //////////////////////////////////////////

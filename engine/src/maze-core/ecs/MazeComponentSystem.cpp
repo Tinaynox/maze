@@ -28,6 +28,7 @@
 #include "maze-core/ecs/MazeComponentSystem.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 
 
@@ -92,8 +93,7 @@ namespace Maze
     void ComponentSystem::processSystemRemoved()
     {
 
-    }
-
+    }  
 
 } // namespace Maze
 //////////////////////////////////////////

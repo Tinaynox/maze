@@ -92,6 +92,13 @@ namespace Maze
         //////////////////////////////////////////
         EntityAspect const& getAspect() const { return m_aspect; }
 
+
+        //////////////////////////////////////////
+        virtual void process(void (*)()) MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual void processUpdate(F32 _dt, void (*)()) MAZE_ABSTRACT;
+
     protected:
 
         //////////////////////////////////////////
@@ -152,6 +159,14 @@ namespace Maze
         virtual void processEntity(Entity* _entity) MAZE_OVERRIDE;
 
 
+        //////////////////////////////////////////
+        virtual void process(void (*_func)()) MAZE_OVERRIDE
+        { }
+
+        //////////////////////////////////////////
+        virtual void processUpdate(F32 _dt, void (*_func)()) MAZE_OVERRIDE
+        { }
+
     public:
     
         //////////////////////////////////////////
@@ -185,6 +200,18 @@ namespace Maze
 
         //////////////////////////////////////////
         using Indices = IndexTupleBuilder<sizeof ...(TComponents)>;
+
+        //////////////////////////////////////////
+        using ProcessFunc = std::function<void(Entity*, TComponents* ..._components)>;
+
+        //////////////////////////////////////////
+        using ProcessFuncRaw = void(*)(Entity*, TComponents* ..._components);
+
+        //////////////////////////////////////////
+        using ProcessUpdateFunc = std::function<void(F32, Entity*, TComponents* ..._components)>;
+
+        //////////////////////////////////////////
+        using ProcessUpdateFuncRaw = void(*)(F32, Entity*, TComponents* ..._components);
 
         //////////////////////////////////////////
         struct EntityData
@@ -272,7 +299,6 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        using ProcessFunc = std::function<void(Entity*, TComponents* ..._components)>;
         void process(ProcessFunc _func)
         {
             for (EntityData entityData : m_entitiesData)
@@ -283,6 +309,34 @@ namespace Maze
                     entityData.components,
                     typename Indices::Indexes());
             }
+        }
+
+        //////////////////////////////////////////
+        virtual void process(void (*_func)()) MAZE_OVERRIDE
+        {
+            ProcessFuncRaw rawFunc = (ProcessFuncRaw)_func;
+            process((ProcessFunc)(rawFunc));
+        }
+
+        //////////////////////////////////////////
+        void processUpdate(F32 _dt, ProcessUpdateFunc _func)
+        {
+            for (EntityData entityData : m_entitiesData)
+            {
+                callProcessUpdate(
+                    _dt,
+                    _func,
+                    entityData.entity,
+                    entityData.components,
+                    typename Indices::Indexes());
+            }
+        }
+
+        //////////////////////////////////////////
+        virtual void processUpdate(F32 _dt, void (*_func)()) MAZE_OVERRIDE
+        {
+            ProcessUpdateFuncRaw rawFunc = (ProcessUpdateFuncRaw)_func;
+            processUpdate(_dt, (ProcessUpdateFunc)(rawFunc));
         }
 
     protected:
@@ -312,6 +366,17 @@ namespace Maze
             IndexesTuple<Idxs...> const&)
         {
             _func(_entity, std::get<Idxs>(_components)...);
+        }
+
+        template<S32 ...Idxs>
+        inline void callProcessUpdate(
+            F32 _dt,
+            ProcessUpdateFunc _func,
+            Entity* _entity,
+            std::tuple<TComponents*...>& _components,
+            IndexesTuple<Idxs...> const&)
+        {
+            _func(_dt, _entity, std::get<Idxs>(_components)...);
         }
 
 
