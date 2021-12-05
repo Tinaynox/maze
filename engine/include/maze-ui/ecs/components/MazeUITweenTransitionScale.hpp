@@ -80,6 +80,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline void setUnscaledDeltaTime(bool _value) { m_unscaledDeltaTime = _value; }
+
+        //////////////////////////////////////////
+        inline bool getUnscaledDeltaTime() const { return m_unscaledDeltaTime; }
+
+
+        //////////////////////////////////////////
         Vec2DF const& getHiddenScale() const { return m_hiddenScale; }
 
         //////////////////////////////////////////
@@ -147,6 +154,8 @@ namespace Maze
 
     protected:
         Transform2DPtr m_transform;
+
+        bool m_unscaledDeltaTime = false;
 
         bool m_isHidden;
         F32 m_showTime;

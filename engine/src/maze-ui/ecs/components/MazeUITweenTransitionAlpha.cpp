@@ -29,6 +29,7 @@
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-graphics/MazeMesh.hpp"
@@ -140,6 +141,9 @@ namespace Maze
     //////////////////////////////////////////
     void UITweenTransitionAlpha::processUpdate(F32 _dt)
     {
+        if (m_unscaledDeltaTime)
+            _dt = UpdateManager::GetInstancePtr()->getUnscaledDeltaTime();
+
         if (m_isHidden && m_hidingProgress < 1.0f)
         {
             m_hidingProgress += _dt * m_hideSpeed;
