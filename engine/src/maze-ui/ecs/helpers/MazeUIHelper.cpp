@@ -276,7 +276,8 @@ namespace Maze
             ColorU32 _normalColor,
             ColorU32 _focusedColor,
             ColorU32 _checkedColor,
-            ColorU32 _pressedColor)
+            ColorU32 _pressedColor,
+            ColorU32 _focusedPressedColor)
         {
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
@@ -304,7 +305,7 @@ namespace Maze
             toggleButton->setTransitionSprite(spriteRenderer);
 
             auto updateToggleButtonState =
-                [_normalColor, _focusedColor, _checkedColor, _pressedColor](
+                [_normalColor, _focusedColor, _checkedColor, _pressedColor, _focusedPressedColor](
                     Button2D* _button,
                     SpriteRenderer2D* _spriteRenderer)
             {
@@ -318,7 +319,10 @@ namespace Maze
                 {
                     if (toggleButton->getFocused())
                     {
-                        _spriteRenderer->setColor(_focusedColor);
+                        if (toggleButton->getChecked())
+                            _spriteRenderer->setColor(_focusedPressedColor);
+                        else
+                            _spriteRenderer->setColor(_focusedColor);
                     }
                     else
                     {

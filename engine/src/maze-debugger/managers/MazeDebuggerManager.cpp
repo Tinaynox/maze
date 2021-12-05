@@ -66,6 +66,12 @@ namespace Maze
 
         EntityManager::GetInstancePtr()->getDefaultWorldRaw()->eventComponentSystemAdded.unsubscribe(this);
 
+        if (SettingsManager::GetInstancePtr())
+        {
+            DebuggerSettings* debuggerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<DebuggerSettings>();
+            debuggerSettings->getPauseChangedEvent().unsubscribe(this);
+        }
+
         closeDebugEditor();
 
         s_instance = nullptr;
@@ -95,6 +101,11 @@ namespace Maze
             return false;
 
         EntityManager::GetInstancePtr()->getDefaultWorldRaw()->eventComponentSystemAdded.subscribe(this, &DebuggerManager::notifyComponentSystemAdded);
+
+        DebuggerSettings* debuggerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<DebuggerSettings>();
+        debuggerSettings->getPauseChangedEvent().subscribe(this, &DebuggerManager::notifyPauseChanged);
+
+        updatePause();
 
         return true;
     }
@@ -167,6 +178,22 @@ namespace Maze
         {
             m_gizmosSystem->eventDrawGizmosEvent.subscribe(this, &DebuggerManager::notifyDrawGizmos);
         }
+    }
+
+    //////////////////////////////////////////
+    void DebuggerManager::notifyPauseChanged(bool const& _value)
+    {
+        updatePause();
+    }
+
+    //////////////////////////////////////////
+    void DebuggerManager::updatePause()
+    {
+        DebuggerSettings* debuggerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<DebuggerSettings>();
+        if (debuggerSettings->getPause() && !m_pause)
+            m_pause = std::make_unique<ScopedPause>();
+        else
+            m_pause.reset();
     }
     
 } // namespace Maze

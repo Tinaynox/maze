@@ -33,6 +33,7 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
+#include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
@@ -80,6 +81,7 @@
 #include "maze-debugger/ecs/components/MazeHierarchyController.hpp"
 #include "maze-debugger/ecs/components/MazeInspectorController.hpp"
 #include "maze-debugger/ecs/components/MazeAssetsController.hpp"
+#include "maze-debugger/ecs/components/MazeTopBarController.hpp"
 #include "maze-debugger/ecs/components/MazeDebugGridRenderer.hpp"
 #include "maze-ui/color-picker/SceneColorPicker.hpp"
 #include "maze-ui/color-picker/SceneColorGradientPicker.hpp"
@@ -108,6 +110,7 @@ namespace Maze
         , m_inspectorViewport(DebuggerLayout::c_inspectorViewport)
         , m_assetsViewport(DebuggerLayout::c_assetsViewport)
         , m_sceneViewport(DebuggerLayout::c_sceneViewport)
+        , m_topBarViewport(DebuggerLayout::c_topBarViewport)
         , m_yawAngle(0.0f)
         , m_pitchAngle(0.0f)
         , m_cursorPositionLastFrame(Vec2DF::c_zero)
@@ -158,6 +161,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneDebugEditor::update(F32 _dt)
     {
+        _dt = UpdateManager::GetInstancePtr()->getUnscaledDeltaTime();
 
 #if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
         
@@ -348,6 +352,21 @@ namespace Maze
             EntityPtr assetsControllerEntity = createEntity();
             AssetsControllerPtr assetsController = AssetsController::Create(m_assetsCanvas.get());
             assetsControllerEntity->addComponent(assetsController);
+        }
+
+        {
+            EntityPtr topBarCanvasEntity = createEntity();
+            m_topBarCanvas = topBarCanvasEntity->createComponent<Canvas>();
+            m_topBarCanvas->setClearColorFlag(false);
+            m_topBarCanvas->setClearColor(ColorU32::c_zero);
+            Rect2DF topBarCanvasViewport = m_topBarViewport;
+            m_topBarCanvas->setViewport(topBarCanvasViewport);
+            m_topBarCanvas->setRenderTarget(m_renderTarget);
+            m_topBarCanvas->setSortOrder(-1000000);
+
+            EntityPtr topBarControllerEntity = createEntity();
+            TopBarControllerPtr topBarController = TopBarController::Create(m_topBarCanvas.get());
+            topBarControllerEntity->addComponent(topBarController);
         }
     }
 

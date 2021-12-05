@@ -72,6 +72,33 @@ namespace Maze
         inline U32 getMicroseconds() { return m_timer.getMicroseconds(); }
 
 
+        //////////////////////////////////////////
+        inline F32 getTimeScale() const { return m_timeScale; }
+
+        //////////////////////////////////////////
+        inline void setTimeScale(F32 _timeScale) { m_timeScale = _timeScale; }
+
+
+        //////////////////////////////////////////
+        inline F32 getAppTime() const { return m_appTime; }
+
+        //////////////////////////////////////////
+        inline void pushPause() { m_pauseCounter++; }
+
+        //////////////////////////////////////////
+        inline void popPause() { if (m_pauseCounter > 0) m_pauseCounter--; }
+
+
+        //////////////////////////////////////////
+        inline F32 getUnscaledDeltaTime() const { return m_unscaledDeltaTime; }
+
+        //////////////////////////////////////////
+        inline F32 getDeltaTime() const { return m_deltaTime; }
+
+
+        //////////////////////////////////////////
+        void processStep(F32 _dt);
+
 
         //////////////////////////////////////////
         static inline UpdateManager* GetInstancePtr() { return s_instance; }
@@ -95,8 +122,38 @@ namespace Maze
 
         Timer m_timer;
 
-        U32 m_lastFrameTimeMS;
-        U32 m_maxDeltaTimeMS;
+        U32 m_lastFrameTimeMS = 0u;
+        U32 m_maxDeltaTimeMS = 50u;
+
+        F32 m_timeScale = 1.0f;
+        S32 m_pauseCounter = 0;
+
+        F32 m_appTime = 0.0f;
+
+        F32 m_unscaledDeltaTime = 0.0f;
+        F32 m_deltaTime = 0.0f;
+    };
+
+
+    //////////////////////////////////////////
+    // Class ScopedPause
+    //
+    //////////////////////////////////////////
+    class ScopedPause
+    {
+    public:
+
+        //////////////////////////////////////////
+        ScopedPause()
+        {
+            UpdateManager::GetInstancePtr()->pushPause();
+        }
+
+        //////////////////////////////////////////
+        ~ScopedPause()
+        {
+            UpdateManager::GetInstancePtr()->popPause();
+        }
     };
 
 

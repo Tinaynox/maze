@@ -33,6 +33,7 @@
 #include "maze-debugger/MazeDebuggerHeader.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
+#include "maze-core/utils/MazeObservableValue.hpp"
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
@@ -70,23 +71,35 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setActive(bool _active);
+        void setActive(bool _value) { m_active = _value; }
 
         //////////////////////////////////////////
-        inline bool getActive() const { return m_active; }
+        inline bool getActive() const { return m_active.getValue(); }
+
+        //////////////////////////////////////////
+        inline auto& getActiveChangedEvent() { return m_active.eventValueChanged; }
 
         //////////////////////////////////////////
         inline void switchActive() { setActive(!getActive()); }
 
 
-    public:
+        //////////////////////////////////////////
+        void setPause(bool _value) { m_pause = _value; }
 
         //////////////////////////////////////////
-        MultiDelegate<bool> eventActiveChanged;
+        inline bool getPause() const { return m_pause.getValue(); }
+
+        //////////////////////////////////////////
+        inline auto& getPauseChangedEvent() { return m_pause.eventValueChanged; }
+
+        //////////////////////////////////////////
+        inline void switchPause() { setPause(!getPause()); }
+
 
     protected:
 
-        bool m_active;
+        ObservableValue<bool> m_active = true;
+        ObservableValue<bool> m_pause = false;
     };
 
 

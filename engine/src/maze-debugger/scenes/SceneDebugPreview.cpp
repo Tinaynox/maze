@@ -33,6 +33,7 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
+#include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
@@ -152,6 +153,8 @@ namespace Maze
     //////////////////////////////////////////
     void SceneDebugPreview::update(F32 _dt)
     {
+        _dt = UpdateManager::GetInstancePtr()->getUnscaledDeltaTime();
+
         m_camera3D->getTransform()->setLocalRotation(Quaternion(m_pitchAngle, m_yawAngle, 0.0f));
         m_previewWorld->update(_dt);
     }

@@ -25,113 +25,100 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_SceneDebugEditor_hpp_))
-#define _SceneDebugEditor_hpp_
+#if (!defined(_MazeTopBarController_hpp_))
+#define _MazeTopBarController_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-debugger/MazeDebuggerHeader.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-ui/MazeUIHeader.hpp"
+#include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
-#include "maze-core/ecs/components/MazeTransform3D.hpp"
-#include "maze-core/utils/MazeDelegate.hpp"
-#include "maze-core/math/MazeQuaternion.hpp"
-#include "maze-core/system/MazeInputEvent.hpp"
-#include "maze-graphics/MazeMesh.hpp"
-#include "maze-graphics/MazeShader.hpp"
-#include "maze-graphics/MazeTexture2D.hpp"
-#include "maze-graphics/MazeMaterial.hpp"
-#include "maze-graphics/MazeRenderPass.hpp"
-#include "maze-graphics/MazeRenderTarget.hpp"
-#include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
-#include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
-#include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
-#include "maze-graphics/ecs/components/MazeCanvas.hpp"
-#include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
-#include "maze-graphics/ecs/components/MazeCamera3D.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-ui/MazeCursorInputEvent.hpp"
+#include "maze-ui/ecs/components/MazeLayout2D.hpp"
+#include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
+#include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
+#include "maze-ui/ecs/components/MazeToggleButton2D.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
-#include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
-#include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
+#include "maze-debugger/inspectors/MazeInspector.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(SceneDebugEditor);
+    MAZE_USING_SHARED_PTR(TopBarController);
 
 
     //////////////////////////////////////////
-    // Class SceneDebugEditor
+    // Class TopBarController
     //
     //////////////////////////////////////////
-    class MAZE_DEBUGGER_API SceneDebugEditor
-        : public ECSRenderScene
+    class MAZE_DEBUGGER_API TopBarController
+        : public Component
         , public MultiDelegateCallbackReceiver
+        , public Updatable
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneDebugEditor, ECSRenderScene);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(TopBarController, Component);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(SceneDebugEditor);
+        MAZE_DECLARE_MEMORY_ALLOCATION(TopBarController);
+
+        //////////////////////////////////////////
+        friend class Entity;
+
 
     public:
 
         //////////////////////////////////////////
-        static SceneDebugEditorPtr Create(RenderTargetPtr const& _renderTarget);
-    
+        virtual ~TopBarController();
+
         //////////////////////////////////////////
-        virtual ~SceneDebugEditor();
+        static TopBarControllerPtr Create(Canvas* _canvas);
+
 
         //////////////////////////////////////////
         virtual void update(F32 _dt) MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        Transform2DPtr const& getTransform() const { return m_transform; }
 
     protected:
 
         //////////////////////////////////////////
-        SceneDebugEditor();
+        TopBarController();
 
         //////////////////////////////////////////
-        virtual bool init(RenderTargetPtr const& _renderTarget);
+        using Component::init;
+        
+        //////////////////////////////////////////
+        bool init(Canvas* _canvas);
 
         //////////////////////////////////////////
-        void notifyMouse(InputEventMouseData const& _data);
+        virtual void processEntityAwakened() MAZE_OVERRIDE;
+
 
         //////////////////////////////////////////
-        void create3D();
+        void updateUI();
 
         //////////////////////////////////////////
-        void create2D();
-
-        //////////////////////////////////////////
-        void createSystems();
-
+        void notifyPauseChanged(bool const& _value);
 
     protected:
+        Canvas* m_canvas;
 
-        CanvasPtr m_hierarchyCanvas;
-        Rect2DF m_hierarchyViewport;
+        Transform2DPtr m_transform;
 
-        CanvasPtr m_inspectorCanvas;
-        Rect2DF m_inspectorViewport;
+        SpriteRenderer2DPtr m_bodyBackground;
 
-        CanvasPtr m_assetsCanvas;
-        Rect2DF m_assetsViewport;
+        HorizontalLayout2DPtr m_layout;
 
-        CanvasPtr m_topBarCanvas;
-        Rect2DF m_topBarViewport;
-
-        Camera3DPtr m_camera3D;
-        Rect2DF m_sceneViewport;
-
-        F32 m_yawAngle;
-        F32 m_pitchAngle;
-        Vec2DF m_cursorPositionLastFrame;
-        bool m_cursorDrag;
+        ToggleButton2DPtr m_pauseButton;
+        ClickButton2DPtr m_stepButton;
     };
 
 
@@ -139,5 +126,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _SceneDebugEditor_hpp_
+#endif // _MazeTopBarController_hpp_
 //////////////////////////////////////////

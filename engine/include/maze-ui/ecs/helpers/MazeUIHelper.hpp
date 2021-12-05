@@ -126,7 +126,8 @@ namespace Maze
             ColorU32 _normalColor = { 245, 245, 245 },
             ColorU32 _focusedColor = { 213, 231, 248 },
             ColorU32 _checkedColor = { 200, 220, 240 },
-            ColorU32 _pressedColor = { 213, 231, 248 });
+            ColorU32 _pressedColor = { 213, 231, 248 },
+            ColorU32 _focusedPressedColor = { 213, 231, 248 });
 
         //////////////////////////////////////////
         MAZE_UI_API ClickButton2DPtr CreateClickButton(

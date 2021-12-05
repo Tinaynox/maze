@@ -43,8 +43,6 @@ namespace Maze
 
     //////////////////////////////////////////
     UpdateManager::UpdateManager()
-        : m_lastFrameTimeMS(0u)
-        , m_maxDeltaTimeMS(50)
     {
         s_instance = this;
     }
@@ -98,7 +96,22 @@ namespace Maze
 
         F32 dt = dtMS / 1000.0f;
 
-        Updater::processUpdate(dt);
+        m_unscaledDeltaTime = dt;
+        F32 scaledDeltaTime = dt * m_timeScale;
+        if (m_pauseCounter > 0)
+            scaledDeltaTime = 0.0f;
+        m_deltaTime = scaledDeltaTime;
+
+        m_appTime += scaledDeltaTime;
+
+        Updater::processUpdate(scaledDeltaTime);
+    }
+
+    //////////////////////////////////////////
+    void UpdateManager::processStep(F32 _dt)
+    {
+        m_appTime += _dt;
+        Updater::processUpdate(_dt);
     }
 
 } // namespace Maze

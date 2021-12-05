@@ -1435,6 +1435,53 @@ namespace Maze
                 Vec2DF(chunkSize, chunkSize));
         }
 
+        // Pause
+        {
+
+            Vec2DS sheetPos(5, 0);
+            Vec2DS startPos = startPosFunc(sheetPos);
+            ColorU32 mainColor(255, 255, 255);
+
+            uiElementsSheet.drawFilledRect(
+                Vec2DS(11, 9) + startPos,
+                Vec2DS(3, 14),
+                mainColor);
+
+            uiElementsSheet.drawFilledRect(
+                Vec2DS(18, 9) + startPos,
+                Vec2DS(3, 14),
+                mainColor);
+
+            m_defaultUISprites[(Size)DefaultUISprite::Pause] = Sprite::Create(
+                m_uiElementsTexture,
+                Vec2DF(startPos),
+                Vec2DF(chunkSize, chunkSize));
+        }
+
+        // StepUpdate
+        {
+
+            Vec2DS sheetPos(6, 0);
+            Vec2DS startPos = startPosFunc(sheetPos);
+            ColorU32 mainColor(255, 255, 255);
+
+            uiElementsSheet.drawFilledTriangle(
+                Vec2DS(10, 9) + startPos,
+                Vec2DS(19, 15) + startPos,
+                Vec2DS(10, 22) + startPos,
+                mainColor);
+
+            uiElementsSheet.drawFilledRect(
+                Vec2DS(20, 9) + startPos,
+                Vec2DS(2, 14),
+                mainColor);
+
+            m_defaultUISprites[(Size)DefaultUISprite::StepUpdate] = Sprite::Create(
+                m_uiElementsTexture,
+                Vec2DF(startPos),
+                Vec2DF(chunkSize, chunkSize));
+        }
+
         m_uiElementsTexture->loadTexture(uiElementsSheet);
 
 #if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)

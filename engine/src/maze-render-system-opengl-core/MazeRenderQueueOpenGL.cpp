@@ -43,6 +43,7 @@
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/utils/MazeProfiler.hpp"
+#include "maze-core/managers/MazeUpdateManager.hpp"
 
 
 //////////////////////////////////////////
@@ -130,7 +131,11 @@ namespace Maze
     {
         Maze::ContextOpenGLScopeBind contextOpenGLScopedLock(m_context);
 
+#if 0
         m_drawTime = (F32)m_timer.getMilliseconds() / 1000.0f;
+#else
+        m_drawTime = UpdateManager::GetInstancePtr()->getAppTime();
+#endif
 
         processDrawBegin();
         m_instanceStreamModelMatrix->setOffset(0);        

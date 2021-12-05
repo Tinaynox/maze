@@ -88,6 +88,8 @@ namespace Maze
         PhysicsMaterial2D,
         Shader,
         SelectAsset,
+        Pause,
+        StepUpdate,
         
         MAX
     };

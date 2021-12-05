@@ -57,17 +57,6 @@ namespace Maze
     {
     }
 
-    //////////////////////////////////////////
-    void DebuggerSettings::setActive(bool _active)
-    {
-        if (m_active == _active)
-            return;
-
-        m_active = _active;
-
-        eventActiveChanged(m_active);
-    }
-
 
 } // namespace Maze
 //////////////////////////////////////////

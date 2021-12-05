@@ -97,6 +97,7 @@ namespace Maze
     Rect2DF const DebuggerLayout::c_inspectorViewport(0.75f, 0.33f, 0.25f, 0.67f);
     Rect2DF const DebuggerLayout::c_assetsViewport(0.0f, 0.0f, 0.5f, 0.33f);
     Rect2DF const DebuggerLayout::c_sceneViewport(0.5f, 0.0f, 0.5f, 0.33f);
+    Rect2DF const DebuggerLayout::c_topBarViewport(0.25f, 0.975f, 0.5f, 0.025f);
     
 
 } // namespace Maze
