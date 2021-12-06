@@ -210,6 +210,30 @@ namespace Maze
         m_canvas->setRenderTarget(renderTarget);
         m_canvas->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
 
+        SpriteHelper::CreateSystemText(
+            "SOME TEST TEXT",
+            8,
+            HorizontalAlignment2D::Center,
+            VerticalAlignment2D::Middle,
+            Vec2DF::c_zero,
+            Vec2DF::c_zero,
+            materialManager->getColorTextureMaterial(),
+            m_canvas->getTransform(),
+            this);
+
+        SpriteHelper::CreateSystemText(
+            "SECOND TEXT HERE",
+            8,
+            HorizontalAlignment2D::Center,
+            VerticalAlignment2D::Middle,
+            Vec2DF::c_zero,
+            { 0.0f, -20.0f },
+            materialManager->getColorTextureMaterial(),
+            m_canvas->getTransform(),
+            this,
+            { 0.5f, 0.5f },
+            { 0.5f, 0.5f });
+        /*
         Maze::SpritePtr sprite = spriteManager->getSprite("Panel00.mztexture");
         sprite->setSliceBorder(
             40.0f,
@@ -225,6 +249,7 @@ namespace Maze
             materialManager->getColorTextureMaterial(),
             canvasTransform2D,
             this);
+        */
     
         /*
         Scrollbar2DPtr scrollbarH = UIHelper::CreateDefaultScrollbarHorizontal(
@@ -369,7 +394,7 @@ namespace Maze
         
         //menuListTree->addItem("Option 1", [](String const& _option) { Log("Option 1"); });
         
-        
+        /*
         ColorEdit2DPtr colorEdit = UIHelper::CreateDefaultColorEdit(
             ColorU32::c_red,
             Vec2DF(150, 18),
@@ -387,6 +412,7 @@ namespace Maze
             this,
             Vec2DF(0.0f, 0.0f),
             Vec2DF::c_zero);
+        */
 
         /*
         ColorEdit2DPtr colorEdit = UIHelper::CreateDefaultColorEdit(
