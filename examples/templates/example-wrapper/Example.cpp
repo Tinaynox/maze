@@ -219,7 +219,7 @@ namespace Maze
         m_inputManager->eventKeyboard.subscribe(this, &Example::notifyKeyboard);
 
         m_settingsManager->loadSettings();
-        m_settingsManager->getSettings<DebuggerSettings>()->eventActiveChanged.subscribe(this, &Example::notifyDebuggerActiveChanged);
+        m_settingsManager->getSettings<DebuggerSettings>()->getActiveChangedEvent().subscribe(this, &Example::notifyDebuggerActiveChanged);
 
         if (!initExampleManagers())
             return false;
@@ -412,7 +412,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Example::notifyDebuggerActiveChanged(bool _active)
+    void Example::notifyDebuggerActiveChanged(bool const& _active)
     {
         updateDebugEditor();
     }

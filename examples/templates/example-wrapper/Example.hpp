@@ -159,7 +159,7 @@ namespace Maze
         void setMainRenderWindowViewport(Rect2DF const& _mainRenderWindowViewport);
 
         //////////////////////////////////////////
-        void notifyDebuggerActiveChanged(bool _active);
+        void notifyDebuggerActiveChanged(bool const& _active);
 
         //////////////////////////////////////////
         void notifyKeyboard(InputEventKeyboardData const& _data);
