@@ -141,7 +141,6 @@ namespace Maze
             VerticalAlignment2D::Middle,
             Vec2DF(50.0f, 8.0f),
             Vec2DF::c_zero,
-            renderSystem->getMaterialManager()->getColorTextureMaterial(),
             m_topBlock,
             m_transform->getEntityRaw()->getECSScene())->setColor(ColorU32::c_black);
 
@@ -167,7 +166,6 @@ namespace Maze
                 VerticalAlignment2D::Middle,
                 Vec2DF(50.0f, 8.0f),
                 Vec2DF::c_zero,
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
                 layout->getTransform(),
                 m_transform->getEntityRaw()->getECSScene());
             topBlockShaderText->setColor(ColorU32::c_black);
@@ -188,7 +186,6 @@ namespace Maze
                 VerticalAlignment2D::Middle,
                 shaderClickButton->getTransform()->getSize(),
                 Vec2DF::c_zero,
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
                 shaderClickButton->getTransform(),
                 m_transform->getEntityRaw()->getECSScene());
             m_topBlockShaderNameText->setColor(ColorU32::c_black);

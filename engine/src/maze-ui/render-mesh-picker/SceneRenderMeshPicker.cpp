@@ -318,7 +318,6 @@ namespace Maze
             VerticalAlignment2D::Middle,
             { data.bodyTransform->getWidth(), 10.0f },
             { 0.0f, -105.0f },
-            GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
             data.bodyTransform,
             data.bodyTransform->getEntityRaw()->getECSScene(),
             { 0.5f, 1.0f },

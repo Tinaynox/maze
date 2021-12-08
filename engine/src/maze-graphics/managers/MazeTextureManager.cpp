@@ -153,8 +153,6 @@ namespace Maze
         m_errorTexture->setMinFilter(TextureFilter::Nearest);
         addTexture(m_errorTexture);
 
-        createSystemFontTextures();
-
         m_whiteCubeTexture = TextureCube::Create(m_renderSystemRaw);
         m_whiteCubeTexture->setName("white_cube");
         {
@@ -188,36 +186,6 @@ namespace Maze
             m_testCubeTexture->loadTexture(faces);
         }
         addTexture(m_testCubeTexture);
-    }
-
-    //////////////////////////////////////////
-    void TextureManager::createSystemFontTextures()
-    {
-        S32 const extrude = 1;
-
-        // System Font
-        {
-            SystemFontPtr systemFont = std::make_shared<SystemFont>();
-
-            systemFont->texture = Texture2D::Create(m_renderSystemRaw);
-            systemFont->texture->setName("system_font");
-            systemFont->charSize = { 8, 8 };
-            systemFont->stroke = systemFont->charSize + extrude * 2;
-            systemFont->offset = { extrude, extrude };
-
-            PixelSheet2D systemFontSheet = GraphicsUtilsHelper::GenerateSystemFontExtrude(
-                GraphicsUtilsHelper::GetAsciiSymbolsSheet8x8(), 16, 6, 8, 8);
-
-            systemFont->texture->loadTexture(systemFontSheet);
-            systemFont->texture->setMagFilter(TextureFilter::Nearest);
-            systemFont->texture->setMinFilter(TextureFilter::LinearMipmapLinear);
-            addTexture(systemFont->texture);
-            
-            m_systemFont = systemFont;
-        }
-
-        // System Font Outlined
-        m_systemFontOutlined = createSystemFontOutlined("system_font_outline", ColorU32::c_black);
     }
 
     //////////////////////////////////////////
@@ -392,35 +360,6 @@ namespace Maze
             if (textureData.second->getAssetFile())
                 textureData.second->reload();
         }
-    }
-
-    //////////////////////////////////////////
-    SystemFontPtr TextureManager::createSystemFontOutlined(
-        String const& _name,
-        ColorU32 const& _outlineColor)
-    {
-        S32 const extrude = 1;
-
-        SystemFontPtr systemFont = std::make_shared<SystemFont>();
-
-        systemFont->texture = Texture2D::Create(m_renderSystemRaw);
-        systemFont->texture->setName(_name);
-        systemFont->outline = 1;
-        systemFont->charSize = Vec2DS(8, 8) + systemFont->outline * 2;
-        systemFont->stroke = systemFont->charSize + (extrude) * 2;
-        systemFont->offset = { extrude, extrude };
-
-        PixelSheet2D systemFontSheet = GraphicsUtilsHelper::GenerateSystemFontExtrudeOutlined(
-            GraphicsUtilsHelper::GetAsciiSymbolsSheet8x8(), 16, 6, 8, 8, _outlineColor);
-
-        systemFont->texture->loadTexture(systemFontSheet);
-        systemFont->texture->setMagFilter(TextureFilter::Nearest);
-        systemFont->texture->setMinFilter(TextureFilter::LinearMipmapLinear);
-        addTexture(systemFont->texture);
-
-        m_systemFontOutlined = systemFont;
-
-        return systemFont;
     }
 
     

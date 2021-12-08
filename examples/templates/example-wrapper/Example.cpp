@@ -201,7 +201,7 @@ namespace Maze
             Math::Lerp(0.0f, 0.25f, p),
             Math::Lerp(0.0f, 0.33f, p),
             Math::Lerp(1.0f, 0.5f, p),
-            Math::Lerp(1.0f, 0.67f, p));
+            Math::Lerp(1.0f, 0.67f - 0.025f, p));
 
         setMainRenderWindowViewport(viewport);
     }

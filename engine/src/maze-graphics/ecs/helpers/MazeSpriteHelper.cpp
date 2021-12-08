@@ -38,6 +38,7 @@
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
+#include "maze-graphics/managers/MazeSystemFontManager.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 
@@ -191,7 +192,6 @@ namespace Maze
             VerticalAlignment2D _verticalAlignment,
             Vec2DF const& _size, 
             Vec2DF const& _position,
-            MaterialPtr const& _material,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
             Vec2DF const& _anchor,
@@ -203,10 +203,9 @@ namespace Maze
             Maze::SystemTextRenderer2DPtr textRenderer = textRendererEntity->createComponent<Maze::SystemTextRenderer2D>();
             textRenderer->setText(_text);
             textRenderer->setFontSize(_fontSize);
-            textRenderer->setMaterial(_material ? _material : SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial());
             textRenderer->setHorizontalAlignment(_horizontalAlignment);
             textRenderer->setVerticalAlignment(_verticalAlignment);
-            textRenderer->setSystemFont(TextureManager::GetCurrentInstancePtr()->getSystemFont());
+            textRenderer->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFont());
 
             Transform2DPtr transform = textRendererEntity->ensureComponent<Transform2D>();
             transform->setParent(_parent);

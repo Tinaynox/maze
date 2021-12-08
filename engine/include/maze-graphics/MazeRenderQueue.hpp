@@ -237,6 +237,7 @@ namespace Maze
             bool _colorBuffer = true,
             bool _depthBuffer = true)
         {
+            m_lastDrawVAOInstancedCommand = nullptr;
             m_renderCommandsBuffer.createCommand<RenderCommandClearCurrentRenderTarget>(_colorBuffer, _depthBuffer);
         }
 
@@ -244,6 +245,7 @@ namespace Maze
         inline void addPushScissorRectCommand(
             Rect2DF const& _scissorRect)
         {
+            m_lastDrawVAOInstancedCommand = nullptr;
             MAZE_DEBUG_ERROR_IF(_scissorRect.size.x < 0.0f || _scissorRect.size.y < 0.0f, "Scissor size is cannot be negative!");
             m_renderCommandsBuffer.createCommand<RenderCommandPushScissorRect>(_scissorRect);
         }
@@ -251,6 +253,7 @@ namespace Maze
         //////////////////////////////////////////
         inline void addPopScissorRectCommand()
         {
+            m_lastDrawVAOInstancedCommand = nullptr;
             m_renderCommandsBuffer.createCommand<RenderCommandPopScissorRect>();
         }
 
@@ -259,12 +262,14 @@ namespace Maze
             S32 _index,
             Vec4DF const& _plane)
         {
+            m_lastDrawVAOInstancedCommand = nullptr;
             m_renderCommandsBuffer.createCommand<RenderCommandEnableClipPlane>(_index, _plane);
         }
 
         //////////////////////////////////////////
         inline void addDisableClipPlaneCommand(S32 _index)
         {
+            m_lastDrawVAOInstancedCommand = nullptr;
             m_renderCommandsBuffer.createCommand<RenderCommandDisableClipPlane>(_index);
         }
 

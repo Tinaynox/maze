@@ -152,14 +152,14 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        U8& operator [](Size _i)
+        inline U8& operator [](Size _i)
         {
             MAZE_DEBUG_BP_IF((_i < 0) || ((U32)_i >= m_size));
             return m_data[_i];
         }
 
         //////////////////////////////////////////
-        U8 const& operator [](Size _i) const
+        inline U8 const& operator [](Size _i) const
         {
             MAZE_DEBUG_BP_IF((_i < 0) || ((U32)_i >= m_size));
             return m_data[_i];

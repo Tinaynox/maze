@@ -733,7 +733,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    inline Mat4D<TValue> Mat4D<TValue>::concatenatedAffineCopy(Mat4D const& _m2)
+    inline Mat4D<TValue> Mat4D<TValue>::concatenatedAffineCopy(Mat4D const& _m2) const
     {
         return Mat4D<TValue>(
             m[0][0] * _m2.m[0][0] + m[0][1] * _m2.m[1][0] + m[0][2] * _m2.m[2][0],

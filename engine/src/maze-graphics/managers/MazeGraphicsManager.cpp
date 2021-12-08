@@ -43,6 +43,7 @@
 #include "maze-graphics/ecs/components/MazeGizmoBillboard3D.hpp"
 #include "maze-graphics/ecs/components/MazeLight3D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
@@ -111,6 +112,7 @@ namespace Maze
 
         // Renderer
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<MeshRenderer>("Renderer");
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<MeshRendererInstanced>("Renderer");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<RenderMask>("Renderer");
         
 

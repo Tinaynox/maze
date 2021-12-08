@@ -348,7 +348,6 @@ namespace Maze
             VerticalAlignment2D::Middle,
             { 8.0f, 18.0f },
             { 10.0f, 200.0f },
-            GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
             m_canvas->getTransform(),
             this,
             Vec2DF::c_zero,
@@ -389,7 +388,6 @@ namespace Maze
                 VerticalAlignment2D::Middle,
                 { 8.0f, 18.0f },
                 Vec2DF::c_zero,
-                GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
                 rowLayout->getTransform(),
                 this);
             label->setColor(ColorU32::c_black);
@@ -446,7 +444,6 @@ namespace Maze
                 VerticalAlignment2D::Middle,
                 { 8.0f, 18.0f },
                 Vec2DF::c_zero,
-                GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
                 rowLayout->getTransform(),
                 this);
             label->setColor(ColorU32::c_black);
@@ -503,7 +500,6 @@ namespace Maze
                 VerticalAlignment2D::Middle,
                 { 8.0f, 18.0f },
                 Vec2DF::c_zero,
-                GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
                 rowLayout->getTransform(),
                 this);
             label->setColor(ColorU32::c_black);
@@ -560,7 +556,6 @@ namespace Maze
                 VerticalAlignment2D::Middle,
                 { 8.0f, 18.0f },
                 Vec2DF::c_zero,
-                GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
                 rowLayout->getTransform(),
                 this);
             label->setColor(ColorU32::c_black);
@@ -634,7 +629,6 @@ namespace Maze
                 VerticalAlignment2D::Middle,
                 { 100.0f, 18.0f },
                 Vec2DF::c_zero,
-                GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
                 rowLayout->getTransform(),
                 this);
             label->setColor(ColorU32::c_black);
@@ -697,7 +691,6 @@ namespace Maze
                 VerticalAlignment2D::Middle,
                 { 8.0f, 18.0f },
                 Vec2DF::c_zero,
-                GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
                 rowLayout->getTransform(),
                 this);
             label->setColor(ColorU32::c_black);

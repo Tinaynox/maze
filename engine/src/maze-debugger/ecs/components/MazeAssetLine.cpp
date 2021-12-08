@@ -180,7 +180,6 @@ namespace Maze
             VerticalAlignment2D::Top,
             Vec2DF(100, charSize),
             Vec2DF(x, 0),
-            materialManager->getColorTextureMaterial(),
             m_mainTransform,
             getEntityRaw()->getECSScene(),
             Vec2DF(0.0f, 0.5f),

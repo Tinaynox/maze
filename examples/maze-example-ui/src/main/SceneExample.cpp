@@ -217,7 +217,6 @@ namespace Maze
             VerticalAlignment2D::Middle,
             Vec2DF::c_zero,
             Vec2DF::c_zero,
-            materialManager->getColorTextureMaterial(),
             m_canvas->getTransform(),
             this);
 
@@ -228,7 +227,6 @@ namespace Maze
             VerticalAlignment2D::Middle,
             Vec2DF::c_zero,
             { 0.0f, -20.0f },
-            materialManager->getColorTextureMaterial(),
             m_canvas->getTransform(),
             this,
             { 0.5f, 0.5f },
@@ -595,7 +593,6 @@ namespace Maze
             VerticalAlignment2D::Middle,
             Vec2DF(8, 18),
             Vec2DF(0, 0),
-            materialManager->getColorTextureMaterial(),
             layout->getTransform(),
             this,
             Vec2DF(0.0f, 0.5f),
@@ -640,7 +637,6 @@ namespace Maze
             VerticalAlignment2D::Middle,
             Vec2DF(8, 18),
             Vec2DF(0, 0),
-            materialManager->getColorTextureMaterial(),
             layout->getTransform(),
             this,
             Vec2DF(0.0f, 0.5f),

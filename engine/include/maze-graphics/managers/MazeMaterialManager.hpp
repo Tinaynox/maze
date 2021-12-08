@@ -131,6 +131,10 @@ namespace Maze
         //////////////////////////////////////////
         void loadAllAssetMaterials();
 
+    public:
+        //////////////////////////////////////////
+        MultiDelegate<> eventSpecialMaterialsCreated;
+
     protected:
 
         //////////////////////////////////////////

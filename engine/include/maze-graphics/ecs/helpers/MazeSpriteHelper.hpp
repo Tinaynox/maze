@@ -116,7 +116,6 @@ namespace Maze
             VerticalAlignment2D _verticalAlignment,
             Vec2DF const& _size, 
             Vec2DF const& _position,
-            MaterialPtr const& _material,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
             Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
