@@ -30,8 +30,11 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
+#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
+#include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
-#include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasRenderer.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeMesh.hpp"
@@ -40,7 +43,6 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
-#include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
@@ -55,7 +57,6 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SystemTextRenderer2D, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(String, text, String(), getText, setText),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(MaterialPtr, material, MaterialPtr(), getMaterial, setMaterial),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, color, ColorU32::c_white, getColor, setColor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(SystemFontPtr, systemFont, SystemFontPtr(), getSystemFont, setSystemFont),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(U32, fontSize, 32, getFontSize, setFontSize),
@@ -70,7 +71,6 @@ namespace Maze
     SystemTextRenderer2D::SystemTextRenderer2D()
         : m_renderSystem(nullptr)
         , m_transform(nullptr)
-        , m_meshRenderer(nullptr)
         , m_canvasRenderer(nullptr)
         , m_color(ColorU32::c_white)
         , m_fontSize(32)
@@ -122,6 +122,8 @@ namespace Maze
             _copyData))
             return false;
 
+        updateMeshData();
+
         return true;
     }
 
@@ -133,23 +135,9 @@ namespace Maze
 
         m_text = _text;
 
-        updateMesh();
+        updateMeshData();
     }
-
-    //////////////////////////////////////////
-    void SystemTextRenderer2D::setMaterial(MaterialPtr const& _material)
-    {
-        if (m_material == _material)
-            return;
-
-        m_material = _material->createCopy();        
-        m_colorUniform = m_material->ensureUniform("u_color");
-        m_baseMapUniform = m_material->ensureUniform("u_baseMap");
-        m_baseMapTexelSizeUniform = m_material->ensureUniform("u_baseMapTexelSize");
-            
-        updateMaterial();
-    }
-
+    
     //////////////////////////////////////////
     void SystemTextRenderer2D::setColor(ColorU32 _color)
     {
@@ -158,7 +146,7 @@ namespace Maze
 
         m_color = _color;
 
-        updateMaterial();
+        updateMeshRendererColors();
     }
 
     //////////////////////////////////////////
@@ -173,11 +161,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SystemTextRenderer2D::updateMesh()
+    void SystemTextRenderer2D::updateMeshData()
     {
         if (!m_canvasRenderer)
             return;
-
+        
         if (!m_meshRenderer)
             return;
 
@@ -203,6 +191,9 @@ namespace Maze
             maxColumnsCount,
             charsCount);
 
+        m_meshRenderer->resize(charsCount);
+        m_localMatrices.resize(charsCount);
+
         S32 columnsCount = 0;
         Char const* p0 = &m_text[0];
         while (*p0 != 0 && *p0 != '\n')
@@ -211,20 +202,9 @@ namespace Maze
             ++p0;
         }
 
-            
-        Maze::Size verticesCount = (Size)charsCount * 4;
-        Maze::Size indicesCount = (Size)charsCount * 6;
-        Maze::Vector<Maze::Vec3DF> positions(verticesCount);
-        Maze::Vector<Maze::Vec4DF> colors(verticesCount);
-        Maze::Vector<Maze::Vec4DF> uvs0(verticesCount);
-        Maze::Vector<Maze::U32> indices(indicesCount);
-
-
         S32 sx = 0;
         S32 sy = -rowSize;
-
-        Size charVerticesIndex = 0;
-        Size charIndicesIndex = 0;
+        Size charIndex = 0;
 
         Char const* p = &m_text[0];
         while (*p != 0)
@@ -252,8 +232,8 @@ namespace Maze
                 F32 border = 0.00001f;
                 Vec4DF uv(
                     (F32(ox * m_systemFont->stroke.x + m_systemFont->offset.x) / (F32)systemFontTexture->getWidth()) + border,
-                    (F32(oy * m_systemFont->stroke.y + m_systemFont->offset.y) / (F32)systemFontTexture->getHeight()) + border,
                     (F32(ox * m_systemFont->stroke.x + m_systemFont->charSize.x + m_systemFont->offset.x) / (F32)systemFontTexture->getWidth()) - border,
+                    (F32(oy * m_systemFont->stroke.y + m_systemFont->offset.y) / (F32)systemFontTexture->getHeight()) + border,
                     (F32(oy * m_systemFont->stroke.y + m_systemFont->charSize.y + m_systemFont->offset.y) / (F32)systemFontTexture->getHeight()) - border
                 );
 
@@ -278,31 +258,12 @@ namespace Maze
                 Vec2DF sizeV = (Vec2DF)m_systemFont->charSize * fontScale;
                 Vec2DF positionShiftV = Vec2DF((F32)sx, (F32)sy) * fontScale + positionShift;
 
+                Mat4DF localTransform = Mat4DF::CreateTranslationMatrix(positionShiftV) * Mat4DF::CreateScaleMatrix(sizeV);
+                m_localMatrices[charIndex] = localTransform;
 
-                positions[charVerticesIndex + 0] = Maze::Vec3DF(+0.5f, +0.5f, +0.0f) * sizeV + positionShiftV;    // Top right
-                positions[charVerticesIndex + 1] = Maze::Vec3DF(+0.5f, -0.5f, +0.0f) * sizeV + positionShiftV;    // Bottom right
-                positions[charVerticesIndex + 2] = Maze::Vec3DF(-0.5f, -0.5f, +0.0f) * sizeV + positionShiftV;    // Bottom left
-                positions[charVerticesIndex + 3] = Maze::Vec3DF(-0.5f, +0.5f, +0.0f) * sizeV + positionShiftV;    // Top left
+                m_meshRenderer->setUV(charIndex, uv);
 
-                colors[charVerticesIndex + 0] = vertexColor;
-                colors[charVerticesIndex + 1] = vertexColor;
-                colors[charVerticesIndex + 2] = vertexColor;
-                colors[charVerticesIndex + 3] = vertexColor;
-
-                uvs0[charVerticesIndex + 0] = Maze::Vec4DF(uv.z, uv.w, 0.0f, 0.0f);    // Top right
-                uvs0[charVerticesIndex + 1] = Maze::Vec4DF(uv.z, uv.y, 0.0f, 0.0f);    // Bottom right
-                uvs0[charVerticesIndex + 2] = Maze::Vec4DF(uv.x, uv.y, 0.0f, 0.0f);    // Bottom left
-                uvs0[charVerticesIndex + 3] = Maze::Vec4DF(uv.x, uv.w, 0.0f, 0.0f);    // Top left
-
-                indices[charIndicesIndex + 0] = (U32)charVerticesIndex + 0;
-                indices[charIndicesIndex + 1] = (U32)charVerticesIndex + 1;
-                indices[charIndicesIndex + 2] = (U32)charVerticesIndex + 3;
-                indices[charIndicesIndex + 3] = (U32)charVerticesIndex + 1;
-                indices[charIndicesIndex + 4] = (U32)charVerticesIndex + 2;
-                indices[charIndicesIndex + 5] = (U32)charVerticesIndex + 3;
-
-                charVerticesIndex += 4;
-                charIndicesIndex += 6;
+                ++charIndex;
 
                 sx += m_systemFont->charSize.x - m_systemFont->outline;
             }
@@ -310,19 +271,8 @@ namespace Maze
             ++p;
         }
 
-        if (charsCount > 0)
-        {
-            m_subMesh->setPositions(&positions[0], positions.size());
-            m_subMesh->setColors(&colors[0], colors.size());
-            m_subMesh->setTexCoords(0, &uvs0[0], uvs0.size());
-            m_subMesh->setIndices(&indices[0], indices.size());
-
-            m_meshRenderer->setMesh(m_mesh);
-        }
-        else
-        {
-            m_meshRenderer->clearMesh();
-        }
+        updateMeshRendererModelMatrices();
+        updateMeshRendererColors();
     }
 
     //////////////////////////////////////////
@@ -331,16 +281,10 @@ namespace Maze
         if (!m_meshRenderer)
             return;
 
-        m_meshRenderer->setMaterial(m_material);
-
-        if (m_material && m_systemFont)
-        {
-            Texture2DPtr texture = m_systemFont->texture;
-
-            m_colorUniform->set(m_color.toVec4DF());
-            m_baseMapUniform->set(texture);
-            m_baseMapTexelSizeUniform->set(1.0f / (Vec2DF)texture->getSize());
-        }
+        if (m_systemFont)
+            m_meshRenderer->setMaterial(m_systemFont->material);
+        else
+            m_meshRenderer->setMaterial(MaterialPtr());
     }
 
     //////////////////////////////////////////
@@ -449,17 +393,40 @@ namespace Maze
     void SystemTextRenderer2D::processEntityAwakened()
     {
         m_transform = getEntityRaw()->ensureComponent<Transform2D>();
-        m_meshRenderer = getEntityRaw()->ensureComponent<MeshRenderer>();
+        m_meshRenderer = getEntityRaw()->ensureComponent<MeshRendererInstanced>();
         m_canvasRenderer = getEntityRaw()->ensureComponent<CanvasRenderer>();
 
-        m_meshRenderer->setRenderMesh(RenderMeshPtr());
-        m_mesh = Mesh::Create();
-        m_subMesh = Maze::SubMesh::Create();             
-        m_subMesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
-        m_mesh->addSubMesh(m_subMesh);
+        m_meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultQuadMesh());
 
         updateMaterial();
-        updateMesh();
+        updateMeshData();
+    }
+
+    //////////////////////////////////////////
+    void SystemTextRenderer2D::updateMeshRendererColors()
+    {
+        if (!m_meshRenderer)
+            return;
+
+        Vec4DF const vertexColor = Vec4DF(1.0f, 1.0f, 1.0f, m_canvasRenderer ? m_canvasRenderer->getAlpha() : 1.0f);
+
+        Size colorsCount = m_meshRenderer->getColors().size();
+        for (Size i = 0; i < colorsCount; ++i)
+            m_meshRenderer->setColor(i, vertexColor * m_color.toVec4DF());
+    }
+
+    //////////////////////////////////////////
+    void SystemTextRenderer2D::updateMeshRendererModelMatrices()
+    {
+        if (!m_meshRenderer)
+            return;
+
+        Size transformCount = m_meshRenderer->getModelMatrices().size();
+        MAZE_DEBUG_ERROR_IF(transformCount != m_localMatrices.size(), "Invalid characters count!");
+        for (Size i = 0; i < transformCount; ++i)
+            m_meshRenderer->setModelMatrix(
+                i,
+                m_transform->getWorldTransform().concatenatedAffineCopy(m_localMatrices[i]));
     }
             
     

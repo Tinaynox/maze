@@ -25,46 +25,39 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeSystemTextRenderer2D_hpp_))
-#define _MazeSystemTextRenderer2D_hpp_
+#if (!defined(_MazeMeshRendererInstanced_hpp_))
+#define _MazeMeshRendererInstanced_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-graphics/MazeAlignment2D.hpp"
-#include "maze-graphics/MazeSystemFont.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(SystemText);
-    MAZE_USING_SHARED_PTR(Material);
-    MAZE_USING_SHARED_PTR(Mesh);
-    MAZE_USING_SHARED_PTR(SubMesh);
-    MAZE_USING_SHARED_PTR(SystemTextRenderer2D);
-    MAZE_USING_SHARED_PTR(Transform2D);
+    MAZE_USING_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(MeshRendererInstanced);
-    MAZE_USING_SHARED_PTR(CanvasRenderer);
+    MAZE_USING_SHARED_PTR(RenderMask);
 
 
     //////////////////////////////////////////
-    // Class SystemTextRenderer2D
+    // Class MeshRendererInstanced
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API SystemTextRenderer2D
+    class MAZE_GRAPHICS_API MeshRendererInstanced
         : public Component
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SystemTextRenderer2D, Component);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(MeshRendererInstanced, Component);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(SystemTextRenderer2D);
+        MAZE_DECLARE_MEMORY_ALLOCATION(MeshRendererInstanced);
 
         //////////////////////////////////////////
         friend class Entity;
@@ -72,103 +65,92 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~SystemTextRenderer2D();
+        virtual ~MeshRendererInstanced();
 
         //////////////////////////////////////////
-        static SystemTextRenderer2DPtr Create(RenderSystem* _renderSystem = nullptr);
+        static MeshRendererInstancedPtr Create(RenderSystem* _renderSystem = nullptr);
 
+            
+        //////////////////////////////////////////
+        inline RenderMeshPtr const& getRenderMesh() const { return m_renderMesh; }
 
         //////////////////////////////////////////
-        Transform2DPtr const& getTransform() const { return m_transform; }
+        inline void setRenderMesh(RenderMeshPtr const& _renderMesh) { m_renderMesh = _renderMesh; }
 
         //////////////////////////////////////////
-        CanvasRendererPtr const& getCanvasRenderer() const { return m_canvasRenderer; }
+        void setRenderMesh(String const& _renderMeshName);
 
         //////////////////////////////////////////
-        MeshRendererInstancedPtr const& getMeshRenderer() const { return m_meshRenderer; }
-
-
-        //////////////////////////////////////////
-        void setText(String const& _text);
+        void setMesh(MeshPtr const& _mesh);
 
         //////////////////////////////////////////
-        inline String const& getText() const { return m_text; }
-
-
-        //////////////////////////////////////////
-        void setColor(ColorU32 _color);
-
-        //////////////////////////////////////////
-        inline void setColor(U8 _r, U8 _g, U8 _b)
-        {
-            setColor({ _r, _g, _b });
-        }
-
-        //////////////////////////////////////////
-        inline ColorU32 getColor() const { return m_color; }            
+        void clearMesh();
 
 
         //////////////////////////////////////////
-        inline SystemFontPtr const& getSystemFont() const { return m_systemFont; }
+        inline void setMaterial(MaterialPtr const& _material) { m_material = _material; }
 
         //////////////////////////////////////////
-        void setSystemFont(SystemFontPtr const& _systemFont);
-
-
-        //////////////////////////////////////////
-        inline U32 getFontSize() const { return m_fontSize; }
+        inline MaterialPtr const& getMaterial() const { return m_material; }
 
         //////////////////////////////////////////
-        void setFontSize(U32 _fontSize) { m_fontSize = _fontSize; }
+        void setMaterial(String const& _materialName);
 
 
         //////////////////////////////////////////
-        HorizontalAlignment2D getHorizontalAlignment() const { return m_horizontalAlignment; }
-
-        //////////////////////////////////////////
-        inline void setHorizontalAlignment(HorizontalAlignment2D _horizontalAlignment)
-        {
-            if (m_horizontalAlignment == _horizontalAlignment)
-                return;
-
-            m_horizontalAlignment = _horizontalAlignment;
-
-            updateMeshData();
-        }
+        inline RenderMaskPtr const& getRenderMask() const { return m_renderMask; }
 
 
         //////////////////////////////////////////
-        inline VerticalAlignment2D getVerticalAlignment() const { return m_verticalAlignment; }
+        inline void setEnabled(bool _enabled) { m_enabled = _enabled; }
 
         //////////////////////////////////////////
-        inline void setVerticalAlignment(VerticalAlignment2D _verticalAlignment)
-        {
-            if (m_verticalAlignment == _verticalAlignment)
-                return;
-
-            m_verticalAlignment = _verticalAlignment;
-
-            updateMeshData();
-        }
+        inline bool getEnabled() const { return m_enabled; }
 
 
         //////////////////////////////////////////
-        void updateMeshData();
-
-
-        //////////////////////////////////////////
-        Vec2DF getTextEnd(Size _rowIndex = 0);
+        void resize(S32 _count);
 
         //////////////////////////////////////////
-        void updateMeshRendererColors();
+        inline Mat4DF const* getModelMatricesData() const { return &m_modelMatricies[0]; }
 
         //////////////////////////////////////////
-        void updateMeshRendererModelMatrices();
+        inline Vector<Mat4DF> const& getModelMatrices() const { return m_modelMatricies; }
+
+        //////////////////////////////////////////
+        inline void setModelMatrices(Vector<Mat4DF> const& _value) { m_modelMatricies = _value; }
+
+        //////////////////////////////////////////
+        inline void setModelMatrix(Size _index, Mat4DF const& _value) { m_modelMatricies[_index] = _value; }
+
+        //////////////////////////////////////////
+        inline Vec4DF const* getColorsData() const { return &m_colors[0]; }
+
+        //////////////////////////////////////////
+        inline Vector<Vec4DF> const& getColors() const { return m_colors; }
+
+        //////////////////////////////////////////
+        inline void setColors(Vector<Vec4DF> const& _value) { m_colors = _value; }
+
+        //////////////////////////////////////////
+        inline void setColor(Size _index, Vec4DF const& _value) { m_colors[_index] = _value; }
+
+        //////////////////////////////////////////
+        inline Vec4DF const* getUVsData() const { return &m_uvs[0]; }
+
+        //////////////////////////////////////////
+        inline Vector<Vec4DF> const& getUVs() const { return m_uvs; }
+
+        //////////////////////////////////////////
+        inline void setUVs(Vector<Vec4DF> const& _value) { m_uvs = _value; }
+
+        //////////////////////////////////////////
+        inline void setUV(Size _index, Vec4DF const& _value) { m_uvs[_index] = _value; }
 
     protected:
 
         //////////////////////////////////////////
-        SystemTextRenderer2D();
+        MeshRendererInstanced();
 
         //////////////////////////////////////////
         using Component::init;
@@ -176,46 +158,32 @@ namespace Maze
         //////////////////////////////////////////
         bool init(RenderSystem* _renderSystem = nullptr);
 
+
         //////////////////////////////////////////
         virtual bool init(
             Component* _component,
             ECSWorld* _world,
-            EntityCopyData _copyData) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        void updateMaterial();
+            EntityCopyData _copyData = EntityCopyData()) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        void calculateTextData(
-            S32& _rowsCount,
-            S32& _maxColumnsCount,
-            S32& _charsCount);
+        virtual void processEntityRemoved() MAZE_OVERRIDE;
 
     protected:
         RenderSystem* m_renderSystem;
 
-        Transform2DPtr m_transform;
-        MeshRendererInstancedPtr m_meshRenderer;
-        CanvasRendererPtr m_canvasRenderer;
+        RenderMeshPtr m_renderMesh;
+        MaterialPtr m_material;
+        
+        RenderMaskPtr m_renderMask;
 
-        String m_text;
+        Vector<Mat4DF> m_modelMatricies;
+        Vector<Vec4DF> m_colors;
+        Vector<Vec4DF> m_uvs;
 
-        ShaderUniformVariantPtr m_colorUniform;
-        ShaderUniformVariantPtr m_baseMapUniform;
-        ShaderUniformVariantPtr m_baseMapTexelSizeUniform;
-
-        ColorU32 m_color;
-
-        SystemFontPtr m_systemFont;
-        U32 m_fontSize;
-
-        HorizontalAlignment2D m_horizontalAlignment;
-        VerticalAlignment2D m_verticalAlignment;
-
-        Vector<Mat4DF> m_localMatrices;
+        bool m_enabled;
     };
 
 
@@ -223,5 +191,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeSystemTextRenderer2D_hpp_
+#endif // _MazeMeshRendererInstanced_hpp_
 //////////////////////////////////////////

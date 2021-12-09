@@ -392,7 +392,7 @@ namespace Maze
 
             if (entity->getActiveInHierarchy())
             {
-                MAZE_DEBUG_ERROR_IF(m_activeEntities.find(entity) != m_activeEntities.end(), "activeEntities array is not synchronized");
+                // MAZE_DEBUG_ERROR_IF(m_activeEntities.find(entity) != m_activeEntities.end(), "activeEntities array is not synchronized");
                 m_activeEntities.emplace_back(entity);
             }
             else

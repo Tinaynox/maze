@@ -111,6 +111,8 @@ namespace Maze
 
         m_mainRenderWindow.reset();
 
+        eventFrame.unsubscribe(this);
+
         s_instance = nullptr;
     }
 
@@ -127,6 +129,8 @@ namespace Maze
     {
         if (!Engine::init(_config))
             return false;
+
+        eventFrame.subscribe(this, &Example::notifyFrame);
 
         return true;
     }
@@ -197,7 +201,7 @@ namespace Maze
             Math::Lerp(0.0f, 0.25f, p),
             Math::Lerp(0.0f, 0.33f, p),
             Math::Lerp(1.0f, 0.5f, p),
-            Math::Lerp(1.0f, 0.67f, p));
+            Math::Lerp(1.0f, 0.67f - 0.025f, p));
 
         setMainRenderWindowViewport(viewport);
     }
@@ -205,7 +209,8 @@ namespace Maze
     //////////////////////////////////////////
     void Example::notifyFrame()
     {
-        
+        if (m_graphicsManager && m_graphicsManager->getDefaultRenderSystemRaw())
+            m_graphicsManager->getDefaultRenderSystemRaw()->clearDrawCalls();
     }
 
     //////////////////////////////////////////

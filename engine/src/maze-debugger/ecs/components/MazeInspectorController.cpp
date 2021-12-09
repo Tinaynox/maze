@@ -154,7 +154,6 @@ namespace Maze
             VerticalAlignment2D::Middle,
             Vec2DF(100, DebuggerLayout::c_titleHeight),
             Vec2DF(DebuggerLayout::c_titleLabelShift, 0),
-            materialManager->getColorTextureMaterial(),
             titleBackground->getTransform(),
             getEntityRaw()->getECSScene(),
             Vec2DF(0.0f, 0.5f),

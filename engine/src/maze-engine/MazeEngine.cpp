@@ -153,7 +153,9 @@ namespace Maze
             timeAfterUpdateMS = updateManager->getMilliseconds();
         }
         
+#if (PROFILER_ENABLED)
         Maze::Profiler::FinishSample();
+#endif
 
         if (!m_running)
         {

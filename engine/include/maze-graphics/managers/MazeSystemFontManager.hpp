@@ -25,79 +25,89 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_SceneExample_hpp_))
-#define _SceneExample_hpp_
+#if (!defined(_MazeSystemFontManager_hpp_))
+#define _MazeSystemFontManager_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-core/ecs/MazeECSScene.hpp"
-#include "maze-core/ecs/components/MazeTransform2D.hpp"
-#include "maze-core/ecs/components/MazeTransform3D.hpp"
-#include "maze-core/math/MazeQuaternion.hpp"
-#include "maze-graphics/MazeMesh.hpp"
-#include "maze-graphics/MazeShader.hpp"
-#include "maze-graphics/MazeTexture2D.hpp"
-#include "maze-graphics/MazeMaterial.hpp"
-#include "maze-graphics/MazeRenderPass.hpp"
-#include "maze-graphics/MazeRenderTarget.hpp"
-#include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-graphics/MazeGraphicsHeader.hpp"
+#include "maze-core/utils/MazeMultiDelegate.hpp"
+#include "maze-core/utils/MazeEnumClass.hpp"
+#include "maze-core/system/MazeWindowVideoMode.hpp"
+#include "maze-core/system/MazeWindow.hpp"
+#include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/system/MazeInputEvent.hpp"
+#include "maze-graphics/MazePixelSheet2D.hpp"
+#include "maze-graphics/MazeSystemFont.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
-
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(SceneExample);
-    MAZE_USING_SHARED_PTR(Camera3D);
-    MAZE_USING_SHARED_PTR(Rigidbody2D);
+    MAZE_USING_SHARED_PTR(SystemFontManager);
+    MAZE_USING_SHARED_PTR(RenderSystem);
 
 
     //////////////////////////////////////////
-    // Class SceneExample
+    // Class SystemFontManager
     //
     //////////////////////////////////////////
-    class SceneExample
-        : public ECSRenderScene
-        , public MultiDelegateCallbackReceiver
+    class MAZE_GRAPHICS_API SystemFontManager 
+        : public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneExample, ECSRenderScene);
-
-    public:
+        virtual ~SystemFontManager();
 
         //////////////////////////////////////////
-        static SceneExamplePtr Create();
-    
-        //////////////////////////////////////////
-        virtual ~SceneExample();
+        static void Initialize(SystemFontManagerPtr& _manager, RenderSystemPtr const& _renderSystem);
 
         //////////////////////////////////////////
-        virtual void update(F32 _dt) MAZE_OVERRIDE;
+        static SystemFontManagerPtr const& GetCurrentInstancePtr();
+
+
+        //////////////////////////////////////////
+        SystemFontPtr const& getSystemFont() const { return m_systemFont; }
+
+        //////////////////////////////////////////
+        SystemFontPtr const& getSystemFontOutlined() const { return m_systemFontOutlined; }
+
+
+        //////////////////////////////////////////
+        SystemFontPtr createSystemFontOutlined(
+            String const& _name,
+            ColorU32 const& _outlineColor);
 
     protected:
 
         //////////////////////////////////////////
-        SceneExample();
+        SystemFontManager();
 
         //////////////////////////////////////////
-        virtual bool init() MAZE_OVERRIDE;
+        virtual bool init(RenderSystemPtr const& _renderSystem);
 
         //////////////////////////////////////////
-        void notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport);
+        void createSystemFont();
+
+        //////////////////////////////////////////
+        void notifySpecialMaterialsCreated();
+
+        //////////////////////////////////////////
+        void finalizeSystemFont(SystemFontPtr const& _font);
 
     protected:
-        Camera3DPtr m_camera3D;
+        RenderSystemWPtr m_renderSystem;
+        RenderSystem* m_renderSystemRaw = nullptr;
+
+        SystemFontPtr m_systemFont;
+        SystemFontPtr m_systemFontOutlined;
     };
-
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _SceneExample_hpp_
+#endif // _MazeSystemFontManager_hpp_
 //////////////////////////////////////////

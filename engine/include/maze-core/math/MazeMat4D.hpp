@@ -259,7 +259,7 @@ namespace Maze
         Mat4D inversedAffineCopy() const;
 
         //////////////////////////////////////////
-        inline Mat4D concatenatedAffineCopy(Mat4D const& _m2);
+        inline Mat4D concatenatedAffineCopy(Mat4D const& _m2) const;
 
         //////////////////////////////////////////
         inline void concatenateAffine(Mat4D const& _m2, Mat4D& _out) const;

@@ -314,6 +314,8 @@ namespace Maze
         m_specularMaterial->setUniform("u_shininess", 0.1f);
         m_specularMaterial->setUniform("u_specularColor", ColorF128(0.3f, 0.3f, 0.3f, 1.0f));
         addMaterial(m_specularMaterial);
+
+        eventSpecialMaterialsCreated();
     }
 
     //////////////////////////////////////////

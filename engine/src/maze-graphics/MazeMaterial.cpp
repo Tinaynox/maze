@@ -180,11 +180,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    RenderPassPtr const& Material::getFirstRenderPass(RenderPassType _passType)
+    RenderPassPtr const& Material::getFirstRenderPass(RenderPassType _passType) const
     {
         static RenderPassPtr nullPointer;
 
-        Vector<RenderPassPtr>& passesByType = m_passes[_passType];
+        Vector<RenderPassPtr> const& passesByType = m_passes[_passType];
         if (passesByType.empty())
             return nullPointer;
 

@@ -44,6 +44,7 @@
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 
 
 //////////////////////////////////////////
@@ -70,7 +71,8 @@ namespace Maze
         //////////////////////////////////////////
         enum CanvasRenderCommandType
         {
-            Mesh,
+            DrawMeshRenderer,
+            DrawMeshRendererInstanced,
             PushScissorMask,
             PopScissorMask
         };
@@ -79,10 +81,17 @@ namespace Maze
         struct CanvasRenderCommand
         {
             //////////////////////////////////////////
-            CanvasRenderCommand(Transform2D* _transform, MeshRenderer* _mesh)
-                : type(CanvasRenderCommandType::Mesh)
+            CanvasRenderCommand(Transform2D* _transform, MeshRenderer const* _meshRenderer)
+                : type(CanvasRenderCommandType::DrawMeshRenderer)
                 , transform(_transform)
-                , mesh(_mesh)
+                , meshRenderer(_meshRenderer)
+            {}
+
+            //////////////////////////////////////////
+            CanvasRenderCommand(Transform2D* _transform, MeshRendererInstanced const* _meshRenderer)
+                : type(CanvasRenderCommandType::DrawMeshRendererInstanced)
+                , transform(_transform)
+                , meshRendererInstanced(_meshRenderer)
             {}
 
             //////////////////////////////////////////
@@ -95,7 +104,9 @@ namespace Maze
             CanvasRenderCommandType type;
 
             Transform2D* transform;
-            MeshRenderer* mesh;
+            MeshRenderer const* meshRenderer;
+            MeshRendererInstanced const* meshRendererInstanced;
+            RenderMesh const* renderMesh;
             ScissorMask2D* scissorMask;
         };
 
@@ -151,6 +162,12 @@ namespace Maze
         void processMeshRendererEntityRemoved(Entity* _entity, MeshRenderer* _meshRenderer, Transform2D* _transform2D);
 
         //////////////////////////////////////////
+        void processMeshRendererEntityAdded(Entity* _entity, MeshRendererInstanced* _meshRenderer, Transform2D* _transform2D);
+
+        //////////////////////////////////////////
+        void processMeshRendererEntityRemoved(Entity* _entity, MeshRendererInstanced* _meshRenderer, Transform2D* _transform2D);
+
+        //////////////////////////////////////////
         void updateSortedCanvasesList();
 
         //////////////////////////////////////////
@@ -162,6 +179,7 @@ namespace Maze
 
         SharedPtr<GenericInclusiveEntitiesSample<Transform2D>> m_transform2Ds;
         SharedPtr<GenericInclusiveEntitiesSample<MeshRenderer, Transform2D>> m_meshRenderersSample;
+        SharedPtr<GenericInclusiveEntitiesSample<MeshRendererInstanced, Transform2D>> m_meshRenderersInstancedSample;
         SharedPtr<GenericInclusiveEntitiesSample<Canvas>> m_canvasesSample;
         SharedPtr<GenericInclusiveEntitiesSample<CanvasScaler>> m_canvasScalersSample;
         SharedPtr<GenericInclusiveEntitiesSample<CanvasGroup>> m_canvasGroupsSample;

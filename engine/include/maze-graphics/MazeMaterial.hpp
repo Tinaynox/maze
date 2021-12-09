@@ -113,7 +113,7 @@ namespace Maze
         RenderPassPtr const& getRenderPass(RenderPassType _passType = RenderPassType::Default, Size _index = 0);
 
         //////////////////////////////////////////
-        RenderPassPtr const& getFirstRenderPass(RenderPassType _passType = RenderPassType::Default);
+        RenderPassPtr const& getFirstRenderPass(RenderPassType _passType = RenderPassType::Default) const;
 
         //////////////////////////////////////////
         void clearAllRenderPasses();

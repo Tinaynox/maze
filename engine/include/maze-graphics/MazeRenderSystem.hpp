@@ -61,6 +61,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(MaterialManager);
     MAZE_USING_SHARED_PTR(SpriteManager);
     MAZE_USING_SHARED_PTR(RenderMeshManager);
+    MAZE_USING_SHARED_PTR(SystemFontManager);
     MAZE_USING_SHARED_PTR(Mesh);
     MAZE_USING_SHARED_PTR(VertexArrayObject);
     MAZE_USING_SHARED_PTR(VertexBufferObject);
@@ -203,6 +204,9 @@ namespace Maze
         //////////////////////////////////////////
         inline MaterialManagerPtr const& getMaterialManager() const { return m_materialManager; }
 
+        //////////////////////////////////////////
+        inline SystemFontManagerPtr const& getSystemFontManager() const { return m_systemFontManager; }
+
 
         //////////////////////////////////////////
         inline Set<RenderWindow*> const& getRenderWindows() const { return m_renderWindows; }
@@ -252,6 +256,7 @@ namespace Maze
         SpriteManagerPtr m_imageManager;
         RenderMeshManagerPtr m_renderMeshManager;
         MaterialManagerPtr m_materialManager;
+        SystemFontManagerPtr m_systemFontManager;
 
         Set<RenderWindow*> m_renderWindows;
 

@@ -139,7 +139,6 @@ namespace Maze
                 VerticalAlignment2D::Middle,
                 _size + Vec2DF(-10.0f, 0.0f),
                 Vec2DF::c_zero,
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
                 transform,
                 _ecsScene);
             textRenderer->setColor(ColorU32::c_black);
@@ -411,7 +410,6 @@ namespace Maze
                     VerticalAlignment2D::Middle,
                     _size,
                     Vec2DF::c_zero,
-                    renderSystem->getMaterialManager()->getColorTextureMaterial(),
                     spriteRenderer->getTransform(),
                     _ecsScene);
                 textRenderer->setColor(ColorU32::c_black);
@@ -681,7 +679,6 @@ namespace Maze
                 VerticalAlignment2D::Middle,
                 _size,
                 Vec2DF::c_zero,
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
                 transform,
                 _ecsScene);
             textRenderer->setColor(ColorU32::c_black);
@@ -785,7 +782,6 @@ namespace Maze
                         VerticalAlignment2D::Middle,
                         Vec2DF(_size.x, 20.0f),
                         Vec2DF(20.0f, 0.0f),
-                        renderSystem->getMaterialManager()->getColorTextureMaterial(),
                         itemPrefabTransform,
                         _ecsScene,
                         Vec2DF::c_zero,
@@ -988,7 +984,6 @@ namespace Maze
                     VerticalAlignment2D::Middle,
                     colorSpriteRenderer->getTransform()->getSize(),
                     Vec2DF(0.0f, 0.0f),
-                    renderSystem->getMaterialManager()->getColorTextureMaterial(),
                     colorSpriteRenderer->getTransform(),
                     _ecsScene,
                     Vec2DF(0.5f, 0.5f),
@@ -1479,7 +1474,6 @@ namespace Maze
                 VerticalAlignment2D::Middle,
                 _size,
                 Vec2DF(20.0f, 0.0f),
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
                 transform,
                 _ecsScene,
                 Vec2DF::c_zero,
@@ -1705,7 +1699,6 @@ namespace Maze
                     VerticalAlignment2D::Middle,
                     toggleTransform->getSize(),
                     Vec2DF::c_zero,
-                    renderSystem->getMaterialManager()->getColorTextureMaterial(),
                     toggleButtonSpriteRenderer->getTransform(),
                     _ecsScene);
                 text->getEntityRaw()->ensureComponent<SizePolicy2D>();

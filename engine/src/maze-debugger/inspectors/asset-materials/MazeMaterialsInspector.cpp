@@ -305,7 +305,6 @@ namespace Maze
                 VerticalAlignment2D::Middle,
                 Vec2DF(50.0f, 8.0f),
                 Vec2DF::c_zero,
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
                 m_shaderUniformVariantsLayout,
                 m_parent->getEntityRaw()->getECSScene())->setColor(ColorU32::c_black);
 

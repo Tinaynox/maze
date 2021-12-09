@@ -92,7 +92,7 @@ namespace Maze
     // Class SceneExample
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneExample, ECSScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneExample, ECSRenderScene);
 
     //////////////////////////////////////////
     SceneExample::SceneExample()
@@ -122,7 +122,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SceneExample::init()
     {
-        if (!ECSScene::init())
+        if (!ECSRenderScene::init(Example::GetInstancePtr()->getMainRenderWindow()))
             return false;
 
 
@@ -295,7 +295,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneExample::update(F32 _dt)
     {
-        ECSScene::update(_dt);
+        ECSRenderScene::update(_dt);
     }
 
 

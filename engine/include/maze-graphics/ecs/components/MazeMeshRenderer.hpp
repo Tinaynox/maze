@@ -150,8 +150,7 @@ namespace Maze
 
         RenderMeshPtr m_renderMesh;
         Vector<MaterialPtr> m_materials;
-
-        AssetFilePtr m_assetFile;
+        
         RenderMaskPtr m_renderMask;
 
         bool m_enabled;

@@ -32,6 +32,7 @@
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
+#include "maze-graphics/managers/MazeSystemFontManager.hpp"
 
 
 //////////////////////////////////////////
@@ -56,6 +57,7 @@ namespace Maze
     //////////////////////////////////////////
     RenderSystem::~RenderSystem()
     {
+        m_systemFontManager.reset();
         m_materialManager.reset();
     }
 
@@ -66,6 +68,7 @@ namespace Maze
         SpriteManager::Initialize(m_imageManager, getSharedPtr());
         RenderMeshManager::Initialize(m_renderMeshManager, getSharedPtr());
         MaterialManager::Initialize(m_materialManager, getSharedPtr());
+        SystemFontManager::Initialize(m_systemFontManager, getSharedPtr());
 
         return true;
     }

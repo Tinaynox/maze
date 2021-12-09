@@ -194,7 +194,6 @@ namespace Maze
             VerticalAlignment2D::Top,
             Vec2DF(300, 300),
             Vec2DF(15.0f, -5.0f),
-            materialManager->getColorTextureMaterial(),
             m_canvas->getTransform(),
             this);
         m_fpsSystemTextRenderer->getTransform()->setAnchor(Vec2DF(0.0f, 1.0f));

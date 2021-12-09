@@ -40,6 +40,7 @@
 #include "maze-core/math/MazeVec3D.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
+#include "maze-graphics/MazeMaterial.hpp"
 
 
 //////////////////////////////////////////
@@ -52,6 +53,7 @@ namespace Maze
     struct MAZE_GRAPHICS_API SystemFont
     {
         Texture2DPtr texture;
+        MaterialPtr material;
         Vec2DS charSize = Vec2DS::c_zero;
         Vec2DS stroke = Vec2DS::c_zero;
         Vec2DS offset = Vec2DS::c_zero;

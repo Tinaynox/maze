@@ -119,7 +119,6 @@ namespace Maze
             VerticalAlignment2D::Middle,
             Vec2DF(8, 18),
             Vec2DF(0, 0),
-            materialManager->getColorTextureMaterial(),
             layout->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
             Vec2DF(0.0f, 0.5f),

@@ -68,6 +68,9 @@ namespace Maze
 
         m_meshRenderersSample->eventEntityAdded.unsubscribe(this);
         m_meshRenderersSample->eventEntityRemoved.unsubscribe(this);
+
+        m_meshRenderersInstancedSample->eventEntityAdded.unsubscribe(this);
+        m_meshRenderersInstancedSample->eventEntityRemoved.unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -90,6 +93,7 @@ namespace Maze
 
         m_transform2Ds = _world->requestInclusiveSample<Transform2D>();
         m_meshRenderersSample = _world->requestInclusiveSample<MeshRenderer, Transform2D>();
+        m_meshRenderersInstancedSample = _world->requestInclusiveSample<MeshRendererInstanced, Transform2D>();
         m_canvasesSample = _world->requestInclusiveSample<Canvas>();
         m_canvasScalersSample = _world->requestInclusiveSample<CanvasScaler>();
         m_canvasGroupsSample = _world->requestInclusiveSample<CanvasGroup>();
@@ -104,6 +108,9 @@ namespace Maze
 
         m_meshRenderersSample->eventEntityAdded.subscribe(this, &RenderControlSystemModule2D::processMeshRendererEntityAdded);
         m_meshRenderersSample->eventEntityRemoved.subscribe(this, &RenderControlSystemModule2D::processMeshRendererEntityRemoved);
+
+        m_meshRenderersInstancedSample->eventEntityAdded.subscribe(this, &RenderControlSystemModule2D::processMeshRendererEntityAdded);
+        m_meshRenderersInstancedSample->eventEntityRemoved.subscribe(this, &RenderControlSystemModule2D::processMeshRendererEntityRemoved);
 
         updateSortedCanvasesList();
 
@@ -184,9 +191,9 @@ namespace Maze
                 {
                     switch (commandData.type)
                     {
-                        case CanvasRenderCommandType::Mesh:
+                        case CanvasRenderCommandType::DrawMeshRenderer:
                         {
-                            MeshRenderer* meshRenderer = commandData.mesh;
+                            MeshRenderer const* meshRenderer = commandData.meshRenderer;
 
                             if (!meshRenderer->getEnabled())
                                 continue;
@@ -222,6 +229,49 @@ namespace Maze
                                 Mat4DF const& worldTransform = transform2D->getWorldTransform();
 
                                 renderQueue->addDrawVAOInstancedCommand(vao, worldTransform);
+                            }
+
+                            break;
+                        }
+
+                        case CanvasRenderCommandType::DrawMeshRendererInstanced:
+                        {
+                            MeshRendererInstanced const* meshRenderer = commandData.meshRendererInstanced;
+
+                            if (!meshRenderer->getEnabled())
+                                continue;
+
+                            Transform2D* transform2D = commandData.transform;
+
+                            if (!meshRenderer->getRenderMesh())
+                                continue;
+
+                            Vector<VertexArrayObjectPtr> const& vaos = meshRenderer->getRenderMesh()->getVertexArrayObjects();
+
+                            if (vaos.empty())
+                                continue;
+
+                            Material const* material = meshRenderer->getMaterial().get();
+                            if (!material)
+                                material = renderTarget->getRenderSystem()->getMaterialManager()->getErrorMaterial().get();
+
+                            renderQueue->addSelectRenderPassCommand(material->getFirstRenderPass());
+
+                            for (Size i = 0, in = vaos.size(); i < in; ++i)
+                            {
+                                VertexArrayObjectPtr const& vao = vaos[i];
+                                MAZE_DEBUG_ERROR_IF(vao == nullptr, "VAO is null");
+
+                                S32 count = (S32)meshRenderer->getModelMatrices().size();
+                                if (count > 0)
+                                {
+                                    renderQueue->addDrawVAOInstancedCommand(
+                                        vao.get(),
+                                        count,
+                                        meshRenderer->getModelMatricesData(),
+                                        meshRenderer->getColorsData(),
+                                        meshRenderer->getUVsData());
+                                }
                             }
 
                             break;
@@ -331,9 +381,16 @@ namespace Maze
         m_systemTextRenderer2DsSample->process(
             [](Entity* _entity, SystemTextRenderer2D* _systemTextRenderer2D)
             {
-                if (    _systemTextRenderer2D->getTransform()->isSizeChanged()
-                    ||    _systemTextRenderer2D->getCanvasRenderer()->isAlphaDirty())
-                    _systemTextRenderer2D->updateMesh();
+                if (_systemTextRenderer2D->getTransform()->isSizeChanged())
+                    _systemTextRenderer2D->updateMeshData();
+                else
+                {
+                    if (_systemTextRenderer2D->getTransform()->isWorldTransformChanged())
+                        _systemTextRenderer2D->updateMeshRendererModelMatrices();
+
+                    if (_systemTextRenderer2D->getCanvasRenderer()->isAlphaDirty())
+                        _systemTextRenderer2D->updateMeshRendererColors();
+                }
             });
 
         updateSortedMeshRenderersList();
@@ -369,6 +426,18 @@ namespace Maze
 
     //////////////////////////////////////////
     void RenderControlSystemModule2D::processMeshRendererEntityRemoved(Entity* _entity, MeshRenderer* _meshRenderer, Transform2D* _transform2D)
+    {
+        m_sortedMeshRenderersDirty = true;
+    }
+
+    //////////////////////////////////////////
+    void RenderControlSystemModule2D::processMeshRendererEntityAdded(Entity* _entity, MeshRendererInstanced* _meshRenderer, Transform2D* _transform2D)
+    {
+        m_sortedMeshRenderersDirty = true;
+    }
+
+    //////////////////////////////////////////
+    void RenderControlSystemModule2D::processMeshRendererEntityRemoved(Entity* _entity, MeshRendererInstanced* _meshRenderer, Transform2D* _transform2D)
     {
         m_sortedMeshRenderersDirty = true;
     }
@@ -447,6 +516,17 @@ namespace Maze
                             {
                                 _transform,
                                 meshRenderer,
+                            });
+                    }
+
+                    MeshRendererInstanced* meshRendererInstanced = entity->getComponentRaw<MeshRendererInstanced>();
+                    if (meshRendererInstanced)
+                    {
+                        canvasRenderData.commands.emplace_back(
+                            CanvasRenderCommand
+                            {
+                                _transform,
+                                meshRendererInstanced,
                             });
                     }
 
