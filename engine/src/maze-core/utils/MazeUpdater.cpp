@@ -146,7 +146,7 @@ namespace Maze
             m_updatables.end(),
             [](Updatable* _updatable0, Updatable* _updatable1)
         {
-            if (_updatable1 == nullptr)
+            if (_updatable1 == nullptr && _updatable0 != nullptr)
                 return true;
 
             if (_updatable0 == nullptr)

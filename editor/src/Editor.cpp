@@ -97,8 +97,6 @@ namespace Maze
 
         m_mainRenderWindow.reset();
 
-        m_settingsManager->getSettings<DebuggerSettings>()->eventActiveChanged.unsubscribe(this);
-
         s_instance = nullptr;        
     }
 
