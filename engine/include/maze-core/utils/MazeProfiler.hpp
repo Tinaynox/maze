@@ -43,6 +43,10 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    #define PROFILER_ENABLED (0)
+
+
+    //////////////////////////////////////////
     struct ProfilerSample
     {
         S32 callCount;
@@ -204,9 +208,13 @@ namespace Maze
     };
 
     //////////////////////////////////////////
+#if (PROFILER_ENABLED)
     #define MAZE_PROFILER_SCOPED_LOCK(__profilerName) \
         static Profiler s_profiler ## __profilerName(#__profilerName); \
         ProfilerScope profiler ## __profilerName ## ScopedLock(&s_profiler ## __profilerName);
+#else
+    #define MAZE_PROFILER_SCOPED_LOCK(__profilerName)
+#endif() // PROFILER_ENABLED
 
     
 } // namespace Maze
