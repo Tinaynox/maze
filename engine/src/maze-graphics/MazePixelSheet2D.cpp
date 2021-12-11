@@ -193,6 +193,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void PixelSheet2D::setPixel(S32 _x, S32 _y, void const* _pixelData)
+    {
+        Size offset = (Size)_y * (Size)m_bytesPerRow + (Size)_x * (Size)m_bytesPerPixel;
+        MAZE_DEBUG_ERROR_RETURN_IF(offset >= m_data.getSize(), "Offset is out of bounds!");
+        void* pixelData = &m_data[offset];
+        memcpy(pixelData, _pixelData, m_bytesPerPixel);
+    }
+
+    //////////////////////////////////////////
     void PixelSheet2D::setPixelSafe(S32 _x, S32 _y, U32 _pixelData)
     {
         if (_x < 0 || _x >= m_size.x || _y < 0 || _y >= m_size.y)
@@ -740,6 +749,79 @@ namespace Maze
     U8 const* PixelSheet2D::getDataPointer() const
     {
         return m_data.getDataPointer();
+    }
+
+    //////////////////////////////////////////
+    PixelSheet2D PixelSheet2D::upscaledCopy(S32 _scale)
+    {
+        if (_scale <= 1)
+            return PixelSheet2D(*this);
+
+        PixelSheet2D newSheet(getSize() * _scale, getFormat());
+        
+        for (S32 _r = 0; _r < m_size.y; ++_r)
+        {
+            for (S32 _y = 0; _y < _scale; ++_y)
+            {
+                for (S32 _c = 0; _c < m_size.x; ++_c)
+                {
+                    for (S32 _x = 0; _x < _scale; ++_x)
+                        newSheet.setPixel(_c * _scale + _x, _r * _scale + _y, getPixel(_c, _r));
+                }
+            }
+        }
+
+        return newSheet;
+    }
+
+    //////////////////////////////////////////
+    void PixelSheet2D::upscale(S32 _scale)
+    {
+        *this = upscaledCopy(_scale);
+    }
+
+    //////////////////////////////////////////
+    PixelSheet2D PixelSheet2D::downscaledCopy(S32 _scale, bool _roundAlpha)
+    {
+        if (_scale <= 1)
+            return PixelSheet2D(*this);
+
+        MAZE_ERROR_RETURN_VALUE_IF(getFormat() != PixelFormat::RGBA_U8, PixelSheet2D(*this), "Unsupported pixel format!");
+
+        PixelSheet2D newSheet(getSize() / _scale, getFormat());
+
+        for (S32 _r = 0; _r < newSheet.m_size.y; ++_r)
+        {
+            for (S32 _c = 0; _c < newSheet.m_size.x; ++_c)
+            {
+                U32 r = 0;
+                U32 g = 0;
+                U32 b = 0;
+                U32 a = 0;
+                U32 count = _scale * _scale;
+                for (S32 _y = 0; _y < _scale; ++_y)
+                    for (S32 _x = 0; _x < _scale; ++_x)
+                    {
+                        ColorU32 srcPixel = getPixelRGBA_U8(_c * _scale + _x, _r * _scale + _y);
+                        r += srcPixel.r;
+                        g += srcPixel.g;
+                        b += srcPixel.b;
+                        a += srcPixel.a;
+                    }
+                ColorU32 newPixel(r / count, g / count, b / count, a / count);
+                if (_roundAlpha)
+                    newPixel.a = newPixel.a >= 128 ? 255 : 0;
+                newSheet.setPixel(_c, _r, newPixel);
+            }
+        }
+
+        return newSheet;
+    }
+
+    //////////////////////////////////////////
+    void PixelSheet2D::downscale(S32 _scale)
+    {
+        *this = downscaledCopy(_scale);
     }
 
 } // namespace Maze

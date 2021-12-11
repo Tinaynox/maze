@@ -76,6 +76,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        SystemFontPtr createSystemFont(
+            Texture2DPtr const& _texture,
+            Vec2DS const& _charSize,
+            Vec2DS const& _stroke,
+            Vec2DS const& _offset = Vec2DS::c_zero);
+
+        //////////////////////////////////////////
         SystemFontPtr createSystemFontOutlined(
             String const& _name,
             ColorU32 const& _outlineColor);
@@ -93,9 +100,6 @@ namespace Maze
 
         //////////////////////////////////////////
         void notifySpecialMaterialsCreated();
-
-        //////////////////////////////////////////
-        void finalizeSystemFont(SystemFontPtr const& _font);
 
     protected:
         RenderSystemWPtr m_renderSystem;

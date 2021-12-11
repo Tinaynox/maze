@@ -94,71 +94,59 @@ namespace Maze
     //////////////////////////////////////////
     void SystemFontManager::createSystemFont()
     {
-        S32 const extrude = 1;
-
         // System Font
+        S32 const extrude = 1;
+        S32 const upscale = 2;
+        Texture2DPtr texture = Texture2D::Create(m_renderSystemRaw);
+        texture->setName("system_font");
+        PixelSheet2D systemFontSheet = GraphicsUtilsHelper::GenerateSystemFontExtrude(
+            GraphicsUtilsHelper::GetAsciiSymbolsSheet8x8(), 16, 6, 8, 8);
+        
+        Vector<PixelSheet2D> pixelSheets;
+        pixelSheets.emplace_back(systemFontSheet.upscaledCopy(upscale));
+        pixelSheets.emplace_back(systemFontSheet);
+        Vec2DS size = systemFontSheet.getSize();
+        while (size.x > 1 && size.y > 1)
         {
-            SystemFontPtr systemFont = std::make_shared<SystemFont>();
-
-            systemFont->texture = Texture2D::Create(m_renderSystemRaw);
-            systemFont->texture->setName("system_font");
-            systemFont->charSize = { 8, 8 };
-            systemFont->stroke = systemFont->charSize + extrude * 2;
-            systemFont->offset = { extrude, extrude };
-
-            PixelSheet2D systemFontSheet = GraphicsUtilsHelper::GenerateSystemFontExtrude(
-                GraphicsUtilsHelper::GetAsciiSymbolsSheet8x8(), 16, 6, 8, 8);
-
-            systemFont->texture->loadTexture(systemFontSheet);
-            m_renderSystemRaw->getTextureManager()->addTexture(systemFont->texture);
-
-            finalizeSystemFont(systemFont);
-
-            m_systemFont = systemFont;
+            pixelSheets.emplace_back(pixelSheets.back().downscaledCopy(2, true));
+            size = pixelSheets.back().getSize();
         }
+
+        texture->loadTexture(pixelSheets);
+        m_renderSystemRaw->getTextureManager()->addTexture(texture);
+        m_systemFont = createSystemFont(
+            texture,
+            Vec2DS(8, 8) * upscale,
+            (Vec2DS(8, 8) + extrude * 2) * upscale,
+            Vec2DS(extrude, extrude) * upscale);
+
 
         // System Font Outlined
         m_systemFontOutlined = createSystemFontOutlined("system_font_outline", ColorU32::c_black);
     }
 
     //////////////////////////////////////////
-    SystemFontPtr SystemFontManager::createSystemFontOutlined(
-        String const& _name,
-        ColorU32 const& _outlineColor)
+    SystemFontPtr SystemFontManager::createSystemFont(
+        Texture2DPtr const& _texture,
+        Vec2DS const& _charSize,
+        Vec2DS const& _stroke,
+        Vec2DS const& _offset)
     {
-        S32 const extrude = 1;
-
         SystemFontPtr systemFont = std::make_shared<SystemFont>();
 
-        systemFont->texture = Texture2D::Create(m_renderSystemRaw);
-        systemFont->texture->setName(_name);
-        systemFont->outline = 1;
-        systemFont->charSize = Vec2DS(8, 8) + systemFont->outline * 2;
-        systemFont->stroke = systemFont->charSize + (extrude) * 2;
-        systemFont->offset = { extrude, extrude };
+        systemFont->texture = _texture;
+        systemFont->texture->setMagFilter(TextureFilter::Linear);
+        systemFont->texture->setMinFilter(TextureFilter::NearestMipmapNearest);
 
-        PixelSheet2D systemFontSheet = GraphicsUtilsHelper::GenerateSystemFontExtrudeOutlined(
-            GraphicsUtilsHelper::GetAsciiSymbolsSheet8x8(), 16, 6, 8, 8, _outlineColor);
+        systemFont->charSize = _charSize;
+        systemFont->stroke = _stroke;
+        systemFont->offset = _offset;
 
-        systemFont->texture->loadTexture(systemFontSheet);
-        m_renderSystemRaw->getTextureManager()->addTexture(systemFont->texture);
+        systemFont->material = MaterialManager::GetCurrentInstance()->getColorTextureMaterial()->createCopy();
+        systemFont->material->ensureUniform("u_baseMap")->set(systemFont->texture);
+        systemFont->material->ensureUniform("u_baseMapTexelSize")->set(1.0f / (Vec2DF)systemFont->texture->getSize());
 
-        finalizeSystemFont(systemFont);
-
-        return systemFont;
-    }
-
-    //////////////////////////////////////////
-    void SystemFontManager::finalizeSystemFont(SystemFontPtr const& _systemFont)
-    {
-        _systemFont->texture->setMagFilter(TextureFilter::Nearest);
-        _systemFont->texture->setMinFilter(TextureFilter::LinearMipmapLinear);
-
-        _systemFont->material = MaterialManager::GetCurrentInstance()->getColorTextureMaterial()->createCopy();
-        _systemFont->material->ensureUniform("u_baseMap")->set(_systemFont->texture);
-        _systemFont->material->ensureUniform("u_baseMapTexelSize")->set(1.0f / (Vec2DF)_systemFont->texture->getSize());
-
-        RenderPassPtr const& renderPass = _systemFont->material->getFirstRenderPass();
+        RenderPassPtr const& renderPass = systemFont->material->getFirstRenderPass();
         renderPass->setRenderQueueIndex(3000);
         renderPass->setDepthWriteEnabled(false);
         renderPass->setDepthTestCompareFunction(CompareFunction::Always);
@@ -167,6 +155,46 @@ namespace Maze
         shader->addLocalFeature("MAZE_UV_STREAM", "(1)");
         shader->recompile();
         renderPass->setShader(shader);
+
+        return systemFont;
+    }
+
+    //////////////////////////////////////////
+    SystemFontPtr SystemFontManager::createSystemFontOutlined(
+        String const& _name,
+        ColorU32 const& _outlineColor)
+    {
+        S32 const extrude = 1;
+        S32 const outline = 1;
+        S32 const upscale = 2;
+        Texture2DPtr texture = Texture2D::Create(m_renderSystemRaw);
+        texture->setName(_name);
+        PixelSheet2D systemFontSheet = GraphicsUtilsHelper::GenerateSystemFontExtrudeOutlined(
+            GraphicsUtilsHelper::GetAsciiSymbolsSheet8x8(), 16, 6, 8, 8, _outlineColor);
+
+        Vector<PixelSheet2D> pixelSheets;
+        pixelSheets.emplace_back(systemFontSheet.upscaledCopy(upscale));
+        pixelSheets.emplace_back(systemFontSheet);
+        Vec2DS size = systemFontSheet.getSize();
+        while (size.x > 1 && size.y > 1)
+        {
+            pixelSheets.emplace_back(pixelSheets.back().downscaledCopy(2, true));
+            size = pixelSheets.back().getSize();
+        }
+
+        texture->loadTexture(pixelSheets);
+        m_renderSystemRaw->getTextureManager()->addTexture(texture);
+        SystemFontPtr systemFont = createSystemFont(
+            texture,
+            (Vec2DS(8, 8) + outline * 2) * upscale,
+            (Vec2DS(8, 8) + outline * 2 + extrude * 2) * upscale,
+            Vec2DS(extrude, extrude) * upscale);
+        systemFont->outline = outline * upscale;
+
+        systemFont->texture->setMagFilter(TextureFilter::Linear);
+        systemFont->texture->setMinFilter(TextureFilter::LinearMipmapNearest);
+
+        return systemFont;
     }
 
 } // namespace Maze

@@ -124,6 +124,9 @@ namespace Maze
         void setPixel(S32 _x, S32 _y, U32 _pixelData);
 
         //////////////////////////////////////////
+        void setPixel(S32 _x, S32 _y, void const* _pixelData);
+
+        //////////////////////////////////////////
         void setPixelSafe(S32 _x, S32 _y, U32 _pixelData);
 
         //////////////////////////////////////////
@@ -281,6 +284,18 @@ namespace Maze
 
         //////////////////////////////////////////
         PixelSheet2D& operator==(PixelSheet2D&& _copy) noexcept;
+
+        //////////////////////////////////////////
+        PixelSheet2D upscaledCopy(S32 _scale);
+
+        //////////////////////////////////////////
+        void upscale(S32 _scale);
+
+        //////////////////////////////////////////
+        PixelSheet2D downscaledCopy(S32 _scale, bool _roundAlpha = false);
+
+        //////////////////////////////////////////
+        void downscale(S32 _scale);
 
     protected:
 
