@@ -37,6 +37,7 @@
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
+#include "maze-core/data/MazeHashedCString.hpp"
 
 
 //////////////////////////////////////////
@@ -124,21 +125,27 @@ namespace Maze
 
         //////////////////////////////////////////
         static inline SimpleComponentSystemPtr Create(
+            HashedCString _name,
             IEntitiesSamplePtr _sample,
             Func _func,
             S32 _order = 0)
         {
-            return MAZE_CREATE_SHARED_PTR_WITH_ARGS(SimpleComponentSystem, _sample, _func, _order);
+            return MAZE_CREATE_SHARED_PTR_WITH_ARGS(SimpleComponentSystem, _name, _sample, _func, _order);
         }
+
+        //////////////////////////////////////////
+        virtual Maze::ClassUID getClassUID() const MAZE_OVERRIDE { return m_name.hash; }
 
     protected:
 
         //////////////////////////////////////////
         SimpleComponentSystem(
+            HashedCString _name = HashedCString(),
             IEntitiesSamplePtr _sample = nullptr,
             Func _func = nullptr,
             S32 _order = 0)
-            : m_sample(_sample)
+            : m_name(_name)
+            , m_sample(_sample)
             , m_func(_func)
             , m_order(_order)
         {}
@@ -153,7 +160,7 @@ namespace Maze
         virtual S32 getOrder() const MAZE_OVERRIDE { return m_order; }
 
     protected:
-
+        HashedCString m_name;
         IEntitiesSamplePtr m_sample;
         Func m_func = nullptr;
         S32 m_order = 0;

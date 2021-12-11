@@ -108,7 +108,7 @@ namespace Maze
         Vec2DS size = systemFontSheet.getSize();
         while (size.x > 1 && size.y > 1)
         {
-            pixelSheets.emplace_back(pixelSheets.back().downscaledCopy(2, true));
+            pixelSheets.emplace_back(pixelSheets.back().downscaledCopy(2, false));
             size = pixelSheets.back().getSize();
         }
 
@@ -178,7 +178,7 @@ namespace Maze
         Vec2DS size = systemFontSheet.getSize();
         while (size.x > 1 && size.y > 1)
         {
-            pixelSheets.emplace_back(pixelSheets.back().downscaledCopy(2, true));
+            pixelSheets.emplace_back(pixelSheets.back().downscaledCopy(2, false));
             size = pixelSheets.back().getSize();
         }
 

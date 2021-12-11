@@ -102,6 +102,9 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline MaterialPtr const& getMaterial(Size _i) const { return m_materials[_i]; }
+
+        //////////////////////////////////////////
         inline void setMaterials(Vector<MaterialPtr> const& _materials) { m_materials = _materials; }
 
         //////////////////////////////////////////

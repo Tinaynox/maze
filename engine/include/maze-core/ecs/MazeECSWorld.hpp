@@ -186,11 +186,13 @@ namespace Maze
 
         //////////////////////////////////////////
         template<typename ...TComponents>
-        SimpleComponentSystemPtr addSystem(
+        inline SimpleComponentSystemPtr addSystem(
+            HashedCString _name,
             void (*_func)(F32, Entity*, TComponents* ...),
             S32 _order = 0)
         {
             SimpleComponentSystemPtr system = SimpleComponentSystem::Create(
+                _name,
                 requestInclusiveSample<TComponents...>(),
                 (SimpleComponentSystem::Func)_func,
                 _order);
