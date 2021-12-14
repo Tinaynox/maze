@@ -39,6 +39,18 @@ namespace Maze
     // Class AnimationCurve
     //
     //////////////////////////////////////////
+    AnimationCurve const AnimationCurve::c_linear01 = AnimationCurve(0.0f, 0.0f, 1.0f, 1.0f);
+    AnimationCurve const AnimationCurve::c_linear10 = AnimationCurve(0.0f, 1.0f, 1.0f, 0.0f);
+    AnimationCurve const AnimationCurve::c_sqr01 = AnimationCurve(
+        Keyframe{ 0.0f, 0.0f, 2.5f, 2.5f },
+        Keyframe{ 1.0f, 1.0f, 0.0f, 0.0f },
+        AnimationCurve::EvaluateMode::Smooth);
+    AnimationCurve const AnimationCurve::c_exp01 = AnimationCurve(
+        Keyframe{ 0.0f, 0.0f, 0.0f, 0.0f },
+        Keyframe{ 1.0f, 1.0f, 2.5f, 2.5f },
+        AnimationCurve::EvaluateMode::Smooth);
+
+    //////////////////////////////////////////
     void AnimationCurve::Keyframe::loadFromJSONValue(Json::Value const& _value)
     {
         time = _value["t"].asFloat();
@@ -133,7 +145,7 @@ namespace Maze
         Json::Value value;
 
         Json::Value& keyframes = value["k"];
-        for (Keyframe keyframe : m_keyframes)
+        for (Keyframe const& keyframe : m_keyframes)
             keyframes.append(keyframe.toJSONValue());
         value["s"] = m_scalar;
         value["em"] = (S32)m_mode;

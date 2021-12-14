@@ -65,6 +65,14 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        static AnimationCurve const c_linear01;
+        static AnimationCurve const c_linear10;
+        static AnimationCurve const c_sqr01;
+        static AnimationCurve const c_exp01;
+
+    public:
+
+        //////////////////////////////////////////
         // Class Keyframe
         //
         //////////////////////////////////////////
@@ -178,6 +186,17 @@ namespace Maze
         {
             addKey(_time0, _value0);
             addKey(_time1, _value1);
+        }
+
+        //////////////////////////////////////////
+        inline AnimationCurve(
+            Keyframe const& _value0,
+            Keyframe const& _value1,
+            EvaluateMode _mode = EvaluateMode::Linear)
+        {
+            addKey(_value0);
+            addKey(_value1);
+            setMode(_mode);
         }
 
         //////////////////////////////////////////
