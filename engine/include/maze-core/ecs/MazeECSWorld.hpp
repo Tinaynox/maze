@@ -43,6 +43,7 @@
 #include "maze-core/utils/MazeSwitchableContainer.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
+#include "maze-core/events/MazeEvent.hpp"
 
 
 //////////////////////////////////////////
@@ -157,6 +158,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void addSystemEventHandler(SimpleComponentSystemEventHandlerPtr const& _system);
+
+
+        //////////////////////////////////////////
         EntitiesSamplePtr requestCommonSample(EntityAspect const& _aspect);
 
         //////////////////////////////////////////
@@ -198,6 +203,68 @@ namespace Maze
                 _order);
             addSystem(system);
             return system;
+        }
+
+        //////////////////////////////////////////
+        template<typename TEventType, typename ...TComponents>
+        inline SimpleComponentSystemEventHandlerPtr addSystemEventHandler(
+            HashedCString _name,
+            ClassUID _eventUID,
+            void (*_func)(TEventType*, Entity*, TComponents* ...),
+            S32 _order = 0)
+        {
+            SimpleComponentSystemEventHandlerPtr system = SimpleComponentSystemEventHandler::Create(
+                _name,
+                _eventUID,
+                requestInclusiveSample<TComponents...>(),
+                (SimpleComponentSystem::Func)_func,
+                _order);
+            addSystemEventHandler(system);
+            return system;
+        }
+
+        //////////////////////////////////////////
+        template <typename TEvent>
+        inline void processEvent(TEvent* _event)
+        {
+            ClassUID eventUID = _event->getClassUID();
+            Vector<SimpleComponentSystemEventHandlerPtr> const& eventHandlers = m_eventHandlers[eventUID];
+
+            for (SimpleComponentSystemEventHandlerPtr const& _eventHandler : eventHandlers)
+                _eventHandler->processEvent(_event);
+        }
+
+        //////////////////////////////////////////
+        template <typename TEvent, typename ...TArgs>
+        inline void sendEventImmediate(TArgs... _args)
+        {
+            TEvent evt(_args...);
+            processEvent(&evt);
+        }
+
+        //////////////////////////////////////////
+        template <typename TEvent>
+        inline void processEvent(EntityId _entityId, TEvent* _event)
+        {
+            ClassUID eventUID = _event->getClassUID();
+            Vector<SimpleComponentSystemEventHandlerPtr> const& eventHandlers = m_eventHandlers[eventUID];
+
+            for (SimpleComponentSystemEventHandlerPtr const& _eventHandler : eventHandlers)
+                _eventHandler->processEvent(_entityId, _event);
+        }
+
+        //////////////////////////////////////////
+        inline void sendEventImmediate(EntityId _entityId, Event* _event)
+        {
+            processEvent(_entityId, _event);
+        }
+
+        //////////////////////////////////////////
+        template <typename TEvent, typename ...TArgs>
+        inline void sendEventImmediate(EntityId _entityId, TArgs... _args)
+        {
+            TEvent evt(_args...);
+            processEvent(_entityId, &evt);
         }
 
     public:
@@ -248,6 +315,8 @@ namespace Maze
 
         Vector<IEntitiesSamplePtr> m_samples;
         Vector<ComponentSystemPtr> m_systems;
+
+        UnorderedMap<ClassUID, Vector<SimpleComponentSystemEventHandlerPtr>> m_eventHandlers;
     };
 
 

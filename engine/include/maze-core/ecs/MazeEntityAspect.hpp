@@ -148,10 +148,10 @@ namespace Maze
         Set<ClassUID> const& getComponentUIDs() const { return m_componentUIDs; }
 
         //////////////////////////////////////////
-        bool hasIntersection(Entity* _entity);
+        bool hasIntersection(Entity* _entity) const;
 
         //////////////////////////////////////////
-        inline bool hasIntersection(EntityPtr const& _entity)
+        inline bool hasIntersection(EntityPtr const& _entity) const
         {
             return hasIntersection(_entity.get());
         }

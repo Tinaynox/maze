@@ -99,6 +99,12 @@ namespace Maze
         //////////////////////////////////////////
         virtual void processUpdate(F32 _dt, void (*)()) MAZE_ABSTRACT;
 
+        //////////////////////////////////////////
+        virtual void processEvent(Event* _event, void (*)()) MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual void processEvent(EntityId _entityId, Event* _event, void (*)()) MAZE_ABSTRACT;
+
     protected:
 
         //////////////////////////////////////////
@@ -167,6 +173,14 @@ namespace Maze
         virtual void processUpdate(F32 _dt, void (*_func)()) MAZE_OVERRIDE
         { }
 
+        //////////////////////////////////////////
+        virtual void processEvent(Event* _event, void (*_func)()) MAZE_OVERRIDE
+        { }
+
+        //////////////////////////////////////////
+        virtual void processEvent(EntityId _entityId, Event* _event, void (*_func)()) MAZE_OVERRIDE
+        { }
+
     public:
     
         //////////////////////////////////////////
@@ -212,6 +226,12 @@ namespace Maze
 
         //////////////////////////////////////////
         using ProcessUpdateFuncRaw = void(*)(F32, Entity*, TComponents* ..._components);
+
+        //////////////////////////////////////////
+        using ProcessEventFunc = std::function<void(Event*, Entity*, TComponents* ..._components)>;
+
+        //////////////////////////////////////////
+        using ProcessEventFuncRaw = void(*)(Event*, Entity*, TComponents* ..._components);
 
         //////////////////////////////////////////
         struct EntityData
@@ -264,15 +284,14 @@ namespace Maze
                 invokeEntityRemoved(entityData, typename Indices::Indexes());
 
             m_entitiesData.clear();
+            m_entityIndices.clear();
         }
 
         //////////////////////////////////////////
         virtual void processEntity(Entity* _entity) MAZE_OVERRIDE
         {
-            typename Vector<EntityData>::iterator it = std::find_if(
-                m_entitiesData.begin(),
-                m_entitiesData.end(),
-                [_entity](EntityData const& _data) -> bool { return _data.entity == _entity; });
+            EntityId eid = _entity->getId();
+            typename UnorderedMap<EntityId, Size>::iterator it = m_entityIndices.find(_entity->getId());
 
             bool intersects;
             if (!_entity->getActiveInHierarchy() || !_entity->getECSWorld() || _entity->getRemoving())
@@ -280,20 +299,29 @@ namespace Maze
             else
                 intersects = m_aspect.hasIntersection(_entity);
             
-            if (it == m_entitiesData.end() && intersects)
+            if (it == m_entityIndices.end() && intersects)
             {
                 EntityData entityData;
                 entityData.entity = _entity;
                 extractComponents(_entity, entityData.components);
 
+                Size index = m_entitiesData.size();
                 m_entitiesData.push_back(entityData);
+                m_entityIndices.emplace(
+                    std::piecewise_construct,
+                    std::forward_as_tuple(eid),
+                    std::forward_as_tuple(index));
                 invokeEntityAdded(entityData, typename Indices::Indexes());
             }
             else
-            if (it != m_entitiesData.end() && !intersects)
+            if (it != m_entityIndices.end() && !intersects)
             {
-                EntityData entityData = (*it);
-                m_entitiesData.erase(it);
+                Size index = it->second;
+                EntityData entityData = m_entitiesData[index];
+                m_entityIndices.erase(it);
+                m_entitiesData.eraseUnordered(m_entitiesData.begin() + index);
+                if (index < m_entitiesData.size())
+                    m_entityIndices[m_entitiesData[index].entity->getId()] = index;
                 invokeEntityRemoved(entityData, typename Indices::Indexes());
             }
         }
@@ -319,7 +347,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        void processUpdate(F32 _dt, ProcessUpdateFunc _func)
+        inline void processUpdate(F32 _dt, ProcessUpdateFunc _func)
         {
             for (EntityData entityData : m_entitiesData)
             {
@@ -337,6 +365,52 @@ namespace Maze
         {
             ProcessUpdateFuncRaw rawFunc = (ProcessUpdateFuncRaw)_func;
             processUpdate(_dt, (ProcessUpdateFunc)(rawFunc));
+        }
+
+        //////////////////////////////////////////
+        inline void processEvent(Event* _event, ProcessEventFunc _func)
+        {
+            for (EntityData entityData : m_entitiesData)
+            {
+                callProcessEvent(
+                    _event,
+                    _func,
+                    entityData.entity,
+                    entityData.components,
+                    typename Indices::Indexes());
+            }
+        }
+
+        //////////////////////////////////////////
+        virtual void processEvent(Event* _event, void (*_func)()) MAZE_OVERRIDE
+        {
+            ProcessEventFuncRaw rawFunc = (ProcessEventFuncRaw)_func;
+            processEvent(_event, (ProcessEventFunc)(rawFunc));
+        }
+
+        //////////////////////////////////////////
+        inline void processEvent(EntityId _entityId, Event* _event, ProcessEventFunc _func)
+        {
+            UnorderedMap<EntityId, Size>::iterator it = m_entityIndices.find(_entityId);
+
+            if (it != m_entityIndices.end())
+            {
+                EntityData& entityData = m_entitiesData[it->second];
+
+                callProcessEvent(
+                    _event,
+                    _func,
+                    entityData.entity,
+                    entityData.components,
+                    typename Indices::Indexes());
+            }
+        }
+
+        //////////////////////////////////////////
+        virtual void processEvent(EntityId _entityId, Event* _event, void (*_func)()) MAZE_OVERRIDE
+        {
+            ProcessEventFuncRaw rawFunc = (ProcessEventFuncRaw)_func;
+            processEvent(_entityId, _event, (ProcessEventFunc)(rawFunc));
         }
 
     protected:
@@ -377,6 +451,17 @@ namespace Maze
             IndexesTuple<Idxs...> const&)
         {
             _func(_dt, _entity, std::get<Idxs>(_components)...);
+        }
+
+        template<S32 ...Idxs>
+        inline void callProcessEvent(
+            Event* _event,
+            ProcessEventFunc _func,
+            Entity* _entity,
+            std::tuple<TComponents*...>& _components,
+            IndexesTuple<Idxs...> const&)
+        {
+            _func(_event, _entity, std::get<Idxs>(_components)...);
         }
 
 
@@ -422,7 +507,8 @@ namespace Maze
         }
 
     protected:
-        Vector<EntityData> m_entitiesData;
+        FastVector<EntityData> m_entitiesData;
+        UnorderedMap<EntityId, Size> m_entityIndices;
     };
 
 

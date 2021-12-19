@@ -56,7 +56,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool EntityAspect::hasIntersection(Entity* _entity)
+    bool EntityAspect::hasIntersection(Entity* _entity) const
     {
         switch (m_type)
         {

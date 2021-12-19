@@ -449,15 +449,32 @@ namespace Maze
         std::sort(
             m_systems.begin(),
             m_systems.end(),
-            [](ComponentSystemPtr const& system0, ComponentSystemPtr const& system1) -> bool
+            [](ComponentSystemPtr const& _system0, ComponentSystemPtr const& _system1) -> bool
             {
-                return system0->getOrder() < system1->getOrder();
+                return _system0->getOrder() < _system1->getOrder();
             });
 
         _system->setWorld(getSharedPtr());
         _system->processSystemAdded();
 
         eventComponentSystemAdded(_system);
+    }
+
+    //////////////////////////////////////////
+    void ECSWorld::addSystemEventHandler(SimpleComponentSystemEventHandlerPtr const& _system)
+    {
+        ClassUID eventUID = _system->getEventUID();
+        Vector<SimpleComponentSystemEventHandlerPtr>& eventHandlers = m_eventHandlers[eventUID];
+        eventHandlers.emplace_back(_system);
+
+        std::sort(
+            eventHandlers.begin(),
+            eventHandlers.end(),
+            [](SimpleComponentSystemEventHandlerPtr const& _system0,
+               SimpleComponentSystemEventHandlerPtr const& _system1) -> bool
+        {
+            return _system0->getOrder() < _system1->getOrder();
+        });
     }
 
     //////////////////////////////////////////

@@ -47,6 +47,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Entity);
     MAZE_USING_SHARED_PTR(ComponentSystem);
     MAZE_USING_SHARED_PTR(SimpleComponentSystem);
+    MAZE_USING_SHARED_PTR(SimpleComponentSystemEventHandler);
     MAZE_USING_SHARED_PTR(ECSWorld);
     MAZE_USING_SHARED_PTR(IEntitiesSample);
 
@@ -161,6 +162,71 @@ namespace Maze
 
     protected:
         HashedCString m_name;
+        IEntitiesSamplePtr m_sample;
+        Func m_func = nullptr;
+        S32 m_order = 0;
+    };
+
+
+    //////////////////////////////////////////
+    // Class SimpleComponentSystemEventHandler
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API SimpleComponentSystemEventHandler
+    {
+    public:
+
+        //////////////////////////////////////////
+        using Func = void (*)();
+
+        //////////////////////////////////////////
+        static inline SimpleComponentSystemEventHandlerPtr Create(
+            HashedCString _name,
+            ClassUID _eventUID,
+            IEntitiesSamplePtr _sample,
+            Func _func,
+            S32 _order = 0)
+        {
+            return MAZE_CREATE_SHARED_PTR_WITH_ARGS(SimpleComponentSystemEventHandler, _name, _eventUID, _sample, _func, _order);
+        }
+
+        //////////////////////////////////////////
+        inline void processEvent(Event* _event)
+        {
+            m_sample->processEvent(_event, m_func);
+        }
+
+        //////////////////////////////////////////
+        inline void processEvent(EntityId _entityId, Event* _event)
+        {
+            m_sample->processEvent(_entityId, _event, m_func);
+        }
+
+        //////////////////////////////////////////
+        inline ClassUID getEventUID() const { return m_eventUID; }
+
+        //////////////////////////////////////////
+        inline S32 getOrder() const { return m_order; }
+
+    protected:
+
+        //////////////////////////////////////////
+        SimpleComponentSystemEventHandler(
+            HashedCString _name,
+            ClassUID _eventUID,
+            IEntitiesSamplePtr _sample = nullptr,
+            Func _func = nullptr,
+            S32 _order = 0)
+            : m_name(_name)
+            , m_eventUID(_eventUID)
+            , m_sample(_sample)
+            , m_func(_func)
+            , m_order(_order)
+        {}
+
+    protected:
+        HashedCString m_name;
+        ClassUID m_eventUID = 0;
         IEntitiesSamplePtr m_sample;
         Func m_func = nullptr;
         S32 m_order = 0;
