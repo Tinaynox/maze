@@ -158,6 +158,30 @@ namespace Maze
         //////////////////////////////////////////
         MetaPropertyDrawerPtr createMetaPropertyDrawer(MetaProperty* _metaProperty);
 
+        //////////////////////////////////////////
+        void addComponentContextMenuOption(
+            ClassUID _componentUID,
+            String const& _title,
+            std::function<void(Entity*, Component*)> _callback);
+
+        //////////////////////////////////////////
+        template <typename TComponent>
+        void addComponentContextMenuOption(
+            String const& _title,
+            std::function<void(Entity*, TComponent*)> _callback)
+        {
+            return this->addComponentContextMenuOption(
+                ClassInfo<TComponent>::UID(),
+                _title,
+                [_callback](Entity* _entity, Component* _component)
+                {
+                    _callback(_entity, _component->castRaw<TComponent>());
+                });
+        }
+
+        //////////////////////////////////////////
+        Vector<std::pair<String, std::function<void(Entity*, Component*)>>> const& getInspectorComponentContextMenuOptions(ClassUID _classUID) const;
+
     public:
 
         //////////////////////////////////////////
@@ -177,6 +201,7 @@ namespace Maze
         Map<ClassUID, std::function<ComponentEditorPtr()>> m_componentEditors;
         Map<ClassUID, std::function<PropertyDrawerPtr(String const&)>> m_propertyDrawers;
         Map<ClassUID, std::function<MetaPropertyDrawerPtr(MetaProperty*)>> m_metaPropertyDrawers;
+        Map<ClassUID, Vector<std::pair<String, std::function<void(Entity*, Component*)>>>> m_inspectorComponentContextMenuOptions;
     };
     
 

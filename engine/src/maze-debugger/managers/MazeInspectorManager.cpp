@@ -30,6 +30,7 @@
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeSystemManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
+#include "maze-core/managers/MazeSystemManager.hpp"
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-debugger/scenes/SceneDebugEditor.hpp"
 #include "maze-graphics/ecs/systems/MazeGizmosSystem.hpp"
@@ -206,6 +207,60 @@ namespace Maze
         registerComponentEditor<Transform3D, ComponentEditorTransform3D>();
         registerComponentEditor<Camera3D, ComponentEditorCamera3D>();
 
+
+        addComponentContextMenuOption<Transform3D>(
+            "Reset Transform",
+            [](Entity* _entity, Transform3D* _component) { _component->resetTransform(); });
+
+        addComponentContextMenuOption<Transform3D>(
+            "Copy Position",
+            [](Entity* _entity, Transform3D* _component)
+            {
+                SystemManager::GetInstancePtr()->setClipboardString(_component->getLocalPosition().toString());
+            });
+        addComponentContextMenuOption<Transform3D>(
+            "Paste Position",
+            [](Entity* _entity, Transform3D* _component)
+            {
+                _component->setLocalPosition(Vec3DF::FromString(SystemManager::GetInstancePtr()->getClipboardAsString()));
+            });
+        addComponentContextMenuOption<Transform3D>(
+            "Copy Rotation",
+            [](Entity* _entity, Transform3D* _component)
+            {
+                SystemManager::GetInstancePtr()->setClipboardString(_component->getLocalRotation().toString());
+            });
+        addComponentContextMenuOption<Transform3D>(
+            "Paste Rotation",
+            [](Entity* _entity, Transform3D* _component)
+            {
+                _component->setLocalRotation(Quaternion::FromString(SystemManager::GetInstancePtr()->getClipboardAsString()));
+            });
+        addComponentContextMenuOption<Transform3D>(
+            "Copy Scale",
+            [](Entity* _entity, Transform3D* _component)
+            {
+                SystemManager::GetInstancePtr()->setClipboardString(_component->getLocalScale().toString());
+            });
+        addComponentContextMenuOption<Transform3D>(
+            "Paste Scale",
+            [](Entity* _entity, Transform3D* _component)
+            {
+                _component->setLocalScale(Vec3DF::FromString(SystemManager::GetInstancePtr()->getClipboardAsString()));
+            });
+        addComponentContextMenuOption<Transform3D>(
+            "Copy Transform",
+            [](Entity* _entity, Transform3D* _component)
+            {
+                SystemManager::GetInstancePtr()->setClipboardString(_component->getLocalTransform().toString());
+            });
+        addComponentContextMenuOption<Transform3D>(
+            "Paste Transform",
+            [](Entity* _entity, Transform3D* _component)
+            {
+                _component->setLocalTransform(Mat4DF::FromString(SystemManager::GetInstancePtr()->getClipboardAsString()));
+            });
+
         return true;
     }
 
@@ -272,6 +327,26 @@ namespace Maze
         }
     }
 
+    //////////////////////////////////////////
+    void InspectorManager::addComponentContextMenuOption(
+        ClassUID _componentUID,
+        String const& _title,
+        std::function<void(Entity*, Component*)> _callback)
+    {
+        m_inspectorComponentContextMenuOptions[_componentUID].emplace_back(std::make_pair(_title, _callback));
+    }
+
+    //////////////////////////////////////////
+    Vector<std::pair<String, std::function<void(Entity*, Component*)>>> const& InspectorManager::getInspectorComponentContextMenuOptions(ClassUID _classUID) const
+    {
+        static Vector<std::pair<String, std::function<void(Entity*, Component*)>>> const nullValue;
+
+        auto it = m_inspectorComponentContextMenuOptions.find(_classUID);
+        if (it == m_inspectorComponentContextMenuOptions.end())
+            return nullValue;
+
+        return it->second;
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

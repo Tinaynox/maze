@@ -373,6 +373,12 @@ namespace Maze
         static MetaProperty* s_parentMetaProperty = Transform3D::GetMetaClass()->getProperty("parent");
         return s_parentMetaProperty;
     }
+
+    //////////////////////////////////////////
+    void Transform3D::resetTransform()
+    {
+        setLocalTransform(Mat4DF::c_identity);
+    }
     
     
 } // namespace Maze

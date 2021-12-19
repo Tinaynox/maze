@@ -57,6 +57,13 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool initApplication() MAZE_OVERRIDE;
 
+
+        ////////////////////////////////////
+        virtual String getClipboardAsString() MAZE_OVERRIDE;
+
+        ////////////////////////////////////
+        virtual void setClipboardString(String const& _text) MAZE_OVERRIDE;
+
     protected:
 
         //////////////////////////////////////////

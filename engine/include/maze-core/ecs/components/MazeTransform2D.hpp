@@ -438,6 +438,49 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        template <typename TComponent>
+        void getAllComponents(Vector<SharedPtr<TComponent>>& _result)
+        {
+            SharedPtr<TComponent> component = getEntityRaw()->getComponentInheritedFrom<TComponent>();
+            if (component)
+                _result.emplace_back(component);
+
+            for (Transform2D* transform : m_children)
+                transform->template getAllComponents<TComponent>(_result);
+        }
+
+        //////////////////////////////////////////
+        template <typename TComponent>
+        Vector<SharedPtr<TComponent>> getAllComponents()
+        {
+            Vector<SharedPtr<TComponent>> result;
+            this->template getAllComponents<TComponent>(result);
+            return result;
+        }
+
+        //////////////////////////////////////////
+        template <typename TComponent>
+        void getAllComponentsRaw(Vector<TComponent*>& _result)
+        {
+            TComponent* component = getEntityRaw()->getComponentRawInheritedFrom<TComponent>();
+            if (component)
+                _result.emplace_back(component);
+
+            for (Transform2D* transform : m_children)
+                transform->template getAllComponentsRaw<TComponent>(_result);
+        }
+
+        //////////////////////////////////////////
+        template <typename TComponent>
+        Vector<TComponent*> getAllComponentsRaw()
+        {
+            Vector<TComponent*> result;
+            this->template getAllComponentsRaw<TComponent>(result);
+            return result;
+        }
+
+
+        //////////////////////////////////////////
         inline Size getNestingLevel()
         {
             if (m_parent)

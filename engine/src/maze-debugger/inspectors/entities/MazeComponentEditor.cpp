@@ -42,6 +42,8 @@
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
 #include "maze-debugger/helpers/MazeDebuggerHelper.hpp"
+#include "maze-debugger/inspectors/entities/MazeEntitiesInspector.hpp"
+#include "maze-debugger/managers/MazeSelectionManager.hpp"
 
 
 //////////////////////////////////////////
@@ -196,12 +198,27 @@ namespace Maze
         m_contextMenu->setCallbackFunction(
             [this](MenuListTree2DPtr const& _menuListTree)
             {
+                ClassUID componentUID = getComponentUID();
                 _menuListTree->addItem(
                     "Remove Component",
-                    [this](String const& _item)
+                    [this, componentUID](String const& _item)
                     {
-                        eventRemoveComponentPressed(getComponentUID());
+                        eventRemoveComponentPressed(componentUID);
                     });
+
+                auto const& options = InspectorManager::GetInstancePtr()->getInspectorComponentContextMenuOptions(componentUID);
+                for (auto const& optionData : options)
+                {
+                    auto optionDataCopy = optionData;
+                    _menuListTree->addItem(
+                        optionData.first,
+                        [this, componentUID, optionDataCopy](String const& _item)
+                        {
+                            Set<EntityPtr> selectedEntites = SelectionManager::GetInstancePtr()->getSelectedEntities();
+                            for (EntityPtr const& entity : selectedEntites)
+                                optionDataCopy.second(entity.get(), entity->getComponentByUID(componentUID).get());
+                        });                        
+                }
             });
         
         return spriteRenderer->getTransform();

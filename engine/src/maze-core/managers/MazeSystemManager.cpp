@@ -93,6 +93,19 @@ namespace Maze
         eventApplicationFrame();
     }
 
+    ////////////////////////////////////
+    String SystemManager::getClipboardAsString()
+    {
+        MAZE_NOT_IMPLEMENTED;
+        return String();
+    }
+
+    ////////////////////////////////////
+    void SystemManager::setClipboardString(String const& _text)
+    {
+        MAZE_NOT_IMPLEMENTED;
+    }
+
 
 } // namespace Maze
 //////////////////////////////////////////

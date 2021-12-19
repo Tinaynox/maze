@@ -329,7 +329,7 @@ namespace Maze
             StringHelper::SplitWords(_string, words, ';');
             if (words.size() == 16)
             {
-                for (S32 i = 0; i < 9; ++i)
+                for (S32 i = 0; i < 16; ++i)
                 {
                     result.planeMatrix[i] = StringHelper::StringToF32(words[i]);
                 }

@@ -97,6 +97,13 @@ namespace Maze
         //////////////////////////////////////////
         static inline SystemManager& GetInstance() { return *s_instance; }
 
+
+        ////////////////////////////////////
+        virtual String getClipboardAsString();
+
+        ////////////////////////////////////
+        virtual void setClipboardString(String const& _text);
+
     public:
 
         //////////////////////////////////////////

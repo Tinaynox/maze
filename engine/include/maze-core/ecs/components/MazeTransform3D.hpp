@@ -366,6 +366,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool isMetaPropertyCopyable(MetaProperty* _metaProperty) MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        void resetTransform();
+
     protected:
 
         //////////////////////////////////////////

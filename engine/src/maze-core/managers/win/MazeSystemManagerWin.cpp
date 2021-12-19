@@ -62,5 +62,51 @@ namespace Maze
         return true;
     }
 
+    ////////////////////////////////////
+    String SystemManagerWin::getClipboardAsString()
+    {
+        if (!OpenClipboard(nullptr))
+            return String();
+
+        HANDLE data = GetClipboardData(CF_TEXT);
+        if (data == nullptr)
+        {
+            CloseClipboard();
+            return String();
+        }
+
+        String text;
+
+        S8* pszText = static_cast<S8*>(GlobalLock(data));
+        if (pszText != nullptr)
+            text = pszText;
+
+        GlobalUnlock(data);
+        CloseClipboard();
+
+        return text;
+    }
+
+    ////////////////////////////////////
+    void SystemManagerWin::setClipboardString(String const& _text)
+    {
+        if (!OpenClipboard(nullptr))
+            return;
+
+        Size const len = _text.size() + 1;
+        HGLOBAL mem = GlobalAlloc(GMEM_MOVEABLE, len);
+        if (mem == 0)
+            return;
+        void* m = GlobalLock(mem);
+        if (m != nullptr)
+            memcpy(m, &_text[0], len);
+        GlobalUnlock(mem);
+
+        EmptyClipboard();
+        SetClipboardData(CF_TEXT, mem);
+
+        CloseClipboard();
+    }
+
 } // namespace Maze
 //////////////////////////////////////////
