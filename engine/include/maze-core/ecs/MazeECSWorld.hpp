@@ -84,6 +84,9 @@ namespace Maze
         //////////////////////////////////////////
         static ECSWorldPtr Create(EntityId _entitiesIdCounter = 0);
 
+        //////////////////////////////////////////
+        static ECSWorld* GetDefaultWorldRaw();
+
 
         //////////////////////////////////////////
         void update(F32 _dt);

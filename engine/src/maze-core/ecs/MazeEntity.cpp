@@ -46,6 +46,9 @@ namespace Maze
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(Entity);
 
     //////////////////////////////////////////
+    EntityId const Entity::c_invalidEntityId = 0;
+
+    //////////////////////////////////////////
     Entity::Entity()
         : m_world(nullptr)
         , m_scene(nullptr)
@@ -86,6 +89,12 @@ namespace Maze
         EntityPtr object;
         MAZE_CREATE_AND_INIT_SHARED_PTR(Entity, object, init(_entity, _world, _copyData));
         return object;
+    }
+
+    //////////////////////////////////////////
+    EntityPtr const& Entity::GetEntity(EntityId _eid)
+    {
+        return ECSWorld::GetDefaultWorldRaw()->getEntityById(_eid);
     }
 
     //////////////////////////////////////////
@@ -141,16 +150,24 @@ namespace Maze
         {
             for (EntityCopyData::ComponentPropertyData const& data : _copyData.getComponentProperties())
             {
-                ComponentPtr component;
-                data.metaProperty->getValue(data.objMetaInstance, component);
-
-                if (component)
+                ClassUID metaPropertyClassUID = data.metaProperty->getValueClassUID();
+                if (metaPropertyClassUID == ClassInfo<ComponentPtr>::UID())
                 {
-                    auto const& it = _copyData.getComponents().find(component.get());
-                    if (it != _copyData.getComponents().end())
+                    ComponentPtr component;
+                    data.metaProperty->getValue(data.objMetaInstance, component);
+
+                    if (component)
                     {
-                        ComponentPtr copiedComponent = it->second->getSharedPtr();
-                        data.metaProperty->setValue(data.metaInstance, &copiedComponent);
+                        auto const& it = _copyData.getComponents().find(component.get());
+                        if (it != _copyData.getComponents().end())
+                        {
+                            ComponentPtr copiedComponent = it->second->getSharedPtr();
+                            data.metaProperty->setValue(data.metaInstance, &copiedComponent);
+                        }
+                        else
+                        {
+                            data.metaProperty->copy(data.metaInstance, data.objMetaInstance);
+                        }
                     }
                     else
                     {
@@ -158,25 +175,63 @@ namespace Maze
                     }
                 }
                 else
+                if (metaPropertyClassUID == ClassInfo<Vector<ComponentPtr>>::UID())
                 {
-                    data.metaProperty->copy(data.metaInstance, data.objMetaInstance);
+                    MAZE_NOT_IMPLEMENTED
+                }
+                else
+                {
+                    MAZE_NOT_IMPLEMENTED
                 }
             }
 
             for (EntityCopyData::EntityPropertyData const& data : _copyData.getEntityProperties())
             {
-                EntityPtr entity;
-                data.metaProperty->getValue(data.objMetaInstance, entity);
-
-                auto const& it = _copyData.getEntities().find(entity.get());
-                if (it != _copyData.getEntities().end())
+                ClassUID metaPropertyClassUID = data.metaProperty->getValueClassUID();
+                if (metaPropertyClassUID == ClassInfo<EntityPtr>::UID())
                 {
-                    EntityPtr copiedEntity = it->second->getSharedPtr();
-                    data.metaProperty->setValue(data.metaInstance, &copiedEntity);
+                    EntityPtr entity;
+                    data.metaProperty->getValue(data.objMetaInstance, entity);
+
+                    auto const& it = _copyData.getEntities().find(entity.get());
+                    if (it != _copyData.getEntities().end())
+                    {
+                        EntityPtr copiedEntity = it->second->getSharedPtr();
+                        data.metaProperty->setValue(data.metaInstance, &copiedEntity);
+                    }
+                    else
+                    {
+                        data.metaProperty->copy(data.metaInstance, data.objMetaInstance);
+                    }
+                }
+                else
+                if (metaPropertyClassUID == ClassInfo<Vector<EntityPtr>>::UID())
+                {
+                    Vector<EntityPtr> entities;
+                    data.metaProperty->getValue(data.objMetaInstance, entities);
+
+                    Vector<EntityPtr> copiedEntities;
+                    copiedEntities.resize(entities.size());
+
+                    for (Size i = 0, in = entities.size(); i < in; ++i)
+                    {
+                        auto const& it = _copyData.getEntities().find(entities[i].get());
+                        if (it != _copyData.getEntities().end())
+                        {
+                            EntityPtr copiedEntity = it->second->getSharedPtr();
+                            copiedEntities[i] = copiedEntity;
+                        }
+                        else
+                        {
+                            copiedEntities[i] = entities[i];
+                        }
+                    }
+
+                    data.metaProperty->setValue(data.metaInstance, &copiedEntities);
                 }
                 else
                 {
-                    data.metaProperty->copy(data.metaInstance, data.objMetaInstance);
+                    MAZE_NOT_IMPLEMENTED
                 }
             }
         }

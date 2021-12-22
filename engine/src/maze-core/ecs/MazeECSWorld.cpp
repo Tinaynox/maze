@@ -30,6 +30,7 @@
 #include "maze-core/ecs/MazeComponentSystem.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
+#include "maze-core/managers/MazeEntityManager.hpp"
 
 
 //////////////////////////////////////////
@@ -70,6 +71,12 @@ namespace Maze
         ECSWorldPtr object;
         MAZE_CREATE_AND_INIT_SHARED_PTR(ECSWorld, object, init(_entitiesIdCounter));
         return object;
+    }
+
+    //////////////////////////////////////////
+    ECSWorld* ECSWorld::GetDefaultWorldRaw()
+    {
+        return EntityManager::GetInstancePtr()->getDefaultWorldRaw();
     }
 
     //////////////////////////////////////////

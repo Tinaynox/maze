@@ -460,22 +460,25 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TComponent>
-        void getAllComponentsRaw(Vector<TComponent*>& _result)
+        void getAllComponentsRaw(Vector<TComponent*>& _result, bool _activeOnly = false)
         {
+            if (_activeOnly && !getEntityRaw()->getActiveSelf())
+                return;
+
             TComponent* component = getEntityRaw()->getComponentRawInheritedFrom<TComponent>();
             if (component)
                 _result.emplace_back(component);
 
             for (Transform2D* transform : m_children)
-                transform->template getAllComponentsRaw<TComponent>(_result);
+                transform->template getAllComponentsRaw<TComponent>(_result, _activeOnly);
         }
 
         //////////////////////////////////////////
         template <typename TComponent>
-        Vector<TComponent*> getAllComponentsRaw()
+        Vector<TComponent*> getAllComponentsRaw(bool _activeOnly = false)
         {
             Vector<TComponent*> result;
-            this->template getAllComponentsRaw<TComponent>(result);
+            this->template getAllComponentsRaw<TComponent>(result, _activeOnly);
             return result;
         }
 

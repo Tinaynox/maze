@@ -383,10 +383,10 @@ namespace Maze
                                     MetaProperty* metaProperty = component->getMetaClass()->getProperty(componentPropertyName);
                                     if (metaProperty)
                                     {
-                                        MetaClass const* metaPropertyMetaClass = metaProperty->getMetaClass();
-                                        if (metaPropertyMetaClass)
+                                        ClassUID metaPropertyUID = metaProperty->getValueClassUID();
+                                        if (metaPropertyUID != 0)
                                         {
-                                            if (metaPropertyMetaClass == Component::GetMetaClass())
+                                            if (metaPropertyUID == ClassInfo<ComponentPtr>::UID())
                                             {
                                                 S32 valueIndex = StringHelper::StringToS32(componentPropertyValue);
                                                 metaProperty->setValue(component->getMetaInstance(), &components[valueIndex]);
@@ -395,12 +395,24 @@ namespace Maze
                                                 continue;
                                             }
                                             else
-                                            if (metaPropertyMetaClass == Entity::GetMetaClass())
+                                            if (metaPropertyUID == ClassInfo<EntityPtr>::UID())
                                             {
                                                 S32 valueIndex = StringHelper::StringToS32(componentPropertyValue);
                                                 metaProperty->setValue(component->getMetaInstance(), &entities[valueIndex]);
 
                                                 prefabChildNode = prefabChildNode->NextSibling();
+                                                continue;
+                                            }
+                                            else
+                                            if (metaPropertyUID == ClassInfo<Vector<ComponentPtr>>::UID())
+                                            {
+                                                MAZE_NOT_IMPLEMENTED;
+                                                continue;
+                                            }
+                                            else
+                                            if (metaPropertyUID == ClassInfo<Vector<EntityPtr>>::UID())
+                                            {
+                                                MAZE_NOT_IMPLEMENTED;
                                                 continue;
                                             }
                                         }
@@ -500,20 +512,54 @@ namespace Maze
                                     CString attributeValue = componentElement->Attribute(propertyName);
                                     if (attributeValue)
                                     {
-                                        MetaClass const* metaPropertyMetaClass = metaProperty->getMetaClass();
-                                        if (metaPropertyMetaClass)
+                                        ClassUID metaPropertyUID = metaProperty->getValueClassUID();
+                                        if (metaPropertyUID != 0)
                                         {
-                                            if (metaPropertyMetaClass == Component::GetMetaClass())
+                                            if (metaPropertyUID == ClassInfo<ComponentPtr>::UID())
                                             {
                                                 S32 valueIndex = StringHelper::StringToS32(attributeValue);
                                                 metaProperty->setValue(componentMetaInstance, &components[valueIndex]);
                                                 continue;
                                             }
                                             else
-                                            if (metaPropertyMetaClass == Entity::GetMetaClass())
+                                            if (metaPropertyUID == ClassInfo<EntityPtr>::UID())
                                             {
                                                 S32 valueIndex = StringHelper::StringToS32(attributeValue);
                                                 metaProperty->setValue(componentMetaInstance, &entities[valueIndex]);
+                                                continue;
+                                            }
+                                            else
+                                            if (metaPropertyUID == ClassInfo<Vector<ComponentPtr>>::UID())
+                                            {
+                                                Vector<String> componentsStr;
+                                                ValueFromString(componentsStr, attributeValue, strlen(attributeValue));
+
+                                                Vector<ComponentPtr> componentsValue;
+                                                componentsValue.resize(componentsStr.size());
+                                                for (Size i = 0, in = componentsStr.size(); i < in; ++i)
+                                                {
+                                                    String const& str = componentsStr[i];
+                                                    S32 valueIndex = StringHelper::StringToS32(str);
+                                                    componentsValue[i] = components[valueIndex];
+                                                }
+                                                metaProperty->setValue(componentMetaInstance, &componentsValue);
+                                                continue;
+                                            }
+                                            else
+                                            if (metaPropertyUID == ClassInfo<Vector<EntityPtr>>::UID())
+                                            {
+                                                Vector<String> entitiesStr;
+                                                ValueFromString(entitiesStr, attributeValue, strlen(attributeValue));
+
+                                                Vector<EntityPtr> entitiesValue;
+                                                entitiesValue.resize(entitiesStr.size());
+                                                for (Size i = 0, in = entitiesStr.size(); i < in; ++i)
+                                                {
+                                                    String const& str = entitiesStr[i];
+                                                    S32 valueIndex = StringHelper::StringToS32(str);
+                                                    entitiesValue[i] = entities[valueIndex];
+                                                }
+                                                metaProperty->setValue(componentMetaInstance, &entitiesValue);
                                                 continue;
                                             }
                                         }

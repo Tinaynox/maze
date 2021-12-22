@@ -71,6 +71,9 @@ namespace Maze
         using ComponentsContainer = Map<ClassUID, ComponentPtr>;
 
         //////////////////////////////////////////
+        static EntityId const c_invalidEntityId;
+
+        //////////////////////////////////////////
         friend class ECSWorld;
         friend class Component;
 
@@ -122,6 +125,8 @@ namespace Maze
             return Create(_entity.get(), _world, _copyData);
         }
 
+        //////////////////////////////////////////
+        static EntityPtr const& GetEntity(EntityId _eid);
 
         //////////////////////////////////////////
         inline EntityPtr createCopy(
@@ -456,6 +461,48 @@ namespace Maze
     inline void DeserializeValue(Entity& _value, U8 const* _data)
     {
         MAZE_TODO;        
+    }
+
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<EntityPtr>::value), void>::type
+        ValueToString(EntityPtr const& _value, String& _data)
+    {
+        _data = _value ? StringHelper::ToString(_value->getId()) : StringHelper::ToString(Entity::c_invalidEntityId);
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<EntityPtr>::value), void>::type
+        ValueFromString(EntityPtr& _value, CString _data, Size _count)
+    {
+        EntityId eid = StringHelper::StringToU32(_data);
+        _value = Entity::GetEntity(eid);
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<EntityPtr>::value), U32>::type
+        GetValueSerializationSize(EntityPtr const& _value)
+    {
+        MAZE_NOT_IMPLEMENTED_RETURN_VALUE(0);
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<EntityPtr>::value), void>::type
+        SerializeValue(EntityPtr const& _value, U8* _data)
+    {
+        MAZE_NOT_IMPLEMENTED;
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<EntityPtr>::value), void>::type
+        DeserializeValue(EntityPtr& _value, U8 const* _data)
+    {
+        MAZE_NOT_IMPLEMENTED;
     }
 
 

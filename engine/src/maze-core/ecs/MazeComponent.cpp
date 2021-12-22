@@ -94,7 +94,24 @@ namespace Maze
 
                 if (ClassInfo<Vector<ComponentPtr>>::UID() == metaProperty->getValueClassUID())
                 {
-                    MAZE_NOT_IMPLEMENTED;
+                    _copyData.getComponentProperties().emplace_back(
+                        EntityCopyData::ComponentPropertyData
+                        {
+                            metaProperty,
+                            metaInstance,
+                            objMetaInstance
+                        });
+                }
+                else
+                if (ClassInfo<Vector<EntityPtr>>::UID() == metaProperty->getValueClassUID())
+                {
+                    _copyData.getEntityProperties().emplace_back(
+                        EntityCopyData::EntityPropertyData
+                        {
+                            metaProperty,
+                            metaInstance,
+                            objMetaInstance
+                        });
                 }
                 else
                 if (ClassInfo<ComponentPtr>::UID() == metaProperty->getValueClassUID())

@@ -319,7 +319,7 @@ namespace Maze
                 m_world->convertUnitsToMeters(boxCollider->getSize().x * scale.x * 0.5f),
                 m_world->convertUnitsToMeters(boxCollider->getSize().y * scale.y * 0.5f),
                 Box2DHelper::ToVec2(m_world->convertUnitsToMeters(
-                    boxCollider->getOffset().x * scale.x,
+                    boxCollider->getOffset().x * scale.x, 
                     boxCollider->getOffset().y * scale.y)),
                0.0f);
             fixture.shape = &polygon;
@@ -375,25 +375,15 @@ namespace Maze
     {
         if (m_transform2D)
         {
-            _boxColliders = m_transform2D->getAllComponentsRaw<BoxCollider2D>();
-            _circleColliders = m_transform2D->getAllComponentsRaw<CircleCollider2D>();
+            _boxColliders = m_transform2D->getAllComponentsRaw<BoxCollider2D>(true);
+            _circleColliders = m_transform2D->getAllComponentsRaw<CircleCollider2D>(true);
         }
         else
         if (m_transform3D)
         {
-            _boxColliders = m_transform3D->getAllComponentsRaw<BoxCollider2D>();
-            _circleColliders = m_transform3D->getAllComponentsRaw<CircleCollider2D>();
+            _boxColliders = m_transform3D->getAllComponentsRaw<BoxCollider2D>(true);
+            _circleColliders = m_transform3D->getAllComponentsRaw<CircleCollider2D>(true);
         }
-        
-        /*
-        BoxCollider2D* boxCollider = getEntityRaw()->getComponentRaw<BoxCollider2D>();
-        if (boxCollider)
-            _boxColliders.push_back(boxCollider);
-
-        CircleCollider2D* circleCollider = getEntityRaw()->getComponentRaw<CircleCollider2D>();
-        if (circleCollider)
-            _circleColliders.push_back(circleCollider);
-        */
     }
     
     
