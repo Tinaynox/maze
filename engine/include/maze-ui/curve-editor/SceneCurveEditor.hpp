@@ -199,6 +199,7 @@ namespace Maze
         AnimationCurveMinMaxMode m_minMaxMode = AnimationCurveMinMaxMode::None;
 
         SystemTextDropdown2DPtr m_modeDropdown;
+        ClickButton2DPtr m_copyButton;
 
         SpriteRenderer2DPtr m_curveRendererHolder;
         SpriteRenderer2DPtr m_curveRenderer;
