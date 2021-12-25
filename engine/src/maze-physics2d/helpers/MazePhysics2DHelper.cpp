@@ -27,7 +27,6 @@
 #include "MazePhysics2DHeader.hpp"
 #include "maze-physics2d/helpers/MazePhysics2DHelper.hpp"
 #include "maze-physics2d/physics/MazePhysicsWorld2D.hpp"
-#include "maze-physics2d/helpers/MazeBox2DHelper.hpp"
 #include "maze-physics2d/managers/MazePhysics2DManager.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
 #include "maze-physics2d/ecs/components/MazeCollider2D.hpp"
@@ -200,7 +199,8 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_PHYSICS2D_API Vector<OverlapHit2DPtr> OverlapZoneAll(
             Vec2DF const& _from,
-            Vec2DF const& _to)
+            Vec2DF const& _to,
+            std::function<bool(b2Fixture* _fixture)> const& _predicate)
         {
             PhysicsWorld2DPtr const& world = Physics2DManager::GetInstancePtr()->getWorld();
 
@@ -216,6 +216,9 @@ namespace Maze
             Box2DHelper::CustomOverlapCallback callback(
                 [&](b2Fixture* _fixture) -> bool
             {
+                if (_predicate && !_predicate(_fixture))
+                    return false;
+
                 b2Body* body = _fixture->GetBody();
 
                 Collider2D* collider = static_cast<Collider2D*>((void*)_fixture->GetUserData().pointer);
@@ -232,6 +235,63 @@ namespace Maze
             world->getBox2DWorld()->QueryAABB(&callback, aabb);
 
             return result;
+        }
+
+        //////////////////////////////////////////
+        MAZE_PHYSICS2D_API Vector<OverlapHit2DPtr> OverlapZoneAll(
+            Vec2DF const& _from,
+            Vec2DF const& _to)
+        {
+            return OverlapZoneAll(_from, _to, nullptr);
+        }
+
+        //////////////////////////////////////////
+        MAZE_PHYSICS2D_API Vector<OverlapHit2DPtr> OverlapSegmentAll(
+            Vec2DF const& _position,
+            Vec2DF const& _direction,
+            F32 _distance,
+            F32 _width)
+        {
+            Vector<OverlapHit2DPtr> result;
+            Vec2DF pos0 = _position;
+            Vec2DF pos1 = _position + _direction * _distance;
+            Vec2DF min = { Math::Min(pos0.x, pos1.x) - _width * 0.5f, Math::Min(pos0.y, pos1.y) - _width * 0.5f };
+            Vec2DF max = { Math::Max(pos0.x, pos1.x) + _width * 0.5f, Math::Max(pos0.y, pos1.y) + _width * 0.5f };
+
+            Vec2DF p = _direction.perpendicular();
+
+            PhysicsWorld2DPtr const& world = Physics2DManager::GetInstancePtr()->getWorld();
+
+            b2PolygonShape polyShape;
+            b2Vec2 points[4] =
+            {
+                Box2DHelper::ToVec2(world->convertUnitsToMeters({ pos0 - p * _width * 0.5f })),
+                Box2DHelper::ToVec2(world->convertUnitsToMeters({ pos0 + p * _width * 0.5f })),
+                Box2DHelper::ToVec2(world->convertUnitsToMeters({ pos1 - p * _width * 0.5f })),
+                Box2DHelper::ToVec2(world->convertUnitsToMeters({ pos1 + p * _width * 0.5f }))
+            };
+            polyShape.Set(points, 4);
+
+            static const b2Transform nullTransform(b2Vec2(0, 0), b2Rot(0));
+
+            return OverlapZoneAll(
+                min,
+                max,
+                [&](b2Fixture* _fixture) -> bool
+                {
+                    if (b2TestOverlap(
+                        _fixture->GetShape(),
+                        0,
+                        &polyShape,
+                        0,
+                        _fixture->GetBody()->GetTransform(),
+                        nullTransform))
+                    {
+                        return true;
+                    }
+                    
+                    return false;
+                });
         }
 
         //////////////////////////////////////////

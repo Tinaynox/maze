@@ -34,6 +34,8 @@
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/math/MazeVec2D.hpp"
+#include "maze-physics2d/helpers/MazeBox2DHelper.hpp"
+#include <algorithm>
 
 
 //////////////////////////////////////////
@@ -161,6 +163,13 @@ namespace Maze
         MAZE_PHYSICS2D_API Vector<OverlapHit2DPtr> OverlapZoneAll(
             Vec2DF const& _from,
             Vec2DF const& _to);
+
+        //////////////////////////////////////////
+        MAZE_PHYSICS2D_API Vector<OverlapHit2DPtr> OverlapSegmentAll(
+            Vec2DF const& _position,
+            Vec2DF const& _direction,
+            F32 _distance,
+            F32 _width);
 
         //////////////////////////////////////////
         MAZE_PHYSICS2D_API Vector<OverlapHit2DPtr> OverlapRectAll(
