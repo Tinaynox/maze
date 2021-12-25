@@ -202,6 +202,7 @@ namespace Maze
         UIElement2DPtr m_canvasUIElement;
 
         SystemTextDropdown2DPtr m_modeDropdown;
+        ClickButton2DPtr m_copyButton;
 
         SpriteRenderer2DPtr m_gradientRendererHolder;
         SpriteRenderer2DPtr m_gradientRenderer;

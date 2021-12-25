@@ -33,6 +33,7 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
+#include "maze-core/managers/MazeSystemManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
@@ -257,15 +258,16 @@ namespace Maze
                 this,
                 Vec2DF(0.0f, 1.0f),
                 Vec2DF(0.0f, 1.0f));
-            rowLayout->setExpand(true);
+            rowLayout->setExpand(false);
             rowLayout->setAutoWidth(false);
+            rowLayout->setSpacing(5.0f);
 
             SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
                 "Mode",
                 8,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
-                { 8.0f, 18.0f },
+                { 80.0f, 18.0f },
                 Vec2DF::c_zero,
                 rowLayout->getTransform(),
                 this);
@@ -282,6 +284,22 @@ namespace Maze
             m_modeDropdown->addOption("Linear");
 
             m_modeDropdown->setValue((S32)gradient.getMode());
+
+
+            m_copyButton = UIHelper::CreateDefaultClickButton(
+                "C",
+                { 18.0f, 18.0f },
+                { -12.0f, -12.0f },
+                m_canvas->getTransform(),
+                this,
+                Vec2DF(1.0f, 1.0f),
+                Vec2DF(1.0f, 1.0f));
+            m_copyButton->eventClick.subscribe(
+                [this](Button2D* _button, CursorInputEvent const& _event)
+            {
+                ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
+                SystemManager::GetInstancePtr()->setClipboardString(gradient.toString());
+            });
         }
 
         // Gradient
