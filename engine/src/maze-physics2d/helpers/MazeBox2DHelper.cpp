@@ -232,22 +232,17 @@ namespace Maze
                         return 0;
 
                     void* userData = (void*)_fixture->GetBody()->GetUserData().pointer;
-                    Rigidbody2D* rigidbody2D;
-                    Collider2D* collider2D;
+                    Rigidbody2D* rigidbody2D = nullptr;
+                    Collider2D* collider2D = nullptr;
 
                     if (userData)
                     {
                         rigidbody2D = static_cast<Rigidbody2D*>(userData);
                         collider2D = static_cast<Collider2D*>((void*)_fixture->GetUserData().pointer);
                     }
-                    else
-                    {
-                        rigidbody2D = nullptr;
-                        collider2D = nullptr;
-                    }
 
-                    if (    _filter 
-                        && !_filter(
+                    if (_filter &&
+                        !_filter(
                             rigidbody2D,
                             collider2D,
                             _world->convertMetersToUnits(Box2DHelper::ToVec2DF(_point)),

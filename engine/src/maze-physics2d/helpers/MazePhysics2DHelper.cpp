@@ -307,7 +307,9 @@ namespace Maze
         MAZE_PHYSICS2D_API OverlapHit2DPtr OverlapPoint(
             Vec2DF const& _position)
         {
-            return OverlapRect(_position, { 0.00002f, 0.00002f });
+            PhysicsWorld2DPtr const& world = Physics2DManager::GetInstancePtr()->getWorld();
+
+            return OverlapRect(_position, world->convertMetersToUnits({ 0.00002f, 0.00002f }));
         }
 
     } // namespace Physics2DHelper
