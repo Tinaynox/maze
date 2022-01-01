@@ -56,6 +56,9 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual Json::Value toJSONValue() const MAZE_ABSTRACT;
+        
+        //////////////////////////////////////////
+        virtual ~IJSONValueSerializable() = default;
     };
 
     //////////////////////////////////////////

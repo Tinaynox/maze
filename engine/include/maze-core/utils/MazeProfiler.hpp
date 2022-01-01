@@ -214,7 +214,7 @@ namespace Maze
         ProfilerScope profiler ## __profilerName ## ScopedLock(&s_profiler ## __profilerName);
 #else
     #define MAZE_PROFILER_SCOPED_LOCK(__profilerName)
-#endif() // PROFILER_ENABLED
+#endif // PROFILER_ENABLED
 
     
 } // namespace Maze

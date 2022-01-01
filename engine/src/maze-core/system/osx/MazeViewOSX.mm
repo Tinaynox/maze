@@ -190,122 +190,122 @@
 //////////////////////////////////////////
 - (void)populateKeyConversion
 {
-    keyConversion.insert(std::pair<int, int>(53,   (int)Maze::KeyCode::Escape));
-    keyConversion.insert(std::pair<int, int>(122,  (int)Maze::KeyCode::F1));
-    keyConversion.insert(std::pair<int, int>(120,  (int)Maze::KeyCode::F2));
-    keyConversion.insert(std::pair<int, int>(99,   (int)Maze::KeyCode::F3));
-    keyConversion.insert(std::pair<int, int>(118,  (int)Maze::KeyCode::F4));
-    keyConversion.insert(std::pair<int, int>(96,   (int)Maze::KeyCode::F5));
-    keyConversion.insert(std::pair<int, int>(97,   (int)Maze::KeyCode::F6));
-    keyConversion.insert(std::pair<int, int>(98,   (int)Maze::KeyCode::F7));
-    keyConversion.insert(std::pair<int, int>(100,  (int)Maze::KeyCode::F8));
-    keyConversion.insert(std::pair<int, int>(101,  (int)Maze::KeyCode::F9));
-    keyConversion.insert(std::pair<int, int>(109,  (int)Maze::KeyCode::F10));
-    keyConversion.insert(std::pair<int, int>(103,  (int)Maze::KeyCode::F11));
-    keyConversion.insert(std::pair<int, int>(111,  (int)Maze::KeyCode::F12));
-    keyConversion.insert(std::pair<int, int>(105,  (int)Maze::KeyCode::PrintScreen));
-    keyConversion.insert(std::pair<int, int>(107,  (int)Maze::KeyCode::ScrollLock));
-    keyConversion.insert(std::pair<int, int>(113,  (int)Maze::KeyCode::Pause));
+    m_keyConversion.insert(std::pair<int, int>(53,   (int)Maze::KeyCode::Escape));
+    m_keyConversion.insert(std::pair<int, int>(122,  (int)Maze::KeyCode::F1));
+    m_keyConversion.insert(std::pair<int, int>(120,  (int)Maze::KeyCode::F2));
+    m_keyConversion.insert(std::pair<int, int>(99,   (int)Maze::KeyCode::F3));
+    m_keyConversion.insert(std::pair<int, int>(118,  (int)Maze::KeyCode::F4));
+    m_keyConversion.insert(std::pair<int, int>(96,   (int)Maze::KeyCode::F5));
+    m_keyConversion.insert(std::pair<int, int>(97,   (int)Maze::KeyCode::F6));
+    m_keyConversion.insert(std::pair<int, int>(98,   (int)Maze::KeyCode::F7));
+    m_keyConversion.insert(std::pair<int, int>(100,  (int)Maze::KeyCode::F8));
+    m_keyConversion.insert(std::pair<int, int>(101,  (int)Maze::KeyCode::F9));
+    m_keyConversion.insert(std::pair<int, int>(109,  (int)Maze::KeyCode::F10));
+    m_keyConversion.insert(std::pair<int, int>(103,  (int)Maze::KeyCode::F11));
+    m_keyConversion.insert(std::pair<int, int>(111,  (int)Maze::KeyCode::F12));
+    m_keyConversion.insert(std::pair<int, int>(105,  (int)Maze::KeyCode::PrintScreen));
+    m_keyConversion.insert(std::pair<int, int>(107,  (int)Maze::KeyCode::ScrollLock));
+    m_keyConversion.insert(std::pair<int, int>(113,  (int)Maze::KeyCode::Pause));
     
-    keyConversion.insert(std::pair<int, int>(50, (int)Maze::KeyCode::Grave));
-    keyConversion.insert(std::pair<int, int>(18, (int)Maze::KeyCode::Number1));
-    keyConversion.insert(std::pair<int, int>(19, (int)Maze::KeyCode::Number2));
-    keyConversion.insert(std::pair<int, int>(20, (int)Maze::KeyCode::Number3));
-    keyConversion.insert(std::pair<int, int>(21, (int)Maze::KeyCode::Number4));
-    keyConversion.insert(std::pair<int, int>(23, (int)Maze::KeyCode::Number5));
-    keyConversion.insert(std::pair<int, int>(22, (int)Maze::KeyCode::Number6));
-    keyConversion.insert(std::pair<int, int>(26, (int)Maze::KeyCode::Number7));
-    keyConversion.insert(std::pair<int, int>(28, (int)Maze::KeyCode::Number8));
-    keyConversion.insert(std::pair<int, int>(25, (int)Maze::KeyCode::Number9));
-    keyConversion.insert(std::pair<int, int>(29, (int)Maze::KeyCode::Number0));
-    keyConversion.insert(std::pair<int, int>(27, (int)Maze::KeyCode::Minus));
-    keyConversion.insert(std::pair<int, int>(24, (int)Maze::KeyCode::Equals));
-    keyConversion.insert(std::pair<int, int>(51, (int)Maze::KeyCode::Backspace));
+    m_keyConversion.insert(std::pair<int, int>(50, (int)Maze::KeyCode::Grave));
+    m_keyConversion.insert(std::pair<int, int>(18, (int)Maze::KeyCode::Number1));
+    m_keyConversion.insert(std::pair<int, int>(19, (int)Maze::KeyCode::Number2));
+    m_keyConversion.insert(std::pair<int, int>(20, (int)Maze::KeyCode::Number3));
+    m_keyConversion.insert(std::pair<int, int>(21, (int)Maze::KeyCode::Number4));
+    m_keyConversion.insert(std::pair<int, int>(23, (int)Maze::KeyCode::Number5));
+    m_keyConversion.insert(std::pair<int, int>(22, (int)Maze::KeyCode::Number6));
+    m_keyConversion.insert(std::pair<int, int>(26, (int)Maze::KeyCode::Number7));
+    m_keyConversion.insert(std::pair<int, int>(28, (int)Maze::KeyCode::Number8));
+    m_keyConversion.insert(std::pair<int, int>(25, (int)Maze::KeyCode::Number9));
+    m_keyConversion.insert(std::pair<int, int>(29, (int)Maze::KeyCode::Number0));
+    m_keyConversion.insert(std::pair<int, int>(27, (int)Maze::KeyCode::Minus));
+    m_keyConversion.insert(std::pair<int, int>(24, (int)Maze::KeyCode::Equals));
+    m_keyConversion.insert(std::pair<int, int>(51, (int)Maze::KeyCode::Backspace));
     
-    keyConversion.insert(std::pair<int, int>(48, (int)Maze::KeyCode::Tab));
-    keyConversion.insert(std::pair<int, int>(12, (int)Maze::KeyCode::Q));
-    keyConversion.insert(std::pair<int, int>(13, (int)Maze::KeyCode::W));
-    keyConversion.insert(std::pair<int, int>(14, (int)Maze::KeyCode::E));
-    keyConversion.insert(std::pair<int, int>(15, (int)Maze::KeyCode::R));
-    keyConversion.insert(std::pair<int, int>(17, (int)Maze::KeyCode::T));
-    keyConversion.insert(std::pair<int, int>(16, (int)Maze::KeyCode::Y));
-    keyConversion.insert(std::pair<int, int>(32, (int)Maze::KeyCode::U));
-    keyConversion.insert(std::pair<int, int>(34, (int)Maze::KeyCode::I));
-    keyConversion.insert(std::pair<int, int>(31, (int)Maze::KeyCode::O));
-    keyConversion.insert(std::pair<int, int>(35, (int)Maze::KeyCode::P));
-    keyConversion.insert(std::pair<int, int>(33, (int)Maze::KeyCode::LBracket));
-    keyConversion.insert(std::pair<int, int>(30, (int)Maze::KeyCode::RBracket));
-    keyConversion.insert(std::pair<int, int>(42, (int)Maze::KeyCode::Backslash));
-    
-    
-    keyConversion.insert(std::pair<int, int>(57, (int)Maze::KeyCode::CapsLock));
-    keyConversion.insert(std::pair<int, int>(0, (int)Maze::KeyCode::A));
-    keyConversion.insert(std::pair<int, int>(1, (int)Maze::KeyCode::S));
-    keyConversion.insert(std::pair<int, int>(2, (int)Maze::KeyCode::D));
-    keyConversion.insert(std::pair<int, int>(3, (int)Maze::KeyCode::F));
-    keyConversion.insert(std::pair<int, int>(5, (int)Maze::KeyCode::G));
-    keyConversion.insert(std::pair<int, int>(4, (int)Maze::KeyCode::H));
-    keyConversion.insert(std::pair<int, int>(38, (int)Maze::KeyCode::J));
-    keyConversion.insert(std::pair<int, int>(40, (int)Maze::KeyCode::K));
-    keyConversion.insert(std::pair<int, int>(37, (int)Maze::KeyCode::L));
-    keyConversion.insert(std::pair<int, int>(41, (int)Maze::KeyCode::Semicolon));
-    keyConversion.insert(std::pair<int, int>(39, (int)Maze::KeyCode::Apostrophe));
-    keyConversion.insert(std::pair<int, int>(36, (int)Maze::KeyCode::Enter));
+    m_keyConversion.insert(std::pair<int, int>(48, (int)Maze::KeyCode::Tab));
+    m_keyConversion.insert(std::pair<int, int>(12, (int)Maze::KeyCode::Q));
+    m_keyConversion.insert(std::pair<int, int>(13, (int)Maze::KeyCode::W));
+    m_keyConversion.insert(std::pair<int, int>(14, (int)Maze::KeyCode::E));
+    m_keyConversion.insert(std::pair<int, int>(15, (int)Maze::KeyCode::R));
+    m_keyConversion.insert(std::pair<int, int>(17, (int)Maze::KeyCode::T));
+    m_keyConversion.insert(std::pair<int, int>(16, (int)Maze::KeyCode::Y));
+    m_keyConversion.insert(std::pair<int, int>(32, (int)Maze::KeyCode::U));
+    m_keyConversion.insert(std::pair<int, int>(34, (int)Maze::KeyCode::I));
+    m_keyConversion.insert(std::pair<int, int>(31, (int)Maze::KeyCode::O));
+    m_keyConversion.insert(std::pair<int, int>(35, (int)Maze::KeyCode::P));
+    m_keyConversion.insert(std::pair<int, int>(33, (int)Maze::KeyCode::LBracket));
+    m_keyConversion.insert(std::pair<int, int>(30, (int)Maze::KeyCode::RBracket));
+    m_keyConversion.insert(std::pair<int, int>(42, (int)Maze::KeyCode::Backslash));
     
     
-    keyConversion.insert(std::pair<int, int>(6, (int)Maze::KeyCode::Z));
-    keyConversion.insert(std::pair<int, int>(7, (int)Maze::KeyCode::X));
-    keyConversion.insert(std::pair<int, int>(8, (int)Maze::KeyCode::C));
-    keyConversion.insert(std::pair<int, int>(9, (int)Maze::KeyCode::V));
-    keyConversion.insert(std::pair<int, int>(11, (int)Maze::KeyCode::B));
-    keyConversion.insert(std::pair<int, int>(45, (int)Maze::KeyCode::N));
-    keyConversion.insert(std::pair<int, int>(46, (int)Maze::KeyCode::M));
-    keyConversion.insert(std::pair<int, int>(43, (int)Maze::KeyCode::Comma));
-    keyConversion.insert(std::pair<int, int>(47, (int)Maze::KeyCode::Period));
-    keyConversion.insert(std::pair<int, int>(44, (int)Maze::KeyCode::Slash));
+    m_keyConversion.insert(std::pair<int, int>(57, (int)Maze::KeyCode::CapsLock));
+    m_keyConversion.insert(std::pair<int, int>(0, (int)Maze::KeyCode::A));
+    m_keyConversion.insert(std::pair<int, int>(1, (int)Maze::KeyCode::S));
+    m_keyConversion.insert(std::pair<int, int>(2, (int)Maze::KeyCode::D));
+    m_keyConversion.insert(std::pair<int, int>(3, (int)Maze::KeyCode::F));
+    m_keyConversion.insert(std::pair<int, int>(5, (int)Maze::KeyCode::G));
+    m_keyConversion.insert(std::pair<int, int>(4, (int)Maze::KeyCode::H));
+    m_keyConversion.insert(std::pair<int, int>(38, (int)Maze::KeyCode::J));
+    m_keyConversion.insert(std::pair<int, int>(40, (int)Maze::KeyCode::K));
+    m_keyConversion.insert(std::pair<int, int>(37, (int)Maze::KeyCode::L));
+    m_keyConversion.insert(std::pair<int, int>(41, (int)Maze::KeyCode::Semicolon));
+    m_keyConversion.insert(std::pair<int, int>(39, (int)Maze::KeyCode::Apostrophe));
+    m_keyConversion.insert(std::pair<int, int>(36, (int)Maze::KeyCode::Enter));
     
     
-    keyConversion.insert(std::pair<int, int>(49, (int)Maze::KeyCode::Space));
-    keyConversion.insert(std::pair<int, int>(110, (int)Maze::KeyCode::Apps));
+    m_keyConversion.insert(std::pair<int, int>(6, (int)Maze::KeyCode::Z));
+    m_keyConversion.insert(std::pair<int, int>(7, (int)Maze::KeyCode::X));
+    m_keyConversion.insert(std::pair<int, int>(8, (int)Maze::KeyCode::C));
+    m_keyConversion.insert(std::pair<int, int>(9, (int)Maze::KeyCode::V));
+    m_keyConversion.insert(std::pair<int, int>(11, (int)Maze::KeyCode::B));
+    m_keyConversion.insert(std::pair<int, int>(45, (int)Maze::KeyCode::N));
+    m_keyConversion.insert(std::pair<int, int>(46, (int)Maze::KeyCode::M));
+    m_keyConversion.insert(std::pair<int, int>(43, (int)Maze::KeyCode::Comma));
+    m_keyConversion.insert(std::pair<int, int>(47, (int)Maze::KeyCode::Period));
+    m_keyConversion.insert(std::pair<int, int>(44, (int)Maze::KeyCode::Slash));
+    
+    
+    m_keyConversion.insert(std::pair<int, int>(49, (int)Maze::KeyCode::Space));
+    m_keyConversion.insert(std::pair<int, int>(110, (int)Maze::KeyCode::Apps));
     
     
     // Central
-    keyConversion.insert(std::pair<int, int>(126, (int)Maze::KeyCode::Up));
-    keyConversion.insert(std::pair<int, int>(125, (int)Maze::KeyCode::Down));
-    keyConversion.insert(std::pair<int, int>(123, (int)Maze::KeyCode::Left));
-    keyConversion.insert(std::pair<int, int>(124, (int)Maze::KeyCode::Right));
+    m_keyConversion.insert(std::pair<int, int>(126, (int)Maze::KeyCode::Up));
+    m_keyConversion.insert(std::pair<int, int>(125, (int)Maze::KeyCode::Down));
+    m_keyConversion.insert(std::pair<int, int>(123, (int)Maze::KeyCode::Left));
+    m_keyConversion.insert(std::pair<int, int>(124, (int)Maze::KeyCode::Right));
 
     
-    keyConversion.insert(std::pair<int, int>(114, (int)Maze::KeyCode::Insert));
-    keyConversion.insert(std::pair<int, int>(115, (int)Maze::KeyCode::Home));
-    keyConversion.insert(std::pair<int, int>(116, (int)Maze::KeyCode::PageUp));
-    keyConversion.insert(std::pair<int, int>(117, (int)Maze::KeyCode::Delete));
-    keyConversion.insert(std::pair<int, int>(119, (int)Maze::KeyCode::End));
-    keyConversion.insert(std::pair<int, int>(121, (int)Maze::KeyCode::PageDown));
+    m_keyConversion.insert(std::pair<int, int>(114, (int)Maze::KeyCode::Insert));
+    m_keyConversion.insert(std::pair<int, int>(115, (int)Maze::KeyCode::Home));
+    m_keyConversion.insert(std::pair<int, int>(116, (int)Maze::KeyCode::PageUp));
+    m_keyConversion.insert(std::pair<int, int>(117, (int)Maze::KeyCode::Delete));
+    m_keyConversion.insert(std::pair<int, int>(119, (int)Maze::KeyCode::End));
+    m_keyConversion.insert(std::pair<int, int>(121, (int)Maze::KeyCode::PageDown));
     
     
     // Keypad
-    keyConversion.insert(std::pair<int, int>(71, (int)Maze::KeyCode::NumLock));
-    keyConversion.insert(std::pair<int, int>(82, (int)Maze::KeyCode::Numpad0));
-    keyConversion.insert(std::pair<int, int>(83, (int)Maze::KeyCode::Numpad1));
-    keyConversion.insert(std::pair<int, int>(84, (int)Maze::KeyCode::Numpad2));
-    keyConversion.insert(std::pair<int, int>(85, (int)Maze::KeyCode::Numpad3));
-    keyConversion.insert(std::pair<int, int>(86, (int)Maze::KeyCode::Numpad4));
-    keyConversion.insert(std::pair<int, int>(87, (int)Maze::KeyCode::Numpad5));
-    keyConversion.insert(std::pair<int, int>(88, (int)Maze::KeyCode::Numpad6));
-    keyConversion.insert(std::pair<int, int>(89, (int)Maze::KeyCode::Numpad7));
-    keyConversion.insert(std::pair<int, int>(91, (int)Maze::KeyCode::Numpad8));
-    keyConversion.insert(std::pair<int, int>(92, (int)Maze::KeyCode::Numpad9));
-    keyConversion.insert(std::pair<int, int>(69, (int)Maze::KeyCode::NumpadPlus));
-    keyConversion.insert(std::pair<int, int>(78, (int)Maze::KeyCode::NumpadMinus));
-    keyConversion.insert(std::pair<int, int>(65, (int)Maze::KeyCode::NumpadDecimal));
-    keyConversion.insert(std::pair<int, int>(75, (int)Maze::KeyCode::NumpadDivide));
-    keyConversion.insert(std::pair<int, int>(67, (int)Maze::KeyCode::NumpadMultiply));
-    keyConversion.insert(std::pair<int, int>(76, (int)Maze::KeyCode::NumpadEnter));
+    m_keyConversion.insert(std::pair<int, int>(71, (int)Maze::KeyCode::NumLock));
+    m_keyConversion.insert(std::pair<int, int>(82, (int)Maze::KeyCode::Numpad0));
+    m_keyConversion.insert(std::pair<int, int>(83, (int)Maze::KeyCode::Numpad1));
+    m_keyConversion.insert(std::pair<int, int>(84, (int)Maze::KeyCode::Numpad2));
+    m_keyConversion.insert(std::pair<int, int>(85, (int)Maze::KeyCode::Numpad3));
+    m_keyConversion.insert(std::pair<int, int>(86, (int)Maze::KeyCode::Numpad4));
+    m_keyConversion.insert(std::pair<int, int>(87, (int)Maze::KeyCode::Numpad5));
+    m_keyConversion.insert(std::pair<int, int>(88, (int)Maze::KeyCode::Numpad6));
+    m_keyConversion.insert(std::pair<int, int>(89, (int)Maze::KeyCode::Numpad7));
+    m_keyConversion.insert(std::pair<int, int>(91, (int)Maze::KeyCode::Numpad8));
+    m_keyConversion.insert(std::pair<int, int>(92, (int)Maze::KeyCode::Numpad9));
+    m_keyConversion.insert(std::pair<int, int>(69, (int)Maze::KeyCode::NumpadPlus));
+    m_keyConversion.insert(std::pair<int, int>(78, (int)Maze::KeyCode::NumpadMinus));
+    m_keyConversion.insert(std::pair<int, int>(65, (int)Maze::KeyCode::NumpadDecimal));
+    m_keyConversion.insert(std::pair<int, int>(75, (int)Maze::KeyCode::NumpadDivide));
+    m_keyConversion.insert(std::pair<int, int>(67, (int)Maze::KeyCode::NumpadMultiply));
+    m_keyConversion.insert(std::pair<int, int>(76, (int)Maze::KeyCode::NumpadEnter));
     
     
     // Other keyboards
-    keyConversion.insert(std::pair<int, int>(10, (int)Maze::KeyCode::MoreLess));
+    m_keyConversion.insert(std::pair<int, int>(10, (int)Maze::KeyCode::MoreLess));
     
 }
 
@@ -387,7 +387,7 @@
     
     eventData.scanCode = [_event keyCode];
     eventData.virtualCode = eventData.scanCode;
-    eventData.keyCode = (Maze::KeyCode)keyConversion[eventData.scanCode];
+    eventData.keyCode = (Maze::KeyCode)m_keyConversion[eventData.scanCode];
     eventData.modifiers = [self collectInputEventKeyboardModifiers: [_event modifierFlags]];
     
     if (_event.isARepeat)
@@ -441,7 +441,7 @@
     eventData.type = Maze::InputEventKeyboardType::KeyUp;
     eventData.scanCode = [_event keyCode];
     eventData.virtualCode = eventData.scanCode;
-    eventData.keyCode = (Maze::KeyCode)keyConversion[eventData.scanCode];
+    eventData.keyCode = (Maze::KeyCode)m_keyConversion[eventData.scanCode];
     eventData.modifiers = [self collectInputEventKeyboardModifiers: [_event modifierFlags]];
     
     inputManager->generateInputEvent( eventData );

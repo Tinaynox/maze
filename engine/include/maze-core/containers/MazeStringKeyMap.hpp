@@ -291,10 +291,10 @@ namespace Maze
         //////////////////////////////////////////
         inline void iterate(std::function<bool(HashedCString, TValue&)> _func)
         {
-            for (MapType::iterator it = m_map.begin(),
-                                   end = m_map.end();
-                                   it != end;
-                                   ++it)
+            for (typename MapType::iterator it = m_map.begin(),
+                                            end = m_map.end();
+                                            it != end;
+                                            ++it)
             {
                 if (!_func(it->first, it->second.second))
                     break;
@@ -304,10 +304,10 @@ namespace Maze
         //////////////////////////////////////////
         inline void iterate(std::function<bool(HashedCString, TValue const&)> _func) const
         {
-            for (MapType::const_iterator it = m_map.begin(),
-                                         end = m_map.end();
-                                         it != end;
-                                         ++it)
+            for (typename MapType::const_iterator it = m_map.begin(),
+                                                  end = m_map.end();
+                                                  it != end;
+                                                  ++it)
             {
                 if (!_func(it->first, it->second.second))
                     break;

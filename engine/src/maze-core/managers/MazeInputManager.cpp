@@ -47,7 +47,7 @@ namespace Maze
     InputManager::InputManager()
         : m_inputEventsIndex(0)
         , m_keyStates{ false }
-        , m_cursorStates{ false }
+        , m_cursorStates{ {false} }
         , m_cursorPositions{ Vec2DF::c_zero }
     {
         s_instance = this;        

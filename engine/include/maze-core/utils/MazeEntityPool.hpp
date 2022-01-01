@@ -90,6 +90,9 @@ namespace Maze
         EntityPoolObject();
 
         //////////////////////////////////////////
+        using Component::init;
+        
+        //////////////////////////////////////////
         bool init(EntityPoolPtr const& _pool);
 
     private:

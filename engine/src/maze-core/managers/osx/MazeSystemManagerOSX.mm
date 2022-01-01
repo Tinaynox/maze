@@ -79,7 +79,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SystemManagerOSX::init(Vector<Maze::S8 const*> const& _commandLineArguments)
     {
-        if (!SystemManagerUnix::init(commandLineArguments))
+        if (!SystemManagerUnix::init(_commandLineArguments))
             return false;
         
         return true;

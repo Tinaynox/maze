@@ -102,7 +102,7 @@ namespace Maze
         using AssetFile::init;
 
         //////////////////////////////////////////
-        virtual bool init(String const& _fullPath, bool _normalizePath = true);
+        virtual bool init(String const& _fullPath, bool _normalizePath = true) MAZE_OVERRIDE;
 
     
     protected:

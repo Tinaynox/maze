@@ -74,7 +74,6 @@ namespace Maze
         //////////////////////////////////////////
         inline TContainer& switchContainer()
         {
-            TContainer& currentContainer = current();
             m_isFirst = !m_isFirst;
             return m_containers[m_isFirst ? 0 : 1];
         }

@@ -119,8 +119,6 @@ namespace Maze
             {
                 ByteBufferPtr byteBuffer = file->readAsByteBuffer();
 
-                zip_fileinfo zfi = { 0 };
-
                 S32 result = zipOpenNewFileInZip3(
                     zf,
                     (_path + '/' + fileName).c_str(),

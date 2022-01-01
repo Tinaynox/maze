@@ -57,7 +57,7 @@ namespace Maze
     : NSOpenGLView
 {
 @private
-    Maze::Map<S32, S32> keyConversion; // #TODO: Rename with m_
+    Maze::Map<Maze::S32, Maze::S32> m_keyConversion;
     Maze::WindowOSX* m_window;
     
     bool m_lastLShiftState;
@@ -68,7 +68,7 @@ namespace Maze
     bool m_lastRAlternateState;
     bool m_lastLCommandState;
     bool m_lastRCommandState;
-    std::set<Maze::KeyCode> m_commandKeyCodes;
+    Maze::Set<Maze::KeyCode> m_commandKeyCodes;
 }
 
 - (id)initWithFrame:(NSRect)_f;
