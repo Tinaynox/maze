@@ -7,4 +7,4 @@ source var.sh
 RESOURCES_DIR=$../../../resources
 source ../../../templates/prj/osx/make-data-x64.sh
 
-read -s -n 1 -p "Press any key to continue . . ."
+read -s -n 1 -p "Press any key to continue..."
