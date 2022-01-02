@@ -59,7 +59,8 @@
 //////////////////////////////////////////
 - (void)updateTimerCallback:(id)_sender
 {
-    m_systemManager->processApplicationFrame();
+    if (m_systemManager)
+        m_systemManager->processApplicationFrame();
 }
 
 
@@ -73,7 +74,7 @@
 //////////////////////////////////////////
 - (void)applicationWillTerminate:(NSNotification*)_notification
 {
-    
+    m_updateTimer = nil;
 }
 
 

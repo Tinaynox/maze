@@ -70,7 +70,7 @@ namespace Maze
             CFStringEncoding encodingMethod = CFStringGetSystemEncoding();
             CString path = CFStringGetCStringPtr(bundlePath, encodingMethod);
             
-            s_defaultAssetsDirectory = path + String("/Contents/Assets/");
+            s_defaultAssetsDirectory = path + String("/Contents/Resources");
         }
         
         return s_defaultAssetsDirectory;

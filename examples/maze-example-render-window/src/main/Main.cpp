@@ -97,6 +97,27 @@ bool g_applicationActive = true;
 struct MainContainer
 {
 public:
+    
+    //////////////////////////////////////////
+    ~MainContainer()
+    {
+        scene.reset();
+        
+        renderWindow0.reset();
+        renderWindow1.reset();
+        
+        entityManager.reset();
+        assetManager.reset();
+        sceneManager.reset();
+        graphicsManager.reset();
+        pluginManager.reset();
+        dynLibManager.reset();
+        windowManager.reset();
+        inputManager.reset();
+        systemManager.reset();
+    }
+    
+public:
     Maze::SystemManagerPtr        systemManager;
     Maze::InputManagerPtr        inputManager;
     Maze::WindowManagerPtr        windowManager;
@@ -233,6 +254,7 @@ void OnInit()
     Maze::RenderWindowParams params;
     params.windowParams = Maze::WindowParams::Create();
     params.windowParams->title = "RenderWindow0";
+    params.windowParams->clientSize = Maze::Vec2DU(640, 480);
     params.windowParams->flags |= Maze::WindowStyleFlags::MinimizeButton;
     params.windowParams->flags |= Maze::WindowStyleFlags::MaximizeButton;
     params.windowParams->flags |= Maze::WindowStyleFlags::Resizable;
@@ -288,6 +310,9 @@ void OnInit()
 }
 
 //////////////////////////////////////////
+void OnShutdown();
+
+//////////////////////////////////////////
 void OnFrame()
 {
     if (Maze::UpdateManager::GetInstancePtr())
@@ -301,7 +326,10 @@ void OnFrame()
     {
         if (g_applicationActive)
         {
-#if (MAZE_PLATFORM != MAZE_PLATFORM_ANDROID)
+#if (MAZE_PLATFORM == MAZE_PLATFORM_OSX)
+            OnShutdown();
+            g_applicationActive = false;
+#elif (MAZE_PLATFORM != MAZE_PLATFORM_ANDROID)
             Maze::Debug::log << "There is no render windows left - Shutdown..." << Maze::endl;
             g_applicationActive = false;
 #endif
@@ -332,6 +360,9 @@ void OnUpdate(float _dt)
 void OnShutdown()
 {
     Maze::Debug::Log("Shutdown!");
+    
+    g_defaultRenderTarget.reset();
+    g_main.reset();
 }
 
 //////////////////////////////////////////
@@ -362,9 +393,6 @@ Maze::S32 main(Maze::S32 argc, Maze::S8 const* argv[])
     }
 
     OnShutdown();
-
-    g_defaultRenderTarget.reset();
-    g_main.reset();
 
 
     return 0;

@@ -102,17 +102,21 @@ namespace Maze
     //////////////////////////////////////////
     Vec2DU WindowOSX::getClientSize()
     {
+        auto size = [[m_windowDelegateOSX contentView] frame].size;
+        auto backingSize = [[m_windowDelegateOSX contentView] convertSizeToBacking:size];
         return Vec2DU(
-            [[m_windowDelegateOSX contentView] frame].size.width,
-            [[m_windowDelegateOSX contentView] frame].size.height);
+            backingSize.width,
+            backingSize.height);
     }
     
     //////////////////////////////////////////
     Vec2DU WindowOSX::getFullSize()
     {
+        auto size = [m_windowDelegateOSX frame].size;
+        auto backingSize = [[m_windowDelegateOSX contentView] convertSizeToBacking:size];
         return Vec2DU(
-            [m_windowDelegateOSX frame].size.width,
-            [m_windowDelegateOSX frame].size.height);
+            backingSize.width,
+            backingSize.height);
     }
     
     //////////////////////////////////////////
@@ -340,11 +344,7 @@ namespace Maze
         
         Vec2DU currentClientSize = getClientSize();
         
-        // #TODO:
-        // F32 scaleFactor = GetDefaultScreenScaleFactor();
-        // desktopMode.width /= scaleFactor;
-        // desktopMode.height /= scaleFactor;
-        F32 scaleFactor = 1.0f;
+        F32 scaleFactor = desktopMode.pixelScale;
         
         
         if (getFullscreen())
@@ -362,7 +362,9 @@ namespace Maze
             [m_windowDelegateOSX setCollectionBehavior: NSWindowCollectionBehaviorFullScreenPrimary];
             [m_windowDelegateOSX setOpaque: YES];
             
-            Vec2DF size(desktopMode.width, desktopMode.height);
+            Vec2DF size(
+                desktopMode.width / scaleFactor,
+                desktopMode.height / scaleFactor);
             
             CGFloat x = (desktopMode.width - size.x) / 2.0;
             CGFloat y = (desktopMode.height - size.y) / 2.0;
@@ -376,7 +378,6 @@ namespace Maze
         {
             F32 paramsVideoModeWidth = m_params->clientSize.x / scaleFactor;
             F32 paramsVideoModeHeight = m_params->clientSize.y / scaleFactor;
-            
             
             NSUInteger styleMask = [m_windowDelegateOSX styleMask];
             styleMask &= ~NSWindowStyleMaskBorderless;

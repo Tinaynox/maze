@@ -71,10 +71,17 @@ namespace Maze
         ////////////////////////////////////
         MAZE_CORE_API WindowVideoMode ConvertCGModeToGGMode(CGDisplayModeRef _cgmode)
         {
-            WindowVideoMode mode(CGDisplayModeGetWidth(_cgmode), CGDisplayModeGetHeight(_cgmode), GetModeBitsPerPixel(_cgmode));
-            F32 scaleFactor = 1.0f; // #TODO
-            mode.width *= scaleFactor;
-            mode.height *= scaleFactor;
+            Size widthInPixels = CGDisplayModeGetPixelWidth(_cgmode);
+            // Size heightInPixels = CGDisplayModeGetPixelHeight(_cgmode);
+            Size width = CGDisplayModeGetWidth(_cgmode);
+            Size height = CGDisplayModeGetHeight(_cgmode);
+            U32 bpp = GetModeBitsPerPixel(_cgmode); 
+            F32 pixelScale = (F32)widthInPixels / (F32)width;
+            WindowVideoMode mode(
+                width,
+                height,
+                bpp,
+                pixelScale);
             return mode;
         }
         

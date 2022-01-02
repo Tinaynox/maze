@@ -42,10 +42,15 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        WindowVideoMode(U32 _width, U32 _height, U32 _bpp)
+        WindowVideoMode(
+            U32 _width,
+            U32 _height,
+            U32 _bpp,
+            F32 _pixelScale = 1.0f)
             : width(_width)
             , height(_height)
             , bpp(_bpp)
+            , pixelScale(_pixelScale)
         {
     
         }
@@ -111,6 +116,7 @@ namespace Maze
         U32 width;
         U32 height;
         U32 bpp;
+        F32 pixelScale = 1.0f;
     };
 
 

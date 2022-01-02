@@ -64,6 +64,8 @@ namespace Maze
     EntityManager::~EntityManager()
     {
         s_instance = nullptr;
+        m_libraryWorld.reset();
+        m_defaultWorld.reset();
     }
 
     //////////////////////////////////////////

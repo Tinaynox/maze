@@ -276,26 +276,14 @@ bool SceneExample::init()
         m_meshRenderer->setMaterial(smgMaterial);
     }
     
-
-    // Carrot
-    {
-        Maze::EntityPtr meshRendererEntity = createEntity();
-        Maze::Transform3DPtr transform = meshRendererEntity->createComponent<Maze::Transform3D>();
-        transform->setLocalPosition(Maze::Vec3DF::RandomDirection() * 4.0f);
-
-        Maze::MeshRendererPtr meshRenderer = meshRendererEntity->createComponent<Maze::MeshRenderer>();
-        meshRenderer->setRenderMesh(Maze::RenderMesh::Create(Maze::MeshHelper::CreateQuadMesh()));
-        meshRenderer->setMaterial(Maze::Material::Create("Test01.mzmaterial"));
-    }
-    
     return true;
 }
 
 //////////////////////////////////////////
 void SceneExample::update(Maze::F32 _dt)
 {
-#if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
-    if (GetAsyncKeyState('Z') & 0x8000)
+    
+    if (Maze::InputManager::GetInstancePtr()->getKeyState(Maze::KeyCode::Z))
     {    
         m_renderTarget->castRaw<Maze::RenderWindowOpenGL>()->getContext()->setWireframeRender(true);
     }
@@ -303,7 +291,6 @@ void SceneExample::update(Maze::F32 _dt)
     {
         m_renderTarget->castRaw<Maze::RenderWindowOpenGL>()->getContext()->setWireframeRender(false);
     }
-#endif
 
     Maze::ECSScene::update(_dt);
 
@@ -323,37 +310,35 @@ void SceneExample::update(Maze::F32 _dt)
 
         Maze::F32 speed = 2.0f;
         
-#if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
-        if (GetAsyncKeyState(87) & 0x8000)
+        if (Maze::InputManager::GetInstancePtr()->getKeyState(Maze::KeyCode::W))
         {
             m_cameraTransform3D->translate(cameraForwardDirection *_dt * speed);
         }
         else
-        if (GetAsyncKeyState(83) & 0x8000)
+        if (Maze::InputManager::GetInstancePtr()->getKeyState(Maze::KeyCode::S))
         {
             m_cameraTransform3D->translate(-cameraForwardDirection * _dt * speed);
         }
 
-        if (GetAsyncKeyState(65) & 0x8000)
+        if (Maze::InputManager::GetInstancePtr()->getKeyState(Maze::KeyCode::A))
         {
             m_cameraTransform3D->translate(-cameraRightDirection * _dt * speed);
         }
         else
-        if (GetAsyncKeyState(68) & 0x8000)
+        if (Maze::InputManager::GetInstancePtr()->getKeyState(Maze::KeyCode::D))
         {
             m_cameraTransform3D->translate(cameraRightDirection * _dt * speed);
         }
         else
-        if (GetAsyncKeyState('Q') & 0x8000)
+        if (Maze::InputManager::GetInstancePtr()->getKeyState(Maze::KeyCode::Q))
         {
             m_pitchAngle -= _dt * Maze::Math::c_pi;
         }
         else
-        if (GetAsyncKeyState('E') & 0x8000)
+        if (Maze::InputManager::GetInstancePtr()->getKeyState(Maze::KeyCode::E))
         {
             m_pitchAngle += _dt * Maze::Math::c_pi;
         }
-#endif
 
         m_cameraTransform3D->setLocalRotation(Maze::Quaternion(m_pitchAngle, m_yawAngle, 0.0f));
         
@@ -384,7 +369,7 @@ void SceneExample::notifyMouse(Maze::InputEventMouseData const& _data)
                 Maze::Vec2DF deltaPosition = cursorPosition - m_cursorPositionLastFrame;
 
                 m_yawAngle += deltaPosition.x * 0.0075f;
-                m_pitchAngle += deltaPosition.y * 0.0075f;
+                m_pitchAngle -= deltaPosition.y * 0.0075f;
             }
 
             m_cursorPositionLastFrame = cursorPosition;

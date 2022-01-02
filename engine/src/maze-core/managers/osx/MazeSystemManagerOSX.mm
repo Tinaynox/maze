@@ -54,6 +54,7 @@ namespace Maze
     //////////////////////////////////////////
     SystemManagerOSX::~SystemManagerOSX()
     {
+        shutdownApplication();
     }
     
     //////////////////////////////////////////
@@ -75,6 +76,17 @@ namespace Maze
         
         return true;
     }
+
+    //////////////////////////////////////////
+    void SystemManagerOSX::shutdownApplication()
+    {
+        if (!m_applicationDelegateOSX)
+            return;
+        
+        [m_applicationDelegateOSX setSystemManager: nil];
+        [m_applicationDelegateOSX shutdown];
+        m_applicationDelegateOSX = nullptr;
+    }
     
     //////////////////////////////////////////
     bool SystemManagerOSX::init(Vector<Maze::S8 const*> const& _commandLineArguments)
@@ -84,6 +96,8 @@ namespace Maze
         
         return true;
     }
+    
+    
     
 } // namespace Maze
 //////////////////////////////////////////

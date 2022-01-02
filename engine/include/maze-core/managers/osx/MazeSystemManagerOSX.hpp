@@ -57,7 +57,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_CORE_API SystemManagerOSX
-    : public SystemManagerUnix
+        : public SystemManagerUnix
     {
     private:
         
@@ -71,6 +71,9 @@ namespace Maze
         
         //////////////////////////////////////////
         virtual bool initApplication() MAZE_OVERRIDE;
+        
+        //////////////////////////////////////////
+        virtual void shutdownApplication() MAZE_OVERRIDE;
         
         
         ////////////////////////////////////
