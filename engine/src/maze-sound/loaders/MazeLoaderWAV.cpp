@@ -226,13 +226,13 @@ namespace Maze
         U32 offset = 0;
         offset += _fileData->read(offset, &waveFileHeader, sizeof(WaveFileHeader));
 
-        if (!_strnicmp(waveFileHeader.riff, "RIFF", 4) && !_strnicmp(waveFileHeader.wave, "WAVE", 4))
+        if (!MAZE_STRNICMP(waveFileHeader.riff, "RIFF", 4) && !MAZE_STRNICMP(waveFileHeader.wave, "WAVE", 4))
         {
             while (U32 bytesRead = _fileData->read(offset, &riffChunk, sizeof(RiffChunk)))
             {
                 offset += bytesRead;
 
-                if (!_strnicmp(riffChunk.chunkName, "fmt ", 4))
+                if (!MAZE_STRNICMP(riffChunk.chunkName, "fmt ", 4))
                 {
                     if (riffChunk.chunkSize <= sizeof(WaveFMT))
                     {
@@ -261,7 +261,7 @@ namespace Maze
                     }
                 }
                 else
-                if (!_strnicmp(riffChunk.chunkName, "data", 4))
+                if (!MAZE_STRNICMP(riffChunk.chunkName, "data", 4))
                 {
                     waveInfo->dataSize = riffChunk.chunkSize;
                     waveInfo->dataOffset = offset;
@@ -338,7 +338,6 @@ namespace Maze
         WaveFileHeader waveFileHeader;
         RiffChunk riffChunk;
         WaveFMT waveFmt;
-        WaveResult wr = WaveResult::BadWaveFile;
 
         // #TODO: Rework, write data directly to waveFileHeader
         ByteBufferPtr headerByteBuffer = _file->readHeaderAsByteBuffer(sizeof(WaveFileHeader));
@@ -346,7 +345,7 @@ namespace Maze
         // Read Wave file header
         headerByteBuffer->read(0, &waveFileHeader, sizeof(WaveFileHeader));
 
-        if (!_strnicmp(waveFileHeader.riff, "RIFF", 4) && !_strnicmp(waveFileHeader.wave, "WAVE", 4))
+        if (!MAZE_STRNICMP(waveFileHeader.riff, "RIFF", 4) && !MAZE_STRNICMP(waveFileHeader.wave, "WAVE", 4))
         {
             return true;
         }

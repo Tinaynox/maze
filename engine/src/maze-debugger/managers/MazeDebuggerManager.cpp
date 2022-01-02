@@ -191,7 +191,7 @@ namespace Maze
     {
         DebuggerSettings* debuggerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<DebuggerSettings>();
         if (debuggerSettings->getPause() && !m_pause)
-            m_pause = std::make_unique<ScopedPause>();
+            m_pause = UniquePtr<ScopedPause>(new ScopedPause());
         else
             m_pause.reset();
     }

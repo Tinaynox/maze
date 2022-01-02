@@ -121,6 +121,7 @@
 #   define MAZE_SCPRINTF(format, arg) _scprintf(format, arg)
 #   define MAZE_SCWPRINTF(format, arg) _scwprintf(format, arg)
 #   define MAZE_STRCMPI _strcmpi
+#   define MAZE_STRNICMP _strnicmp
 #elif (MAZE_PLATFORM_UNIX_FAMILY)
 #   define MAZE_SPRINTF sprintf
 #   define MAZE_SWPRINTF swprintf
@@ -133,6 +134,7 @@
 #   define MAZE_SCPRINTF(format, arg) MAZE_scprintf(format, arg)
 #   define MAZE_SCWPRINTF(format, arg) MAZE_scwprintf(format, arg)
 #   define MAZE_STRCMPI strcasecmp
+#   define MAZE_STRNICMP strncmp
 #else
 #   define MAZE_SPRINTF sprintf
 #   define MAZE_SWPRINTF swprintf
@@ -145,6 +147,7 @@
 #   define MAZE_SCPRINTF(format, arg) scprintf(format, arg)
 #   define MAZE_SCWPRINTF(format, arg) scwprintf(format, arg)
 #   define MAZE_STRCMPI strcasecmp
+#   define MAZE_STRNICMP strncmp
 #endif
 
 

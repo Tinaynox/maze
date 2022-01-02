@@ -356,7 +356,7 @@ namespace Maze
                 m_world->convertUnitsToMeters(
                     circleCollider->getOffset().x * scaleMax,
                     circleCollider->getOffset().y * scaleMax));
-            polygon.m_radius = circleCollider->getRadius() * scaleMax;
+            polygon.m_radius = m_world->convertUnitsToMeters(circleCollider->getRadius() * scaleMax);
             fixture.shape = &polygon;
             fixture.userData.pointer = (uintptr_t)(Collider2D*)circleCollider;
 

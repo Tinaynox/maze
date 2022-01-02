@@ -174,8 +174,14 @@ namespace Maze
     //////////////////////////////////////////
     void Engine::shutdown()
     {
+        if (!m_running)
+            return;
+        
         MAZE_LOG("Shutdown started!");
         m_running = false;
+        
+        if (m_systemManager)
+            m_systemManager->shutdownApplication();
     }
 
     //////////////////////////////////////////

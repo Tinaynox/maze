@@ -77,7 +77,7 @@ namespace Maze
         inline bool getActive() const { return m_active.getValue(); }
 
         //////////////////////////////////////////
-        inline auto& getActiveChangedEvent() { return m_active.eventValueChanged; }
+        inline MultiDelegate<bool const&>& getActiveChangedEvent() { return m_active.eventValueChanged; }
 
         //////////////////////////////////////////
         inline void switchActive() { setActive(!getActive()); }
@@ -90,7 +90,7 @@ namespace Maze
         inline bool getPause() const { return m_pause.getValue(); }
 
         //////////////////////////////////////////
-        inline auto& getPauseChangedEvent() { return m_pause.eventValueChanged; }
+        inline MultiDelegate<bool const&>& getPauseChangedEvent() { return m_pause.eventValueChanged; }
 
         //////////////////////////////////////////
         inline void switchPause() { setPause(!getPause()); }
