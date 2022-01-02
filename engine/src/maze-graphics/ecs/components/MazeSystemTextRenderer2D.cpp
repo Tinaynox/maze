@@ -172,8 +172,6 @@ namespace Maze
         if (!m_systemFont)
             return;
 
-        Vec4DF vertexColor = Vec4DF(1.0f, 1.0f, 1.0f, m_canvasRenderer->getAlpha());
-
         Vec2DF const& size = m_transform->getSize();
 
         Texture2DPtr const& systemFontTexture = m_systemFont->texture;

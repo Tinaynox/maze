@@ -193,11 +193,29 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ContextOpenGL3NS::_validateIsCurrent()
+    bool ContextOpenGL3NS::_validateIsCurrentGLContext()
     {
         MAZE_ERROR_IF(m_context != [NSOpenGLContext currentContext], "Context is not current!!");
         
         return true;
+    }
+
+    //////////////////////////////////////////
+    bool ContextOpenGL3NS::_validateIsCurrentGLContextAndSurface()
+    {
+        return _validateIsCurrentGLContext();
+    }
+    
+    //////////////////////////////////////////
+    bool ContextOpenGL3NS::isSameGLContext(ContextOpenGL* _context)
+    {
+        return (this == _context);
+    }
+
+    //////////////////////////////////////////
+    bool ContextOpenGL3NS::isSameGLSurface(ContextOpenGL* _context)
+    {
+        return (this == _context);
     }
 
     //////////////////////////////////////////
@@ -376,8 +394,6 @@ namespace Maze
         Debug::Log("GPU Processing: %d", S32(gpuProcessing));
         
         [pixFmt release];
-        
-        syncGLStates();
         
         createExtensions();
         m_stateMachine.reset(new StateMachineOpenGL(this));

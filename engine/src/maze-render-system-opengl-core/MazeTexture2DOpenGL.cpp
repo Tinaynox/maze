@@ -541,9 +541,6 @@ namespace Maze
             result.setFormat(pixelFormat);
             result.setSize(m_size);
 
-            U32 bytesPerPixel = PixelFormat::GetBytesPerPixel(pixelFormat);
-            U32 channelsPerPixel = PixelFormat::GetChannelsPerPixel(pixelFormat);
-            U32 bytesPerChannel = bytesPerPixel / channelsPerPixel;
             MZGLint originFormat = GetOpenGLOriginFormat(pixelFormat);
 
             MZGLint dataType = GetOpenGLDataType(pixelFormat);

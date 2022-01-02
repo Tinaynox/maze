@@ -159,11 +159,12 @@ bool SceneExample::init()
     
 
     Maze::SpritePtr sprite = spriteManager->getSprite("Panel00.mztexture");
-    sprite->setSliceBorder(
-        40.0f,
-        34.0f,
-        40.0f,
-        34.0f);
+    if (sprite)
+        sprite->setSliceBorder(
+            40.0f,
+            34.0f,
+            40.0f,
+            34.0f);
 
 
     ////////////////////////////////////////////

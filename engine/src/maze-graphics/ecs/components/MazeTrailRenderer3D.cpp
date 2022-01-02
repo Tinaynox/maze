@@ -100,7 +100,6 @@ namespace Maze
     TrailRenderer3D::TrailRenderer3D()
         : m_renderSystem(nullptr)
         , m_time(2.0f)
-        , m_timer(0.0f)
         , m_width(1.0f)
         , m_color(ColorF128::c_white)
     {
@@ -199,9 +198,6 @@ namespace Maze
             F32 penultimateToLastLength = penultimateToLast.length();
             Vec3DF direction = penultimateToLast / penultimateToLastLength;
             lastKeyframe.direction = direction;
-
-            F32 width = getTrailWidth(0.0f);
-            F32 halfWidth = width * 0.5f;
 
             if (edgesCount > 2)
             {

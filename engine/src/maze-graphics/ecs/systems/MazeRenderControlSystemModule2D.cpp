@@ -56,7 +56,6 @@ namespace Maze
     //////////////////////////////////////////
     RenderControlSystemModule2D::RenderControlSystemModule2D()
         : m_sortedMeshRenderersDirty(false)
-        , m_world(nullptr)
     {
     }
 
@@ -240,8 +239,6 @@ namespace Maze
 
                             if (!meshRenderer->getEnabled())
                                 continue;
-
-                            Transform2D* transform2D = commandData.transform;
 
                             if (!meshRenderer->getRenderMesh())
                                 continue;

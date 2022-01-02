@@ -227,7 +227,7 @@ namespace Maze
         VertexArrayObjectPtr m_vao;
         RenderMeshPtr m_renderMesh;
 
-        F32 m_timer;
+        F32 m_timer = 0.0f;
 
         Deque<TrailEdge> m_edges;
         FastVector<Vec3DF> m_vertices;

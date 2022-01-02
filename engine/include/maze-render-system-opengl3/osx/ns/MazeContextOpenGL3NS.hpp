@@ -112,8 +112,17 @@ namespace Maze
         void ensureIfCurrent();
 
         //////////////////////////////////////////
-        virtual bool _validateIsCurrent() MAZE_OVERRIDE;
+        virtual bool _validateIsCurrentGLContext() MAZE_OVERRIDE;
+        
+        //////////////////////////////////////////
+        virtual bool _validateIsCurrentGLContextAndSurface() MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        virtual bool isSameGLContext(ContextOpenGL* _context) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual bool isSameGLSurface(ContextOpenGL* _context) MAZE_OVERRIDE;
+        
         //////////////////////////////////////////
         virtual GlFunctionPointer getFunction(CString _name) MAZE_OVERRIDE;
 

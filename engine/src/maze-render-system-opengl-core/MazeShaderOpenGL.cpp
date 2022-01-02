@@ -94,7 +94,6 @@ namespace Maze
         : m_context(nullptr)
     {
         ShaderOpenGL* shaderOpenGL = newShader->castRaw<ShaderOpenGL>();
-        RenderSystemOpenGL* rs = shaderOpenGL->getRenderSystemOpenGLRaw();
         ContextOpenGL* context = shaderOpenGL->getContextOpenGL();
         if (context)
         {

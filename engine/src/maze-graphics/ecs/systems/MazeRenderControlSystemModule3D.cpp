@@ -276,8 +276,6 @@ namespace Maze
                 if (_renderTarget != renderTarget.get())
                     return;
 
-                Vec2DU const& renderTargetSize = renderTarget->getRenderTargetSize();
-
                 DefaultPassParams params;
 
                 params.renderMask = _camera3D->getRenderMask();

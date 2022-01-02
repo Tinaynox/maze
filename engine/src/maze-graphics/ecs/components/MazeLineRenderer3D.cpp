@@ -250,12 +250,12 @@ namespace Maze
 
             m_vertices[vertex] = vertexA;
             m_uvs[vertex] = Vec2DF(edge.progress, 0.0f);
-            m_colors[vertex] = color;
+            m_colors[vertex] = color.toVec4DF();
             ++vertex;
 
             m_vertices[vertex] = vertexB;
             m_uvs[vertex] = Vec2DF(edge.progress, 1.0f);
-            m_colors[vertex] = color;
+            m_colors[vertex] = color.toVec4DF();
             ++vertex;
 
             
@@ -272,12 +272,12 @@ namespace Maze
 
         m_vertices[vertex] = vertexA;
         m_uvs[vertex] = Vec2DF(1.0f, 0.0f);
-        m_colors[vertex] = color;
+        m_colors[vertex] = color.toVec4DF();
         ++vertex;
 
         m_vertices[vertex] = vertexB;
         m_uvs[vertex] = Vec2DF(1.0f, 1.0f);
-        m_colors[vertex] = color;
+        m_colors[vertex] = color.toVec4DF();
         ++vertex;
 
         m_vao->setVerticesData((U8 const*)&m_vertices[0], c_positionDescription, verticesCount);

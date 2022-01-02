@@ -135,7 +135,6 @@ namespace Maze
         if (!m_renderTarget)
             return Vec2DF::c_zero;
 
-        Vec4DF positionWS = Vec4DF(_positionWS, 1.0f);
         Mat4DF const& cameraTransform = getTransform()->getWorldTransform();
         Vec4DF positionVS = cameraTransform.inversedAffineCopy() * _positionWS;
         Mat4DF projectionMatrix = calculateProjectionMatrix(getRenderTarget());

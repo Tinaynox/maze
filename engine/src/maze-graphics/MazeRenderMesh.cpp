@@ -123,12 +123,15 @@ namespace Maze
         AssetFilePtr const& _assetFile,
         RenderTarget* _renderTarget)
     {
+        MAZE_ERROR_RETURN_IF(!_assetFile, "Null AssetFile")
+        
         MeshPtr mesh = Mesh::Create(m_renderSystem);
 
         MAZE_LOG("Loading %s...", _assetFile->getFileName().c_str());
         LoadOBJ(_assetFile, mesh);
 
         loadFromMesh(mesh, _renderTarget);
+        
     }
 
     //////////////////////////////////////////
