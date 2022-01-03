@@ -362,7 +362,6 @@ namespace Maze
 
                 AABB2D menuListAABB = menuList->getTransform()->calculateWorldAABB();
                 F32 menuListWorldWidth = menuListAABB.getWidth();
-                F32 menuListWorldHeight = menuListAABB.getHeight();
 
                 Vec2DF positionOS(
                     parentListItem->getTransform()->getWidth(),

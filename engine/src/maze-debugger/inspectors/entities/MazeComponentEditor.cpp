@@ -110,9 +110,6 @@ namespace Maze
     //////////////////////////////////////////
     Transform2DPtr ComponentEditor::createDefaultEditorRoot(Transform2DPtr const& _parent)
     {
-        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
-
         VerticalLayout2DPtr layout = UIHelper::CreateVerticalLayout(
             HorizontalAlignment2D::Center,
             VerticalAlignment2D::Top,
@@ -212,7 +209,7 @@ namespace Maze
                     auto optionDataCopy = optionData;
                     _menuListTree->addItem(
                         optionData.first,
-                        [this, componentUID, optionDataCopy](String const& _item)
+                        [componentUID, optionDataCopy](String const& _item)
                         {
                             Set<EntityPtr> selectedEntites = SelectionManager::GetInstancePtr()->getSelectedEntities();
                             for (EntityPtr const& entity : selectedEntites)
@@ -244,9 +241,6 @@ namespace Maze
     //////////////////////////////////////////
     Transform2DPtr ComponentEditor::createDefaultBody(Transform2DPtr const& _parent)
     {
-        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
-
         F32 const paddingLeft = 10.0f;
         F32 const paddingRight = 3.0f;
         F32 const paddingBottom = 5.0f;

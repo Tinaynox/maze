@@ -215,11 +215,7 @@ namespace Maze
     //////////////////////////////////////////
     void PropertyDrawerRenderMesh::notifyRenderMeshButtonClick(Button2D* _button, CursorInputEvent const& _event)
     {
-        if (m_renderMesh)
-        {
-            RenderSystemPtr const& renderSystem = Maze::GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-            RenderMeshManagerPtr const& renderMeshManager = renderSystem->getRenderMeshManager();
-        }
+
     }
 
     //////////////////////////////////////////

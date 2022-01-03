@@ -97,8 +97,6 @@ namespace Maze
     {
         if (!Inspector::init(_parent))
             return false;
-        
-        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
         m_topBlock = SpriteHelper::CreateTransform2D(
             Vec2DF(_parent->getWidth(), 50.0f),
@@ -209,9 +207,6 @@ namespace Maze
     //////////////////////////////////////////
     void EntitiesInspector::buildEntitiesPropertiesList()
     {
-        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
-
         InspectorManager* inspectorManager = InspectorManager::GetInstancePtr();
 
         Set<MetaClass*> componentMetaClasses = DebuggerHelper::CollectIntersectingComponentMetaClasses(m_entities);

@@ -295,7 +295,7 @@ namespace Maze
                 Vec2DF(1.0f, 1.0f),
                 Vec2DF(1.0f, 1.0f));
             m_copyButton->eventClick.subscribe(
-                [this](Button2D* _button, CursorInputEvent const& _event)
+                [](Button2D* _button, CursorInputEvent const& _event)
                 {
                     AnimationCurve curve = AnimationCurveManager::GetInstancePtr()->getCurve();
                     SystemManager::GetInstancePtr()->setClipboardString(curve.toString());
@@ -588,7 +588,6 @@ namespace Maze
 
         F32 startTime = curve.getStartTime();
         F32 endTime = curve.getEndTime();
-        F32 time = curve.getTime();
         
 
         // Frame and grid
@@ -1219,7 +1218,6 @@ namespace Maze
         }
 
         F32 prevTime = curve.getKeys()[m_keyIndex].time;
-        F32 prevValue = curve.getKeys()[m_keyIndex].value;
         S32 insertionIndex = (S32)curve.getInsertionIndex(_newTime);
 
         curve.setKey(m_keyIndex, _newValue);
@@ -1374,8 +1372,6 @@ namespace Maze
         F32 width = m_curveRenderer->getTransform()->getSize().x - c_leftOffset - c_rightOffset;
         F32 heightScalar = getCurveHeightScalar();
         Vec2DF origin = getCurveOrigin();
-
-        F32 cellSize = width / 20.0f;
 
         Vec2DF point(
             origin.x + x * width,

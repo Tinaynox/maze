@@ -718,8 +718,6 @@ namespace Maze
                 listTemplateSpriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
 
                 listEntity = listTemplateSpriteRenderer->getEntityRaw();
-
-                Transform2DPtr const& listTemplateTransform = listTemplateSpriteRenderer->getTransform();
                 
                 CanvasPtr canvas = listEntity->ensureComponent<Canvas>();
 
@@ -760,7 +758,6 @@ namespace Maze
                         _ecsScene);
                     backgroundSpriteRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Background");
                     backgroundSpriteRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
-                    SpriteRenderer2D* backgroundSpriteRendererRaw = backgroundSpriteRenderer.get();
                     
                     SpriteRenderer2DPtr checkMarkSprite = SpriteHelper::CreateSprite(
                         UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::CheckMark),
@@ -772,7 +769,6 @@ namespace Maze
                         Vec2DF(0.0f, 0.0f),
                         Vec2DF(0.5f, 0.5f));
                     checkMarkSprite->getEntityRaw()->ensureComponent<Name>()->setName("CheckMark");
-                    SpriteRenderer2D* checkMarkSpriteRaw = checkMarkSprite.get();
                     checkMarkSprite->setColor(ColorU32::c_black);
                     
                     SystemTextRenderer2DPtr itemTextRenderer = SpriteHelper::CreateSystemText(
@@ -1434,7 +1430,6 @@ namespace Maze
                 _ecsScene);
             backgroundSpriteRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Background");
             backgroundSpriteRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
-            SpriteRenderer2D* backgroundSpriteRendererRaw = backgroundSpriteRenderer.get();
             menuListItem->getButton()->setTransitionSprite(backgroundSpriteRenderer);
             menuListItem->getButton()->setNormalColor(ColorU32(240, 240, 240));
             menuListItem->getButton()->setFocusedColor(ColorU32(209, 226, 242));
@@ -1577,8 +1572,6 @@ namespace Maze
             Vec2DF const& _anchor,
             Vec2DF const& _pivot)
         {
-            RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-
             EntityPtr menuListTreeEntity = _ecsScene->createEntity();
             menuListTreeEntity->ensureComponent<Name>("Menu List Tree");
 
@@ -1747,7 +1740,6 @@ namespace Maze
             transform->setSize(_size);
 
             SpriteRenderer2DPtr spriteRenderer = scrollbarEntity->createComponent<SpriteRenderer2D>();
-            SpriteRenderer2D* spriteRendererRaw = spriteRenderer.get();
             spriteRenderer->setSprite(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));
             spriteRenderer->setMaterial(
                 renderSystem->getMaterialManager()->getColorTextureMaterial());
@@ -1804,7 +1796,6 @@ namespace Maze
             transform->setSize(_size);
 
             SpriteRenderer2DPtr spriteRenderer = scrollbarEntity->createComponent<SpriteRenderer2D>();
-            SpriteRenderer2D* spriteRendererRaw = spriteRenderer.get();
             spriteRenderer->setSprite(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));
             spriteRenderer->setMaterial(
                 renderSystem->getMaterialManager()->getColorTextureMaterial());
@@ -1861,7 +1852,6 @@ namespace Maze
             transform->setSize(_size);
 
             SpriteRenderer2DPtr spriteRenderer = scrollbarEntity->createComponent<SpriteRenderer2D>();
-            SpriteRenderer2D* spriteRendererRaw = spriteRenderer.get();
             spriteRenderer->setSprite(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));
             spriteRenderer->setMaterial(
                 renderSystem->getMaterialManager()->getColorTextureMaterial());

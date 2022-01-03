@@ -189,8 +189,6 @@ namespace Maze
         SizePolicy2DPtr layoutSizePolicy = m_layout->getEntityRaw()->ensureComponent<SizePolicy2D>();
         layoutSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
 
-        MaterialPtr const& material = MaterialPickerManager::GetInstancePtr()->getMaterial();
-
         updateMaterials();
         updateUI();
     }
@@ -326,7 +324,7 @@ namespace Maze
                 // #TODO: REWORK
                 if (materialCopy->getUniform("u_baseMap"))
                 {
-                    ShaderUniformPtr const& uniform = renderPass->getShader()->ensureUniform("u_baseMapST");
+                    renderPass->getShader()->ensureUniform("u_baseMapST");
 
                     TexturePtr const& texture = materialCopy->getUniform("u_baseMap")->getTexture();
 

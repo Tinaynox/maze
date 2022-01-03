@@ -113,9 +113,6 @@ namespace Maze
         Transform2DPtr const& _parent,
         CString _label)
     {
-        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
-
         HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
@@ -546,8 +543,6 @@ namespace Maze
 
             listEntity = listTemplateSpriteRenderer->getEntityRaw();
 
-            Transform2DPtr const& listTemplateTransform = listTemplateSpriteRenderer->getTransform();
-
             CanvasPtr canvas = listEntity->ensureComponent<Canvas>();
 
             canvas->setClearColor(ColorU32::c_red);
@@ -587,7 +582,6 @@ namespace Maze
                     m_layout->getEntityRaw()->getECSScene());
                 backgroundSpriteRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Background");
                 backgroundSpriteRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
-                SpriteRenderer2D* backgroundSpriteRendererRaw = backgroundSpriteRenderer.get();
 
                 SpriteRenderer2DPtr checkMarkSprite = SpriteHelper::CreateSprite(
                     UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::CheckMark),
@@ -599,7 +593,6 @@ namespace Maze
                     Vec2DF(0.0f, 0.0f),
                     Vec2DF(0.5f, 0.5f));
                 checkMarkSprite->getEntityRaw()->ensureComponent<Name>()->setName("CheckMark");
-                SpriteRenderer2D* checkMarkSpriteRaw = checkMarkSprite.get();
                 checkMarkSprite->setColor(ColorU32::c_black);
 
                 SystemTextRenderer2DPtr itemTextRenderer = SpriteHelper::CreateSystemText(

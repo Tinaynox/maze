@@ -204,7 +204,6 @@ namespace Maze
         m_curvePixelSheet.fill(ColorU32(86, 86, 86));
 
         F32 startTime = m_curve.getStartTime();
-        F32 endTime = m_curve.getEndTime();
         F32 time = m_curve.getTime();
 
         F32 width = (F32)m_curvePixelSheet.getSize().x - 1;

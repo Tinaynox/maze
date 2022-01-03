@@ -88,9 +88,6 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    F32 const c_intensityMax = 32.0f;
-
-    //////////////////////////////////////////
     // Class SceneColorGradientPicker
     //
     //////////////////////////////////////////
@@ -295,11 +292,11 @@ namespace Maze
                 Vec2DF(1.0f, 1.0f),
                 Vec2DF(1.0f, 1.0f));
             m_copyButton->eventClick.subscribe(
-                [this](Button2D* _button, CursorInputEvent const& _event)
-            {
-                ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
-                SystemManager::GetInstancePtr()->setClipboardString(gradient.toString());
-            });
+                [](Button2D* _button, CursorInputEvent const& _event)
+                {
+                    ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
+                    SystemManager::GetInstancePtr()->setClipboardString(gradient.toString());
+                });
         }
 
         // Gradient
@@ -354,7 +351,6 @@ namespace Maze
                     Vec4DF uv = Vec4DF(0.0f, 0.0f, 1.0f, 1.0f);
                     F32 canvasRendererAlpha = _spriteRenderer->getCanvasRenderer()->getAlpha();
                     FastVector<Pair<F32, Vec4DF>> gradientColors = gradient.toRawColors();
-                    Size gradientColorsCount = gradientColors.size();
 
                     F32 startTime = gradientColors.front().first;
                     F32 deltaTime = gradientColors.back().first - gradientColors.front().first;
@@ -689,10 +685,6 @@ namespace Maze
     {
         ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
         gradient.clamp01();
-
-        F32 startTime = gradient.getStartTime();
-        F32 endTime = gradient.getEndTime();
-        F32 deltaTime = gradient.getTime();
 
         // Alpha
         Size alphaTagsCount = gradient.getKeysAlpha().size();
@@ -1102,7 +1094,6 @@ namespace Maze
         }
 
         F32 prevTime = gradient.getKeysAlpha()[m_colorTagIndex].time;
-        F32 prevValue = gradient.getKeysAlpha()[m_colorTagIndex].value;
         Size insertionIndex = gradient.getInsertionIndexAlpha(_newTime);
 
         gradient.setKeyAlphaTime(m_colorTagIndex, _newTime);

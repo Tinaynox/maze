@@ -107,10 +107,7 @@ namespace Maze
     void ShaderUniformVariantDrawerVec3DF::buildUI(
         Transform2DPtr const& _parent,
         CString _label)
-    {
-        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
-        
+    {        
 
         HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Left,
@@ -160,7 +157,6 @@ namespace Maze
         Transform2DPtr const& _parent)
     {
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
 
         HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Left,

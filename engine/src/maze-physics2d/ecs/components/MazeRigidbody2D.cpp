@@ -250,9 +250,9 @@ namespace Maze
         b2BodyDef bd;
         bd.type = GetBox2DBodyType(m_type);
 
-        Vec2DF position;
-        F32 angle;
-        Vec2DF scale;
+        Vec2DF position = Vec2DF::c_zero;
+        F32 angle = 0.0f;
+        Vec2DF scale = Vec2DF::c_one;
 
         if (m_transform2D)
         {

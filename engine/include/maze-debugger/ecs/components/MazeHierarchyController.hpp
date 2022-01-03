@@ -183,7 +183,7 @@ namespace Maze
         void removeHierarchyLine(EntityPtr const& _entity);
 
     protected:
-        Canvas* m_canvas;
+        Canvas* m_canvas = nullptr;
 
         Transform2DPtr m_transform;
 
@@ -195,7 +195,7 @@ namespace Maze
         Transform2DPtr m_titleTransform;
         SpriteRenderer2DPtr m_titleBackground;
 
-        ECSWorld* m_world;
+        ECSWorld* m_world = nullptr;
 
         Map<EntityId, HierarchyLineEntityData> m_hierarchyLinesPerEntity;
         UnorderedMap<ECSScene*, HierarchyLineSceneData> m_hierarchyLinesPerScene;

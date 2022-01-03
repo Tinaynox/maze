@@ -42,9 +42,6 @@
 //////////////////////////////////////////
 namespace Maze
 {
-    //////////////////////////////////////////
-    static F32 const c_shotValueMax = 1.5f;
-
 
     //////////////////////////////////////////
     // Class LevelBloomController
@@ -183,8 +180,6 @@ namespace Maze
     //////////////////////////////////////////
     void LevelBloomController::updateBuffers()
     {
-        RenderSystem* renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw();
-
         Vec2DU bloomRenderBufferSize(
             m_sceneGame->getRenderBuffer()->getWidth() >> 1,
             m_sceneGame->getRenderBuffer()->getHeight() >> 1);

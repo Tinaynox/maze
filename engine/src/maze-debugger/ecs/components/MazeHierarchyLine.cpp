@@ -117,7 +117,6 @@ namespace Maze
     void HierarchyLine::processEntityAwakened()
     {
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        SpriteManagerPtr const& spriteManager = renderSystem->getSpriteManager();
         MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
 
         S32 const charSize = 8;
@@ -208,7 +207,7 @@ namespace Maze
 
                     _menuListTree->addItem(
                         "Delete",
-                        [this, entityWeak](String const& _text)
+                        [entityWeak](String const& _text)
                         {
                             EntityPtr entity = entityWeak.lock();
                             if (entity)
@@ -223,7 +222,7 @@ namespace Maze
                     {
                         _menuListTree->addItem(
                             "Duplicate",
-                            [this, entityWeak](String const& _text)
+                            [entityWeak](String const& _text)
                             {
                                 EntityPtr entity = entityWeak.lock();
                                 if (entity)
@@ -236,7 +235,7 @@ namespace Maze
 
                         _menuListTree->addItem(
                             "Add Child/3D/Empty",
-                            [this, transform3D](String const& _text)
+                            [transform3D](String const& _text)
                             {
                                 EntityPtr newEntity = DebuggerHelper::CreateEntity3D("Entity");
                                 Transform3DPtr newEntityTransform = newEntity->getComponent<Transform3D>();
@@ -251,7 +250,7 @@ namespace Maze
                         {
                             _menuListTree->addItem(
                                 "Add Child/2D/Empty",
-                                [this, transform2D](String const& _text)
+                                [transform2D](String const& _text)
                                 {
                                     EntityPtr newEntity = DebuggerHelper::CreateEntity2D("Entity");
                                     Transform2DPtr newEntityTransform = newEntity->getComponent<Transform2D>();

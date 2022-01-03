@@ -115,7 +115,6 @@ namespace Maze
         CString _label)
     {
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
         
         VerticalLayout2DPtr verticalLayout = UIHelper::CreateVerticalLayout(
             HorizontalAlignment2D::Right,
@@ -193,7 +192,6 @@ namespace Maze
         Transform2DPtr const& _parent)
     {
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
 
         HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Left,

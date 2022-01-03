@@ -132,8 +132,6 @@ namespace Maze
 
         OptionData optionData;
 
-        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-
         EntityPtr menuButtonObject = m_menuButtonPrefab->getEntityRaw()->createCopy();
         menuButtonObject->setActiveSelf(true);
         optionData.button = menuButtonObject->getComponent<ToggleButton2D>();

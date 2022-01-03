@@ -140,7 +140,6 @@ namespace Maze
         if (m_axisStates[_axisId] == _axisState)
             return;
 
-        F32 lastState = m_axisStates[_axisId];
         m_axisStates[_axisId] = _axisState;
 
         eventAxisValueChanged(this, _axisId, _axisState);

@@ -203,8 +203,6 @@ namespace Maze
                 Vec4DF uv = Vec4DF(0.0f, 0.0f, 1.0f, 1.0f);
                 F32 canvasRendererAlpha = _spriteRenderer->getCanvasRenderer()->getAlpha();
                 FastVector<Pair<F32, Vec4DF>> gradientColors = gradient.toRawColors();
-                Size gradientColorsCount = gradientColors.size();
-
                 
 
                 F32 startTime = gradientColors.front().first;

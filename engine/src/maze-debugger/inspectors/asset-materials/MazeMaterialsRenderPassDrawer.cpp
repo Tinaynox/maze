@@ -107,8 +107,6 @@ namespace Maze
     //////////////////////////////////////////
     void MaterialsRenderPassDrawer::processEntityAwakened()
     {
-        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-
         m_transform = getEntityRaw()->ensureComponent<Transform2D>();
         SizePolicy2DPtr sizePolicy = getEntityRaw()->ensureComponent<SizePolicy2D>();
         sizePolicy->setFlag(SizePolicy2D::Height, false);

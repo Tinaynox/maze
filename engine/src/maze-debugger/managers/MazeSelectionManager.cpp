@@ -296,6 +296,10 @@ namespace Maze
                 selectObject(ObjectPtr());
                 break;
             }
+            default:
+            {
+                break;
+            }
         }
 
         m_selectionType = _value;

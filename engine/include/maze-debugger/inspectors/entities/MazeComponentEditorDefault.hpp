@@ -81,6 +81,9 @@ namespace Maze
         ComponentEditorDefault();        
 
         //////////////////////////////////////////
+        using ComponentEditor::init;
+        
+        //////////////////////////////////////////
         virtual bool init(MetaClass* _componentMetaClass);
 
 

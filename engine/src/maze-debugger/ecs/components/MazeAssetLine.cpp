@@ -118,7 +118,6 @@ namespace Maze
         S32 const charSize = 8;
 
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        SpriteManagerPtr const& spriteManager = renderSystem->getSpriteManager();
         MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
 
 

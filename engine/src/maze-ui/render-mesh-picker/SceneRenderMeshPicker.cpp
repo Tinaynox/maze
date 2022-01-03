@@ -191,8 +191,6 @@ namespace Maze
         SizePolicy2DPtr layoutSizePolicy = m_layout->getEntityRaw()->ensureComponent<SizePolicy2D>();
         layoutSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
 
-        RenderMeshPtr const& material = RenderMeshPickerManager::GetInstancePtr()->getRenderMesh();
-
         updateRenderMeshs();
         updateUI();
     }

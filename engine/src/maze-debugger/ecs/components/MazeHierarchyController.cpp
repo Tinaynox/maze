@@ -75,8 +75,6 @@ namespace Maze
 
     //////////////////////////////////////////
     HierarchyController::HierarchyController()
-        : m_world(nullptr)
-        , m_canvas(nullptr)
     {
     }
 
@@ -129,7 +127,6 @@ namespace Maze
         m_hierarchyLinePool = getEntityRaw()->ensureComponent<HierarchyLinePool>();
 
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        SpriteManagerPtr const& spriteManager = renderSystem->getSpriteManager();
         MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
 
         m_titleTransform = SpriteHelper::CreateTransform2D(
@@ -271,7 +268,6 @@ namespace Maze
                             if (componentName)
                                 name = componentName->getName();
 
-                            HierarchyLineEntityData& hierarchyLineData = m_hierarchyLinesPerEntity[entity->getId()];
                             HierarchyLinePtr hierarchyLine = createHierarchyElement(
                                 entity,
                                 name.c_str(),

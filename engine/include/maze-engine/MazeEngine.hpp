@@ -189,7 +189,7 @@ namespace Maze
             RenderSystemPtr const& _renderSystem);
 
         //////////////////////////////////////////
-        virtual S32 getUpdatableOrder() const { return 10000; }
+        virtual S32 getUpdatableOrder() const MAZE_OVERRIDE { return 10000; }
 
     protected:
         static Engine* s_instance;

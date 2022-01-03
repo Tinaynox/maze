@@ -273,10 +273,6 @@ namespace Maze
 
         listTransform->destroyAllChildren();
 
-
-        SystemTextRenderer2D* labelTextRenderer = m_itemPrefabTransform->findChildComponent<SystemTextRenderer2D>("Label");
-
-
         F32 y = 0;
 
         for (OptionData const& optionData : m_options)

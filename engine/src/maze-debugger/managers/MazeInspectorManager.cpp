@@ -286,8 +286,6 @@ namespace Maze
     //////////////////////////////////////////
     PropertyDrawerPtr InspectorManager::createPropertyDrawer(ClassUID _propertyClassUID, String const& _label)
     {
-        MetaClass* metaClass = MetaClass::GetMetaClass(_propertyClassUID);
-
         auto it = m_propertyDrawers.find(_propertyClassUID);
         if (it == m_propertyDrawers.end())
         {

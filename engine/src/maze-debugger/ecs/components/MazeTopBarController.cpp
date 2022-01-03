@@ -123,7 +123,6 @@ namespace Maze
         m_transform = getEntityRaw()->ensureComponent<Transform2D>();
 
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        SpriteManagerPtr const& spriteManager = renderSystem->getSpriteManager();
         MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
 
         Transform2DPtr canvasTransform = SpriteHelper::CreateTransform2D(

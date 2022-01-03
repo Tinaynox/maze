@@ -328,8 +328,6 @@ namespace Maze
     {
         clearSaveMaterialButton();
 
-        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-
         Set<MaterialPtr> materials = getMaterials();
 
         // #TODO: Multi material editor
