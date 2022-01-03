@@ -126,6 +126,12 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool setSize(Vec2DU const& _size);
 
+        
+        //////////////////////////////////////////
+        inline Texture2DPtr getColorTexture2D(U32 _index = 0) const
+        {
+            return std::static_pointer_cast<Texture2D>(m_colorTextures[_index]);
+        }
 
         //////////////////////////////////////////
         inline TexturePtr const& getColorTexture(U32 _index = 0) const { return m_colorTextures[_index]; }

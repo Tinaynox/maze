@@ -150,8 +150,8 @@ namespace Maze
                 PixelFormat::RGBA_F16,
                 PixelFormat::DEPTH_U24
             });
-        m_renderBuffer->getColorTexture()->setMinFilter(TextureFilter::Linear);
-        m_renderBuffer->getColorTexture()->setMagFilter(TextureFilter::Linear);
+        m_renderBuffer->getColorTexture2D()->setMinFilter(TextureFilter::Linear);
+        m_renderBuffer->getColorTexture2D()->setMagFilter(TextureFilter::Linear);
 
 
 
@@ -171,7 +171,7 @@ namespace Maze
 
         MaterialPtr const& postFXMaterial = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getMaterial("PostFX00.mzmaterial");
         m_renderColorSprite = SpriteHelper::CreateSprite(
-            Sprite::Create(m_renderBuffer->getColorTexture()),
+            Sprite::Create(m_renderBuffer->getColorTexture2D()),
             m_canvas->getTransform()->getSize(),
             Vec2DF::c_zero,
             postFXMaterial,
@@ -344,7 +344,7 @@ namespace Maze
         m_renderColorSprite->getMaterial()->ensureUniform(
             "u_bloomMap",
             ShaderUniformType::UniformTexture2D)->set(
-                m_bloomController->getBloomRenderBuffer()->getColorTexture());
+                m_bloomController->getBloomRenderBuffer()->getColorTexture2D());
 
 
         Quaternion q = Quaternion::Slerp(
@@ -375,7 +375,7 @@ namespace Maze
         ps->getTransform()->rotate(Vec3DF::c_unitX, -Math::c_halfPi);
         ps->getTransform()->setLocalY(2.0f);
 
-        ps->getMainModule().setTransformPolicy(ParticleSystemTransformPolicy::World);
+        ps->getMainModule().setTransformPolicy(ParticleSystemSimulationSpace::World);
         ps->getMainModule().getLifetime().setConstant(1.0f);
         ps->getMainModule().getSpeed().setConstant(1.0f);
         ps->getMainModule().getRotation().setRandomBetweenConstants(0.0f, Math::c_twoPi);

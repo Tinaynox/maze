@@ -156,8 +156,6 @@ namespace Maze
         CString _name,
         Transform2DPtr const& _parent)
     {
-        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-
         HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
