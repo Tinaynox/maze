@@ -176,9 +176,7 @@ namespace Maze
     void SceneExample::create2D()
     {
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
         SpriteManagerPtr const& spriteManager = renderSystem->getSpriteManager();
-        RenderMeshManagerPtr const& renderMeshManager = renderSystem->getRenderMeshManager();
         MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
 
         spriteManager->setDefaultSpriteMaterial(materialManager->getColorTextureMaterial());
@@ -220,9 +218,6 @@ namespace Maze
     //////////////////////////////////////////
     void SceneExample::updateUI()
     {
-        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
-
         m_enabledText.reset();
         m_axesUI.clear();
         m_buttonsUI.clear();

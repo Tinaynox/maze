@@ -201,7 +201,7 @@ namespace Maze
         S32 defaultDeviceIndex = 0;
 
         // Go through device list (each device terminated with a single NULL, list terminated with double NULL)
-        while (*devices != NULL) 
+        while (*devices != 0) 
         {
             if (strcmp(defaultDeviceName, devices) == 0)
                 defaultDeviceIndex = index;
