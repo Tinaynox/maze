@@ -52,8 +52,8 @@ namespace Maze
     StateMachineOpenGL::StateMachineOpenGL(ContextOpenGL* _context)
         : m_context(_context)
         , m_activeTexture(MAZE_GL_TEXTURE0)
-        , m_bindTextureIds{ 0 }
         , m_bindTextureTargets{ 0 }
+        , m_bindTextureIds{ 0 }        
         , m_clipDistances{ 0 }
         , m_program(0)
         , m_frameBuffer(0)

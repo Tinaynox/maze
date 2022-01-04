@@ -205,20 +205,7 @@ namespace Maze
         m_testSprite2->getTransform()->setZ(10000);
 #endif
 
-
-        S32 p0 = EntityManager::GetInstancePtr()->getComponentPriority<Transform3D>();
-        S32 p1 = EntityManager::GetInstancePtr()->getComponentPriority<Camera3D>();
-
-
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
-        SpriteManagerPtr const& spriteManager = renderSystem->getSpriteManager();
-        RenderMeshManagerPtr const& renderMeshManager = renderSystem->getRenderMeshManager();
-
-        EntityManager* entityManager = EntityManager::GetInstancePtr();
-        ECSWorldPtr const& world = entityManager->getDefaultWorld();
-
-        RenderWindowPtr const& renderTarget = Example::GetInstancePtr()->getMainRenderWindow();
         Example::GetInstancePtr()->eventMainRenderWindowViewportChanged.subscribe(this, &SceneExample::notifyMainRenderWindowViewportChanged);
         Example::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &SceneExample::notifyRenderTargetResized);
 

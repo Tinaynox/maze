@@ -79,8 +79,7 @@ namespace Maze
         MAZE_ERROR_RETURN_VALUE_IF(!dynLibManager, false, "DynLibManager is not exists!");
 
         DynLibPtr const& pluginLibrary = dynLibManager->loadLibrary(_pluginLibraryFullPath);
-        if (!pluginLibrary)
-            return false;
+        MAZE_ERROR_RETURN_VALUE_IF(!pluginLibrary, false, "Failed to load plugin - %s", _pluginLibraryFullPath.c_str());
 
         if (std::find(m_pluginLibs.begin(), m_pluginLibs.end(), pluginLibrary) == m_pluginLibs.end())
         {
@@ -138,15 +137,17 @@ namespace Maze
 
 #if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
 #   if (MAZE_ARCH == MAZE_ARCH_X86)
-        pluginName += "-x86-d";
+        pluginName += "-x86;
 #   else
-        pluginName += "-x64-d";
+        pluginName += "-x64;
 #   endif
 #elif (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
-        pluginName = "lib" + pluginName + "-d";
+        pluginName = "lib" + pluginName;
 #elif (MAZE_PLATFORM == MAZE_PLATFORM_OSX)
-        pluginName = "lib" + pluginName + "-d";
-#else
+        pluginName = "lib" + pluginName;
+#endif
+        
+#if MAZE_DEBUG
         pluginName += "-d";
 #endif
 
