@@ -60,7 +60,13 @@ elseif((MAZE_TARGET_PLATFORM_IS_ANDROID))
     target_link_libraries(
             maze-sound-system-openal
             PUBLIC OpenAL)
-    
+
+elseif((MAZE_TARGET_PLATFORM_IS_OSX))
+    find_package(OpenAL REQUIRED)
+    target_link_libraries(
+            maze-sound-system-openal
+            PUBLIC ${OPENAL_LIBRARY})
+
 endif()
     
 

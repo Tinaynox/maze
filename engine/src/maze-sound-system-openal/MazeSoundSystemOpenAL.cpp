@@ -34,6 +34,8 @@
 
 #if MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS
 #   include "maze-sound-system-openal/win/MazeContextOpenALWin.hpp"
+#elif MAZE_PLATFORM == MAZE_PLATFORM_OSX
+#   include "maze-sound-system-openal/osx/MazeContextOpenALOSX.hpp"
 #endif
 
 
@@ -107,6 +109,8 @@ namespace Maze
     {
 #if MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS
         return ContextOpenALWin::Create(cast<SoundSystemOpenAL>(), _deviceIndex);
+#elif MAZE_PLATFORM == MAZE_PLATFORM_OSX
+        return ContextOpenALOSX::Create(cast<SoundSystemOpenAL>(), _deviceIndex);
 #else
         MAZE_NOT_IMPLEMENTED;
         return ContextOpenALPtr();

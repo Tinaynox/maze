@@ -157,9 +157,7 @@ namespace Maze
     void SceneExample::create2D()
     {
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
         SpriteManagerPtr const& spriteManager = renderSystem->getSpriteManager();
-        RenderMeshManagerPtr const& renderMeshManager = renderSystem->getRenderMeshManager();
         MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
 
         RenderWindowPtr const& renderTarget = Example::GetInstancePtr()->getMainRenderWindow();
@@ -235,7 +233,8 @@ namespace Maze
         m_soundVolumeSlider->eventValueChanged.subscribe(
             [&](Slider2D* _slider, F32 _value)
             {
-                m_soundGroup->setVolume(_value);
+                if (m_soundGroup)
+                    m_soundGroup->setVolume(_value);
             });
 
         m_musicVolumeSlider = UIHelper::CreateDefaultSlider(
@@ -248,7 +247,8 @@ namespace Maze
         m_musicVolumeSlider->eventValueChanged.subscribe(
             [&](Slider2D* _slider, F32 _value)
             {
-                m_musicGroup->setVolume(_value);
+                if (m_musicGroup)
+                    m_musicGroup->setVolume(_value);
             });
     }
 

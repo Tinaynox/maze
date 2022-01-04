@@ -59,6 +59,9 @@ namespace Maze
         if (!_soundSystem)
             _soundSystem = SoundManager::GetInstancePtr()->getDefaultSoundSystemRaw();
 
+        if (!_soundSystem)
+            return nullptr;
+        
         return _soundSystem->createSound();
     }
 

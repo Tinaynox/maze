@@ -94,20 +94,23 @@
 - (void)mouseDown:(NSEvent*)_event
 {
     NSPoint pos = [_event locationInWindow];
+    pos = [self convertPointToBacking:pos];
     
     Maze::InputManager* inputManager = Maze::InputManager::GetInstancePtr();
     Maze::InputEventMouseData eventData;
     eventData.type = Maze::InputEventMouseType::ButtonDown;
     eventData.x = pos.x;
-    eventData.y =  pos.y;
+    eventData.y = pos.y;
     eventData.buttonId = 0;
-    inputManager->generateInputEvent( eventData );
+    eventData.window = m_window;
+    inputManager->generateInputEvent(eventData);
 }
 
 //////////////////////////////////////////
 - (void)mouseUp:(NSEvent *)_event
 {
     NSPoint pos = [_event locationInWindow];
+    pos = [self convertPointToBacking:pos];
     
     Maze::InputManager* inputManager = Maze::InputManager::GetInstancePtr();
     Maze::InputEventMouseData eventData;
@@ -115,13 +118,15 @@
     eventData.x = pos.x;
     eventData.y = pos.y;
     eventData.buttonId = 0;
-    inputManager->generateInputEvent( eventData );
+    eventData.window = m_window;
+    inputManager->generateInputEvent(eventData);
 }
 
 //////////////////////////////////////////
 - (void)rightMouseDown: (NSEvent*)_event
 {
     NSPoint pos = [_event locationInWindow];
+    pos = [self convertPointToBacking:pos];
     
     Maze::InputManager* inputManager = Maze::InputManager::GetInstancePtr();
     Maze::InputEventMouseData eventData;
@@ -129,13 +134,15 @@
     eventData.x = pos.x;
     eventData.y = pos.y;
     eventData.buttonId = 1;
-    inputManager->generateInputEvent( eventData );
+    eventData.window = m_window;
+    inputManager->generateInputEvent(eventData);
 }
 
 //////////////////////////////////////////
 - (void)rightMouseUp:(NSEvent*)_event
 {
     NSPoint pos = [_event locationInWindow];
+    pos = [self convertPointToBacking:pos];
     
     Maze::InputManager* inputManager = Maze::InputManager::GetInstancePtr();
     Maze::InputEventMouseData eventData;
@@ -143,26 +150,30 @@
     eventData.x = pos.x;
     eventData.y = pos.y;
     eventData.buttonId = 1;
-    inputManager->generateInputEvent( eventData );
+    eventData.window = m_window;
+    inputManager->generateInputEvent(eventData);
 }
 
 //////////////////////////////////////////
 -(void)mouseMoved:(NSEvent*)_event
 {
     NSPoint pos = [_event locationInWindow];
+    pos = [self convertPointToBacking:pos];
     
     Maze::InputManager* inputManager = Maze::InputManager::GetInstancePtr();
     Maze::InputEventMouseData eventData;
     eventData.type = Maze::InputEventMouseType::Move;
     eventData.x = pos.x;
     eventData.y = pos.y;
-    inputManager->generateInputEvent( eventData );
+    eventData.window = m_window;
+    inputManager->generateInputEvent(eventData);
 }
 
 //////////////////////////////////////////
 - (void)mouseDragged:(NSEvent*)_event
 {
     NSPoint pos = [_event locationInWindow];
+    pos = [self convertPointToBacking:pos];
     
     Maze::InputManager* inputManager = Maze::InputManager::GetInstancePtr();
     Maze::InputEventMouseData eventData;
@@ -170,6 +181,7 @@
     eventData.x = pos.x;
     eventData.y = pos.y;
     eventData.buttonId = 0;
+    eventData.window = m_window;
     inputManager->generateInputEvent(eventData);
 }
 
@@ -177,6 +189,7 @@
 - (void)rightMouseDragged:(NSEvent *)_event
 {
     NSPoint pos = [_event locationInWindow];
+    pos = [self convertPointToBacking:pos];
     
     Maze::InputManager* inputManager = Maze::InputManager::GetInstancePtr();
     Maze::InputEventMouseData eventData;
@@ -184,6 +197,7 @@
     eventData.x = pos.x;
     eventData.y = pos.y;
     eventData.buttonId = 1;
+    eventData.window = m_window;
     inputManager->generateInputEvent(eventData);
 }
 
@@ -688,13 +702,13 @@
 //////////////////////////////////////////
 - (void)scrollWheel:(NSEvent*)_event
 {
-   
     Maze::InputManager* inputManager = Maze::InputManager::GetInstancePtr();
     Maze::InputEventMouseData eventData;
     eventData.type = Maze::InputEventMouseType::Wheel;
     eventData.x = 0;
     eventData.y = 0;
     eventData.z = [_event deltaY] * 50;
+    eventData.window = m_window;
     inputManager->generateInputEvent(eventData);
 }
 

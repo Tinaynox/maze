@@ -135,11 +135,16 @@ namespace Maze
     //////////////////////////////////////////
     SoundPtr const& SoundManager::getSound(AssetFilePtr const& _assetFile)
     {
+        static SoundPtr const nullPointer;
+        
         UnorderedMap<String, SoundPtr>::const_iterator it = m_soundsByName.find(_assetFile->getFileName());
         if (it != m_soundsByName.end())
             return it->second;
 
         SoundPtr sound = Sound::Create(_assetFile, m_defaultSoundSystem.get());
+        if (!sound)
+            return nullPointer;
+
         sound->setName(_assetFile->getFileName());
 
         return addSound(sound);

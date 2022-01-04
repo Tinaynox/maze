@@ -1,4 +1,4 @@
-﻿//////////////////////////////////////////
+//////////////////////////////////////////
 //
 // Maze Engine
 // Copyright (C) 2021 Dmitriy "Tinaynox" Nosov (tinaynox@gmail.com)
@@ -139,6 +139,76 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_SOUND_SYSTEM_OPENAL_API bool AssignFunctionsOpenAL(ContextOpenALPtr const& _soundContext)
     {
+#if MAZE_PLATFORM == MAZE_PLATFORM_OSX
+        mzalEnable = alEnable;
+        mzalDisable = alDisable;
+        mzalIsEnabled = alIsEnabled;
+        mzalGetBoolean = alGetBoolean;
+        mzalGetInteger = alGetInteger;
+        mzalGetFloat = alGetFloat;
+        mzalGetDouble = alGetDouble;
+        mzalGetBooleanv = alGetBooleanv;
+        mzalGetIntegerv = alGetIntegerv;
+        mzalGetFloatv = alGetFloatv;
+        mzalGetDoublev = alGetDoublev;
+        mzalGetString = alGetString;
+        mzalGetError = alGetError;
+        mzalIsExtensionPresent = alIsExtensionPresent;
+        mzalGetProcAddress = alGetProcAddress;
+        mzalGetEnumValue = alGetEnumValue;
+        mzalListeneri = alListeneri;
+        mzalListenerf = alListenerf;
+        mzalListener3f = alListener3f;
+        mzalListenerfv = alListenerfv;
+        mzalGetListeneri = alGetListeneri;
+        mzalGetListenerf = alGetListenerf;
+        mzalGetListener3f = alGetListener3f;
+        mzalGetListenerfv = alGetListenerfv;
+        mzalGenSources = alGenSources;
+        mzalDeleteSources = alDeleteSources;
+        mzalIsSource = alIsSource;
+        mzalSourcei = alSourcei;
+        mzalSourcef = alSourcef;
+        mzalSource3f = alSource3f;
+        mzalSourcefv = alSourcefv;
+        mzalGetSourcei = alGetSourcei;
+        mzalGetSourcef = alGetSourcef;
+        mzalGetSourcefv = alGetSourcefv;
+        mzalSourcePlayv = alSourcePlayv;
+        mzalSourceStopv = alSourceStopv;
+        mzalSourceRewindv = alSourceRewindv;
+        mzalSourcePlay = alSourcePlay;
+        mzalSourcePause = alSourcePause;
+        mzalSourceStop = alSourceStop;
+        mzalSourceRewind = alSourceRewind;
+        mzalGenBuffers = alGenBuffers;
+        mzalDeleteBuffers = alDeleteBuffers;
+        mzalIsBuffer = alIsBuffer;
+        mzalBufferData = alBufferData;
+        mzalGetBufferi = alGetBufferi;
+        mzalGetBufferf = alGetBufferf;
+        mzalSourceQueueBuffers = alSourceQueueBuffers;
+        mzalSourceUnqueueBuffers = alSourceUnqueueBuffers;
+        mzalDistanceModel = alDistanceModel;
+        mzalDopplerFactor = alDopplerFactor;
+        mzalDopplerVelocity = alDopplerVelocity;
+
+        mzalcGetString = alcGetString;
+        mzalcGetIntegerv = alcGetIntegerv;
+        mzalcOpenDevice = alcOpenDevice;
+        mzalcCloseDevice = alcCloseDevice;
+        mzalcCreateContext = alcCreateContext;
+        mzalcMakeContextCurrent = alcMakeContextCurrent;
+        mzalcProcessContext = alcProcessContext;
+        mzalcGetCurrentContext = alcGetCurrentContext;
+        mzalcGetContextsDevice = alcGetContextsDevice;
+        mzalcSuspendContext = alcSuspendContext;
+        mzalcDestroyContext = alcDestroyContext;
+        mzalcGetError = alcGetError;
+        mzalcIsExtensionPresent = alcIsExtensionPresent;
+        mzalcGetProcAddress = alcGetProcAddress;
+        mzalcGetEnumValue = alcGetEnumValue;
+#else
         AssignOpenALFunction(_soundContext, mzalEnable, "alEnable");
         AssignOpenALFunction(_soundContext, mzalDisable, "alDisable");
         AssignOpenALFunction(_soundContext, mzalIsEnabled, "alIsEnabled");
@@ -207,6 +277,7 @@ namespace Maze
         AssignOpenALFunction(_soundContext, mzalcIsExtensionPresent, "alcIsExtensionPresent");
         AssignOpenALFunction(_soundContext, mzalcGetProcAddress, "alcGetProcAddress");
         AssignOpenALFunction(_soundContext, mzalcGetEnumValue, "alcGetEnumValue");
+#endif
        
         return true;
     }

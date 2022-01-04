@@ -25,73 +25,74 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeSoundOpenAL_hpp_))
-#define _MazeSoundOpenAL_hpp_
+#if (!defined(_MazeContextOpenALOSX_hpp_))
+#define _MazeContextOpenALOSX_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-sound-system-openal/MazeSoundSystemOpenALHeader.hpp"
+#include "maze-sound-system-openal/MazeContextOpenAL.hpp"
 #include "maze-sound-system-openal/MazeHeaderOpenAL.hpp"
-#include "maze-sound/MazeSound.hpp"
+#include "maze-sound/MazeSoundSystem.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(SoundOpenAL);
-    MAZE_USING_SHARED_PTR(Sound);
+    MAZE_USING_SHARED_PTR(ContextOpenALOSX);
 
 
     //////////////////////////////////////////
-    // Class SoundOpenAL
+    // Class ContextOpenALOSX
     //
     //////////////////////////////////////////
-    class MAZE_SOUND_SYSTEM_OPENAL_API SoundOpenAL
-        : public Sound
+    class MAZE_SOUND_SYSTEM_OPENAL_API ContextOpenALOSX
+        : public ContextOpenAL
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SoundOpenAL, Sound);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(ContextOpenALOSX, ContextOpenAL);
 
     public:
 
         //////////////////////////////////////////
-        virtual ~SoundOpenAL();
+        virtual ~ContextOpenALOSX();
 
         //////////////////////////////////////////
-        static SoundOpenALPtr Create(SoundSystem* _soundSystem = nullptr);
+        static ContextOpenALOSXPtr Create(
+            SoundSystemOpenALPtr const& _soundSystem,
+            S32 _deviceIndex = -1);
+
 
         //////////////////////////////////////////
-        virtual bool loadSound(SoundDataPtr const& _soundData) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        inline MZALuint getBufferID() const { return m_bufferID; }
+        virtual ALFunctionPointer getFunction(CString _name) MAZE_OVERRIDE;
 
     protected:
 
         //////////////////////////////////////////
-        SoundOpenAL();
+        ContextOpenALOSX();
 
         //////////////////////////////////////////
-        virtual bool init(SoundSystem* _soundSystem) MAZE_OVERRIDE;
+        virtual bool init(
+            SoundSystemOpenALPtr const& _soundSystem,
+            S32 _deviceIndex = -1) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        void setup();
 
 
         //////////////////////////////////////////
-        void generateALObjects();
-
-        //////////////////////////////////////////
-        void deleteALObjects();
+        void notifyFunctionsAssigned();
 
     protected:
-        MZALuint m_bufferID = 0;
-        MZALenum m_bufferFormat = 0;
+        
     };
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeSoundOpenAL_hpp_
+#endif // _MazeContextOpenALOSX_hpp_
 //////////////////////////////////////////

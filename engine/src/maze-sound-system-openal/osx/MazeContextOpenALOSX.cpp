@@ -24,11 +24,10 @@
 
 
 //////////////////////////////////////////
-#include "MazeSoundHeader.hpp"
-#include "maze-sound/MazeSoundGroup.hpp"
-#include "maze-sound/managers/MazeSoundManager.hpp"
-#include "maze-sound/loaders/MazeLoaderWAV.hpp"
-#include "maze-core/managers/MazeAssetManager.hpp"
+#include "MazeSoundSystemOpenALHeader.hpp"
+#include "maze-sound-system-openal/osx/MazeContextOpenALOSX.hpp"
+#include "maze-sound-system-openal/MazeSoundOpenAL.hpp"
+#include "maze-sound-system-openal/MazeSoundSystemOpenAL.hpp"
 
 
 //////////////////////////////////////////
@@ -36,51 +35,69 @@ namespace Maze
 {
 
     //////////////////////////////////////////
-    // Class SoundGroup
+    // Class ContextOpenALOSX
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS(SoundGroup);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(ContextOpenALOSX, ContextOpenAL);
 
     //////////////////////////////////////////
-    SoundGroup::SoundGroup()
+    ContextOpenALOSX::ContextOpenALOSX()
     {
     }
 
     //////////////////////////////////////////
-    SoundGroup::~SoundGroup()
+    ContextOpenALOSX::~ContextOpenALOSX()
     {
-        
+
+        if (m_soundSystemRaw)
+            m_soundSystemRaw->eventFunctionsAssigned.unsubscribe(this);
     }
 
     //////////////////////////////////////////
-    SoundGroupPtr SoundGroup::Create(SoundSystem* _soundSystem)
+    ContextOpenALOSXPtr ContextOpenALOSX::Create(
+        SoundSystemOpenALPtr const& _soundSystem,
+        S32 _deviceIndex)
     {
-        if (!_soundSystem)
-            _soundSystem = SoundSystem::GetCurrentInstancePtr();
-        
-        if (!_soundSystem)
-            return nullptr;
-
-        return _soundSystem->createSoundGroup();
+        ContextOpenALOSXPtr soundSystem;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(ContextOpenALOSX, soundSystem, init(_soundSystem, _deviceIndex));
+        return soundSystem;
     }
 
     //////////////////////////////////////////
-    bool SoundGroup::init(SoundSystem* _soundSystem)
+    bool ContextOpenALOSX::init(
+        SoundSystemOpenALPtr const& _soundSystem,
+        S32 _deviceIndex)
     {
-        m_soundSystem = _soundSystem;
+        if (!ContextOpenAL::init(_soundSystem, _deviceIndex))
+            return false;
+
+        if (_soundSystem->getFunctionsAssigned())
+            setup();
+        else
+            _soundSystem->eventFunctionsAssigned.subscribe(this, &ContextOpenALOSX::notifyFunctionsAssigned);
 
         return true;
     }
 
     //////////////////////////////////////////
-    void SoundGroup::setVolume(F32 _volume)
+    void ContextOpenALOSX::setup()
     {
-        if (m_volume == _volume)
+        if (m_deviceIndex < 0)
             return;
 
-        m_volume = _volume;
+        createALContext();
+    }
 
-        eventVolumeChanged(m_volume);
+    //////////////////////////////////////////
+    ContextOpenAL::ALFunctionPointer ContextOpenALOSX::getFunction(CString _name)
+    {
+        return nullptr;
+    }
+
+    //////////////////////////////////////////
+    void ContextOpenALOSX::notifyFunctionsAssigned()
+    {
+        setup();
     }
 
 } // namespace Maze

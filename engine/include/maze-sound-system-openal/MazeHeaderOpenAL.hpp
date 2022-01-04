@@ -32,8 +32,13 @@
 //////////////////////////////////////////
 #include "maze-sound-system-openal/MazeSoundSystemOpenALHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
-#include <al.h>
-#include <alc.h>
+#if MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS
+#   include <al.h>
+#   include <alc.h>
+#else
+#   include <OpenAL/al.h>
+#   include <OpenAL/alc.h>
+#endif
 
 
 //////////////////////////////////////////
