@@ -71,6 +71,7 @@ namespace Maze
         Rect2DF viewport;
         F32 nearZ;
         F32 farZ;
+        F32 fieldOfViewY;
         bool clearColorFlag;
         ColorU32 clearColor;
         bool clearDepthFlag;

@@ -89,7 +89,7 @@ namespace Maze
             spriteRenderer->setSprite(_sprite);
             spriteRenderer->setMaterial(_material);
 
-            if (_sprite->getSliceBorder().isBorderExists())
+            if (_sprite && _sprite->getSliceBorder().isBorderExists())
                 spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
 
             Maze::Transform2DPtr const& transform = spriteRenderer->getTransform();

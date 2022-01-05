@@ -115,35 +115,8 @@ namespace Maze
     //////////////////////////////////////////
     void Quaternion::toRotationMatrix(Mat4DF& _rotationMatrix) const
     {
-        F32 tx = x + x;
-        F32 ty = y + y;
-        F32 tz = z + z;
-        F32 twx = tx * w;
-        F32 twy = ty * w;
-        F32 twz = tz * w;
-        F32 txx = tx * x;
-        F32 txy = ty * x;
-        F32 txz = tz * x;
-        F32 tyy = ty * y;
-        F32 tyz = tz * y;
-        F32 tzz = tz * z;
-
-        _rotationMatrix[0][0] = 1.0f - (tyy + tzz);
-        _rotationMatrix[0][1] = txy - twz;
-        _rotationMatrix[0][2] = txz + twy;
-        _rotationMatrix[0][3] = 0.0f;
-        _rotationMatrix[1][0] = txy + twz;
-        _rotationMatrix[1][1] = 1.0f - (txx + tzz);
-        _rotationMatrix[1][2] = tyz - twx;
-        _rotationMatrix[1][3] = 0.0f;
-        _rotationMatrix[2][0] = txz - twy;
-        _rotationMatrix[2][1] = tyz + twx;
-        _rotationMatrix[2][2] = 1.0f - (txx + tyy);
-        _rotationMatrix[2][3] = 0.0f;
-        _rotationMatrix[3][0] = 0.0f;
-        _rotationMatrix[3][1] = 0.0f;
-        _rotationMatrix[3][2] = 0.0f;
-        _rotationMatrix[3][3] = 1.0f;
+        // #TODO: Optimize?
+        _rotationMatrix = Mat4DF::CreateRotationMatrix(getEuler());
     }
     
     //////////////////////////////////////////
@@ -595,10 +568,14 @@ namespace Maze
         // No singularity - this is the majority of cases
         else
         {
-            euler.x = Math::ASin(2.0f * (w * x - y * z));
-            euler.y = Math::ATan2(2.0f * w * y + 2.0f * z * x, 1.0f - 2.0f * (x * x + y * y));
-            euler.z = Math::ATan2(2.0f * w * z + 2.0f * x * y, 1.0f - 2.0f * (z * z + x * x));
+            Quaternion q(y, w, z, x);
+            euler.x = Math::ASin(2.0f * (q.x * q.z - q.w * q.y));
+            euler.y = Math::ATan2(2.0f * q.x * q.w + 2.0f * q.y * q.z, 1.0f - 2.0f * (q.z * q.z + q.w * q.w));
+            euler.z = Math::ATan2(2.0f * q.x * q.y + 2.0f * q.z * q.w, 1.0f - 2.0f * (q.y * q.y + q.z * q.z));
         }
+        Math::NormalizeAngle(euler.x);
+        Math::NormalizeAngle(euler.y);
+        Math::NormalizeAngle(euler.z);
 
         return euler;
     }

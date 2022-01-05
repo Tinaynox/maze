@@ -55,10 +55,10 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API bool CopyProperties(MetaInstance _dstMetaInstance, ConstMetaInstance _srcMetaInstance)
         {
-            MetaClass const* dstMetaClass = _dstMetaInstance.getMetaClass();
             MetaClass const* srcMetaClass = _srcMetaInstance.getMetaClass();
 
 #if (MAZE_DEBUG)
+            MetaClass const* dstMetaClass = _dstMetaInstance.getMetaClass();
             if (!dstMetaClass->isInheritedFrom(srcMetaClass))
             {
                 MAZE_ERROR_RETURN_VALUE( 

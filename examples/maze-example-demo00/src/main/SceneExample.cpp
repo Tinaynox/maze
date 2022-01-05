@@ -181,9 +181,10 @@ namespace Maze
         m_renderColorSprite->getEntityRaw()->ensureComponent<Name>("RenderColorSprite");
         m_renderColorSprite->getEntityRaw()->ensureComponent<SizePolicy2D>();
 
-#if (0)
+#if (1)
+        
         m_testSprite1 = SpriteHelper::CreateSprite(
-            Sprite::Create(m_world->getSystem<RenderWaterSystem>()->getReflectionBuffer()->getColorTexture()),
+            SpritePtr(),
             {128, 128 },
             Vec2DF::c_zero,
             GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getColorTextureMaterial(),
@@ -194,7 +195,7 @@ namespace Maze
         m_testSprite1->getTransform()->setZ(10000);
 
         m_testSprite2 = SpriteHelper::CreateSprite(
-            Sprite::Create(m_world->getSystem<RenderWaterSystem>()->getRefractionBuffer()->getColorTexture()),
+            SpritePtr(),
             { 128, 128 },
             { 128, 0 },
             GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getColorTextureMaterial(),
@@ -349,6 +350,19 @@ namespace Maze
             F32 z = 2 * Math::Cos(1.4f * timer) - 2.0f;
             m_particleSystem->getTransform()->setLocalPosition(
                 {x, 2.5f + Math::Sin(2.0f * timer), z});
+        }
+        
+        if (m_testSprite1 && m_testSprite2)
+        {
+            RenderWaterSystemPtr waterSystem = m_world->getSystem<RenderWaterSystem>();
+            Texture2DPtr reflectionTexture = waterSystem->getReflectionBuffer()->getColorTexture2D();
+            Texture2DPtr refractionTexture = waterSystem->getRefractionBuffer()->getColorTexture2D();
+            
+            if (!m_testSprite1->getSprite() || m_testSprite1->getSprite()->getTexture() != reflectionTexture)
+                m_testSprite1->setSprite(Sprite::Create(reflectionTexture));
+            
+            if (!m_testSprite2->getSprite() || m_testSprite2->getSprite()->getTexture() != refractionTexture)
+                m_testSprite2->setSprite(Sprite::Create(refractionTexture));
         }
     }
 

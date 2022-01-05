@@ -284,6 +284,7 @@ namespace Maze
                 params.viewport = _camera3D->getViewport();
                 params.nearZ = _camera3D->getNearZ();
                 params.farZ = _camera3D->getFarZ();
+                params.fieldOfViewY = _camera3D->getFOV();
                 params.clearColorFlag = _camera3D->getClearColorFlag();
                 params.clearColor = _camera3D->getClearColor();
                 params.clearDepthFlag = _camera3D->getClearDepthFlag();
