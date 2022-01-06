@@ -612,6 +612,9 @@ namespace Maze
     //////////////////////////////////////////
     void SceneColorGradientPicker::updateUI()
     {
+        if (m_state == ECSSceneState::Destroy)
+            return;
+
         m_gradientRenderer->updateMesh();
         updateColorSliderTags();
         updateColorTagUI();

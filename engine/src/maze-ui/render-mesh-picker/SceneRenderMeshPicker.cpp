@@ -246,6 +246,9 @@ namespace Maze
     //////////////////////////////////////////
     void SceneRenderMeshPicker::updateUI()
     {
+        if (m_state == ECSSceneState::Destroy)
+            return;
+
         RenderMeshPtr const& currentRenderMesh = RenderMeshPickerManager::GetInstancePtr()->getRenderMesh();
 
         for (Size i = 0; i < m_previews.size(); ++i)

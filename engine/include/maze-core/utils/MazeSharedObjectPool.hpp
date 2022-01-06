@@ -133,7 +133,10 @@ namespace Maze
             m_releaseFunc(_element);
 
             if (getCountInactive() < (S32)m_maxSize)
+            {
+                MAZE_DEBUG_ERROR_IF(!m_poolStack.empty() && m_poolStack.top() == _element, "Duplicate push to stack!");
                 m_poolStack.push(_element);
+            }
         }
 
         //////////////////////////////////////////
@@ -150,9 +153,9 @@ namespace Maze
         std::function<void(ObjectSharedPtr const&)> m_getFunc;
         std::function<void(ObjectSharedPtr const&)> m_releaseFunc;
         std::function<void(ObjectSharedPtr const&)> m_destroyFunc;
-        Size m_maxSize;
+        Size m_maxSize = 0u;
         Stack<ObjectSharedPtr> m_poolStack;
-        S32 m_countAll;
+        S32 m_countAll = 0;
     };
 
     

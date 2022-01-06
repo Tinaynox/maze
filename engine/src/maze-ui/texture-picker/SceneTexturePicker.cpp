@@ -246,6 +246,9 @@ namespace Maze
     //////////////////////////////////////////
     void SceneTexturePicker::updateUI()
     {
+        if (m_state == ECSSceneState::Destroy)
+            return;
+
         Texture2DPtr const& currentTexture = TexturePickerManager::GetInstancePtr()->getTexture();
 
         for (Size i = 0; i < m_previews.size(); ++i)

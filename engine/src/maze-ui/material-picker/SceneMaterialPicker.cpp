@@ -244,6 +244,9 @@ namespace Maze
     //////////////////////////////////////////
     void SceneMaterialPicker::updateUI()
     {
+        if (m_state == ECSSceneState::Destroy)
+            return;
+
         MaterialPtr const& currentMaterial = MaterialPickerManager::GetInstancePtr()->getMaterial();
 
         for (Size i = 0; i < m_previews.size(); ++i)
