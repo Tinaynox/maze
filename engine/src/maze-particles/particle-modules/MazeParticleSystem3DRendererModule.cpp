@@ -246,7 +246,8 @@ namespace Maze
         Mat4DF particleSystemWorldTranslatonMatrix = Mat4DF::CreateTranslationMatrix(particleSystemWorldTranslation);
 
         // PS Rotation
-        Vec3DF particleSystemWorldRotation = _particleSystemWorldTransform.getAffineRotationEulerAngles();
+        //Vec3DF particleSystemWorldRotation = _particleSystemWorldTransform.getAffineRotationEulerAngles();
+        Vec3DF particleSystemWorldRotation = Quaternion::GetEuler(_particleSystemWorldTransform);
         Mat4DF particleSystemWorldRotationMatrix = Mat4DF::CreateRotationMatrix(particleSystemWorldRotation);
         /*
         F32 cx = cosf(particleSystemWorldRotation.x);

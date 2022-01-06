@@ -220,11 +220,6 @@ namespace Maze
 
         return 
             Mat4D(
-                (TValue)cz, (TValue)-sz, (TValue)0, (TValue)0,
-                (TValue)sz, (TValue)cz, (TValue)0, (TValue)0,
-                (TValue)0, (TValue)0, (TValue)1, (TValue)0,
-                (TValue)0, (TValue)0, (TValue)0, (TValue)1) *
-            Mat4D(
                 (TValue)cy, (TValue)0, (TValue)sy, (TValue)0,
                 (TValue)0, (TValue)1, (TValue)0, (TValue)0,
                 (TValue)-sy, (TValue)0, (TValue)cy, (TValue)0,
@@ -233,6 +228,11 @@ namespace Maze
                 (TValue)1, (TValue)0, (TValue)0, (TValue)0,
                 (TValue)0, (TValue)cx, (TValue)-sx, (TValue)0,
                 (TValue)0, (TValue)sx, (TValue)cx, (TValue)0,
+                (TValue)0, (TValue)0, (TValue)0, (TValue)1) *
+            Mat4D(
+                (TValue)cz, (TValue)-sz, (TValue)0, (TValue)0,
+                (TValue)sz, (TValue)cz, (TValue)0, (TValue)0,
+                (TValue)0, (TValue)0, (TValue)1, (TValue)0,
                 (TValue)0, (TValue)0, (TValue)0, (TValue)1);
     }
 
@@ -674,6 +674,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    /*
     template <class TValue>
     inline MAZE_CONSTEXPR14 Vec3D<TValue> Mat4D<TValue>::getAffineRotationEulerAngles() const
     {
@@ -712,6 +713,7 @@ namespace Maze
         
         return euler;
     }
+    */
 
     //////////////////////////////////////////
     template <class TValue>

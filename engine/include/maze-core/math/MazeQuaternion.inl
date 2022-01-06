@@ -66,6 +66,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline Quaternion::Quaternion(Mat4DF const& _rotationMatrix)
+    {
+        setRotationMatrix(_rotationMatrix);
+    }
+
+    //////////////////////////////////////////
     inline Quaternion::Quaternion(F32 const& _angle, Vec3DF const& _axis)
     {
         setAngleAxis(_angle, _axis);

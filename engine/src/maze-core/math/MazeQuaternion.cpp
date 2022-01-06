@@ -84,6 +84,21 @@ namespace Maze
             *apkQuat[k] = (_rotationMatrix[k][i] + _rotationMatrix[i][k]) * root;
         }
     }
+
+    //////////////////////////////////////////
+    void Quaternion::setRotationMatrix(Mat3DF const& _rotationMatrix, bool _multInvScale)
+    {
+        if (_multInvScale)
+        {
+            Vec3DF scale = _rotationMatrix.getAffineScale();
+            Mat3DF unscaledMat = _rotationMatrix * Mat3DF::CreateScaleMatrix(1.0f / scale);
+            setRotationMatrix(unscaledMat);
+        }
+        else
+        {
+            setRotationMatrix(_rotationMatrix);
+        }
+    }
     
     //////////////////////////////////////////
     void Quaternion::toRotationMatrix(Mat3DF& _rotationMatrix) const

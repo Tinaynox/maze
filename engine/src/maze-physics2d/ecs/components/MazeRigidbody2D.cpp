@@ -265,7 +265,8 @@ namespace Maze
         {
             Vec3DF worldPosition = m_transform3D->getWorldPosition();
             position = { worldPosition.x, worldPosition.y };
-            angle = m_transform3D->getWorldTransform().getAffineRotationEulerAngles().z;
+            // angle = m_transform3D->getWorldTransform().getAffineRotationEulerAngles().z;
+            angle = Quaternion::GetEuler(m_transform3D->getWorldTransform()).z;
             scale = m_transform3D->getWorldTransform().getAffineScale2D();
         }
         else

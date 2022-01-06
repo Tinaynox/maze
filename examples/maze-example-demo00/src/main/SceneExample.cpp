@@ -293,7 +293,8 @@ namespace Maze
             barrelMeshRenderer->setRenderMesh("Barrel00.obj");
             barrelMeshRenderer->setMaterial("Barrel00.mzmaterial");
             barrelTransform->setLocalPosition({ -1.0f, 1.8f, -7.0f });
-            barrelTransform->setLocalRotation(Quaternion(0.0f, Math::c_halfPi + 0.1f, Math::c_halfPi));
+            // barrelTransform->setLocalRotation(Quaternion(0.0f, Math::c_halfPi + 0.1f, Math::c_halfPi));
+            barrelTransform->setLocalRotationDegrees(0.0f, 180.0f, 90.0f);
             barrelTransform->setLocalScale({ 0.025f, 0.025f, 0.025f });
         }
 
@@ -355,14 +356,17 @@ namespace Maze
         if (m_testSprite1 && m_testSprite2)
         {
             RenderWaterSystemPtr waterSystem = m_world->getSystem<RenderWaterSystem>();
-            Texture2DPtr reflectionTexture = waterSystem->getReflectionBuffer()->getColorTexture2D();
-            Texture2DPtr refractionTexture = waterSystem->getRefractionBuffer()->getColorTexture2D();
-            
-            if (!m_testSprite1->getSprite() || m_testSprite1->getSprite()->getTexture() != reflectionTexture)
-                m_testSprite1->setSprite(Sprite::Create(reflectionTexture));
-            
-            if (!m_testSprite2->getSprite() || m_testSprite2->getSprite()->getTexture() != refractionTexture)
-                m_testSprite2->setSprite(Sprite::Create(refractionTexture));
+            if (waterSystem && waterSystem->getReflectionBuffer() && waterSystem->getRefractionBuffer())
+            {
+                Texture2DPtr reflectionTexture = waterSystem->getReflectionBuffer()->getColorTexture2D();
+                Texture2DPtr refractionTexture = waterSystem->getRefractionBuffer()->getColorTexture2D();
+
+                if (!m_testSprite1->getSprite() || m_testSprite1->getSprite()->getTexture() != reflectionTexture)
+                    m_testSprite1->setSprite(Sprite::Create(reflectionTexture));
+
+                if (!m_testSprite2->getSprite() || m_testSprite2->getSprite()->getTexture() != refractionTexture)
+                    m_testSprite2->setSprite(Sprite::Create(refractionTexture));
+            }
         }
     }
 

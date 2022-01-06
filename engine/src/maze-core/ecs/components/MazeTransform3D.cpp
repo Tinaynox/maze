@@ -168,7 +168,8 @@ namespace Maze
         m_localTransform = _localTransform;
 
         m_localPosition = m_localTransform.getAffineTranslation();
-        Vec3DF eulerAngles = m_localTransform.getAffineRotationEulerAngles();
+        //Vec3DF eulerAngles = m_localTransform.getAffineRotationEulerAngles();
+        Vec3DF eulerAngles = Quaternion::GetEuler(m_localTransform);
         m_localRotation.setEulerAngles(eulerAngles);
         m_localScale = m_localTransform.getAffineScale();
 

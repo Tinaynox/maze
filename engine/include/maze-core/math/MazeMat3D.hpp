@@ -109,7 +109,13 @@ namespace Maze
         static inline MAZE_CONSTEXPR Mat3D CreateScaleMatrix(TValue _x, TValue _y);
 
         //////////////////////////////////////////
+        static inline MAZE_CONSTEXPR Mat3D CreateScaleMatrix(TValue _x, TValue _y, TValue _z);
+
+        //////////////////////////////////////////
         static inline MAZE_CONSTEXPR Mat3D CreateScaleMatrix(Vec2D<TValue> const& _vector);
+
+        //////////////////////////////////////////
+        static inline MAZE_CONSTEXPR Mat3D CreateScaleMatrix(Vec3D<TValue> const& _vector);
 
         //////////////////////////////////////////
         static inline MAZE_CONSTEXPR Mat3D CreateAffineTransformMatrix(
@@ -201,13 +207,22 @@ namespace Maze
         inline Mat3D<TValue> concatenatedAffineCopy(Mat3D<TValue> const& _m2) const;
 
         //////////////////////////////////////////
-        inline MAZE_CONSTEXPR TValue getAffineTranslationX() const;
+        inline MAZE_CONSTEXPR TValue getAffineTranslation2DX() const;
 
         //////////////////////////////////////////
-        inline MAZE_CONSTEXPR TValue getAffineTranslationY() const;
+        inline MAZE_CONSTEXPR TValue getAffineTranslation2DY() const;
 
         //////////////////////////////////////////
-        inline MAZE_CONSTEXPR Vec2D<TValue> getAffineTranslation() const;
+        inline MAZE_CONSTEXPR Vec2D<TValue> getAffineTranslation2D() const;
+
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR TValue getAffineScale2DX() const;
+
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR TValue getAffineScale2DY() const;
+
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR Vec2D<TValue> getAffineScale2D() const;
 
         //////////////////////////////////////////
         inline MAZE_CONSTEXPR TValue getAffineScaleX() const;
@@ -216,10 +231,13 @@ namespace Maze
         inline MAZE_CONSTEXPR TValue getAffineScaleY() const;
 
         //////////////////////////////////////////
-        inline MAZE_CONSTEXPR Vec2D<TValue> getAffineScale() const;
+        inline MAZE_CONSTEXPR TValue getAffineScaleZ() const;
 
         //////////////////////////////////////////
-        inline MAZE_CONSTEXPR Rotation2D getAffineRotation() const;
+        inline MAZE_CONSTEXPR Vec3D<TValue> getAffineScale() const;
+
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR Rotation2D getAffineRotation2D() const;
 
         //////////////////////////////////////////
         inline Vec2D<TValue> transformAffine(Vec2D<TValue> const& _v) const;

@@ -244,7 +244,7 @@ namespace Maze
         inline MAZE_CONSTEXPR Vec2D<TValue> getAffineTranslation2D() const;
 
         //////////////////////////////////////////
-        inline MAZE_CONSTEXPR14 Vec3D<TValue> getAffineRotationEulerAngles() const;
+        // inline MAZE_CONSTEXPR14 Vec3D<TValue> getAffineRotationEulerAngles() const;
 
         //////////////////////////////////////////
         inline MAZE_CONSTEXPR Mat4D operator*(F32 _scalar) const;
@@ -302,6 +302,22 @@ namespace Maze
 
         //////////////////////////////////////////
         inline MAZE_CONSTEXPR Rotation2D getAffineRotation2D() const;
+
+
+        //////////////////////////////////////////
+        inline void getMat3D(Mat3D<TValue>& _mat) const
+        {
+            _mat.m[0][0] = m[0][0];
+            _mat.m[0][1] = m[0][1];
+            _mat.m[0][2] = m[0][2];
+            _mat.m[1][0] = m[1][0];
+            _mat.m[1][1] = m[1][1];
+            _mat.m[1][2] = m[1][2];
+            _mat.m[2][0] = m[2][0];
+            _mat.m[2][1] = m[2][1];
+            _mat.m[2][2] = m[2][2];
+        }
+
 
 
         //////////////////////////////////////////

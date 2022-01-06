@@ -74,6 +74,9 @@ namespace Maze
         inline Quaternion(Mat3DF const& _rotationMatrix);
 
         //////////////////////////////////////////
+        inline Quaternion(Mat4DF const& _rotationMatrix);
+
+        //////////////////////////////////////////
         inline Quaternion(F32 const& _angle, Vec3DF const& _axis);
 
         //////////////////////////////////////////
@@ -99,6 +102,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        static inline Vec3DF GetEuler(Mat3DF const& _rotationMatrix) { return Quaternion(_rotationMatrix).getEuler(); }
+
+        //////////////////////////////////////////
+        static inline Vec3DF GetEuler(Mat4DF const& _rotationMatrix) { return Quaternion(_rotationMatrix).getEuler(); }
+
+
+        //////////////////////////////////////////
         inline void swap(Quaternion& _q);
 
 
@@ -117,6 +127,17 @@ namespace Maze
 
         //////////////////////////////////////////
         void setRotationMatrix(Mat3DF const& _rotationMatrix);
+
+        //////////////////////////////////////////
+        void setRotationMatrix(Mat3DF const& _rotationMatrix, bool _multInvScale);
+
+        //////////////////////////////////////////
+        inline void setRotationMatrix(Mat4DF const& _rotationMatrix, bool _multInvScale = true)
+        {
+            Mat3DF mat;
+            _rotationMatrix.getMat3D(mat);
+            setRotationMatrix(mat, _multInvScale);
+        }
 
         //////////////////////////////////////////
         void toRotationMatrix(Mat3DF& _rotationMatrix) const;

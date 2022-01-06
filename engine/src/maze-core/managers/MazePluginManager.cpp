@@ -137,9 +137,9 @@ namespace Maze
 
 #if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
 #   if (MAZE_ARCH == MAZE_ARCH_X86)
-        pluginName += "-x86;
+        pluginName += "-x86";
 #   else
-        pluginName += "-x64;
+        pluginName += "-x64";
 #   endif
 #elif (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
         pluginName = "lib" + pluginName;

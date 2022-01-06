@@ -167,10 +167,28 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
+    inline MAZE_CONSTEXPR Mat3D<TValue> Mat3D<TValue>::CreateScaleMatrix(TValue _x, TValue _y, TValue _z)
+    {
+        return Mat3D<TValue>(
+            _x, 0, 0,
+            0, _y, 0,
+            0, 0, _z);
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
     inline MAZE_CONSTEXPR Mat3D<TValue> Mat3D<TValue>::CreateScaleMatrix(
         Vec2D<TValue> const& _vector)
     {
         return CreateScaleMatrix(_vector.x, _vector.y);
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
+    inline MAZE_CONSTEXPR Mat3D<TValue> Mat3D<TValue>::CreateScaleMatrix(
+        Vec3D<TValue> const& _vector)
+    {
+        return CreateScaleMatrix(_vector.x, _vector.y, _vector.z);
     }
 
     //////////////////////////////////////////
@@ -484,49 +502,77 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR TValue Mat3D<TValue>::getAffineTranslationX() const 
+    inline MAZE_CONSTEXPR TValue Mat3D<TValue>::getAffineTranslation2DX() const 
     { 
         return m[0][2]; 
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR TValue Mat3D<TValue>::getAffineTranslationY() const 
+    inline MAZE_CONSTEXPR TValue Mat3D<TValue>::getAffineTranslation2DY() const 
     { 
         return m[1][2]; 
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR Vec2D<TValue> Mat3D<TValue>::getAffineTranslation() const 
+    inline MAZE_CONSTEXPR Vec2D<TValue> Mat3D<TValue>::getAffineTranslation2D() const 
     { 
         return Vec2D<TValue>(getAffineTranslationX(), getAffineTranslationY()); 
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR TValue Mat3D<TValue>::getAffineScaleX() const 
+    inline MAZE_CONSTEXPR TValue Mat3D<TValue>::getAffineScale2DX() const 
     { 
         return Vec2D<TValue>(m[0][0], m[1][0]).length(); 
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR TValue Mat3D<TValue>::getAffineScaleY() const 
+    inline MAZE_CONSTEXPR TValue Mat3D<TValue>::getAffineScale2DY() const 
     { 
         return Vec2D<TValue>(m[0][1], m[1][1]).length(); 
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR Vec2D<TValue> Mat3D<TValue>::getAffineScale() const
+    inline MAZE_CONSTEXPR Vec2D<TValue> Mat3D<TValue>::getAffineScale2D() const
     { 
         return Vec2D<TValue>(getAffineScaleX(), getAffineScaleY()); 
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR Rotation2D Mat3D<TValue>::getAffineRotation() const 
+    inline MAZE_CONSTEXPR TValue Mat3D<TValue>::getAffineScaleX() const
+    {
+        return Vec3D<TValue>(m[0][0], m[1][0], m[2][0]).length();
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
+    inline MAZE_CONSTEXPR TValue Mat3D<TValue>::getAffineScaleY() const
+    {
+        return Vec3D<TValue>(m[0][1], m[1][1], m[2][1]).length();
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
+    inline MAZE_CONSTEXPR TValue Mat3D<TValue>::getAffineScaleZ() const
+    {
+        return Vec3D<TValue>(m[0][2], m[1][2], m[2][2]).length();
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
+    inline MAZE_CONSTEXPR Vec3D<TValue> Mat3D<TValue>::getAffineScale() const
+    {
+        return Vec3D<TValue>(getAffineScaleX(), getAffineScaleY(), getAffineScaleZ());
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
+    inline MAZE_CONSTEXPR Rotation2D Mat3D<TValue>::getAffineRotation2D() const 
     { 
         return Rotation2D((F32)m[1][0] / getAffineScaleX(), (F32)m[0][0] / getAffineScaleX()); 
     }
