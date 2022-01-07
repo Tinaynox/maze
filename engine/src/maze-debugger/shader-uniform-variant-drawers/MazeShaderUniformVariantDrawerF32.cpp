@@ -163,7 +163,7 @@ namespace Maze
     //////////////////////////////////////////
     void ShaderUniformVariantDrawerF32::processDataFromUI()
     {
-        F32 value = StringHelper::StringToF32(m_editBox->getText());
+        F32 value = StringHelper::StringToF32Safe(m_editBox->getText());
 
         for (MaterialPtr const& material : m_materials)
             material->getUniform(m_shaderUniformName)->set(value);

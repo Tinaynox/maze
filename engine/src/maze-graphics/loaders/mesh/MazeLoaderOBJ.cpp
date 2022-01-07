@@ -588,9 +588,9 @@ namespace Maze
                     Vec3DF vertexPosition;
                     if (words.size() >= 3)
                     {
-                        vertexPosition.x = StringHelper::StringToF32(words[0]);
-                        vertexPosition.y = StringHelper::StringToF32(words[1]);
-                        vertexPosition.z = StringHelper::StringToF32(words[2]);
+                        vertexPosition.x = StringHelper::StringToF32Safe(words[0]);
+                        vertexPosition.y = StringHelper::StringToF32Safe(words[1]);
+                        vertexPosition.z = StringHelper::StringToF32Safe(words[2]);
 
                         positions.push_back(vertexPosition);
                     }
@@ -605,8 +605,8 @@ namespace Maze
                     Vec2DF uv;
                     if (words.size() >= 2)
                     {
-                        uv.x = StringHelper::StringToF32(words[0]);
-                        uv.y = StringHelper::StringToF32(words[1]);
+                        uv.x = StringHelper::StringToF32Safe(words[0]);
+                        uv.y = StringHelper::StringToF32Safe(words[1]);
 
                         uvs.push_back(uv);
                     }
@@ -621,9 +621,9 @@ namespace Maze
                     Vec3DF vertexNormal;
                     if (words.size() >= 3)
                     {
-                        vertexNormal.x = StringHelper::StringToF32(words[0]);
-                        vertexNormal.y = StringHelper::StringToF32(words[1]);
-                        vertexNormal.z = StringHelper::StringToF32(words[2]);
+                        vertexNormal.x = StringHelper::StringToF32Safe(words[0]);
+                        vertexNormal.y = StringHelper::StringToF32Safe(words[1]);
+                        vertexNormal.z = StringHelper::StringToF32Safe(words[2]);
 
                         normals.push_back(vertexNormal);
                     }

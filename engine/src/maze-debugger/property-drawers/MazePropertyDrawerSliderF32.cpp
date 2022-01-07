@@ -220,7 +220,7 @@ namespace Maze
     //////////////////////////////////////////
     F32 PropertyDrawerSliderF32::getValue() const
     {
-        F32 value = StringHelper::StringToF32(m_editBox->getText());
+        F32 value = StringHelper::StringToF32Safe(m_editBox->getText());
         return value;
     }
 

@@ -264,10 +264,10 @@ namespace Maze
     void ShaderUniformVariantDrawerVec4DU::processDataFromUI()
     {
         Vec4DF value;
-        value.x = StringHelper::StringToF32(m_editBoxX->getText());
-        value.y = StringHelper::StringToF32(m_editBoxY->getText());
-        value.z = StringHelper::StringToF32(m_editBoxZ->getText());
-        value.w = StringHelper::StringToF32(m_editBoxW->getText());
+        value.x = StringHelper::StringToF32Safe(m_editBoxX->getText());
+        value.y = StringHelper::StringToF32Safe(m_editBoxY->getText());
+        value.z = StringHelper::StringToF32Safe(m_editBoxZ->getText());
+        value.w = StringHelper::StringToF32Safe(m_editBoxW->getText());
 
         for (MaterialPtr const& material : m_materials)
             material->getUniform(m_shaderUniformName)->set(value);

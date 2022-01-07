@@ -258,6 +258,61 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline bool IsF32Number(StdString const& _s) noexcept
+        {
+            if (_s.empty())
+                return false;
+
+            StdString::const_iterator begin = _s.begin();
+
+            if (*begin == '-')
+                ++begin;
+
+            S32 point = 1;
+            return  std::find_if(
+                begin,
+                _s.end(),
+                [&point](S8 _c)
+            {
+                if (_c == '.' && point == 1)
+                {
+                    point++;
+                    return false;
+                }
+                return !std::isdigit(_c);
+            }) == _s.end();
+        }
+
+        //////////////////////////////////////////
+        inline bool IsF32Number(String const& _s) noexcept
+        {
+            if (_s.empty())
+                return false;
+
+            String::const_iterator begin = _s.begin();
+
+            if (*begin == '-')
+                ++begin;
+
+            if (begin == _s.end())
+                return false;
+
+            S32 point = 1;
+            return  std::find_if(
+                begin,
+                _s.end(),
+                [&point](S8 _c)
+            {
+                if (_c == '.' && point == 1)
+                {
+                    point++;
+                    return false;
+                }
+                return !std::isdigit(_c);
+            }) == _s.end();
+        }
+
+        //////////////////////////////////////////
         inline bool StringToBool(CString _str) noexcept
         {
             return strcmp(_str, "1") == 0 ? true : false;
@@ -418,6 +473,15 @@ namespace Maze
         inline F32 StringToF32(String const& _str) noexcept
         {
             if (_str.empty())
+                return 0.0f;
+
+            return std::stof(_str.c_str());
+        }
+
+        //////////////////////////////////////////
+        inline F32 StringToF32Safe(String const& _str) noexcept
+        {
+            if (_str.empty() || !IsF32Number(_str))
                 return 0.0f;
 
             return std::stof(_str.c_str());
@@ -869,58 +933,6 @@ namespace Maze
                     {
                         return !std::isdigit(_c);
                     }) == _s.end();
-        }
-
-        //////////////////////////////////////////
-        inline bool IsF32Number(StdString const& _s) noexcept
-        {
-            if (_s.empty())
-                return false;
-
-            StdString::const_iterator begin = _s.begin();
-
-            if (*begin == '-')
-                ++begin;
-
-            S32 point = 1;
-            return  std::find_if(
-                        begin,
-                        _s.end(),
-                        [&point](S8 _c)
-                        {
-                            if (_c == '.' && point == 1)
-                            {
-                                point++;
-                                return false;
-                            }
-                            return !std::isdigit(_c);
-                        }) == _s.end();
-        }
-
-        //////////////////////////////////////////
-        inline bool IsF32Number(String const& _s) noexcept
-        {
-            if (_s.empty())
-                return false;
-
-            String::const_iterator begin = _s.begin();
-
-            if (*begin == '-')
-                ++begin;
-
-            S32 point = 1;
-            return  std::find_if(
-                        begin,
-                        _s.end(),
-                        [&point](S8 _c)
-                        {
-                            if (_c == '.' && point == 1)
-                            {
-                                point++;
-                                return false;
-                            }
-                            return !std::isdigit(_c);
-                        }) == _s.end();
         }
 
         //////////////////////////////////////////

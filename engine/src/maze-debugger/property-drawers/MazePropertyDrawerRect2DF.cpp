@@ -272,10 +272,10 @@ namespace Maze
     Rect2DF PropertyDrawerRect2DF::getValue() const
     {
         Rect2DF value;
-        value.position.x = StringHelper::StringToF32(m_editBoxX->getText());
-        value.position.y = StringHelper::StringToF32(m_editBoxY->getText());
-        value.size.x = StringHelper::StringToF32(m_editBoxW->getText());
-        value.size.y = StringHelper::StringToF32(m_editBoxH->getText());
+        value.position.x = StringHelper::StringToF32Safe(m_editBoxX->getText());
+        value.position.y = StringHelper::StringToF32Safe(m_editBoxY->getText());
+        value.size.x = StringHelper::StringToF32Safe(m_editBoxW->getText());
+        value.size.y = StringHelper::StringToF32Safe(m_editBoxH->getText());
 
         return value;
     }

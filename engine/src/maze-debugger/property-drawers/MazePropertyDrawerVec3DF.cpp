@@ -235,9 +235,9 @@ namespace Maze
     Vec3DF PropertyDrawerVec3DF::getValue() const
     {
         Vec3DF value;
-        value.x = StringHelper::StringToF32(m_editBoxX->getText());
-        value.y = StringHelper::StringToF32(m_editBoxY->getText());
-        value.z = StringHelper::StringToF32(m_editBoxZ->getText());
+        value.x = StringHelper::StringToF32Safe(m_editBoxX->getText());
+        value.y = StringHelper::StringToF32Safe(m_editBoxY->getText());
+        value.z = StringHelper::StringToF32Safe(m_editBoxZ->getText());
         return value;
     }
 

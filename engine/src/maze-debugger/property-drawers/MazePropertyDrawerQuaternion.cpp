@@ -241,9 +241,9 @@ namespace Maze
     //////////////////////////////////////////
     Quaternion PropertyDrawerQuaternion::getValue() const
     {
-        F32 pitchDegrees = StringHelper::StringToF32(m_editBoxX->getText());
-        F32 yawDegrees = StringHelper::StringToF32(m_editBoxY->getText());
-        F32 rollDegrees = StringHelper::StringToF32(m_editBoxZ->getText());
+        F32 pitchDegrees = StringHelper::StringToF32Safe(m_editBoxX->getText());
+        F32 yawDegrees = StringHelper::StringToF32Safe(m_editBoxY->getText());
+        F32 rollDegrees = StringHelper::StringToF32Safe(m_editBoxZ->getText());
 
         F32 pitch = Math::DegreesToRadians(pitchDegrees);
         F32 yaw = Math::DegreesToRadians(yawDegrees);

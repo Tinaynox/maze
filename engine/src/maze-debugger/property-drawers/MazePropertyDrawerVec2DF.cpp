@@ -225,8 +225,8 @@ namespace Maze
     Vec2DF PropertyDrawerVec2DF::getValue() const
     {
         Vec2DF value;
-        value.x = StringHelper::StringToF32(m_editBoxX->getText());
-        value.y = StringHelper::StringToF32(m_editBoxY->getText());
+        value.x = StringHelper::StringToF32Safe(m_editBoxX->getText());
+        value.y = StringHelper::StringToF32Safe(m_editBoxY->getText());
         return value;
     }
 
