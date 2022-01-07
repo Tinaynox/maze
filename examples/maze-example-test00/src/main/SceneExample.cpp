@@ -80,7 +80,6 @@
 #include "maze-render-system-opengl-core/MazeStateMachineOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
-#include "main/LevelBloomController.hpp"
 #include "Example.hpp"
 
 
@@ -90,13 +89,19 @@ namespace Maze
     //////////////////////////////////////////
     String GetExampleName()
     {
-        return "Sky, Terrain and Water";
+        return "Test00";
     }
 
     //////////////////////////////////////////
     void LoadFirstExampleScene(SceneManager* _sceneManager)
     {
         _sceneManager->loadScene<SceneExample>();
+    }
+
+    //////////////////////////////////////////
+    bool IsLoadAllAssets()
+    {
+        return false;
     }
 
 
@@ -143,18 +148,6 @@ namespace Maze
         inputManager->eventMouse.subscribe(this, &SceneExample::notifyMouse);
         inputManager->eventTouch.subscribe(this, &SceneExample::notifyTouch);
 
-        Vec2DU renderBufferSize = Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize();
-        m_renderBuffer = RenderBuffer::Create(
-            {
-                renderBufferSize,
-                PixelFormat::RGBA_F16,
-                PixelFormat::DEPTH_U24
-            });
-        m_renderBuffer->getColorTexture2D()->setMinFilter(TextureFilter::Linear);
-        m_renderBuffer->getColorTexture2D()->setMagFilter(TextureFilter::Linear);
-
-
-
         EntityPtr canvasEntity = createEntity("Canvas");
         m_canvas = canvasEntity->createComponent<Canvas>();
         m_canvas->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
@@ -169,43 +162,6 @@ namespace Maze
         canvasScaler->updateCanvasScale();
 
 
-        MaterialPtr const& postFXMaterial = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getMaterial("PostFX00.mzmaterial");
-        m_renderColorSprite = SpriteHelper::CreateSprite(
-            Sprite::Create(m_renderBuffer->getColorTexture2D()),
-            m_canvas->getTransform()->getSize(),
-            Vec2DF::c_zero,
-            postFXMaterial,
-            m_canvas->getTransform(),
-            this);
-        m_renderColorSprite->getTransform()->setZ(1000);
-        m_renderColorSprite->getEntityRaw()->ensureComponent<Name>("RenderColorSprite");
-        m_renderColorSprite->getEntityRaw()->ensureComponent<SizePolicy2D>();
-
-#if (1)
-        
-        m_testSprite1 = SpriteHelper::CreateSprite(
-            SpritePtr(),
-            {128, 128 },
-            Vec2DF::c_zero,
-            GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getColorTextureMaterial(),
-            m_canvas->getTransform(),
-            this,
-            { 0.0f, 1.0f },
-            { 0.0f, 1.0f });
-        m_testSprite1->getTransform()->setZ(10000);
-
-        m_testSprite2 = SpriteHelper::CreateSprite(
-            SpritePtr(),
-            { 128, 128 },
-            { 128, 0 },
-            GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getColorTextureMaterial(),
-            m_canvas->getTransform(),
-            this,
-            { 0.0f, 1.0f },
-            { 0.0f, 1.0f });
-        m_testSprite2->getTransform()->setZ(10000);
-#endif
-
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
         Example::GetInstancePtr()->eventMainRenderWindowViewportChanged.subscribe(this, &SceneExample::notifyMainRenderWindowViewportChanged);
         Example::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &SceneExample::notifyRenderTargetResized);
@@ -215,90 +171,32 @@ namespace Maze
         EntityPtr lightEntity = createEntity("Light");
         Light3DPtr mainLight3D = lightEntity->createComponent<Light3D>();
         mainLight3D->setColor(ColorU32(255, 244, 214));
-        mainLight3D->getTransform()->setLocalDirection(0.577f, -0.577f, 0.577f);
-        mainLight3D->getTransform()->setLocalPosition(0.0f, 5.0f, -5.0f);
+        mainLight3D->getTransform()->setLocalDirection(-0.477f, -0.677f, -0.577f);
+        mainLight3D->getTransform()->setLocalPosition(5.0f, 5.0f, 5.0f);
 
 
         // Camera
         EntityPtr cameraEntity = createEntity("Camera");
         m_camera3D = cameraEntity->createComponent<Camera3D>();
         m_camera3D->getTransform()->setLocalPosition(Vec3DF(8.0f, 4.0f, 8.0f));
-        m_camera3D->setFOV(Math::DegreesToRadians(30));
-        m_camera3D->setClearColorFlag(false);
-        m_camera3D->setClearSkyBoxFlag(true);
-        m_camera3D->setRenderTarget(m_renderBuffer);
-        m_camera3D->setRenderMask(m_camera3D->getRenderMask() & ~(S32)DefaultRenderMask::Gizmos);
+        // m_camera3D->setFOV(Math::DegreesToRadians(30));
+        m_camera3D->setClearColorFlag(true);
+        // m_camera3D->setClearSkyBoxFlag(true);
+        m_camera3D->setRenderMask(m_camera3D->getRenderMask() | (S32)DefaultRenderMask::Gizmos);
         m_camera3D->setNearZ(0.01f);
         m_camera3D->setFarZ(100.0f);
-
-        m_bloomController = LevelBloomController::Create(this);
-
-        getLightingSettings()->setSkyBoxMaterial("Skybox00.mzmaterial");
+        m_camera3D->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
+        m_camera3D->setRenderTarget(Example::GetInstancePtr()->getMainRenderWindow());
 
 
-        // Terrain
-        EntityPtr terrainEntity = createEntity("Terrain");
-        TerrainMesh3DPtr terrainMesh = terrainEntity->ensureComponent<TerrainMesh3D>();
-        terrainMesh->setCellsCount({ 50, 50 });
-        terrainMesh->setSize({ 20, 20 });
-        terrainMesh->setHeight(2.25f);
-        terrainMesh->setHeightMap(renderSystem->getTextureManager()->getTexture2D("Heightmap02.mztexture"));
-        MeshRendererPtr terrainMeshRenderer = terrainEntity->ensureComponent<MeshRenderer>();
-        terrainMeshRenderer->setMaterial("Terrain00.mzmaterial");
 
-
-        // Water
-        EntityPtr waterEntity = createEntity("Water");
-        WaterRenderer3DPtr waterRenderer = waterEntity->ensureComponent<WaterRenderer3D>();
-        Transform3DPtr waterTransform = waterEntity->ensureComponent<Transform3D>();
-        waterTransform->setLocalScale({ 20.0f, 20.0f, 1.0f });
-        waterTransform->setLocalY(0.75f);
-        waterTransform->setLocalRotation(Quaternion(Math::DegreesToRadians(90), Vec3DF::c_unitX));
-        MeshRendererPtr waterMeshRenderer = waterEntity->ensureComponent<MeshRenderer>();
-        waterMeshRenderer->setRenderMesh(renderSystem->getRenderMeshManager()->getDefaultQuadMesh());
-        waterRenderer->setMaterial("Water00.mzmaterial");
-        waterRenderer->getMeshRenderer()->getMaterial()->getFirstRenderPass()->setRenderQueueIndex(2500);
-        
-
-        // Barrel
-        {
-            EntityPtr barrelEntity = createEntity("Barrel");
-            Transform3DPtr barrelTransform = barrelEntity->createComponent<Transform3D>();
-            MeshRendererPtr barrelMeshRenderer = barrelEntity->createComponent<MeshRenderer>();
-            barrelMeshRenderer->setRenderMesh("Barrel00.obj");
-            barrelMeshRenderer->setMaterial("Barrel00.mzmaterial");
-            barrelTransform->setLocalY(0.05f);
-            barrelTransform->setLocalZ(-1.0f);
-            barrelTransform->setLocalRotation(Quaternion(Math::c_halfPi, 0.0f, 0.0f));
-            barrelTransform->setLocalScale({ 0.025f, 0.025f, 0.025f });
-        }
-
-        // Barrel
-        {
-            EntityPtr barrelEntity = createEntity("Barrel");
-            Transform3DPtr barrelTransform = barrelEntity->createComponent<Transform3D>();
-            MeshRendererPtr barrelMeshRenderer = barrelEntity->createComponent<MeshRenderer>();
-            barrelMeshRenderer->setRenderMesh("Barrel00.obj");
-            barrelMeshRenderer->setMaterial("Barrel00.mzmaterial");
-            barrelTransform->setLocalPosition({2.5f, 0.3f, -5.0f});
-            barrelTransform->setLocalRotation(Quaternion(0.0f, Math::c_halfPi, Math::c_halfPi * 0.1f));
-            barrelTransform->setLocalScale({ 0.025f, 0.025f, 0.025f });
-        }
-
-        // Barrel
-        {
-            EntityPtr barrelEntity = createEntity("Barrel");
-            Transform3DPtr barrelTransform = barrelEntity->createComponent<Transform3D>();
-            MeshRendererPtr barrelMeshRenderer = barrelEntity->createComponent<MeshRenderer>();
-            barrelMeshRenderer->setRenderMesh("Barrel00.obj");
-            barrelMeshRenderer->setMaterial("Barrel00.mzmaterial");
-            barrelTransform->setLocalPosition({ -1.0f, 1.8f, -7.0f });
-            // barrelTransform->setLocalRotation(Quaternion(0.0f, Math::c_halfPi + 0.1f, Math::c_halfPi));
-            barrelTransform->setLocalRotationDegrees(0.0f, 180.0f, 90.0f);
-            barrelTransform->setLocalScale({ 0.025f, 0.025f, 0.025f });
-        }
-
-        createParticleSystem();
+        EntityPtr objectEntity = createEntity();
+        Transform3DPtr transform = objectEntity->createComponent<Transform3D>();
+        MeshRendererPtr meshRenderer = objectEntity->createComponent<MeshRenderer>();
+        //meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultCubeMesh());
+        meshRenderer->setRenderMesh("DroneLP.obj");
+        meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getSpecularDSMaterial());
+        objectEntity->ensureComponent<Name>("Obj");
 
         return true;
     }
@@ -310,9 +208,7 @@ namespace Maze
             return;
 
         m_canvas->setViewport(_mainRenderWindowViewport);
-
-        if(!Example::GetInstancePtr()->isDebugEditorProgress())
-            m_renderBuffer->setSize(Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize());
+        m_camera3D->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
     }
 
     //////////////////////////////////////////
@@ -321,7 +217,6 @@ namespace Maze
         if (!Example::GetInstancePtr()->isMainWindowReadyToRender())
             return;
 
-        m_renderBuffer->setSize(Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize());
     }
 
     //////////////////////////////////////////
@@ -329,104 +224,11 @@ namespace Maze
     {
         ECSRenderScene::update(_dt);
 
-        m_bloomController->update(_dt);
-        m_renderColorSprite->getMaterial()->ensureUniform(
-            "u_bloomMap",
-            ShaderUniformType::UniformTexture2D)->set(
-                m_bloomController->getBloomRenderBuffer()->getColorTexture2D());
-
-
         Quaternion q = Quaternion::Slerp(
             24.0f * _dt,
             m_camera3D->getTransform()->getLocalRotation(),
             Quaternion(m_pitchAngle, m_yawAngle, 0.0f));
         m_camera3D->getTransform()->setLocalRotation(q);
-
-
-        if (m_particleSystem)
-        {
-            static F32 timer = 0.0f;
-            timer += _dt;
-            F32 x = 2 * Math::Sin(1.4f * timer) + 2.0f;
-            F32 z = 2 * Math::Cos(1.4f * timer) - 2.0f;
-            m_particleSystem->getTransform()->setLocalPosition(
-                {x, 2.5f + Math::Sin(2.0f * timer), z});
-        }
-        
-        if (m_testSprite1 && m_testSprite2)
-        {
-            RenderWaterSystemPtr waterSystem = m_world->getSystem<RenderWaterSystem>();
-            if (waterSystem && waterSystem->getReflectionBuffer() && waterSystem->getRefractionBuffer())
-            {
-                Texture2DPtr reflectionTexture = waterSystem->getReflectionBuffer()->getColorTexture2D();
-                Texture2DPtr refractionTexture = waterSystem->getRefractionBuffer()->getColorTexture2D();
-
-                if (!m_testSprite1->getSprite() || m_testSprite1->getSprite()->getTexture() != reflectionTexture)
-                    m_testSprite1->setSprite(Sprite::Create(reflectionTexture));
-
-                if (!m_testSprite2->getSprite() || m_testSprite2->getSprite()->getTexture() != refractionTexture)
-                    m_testSprite2->setSprite(Sprite::Create(refractionTexture));
-            }
-        }
-    }
-
-    //////////////////////////////////////////
-    void SceneExample::createParticleSystem()
-    {
-        // Particle System
-        EntityPtr psEntity = createEntity();
-        ParticleSystem3DPtr ps = psEntity->ensureComponent<ParticleSystem3D>();
-        m_particleSystem = ps;
-        ps->getTransform()->rotate(Vec3DF::c_unitX, -Math::c_halfPi);
-        ps->getTransform()->setLocalY(2.0f);
-
-        ps->getMainModule().setTransformPolicy(ParticleSystemSimulationSpace::World);
-        ps->getMainModule().getLifetime().setConstant(1.0f);
-        ps->getMainModule().getSpeed().setConstant(1.0f);
-        ps->getMainModule().getRotation().setRandomBetweenConstants(0.0f, Math::c_twoPi);
-        ps->getMainModule().getGravity().setConstant(0.0f);
-        ps->getMainModule().getSize().setRandomBetweenConstants(0.5f, 1.0f);
-        ps->getMainModule().getColor().setColor({ 1.2f * 63.0f / 255.0f, 1.2f * 255.0f / 255.0f, 1.2f * 79.0f / 255.0f, 0.4f });
-        //ps->getMainModule().getSize().setConstant(0.5f);
-        ps->getMainModule().getRotationOverLifetime().enabled = true;
-
-        MaterialPtr material = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getMaterial("Fireball00.mzmaterial");
-
-        ps->getRendererModule().getTextureSheetAnimation().enabled = true;
-        ps->getRendererModule().getTextureSheetAnimation().tiles = Vec2DS(7, 7);
-        ps->getRendererModule().getTextureSheetAnimation().startFrame.setConstant(0);
-
-        {
-            AnimationCurve curve;
-            curve.setMode(AnimationCurve::EvaluateMode::Linear);
-            curve.addKey(0.0f, 0.0f);
-            curve.addKey(1.0f, 49.0f);
-            ps->getRendererModule().getTextureSheetAnimation().frameOverTime.setCurve(curve);
-        }
-
-        {
-            ColorGradient gradient;
-            gradient.addKeyRGB(0.0f, Vec3DF::c_one);
-            gradient.addKeyAlpha(0.23f, 0.0f);
-            gradient.addKeyAlpha(0.42f, 1.0f);
-            gradient.addKeyAlpha(0.71f, 1.0f);
-            gradient.addKeyAlpha(0.88f, 0.0f);
-            ps->getMainModule().getColorOverLifetime().setEnabled(true);
-            ps->getMainModule().getColorOverLifetime().setParameter({ gradient });
-        }
-
-        ps->getRendererModule().setParticlesMaxCount(10000);
-        ps->getMainModule().getEmission().emissionPerSecond.setConstant(150.0f);
-
-        ps->getShapeModule().setType(ParticleSystem3DZoneType::Cone);
-        ps->getShapeModule().getZoneData().cone.angle = 0.436f;
-        ps->getShapeModule().getZoneData().cone.length = 0.001f;
-        ps->getShapeModule().getZoneData().cone.radius = 0.119f;
-        ps->getShapeModule().setShapeVolume(true);
-
-        ps->setMaterial(material);
-        ps->play();
-        psEntity->ensureComponent<Name>("ParticleSystem");
     }
 
     //////////////////////////////////////////

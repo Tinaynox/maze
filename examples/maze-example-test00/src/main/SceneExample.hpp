@@ -84,9 +84,6 @@ namespace Maze
         virtual void update(F32 _dt) MAZE_OVERRIDE;
 
 
-        //////////////////////////////////////////
-        RenderBufferPtr const& getRenderBuffer() const { return m_renderBuffer; }
-
     protected:
 
         //////////////////////////////////////////
@@ -102,9 +99,6 @@ namespace Maze
         void notifyRenderTargetResized(RenderTarget* _renderTarget);
 
         //////////////////////////////////////////
-        void createParticleSystem();
-
-        //////////////////////////////////////////
         void notifyMouse(InputEventMouseData const& _data);
 
         //////////////////////////////////////////
@@ -113,18 +107,6 @@ namespace Maze
     protected:
         CanvasPtr m_canvas;
         Camera3DPtr m_camera3D;
-
-        SpriteRenderer2DPtr m_renderColorSprite;
-        SpriteRenderer2DPtr m_renderDepthSprite;
-
-        SpriteRenderer2DPtr m_testSprite1;
-        SpriteRenderer2DPtr m_testSprite2;
-
-        RenderBufferPtr m_renderBuffer;
-
-        LevelBloomControllerPtr m_bloomController;
-
-        ParticleSystem3DPtr m_particleSystem;
 
         F32 m_yawAngle = -2.565f;
         F32 m_pitchAngle = 0.253f;

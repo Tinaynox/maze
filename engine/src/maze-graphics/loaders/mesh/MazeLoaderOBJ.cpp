@@ -181,12 +181,14 @@ namespace Maze
                 case 1:
                 {
                     Vec3DF finalPosition = GetElement(_positions, svert[0]);
-                    Vec2DF finalUV = Vec2DF::c_zero;
-                    noNormal = true;
-                    
-                    _outPositions.push_back(finalPosition);
-                    _outUVs.push_back(finalUV);
-                    _outNormals.push_back(Vec3DF::c_zero);
+                    if (std::find(_outPositions.begin(), _outPositions.end(), finalPosition) == _outPositions.end())
+                    {
+                        Vec2DF finalUV = Vec2DF::c_zero;
+                        noNormal = true;
+                        _outPositions.push_back(finalPosition);
+                        _outUVs.push_back(finalUV);
+                        _outNormals.push_back(Vec3DF::c_zero);
+                    }
 
                     break;
                 }
@@ -194,12 +196,14 @@ namespace Maze
                 case 2:
                 {
                     Vec3DF finalPosition = GetElement(_positions, svert[0]);
-                    Vec2DF finalUV = NormalizeUV(GetElement(_uvs, svert[1]));
-                    noNormal = true;
-                    
-                    _outPositions.push_back(finalPosition);
-                    _outUVs.push_back(finalUV);
-                    _outNormals.push_back(Vec3DF::c_zero);
+                    if (std::find(_outPositions.begin(), _outPositions.end(), finalPosition) == _outPositions.end())
+                    {
+                        Vec2DF finalUV = NormalizeUV(GetElement(_uvs, svert[1]));
+                        noNormal = true;
+                        _outPositions.push_back(finalPosition);
+                        _outUVs.push_back(finalUV);
+                        _outNormals.push_back(Vec3DF::c_zero);
+                    }
 
                     break;
                 }
@@ -207,12 +211,15 @@ namespace Maze
                 case 3: 
                 {
                     Vec3DF finalPosition = GetElement(_positions, svert[0]);
-                    Vec2DF finalUV = Vec2DF::c_zero;
-                    Vec3DF finalNormal = GetElement(_normals, svert[2]);
+                    if (std::find(_outPositions.begin(), _outPositions.end(), finalPosition) == _outPositions.end())
+                    {
+                        Vec2DF finalUV = Vec2DF::c_zero;
+                        Vec3DF finalNormal = GetElement(_normals, svert[2]);
 
-                    _outPositions.push_back(finalPosition);
-                    _outUVs.push_back(finalUV);
-                    _outNormals.push_back(finalNormal);
+                        _outPositions.push_back(finalPosition);
+                        _outUVs.push_back(finalUV);
+                        _outNormals.push_back(finalNormal);
+                    }
 
                     break;
                 }
@@ -220,12 +227,15 @@ namespace Maze
                 case 4:
                 {
                     Vec3DF finalPosition = GetElement(_positions, svert[0]);
-                    Vec2DF finalUV = NormalizeUV(GetElement(_uvs, svert[1]));
-                    Vec3DF finalNormal = GetElement(_normals, svert[2]);
+                    if (std::find(_outPositions.begin(), _outPositions.end(), finalPosition) == _outPositions.end())
+                    {
+                        Vec2DF finalUV = NormalizeUV(GetElement(_uvs, svert[1]));
+                        Vec3DF finalNormal = GetElement(_normals, svert[2]);
 
-                    _outPositions.push_back(finalPosition);
-                    _outUVs.push_back(finalUV);
-                    _outNormals.push_back(finalNormal);
+                        _outPositions.push_back(finalPosition);
+                        _outUVs.push_back(finalUV);
+                        _outNormals.push_back(finalNormal);
+                    }
 
                     break;
                 }

@@ -311,9 +311,13 @@ namespace Maze
         m_specularMaterial->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteTexture());
         m_specularMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
         m_specularMaterial->setUniform("u_ambientLightColor", ColorF128(0.1f, 0.1f, 0.1f, 1.0f));
-        m_specularMaterial->setUniform("u_shininess", 0.1f);
+        m_specularMaterial->setUniform("u_shininess", 0.65f);
         m_specularMaterial->setUniform("u_specularColor", ColorF128(0.3f, 0.3f, 0.3f, 1.0f));
         addMaterial(m_specularMaterial);
+
+        m_specularDSMaterial = m_specularMaterial->createCopy();
+        m_specularDSMaterial->getFirstRenderPass()->setCullMode(CullMode::Off);
+        addMaterial(m_specularDSMaterial);
 
         eventSpecialMaterialsCreated();
     }

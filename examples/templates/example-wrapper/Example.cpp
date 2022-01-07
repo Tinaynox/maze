@@ -86,6 +86,9 @@ namespace Maze
     //////////////////////////////////////////
     extern void LoadFirstExampleScene(SceneManager* _sceneManager);
 
+    //////////////////////////////////////////
+    extern bool IsLoadAllAssets();
+
 
     //////////////////////////////////////////
     // Class Example
@@ -357,9 +360,12 @@ namespace Maze
 
         shaderSystem->findAssetShadersAndAddToCache();
 
-        renderSystem->getTextureManager()->loadAllAssetTextures();
-        renderSystem->getMaterialManager()->loadAllAssetMaterials();
-        // renderSystem->getRenderMeshManager()->loadAllAssetRenderMeshes();
+        if (IsLoadAllAssets())
+        {
+            renderSystem->getTextureManager()->loadAllAssetTextures();
+            renderSystem->getMaterialManager()->loadAllAssetMaterials();
+            // renderSystem->getRenderMeshManager()->loadAllAssetRenderMeshes();
+        }
 
         m_uiManager->createUIElements();
         m_graphicsManager->getGizmosManager()->createGizmosElements();
