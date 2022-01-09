@@ -69,6 +69,8 @@ namespace Maze
         static AnimationCurve const c_linear10;
         static AnimationCurve const c_sqr01;
         static AnimationCurve const c_exp01;
+        static AnimationCurve const c_smooth01;
+        static AnimationCurve const c_smooth10;
 
     public:
 

@@ -121,6 +121,17 @@ namespace Maze
         return nullptr;
     }
 
+    //////////////////////////////////////////
+    MetaClass* ComponentFactory::getComponentMetaClass(ClassUID _uid)
+    {
+        for (auto const& sceneObjectCreationData : m_sceneObjectCreationData)
+            if (sceneObjectCreationData.second.uid == _uid)
+                return sceneObjectCreationData.second.metaClass;
+
+        MAZE_ERROR("Undefined component with uid=%u", _uid);
+        return nullptr;
+    }
+
 
 } // namespace Maze
 //////////////////////////////////////////

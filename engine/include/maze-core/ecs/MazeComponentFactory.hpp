@@ -127,6 +127,9 @@ namespace Maze
         CString getComponentName(ClassUID _uid);
 
         //////////////////////////////////////////
+        MetaClass* getComponentMetaClass(ClassUID _uid);
+
+        //////////////////////////////////////////
         Map<ClassUID, ComponentCreationData> const& getSceneObjectCreationData() const { return m_sceneObjectCreationData; }
 
     protected:

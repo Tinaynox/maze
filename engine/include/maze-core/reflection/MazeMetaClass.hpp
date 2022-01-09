@@ -288,6 +288,9 @@ namespace Maze
         MetaProperty* getProperty(S32 _index);
 
         //////////////////////////////////////////
+        S32 getPropertyIndex(CString _name) const;
+
+        //////////////////////////////////////////
         MetaProperty const* getProperty(CString _name, bool _recursive = true) const;
 
         //////////////////////////////////////////

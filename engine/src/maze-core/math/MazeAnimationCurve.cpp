@@ -49,6 +49,14 @@ namespace Maze
         Keyframe{ 0.0f, 0.0f, 0.0f, 0.0f },
         Keyframe{ 1.0f, 1.0f, 2.5f, 2.5f },
         AnimationCurve::EvaluateMode::Smooth);
+    AnimationCurve const AnimationCurve::c_smooth01 = AnimationCurve(
+        Keyframe{ 0.0f, 0.0f },
+        Keyframe{ 1.0f, 1.0f },
+        AnimationCurve::EvaluateMode::Smooth);
+    AnimationCurve const AnimationCurve::c_smooth10 = AnimationCurve(
+        Keyframe{ 0.0f, 1.0f },
+        Keyframe{ 1.0f, 0.0f },
+        AnimationCurve::EvaluateMode::Smooth);
 
     //////////////////////////////////////////
     void AnimationCurve::Keyframe::loadFromJSONValue(Json::Value const& _value)

@@ -103,6 +103,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    S32 MetaClass::getPropertyIndex(CString _name) const
+    {
+        for (S32 i = 0; i < m_propertiesCount; i++)
+        {
+            MetaProperty* m = m_properties[i];
+            if (strcmp(m->getName(), _name) == 0)
+                return i;
+        }
+
+        return -1;
+    }
+
+    //////////////////////////////////////////
     MetaProperty const* MetaClass::getProperty(CString _name, bool _recursive) const
     {
         for (S32 i = 0; i < m_propertiesCount; i++) 
