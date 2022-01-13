@@ -357,6 +357,12 @@ namespace Maze
                     if (prefabName)
                     {
                         EntityPtr entity = loadPrefab(prefabName, world, scene);
+                        if (entity == nullptr)
+                        {
+                            MAZE_ERROR("Entity is nullptr!");
+                            entityNode = entityNode->NextSibling();
+                            continue;
+                        }
                         entities[entityIndex] = entity;
 
                         tinyxml2::XMLNode* prefabChildNode = entityNode->FirstChild();
@@ -474,6 +480,12 @@ namespace Maze
                 {
                     S32 entityIndex = entityElement->IntAttribute("_i");
                     EntityPtr const& entity = entities[entityIndex];
+                    if (entity == nullptr)
+                    {
+                        MAZE_ERROR("Entity is nullptr!");
+                        entityNode = entityNode->NextSibling();
+                        continue;
+                    }
 
                     CString entityActiveAttribute = entityElement->Attribute("active");
                     if (entityActiveAttribute)
