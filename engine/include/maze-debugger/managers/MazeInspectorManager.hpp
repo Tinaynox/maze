@@ -166,17 +166,112 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TComponent>
-        void addComponentContextMenuOption(
+        inline void addComponentContextMenuOption(
             String const& _title,
             std::function<void(Entity*, TComponent*)> _callback)
         {
-            return this->addComponentContextMenuOption(
+            this->addComponentContextMenuOption(
                 ClassInfo<TComponent>::UID(),
                 _title,
                 [_callback](Entity* _entity, Component* _component)
                 {
                     _callback(_entity, _component->castRaw<TComponent>());
                 });
+        }
+
+        //////////////////////////////////////////
+        template <typename TComponent>
+        inline void addComponentContextMenuOptions(
+            String const& _title0, std::function<void(Entity*, TComponent*)> _callback0,
+            String const& _title1, std::function<void(Entity*, TComponent*)> _callback1)
+        {
+            this->addComponentContextMenuOption<TComponent>(_title0, _callback0);
+            this->addComponentContextMenuOption<TComponent>(_title1, _callback1);
+        }
+
+        //////////////////////////////////////////
+        template <typename TComponent>
+        inline void addComponentContextMenuOptions(
+            String const& _title0, std::function<void(Entity*, TComponent*)> _callback0,
+            String const& _title1, std::function<void(Entity*, TComponent*)> _callback1,
+            String const& _title2, std::function<void(Entity*, TComponent*)> _callback2)
+        {
+            this->addComponentContextMenuOption<TComponent>(_title0, _callback0);
+            this->addComponentContextMenuOption<TComponent>(_title1, _callback1);
+            this->addComponentContextMenuOption<TComponent>(_title2, _callback2);
+        }
+
+        //////////////////////////////////////////
+        template <typename TComponent>
+        inline void addComponentContextMenuOptions(
+            String const& _title0, std::function<void(Entity*, TComponent*)> _callback0,
+            String const& _title1, std::function<void(Entity*, TComponent*)> _callback1,
+            String const& _title2, std::function<void(Entity*, TComponent*)> _callback2,
+            String const& _title3, std::function<void(Entity*, TComponent*)> _callback3)
+        {
+            this->addComponentContextMenuOptions<TComponent>(_title0, _callback0, _title1, _callback1);
+            this->addComponentContextMenuOptions<TComponent>(_title2, _callback2, _title3, _callback3);
+        }
+
+        //////////////////////////////////////////
+        template <typename TComponent>
+        inline void addComponentContextMenuOptions(
+            String const& _title0, std::function<void(Entity*, TComponent*)> _callback0,
+            String const& _title1, std::function<void(Entity*, TComponent*)> _callback1,
+            String const& _title2, std::function<void(Entity*, TComponent*)> _callback2,
+            String const& _title3, std::function<void(Entity*, TComponent*)> _callback3,
+            String const& _title4, std::function<void(Entity*, TComponent*)> _callback4)
+        {
+            this->addComponentContextMenuOptions<TComponent>(_title0, _callback0, _title1, _callback1);
+            this->addComponentContextMenuOptions<TComponent>(_title2, _callback2, _title3, _callback3, _title4, _callback4);
+        }
+
+        //////////////////////////////////////////
+        template <typename TComponent>
+        inline void addComponentContextMenuOptions(
+            String const& _title0, std::function<void(Entity*, TComponent*)> _callback0,
+            String const& _title1, std::function<void(Entity*, TComponent*)> _callback1,
+            String const& _title2, std::function<void(Entity*, TComponent*)> _callback2,
+            String const& _title3, std::function<void(Entity*, TComponent*)> _callback3,
+            String const& _title4, std::function<void(Entity*, TComponent*)> _callback4,
+            String const& _title5, std::function<void(Entity*, TComponent*)> _callback5)
+        {
+            this->addComponentContextMenuOptions<TComponent>(_title0, _callback0, _title1, _callback1, _title2, _callback2);
+            this->addComponentContextMenuOptions<TComponent>(_title3, _callback3, _title4, _callback4, _title5, _callback5);
+        }
+
+        //////////////////////////////////////////
+        template <typename TComponent>
+        inline void addComponentContextMenuOptions(
+            String const& _title0, std::function<void(Entity*, TComponent*)> _callback0,
+            String const& _title1, std::function<void(Entity*, TComponent*)> _callback1,
+            String const& _title2, std::function<void(Entity*, TComponent*)> _callback2,
+            String const& _title3, std::function<void(Entity*, TComponent*)> _callback3,
+            String const& _title4, std::function<void(Entity*, TComponent*)> _callback4,
+            String const& _title5, std::function<void(Entity*, TComponent*)> _callback5,
+            String const& _title6, std::function<void(Entity*, TComponent*)> _callback6)
+        {
+            this->addComponentContextMenuOptions<TComponent>(_title0, _callback0, _title1, _callback1);
+            this->addComponentContextMenuOptions<TComponent>(_title2, _callback2, _title3, _callback3);
+            this->addComponentContextMenuOptions<TComponent>(_title4, _callback4, _title5, _callback5, _title6, _callback6);
+        }
+
+        //////////////////////////////////////////
+        template <typename TComponent>
+        inline void addComponentContextMenuOptions(
+            String const& _title0, std::function<void(Entity*, TComponent*)> _callback0,
+            String const& _title1, std::function<void(Entity*, TComponent*)> _callback1,
+            String const& _title2, std::function<void(Entity*, TComponent*)> _callback2,
+            String const& _title3, std::function<void(Entity*, TComponent*)> _callback3,
+            String const& _title4, std::function<void(Entity*, TComponent*)> _callback4,
+            String const& _title5, std::function<void(Entity*, TComponent*)> _callback5,
+            String const& _title6, std::function<void(Entity*, TComponent*)> _callback6,
+            String const& _title7, std::function<void(Entity*, TComponent*)> _callback7)
+        {
+            this->addComponentContextMenuOptions<TComponent>(_title0, _callback0, _title1, _callback1);
+            this->addComponentContextMenuOptions<TComponent>(_title2, _callback2, _title3, _callback3);
+            this->addComponentContextMenuOptions<TComponent>(_title4, _callback4, _title5, _callback5);
+            this->addComponentContextMenuOptions<TComponent>(_title6, _callback6, _title7, _callback7);
         }
 
         //////////////////////////////////////////
