@@ -179,6 +179,11 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_PHYSICS2D_API OverlapHit2DPtr OverlapPoint(
             Vec2DF const& _position);
+
+        //////////////////////////////////////////
+        MAZE_PHYSICS2D_API Vector<OverlapHit2DPtr> OverlapCircleAll(
+            Vec2DF const& _position,
+            F32 _radius);
         
 
     } // namespace Physics2DHelper

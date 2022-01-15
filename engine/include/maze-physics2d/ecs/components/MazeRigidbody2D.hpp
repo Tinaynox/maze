@@ -90,8 +90,7 @@ namespace Maze
         enum Rigidbody2DFlag
         {
             IsBullet = MAZE_BIT(0),
-            IsSensor = MAZE_BIT(1),
-            FixedRotation = MAZE_BIT(2),
+            FixedRotation = MAZE_BIT(1),
             BodyDirty = MAZE_BIT(7),
         };
 
@@ -225,19 +224,6 @@ namespace Maze
 
         //////////////////////////////////////////
         bool getIsBullet() const { return (m_flags & Rigidbody2DFlag::IsBullet) != 0; }
-
-
-        //////////////////////////////////////////
-        void setIsSensor(bool _isSensor)
-        {
-            if (_isSensor)
-                setFlags(m_flags | Rigidbody2DFlag::IsSensor);
-            else
-                setFlags(m_flags & ~Rigidbody2DFlag::IsSensor);
-        }
-
-        //////////////////////////////////////////
-        bool getIsSensor() const { return (m_flags & Rigidbody2DFlag::IsSensor) != 0; }
 
 
         //////////////////////////////////////////

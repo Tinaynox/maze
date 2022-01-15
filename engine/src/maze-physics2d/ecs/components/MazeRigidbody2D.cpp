@@ -311,7 +311,7 @@ namespace Maze
             fixture.friction = physicsMaterial->getFriction();
             fixture.restitution = physicsMaterial->getRestitution();
             fixture.filter = filter;
-            fixture.isSensor = getIsSensor();
+            fixture.isSensor = boxCollider->getIsSensor();
 
             if (fixture.isSensor)
                 fixture.density = 0.0001f;
@@ -346,7 +346,7 @@ namespace Maze
             fixture.friction = physicsMaterial->getFriction();
             fixture.restitution = physicsMaterial->getRestitution();
             fixture.filter = filter;
-            fixture.isSensor = getIsSensor();
+            fixture.isSensor = circleCollider->getIsSensor();
 
             if (fixture.isSensor)
                 fixture.density = 0.0001f;

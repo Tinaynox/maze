@@ -117,6 +117,9 @@ namespace Maze
         //////////////////////////////////////////
         inline Vec3DF getWorldPosition() { return getWorldTransform().getAffineTranslation(); }
 
+        //////////////////////////////////////////
+        inline Vec3DF getWorldPosition(Vec3DF const& _localPoint) { return getWorldTransform().transformAffine(_localPoint); }
+
 
         //////////////////////////////////////////
         Quaternion const& getLocalRotation() const { return m_localRotation; }

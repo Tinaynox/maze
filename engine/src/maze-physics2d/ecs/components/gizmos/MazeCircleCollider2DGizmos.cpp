@@ -94,14 +94,16 @@ namespace Maze
         if (transform3D)
         {
             F32 radius = circleCollider->getRadius();
+            Vec2DF offset = circleCollider->getOffset();
 
             Vec2DF scale = transform3D->getWorldTransform().getAffineScale2D();
+            F32 maxScale = Math::Max(scale.x, scale.y);
 
             _drawer->setColor(ColorF128::c_green);
             _drawer->drawCircle(
-                transform3D->getWorldPosition(),
+                transform3D->getWorldPosition(Vec3DF(offset, 0.0f)),
                 transform3D->getWorldForwardDirection(),
-                Math::Max(scale.x, scale.y) * radius,
+                maxScale * radius,
                 24);
         }
     }
