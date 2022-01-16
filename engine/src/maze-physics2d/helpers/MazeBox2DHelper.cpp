@@ -289,6 +289,15 @@ namespace Maze
             return result;
         }
 
+        //////////////////////////////////////////
+        AABB2D GetBodyAABB2D(
+            PhysicsWorld2D const* _world,
+            b2Body const* _body)
+        {
+            b2AABB aabb = GetBodyAABB(_body);
+            return _world->convertMetersToUnits(ToAABB2D(aabb));
+        }
+
         ////////////////////////////////////
         bool IsOverlap(b2World const* _world, b2Body const* _body, ReportFixturePredicate _pred)
         {

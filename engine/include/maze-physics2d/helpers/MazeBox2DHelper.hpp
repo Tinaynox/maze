@@ -34,6 +34,7 @@
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeAABB2D.hpp"
 #include "maze-graphics/MazeColorF128.hpp"
 #include <box2d/box2d.h>
 #include <functional>
@@ -66,6 +67,15 @@ namespace Maze
         MAZE_PHYSICS2D_API inline Vec2DF ToVec2DF(b2Vec2 const& _vec)
         {
             return Vec2DF(_vec.x, _vec.y);
+        }
+
+        //////////////////////////////////////////
+        MAZE_PHYSICS2D_API inline AABB2D ToAABB2D(b2AABB const& _aabb)
+        {
+            AABB2D aabb;
+            aabb.setMin(ToVec2DF(_aabb.lowerBound));
+            aabb.setMax(ToVec2DF(_aabb.upperBound));
+            return aabb;
         }
 
         //////////////////////////////////////////
@@ -235,6 +245,11 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_PHYSICS2D_API b2AABB GetBodyAABB(b2Body const* _body);
+
+        //////////////////////////////////////////
+        MAZE_PHYSICS2D_API AABB2D GetBodyAABB2D(
+            PhysicsWorld2D const* _world,
+            b2Body const* _body);
 
         ////////////////////////////////////
         MAZE_PHYSICS2D_API bool IsOverlap(b2World const* _world, b2Body const* _body, ReportFixturePredicate _pred);

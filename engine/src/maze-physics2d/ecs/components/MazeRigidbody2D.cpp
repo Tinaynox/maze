@@ -168,6 +168,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    AABB2D Rigidbody2D::getAABB()
+    {
+        if (!m_body)
+            return AABB2D::c_zero;
+
+        return Box2DHelper::GetBodyAABB2D(m_world, m_body);
+    }
+
+    //////////////////////////////////////////
     void Rigidbody2D::processEntityEnabled()
     {
         updateBodyEnabled();
