@@ -31,6 +31,7 @@
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
+#include "maze-physics2d/ecs/components/MazePhysicsRotor2D.hpp"
 #include "maze-physics2d/helpers/MazeBox2DHelper.hpp"
 #include "maze-physics2d/managers/MazePhysics2DManager.hpp"
 #include "maze-physics2d/physics/MazePhysicsWorld2D.hpp"
@@ -79,6 +80,7 @@ namespace Maze
     void PhysicsControlSystem2D::processSystemAdded()
     {
         m_rigidbodies = m_worldRaw->requestInclusiveSample<Rigidbody2D, Transform3D>();
+        m_rotors = m_worldRaw->requestInclusiveSample<PhysicsRotor2D>();
     }
 
     //////////////////////////////////////////
@@ -110,6 +112,12 @@ namespace Maze
     //////////////////////////////////////////
     void PhysicsControlSystem2D::notifyFixedUpdateStart(F32 _dt)
     {
+        m_rotors->process(
+            [&](Entity* _entity, PhysicsRotor2D* _rotor)
+            {
+                _rotor->update(_dt);
+            });
+
         m_rigidbodies->process(
             [&](Entity* _entity, Rigidbody2D* _rigidbody, Transform3D* _transform)
             {
