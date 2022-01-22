@@ -25,84 +25,68 @@
 
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
-#include "maze-core/ecs/systems/MazeTransformUtilsSystem.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
-#include "maze-core/ecs/components/MazeTransform2D.hpp"
-#include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
-#include "maze-core/ecs/components/MazeTransform3D.hpp"
-#include "maze-core/ecs/components/MazeRotor3D.hpp"
-#include "maze-core/ecs/components/MazeSinMovement3D.hpp"
 #include "maze-core/ecs/components/MazeLinearMovement3D.hpp"
-#include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
+#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/math/MazeQuaternion.hpp"
 
 
 //////////////////////////////////////////
+// LinearMovement3Dspace Maze
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class TransformUtilsSystem
+    // Class LinearMovement3D
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(TransformUtilsSystem, ComponentSystem);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(LinearMovement3D, Component,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, active, true, getActive, setActive),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, axis, Vec3DF::c_unitY, getAxis, setAxis),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, speed, 5.0f, getSpeed, setSpeed));
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(TransformUtilsSystem);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(LinearMovement3D);
 
     //////////////////////////////////////////
-    TransformUtilsSystem::TransformUtilsSystem()
+    LinearMovement3D::LinearMovement3D()
     {
     }
 
     //////////////////////////////////////////
-    TransformUtilsSystem::~TransformUtilsSystem()
+    LinearMovement3D::~LinearMovement3D()
     {
     }
 
     //////////////////////////////////////////
-    TransformUtilsSystemPtr TransformUtilsSystem::Create()
+    LinearMovement3DPtr LinearMovement3D::Create(Vec3DF const& _axis, F32 _speed)
     {
-        TransformUtilsSystemPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(TransformUtilsSystem, object, init());
+        LinearMovement3DPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(LinearMovement3D, object, init(_axis, _speed));
         return object;
     }
 
     //////////////////////////////////////////
-    bool TransformUtilsSystem::init()
+    bool LinearMovement3D::init(Vec3DF const& _axis, F32 _speed)
     {
+        setAxis(_axis);
+        setSpeed(_speed);
+
         return true;
     }
 
     //////////////////////////////////////////
-    void TransformUtilsSystem::processSystemAdded()
+    void LinearMovement3D::update(F32 _dt)
     {
-        m_rotors3D = m_worldRaw->requestInclusiveSample<Rotor3D>();
-        m_sinMovements3D = m_worldRaw->requestInclusiveSample<SinMovement3D>();
-        m_linearMovements3D = m_worldRaw->requestInclusiveSample<LinearMovement3D>();
+        if (m_active)
+            m_transform->translate(m_axis * m_speed * _dt);
     }
-        
-    //////////////////////////////////////////
-    void TransformUtilsSystem::processUpdate(F32 _dt)
-    {
-        m_rotors3D->process(
-            [_dt](Entity* entity, Rotor3D* _rotor)
-            {
-                _rotor->update(_dt);
-            });
 
-        m_sinMovements3D->process(
-            [_dt](Entity* entity, SinMovement3D* _sinMovement)
-            {
-                _sinMovement->update(_dt);
-            });
-        m_linearMovements3D->process(
-            [_dt](Entity* entity, LinearMovement3D* _linearMovement)
-            {
-                _linearMovement->update(_dt);
-            });
- 
+    //////////////////////////////////////////
+    void LinearMovement3D::processEntityAwakened()
+    {
+        m_transform = getEntityRaw()->getComponent<Transform3D>();
     }
-    
     
 } // namespace Maze
 //////////////////////////////////////////

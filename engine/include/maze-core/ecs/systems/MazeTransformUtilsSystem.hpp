@@ -47,6 +47,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Transform2D);
     MAZE_USING_SHARED_PTR(Transform3D);
     MAZE_USING_SHARED_PTR(Rotor3D);
+    MAZE_USING_SHARED_PTR(LinearMovement3D);
     MAZE_USING_SHARED_PTR(SinMovement3D);
 
 
@@ -97,6 +98,7 @@ namespace Maze
 
     protected:
         SharedPtr<GenericInclusiveEntitiesSample<Rotor3D>> m_rotors3D;
+        SharedPtr<GenericInclusiveEntitiesSample<LinearMovement3D>> m_linearMovements3D;
         SharedPtr<GenericInclusiveEntitiesSample<SinMovement3D>> m_sinMovements3D;
     };
 

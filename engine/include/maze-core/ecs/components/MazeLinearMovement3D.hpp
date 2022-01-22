@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeRotor3D_hpp_))
-#define _MazeRotor3D_hpp_
+#if (!defined(_MazeLinearMovement3D_hpp_))
+#define _MazeLinearMovement3D_hpp_
 
 
 //////////////////////////////////////////
@@ -40,24 +40,24 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(Rotor3D);
+    MAZE_USING_SHARED_PTR(LinearMovement3D);
     MAZE_USING_SHARED_PTR(Transform3D);
 
 
     //////////////////////////////////////////
-    // Class Rotor3D
+    // Class LinearMovement3D
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API Rotor3D
+    class MAZE_CORE_API LinearMovement3D
         : public Component
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(Rotor3D, Component);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(LinearMovement3D, Component);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(Rotor3D);
+        MAZE_DECLARE_MEMORY_ALLOCATION(LinearMovement3D);
 
         //////////////////////////////////////////
         friend class Entity;
@@ -65,10 +65,10 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~Rotor3D();
+        virtual ~LinearMovement3D();
 
         //////////////////////////////////////////
-        static Rotor3DPtr Create(Vec3DF const& _axis = Vec3DF::c_unitY, F32 _speed = 5.0f);
+        static LinearMovement3DPtr Create(Vec3DF const& _axis = Vec3DF::c_unitY, F32 _speed = 5.0f);
 
 
         //////////////////////////////////////////
@@ -98,7 +98,7 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        Rotor3D();
+        LinearMovement3D();
 
         //////////////////////////////////////////
         using Component::init;
@@ -122,5 +122,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeRotor3D_hpp_
+#endif // _MazeLinearMovement3D_hpp_
 //////////////////////////////////////////

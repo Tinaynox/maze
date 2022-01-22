@@ -259,6 +259,9 @@ namespace Maze
     //////////////////////////////////////////
     bool WindowWin::processEvent(UINT _message, WPARAM _wParam, LPARAM _lParam)
     {
+        if (m_handle == 0)
+            return true;
+
         InputManager* inputManager = InputManager::GetInstancePtr();
 
         switch (_message)
