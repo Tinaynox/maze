@@ -30,6 +30,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
+#include "maze-core/managers/MazeEntitySerializationManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
@@ -216,6 +217,18 @@ namespace Maze
                             }
                         });
 
+                    _menuListTree->addItem(
+                        "Save To XML",
+                        [entityWeak](String const& _text)
+                        {
+                            EntityPtr entity = entityWeak.lock();
+                            if (entity)
+                            {
+                                Name* name = entity->getComponentRaw<Name>();
+                                String filename = name ? name->getName() : "Unnamed";
+                                EntitySerializationManager::GetInstancePtr()->savePrefabToXMLFile(entity, filename + ".xml");
+                            }
+                        });
 
                     Transform3D* transform3D = entity->getComponentRaw<Transform3D>();
                     if (transform3D)
