@@ -91,6 +91,8 @@ namespace Maze
         {
             IsBullet = MAZE_BIT(0),
             FixedRotation = MAZE_BIT(1),
+            TransformDirty = MAZE_BIT(5),
+            EnabledDirty = MAZE_BIT(6),
             BodyDirty = MAZE_BIT(7),
         };
 
@@ -241,6 +243,12 @@ namespace Maze
         //////////////////////////////////////////
         bool getBodyDirty() const { return (m_flags & Rigidbody2DFlag::BodyDirty) != 0; }
 
+        //////////////////////////////////////////
+        bool getEnabledDirty() const { return (m_flags & Rigidbody2DFlag::EnabledDirty) != 0; }
+
+        //////////////////////////////////////////
+        bool getTransformDirty() const { return (m_flags & Rigidbody2DFlag::TransformDirty) != 0; }
+
 
         //////////////////////////////////////////
         U8 getFlags() const { return m_flags; }
@@ -277,7 +285,11 @@ namespace Maze
                 return;
 
             m_fixedUpdateStartPosition = _position;
-            m_body->SetTransform(Box2DHelper::ToVec2(m_world->convertUnitsToMeters(_position)), m_body->GetAngle());
+
+            if (m_world->getBox2DWorld()->IsLocked())
+                m_flags |= Rigidbody2DFlag::TransformDirty;
+            else
+                m_body->SetTransform(Box2DHelper::ToVec2(m_world->convertUnitsToMeters(_position)), m_body->GetAngle());
         }
 
         //////////////////////////////////////////

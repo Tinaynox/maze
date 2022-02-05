@@ -200,6 +200,9 @@ namespace Maze
 
         SystemTextDropdown2DPtr m_modeDropdown;
         ClickButton2DPtr m_copyButton;
+        ClickButton2DPtr m_pasteButton;
+        ClickButton2DPtr m_copyXMLButton;
+        ClickButton2DPtr m_pasteXMLButton;
 
         SpriteRenderer2DPtr m_curveRendererHolder;
         SpriteRenderer2DPtr m_curveRenderer;

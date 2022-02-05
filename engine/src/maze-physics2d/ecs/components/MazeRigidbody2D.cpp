@@ -194,7 +194,10 @@ namespace Maze
         if (!m_body)
             return; 
 
-        m_body->SetEnabled(getEntityRaw()->getActiveInHierarchy() && m_enabled);
+        if (m_world->getBox2DWorld()->IsLocked())
+            m_flags |= Rigidbody2DFlag::EnabledDirty;
+        else
+            m_body->SetEnabled(getEntityRaw()->getActiveInHierarchy() && m_enabled);
     }
 
     //////////////////////////////////////////
@@ -202,6 +205,18 @@ namespace Maze
     {
         if (getBodyDirty())
             rebuildBody();
+
+        if (getEnabledDirty())
+        {
+            m_body->SetEnabled(getEntityRaw()->getActiveInHierarchy() && m_enabled);
+            m_flags &= ~Rigidbody2DFlag::EnabledDirty;
+        }
+
+        if (getTransformDirty())
+        {
+            m_body->SetTransform(Box2DHelper::ToVec2(m_world->convertUnitsToMeters(m_fixedUpdateStartPosition)), m_body->GetAngle());
+            m_flags &= ~Rigidbody2DFlag::TransformDirty;
+        }
 
         m_fixedUpdateStartPosition = getPosition();
         m_fixedUpdateStartAngle = getAngle();
