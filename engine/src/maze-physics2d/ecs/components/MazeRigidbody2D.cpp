@@ -258,6 +258,12 @@ namespace Maze
     //////////////////////////////////////////
     void Rigidbody2D::rebuildBody()
     {
+        if (m_world->getBox2DWorld()->IsLocked())
+        {
+            dirtyBody();
+            return;
+        }
+
         b2World* world = m_world->getBox2DWorld();
 
         b2Vec2 linearVelocity = b2Vec2_zero;
