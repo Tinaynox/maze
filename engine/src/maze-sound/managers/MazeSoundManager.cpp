@@ -133,6 +133,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    SoundPtr const& SoundManager::getSound(HashedCString _assetFileName)
+    {
+        // #TODO: Rework m_soundsByName to StringHashMap
+        return getSound(String(_assetFileName.str));
+    }
+
+    //////////////////////////////////////////
     SoundPtr const& SoundManager::getSound(AssetFilePtr const& _assetFile)
     {
         static SoundPtr const nullPointer;

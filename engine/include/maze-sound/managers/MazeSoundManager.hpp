@@ -77,6 +77,9 @@ namespace Maze
         SoundPtr const& getSound(String const& _assetFileName);
 
         //////////////////////////////////////////
+        SoundPtr const& getSound(HashedCString _assetFileName);
+
+        //////////////////////////////////////////
         SoundPtr const& getSound(AssetFilePtr const& _assetFile);
 
         //////////////////////////////////////////
