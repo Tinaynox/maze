@@ -136,19 +136,27 @@ namespace Maze
                 if (!_rigidbody->getBody())
                     return;
 
-                _transform->setLocalPosition(
-                    Math::Lerp(
-                        _rigidbody->getFixedUpdateStartPosition(),
-                        _rigidbody->getPosition(),
-                        accumulatorRatio));
-
-                _transform->setLocalRotation(
-                    Quaternion(
+                if (!_rigidbody->getTransformDirty())
+                {
+                    _transform->setLocalPosition(
                         Math::Lerp(
-                            _rigidbody->getFixedUpdateStartAngle(),
-                            _rigidbody->getAngle(),
-                            accumulatorRatio),
-                        Vec3DF::c_unitZ));
+                            _rigidbody->getFixedUpdateStartPosition(),
+                            _rigidbody->getPosition(),
+                            accumulatorRatio));
+
+                    _transform->setLocalRotation(
+                        Quaternion(
+                            Math::Lerp(
+                                _rigidbody->getFixedUpdateStartAngle(),
+                                _rigidbody->getAngle(),
+                                accumulatorRatio),
+                            Vec3DF::c_unitZ));
+                }
+                else
+                {
+                    _transform->setLocalPosition(_rigidbody->getFixedUpdateStartPosition());
+                    _transform->setLocalRotation(Quaternion(_rigidbody->getFixedUpdateStartAngle(), Vec3DF::c_unitZ));
+                }
             });
     }
     
