@@ -32,6 +32,7 @@
 #include "maze-sound/MazeSoundSource.hpp"
 #include "maze-sound/MazeSoundSet.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -127,6 +128,9 @@ namespace Maze
         else
         {
             String fileExtension = StringHelper::ToLower(metaData["ext"]);
+            if (fileExtension.empty())
+                fileExtension = FileHelper::GetFileExtension(_assetFile->getFileName());
+
             if (fileExtension == "wav")
             {
                 MAZE_ERROR_IF(!Maze::LoadWAV(_assetFile, soundData), "SoundData is not loaded - '%s'", _assetFile->getFileName().c_str());

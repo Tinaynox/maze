@@ -98,6 +98,10 @@ namespace Maze
         //////////////////////////////////////////
         void setDefaultSoundSystem(SoundSystemPtr const& _soundSystem);
 
+
+        //////////////////////////////////////////
+        void loadSounds(Set<String> const& _tags);
+
     protected:
 
         //////////////////////////////////////////

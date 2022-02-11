@@ -181,6 +181,23 @@ namespace Maze
 
         return nullPointer;
     }
+
+    //////////////////////////////////////////
+    void SoundManager::loadSounds(Set<String> const& _tags)
+    {
+        Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtension(
+            "wav",
+            [&](AssetFilePtr const& _assetFile)
+            {
+                return _assetFile->hasAnyOfTags(_tags);
+            });
+
+        for (AssetFilePtr const& assetFile : assetFiles)
+        {
+            String fileName = assetFile->getFileName();
+            getSound(fileName);
+        }
+    }
     
 } // namespace Maze
 //////////////////////////////////////////
