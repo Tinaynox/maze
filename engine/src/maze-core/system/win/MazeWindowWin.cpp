@@ -839,8 +839,8 @@ namespace Maze
         wc.cbClsExtra    = 0;
         wc.cbWndExtra    = 0;
         wc.hInstance     = hinstance;
-        wc.hIcon         = (HICON)LoadImage(hinstance, MAKEINTRESOURCE(m_params->icon), IMAGE_ICON, 256, 256, 0);
-        wc.hIconSm       = (HICON)LoadImage(hinstance, MAKEINTRESOURCE(m_params->icon), IMAGE_ICON, 32, 32, 0);
+        wc.hIcon         = (HICON)LoadImage(hinstance, MAKEINTRESOURCE(m_params->iconBig), IMAGE_ICON, 256, 256, 0);
+        wc.hIconSm       = (HICON)LoadImage(hinstance, MAKEINTRESOURCE(m_params->iconSmall), IMAGE_ICON, 32, 32, 0);
 
         if (m_params->cursor)
         {
@@ -945,9 +945,9 @@ namespace Maze
         SetFocus(hwnd);
         
 
-        HICON hIconSmall = (HICON)LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(m_params->icon), IMAGE_ICON, 32, 32, 0);
+        HICON hIconSmall = (HICON)LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(m_params->iconSmall), IMAGE_ICON, 32, 32, 0);
         SendMessage(hwnd, WM_SETICON,ICON_SMALL, (LPARAM)hIconSmall);
-        HICON hIconBig = (HICON)LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(m_params->icon), IMAGE_ICON, 256, 256, 0);
+        HICON hIconBig = (HICON)LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(m_params->iconBig), IMAGE_ICON, 256, 256, 0);
         SendMessage(hwnd, WM_SETICON,ICON_BIG, (LPARAM)hIconBig);
 
 
