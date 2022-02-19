@@ -88,6 +88,9 @@ namespace Maze
         //////////////////////////////////////////
         inline void popPause() { if (m_pauseCounter > 0) m_pauseCounter--; }
 
+        //////////////////////////////////////////
+        inline bool isPaused() const { return (m_pauseCounter > 0); }
+
 
         //////////////////////////////////////////
         inline F32 getUnscaledDeltaTime() const { return m_unscaledDeltaTime; }

@@ -107,19 +107,7 @@ namespace Maze
         MZALint state;
         MAZE_AL_CALL(mzalGetSourcei(m_sourceID, AL_SOURCE_STATE, &state));
         if (state == AL_STOPPED)
-        {
-            /*
-            if (m_looped)
-            {
-                MAZE_AL_CALL(mzalSourceRewind(m_sourceID));
-                play();
-            }
-            else
-            */
-            {
-                return false;
-            }
-        }
+            return false;
 
         return true;
     }
@@ -139,6 +127,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void SoundSourceOpenAL::setPitch(F32 _pitch)
+    {
+        SoundSource::setPitch(_pitch);
+        updatePitch();
+    }
+
+    //////////////////////////////////////////
     void SoundSourceOpenAL::updateVolume()
     {
         F32 volume = m_volume;
@@ -147,6 +142,17 @@ namespace Maze
             volume *= m_soundGroup->getVolume();
 
         MAZE_AL_CALL(mzalSourcef(m_sourceID, AL_GAIN, volume));
+    }
+
+    //////////////////////////////////////////
+    void SoundSourceOpenAL::updatePitch()
+    {
+        F32 pitch = m_pitch;
+
+        if (m_soundGroup)
+            pitch *= m_soundGroup->getPitch();
+
+        MAZE_AL_CALL(mzalSourcef(m_sourceID, AL_PITCH, pitch));
     }
 
     //////////////////////////////////////////

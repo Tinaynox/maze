@@ -69,10 +69,18 @@ namespace Maze
         //////////////////////////////////////////
         inline F32 getVolume() const { return m_volume; }
 
+
+        //////////////////////////////////////////
+        void setPitch(F32 _pitch);
+
+        //////////////////////////////////////////
+        inline F32 getPitch() const { return m_pitch; }
+
     public:
 
         //////////////////////////////////////////
         MultiDelegate<F32> eventVolumeChanged;
+        MultiDelegate<F32> eventPitchChanged;
 
     protected:
 
@@ -86,6 +94,7 @@ namespace Maze
     protected:
         SoundSystem* m_soundSystem = nullptr;
         F32 m_volume = 1.0f;
+        F32 m_pitch = 1.0f;
     };
     
 

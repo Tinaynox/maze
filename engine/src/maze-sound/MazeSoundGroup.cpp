@@ -83,5 +83,16 @@ namespace Maze
         eventVolumeChanged(m_volume);
     }
 
+    //////////////////////////////////////////
+    void SoundGroup::setPitch(F32 _pitch)
+    {
+        if (m_pitch == _pitch)
+            return;
+
+        m_pitch = _pitch;
+
+        eventPitchChanged(m_pitch);
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

@@ -72,6 +72,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        virtual void setPitch(F32 _pitch) { m_pitch = _pitch; }
+
+        //////////////////////////////////////////
+        inline F32 getPitch() const { return m_pitch; }
+
+
+        //////////////////////////////////////////
         virtual void setLooped(bool _looped) { m_looped = _looped; }
 
         //////////////////////////////////////////
@@ -109,11 +116,17 @@ namespace Maze
         virtual void updateVolume() MAZE_ABSTRACT;
 
         //////////////////////////////////////////
+        virtual void updatePitch() MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
         virtual void updateLooped() MAZE_ABSTRACT;
 
 
         //////////////////////////////////////////
         void notifySoundGroupVolumeChanged(F32 _volume);
+
+        //////////////////////////////////////////
+        void notifySoundGroupPitchChanged(F32 _pitch);
 
     protected:
         SoundSystem* m_soundSystem = nullptr;
@@ -121,6 +134,7 @@ namespace Maze
         SoundGroupPtr m_soundGroup;
 
         F32 m_volume = 1.0f;
+        F32 m_pitch = 1.0f;
         bool m_looped = false;
     };
     

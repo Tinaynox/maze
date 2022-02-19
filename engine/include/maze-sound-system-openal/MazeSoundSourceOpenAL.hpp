@@ -81,6 +81,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual void setVolume(F32 _volume) MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        virtual void setPitch(F32 _pitch) MAZE_OVERRIDE;
+
     protected:
 
         //////////////////////////////////////////
@@ -102,6 +105,9 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual void updateVolume() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void updatePitch() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual void updateLooped() MAZE_OVERRIDE;
