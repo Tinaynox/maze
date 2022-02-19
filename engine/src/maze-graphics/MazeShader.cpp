@@ -613,6 +613,7 @@ namespace Maze
                     else
                     {
                         MAZE_ERROR("Shader: '%s'. Undefined texture for uniform '%s': '%s'", getName().c_str(), uniformData.name.c_str(), uniformData.value.c_str());
+                        setUniform(uniformData.name, textureManager->getErrorTexture());
                     }
                     break;
                 }

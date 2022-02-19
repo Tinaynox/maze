@@ -181,7 +181,7 @@ namespace Maze
 
         m_texture = value.getTexture2D();
 
-        Texture2DPtr const& spriteTexture = m_texture ? m_texture : GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getTextureManager()->getWhiteTexture();
+        Texture2DPtr const& spriteTexture = m_texture ? m_texture : GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getTextureManager()->getErrorTexture();
 
         if (m_sprite->getTexture() != spriteTexture)
             m_sprite->set(spriteTexture);
