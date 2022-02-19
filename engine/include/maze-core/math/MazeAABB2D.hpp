@@ -157,6 +157,18 @@ namespace Maze
         inline MAZE_CONSTEXPR Vec2DF const& getRightBottom() const { return m_max; }
         
         //////////////////////////////////////////
+        inline MAZE_CONSTEXPR Vec2DF getLeft() const { return Vec2DF(m_min.x, m_min.y + getHeight() * 0.5f); }
+
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR Vec2DF getRight() const { return Vec2DF(m_max.x, m_min.y + getHeight() * 0.5f); }
+
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR Vec2DF getBottom() const { return Vec2DF(m_min.x + getWidth() * 0.5f, m_min.y); }
+
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR Vec2DF getTop() const { return Vec2DF(m_min.x + getWidth() * 0.5f, m_max.y); }
+
+        //////////////////////////////////////////
         inline MAZE_CONSTEXPR F32 getWidth() const { return m_max.x - m_min.x; }
         
         //////////////////////////////////////////

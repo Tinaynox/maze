@@ -34,6 +34,7 @@
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeAABB2D.hpp"
 #include "maze-core/ecs/MazeComponentSystem.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
@@ -112,27 +113,43 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline F32 convertMetersToUnits(F32 _meters)
+        inline F32 convertMetersToUnits(F32 _meters) const
         {
             return _meters * m_unitsPerMeter;
         }
 
         //////////////////////////////////////////
-        inline F32 convertUnitsToMeters(F32 _units)
+        inline F32 convertUnitsToMeters(F32 _units) const
         {
             return _units / m_unitsPerMeter;
         }
 
         //////////////////////////////////////////
-        inline Vec2DF convertMetersToUnits(Vec2DF const& _meters)
+        inline Vec2DF convertMetersToUnits(Vec2DF const& _meters) const
         {
             return _meters * m_unitsPerMeter;
         }
 
         //////////////////////////////////////////
-        inline Vec2DF convertUnitsToMeters(Vec2DF const& _units)
+        inline Vec2DF convertUnitsToMeters(Vec2DF const& _units) const
         {
             return _units / m_unitsPerMeter;
+        }
+
+        //////////////////////////////////////////
+        inline AABB2D convertMetersToUnits(AABB2D const& _meters) const
+        {
+            return AABB2D(
+                _meters.getMin() * m_unitsPerMeter,
+                _meters.getMax() * m_unitsPerMeter);
+        }
+
+        //////////////////////////////////////////
+        inline AABB2D convertUnitsToMeters(AABB2D const& _units) const
+        {
+            return AABB2D(
+                _units.getMin() / m_unitsPerMeter,
+                _units.getMax() / m_unitsPerMeter);
         }
 
         //////////////////////////////////////////

@@ -37,6 +37,7 @@
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
 #include "maze-physics2d/ecs/components/MazeBoxCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeCircleCollider2D.hpp"
+#include "maze-physics2d/ecs/components/MazePhysicsRotor2D.hpp"
 #include "maze-physics2d/managers/MazePhysicsMaterial2DManager.hpp"
 #include "maze-graphics/managers/MazeGizmosManager.hpp"
 
@@ -85,6 +86,7 @@ namespace Maze
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<Rigidbody2D>("2D/Physics");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<BoxCollider2D>("2D/Physics");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<CircleCollider2D>("2D/Physics");
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<PhysicsRotor2D>("2D/Physics");
 
         return true;
     }

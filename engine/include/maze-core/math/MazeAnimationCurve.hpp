@@ -194,11 +194,13 @@ namespace Maze
         inline AnimationCurve(
             Keyframe const& _value0,
             Keyframe const& _value1,
-            EvaluateMode _mode = EvaluateMode::Linear)
+            EvaluateMode _mode = EvaluateMode::Linear,
+            F32 _scalar = 1.0f)
         {
             addKey(_value0);
             addKey(_value1);
             setMode(_mode);
+            setScalar(_scalar);
         }
 
         //////////////////////////////////////////

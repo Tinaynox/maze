@@ -45,7 +45,8 @@ namespace Maze
         CString _windowTitle,
         WindowMode _windowMode,
         bool _minimized,
-        S32 _icon,
+        S32 _iconBig,
+        S32 _iconSmall,
         U8 _flags)
     {
         WindowParamsPtr object = MAZE_CREATE_SHARED_PTR(MAZE_PLATFORM_OBJECT(WindowParams));
@@ -56,7 +57,8 @@ namespace Maze
                 _windowTitle,
                 _windowMode,
                 _minimized,
-                _icon,
+                _iconBig,
+                _iconSmall,
                 _flags))
             return WindowParamsPtr();
             
@@ -81,7 +83,8 @@ namespace Maze
         CString _windowTitle,
         WindowMode _windowMode,
         bool _minimized,
-        S32 _icon,
+        S32 _iconBig,
+        S32 _iconSmall,
         U8 _flags)
     {
         clientSize = _clientSize;
@@ -89,7 +92,8 @@ namespace Maze
         windowMode = _windowMode;
         minimized = _minimized;
         title = _windowTitle;
-        icon = _icon;
+        iconBig = _iconBig;
+        iconSmall = _iconSmall;
         flags = _flags;
 
         return true;
@@ -103,7 +107,8 @@ namespace Maze
         windowMode = _windowParams->windowMode;
         minimized = _windowParams->minimized;
         title = _windowParams->title;
-        icon = _windowParams->icon;
+        iconBig = _windowParams->iconBig;
+        iconSmall = _windowParams->iconSmall;
         flags = _windowParams->flags;
 
         return true;

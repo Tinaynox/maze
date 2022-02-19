@@ -133,6 +133,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    SoundPtr const& SoundManager::getSound(HashedCString _assetFileName)
+    {
+        // #TODO: Rework m_soundsByName to StringHashMap
+        return getSound(String(_assetFileName.str));
+    }
+
+    //////////////////////////////////////////
     SoundPtr const& SoundManager::getSound(AssetFilePtr const& _assetFile)
     {
         static SoundPtr const nullPointer;
@@ -173,6 +180,23 @@ namespace Maze
         }
 
         return nullPointer;
+    }
+
+    //////////////////////////////////////////
+    void SoundManager::loadSounds(Set<String> const& _tags)
+    {
+        Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtension(
+            "wav",
+            [&](AssetFilePtr const& _assetFile)
+            {
+                return _assetFile->hasAnyOfTags(_tags);
+            });
+
+        for (AssetFilePtr const& assetFile : assetFiles)
+        {
+            String fileName = assetFile->getFileName();
+            getSound(fileName);
+        }
     }
     
 } // namespace Maze

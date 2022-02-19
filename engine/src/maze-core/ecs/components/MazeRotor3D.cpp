@@ -41,6 +41,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Rotor3D, Component,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, active, true, getActive, setActive),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, axis, Vec3DF::c_unitY, getAxis, setAxis),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, speed, 5.0f, getSpeed, setSpeed));
 
@@ -49,8 +50,6 @@ namespace Maze
 
     //////////////////////////////////////////
     Rotor3D::Rotor3D()
-        : m_axis(Vec3DF::c_unitY)
-        , m_speed(5.0f)
     {
     }
 
@@ -79,7 +78,8 @@ namespace Maze
     //////////////////////////////////////////
     void Rotor3D::update(F32 _dt)
     {
-        m_transform->rotate(m_axis.normalizedCopy(), m_speed * _dt);
+        if (m_active)
+            m_transform->rotate(m_axis.normalizedCopy(), m_speed * _dt);
     }
 
     //////////////////////////////////////////

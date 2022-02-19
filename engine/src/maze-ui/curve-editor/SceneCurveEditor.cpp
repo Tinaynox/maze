@@ -289,7 +289,7 @@ namespace Maze
             m_copyButton = UIHelper::CreateDefaultClickButton(
                 "C",
                 { 18.0f, 18.0f },
-                { -12.0f, -12.0f },
+                { -32.0f, -12.0f },
                 m_canvas->getTransform(),
                 this,
                 Vec2DF(1.0f, 1.0f),
@@ -299,6 +299,59 @@ namespace Maze
                 {
                     AnimationCurve curve = AnimationCurveManager::GetInstancePtr()->getCurve();
                     SystemManager::GetInstancePtr()->setClipboardString(curve.toString());
+                });
+
+            m_pasteButton = UIHelper::CreateDefaultClickButton(
+                "P",
+                { 18.0f, 18.0f },
+                { -12.0f, -12.0f },
+                m_canvas->getTransform(),
+                this,
+                Vec2DF(1.0f, 1.0f),
+                Vec2DF(1.0f, 1.0f));
+            m_pasteButton->eventClick.subscribe(
+                [](Button2D* _button, CursorInputEvent const& _event)
+                {
+                    String text = SystemManager::GetInstancePtr()->getClipboardAsString();
+                    AnimationCurve curve = AnimationCurve::FromString(text);
+                    AnimationCurveManager::GetInstancePtr()->setCurve(curve);
+                    
+                });
+
+
+            m_copyXMLButton = UIHelper::CreateDefaultClickButton(
+                "CX",
+                { 18.0f, 18.0f },
+                { -72.0f, -12.0f },
+                m_canvas->getTransform(),
+                this,
+                Vec2DF(1.0f, 1.0f),
+                Vec2DF(1.0f, 1.0f));
+            m_copyXMLButton->eventClick.subscribe(
+                [](Button2D* _button, CursorInputEvent const& _event)
+                {
+                    AnimationCurve curve = AnimationCurveManager::GetInstancePtr()->getCurve();
+                    String text = curve.toString();
+                    StringHelper::ReplaceSubstring(text, "\"", "&quot;");
+                    SystemManager::GetInstancePtr()->setClipboardString(text);
+                });
+
+            m_pasteXMLButton = UIHelper::CreateDefaultClickButton(
+                "PX",
+                { 18.0f, 18.0f },
+                { -52.0f, -12.0f },
+                m_canvas->getTransform(),
+                this,
+                Vec2DF(1.0f, 1.0f),
+                Vec2DF(1.0f, 1.0f));
+            m_pasteXMLButton->eventClick.subscribe(
+                [](Button2D* _button, CursorInputEvent const& _event)
+                {
+                    String text = SystemManager::GetInstancePtr()->getClipboardAsString();
+                    StringHelper::ReplaceSubstring(text, "&quot;", "\"");
+                    AnimationCurve curve = AnimationCurve::FromString(text);
+                    AnimationCurveManager::GetInstancePtr()->setCurve(curve);
+
                 });
 
             m_modeDropdown->addOption("Fixed");
@@ -569,11 +622,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void SceneCurveEditor::processCurve()
-    {
-
-        
-
-        
+    {        
         F32 width = m_curveRenderer->getTransform()->getSize().x - c_leftOffset - c_rightOffset;
         F32 height = m_curveRenderer->getTransform()->getSize().y - c_bottomOffset - c_topOffset;
 
@@ -945,6 +994,7 @@ namespace Maze
         m_curveTexture->loadTexture(m_curvePixelSheet);
         m_curveSprite->set(m_curveTexture);
         
+        m_modeDropdown->setValue((S32)curve.getMode());
     }
 
     //////////////////////////////////////////

@@ -76,6 +76,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline bool getActive() const { return m_active; }
+
+        //////////////////////////////////////////
+        inline void setActive(bool _active) { m_active = _active; }
+
+
+        //////////////////////////////////////////
         inline Vec3DF const& getAxis() const { return m_axis; }
 
         //////////////////////////////////////////
@@ -103,8 +110,9 @@ namespace Maze
         virtual void processEntityAwakened() MAZE_OVERRIDE;
 
     protected:
-        Vec3DF m_axis;
-        F32 m_speed;
+        bool m_active = true;
+        Vec3DF m_axis = Vec3DF::c_unitY;
+        F32 m_speed = 5.0f;
 
         Transform3DPtr m_transform;
     };

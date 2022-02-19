@@ -25,68 +25,65 @@
 
 //////////////////////////////////////////
 #include "MazePhysics2DHeader.hpp"
-#include "maze-physics2d/ecs/components/MazeCollider2D.hpp"
-#include "maze-physics2d/physics/MazePhysicsMaterial2D.hpp"
-#include "maze-physics2d/managers/MazePhysicsMaterial2DManager.hpp"
-#include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-physics2d/ecs/components/MazePhysicsRotor2D.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/services/MazeLogStream.hpp"
+#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/math/MazeQuaternion.hpp"
+#include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
 
 
 //////////////////////////////////////////
+// PhysicsRotor2Dspace Maze
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class Collider2D
+    // Class PhysicsRotor2D
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Collider2D, Component,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(PhysicsMaterial2DPtr, physicsMaterial, PhysicsMaterial2DPtr(), getPhysicsMaterial, setPhysicsMaterial),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, isSensor, false, getIsSensor, setIsSensor));
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PhysicsRotor2D, Component,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, speed, 5.0f, getSpeed, setSpeed));
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(Collider2D);
-
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(PhysicsRotor2D);
 
     //////////////////////////////////////////
-    Collider2D::Collider2D()
+    PhysicsRotor2D::PhysicsRotor2D()
+        : m_speed(5.0f)
     {
-        
     }
 
     //////////////////////////////////////////
-    Collider2D::~Collider2D()
+    PhysicsRotor2D::~PhysicsRotor2D()
     {
-        
     }
 
     //////////////////////////////////////////
-    Collider2DPtr Collider2D::Create()
+    PhysicsRotor2DPtr PhysicsRotor2D::Create(F32 _speed)
     {
-        Collider2DPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(Collider2D, object, init());
+        PhysicsRotor2DPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PhysicsRotor2D, object, init(_speed));
         return object;
     }
 
     //////////////////////////////////////////
-    bool Collider2D::init()
+    bool PhysicsRotor2D::init(F32 _speed)
     {
+        setSpeed(_speed);
 
         return true;
     }
 
     //////////////////////////////////////////
-    void Collider2D::processComponentAdded()
+    void PhysicsRotor2D::update(F32 _dt)
     {
-        
+        m_rigidbody->setAngle(m_rigidbody->getAngle() + m_speed * _dt);
     }
 
     //////////////////////////////////////////
-    void Collider2D::setPhysicsMaterial(String const& _physicsMaterial)
+    void PhysicsRotor2D::processEntityAwakened()
     {
-        setPhysicsMaterial(PhysicsMaterial2DManager::GetInstancePtr()->getMaterial(_physicsMaterial));
+        m_rigidbody = getEntityRaw()->getComponent<Rigidbody2D>();
     }
-    
     
 } // namespace Maze
 //////////////////////////////////////////

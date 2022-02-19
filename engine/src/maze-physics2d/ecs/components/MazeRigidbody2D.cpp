@@ -168,6 +168,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    AABB2D Rigidbody2D::getAABB()
+    {
+        if (!m_body)
+            return AABB2D::c_zero;
+
+        return Box2DHelper::GetBodyAABB2D(m_world, m_body);
+    }
+
+    //////////////////////////////////////////
     void Rigidbody2D::processEntityEnabled()
     {
         updateBodyEnabled();
@@ -185,7 +194,10 @@ namespace Maze
         if (!m_body)
             return; 
 
-        m_body->SetEnabled(getEntityRaw()->getActiveInHierarchy() && m_enabled);
+        if (m_world->getBox2DWorld()->IsLocked())
+            m_flags |= Rigidbody2DFlag::EnabledDirty;
+        else
+            m_body->SetEnabled(getEntityRaw()->getActiveInHierarchy() && m_enabled);
     }
 
     //////////////////////////////////////////
@@ -193,6 +205,18 @@ namespace Maze
     {
         if (getBodyDirty())
             rebuildBody();
+
+        if (getEnabledDirty())
+        {
+            m_body->SetEnabled(getEntityRaw()->getActiveInHierarchy() && m_enabled);
+            m_flags &= ~Rigidbody2DFlag::EnabledDirty;
+        }
+
+        if (getTransformDirty())
+        {
+            m_body->SetTransform(Box2DHelper::ToVec2(m_world->convertUnitsToMeters(m_fixedUpdateStartPosition)), m_body->GetAngle());
+            m_flags &= ~Rigidbody2DFlag::TransformDirty;
+        }
 
         m_fixedUpdateStartPosition = getPosition();
         m_fixedUpdateStartAngle = getAngle();
@@ -234,6 +258,12 @@ namespace Maze
     //////////////////////////////////////////
     void Rigidbody2D::rebuildBody()
     {
+        if (m_world->getBox2DWorld()->IsLocked())
+        {
+            dirtyBody();
+            return;
+        }
+
         b2World* world = m_world->getBox2DWorld();
 
         b2Vec2 linearVelocity = b2Vec2_zero;
@@ -311,7 +341,7 @@ namespace Maze
             fixture.friction = physicsMaterial->getFriction();
             fixture.restitution = physicsMaterial->getRestitution();
             fixture.filter = filter;
-            fixture.isSensor = getIsSensor();
+            fixture.isSensor = boxCollider->getIsSensor();
 
             if (fixture.isSensor)
                 fixture.density = 0.0001f;
@@ -346,7 +376,7 @@ namespace Maze
             fixture.friction = physicsMaterial->getFriction();
             fixture.restitution = physicsMaterial->getRestitution();
             fixture.filter = filter;
-            fixture.isSensor = getIsSensor();
+            fixture.isSensor = circleCollider->getIsSensor();
 
             if (fixture.isSensor)
                 fixture.density = 0.0001f;

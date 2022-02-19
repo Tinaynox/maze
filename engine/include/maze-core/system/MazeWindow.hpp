@@ -97,7 +97,8 @@ namespace Maze
             CString _windowTitle = "Window",
             WindowMode _windowMode = WindowMode::Windowed,
             bool _minimized = false,
-            S32 _icon = 0,
+            S32 _iconBig = 0,
+            S32 _iconSmall = 0,
             U8 _flags = WindowStyleFlags::Titlebar | WindowStyleFlags::CloseButton | WindowStyleFlags::Background);
 
         ////////////////////////////////////
@@ -114,7 +115,8 @@ namespace Maze
 
         String title;
 
-        S32 icon;
+        S32 iconBig;
+        S32 iconSmall;
         SystemCursorPtr cursor;
 
         U8 flags;
@@ -128,7 +130,8 @@ namespace Maze
             CString _windowTitle = "Window",
             WindowMode _windowMode = WindowMode::Windowed,
             bool _minimized = false,
-            S32 _icon = 0,
+            S32 _iconBig = 0,
+            S32 _iconSmall = 0,
             U8 _flags = WindowStyleFlags::Titlebar | WindowStyleFlags::CloseButton | WindowStyleFlags::Background);
 
         ////////////////////////////////////

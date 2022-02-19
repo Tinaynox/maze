@@ -566,7 +566,7 @@ namespace Maze
         Vec3DF euler;
 
         // Singularity at north pole
-        if (test > 0.4995f * unit)
+        if (test > 0.49995f * unit)
         {
             euler.x = Math::c_halfPi;
             euler.y = 2.0f * Math::ATan2(y, x);
@@ -574,7 +574,7 @@ namespace Maze
         }
         else
         // Singularity at south pole
-        if (test < -0.4995f * unit)
+        if (test < -0.49995f * unit)
         {
             euler.x = -Math::c_halfPi;
             euler.y = -2.0f * Math::ATan2(y, x);

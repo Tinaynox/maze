@@ -25,107 +25,102 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeSoundManager_hpp_))
-#define _MazeSoundManager_hpp_
+#if (!defined(_MazeLinearMovement3D_hpp_))
+#define _MazeLinearMovement3D_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-sound/MazeSoundHeader.hpp"
-#include "maze-core/MazeTypes.hpp"
-#include "maze-sound/MazeSoundSystem.hpp"
+#include "maze-core/MazeCoreHeader.hpp"
+#include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeRotation2D.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(SoundManager);
-    MAZE_USING_SHARED_PTR(SoundSystem);
-    MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_SHARED_PTR(LinearMovement3D);
+    MAZE_USING_SHARED_PTR(Transform3D);
 
 
     //////////////////////////////////////////
-    // Class SoundManager
+    // Class LinearMovement3D
     //
     //////////////////////////////////////////
-    class MAZE_SOUND_API SoundManager
+    class MAZE_CORE_API LinearMovement3D
+        : public Component
     {
     public:
 
         //////////////////////////////////////////
-        virtual ~SoundManager();
+        MAZE_DECLARE_METACLASS_WITH_PARENT(LinearMovement3D, Component);
 
         //////////////////////////////////////////
-        static void Initialize(SoundManagerPtr& _soundManager);
-
-
-        //////////////////////////////////////////
-        static inline SoundManager* GetInstancePtr() { return s_instance; }
+        MAZE_DECLARE_MEMORY_ALLOCATION(LinearMovement3D);
 
         //////////////////////////////////////////
-        static inline SoundManager& GetInstance() { return *s_instance; }       
+        friend class Entity;
 
-
-        //////////////////////////////////////////
-        void addSoundSystem(SoundSystemPtr const& _soundSystem);
+    public:
 
         //////////////////////////////////////////
-        void removeSoundSystem(SoundSystemPtr const& _soundSystem);
+        virtual ~LinearMovement3D();
+
+        //////////////////////////////////////////
+        static LinearMovement3DPtr Create(Vec3DF const& _axis = Vec3DF::c_unitY, F32 _speed = 5.0f);
 
 
         //////////////////////////////////////////
-        SoundPtr const& getSound(String const& _assetFileName);
-
-        //////////////////////////////////////////
-        SoundPtr const& getSound(HashedCString _assetFileName);
-
-        //////////////////////////////////////////
-        SoundPtr const& getSound(AssetFilePtr const& _assetFile);
-
-        //////////////////////////////////////////
-        String const& getSoundName(Sound const* _sound);
-
-        //////////////////////////////////////////
-        inline UnorderedMap<String, SoundSystemPtr> const& getSoundSystems() const { return m_soundSystems; }
+        void update(F32 _dt);
 
 
         //////////////////////////////////////////
-        inline SoundSystemPtr const& getDefaultSoundSystem() const { return m_defaultSoundSystem; }
+        inline bool getActive() const { return m_active; }
 
         //////////////////////////////////////////
-        inline SoundSystem* getDefaultSoundSystemRaw() const { return m_defaultSoundSystem.get(); }
-
-        //////////////////////////////////////////
-        void setDefaultSoundSystem(SoundSystemPtr const& _soundSystem);
+        inline void setActive(bool _active) { m_active = _active; }
 
 
         //////////////////////////////////////////
-        void loadSounds(Set<String> const& _tags);
+        inline Vec3DF const& getAxis() const { return m_axis; }
+
+        //////////////////////////////////////////
+        inline void setAxis(Vec3DF const& _axis) { m_axis = _axis; }
+
+
+        //////////////////////////////////////////
+        inline F32 getSpeed() const { return m_speed; }
+
+        //////////////////////////////////////////
+        inline void setSpeed(F32 _speed) { m_speed = _speed; }
 
     protected:
 
         //////////////////////////////////////////
-        SoundManager();
+        LinearMovement3D();
 
         //////////////////////////////////////////
-        bool init();
+        using Component::init;
+        
+        //////////////////////////////////////////
+        bool init(Vec3DF const& _axis = Vec3DF::c_unitY, F32 _speed = 5.0f);
 
         //////////////////////////////////////////
-        SoundPtr const& addSound(SoundPtr const& _sound);
+        virtual void processEntityAwakened() MAZE_OVERRIDE;
 
     protected:
-        static SoundManager* s_instance;
+        bool m_active = true;
+        Vec3DF m_axis = Vec3DF::c_unitY;
+        F32 m_speed = 5.0f;
 
-        UnorderedMap<String, SoundSystemPtr> m_soundSystems;
-        SoundSystemPtr m_defaultSoundSystem;
-
-        UnorderedMap<String, SoundPtr> m_soundsByName;
+        Transform3DPtr m_transform;
     };
-    
+
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeSoundManager_hpp_
+#endif // _MazeLinearMovement3D_hpp_
 //////////////////////////////////////////

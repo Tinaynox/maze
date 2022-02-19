@@ -25,47 +25,39 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazePhysicsControlSystem2D_hpp_))
-#define _MazePhysicsControlSystem2D_hpp_
+#if (!defined(_MazePhysicsRotor2D_hpp_))
+#define _MazePhysicsRotor2D_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-physics2d/MazePhysics2DHeader.hpp"
-#include "maze-core/ecs/MazeComponentSystem.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-core/ecs/MazeEntitiesSample.hpp"
-#include "maze-core/ecs/components/MazeTransform2D.hpp"
-#include "maze-core/ecs/components/MazeTransform3D.hpp"
-#include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
+#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeRotation2D.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(EntitiesSample);
-    MAZE_USING_SHARED_PTR(PhysicsControlSystem2D);
-    MAZE_USING_SHARED_PTR(Transform2D);
-    MAZE_USING_SHARED_PTR(Rigidbody2D);
-    MAZE_USING_SHARED_PTR(PhysicsWorld2D);
     MAZE_USING_SHARED_PTR(PhysicsRotor2D);
-            
+    MAZE_USING_SHARED_PTR(Rigidbody2D);
+
 
     //////////////////////////////////////////
-    // Class PhysicsControlSystem2D
+    // Class PhysicsRotor2D
     //
     //////////////////////////////////////////
-    class MAZE_PHYSICS2D_API PhysicsControlSystem2D
-        : public ComponentSystem
-        , public MultiDelegateCallbackReceiver
+    class MAZE_PHYSICS2D_API PhysicsRotor2D
+        : public Component
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(PhysicsControlSystem2D, ComponentSystem);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(PhysicsRotor2D, Component);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(PhysicsControlSystem2D);
+        MAZE_DECLARE_MEMORY_ALLOCATION(PhysicsRotor2D);
 
         //////////////////////////////////////////
         friend class Entity;
@@ -73,43 +65,39 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~PhysicsControlSystem2D();
+        virtual ~PhysicsRotor2D();
 
         //////////////////////////////////////////
-        static PhysicsControlSystem2DPtr Create();
+        static PhysicsRotor2DPtr Create(F32 _speed = 5.0f);
 
 
         //////////////////////////////////////////
-        virtual S32 getOrder() const MAZE_OVERRIDE { return 500; }
+        void update(F32 _dt);
+
+        //////////////////////////////////////////
+        inline F32 getSpeed() const { return m_speed; }
+
+        //////////////////////////////////////////
+        inline void setSpeed(F32 _speed) { m_speed = _speed; }
 
     protected:
 
         //////////////////////////////////////////
-        PhysicsControlSystem2D();
+        PhysicsRotor2D();
 
         //////////////////////////////////////////
-        bool init();
+        using Component::init;
+        
+        //////////////////////////////////////////
+        bool init(F32 _speed = 5.0f);
 
         //////////////////////////////////////////
-        virtual void processSystemAdded() MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void processUpdate(F32 _dt) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        void setPhysicsWorld2D(PhysicsWorld2DPtr const& _physicsWorld2D);
-
-        //////////////////////////////////////////
-        void notifyFixedUpdateStart(F32 _dt);
-
-        //////////////////////////////////////////
-        void notifyUpdateFinished(F32 _dt);
+        virtual void processEntityAwakened() MAZE_OVERRIDE;
 
     protected:
-        PhysicsWorld2DPtr m_physicsWorld2D;
+        F32 m_speed;
 
-        SharedPtr<GenericInclusiveEntitiesSample<Rigidbody2D, Transform3D>> m_rigidbodies;
-        SharedPtr<GenericInclusiveEntitiesSample<PhysicsRotor2D>> m_rotors;
+        Rigidbody2DPtr m_rigidbody;
     };
 
 
@@ -117,5 +105,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazePhysicsControlSystem2D_hpp_
+#endif // _MazePhysicsRotor2D_hpp_
 //////////////////////////////////////////

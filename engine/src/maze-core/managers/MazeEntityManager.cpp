@@ -36,6 +36,7 @@
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/components/MazeEventRetranslator.hpp"
 #include "maze-core/ecs/components/MazeRotor3D.hpp"
+#include "maze-core/ecs/components/MazeLinearMovement3D.hpp"
 #include "maze-core/ecs/components/MazeSinMovement3D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
@@ -96,6 +97,7 @@ namespace Maze
         // 3D
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<Transform3D>("3D");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<Rotor3D>("3D/Utils");
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<LinearMovement3D>("3D/Utils");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<SinMovement3D>("3D/Utils");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<AwakeRandomRotation3D>("3D/Utils");
 

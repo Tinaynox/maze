@@ -78,6 +78,13 @@ namespace Maze
         //////////////////////////////////////////
         void setPhysicsMaterial(String const& _physicsMaterial);
 
+
+        //////////////////////////////////////////
+        inline void setIsSensor(bool _value) { m_isSensor = _value; }
+
+        //////////////////////////////////////////
+        inline bool getIsSensor() const { return m_isSensor; }
+
     protected:
 
         //////////////////////////////////////////
@@ -93,6 +100,7 @@ namespace Maze
         virtual void processComponentAdded() MAZE_OVERRIDE;
 
     protected:
+        bool m_isSensor = false;
         PhysicsMaterial2DPtr m_physicsMaterial;
     };
 

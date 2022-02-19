@@ -90,8 +90,9 @@ namespace Maze
         enum Rigidbody2DFlag
         {
             IsBullet = MAZE_BIT(0),
-            IsSensor = MAZE_BIT(1),
-            FixedRotation = MAZE_BIT(2),
+            FixedRotation = MAZE_BIT(1),
+            TransformDirty = MAZE_BIT(5),
+            EnabledDirty = MAZE_BIT(6),
             BodyDirty = MAZE_BIT(7),
         };
 
@@ -228,19 +229,6 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setIsSensor(bool _isSensor)
-        {
-            if (_isSensor)
-                setFlags(m_flags | Rigidbody2DFlag::IsSensor);
-            else
-                setFlags(m_flags & ~Rigidbody2DFlag::IsSensor);
-        }
-
-        //////////////////////////////////////////
-        bool getIsSensor() const { return (m_flags & Rigidbody2DFlag::IsSensor) != 0; }
-
-
-        //////////////////////////////////////////
         void setFixedRotation(bool _isFixedRotation)
         {
             if (_isFixedRotation)
@@ -254,6 +242,12 @@ namespace Maze
 
         //////////////////////////////////////////
         bool getBodyDirty() const { return (m_flags & Rigidbody2DFlag::BodyDirty) != 0; }
+
+        //////////////////////////////////////////
+        bool getEnabledDirty() const { return (m_flags & Rigidbody2DFlag::EnabledDirty) != 0; }
+
+        //////////////////////////////////////////
+        bool getTransformDirty() const { return (m_flags & Rigidbody2DFlag::TransformDirty) != 0; }
 
 
         //////////////////////////////////////////
@@ -291,7 +285,11 @@ namespace Maze
                 return;
 
             m_fixedUpdateStartPosition = _position;
-            m_body->SetTransform(Box2DHelper::ToVec2(m_world->convertUnitsToMeters(_position)), m_body->GetAngle());
+
+            if (m_world->getBox2DWorld()->IsLocked())
+                m_flags |= Rigidbody2DFlag::TransformDirty;
+            else
+                m_body->SetTransform(Box2DHelper::ToVec2(m_world->convertUnitsToMeters(_position)), m_body->GetAngle());
         }
 
         //////////////////////////////////////////
@@ -404,6 +402,10 @@ namespace Maze
 
         //////////////////////////////////////////
         void destroyBody();
+
+
+        //////////////////////////////////////////
+        AABB2D getAABB();
 
     protected:
 

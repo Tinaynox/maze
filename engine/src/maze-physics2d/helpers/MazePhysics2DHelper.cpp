@@ -312,6 +312,56 @@ namespace Maze
             return OverlapRect(_position, world->convertMetersToUnits({ 0.00002f, 0.00002f }));
         }
 
+        //////////////////////////////////////////
+        MAZE_PHYSICS2D_API Vector<OverlapHit2DPtr> OverlapCircleAll(
+            Vec2DF const& _position,
+            F32 _radius)
+        {
+            PhysicsWorld2DPtr const& world = Physics2DManager::GetInstancePtr()->getWorld();
+
+            b2CircleShape shape;
+            shape.m_p = Box2DHelper::ToVec2(world->convertUnitsToMeters(_position));
+            shape.m_radius = world->convertUnitsToMeters(_radius);
+
+            Vector<OverlapHit2DPtr> result;
+
+            static const b2Transform nullTransform(b2Vec2(0, 0), b2Rot(0));
+
+            Box2DHelper::CustomOverlapCallback callback(
+                [&](b2Fixture* _fixture) -> bool
+            {
+                if (!b2TestOverlap(
+                    _fixture->GetShape(),
+                    0,
+                    &shape,
+                    0,
+                    _fixture->GetBody()->GetTransform(),
+                    nullTransform))
+                {
+                    return false;
+                }
+
+                b2Body* body = _fixture->GetBody();
+
+                Collider2D* collider = static_cast<Collider2D*>((void*)_fixture->GetUserData().pointer);
+                Rigidbody2D* rigidbody = reinterpret_cast<Rigidbody2D*>(body->GetUserData().pointer);
+
+                result.emplace_back(
+                    std::make_shared<OverlapHit2D>(
+                        collider,
+                        rigidbody));
+
+                return false;
+            });
+
+            b2AABB aabb;
+            shape.ComputeAABB(&aabb, nullTransform, 0);
+
+            world->getBox2DWorld()->QueryAABB(&callback, aabb);
+
+            return result;
+        }
+
     } // namespace Physics2DHelper
     /////////////////////////////////////////
     
