@@ -79,7 +79,7 @@ namespace Maze
     //////////////////////////////////////////
     void Rotor3D::update(F32 _dt)
     {
-        m_transform->rotate(m_axis, m_speed * _dt);
+        m_transform->rotate(m_axis.normalizedCopy(), m_speed * _dt);
     }
 
     //////////////////////////////////////////
