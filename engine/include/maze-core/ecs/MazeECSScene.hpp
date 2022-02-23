@@ -87,7 +87,8 @@ namespace Maze
         //////////////////////////////////////////
         enum Flags
         {
-            PausedInBackground = MAZE_BIT(0)
+            PausedInBackground = MAZE_BIT(0),
+            IsSystemScene = MAZE_BIT(1)
         };
 
     public:
@@ -107,6 +108,13 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void setPausedInBackground() { setFlag(Flags::PausedInBackground, true); }
+
+
+        //////////////////////////////////////////
+        inline bool getIsSystemScene() const { return m_flags & Flags::IsSystemScene; }
+
+        //////////////////////////////////////////
+        inline void setIsSystemScene() { setFlag(Flags::IsSystemScene, true); }
 
 
         //////////////////////////////////////////

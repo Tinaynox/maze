@@ -94,11 +94,17 @@ namespace Maze
             {
                 for (Size i = 0; i < m_scenes.size(); ++i)
                 {
+                    if (m_scenes[i]->getIsSystemScene())
+                        continue;
+
                     destroyScene(m_scenes[i]);
                 }
 
                 for (Size i = 0; i < m_newScenes.size(); ++i)
                 {
+                    if (m_newScenes[i]->getIsSystemScene())
+                        continue;
+
                     destroyScene(m_newScenes[i]);
                 }
             }

@@ -120,8 +120,11 @@ namespace Maze
             spriteRenderer->setSprite(_spriteName);
             spriteRenderer->setMaterial(_material ? _material : SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial());
 
-            if (spriteRenderer->getSprite()->getSliceBorder().isBorderExists())
-                spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
+            if (spriteRenderer->getSprite())
+            {
+                if (spriteRenderer->getSprite()->getSliceBorder().isBorderExists())
+                    spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
+            }
 
             Maze::Transform2DPtr const& transform = spriteRenderer->getTransform();
             transform->setParent(_parent);

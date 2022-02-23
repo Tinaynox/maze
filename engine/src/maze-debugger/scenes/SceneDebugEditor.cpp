@@ -116,6 +116,7 @@ namespace Maze
         , m_cursorPositionLastFrame(Vec2DF::c_zero)
         , m_cursorDrag(false)
     {
+        setIsSystemScene();
     }
 
     //////////////////////////////////////////
