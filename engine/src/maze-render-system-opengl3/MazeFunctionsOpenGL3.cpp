@@ -101,6 +101,7 @@ namespace Maze
         AssignOpenGLFunction(_renderContext, mzglGetFloatv, "glGetFloatv");
         AssignOpenGLFunction(_renderContext, mzglGetIntegerv, "glGetIntegerv");
         AssignOpenGLFunction(_renderContext, mzglGetDoublev, "glGetDoublev");
+        AssignOpenGLFunction(_renderContext, mzglGetBufferParameteriv, "glGetBufferParameteriv");
         AssignOpenGLFunction(_renderContext, mzglGetProgramiv, "glGetProgramiv");
         AssignOpenGLFunction(_renderContext, mzglGetUniformLocation, "glGetUniformLocation");
         AssignOpenGLFunction(_renderContext, mzglGetAttribLocation, "glGetAttribLocation");
@@ -147,6 +148,7 @@ namespace Maze
         AssignOpenGLFunction(_renderContext, mzglUniformMatrix3fv, "glUniformMatrix3fv");
         AssignOpenGLFunction(_renderContext, mzglUniformMatrix4fv, "glUniformMatrix4fv");
         AssignOpenGLFunction(_renderContext, mzglGetVertexAttribiv, "glGetVertexAttribivARB");
+        AssignOpenGLFunction(_renderContext, mzglGetVertexAttribPointerv, "glGetVertexAttribPointervARB");
         AssignOpenGLFunction(_renderContext, mzglGenQueries, "glGenQueries");
         AssignOpenGLFunction(_renderContext, mzglBeginQuery, "glBeginQuery");
         AssignOpenGLFunction(_renderContext, mzglEndQuery, "glEndQuery");
@@ -239,6 +241,7 @@ namespace Maze
         AssignOpenGLFunction(_renderContext, mzglGetFloatv, "glGetFloatv");
         AssignOpenGLFunction(_renderContext, mzglGetIntegerv, "glGetIntegerv");
         AssignOpenGLFunction(_renderContext, mzglGetDoublev, "glGetDoublev");
+        AssignOpenGLFunction(_renderContext, mzglGetBufferParameteriv, "glGetBufferParameteriv");
         AssignOpenGLFunction(_renderContext, mzglGetProgramiv, "glGetProgramiv");
         AssignOpenGLFunction(_renderContext, mzglGetUniformLocation, "glGetUniformLocation");
         AssignOpenGLFunction(_renderContext, mzglGetAttribLocation, "glGetAttribLocation");
@@ -281,6 +284,7 @@ namespace Maze
         AssignOpenGLFunction(_renderContext, mzglUniformMatrix3fv, "glUniformMatrix3fv");
         AssignOpenGLFunction(_renderContext, mzglUniformMatrix4fv, "glUniformMatrix4fv");
         AssignOpenGLFunction(_renderContext, mzglGetVertexAttribiv, "glGetVertexAttribiv");
+        AssignOpenGLFunction(_renderContext, mzglGetVertexAttribPointerv, "glGetVertexAttribPointerv");
         AssignOpenGLFunction(_renderContext, mzglGenQueries, "glGenQueriesEXT");
         AssignOpenGLFunction(_renderContext, mzglBeginQuery, "glBeginQuery");
         AssignOpenGLFunction(_renderContext, mzglEndQuery, "glEndQuery");
@@ -395,6 +399,7 @@ namespace Maze
         AssignOpenGLFunction(_renderContext, mzglGetFloatv, glGetFloatv);
         AssignOpenGLFunction(_renderContext, mzglGetIntegerv, glGetIntegerv);
         AssignOpenGLFunction(_renderContext, mzglGetDoublev, MAZE_NULL);
+        AssignOpenGLFunction(_renderContext, mzglGetBufferParameteriv, MAZE_NULL);
         AssignOpenGLFunction(_renderContext, mzglGetProgramiv, glGetProgramiv);
         AssignOpenGLFunction(_renderContext, mzglGetUniformLocation, glGetUniformLocation);
         AssignOpenGLFunction(_renderContext, mzglGetAttribLocation, glGetAttribLocation);
@@ -437,6 +442,7 @@ namespace Maze
         AssignOpenGLFunction(_renderContext, mzglUniformMatrix3fv, glUniformMatrix3fv);
         AssignOpenGLFunction(_renderContext, mzglUniformMatrix4fv, glUniformMatrix4fv);
         AssignOpenGLFunction(_renderContext, mzglGetVertexAttribiv, glGetVertexAttribiv);
+        AssignOpenGLFunction(_renderContext, mzglGetVertexAttribPointerv, glGetVertexAttribPointerv);
         AssignOpenGLFunction(_renderContext, mzglGenQueries, glGenQueriesEXT);
         AssignOpenGLFunction(_renderContext, mzglBeginQuery, glBeginQuery);
         AssignOpenGLFunction(_renderContext, mzglEndQuery, glEndQuery);

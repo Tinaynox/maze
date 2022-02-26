@@ -107,6 +107,18 @@ namespace Maze
         //////////////////////////////////////////
         inline SubMeshPtr const& getSubMeshCopy() const { return m_subMeshCopy; }
 
+
+#if MAZE_DEBUG
+        //////////////////////////////////////////
+        inline String const& getDebugInfo() const { return m_debugInfo; }
+
+        //////////////////////////////////////////
+        inline void setDebugInfo(String const& _value) { m_debugInfo = _value; }
+
+        //////////////////////////////////////////
+        virtual void debug() MAZE_ABSTRACT;
+#endif
+
     protected:
 
         //////////////////////////////////////////
@@ -123,8 +135,11 @@ namespace Maze
         VertexAttributeType m_indicesType;
         Size m_indicesCount;
 
-
         SubMeshPtr m_subMeshCopy;
+
+#if MAZE_DEBUG
+        String m_debugInfo;
+#endif
     };
 
 } // namespace Maze

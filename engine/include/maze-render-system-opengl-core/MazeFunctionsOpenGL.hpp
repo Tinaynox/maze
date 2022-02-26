@@ -86,6 +86,7 @@ MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern MZGLenum (MAZE_GL_FUNCPTR *mzglGetErro
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglGetFloatv)(MZGLenum _pname, MZGLfloat* _params);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglGetIntegerv)(MZGLenum _pname, MZGLint* _params);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglGetDoublev)(MZGLenum _pname, MZGLdouble* _params);
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglGetBufferParameteriv)(MZGLenum _target, MZGLenum _value, MZGLint* _data);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglGetProgramiv)(MZGLuint _program, MZGLenum _pname, MZGLint* _param);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern MZGLint (MAZE_GL_FUNCPTR *mzglGetUniformLocation)(MZGLuint _program, const MZGLchar* _name);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern MZGLint (MAZE_GL_FUNCPTR *mzglGetAttribLocation)(MZGLuint _program, const MZGLchar* _name);
@@ -132,6 +133,7 @@ MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR* mzglUniform4fv)
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglUniformMatrix3fv)(MZGLint _location, MZGLsizei _count, MZGLboolean _transpose, const MZGLfloat* _value);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglUniformMatrix4fv)(MZGLint _location, MZGLsizei _count, MZGLboolean _transpose, const MZGLfloat* _value);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglGetVertexAttribiv)(MZGLuint _index, MZGLenum _pname, MZGLint* _params);
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR* mzglGetVertexAttribPointerv)(MZGLuint _index, MZGLenum _pname, void** _pointer);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglGenQueries)(MZGLsizei _n, MZGLuint* _ids);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglBeginQuery)(MZGLenum _target, MZGLuint _id);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglEndQuery)(MZGLenum _target);

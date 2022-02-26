@@ -107,7 +107,7 @@ namespace Maze
         inline String const& getName() const { return m_name; }
 
         //////////////////////////////////////////
-        inline void setName(String const& _name) { m_name = _name; }
+        void setName(String const& _name);
 
 
         //////////////////////////////////////////
@@ -152,6 +152,10 @@ namespace Maze
         //////////////////////////////////////////
         static RenderMeshPtr FromString(String const& _string);
         
+#if MAZE_DEBUG
+        //////////////////////////////////////////
+        void updateVAODebugInfo();
+#endif
 
     protected:
 

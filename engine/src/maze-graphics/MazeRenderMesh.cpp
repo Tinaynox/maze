@@ -119,6 +119,29 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void RenderMesh::setName(String const& _name)
+    {
+        m_name = _name;
+
+#if MAZE_DEBUG
+        updateVAODebugInfo();
+#endif
+    }
+
+#if MAZE_DEBUG
+    //////////////////////////////////////////
+    void RenderMesh::updateVAODebugInfo()
+    {
+        for (S32 i = 0, in = (S32)m_vertexArrayObjects.size(); i < in; ++i)
+        {
+            VertexArrayObjectPtr const& vao = m_vertexArrayObjects[i];
+            if (vao)
+                vao->setDebugInfo(m_name + "__" + StringHelper::ToString(i));
+        }
+    }
+#endif
+
+    //////////////////////////////////////////
     void RenderMesh::loadFromAssetFile(
         AssetFilePtr const& _assetFile,
         RenderTarget* _renderTarget)
@@ -166,6 +189,10 @@ namespace Maze
                 m_vertexArrayObjects[i]->setMesh(subMesh);
             }
         }
+
+#if MAZE_DEBUG
+        updateVAODebugInfo();
+#endif
     }
 
     //////////////////////////////////////////

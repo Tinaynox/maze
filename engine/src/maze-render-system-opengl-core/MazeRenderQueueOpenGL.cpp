@@ -203,7 +203,6 @@ namespace Maze
                                         indicesType,
                                         0,
                                         command->count));
-
 #if (MAZE_DEBUG)
                                 }
 #endif
@@ -305,6 +304,7 @@ namespace Maze
                 }
             });
 
+        m_context->getStateMachine()->bindVertexArrayObject(0);
         clear();
     }
 

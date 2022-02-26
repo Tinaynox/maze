@@ -321,5 +321,31 @@ namespace Maze
         }
     }
 
+#if MAZE_DEBUG
+    //////////////////////////////////////////
+    void VertexArrayObjectOpenGL::debug()
+    {
+        Debug::Log("Querying VAO state:");
+        S32 vao, eabb, eabbs, mva, isOn(1), vaabb;
+        mzglGetIntegerv(MAZE_GL_VERTEX_ARRAY_BINDING, &vao);
+        mzglGetIntegerv(MAZE_GL_ELEMENT_ARRAY_BUFFER_BINDING, &eabb);
+        mzglGetBufferParameteriv(MAZE_GL_ELEMENT_ARRAY_BUFFER, MAZE_GL_BUFFER_SIZE, &eabbs);
+
+        Debug::Log("  Binded VAO: %d (Current: %d)", vao, (S32)m_glVAO);
+        Debug::Log("  Binded EBO: %d (Current: %d), size=%d", eabb, (S32)m_glEBO, eabbs);
+
+        mzglGetIntegerv(MAZE_GL_MAX_VERTEX_ATTRIBS, &mva);
+        for (S32 i = 0; i < mva; ++i)
+        {
+            mzglGetVertexAttribiv(i, MAZE_GL_VERTEX_ATTRIB_ARRAY_ENABLED, &isOn);
+            if (isOn)
+            {
+                mzglGetVertexAttribiv(i, MAZE_GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING, &vaabb);
+                Debug::Log("  attrib #%d(%s): VBO=%d", i, GetVertexAttributeName(VertexAttributeSemantic(i)), vaabb);
+            }
+        }
+    }
+#endif
+
 } // namespace Maze
 //////////////////////////////////////////

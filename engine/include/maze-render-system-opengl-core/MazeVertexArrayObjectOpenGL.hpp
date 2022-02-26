@@ -127,6 +127,12 @@ namespace Maze
         //////////////////////////////////////////
         inline MZGLuint getGLEBO() const { return m_glEBO; }
 
+
+#if MAZE_DEBUG
+        //////////////////////////////////////////
+        virtual void debug() MAZE_OVERRIDE;
+#endif
+
     protected:
 
         //////////////////////////////////////////

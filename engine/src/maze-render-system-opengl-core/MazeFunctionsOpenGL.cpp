@@ -60,6 +60,7 @@ MAZE_RENDER_SYSTEM_OPENGL_CORE_API MZGLenum (MAZE_GL_FUNCPTR *mzglGetError)() = 
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglGetFloatv)(MZGLenum _pname, MZGLfloat* _params) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglGetIntegerv)(MZGLenum _pname, MZGLint* _params) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglGetDoublev)(MZGLenum _pname, MZGLdouble* _params) = nullptr;
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglGetBufferParameteriv)(MZGLenum _target, MZGLenum _value, MZGLint* _data) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglGetProgramiv)(MZGLuint _program, MZGLenum _pname, MZGLint* _param) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API MZGLint (MAZE_GL_FUNCPTR *mzglGetUniformLocation)(MZGLuint _program, MZGLchar const* _name) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API MZGLint (MAZE_GL_FUNCPTR *mzglGetAttribLocation)(MZGLuint _program, MZGLchar const* _name) = nullptr;
@@ -106,6 +107,7 @@ MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR* mzglUniform4fv)(MZGLin
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglUniformMatrix3fv)(MZGLint _location, MZGLsizei _count, MZGLboolean _transpose, MZGLfloat const* _value) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglUniformMatrix4fv)(MZGLint _location, MZGLsizei _count, MZGLboolean _transpose, MZGLfloat const* _value) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglGetVertexAttribiv)(MZGLuint _index, MZGLenum _pname, MZGLint* _params) = nullptr;
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglGetVertexAttribPointerv)(MZGLuint _index, MZGLenum _pname, void** _pointer) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglGenQueries)(MZGLsizei _n, MZGLuint* _ids) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglBeginQuery)(MZGLenum _target, MZGLuint _id) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglEndQuery)(MZGLenum _target) = nullptr;
