@@ -35,6 +35,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
+#include "maze-core/ecs/components/MazeRotor3D.hpp"
 #include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
@@ -193,10 +194,13 @@ namespace Maze
         EntityPtr objectEntity = createEntity();
         Transform3DPtr transform = objectEntity->createComponent<Transform3D>();
         MeshRendererPtr meshRenderer = objectEntity->createComponent<MeshRenderer>();
-        //meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultCubeMesh());
-        meshRenderer->setRenderMesh("DroneLP.obj");
+        meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultCubeMesh());
+        // meshRenderer->setRenderMesh("DroneLP.obj");
         meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getSpecularDSMaterial());
         objectEntity->ensureComponent<Name>("Obj");
+        Rotor3DPtr rotor = objectEntity->createComponent<Rotor3D>();
+        rotor->setAxis({0.0f, -0.7071f, -0.7071f });
+        rotor->setSpeed(0.2f);
 
         return true;
     }

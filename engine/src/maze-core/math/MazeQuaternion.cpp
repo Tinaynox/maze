@@ -130,8 +130,16 @@ namespace Maze
     //////////////////////////////////////////
     void Quaternion::toRotationMatrix(Mat4DF& _rotationMatrix) const
     {
-        // #TODO: Optimize?
-        _rotationMatrix = Mat4DF::CreateRotationMatrix(getEuler());
+        Mat3DF m;
+        toRotationMatrix(m);
+        _rotationMatrix = m;
+        _rotationMatrix[0][3] = 0;
+        _rotationMatrix[1][3] = 0;
+        _rotationMatrix[2][3] = 0;
+        _rotationMatrix[3][0] = 0;
+        _rotationMatrix[3][1] = 0;
+        _rotationMatrix[3][2] = 0;
+        _rotationMatrix[3][3] = 1;
     }
     
     //////////////////////////////////////////
