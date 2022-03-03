@@ -65,6 +65,13 @@ namespace Maze
         String const& _srcPath,
         String const& _destPath);
 
+    //////////////////////////////////////////
+    MAZE_CORE_API void ObfuscateAssetPacks(
+        String const& _srcPath,
+        String const& _destPath,
+        String const& _targetSrcPath,
+        String const& _targetDestPath);
+
 
 } // namespace Maze
 //////////////////////////////////////////

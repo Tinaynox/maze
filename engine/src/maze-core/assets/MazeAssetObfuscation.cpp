@@ -164,6 +164,23 @@ namespace Maze
         String const& _srcPath,
         String const& _destPath)
     {
+        ObfuscateAssetPacks(
+            _srcPath,
+            _destPath,
+            _srcPath,
+            _destPath);
+    }
+
+    //////////////////////////////////////////
+    MAZE_CORE_API void ObfuscateAssetPacks(
+        String const& _srcPath,
+        String const& _destPath,
+        String const& _targetSrcPath,
+        String const& _targetDestPath)
+    {
+        String targetSrcFullPath = FileHelper::ConvertLocalPathToFullPath(_targetSrcPath.c_str());
+        String targetDestFullPath = FileHelper::ConvertLocalPathToFullPath(_targetDestPath.c_str());
+
         FileHelper::CreateDirectoryRecursive(_destPath.c_str());
 
         Vector<AssetFilePtr> files = AssetHelper::GetAllAssetFilesInDirectory(_srcPath);
@@ -173,7 +190,14 @@ namespace Maze
             {
                 if (file->getExtension() == "mzap")
                 {
-                    zipFile zf = zipOpen((_destPath + "/" + file->getFileName()).c_str(), APPEND_STATUS_CREATE);
+                    String fileFullPath = file->getFullPath();
+                    String relPath = fileFullPath;
+                    StringHelper::RemoveSubstring(relPath, _targetSrcPath);
+                    String targetPackFullPath = _targetDestPath + relPath;
+                    String targetPackDirectoryFullPath = FileHelper::GetDirectoryInPath(targetPackFullPath);
+                    FileHelper::CreateDirectoryRecursive(targetPackDirectoryFullPath.c_str());
+
+                    zipFile zf = zipOpen(targetPackFullPath.c_str(), APPEND_STATUS_CREATE);
                     if (!zf)
                         continue;
 
@@ -188,12 +212,17 @@ namespace Maze
                 }
                 else
                 {
-                    ObfuscateAssetPacks(file->getFullPath(), _destPath);
+                    ObfuscateAssetPacks(file->getFullPath(), _destPath, _targetSrcPath, _targetDestPath);
                 }
             }
             else
             {
-                FileHelper::CopyRegularFile(file->getFullPath().c_str(), (_destPath + "/" + file->getFileName()).c_str());
+                String fileFullPath = file->getFullPath();
+                String relPath = fileFullPath;
+                StringHelper::RemoveSubstring(relPath, _targetSrcPath);
+                String targetPackFullPath = _targetDestPath + relPath;
+
+                FileHelper::CopyRegularFile(file->getFullPath().c_str(), targetPackFullPath.c_str());
             }
         }
     }

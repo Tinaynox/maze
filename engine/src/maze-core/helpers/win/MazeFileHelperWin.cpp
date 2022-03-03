@@ -286,7 +286,7 @@ namespace Maze
             if (!source)
                 return false;
 
-            CreateDirectoryRecursive(_destFullPath);
+            CreateDirectoryRecursive(FileHelper::GetDirectoryInPath(_destFullPath).c_str());
 
             FILE* dest = StdHelper::OpenFile(_destFullPath, "wb");
             if (!dest)

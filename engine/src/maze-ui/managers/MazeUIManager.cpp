@@ -1485,7 +1485,7 @@ namespace Maze
         m_uiElementsTexture->loadTexture(uiElementsSheet);
 
 #if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
-        m_uiElementsTexture->saveToFileAsTGA("uiElements.tga");
+        // m_uiElementsTexture->saveToFileAsTGA("uiElements.tga");
 #endif
 
 
