@@ -461,6 +461,23 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void Transform2D::getAllEntitiesRaw(Vector<Entity*>& _result)
+    {
+        _result.emplace_back(getEntityRaw());
+
+        for (Transform2D* transform : m_children)
+            transform->getAllEntitiesRaw(_result);
+    }
+
+    //////////////////////////////////////////
+    Vector<Entity*> Transform2D::getAllEntitiesRaw()
+    {
+        Vector<Entity*> result;
+        getAllEntitiesRaw(result);
+        return result;
+    }
+
+    //////////////////////////////////////////
     Transform2D* Transform2D::findChild(std::function<bool(Transform2D*)> _pred)
     {
         for (Transform2D* child : m_children)

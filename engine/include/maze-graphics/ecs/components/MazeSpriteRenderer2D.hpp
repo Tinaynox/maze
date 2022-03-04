@@ -49,13 +49,11 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    enum class SpriteRenderMode
-    {
+    MAZE_DECLARE_ENUMCLASS_4(SpriteRenderMode,
         Simple,
         Sliced,
         Tiled,
-        Custom
-    };
+        Custom);
 
 
     //////////////////////////////////////////
@@ -194,7 +192,7 @@ namespace Maze
     // Serialization
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_CPP_ENUMCLASS_SERIALIZATION(SpriteRenderMode);
+    MAZE_IMPLEMENT_ENUMCLASS_SERIALIZATION(SpriteRenderMode);
 
 
 } // namespace Maze

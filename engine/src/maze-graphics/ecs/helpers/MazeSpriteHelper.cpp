@@ -208,7 +208,7 @@ namespace Maze
             textRenderer->setFontSize(_fontSize);
             textRenderer->setHorizontalAlignment(_horizontalAlignment);
             textRenderer->setVerticalAlignment(_verticalAlignment);
-            textRenderer->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFont());
+            textRenderer->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefault());
 
             Transform2DPtr transform = textRendererEntity->ensureComponent<Transform2D>();
             transform->setParent(_parent);

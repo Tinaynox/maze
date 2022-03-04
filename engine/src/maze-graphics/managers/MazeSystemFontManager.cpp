@@ -92,6 +92,30 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    SystemFontPtr const& SystemFontManager::getSystemFont(String const& _fontName)
+    {
+        static SystemFontPtr nullPointer;
+
+        SystemFontPtr* it = m_systemFontsByName.find(_fontName);
+        if (it != nullptr)
+            return *it;
+
+        return nullPointer;
+    }
+
+    //////////////////////////////////////////
+    CString SystemFontManager::getSystemFontName(SystemFont const* _font)
+    {
+        for (auto it = m_systemFontsByName.begin(), end = m_systemFontsByName.end(); it != end; ++it)
+        {
+            if (it.value().get() == _font)
+                return it.key().str;
+        }
+
+        return nullptr;
+    }
+
+    //////////////////////////////////////////
     void SystemFontManager::createSystemFont()
     {
         // System Font
@@ -114,15 +138,17 @@ namespace Maze
 
         texture->loadTexture(pixelSheets);
         m_renderSystemRaw->getTextureManager()->addTexture(texture);
-        m_systemFont = createSystemFont(
+        m_systemFontDefault = createSystemFont(
             texture,
             Vec2DS(8, 8) * upscale,
             (Vec2DS(8, 8) + extrude * 2) * upscale,
             Vec2DS(extrude, extrude) * upscale);
+        registerSystemFont("system_font", m_systemFontDefault);
 
 
         // System Font Outlined
-        m_systemFontOutlined = createSystemFontOutlined("system_font_outline", ColorU32::c_black);
+        m_systemFontDefaultOutlined = createSystemFontOutlined("system_font_outline", ColorU32::c_black);
+        registerSystemFont("system_font_outline", m_systemFontDefaultOutlined);
     }
 
     //////////////////////////////////////////
@@ -195,6 +221,12 @@ namespace Maze
         systemFont->texture->setMinFilter(TextureFilter::LinearMipmapNearest);
 
         return systemFont;
+    }
+
+    //////////////////////////////////////////
+    void SystemFontManager::registerSystemFont(String const& _name, SystemFontPtr const& _font)
+    {
+        m_systemFontsByName.insert(_name, _font);
     }
 
 } // namespace Maze

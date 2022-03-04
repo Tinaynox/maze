@@ -183,10 +183,13 @@ namespace Maze
 
                 HashedCString* newKey = const_cast<HashedCString*>(&at.first->first);
                 newKey->str = &at.first->second.first[0];
+
+                return nullptr;
             }
             else
             {
                 it->second.second = _value;
+                return &it->second.second;
             }
         }
 

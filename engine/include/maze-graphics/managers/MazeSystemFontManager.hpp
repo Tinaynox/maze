@@ -37,6 +37,7 @@
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 #include "maze-graphics/MazePixelSheet2D.hpp"
 #include "maze-graphics/MazeSystemFont.hpp"
 
@@ -69,10 +70,17 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        SystemFontPtr const& getSystemFont() const { return m_systemFont; }
+        SystemFontPtr const& getSystemFontDefault() const { return m_systemFontDefault; }
 
         //////////////////////////////////////////
-        SystemFontPtr const& getSystemFontOutlined() const { return m_systemFontOutlined; }
+        SystemFontPtr const& getSystemFontDefaultOutlined() const { return m_systemFontDefaultOutlined; }
+
+
+        //////////////////////////////////////////
+        SystemFontPtr const& getSystemFont(String const& _fontName);
+
+        //////////////////////////////////////////
+        CString getSystemFontName(SystemFont const* _font);
 
 
         //////////////////////////////////////////
@@ -86,6 +94,9 @@ namespace Maze
         SystemFontPtr createSystemFontOutlined(
             String const& _name,
             ColorU32 const& _outlineColor);
+
+        //////////////////////////////////////////
+        void registerSystemFont(String const& _name, SystemFontPtr const& _font);
 
     protected:
 
@@ -105,8 +116,10 @@ namespace Maze
         RenderSystemWPtr m_renderSystem;
         RenderSystem* m_renderSystemRaw = nullptr;
 
-        SystemFontPtr m_systemFont;
-        SystemFontPtr m_systemFontOutlined;
+        SystemFontPtr m_systemFontDefault;
+        SystemFontPtr m_systemFontDefaultOutlined;
+
+        StringKeyMap<SystemFontPtr> m_systemFontsByName;
     };
 
 } // namespace Maze

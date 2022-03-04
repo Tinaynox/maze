@@ -47,21 +47,75 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    using SystemFontPtr = Maze::SharedPtr<struct SystemFont>;
+    // using SystemFontPtr = Maze::SharedPtr<struct SystemFont>;
+    MAZE_USING_SHARED_PTR(SystemFont);
+
 
     //////////////////////////////////////////
-    struct MAZE_GRAPHICS_API SystemFont
+    class MAZE_GRAPHICS_API SystemFont
+        : public SharedObject<SystemFont>
     {
+    public:
+
         Texture2DPtr texture;
         MaterialPtr material;
         Vec2DS charSize = Vec2DS::c_zero;
         Vec2DS stroke = Vec2DS::c_zero;
         Vec2DS offset = Vec2DS::c_zero;
         S32 outline = 0;
+
+    public:
+
+        //////////////////////////////////////////
+        static void FromString(SystemFontPtr& _value, CString _data, Size _count);
+
+        //////////////////////////////////////////
+        static void ToString(SystemFont const* _value, String& _data);
     };
 
     //////////////////////////////////////////
     MAZE_NOT_IMPLEMENTED_SERIALIZATION(SystemFont);
+
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<SystemFontPtr>::value), void>::type
+        ValueToString(SystemFontPtr const& _value, String& _data)
+    {
+        SystemFont::ToString(_value.get(), _data);
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<SystemFontPtr>::value), void>::type
+        ValueFromString(SystemFontPtr& _value, CString _data, Size _count)
+    {
+        SystemFont::FromString(_value, _data, _count);
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<SystemFontPtr>::value), U32>::type
+        GetValueSerializationSize(SystemFontPtr const& _value)
+    {
+        MAZE_NOT_IMPLEMENTED_RETURN_VALUE(0);
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<SystemFontPtr>::value), void>::type
+        SerializeValue(SystemFontPtr const& _value, U8* _data)
+    {
+        MAZE_NOT_IMPLEMENTED;
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<SystemFontPtr>::value), void>::type
+        DeserializeValue(SystemFontPtr& _value, U8 const* _data)
+    {
+        MAZE_NOT_IMPLEMENTED;
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

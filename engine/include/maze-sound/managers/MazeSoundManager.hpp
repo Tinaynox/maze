@@ -80,6 +80,9 @@ namespace Maze
         SoundPtr const& getSound(HashedCString _assetFileName);
 
         //////////////////////////////////////////
+        inline SoundPtr const& getSound(CString _assetFileName) { return getSound(HashedCString(_assetFileName)); }
+
+        //////////////////////////////////////////
         SoundPtr const& getSound(AssetFilePtr const& _assetFile);
 
         //////////////////////////////////////////

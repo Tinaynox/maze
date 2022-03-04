@@ -26,11 +26,61 @@
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/MazeSystemFont.hpp"
+#include "maze-graphics/managers/MazeGraphicsManager.hpp"
+#include "maze-graphics/managers/MazeSystemFontManager.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    void SystemFont::FromString(SystemFontPtr& _value, CString _data, Size _count)
+    {
+        if (!_data || strcmp(_data, "") == 0)
+        {
+            _value.reset();
+            return;
+        }
+
+        if (_count == 0)
+            _count = strlen(_data);
+
+        RenderSystemPtr const& renderSystem = Maze::GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+        SystemFontManagerPtr const& systemFontManager = renderSystem->getSystemFontManager();
+
+        if (StringHelper::IsStartsWith(_data, "ptr:"))
+        {
+            String data = String(_data + 4, _data + _count);
+            StringHelper::StringToObjectPtr(_value, data);
+        }
+        else
+        {
+            _value = systemFontManager->getSystemFont(_data);
+        }
+    }
+
+    //////////////////////////////////////////
+    void SystemFont::ToString(SystemFont const* _value, String& _data)
+    {
+        if (!_value)
+        {
+            _data.clear();
+            return;
+        }
+
+        RenderSystemPtr const& renderSystem = Maze::GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+        SystemFontManagerPtr const& systemFontManager = renderSystem->getSystemFontManager();
+
+        CString materialName = systemFontManager->getSystemFontName(_value);
+        if (materialName != nullptr)
+        {
+            _data = materialName;
+        }
+        else
+        {
+            StringHelper::FormatString(_data, "ptr:%p", _value);
+        }
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

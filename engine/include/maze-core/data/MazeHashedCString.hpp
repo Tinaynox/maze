@@ -51,8 +51,17 @@ namespace Maze
     //////////////////////////////////////////
     struct MAZE_CORE_API HashedCString
     {
-        CString str;
-        U32 hash;
+        CString str = nullptr;
+        U32 hash = 0u;
+
+        //////////////////////////////////////////
+        inline HashedCString() {}
+
+        //////////////////////////////////////////
+        inline HashedCString(CString _str, U32 _hash) : str(_str), hash(_hash) {}
+
+        //////////////////////////////////////////
+        inline HashedCString(CString _str) : str(_str), hash(CalculateFNV1(_str)) {}
 
         //////////////////////////////////////////
         inline bool operator==(HashedCString const& _value) const

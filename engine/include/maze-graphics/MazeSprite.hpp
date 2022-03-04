@@ -195,6 +195,14 @@ namespace Maze
         //////////////////////////////////////////
         MultiDelegate<Sprite*> eventDataChanged;
 
+    public:
+
+        //////////////////////////////////////////
+        static void FromString(SpritePtr& _value, CString _data, Size _count);
+
+        //////////////////////////////////////////
+        static void ToString(Sprite const* _value, String& _data);
+
     protected:
 
         //////////////////////////////////////////
@@ -229,6 +237,47 @@ namespace Maze
 
     //////////////////////////////////////////
     MAZE_NOT_IMPLEMENTED_SERIALIZATION(Sprite);
+
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<SpritePtr>::value), void>::type
+        ValueToString(SpritePtr const& _value, String& _data)
+    {
+        Sprite::ToString(_value.get(), _data);
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<SpritePtr>::value), void>::type
+        ValueFromString(SpritePtr& _value, CString _data, Size _count)
+    {
+        Sprite::FromString(_value, _data, _count);
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<SpritePtr>::value), U32>::type
+        GetValueSerializationSize(SpritePtr const& _value)
+    {
+        MAZE_NOT_IMPLEMENTED_RETURN_VALUE(0);
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<SpritePtr>::value), void>::type
+        SerializeValue(SpritePtr const& _value, U8* _data)
+    {
+        MAZE_NOT_IMPLEMENTED;
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<SpritePtr>::value), void>::type
+        DeserializeValue(SpritePtr& _value, U8 const* _data)
+    {
+        MAZE_NOT_IMPLEMENTED;
+    }
 
 
 } // namespace Maze

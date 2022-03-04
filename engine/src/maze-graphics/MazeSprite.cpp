@@ -28,6 +28,7 @@
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
+#include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 
 
@@ -231,6 +232,56 @@ namespace Maze
         m_textureCoordRT = Vec2DF(
             (m_colorPosition.x + m_colorSize.x) / tw,
             (m_colorPosition.y + m_colorSize.y) / th);
+    }
+
+    //////////////////////////////////////////
+    void Sprite::FromString(SpritePtr& _value, CString _data, Size _count)
+    {
+        if (!_data || strcmp(_data, "") == 0)
+        {
+            _value.reset();
+            return;
+        }
+
+        if (_count == 0)
+            _count = strlen(_data);
+
+        RenderSystemPtr const& renderSystem = Maze::GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+        SpriteManagerPtr const& spriteManager = renderSystem->getSpriteManager();
+
+        if (StringHelper::IsStartsWith(_data, "ptr:"))
+        {
+            String data = String(_data + 4, _data + _count);
+            StringHelper::StringToObjectPtr(_value, data);
+        }
+        else
+        {
+            _value = spriteManager->getSprite(_data);
+        }
+    }
+
+    //////////////////////////////////////////
+    void Sprite::ToString(Sprite const* _value, String& _data)
+    {
+        if (!_value)
+        {
+            _data.clear();
+            return;
+        }
+
+        // RenderSystemPtr const& renderSystem = Maze::GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+        // SpriteManagerPtr const& spriteManager = renderSystem->getSpriteManager();
+        // String const& spriteName = spriteManager->getSpriteName(_value);
+
+        String const& spriteName = _value->getName();
+        if (!spriteName.empty())
+        {
+            _data = spriteName;
+        }
+        else
+        {
+            StringHelper::FormatString(_data, "ptr:%p", _value);
+        }
     }
 
 

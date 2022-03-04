@@ -438,6 +438,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void getAllEntitiesRaw(Vector<Entity*>& _result);
+
+        //////////////////////////////////////////
+        Vector<Entity*> getAllEntitiesRaw();
+
+
+        //////////////////////////////////////////
         template <typename TComponent>
         void getAllComponents(Vector<SharedPtr<TComponent>>& _result)
         {

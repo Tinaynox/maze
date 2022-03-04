@@ -54,6 +54,10 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_ENUMCLASS(SpriteRenderMode);
+
+
+    //////////////////////////////////////////
     // Class SpriteRenderer2D
     //
     //////////////////////////////////////////
@@ -224,6 +228,9 @@ namespace Maze
         if (!m_canvasRenderer)
             return;
 
+        if (!getEntityRaw()->getECSScene())
+            return;
+
         Vec2DF const& size = m_transform->getSize();
 
         Vec4DF uv;
@@ -303,6 +310,7 @@ namespace Maze
 
         m_meshRenderer->setRenderMesh(RenderMeshPtr());
         updateMesh();
+        updateMaterial();
     }
     
     //////////////////////////////////////////
