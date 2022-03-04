@@ -55,10 +55,12 @@ namespace Maze
     public:
         static const ColorU32 c_zero;
         static const ColorU32 c_white;
+        static const ColorU32 c_whiteSoft;
         static const ColorU32 c_gray;
         static const ColorU32 c_lightGray;
         static const ColorU32 c_darkGray;
         static const ColorU32 c_black;
+        static const ColorU32 c_blackSoft;
         static const ColorU32 c_red;
         static const ColorU32 c_green;
         static const ColorU32 c_blue;

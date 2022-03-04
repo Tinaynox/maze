@@ -39,10 +39,12 @@ namespace Maze
     //////////////////////////////////////////
     const ColorU32 ColorU32::c_zero            = ColorU32(0, 0, 0, 0);
     const ColorU32 ColorU32::c_white           = ColorU32(255, 255, 255, 255);
+    const ColorU32 ColorU32::c_whiteSoft       = ColorU32(252, 252, 252, 255);
     const ColorU32 ColorU32::c_gray            = ColorU32(128, 128, 128, 255);
     const ColorU32 ColorU32::c_lightGray       = ColorU32(192, 192, 192, 255);
     const ColorU32 ColorU32::c_darkGray        = ColorU32(64, 64, 64, 255);
     const ColorU32 ColorU32::c_black           = ColorU32(0, 0, 0, 255);
+    const ColorU32 ColorU32::c_blackSoft       = ColorU32(7, 9, 9, 255);
     const ColorU32 ColorU32::c_red             = ColorU32(255, 0, 0, 255);
     const ColorU32 ColorU32::c_green           = ColorU32(0, 255, 0, 255);
     const ColorU32 ColorU32::c_blue            = ColorU32(0, 0, 255, 255);
