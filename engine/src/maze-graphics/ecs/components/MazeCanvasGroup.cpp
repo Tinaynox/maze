@@ -107,7 +107,8 @@ namespace Maze
     {
         m_flags |= (Flags::WorldAlphaDirty | Flags::WorldAlphaChangedEvent);
 
-        _dirtyWorldAlphaRecursive(m_transform.get());
+        if (m_transform)
+            _dirtyWorldAlphaRecursive(m_transform.get());
     }
 
     //////////////////////////////////////////

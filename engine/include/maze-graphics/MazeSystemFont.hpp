@@ -47,7 +47,6 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // using SystemFontPtr = Maze::SharedPtr<struct SystemFont>;
     MAZE_USING_SHARED_PTR(SystemFont);
 
 

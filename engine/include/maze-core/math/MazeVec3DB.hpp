@@ -268,9 +268,9 @@ namespace Maze
         }
 
     public:
-        bool x;
-        bool y;
-        bool z;
+        bool x = false;
+        bool y = false;
+        bool z = false;
     }; 
 
 

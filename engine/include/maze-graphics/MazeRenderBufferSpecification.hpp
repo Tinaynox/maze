@@ -148,7 +148,7 @@ namespace Maze
         TextureFormat depthTextureFormat = { PixelFormat::None, 0 };
         TextureFormat stencilTextureFormat = { PixelFormat::None, 0 };
 
-        U32 _hash;
+        U32 _hash = 0u;
     };
 
     //////////////////////////////////////////

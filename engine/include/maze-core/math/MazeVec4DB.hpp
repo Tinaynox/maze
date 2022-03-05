@@ -368,10 +368,10 @@ namespace Maze
 
 
     public:
-        bool x;
-        bool y;
-        bool z;
-        bool w;
+        bool x = false;
+        bool y = false;
+        bool z = false;
+        bool w = false;
     }; 
 
 
