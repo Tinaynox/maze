@@ -143,7 +143,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SpriteRenderer2D::setSprite(String const& _spriteName)
+    void SpriteRenderer2D::setSprite(HashedString const& _spriteName)
     {
         Maze::RenderSystemPtr const& renderSystem = Maze::GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
         Maze::SpriteManagerPtr const& spriteManager = renderSystem->getSpriteManager();

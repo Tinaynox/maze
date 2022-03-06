@@ -101,7 +101,7 @@ namespace Maze
         void setSprite(SpritePtr const& _sprite);
 
         //////////////////////////////////////////
-        void setSprite(String const& _spriteName);
+        void setSprite(HashedString const& _spriteName);
 
 
         //////////////////////////////////////////

@@ -311,6 +311,28 @@ namespace Maze
     MAZE_IMPLEMENT_COMPONENT_SERIALIZATION(Component);
 
 
+    //////////////////////////////////////////
+    #define MAZE_IMPLEMENT_COMPONENT_PROPERTY_SETTER_GETTER(DComponentClass, DMemberName, DMethodName) \
+        inline void set##DMethodName(DComponentClass##Ptr const& _value) { m_##DMemberName = _value; } \
+        inline DComponentClass##Ptr const& get##DMethodName() const { return m_##DMemberName; } \
+        inline void set##DMethodName(ComponentPtr _value) \
+        { \
+            if (_value) \
+            { \
+                MAZE_DEBUG_BP_RETURN_IF(_value->getClassUID() != ClassInfo<DComponentClass>::UID()); \
+                set##DMethodName(_value->cast<DComponentClass>()); \
+            } \
+            else \
+            { \
+                set##DMethodName(DComponentClass##Ptr()); \
+            } \
+        }\
+        inline ComponentPtr get##DMethodName##Component() const { return m_##DMemberName; }
+
+    //////////////////////////////////////////
+    #define MAZE_IMPLEMENT_METACLASS_COMPONENT_PROPERTY(DMemberName, DMethodName) \
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, DMemberName, ComponentPtr(), get##DMethodName##Component, set##DMethodName)
+
 } // namespace Maze
 //////////////////////////////////////////
 

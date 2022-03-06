@@ -197,7 +197,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        static ColorU32 FromString(String const& _colorString, S8 _separator = ',');
+        static ColorU32 FromString(String const& _colorString, S8 _separator = ';');
 
         //////////////////////////////////////////
         static ColorU32 FromStringHex(String const& _colorString);
@@ -206,7 +206,7 @@ namespace Maze
         String toStringHex() const;
 
         //////////////////////////////////////////
-        void setString(String const& _colorString, S8 _separator = ',');
+        void setString(String const& _colorString, S8 _separator = ';');
 
         //////////////////////////////////////////
         U32 toRGB_U8() const;
@@ -246,7 +246,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline String toString(S8 _separator = ',') const
+        inline String toString(S8 _separator = ';') const
         {
             String result = StringHelper::S32ToString(r) + _separator + StringHelper::S32ToString(g) + _separator + StringHelper::S32ToString(b);
             if (a != 255)
@@ -257,7 +257,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline String toStringTag(S8 _separator = ',') const
+        inline String toStringTag(S8 _separator = ';') const
         {
             String result = "#{" + StringHelper::S32ToString(r) + _separator + StringHelper::S32ToString(g) + _separator + StringHelper::S32ToString(b);
             if (a != 255)
