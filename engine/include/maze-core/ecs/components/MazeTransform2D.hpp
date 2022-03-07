@@ -176,6 +176,12 @@ namespace Maze
         inline void setAnchor(F32 _x, F32 _y) { setAnchor(Vec2DF(_x, _y)); }
 
         //////////////////////////////////////////
+        inline void setAnchorX(F32 _x) { setAnchor(Vec2DF(_x, m_anchor.y)); }
+
+        //////////////////////////////////////////
+        inline void setAnchorY(F32 _y) { setAnchor(Vec2DF(m_anchor.x, _y)); }
+
+        //////////////////////////////////////////
         inline Vec2DF const& getAnchor() const { return m_anchor; }
 
 

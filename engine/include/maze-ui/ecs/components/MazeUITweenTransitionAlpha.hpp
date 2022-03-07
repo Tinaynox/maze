@@ -83,6 +83,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline F32 getHidingProgress() const { return m_hidingProgress; }
+
+
+        //////////////////////////////////////////
         inline void setUnscaledDeltaTime(bool _value) { m_unscaledDeltaTime = _value; }
 
         //////////////////////////////////////////
@@ -91,6 +95,13 @@ namespace Maze
 
         //////////////////////////////////////////
         void setHidden(bool _isHidden, bool _resetProgress = false);
+
+
+        //////////////////////////////////////////
+        inline void setHideKoef(F32 _value) { m_hideKoef = _value; }
+
+        //////////////////////////////////////////
+        inline F32 getHideKoef() const { return m_hideKoef; }
 
 
         //////////////////////////////////////////

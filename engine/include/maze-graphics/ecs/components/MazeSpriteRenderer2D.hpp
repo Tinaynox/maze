@@ -121,6 +121,9 @@ namespace Maze
         inline void setColor(U8 _r, U8 _g, U8 _b, U8 _a) { setColor({ _r, _g, _b, _a }); }
 
         //////////////////////////////////////////
+        inline void setColorAlpha(U8 _a) { setColor({ m_color.r, m_color.g, m_color.b, _a }); }
+
+        //////////////////////////////////////////
         ColorU32 getColor() const { return m_color; }            
 
 
