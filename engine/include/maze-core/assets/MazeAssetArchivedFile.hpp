@@ -84,10 +84,10 @@ namespace Maze
         String const& getZipArchiveFilePath() const { return m_zipArchiveFilePath; }
 
         //////////////////////////////////////////
-        String const& getFileName() const MAZE_OVERRIDE { return m_fileName; }
+        HashedString const& getFileName() const MAZE_OVERRIDE { return m_fileName; }
 
         //////////////////////////////////////////
-        String const& getFullPath() const MAZE_OVERRIDE { return m_fullPath; }
+        HashedString const& getFullPath() const MAZE_OVERRIDE { return m_fullPath; }
 
         //////////////////////////////////////////
         virtual Size getFileSize() MAZE_OVERRIDE;
@@ -130,8 +130,8 @@ namespace Maze
     protected:
         ArchiveFileZipPtr m_archive;
         String m_zipArchiveFilePath;
-        String m_fileName;
-        String m_fullPath;
+        HashedString m_fileName;
+        HashedString m_fullPath;
     };
 
 

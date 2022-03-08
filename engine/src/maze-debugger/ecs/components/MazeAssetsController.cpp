@@ -284,7 +284,7 @@ namespace Maze
             assetDirectories.end(),
             [](AssetFilePtr const& _a, AssetFilePtr const& _b) -> bool
             {
-                return _a->getFullPath() < _b->getFullPath();
+                return _a->getFullPath().getString() < _b->getFullPath().getString();
             });
 
         for (AssetFilePtr const& assetFile : assetDirectories)
@@ -418,7 +418,7 @@ namespace Maze
             assetFiles.end(),
             [](AssetFilePtr const& _a, AssetFilePtr const& _b) -> bool
             {
-                return _a->getFullPath() < _b->getFullPath();
+                return _a->getFullPath().getString() < _b->getFullPath().getString();
             });
 
         for (AssetFilePtr const& assetFile : assetFiles)

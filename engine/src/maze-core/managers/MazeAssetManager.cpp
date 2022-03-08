@@ -284,10 +284,10 @@ namespace Maze
         Vector<AssetFilePtr> result;
         for (auto data : m_assetFilesByFullPath)
         {
-            if (   data.second->getFullPath() != _folderFullPath 
+            if (   data.second->getFullPath().getString() != _folderFullPath 
                 && StringHelper::IsStartsWith(data.second->getFullPath(), _folderFullPath))
             {
-                String relativePath = data.second->getFullPath().substr(
+                String relativePath = data.second->getFullPath().getString().substr(
                     _folderFullPath.size() + 1, data.second->getFullPath().size() - _folderFullPath.size() - 1);
 
                 if (relativePath.find('/') == String::npos)
@@ -303,7 +303,7 @@ namespace Maze
     {
         UnorderedMap<String, String> metaData;
 
-        AssetFilePtr metaFile = getAssetFileByFileName(_assetFile->getFileName() + ".meta");
+        AssetFilePtr metaFile = getAssetFileByFileName(_assetFile->getFileName().getString() + ".meta");
         if (metaFile)
         {
             String metaDataString;

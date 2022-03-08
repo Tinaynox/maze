@@ -35,6 +35,7 @@
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_CPlusPlus.hpp"
 #include "maze-core/data/MazeHashedCString.hpp"
+#include "maze-core/data/MazeHashedString.hpp"
 #include <cstring>
 #include <cassert>
 
@@ -206,6 +207,12 @@ namespace Maze
         inline TValue* insert(CString _key, TValue const& _value) { return insert(MAZE_HASHED_CSTRING(_key), _value); }
 
         //////////////////////////////////////////
+        inline TValue* insert(HashedString const& _key, TValue&& _value) { return insert(_key.asHashedCString(), std::move(_value)); }
+
+        //////////////////////////////////////////
+        inline TValue* insert(HashedString const& _key, TValue const& _value) { return insert(_key.asHashedCString(), _value); }
+
+        //////////////////////////////////////////
         inline TValue* insert(HashedCString _key, TValue&& _value)
         {
             auto it = m_map.find(_key);
@@ -277,6 +284,9 @@ namespace Maze
         inline void erase(CString _key) { erase(MAZE_HASHED_CSTRING(_key)); }
 
         //////////////////////////////////////////
+        inline void erase(HashedString const& _key) { erase(_key.asHashedCString()); }
+
+        //////////////////////////////////////////
         inline void erase(HashedCString _key) { m_map.erase(_key); }
 
         //////////////////////////////////////////
@@ -292,6 +302,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline TValue const* tryGet(CString _key) const { return tryGet(MAZE_HASHED_CSTRING(_key)); }
+
+        //////////////////////////////////////////
+        inline TValue const* tryGet(HashedString const& _key) const { return tryGet(_key.asHashedCString()); }
 
         //////////////////////////////////////////
         inline TValue const* tryGet(HashedCString _key) const
@@ -310,6 +323,9 @@ namespace Maze
         inline TValue* tryGet(CString _key) { return tryGet(MAZE_HASHED_CSTRING(_key)); }
 
         //////////////////////////////////////////
+        inline TValue* tryGet(HashedString const& _key) { return tryGet(_key.asHashedCString()); }
+
+        //////////////////////////////////////////
         inline TValue* tryGet(HashedCString _key)
         {
             auto it = m_map.find(_key);
@@ -326,6 +342,9 @@ namespace Maze
         inline iterator find(CString _key) { return find(MAZE_HASHED_CSTRING(_key)); }
 
         //////////////////////////////////////////
+        inline iterator find(HashedString const& _key) { return find(_key.asHashedCString()); }
+
+        //////////////////////////////////////////
         inline iterator find(HashedCString _key) { return m_map.find(_key); }
 
         //////////////////////////////////////////
@@ -333,6 +352,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline const_iterator find(CString _key) const { return find(MAZE_HASHED_CSTRING(_key)); }
+
+        //////////////////////////////////////////
+        inline const_iterator find(HashedString const& _key) const { return find(_key.asHashedCString()); }
 
         //////////////////////////////////////////
         inline const_iterator find(HashedCString _key) const { return m_map.find(_key); }
@@ -343,6 +365,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline TValue& ensure(CString _key) { return ensure(MAZE_HASHED_CSTRING(_key)); }
+
+        //////////////////////////////////////////
+        inline TValue& ensure(HashedString const& _key) { return ensure(_key.asHashedCString()); }
 
         //////////////////////////////////////////
         inline TValue& ensure(HashedCString _key)
@@ -362,6 +387,9 @@ namespace Maze
         inline TValue& operator[](CString _key) { return ensure(_key); }
 
         //////////////////////////////////////////
+        inline TValue& operator[](HashedString _key) { return ensure(_key.asHashedCString()); }
+
+        //////////////////////////////////////////
         inline TValue& operator[](HashedCString _key) { return ensure(_key); }
 
         //////////////////////////////////////////
@@ -378,6 +406,12 @@ namespace Maze
             TValue const* value = tryGet(_key);
             MAZE_ASSERT(value != nullptr);
             return *value;
+        }
+
+        //////////////////////////////////////////
+        inline TValue const& operator[](HashedString const& _key) const
+        {
+            return this->operator[](_key.asHashedCString());
         }
 
         //////////////////////////////////////////

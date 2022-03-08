@@ -66,10 +66,10 @@ namespace Maze
 
         
         //////////////////////////////////////////
-        virtual String const& getFullPath() const MAZE_OVERRIDE { return m_fullPath; }
+        virtual HashedString const& getFullPath() const MAZE_OVERRIDE { return m_fullPath; }
         
         //////////////////////////////////////////
-        virtual String const& getFileName() const MAZE_OVERRIDE { return m_fileName; }
+        virtual HashedString const& getFileName() const MAZE_OVERRIDE { return m_fileName; }
 
 
         //////////////////////////////////////////
@@ -111,10 +111,10 @@ namespace Maze
         
     
     protected:
-        String m_fullPath;
+        HashedString m_fullPath;
         
     private:
-        String m_fileName;
+        HashedString m_fileName;
     };
 
 

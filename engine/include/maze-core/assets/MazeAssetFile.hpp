@@ -73,10 +73,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual String const& getFullPath() const MAZE_ABSTRACT;
+        virtual HashedString const& getFullPath() const MAZE_ABSTRACT;
         
         //////////////////////////////////////////
-        virtual String const& getFileName() const MAZE_ABSTRACT;
+        virtual HashedString const& getFileName() const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual Size getFileSize() MAZE_ABSTRACT;

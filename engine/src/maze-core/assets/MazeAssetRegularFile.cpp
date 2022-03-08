@@ -78,7 +78,7 @@ namespace Maze
         
         if (_normalizePath)
         {
-            FileHelper::NormalizeFilePath(m_fullPath);
+            m_fullPath = FileHelper::NormalizedFilePath(m_fullPath);
         }
         
         m_fileName = FileHelper::GetFileNameInPath(m_fullPath);

@@ -143,7 +143,7 @@ namespace Maze
         if (!m_assetFile)
             return nullValue;
 
-        return m_assetFile->getFileName();
+        return m_assetFile->getFileName().getString();
     }
 
     //////////////////////////////////////////

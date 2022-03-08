@@ -121,7 +121,7 @@ namespace Maze
         S32 tryUnzOpenCurrentFile(String const& _fileName, unzFile _file);
 
     protected:
-        String m_fullPath;
+        HashedString m_fullPath;
         unzFile m_zipHandle = nullptr;
 
         ZipNavigationMap m_zipNavigationMap;

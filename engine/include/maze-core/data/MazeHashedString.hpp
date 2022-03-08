@@ -97,6 +97,12 @@ namespace Maze
         inline U32 getHash() const { return m_hash; }
 
 
+        //////////////////////////////////////////
+        inline CString c_str() const { return m_string.c_str(); }
+
+        //////////////////////////////////////////
+        inline Size size() const { return m_string.size(); }
+
 
         //////////////////////////////////////////
         inline HashedString& operator=(HashedString const& _other)
