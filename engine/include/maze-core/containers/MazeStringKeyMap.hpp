@@ -52,7 +52,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        using MapType = UnorderedMap<HashedCString, Pair<String, TValue>>;
+        using MapType = UnorderedMap<HashedCString, Pair<String const, TValue>>;
 
         //////////////////////////////////////////
         class StringKeyMapIterator
@@ -90,10 +90,10 @@ namespace Maze
             inline TValue& value() const { return m_iterator->second.second; }
 
             //////////////////////////////////////////
-            TValue& operator*() { return value(); }
+            inline Pair<String const, TValue>& operator*() { return m_iterator->second; }
 
             //////////////////////////////////////////
-            const TValue& operator*() const { return value(); }
+            inline Pair<String const, TValue> const& operator*() const { return m_iterator->second; }
 
             //////////////////////////////////////////
             TValue* operator->() { return &m_iterator->second.second; }
@@ -205,13 +205,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline TValue const* find(String const& _key) const { return find(MAZE_HASHED_CSTRING(_key.c_str())); }
+        inline TValue const* tryGet(String const& _key) const { return tryGet(MAZE_HASHED_CSTRING(_key.c_str())); }
 
         //////////////////////////////////////////
-        inline TValue const* find(CString _key) const { return find(MAZE_HASHED_CSTRING(_key)); }
+        inline TValue const* tryGet(CString _key) const { return tryGet(MAZE_HASHED_CSTRING(_key)); }
 
         //////////////////////////////////////////
-        inline TValue const* find(HashedCString _key) const
+        inline TValue const* tryGet(HashedCString _key) const
         {
             auto it = m_map.find(_key);
             if (it != m_map.end())
@@ -221,13 +221,13 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline TValue* find(String const& _key) { return find(MAZE_HASHED_CSTRING(_key.c_str())); }
+        inline TValue* tryGet(String const& _key) { return tryGet(MAZE_HASHED_CSTRING(_key.c_str())); }
 
         //////////////////////////////////////////
-        inline TValue* find(CString _key) { return find(MAZE_HASHED_CSTRING(_key)); }
+        inline TValue* tryGet(CString _key) { return tryGet(MAZE_HASHED_CSTRING(_key)); }
 
         //////////////////////////////////////////
-        inline TValue* find(HashedCString _key)
+        inline TValue* tryGet(HashedCString _key)
         {
             auto it = m_map.find(_key);
             if (it != m_map.end())
@@ -246,7 +246,7 @@ namespace Maze
         //////////////////////////////////////////
         inline TValue& ensure(HashedCString _key)
         {
-            TValue* value = find(_key);
+            TValue* value = tryGet(_key);
             if (value)
                 return *value;
             value = insert(_key, TValue());
@@ -266,7 +266,7 @@ namespace Maze
         //////////////////////////////////////////
         inline TValue const& operator[](String const& _key) const
         {
-            TValue const* value = find(_key);
+            TValue const* value = tryGet(_key);
             MAZE_ASSERT(value != nullptr);
             return *value;
         }
@@ -274,7 +274,7 @@ namespace Maze
         //////////////////////////////////////////
         inline TValue const& operator[](CString _key) const
         {
-            TValue const* value = find(_key);
+            TValue const* value = tryGet(_key);
             MAZE_ASSERT(value != nullptr);
             return *value;
         }
@@ -282,7 +282,7 @@ namespace Maze
         //////////////////////////////////////////
         inline TValue const& operator[](HashedCString _key) const
         {
-            TValue const* value = find(_key);
+            TValue const* value = tryGet(_key);
             MAZE_ASSERT(value != nullptr);
             return *value;
         }

@@ -33,6 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 #include <tinyxml2/tinyxml2.h>
 
 

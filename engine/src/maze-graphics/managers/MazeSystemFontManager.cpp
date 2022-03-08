@@ -96,7 +96,7 @@ namespace Maze
     {
         static SystemFontPtr nullPointer;
 
-        SystemFontPtr* it = m_systemFontsByName.find(_fontName);
+        SystemFontPtr* it = m_systemFontsByName.tryGet(_fontName);
         if (it != nullptr)
             return *it;
 
