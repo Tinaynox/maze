@@ -95,7 +95,7 @@ namespace Maze
     {
         static Texture2DPtr nullPointer;
 
-        UnorderedMap<String, Texture2DPtr>::const_iterator it = m_textures2DByName.find(_textureName);
+        StringKeyMap<Texture2DPtr>::const_iterator it = m_textures2DByName.find(_textureName);
         if (it != m_textures2DByName.end())
             return it->second;
 
@@ -109,7 +109,7 @@ namespace Maze
     //////////////////////////////////////////
     Texture2DPtr const& TextureManager::getTexture2D(AssetFilePtr const& _assetFile)
     {
-        UnorderedMap<String, Texture2DPtr>::const_iterator it = m_textures2DByName.find(_assetFile->getFileName());
+        StringKeyMap<Texture2DPtr>::const_iterator it = m_textures2DByName.find(_assetFile->getFileName());
         if (it != m_textures2DByName.end())
             return it->second;
 
@@ -191,12 +191,11 @@ namespace Maze
     //////////////////////////////////////////
     Texture2DPtr const& TextureManager::addTexture(Texture2DPtr const& _texture)
     {
-        auto it2 = m_textures2DByName.emplace(
-            std::piecewise_construct,
-            std::forward_as_tuple(_texture->getName()),
-            std::forward_as_tuple(_texture));
+        auto it2 = m_textures2DByName.insert(
+            _texture->getName(),
+            _texture);
 
-        return it2.first->second;
+        return *it2;
     }
 
     //////////////////////////////////////////
@@ -285,7 +284,7 @@ namespace Maze
     {
         static TextureCubePtr nullPointer;
 
-        UnorderedMap<String, TextureCubePtr>::const_iterator it = m_texturesCubeByName.find(_textureName);
+        StringKeyMap<TextureCubePtr>::const_iterator it = m_texturesCubeByName.find(_textureName);
         if (it != m_texturesCubeByName.end())
             return it->second;
 
@@ -299,7 +298,7 @@ namespace Maze
     //////////////////////////////////////////
     TextureCubePtr const& TextureManager::getTextureCube(AssetFilePtr const& _assetFile)
     {
-        UnorderedMap<String, TextureCubePtr>::const_iterator it = m_texturesCubeByName.find(_assetFile->getFileName());
+        StringKeyMap<TextureCubePtr>::const_iterator it = m_texturesCubeByName.find(_assetFile->getFileName());
         if (it != m_texturesCubeByName.end())
             return it->second;
 
@@ -324,12 +323,11 @@ namespace Maze
     //////////////////////////////////////////
     TextureCubePtr const& TextureManager::addTexture(TextureCubePtr const& _texture)
     {
-        auto it2 = m_texturesCubeByName.emplace(
-            std::piecewise_construct,
-            std::forward_as_tuple(_texture->getName()),
-            std::forward_as_tuple(_texture));
+        auto it2 = m_texturesCubeByName.insert(
+            _texture->getName(),
+            _texture);
 
-        return it2.first->second;
+        return *it2;
     }
 
     //////////////////////////////////////////

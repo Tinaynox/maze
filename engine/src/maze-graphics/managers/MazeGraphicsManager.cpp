@@ -129,13 +129,10 @@ namespace Maze
     //////////////////////////////////////////
     void GraphicsManager::addRenderSystem(RenderSystemPtr const& _renderSystem)
     {
-        UnorderedMap<String, RenderSystemPtr>::iterator it = m_renderSystems.find(_renderSystem->getName());
+        StringKeyMap<RenderSystemPtr>::iterator it = m_renderSystems.find(_renderSystem->getName());
         MAZE_ERROR_RETURN_IF(it != m_renderSystems.end(), "RenderSystem %s is already exists!", _renderSystem->getName().c_str());
 
-        m_renderSystems.emplace(
-            std::piecewise_construct,
-            std::forward_as_tuple(_renderSystem->getName()),
-            std::forward_as_tuple(_renderSystem));
+        m_renderSystems.insert(_renderSystem->getName(), _renderSystem);
 
 
         if (m_defaultRenderSystem == nullptr)
@@ -147,7 +144,7 @@ namespace Maze
     //////////////////////////////////////////
     void GraphicsManager::removeRenderSystem(RenderSystemPtr const& _renderSystem)
     {
-        UnorderedMap<String, RenderSystemPtr>::iterator it = m_renderSystems.find(_renderSystem->getName());
+        StringKeyMap<RenderSystemPtr>::iterator it = m_renderSystems.find(_renderSystem->getName());
         MAZE_ERROR_RETURN_IF(it == m_renderSystems.end(), "RenderSystem %s is not exists!", _renderSystem->getName().c_str());
 
         m_renderSystems.erase(it);
@@ -170,7 +167,7 @@ namespace Maze
             return;
         }
 
-        UnorderedMap<String, RenderSystemPtr>::iterator it = m_renderSystems.find(_renderSystem->getName());
+        StringKeyMap<RenderSystemPtr>::iterator it = m_renderSystems.find(_renderSystem->getName());
         MAZE_ERROR_RETURN_IF(it == m_renderSystems.end(), "RenderSystem %s is not in RenderSystems list!", _renderSystem->getName().c_str());
 
         m_defaultRenderSystem = _renderSystem;

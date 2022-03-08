@@ -41,6 +41,7 @@
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
 #include "maze-core/data/MazeByteBuffer.hpp"
+#include "maze-core/data/MazeHashedString.hpp"
 #include "maze-core/MazeObject.hpp"
 #include <tinyxml2.h>
 

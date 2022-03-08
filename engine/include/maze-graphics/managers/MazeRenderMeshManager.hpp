@@ -37,6 +37,7 @@
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 
 
 //////////////////////////////////////////
@@ -118,7 +119,7 @@ namespace Maze
         RenderMeshPtr m_defaultCubeMesh;
         RenderMeshPtr m_defaultSphereMesh;
 
-        UnorderedMap<String, RenderMeshPtr> m_renderMeshesByName;
+        StringKeyMap<RenderMeshPtr> m_renderMeshesByName;
     };
 
 } // namespace Maze

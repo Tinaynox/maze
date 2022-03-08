@@ -82,7 +82,7 @@ namespace Maze
     {
         static SpritePtr nullPointer;
 
-        UnorderedMap<String, SpritePtr>::const_iterator it = m_imagesByName.find(_imageName);
+        StringKeyMap<SpritePtr>::const_iterator it = m_imagesByName.find(_imageName);
         if (it != m_imagesByName.end())
             return it->second;
         
@@ -93,10 +93,9 @@ namespace Maze
         {
             
             SpritePtr sprite = Sprite::Create(texture2D);
-            auto it2 = m_imagesByName.emplace(
-                std::piecewise_construct,
-                std::forward_as_tuple(_imageName),
-                std::forward_as_tuple(sprite));
+            auto it2 = m_imagesByName.insert(
+                _imageName,
+                sprite);
 
             if (texture2D->getAssetFile())
             {
@@ -118,7 +117,7 @@ namespace Maze
                 }
             }
 
-            return it2.first->second;
+            return *it2;
         }
 
         return nullPointer;

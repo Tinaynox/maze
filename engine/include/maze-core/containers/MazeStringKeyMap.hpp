@@ -60,6 +60,14 @@ namespace Maze
         public:
 
             //////////////////////////////////////////
+            friend class StringKeyMap<TValue>;
+
+            //////////////////////////////////////////
+            friend class StringKeyMapConstIterator;
+
+        public:
+
+            //////////////////////////////////////////
             StringKeyMapIterator()
             {}
 
@@ -96,37 +104,100 @@ namespace Maze
             inline Pair<String const, TValue> const& operator*() const { return m_iterator->second; }
 
             //////////////////////////////////////////
-            TValue* operator->() { return &m_iterator->second.second; }
+            inline Pair<String const, TValue>* operator->() { return &m_iterator->second; }
+
+            //////////////////////////////////////////
+            inline Pair<String const, TValue> const* operator->() const { return &m_iterator->second; }
 
         protected:
             typename MapType::iterator m_iterator;
+        };
+
+        //////////////////////////////////////////
+        class StringKeyMapConstIterator
+        {
+        public:
+
+            //////////////////////////////////////////
+            friend class StringKeyMap<TValue>;
+
+        public:
+
+            //////////////////////////////////////////
+            StringKeyMapConstIterator()
+            {}
+
+            //////////////////////////////////////////
+            StringKeyMapConstIterator(typename MapType::const_iterator&& _iterator)
+                : m_iterator(_iterator)
+            {}
+
+            //////////////////////////////////////////
+            StringKeyMapConstIterator(typename MapType::iterator&& _iterator)
+                : m_iterator(_iterator)
+            {}
+
+            //////////////////////////////////////////
+            StringKeyMapConstIterator(StringKeyMapIterator const& _iterator)
+                : m_iterator(_iterator.m_iterator)
+            {}
+
+            //////////////////////////////////////////
+            inline StringKeyMapConstIterator& operator++() { ++m_iterator; return (*this); }
+
+            //////////////////////////////////////////
+            inline StringKeyMapConstIterator& operator--() { --m_iterator; return (*this); }
+
+            //////////////////////////////////////////
+            inline bool operator!=(StringKeyMapConstIterator const& _other) const { return m_iterator != _other.m_iterator; }
+
+            //////////////////////////////////////////
+            inline bool operator==(StringKeyMapConstIterator const& _other) const { return m_iterator == _other.m_iterator; }
+
+            //////////////////////////////////////////
+            inline HashedCString key() const { return m_iterator->first; }
+
+            //////////////////////////////////////////
+            inline TValue& value() const { return m_iterator->second.second; }
+
+            //////////////////////////////////////////
+            inline Pair<String const, TValue> const& operator*() const { return m_iterator->second; }
+
+            //////////////////////////////////////////
+            inline Pair<String const, TValue> const* operator->() const { return &m_iterator->second; }
+
+        protected:
+            typename MapType::const_iterator m_iterator;
         };
 
 
         //////////////////////////////////////////
         using iterator = StringKeyMapIterator;
 
+        //////////////////////////////////////////
+        using const_iterator = StringKeyMapConstIterator;
+
     public:
 
 
         //////////////////////////////////////////
-        inline iterator begin()
-        {
-            return m_map.begin();
-        }
+        inline iterator begin() { return m_map.begin(); }
 
         //////////////////////////////////////////
-        inline iterator end()
-        {
-            return m_map.end();
-        }
+        inline const_iterator begin() const { return m_map.begin(); }
+
+        //////////////////////////////////////////
+        inline iterator end() { return m_map.end(); }
+
+        //////////////////////////////////////////
+        inline const_iterator end() const { return m_map.end(); }
 
 
         //////////////////////////////////////////
-        inline void insert(String const& _key, TValue&& _value) { insert(MAZE_HASHED_CSTRING(_key.c_str()), std::move(_value)); }
+        inline TValue* insert(String const& _key, TValue&& _value) { return insert(MAZE_HASHED_CSTRING(_key.c_str()), std::move(_value)); }
 
         //////////////////////////////////////////
-        inline void insert(String const& _key, TValue const& _value) { insert(MAZE_HASHED_CSTRING(_key.c_str()), _value); }
+        inline TValue* insert(String const& _key, TValue const& _value) { return insert(MAZE_HASHED_CSTRING(_key.c_str()), _value); }
 
         //////////////////////////////////////////
         inline TValue* insert(CString _key, TValue&& _value) { return insert(MAZE_HASHED_CSTRING(_key), std::move(_value)); }
@@ -181,8 +252,13 @@ namespace Maze
                     std::forward_as_tuple(_key),
                     std::forward_as_tuple(std::move(valueData)));
 
-                HashedCString* newKey = const_cast<HashedCString*>(&at.first->first);
-                newKey->str = &at.first->second.first[0];
+                if (at.second)
+                {
+                    HashedCString* newKey = const_cast<HashedCString*>(&at.first->first);
+                    newKey->str = &at.first->second.first[0];
+
+                    return &at.first->second.second;
+                }
 
                 return nullptr;
             }
@@ -202,6 +278,13 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void erase(HashedCString _key) { m_map.erase(_key); }
+
+        //////////////////////////////////////////
+        inline void erase(iterator const& _it) { m_map.erase(_it.m_iterator); }
+
+
+        //////////////////////////////////////////
+        inline bool empty() { return m_map.empty(); }
 
 
         //////////////////////////////////////////
@@ -235,6 +318,24 @@ namespace Maze
 
             return nullptr;
         }
+
+        //////////////////////////////////////////
+        inline iterator find(String const& _key) { return find(MAZE_HASHED_CSTRING(_key.c_str())); }
+
+        //////////////////////////////////////////
+        inline iterator find(CString _key) { return find(MAZE_HASHED_CSTRING(_key)); }
+
+        //////////////////////////////////////////
+        inline iterator find(HashedCString _key) { return m_map.find(_key); }
+
+        //////////////////////////////////////////
+        inline const_iterator find(String const& _key) const { return find(MAZE_HASHED_CSTRING(_key.c_str())); }
+
+        //////////////////////////////////////////
+        inline const_iterator find(CString _key) const { return find(MAZE_HASHED_CSTRING(_key)); }
+
+        //////////////////////////////////////////
+        inline const_iterator find(HashedCString _key) const { return m_map.find(_key); }
 
 
         //////////////////////////////////////////
@@ -321,9 +422,41 @@ namespace Maze
         MapType m_map;
     };
 
-
 } // namespace Maze
 //////////////////////////////////////////
+
+
+//////////////////////////////////////////
+template <typename TValue>
+inline bool operator!=(
+    typename Maze::StringKeyMap<TValue>::StringKeyMapIterator const& _it0,
+    typename Maze::StringKeyMap<TValue>::StringKeyMapConstIterator const& _it1)
+{ return _it0.m_iterator != _it1.m_iterator; }
+
+//////////////////////////////////////////
+template <typename TValue>
+inline bool operator==(
+    typename Maze::StringKeyMap<TValue>::StringKeyMapIterator const& _it0,
+    typename Maze::StringKeyMap<TValue>::StringKeyMapConstIterator const& _it1)
+{ return _it0.m_iterator == _it1.m_iterator; }
+
+//////////////////////////////////////////
+template <typename TValue>
+inline bool operator!=(
+    typename Maze::StringKeyMap<TValue>::StringKeyMapConstIterator const& _it0,
+    typename Maze::StringKeyMap<TValue>::StringKeyMapIterator const& _it1)
+{
+    return _it0.m_iterator != _it1.m_iterator;
+}
+
+//////////////////////////////////////////
+template <typename TValue>
+inline bool operator==(
+    typename Maze::StringKeyMap<TValue>::StringKeyMapConstIterator const& _it0,
+    typename Maze::StringKeyMap<TValue>::StringKeyMapIterator const& _it1)
+{
+    return _it0.m_iterator == _other.m_iterator;
+}
 
 
 #endif // _MazeStringKeyMap_h_

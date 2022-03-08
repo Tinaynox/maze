@@ -39,6 +39,7 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 
 
 //////////////////////////////////////////
@@ -74,7 +75,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline UnorderedMap<String, RenderSystemPtr> const& getRenderSystems() const { return m_renderSystems; }
+        inline StringKeyMap<RenderSystemPtr> const& getRenderSystems() const { return m_renderSystems; }
 
         //////////////////////////////////////////
         void addRenderSystem(RenderSystemPtr const& renderSystem);
@@ -121,7 +122,7 @@ namespace Maze
     protected:
         static GraphicsManager* s_instance;
 
-        UnorderedMap<String, RenderSystemPtr> m_renderSystems;
+        StringKeyMap<RenderSystemPtr> m_renderSystems;
         RenderSystemPtr m_defaultRenderSystem;
 
         GizmosManagerPtr m_gizmosManager;

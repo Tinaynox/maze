@@ -124,7 +124,7 @@ namespace Maze
     protected:
         static SystemManager* s_instance;
 
-        Maze::Vector<Maze::S8 const*> m_commandLineArguments;
+        Vector<S8 const*> m_commandLineArguments;
 
         UpdateManagerPtr m_updateManager;
 

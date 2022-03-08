@@ -37,6 +37,7 @@
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 
 
 //////////////////////////////////////////
@@ -159,7 +160,7 @@ namespace Maze
         RenderSystemWPtr m_renderSystem;
         RenderSystem* m_renderSystemRaw;
 
-        UnorderedMap<String, MaterialPtr> m_materialsByName;
+        StringKeyMap<MaterialPtr> m_materialsByName;
 
         MaterialPtr m_errorMaterial;
         MaterialPtr m_uvMaterial;

@@ -109,7 +109,7 @@ namespace Maze
     {
         static MaterialPtr nullPointer;
 
-        UnorderedMap<String, MaterialPtr>::const_iterator it = m_materialsByName.find(_materialName);
+        StringKeyMap<MaterialPtr>::const_iterator it = m_materialsByName.find(_materialName);
         if (it != m_materialsByName.end())
             return it->second;
 
@@ -128,7 +128,7 @@ namespace Maze
     //////////////////////////////////////////
     MaterialPtr const& MaterialManager::getMaterial(AssetFilePtr const& _assetFile)
     {
-        UnorderedMap<String, MaterialPtr>::const_iterator it = m_materialsByName.find(_assetFile->getFileName());
+        StringKeyMap<MaterialPtr>::const_iterator it = m_materialsByName.find(_assetFile->getFileName());
         if (it != m_materialsByName.end())
             return it->second;
 
@@ -325,11 +325,8 @@ namespace Maze
     //////////////////////////////////////////
     MaterialPtr const& MaterialManager::addMaterial(MaterialPtr const& _material)
     {
-        auto it2 = m_materialsByName.emplace(
-            std::piecewise_construct,
-            std::forward_as_tuple(_material->getName()),
-            std::forward_as_tuple(_material));
-        return it2.first->second;
+        auto it2 = m_materialsByName.insert(_material->getName(), _material);
+        return *it2;
     }
 
     //////////////////////////////////////////

@@ -75,10 +75,22 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        const AssetFilePtr& getAssetFileByFileName(String const& _fileName);
+        const AssetFilePtr& getAssetFileByFileName(HashedCString _fileName);
+
+        //////////////////////////////////////////
+        inline const AssetFilePtr& getAssetFileByFileName(String const& _fileName) { return getAssetFileByFileName(MAZE_HASHED_CSTRING(_fileName.c_str())); }
+
+        //////////////////////////////////////////
+        inline const AssetFilePtr& getAssetFileByFileName(CString _fileName) { return getAssetFileByFileName(MAZE_HASHED_CSTRING(_fileName)); }
         
         //////////////////////////////////////////
-        const AssetFilePtr& getAssetFileByFullPath(String const& _fileFullPath);
+        const AssetFilePtr& getAssetFileByFullPath(HashedCString _fileFullPath);
+
+        //////////////////////////////////////////
+        inline const AssetFilePtr& getAssetFileByFullPath(String const& _fileFullPath) { return getAssetFileByFullPath(MAZE_HASHED_CSTRING(_fileFullPath.c_str())); }
+
+        //////////////////////////////////////////
+        inline const AssetFilePtr& getAssetFileByFullPath(CString _fileFullPath) { return getAssetFileByFullPath(MAZE_HASHED_CSTRING(_fileFullPath)); }
 
 
         //////////////////////////////////////////
@@ -115,7 +127,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        Vector<AssetFilePtr> getAssetFilesInFolder(String& _folderFullPath);
+        Vector<AssetFilePtr> getAssetFilesInFolder(String const& _folderFullPath);
 
         //////////////////////////////////////////
         UnorderedMap<String, String> getMetaData(AssetFilePtr const& _assetFile);
@@ -149,8 +161,8 @@ namespace Maze
         static AssetManager* s_instance;
         
     protected:
-        UnorderedMap<String, AssetFilePtr> m_assetFilesByFileName;
-        UnorderedMap<String, AssetFilePtr> m_assetFilesByFullPath;
+        StringKeyMap<AssetFilePtr> m_assetFilesByFileName;
+        StringKeyMap<AssetFilePtr> m_assetFilesByFullPath;
 
     };
 

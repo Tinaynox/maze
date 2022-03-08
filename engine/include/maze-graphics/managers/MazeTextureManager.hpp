@@ -37,6 +37,7 @@
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 #include "maze-graphics/MazePixelSheet2D.hpp"
 #include "maze-graphics/MazeSystemFont.hpp"
 
@@ -143,8 +144,8 @@ namespace Maze
         RenderSystemWPtr m_renderSystem;
         RenderSystem* m_renderSystemRaw;
 
-        UnorderedMap<String, Texture2DPtr> m_textures2DByName;
-        UnorderedMap<String, TextureCubePtr> m_texturesCubeByName;
+        StringKeyMap<Texture2DPtr> m_textures2DByName;
+        StringKeyMap<TextureCubePtr> m_texturesCubeByName;
 
         Texture2DPtr m_whiteTexture;
         Texture2DPtr m_blackTexture;

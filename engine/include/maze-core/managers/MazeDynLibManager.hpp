@@ -38,6 +38,7 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 
 
 //////////////////////////////////////////
@@ -92,7 +93,7 @@ namespace Maze
     protected:
         static DynLibManager* s_instance;
 
-        UnorderedMap<String, DynLibPtr> m_loadedLibs;
+        StringKeyMap<DynLibPtr> m_loadedLibs;
     };
 
 

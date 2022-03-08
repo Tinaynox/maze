@@ -81,7 +81,7 @@ namespace Maze
     {
         static DynLibPtr const nullPtr;
 
-        UnorderedMap<String, DynLibPtr>::iterator it = m_loadedLibs.find(_libraryFullPath);
+        StringKeyMap<DynLibPtr>::iterator it = m_loadedLibs.find(_libraryFullPath);
         if (it != m_loadedLibs.end())
         {
             return it->second;
@@ -95,19 +95,15 @@ namespace Maze
             if (!dynLib->load())
                 return nullPtr;
 
-            auto r = m_loadedLibs.emplace(
-                std::piecewise_construct,
-                std::forward_as_tuple(_libraryFullPath),
-                std::forward_as_tuple(dynLib));
-
-            return r.first->second;
+            DynLibPtr* insertedDynLib = m_loadedLibs.insert(_libraryFullPath, dynLib);
+            return *insertedDynLib;
         }
     }
 
     //////////////////////////////////////////
     void DynLibManager::unloadLibrary(DynLib* _lib)
     {
-        UnorderedMap<String, DynLibPtr>::iterator it = 
+        StringKeyMap<DynLibPtr>::iterator it =
             std::find_if(
                 m_loadedLibs.begin(),
                 m_loadedLibs.end(),

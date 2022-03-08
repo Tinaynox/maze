@@ -109,7 +109,7 @@ namespace Maze
     {
         static RenderMeshPtr nullPointer;
 
-        UnorderedMap<String, RenderMeshPtr>::const_iterator it = m_renderMeshesByName.find(_renderMeshName);
+        StringKeyMap<RenderMeshPtr>::const_iterator it = m_renderMeshesByName.find(_renderMeshName);
         if (it != m_renderMeshesByName.end())
             return it->second;
 
@@ -125,7 +125,7 @@ namespace Maze
     //////////////////////////////////////////
     RenderMeshPtr const& RenderMeshManager::getRenderMesh(AssetFilePtr const& _assetFile)
     {
-        UnorderedMap<String, RenderMeshPtr>::const_iterator it = m_renderMeshesByName.find(_assetFile->getFileName());
+        StringKeyMap<RenderMeshPtr>::const_iterator it = m_renderMeshesByName.find(_assetFile->getFileName());
         if (it != m_renderMeshesByName.end())
             return it->second;
 
@@ -137,11 +137,10 @@ namespace Maze
     //////////////////////////////////////////
     RenderMeshPtr const& RenderMeshManager::addRenderMesh(RenderMeshPtr const& _renderMesh)
     {
-        auto it2 = m_renderMeshesByName.emplace(
-            std::piecewise_construct,
-            std::forward_as_tuple(_renderMesh->getName()),
-            std::forward_as_tuple(_renderMesh));
-        return it2.first->second;
+        auto it2 = m_renderMeshesByName.insert(
+            _renderMesh->getName(),
+            _renderMesh);
+        return *it2;
     }
 
     //////////////////////////////////////////

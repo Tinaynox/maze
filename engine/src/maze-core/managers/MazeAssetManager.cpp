@@ -87,7 +87,7 @@ namespace Maze
 
         AssetDirectoryPtr directory;
 
-        UnorderedMap<String, AssetFilePtr>::iterator it = m_assetFilesByFullPath.find(fullPath);
+        StringKeyMap<AssetFilePtr>::iterator it = m_assetFilesByFullPath.find(fullPath);
         if (it == m_assetFilesByFullPath.end())
         {
             directory = AssetDirectory::Create(fullPath);
@@ -148,11 +148,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    AssetFilePtr const& AssetManager::getAssetFileByFileName(String const& _fileName)
+    AssetFilePtr const& AssetManager::getAssetFileByFileName(HashedCString _fileName)
     {
         static AssetFilePtr nullPtr;
 
-        UnorderedMap<String, AssetFilePtr>::iterator it = m_assetFilesByFileName.find(_fileName);
+        StringKeyMap<AssetFilePtr>::iterator it = m_assetFilesByFileName.find(_fileName);
         if (it == m_assetFilesByFileName.end())
             return nullPtr;
 
@@ -160,11 +160,11 @@ namespace Maze
     }
         
     //////////////////////////////////////////
-    AssetFilePtr const& AssetManager::getAssetFileByFullPath(String const& _fileFullPath)
+    AssetFilePtr const& AssetManager::getAssetFileByFullPath(HashedCString _fileFullPath)
     {
         static AssetFilePtr nullPtr;
         
-        UnorderedMap<String, AssetFilePtr>::iterator it = m_assetFilesByFullPath.find(_fileFullPath);
+        StringKeyMap<AssetFilePtr>::iterator it = m_assetFilesByFullPath.find(_fileFullPath);
         if (it == m_assetFilesByFullPath.end())
             return nullPtr;
         
@@ -232,8 +232,8 @@ namespace Maze
     {
         Vector<AssetFilePtr> result;
 
-        UnorderedMap<String, AssetFilePtr>::iterator it = m_assetFilesByFullPath.begin();
-        UnorderedMap<String, AssetFilePtr>::iterator end = m_assetFilesByFullPath.end();
+        StringKeyMap<AssetFilePtr>::iterator it = m_assetFilesByFullPath.begin();
+        StringKeyMap<AssetFilePtr>::iterator end = m_assetFilesByFullPath.end();
         for (; it != end; ++it)
         {
             if ((*it).second->getExtension() == _extension)
@@ -251,8 +251,8 @@ namespace Maze
     {
         Vector<AssetFilePtr> result;
 
-        UnorderedMap<String, AssetFilePtr>::iterator it = m_assetFilesByFullPath.begin();
-        UnorderedMap<String, AssetFilePtr>::iterator end = m_assetFilesByFullPath.end();
+        StringKeyMap<AssetFilePtr>::iterator it = m_assetFilesByFullPath.begin();
+        StringKeyMap<AssetFilePtr>::iterator end = m_assetFilesByFullPath.end();
         for (; it != end; ++it)
         {
             if (_extensions.count((*it).second->getExtension()))
@@ -279,13 +279,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vector<AssetFilePtr> AssetManager::getAssetFilesInFolder(String& _folderFullPath)
+    Vector<AssetFilePtr> AssetManager::getAssetFilesInFolder(String const& _folderFullPath)
     {
         Vector<AssetFilePtr> result;
         for (auto data : m_assetFilesByFullPath)
         {
-            if (    data.second->getFullPath() != _folderFullPath 
-                &&    StringHelper::IsStartsWith(data.second->getFullPath(), _folderFullPath))
+            if (   data.second->getFullPath() != _folderFullPath 
+                && StringHelper::IsStartsWith(data.second->getFullPath(), _folderFullPath))
             {
                 String relativePath = data.second->getFullPath().substr(
                     _folderFullPath.size() + 1, data.second->getFullPath().size() - _folderFullPath.size() - 1);
