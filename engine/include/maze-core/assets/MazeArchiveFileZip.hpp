@@ -81,7 +81,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline String const& getFullPath() const { return m_fullPath; }
+        inline HashedString const& getFullPath() const { return m_fullPath; }
 
 
         //////////////////////////////////////////

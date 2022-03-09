@@ -489,7 +489,7 @@ inline bool operator==(
     typename Maze::StringKeyMap<TValue>::StringKeyMapConstIterator const& _it0,
     typename Maze::StringKeyMap<TValue>::StringKeyMapIterator const& _it1)
 {
-    return _it0.m_iterator == _other.m_iterator;
+    return _it0.m_iterator == _it1.m_iterator;
 }
 
 

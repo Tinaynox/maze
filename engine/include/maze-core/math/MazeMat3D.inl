@@ -518,7 +518,7 @@ namespace Maze
     template <class TValue>
     inline MAZE_CONSTEXPR Vec2D<TValue> Mat3D<TValue>::getAffineTranslation2D() const 
     { 
-        return Vec2D<TValue>(getAffineTranslationX(), getAffineTranslationY()); 
+        return Vec2D<TValue>(getAffineTranslation2DX(), getAffineTranslation2DY()); 
     }
 
     //////////////////////////////////////////

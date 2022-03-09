@@ -70,7 +70,7 @@ namespace Maze
         m_archive = _archive;
         m_zipArchiveFilePath = _zipArchiveFilePath;
         m_fileName = FileHelper::GetFileNameInPath(_zipArchiveFilePath);
-        m_fullPath = _archive->getFullPath() + _zipArchiveFilePath;
+        m_fullPath = _archive->getFullPath().getString() + _zipArchiveFilePath;
         
         return true;
     }
