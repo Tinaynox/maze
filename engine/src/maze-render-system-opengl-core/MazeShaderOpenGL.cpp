@@ -479,17 +479,27 @@ namespace Maze
             return false;
         }
         
+        
+        // Pre Linking (For attribute locations check)
+        MAZE_GL_CALL(mzglLinkProgram(m_programId));
 
         for (VertexAttributeSemantic attribSemantic = VertexAttributeSemantic(0);
                                      attribSemantic < VertexAttributeSemantic::MAX;
                                      attribSemantic = VertexAttributeSemantic((S32)attribSemantic + 1))
         {
+            CString attribName = GetVertexAttributeName(attribSemantic); 
+            
+            MZGLint attribLocation;
+            MAZE_GL_CALL(attribLocation = mzglGetAttribLocation(m_programId, attribName));
+            if (attribLocation == -1)
+                continue;
+            
             MAZE_GL_CALL(mzglBindAttribLocation(m_programId,
                 (MZGLuint)attribSemantic,
-                GetVertexAttributeName(attribSemantic)));
+                attribName));
         }
         
-        // Linking
+        // Final Linking
         MAZE_GL_CALL(mzglLinkProgram(m_programId));
                 
 
