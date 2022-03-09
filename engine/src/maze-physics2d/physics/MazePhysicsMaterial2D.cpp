@@ -192,7 +192,7 @@ namespace Maze
         }
         else
         {
-            _value = PhysicsMaterial2DManager::GetInstancePtr()->getMaterial(_data);
+            _value = PhysicsMaterial2DManager::GetInstancePtr()->getMaterial(MAZE_HASHED_CSTRING(_data));
         }
     }
 

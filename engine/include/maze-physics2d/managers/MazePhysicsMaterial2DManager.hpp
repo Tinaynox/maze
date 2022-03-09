@@ -35,6 +35,7 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/math/MazeVec2D.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 
 
 //////////////////////////////////////////
@@ -73,7 +74,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        PhysicsMaterial2DPtr const& getMaterial(String const& _materialName);
+        PhysicsMaterial2DPtr const& getMaterial(HashedCString _materialName);
+
+        //////////////////////////////////////////
+        inline PhysicsMaterial2DPtr const& getMaterial(String const& _materialName) { return getMaterial(MAZE_HASHED_CSTRING(_materialName.c_str())); }
+
+        //////////////////////////////////////////
+        inline PhysicsMaterial2DPtr const& getMaterial(CString _materialName) { return getMaterial(MAZE_HASHED_CSTRING(_materialName)); }
 
         //////////////////////////////////////////
         PhysicsMaterial2DPtr const& getMaterial(AssetFilePtr const& _assetFile);
@@ -94,7 +101,7 @@ namespace Maze
 
         PhysicsMaterial2DPtr m_defaultMaterial;
 
-        UnorderedMap<String, PhysicsMaterial2DPtr> m_materialsByName;
+        StringKeyMap<PhysicsMaterial2DPtr> m_materialsByName;
     };
     
 

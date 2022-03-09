@@ -74,7 +74,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        Texture2DPtr const& getTexture2D(String const& _assetFileName);
+        Texture2DPtr const& getTexture2D(HashedCString _assetFileName);
+
+        //////////////////////////////////////////
+        inline Texture2DPtr const& getTexture2D(String const& _assetFileName) { return getTexture2D(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+
+        //////////////////////////////////////////
+        inline Texture2DPtr const& getTexture2D(CString _assetFileName) { return getTexture2D(MAZE_HASHED_CSTRING(_assetFileName)); }
 
         //////////////////////////////////////////
         Texture2DPtr const& getTexture2D(AssetFilePtr const& _assetFile);

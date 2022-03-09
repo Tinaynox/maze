@@ -105,7 +105,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    RenderMeshPtr const& RenderMeshManager::getRenderMesh(String const& _renderMeshName)
+    RenderMeshPtr const& RenderMeshManager::getRenderMesh(HashedCString _renderMeshName)
     {
         static RenderMeshPtr nullPointer;
 
@@ -118,7 +118,7 @@ namespace Maze
             return nullPointer;
 
         RenderMeshPtr renderMesh = RenderMesh::Create(assetFile);
-        renderMesh->setName(_renderMeshName);
+        renderMesh->setName(_renderMeshName.str);
         return addRenderMesh(renderMesh);
     }
 

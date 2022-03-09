@@ -75,42 +75,40 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PhysicsMaterial2DPtr const& PhysicsMaterial2DManager::getMaterial(String const& _materialName)
+    PhysicsMaterial2DPtr const& PhysicsMaterial2DManager::getMaterial(HashedCString _materialName)
     {
         static MaterialPtr nullPointer;
 
-        UnorderedMap<String, PhysicsMaterial2DPtr>::const_iterator it = m_materialsByName.find(_materialName);
+        StringKeyMap<PhysicsMaterial2DPtr>::const_iterator it = m_materialsByName.find(_materialName);
         if (it != m_materialsByName.end())
             return it->second;
 
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_materialName);
         if (!assetFile)
         {
-            MAZE_ERROR("Undefined material: %s!", _materialName.c_str());
+            MAZE_ERROR("Undefined material: %s!", _materialName.str);
             return m_defaultMaterial;
         }
 
         PhysicsMaterial2DPtr material = PhysicsMaterial2D::Create(assetFile);
-        auto it2 = m_materialsByName.emplace(
-            std::piecewise_construct,
-            std::forward_as_tuple(_materialName),
-            std::forward_as_tuple(material));
-        return it2.first->second;
+        auto it2 = m_materialsByName.insert(
+            _materialName,
+            material);
+        return *it2;
     }
 
     //////////////////////////////////////////
     PhysicsMaterial2DPtr const& PhysicsMaterial2DManager::getMaterial(AssetFilePtr const& _assetFile)
     {
-        UnorderedMap<String, PhysicsMaterial2DPtr>::const_iterator it = m_materialsByName.find(_assetFile->getFileName());
+        StringKeyMap<PhysicsMaterial2DPtr>::const_iterator it = m_materialsByName.find(_assetFile->getFileName());
         if (it != m_materialsByName.end())
             return it->second;
 
         PhysicsMaterial2DPtr material = PhysicsMaterial2D::Create(_assetFile);
-        auto it2 = m_materialsByName.emplace(
-            std::piecewise_construct,
-            std::forward_as_tuple(_assetFile->getFileName()),
-            std::forward_as_tuple(material));
-        return it2.first->second;
+        auto it2 = m_materialsByName.insert(
+            _assetFile->getFileName(),
+            material);
+        return *it2;
     }
 
     //////////////////////////////////////////

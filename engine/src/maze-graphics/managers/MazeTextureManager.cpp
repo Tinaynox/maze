@@ -91,7 +91,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Texture2DPtr const& TextureManager::getTexture2D(String const& _textureName)
+    Texture2DPtr const& TextureManager::getTexture2D(HashedCString _textureName)
     {
         static Texture2DPtr nullPointer;
 

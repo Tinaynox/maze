@@ -105,7 +105,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MaterialPtr const& MaterialManager::getMaterial(String const& _materialName)
+    MaterialPtr const& MaterialManager::getMaterial(HashedCString _materialName)
     {
         static MaterialPtr nullPointer;
 
@@ -116,12 +116,12 @@ namespace Maze
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_materialName);
         if (!assetFile)
         {
-            MAZE_ERROR("Undefined material: %s!", _materialName.c_str());
+            MAZE_ERROR("Undefined material: %s!", _materialName.str);
             return m_errorMaterial;
         }
 
         MaterialPtr material = Material::Create(assetFile);
-        material->setName(_materialName);
+        material->setName(_materialName.str);
         return addMaterial(material);
     }
 

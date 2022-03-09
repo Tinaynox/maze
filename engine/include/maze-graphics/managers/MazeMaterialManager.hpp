@@ -70,7 +70,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MaterialPtr const& getMaterial(String const& _assetFileName);
+        MaterialPtr const& getMaterial(HashedCString _assetFileName);
+
+        //////////////////////////////////////////
+        inline MaterialPtr const& getMaterial(String const& _assetFileName) { return getMaterial(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+
+        //////////////////////////////////////////
+        inline MaterialPtr const& getMaterial(CString _assetFileName) { return getMaterial(MAZE_HASHED_CSTRING(_assetFileName)); }
 
         //////////////////////////////////////////
         MaterialPtr const& getMaterial(AssetFilePtr const& _assetFile);

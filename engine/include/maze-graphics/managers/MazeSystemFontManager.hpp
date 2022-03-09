@@ -77,7 +77,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        SystemFontPtr const& getSystemFont(String const& _fontName);
+        SystemFontPtr const& getSystemFont(HashedCString _fontName);
+
+        //////////////////////////////////////////
+        inline SystemFontPtr const& getSystemFont(String const& _fontName) { return getSystemFont(MAZE_HASHED_CSTRING(_fontName.c_str())); }
+
+        //////////////////////////////////////////
+        inline SystemFontPtr const& getSystemFont(CString _fontName) { return getSystemFont(MAZE_HASHED_CSTRING(_fontName)); }
 
         //////////////////////////////////////////
         CString getSystemFontName(SystemFont const* _font);

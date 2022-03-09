@@ -78,7 +78,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SpritePtr const& SpriteManager::getSprite(String const& _imageName)
+    SpritePtr const& SpriteManager::getSprite(HashedCString _imageName)
     {
         static SpritePtr nullPointer;
 

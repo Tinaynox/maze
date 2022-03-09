@@ -256,7 +256,7 @@ namespace Maze
         }
         else
         {
-            _value = spriteManager->getSprite(_data);
+            _value = spriteManager->getSprite(MAZE_HASHED_CSTRING(_data));
         }
     }
 

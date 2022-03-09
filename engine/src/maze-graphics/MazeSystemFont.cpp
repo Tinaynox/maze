@@ -55,7 +55,7 @@ namespace Maze
         }
         else
         {
-            _value = systemFontManager->getSystemFont(_data);
+            _value = systemFontManager->getSystemFont(MAZE_HASHED_CSTRING(_data));
         }
     }
 

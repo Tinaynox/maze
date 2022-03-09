@@ -68,7 +68,13 @@ namespace Maze
         static SpriteManagerPtr const& GetCurrentInstance();
 
         //////////////////////////////////////////
-        SpritePtr const& getSprite(String const& _imageName);
+        SpritePtr const& getSprite(HashedCString _imageName);
+
+        //////////////////////////////////////////
+        inline SpritePtr const& getSprite(String const& _imageName) { return getSprite(MAZE_HASHED_CSTRING(_imageName.c_str())); }
+
+        //////////////////////////////////////////
+        inline SpritePtr const& getSprite(CString _imageName) { return getSprite(MAZE_HASHED_CSTRING(_imageName)); }
 
 
         //////////////////////////////////////////

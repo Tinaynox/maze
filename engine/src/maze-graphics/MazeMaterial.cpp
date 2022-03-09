@@ -573,7 +573,7 @@ namespace Maze
         }
         else
         {
-            _value = materialManager->getMaterial(_data);
+            _value = materialManager->getMaterial(MAZE_HASHED_CSTRING(_data));
         }
     }
 

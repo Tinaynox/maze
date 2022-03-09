@@ -147,7 +147,7 @@ namespace Maze
     {
         Maze::RenderSystemPtr const& renderSystem = Maze::GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
         Maze::SpriteManagerPtr const& spriteManager = renderSystem->getSpriteManager();
-        Maze::SpritePtr const& sprite = spriteManager->getSprite(_spriteName);
+        Maze::SpritePtr const& sprite = spriteManager->getSprite(_spriteName.asHashedCString());
         setSprite(sprite);
     }
 

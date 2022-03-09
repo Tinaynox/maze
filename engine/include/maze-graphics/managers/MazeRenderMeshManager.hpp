@@ -81,7 +81,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        RenderMeshPtr const& getRenderMesh(String const& _assetFileName);
+        RenderMeshPtr const& getRenderMesh(HashedCString _assetFileName);
+
+        //////////////////////////////////////////
+        inline RenderMeshPtr const& getRenderMesh(String const& _assetFileName) { return getRenderMesh(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+
+        //////////////////////////////////////////
+        inline RenderMeshPtr const& getRenderMesh(CString _assetFileName) { return getRenderMesh(MAZE_HASHED_CSTRING(_assetFileName)); }
 
         //////////////////////////////////////////
         RenderMeshPtr const& getRenderMesh(AssetFilePtr const& _assetFile);
