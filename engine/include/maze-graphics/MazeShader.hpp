@@ -46,6 +46,7 @@
 #include "maze-core/math/MazeMat3D.hpp"
 #include "maze-core/math/MazeMat4D.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 
 
 //////////////////////////////////////////
@@ -309,7 +310,7 @@ namespace Maze
 
         UnorderedMap<Size, ShaderUniformPtr> m_uniformsCache;
 
-        UnorderedMap<String, String> m_localFeatures;
+        StringKeyMap<String> m_localFeatures;
 
         RenderSystemWPtr m_renderSystem;
         RenderSystem* m_renderSystemRaw;

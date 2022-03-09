@@ -180,6 +180,39 @@ namespace Maze
 
     public:
 
+        //////////////////////////////////////////
+        inline StringKeyMap() = default;
+
+        //////////////////////////////////////////
+        inline ~StringKeyMap() = default;
+
+        //////////////////////////////////////////
+        inline StringKeyMap(StringKeyMap const& _other)
+        {
+            for (auto const& mapData : _other)
+                insert(mapData.first, mapData.second);
+        }
+
+        //////////////////////////////////////////
+        inline StringKeyMap(StringKeyMap&& _other)
+            : m_map(std::move(_other.m_map))
+        {}
+
+        //////////////////////////////////////////
+        inline StringKeyMap& operator=(StringKeyMap const& _other)
+        {
+            clear();
+            for (auto const& mapData : _other)
+                insert(mapData.first, mapData.second);
+            return *this;
+        }
+
+        //////////////////////////////////////////
+        inline StringKeyMap& operator=(StringKeyMap&& _other)
+        {
+            m_map = std::move(_other.m_map);
+            return *this;
+        }
 
         //////////////////////////////////////////
         inline iterator begin() { return m_map.begin(); }
