@@ -340,6 +340,7 @@ namespace Maze
             m_config.flags &= ~ContextOpenGLFlags::Debug;
         }
         
+        attrs.push_back(NSOpenGLPFANoRecovery);
         attrs.push_back((NSOpenGLPixelFormatAttribute)0);
         
         m_config.sRgbCapable = true;
