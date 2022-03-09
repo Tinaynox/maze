@@ -33,6 +33,7 @@
 #include "maze-sound/MazeSoundHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-sound/MazeSoundSystem.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 
 
 //////////////////////////////////////////
@@ -74,13 +75,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        SoundPtr const& getSound(String const& _assetFileName);
-
-        //////////////////////////////////////////
         SoundPtr const& getSound(HashedCString _assetFileName);
 
         //////////////////////////////////////////
-        inline SoundPtr const& getSound(CString _assetFileName) { return getSound(HashedCString(_assetFileName)); }
+        inline SoundPtr const& getSound(String const& _assetFileName) { return getSound(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+
+        //////////////////////////////////////////
+        inline SoundPtr const& getSound(CString _assetFileName) { return getSound(MAZE_HASHED_CSTRING(_assetFileName)); }
 
         //////////////////////////////////////////
         SoundPtr const& getSound(AssetFilePtr const& _assetFile);
@@ -89,7 +90,7 @@ namespace Maze
         String const& getSoundName(Sound const* _sound);
 
         //////////////////////////////////////////
-        inline UnorderedMap<String, SoundSystemPtr> const& getSoundSystems() const { return m_soundSystems; }
+        inline StringKeyMap<SoundSystemPtr> const& getSoundSystems() const { return m_soundSystems; }
 
 
         //////////////////////////////////////////
@@ -119,10 +120,10 @@ namespace Maze
     protected:
         static SoundManager* s_instance;
 
-        UnorderedMap<String, SoundSystemPtr> m_soundSystems;
+        StringKeyMap<SoundSystemPtr> m_soundSystems;
         SoundSystemPtr m_defaultSoundSystem;
 
-        UnorderedMap<String, SoundPtr> m_soundsByName;
+        StringKeyMap<SoundPtr> m_soundsByName;
     };
     
 

@@ -190,7 +190,7 @@ namespace Maze
     {
         Set<String> tags;
 
-        UnorderedMap<String, String> metaData = getMetaData(_file);
+        StringKeyMap<String> metaData = getMetaData(_file);
         String const& tagsString = metaData["tags"];
         if (!tagsString.empty())
         {
@@ -299,9 +299,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    UnorderedMap<String, String> AssetManager::getMetaData(AssetFilePtr const& _assetFile)
+    StringKeyMap<String> AssetManager::getMetaData(AssetFilePtr const& _assetFile)
     {
-        UnorderedMap<String, String> metaData;
+        StringKeyMap<String> metaData;
 
         AssetFilePtr metaFile = getAssetFileByFileName(_assetFile->getFileName().getString() + ".meta");
         if (metaFile)

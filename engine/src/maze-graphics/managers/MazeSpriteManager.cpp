@@ -99,7 +99,7 @@ namespace Maze
 
             if (texture2D->getAssetFile())
             {
-                UnorderedMap<String, String> metaData = AssetManager::GetInstancePtr()->getMetaData(texture2D->getAssetFile());
+                StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(texture2D->getAssetFile());
                 auto metaDataIt = metaData.find("sliceBorder");
                 if (metaDataIt != metaData.end())
                 {

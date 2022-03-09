@@ -82,7 +82,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    UnorderedMap<String, AssetFilePtr> const* AssetArchivedFile::getChildrenAssets() const
+    StringKeyMap<AssetFilePtr> const* AssetArchivedFile::getChildrenAssets() const
     {
         return nullptr;
     }

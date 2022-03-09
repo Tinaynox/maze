@@ -76,7 +76,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    UnorderedMap<String, AssetFilePtr> const* AssetDirectory::getChildrenAssets() const
+    StringKeyMap<AssetFilePtr> const* AssetDirectory::getChildrenAssets() const
     {
         return &m_childrenAssets;
     }
@@ -132,10 +132,9 @@ namespace Maze
 
                 if (file)
                 {
-                    m_childrenAssets.emplace(
-                        std::piecewise_construct,
-                        std::forward_as_tuple(file->getFullPath()),
-                        std::forward_as_tuple(file));
+                    m_childrenAssets.insert(
+                        file->getFullPath(),
+                        file);
 
                     if (_addedFiles)
                         _addedFiles->push_back(file);
@@ -154,9 +153,9 @@ namespace Maze
             }
         }
 
-        for (UnorderedMap<String, AssetFilePtr>::iterator it = m_childrenAssets.begin(),
-                                                          end = m_childrenAssets.end();
-                                                          it != end;)
+        for (StringKeyMap<AssetFilePtr>::iterator it = m_childrenAssets.begin(),
+                                                  end = m_childrenAssets.end();
+                                                  it != end;)
         {
             if (confirmedFileFullPathes.count((*it).first) == 0)
             {

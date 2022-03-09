@@ -69,7 +69,7 @@ namespace Maze
         };
 
         //////////////////////////////////////////
-        using ZipNavigationMap = UnorderedMap<String, ZipFileInfo>;
+        using ZipNavigationMap = StringKeyMap<ZipFileInfo>;
 
     public:
 

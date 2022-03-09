@@ -69,13 +69,12 @@ namespace Maze
     //////////////////////////////////////////
     void SoundManager::addSoundSystem(SoundSystemPtr const& _soundSystem)
     {
-        UnorderedMap<String, SoundSystemPtr>::iterator it = m_soundSystems.find(_soundSystem->getName());
+        StringKeyMap<SoundSystemPtr>::iterator it = m_soundSystems.find(_soundSystem->getName());
         MAZE_ERROR_RETURN_IF(it != m_soundSystems.end(), "SoundSystem %s is already exists!", _soundSystem->getName().c_str());
 
-        m_soundSystems.emplace(
-            std::piecewise_construct,
-            std::forward_as_tuple(_soundSystem->getName()),
-            std::forward_as_tuple(_soundSystem));
+        m_soundSystems.insert(            
+            _soundSystem->getName(),
+            _soundSystem);
 
 
         if (m_defaultSoundSystem == nullptr)
@@ -87,7 +86,7 @@ namespace Maze
     //////////////////////////////////////////
     void SoundManager::removeSoundSystem(SoundSystemPtr const& _soundSystem)
     {
-        UnorderedMap<String, SoundSystemPtr>::iterator it = m_soundSystems.find(_soundSystem->getName());
+        StringKeyMap<SoundSystemPtr>::iterator it = m_soundSystems.find(_soundSystem->getName());
         MAZE_ERROR_RETURN_IF(it == m_soundSystems.end(), "SoundSystem %s is not exists!", _soundSystem->getName().c_str());
 
         m_soundSystems.erase(it);
@@ -110,18 +109,18 @@ namespace Maze
             return;
         }
 
-        UnorderedMap<String, SoundSystemPtr>::iterator it = m_soundSystems.find(_soundSystem->getName());
+        StringKeyMap<SoundSystemPtr>::iterator it = m_soundSystems.find(_soundSystem->getName());
         MAZE_ERROR_RETURN_IF(it == m_soundSystems.end(), "SoundSystem %s is not in SoundSystems list!", _soundSystem->getName().c_str());
 
         m_defaultSoundSystem = _soundSystem;
     }
 
     //////////////////////////////////////////
-    SoundPtr const& SoundManager::getSound(String const& _assetFileName)
+    SoundPtr const& SoundManager::getSound(HashedCString _assetFileName)
     {
         static SoundPtr nullPointer;
 
-        UnorderedMap<String, SoundPtr>::const_iterator it = m_soundsByName.find(_assetFileName);
+        StringKeyMap<SoundPtr>::const_iterator it = m_soundsByName.find(_assetFileName);
         if (it != m_soundsByName.end())
             return it->second;
 
@@ -133,18 +132,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SoundPtr const& SoundManager::getSound(HashedCString _assetFileName)
-    {
-        // #TODO: Rework m_soundsByName to StringHashMap
-        return getSound(String(_assetFileName.str));
-    }
-
-    //////////////////////////////////////////
     SoundPtr const& SoundManager::getSound(AssetFilePtr const& _assetFile)
     {
         static SoundPtr const nullPointer;
         
-        UnorderedMap<String, SoundPtr>::const_iterator it = m_soundsByName.find(_assetFile->getFileName());
+        StringKeyMap<SoundPtr>::const_iterator it = m_soundsByName.find(_assetFile->getFileName());
         if (it != m_soundsByName.end())
             return it->second;
 
@@ -160,12 +152,11 @@ namespace Maze
     //////////////////////////////////////////
     SoundPtr const& SoundManager::addSound(SoundPtr const& _sound)
     {
-        auto it2 = m_soundsByName.emplace(
-            std::piecewise_construct,
-            std::forward_as_tuple(_sound->getName()),
-            std::forward_as_tuple(_sound));
+        auto it2 = m_soundsByName.insert(            
+            _sound->getName(),
+            _sound);
 
-        return it2.first->second;
+        return *it2;
     }
 
     //////////////////////////////////////////

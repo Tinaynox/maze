@@ -112,7 +112,7 @@ namespace Maze
 
         Debug::Log("Loading texture pixel sheet: %s...", _assetFile->getFileName().c_str());
 
-        UnorderedMap<String, String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
+        StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
 
         if (metaData.empty())
         {

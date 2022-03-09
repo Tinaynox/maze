@@ -116,7 +116,7 @@ namespace Maze
         Texture2DPtr texture2D = Texture2D::Create(_assetFile, m_renderSystemRaw);
         texture2D->setName(_assetFile->getFileName());
 
-        UnorderedMap<String, String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
+        StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
         if (metaData["magFilter"] != String())
             texture2D->setMagFilter(TextureFilter::FromString(metaData["magFilter"]));
         if (metaData["minFilter"] != String())
@@ -227,7 +227,7 @@ namespace Maze
 
         Debug::Log("Loading texture pixel sheet: %s...", _assetFile->getFileName().c_str());
 
-        UnorderedMap<String, String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
+        StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
 
         if (metaData.empty())
         {
@@ -305,7 +305,7 @@ namespace Maze
         TextureCubePtr textureCube = TextureCube::Create(_assetFile, m_renderSystemRaw);
         textureCube->setName(_assetFile->getFileName());
 
-        UnorderedMap<String, String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
+        StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
         if (metaData["magFilter"] != String())
             textureCube->setMagFilter(TextureFilter::FromString(metaData["magFilter"]));
         if (metaData["minFilter"] != String())

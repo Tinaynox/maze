@@ -39,6 +39,7 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/utils/MazeStringPerfectHashGenerator.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 
 
 //////////////////////////////////////////
@@ -88,10 +89,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline UnorderedMap<String, ShaderPtr> const& getShadersCache() const { return m_shadersCache; }
+        inline StringKeyMap<ShaderPtr> const& getShadersCache() const { return m_shadersCache; }
 
         //////////////////////////////////////////
-        ShaderPtr const& getShaderFromCache(String const& _shaderName);
+        ShaderPtr const& getShaderFromCache(HashedCString _shaderName);
+
+        //////////////////////////////////////////
+        inline ShaderPtr const& getShaderFromCache(String const& _shaderName) { return getShaderFromCache(MAZE_HASHED_CSTRING(_shaderName.c_str())); }
+
+        //////////////////////////////////////////
+        inline ShaderPtr const& getShaderFromCache(CString _shaderName) { return getShaderFromCache(MAZE_HASHED_CSTRING(_shaderName)); }
 
         //////////////////////////////////////////
         ShaderPtr const& getErrorShader() const { return m_errorShader; }
@@ -167,7 +174,7 @@ namespace Maze
         RenderSystemWPtr m_renderSystem;
         RenderSystem* m_renderSystemRaw;
 
-        UnorderedMap<String, ShaderPtr> m_shadersCache;
+        StringKeyMap<ShaderPtr> m_shadersCache;
 
         ShaderPtr m_errorShader;
         ShaderPtr m_uvShader;

@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/assets/MazeAssetRegularFile.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 
 
 //////////////////////////////////////////
@@ -65,7 +66,7 @@ namespace Maze
         virtual ~AssetDirectory();
 
         //////////////////////////////////////////
-        virtual UnorderedMap<String, AssetFilePtr> const* getChildrenAssets() const MAZE_OVERRIDE;
+        virtual StringKeyMap<AssetFilePtr> const* getChildrenAssets() const MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         // virtual void addChildAsset(AssetFilePtr const& file) MAZE_OVERRIDE;
@@ -89,7 +90,7 @@ namespace Maze
 
     protected:
 
-        UnorderedMap<String, AssetFilePtr> m_childrenAssets;
+        StringKeyMap<AssetFilePtr> m_childrenAssets;
     };
 
 } // namespace Maze

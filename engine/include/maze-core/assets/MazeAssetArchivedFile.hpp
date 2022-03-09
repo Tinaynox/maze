@@ -94,7 +94,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual UnorderedMap<String, AssetFilePtr> const* getChildrenAssets() const MAZE_OVERRIDE;
+        virtual StringKeyMap<AssetFilePtr> const* getChildrenAssets() const MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual Size readToString(String& _string) MAZE_OVERRIDE;

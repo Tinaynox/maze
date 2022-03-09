@@ -197,7 +197,7 @@ namespace Maze
                 [this](MenuListTree2DPtr const& _listTree)
                 {
                     RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-                    UnorderedMap<String, ShaderPtr> const& shadersCache = renderSystem->getShaderSystem()->getShadersCache();
+                    StringKeyMap<ShaderPtr> const& shadersCache = renderSystem->getShaderSystem()->getShadersCache();
 
                     for (auto const& shaderData : shadersCache)
                     {

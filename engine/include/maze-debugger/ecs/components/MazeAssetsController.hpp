@@ -33,6 +33,7 @@
 #include "maze-debugger/MazeDebuggerHeader.hpp"
 #include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
 #include "maze-debugger/ecs/components/MazeAssetLine.hpp"
@@ -144,11 +145,11 @@ namespace Maze
 
         ScrollRect2DPtr m_assetsTreeRoot;
         Transform2DPtr m_assetsTreeLayoutTransform;
-        UnorderedMap<String, AssetLinePtr> m_assetsTreeLines;
+        StringKeyMap<AssetLinePtr> m_assetsTreeLines;
 
         ScrollRect2DPtr m_selectedAssetsFolderRoot;
         Transform2DPtr m_selectedAssetsFolderLayoutTransform;
-        UnorderedMap<String, AssetLinePtr> m_selectedAssetsFolderLines;
+        StringKeyMap<AssetLinePtr> m_selectedAssetsFolderLines;
 
         String m_selectedAssetFolder;
     };

@@ -98,10 +98,9 @@ namespace Maze
                 {
                     confirmedFileFullPathes.emplace(archivedFile->getFullPath());
 
-                    m_childrenAssets.emplace(
-                        std::piecewise_construct,
-                        std::forward_as_tuple(archivedFile->getFullPath()),
-                        std::forward_as_tuple(archivedFile));
+                    m_childrenAssets.insert(
+                        archivedFile->getFullPath(),
+                        archivedFile);
 
                     if (_addedFiles)
                         _addedFiles->push_back(archivedFile);
@@ -109,9 +108,9 @@ namespace Maze
             }
         }
 
-        for (UnorderedMap<String, AssetFilePtr>::iterator it = m_childrenAssets.begin(),
-                                                          end = m_childrenAssets.end();
-                                                          it != end;)
+        for (StringKeyMap<AssetFilePtr>::iterator it = m_childrenAssets.begin(),
+                                                  end = m_childrenAssets.end();
+                                                  it != end;)
         {
             if (confirmedFileFullPathes.count((*it).first) == 0)
             {

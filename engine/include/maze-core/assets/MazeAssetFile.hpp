@@ -43,6 +43,7 @@
 #include "maze-core/data/MazeByteBuffer.hpp"
 #include "maze-core/data/MazeHashedString.hpp"
 #include "maze-core/MazeObject.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 #include <tinyxml2.h>
 
 
@@ -83,7 +84,7 @@ namespace Maze
         
 
         //////////////////////////////////////////
-        virtual UnorderedMap<String, AssetFilePtr> const* getChildrenAssets() const;
+        virtual StringKeyMap<AssetFilePtr> const* getChildrenAssets() const;
 
         //////////////////////////////////////////
         virtual Size readToString(String& _string) { return 0; }

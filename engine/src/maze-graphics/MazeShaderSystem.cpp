@@ -73,7 +73,7 @@ namespace Maze
             return false;
         }
 
-        UnorderedMap<String, ShaderPtr>::iterator it = m_shadersCache.find(name);
+        StringKeyMap<ShaderPtr>::iterator it = m_shadersCache.find(name);
         if (m_shadersCache.end() != it)
             return false;
         
@@ -85,7 +85,7 @@ namespace Maze
     bool ShaderSystem::removeShaderFromCache(ShaderPtr const& _shader)
     {
         String const& name = _shader->getName();
-        UnorderedMap<String, ShaderPtr>::iterator it = m_shadersCache.find(name);
+        StringKeyMap<ShaderPtr>::iterator it = m_shadersCache.find(name);
         if (m_shadersCache.end() == it)
             return false;
 
@@ -94,10 +94,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ShaderPtr const& ShaderSystem::getShaderFromCache(String const& _shaderName)
+    ShaderPtr const& ShaderSystem::getShaderFromCache(HashedCString _shaderName)
     {
         static ShaderPtr nullShader;
-        UnorderedMap<String, ShaderPtr>::iterator it = m_shadersCache.find(_shaderName);
+        StringKeyMap<ShaderPtr>::iterator it = m_shadersCache.find(_shaderName);
         if (m_shadersCache.end() == it)
             return nullShader;
 
@@ -136,7 +136,7 @@ namespace Maze
     {
         for (AssetFilePtr const& file : _files)
         {
-            UnorderedMap<String, ShaderPtr>::iterator it = std::find_if(
+            StringKeyMap<ShaderPtr>::iterator it = std::find_if(
                 m_shadersCache.begin(),
                 m_shadersCache.end(),
                 [file](Pair<String, ShaderPtr> const& _a) -> bool

@@ -327,10 +327,9 @@ namespace Maze
             line->setDropDownVisible(false);
             line->getIconRenderer()->setColor(ColorU32(192, 192, 192));
 
-            m_assetsTreeLines.emplace(
-                std::piecewise_construct,
-                std::forward_as_tuple(assetFile->getFullPath()),
-                std::forward_as_tuple(line));
+            m_assetsTreeLines.insert(
+                assetFile->getFullPath(),
+                line);
             line->setAssetFile(assetFile);
             line->eventExpandedChanged.subscribe(this, &AssetsController::notifyAssetTreeLineExpandedChanged);            
             line->eventLinePressed.subscribe(this, &AssetsController::notifyAssetTreeLinePressed);
@@ -437,10 +436,9 @@ namespace Maze
                 AssetDebuggerManager::GetInstancePtr()->getIconForAssetFile(assetFile));
             line->setSelectAssetFileByPress(true);
 
-            m_selectedAssetsFolderLines.emplace(
-                std::piecewise_construct,
-                std::forward_as_tuple(fullPath),
-                std::forward_as_tuple(line));
+            m_selectedAssetsFolderLines.insert(
+                fullPath,
+                line);
             line->setAssetFile(assetFile);
         }
 

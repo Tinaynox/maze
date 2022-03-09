@@ -290,7 +290,7 @@ namespace Maze
         inline void erase(HashedCString _key) { m_map.erase(_key); }
 
         //////////////////////////////////////////
-        inline void erase(iterator const& _it) { m_map.erase(_it.m_iterator); }
+        inline iterator erase(iterator const& _it) { return m_map.erase(_it.m_iterator); }
 
 
         //////////////////////////////////////////

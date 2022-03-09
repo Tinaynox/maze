@@ -130,7 +130,7 @@ namespace Maze
         Vector<AssetFilePtr> getAssetFilesInFolder(String const& _folderFullPath);
 
         //////////////////////////////////////////
-        UnorderedMap<String, String> getMetaData(AssetFilePtr const& _assetFile);
+        StringKeyMap<String> getMetaData(AssetFilePtr const& _assetFile);
 
     protected:
 

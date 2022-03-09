@@ -82,7 +82,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual UnorderedMap<String, AssetFilePtr> const* getChildrenAssets() const MAZE_OVERRIDE { return &m_childrenAssets; }
+        virtual StringKeyMap<AssetFilePtr> const* getChildrenAssets() const MAZE_OVERRIDE { return &m_childrenAssets; }
 
 
         //////////////////////////////////////////
@@ -107,7 +107,7 @@ namespace Maze
     
     protected:
         ArchiveFileZipPtr m_archive;
-        UnorderedMap<String, AssetFilePtr> m_childrenAssets;
+        StringKeyMap<AssetFilePtr> m_childrenAssets;
     };
 
 
