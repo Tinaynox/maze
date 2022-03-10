@@ -157,10 +157,9 @@ namespace Maze
         String const& _assetFileExtension,
         std::function<SpritePtr(AssetFilePtr const&)> _callback)
     {
-        m_iconCallbackPerAssetFileExtension.emplace(
-            std::piecewise_construct,
-            std::forward_as_tuple(_assetFileExtension),
-            std::forward_as_tuple(_callback));
+        m_iconCallbackPerAssetFileExtension.insert(
+            _assetFileExtension,
+            _callback);
     }
 
     //////////////////////////////////////////

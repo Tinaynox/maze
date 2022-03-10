@@ -34,6 +34,7 @@
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 #include <functional>
 
 
@@ -116,7 +117,7 @@ namespace Maze
     protected:
         static AssetDebuggerManager* s_instance;
 
-        UnorderedMap<String, std::function<SpritePtr(AssetFilePtr const&)>> m_iconCallbackPerAssetFileExtension;
+        StringKeyMap<std::function<SpritePtr(AssetFilePtr const&)>> m_iconCallbackPerAssetFileExtension;
         Map<ClassUID, std::function<SpritePtr()>> m_iconCallbackPerAssetFileClass;
     };
     
