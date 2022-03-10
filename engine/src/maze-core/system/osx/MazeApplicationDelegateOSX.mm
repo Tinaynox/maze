@@ -38,7 +38,7 @@
 //////////////////////////////////////////
 - (void)applicationDidFinishLaunching:(NSNotification*)_notification
 {
-    m_updateTimer = [NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)(0.0f)
+    m_updateTimer = [NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)(0.016f)
                                                target:self
                                                selector:@selector(updateTimerCallback:)
                                                userInfo:nil

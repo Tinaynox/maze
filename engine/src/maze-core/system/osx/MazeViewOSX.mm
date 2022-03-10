@@ -79,13 +79,13 @@
     {
         if (m_window->getParams()->flags & Maze::WindowStyleFlags::Background)
         {
-            [[NSColor blackColor] setFill];
-            NSRectFill(_dirtyRect);
+            // [[NSColor blackColor] setFill];
+            // NSRectFill(_dirtyRect);
         }
         else
         {
-            [[NSColor clearColor] set];
-            NSRectFill(_dirtyRect);
+            // [[NSColor clearColor] set];
+            // NSRectFill(_dirtyRect);
         }
     }
 }
