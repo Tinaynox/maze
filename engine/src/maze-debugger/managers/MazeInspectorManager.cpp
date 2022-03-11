@@ -87,7 +87,6 @@ namespace Maze
             PropertyDrawerMaterial>;
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerMaterial, MetaPropertyDrawer);
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK_TEMPLATE(MetaPropertyDrawerMaterial);
-    template class MAZE_DEBUGGER_API MetaPropertyDrawerDefault<MaterialPtr, PropertyDrawerMaterial>;
 
 
     //////////////////////////////////////////
@@ -97,17 +96,15 @@ namespace Maze
             PropertyDrawerRenderMesh>;
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerRenderMesh, MetaPropertyDrawer);
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK_TEMPLATE(MetaPropertyDrawerRenderMesh);
-    template class MAZE_DEBUGGER_API MetaPropertyDrawerDefault<RenderMeshPtr, PropertyDrawerRenderMesh>;
 
 
     //////////////////////////////////////////
     using MetaPropertyDrawerF32Radians =
         MetaPropertyDrawerDefault<
-            F32,
-            PropertyDrawerRadians>;
+        F32,
+        PropertyDrawerRadians>;
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerF32Radians, MetaPropertyDrawer);
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK_TEMPLATE(MetaPropertyDrawerF32Radians);
-    template class MAZE_DEBUGGER_API MetaPropertyDrawerDefault<F32, PropertyDrawerRadians>;
 
 
     //////////////////////////////////////////
@@ -117,7 +114,6 @@ namespace Maze
         PropertyDrawerVec2DU>;
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerVec2DS, MetaPropertyDrawer);
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK_TEMPLATE(MetaPropertyDrawerVec2DS);
-    template class MAZE_DEBUGGER_API MetaPropertyDrawerDefault<Vec2DS, PropertyDrawerVec2DU>;
 
 
     //////////////////////////////////////////
@@ -127,7 +123,6 @@ namespace Maze
         PropertyDrawerVec2DU>;
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerVec2DU, MetaPropertyDrawer);
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK_TEMPLATE(MetaPropertyDrawerVec2DU);
-    template class MAZE_DEBUGGER_API MetaPropertyDrawerDefault<Vec2DU, PropertyDrawerVec2DU>;
 
 
     //////////////////////////////////////////
@@ -137,7 +132,6 @@ namespace Maze
         PropertyDrawerTexture2D>;
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerTexture2D, MetaPropertyDrawer);
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK_TEMPLATE(MetaPropertyDrawerTexture2D);
-    template class MAZE_DEBUGGER_API MetaPropertyDrawerDefault<Texture2DPtr, PropertyDrawerTexture2D>;
 
 
     //////////////////////////////////////////

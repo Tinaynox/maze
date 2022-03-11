@@ -35,7 +35,11 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/math/MazeVec2D.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
+#include "maze-debugger/property-drawers/MazePropertyDrawerMaterial.hpp"
+#include "maze-debugger/property-drawers/MazePropertyDrawerRenderMesh.hpp"
 #include "maze-debugger/property-drawers/MazePropertyDrawerRadians.hpp"
+#include "maze-debugger/property-drawers/MazePropertyDrawerVec2DU.hpp"
+#include "maze-debugger/property-drawers/MazePropertyDrawerTexture2D.hpp"
 #include "maze-debugger/meta-property-drawers/MazeMetaPropertyDrawerDefault.hpp"
 #include <functional>
 
@@ -53,6 +57,15 @@ namespace Maze
     MAZE_USING_SHARED_PTR(PropertyDrawer);
     MAZE_USING_SHARED_PTR(MetaPropertyDrawer);
     MAZE_USING_SHARED_PTR(ComponentEditor);
+
+
+    //////////////////////////////////////////
+    template class MAZE_DEBUGGER_API MetaPropertyDrawerDefault<MaterialPtr, PropertyDrawerMaterial>;
+    template class MAZE_DEBUGGER_API MetaPropertyDrawerDefault<RenderMeshPtr, PropertyDrawerRenderMesh>;
+    template class MAZE_DEBUGGER_API MetaPropertyDrawerDefault<F32, PropertyDrawerRadians>;
+    template class MAZE_DEBUGGER_API MetaPropertyDrawerDefault<Vec2DS, PropertyDrawerVec2DU>;
+    template class MAZE_DEBUGGER_API MetaPropertyDrawerDefault<Vec2DU, PropertyDrawerVec2DU>;
+    template class MAZE_DEBUGGER_API MetaPropertyDrawerDefault<Texture2DPtr, PropertyDrawerTexture2D>;
 
 
     //////////////////////////////////////////
