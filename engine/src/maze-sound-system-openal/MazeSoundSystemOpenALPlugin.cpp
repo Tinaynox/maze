@@ -118,11 +118,11 @@ namespace Maze
         SoundManager* soundManager = SoundManager::GetInstancePtr();
         MAZE_ERROR_RETURN_IF(soundManager == nullptr, "SoundManager is not exists!");
 
-        m_soundSystem = SoundSystemOpenAL::Create(m_config);
-        MAZE_ERROR_RETURN_IF(!m_soundSystem, "SoundSystemOpenAL cannot be created!");
+        SoundSystemOpenALPtr soundSystem = SoundSystemOpenAL::Create(m_config);
+        MAZE_ERROR_RETURN_IF(!soundSystem, "SoundSystemOpenAL cannot be created!");
 
-        soundManager->addSoundSystem(m_soundSystem);
-
+        soundManager->addSoundSystem(soundSystem);
+        m_soundSystem = soundSystem;
     }
 
     //////////////////////////////////////////
@@ -131,7 +131,7 @@ namespace Maze
         SoundManager* soundManager = SoundManager::GetInstancePtr();
         MAZE_ERROR_RETURN_IF(soundManager == nullptr, "SoundManager is not exists!");
 
-        soundManager->removeSoundSystem(m_soundSystem);
+        soundManager->removeSoundSystem(m_soundSystem.lock());
         m_soundSystem.reset();
     }
 

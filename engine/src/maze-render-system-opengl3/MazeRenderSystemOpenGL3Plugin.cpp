@@ -118,11 +118,11 @@ namespace Maze
         GraphicsManager* graphicsManager = GraphicsManager::GetInstancePtr();
         MAZE_ERROR_RETURN_IF(graphicsManager == nullptr, "GraphicsManager is not exists!");
 
-        m_renderSystem = RenderSystemOpenGL3::Create(m_config);
-        MAZE_ERROR_RETURN_IF(!m_renderSystem, "RenderSystemOpenGL3 cannot be created!");
+        RenderSystemOpenGL3Ptr renderSystem = RenderSystemOpenGL3::Create(m_config);
+        MAZE_ERROR_RETURN_IF(!renderSystem, "RenderSystemOpenGL3 cannot be created!");
 
-        graphicsManager->addRenderSystem(m_renderSystem);
-
+        graphicsManager->addRenderSystem(renderSystem);
+        m_renderSystem = renderSystem;
     }
 
     //////////////////////////////////////////
@@ -131,7 +131,7 @@ namespace Maze
         GraphicsManager* graphicsManager = GraphicsManager::GetInstancePtr();
         MAZE_ERROR_RETURN_IF(graphicsManager == nullptr, "GraphicsManager is not exists!");
 
-        graphicsManager->removeRenderSystem(m_renderSystem);
+        graphicsManager->removeRenderSystem(m_renderSystem.lock());
         m_renderSystem.reset();
     }
 

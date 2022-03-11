@@ -57,6 +57,8 @@ namespace Maze
     //////////////////////////////////////////
     SoundSystemOpenAL::~SoundSystemOpenAL()
     {
+        m_mainContext.reset();
+        m_dummyContext.reset();
     }
 
     //////////////////////////////////////////

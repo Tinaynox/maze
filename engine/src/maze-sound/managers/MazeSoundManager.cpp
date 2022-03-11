@@ -51,6 +51,9 @@ namespace Maze
     //////////////////////////////////////////
     SoundManager::~SoundManager()
     {
+        m_soundSystems.clear();
+        m_defaultSoundSystem.reset();
+
         s_instance = nullptr;
     }
 

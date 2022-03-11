@@ -95,7 +95,7 @@ namespace Maze
         bool init(RenderSystemOpenGLConfig const& _config);
 
     protected:
-        RenderSystemOpenGL3Ptr m_renderSystem;
+        RenderSystemOpenGL3WPtr m_renderSystem;
 
         RenderSystemOpenGLConfig m_config;
     };

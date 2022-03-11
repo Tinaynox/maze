@@ -95,7 +95,7 @@ namespace Maze
         bool init(SoundSystemOpenALConfig const& _config);
 
     protected:
-        SoundSystemOpenALPtr m_soundSystem;
+        SoundSystemOpenALWPtr m_soundSystem;
 
         SoundSystemOpenALConfig m_config;
     };
