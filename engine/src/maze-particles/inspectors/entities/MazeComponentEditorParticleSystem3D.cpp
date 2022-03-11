@@ -28,8 +28,6 @@
 #include "maze-particles/inspectors/entities/MazeComponentEditorParticleSystem3D.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
-#include "maze-debugger/meta-property-drawers/MazeMetaPropertyDrawerRadians.hpp"
-#include "maze-debugger/meta-property-drawers/MazeMetaPropertyDrawerDefault.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-particles/property-drawers/MazePropertyDrawerParticleSystemParameterF32.hpp"
 

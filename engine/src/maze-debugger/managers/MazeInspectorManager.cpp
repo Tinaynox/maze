@@ -101,12 +101,12 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    using MetaPropertyDrawerRadians =
+    using MetaPropertyDrawerF32Radians =
         MetaPropertyDrawerDefault<
             F32,
             PropertyDrawerRadians>;
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerRadians, MetaPropertyDrawer);
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK_TEMPLATE(MetaPropertyDrawerRadians);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerF32Radians, MetaPropertyDrawer);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK_TEMPLATE(MetaPropertyDrawerF32Radians);
     template class MAZE_DEBUGGER_API MetaPropertyDrawerDefault<F32, PropertyDrawerRadians>;
 
 

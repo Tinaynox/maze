@@ -279,21 +279,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Material::setUniform(String const& _uniformName, S32 _value)
+    void Material::setUniform(HashedCString _uniformName, S32 _value)
     {
         ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
         uniformVariant->set(_value);
     }
 
     //////////////////////////////////////////
-    void Material::setUniform(String const& _uniformName, F32 _value)
+    void Material::setUniform(HashedCString _uniformName, F32 _value)
     {
         ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
         uniformVariant->set(_value);
     }
 
     //////////////////////////////////////////
-    void Material::setUniform(String const& _uniformName, TexturePtr const& _texture)
+    void Material::setUniform(HashedCString _uniformName, TexturePtr const& _texture)
     {
         MAZE_ERROR_RETURN_IF(!_texture, "Null texture");
 
@@ -315,98 +315,98 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Material::setUniform(String const& _uniformName, Texture2DPtr const& _texture2D)
+    void Material::setUniform(HashedCString _uniformName, Texture2DPtr const& _texture2D)
     {
         ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
         uniformVariant->set(_texture2D);
     }
 
     //////////////////////////////////////////
-    void Material::setUniform(String const& _uniformName, TextureCubePtr const& _textureCube)
+    void Material::setUniform(HashedCString _uniformName, TextureCubePtr const& _textureCube)
     {
         ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
         uniformVariant->set(_textureCube);
     }
 
     //////////////////////////////////////////
-    void Material::setUniform(String const& _uniformName, Vec2DF const& _vector)
+    void Material::setUniform(HashedCString _uniformName, Vec2DF const& _vector)
     {
         ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
         uniformVariant->set(_vector);
     }
 
     //////////////////////////////////////////
-    void Material::setUniform(String const& _uniformName, Vec3DF const& _vector)
+    void Material::setUniform(HashedCString _uniformName, Vec3DF const& _vector)
     {
         ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
         uniformVariant->set(_vector);
     }
 
     //////////////////////////////////////////
-    void Material::setUniform(String const& _uniformName, Vec4DF const& _vector)
+    void Material::setUniform(HashedCString _uniformName, Vec4DF const& _vector)
     {
         ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
         uniformVariant->set(_vector);
     }
 
     //////////////////////////////////////////
-    void Material::setUniform(String const& _uniformName, Vec2DS const& _vector)
+    void Material::setUniform(HashedCString _uniformName, Vec2DS const& _vector)
     {
         ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
         uniformVariant->set(_vector);
     }
 
     //////////////////////////////////////////
-    void Material::setUniform(String const& _uniformName, Vec3DS const& _vector)
+    void Material::setUniform(HashedCString _uniformName, Vec3DS const& _vector)
     {
         ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
         uniformVariant->set(_vector);
     }
 
     //////////////////////////////////////////
-    void Material::setUniform(String const& _uniformName, Vec4DS const& _vector)
+    void Material::setUniform(HashedCString _uniformName, Vec4DS const& _vector)
     {
         ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
         uniformVariant->set(_vector);
     }
 
     //////////////////////////////////////////
-    void Material::setUniform(String const& _uniformName, Vec2DU const& _vector)
+    void Material::setUniform(HashedCString _uniformName, Vec2DU const& _vector)
     {
         ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
         uniformVariant->set(_vector);
     }
 
     //////////////////////////////////////////
-    void Material::setUniform(String const& _uniformName, Vec3DU const& _vector)
+    void Material::setUniform(HashedCString _uniformName, Vec3DU const& _vector)
     {
         ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
         uniformVariant->set(_vector);
     }
 
     //////////////////////////////////////////
-    void Material::setUniform(String const& _uniformName, Vec4DU const& _vector)
+    void Material::setUniform(HashedCString _uniformName, Vec4DU const& _vector)
     {
         ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
         uniformVariant->set(_vector);
     }
 
     //////////////////////////////////////////
-    void Material::setUniform(String const& _uniformName, Mat3DF const& _matrix)
+    void Material::setUniform(HashedCString _uniformName, Mat3DF const& _matrix)
     {
         ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
         uniformVariant->set(_matrix);
     }
 
     //////////////////////////////////////////
-    void Material::setUniform(String const& _uniformName, Mat4DF const& _matrix)
+    void Material::setUniform(HashedCString _uniformName, Mat4DF const& _matrix)
     {
         ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
         uniformVariant->set(_matrix);
     }
 
     //////////////////////////////////////////
-    void Material::setUniform(String const& _uniformName, ColorF128 const& _color)
+    void Material::setUniform(HashedCString _uniformName, ColorF128 const& _color)
     {
         ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
         uniformVariant->set(_color);
@@ -414,7 +414,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    void Material::setUniform(String const& _uniformName, ShaderUniformVariant const& _shaderUniformVariant)
+    void Material::setUniform(HashedCString _uniformName, ShaderUniformVariant const& _shaderUniformVariant)
     {
         ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
         *uniformVariant = _shaderUniformVariant;
@@ -428,7 +428,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ShaderUniformVariantPtr const& Material::getUniform(String const& _uniformName)
+    ShaderUniformVariantPtr const& Material::getUniform(HashedCString _uniformName)
     {
         static ShaderUniformVariantPtr nullPointer;
 
@@ -440,7 +440,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ShaderUniformVariantPtr const& Material::ensureUniform(String const& _uniformName, ShaderUniformType _type)
+    ShaderUniformVariantPtr const& Material::ensureUniform(HashedCString _uniformName, ShaderUniformType _type)
     {
         ShaderUniformVariantPtr const& uniform = getUniform(_uniformName);
         if (uniform)

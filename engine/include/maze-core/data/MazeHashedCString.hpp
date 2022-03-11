@@ -55,7 +55,7 @@ namespace Maze
         U32 hash = 0u;
 
         //////////////////////////////////////////
-        inline HashedCString() {}
+        inline HashedCString() : str(""), hash(CalculateFNV1("")) {}
 
         //////////////////////////////////////////
         inline HashedCString(CString _str, U32 _hash) : str(_str), hash(_hash) {}
@@ -66,7 +66,16 @@ namespace Maze
         //////////////////////////////////////////
         inline bool operator==(HashedCString const& _value) const
         {
+            if (hash != _value.hash)
+                return false;
+
             return strcmp(str, _value.str) == 0;
+        }
+
+        //////////////////////////////////////////
+        inline bool operator!=(HashedCString const& _value) const
+        {
+            return !this->operator==(_value);
         }
 
         template <U32 THashValue>

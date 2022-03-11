@@ -50,6 +50,7 @@
 #include "maze-core/math/MazeMat3D.hpp"
 #include "maze-core/math/MazeMat4D.hpp"
 #include "maze-core/serialization/MazeXMLSerializable.hpp"
+#include "maze-core/data//MazeHashedCString.hpp"
 
 
 //////////////////////////////////////////
@@ -107,7 +108,7 @@ namespace Maze
         ShaderUniformVariant(
             RenderSystem* _renderSystem = nullptr,
             ShaderUniformType _type = ShaderUniformType::None,
-            String const& _name = String());
+            HashedCString _name = HashedCString());
 
         //////////////////////////////////////////
         ShaderUniformVariant(RenderSystem* _renderSystem, S32 _value);
@@ -403,21 +404,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setName(String const& _name)
+        inline void setName(HashedString const& _name)
         {
             if (m_name == _name)
                 return;
 
             m_name = _name;
-
-            generateNameHash();
         }
 
         //////////////////////////////////////////
-        inline String const& getName() const { return m_name; }
-
-        //////////////////////////////////////////
-        inline Size getNameHash() const { return m_nameHash; }
+        inline HashedString const& getName() const { return m_name; }
 
     public:
 
@@ -431,9 +427,6 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void setType(ShaderUniformType _type) { m_type = _type; }
-
-        //////////////////////////////////////////
-        void generateNameHash();
 
     protected:
         RenderSystem* m_renderSystem;
@@ -457,8 +450,7 @@ namespace Maze
             Mat4DF m_matrix4DF;
         };
         
-        String m_name;
-        Size m_nameHash;
+        HashedString m_name;
     };
 
 

@@ -48,12 +48,12 @@ namespace Maze
     ShaderUniformVariant::ShaderUniformVariant(
         RenderSystem* _renderSystem,
         ShaderUniformType _type,
-        String const& _name)
+        HashedCString _name)
         : m_renderSystem(_renderSystem)
         , m_type(_type)
         , m_name(_name)
     {
-        generateNameHash();
+        
     }
 
     //////////////////////////////////////////
@@ -915,15 +915,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ShaderUniformVariant::generateNameHash()
-    {
-        if (!m_renderSystem)
-            return;
-
-        m_nameHash = m_renderSystem->getShaderSystem()->stringToHash(m_name);
-    }
-
-    //////////////////////////////////////////
     void ShaderUniformVariant::loadFromXMLElement(tinyxml2::XMLElement const* _element)
     {
         CString name = _element->Attribute("name");
@@ -957,7 +948,7 @@ namespace Maze
         std::ostream& _o,
         ShaderUniformVariant const& _variant)
     {
-        _o << _variant.getName() << "(" << _variant.getType().toCString() << ")=" << _variant.toStringValue();
+        _o << _variant.getName().c_str() << "(" << _variant.getType().toCString() << ")=" << _variant.toStringValue();
 
         switch (_variant.getType())
         {

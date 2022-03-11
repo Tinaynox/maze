@@ -60,7 +60,7 @@ namespace Maze
 
     //////////////////////////////////////////
     bool ShaderUniformVariantDrawer::init(
-        String const& _shaderUniformName,
+        HashedCString _shaderUniformName,
         ShaderUniformType _shaderUniformType)
     {
         m_shaderUniformName = _shaderUniformName;

@@ -74,7 +74,7 @@ namespace Maze
 
         //////////////////////////////////////////
         static ShaderUniformVariantDrawerColorF128Ptr Create(
-            String const& _shaderUniformName,
+            HashedCString _shaderUniformName,
             ShaderUniformType _shaderUniformType);
 
 
@@ -91,7 +91,7 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool init(
-            String const& _shaderUniformName,
+            HashedCString _shaderUniformName,
             ShaderUniformType _shaderUniformType) MAZE_OVERRIDE;
 
         //////////////////////////////////////////

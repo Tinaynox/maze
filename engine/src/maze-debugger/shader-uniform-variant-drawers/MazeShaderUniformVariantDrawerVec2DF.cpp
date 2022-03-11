@@ -78,7 +78,7 @@ namespace Maze
 
     //////////////////////////////////////////
     ShaderUniformVariantDrawerVec2DFPtr ShaderUniformVariantDrawerVec2DF::Create(
-        String const& _shaderUniformName,
+        HashedCString _shaderUniformName,
         ShaderUniformType _shaderUniformType)
     {
         ShaderUniformVariantDrawerVec2DFPtr object;
@@ -88,7 +88,7 @@ namespace Maze
 
     //////////////////////////////////////////
     bool ShaderUniformVariantDrawerVec2DF::init(
-        String const& _shaderUniformName,
+        HashedCString _shaderUniformName,
         ShaderUniformType _shaderUniformType)
     {
         if (!ShaderUniformVariantDrawer::init(_shaderUniformName, _shaderUniformType))

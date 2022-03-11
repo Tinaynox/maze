@@ -73,7 +73,7 @@ namespace Maze
 
     //////////////////////////////////////////
     ShaderUniformVariantDrawerTexture2DPtr ShaderUniformVariantDrawerTexture2D::Create(
-        String const& _shaderUniformName,
+        HashedCString _shaderUniformName,
         ShaderUniformType _shaderUniformType)
     {
         ShaderUniformVariantDrawerTexture2DPtr object;
@@ -83,7 +83,7 @@ namespace Maze
 
     //////////////////////////////////////////
     bool ShaderUniformVariantDrawerTexture2D::init(
-        String const& _shaderUniformName,
+        HashedCString _shaderUniformName,
         ShaderUniformType _shaderUniformType)
     {
         if (!ShaderUniformVariantDrawer::init(_shaderUniformName, _shaderUniformType))

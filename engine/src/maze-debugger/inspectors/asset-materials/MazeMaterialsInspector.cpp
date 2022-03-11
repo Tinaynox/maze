@@ -224,7 +224,7 @@ namespace Maze
             FastVector<ShaderUniformVariantPtr> const& uniforms = material->getUniforms();
             for (ShaderUniformVariantPtr const& uniformVariant : uniforms)
             {
-                String const& uniformName = uniformVariant->getName();
+                HashedString const& uniformName = uniformVariant->getName();
                 ShaderUniformType shaderUniformType = uniformVariant->getType();
 
                 ShaderUniformVariantDrawerPtr shaderUniformVariantDrawer;

@@ -256,13 +256,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ShaderUniformPtr const& ShaderOpenGL::createUniformFromShader(String const& _uniformName)
+    ShaderUniformPtr const& ShaderOpenGL::createUniformFromShader(HashedCString _uniformName)
     {
         static ShaderUniformPtr nullPointer;
 
-        Size hash = m_renderSystemRaw->getShaderSystem()->stringToHash(_uniformName);
-
-        UnorderedMap<Size, ShaderUniformPtr>::const_iterator it = m_uniformsCache.find(hash);
+        UnorderedMap<U32, ShaderUniformPtr>::const_iterator it = m_uniformsCache.find(_uniformName.hash);
         if (it != m_uniformsCache.end())
             return it->second;
 
@@ -275,22 +273,30 @@ namespace Maze
         
         ShaderOpenGLScopeBind scopeBind(this);
         MZGLint uniformLocation = 0;
-        MAZE_GL_CALL(uniformLocation = mzglGetUniformLocation(m_programId, _uniformName.c_str()));
+        MAZE_GL_CALL(uniformLocation = mzglGetUniformLocation(m_programId, _uniformName.str));
 
         if (uniformLocation < 0)
         {
             // Mark with empty pointer
-            m_uniformsCache.emplace(hash, nullptr);
+            m_uniformsCache.emplace(
+                std::piecewise_construct,
+                std::forward_as_tuple(_uniformName.hash),
+                std::forward_as_tuple(nullptr));
             return nullPointer;
         }
 
-        ShaderUniformOpenGLPtr newUniform = ShaderUniform::Create(getSharedPtr())->cast<ShaderUniformOpenGL>();
+        ShaderUniformOpenGLPtr newUniform = std::static_pointer_cast<ShaderUniformOpenGL>(ShaderUniform::Create(getSharedPtr()));
+        MAZE_ERROR_RETURN_VALUE_IF(!newUniform, nullPointer, "Shader Uniform creation error!");
         newUniform->setLocation(uniformLocation);
         newUniform->setName(_uniformName);
-        m_uniformsCache[hash] = newUniform;
-        
+        auto at = m_uniformsCache.emplace(
+            std::piecewise_construct,
+            std::forward_as_tuple(_uniformName.hash),
+            std::forward_as_tuple(newUniform));
+        if (at.second)
+            return at.first->second;
 
-        return m_uniformsCache[hash];
+        return nullPointer;
     }
 
     //////////////////////////////////////////

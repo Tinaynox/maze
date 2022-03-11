@@ -143,9 +143,6 @@ namespace Maze
         ShaderPtr const& getSpecularShader() const { return m_specularShader; }
 
 
-        //////////////////////////////////////////
-        inline Size stringToHash(String const& _string) { return m_hashGenerator.stringToHash(_string); }
-
     public:
 
         MultiDelegate<> eventSystemInited;
@@ -190,8 +187,6 @@ namespace Maze
         ShaderPtr m_debugAxisShader;
         ShaderPtr m_skyboxShader;
         ShaderPtr m_specularShader;
-
-        StringPerfectHashGenerator m_hashGenerator;
     };
 
 } // namespace Maze

@@ -157,7 +157,7 @@ namespace Maze
             ShaderOpenGLPtr const& _shader);
         
         //////////////////////////////////////////
-        virtual ShaderUniformPtr const& createUniformFromShader(String const& _uniformName) MAZE_OVERRIDE;
+        virtual ShaderUniformPtr const& createUniformFromShader(HashedCString _uniformName) MAZE_OVERRIDE;
     
 
         //////////////////////////////////////////

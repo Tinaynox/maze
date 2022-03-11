@@ -106,10 +106,10 @@ namespace Maze
 
 
             //////////////////////////////////////////
-            inline bool operator==(TextureSheetAnimation const& _value) { return enabled == _value.enabled && tiles == _value.tiles && startFrame == _value.startFrame && frameOverTime == _value.frameOverTime; }
+            inline bool operator==(TextureSheetAnimation const& _value) const { return enabled == _value.enabled && tiles == _value.tiles && startFrame == _value.startFrame && frameOverTime == _value.frameOverTime; }
 
             //////////////////////////////////////////
-            inline bool operator!=(TextureSheetAnimation const& _value) { return !this->operator==(_value); }
+            inline bool operator!=(TextureSheetAnimation const& _value) const { return !this->operator==(_value); }
 
         public:
 
@@ -198,6 +198,22 @@ namespace Maze
             Vec3DF const& _cameraPosition,
             Vec3DF const& _cameraForward,
             Vec3DF const& _cameraUp);
+
+
+
+        //////////////////////////////////////////
+        inline bool operator==(ParticleSystem3DRendererModule const& _value) const
+        {
+            return 
+                m_particlesMaxCount == _value.m_particlesMaxCount &&
+                m_renderMesh == _value.m_renderMesh &&
+                m_material == _value.m_material &&
+                m_renderAlignment == _value.m_renderAlignment &&
+                m_textureSheetAnimation == _value.m_textureSheetAnimation;
+        }
+
+        //////////////////////////////////////////
+        inline bool operator!=(ParticleSystem3DRendererModule const& _value) const { return !this->operator==(_value); }
 
     public:
 

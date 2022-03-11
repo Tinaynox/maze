@@ -72,7 +72,7 @@ namespace Maze
             CString _label = nullptr) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        String const& getShaderUniformName() const { return m_shaderUniformName; }
+        HashedString const& getShaderUniformName() const { return m_shaderUniformName; }
 
         //////////////////////////////////////////
         ShaderUniformType getShaderUniformType() const { return m_shaderUniformType; }
@@ -95,7 +95,7 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool init(
-            String const& _shaderUniformName,
+            HashedCString _shaderUniformName,
             ShaderUniformType _shaderUniformType);
 
         //////////////////////////////////////////
@@ -104,7 +104,7 @@ namespace Maze
             bool& _isMultiValue);
 
     protected:
-        String m_shaderUniformName;
+        HashedString m_shaderUniformName;
         ShaderUniformType m_shaderUniformType;
 
         Set<MaterialPtr> m_materials;

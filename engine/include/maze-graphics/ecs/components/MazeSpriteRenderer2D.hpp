@@ -49,7 +49,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_4(SpriteRenderMode,
+    MAZE_DECLARE_ENUMCLASS_4_API(MAZE_GRAPHICS_API, SpriteRenderMode,
         Simple,
         Sliced,
         Tiled,

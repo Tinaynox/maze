@@ -45,7 +45,6 @@
 #include "maze-debugger/managers/MazeInspectorManager.hpp"
 #include "maze-debugger/property-drawers/MazePropertyDrawerRadians.hpp"
 #include "maze-debugger/meta-property-drawers/MazeMetaPropertyDrawerDefault.hpp"
-#include "maze-debugger/property-drawers/MazePropertyDrawerRadians.hpp"
 #include "maze-particles/property-drawers/MazePropertyDrawerParticleSystemParameterF32.hpp"
 
 

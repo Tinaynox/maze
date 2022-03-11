@@ -87,72 +87,69 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        ShaderUniformPtr const& ensureUniform(String const& _uniformName);
-
-        //////////////////////////////////////////
-        ShaderUniformPtr const& ensureUniform(String const& _uniformName, Size _uniformHash);
+        ShaderUniformPtr const& ensureUniform(HashedCString _uniformName);
 
 
         ///////////////////////////f///////////////
-        void setUniform(String const& _uniformName, ShaderUniformVariant const& _value, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, ShaderUniformVariant const& _value, bool _warningIfNotExists = false);
 
         ///////////////////////////f///////////////
-        void setUniform(String const& _uniformName, S32 _value, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, S32 _value, bool _warningIfNotExists = false);
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, F32 _value, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, F32 _value, bool _warningIfNotExists = false);
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, bool _value, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, bool _value, bool _warningIfNotExists = false);
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Texture2DPtr const& _texture2D, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, Texture2DPtr const& _texture2D, bool _warningIfNotExists = false);
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Vec2DF const& _vector, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, Vec2DF const& _vector, bool _warningIfNotExists = false);
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Vec3DF const& _vector, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, Vec3DF const& _vector, bool _warningIfNotExists = false);
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Vec4DF const& _vector, bool _warningIfNotExists = false);
-
-
-        //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Vec2DS const& _vector, bool _warningIfNotExists = false);
-
-        //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Vec3DS const& _vector, bool _warningIfNotExists = false);
-
-        //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Vec4DS const& _vector, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, Vec4DF const& _vector, bool _warningIfNotExists = false);
 
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Vec2DU const& _vector, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, Vec2DS const& _vector, bool _warningIfNotExists = false);
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Vec3DU const& _vector, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, Vec3DS const& _vector, bool _warningIfNotExists = false);
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Vec4DU const& _vector, bool _warningIfNotExists = false);
-
-
-        //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Vec2DB const& _vector, bool _warningIfNotExists = false);
-
-        //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Vec3DB const& _vector, bool _warningIfNotExists = false);
-
-        //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Vec4DB const& _vector, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, Vec4DS const& _vector, bool _warningIfNotExists = false);
 
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Mat3DF const& _matrix, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, Vec2DU const& _vector, bool _warningIfNotExists = false);
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Mat4DF const& _matrix, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, Vec3DU const& _vector, bool _warningIfNotExists = false);
+
+        //////////////////////////////////////////
+        void setUniform(HashedCString _uniformName, Vec4DU const& _vector, bool _warningIfNotExists = false);
+
+
+        //////////////////////////////////////////
+        void setUniform(HashedCString _uniformName, Vec2DB const& _vector, bool _warningIfNotExists = false);
+
+        //////////////////////////////////////////
+        void setUniform(HashedCString _uniformNamee, Vec3DB const& _vector, bool _warningIfNotExists = false);
+
+        //////////////////////////////////////////
+        void setUniform(HashedCString _uniformName, Vec4DB const& _vector, bool _warningIfNotExists = false);
+
+
+        //////////////////////////////////////////
+        void setUniform(HashedCString _uniformName, Mat3DF const& _matrix, bool _warningIfNotExists = false);
+
+        //////////////////////////////////////////
+        void setUniform(HashedCString _uniformName, Mat4DF const& _matrix, bool _warningIfNotExists = false);
 
 
         //////////////////////////////////////////
@@ -160,10 +157,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Mat3DF* _matrices, Size _count, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, Mat3DF* _matrices, Size _count, bool _warningIfNotExists = false);
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Mat4DF* _matrices, Size _count, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, Mat4DF* _matrices, Size _count, bool _warningIfNotExists = false);
 
 
         //////////////////////////////////////////
@@ -289,7 +286,7 @@ namespace Maze
         virtual bool init(ShaderPtr const& _shader);
 
         //////////////////////////////////////////
-        virtual ShaderUniformPtr const& createUniformFromShader(String const& _uniformName) MAZE_ABSTRACT;
+        virtual ShaderUniformPtr const& createUniformFromShader(HashedCString _uniformName) MAZE_ABSTRACT;
     
         //////////////////////////////////////////
         void assignDefaultUniforms();
@@ -308,7 +305,7 @@ namespace Maze
 
         AssetFilePtr m_assetFile;
 
-        UnorderedMap<Size, ShaderUniformPtr> m_uniformsCache;
+        UnorderedMap<U32, ShaderUniformPtr> m_uniformsCache;
 
         StringKeyMap<String> m_localFeatures;
 

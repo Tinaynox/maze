@@ -62,8 +62,8 @@ namespace Maze
 
         //////////////////////////////////////////
         inline HashedString(CString _string)
-            : m_string(_string)
-            , m_hash(MAZE_HASHED_CSTRING(_string).hash)
+            : m_string(_string ? _string : "")
+            , m_hash(MAZE_HASHED_CSTRING(_string ? _string : "").hash)
         {}
 
         //////////////////////////////////////////
@@ -76,6 +76,12 @@ namespace Maze
         inline HashedString(String const& _string)
             : m_string(_string)
             , m_hash(MAZE_HASHED_CSTRING(_string.c_str()).hash)
+        {}
+
+        //////////////////////////////////////////
+        inline HashedString(HashedCString _other)
+            : m_string(_other.str ? _other.str : "")
+            , m_hash(_other.str ? _other.hash : MAZE_HASHED_CSTRING_CT("").hash)
         {}
 
         //////////////////////////////////////////
@@ -113,11 +119,45 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline HashedString& operator=(HashedCString _other)
+        {
+            m_string = _other.str ? _other.str : "";
+            m_hash = _other.str ? _other.hash : MAZE_HASHED_CSTRING_CT("").hash;
+            return *this;
+        }
+
+        //////////////////////////////////////////
+        inline HashedString& operator=(CString _other)
+        {
+            m_string = _other ? _other : "";
+            m_hash = MAZE_HASHED_CSTRING(_other ? _other : "").hash;
+            return *this;
+        }
+
+        //////////////////////////////////////////
         inline HashedString& operator=(HashedString&& _other) noexcept
         {
             m_string = std::move(_other.m_string);
             m_hash = std::move(_other.m_hash);
             return *this;
+        }
+
+        //////////////////////////////////////////
+        inline bool operator==(HashedString const& _other) const
+        {
+            if (m_hash != _other.m_hash)
+                return false;
+
+            return m_string == _other.m_string;
+        }
+
+        //////////////////////////////////////////
+        inline bool operator==(HashedCString _other) const
+        {
+            if (m_hash != _other.hash)
+                return false;
+
+            return m_string == _other.str;
         }
 
         //////////////////////////////////////////

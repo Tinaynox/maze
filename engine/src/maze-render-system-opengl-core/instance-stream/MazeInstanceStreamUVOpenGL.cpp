@@ -38,10 +38,10 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    static CString const c_uvStreamUniformName = "u_uvStream";
-    static CString const c_uvStreamTextureUniformName = "u_uvStreamTexture";
-    static CString const c_uvStreamTextureSizeUniformName = "u_uvStreamTextureSize";
-    static CString const c_uvStreamOffsetUniformName = "u_uvStreamOffset";
+    static HashedCString const c_uvStreamUniformName = MAZE_HASHED_CSTRING("u_uvStream");
+    static HashedCString const c_uvStreamTextureUniformName = MAZE_HASHED_CSTRING("u_uvStreamTexture");
+    static HashedCString const c_uvStreamTextureSizeUniformName = MAZE_HASHED_CSTRING("u_uvStreamTextureSize");
+    static HashedCString const c_uvStreamOffsetUniformName = MAZE_HASHED_CSTRING("u_uvStreamOffset");
 
 
     //////////////////////////////////////////
@@ -116,11 +116,6 @@ namespace Maze
             }
         }
 
-        m_uvStreamUniformHash = _rs->getShaderSystem()->stringToHash(c_uvStreamUniformName);
-        m_uvStreamTextureUniformHash = _rs->getShaderSystem()->stringToHash(c_uvStreamTextureUniformName);
-        m_uvStreamTextureSizeUniformHash = _rs->getShaderSystem()->stringToHash(c_uvStreamTextureSizeUniformName);
-        m_uvStreamOffsetUniformHash = _rs->getShaderSystem()->stringToHash(c_uvStreamOffsetUniformName);
-
         m_maxInstancesPerDraw = 16384;
         m_data.resize(m_maxInstancesPerDraw);
 
@@ -134,7 +129,7 @@ namespace Maze
         {
             case InstanceStreamModeOpenGL::UniformArray:
             {
-                ShaderUniformPtr const& uvStreamUniform = m_context->getCurrentShader()->ensureUniform(c_uvStreamUniformName, m_uvStreamUniformHash);
+                ShaderUniformPtr const& uvStreamUniform = m_context->getCurrentShader()->ensureUniform(c_uvStreamUniformName);
 
                 if (uvStreamUniform)
                     uvStreamUniform->set(&m_data[m_dataOffset], _instancesCount);
@@ -143,19 +138,12 @@ namespace Maze
             }
             case InstanceStreamModeOpenGL::UniformTexture:
             {
-                ShaderUniformPtr const& uvStreamTextureUniform = m_context->getCurrentShader()->ensureUniform(
-                    c_uvStreamTextureUniformName,
-                    m_uvStreamTextureUniformHash);
+                ShaderUniformPtr const& uvStreamTextureUniform = m_context->getCurrentShader()->ensureUniform(c_uvStreamTextureUniformName);
 
                 if (uvStreamTextureUniform)
                 {
-                    ShaderUniformPtr const& uvStreamTextureSizeUniform = m_context->getCurrentShader()->ensureUniform(
-                        c_uvStreamTextureSizeUniformName,
-                        m_uvStreamTextureSizeUniformHash);
-
-                    ShaderUniformPtr const& uvStreamOffsetUniform = m_context->getCurrentShader()->ensureUniform(
-                        c_uvStreamOffsetUniformName,
-                        m_uvStreamOffsetUniformHash);
+                    ShaderUniformPtr const& uvStreamTextureSizeUniform = m_context->getCurrentShader()->ensureUniform(c_uvStreamTextureSizeUniformName);
+                    ShaderUniformPtr const& uvStreamOffsetUniform = m_context->getCurrentShader()->ensureUniform(c_uvStreamOffsetUniformName);
 
                     Texture2DPtr const& bufferTexture = m_bufferInfo.buffer->getTexture();
 

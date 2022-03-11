@@ -92,11 +92,6 @@ namespace Maze
         InstanceStreamModeOpenGL m_mode = InstanceStreamModeOpenGL::None;
 
         RenderQueueGPUBufferInfo m_bufferInfo;
-
-        Size m_colorsStreamUniformHash = 0;
-        Size m_colorsStreamTextureUniformHash = 0;
-        Size m_colorsStreamTextureSizeUniformHash = 0;
-        Size m_colorsStreamOffsetUniformHash = 0;
     };
 
 

@@ -72,7 +72,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline String const& getName() const { return m_value.getName(); }
+        inline HashedString const& getName() const { return m_value.getName(); }
 
         //////////////////////////////////////////
         inline ShaderUniformVariant const& getValue() const { return m_value; }
@@ -278,7 +278,7 @@ namespace Maze
         virtual bool init(ShaderPtr const& _shader, ShaderUniformType _type = ShaderUniformType::None);
 
         //////////////////////////////////////////
-        void setName(String const& _name) { m_value.setName(_name); }
+        void setName(HashedCString _name) { m_value.setName(_name); }
 
         
         //////////////////////////////////////////

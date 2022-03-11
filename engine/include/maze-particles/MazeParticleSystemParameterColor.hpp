@@ -173,7 +173,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline bool operator==(ParticleSystemParameterColor const& _parameter)
+        inline bool operator==(ParticleSystemParameterColor const& _parameter) const
         {
             if (m_mode != _parameter.m_mode)
                 return false;
@@ -224,7 +224,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline bool operator!=(ParticleSystemParameterColor const& _parameter)
+        inline bool operator!=(ParticleSystemParameterColor const& _parameter) const
         {
             return !this->operator==(_parameter);
         }

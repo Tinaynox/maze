@@ -350,7 +350,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline bool operator==(AnimationCurve const& _rhs)
+        inline bool operator==(AnimationCurve const& _rhs) const
         {
             if (m_mode != _rhs.m_mode)
                 return false;
@@ -372,7 +372,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline bool operator!=(AnimationCurve const& _rhs)
+        inline bool operator!=(AnimationCurve const& _rhs) const
         {
             return !this->operator==(_rhs);
         }

@@ -98,7 +98,7 @@ namespace Maze
             Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
 
         //////////////////////////////////////////
-        inline MAZE_GRAPHICS_API SpriteRenderer2DPtr CreateSprite(
+        MAZE_FORCEINLINE SpriteRenderer2DPtr CreateSprite(
             CString _spriteName,
             Vec2DF const& _size,
             Vec2DF const& _position,

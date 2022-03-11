@@ -47,7 +47,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     template <typename TComponent>
-    class MAZE_CORE_API ComponentPoolObject
+    class ComponentPoolObject
         : public Component
     {
     public:

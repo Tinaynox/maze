@@ -72,7 +72,7 @@ namespace Maze
 
     //////////////////////////////////////////
     ShaderUniformVariantDrawerF32Ptr ShaderUniformVariantDrawerF32::Create(
-        String const& _shaderUniformName,
+        HashedCString _shaderUniformName,
         ShaderUniformType _shaderUniformType)
     {
         ShaderUniformVariantDrawerF32Ptr object;
@@ -82,7 +82,7 @@ namespace Maze
 
     //////////////////////////////////////////
     bool ShaderUniformVariantDrawerF32::init(
-        String const& _shaderUniformName,
+        HashedCString _shaderUniformName,
         ShaderUniformType _shaderUniformType)
     {
         if (!ShaderUniformVariantDrawer::init(_shaderUniformName, _shaderUniformType))

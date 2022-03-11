@@ -70,7 +70,7 @@ namespace Maze
 
     //////////////////////////////////////////
     ShaderUniformVariantDrawerColorF128Ptr ShaderUniformVariantDrawerColorF128::Create(
-        String const& _shaderUniformName,
+        HashedCString _shaderUniformName,
         ShaderUniformType _shaderUniformType)
     {
         ShaderUniformVariantDrawerColorF128Ptr object;
@@ -80,7 +80,7 @@ namespace Maze
 
     //////////////////////////////////////////
     bool ShaderUniformVariantDrawerColorF128::init(
-        String const& _shaderUniformName,
+        HashedCString _shaderUniformName,
         ShaderUniformType _shaderUniformType)
     {
         if (!ShaderUniformVariantDrawer::init(_shaderUniformName, _shaderUniformType))

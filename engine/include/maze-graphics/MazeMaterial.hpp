@@ -137,71 +137,71 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, S32 _value);
+        void setUniform(HashedCString _uniformName, S32 _value);
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, F32 _value);
+        void setUniform(HashedCString _uniformName, F32 _value);
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, TexturePtr const& _texture);
+        void setUniform(HashedCString _uniformName, TexturePtr const& _texture);
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Texture2DPtr const& _texture2D);
+        void setUniform(HashedCString _uniformName, Texture2DPtr const& _texture2D);
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, TextureCubePtr const& _textureCube);
+        void setUniform(HashedCString _uniformName, TextureCubePtr const& _textureCube);
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Vec2DF const& _vector);
+        void setUniform(HashedCString _uniformName, Vec2DF const& _vector);
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Vec3DF const& _vector);
+        void setUniform(HashedCString _uniformName, Vec3DF const& _vector);
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Vec4DF const& _vector);
-
-
-        //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Vec2DS const& _vector);
-
-        //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Vec3DS const& _vector);
-
-        //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Vec4DS const& _vector);
+        void setUniform(HashedCString _uniformName, Vec4DF const& _vector);
 
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Vec2DU const& _vector);
+        void setUniform(HashedCString _uniformName, Vec2DS const& _vector);
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Vec3DU const& _vector);
+        void setUniform(HashedCString _uniformName, Vec3DS const& _vector);
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Vec4DU const& _vector);
+        void setUniform(HashedCString _uniformName, Vec4DS const& _vector);
 
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Mat3DF const& _matrix);
+        void setUniform(HashedCString _uniformName, Vec2DU const& _vector);
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, Mat4DF const& _matrix);
+        void setUniform(HashedCString _uniformName, Vec3DU const& _vector);
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, ColorF128 const& _color);
+        void setUniform(HashedCString _uniformName, Vec4DU const& _vector);
+
 
         //////////////////////////////////////////
-        void setUniform(String const& _uniformName, ShaderUniformVariant const& _shaderUniformVariant);
+        void setUniform(HashedCString _uniformName, Mat3DF const& _matrix);
+
+        //////////////////////////////////////////
+        void setUniform(HashedCString _uniformName, Mat4DF const& _matrix);
+
+        //////////////////////////////////////////
+        void setUniform(HashedCString _uniformName, ColorF128 const& _color);
+
+        //////////////////////////////////////////
+        void setUniform(HashedCString _uniformName, ShaderUniformVariant const& _shaderUniformVariant);
 
 
         //////////////////////////////////////////
         void setUniform(ShaderUniformVariant const& _uniformVariant);
 
         //////////////////////////////////////////
-        ShaderUniformVariantPtr const& getUniform(String const& _uniformName);
+        ShaderUniformVariantPtr const& getUniform(HashedCString _uniformName);
 
         //////////////////////////////////////////
-        ShaderUniformVariantPtr const& ensureUniform(String const& _uniformName, ShaderUniformType _type = ShaderUniformType::None);
+        ShaderUniformVariantPtr const& ensureUniform(HashedCString _uniformName, ShaderUniformType _type = ShaderUniformType::None);
 
         //////////////////////////////////////////
         FastVector<ShaderUniformVariantPtr> const& getUniforms() const { return m_uniforms; }
