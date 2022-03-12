@@ -89,6 +89,27 @@ namespace Maze
     //////////////////////////////////////////
     Engine::~Engine()
     {
+        m_particlesManager.reset();
+        m_debuggerManager.reset();
+        m_soundManager.reset();
+        m_uiManager.reset();
+        m_physics2DManager.reset();
+        m_gamepadManager.reset();
+        m_graphicsManager.reset();
+        m_entityManager.reset();
+        m_assetManager.reset();
+        m_sceneManager.reset();
+
+        if (m_pluginManager)
+            m_pluginManager->unloadAllPlugins();
+        m_pluginManager.reset();
+
+        m_dynLibManager.reset();
+        m_windowManager.reset();
+        m_inputManager.reset();
+        m_eventManager.reset();
+        m_settingsManager.reset();
+
         s_instance = nullptr;
     }
 

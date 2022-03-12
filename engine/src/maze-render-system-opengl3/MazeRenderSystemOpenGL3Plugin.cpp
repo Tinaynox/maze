@@ -129,7 +129,8 @@ namespace Maze
     void RenderSystemOpenGL3Plugin::uninstall()
     {
         GraphicsManager* graphicsManager = GraphicsManager::GetInstancePtr();
-        MAZE_ERROR_RETURN_IF(graphicsManager == nullptr, "GraphicsManager is not exists!");
+        if (!graphicsManager)
+            return;
 
         graphicsManager->removeRenderSystem(m_renderSystem.lock());
         m_renderSystem.reset();

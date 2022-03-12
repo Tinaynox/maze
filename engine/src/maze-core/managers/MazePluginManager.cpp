@@ -81,9 +81,9 @@ namespace Maze
         DynLibPtr const& pluginLibrary = dynLibManager->loadLibrary(_pluginLibraryFullPath);
         MAZE_ERROR_RETURN_VALUE_IF(!pluginLibrary, false, "Failed to load plugin - %s", _pluginLibraryFullPath.c_str());
 
-        if (std::find(m_pluginLibs.begin(), m_pluginLibs.end(), pluginLibrary) == m_pluginLibs.end())
+        if (m_pluginLibs.find(_pluginLibraryFullPath) == m_pluginLibs.end())
         {
-            m_pluginLibs.push_back(pluginLibrary);
+            m_pluginLibs.insert(_pluginLibraryFullPath, pluginLibrary);
 
             // Call startup function
 #if (defined(__GNUC__))
@@ -103,24 +103,24 @@ namespace Maze
     //////////////////////////////////////////
     void PluginManager::unloadPlugin(String const& _pluginLibraryFullPath)
     {
-        Vector<DynLibPtr>::iterator it;
+        StringKeyMap<DynLibPtr>::iterator it;
 
         for (it = m_pluginLibs.begin(); it != m_pluginLibs.end(); ++it)
         {
-            if ((*it)->getLibraryFullPath() == _pluginLibraryFullPath)
+            if ((*it).first == _pluginLibraryFullPath)
             {
                 // Call startup function
 #if (defined(__GNUC__))
                 __extension__
 #endif
-                PluginDynLibStopFunction func = (PluginDynLibStopFunction)(*it)->getSymbol("StopPlugin");
+                PluginDynLibStopFunction func = (PluginDynLibStopFunction)(*it).second->getSymbol("StopPlugin");
 
-                MAZE_ERROR_RETURN_IF(!func, "Cannot find symbol StopPlugin in library: %s", (*it)->getLibraryFullPath().c_str());
+                MAZE_ERROR_RETURN_IF(!func, "Cannot find symbol StopPlugin in library: %s", (*it).first.c_str());
 
                 // This must call installPlugin
                 func();
 
-                DynLibManager::GetInstancePtr()->unloadLibrary((*it));
+                DynLibManager::GetInstancePtr()->unloadLibrary((*it).second);
 
                 m_pluginLibs.erase(it);
 
@@ -152,6 +152,15 @@ namespace Maze
 #endif
 
         return loadPlugin(pluginName);
+    }
+
+    //////////////////////////////////////////
+    void PluginManager::unloadAllPlugins()
+    {
+        while (!m_pluginLibs.empty())
+        {
+            unloadPlugin(m_pluginLibs.begin()->first);
+        }
     }
 
     //////////////////////////////////////////

@@ -54,7 +54,8 @@ namespace Maze
     //////////////////////////////////////////
     GizmosSystem::~GizmosSystem()
     {
-        GizmosManager::GetInstancePtr()->eventGizmosPerComponentClassChanged.unsubscribe(this);
+        if (GizmosManager::GetInstancePtr())
+            GizmosManager::GetInstancePtr()->eventGizmosPerComponentClassChanged.unsubscribe(this);
     }
 
     //////////////////////////////////////////

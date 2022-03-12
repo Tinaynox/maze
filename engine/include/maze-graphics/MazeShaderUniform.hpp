@@ -78,7 +78,7 @@ namespace Maze
         inline ShaderUniformVariant const& getValue() const { return m_value; }
 
         //////////////////////////////////////////
-        inline ShaderUniformType getType() const { return m_value.getType(); }
+        inline ShaderUniformType const& getType() const { return m_value.getType(); }
 
         //////////////////////////////////////////
         inline S32 getS32() const { return m_value.getS32(); }

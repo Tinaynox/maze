@@ -38,6 +38,7 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 
 
 //////////////////////////////////////////
@@ -73,6 +74,9 @@ namespace Maze
         //////////////////////////////////////////
         bool loadPlatformPlugin(String const& _pluginName);
 
+        //////////////////////////////////////////
+        void unloadAllPlugins();
+
 
         //////////////////////////////////////////
         static inline PluginManager* GetInstancePtr() { return s_instance; }
@@ -102,7 +106,7 @@ namespace Maze
     protected:
         static PluginManager* s_instance;
 
-        Vector<DynLibPtr> m_pluginLibs;
+        StringKeyMap<DynLibPtr> m_pluginLibs;
         Vector<PluginPtr> m_plugins;
     };
 

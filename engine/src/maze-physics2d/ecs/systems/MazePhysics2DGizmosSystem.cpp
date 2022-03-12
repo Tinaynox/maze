@@ -54,7 +54,8 @@ namespace Maze
     //////////////////////////////////////////
     Physics2DGizmosSystem::~Physics2DGizmosSystem()
     {
-        GizmosManager::GetInstancePtr()->eventGizmosPerComponentClassChanged.unsubscribe(this);
+        if (GizmosManager::GetInstancePtr())
+            GizmosManager::GetInstancePtr()->eventGizmosPerComponentClassChanged.unsubscribe(this);
     }
 
     //////////////////////////////////////////

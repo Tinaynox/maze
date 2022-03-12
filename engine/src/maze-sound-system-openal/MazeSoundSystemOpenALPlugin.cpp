@@ -129,7 +129,8 @@ namespace Maze
     void SoundSystemOpenALPlugin::uninstall()
     {
         SoundManager* soundManager = SoundManager::GetInstancePtr();
-        MAZE_ERROR_RETURN_IF(soundManager == nullptr, "SoundManager is not exists!");
+        if (!soundManager)
+            return;
 
         soundManager->removeSoundSystem(m_soundSystem.lock());
         m_soundSystem.reset();

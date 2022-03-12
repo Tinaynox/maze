@@ -200,7 +200,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline ShaderUniformType getType() const { return m_type; }
+        inline ShaderUniformType const& getType() const { return m_type; }
 
 
 
