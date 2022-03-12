@@ -28,6 +28,7 @@
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
@@ -50,6 +51,7 @@
 #include "maze-core/math/MazeMathGeometry.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
+#include "maze-core/events/MazeEvent.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -105,6 +107,38 @@ namespace Maze
         return false;
     }
 
+
+    //////////////////////////////////////////
+    class SimpleEvent : public Event
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS(SimpleEvent);
+    };
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS(SimpleEvent);
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM(SomeUpdateES, 100,
+        F32 _dt,
+        Entity* _entity,
+        Transform3D* _someObject,
+        Rotor3D* _rotor)
+    {
+        _someObject->translate(Vec3DF::c_unitY * _dt * 0.2f);
+    }
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(SomeEventES, 100,
+        SimpleEvent* _event,
+        Entity* _entity,
+        Transform3D* _someObject,
+        Rotor3D* _rotor)
+    {
+        _someObject->translate(Vec3DF::c_unitX * 1.0f);
+    }
 
     //////////////////////////////////////////
     // Class SceneExample
@@ -190,6 +224,7 @@ namespace Maze
         m_camera3D->setRenderTarget(Example::GetInstancePtr()->getMainRenderWindow());
 
 
+        // m_world->addSystem("SomeUpdateES", SomeUpdateES, 0);
 
         EntityPtr objectEntity = createEntity();
         Transform3DPtr transform = objectEntity->createComponent<Transform3D>();
@@ -272,6 +307,8 @@ namespace Maze
                     {
                         m_cursorDrag = true;
                     }
+
+                    m_world->sendEventImmediate<SimpleEvent>();
                 }
                 break;
             }

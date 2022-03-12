@@ -163,6 +163,9 @@ namespace Maze
         //////////////////////////////////////////
         void addSystemEventHandler(SimpleComponentSystemEventHandlerPtr const& _system);
 
+        //////////////////////////////////////////
+        void removeSystemEventHandler(SimpleComponentSystemEventHandlerPtr const& _system);
+
 
         //////////////////////////////////////////
         EntitiesSamplePtr requestCommonSample(EntityAspect const& _aspect);
@@ -212,13 +215,12 @@ namespace Maze
         template<typename TEventType, typename ...TComponents>
         inline SimpleComponentSystemEventHandlerPtr addSystemEventHandler(
             HashedCString _name,
-            ClassUID _eventUID,
             void (*_func)(TEventType*, Entity*, TComponents* ...),
             S32 _order = 0)
         {
             SimpleComponentSystemEventHandlerPtr system = SimpleComponentSystemEventHandler::Create(
                 _name,
-                _eventUID,
+                ClassInfo<TEventType>::UID(),
                 requestInclusiveSample<TComponents...>(),
                 (SimpleComponentSystem::Func)_func,
                 _order);
@@ -242,6 +244,10 @@ namespace Maze
         inline void sendEventImmediate(TArgs... _args)
         {
             TEvent evt(_args...);
+            MAZE_DEBUG_ERROR_BP_IF(
+                evt.getClassUID() != ClassInfo<TEvent>::UID(),
+                "Event %s has wrong metadata!",
+                ClassInfo<TEvent>::Name());
             processEvent(&evt);
         }
 

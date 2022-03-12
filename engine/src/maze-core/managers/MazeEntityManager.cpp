@@ -32,6 +32,7 @@
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-core/ecs/MazeComponentFactory.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/components/MazeEventRetranslator.hpp"
@@ -47,7 +48,6 @@
 //////////////////////////////////////////
 namespace Maze
 {
-
 
     //////////////////////////////////////////
     // Class EntityManager
@@ -66,7 +66,13 @@ namespace Maze
     {
         s_instance = nullptr;
         m_libraryWorld.reset();
-        m_defaultWorld.reset();
+
+        if (m_defaultWorld)
+        {
+            SimpleComponentSystemHolder::Detach(m_defaultWorld.get());
+            SimpleComponentSystemEventHandlerHolder::Detach(m_defaultWorld.get());
+            m_defaultWorld.reset();
+        }
     }
 
     //////////////////////////////////////////
@@ -79,6 +85,9 @@ namespace Maze
     bool EntityManager::init()
     {
         m_defaultWorld = ECSWorld::Create(0);
+        SimpleComponentSystemHolder::Attach(m_defaultWorld.get());
+        SimpleComponentSystemEventHandlerHolder::Attach(m_defaultWorld.get());
+
         m_libraryWorld = ECSWorld::Create(100000000);
         
         m_componentFactory = ComponentFactory::Create();

@@ -468,6 +468,23 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void ECSWorld::removeSystem(ComponentSystemPtr const& _system)
+    {
+        for (Size i = 0, in = m_systems.size(); i < in; ++i)
+        {
+            if (m_systems[i] == _system)
+            {
+                ComponentSystemPtr system = _system;
+                m_systems.erase(m_systems.begin() + i);
+                system->processSystemRemoved();
+                system->setWorld(getSharedPtr());
+
+                return;
+            }
+        }
+    }
+
+    //////////////////////////////////////////
     void ECSWorld::addSystemEventHandler(SimpleComponentSystemEventHandlerPtr const& _system)
     {
         ClassUID eventUID = _system->getEventUID();
@@ -485,16 +502,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ECSWorld::removeSystem(ComponentSystemPtr const& _system)
+    void ECSWorld::removeSystemEventHandler(SimpleComponentSystemEventHandlerPtr const& _system)
     {
-        for (Size i = 0, in = m_systems.size(); i < in; ++i)
+        ClassUID eventUID = _system->getEventUID();
+        Vector<SimpleComponentSystemEventHandlerPtr>& eventHandlers = m_eventHandlers[eventUID];
+        for (Size i = 0, in = eventHandlers.size(); i < in; ++i)
         {
-            if (m_systems[i] == _system)
+            if (eventHandlers[i] == _system)
             {
-                ComponentSystemPtr system = _system;
-                m_systems.erase(m_systems.begin() + i);
-                system->processSystemRemoved();
-                system->setWorld(getSharedPtr());
+                SimpleComponentSystemEventHandlerPtr system = _system;
+                eventHandlers.erase(eventHandlers.begin() + i);
 
                 return;
             }

@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeSystem_hpp_))
-#define _MazeSystem_hpp_
+#if (!defined(_MazeComponentSystem_hpp_))
+#define _MazeComponentSystem_hpp_
 
 
 //////////////////////////////////////////
@@ -237,5 +237,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeSystem_hpp_
+#endif // _MazeComponentSystem_hpp_
 //////////////////////////////////////////
