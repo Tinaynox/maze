@@ -95,8 +95,8 @@ namespace Maze
         m_uiManager.reset();
         m_physics2DManager.reset();
         m_gamepadManager.reset();
-        m_graphicsManager.reset();
         m_entityManager.reset();
+        m_graphicsManager.reset();
         m_assetManager.reset();
         m_sceneManager.reset();
 
