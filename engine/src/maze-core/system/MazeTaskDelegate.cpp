@@ -25,33 +25,14 @@
 
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
-#include "maze-core/system/MazeThreadEntryPoint.hpp"
+#include "maze-core/system/MazeTaskDelegate.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
-{
+{    
     //////////////////////////////////////////
-    // Class ThreadEntryPoint
-    //
-    ////////////////////////////////////
-    ThreadEntryPoint::ThreadEntryPoint()
-    {}
-    
-    ////////////////////////////////////
-    ThreadEntryPoint::~ThreadEntryPoint()
-    {
-    }
-
-
-    //////////////////////////////////////////
-    // Class ThreadEntryPoint0
-    //
-    //////////////////////////////////////////
-    S32 ThreadEntryPoint0::run()
-    {
-        return m_delegate();
-    }
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(TaskDelegate0);
 
 } // namespace Maze
 //////////////////////////////////////////

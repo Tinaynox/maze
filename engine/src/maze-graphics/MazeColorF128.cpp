@@ -39,10 +39,12 @@ namespace Maze
     //////////////////////////////////////////
     const ColorF128 ColorF128::c_zero            = ColorF128(0, 0, 0, 0);
     const ColorF128 ColorF128::c_white           = ColorF128(1.0f, 1.0f, 1.0f, 1.0f);
+    const ColorF128 ColorF128::c_whiteSoft       = ColorF128(0.988f, 0.988f, 0.988f, 1.0f);
     const ColorF128 ColorF128::c_gray            = ColorF128(0.5f, 0.5f, 0.5f, 1.0f);
     const ColorF128 ColorF128::c_lightGray       = ColorF128(0.75f, 0.75f, 0.75f, 1.0f);
     const ColorF128 ColorF128::c_darkGray        = ColorF128(0.25f, 0.25f, 0.25f, 1.0f);
     const ColorF128 ColorF128::c_black           = ColorF128(0, 0, 0, 1.0f);
+    const ColorF128 ColorF128::c_blackSoft       = ColorF128(0.027f, 0.035f, 0.035f, 1.0f);
     const ColorF128 ColorF128::c_red             = ColorF128(1.0f, 0, 0, 1.0f);
     const ColorF128 ColorF128::c_green           = ColorF128(0, 1.0f, 0, 1.0f);
     const ColorF128 ColorF128::c_blue            = ColorF128(0, 0, 1.0f, 1.0f);

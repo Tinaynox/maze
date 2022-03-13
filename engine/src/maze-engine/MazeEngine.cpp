@@ -36,6 +36,7 @@
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/utils/MazeProfiler.hpp"
 #include "maze-core/managers/MazeSystemManager.hpp"
+#include "maze-core/managers/MazeTaskManager.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/managers/MazeEventManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
@@ -109,6 +110,9 @@ namespace Maze
         m_inputManager.reset();
         m_eventManager.reset();
         m_settingsManager.reset();
+
+        m_taskManager.reset();
+        m_systemManager.reset();
 
         s_instance = nullptr;
     }
@@ -229,6 +233,10 @@ namespace Maze
     //////////////////////////////////////////
     bool Engine::initMainManagers()
     {
+        TaskManager::Initialize(m_taskManager);
+        if (!m_taskManager)
+            return false;
+
         SettingsManager::Initialize(m_settingsManager, m_config.projectName);
         if (!m_settingsManager)
             return false;

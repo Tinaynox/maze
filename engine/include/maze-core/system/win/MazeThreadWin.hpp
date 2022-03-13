@@ -32,7 +32,7 @@
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
-#include "maze-core/system/MazeThreadEntryPoint.hpp"
+#include "maze-core/system/MazeTaskDelegate.hpp"
 #include "maze-core/system/MazeMutex.hpp"
 #include "maze-core/system/MazeThreadPriority.hpp"
 
@@ -55,7 +55,7 @@ namespace Maze
         ThreadWin(Delegate<S32> const& _entryPoint)
             : ThreadWin()
         {
-            m_entryPoint = std::make_shared<ThreadEntryPoint0>(_entryPoint);
+            m_entryPoint = std::make_shared<TaskDelegate0>(_entryPoint);
         }
 
         //////////////////////////////////////////
@@ -63,7 +63,7 @@ namespace Maze
         ThreadWin(Delegate<S32> const& _entryPoint, TArg0 _arg0)
             : ThreadWin()
         {
-            m_entryPoint = std::make_shared<ThreadEntryPoint1>(_entryPoint, _arg0);
+            m_entryPoint = std::make_shared<TaskDelegate1>(_entryPoint, _arg0);
         }
 
         //////////////////////////////////////////
@@ -71,7 +71,7 @@ namespace Maze
         ThreadWin(Delegate<S32> const& _entryPoint, TArg0 _arg0, TArg1 _arg1)
             : ThreadWin()
         {
-            m_entryPoint = std::make_shared<ThreadEntryPoint2>(_entryPoint, _arg0, _arg1);
+            m_entryPoint = std::make_shared<TaskDelegate2>(_entryPoint, _arg0, _arg1);
         }
 
 
@@ -112,7 +112,7 @@ namespace Maze
         static U32 __stdcall EntryPoint(void* _userData);
 
     protected:
-        SharedPtr<ThreadEntryPoint> m_entryPoint;
+        SharedPtr<TaskDelegate> m_entryPoint;
         Mutex m_mutex;
 
     protected:

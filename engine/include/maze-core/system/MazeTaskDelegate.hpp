@@ -25,44 +25,45 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeThreadEntryPoint_hpp_))
-#define _MazeThreadEntryPoint_hpp_
+#if (!defined(_MazeTaskDelegate_hpp_))
+#define _MazeTaskDelegate_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/utils/MazeDelegate.hpp"
+#include "maze-core/memory/MazeMemory.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class ThreadEntryPoint
+    // Class TaskDelegate
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API ThreadEntryPoint
-    {
+    class MAZE_CORE_API TaskDelegate
+    {   
     public:
 
         ////////////////////////////////////
-        ThreadEntryPoint();
+        TaskDelegate() = default;
 
         ////////////////////////////////////
-        virtual ~ThreadEntryPoint();
+        virtual ~TaskDelegate() = default;
 
         ////////////////////////////////////
-        ThreadEntryPoint(ThreadEntryPoint const&) = delete;
+        TaskDelegate(TaskDelegate const&) = delete;
 
         ////////////////////////////////////
-        ThreadEntryPoint(ThreadEntryPoint&&) = delete;
+        TaskDelegate(TaskDelegate&&) = delete;
 
         ////////////////////////////////////
-        ThreadEntryPoint& operator=(ThreadEntryPoint const&) = delete;
+        TaskDelegate& operator=(TaskDelegate const&) = delete;
 
         ////////////////////////////////////
-        ThreadEntryPoint& operator=(ThreadEntryPoint&&) = delete;
+        TaskDelegate& operator=(TaskDelegate&&) = delete;
 
         //////////////////////////////////////////
         virtual S32 run() MAZE_ABSTRACT;
@@ -70,33 +71,40 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class ThreadEntryPoint0
+    // Class TaskDelegate0
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API ThreadEntryPoint0
-        : public ThreadEntryPoint
+    class MAZE_CORE_API TaskDelegate0
+        : public TaskDelegate
     {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_MEMORY_ALLOCATION(TaskDelegate0);
+
     public:
 
         //////////////////////////////////////////
-        ThreadEntryPoint0(Delegate<S32> const& _delegate)
+        TaskDelegate0(Delegate<S32> const& _delegate)
             : m_delegate(_delegate)
         {}
 
         ////////////////////////////////////
-        ThreadEntryPoint0(ThreadEntryPoint0 const&) = delete;
+        TaskDelegate0(TaskDelegate0 const&) = delete;
 
         ////////////////////////////////////
-        ThreadEntryPoint0(ThreadEntryPoint0&&) = delete;
+        TaskDelegate0(TaskDelegate0&&) = delete;
 
         ////////////////////////////////////
-        ThreadEntryPoint0& operator=(ThreadEntryPoint0 const&) = delete;
+        TaskDelegate0& operator=(TaskDelegate0 const&) = delete;
 
         ////////////////////////////////////
-        ThreadEntryPoint0& operator=(ThreadEntryPoint0&&) = delete;
+        TaskDelegate0& operator=(TaskDelegate0&&) = delete;
 
         //////////////////////////////////////////
-        virtual S32 run() MAZE_OVERRIDE;
+        virtual S32 run() MAZE_OVERRIDE
+        {
+            return m_delegate();
+        }
 
     protected:
         Delegate<S32> m_delegate;
@@ -104,17 +112,21 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class ThreadEntryPoint1
+    // Class TaskDelegate1
     //
     //////////////////////////////////////////
     template <typename TArg0>
-    class ThreadEntryPoint1
-        : public ThreadEntryPoint
+    class TaskDelegate1
+        : public TaskDelegate
     {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_AND_IMPLEMENT_MEMORY_ALLOCATION_DEFAULT(TaskDelegate1);
+
     public:
 
         //////////////////////////////////////////
-        ThreadEntryPoint1(
+        TaskDelegate1(
             Delegate<S32, TArg0> const& _delegate,
             TArg0 _arg0)
             : m_delegate(_delegate)
@@ -122,16 +134,16 @@ namespace Maze
         {}
 
         ////////////////////////////////////
-        ThreadEntryPoint1(ThreadEntryPoint1 const&) = delete;
+        TaskDelegate1(TaskDelegate1 const&) = delete;
 
         ////////////////////////////////////
-        ThreadEntryPoint1(ThreadEntryPoint1&&) = delete;
+        TaskDelegate1(TaskDelegate1&&) = delete;
 
         ////////////////////////////////////
-        ThreadEntryPoint1& operator=(ThreadEntryPoint1 const&) = delete;
+        TaskDelegate1& operator=(TaskDelegate1 const&) = delete;
 
         ////////////////////////////////////
-        ThreadEntryPoint1& operator=(ThreadEntryPoint1&&) = delete;
+        TaskDelegate1& operator=(TaskDelegate1&&) = delete;
 
         //////////////////////////////////////////
         virtual S32 run() MAZE_OVERRIDE
@@ -146,17 +158,21 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class ThreadEntryPoint2
+    // Class TaskDelegate2
     //
     //////////////////////////////////////////
     template <typename TArg0, typename TArg1>
-    class ThreadEntryPoint2
-        : public ThreadEntryPoint
+    class TaskDelegate2
+        : public TaskDelegate
     {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_AND_IMPLEMENT_MEMORY_ALLOCATION_DEFAULT(TaskDelegate2);
+
     public:
 
         //////////////////////////////////////////
-        ThreadEntryPoint2(
+        TaskDelegate2(
             Delegate<S32, TArg0, TArg1> const& _delegate,
             TArg0 _arg0,
             TArg1 _arg1)
@@ -166,16 +182,16 @@ namespace Maze
         {}
 
         ////////////////////////////////////
-        ThreadEntryPoint2(ThreadEntryPoint2 const&) = delete;
+        TaskDelegate2(TaskDelegate2 const&) = delete;
 
         ////////////////////////////////////
-        ThreadEntryPoint2(ThreadEntryPoint2&&) = delete;
+        TaskDelegate2(TaskDelegate2&&) = delete;
 
         ////////////////////////////////////
-        ThreadEntryPoint2& operator=(ThreadEntryPoint2 const&) = delete;
+        TaskDelegate2& operator=(TaskDelegate2 const&) = delete;
 
         ////////////////////////////////////
-        ThreadEntryPoint2& operator=(ThreadEntryPoint2&&) = delete;
+        TaskDelegate2& operator=(TaskDelegate2&&) = delete;
 
         //////////////////////////////////////////
         virtual S32 run() MAZE_OVERRIDE
@@ -194,5 +210,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeThreadEntryPoint_hpp_
+#endif // _MazeTaskDelegate_hpp_
 //////////////////////////////////////////

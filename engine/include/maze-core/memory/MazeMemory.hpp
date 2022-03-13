@@ -272,24 +272,24 @@ namespace Maze
 
     //////////////////////////////////////////
     #define MAZE_DECLARE_AND_IMPLEMENT_MEMORY_ALLOCATION_DEFAULT(T)                              \
-        static void* operator new(Maze::Size _s)                                                 \
+        inline static void* operator new(Maze::Size _s)                                          \
         {                                                                                        \
             return ::operator new(_s);                                                           \
         }                                                                                        \
-        static void* operator new(Maze::Size _s, void* _m)                                       \
+        inline static void* operator new(Maze::Size _s, void* _m)                                \
         {                                                                                        \
             return _m;                                                                           \
         }                                                                                        \
-        static void* operator new(Maze::Size _s, std::nothrow_t const& _t)    throw()            \
+        inline static void* operator new(Maze::Size _s, std::nothrow_t const& _t)    throw()     \
         {                                                                                        \
             MAZE_TODO;                                                                           \
             return nullptr;                                                                      \
         }                                                                                        \
-        static void operator delete(void* _m, Maze::Size _s)                                     \
+        inline static void operator delete(void* _m, Maze::Size _s)                              \
         {                                                                                        \
             ::operator delete(_m);                                                               \
         }                                                                                        \
-        static void operator delete(void*, void*)                                                \
+        inline static void operator delete(void*, void*)                                         \
         {                                                                                        \
         }    
 

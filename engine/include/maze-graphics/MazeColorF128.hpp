@@ -56,10 +56,12 @@ namespace Maze
     public:
         static const ColorF128 c_zero;
         static const ColorF128 c_white;
+        static const ColorF128 c_whiteSoft;
         static const ColorF128 c_gray;
         static const ColorF128 c_lightGray;
         static const ColorF128 c_darkGray;
         static const ColorF128 c_black;
+        static const ColorF128 c_blackSoft;
         static const ColorF128 c_red;
         static const ColorF128 c_green;
         static const ColorF128 c_blue;
@@ -240,7 +242,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        static ColorF128 FromString(String const& _colorString, S8 _separator = ',');
+        static ColorF128 FromString(String const& _colorString, S8 _separator = ';');
 
         //////////////////////////////////////////
         static ColorF128 FromStringHex(String const& _colorString);
@@ -249,11 +251,11 @@ namespace Maze
         String toStringHex() const;
 
         //////////////////////////////////////////
-        void setString(String const& _colorString, S8 _separator = ',');
+        void setString(String const& _colorString, S8 _separator = ';');
 
 
         //////////////////////////////////////////
-        inline String toString(S8 separator = ',') const
+        inline String toString(S8 separator = ';') const
         {
             String result;
             result += StringHelper::F32ToString(r);
@@ -264,7 +266,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline String toStringTag(S8 separator = ',') const
+        inline String toStringTag(S8 separator = ';') const
         {
             String result = "#{";
             result += StringHelper::F32ToString(r);

@@ -43,6 +43,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(Engine);
     MAZE_USING_SHARED_PTR(SystemManager);
+    MAZE_USING_SHARED_PTR(TaskManager);
     MAZE_USING_SHARED_PTR(EventManager);
     MAZE_USING_SHARED_PTR(InputManager);
     MAZE_USING_SHARED_PTR(WindowManager);
@@ -99,6 +100,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline SystemManagerPtr const& getSystemManager() const { return m_systemManager; }
+
+        //////////////////////////////////////////
+        inline TaskManagerPtr const& getTaskManager() const { return m_taskManager; }
 
         //////////////////////////////////////////
         inline EventManagerPtr const& getEventManager() const { return m_eventManager; }
@@ -201,6 +205,7 @@ namespace Maze
         PhysicsWorld2DConfig m_physicsWorld2DConfig;
         
         SystemManagerPtr m_systemManager;
+        TaskManagerPtr m_taskManager;
         EventManagerPtr m_eventManager;
         InputManagerPtr m_inputManager;
         WindowManagerPtr m_windowManager;
