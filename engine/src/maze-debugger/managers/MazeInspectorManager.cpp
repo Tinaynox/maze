@@ -86,7 +86,6 @@ namespace Maze
             MaterialPtr,
             PropertyDrawerMaterial>;
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerMaterial, MetaPropertyDrawer);
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK_TEMPLATE(MetaPropertyDrawerMaterial);
 
 
     //////////////////////////////////////////
@@ -95,7 +94,6 @@ namespace Maze
             RenderMeshPtr,
             PropertyDrawerRenderMesh>;
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerRenderMesh, MetaPropertyDrawer);
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK_TEMPLATE(MetaPropertyDrawerRenderMesh);
 
 
     //////////////////////////////////////////
@@ -104,7 +102,6 @@ namespace Maze
         F32,
         PropertyDrawerRadians>;
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerF32Radians, MetaPropertyDrawer);
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK_TEMPLATE(MetaPropertyDrawerF32Radians);
 
 
     //////////////////////////////////////////
@@ -113,7 +110,6 @@ namespace Maze
         Vec2DS,
         PropertyDrawerVec2DU>;
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerVec2DS, MetaPropertyDrawer);
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK_TEMPLATE(MetaPropertyDrawerVec2DS);
 
 
     //////////////////////////////////////////
@@ -122,7 +118,6 @@ namespace Maze
         Vec2DU,
         PropertyDrawerVec2DU>;
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerVec2DU, MetaPropertyDrawer);
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK_TEMPLATE(MetaPropertyDrawerVec2DU);
 
 
     //////////////////////////////////////////
@@ -131,7 +126,6 @@ namespace Maze
         Texture2DPtr,
         PropertyDrawerTexture2D>;
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerTexture2D, MetaPropertyDrawer);
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK_TEMPLATE(MetaPropertyDrawerTexture2D);
 
 
     //////////////////////////////////////////

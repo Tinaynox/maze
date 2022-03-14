@@ -63,7 +63,7 @@ namespace Maze
         MAZE_DECLARE_METACLASS_WITH_PARENT(MetaPropertyDrawerDefault, MetaPropertyDrawer);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(MetaPropertyDrawerDefault);
+        MAZE_DECLARE_AND_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(MetaPropertyDrawerDefault);
 
     public:
 
