@@ -31,6 +31,7 @@
 #include "maze-sound-system-openal/MazeSoundSourceOpenAL.hpp"
 #include "maze-sound-system-openal/MazeFunctionsOpenAL.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
+#include "maze-sound-system-openal/MazeContextOpenAL.hpp"
 
 #if MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS
 #   include "maze-sound-system-openal/win/MazeContextOpenALWin.hpp"

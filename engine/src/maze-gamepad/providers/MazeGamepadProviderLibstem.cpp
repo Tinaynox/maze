@@ -24,6 +24,10 @@
 
 
 //////////////////////////////////////////
+#if (MAZE_LIBSTEM_GAMEPAD_ENABLED)
+
+
+//////////////////////////////////////////
 #include "MazeGamepadHeader.hpp"
 #include "maze-gamepad/providers/MazeGamepadProviderLibstem.hpp"
 #include "maze-gamepad/gamepad/MazeGamepad.hpp"
@@ -186,4 +190,8 @@ namespace Maze
     }
     
 } // namespace Maze
+//////////////////////////////////////////
+
+
+#endif // MAZE_LIBSTEM_GAMEPAD_ENABLED
 //////////////////////////////////////////

@@ -128,7 +128,7 @@ R"(
         
         // Specular
         float NdotH = dot(normalWS, H);    
-        float specular = pow(clamp(NdotH, 0.0, 1.0), max(pow(shininess, 3) * 512.0, 1.0));
+        float specular = pow(clamp(NdotH, 0.0, 1.0), max(pow(shininess, 3.0) * 512.0, 1.0));
 		vec3 specularColor = u_specularColor.rgb * clamp(specular, 0.0, 1.0);    
     
         return 

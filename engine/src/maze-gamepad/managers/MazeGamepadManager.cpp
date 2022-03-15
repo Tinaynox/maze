@@ -31,6 +31,7 @@
 #include "maze-core/managers/MazeSystemManager.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-gamepad/gamepad/MazeGamepad.hpp"
+#include "maze-gamepad/providers/MazeGamepadProvider.hpp"
 
 #if (MAZE_LIBSTEM_GAMEPAD_ENABLED)
 #   include "maze-gamepad/providers/MazeGamepadProviderLibstem.hpp"
