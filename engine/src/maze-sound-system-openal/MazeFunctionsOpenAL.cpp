@@ -139,7 +139,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_SOUND_SYSTEM_OPENAL_API bool AssignFunctionsOpenAL(ContextOpenALPtr const& _soundContext)
     {
-#if MAZE_PLATFORM == MAZE_PLATFORM_OSX
+#if (MAZE_PLATFORM == MAZE_PLATFORM_OSX) || (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN)
         mzalEnable = alEnable;
         mzalDisable = alDisable;
         mzalIsEnabled = alIsEnabled;

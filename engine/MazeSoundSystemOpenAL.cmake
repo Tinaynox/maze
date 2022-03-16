@@ -34,8 +34,7 @@ target_link_libraries(
     maze-sound-system-openal
     PUBLIC maze-sound)
 
-if((MAZE_TARGET_PLATFORM_IS_WINDOWS) OR
-   (MAZE_TARGET_PLATFORM_IS_EMSCRIPTEN ))
+if(MAZE_TARGET_PLATFORM_IS_WINDOWS)
     
     target_include_directories(
         maze-sound-system-openal
@@ -54,6 +53,10 @@ if((MAZE_TARGET_PLATFORM_IS_WINDOWS) OR
             PUBLIC "${PROJECT_SOURCE_DIR}/third-party/OpenAL 1.1 SDK/libs/Win32/OpenAL32.lib")
     
     endif()
+    
+elseif(MAZE_TARGET_PLATFORM_IS_EMSCRIPTEN)
+
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lopenal")
     
 elseif((MAZE_TARGET_PLATFORM_IS_ANDROID))
 

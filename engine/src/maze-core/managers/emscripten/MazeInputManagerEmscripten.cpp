@@ -92,6 +92,7 @@ namespace Maze
                 event.buttonId = _event->button;
                 event.x = _event->clientX;
                 event.y = windowEmscripten->getClientSize().y - _event->clientY;
+                event.window = windowEmscripten.get();
                 generateInputEvent(event);
                 break;
             }
@@ -102,6 +103,7 @@ namespace Maze
                 event.buttonId = _event->button;
                 event.x = _event->clientX;
                 event.y = windowEmscripten->getClientSize().y - _event->clientY;
+                event.window = windowEmscripten.get();
                 generateInputEvent(event);
                 break;
             }            
@@ -112,6 +114,7 @@ namespace Maze
                 event.buttonId = _event->button;
                 event.x = _event->clientX;
                 event.y = windowEmscripten->getClientSize().y - _event->clientY;
+                event.window = windowEmscripten.get();
                 generateInputEvent(event);
                 break;
             }        
@@ -121,6 +124,7 @@ namespace Maze
                 event.type = InputEventMouseType::Move;
                 event.x = _event->clientX;
                 event.y = windowEmscripten->getClientSize().y - _event->clientY;
+                event.window = windowEmscripten.get();
                 generateInputEvent(event);
                 
                 break;

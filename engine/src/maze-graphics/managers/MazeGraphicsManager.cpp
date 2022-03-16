@@ -72,6 +72,9 @@ namespace Maze
     //////////////////////////////////////////
     GraphicsManager::~GraphicsManager()
     {
+        m_renderSystems.clear();
+        m_defaultRenderSystem.reset();
+
         s_instance = nullptr;
     }
 

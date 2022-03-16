@@ -61,7 +61,8 @@ namespace Maze
         if (m_renderSystemRaw)
         {
             m_renderSystemRaw->eventSystemInited.unsubscribe(this);
-            m_renderSystemRaw->getShaderSystem()->eventSystemInited.unsubscribe(this);
+            if (m_renderSystemRaw->getShaderSystem())
+                m_renderSystemRaw->getShaderSystem()->eventSystemInited.unsubscribe(this);
         }
     }
 

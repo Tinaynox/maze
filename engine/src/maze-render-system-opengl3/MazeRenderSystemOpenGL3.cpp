@@ -99,10 +99,20 @@ namespace Maze
         if (!RenderSystemOpenGL::init(_config))
             return false;
 
+#if (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN)
+        if (m_config.useDummyContext)
+        {
+            MAZE_WARNING("DummyContext is not supported on the current platform.");
+            m_config.useDummyContext = false;
+        }
+#endif
+
         if (m_config.useDummyContext)
         {
             Debug::Log("Creating Dummy Context...");
             m_dummyContext = ContextOpenGL::Create(cast<RenderSystemOpenGL>());
+            MAZE_ERROR_RETURN_VALUE_IF(!m_dummyContext, false, "Dummy context cannot is not created!");
+
             m_dummyContext->setName("Dummy Context");
 
             assignGLFunctions(m_dummyContext);
@@ -114,10 +124,7 @@ namespace Maze
             MAZE_GL_CALL(Debug::Log("GL_SHADING_LANGUAGE_VERSION: %s", (CString)mzglGetString(MAZE_GL_SHADING_LANGUAGE_VERSION)));
 
             m_dummyContext->getExtensions()->loadGLExtensions();
-
-#if (MAZE_PLATFORM != MAZE_PLATFORM_EMSCRIPTEN)
             m_dummyContext->getExtensions()->printGLExtensions();
-#endif
 
             m_dummyContext->flushConfig();
 

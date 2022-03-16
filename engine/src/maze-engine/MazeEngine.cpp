@@ -220,7 +220,12 @@ namespace Maze
     void Engine::notifyApplicationInit()
     {
         UpdateManager::GetInstancePtr()->addUpdatable(this);
-        initMainManagers();
+        if (!initMainManagers())
+        {
+            shutdown();
+            return;
+        }
+
         eventInit();
     }
 

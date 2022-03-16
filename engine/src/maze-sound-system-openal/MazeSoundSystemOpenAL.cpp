@@ -37,6 +37,8 @@
 #   include "maze-sound-system-openal/win/MazeContextOpenALWin.hpp"
 #elif MAZE_PLATFORM == MAZE_PLATFORM_OSX
 #   include "maze-sound-system-openal/osx/MazeContextOpenALOSX.hpp"
+#elif MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN
+#   include "maze-sound-system-openal/emscripten/MazeContextOpenALEmscripten.hpp"
 #endif
 
 
@@ -114,6 +116,8 @@ namespace Maze
         return ContextOpenALWin::Create(cast<SoundSystemOpenAL>(), _deviceIndex);
 #elif MAZE_PLATFORM == MAZE_PLATFORM_OSX
         return ContextOpenALOSX::Create(cast<SoundSystemOpenAL>(), _deviceIndex);
+#elif MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN
+        return ContextOpenALEmscripten::Create(cast<SoundSystemOpenAL>(), _deviceIndex);
 #else
         MAZE_NOT_IMPLEMENTED;
         return ContextOpenALPtr();
@@ -143,9 +147,11 @@ namespace Maze
     //////////////////////////////////////////
     bool SoundSystemOpenAL::setupSystem()
     {
+#if (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN)
         m_dummyContext = createContext();
         if (!m_dummyContext)
             return false;
+#endif
 
         assignFunctionsOpenAL(m_dummyContext);
 

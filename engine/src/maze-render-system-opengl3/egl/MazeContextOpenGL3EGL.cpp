@@ -346,7 +346,7 @@ namespace Maze
         return true;
 
 #else
-        // Unsupported
+        MAZE_ERROR("PixelBufferContext is not supported on the current platform!");
         return false;
 
 #endif

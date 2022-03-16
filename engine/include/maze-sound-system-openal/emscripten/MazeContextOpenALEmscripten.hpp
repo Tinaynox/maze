@@ -8,7 +8,7 @@
 //
 // Permission is granted to anyone to use this software for any purpose,
 // including commercial applications, and to alter it and redistribute it freely,
-// subject to the following restrictions:
+// subject to the folloEmscripteng restrictions:
 //
 // 1. The origin of this software must not be misrepresented;
 //    you must not claim that you wrote the original software.
@@ -25,99 +25,73 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeObservableValue_hpp_))
-#define _MazeObservableValue_hpp_
+#if (!defined(_MazeContextOpenALEmscripten_hpp_))
+#define _MazeContextOpenALEmscripten_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-core/MazeCoreHeader.hpp"
-#include "maze-core/MazeStdTypes.hpp"
-#include "maze-core/MazeBaseTypes.hpp"
-#include "maze-core/MazeTypes.hpp"
-#include "maze-core/utils/MazeMultiDelegate.hpp"
+#include "maze-sound-system-openal/MazeSoundSystemOpenALHeader.hpp"
+#include "maze-sound-system-openal/MazeContextOpenAL.hpp"
+#include "maze-sound-system-openal/MazeHeaderOpenAL.hpp"
+#include "maze-sound/MazeSoundSystem.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
-    
     //////////////////////////////////////////
-    template<typename TValue>
-    class ObservableValue
+    MAZE_USING_SHARED_PTR(ContextOpenALEmscripten);
+
+
+    //////////////////////////////////////////
+    // Class ContextOpenALEmscripten
+    //
+    //////////////////////////////////////////
+    class MAZE_SOUND_SYSTEM_OPENAL_API ContextOpenALEmscripten
+        : public ContextOpenAL
     {
     public:
 
         //////////////////////////////////////////
-        using ValueChangedDelegate = MultiDelegate<TValue const&>;
+        MAZE_DECLARE_METACLASS_WITH_PARENT(ContextOpenALEmscripten, ContextOpenAL);
 
     public:
 
         //////////////////////////////////////////
-        ObservableValue()
-        {}
+        virtual ~ContextOpenALEmscripten();
 
         //////////////////////////////////////////
-        ObservableValue(TValue const& _value)
-            : m_value(_value)
-        {}
+        static ContextOpenALEmscriptenPtr Create(
+            SoundSystemOpenALPtr const& _soundSystem,
+            S32 _deviceIndex = -1);
+
 
         //////////////////////////////////////////
-        template <typename UValue>
-        ObservableValue(UValue const& _value)
-            : m_value(_value)
-        {}
+        virtual ALFunctionPointer getFunction(CString _name) MAZE_OVERRIDE;
+
+    protected:
 
         //////////////////////////////////////////
-        ObservableValue(TValue&& _value)
-            : m_value(std::move(_value))
-        {}
+        ContextOpenALEmscripten();
 
         //////////////////////////////////////////
-        inline ObservableValue<TValue>& operator=(TValue const& _value)
-        {
-            setValue(_value);
-            return *this;
-        }
+        virtual bool init(
+            SoundSystemOpenALPtr const& _soundSystem,
+            S32 _deviceIndex = -1) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        inline operator TValue() const { return m_value; }
+        void setup();
+
 
         //////////////////////////////////////////
-        inline TValue const& getValue() const { return m_value; }
+        void notifyFunctionsAssigned();
 
-        //////////////////////////////////////////
-        inline void setValue(TValue const& _value)
-        {
-            if (m_value == _value)
-                return;
-
-            setValueWithoutNotify(_value);
-            eventValueChanged(_value);
-        }
-
-        //////////////////////////////////////////
-        inline void setValueWithoutNotify(TValue const& _value)
-        {
-            m_value = _value;
-        }
-
-        //////////////////////////////////////////
-        inline void removeAllListeners()
-        {
-            eventValueChanged.clear();
-        }
-
-    public:
-        ValueChangedDelegate eventValueChanged;
-
-    private:
-        TValue m_value;
+    protected:
     };
 
-    
 } // namespace Maze
 //////////////////////////////////////////
 
 
+#endif // _MazeContextOpenALEmscripten_hpp_
 //////////////////////////////////////////
-#endif // _MazeObservableValue_hpp_

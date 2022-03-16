@@ -278,10 +278,13 @@ namespace Maze
     {
         ContextOpenGLPtr context = createContextImpl(_window, _config);
 
-        if (!m_defaultRenderContext)
-            setDefaultRenderContext(context);
+        if (context)
+        {
+            if (!m_defaultRenderContext)
+                setDefaultRenderContext(context);
 
-        context->setupDefaultStates();
+            context->setupDefaultStates();
+        }
         
         return context;
     }
@@ -293,7 +296,8 @@ namespace Maze
     {
         ContextOpenGLPtr context = createContextImpl(_width, _height, _config);
 
-        context->setupDefaultStates();
+        if (context)
+            context->setupDefaultStates();
 
         return context;
     }

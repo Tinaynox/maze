@@ -77,7 +77,7 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init(
             SoundSystemOpenALPtr const& _soundSystem,
-            S32 _deviceIndex = -1);
+            S32 _deviceIndex = -1) MAZE_OVERRIDE;
 
 
         //////////////////////////////////////////

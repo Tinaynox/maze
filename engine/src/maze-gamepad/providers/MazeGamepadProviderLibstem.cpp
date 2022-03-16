@@ -24,11 +24,12 @@
 
 
 //////////////////////////////////////////
-#if (MAZE_LIBSTEM_GAMEPAD_ENABLED)
-
+#include "MazeGamepadHeader.hpp"
 
 //////////////////////////////////////////
-#include "MazeGamepadHeader.hpp"
+#if (MAZE_LIBSTEM_GAMEPAD_ENABLED)
+
+//////////////////////////////////////////
 #include "maze-gamepad/providers/MazeGamepadProviderLibstem.hpp"
 #include "maze-gamepad/gamepad/MazeGamepad.hpp"
 #include "maze-gamepad/managers/MazeGamepadManager.hpp"

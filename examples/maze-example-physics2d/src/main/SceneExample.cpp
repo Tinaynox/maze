@@ -86,6 +86,12 @@ namespace Maze
     {
         _sceneManager->loadScene<SceneExample>();
     }
+    
+    //////////////////////////////////////////
+    bool IsLoadAllAssets()
+    {
+        return false;
+    }
 
 
     //////////////////////////////////////////
