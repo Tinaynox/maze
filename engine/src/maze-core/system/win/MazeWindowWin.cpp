@@ -257,6 +257,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline void CaptureMouseInput(HWND _hwnd)
+    {
+        ReleaseCapture();
+        SetCapture(_hwnd);
+    }
+
+    //////////////////////////////////////////
+    inline void ReleaseMouseInput(HWND _hwnd)
+    {
+        HWND captureHWND = GetCapture();
+        if (captureHWND == _hwnd)
+            ReleaseCapture();
+    }
+
+    
+    //////////////////////////////////////////
     bool WindowWin::processEvent(UINT _message, WPARAM _wParam, LPARAM _lParam)
     {
         if (m_handle == 0)
@@ -306,6 +322,8 @@ namespace Maze
             
             case WM_LBUTTONDOWN:
             {
+                CaptureMouseInput((HWND)m_handle);
+
                 InputEventMouseData event;
                 event.type = InputEventMouseType::ButtonDown;
                 event.buttonId = 0;
@@ -330,6 +348,8 @@ namespace Maze
 
             case WM_LBUTTONUP:
             {
+                ReleaseMouseInput((HWND)m_handle);
+
                 InputEventMouseData event;
                 event.type = InputEventMouseType::ButtonUp;
                 event.buttonId = 0;
@@ -342,6 +362,8 @@ namespace Maze
 
             case WM_RBUTTONDOWN:
             {
+                CaptureMouseInput((HWND)m_handle);
+
                 InputEventMouseData event;
                 event.type = InputEventMouseType::ButtonDown;
                 event.buttonId = 1;
@@ -366,6 +388,8 @@ namespace Maze
 
             case WM_RBUTTONUP:
             {
+                ReleaseMouseInput((HWND)m_handle);
+
                 InputEventMouseData event;
                 event.type = InputEventMouseType::ButtonUp;
                 event.buttonId = 1;
@@ -378,6 +402,8 @@ namespace Maze
 
             case WM_MBUTTONDOWN:
             {
+                CaptureMouseInput((HWND)m_handle);
+
                 InputEventMouseData event;
                 event.type = InputEventMouseType::ButtonDown;
                 event.buttonId = 2;
@@ -403,6 +429,8 @@ namespace Maze
 
             case WM_MBUTTONUP:
             {
+                ReleaseMouseInput((HWND)m_handle);
+
                 InputEventMouseData event;
                 event.type = InputEventMouseType::ButtonUp;
                 event.buttonId = 2;
@@ -416,6 +444,8 @@ namespace Maze
 #if (_WIN32_WINNT >= 0x0500)
             case WM_XBUTTONDOWN:
             {
+                CaptureMouseInput((HWND)m_handle);
+
                 InputEventMouseData event;
                 event.type = InputEventMouseType::ButtonDown;
                 event.buttonId = GET_XBUTTON_WPARAM(_wParam) + 2;
@@ -441,6 +471,8 @@ namespace Maze
 
             case WM_XBUTTONUP:
             {
+                ReleaseMouseInput((HWND)m_handle);
+
                 InputEventMouseData event;
                 event.type = InputEventMouseType::ButtonUp;
                 event.buttonId = GET_XBUTTON_WPARAM(_wParam) + 2;
