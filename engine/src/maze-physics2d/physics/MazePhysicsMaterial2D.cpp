@@ -147,7 +147,7 @@ namespace Maze
     void PhysicsMaterial2D::loadFromAssetFile(AssetFilePtr const& _assetFile)
     {
         tinyxml2::XMLDocument doc;
-        MAZE_LOG("Loading %s...", _assetFile->getFileName().c_str());
+        MAZE_LOG("Loading PhysicsMaterial2D: %s...", _assetFile->getFileName().c_str());
         _assetFile->readToXMLDocument(doc);
         loadFromXMLDocument(doc);
     }

@@ -150,7 +150,7 @@ namespace Maze
         
         MeshPtr mesh = Mesh::Create(m_renderSystem);
 
-        MAZE_LOG("Loading %s...", _assetFile->getFileName().c_str());
+        MAZE_LOG("Loading RenderMesh: %s...", _assetFile->getFileName().c_str());
         LoadOBJ(_assetFile, mesh);
 
         loadFromMesh(mesh, _renderTarget);
@@ -224,6 +224,11 @@ namespace Maze
     //////////////////////////////////////////
     RenderMeshPtr RenderMesh::FromString(String const& _string)
     {
+        // #TODO: REWORK this function!
+
+        if (_string.empty())
+            return nullptr;
+
         return GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getRenderMeshManager()->getRenderMesh(_string);
     }
     

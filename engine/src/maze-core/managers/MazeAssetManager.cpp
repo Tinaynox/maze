@@ -152,6 +152,8 @@ namespace Maze
     {
         static AssetFilePtr nullPtr;
 
+        MAZE_ERROR_RETURN_VALUE_IF(strcmp(_fileName.str, "") == 0, nullPtr, "Empty file name!");
+
         StringKeyMap<AssetFilePtr>::iterator it = m_assetFilesByFileName.find(_fileName);
         if (it == m_assetFilesByFileName.end())
             return nullPtr;
