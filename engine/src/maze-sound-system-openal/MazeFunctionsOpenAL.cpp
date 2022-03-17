@@ -209,6 +209,7 @@ namespace Maze
         mzalcGetProcAddress = alcGetProcAddress;
         mzalcGetEnumValue = alcGetEnumValue;
 #else
+        MAZE_ERROR_RETURN_VALUE_IF(!_soundContext, false, "Sound Context is null!");
         AssignOpenALFunction(_soundContext, mzalEnable, "alEnable");
         AssignOpenALFunction(_soundContext, mzalDisable, "alDisable");
         AssignOpenALFunction(_soundContext, mzalIsEnabled, "alIsEnabled");

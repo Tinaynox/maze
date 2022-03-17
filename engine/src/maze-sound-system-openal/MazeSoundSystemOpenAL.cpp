@@ -147,7 +147,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SoundSystemOpenAL::setupSystem()
     {
-#if (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN)
+#if (MAZE_PLATFORM != MAZE_PLATFORM_EMSCRIPTEN)
         m_dummyContext = createContext();
         if (!m_dummyContext)
             return false;
