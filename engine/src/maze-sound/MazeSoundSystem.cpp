@@ -110,7 +110,7 @@ namespace Maze
     {
         SoundDataPtr soundData;
 
-        Debug::Log("Loading texture pixel sheet: %s...", _assetFile->getFileName().c_str());
+        Debug::Log("Loading sound: %s...", _assetFile->getFileName().c_str());
 
         StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
 
