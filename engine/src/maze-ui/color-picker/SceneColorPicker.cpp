@@ -108,8 +108,11 @@ namespace Maze
     //////////////////////////////////////////
     SceneColorPicker::~SceneColorPicker()
     {
-        ColorPickerManager::GetInstancePtr()->eventColorChanged.unsubscribe(this);
-        ColorPickerManager::GetInstancePtr()->eventColorHDRChanged.unsubscribe(this);
+        if (ColorPickerManager::GetInstancePtr())
+        {
+            ColorPickerManager::GetInstancePtr()->eventColorChanged.unsubscribe(this);
+            ColorPickerManager::GetInstancePtr()->eventColorHDRChanged.unsubscribe(this);
+        }
 
         if (m_hsvRectButton)
         {

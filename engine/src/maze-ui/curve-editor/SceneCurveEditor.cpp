@@ -109,7 +109,8 @@ namespace Maze
     //////////////////////////////////////////
     SceneCurveEditor::~SceneCurveEditor()
     {
-        AnimationCurveManager::GetInstancePtr()->eventCurveChanged.unsubscribe(this);
+        if (AnimationCurveManager::GetInstancePtr())
+            AnimationCurveManager::GetInstancePtr()->eventCurveChanged.unsubscribe(this);
 
         if (m_modeDropdown)
         {

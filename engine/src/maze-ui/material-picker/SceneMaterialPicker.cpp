@@ -104,7 +104,8 @@ namespace Maze
     //////////////////////////////////////////
     SceneMaterialPicker::~SceneMaterialPicker()
     {
-        MaterialPickerManager::GetInstancePtr()->eventMaterialChanged.unsubscribe(this);
+        if (MaterialPickerManager::GetInstancePtr())
+            MaterialPickerManager::GetInstancePtr()->eventMaterialChanged.unsubscribe(this);
 
         clearPreviews();
 

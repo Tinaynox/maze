@@ -1007,8 +1007,13 @@ namespace Maze
             return;
 
         HWND handle = (HWND)m_handle;
-        
+                
+        WindowPtr window = cast<Window>();
+
         processWindowWillClose();
+
+        if (!isOpened())
+            return;
 
         m_handle = 0;
 
@@ -1018,6 +1023,8 @@ namespace Maze
             ChangeDisplaySettings(NULL, 0);
 
         processWindowClosed();
+
+        window.reset();
     }
 
     //////////////////////////////////////////

@@ -106,7 +106,8 @@ namespace Maze
     //////////////////////////////////////////
     SceneRenderMeshPicker::~SceneRenderMeshPicker()
     {
-        RenderMeshPickerManager::GetInstancePtr()->eventRenderMeshChanged.unsubscribe(this);
+        if (RenderMeshPickerManager::GetInstancePtr())
+            RenderMeshPickerManager::GetInstancePtr()->eventRenderMeshChanged.unsubscribe(this);
 
         clearPreviews();
 

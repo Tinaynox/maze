@@ -105,7 +105,8 @@ namespace Maze
     //////////////////////////////////////////
     SceneTexturePicker::~SceneTexturePicker()
     {
-        TexturePickerManager::GetInstancePtr()->eventTextureChanged.unsubscribe(this);
+        if (TexturePickerManager::GetInstancePtr())
+            TexturePickerManager::GetInstancePtr()->eventTextureChanged.unsubscribe(this);
 
         clearPreviews();
 

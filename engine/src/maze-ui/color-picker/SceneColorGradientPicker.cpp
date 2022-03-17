@@ -101,7 +101,8 @@ namespace Maze
     //////////////////////////////////////////
     SceneColorGradientPicker::~SceneColorGradientPicker()
     {
-        ColorGradientPickerManager::GetInstancePtr()->eventGradientChanged.unsubscribe(this);
+        if (ColorGradientPickerManager::GetInstancePtr())
+            ColorGradientPickerManager::GetInstancePtr()->eventGradientChanged.unsubscribe(this);
 
         while (!m_alphaTags.empty())
         {
