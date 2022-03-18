@@ -30,6 +30,7 @@
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/managers/MazeSystemFontManager.hpp"
 
 
 //////////////////////////////////////////
@@ -100,28 +101,30 @@ namespace Maze
                     Vec2DF::c_zero);
 
                 viewData.label0 = SpriteHelper::CreateSystemText(
-                    "Text",
+                    "PROFILER",
                     8,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Top,
                     statsSize,
-                    Vec2DF(2.0f, -2.0f),
+                    Vec2DF(2.0f, -1.0f),
                     viewData.background->getTransform(),
                     this,
                     Vec2DF(0.0f, 1.0f),
                     Vec2DF(0.0f, 1.0f));
+                viewData.label0->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefaultOutlined());
 
                 viewData.label1 = SpriteHelper::CreateSystemText(
-                    "Text",
+                    "",
                     8,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Bottom,
                     statsSize,
-                    Vec2DF(2.0f, 2.0f),
+                    Vec2DF(2.0f, 1.0f),
                     viewData.background->getTransform(),
                     this,
                     Vec2DF(0.0f, 0.0f),
                     Vec2DF(0.0f, 0.0f));
+                viewData.label1->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefaultOutlined());
             }
         }
 
