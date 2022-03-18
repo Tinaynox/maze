@@ -174,6 +174,8 @@ namespace Maze
         MAZE_ERROR_RETURN_IF(it == m_renderSystems.end(), "RenderSystem %s is not in RenderSystems list!", _renderSystem->getName().c_str());
 
         m_defaultRenderSystem = _renderSystem;
+
+        eventDefaultRenderSystemChanged(m_defaultRenderSystem);
     }
 
 } // namespace Maze

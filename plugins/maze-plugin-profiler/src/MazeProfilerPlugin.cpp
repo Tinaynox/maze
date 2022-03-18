@@ -27,6 +27,7 @@
 #include "MazeProfilerHeader.hpp"
 #include "MazeProfilerPlugin.hpp"
 #include "maze-core/managers/MazePluginManager.hpp"
+#include "maze-plugin-profiler/MazeProfilerService.hpp"
 
 
 
@@ -109,13 +110,13 @@ namespace Maze
     //////////////////////////////////////////
     void ProfilerPlugin::install()
     {
-        MAZE_NOT_IMPLEMENTED;
+        ProfilerService::GetInstancePtr()->initialize();
     }
 
     //////////////////////////////////////////
     void ProfilerPlugin::uninstall()
     {
-        MAZE_NOT_IMPLEMENTED;
+        ProfilerService::GetInstancePtr()->shutdown();
     }
 
 } // namespace Maze

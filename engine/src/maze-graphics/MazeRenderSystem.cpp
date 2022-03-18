@@ -83,6 +83,7 @@ namespace Maze
     bool RenderSystem::processRenderWindowCreated(RenderWindowPtr const& _renderWindow)
     {
         m_renderWindows.insert(_renderWindow.get());
+        eventRenderWindowsChanged();
         return true;
     }
 
@@ -90,6 +91,7 @@ namespace Maze
     bool RenderSystem::processRenderWindowDestroyed(RenderWindow* _renderWindow)
     {
         m_renderWindows.erase(_renderWindow);
+        eventRenderWindowsChanged();
         return true;
     }
 

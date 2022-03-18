@@ -230,6 +230,7 @@ namespace Maze
 
     public:
         MultiDelegate<> eventSystemInited;
+        MultiDelegate<> eventRenderWindowsChanged;
 
     protected:
 

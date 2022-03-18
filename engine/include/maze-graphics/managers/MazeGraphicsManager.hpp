@@ -108,6 +108,12 @@ namespace Maze
         //////////////////////////////////////////
         inline GizmosManagerPtr const& getGizmosManager() const { return m_gizmosManager; }
 
+        
+    public:
+
+        //////////////////////////////////////////
+        MultiDelegate<RenderSystemPtr const&> eventDefaultRenderSystemChanged;
+
     protected:
 
         //////////////////////////////////////////

@@ -25,40 +25,25 @@ cmake_minimum_required(VERSION 3.6)
 
 
 ##########################################
-project(maze-plugin-profiler)
+project(maze-android-native-lib)
 
 
 ##########################################
-include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Utils.cmake")
-include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Config.cmake")
-include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Macros.cmake")
+set(EXAMPLE_NAME "maze-plugin-profiler-test")
+set(EXAMPLE_LIB "${EXAMPLE_NAME}")
 
 
 ##########################################
-# add_subdirectory("${MAZE_ENGINE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/MazeEngine")
+get_filename_component(BUILD_ARCH_FOLDER ${CMAKE_CURRENT_BINARY_DIR} NAME)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../../../../examples/${EXAMPLE_NAME}" "${CMAKE_CURRENT_BINARY_DIR}/../../../../../cmake/${BUILD_ARCH_FOLDER}")
+
+set(CMAKE_SHARED_LINKER_FLAGS
+    "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_onCreate")
 
 
-##########################################
-maze_add_module(
-    ${PROJECT_NAME}
-    INCLUDE_DIR "include/maze-plugin-profiler"
-    SRC_DIR "src"
-    FORWARD_HEADER MazeProfilerHeader)
-
-
-##########################################    
-target_include_directories(
-    ${PROJECT_NAME}
-    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
-
-
-##########################################
-set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "MazePlugins")
-
-
-##########################################
-target_link_libraries(
-    ${PROJECT_NAME}
-    PUBLIC maze-core
-    PUBLIC maze-graphics
-    PUBLIC maze-ui)
+add_library(maze-native-lib
+            SHARED
+            src/main/cpp/AndroidMain.cpp)
+        
+target_link_libraries(maze-native-lib
+    ${EXAMPLE_LIB})

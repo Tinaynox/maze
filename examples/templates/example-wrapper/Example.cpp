@@ -89,6 +89,9 @@ namespace Maze
     //////////////////////////////////////////
     extern bool IsLoadAllAssets();
 
+    //////////////////////////////////////////
+    extern bool LoadPlugins();
+
 
     //////////////////////////////////////////
     // Class Example
@@ -249,6 +252,8 @@ namespace Maze
     //////////////////////////////////////////
     bool Example::loadPlugins()
     {
+        if (!LoadPlugins())
+            return false;
 
 #if (MAZE_STATIC)
         Debug::log << "Plugins Static installation..." << endl;
