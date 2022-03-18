@@ -29,6 +29,7 @@
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/settings/MazeSettingsManager.hpp"
+#include "maze-core/utils/MazeProfiler.hpp"
 #include "maze-plugin-profiler/MazeProfilerService.hpp"
 #include "maze-plugin-profiler/settings/MazeProfilerSettings.hpp"
 #include "maze-plugin-profiler/scene/MazeSceneProfiler.hpp"
@@ -187,6 +188,8 @@ namespace Maze
 
         ProfilerSettings* profilerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerSettings>();
         bool active = profilerSettings->getActive();
+
+        Profiler::SetProfiling(active);
 
         if (active)
             loadScene();

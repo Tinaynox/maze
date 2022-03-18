@@ -76,10 +76,10 @@ namespace Maze
     //////////////////////////////////////////
     void Profiler::start()
     {
+        s_activeProfiler = this;
+
         if (!s_currentProfiling)
             return;
-
-        s_activeProfiler = this;
 
         ProfilerSample& cs = m_samples[s_currentSampleIndex];
         ++cs.callCount;
@@ -89,10 +89,10 @@ namespace Maze
     //////////////////////////////////////////
     S32 Profiler::stop()
     {
+        s_activeProfiler = m_parentProfiler;
+
         if (!s_currentProfiling)
             return 0;
-
-        s_activeProfiler = m_parentProfiler;
 
         ProfilerSample& cs = m_samples[s_currentSampleIndex];
         cs.endMS = m_timer.getMilliseconds();

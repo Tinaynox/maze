@@ -43,7 +43,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    #define PROFILER_ENABLED (0)
+    #define PROFILER_ENABLED (1)
 
 
     //////////////////////////////////////////
@@ -104,7 +104,7 @@ namespace Maze
         inline F32 getAverageDuration() const { return m_avg; }
 
         //////////////////////////////////////////
-        inline const ProfilerSample& getSample(Size _i) const
+        inline ProfilerSample const& getSample(Size _i) const
         {
             return m_samples[(s_currentSampleIndex + _i) % c_samplesCount];
         }
@@ -113,7 +113,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        static inline const Vector<Profiler*>& GetAllProfilers()
+        static inline Vector<Profiler*> const& GetAllProfilers()
         {
             return s_allProfilers;
         }

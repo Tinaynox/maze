@@ -92,6 +92,14 @@ namespace Maze
         void setText(String const& _text);
 
         //////////////////////////////////////////
+        inline void setText(CString _text, ...)
+        {
+            String newText;
+            MAZE_FORMAT_VA_STRING(_text, newText);
+            setText(newText);
+        }
+
+        //////////////////////////////////////////
         inline String const& getText() const { return m_text; }
 
 

@@ -33,6 +33,8 @@
 #include "maze-plugin-profiler/MazeProfilerHeader.hpp"
 #include "maze-graphics/ecs/MazeECSRenderScene.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
+#include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 
 
 //////////////////////////////////////////
@@ -50,11 +52,25 @@ namespace Maze
     class MAZE_PLUGIN_PROFILER_API SceneProfiler
         : public ECSRenderScene
         , public MultiDelegateCallbackReceiver
+        , public Updatable
     {
     public:
 
         //////////////////////////////////////////
         MAZE_DECLARE_METACLASS_WITH_PARENT(SceneProfiler, ECSRenderScene);
+
+    public:
+
+        //////////////////////////////////////////
+        // Struct ProfilerViewData
+        //
+        //////////////////////////////////////////
+        struct ProfilerViewData
+        {
+            SpriteRenderer2DPtr background;
+            SystemTextRenderer2DPtr label0;
+            SystemTextRenderer2DPtr label1;
+        };
 
     public:
 
@@ -85,6 +101,8 @@ namespace Maze
 
     protected:
         CanvasPtr m_canvas;
+
+        FastVector<ProfilerViewData> m_views;
     };
 
 

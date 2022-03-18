@@ -26,6 +26,10 @@
 //////////////////////////////////////////
 #include "MazeProfilerHeader.hpp"
 #include "maze-plugin-profiler/scene/MazeSceneProfiler.hpp"
+#include "maze-core/utils/MazeProfiler.hpp"
+#include "maze-core/managers/MazeUpdateManager.hpp"
+#include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -70,7 +74,117 @@ namespace Maze
     //////////////////////////////////////////
     void SceneProfiler::update(F32 _dt)
     {
-        
+        Size currentThreadSampleIndex = Profiler::GetCurrentSampleIndex();
+        Vector<Profiler*> const& profilers = Profiler::GetAllProfilers();
+        Size profilersCount = profilers.size();
+
+        static Vec2DF const lbOffset(10.0f, 10.0f);
+        static Vec2DF const statsSize(120.0f, 50.0f);
+
+        Size prevDataSize = m_views.size();
+        if (prevDataSize < profilersCount)
+        {
+            m_views.resize(profilersCount);
+
+            for (Size i = prevDataSize, in = m_views.size(); i < in; ++i)
+            {
+                ProfilerViewData& viewData = m_views[i];
+                viewData.background = SpriteHelper::CreateSprite(
+                    ColorU32(7, 7, 7, 100),
+                    statsSize,
+                    lbOffset,
+                    nullptr,
+                    m_canvas->getTransform(),
+                    this,
+                    Vec2DF::c_zero,
+                    Vec2DF::c_zero);
+
+                viewData.label0 = SpriteHelper::CreateSystemText(
+                    "Text",
+                    8,
+                    HorizontalAlignment2D::Left,
+                    VerticalAlignment2D::Top,
+                    statsSize,
+                    Vec2DF(2.0f, -2.0f),
+                    viewData.background->getTransform(),
+                    this,
+                    Vec2DF(0.0f, 1.0f),
+                    Vec2DF(0.0f, 1.0f));
+
+                viewData.label1 = SpriteHelper::CreateSystemText(
+                    "Text",
+                    8,
+                    HorizontalAlignment2D::Left,
+                    VerticalAlignment2D::Bottom,
+                    statsSize,
+                    Vec2DF(2.0f, 2.0f),
+                    viewData.background->getTransform(),
+                    this,
+                    Vec2DF(0.0f, 0.0f),
+                    Vec2DF(0.0f, 0.0f));
+            }
+        }
+
+        static ColorU32 const bgrColorDefault(0, 0, 0, 100);
+        static ColorU32 const bgrColorOverload0(135, 50, 0, 100);
+        static ColorU32 const bgrColorOverload1(150, 0, 0, 100);
+
+        static U32 statsPerRow = 6;
+
+        Vec2DF viewportSize = m_canvas->getTransform()->getSize();
+
+        for (Size i = 0, in = profilersCount; i < in; ++i)
+        {
+            Profiler* profilerData = profilers[i];
+            ProfilerViewData& viewData = m_views[i];
+
+            Size column = i % statsPerRow;
+            Size row = i / statsPerRow;
+
+            Vec2DF pos = Vec2DF(
+                lbOffset.x,
+                lbOffset.y) +
+                Vec2DF(
+                    (F32)column * (statsSize.x + lbOffset.x),
+                    (F32)row * (statsSize.y + lbOffset.y));
+            viewData.background->getTransform()->setLocalPosition(pos);
+
+            if (profilerData->getMaxDuration() <= 2)
+                viewData.background->setColor(bgrColorDefault);
+            else
+            if (profilerData->getMaxDuration() <= 16)
+                viewData.background->setColor(bgrColorOverload0);
+            else
+                viewData.background->setColor(bgrColorOverload1);
+
+            Profiler* parent = profilerData->getParentProfiler();
+            if (parent)
+            {
+                viewData.label0->setText(
+                    "%s\n >> %s",
+                    profilerData->getShortName(),
+                    parent->getShortName());
+            }
+            else
+            {
+                viewData.label0->setText(
+                    "%s\n",
+                    profilerData->getShortName());
+            }
+
+            if (profilerData->getMaxDuration() == 0 && false)
+            {
+                viewData.label1->setText("");
+            }
+            else
+            {
+                viewData.label1->setText(
+                    "cls: %u\nmin:%u\nmax:%u",
+                    profilerData->getSample(currentThreadSampleIndex).callCount,
+                    profilerData->getMinDuration(),
+                    profilerData->getMaxDuration());
+            }
+        }
     }
 
     //////////////////////////////////////////
@@ -78,12 +192,11 @@ namespace Maze
     {
         EntityPtr canvasEntity = createEntity();
         m_canvas = canvasEntity->createComponent<Canvas>();
-        m_canvas->setClearColorFlag(true);
-        m_canvas->setClearDepthFlag(true);
-        m_canvas->setClearColor(ColorU32::c_red);
+        m_canvas->setClearColorFlag(false);
+        m_canvas->setClearDepthFlag(false);
         m_canvas->setRenderTarget(m_renderTarget);
         m_canvas->setSortOrder(1500000);
-        m_canvas->setViewport(0.0f, 0.0f, 0.5f, 0.5f);
+        m_canvas->setViewport(0.0f, 0.0f, 1.0f, 1.0f);
 
         updateUI();
     }

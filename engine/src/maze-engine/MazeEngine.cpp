@@ -177,10 +177,6 @@ namespace Maze
             ThreadHelper::SleepCurrentThread(1);
             timeAfterUpdateMS = updateManager->getMilliseconds();
         }
-        
-#if (PROFILER_ENABLED)
-        Maze::Profiler::FinishSample();
-#endif
 
         if (!m_running)
         {
@@ -193,7 +189,19 @@ namespace Maze
     //////////////////////////////////////////
     void Engine::run()
     {
-        while (frame()){};
+        Timer t;
+        bool play = true;
+        do
+        {
+            {
+                MAZE_PROFILER_SCOPED_LOCK(FRAME);
+                play = frame();
+            }
+#if (PROFILER_ENABLED)
+            Maze::Profiler::FinishSample();
+#endif
+        }
+        while (play);
     }
 
     //////////////////////////////////////////
