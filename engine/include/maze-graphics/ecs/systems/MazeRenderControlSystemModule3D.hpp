@@ -54,6 +54,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Transform3D);
     MAZE_USING_SHARED_PTR(TrailRenderer3D);
     MAZE_USING_SHARED_PTR(LineRenderer3D);
+    MAZE_USING_SHARED_PTR(LineRenderer2D);
     MAZE_USING_SHARED_PTR(RenderPass);
     MAZE_USING_SHARED_PTR(VertexArrayObject);
     MAZE_USING_SHARED_PTR(LightingSettings);

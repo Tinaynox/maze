@@ -35,6 +35,7 @@
 #include "maze-core/ecs/MazeECSScene.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/ecs/MazeComponentFactory.hpp"
+#include "maze-core/utils/MazeProfiler.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeContextMenuCanvas2D.hpp"
 #include "maze-debugger/managers/MazeInspectorManager.hpp"
@@ -144,6 +145,8 @@ namespace Maze
     //////////////////////////////////////////
     void EntitiesInspector::update(F32 _dt)
     {
+        MAZE_PROFILER_SCOPED_LOCK(INSPECTOR);
+
         if (m_entitiesPropertiesListDirty)
             buildEntitiesPropertiesList();
 

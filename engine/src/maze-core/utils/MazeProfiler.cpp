@@ -142,8 +142,8 @@ namespace Maze
             profiler->m_max = max;
             profiler->m_avg = (F32)sum / c_samplesCount;
             
-            profiler->m_samples[ s_currentSampleIndex ].callCount = 0;
-            profiler->m_samples[ s_currentSampleIndex ].durationMS = 0;
+            profiler->m_samples[s_currentSampleIndex].callCount = 0;
+            profiler->m_samples[s_currentSampleIndex].durationMS = 0;
         }
 
         if (s_requiredProfiling != s_currentProfiling)

@@ -57,6 +57,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(MeshRenderer);
     MAZE_USING_SHARED_PTR(Transform2D);
     MAZE_USING_SHARED_PTR(ScissorMask2D);
+    MAZE_USING_SHARED_PTR(LineRenderer2D);
             
 
     //////////////////////////////////////////
@@ -186,6 +187,7 @@ namespace Maze
         SharedPtr<GenericInclusiveEntitiesSample<CanvasRenderer>> m_canvasRenderersSample;
         SharedPtr<GenericInclusiveEntitiesSample<SpriteRenderer2D>> m_spriteRenderer2DsSample;
         SharedPtr<GenericInclusiveEntitiesSample<SystemTextRenderer2D>> m_systemTextRenderer2DsSample;
+        SharedPtr<GenericInclusiveEntitiesSample<LineRenderer2D, Transform2D>> m_lineRenderers2DSample;
         SharedPtr<GenericInclusiveEntitiesSample<SizePolicy2D>> m_sizePolicy2D;
 
         Vector<Canvas*> m_sortedCanvases;

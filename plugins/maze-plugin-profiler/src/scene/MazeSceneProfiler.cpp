@@ -76,6 +76,7 @@ namespace Maze
     void SceneProfiler::update(F32 _dt)
     {
         Size currentThreadSampleIndex = Profiler::GetCurrentSampleIndex();
+        currentThreadSampleIndex = currentThreadSampleIndex != 0 ? currentThreadSampleIndex - 1u : Profiler::c_samplesCount - 1u;
         Vector<Profiler*> const& profilers = Profiler::GetAllProfilers();
         Size profilersCount = profilers.size();
 
@@ -99,6 +100,16 @@ namespace Maze
                     this,
                     Vec2DF::c_zero,
                     Vec2DF::c_zero);
+
+                viewData.graph = SpriteHelper::CreateLineRenderer(
+                    Vec2DF(0.0f, 0.0f),
+                    viewData.background->getTransform(),
+                    this,
+                    Vec2DF::c_zero,
+                    Vec2DF::c_zero);
+                viewData.graph->setPositions({ Vec2DF(0.0f, 0.0f), Vec2DF(10.0f, 10.0f), Vec2DF(50.0f, 0.0f) });
+                viewData.graph->setColor(ColorF128::c_green);
+                viewData.graph->resizePositions(Profiler::c_samplesCount);
 
                 viewData.label0 = SpriteHelper::CreateSystemText(
                     "PROFILER",
@@ -175,17 +186,46 @@ namespace Maze
                     profilerData->getShortName());
             }
 
-            if (profilerData->getMaxDuration() == 0 && false)
+            if (profilerData->getMaxDuration() == 0)
             {
                 viewData.label1->setText("");
+
+                viewData.graph->getEntityRaw()->setActiveSelf(false);
             }
             else
             {
                 viewData.label1->setText(
-                    "cls: %u\nmin:%u\nmax:%u",
+                    "cls: %u\navg:%.1f\nmin:%u max:%u",
                     profilerData->getSample(currentThreadSampleIndex).callCount,
+                    profilerData->getAverageDuration(),
                     profilerData->getMinDuration(),
                     profilerData->getMaxDuration());
+
+                {
+                    viewData.graph->getEntityRaw()->setActiveSelf(true);
+
+                    if (profilerData->getMaxDuration() <= 2)
+                        viewData.graph->setColor(ColorU32(0, 255, 0));
+                    else
+                        if (profilerData->getMaxDuration() <= 16)
+                            viewData.graph->setColor(ColorU32(255, 165, 0));
+                        else
+                            viewData.graph->setColor(ColorU32(255, 0, 0));
+
+                    for (Size j = 0, jn = Profiler::c_samplesCount; j < jn; ++j)
+                    {
+                        ProfilerSample const& sample = profilerData->getSample(j);
+
+                        F32 val = Math::Min(1.0f, (F32)sample.durationMS / 100.0f);
+                        viewData.graph->setPosition(
+                            j,
+                            Vec2DF(
+                                ((F32)j / (F32)jn * (F32)statsSize.x),
+                                val * (F32)statsSize.y));
+                    }
+
+                    viewData.graph->rebuildMesh();
+                }
             }
         }
     }

@@ -37,6 +37,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeComponentFactory.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/utils/MazeProfiler.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeContextMenuCanvas2D.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
@@ -114,6 +115,8 @@ namespace Maze
     //////////////////////////////////////////
     void MaterialsInspector::update(F32 _dt)
     {
+        MAZE_PROFILER_SCOPED_LOCK(INSPECTOR);
+
         if (m_materialsPropertiesListDirty)
             buildMaterialsPropertiesList();
 
