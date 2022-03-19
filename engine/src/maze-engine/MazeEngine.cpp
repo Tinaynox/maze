@@ -204,6 +204,7 @@ namespace Maze
         while (play);
     }
 
+
     //////////////////////////////////////////
     void Engine::shutdown()
     {
@@ -240,7 +241,13 @@ namespace Maze
     //////////////////////////////////////////
     void Engine::notifyApplicationFrame()
     {
-        frame();
+        {
+            MAZE_PROFILER_SCOPED_LOCK(FRAME);
+            frame();
+        }
+#if (PROFILER_ENABLED)
+        Maze::Profiler::FinishSample();
+#endif
     }
 
     //////////////////////////////////////////

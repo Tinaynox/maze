@@ -55,7 +55,10 @@ namespace Maze
         virtual ~InputManagerEmscripten();
 
         //////////////////////////////////////////
-        EM_BOOL processMouseEvent(Maze::S32 _eventType, EmscriptenMouseEvent const* _event, void* _userData);
+        EM_BOOL processMouseEvent(S32 _eventType, EmscriptenMouseEvent const* _event, void* _userData);
+        
+        //////////////////////////////////////////
+        EM_BOOL processKeyboardEvent(S32 _eventType, EmscriptenKeyboardEvent const* _event, void* _userData);
         
     protected:
 

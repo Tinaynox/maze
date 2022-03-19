@@ -56,7 +56,17 @@ namespace Maze
         F14                   = 15,           // (NEC PC98)
         F15                   = 16,           // (NEC PC98)
 
-        Grave                 = 30,           // ~
+        F16                   = 17,           //
+        F17                   = 18,           //
+        F18                   = 19,           //
+        F19                   = 20,           //
+        F20                   = 21,           //
+        F21                   = 22,           //
+        F22                   = 23,           //
+        F23                   = 24,           //
+        F24                   = 25,           //
+
+        Grave                 = 30,           // ~ ` (Back quote)
         Number1               = 31,           //
         Number2               = 32,           //
         Number3               = 33,           //
@@ -97,7 +107,7 @@ namespace Maze
         K                     = 98,           //
         L                     = 99,           //
         Semicolon             = 100,          // ;
-        Apostrophe            = 101,          // '
+        Apostrophe            = 101,          // ' " Quote
         Enter                 = 102,          //
 
         LShift                = 120,          //
@@ -122,7 +132,7 @@ namespace Maze
         Space                 = 153,          //
         RAlt                  = 154,          // Right Alt
         RCommand              = 155,          // Right Windows/OSX
-        Apps                  = 156,          // AppMenu key
+        Apps                  = 156,          // AppMenu ContextMenu
         RControl              = 157,          //
         MoreLess              = 158,          //  < > | on UK/Germany keyboards
 

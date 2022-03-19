@@ -30,7 +30,11 @@
 
 
 //////////////////////////////////////////
+#include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
+#include "maze-core/helpers/MazeInputHelper.hpp"
+#include "maze-core/system/MazeKeyCode.hpp"
+#include <emscripten/html5.h>
 
 
 //////////////////////////////////////////
@@ -39,7 +43,11 @@ namespace Maze
     //////////////////////////////////////////
     namespace InputHelper
     {
+        ////////////////////////////////////
+        MAZE_CORE_API KeyCode ConvertVirtualCodeToKeyCode(S64 _virtualCode, U32 _modifiers);
         
+        //////////////////////////////////////////
+        MAZE_CORE_API U32 CollectInputEventKeyboardModifiers(EmscriptenKeyboardEvent const* _event);
 
     } // namespace InputHelper
     //////////////////////////////////////////

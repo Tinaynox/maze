@@ -31,6 +31,7 @@
 #include "maze-render-system-opengl-core/MazeVertexBufferObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeVertexOpenGL.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
+#include "maze-core/utils/MazeProfiler.hpp"
 
 
 //////////////////////////////////////////

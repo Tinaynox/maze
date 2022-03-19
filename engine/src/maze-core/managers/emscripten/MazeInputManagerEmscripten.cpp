@@ -28,6 +28,7 @@
 #include "maze-core/managers/emscripten/MazeInputManagerEmscripten.hpp"
 #include "maze-core/managers/emscripten/MazeWindowManagerEmscripten.hpp"
 #include "maze-core/system/emscripten/MazeWindowEmscripten.hpp"
+#include "maze-core/helpers/emscripten/MazeInputHelperEmscripten.hpp"
 
 
 //////////////////////////////////////////
@@ -38,6 +39,12 @@ static Maze::InputManagerEmscripten* g_inputManagerEmscripten = nullptr;
 EM_BOOL OnMouseEvent(Maze::S32 _eventType, EmscriptenMouseEvent const* _event, void* _userData)
 {
     return g_inputManagerEmscripten->processMouseEvent(_eventType, _event, _userData);
+}
+
+//////////////////////////////////////////
+EM_BOOL OnKeyboardEvent(Maze::S32 _eventType, EmscriptenKeyboardEvent const* _event, void* _userData)
+{
+    return g_inputManagerEmscripten->processKeyboardEvent(_eventType, _event, _userData);
 }
 
 
@@ -72,14 +79,17 @@ namespace Maze
         emscripten_set_mouseenter_callback(nullptr, nullptr, 1, OnMouseEvent);
         emscripten_set_mouseleave_callback(nullptr, nullptr, 1, OnMouseEvent);
         
+        emscripten_set_keydown_callback(nullptr, nullptr, 1, OnKeyboardEvent);
+        emscripten_set_keyup_callback(nullptr, nullptr, 1, OnKeyboardEvent);
+        
         return true;
     }
     
     //////////////////////////////////////////
     EM_BOOL InputManagerEmscripten::processMouseEvent(
-    Maze::S32 _eventType,
-    EmscriptenMouseEvent const* _event,
-    void* _userData)
+        Maze::S32 _eventType,
+        EmscriptenMouseEvent const* _event,
+        void* _userData)
     {
         WindowEmscriptenPtr const& windowEmscripten = WindowManagerEmscripten::GetInstancePtr()->castRaw<WindowManagerEmscripten>()->getWindow();
         
@@ -161,6 +171,45 @@ namespace Maze
             }
             default:
             {
+                break;
+            }
+        }
+        
+        return 0;
+    }
+    
+    //////////////////////////////////////////
+    EM_BOOL InputManagerEmscripten::processKeyboardEvent(
+        Maze::S32 _eventType,
+        EmscriptenKeyboardEvent const* _event,
+        void* _userData)
+    {
+        WindowEmscriptenPtr const& windowEmscripten = WindowManagerEmscripten::GetInstancePtr()->castRaw<WindowManagerEmscripten>()->getWindow();
+        
+        switch (_eventType)
+        {
+            case EMSCRIPTEN_EVENT_KEYDOWN:
+            {
+                InputEventKeyboardData event;
+                event.type = InputEventKeyboardType::KeyDown;
+                event.scanCode = 0;
+                event.virtualCode = _event->keyCode;
+                event.modifiers = InputHelper::CollectInputEventKeyboardModifiers(_event);
+                event.keyCode = InputHelper::ConvertVirtualCodeToKeyCode(event.virtualCode, event.modifiers);
+                generateInputEvent(event);
+                                
+                break;
+            }
+            case EMSCRIPTEN_EVENT_KEYUP:
+            {
+                InputEventKeyboardData event;
+                event.type = InputEventKeyboardType::KeyUp;
+                event.scanCode = 0;
+                event.virtualCode = _event->keyCode;
+                event.modifiers = InputHelper::CollectInputEventKeyboardModifiers(_event);
+                event.keyCode = InputHelper::ConvertVirtualCodeToKeyCode(event.virtualCode, event.modifiers);
+                generateInputEvent(event);
+                
                 break;
             }
         }
