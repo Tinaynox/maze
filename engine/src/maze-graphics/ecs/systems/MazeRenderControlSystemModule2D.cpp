@@ -27,6 +27,7 @@
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystemModule2D.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/utils/MazeProfiler.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
@@ -35,6 +36,7 @@
 #include "maze-graphics/ecs/components/MazeCanvasRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
+#include "maze-graphics/ecs/components/MazeLineRenderer2D.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
 #include "maze-graphics/MazeRenderQueue.hpp"
@@ -99,6 +101,7 @@ namespace Maze
         m_canvasRenderersSample = _world->requestInclusiveSample<CanvasRenderer>();
         m_spriteRenderer2DsSample =  _world->requestInclusiveSample<SpriteRenderer2D>();
         m_systemTextRenderer2DsSample =  _world->requestInclusiveSample<SystemTextRenderer2D>();
+        m_lineRenderers2DSample = _world->requestInclusiveSample<LineRenderer2D, Transform2D>();
 
         m_sizePolicy2D = _world->requestInclusiveSample<SizePolicy2D>();
 
@@ -119,6 +122,8 @@ namespace Maze
     //////////////////////////////////////////
     void RenderControlSystemModule2D::draw(RenderTarget* _renderTarget)
     {
+        MAZE_PROFILER_SCOPED_LOCK(2D);
+
         for (auto& canvasRenderData : m_sortedCanvasRenderData)
         {
             Canvas* canvas = canvasRenderData.canvas;

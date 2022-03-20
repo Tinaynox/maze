@@ -32,6 +32,7 @@
 #include "maze-render-system-opengl-core/MazeExtensionsOpenGL.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/helpers/MazeStdHelper.hpp"
+#include "maze-core/utils/MazeProfiler.hpp"
 
 
 //////////////////////////////////////////
@@ -234,6 +235,7 @@ namespace Maze
         }
         else
         {
+            MAZE_PROFILER_SCOPED_LOCK(BUFFDATA);
             MAZE_GL_CALL(
                 mzglBufferData(
                     MAZE_GL_ARRAY_BUFFER,

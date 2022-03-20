@@ -77,6 +77,14 @@ namespace Maze
 
         //////////////////////////////////////////
         template <class TSettings>
+        inline void clearSettings()
+        {
+            MetaClass* metaClass = TSettings::GetMetaClass();
+            m_settings.erase(metaClass);
+        }
+
+        //////////////////////////////////////////
+        template <class TSettings>
         inline SharedPtr<TSettings> getSettings() const
         {
             static SharedPtr<TSettings> nullPointer;

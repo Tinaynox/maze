@@ -38,7 +38,11 @@
 
 //////////////////////////////////////////
 #if (MAZE_DEBUG)
+#   if (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN)
+#    define MAZE_DEBUG_GL (0)
+#   else
 #    define MAZE_DEBUG_GL (1)
+#   endif
 #else
 #    define MAZE_DEBUG_GL (0)
 #endif

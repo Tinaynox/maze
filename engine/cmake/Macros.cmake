@@ -198,7 +198,7 @@ endmacro ()
 
 ##########################################
 # Set the appropriate standard library on each platform for the given target
-# example: maze_setup_stdlib(gg-core)
+# example: maze_setup_stdlib(maze-core)
 #
 ##########################################
 function(maze_setup_stdlib TARGET)
@@ -249,11 +249,11 @@ endfunction()
 
 
 ##########################################
-# Add a new GG module library
-# Example: maze_add_module(    gg-graphics
-#                              INCLUDE_DIR include/gg/core
-#                              SRC_DIR src/gg/core
-#                              [STATIC]) # Always create a static library and ignore BUILD_SHARED_LIBS
+# Add a new Maze module library
+# Example: maze_add_module(maze-graphics
+#                          INCLUDE_DIR include/maze-graphics
+#                          SRC_DIR src/maze-graphics
+#                          STATIC]) # Always create a static library and ignore BUILD_SHARED_LIBS
 #
 ##########################################
 macro(maze_add_module MODULE_NAME)
@@ -296,10 +296,10 @@ macro(maze_add_module MODULE_NAME)
 
     # Add <project>/third-party as public include directory
     target_include_directories(${MODULE_NAME}
-        PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/third-party>)
+        PUBLIC $<BUILD_INTERFACE:${MAZE_ENGINE_DIR}/third-party>)
 
     
-    set(MAZE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib/${MAZE_ARCH_SUFFIX}")
+    set(MAZE_LIBRARY_OUTPUT_DIRECTORY "${MAZE_ENGINE_DIR}/lib/${MAZE_ARCH_SUFFIX}")
     set_target_properties(${MODULE_NAME}
         PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY "${MAZE_LIBRARY_OUTPUT_DIRECTORY}"
@@ -320,7 +320,7 @@ macro(maze_add_module MODULE_NAME)
 
         #set_target_properties(${MODULE_NAME} PROPERTIES
         #            XCODE_ATTRIBUTE_GCC_PRECOMPILE_PREFIX_HEADER "YES"
-        #            XCODE_ATTRIBUTE_GCC_PREFIX_HEADER "${PROJECT_SOURCE_DIR}/${MODULE_SRC_DIR}/${MODULE_FORWARD_HEADER}.hpp")
+        #            XCODE_ATTRIBUTE_GCC_PREFIX_HEADER "${MAZE_ENGINE_DIR}/${MODULE_SRC_DIR}/${MODULE_FORWARD_HEADER}.hpp")
     endif()
 
 
@@ -406,12 +406,12 @@ macro(maze_add_module MODULE_NAME)
             # DLLs export debug symbols in the linker PDB (the compiler PDB is an intermediate file)
             set_target_properties(${MODULE_NAME} PROPERTIES
                                    PDB_NAME "${MODULE_NAME}${MAZE_PDB_POSTFIX}"
-                                   PDB_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib/${MAZE_ARCH_SUFFIX}")
+                                   PDB_OUTPUT_DIRECTORY "${MAZE_ENGINE_DIR}/lib/${MAZE_ARCH_SUFFIX}")
         else()
             # Static libraries have no linker PDBs, thus the compiler PDBs are relevant
             set_target_properties(${MODULE_NAME} PROPERTIES
                                   COMPILE_PDB_NAME "${MODULE_NAME}-s${MAZE_PDB_POSTFIX}"
-                                  COMPILE_PDB_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib/${MAZE_ARCH_SUFFIX}")
+                                  COMPILE_PDB_OUTPUT_DIRECTORY "${MAZE_ENGINE_DIR}/lib/${MAZE_ARCH_SUFFIX}")
         endif()
 
     endif()
@@ -459,19 +459,16 @@ macro(maze_add_module MODULE_NAME)
     endif()
 
 
-
     # Add <project>/include as public include directory
     target_include_directories(${MODULE_NAME}
-                               PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                               PRIVATE ${PROJECT_SOURCE_DIR}/src)
-
-    target_include_directories(${MODULE_NAME}
-                               PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/${MODULE_INCLUDE_DIR}>
-                               PRIVATE ${PROJECT_SOURCE_DIR}/${MODULE_SRC_DIR})
+                               PUBLIC $<BUILD_INTERFACE:${MAZE_ENGINE_DIR}/include>
+                               PRIVATE ${MAZE_ENGINE_DIR}/src
+                               PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${MODULE_INCLUDE_DIR}>
+                               PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/${MODULE_SRC_DIR})
 
 
     if(MAZE_BUILD_FRAMEWORKS)
-        target_include_directories(${MODULE_NAME} INTERFACE $<INSTALL_INTERFACE:GG.framework>)
+        target_include_directories(${MODULE_NAME} INTERFACE $<INSTALL_INTERFACE:maze.framework>)
     else()
         target_include_directories(${MODULE_NAME} INTERFACE $<INSTALL_INTERFACE:include>)
     endif()
@@ -485,9 +482,9 @@ endmacro()
 
 
 ##########################################
-# Add a new GG example
-# Example: maze_add_example(    gg-example-hello-world
-#                               DIR "examples/gg-example-hello-world"
+# Add a new Maze example
+# Example: maze_add_example(maze-example-hello-world
+#                           DIR "examples/maze-example-hello-world"
 #
 ##########################################
 macro(maze_add_example EXAMPLE_NAME)
@@ -519,12 +516,10 @@ macro(maze_add_example EXAMPLE_NAME)
     endif()
 
 
-    set_property(TARGET ${EXAMPLE_NAME} PROPERTY FOLDER "GGExamples")
+    set_property(TARGET ${EXAMPLE_NAME} PROPERTY FOLDER "MazeExamples")
 
     # Setup stdlib
     maze_setup_stdlib(${EXAMPLE_NAME})
-
-
 
 
     # Add <project>/include as public include directory
@@ -532,6 +527,6 @@ macro(maze_add_example EXAMPLE_NAME)
                                PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
 
 
-    target_link_libraries(${EXAMPLE_NAME} gg-core)
+    target_link_libraries(${EXAMPLE_NAME} maze-core)
 
 endmacro()

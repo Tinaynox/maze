@@ -27,6 +27,7 @@
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystemModule3D.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/utils/MazeProfiler.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeLight3D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
@@ -268,6 +269,8 @@ namespace Maze
     //////////////////////////////////////////
     void RenderControlSystemModule3D::draw(RenderTarget* _renderTarget)
     {
+        MAZE_PROFILER_SCOPED_LOCK(3D);
+
         m_cameras3DSample->process(
             [&](Entity* _entity, Camera3D* _camera3D)
             {

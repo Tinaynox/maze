@@ -76,10 +76,10 @@ namespace Maze
     //////////////////////////////////////////
     void Profiler::start()
     {
+        s_activeProfiler = this;
+
         if (!s_currentProfiling)
             return;
-
-        s_activeProfiler = this;
 
         ProfilerSample& cs = m_samples[s_currentSampleIndex];
         ++cs.callCount;
@@ -89,10 +89,10 @@ namespace Maze
     //////////////////////////////////////////
     S32 Profiler::stop()
     {
+        s_activeProfiler = m_parentProfiler;
+
         if (!s_currentProfiling)
             return 0;
-
-        s_activeProfiler = m_parentProfiler;
 
         ProfilerSample& cs = m_samples[s_currentSampleIndex];
         cs.endMS = m_timer.getMilliseconds();
@@ -142,8 +142,8 @@ namespace Maze
             profiler->m_max = max;
             profiler->m_avg = (F32)sum / c_samplesCount;
             
-            profiler->m_samples[ s_currentSampleIndex ].callCount = 0;
-            profiler->m_samples[ s_currentSampleIndex ].durationMS = 0;
+            profiler->m_samples[s_currentSampleIndex].callCount = 0;
+            profiler->m_samples[s_currentSampleIndex].durationMS = 0;
         }
 
         if (s_requiredProfiling != s_currentProfiling)

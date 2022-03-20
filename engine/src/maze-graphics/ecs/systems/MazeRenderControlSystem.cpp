@@ -27,6 +27,7 @@
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/utils/MazeProfiler.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystemModule2D.hpp"
@@ -163,6 +164,8 @@ namespace Maze
     //////////////////////////////////////////
     void RenderControlSystem::processUpdate(F32 _dt)
     {
+        MAZE_PROFILER_SCOPED_LOCK(RENDER);
+
         m_module3D->processUpdate(_dt);
         m_module2D->processUpdate(_dt);
 

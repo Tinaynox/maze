@@ -33,6 +33,11 @@ include("${CMAKE_CURRENT_LIST_DIR}/Utils.cmake")
 
 
 ##########################################
+set(MAZE_DIR ${CMAKE_CURRENT_LIST_DIR}/../..)
+set(MAZE_ENGINE_DIR ${MAZE_DIR}/engine)
+
+
+##########################################
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 
     set(MAZE_TARGET_PLATFORM_NAME "win")

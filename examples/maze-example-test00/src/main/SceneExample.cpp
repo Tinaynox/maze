@@ -307,7 +307,10 @@ namespace Maze
                     {
                         m_cursorDrag = true;
                     }
-
+                }
+                else
+                if (_data.buttonId == 2)
+                {
                     m_world->sendEventImmediate<SimpleEvent>();
                 }
                 break;
