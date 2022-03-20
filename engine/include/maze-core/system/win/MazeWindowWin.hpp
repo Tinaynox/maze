@@ -175,6 +175,9 @@ namespace Maze
         PAINTSTRUCT m_paintStruct;
 
         String m_className;
+
+        bool m_closing = false;
+        bool m_destroying = false;
     };
     
     

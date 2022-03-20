@@ -34,12 +34,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    namespace SystemDialogHelper
-    {
-        
-
-    } // namespace SystemDialogHelper
-    //////////////////////////////////////////
+    MAZE_IMPLEMENT_ENUMCLASS(SystemMessageBoxType);
 
 
 } // namespace Maze

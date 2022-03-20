@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
+#include "maze-core/utils/MazeEnumClass.hpp"
 
 
 //////////////////////////////////////////
@@ -39,6 +40,14 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(Window);
+
+
+    //////////////////////////////////////////
+    MAZE_DECLARE_ENUMCLASS_3_API(MAZE_CORE_API, SystemMessageBoxType,
+        Info,
+        Warning,
+        Error);
+
 
     //////////////////////////////////////////
     namespace SystemDialogHelper
@@ -52,6 +61,13 @@ namespace Maze
         MAZE_CORE_API extern String SaveFile(
             CString _filter,
             Window const* _modalToWindow = nullptr);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API extern void ShowMessageBox(
+            SystemMessageBoxType _type,
+            CString _title,
+            CString _text,
+            ...);
 
 
     } // namespace SystemDialogHelper

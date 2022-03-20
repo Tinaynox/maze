@@ -65,7 +65,6 @@ namespace Maze
                 return StringHelper::ToString(ofn.lpstrFile);
 
             return String();
-
         }
 
         //////////////////////////////////////////
@@ -96,8 +95,29 @@ namespace Maze
                 return StringHelper::ToString(ofn.lpstrFile);
 
             return String();
-
         }
+        
+        //////////////////////////////////////////
+        MAZE_CORE_API void ShowMessageBox(
+            SystemMessageBoxType _type,
+            CString _title,
+            CString _text,
+            ...)
+        {
+            String formattedText;
+            MAZE_FORMAT_VA_STRING(_text, formattedText);
+
+            UINT flags = MB_OK;
+
+            switch (_type)
+            {
+                case SystemMessageBoxType::Warning: flags |= MB_ICONEXCLAMATION; break;
+                case SystemMessageBoxType::Error: flags |= MB_ICONERROR; break;
+            }
+
+            MessageBoxA(NULL, formattedText.c_str(), _title, flags);
+        }
+
 
     } // namespace SystemHelper
     //////////////////////////////////////////

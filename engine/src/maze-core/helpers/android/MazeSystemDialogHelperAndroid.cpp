@@ -59,6 +59,16 @@ namespace Maze
             return String();
 
         }
+        
+        //////////////////////////////////////////
+        MAZE_CORE_API void ShowMessageBox(
+            SystemMessageBoxType _type,
+            CString _title,
+            CString _text,
+            ...)
+        {
+            MAZE_NOT_IMPLEMENTED;
+        }
 
     } // namespace SystemHelper
     //////////////////////////////////////////

@@ -182,6 +182,7 @@ namespace Maze
     //////////////////////////////////////////
     WindowWin::~WindowWin()
     {
+        m_destroying = true;
         close();
     }
 
@@ -215,6 +216,9 @@ namespace Maze
     bool WindowWin::isOpened()
     {
         if (m_handle == 0)
+            return false;
+
+        if (m_closing)
             return false;
 
         return true;
@@ -719,17 +723,9 @@ namespace Maze
             
             case WM_SETFOCUS:
             {
-                //Maze_TODO;
-                /*
-                InputEventWindowData event;
-                short active = LOWORD(_wParam);
-                event.handle = getHandle();
-                if (active)
-                    event.type = InputEventWindowType::Activate;
-                else
-                    event.type = InputEventWindowType::Deactivate;
-                inputManager->generateInputEventWindow(event);
-                */
+                if (!isOpened())
+                    return true;
+
                 processWindowFocusChanged();
 
                 break;
@@ -737,6 +733,9 @@ namespace Maze
 
             case WM_KILLFOCUS:
             {
+                if (!isOpened())
+                    return true;
+
                 processWindowFocusChanged();
 
                 break;
@@ -1006,14 +1005,15 @@ namespace Maze
         if (!isOpened())
             return;
 
+        m_closing = true;
+
         HWND handle = (HWND)m_handle;
-                
-        WindowPtr window = cast<Window>();
+
+        WindowPtr window;
+        if (!m_destroying)
+            window = cast<Window>();
 
         processWindowWillClose();
-
-        if (!isOpened())
-            return;
 
         m_handle = 0;
 
@@ -1024,7 +1024,7 @@ namespace Maze
 
         processWindowClosed();
 
-        window.reset();
+        m_closing = false;
     }
 
     //////////////////////////////////////////

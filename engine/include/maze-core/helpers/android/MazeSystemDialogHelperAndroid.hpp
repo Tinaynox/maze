@@ -50,6 +50,13 @@ namespace Maze
         MAZE_CORE_API String SaveFile(
             CString _filter,
             Window const* _modalToWindow);
+            
+        //////////////////////////////////////////
+        MAZE_CORE_API void ShowMessageBox(
+            SystemMessageBoxType _type,
+            CString _title,
+            CString _text,
+            ...);
 
 
     } // namespace SystemHelper
