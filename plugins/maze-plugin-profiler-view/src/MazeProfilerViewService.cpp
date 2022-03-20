@@ -77,7 +77,12 @@ namespace Maze
         profilerSettings->getActiveChangedEvent().subscribe(this, &ProfilerViewService::notifyProfilerViewActiveChanged);
 
         if (GraphicsManager::GetInstancePtr())
+        {
             GraphicsManager::GetInstancePtr()->eventDefaultRenderSystemChanged.subscribe(this, &ProfilerViewService::notifyDefaultRenderSystemChanged);
+
+            if (GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw())
+                setRenderSystem(GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw());
+        }
 
         InputManager::GetInstancePtr()->eventKeyboard.subscribe(this, &ProfilerViewService::notifyKeyboard);
 

@@ -92,7 +92,7 @@ namespace Maze
         void setText(String const& _text);
 
         //////////////////////////////////////////
-        inline void setText(CString _text, ...)
+        inline void setTextFormatted(CString _text, ...)
         {
             String newText;
             MAZE_FORMAT_VA_STRING(_text, newText);

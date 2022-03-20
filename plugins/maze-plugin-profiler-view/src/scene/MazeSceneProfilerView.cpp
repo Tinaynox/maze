@@ -175,14 +175,14 @@ namespace Maze
             Profiler* parent = profilerData->getParentProfiler();
             if (parent)
             {
-                viewData.label0->setText(
+                viewData.label0->setTextFormatted(
                     "%s\n >> %s",
                     profilerData->getShortName(),
                     parent->getShortName());
             }
             else
             {
-                viewData.label0->setText(
+                viewData.label0->setTextFormatted(
                     "%s\n",
                     profilerData->getShortName());
             }
@@ -195,7 +195,7 @@ namespace Maze
             }
             else
             {
-                viewData.label1->setText(
+                viewData.label1->setTextFormatted(
                     "cls: %u\navg:%.1f\nmin:%u max:%u",
                     profilerData->getSample(prevSampleIndex).callCount,
                     profilerData->getAverageDuration(),
