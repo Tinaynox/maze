@@ -49,6 +49,7 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeLineRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeSimpleLineRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeLineRenderer3D.hpp"
 #include "maze-graphics/ecs/components/MazeTrailRenderer3D.hpp"
 #include "maze-graphics/ecs/components/MazeTerrainMesh3D.hpp"
@@ -106,6 +107,7 @@ namespace Maze
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<SpriteRenderer2D>("2D");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<SystemTextRenderer2D>("2D");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<LineRenderer2D>("2D");
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<SimpleLineRenderer2D>("2D");
 
         // 3D
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<Camera3D>("3D");

@@ -103,7 +103,7 @@ namespace Maze
                     Vec2DF::c_zero,
                     Vec2DF::c_zero);
 
-                viewData.graph = SpriteHelper::CreateLineRenderer(
+                viewData.graph = SpriteHelper::CreateSimpleLineRenderer(
                     Vec2DF(0.0f, 0.0f),
                     viewData.background->getTransform(),
                     this,
@@ -144,9 +144,9 @@ namespace Maze
         static ColorU32 const bgrColorOverload0(135, 50, 0, 100);
         static ColorU32 const bgrColorOverload1(150, 0, 0, 100);
 
-        static U32 statsPerRow = 6;
-
         Vec2DF viewportSize = m_canvas->getTransform()->getSize();
+
+        U32 const statsPerRow = Math::Max(1u, U32((viewportSize.x - lbOffset.x) / (statsSize.x + lbOffset.x)));
 
         for (Size i = 0, in = profilersCount; i < in; ++i)
         {

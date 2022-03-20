@@ -34,6 +34,7 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeLineRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeSimpleLineRenderer2D.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
@@ -233,6 +234,30 @@ namespace Maze
             lineRendererEntity->ensureComponent<Name>("LineRenderer");
 
             LineRenderer2DPtr lineRenderer = lineRendererEntity->createComponent<LineRenderer2D>();
+            lineRenderer->getMeshRenderer()->setMaterial(MaterialManager::GetCurrentInstance()->getColorMaterial());
+
+            Transform2DPtr transform = lineRendererEntity->ensureComponent<Transform2D>();
+            transform->setParent(_parent);
+            transform->setLocalPosition(_position);
+            transform->setSize(Vec2DF::c_zero);
+            transform->setAnchor(_anchor);
+            transform->setPivot(_pivot);
+
+            return lineRenderer;
+        }
+
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API SimpleLineRenderer2DPtr CreateSimpleLineRenderer(
+            Vec2DF const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2DF const& _anchor,
+            Vec2DF const& _pivot)
+        {
+            Maze::EntityPtr lineRendererEntity = _ecsScene->createEntity();
+            lineRendererEntity->ensureComponent<Name>("LineRenderer");
+
+            SimpleLineRenderer2DPtr lineRenderer = lineRendererEntity->createComponent<SimpleLineRenderer2D>();
             lineRenderer->getMeshRenderer()->setMaterial(MaterialManager::GetCurrentInstance()->getColorMaterial());
 
             Transform2DPtr transform = lineRendererEntity->ensureComponent<Transform2D>();

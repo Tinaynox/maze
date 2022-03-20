@@ -36,6 +36,7 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeLineRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeSimpleLineRenderer2D.hpp"
 
 
 //////////////////////////////////////////
@@ -71,7 +72,7 @@ namespace Maze
             SpriteRenderer2DPtr background;
             SystemTextRenderer2DPtr label0;
             SystemTextRenderer2DPtr label1;
-            LineRenderer2DPtr graph;
+            SimpleLineRenderer2DPtr graph;
         };
 
     public:
