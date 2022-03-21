@@ -99,6 +99,12 @@ namespace Maze
         return false;
     }
 
+    //////////////////////////////////////////
+    bool LoadPlugins()
+    {
+        return true;
+    }
+
 
     //////////////////////////////////////////
     // Class SceneExample

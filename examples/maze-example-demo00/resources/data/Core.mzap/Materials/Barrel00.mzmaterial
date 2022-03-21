@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Material>
+    <ShaderUniformVariant name="u_baseMap" type="UniformTexture2D" value="Barrel00.mztexture" />
+    <ShaderUniformVariant name="u_color" type="UniformColorF128" value="0.91;1.0;0.91;1.0" />
+    <ShaderUniformVariant name="u_ambientLightColor" type="UniformColorF128" value="0.74;0.73;0.556;1.0" />
+    <ShaderUniformVariant name="u_shininess" type="UniformF32" value="0.1" />
+    <ShaderUniformVariant name="u_specularColor" type="UniformColorF128" value="0.6;0.6;0.6;1.0" />
+    <RenderPass 
+        passType="Default"
+        renderQueueIndex="2000"
+        shader="Default.mzshader"
+        blendOperation="Add"
+        blendSrcFactor="One"
+        blendDestFactor="Zero"
+        depthTestCompareFunction="LessEqual"
+        depthWriteEnabled="1"
+        cullMode="Off"/>
+</Material>

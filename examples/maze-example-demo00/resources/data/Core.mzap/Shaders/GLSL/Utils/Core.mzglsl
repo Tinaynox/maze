@@ -1,0 +1,121 @@
+//////////////////////////////////////////
+#if (MAZE_MODEL_MATRICES_VIA_TEXTURE)
+    uniform sampler2D u_modelMatricesTexture;
+    uniform int u_modelMatricesTextureSize;
+    uniform int u_modelMatriciesOffset;
+
+
+    //////////////////////////////////////////
+    mat4 GetModelMatrix(int instanceId)
+    {
+        int modelMatrixIndex = instanceId + u_modelMatriciesOffset;
+        int r = 4 * modelMatrixIndex / u_modelMatricesTextureSize;
+        int c = 4 * modelMatrixIndex % u_modelMatricesTextureSize;
+    
+        ivec2 pos0 = ivec2(c + 0, r);
+        ivec2 pos1 = ivec2(c + 1, r);
+        ivec2 pos2 = ivec2(c + 2, r);
+        
+        return mat4( 
+            texelFetch(u_modelMatricesTexture, pos0, 0).xyzw,
+            texelFetch(u_modelMatricesTexture, pos1, 0).xyzw,
+            texelFetch(u_modelMatricesTexture, pos2, 0).xyzw,
+            vec4(0, 0, 0, 1 ));
+    }
+    
+#elif (MAZE_MODEL_MATRICES_VIA_ARRAY)
+    uniform mat4 u_modelMatrices[32];
+
+    //////////////////////////////////////////
+    mat4 GetModelMatrix(int instanceId)
+    {
+        return u_modelMatrices[instanceId];
+    }
+
+#endif
+
+
+//////////////////////////////////////////
+#if (MAZE_INSTANCE_STREAM_VIA_TEXTURE)
+    uniform sampler2D u_colorsStreamTexture;
+    uniform int u_colorsStreamTextureSize;
+    uniform int u_colorsStreamOffset;
+
+
+    //////////////////////////////////////////
+    vec4 GetColorStream(int instanceId)
+    {
+        int colorIndex = instanceId + u_colorsStreamOffset;
+        int r = colorIndex / u_colorsStreamTextureSize;
+        int c = colorIndex % u_colorsStreamTextureSize;
+
+        ivec2 pos = ivec2(c, r);
+    
+        return texelFetch(u_colorsStreamTexture, pos, 0).xyzw;
+    }
+
+#elif (MAZE_INSTANCE_STREAM_VIA_ARRAY)
+    uniform vec4 u_colorsStream[32];
+
+    //////////////////////////////////////////
+    vec4 GetColorStream(int instanceId)
+    {
+        return u_colorsStream[instanceId];
+    }
+
+#endif
+
+
+//////////////////////////////////////////
+#if (MAZE_INSTANCE_STREAM_VIA_TEXTURE)
+    uniform sampler2D u_uvStreamTexture;
+    uniform int u_uvStreamTextureSize;
+    uniform int u_uvStreamOffset;
+
+
+    //////////////////////////////////////////
+    vec4 GetUVStream(int instanceId)
+    {
+        int uvIndex = instanceId + u_uvStreamOffset;
+        int r = uvIndex / u_uvStreamTextureSize;
+        int c = uvIndex % u_uvStreamTextureSize;
+
+        ivec2 pos = ivec2(c, r);
+    
+        return texelFetch(u_uvStreamTexture, pos, 0).xyzw;
+    }
+
+#elif (MAZE_INSTANCE_STREAM_VIA_ARRAY)
+    uniform vec4 u_uvStream[32];
+
+    //////////////////////////////////////////
+    vec4 GetUVStream(int instanceId)
+    {
+        return u_uvStream[instanceId];
+    }
+
+#endif
+
+
+//////////////////////////////////////////
+vec3 SampleNormalTS(
+    sampler2D normalMap,
+    vec2 uv,
+    float normalScale)
+{
+#if defined(NORMAL_MAP) && (NORMAL_MAP)
+    vec4 packedNormal = MAZE_GET_TEXEL2D(normalMap, uv);
+    vec3 normal;
+    normal.xyz = packedNormal.rgb * 2.0 - 1.0;
+    normal.xy *= -normalScale;
+    return normal;
+#else
+    return vec3(0.0, 0.0, 1.0);
+#endif
+}
+
+//////////////////////////////////////////
+vec3 TransformTangentToWorld(vec3 vecTS, mat3 tangentToWorld)
+{
+    return tangentToWorld * vecTS;
+}

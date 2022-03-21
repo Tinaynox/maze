@@ -1,1 +1,1 @@
-emrun --browser chrome maze-example-resources.html
+emrun --browser chrome index.html

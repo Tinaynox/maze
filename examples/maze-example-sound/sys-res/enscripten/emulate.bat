@@ -1,1 +1,1 @@
-emrun --browser chrome maze-example-sound.html
+emrun --browser chrome index.html

@@ -107,6 +107,11 @@ namespace Maze
         return false;
     }
 
+    //////////////////////////////////////////
+    bool LoadPlugins()
+    {
+        return true;
+    }
 
     //////////////////////////////////////////
     class SimpleEvent : public Event

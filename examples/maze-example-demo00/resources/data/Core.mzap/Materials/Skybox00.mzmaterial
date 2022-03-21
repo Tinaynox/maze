@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Material>
+    <ShaderUniformVariant name="u_baseMap" type="UniformTextureCube" value="Skybox01.mzcubemap" />
+    <ShaderUniformVariant name="u_color" type="UniformColorF128" value="1.0;0.83;0.81;1.0" />
+    
+    <RenderPass 
+        passType="Default"
+        renderQueueIndex="2000"
+        shader="Skybox00.mzshader"
+        blendOperation="Add"
+        blendSrcFactor="One"
+        blendDestFactor="Zero"
+        depthTestCompareFunction="LessEqual"
+        depthWriteEnabled="1"
+        cullMode="Off"/>
+</Material>

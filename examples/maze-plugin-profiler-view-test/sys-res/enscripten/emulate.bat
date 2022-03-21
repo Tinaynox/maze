@@ -1,1 +1,1 @@
-emrun --browser chrome maze-plugin-profiler-view-test.html
+emrun --browser chrome index.html

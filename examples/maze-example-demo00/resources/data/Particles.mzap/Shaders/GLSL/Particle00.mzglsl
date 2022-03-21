@@ -1,0 +1,129 @@
+//////////////////////////////////////////
+// Vertex Shader
+//
+//////////////////////////////////////////
+#type vertex
+
+//////////////////////////////////////////
+#include "Utils/PrecisionHigh.mzglsl"
+#include "Utils/Vertex.mzglsl"
+
+
+//////////////////////////////////////////
+IN vec3 a_position;
+IN vec3 a_normal;
+IN vec4 a_color;
+IN vec2 a_texCoords0;
+
+
+//////////////////////////////////////////
+OUT vec3 v_positionOS;
+OUT vec3 v_positionWS;
+OUT vec3 v_positionVS;
+OUT vec4 v_color;
+OUT vec2 v_uv0;
+
+
+//////////////////////////////////////////
+#include "Utils/Core.mzglsl"
+
+
+//////////////////////////////////////////
+// Main
+void main()
+{
+    
+    int instanceId = gl_InstanceID;
+    
+    mat4 modelMatrix = GetModelMatrix(instanceId);
+
+    vec4 positionOS = vec4(a_position, 1.0);
+    vec4 positionWS = positionOS * modelMatrix;
+    MAZE_CLIP_DISTANCE_VERTEX(positionWS);
+    vec4 positionVS = positionWS * u_viewMatrix;
+    vec4 positionCS = positionVS * u_projectionMatrix;
+        
+#if (MAZE_LHCS)
+    positionCS.z = -positionCS.z;
+#endif
+    
+    v_positionOS = positionOS.xyz;
+    v_positionWS = positionWS.xyz;
+    v_positionVS = positionVS.xyz;
+    v_color = a_color;
+    v_uv0 = a_texCoords0;
+    
+#if (MAZE_COLOR_STREAM)
+        v_color *= GetColorStream(instanceId);
+#endif
+
+#if (MAZE_UV_STREAM)
+        vec4 uvStream = GetUVStream(instanceId);
+        v_uv0 = vec2(
+            mix(uvStream.x, uvStream.y, v_uv0.x),
+            mix(uvStream.z, uvStream.w, v_uv0.y));
+#endif
+
+    gl_Position = positionCS;
+}
+
+
+//////////////////////////////////////////
+// Fragment Shader
+//
+//////////////////////////////////////////
+#type fragment
+
+//////////////////////////////////////////
+#include "Utils/PrecisionHigh.mzglsl"
+#include "Utils/Fragment.mzglsl"
+
+
+//////////////////////////////////////////
+uniform sampler2D u_baseMap;
+uniform vec4 u_baseMapST;
+uniform sampler2D u_emissionMap;
+uniform vec4 u_color;
+uniform vec4 u_emissionColor;
+
+
+//////////////////////////////////////////
+IN vec3 v_positionOS;
+IN vec3 v_positionWS;
+IN vec3 v_positionVS;
+IN vec3 v_normalOS;
+IN vec3 v_normalWS;
+IN vec4 v_color;
+IN vec2 v_uv0;
+
+
+//////////////////////////////////////////
+layout(location=0) out vec4 out_color;
+
+
+//////////////////////////////////////////
+uniform sampler2D u_modelMatricesTexture;
+
+
+//////////////////////////////////////////
+// Main
+void main()
+{
+    MAZE_CLIP_DISTANCE_FRAGMENT;
+    
+    vec2 uv = u_baseMapST.xy * v_uv0 + u_baseMapST.zw;
+
+    // Albedo
+    vec4 albedo = texture(u_baseMap, uv) * v_color * u_color;
+    
+    // Emission
+    vec4 emission = texture(u_emissionMap, uv) * u_emissionColor;
+    
+    // Diffuse color
+    vec3 diffuseColor = albedo.rgb;
+        
+    // Linear color
+    vec3 linearColor = diffuseColor + emission.rgb;
+        
+    out_color = vec4(linearColor, albedo.a);
+}

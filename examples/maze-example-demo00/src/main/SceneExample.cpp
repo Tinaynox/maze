@@ -105,6 +105,12 @@ namespace Maze
         return false;
     }
 
+    //////////////////////////////////////////
+    bool LoadPlugins()
+    {
+        return true;
+    }
+
 
     //////////////////////////////////////////
     // Class SceneExample
@@ -187,7 +193,7 @@ namespace Maze
         m_renderColorSprite->getEntityRaw()->ensureComponent<Name>("RenderColorSprite");
         m_renderColorSprite->getEntityRaw()->ensureComponent<SizePolicy2D>();
 
-#if (1)
+#if (0)
         
         m_testSprite1 = SpriteHelper::CreateSprite(
             SpritePtr(),

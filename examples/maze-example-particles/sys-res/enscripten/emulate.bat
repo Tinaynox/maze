@@ -1,1 +1,1 @@
-emrun --browser chrome maze-example-particles.html
+emrun --browser chrome index.html

@@ -142,13 +142,7 @@ endif()
 
 
 if(MAZE_TARGET_PLATFORM_IS_EMSCRIPTEN)
-
-    #append_linker_flags(${EXAMPLE_NAME} "-s DEMANGLE_SUPPORT=1 --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/../resources@/ --bind --emrun -v")
-    append_linker_flags(${EXAMPLE_NAME} "-s DEMANGLE_SUPPORT=1 --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/../../prj/resources/resources-x1.0-nc@/ --bind --emrun -v")
-    #append_linker_flags(${EXAMPLE_NAME} "-s DEMANGLE_SUPPORT=1 --embed-file ${CMAKE_CURRENT_SOURCE_DIR}/../resources --bind")
-    
-    #append_linker_flags(${EXAMPLE_NAME} "-s DEMANGLE_SUPPORT=1 --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/../resources@/ --bind")
-
+    append_linker_flags(${EXAMPLE_NAME} "-s DEMANGLE_SUPPORT=1 --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/../../prj/${EXAMPLE_NAME}/resources/resources-x1.0-nc@/ --bind --emrun -v")
 endif()
 
 

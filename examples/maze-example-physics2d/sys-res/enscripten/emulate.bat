@@ -1,1 +1,1 @@
-emrun --browser chrome maze-example-physics2d.html
+emrun --browser chrome index.html
