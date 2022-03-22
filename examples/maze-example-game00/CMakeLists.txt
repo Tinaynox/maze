@@ -170,9 +170,9 @@ maze_setup_stdlib(${EXAMPLE_NAME})
 
 target_include_directories(
         ${EXAMPLE_NAME}
-        PUBLIC "${PROJECT_SOURCE_DIR}/third-party/zlib"
+        PUBLIC "${MAZE_DIR}/third-party/zlib"
         PUBLIC "${PROJECT_BINARY_DIR}/third-party/zlib"
-        PUBLIC "${PROJECT_SOURCE_DIR}/third-party/libpng"
+        PUBLIC "${MAZE_DIR}/third-party/libpng"
         PUBLIC "${PROJECT_BINARY_DIR}/third-party/libpng")
 
 # Add <project>/include as public include directory

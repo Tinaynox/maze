@@ -40,8 +40,8 @@ target_link_libraries(
         
 target_include_directories(
     maze-physics2d
-    PUBLIC "${PROJECT_SOURCE_DIR}/third-party/zlib"
+    PUBLIC "${MAZE_DIR}/third-party/zlib"
     PUBLIC "${PROJECT_BINARY_DIR}/third-party/zlib"
-    PUBLIC "${PROJECT_SOURCE_DIR}/third-party/libpng"
+    PUBLIC "${MAZE_DIR}/third-party/libpng"
     PUBLIC "${PROJECT_BINARY_DIR}/third-party/libpng"
-    PUBLIC "${PROJECT_SOURCE_DIR}/third-party/box2d/include")
+    PUBLIC "${MAZE_DIR}/third-party/box2d/include")

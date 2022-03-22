@@ -38,19 +38,19 @@ if(MAZE_TARGET_PLATFORM_IS_WINDOWS)
     
     target_include_directories(
         maze-sound-system-openal
-        PUBLIC "${PROJECT_SOURCE_DIR}/third-party/OpenAL 1.1 SDK/include")
+        PUBLIC "${MAZE_DIR}/third-party/OpenAL 1.1 SDK/include")
     
     if(MAZE_ARCH_SUFFIX STREQUAL "x64")
     
         target_link_libraries(
             maze-sound-system-openal
-            PUBLIC "${PROJECT_SOURCE_DIR}/third-party/OpenAL 1.1 SDK/libs/Win64/OpenAL32.lib")
+            PUBLIC "${MAZE_DIR}/third-party/OpenAL 1.1 SDK/libs/Win64/OpenAL32.lib")
             
     else()
     
         target_link_libraries(
             maze-sound-system-openal
-            PUBLIC "${PROJECT_SOURCE_DIR}/third-party/OpenAL 1.1 SDK/libs/Win32/OpenAL32.lib")
+            PUBLIC "${MAZE_DIR}/third-party/OpenAL 1.1 SDK/libs/Win32/OpenAL32.lib")
     
     endif()
     

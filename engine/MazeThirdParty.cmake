@@ -24,12 +24,12 @@
 
 
 # nedmalloc
-add_subdirectory(third-party/nedmalloc)
+add_subdirectory("${MAZE_DIR}/third-party/nedmalloc" "${CMAKE_CURRENT_BINARY_DIR}/third-party/nedmalloc")
 set_property(TARGET nedmalloc PROPERTY FOLDER "MazeThirdParty") 
 
 # tinyxml2
 set(BUILD_TESTS OFF)
-add_subdirectory(third-party/tinyxml2)
+add_subdirectory("${MAZE_DIR}/third-party/tinyxml2" "${CMAKE_CURRENT_BINARY_DIR}/third-party/tinyxml2")
 set_property(TARGET tinyxml2 PROPERTY FOLDER "MazeThirdParty")
 set_property(TARGET uninstall PROPERTY FOLDER "MazeThirdParty")
 set_target_properties(tinyxml2
@@ -53,7 +53,7 @@ set(JSONCPP_WITH_CMAKE_PACKAGE OFF CACHE BOOL "Generate and install cmake packag
 # set(JSONCPP_LIB_BUILD_STATIC ON)
 # set(JSONCPP_LIB_BUILD_SHARED OFF)
 set(BUILD_OBJECT_LIBS OFF CACHE BOOL "Build jsoncpp_lib as a object library." FORCE)
-add_subdirectory(third-party/jsoncpp)
+add_subdirectory("${MAZE_DIR}/third-party/jsoncpp" "${CMAKE_CURRENT_BINARY_DIR}/third-party/jsoncpp")
 set(JSONCPP_LIBRARY jsoncpp_static)
 set_property(TARGET ${JSONCPP_LIBRARY} PROPERTY FOLDER "MazeThirdParty")
 if(BUILD_OBJECT_LIBS)
@@ -83,28 +83,28 @@ else()
     set(ZLIB_NAME zlibstatic)
 endif()
 set(ZLIB_LIBRARY ${ZLIB_NAME})
-set(ZLIB_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/third-party/zlib" CACHE PATH "Zlib include dir" FORCE)
-add_subdirectory(third-party/zlib)
+set(ZLIB_INCLUDE_DIR "${MAZE_DIR}/third-party/zlib" CACHE PATH "Zlib include dir" FORCE)
+add_subdirectory("${MAZE_DIR}/third-party/zlib" "${CMAKE_CURRENT_BINARY_DIR}/third-party/zlib")
 set_property(TARGET zlib PROPERTY FOLDER "MazeThirdParty")
 set_property(TARGET zlibstatic PROPERTY FOLDER "MazeThirdParty")
 set_property(TARGET minigzip PROPERTY FOLDER "MazeThirdParty")
 set_property(TARGET example PROPERTY FOLDER "MazeThirdParty")
 target_include_directories(
     minigzip
-    PUBLIC "${PROJECT_SOURCE_DIR}/third-party/zlib"
+    PUBLIC "${MAZE_DIR}/third-party/zlib"
     PUBLIC "${PROJECT_BINARY_DIR}/third-party/zlib")
 target_include_directories(
     example
-    PUBLIC "${PROJECT_SOURCE_DIR}/third-party/zlib"
+    PUBLIC "${MAZE_DIR}/third-party/zlib"
     PUBLIC "${PROJECT_BINARY_DIR}/third-party/zlib")
 if(HAVE_OFF64_T)
     target_include_directories(
         minigzip64
-        PUBLIC "${PROJECT_SOURCE_DIR}/third-party/zlib"
+        PUBLIC "${MAZE_DIR}/third-party/zlib"
         PUBLIC "${PROJECT_BINARY_DIR}/third-party/zlib")
     target_include_directories(
         example64
-        PUBLIC "${PROJECT_SOURCE_DIR}/third-party/zlib"
+        PUBLIC "${MAZE_DIR}/third-party/zlib"
         PUBLIC "${PROJECT_BINARY_DIR}/third-party/zlib")
 endif()
 set_target_properties(${ZLIB_NAME}
@@ -135,11 +135,11 @@ endif()
 set(MZ_WZAES OFF)
 set(SKIP_INSTALL_LIBRARIES ON)
 set(MZ_FETCH_LIBS OFF)
-add_subdirectory(third-party/minizip-ng)
+add_subdirectory("${MAZE_DIR}/third-party/minizip-ng" "${CMAKE_CURRENT_BINARY_DIR}/third-party/minizip-ng")
 set_property(TARGET minizip PROPERTY FOLDER "MazeThirdParty")
 target_include_directories(
     minizip
-    PUBLIC "${PROJECT_SOURCE_DIR}/third-party/zlib"
+    PUBLIC "${MAZE_DIR}/third-party/zlib"
     PUBLIC "${PROJECT_BINARY_DIR}/third-party/zlib")
 set_target_properties(minizip
     PROPERTIES
@@ -172,21 +172,21 @@ else()
     set(PNG_SHARED OFF)
     set(PNG_STATIC ON)
 endif()
-add_subdirectory(third-party/libpng)
+add_subdirectory("${MAZE_DIR}/third-party/libpng" "${CMAKE_CURRENT_BINARY_DIR}/third-party/libpng")
 set_property(TARGET ${PNGLIB_NAME} PROPERTY FOLDER "MazeThirdParty")
 set_property(TARGET genfiles PROPERTY FOLDER "MazeThirdParty")
 target_include_directories(
     ${PNGLIB_NAME}
-    PUBLIC "${PROJECT_SOURCE_DIR}/third-party/zlib"
+    PUBLIC "${MAZE_DIR}/third-party/zlib"
     PUBLIC "${PROJECT_BINARY_DIR}/third-party/zlib"
-    PUBLIC "${PROJECT_SOURCE_DIR}/third-party/libpng"
+    PUBLIC "${MAZE_DIR}/third-party/libpng"
     PUBLIC "${PROJECT_BINARY_DIR}/third-party/libpng")
 if(BUILD_SHARED_LIBS)
     target_include_directories(
         png-fix-itxt
-        PUBLIC "${PROJECT_SOURCE_DIR}/third-party/zlib"
+        PUBLIC "${MAZE_DIR}/third-party/zlib"
         PUBLIC "${PROJECT_BINARY_DIR}/third-party/zlib"
-        PUBLIC "${PROJECT_SOURCE_DIR}/third-party/libpng"
+        PUBLIC "${MAZE_DIR}/third-party/libpng"
         PUBLIC "${PROJECT_BINARY_DIR}/third-party/libpng")
 endif()
 set_target_properties(${PNGLIB_NAME}
@@ -209,7 +209,7 @@ set_target_properties(${PNGLIB_NAME}
 set(BOX2D_BUILD_EXAMPLES OFF)
 set(BOX2D_BUILD_TESTBED OFF)
 set(BOX2D_BUILD_UNIT_TESTS OFF)
-add_subdirectory(third-party/box2d)
+add_subdirectory("${MAZE_DIR}/third-party/box2d" "${CMAKE_CURRENT_BINARY_DIR}/third-party/box2d")
 set_property(TARGET box2d PROPERTY FOLDER "MazeThirdParty")
 set_target_properties(box2d
     PROPERTIES
@@ -230,6 +230,6 @@ set_target_properties(box2d
 #libstem_gamepad
 if(MAZE_TARGET_PLATFORM_IS_WINDOWS OR MAZE_TARGET_PLATFORM_IS_OSX OR MAZE_TARGET_PLATFORM_IS_LINUX)
     add_compile_definitions("MAZE_LIBSTEM_GAMEPAD_ENABLED=1")
-    add_subdirectory(third-party/libstem_gamepad)
+    add_subdirectory("${MAZE_DIR}/third-party/libstem_gamepad" "${CMAKE_CURRENT_BINARY_DIR}/third-party/libstem_gamepad")
     set_property(TARGET libstem_gamepad PROPERTY FOLDER "MazeThirdParty")
 endif()

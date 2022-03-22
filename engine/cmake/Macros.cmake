@@ -294,9 +294,8 @@ macro(maze_add_module MODULE_NAME)
         add_library(${MODULE_NAME} ${MODULE_FILES})
     endif()
 
-    # Add <project>/third-party as public include directory
     target_include_directories(${MODULE_NAME}
-        PUBLIC $<BUILD_INTERFACE:${MAZE_ENGINE_DIR}/third-party>)
+        PUBLIC $<BUILD_INTERFACE:${MAZE_DIR}/third-party>)
 
     
     set(MAZE_LIBRARY_OUTPUT_DIRECTORY "${MAZE_ENGINE_DIR}/lib/${MAZE_ARCH_SUFFIX}")

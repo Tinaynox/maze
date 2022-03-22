@@ -39,19 +39,19 @@ if((MAZE_TARGET_PLATFORM_IS_WINDOWS) OR
     
     target_include_directories(
         maze-render-system-opengl3
-        PUBLIC "${PROJECT_SOURCE_DIR}/third-party/pvr_sdk/include")
+        PUBLIC "${MAZE_DIR}/third-party/pvr_sdk/include")
     
     if(MAZE_ARCH_SUFFIX STREQUAL "x64")
     
         target_link_libraries(
             maze-render-system-opengl3
-            PUBLIC "${PROJECT_SOURCE_DIR}/third-party/pvr_sdk/lib/Windows_x86_64/libEGL.lib")
+            PUBLIC "${MAZE_DIR}/third-party/pvr_sdk/lib/Windows_x86_64/libEGL.lib")
             
     else()
     
         target_link_libraries(
             maze-render-system-opengl3
-            PUBLIC "${PROJECT_SOURCE_DIR}/third-party/pvr_sdk/lib/Windows_x86_32/libEGL.lib")
+            PUBLIC "${MAZE_DIR}/third-party/pvr_sdk/lib/Windows_x86_32/libEGL.lib")
     
     endif()
     
@@ -80,7 +80,7 @@ if(MAZE_TARGET_PLATFORM_IS_LINUX)
 
     target_include_directories(
         maze-render-system-opengl3
-        PUBLIC "${PROJECT_SOURCE_DIR}/third-party/glad/include")
+        PUBLIC "${MAZE_DIR}/third-party/glad/include")
     
     target_link_libraries(
         maze-render-system-opengl3

@@ -1,21 +1,21 @@
-[submodule "engine/third-party/tinyxml2"]
-	path = engine/third-party/tinyxml2
+[submodule "third-party/tinyxml2"]
+	path = third-party/tinyxml2
 	url = git@github.com:Tinaynox/tinyxml2.git
-[submodule "engine/third-party/libpng"]
-	path = engine/third-party/libpng
+[submodule "third-party/libpng"]
+	path = third-party/libpng
 	url = git@github.com:Tinaynox/libpng.git
-[submodule "engine/third-party/zlib"]
-	path = engine/third-party/zlib
+[submodule "third-party/zlib"]
+	path = third-party/zlib
 	url = git@github.com:Tinaynox/zlib.git
-[submodule "engine/third-party/box2d"]
-	path = engine/third-party/box2d
+[submodule "third-party/box2d"]
+	path = third-party/box2d
 	url = git@github.com:Tinaynox/box2d.git
-[submodule "engine/third-party/jsoncpp"]
-	path = engine/third-party/jsoncpp
+[submodule "third-party/jsoncpp"]
+	path = third-party/jsoncpp
 	url = git@github.com:Tinaynox/jsoncpp.git
-[submodule "engine/third-party/minizip-ng"]
-	path = engine/third-party/minizip-ng
+[submodule "third-party/minizip-ng"]
+	path = third-party/minizip-ng
 	url = git@github.com:Tinaynox/minizip-ng.git
-[submodule "engine/third-party/libstem_gamepad"]
-	path = engine/third-party/libstem_gamepad
+[submodule "third-party/libstem_gamepad"]
+	path = third-party/libstem_gamepad
 	url = git@github.com:Tinaynox/libstem_gamepad.git

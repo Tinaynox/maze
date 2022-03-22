@@ -39,10 +39,10 @@ target_link_libraries(maze-core
     
 target_include_directories(
     maze-core
-    PUBLIC "${PROJECT_SOURCE_DIR}/third-party/utf8"
-    PUBLIC "${PROJECT_SOURCE_DIR}/third-party/tinyxml2"
-    PUBLIC "${PROJECT_SOURCE_DIR}/third-party/jsoncpp/include"
-    PUBLIC "${PROJECT_SOURCE_DIR}/third-party/minizip/include")
+    PUBLIC "${MAZE_DIR}/third-party/utf8"
+    PUBLIC "${MAZE_DIR}/third-party/tinyxml2"
+    PUBLIC "${MAZE_DIR}/third-party/jsoncpp/include"
+    PUBLIC "${MAZE_DIR}/third-party/minizip/include")
 
 if(MAZE_TARGET_PLATFORM_IS_WINDOWS)
 
