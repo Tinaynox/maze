@@ -66,7 +66,8 @@ namespace Maze
     //////////////////////////////////////////
     extern "C" void MAZE_PLUGIN_PROFILER_VIEW_API StopPlugin()
     {
-        PluginManager::GetInstancePtr()->uninstallPlugin(std::static_pointer_cast<Plugin>(s_plugin));
+        if (PluginManager::GetInstancePtr())
+            PluginManager::GetInstancePtr()->uninstallPlugin(std::static_pointer_cast<Plugin>(s_plugin));
         s_plugin.reset();
     }
 
@@ -116,7 +117,8 @@ namespace Maze
     //////////////////////////////////////////
     void ProfilerViewPlugin::uninstall()
     {
-        ProfilerViewService::GetInstancePtr()->shutdown();
+        if (ProfilerViewService::GetInstancePtr())
+            ProfilerViewService::GetInstancePtr()->shutdown();
     }
 
 } // namespace Maze

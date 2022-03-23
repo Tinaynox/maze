@@ -51,7 +51,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     template <typename T>
-    class MAZE_CORE_API Singleton
+    class Singleton
     {
     public:
 

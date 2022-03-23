@@ -60,8 +60,7 @@ namespace Maze
     //////////////////////////////////////////
     ProfilerViewService::~ProfilerViewService()
     {
-        m_renderSystem = nullptr;
-        m_renderWindow = nullptr;
+        
     }
 
     //////////////////////////////////////////

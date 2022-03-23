@@ -35,7 +35,7 @@
 
 
 //////////////////////////////////////////
-#if defined(MAZE_PLUGIN_PROFILER_EXPORTS)
+#if defined(MAZE_PLUGIN_PROFILER_VIEW_EXPORTS)
 #   define MAZE_PLUGIN_PROFILER_VIEW_API MAZE_API_EXPORT
 #else
 #   define MAZE_PLUGIN_PROFILER_VIEW_API MAZE_API_IMPORT

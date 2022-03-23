@@ -93,6 +93,24 @@ target_include_directories(
     ${ZLIB_NAME}
     PUBLIC $<BUILD_INTERFACE:${MAZE_DIR}/third-party/zlib>
     PUBLIC $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/third-party/zlib>)
+target_include_directories(
+    minigzip
+    PUBLIC $<BUILD_INTERFACE:${MAZE_DIR}/third-party/zlib>
+    PUBLIC $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/third-party/zlib>)
+target_include_directories(
+    example
+    PUBLIC $<BUILD_INTERFACE:${MAZE_DIR}/third-party/zlib>
+    PUBLIC $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/third-party/zlib>)
+if(HAVE_OFF64_T)
+    target_include_directories(
+        minigzip64
+        PUBLIC $<BUILD_INTERFACE:${MAZE_DIR}/third-party/zlib>
+        PUBLIC $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/third-party/zlib>)
+    target_include_directories(
+        example64
+        PUBLIC $<BUILD_INTERFACE:${MAZE_DIR}/third-party/zlib>
+        PUBLIC $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/third-party/zlib>)
+endif()
 set_target_properties(${ZLIB_NAME}
     PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib/${MAZE_ARCH_SUFFIX}"

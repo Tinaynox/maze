@@ -90,6 +90,10 @@ namespace Maze
         //////////////////////////////////////////
         inline RenderBufferPtr const& getRefractionBuffer() const { return m_refractionBuffer; }
 
+
+        //////////////////////////////////////////
+        void resizeBuffers(Vec2DU const& _size);
+
     protected:
 
         //////////////////////////////////////////

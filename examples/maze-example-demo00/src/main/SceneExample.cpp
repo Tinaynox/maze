@@ -166,6 +166,9 @@ namespace Maze
         m_renderBuffer->getColorTexture2D()->setMagFilter(TextureFilter::Linear);
 
 
+        RenderWaterSystemPtr waterSystem = m_world->getSystem<RenderWaterSystem>();
+        waterSystem->resizeBuffers(renderBufferSize);
+
 
         EntityPtr canvasEntity = createEntity("Canvas");
         m_canvas = canvasEntity->createComponent<Canvas>();
