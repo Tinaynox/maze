@@ -55,6 +55,8 @@ namespace Maze
         //////////////////////////////////////////
         struct DelayedTask
         {
+        public:
+
             //////////////////////////////////////////
             DelayedTask() = default;
 
@@ -64,7 +66,7 @@ namespace Maze
                 , framesDelay(_framesDelay)
             {}
 
-            UniquePtr<TaskDelegate> task;
+            SharedPtr<TaskDelegate> task;
             S32 framesDelay = 0;
         };
 
@@ -146,7 +148,7 @@ namespace Maze
 
         static TaskManager* s_instance;
 
-        SwitchableContainer<FastVector<UniquePtr<TaskDelegate>>> m_mainThreadTasks;
+        SwitchableContainer<FastVector<SharedPtr<TaskDelegate>>> m_mainThreadTasks;
         List<DelayedTask> m_delayedMainThreadTasks;
     };
 

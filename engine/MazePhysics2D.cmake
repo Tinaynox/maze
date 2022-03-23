@@ -34,14 +34,8 @@ target_link_libraries(
     maze-physics2d
     PUBLIC maze-core
     PUBLIC maze-graphics
-    PUBLIC ${ZLIB_NAME}
-    PUBLIC ${PNGLIB_NAME}
     PUBLIC box2d)
         
 target_include_directories(
     maze-physics2d
-    PUBLIC "${MAZE_DIR}/third-party/zlib"
-    PUBLIC "${PROJECT_BINARY_DIR}/third-party/zlib"
-    PUBLIC "${MAZE_DIR}/third-party/libpng"
-    PUBLIC "${PROJECT_BINARY_DIR}/third-party/libpng"
     PUBLIC "${MAZE_DIR}/third-party/box2d/include")

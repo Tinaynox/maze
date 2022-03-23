@@ -72,8 +72,8 @@ namespace Maze
     void TaskManager::update(F32 _dt)
     {
         m_mainThreadTasks.switchContainer();
-        FastVector<UniquePtr<TaskDelegate>>& mainThreadTasks = m_mainThreadTasks.other();
-        for (UniquePtr<TaskDelegate>& mainThreadTask : mainThreadTasks)
+        FastVector<SharedPtr<TaskDelegate>>& mainThreadTasks = m_mainThreadTasks.other();
+        for (SharedPtr<TaskDelegate>& mainThreadTask : mainThreadTasks)
             mainThreadTask->run();
         m_mainThreadTasks.other().clear();
 

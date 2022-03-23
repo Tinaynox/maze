@@ -90,23 +90,9 @@ set_property(TARGET zlibstatic PROPERTY FOLDER "MazeThirdParty")
 set_property(TARGET minigzip PROPERTY FOLDER "MazeThirdParty")
 set_property(TARGET example PROPERTY FOLDER "MazeThirdParty")
 target_include_directories(
-    minigzip
-    PUBLIC "${MAZE_DIR}/third-party/zlib"
-    PUBLIC "${PROJECT_BINARY_DIR}/third-party/zlib")
-target_include_directories(
-    example
-    PUBLIC "${MAZE_DIR}/third-party/zlib"
-    PUBLIC "${PROJECT_BINARY_DIR}/third-party/zlib")
-if(HAVE_OFF64_T)
-    target_include_directories(
-        minigzip64
-        PUBLIC "${MAZE_DIR}/third-party/zlib"
-        PUBLIC "${PROJECT_BINARY_DIR}/third-party/zlib")
-    target_include_directories(
-        example64
-        PUBLIC "${MAZE_DIR}/third-party/zlib"
-        PUBLIC "${PROJECT_BINARY_DIR}/third-party/zlib")
-endif()
+    ${ZLIB_NAME}
+    PUBLIC $<BUILD_INTERFACE:${MAZE_DIR}/third-party/zlib>
+    PUBLIC $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/third-party/zlib>)
 set_target_properties(${ZLIB_NAME}
     PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib/${MAZE_ARCH_SUFFIX}"
@@ -137,10 +123,6 @@ set(SKIP_INSTALL_LIBRARIES ON)
 set(MZ_FETCH_LIBS OFF)
 add_subdirectory("${MAZE_DIR}/third-party/minizip-ng" "${CMAKE_CURRENT_BINARY_DIR}/third-party/minizip-ng")
 set_property(TARGET minizip PROPERTY FOLDER "MazeThirdParty")
-target_include_directories(
-    minizip
-    PUBLIC "${MAZE_DIR}/third-party/zlib"
-    PUBLIC "${PROJECT_BINARY_DIR}/third-party/zlib")
 set_target_properties(minizip
     PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib/${MAZE_ARCH_SUFFIX}"
@@ -177,18 +159,8 @@ set_property(TARGET ${PNGLIB_NAME} PROPERTY FOLDER "MazeThirdParty")
 set_property(TARGET genfiles PROPERTY FOLDER "MazeThirdParty")
 target_include_directories(
     ${PNGLIB_NAME}
-    PUBLIC "${MAZE_DIR}/third-party/zlib"
-    PUBLIC "${PROJECT_BINARY_DIR}/third-party/zlib"
-    PUBLIC "${MAZE_DIR}/third-party/libpng"
-    PUBLIC "${PROJECT_BINARY_DIR}/third-party/libpng")
-if(BUILD_SHARED_LIBS)
-    target_include_directories(
-        png-fix-itxt
-        PUBLIC "${MAZE_DIR}/third-party/zlib"
-        PUBLIC "${PROJECT_BINARY_DIR}/third-party/zlib"
-        PUBLIC "${MAZE_DIR}/third-party/libpng"
-        PUBLIC "${PROJECT_BINARY_DIR}/third-party/libpng")
-endif()
+    PUBLIC $<BUILD_INTERFACE:${MAZE_DIR}/third-party/libpng>
+    PUBLIC $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/third-party/libpng>)
 set_target_properties(${PNGLIB_NAME}
     PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib/${MAZE_ARCH_SUFFIX}"

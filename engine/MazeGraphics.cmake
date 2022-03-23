@@ -35,10 +35,3 @@ target_link_libraries(
     PUBLIC maze-core
     PUBLIC ${ZLIB_NAME}
     PUBLIC ${PNGLIB_NAME})
-        
-target_include_directories(
-    maze-graphics
-    PUBLIC "${MAZE_DIR}/third-party/zlib"
-    PUBLIC "${PROJECT_BINARY_DIR}/third-party/zlib"
-    PUBLIC "${MAZE_DIR}/third-party/libpng"
-    PUBLIC "${PROJECT_BINARY_DIR}/third-party/libpng")

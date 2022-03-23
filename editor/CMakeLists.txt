@@ -178,13 +178,6 @@ set_property(TARGET ${EXAMPLE_NAME} PROPERTY FOLDER "MazeEditor")
 
 maze_setup_stdlib(${EXAMPLE_NAME})
 
-target_include_directories(
-        ${EXAMPLE_NAME}
-        PUBLIC "${MAZE_DIR}/third-party/zlib"
-        PUBLIC "${PROJECT_BINARY_DIR}/third-party/zlib"
-        PUBLIC "${MAZE_DIR}/third-party/libpng"
-        PUBLIC "${PROJECT_BINARY_DIR}/third-party/libpng")
-
 # Add <project>/include as public include directory
 target_include_directories(
     ${EXAMPLE_NAME}
