@@ -54,7 +54,10 @@ namespace Maze
     ////////////////////////////////////
     MAZE_CORE_API String CallObfuscationPasswordFunction(String const& _fileName)
     {
-        return g_obfuscationPasswordFunction(_fileName);
+        if (g_obfuscationPasswordFunction)
+            return g_obfuscationPasswordFunction(_fileName);
+
+        return String();
     }
 
     //////////////////////////////////////////

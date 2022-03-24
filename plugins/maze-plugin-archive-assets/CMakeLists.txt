@@ -25,7 +25,7 @@ cmake_minimum_required(VERSION 3.6)
 
 
 ##########################################
-project(maze-plugin-profiler-view)
+project(maze-plugin-archive-assets)
 
 
 ##########################################
@@ -39,7 +39,7 @@ maze_add_module(
     ${PROJECT_NAME}
     INCLUDE_DIR "include/${PROJECT_NAME}"
     SRC_DIR "src"
-    FORWARD_HEADER MazeProfilerViewHeader)
+    FORWARD_HEADER MazeArchiveAssetsHeader)
 
 
 ##########################################    
