@@ -112,6 +112,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        MultiDelegate<RenderSystemPtr const&> eventDefaultRenderSystemWillBeChanged;
         MultiDelegate<RenderSystemPtr const&> eventDefaultRenderSystemChanged;
 
     protected:

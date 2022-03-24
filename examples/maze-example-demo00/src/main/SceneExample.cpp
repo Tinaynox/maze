@@ -333,10 +333,13 @@ namespace Maze
     //////////////////////////////////////////
     void SceneExample::notifyRenderTargetResized(RenderTarget* _renderTarget)
     {
+        Vec2DU size = Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize();
+        Debug::Log("Render target resized: %ux%u", size.x, size.y);
+
         if (!Example::GetInstancePtr()->isMainWindowReadyToRender())
             return;
 
-        m_renderBuffer->setSize(Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize());
+        m_renderBuffer->setSize(size);
     }
 
     //////////////////////////////////////////

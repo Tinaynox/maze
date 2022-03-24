@@ -77,6 +77,7 @@ namespace Maze
 
         if (GraphicsManager::GetInstancePtr())
         {
+            GraphicsManager::GetInstancePtr()->eventDefaultRenderSystemWillBeChanged.subscribe(this, &ProfilerViewService::notifyDefaultRenderSystemWillBeChanged);
             GraphicsManager::GetInstancePtr()->eventDefaultRenderSystemChanged.subscribe(this, &ProfilerViewService::notifyDefaultRenderSystemChanged);
 
             if (GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw())
@@ -105,7 +106,10 @@ namespace Maze
         setRenderWindow(nullptr);
         
         if (GraphicsManager::GetInstancePtr())
+        {
+            GraphicsManager::GetInstancePtr()->eventDefaultRenderSystemWillBeChanged.unsubscribe(this);
             GraphicsManager::GetInstancePtr()->eventDefaultRenderSystemChanged.unsubscribe(this);
+        }
 
         if (InputManager::GetInstancePtr())
             InputManager::GetInstancePtr()->eventKeyboard.unsubscribe(this);
@@ -157,6 +161,12 @@ namespace Maze
     void ProfilerViewService::notifyDefaultRenderSystemChanged(RenderSystemPtr const& _renderSystem)
     {
         setRenderSystem(_renderSystem.get());
+    }
+
+    //////////////////////////////////////////
+    void ProfilerViewService::notifyDefaultRenderSystemWillBeChanged(RenderSystemPtr const& _renderSystem)
+    {
+        setRenderSystem(nullptr);
     }
 
     //////////////////////////////////////////

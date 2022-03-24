@@ -24,7 +24,9 @@ canvas.emscripten { border: 0px none; background-color: black; }
         postRun: [],
         canvas: (function() {
           var canvas = document.getElementById('canvas');
-
+          canvas.width = document.body.clientWidth;
+          canvas.height = document.body.clientHeight;
+          
           // As a default initial behavior, pop up an alert when webgl context is lost. To make your
           // application robust, you may want to override this behavior before shipping!
           // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
@@ -33,6 +35,11 @@ canvas.emscripten { border: 0px none; background-color: black; }
           return canvas;
         })(),
       };
+      window.addEventListener('resize', function(event){
+        Module.canvas.width = document.body.clientWidth;
+        Module.canvas.height = document.body.clientHeight;
+      });
+
     </script>
     <script async type="text/javascript" src="maze-example-demo00.js"></script>
   </body>

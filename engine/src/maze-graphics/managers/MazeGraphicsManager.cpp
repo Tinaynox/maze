@@ -75,7 +75,7 @@ namespace Maze
     GraphicsManager::~GraphicsManager()
     {
         m_renderSystems.clear();
-        m_defaultRenderSystem.reset();
+        setDefaultRenderSystem(nullptr);
 
         s_instance = nullptr;
     }
@@ -168,17 +168,17 @@ namespace Maze
     //////////////////////////////////////////
     void GraphicsManager::setDefaultRenderSystem(RenderSystemPtr const& _renderSystem)
     {
-        if (_renderSystem == nullptr)
-        {
-            m_defaultRenderSystem.reset();
+        if (m_defaultRenderSystem == _renderSystem)
             return;
+
+        if (_renderSystem)
+        {
+            StringKeyMap<RenderSystemPtr>::iterator it = m_renderSystems.find(_renderSystem->getName());
+            MAZE_ERROR_RETURN_IF(it == m_renderSystems.end(), "RenderSystem %s is not in RenderSystems list!", _renderSystem->getName().c_str());
         }
 
-        StringKeyMap<RenderSystemPtr>::iterator it = m_renderSystems.find(_renderSystem->getName());
-        MAZE_ERROR_RETURN_IF(it == m_renderSystems.end(), "RenderSystem %s is not in RenderSystems list!", _renderSystem->getName().c_str());
-
+        eventDefaultRenderSystemWillBeChanged(_renderSystem);
         m_defaultRenderSystem = _renderSystem;
-
         eventDefaultRenderSystemChanged(m_defaultRenderSystem);
     }
 

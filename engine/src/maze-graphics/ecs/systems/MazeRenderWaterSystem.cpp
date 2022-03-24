@@ -101,7 +101,7 @@ namespace Maze
     //////////////////////////////////////////
     void RenderWaterSystem::createBuffers(Vec2DU const& _size)
     {
-        Debug::Log("Creating RenderWaterSystem buffers: %ux%u", _size);
+        Debug::Log("Creating RenderWaterSystem buffers: %ux%u", _size.x, _size.y);
         m_reflectionBuffer = RenderBuffer::Create(
             {
                 {_size.x, _size.y},
@@ -119,7 +119,7 @@ namespace Maze
             });
         m_refractionBuffer->getColorTexture()->castRaw<Texture2D>()->setMinFilter(TextureFilter::Linear);
         m_refractionBuffer->getColorTexture()->castRaw<Texture2D>()->setMagFilter(TextureFilter::Linear);
-        Log("RenderWaterSystem buffers created");
+        Debug::Log("RenderWaterSystem buffers created");
     }
 
     //////////////////////////////////////////

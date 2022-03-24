@@ -77,6 +77,9 @@ namespace Maze
         void notifyDefaultRenderSystemChanged(RenderSystemPtr const& _renderSystem);
 
         //////////////////////////////////////////
+        void notifyDefaultRenderSystemWillBeChanged(RenderSystemPtr const& _renderSystem);
+
+        //////////////////////////////////////////
         void notifyRenderSystemRenderWindowsChanged();
 
         //////////////////////////////////////////
