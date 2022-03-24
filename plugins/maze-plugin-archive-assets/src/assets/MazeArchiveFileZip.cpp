@@ -24,8 +24,8 @@
 
 
 //////////////////////////////////////////
-#include "MazeCoreHeader.hpp"
-#include "maze-core/assets/MazeArchiveFileZip.hpp"
+#include "MazeArchiveAssetsHeader.hpp"
+#include "maze-plugin-archive-assets/assets/MazeArchiveFileZip.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
 
 

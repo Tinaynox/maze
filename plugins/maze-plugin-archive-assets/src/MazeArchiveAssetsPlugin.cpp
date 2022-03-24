@@ -27,6 +27,9 @@
 #include "MazeArchiveAssetsHeader.hpp"
 #include "MazeArchiveAssetsPlugin.hpp"
 #include "maze-core/managers/MazePluginManager.hpp"
+#include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-plugin-archive-assets/assets/MazeAssetRegularArchive.hpp"
 
 
 
@@ -72,6 +75,18 @@ namespace Maze
 
 #endif
 
+    //////////////////////////////////////////
+    MAZE_PLUGIN_ARCHIVE_ASSETS_API AssetFilePtr ProcessMazeAssetPack(
+        String const& _fileFullPath,
+        Vector<AssetFilePtr>* _addedFiles,
+        Vector<AssetFilePtr>* _removedFiles)
+    {
+        AssetRegularArchivePtr assetArchive = AssetRegularArchive::Create(_fileFullPath);
+        MAZE_WARNING_RETURN_VALUE_IF(!assetArchive, AssetFilePtr(), "Zip archive %s is corrupted!", _fileFullPath.c_str());
+        assetArchive->updateChildrenAssets(_addedFiles, _removedFiles);
+        return assetArchive;
+    }
+
 
     //////////////////////////////////////////
     // Class ArchiveAssetsPlugin
@@ -110,13 +125,14 @@ namespace Maze
     //////////////////////////////////////////
     void ArchiveAssetsPlugin::install()
     {
-        
+        AssetManager::GetInstancePtr()->registerFileChildrenProcessor("mzap", &ProcessMazeAssetPack);
     }
 
     //////////////////////////////////////////
     void ArchiveAssetsPlugin::uninstall()
     {
-        
+        if (AssetManager::GetInstancePtr())
+            AssetManager::GetInstancePtr()->clearFileChildrenProcessor("mzap");
     }
 
 } // namespace Maze

@@ -46,6 +46,10 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    using FileChildrenProcessor = std::function<AssetFilePtr(String const, Vector<AssetFilePtr>*, Vector<AssetFilePtr>*)>;
+
+
+    //////////////////////////////////////////
     // Class AssetManager
     //
     //////////////////////////////////////////
@@ -132,6 +136,29 @@ namespace Maze
         //////////////////////////////////////////
         StringKeyMap<String> getMetaData(AssetFilePtr const& _assetFile);
 
+
+        //////////////////////////////////////////
+        inline void registerFileChildrenProcessor(String const& _extension, FileChildrenProcessor const& _processor)
+        {
+            m_fileChildrenProcessors.insert(_extension, _processor);
+        }
+
+        //////////////////////////////////////////
+        inline void clearFileChildrenProcessor(String const& _extension)
+        {
+            m_fileChildrenProcessors.erase(_extension);
+        }
+
+        //////////////////////////////////////////
+        inline FileChildrenProcessor getFileChildrenProcessor(String const& _extension) const
+        {
+            auto it = m_fileChildrenProcessors.find(_extension);
+            if (it != m_fileChildrenProcessors.end())
+                return it->second;
+
+            return FileChildrenProcessor();
+        }
+
     protected:
 
         //////////////////////////////////////////
@@ -164,6 +191,7 @@ namespace Maze
         StringKeyMap<AssetFilePtr> m_assetFilesByFileName;
         StringKeyMap<AssetFilePtr> m_assetFilesByFullPath;
 
+        StringKeyMap<FileChildrenProcessor> m_fileChildrenProcessors;
     };
 
 

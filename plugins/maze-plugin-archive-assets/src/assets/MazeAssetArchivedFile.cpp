@@ -24,9 +24,9 @@
 
 
 //////////////////////////////////////////
-#include "MazeCoreHeader.hpp"
-#include "maze-core/assets/MazeAssetArchivedFile.hpp"
-#include "maze-core/assets/MazeAssetRegularArchive.hpp"
+#include "MazeArchiveAssetsHeader.hpp"
+#include "maze-plugin-archive-assets/assets/MazeAssetArchivedFile.hpp"
+#include "maze-plugin-archive-assets/assets/MazeAssetRegularArchive.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include <tinyxml2.h>
 

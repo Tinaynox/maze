@@ -30,7 +30,7 @@
 
 
 //////////////////////////////////////////
-#include "maze-core/MazeCoreHeader.hpp"
+#include "maze-plugin-archive-assets/MazeArchiveAssetsHeader.hpp"
 #include "maze-core/assets/MazeArchiveFile.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
 #include <mz.h>
@@ -49,7 +49,7 @@ namespace Maze
     // Class ArchiveFileZip
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API ArchiveFileZip
+    class MAZE_PLUGIN_ARCHIVE_ASSETS_API ArchiveFileZip
         : public ArchiveFile
     {
     public:

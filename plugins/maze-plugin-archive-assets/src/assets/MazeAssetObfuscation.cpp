@@ -24,8 +24,8 @@
 
 
 //////////////////////////////////////////
-#include "MazeCoreHeader.hpp"
-#include "maze-core/assets/MazeAssetObfuscation.hpp"
+#include "MazeArchiveAssetsHeader.hpp"
+#include "maze-plugin-archive-assets/assets/MazeAssetObfuscation.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/helpers/MazeAssetHelper.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
@@ -46,13 +46,13 @@ namespace Maze
     ObfuscationPasswordFunction g_obfuscationPasswordFunction = nullptr;
 
     ////////////////////////////////////
-    MAZE_CORE_API void SetObfuscationPasswordFunction(ObfuscationPasswordFunction _func)
+    MAZE_PLUGIN_ARCHIVE_ASSETS_API void SetObfuscationPasswordFunction(ObfuscationPasswordFunction _func)
     {
         g_obfuscationPasswordFunction = _func;
     }
 
     ////////////////////////////////////
-    MAZE_CORE_API String CallObfuscationPasswordFunction(String const& _fileName)
+    MAZE_PLUGIN_ARCHIVE_ASSETS_API String CallObfuscationPasswordFunction(String const& _fileName)
     {
         if (g_obfuscationPasswordFunction)
             return g_obfuscationPasswordFunction(_fileName);
@@ -163,7 +163,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MAZE_CORE_API void ObfuscateAssetPacks(
+    MAZE_PLUGIN_ARCHIVE_ASSETS_API void ObfuscateAssetPacks(
         String const& _srcPath,
         String const& _destPath)
     {
@@ -175,7 +175,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MAZE_CORE_API void ObfuscateAssetPacks(
+    MAZE_PLUGIN_ARCHIVE_ASSETS_API void ObfuscateAssetPacks(
         String const& _srcPath,
         String const& _destPath,
         String const& _targetSrcPath,

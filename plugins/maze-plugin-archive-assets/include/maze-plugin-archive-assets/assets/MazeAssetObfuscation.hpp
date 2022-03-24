@@ -30,7 +30,7 @@
 
 
 //////////////////////////////////////////
-#include "maze-core/MazeCoreHeader.hpp"
+#include "maze-plugin-archive-assets/MazeArchiveAssetsHeader.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/system/MazeWindowVideoMode.hpp"
@@ -55,18 +55,18 @@ namespace Maze
     using ObfuscationPasswordFunction = std::function<String(String const&)>;
 
     ////////////////////////////////////
-    MAZE_CORE_API void SetObfuscationPasswordFunction(ObfuscationPasswordFunction _func);
+    MAZE_PLUGIN_ARCHIVE_ASSETS_API void SetObfuscationPasswordFunction(ObfuscationPasswordFunction _func);
 
     ////////////////////////////////////
-    MAZE_CORE_API String CallObfuscationPasswordFunction(String const&);
+    MAZE_PLUGIN_ARCHIVE_ASSETS_API String CallObfuscationPasswordFunction(String const&);
 
     //////////////////////////////////////////
-    MAZE_CORE_API void ObfuscateAssetPacks(
+    MAZE_PLUGIN_ARCHIVE_ASSETS_API void ObfuscateAssetPacks(
         String const& _srcPath,
         String const& _destPath);
 
     //////////////////////////////////////////
-    MAZE_CORE_API void ObfuscateAssetPacks(
+    MAZE_PLUGIN_ARCHIVE_ASSETS_API void ObfuscateAssetPacks(
         String const& _srcPath,
         String const& _destPath,
         String const& _targetSrcPath,

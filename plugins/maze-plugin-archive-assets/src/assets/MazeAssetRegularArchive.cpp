@@ -24,10 +24,10 @@
 
 
 //////////////////////////////////////////
-#include "MazeCoreHeader.hpp"
-#include "maze-core/assets/MazeAssetRegularArchive.hpp"
-#include "maze-core/assets/MazeAssetObfuscation.hpp"
-#include "maze-core/assets/MazeAssetArchivedFile.hpp"
+#include "MazeArchiveAssetsHeader.hpp"
+#include "maze-plugin-archive-assets/assets/MazeAssetRegularArchive.hpp"
+#include "maze-plugin-archive-assets/assets/MazeAssetObfuscation.hpp"
+#include "maze-plugin-archive-assets/assets/MazeAssetArchivedFile.hpp"
 
 
 //////////////////////////////////////////
