@@ -52,6 +52,18 @@ EM_BOOL OnKeyboardEvent(Maze::S32 _eventType, EmscriptenKeyboardEvent const* _ev
 namespace Maze
 {
     //////////////////////////////////////////
+    inline S32 ConvertEmscriptenMouseButtonIdToMazeMouseButtonId(S32 _emscriptenMouseButtonId)
+    {
+        switch (_emscriptenMouseButtonId)
+        {
+            case 1: return 2;
+            case 2: return 1;
+        }
+        
+        return _emscriptenMouseButtonId;
+    }
+    
+    //////////////////////////////////////////
     // Class InputManagerEmscripten
     //
     //////////////////////////////////////////
@@ -99,7 +111,7 @@ namespace Maze
             {
                 InputEventMouseData event;
                 event.type = InputEventMouseType::ButtonDown;
-                event.buttonId = _event->button;
+                event.buttonId = ConvertEmscriptenMouseButtonIdToMazeMouseButtonId(_event->button);
                 event.x = _event->clientX;
                 event.y = windowEmscripten->getClientSize().y - _event->clientY;
                 event.window = windowEmscripten.get();
@@ -110,7 +122,7 @@ namespace Maze
             {
                 InputEventMouseData event;
                 event.type = InputEventMouseType::ButtonUp;
-                event.buttonId = _event->button;
+                event.buttonId = ConvertEmscriptenMouseButtonIdToMazeMouseButtonId(_event->button);
                 event.x = _event->clientX;
                 event.y = windowEmscripten->getClientSize().y - _event->clientY;
                 event.window = windowEmscripten.get();
@@ -121,7 +133,7 @@ namespace Maze
             {
                 InputEventMouseData event;
                 event.type = InputEventMouseType::ButtonDoubleClick;
-                event.buttonId = _event->button;
+                event.buttonId = ConvertEmscriptenMouseButtonIdToMazeMouseButtonId(_event->button);
                 event.x = _event->clientX;
                 event.y = windowEmscripten->getClientSize().y - _event->clientY;
                 event.window = windowEmscripten.get();
