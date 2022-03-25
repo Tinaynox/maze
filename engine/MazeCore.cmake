@@ -34,15 +34,13 @@ maze_add_module(
 target_link_libraries(maze-core 
     PUBLIC nedmalloc
     PUBLIC tinyxml2
-    PUBLIC jsoncpp_static
-    PUBLIC minizip)
+    PUBLIC jsoncpp_static)
     
 target_include_directories(
     maze-core
     PUBLIC "${MAZE_DIR}/third-party/utf8"
     PUBLIC "${MAZE_DIR}/third-party/tinyxml2"
-    PUBLIC "${MAZE_DIR}/third-party/jsoncpp/include"
-    PUBLIC "${MAZE_DIR}/third-party/minizip/include")
+    PUBLIC "${MAZE_DIR}/third-party/jsoncpp/include")
 
 if(MAZE_TARGET_PLATFORM_IS_WINDOWS)
 

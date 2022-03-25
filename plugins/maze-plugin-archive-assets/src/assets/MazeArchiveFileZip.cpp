@@ -281,7 +281,10 @@ namespace Maze
         if (m_passwordFunction)
         {
             String password = m_passwordFunction(_fileName);
-            return unzOpenCurrentFilePassword(m_zipHandle, password.c_str());
+            if (password.empty())
+                return unzOpenCurrentFile(m_zipHandle);
+            else
+                return unzOpenCurrentFilePassword(m_zipHandle, password.c_str());
         }
         else
         {

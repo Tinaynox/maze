@@ -35,6 +35,10 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Macros.cmake")
 
 
 ##########################################
+include("${MAZE_DIR}/third-party/minizip.cmake")
+
+
+##########################################
 maze_add_module(
     ${PROJECT_NAME}
     INCLUDE_DIR "include/${PROJECT_NAME}"
@@ -45,7 +49,8 @@ maze_add_module(
 ##########################################    
 target_include_directories(
     ${PROJECT_NAME}
-    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    PUBLIC "${MAZE_DIR}/third-party/minizip/include")
 
 
 ##########################################
@@ -57,4 +62,5 @@ target_link_libraries(
     ${PROJECT_NAME}
     PUBLIC maze-core
     PUBLIC maze-graphics
-    PUBLIC maze-ui)
+    PUBLIC maze-ui
+    PUBLIC minizip)
