@@ -61,6 +61,4 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "MazePlugins")
 target_link_libraries(
     ${PROJECT_NAME}
     PUBLIC maze-core
-    PUBLIC maze-graphics
-    PUBLIC maze-ui
     PUBLIC minizip)
