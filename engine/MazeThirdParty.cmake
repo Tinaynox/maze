@@ -28,7 +28,8 @@ add_subdirectory("${MAZE_DIR}/third-party/nedmalloc" "${CMAKE_CURRENT_BINARY_DIR
 set_property(TARGET nedmalloc PROPERTY FOLDER "MazeThirdParty") 
 
 # tinyxml2
-set(BUILD_TESTS OFF)
+set(BUILD_TESTS OFF CACHE BOOL "build xmltest (deprecated: Use BUILD_TESTING)" FORCE)
+set(BUILD_TESTING OFF CACHE BOOL "build xmltest" FORCE)
 add_subdirectory("${MAZE_DIR}/third-party/tinyxml2" "${CMAKE_CURRENT_BINARY_DIR}/third-party/tinyxml2")
 set_property(TARGET tinyxml2 PROPERTY FOLDER "MazeThirdParty")
 set_property(TARGET uninstall PROPERTY FOLDER "MazeThirdParty")

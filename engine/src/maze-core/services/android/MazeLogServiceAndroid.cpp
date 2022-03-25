@@ -32,9 +32,7 @@
 
 //////////////////////////////////////////
 namespace Maze
-{
-    
-    
+{ 
     ////////////////////////////////////
     android_LogPriority LogPriorityToAndroidLogPriority(S32 _priority)
     {
@@ -49,13 +47,6 @@ namespace Maze
     //////////////////////////////////////////
     // Class LogService
     //
-    //////////////////////////////////////////
-    template<>
-    SharedPtr<LogService> Singleton<LogService>::s_instance{};
-    template<>
-    Mutex Singleton<LogService>::s_mutex{};
-    
-
     //////////////////////////////////////////
     LogService::LogService()
         : m_prevLogPriority(-1)
