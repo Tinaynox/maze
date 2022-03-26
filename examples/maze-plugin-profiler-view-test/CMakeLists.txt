@@ -46,16 +46,16 @@ endif()
 
 
 ##########################################
-add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-profiler-view" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-profiler-view")
-
-
-##########################################
 maze_add_sources(${CMAKE_CURRENT_SOURCE_DIR}/../templates/example-wrapper ADDITIONAL_EXAMPLE_FILES)
 maze_sort_sources("${ADDITIONAL_EXAMPLE_FILES}" ADDITIONAL_EXAMPLE_FILES)
 
 
 ##########################################
 include("${CMAKE_CURRENT_SOURCE_DIR}/../templates/CMakeExampleTemplate.cmake")
+
+
+##########################################
+add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-profiler-view" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-profiler-view")
 
 
 ##########################################
