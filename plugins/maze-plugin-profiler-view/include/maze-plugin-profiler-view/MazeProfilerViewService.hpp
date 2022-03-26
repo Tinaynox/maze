@@ -31,7 +31,6 @@
 
 //////////////////////////////////////////
 #include "maze-plugin-profiler-view/MazeProfilerViewHeader.hpp"
-#include "maze-core/utils/MazeSingleton.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
@@ -47,8 +46,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_PLUGIN_PROFILER_VIEW_API ProfilerViewService
-        : public Singleton<ProfilerViewService>
-        , public MultiDelegateCallbackReceiver
+        : public MultiDelegateCallbackReceiver
     {
     public:
         
@@ -64,6 +62,17 @@ namespace Maze
 
         //////////////////////////////////////////
         void shutdown();
+
+
+        //////////////////////////////////////////
+        static inline ProfilerViewService& GetInstance()
+        {
+            static ProfilerViewService s_logService;
+            return s_logService;
+        }
+
+        //////////////////////////////////////////
+        static inline ProfilerViewService* GetInstancePtr() { return &GetInstance(); }
 
     protected:
 

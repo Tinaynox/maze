@@ -42,14 +42,14 @@ namespace Maze
 #if (MAZE_STATIC)
 
     //////////////////////////////////////////
-    void InstallSoundSystemOpenALPlugin(SoundSystemOpenALConfig const& _config)
+    MAZE_SOUND_SYSTEM_OPENAL_API void InstallSoundSystemOpenALPlugin(SoundSystemOpenALConfig const& _config)
     {
         s_plugin = Maze::SoundSystemOpenALPlugin::Create(_config);
         Maze::PluginManager::GetInstancePtr()->installPlugin(std::static_pointer_cast<Plugin>(s_plugin));
     }
 
     //////////////////////////////////////////
-    void UninstallSoundSystemOpenALPlugin()
+    MAZE_SOUND_SYSTEM_OPENAL_API void UninstallSoundSystemOpenALPlugin()
     {
         Maze::PluginManager::GetInstancePtr()->uninstallPlugin(std::static_pointer_cast<Plugin>(s_plugin));
         s_plugin.reset();
@@ -57,18 +57,15 @@ namespace Maze
 
 #else
 
-    
-
-
     //////////////////////////////////////////
-    extern "C" void MAZE_SOUND_SYSTEM_OPENAL_API StartPlugin()
+    extern "C" MAZE_SOUND_SYSTEM_OPENAL_API void StartPlugin()
     {
         s_plugin = Maze::SoundSystemOpenALPlugin::Create();
         Maze::PluginManager::GetInstancePtr()->installPlugin(std::static_pointer_cast<Plugin>(s_plugin));
     }
 
     //////////////////////////////////////////
-    extern "C" void MAZE_SOUND_SYSTEM_OPENAL_API StopPlugin()
+    extern "C" MAZE_SOUND_SYSTEM_OPENAL_API void StopPlugin()
     {
         Maze::PluginManager::GetInstancePtr()->uninstallPlugin(std::static_pointer_cast<Plugin>(s_plugin));
         s_plugin.reset();

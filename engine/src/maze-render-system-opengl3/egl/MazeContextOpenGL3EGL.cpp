@@ -438,6 +438,7 @@ namespace Maze
     {
         if (m_eglSurface != EGL_NO_SURFACE)
         {
+            MAZE_PROFILER_SCOPED_LOCK(SWAP);
             MAZE_EGL_CALL(eglSwapBuffers(m_eglDisplay, m_eglSurface));
         }
 

@@ -42,12 +42,21 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_CORE_API LogService
         : public LogServiceUnix
-        , public Singleton<LogService>
     {
     public:
 
         //////////////////////////////////////////
         LogService();
+        
+        //////////////////////////////////////////
+        static inline LogService& GetInstance()
+        {
+            static LogService s_logService;
+            return s_logService;
+        }
+
+        //////////////////////////////////////////
+        static inline LogService* GetInstancePtr() { return &GetInstance(); }
 
     protected:
 

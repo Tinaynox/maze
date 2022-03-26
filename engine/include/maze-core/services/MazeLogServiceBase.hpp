@@ -33,7 +33,6 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/system/MazeMutex.hpp"
-#include "maze-core/utils/MazeSingleton.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include <ostream>
 

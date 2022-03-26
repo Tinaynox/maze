@@ -1,5 +1,5 @@
 Function specifiers order:
-MAZE_API_* extern/static inline constexpr
+extern "C" MAZE_API_* static inline constexpr
 
 Variables Nomenclature:
 

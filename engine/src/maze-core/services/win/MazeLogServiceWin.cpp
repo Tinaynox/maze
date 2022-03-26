@@ -37,16 +37,6 @@ namespace Maze
     // Class LogService
     //
     //////////////////////////////////////////
-    template <>
-    SharedPtr<LogService> Singleton<LogService>::s_instance{};
-    template <>
-    Mutex Singleton<LogService>::s_mutex{};
-    
-
-    //////////////////////////////////////////
-    template class Singleton<LogService>;
-    
-    //////////////////////////////////////////
     LogService::LogService()
     {
         

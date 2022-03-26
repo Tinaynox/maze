@@ -59,14 +59,14 @@ namespace Maze
 #else
 
     //////////////////////////////////////////
-    extern "C" void MAZE_PLUGIN_ARCHIVE_ASSETS_API StartPlugin()
+    extern "C" MAZE_PLUGIN_ARCHIVE_ASSETS_API void StartPlugin()
     {
         s_plugin = ArchiveAssetsPlugin::Create();
         Maze::PluginManager::GetInstancePtr()->installPlugin(std::static_pointer_cast<Plugin>(s_plugin));
     }
 
     //////////////////////////////////////////
-    extern "C" void MAZE_PLUGIN_ARCHIVE_ASSETS_API StopPlugin()
+    extern "C" MAZE_PLUGIN_ARCHIVE_ASSETS_API void StopPlugin()
     {
         if (PluginManager::GetInstancePtr())
             PluginManager::GetInstancePtr()->uninstallPlugin(std::static_pointer_cast<Plugin>(s_plugin));

@@ -57,18 +57,15 @@ namespace Maze
 
 #else
 
-    
-
-
     //////////////////////////////////////////
-    extern "C" void MAZE_RENDER_SYSTEM_OPENGL3_API StartPlugin()
+    extern "C" MAZE_RENDER_SYSTEM_OPENGL3_API void StartPlugin()
     {
         s_plugin = Maze::RenderSystemOpenGL3Plugin::Create();
         Maze::PluginManager::GetInstancePtr()->installPlugin(std::static_pointer_cast<Plugin>(s_plugin));
     }
 
     //////////////////////////////////////////
-    extern "C" void MAZE_RENDER_SYSTEM_OPENGL3_API StopPlugin()
+    extern "C" MAZE_RENDER_SYSTEM_OPENGL3_API void StopPlugin()
     {
         Maze::PluginManager::GetInstancePtr()->uninstallPlugin(std::static_pointer_cast<Plugin>(s_plugin));
         s_plugin.reset();

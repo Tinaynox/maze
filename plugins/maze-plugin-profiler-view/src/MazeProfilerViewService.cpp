@@ -42,16 +42,6 @@ namespace Maze
     // Class ProfilerViewService
     //
     //////////////////////////////////////////
-    template <>
-    SharedPtr<ProfilerViewService> Singleton<ProfilerViewService>::s_instance{};
-    template <>
-    Mutex Singleton<ProfilerViewService>::s_mutex{};
-    
-
-    //////////////////////////////////////////
-    template class Singleton<ProfilerViewService>;
-    
-    //////////////////////////////////////////
     ProfilerViewService::ProfilerViewService()
     {
         

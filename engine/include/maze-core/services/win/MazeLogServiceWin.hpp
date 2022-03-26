@@ -43,13 +43,22 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_CORE_API LogService
         : public LogServiceBase
-        , public Singleton<LogService>
         , public MultiDelegateCallbackReceiver
     {
     public:
         
         //////////////////////////////////////////
         LogService();
+        
+        //////////////////////////////////////////
+        static inline LogService& GetInstance()
+        {
+            static LogService s_logService;
+            return s_logService;
+        }
+
+        //////////////////////////////////////////
+        static inline LogService* GetInstancePtr() { return &GetInstance(); }
         
     protected:
         
