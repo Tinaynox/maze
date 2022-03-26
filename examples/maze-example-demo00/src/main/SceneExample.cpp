@@ -32,10 +32,12 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
+#include "maze-core/managers/MazePluginManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
+#include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
@@ -80,6 +82,8 @@
 #include "maze-render-system-opengl-core/MazeStateMachineOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
+#include "maze-plugin-profiler-view/MazeProfilerViewPlugin.hpp"
+#include "maze-plugin-profiler-view/settings/MazeProfilerViewSettings.hpp"
 #include "main/LevelBloomController.hpp"
 #include "Example.hpp"
 
@@ -108,6 +112,17 @@ namespace Maze
     //////////////////////////////////////////
     bool LoadPlugins()
     {
+#if (MAZE_STATIC)
+        InstallProfilerViewPlugin();
+#else
+        PluginManager::GetInstancePtr()->loadPlatformPlugin("maze-plugin-profiler-view");
+#endif
+
+#if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
+        if (SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>())
+            SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>()->setActive(true);
+#endif
+
         return true;
     }
 
