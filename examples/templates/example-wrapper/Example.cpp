@@ -255,29 +255,19 @@ namespace Maze
         if (!LoadPlugins())
             return false;
 
-#if (MAZE_STATIC)
-        Debug::log << "Plugins Static installation..." << endl;
-#   if MAZE_RENDER_SYSTEM_OPENGL_ENABLED
+#if MAZE_RENDER_SYSTEM_OPENGL_ENABLED
         {
             RenderSystemOpenGLConfig config;
             config.multiContextPolicy = OpenGLMultiContextPolicy::Unified;
-            InstallRenderSystemOpenGL3Plugin(config);
+            MAZE_LOAD_PLATFORM_PLUGIN(RenderSystemOpenGL3, "maze-render-system-opengl3", config);
         }
-#   endif
+#endif
+
 #if MAZE_SOUND_SYSTEM_OPENAL_ENABLED
         {
             SoundSystemOpenALConfig config;
-            InstallSoundSystemOpenALPlugin(config);
+            MAZE_LOAD_PLATFORM_PLUGIN(SoundSystemOpenAL, "maze-sound-system-openal", config);
         }
-#   endif
-        Debug::log << "Plugins Static installation finished." << endl;
-#else
-#   if MAZE_RENDER_SYSTEM_OPENGL_ENABLED
-        m_pluginManager->loadPlatformPlugin("maze-render-system-opengl3");
-#   endif
-#if MAZE_SOUND_SYSTEM_OPENAL_ENABLED
-        m_pluginManager->loadPlatformPlugin("maze-sound-system-openal");
-#   endif
 #endif
 
         Debug::log << "Available Render Systems: " << endl;
