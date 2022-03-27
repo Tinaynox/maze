@@ -543,22 +543,29 @@ namespace Maze
             esVersion = EGL_OPENGL_BIT;
         }
 
-        const EGLint attributes[] = 
+        EGLint configCount;
+        EGLConfig configs[1] = { 0 };
+
+        S32 antialiasingLevel = _config.antialiasingLevel;
+
+        EGLBoolean result;
+        bool repeatTry = false;
+        do
+        {
+            const EGLint attributes[] = 
             {    
                 EGL_BUFFER_SIZE,            static_cast<EGLint>(_bitsPerPixel),
                 EGL_DEPTH_SIZE,             static_cast<EGLint>(_config.depthBits),
                 EGL_STENCIL_SIZE,           static_cast<EGLint>(_config.stencilBits),
-                EGL_SAMPLE_BUFFERS,         static_cast<EGLint>(_config.antialiasingLevel),
+                EGL_SAMPLE_BUFFERS,         static_cast<EGLint>(antialiasingLevel),
                 EGL_SURFACE_TYPE,           EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
                 EGL_RENDERABLE_TYPE,        esVersion,
                 EGL_NONE
             };
-
-        EGLint configCount;
-        EGLConfig configs[1] = { 0 };
-
-        EGLBoolean result;
-        MAZE_EGL_CALL(result = eglChooseConfig(_eglDisplay, attributes, configs, 1, &configCount));
+            
+            MAZE_EGL_CALL(result = eglChooseConfig(_eglDisplay, attributes, configs, 1, &configCount));
+        }
+        while (configCount == 0);
         MAZE_ERROR_IF(configCount == 0, "Config count is ZERO.");
 
         
