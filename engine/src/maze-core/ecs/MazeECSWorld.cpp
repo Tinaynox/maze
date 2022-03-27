@@ -478,7 +478,7 @@ namespace Maze
                 m_systems.erase(m_systems.begin() + i);
                 system->processSystemRemoved();
                 system->setWorld(getSharedPtr());
-
+                eventComponentSystemRemoved(system);
                 return;
             }
         }

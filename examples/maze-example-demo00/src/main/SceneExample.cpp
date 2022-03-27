@@ -69,7 +69,6 @@
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeWaterRenderer3D.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderWaterSystem.hpp"
 #include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
 #include "maze-particles/MazeParticleSystemParameterF32.hpp"
 #include "maze-particles/MazeParticleSystemParameterColor.hpp"
@@ -85,6 +84,8 @@
 #include "maze-plugin-profiler-view/MazeProfilerViewPlugin.hpp"
 #include "maze-plugin-profiler-view/settings/MazeProfilerViewSettings.hpp"
 #include "maze-plugin-loader-png/MazeLoaderPNGPlugin.hpp"
+#include "maze-plugin-water/MazeWaterPlugin.hpp"
+#include "maze-plugin-water/ecs/systems/MazeRenderWaterSystem.hpp"
 #include "main/LevelBloomController.hpp"
 #include "Example.hpp"
 
@@ -116,9 +117,11 @@ namespace Maze
 #if (MAZE_STATIC)
         InstallProfilerViewPlugin();
         InstallLoaderPNGPlugin();
+        InstallWaterPlugin();
 #else
         PluginManager::GetInstancePtr()->loadPlatformPlugin("maze-plugin-profiler-view");
         PluginManager::GetInstancePtr()->loadPlatformPlugin("maze-plugin-loader-png");
+        PluginManager::GetInstancePtr()->loadPlatformPlugin("maze-plugin-water");
 #endif
 
 #if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)

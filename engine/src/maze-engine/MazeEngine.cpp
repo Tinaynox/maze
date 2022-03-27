@@ -60,7 +60,6 @@
 #include "maze-graphics/ecs/systems/MazeGizmosSystem.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderPreparationSystem.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderWaterSystem.hpp"
 #include "maze-graphics/managers/MazeGizmosManager.hpp"
 #include "maze-ui/ecs/systems/MazeInputSystem2D.hpp"
 #include "maze-ui/ecs/systems/MazeUITweenTransitionSystem.hpp"
@@ -343,9 +342,6 @@ namespace Maze
         _world->addSystem(PhysicsControlSystem2D::Create());
 
         _world->addSystem(UITweenTransitionSystem::Create());
-
-        // #TODO: Move to some plugin?
-        _world->addSystem(RenderWaterSystem::Create());
     }
 
 } // namespace Maze

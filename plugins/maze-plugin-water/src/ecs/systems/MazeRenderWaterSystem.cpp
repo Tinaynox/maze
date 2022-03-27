@@ -24,8 +24,8 @@
 
 
 //////////////////////////////////////////
-#include "MazeGraphicsHeader.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderWaterSystem.hpp"
+#include "MazeWaterHeader.hpp"
+#include "maze-plugin-water/ecs/systems/MazeRenderWaterSystem.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
@@ -63,6 +63,9 @@ namespace Maze
     //////////////////////////////////////////
     RenderWaterSystem::~RenderWaterSystem()
     {
+        if (m_worldRaw)
+            m_worldRaw->eventComponentSystemAdded.unsubscribe(this);
+
         if (m_renderControlSystem)
             m_renderControlSystem->getModule3D()->eventPrePass.unsubscribe(this);
     }
@@ -87,11 +90,22 @@ namespace Maze
     void RenderWaterSystem::processSystemAdded()
     {
         m_waterRenderersSample = m_worldRaw->requestInclusiveSample<WaterRenderer3D>();
+        m_worldRaw->eventComponentSystemAdded.subscribe(this, &RenderWaterSystem::notifyComponentSystemAdded);
 
         m_renderControlSystem = m_worldRaw->getSystem<RenderControlSystem>();
-        m_renderControlSystem->getModule3D()->eventPrePass.subscribe(this, &RenderWaterSystem::notifyRenderPrePass);
+        if (m_renderControlSystem)
+            m_renderControlSystem->getModule3D()->eventPrePass.subscribe(this, &RenderWaterSystem::notifyRenderPrePass);
     }
 
+    //////////////////////////////////////////
+    void RenderWaterSystem::processSystemRemoved()
+    {
+        if (m_worldRaw)
+            m_worldRaw->eventComponentSystemAdded.unsubscribe(this);
+
+        if (m_renderControlSystem)
+            m_renderControlSystem->getModule3D()->eventPrePass.unsubscribe(this);
+    }
 
     //////////////////////////////////////////
     void RenderWaterSystem::processUpdate(F32 _dt)
@@ -202,6 +216,20 @@ namespace Maze
                     m_reflectionBuffer.get(),
                     m_refractionBuffer.get());
             });
+    }
+
+    //////////////////////////////////////////
+    void RenderWaterSystem::notifyComponentSystemAdded(ComponentSystemPtr const& _system)
+    {
+        if (_system->getClassUID() == ClassInfo<RenderControlSystem>::UID())
+        {
+            if (!m_renderControlSystem)
+            {
+                m_renderControlSystem = _system->cast<RenderControlSystem>();
+                if (m_renderControlSystem)
+                    m_renderControlSystem->getModule3D()->eventPrePass.subscribe(this, &RenderWaterSystem::notifyRenderPrePass);
+            }
+        }
     }
     
     

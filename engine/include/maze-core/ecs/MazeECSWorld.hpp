@@ -283,6 +283,7 @@ namespace Maze
         MultiDelegate<Entity*> eventEntityChanged;
         MultiDelegate<EntityPtr const&> eventEntityRemoved;
         MultiDelegate<ComponentSystemPtr const&> eventComponentSystemAdded;
+        MultiDelegate<ComponentSystemPtr const&> eventComponentSystemRemoved;
 
     protected:
 

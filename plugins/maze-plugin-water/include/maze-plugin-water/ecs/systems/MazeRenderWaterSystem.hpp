@@ -30,7 +30,7 @@
 
 
 //////////////////////////////////////////
-#include "maze-graphics/MazeGraphicsHeader.hpp"
+#include "maze-plugin-water/MazeWaterHeader.hpp"
 #include "maze-core/ecs/MazeComponentSystem.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
@@ -57,7 +57,7 @@ namespace Maze
     // Class RenderWaterSystem
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API RenderWaterSystem
+    class MAZE_PLUGIN_WATER_API RenderWaterSystem
         : public ComponentSystem
         , public MultiDelegateCallbackReceiver
     {
@@ -106,6 +106,9 @@ namespace Maze
         virtual void processSystemAdded() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
+        virtual void processSystemRemoved() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
         virtual void processUpdate(F32 _dt) MAZE_OVERRIDE;
 
 
@@ -117,6 +120,10 @@ namespace Maze
 
         //////////////////////////////////////////
         void createBuffers(Vec2DU const& _size);
+
+
+        //////////////////////////////////////////
+        void notifyComponentSystemAdded(ComponentSystemPtr const& _system);
 
     protected:
         SharedPtr<GenericInclusiveEntitiesSample<WaterRenderer3D>> m_waterRenderersSample;

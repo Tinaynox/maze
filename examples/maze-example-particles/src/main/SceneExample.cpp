@@ -76,6 +76,8 @@
 #include "maze-render-system-opengl-core/MazeStateMachineOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
+#include "maze-plugin-profiler-view/MazeProfilerViewPlugin.hpp"
+#include "maze-plugin-loader-png/MazeLoaderPNGPlugin.hpp"
 #include "main/LevelBloomController.hpp"
 #include "Example.hpp"
 
@@ -104,6 +106,14 @@ namespace Maze
     //////////////////////////////////////////
     bool LoadPlugins()
     {
+#if (MAZE_STATIC)
+        InstallProfilerViewPlugin();
+        InstallLoaderPNGPlugin();
+#else
+        PluginManager::GetInstancePtr()->loadPlatformPlugin("maze-plugin-profiler-view");
+        PluginManager::GetInstancePtr()->loadPlatformPlugin("maze-plugin-loader-png");
+#endif
+
         return true;
     }
 
