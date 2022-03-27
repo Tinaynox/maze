@@ -543,24 +543,52 @@ namespace Maze
             esVersion = EGL_OPENGL_BIT;
         }
 
-        const EGLint attributes[] = 
+        EGLint configCount;
+        EGLConfig configs[1] = { 0 };
+
+        S32 antialiasingLevel = _config.antialiasingLevel;
+
+        EGLBoolean result;
+        bool repeatTry = false;
+        do
+        {
+            const EGLint attributes[] = 
             {    
                 EGL_BUFFER_SIZE,            static_cast<EGLint>(_bitsPerPixel),
                 EGL_DEPTH_SIZE,             static_cast<EGLint>(_config.depthBits),
                 EGL_STENCIL_SIZE,           static_cast<EGLint>(_config.stencilBits),
-                EGL_SAMPLE_BUFFERS,         static_cast<EGLint>(_config.antialiasingLevel),
+                EGL_SAMPLE_BUFFERS,         static_cast<EGLint>(antialiasingLevel),
                 EGL_SURFACE_TYPE,           EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
                 EGL_RENDERABLE_TYPE,        esVersion,
                 EGL_NONE
             };
-
-        EGLint configCount;
-        EGLConfig configs[1] = { 0 };
-
-        EGLBoolean result;
-        MAZE_EGL_CALL(result = eglChooseConfig(_eglDisplay, attributes, configs, 1, &configCount));
-        MAZE_ERROR_IF(configCount == 0, "Config count is ZERO.");
-
+            
+            MAZE_EGL_CALL(result = eglChooseConfig(_eglDisplay, attributes, configs, 1, &configCount));
+            
+            if (configCount == 0)
+            {
+                if (antialiasingLevel > 0)
+                {
+                    antialiasingLevel /= 2;
+                    repeatTry = true;
+                }
+            }
+        }
+        while (configCount == 0 && repeatTry);
+        
+        MAZE_ERROR_IF(
+            configCount == 0,
+            "Config count is ZERO.\n"
+            "esVersion=%d\n"
+            "bitsPerPixel=%d\n"
+            "depthBits=%d\n"
+            "stencilBits=%d\n"
+            "antialiasingLevel=%d\n",
+            esVersion,
+            _bitsPerPixel,
+            _config.depthBits,
+            _config.stencilBits,
+            _config.antialiasingLevel);
         
         return configs[0];
     }
