@@ -30,7 +30,14 @@ project(maze-example-physics2d)
 
 ##########################################
 set(EXAMPLE_NAME "${PROJECT_NAME}")
-set(EXAMPLE_MAZE_LIBS maze-core maze-graphics maze-ui maze-engine maze-debugger)
+set(EXAMPLE_MAZE_LIBS
+    maze-core
+    maze-graphics
+    maze-ui
+    maze-engine
+    maze-debugger
+    maze-plugin-profiler-view
+    maze-plugin-loader-png)
 
 
 ##########################################
@@ -52,6 +59,11 @@ maze_sort_sources("${ADDITIONAL_EXAMPLE_FILES}" ADDITIONAL_EXAMPLE_FILES)
 
 ##########################################
 include("${CMAKE_CURRENT_SOURCE_DIR}/../templates/CMakeExampleTemplate.cmake")
+
+
+##########################################
+add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-profiler-view" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-profiler-view")
+add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-loader-png" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-loader-png")
 
 
 ##########################################

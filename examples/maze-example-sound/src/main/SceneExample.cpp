@@ -182,13 +182,6 @@ namespace Maze
         m_canvas->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
         m_canvas->setClearColorFlag(true);
 
-        Maze::SpritePtr sprite = spriteManager->getSprite("Panel00.mztexture");
-        sprite->setSliceBorder(
-            40.0f,
-            34.0f,
-            40.0f,
-            34.0f);
-
         m_soundGroup = SoundGroup::Create();
         m_musicGroup = SoundGroup::Create();
 

@@ -76,6 +76,22 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    inline void RegisterTextureLoader(RenderSystemPtr const& _renderSystem)
+    {
+        if (_renderSystem && _renderSystem->getTextureManager())
+        {
+            _renderSystem->getTextureManager()->registerTextureLoader(
+                MAZE_HASHED_CSTRING("png"),
+                TextureLoaderData(
+                (LoadTextureAssetFileFunction)&LoadPNG,
+                    (LoadTextureByteBufferFunction)&LoadPNG,
+                    (IsTextureAssetFileFunction)&IsPNGFile,
+                    (IsTextureByteBufferFunction)&IsPNGFile));
+        }
+    }
+
+
+    //////////////////////////////////////////
     // Class LoaderPNGPlugin
     //
     //////////////////////////////////////////
@@ -117,17 +133,11 @@ namespace Maze
             GraphicsManager::GetInstancePtr()->eventDefaultRenderSystemChanged.subscribe(
                 [](RenderSystemPtr const& _renderSystem)
                 {
-                    if (_renderSystem && _renderSystem->getTextureManager())
-                    {
-                        _renderSystem->getTextureManager()->registerTextureLoader(
-                            MAZE_HASHED_CSTRING("png"),
-                            TextureLoaderData(
-                                (LoadTextureAssetFileFunction)&LoadPNG,
-                                (LoadTextureByteBufferFunction)&LoadPNG,
-                                (IsTextureAssetFileFunction)&IsPNGFile,
-                                (IsTextureByteBufferFunction)&IsPNGFile));
-                    }
+                    RegisterTextureLoader(_renderSystem);
                 });
+
+            if (GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw())
+                RegisterTextureLoader(GraphicsManager::GetInstancePtr()->getDefaultRenderSystem());
         }
         
     }

@@ -61,6 +61,7 @@
 #include "maze-graphics/MazeRenderWindow.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
+#include "maze-plugin-loader-png/MazeLoaderPNGPlugin.hpp"
 #include <memory>
 
 #include MAZE_INCLUDE_OS_FILE(maze-core/helpers, MazeFileHelper)
@@ -189,48 +190,8 @@ void OnInit()
     MAZE_LOG("Package Name: %s\n", applicationId.c_str());
 #endif
 
-#if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
-
-
-#endif
-
-
-#if (MAZE_STATIC)
-
-    Maze::Debug::log << "Plugins Static installation..." << Maze::endl;
-    Maze::InstallRenderSystemOpenGL3Plugin();
-    Maze::Debug::log << "Plugins Static installation finished." << Maze::endl;
-
-#else
-
-#    if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
-
-#        if (MAZE_ARCH == MAZE_ARCH_X86)
-
-    g_main->pluginManager->loadPlugin("maze-render-system-opengl3-x86-d");
-
-#        else
-
-    g_main->pluginManager->loadPlugin("maze-render-system-opengl3-x64-d");
-
-#        endif
-
-#    elif (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
-
-    //g_pluginManager->loadPlugin(Maze::FileHelper::GetLibDirectory() + "/" + "libmaze-render-system-gl3-d.so");
-    g_main->pluginManager->loadPlugin("libmaze-render-system-opengl3-d");
-
-#    elif (MAZE_PLATFORM == MAZE_PLATFORM_OSX)
-
-    g_main->pluginManager->loadPlugin("libmaze-render-system-opengl3-d");
-
-#    else
-
-    g_main->pluginManager->loadPlugin("maze-render-system-opengl3-d");
-
-#    endif
-
-#endif
+    MAZE_LOAD_PLATFORM_PLUGIN(RenderSystemOpenGL3, "maze-render-system-opengl3");
+    MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG, "maze-plugin-loader-png");
 
 
     Maze::Debug::log << "Available Render Systems: " << Maze::endl;

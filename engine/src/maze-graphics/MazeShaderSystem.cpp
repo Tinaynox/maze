@@ -60,25 +60,27 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ShaderSystem::addShaderToCache(ShaderPtr const& _shader)
+    ShaderPtr const& ShaderSystem::addShaderToCache(ShaderPtr const& _shader)
     {
+        static ShaderPtr const nullShader;
+
         if (!_shader)
-            return false;
+            return nullShader;
 
         String const& name = _shader->getName();
 
         if (name.empty())
         {
             MAZE_WARNING("You cant add null name shader into the cache!");
-            return false;
+            return nullShader;
         }
 
         StringKeyMap<ShaderPtr>::iterator it = m_shadersCache.find(name);
         if (m_shadersCache.end() != it)
-            return false;
+            return nullShader;
         
-        m_shadersCache[name] = _shader;
-        return true;
+        ShaderPtr* shader = m_shadersCache.insert(name, _shader);
+        return *shader;
     }
 
     //////////////////////////////////////////
@@ -102,6 +104,27 @@ namespace Maze
             return nullShader;
 
         return (*it).second;
+    }
+
+    //////////////////////////////////////////
+    ShaderPtr const& ShaderSystem::getShader(HashedCString _shaderName)
+    {
+        static ShaderPtr nullShader;
+
+        ShaderPtr const& result = getShaderFromCache(_shaderName);
+        if (result)
+            return result;
+
+        AssetManager* assetManager = AssetManager::GetInstancePtr();
+        AssetFilePtr const& assetFile = assetManager->getAssetFileByFileName(_shaderName);
+        if (assetFile)
+        {
+            ShaderPtr shader = Shader::CreateFromFile(getRenderSystem(), assetFile);
+            if (shader)
+                return addShaderToCache(shader);
+        }
+
+        return nullShader;
     }
 
     //////////////////////////////////////////

@@ -115,5 +115,14 @@ namespace Maze
 //////////////////////////////////////////
 
 
+//////////////////////////////////////////
+#if (MAZE_STATIC)
+#   define MAZE_LOAD_PLATFORM_PLUGIN(DPluginTitle, DPluginName) Maze::Install ## DPluginTitle ## Plugin();
+#else
+#   define MAZE_LOAD_PLATFORM_PLUGIN(DPluginTitle, DPluginName) Maze::PluginManager::GetInstancePtr()->loadPlatformPlugin(DPluginName);
+#endif
+
+
+
 #endif // _MazePluginManager_hpp_
 //////////////////////////////////////////

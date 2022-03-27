@@ -32,6 +32,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
+#include "maze-core/managers/MazePluginManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
@@ -106,13 +107,8 @@ namespace Maze
     //////////////////////////////////////////
     bool LoadPlugins()
     {
-#if (MAZE_STATIC)
-        InstallProfilerViewPlugin();
-        InstallLoaderPNGPlugin();
-#else
-        PluginManager::GetInstancePtr()->loadPlatformPlugin("maze-plugin-profiler-view");
-        PluginManager::GetInstancePtr()->loadPlatformPlugin("maze-plugin-loader-png");
-#endif
+        MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView, "maze-plugin-profiler-view");
+        MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG, "maze-plugin-loader-png");
 
         return true;
     }

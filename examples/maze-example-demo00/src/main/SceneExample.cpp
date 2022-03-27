@@ -114,15 +114,9 @@ namespace Maze
     //////////////////////////////////////////
     bool LoadPlugins()
     {
-#if (MAZE_STATIC)
-        InstallProfilerViewPlugin();
-        InstallLoaderPNGPlugin();
-        InstallWaterPlugin();
-#else
-        PluginManager::GetInstancePtr()->loadPlatformPlugin("maze-plugin-profiler-view");
-        PluginManager::GetInstancePtr()->loadPlatformPlugin("maze-plugin-loader-png");
-        PluginManager::GetInstancePtr()->loadPlatformPlugin("maze-plugin-water");
-#endif
+        MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView, "maze-plugin-profiler-view");
+        MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG, "maze-plugin-loader-png");
+        MAZE_LOAD_PLATFORM_PLUGIN(Water, "maze-plugin-water");
 
 #if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
         if (SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>())

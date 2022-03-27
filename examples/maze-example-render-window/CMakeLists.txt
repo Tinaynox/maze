@@ -30,7 +30,10 @@ project(maze-example-render-window)
 
 ##########################################
 set(EXAMPLE_NAME "${PROJECT_NAME}")
-set(EXAMPLE_MAZE_LIBS maze-core maze-graphics)
+set(EXAMPLE_MAZE_LIBS
+    maze-core
+    maze-graphics
+    maze-plugin-loader-png)
 
 
 ##########################################
@@ -47,3 +50,7 @@ endif()
 
 ##########################################
 include("${CMAKE_CURRENT_SOURCE_DIR}/../templates/CMakeExampleTemplate.cmake")
+
+
+##########################################
+add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-loader-png" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-loader-png")

@@ -363,10 +363,10 @@ namespace Maze
         RenderSystemPtr const& renderSystem = m_graphicsManager->getDefaultRenderSystem();
         ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
 
-        shaderSystem->findAssetShadersAndAddToCache();
 
         if (IsLoadAllAssets())
         {
+            shaderSystem->findAssetShadersAndAddToCache();
             renderSystem->getTextureManager()->loadAllAssetTextures();
             renderSystem->getMaterialManager()->loadAllAssetMaterials();
             // renderSystem->getRenderMeshManager()->loadAllAssetRenderMeshes();

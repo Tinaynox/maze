@@ -100,6 +100,17 @@ namespace Maze
         //////////////////////////////////////////
         inline ShaderPtr const& getShaderFromCache(CString _shaderName) { return getShaderFromCache(MAZE_HASHED_CSTRING(_shaderName)); }
 
+
+        //////////////////////////////////////////
+        ShaderPtr const& getShader(HashedCString _shaderName);
+
+        //////////////////////////////////////////
+        inline ShaderPtr const& getShader(String const& _shaderName) { return getShader(MAZE_HASHED_CSTRING(_shaderName.c_str())); }
+
+        //////////////////////////////////////////
+        inline ShaderPtr const& getShader(CString _shaderName) { return getShader(MAZE_HASHED_CSTRING(_shaderName)); }
+
+
         //////////////////////////////////////////
         ShaderPtr const& getErrorShader() const { return m_errorShader; }
 
@@ -157,7 +168,7 @@ namespace Maze
     
 
         //////////////////////////////////////////
-        bool addShaderToCache(ShaderPtr const& _shader);
+        ShaderPtr const& addShaderToCache(ShaderPtr const& _shader);
 
         //////////////////////////////////////////
         bool removeShaderFromCache(ShaderPtr const& _shader);

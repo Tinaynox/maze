@@ -809,7 +809,7 @@ namespace Maze
         if (_count == 0)
             _count = strlen(_shaderName);
 
-        _value = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getShaderSystem()->getShaderFromCache(_shaderName);
+        _value = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getShaderSystem()->getShader(_shaderName);
         if (!_value)
         {
             if (_shaderName && strcmp(_shaderName, "") != 0)
