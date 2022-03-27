@@ -71,7 +71,6 @@
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeWaterRenderer3D.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderWaterSystem.hpp"
 #include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
 #include "maze-particles/MazeParticleSystemParameterF32.hpp"
 #include "maze-particles/MazeParticleSystemParameterColor.hpp"
@@ -112,11 +111,7 @@ namespace Maze
     //////////////////////////////////////////
     bool LoadPlugins()
     {
-#if (MAZE_STATIC)
-        InstallArchiveAssetsPlugin();
-#else
-        PluginManager::GetInstancePtr()->loadPlatformPlugin("maze-plugin-archive-assets");
-#endif
+        MAZE_LOAD_PLATFORM_PLUGIN(ArchiveAssets, "maze-plugin-archive-assets");
 
         return true;
     }

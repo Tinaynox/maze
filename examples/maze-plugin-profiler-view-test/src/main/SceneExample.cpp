@@ -72,7 +72,6 @@
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeWaterRenderer3D.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderWaterSystem.hpp"
 #include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
 #include "maze-particles/MazeParticleSystemParameterF32.hpp"
 #include "maze-particles/MazeParticleSystemParameterColor.hpp"
@@ -114,11 +113,8 @@ namespace Maze
     //////////////////////////////////////////
     bool LoadPlugins()
     {
-#if (MAZE_STATIC)
-        InstallProfilerViewPlugin();
-#else
-        PluginManager::GetInstancePtr()->loadPlatformPlugin("maze-plugin-profiler-view");
-#endif
+        MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView, "maze-plugin-profiler-view");
+
         if (SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>())
             SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>()->setActive(true);
 

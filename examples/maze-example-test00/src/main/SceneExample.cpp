@@ -70,7 +70,6 @@
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeWaterRenderer3D.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderWaterSystem.hpp"
 #include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
 #include "maze-particles/MazeParticleSystemParameterF32.hpp"
 #include "maze-particles/MazeParticleSystemParameterColor.hpp"
