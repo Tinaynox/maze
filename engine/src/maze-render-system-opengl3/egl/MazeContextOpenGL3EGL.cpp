@@ -564,10 +564,31 @@ namespace Maze
             };
             
             MAZE_EGL_CALL(result = eglChooseConfig(_eglDisplay, attributes, configs, 1, &configCount));
+            
+            if (configCount == 0)
+            {
+                if (antialiasingLevel > 0)
+                {
+                    antialiasingLevel /= 2;
+                    repeatTry = true;
+                }
+            }
         }
-        while (configCount == 0);
-        MAZE_ERROR_IF(configCount == 0, "Config count is ZERO.");
-
+        while (configCount == 0 && repeatTry);
+        
+        MAZE_ERROR_IF(
+            configCount == 0,
+            "Config count is ZERO.\n"
+            "esVersion=%d\n"
+            "bitsPerPixel=%d\n"
+            "depthBits=%d\n"
+            "stencilBits=%d\n"
+            "antialiasingLevel=%d\n",
+            esVersion,
+            _bitsPerPixel,
+            _config.depthBits,
+            _config.stencilBits,
+            _config.antialiasingLevel);
         
         return configs[0];
     }

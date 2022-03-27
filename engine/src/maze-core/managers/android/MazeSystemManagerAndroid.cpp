@@ -218,6 +218,7 @@ namespace Maze
                         eventData.index = pointerId;
                         eventData.x = x;
                         eventData.y = y;
+                        eventData.window = windowAndroid.get();
                         inputManager->generateInputEvent(eventData);
                         break;
                     }
@@ -228,6 +229,7 @@ namespace Maze
                         eventData.index = pointerId;
                         eventData.x = x;
                         eventData.y = y;
+                        eventData.window = windowAndroid.get();
                         inputManager->generateInputEvent(eventData);
                         break;
                     }
@@ -240,6 +242,7 @@ namespace Maze
                             eventData.index = i;
                             eventData.x = (AMotionEvent_getX(_event, i));
                             eventData.y = windowAndroid->getClientSize().y - AMotionEvent_getY(_event, i);
+                            eventData.window = windowAndroid.get();
                             inputManager->generateInputEvent(eventData);
                         }
 
@@ -252,6 +255,7 @@ namespace Maze
                         eventData.index = pointerId;
                         eventData.x = x;
                         eventData.y = y;
+                        eventData.window = windowAndroid.get();
                         inputManager->generateInputEvent(eventData);
 
                         break;
@@ -270,6 +274,7 @@ namespace Maze
                         eventData.index = pointerId;
                         eventData.x = x;
                         eventData.y = y;
+                        eventData.window = windowAndroid.get();
                         inputManager->generateInputEvent(eventData);
                         break;
                     }
@@ -281,6 +286,7 @@ namespace Maze
                         eventData.index = pointerId;
                         eventData.x = x;
                         eventData.y = y;
+                        eventData.window = windowAndroid.get();
                         inputManager->generateInputEvent(eventData);
                         break;
                     }
