@@ -29,7 +29,6 @@
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-graphics/loaders/texture/MazeLoaderPNG.hpp"
 #include "maze-graphics/loaders/texture/MazeLoaderBMP.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/services/MazeLogStream.hpp"

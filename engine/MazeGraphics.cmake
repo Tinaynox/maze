@@ -32,6 +32,4 @@ maze_add_module(
 
 target_link_libraries(
     maze-graphics 
-    PUBLIC maze-core
-    PUBLIC ${ZLIB_NAME}
-    PUBLIC ${PNGLIB_NAME})
+    PUBLIC maze-core)

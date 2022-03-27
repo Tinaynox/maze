@@ -1,6 +1,6 @@
 //////////////////////////////////////////
 //
-// Maze Engine
+// Maze SoundSystemAL
 // Copyright (C) 2021 Dmitriy "Tinaynox" Nosov (tinaynox@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -25,34 +25,73 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeLoaderPNG_hpp_))
-#define _MazeLoaderPNG_hpp_
+#if (!defined(_MazeLoaderPNGPlugin_hpp_))
+#define _MazeLoaderPNGPlugin_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-graphics/MazeGraphicsHeader.hpp"
-#include "maze-graphics/MazePixelSheet2D.hpp"
-#include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-plugin-loader-png/MazeLoaderPNGHeader.hpp"
+#include "maze-core/system/MazePlugin.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool LoadPNG(AssetFilePtr const& _file, Vector<PixelSheet2D>& _pixelSheets);
+    MAZE_USING_SHARED_PTR(LoaderPNGPlugin);
+    MAZE_USING_SHARED_PTR(LoaderPNG);
+
+
+#if (MAZE_STATIC)
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool LoadPNG(ByteBufferPtr const& _fileData, Vector<PixelSheet2D>& _pixelSheets);
+    void InstallLoaderPNGPlugin();
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool IsPNGFile(AssetFilePtr const& _file);
+    void UninstallLoaderPNGPlugin();
+
+#endif
+
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool IsPNGFile(ByteBufferPtr const& _fileData);
+    // Class LoaderPNGPlugin
+    //
+    //////////////////////////////////////////
+    class MAZE_PLUGIN_LOADER_PNG_API LoaderPNGPlugin
+        : public Plugin
+        , public std::enable_shared_from_this<LoaderPNGPlugin>
+    {
+    public:
+
+        //////////////////////////////////////////
+        virtual ~LoaderPNGPlugin();
+
+        //////////////////////////////////////////
+        static LoaderPNGPluginPtr Create();
+
+        //////////////////////////////////////////
+        virtual String const& getName() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void install() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void uninstall() MAZE_OVERRIDE;
+
+    protected:
+
+        //////////////////////////////////////////
+        LoaderPNGPlugin();
+
+        //////////////////////////////////////////
+        bool init();
+
+    protected:
+    };
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeLoaderPNG_hpp_
+#endif // _MazeLoaderPNGPlugin_hpp_
 //////////////////////////////////////////

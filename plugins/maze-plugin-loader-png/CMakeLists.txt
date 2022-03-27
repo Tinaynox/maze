@@ -21,25 +21,46 @@
 # 3. This notice may not be removed or altered from any source distribution.
 #
 ##########################################
+cmake_minimum_required(VERSION 3.6)
+
+
+##########################################
+project(maze-plugin-loader-png)
+
+
+##########################################
+include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Utils.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Config.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Macros.cmake")
 
 
 ##########################################
 maze_add_module(
-    maze-physics2d
-    INCLUDE_DIR "include/maze-physics2d"
-    SRC_DIR "src/maze-physics2d"
-    FORWARD_HEADER MazePhysics2DHeader)
+    ${PROJECT_NAME}
+    INCLUDE_DIR "include/${PROJECT_NAME}"
+    SRC_DIR "src"
+    FORWARD_HEADER MazeLoaderPNGHeader)
+    
 
 ##########################################
-# Box2d
-include("${MAZE_DIR}/third-party/box2d.cmake")
+# libpng
+include("${MAZE_DIR}/third-party/libpng.cmake")
 
+
+##########################################    
+target_include_directories(
+    ${PROJECT_NAME}
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+
+
+##########################################
+set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "MazePlugins")
+
+
+##########################################
 target_link_libraries(
-    maze-physics2d
+    ${PROJECT_NAME}
     PUBLIC maze-core
     PUBLIC maze-graphics
-    PUBLIC box2d)
-        
-target_include_directories(
-    maze-physics2d
-    PUBLIC "${MAZE_DIR}/third-party/box2d/include")
+    PUBLIC ${ZLIB_NAME}
+    PUBLIC ${PNGLIB_NAME})

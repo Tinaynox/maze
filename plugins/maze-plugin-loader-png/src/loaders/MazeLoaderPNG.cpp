@@ -24,8 +24,8 @@
 
 
 //////////////////////////////////////////
-#include "MazeGraphicsHeader.hpp"
-#include "maze-graphics/loaders/texture/MazeLoaderPNG.hpp"
+#include "MazeLoaderPNGHeader.hpp"
+#include "maze-plugin-loader-png/loaders/MazeLoaderPNG.hpp"
 #include "maze-graphics/MazePixelFormat.hpp"
 #include <png.h>
 
@@ -34,7 +34,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool LoadPNG(AssetFilePtr const& _file, Vector<PixelSheet2D>& _pixelSheets)
+    MAZE_PLUGIN_LOADER_PNG_API bool LoadPNG(AssetFilePtr const& _file, Vector<PixelSheet2D>& _pixelSheets)
     {
         ByteBufferPtr fileData = _file->readAsByteBuffer();
         return LoadPNG(fileData, _pixelSheets);
@@ -76,7 +76,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool LoadPNG(ByteBufferPtr const& _fileData, Vector<PixelSheet2D>& _pixelSheets)
+    MAZE_PLUGIN_LOADER_PNG_API bool LoadPNG(ByteBufferPtr const& _fileData, Vector<PixelSheet2D>& _pixelSheets)
     {
         MAZE_DEBUG_ERROR_RETURN_VALUE_IF(
             !_fileData || _fileData->getSize() == 0,
@@ -158,6 +158,8 @@ namespace Maze
 
             png_size_t rowbytes;
             png_bytep* rowPointers = (png_bytep*)malloc(sizeof(png_bytep) * height);
+            if (!rowPointers)
+                break;
 
             png_read_update_info(pngStruct, info);
 
@@ -214,7 +216,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool IsPNGFile(AssetFilePtr const& _file)
+    MAZE_PLUGIN_LOADER_PNG_API bool IsPNGFile(AssetFilePtr const& _file)
     {
         // #TODO:
         ByteBufferPtr fileData = _file->readAsByteBuffer();
@@ -222,7 +224,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool IsPNGFile(ByteBufferPtr const& _fileData)
+    MAZE_PLUGIN_LOADER_PNG_API bool IsPNGFile(ByteBufferPtr const& _fileData)
     {
         png_byte header[PNGSIGSIZE] = {0};
 

@@ -36,7 +36,6 @@
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/MazeTextureCube.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
-#include "maze-graphics/loaders/texture/MazeLoaderPNG.hpp"
 #include "maze-graphics/loaders/texture/MazeLoaderBMP.hpp"
 
 
@@ -80,6 +79,14 @@ namespace Maze
         m_renderSystemRaw = _renderSystem.get();
 
         m_renderSystemRaw->eventSystemInited.subscribe(this, &TextureManager::notifyRenderSystemInited);
+
+        registerTextureLoader(
+            MAZE_HASHED_CSTRING("bmp"),
+            TextureLoaderData(
+                (LoadTextureAssetFileFunction)&LoadBMP,
+                (LoadTextureByteBufferFunction)&LoadBMP,
+                (IsTextureAssetFileFunction)&IsBMPFile,
+                (IsTextureByteBufferFunction)&IsBMPFile));
 
         return true;
     }
@@ -231,35 +238,33 @@ namespace Maze
 
         if (metaData.empty())
         {
-            if (Maze::IsBMPFile(_assetFile))
+            bool loaderFound = false;
+            for (auto const& textureLoaderData : m_textureLoaders)
             {
-                MAZE_ERROR_IF(!Maze::LoadBMP(_assetFile, pixelSheets), "PixelSheet is not loaded - '%s'", _assetFile->getFileName().c_str());
+                TextureLoaderData const& loaderData = textureLoaderData.second;
+                if (loaderData.isTextureAssetFileFunc(_assetFile))
+                {
+                    loaderFound = true;
+                    MAZE_ERROR_IF(!loaderData.loadTextureAssetFileFunc(_assetFile, pixelSheets), "PixelSheet is not loaded - '%s'", _assetFile->getFileName().c_str());
+                    break;
+                }
             }
-            else
-            if (Maze::IsPNGFile(_assetFile))
-            {
-                MAZE_ERROR_IF(!Maze::LoadPNG(_assetFile, pixelSheets), "PixelSheet is not loaded - '%s'", _assetFile->getFileName().c_str());
-            }
-            else
-            {
-                MAZE_ERROR("Unsupported texture format!");
-            }
+
+            MAZE_ERROR_IF(!loaderFound, "Unsupported texture format - %s!", _assetFile->getFileName().c_str());
         }
         else
         {
-            String fileExtension = StringHelper::ToLower(metaData["ext"]);
-            if (fileExtension == "bmp")
+            HashedString fileExtension = StringHelper::ToLower(metaData["ext"]);
+
+            auto it = m_textureLoaders.find(fileExtension);
+            if (it != m_textureLoaders.end())
             {
-                MAZE_ERROR_IF(!Maze::LoadBMP(_assetFile, pixelSheets), "PixelSheet is not loaded - '%s'", _assetFile->getFileName().c_str());
+                TextureLoaderData const& loaderData = it->second;
+                MAZE_ERROR_IF(!loaderData.loadTextureAssetFileFunc(_assetFile, pixelSheets), "PixelSheet is not loaded - '%s'", _assetFile->getFileName().c_str());
             }
             else
-            if (fileExtension == "png")
             {
-                MAZE_ERROR_IF(!Maze::LoadPNG(_assetFile, pixelSheets), "PixelSheet is not loaded - '%s'", _assetFile->getFileName().c_str());
-            }
-            else
-            {
-                MAZE_ERROR("Unsupported texture format!");
+                MAZE_ERROR("Unsupported texture format - %s!", _assetFile->getFileName().c_str());
             }
         }
 

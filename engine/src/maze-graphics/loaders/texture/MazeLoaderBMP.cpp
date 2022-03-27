@@ -27,7 +27,6 @@
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/loaders/texture/MazeLoaderBMP.hpp"
 #include "maze-graphics/MazePixelFormat.hpp"
-#include <png.h>
 
 
 //////////////////////////////////////////

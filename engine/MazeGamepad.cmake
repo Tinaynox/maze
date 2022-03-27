@@ -36,6 +36,11 @@ set(MODULE_LIBS maze-core maze-graphics)
 
 
 ##########################################
+#libstem_gamepad
+include("${MAZE_DIR}/third-party/libstem_gamepad.cmake")
+
+
+##########################################
 if(MAZE_TARGET_PLATFORM_IS_WINDOWS OR MAZE_TARGET_PLATFORM_IS_OSX OR MAZE_TARGET_PLATFORM_IS_LINUX)
    list(APPEND MODULE_LIBS libstem_gamepad)
 endif()

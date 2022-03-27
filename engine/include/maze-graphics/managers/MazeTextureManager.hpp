@@ -55,6 +55,41 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    using LoadTextureAssetFileFunction = bool(*)(AssetFilePtr const& _file, Vector<PixelSheet2D>& _pixelSheets);
+    using LoadTextureByteBufferFunction = bool(*)(ByteBufferPtr const& _fileData, Vector<PixelSheet2D>& _pixelSheets);
+    using IsTextureAssetFileFunction = bool(*)(AssetFilePtr const& _file);
+    using IsTextureByteBufferFunction = bool(*)(ByteBufferPtr const& _fileData);
+
+
+    //////////////////////////////////////////
+    // Struct TextureLoaderData
+    //
+    //////////////////////////////////////////
+    struct TextureLoaderData
+    {
+        //////////////////////////////////////////
+        TextureLoaderData() = default;
+
+        //////////////////////////////////////////
+        TextureLoaderData(
+            LoadTextureAssetFileFunction _loadTextureAssetFileFunc,
+            LoadTextureByteBufferFunction _loadTextureByteBufferFunc,
+            IsTextureAssetFileFunction _isTextureAssetFileFunc,
+            IsTextureByteBufferFunction _isTextureByteBufferFunc)
+            : loadTextureAssetFileFunc(_loadTextureAssetFileFunc)
+            , loadTextureByteBufferFunc(_loadTextureByteBufferFunc)
+            , isTextureAssetFileFunc(_isTextureAssetFileFunc)
+            , isTextureByteBufferFunc(_isTextureByteBufferFunc)
+        {}
+
+        LoadTextureAssetFileFunction loadTextureAssetFileFunc;
+        LoadTextureByteBufferFunction loadTextureByteBufferFunc;
+        IsTextureAssetFileFunction isTextureAssetFileFunc;
+        IsTextureByteBufferFunction isTextureByteBufferFunc;
+    };
+
+
+    //////////////////////////////////////////
     // Class TextureManager
     //
     //////////////////////////////////////////
@@ -132,6 +167,20 @@ namespace Maze
         void reloadAllAssetTextures();
 
 
+        //////////////////////////////////////////
+        void registerTextureLoader(
+            HashedCString _extension,
+            TextureLoaderData const& _data)
+        {
+            m_textureLoaders.insert(_extension, _data);
+        }
+
+        //////////////////////////////////////////
+        void clearTextureLoader(HashedCString _extension)
+        {
+            m_textureLoaders.erase(_extension);
+        }
+
     protected:
 
         //////////////////////////////////////////
@@ -149,6 +198,8 @@ namespace Maze
     protected:
         RenderSystemWPtr m_renderSystem;
         RenderSystem* m_renderSystemRaw;
+
+        StringKeyMap<TextureLoaderData> m_textureLoaders;
 
         StringKeyMap<Texture2DPtr> m_textures2DByName;
         StringKeyMap<TextureCubePtr> m_texturesCubeByName;

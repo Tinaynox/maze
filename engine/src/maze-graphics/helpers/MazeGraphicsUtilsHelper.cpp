@@ -26,9 +26,8 @@
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
-#include "maze-graphics/loaders/texture/MazeLoaderPNG.hpp"
 #include "maze-graphics/MazePixelFormat.hpp"
-#include <png.h>
+#include "maze-graphics/MazePixelSheet2D.hpp"
 
 
 //////////////////////////////////////////

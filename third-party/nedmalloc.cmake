@@ -24,22 +24,5 @@
 
 
 ##########################################
-maze_add_module(
-    maze-physics2d
-    INCLUDE_DIR "include/maze-physics2d"
-    SRC_DIR "src/maze-physics2d"
-    FORWARD_HEADER MazePhysics2DHeader)
-
-##########################################
-# Box2d
-include("${MAZE_DIR}/third-party/box2d.cmake")
-
-target_link_libraries(
-    maze-physics2d
-    PUBLIC maze-core
-    PUBLIC maze-graphics
-    PUBLIC box2d)
-        
-target_include_directories(
-    maze-physics2d
-    PUBLIC "${MAZE_DIR}/third-party/box2d/include")
+add_subdirectory("${MAZE_DIR}/third-party/nedmalloc" "${CMAKE_CURRENT_BINARY_DIR}/third-party/nedmalloc")
+set_property(TARGET nedmalloc PROPERTY FOLDER "MazeThirdParty") 
