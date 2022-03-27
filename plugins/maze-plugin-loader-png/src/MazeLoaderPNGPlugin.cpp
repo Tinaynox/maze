@@ -117,13 +117,16 @@ namespace Maze
             GraphicsManager::GetInstancePtr()->eventDefaultRenderSystemChanged.subscribe(
                 [](RenderSystemPtr const& _renderSystem)
                 {
-                    TextureManager::GetCurrentInstancePtr()->registerTextureLoader(
-                        MAZE_HASHED_CSTRING("png"),
-                        TextureLoaderData(
-                            (LoadTextureAssetFileFunction)&LoadPNG,
-                            (LoadTextureByteBufferFunction)&LoadPNG,
-                            (IsTextureAssetFileFunction)&IsPNGFile,
-                            (IsTextureByteBufferFunction)&IsPNGFile));
+                    if (_renderSystem && _renderSystem->getTextureManager())
+                    {
+                        _renderSystem->getTextureManager()->registerTextureLoader(
+                            MAZE_HASHED_CSTRING("png"),
+                            TextureLoaderData(
+                                (LoadTextureAssetFileFunction)&LoadPNG,
+                                (LoadTextureByteBufferFunction)&LoadPNG,
+                                (IsTextureAssetFileFunction)&IsPNGFile,
+                                (IsTextureByteBufferFunction)&IsPNGFile));
+                    }
                 });
         }
         
