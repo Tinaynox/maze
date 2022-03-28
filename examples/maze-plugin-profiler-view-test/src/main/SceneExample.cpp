@@ -86,6 +86,7 @@
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
 #include "maze-plugin-profiler-view/MazeProfilerViewPlugin.hpp"
 #include "maze-plugin-profiler-view/settings/MazeProfilerViewSettings.hpp"
+#include "maze-plugin-console/MazeConsolePlugin.hpp"
 #include "Example.hpp"
 
 
@@ -114,6 +115,7 @@ namespace Maze
     bool LoadPlugins()
     {
         MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView, "maze-plugin-profiler-view");
+        MAZE_LOAD_PLATFORM_PLUGIN(Console, "maze-plugin-console");
 
         if (SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>())
             SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>()->setActive(true);

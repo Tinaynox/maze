@@ -103,7 +103,7 @@ namespace Maze
         else
             m_tempLogBuffer.append(_text, _size);
 
-        m_eventLog(_priority, _text, _size);
+        eventLog(_priority, _text, _size);
     }
 
     //////////////////////////////////////////

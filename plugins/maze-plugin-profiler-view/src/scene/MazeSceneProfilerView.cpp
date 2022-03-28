@@ -45,6 +45,7 @@ namespace Maze
     //////////////////////////////////////////
     SceneProfilerView::SceneProfilerView()
     {
+        setIsSystemScene();
     }
 
     //////////////////////////////////////////

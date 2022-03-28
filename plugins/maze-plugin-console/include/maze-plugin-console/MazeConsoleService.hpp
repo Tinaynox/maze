@@ -25,115 +25,114 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeLogServiceBase_hpp_))
-#define _MazeLogServiceBase_hpp_
+#if (!defined(_MazeConsoleService_hpp_))
+#define _MazeConsoleService_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-core/MazeCoreHeader.hpp"
-#include "maze-core/MazeTypes.hpp"
-#include "maze-core/system/MazeMutex.hpp"
+#include "maze-plugin-console/MazeConsoleHeader.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
-#include <ostream>
+#include "maze-core/system/MazeInputEvent.hpp"
+#include "maze-core/services/MazeLogService.hpp"
+#include "maze-graphics/MazeRenderSystem.hpp"
+#include "maze-graphics/MazeRenderWindow.hpp"
+#include "maze-graphics/managers/MazeGraphicsManager.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    enum LogPriority
-    {
-        c_logPriority_Default = 0,
-        c_logPriority_Warning = 1,
-        c_logPriority_Error = 2,
-        c_logPriority_Minor = 3
-    };
-
-
-    //////////////////////////////////////////
-    // Class LogServiceBase
+    // Class ConsoleService
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API LogServiceBase
-    {        
+    class MAZE_PLUGIN_CONSOLE_API ConsoleService
+        : public MultiDelegateCallbackReceiver
+    {
     public:
-      
-        //////////////////////////////////////////
-        virtual ~LogServiceBase();
-        
         
         //////////////////////////////////////////
-        virtual bool setLogFile(CString _fullPath);
-        
-        //////////////////////////////////////////
-        inline std::ofstream const& getLogFile() const { return m_logFile; }
-           
+        ConsoleService();
 
         //////////////////////////////////////////
-        void log(S32 _priority, CString _text);
-
-        //////////////////////////////////////////
-        inline void log(CString _text) { log(c_logPriority_Default, _text); }
-
-        //////////////////////////////////////////
-        void log(S32 _priority, CWString _text);
-
-        //////////////////////////////////////////
-        inline void log(CWString _text) { log(c_logPriority_Default, _text); }
+        ~ConsoleService();
         
 
-
-        
         //////////////////////////////////////////
-        void log(S32 _priority, CString _text, Size _size);
-        
-        //////////////////////////////////////////
-        inline void log(CString _text, Size _size) { log(c_logPriority_Default, _text, _size); }
+        void initialize();
 
         //////////////////////////////////////////
-        void log(S32 _priority, CWString _text, Size _size);
-        
-        //////////////////////////////////////////
-        inline void log(CWString _text, Size _size) { log(c_logPriority_Default, _text, _size); }
-        
-        
-
+        void shutdown();
 
 
         //////////////////////////////////////////
-        void logFormatted(S32 _priority, CString _text, ...);
+        static inline ConsoleService& GetInstance()
+        {
+            static ConsoleService s_logService;
+            return s_logService;
+        }
 
         //////////////////////////////////////////
-        void logFormatted(CString _text, ...);
+        static inline ConsoleService* GetInstancePtr() { return &GetInstance(); }
+
 
         //////////////////////////////////////////
-        void logFormatted(S32 _priority, CWString _text, ...);
-
-        //////////////////////////////////////////
-        void logFormatted(CWString _text, ...);
-
+        String const& getLog() const { return m_log; }
 
     public:
 
         //////////////////////////////////////////
-        MultiDelegate<S32, CString, Size> eventLog;
-        
+        MultiDelegate<String const&> eventLogChanged;
+
     protected:
-        
+
         //////////////////////////////////////////
-        LogServiceBase();
-        
-        
+        void setRenderSystem(RenderSystem* _renderSystem);
+
+        //////////////////////////////////////////
+        void setRenderWindow(RenderWindow* _renderWindow);
+
+        //////////////////////////////////////////
+        void notifyDefaultRenderSystemChanged(RenderSystemPtr const& _renderSystem);
+
+        //////////////////////////////////////////
+        void notifyDefaultRenderSystemWillBeChanged(RenderSystemPtr const& _renderSystem);
+
+        //////////////////////////////////////////
+        void notifyRenderSystemRenderWindowsChanged();
+
+        //////////////////////////////////////////
+        void notifyRenderWindowWillClose(Window* _window);
+
+        //////////////////////////////////////////
+        void notifyConsoleActiveChanged(bool const& _active);
+
+        //////////////////////////////////////////
+        void notifyKeyboard(InputEventKeyboardData const& _keyboardData);
+
+        //////////////////////////////////////////
+        void updateActive();
+
+        //////////////////////////////////////////
+        void loadScene();
+
+        //////////////////////////////////////////
+        void unloadScene();
+
+
+        //////////////////////////////////////////
+        void notifyLog(S32 _priority, CString _text, Size _size);
+
     protected:
-        std::ofstream m_logFile;
-        String m_tempLogBuffer;
-        Mutex m_mutex;
+        RenderSystem* m_renderSystem = nullptr;
+        RenderWindow* m_renderWindow = nullptr;
+
+        String m_log;
     };
-    
-    
+
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeLogServiceBase_hpp_
+#endif // _MazeConsoleService_hpp_
 //////////////////////////////////////////

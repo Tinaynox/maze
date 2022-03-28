@@ -247,7 +247,7 @@ namespace Maze
                 {
                     case VerticalAlignment2D::Top: positionShift.y = size.y; break;
                     case VerticalAlignment2D::Middle: positionShift.y = (size.y + (rowsCount * (m_systemFont->charSize.y - m_systemFont->outline) + m_systemFont->outline) * fontScale) * 0.5f; break;
-                    case VerticalAlignment2D::Bottom: positionShift.y = (rowsCount * (m_systemFont->charSize.y - m_systemFont->outline) + m_systemFont->outline) * fontScale; break;
+                    case VerticalAlignment2D::Bottom: positionShift.y = (rowsCount * rowSize - m_systemFont->outline) * fontScale; break;
                     default: break;
                 }
                     
@@ -346,7 +346,7 @@ namespace Maze
         {
             case VerticalAlignment2D::Top: positionShift.y = size.y; break;
             case VerticalAlignment2D::Middle: positionShift.y = (size.y + (rowsCount * (m_systemFont->charSize.y - m_systemFont->outline) + m_systemFont->outline) * fontScale) * 0.5f; break;
-            case VerticalAlignment2D::Bottom: positionShift.y = (rowsCount * (m_systemFont->charSize.y - m_systemFont->outline) + m_systemFont->outline) * fontScale; break;
+            case VerticalAlignment2D::Bottom: positionShift.y = (rowsCount * rowSize - m_systemFont->outline) * fontScale; break;
             default: break;
         }
 
