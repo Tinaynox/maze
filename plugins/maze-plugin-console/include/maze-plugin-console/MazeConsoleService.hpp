@@ -37,6 +37,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeRenderWindow.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
+#include "maze-plugin-console/MazeConsoleCommand.hpp"
 
 
 //////////////////////////////////////////
@@ -78,6 +79,27 @@ namespace Maze
 
         //////////////////////////////////////////
         String const& getLog() const { return m_log; }
+
+
+        //////////////////////////////////////////
+        void registerCommand(HashedCString _command, Delegate<void, String*, S32> const& _callback);
+
+        //////////////////////////////////////////
+        bool hasCommand(HashedCString _command);
+
+        //////////////////////////////////////////
+        void executeCommand(HashedCString _command, String* _argv, S32 _argc);
+
+        //////////////////////////////////////////
+        Vector<String> getCommandsStartedWith(String const& _text);
+
+
+
+        //////////////////////////////////////////
+        String const& getLastCommand(S32 _num);
+
+        //////////////////////////////////////////
+        inline Size getLastCommandsSize() const { return m_lastCommands.size(); }
 
     public:
 
@@ -128,6 +150,11 @@ namespace Maze
         RenderWindow* m_renderWindow = nullptr;
 
         String m_log;
+
+        StringKeyMap<ConsoleCommand> m_commands;
+
+
+        Deque<String> m_lastCommands;
     };
 
 } // namespace Maze

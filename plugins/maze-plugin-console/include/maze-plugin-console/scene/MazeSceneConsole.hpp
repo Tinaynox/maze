@@ -31,6 +31,7 @@
 
 //////////////////////////////////////////
 #include "maze-plugin-console/MazeConsoleHeader.hpp"
+#include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-graphics/ecs/MazeECSRenderScene.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
@@ -96,6 +97,9 @@ namespace Maze
         void notifyTextInput(SystemTextEditBox2D* _edit);
 
         //////////////////////////////////////////
+        void notifyTextChanged(SystemTextEditBox2D* _edit, String const& _text);
+
+        //////////////////////////////////////////
         void notifyBackgroundClick(CursorInputEvent const& _event);
 
         //////////////////////////////////////////
@@ -103,6 +107,15 @@ namespace Maze
 
         //////////////////////////////////////////
         void updateLogText();
+
+        //////////////////////////////////////////
+        void updateHintText();
+
+        //////////////////////////////////////////
+        void completeCommand();
+
+        //////////////////////////////////////////
+        void notifyKeyboard(InputEventKeyboardData const& _keyboardData);
 
     protected:
         bool m_firstFrame = true;
@@ -113,6 +126,10 @@ namespace Maze
         UIElement2DPtr m_backgroundElement;
         SystemTextRenderer2DPtr m_consoleText;
         SystemTextEditBox2DPtr m_edit;
+        SystemTextRenderer2DPtr m_hintText;
+
+
+        S32 m_lastCommandIndex = -1;
     };
 
 

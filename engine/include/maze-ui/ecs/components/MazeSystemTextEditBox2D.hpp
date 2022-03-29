@@ -212,6 +212,7 @@ namespace Maze
         MultiDelegate<SystemTextEditBox2D*, bool> eventPressedChanged;
         MultiDelegate<SystemTextEditBox2D*, bool> eventSelectedChanged;
         MultiDelegate<SystemTextEditBox2D*> eventTextInput;
+        MultiDelegate<SystemTextEditBox2D*, String const&> eventTextChanged;
 
     protected:
 

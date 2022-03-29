@@ -256,5 +256,69 @@ namespace Maze
         eventLogChanged(m_log);
     }
 
+    //////////////////////////////////////////
+    void ConsoleService::registerCommand(HashedCString _command, Delegate<void, String*, S32> const& _callback)
+    {
+        ConsoleCommand command;
+        command.callback = _callback;
+        m_commands.insert(_command, command);
+    }
+
+    //////////////////////////////////////////
+    bool ConsoleService::hasCommand(HashedCString _command)
+    {
+        return m_commands.find(_command) != m_commands.end();
+    }
+
+    //////////////////////////////////////////
+    void ConsoleService::executeCommand(HashedCString _command, String* _argv, S32 _argc)
+    {
+        auto it = m_commands.find(_command);
+        if (it != m_commands.end())
+        {
+            String lastCommand = _command.str;
+            for (S32 i = 0; i < _argc; ++i)
+                lastCommand += ' ' + _argv[i];
+
+            Debug::Log("%s", lastCommand.c_str());
+
+            ConsoleCommand const& command = it->second;
+            command.callback(_argv, _argc);
+
+            if (m_lastCommands.empty() || m_lastCommands.back() != lastCommand)
+            {
+                m_lastCommands.push_back(lastCommand);
+
+                if (m_lastCommands.size() >= 16)
+                    m_lastCommands.pop_front();
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    Vector<String> ConsoleService::getCommandsStartedWith(String const& _text)
+    {
+        Vector<String> result;
+
+        for (auto const& commandData : m_commands)
+        {
+            if (StringHelper::IsStartsWith(commandData.first.c_str(), _text.c_str()))
+                result.emplace_back(commandData.first);
+        }
+
+        return result;
+    }
+
+    //////////////////////////////////////////
+    String const& ConsoleService::getLastCommand(S32 _num)
+    {
+        static String nullString;
+
+        if (m_lastCommands.empty())
+            return nullString;
+
+        return m_lastCommands.at(Math::Clamp((S32)m_lastCommands.size() - _num - 1, 0, (S32)m_lastCommands.size() - 1));
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

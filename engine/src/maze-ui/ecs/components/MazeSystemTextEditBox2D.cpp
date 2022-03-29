@@ -300,6 +300,8 @@ namespace Maze
         resetBlinkTimer();
         updateSystemTextRenderer();
         updateCursorRendererPosition();
+
+        eventTextChanged(this, m_text);
     }
 
     //////////////////////////////////////////

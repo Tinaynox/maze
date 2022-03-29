@@ -71,7 +71,13 @@ namespace Maze
             m_backgroundElement->eventClick.unsubscribe(this);
 
         if (m_edit)
+        {
             m_edit->eventTextInput.unsubscribe(this);
+            m_edit->eventTextChanged.unsubscribe(this);
+        }
+
+        if (InputManager::GetInstancePtr())
+            InputManager::GetInstancePtr()->eventKeyboard.unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -93,6 +99,8 @@ namespace Maze
         create2D();
 
         ConsoleService::GetInstancePtr()->eventLogChanged.subscribe(this, &SceneConsole::notifyLogChanged);
+
+        InputManager::GetInstancePtr()->eventKeyboard.subscribe(this, &SceneConsole::notifyKeyboard);
 
         return true;
     }
@@ -158,6 +166,21 @@ namespace Maze
         m_edit->getEntityRaw()->ensureComponent<CanvasGroup>()->setLocalAlpha(0.66f);
 
         m_edit->eventTextInput.subscribe(this, &SceneConsole::notifyTextInput);
+        m_edit->eventTextChanged.subscribe(this, &SceneConsole::notifyTextChanged);
+
+        m_hintText = SpriteHelper::CreateSystemText(
+            "",
+            8,
+            HorizontalAlignment2D::Left,
+            VerticalAlignment2D::Top,
+            m_background->getTransform()->getSize(),
+            Vec2DF(1.0f, -1.0f),
+            m_background->getTransform(),
+            this,
+            Vec2DF(0.0f, 0.0f),
+            Vec2DF(0.0f, 1.0f));
+        m_hintText->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefaultOutlined());
+        updateHintText();
     }
 
     //////////////////////////////////////////
@@ -184,8 +207,28 @@ namespace Maze
         if (command.empty())
             return;
 
+        Vector<String> words;
+        StringHelper::SplitWords(command, words, ' ');
+        String const commandName = words[0];
 
-        Debug::Log("%s", command.c_str());
+        if (!ConsoleService::GetInstancePtr()->hasCommand(commandName.c_str()))
+        {
+            MAZE_WARNING("Undefined command: %s", commandName.c_str());
+            return;
+        }
+        
+        if (words.size() > 1)
+            ConsoleService::GetInstancePtr()->executeCommand(commandName.c_str(), &words[1], words.size() - 1);
+        else
+            ConsoleService::GetInstancePtr()->executeCommand(commandName.c_str(), nullptr, 0);
+
+        m_lastCommandIndex = -1;
+    }
+
+    //////////////////////////////////////////
+    void SceneConsole::notifyTextChanged(SystemTextEditBox2D* _edit, String const& _text)
+    {
+        updateHintText();
     }
 
     //////////////////////////////////////////
@@ -208,6 +251,133 @@ namespace Maze
             m_consoleText->setText(String(log.begin(), log.end() - 1));
         else
             m_consoleText->setText(log);
+    }
+
+    //////////////////////////////////////////
+    void SceneConsole::updateHintText()
+    {
+        String const& command = m_edit->getText();
+
+        if (command.empty())
+        {
+            m_hintText->setText("");
+        }
+        else
+        {
+            Vector<String> commands = ConsoleService::GetInstancePtr()->getCommandsStartedWith(command);
+
+            String hintText;
+            for (String const& cmd : commands)
+            {
+                if (!hintText.empty())
+                    hintText += '\n';
+                hintText += cmd;
+            }
+
+            m_hintText->setText(hintText);
+        }
+    }
+
+    //////////////////////////////////////////
+    void SceneConsole::completeCommand()
+    {
+        String const& command = m_edit->getText();
+        if (command.empty())
+            return;
+
+        Vector<String> commands = ConsoleService::GetInstancePtr()->getCommandsStartedWith(command);
+        if (commands.empty())
+            return;
+
+        if (commands.size() == 1)
+            m_edit->setText(commands.front());
+        else
+        {
+            S32 commandsCount = (S32)commands.size();
+
+            String commandPart;
+            Size index = 0;
+            bool finished = false;
+            do
+            {
+                Char ch = commands.front()[index];
+
+                for (S32 i = 1; i < commandsCount; ++i)
+                {
+                    if (commands[i].size() <= index || commands[i][index] != ch)
+                    {
+                        finished = true;
+                        break;
+                    }
+                }
+
+                if (!finished)
+                    commandPart += ch;
+                ++index;
+            }
+            while (!finished);
+
+            if (commandPart == command)
+                m_edit->setText(commands.front());
+            else
+                m_edit->setText(commandPart);
+        }
+    }
+
+    //////////////////////////////////////////
+    void SceneConsole::notifyKeyboard(InputEventKeyboardData const& _keyboardData)
+    {
+        switch (_keyboardData.type)
+        {
+        case InputEventKeyboardType::KeyDown:
+        {
+            if (_keyboardData.keyCode == KeyCode::Tab)
+            {
+                if (m_edit->getSelected())
+                {
+                    completeCommand();
+                }
+            }
+            else
+            if (_keyboardData.keyCode == KeyCode::Up)
+            {
+                S32 lastCommandsSize = (S32)ConsoleService::GetInstancePtr()->getLastCommandsSize();
+
+                if (lastCommandsSize > 0)
+                {
+                    m_lastCommandIndex = Math::Clamp(m_lastCommandIndex + 1, 0, lastCommandsSize - 1);
+                    String const& lastCommand = ConsoleService::GetInstancePtr()->getLastCommand(m_lastCommandIndex);
+                    if (!lastCommand.empty())
+                        m_edit->setText(lastCommand);
+                }
+            }
+            else
+            if (_keyboardData.keyCode == KeyCode::Down)
+            {
+                S32 lastCommandsSize = (S32)ConsoleService::GetInstancePtr()->getLastCommandsSize();
+
+                if (lastCommandsSize > 0)
+                {
+                    if (m_lastCommandIndex <= 0)
+                    {
+                        m_lastCommandIndex = -1;
+                        m_edit->setText("");
+                    }
+                    else
+                    {
+                        m_lastCommandIndex = Math::Clamp(m_lastCommandIndex - 1, 0, lastCommandsSize - 1);
+                        String const& lastCommand = ConsoleService::GetInstancePtr()->getLastCommand(m_lastCommandIndex);
+                        if (!lastCommand.empty())
+                            m_edit->setText(lastCommand);
+                    }
+                }
+            }
+
+            break;
+        }
+        default:
+            break;
+        }
     }
 
 } // namespace Maze

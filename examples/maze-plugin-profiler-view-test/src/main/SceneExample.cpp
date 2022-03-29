@@ -87,6 +87,7 @@
 #include "maze-plugin-profiler-view/MazeProfilerViewPlugin.hpp"
 #include "maze-plugin-profiler-view/settings/MazeProfilerViewSettings.hpp"
 #include "maze-plugin-console/MazeConsolePlugin.hpp"
+#include "maze-plugin-console/MazeConsoleService.hpp"
 #include "Example.hpp"
 
 
@@ -220,6 +221,20 @@ namespace Maze
         Rotor3DPtr rotor = objectEntity->createComponent<Rotor3D>();
         rotor->setAxis({0.0f, -0.7071f, -0.7071f });
         rotor->setSpeed(0.2f);
+
+
+        ConsoleService::GetInstancePtr()->registerCommand(
+            "profile",
+            [](String* _argv, S32 _argc)
+            {
+                if (_argc == 0)
+                    SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>()->switchActive();
+                else
+                {
+                    bool active = StringHelper::StringToBool(_argv[0]);
+                    SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>()->setActive(active);
+                }
+            });
 
         return true;
     }
