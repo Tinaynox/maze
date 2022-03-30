@@ -249,7 +249,7 @@ namespace Maze
     {
         m_log.append(_text, _text + _size);
 
-        static S32 const c_logSymbolsCount = 2048;
+        S32 const c_logSymbolsCount = 2048 * 2;
         if (m_log.size() > c_logSymbolsCount)
             m_log = m_log.substr(m_log.size() - c_logSymbolsCount, c_logSymbolsCount);
 
