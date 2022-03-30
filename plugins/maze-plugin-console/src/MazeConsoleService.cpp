@@ -257,10 +257,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ConsoleService::registerCommand(HashedCString _command, Delegate<void, String*, S32> const& _callback)
+    void ConsoleService::registerCommand(
+        HashedCString _command,
+        Delegate<bool, String*, S32> const& _callback,
+        S32 _argsCount)
     {
         ConsoleCommand command;
+        command.command = _command;
         command.callback = _callback;
+        command.argsCount = _argsCount;
         m_commands.insert(_command, command);
     }
 
@@ -283,7 +288,7 @@ namespace Maze
             Debug::Log("%s", lastCommand.c_str());
 
             ConsoleCommand const& command = it->second;
-            command.callback(_argv, _argc);
+            bool result = command.callback(_argv, _argc);
 
             if (m_lastCommands.empty() || m_lastCommands.back() != lastCommand)
             {
@@ -292,18 +297,22 @@ namespace Maze
                 if (m_lastCommands.size() >= 16)
                     m_lastCommands.pop_front();
             }
+
+            if (!result)
+                Debug::LogWarning("Command %s failed!", _command.str);
+            
         }
     }
 
     //////////////////////////////////////////
-    Vector<String> ConsoleService::getCommandsStartedWith(String const& _text)
+    Vector<ConsoleCommand> ConsoleService::getCommandsStartedWith(String const& _text)
     {
-        Vector<String> result;
+        Vector<ConsoleCommand> result;
 
         for (auto const& commandData : m_commands)
         {
             if (StringHelper::IsStartsWith(commandData.first.c_str(), _text.c_str()))
-                result.emplace_back(commandData.first);
+                result.emplace_back(commandData.second);
         }
 
         return result;

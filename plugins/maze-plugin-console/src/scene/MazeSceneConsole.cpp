@@ -264,14 +264,17 @@ namespace Maze
         }
         else
         {
-            Vector<String> commands = ConsoleService::GetInstancePtr()->getCommandsStartedWith(command);
+            Vector<ConsoleCommand> commands = ConsoleService::GetInstancePtr()->getCommandsStartedWith(command);
 
             String hintText;
-            for (String const& cmd : commands)
+            for (ConsoleCommand const& cmd : commands)
             {
                 if (!hintText.empty())
                     hintText += '\n';
-                hintText += cmd;
+                hintText += cmd.command;
+
+                for (S32 i = 0; i < cmd.argsCount; ++i)
+                    hintText += " x";
             }
 
             m_hintText->setText(hintText);
@@ -285,12 +288,12 @@ namespace Maze
         if (command.empty())
             return;
 
-        Vector<String> commands = ConsoleService::GetInstancePtr()->getCommandsStartedWith(command);
+        Vector<ConsoleCommand> commands = ConsoleService::GetInstancePtr()->getCommandsStartedWith(command);
         if (commands.empty())
             return;
 
         if (commands.size() == 1)
-            m_edit->setText(commands.front());
+            m_edit->setText(commands.front().command);
         else
         {
             S32 commandsCount = (S32)commands.size();
@@ -300,11 +303,11 @@ namespace Maze
             bool finished = false;
             do
             {
-                Char ch = commands.front()[index];
+                Char ch = commands.front().command.getString()[index];
 
                 for (S32 i = 1; i < commandsCount; ++i)
                 {
-                    if (commands[i].size() <= index || commands[i][index] != ch)
+                    if (commands[i].command.size() <= index || commands[i].command.getString()[index] != ch)
                     {
                         finished = true;
                         break;
@@ -318,7 +321,7 @@ namespace Maze
             while (!finished);
 
             if (commandPart == command)
-                m_edit->setText(commands.front());
+                m_edit->setText(commands.front().command);
             else
                 m_edit->setText(commandPart);
         }

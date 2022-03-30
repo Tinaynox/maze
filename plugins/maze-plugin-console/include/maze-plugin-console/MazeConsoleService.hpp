@@ -82,7 +82,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void registerCommand(HashedCString _command, Delegate<void, String*, S32> const& _callback);
+        void registerCommand(
+            HashedCString _command,
+            Delegate<bool, String*, S32> const& _callback,
+            S32 _argsCount = 0);
 
         //////////////////////////////////////////
         bool hasCommand(HashedCString _command);
@@ -91,7 +94,7 @@ namespace Maze
         void executeCommand(HashedCString _command, String* _argv, S32 _argc);
 
         //////////////////////////////////////////
-        Vector<String> getCommandsStartedWith(String const& _text);
+        Vector<ConsoleCommand> getCommandsStartedWith(String const& _text);
 
 
 

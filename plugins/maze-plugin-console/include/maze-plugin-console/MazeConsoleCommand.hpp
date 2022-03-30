@@ -48,7 +48,9 @@ namespace Maze
     //////////////////////////////////////////
     struct ConsoleCommand
     {
-        Delegate<void, String*, S32> callback;
+        HashedString command;
+        Delegate<bool, String*, S32> callback;
+        S32 argsCount = 0;
     };
 
 
