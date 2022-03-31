@@ -127,7 +127,15 @@ namespace Maze
         inline U32 getFontSize() const { return m_fontSize; }
 
         //////////////////////////////////////////
-        void setFontSize(U32 _fontSize) { m_fontSize = _fontSize; }
+        void setFontSize(U32 _fontSize)
+        {
+            if (m_fontSize == _fontSize)
+                return;
+
+            m_fontSize = _fontSize;
+
+            updateMeshData();
+        }
 
 
         //////////////////////////////////////////

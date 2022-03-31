@@ -82,31 +82,6 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    String GetExampleName()
-    {
-        return "UI";
-    }
-
-    //////////////////////////////////////////
-    void LoadFirstExampleScene(SceneManager* _sceneManager)
-    {
-        _sceneManager->loadScene<SceneExample>();
-    }
-    
-    //////////////////////////////////////////
-    bool IsLoadAllAssets()
-    {
-        return false;
-    }
-
-    //////////////////////////////////////////
-    bool LoadPlugins()
-    {
-        return true;
-    }
-
-
-    //////////////////////////////////////////
     // Class SceneExample
     //
     //////////////////////////////////////////
