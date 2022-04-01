@@ -83,12 +83,12 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        template <class S, typename ...TArgs>
-        SharedPtr<S> loadScene(
+        template <class TScene, typename ...TArgs>
+        SharedPtr<TScene> loadScene(
             bool _additive,
             TArgs... _args)
         {
-            static SharedPtr<S> nullPointer;
+            static SharedPtr<TScene> nullPointer;
 
             if (!_additive)
             {
@@ -110,38 +110,38 @@ namespace Maze
             }
 
             {
-                ECSScenePtr scene = std::static_pointer_cast<ECSScene>(S::Create(_args...));
+                ECSScenePtr scene = std::static_pointer_cast<ECSScene>(TScene::Create(_args...));
                 MAZE_RETURN_VALUE_IF(!scene, nullPointer);
 
-                MAZE_DEBUG_BP_IF(scene->getClassUID() != ClassInfo<S>::UID());
+                MAZE_DEBUG_BP_IF(scene->getClassUID() != ClassInfo<TScene>::UID());
                 scene->setState(ECSSceneState::Created);
                 m_newScenes.push_back(scene);
 
                 if (!m_mainScene)
                     setMainScene(scene);
 
-                return scene->cast<S>();
+                return scene->cast<TScene>();
             }
         }
 
         //////////////////////////////////////////
-        template <class S>
-        SharedPtr<S> loadScene()
+        template <class TScene>
+        SharedPtr<TScene> loadScene()
         {
-            return loadScene<S>(true);
+            return loadScene<TScene>(true);
         }
 
         //////////////////////////////////////////
-        template <class S>
-        SharedPtr<S> getScene()
+        template <class TScene>
+        SharedPtr<TScene> getScene()
         {
             for (Size i = 0; i < m_scenes.size(); ++i)
-                if (m_scenes[i]->getClassUID() == ClassInfo<S>::UID())
-                    return m_scenes[i]->cast<S>();
+                if (m_scenes[i]->getClassUID() == ClassInfo<TScene>::UID())
+                    return m_scenes[i]->cast<TScene>();
 
             for (Size i = 0; i < m_newScenes.size(); ++i)
-                if (m_newScenes[i]->getClassUID() == ClassInfo<S>::UID())
-                    return m_newScenes[i]->cast<S>();
+                if (m_newScenes[i]->getClassUID() == ClassInfo<TScene>::UID())
+                    return m_newScenes[i]->cast<TScene>();
 
             return nullptr;
         }
@@ -149,6 +149,16 @@ namespace Maze
         //////////////////////////////////////////
         ScenesList const& getScenes() const { return m_scenes; }
     
+
+        //////////////////////////////////////////
+        template <class TScene>
+        inline void unloadScene()
+        {
+            SharedPtr<TScene> const& scene = getScene<TScene>();
+            if (scene)
+                destroyScene(scene);
+        }
+
 
         //////////////////////////////////////////
         static inline SceneManager* GetInstancePtr() { return s_instance; }

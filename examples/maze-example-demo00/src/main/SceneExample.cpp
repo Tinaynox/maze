@@ -94,40 +94,6 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    String GetExampleName()
-    {
-        return "Sky, Terrain and Water";
-    }
-
-    //////////////////////////////////////////
-    void LoadFirstExampleScene(SceneManager* _sceneManager)
-    {
-        _sceneManager->loadScene<SceneExample>();
-    }
-
-    //////////////////////////////////////////
-    bool IsLoadAllAssets()
-    {
-        return false;
-    }
-
-    //////////////////////////////////////////
-    bool LoadPlugins()
-    {
-        MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView, "maze-plugin-profiler-view");
-        MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG, "maze-plugin-loader-png");
-        MAZE_LOAD_PLATFORM_PLUGIN(Water, "maze-plugin-water");
-
-#if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
-        if (SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>())
-            SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>()->setActive(true);
-#endif
-
-        return true;
-    }
-
-
-    //////////////////////////////////////////
     // Class SceneExample
     //
     //////////////////////////////////////////
@@ -190,7 +156,7 @@ namespace Maze
         m_canvas->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
         m_canvas->setRenderTarget(Example::GetInstancePtr()->getMainRenderWindow());
         m_canvas->setClearColorFlag(false);
-        m_canvas->setClearColor(ColorU32::c_zero);
+        m_canvas->setClearColor(ColorU32::c_blackSoft);
 
         CanvasScalerPtr canvasScaler = canvasEntity->ensureComponent<CanvasScaler>();
         canvasScaler->setScaleMode(CanvasScaler::ScaleMode::ScaleWithViewportSize);
