@@ -34,6 +34,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
+#include "maze-core/system/MazeTimer.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeShader.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
@@ -116,6 +117,10 @@ namespace Maze
         //////////////////////////////////////////
         inline bool isDebugEditorProgress() const { return m_debugEditorProgress > 0.0f && m_debugEditorProgress < 1.0f; }
 
+
+        //////////////////////////////////////////
+        inline U32 getTime() { return m_timer.getMilliseconds(); }
+
     public:
 
         //////////////////////////////////////////
@@ -176,6 +181,8 @@ namespace Maze
 
 
         F32 m_debugEditorProgress;
+
+        Timer m_timer;
     };
 
 

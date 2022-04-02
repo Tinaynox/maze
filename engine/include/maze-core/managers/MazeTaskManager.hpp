@@ -87,50 +87,50 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void addMainThreadTask(Delegate<S32> const& _delegate)
+        inline void addMainThreadTask(Delegate<void> const& _delegate)
         {
             m_mainThreadTasks.current().emplace_back(
-                new TaskDelegate0{ _delegate });
+                new TaskDelegate0{ [_delegate]() { _delegate(); return 0; } });
         }
 
         //////////////////////////////////////////
         template <typename TArg0>
-        inline void addMainThreadTask(Delegate<S32> const& _delegate, TArg0 const& _arg0)
+        inline void addMainThreadTask(Delegate<void> const& _delegate, TArg0 const& _arg0)
         {
             m_mainThreadTasks.current().emplace_back(
-                new TaskDelegate1<TArg0>{ _delegate, _arg0 });
+                new TaskDelegate1<TArg0>{ [_delegate, _arg0]() { _delegate(_arg0); return 0; }, _arg0 });
         }
 
         //////////////////////////////////////////
         template <typename TArg0, typename TArg1>
-        inline void addMainThreadTask(Delegate<S32> const& _delegate, TArg0 const& _arg0, TArg0 const& _arg1)
+        inline void addMainThreadTask(Delegate<void> const& _delegate, TArg0 const& _arg0, TArg0 const& _arg1)
         {
             m_mainThreadTasks.current().emplace_back(
-                new TaskDelegate1<TArg0>{ _delegate, _arg0, _arg1 });
+                new TaskDelegate1<TArg0>{ [_delegate, _arg0, _arg1]() { _delegate(_arg0, _arg1); return 0; }, _arg0, _arg1 });
         }
 
 
         //////////////////////////////////////////
-        inline void addDelayedMainThreadTask(S32 _framesDelay, Delegate<S32> const& _delegate)
+        inline void addDelayedMainThreadTask(S32 _framesDelay, Delegate<void> const& _delegate)
         {
             m_delayedMainThreadTasks.emplace_back(
-                DelayedTask{ new TaskDelegate0{ _delegate }, _framesDelay });
+                DelayedTask{ new TaskDelegate0{ [_delegate]() { _delegate(); return 0; } }, _framesDelay });
         }
 
         //////////////////////////////////////////
         template <typename TArg0>
-        inline void addDelayedMainThreadTask(S32 _framesDelay, Delegate<S32> const& _delegate, TArg0 const& _arg0)
+        inline void addDelayedMainThreadTask(S32 _framesDelay, Delegate<void> const& _delegate, TArg0 const& _arg0)
         {
             m_delayedMainThreadTasks.emplace_back(
-                DelayedTask{ new TaskDelegate1<TArg0>{ _delegate, _arg0 }, _framesDelay });
+                DelayedTask{ new TaskDelegate1<TArg0>{ [_delegate, _arg0]() { _delegate(_arg0); return 0; }, _arg0 }, _framesDelay });
         }
 
         //////////////////////////////////////////
         template <typename TArg0, typename TArg1>
-        inline void addDelayedMainThreadTask(S32 _framesDelay, Delegate<S32> const& _delegate, TArg0 const& _arg0, TArg0 const& _arg1)
+        inline void addDelayedMainThreadTask(S32 _framesDelay, Delegate<void> const& _delegate, TArg0 const& _arg0, TArg0 const& _arg1)
         {
             m_delayedMainThreadTasks.emplace_back(
-                DelayedTask{ new TaskDelegate1<TArg0>{ _delegate, _arg0, _arg1 }, _framesDelay });
+                DelayedTask{ new TaskDelegate1<TArg0>{ [_delegate, _arg0, _arg1]() { _delegate(_arg0, _arg1); return 0; }, _arg0, _arg1 }, _framesDelay });
         }
 
     protected:

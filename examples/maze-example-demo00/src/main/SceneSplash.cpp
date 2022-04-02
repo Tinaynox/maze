@@ -198,13 +198,8 @@ namespace Maze
                 SceneManager::GetInstancePtr()->loadScene<SceneExample>();
                 TaskManager::GetInstancePtr()->addDelayedMainThreadTask(
                     1,
-                    []()
-                    {
-                        SceneManager::GetInstancePtr()->unloadScene<SceneSplash>();
-                        return 0;
-                    });
+                    [](){ SceneManager::GetInstancePtr()->unloadScene<SceneSplash>(); });
 
-                return 0;
             });
 
         return true;

@@ -222,18 +222,26 @@ namespace Maze
     //////////////////////////////////////////
     bool Example::initMainManagers()
     {
+        Debug::Log("Example Init - 1 [%ums]", getTime());
+
         LogService::GetInstancePtr()->setLogFile((FileHelper::GetDefaultLogDirectory() + "/log.log").c_str());
 
         if (!Engine::initMainManagers())
             return false;
+
+        Debug::Log("Example Init - 2 [%ums]", getTime());
 
         m_inputManager->eventKeyboard.subscribe(this, &Example::notifyKeyboard);
 
         m_settingsManager->loadSettings();
         m_settingsManager->getSettings<DebuggerSettings>()->getActiveChangedEvent().subscribe(this, &Example::notifyDebuggerActiveChanged);
 
+        Debug::Log("Example Init - 3 [%ums]", getTime());
+
         if (!initExampleManagers())
             return false;
+
+        Debug::Log("Example Init - 4 [%ums]", getTime());
 
         return true;
     }
@@ -349,6 +357,8 @@ namespace Maze
         if (!createMainRenderWindow())
             return false;
 
+        Debug::Log("Example Init - 5 [%ums]", getTime());
+
         AssetManager::GetInstancePtr()->addAssetsDirectory(AssetManager::GetInstancePtr()->getDefaultAssetsDirectory(), true);
         RenderSystemPtr const& renderSystem = m_graphicsManager->getDefaultRenderSystem();
         ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
@@ -371,10 +381,13 @@ namespace Maze
 
         createDefaultECSWorldSystems(world, m_mainRenderWindow, renderSystem);        
 
+        Debug::Log("Example Init - 6 [%ums]", getTime());
+
         updateDebugEditor();
         m_debugEditorProgress = m_debuggerManager->getDebugEditorActive() ? 1.0f : 0.0f;
         updateDebugEditorViewport();
 
+        Debug::Log("Example Init - 7 [%ums]", getTime());
 
         LoadFirstExampleScene(m_sceneManager.get());
 
