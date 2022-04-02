@@ -184,6 +184,11 @@ namespace Maze
                 texture->setMinFilter(TextureFilter::Nearest);
                 break;
             }
+            default:
+            {
+                MAZE_NOT_IMPLEMENTED;
+                break;
+            }
         }
 
         if (texture)
@@ -236,6 +241,11 @@ namespace Maze
 
                     texture->loadTexture(faces);
                 }
+                break;
+            }
+            default:
+            {
+                MAZE_NOT_IMPLEMENTED;
                 break;
             }
         }

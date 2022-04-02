@@ -159,6 +159,11 @@ namespace Maze
                 systemFont = createSystemFontOutlined(_fontType.toCString(), ColorU32::c_black);
                 break;
             }
+            default:
+            {
+                MAZE_NOT_IMPLEMENTED;
+                break;
+            }
         }
 
 

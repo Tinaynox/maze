@@ -355,6 +355,11 @@ namespace Maze
 
                 break;
             }
+            default:
+            {
+                MAZE_NOT_IMPLEMENTED;
+                break;
+            }
         }
 
         if (material)
