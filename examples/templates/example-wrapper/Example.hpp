@@ -172,6 +172,9 @@ namespace Maze
         //////////////////////////////////////////
         void updateDebugEditorViewport();
 
+        //////////////////////////////////////////
+        void notifyCoreGameResourcesLoaded();
+
     protected:
         static Example* s_instance;
 

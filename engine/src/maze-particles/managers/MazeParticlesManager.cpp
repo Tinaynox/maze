@@ -142,7 +142,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ParticlesManager::createParticlesElements()
+    void ParticlesManager::createBuiltinAssets()
     {
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 

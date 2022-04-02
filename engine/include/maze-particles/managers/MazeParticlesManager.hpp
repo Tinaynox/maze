@@ -77,7 +77,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void createParticlesElements();
+        void createBuiltinAssets();
 
     protected:
 

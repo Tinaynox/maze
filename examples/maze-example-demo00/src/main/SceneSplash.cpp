@@ -65,6 +65,7 @@
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
+#include "maze-graphics/managers/MazeGizmosManager.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
@@ -87,6 +88,7 @@
 #include "maze-plugin-loader-png/MazeLoaderPNGPlugin.hpp"
 #include "maze-plugin-water/MazeWaterPlugin.hpp"
 #include "maze-plugin-water/ecs/systems/MazeRenderWaterSystem.hpp"
+#include "maze-ui/managers/MazeUIManager.hpp"
 #include "main/SceneExample.hpp"
 #include "main/LevelBloomController.hpp"
 #include "Example.hpp"
@@ -118,7 +120,6 @@ namespace Maze
     {
         MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView, "maze-plugin-profiler-view");
         MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG, "maze-plugin-loader-png");
-        MAZE_LOAD_PLATFORM_PLUGIN(Water, "maze-plugin-water");
 
 #if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
         if (SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>())
@@ -183,7 +184,8 @@ namespace Maze
         canvasScaler->setMatchWidthOrHeight(1.0f);
         canvasScaler->updateCanvasScale();
 
-        SpriteManager::GetCurrentInstance()->setDefaultSpriteMaterial(MaterialManager::GetCurrentInstance()->getColorTextureMaterial());
+        MaterialPtr const& material = MaterialManager::GetCurrentInstance()->ensureBuiltinMaterial(BuiltinMaterialType::ColorTexture);
+        SpriteManager::GetCurrentInstance()->setDefaultSpriteMaterial(material);
         SpriteHelper::CreateSprite(
             "MazeLogo_128x128.mztexture",
             Vec2DF(128.0f, 128.0f),
@@ -195,9 +197,18 @@ namespace Maze
             1,
             []()
             {
+                RenderSystem::GetCurrentInstancePtr()->createBuiltinAssets();
+                GraphicsManager::GetInstancePtr()->getGizmosManager()->createGizmosElements();
+                UIManager::GetInstancePtr()->createUIElements();
+                ParticlesManager::GetInstancePtr()->createBuiltinAssets();
+
+                MAZE_LOAD_PLATFORM_PLUGIN(Water, "maze-plugin-water");
+
+                Example::GetInstancePtr()->eventCoreGameResourcesLoaded();
+                
                 SceneManager::GetInstancePtr()->loadScene<SceneExample>();
                 TaskManager::GetInstancePtr()->addDelayedMainThreadTask(
-                    1,
+                    2,
                     [](){ SceneManager::GetInstancePtr()->unloadScene<SceneSplash>(); });
 
             });

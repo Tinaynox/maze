@@ -137,6 +137,7 @@ namespace Maze
             return false;
 
         eventFrame.subscribe(this, &Example::notifyFrame);
+        eventCoreGameResourcesLoaded.subscribe(this, &Example::notifyCoreGameResourcesLoaded);
 
         return true;
     }
@@ -360,32 +361,12 @@ namespace Maze
         Debug::Log("Example Init - 5 [%ums]", getTime());
 
         AssetManager::GetInstancePtr()->addAssetsDirectory(AssetManager::GetInstancePtr()->getDefaultAssetsDirectory(), true);
-        RenderSystemPtr const& renderSystem = m_graphicsManager->getDefaultRenderSystem();
-        ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
-
-
-        if (IsLoadAllAssets())
-        {
-            shaderSystem->findAssetShadersAndAddToCache();
-            renderSystem->getTextureManager()->loadAllAssetTextures();
-            renderSystem->getMaterialManager()->loadAllAssetMaterials();
-            // renderSystem->getRenderMeshManager()->loadAllAssetRenderMeshes();
-        }
-
-        m_uiManager->createUIElements();
-        m_graphicsManager->getGizmosManager()->createGizmosElements();
-        m_particlesManager->createParticlesElements();
 
         EntityManager* entityManager = EntityManager::GetInstancePtr();
         ECSWorldPtr const& world = entityManager->getDefaultWorld();
-
-        createDefaultECSWorldSystems(world, m_mainRenderWindow, renderSystem);        
+        createPrimaryECSWorldSystems(world, m_mainRenderWindow, m_graphicsManager->getDefaultRenderSystem());
 
         Debug::Log("Example Init - 6 [%ums]", getTime());
-
-        updateDebugEditor();
-        m_debugEditorProgress = m_debuggerManager->getDebugEditorActive() ? 1.0f : 0.0f;
-        updateDebugEditorViewport();
 
         Debug::Log("Example Init - 7 [%ums]", getTime());
 
@@ -482,6 +463,33 @@ namespace Maze
             return false;
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    void Example::notifyCoreGameResourcesLoaded()
+    {
+        RenderSystemPtr const& renderSystem = m_graphicsManager->getDefaultRenderSystem();
+        ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
+
+        if (IsLoadAllAssets())
+        {
+            shaderSystem->findAssetShadersAndAddToCache();
+            renderSystem->getTextureManager()->loadAllAssetTextures();
+            renderSystem->getMaterialManager()->loadAllAssetMaterials();
+            // renderSystem->getRenderMeshManager()->loadAllAssetRenderMeshes();
+        }
+
+        m_uiManager->createUIElements();
+        m_graphicsManager->getGizmosManager()->createGizmosElements();
+        m_particlesManager->createBuiltinAssets();
+
+        EntityManager* entityManager = EntityManager::GetInstancePtr();
+        ECSWorldPtr const& world = entityManager->getDefaultWorld();
+        createSecondaryECSWorldSystems(world, m_mainRenderWindow, m_graphicsManager->getDefaultRenderSystem());
+
+        updateDebugEditor();
+        m_debugEditorProgress = m_debuggerManager->getDebugEditorActive() ? 1.0f : 0.0f;
+        updateDebugEditorViewport();
     }
 
 } // namespace Maze
