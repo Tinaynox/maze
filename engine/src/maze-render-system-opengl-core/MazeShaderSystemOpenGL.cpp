@@ -186,7 +186,10 @@ namespace Maze
 #include "shaders/MazeSpecularShader.mzglsl"
                 ; break;
             default:
+            {
+                MAZE_NOT_IMPLEMENTED;
                 break;
+            }
         }
 
         MAZE_ERROR_RETURN_VALUE_IF(!shaderSource, shader, "ShaderSource is null! ShaderType: %s", _shaderType.toCString());

@@ -113,6 +113,11 @@ namespace Maze
                 renderMesh = RenderMesh::Create(Maze::MeshHelper::CreateSpherifiedCubeMesh(), m_renderSystemRaw);
                 break;
             }
+            default:
+            {
+                MAZE_NOT_IMPLEMENTED;
+                break;
+            }
         }
 
         if (renderMesh)
