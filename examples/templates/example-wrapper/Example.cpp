@@ -476,12 +476,7 @@ namespace Maze
             shaderSystem->findAssetShadersAndAddToCache();
             renderSystem->getTextureManager()->loadAllAssetTextures();
             renderSystem->getMaterialManager()->loadAllAssetMaterials();
-            // renderSystem->getRenderMeshManager()->loadAllAssetRenderMeshes();
         }
-
-        m_uiManager->createUIElements();
-        m_graphicsManager->getGizmosManager()->createGizmosElements();
-        m_particlesManager->createBuiltinAssets();
 
         EntityManager* entityManager = EntityManager::GetInstancePtr();
         ECSWorldPtr const& world = entityManager->getDefaultWorld();
