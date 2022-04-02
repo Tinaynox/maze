@@ -8,7 +8,7 @@
     
     <Feature name="SPECULAR_MAP" />
     <Uniform name="u_specularColor" type="UniformVec4DF" value="1.0;1.0;1.0;1.0" />
-    <Uniform name="u_specularMap" type="UniformTexture2D" value="white" />
+    <Uniform name="u_specularMap" type="UniformTexture2D" value="White" />
     
     <Feature name="BACK_LIGHT" />
     <Uniform name="u_backLightColor" type="UniformVec4DF" value="0.65;0.70;0.75;1.0" />

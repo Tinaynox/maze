@@ -197,14 +197,8 @@ namespace Maze
             1,
             []()
             {
-                RenderSystem::GetCurrentInstancePtr()->createBuiltinAssets();
-                GraphicsManager::GetInstancePtr()->getGizmosManager()->createGizmosElements();
-                UIManager::GetInstancePtr()->createUIElements();
-                ParticlesManager::GetInstancePtr()->createBuiltinAssets();
-
+                Example::GetInstancePtr()->loadCoreGameAssets();
                 MAZE_LOAD_PLATFORM_PLUGIN(Water, "maze-plugin-water");
-
-                Example::GetInstancePtr()->eventCoreGameResourcesLoaded();
                 
                 SceneManager::GetInstancePtr()->loadScene<SceneExample>();
                 TaskManager::GetInstancePtr()->addDelayedMainThreadTask(

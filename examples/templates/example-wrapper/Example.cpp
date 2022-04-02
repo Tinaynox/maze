@@ -487,5 +487,16 @@ namespace Maze
         updateDebugEditorViewport();
     }
 
+    //////////////////////////////////////////
+    void Example::loadCoreGameAssets()
+    {
+        RenderSystem::GetCurrentInstancePtr()->createBuiltinAssets();
+        GraphicsManager::GetInstancePtr()->getGizmosManager()->createGizmosElements();
+        UIManager::GetInstancePtr()->createUIElements();
+        ParticlesManager::GetInstancePtr()->createBuiltinAssets();
+
+        eventCoreGameResourcesLoaded();
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

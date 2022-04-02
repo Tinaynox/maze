@@ -97,6 +97,7 @@ namespace Maze
     //////////////////////////////////////////
     void LoadFirstExampleScene(SceneManager* _sceneManager)
     {
+        Example::GetInstancePtr()->loadCoreGameAssets();
         _sceneManager->loadScene<SceneExample>();
     }
 
@@ -235,7 +236,7 @@ namespace Maze
         MeshRendererPtr meshRenderer = objectEntity->createComponent<MeshRenderer>();
         meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultCubeMesh());
         // meshRenderer->setRenderMesh("DroneLP.obj");
-        meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getSpecularDSMaterial());
+        meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::SpecularDS));
         objectEntity->ensureComponent<Name>("Obj");
         Rotor3DPtr rotor = objectEntity->createComponent<Rotor3D>();
         rotor->setAxis({0.0f, -0.7071f, -0.7071f });

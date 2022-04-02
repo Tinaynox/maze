@@ -121,6 +121,10 @@ namespace Maze
         //////////////////////////////////////////
         inline U32 getTime() { return m_timer.getMilliseconds(); }
 
+
+        //////////////////////////////////////////
+        void loadCoreGameAssets();
+
     public:
 
         //////////////////////////////////////////

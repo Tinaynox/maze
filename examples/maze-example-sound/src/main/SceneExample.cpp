@@ -94,6 +94,7 @@ namespace Maze
     //////////////////////////////////////////
     void LoadFirstExampleScene(SceneManager* _sceneManager)
     {
+        Example::GetInstancePtr()->loadCoreGameAssets();
         _sceneManager->loadScene<SceneExample>();
     }
     

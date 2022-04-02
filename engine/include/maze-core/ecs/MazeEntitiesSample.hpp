@@ -265,7 +265,7 @@ namespace Maze
         virtual EntitiesSampleType getType() MAZE_OVERRIDE { return EntitiesSampleType::GenericInclusive; }
 
         //////////////////////////////////////////
-        Vector<EntityData> const& getEntitiesData() const { return m_entitiesData; }
+        FastVector<EntityData> const& getEntitiesData() const { return m_entitiesData; }
 
         //////////////////////////////////////////
         Vector<EntityId> getEntityIds() const
