@@ -325,7 +325,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Engine::createDefaultECSWorldSystems(
+    void Engine::createPrimaryECSWorldSystems(
         ECSWorldPtr const& _world,
         RenderWindowPtr const& _renderWindow,
         RenderSystemPtr const& _renderSystem)
@@ -333,15 +333,23 @@ namespace Maze
         _world->addSystem(SizePolicy2DSystem::Create());
         _world->addSystem(TransformUtilsSystem::Create());
         _world->addSystem(TransformEventsSystem::Create());
-        _world->addSystem(GizmosSystem::Create(_renderWindow.get()));
         _world->addSystem(RenderPreparationSystem::Create(_renderSystem));
         _world->addSystem(RenderControlSystem::Create(_renderSystem));
-        _world->addSystem(ParticlesDrawerSystem::Create(_renderSystem));
         _world->addSystem(Bounds2DSystem::Create());
         _world->addSystem(InputSystem2D::Create());
-        _world->addSystem(PhysicsControlSystem2D::Create());
 
         _world->addSystem(UITweenTransitionSystem::Create());
+    }
+
+    //////////////////////////////////////////
+    void Engine::createSecondaryECSWorldSystems(
+        ECSWorldPtr const& _world,
+        RenderWindowPtr const& _renderWindow,
+        RenderSystemPtr const& _renderSystem)
+    {
+        _world->addSystem(GizmosSystem::Create(_renderWindow.get()));
+        _world->addSystem(ParticlesDrawerSystem::Create(_renderSystem));
+        _world->addSystem(PhysicsControlSystem2D::Create());
     }
 
 } // namespace Maze

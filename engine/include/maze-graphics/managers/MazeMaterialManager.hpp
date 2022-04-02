@@ -51,6 +51,28 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Enum BuiltinMaterialType
+    //
+    //////////////////////////////////////////
+    MAZE_DECLARE_ENUMCLASS_15_API(MAZE_GRAPHICS_API, BuiltinMaterialType,
+        Error,
+        UV,
+        Normal,
+        Color,
+        ColorTexture,
+        ColorTextureCustomUV,
+        ColorHDR,
+        HSVRect,
+        HSVBand,
+        ColorPickerChannel,
+        DebugGrid,
+        DebugAxis,
+        Skybox,
+        Specular,
+        SpecularDS);
+
+
+    //////////////////////////////////////////
     // Class MaterialManager
     //
     //////////////////////////////////////////
@@ -86,50 +108,28 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MaterialPtr const& getErrorMaterial() const { return m_errorMaterial; }
-
-        //////////////////////////////////////////
-        MaterialPtr const& getUVMaterial() const { return m_uvMaterial; }
-
-        //////////////////////////////////////////
-        MaterialPtr const& getNormalMaterial() const { return m_normalMaterial; }
-
-        //////////////////////////////////////////
-        MaterialPtr const& getColorMaterial() const { return m_colorMaterial; }
-
-        //////////////////////////////////////////
-        MaterialPtr const& getColorTextureMaterial() const { return m_colorTextureMaterial; }
-
-        //////////////////////////////////////////
-        MaterialPtr const& getColorTextureCustomUVMaterial() const { return m_colorTextureCustomUVMaterial; }
-
-        //////////////////////////////////////////
-        MaterialPtr const& getColorHDRMaterial() const { return m_colorHDRMaterial; }
-
-        //////////////////////////////////////////
-        MaterialPtr const& getHSVRectMaterial() const { return m_hsvRectMaterial; }
-
-        //////////////////////////////////////////
-        MaterialPtr const& getHSVBandMaterial() const { return m_hsvBandMaterial; }
-
-        //////////////////////////////////////////
-        MaterialPtr const& getColorPickerChannelMaterial() const { return m_colorPickerChannelMaterial; }
-
-        //////////////////////////////////////////
-        MaterialPtr const& getDebugGridMaterial() const { return m_debugGridMaterial; }
-
-        //////////////////////////////////////////
-        MaterialPtr const& getDebugAxisMaterial() const { return m_debugAxisMaterial; }
-
-        //////////////////////////////////////////
-        MaterialPtr const& getSkyboxMaterial() const { return m_skyboxMaterial; }
-
-        //////////////////////////////////////////
-        MaterialPtr const& getSpecularMaterial() const { return m_specularMaterial; }
-
-        //////////////////////////////////////////
-        MaterialPtr const& getSpecularDSMaterial() const { return m_specularDSMaterial; }
+        inline MaterialPtr const& getBuiltinMaterial(BuiltinMaterialType _materialType) const { return m_builtinMaterials[(Size)_materialType]; }
         
+        //////////////////////////////////////////
+        MaterialPtr const& createBuiltinMaterial(BuiltinMaterialType _materialType);
+
+        //////////////////////////////////////////
+        MaterialPtr const& ensureBuiltinMaterial(BuiltinMaterialType _materialType);
+
+        //////////////////////////////////////////
+        void createBuiltinMaterials();
+
+
+        //////////////////////////////////////////
+        inline MaterialPtr const& getErrorMaterial() const { return getBuiltinMaterial(BuiltinMaterialType::Error); }
+
+        //////////////////////////////////////////
+        inline MaterialPtr const& getColorMaterial() const { return getBuiltinMaterial(BuiltinMaterialType::Color); }
+
+        //////////////////////////////////////////
+        inline MaterialPtr const& getColorTextureMaterial() const { return getBuiltinMaterial(BuiltinMaterialType::ColorTexture); }
+
+
 
         //////////////////////////////////////////
         MaterialPtr const& addMaterial(MaterialPtr const& _material);
@@ -143,7 +143,7 @@ namespace Maze
 
     public:
         //////////////////////////////////////////
-        MultiDelegate<> eventSpecialMaterialsCreated;
+        MultiDelegate<> eventBuiltinMaterialsCreated;
 
     protected:
 
@@ -159,30 +159,13 @@ namespace Maze
         //////////////////////////////////////////
         void notifyShaderSystemInited();
 
-        //////////////////////////////////////////
-        void createSpecialMaterials();
-
     protected:
         RenderSystemWPtr m_renderSystem;
         RenderSystem* m_renderSystemRaw;
 
         StringKeyMap<MaterialPtr> m_materialsByName;
 
-        MaterialPtr m_errorMaterial;
-        MaterialPtr m_uvMaterial;
-        MaterialPtr m_normalMaterial;
-        MaterialPtr m_colorMaterial;
-        MaterialPtr m_colorTextureMaterial;
-        MaterialPtr m_colorTextureCustomUVMaterial;
-        MaterialPtr m_colorHDRMaterial;
-        MaterialPtr m_hsvRectMaterial;
-        MaterialPtr m_hsvBandMaterial;
-        MaterialPtr m_colorPickerChannelMaterial;
-        MaterialPtr m_debugGridMaterial;
-        MaterialPtr m_debugAxisMaterial;
-        MaterialPtr m_skyboxMaterial;
-        MaterialPtr m_specularMaterial;
-        MaterialPtr m_specularDSMaterial;
+        MaterialPtr m_builtinMaterials[BuiltinMaterialType::MAX];
     };
 
 } // namespace Maze

@@ -52,6 +52,27 @@ namespace Maze
     
 
     //////////////////////////////////////////
+    // Enum BuiltinShaderType
+    //
+    //////////////////////////////////////////
+    MAZE_DECLARE_ENUMCLASS_14_API(MAZE_GRAPHICS_API, BuiltinShaderType,
+        Error,
+        UV,
+        Normal,
+        Color,
+        ColorTexture,
+        ColorTextureCustomUV,
+        ColorHDR,
+        HSVRect,
+        HSVBand,
+        ColorPickerChannel,
+        DebugGrid,
+        DebugAxis,
+        Skybox,
+        Specular);
+
+
+    //////////////////////////////////////////
     // Class ShaderSystem
     //
     //////////////////////////////////////////
@@ -112,47 +133,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        ShaderPtr const& getErrorShader() const { return m_errorShader; }
+        ShaderPtr const& getBuiltinShader(BuiltinShaderType _shaderType) const { return m_builtinShaders[(Size)_shaderType]; }
 
         //////////////////////////////////////////
-        ShaderPtr const& getUVShader() const { return m_uvShader; }
+        ShaderPtr const& ensureBuiltinShader(BuiltinShaderType _shaderType);
 
         //////////////////////////////////////////
-        ShaderPtr const& getNormalShader() const { return m_normalShader; }
+        virtual ShaderPtr const& createBuiltinShader(BuiltinShaderType _shaderType) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        ShaderPtr const& getColorShader() const { return m_colorShader; }
-
-        //////////////////////////////////////////
-        ShaderPtr const& getColorTextureShader() const { return m_colorTextureShader; }
-
-        //////////////////////////////////////////
-        ShaderPtr const& getColorTextureCustomUVShader() const { return m_colorTextureCustomUVShader; }
-
-        //////////////////////////////////////////
-        ShaderPtr const& getColorHDRShader() const { return m_colorHDRShader; }
-
-        //////////////////////////////////////////
-        ShaderPtr const& getHSVRectShader() const { return m_hsvRectShader; }
-
-        //////////////////////////////////////////
-        ShaderPtr const& getHSVBandShader() const { return m_hsvBandShader; }
-
-        //////////////////////////////////////////
-        ShaderPtr const& getColorPickerChannelShader() const { return m_colorPickerChannelShader; }
-
-        //////////////////////////////////////////
-        ShaderPtr const& getDebugGridShader() const { return m_debugGridShader; }
-
-        //////////////////////////////////////////
-        ShaderPtr const& getDebugAxisShader() const { return m_debugAxisShader; }
-
-        //////////////////////////////////////////
-        ShaderPtr const& getSkyboxShader() const { return m_skyboxShader; }
-
-        //////////////////////////////////////////
-        ShaderPtr const& getSpecularShader() const { return m_specularShader; }
-
+        void createBuiltinShaders();
 
     public:
 
@@ -184,20 +174,7 @@ namespace Maze
 
         StringKeyMap<ShaderPtr> m_shadersCache;
 
-        ShaderPtr m_errorShader;
-        ShaderPtr m_uvShader;
-        ShaderPtr m_normalShader;
-        ShaderPtr m_colorShader;
-        ShaderPtr m_colorTextureShader;
-        ShaderPtr m_colorTextureCustomUVShader;
-        ShaderPtr m_colorHDRShader;
-        ShaderPtr m_hsvRectShader;
-        ShaderPtr m_hsvBandShader;
-        ShaderPtr m_colorPickerChannelShader;
-        ShaderPtr m_debugGridShader;
-        ShaderPtr m_debugAxisShader;
-        ShaderPtr m_skyboxShader;
-        ShaderPtr m_specularShader;
+        ShaderPtr m_builtinShaders[(Size)BuiltinShaderType::MAX];
     };
 
 } // namespace Maze

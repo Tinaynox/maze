@@ -228,6 +228,10 @@ namespace Maze
         //////////////////////////////////////////
         inline void setDrawCallsLimit(S32 _value) { m_drawCallsLimit = _value; }
 
+
+        //////////////////////////////////////////
+        void createBuiltinAssets();
+
     public:
         MultiDelegate<> eventSystemInited;
         MultiDelegate<> eventRenderWindowsChanged;

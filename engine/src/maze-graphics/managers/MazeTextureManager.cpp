@@ -42,6 +42,13 @@
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_ENUMCLASS(BuiltinTexture2DType);
+
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_ENUMCLASS(BuiltinTextureCubeType);
+
 
     //////////////////////////////////////////
     // Class TextureManager
@@ -94,7 +101,7 @@ namespace Maze
     //////////////////////////////////////////
     void TextureManager::notifyRenderSystemInited()
     {
-        createSpecialTextures();
+        // createBuiltinTextures();
     }
 
     //////////////////////////////////////////
@@ -137,62 +144,129 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void TextureManager::createSpecialTextures()
+    Texture2DPtr const& TextureManager::ensureBuiltinTexture2D(BuiltinTexture2DType _texture2DType)
     {
-        m_whiteTexture = Texture2D::Create(m_renderSystemRaw);
-        m_whiteTexture->setName("white");
-        m_whiteTexture->loadTexture(PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white));
-        m_whiteTexture->setMagFilter(TextureFilter::Nearest);
-        m_whiteTexture->setMinFilter(TextureFilter::Nearest);
-        addTexture(m_whiteTexture);
+        Texture2DPtr const& texture = getBuiltinTexture2D(_texture2DType);
+        if (texture)
+            return texture;
 
-        m_blackTexture = Texture2D::Create(m_renderSystemRaw);
-        m_blackTexture->setName("black");
-        m_blackTexture->loadTexture(PixelSheet2D(Vec2DS(1, 1), ColorU32::c_black));
-        m_blackTexture->setMagFilter(TextureFilter::Nearest);
-        m_blackTexture->setMinFilter(TextureFilter::Nearest);
-        addTexture(m_blackTexture);
+        return createBuiltinTexture2D(_texture2DType);
+    }
 
-        m_errorTexture = Texture2D::Create(m_renderSystemRaw);
-        m_errorTexture->setName("error");
-        m_errorTexture->loadTexture(PixelSheet2D(Vec2DS(1, 1), ColorU32::c_magenta));
-        m_errorTexture->setMagFilter(TextureFilter::Nearest);
-        m_errorTexture->setMinFilter(TextureFilter::Nearest);
-        addTexture(m_errorTexture);
+    //////////////////////////////////////////
+    Texture2DPtr const& TextureManager::createBuiltinTexture2D(BuiltinTexture2DType _texture2DType)
+    {
+        Texture2DPtr& texture = m_builtinTexture2Ds[_texture2DType];
 
-        m_whiteCubeTexture = TextureCube::Create(m_renderSystemRaw);
-        m_whiteCubeTexture->setName("white_cube");
+        switch (_texture2DType)
         {
-            PixelSheet2D faces[6] = 
-                { 
-                    PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
-                    PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
-                    PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
-                    PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
-                    PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
-                    PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
-                };
-
-            m_whiteCubeTexture->loadTexture(faces);
-        }
-        addTexture(m_whiteCubeTexture);
-
-        m_testCubeTexture = TextureCube::Create(m_renderSystemRaw);
-        m_testCubeTexture->setName("test_cube");
-        {
-            PixelSheet2D faces[6] =
+            case BuiltinTexture2DType::White:
             {
-                PixelSheet2D(Vec2DS(1, 1), ColorU32::c_red),
-                PixelSheet2D(Vec2DS(1, 1), ColorU32::c_green),
-                PixelSheet2D(Vec2DS(1, 1), ColorU32::c_blue),
-                PixelSheet2D(Vec2DS(1, 1), ColorU32::c_cyan),
-                PixelSheet2D(Vec2DS(1, 1), ColorU32::c_magenta),
-                PixelSheet2D(Vec2DS(1, 1), ColorU32::c_yellow),
-            };
-            
-            m_testCubeTexture->loadTexture(faces);
+                texture = Texture2D::Create(m_renderSystemRaw);
+                texture->loadTexture(PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white));
+                texture->setMagFilter(TextureFilter::Nearest);
+                texture->setMinFilter(TextureFilter::Nearest);
+                break;
+            }
+            case BuiltinTexture2DType::Black:
+            {
+                texture = Texture2D::Create(m_renderSystemRaw);
+                texture->loadTexture(PixelSheet2D(Vec2DS(1, 1), ColorU32::c_black));
+                texture->setMagFilter(TextureFilter::Nearest);
+                texture->setMinFilter(TextureFilter::Nearest);
+                break;
+            }
+            case BuiltinTexture2DType::Error:
+            {
+                texture = Texture2D::Create(m_renderSystemRaw);
+                texture->loadTexture(PixelSheet2D(Vec2DS(1, 1), ColorU32::c_magenta));
+                texture->setMagFilter(TextureFilter::Nearest);
+                texture->setMinFilter(TextureFilter::Nearest);
+                break;
+            }
         }
-        addTexture(m_testCubeTexture);
+
+        if (texture)
+        {
+            texture->setName(_texture2DType.toCString());
+            addTexture(texture);
+        }
+
+        return texture;
+    }
+
+    //////////////////////////////////////////
+    TextureCubePtr const& TextureManager::createBuiltinTextureCube(BuiltinTextureCubeType _textureCubeType)
+    {
+        TextureCubePtr& texture = m_builtinTextureCubes[_textureCubeType];
+
+        switch (_textureCubeType)
+        {
+            case BuiltinTextureCubeType::White:
+            {
+                texture = TextureCube::Create(m_renderSystemRaw);
+                {
+                    PixelSheet2D faces[6] =
+                    {
+                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
+                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
+                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
+                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
+                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
+                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
+                    };
+
+                    texture->loadTexture(faces);
+                }
+                break;
+            }
+            case BuiltinTextureCubeType::Test:
+            {
+                texture = TextureCube::Create(m_renderSystemRaw);
+                {
+                    PixelSheet2D faces[6] =
+                    {
+                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_red),
+                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_green),
+                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_blue),
+                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_cyan),
+                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_magenta),
+                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_yellow),
+                    };
+
+                    texture->loadTexture(faces);
+                }
+                break;
+            }
+        }
+
+        if (texture)
+        {
+            texture->setName(_textureCubeType.toCString());
+            addTexture(texture);
+        }
+
+        return texture;
+    }
+
+    //////////////////////////////////////////
+    TextureCubePtr const& TextureManager::ensureBuiltinTextureCube(BuiltinTextureCubeType _textureCubeType)
+    {
+        TextureCubePtr const& texture = getBuiltinTextureCube(_textureCubeType);
+        if (texture)
+            return texture;
+
+        return createBuiltinTextureCube(_textureCubeType);
+    }
+
+    //////////////////////////////////////////
+    void TextureManager::createBuiltinTextures()
+    {
+        for (BuiltinTexture2DType t = BuiltinTexture2DType(1); t < BuiltinTexture2DType::MAX; ++t)
+            ensureBuiltinTexture2D(t);
+        
+        for (BuiltinTextureCubeType t = BuiltinTextureCubeType(1); t < BuiltinTextureCubeType::MAX; ++t)
+            ensureBuiltinTextureCube(t);
     }
 
     //////////////////////////////////////////

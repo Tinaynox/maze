@@ -41,6 +41,9 @@
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_ENUMCLASS(BuiltinRenderMeshType);
+
 
     //////////////////////////////////////////
     // Class RenderMeshManager
@@ -85,23 +88,57 @@ namespace Maze
     //////////////////////////////////////////
     void RenderMeshManager::notifyRenderSystemInited()
     {
-        createDefaultMeshes();
+        // createBuiltinRenderMeshes();
     }
 
     //////////////////////////////////////////
-    void RenderMeshManager::createDefaultMeshes()
+    RenderMeshPtr const& RenderMeshManager::createBuiltinRenderMesh(BuiltinRenderMeshType _renderMeshType)
     {
-        m_defaultQuadMesh = RenderMesh::Create(Maze::MeshHelper::CreateQuadMesh(), m_renderSystemRaw);
-        m_defaultQuadMesh->setName("Quad");
-        addRenderMesh(m_defaultQuadMesh);
+        RenderMeshPtr& renderMesh = m_builtinRenderMeshes[_renderMeshType];
 
-        m_defaultCubeMesh = RenderMesh::Create(Maze::MeshHelper::CreateCubeMesh(), m_renderSystemRaw);
-        m_defaultCubeMesh->setName("Cube");
-        addRenderMesh(m_defaultCubeMesh);
+        switch (_renderMeshType)
+        {
+            case BuiltinRenderMeshType::Quad:
+            {
+                renderMesh = RenderMesh::Create(Maze::MeshHelper::CreateQuadMesh(), m_renderSystemRaw);
+                break;
+            }
+            case BuiltinRenderMeshType::Cube:
+            {
+                renderMesh = RenderMesh::Create(Maze::MeshHelper::CreateCubeMesh(), m_renderSystemRaw);
+                break;
+            }
+            case BuiltinRenderMeshType::Sphere:
+            {
+                renderMesh = RenderMesh::Create(Maze::MeshHelper::CreateSpherifiedCubeMesh(), m_renderSystemRaw);
+                break;
+            }
+        }
 
-        m_defaultSphereMesh = RenderMesh::Create(Maze::MeshHelper::CreateSpherifiedCubeMesh(), m_renderSystemRaw);
-        m_defaultSphereMesh->setName("Sphere");
-        addRenderMesh(m_defaultSphereMesh);
+        if (renderMesh)
+        {
+            renderMesh->setName(_renderMeshType.toCString());
+            addRenderMesh(renderMesh);
+        }
+
+        return renderMesh;
+    }
+
+    //////////////////////////////////////////
+    RenderMeshPtr const& RenderMeshManager::ensureBuiltinRenderMesh(BuiltinRenderMeshType _renderMeshType)
+    {
+        RenderMeshPtr const& renderMesh = getBuiltinRenderMesh(_renderMeshType);
+        if (renderMesh)
+            return renderMesh;
+
+        return createBuiltinRenderMesh(_renderMeshType);
+    }
+
+    //////////////////////////////////////////
+    void RenderMeshManager::createBuiltinRenderMeshes()
+    {
+        for (BuiltinRenderMeshType t = BuiltinRenderMeshType(1); t < BuiltinRenderMeshType::MAX; ++t)
+            ensureBuiltinRenderMesh(t);
     }
 
     //////////////////////////////////////////

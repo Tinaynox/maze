@@ -217,8 +217,11 @@ namespace Maze
                 texture = m_material->getRenderSystem()->getTextureManager()->getWhiteTexture();
             }
 
-            m_material->setUniform("u_baseMap", texture);
-            m_material->setUniform("u_baseMapTexelSize", 1.0f / (Vec2DF)texture->getSize());
+            if (texture)
+            {
+                m_material->setUniform("u_baseMap", texture);
+                m_material->setUniform("u_baseMapTexelSize", 1.0f / (Vec2DF)texture->getSize());
+            }
         }
     }
 

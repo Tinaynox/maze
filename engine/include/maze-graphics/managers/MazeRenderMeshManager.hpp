@@ -52,6 +52,16 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Enum BuiltinRenderMeshType
+    //
+    //////////////////////////////////////////
+    MAZE_DECLARE_ENUMCLASS_3_API(MAZE_GRAPHICS_API, BuiltinRenderMeshType,
+        Quad,
+        Cube,
+        Sphere);
+
+
+    //////////////////////////////////////////
     // Class RenderMeshManager
     //
     //////////////////////////////////////////
@@ -71,13 +81,26 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline RenderMeshPtr const& getDefaultQuadMesh() const { return m_defaultQuadMesh; }
+        inline RenderMeshPtr const& getDefaultQuadMesh() const { return getBuiltinRenderMesh(BuiltinRenderMeshType::Quad); }
 
         //////////////////////////////////////////
-        inline RenderMeshPtr const& getDefaultCubeMesh() const { return m_defaultCubeMesh; }
+        inline RenderMeshPtr const& getDefaultCubeMesh() const { return getBuiltinRenderMesh(BuiltinRenderMeshType::Cube); }
 
         //////////////////////////////////////////
-        inline RenderMeshPtr const& getDefaultSphereMesh() const { return m_defaultSphereMesh; }
+        inline RenderMeshPtr const& getDefaultSphereMesh() const { return getBuiltinRenderMesh(BuiltinRenderMeshType::Sphere); }
+
+
+        //////////////////////////////////////////
+        inline RenderMeshPtr const& getBuiltinRenderMesh(BuiltinRenderMeshType _renderMeshType) const { return m_builtinRenderMeshes[_renderMeshType]; }
+
+        //////////////////////////////////////////
+        RenderMeshPtr const& createBuiltinRenderMesh(BuiltinRenderMeshType _renderMeshType);
+
+        //////////////////////////////////////////
+        RenderMeshPtr const& ensureBuiltinRenderMesh(BuiltinRenderMeshType _renderMeshType);
+
+        //////////////////////////////////////////
+        void createBuiltinRenderMeshes();
 
 
         //////////////////////////////////////////
@@ -114,16 +137,11 @@ namespace Maze
         //////////////////////////////////////////
         void notifyRenderSystemInited();
     
-        //////////////////////////////////////////
-        void createDefaultMeshes();
-
     protected:
         RenderSystemWPtr m_renderSystem;
         RenderSystem* m_renderSystemRaw;
 
-        RenderMeshPtr m_defaultQuadMesh;
-        RenderMeshPtr m_defaultCubeMesh;
-        RenderMeshPtr m_defaultSphereMesh;
+        RenderMeshPtr m_builtinRenderMeshes[BuiltinRenderMeshType::MAX];
 
         StringKeyMap<RenderMeshPtr> m_renderMeshesByName;
     };

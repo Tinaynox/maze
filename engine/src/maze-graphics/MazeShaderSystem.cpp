@@ -36,6 +36,10 @@ namespace Maze
 {
 
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_ENUMCLASS(BuiltinShaderType);
+
+
+    //////////////////////////////////////////
     // Class ShaderSystem
     //
     //////////////////////////////////////////
@@ -152,6 +156,23 @@ namespace Maze
             }
 
         }
+    }
+
+    //////////////////////////////////////////
+    ShaderPtr const& ShaderSystem::ensureBuiltinShader(BuiltinShaderType _shaderType)
+    {
+        ShaderPtr const& shader = getBuiltinShader(_shaderType);
+        if (shader)
+            return shader;
+
+        return createBuiltinShader(_shaderType);
+    }
+
+    //////////////////////////////////////////
+    void ShaderSystem::createBuiltinShaders()
+    {
+        for (BuiltinShaderType t = BuiltinShaderType(1); t < BuiltinShaderType::MAX; ++t)
+            ensureBuiltinShader(t);
     }
 
     //////////////////////////////////////////

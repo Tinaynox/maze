@@ -232,7 +232,7 @@ namespace Maze
         mesh->setColors(&colors[0], colors.size());
         mesh->setIndices(&indices[0], indices.size());
     
-        m_meshRenderer->setMaterial(GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getDebugGridMaterial());
+        m_meshRenderer->setMaterial(GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::DebugGrid));
 
         m_meshRenderer->setMesh(mesh);
 

@@ -964,7 +964,7 @@ namespace Maze
                 ColorU32::FromVec4DF(_color),
                 _size - 2.0f,
                 Vec2DF::c_zero,
-                renderSystem->getMaterialManager()->getColorHDRMaterial(),
+                renderSystem->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::ColorHDR),
                 transform,
                 _ecsScene);
             colorSpriteRenderer->getEntityRaw()->createComponent<SizePolicy2D>()->setSizeDelta(-2.0f, -2.0f);

@@ -44,6 +44,9 @@
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_ENUMCLASS(BuiltinMaterialType);
+
 
     //////////////////////////////////////////
     // Class MaterialManager
@@ -102,7 +105,7 @@ namespace Maze
     //////////////////////////////////////////
     void MaterialManager::notifyShaderSystemInited()
     {
-        createSpecialMaterials();
+        // createBuiltinMaterials();
     }
 
     //////////////////////////////////////////
@@ -118,7 +121,7 @@ namespace Maze
         if (!assetFile)
         {
             MAZE_ERROR("Undefined material: %s!", _materialName.str);
-            return m_errorMaterial;
+            return getErrorMaterial();
         }
 
         MaterialPtr material = Material::Create(assetFile);
@@ -153,174 +156,233 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void MaterialManager::createSpecialMaterials()
+    MaterialPtr const& MaterialManager::createBuiltinMaterial(BuiltinMaterialType _materialType)
     {
-        m_errorMaterial = Material::Create(m_renderSystemRaw);
-        m_errorMaterial->setName("Error");
-        RenderPassPtr renderPass = m_errorMaterial->createRenderPass();
-        renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getErrorShader());
-        renderPass->setDepthWriteEnabled(true);
-        renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
-        renderPass->setRenderQueueIndex(2000);
+        MaterialPtr& material = m_builtinMaterials[_materialType];
 
-        m_uvMaterial = Material::Create(m_renderSystemRaw);
-        m_uvMaterial->setName("UV");
-        renderPass = m_uvMaterial->createRenderPass();
-        renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getUVShader());
-        renderPass->setDepthWriteEnabled(true);
-        renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
-        renderPass->setCullMode(CullMode::Off);
-        renderPass->setRenderQueueIndex(2000);
-        addMaterial(m_uvMaterial);
-
-        m_normalMaterial = Material::Create(m_renderSystemRaw);
-        m_normalMaterial->setName("Normal");
-        renderPass = m_normalMaterial->createRenderPass();
-        renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getNormalShader());
-        renderPass->setDepthWriteEnabled(true);
-        renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
-        renderPass->setCullMode(CullMode::Off);
-        renderPass->setRenderQueueIndex(2000);
-        addMaterial(m_normalMaterial);
+        switch (_materialType)
+        {
+            case BuiltinMaterialType::Error:
+            {
+                material = Material::Create(m_renderSystemRaw);
+                RenderPassPtr renderPass = material->createRenderPass();
+                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::Error));
+                renderPass->setDepthWriteEnabled(true);
+                renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
+                renderPass->setRenderQueueIndex(2000);
+                break;
+            }
+            case BuiltinMaterialType::UV:
+            {
+                material = Material::Create(m_renderSystemRaw);
+                RenderPassPtr renderPass = material->createRenderPass();
+                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::UV));
+                renderPass->setDepthWriteEnabled(true);
+                renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
+                renderPass->setCullMode(CullMode::Off);
+                renderPass->setRenderQueueIndex(2000);
+                break;
+            }
+            case BuiltinMaterialType::Normal:
+            {
+                material = Material::Create(m_renderSystemRaw);
+                RenderPassPtr renderPass = material->createRenderPass();
+                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::Normal));
+                renderPass->setDepthWriteEnabled(true);
+                renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
+                renderPass->setCullMode(CullMode::Off);
+                renderPass->setRenderQueueIndex(2000);
+                break;
+            }
+            case BuiltinMaterialType::Color:
+            {
+                material = Material::Create(m_renderSystemRaw);
+                RenderPassPtr renderPass = material->createRenderPass();
+                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::Color));
+                renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
+                renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
+                renderPass->setDepthWriteEnabled(false);
+                renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
+                renderPass->setCullMode(CullMode::Off);
+                renderPass->setRenderQueueIndex(3000);
+                material->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
+                break;
+            }
+            case BuiltinMaterialType::ColorTexture:
+            {
+                material = Material::Create(m_renderSystemRaw);
+                RenderPassPtr renderPass = material->createRenderPass();
+                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::ColorTexture));
+                renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
+                renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
+                renderPass->setDepthWriteEnabled(false);
+                renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
+                renderPass->setCullMode(CullMode::Off);
+                renderPass->setRenderQueueIndex(3000);
+                material->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
+                material->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteTexture());
+                material->setUniform("u_baseMapST", Vec4DF(1.0f, 1.0f, 0.0f, 0.0f));
+                break;
+            }
+            case BuiltinMaterialType::ColorTextureCustomUV:
+            {
+                material = Material::Create(m_renderSystemRaw);
+                RenderPassPtr renderPass = material->createRenderPass();
+                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::ColorTextureCustomUV));
+                renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
+                renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
+                renderPass->setDepthWriteEnabled(false);
+                renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
+                renderPass->setCullMode(CullMode::Off);
+                renderPass->setRenderQueueIndex(3000);
+                material->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteTexture());
+                material->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
+                break;
+            }
+            case BuiltinMaterialType::ColorHDR:
+            {
+                material = Material::Create(m_renderSystemRaw);
+                RenderPassPtr renderPass = material->createRenderPass();
+                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::ColorHDR));
+                renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
+                renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
+                renderPass->setDepthWriteEnabled(false);
+                renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
+                renderPass->setCullMode(CullMode::Off);
+                renderPass->setRenderQueueIndex(3000);
+                material->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
+                material->setUniform("u_intensity", 0.0f);
+                break;
+            }
+            case BuiltinMaterialType::HSVRect:
+            {
+                material = Material::Create(m_renderSystemRaw);
+                RenderPassPtr renderPass = material->createRenderPass();
+                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::HSVRect));
+                break;
+            }
+            case BuiltinMaterialType::HSVBand:
+            {
+                material = Material::Create(m_renderSystemRaw);
+                RenderPassPtr renderPass = material->createRenderPass();
+                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::HSVBand));
+                break;
+            }
+            case BuiltinMaterialType::ColorPickerChannel:
+            {
+                material = Material::Create(m_renderSystemRaw);
+                RenderPassPtr renderPass = material->createRenderPass();
+                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::ColorPickerChannel));
+                renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
+                renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
+                renderPass->setDepthWriteEnabled(false);
+                renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
+                renderPass->setCullMode(CullMode::Off);
+                renderPass->setRenderQueueIndex(3000);
+                break;
+            }
+            case BuiltinMaterialType::DebugGrid:
+            {
+                material = Material::Create(m_renderSystemRaw);
+                RenderPassPtr renderPass = material->createRenderPass();
+                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::DebugGrid));
+                renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
+                renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
+                renderPass->setDepthWriteEnabled(false);
+                renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
+                renderPass->setCullMode(CullMode::Off);
+                renderPass->setRenderQueueIndex(3000);
+                material->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
+                break;
+            }
+            case BuiltinMaterialType::DebugAxis:
+            {
+                material = Material::Create(m_renderSystemRaw);
                 
-        m_colorMaterial = Material::Create(m_renderSystemRaw);
-        m_colorMaterial->setName("Color");
-        renderPass = m_colorMaterial->createRenderPass();
-        renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getColorShader());
-        renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
-        renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
-        renderPass->setDepthWriteEnabled(false);
-        renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
-        renderPass->setCullMode(CullMode::Off);
-        renderPass->setRenderQueueIndex(3000);
-        m_colorMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
-        addMaterial(m_colorMaterial);
+                RenderPassPtr renderPass = material->createRenderPass();
+                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::DebugAxis));
+                renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
+                renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
+                renderPass->setDepthWriteEnabled(false);
+                renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
+                renderPass->setCullMode(CullMode::Off);
+                renderPass->setRenderQueueIndex(3000);
+                material->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
+                break;
+            }
+            case BuiltinMaterialType::Skybox:
+            {
+                material = Material::Create(m_renderSystemRaw);
+                RenderPassPtr renderPass = material->createRenderPass();
+                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::Skybox));
+                renderPass->setBlendSrcFactor(BlendFactor::One);
+                renderPass->setBlendDestFactor(BlendFactor::Zero);
+                renderPass->setDepthWriteEnabled(false);
+                renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
+                renderPass->setCullMode(CullMode::Back);
+                renderPass->setRenderQueueIndex(1000);
+                material->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
+                material->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteCubeTexture());
+                break;
+            }
+            case BuiltinMaterialType::Specular:
+            {
+                material = Material::Create(m_renderSystemRaw);
+                RenderPassPtr renderPass = material->createRenderPass();
+                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::Specular));
+                renderPass->setBlendSrcFactor(BlendFactor::One);
+                renderPass->setBlendDestFactor(BlendFactor::Zero);
+                renderPass->setDepthWriteEnabled(true);
+                renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
+                renderPass->setCullMode(CullMode::Back);
+                renderPass->setRenderQueueIndex(2000);
+                material->setUniform("u_baseMapST", Vec4DF(1.0f, 1.0f, 0.0f, 0.0f));
+                material->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteTexture());
+                material->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
+                material->setUniform("u_ambientLightColor", ColorF128(0.1f, 0.1f, 0.1f, 1.0f));
+                material->setUniform("u_shininess", 0.65f);
+                material->setUniform("u_specularColor", ColorF128(0.3f, 0.3f, 0.3f, 1.0f));
+                break;
+            }
+            case BuiltinMaterialType::SpecularDS:
+            {
+                MaterialPtr const& specularMaterial = ensureBuiltinMaterial(BuiltinMaterialType::Specular);
+                if (specularMaterial)
+                {
+                    material = specularMaterial->createCopy();
+                    material->getFirstRenderPass()->setCullMode(CullMode::Off);
+                }
 
-        m_colorTextureMaterial = Material::Create(m_renderSystemRaw);
-        m_colorTextureMaterial->setName("ColorTexture");
-        renderPass = m_colorTextureMaterial->createRenderPass();
-        renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getColorTextureShader());
-        renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
-        renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
-        renderPass->setDepthWriteEnabled(false);
-        renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
-        renderPass->setCullMode(CullMode::Off);
-        renderPass->setRenderQueueIndex(3000);
-        m_colorTextureMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
-        m_colorTextureMaterial->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteTexture());
-        m_colorTextureMaterial->setUniform("u_baseMapST", Vec4DF(1.0f, 1.0f, 0.0f, 0.0f));
-        addMaterial(m_colorTextureMaterial);
+                break;
+            }
+        }
 
-        m_colorTextureCustomUVMaterial = Material::Create(m_renderSystemRaw);
-        m_colorTextureCustomUVMaterial->setName("ColorTextureCustomUV");
-        renderPass = m_colorTextureCustomUVMaterial->createRenderPass();
-        renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getColorTextureCustomUVShader());
-        renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
-        renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
-        renderPass->setDepthWriteEnabled(false);
-        renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
-        renderPass->setCullMode(CullMode::Off);
-        renderPass->setRenderQueueIndex(3000);
-        m_colorTextureCustomUVMaterial->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteTexture());
-        m_colorTextureCustomUVMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
+        if (material)
+        {
+            material->setName(_materialType.toCString());
+            addMaterial(material);
+        }
 
-        m_colorHDRMaterial = Material::Create(m_renderSystemRaw);
-        m_colorHDRMaterial->setName("ColorHDR");
-        renderPass = m_colorHDRMaterial->createRenderPass();
-        renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getColorHDRShader());
-        renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
-        renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
-        renderPass->setDepthWriteEnabled(false);
-        renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
-        renderPass->setCullMode(CullMode::Off);
-        renderPass->setRenderQueueIndex(3000);
-        m_colorHDRMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
-        m_colorHDRMaterial->setUniform("u_intensity", 0.0f);
+        return material;
+    }
 
-        m_hsvRectMaterial = Material::Create(m_renderSystemRaw);
-        m_hsvRectMaterial->setName("HSVRect");
-        renderPass = m_hsvRectMaterial->createRenderPass();
-        renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getHSVRectShader());
+    //////////////////////////////////////////
+    MaterialPtr const& MaterialManager::ensureBuiltinMaterial(BuiltinMaterialType _materialType)
+    {
+        MaterialPtr const& material = getBuiltinMaterial(_materialType);
+        if (material)
+            return material;
 
-        m_hsvBandMaterial = Material::Create(m_renderSystemRaw);
-        m_hsvBandMaterial->setName("HSVBand");
-        renderPass = m_hsvBandMaterial->createRenderPass();
-        renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getHSVBandShader());
+        return createBuiltinMaterial(_materialType);
+    }
 
-        m_colorPickerChannelMaterial = Material::Create(m_renderSystemRaw);
-        m_colorPickerChannelMaterial->setName("ColorPickerChannelMaterial");
-        renderPass = m_colorPickerChannelMaterial->createRenderPass();
-        renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getColorPickerChannelShader());
-        renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
-        renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
-        renderPass->setDepthWriteEnabled(false);
-        renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
-        renderPass->setCullMode(CullMode::Off);
-        renderPass->setRenderQueueIndex(3000);
+    //////////////////////////////////////////
+    void MaterialManager::createBuiltinMaterials()
+    {
+        for (BuiltinMaterialType t = BuiltinMaterialType(1); t < BuiltinMaterialType::MAX; ++t)
+            ensureBuiltinMaterial(t);
 
-        m_debugGridMaterial = Material::Create(m_renderSystemRaw);
-        m_debugGridMaterial->setName("DebugGrid");
-        renderPass = m_debugGridMaterial->createRenderPass();
-        renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getDebugGridShader());
-        renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
-        renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
-        renderPass->setDepthWriteEnabled(false);
-        renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
-        renderPass->setCullMode(CullMode::Off);
-        renderPass->setRenderQueueIndex(3000);
-        m_debugGridMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
-
-        m_debugAxisMaterial = Material::Create(m_renderSystemRaw);
-        m_debugAxisMaterial->setName("DebugAxis");
-        renderPass = m_debugAxisMaterial->createRenderPass();
-        renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getDebugAxisShader());
-        renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
-        renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
-        renderPass->setDepthWriteEnabled(false);
-        renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
-        renderPass->setCullMode(CullMode::Off);
-        renderPass->setRenderQueueIndex(3000);
-        m_debugAxisMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
-
-
-        m_skyboxMaterial = Material::Create(m_renderSystemRaw);
-        m_skyboxMaterial->setName("Skybox");
-        renderPass = m_skyboxMaterial->createRenderPass();
-        renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getSkyboxShader());
-        renderPass->setBlendSrcFactor(BlendFactor::One);
-        renderPass->setBlendDestFactor(BlendFactor::Zero);
-        renderPass->setDepthWriteEnabled(false);
-        renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
-        renderPass->setCullMode(CullMode::Back);
-        renderPass->setRenderQueueIndex(1000);
-        m_skyboxMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
-        m_skyboxMaterial->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteCubeTexture());
-        addMaterial(m_skyboxMaterial);
-
-
-        m_specularMaterial = Material::Create(m_renderSystemRaw);
-        m_specularMaterial->setName("Specular");
-        renderPass = m_specularMaterial->createRenderPass();
-        renderPass->setShader(m_renderSystemRaw->getShaderSystem()->getSpecularShader());
-        renderPass->setBlendSrcFactor(BlendFactor::One);
-        renderPass->setBlendDestFactor(BlendFactor::Zero);
-        renderPass->setDepthWriteEnabled(true);
-        renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
-        renderPass->setCullMode(CullMode::Back);
-        renderPass->setRenderQueueIndex(2000);
-        m_specularMaterial->setUniform("u_baseMapST", Vec4DF(1.0f, 1.0f, 0.0f, 0.0f));
-        m_specularMaterial->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteTexture());
-        m_specularMaterial->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
-        m_specularMaterial->setUniform("u_ambientLightColor", ColorF128(0.1f, 0.1f, 0.1f, 1.0f));
-        m_specularMaterial->setUniform("u_shininess", 0.65f);
-        m_specularMaterial->setUniform("u_specularColor", ColorF128(0.3f, 0.3f, 0.3f, 1.0f));
-        addMaterial(m_specularMaterial);
-
-        m_specularDSMaterial = m_specularMaterial->createCopy();
-        m_specularDSMaterial->getFirstRenderPass()->setCullMode(CullMode::Off);
-        addMaterial(m_specularDSMaterial);
-
-        eventSpecialMaterialsCreated();
+        eventBuiltinMaterialsCreated();
     }
 
     //////////////////////////////////////////

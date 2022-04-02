@@ -44,6 +44,9 @@
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_ENUMCLASS(BuiltinSystemFontType);
+
 
     //////////////////////////////////////////
     // Class SystemFontManager
@@ -58,7 +61,7 @@ namespace Maze
     SystemFontManager::~SystemFontManager()
     {
         if (m_renderSystemRaw && m_renderSystemRaw->getMaterialManager())
-            m_renderSystemRaw->getMaterialManager()->eventSpecialMaterialsCreated.unsubscribe(this);
+            m_renderSystemRaw->getMaterialManager()->eventBuiltinMaterialsCreated.unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -73,8 +76,8 @@ namespace Maze
         m_renderSystem = _renderSystem;
         m_renderSystemRaw = _renderSystem.get();
 
-        m_renderSystemRaw->getMaterialManager()->eventSpecialMaterialsCreated.subscribe(
-            this, &SystemFontManager::notifySpecialMaterialsCreated);
+        m_renderSystemRaw->getMaterialManager()->eventBuiltinMaterialsCreated.subscribe(
+            this, &SystemFontManager::notifyBuiltinMaterialsCreated);
 
         return true;
     }
@@ -86,9 +89,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SystemFontManager::notifySpecialMaterialsCreated()
+    void SystemFontManager::notifyBuiltinMaterialsCreated()
     {
-        createSystemFont();
+        // createBuiltinSystemFonts();
     }
 
     //////////////////////////////////////////
@@ -116,39 +119,72 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SystemFontManager::createSystemFont()
+    SystemFontPtr const& SystemFontManager::createBuiltinSystemFont(BuiltinSystemFontType _fontType)
     {
-        // System Font
-        S32 const extrude = 1;
-        S32 const upscale = 2;
-        Texture2DPtr texture = Texture2D::Create(m_renderSystemRaw);
-        texture->setName("system_font");
-        PixelSheet2D systemFontSheet = GraphicsUtilsHelper::GenerateSystemFontExtrude(
-            GraphicsUtilsHelper::GetAsciiSymbolsSheet8x8(), 16, 6, 8, 8);
-        
-        Vector<PixelSheet2D> pixelSheets;
-        pixelSheets.emplace_back(systemFontSheet.upscaledCopy(upscale));
-        pixelSheets.emplace_back(systemFontSheet);
-        Vec2DS size = systemFontSheet.getSize();
-        while (size.x > 1 && size.y > 1)
+        SystemFontPtr& systemFont = m_builtinSystemFonts[_fontType];
+
+        switch (_fontType)
         {
-            pixelSheets.emplace_back(pixelSheets.back().downscaledCopy(2, false));
-            size = pixelSheets.back().getSize();
+            case BuiltinSystemFontType::Default:
+            {
+                S32 const extrude = 1;
+                S32 const upscale = 2;
+                Texture2DPtr texture = Texture2D::Create(m_renderSystemRaw);
+                texture->setName(_fontType.toCString());
+                PixelSheet2D systemFontSheet = GraphicsUtilsHelper::GenerateSystemFontExtrude(
+                    GraphicsUtilsHelper::GetAsciiSymbolsSheet8x8(), 16, 6, 8, 8);
+
+                Vector<PixelSheet2D> pixelSheets;
+                pixelSheets.emplace_back(systemFontSheet.upscaledCopy(upscale));
+                pixelSheets.emplace_back(systemFontSheet);
+                Vec2DS size = systemFontSheet.getSize();
+                while (size.x > 1 && size.y > 1)
+                {
+                    pixelSheets.emplace_back(pixelSheets.back().downscaledCopy(2, false));
+                    size = pixelSheets.back().getSize();
+                }
+
+                texture->loadTexture(pixelSheets);
+                m_renderSystemRaw->getTextureManager()->addTexture(texture);
+                systemFont = createSystemFont(
+                    texture,
+                    Vec2DS(8, 8) * upscale,
+                    (Vec2DS(8, 8) + extrude * 2) * upscale,
+                    Vec2DS(extrude, extrude) * upscale);
+
+                break;
+            }
+            case BuiltinSystemFontType::DefaultOutlined:
+            {
+                systemFont = createSystemFontOutlined(_fontType.toCString(), ColorU32::c_black);
+                break;
+            }
         }
 
-        texture->loadTexture(pixelSheets);
-        m_renderSystemRaw->getTextureManager()->addTexture(texture);
-        m_systemFontDefault = createSystemFont(
-            texture,
-            Vec2DS(8, 8) * upscale,
-            (Vec2DS(8, 8) + extrude * 2) * upscale,
-            Vec2DS(extrude, extrude) * upscale);
-        registerSystemFont("system_font", m_systemFontDefault);
 
+        if (systemFont)
+        {
+            registerSystemFont(_fontType.toCString(), systemFont);
+        }
 
-        // System Font Outlined
-        m_systemFontDefaultOutlined = createSystemFontOutlined("system_font_outline", ColorU32::c_black);
-        registerSystemFont("system_font_outline", m_systemFontDefaultOutlined);
+        return systemFont;
+    }
+
+    //////////////////////////////////////////
+    SystemFontPtr const& SystemFontManager::ensureBuiltinSystemFont(BuiltinSystemFontType _fontType)
+    {
+        SystemFontPtr const& systemFont = getBuiltinSystemFont(_fontType);
+        if (systemFont)
+            return systemFont;
+
+        return createBuiltinSystemFont(_fontType);
+    }
+
+    //////////////////////////////////////////
+    void SystemFontManager::createBuiltinSystemFonts()
+    {
+        for (BuiltinSystemFontType t = BuiltinSystemFontType(1); t < BuiltinSystemFontType::MAX; ++t)
+            ensureBuiltinSystemFont(t);        
     }
 
     //////////////////////////////////////////

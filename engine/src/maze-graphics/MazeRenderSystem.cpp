@@ -33,6 +33,7 @@
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeSystemFontManager.hpp"
+#include "maze-graphics/MazeShaderSystem.hpp"
 
 
 //////////////////////////////////////////
@@ -114,6 +115,15 @@ namespace Maze
         eventSystemInited();
     }
 
+    //////////////////////////////////////////
+    void RenderSystem::createBuiltinAssets()
+    {
+        m_textureManager->createBuiltinTextures();
+        m_shaderSystem->createBuiltinShaders();
+        m_materialManager->createBuiltinMaterials();
+        m_renderMeshManager->createBuiltinRenderMeshes();
+        m_systemFontManager->createBuiltinSystemFonts();
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

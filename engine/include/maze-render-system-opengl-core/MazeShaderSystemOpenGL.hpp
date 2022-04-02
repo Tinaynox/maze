@@ -65,6 +65,9 @@ namespace Maze
         //////////////////////////////////////////
         inline MZGLint getGLSLVersion() const { return m_glslVersion; }
 
+        //////////////////////////////////////////
+        virtual ShaderPtr const& createBuiltinShader(BuiltinShaderType _shaderType) MAZE_OVERRIDE;
+
     protected:
 
         //////////////////////////////////////////

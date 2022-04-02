@@ -55,6 +55,25 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Enum BuiltinTexture2DType
+    //
+    //////////////////////////////////////////
+    MAZE_DECLARE_ENUMCLASS_3_API(MAZE_GRAPHICS_API, BuiltinTexture2DType,
+        White,
+        Black,
+        Error);
+
+
+    //////////////////////////////////////////
+    // Enum BuiltinTextureCubeType
+    //
+    //////////////////////////////////////////
+    MAZE_DECLARE_ENUMCLASS_2_API(MAZE_GRAPHICS_API, BuiltinTextureCubeType,
+        White,
+        Test);
+
+
+    //////////////////////////////////////////
     using LoadTextureAssetFileFunction = bool(*)(AssetFilePtr const& _file, Vector<PixelSheet2D>& _pixelSheets);
     using LoadTextureByteBufferFunction = bool(*)(ByteBufferPtr const& _fileData, Vector<PixelSheet2D>& _pixelSheets);
     using IsTextureAssetFileFunction = bool(*)(AssetFilePtr const& _file);
@@ -120,14 +139,37 @@ namespace Maze
         //////////////////////////////////////////
         Texture2DPtr const& getTexture2D(AssetFilePtr const& _assetFile);
 
-        //////////////////////////////////////////
-        Texture2DPtr const& getWhiteTexture() const { return m_whiteTexture; }
 
         //////////////////////////////////////////
-        Texture2DPtr const& getBlackTexture() const { return m_blackTexture; }
+        inline Texture2DPtr const& getBuiltinTexture2D(BuiltinTexture2DType _texture2DType) const { return m_builtinTexture2Ds[_texture2DType]; }
 
         //////////////////////////////////////////
-        Texture2DPtr const& getErrorTexture() const { return m_errorTexture; }
+        Texture2DPtr const& createBuiltinTexture2D(BuiltinTexture2DType _texture2DType);
+
+        //////////////////////////////////////////
+        Texture2DPtr const& ensureBuiltinTexture2D(BuiltinTexture2DType _texture2DType);
+
+        //////////////////////////////////////////
+        inline TextureCubePtr const& getBuiltinTextureCube(BuiltinTextureCubeType _textureCubeType) const { return m_builtinTextureCubes[_textureCubeType]; }
+
+        //////////////////////////////////////////
+        TextureCubePtr const& createBuiltinTextureCube(BuiltinTextureCubeType _textureCubeType);
+
+        //////////////////////////////////////////
+        TextureCubePtr const& ensureBuiltinTextureCube(BuiltinTextureCubeType _textureCubeType);
+
+        //////////////////////////////////////////
+        void createBuiltinTextures();
+
+
+        //////////////////////////////////////////
+        Texture2DPtr const& getWhiteTexture() const { return getBuiltinTexture2D(BuiltinTexture2DType::White); }
+
+        //////////////////////////////////////////
+        Texture2DPtr const& getBlackTexture() const { return getBuiltinTexture2D(BuiltinTexture2DType::Black); }
+
+        //////////////////////////////////////////
+        Texture2DPtr const& getErrorTexture() const { return getBuiltinTexture2D(BuiltinTexture2DType::Error); }
 
 
         //////////////////////////////////////////
@@ -144,6 +186,7 @@ namespace Maze
         Vector<PixelSheet2D> loadPixelSheets2D(String const& _assetFileName);
 
 
+
         //////////////////////////////////////////
         TextureCubePtr const& getTextureCube(String const& _assetFileName);
 
@@ -151,10 +194,11 @@ namespace Maze
         TextureCubePtr const& getTextureCube(AssetFilePtr const& _assetFile);
 
         //////////////////////////////////////////
-        TextureCubePtr const& getWhiteCubeTexture() const { return m_whiteCubeTexture; }
+        TextureCubePtr const& getWhiteCubeTexture() const { return getBuiltinTextureCube(BuiltinTextureCubeType::White); }
 
         //////////////////////////////////////////
-        TextureCubePtr const& getTestCubeTexture() const { return m_testCubeTexture; }
+        TextureCubePtr const& getTestCubeTexture() const { return getBuiltinTextureCube(BuiltinTextureCubeType::Test); }
+
 
         //////////////////////////////////////////
         TextureCubePtr const& addTexture(TextureCubePtr const& _texture);
@@ -191,9 +235,6 @@ namespace Maze
 
         //////////////////////////////////////////
         void notifyRenderSystemInited();
-
-        //////////////////////////////////////////
-        void createSpecialTextures();
     
     protected:
         RenderSystemWPtr m_renderSystem;
@@ -204,12 +245,8 @@ namespace Maze
         StringKeyMap<Texture2DPtr> m_textures2DByName;
         StringKeyMap<TextureCubePtr> m_texturesCubeByName;
 
-        Texture2DPtr m_whiteTexture;
-        Texture2DPtr m_blackTexture;
-        Texture2DPtr m_errorTexture;
-
-        TextureCubePtr m_whiteCubeTexture;
-        TextureCubePtr m_testCubeTexture;
+        Texture2DPtr m_builtinTexture2Ds[BuiltinTexture2DType::MAX];
+        TextureCubePtr m_builtinTextureCubes[BuiltinTexture2DType::MAX];
     };
 
 } // namespace Maze

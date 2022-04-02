@@ -92,7 +92,8 @@ namespace Maze
         static ShaderPtr CreateFromSource(
             RenderSystemPtr const& _renderSystem,
             ContextOpenGL* _contextOpenGL,
-            String const& _shaderSource);
+            String const& _shaderSource,
+            CString _shaderName = nullptr);
 
         //////////////////////////////////////////
         static ShaderPtr Create(ShaderOpenGLPtr const& _shader);
@@ -150,7 +151,8 @@ namespace Maze
         virtual bool init(
             RenderSystemPtr const& _renderSystem,
             ContextOpenGL* _contextOpenGL,
-            String const& _shaderSource);
+            String const& _shaderSource,
+            CString _shaderName = nullptr);
 
         //////////////////////////////////////////
         virtual bool init(

@@ -156,10 +156,11 @@ namespace Maze
     ShaderPtr ShaderOpenGL::CreateFromSource(
         RenderSystemPtr const& _renderSystem,
         ContextOpenGL* _contextOpenGL,
-        String const& _shaderSource)
+        String const& _shaderSource,
+        CString _shaderName)
     {
         ShaderOpenGLPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(ShaderOpenGL, object, init(_renderSystem, _contextOpenGL, _shaderSource));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(ShaderOpenGL, object, init(_renderSystem, _contextOpenGL, _shaderSource, _shaderName));
         return object;
     }
 
@@ -198,7 +199,8 @@ namespace Maze
     bool ShaderOpenGL::init(
         RenderSystemPtr const& _renderSystem,
         ContextOpenGL* _contextOpenGL,
-        String const& _shaderSource)
+        String const& _shaderSource,
+        CString _shaderName)
     {
         if (!Shader::init(_renderSystem))
             return false;
@@ -210,6 +212,9 @@ namespace Maze
             return false;
 
         setContextOpenGL(_contextOpenGL);
+
+        if (_shaderName)
+            setName(_shaderName);
 
         if (!loadFromSource(_shaderSource))
             return false;

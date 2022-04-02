@@ -116,106 +116,88 @@ namespace Maze
     //////////////////////////////////////////
     void ShaderSystemOpenGL::notifyGLContextSetup(ContextOpenGL* _contextOpenGL)
     {
-        m_errorShader = ShaderOpenGL::CreateFromSource(
-            m_renderSystem.lock(),
-            getRenderSystemOpenGL()->ensureCurrentContext(),
-#include "shaders/MazeErrorShader.mzglsl"
-        );
-        m_errorShader->setName("error");
-
-        m_uvShader = ShaderOpenGL::CreateFromSource(
-            m_renderSystem.lock(),
-            getRenderSystemOpenGL()->ensureCurrentContext(),
-#include "shaders/MazeUVShader.mzglsl"
-            );
-        m_uvShader->setName("uv");
-
-        m_normalShader = ShaderOpenGL::CreateFromSource(
-            m_renderSystem.lock(),
-            getRenderSystemOpenGL()->ensureCurrentContext(),
-#include "shaders/MazeNormalShader.mzglsl"
-        );
-        m_normalShader->setName("normal");
-
-
-        m_colorShader = ShaderOpenGL::CreateFromSource(
-            m_renderSystem.lock(),
-            getRenderSystemOpenGL()->ensureCurrentContext(),
-#include "shaders/MazeColorShader.mzglsl"
-            );
-        m_colorShader->setName("color");
-
-        m_colorTextureShader = ShaderOpenGL::CreateFromSource(
-            m_renderSystem.lock(),
-            getRenderSystemOpenGL()->ensureCurrentContext(),
-#include "shaders/MazeColorTextureShader.mzglsl"
-            );
-        m_colorTextureShader->setName("color_texture");
-
-        m_colorTextureCustomUVShader = ShaderOpenGL::CreateFromSource(
-            m_renderSystem.lock(),
-            getRenderSystemOpenGL()->ensureCurrentContext(),
-#include "shaders/MazeColorTextureCustomUVShader.mzglsl"
-            );
-            m_colorTextureCustomUVShader->setName("color_texture_customUV");
-
-            m_colorHDRShader = ShaderOpenGL::CreateFromSource(
-                m_renderSystem.lock(),
-                getRenderSystemOpenGL()->ensureCurrentContext(),
-#include "shaders/MazeColorHDRShader.mzglsl"
-            );
-            m_colorHDRShader->setName("color_hdr");
-
-        m_hsvRectShader = ShaderOpenGL::CreateFromSource(
-            m_renderSystem.lock(),
-            getRenderSystemOpenGL()->ensureCurrentContext(),
-#include "shaders/MazeHSVRectShader.mzglsl"
-        );
-        m_hsvRectShader->setName("hsv_rect");
-
-        m_hsvBandShader = ShaderOpenGL::CreateFromSource(
-            m_renderSystem.lock(),
-            getRenderSystemOpenGL()->ensureCurrentContext(),
-#include "shaders/MazeHSVBandShader.mzglsl"
-        );
-        m_hsvBandShader->setName("hsv_band");
-
-        m_colorPickerChannelShader = ShaderOpenGL::CreateFromSource(
-            m_renderSystem.lock(),
-            getRenderSystemOpenGL()->ensureCurrentContext(),
-#include "shaders/MazeColorPickerChannelShader.mzglsl"
-        );
-        m_colorPickerChannelShader->setName("color_picker_channel");
-
-        m_debugGridShader = ShaderOpenGL::CreateFromSource(
-            m_renderSystem.lock(),
-            getRenderSystemOpenGL()->ensureCurrentContext(),
-#include "shaders/MazeDebugGridShader.mzglsl"
-        );
-        m_debugGridShader->setName("debug_grid");
-
-        m_debugAxisShader = ShaderOpenGL::CreateFromSource(
-            m_renderSystem.lock(),
-            getRenderSystemOpenGL()->ensureCurrentContext(),
-#include "shaders/MazeDebugAxisShader.mzglsl"
-        );
-        m_debugAxisShader->setName("debug_axis");
-
-        m_skyboxShader = ShaderOpenGL::CreateFromSource(
-            m_renderSystem.lock(),
-            getRenderSystemOpenGL()->ensureCurrentContext(),
-#include "shaders/MazeSkyboxShader.mzglsl"
-        );
-        m_skyboxShader->setName("skybox");
-
-        m_specularShader = ShaderOpenGL::CreateFromSource(
-            m_renderSystem.lock(),
-            getRenderSystemOpenGL()->ensureCurrentContext(),
-#include "shaders/MazeSpecularShader.mzglsl"
-        );
-        m_specularShader->setName("specular");
+        // createBuiltinShaders();
 
         processSystemInited();
+    }
+
+    //////////////////////////////////////////
+    ShaderPtr const& ShaderSystemOpenGL::createBuiltinShader(BuiltinShaderType _shaderType)
+    {
+        ShaderPtr& shader = m_builtinShaders[(Size)_shaderType];
+        CString shaderSource = nullptr;
+
+        switch (_shaderType)
+        {
+            case BuiltinShaderType::Error:
+                shaderSource =
+#include "shaders/MazeErrorShader.mzglsl"
+                ; break;
+            case BuiltinShaderType::UV:
+                shaderSource =
+#include "shaders/MazeUVShader.mzglsl"
+                ; break;
+            case BuiltinShaderType::Normal:
+                shaderSource =
+#include "shaders/MazeNormalShader.mzglsl"
+                ; break;
+            case BuiltinShaderType::Color:
+                shaderSource =
+#include "shaders/MazeColorShader.mzglsl"
+                ; break;
+            case BuiltinShaderType::ColorTexture:
+                shaderSource =
+#include "shaders/MazeColorTextureShader.mzglsl"
+                ; break;
+            case BuiltinShaderType::ColorTextureCustomUV:
+                shaderSource =
+#include "shaders/MazeColorTextureCustomUVShader.mzglsl"
+                ; break;
+            case BuiltinShaderType::ColorHDR:
+                shaderSource =
+#include "shaders/MazeColorHDRShader.mzglsl"
+                ; break;
+            case BuiltinShaderType::HSVRect:
+                shaderSource =
+#include "shaders/MazeHSVRectShader.mzglsl"
+                ; break;
+            case BuiltinShaderType::HSVBand:
+                shaderSource =
+#include "shaders/MazeHSVBandShader.mzglsl"
+                ; break;
+            case BuiltinShaderType::ColorPickerChannel:
+                shaderSource =
+#include "shaders/MazeColorPickerChannelShader.mzglsl"
+                ; break;
+            case BuiltinShaderType::DebugGrid:
+                shaderSource =
+#include "shaders/MazeDebugGridShader.mzglsl"
+                ; break;
+            case BuiltinShaderType::DebugAxis:
+                shaderSource =
+#include "shaders/MazeDebugAxisShader.mzglsl"
+                ; break;
+            case BuiltinShaderType::Skybox:
+                shaderSource =
+#include "shaders/MazeSkyboxShader.mzglsl"
+                ; break;
+            case BuiltinShaderType::Specular:
+                shaderSource =
+#include "shaders/MazeSpecularShader.mzglsl"
+                ; break;
+            default:
+                break;
+        }
+
+        MAZE_ERROR_RETURN_VALUE_IF(!shaderSource, shader, "ShaderSource is null! ShaderType: %s", _shaderType.toCString());
+
+        shader = ShaderOpenGL::CreateFromSource(
+            m_renderSystem.lock(),
+            getRenderSystemOpenGL()->ensureCurrentContext(),
+            shaderSource,
+            _shaderType.toCString());
+
+        return shader;
     }
 
     //////////////////////////////////////////

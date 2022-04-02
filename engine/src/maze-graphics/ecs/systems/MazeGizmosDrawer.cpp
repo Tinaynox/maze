@@ -137,7 +137,7 @@ namespace Maze
                     entity->ensureComponent<Name>("Gizmo Billboard");
 
                     MaterialPtr material = Material::Create(
-                        GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getColorTextureCustomUVMaterial());
+                        GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::ColorTextureCustomUV));
                     material->getFirstRenderPass()->setRenderQueueIndex(5000);
 
                     MeshRendererPtr meshRenderer = entity->createComponent<MeshRenderer>();

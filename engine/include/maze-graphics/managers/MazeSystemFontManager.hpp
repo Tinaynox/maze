@@ -51,6 +51,15 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Enum BuiltinSystemFontType
+    //
+    //////////////////////////////////////////
+    MAZE_DECLARE_ENUMCLASS_2_API(MAZE_GRAPHICS_API, BuiltinSystemFontType,
+        Default,
+        DefaultOutlined);
+
+
+    //////////////////////////////////////////
     // Class SystemFontManager
     //
     //////////////////////////////////////////
@@ -70,10 +79,22 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        SystemFontPtr const& getSystemFontDefault() const { return m_systemFontDefault; }
+        inline SystemFontPtr const& getBuiltinSystemFont(BuiltinSystemFontType _fontType) const { return m_builtinSystemFonts[_fontType]; }
 
         //////////////////////////////////////////
-        SystemFontPtr const& getSystemFontDefaultOutlined() const { return m_systemFontDefaultOutlined; }
+        SystemFontPtr const& createBuiltinSystemFont(BuiltinSystemFontType _fontType);
+
+        //////////////////////////////////////////
+        SystemFontPtr const& ensureBuiltinSystemFont(BuiltinSystemFontType _fontType);
+
+        //////////////////////////////////////////
+        void createBuiltinSystemFonts();
+
+        //////////////////////////////////////////
+        SystemFontPtr const& getSystemFontDefault() const { return getBuiltinSystemFont(BuiltinSystemFontType::Default); }
+
+        //////////////////////////////////////////
+        SystemFontPtr const& getSystemFontDefaultOutlined() const { return getBuiltinSystemFont(BuiltinSystemFontType::DefaultOutlined); }
 
 
         //////////////////////////////////////////
@@ -104,6 +125,9 @@ namespace Maze
         //////////////////////////////////////////
         void registerSystemFont(String const& _name, SystemFontPtr const& _font);
 
+
+        
+
     protected:
 
         //////////////////////////////////////////
@@ -113,17 +137,13 @@ namespace Maze
         virtual bool init(RenderSystemPtr const& _renderSystem);
 
         //////////////////////////////////////////
-        void createSystemFont();
-
-        //////////////////////////////////////////
-        void notifySpecialMaterialsCreated();
+        void notifyBuiltinMaterialsCreated();
 
     protected:
         RenderSystemWPtr m_renderSystem;
         RenderSystem* m_renderSystemRaw = nullptr;
 
-        SystemFontPtr m_systemFontDefault;
-        SystemFontPtr m_systemFontDefaultOutlined;
+        SystemFontPtr m_builtinSystemFonts[BuiltinSystemFontType::MAX];
 
         StringKeyMap<SystemFontPtr> m_systemFontsByName;
     };
