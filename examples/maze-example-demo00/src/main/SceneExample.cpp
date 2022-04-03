@@ -87,6 +87,7 @@
 #include "maze-plugin-water/MazeWaterPlugin.hpp"
 #include "maze-plugin-water/ecs/systems/MazeRenderWaterSystem.hpp"
 #include "main/LevelBloomController.hpp"
+#include "maze-plugin-console/MazeConsoleService.hpp"
 #include "Example.hpp"
 
 
@@ -245,16 +246,31 @@ namespace Maze
 
         // Water
         EntityPtr waterEntity = createEntity("Water");
-        WaterRenderer3DPtr waterRenderer = waterEntity->ensureComponent<WaterRenderer3D>();
+        m_waterRenderer = waterEntity->ensureComponent<WaterRenderer3D>();
         Transform3DPtr waterTransform = waterEntity->ensureComponent<Transform3D>();
         waterTransform->setLocalScale({ 20.0f, 20.0f, 1.0f });
         waterTransform->setLocalY(0.75f);
         waterTransform->setLocalRotation(Quaternion(Math::DegreesToRadians(90), Vec3DF::c_unitX));
         MeshRendererPtr waterMeshRenderer = waterEntity->ensureComponent<MeshRenderer>();
         waterMeshRenderer->setRenderMesh(renderSystem->getRenderMeshManager()->getDefaultQuadMesh());
-        waterRenderer->setMaterial("Water00.mzmaterial");
-        waterRenderer->getMeshRenderer()->getMaterial()->getFirstRenderPass()->setRenderQueueIndex(2500);
+        m_waterRenderer->setMaterial("Water00.mzmaterial");
+        m_waterRenderer->getMeshRenderer()->getMaterial()->getFirstRenderPass()->setRenderQueueIndex(2500);
         
+        ConsoleService::GetInstancePtr()->registerCommand(
+            "water",
+            [this](String* _argv, S32 _argc)
+            {
+                if (_argc > 1)
+                    return false;
+
+                if (_argc == 0)
+                    m_waterRenderer->getEntityRaw()->setActiveSelf(!m_waterRenderer->getEntityRaw()->getActiveSelf());
+                else
+                    m_waterRenderer->getEntityRaw()->setActiveSelf(StringHelper::StringToBool(_argv[0]));
+
+                return true;
+            }, 1);
+
 
         // Barrel
         {
@@ -426,6 +442,23 @@ namespace Maze
         ps->setMaterial(material);
         ps->play();
         psEntity->ensureComponent<Name>("ParticleSystem");
+
+
+        ConsoleService::GetInstancePtr()->registerCommand(
+            "ps",
+            [this](String* _argv, S32 _argc)
+            {
+                if (_argc > 1)
+                    return false;
+
+                m_particleSystem->restart();
+                if (_argc == 0)
+                    m_particleSystem->getEntityRaw()->setActiveSelf(!m_particleSystem->getEntityRaw()->getActiveSelf());
+                else
+                    m_particleSystem->getEntityRaw()->setActiveSelf(StringHelper::StringToBool(_argv[0]));
+
+                return true;
+            }, 1);
     }
 
     //////////////////////////////////////////

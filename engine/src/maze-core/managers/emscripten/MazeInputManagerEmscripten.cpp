@@ -209,7 +209,15 @@ namespace Maze
                 event.modifiers = InputHelper::CollectInputEventKeyboardModifiers(_event);
                 event.keyCode = InputHelper::ConvertVirtualCodeToKeyCode(event.virtualCode, event.modifiers);
                 generateInputEvent(event);
-                                
+                
+                {
+                    InputEventTextData event;
+                    event.type = InputEventTextType::Input;
+                    event.utf8 = _event->which;
+                    for (Size i = 0; i < 5; ++i)
+                        event.textUtf8[i] = (U8)_event->key[i];
+                    generateInputEvent(event);
+                }
                 break;
             }
             case EMSCRIPTEN_EVENT_KEYUP:

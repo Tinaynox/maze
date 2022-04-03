@@ -57,6 +57,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(LevelBloomController);
     MAZE_USING_SHARED_PTR(ParticleSystem3D);
+    MAZE_USING_SHARED_PTR(WaterRenderer3D);
 
 
     //////////////////////////////////////////
@@ -121,6 +122,8 @@ namespace Maze
         SpriteRenderer2DPtr m_testSprite2;
 
         RenderBufferPtr m_renderBuffer;
+
+        WaterRenderer3DPtr m_waterRenderer;
 
         LevelBloomControllerPtr m_bloomController;
 

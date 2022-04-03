@@ -88,7 +88,9 @@
 #include "maze-plugin-loader-png/MazeLoaderPNGPlugin.hpp"
 #include "maze-plugin-water/MazeWaterPlugin.hpp"
 #include "maze-plugin-water/ecs/systems/MazeRenderWaterSystem.hpp"
+#include "maze-plugin-profiler-view/settings/MazeProfilerViewSettings.hpp"
 #include "maze-plugin-console/MazeConsolePlugin.hpp"
+#include "maze-plugin-console/MazeConsoleService.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "main/SceneExample.hpp"
 #include "main/LevelBloomController.hpp"
@@ -127,6 +129,21 @@ namespace Maze
         if (SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>())
             SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>()->setActive(true);
 #endif
+
+        ConsoleService::GetInstancePtr()->registerCommand(
+            "profile",
+            [](String* _argv, S32 _argc)
+            {
+                if (_argc > 1)
+                    return false;
+
+                if (_argc == 0)
+                    SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>()->switchActive();
+                else
+                    SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>()->setActive(StringHelper::StringToBool(_argv[0]));
+
+                return true;
+            }, 1);
 
         return true;
     }

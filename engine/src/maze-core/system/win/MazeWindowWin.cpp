@@ -499,6 +499,7 @@ namespace Maze
                 event.keyCode = InputHelper::ConvertVirtualCodeToKeyCode(event.virtualCode, event.modifiers);
                 inputManager->generateInputEvent(event);
 
+                /*
                 {
                     
                     String text = InputHelper::TranslateWin32Text(
@@ -516,6 +517,7 @@ namespace Maze
 
                     inputManager->generateInputEvent(event);
                 }
+                */
 
                 break;
             }
