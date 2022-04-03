@@ -163,8 +163,6 @@ namespace Maze
     {
         _dt = UpdateManager::GetInstancePtr()->getUnscaledDeltaTime();
 
-#if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
-        
         Rect2DF viewportRect = m_camera3D->getViewport();
         viewportRect.position *= (Vec2DF)m_camera3D->getRenderTarget()->getRenderTargetSize();
         viewportRect.size *= (Vec2DF)m_camera3D->getRenderTarget()->getRenderTargetSize();
@@ -178,37 +176,36 @@ namespace Maze
 
             F32 speed = 2.0f;
 
-            if (GetAsyncKeyState(87) & 0x8000)
+            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::W))
             {
                 m_camera3D->getTransform()->translate(cameraForwardDirection *_dt * speed);
             }
             else
-            if (GetAsyncKeyState(83) & 0x8000)
+            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::S))
             {
                 m_camera3D->getTransform()->translate(-cameraForwardDirection * _dt * speed);
             }
 
-            if (GetAsyncKeyState(65) & 0x8000)
+            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::A))
             {
                 m_camera3D->getTransform()->translate(-cameraRightDirection * _dt * speed);
             }
             else
-            if (GetAsyncKeyState(68) & 0x8000)
+            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::D))
             {
                 m_camera3D->getTransform()->translate(cameraRightDirection * _dt * speed);
             }
-            else
-            if (GetAsyncKeyState('Q') & 0x8000)
+            
+            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::Q))
             {
-                m_pitchAngle -= _dt * Math::c_pi;
+                m_yawAngle -= _dt * Math::c_pi;
             }
             else
-            if (GetAsyncKeyState('E') & 0x8000)
+            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::E))
             {
-                m_pitchAngle += _dt * Math::c_pi;
+                m_yawAngle += _dt * Math::c_pi;
             }
         }
-#endif
 
         m_camera3D->getTransform()->setLocalRotation(Quaternion(m_pitchAngle, m_yawAngle, 0.0f));
     }

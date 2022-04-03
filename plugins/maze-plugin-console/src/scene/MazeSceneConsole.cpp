@@ -218,7 +218,7 @@ namespace Maze
         }
         
         if (words.size() > 1)
-            ConsoleService::GetInstancePtr()->executeCommand(commandName.c_str(), &words[1], words.size() - 1);
+            ConsoleService::GetInstancePtr()->executeCommand(commandName.c_str(), &words[1], (S32)words.size() - 1);
         else
             ConsoleService::GetInstancePtr()->executeCommand(commandName.c_str(), nullptr, 0);
 

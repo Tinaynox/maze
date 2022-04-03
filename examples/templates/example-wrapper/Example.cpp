@@ -118,6 +118,7 @@ namespace Maze
         m_mainRenderWindow.reset();
 
         eventFrame.unsubscribe(this);
+        eventCoreGameResourcesLoaded.unsubscribe(this);
 
         s_instance = nullptr;
     }
@@ -133,13 +134,10 @@ namespace Maze
     //////////////////////////////////////////
     bool Example::init(EngineConfig const& _config)
     {
-        if (!Engine::init(_config))
-            return false;
-
         eventFrame.subscribe(this, &Example::notifyFrame);
         eventCoreGameResourcesLoaded.subscribe(this, &Example::notifyCoreGameResourcesLoaded);
 
-        return true;
+        return Engine::init(_config);
     }
 
     //////////////////////////////////////////
@@ -426,7 +424,11 @@ namespace Maze
             {
                 switch (_data.keyCode)
                 {
+#if MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN
+                case KeyCode::F8:
+#else
                 case KeyCode::F1:
+#endif
                 {
                     SettingsManager::GetInstancePtr()->getSettings<DebuggerSettings>()->switchActive();
                     SettingsManager::GetInstancePtr()->saveSettings();

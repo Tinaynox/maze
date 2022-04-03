@@ -88,6 +88,7 @@
 #include "maze-plugin-loader-png/MazeLoaderPNGPlugin.hpp"
 #include "maze-plugin-water/MazeWaterPlugin.hpp"
 #include "maze-plugin-water/ecs/systems/MazeRenderWaterSystem.hpp"
+#include "maze-plugin-console/MazeConsolePlugin.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "main/SceneExample.hpp"
 #include "main/LevelBloomController.hpp"
@@ -120,6 +121,7 @@ namespace Maze
     {
         MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView, "maze-plugin-profiler-view");
         MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG, "maze-plugin-loader-png");
+        MAZE_LOAD_PLATFORM_PLUGIN(Console, "maze-plugin-console");
 
 #if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
         if (SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>())
