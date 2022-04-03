@@ -64,7 +64,7 @@ namespace Maze
             ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
 
             if (GetOpenFileNameA(&ofn) == TRUE)
-                return StringHelper::ToString(ofn.lpstrFile);
+                return FileHelper::NormalizedFilePath(StringHelper::ToString(ofn.lpstrFile));
 
             return String();
         }
@@ -94,7 +94,7 @@ namespace Maze
             ofn.lpstrDefExt = strchr(_filter, '\0') + 1;
 
             if (GetSaveFileNameA(&ofn) == TRUE)
-                return StringHelper::ToString(ofn.lpstrFile);
+                return FileHelper::NormalizedFilePath(StringHelper::ToString(ofn.lpstrFile));
 
             return String();
         }
@@ -152,7 +152,7 @@ namespace Maze
             if (pidl)
             {
                 SHGetPathFromIDList(pidl, displayName);
-                return StringHelper::ToString(displayName);
+                return FileHelper::NormalizedFilePath(StringHelper::ToString(displayName));
             }
 
             return String();

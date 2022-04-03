@@ -101,6 +101,12 @@ namespace Maze
         //////////////////////////////////////////
         void notifyMainRenderWindowResized(RenderTarget* _renderTarget);
 
+        //////////////////////////////////////////
+        void notifyCurrentAssetsFullPath(String const& _currentAssetsFullPath);
+
+        //////////////////////////////////////////
+        void updateAssetsController();
+
     protected:
         Camera3DPtr m_camera3D;
         Vec3DF m_camera3DTargetPosition = Vec3DF::c_zero;

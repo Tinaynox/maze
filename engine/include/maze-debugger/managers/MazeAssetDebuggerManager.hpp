@@ -35,6 +35,7 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/math/MazeVec2D.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
 #include <functional>
 
 
@@ -54,6 +55,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(ComponentSystem);
     MAZE_USING_SHARED_PTR(Sprite);
     MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_SHARED_PTR(RenderSystem);
 
 
     //////////////////////////////////////////
@@ -113,6 +115,17 @@ namespace Maze
         //////////////////////////////////////////
         bool init();
 
+        //////////////////////////////////////////
+        void registerCallbacks();
+
+        //////////////////////////////////////////
+        void notifyTextureLoaderAdded(HashedCString _extension, TextureLoaderData const& _data);
+
+        //////////////////////////////////////////
+        void notifyDefaultRenderSystemWillBeChanged(RenderSystemPtr const& _renderSystem);
+
+        //////////////////////////////////////////
+        void notifyDefaultRenderSystemChanged(RenderSystemPtr const& _renderSystem);
 
     protected:
         static AssetDebuggerManager* s_instance;

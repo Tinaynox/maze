@@ -217,6 +217,7 @@ namespace Maze
             TextureLoaderData const& _data)
         {
             m_textureLoaders.insert(_extension, _data);
+            eventTextureLoaderAdded(_extension, _data);
         }
 
         //////////////////////////////////////////
@@ -224,6 +225,14 @@ namespace Maze
         {
             m_textureLoaders.erase(_extension);
         }
+
+        //////////////////////////////////////////
+        Vector<String> getTextureLoaderExtensions();
+
+    public:
+
+        //////////////////////////////////////////
+        MultiDelegate<HashedCString, TextureLoaderData const&> eventTextureLoaderAdded;
 
     protected:
 

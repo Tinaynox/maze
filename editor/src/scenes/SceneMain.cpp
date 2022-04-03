@@ -97,6 +97,7 @@
 #include "maze-ui/texture-picker/SceneTexturePicker.hpp"
 #include "maze-ui/render-mesh-picker/SceneRenderMeshPicker.hpp"
 #include "helpers/EditorHelper.hpp"
+#include "managers/EditorAssetsModeManager.hpp"
 
 
 //////////////////////////////////////////
@@ -139,6 +140,9 @@ namespace Maze
         {
             GizmosManager::GetInstancePtr()->setCamera(nullptr);
         }
+
+        if (EditorAssetsModeManager::GetInstancePtr())
+            EditorAssetsModeManager::GetInstancePtr()->eventCurrentAssetsFullPath.unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -162,6 +166,8 @@ namespace Maze
 
         create3D();
         create2D();
+
+        EditorAssetsModeManager::GetInstancePtr()->eventCurrentAssetsFullPath.subscribe(this, &SceneMain::notifyCurrentAssetsFullPath);
 
         return true;
     }
@@ -571,6 +577,8 @@ namespace Maze
             EntityPtr assetsControllerEntity = createEntity();
             m_assetsController = AssetsController::Create(m_assetsCanvas.get());
             assetsControllerEntity->addComponent(m_assetsController);
+
+            updateAssetsController();
         }
 
         
@@ -639,6 +647,29 @@ namespace Maze
         {
             Rect2DF sceneViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
             m_camera3D->setViewport(sceneViewport);
+        }
+    }
+
+    //////////////////////////////////////////
+    void SceneMain::notifyCurrentAssetsFullPath(String const& _currentAssetsFullPath)
+    {
+        updateAssetsController();
+    }
+
+    //////////////////////////////////////////
+    void SceneMain::updateAssetsController()
+    {
+        if (!m_assetsController)
+            return;
+
+        String const& currentAssetsFullPath = EditorAssetsModeManager::GetInstancePtr()->getCurrentAssetsFullPath();
+        if (!currentAssetsFullPath.empty())
+        {
+            m_assetsController->setAssetsFullPath(currentAssetsFullPath);
+        }
+        else
+        {
+            m_assetsController->setAssetsFullPath(AssetManager::GetInstancePtr()->getDefaultAssetsDirectory());
         }
     }
 

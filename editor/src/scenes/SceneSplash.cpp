@@ -310,7 +310,6 @@ namespace Maze
                 EditorMode editorMode = editorSettings->getEditorMode();
                 String assetsFullPath = editorSettings->getAssetsFullPath();
                 bool isAssetsFullPathValid = !assetsFullPath.empty() && FileHelper::IsDirectory(assetsFullPath);
-                isAssetsFullPathValid = false;
 
                 if (editorMode == EditorMode::None ||
                     (editorMode == EditorMode::Assets && !isAssetsFullPathValid))

@@ -236,7 +236,7 @@ namespace Maze
         if (png_sig_cmp(header, 0, PNGSIGSIZE))
             return false;
 
-        return false;
+        return true;
     }
 
 } // namespace Maze

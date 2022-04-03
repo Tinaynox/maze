@@ -83,6 +83,9 @@ namespace Maze
         static inline EditorAssetsModeManager& GetInstance() { return *s_instance; }
 
 
+        //////////////////////////////////////////
+        String const& getCurrentAssetsFullPath() const { return m_currentAssetsFullPath; }
+
     protected:
 
         //////////////////////////////////////////
@@ -104,6 +107,12 @@ namespace Maze
 
         //////////////////////////////////////////
         void setCurrentAssetsFolder(String const& _folder);
+
+
+    public:
+
+        //////////////////////////////////////////
+        MultiDelegate<String const&> eventCurrentAssetsFullPath;
 
     protected:
         static EditorAssetsModeManager* s_instance;

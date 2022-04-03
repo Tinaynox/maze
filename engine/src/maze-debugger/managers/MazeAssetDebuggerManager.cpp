@@ -52,6 +52,23 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    static SpritePtr TextureFileIconCallback(AssetFilePtr const& _assetFile)
+    {
+        SpritePtr result;
+
+        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+        TextureManagerPtr const& textureManager = renderSystem->getTextureManager();
+        Texture2DPtr const& texture = textureManager->getTexture2D(_assetFile);
+        if (texture)
+        {
+            result = Sprite::Create(texture);
+        }
+
+        return result;
+    };
+
+
+    //////////////////////////////////////////
     // Class AssetDebuggerManager
     //
     //////////////////////////////////////////
@@ -67,6 +84,15 @@ namespace Maze
     AssetDebuggerManager::~AssetDebuggerManager()
     {
         s_instance = nullptr;
+
+        if (GraphicsManager::GetInstancePtr())
+        {
+            GraphicsManager::GetInstancePtr()->eventDefaultRenderSystemWillBeChanged.unsubscribe(this);
+            GraphicsManager::GetInstancePtr()->eventDefaultRenderSystemChanged.unsubscribe(this);
+        }
+
+        if (RenderSystem::GetCurrentInstancePtr() && RenderSystem::GetCurrentInstancePtr()->getTextureManager())
+            RenderSystem::GetCurrentInstancePtr()->getTextureManager()->eventTextureLoaderAdded.unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -78,35 +104,54 @@ namespace Maze
     //////////////////////////////////////////
     bool AssetDebuggerManager::init()
     {
-        std::function<SpritePtr(AssetFilePtr const&)> textureFileIconCallback =
-            [](AssetFilePtr const& _assetFile) -> SpritePtr
-            {
-                SpritePtr result;
+        GraphicsManager::GetInstancePtr()->eventDefaultRenderSystemWillBeChanged.subscribe(this, &AssetDebuggerManager::notifyDefaultRenderSystemWillBeChanged);
+        GraphicsManager::GetInstancePtr()->eventDefaultRenderSystemChanged.subscribe(this, &AssetDebuggerManager::notifyDefaultRenderSystemChanged);
+        notifyDefaultRenderSystemChanged(GraphicsManager::GetInstancePtr()->getDefaultRenderSystem());
 
-                RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-                TextureManagerPtr const& textureManager = renderSystem->getTextureManager();
-                Texture2DPtr const& texture = textureManager->getTexture2D(_assetFile);
-                if (texture)
-                {
-                    result = Sprite::Create(texture);
-                }
+        return true;
+    }
 
-                return result;
-            };
+    //////////////////////////////////////////
+    void AssetDebuggerManager::notifyDefaultRenderSystemWillBeChanged(RenderSystemPtr const& _renderSystem)
+    {
+        if (RenderSystem::GetCurrentInstancePtr() && RenderSystem::GetCurrentInstancePtr()->getTextureManager())
+            RenderSystem::GetCurrentInstancePtr()->getTextureManager()->eventTextureLoaderAdded.unsubscribe(this);
+    }
 
-        registerIconCallbackForAssetFileExtension("bmp", textureFileIconCallback);
-        registerIconCallbackForAssetFileExtension("png", textureFileIconCallback);
-        registerIconCallbackForAssetFileExtension("mztexture", textureFileIconCallback);
+    //////////////////////////////////////////
+    void AssetDebuggerManager::notifyDefaultRenderSystemChanged(RenderSystemPtr const& _renderSystem)
+    {
+        if (_renderSystem)
+        {
+            registerCallbacks();
+
+            _renderSystem->getTextureManager()->eventTextureLoaderAdded.subscribe(this, &AssetDebuggerManager::notifyTextureLoaderAdded);
+        }
+    }
+
+    //////////////////////////////////////////
+    void AssetDebuggerManager::notifyTextureLoaderAdded(HashedCString _extension, TextureLoaderData const& _data)
+    {
+        registerIconCallbackForAssetFileExtension(_extension.str, TextureFileIconCallback);
+    }
+
+    //////////////////////////////////////////
+    void AssetDebuggerManager::registerCallbacks()
+    {
+        Vector<String> textureExtensions = TextureManager::GetCurrentInstancePtr()->getTextureLoaderExtensions();
+        for (String const& textureExtension : textureExtensions)
+            registerIconCallbackForAssetFileExtension(textureExtension, TextureFileIconCallback);
+        registerIconCallbackForAssetFileExtension("mztexture", TextureFileIconCallback);
 
 
         std::function<SpritePtr(AssetFilePtr const&)> textFileIconCallback =
             [](AssetFilePtr const& _assetFile)
-            {
-                return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::TextFile);
-            };
+        {
+            return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::TextFile);
+        };
         registerIconCallbackForAssetFileExtension("txt", textFileIconCallback);
         registerIconCallbackForAssetFileExtension("meta", textFileIconCallback);
-        
+
         std::function<SpritePtr(AssetFilePtr const&)> meshFileIconCallback =
             [](AssetFilePtr const& _assetFile)
         {
@@ -117,34 +162,32 @@ namespace Maze
 
         registerIconCallbackForAssetFileExtension("mzphysicsMaterial2D",
             [](AssetFilePtr const& _assetFile)
-            {
-                return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::PhysicsMaterial2D);
-            });
+        {
+            return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::PhysicsMaterial2D);
+        });
 
         registerIconCallbackForAssetFileExtension("mzshader",
             [](AssetFilePtr const& _assetFile)
-            {
-                return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Shader);
-            });
+        {
+            return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Shader);
+        });
         registerIconCallbackForAssetFileExtension("mzglsl",
             [](AssetFilePtr const& _assetFile)
-            {
-                return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Shader);
-            });
+        {
+            return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Shader);
+        });
 
-        registerIconCallbackForAssetFileExtension("mzmaterial", 
+        registerIconCallbackForAssetFileExtension("mzmaterial",
             [](AssetFilePtr const& _assetFile)
-            {
-                return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Material);
-            });
+        {
+            return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Material);
+        });
 
         registerIconCallbackForAssetFileClass<AssetDirectory>(
             []()
-            {
-                return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::FolderClosed);
-            });
-
-        return true;
+        {
+            return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::FolderClosed);
+        });
     }
 
     //////////////////////////////////////////

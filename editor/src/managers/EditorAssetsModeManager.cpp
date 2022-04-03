@@ -130,6 +130,8 @@ namespace Maze
         editorSettings->getEditorModeChangedEvent().subscribe(this, &EditorAssetsModeManager::notifyEditorModeChanged);
         editorSettings->getAssetsFullPathChangedEvent().subscribe(this, &EditorAssetsModeManager::notifyAssetsFullPathChanged);
         
+        updateAssets();
+
         return true;
     }
 
@@ -176,6 +178,8 @@ namespace Maze
         {
             AssetManager::GetInstancePtr()->addAssetsDirectory(m_currentAssetsFullPath, true);
         }
+
+        eventCurrentAssetsFullPath(m_currentAssetsFullPath);
     }
 
 } // namespace Maze

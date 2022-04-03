@@ -223,6 +223,18 @@ namespace Maze
         SizePolicy2DPtr assetsFolderLayoutSizePolicy = m_selectedAssetsFolderLayoutTransform->getEntityRaw()->ensureComponent<SizePolicy2D>();
         assetsFolderLayoutSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
 
+        setAssetsFullPath(AssetManager::GetInstancePtr()->getDefaultAssetsDirectory());
+    }
+
+    //////////////////////////////////////////
+    void AssetsController::setAssetsFullPath(String const& _assetsFullPath)
+    {
+        if (m_assetsFullPath == _assetsFullPath)
+            return;
+
+        m_assetsFullPath = _assetsFullPath;
+
+
         updateAssetsTree();
 
         Set<AssetFilePtr> const& assetFiles = SelectionManager::GetInstancePtr()->getSelectedAssetFiles();
@@ -236,11 +248,11 @@ namespace Maze
                 if (selectedDirectory.empty())
                     selectedDirectory = directory;
                 else
-                if (selectedDirectory != directory)
-                {
-                    selectedDirectory.clear();
-                    break;
-                }
+                    if (selectedDirectory != directory)
+                    {
+                        selectedDirectory.clear();
+                        break;
+                    }
             }
 
             if (!selectedDirectory.empty())
@@ -266,18 +278,16 @@ namespace Maze
     //////////////////////////////////////////
     void AssetsController::updateAssetsTree()
     {
+        clearAssetsTree();
+
+        String assetsFullPath = m_assetsFullPath;
+        
+        const AssetFilePtr& assetDirectory = AssetManager::GetInstancePtr()->getAssetFileByFullPath(assetsFullPath);
+        if (!assetDirectory)
+            return;
+
         Vector<AssetFilePtr> assetDirectories;
-
-        Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFiles<AssetDirectory>();
-        String defaultAssetsDirectory = AssetManager::GetInstancePtr()->getDefaultAssetsDirectory();
-        for (AssetFilePtr assetFile : assetFiles)
-        {
-            String fullPath = assetFile->getFullPath();
-            if (fullPath == defaultAssetsDirectory)
-                continue;
-
-            assetDirectories.emplace_back(assetFile);
-        }
+        assetDirectories.push_back(assetDirectory);
 
         std::sort(
             assetDirectories.begin(),
@@ -292,7 +302,7 @@ namespace Maze
             String fileName = assetFile->getFileName();
             String fullPath = assetFile->getFullPath();
 
-            if (!StringHelper::IsStartsWith(fullPath, defaultAssetsDirectory))
+            if (!StringHelper::IsStartsWith(fullPath, assetsFullPath))
                 continue;
 
             Transform2DPtr lineParent = m_assetsTreeLayoutTransform;
@@ -305,7 +315,7 @@ namespace Maze
             if (fullPathLastSlashPosition != String::npos)
             {
                 String parentFullPath = fullPath.substr(0, fullPathLastSlashPosition);
-                if (!parentFullPath.empty() && parentFullPath != defaultAssetsDirectory)
+                if (!parentFullPath.empty() && parentFullPath != assetsFullPath)
                 {
                     auto assetsTreeLinesIt = m_assetsTreeLines.find(parentFullPath);
                     if (assetsTreeLinesIt != m_assetsTreeLines.end())
@@ -315,10 +325,6 @@ namespace Maze
 
                         parentLine->setDropDownVisible(true);
                         parentLine->setExpanded(true);
-                    }
-                    else
-                    {
-                        MAZE_ERROR("Parent is not found!");
                     }
                 }
             }

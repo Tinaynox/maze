@@ -96,6 +96,10 @@ namespace Maze
         void setSelectedAssetFolder(String const& _value);
 
 
+        //////////////////////////////////////////
+        void setAssetsFullPath(String const& _assetsFullPath);
+
+
     protected:
 
         //////////////////////////////////////////
@@ -140,6 +144,8 @@ namespace Maze
         Transform2DPtr m_transform;
 
         SpriteRenderer2DPtr m_bodyBackground;
+
+        String m_assetsFullPath;
 
         HorizontalLayout2DPtr m_layout;
 

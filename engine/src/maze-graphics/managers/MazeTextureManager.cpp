@@ -449,6 +449,15 @@ namespace Maze
         }
     }
 
+    //////////////////////////////////////////
+    Vector<String> TextureManager::getTextureLoaderExtensions()
+    {
+        Vector<String> result;
+        for (auto const& textureLoaderData : m_textureLoaders)
+            result.push_back(textureLoaderData.first);
+        
+        return result;
+    }
     
 } // namespace Maze
 //////////////////////////////////////////
