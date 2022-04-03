@@ -167,31 +167,31 @@ namespace Maze
             }
             case EMSCRIPTEN_EVENT_WHEEL:
             {
-                Debug::Log("TODO: EMSCRIPTEN_EVENT_WHEEL");
+                // Debug::Log("TODO: EMSCRIPTEN_EVENT_WHEEL");
                 
                 break;
             }
             case EMSCRIPTEN_EVENT_MOUSEENTER:
             {
-                Debug::Log("TODO: EMSCRIPTEN_EVENT_MOUSEENTER");
+                // Debug::Log("TODO: EMSCRIPTEN_EVENT_MOUSEENTER");
                 
                 break;
             }
             case EMSCRIPTEN_EVENT_MOUSELEAVE:
             {
-                Debug::Log("TODO: EMSCRIPTEN_EVENT_MOUSELEAVE");
+                // Debug::Log("TODO: EMSCRIPTEN_EVENT_MOUSELEAVE");
                 
                 break;
             }
             case EMSCRIPTEN_EVENT_MOUSEOVER:
             {
-                Debug::Log("TODO: EMSCRIPTEN_EVENT_MOUSEOVER");
+                // Debug::Log("TODO: EMSCRIPTEN_EVENT_MOUSEOVER");
                 
                 break;
             }
             case EMSCRIPTEN_EVENT_MOUSEOUT:
             {
-                Debug::Log("TODO: EMSCRIPTEN_EVENT_MOUSEOUT");
+                // Debug::Log("TODO: EMSCRIPTEN_EVENT_MOUSEOUT");
                 
                 break;
             }
