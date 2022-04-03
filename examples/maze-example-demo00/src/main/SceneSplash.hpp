@@ -52,6 +52,7 @@ namespace Maze
 
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(SceneSplash);
+    MAZE_USING_SHARED_PTR(SpriteRenderer2D);
  
 
     //////////////////////////////////////////
@@ -89,8 +90,20 @@ namespace Maze
         //////////////////////////////////////////
         void notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport);
 
+        //////////////////////////////////////////
+        void notifyLoadingStep();
+
+        //////////////////////////////////////////
+        void nextLoadingStep(S32 _delayFrames);
+
+        //////////////////////////////////////////
+        void setCurrentProgress(F32 _progress);
+
     protected:
+        S32 m_loadingStep = 0;
         CanvasPtr m_canvas;
+
+        SpriteRenderer2DPtr m_progressBarFill;
     };
 
 

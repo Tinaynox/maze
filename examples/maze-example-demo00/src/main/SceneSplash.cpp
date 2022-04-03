@@ -66,6 +66,7 @@
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-graphics/managers/MazeGizmosManager.hpp"
+#include "maze-graphics/managers/MazeSystemFontManager.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
@@ -95,6 +96,10 @@
 #include "main/SceneExample.hpp"
 #include "main/LevelBloomController.hpp"
 #include "Example.hpp"
+
+
+#include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 
 
 //////////////////////////////////////////
@@ -212,19 +217,7 @@ namespace Maze
             m_canvas->getTransform(),
             this);
 
-        TaskManager::GetInstancePtr()->addDelayedMainThreadTask(
-            1,
-            []()
-            {
-                Example::GetInstancePtr()->loadCoreGameAssets();
-                MAZE_LOAD_PLATFORM_PLUGIN(Water, "maze-plugin-water");
-                
-                SceneManager::GetInstancePtr()->loadScene<SceneExample>();
-                TaskManager::GetInstancePtr()->addDelayedMainThreadTask(
-                    2,
-                    [](){ SceneManager::GetInstancePtr()->unloadScene<SceneSplash>(); });
-
-            });
+        nextLoadingStep(1);
 
         return true;
     }
@@ -239,9 +232,142 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void SceneSplash::notifyLoadingStep()
+    {
+        S32 delayToNextStep = 1;
+
+        switch (m_loadingStep)
+        {
+            case 0:
+            {
+                MaterialPtr const& material = MaterialManager::GetCurrentInstance()->ensureBuiltinMaterial(BuiltinMaterialType::Color);
+                SpriteRenderer2DPtr frame = SpriteHelper::CreateSprite(
+                    ColorU32::c_lightGray,
+                    Vec2DF(96.0f, 10.0f),
+                    Vec2DF(0.0f, -34.0f),
+                    material,
+                    m_canvas->getTransform(),
+                    this);
+
+                SpriteRenderer2DPtr back = SpriteHelper::CreateSprite(
+                    ColorU32::c_blackSoft,
+                    frame->getTransform()->getSize() - 4.0f,
+                    Vec2DF::c_zero,
+                    material,
+                    frame->getTransform(),
+                    this);
+
+                m_progressBarFill = SpriteHelper::CreateSprite(
+                    ColorU32::c_whiteSoft,
+                    Vec2DF(0.0f, back->getTransform()->getHeight()),
+                    Vec2DF::c_zero,
+                    material,
+                    back->getTransform(),
+                    this,
+                    Vec2DF(0.0f, 0.5f),
+                    Vec2DF(0.0f, 0.5f));
+
+                break;
+            }
+            case 1:
+            {
+                TextureManager::GetCurrentInstancePtr()->createBuiltinTextures();
+                setCurrentProgress(0.25f);
+                break;
+            }
+            case 2:
+            {
+                RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->createBuiltinShaders();
+                setCurrentProgress(0.35f);
+                break;
+            }
+            case 3:
+            {
+                MaterialManager::GetCurrentInstance()->createBuiltinMaterials();
+                setCurrentProgress(0.45f);
+                break;
+            }
+            case 4:
+            {
+                RenderMeshManager::GetCurrentInstancePtr()->createBuiltinRenderMeshes();
+                setCurrentProgress(0.55f);
+                break;
+            }
+            case 5:
+            {
+                SystemFontManager::GetCurrentInstancePtr()->createBuiltinSystemFonts();
+                setCurrentProgress(0.65f);
+                break;
+            }
+            case 6:
+            {
+                GraphicsManager::GetInstancePtr()->getGizmosManager()->createGizmosElements();
+                setCurrentProgress(0.7f);
+                break;
+            }
+            case 7:
+            {
+                UIManager::GetInstancePtr()->createUIElements();
+                setCurrentProgress(0.75f);
+                break;
+            }
+            case 8:
+            {
+                ParticlesManager::GetInstancePtr()->createBuiltinAssets();
+                setCurrentProgress(0.8f);
+                break;
+            }
+            case 9:
+            {
+                Example::GetInstancePtr()->eventCoreGameResourcesLoaded();
+                setCurrentProgress(0.85f);
+                break;
+            }
+            case 10:
+            {
+                MAZE_LOAD_PLATFORM_PLUGIN(Water, "maze-plugin-water");
+                setCurrentProgress(0.9f);
+                break;
+            }
+            case 11:
+            {
+                SceneManager::GetInstancePtr()->loadScene<SceneExample>();
+
+                setCurrentProgress(1.0f);
+                delayToNextStep = 2;
+                break;
+            }
+            case 12:
+            {
+                SceneManager::GetInstancePtr()->unloadScene<SceneSplash>();
+                return;
+            }
+        }
+
+        nextLoadingStep(delayToNextStep);
+
+        ++m_loadingStep;
+    }
+
+    //////////////////////////////////////////
+    void SceneSplash::nextLoadingStep(S32 _delayFrames)
+    {
+        TaskManager::GetInstancePtr()->addDelayedMainThreadTask(
+            _delayFrames,
+            CreateDelegate(this, &SceneSplash::notifyLoadingStep));
+    }
+
+    //////////////////////////////////////////
     void SceneSplash::update(F32 _dt)
     {
         ECSRenderScene::update(_dt);
+    }
+
+    //////////////////////////////////////////
+    void SceneSplash::setCurrentProgress(F32 _progress)
+    {
+        if (m_progressBarFill)
+            m_progressBarFill->getTransform()->setWidth(m_progressBarFill->getTransform()->getParent()->getWidth() * _progress);
     }
 
 } // namespace Maze
