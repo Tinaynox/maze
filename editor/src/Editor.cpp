@@ -70,9 +70,7 @@
 #include "maze-particles/managers/MazeParticlesManager.hpp"
 #include "managers/EditorManager.hpp"
 #include "settings/MazeEditorSettings.hpp"
-#include "scenes/SceneMain.hpp"
-#include "scenes/SceneDebug.hpp"
-#include "scenes/SceneWorkspace.hpp"
+#include "scenes/SceneSplash.hpp"
 
 
 //////////////////////////////////////////
@@ -291,8 +289,7 @@ namespace Maze
         ECSWorldPtr const& world = entityManager->getDefaultWorld();
         createPrimaryECSWorldSystems(world, m_mainRenderWindow, m_graphicsManager->getDefaultRenderSystem());
 
-        m_sceneManager->loadScene<SceneMain>();
-        m_sceneManager->loadScene<SceneDebug>();
+        m_sceneManager->loadScene<SceneSplash>();
         
         m_editorManager->start();
 
@@ -328,28 +325,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Editor::loadCoreEditorAssets()
-    {
-        RenderSystem::GetCurrentInstancePtr()->createBuiltinAssets();
-        GraphicsManager::GetInstancePtr()->getGizmosManager()->createGizmosElements();
-        UIManager::GetInstancePtr()->createUIElements();
-        ParticlesManager::GetInstancePtr()->createBuiltinAssets();
-
-        eventCoreEditorResourcesLoaded();
-    }
-
-    //////////////////////////////////////////
     void Editor::notifyCoreEditorResourcesLoaded()
     {
         RenderSystemPtr const& renderSystem = m_graphicsManager->getDefaultRenderSystem();
         ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
-
-        /*
-        shaderSystem->findAssetShadersAndAddToCache();
-        renderSystem->getTextureManager()->loadAllAssetTextures();
-        renderSystem->getMaterialManager()->loadAllAssetMaterials();
-        renderSystem->getRenderMeshManager()->loadAllAssetRenderMeshes();
-        */
 
         EntityManager* entityManager = EntityManager::GetInstancePtr();
         ECSWorldPtr const& world = entityManager->getDefaultWorld();

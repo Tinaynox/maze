@@ -86,9 +86,6 @@ namespace Maze
         //////////////////////////////////////////
         inline EditorManagerPtr const& getEditorManager() const { return m_editorManager; }
 
-        //////////////////////////////////////////
-        void loadCoreEditorAssets();
-
     public:
 
         //////////////////////////////////////////

@@ -25,75 +25,75 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeEditorSettings_hpp_))
-#define _MazeEditorSettings_hpp_
+#if (!defined(_EditorProjectModeManager_hpp_))
+#define _EditorProjectModeManager_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-core/utils/MazeMultiDelegate.hpp"
-#include "maze-core/utils/MazeEnumClass.hpp"
-#include "maze-core/utils/MazeObservableValue.hpp"
-#include "maze-core/system/MazeTimer.hpp"
-#include "maze-core/reflection/MazeMetaClass.hpp"
-#include "maze-core/settings/MazeSettings.hpp"
-#include "editor/EditorMode.hpp"
+#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/math/MazeQuaternion.hpp"
+#include "maze-graphics/MazeMesh.hpp"
+#include "maze-graphics/MazeShader.hpp"
+#include "maze-graphics/MazeTexture2D.hpp"
+#include "maze-graphics/MazeMaterial.hpp"
+#include "maze-graphics/MazeRenderPass.hpp"
+#include "maze-graphics/MazeRenderTarget.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeCanvas.hpp"
+#include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
+#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
+#include "scenes/SceneWorkspace.hpp"
+#include "editor/EditorSceneMode.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(EditorSettings);
+    MAZE_USING_SHARED_PTR(EditorProjectModeManager);
+    MAZE_USING_SHARED_PTR(RenderMesh);
+    MAZE_USING_SHARED_PTR(SceneWorkspace);
+
 
     //////////////////////////////////////////
-    // Class EditorSettings
+    // Class EditorProjectModeManager
     //
     //////////////////////////////////////////
-    class EditorSettings
-        : public Settings
+    class EditorProjectModeManager
+        : public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(EditorSettings, Settings);
+        ~EditorProjectModeManager();
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(EditorSettings);
-
-    public:
-
-        //////////////////////////////////////////
-        EditorSettings();
+        static void Initialize(EditorProjectModeManagerPtr& _manager);
+        
 
         //////////////////////////////////////////
-        virtual ~EditorSettings();
-
-
-        //////////////////////////////////////////
-        void setEditorMode(EditorMode _value) { m_editorMode = _value; }
+        static inline EditorProjectModeManager* GetInstancePtr() { return s_instance; }
 
         //////////////////////////////////////////
-        inline EditorMode getEditorMode() const { return m_editorMode.getValue(); }
-
-        //////////////////////////////////////////
-        inline MultiDelegate<EditorMode const&>& getEditorModeChangedEvent() { return m_editorMode.eventValueChanged; }
-
-
-
-        //////////////////////////////////////////
-        void setAssetsFullPath(String _value) { m_assetsFullPath = _value; }
-
-        //////////////////////////////////////////
-        inline String getAssetsFullPath() const { return m_assetsFullPath.getValue(); }
-
-        //////////////////////////////////////////
-        inline MultiDelegate<String const&>& getAssetsFullPathChangedEvent() { return m_assetsFullPath.eventValueChanged; }
+        static inline EditorProjectModeManager& GetInstance() { return *s_instance; }
 
 
     protected:
 
-        ObservableValue<EditorMode> m_editorMode = EditorMode::None;
-        ObservableValue<String> m_assetsFullPath;
+        //////////////////////////////////////////
+        EditorProjectModeManager();
+
+        //////////////////////////////////////////
+        bool init();
+
+
+
+    protected:
+        static EditorProjectModeManager* s_instance;
     };
 
 
@@ -101,5 +101,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeEditorSettings_hpp_
+#endif // _EditorProjectModeManager_hpp_
 //////////////////////////////////////////

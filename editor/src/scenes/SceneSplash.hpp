@@ -25,75 +25,90 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeEditorSettings_hpp_))
-#define _MazeEditorSettings_hpp_
+#if (!defined(_SceneSplash_hpp_))
+#define _SceneSplash_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-core/utils/MazeMultiDelegate.hpp"
-#include "maze-core/utils/MazeEnumClass.hpp"
-#include "maze-core/utils/MazeObservableValue.hpp"
-#include "maze-core/system/MazeTimer.hpp"
-#include "maze-core/reflection/MazeMetaClass.hpp"
-#include "maze-core/settings/MazeSettings.hpp"
-#include "editor/EditorMode.hpp"
+#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/MazeBaseTypes.hpp"
+#include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/math/MazeQuaternion.hpp"
+#include "maze-graphics/MazeMesh.hpp"
+#include "maze-graphics/MazeShader.hpp"
+#include "maze-graphics/MazeTexture2D.hpp"
+#include "maze-graphics/MazeMaterial.hpp"
+#include "maze-graphics/MazeRenderPass.hpp"
+#include "maze-graphics/MazeRenderTarget.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeCanvas.hpp"
+#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(EditorSettings);
+    MAZE_USING_SHARED_PTR(SceneSplash);
+    MAZE_USING_SHARED_PTR(SpriteRenderer2D);
+
 
     //////////////////////////////////////////
-    // Class EditorSettings
+    // Class SceneSplash
     //
     //////////////////////////////////////////
-    class EditorSettings
-        : public Settings
+    class SceneSplash
+        : public ECSRenderScene
+        , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(EditorSettings, Settings);
-
-        //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(EditorSettings);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneSplash, ECSRenderScene);
 
     public:
 
         //////////////////////////////////////////
-        EditorSettings();
+        static SceneSplashPtr Create();
+    
+        //////////////////////////////////////////
+        virtual ~SceneSplash();
 
         //////////////////////////////////////////
-        virtual ~EditorSettings();
-
-
-        //////////////////////////////////////////
-        void setEditorMode(EditorMode _value) { m_editorMode = _value; }
-
-        //////////////////////////////////////////
-        inline EditorMode getEditorMode() const { return m_editorMode.getValue(); }
-
-        //////////////////////////////////////////
-        inline MultiDelegate<EditorMode const&>& getEditorModeChangedEvent() { return m_editorMode.eventValueChanged; }
-
-
-
-        //////////////////////////////////////////
-        void setAssetsFullPath(String _value) { m_assetsFullPath = _value; }
-
-        //////////////////////////////////////////
-        inline String getAssetsFullPath() const { return m_assetsFullPath.getValue(); }
-
-        //////////////////////////////////////////
-        inline MultiDelegate<String const&>& getAssetsFullPathChangedEvent() { return m_assetsFullPath.eventValueChanged; }
+        virtual void update(F32 _dt) MAZE_OVERRIDE;
 
 
     protected:
 
-        ObservableValue<EditorMode> m_editorMode = EditorMode::None;
-        ObservableValue<String> m_assetsFullPath;
+        //////////////////////////////////////////
+        SceneSplash();
+
+        //////////////////////////////////////////
+        virtual bool init() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        void notifyMainRenderWindowResized(RenderTarget* _renderTarget);
+
+        //////////////////////////////////////////
+        void notifyLoadingStep();
+
+        //////////////////////////////////////////
+        void nextLoadingStep(S32 _delayFrames);
+
+        //////////////////////////////////////////
+        void setCurrentProgress(F32 _progress);
+
+
+        //////////////////////////////////////////
+        void createSelectModeMenu();
+
+    protected:
+        S32 m_loadingStep = 0;
+        CanvasPtr m_canvas;
+
+        SpriteRenderer2DPtr m_progressBarFill;
     };
 
 
@@ -101,5 +116,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeEditorSettings_hpp_
+#endif // _SceneSplash_hpp_
 //////////////////////////////////////////

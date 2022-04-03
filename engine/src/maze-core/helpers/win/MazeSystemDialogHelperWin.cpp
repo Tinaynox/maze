@@ -30,7 +30,9 @@
 #include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/system/win/MazeWindowWin.hpp"
+#include "maze-core/helpers/win/MazeTextHelperWin.hpp"
 #include <commdlg.h>
+#include <ShlObj.h>
 
 
 //////////////////////////////////////////
@@ -45,7 +47,7 @@ namespace Maze
             Window const* _modalToWindow)
         {
             OPENFILENAMEA ofn;
-            CHAR szFile[260] = { 0 };
+            CHAR szFile[MAX_PATH] = { 0 };
             
             ZeroMemory(&ofn, sizeof(OPENFILENAME));
             ofn.lStructSize = sizeof(OPENFILENAME);
@@ -53,7 +55,7 @@ namespace Maze
             ofn.lpstrFile = szFile;
             ofn.nMaxFile = sizeof(szFile);
 
-            CHAR currentDir[256] = { 0 };
+            CHAR currentDir[MAX_PATH] = { 0 };
             if (GetCurrentDirectoryA(256, currentDir))
                 ofn.lpstrInitialDir = currentDir;
 
@@ -73,7 +75,7 @@ namespace Maze
             Window const* _modalToWindow)
         {
             OPENFILENAMEA ofn;
-            CHAR szFile[260] = { 0 };
+            CHAR szFile[MAX_PATH] = { 0 };
 
             ZeroMemory(&ofn, sizeof(OPENFILENAME));
             ofn.lStructSize = sizeof(OPENFILENAME);
@@ -81,7 +83,7 @@ namespace Maze
             ofn.lpstrFile = szFile;
             ofn.nMaxFile = sizeof(szFile);
 
-            CHAR currentDir[256] = { 0 };
+            CHAR currentDir[MAX_PATH] = { 0 };
             if (GetCurrentDirectoryA(256, currentDir))
                 ofn.lpstrInitialDir = currentDir;
 
@@ -93,6 +95,65 @@ namespace Maze
 
             if (GetSaveFileNameA(&ofn) == TRUE)
                 return StringHelper::ToString(ofn.lpstrFile);
+
+            return String();
+        }
+
+        //////////////////////////////////////////
+        static S32 CALLBACK OpenFolderCallbackProc(HWND _hwnd, UINT _msg, LPARAM _lParam, LPARAM _lpData)
+        {
+            LPITEMIDLIST pidlNavigate;
+            switch (_msg)
+            {
+                case BFFM_INITIALIZED:
+                {
+                    pidlNavigate = (LPITEMIDLIST)_lpData;
+                    if (pidlNavigate != NULL)
+                        SendMessage(_hwnd, BFFM_SETSELECTION, (WPARAM)FALSE, (LPARAM)pidlNavigate);
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
+            }
+            return 0;
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API String OpenFolder(
+            CString _dialogTitle,
+            Window const* _modalToWindow)
+        {
+            String workingDirectory = FileHelper::GetWorkingDirectory();
+            StringHelper::ReplaceSubstring(workingDirectory, "/", "\\");
+
+            LPITEMIDLIST pidlStart;
+            SHParseDisplayName(
+                TextHelper::ConvertUTF8ToUCS2(
+                    workingDirectory.c_str(),
+                    workingDirectory.size()).c_str(),
+                NULL,
+                &pidlStart,
+                0,
+                NULL);
+
+            BROWSEINFO bi;
+            CHAR displayName[MAX_PATH];
+
+            ZeroMemory(&bi, sizeof(bi));
+            bi.hwndOwner = _modalToWindow ? _modalToWindow->castRaw<WindowWin>()->getHandle() : NULL;
+            bi.pszDisplayName = NULL;
+            bi.lpszTitle = _dialogTitle ? _dialogTitle : "Select folder";
+            bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
+            bi.lParam = (LPARAM)pidlStart;
+            bi.lpfn = OpenFolderCallbackProc;
+            LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
+            if (pidl)
+            {
+                SHGetPathFromIDList(pidl, displayName);
+                return StringHelper::ToString(displayName);
+            }
 
             return String();
         }

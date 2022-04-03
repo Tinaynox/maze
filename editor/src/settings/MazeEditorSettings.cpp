@@ -39,7 +39,8 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EditorSettings, Settings,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(EditorMode, editorMode, EditorMode::None, getEditorMode, setEditorMode));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(EditorMode, editorMode, EditorMode::None, getEditorMode, setEditorMode),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(String, assetsFullPath, String(), getAssetsFullPath, setAssetsFullPath));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(EditorSettings);

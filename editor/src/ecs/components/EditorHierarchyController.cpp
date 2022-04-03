@@ -94,7 +94,7 @@ namespace Maze
         m_world->eventEntityChanged.unsubscribe(this);
 
         if (EditorManager::GetInstancePtr())
-            EditorManager::GetInstancePtr()->eventModeChanged.unsubscribe(this);
+            EditorManager::GetInstancePtr()->eventSceneModeChanged.unsubscribe(this);
 
         if (EditorPrefabManager::GetInstancePtr())
             EditorPrefabManager::GetInstancePtr()->eventPrefabEntityChanged.unsubscribe(this);
@@ -119,7 +119,7 @@ namespace Maze
 
         m_canvas = _canvas;
 
-        EditorManager::GetInstancePtr()->eventModeChanged.subscribe(this, &EditorHierarchyController::notifyEditorSceneModeChanged);
+        EditorManager::GetInstancePtr()->eventSceneModeChanged.subscribe(this, &EditorHierarchyController::notifyEditorSceneModeChanged);
         EditorPrefabManager::GetInstancePtr()->eventPrefabEntityChanged.subscribe(this, &EditorHierarchyController::notifyPrefabEntityChanged);
 
         return true;
@@ -220,7 +220,7 @@ namespace Maze
             hierarchyLineData.second.line->getEntityRaw()->setActiveSelf(false);
 
         
-        switch (EditorManager::GetInstancePtr()->getMode())
+        switch (EditorManager::GetInstancePtr()->getSceneMode())
         {
             case EditorSceneMode::Scene:
                 updateHierarchyScenes();

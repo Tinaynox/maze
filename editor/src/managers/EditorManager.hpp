@@ -58,6 +58,8 @@ namespace Maze
     MAZE_USING_SHARED_PTR(EditorManager);
     MAZE_USING_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(SceneWorkspace);
+    MAZE_USING_SHARED_PTR(EditorAssetsModeManager);
+    MAZE_USING_SHARED_PTR(EditorProjectModeManager);
     
 
     //////////////////////////////////////////
@@ -88,10 +90,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setMode(EditorSceneMode _mode);
+        void setSceneMode(EditorSceneMode _mode);
 
         //////////////////////////////////////////
-        inline EditorSceneMode getMode() const { return m_mode; }
+        inline EditorSceneMode getSceneMode() const { return m_sceneMode; }
 
 
         //////////////////////////////////////////
@@ -118,7 +120,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        MultiDelegate<EditorSceneMode> eventModeChanged;
+        MultiDelegate<EditorSceneMode> eventSceneModeChanged;
 
 
     protected:
@@ -134,11 +136,13 @@ namespace Maze
     protected:
         static EditorManager* s_instance;
 
-        EditorSceneMode m_mode = EditorSceneMode::None;
+        EditorSceneMode m_sceneMode = EditorSceneMode::None;
 
         SceneWorkspacePtr m_sceneWorkspace;
 
         EditorPrefabManagerPtr m_editorPrefabManager;
+        EditorAssetsModeManagerPtr m_editorAssetsModeManager;
+        EditorProjectModeManagerPtr m_editorProjectModeManager;
 
         String m_currentEditFileFullPath;
     };

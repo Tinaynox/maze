@@ -63,6 +63,11 @@ namespace Maze
             Window const* _modalToWindow = nullptr);
 
         //////////////////////////////////////////
+        MAZE_CORE_API extern String OpenFolder(
+            CString _dialogTitle = "Select",
+            Window const* _modalToWindow = nullptr);
+
+        //////////////////////////////////////////
         MAZE_CORE_API extern void ShowMessageBox(
             SystemMessageBoxType _type,
             CString _title,

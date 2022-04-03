@@ -51,6 +51,11 @@ namespace Maze
             CString _filter,
             Window const* _modalToWindow);
 
+        //////////////////////////////////////////
+        MAZE_CORE_API String OpenFolder(
+            CString _dialogTitle,
+            Window const* _modalToWindow);
+
 
     } // namespace SystemHelper
     //////////////////////////////////////////

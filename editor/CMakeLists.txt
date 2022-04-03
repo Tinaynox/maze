@@ -30,7 +30,17 @@ project(maze-editor)
 
 ##########################################
 set(EXAMPLE_NAME "${PROJECT_NAME}")
-set(EXAMPLE_MAZE_LIBS maze-core maze-graphics maze-ui maze-gamepad maze-engine maze-sound maze-debugger)
+set(EXAMPLE_MAZE_LIBS
+    maze-core
+    maze-graphics
+    maze-ui
+    maze-gamepad
+    maze-engine
+    maze-sound
+    maze-debugger
+    maze-plugin-profiler-view
+    maze-plugin-console
+    maze-plugin-loader-png)
 
 
 ##########################################
@@ -58,6 +68,12 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../engine" "${CMAKE_CURRENT_BINARY
 include("${CMAKE_CURRENT_SOURCE_DIR}/../engine/cmake/Config.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/../engine/cmake/Macros.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/../engine/cmake/Utils.cmake")
+
+
+##########################################
+add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-profiler-view" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-profiler-view")
+add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-console" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-console")
+add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-loader-png" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-loader-png")
 
 
 ##########################################

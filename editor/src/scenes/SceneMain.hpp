@@ -54,6 +54,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(SceneMain);
     MAZE_USING_SHARED_PTR(Camera3D);
     MAZE_USING_SHARED_PTR(Canvas);
+    MAZE_USING_SHARED_PTR(AssetsController);
     
 
     //////////////////////////////////////////
@@ -110,6 +111,8 @@ namespace Maze
         CanvasPtr m_inspectorCanvas;
         CanvasPtr m_assetsCanvas;
         CanvasPtr m_previewCanvas;
+
+        AssetsControllerPtr m_assetsController;
 
         F32 m_yawAngle;
         F32 m_pitchAngle;

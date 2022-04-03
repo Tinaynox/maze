@@ -155,8 +155,6 @@ namespace Maze
         if (!ECSRenderScene::init(Editor::GetInstancePtr()->getMainRenderWindow()))
             return false;
 
-        Editor::GetInstancePtr()->loadCoreEditorAssets();
-
         Editor::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &SceneMain::notifyMainRenderWindowResized);
 
         InputManager* inputManager = InputManager::GetInstancePtr();
@@ -571,8 +569,8 @@ namespace Maze
             m_assetsCanvas->setSortOrder(-1000000);
 
             EntityPtr assetsControllerEntity = createEntity();
-            AssetsControllerPtr assetsController = AssetsController::Create(m_assetsCanvas.get());
-            assetsControllerEntity->addComponent(assetsController);
+            m_assetsController = AssetsController::Create(m_assetsCanvas.get());
+            assetsControllerEntity->addComponent(m_assetsController);
         }
 
         

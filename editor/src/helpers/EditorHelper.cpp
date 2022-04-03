@@ -113,7 +113,7 @@ namespace Maze
         //////////////////////////////////////////
         EntityPtr CreateEntity(CString _entityName)
         {
-            switch (EditorManager::GetInstancePtr()->getMode())
+            switch (EditorManager::GetInstancePtr()->getSceneMode())
             {
                 case EditorSceneMode::Scene:
                     return DebuggerHelper::CreateEntity(_entityName);
@@ -131,7 +131,7 @@ namespace Maze
         //////////////////////////////////////////
         EntityPtr CreateEntity2D(CString _entityName)
         {
-            switch (EditorManager::GetInstancePtr()->getMode())
+            switch (EditorManager::GetInstancePtr()->getSceneMode())
             {
                 case EditorSceneMode::Scene:
                 {
@@ -160,7 +160,7 @@ namespace Maze
         //////////////////////////////////////////
         EntityPtr CreateEntity3D(CString _entityName)
         {
-            switch (EditorManager::GetInstancePtr()->getMode())
+            switch (EditorManager::GetInstancePtr()->getSceneMode())
             {
                 case EditorSceneMode::Scene:
                 {
@@ -252,7 +252,7 @@ namespace Maze
         //////////////////////////////////////////
         void Save()
         {
-            switch (EditorManager::GetInstancePtr()->getMode())
+            switch (EditorManager::GetInstancePtr()->getSceneMode())
             {
                 case EditorSceneMode::Scene:
                 {
@@ -290,7 +290,7 @@ namespace Maze
         //////////////////////////////////////////
         void SaveAs()
         {
-            switch (EditorManager::GetInstancePtr()->getMode())
+            switch (EditorManager::GetInstancePtr()->getSceneMode())
             {
                 case EditorSceneMode::Scene:
                 {
@@ -333,7 +333,7 @@ namespace Maze
             {
                 EntityPtr prefab = EntitySerializationManager::GetInstancePtr()->loadPrefabFromXMLFile(fullPath);
                 EditorPrefabManager::GetInstancePtr()->setPrefabEntity(prefab);
-                EditorManager::GetInstancePtr()->setMode(EditorSceneMode::Prefab);
+                EditorManager::GetInstancePtr()->setSceneMode(EditorSceneMode::Prefab);
 
                 EditorManager::GetInstancePtr()->setCurrentEditFileFullPath(fullPath);
             }
@@ -346,7 +346,7 @@ namespace Maze
 
             EditorManager::GetInstancePtr()->clearWorkspace();
 
-            EditorManager::GetInstancePtr()->setMode(EditorSceneMode::Scene);
+            EditorManager::GetInstancePtr()->setSceneMode(EditorSceneMode::Scene);
         }
     };
 
