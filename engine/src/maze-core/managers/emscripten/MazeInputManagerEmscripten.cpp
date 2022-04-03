@@ -149,6 +149,20 @@ namespace Maze
                 event.window = windowEmscripten.get();
                 generateInputEvent(event);
                 
+                for (S32 i = 0; i < 3; ++i)
+                {
+                    if (getCursorButtonState(0, i))
+                    {
+                        InputEventMouseData event2;
+                        event2.type = InputEventMouseType::Drag;
+                        event2.buttonId = i;
+                        event2.x = _event->clientX;
+                        event2.y = windowEmscripten->getClientSize().y - _event->clientY;
+                        event2.window = windowEmscripten.get();
+                        generateInputEvent(event2);
+                    }
+                }
+                
                 break;
             }
             case EMSCRIPTEN_EVENT_WHEEL:
