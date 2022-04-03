@@ -57,7 +57,6 @@
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
-#include "maze-graphics/loaders/texture/MazeLoaderPNG.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/MazeGPUTextureBuffer.hpp"
@@ -116,10 +115,10 @@ namespace Maze
         {
             switch (EditorManager::GetInstancePtr()->getMode())
             {
-                case EditorMode::Scene:
+                case EditorSceneMode::Scene:
                     return DebuggerHelper::CreateEntity(_entityName);
 
-                case EditorMode::Prefab:
+                case EditorSceneMode::Prefab:
                     MAZE_ERROR_RETURN_VALUE(EntityPtr(), "Forbidden operation!");
 
                 default:
@@ -134,11 +133,11 @@ namespace Maze
         {
             switch (EditorManager::GetInstancePtr()->getMode())
             {
-                case EditorMode::Scene:
+                case EditorSceneMode::Scene:
                 {
                     return DebuggerHelper::CreateEntity2D(_entityName);
                 }
-                case EditorMode::Prefab:
+                case EditorSceneMode::Prefab:
                 {
 
                     EntityPtr const& prefabEntity = EditorPrefabManager::GetInstancePtr()->getPrefabEntity();
@@ -163,11 +162,11 @@ namespace Maze
         {
             switch (EditorManager::GetInstancePtr()->getMode())
             {
-                case EditorMode::Scene:
+                case EditorSceneMode::Scene:
                 {
                     return DebuggerHelper::CreateEntity3D(_entityName);
                 }
-                case EditorMode::Prefab:
+                case EditorSceneMode::Prefab:
                 {
 
                     EntityPtr const& prefabEntity = EditorPrefabManager::GetInstancePtr()->getPrefabEntity();
@@ -196,7 +195,7 @@ namespace Maze
 
             MeshRendererPtr meshRenderer = gameObject->ensureComponent<MeshRenderer>();
             meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultCubeMesh());
-            meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getSpecularMaterial());
+            meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::Specular));
 
             return gameObject;
         }
@@ -210,7 +209,7 @@ namespace Maze
 
             MeshRendererPtr meshRenderer = gameObject->ensureComponent<MeshRenderer>();
             meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultSphereMesh());
-            meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getSpecularMaterial());
+            meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::Specular));
 
             return gameObject;
         }
@@ -255,12 +254,12 @@ namespace Maze
         {
             switch (EditorManager::GetInstancePtr()->getMode())
             {
-                case EditorMode::Scene:
+                case EditorSceneMode::Scene:
                 {
                     MAZE_NOT_IMPLEMENTED;
                     break;
                 }
-                case EditorMode::Prefab:
+                case EditorSceneMode::Prefab:
                 {
                     String fullPath;
                     
@@ -293,12 +292,12 @@ namespace Maze
         {
             switch (EditorManager::GetInstancePtr()->getMode())
             {
-                case EditorMode::Scene:
+                case EditorSceneMode::Scene:
                 {
                     MAZE_NOT_IMPLEMENTED;
                     break;
                 }
-                case EditorMode::Prefab:
+                case EditorSceneMode::Prefab:
                 {
                     String fullPath = SystemDialogHelper::SaveFile(
                         "Maze Prefab (*.mzprefab)\0*.mzprefab\0",
@@ -334,7 +333,7 @@ namespace Maze
             {
                 EntityPtr prefab = EntitySerializationManager::GetInstancePtr()->loadPrefabFromXMLFile(fullPath);
                 EditorPrefabManager::GetInstancePtr()->setPrefabEntity(prefab);
-                EditorManager::GetInstancePtr()->setMode(EditorMode::Prefab);
+                EditorManager::GetInstancePtr()->setMode(EditorSceneMode::Prefab);
 
                 EditorManager::GetInstancePtr()->setCurrentEditFileFullPath(fullPath);
             }
@@ -347,7 +346,7 @@ namespace Maze
 
             EditorManager::GetInstancePtr()->clearWorkspace();
 
-            EditorManager::GetInstancePtr()->setMode(EditorMode::Scene);
+            EditorManager::GetInstancePtr()->setMode(EditorSceneMode::Scene);
         }
     };
 

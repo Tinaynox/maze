@@ -61,7 +61,6 @@ namespace Maze
     //////////////////////////////////////////
     class Editor 
         : public Engine
-        , public Singleton<Editor>
     {
     public:
 
@@ -86,6 +85,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline EditorManagerPtr const& getEditorManager() const { return m_editorManager; }
+
+        //////////////////////////////////////////
+        void loadCoreEditorAssets();
 
     public:
 
@@ -128,6 +130,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void notifyKeyboard(InputEventKeyboardData const& _data);
+
+        //////////////////////////////////////////
+        void notifyCoreEditorResourcesLoaded();
 
     protected:
         static Editor* s_instance;

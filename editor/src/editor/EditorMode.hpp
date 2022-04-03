@@ -57,9 +57,12 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_DECLARE_ENUMCLASS_2(EditorMode,
-        Scene,
-        Prefab);
+        Project,
+        Assets);
 
+
+    //////////////////////////////////////////
+    // MAZE_IMPLEMENT_ENUMCLASS_SERIALIZATION(EditorMode);
 
 } // namespace Maze
 //////////////////////////////////////////

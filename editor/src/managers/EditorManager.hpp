@@ -47,7 +47,7 @@
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "scenes/SceneWorkspace.hpp"
-#include "editor/EditorMode.hpp"
+#include "editor/EditorSceneMode.hpp"
 #include "managers/EditorPrefabManager.hpp"
 
 
@@ -88,10 +88,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setMode(EditorMode _mode);
+        void setMode(EditorSceneMode _mode);
 
         //////////////////////////////////////////
-        inline EditorMode getMode() const { return m_mode; }
+        inline EditorSceneMode getMode() const { return m_mode; }
 
 
         //////////////////////////////////////////
@@ -118,7 +118,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        MultiDelegate<EditorMode> eventModeChanged;
+        MultiDelegate<EditorSceneMode> eventModeChanged;
 
 
     protected:
@@ -134,7 +134,7 @@ namespace Maze
     protected:
         static EditorManager* s_instance;
 
-        EditorMode m_mode = EditorMode::None;
+        EditorSceneMode m_mode = EditorSceneMode::None;
 
         SceneWorkspacePtr m_sceneWorkspace;
 

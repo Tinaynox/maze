@@ -35,6 +35,7 @@
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 
 
 //////////////////////////////////////////
@@ -73,6 +74,8 @@ namespace Maze
             MetaClass* metaClass = TSettings::GetMetaClass();
 
             m_settings[metaClass] = SharedPtr<TSettings>(new TSettings());
+
+            indentifyUnregisteredSetting(m_settings[metaClass].get());
         }
 
         //////////////////////////////////////////
@@ -128,12 +131,17 @@ namespace Maze
         //////////////////////////////////////////
         Pair<MetaClass* const, SettingsPtr>* getSettings(String const& _settingsClassName);
 
+
+        //////////////////////////////////////////
+        void indentifyUnregisteredSetting(Settings* _settings);
+
     private:
         static SettingsManager* s_instance;
 
         String m_settingsFileFullPath;
 
         Map<MetaClass*, SettingsPtr> m_settings;
+        StringKeyMap<Vector<Pair<String, String>>> m_unregisteredSettings;
     };
 
 

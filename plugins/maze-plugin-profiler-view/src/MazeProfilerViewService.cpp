@@ -119,7 +119,10 @@ namespace Maze
         m_renderSystem = _renderSystem;
 
         if (m_renderSystem)
+        {
             m_renderSystem->eventRenderWindowsChanged.subscribe(this, &ProfilerViewService::notifyRenderSystemRenderWindowsChanged);
+            notifyRenderSystemRenderWindowsChanged();
+        }
     }
 
     //////////////////////////////////////////

@@ -126,30 +126,8 @@ namespace Maze
     //////////////////////////////////////////
     bool LoadPlugins()
     {
-        MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView, "maze-plugin-profiler-view");
         MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG, "maze-plugin-loader-png");
-        MAZE_LOAD_PLATFORM_PLUGIN(Console, "maze-plugin-console");
-
-#if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
-        if (SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>())
-            SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>()->setActive(true);
-#endif
-
-        ConsoleService::GetInstancePtr()->registerCommand(
-            "profile",
-            [](String* _argv, S32 _argc)
-            {
-                if (_argc > 1)
-                    return false;
-
-                if (_argc == 0)
-                    SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>()->switchActive();
-                else
-                    SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>()->setActive(StringHelper::StringToBool(_argv[0]));
-
-                return true;
-            }, 1);
-
+        
         return true;
     }
 
@@ -331,13 +309,40 @@ namespace Maze
             }
             case 11:
             {
+                MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView, "maze-plugin-profiler-view");
+                MAZE_LOAD_PLATFORM_PLUGIN(Console, "maze-plugin-console");
+#if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
+                if (SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>())
+                    SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>()->setActive(true);
+#endif
+
+                ConsoleService::GetInstancePtr()->registerCommand(
+                    "profile",
+                    [](String* _argv, S32 _argc)
+                {
+                    if (_argc > 1)
+                        return false;
+
+                    if (_argc == 0)
+                        SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>()->switchActive();
+                    else
+                        SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>()->setActive(StringHelper::StringToBool(_argv[0]));
+
+                    return true;
+                }, 1);
+
+                setCurrentProgress(0.95f);
+                break;
+            }
+            case 12:
+            {
                 SceneManager::GetInstancePtr()->loadScene<SceneExample>();
 
                 setCurrentProgress(1.0f);
                 delayToNextStep = 2;
                 break;
             }
-            case 12:
+            case 13:
             {
                 SceneManager::GetInstancePtr()->unloadScene<SceneSplash>();
                 return;

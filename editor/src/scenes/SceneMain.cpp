@@ -155,6 +155,8 @@ namespace Maze
         if (!ECSRenderScene::init(Editor::GetInstancePtr()->getMainRenderWindow()))
             return false;
 
+        Editor::GetInstancePtr()->loadCoreEditorAssets();
+
         Editor::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &SceneMain::notifyMainRenderWindowResized);
 
         InputManager* inputManager = InputManager::GetInstancePtr();
@@ -342,7 +344,7 @@ namespace Maze
         axesMeshRendererEntity->createComponent<Transform3D>();
         MeshRendererPtr axesMeshRenderer = axesMeshRendererEntity->createComponent<MeshRenderer>();
         axesMeshRenderer->setRenderMesh(RenderMesh::Create(MeshHelper::CreateCoordinateAxes()));
-        axesMeshRenderer->setMaterial(GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getDebugAxisMaterial());
+        axesMeshRenderer->setMaterial(GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::DebugAxis));
         axesMeshRenderer->getRenderMask()->setMask(DefaultRenderMask::Gizmos);
     }
 

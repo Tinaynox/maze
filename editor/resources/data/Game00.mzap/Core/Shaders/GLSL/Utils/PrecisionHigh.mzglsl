@@ -1,7 +1,0 @@
-//////////////////////////////////////////
-#if (defined(GL_ES))
-    precision highp float;
-    #if (MAZE_GLSL_VERSION > 100)
-        precision highp usampler2D;
-    #endif
-#endif

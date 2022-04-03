@@ -119,7 +119,7 @@ namespace Maze
 
         m_canvas = _canvas;
 
-        EditorManager::GetInstancePtr()->eventModeChanged.subscribe(this, &EditorHierarchyController::notifyEditorModeChanged);
+        EditorManager::GetInstancePtr()->eventModeChanged.subscribe(this, &EditorHierarchyController::notifyEditorSceneModeChanged);
         EditorPrefabManager::GetInstancePtr()->eventPrefabEntityChanged.subscribe(this, &EditorHierarchyController::notifyPrefabEntityChanged);
 
         return true;
@@ -222,10 +222,10 @@ namespace Maze
         
         switch (EditorManager::GetInstancePtr()->getMode())
         {
-            case EditorMode::Scene:
+            case EditorSceneMode::Scene:
                 updateHierarchyScenes();
                 break;
-            case EditorMode::Prefab:
+            case EditorSceneMode::Prefab:
                 updateHierarchyPrefab();
                 break;
         }
@@ -623,7 +623,7 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    void EditorHierarchyController::notifyEditorModeChanged(EditorMode _mode)
+    void EditorHierarchyController::notifyEditorSceneModeChanged(EditorSceneMode _mode)
     {
 
     }

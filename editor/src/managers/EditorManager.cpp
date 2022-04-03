@@ -58,7 +58,6 @@
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
-#include "maze-graphics/loaders/texture/MazeLoaderPNG.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/MazeGPUTextureBuffer.hpp"
@@ -121,13 +120,13 @@ namespace Maze
 
         
         
-        setMode(EditorMode::Scene);
+        setMode(EditorSceneMode::Scene);
 
         return true;
     }
 
     //////////////////////////////////////////
-    void EditorManager::setMode(EditorMode _mode)
+    void EditorManager::setMode(EditorSceneMode _mode)
     {
         if (m_mode == _mode)
             return;
@@ -146,7 +145,7 @@ namespace Maze
     //////////////////////////////////////////
     void EditorManager::openPrefab(EntityPtr const& _value)
     {
-        setMode(EditorMode::Prefab);
+        setMode(EditorSceneMode::Prefab);
         m_sceneWorkspace->destroyAllEntitiesExcept(_value);
         m_editorPrefabManager->setPrefabEntity(_value);
     }

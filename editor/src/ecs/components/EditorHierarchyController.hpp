@@ -35,7 +35,7 @@
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
-#include "editor/EditorMode.hpp"
+#include "editor/EditorSceneMode.hpp"
 
 
 //////////////////////////////////////////
@@ -191,7 +191,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void notifyEditorModeChanged(EditorMode _mode);
+        void notifyEditorSceneModeChanged(EditorSceneMode _mode);
 
         //////////////////////////////////////////
         void notifyPrefabEntityChanged(EntityPtr const& _entity);

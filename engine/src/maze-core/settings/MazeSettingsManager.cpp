@@ -128,37 +128,40 @@ namespace Maze
                 continue;
             }
 
-            auto* settings = getSettings(settingsMetaClassElement->Name());
+            CString const settingsName = settingsMetaClassElement->Name();
+            auto* settings = getSettings(settingsName);
             
-            if (settings)
+            tinyxml2::XMLNode* settingsElementNode = settingsNode->FirstChild();
+            while (settingsElementNode)
             {
-                MetaClass* const settingsMetaClass = settings->first;
-                MetaInstance settingsMetaInstance = settings->second->getMetaInstance();
+                tinyxml2::XMLElement* settingsElement = settingsElementNode->ToElement();
 
-                tinyxml2::XMLNode* settingsElementNode = settingsNode->FirstChild();
-                while (settingsElementNode)
+                if (!settingsElement)
                 {
-                    tinyxml2::XMLElement* settingsElement = settingsElementNode->ToElement();
+                    settingsElementNode = settingsElementNode->NextSibling();
+                    continue;
+                }
 
-                    if (!settingsElement)
-                    {
-                        settingsElementNode = settingsElementNode->NextSibling();
-                        continue;
-                    }
-
-                    String key = settingsElement->Attribute("key");
-                    String value = settingsElement->Attribute("value");
+                String key = settingsElement->Attribute("key");
+                String value = settingsElement->Attribute("value");
             
+                if (settings)
+                {
+                    MetaClass* const settingsMetaClass = settings->first;
+                    MetaInstance settingsMetaInstance = settings->second->getMetaInstance();
                     MetaProperty* metaProperty = settingsMetaClass->getProperty(key.c_str());
                     if (metaProperty)
-                    {
                         metaProperty->setString(settingsMetaInstance, value);
-                    }
-
-                    settingsElementNode = settingsElementNode->NextSibling();
                 }
-            }
+                else
+                {
+                    m_unregisteredSettings[settingsName].emplace_back(
+                        Pair<String, String>(key, value));
+                }
 
+                settingsElementNode = settingsElementNode->NextSibling();
+            }
+  
             settingsNode = settingsNode->NextSibling();
         }
 
@@ -207,6 +210,19 @@ namespace Maze
             root->InsertEndChild(settingsMetaClassElement);
         }
 
+        for (auto const& unregisteredSettings : m_unregisteredSettings)
+        {
+            tinyxml2::XMLElement* settingsMetaClassElement = doc.NewElement(unregisteredSettings.first.c_str());
+            
+            for (auto const& property : unregisteredSettings.second)
+            {
+                tinyxml2::XMLElement* settingsElement = doc.NewElement("Property");
+                settingsElement->SetAttribute("key", property.first.c_str());
+                settingsElement->SetAttribute("value", property.second.c_str());
+                settingsMetaClassElement->InsertEndChild(settingsElement);
+            }
+        }
+
         tinyxml2::XMLError loadError = doc.SaveFile(m_settingsFileFullPath.c_str());
         if (tinyxml2::XML_SUCCESS != loadError)
         {
@@ -217,6 +233,26 @@ namespace Maze
         Debug::Log("Settings file '%s' saved.", m_settingsFileFullPath.c_str());
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    void SettingsManager::indentifyUnregisteredSetting(Settings* _settings)
+    {
+        CString settingsName = _settings->getClassName();
+        auto it = m_unregisteredSettings.find(settingsName);
+        if (it == m_unregisteredSettings.end())
+            return;
+
+        for (auto& property : it->second)
+        {
+            MetaClass* const settingsMetaClass = _settings->getMetaClass();
+            MetaInstance settingsMetaInstance = _settings->getMetaInstance();
+            MetaProperty* metaProperty = settingsMetaClass->getProperty(property.first.c_str());
+            if (metaProperty)
+                metaProperty->setString(settingsMetaInstance, property.second);
+        }
+
+        m_unregisteredSettings.erase(it);
     }
 
 } // namespace Maze
