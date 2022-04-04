@@ -89,6 +89,7 @@
 #include "settings/MazeEditorSettings.hpp"
 #include "layout/EditorLayout.hpp"
 #include "scenes/SceneMain.hpp"
+#include "scenes/SceneSelectMode.hpp"
 #include "scenes/SceneDebug.hpp"
 
 
@@ -295,11 +296,10 @@ namespace Maze
             }
             case 11:
             {
-                SceneManager::GetInstancePtr()->loadScene<SceneMain>();
                 SceneManager::GetInstancePtr()->loadScene<SceneDebug>();
 
                 setCurrentProgress(1.0f);
-                delayToNextStep = 10;
+                delayToNextStep = 2;
                 break;
             }
             case 12:
@@ -314,11 +314,13 @@ namespace Maze
                 if (editorMode == EditorMode::None ||
                     (editorMode == EditorMode::Assets && !isAssetsFullPathValid))
                 {
-                    createSelectModeMenu();
+                    SceneManager::GetInstancePtr()->loadScene<SceneSelectMode>();
+                    SceneManager::GetInstancePtr()->unloadScene<SceneSplash>();
                     return;
                 }
                 else
                 {
+                    SceneManager::GetInstancePtr()->loadScene<SceneMain>();
                     SceneManager::GetInstancePtr()->unloadScene<SceneSplash>();
                 }
                 return;
@@ -343,82 +345,6 @@ namespace Maze
     {
         if (m_progressBarFill)
             m_progressBarFill->getTransform()->setWidth(m_progressBarFill->getTransform()->getParent()->getWidth() * _progress);
-    }
-
-    //////////////////////////////////////////
-    void SceneSplash::createSelectModeMenu()
-    {
-        MaterialPtr const& material = MaterialManager::GetCurrentInstance()->ensureBuiltinMaterial(BuiltinMaterialType::Color);
-        SpriteRenderer2DPtr frame = SpriteHelper::CreateSprite(
-            ColorU32::c_lightGray,
-            Vec2DF(200.0f, 100.0f),
-            Vec2DF(0.0f, 0.0f),
-            material,
-            m_canvas->getTransform(),
-            this);
-
-        VerticalLayout2DPtr layout = UIHelper::CreateVerticalLayout(
-            HorizontalAlignment2D::Center,
-            VerticalAlignment2D::Middle,
-            frame->getTransform()->getSize(),
-            Vec2DF::c_zero,
-            frame->getTransform(),
-            this);
-        layout->setSpacing(5.0f);
-
-        SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
-            "EDITOR MODE",
-            8,
-            HorizontalAlignment2D::Center,
-            VerticalAlignment2D::Middle,
-            Vec2DF(frame->getTransform()->getWidth(), 18.0f),
-            Vec2DF::c_zero,
-            layout->getTransform(),
-            this);
-        label->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefaultOutlined());
-
-        Vec2DF const c_buttonSize = Vec2DF(100.0f, 18.0f);
-        {
-            ClickButton2DPtr button = UIHelper::CreateDefaultClickButton(
-                "PROJECT",
-                c_buttonSize,
-                Vec2DF::c_zero,
-                layout->getTransform(),
-                this);
-            
-        }
-        {
-            ClickButton2DPtr button = UIHelper::CreateDefaultClickButton(
-                "ASSETS",
-                c_buttonSize,
-                Vec2DF::c_zero,
-                layout->getTransform(),
-                this);
-            button->eventClick.subscribe(
-                [](Button2D* _button, CursorInputEvent const& _event)
-                {
-                    EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
-                    editorSettings->setEditorMode(EditorMode::Assets);
-                    
-                    RenderWindowPtr const& renderWindow = Editor::GetInstancePtr()->getMainRenderWindow();
-                    String path;
-                    do
-                    {
-                        path = SystemDialogHelper::OpenFolder(
-                            "Select Assets Folder",
-                            renderWindow->getWindowRaw());
-
-                        if (path.empty())
-                            return;
-                    }
-                    while (!FileHelper::IsDirectory(path));
-
-                    editorSettings->setAssetsFullPath(path);
-
-                    SettingsManager::GetInstancePtr()->saveSettings();
-                    SceneManager::GetInstancePtr()->unloadScene<SceneSplash>();
-                });
-        }
     }
 
 } // namespace Maze

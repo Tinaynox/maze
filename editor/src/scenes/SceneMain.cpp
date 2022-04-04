@@ -186,7 +186,6 @@ namespace Maze
 
         AABB2D aabb = AABB2D::FromRect2D(viewportRect);
 
-#if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
         if (m_camera3D && aabb.contains(InputManager::GetInstancePtr()->getCursorPosition(0)))
         {
             Vec3DF cameraForwardDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3DF::c_unitZ;
@@ -199,37 +198,36 @@ namespace Maze
                 speed *= 3.0f;
             }
 
-            if (GetAsyncKeyState(87) & 0x8000)
+            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::W))
             {
                 m_camera3DTargetPosition += cameraForwardDirection * _dt * speed;
             }
             else
-            if (GetAsyncKeyState(83) & 0x8000)
+            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::S))
             {
                 m_camera3DTargetPosition += -cameraForwardDirection * _dt * speed;
             }
 
-            if (GetAsyncKeyState(65) & 0x8000)
+            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::A))
             {
                 m_camera3DTargetPosition += -cameraRightDirection * _dt * speed;
             }
             else
-            if (GetAsyncKeyState(68) & 0x8000)
+            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::D))
             {
                 m_camera3DTargetPosition += cameraRightDirection * _dt * speed;
             }
             else
-            if (GetAsyncKeyState('Q') & 0x8000)
+            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::Q))
             {
                 m_pitchAngle -= _dt * Math::c_pi;
             }
             else
-            if (GetAsyncKeyState('E') & 0x8000)
+            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::E))
             {
                 m_pitchAngle += _dt * Math::c_pi;
             }
         }
-#endif
 
 
         if (m_camera3D)

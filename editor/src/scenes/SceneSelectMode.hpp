@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_SceneSplash_hpp_))
-#define _SceneSplash_hpp_
+#if (!defined(_SceneSelectMode_hpp_))
+#define _SceneSelectMode_hpp_
 
 
 //////////////////////////////////////////
@@ -51,30 +51,30 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(SceneSplash);
+    MAZE_USING_SHARED_PTR(SceneSelectMode);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
 
 
     //////////////////////////////////////////
-    // Class SceneSplash
+    // Class SceneSelectMode
     //
     //////////////////////////////////////////
-    class SceneSplash
+    class SceneSelectMode
         : public ECSRenderScene
         , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneSplash, ECSRenderScene);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneSelectMode, ECSRenderScene);
 
     public:
 
         //////////////////////////////////////////
-        static SceneSplashPtr Create();
+        static SceneSelectModePtr Create();
     
         //////////////////////////////////////////
-        virtual ~SceneSplash();
+        virtual ~SceneSelectMode();
 
         //////////////////////////////////////////
         virtual void update(F32 _dt) MAZE_OVERRIDE;
@@ -83,29 +83,13 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        SceneSplash();
+        SceneSelectMode();
 
         //////////////////////////////////////////
         virtual bool init() MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        void notifyMainRenderWindowResized(RenderTarget* _renderTarget);
-
-        //////////////////////////////////////////
-        void notifyLoadingStep();
-
-        //////////////////////////////////////////
-        void nextLoadingStep(S32 _delayFrames);
-
-        //////////////////////////////////////////
-        void setCurrentProgress(F32 _progress);
-       
-
     protected:
-        S32 m_loadingStep = 0;
         CanvasPtr m_canvas;
-
-        SpriteRenderer2DPtr m_progressBarFill;
     };
 
 
@@ -113,5 +97,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _SceneSplash_hpp_
+#endif // _SceneSelectMode_hpp_
 //////////////////////////////////////////
