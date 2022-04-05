@@ -33,6 +33,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeEntitySerializationManager.hpp"
+#include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/helpers/MazeSystemDialogHelper.hpp"
@@ -86,6 +87,9 @@
 #include "managers/EditorManager.hpp"
 #include "managers/EditorPrefabManager.hpp"
 #include "Editor.hpp"
+#include "settings/MazeEditorSettings.hpp"
+#include "scenes/SceneMain.hpp"
+#include "scenes/SceneSelectMode.hpp"
 
 
 //////////////////////////////////////////
@@ -250,8 +254,17 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        bool SaveValidate()
+        {
+            return EditorManager::GetInstancePtr()->getMode() == EditorMode::Project;
+        }
+
+        //////////////////////////////////////////
         void Save()
         {
+            if (!SaveValidate())
+                return;
+
             switch (EditorManager::GetInstancePtr()->getSceneMode())
             {
                 case EditorSceneMode::Scene:
@@ -288,8 +301,17 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        bool SaveAsValidate()
+        {
+            return EditorManager::GetInstancePtr()->getMode() == EditorMode::Project;
+        }
+
+        //////////////////////////////////////////
         void SaveAs()
         {
+            if (!SaveAsValidate())
+                return;
+
             switch (EditorManager::GetInstancePtr()->getSceneMode())
             {
                 case EditorSceneMode::Scene:
@@ -321,8 +343,17 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        bool LoadValidate()
+        {
+            return EditorManager::GetInstancePtr()->getMode() == EditorMode::Project;
+        }
+
+        //////////////////////////////////////////
         void Load()
         {
+            if (!LoadValidate())
+                return;
+
             Clear();
 
             String fullPath = SystemDialogHelper::OpenFile(
@@ -340,13 +371,64 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        bool ClearValidate()
+        {
+            return true;
+        }
+
+        //////////////////////////////////////////
         void Clear()
         {
+            if (!ClearValidate())
+                return;
+
             EditorManager::GetInstancePtr()->setCurrentEditFileFullPath(String());
 
             EditorManager::GetInstancePtr()->clearWorkspace();
 
             EditorManager::GetInstancePtr()->setSceneMode(EditorSceneMode::Scene);
+        }
+
+        //////////////////////////////////////////
+        bool CloseAssetsValidate()
+        {
+            return EditorManager::GetInstancePtr()->getMode() == EditorMode::Assets;
+        }
+
+        //////////////////////////////////////////
+        void CloseAssets()
+        {
+            if (!CloseAssetsValidate())
+                return;
+
+            EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
+            editorSettings->setEditorMode(EditorMode::None);
+            editorSettings->setAssetsFullPath(String());
+            SettingsManager::GetInstancePtr()->saveSettings();
+
+            SceneManager::GetInstancePtr()->loadScene<SceneSelectMode>();
+            SceneManager::GetInstancePtr()->unloadScene<SceneMain>();
+        }
+
+        //////////////////////////////////////////
+        bool CloseProjectValidate()
+        {
+            return EditorManager::GetInstancePtr()->getMode() == EditorMode::Project;
+        }
+
+        //////////////////////////////////////////
+        void CloseProject()
+        {
+            if (!CloseAssetsValidate())
+                return;
+
+            EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
+            editorSettings->setEditorMode(EditorMode::None);
+            editorSettings->setAssetsFullPath(String());
+            SettingsManager::GetInstancePtr()->saveSettings();
+
+            SceneManager::GetInstancePtr()->loadScene<SceneSelectMode>();
+            SceneManager::GetInstancePtr()->unloadScene<SceneMain>();
         }
     };
 

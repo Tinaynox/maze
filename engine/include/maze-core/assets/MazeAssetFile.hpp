@@ -87,6 +87,21 @@ namespace Maze
         virtual StringKeyMap<AssetFilePtr> const* getChildrenAssets() const;
 
         //////////////////////////////////////////
+        void getChildrenAssets(
+            Vector<AssetFilePtr>& _outResult,
+            ClassUID _classUID,
+            bool _recursive = true) const;
+
+        //////////////////////////////////////////
+        template <typename TAssetFile>
+        inline Vector<AssetFilePtr> getChildrenAssets(bool _recursive = true) const
+        {
+            Vector<AssetFilePtr> result;
+            getChildrenAssets(result, ClassInfo<TAssetFile>::UID(), _recursive);
+            return result;
+        }
+
+        //////////////////////////////////////////
         virtual Size readToString(String& _string) { return 0; }
         
         //////////////////////////////////////////

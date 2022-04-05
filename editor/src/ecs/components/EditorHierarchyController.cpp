@@ -244,6 +244,9 @@ namespace Maze
         for (ECSScenePtr const& scene : scenes)
         {
             ClassUID sceneUID = scene->getClassUID();
+            if (scene->getIsSystemScene())
+                continue;
+
             if (sceneUID == getEntityRaw()->getECSScene()->getClassUID())
                 continue;
 

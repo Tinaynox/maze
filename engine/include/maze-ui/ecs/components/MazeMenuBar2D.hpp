@@ -79,8 +79,16 @@ namespace Maze
         //////////////////////////////////////////
         struct OptionData
         {
+            //////////////////////////////////////////
+            struct CallbackData
+            {
+                String text;
+                MenuListTree2D::ItemCallback callback;
+                MenuListTree2D::ItemValidateCallback validate;
+            };
+
             ToggleButton2DPtr button;
-            Vector<Pair<String, MenuListTree2D::ItemCallback>> callbacks;
+            Vector<CallbackData> callbacks;
         };
 
     public:
@@ -186,7 +194,8 @@ namespace Maze
         void addOption(
             String const& _menuName,
             String const& _option,
-            MenuListTree2D::ItemCallback _callback);
+            MenuListTree2D::ItemCallback _callback,
+            MenuListTree2D::ItemValidateCallback _validate = nullptr);
 
     protected:
 

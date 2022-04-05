@@ -33,6 +33,7 @@
 #include "maze-core/managers/MazeEntitySerializationManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
+#include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeRotor3D.hpp"
@@ -81,6 +82,7 @@
 #include "maze-physics2d/ecs/components/MazeBoxCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeCircleCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
+#include "settings/MazeEditorSettings.hpp"
 #include "Editor.hpp"
 #include "managers/EditorAssetsModeManager.hpp"
 #include "managers/EditorProjectModeManager.hpp"
@@ -132,6 +134,16 @@ namespace Maze
         setSceneMode(EditorSceneMode::Scene);
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    EditorMode EditorManager::getMode() const
+    {
+        EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
+        if (!editorSettings)
+            return EditorMode::None;
+
+        return editorSettings->getEditorMode();
     }
 
     //////////////////////////////////////////

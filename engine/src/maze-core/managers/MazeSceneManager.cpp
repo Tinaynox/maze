@@ -131,20 +131,15 @@ namespace Maze
             {
                 ECSScenePtr scenePointerCopy = scene;
 
-                scene->processSceneWillBeDestroyed();
+                scenePointerCopy->processSceneWillBeDestroyed();
 
-                m_deadScenes.push_back(scene);
+                m_deadScenes.push_back(scenePointerCopy);
 
                 it = m_scenes.erase(it);
                 end = m_scenes.end();
 
-                if (scene == m_mainScene)
-                {
-                    if (!m_scenes.empty())
-                        setMainScene(m_scenes.back());
-                    else
-                        setMainScene(nullptr);
-                }
+                if (scenePointerCopy == m_mainScene)
+                    setMainScene(findNewMainScene());
 
                 if (!m_scenes.empty())
                 {
@@ -159,6 +154,36 @@ namespace Maze
             ++it;
         }
     }
+
+    //////////////////////////////////////////
+    bool SceneManager::isGoodMainScene(ECSScenePtr const& _scene)
+    {
+        if (_scene->getState() == ECSSceneState::Destroy)
+            return false;
+
+        if (_scene->getIsSystemScene())
+            return false;
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    ECSScenePtr const& SceneManager::findNewMainScene()
+    {
+        static ECSScenePtr const nullPointer;
+
+        for (ScenesList::reverse_iterator it = m_scenes.rbegin(), end = m_scenes.rend(); it != end; ++it)
+        {
+            ECSScenePtr const& scene = *it;
+            if (!isGoodMainScene(scene))
+                continue;
+
+            return scene;
+        }
+
+        return nullPointer;
+    }
+
 
 } // namespace Maze
 //////////////////////////////////////////

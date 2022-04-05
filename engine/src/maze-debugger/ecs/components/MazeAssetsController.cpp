@@ -286,7 +286,7 @@ namespace Maze
         if (!assetDirectory)
             return;
 
-        Vector<AssetFilePtr> assetDirectories;
+        Vector<AssetFilePtr> assetDirectories = assetDirectory->getChildrenAssets<AssetDirectory>();
         assetDirectories.push_back(assetDirectory);
 
         std::sort(
@@ -315,7 +315,7 @@ namespace Maze
             if (fullPathLastSlashPosition != String::npos)
             {
                 String parentFullPath = fullPath.substr(0, fullPathLastSlashPosition);
-                if (!parentFullPath.empty() && parentFullPath != assetsFullPath)
+                if (!parentFullPath.empty()/* && parentFullPath != assetsFullPath*/)
                 {
                     auto assetsTreeLinesIt = m_assetsTreeLines.find(parentFullPath);
                     if (assetsTreeLinesIt != m_assetsTreeLines.end())
@@ -324,9 +324,10 @@ namespace Maze
                         lineParent = parentLine->getChildrenTransform();
 
                         parentLine->setDropDownVisible(true);
-                        parentLine->setExpanded(true);
+                        parentLine->setExpanded(false);
                     }
                 }
+
             }
 
             line->getTransform()->setParent(lineParent);

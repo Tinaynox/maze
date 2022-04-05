@@ -78,12 +78,14 @@ namespace Maze
 
         //////////////////////////////////////////
         using ItemCallback = std::function<void(String const& _text)>;
+        using ItemValidateCallback = std::function<bool()>;
 
         //////////////////////////////////////////
         struct ItemData
         {
             String text;
             ItemCallback callback;
+            ItemValidateCallback validate;
         };
 
     public:
@@ -165,6 +167,7 @@ namespace Maze
         void addItem(
             String const& _itemData,
             ItemCallback const& _callback,
+            ItemValidateCallback const& _validate = nullptr,
             bool _rebuildItems = true);
 
         //////////////////////////////////////////

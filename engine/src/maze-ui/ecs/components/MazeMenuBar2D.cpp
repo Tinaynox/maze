@@ -227,7 +227,7 @@ namespace Maze
 
                     for (auto callback : optionsIt->second.callbacks)
                     {
-                        _menuListTree->addItem(callback.first, callback.second);
+                        _menuListTree->addItem(callback.text, callback.callback, callback.validate);
                     }
                 });
         }
@@ -242,13 +242,14 @@ namespace Maze
     void MenuBar2D::addOption(
         String const& _menuName,
         String const& _option,
-        MenuListTree2D::ItemCallback _callback)
+        MenuListTree2D::ItemCallback _callback,
+        MenuListTree2D::ItemValidateCallback _validate)
     {
         OptionData* optionData = ensureMenu(_menuName);
         if (!optionData)
             return;
 
-        optionData->callbacks.push_back(Pair<String, MenuListTree2D::ItemCallback>(_option, _callback));
+        optionData->callbacks.push_back({ _option, _callback, _validate });
     }
 
     //////////////////////////////////////////

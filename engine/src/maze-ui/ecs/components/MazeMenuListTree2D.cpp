@@ -126,9 +126,10 @@ namespace Maze
     void MenuListTree2D::addItem(
         String const& _itemData,
         ItemCallback const& _callback,
+        ItemValidateCallback const& _validate,
         bool _rebuildItems)
     {
-        m_items.push_back({ _itemData, _callback });
+        m_items.push_back({ _itemData, _callback, _validate });
 
         if (_rebuildItems)
             rebuildItems();
@@ -173,7 +174,11 @@ namespace Maze
         for (ItemData const& itemData : m_items)
         {
             String itemText = itemData.text;
-            ItemCallback callback = itemData.callback;
+            ItemCallback const& callback = itemData.callback;
+            ItemValidateCallback const& validate = itemData.validate;
+
+            if (validate && !validate())
+                continue;
 
             Vector<String> words;
             StringHelper::SplitWords(itemText, words, '/');

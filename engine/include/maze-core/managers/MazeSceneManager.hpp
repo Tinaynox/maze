@@ -117,7 +117,7 @@ namespace Maze
                 scene->setState(ECSSceneState::Created);
                 m_newScenes.push_back(scene);
 
-                if (!m_mainScene)
+                if (!m_mainScene && isGoodMainScene(scene))
                     setMainScene(scene);
 
                 return scene->cast<TScene>();
@@ -174,6 +174,12 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init();
 
+
+        //////////////////////////////////////////
+        bool isGoodMainScene(ECSScenePtr const& _scene);
+
+        //////////////////////////////////////////
+        ECSScenePtr const& findNewMainScene();
 
     private:
         static SceneManager* s_instance;

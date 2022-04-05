@@ -48,6 +48,7 @@
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "scenes/SceneWorkspace.hpp"
 #include "editor/EditorSceneMode.hpp"
+#include "editor/EditorMode.hpp"
 #include "managers/EditorPrefabManager.hpp"
 
 
@@ -87,6 +88,10 @@ namespace Maze
 
         //////////////////////////////////////////
         EditorPrefabManagerPtr const& getEditorPrefabManager() const { return m_editorPrefabManager; }
+
+
+        //////////////////////////////////////////
+        EditorMode getMode() const;
 
 
         //////////////////////////////////////////

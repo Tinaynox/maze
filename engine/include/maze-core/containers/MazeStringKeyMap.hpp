@@ -485,6 +485,19 @@ namespace Maze
             }
         }
 
+
+        //////////////////////////////////////////
+        inline bool contains(String const& _key) { return contains(MAZE_HASHED_CSTRING(_key.c_str())); }
+
+        //////////////////////////////////////////
+        inline bool contains(CString _key) { return contains(MAZE_HASHED_CSTRING(_key)); }
+
+        //////////////////////////////////////////
+        inline bool contains(HashedString const& _key) { return contains(_key.asHashedCString()); }
+
+        //////////////////////////////////////////
+        inline bool contains(HashedCString _key) { return (m_map.find(_key) != m_map.end()); }
+
     private:
         MapType m_map;
     };

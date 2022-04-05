@@ -320,7 +320,7 @@ namespace Maze
 
         StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
 
-        if (metaData.empty())
+        if (metaData.empty() || !metaData.contains("ext"))
         {
             bool loaderFound = false;
             for (auto const& textureLoaderData : m_textureLoaders)

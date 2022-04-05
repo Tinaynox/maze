@@ -220,12 +220,12 @@ namespace Maze
             else
             if (InputManager::GetInstancePtr()->getKeyState(KeyCode::Q))
             {
-                m_pitchAngle -= _dt * Math::c_pi;
+                m_yawAngle -= _dt * Math::c_pi;
             }
             else
             if (InputManager::GetInstancePtr()->getKeyState(KeyCode::E))
             {
-                m_pitchAngle += _dt * Math::c_pi;
+                m_yawAngle += _dt * Math::c_pi;
             }
         }
 
@@ -382,16 +382,28 @@ namespace Maze
             
             menuBar->addOption(
                 "File", "Save",
-                [](String const& _text) { EditorHelper::Save(); });
+                [](String const& _text) { EditorHelper::Save(); },
+                EditorHelper::SaveValidate);
             menuBar->addOption(
                 "File", "Save As...",
-                [](String const& _text) { EditorHelper::SaveAs(); });
+                [](String const& _text) { EditorHelper::SaveAs(); },
+                EditorHelper::SaveAsValidate);
             menuBar->addOption(
                 "File", "Load",
-                [](String const& _text) { EditorHelper::Load(); });
+                [](String const& _text) { EditorHelper::Load(); },
+                EditorHelper::LoadValidate);
             menuBar->addOption(
                 "File", "Clear",
-                [](String const& _text) { EditorHelper::Clear(); });
+                [](String const& _text) { EditorHelper::Clear(); },
+                EditorHelper::ClearValidate);
+            menuBar->addOption(
+                "File", "Close Assets",
+                [](String const& _text) { EditorHelper::CloseAssets(); },
+                EditorHelper::CloseAssetsValidate);
+            menuBar->addOption(
+                "File", "Close Project",
+                [](String const& _text) { EditorHelper::CloseProject(); },
+                EditorHelper::CloseProjectValidate);
             menuBar->addOption(
                 "File", "Exit",
                 [](String const& _text) { Editor::GetInstancePtr()->getMainRenderWindow()->getWindow()->close(); });
