@@ -197,13 +197,15 @@ namespace Maze
     {
         if (m_shaderUniformVariantsRoot)
         {
-            m_shaderUniformVariantsRoot->getEntityRaw()->removeFromECSWorld();
+            if (m_shaderUniformVariantsRoot->getEntityRaw())
+                m_shaderUniformVariantsRoot->getEntityRaw()->removeFromECSWorld();
             m_shaderUniformVariantsRoot.reset();
         }
 
         if (m_shaderUniformVariantsLayout)
         {
-            m_shaderUniformVariantsLayout->getEntityRaw()->removeFromECSWorld();
+            if (m_shaderUniformVariantsLayout->getEntityRaw())
+                m_shaderUniformVariantsLayout->getEntityRaw()->removeFromECSWorld();
             m_shaderUniformVariantsLayout.reset();
         }
 

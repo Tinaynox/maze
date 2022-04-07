@@ -97,6 +97,8 @@
 #include "maze-ui/texture-picker/SceneTexturePicker.hpp"
 #include "maze-ui/render-mesh-picker/SceneRenderMeshPicker.hpp"
 #include "helpers/EditorHelper.hpp"
+#include "helpers/EditorAssetsModeHelper.hpp"
+#include "helpers/EditorProjectModeHelper.hpp"
 #include "managers/EditorAssetsModeManager.hpp"
 
 
@@ -397,56 +399,65 @@ namespace Maze
                 [](String const& _text) { EditorHelper::Clear(); },
                 EditorHelper::ClearValidate);
             menuBar->addOption(
+                "File", "Open Assets",
+                [](String const& _text) { EditorHelper::OpenAssets(); },
+                EditorHelper::IsAssetsMode);
+            menuBar->addOption(
                 "File", "Close Assets",
                 [](String const& _text) { EditorHelper::CloseAssets(); },
-                EditorHelper::CloseAssetsValidate);
+                EditorHelper::IsAssetsMode);
             menuBar->addOption(
                 "File", "Close Project",
                 [](String const& _text) { EditorHelper::CloseProject(); },
-                EditorHelper::CloseProjectValidate);
+                EditorHelper::IsProjectMode);
             menuBar->addOption(
                 "File", "Exit",
                 [](String const& _text) { Editor::GetInstancePtr()->getMainRenderWindow()->getWindow()->close(); });
 
             menuBar->addOption(
                 "Edit", "Play",
-                [](String const& _text) { Debug::Log("Play"); });
+                [](String const& _text) { Debug::Log("Play"); },
+                EditorHelper::IsValidSceneMode);
             menuBar->addOption(
                 "Edit", "Pause",
-                [](String const& _text) { Debug::Log("Pause"); });
+                [](String const& _text) { Debug::Log("Pause"); },
+                EditorHelper::IsValidSceneMode);
 
             menuBar->addOption(
                 "Edit", "Create/Prefab/2D",
-                [](String const& _text) { EditorHelper::CreateNewPrefab2D(); });
+                [](String const& _text) { EditorHelper::CreateNewPrefab2D(); },
+                EditorHelper::IsValidSceneMode);
             menuBar->addOption(
                 "Edit", "Create/Prefab/3D",
-                [](String const& _text) { EditorHelper::CreateNewPrefab3D(); });
+                [](String const& _text) { EditorHelper::CreateNewPrefab3D(); },
+                EditorHelper::IsValidSceneMode);
 
             menuBar->addOption(
                 "Entity", "Create/2D/Empty",
-                [](String const& _text) { EditorHelper::CreateEntity2D("Entity"); });
+                [](String const& _text) { EditorHelper::CreateEntity2D("Entity"); },
+                EditorHelper::IsValidSceneMode);
             menuBar->addOption(
                 "Entity", "Create/3D/Empty",
-                [](String const& _text) { EditorHelper::CreateEntity3D("Entity"); });
+                [](String const& _text) { EditorHelper::CreateEntity3D("Entity"); },
+                EditorHelper::IsValidSceneMode);
             menuBar->addOption(
                 "Entity", "Create/3D/Light/Directional",
-                [](String const& _text) { EditorHelper::CreateDirectionalLight("Directional Light"); });
+                [](String const& _text) { EditorHelper::CreateDirectionalLight("Directional Light"); },
+                EditorHelper::IsValidSceneMode);
             menuBar->addOption(
                 "Entity", "Create/3D/Mesh/Cube",
-                [](String const& _text) { EditorHelper::CreateCube("Cube"); });
+                [](String const& _text) { EditorHelper::CreateCube("Cube"); },
+                EditorHelper::IsValidSceneMode);
             menuBar->addOption(
                 "Entity", "Create/3D/Mesh/Sphere",
-                [](String const& _text) { EditorHelper::CreateSphere("Sphere"); });
+                [](String const& _text) { EditorHelper::CreateSphere("Sphere"); },
+                EditorHelper::IsValidSceneMode);
             menuBar->addOption(
                 "Entity", "Create/3D/FX/Particle System",
-                [](String const& _text) { EditorHelper::CreateNewParticleSystem3D("Particle System"); });
+                [](String const& _text) { EditorHelper::CreateNewParticleSystem3D("Particle System"); },
+                EditorHelper::IsValidSceneMode);
                         
-
-            menuBar->addOption("Component", "Add",
-                [](String const& _text) { Debug::Log("Add"); });
-
-            menuBar->addOption("Help", "About",
-                [](String const& _text) { Debug::Log("About"); });
+            
 
 
             // Hierarchy line - Entity

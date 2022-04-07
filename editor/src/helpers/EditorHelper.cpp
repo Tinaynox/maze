@@ -99,6 +99,12 @@ namespace Maze
     namespace EditorHelper
     {
         //////////////////////////////////////////
+        bool IsValidSceneMode()
+        {
+            return EditorManager::GetInstancePtr()->getSceneMode() != EditorSceneMode::None;
+        }
+
+        //////////////////////////////////////////
         EntityPtr CreateNewPrefab2D()
         {
             EntityPtr gameObject = EditorManager::GetInstancePtr()->createNewPrefab();
@@ -373,7 +379,7 @@ namespace Maze
         //////////////////////////////////////////
         bool ClearValidate()
         {
-            return true;
+            return EditorManager::GetInstancePtr()->getSceneMode() != EditorSceneMode::None;
         }
 
         //////////////////////////////////////////
@@ -387,48 +393,6 @@ namespace Maze
             EditorManager::GetInstancePtr()->clearWorkspace();
 
             EditorManager::GetInstancePtr()->setSceneMode(EditorSceneMode::Scene);
-        }
-
-        //////////////////////////////////////////
-        bool CloseAssetsValidate()
-        {
-            return EditorManager::GetInstancePtr()->getMode() == EditorMode::Assets;
-        }
-
-        //////////////////////////////////////////
-        void CloseAssets()
-        {
-            if (!CloseAssetsValidate())
-                return;
-
-            EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
-            editorSettings->setEditorMode(EditorMode::None);
-            editorSettings->setAssetsFullPath(String());
-            SettingsManager::GetInstancePtr()->saveSettings();
-
-            SceneManager::GetInstancePtr()->loadScene<SceneSelectMode>();
-            SceneManager::GetInstancePtr()->unloadScene<SceneMain>();
-        }
-
-        //////////////////////////////////////////
-        bool CloseProjectValidate()
-        {
-            return EditorManager::GetInstancePtr()->getMode() == EditorMode::Project;
-        }
-
-        //////////////////////////////////////////
-        void CloseProject()
-        {
-            if (!CloseAssetsValidate())
-                return;
-
-            EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
-            editorSettings->setEditorMode(EditorMode::None);
-            editorSettings->setAssetsFullPath(String());
-            SettingsManager::GetInstancePtr()->saveSettings();
-
-            SceneManager::GetInstancePtr()->loadScene<SceneSelectMode>();
-            SceneManager::GetInstancePtr()->unloadScene<SceneMain>();
         }
     };
 

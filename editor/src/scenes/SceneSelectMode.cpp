@@ -90,6 +90,8 @@
 #include "layout/EditorLayout.hpp"
 #include "scenes/SceneMain.hpp"
 #include "scenes/SceneDebug.hpp"
+#include "helpers/EditorAssetsModeHelper.hpp"
+#include "helpers/EditorProjectModeHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -207,17 +209,7 @@ namespace Maze
                     editorSettings->setEditorMode(EditorMode::Assets);
 
                     RenderWindowPtr const& renderWindow = Editor::GetInstancePtr()->getMainRenderWindow();
-                    String path;
-                    do
-                    {
-                        path = SystemDialogHelper::OpenFolder(
-                            "Select Assets Folder",
-                            renderWindow->getWindowRaw());
-
-                        if (path.empty())
-                            return;
-                    } while (!FileHelper::IsDirectory(path));
-
+                    String path = EditorHelper::SelectAssetsFolder();
                     editorSettings->setAssetsFullPath(path);
 
                     SettingsManager::GetInstancePtr()->saveSettings();

@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_EditorHelper_hpp_))
-#define _EditorHelper_hpp_
+#if (!defined(_EditorAssetsModeHelper_hpp_))
+#define _EditorAssetsModeHelper_hpp_
 
 
 //////////////////////////////////////////
@@ -59,58 +59,16 @@ namespace Maze
     namespace EditorHelper
     {
         //////////////////////////////////////////
-        bool IsValidSceneMode();
+        bool IsAssetsMode();
+
+        /////////////////////////////////////////
+        String SelectAssetsFolder();
 
         //////////////////////////////////////////
-        EntityPtr CreateNewPrefab2D();
+        void OpenAssets();
 
         //////////////////////////////////////////
-        EntityPtr CreateNewPrefab3D();
-
-        //////////////////////////////////////////
-        EntityPtr CreateEntity(CString _entityName);
-
-        //////////////////////////////////////////
-        EntityPtr CreateEntity2D(CString _entityName);
-
-        //////////////////////////////////////////
-        EntityPtr CreateEntity3D(CString _entityName);
-
-        //////////////////////////////////////////
-        EntityPtr CreateCube(CString _entityName);
-
-        //////////////////////////////////////////
-        EntityPtr CreateSphere(CString _entityName);
-
-        //////////////////////////////////////////
-        EntityPtr CreateDirectionalLight(CString _entityName);
-
-        //////////////////////////////////////////
-        EntityPtr CreateNewParticleSystem3D(CString _entityName);
-
-        //////////////////////////////////////////
-        bool SaveValidate();
-
-        //////////////////////////////////////////
-        void Save();
-
-        //////////////////////////////////////////
-        bool SaveAsValidate();
-
-        //////////////////////////////////////////
-        void SaveAs();
-
-        //////////////////////////////////////////
-        bool LoadValidate();
-
-        //////////////////////////////////////////
-        void Load();
-
-        //////////////////////////////////////////
-        bool ClearValidate();
-
-        //////////////////////////////////////////
-        void Clear();
+        void CloseAssets();
     };
 
 
@@ -118,5 +76,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _EditorHelper_hpp_
+#endif // _EditorAssetsModeHelper_hpp_
 //////////////////////////////////////////
