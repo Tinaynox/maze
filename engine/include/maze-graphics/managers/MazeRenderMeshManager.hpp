@@ -47,6 +47,8 @@ namespace Maze
     MAZE_USING_SHARED_PTR(RenderMeshManager);
     MAZE_USING_SHARED_PTR(RenderSystem);
     MAZE_USING_SHARED_PTR(Texture);
+    MAZE_USING_SHARED_PTR(Mesh);
+    MAZE_USING_SHARED_PTR(ByteBuffer);
     MAZE_USING_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(AssetFile);
 
@@ -59,6 +61,41 @@ namespace Maze
         Quad,
         Cube,
         Sphere);
+
+
+    //////////////////////////////////////////
+    using LoadRenderMeshAssetFileFunction = bool(*)(AssetFilePtr const& _file, MeshPtr const& _mesh);
+    using LoadRenderMeshByteBufferFunction = bool(*)(ByteBufferPtr const& _fileData, MeshPtr const& _mesh);
+    using IsRenderMeshAssetFileFunction = bool(*)(AssetFilePtr const& _file);
+    using IsRenderMeshByteBufferFunction = bool(*)(ByteBufferPtr const& _fileData);
+
+
+    //////////////////////////////////////////
+    // Struct RenderMeshLoaderData
+    //
+    //////////////////////////////////////////
+    struct RenderMeshLoaderData
+    {
+        //////////////////////////////////////////
+        RenderMeshLoaderData() = default;
+
+        //////////////////////////////////////////
+        RenderMeshLoaderData(
+            LoadRenderMeshAssetFileFunction _loadRenderMeshAssetFileFunc,
+            LoadRenderMeshByteBufferFunction _loadRenderMeshByteBufferFunc,
+            IsRenderMeshAssetFileFunction _isRenderMeshAssetFileFunc,
+            IsRenderMeshByteBufferFunction _isRenderMeshByteBufferFunc)
+            : loadRenderMeshAssetFileFunc(_loadRenderMeshAssetFileFunc)
+            , loadRenderMeshByteBufferFunc(_loadRenderMeshByteBufferFunc)
+            , isRenderMeshAssetFileFunc(_isRenderMeshAssetFileFunc)
+            , isRenderMeshByteBufferFunc(_isRenderMeshByteBufferFunc)
+        {}
+
+        LoadRenderMeshAssetFileFunction loadRenderMeshAssetFileFunc;
+        LoadRenderMeshByteBufferFunction loadRenderMeshByteBufferFunc;
+        IsRenderMeshAssetFileFunction isRenderMeshAssetFileFunc;
+        IsRenderMeshByteBufferFunction isRenderMeshByteBufferFunc;
+    };
 
 
     //////////////////////////////////////////
@@ -126,6 +163,35 @@ namespace Maze
         //////////////////////////////////////////
         void loadAllAssetRenderMeshes();
 
+
+
+        //////////////////////////////////////////
+        void registerRenderMeshLoader(
+            HashedCString _extension,
+            RenderMeshLoaderData const& _data)
+        {
+            m_renderMeshLoaders.insert(_extension, _data);
+            eventRenderMeshLoaderAdded(_extension, _data);
+        }
+
+        //////////////////////////////////////////
+        void clearRenderMeshLoader(HashedCString _extension)
+        {
+            m_renderMeshLoaders.erase(_extension);
+        }
+
+        //////////////////////////////////////////
+        Vector<String> getRenderMeshLoaderExtensions();
+
+
+        //////////////////////////////////////////
+        MeshPtr loadMesh(AssetFilePtr const& _assetFile);
+
+    public:
+
+        //////////////////////////////////////////
+        MultiDelegate<HashedCString, RenderMeshLoaderData const&> eventRenderMeshLoaderAdded;
+
     protected:
 
         //////////////////////////////////////////
@@ -140,6 +206,8 @@ namespace Maze
     protected:
         RenderSystemWPtr m_renderSystem;
         RenderSystem* m_renderSystemRaw;
+
+        StringKeyMap<RenderMeshLoaderData> m_renderMeshLoaders;
 
         RenderMeshPtr m_builtinRenderMeshes[BuiltinRenderMeshType::MAX];
 

@@ -175,6 +175,14 @@ namespace Maze
             Vec2DF const& _renderTargetCoords,
             CursorInputSource const& _inputSource);
 
+        //////////////////////////////////////////
+        void processCursorWheel(
+            Window* _window,
+            S32 _cursorIndex,
+            F32 _deltaWheel,
+            Vec2DF const& _renderTargetCoords,
+            CursorInputSource const& _inputSource);
+
     protected:
         SharedPtr<GenericInclusiveEntitiesSample<Canvas>> m_canvasesSample;
         SharedPtr<GenericInclusiveEntitiesSample<CanvasScaler>> m_canvasScalersSample;

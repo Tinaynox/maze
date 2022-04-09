@@ -316,8 +316,15 @@ namespace Maze
             
             case WM_MOUSEWHEEL:
             {
+                POINT pt;
+                pt.x = GET_X_LPARAM(_lParam);
+                pt.y = GET_Y_LPARAM(_lParam);
+                ScreenToClient(m_handle, &pt);
+
                 InputEventMouseData event;
                 event.type = InputEventMouseType::Wheel;
+                event.x = pt.x;
+                event.y = m_params->clientSize.y - pt.y;
                 event.z = GET_WHEEL_DELTA_WPARAM(_wParam);
                 event.window = this;
                 inputManager->generateInputEvent(event);

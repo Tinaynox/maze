@@ -55,7 +55,7 @@ namespace Maze
     // Enum BuiltinShaderType
     //
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_14_API(MAZE_GRAPHICS_API, BuiltinShaderType,
+    MAZE_DECLARE_ENUMCLASS_15_API(MAZE_GRAPHICS_API, BuiltinShaderType,
         Error,
         UV,
         Normal,
@@ -69,7 +69,8 @@ namespace Maze
         DebugGrid,
         DebugAxis,
         Skybox,
-        Specular);
+        Specular,
+        MeshPreview);
 
 
     //////////////////////////////////////////

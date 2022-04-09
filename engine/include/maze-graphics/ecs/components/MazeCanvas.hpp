@@ -33,6 +33,7 @@
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
+#include "maze-core/math/MazeAABB2D.hpp"
 #include "maze-graphics/MazeColorU32.hpp"
 
 
@@ -100,6 +101,11 @@ namespace Maze
         //////////////////////////////////////////
         inline Rect2DF const& getViewport() const { return m_viewport; }
     
+        //////////////////////////////////////////
+        Rect2DF getRenderTargetRect() const;
+
+        //////////////////////////////////////////
+        AABB2D getRenderTargetAABB() const;
 
 
         //////////////////////////////////////////

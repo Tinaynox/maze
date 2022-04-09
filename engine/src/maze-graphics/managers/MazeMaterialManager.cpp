@@ -355,6 +355,26 @@ namespace Maze
 
                 break;
             }
+            case BuiltinMaterialType::MeshPreview:
+            {
+                material = Material::Create(m_renderSystemRaw);
+                RenderPassPtr renderPass = material->createRenderPass();
+                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::MeshPreview));
+                renderPass->setBlendSrcFactor(BlendFactor::One);
+                renderPass->setBlendDestFactor(BlendFactor::Zero);
+                renderPass->setDepthWriteEnabled(true);
+                renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
+                renderPass->setCullMode(CullMode::Off);
+                renderPass->setRenderQueueIndex(2000);
+                material->setUniform("u_baseMapST", Vec4DF(1.0f, 1.0f, 0.0f, 0.0f));
+                material->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteTexture());
+                material->setUniform("u_color", ColorF128(0.77f, 0.77f, 0.77f, 1.0f));
+                material->setUniform("u_ambientLightColor", ColorF128(0.1f, 0.1f, 0.1f, 1.0f));
+                material->setUniform("u_shininess", 0.65f);
+                material->setUniform("u_specularColor", ColorF128(0.3f, 0.3f, 0.3f, 1.0f));
+
+                break;
+            }
             default:
             {
                 MAZE_NOT_IMPLEMENTED;

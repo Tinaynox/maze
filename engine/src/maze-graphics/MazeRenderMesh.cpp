@@ -43,6 +43,9 @@ namespace Maze
     // Class RenderMesh
     //
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(RenderMesh, Object);
+
+    //////////////////////////////////////////
     RenderMesh::RenderMesh()
     {
     }
@@ -146,15 +149,10 @@ namespace Maze
         AssetFilePtr const& _assetFile,
         RenderTarget* _renderTarget)
     {
-        MAZE_ERROR_RETURN_IF(!_assetFile, "Null AssetFile")
-        
-        MeshPtr mesh = Mesh::Create(m_renderSystem);
+        MAZE_ERROR_RETURN_IF(!_assetFile, "Null AssetFile");
 
-        MAZE_LOG("Loading RenderMesh: %s...", _assetFile->getFileName().c_str());
-        LoadOBJ(_assetFile, mesh);
-
+        MeshPtr mesh = m_renderSystem->getRenderMeshManager()->loadMesh(_assetFile);
         loadFromMesh(mesh, _renderTarget);
-        
     }
 
     //////////////////////////////////////////

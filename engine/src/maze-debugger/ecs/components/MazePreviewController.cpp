@@ -40,6 +40,7 @@
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
+#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
@@ -54,6 +55,7 @@
 #include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 #include "maze-debugger/preview-inspectors/MazeMaterialsPreviewInspector.hpp"
 #include "maze-debugger/preview-inspectors/MazeTexture2DPreviewInspector.hpp"
+#include "maze-debugger/preview-inspectors/MazeRenderMeshPreviewInspector.hpp"
 
 
 //////////////////////////////////////////
@@ -104,6 +106,7 @@ namespace Maze
 
         m_bodyBackgroundElement->eventCursorPressIn.unsubscribe(this);
         m_bodyBackgroundElement->eventCursorDrag.unsubscribe(this);
+        m_bodyBackgroundElement->eventCursorWheel.unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -130,12 +133,16 @@ namespace Maze
         registerPreviewInspectorByExtension<Texture2DPreviewInspector>("mztexture");
         registerPreviewInspectorByClassUID<Texture2DPreviewInspector, Texture2D>();
 
-        GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getTextureManager()->eventTextureLoaderAdded.subscribe(
+        TextureManager::GetCurrentInstancePtr()->eventTextureLoaderAdded.subscribe(
             this, &PreviewController::notifyTextureLoaderAdded);
 
-        Vector<String> textureExtensions = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getTextureManager()->getTextureLoaderExtensions();
+        Vector<String> textureExtensions = TextureManager::GetCurrentInstancePtr()->getTextureLoaderExtensions();
         for (String const& textureExtension : textureExtensions)
             registerPreviewInspectorByExtension<Texture2DPreviewInspector>(textureExtension.c_str());
+
+
+        registerPreviewInspectorByExtension<RenderMeshPreviewInspector>("obj");
+        registerPreviewInspectorByClassUID<RenderMeshPreviewInspector, RenderMesh>();
 
         return true;
     }
@@ -226,6 +233,7 @@ namespace Maze
         m_bodyBackgroundElement->setCaptureCursorHits(true);
         m_bodyBackgroundElement->eventCursorPressIn.subscribe(this, &PreviewController::notifyBodyBackgroundElementCursorPress);
         m_bodyBackgroundElement->eventCursorDrag.subscribe(this, &PreviewController::notifyBodyBackgroundElementCursorDrag);
+        m_bodyBackgroundElement->eventCursorWheel.subscribe(this, &PreviewController::notifyBodyBackgroundElementCursorWheel);
         
         m_layout = UIHelper::CreateVerticalLayout(
             HorizontalAlignment2D::Left,
@@ -418,6 +426,14 @@ namespace Maze
     {
         if (m_previewInspector)
             m_previewInspector->processCursorDrag(_positionOS, _event);
+    }
+
+    //////////////////////////////////////////
+    void PreviewController::notifyBodyBackgroundElementCursorWheel(
+        CursorWheelInputEvent const& _event)
+    {
+        if (m_previewInspector)
+            m_previewInspector->processCursorWheel(_event);
     }
 
     //////////////////////////////////////////

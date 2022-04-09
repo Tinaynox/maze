@@ -138,6 +138,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    Rect2DF Canvas::getRenderTargetRect() const
+    {
+        Rect2DF viewportRect = getViewport();
+        viewportRect.position *= (Vec2DF)getRenderTarget()->getRenderTargetSize();
+        viewportRect.size *= (Vec2DF)getRenderTarget()->getRenderTargetSize();
+        return viewportRect;
+    }
+
+    //////////////////////////////////////////
+    AABB2D Canvas::getRenderTargetAABB() const
+    {
+        return AABB2D::FromRect2D(getRenderTargetRect());
+    }
+
+    //////////////////////////////////////////
     void Canvas::updateCanvasTransform()
     {
         switch (m_viewportTransformPolicy)

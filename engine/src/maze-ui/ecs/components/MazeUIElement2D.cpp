@@ -255,6 +255,23 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void UIElement2D::processCursorWheel(CursorWheelInputEvent const& _inputEvent)
+    {
+        if (!eventCursorWheel.empty() || m_captureCursorHits)
+        {
+            Vec2DF const& positionWS = _inputEvent.position;
+
+            if (!m_bounds->getBounds().contains(positionWS))
+                return;
+
+            if (m_captureCursorHits)
+                _inputEvent.captureHit();
+
+            eventCursorWheel(_inputEvent);
+        }
+    }
+
+    //////////////////////////////////////////
     void UIElement2D::setFocused(bool _focused)
     {
         if (m_focused == _focused)

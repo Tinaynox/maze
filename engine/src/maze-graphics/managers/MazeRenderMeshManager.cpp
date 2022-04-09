@@ -35,7 +35,9 @@
 #include "maze-core/helpers/MazeWindowHelper.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
+#include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
+#include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 
 
 //////////////////////////////////////////
@@ -81,6 +83,14 @@ namespace Maze
         m_renderSystemRaw = _renderSystem.get();
 
         m_renderSystemRaw->eventSystemInited.subscribe(this, &RenderMeshManager::notifyRenderSystemInited);
+
+        registerRenderMeshLoader(
+            MAZE_HASHED_CSTRING("obj"),
+            RenderMeshLoaderData(
+                (LoadRenderMeshAssetFileFunction)&LoadOBJ,
+                (LoadRenderMeshByteBufferFunction)&LoadOBJ,
+                (IsRenderMeshAssetFileFunction)&IsOBJFile,
+                (IsRenderMeshByteBufferFunction)&IsOBJFile));
 
         return true;
     }
@@ -205,9 +215,63 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    MeshPtr RenderMeshManager::loadMesh(AssetFilePtr const& _assetFile)
+    {
+        MeshPtr mesh;
+
+        if (!_assetFile)
+            return mesh;
+
+        mesh = Mesh::Create(m_renderSystemRaw);
+
+        Debug::Log("Loading render mesh: %s...", _assetFile->getFileName().c_str());
+
+        StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
+
+        if (metaData.empty() || !metaData.contains("ext"))
+        {
+            bool loaderFound = false;
+            for (auto const& renderMeshLoaderData : m_renderMeshLoaders)
+            {
+                RenderMeshLoaderData const& loaderData = renderMeshLoaderData.second;
+                if (loaderData.isRenderMeshAssetFileFunc(_assetFile))
+                {
+                    loaderFound = true;
+                    MAZE_ERROR_IF(!loaderData.loadRenderMeshAssetFileFunc(_assetFile, mesh), "Mesh is not loaded - '%s'", _assetFile->getFileName().c_str());
+                    break;
+                }
+            }
+
+            MAZE_ERROR_IF(!loaderFound, "Unsupported texture format - %s!", _assetFile->getFileName().c_str());
+        }
+        else
+        {
+            HashedString fileExtension = StringHelper::ToLower(metaData["ext"]);
+
+            auto it = m_renderMeshLoaders.find(fileExtension);
+            if (it != m_renderMeshLoaders.end())
+            {
+                RenderMeshLoaderData const& loaderData = it->second;
+                MAZE_ERROR_IF(!loaderData.loadRenderMeshAssetFileFunc(_assetFile, mesh), "Mesh is not loaded - '%s'", _assetFile->getFileName().c_str());
+            }
+            else
+            {
+                MAZE_ERROR("Unsupported texture format - %s!", _assetFile->getFileName().c_str());
+            }
+        }
+
+        Debug::Log("Loaded.", _assetFile->getFileName().c_str());
+
+        return mesh;
+    }
+
+    //////////////////////////////////////////
     void RenderMeshManager::loadAllAssetRenderMeshes()
     {
-        Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions({ "obj" });
+        Vector<String> loaderExtensions = getRenderMeshLoaderExtensions();
+
+        Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions(
+            Set<String>(loaderExtensions.begin(), loaderExtensions.end()));
         for (AssetFilePtr const& assetFile : assetFiles)
         {
             if (m_renderMeshesByName.find(assetFile->getFileName()) != m_renderMeshesByName.end())
@@ -217,6 +281,16 @@ namespace Maze
             renderMesh->setName(assetFile->getFileName());
             addRenderMesh(renderMesh);
         }
+    }
+
+    //////////////////////////////////////////
+    Vector<String> RenderMeshManager::getRenderMeshLoaderExtensions()
+    {
+        Vector<String> result;
+        for (auto const& renderMeshLoaderData : m_renderMeshLoaders)
+            result.push_back(renderMeshLoaderData.first);
+
+        return result;
     }
     
 } // namespace Maze

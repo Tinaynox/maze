@@ -185,6 +185,10 @@ namespace Maze
                 shaderSource =
 #include "shaders/MazeSpecularShader.mzglsl"
                 ; break;
+            case BuiltinShaderType::MeshPreview:
+                shaderSource =
+#include "shaders/MazeMeshPreviewShader.mzglsl"
+                    ; break;
             default:
             {
                 MAZE_NOT_IMPLEMENTED;

@@ -226,7 +226,6 @@ namespace Maze
                 Vec2DF(0.5f, 0.5f),
                 Vec2DF(0.5f, 0.5f));
             info->setColor(ColorU32::c_black);
-            // info->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefaultOutlined());
         }
         
         m_texturesDirty = false;

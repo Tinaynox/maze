@@ -99,6 +99,8 @@ namespace Maze
         //////////////////////////////////////////
         void processCursorDrag(CursorInputEvent const& _inputEvent);
 
+        //////////////////////////////////////////
+        void processCursorWheel(CursorWheelInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
         bool getCaptureCursorHits() const { return m_captureCursorHits;}
@@ -148,6 +150,8 @@ namespace Maze
         MultiDelegate<bool> eventFocusChanged;
         MultiDelegate<bool> eventPressedChanged;
         MultiDelegate<CursorInputEvent const&> eventClick;
+
+        MultiDelegate<CursorWheelInputEvent const&> eventCursorWheel;
 
     protected:
 

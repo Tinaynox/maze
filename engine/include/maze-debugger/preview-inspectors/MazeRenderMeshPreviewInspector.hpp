@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazePreviewInspector_hpp_))
-#define _MazePreviewInspector_hpp_
+#if (!defined(_MazeRenderMeshPreviewInspector_hpp_))
+#define _MazeRenderMeshPreviewInspector_hpp_
 
 
 //////////////////////////////////////////
@@ -36,8 +36,9 @@
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
-#include "maze-core/utils/MazeUpdater.hpp"
-#include "maze-debugger/scenes/SceneDebugPreview.hpp"
+#include "maze-debugger/preview-inspectors/MazePreviewInspector.hpp"
+#include "maze-debugger/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawer.hpp"
+#include "maze-ui/MazeCursorInputEvent.hpp"
 #include <functional>
 
 
@@ -45,77 +46,100 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(PreviewInspector);
+    MAZE_USING_SHARED_PTR(RenderMeshPreviewInspector);
     MAZE_USING_SHARED_PTR(Transform2D);
-    MAZE_USING_SHARED_PTR(Transform3D);
     MAZE_USING_SHARED_PTR(Component);
     MAZE_USING_SHARED_PTR(MetaPropertyDrawer);
     MAZE_USING_SHARED_PTR(ClickButton2D);
     MAZE_USING_SHARED_PTR(Button2D);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(Entity);
-    MAZE_USING_SHARED_PTR(Camera3D);
-
+    MAZE_USING_SHARED_PTR(ComponentEditor);
+    MAZE_USING_SHARED_PTR(ToggleButton2D);
+    MAZE_USING_SHARED_PTR(SystemTextRenderer2D);
+    MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_SHARED_PTR(RenderMesh);
+    MAZE_USING_SHARED_PTR(Shader);
+    
 
     //////////////////////////////////////////
-    // Class PreviewInspector
+    // Class RenderMeshPreviewInspector
     //
     //////////////////////////////////////////
-    class MAZE_DEBUGGER_API PreviewInspector
-        : public MultiDelegateCallbackReceiver
-        , public Updatable
+    class MAZE_DEBUGGER_API RenderMeshPreviewInspector
+        : public PreviewInspector
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS(PreviewInspector);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(RenderMeshPreviewInspector, PreviewInspector);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(PreviewInspector);
+        MAZE_DECLARE_MEMORY_ALLOCATION(RenderMeshPreviewInspector);
 
     public:
 
         //////////////////////////////////////////
-        virtual ~PreviewInspector();
+        virtual ~RenderMeshPreviewInspector();
 
         //////////////////////////////////////////
-        virtual bool getCameraActive() const { return false; }
-
-        //////////////////////////////////////////
-        virtual bool getCanvasActive() const { return false; }
-
-        //////////////////////////////////////////
-        virtual void processCursorPress(Vec2DF const& _positionOS, CursorInputEvent const& _event) {};
-
-        //////////////////////////////////////////
-        virtual void processCursorDrag(Vec2DF const& _positionOS, CursorInputEvent const& _event) {};
-
-        //////////////////////////////////////////
-        virtual void processCursorWheel(CursorWheelInputEvent const& _event) {};
-        
-
-        //////////////////////////////////////////
-        virtual bool setAssetFiles(Set<AssetFilePtr> const& _assetFiles) { return false; }
-
-        //////////////////////////////////////////
-        virtual bool setObjects(Set<ObjectPtr> const& _objects) { return false; }
-
-    protected:
-
-        //////////////////////////////////////////
-        PreviewInspector();
-
-        //////////////////////////////////////////
-        virtual bool init(
+        static RenderMeshPreviewInspectorPtr Create(
             Transform2DPtr const& _parent2D,
             SceneDebugPreviewPtr const& _scene);
+
 
         //////////////////////////////////////////
         virtual void update(F32 _dt) MAZE_OVERRIDE;
 
+
+        //////////////////////////////////////////
+        virtual bool getCameraActive() const MAZE_OVERRIDE { return true; }
+
+        //////////////////////////////////////////
+        virtual bool getCanvasActive() const MAZE_OVERRIDE { return false; }
+
+        //////////////////////////////////////////
+        virtual void processCursorPress(Vec2DF const& _positionOS, CursorInputEvent const& _event) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void processCursorDrag(Vec2DF const& _positionOS, CursorInputEvent const& _event) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void processCursorWheel(CursorWheelInputEvent const& _event) MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
+        void setRenderMeshes(Set<RenderMeshPtr> const& _renderMeshes);
+
+        //////////////////////////////////////////
+        virtual bool setAssetFiles(Set<AssetFilePtr> const& _assetFiles) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual bool setObjects(Set<ObjectPtr> const& _objects) MAZE_OVERRIDE;
+
     protected:
-        Transform2DPtr m_parent2D;
-        SceneDebugPreviewPtr m_scene;
+
+        //////////////////////////////////////////
+        RenderMeshPreviewInspector();
+
+        //////////////////////////////////////////
+        virtual bool init(
+            Transform2DPtr const& _parent2D,
+            SceneDebugPreviewPtr const& _scene) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        void buildRenderMeshes();
+
+        //////////////////////////////////////////
+        void updateCameraPosition();
+
+    protected:
+        Set<RenderMeshPtr> m_renderMeshes;
+
+        bool m_renderMeshesDirty = false;
+        Vec2DF m_cursorPositionLastFrame = Vec2DF::c_zero;
+
+        F32 m_cameraDistance = 7.0f;
     };
 
 
@@ -123,5 +147,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazePreviewInspector_hpp_
+#endif // _MazeRenderMeshPreviewInspector_hpp_
 //////////////////////////////////////////

@@ -763,8 +763,9 @@ namespace Maze
     MAZE_GRAPHICS_API bool IsOBJFile(AssetFilePtr const& _file)
     {
         // #TODO:
-        ByteBufferPtr fileData = _file->readAsByteBuffer();
-        return IsOBJFile(fileData);
+        return _file->getExtension() == "obj";
+        // ByteBufferPtr fileData = _file->readAsByteBuffer();
+        // return IsOBJFile(fileData);        
     }
 
     //////////////////////////////////////////

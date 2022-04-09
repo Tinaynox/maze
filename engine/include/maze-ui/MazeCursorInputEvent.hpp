@@ -62,7 +62,7 @@ namespace Maze
     // Struct CursorInputEvent
     //
     //////////////////////////////////////////
-    struct CursorInputEvent
+    struct MAZE_UI_API CursorInputEvent
     {
         //////////////////////////////////////////
         inline CursorInputEvent(
@@ -92,6 +92,39 @@ namespace Maze
         mutable bool hitCaptured;
         S32 button;
         CursorInputSource inputSource;
+        Window* window;
+        Canvas* canvas;
+        Canvas* rootCanvas;
+    };
+
+
+    //////////////////////////////////////////
+    // Struct CursorWheelInputEvent
+    //
+    //////////////////////////////////////////
+    struct MAZE_UI_API CursorWheelInputEvent
+    {
+        //////////////////////////////////////////
+        inline CursorWheelInputEvent(
+            S32 _index = 0,
+            F32 _deltaWheel = 0.0f,
+            Window* _window = nullptr)
+            : index(_index)
+            , position(Vec2DF::c_zero)
+            , deltaWheel(_deltaWheel)
+            , hitCaptured(false)
+            , window(_window)
+            , canvas(nullptr)
+            , rootCanvas(nullptr)
+        {}
+
+        //////////////////////////////////////////
+        inline void captureHit() const { hitCaptured = true; }
+
+        S32 index;
+        Vec2DF position;
+        F32 deltaWheel;
+        mutable bool hitCaptured;
         Window* window;
         Canvas* canvas;
         Canvas* rootCanvas;

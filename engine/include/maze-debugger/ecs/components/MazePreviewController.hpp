@@ -194,6 +194,10 @@ namespace Maze
             Vec2DF const& _positionOS, CursorInputEvent const& _event);
 
         //////////////////////////////////////////
+        void notifyBodyBackgroundElementCursorWheel(
+            CursorWheelInputEvent const& _event);
+
+        //////////////////////////////////////////
         void notifyTextureLoaderAdded(HashedCString _extension, TextureLoaderData const& _loader);
 
     protected:

@@ -287,6 +287,11 @@ namespace Maze
                 processCursorDrag(_mouseData.window, 0, _mouseData.buttonId, Vec2DF((F32)_mouseData.x, (F32)_mouseData.y), CursorInputSource::Mouse);
                 break;
             }
+            case InputEventMouseType::Wheel:
+            {
+                processCursorWheel(_mouseData.window, 0, _mouseData.z, Vec2DF((F32)_mouseData.x, (F32)_mouseData.y), CursorInputSource::Mouse);
+                break;
+            }
             default:
             {
                 break;
@@ -516,9 +521,9 @@ namespace Maze
             _window);
 
         for (Vector<CanvasData>::const_reverse_iterator it = m_sortedUIElements2D.rbegin(),
-            end = m_sortedUIElements2D.rend();
-            it != end;
-            ++it)
+                                                        end = m_sortedUIElements2D.rend();
+                                                        it != end;
+                                                        ++it)
         {
             CanvasData const& canvasData = *it;
 
@@ -555,6 +560,63 @@ namespace Maze
                         element->setFocused(false);
                 }
             }
+        }
+    }
+
+    //////////////////////////////////////////
+    void InputSystem2D::processCursorWheel(
+        Window* _window,
+        S32 _cursorIndex,
+        F32 _deltaWheel,
+        Vec2DF const& _renderTargetCoords,
+        CursorInputSource const& _inputSource)
+    {
+        updateSortedUIElements2DList();
+
+        CursorWheelInputEvent cursorInputEvent(
+            _cursorIndex,
+            _deltaWheel,
+            _window);
+
+        for (Vector<CanvasData>::const_reverse_iterator it = m_sortedUIElements2D.rbegin(),
+                                                        end = m_sortedUIElements2D.rend();
+                                                        it != end;
+                                                        ++it)
+        {
+            CanvasData const& canvasData = *it;
+
+            if (canvasData.rootCanvas &&
+                canvasData.rootCanvas->getRenderTarget() &&
+                canvasData.rootCanvas->getRenderTarget()->getMetaClass()->isInheritedFrom<RenderWindow>())
+            {
+                if (_window != canvasData.rootCanvas->getRenderTarget()->castRaw<RenderWindow>()->getWindowRaw())
+                    continue;
+            }
+
+            cursorInputEvent.canvas = canvasData.canvas;
+            cursorInputEvent.rootCanvas = canvasData.rootCanvas;
+            Vector<UIElement2D*> const& sortedUIElements2D = canvasData.sortedUIElements2D;
+
+            if (cursorInputEvent.rootCanvas)
+                cursorInputEvent.position = cursorInputEvent.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+            else
+                cursorInputEvent.position = cursorInputEvent.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+
+            for (Vector<UIElement2D*>::const_reverse_iterator it2 = sortedUIElements2D.rbegin(),
+                                                              end2 = sortedUIElements2D.rend();
+                                                              it2 != end2;
+                                                              ++it2)
+            {
+                UIElement2D* element = *it2;
+
+                element->processCursorWheel(cursorInputEvent);
+
+                if (cursorInputEvent.hitCaptured)
+                    break;
+            }
+
+            if (cursorInputEvent.hitCaptured)
+                break;
         }
     }
 

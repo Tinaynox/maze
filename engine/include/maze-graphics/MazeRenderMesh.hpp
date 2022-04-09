@@ -38,6 +38,7 @@
 #include "maze-core/system/MazeWindowVideoMode.hpp"
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/MazeObject.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/containers/MazeFastVector.hpp"
 #include <functional>
@@ -60,8 +61,12 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API RenderMesh
         : public SharedObject<RenderMesh>
+        , public Object
     {
     public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(RenderMesh, Object);
 
         //////////////////////////////////////////
         using RenderMeshDeleter = std::function<void(RenderMesh* _ptr)>;
