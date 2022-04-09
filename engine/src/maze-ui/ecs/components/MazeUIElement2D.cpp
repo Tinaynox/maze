@@ -257,15 +257,19 @@ namespace Maze
     //////////////////////////////////////////
     void UIElement2D::processCursorWheel(CursorWheelInputEvent const& _inputEvent)
     {
-        if (!eventCursorWheel.empty() || m_captureCursorHits)
+        if (!eventCursorWheel.empty())
         {
             Vec2DF const& positionWS = _inputEvent.position;
 
             if (!m_bounds->getBounds().contains(positionWS))
                 return;
 
-            if (m_captureCursorHits)
-                _inputEvent.captureHit();
+            Vec2DF positionOS = m_transform->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
+            if (positionOS.x < 0 || positionOS.y < 0 ||
+                positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
+            {
+                return;
+            }
 
             eventCursorWheel(_inputEvent);
         }

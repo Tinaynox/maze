@@ -161,7 +161,9 @@ namespace Maze
 
         Vec2DF offset = calculateOffset(Vec2DF::c_zero);
 
-        if (m_boundsViewSpace != m_prevBoundsViewSpace || m_contentBoundsViewSpace != m_prevContentBoundsViewSpace || m_contentTransform->getLocalPosition() != m_prevPosition)
+        if (m_boundsViewSpace != m_prevBoundsViewSpace ||
+            m_contentBoundsViewSpace != m_prevContentBoundsViewSpace ||
+            m_contentTransform->getLocalPosition() != m_prevPosition)
         {
             updateScrollbars(offset);
             eventValueChanged(this, getNormalizedPosition());
@@ -222,11 +224,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    F32 ScrollRect2D::getNormalizedPosition(Size _axis)
+    {
+        return getNormalizedPosition()[_axis];
+    }
+
+    //////////////////////////////////////////
     void ScrollRect2D::setNormalizedPosition(F32 _value, Size _axis)
     {
         updateBounds();
 
         F32 hiddenLength = m_contentBoundsViewSpace.getSize()[_axis] - m_boundsViewSpace.getSize()[_axis];
+        if (hiddenLength < 0.0f)
+            return;
+
         F32 contentBoundsMinPosition;
         
         if (_axis == 0)

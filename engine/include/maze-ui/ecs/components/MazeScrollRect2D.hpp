@@ -189,6 +189,9 @@ namespace Maze
         Vec2DF getNormalizedPosition();
 
         //////////////////////////////////////////
+        F32 getNormalizedPosition(Size _axis);
+
+        //////////////////////////////////////////
         void setNormalizedPosition(F32 _value, Size _axis);
 
         //////////////////////////////////////////

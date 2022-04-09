@@ -1843,6 +1843,7 @@ namespace Maze
             EntityPtr scrollbarEntity = _ecsScene->createEntity("ScrollRect");
 
             ScrollRect2DPtr scrollRect = scrollbarEntity->createComponent<ScrollRect2D>();
+            ScrollRect2DWPtr scrollRectWeak = scrollRect;
 
             Transform2DPtr const& transform = scrollRect->getTransform();
             transform->setParent(_parent);
@@ -1850,6 +1851,19 @@ namespace Maze
             transform->setAnchor(_anchor);
             transform->setPivot(_pivot);
             transform->setSize(_size);
+
+            scrollRect->getUIElement()->eventCursorWheel.subscribe(
+                [scrollRectWeak](CursorWheelInputEvent const& _event)
+                {
+                    ScrollRect2DPtr scrollRect = scrollRectWeak.lock();
+                    if (scrollRect)
+                    {
+                        F32 value = scrollRect->getNormalizedPosition(1);
+                        scrollRect->setNormalizedPosition(
+                            Math::Clamp(value - 0.001f * _event.deltaWheel, 0.0f, 1.0f),
+                            1);
+                    }
+                });
 
             SpriteRenderer2DPtr spriteRenderer = scrollbarEntity->createComponent<SpriteRenderer2D>();
             spriteRenderer->setSprite(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));

@@ -289,7 +289,7 @@ namespace Maze
             }
             case InputEventMouseType::Wheel:
             {
-                processCursorWheel(_mouseData.window, 0, _mouseData.z, Vec2DF((F32)_mouseData.x, (F32)_mouseData.y), CursorInputSource::Mouse);
+                processCursorWheel(_mouseData.window, 0, (F32)_mouseData.z, Vec2DF((F32)_mouseData.x, (F32)_mouseData.y), CursorInputSource::Mouse);
                 break;
             }
             default:
