@@ -196,10 +196,11 @@ namespace Maze
             // DebugGrid
             EntityPtr debugGridRendererEntity = m_scene->createEntity();
             debugGridRendererEntity->createComponent<DebugGridRenderer>(m_scene->getCamera());
+            debugGridRendererEntity->getComponent<Transform3D>()->setParent(m_scene->getPreviewNodeTransform());
 
             // Axes
             EntityPtr axesMeshRendererEntity = m_scene->createEntity();
-            axesMeshRendererEntity->createComponent<Transform3D>();
+            axesMeshRendererEntity->createComponent<Transform3D>()->setParent(m_scene->getPreviewNodeTransform());
             MeshRendererPtr axesMeshRenderer = axesMeshRendererEntity->createComponent<MeshRenderer>();
             axesMeshRenderer->setRenderMesh(RenderMesh::Create(MeshHelper::CreateCoordinateAxes()));
             axesMeshRenderer->setMaterial(GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::DebugAxis));

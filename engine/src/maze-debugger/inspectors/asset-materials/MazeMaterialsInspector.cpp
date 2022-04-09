@@ -357,7 +357,7 @@ namespace Maze
                 sizePolicy->setFlag(SizePolicy2D::Height, false);
 
                 ClickButton2DPtr button = UIHelper::CreateDefaultClickButton(
-                    (String("Save ") + material->getName()).c_str(),
+                    String("Save Asset File").c_str(),
                     Vec2DF(250, 18),
                     Vec2DF::c_zero,
                     m_saveMaterialButtonRoot,
