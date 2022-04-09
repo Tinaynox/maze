@@ -38,6 +38,7 @@
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
+#include "maze-core/MazeObject.hpp"
 
 
 //////////////////////////////////////////
@@ -78,11 +79,12 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API Texture
         : public SharedObject<Texture>
+        , public Object
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS(Texture);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(Texture, Object);
 
     public:
 

@@ -82,8 +82,6 @@ namespace Maze
 
     //////////////////////////////////////////
     MaterialsPreviewInspector::MaterialsPreviewInspector()
-        : m_materialsDirty(false)
-        , m_cursorPositionLastFrame(Vec2DF::c_zero)
     {
         
     }
@@ -173,7 +171,7 @@ namespace Maze
     //////////////////////////////////////////
     void MaterialsPreviewInspector::buildMaterials()
     {
-        m_scene->getPreviewNodeTransform()->destroyAllChildren();
+        m_scene->clear();
 
         if (!m_materials.empty())
         {
@@ -212,9 +210,35 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Set<MaterialPtr> MaterialsPreviewInspector::getMaterials()
+    bool MaterialsPreviewInspector::setAssetFiles(Set<AssetFilePtr> const& _assetFiles)
     {
-        return m_materials;
+        Set<MaterialPtr> materials;
+
+        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+        MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
+
+        for (AssetFilePtr const& assetFile : _assetFiles)
+        {
+            MaterialPtr const& material = materialManager->getMaterial(assetFile);
+            if (material)
+                materials.insert(material);
+        }
+
+        setMaterials(materials);
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool MaterialsPreviewInspector::setObjects(Set<ObjectPtr> const& _objects)
+    {
+        Set<MaterialPtr> materials;
+        for (ObjectPtr const& object : _objects)
+            materials.insert(std::static_pointer_cast<Material>(object));
+
+        setMaterials(materials);
+
+        return true;
     }
 
 

@@ -119,7 +119,8 @@ namespace Maze
 
                 if (path.empty())
                     return path;
-            } while (!FileHelper::IsDirectory(path));
+            }
+            while (!FileHelper::IsDirectory(path));
 
             return path;
         }
@@ -131,6 +132,8 @@ namespace Maze
                 return;
 
             String path = SelectAssetsFolder();
+            if (path.empty())
+                return;
 
             SceneManager::GetInstancePtr()->unloadScene<SceneMain>();
 

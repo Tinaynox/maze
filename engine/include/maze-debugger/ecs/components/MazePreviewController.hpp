@@ -38,6 +38,7 @@
 #include "maze-debugger/scenes/SceneDebugPreview.hpp"
 #include "maze-debugger/preview-inspectors/MazePreviewInspector.hpp"
 #include "maze-graphics/MazeSprite.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-ui/ecs/components/MazeScrollRect2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
@@ -77,6 +78,9 @@ namespace Maze
         friend class Entity;
 
 
+        //////////////////////////////////////////
+        using SetupEditorFunc = std::function<PreviewInspectorPtr(PreviewController*)>;
+
     public:
 
         //////////////////////////////////////////
@@ -95,7 +99,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TInspector>
-        inline SharedPtr<TInspector> setupEditor()
+        inline SharedPtr<TInspector> setupInspector()
         {
             if (!m_previewInspector || m_previewInspector->getMetaClass() != TInspector::GetMetaClass())
             {
@@ -107,7 +111,9 @@ namespace Maze
 
                 if (m_previewInspector)
                 {
-                    set3DSceneVisible(m_previewInspector->get3DSceneVisible());
+                    setSceneVisibleSettings(
+                        m_previewInspector->getCameraActive(),
+                        m_previewInspector->getCanvasActive());
                 }
             }
 
@@ -116,6 +122,38 @@ namespace Maze
 
         //////////////////////////////////////////
         void clearEditor();
+
+
+        //////////////////////////////////////////
+        template <typename TInspector>
+        inline void registerPreviewInspectorByExtension(HashedCString _extension)
+        {
+            static auto setupInspectorFunc = 
+                [](PreviewController* _controller)
+                {
+                    return std::static_pointer_cast<PreviewInspector>(_controller->setupInspector<TInspector>());
+                };
+            m_editorByExtension[_extension] = setupInspectorFunc;
+        }
+
+        //////////////////////////////////////////
+        template <typename TInspector>
+        inline void registerPreviewInspectorByClassUID(ClassUID _objectUID)
+        {
+            static auto setupInspectorFunc =
+                [](PreviewController* _controller)
+                {
+                    return std::static_pointer_cast<PreviewInspector>(_controller->setupInspector<TInspector>());
+                };
+            m_editorByClassUID[_objectUID] = setupInspectorFunc;
+        }
+
+        //////////////////////////////////////////
+        template <typename TInspector, typename TObject>
+        inline void registerPreviewInspectorByClassUID()
+        {
+            registerPreviewInspectorByClassUID<TInspector>(ClassInfo<TObject>::UID());
+        }
 
     protected:
 
@@ -141,7 +179,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void set3DSceneVisible(bool _value);
+        void setSceneVisibleSettings(bool _camera, bool _canvas);
 
         //////////////////////////////////////////
         void notifySelectionChanged();
@@ -154,6 +192,9 @@ namespace Maze
         //////////////////////////////////////////
         void notifyBodyBackgroundElementCursorDrag(
             Vec2DF const& _positionOS, CursorInputEvent const& _event);
+
+        //////////////////////////////////////////
+        void notifyTextureLoaderAdded(HashedCString _extension, TextureLoaderData const& _loader);
 
     protected:
         Canvas* m_canvas;
@@ -170,6 +211,8 @@ namespace Maze
 
         PreviewInspectorPtr m_previewInspector;
 
+        StringKeyMap<SetupEditorFunc> m_editorByExtension;
+        Map<ClassUID, SetupEditorFunc> m_editorByClassUID;
     };
 
 

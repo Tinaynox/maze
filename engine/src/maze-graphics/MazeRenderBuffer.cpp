@@ -206,6 +206,8 @@ namespace Maze
 
         m_size = _size;
 
+        eventRenderTargetResized(this);
+
         return true;
     }
 

@@ -79,13 +79,24 @@ namespace Maze
         virtual ~PreviewInspector();
 
         //////////////////////////////////////////
-        virtual bool get3DSceneVisible() const { return false; }
+        virtual bool getCameraActive() const { return false; }
+
+        //////////////////////////////////////////
+        virtual bool getCanvasActive() const { return false; }
 
         //////////////////////////////////////////
         virtual void processCursorPress(Vec2DF const& _positionOS, CursorInputEvent const& _event) {};
 
         //////////////////////////////////////////
         virtual void processCursorDrag(Vec2DF const& _positionOS, CursorInputEvent const& _event) {};
+
+
+
+        //////////////////////////////////////////
+        virtual bool setAssetFiles(Set<AssetFilePtr> const& _assetFiles) { return false; }
+
+        //////////////////////////////////////////
+        virtual bool setObjects(Set<ObjectPtr> const& _objects) { return false; }
 
     protected:
 

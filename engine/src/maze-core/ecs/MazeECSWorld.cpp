@@ -409,10 +409,10 @@ namespace Maze
                 {
                     m_activeEntities.eraseUnordered(it);
                 }
-                else
-                {
-                    MAZE_DEBUG_ERROR("activeEntities array is not synchronized");
-                }
+                // else
+                // {
+                //     MAZE_DEBUG_ERROR("activeEntities array is not synchronized");
+                // }
             }
 
             for (Size i = 0, in = m_samples.size(); i < in; ++i)

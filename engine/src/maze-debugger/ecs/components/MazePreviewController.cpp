@@ -39,6 +39,7 @@
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
@@ -52,6 +53,7 @@
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 #include "maze-debugger/preview-inspectors/MazeMaterialsPreviewInspector.hpp"
+#include "maze-debugger/preview-inspectors/MazeTexture2DPreviewInspector.hpp"
 
 
 //////////////////////////////////////////
@@ -83,6 +85,17 @@ namespace Maze
         if (UpdateManager::GetInstancePtr())
             UpdateManager::GetInstancePtr()->removeUpdatable(this);
 
+        if (GraphicsManager::GetInstancePtr())
+        {
+            if (GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw())
+            {
+                if (GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getTextureManager())
+                {
+                    GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getTextureManager()->eventTextureLoaderAdded.unsubscribe(this);
+                }
+            }
+        }
+
         if (m_scene)
         {
             SceneManager::GetInstancePtr()->destroyScene(m_scene);
@@ -111,13 +124,30 @@ namespace Maze
         SelectionManager::GetInstancePtr()->eventSelectionChanged.subscribe(this, &PreviewController::notifySelectionChanged);
         UpdateManager::GetInstancePtr()->addUpdatable(this);
 
+        registerPreviewInspectorByExtension<MaterialsPreviewInspector>("mzmaterial");
+        registerPreviewInspectorByClassUID<MaterialsPreviewInspector, Material>();
+
+        registerPreviewInspectorByExtension<Texture2DPreviewInspector>("mztexture");
+        registerPreviewInspectorByClassUID<Texture2DPreviewInspector, Texture2D>();
+
+        GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getTextureManager()->eventTextureLoaderAdded.subscribe(
+            this, &PreviewController::notifyTextureLoaderAdded);
+
+        Vector<String> textureExtensions = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getTextureManager()->getTextureLoaderExtensions();
+        for (String const& textureExtension : textureExtensions)
+            registerPreviewInspectorByExtension<Texture2DPreviewInspector>(textureExtension.c_str());
+
         return true;
     }
 
     //////////////////////////////////////////
     void PreviewController::update(F32 _dt)
     {
-        
+        if (m_canvas && m_renderBuffer)
+        {
+            m_renderBuffer->setSize(
+                (Vec2DU)m_bodyBackground->getTransform()->getSize());
+        }
     }
 
     //////////////////////////////////////////
@@ -144,6 +174,8 @@ namespace Maze
                 PixelFormat::RGBA_U8,
                 PixelFormat::DEPTH_U24
             });
+        m_renderBuffer->getColorTexture2D()->setMinFilter(TextureFilter::Nearest);
+        m_renderBuffer->getColorTexture2D()->setMagFilter(TextureFilter::Nearest);
 
         m_scene = SceneManager::GetInstancePtr()->loadScene<SceneDebugPreview>(true, m_renderBuffer);
 
@@ -278,25 +310,18 @@ namespace Maze
                             }
                             else
                             {
-                                if (extension == "mzmaterial")
+                                auto it = m_editorByExtension.find(extension);
+                                if (it != m_editorByExtension.end())
                                 {
-                                    Set<MaterialPtr> materials;
-
-                                    RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-                                    MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
-
-                                    for (AssetFilePtr const& assetFile : assetFiles)
+                                    clearEditor();
+                                    PreviewInspectorPtr inspector = it->second(this);
+                                    if (inspector)
                                     {
-                                        MaterialPtr const& material = materialManager->getMaterial(assetFile);
-                                        if (material)
-                                            materials.insert(material);
+                                        if (inspector->setAssetFiles(assetFiles))
+                                        {
+                                            m_layout->alignChildren();
+                                        }
                                     }
-
-                                    MaterialsPreviewInspectorPtr inspector = setupEditor<MaterialsPreviewInspector>();
-                                    inspector->setMaterials(materials);
-
-                                    inspector->update(0.0f);
-                                    m_layout->alignChildren();
                                 }
                                 else
                                 {
@@ -306,19 +331,22 @@ namespace Maze
                             }
                         }
                         else
-                            // Material
-                            if (objectsMetaClass->isInheritedFrom<Material>())
+                        {
+                            for (auto editorByClassUIDData : m_editorByClassUID)
                             {
-                                Set<MaterialPtr> materials;
-                                for (ObjectPtr const& object : objects)
-                                    materials.insert(std::static_pointer_cast<Material>(object));
-
-                                MaterialsPreviewInspectorPtr inspector = setupEditor<MaterialsPreviewInspector>();
-                                inspector->setMaterials(materials);
-
-                                inspector->update(0.0f);
-                                m_layout->alignChildren();
+                                if (objectsMetaClass->isInheritedFrom(editorByClassUIDData.first))
+                                {
+                                    clearEditor();
+                                    PreviewInspectorPtr inspector = editorByClassUIDData.second(this);
+                                    if (inspector)
+                                    {
+                                        inspector->setObjects(objects);
+                                        m_layout->alignChildren();
+                                    }                                    
+                                    break;
+                                }
                             }
+                        }
                     }
                     else
                     {
@@ -348,31 +376,31 @@ namespace Maze
         m_previewInspector.reset();
 
         if (m_scene)
-            m_scene->getPreviewNodeTransform()->destroyAllChildren();
+            m_scene->clear();
         
 
-        set3DSceneVisible(false);
+        setSceneVisibleSettings(false, false);
     }
 
     //////////////////////////////////////////
-    void PreviewController::set3DSceneVisible(bool _value)
+    void PreviewController::setSceneVisibleSettings(bool _camera, bool _canvas)
     {
-        if (_value)
+        if (_camera || _canvas)
         {
             m_bodyBackground->setSprite(m_bodySprite);
             m_bodyBackground->setColor(ColorU32::c_white);
-
-            if (m_scene)
-                m_scene->getCamera()->getEntityRaw()->setActiveSelf(true);
         }
         else
         {
             m_bodyBackground->setSprite(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02));
             m_bodyBackground->setColor(DebuggerLayout::c_bodyBackgroundColor);
+        }
 
-            if (m_scene)
-                m_scene->getCamera()->getEntityRaw()->setActiveSelf(false);
+        if (m_scene)
+        {
+            m_scene->getCamera()->getEntityRaw()->setActiveSelf(_camera);
+            m_scene->getCanvas()->getEntityRaw()->setActiveSelf(_canvas);
         }
     }
 
@@ -390,6 +418,12 @@ namespace Maze
     {
         if (m_previewInspector)
             m_previewInspector->processCursorDrag(_positionOS, _event);
+    }
+
+    //////////////////////////////////////////
+    void PreviewController::notifyTextureLoaderAdded(HashedCString _extension, TextureLoaderData const& _loader)
+    {
+        registerPreviewInspectorByExtension<Texture2DPreviewInspector>(_extension);
     }
 
 } // namespace Maze

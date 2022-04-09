@@ -188,7 +188,22 @@ namespace Maze
     //////////////////////////////////////////
     void SceneDebugPreview::create2D()
     {
-        
+        EntityPtr canvasEntity = createEntity();
+        m_canvas = canvasEntity->createComponent<Canvas>();
+        m_canvas->setClearColorFlag(true);
+        m_canvas->setClearColor(ColorU32::c_lightGray);
+        m_canvas->setRenderTarget(m_renderTarget);
+        canvasEntity->setActiveSelf(false);
+    }
+
+    //////////////////////////////////////////
+    void SceneDebugPreview::clear()
+    {
+        if (getPreviewNodeTransform())
+            getPreviewNodeTransform()->destroyAllChildren();
+
+        if (getCanvas())
+            getCanvas()->getTransform()->destroyAllChildren();
     }
 
     //////////////////////////////////////////

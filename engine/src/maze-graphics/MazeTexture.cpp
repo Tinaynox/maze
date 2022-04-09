@@ -45,7 +45,7 @@ namespace Maze
     MAZE_IMPLEMENT_ENUMCLASS(TextureType);
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS(Texture);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Texture, Object);
 
     //////////////////////////////////////////
     Texture::Texture()

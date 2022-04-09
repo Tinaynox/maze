@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeMaterialsPreviewInspector_hpp_))
-#define _MazeMaterialsPreviewInspector_hpp_
+#if (!defined(_MazeTexture2DPreviewInspector_hpp_))
+#define _MazeTexture2DPreviewInspector_hpp_
 
 
 //////////////////////////////////////////
@@ -46,7 +46,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(MaterialsPreviewInspector);
+    MAZE_USING_SHARED_PTR(Texture2DPreviewInspector);
     MAZE_USING_SHARED_PTR(Transform2D);
     MAZE_USING_SHARED_PTR(Component);
     MAZE_USING_SHARED_PTR(MetaPropertyDrawer);
@@ -63,27 +63,27 @@ namespace Maze
     
 
     //////////////////////////////////////////
-    // Class MaterialsPreviewInspector
+    // Class Texture2DPreviewInspector
     //
     //////////////////////////////////////////
-    class MAZE_DEBUGGER_API MaterialsPreviewInspector
+    class MAZE_DEBUGGER_API Texture2DPreviewInspector
         : public PreviewInspector
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(MaterialsPreviewInspector, PreviewInspector);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(Texture2DPreviewInspector, PreviewInspector);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(MaterialsPreviewInspector);
+        MAZE_DECLARE_MEMORY_ALLOCATION(Texture2DPreviewInspector);
 
     public:
 
         //////////////////////////////////////////
-        virtual ~MaterialsPreviewInspector();
+        virtual ~Texture2DPreviewInspector();
 
         //////////////////////////////////////////
-        static MaterialsPreviewInspectorPtr Create(
+        static Texture2DPreviewInspectorPtr Create(
             Transform2DPtr const& _parent2D,
             SceneDebugPreviewPtr const& _scene);
 
@@ -93,20 +93,14 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual bool getCameraActive() const MAZE_OVERRIDE { return true; }
+        virtual bool getCameraActive() const MAZE_OVERRIDE { return false; }
 
         //////////////////////////////////////////
-        virtual bool getCanvasActive() const MAZE_OVERRIDE { return false; }
-
-        //////////////////////////////////////////
-        virtual void processCursorPress(Vec2DF const& _positionOS, CursorInputEvent const& _event) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void processCursorDrag(Vec2DF const& _positionOS, CursorInputEvent const& _event) MAZE_OVERRIDE;
+        virtual bool getCanvasActive() const MAZE_OVERRIDE { return true; }
 
 
         //////////////////////////////////////////
-        void setMaterials(Set<MaterialPtr> const& _materials);
+        void setTextures(Set<Texture2DPtr> const& _textures);
 
         //////////////////////////////////////////
         virtual bool setAssetFiles(Set<AssetFilePtr> const& _assetFiles) MAZE_OVERRIDE;
@@ -117,24 +111,21 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        MaterialsPreviewInspector();
+        Texture2DPreviewInspector();
 
         //////////////////////////////////////////
         virtual bool init(
             Transform2DPtr const& _parent2D,
             SceneDebugPreviewPtr const& _scene) MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        void buildMaterials();
 
         //////////////////////////////////////////
-        void updateCameraPosition();
+        void buildTextures();
 
     protected:
-        Set<MaterialPtr> m_materials;
+        Set<Texture2DPtr> m_textures;
 
-        bool m_materialsDirty = false;
-        Vec2DF m_cursorPositionLastFrame = Vec2DF::c_zero;
+        bool m_texturesDirty = false;
     };
 
 
@@ -142,5 +133,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeMaterialsPreviewInspector_hpp_
+#endif // _MazeTexture2DPreviewInspector_hpp_
 //////////////////////////////////////////

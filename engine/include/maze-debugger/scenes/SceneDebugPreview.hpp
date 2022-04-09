@@ -91,10 +91,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void clear();
+
+        //////////////////////////////////////////
         inline Transform3DPtr const& getPreviewNodeTransform() const { return m_previewNodeTransform; }
 
         //////////////////////////////////////////
         Camera3DPtr const& getCamera() const { return m_camera3D; }
+
+        //////////////////////////////////////////
+        CanvasPtr const& getCanvas() const { return m_canvas; }
 
 
         //////////////////////////////////////////
@@ -132,7 +138,8 @@ namespace Maze
     protected:
         Transform3DPtr m_previewNodeTransform;
 
-        Camera3DPtr m_camera3D;      
+        Camera3DPtr m_camera3D;
+        CanvasPtr m_canvas;
 
         F32 m_yawAngle;
         F32 m_pitchAngle;
