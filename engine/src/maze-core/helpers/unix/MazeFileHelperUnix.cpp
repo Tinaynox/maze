@@ -291,6 +291,23 @@ namespace Maze
             
             return buff;
         }
+        
+        ////////////////////////////////////
+        MAZE_CORE_API FileStats GetFileStats(CString _fileFullPath)
+        {
+            FileStats result;
+
+            struct stat st;
+            if (stat(_fullPath, &st) == 0)
+            {
+                result.creationTimeUTC = st.st_ctime;
+                result.modifiedTimeUTC = st.st_mtime;
+                result.accessedTimeUTC = st.st_atime;
+                result.fileSize = st.st_size;
+            }
+
+            return result;
+        }
 
     } // namespace FileHelper
     //////////////////////////////////////////

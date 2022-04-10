@@ -62,6 +62,18 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        MAZE_CORE_API UnixTime ConvertUTCToLocal(UnixTime _utc)
+        {
+            return _utc + GetUTCTimeZone();
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API UnixTime ConvertLocalToUTC(UnixTime _localTime)
+        {
+            return _localTime - GetUTCTimeZone();
+        }
+
+        //////////////////////////////////////////
         MAZE_CORE_API void ConvertStdDateTimeToDateTime(tm const* _stdDateTime, DateTime* _dateTime)
         {
             _dateTime->seconds = _stdDateTime->tm_sec;

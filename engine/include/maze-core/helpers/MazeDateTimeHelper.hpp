@@ -53,6 +53,12 @@ namespace Maze
         MAZE_CORE_API UnixTime GetUTCTimeZone();
 
         //////////////////////////////////////////
+        MAZE_CORE_API UnixTime ConvertUTCToLocal(UnixTime _utc);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API UnixTime ConvertLocalToUTC(UnixTime _localTime);
+
+        //////////////////////////////////////////
         MAZE_CORE_API void ConvertStdDateTimeToDateTime(tm const* _stdDateTime, DateTime* _dateTime);
 
         //////////////////////////////////////////
@@ -60,6 +66,14 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_CORE_API void ConvertUnixTimeToDateTime(UnixTime _unixTime, DateTime* _dateTime);
+
+        //////////////////////////////////////////
+        inline DateTime ConvertUnixTimeToDateTime(UnixTime _unixTime)
+        {
+            DateTime dateTime;
+            ConvertUnixTimeToDateTime(_unixTime, &dateTime);
+            return dateTime;
+        }
 
 
         //////////////////////////////////////////

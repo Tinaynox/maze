@@ -35,6 +35,7 @@
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/system/MazeWindowVideoMode.hpp"
 #include "maze-core/system/MazeWindow.hpp"
+#include "maze-core/system/MazeFileStats.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
@@ -81,6 +82,9 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual Size getFileSize() MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual FileStats const& getFileStats() MAZE_ABSTRACT;
         
 
         //////////////////////////////////////////

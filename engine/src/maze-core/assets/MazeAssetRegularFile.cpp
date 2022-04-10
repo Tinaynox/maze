@@ -82,10 +82,19 @@ namespace Maze
         }
         
         m_fileName = FileHelper::GetFileNameInPath(m_fullPath);
+
+        Size size = getFileSize();
+        m_fileStats = FileHelper::GetFileStats(m_fullPath.c_str());
     }
 
     //////////////////////////////////////////
     Size AssetRegularFile::getFileSize()
+    {
+        return m_fileStats.fileSize;
+    }
+
+    //////////////////////////////////////////
+    Size AssetRegularFile::calculateFileSize()
     {
         FILE* fileHandler = StdHelper::OpenFile(m_fullPath.c_str(), "rb");
         if (!fileHandler)
@@ -96,7 +105,7 @@ namespace Maze
         U32 prevPos = ftell(fileHandler);
         fseek(fileHandler, 0, SEEK_END);
         size = ftell(fileHandler);
-        fseek(fileHandler, prevPos, SEEK_SET);        
+        fseek(fileHandler, prevPos, SEEK_SET);
 
         fclose(fileHandler);
 

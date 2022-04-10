@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
+#include "maze-core/system/MazeFileStats.hpp"
 
 
 //////////////////////////////////////////
@@ -100,6 +101,8 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API extern String ConvertLocalPathToFullPath(CString _localPath);
 
+        ////////////////////////////////////
+        MAZE_CORE_API extern FileStats GetFileStats(CString _fileFullPath);
 
     } // namespace FileHelper
     //////////////////////////////////////////

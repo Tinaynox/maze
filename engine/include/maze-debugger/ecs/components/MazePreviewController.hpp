@@ -103,7 +103,7 @@ namespace Maze
         {
             if (!m_previewInspector || m_previewInspector->getMetaClass() != TInspector::GetMetaClass())
             {
-                clearEditor();
+                clearInspector();
 
                 m_previewInspector = TInspector::Create(
                     m_layout->getTransform(),
@@ -121,7 +121,20 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        void clearEditor();
+        template <typename TInspector>
+        inline SharedPtr<TInspector> setupInspector(Set<AssetFilePtr> const& _assetFiles)
+        {
+            SharedPtr<TInspector> inspector = setupInspector<TInspector>();
+            if (inspector)
+            {
+                if (inspector->setAssetFiles(_assetFiles))
+                    m_layout->alignChildren();
+            }
+            return inspector;
+        }
+
+        //////////////////////////////////////////
+        void clearInspector();
 
 
         //////////////////////////////////////////

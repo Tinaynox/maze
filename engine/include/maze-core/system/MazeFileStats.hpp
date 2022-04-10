@@ -25,73 +25,35 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeDateTime_hpp_))
-#define _MazeDateTime_hpp_
+#if (!defined(_MazeFileStats_hpp_))
+#define _MazeFileStats_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
-#include "maze-core/MazeStdTypes.hpp"
 #include "maze-core/MazeTypes.hpp"
-#include "maze-core/preprocessor/MazePreprocessor_CPlusPlus.hpp"
+#include "maze-core/system/MazeDateTime.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    // Struct DateTime
+    // Struct FileStats
     //
     //////////////////////////////////////////
-    struct MAZE_CORE_API DateTime
+    struct MAZE_CORE_API FileStats
     {
-        S32 seconds = 0;    // [0, 60] Including leap second
-        S32 minutes = 0;    // [0, 59]
-        S32 hours = 0;      // [0, 23]
-        S32 months = 0;     // [0, 11] (Since January)
-        S32 years = 0;      // Since 1900
-
-        S32 monthDay = 0;   // [1, 31]
-        S32 weekDay = 0;    // [0, 6] (Since Sunday)
-        S32 yearDay = 0;    // [0, 365] (Since January 1)
-
-        S32 daylightSavingsTime = 0;
-
-
-
-        //////////////////////////////////////////
-        String formatSeconds();
-
-        //////////////////////////////////////////
-        String formatMinutes();
-
-        //////////////////////////////////////////
-        String formatHours24();
-
-        //////////////////////////////////////////
-        String formatHours12();
-
-        //////////////////////////////////////////
-        String formatTime24();
-
-        //////////////////////////////////////////
-        String formatTime12();
-
-        //////////////////////////////////////////
-        String formatTimeFull24();
-
-        //////////////////////////////////////////
-        String formatTimeFull12();
-        
-        //////////////////////////////////////////
-        String formatDateTime();
+        UnixTime creationTimeUTC = 0u;
+        UnixTime modifiedTimeUTC = 0u;
+        UnixTime accessedTimeUTC = 0u;
+        Size fileSize = 0u;
     };
-
-
+    
 } // namespace Maze
 //////////////////////////////////////////
+    
 
-
-#endif // _MazeDateTime_hpp_
+#endif // _MazeFileStats_hpp_
 //////////////////////////////////////////

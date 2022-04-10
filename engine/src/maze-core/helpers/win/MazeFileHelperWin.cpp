@@ -29,6 +29,7 @@
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-core/helpers/MazeStdHelper.hpp"
+#include "maze-core/helpers/MazeDateTimeHelper.hpp"
 #include <ShlObj.h>
 
 
@@ -561,6 +562,23 @@ namespace Maze
             NormalizeFilePath(buffer);
         
             return buffer;
+        }
+
+        ////////////////////////////////////
+        MAZE_CORE_API FileStats GetFileStats(CString _fileFullPath)
+        {
+            FileStats result;
+
+            struct _stat st;
+            if (_stat(_fileFullPath, &st) == 0)
+            {
+                result.creationTimeUTC = st.st_ctime;
+                result.modifiedTimeUTC = st.st_mtime;
+                result.accessedTimeUTC = st.st_atime;
+                result.fileSize = st.st_size;
+            }
+
+            return result;
         }
 
     } // namespace FileHelper

@@ -34,6 +34,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
+#include "maze-core/assets/MazeAssetDirectory.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -56,6 +57,8 @@
 #include "maze-debugger/preview-inspectors/MazeMaterialsPreviewInspector.hpp"
 #include "maze-debugger/preview-inspectors/MazeTexture2DPreviewInspector.hpp"
 #include "maze-debugger/preview-inspectors/MazeRenderMeshPreviewInspector.hpp"
+#include "maze-debugger/preview-inspectors/MazeDirectoryPreviewInspector.hpp"
+#include "maze-debugger/preview-inspectors/MazeFilePreviewInspector.hpp"
 
 
 //////////////////////////////////////////
@@ -271,7 +274,7 @@ namespace Maze
         {
             case SelectionType::Entities:
             {
-                clearEditor();
+                clearInspector();
                 
 
                 break;
@@ -301,6 +304,12 @@ namespace Maze
                             for (ObjectPtr const& object : objects)
                                 assetFiles.insert(std::static_pointer_cast<AssetFile>(object));
 
+                            if (objectsMetaClass->isInheritedFrom<AssetDirectory>())
+                            {
+                                setupInspector<DirectoryPreviewInspector>(assetFiles);
+                                break;
+                            }
+
                             String extension = (*assetFiles.begin())->getExtension();
                             bool multiExtension = false;
                             for (auto it = ++assetFiles.begin(); it != assetFiles.end(); ++it)
@@ -314,14 +323,13 @@ namespace Maze
 
                             if (multiExtension)
                             {
-                                clearEditor();
+                                clearInspector();
                             }
                             else
                             {
                                 auto it = m_editorByExtension.find(extension);
                                 if (it != m_editorByExtension.end())
                                 {
-                                    clearEditor();
                                     PreviewInspectorPtr inspector = it->second(this);
                                     if (inspector)
                                     {
@@ -333,8 +341,8 @@ namespace Maze
                                 }
                                 else
                                 {
-                                    // Not supported extension
-                                    clearEditor();
+                                    setupInspector<FilePreviewInspector>(assetFiles);
+                                    break;
                                 }
                             }
                         }
@@ -344,7 +352,6 @@ namespace Maze
                             {
                                 if (objectsMetaClass->isInheritedFrom(editorByClassUIDData.first))
                                 {
-                                    clearEditor();
                                     PreviewInspectorPtr inspector = editorByClassUIDData.second(this);
                                     if (inspector)
                                     {
@@ -358,26 +365,26 @@ namespace Maze
                     }
                     else
                     {
-                        clearEditor();
+                        clearInspector();
                     }
                 }
                 else
                 {
-                    clearEditor();
+                    clearInspector();
                 }
 
                 break;
             }
             default:
             {
-                clearEditor();
+                clearInspector();
                 break;
             }
         }
     }
     
     //////////////////////////////////////////
-    void PreviewController::clearEditor()
+    void PreviewController::clearInspector()
     {
         m_layout->getTransform()->destroyAllChildren();
         m_layout->alignChildren();

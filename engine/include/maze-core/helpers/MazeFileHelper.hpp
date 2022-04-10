@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
+#include "maze-core/system/MazeFileStats.hpp"
 
 
 //////////////////////////////////////////
@@ -165,6 +166,10 @@ namespace Maze
             else
                 return DeleteRegularFile(_fullPath);
         }
+
+
+        ////////////////////////////////////
+        MAZE_CORE_API extern FileStats GetFileStats(CString _fileFullPath);
 
     } // namespace FileHelper
     //////////////////////////////////////////
