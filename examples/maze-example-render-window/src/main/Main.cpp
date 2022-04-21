@@ -259,7 +259,7 @@ void OnInit()
     Maze::Debug::log << g_main->windowManager->constructWindowsInfo();
 
 
-    Maze::AssetManager::GetInstancePtr()->addAssetsDirectory(Maze::AssetManager::GetInstancePtr()->getDefaultAssetsDirectory(), true);
+    Maze::AssetManager::GetInstancePtr()->addAssetsDirectoryPath(Maze::AssetManager::GetInstancePtr()->getDefaultAssetsDirectory());
 
     Maze::RenderSystemPtr const& renderSystem = g_main->graphicsManager->getDefaultRenderSystem();
     Maze::ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
