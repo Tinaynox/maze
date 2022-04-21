@@ -24,13 +24,12 @@
 
 
 //////////////////////////////////////////
-#include "EditorManager.hpp"
+#include "EditorAssetsManager.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
-#include "maze-core/managers/MazeEntitySerializationManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/settings/MazeSettingsManager.hpp"
@@ -39,6 +38,7 @@
 #include "maze-core/ecs/components/MazeRotor3D.hpp"
 #include "maze-core/ecs/components/MazeSinMovement3D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
@@ -82,111 +82,69 @@
 #include "maze-physics2d/ecs/components/MazeBoxCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeCircleCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
-#include "settings/MazeEditorSettings.hpp"
 #include "Editor.hpp"
-#include "managers/EditorAssetsManager.hpp"
-#include "managers/EditorAssetsModeManager.hpp"
-#include "managers/EditorProjectModeManager.hpp"
+#include "settings/MazeEditorSettings.hpp"
+
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class EditorManager
+    // Class EditorAssetsManager
     //
     //////////////////////////////////////////
-    EditorManager* EditorManager::s_instance = nullptr;
+    EditorAssetsManager* EditorAssetsManager::s_instance = nullptr;
 
     //////////////////////////////////////////
-    EditorManager::EditorManager()
+    EditorAssetsManager::EditorAssetsManager()
     {
         s_instance = this;
     }
 
     //////////////////////////////////////////
-    EditorManager::~EditorManager()
+    EditorAssetsManager::~EditorAssetsManager()
     {
-        s_instance = nullptr;        
+        if (Editor::GetInstancePtr())
+        {
+            if (Editor::GetInstancePtr()->getMainRenderWindow())
+            {
+                if (Editor::GetInstancePtr()->getMainRenderWindow()->getWindow())
+                {
+                    Editor::GetInstancePtr()->getMainRenderWindow()->getWindow()->eventWindowFocusChanged.unsubscribe(this);
+                }
+            }
+        }
+
+        s_instance = nullptr;
     }
 
     //////////////////////////////////////////
-    void EditorManager::Initialize(EditorManagerPtr& _playerManager)
+    void EditorAssetsManager::Initialize(EditorAssetsManagerPtr& _manager)
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorManager, _playerManager, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorAssetsManager, _manager, init());
     }
 
     //////////////////////////////////////////
-    bool EditorManager::init()
+    bool EditorAssetsManager::init()
     {
-        EditorAssetsManager::Initialize(m_editorAssetsManager);
-        if (!m_editorAssetsManager)
-            return false;
-
-        EditorPrefabManager::Initialize(m_editorPrefabManager);
-        if (!m_editorPrefabManager)
-            return false;
-
-        EditorAssetsModeManager::Initialize(m_editorAssetsModeManager);
-        if (!m_editorAssetsModeManager)
-            return false;
-
-        EditorProjectModeManager::Initialize(m_editorProjectModeManager);
-        if (!m_editorProjectModeManager)
-            return false;
+        Editor::GetInstancePtr()->eventMainRenderWindowCreated.subscribe(
+            [this]()
+            {
+                Editor::GetInstancePtr()->getMainRenderWindow()->getWindow()->eventWindowFocusChanged.subscribe(
+                    this, &EditorAssetsManager::notifyWindowFocusChanged);
+            });
 
         return true;
     }
 
     //////////////////////////////////////////
-    EditorMode EditorManager::getMode() const
+    void EditorAssetsManager::notifyWindowFocusChanged(Window* _window)
     {
-        EditorSettings* editorSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSettings>();
-        if (!editorSettings)
-            return EditorMode::None;
-
-        return editorSettings->getEditorMode();
+        if (_window->getFocused())
+        {
+            AssetManager::GetInstancePtr()->updateAssets();
+        }
     }
-
-    //////////////////////////////////////////
-    void EditorManager::setSceneMode(EditorSceneMode _mode)
-    {
-        if (m_sceneMode == _mode)
-            return;
-
-        m_sceneMode = _mode;
-
-        eventSceneModeChanged(m_sceneMode);
-    }
-
-    //////////////////////////////////////////
-    void EditorManager::clearWorkspace()
-    {
-        m_sceneWorkspace->destroyAllEntities();
-    }
-
-    //////////////////////////////////////////
-    void EditorManager::openPrefab(EntityPtr const& _value)
-    {
-        setSceneMode(EditorSceneMode::Prefab);
-        m_sceneWorkspace->destroyAllEntitiesExcept(_value);
-        m_editorPrefabManager->setPrefabEntity(_value);
-    }
-
-    //////////////////////////////////////////
-    EntityPtr EditorManager::createNewPrefab()
-    {        
-        EntityPtr gameObject = m_sceneWorkspace->createEntity("Entity");
-        openPrefab(gameObject);
-
-        return gameObject;
-    }
-
-    //////////////////////////////////////////
-    void EditorManager::start()
-    {
-        m_sceneWorkspace = Editor::GetInstancePtr()->getSceneManager()->loadScene<SceneWorkspace>();
-    }
-
 
 } // namespace Maze
 //////////////////////////////////////////

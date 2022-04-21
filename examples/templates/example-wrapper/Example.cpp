@@ -358,7 +358,7 @@ namespace Maze
 
         Debug::Log("Example Init - 5 [%ums]", getTime());
 
-        AssetManager::GetInstancePtr()->addAssetsDirectory(AssetManager::GetInstancePtr()->getDefaultAssetsDirectory(), true);
+        AssetManager::GetInstancePtr()->addAssetsDirectoryPath(AssetManager::GetInstancePtr()->getDefaultAssetsDirectory());
 
         EntityManager* entityManager = EntityManager::GetInstancePtr();
         ECSWorldPtr const& world = entityManager->getDefaultWorld();

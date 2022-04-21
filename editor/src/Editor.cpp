@@ -95,6 +95,8 @@ namespace Maze
     {
         m_sceneManager.reset();
 
+        m_editorManager.reset();
+
         m_mainRenderWindow.reset();
 
         s_instance = nullptr;        
@@ -268,7 +270,7 @@ namespace Maze
         if (!createMainRenderWindow())
             return false;
 
-        AssetManager::GetInstancePtr()->addAssetsDirectory(AssetManager::GetInstancePtr()->getDefaultAssetsDirectory(), true);
+        AssetManager::GetInstancePtr()->addAssetsDirectoryPath(AssetManager::GetInstancePtr()->getDefaultAssetsDirectory());
         
 
         EntityManager* entityManager = EntityManager::GetInstancePtr();
