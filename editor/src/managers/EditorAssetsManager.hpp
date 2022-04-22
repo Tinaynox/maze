@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_EditorManager_hpp_))
-#define _EditorManager_hpp_
+#if (!defined(_EditorAssetsManager_hpp_))
+#define _EditorAssetsManager_hpp_
 
 
 //////////////////////////////////////////
@@ -49,109 +49,54 @@
 #include "scenes/SceneWorkspace.hpp"
 #include "editor/EditorSceneMode.hpp"
 #include "editor/EditorMode.hpp"
-#include "managers/EditorPrefabManager.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(EditorManager);
+    MAZE_USING_SHARED_PTR(EditorAssetsManager);
     MAZE_USING_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(SceneWorkspace);
-    MAZE_USING_SHARED_PTR(EditorAssetsManager);
-    MAZE_USING_SHARED_PTR(EditorAssetsModeManager);
-    MAZE_USING_SHARED_PTR(EditorProjectModeManager);
-    
+
 
     //////////////////////////////////////////
-    // Class EditorManager
+    // Class EditorAssetsManager
     //
     //////////////////////////////////////////
-    class EditorManager
+    class EditorAssetsManager
         : public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        ~EditorManager();
+        ~EditorAssetsManager();
 
         //////////////////////////////////////////
-        static void Initialize(EditorManagerPtr& _gameManager);
+        static void Initialize(EditorAssetsManagerPtr& _manager);
         
 
         //////////////////////////////////////////
-        static inline EditorManager* GetInstancePtr() { return s_instance; }
+        static inline EditorAssetsManager* GetInstancePtr() { return s_instance; }
 
         //////////////////////////////////////////
-        static inline EditorManager& GetInstance() { return *s_instance; }
-
-
-        //////////////////////////////////////////
-        EditorPrefabManagerPtr const& getEditorPrefabManager() const { return m_editorPrefabManager; }
-
-
-        //////////////////////////////////////////
-        EditorMode getMode() const;
-
-
-        //////////////////////////////////////////
-        void setSceneMode(EditorSceneMode _mode);
-
-        //////////////////////////////////////////
-        inline EditorSceneMode getSceneMode() const { return m_sceneMode; }
-
-
-        //////////////////////////////////////////
-        void clearWorkspace();
-
-
-        //////////////////////////////////////////
-        void openPrefab(EntityPtr const& _value);
-
-        //////////////////////////////////////////
-        EntityPtr createNewPrefab();
-
-
-        //////////////////////////////////////////
-        void start();
-
-
-        //////////////////////////////////////////
-        inline String const& getCurrentEditFileFullPath() const { return m_currentEditFileFullPath; }
-
-        //////////////////////////////////////////
-        inline void setCurrentEditFileFullPath(String const& _value) { m_currentEditFileFullPath = _value; }
-
-    public:
-
-        //////////////////////////////////////////
-        MultiDelegate<EditorSceneMode> eventSceneModeChanged;
+        static inline EditorAssetsManager& GetInstance() { return *s_instance; }
 
 
     protected:
 
         //////////////////////////////////////////
-        EditorManager();
+        EditorAssetsManager();
 
         //////////////////////////////////////////
         bool init();
 
 
+        //////////////////////////////////////////
+        void notifyWindowFocusChanged(Window* _window);
 
     protected:
-        static EditorManager* s_instance;
-
-        EditorSceneMode m_sceneMode = EditorSceneMode::None;
-
-        SceneWorkspacePtr m_sceneWorkspace;
-
-        EditorAssetsManagerPtr m_editorAssetsManager;
-        EditorPrefabManagerPtr m_editorPrefabManager;
-        EditorAssetsModeManagerPtr m_editorAssetsModeManager;
-        EditorProjectModeManagerPtr m_editorProjectModeManager;
-
-        String m_currentEditFileFullPath;
+        static EditorAssetsManager* s_instance;
     };
 
 
@@ -159,5 +104,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _EditorManager_hpp_
+#endif // _EditorAssetsManager_hpp_
 //////////////////////////////////////////

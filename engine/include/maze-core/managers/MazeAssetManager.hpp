@@ -69,11 +69,11 @@ namespace Maze
         
         
         //////////////////////////////////////////
-        void addAssetsDirectory(String const& _path, bool _recursive = true);
-        
+        void addAssetsDirectoryPath(String const& _path);
+
         //////////////////////////////////////////
-        void removeAssetsDirectory(String const& _path, bool _recursive = true);
-        
+        void removeAssetsDirectoryPath(String const& _path);
+
         //////////////////////////////////////////
         String constructAssetsInfo();
 
@@ -159,6 +159,10 @@ namespace Maze
             return FileChildrenProcessor();
         }
 
+
+        //////////////////////////////////////////
+        void updateAssets();
+
     protected:
 
         //////////////////////////////////////////
@@ -183,11 +187,19 @@ namespace Maze
         ////////////////////////////////////
         void updateFileInfo(AssetFilePtr const& _file);
 
+
+        //////////////////////////////////////////
+        void addAssetsDirectory(String const& _path, bool _recursive = true);
+
+        //////////////////////////////////////////
+        void removeAssetsDirectory(String const& _path, bool _recursive = true);
     
     protected:
         static AssetManager* s_instance;
         
     protected:
+        Set<String> m_assetDirectoryPathes;
+
         StringKeyMap<AssetFilePtr> m_assetFilesByFileName;
         StringKeyMap<AssetFilePtr> m_assetFilesByFullPath;
 

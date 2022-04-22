@@ -169,14 +169,14 @@ namespace Maze
 
         if (!m_currentAssetsFullPath.empty())
         {
-            AssetManager::GetInstancePtr()->removeAssetsDirectory(m_currentAssetsFullPath, true);
+            AssetManager::GetInstancePtr()->removeAssetsDirectoryPath(m_currentAssetsFullPath);
         }
 
         m_currentAssetsFullPath = _folder;
 
         if (!m_currentAssetsFullPath.empty())
         {
-            AssetManager::GetInstancePtr()->addAssetsDirectory(m_currentAssetsFullPath, true);
+            AssetManager::GetInstancePtr()->addAssetsDirectoryPath(m_currentAssetsFullPath);
         }
 
         eventCurrentAssetsFullPath(m_currentAssetsFullPath);

@@ -77,6 +77,20 @@ namespace Maze
 
         return true;
     }
+
+    //////////////////////////////////////////
+    void AssetManager::addAssetsDirectoryPath(String const& _path)
+    {
+        m_assetDirectoryPathes.insert(_path);
+        addAssetsDirectory(_path, true);
+    }
+
+    //////////////////////////////////////////
+    void AssetManager::removeAssetsDirectoryPath(String const& _path)
+    {
+        m_assetDirectoryPathes.erase(_path);
+        removeAssetsDirectory(_path, true);
+    }
     
     //////////////////////////////////////////
     void AssetManager::addAssetsDirectory(String const& _path, bool _recursive)
@@ -331,6 +345,12 @@ namespace Maze
         }
 
         return metaData;
+    }
+
+    //////////////////////////////////////////
+    void AssetManager::updateAssets()
+    {
+
     }
 
 
