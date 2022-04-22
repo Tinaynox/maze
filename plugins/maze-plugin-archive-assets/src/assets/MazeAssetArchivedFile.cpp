@@ -82,6 +82,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    FileStats const& AssetArchivedFile::getFileStats()
+    {
+        return m_archive->getArchivedFileStats(m_zipArchiveFilePath);
+    }
+
+    //////////////////////////////////////////
     StringKeyMap<AssetFilePtr> const* AssetArchivedFile::getChildrenAssets() const
     {
         return nullptr;

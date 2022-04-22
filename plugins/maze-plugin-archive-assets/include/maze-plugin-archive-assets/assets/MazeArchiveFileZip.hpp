@@ -33,6 +33,7 @@
 #include "maze-plugin-archive-assets/MazeArchiveAssetsHeader.hpp"
 #include "maze-core/assets/MazeArchiveFile.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
+#include "maze-core/system/MazeFileStats.hpp"
 #include <mz.h>
 #include <mz_compat.h>
 #include <mz_crypt.h>
@@ -101,6 +102,9 @@ namespace Maze
 
         ////////////////////////////////////
         Size getArchivedFileLength(String const& _filePath);
+
+        ////////////////////////////////////
+        FileStats const& getArchivedFileStats(String const& _filePath);
 
     protected:
 

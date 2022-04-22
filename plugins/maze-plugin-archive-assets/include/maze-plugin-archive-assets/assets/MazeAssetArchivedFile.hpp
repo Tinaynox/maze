@@ -92,6 +92,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual Size getFileSize() MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        virtual FileStats const& getFileStats() MAZE_OVERRIDE;
+
 
         //////////////////////////////////////////
         virtual StringKeyMap<AssetFilePtr> const* getChildrenAssets() const MAZE_OVERRIDE;

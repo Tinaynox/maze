@@ -275,6 +275,14 @@ namespace Maze
         return it->second.uncompressedSize;
     }
 
+    ////////////////////////////////////
+    FileStats const& ArchiveFileZip::getArchivedFileStats(String const& _filePath)
+    {
+        // #TODO: Implement
+        static FileStats const fileStats;
+        return fileStats;
+    }
+
     //////////////////////////////////////////
     S32 ArchiveFileZip::tryUnzOpenCurrentFile(String const& _fileName, unzFile _file)
     {
