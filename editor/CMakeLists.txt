@@ -40,7 +40,8 @@ set(EXAMPLE_MAZE_LIBS
     maze-debugger
     maze-plugin-profiler-view
     maze-plugin-console
-    maze-plugin-loader-png)
+    maze-plugin-loader-png
+    maze-plugin-archive-assets)
 
 
 ##########################################
@@ -74,6 +75,7 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/../engine/cmake/Utils.cmake")
 add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-profiler-view" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-profiler-view")
 add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-console" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-console")
 add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-loader-png" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-loader-png")
+add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-archive-assets" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-archive-assets")
 
 
 ##########################################

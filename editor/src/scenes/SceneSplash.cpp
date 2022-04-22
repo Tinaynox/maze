@@ -80,6 +80,7 @@
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
 #include "maze-particles/managers/MazeParticlesManager.hpp"
+#include "maze-plugin-archive-assets/MazeArchiveAssetsPlugin.hpp"
 #include "maze-plugin-console/MazeConsolePlugin.hpp"
 #include "maze-plugin-console/MazeConsoleService.hpp"
 #include "maze-plugin-profiler-view/MazeProfilerViewPlugin.hpp"
@@ -269,6 +270,7 @@ namespace Maze
             }
             case 10:
             {
+                MAZE_LOAD_PLATFORM_PLUGIN(ArchiveAssets, "maze-plugin-archive-assets");
                 MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView, "maze-plugin-profiler-view");
                 MAZE_LOAD_PLATFORM_PLUGIN(Console, "maze-plugin-console");
 #if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
