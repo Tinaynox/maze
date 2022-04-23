@@ -84,11 +84,20 @@ namespace Maze
         virtual Size getFileSize() MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual FileStats const& getFileStats() MAZE_ABSTRACT;
+        virtual FileStats getFileStats() MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual bool isFileExists() MAZE_ABSTRACT;
         
 
         //////////////////////////////////////////
         virtual StringKeyMap<AssetFilePtr> const* getChildrenAssets() const;
+
+        //////////////////////////////////////////
+        virtual void updateChildrenAssets(
+            bool _recursive,
+            Vector<AssetFilePtr>* _addedFiles,
+            Vector<AssetFilePtr>* _removedFiles) {};
 
         //////////////////////////////////////////
         void getChildrenAssets(
@@ -97,11 +106,24 @@ namespace Maze
             bool _recursive = true) const;
 
         //////////////////////////////////////////
+        void getChildrenAssets(
+            Vector<AssetFilePtr>& _outResult,
+            bool _recursive = true) const;
+
+        //////////////////////////////////////////
         template <typename TAssetFile>
         inline Vector<AssetFilePtr> getChildrenAssets(bool _recursive = true) const
         {
             Vector<AssetFilePtr> result;
             getChildrenAssets(result, ClassInfo<TAssetFile>::UID(), _recursive);
+            return result;
+        }
+
+        //////////////////////////////////////////
+        inline Vector<AssetFilePtr> getChildrenAssets(bool _recursive) const
+        {
+            Vector<AssetFilePtr> result;
+            getChildrenAssets(result, _recursive);
             return result;
         }
 

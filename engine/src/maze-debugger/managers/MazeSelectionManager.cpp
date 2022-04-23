@@ -30,6 +30,7 @@
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeSystemManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
+#include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-debugger/scenes/SceneDebugEditor.hpp"
@@ -66,6 +67,9 @@ namespace Maze
             }
         }
         
+        if (AssetManager::GetInstancePtr())
+            AssetManager::GetInstancePtr()->eventAssetFileRemoved.unsubscribe(this);
+
         s_instance = nullptr;
     }
 
@@ -78,8 +82,8 @@ namespace Maze
     //////////////////////////////////////////
     bool SelectionManager::init()
     {
-
         EntityManager::GetInstancePtr()->getDefaultWorldRaw()->eventEntityRemoved.subscribe(this, &SelectionManager::notifyEntityRemoved);
+        AssetManager::GetInstancePtr()->eventAssetFileRemoved.subscribe(this, &SelectionManager::notifyAssetFileRemoved);
 
         return true;
     }
@@ -303,8 +307,12 @@ namespace Maze
         }
 
         m_selectionType = _value;
+    }
 
-        
+    //////////////////////////////////////////
+    void SelectionManager::notifyAssetFileRemoved(AssetFilePtr const& _assetFile)
+    {
+        unselectObject(_assetFile);
     }
     
 } // namespace Maze

@@ -170,24 +170,58 @@ namespace Maze
     //////////////////////////////////////////
     String Texture2D::toString() const
     {
-        MAZE_NOT_IMPLEMENTED;
-        return String();
+        String str;
+        ToString(this, str);
+        return str;
     }
 
     //////////////////////////////////////////
-    void Texture2D::setString(CString _data, Size _count)
+    void Texture2D::FromString(Texture2DPtr& _value, CString _data, Size _count)
     {
-        MAZE_NOT_IMPLEMENTED;
+        if (!_data || strcmp(_data, "") == 0)
+        {
+            _value.reset();
+            return;
+        }
+
+        if (_count == 0)
+            _count = strlen(_data);
+
+        RenderSystemPtr const& renderSystem = Maze::GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+        TextureManagerPtr const& textureManager = renderSystem->getTextureManager();
+
+        if (StringHelper::IsStartsWith(_data, "ptr:"))
+        {
+            String data = String(_data + 4, _data + _count);
+            StringHelper::StringToObjectPtr(_value, data);
+        }
+        else
+        {
+            _value = textureManager->getTexture2D(MAZE_HASHED_CSTRING(_data));
+        }
     }
 
     //////////////////////////////////////////
-    Texture2DPtr const& Texture2D::FromString(CString _data, Size _count)
+    void Texture2D::ToString(Texture2D const* _value, String& _data)
     {
-        static Texture2DPtr nullPointer;
+        if (!_value)
+        {
+            _data.clear();
+            return;
+        }
 
-        MAZE_NOT_IMPLEMENTED;
+        RenderSystemPtr const& renderSystem = Maze::GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+        TextureManagerPtr const& textureManager = renderSystem->getTextureManager();
 
-        return nullPointer;
+        String const& textureName = textureManager->getTextureName(_value);
+        if (!textureName.empty())
+        {
+            _data = textureName;
+        }
+        else
+        {
+            StringHelper::FormatString(_data, "ptr:%p", _value);
+        }
     }
 
 

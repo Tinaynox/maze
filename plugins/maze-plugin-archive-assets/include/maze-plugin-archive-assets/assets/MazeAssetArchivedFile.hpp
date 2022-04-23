@@ -93,11 +93,21 @@ namespace Maze
         virtual Size getFileSize() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual FileStats const& getFileStats() MAZE_OVERRIDE;
+        virtual FileStats getFileStats() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual bool isFileExists() MAZE_OVERRIDE;
 
 
         //////////////////////////////////////////
         virtual StringKeyMap<AssetFilePtr> const* getChildrenAssets() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void updateChildrenAssets(
+            bool _recursive,
+            Vector<AssetFilePtr>* _addedFiles,
+            Vector<AssetFilePtr>* _removedFiles) MAZE_OVERRIDE;
+
 
         //////////////////////////////////////////
         virtual Size readToString(String& _string) MAZE_OVERRIDE;

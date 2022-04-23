@@ -162,6 +162,10 @@ namespace Maze
         //////////////////////////////////////////
         void setSelectionType(SelectionType _value);
 
+
+        //////////////////////////////////////////
+        void notifyAssetFileRemoved(AssetFilePtr const& _assetFile);
+
     protected:
         static SelectionManager* s_instance;
 

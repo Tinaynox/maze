@@ -81,6 +81,9 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_DEBUGGER_API EntityPtr CreateEntity3D(CString _entityName);
 
+        //////////////////////////////////////////
+        MAZE_DEBUGGER_API String BuildNewAssetFileName(String const& _fullPath);
+
 
     } // namespace DebuggerHelper
     //////////////////////////////////////////

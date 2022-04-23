@@ -69,13 +69,10 @@ namespace Maze
         virtual StringKeyMap<AssetFilePtr> const* getChildrenAssets() const MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        // virtual void addChildAsset(AssetFilePtr const& file) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        void updateChildrenAssets(
+        virtual void updateChildrenAssets(
             bool _recursive,
             Vector<AssetFilePtr>* _addedFiles,
-            Vector<AssetFilePtr>* _removedFiles);
+            Vector<AssetFilePtr>* _removedFiles) MAZE_OVERRIDE;
 
     protected:
 

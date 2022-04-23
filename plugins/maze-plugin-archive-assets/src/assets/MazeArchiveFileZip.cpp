@@ -276,11 +276,25 @@ namespace Maze
     }
 
     ////////////////////////////////////
-    FileStats const& ArchiveFileZip::getArchivedFileStats(String const& _filePath)
+    FileStats ArchiveFileZip::getArchivedFileStats(String const& _filePath)
     {
         // #TODO: Implement
-        static FileStats const fileStats;
-        return fileStats;
+        return FileStats();
+    }
+
+    ////////////////////////////////////
+    bool ArchiveFileZip::isFileExists()
+    {
+        return FileHelper::IsFileExists(m_fullPath);
+    }
+
+    ////////////////////////////////////
+    bool ArchiveFileZip::isFileExists(String const& _filePath)
+    {
+        if (!isFileExists())
+            return false;
+
+        return m_zipNavigationMap.find(_filePath) != m_zipNavigationMap.end();
     }
 
     //////////////////////////////////////////

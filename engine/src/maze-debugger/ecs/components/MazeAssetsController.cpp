@@ -51,8 +51,10 @@
 #include "maze-debugger/layout/MazeDebuggerLayout.hpp"
 #include "maze-debugger/managers/MazeAssetDebuggerManager.hpp"
 #include "maze-debugger/managers/MazeSelectionManager.hpp"
+#include "maze-debugger/helpers/MazeDebuggerHelper.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeScrollRect2D.hpp"
+#include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 
 
@@ -79,6 +81,12 @@ namespace Maze
     {
         SelectionManager::GetInstancePtr()->eventSelectionChanged.unsubscribe(this);
 
+        if (AssetManager::GetInstancePtr())
+        {
+            AssetManager::GetInstancePtr()->eventAssetFileAdded.unsubscribe(this);
+            AssetManager::GetInstancePtr()->eventAssetFileRemoved.unsubscribe(this);
+        }
+
         clearAssetsTree();
     }
 
@@ -98,18 +106,33 @@ namespace Maze
 
         SelectionManager::GetInstancePtr()->eventSelectionChanged.subscribe(this, &AssetsController::notifySelectionManagerSelectionChanged);
 
+        AssetManager::GetInstancePtr()->eventAssetFileAdded.subscribe(this, &AssetsController::notifyAssetFileAdded);
+        AssetManager::GetInstancePtr()->eventAssetFileRemoved.subscribe(this, &AssetsController::notifyAssetFileRemoved);
+
         return true;
     }
 
     //////////////////////////////////////////
     void AssetsController::update(F32 _dt)
     {
-        
+        if (m_assetsTreeDirty)
+        {
+            updateAssetsTree();
+            m_assetsTreeDirty = false;
+        }
+
+        if (m_selectedAssetsFolder)
+        {
+            updateSelectedAssetsFolder();
+            m_selectedAssetsFolder = false;
+        }
     }
 
     //////////////////////////////////////////
     void AssetsController::processEntityAwakened()
     {
+        AssetsControllerWPtr controllerWeak = cast<AssetsController>();
+
         m_transform = getEntityRaw()->ensureComponent<Transform2D>();
 
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
@@ -215,6 +238,36 @@ namespace Maze
         m_selectedAssetsFolderRoot->getEntityRaw()->getComponent<SpriteRenderer2D>()->setSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02));
 
+        ContextMenu2DPtr selectedAssetsFolderRootContextMenu = m_selectedAssetsFolderRoot->getEntityRaw()->ensureComponent<ContextMenu2D>();
+        selectedAssetsFolderRootContextMenu->setCallbackFunction(
+            [controllerWeak](MenuListTree2DPtr const& _menuListTree)
+            {
+                AssetsControllerPtr controller = controllerWeak.lock();
+                if (controller && !controller->m_selectedAssetFolder.empty())
+                {
+                    _menuListTree->addItem(
+                        "Create/Material",
+                        [controllerWeak](String const& _text)
+                        {
+                            AssetsControllerPtr controller = controllerWeak.lock();
+                            if (controller && !controller->m_selectedAssetFolder.empty())
+                            {
+                                MaterialPtr srcMaterial = MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::Specular);
+                                MaterialPtr material = srcMaterial->createCopy();
+                                String newMaterialFullPath = DebuggerHelper::BuildNewAssetFileName(controller->m_selectedAssetFolder + "/New Material.mzmaterial");
+                                material->saveToFile(newMaterialFullPath);
+                                AssetManager::GetInstancePtr()->updateAssets();
+
+                                AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(newMaterialFullPath);
+                                if (assetFile && MaterialManager::GetCurrentInstance()->getMaterial(assetFile))
+                                {
+                                    SelectionManager::GetInstancePtr()->selectObject(assetFile);
+                                }
+                            }
+                        });
+                }
+            });
+
         m_selectedAssetsFolderLayoutTransform = m_selectedAssetsFolderRoot->getContentTransform();
         m_selectedAssetsFolderLayoutTransform->setSize(Vec2DF::c_zero);
         VerticalLayout2DPtr assetsFolderLayoutTransformLayout = m_selectedAssetsFolderLayoutTransform->getEntityRaw()->ensureComponent<VerticalLayout2D>();
@@ -308,7 +361,7 @@ namespace Maze
             Transform2DPtr lineParent = m_assetsTreeLayoutTransform;
 
             EntityPtr assetLineObject = getEntityRaw()->getECSScene()->createEntity();
-            AssetLinePtr line = assetLineObject->ensureComponent<AssetLine>(fileName);
+            AssetLinePtr line = assetLineObject->ensureComponent<AssetLine>(this, assetFile);
             line->setIcon(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::FolderClosed));
 
             Size fullPathLastSlashPosition = fullPath.find_last_of('/');
@@ -324,7 +377,6 @@ namespace Maze
                         lineParent = parentLine->getChildrenTransform();
 
                         parentLine->setDropDownVisible(true);
-                        parentLine->setExpanded(false);
                     }
                 }
 
@@ -337,9 +389,10 @@ namespace Maze
             m_assetsTreeLines.insert(
                 assetFile->getFullPath(),
                 line);
-            line->setAssetFile(assetFile);
             line->eventExpandedChanged.subscribe(this, &AssetsController::notifyAssetTreeLineExpandedChanged);            
             line->eventLinePressed.subscribe(this, &AssetsController::notifyAssetTreeLinePressed);
+
+            line->setSelected(m_selectedAssetFolder == assetFile->getFullPath().c_str());
         }
         
     }
@@ -417,6 +470,8 @@ namespace Maze
         if (m_selectedAssetFolder.empty())
             return;
 
+        AssetsControllerWPtr controllerWeak = cast<AssetsController>();
+
         Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesInFolder(m_selectedAssetFolder);
 
         std::sort(
@@ -435,7 +490,7 @@ namespace Maze
             Transform2DPtr lineParent = m_selectedAssetsFolderLayoutTransform;
 
             EntityPtr assetLineObject = getEntityRaw()->getECSScene()->createEntity();
-            AssetLinePtr line = assetLineObject->ensureComponent<AssetLine>(fileName);
+            AssetLinePtr line = assetLineObject->ensureComponent<AssetLine>(this, assetFile);
 
             line->getTransform()->setParent(lineParent);
             line->setDropDownVisible(false);
@@ -446,7 +501,22 @@ namespace Maze
             m_selectedAssetsFolderLines.insert(
                 fullPath,
                 line);
-            line->setAssetFile(assetFile);
+
+            ContextMenu2DPtr lineContextMenu = line->getEntityRaw()->ensureComponent<ContextMenu2D>();
+            lineContextMenu->setCallbackFunction(
+                [controllerWeak](MenuListTree2DPtr const& _menuListTree)
+                {
+                    AssetsControllerPtr controller = controllerWeak.lock();
+                    if (controller && !controller->m_selectedAssetFolder.empty())
+                    {
+                        _menuListTree->addItem(
+                            "Create/Test",
+                            [controllerWeak](String const& _text)
+                            {
+                                Debug::LogError("YEAH!");
+                            });
+                    }
+                });
         }
 
         updateSelectedAssetsFolderSelection();
@@ -473,6 +543,54 @@ namespace Maze
         }
     }
     
+    //////////////////////////////////////////
+    void AssetsController::notifyAssetFileAdded(AssetFilePtr const& _file)
+    {
+        m_assetsTreeDirty = true;
+        m_selectedAssetsFolder = true;
+    }
+
+    //////////////////////////////////////////
+    void AssetsController::notifyAssetFileRemoved(AssetFilePtr const& _file)
+    {
+        m_assetsTreeDirty = true;
+        m_selectedAssetsFolder = true;
+
+        if (_file->getFullPath() == m_selectedAssetFolder)
+            m_selectedAssetFolder.clear();
+
+        m_assetFilesInfo.erase(_file);
+    }
+
+    //////////////////////////////////////////
+    void AssetsController::setAssetFileExpanded(AssetFilePtr const& _assetFile, bool _expanded)
+    {
+        m_assetFilesInfo[_assetFile].expanded = _expanded;
+
+        for (auto assetLineData : m_assetsTreeLines)
+            if (assetLineData.second->getAssetFile() == _assetFile)
+            {
+                assetLineData.second->setExpanded(_expanded);
+                break;
+            }
+
+        for (auto assetLineData : m_selectedAssetsFolderLines)
+            if (assetLineData.second->getAssetFile() == _assetFile)
+            {
+                assetLineData.second->setExpanded(_expanded);
+                break;
+            }
+    }
+
+    //////////////////////////////////////////
+    bool AssetsController::getAssetFileExpanded(AssetFilePtr const& _assetFile)
+    {
+        auto it = m_assetFilesInfo.find(_assetFile);
+        if (it != m_assetFilesInfo.end())
+            return it->second.expanded;
+
+        return false;
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

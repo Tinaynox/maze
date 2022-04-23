@@ -73,6 +73,11 @@ namespace Maze
         //////////////////////////////////////////
         friend class Entity;
 
+        //////////////////////////////////////////
+        struct AssetLineInfo
+        {
+            bool expanded = false;
+        };
 
     public:
 
@@ -99,6 +104,12 @@ namespace Maze
         //////////////////////////////////////////
         void setAssetsFullPath(String const& _assetsFullPath);
 
+
+        //////////////////////////////////////////
+        void setAssetFileExpanded(AssetFilePtr const& _assetFile, bool _expanded);
+
+        //////////////////////////////////////////
+        bool getAssetFileExpanded(AssetFilePtr const& _assetFile);
 
     protected:
 
@@ -138,12 +149,20 @@ namespace Maze
         //////////////////////////////////////////
         void notifySelectionManagerSelectionChanged();
 
+        //////////////////////////////////////////
+        void notifyAssetFileAdded(AssetFilePtr const& _file);
+
+        //////////////////////////////////////////
+        void notifyAssetFileRemoved(AssetFilePtr const& _file);
+
     protected:
         Canvas* m_canvas;
 
         Transform2DPtr m_transform;
 
         SpriteRenderer2DPtr m_bodyBackground;
+
+        Map<AssetFilePtr, AssetLineInfo> m_assetFilesInfo;
 
         String m_assetsFullPath;
 
@@ -158,6 +177,9 @@ namespace Maze
         StringKeyMap<AssetLinePtr> m_selectedAssetsFolderLines;
 
         String m_selectedAssetFolder;
+
+        bool m_assetsTreeDirty = false;
+        bool m_selectedAssetsFolder = false;
     };
 
 

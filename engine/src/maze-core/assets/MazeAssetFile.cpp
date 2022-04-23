@@ -84,6 +84,24 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void AssetFile::getChildrenAssets(
+        Vector<AssetFilePtr>& _outResult,
+        bool _recursive) const
+    {
+        StringKeyMap<AssetFilePtr> const* childrenAssets = getChildrenAssets();
+        if (!childrenAssets)
+            return;
+
+        for (auto const& _assetFileData : *childrenAssets)
+        {
+            _outResult.push_back(_assetFileData.second);
+
+            if (_recursive)
+                _assetFileData.second->getChildrenAssets(_outResult, _recursive);
+        }
+    }
+
+    //////////////////////////////////////////
     String AssetFile::readAsString()
     {
         String result;

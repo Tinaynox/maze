@@ -458,6 +458,20 @@ namespace Maze
         
         return result;
     }
+
+    //////////////////////////////////////////
+    String const& TextureManager::getTextureName(Texture2D const* _texture)
+    {
+        static String nullPointer;
+
+        for (auto const& textureData : m_textures2DByName)
+        {
+            if (textureData.second.get() == _texture)
+                return textureData.first;
+        }
+
+        return nullPointer;
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

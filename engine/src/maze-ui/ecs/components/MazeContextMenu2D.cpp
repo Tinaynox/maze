@@ -105,6 +105,9 @@ namespace Maze
         if (!m_callback)
             return;
 
+        if (_inputEvent.hitCaptured)
+            return;
+
         if (_inputEvent.button == m_cursorButtonIndex)
         {
             ContextMenuCanvas2DPtr contextMenuCanvas = ContextMenuCanvas2D::EnsureContextMenuCanvas(getEntityRaw()->getECSScene());
@@ -119,6 +122,7 @@ namespace Maze
                 {
                     m_callback(_menuListTree);
                 });
+            _inputEvent.captureHit();
         }
     }
 

@@ -165,7 +165,12 @@ namespace Maze
         if (shader)
             return shader;
 
-        return createBuiltinShader(_shaderType);
+        ShaderPtr const& createdShader = createBuiltinShader(_shaderType);
+        if (createdShader)
+        {
+            addShaderToCache(createdShader);
+        }
+        return createdShader;
     }
 
     //////////////////////////////////////////

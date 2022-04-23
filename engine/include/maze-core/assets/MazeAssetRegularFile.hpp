@@ -76,7 +76,10 @@ namespace Maze
         virtual Size getFileSize() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual FileStats const& getFileStats() MAZE_OVERRIDE { return m_fileStats; }
+        virtual FileStats getFileStats() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual bool isFileExists() MAZE_OVERRIDE;
 
 
         //////////////////////////////////////////
@@ -117,7 +120,6 @@ namespace Maze
     
     protected:
         HashedString m_fullPath;
-        FileStats m_fileStats;
         
     private:
         HashedString m_fileName;

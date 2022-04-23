@@ -158,7 +158,9 @@ namespace Maze
         if (editorMode == EditorMode::Assets && isAssetsFullPathValid)
             setCurrentAssetsFolder(assetsFullPath);
         else
-            setCurrentAssetsFolder(String());        
+            setCurrentAssetsFolder(String());
+
+        AssetManager::GetInstancePtr()->updateAssets();
     }
 
     //////////////////////////////////////////

@@ -626,7 +626,7 @@ namespace Maze
             case ShaderUniformType::UniformTexture2D:
             {
                 if (m_texture)
-                    data = m_texture->castRaw<Texture2D>()->getAssetFileName();
+                    data = m_texture->castRaw<Texture2D>()->toString();
                 return data;
             }
             case ShaderUniformType::UniformTextureCube:

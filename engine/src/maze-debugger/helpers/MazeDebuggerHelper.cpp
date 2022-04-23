@@ -35,6 +35,7 @@
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
@@ -234,6 +235,30 @@ namespace Maze
             entity->ensureComponent<Transform3D>();
 
             return entity;
+        }
+
+        //////////////////////////////////////////
+        MAZE_DEBUGGER_API String BuildNewAssetFileName(String const& _fullPath)
+        {
+            if (!AssetManager::GetInstancePtr()->getAssetFileByFullPath(_fullPath))
+                return _fullPath;
+
+            S32 i = 1;
+
+            String dir = FileHelper::GetDirectoryInPath(_fullPath);
+            String fileName = FileHelper::GetFileNameInPath(_fullPath);
+            String fileNameWithoutExtension = FileHelper::GetFileNameWithoutExtension(fileName);
+            String fileExtension = FileHelper::GetFileExtension(fileName);
+
+            String newPath;
+            do
+            {
+                newPath = dir + "/" + fileNameWithoutExtension + " " + StringHelper::ToString(i) + "." + fileExtension;
+                ++i;
+            }
+            while (AssetManager::GetInstancePtr()->getAssetFileByFullPath(newPath));
+
+            return newPath;
         }
 
     } // namespace DebuggerHelper

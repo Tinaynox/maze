@@ -88,6 +88,10 @@ namespace Maze
 
         if (UpdateManager::GetInstancePtr())
             UpdateManager::GetInstancePtr()->removeUpdatable(this);
+
+
+        if (AssetManager::GetInstancePtr())
+            AssetManager::GetInstancePtr()->eventAssetFileRemoved.unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -106,13 +110,19 @@ namespace Maze
         SelectionManager::GetInstancePtr()->eventSelectionChanged.subscribe(this, &InspectorController::notifySelectionChanged);
         UpdateManager::GetInstancePtr()->addUpdatable(this);
 
+        AssetManager::GetInstancePtr()->eventAssetFileRemoved.subscribe(this, &InspectorController::notifyAssetFileRemoved);
+
         return true;
     }
 
     //////////////////////////////////////////
     void InspectorController::update(F32 _dt)
     {
-        
+        if (m_editorsDirty)
+        {
+            updateEditors();
+            m_editorsDirty = false;
+        }
     }
 
     //////////////////////////////////////////
@@ -199,87 +209,87 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void InspectorController::notifySelectionChanged()
+    void InspectorController::updateEditors()
     {
         switch (SelectionManager::GetInstancePtr()->getSelectionType())
         {
-            case SelectionType::Entities:
+        case SelectionType::Entities:
+        {
+            Set<EntityPtr> const& selectedObjects = SelectionManager::GetInstancePtr()->getSelectedEntities();
+
+            if (!selectedObjects.empty())
             {
-                Set<EntityPtr> const& selectedObjects = SelectionManager::GetInstancePtr()->getSelectedEntities();
+                EntitiesInspectorPtr inspector = setupEditor<EntitiesInspector>();
+                inspector->setEntities(selectedObjects);
 
-                if (!selectedObjects.empty())
-                {
-                    EntitiesInspectorPtr inspector = setupEditor<EntitiesInspector>();
-                    inspector->setEntities(selectedObjects);
-
-                    inspector->update(0.0f);
-                    m_layout->alignChildren();
-                }
-                else
-                {
-                    clearEditor();
-                }
-
-                break;
+                inspector->update(0.0f);
+                m_layout->alignChildren();
             }
-            case SelectionType::Objects:
+            else
             {
-                Set<ObjectPtr> const& objects = SelectionManager::GetInstancePtr()->getSelectedObjects();
+                clearEditor();
+            }
 
-                if (!objects.empty())
+            break;
+        }
+        case SelectionType::Objects:
+        {
+            Set<ObjectPtr> const& objects = SelectionManager::GetInstancePtr()->getSelectedObjects();
+
+            if (!objects.empty())
+            {
+                MetaClass* objectsMetaClass = (*objects.begin())->getMetaClass();
+                for (auto it = ++objects.begin(); it != objects.end(); ++it)
                 {
-                    MetaClass* objectsMetaClass = (*objects.begin())->getMetaClass();
-                    for (auto it = ++objects.begin(); it != objects.end(); ++it)
+                    if ((*it)->getMetaClass() != objectsMetaClass)
                     {
-                        if ((*it)->getMetaClass() != objectsMetaClass)
-                        {
-                            objectsMetaClass = nullptr;
-                            break;
-                        }
+                        objectsMetaClass = nullptr;
+                        break;
                     }
+                }
 
-                    if (objectsMetaClass != nullptr)
+                if (objectsMetaClass != nullptr)
+                {
+                    // Asset files
+                    if (objectsMetaClass->isInheritedFrom<AssetFile>())
                     {
-                        // Asset files
-                        if (objectsMetaClass->isInheritedFrom<AssetFile>())
+                        Set<AssetFilePtr> assetFiles;
+                        for (ObjectPtr const& object : objects)
+                            assetFiles.insert(std::static_pointer_cast<AssetFile>(object));
+
+                        String extension = (*assetFiles.begin())->getExtension();
+                        bool multiExtension = false;
+                        for (auto it = ++assetFiles.begin(); it != assetFiles.end(); ++it)
                         {
-                            Set<AssetFilePtr> assetFiles;
-                            for (ObjectPtr const& object : objects)
-                                assetFiles.insert(std::static_pointer_cast<AssetFile>(object));
-
-                            String extension = (*assetFiles.begin())->getExtension();
-                            bool multiExtension = false;
-                            for (auto it = ++assetFiles.begin(); it != assetFiles.end(); ++it)
+                            if ((*it)->getExtension() != extension)
                             {
-                                if ((*it)->getExtension() != extension)
-                                {
-                                    multiExtension = true;
-                                    break;
-                                }
+                                multiExtension = true;
+                                break;
                             }
+                        }
 
-                            if (multiExtension)
+                        if (multiExtension)
+                        {
+                            clearEditor();
+                        }
+                        else
+                        {
+                            if (extension == "mzmaterial")
                             {
-                                clearEditor();
+                                AssetMaterialsInspectorPtr inspector = setupEditor<AssetMaterialsInspector>();
+                                inspector->setAssetFiles(assetFiles);
+
+                                inspector->update(0.0f);
+                                m_layout->alignChildren();
                             }
                             else
                             {
-                                if (extension == "mzmaterial")
-                                {
-                                    AssetMaterialsInspectorPtr inspector = setupEditor<AssetMaterialsInspector>();
-                                    inspector->setAssetFiles(assetFiles);
-
-                                    inspector->update(0.0f);
-                                    m_layout->alignChildren();
-                                }
-                                else
-                                {
-                                    // Not supported extension
-                                    clearEditor();
-                                }
+                                // Not supported extension
+                                clearEditor();
                             }
                         }
-                        else
+                    }
+                    else
                         // Material
                         if (objectsMetaClass->isInheritedFrom<Material>())
                         {
@@ -293,25 +303,31 @@ namespace Maze
                             inspector->update(0.0f);
                             m_layout->alignChildren();
                         }
-                    }
-                    else
-                    {
-                        clearEditor();
-                    }
                 }
                 else
                 {
                     clearEditor();
                 }
-
-                break;
             }
-            default:
+            else
             {
                 clearEditor();
-                break;
             }
+
+            break;
         }
+        default:
+        {
+            clearEditor();
+            break;
+        }
+        }
+    }
+
+    //////////////////////////////////////////
+    void InspectorController::notifySelectionChanged()
+    {
+        m_editorsDirty = true;
     }
 
     //////////////////////////////////////////
@@ -324,6 +340,12 @@ namespace Maze
         }
 
         m_inspector.reset();
+    }
+
+    //////////////////////////////////////////
+    void InspectorController::notifyAssetFileRemoved(AssetFilePtr const& _assetFile)
+    {
+        m_editorsDirty = true;
     }
     
     

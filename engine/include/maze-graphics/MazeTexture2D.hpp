@@ -104,7 +104,7 @@ namespace Maze
         inline AssetFilePtr const& getAssetFile() const { return m_assetFile; }
 
         //////////////////////////////////////////
-        String const& getAssetFileName() const;
+        String const& getAssetFileName() const; // #TODO: REMOVE THIS METHOD!
 
         //////////////////////////////////////////
         virtual bool loadTexture(
@@ -185,10 +185,10 @@ namespace Maze
         virtual String toString() const;
 
         //////////////////////////////////////////
-        virtual void setString(CString _data, Size _count);
+        static void FromString(Texture2DPtr& _value, CString _data, Size _count);
 
         //////////////////////////////////////////
-        static Texture2DPtr const& FromString(CString _data, Size _count);
+        static void ToString(Texture2D const* _value, String& _data);
 
     protected:
 
@@ -208,7 +208,7 @@ namespace Maze
 
         PixelFormat::Enum m_internalPixelFormat;
 
-        AssetFilePtr m_assetFile;
+        AssetFilePtr m_assetFile; // #TODO: REMOVE THIS!
     };
 
     //////////////////////////////////////////
@@ -220,7 +220,13 @@ namespace Maze
     inline typename ::std::enable_if<(IsSharedPtr<Texture2DPtr>::value), void>::type
         ValueToString(Texture2DPtr const& _value, String& _data)
     {
-        _data = _value->toString();
+        if (!_value)
+        {
+            _data.clear();
+            return;
+        }
+
+        Texture2D::ToString(_value.get(), _data);
     }
 
     //////////////////////////////////////////
@@ -228,7 +234,7 @@ namespace Maze
     inline typename ::std::enable_if<(IsSharedPtr<Texture2DPtr>::value), void>::type
         ValueFromString(Texture2DPtr& _value, CString _data, Size _count)
     {
-        _value = Texture2D::FromString(_data, _count);
+         Texture2D::FromString(_value, _data, _count);
     }
 
     //////////////////////////////////////////

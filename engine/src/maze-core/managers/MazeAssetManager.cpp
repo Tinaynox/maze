@@ -91,6 +91,35 @@ namespace Maze
         m_assetDirectoryPathes.erase(_path);
         removeAssetsDirectory(_path, true);
     }
+
+    //////////////////////////////////////////
+    void AssetManager::updateAssets()
+    {
+        Vector<AssetFilePtr> addedFiles;
+        Vector<AssetFilePtr> removedFiles;
+
+        Set<String> rootAssetDirectories = AssetManager::collectRootAssetDirectoryPathes();
+        for (String const& fullPath : rootAssetDirectories)
+        {
+            const AssetFilePtr& rootAsset = getAssetFileByFullPath(fullPath);
+            rootAsset->updateChildrenAssets(true, &addedFiles, &removedFiles);
+        }
+
+        for (AssetFilePtr const& addFile : addedFiles)
+            processAddFile(addFile);
+
+        for (AssetFilePtr const& addFile : addedFiles)
+        {
+            updateFileInfo(addFile);
+            eventAssetFileAdded(addFile);
+        }
+
+        for (AssetFilePtr const& removeFile : removedFiles)
+        {
+            processRemoveFile(removeFile);
+            eventAssetFileRemoved(removeFile);
+        }
+    }
     
     //////////////////////////////////////////
     void AssetManager::addAssetsDirectory(String const& _path, bool _recursive)
@@ -124,10 +153,16 @@ namespace Maze
             processAddFile(addFile);
 
         for (AssetFilePtr const& addFile : addedFiles)
+        {
             updateFileInfo(addFile);
+            eventAssetFileAdded(addFile);
+        }
 
         for (AssetFilePtr const& removeFile : removedFiles)
+        {
             processRemoveFile(removeFile);
+            eventAssetFileRemoved(removeFile);
+        }
     }
     
     //////////////////////////////////////////
@@ -188,17 +223,28 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    const AssetFilePtr& AssetManager::getAssetFile(HashedCString _string)
+    {
+        return strstr(_string.str, "/") != nullptr ? getAssetFileByFullPath(_string.str)
+                                                   : getAssetFileByFileName(_string.str);
+    }
+
+    //////////////////////////////////////////
     void AssetManager::processAddFile(AssetFilePtr const& _file)
     {
         m_assetFilesByFileName[_file->getFileName()] = _file;
         m_assetFilesByFullPath[_file->getFullPath()] = _file;
+
+        m_assetFilesUpdateTimeUTC[_file] = _file->getFileStats().modifiedTimeUTC;
     }
 
     //////////////////////////////////////////
     void AssetManager::processRemoveFile(AssetFilePtr const& _file)
     {
         m_assetFilesByFileName.erase(_file->getFileName());
-        m_assetFilesByFileName.erase(_file->getFullPath());
+        m_assetFilesByFullPath.erase(_file->getFullPath());
+
+        m_assetFilesUpdateTimeUTC.erase(_file);
     }
 
     ////////////////////////////////////
@@ -348,9 +394,39 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetManager::updateAssets()
+    Set<String> AssetManager::collectRootAssetDirectoryPathes()
     {
+        Set<String> result = m_assetDirectoryPathes;
 
+        // Remove sub directories
+        for (auto it = result.begin(),
+                  end = result.end();
+                  it != end;)
+        {
+            String const& fullPath = *it;
+            bool isSubDirectory = std::find_if(
+                result.begin(),
+                result.end(),
+                [&fullPath](String const& _fullPath)
+                {
+                    if (fullPath == _fullPath)
+                        return false;
+
+                    return StringHelper::IsStartsWith(_fullPath, fullPath);
+                }) != result.end();
+
+            if (isSubDirectory)
+            {
+                it = result.erase(it);
+                end = result.end();
+            }
+            else
+            {
+                ++it;
+            }
+        }
+
+        return result;
     }
 
 

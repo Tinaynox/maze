@@ -135,13 +135,7 @@ namespace Maze
             else
             {
                 if (_recursive)
-                {
-                    if (it->second->getClassUID() == ClassInfo<AssetDirectory>::UID())
-                    {
-                        AssetDirectoryPtr directory = it->second->cast<AssetDirectory>();
-                        directory->updateChildrenAssets(_recursive, _addedFiles, _removedFiles);
-                    }
-                }
+                    it->second->updateChildrenAssets(_recursive, _addedFiles, _removedFiles);
             }
         }
 
@@ -151,6 +145,13 @@ namespace Maze
         {
             if (confirmedFileFullPathes.count((*it).first) == 0)
             {
+                Vector<AssetFilePtr> children = it->second->getChildrenAssets(true);
+                for (AssetFilePtr const& assetFile : children)
+                {
+                    if (_removedFiles)
+                        _removedFiles->push_back(assetFile);
+                }
+
                 if (_removedFiles)
                     _removedFiles->push_back(it->second);
 

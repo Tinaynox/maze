@@ -1152,7 +1152,7 @@ namespace Maze
 
             TClass* object = reinterpret_cast<TClass*>(ptr);
             if (object)
-                _value = object->getSharedPtr();
+                _value = object->cast<TClass>();
             else
                 _value.reset();
         }

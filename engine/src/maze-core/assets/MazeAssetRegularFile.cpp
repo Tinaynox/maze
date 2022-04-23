@@ -82,15 +82,24 @@ namespace Maze
         }
         
         m_fileName = FileHelper::GetFileNameInPath(m_fullPath);
-
-        Size size = getFileSize();
-        m_fileStats = FileHelper::GetFileStats(m_fullPath.c_str());
     }
 
     //////////////////////////////////////////
     Size AssetRegularFile::getFileSize()
     {
-        return m_fileStats.fileSize;
+        return getFileStats().fileSize;
+    }
+
+    //////////////////////////////////////////
+    FileStats AssetRegularFile::getFileStats()
+    {
+        return FileHelper::GetFileStats(m_fullPath.c_str());
+    }
+
+    //////////////////////////////////////////
+    bool AssetRegularFile::isFileExists()
+    {
+        return FileHelper::IsFileExists(m_fullPath);
     }
 
     //////////////////////////////////////////

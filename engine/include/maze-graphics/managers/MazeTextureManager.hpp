@@ -229,6 +229,10 @@ namespace Maze
         //////////////////////////////////////////
         Vector<String> getTextureLoaderExtensions();
 
+
+        //////////////////////////////////////////
+        String const& getTextureName(Texture2D const* _texture);
+
     public:
 
         //////////////////////////////////////////

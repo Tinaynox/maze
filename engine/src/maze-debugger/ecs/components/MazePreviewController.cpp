@@ -101,6 +101,9 @@ namespace Maze
             }
         }
 
+        if (AssetManager::GetInstancePtr())
+            AssetManager::GetInstancePtr()->eventAssetFileRemoved.unsubscribe(this);
+
         if (m_scene)
         {
             SceneManager::GetInstancePtr()->destroyScene(m_scene);
@@ -147,6 +150,8 @@ namespace Maze
         registerPreviewInspectorByExtension<RenderMeshPreviewInspector>("obj");
         registerPreviewInspectorByClassUID<RenderMeshPreviewInspector, RenderMesh>();
 
+        AssetManager::GetInstancePtr()->eventAssetFileRemoved.subscribe(this, &PreviewController::notifyAssetFileRemoved);
+
         return true;
     }
 
@@ -157,6 +162,12 @@ namespace Maze
         {
             m_renderBuffer->setSize(
                 (Vec2DU)m_bodyBackground->getTransform()->getSize());
+        }
+
+        if (m_inspectorsDirty)
+        {
+            udpateInspectors();
+            m_inspectorsDirty = false;
         }
     }
 
@@ -268,119 +279,125 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PreviewController::notifySelectionChanged()
+    void PreviewController::udpateInspectors()
     {
         switch (SelectionManager::GetInstancePtr()->getSelectionType())
         {
-            case SelectionType::Entities:
-            {
-                clearInspector();
-                
+        case SelectionType::Entities:
+        {
+            clearInspector();
 
-                break;
-            }
-            case SelectionType::Objects:
-            {
-                Set<ObjectPtr> const& objects = SelectionManager::GetInstancePtr()->getSelectedObjects();
 
-                if (!objects.empty())
+            break;
+        }
+        case SelectionType::Objects:
+        {
+            Set<ObjectPtr> const& objects = SelectionManager::GetInstancePtr()->getSelectedObjects();
+
+            if (!objects.empty())
+            {
+                MetaClass* objectsMetaClass = (*objects.begin())->getMetaClass();
+                for (auto it = ++objects.begin(); it != objects.end(); ++it)
                 {
-                    MetaClass* objectsMetaClass = (*objects.begin())->getMetaClass();
-                    for (auto it = ++objects.begin(); it != objects.end(); ++it)
+                    if ((*it)->getMetaClass() != objectsMetaClass)
                     {
-                        if ((*it)->getMetaClass() != objectsMetaClass)
+                        objectsMetaClass = nullptr;
+                        break;
+                    }
+                }
+
+                if (objectsMetaClass != nullptr)
+                {
+                    // Asset files
+                    if (objectsMetaClass->isInheritedFrom<AssetFile>())
+                    {
+                        Set<AssetFilePtr> assetFiles;
+                        for (ObjectPtr const& object : objects)
+                            assetFiles.insert(std::static_pointer_cast<AssetFile>(object));
+
+                        if (objectsMetaClass->isInheritedFrom<AssetDirectory>())
                         {
-                            objectsMetaClass = nullptr;
+                            setupInspector<DirectoryPreviewInspector>(assetFiles);
                             break;
                         }
-                    }
 
-                    if (objectsMetaClass != nullptr)
-                    {
-                        // Asset files
-                        if (objectsMetaClass->isInheritedFrom<AssetFile>())
+                        String extension = (*assetFiles.begin())->getExtension();
+                        bool multiExtension = false;
+                        for (auto it = ++assetFiles.begin(); it != assetFiles.end(); ++it)
                         {
-                            Set<AssetFilePtr> assetFiles;
-                            for (ObjectPtr const& object : objects)
-                                assetFiles.insert(std::static_pointer_cast<AssetFile>(object));
-
-                            if (objectsMetaClass->isInheritedFrom<AssetDirectory>())
+                            if ((*it)->getExtension() != extension)
                             {
-                                setupInspector<DirectoryPreviewInspector>(assetFiles);
+                                multiExtension = true;
                                 break;
                             }
+                        }
 
-                            String extension = (*assetFiles.begin())->getExtension();
-                            bool multiExtension = false;
-                            for (auto it = ++assetFiles.begin(); it != assetFiles.end(); ++it)
-                            {
-                                if ((*it)->getExtension() != extension)
-                                {
-                                    multiExtension = true;
-                                    break;
-                                }
-                            }
-
-                            if (multiExtension)
-                            {
-                                clearInspector();
-                            }
-                            else
-                            {
-                                auto it = m_editorByExtension.find(extension);
-                                if (it != m_editorByExtension.end())
-                                {
-                                    PreviewInspectorPtr inspector = it->second(this);
-                                    if (inspector)
-                                    {
-                                        if (inspector->setAssetFiles(assetFiles))
-                                        {
-                                            m_layout->alignChildren();
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    setupInspector<FilePreviewInspector>(assetFiles);
-                                    break;
-                                }
-                            }
+                        if (multiExtension)
+                        {
+                            clearInspector();
                         }
                         else
                         {
-                            for (auto editorByClassUIDData : m_editorByClassUID)
+                            auto it = m_editorByExtension.find(extension);
+                            if (it != m_editorByExtension.end())
                             {
-                                if (objectsMetaClass->isInheritedFrom(editorByClassUIDData.first))
+                                PreviewInspectorPtr inspector = it->second(this);
+                                if (inspector)
                                 {
-                                    PreviewInspectorPtr inspector = editorByClassUIDData.second(this);
-                                    if (inspector)
+                                    if (inspector->setAssetFiles(assetFiles))
                                     {
-                                        inspector->setObjects(objects);
                                         m_layout->alignChildren();
-                                    }                                    
-                                    break;
+                                    }
                                 }
+                            }
+                            else
+                            {
+                                setupInspector<FilePreviewInspector>(assetFiles);
+                                break;
                             }
                         }
                     }
                     else
                     {
-                        clearInspector();
+                        for (auto editorByClassUIDData : m_editorByClassUID)
+                        {
+                            if (objectsMetaClass->isInheritedFrom(editorByClassUIDData.first))
+                            {
+                                PreviewInspectorPtr inspector = editorByClassUIDData.second(this);
+                                if (inspector)
+                                {
+                                    inspector->setObjects(objects);
+                                    m_layout->alignChildren();
+                                }
+                                break;
+                            }
+                        }
                     }
                 }
                 else
                 {
                     clearInspector();
                 }
-
-                break;
             }
-            default:
+            else
             {
                 clearInspector();
-                break;
             }
+
+            break;
         }
+        default:
+        {
+            clearInspector();
+            break;
+        }
+        }
+    }
+
+    //////////////////////////////////////////
+    void PreviewController::notifySelectionChanged()
+    {
+        m_inspectorsDirty = true;
     }
     
     //////////////////////////////////////////
@@ -447,6 +464,12 @@ namespace Maze
     void PreviewController::notifyTextureLoaderAdded(HashedCString _extension, TextureLoaderData const& _loader)
     {
         registerPreviewInspectorByExtension<Texture2DPreviewInspector>(_extension);
+    }
+
+    //////////////////////////////////////////
+    void PreviewController::notifyAssetFileRemoved(AssetFilePtr const& _file)
+    {
+        m_inspectorsDirty = true;
     }
 
 } // namespace Maze

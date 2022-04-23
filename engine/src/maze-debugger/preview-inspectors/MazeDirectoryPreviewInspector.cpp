@@ -149,7 +149,7 @@ namespace Maze
         if (!m_directories.empty())
         {
             AssetFilePtr const& assetFile = *m_directories.begin();
-            FileStats const& fileStats = assetFile->getFileStats();
+            FileStats fileStats = assetFile->getFileStats();
             UnixTime creationTimeLocal = DateTimeHelper::ConvertUTCToLocal(fileStats.creationTimeUTC);
             UnixTime modifiedTimeLocal = DateTimeHelper::ConvertUTCToLocal(fileStats.modifiedTimeUTC);
             UnixTime accessedTimeLocal = DateTimeHelper::ConvertUTCToLocal(fileStats.accessedTimeUTC);

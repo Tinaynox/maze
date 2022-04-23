@@ -55,6 +55,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(Sprite);
     MAZE_USING_SHARED_PTR(ContextMenu2D);
+    MAZE_USING_SHARED_PTR(AssetsController);
 
 
     //////////////////////////////////////////
@@ -79,7 +80,9 @@ namespace Maze
         virtual ~AssetLine();
 
         //////////////////////////////////////////
-        static AssetLinePtr Create(String const& _label);
+        static AssetLinePtr Create(
+            AssetsController* _assetsController,
+            AssetFilePtr const& _assetFile);
 
 
         //////////////////////////////////////////
@@ -114,9 +117,6 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setAssetFile(AssetFilePtr const& _line);
-
-        //////////////////////////////////////////
         AssetFilePtr const& getAssetFile() const { return m_assetFile; }
 
 
@@ -139,7 +139,9 @@ namespace Maze
         using Component::init;
         
         //////////////////////////////////////////
-        bool init(String const& _label);
+        bool init(
+            AssetsController* _assetsController,
+            AssetFilePtr const& _assetFile);
 
         //////////////////////////////////////////
         void processEntityAwakened() MAZE_OVERRIDE;
@@ -154,6 +156,9 @@ namespace Maze
         void updateSelectedUI();
 
     protected:
+        AssetsController* m_assetsController = nullptr;
+        AssetFilePtr m_assetFile;
+
         Transform2DPtr m_transform;
 
         Transform2DPtr m_mainTransform;
@@ -166,10 +171,6 @@ namespace Maze
 
         VerticalLayout2DPtr m_childrenLayout;
         Transform2DPtr m_childrenTransform;
-
-        String m_label;
-
-        AssetFilePtr m_assetFile;
 
         bool m_selected;
 

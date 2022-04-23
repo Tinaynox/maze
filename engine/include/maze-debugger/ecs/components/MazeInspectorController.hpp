@@ -125,8 +125,17 @@ namespace Maze
         //////////////////////////////////////////
         void notifySelectionChanged();
 
+
+        //////////////////////////////////////////
+        void notifyAssetFileRemoved(AssetFilePtr const& _assetFile);
         
+
+        //////////////////////////////////////////
+        void updateEditors();
+
     protected:
+        bool m_editorsDirty = false;
+
         Canvas* m_canvas;
 
         Transform2DPtr m_transform;

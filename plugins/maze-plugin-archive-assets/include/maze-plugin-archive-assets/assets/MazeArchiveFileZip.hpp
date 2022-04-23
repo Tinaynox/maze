@@ -104,7 +104,13 @@ namespace Maze
         Size getArchivedFileLength(String const& _filePath);
 
         ////////////////////////////////////
-        FileStats const& getArchivedFileStats(String const& _filePath);
+        FileStats getArchivedFileStats(String const& _filePath);
+
+        ////////////////////////////////////
+        bool isFileExists();
+
+        ////////////////////////////////////
+        bool isFileExists(String const& _filePath);
 
     protected:
 

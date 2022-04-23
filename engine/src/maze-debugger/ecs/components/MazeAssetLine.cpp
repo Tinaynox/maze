@@ -54,6 +54,7 @@
 #include "maze-debugger/scenes/SceneDebugEditor.hpp"
 #include "maze-debugger/managers/MazeSelectionManager.hpp"
 #include "maze-debugger/helpers/MazeDebuggerHelper.hpp"
+#include "maze-debugger/ecs/components/MazeAssetsController.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
@@ -97,17 +98,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    AssetLinePtr AssetLine::Create(String const& _label)
+    AssetLinePtr AssetLine::Create(
+        AssetsController* _assetsController,
+        AssetFilePtr const& _assetFile)
     {
         AssetLinePtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(AssetLine, object, init(_label));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(AssetLine, object, init(_assetsController, _assetFile));
         return object;
     }
 
     //////////////////////////////////////////
-    bool AssetLine::init(String const& _label)
+    bool AssetLine::init(
+        AssetsController* _assetsController,
+        AssetFilePtr const& _assetFile)
     {
-        m_label = _label;
+        m_assetsController = _assetsController;
+        m_assetFile = _assetFile;
 
         return true;
     }
@@ -173,7 +179,7 @@ namespace Maze
         x += (F32)charSize + 4;
 
         m_textRenderer = SpriteHelper::CreateSystemText(
-            m_label.c_str(),
+            m_assetFile->getFileName().c_str(),
             charSize,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Top,
@@ -205,7 +211,8 @@ namespace Maze
         childrenLayoutSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
         childrenLayoutSizePolicy->setSizeDelta(-10.0f, 0.0f);
 
-        setExpanded(false);
+        setExpanded(m_assetsController->getAssetFileExpanded(m_assetFile));
+
         updateSelectedUI();
     }
 
@@ -215,7 +222,7 @@ namespace Maze
         if (_inputEvent.button != 0)
             return;
 
-        setExpanded(!isExpanded());
+        m_assetsController->setAssetFileExpanded(m_assetFile, !isExpanded());
 
         eventDropDownClick(this);
     }
@@ -287,12 +294,6 @@ namespace Maze
         m_selected = _value;
 
         updateSelectedUI();
-    }
-
-    //////////////////////////////////////////
-    void AssetLine::setAssetFile(AssetFilePtr const& _line)
-    {
-        m_assetFile = _line;
     }
 
     //////////////////////////////////////////

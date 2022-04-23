@@ -29,6 +29,7 @@
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
+#include "maze-core/math/MazeMath.hpp"
 
 
 //////////////////////////////////////////
@@ -222,6 +223,11 @@ namespace Maze
             return;
 
         m_size = _size;
+
+#if MAZE_DEBUG
+        MAZE_ERROR_IF(m_size.isNaN(), "Size is NaN!");
+#endif
+
         m_flags |= (Flags::LocalTransformDirty | Flags::LocalTransformChangedCurrentFrame | Flags::SizeChangedCurrentFrame);
         dirtyWorldTransform();
     }

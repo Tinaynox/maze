@@ -82,15 +82,30 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    FileStats const& AssetArchivedFile::getFileStats()
+    FileStats AssetArchivedFile::getFileStats()
     {
         return m_archive->getArchivedFileStats(m_zipArchiveFilePath);
+    }
+
+    //////////////////////////////////////////
+    bool AssetArchivedFile::isFileExists()
+    {
+        return m_archive->isFileExists();
     }
 
     //////////////////////////////////////////
     StringKeyMap<AssetFilePtr> const* AssetArchivedFile::getChildrenAssets() const
     {
         return nullptr;
+    }
+
+    //////////////////////////////////////////
+    void AssetArchivedFile::updateChildrenAssets(
+        bool _recursive,
+        Vector<AssetFilePtr>* _addedFiles,
+        Vector<AssetFilePtr>* _removedFiles)
+    {
+        MAZE_NOT_IMPLEMENTED;
     }
 
     //////////////////////////////////////////

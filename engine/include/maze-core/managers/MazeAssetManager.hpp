@@ -75,6 +75,9 @@ namespace Maze
         void removeAssetsDirectoryPath(String const& _path);
 
         //////////////////////////////////////////
+        void updateAssets();
+
+        //////////////////////////////////////////
         String constructAssetsInfo();
 
 
@@ -95,6 +98,15 @@ namespace Maze
 
         //////////////////////////////////////////
         inline const AssetFilePtr& getAssetFileByFullPath(CString _fileFullPath) { return getAssetFileByFullPath(MAZE_HASHED_CSTRING(_fileFullPath)); }
+
+        //////////////////////////////////////////
+        const AssetFilePtr& getAssetFile(HashedCString _string);
+
+        //////////////////////////////////////////
+        inline const AssetFilePtr& getAssetFile(String const& _string) { return getAssetFile(MAZE_HASHED_CSTRING(_string.c_str())); }
+
+        //////////////////////////////////////////
+        inline const AssetFilePtr& getAssetFile(CString _string) { return getAssetFile(MAZE_HASHED_CSTRING(_string)); }
 
 
         //////////////////////////////////////////
@@ -159,9 +171,9 @@ namespace Maze
             return FileChildrenProcessor();
         }
 
-
-        //////////////////////////////////////////
-        void updateAssets();
+    public:
+        MultiDelegate<AssetFilePtr const&> eventAssetFileAdded;
+        MultiDelegate<AssetFilePtr const&> eventAssetFileRemoved;
 
     protected:
 
@@ -194,6 +206,9 @@ namespace Maze
         //////////////////////////////////////////
         void removeAssetsDirectory(String const& _path, bool _recursive = true);
     
+        //////////////////////////////////////////
+        Set<String> collectRootAssetDirectoryPathes();
+
     protected:
         static AssetManager* s_instance;
         
@@ -202,6 +217,7 @@ namespace Maze
 
         StringKeyMap<AssetFilePtr> m_assetFilesByFileName;
         StringKeyMap<AssetFilePtr> m_assetFilesByFullPath;
+        Map<AssetFilePtr, UnixTime> m_assetFilesUpdateTimeUTC;
 
         StringKeyMap<FileChildrenProcessor> m_fileChildrenProcessors;
     };

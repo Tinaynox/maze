@@ -117,7 +117,7 @@ namespace Maze
         if (it != m_materialsByName.end())
             return it->second;
 
-        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_materialName);
+        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_materialName);
         if (!assetFile)
         {
             MAZE_ERROR("Undefined material: %s!", _materialName.str);

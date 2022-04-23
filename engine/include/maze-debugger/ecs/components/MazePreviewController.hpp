@@ -179,6 +179,9 @@ namespace Maze
         //////////////////////////////////////////
         bool init(Canvas* _canvas);
 
+
+        //////////////////////////////////////////
+        void udpateInspectors();
         
 
         //////////////////////////////////////////
@@ -213,7 +216,13 @@ namespace Maze
         //////////////////////////////////////////
         void notifyTextureLoaderAdded(HashedCString _extension, TextureLoaderData const& _loader);
 
+
+        //////////////////////////////////////////
+        void notifyAssetFileRemoved(AssetFilePtr const& _file);
+
     protected:
+        bool m_inspectorsDirty = false;
+
         Canvas* m_canvas;
 
         Transform2DPtr m_transform;
