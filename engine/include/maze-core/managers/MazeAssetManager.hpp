@@ -108,6 +108,9 @@ namespace Maze
         //////////////////////////////////////////
         inline const AssetFilePtr& getAssetFile(CString _string) { return getAssetFile(MAZE_HASHED_CSTRING(_string)); }
 
+        //////////////////////////////////////////
+        void deleteAssetFile(const AssetFilePtr& _assetFile);
+
 
         //////////////////////////////////////////
         static inline AssetManager* GetInstancePtr() { return s_instance; }

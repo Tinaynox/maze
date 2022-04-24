@@ -160,8 +160,9 @@ namespace Maze
     {
         if (m_canvas && m_renderBuffer)
         {
-            m_renderBuffer->setSize(
-                (Vec2DU)m_bodyBackground->getTransform()->getSize());
+            Vec2DU size = (Vec2DU)m_bodyBackground->getTransform()->getSize();
+            if (size.x != 0u && size.y != 0u)
+                m_renderBuffer->setSize(size);
         }
 
         if (m_inspectorsDirty)

@@ -681,6 +681,13 @@ namespace Maze
         return IsNaN(x) || IsNaN(y) || IsNaN(z) || IsNaN(w);
     }
 
+    //////////////////////////////////////////
+    template <class TValue>
+    inline MAZE_CONSTEXPR bool Vec4D<TValue>::isInfinity() const
+    {
+        return IsInfinity(x) || IsInfinity(y) || IsInfinity(z) || IsInfinity(w);
+    }
+
 #pragma warning(pop)
 
 } // namespace Maze

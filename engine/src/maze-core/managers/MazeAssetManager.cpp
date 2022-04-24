@@ -230,6 +230,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void AssetManager::deleteAssetFile(const AssetFilePtr& _assetFile)
+    {
+        if (!_assetFile)
+            return;
+
+        FileHelper::Delete(_assetFile->getFullPath().c_str());
+        updateAssets();
+    }
+
+    //////////////////////////////////////////
     void AssetManager::processAddFile(AssetFilePtr const& _file)
     {
         m_assetFilesByFileName[_file->getFileName()] = _file;
@@ -346,8 +356,10 @@ namespace Maze
         Vector<AssetFilePtr> result;
         for (auto data : m_assetFilesByFullPath)
         {
-            if (   data.second->getFullPath().getString() != _folderFullPath 
-                && StringHelper::IsStartsWith(data.second->getFullPath(), _folderFullPath))
+            if (data.second->getFullPath().getString() != _folderFullPath &&
+                data.second->getFullPath().size() > _folderFullPath.size() + 1u &&
+                data.second->getFullPath()[_folderFullPath.size()] == '/' &&
+                StringHelper::IsStartsWith(data.second->getFullPath(), _folderFullPath))
             {
                 String relativePath = data.second->getFullPath().getString().substr(
                     _folderFullPath.size() + 1, data.second->getFullPath().size() - _folderFullPath.size() - 1);

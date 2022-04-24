@@ -245,26 +245,9 @@ namespace Maze
                 AssetsControllerPtr controller = controllerWeak.lock();
                 if (controller && !controller->m_selectedAssetFolder.empty())
                 {
-                    _menuListTree->addItem(
-                        "Create/Material",
-                        [controllerWeak](String const& _text)
-                        {
-                            AssetsControllerPtr controller = controllerWeak.lock();
-                            if (controller && !controller->m_selectedAssetFolder.empty())
-                            {
-                                MaterialPtr srcMaterial = MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::Specular);
-                                MaterialPtr material = srcMaterial->createCopy();
-                                String newMaterialFullPath = DebuggerHelper::BuildNewAssetFileName(controller->m_selectedAssetFolder + "/New Material.mzmaterial");
-                                material->saveToFile(newMaterialFullPath);
-                                AssetManager::GetInstancePtr()->updateAssets();
-
-                                AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(newMaterialFullPath);
-                                if (assetFile && MaterialManager::GetCurrentInstance()->getMaterial(assetFile))
-                                {
-                                    SelectionManager::GetInstancePtr()->selectObject(assetFile);
-                                }
-                            }
-                        });
+                    AssetDebuggerManager::GetInstancePtr()->callAssetFileContextMenuCallback(
+                        controller->m_selectedAssetFolder,
+                        _menuListTree);
                 }
             });
 
@@ -331,6 +314,8 @@ namespace Maze
     //////////////////////////////////////////
     void AssetsController::updateAssetsTree()
     {
+        AssetsControllerWPtr controllerWeak = cast<AssetsController>();
+
         clearAssetsTree();
 
         String assetsFullPath = m_assetsFullPath;
@@ -362,7 +347,6 @@ namespace Maze
 
             EntityPtr assetLineObject = getEntityRaw()->getECSScene()->createEntity();
             AssetLinePtr line = assetLineObject->ensureComponent<AssetLine>(this, assetFile);
-            line->setIcon(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::FolderClosed));
 
             Size fullPathLastSlashPosition = fullPath.find_last_of('/');
             if (fullPathLastSlashPosition != String::npos)
@@ -393,6 +377,20 @@ namespace Maze
             line->eventLinePressed.subscribe(this, &AssetsController::notifyAssetTreeLinePressed);
 
             line->setSelected(m_selectedAssetFolder == assetFile->getFullPath().c_str());
+            notifyAssetTreeLineExpandedChanged(line.get(), getAssetFileExpanded(assetFile));
+
+            ContextMenu2DPtr lineContextMenu = line->getEntityRaw()->ensureComponent<ContextMenu2D>();
+            lineContextMenu->setCallbackFunction(
+                [controllerWeak, fullPath](MenuListTree2DPtr const& _menuListTree)
+                {
+                    AssetsControllerPtr controller = controllerWeak.lock();
+                    if (controller)
+                    {
+                        AssetDebuggerManager::GetInstancePtr()->callAssetFileContextMenuCallback(
+                            fullPath,
+                            _menuListTree);
+                    }
+                });
         }
         
     }
@@ -504,17 +502,14 @@ namespace Maze
 
             ContextMenu2DPtr lineContextMenu = line->getEntityRaw()->ensureComponent<ContextMenu2D>();
             lineContextMenu->setCallbackFunction(
-                [controllerWeak](MenuListTree2DPtr const& _menuListTree)
+                [controllerWeak, fullPath](MenuListTree2DPtr const& _menuListTree)
                 {
                     AssetsControllerPtr controller = controllerWeak.lock();
                     if (controller && !controller->m_selectedAssetFolder.empty())
                     {
-                        _menuListTree->addItem(
-                            "Create/Test",
-                            [controllerWeak](String const& _text)
-                            {
-                                Debug::LogError("YEAH!");
-                            });
+                        AssetDebuggerManager::GetInstancePtr()->callAssetFileContextMenuCallback(
+                            fullPath,
+                            _menuListTree);
                     }
                 });
         }

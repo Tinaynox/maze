@@ -83,6 +83,22 @@ namespace Maze
 
             return _path.substr(0, pos);            
         }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API String GetParentDirectoryInPath(String const& _path) noexcept
+        {
+            String directory = GetDirectoryInPath(_path);
+
+            if (!IsDirectory(_path))
+                return directory;
+
+            Size pos = String(_path).find_last_of('/');
+
+            if (pos == String::npos)
+                return String();
+
+            return _path.substr(0, pos);
+        }
         
         //////////////////////////////////////////
         MAZE_CORE_API String GetFileNameInPath(String const& _path) noexcept

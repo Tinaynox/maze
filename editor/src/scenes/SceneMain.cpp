@@ -623,6 +623,8 @@ namespace Maze
     void SceneMain::notifyMainRenderWindowResized(RenderTarget* _renderTarget)
     {
         RenderWindowPtr const& renderWindow = Editor::GetInstancePtr()->getMainRenderWindow();
+        if (renderWindow->getWindow()->getMinimized())
+            return;
 
         if (m_topMenuBarCanvas)
         {

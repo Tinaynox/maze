@@ -563,6 +563,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    template <class TValue>
+    inline MAZE_CONSTEXPR bool Vec2D<TValue>::isInfinity() const
+    {
+        return Math::IsInfinity(x) || Math::IsInfinity(y);
+    }
+
+    //////////////////////////////////////////
     template <class TValue> 
     inline MAZE_CONSTEXPR Vec2D<TValue> Vec2D<TValue>::FromAngle(F32 _angle)
     {

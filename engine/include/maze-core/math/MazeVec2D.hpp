@@ -278,6 +278,13 @@ namespace Maze
         inline MAZE_CONSTEXPR bool isNaN() const;
 
         //////////////////////////////////////////
+        inline MAZE_CONSTEXPR bool isInfinity() const;
+
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR bool isFinite() const { return !isNaN() && !isInfinity(); }
+
+
+        //////////////////////////////////////////
         static inline MAZE_CONSTEXPR Vec2D FromAngle(F32 _angle);
 
         //////////////////////////////////////////

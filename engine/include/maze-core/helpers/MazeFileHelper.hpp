@@ -56,6 +56,9 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_CORE_API String GetDirectoryInPath(String const& _path) noexcept;
+
+        //////////////////////////////////////////
+        MAZE_CORE_API String GetParentDirectoryInPath(String const& _path) noexcept;
         
         //////////////////////////////////////////
         MAZE_CORE_API String GetFileNameInPath(String const& _path) noexcept;

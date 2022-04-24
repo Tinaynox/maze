@@ -96,6 +96,9 @@ namespace Maze
     Rect2DF EditorLayout::CalculateWorkViewport(Rect2DF const& _viewport)
     {
         Vec2DF fullRenderTargetSize = (Vec2DF)Editor::GetInstancePtr()->getMainRenderWindow()->getRenderTargetSize();
+        if (fullRenderTargetSize == Vec2DF::c_zero)
+            return Rect2DF::c_zero;
+
         Vec2DF workRenderTargetSize = Vec2DF(fullRenderTargetSize.x, fullRenderTargetSize.y - EditorLayout::c_menuBarHeight);
 
         Rect2DF targetViewportZone = _viewport;

@@ -692,10 +692,9 @@ namespace Maze
 
                     m_params->clientSize = Vec2DU(width, height);
                 }
-                
 
                 updateClientSize();
-                
+
                 processWindowSizeChanged();
 
                 break;

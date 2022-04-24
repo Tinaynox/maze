@@ -161,6 +161,12 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline Char const& operator [](Size _i) const
+        {
+            return m_string[_i];
+        }
+
+        //////////////////////////////////////////
         inline HashedCString asHashedCString() const { return HashedCString{m_string.c_str(), m_hash}; }
 
         //////////////////////////////////////////

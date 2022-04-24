@@ -52,6 +52,9 @@ namespace Maze
         MAZE_CORE_API extern void OpenURL(String const& _url);
 
         //////////////////////////////////////////
+        MAZE_CORE_API extern void OpenExplorer(String const& _fullPath, bool _select = true);
+
+        //////////////////////////////////////////
         MAZE_CORE_API extern String const& GetOSVersion();
 
         //////////////////////////////////////////

@@ -223,10 +223,7 @@ namespace Maze
             return;
 
         m_size = _size;
-
-#if MAZE_DEBUG
-        MAZE_ERROR_IF(m_size.isNaN(), "Size is NaN!");
-#endif
+        MAZE_DEBUG_ERROR_IF(!m_size.isFinite(), "Size is not finite!");
 
         m_flags |= (Flags::LocalTransformDirty | Flags::LocalTransformChangedCurrentFrame | Flags::SizeChangedCurrentFrame);
         dirtyWorldTransform();

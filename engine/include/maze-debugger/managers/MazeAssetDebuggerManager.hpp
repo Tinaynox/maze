@@ -35,6 +35,7 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/math/MazeVec2D.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
+#include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include <functional>
 
@@ -66,6 +67,10 @@ namespace Maze
         : public Updatable
         , public MultiDelegateCallbackReceiver
     {
+    public:
+        //////////////////////////////////////////
+        using AssetFileContextMenuCallback = std::function<void(String const&, MenuListTree2DPtr const&)>;
+
     public:
 
         //////////////////////////////////////////
@@ -107,6 +112,16 @@ namespace Maze
         //////////////////////////////////////////
         SpritePtr getIconForAssetFile(AssetFilePtr const& _assetFile);
 
+
+        //////////////////////////////////////////
+        inline void registerAssetFileContextMenuCallback(AssetFileContextMenuCallback _callback)
+        {
+            m_assetFileContextMenuCallbacks.push_back(_callback);
+        }
+
+        //////////////////////////////////////////
+        void callAssetFileContextMenuCallback(String const& _fullPath, MenuListTree2DPtr const& _tree);
+
     protected:
 
         //////////////////////////////////////////
@@ -116,7 +131,10 @@ namespace Maze
         bool init();
 
         //////////////////////////////////////////
-        void registerCallbacks();
+        void registerIconCallbacks();
+
+        //////////////////////////////////////////
+        void registerAssetFileCallbacks();
 
         //////////////////////////////////////////
         void notifyTextureLoaderAdded(HashedCString _extension, TextureLoaderData const& _data);
@@ -132,6 +150,8 @@ namespace Maze
 
         StringKeyMap<std::function<SpritePtr(AssetFilePtr const&)>> m_iconCallbackPerAssetFileExtension;
         Map<ClassUID, std::function<SpritePtr()>> m_iconCallbackPerAssetFileClass;
+
+        Vector<AssetFileContextMenuCallback> m_assetFileContextMenuCallbacks;
     };
     
 

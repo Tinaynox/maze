@@ -132,6 +132,7 @@ namespace Maze
             return;
 
         m_viewport = _viewport;
+        MAZE_DEBUG_ERROR_IF(!m_viewport.position.isFinite() || !m_viewport.size.isFinite(), "Viewport is not finite!");
 
         if (m_viewportTransformPolicy == ViewportTransformPolicy::ViewportToTransform)
             updateCanvasTransform();
@@ -170,6 +171,7 @@ namespace Maze
                 m_transform->setLocalPosition(size * 0.5f);
 
                 m_originPosition = m_viewport.position * (Vec2DF)m_renderTarget->getRenderTargetSize();
+                MAZE_DEBUG_ERROR_IF(!m_originPosition.isFinite(), "Origin position is not finite!");
 
                 auto canvasScaler = m_canvasScaler.lock();
                 if (canvasScaler)
@@ -197,13 +199,16 @@ namespace Maze
                 F32 renderTargetWidth = (F32)canvas->getRenderTarget()->getRenderTargetWidth();
                 F32 renderTargetHeight = (F32)canvas->getRenderTarget()->getRenderTargetHeight();
 
-                Rect2DF listVieport(
-                    lbRenderTargetSpace.x / renderTargetWidth,
-                    lbRenderTargetSpace.y / renderTargetHeight,
-                    (rtRenderTargetSpace.x - lbRenderTargetSpace.x) / renderTargetWidth,
-                    (rtRenderTargetSpace.y - lbRenderTargetSpace.y) / renderTargetHeight);
+                if (renderTargetWidth > 0.0f && renderTargetHeight > 0.0f)
+                {
+                    Rect2DF listVieport(
+                        lbRenderTargetSpace.x / renderTargetWidth,
+                        lbRenderTargetSpace.y / renderTargetHeight,
+                        (rtRenderTargetSpace.x - lbRenderTargetSpace.x) / renderTargetWidth,
+                        (rtRenderTargetSpace.y - lbRenderTargetSpace.y) / renderTargetHeight);
 
-                setViewport(listVieport);
+                    setViewport(listVieport);
+                }
 
                 if (canvas != this)
                     setRenderTarget(canvas->getRenderTarget());

@@ -28,18 +28,23 @@
 #include "maze-debugger/managers/MazeAssetDebuggerManager.hpp"
 #include "maze-debugger/managers/MazeSelectionManager.hpp"
 #include "maze-core/helpers/MazeTextHelper.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
+#include "maze-core/helpers/MazeSystemHelper.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeSystemManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
+#include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/assets/MazeAssetDirectory.hpp"
 #include "maze-debugger/scenes/SceneDebugEditor.hpp"
 #include "maze-debugger/settings/MazeDebuggerSettings.hpp"
+#include "maze-debugger/helpers/MazeDebuggerHelper.hpp"
 #include "maze-graphics/ecs/systems/MazeGizmosSystem.hpp"
 #include "maze-graphics/ecs/components/gizmos/MazeComponentGizmos.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
+#include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
@@ -108,6 +113,8 @@ namespace Maze
         GraphicsManager::GetInstancePtr()->eventDefaultRenderSystemChanged.subscribe(this, &AssetDebuggerManager::notifyDefaultRenderSystemChanged);
         notifyDefaultRenderSystemChanged(GraphicsManager::GetInstancePtr()->getDefaultRenderSystem());
 
+        registerAssetFileCallbacks();
+
         return true;
     }
 
@@ -123,7 +130,7 @@ namespace Maze
     {
         if (_renderSystem)
         {
-            registerCallbacks();
+            registerIconCallbacks();
 
             _renderSystem->getTextureManager()->eventTextureLoaderAdded.subscribe(this, &AssetDebuggerManager::notifyTextureLoaderAdded);
         }
@@ -136,7 +143,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetDebuggerManager::registerCallbacks()
+    void AssetDebuggerManager::registerIconCallbacks()
     {
         Vector<String> textureExtensions = TextureManager::GetCurrentInstancePtr()->getTextureLoaderExtensions();
         for (String const& textureExtension : textureExtensions)
@@ -188,6 +195,64 @@ namespace Maze
         {
             return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::FolderClosed);
         });
+    }
+
+    //////////////////////////////////////////
+    void AssetDebuggerManager::registerAssetFileCallbacks()
+    {
+        registerAssetFileContextMenuCallback(
+            [](String const& _fullPath, MenuListTree2DPtr const& _menuListTree)
+            {
+                _menuListTree->addItem(
+                    "Create/Folder",
+                    [_fullPath](String const& _text)
+                    {
+                        String dir = FileHelper::GetDirectoryInPath(_fullPath);
+                        String newFolderFullPath = DebuggerHelper::BuildNewAssetFileName(dir + "/New Folder");
+                        FileHelper::CreateDirectoryRecursive(newFolderFullPath.c_str());
+                        AssetManager::GetInstancePtr()->updateAssets();
+                    });
+
+                _menuListTree->addItem(
+                    "Create/Material",
+                    [_fullPath](String const& _text)
+                    {
+                        String dir = FileHelper::GetDirectoryInPath(_fullPath);
+                        MaterialPtr srcMaterial = MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::Specular);
+                        MaterialPtr material = srcMaterial->createCopy();
+                        String newMaterialFullPath = DebuggerHelper::BuildNewAssetFileName(dir + "/New Material.mzmaterial");
+                        material->saveToFile(newMaterialFullPath);
+                        AssetManager::GetInstancePtr()->updateAssets();
+
+                        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(newMaterialFullPath);
+                        if (assetFile && MaterialManager::GetCurrentInstance()->getMaterial(assetFile))
+                        {
+                            SelectionManager::GetInstancePtr()->selectObject(assetFile);
+                        }
+                    });
+
+                _menuListTree->addItem(
+                    "Show in Explorer",
+                    [_fullPath](String const& _text)
+                    {                        
+                        SystemHelper::OpenExplorer(_fullPath);
+                    });
+
+                _menuListTree->addItem(
+                    "Delete",
+                    [_fullPath](String const& _text)
+                    {
+                        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_fullPath);
+                        AssetManager::GetInstancePtr()->deleteAssetFile(assetFile);
+                    });
+            });
+    }
+
+    //////////////////////////////////////////
+    void AssetDebuggerManager::callAssetFileContextMenuCallback(String const& _fullPath, MenuListTree2DPtr const& _menuListTree)
+    {
+        for (auto callback : m_assetFileContextMenuCallbacks)
+            callback(_fullPath, _menuListTree);
     }
 
     //////////////////////////////////////////

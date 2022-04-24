@@ -410,6 +410,12 @@ namespace Maze
         //////////////////////////////////////////
         inline MAZE_CONSTEXPR bool isNaN() const;
 
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR bool isInfinity() const;
+
+        //////////////////////////////////////////
+        inline MAZE_CONSTEXPR bool isFinite() const { return !isNaN() && !isInfinity(); }
+
 
         //////////////////////////////////////////
         inline String toString() const { return StringHelper::ToString(x) + ";" + StringHelper::ToString(y) + ";" + StringHelper::ToString(z) + ";" + StringHelper::ToString(w); }

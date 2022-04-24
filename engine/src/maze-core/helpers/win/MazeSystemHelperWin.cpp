@@ -56,6 +56,18 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        MAZE_CORE_API extern void OpenExplorer(String const& _fullPath, bool _select)
+        {
+            String winPath = _fullPath;
+            StringHelper::ReplaceSubstring(winPath, "/", "\\");
+
+            if (_select)
+                ShellExecuteA(NULL, "open", "explorer.exe", ("/select," + winPath).c_str(), NULL, SW_SHOW);
+            else
+                ShellExecuteA(NULL, "open", "explorer.exe", (winPath).c_str(), NULL, SW_SHOW);
+        }
+
+        //////////////////////////////////////////
         MAZE_CORE_API bool GetWinMajorMinorVersion(DWORD& _major, DWORD& _minor)
         {
             bool bRetCode = false;
