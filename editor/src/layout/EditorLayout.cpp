@@ -72,9 +72,9 @@
 #include "maze-render-system-opengl-core/MazeStateMachineOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
-#include "maze-debugger/ecs/components/MazeHierarchyController.hpp"
-#include "maze-debugger/ecs/components/MazeInspectorController.hpp"
-#include "maze-debugger/ecs/components/MazeAssetsController.hpp"
+#include "maze-editor-tools/ecs/components/MazeHierarchyController.hpp"
+#include "maze-editor-tools/ecs/components/MazeInspectorController.hpp"
+#include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "Editor.hpp"
 
 

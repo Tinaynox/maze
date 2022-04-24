@@ -57,7 +57,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(GamepadManager);
     MAZE_USING_SHARED_PTR(UIManager);
     MAZE_USING_SHARED_PTR(ParticlesManager);
-    MAZE_USING_SHARED_PTR(DebuggerManager);
+    MAZE_USING_SHARED_PTR(EditorToolsManager);
     MAZE_USING_SHARED_PTR(Physics2DManager);
     MAZE_USING_SHARED_PTR(RenderWindow);
     MAZE_USING_SHARED_PTR(RenderSystem);
@@ -147,7 +147,7 @@ namespace Maze
         inline SoundManagerPtr const& getSoundManager() const { return m_soundManager; }
 
         //////////////////////////////////////////
-        inline DebuggerManagerPtr const& getDebuggerManager() const { return m_debuggerManager; }
+        inline EditorToolsManagerPtr const& getEditorToolsManager() const { return m_editorToolsManager; }
 
         //////////////////////////////////////////
         inline bool getRunning() const { return m_running; }
@@ -227,7 +227,7 @@ namespace Maze
         UIManagerPtr m_uiManager;
         ParticlesManagerPtr m_particlesManager;
         SoundManagerPtr m_soundManager;
-        DebuggerManagerPtr m_debuggerManager;
+        EditorToolsManagerPtr m_editorToolsManager;
     };
 
 

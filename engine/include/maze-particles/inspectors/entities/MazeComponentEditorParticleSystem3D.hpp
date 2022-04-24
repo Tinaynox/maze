@@ -37,7 +37,7 @@
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
-#include "maze-debugger/inspectors/entities/MazeComponentEditor.hpp"
+#include "maze-editor-tools/inspectors/entities/MazeComponentEditor.hpp"
 #include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
 
 

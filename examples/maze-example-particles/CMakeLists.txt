@@ -35,7 +35,7 @@ set(EXAMPLE_MAZE_LIBS
     maze-graphics
     maze-ui
     maze-engine
-    maze-debugger
+    maze-editor-tools
     maze-particles
     maze-plugin-profiler-view
     maze-plugin-loader-png)

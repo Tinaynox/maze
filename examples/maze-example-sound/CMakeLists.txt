@@ -30,7 +30,7 @@ project(maze-example-sound)
 
 ##########################################
 set(EXAMPLE_NAME "${PROJECT_NAME}")
-set(EXAMPLE_MAZE_LIBS maze-core maze-sound maze-graphics maze-ui maze-engine maze-debugger)
+set(EXAMPLE_MAZE_LIBS maze-core maze-sound maze-graphics maze-ui maze-engine maze-editor-tools)
 
 
 ##########################################

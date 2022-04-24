@@ -36,8 +36,8 @@
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
-#include "maze-debugger/property-drawers/MazePropertyDrawer.hpp"
-#include "maze-debugger/property-drawers/MazePropertyDrawerAnimationCurve.hpp"
+#include "maze-editor-tools/property-drawers/MazePropertyDrawer.hpp"
+#include "maze-editor-tools/property-drawers/MazePropertyDrawerAnimationCurve.hpp"
 #include "maze-particles/MazeParticleSystemParameterF32.hpp"
 
 

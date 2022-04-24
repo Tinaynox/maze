@@ -36,7 +36,7 @@ set(EXAMPLE_MAZE_LIBS
     maze-ui
     maze-engine
     maze-sound
-    maze-debugger
+    maze-editor-tools
     maze-plugin-profiler-view
     maze-plugin-console)
 

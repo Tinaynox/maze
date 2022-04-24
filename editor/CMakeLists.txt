@@ -37,7 +37,7 @@ set(EXAMPLE_MAZE_LIBS
     maze-gamepad
     maze-engine
     maze-sound
-    maze-debugger
+    maze-editor-tools
     maze-plugin-profiler-view
     maze-plugin-console
     maze-plugin-loader-png

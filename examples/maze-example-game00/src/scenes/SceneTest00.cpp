@@ -73,7 +73,7 @@
 #include "maze-render-system-opengl-core/MazeStateMachineOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
-#include "maze-debugger/settings/MazeDebuggerSettings.hpp"
+#include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
 #include "Game.hpp"
 #include "scenes/SceneFadePreloader.hpp"
 #include "scenes/SceneMainMenu.hpp"

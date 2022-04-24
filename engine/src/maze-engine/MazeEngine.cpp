@@ -50,7 +50,7 @@
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-gamepad/managers/MazeGamepadManager.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
-#include "maze-debugger/managers/MazeDebuggerManager.hpp"
+#include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
 #include "maze-physics2d/managers/MazePhysics2DManager.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
@@ -90,7 +90,7 @@ namespace Maze
     Engine::~Engine()
     {
         m_particlesManager.reset();
-        m_debuggerManager.reset();
+        m_editorToolsManager.reset();
         m_soundManager.reset();
         m_uiManager.reset();
         m_physics2DManager.reset();
@@ -312,8 +312,8 @@ namespace Maze
         if (!m_soundManager)
             return false;
 
-        DebuggerManager::Initialize(m_debuggerManager);
-        if (!m_debuggerManager)
+        EditorToolsManager::Initialize(m_editorToolsManager);
+        if (!m_editorToolsManager)
             return false;
 
         ParticlesManager::Initialize(m_particlesManager);

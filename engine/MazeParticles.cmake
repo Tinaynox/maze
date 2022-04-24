@@ -34,4 +34,4 @@ target_link_libraries(
     maze-particles
     PUBLIC maze-core
     PUBLIC maze-graphics
-    PUBLIC maze-debugger)
+    PUBLIC maze-editor-tools)

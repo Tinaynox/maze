@@ -30,7 +30,7 @@ project(maze-plugin-archive-assets-test)
 
 ##########################################
 set(EXAMPLE_NAME "${PROJECT_NAME}")
-set(EXAMPLE_MAZE_LIBS maze-core maze-graphics maze-ui maze-engine maze-sound maze-debugger maze-plugin-archive-assets)
+set(EXAMPLE_MAZE_LIBS maze-core maze-graphics maze-ui maze-engine maze-sound maze-editor-tools maze-plugin-archive-assets)
 
 
 ##########################################

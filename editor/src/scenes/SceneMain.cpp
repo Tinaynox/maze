@@ -77,13 +77,13 @@
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
-#include "maze-debugger/ecs/components/MazeHierarchyController.hpp"
-#include "maze-debugger/ecs/components/MazeInspectorController.hpp"
-#include "maze-debugger/ecs/components/MazeAssetsController.hpp"
-#include "maze-debugger/ecs/components/MazePreviewController.hpp"
-#include "maze-debugger/ecs/components/MazeDebugGridRenderer.hpp"
-#include "maze-debugger/helpers/MazeDebuggerHelper.hpp"
-#include "maze-debugger/managers/MazeDebuggerManager.hpp"
+#include "maze-editor-tools/ecs/components/MazeHierarchyController.hpp"
+#include "maze-editor-tools/ecs/components/MazeInspectorController.hpp"
+#include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
+#include "maze-editor-tools/ecs/components/MazePreviewController.hpp"
+#include "maze-editor-tools/ecs/components/MazeDebugGridRenderer.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
+#include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
 #include "ecs/components/EditorHierarchyController.hpp"
 #include "ecs/components/EditorMainCanvasController.hpp"
 #include "Editor.hpp"
@@ -461,7 +461,7 @@ namespace Maze
 
 
             // Hierarchy line - Entity
-            DebuggerManager::GetInstancePtr()->eventHierarchyLineEntityContextMenu.subscribe(
+            EditorToolsManager::GetInstancePtr()->eventHierarchyLineEntityContextMenu.subscribe(
                 [](MenuListTree2DPtr const& _menuListTree, Entity* _entity)
                 {                 
                     Transform3D* transform3D = _entity->getComponentRaw<Transform3D>();
@@ -500,7 +500,7 @@ namespace Maze
                 });
 
             // Hierarchy line - Scene
-            DebuggerManager::GetInstancePtr()->eventHierarchyLineSceneContextMenu.subscribe(
+            EditorToolsManager::GetInstancePtr()->eventHierarchyLineSceneContextMenu.subscribe(
                 [](MenuListTree2DPtr const& _menuListTree, ECSScene* _scene)
                 {
                     _menuListTree->addItem(

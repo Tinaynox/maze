@@ -32,7 +32,7 @@ maze_add_module(
 
 
 ##########################################
-set(MODULE_LIBS maze-core maze-graphics maze-particles maze-physics2d maze-sound maze-gamepad maze-debugger)
+set(MODULE_LIBS maze-core maze-graphics maze-particles maze-physics2d maze-sound maze-gamepad maze-editor-tools)
 
 
 ##########################################

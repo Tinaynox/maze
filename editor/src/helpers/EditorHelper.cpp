@@ -79,10 +79,10 @@
 #include "maze-render-system-opengl-core/MazeStateMachineOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
-#include "maze-debugger/ecs/components/MazeHierarchyController.hpp"
-#include "maze-debugger/ecs/components/MazeInspectorController.hpp"
-#include "maze-debugger/ecs/components/MazeAssetsController.hpp"
-#include "maze-debugger/helpers/MazeDebuggerHelper.hpp"
+#include "maze-editor-tools/ecs/components/MazeHierarchyController.hpp"
+#include "maze-editor-tools/ecs/components/MazeInspectorController.hpp"
+#include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-particles/managers/MazeParticlesManager.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorPrefabManager.hpp"
@@ -126,7 +126,7 @@ namespace Maze
             switch (EditorManager::GetInstancePtr()->getSceneMode())
             {
                 case EditorSceneMode::Scene:
-                    return DebuggerHelper::CreateEntity(_entityName);
+                    return EditorToolsHelper::CreateEntity(_entityName);
 
                 case EditorSceneMode::Prefab:
                     MAZE_ERROR_RETURN_VALUE(EntityPtr(), "Forbidden operation!");
@@ -145,7 +145,7 @@ namespace Maze
             {
                 case EditorSceneMode::Scene:
                 {
-                    return DebuggerHelper::CreateEntity2D(_entityName);
+                    return EditorToolsHelper::CreateEntity2D(_entityName);
                 }
                 case EditorSceneMode::Prefab:
                 {
@@ -155,7 +155,7 @@ namespace Maze
                     Transform2DPtr prefabTransform = prefabEntity->getComponent<Transform2D>();
                     MAZE_ERROR_RETURN_VALUE_IF(!prefabTransform, EntityPtr(), "Prefab has no Transform2D!");
 
-                    EntityPtr entity = DebuggerHelper::CreateEntity2D(_entityName);
+                    EntityPtr entity = EditorToolsHelper::CreateEntity2D(_entityName);
                     entity->getComponent<Transform2D>()->setParent(prefabTransform);
                     return entity;
                 }
@@ -174,7 +174,7 @@ namespace Maze
             {
                 case EditorSceneMode::Scene:
                 {
-                    return DebuggerHelper::CreateEntity3D(_entityName);
+                    return EditorToolsHelper::CreateEntity3D(_entityName);
                 }
                 case EditorSceneMode::Prefab:
                 {
@@ -184,7 +184,7 @@ namespace Maze
                     Transform3DPtr prefabTransform = prefabEntity->getComponent<Transform3D>();
                     MAZE_ERROR_RETURN_VALUE_IF(!prefabTransform, EntityPtr(), "Prefab has no Transform2D!");
 
-                    EntityPtr entity = DebuggerHelper::CreateEntity3D(_entityName);
+                    EntityPtr entity = EditorToolsHelper::CreateEntity3D(_entityName);
                     entity->getComponent<Transform3D>()->setParent(prefabTransform);
                     return entity;
                 }

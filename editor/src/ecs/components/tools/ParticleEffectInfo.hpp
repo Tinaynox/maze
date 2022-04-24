@@ -30,7 +30,7 @@
 
 
 //////////////////////////////////////////
-#include "maze-debugger/MazeDebuggerHeader.hpp"
+#include "maze-editor-tools/MazeEditorToolsHeader.hpp"
 #include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
@@ -61,7 +61,7 @@ namespace Maze
     // Class ParticleEffectInfo
     //
     //////////////////////////////////////////
-    class MAZE_DEBUGGER_API ParticleEffectInfo
+    class MAZE_EDITOR_TOOLS_API ParticleEffectInfo
         : public Component
         , public Updatable
         , public MultiDelegateCallbackReceiver

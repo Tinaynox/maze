@@ -30,7 +30,7 @@ project(maze-example-game00)
 
 ##########################################
 set(EXAMPLE_NAME "${PROJECT_NAME}")
-set(EXAMPLE_MAZE_LIBS maze-core maze-graphics maze-ui maze-gamepad maze-engine maze-debugger)
+set(EXAMPLE_MAZE_LIBS maze-core maze-graphics maze-ui maze-gamepad maze-engine maze-editor-tools)
 
 
 ##########################################

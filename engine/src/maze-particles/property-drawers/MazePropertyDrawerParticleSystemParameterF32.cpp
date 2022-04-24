@@ -40,8 +40,8 @@
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
-#include "maze-debugger/layout/MazeDebuggerLayout.hpp"
-#include "maze-debugger/helpers/MazeDebuggerHelper.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -128,8 +128,8 @@ namespace Maze
         m_rootEntity = layout->getEntity();
 
         SystemTextRenderer2DPtr systemText = SpriteHelper::CreateSystemText(
-            DebuggerHelper::BuildPropertyName(m_label.c_str(), _label).c_str(),
-            DebuggerLayout::c_inspectorPropertyFontSize,
+            EditorToolsHelper::BuildPropertyName(m_label.c_str(), _label).c_str(),
+            EditorToolsLayout::c_inspectorPropertyFontSize,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
             Vec2DF(8, 18),
@@ -138,7 +138,7 @@ namespace Maze
             _parent->getEntityRaw()->getECSScene(),
             Vec2DF(0.0f, 0.5f),
             Vec2DF::c_zero);
-        systemText->setColor(DebuggerLayout::c_inspectorPropertyColor);
+        systemText->setColor(EditorToolsLayout::c_inspectorPropertyColor);
 
         m_layout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Left,

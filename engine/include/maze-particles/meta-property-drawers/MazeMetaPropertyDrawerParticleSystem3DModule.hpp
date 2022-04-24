@@ -36,9 +36,9 @@
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
-#include "maze-debugger/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
-#include "maze-debugger/meta-property-drawers/MazeMetaPropertyDrawerDefault.hpp"
-#include "maze-debugger/managers/MazeInspectorManager.hpp"
+#include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
+#include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawerDefault.hpp"
+#include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 
 
 //////////////////////////////////////////

@@ -39,9 +39,9 @@
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
-#include "maze-debugger/layout/MazeDebuggerLayout.hpp"
-#include "maze-debugger/helpers/MazeDebuggerHelper.hpp"
-#include "maze-debugger/managers/MazeInspectorManager.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
+#include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 
 
 //////////////////////////////////////////

@@ -30,7 +30,7 @@
 
 
 //////////////////////////////////////////
-#include "maze-debugger/MazeDebuggerHeader.hpp"
+#include "maze-editor-tools/MazeEditorToolsHeader.hpp"
 #include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
@@ -57,7 +57,7 @@ namespace Maze
     // Class EditorMainCanvasController
     //
     //////////////////////////////////////////
-    class MAZE_DEBUGGER_API EditorMainCanvasController
+    class MAZE_EDITOR_TOOLS_API EditorMainCanvasController
         : public Component
         , public Updatable
         , public MultiDelegateCallbackReceiver

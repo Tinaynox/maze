@@ -89,10 +89,10 @@ include("MazePhysics2D.cmake")
 
 
 ##########################################
-# Maze Debugger
+# Maze EditorTools
 #
 ##########################################
-include("MazeDebugger.cmake")
+include("MazeEditorTools.cmake")
 
 
 ##########################################
