@@ -158,6 +158,16 @@ namespace Maze
         MAZE_CORE_API extern bool MoveDirectory(CString _sourceFullPath, CString _destFullPath);
 
         //////////////////////////////////////////
+        inline bool Move(CString _sourceFullPath, CString _destFullPath)
+        {
+            if (IsDirectory(_sourceFullPath))
+                return MoveDirectory(_sourceFullPath, _destFullPath);
+            else
+                return MoveRegularFile(_sourceFullPath, _destFullPath);
+        }
+
+
+        //////////////////////////////////////////
         MAZE_CORE_API extern String ConvertLocalPathToFullPath(CString _localPath);
 
 

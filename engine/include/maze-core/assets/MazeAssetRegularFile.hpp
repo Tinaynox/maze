@@ -81,6 +81,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool isFileExists() MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        virtual bool move(String const& _newFullPath, Vector<Pair<String, AssetFilePtr>>& _movedFiles) MAZE_OVERRIDE;
+
 
         //////////////////////////////////////////
         virtual Size readToString(String& string) MAZE_OVERRIDE;

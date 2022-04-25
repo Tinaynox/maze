@@ -111,6 +111,9 @@ namespace Maze
         //////////////////////////////////////////
         void deleteAssetFile(const AssetFilePtr& _assetFile);
 
+        //////////////////////////////////////////
+        void moveAssetFile(const AssetFilePtr& _assetFile, String const& _newFullPath);
+
 
         //////////////////////////////////////////
         static inline AssetManager* GetInstancePtr() { return s_instance; }
@@ -174,9 +177,13 @@ namespace Maze
             return FileChildrenProcessor();
         }
 
+        //////////////////////////////////////////
+        inline Set<String> const& getAssetDirectoryPathes() const { return m_assetDirectoryPathes; }
+
     public:
         MultiDelegate<AssetFilePtr const&> eventAssetFileAdded;
         MultiDelegate<AssetFilePtr const&> eventAssetFileRemoved;
+        MultiDelegate<AssetFilePtr const&, String const&> eventAssetFileMoved;
 
     protected:
 

@@ -85,6 +85,7 @@ namespace Maze
         {
             AssetManager::GetInstancePtr()->eventAssetFileAdded.unsubscribe(this);
             AssetManager::GetInstancePtr()->eventAssetFileRemoved.unsubscribe(this);
+            AssetManager::GetInstancePtr()->eventAssetFileMoved.unsubscribe(this);
         }
 
         clearAssetsTree();
@@ -108,6 +109,7 @@ namespace Maze
 
         AssetManager::GetInstancePtr()->eventAssetFileAdded.subscribe(this, &AssetsController::notifyAssetFileAdded);
         AssetManager::GetInstancePtr()->eventAssetFileRemoved.subscribe(this, &AssetsController::notifyAssetFileRemoved);
+        AssetManager::GetInstancePtr()->eventAssetFileMoved.subscribe(this, &AssetsController::notifyAssetFileMoved);
 
         return true;
     }
@@ -246,6 +248,7 @@ namespace Maze
                 if (controller && !controller->m_selectedAssetFolder.empty())
                 {
                     AssetEditorToolsManager::GetInstancePtr()->callAssetFileContextMenuCallback(
+                        controller.get(),
                         controller->m_selectedAssetFolder,
                         _menuListTree);
                 }
@@ -387,6 +390,7 @@ namespace Maze
                     if (controller)
                     {
                         AssetEditorToolsManager::GetInstancePtr()->callAssetFileContextMenuCallback(
+                            controller.get(),
                             fullPath,
                             _menuListTree);
                     }
@@ -508,6 +512,7 @@ namespace Maze
                     if (controller && !controller->m_selectedAssetFolder.empty())
                     {
                         AssetEditorToolsManager::GetInstancePtr()->callAssetFileContextMenuCallback(
+                            controller.get(),
                             fullPath,
                             _menuListTree);
                     }
@@ -558,6 +563,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void AssetsController::notifyAssetFileMoved(AssetFilePtr const& _file, String const& _prevFullPath)
+    {
+        m_assetsTreeDirty = true;
+        m_selectedAssetsFolder = true;
+
+        if (m_selectedAssetFolder == _prevFullPath)
+            setSelectedAssetFolder(_file->getFullPath());
+    }
+
+    //////////////////////////////////////////
     void AssetsController::setAssetFileExpanded(AssetFilePtr const& _assetFile, bool _expanded)
     {
         m_assetFilesInfo[_assetFile].expanded = _expanded;
@@ -583,6 +598,36 @@ namespace Maze
         auto it = m_assetFilesInfo.find(_assetFile);
         if (it != m_assetFilesInfo.end())
             return it->second.expanded;
+
+        return false;
+    }
+
+    //////////////////////////////////////////
+    void AssetsController::setAssetFileRename(AssetFilePtr const& _assetFile, bool _rename)
+    {
+        m_assetFilesInfo[_assetFile].rename = _rename;
+
+        for (auto assetLineData : m_assetsTreeLines)
+            if (assetLineData.second->getAssetFile() == _assetFile)
+            {
+                assetLineData.second->setEditMode(_rename);
+                break;
+            }
+
+        for (auto assetLineData : m_selectedAssetsFolderLines)
+            if (assetLineData.second->getAssetFile() == _assetFile)
+            {
+                assetLineData.second->setEditMode(_rename);
+                break;
+            }
+    }
+
+    //////////////////////////////////////////
+    bool AssetsController::getAssetFileRename(AssetFilePtr const& _assetFile)
+    {
+        auto it = m_assetFilesInfo.find(_assetFile);
+        if (it != m_assetFilesInfo.end())
+            return it->second.rename;
 
         return false;
     }

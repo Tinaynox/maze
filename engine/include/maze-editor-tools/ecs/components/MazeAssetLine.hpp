@@ -56,6 +56,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Sprite);
     MAZE_USING_SHARED_PTR(ContextMenu2D);
     MAZE_USING_SHARED_PTR(AssetsController);
+    MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
 
 
     //////////////////////////////////////////
@@ -115,6 +116,9 @@ namespace Maze
         //////////////////////////////////////////
         void setSelected(bool _value);
 
+        //////////////////////////////////////////
+        void setEditMode(bool _value);
+
 
         //////////////////////////////////////////
         AssetFilePtr const& getAssetFile() const { return m_assetFile; }
@@ -122,6 +126,7 @@ namespace Maze
 
         //////////////////////////////////////////
         void setSelectAssetFileByPress(bool _value) { m_selectAssetFileByPress = _value; }
+
 
     public:
 
@@ -155,6 +160,13 @@ namespace Maze
         //////////////////////////////////////////
         void updateSelectedUI();
 
+
+        //////////////////////////////////////////
+        void notifyTextEditSelectedChanged(SystemTextEditBox2D* _edit, bool _value);
+
+        //////////////////////////////////////////
+        void notifyTextEditInput(SystemTextEditBox2D* _edit);
+
     protected:
         AssetsController* m_assetsController = nullptr;
         AssetFilePtr m_assetFile;
@@ -166,6 +178,7 @@ namespace Maze
         SpriteRenderer2DPtr m_dropDownRenderer;
         SpriteRenderer2DPtr m_iconRenderer;
         SystemTextRenderer2DPtr m_textRenderer;
+        SystemTextEditBox2DPtr m_textEdit;
 
         ContextMenu2DPtr m_contextMenu;
 

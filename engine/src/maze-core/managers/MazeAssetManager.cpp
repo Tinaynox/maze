@@ -240,6 +240,40 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void AssetManager::moveAssetFile(const AssetFilePtr& _assetFile, String const& _newFullPath)
+    {
+        if (!_assetFile)
+            return;
+
+        MAZE_ERROR_RETURN_IF(
+            m_assetDirectoryPathes.find(_assetFile->getFullPath()) != m_assetDirectoryPathes.end(),
+            "It's forbidden to move root asset directories!");
+
+        Vector<Pair<String, AssetFilePtr>> movedFiles;
+        if (_assetFile->move(_newFullPath, movedFiles))
+        {
+            for (auto movedFileData : movedFiles)
+            {
+                String const& fullPath = movedFileData.first;
+                String fileName = FileHelper::GetFileNameInPath(fullPath);
+
+                AssetFilePtr const& assetFile = movedFileData.second;
+
+                m_assetFilesByFileName.erase(fileName);
+                m_assetFilesByFullPath.erase(fullPath);
+
+                m_assetFilesByFileName[assetFile->getFileName()] = assetFile;
+                m_assetFilesByFullPath[assetFile->getFullPath()] = assetFile;
+            }
+
+            for (auto movedFileData : movedFiles)
+                eventAssetFileMoved(movedFileData.second, movedFileData.first);
+
+            updateAssets();
+        }
+    }
+
+    //////////////////////////////////////////
     void AssetManager::processAddFile(AssetFilePtr const& _file)
     {
         m_assetFilesByFileName[_file->getFileName()] = _file;

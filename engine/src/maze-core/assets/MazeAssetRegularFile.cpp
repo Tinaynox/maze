@@ -103,6 +103,30 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool AssetRegularFile::move(String const& _newFullPath, Vector<Pair<String, AssetFilePtr>>& _movedFiles)
+    {
+        if (m_fullPath == _newFullPath)
+            return false;
+
+        bool isFullPathExists = FileHelper::IsFileExists(m_fullPath);
+        bool isNewFullPathExists = FileHelper::IsFileExists(_newFullPath);
+
+        MAZE_WARNING_RETURN_VALUE_IF(isFullPathExists && isNewFullPathExists, false, "File is already exists - %s!", _newFullPath.c_str());
+        MAZE_WARNING_RETURN_VALUE_IF(!isFullPathExists && !isNewFullPathExists, false, "File is not exists - %s!", m_fullPath.c_str());
+
+        if (isFullPathExists && !isNewFullPathExists)
+        {
+            if (!FileHelper::Move(m_fullPath.c_str(), _newFullPath.c_str()))
+                return false;
+        }
+        
+        _movedFiles.push_back(Pair<String, AssetFilePtr>(m_fullPath, getSharedPtr()));
+        setFullPath(_newFullPath);
+
+        return true;
+    }
+
+    //////////////////////////////////////////
     Size AssetRegularFile::calculateFileSize()
     {
         FILE* fileHandler = StdHelper::OpenFile(m_fullPath.c_str(), "rb");

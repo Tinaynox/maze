@@ -38,6 +38,7 @@
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -94,6 +95,12 @@ namespace Maze
             ClickButton2D* button = m_textRenderer->getEntityRaw()->getComponentRaw<ClickButton2D>();
             if (button)
                 button->eventClick.unsubscribe(this);
+        }
+
+        if (m_textEdit)
+        {
+            m_textEdit->eventSelectedChanged.unsubscribe(this);
+            m_textEdit->eventTextInput.unsubscribe(this);
         }
     }
 
@@ -178,8 +185,9 @@ namespace Maze
             Vec2DF(0.5f, 0.5f));
         x += (F32)charSize + 4;
 
+        String label = FileHelper::GetFileNameWithoutExtension(m_assetFile->getFileName());
         m_textRenderer = SpriteHelper::CreateSystemText(
-            m_assetFile->getFileName().c_str(),
+            label.c_str(),
             charSize,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Top,
@@ -190,6 +198,19 @@ namespace Maze
             Vec2DF(0.0f, 0.5f),
             Vec2DF(0.0f, 0.5f));
         m_textRenderer->setColor(ColorU32::c_black);
+
+        m_textEdit = UIHelper::CreateDefaultEditBox(
+            label.c_str(),
+            Vec2DF(200, (F32)charSize + 4.0f),
+            Vec2DF(x, 0),
+            m_mainTransform,
+            getEntityRaw()->getECSScene(),
+            Vec2DF(0.0f, 0.5f),
+            Vec2DF(0.0f, 0.5f));
+        m_textEdit->eventSelectedChanged.subscribe(this, &AssetLine::notifyTextEditSelectedChanged);
+        m_textEdit->eventTextInput.subscribe(this, &AssetLine::notifyTextEditInput);
+        m_textEdit->getEntityRaw()->setActiveSelf(false);
+
         ClickButton2DPtr textButton = m_textRenderer->getEntityRaw()->ensureComponent<ClickButton2D>();
         textButton->eventClick.subscribe(this, &AssetLine::notifyLinePressed);
 
@@ -212,6 +233,7 @@ namespace Maze
         childrenLayoutSizePolicy->setSizeDelta(-10.0f, 0.0f);
 
         setExpanded(m_assetsController->getAssetFileExpanded(m_assetFile));
+        setEditMode(m_assetsController->getAssetFileRename(m_assetFile));
 
         updateSelectedUI();
     }
@@ -297,6 +319,18 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void AssetLine::setEditMode(bool _value)
+    {
+        m_textRenderer->getEntityRaw()->setActiveSelf(!_value);
+        m_textEdit->getEntityRaw()->setActiveSelf(_value);
+
+        if (_value)
+        {
+            m_textEdit->setSelected(true);
+        }
+    }
+
+    //////////////////////////////////////////
     void AssetLine::updateSelectedUI()
     {
         if (!m_textRenderer)
@@ -312,6 +346,44 @@ namespace Maze
         }
     }
 
+    //////////////////////////////////////////
+    void AssetLine::notifyTextEditSelectedChanged(SystemTextEditBox2D* _edit, bool _value)
+    {
+        if (!_value)
+            m_assetsController->setAssetFileRename(m_assetFile, false);
+    }
+
+    //////////////////////////////////////////
+    void AssetLine::notifyTextEditInput(SystemTextEditBox2D* _edit)
+    {
+        String newFileName = _edit->getText();
+
+        bool cancelRename = true;
+
+        String oldFileName = FileHelper::GetFileNameWithoutExtension(m_assetFile->getFileName());
+
+        if (!newFileName.empty() && oldFileName != newFileName)
+        {
+            String dir = FileHelper::GetParentDirectoryInPath(m_assetFile->getFullPath());
+            String extension = FileHelper::GetFileExtension(m_assetFile->getFileName());
+
+            String newFullPath = dir + "/" + newFileName;
+            if (!extension.empty())
+                newFullPath += "." + extension;
+
+            if (!FileHelper::IsFileExists(newFullPath))
+            {
+                AssetManager::GetInstancePtr()->moveAssetFile(m_assetFile, newFullPath);
+            }
+            else
+            {
+                cancelRename = false;
+            }
+        }
+
+        if (cancelRename)
+            m_assetsController->setAssetFileRename(m_assetFile, false);
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

@@ -457,6 +457,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API bool MoveRegularFile(CString _sourceFullPath, CString _destFullPath)
         {
+            /*
             if (!CopyRegularFile(_sourceFullPath, _destFullPath))
                 return false;
 
@@ -464,6 +465,8 @@ namespace Maze
                 return false;
 
             return true;
+            */
+            return MoveFileA(_sourceFullPath, _destFullPath);
         }
 
 

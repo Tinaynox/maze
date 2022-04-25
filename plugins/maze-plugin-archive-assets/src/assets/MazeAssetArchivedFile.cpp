@@ -94,6 +94,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool AssetArchivedFile::move(String const& _newFullPath, Vector<Pair<String, AssetFilePtr>>& _renamedFiles)
+    {
+        MAZE_NOT_IMPLEMENTED;
+        return false;
+    }
+
+    //////////////////////////////////////////
     StringKeyMap<AssetFilePtr> const* AssetArchivedFile::getChildrenAssets() const
     {
         return nullptr;

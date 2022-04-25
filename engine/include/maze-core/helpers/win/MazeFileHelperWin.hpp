@@ -92,6 +92,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API extern bool DeleteDirectory(CString _path);
 
+
         //////////////////////////////////////////
         MAZE_CORE_API extern bool MoveRegularFile(CString _sourceFullPath, CString _destFullPath);
 

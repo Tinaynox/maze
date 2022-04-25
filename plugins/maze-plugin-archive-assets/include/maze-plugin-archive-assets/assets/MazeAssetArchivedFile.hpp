@@ -98,6 +98,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool isFileExists() MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        virtual bool move(String const& _newFullPath, Vector<Pair<String, AssetFilePtr>>& _renamedFiles) MAZE_OVERRIDE;
+
 
         //////////////////////////////////////////
         virtual StringKeyMap<AssetFilePtr> const* getChildrenAssets() const MAZE_OVERRIDE;

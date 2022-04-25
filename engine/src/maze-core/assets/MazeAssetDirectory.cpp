@@ -76,6 +76,22 @@ namespace Maze
     {
         return &m_childrenAssets;
     }
+
+    //////////////////////////////////////////
+    bool AssetDirectory::move(String const& _newFullPath, Vector<Pair<String, AssetFilePtr>>& _movedFiles)
+    {
+        if (!AssetRegularFile::move(_newFullPath, _movedFiles))
+            return false;
+
+        for (auto childrenAssetData : m_childrenAssets)
+        {
+            String newFullPath = m_fullPath.getString() + "/" + childrenAssetData.second->getFileName().getString();
+            if (!childrenAssetData.second->move(newFullPath, _movedFiles))
+                return false;
+        }
+
+        return true;
+    }
     
     //////////////////////////////////////////
     void AssetDirectory::updateChildrenAssets(
@@ -96,7 +112,14 @@ namespace Maze
             auto it = m_childrenAssets.find(fileFullPath);
             if (it == m_childrenAssets.end())
             {
-                AssetFilePtr file;
+                AssetFilePtr file = AssetManager::GetInstancePtr()->getAssetFileByFullPath(fileFullPath);
+                if (file)
+                {
+                    m_childrenAssets.insert(
+                        file->getFullPath(),
+                        file);
+                    continue;
+                }
 
                 if (FileHelper::IsDirectory(fileFullPath))
                 {
@@ -145,15 +168,18 @@ namespace Maze
         {
             if (confirmedFileFullPathes.count((*it).first) == 0)
             {
-                Vector<AssetFilePtr> children = it->second->getChildrenAssets(true);
-                for (AssetFilePtr const& assetFile : children)
+                if (it->second->getFullPath() == it->first)
                 {
-                    if (_removedFiles)
-                        _removedFiles->push_back(assetFile);
-                }
+                    Vector<AssetFilePtr> children = it->second->getChildrenAssets(true);
+                    for (AssetFilePtr const& assetFile : children)
+                    {
+                        if (_removedFiles)
+                            _removedFiles->push_back(assetFile);
+                    }
 
-                if (_removedFiles)
-                    _removedFiles->push_back(it->second);
+                    if (_removedFiles)
+                        _removedFiles->push_back(it->second);
+                }
 
                 it = m_childrenAssets.erase(it);
                 end = m_childrenAssets.end();

@@ -69,6 +69,9 @@ namespace Maze
         virtual StringKeyMap<AssetFilePtr> const* getChildrenAssets() const MAZE_OVERRIDE;
 
         //////////////////////////////////////////
+        bool move(String const& _newFullPath, Vector<Pair<String, AssetFilePtr>>& _movedFiles) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
         virtual void updateChildrenAssets(
             bool _recursive,
             Vector<AssetFilePtr>* _addedFiles,

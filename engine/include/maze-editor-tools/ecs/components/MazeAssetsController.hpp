@@ -77,6 +77,7 @@ namespace Maze
         struct AssetLineInfo
         {
             bool expanded = false;
+            bool rename = false;
         };
 
     public:
@@ -110,6 +111,13 @@ namespace Maze
 
         //////////////////////////////////////////
         bool getAssetFileExpanded(AssetFilePtr const& _assetFile);
+
+
+        //////////////////////////////////////////
+        void setAssetFileRename(AssetFilePtr const& _assetFile, bool _rename);
+
+        //////////////////////////////////////////
+        bool getAssetFileRename(AssetFilePtr const& _assetFile);
 
     protected:
 
@@ -154,6 +162,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void notifyAssetFileRemoved(AssetFilePtr const& _file);
+
+        //////////////////////////////////////////
+        void notifyAssetFileMoved(AssetFilePtr const& _file, String const& _prevFullPath);
 
     protected:
         Canvas* m_canvas;

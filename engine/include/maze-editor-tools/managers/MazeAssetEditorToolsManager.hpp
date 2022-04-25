@@ -57,6 +57,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Sprite);
     MAZE_USING_SHARED_PTR(AssetFile);
     MAZE_USING_SHARED_PTR(RenderSystem);
+    MAZE_USING_SHARED_PTR(AssetsController);
 
 
     //////////////////////////////////////////
@@ -69,7 +70,7 @@ namespace Maze
     {
     public:
         //////////////////////////////////////////
-        using AssetFileContextMenuCallback = std::function<void(String const&, MenuListTree2DPtr const&)>;
+        using AssetFileContextMenuCallback = std::function<void(AssetsController*, String const&, MenuListTree2DPtr const&)>;
 
     public:
 
@@ -120,7 +121,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        void callAssetFileContextMenuCallback(String const& _fullPath, MenuListTree2DPtr const& _tree);
+        void callAssetFileContextMenuCallback(AssetsController* _controller, String const& _fullPath, MenuListTree2DPtr const& _tree);
 
     protected:
 

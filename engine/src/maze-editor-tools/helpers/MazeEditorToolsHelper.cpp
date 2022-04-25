@@ -245,7 +245,7 @@ namespace Maze
 
             S32 i = 1;
 
-            String dir = FileHelper::GetDirectoryInPath(_fullPath);
+            String dir = FileHelper::GetParentDirectoryInPath(_fullPath);
             String fileName = FileHelper::GetFileNameInPath(_fullPath);
             String fileNameWithoutExtension = FileHelper::GetFileNameWithoutExtension(fileName);
             String fileExtension = FileHelper::GetFileExtension(fileName);
@@ -253,7 +253,9 @@ namespace Maze
             String newPath;
             do
             {
-                newPath = dir + "/" + fileNameWithoutExtension + " " + StringHelper::ToString(i) + "." + fileExtension;
+                newPath = dir + "/" + fileNameWithoutExtension + " " + StringHelper::ToString(i);
+                if (!fileExtension.empty())
+                    newPath += "." + fileExtension;
                 ++i;
             }
             while (AssetManager::GetInstancePtr()->getAssetFileByFullPath(newPath));

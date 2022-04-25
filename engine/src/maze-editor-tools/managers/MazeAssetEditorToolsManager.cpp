@@ -40,6 +40,7 @@
 #include "maze-editor-tools/scenes/SceneDebugEditor.hpp"
 #include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
+#include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "maze-graphics/ecs/systems/MazeGizmosSystem.hpp"
 #include "maze-graphics/ecs/components/gizmos/MazeComponentGizmos.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
@@ -201,21 +202,23 @@ namespace Maze
     void AssetEditorToolsManager::registerAssetFileCallbacks()
     {
         registerAssetFileContextMenuCallback(
-            [](String const& _fullPath, MenuListTree2DPtr const& _menuListTree)
+            [](AssetsController* _controller, String const& _fullPath, MenuListTree2DPtr const& _menuListTree)
             {
                 _menuListTree->addItem(
                     "Create/Folder",
-                    [_fullPath](String const& _text)
+                    [_controller, _fullPath](String const& _text)
                     {
                         String dir = FileHelper::GetDirectoryInPath(_fullPath);
                         String newFolderFullPath = EditorToolsHelper::BuildNewAssetFileName(dir + "/New Folder");
                         FileHelper::CreateDirectoryRecursive(newFolderFullPath.c_str());
                         AssetManager::GetInstancePtr()->updateAssets();
+
+                        _controller->setAssetFileRename(AssetManager::GetInstancePtr()->getAssetFileByFullPath(newFolderFullPath), true);
                     });
 
                 _menuListTree->addItem(
                     "Create/Material",
-                    [_fullPath](String const& _text)
+                    [_controller, _fullPath](String const& _text)
                     {
                         String dir = FileHelper::GetDirectoryInPath(_fullPath);
                         MaterialPtr srcMaterial = MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::Specular);
@@ -228,6 +231,7 @@ namespace Maze
                         if (assetFile && MaterialManager::GetCurrentInstance()->getMaterial(assetFile))
                         {
                             SelectionManager::GetInstancePtr()->selectObject(assetFile);
+                            _controller->setAssetFileRename(assetFile, true);
                         }
                     });
 
@@ -238,21 +242,36 @@ namespace Maze
                         SystemHelper::OpenExplorer(_fullPath);
                     });
 
-                _menuListTree->addItem(
-                    "Delete",
-                    [_fullPath](String const& _text)
-                    {
-                        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_fullPath);
-                        AssetManager::GetInstancePtr()->deleteAssetFile(assetFile);
-                    });
+                auto  const& assetDirectoryPathes = AssetManager::GetInstancePtr()->getAssetDirectoryPathes();
+                bool isRootAssetDirectory = assetDirectoryPathes.find(_fullPath) != assetDirectoryPathes.end();
+
+                if (!isRootAssetDirectory)
+                {
+                    _menuListTree->addItem(
+                        "Rename",
+                        [_controller, _fullPath](String const& _text)
+                        {
+                            AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_fullPath);
+                            if (assetFile)
+                                _controller->setAssetFileRename(assetFile, true);
+                        });
+
+                    _menuListTree->addItem(
+                        "Delete",
+                        [_fullPath](String const& _text)
+                        {
+                            AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_fullPath);
+                            AssetManager::GetInstancePtr()->deleteAssetFile(assetFile);
+                        });
+                }
             });
     }
 
     //////////////////////////////////////////
-    void AssetEditorToolsManager::callAssetFileContextMenuCallback(String const& _fullPath, MenuListTree2DPtr const& _menuListTree)
+    void AssetEditorToolsManager::callAssetFileContextMenuCallback(AssetsController* _controller, String const& _fullPath, MenuListTree2DPtr const& _menuListTree)
     {
         for (auto callback : m_assetFileContextMenuCallbacks)
-            callback(_fullPath, _menuListTree);
+            callback(_controller, _fullPath, _menuListTree);
     }
 
     //////////////////////////////////////////
