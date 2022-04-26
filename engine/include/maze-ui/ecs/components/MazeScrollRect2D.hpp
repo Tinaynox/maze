@@ -282,7 +282,7 @@ namespace Maze
             Vec2DF const& _delta);
 
         //////////////////////////////////////////
-        static void UpdateOneScrollbarVisibility(
+        static bool UpdateOneScrollbarVisibility(
             bool _scrollingNeeded,
             bool _axisEnabled,
             ScrollRect2DScrollbarVisibility _scrollbarVisibility,
@@ -331,7 +331,7 @@ namespace Maze
         void updateScrollbars(Vec2DF const& _offset);
 
         //////////////////////////////////////////
-        void updateScrollbarVisibility();
+        bool updateScrollbarVisibility();
 
         //////////////////////////////////////////
         inline bool getHorizontalScrollingNeeded() const { return m_contentBoundsViewSpace.getWidth() > m_boundsViewSpace.getWidth() + 0.01f; }

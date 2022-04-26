@@ -170,7 +170,17 @@ namespace Maze
             updatePrevData();
         }
 
-        updateScrollbarVisibility();
+        if (updateScrollbarVisibility())
+        {
+            bool hScrollingNeeded = getHorizontalScrollingNeeded();
+            bool vScrollingNeeded = getVerticalScrollingNeeded();
+
+            if (!hScrollingNeeded)
+                setHorizontalNormalizedPosition(0.0f);
+            if (!vScrollingNeeded)
+                setVerticalNormalizedPosition(0.0f);
+        }
+
         updateScrollbarsExpand();
     }
 
@@ -235,15 +245,25 @@ namespace Maze
         updateBounds();
 
         F32 hiddenLength = m_contentBoundsViewSpace.getSize()[_axis] - m_boundsViewSpace.getSize()[_axis];
-        if (hiddenLength < 0.0f)
-            return;
 
         F32 contentBoundsMinPosition;
         
         if (_axis == 0)
+        {
+            // #TODO: Research and rework
+            if (!getHorizontalScrollingNeeded())
+                _value = 0.0f;
+
             contentBoundsMinPosition = m_boundsViewSpace.getMin()[_axis] - _value * hiddenLength;
+        }
         else
-            contentBoundsMinPosition = m_boundsViewSpace.getMin()[_axis] - (1.0f - _value) * hiddenLength;;
+        {
+            // #TODO: Research and rework
+            if (!getVerticalScrollingNeeded())
+                _value = 0.0f;
+
+            contentBoundsMinPosition = m_boundsViewSpace.getMin()[_axis] - (1.0f - _value) * hiddenLength;
+        }
 
         F32 newLocalPosition = m_contentTransform->getLocalPosition()[_axis] + contentBoundsMinPosition - m_contentBoundsViewSpace.getMin()[_axis];
 
@@ -433,7 +453,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ScrollRect2D::UpdateOneScrollbarVisibility(
+    bool ScrollRect2D::UpdateOneScrollbarVisibility(
         bool _scrollingNeeded,
         bool _axisEnabled,
         ScrollRect2DScrollbarVisibility _scrollbarVisibility,
@@ -444,14 +464,22 @@ namespace Maze
             if (_scrollbarVisibility == ScrollRect2DScrollbarVisibility::Permanent)
             {
                 if (_scrollbar->getEntityRaw()->getActiveSelf() != _axisEnabled)
+                {
                     _scrollbar->getEntityRaw()->setActiveSelf(_axisEnabled);
+                    return true;
+                }
             }
             else
             {
                 if (_scrollbar->getEntityRaw()->getActiveSelf() != _scrollingNeeded)
+                {
                     _scrollbar->getEntityRaw()->setActiveSelf(_scrollingNeeded);
+                    return true;
+                }
             }
         }
+
+        return false;
     }
 
     //////////////////////////////////////////
@@ -491,15 +519,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ScrollRect2D::updateScrollbarVisibility()
+    bool ScrollRect2D::updateScrollbarVisibility()
     {
         updateBounds();
 
         bool hScrollingNeeded = getHorizontalScrollingNeeded();
         bool vScrollingNeeded = getVerticalScrollingNeeded();
 
-        UpdateOneScrollbarVisibility(vScrollingNeeded, m_verticalScroll, m_verticalScrollbarVisibility, m_verticalScrollbar);
-        UpdateOneScrollbarVisibility(hScrollingNeeded, m_horizontalScroll, m_horizontalScrollbarVisibility, m_horizontalScrollbar);
+        bool result = false;
+        result |= UpdateOneScrollbarVisibility(vScrollingNeeded, m_verticalScroll, m_verticalScrollbarVisibility, m_verticalScrollbar);
+        result |= UpdateOneScrollbarVisibility(hScrollingNeeded, m_horizontalScroll, m_horizontalScrollbarVisibility, m_horizontalScrollbar);
+        return result;
     }
 
     //////////////////////////////////////////
