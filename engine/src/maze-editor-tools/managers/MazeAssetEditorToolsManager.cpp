@@ -206,34 +206,8 @@ namespace Maze
             [](AssetsController* _controller, String const& _fullPath, MenuListTree2DPtr const& _menuListTree)
             {
                 _menuListTree->addItem(
-                    "Create/Folder",
-                    [_controller, _fullPath](String const& _text) { AssetEditorToolsHelper::CreateFolder(_controller, _fullPath); });
-
-                _menuListTree->addItem(
-                    "Create/Material",
-                    [_controller, _fullPath](String const& _text) { AssetEditorToolsHelper::CreateMaterial(_controller, _fullPath); });
-
-                _menuListTree->addItem(
-                    "Create/Prefab/2D",
-                    [_controller, _fullPath](String const& _text) { AssetEditorToolsHelper::CreatePrefab2D(_controller, _fullPath); });
-
-                _menuListTree->addItem(
                     "Show in Explorer",
                     [_fullPath](String const& _text) { AssetEditorToolsHelper::ShowInExplorer(_fullPath); });
-
-                auto  const& assetDirectoryPathes = AssetManager::GetInstancePtr()->getAssetDirectoryPathes();
-                bool isRootAssetDirectory = assetDirectoryPathes.find(_fullPath) != assetDirectoryPathes.end();
-
-                if (!isRootAssetDirectory)
-                {
-                    _menuListTree->addItem(
-                        "Rename",
-                        [_controller, _fullPath](String const& _text) { AssetEditorToolsHelper::Rename(_controller, _fullPath); });
-
-                    _menuListTree->addItem(
-                        "Delete",
-                        [_fullPath](String const& _text) { AssetEditorToolsHelper::Delete(_fullPath); });
-                }
             });
     }
 

@@ -82,8 +82,10 @@
 #include "maze-physics2d/ecs/components/MazeBoxCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeCircleCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
+#include "maze-editor-tools/managers/MazeAssetEditorToolsManager.hpp"
 #include "Editor.hpp"
 #include "settings/MazeEditorSettings.hpp"
+#include "helpers/EditorAssetHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -134,6 +136,8 @@ namespace Maze
                     this, &EditorAssetsManager::notifyWindowFocusChanged);
             });
 
+        registerAssetFileCallbacks();
+
         return true;
     }
 
@@ -144,6 +148,40 @@ namespace Maze
         {
             AssetManager::GetInstancePtr()->updateAssets();
         }
+    }
+
+    //////////////////////////////////////////
+    void EditorAssetsManager::registerAssetFileCallbacks()
+    {
+        AssetEditorToolsManager::GetInstancePtr()->registerAssetFileContextMenuCallback(
+            [](AssetsController* _controller, String const& _fullPath, MenuListTree2DPtr const& _menuListTree)
+        {
+            _menuListTree->addItem(
+                "Create/Folder",
+                [_controller, _fullPath](String const& _text) { EditorAssetHelper::CreateFolder(_controller, _fullPath); });
+
+            _menuListTree->addItem(
+                "Create/Material",
+                [_controller, _fullPath](String const& _text) { EditorAssetHelper::CreateMaterial(_controller, _fullPath); });
+
+            _menuListTree->addItem(
+                "Create/Prefab/2D",
+                [_controller, _fullPath](String const& _text) { EditorAssetHelper::CreatePrefab2D(_controller, _fullPath); });
+
+            auto  const& assetDirectoryPathes = AssetManager::GetInstancePtr()->getAssetDirectoryPathes();
+            bool isRootAssetDirectory = assetDirectoryPathes.find(_fullPath) != assetDirectoryPathes.end();
+
+            if (!isRootAssetDirectory)
+            {
+                _menuListTree->addItem(
+                    "Rename",
+                    [_controller, _fullPath](String const& _text) { EditorAssetHelper::Rename(_controller, _fullPath); });
+
+                _menuListTree->addItem(
+                    "Delete",
+                    [_fullPath](String const& _text) { EditorAssetHelper::Delete(_fullPath); });
+            }
+        });
     }
 
 } // namespace Maze

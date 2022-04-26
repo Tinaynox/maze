@@ -64,22 +64,7 @@ namespace Maze
     namespace AssetEditorToolsHelper
     {
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void CreateFolder(AssetsController* _controller, String const& _fullPath);
-
-        //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void CreateMaterial(AssetsController* _controller, String const& _fullPath);
-
-        //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void CreatePrefab2D(AssetsController* _controller, String const& _fullPath);
-
-        //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void ShowInExplorer(String const& _fullPath);
-
-        //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void Rename(AssetsController* _controller, String const& _fullPath);
-
-        //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void Delete(String const& _fullPath);
 
     } // namespace AssetEditorToolsHelper
     //////////////////////////////////////////

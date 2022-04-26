@@ -25,15 +25,17 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_EditorAssetsManager_hpp_))
-#define _EditorAssetsManager_hpp_
+#if (!defined(_EditorAssetHelper_hpp_))
+#define _EditorAssetHelper_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-core/ecs/MazeECSScene.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/utils/MazeDelegate.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
+#include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeShader.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
@@ -45,62 +47,35 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
-#include "scenes/SceneWorkspace.hpp"
-#include "editor/EditorSceneMode.hpp"
-#include "editor/EditorMode.hpp"
+#include "maze-ui/ecs/components/MazeClickButton2D.hpp"
+#include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
+#include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(EditorAssetsManager);
-    MAZE_USING_SHARED_PTR(RenderMesh);
-    MAZE_USING_SHARED_PTR(SceneWorkspace);
+    MAZE_USING_SHARED_PTR(AssetsController);
 
 
     //////////////////////////////////////////
-    // Class EditorAssetsManager
-    //
-    //////////////////////////////////////////
-    class EditorAssetsManager
-        : public MultiDelegateCallbackReceiver
+    namespace EditorAssetHelper
     {
-    public:
+        //////////////////////////////////////////
+        void CreateFolder(AssetsController* _controller, String const& _fullPath);
 
         //////////////////////////////////////////
-        ~EditorAssetsManager();
+        void CreateMaterial(AssetsController* _controller, String const& _fullPath);
 
         //////////////////////////////////////////
-        static void Initialize(EditorAssetsManagerPtr& _manager);
-        
+        void CreatePrefab2D(AssetsController* _controller, String const& _fullPath);
 
         //////////////////////////////////////////
-        static inline EditorAssetsManager* GetInstancePtr() { return s_instance; }
+        void Rename(AssetsController* _controller, String const& _fullPath);
 
         //////////////////////////////////////////
-        static inline EditorAssetsManager& GetInstance() { return *s_instance; }
-
-
-    protected:
-
-        //////////////////////////////////////////
-        EditorAssetsManager();
-
-        //////////////////////////////////////////
-        bool init();
-
-
-        //////////////////////////////////////////
-        void notifyWindowFocusChanged(Window* _window);
-
-
-        //////////////////////////////////////////
-        void registerAssetFileCallbacks();
-
-    protected:
-        static EditorAssetsManager* s_instance;
+        void Delete(String const& _fullPath);
     };
 
 
@@ -108,5 +83,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _EditorAssetsManager_hpp_
+#endif // _EditorAssetHelper_hpp_
 //////////////////////////////////////////

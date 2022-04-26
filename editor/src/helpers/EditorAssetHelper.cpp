@@ -24,8 +24,7 @@
 
 
 //////////////////////////////////////////
-#include "MazeEditorToolsHeader.hpp"
-#include "maze-editor-tools/helpers/MazeAssetEditorToolsHelper.hpp"
+#include "helpers/EditorAssetHelper.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
@@ -33,10 +32,13 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
+#include "maze-core/managers/MazeEntitySerializationManager.hpp"
+#include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
-#include "maze-core/helpers/MazeFileHelper.hpp"
+#include "maze-core/helpers/MazeSystemDialogHelper.hpp"
 #include "maze-core/helpers/MazeSystemHelper.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
@@ -46,6 +48,7 @@
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeLight3D.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
@@ -56,7 +59,6 @@
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
-#include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
@@ -66,6 +68,9 @@
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
+#include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
+#include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
@@ -76,28 +81,75 @@
 #include "maze-render-system-opengl-core/MazeStateMachineOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
-#include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 #include "maze-editor-tools/ecs/components/MazeHierarchyController.hpp"
 #include "maze-editor-tools/ecs/components/MazeInspectorController.hpp"
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
+#include "maze-editor-tools/managers/MazeSelectionManager.hpp"
+#include "maze-particles/managers/MazeParticlesManager.hpp"
+#include "managers/EditorManager.hpp"
+#include "managers/EditorPrefabManager.hpp"
+#include "Editor.hpp"
+#include "settings/MazeEditorSettings.hpp"
+#include "scenes/SceneMain.hpp"
+#include "scenes/SceneSelectMode.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    namespace AssetEditorToolsHelper
+    namespace EditorAssetHelper
     {
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void ShowInExplorer(String const& _fullPath)
+        void CreateFolder(AssetsController* _controller, String const& _fullPath)
         {
-            SystemHelper::OpenExplorer(_fullPath);
+            String dir = FileHelper::GetDirectoryInPath(_fullPath);
+            String newFolderFullPath = EditorToolsHelper::BuildNewAssetFileName(dir + "/New Folder");
+            FileHelper::CreateDirectoryRecursive(newFolderFullPath.c_str());
+            AssetManager::GetInstancePtr()->updateAssets();
+
+            _controller->setAssetFileRename(AssetManager::GetInstancePtr()->getAssetFileByFullPath(newFolderFullPath), true);
         }
 
-    } // namespace AssetEditorToolsHelper
-    //////////////////////////////////////////
-    
+        //////////////////////////////////////////
+        void CreateMaterial(AssetsController* _controller, String const& _fullPath)
+        {
+            String dir = FileHelper::GetDirectoryInPath(_fullPath);
+            MaterialPtr srcMaterial = MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::Specular);
+            MaterialPtr material = srcMaterial->createCopy();
+            String newMaterialFullPath = EditorToolsHelper::BuildNewAssetFileName(dir + "/New Material.mzmaterial");
+            material->saveToFile(newMaterialFullPath);
+            AssetManager::GetInstancePtr()->updateAssets();
+
+            AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(newMaterialFullPath);
+            if (assetFile && MaterialManager::GetCurrentInstance()->getMaterial(assetFile))
+            {
+                SelectionManager::GetInstancePtr()->selectObject(assetFile);
+                _controller->setAssetFileRename(assetFile, true);
+            }
+        }
+
+        //////////////////////////////////////////
+        void CreatePrefab2D(AssetsController* _controller, String const& _fullPath)
+        {
+        }
+
+        //////////////////////////////////////////
+        void Rename(AssetsController* _controller, String const& _fullPath)
+        {
+            AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_fullPath);
+            if (assetFile)
+                _controller->setAssetFileRename(assetFile, true);
+        }
+
+        //////////////////////////////////////////
+        void Delete(String const& _fullPath)
+        {
+            AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_fullPath);
+            AssetManager::GetInstancePtr()->deleteAssetFile(assetFile);
+        }
+    };
 
 } // namespace Maze
 //////////////////////////////////////////
