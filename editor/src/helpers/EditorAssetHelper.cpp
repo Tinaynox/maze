@@ -93,6 +93,7 @@
 #include "settings/MazeEditorSettings.hpp"
 #include "scenes/SceneMain.hpp"
 #include "scenes/SceneSelectMode.hpp"
+#include "helpers/EditorHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -131,8 +132,23 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        void CreatePrefab2D(AssetsController* _controller, String const& _fullPath)
+        void CreatePrefab3D(AssetsController* _controller, String const& _fullPath)
         {
+            String dir = FileHelper::GetDirectoryInPath(_fullPath);
+            EntityPtr entity = EditorHelper::CreateNewPrefab3D();
+
+            String newPrefabFullPath = EditorToolsHelper::BuildNewAssetFileName(dir + "/New Prefab.mzprefab");
+            EntitySerializationManager::GetInstancePtr()->savePrefabToXMLFile(entity, newPrefabFullPath);
+            AssetManager::GetInstancePtr()->updateAssets();
+
+            entity->removeFromECSWorld();
+
+            AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(newPrefabFullPath);
+            if (assetFile)
+            {
+                SelectionManager::GetInstancePtr()->selectObject(assetFile);
+                _controller->setAssetFileRename(assetFile, true);
+            }
         }
 
         //////////////////////////////////////////

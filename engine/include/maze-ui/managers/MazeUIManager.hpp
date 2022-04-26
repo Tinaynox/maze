@@ -90,6 +90,7 @@ namespace Maze
         SelectAsset,
         Pause,
         StepUpdate,
+        Prefab,
         
         MAX
     };

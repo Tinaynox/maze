@@ -192,6 +192,12 @@ namespace Maze
             return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Material);
         });
 
+        registerIconCallbackForAssetFileExtension("mzprefab",
+            [](AssetFilePtr const& _assetFile)
+        {
+            return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Prefab);
+        });
+
         registerIconCallbackForAssetFileClass<AssetDirectory>(
             []()
         {

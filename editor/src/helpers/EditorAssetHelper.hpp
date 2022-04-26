@@ -69,7 +69,7 @@ namespace Maze
         void CreateMaterial(AssetsController* _controller, String const& _fullPath);
 
         //////////////////////////////////////////
-        void CreatePrefab2D(AssetsController* _controller, String const& _fullPath);
+        void CreatePrefab3D(AssetsController* _controller, String const& _fullPath);
 
         //////////////////////////////////////////
         void Rename(AssetsController* _controller, String const& _fullPath);
