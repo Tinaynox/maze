@@ -236,6 +236,7 @@ namespace Maze
                 }
             }
 
+            _entity->setECSScene(nullptr);
             _entity->setECSWorld(nullptr);
 
             m_entitiesMap.erase(_entity->getId());

@@ -70,6 +70,7 @@ namespace Maze
         static Rect2DF const c_assetsViewport;
         static Rect2DF const c_sceneViewport;
         static Rect2DF const c_previewViewport;
+        static Rect2DF const c_topBarViewport;
 
         //////////////////////////////////////////
         static Rect2DF CalculateWorkViewport(Rect2DF const& _viewport);

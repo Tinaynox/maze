@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_EditorAssetHelper_hpp_))
-#define _EditorAssetHelper_hpp_
+#if (!defined(_EditorSceneModeControllerNone_hpp_))
+#define _EditorSceneModeControllerNone_hpp_
 
 
 //////////////////////////////////////////
@@ -50,35 +50,39 @@
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
+#include "editor/EditorSceneModeController.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(AssetsController);
+    MAZE_USING_SHARED_PTR(EditorSceneModeControllerNone);
 
 
     //////////////////////////////////////////
-    namespace EditorAssetHelper
+    // Class EditorSceneModeControllerNone
+    //
+    //////////////////////////////////////////
+    class EditorSceneModeControllerNone
+        : public EditorSceneModeController
     {
-        //////////////////////////////////////////
-        void CreateFolder(AssetsController* _controller, String const& _fullPath);
+    public:
 
         //////////////////////////////////////////
-        void CreateMaterial(AssetsController* _controller, String const& _fullPath);
+        virtual ~EditorSceneModeControllerNone();
 
         //////////////////////////////////////////
-        void CreatePrefab3D(AssetsController* _controller, String const& _fullPath);
+        static EditorSceneModeControllerNonePtr Create(SceneMain* _sceneMain);
+
+
+    protected:
 
         //////////////////////////////////////////
-        void Rename(AssetsController* _controller, String const& _fullPath);
+        EditorSceneModeControllerNone();
 
         //////////////////////////////////////////
-        void Delete(String const& _fullPath);
-
-        //////////////////////////////////////////
-        void Edit(String const& _fullPath);
+        bool init(SceneMain* _sceneMain);    
     };
 
 
@@ -86,5 +90,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _EditorAssetHelper_hpp_
+#endif // _EditorSceneModeControllerNone_hpp_
 //////////////////////////////////////////

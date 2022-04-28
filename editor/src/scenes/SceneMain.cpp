@@ -86,6 +86,7 @@
 #include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
 #include "ecs/components/EditorHierarchyController.hpp"
 #include "ecs/components/EditorMainCanvasController.hpp"
+#include "ecs/components/EditorTopBarController.hpp"
 #include "Editor.hpp"
 #include "layout/EditorLayout.hpp"
 #include "scenes/SceneDebug.hpp"
@@ -100,6 +101,11 @@
 #include "helpers/EditorAssetsModeHelper.hpp"
 #include "helpers/EditorProjectModeHelper.hpp"
 #include "managers/EditorAssetsModeManager.hpp"
+#include "managers/EditorManager.hpp"
+#include "editor/EditorSceneModeController.hpp"
+#include "editor/scene-mode-none/EditorSceneModeControllerNone.hpp"
+#include "editor/scene-mode-prefab/EditorSceneModeControllerPrefab.hpp"
+#include "editor/scene-mode-scene/EditorSceneModeControllerScene.hpp"
 
 
 //////////////////////////////////////////
@@ -145,6 +151,9 @@ namespace Maze
 
         if (EditorAssetsModeManager::GetInstancePtr())
             EditorAssetsModeManager::GetInstancePtr()->eventCurrentAssetsFullPath.unsubscribe(this);
+
+        if (EditorManager::GetInstancePtr())
+            EditorManager::GetInstancePtr()->eventSceneModeChanged.unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -168,8 +177,10 @@ namespace Maze
 
         create3D();
         create2D();
+        createSceneModeController();
 
         EditorAssetsModeManager::GetInstancePtr()->eventCurrentAssetsFullPath.subscribe(this, &SceneMain::notifyCurrentAssetsFullPath);
+        EditorManager::GetInstancePtr()->eventSceneModeChanged.subscribe(this, &SceneMain::notifySceneModeChanged);
 
         return true;
     }
@@ -264,8 +275,11 @@ namespace Maze
                 {
                     Vec2DF deltaPosition = cursorPosition - m_cursorPositionLastFrame;
 
-                    m_yawAngle += deltaPosition.x * 0.0075f;
-                    m_pitchAngle -= deltaPosition.y * 0.0075f;
+                    if (m_camera3D && m_camera3D->getEntityRaw()->getActiveSelf())
+                    {
+                        m_yawAngle += deltaPosition.x * 0.0075f;
+                        m_pitchAngle -= deltaPosition.y * 0.0075f;
+                    }
                 }
 
                 m_cursorPositionLastFrame = cursorPosition;
@@ -275,16 +289,19 @@ namespace Maze
             {
                 if (_data.buttonId == 1)
                 {
-                    Vec2DF cursorPosition = Vec2DF((F32)_data.x, (F32)_data.y);
-                    Rect2DF viewportRect(
-                        m_camera3D->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
-                        m_camera3D->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
-                        m_camera3D->getViewport().size.x * m_renderTarget->getRenderTargetSize().x,
-                        m_camera3D->getViewport().size.y * m_renderTarget->getRenderTargetSize().y);
-
-                    if (viewportRect.contains(cursorPosition))
+                    if (m_camera3D && m_camera3D->getEntityRaw()->getActiveSelf())
                     {
-                        m_cursorDrag = true;
+                        Vec2DF cursorPosition = Vec2DF((F32)_data.x, (F32)_data.y);
+                        Rect2DF viewportRect(
+                            m_camera3D->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
+                            m_camera3D->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
+                            m_camera3D->getViewport().size.x * m_renderTarget->getRenderTargetSize().x,
+                            m_camera3D->getViewport().size.y * m_renderTarget->getRenderTargetSize().y);
+
+                        if (viewportRect.contains(cursorPosition))
+                        {
+                            m_cursorDrag = true;
+                        }
                     }
                 }
                 break;
@@ -617,6 +634,21 @@ namespace Maze
             PreviewControllerPtr previewController = PreviewController::Create(m_previewCanvas.get());
             previewControllerEntity->addComponent(previewController);
         }
+
+        {
+            EntityPtr topBarCanvasEntity = createEntity();
+            m_topBarCanvas = topBarCanvasEntity->createComponent<Canvas>();
+            m_topBarCanvas->setClearColorFlag(false);
+            m_topBarCanvas->setClearColor(ColorU32::c_zero);
+            Rect2DF topBarCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_topBarViewport);
+            m_topBarCanvas->setViewport(topBarCanvasViewport);
+            m_topBarCanvas->setRenderTarget(m_renderTarget);
+            m_topBarCanvas->setSortOrder(-1000000);
+
+            EntityPtr topBarControllerEntity = createEntity();
+            EditorTopBarControllerPtr topBarController = EditorTopBarController::Create(m_topBarCanvas.get());
+            topBarControllerEntity->addComponent(topBarController);
+        }
     }
 
     //////////////////////////////////////////
@@ -680,6 +712,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void SceneMain::notifySceneModeChanged(EditorSceneMode _mode)
+    {
+        createSceneModeController();
+    }
+
+    //////////////////////////////////////////
     void SceneMain::updateAssetsController()
     {
         if (!m_assetsController)
@@ -693,6 +731,42 @@ namespace Maze
         else
         {
             m_assetsController->setAssetsFullPath(AssetManager::GetInstancePtr()->getDefaultAssetsDirectory());
+        }
+    }
+
+    //////////////////////////////////////////
+    void SceneMain::destroySceneModeController()
+    {
+        if (!m_sceneModeController)
+            return;
+
+        m_sceneModeController->shutdown();
+        m_sceneModeController.reset();
+    }
+
+    //////////////////////////////////////////
+    void SceneMain::createSceneModeController()
+    {
+        destroySceneModeController();
+
+        EditorSceneMode sceneMode = EditorManager::GetInstancePtr()->getSceneMode();
+        switch (sceneMode)
+        {
+            case EditorSceneMode::Prefab:
+            {
+                m_sceneModeController = EditorSceneModeControllerPrefab::Create(this);
+                break;
+            }
+            case EditorSceneMode::Scene:
+            {
+                m_sceneModeController = EditorSceneModeControllerScene::Create(this);
+                break;
+            }
+            default:
+            {
+                m_sceneModeController = EditorSceneModeControllerNone::Create(this);
+                break;
+            }
         }
     }
 

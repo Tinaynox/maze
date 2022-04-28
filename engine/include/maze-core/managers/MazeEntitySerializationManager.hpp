@@ -42,6 +42,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(EntitySerializationManager);
+    MAZE_USING_SHARED_PTR(AssetFile);
     
 
     //////////////////////////////////////////
@@ -82,6 +83,18 @@ namespace Maze
         //////////////////////////////////////////
         EntityPtr loadPrefabFromXMLElement(
             tinyxml2::XMLElement* _element,
+            ECSWorld* _world = nullptr,
+            ECSScene* _scene = nullptr) const;
+
+        //////////////////////////////////////////
+        EntityPtr loadPrefab(
+            tinyxml2::XMLDocument& _doc,
+            ECSWorld* _world = nullptr,
+            ECSScene* _scene = nullptr) const;
+
+        //////////////////////////////////////////
+        EntityPtr loadPrefab(
+            AssetFilePtr const& _assetFile,
             ECSWorld* _world = nullptr,
             ECSScene* _scene = nullptr) const;
 

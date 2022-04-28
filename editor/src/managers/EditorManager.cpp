@@ -159,6 +159,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void EditorManager::clearMode()
+    {
+        setSceneMode(EditorSceneMode::None);
+        clearWorkspace();
+
+        m_editorPrefabManager->setPrefabAssetFile(nullptr);
+        m_editorPrefabManager->setPrefabEntity(nullptr);
+    }
+
+    //////////////////////////////////////////
     void EditorManager::clearWorkspace()
     {
         m_sceneWorkspace->destroyAllEntities();
@@ -169,7 +179,16 @@ namespace Maze
     {
         setSceneMode(EditorSceneMode::Prefab);
         m_sceneWorkspace->destroyAllEntitiesExcept(_value);
+        m_editorPrefabManager->setPrefabAssetFile(nullptr);
         m_editorPrefabManager->setPrefabEntity(_value);
+    }
+
+    //////////////////////////////////////////
+    void EditorManager::openPrefab(AssetFilePtr const& _value)
+    {
+        setSceneMode(EditorSceneMode::Prefab);
+        m_sceneWorkspace->destroyAllEntities();
+        m_editorPrefabManager->setPrefabAssetFile(_value);
     }
 
     //////////////////////////////////////////

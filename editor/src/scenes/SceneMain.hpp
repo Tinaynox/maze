@@ -43,6 +43,7 @@
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "editor/EditorSceneMode.hpp"
 
 
 //////////////////////////////////////////
@@ -55,6 +56,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Camera3D);
     MAZE_USING_SHARED_PTR(Canvas);
     MAZE_USING_SHARED_PTR(AssetsController);
+    MAZE_USING_SHARED_PTR(EditorSceneModeController);
     
 
     //////////////////////////////////////////
@@ -81,6 +83,13 @@ namespace Maze
         //////////////////////////////////////////
         virtual void update(F32 _dt) MAZE_OVERRIDE;
 
+
+        //////////////////////////////////////////
+        inline Camera3DPtr const& getCamera3D() const { return m_camera3D; }
+
+        //////////////////////////////////////////
+        inline CanvasPtr const& getMainCanvas() const { return m_mainCanvas; }
+
     protected:
 
         //////////////////////////////////////////
@@ -105,9 +114,21 @@ namespace Maze
         void notifyCurrentAssetsFullPath(String const& _currentAssetsFullPath);
 
         //////////////////////////////////////////
+        void notifySceneModeChanged(EditorSceneMode _mode);
+
+        //////////////////////////////////////////
         void updateAssetsController();
 
+
+        //////////////////////////////////////////
+        void destroySceneModeController();
+
+        //////////////////////////////////////////
+        void createSceneModeController();
+
     protected:
+        EditorSceneModeControllerPtr m_sceneModeController;
+
         Camera3DPtr m_camera3D;
         Vec3DF m_camera3DTargetPosition = Vec3DF::c_zero;
         CanvasPtr m_mainCanvas;
@@ -117,6 +138,7 @@ namespace Maze
         CanvasPtr m_inspectorCanvas;
         CanvasPtr m_assetsCanvas;
         CanvasPtr m_previewCanvas;
+        CanvasPtr m_topBarCanvas;
 
         AssetsControllerPtr m_assetsController;
 

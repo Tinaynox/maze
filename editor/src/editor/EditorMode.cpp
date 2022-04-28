@@ -24,8 +24,7 @@
 
 
 //////////////////////////////////////////
-#include "MazeEditorToolsHeader.hpp"
-#include "editor/EditorMode.hpp"
+#include "EditorMode.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"

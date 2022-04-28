@@ -24,7 +24,7 @@
 
 
 //////////////////////////////////////////
-#include "EditorSceneMode.hpp"
+#include "EditorSceneModeController.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
@@ -82,7 +82,26 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_ENUMCLASS(EditorSceneMode);
+    // Class EditorSceneModeController
+    //
+    //////////////////////////////////////////
+    EditorSceneModeController::EditorSceneModeController()
+    {
+
+    }
+
+    //////////////////////////////////////////
+    EditorSceneModeController::~EditorSceneModeController()
+    {
+
+    }
+
+    //////////////////////////////////////////
+    bool EditorSceneModeController::init(SceneMain* _sceneMain)
+    {
+        m_sceneMain = _sceneMain;
+        return true;
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

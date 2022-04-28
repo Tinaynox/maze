@@ -24,10 +24,11 @@
 
 
 //////////////////////////////////////////
-#include "EditorSceneMode.hpp"
+#include "EditorSceneModeControllerPrefab.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
@@ -64,6 +65,7 @@
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
+#include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
@@ -76,13 +78,82 @@
 #include "maze-editor-tools/ecs/components/MazeInspectorController.hpp"
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "Editor.hpp"
+#include "scenes/SceneMain.hpp"
+#include "managers/EditorManager.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_ENUMCLASS(EditorSceneMode);
+    // Class EditorSceneModeControllerPrefab
+    //
+    //////////////////////////////////////////
+    EditorSceneModeControllerPrefab::EditorSceneModeControllerPrefab()
+    {
+
+    }
+
+    //////////////////////////////////////////
+    EditorSceneModeControllerPrefab::~EditorSceneModeControllerPrefab()
+    {
+
+    }
+
+    //////////////////////////////////////////
+    EditorSceneModeControllerPrefabPtr EditorSceneModeControllerPrefab::Create(SceneMain* _sceneMain)
+    {
+        EditorSceneModeControllerPrefabPtr obj;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorSceneModeControllerPrefab, obj, init(_sceneMain));
+        return obj;
+    }
+
+    //////////////////////////////////////////
+    bool EditorSceneModeControllerPrefab::init(SceneMain* _sceneMain)
+    {
+        if (!EditorSceneModeController::init(_sceneMain))
+            return false;
+
+        m_sceneMain->getCamera3D()->getEntityRaw()->setActiveSelf(true);
+        m_sceneMain->getCamera3D()->setClearColor(ColorU32(99, 101, 140, 255));
+        m_sceneMain->getMainCanvas()->setClearColorFlag(false);
+
+
+        m_canvasNode = SpriteHelper::CreateTransform2D(
+            m_sceneMain->getMainCanvas()->getTransform()->getSize(),
+            Vec2DF::c_zero,
+            m_sceneMain->getMainCanvas()->getTransform(),
+            m_sceneMain,
+            Vec2DF::c_zero,
+            Vec2DF::c_zero);
+        m_canvasNode->getEntityRaw()->ensureComponent<SizePolicy2D>();
+
+        ClickButton2DPtr closeButton = UIHelper::CreateDefaultClickButton(
+            "X",
+            Vec2DF(18.0f, 18.0f),
+            Vec2DF(-2.0f, -2.0f),
+            m_canvasNode,
+            m_sceneMain,
+            Vec2DF(1.0f, 1.0f),
+            Vec2DF(1.0f, 1.0f));
+        closeButton->eventClick.subscribe(
+            [](Button2D* _button, CursorInputEvent const& _event)
+            {
+                EditorManager::GetInstancePtr()->clearMode();
+            });
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void EditorSceneModeControllerPrefab::shutdown()
+    {
+        if (m_canvasNode)
+        {
+            m_canvasNode->getEntityRaw()->removeFromECSWorld();
+            m_canvasNode.reset();
+        }
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

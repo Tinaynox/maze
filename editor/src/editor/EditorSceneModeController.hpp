@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_EditorAssetHelper_hpp_))
-#define _EditorAssetHelper_hpp_
+#if (!defined(_EditorSceneModeController_hpp_))
+#define _EditorSceneModeController_hpp_
 
 
 //////////////////////////////////////////
@@ -56,29 +56,35 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(AssetsController);
+    MAZE_USING_SHARED_PTR(EditorSceneModeController);
+    MAZE_USING_SHARED_PTR(SceneMain);
 
 
     //////////////////////////////////////////
-    namespace EditorAssetHelper
+    // Class EditorSceneModeController
+    //
+    //////////////////////////////////////////
+    class EditorSceneModeController
     {
-        //////////////////////////////////////////
-        void CreateFolder(AssetsController* _controller, String const& _fullPath);
+    public:
 
         //////////////////////////////////////////
-        void CreateMaterial(AssetsController* _controller, String const& _fullPath);
+        virtual ~EditorSceneModeController();
+
 
         //////////////////////////////////////////
-        void CreatePrefab3D(AssetsController* _controller, String const& _fullPath);
+        virtual void shutdown() {};
+
+    protected:
 
         //////////////////////////////////////////
-        void Rename(AssetsController* _controller, String const& _fullPath);
+        EditorSceneModeController();
 
         //////////////////////////////////////////
-        void Delete(String const& _fullPath);
+        bool init(SceneMain* _sceneMain);
 
-        //////////////////////////////////////////
-        void Edit(String const& _fullPath);
+    protected:
+        SceneMain* m_sceneMain = nullptr;
     };
 
 
@@ -86,5 +92,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _EditorAssetHelper_hpp_
+#endif // _EditorSceneModeController_hpp_
 //////////////////////////////////////////

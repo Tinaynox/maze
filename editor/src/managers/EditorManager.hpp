@@ -101,6 +101,12 @@ namespace Maze
         //////////////////////////////////////////
         inline EditorSceneMode getSceneMode() const { return m_sceneMode; }
 
+        //////////////////////////////////////////
+        inline SceneWorkspacePtr const& getSceneWorkspace() const { return m_sceneWorkspace; }
+
+
+        //////////////////////////////////////////
+        void clearMode();
 
         //////////////////////////////////////////
         void clearWorkspace();
@@ -108,6 +114,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void openPrefab(EntityPtr const& _value);
+
+        //////////////////////////////////////////
+        void openPrefab(AssetFilePtr const& _value);
 
         //////////////////////////////////////////
         EntityPtr createNewPrefab();

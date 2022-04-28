@@ -24,7 +24,7 @@
 
 
 //////////////////////////////////////////
-#include "EditorSceneMode.hpp"
+#include "EditorSceneModeControllerScene.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
@@ -76,13 +76,47 @@
 #include "maze-editor-tools/ecs/components/MazeInspectorController.hpp"
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "Editor.hpp"
+#include "scenes/SceneMain.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_ENUMCLASS(EditorSceneMode);
+    // Class EditorSceneModeControllerScene
+    //
+    //////////////////////////////////////////
+    EditorSceneModeControllerScene::EditorSceneModeControllerScene()
+    {
+
+    }
+
+    //////////////////////////////////////////
+    EditorSceneModeControllerScene::~EditorSceneModeControllerScene()
+    {
+
+    }
+
+    //////////////////////////////////////////
+    EditorSceneModeControllerScenePtr EditorSceneModeControllerScene::Create(SceneMain* _sceneMain)
+    {
+        EditorSceneModeControllerScenePtr obj;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorSceneModeControllerScene, obj, init(_sceneMain));
+        return obj;
+    }
+
+    //////////////////////////////////////////
+    bool EditorSceneModeControllerScene::init(SceneMain* _sceneMain)
+    {
+        if (!EditorSceneModeController::init(_sceneMain))
+            return false;
+
+        m_sceneMain->getCamera3D()->getEntityRaw()->setActiveSelf(true);
+        m_sceneMain->getCamera3D()->setClearColor(ColorU32(99, 101, 140, 255));
+        m_sceneMain->getMainCanvas()->setClearColorFlag(false);
+
+        return true;
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

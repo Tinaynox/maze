@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_EditorAssetHelper_hpp_))
-#define _EditorAssetHelper_hpp_
+#if (!defined(_EditorSceneModeControllerPrefab_hpp_))
+#define _EditorSceneModeControllerPrefab_hpp_
 
 
 //////////////////////////////////////////
@@ -50,35 +50,45 @@
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
+#include "editor/EditorSceneModeController.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(AssetsController);
+    MAZE_USING_SHARED_PTR(EditorSceneModeControllerPrefab);
 
 
     //////////////////////////////////////////
-    namespace EditorAssetHelper
+    // Class EditorSceneModeControllerPrefab
+    //
+    //////////////////////////////////////////
+    class EditorSceneModeControllerPrefab
+        : public EditorSceneModeController
     {
-        //////////////////////////////////////////
-        void CreateFolder(AssetsController* _controller, String const& _fullPath);
+    public:
 
         //////////////////////////////////////////
-        void CreateMaterial(AssetsController* _controller, String const& _fullPath);
+        virtual ~EditorSceneModeControllerPrefab();
 
         //////////////////////////////////////////
-        void CreatePrefab3D(AssetsController* _controller, String const& _fullPath);
+        static EditorSceneModeControllerPrefabPtr Create(SceneMain* _sceneMain);
 
         //////////////////////////////////////////
-        void Rename(AssetsController* _controller, String const& _fullPath);
+        virtual void shutdown() MAZE_OVERRIDE;
+
+    protected:
 
         //////////////////////////////////////////
-        void Delete(String const& _fullPath);
+        EditorSceneModeControllerPrefab();
 
         //////////////////////////////////////////
-        void Edit(String const& _fullPath);
+        bool init(SceneMain* _sceneMain);
+
+
+    protected:
+        Transform2DPtr m_canvasNode;
     };
 
 
@@ -86,5 +96,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _EditorAssetHelper_hpp_
+#endif // _EditorSceneModeControllerPrefab_hpp_
 //////////////////////////////////////////

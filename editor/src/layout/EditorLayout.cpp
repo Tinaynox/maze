@@ -86,11 +86,12 @@ namespace Maze
     //
     //////////////////////////////////////////
     F32 const EditorLayout::c_menuBarHeight = 17.0f;
-    Rect2DF const EditorLayout::c_sceneViewport(0.25f, 0.33f, 0.5f, 0.67f);
+    Rect2DF const EditorLayout::c_sceneViewport(0.25f, 0.33f, 0.5f, 0.645f);
     Rect2DF const EditorLayout::c_hierarchyViewport(0.0f, 0.33f, 0.25f, 0.67f);
     Rect2DF const EditorLayout::c_inspectorViewport(0.75f, 0.33f, 0.25f, 0.67f);
     Rect2DF const EditorLayout::c_assetsViewport(0.0f, 0.0f, 0.5f, 0.33f);
     Rect2DF const EditorLayout::c_previewViewport(0.5f, 0.0f, 0.5f, 0.33f);
+    Rect2DF const EditorLayout::c_topBarViewport(0.25f, 0.975f, 0.5f, 0.025f);
         
     //////////////////////////////////////////
     Rect2DF EditorLayout::CalculateWorkViewport(Rect2DF const& _viewport)

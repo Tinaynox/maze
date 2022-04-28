@@ -25,98 +25,100 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_EditorPrefabManager_hpp_))
-#define _EditorPrefabManager_hpp_
+#if (!defined(_EditorTopBarController_hpp_))
+#define _EditorTopBarController_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-editor-tools/MazeEditorToolsHeader.hpp"
+#include "maze-ui/MazeUIHeader.hpp"
+#include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
-#include "maze-core/ecs/components/MazeTransform3D.hpp"
-#include "maze-core/math/MazeQuaternion.hpp"
-#include "maze-graphics/MazeMesh.hpp"
-#include "maze-graphics/MazeShader.hpp"
-#include "maze-graphics/MazeTexture2D.hpp"
-#include "maze-graphics/MazeMaterial.hpp"
-#include "maze-graphics/MazeRenderPass.hpp"
-#include "maze-graphics/MazeRenderTarget.hpp"
-#include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
-#include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
-#include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
-#include "maze-graphics/ecs/components/MazeCanvas.hpp"
-#include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
-#include "scenes/SceneWorkspace.hpp"
-#include "editor/EditorSceneMode.hpp"
+#include "maze-ui/MazeCursorInputEvent.hpp"
+#include "maze-ui/ecs/components/MazeLayout2D.hpp"
+#include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
+#include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
+#include "maze-ui/ecs/components/MazeToggleButton2D.hpp"
+#include "maze-ui/ecs/components/MazeClickButton2D.hpp"
+#include "maze-editor-tools/inspectors/MazeInspector.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(EditorPrefabManager);
-    MAZE_USING_SHARED_PTR(RenderMesh);
-    MAZE_USING_SHARED_PTR(SceneWorkspace);
+    MAZE_USING_SHARED_PTR(EditorTopBarController);
 
 
     //////////////////////////////////////////
-    // Class EditorPrefabManager
+    // Class EditorTopBarController
     //
     //////////////////////////////////////////
-    class EditorPrefabManager
-        : public MultiDelegateCallbackReceiver
+    class EditorTopBarController
+        : public Component
+        , public MultiDelegateCallbackReceiver
+        , public Updatable
     {
     public:
 
         //////////////////////////////////////////
-        ~EditorPrefabManager();
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EditorTopBarController, Component);
 
         //////////////////////////////////////////
-        static void Initialize(EditorPrefabManagerPtr& _manager);
-        
+        MAZE_DECLARE_MEMORY_ALLOCATION(EditorTopBarController);
 
         //////////////////////////////////////////
-        static inline EditorPrefabManager* GetInstancePtr() { return s_instance; }
+        friend class Entity;
 
-        //////////////////////////////////////////
-        static inline EditorPrefabManager& GetInstance() { return *s_instance; }
-
-
-
-        //////////////////////////////////////////
-        inline EntityPtr const& getPrefabEntity() const { return m_prefabEntity; }
-
-        //////////////////////////////////////////
-        void setPrefabEntity(EntityPtr const& _value);
-
-
-        //////////////////////////////////////////
-        inline AssetFilePtr const& getPrefabAssetFile() const { return m_prefabAssetFile; }
-
-        //////////////////////////////////////////
-        void setPrefabAssetFile(AssetFilePtr const& _value);
 
     public:
 
         //////////////////////////////////////////
-        MultiDelegate<EntityPtr const&> eventPrefabEntityChanged;
-        MultiDelegate<AssetFilePtr const&> eventPrefabAssetFileChanged;
+        virtual ~EditorTopBarController();
+
+        //////////////////////////////////////////
+        static EditorTopBarControllerPtr Create(Canvas* _canvas);
+
+
+        //////////////////////////////////////////
+        virtual void update(F32 _dt) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        Transform2DPtr const& getTransform() const { return m_transform; }
 
     protected:
 
         //////////////////////////////////////////
-        EditorPrefabManager();
+        EditorTopBarController();
 
         //////////////////////////////////////////
-        bool init();
+        using Component::init;
+        
+        //////////////////////////////////////////
+        bool init(Canvas* _canvas);
+
+        //////////////////////////////////////////
+        virtual void processEntityAwakened() MAZE_OVERRIDE;
 
 
+        //////////////////////////////////////////
+        void updateUI();
+
+        //////////////////////////////////////////
+        void notifyPauseChanged(bool const& _value);
 
     protected:
-        static EditorPrefabManager* s_instance;
+        Canvas* m_canvas;
 
-        EntityPtr m_prefabEntity;
-        AssetFilePtr m_prefabAssetFile;
+        Transform2DPtr m_transform;
+
+        SpriteRenderer2DPtr m_bodyBackground;
+
+        HorizontalLayout2DPtr m_layout;
+
+        ToggleButton2DPtr m_pauseButton;
+        ClickButton2DPtr m_stepButton;
     };
 
 
@@ -124,5 +126,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _EditorPrefabManager_hpp_
+#endif // _EditorTopBarController_hpp_
 //////////////////////////////////////////

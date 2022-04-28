@@ -135,9 +135,11 @@ namespace Maze
         void CreatePrefab3D(AssetsController* _controller, String const& _fullPath)
         {
             String dir = FileHelper::GetDirectoryInPath(_fullPath);
-            EntityPtr entity = EditorHelper::CreateNewPrefab3D();
 
             String newPrefabFullPath = EditorToolsHelper::BuildNewAssetFileName(dir + "/New Prefab.mzprefab");
+
+            String name = FileHelper::GetFileNameWithoutExtension(newPrefabFullPath);
+            EntityPtr entity = EditorManager::GetInstancePtr()->getSceneWorkspace()->createEntity(name);
             EntitySerializationManager::GetInstancePtr()->savePrefabToXMLFile(entity, newPrefabFullPath);
             AssetManager::GetInstancePtr()->updateAssets();
 
@@ -164,6 +166,14 @@ namespace Maze
         {
             AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_fullPath);
             AssetManager::GetInstancePtr()->deleteAssetFile(assetFile);
+        }
+
+        //////////////////////////////////////////
+        void Edit(String const& _fullPath)
+        {
+            AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_fullPath);
+            MAZE_ERROR_RETURN_IF(!assetFile, "Asset file %s is null!", _fullPath.c_str());
+            EditorManager::GetInstancePtr()->openPrefab(assetFile);
         }
     };
 

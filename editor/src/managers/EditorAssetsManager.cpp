@@ -156,6 +156,8 @@ namespace Maze
         AssetEditorToolsManager::GetInstancePtr()->registerAssetFileContextMenuCallback(
             [](AssetsController* _controller, String const& _fullPath, MenuListTree2DPtr const& _menuListTree)
         {
+            String extension = FileHelper::GetFileExtension(_fullPath);
+
             _menuListTree->addItem(
                 "Create/Folder",
                 [_controller, _fullPath](String const& _text) { EditorAssetHelper::CreateFolder(_controller, _fullPath); });
@@ -180,6 +182,13 @@ namespace Maze
                 _menuListTree->addItem(
                     "Delete",
                     [_fullPath](String const& _text) { EditorAssetHelper::Delete(_fullPath); });
+            }
+
+            if (extension == "mzprefab")
+            {
+                _menuListTree->addItem(
+                    "Edit",
+                    [_fullPath](String const& _text) { EditorAssetHelper::Edit(_fullPath); });
             }
         });
     }

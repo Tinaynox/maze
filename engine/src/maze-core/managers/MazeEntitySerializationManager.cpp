@@ -44,6 +44,7 @@
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
+#include "maze-core/assets/MazeAssetFile.hpp"
 
 
 
@@ -234,6 +235,35 @@ namespace Maze
 
     //////////////////////////////////////////
     EntityPtr EntitySerializationManager::loadPrefab(
+        tinyxml2::XMLDocument& _doc,
+        ECSWorld* _world,
+        ECSScene* _scene) const
+    {
+        tinyxml2::XMLNode* rootNode = _doc.FirstChild();
+        if (!rootNode)
+        {
+            MAZE_ERROR("File loading error - empty root node!");
+            return nullptr;
+        }
+
+        return loadPrefabFromXMLElement(rootNode->NextSibling()->ToElement(), _world, _scene);
+    }
+
+    //////////////////////////////////////////
+    EntityPtr EntitySerializationManager::loadPrefab(
+        AssetFilePtr const& _assetFile,
+        ECSWorld* _world,
+        ECSScene* _scene) const
+    {
+        tinyxml2::XMLDocument doc;
+        if (!_assetFile->readToXMLDocument(doc))
+            return nullptr;
+
+        return loadPrefab(doc, _world, _scene);
+    }
+
+    //////////////////////////////////////////
+    EntityPtr EntitySerializationManager::loadPrefab(
         String const& _assetFileName,
         ECSWorld* _world,
         ECSScene* _scene) const
@@ -242,14 +272,7 @@ namespace Maze
         if (!AssetManager::GetInstancePtr()->openXMLDocumentAssetFile(doc, _assetFileName, true))
             return nullptr;
 
-        tinyxml2::XMLNode* rootNode = doc.FirstChild();
-        if (!rootNode)
-        {
-            MAZE_ERROR("File '%s' loading error - empty root node!", _assetFileName.c_str());
-            return nullptr;
-        }
-
-        return loadPrefabFromXMLElement(rootNode->NextSibling()->ToElement(), _world, _scene);
+        return loadPrefab(doc, _world, _scene);
     }
 
     //////////////////////////////////////////

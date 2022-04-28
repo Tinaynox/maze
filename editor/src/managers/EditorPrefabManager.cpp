@@ -32,6 +32,7 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
+#include "maze-core/managers/MazeEntitySerializationManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeRotor3D.hpp"
@@ -80,6 +81,7 @@
 #include "maze-physics2d/ecs/components/MazeBoxCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeCircleCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
+#include "managers/EditorManager.hpp"
 #include "Editor.hpp"
 
 
@@ -130,6 +132,29 @@ namespace Maze
         eventPrefabEntityChanged(m_prefabEntity);
     }
 
+    //////////////////////////////////////////
+    void EditorPrefabManager::setPrefabAssetFile(AssetFilePtr const& _value)
+    {
+        if (m_prefabAssetFile == _value)
+            return;
+
+        m_prefabAssetFile = _value;
+
+        if (m_prefabAssetFile)
+        {
+            setPrefabEntity(
+                EntitySerializationManager::GetInstancePtr()->loadPrefab(
+                    m_prefabAssetFile,
+                    EditorManager::GetInstancePtr()->getSceneWorkspace()->getWorld(),
+                    EditorManager::GetInstancePtr()->getSceneWorkspace().get()));
+        }
+        else
+        {
+            setPrefabEntity(nullptr);
+        }
+
+        eventPrefabAssetFileChanged(m_prefabAssetFile);
+    }
 
 } // namespace Maze
 //////////////////////////////////////////
