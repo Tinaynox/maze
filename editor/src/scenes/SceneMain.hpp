@@ -57,6 +57,8 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Canvas);
     MAZE_USING_SHARED_PTR(AssetsController);
     MAZE_USING_SHARED_PTR(EditorSceneModeController);
+    MAZE_USING_SHARED_PTR(MeshRenderer);
+    MAZE_USING_SHARED_PTR(DebugGridRenderer);
     
 
     //////////////////////////////////////////
@@ -89,6 +91,13 @@ namespace Maze
 
         //////////////////////////////////////////
         inline CanvasPtr const& getMainCanvas() const { return m_mainCanvas; }
+
+
+        //////////////////////////////////////////
+        inline MeshRendererPtr const& getDebugAxesRenderer() const { return m_debugAxesRenderer; }
+
+        //////////////////////////////////////////
+        inline DebugGridRendererPtr const& getDebugGridRenderer() const { return m_debugGridRenderer; }
 
     protected:
 
@@ -141,6 +150,10 @@ namespace Maze
         CanvasPtr m_topBarCanvas;
 
         AssetsControllerPtr m_assetsController;
+
+
+        MeshRendererPtr m_debugAxesRenderer;
+        DebugGridRendererPtr m_debugGridRenderer;
 
         F32 m_yawAngle;
         F32 m_pitchAngle;

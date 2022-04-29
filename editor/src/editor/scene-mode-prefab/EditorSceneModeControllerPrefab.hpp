@@ -47,6 +47,7 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
+#include "maze-graphics/ecs/components/MazeLight3D.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
@@ -58,6 +59,10 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(EditorSceneModeControllerPrefab);
+    MAZE_USING_SHARED_PTR(SpriteRenderer2D);
+    MAZE_USING_SHARED_PTR(HorizontalLayout2D);
+    MAZE_USING_SHARED_PTR(ToggleButton2D);
+    MAZE_USING_SHARED_PTR(Sprite);
 
 
     //////////////////////////////////////////
@@ -87,8 +92,21 @@ namespace Maze
         bool init(SceneMain* _sceneMain);
 
 
+        //////////////////////////////////////////
+        ToggleButton2DPtr createBarButton(
+            Transform2DPtr const& _parent,
+            SpritePtr const& _sprite,
+            ColorU32 const& _spriteColor);
+
     protected:
         Transform2DPtr m_canvasNode;
+        Transform3DPtr m_mainNode;
+
+        Light3DPtr m_debugLight;
+
+        SpriteRenderer2DPtr m_topBarBackground;
+        HorizontalLayout2DPtr m_topBarLeftLayout;
+        HorizontalLayout2DPtr m_topBarRightLayout;
     };
 
 

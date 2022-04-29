@@ -70,6 +70,7 @@ namespace Maze
         static U32 const c_titleFontSize;
         static F32 const c_titleLabelShift;
         static ColorU32 const c_bodyBackgroundColor;
+        static ColorU32 const c_bodySubBackgroundColor;
         static U32 const c_inspectorPropertyFontSize;
         static ColorU32 const c_inspectorPropertyColor;
         static Rect2DF const c_hierarchyViewport;

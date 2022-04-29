@@ -87,6 +87,8 @@
 #include "managers/EditorAssetsManager.hpp"
 #include "managers/EditorAssetsModeManager.hpp"
 #include "managers/EditorProjectModeManager.hpp"
+#include "managers/EditorGizmosManager.hpp"
+
 
 //////////////////////////////////////////
 namespace Maze
@@ -134,6 +136,10 @@ namespace Maze
         if (!m_editorProjectModeManager)
             return false;
 
+        EditorGizmosManager::Initialize(m_editorGizmosManager);
+        if (!m_editorGizmosManager)
+            return false;
+
         return true;
     }
 
@@ -166,6 +172,8 @@ namespace Maze
 
         m_editorPrefabManager->setPrefabAssetFile(nullptr);
         m_editorPrefabManager->setPrefabEntity(nullptr);
+
+        setWindowTitle("Editor");
     }
 
     //////////////////////////////////////////
@@ -181,6 +189,8 @@ namespace Maze
         m_sceneWorkspace->destroyAllEntitiesExcept(_value);
         m_editorPrefabManager->setPrefabAssetFile(nullptr);
         m_editorPrefabManager->setPrefabEntity(_value);
+
+        setWindowTitle("Editor - New Prefab");
     }
 
     //////////////////////////////////////////
@@ -189,6 +199,8 @@ namespace Maze
         setSceneMode(EditorSceneMode::Prefab);
         m_sceneWorkspace->destroyAllEntities();
         m_editorPrefabManager->setPrefabAssetFile(_value);
+
+        setWindowTitle("Editor - %s", _value->getFileName().c_str());
     }
 
     //////////////////////////////////////////
@@ -206,6 +218,19 @@ namespace Maze
         m_sceneWorkspace = Editor::GetInstancePtr()->getSceneManager()->loadScene<SceneWorkspace>();
     }
 
+    //////////////////////////////////////////
+    void EditorManager::setWindowTitle(CString _title, ...)
+    {
+        String text;
+        MAZE_FORMAT_VA_STRING(_title, text);
+        setWindowTitle(text);
+    }
+
+    //////////////////////////////////////////
+    void EditorManager::setWindowTitle(String const& _title)
+    {
+        Editor::GetInstancePtr()->getMainRenderWindow()->getWindow()->setTitle(_title);
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

@@ -89,7 +89,7 @@ namespace Maze
         
             Maze::SpriteRenderer2DPtr spriteRenderer = spriteRendererEntity->createComponent<Maze::SpriteRenderer2D>();
             spriteRenderer->setSprite(_sprite);
-            spriteRenderer->setMaterial(_material);
+            spriteRenderer->setMaterial(_material ? _material : SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial());
 
             if (_sprite && _sprite->getSliceBorder().isBorderExists())
                 spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);

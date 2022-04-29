@@ -358,15 +358,15 @@ namespace Maze
 
         // DebugGrid
         EntityPtr debugGridRendererEntity = createEntity();
-        debugGridRendererEntity->createComponent<DebugGridRenderer>(m_camera3D);
+        m_debugGridRenderer = debugGridRendererEntity->createComponent<DebugGridRenderer>(m_camera3D);
 
         // Axes
         EntityPtr axesMeshRendererEntity = createEntity();
         axesMeshRendererEntity->createComponent<Transform3D>();
-        MeshRendererPtr axesMeshRenderer = axesMeshRendererEntity->createComponent<MeshRenderer>();
-        axesMeshRenderer->setRenderMesh(RenderMesh::Create(MeshHelper::CreateCoordinateAxes()));
-        axesMeshRenderer->setMaterial(GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::DebugAxis));
-        axesMeshRenderer->getRenderMask()->setMask(DefaultRenderMask::Gizmos);
+        m_debugAxesRenderer = axesMeshRendererEntity->createComponent<MeshRenderer>();
+        m_debugAxesRenderer->setRenderMesh(RenderMesh::Create(MeshHelper::CreateCoordinateAxes()));
+        m_debugAxesRenderer->setMaterial(GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::DebugAxis));
+        m_debugAxesRenderer->getRenderMask()->setMask(DefaultRenderMask::Gizmos);
     }
 
     //////////////////////////////////////////

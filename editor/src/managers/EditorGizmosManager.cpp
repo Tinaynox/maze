@@ -24,7 +24,7 @@
 
 
 //////////////////////////////////////////
-#include "EditorPrefabManager.hpp"
+#include "EditorGizmosManager.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
@@ -32,13 +32,11 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
-#include "maze-core/managers/MazeEntitySerializationManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeRotor3D.hpp"
 #include "maze-core/ecs/components/MazeSinMovement3D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
-#include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
@@ -82,7 +80,6 @@
 #include "maze-physics2d/ecs/components/MazeBoxCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeCircleCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
-#include "managers/EditorManager.hpp"
 #include "Editor.hpp"
 
 
@@ -90,19 +87,19 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class EditorPrefabManager
+    // Class EditorGizmosManager
     //
     //////////////////////////////////////////
-    EditorPrefabManager* EditorPrefabManager::s_instance = nullptr;
+    EditorGizmosManager* EditorGizmosManager::s_instance = nullptr;
 
     //////////////////////////////////////////
-    EditorPrefabManager::EditorPrefabManager()
+    EditorGizmosManager::EditorGizmosManager()
     {
         s_instance = this;
     }
 
     //////////////////////////////////////////
-    EditorPrefabManager::~EditorPrefabManager()
+    EditorGizmosManager::~EditorGizmosManager()
     {
         s_instance = nullptr;
 
@@ -110,66 +107,107 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EditorPrefabManager::Initialize(EditorPrefabManagerPtr& _manager)
+    void EditorGizmosManager::Initialize(EditorGizmosManagerPtr& _manager)
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorPrefabManager, _manager, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorGizmosManager, _manager, init());
     }
 
     //////////////////////////////////////////
-    bool EditorPrefabManager::init()
+    bool EditorGizmosManager::init()
     {
         
         return true;
     }
 
     //////////////////////////////////////////
-    void EditorPrefabManager::setPrefabEntity(EntityPtr const& _value)
+    void EditorGizmosManager::createGizmosElements()
     {
-        if (m_prefabEntity == _value)
-            return;
+        S32 const iconSize = 32;
+        S32 const gap = 1;
 
-        m_prefabEntity = _value;
+        auto startPosFunc = [&](Vec2DS const& _pos) { return (iconSize * _pos) + Vec2DS((_pos.x + 1) * gap, (_pos.y + 1) * gap); };
 
-        eventPrefabEntityChanged(m_prefabEntity);
-    }
+        PixelSheet2D uiElementsSheet(Vec2DS(4, 4) * iconSize, PixelFormat::RGBA_U8);
+        uiElementsSheet.fill(ColorU32::c_transparent);
 
-    //////////////////////////////////////////
-    void EditorPrefabManager::setPrefabAssetFile(AssetFilePtr const& _value)
-    {
-        if (m_prefabAssetFile == _value)
-            return;
+        m_gizmosElementsTexture = Texture2D::Create();
+        m_gizmosElementsTexture->setMagFilter(TextureFilter::Linear);
+        m_gizmosElementsTexture->setMinFilter(TextureFilter::Linear);
+        m_gizmosElementsTexture->setWrapS(TextureWrap::ClampToEdge);
+        m_gizmosElementsTexture->setWrapT(TextureWrap::ClampToEdge);
 
-        m_prefabAssetFile = _value;
 
-        if (m_prefabAssetFile)
+        // Axes
         {
-            EntityPtr entity = EntitySerializationManager::GetInstancePtr()->loadPrefab(
-                m_prefabAssetFile,
-                EditorManager::GetInstancePtr()->getSceneWorkspace()->getWorld(),
-                EditorManager::GetInstancePtr()->getSceneWorkspace().get());
+            Vec2DS sheetPos(0, 0);
 
-            // Fix name
-            entity->ensureComponent<Name>()->setName(FileHelper::GetFileNameWithoutExtension(_value->getFileName()));
+            Vec2DS startPos = startPosFunc(sheetPos);
 
-            setPrefabEntity(entity);
+            for (S32 i = 0; i < 2; ++i)
+                for (S32 j = 0; j < 2; ++j)
+                {
+                    uiElementsSheet.drawLine(
+                        startPos + Vec2DS(3 + i, 3 + j),
+                        startPos + Vec2DS(28 + i, 3 + j),
+                        ColorU32::c_red);
+
+                    uiElementsSheet.drawLine(
+                        startPos + Vec2DS(3 + i, 4 + j),
+                        startPos + Vec2DS(3 + i, 28 + j),
+                        ColorU32::c_green);
+
+                    uiElementsSheet.drawLine(
+                        startPos + Vec2DS(4 + i, 4 + j),
+                        startPos + Vec2DS(24 + i, 18 + j),
+                        ColorU32::c_blue);
+                }
+
+            m_editorGizmosSprites[(Size)EditorGizmosSprite::Axes] = Sprite::Create(
+                m_gizmosElementsTexture,
+                Vec2DF(iconSize * sheetPos),
+                Vec2DF(iconSize, iconSize));
         }
-        else
+
+        // Grid
         {
-            setPrefabEntity(nullptr);
+            Vec2DS sheetPos(1, 0);
+
+            Vec2DS startPos = startPosFunc(sheetPos);
+
+            for (S32 i = 0; i < 2; ++i)
+                for (S32 j = 0; j < 2; ++j)
+                {
+                    for (S32 f = 0; f < 5; ++f)
+                    {
+                        uiElementsSheet.drawLine(
+                            startPos + Vec2DS(2 + i + f * 5, 1 + j),
+                            startPos + Vec2DS(2 + i + f * 5, 26 + j),
+                            ColorU32::c_lightGray);
+
+                        uiElementsSheet.drawLine(
+                            startPos + Vec2DS(1 + i, 3 + j + f * 5),
+                            startPos + Vec2DS(26 + i, 3 + j + f * 5),
+                            ColorU32::c_lightGray);
+                    }
+                }
+
+            m_editorGizmosSprites[(Size)EditorGizmosSprite::Grid] = Sprite::Create(
+                m_gizmosElementsTexture,
+                Vec2DF(iconSize * sheetPos),
+                Vec2DF(iconSize, iconSize));
         }
 
-        eventPrefabAssetFileChanged(m_prefabAssetFile);
+        m_gizmosElementsTexture->loadTexture(uiElementsSheet);
+
+        m_gizmosElementsTexture->saveToFileAsTGA("a.tga");
+
+        for (EditorGizmosSprite spriteType = EditorGizmosSprite(0); spriteType < EditorGizmosSprite::MAX; spriteType = EditorGizmosSprite((S32)spriteType + 1))
+        {
+            if (m_editorGizmosSprites[(Size)spriteType])
+                m_editorGizmosSprites[(Size)spriteType]->updateTextureCoords();
+        }
     }
 
-    //////////////////////////////////////////
-    void EditorPrefabManager::saveAssetFile()
-    {
-        if (!m_prefabAssetFile || !m_prefabEntity)
-            return;
-
-        EntitySerializationManager::GetInstancePtr()->savePrefabToXMLFile(
-            m_prefabEntity, m_prefabAssetFile->getFullPath());
-    }
 
 } // namespace Maze
 //////////////////////////////////////////

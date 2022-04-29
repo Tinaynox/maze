@@ -192,11 +192,11 @@ namespace Maze
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Top,
             Vec2DF(300, 300),
-            Vec2DF(15.0f, -5.0f),
+            Vec2DF(15.0f, -25.0f),
             m_canvas->getTransform(),
-            this);
-        m_fpsSystemTextRenderer->getTransform()->setAnchor(Vec2DF(0.0f, 1.0f));
-        m_fpsSystemTextRenderer->getTransform()->setPivot(Vec2DF(0.0f, 1.0f));
+            this,
+            Vec2DF(0.0f, 1.0f),
+            Vec2DF(0.0f, 1.0f));
         m_fpsSystemTextRenderer->getEntityRaw()->ensureComponent<Name>("FPS");
     }
 

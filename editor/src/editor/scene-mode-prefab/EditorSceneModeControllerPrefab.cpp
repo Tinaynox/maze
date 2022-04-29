@@ -54,6 +54,8 @@
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
+#include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/managers/MazeGizmosManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
@@ -66,6 +68,7 @@
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
+#include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
@@ -77,9 +80,12 @@
 #include "maze-editor-tools/ecs/components/MazeHierarchyController.hpp"
 #include "maze-editor-tools/ecs/components/MazeInspectorController.hpp"
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
+#include "maze-editor-tools/ecs/components/MazeDebugGridRenderer.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
 #include "Editor.hpp"
 #include "scenes/SceneMain.hpp"
 #include "managers/EditorManager.hpp"
+#include "managers/EditorGizmosManager.hpp"
 
 
 //////////////////////////////////////////
@@ -128,11 +134,116 @@ namespace Maze
             Vec2DF::c_zero);
         m_canvasNode->getEntityRaw()->ensureComponent<SizePolicy2D>();
 
+        EntityPtr mainNodeEntity = m_sceneMain->createEntity("Main Node");
+        m_mainNode = mainNodeEntity->ensureComponent<Transform3D>();
+
+        EntityPtr debugLightEntity = m_sceneMain->createEntity("Debug Light");
+        m_debugLight = debugLightEntity->createComponent<Light3D>();
+        debugLightEntity->ensureComponent<Transform3D>()->setParent(m_mainNode);
+        m_debugLight->setColor(ColorU32(255, 244, 214));
+        m_debugLight->getTransform()->setLocalDirection(0.577f, -0.577f, 0.577f);
+        m_debugLight->getTransform()->setLocalPosition(0.0f, 5.0f, -5.0f);
+
+
+
+        m_topBarBackground = SpriteHelper::CreateSprite(
+            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
+            Vec2DF(
+                m_canvasNode->getSize().x,
+                20.0f),
+            Vec2DF(0.0f, 0.0f),
+            MaterialManager::GetCurrentInstance()->getColorTextureMaterial(),
+            m_canvasNode,
+            m_sceneMain,
+            Vec2DF(0.0f, 1.0f),
+            Vec2DF(0.0f, 1.0f));
+        m_topBarBackground->setColor(EditorToolsLayout::c_bodySubBackgroundColor);
+        m_topBarBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
+
+
+        m_topBarLeftLayout = UIHelper::CreateHorizontalLayout(
+            HorizontalAlignment2D::Left,
+            VerticalAlignment2D::Middle,
+            m_topBarBackground->getTransform()->getSize(),
+            Vec2DF::c_zero,
+            m_topBarBackground->getTransform(),
+            m_sceneMain,
+            Vec2DF::c_zero,
+            Vec2DF::c_zero);
+        m_topBarLeftLayout->setAutoWidth(false);
+        m_topBarLeftLayout->setAutoHeight(false);
+        m_topBarLeftLayout->getEntityRaw()->ensureComponent<SizePolicy2D>();
+        m_topBarLeftLayout->setSpacing(2.0f);
+
+        ToggleButton2DPtr lightButton = createBarButton(
+            m_topBarLeftLayout->getTransform(),
+            GizmosManager::GetInstancePtr()->getDefaultGizmosSprite(DefaultGizmosSprite::LightGizmo),
+            ColorU32::c_yellow);
+        lightButton->setChecked(true);
+        lightButton->eventCheckedChanged.subscribe(
+            [this](ToggleButton2D* _button, bool _value)
+            {
+                m_debugLight->getEntityRaw()->setActiveSelf(_value);
+            });
+
+        ToggleButton2DPtr axesButton = createBarButton(
+            m_topBarLeftLayout->getTransform(),
+            EditorGizmosManager::GetInstancePtr()->getEditorGizmosSprite(EditorGizmosSprite::Axes),
+            ColorU32::c_white);
+        axesButton->setChecked(true);
+        axesButton->eventCheckedChanged.subscribe(
+            [this](ToggleButton2D* _button, bool _value)
+        {
+            m_sceneMain->getDebugAxesRenderer()->getEntityRaw()->setActiveSelf(_value);
+        });
+
+        ToggleButton2DPtr gridButton = createBarButton(
+            m_topBarLeftLayout->getTransform(),
+            EditorGizmosManager::GetInstancePtr()->getEditorGizmosSprite(EditorGizmosSprite::Grid),
+            ColorU32::c_white);
+        gridButton->setChecked(true);
+        gridButton->eventCheckedChanged.subscribe(
+            [this](ToggleButton2D* _button, bool _value)
+        {
+            m_sceneMain->getDebugGridRenderer()->getEntityRaw()->setActiveSelf(_value);
+        });
+
+
+
+
+        m_topBarRightLayout = UIHelper::CreateHorizontalLayout(
+            HorizontalAlignment2D::Right,
+            VerticalAlignment2D::Middle,
+            m_topBarBackground->getTransform()->getSize(),
+            Vec2DF::c_zero,
+            m_topBarBackground->getTransform(),
+            m_sceneMain,
+            Vec2DF::c_zero,
+            Vec2DF::c_zero);
+        m_topBarRightLayout->setAutoWidth(false);
+        m_topBarRightLayout->setAutoHeight(false);
+        m_topBarRightLayout->getEntityRaw()->ensureComponent<SizePolicy2D>();
+        m_topBarRightLayout->setSpacing(2.0f);
+
+        ClickButton2DPtr saveButton = UIHelper::CreateDefaultClickButton(
+            "Save",
+            Vec2DF(42.0f, 18.0f),
+            Vec2DF(-2.0f, -2.0f),
+            m_topBarRightLayout->getTransform(),
+            m_sceneMain,
+            Vec2DF(1.0f, 1.0f),
+            Vec2DF(1.0f, 1.0f));
+        saveButton->eventClick.subscribe(
+            [](Button2D* _button, CursorInputEvent const& _event)
+            {
+                EditorPrefabManager::GetInstancePtr()->saveAssetFile();
+            });
+
         ClickButton2DPtr closeButton = UIHelper::CreateDefaultClickButton(
             "X",
             Vec2DF(18.0f, 18.0f),
             Vec2DF(-2.0f, -2.0f),
-            m_canvasNode,
+            m_topBarRightLayout->getTransform(),
             m_sceneMain,
             Vec2DF(1.0f, 1.0f),
             Vec2DF(1.0f, 1.0f));
@@ -153,6 +264,44 @@ namespace Maze
             m_canvasNode->getEntityRaw()->removeFromECSWorld();
             m_canvasNode.reset();
         }
+
+        if (m_mainNode)
+        {
+            m_mainNode->getEntityRaw()->removeFromECSWorld();
+            m_mainNode.reset();
+        }
+    }
+
+    //////////////////////////////////////////
+    ToggleButton2DPtr EditorSceneModeControllerPrefab::createBarButton(
+        Transform2DPtr const& _parent,
+        SpritePtr const& _sprite,
+        ColorU32 const& _spriteColor)
+    {
+        ToggleButton2DPtr button = UIHelper::CreateToggleButton(
+            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
+            Vec2DF(18.0f, 18.0f),
+            Vec2DF::c_zero,
+            _parent,
+            m_sceneMain,
+            Vec2DF::c_zero,
+            Vec2DF::c_zero,
+            { 200, 200, 200 },
+            { 187, 187, 187 },
+            { 161, 161, 161 },
+            { 171, 171, 171 },
+            { 151, 151, 151 });
+
+        SpriteRenderer2DPtr sprite = SpriteHelper::CreateSprite(
+            _sprite,
+            Vec2DF(14.0f, 14.0f),
+            Vec2DF::c_zero,
+            nullptr,
+            button->getTransform(),
+            m_sceneMain);
+        sprite->setColor(_spriteColor);
+
+        return button;
     }
 
 } // namespace Maze

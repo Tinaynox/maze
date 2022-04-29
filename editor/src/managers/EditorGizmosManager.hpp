@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_EditorManager_hpp_))
-#define _EditorManager_hpp_
+#if (!defined(_EditorGizmosManager_hpp_))
+#define _EditorGizmosManager_hpp_
 
 
 //////////////////////////////////////////
@@ -48,108 +48,60 @@
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "scenes/SceneWorkspace.hpp"
 #include "editor/EditorSceneMode.hpp"
-#include "editor/EditorMode.hpp"
-#include "managers/EditorPrefabManager.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(EditorManager);
+    MAZE_USING_SHARED_PTR(EditorGizmosManager);
     MAZE_USING_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(SceneWorkspace);
-    MAZE_USING_SHARED_PTR(EditorAssetsManager);
-    MAZE_USING_SHARED_PTR(EditorAssetsModeManager);
-    MAZE_USING_SHARED_PTR(EditorProjectModeManager);
-    MAZE_USING_SHARED_PTR(EditorGizmosManager);
-   
+
 
     //////////////////////////////////////////
-    // Class EditorManager
+    enum class EditorGizmosSprite
+    {
+        Axes = 0,
+        Grid,
+
+        MAX
+    };
+
+
+    //////////////////////////////////////////
+    // Class EditorGizmosManager
     //
     //////////////////////////////////////////
-    class EditorManager
+    class EditorGizmosManager
         : public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        ~EditorManager();
+        ~EditorGizmosManager();
 
         //////////////////////////////////////////
-        static void Initialize(EditorManagerPtr& _gameManager);
+        static void Initialize(EditorGizmosManagerPtr& _manager);
         
 
         //////////////////////////////////////////
-        static inline EditorManager* GetInstancePtr() { return s_instance; }
+        static inline EditorGizmosManager* GetInstancePtr() { return s_instance; }
 
         //////////////////////////////////////////
-        static inline EditorManager& GetInstance() { return *s_instance; }
-
-
-        //////////////////////////////////////////
-        EditorPrefabManagerPtr const& getEditorPrefabManager() const { return m_editorPrefabManager; }
+        static inline EditorGizmosManager& GetInstance() { return *s_instance; }
 
 
         //////////////////////////////////////////
-        EditorMode getMode() const;
-
-
-        //////////////////////////////////////////
-        void setSceneMode(EditorSceneMode _mode);
+        inline SpritePtr const& getEditorGizmosSprite(EditorGizmosSprite uiSprite) const { return m_editorGizmosSprites[(Size)uiSprite]; }
 
         //////////////////////////////////////////
-        inline EditorSceneMode getSceneMode() const { return m_sceneMode; }
-
-        //////////////////////////////////////////
-        inline SceneWorkspacePtr const& getSceneWorkspace() const { return m_sceneWorkspace; }
-
-
-        //////////////////////////////////////////
-        void clearMode();
-
-        //////////////////////////////////////////
-        void clearWorkspace();
-
-
-        //////////////////////////////////////////
-        void openPrefab(EntityPtr const& _value);
-
-        //////////////////////////////////////////
-        void openPrefab(AssetFilePtr const& _value);
-
-        //////////////////////////////////////////
-        EntityPtr createNewPrefab();
-
-
-        //////////////////////////////////////////
-        void start();
-
-
-        //////////////////////////////////////////
-        inline String const& getCurrentEditFileFullPath() const { return m_currentEditFileFullPath; }
-
-        //////////////////////////////////////////
-        inline void setCurrentEditFileFullPath(String const& _value) { m_currentEditFileFullPath = _value; }
-
-
-        //////////////////////////////////////////
-        void setWindowTitle(CString _title, ...);
-
-        //////////////////////////////////////////
-        void setWindowTitle(String const& _title);
-
-    public:
-
-        //////////////////////////////////////////
-        MultiDelegate<EditorSceneMode> eventSceneModeChanged;
-
+        void createGizmosElements();
 
     protected:
 
         //////////////////////////////////////////
-        EditorManager();
+        EditorGizmosManager();
 
         //////////////////////////////////////////
         bool init();
@@ -157,19 +109,10 @@ namespace Maze
 
 
     protected:
-        static EditorManager* s_instance;
+        static EditorGizmosManager* s_instance;
 
-        EditorSceneMode m_sceneMode = EditorSceneMode::None;
-
-        SceneWorkspacePtr m_sceneWorkspace;
-
-        EditorAssetsManagerPtr m_editorAssetsManager;
-        EditorPrefabManagerPtr m_editorPrefabManager;
-        EditorAssetsModeManagerPtr m_editorAssetsModeManager;
-        EditorProjectModeManagerPtr m_editorProjectModeManager;
-        EditorGizmosManagerPtr m_editorGizmosManager;
-
-        String m_currentEditFileFullPath;
+        Texture2DPtr m_gizmosElementsTexture;
+        SpritePtr m_editorGizmosSprites[(Size)EditorGizmosSprite::MAX];
     };
 
 
@@ -177,5 +120,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _EditorManager_hpp_
+#endif // _EditorGizmosManager_hpp_
 //////////////////////////////////////////

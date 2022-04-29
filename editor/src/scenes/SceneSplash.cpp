@@ -92,6 +92,7 @@
 #include "scenes/SceneMain.hpp"
 #include "scenes/SceneSelectMode.hpp"
 #include "scenes/SceneDebug.hpp"
+#include "managers/EditorGizmosManager.hpp"
 
 
 //////////////////////////////////////////
@@ -229,6 +230,8 @@ namespace Maze
             case 3:
             {
                 MaterialManager::GetCurrentInstance()->createBuiltinMaterials();
+                SpriteManager::GetCurrentInstance()->setDefaultSpriteMaterial(
+                    MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::ColorTexture));
                 setCurrentProgress(0.45f);
                 break;
             }
@@ -247,6 +250,7 @@ namespace Maze
             case 6:
             {
                 GraphicsManager::GetInstancePtr()->getGizmosManager()->createGizmosElements();
+                EditorGizmosManager::GetInstancePtr()->createGizmosElements();
                 setCurrentProgress(0.7f);
                 break;
             }

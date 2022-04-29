@@ -90,6 +90,7 @@ namespace Maze
     U32 const EditorToolsLayout::c_titleFontSize = 10;
     F32 const EditorToolsLayout::c_titleLabelShift = 5.0f;
     ColorU32 const EditorToolsLayout::c_bodyBackgroundColor = ColorU32(194, 194, 194, 255);
+    ColorU32 const EditorToolsLayout::c_bodySubBackgroundColor = ColorU32(164, 164, 164, 255);
     U32 const EditorToolsLayout::c_inspectorPropertyFontSize = 8;
     ColorU32 const EditorToolsLayout::c_inspectorPropertyColor = ColorU32(32, 32, 32, 255);
     Rect2DF const EditorToolsLayout::c_hierarchyViewport(0.0f, 0.33f, 0.25f, 0.67f);
