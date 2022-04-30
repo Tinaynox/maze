@@ -33,6 +33,7 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
+#include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
@@ -86,6 +87,7 @@
 #include "scenes/SceneMain.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorGizmosManager.hpp"
+#include "settings/MazeEditorSceneSettings.hpp"
 
 
 //////////////////////////////////////////
@@ -103,7 +105,13 @@ namespace Maze
     //////////////////////////////////////////
     EditorSceneModeControllerPrefab::~EditorSceneModeControllerPrefab()
     {
-
+        if (SettingsManager::GetInstancePtr())
+        {
+            EditorSceneSettings* editorSceneSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>();
+            editorSceneSettings->getDebugLightEnabledChangedEvent().unsubscribe(this);
+            editorSceneSettings->getDebugAxesEnabledChangedEvent().unsubscribe(this);
+            editorSceneSettings->getDebugGridEnabledChangedEvent().unsubscribe(this);
+        }
     }
 
     //////////////////////////////////////////
@@ -175,38 +183,50 @@ namespace Maze
         m_topBarLeftLayout->getEntityRaw()->ensureComponent<SizePolicy2D>();
         m_topBarLeftLayout->setSpacing(2.0f);
 
-        ToggleButton2DPtr lightButton = createBarButton(
+        m_lightButton = createBarButton(
             m_topBarLeftLayout->getTransform(),
             GizmosManager::GetInstancePtr()->getDefaultGizmosSprite(DefaultGizmosSprite::LightGizmo),
             ColorU32::c_yellow);
-        lightButton->setChecked(true);
-        lightButton->eventCheckedChanged.subscribe(
-            [this](ToggleButton2D* _button, bool _value)
+        m_lightButton->setChecked(true);
+        m_lightButton->eventClick.subscribe(
+            [this](Button2D* _button, CursorInputEvent const& _event)
             {
-                m_debugLight->getEntityRaw()->setActiveSelf(_value);
+                SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->switchDebugLightEnabled();
+                SettingsManager::GetInstancePtr()->saveSettings();
             });
+        updateDebugLight();
+        SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getDebugLightEnabledChangedEvent().subscribe(
+            this, &EditorSceneModeControllerPrefab::notifyDebugLightEnabledChanged);
 
-        ToggleButton2DPtr axesButton = createBarButton(
+        m_axesButton = createBarButton(
             m_topBarLeftLayout->getTransform(),
             EditorGizmosManager::GetInstancePtr()->getEditorGizmosSprite(EditorGizmosSprite::Axes),
             ColorU32::c_white);
-        axesButton->setChecked(true);
-        axesButton->eventCheckedChanged.subscribe(
-            [this](ToggleButton2D* _button, bool _value)
+        m_axesButton->setChecked(true);
+        m_axesButton->eventClick.subscribe(
+            [this](Button2D* _button, CursorInputEvent const& _event)
         {
-            m_sceneMain->getDebugAxesRenderer()->getEntityRaw()->setActiveSelf(_value);
+            SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->switchDebugAxesEnabled();
+            SettingsManager::GetInstancePtr()->saveSettings();
         });
+        updateDebugAxes();
+        SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getDebugAxesEnabledChangedEvent().subscribe(
+            this, &EditorSceneModeControllerPrefab::notifyDebugAxesEnabledChanged);
 
-        ToggleButton2DPtr gridButton = createBarButton(
+        m_gridButton = createBarButton(
             m_topBarLeftLayout->getTransform(),
             EditorGizmosManager::GetInstancePtr()->getEditorGizmosSprite(EditorGizmosSprite::Grid),
             ColorU32::c_white);
-        gridButton->setChecked(true);
-        gridButton->eventCheckedChanged.subscribe(
-            [this](ToggleButton2D* _button, bool _value)
+        m_gridButton->setChecked(true);
+        m_gridButton->eventClick.subscribe(
+            [this](Button2D* _button, CursorInputEvent const& _event)
         {
-            m_sceneMain->getDebugGridRenderer()->getEntityRaw()->setActiveSelf(_value);
+            SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->switchDebugGridEnabled();
+            SettingsManager::GetInstancePtr()->saveSettings();
         });
+        updateDebugGrid();
+        SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getDebugGridEnabledChangedEvent().subscribe(
+            this, &EditorSceneModeControllerPrefab::notifyDebugGridEnabledChanged);
 
 
 
@@ -291,6 +311,7 @@ namespace Maze
             { 161, 161, 161 },
             { 171, 171, 171 },
             { 151, 151, 151 });
+        button->setCheckByClick(false);
 
         SpriteRenderer2DPtr sprite = SpriteHelper::CreateSprite(
             _sprite,
@@ -302,6 +323,48 @@ namespace Maze
         sprite->setColor(_spriteColor);
 
         return button;
+    }
+
+    //////////////////////////////////////////
+    void EditorSceneModeControllerPrefab::updateDebugLight()
+    {
+        bool value = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getDebugLightEnabled();
+        m_debugLight->getEntityRaw()->setActiveSelf(value);
+        m_lightButton->setChecked(value);
+    }
+
+    //////////////////////////////////////////
+    void EditorSceneModeControllerPrefab::updateDebugAxes()
+    {
+        bool value = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getDebugAxesEnabled();
+        m_sceneMain->getDebugAxesRenderer()->getEntityRaw()->setActiveSelf(value);
+        m_axesButton->setChecked(value);
+    }
+
+    //////////////////////////////////////////
+    void EditorSceneModeControllerPrefab::updateDebugGrid()
+    {
+        bool value = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getDebugGridEnabled();
+        m_sceneMain->getDebugGridRenderer()->getEntityRaw()->setActiveSelf(value);
+        m_gridButton->setChecked(value);
+    }
+
+    //////////////////////////////////////////
+    void EditorSceneModeControllerPrefab::notifyDebugLightEnabledChanged(bool const& _value)
+    {
+        updateDebugLight();
+    }
+
+    //////////////////////////////////////////
+    void EditorSceneModeControllerPrefab::notifyDebugAxesEnabledChanged(bool const& _value)
+    {
+        updateDebugAxes();
+    }
+
+    //////////////////////////////////////////
+    void EditorSceneModeControllerPrefab::notifyDebugGridEnabledChanged(bool const& _value)
+    {
+        updateDebugGrid();
     }
 
 } // namespace Maze

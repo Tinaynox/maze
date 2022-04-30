@@ -71,6 +71,7 @@
 #include "maze-plugin-loader-png/MazeLoaderPNGPlugin.hpp"
 #include "managers/EditorManager.hpp"
 #include "settings/MazeEditorSettings.hpp"
+#include "settings/MazeEditorSceneSettings.hpp"
 #include "scenes/SceneSplash.hpp"
 
 
@@ -166,6 +167,7 @@ namespace Maze
         m_inputManager->eventKeyboard.subscribe(this, &Editor::notifyKeyboard);
 
         m_settingsManager->registerSettings<EditorSettings>();
+        m_settingsManager->registerSettings<EditorSceneSettings>();
         m_settingsManager->loadSettings();
         
 
