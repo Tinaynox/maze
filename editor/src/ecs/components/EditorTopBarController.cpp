@@ -59,6 +59,7 @@
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/managers/MazeGizmosManager.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
+#include "managers/EditorManager.hpp"
 
 
 //////////////////////////////////////////
@@ -89,6 +90,11 @@ namespace Maze
         {
             EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
             debbugerSettings->getPauseChangedEvent().unsubscribe(this);
+        }
+
+        if (EditorManager::GetInstancePtr())
+        {
+            EditorManager::GetInstancePtr()->eventPlaytestModeEnabledChanged.unsubscribe(this);
         }
     }
 
@@ -123,6 +129,8 @@ namespace Maze
 
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
         MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
+
+        EditorManager::GetInstancePtr()->eventPlaytestModeEnabledChanged.subscribe(this, &EditorTopBarController::notifyPlaytestModeEnabledChanged);
 
         Transform2DPtr canvasTransform = SpriteHelper::CreateTransform2D(
             m_canvas->getTransform()->getSize(),
@@ -162,7 +170,36 @@ namespace Maze
         SizePolicy2DPtr layoutSizePolicy = m_layout->getEntityRaw()->ensureComponent<SizePolicy2D>();
         m_layout->setSpacing(2.0f);
 
-        /*
+
+        m_playButton = UIHelper::CreateToggleButton(
+            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
+            Vec2DF(18.0f, 18.0f),
+            Vec2DF::c_zero,
+            m_layout->getTransform(),
+            getEntityRaw()->getECSScene(),
+            Vec2DF(0.5f, 0.5f),
+            Vec2DF(0.5f, 0.5f),
+            { 200, 200, 200 },
+            { 187, 187, 187 },
+            { 161, 161, 161 },
+            { 171, 171, 171 },
+            { 151, 151, 151 });
+        m_playButton->setCheckByClick(false);
+        m_playButton->eventClick.subscribe(
+            [](Button2D* _button, CursorInputEvent const& _event)
+        {
+            EditorManager::GetInstancePtr()->setPlaytestModeEnabled(
+                !EditorManager::GetInstancePtr()->getPlaytestModeEnabled());
+        });
+        SpriteHelper::CreateSprite(
+            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Play),
+            Vec2DF(18.0f, 18.0f),
+            Vec2DF::c_zero,
+            MaterialManager::GetCurrentInstance()->getColorTextureMaterial(),
+            m_playButton->getTransform(),
+            getEntityRaw()->getECSScene())->setColor(85, 85, 85);
+
+
         m_pauseButton = UIHelper::CreateToggleButton(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
             Vec2DF(18.0f, 18.0f),
@@ -181,7 +218,7 @@ namespace Maze
             [](Button2D* _button, CursorInputEvent const& _event)
             {
                 EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
-                debbugerSettings->switchPause();
+                // debbugerSettings->switchPause();
             });
         SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Pause),
@@ -215,7 +252,6 @@ namespace Maze
             MaterialManager::GetCurrentInstance()->getColorTextureMaterial(),
             m_stepButton->getTransform(),
             getEntityRaw()->getECSScene())->setColor(85, 85, 85);
-        */
 
         updateUI();
 
@@ -237,6 +273,12 @@ namespace Maze
             EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
             m_pauseButton->setChecked(debbugerSettings->getPause());
         }
+    }
+
+    //////////////////////////////////////////
+    void EditorTopBarController::notifyPlaytestModeEnabledChanged(bool _value)
+    {
+        m_playButton->setChecked(_value);
     }
 
     

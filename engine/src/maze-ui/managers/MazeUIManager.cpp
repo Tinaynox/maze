@@ -1435,6 +1435,25 @@ namespace Maze
                 Vec2DF(chunkSize, chunkSize));
         }
 
+        // Play
+        {
+
+            Vec2DS sheetPos(7, 0);
+            Vec2DS startPos = startPosFunc(sheetPos);
+            ColorU32 mainColor(255, 255, 255);
+
+            uiElementsSheet.drawFilledTriangle(
+                Vec2DS(13, 9) + startPos,
+                Vec2DS(22, 15) + startPos,
+                Vec2DS(13, 22) + startPos,
+                mainColor);
+
+            m_defaultUISprites[(Size)DefaultUISprite::Play] = Sprite::Create(
+                m_uiElementsTexture,
+                Vec2DF(startPos),
+                Vec2DF(chunkSize, chunkSize));
+        }
+
         // Pause
         {
 

@@ -100,6 +100,9 @@ namespace Maze
         //////////////////////////////////////////
         void saveAssetFile();
 
+        //////////////////////////////////////////
+        void updatePrefabAssetFile();
+
     public:
 
         //////////////////////////////////////////
@@ -113,8 +116,6 @@ namespace Maze
 
         //////////////////////////////////////////
         bool init();
-
-
 
     protected:
         static EditorPrefabManager* s_instance;

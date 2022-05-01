@@ -84,7 +84,6 @@ namespace Maze
             });
 
         m_workspaceWorld->addSystem(SizePolicy2DSystem::Create());
-        m_workspaceWorld->addSystem(TransformUtilsSystem::Create());
         m_workspaceWorld->addSystem(TransformEventsSystem::Create());
         m_workspaceWorld->addSystem(RenderPreparationSystem::Create(renderSystem));
         m_workspaceWorld->addSystem(RenderControlSystem::Create(renderSystem));

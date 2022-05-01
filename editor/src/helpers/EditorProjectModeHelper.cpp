@@ -88,7 +88,7 @@
 #include "managers/EditorPrefabManager.hpp"
 #include "Editor.hpp"
 #include "settings/MazeEditorSettings.hpp"
-#include "scenes/SceneMain.hpp"
+#include "scenes/SceneEditor.hpp"
 #include "scenes/SceneSelectMode.hpp"
 
 
@@ -116,7 +116,7 @@ namespace Maze
             SettingsManager::GetInstancePtr()->saveSettings();
 
             SceneManager::GetInstancePtr()->loadScene<SceneSelectMode>();
-            SceneManager::GetInstancePtr()->unloadScene<SceneMain>();
+            SceneManager::GetInstancePtr()->unloadScene<SceneEditor>();
         }
     };
 

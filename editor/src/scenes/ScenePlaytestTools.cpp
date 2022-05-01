@@ -24,7 +24,7 @@
 
 
 //////////////////////////////////////////
-#include "SceneWorkspaceTools.hpp"
+#include "ScenePlaytestTools.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
@@ -79,7 +79,7 @@
 #include "maze-particles/managers/MazeParticlesManager.hpp"
 #include "maze-editor-tools/ecs/components/MazeDebugGridRenderer.hpp"
 #include "managers/EditorEntityManager.hpp"
-#include "managers/EditorWorkspaceManager.hpp"
+#include "managers/EditorPlaytestManager.hpp"
 #include "managers/EditorManager.hpp"
 #include "Editor.hpp"
 #include "layout/EditorLayout.hpp"
@@ -90,20 +90,20 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class SceneWorkspaceTools
+    // Class ScenePlaytestTools
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneWorkspaceTools, SceneMainTools);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(ScenePlaytestTools, SceneMainTools);
 
     //////////////////////////////////////////
-    SceneWorkspaceTools::SceneWorkspaceTools()
+    ScenePlaytestTools::ScenePlaytestTools()
     {
 
 
     }
 
     //////////////////////////////////////////
-    SceneWorkspaceTools::~SceneWorkspaceTools()
+    ScenePlaytestTools::~ScenePlaytestTools()
     {
         InputManager* inputManager = InputManager::GetInstancePtr();
         if (inputManager)
@@ -118,22 +118,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SceneWorkspaceToolsPtr SceneWorkspaceTools::Create()
+    ScenePlaytestToolsPtr ScenePlaytestTools::Create()
     {
-        SceneWorkspaceToolsPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(SceneWorkspaceTools, object, init());
+        ScenePlaytestToolsPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(ScenePlaytestTools, object, init());
         return object;
     }
 
     //////////////////////////////////////////
-    bool SceneWorkspaceTools::init()
+    bool ScenePlaytestTools::init()
     {
-        RenderBufferPtr const& renderTarget = EditorWorkspaceManager::GetInstancePtr()->getWorkspaceRenderBuffer();
+        RenderWindowPtr const& renderTarget = Editor::GetInstancePtr()->getMainRenderWindow();
         if (!SceneMainTools::init(renderTarget))
             return false;
 
         InputManager* inputManager = InputManager::GetInstancePtr();
-        inputManager->eventMouse.subscribe(this, &SceneWorkspaceTools::notifyMouse);
+        inputManager->eventMouse.subscribe(this, &ScenePlaytestTools::notifyMouse);
 
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
         ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
@@ -144,7 +144,7 @@ namespace Maze
         EntityManager* entityManager = EntityManager::GetInstancePtr();
         ECSWorldPtr const& world = entityManager->getDefaultWorld();
 
-        Editor::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &SceneWorkspaceTools::notifyMainRenderWindowResized);
+        Editor::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &ScenePlaytestTools::notifyMainRenderWindowResized);
 
         // Camera
         EntityPtr cameraEntity = createEntity();
@@ -160,6 +160,7 @@ namespace Maze
         m_camera3D->setClearColor(ColorU32(99, 101, 140, 255));
         m_camera3D->getEntityRaw()->ensureComponent<Name>("Camera");
         m_camera3D->setRenderMask(m_camera3D->getRenderMask() | (S32)DefaultRenderMask::Gizmos);
+        m_camera3D->setViewport(EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport));
         GizmosManager::GetInstancePtr()->setCamera(m_camera3D);
 
         // DebugGrid
@@ -181,6 +182,7 @@ namespace Maze
             m_mainCanvas->setClearColor(ColorU32::c_zero);
             m_mainCanvas->setRenderTarget(m_renderTarget);
             m_mainCanvas->setSortOrder(-1000000);
+            m_mainCanvas->setViewport(EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport));
 
             EntityPtr mainCanvasControllerEntity = createEntity();
             EditorMainCanvasControllerPtr mainCanvasController = EditorMainCanvasController::Create(m_mainCanvas.get());
@@ -191,9 +193,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneWorkspaceTools::update(F32 _dt)
+    void ScenePlaytestTools::update(F32 _dt)
     {
-        ECSRenderScene::update(_dt);
+        SceneMainTools::update(_dt);
 
         if (!Editor::GetInstancePtr()->getMainRenderWindow()->getFocused())
             return;
@@ -268,7 +270,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneWorkspaceTools::notifyMouse(InputEventMouseData const& _data)
+    void ScenePlaytestTools::notifyMouse(InputEventMouseData const& _data)
     {
         if (!Editor::GetInstancePtr()->getMainRenderWindow()->getFocused())
             return;
@@ -331,14 +333,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ECSWorld* SceneWorkspaceTools::assignWorld()
+    ECSWorld* ScenePlaytestTools::assignWorld()
     {
-        return EditorEntityManager::GetInstancePtr()->getWorkspaceWorld().get();
+        return EntityManager::GetInstancePtr()->getDefaultWorld().get();
     }
 
     //////////////////////////////////////////
-    void SceneWorkspaceTools::notifyMainRenderWindowResized(RenderTarget* _renderTarget)
+    void ScenePlaytestTools::notifyMainRenderWindowResized(RenderTarget* _renderTarget)
     {
+        Rect2DF rect = EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
+
+        if (m_camera3D)
+            m_camera3D->setViewport(rect);
+
+        if (m_mainCanvas)
+            m_mainCanvas->setViewport(rect);
     }
 
 

@@ -24,7 +24,7 @@
 
 
 //////////////////////////////////////////
-#include "EditorWorkspaceManager.hpp"
+#include "EditorPlaytestManager.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
@@ -82,27 +82,27 @@
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
 #include "Editor.hpp"
 #include "layout/EditorLayout.hpp"
-#include "scenes/SceneWorkspace.hpp"
-#include "scenes/SceneWorkspaceTools.hpp"
+#include "scenes/ScenePlaytest.hpp"
+#include "scenes/ScenePlaytestTools.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class EditorWorkspaceManager
+    // Class EditorPlaytestManager
     //
     //////////////////////////////////////////
-    EditorWorkspaceManager* EditorWorkspaceManager::s_instance = nullptr;
+    EditorPlaytestManager* EditorPlaytestManager::s_instance = nullptr;
 
     //////////////////////////////////////////
-    EditorWorkspaceManager::EditorWorkspaceManager()
+    EditorPlaytestManager::EditorPlaytestManager()
     {
         s_instance = this;
     }
 
     //////////////////////////////////////////
-    EditorWorkspaceManager::~EditorWorkspaceManager()
+    EditorPlaytestManager::~EditorPlaytestManager()
     {
         if (Editor::GetInstancePtr() && Editor::GetInstancePtr()->getMainRenderWindow())
             Editor::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.unsubscribe(this);
@@ -111,76 +111,69 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EditorWorkspaceManager::Initialize(EditorWorkspaceManagerPtr& _manager)
+    void EditorPlaytestManager::Initialize(EditorPlaytestManagerPtr& _manager)
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorWorkspaceManager, _manager, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorPlaytestManager, _manager, init());
     }
 
     //////////////////////////////////////////
-    bool EditorWorkspaceManager::init()
+    bool EditorPlaytestManager::init()
     {
 
         return true;
     }
 
     //////////////////////////////////////////
-    void EditorWorkspaceManager::start()
+    void EditorPlaytestManager::start()
     {
-        Editor::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &EditorWorkspaceManager::notifyMainRenderWindowResized);
-
-        m_workspaceRenderBuffer = RenderBuffer::Create(
-            {
-                calculateWorkspaceRenderBuffer(),
-                PixelFormat::RGBA_U8,
-                PixelFormat::DEPTH_U24
-            });
+        Editor::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &EditorPlaytestManager::notifyMainRenderWindowResized);
 
         createScenes();
     }
 
     //////////////////////////////////////////
-    void EditorWorkspaceManager::createScenes()
+    void EditorPlaytestManager::createScenes()
     {
         destroyScenes();
 
-        m_sceneWorkspace = Editor::GetInstancePtr()->getSceneManager()->loadScene<SceneWorkspace>();
-        m_sceneWorkspaceTools = Editor::GetInstancePtr()->getSceneManager()->loadScene<SceneWorkspaceTools>();
+        m_scenePlaytest = Editor::GetInstancePtr()->getSceneManager()->loadScene<ScenePlaytest>();
+        m_scenePlaytestTools = Editor::GetInstancePtr()->getSceneManager()->loadScene<ScenePlaytestTools>();
     }
 
     //////////////////////////////////////////
-    void EditorWorkspaceManager::destroyScenes()
+    void EditorPlaytestManager::destroyScenes()
     {
-        if (m_sceneWorkspace)
+        if (m_scenePlaytest)
         {
-            Editor::GetInstancePtr()->getSceneManager()->destroyScene(m_sceneWorkspace);
-            m_sceneWorkspace.reset();
+            Editor::GetInstancePtr()->getSceneManager()->destroyScene(m_scenePlaytest);
+            m_scenePlaytest.reset();
         }
 
-        if (m_sceneWorkspaceTools)
+        if (m_scenePlaytestTools)
         {
-            Editor::GetInstancePtr()->getSceneManager()->destroyScene(m_sceneWorkspaceTools);
-            m_sceneWorkspaceTools.reset();
+            Editor::GetInstancePtr()->getSceneManager()->destroyScene(m_scenePlaytestTools);
+            m_scenePlaytestTools.reset();
         }
     }
 
     //////////////////////////////////////////
-    void EditorWorkspaceManager::clearWorkspace()
+    void EditorPlaytestManager::clearPlaytest()
     {
-        if (m_sceneWorkspace)
-            m_sceneWorkspace->destroyAllEntities();
+        if (m_scenePlaytest)
+            m_scenePlaytest->destroyAllEntities();
     }
 
     //////////////////////////////////////////
-    Vec2DU EditorWorkspaceManager::calculateWorkspaceRenderBuffer()
+    Vec2DU EditorPlaytestManager::calculatePlaytestRenderBuffer()
     {
         Rect2DF mainCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
         return Vec2DU(mainCanvasViewport.size * (Vec2DF)Editor::GetInstancePtr()->getMainRenderWindow()->getRenderTargetSize());
     }
 
     //////////////////////////////////////////
-    void EditorWorkspaceManager::notifyMainRenderWindowResized(RenderTarget* _renderTarget)
+    void EditorPlaytestManager::notifyMainRenderWindowResized(RenderTarget* _renderTarget)
     {
-        m_workspaceRenderBuffer->setSize(calculateWorkspaceRenderBuffer());
+        
     }
 
 } // namespace Maze

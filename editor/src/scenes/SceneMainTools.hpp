@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_SceneMain_hpp_))
-#define _SceneMain_hpp_
+#if (!defined(_SceneMainTools_hpp_))
+#define _SceneMainTools_hpp_
 
 
 //////////////////////////////////////////
@@ -51,37 +51,63 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(SceneMain);
+    MAZE_USING_SHARED_PTR(SceneMainTools);
+    MAZE_USING_SHARED_PTR(MeshRenderer);
+    MAZE_USING_SHARED_PTR(DebugGridRenderer);
+    MAZE_USING_SHARED_PTR(Camera3D);
 
 
     //////////////////////////////////////////
-    // Class SceneMain
+    // Class SceneMainTools
     //
     //////////////////////////////////////////
-    class SceneMain
+    class SceneMainTools
         : public ECSRenderScene
         , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneMain, ECSRenderScene);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneMainTools, ECSRenderScene);
 
     public:
     
         //////////////////////////////////////////
-        virtual ~SceneMain();
+        virtual ~SceneMainTools();
 
+
+        //////////////////////////////////////////
+        inline Camera3DPtr const& getCamera3D() const { return m_camera3D; }
+
+        //////////////////////////////////////////
+        inline MeshRendererPtr const& getDebugAxesRenderer() const { return m_debugAxesRenderer; }
+
+        //////////////////////////////////////////
+        inline DebugGridRendererPtr const& getDebugGridRenderer() const { return m_debugGridRenderer; }
+
+        //////////////////////////////////////////
+        inline CanvasPtr const& getMainCanvas() const { return m_mainCanvas; }
 
     protected:
 
         //////////////////////////////////////////
-        SceneMain();
+        SceneMainTools();
 
         //////////////////////////////////////////
-        bool init(RenderTargetPtr const& _renderTarget);
+        virtual bool init(RenderTargetPtr const& _renderTarget);
 
     protected:
+        Camera3DPtr m_camera3D;
+        Vec3DF m_camera3DTargetPosition = Vec3DF::c_zero;
+        MeshRendererPtr m_debugAxesRenderer;
+        DebugGridRendererPtr m_debugGridRenderer;
+
+        F32 m_yawAngle = 0.0f;
+        F32 m_pitchAngle = 0.0f;
+        Vec2DF m_cursorPositionLastFrame = Vec2DF::c_zero;
+        bool m_cursorDrag = false;
+
+        CanvasPtr m_mainCanvas;
     };
 
 
@@ -89,5 +115,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _SceneMain_hpp_
+#endif // _SceneMainTools_hpp_
 //////////////////////////////////////////

@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_EditorWorkspaceManager_hpp_))
-#define _EditorWorkspaceManager_hpp_
+#if (!defined(_SceneEditor_hpp_))
+#define _SceneEditor_hpp_
 
 
 //////////////////////////////////////////
@@ -41,91 +41,107 @@
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
-#include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
-#include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
-#include "maze-graphics/ecs/components/MazeCanvas.hpp"
-#include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
-#include "scenes/SceneWorkspace.hpp"
+#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
 #include "editor/EditorSceneMode.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
-    //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(EditorWorkspaceManager);
-    MAZE_USING_SHARED_PTR(RenderMesh);
-    MAZE_USING_SHARED_PTR(SceneWorkspace);
-    MAZE_USING_SHARED_PTR(SceneWorkspaceTools);
 
 
     //////////////////////////////////////////
-    // Class EditorWorkspaceManager
+    MAZE_USING_SHARED_PTR(SceneEditor);
+    MAZE_USING_SHARED_PTR(Camera3D);
+    MAZE_USING_SHARED_PTR(Canvas);
+    MAZE_USING_SHARED_PTR(AssetsController);
+    MAZE_USING_SHARED_PTR(EditorSceneModeController);
+    MAZE_USING_SHARED_PTR(MeshRenderer);
+    MAZE_USING_SHARED_PTR(DebugGridRenderer);
+    
+
+    //////////////////////////////////////////
+    // Class SceneEditor
     //
     //////////////////////////////////////////
-    class EditorWorkspaceManager
-        : public MultiDelegateCallbackReceiver
+    class SceneEditor
+        : public ECSRenderScene
+        , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        ~EditorWorkspaceManager();
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneEditor, ECSRenderScene);
+
+    public:
 
         //////////////////////////////////////////
-        static void Initialize(EditorWorkspaceManagerPtr& _manager);
-        
+        static SceneEditorPtr Create();
+    
+        //////////////////////////////////////////
+        virtual ~SceneEditor();
 
         //////////////////////////////////////////
-        static inline EditorWorkspaceManager* GetInstancePtr() { return s_instance; }
-
-        //////////////////////////////////////////
-        static inline EditorWorkspaceManager& GetInstance() { return *s_instance; }
-
-
-        //////////////////////////////////////////
-        inline RenderBufferPtr const& getWorkspaceRenderBuffer() const { return m_workspaceRenderBuffer; }
-
-        //////////////////////////////////////////
-        inline SceneWorkspacePtr const& getSceneWorkspace() const { return m_sceneWorkspace; }
-
-        //////////////////////////////////////////
-        inline SceneWorkspaceToolsPtr const& getSceneWorkspaceTools() const { return m_sceneWorkspaceTools; }
+        virtual void update(F32 _dt) MAZE_OVERRIDE;
 
 
         //////////////////////////////////////////
-        void start();
+        inline CanvasPtr const& getWorkspaceCanvas() const { return m_workspaceCanvas; }
 
-        //////////////////////////////////////////
-        void createScenes();
-
-        //////////////////////////////////////////
-        void destroyScenes();
-
-        //////////////////////////////////////////
-        void clearWorkspace();
-
-        //////////////////////////////////////////
-        Vec2DU calculateWorkspaceRenderBuffer();
 
     protected:
 
         //////////////////////////////////////////
-        EditorWorkspaceManager();
+        SceneEditor();
 
         //////////////////////////////////////////
-        bool init();
+        virtual bool init() MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        void create3D();
+
+        //////////////////////////////////////////
+        void create2D();
 
         //////////////////////////////////////////
         void notifyMainRenderWindowResized(RenderTarget* _renderTarget);
 
-    protected:
-        static EditorWorkspaceManager* s_instance;
+        //////////////////////////////////////////
+        void notifyCurrentAssetsFullPath(String const& _currentAssetsFullPath);
 
-        RenderBufferPtr m_workspaceRenderBuffer;
-        SceneWorkspacePtr m_sceneWorkspace;
-        SceneWorkspaceToolsPtr m_sceneWorkspaceTools;
+        //////////////////////////////////////////
+        void notifySceneModeChanged(EditorSceneMode _mode);
+
+        //////////////////////////////////////////
+        void notifyPlaytestModeEnabledChanged(bool _value);
+
+        //////////////////////////////////////////
+        void updateAssetsController();
+
+
+        //////////////////////////////////////////
+        void destroySceneModeController();
+
+        //////////////////////////////////////////
+        void createSceneModeController();
+
+    protected:
+        EditorSceneModeControllerPtr m_sceneModeController;
+
+        
+        CanvasPtr m_workspaceCanvas;
+        SpritePtr m_workspaceSprite;
+        SpriteRenderer2DPtr m_workspaceSpriteRenderer;
+
+        CanvasPtr m_topMenuBarCanvas;
+        CanvasPtr m_hierarchyCanvas;
+        CanvasPtr m_inspectorCanvas;
+        CanvasPtr m_assetsCanvas;
+        CanvasPtr m_previewCanvas;
+        CanvasPtr m_topBarCanvas;
+
+        AssetsControllerPtr m_assetsController;
     };
 
 
@@ -133,5 +149,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _EditorWorkspaceManager_hpp_
+#endif // _SceneEditor_hpp_
 //////////////////////////////////////////

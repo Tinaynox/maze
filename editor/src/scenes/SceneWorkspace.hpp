@@ -45,6 +45,7 @@
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "scenes/SceneMain.hpp"
 
 
 //////////////////////////////////////////
@@ -59,13 +60,12 @@ namespace Maze
     //
     //////////////////////////////////////////
     class SceneWorkspace
-        : public ECSRenderScene
-        , public MultiDelegateCallbackReceiver
+        : public SceneMain
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneWorkspace, ECSRenderScene);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneWorkspace, SceneMain);
 
     public:
 
@@ -92,7 +92,6 @@ namespace Maze
         virtual ECSWorld* assignWorld() MAZE_OVERRIDE;
 
     protected:
-        MeshRendererPtr m_meshRenderer;
     };
 
 

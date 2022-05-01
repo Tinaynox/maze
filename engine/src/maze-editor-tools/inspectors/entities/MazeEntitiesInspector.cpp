@@ -78,11 +78,7 @@ namespace Maze
         if (m_addComponentButton)
             m_addComponentButton->eventClick.unsubscribe(this);
 
-        if (EntityManager::GetInstancePtr())
-        {
-            if (EntityManager::GetInstancePtr()->getDefaultWorld())
-            EntityManager::GetInstancePtr()->getDefaultWorld()->eventEntityChanged.unsubscribe(this);
-        }
+        setECSWorld(nullptr);
     }
 
     //////////////////////////////////////////
@@ -136,8 +132,6 @@ namespace Maze
             Vec2DF(1.0f, 0.5f),
             Vec2DF(1.0f, 0.5f));
         m_addComponentButton->eventClick.subscribe(this, &EntitiesInspector::notifyAddComponentButton);
-        
-        EntityManager::GetInstancePtr()->getDefaultWorld()->eventEntityChanged.subscribe(this, &EntitiesInspector::notifyEntityChanged);
 
         return true;
     }
@@ -158,6 +152,11 @@ namespace Maze
     void EntitiesInspector::setEntities(Set<EntityPtr> const& _entities)
     {
         m_entities = _entities;
+
+        if (_entities.size())
+            setECSWorld((*_entities.begin())->getECSWorld()->cast<ECSWorld>());
+        else
+            setECSWorld(nullptr);
 
         m_entitiesPropertiesListDirty = true;
     }
@@ -190,9 +189,9 @@ namespace Maze
     void EntitiesInspector::updatePropertyValues()
     {
         for (Map<ClassUID, ComponentEditorPtr>::iterator    it = m_componentEditors.begin(),
-            end = m_componentEditors.end();
-            it != end;
-            ++it)
+                                                            end = m_componentEditors.end();
+                                                            it != end;
+                                                            ++it)
         {
             ClassUID componentUID = it->first;
 
@@ -200,7 +199,8 @@ namespace Maze
             for (EntityPtr const& entity : m_entities)
             {
                 ComponentPtr const& component = entity->getComponentByUID(componentUID);
-                components.insert(component);
+                if (component)
+                    components.insert(component);
             }
 
             it->second->updatePropertyValues(components);
@@ -216,9 +216,9 @@ namespace Maze
 
         // Remove unnecessary editors
         for (Map<ClassUID, ComponentEditorPtr>::iterator    it = m_componentEditors.begin(),
-            end = m_componentEditors.end();
-            it != end;
-            )
+                                                            end = m_componentEditors.end();
+                                                            it != end;
+                                                            )
         {
             if (std::find_if(
                 componentMetaClasses.begin(),
@@ -323,6 +323,25 @@ namespace Maze
         {
             if (m_entities.find(_entity->getSharedPtr()) != m_entities.end())
                 m_entitiesPropertiesListDirty = true;
+        }
+    }
+
+    //////////////////////////////////////////
+    void EntitiesInspector::setECSWorld(ECSWorldPtr const& _world)
+    {
+        if (m_world == _world)
+            return;
+
+        if (m_world)
+        {
+            m_world->eventEntityChanged.unsubscribe(this);
+        }
+
+        m_world = _world;
+
+        if (m_world)
+        {
+            m_world->eventEntityChanged.subscribe(this, &EntitiesInspector::notifyEntityChanged);
         }
     }
 

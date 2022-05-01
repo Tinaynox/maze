@@ -84,7 +84,7 @@
 #include "maze-editor-tools/ecs/components/MazeDebugGridRenderer.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
 #include "Editor.hpp"
-#include "scenes/SceneMain.hpp"
+#include "scenes/SceneEditor.hpp"
 #include "scenes/SceneWorkspaceTools.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorWorkspaceManager.hpp"
@@ -130,7 +130,7 @@ namespace Maze
         if (!EditorSceneModeController::init())
             return false;
 
-        SceneWorkspaceToolsPtr const& scene = EditorWorkspaceManager::GetInstancePtr()->getSceneWorkspaceTools();
+        SceneMainToolsPtr const& scene = EditorManager::GetInstancePtr()->getSceneMainTools();
         scene->getCamera3D()->getEntityRaw()->setActiveSelf(true);
         scene->getCamera3D()->setClearColor(ColorU32(99, 101, 140, 255));
         scene->getMainCanvas()->setClearColorFlag(false);
@@ -248,19 +248,24 @@ namespace Maze
         m_topBarRightLayout->getEntityRaw()->ensureComponent<SizePolicy2D>();
         m_topBarRightLayout->setSpacing(2.0f);
 
-        ClickButton2DPtr saveButton = UIHelper::CreateDefaultClickButton(
-            "Save",
-            Vec2DF(42.0f, 18.0f),
-            Vec2DF(-2.0f, -2.0f),
-            m_topBarRightLayout->getTransform(),
-            scene.get(),
-            Vec2DF(1.0f, 1.0f),
-            Vec2DF(1.0f, 1.0f));
-        saveButton->eventClick.subscribe(
-            [](Button2D* _button, CursorInputEvent const& _event)
-            {
-                EditorPrefabManager::GetInstancePtr()->saveAssetFile();
-            });
+        bool playtestModeEnabled = EditorManager::GetInstancePtr()->getPlaytestModeEnabled();
+
+        if (!playtestModeEnabled)
+        {
+            ClickButton2DPtr saveButton = UIHelper::CreateDefaultClickButton(
+                "Save",
+                Vec2DF(42.0f, 18.0f),
+                Vec2DF(-2.0f, -2.0f),
+                m_topBarRightLayout->getTransform(),
+                scene.get(),
+                Vec2DF(1.0f, 1.0f),
+                Vec2DF(1.0f, 1.0f));
+            saveButton->eventClick.subscribe(
+                [](Button2D* _button, CursorInputEvent const& _event)
+                {
+                    EditorPrefabManager::GetInstancePtr()->saveAssetFile();
+                });
+        }
 
         ClickButton2DPtr closeButton = UIHelper::CreateDefaultClickButton(
             "X",
@@ -301,7 +306,7 @@ namespace Maze
         SpritePtr const& _sprite,
         ColorU32 const& _spriteColor)
     {
-        SceneWorkspaceToolsPtr const& scene = EditorWorkspaceManager::GetInstancePtr()->getSceneWorkspaceTools();
+        SceneMainToolsPtr const& scene = EditorManager::GetInstancePtr()->getSceneMainTools();
 
         ToggleButton2DPtr button = UIHelper::CreateToggleButton(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
@@ -341,7 +346,7 @@ namespace Maze
     //////////////////////////////////////////
     void EditorSceneModeControllerPrefab::updateDebugAxes()
     {
-        SceneWorkspaceToolsPtr const& scene = EditorWorkspaceManager::GetInstancePtr()->getSceneWorkspaceTools();
+        SceneMainToolsPtr const& scene = EditorManager::GetInstancePtr()->getSceneMainTools();
 
         bool value = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getDebugAxesEnabled();
         scene->getDebugAxesRenderer()->getEntityRaw()->setActiveSelf(value);
@@ -351,7 +356,7 @@ namespace Maze
     //////////////////////////////////////////
     void EditorSceneModeControllerPrefab::updateDebugGrid()
     {
-        SceneWorkspaceToolsPtr const& scene = EditorWorkspaceManager::GetInstancePtr()->getSceneWorkspaceTools();
+        SceneMainToolsPtr const& scene = EditorManager::GetInstancePtr()->getSceneMainTools();
 
         bool value = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getDebugGridEnabled();
         scene->getDebugGridRenderer()->getEntityRaw()->setActiveSelf(value);

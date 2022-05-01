@@ -90,7 +90,7 @@
 #include "managers/EditorPrefabManager.hpp"
 #include "Editor.hpp"
 #include "settings/MazeEditorSettings.hpp"
-#include "scenes/SceneMain.hpp"
+#include "scenes/SceneEditor.hpp"
 #include "scenes/SceneSelectMode.hpp"
 
 
@@ -135,7 +135,7 @@ namespace Maze
             if (path.empty())
                 return;
 
-            SceneManager::GetInstancePtr()->unloadScene<SceneMain>();
+            SceneManager::GetInstancePtr()->unloadScene<SceneEditor>();
 
             TaskManager::GetInstancePtr()->addDelayedMainThreadTask(
                 2,
@@ -145,7 +145,7 @@ namespace Maze
                     editorSettings->setAssetsFullPath(path);
                     SettingsManager::GetInstancePtr()->saveSettings();
 
-                    SceneManager::GetInstancePtr()->loadScene<SceneMain>();
+                    SceneManager::GetInstancePtr()->loadScene<SceneEditor>();
                 });
         }
 
@@ -161,7 +161,7 @@ namespace Maze
             SettingsManager::GetInstancePtr()->saveSettings();
 
             SceneManager::GetInstancePtr()->loadScene<SceneSelectMode>();
-            SceneManager::GetInstancePtr()->unloadScene<SceneMain>();
+            SceneManager::GetInstancePtr()->unloadScene<SceneEditor>();
         }
     };
 

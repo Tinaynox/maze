@@ -89,7 +89,6 @@ namespace Maze
         //////////////////////////////////////////
         inline MultiDelegate<String const&>& getAssetsFullPathChangedEvent() { return m_assetsFullPath.eventValueChanged; }
 
-
     protected:
 
         ObservableValue<EditorMode> m_editorMode = EditorMode::None;

@@ -88,6 +88,7 @@ namespace Maze
         PhysicsMaterial2D,
         Shader,
         SelectAsset,
+        Play,
         Pause,
         StepUpdate,
         Prefab,

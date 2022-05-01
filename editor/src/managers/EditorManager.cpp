@@ -90,7 +90,12 @@
 #include "managers/EditorGizmosManager.hpp"
 #include "managers/EditorEntityManager.hpp"
 #include "managers/EditorWorkspaceManager.hpp"
+#include "managers/EditorPlaytestManager.hpp"
 #include "layout/EditorLayout.hpp"
+#include "scenes/SceneWorkspace.hpp"
+#include "scenes/SceneWorkspaceTools.hpp"
+#include "scenes/ScenePlaytest.hpp"
+#include "scenes/ScenePlaytestTools.hpp"
 
 
 //////////////////////////////////////////
@@ -151,6 +156,10 @@ namespace Maze
         if (!m_editorWorkspaceManager)
             return false;
 
+        EditorPlaytestManager::Initialize(m_editorPlaytestManager);
+        if (!m_editorPlaytestManager)
+            return false;
+
         return true;
     }
 
@@ -191,7 +200,7 @@ namespace Maze
     void EditorManager::openPrefab(EntityPtr const& _value)
     {
         setSceneMode(EditorSceneMode::Prefab);
-        m_editorWorkspaceManager->getSceneWorkspace()->destroyAllEntitiesExcept(_value);
+        getSceneMain()->destroyAllEntitiesExcept(_value);
         m_editorPrefabManager->setPrefabAssetFile(nullptr);
         m_editorPrefabManager->setPrefabEntity(_value);
 
@@ -202,7 +211,7 @@ namespace Maze
     void EditorManager::openPrefab(AssetFilePtr const& _value)
     {
         setSceneMode(EditorSceneMode::Prefab);
-        m_editorWorkspaceManager->getSceneWorkspace()->destroyAllEntities();
+        getSceneMain()->destroyAllEntities();
         m_editorPrefabManager->setPrefabAssetFile(_value);
 
         setWindowTitle("Editor - %s", _value->getFileName().c_str());
@@ -211,7 +220,7 @@ namespace Maze
     //////////////////////////////////////////
     EntityPtr EditorManager::createNewPrefab()
     {        
-        EntityPtr gameObject = m_editorWorkspaceManager->getSceneWorkspace()->createEntity("Entity");
+        EntityPtr gameObject = getSceneMain()->createEntity("Entity");
         openPrefab(gameObject);
 
         return gameObject;
@@ -221,6 +230,7 @@ namespace Maze
     void EditorManager::start()
     {
         m_editorWorkspaceManager->start();
+        m_editorPlaytestManager->start();
     }
 
     //////////////////////////////////////////
@@ -235,6 +245,49 @@ namespace Maze
     void EditorManager::setWindowTitle(String const& _title)
     {
         Editor::GetInstancePtr()->getMainRenderWindow()->getWindow()->setTitle(_title);
+    }
+
+    //////////////////////////////////////////
+    void EditorManager::setPlaytestModeEnabled(bool _value)
+    {
+        if (m_playtestModeEnabled == _value)
+            return;
+
+        m_playtestModeEnabled = _value;
+
+        if (m_playtestModeEnabled)
+        {
+            m_editorWorkspaceManager->destroyScenes();
+            m_editorPlaytestManager->createScenes();
+        }
+        else
+        {
+            m_editorWorkspaceManager->createScenes();
+            m_editorPlaytestManager->destroyScenes();
+        }
+
+        if (m_editorPrefabManager->getPrefabAssetFile())
+            m_editorPrefabManager->updatePrefabAssetFile();
+
+        eventPlaytestModeEnabledChanged(m_playtestModeEnabled);
+    }
+
+    //////////////////////////////////////////
+    SceneMainPtr EditorManager::getSceneMain() const
+    {
+        if (m_playtestModeEnabled)
+            return m_editorPlaytestManager->getScenePlaytest();
+        else
+            return m_editorWorkspaceManager->getSceneWorkspace();
+    }
+
+    //////////////////////////////////////////
+    SceneMainToolsPtr EditorManager::getSceneMainTools() const
+    {
+        if (m_playtestModeEnabled)
+            return m_editorPlaytestManager->getScenePlaytestTools();
+        else
+            return m_editorWorkspaceManager->getSceneWorkspaceTools();
     }
 
 } // namespace Maze

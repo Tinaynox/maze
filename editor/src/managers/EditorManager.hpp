@@ -49,6 +49,8 @@
 #include "editor/EditorSceneMode.hpp"
 #include "editor/EditorMode.hpp"
 #include "managers/EditorPrefabManager.hpp"
+#include "scenes/SceneMain.hpp"
+#include "scenes/SceneMainTools.hpp"
 
 
 //////////////////////////////////////////
@@ -62,6 +64,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(EditorGizmosManager);
     MAZE_USING_SHARED_PTR(EditorEntityManager);
     MAZE_USING_SHARED_PTR(EditorWorkspaceManager);
+    MAZE_USING_SHARED_PTR(EditorPlaytestManager);
    
 
     //////////////////////////////////////////
@@ -135,10 +138,25 @@ namespace Maze
         //////////////////////////////////////////
         void setWindowTitle(String const& _title);
 
+
+        //////////////////////////////////////////
+        void setPlaytestModeEnabled(bool _value);
+
+        //////////////////////////////////////////
+        inline bool getPlaytestModeEnabled() const { return m_playtestModeEnabled; }
+
+
+        //////////////////////////////////////////
+        SceneMainPtr getSceneMain() const;
+
+        //////////////////////////////////////////
+        SceneMainToolsPtr getSceneMainTools() const;
+
     public:
 
         //////////////////////////////////////////
         MultiDelegate<EditorSceneMode> eventSceneModeChanged;
+        MultiDelegate<bool> eventPlaytestModeEnabledChanged;
 
 
     protected:
@@ -163,8 +181,11 @@ namespace Maze
         EditorGizmosManagerPtr m_editorGizmosManager;
         EditorEntityManagerPtr m_editorEntityManager;
         EditorWorkspaceManagerPtr m_editorWorkspaceManager;
+        EditorPlaytestManagerPtr m_editorPlaytestManager;
 
         String m_currentEditFileFullPath;
+
+        bool m_playtestModeEnabled = false;
     };
 
 

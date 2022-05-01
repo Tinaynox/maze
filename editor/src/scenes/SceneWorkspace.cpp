@@ -87,7 +87,7 @@ namespace Maze
     // Class SceneWorkspace
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneWorkspace, ECSRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneWorkspace, SceneMain);
 
     //////////////////////////////////////////
     SceneWorkspace::SceneWorkspace()
@@ -113,7 +113,7 @@ namespace Maze
     bool SceneWorkspace::init()
     {
         RenderWindowPtr const& renderWindow = Editor::GetInstancePtr()->getMainRenderWindow();
-        if (!ECSRenderScene::init(renderWindow))
+        if (!SceneMain::init(renderWindow))
             return false;
 
         RenderMeshManagerPtr const& renderMeshManager = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getRenderMeshManager();

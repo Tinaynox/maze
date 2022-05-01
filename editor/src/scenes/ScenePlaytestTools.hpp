@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_SceneMain_hpp_))
-#define _SceneMain_hpp_
+#if (!defined(_ScenePlaytestTools_hpp_))
+#define _ScenePlaytestTools_hpp_
 
 
 //////////////////////////////////////////
@@ -45,41 +45,61 @@
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "scenes/SceneMainTools.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(SceneMain);
+    MAZE_USING_SHARED_PTR(ScenePlaytestTools);
+    MAZE_USING_SHARED_PTR(MeshRenderer);
+    MAZE_USING_SHARED_PTR(DebugGridRenderer);
+    MAZE_USING_SHARED_PTR(Camera3D);
 
 
     //////////////////////////////////////////
-    // Class SceneMain
+    // Class ScenePlaytestTools
     //
     //////////////////////////////////////////
-    class SceneMain
-        : public ECSRenderScene
-        , public MultiDelegateCallbackReceiver
+    class ScenePlaytestTools
+        : public SceneMainTools
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneMain, ECSRenderScene);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(ScenePlaytestTools, SceneMainTools);
 
     public:
+
+        //////////////////////////////////////////
+        static ScenePlaytestToolsPtr Create();
     
         //////////////////////////////////////////
-        virtual ~SceneMain();
+        virtual ~ScenePlaytestTools();
+
+        //////////////////////////////////////////
+        virtual void update(F32 _dt) MAZE_OVERRIDE;
 
 
     protected:
 
         //////////////////////////////////////////
-        SceneMain();
+        ScenePlaytestTools();
 
         //////////////////////////////////////////
-        bool init(RenderTargetPtr const& _renderTarget);
+        virtual bool init() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        void notifyMouse(InputEventMouseData const& _data);
+
+
+        //////////////////////////////////////////
+        virtual ECSWorld* assignWorld() MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
+        void notifyMainRenderWindowResized(RenderTarget* _renderTarget);
 
     protected:
     };
@@ -89,5 +109,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _SceneMain_hpp_
+#endif // _ScenePlaytestTools_hpp_
 //////////////////////////////////////////

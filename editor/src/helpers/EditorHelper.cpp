@@ -89,7 +89,7 @@
 #include "managers/EditorWorkspaceManager.hpp"
 #include "Editor.hpp"
 #include "settings/MazeEditorSettings.hpp"
-#include "scenes/SceneMain.hpp"
+#include "scenes/SceneEditor.hpp"
 #include "scenes/SceneSelectMode.hpp"
 
 

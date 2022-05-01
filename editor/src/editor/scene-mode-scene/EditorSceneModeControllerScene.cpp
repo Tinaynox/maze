@@ -76,7 +76,7 @@
 #include "maze-editor-tools/ecs/components/MazeInspectorController.hpp"
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "Editor.hpp"
-#include "scenes/SceneMain.hpp"
+#include "scenes/SceneEditor.hpp"
 #include "scenes/SceneWorkspaceTools.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorWorkspaceManager.hpp"
@@ -114,7 +114,7 @@ namespace Maze
         if (!EditorSceneModeController::init())
             return false;
 
-        SceneWorkspaceToolsPtr const& scene = EditorWorkspaceManager::GetInstancePtr()->getSceneWorkspaceTools();
+        SceneMainToolsPtr const& scene = EditorManager::GetInstancePtr()->getSceneMainTools();
 
         scene->getCamera3D()->getEntityRaw()->setActiveSelf(true);
         scene->getCamera3D()->setClearColor(ColorU32(99, 101, 140, 255));

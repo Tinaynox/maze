@@ -45,6 +45,7 @@
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "scenes/SceneMainTools.hpp"
 
 
 //////////////////////////////////////////
@@ -62,13 +63,12 @@ namespace Maze
     //
     //////////////////////////////////////////
     class SceneWorkspaceTools
-        : public ECSRenderScene
-        , public MultiDelegateCallbackReceiver
+        : public SceneMainTools
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneWorkspaceTools, ECSRenderScene);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneWorkspaceTools, SceneMainTools);
 
     public:
 
@@ -80,20 +80,6 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual void update(F32 _dt) MAZE_OVERRIDE;
-
-
-
-        //////////////////////////////////////////
-        inline Camera3DPtr const& getCamera3D() const { return m_camera3D; }
-
-        //////////////////////////////////////////
-        inline MeshRendererPtr const& getDebugAxesRenderer() const { return m_debugAxesRenderer; }
-
-        //////////////////////////////////////////
-        inline DebugGridRendererPtr const& getDebugGridRenderer() const { return m_debugGridRenderer; }
-
-        //////////////////////////////////////////
-        inline CanvasPtr const& getMainCanvas() const { return m_mainCanvas; }
 
     protected:
 
@@ -115,19 +101,6 @@ namespace Maze
         void notifyMainRenderWindowResized(RenderTarget* _renderTarget);
 
     protected:
-        MeshRendererPtr m_meshRenderer;
-
-        Camera3DPtr m_camera3D;
-        Vec3DF m_camera3DTargetPosition = Vec3DF::c_zero;
-        MeshRendererPtr m_debugAxesRenderer;
-        DebugGridRendererPtr m_debugGridRenderer;
-
-        F32 m_yawAngle = 0.0f;
-        F32 m_pitchAngle = 0.0f;
-        Vec2DF m_cursorPositionLastFrame = Vec2DF::c_zero;
-        bool m_cursorDrag = false;
-
-        CanvasPtr m_mainCanvas;
     };
 
 

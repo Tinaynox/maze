@@ -24,31 +24,25 @@
 
 
 //////////////////////////////////////////
-#include "EditorWorkspaceManager.hpp"
+#include "ScenePlaytest.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
-#include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
+#include "maze-core/managers/MazeEntityManager.hpp"
+#include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
-#include "maze-core/ecs/components/MazeRotor3D.hpp"
-#include "maze-core/ecs/components/MazeSinMovement3D.hpp"
-#include "maze-core/ecs/components/MazeName.hpp"
+#include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
+#include "maze-core/math/MazeAnimationCurve.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
-#include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
-#include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
-#include "maze-graphics/managers/MazeGraphicsManager.hpp"
-#include "maze-graphics/managers/MazeSpriteManager.hpp"
-#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
-#include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
@@ -65,10 +59,10 @@
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
-#include "maze-graphics/managers/MazeGraphicsManager.hpp"
+#include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
-#include "maze-gamepad/managers/MazeGamepadManager.hpp"
-#include "maze-gamepad/gamepad/MazeGamepad.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
+#include "maze-graphics/ecs/components/MazeLight3D.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
@@ -77,111 +71,72 @@
 #include "maze-render-system-opengl-core/MazeStateMachineOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
-#include "maze-physics2d/ecs/components/MazeBoxCollider2D.hpp"
-#include "maze-physics2d/ecs/components/MazeCircleCollider2D.hpp"
-#include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
+#include "maze-ui/managers/MazeColorPickerManager.hpp"
+#include "maze-ui/ecs/components/MazeExperimental.hpp"
+#include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
+#include "maze-particles/managers/MazeParticlesManager.hpp"
+#include "managers/EditorEntityManager.hpp"
 #include "Editor.hpp"
 #include "layout/EditorLayout.hpp"
-#include "scenes/SceneWorkspace.hpp"
-#include "scenes/SceneWorkspaceTools.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class EditorWorkspaceManager
+    // Class ScenePlaytest
     //
     //////////////////////////////////////////
-    EditorWorkspaceManager* EditorWorkspaceManager::s_instance = nullptr;
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(ScenePlaytest, SceneMain);
 
     //////////////////////////////////////////
-    EditorWorkspaceManager::EditorWorkspaceManager()
+    ScenePlaytest::ScenePlaytest()
     {
-        s_instance = this;
+
+
     }
 
     //////////////////////////////////////////
-    EditorWorkspaceManager::~EditorWorkspaceManager()
+    ScenePlaytest::~ScenePlaytest()
     {
-        if (Editor::GetInstancePtr() && Editor::GetInstancePtr()->getMainRenderWindow())
-            Editor::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.unsubscribe(this);
-
-        s_instance = nullptr;
     }
 
     //////////////////////////////////////////
-    void EditorWorkspaceManager::Initialize(EditorWorkspaceManagerPtr& _manager)
+    ScenePlaytestPtr ScenePlaytest::Create()
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorWorkspaceManager, _manager, init());
+        ScenePlaytestPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(ScenePlaytest, object, init());
+        return object;
     }
 
     //////////////////////////////////////////
-    bool EditorWorkspaceManager::init()
+    bool ScenePlaytest::init()
     {
+        RenderWindowPtr const& renderWindow = Editor::GetInstancePtr()->getMainRenderWindow();
+        if (!SceneMain::init(renderWindow))
+            return false;
+
+        RenderMeshManagerPtr const& renderMeshManager = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getRenderMeshManager();
+
+        makeMainScene();
 
         return true;
     }
 
     //////////////////////////////////////////
-    void EditorWorkspaceManager::start()
+    void ScenePlaytest::update(F32 _dt)
     {
-        Editor::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &EditorWorkspaceManager::notifyMainRenderWindowResized);
+        if (!Editor::GetInstancePtr()->getRunning())
+            return;
 
-        m_workspaceRenderBuffer = RenderBuffer::Create(
-            {
-                calculateWorkspaceRenderBuffer(),
-                PixelFormat::RGBA_U8,
-                PixelFormat::DEPTH_U24
-            });
-
-        createScenes();
     }
 
     //////////////////////////////////////////
-    void EditorWorkspaceManager::createScenes()
+    ECSWorld* ScenePlaytest::assignWorld()
     {
-        destroyScenes();
-
-        m_sceneWorkspace = Editor::GetInstancePtr()->getSceneManager()->loadScene<SceneWorkspace>();
-        m_sceneWorkspaceTools = Editor::GetInstancePtr()->getSceneManager()->loadScene<SceneWorkspaceTools>();
+        return EntityManager::GetInstancePtr()->getDefaultWorld().get();
     }
 
-    //////////////////////////////////////////
-    void EditorWorkspaceManager::destroyScenes()
-    {
-        if (m_sceneWorkspace)
-        {
-            Editor::GetInstancePtr()->getSceneManager()->destroyScene(m_sceneWorkspace);
-            m_sceneWorkspace.reset();
-        }
-
-        if (m_sceneWorkspaceTools)
-        {
-            Editor::GetInstancePtr()->getSceneManager()->destroyScene(m_sceneWorkspaceTools);
-            m_sceneWorkspaceTools.reset();
-        }
-    }
-
-    //////////////////////////////////////////
-    void EditorWorkspaceManager::clearWorkspace()
-    {
-        if (m_sceneWorkspace)
-            m_sceneWorkspace->destroyAllEntities();
-    }
-
-    //////////////////////////////////////////
-    Vec2DU EditorWorkspaceManager::calculateWorkspaceRenderBuffer()
-    {
-        Rect2DF mainCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
-        return Vec2DU(mainCanvasViewport.size * (Vec2DF)Editor::GetInstancePtr()->getMainRenderWindow()->getRenderTargetSize());
-    }
-
-    //////////////////////////////////////////
-    void EditorWorkspaceManager::notifyMainRenderWindowResized(RenderTarget* _renderTarget)
-    {
-        m_workspaceRenderBuffer->setSize(calculateWorkspaceRenderBuffer());
-    }
 
 } // namespace Maze
 //////////////////////////////////////////

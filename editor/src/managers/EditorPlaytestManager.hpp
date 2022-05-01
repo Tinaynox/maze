@@ -25,13 +25,12 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_SceneMain_hpp_))
-#define _SceneMain_hpp_
+#if (!defined(_EditorPlaytestManager_hpp_))
+#define _EditorPlaytestManager_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-core/ecs/MazeECSScene.hpp"
-#include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
@@ -43,45 +42,86 @@
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
+#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
+#include "scenes/ScenePlaytest.hpp"
+#include "editor/EditorSceneMode.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(SceneMain);
+    MAZE_USING_SHARED_PTR(EditorPlaytestManager);
+    MAZE_USING_SHARED_PTR(RenderMesh);
+    MAZE_USING_SHARED_PTR(ScenePlaytest);
+    MAZE_USING_SHARED_PTR(ScenePlaytestTools);
 
 
     //////////////////////////////////////////
-    // Class SceneMain
+    // Class EditorPlaytestManager
     //
     //////////////////////////////////////////
-    class SceneMain
-        : public ECSRenderScene
-        , public MultiDelegateCallbackReceiver
+    class EditorPlaytestManager
+        : public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneMain, ECSRenderScene);
+        ~EditorPlaytestManager();
 
-    public:
-    
         //////////////////////////////////////////
-        virtual ~SceneMain();
+        static void Initialize(EditorPlaytestManagerPtr& _manager);
+        
 
+        //////////////////////////////////////////
+        static inline EditorPlaytestManager* GetInstancePtr() { return s_instance; }
+
+        //////////////////////////////////////////
+        static inline EditorPlaytestManager& GetInstance() { return *s_instance; }
+
+
+        //////////////////////////////////////////
+        inline ScenePlaytestPtr const& getScenePlaytest() const { return m_scenePlaytest; }
+
+        //////////////////////////////////////////
+        inline ScenePlaytestToolsPtr const& getScenePlaytestTools() const { return m_scenePlaytestTools; }
+
+
+        //////////////////////////////////////////
+        void start();
+
+        //////////////////////////////////////////
+        void createScenes();
+
+        //////////////////////////////////////////
+        void destroyScenes();
+
+        //////////////////////////////////////////
+        void clearPlaytest();
+
+        //////////////////////////////////////////
+        Vec2DU calculatePlaytestRenderBuffer();
 
     protected:
 
         //////////////////////////////////////////
-        SceneMain();
+        EditorPlaytestManager();
 
         //////////////////////////////////////////
-        bool init(RenderTargetPtr const& _renderTarget);
+        bool init();
+
+
+        //////////////////////////////////////////
+        void notifyMainRenderWindowResized(RenderTarget* _renderTarget);
 
     protected:
+        static EditorPlaytestManager* s_instance;
+
+        ScenePlaytestPtr m_scenePlaytest;
+        ScenePlaytestToolsPtr m_scenePlaytestTools;
     };
 
 
@@ -89,5 +129,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _SceneMain_hpp_
+#endif // _EditorPlaytestManager_hpp_
 //////////////////////////////////////////

@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_SceneMain_hpp_))
-#define _SceneMain_hpp_
+#if (!defined(_ScenePlaytest_hpp_))
+#define _ScenePlaytest_hpp_
 
 
 //////////////////////////////////////////
@@ -45,41 +45,51 @@
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "scenes/SceneMain.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(SceneMain);
+    MAZE_USING_SHARED_PTR(ScenePlaytest);
 
 
     //////////////////////////////////////////
-    // Class SceneMain
+    // Class ScenePlaytest
     //
     //////////////////////////////////////////
-    class SceneMain
-        : public ECSRenderScene
-        , public MultiDelegateCallbackReceiver
+    class ScenePlaytest
+        : public SceneMain
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneMain, ECSRenderScene);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(ScenePlaytest, SceneMain);
 
     public:
+
+        //////////////////////////////////////////
+        static ScenePlaytestPtr Create();
     
         //////////////////////////////////////////
-        virtual ~SceneMain();
+        virtual ~ScenePlaytest();
+
+        //////////////////////////////////////////
+        virtual void update(F32 _dt) MAZE_OVERRIDE;
 
 
     protected:
 
         //////////////////////////////////////////
-        SceneMain();
+        ScenePlaytest();
 
         //////////////////////////////////////////
-        bool init(RenderTargetPtr const& _renderTarget);
+        virtual bool init() MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
+        virtual ECSWorld* assignWorld() MAZE_OVERRIDE;
 
     protected:
     };
@@ -89,5 +99,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _SceneMain_hpp_
+#endif // _ScenePlaytest_hpp_
 //////////////////////////////////////////

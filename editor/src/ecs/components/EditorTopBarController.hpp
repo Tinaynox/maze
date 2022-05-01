@@ -108,6 +108,9 @@ namespace Maze
         //////////////////////////////////////////
         void notifyPauseChanged(bool const& _value);
 
+        //////////////////////////////////////////
+        void notifyPlaytestModeEnabledChanged(bool _value);
+
     protected:
         Canvas* m_canvas;
 
@@ -117,6 +120,7 @@ namespace Maze
 
         HorizontalLayout2DPtr m_layout;
 
+        ToggleButton2DPtr m_playButton;
         ToggleButton2DPtr m_pauseButton;
         ClickButton2DPtr m_stepButton;
     };
