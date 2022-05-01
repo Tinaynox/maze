@@ -83,6 +83,7 @@
 #include "maze-physics2d/ecs/components/MazeCircleCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
 #include "managers/EditorManager.hpp"
+#include "managers/EditorWorkspaceManager.hpp"
 #include "Editor.hpp"
 
 
@@ -145,8 +146,8 @@ namespace Maze
         {
             EntityPtr entity = EntitySerializationManager::GetInstancePtr()->loadPrefab(
                 m_prefabAssetFile,
-                EditorManager::GetInstancePtr()->getSceneWorkspace()->getWorld(),
-                EditorManager::GetInstancePtr()->getSceneWorkspace().get());
+                EditorWorkspaceManager::GetInstancePtr()->getSceneWorkspace()->getWorld(),
+                EditorWorkspaceManager::GetInstancePtr()->getSceneWorkspace().get());
 
             // Fix name
             entity->ensureComponent<Name>()->setName(FileHelper::GetFileNameWithoutExtension(_value->getFileName()));

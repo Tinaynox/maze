@@ -86,6 +86,7 @@
 #include "maze-particles/managers/MazeParticlesManager.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorPrefabManager.hpp"
+#include "managers/EditorWorkspaceManager.hpp"
 #include "Editor.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "scenes/SceneMain.hpp"
@@ -390,7 +391,7 @@ namespace Maze
 
             EditorManager::GetInstancePtr()->setCurrentEditFileFullPath(String());
 
-            EditorManager::GetInstancePtr()->clearWorkspace();
+            EditorWorkspaceManager::GetInstancePtr()->clearWorkspace();
 
             EditorManager::GetInstancePtr()->setSceneMode(EditorSceneMode::Scene);
         }

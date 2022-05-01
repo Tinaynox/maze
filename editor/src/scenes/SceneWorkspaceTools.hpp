@@ -25,17 +25,16 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_EditorSceneModeController_hpp_))
-#define _EditorSceneModeController_hpp_
+#if (!defined(_SceneWorkspaceTools_hpp_))
+#define _SceneWorkspaceTools_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
-#include "maze-core/utils/MazeDelegate.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
-#include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeShader.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
@@ -44,46 +43,91 @@
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
-#include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
-#include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
-#include "maze-ui/ecs/components/MazeClickButton2D.hpp"
-#include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
-#include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
+#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(EditorSceneModeController);
-    MAZE_USING_SHARED_PTR(SceneMain);
+    MAZE_USING_SHARED_PTR(SceneWorkspaceTools);
+    MAZE_USING_SHARED_PTR(MeshRenderer);
+    MAZE_USING_SHARED_PTR(DebugGridRenderer);
+    MAZE_USING_SHARED_PTR(Camera3D);
 
 
     //////////////////////////////////////////
-    // Class EditorSceneModeController
+    // Class SceneWorkspaceTools
     //
     //////////////////////////////////////////
-    class EditorSceneModeController
+    class SceneWorkspaceTools
+        : public ECSRenderScene
+        , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        virtual ~EditorSceneModeController();
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneWorkspaceTools, ECSRenderScene);
+
+    public:
+
+        //////////////////////////////////////////
+        static SceneWorkspaceToolsPtr Create();
+    
+        //////////////////////////////////////////
+        virtual ~SceneWorkspaceTools();
+
+        //////////////////////////////////////////
+        virtual void update(F32 _dt) MAZE_OVERRIDE;
+
 
 
         //////////////////////////////////////////
-        virtual void shutdown() {};
+        inline Camera3DPtr const& getCamera3D() const { return m_camera3D; }
+
+        //////////////////////////////////////////
+        inline MeshRendererPtr const& getDebugAxesRenderer() const { return m_debugAxesRenderer; }
+
+        //////////////////////////////////////////
+        inline DebugGridRendererPtr const& getDebugGridRenderer() const { return m_debugGridRenderer; }
+
+        //////////////////////////////////////////
+        inline CanvasPtr const& getMainCanvas() const { return m_mainCanvas; }
 
     protected:
 
         //////////////////////////////////////////
-        EditorSceneModeController();
+        SceneWorkspaceTools();
 
         //////////////////////////////////////////
-        bool init();
+        virtual bool init() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        void notifyMouse(InputEventMouseData const& _data);
+
+
+        //////////////////////////////////////////
+        virtual ECSWorld* assignWorld() MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
+        void notifyMainRenderWindowResized(RenderTarget* _renderTarget);
 
     protected:
+        MeshRendererPtr m_meshRenderer;
+
+        Camera3DPtr m_camera3D;
+        Vec3DF m_camera3DTargetPosition = Vec3DF::c_zero;
+        MeshRendererPtr m_debugAxesRenderer;
+        DebugGridRendererPtr m_debugGridRenderer;
+
+        F32 m_yawAngle = 0.0f;
+        F32 m_pitchAngle = 0.0f;
+        Vec2DF m_cursorPositionLastFrame = Vec2DF::c_zero;
+        bool m_cursorDrag = false;
+
+        CanvasPtr m_mainCanvas;
     };
 
 
@@ -91,5 +135,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _EditorSceneModeController_hpp_
+#endif // _SceneWorkspaceTools_hpp_
 //////////////////////////////////////////

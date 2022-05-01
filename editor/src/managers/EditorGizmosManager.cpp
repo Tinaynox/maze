@@ -199,8 +199,6 @@ namespace Maze
 
         m_gizmosElementsTexture->loadTexture(uiElementsSheet);
 
-        m_gizmosElementsTexture->saveToFileAsTGA("a.tga");
-
         for (EditorGizmosSprite spriteType = EditorGizmosSprite(0); spriteType < EditorGizmosSprite::MAX; spriteType = EditorGizmosSprite((S32)spriteType + 1))
         {
             if (m_editorGizmosSprites[(Size)spriteType])

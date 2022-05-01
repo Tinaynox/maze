@@ -89,6 +89,7 @@
 #include "maze-particles/managers/MazeParticlesManager.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorPrefabManager.hpp"
+#include "managers/EditorWorkspaceManager.hpp"
 #include "Editor.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "scenes/SceneMain.hpp"
@@ -139,7 +140,7 @@ namespace Maze
             String newPrefabFullPath = EditorToolsHelper::BuildNewAssetFileName(dir + "/New Prefab.mzprefab");
 
             String name = FileHelper::GetFileNameWithoutExtension(newPrefabFullPath);
-            EntityPtr entity = EditorManager::GetInstancePtr()->getSceneWorkspace()->createEntity(name);
+            EntityPtr entity = EditorWorkspaceManager::GetInstancePtr()->getSceneWorkspace()->createEntity(name);
             EntitySerializationManager::GetInstancePtr()->savePrefabToXMLFile(entity, newPrefabFullPath);
             AssetManager::GetInstancePtr()->updateAssets();
 

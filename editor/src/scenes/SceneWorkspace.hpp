@@ -89,14 +89,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void createTest();
+        virtual ECSWorld* assignWorld() MAZE_OVERRIDE;
 
     protected:
-        
         MeshRendererPtr m_meshRenderer;
-
-        F32 m_timer = 0.0f;
-        Transform3DPtr m_psTransform;
     };
 
 

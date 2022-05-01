@@ -61,7 +61,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(HorizontalLayout2D);
     MAZE_USING_SHARED_PTR(VerticalLayout2D);
     MAZE_USING_SHARED_PTR(SizePolicy2D);
-            
+
 
     //////////////////////////////////////////
     // Class InputSystem2D
@@ -92,6 +92,9 @@ namespace Maze
             Vector<UIElement2D*> sortedUIElements2D;
         };
 
+        //////////////////////////////////////////
+        static inline Vec2DF DefaultCoordsConverter(Vec2DF const& _coords) { return _coords; }
+
     public:
 
         //////////////////////////////////////////
@@ -104,6 +107,9 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual S32 getOrder() const MAZE_OVERRIDE { return 20000; }
+
+        //////////////////////////////////////////
+        inline void setCoordsConverter(std::function<Vec2DF(Vec2DF const&)> const& _coordsConverter) { m_coordsConverter = _coordsConverter; }
 
     protected:
 
@@ -198,6 +204,8 @@ namespace Maze
 
         bool m_sortedUIElements2DDirty;
         Vector<CanvasData> m_sortedUIElements2D;
+
+        std::function<Vec2DF(Vec2DF const&)> m_coordsConverter = DefaultCoordsConverter;
     };
 
 

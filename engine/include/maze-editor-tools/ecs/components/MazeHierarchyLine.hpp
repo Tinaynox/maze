@@ -138,6 +138,7 @@ namespace Maze
         /////////////////////////////////////////
         MultiDelegate<void*> eventUserDataChanged;
         MultiDelegate<HierarchyLine*> eventDropDownClick;
+        MultiDelegate<HierarchyLine*> eventLinePressed;
 
     protected:
 

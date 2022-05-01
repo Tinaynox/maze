@@ -76,6 +76,7 @@
 #include "maze-editor-tools/ecs/components/MazeInspectorController.hpp"
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "Editor.hpp"
+#include "managers/EditorManager.hpp"
 
 
 //////////////////////////////////////////
@@ -107,6 +108,17 @@ namespace Maze
         targetViewportZone.size *= workRenderTargetSize / fullRenderTargetSize;
 
         return targetViewportZone;
+    }
+
+    //////////////////////////////////////////
+    Vec2DF EditorLayout::ConvertRenderWindowCoordsToWorkspaceViewport(Vec2DF const& _coord)
+    {
+        RenderWindowPtr const& renderWindow = Editor::GetInstancePtr()->getMainRenderWindow();
+        Rect2DF viewport = CalculateWorkViewport(c_sceneViewport);
+
+        Vec2DF workspaceStart = viewport.position * (Vec2DF)renderWindow->getRenderTargetSize();
+
+        return _coord - workspaceStart;
     }
 
 } // namespace Maze

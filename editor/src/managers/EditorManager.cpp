@@ -88,6 +88,9 @@
 #include "managers/EditorAssetsModeManager.hpp"
 #include "managers/EditorProjectModeManager.hpp"
 #include "managers/EditorGizmosManager.hpp"
+#include "managers/EditorEntityManager.hpp"
+#include "managers/EditorWorkspaceManager.hpp"
+#include "layout/EditorLayout.hpp"
 
 
 //////////////////////////////////////////
@@ -140,6 +143,14 @@ namespace Maze
         if (!m_editorGizmosManager)
             return false;
 
+        EditorEntityManager::Initialize(m_editorEntityManager);
+        if (!m_editorEntityManager)
+            return false;
+
+        EditorWorkspaceManager::Initialize(m_editorWorkspaceManager);
+        if (!m_editorWorkspaceManager)
+            return false;
+
         return true;
     }
 
@@ -168,7 +179,7 @@ namespace Maze
     void EditorManager::clearMode()
     {
         setSceneMode(EditorSceneMode::None);
-        clearWorkspace();
+        m_editorWorkspaceManager->clearWorkspace();
 
         m_editorPrefabManager->setPrefabAssetFile(nullptr);
         m_editorPrefabManager->setPrefabEntity(nullptr);
@@ -177,16 +188,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EditorManager::clearWorkspace()
-    {
-        m_sceneWorkspace->destroyAllEntities();
-    }
-
-    //////////////////////////////////////////
     void EditorManager::openPrefab(EntityPtr const& _value)
     {
         setSceneMode(EditorSceneMode::Prefab);
-        m_sceneWorkspace->destroyAllEntitiesExcept(_value);
+        m_editorWorkspaceManager->getSceneWorkspace()->destroyAllEntitiesExcept(_value);
         m_editorPrefabManager->setPrefabAssetFile(nullptr);
         m_editorPrefabManager->setPrefabEntity(_value);
 
@@ -197,7 +202,7 @@ namespace Maze
     void EditorManager::openPrefab(AssetFilePtr const& _value)
     {
         setSceneMode(EditorSceneMode::Prefab);
-        m_sceneWorkspace->destroyAllEntities();
+        m_editorWorkspaceManager->getSceneWorkspace()->destroyAllEntities();
         m_editorPrefabManager->setPrefabAssetFile(_value);
 
         setWindowTitle("Editor - %s", _value->getFileName().c_str());
@@ -206,7 +211,7 @@ namespace Maze
     //////////////////////////////////////////
     EntityPtr EditorManager::createNewPrefab()
     {        
-        EntityPtr gameObject = m_sceneWorkspace->createEntity("Entity");
+        EntityPtr gameObject = m_editorWorkspaceManager->getSceneWorkspace()->createEntity("Entity");
         openPrefab(gameObject);
 
         return gameObject;
@@ -215,7 +220,7 @@ namespace Maze
     //////////////////////////////////////////
     void EditorManager::start()
     {
-        m_sceneWorkspace = Editor::GetInstancePtr()->getSceneManager()->loadScene<SceneWorkspace>();
+        m_editorWorkspaceManager->start();
     }
 
     //////////////////////////////////////////

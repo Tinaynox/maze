@@ -87,17 +87,8 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Camera3DPtr const& getCamera3D() const { return m_camera3D; }
+        inline CanvasPtr const& getWorkspaceCanvas() const { return m_workspaceCanvas; }
 
-        //////////////////////////////////////////
-        inline CanvasPtr const& getMainCanvas() const { return m_mainCanvas; }
-
-
-        //////////////////////////////////////////
-        inline MeshRendererPtr const& getDebugAxesRenderer() const { return m_debugAxesRenderer; }
-
-        //////////////////////////////////////////
-        inline DebugGridRendererPtr const& getDebugGridRenderer() const { return m_debugGridRenderer; }
 
     protected:
 
@@ -106,9 +97,6 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool init() MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        void notifyMouse(InputEventMouseData const& _data);
 
         //////////////////////////////////////////
         void create3D();
@@ -138,9 +126,10 @@ namespace Maze
     protected:
         EditorSceneModeControllerPtr m_sceneModeController;
 
-        Camera3DPtr m_camera3D;
-        Vec3DF m_camera3DTargetPosition = Vec3DF::c_zero;
-        CanvasPtr m_mainCanvas;
+        
+        CanvasPtr m_workspaceCanvas;
+        SpritePtr m_workspaceSprite;
+        SpriteRenderer2DPtr m_workspaceSpriteRenderer;
 
         CanvasPtr m_topMenuBarCanvas;
         CanvasPtr m_hierarchyCanvas;
@@ -150,15 +139,6 @@ namespace Maze
         CanvasPtr m_topBarCanvas;
 
         AssetsControllerPtr m_assetsController;
-
-
-        MeshRendererPtr m_debugAxesRenderer;
-        DebugGridRendererPtr m_debugGridRenderer;
-
-        F32 m_yawAngle;
-        F32 m_pitchAngle;
-        Vec2DF m_cursorPositionLastFrame;
-        bool m_cursorDrag;
     };
 
 

@@ -85,7 +85,9 @@
 #include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
 #include "Editor.hpp"
 #include "scenes/SceneMain.hpp"
+#include "scenes/SceneWorkspaceTools.hpp"
 #include "managers/EditorManager.hpp"
+#include "managers/EditorWorkspaceManager.hpp"
 #include "managers/EditorGizmosManager.hpp"
 #include "settings/MazeEditorSceneSettings.hpp"
 
@@ -115,37 +117,38 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    EditorSceneModeControllerPrefabPtr EditorSceneModeControllerPrefab::Create(SceneMain* _sceneMain)
+    EditorSceneModeControllerPrefabPtr EditorSceneModeControllerPrefab::Create()
     {
         EditorSceneModeControllerPrefabPtr obj;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorSceneModeControllerPrefab, obj, init(_sceneMain));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorSceneModeControllerPrefab, obj, init());
         return obj;
     }
 
     //////////////////////////////////////////
-    bool EditorSceneModeControllerPrefab::init(SceneMain* _sceneMain)
+    bool EditorSceneModeControllerPrefab::init()
     {
-        if (!EditorSceneModeController::init(_sceneMain))
+        if (!EditorSceneModeController::init())
             return false;
 
-        m_sceneMain->getCamera3D()->getEntityRaw()->setActiveSelf(true);
-        m_sceneMain->getCamera3D()->setClearColor(ColorU32(99, 101, 140, 255));
-        m_sceneMain->getMainCanvas()->setClearColorFlag(false);
+        SceneWorkspaceToolsPtr const& scene = EditorWorkspaceManager::GetInstancePtr()->getSceneWorkspaceTools();
+        scene->getCamera3D()->getEntityRaw()->setActiveSelf(true);
+        scene->getCamera3D()->setClearColor(ColorU32(99, 101, 140, 255));
+        scene->getMainCanvas()->setClearColorFlag(false);
 
 
         m_canvasNode = SpriteHelper::CreateTransform2D(
-            m_sceneMain->getMainCanvas()->getTransform()->getSize(),
+            scene->getMainCanvas()->getTransform()->getSize(),
             Vec2DF::c_zero,
-            m_sceneMain->getMainCanvas()->getTransform(),
-            m_sceneMain,
+            scene->getMainCanvas()->getTransform(),
+            scene.get(),
             Vec2DF::c_zero,
             Vec2DF::c_zero);
         m_canvasNode->getEntityRaw()->ensureComponent<SizePolicy2D>();
 
-        EntityPtr mainNodeEntity = m_sceneMain->createEntity("Main Node");
+        EntityPtr mainNodeEntity = scene->createEntity("Main Node");
         m_mainNode = mainNodeEntity->ensureComponent<Transform3D>();
 
-        EntityPtr debugLightEntity = m_sceneMain->createEntity("Debug Light");
+        EntityPtr debugLightEntity = scene->createEntity("Debug Light");
         m_debugLight = debugLightEntity->createComponent<Light3D>();
         debugLightEntity->ensureComponent<Transform3D>()->setParent(m_mainNode);
         m_debugLight->setColor(ColorU32(255, 244, 214));
@@ -162,7 +165,7 @@ namespace Maze
             Vec2DF(0.0f, 0.0f),
             MaterialManager::GetCurrentInstance()->getColorTextureMaterial(),
             m_canvasNode,
-            m_sceneMain,
+            scene.get(),
             Vec2DF(0.0f, 1.0f),
             Vec2DF(0.0f, 1.0f));
         m_topBarBackground->setColor(EditorToolsLayout::c_bodySubBackgroundColor);
@@ -175,7 +178,7 @@ namespace Maze
             m_topBarBackground->getTransform()->getSize(),
             Vec2DF::c_zero,
             m_topBarBackground->getTransform(),
-            m_sceneMain,
+            scene.get(),
             Vec2DF::c_zero,
             Vec2DF::c_zero);
         m_topBarLeftLayout->setAutoWidth(false);
@@ -237,7 +240,7 @@ namespace Maze
             m_topBarBackground->getTransform()->getSize(),
             Vec2DF::c_zero,
             m_topBarBackground->getTransform(),
-            m_sceneMain,
+            scene.get(),
             Vec2DF::c_zero,
             Vec2DF::c_zero);
         m_topBarRightLayout->setAutoWidth(false);
@@ -250,7 +253,7 @@ namespace Maze
             Vec2DF(42.0f, 18.0f),
             Vec2DF(-2.0f, -2.0f),
             m_topBarRightLayout->getTransform(),
-            m_sceneMain,
+            scene.get(),
             Vec2DF(1.0f, 1.0f),
             Vec2DF(1.0f, 1.0f));
         saveButton->eventClick.subscribe(
@@ -264,7 +267,7 @@ namespace Maze
             Vec2DF(18.0f, 18.0f),
             Vec2DF(-2.0f, -2.0f),
             m_topBarRightLayout->getTransform(),
-            m_sceneMain,
+            scene.get(),
             Vec2DF(1.0f, 1.0f),
             Vec2DF(1.0f, 1.0f));
         closeButton->eventClick.subscribe(
@@ -298,12 +301,14 @@ namespace Maze
         SpritePtr const& _sprite,
         ColorU32 const& _spriteColor)
     {
+        SceneWorkspaceToolsPtr const& scene = EditorWorkspaceManager::GetInstancePtr()->getSceneWorkspaceTools();
+
         ToggleButton2DPtr button = UIHelper::CreateToggleButton(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
             Vec2DF(18.0f, 18.0f),
             Vec2DF::c_zero,
             _parent,
-            m_sceneMain,
+            scene.get(),
             Vec2DF::c_zero,
             Vec2DF::c_zero,
             { 200, 200, 200 },
@@ -319,7 +324,7 @@ namespace Maze
             Vec2DF::c_zero,
             nullptr,
             button->getTransform(),
-            m_sceneMain);
+            scene.get());
         sprite->setColor(_spriteColor);
 
         return button;
@@ -336,16 +341,20 @@ namespace Maze
     //////////////////////////////////////////
     void EditorSceneModeControllerPrefab::updateDebugAxes()
     {
+        SceneWorkspaceToolsPtr const& scene = EditorWorkspaceManager::GetInstancePtr()->getSceneWorkspaceTools();
+
         bool value = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getDebugAxesEnabled();
-        m_sceneMain->getDebugAxesRenderer()->getEntityRaw()->setActiveSelf(value);
+        scene->getDebugAxesRenderer()->getEntityRaw()->setActiveSelf(value);
         m_axesButton->setChecked(value);
     }
 
     //////////////////////////////////////////
     void EditorSceneModeControllerPrefab::updateDebugGrid()
     {
+        SceneWorkspaceToolsPtr const& scene = EditorWorkspaceManager::GetInstancePtr()->getSceneWorkspaceTools();
+
         bool value = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorSceneSettings>()->getDebugGridEnabled();
-        m_sceneMain->getDebugGridRenderer()->getEntityRaw()->setActiveSelf(value);
+        scene->getDebugGridRenderer()->getEntityRaw()->setActiveSelf(value);
         m_gridButton->setChecked(value);
     }
 

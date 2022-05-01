@@ -102,6 +102,7 @@
 #include "helpers/EditorProjectModeHelper.hpp"
 #include "managers/EditorAssetsModeManager.hpp"
 #include "managers/EditorManager.hpp"
+#include "managers/EditorWorkspaceManager.hpp"
 #include "editor/EditorSceneModeController.hpp"
 #include "editor/scene-mode-none/EditorSceneModeControllerNone.hpp"
 #include "editor/scene-mode-prefab/EditorSceneModeControllerPrefab.hpp"
@@ -120,22 +121,12 @@ namespace Maze
 
     //////////////////////////////////////////
     SceneMain::SceneMain()
-        : m_yawAngle(0.0f)
-        , m_pitchAngle(0.0f)
-        , m_cursorPositionLastFrame(Vec2DF::c_zero)
-        , m_cursorDrag(false)
     {
     }
 
     //////////////////////////////////////////
     SceneMain::~SceneMain()
     {
-        InputManager* inputManager = InputManager::GetInstancePtr();
-        if (inputManager)
-        {
-            inputManager->eventMouse.unsubscribe(this);
-        }
-
         if (Editor::GetInstancePtr())
         {
             if (Editor::GetInstancePtr()->getMainRenderWindow())
@@ -172,9 +163,6 @@ namespace Maze
 
         Editor::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &SceneMain::notifyMainRenderWindowResized);
 
-        InputManager* inputManager = InputManager::GetInstancePtr();
-        inputManager->eventMouse.subscribe(this, &SceneMain::notifyMouse);
-
         create3D();
         create2D();
         createSceneModeController();
@@ -188,185 +176,12 @@ namespace Maze
     //////////////////////////////////////////
     void SceneMain::update(F32 _dt)
     {
-        ECSRenderScene::update(_dt);
-
-        if (!Editor::GetInstancePtr()->getMainRenderWindow()->getFocused())
-            return;
-
-        Rect2DF viewportRect = m_camera3D->getViewport();
-        viewportRect.position *= (Vec2DF)m_camera3D->getRenderTarget()->getRenderTargetSize();
-        viewportRect.size *= (Vec2DF)m_camera3D->getRenderTarget()->getRenderTargetSize();
-
-        AABB2D aabb = AABB2D::FromRect2D(viewportRect);
-
-        if (m_camera3D && aabb.contains(InputManager::GetInstancePtr()->getCursorPosition(0)))
-        {
-            Vec3DF cameraForwardDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3DF::c_unitZ;
-            Vec3DF cameraRightDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3DF::c_unitX;
-
-            F32 speed = 3.0f;
-
-            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::LShift) || InputManager::GetInstancePtr()->getKeyState(KeyCode::RShift))
-            {
-                speed *= 3.0f;
-            }
-
-            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::W))
-            {
-                m_camera3DTargetPosition += cameraForwardDirection * _dt * speed;
-            }
-            else
-            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::S))
-            {
-                m_camera3DTargetPosition += -cameraForwardDirection * _dt * speed;
-            }
-
-            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::A))
-            {
-                m_camera3DTargetPosition += -cameraRightDirection * _dt * speed;
-            }
-            else
-            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::D))
-            {
-                m_camera3DTargetPosition += cameraRightDirection * _dt * speed;
-            }
-            else
-            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::Q))
-            {
-                m_yawAngle -= _dt * Math::c_pi;
-            }
-            else
-            if (InputManager::GetInstancePtr()->getKeyState(KeyCode::E))
-            {
-                m_yawAngle += _dt * Math::c_pi;
-            }
-        }
-
-
-        if (m_camera3D)
-        {
-            m_camera3D->getTransform()->setLocalPosition(
-                Math::Lerp(
-                    m_camera3D->getTransform()->getLocalPosition(),
-                    m_camera3DTargetPosition,
-                    _dt * 16.0f));
-
-            Quaternion q = Quaternion::Slerp(
-                36.0f * _dt,
-                m_camera3D->getTransform()->getLocalRotation(),
-                Quaternion(m_pitchAngle, m_yawAngle, 0.0f));
-            m_camera3D->getTransform()->setLocalRotation(q);
-        }
-    }
-
-    //////////////////////////////////////////
-    void SceneMain::notifyMouse(InputEventMouseData const& _data)
-    {
-        if (!Editor::GetInstancePtr()->getMainRenderWindow()->getFocused())
-            return;
-
-        switch (_data.type)
-        {
-            case InputEventMouseType::Move:
-            {
-                Vec2DF cursorPosition = Vec2DF((F32)_data.x, (F32)_data.y);
-
-                if (m_cursorDrag)
-                {
-                    Vec2DF deltaPosition = cursorPosition - m_cursorPositionLastFrame;
-
-                    if (m_camera3D && m_camera3D->getEntityRaw()->getActiveSelf())
-                    {
-                        m_yawAngle += deltaPosition.x * 0.0075f;
-                        m_pitchAngle -= deltaPosition.y * 0.0075f;
-                    }
-                }
-
-                m_cursorPositionLastFrame = cursorPosition;
-                break;
-            }
-            case InputEventMouseType::ButtonDown:
-            {
-                if (_data.buttonId == 1)
-                {
-                    if (m_camera3D && m_camera3D->getEntityRaw()->getActiveSelf())
-                    {
-                        Vec2DF cursorPosition = Vec2DF((F32)_data.x, (F32)_data.y);
-                        Rect2DF viewportRect(
-                            m_camera3D->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
-                            m_camera3D->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
-                            m_camera3D->getViewport().size.x * m_renderTarget->getRenderTargetSize().x,
-                            m_camera3D->getViewport().size.y * m_renderTarget->getRenderTargetSize().y);
-
-                        if (viewportRect.contains(cursorPosition))
-                        {
-                            m_cursorDrag = true;
-                        }
-                    }
-                }
-                break;
-            }
-            case InputEventMouseType::ButtonUp:
-            {
-                if (_data.buttonId == 1)
-                {
-                    m_cursorDrag = false;
-                }
-                break;
-            }
-            default:
-            {
-                break;
-            }
-        }
     }
 
     //////////////////////////////////////////
     void SceneMain::create3D()
     {
-        InputManager* inputManager = InputManager::GetInstancePtr();
-
-        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
-        SpriteManagerPtr const& spriteManager = renderSystem->getSpriteManager();
-        RenderMeshManagerPtr const& renderMeshManager = renderSystem->getRenderMeshManager();
-        MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
-
-        EntityManager* entityManager = EntityManager::GetInstancePtr();
-        ECSWorldPtr const& world = entityManager->getDefaultWorld();
-
-        RenderWindowPtr const& renderTarget = Editor::GetInstancePtr()->getMainRenderWindow();
-
-
-        // Camera
-        EntityPtr cameraEntity = createEntity();
-        m_camera3D = cameraEntity->createComponent<Camera3D>();
-        m_camera3DTargetPosition = Vec3DF(3.0f, 3.0f, -5.0f);
-        m_camera3D->getTransform()->setLocalPosition(m_camera3DTargetPosition);
-        m_yawAngle = Math::DegreesToRadians(-30.0f);
-        m_pitchAngle = Math::DegreesToRadians(20.0f);
-        m_camera3D->getTransform()->setLocalRotation(Quaternion(m_pitchAngle, m_yawAngle, 0.0f));
-
-        m_camera3D->setFOV(Math::DegreesToRadians(60));
-        m_camera3D->setRenderTarget(renderTarget);
-        m_camera3D->setClearColor(ColorU32(99, 101, 140, 255));
-        m_camera3D->getEntityRaw()->ensureComponent<Name>("Camera");
-        Rect2DF sceneViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
-        m_camera3D->setViewport(sceneViewport);
-        m_camera3D->setRenderMask(m_camera3D->getRenderMask() | (S32)DefaultRenderMask::Gizmos);
-        GizmosManager::GetInstancePtr()->setCamera(m_camera3D);
-
-        // DebugGrid
-        EntityPtr debugGridRendererEntity = createEntity();
-        m_debugGridRenderer = debugGridRendererEntity->createComponent<DebugGridRenderer>(m_camera3D);
-
-        // Axes
-        EntityPtr axesMeshRendererEntity = createEntity();
-        axesMeshRendererEntity->createComponent<Transform3D>();
-        m_debugAxesRenderer = axesMeshRendererEntity->createComponent<MeshRenderer>();
-        m_debugAxesRenderer->setRenderMesh(RenderMesh::Create(MeshHelper::CreateCoordinateAxes()));
-        m_debugAxesRenderer->setMaterial(GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::DebugAxis));
-        m_debugAxesRenderer->getRenderMask()->setMask(DefaultRenderMask::Gizmos);
+        
     }
 
     //////////////////////////////////////////
@@ -549,17 +364,26 @@ namespace Maze
 
         {
             EntityPtr mainCanvasEntity = createEntity();
-            m_mainCanvas = mainCanvasEntity->createComponent<Canvas>();
-            m_mainCanvas->setClearColorFlag(false);
-            m_mainCanvas->setClearColor(ColorU32::c_zero);
+            m_workspaceCanvas = mainCanvasEntity->createComponent<Canvas>();
+            m_workspaceCanvas->setClearColorFlag(false);
+            m_workspaceCanvas->setClearColor(ColorU32::c_zero);
             Rect2DF mainCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
-            m_mainCanvas->setViewport(mainCanvasViewport);
-            m_mainCanvas->setRenderTarget(m_renderTarget);
-            m_mainCanvas->setSortOrder(-1000000);
+            m_workspaceCanvas->setViewport(mainCanvasViewport);
+            m_workspaceCanvas->setRenderTarget(m_renderTarget);
+            m_workspaceCanvas->setSortOrder(-1000000);
 
-            EntityPtr mainCanvasControllerEntity = createEntity();
-            EditorMainCanvasControllerPtr mainCanvasController = EditorMainCanvasController::Create(m_mainCanvas.get());
-            mainCanvasControllerEntity->addComponent(mainCanvasController);
+            RenderBufferPtr const& workspaceRenderBuffer = EditorWorkspaceManager::GetInstancePtr()->getWorkspaceRenderBuffer();
+            m_workspaceSprite = Sprite::Create(workspaceRenderBuffer->getColorTexture()->cast<Texture2D>());
+            m_workspaceSpriteRenderer = SpriteHelper::CreateSprite(
+                m_workspaceSprite,
+                m_workspaceCanvas->getTransform()->getSize(),
+                Vec2DF(0.0f, 0.0f),
+                nullptr,
+                m_workspaceCanvas->getTransform(),
+                this,
+                Vec2DF::c_zero,
+                Vec2DF::c_zero);
+            m_workspaceSpriteRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
         }
 
         {
@@ -668,10 +492,10 @@ namespace Maze
             m_topMenuBarCanvas->setViewport(topMenuBarCanvasViewport);
         }
 
-        if (m_mainCanvas)
+        if (m_workspaceCanvas)
         {
             Rect2DF mainCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
-            m_mainCanvas->setViewport(mainCanvasViewport);
+            m_workspaceCanvas->setViewport(mainCanvasViewport);
         }
 
         if (m_hierarchyCanvas)
@@ -696,12 +520,6 @@ namespace Maze
         {
             Rect2DF previewCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_previewViewport);
             m_previewCanvas->setViewport(previewCanvasViewport);
-        }
-
-        if (m_camera3D)
-        {
-            Rect2DF sceneViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
-            m_camera3D->setViewport(sceneViewport);
         }
     }
 
@@ -754,17 +572,17 @@ namespace Maze
         {
             case EditorSceneMode::Prefab:
             {
-                m_sceneModeController = EditorSceneModeControllerPrefab::Create(this);
+                m_sceneModeController = EditorSceneModeControllerPrefab::Create();
                 break;
             }
             case EditorSceneMode::Scene:
             {
-                m_sceneModeController = EditorSceneModeControllerScene::Create(this);
+                m_sceneModeController = EditorSceneModeControllerScene::Create();
                 break;
             }
             default:
             {
-                m_sceneModeController = EditorSceneModeControllerNone::Create(this);
+                m_sceneModeController = EditorSceneModeControllerNone::Create();
                 break;
             }
         }

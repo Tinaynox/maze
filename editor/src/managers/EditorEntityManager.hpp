@@ -25,71 +25,73 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_EditorSceneModeController_hpp_))
-#define _EditorSceneModeController_hpp_
+#if (!defined(_EditorEntityManager_hpp_))
+#define _EditorEntityManager_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-core/ecs/MazeECSScene.hpp"
-#include "maze-core/ecs/components/MazeTransform2D.hpp"
-#include "maze-core/ecs/components/MazeTransform3D.hpp"
-#include "maze-core/utils/MazeDelegate.hpp"
-#include "maze-core/math/MazeQuaternion.hpp"
-#include "maze-core/system/MazeInputEvent.hpp"
-#include "maze-graphics/MazeMesh.hpp"
-#include "maze-graphics/MazeShader.hpp"
-#include "maze-graphics/MazeTexture2D.hpp"
-#include "maze-graphics/MazeMaterial.hpp"
-#include "maze-graphics/MazeRenderPass.hpp"
-#include "maze-graphics/MazeRenderTarget.hpp"
-#include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
-#include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
-#include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
-#include "maze-graphics/ecs/components/MazeCanvas.hpp"
-#include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
-#include "maze-ui/ecs/components/MazeClickButton2D.hpp"
-#include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
-#include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
+#include "maze-core/MazeCoreHeader.hpp"
+#include "maze-core/utils/MazeMultiDelegate.hpp"
+#include "maze-core/utils/MazeEnumClass.hpp"
+#include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/system/MazeTimer.hpp"
+#include "maze-core/ecs/MazeECSWorld.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(EditorSceneModeController);
-    MAZE_USING_SHARED_PTR(SceneMain);
+    MAZE_USING_SHARED_PTR(EditorEntityManager);
 
 
     //////////////////////////////////////////
-    // Class EditorSceneModeController
+    // Class EditorEntityManager
     //
     //////////////////////////////////////////
-    class EditorSceneModeController
+    class EditorEntityManager
+        : public Updatable
     {
     public:
 
         //////////////////////////////////////////
-        virtual ~EditorSceneModeController();
+        virtual ~EditorEntityManager();
+
+        //////////////////////////////////////////
+        static void Initialize(EditorEntityManagerPtr& _updateManager);
 
 
         //////////////////////////////////////////
-        virtual void shutdown() {};
+        virtual void update(F32 _dt) MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
+        inline ECSWorldPtr const& getWorkspaceWorld() const { return m_workspaceWorld; }
+
+
+        //////////////////////////////////////////
+        static inline EditorEntityManager* GetInstancePtr() { return s_instance; }
+
+        //////////////////////////////////////////
+        static inline EditorEntityManager& GetInstance() { return *s_instance; }
 
     protected:
 
         //////////////////////////////////////////
-        EditorSceneModeController();
+        EditorEntityManager();
 
         //////////////////////////////////////////
-        bool init();
+        virtual bool init();
 
-    protected:
+    private:
+        static EditorEntityManager* s_instance;
+
+        ECSWorldPtr m_workspaceWorld;
     };
-
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _EditorSceneModeController_hpp_
+#endif // _EditorEntityManager_hpp_
 //////////////////////////////////////////

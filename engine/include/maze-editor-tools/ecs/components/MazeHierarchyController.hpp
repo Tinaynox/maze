@@ -173,6 +173,9 @@ namespace Maze
         void notifyHierarchyLineDropDownClick(HierarchyLine* _hierarchyLine);
 
         //////////////////////////////////////////
+        void notifyHierarchyLinePressed(HierarchyLine* _hierarchyLine);
+
+        //////////////////////////////////////////
         void notifyEntityRemoved(EntityPtr const& _entity);
 
         //////////////////////////////////////////

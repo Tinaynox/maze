@@ -93,6 +93,7 @@
 #include "scenes/SceneSelectMode.hpp"
 #include "scenes/SceneDebug.hpp"
 #include "managers/EditorGizmosManager.hpp"
+#include "managers/EditorManager.hpp"
 
 
 //////////////////////////////////////////
@@ -302,6 +303,8 @@ namespace Maze
             }
             case 11:
             {
+                EditorManager::GetInstancePtr()->start();
+
                 SceneManager::GetInstancePtr()->loadScene<SceneDebug>();
 
                 setCurrentProgress(1.0f);

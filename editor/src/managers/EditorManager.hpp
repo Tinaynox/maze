@@ -46,7 +46,6 @@
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
-#include "scenes/SceneWorkspace.hpp"
 #include "editor/EditorSceneMode.hpp"
 #include "editor/EditorMode.hpp"
 #include "managers/EditorPrefabManager.hpp"
@@ -57,12 +56,12 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(EditorManager);
-    MAZE_USING_SHARED_PTR(RenderMesh);
-    MAZE_USING_SHARED_PTR(SceneWorkspace);
     MAZE_USING_SHARED_PTR(EditorAssetsManager);
     MAZE_USING_SHARED_PTR(EditorAssetsModeManager);
     MAZE_USING_SHARED_PTR(EditorProjectModeManager);
     MAZE_USING_SHARED_PTR(EditorGizmosManager);
+    MAZE_USING_SHARED_PTR(EditorEntityManager);
+    MAZE_USING_SHARED_PTR(EditorWorkspaceManager);
    
 
     //////////////////////////////////////////
@@ -79,7 +78,8 @@ namespace Maze
 
         //////////////////////////////////////////
         static void Initialize(EditorManagerPtr& _gameManager);
-        
+       
+
 
         //////////////////////////////////////////
         static inline EditorManager* GetInstancePtr() { return s_instance; }
@@ -102,15 +102,10 @@ namespace Maze
         //////////////////////////////////////////
         inline EditorSceneMode getSceneMode() const { return m_sceneMode; }
 
-        //////////////////////////////////////////
-        inline SceneWorkspacePtr const& getSceneWorkspace() const { return m_sceneWorkspace; }
 
 
         //////////////////////////////////////////
         void clearMode();
-
-        //////////////////////////////////////////
-        void clearWorkspace();
 
 
         //////////////////////////////////////////
@@ -161,13 +156,13 @@ namespace Maze
 
         EditorSceneMode m_sceneMode = EditorSceneMode::None;
 
-        SceneWorkspacePtr m_sceneWorkspace;
-
         EditorAssetsManagerPtr m_editorAssetsManager;
         EditorPrefabManagerPtr m_editorPrefabManager;
         EditorAssetsModeManagerPtr m_editorAssetsModeManager;
         EditorProjectModeManagerPtr m_editorProjectModeManager;
         EditorGizmosManagerPtr m_editorGizmosManager;
+        EditorEntityManagerPtr m_editorEntityManager;
+        EditorWorkspaceManagerPtr m_editorWorkspaceManager;
 
         String m_currentEditFileFullPath;
     };

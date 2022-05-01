@@ -265,31 +265,33 @@ namespace Maze
     //////////////////////////////////////////
     void InputSystem2D::notifyMouse(Maze::InputEventMouseData const& _mouseData)
     {
+        Vec2DF mousePosition = m_coordsConverter(Vec2DF((F32)_mouseData.x, (F32)_mouseData.y));
+
         switch (_mouseData.type)
         {
             case InputEventMouseType::ButtonDown:
             {
-                processCursorPress(_mouseData.window, 0, _mouseData.buttonId, Vec2DF((F32)_mouseData.x, (F32)_mouseData.y), CursorInputSource::Mouse);
+                processCursorPress(_mouseData.window, 0, _mouseData.buttonId, mousePosition, CursorInputSource::Mouse);
                 break;
             }
             case InputEventMouseType::ButtonUp:
             {
-                processCursorRelease(_mouseData.window, 0, _mouseData.buttonId, Vec2DF((F32)_mouseData.x, (F32)_mouseData.y), CursorInputSource::Mouse);
+                processCursorRelease(_mouseData.window, 0, _mouseData.buttonId, mousePosition, CursorInputSource::Mouse);
                 break;
             }
             case InputEventMouseType::Move:
             {
-                processCursorMove(_mouseData.window, 0, _mouseData.buttonId, Vec2DF((F32)_mouseData.x, (F32)_mouseData.y), CursorInputSource::Mouse);
+                processCursorMove(_mouseData.window, 0, _mouseData.buttonId, mousePosition, CursorInputSource::Mouse);
                 break;
             }
             case InputEventMouseType::Drag:
             {
-                processCursorDrag(_mouseData.window, 0, _mouseData.buttonId, Vec2DF((F32)_mouseData.x, (F32)_mouseData.y), CursorInputSource::Mouse);
+                processCursorDrag(_mouseData.window, 0, _mouseData.buttonId, mousePosition, CursorInputSource::Mouse);
                 break;
             }
             case InputEventMouseType::Wheel:
             {
-                processCursorWheel(_mouseData.window, 0, (F32)_mouseData.z, Vec2DF((F32)_mouseData.x, (F32)_mouseData.y), CursorInputSource::Mouse);
+                processCursorWheel(_mouseData.window, 0, (F32)_mouseData.z, mousePosition, CursorInputSource::Mouse);
                 break;
             }
             default:
@@ -302,22 +304,24 @@ namespace Maze
     //////////////////////////////////////////
     void InputSystem2D::notifyTouch(Maze::InputEventTouchData const& _touchData)
     {
+        Vec2DF touchPosition = m_coordsConverter(Vec2DF((F32)_touchData.x, (F32)_touchData.y));
+
         switch (_touchData.type)
         {
             case InputEventTouchType::Press:
             {
-                processCursorMove(_touchData.window, _touchData.index, 0, Vec2DF((F32)_touchData.x, (F32)_touchData.y), CursorInputSource::Touch);
-                processCursorPress(_touchData.window, _touchData.index, 0, Vec2DF((F32)_touchData.x, (F32)_touchData.y), CursorInputSource::Touch);
+                processCursorMove(_touchData.window, _touchData.index, 0, touchPosition, CursorInputSource::Touch);
+                processCursorPress(_touchData.window, _touchData.index, 0, touchPosition, CursorInputSource::Touch);
                 break;
             }
             case InputEventTouchType::Release:
             {
-                processCursorRelease(_touchData.window, _touchData.index, 0, Vec2DF((F32)_touchData.x, (F32)_touchData.y), CursorInputSource::Touch);
+                processCursorRelease(_touchData.window, _touchData.index, 0, touchPosition, CursorInputSource::Touch);
                 break;
             }
             case InputEventTouchType::Move:
             {
-                processCursorMove(_touchData.window, _touchData.index, 0, Vec2DF((F32)_touchData.x, (F32)_touchData.y), CursorInputSource::Touch);
+                processCursorMove(_touchData.window, _touchData.index, 0, touchPosition, CursorInputSource::Touch);
                 break;
             }
             default:

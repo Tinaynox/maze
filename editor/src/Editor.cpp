@@ -280,8 +280,6 @@ namespace Maze
         createPrimaryECSWorldSystems(world, m_mainRenderWindow, m_graphicsManager->getDefaultRenderSystem());
 
         m_sceneManager->loadScene<SceneSplash>();
-        
-        m_editorManager->start();
 
         return true;
     }

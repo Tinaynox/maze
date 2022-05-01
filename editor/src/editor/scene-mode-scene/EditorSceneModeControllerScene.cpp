@@ -77,6 +77,9 @@
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "Editor.hpp"
 #include "scenes/SceneMain.hpp"
+#include "scenes/SceneWorkspaceTools.hpp"
+#include "managers/EditorManager.hpp"
+#include "managers/EditorWorkspaceManager.hpp"
 
 
 //////////////////////////////////////////
@@ -98,22 +101,24 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    EditorSceneModeControllerScenePtr EditorSceneModeControllerScene::Create(SceneMain* _sceneMain)
+    EditorSceneModeControllerScenePtr EditorSceneModeControllerScene::Create()
     {
         EditorSceneModeControllerScenePtr obj;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorSceneModeControllerScene, obj, init(_sceneMain));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorSceneModeControllerScene, obj, init());
         return obj;
     }
 
     //////////////////////////////////////////
-    bool EditorSceneModeControllerScene::init(SceneMain* _sceneMain)
+    bool EditorSceneModeControllerScene::init()
     {
-        if (!EditorSceneModeController::init(_sceneMain))
+        if (!EditorSceneModeController::init())
             return false;
 
-        m_sceneMain->getCamera3D()->getEntityRaw()->setActiveSelf(true);
-        m_sceneMain->getCamera3D()->setClearColor(ColorU32(99, 101, 140, 255));
-        m_sceneMain->getMainCanvas()->setClearColorFlag(false);
+        SceneWorkspaceToolsPtr const& scene = EditorWorkspaceManager::GetInstancePtr()->getSceneWorkspaceTools();
+
+        scene->getCamera3D()->getEntityRaw()->setActiveSelf(true);
+        scene->getCamera3D()->setClearColor(ColorU32(99, 101, 140, 255));
+        scene->getMainCanvas()->setClearColorFlag(false);
 
         return true;
     }

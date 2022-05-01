@@ -79,7 +79,7 @@ namespace Maze
         virtual ~EditorSceneModeControllerPrefab();
 
         //////////////////////////////////////////
-        static EditorSceneModeControllerPrefabPtr Create(SceneMain* _sceneMain);
+        static EditorSceneModeControllerPrefabPtr Create();
 
         //////////////////////////////////////////
         virtual void shutdown() MAZE_OVERRIDE;
@@ -90,7 +90,7 @@ namespace Maze
         EditorSceneModeControllerPrefab();
 
         //////////////////////////////////////////
-        bool init(SceneMain* _sceneMain);
+        bool init();
 
 
         //////////////////////////////////////////

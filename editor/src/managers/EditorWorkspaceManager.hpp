@@ -25,17 +25,15 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_EditorSceneModeController_hpp_))
-#define _EditorSceneModeController_hpp_
+#if (!defined(_EditorWorkspaceManager_hpp_))
+#define _EditorWorkspaceManager_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-core/ecs/MazeECSScene.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
-#include "maze-core/utils/MazeDelegate.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
-#include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeShader.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
@@ -47,43 +45,81 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
-#include "maze-ui/ecs/components/MazeClickButton2D.hpp"
-#include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
-#include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
+#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
+#include "scenes/SceneWorkspace.hpp"
+#include "editor/EditorSceneMode.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(EditorSceneModeController);
-    MAZE_USING_SHARED_PTR(SceneMain);
+    MAZE_USING_SHARED_PTR(EditorWorkspaceManager);
+    MAZE_USING_SHARED_PTR(RenderMesh);
+    MAZE_USING_SHARED_PTR(SceneWorkspace);
+    MAZE_USING_SHARED_PTR(SceneWorkspaceTools);
 
 
     //////////////////////////////////////////
-    // Class EditorSceneModeController
+    // Class EditorWorkspaceManager
     //
     //////////////////////////////////////////
-    class EditorSceneModeController
+    class EditorWorkspaceManager
+        : public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        virtual ~EditorSceneModeController();
+        ~EditorWorkspaceManager();
+
+        //////////////////////////////////////////
+        static void Initialize(EditorWorkspaceManagerPtr& _manager);
+        
+
+        //////////////////////////////////////////
+        static inline EditorWorkspaceManager* GetInstancePtr() { return s_instance; }
+
+        //////////////////////////////////////////
+        static inline EditorWorkspaceManager& GetInstance() { return *s_instance; }
 
 
         //////////////////////////////////////////
-        virtual void shutdown() {};
+        inline RenderBufferPtr const& getWorkspaceRenderBuffer() const { return m_workspaceRenderBuffer; }
+
+        //////////////////////////////////////////
+        inline SceneWorkspacePtr const& getSceneWorkspace() const { return m_sceneWorkspace; }
+
+        //////////////////////////////////////////
+        inline SceneWorkspaceToolsPtr const& getSceneWorkspaceTools() const { return m_sceneWorkspaceTools; }
+
+
+        //////////////////////////////////////////
+        void start();
+
+        //////////////////////////////////////////
+        void clearWorkspace();
+
+        //////////////////////////////////////////
+        Vec2DU calculateWorkspaceRenderBuffer();
 
     protected:
 
         //////////////////////////////////////////
-        EditorSceneModeController();
+        EditorWorkspaceManager();
 
         //////////////////////////////////////////
         bool init();
 
+
+        //////////////////////////////////////////
+        void notifyMainRenderWindowResized(RenderTarget* _renderTarget);
+
     protected:
+        static EditorWorkspaceManager* s_instance;
+
+        RenderBufferPtr m_workspaceRenderBuffer;
+        SceneWorkspacePtr m_sceneWorkspace;
+        SceneWorkspaceToolsPtr m_sceneWorkspaceTools;
     };
 
 
@@ -91,5 +127,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _EditorSceneModeController_hpp_
+#endif // _EditorWorkspaceManager_hpp_
 //////////////////////////////////////////

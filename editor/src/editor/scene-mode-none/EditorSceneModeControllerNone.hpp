@@ -73,7 +73,7 @@ namespace Maze
         virtual ~EditorSceneModeControllerNone();
 
         //////////////////////////////////////////
-        static EditorSceneModeControllerNonePtr Create(SceneMain* _sceneMain);
+        static EditorSceneModeControllerNonePtr Create();
 
 
     protected:
@@ -82,7 +82,7 @@ namespace Maze
         EditorSceneModeControllerNone();
 
         //////////////////////////////////////////
-        bool init(SceneMain* _sceneMain);    
+        bool init();    
     };
 
 

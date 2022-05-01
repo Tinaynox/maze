@@ -97,9 +97,8 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool EditorSceneModeController::init(SceneMain* _sceneMain)
+    bool EditorSceneModeController::init()
     {
-        m_sceneMain = _sceneMain;
         return true;
     }
 

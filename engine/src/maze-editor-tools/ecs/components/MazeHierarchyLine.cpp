@@ -316,26 +316,7 @@ namespace Maze
         if (_inputEvent.button != 0)
             return;
 
-        HierarchyLinePtr const& hierarchyLine = _button->getTransform()->getParent()->getEntityRaw()->getComponent<HierarchyLine>();
-        
-        switch (hierarchyLine->getType())
-        {
-            case HierarchyLineType::Entity:
-            {
-                EntityId entityId = (EntityId)(reinterpret_cast<Size>(hierarchyLine->getUserData()));
-
-                EntityPtr const& entity = EntityManager::GetInstancePtr()->getDefaultWorldRaw()->getEntityById(entityId);
-
-                if (SelectionManager::GetInstancePtr()->isObjectSelected(entity))
-                    SelectionManager::GetInstancePtr()->unselectObject(entity);
-                else
-                    SelectionManager::GetInstancePtr()->selectObject(entity);
-
-                break;
-            }
-            default:
-                break;
-        }
+        eventLinePressed(this);
     }
 
     //////////////////////////////////////////
