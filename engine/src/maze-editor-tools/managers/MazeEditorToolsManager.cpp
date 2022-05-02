@@ -62,6 +62,8 @@ namespace Maze
     //////////////////////////////////////////
     EditorToolsManager::~EditorToolsManager()
     {
+        m_selectionManager.reset();
+
         setGizmosSystem(nullptr);
 
         EntityManager::GetInstancePtr()->getDefaultWorldRaw()->eventComponentSystemAdded.unsubscribe(this);

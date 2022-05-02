@@ -79,7 +79,8 @@ namespace Maze
     //////////////////////////////////////////
     AssetsController::~AssetsController()
     {
-        SelectionManager::GetInstancePtr()->eventSelectionChanged.unsubscribe(this);
+        if (SelectionManager::GetInstancePtr())
+            SelectionManager::GetInstancePtr()->eventSelectionChanged.unsubscribe(this);
 
         if (AssetManager::GetInstancePtr())
         {

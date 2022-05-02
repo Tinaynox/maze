@@ -231,7 +231,7 @@ namespace Maze
         if (!m_canvasRenderer)
             return;
 
-        if (!getEntityRaw()->getECSScene())
+        if (!getEntityRaw() || !getEntityRaw()->getECSScene())
             return;
 
         Vec2DF const& size = m_transform->getSize();

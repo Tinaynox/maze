@@ -84,6 +84,7 @@
 #include "maze-physics2d/ecs/components/MazeCircleCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
 #include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
+#include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "Editor.hpp"
 #include "managers/EditorAssetsManager.hpp"
@@ -263,6 +264,12 @@ namespace Maze
     {
         if (m_playtestModeEnabled == _value)
             return;
+
+        
+        if (_value)
+        {
+            EditorPrefabManager::GetInstancePtr()->saveAssetFile();
+        }
 
         Mat4DF prevCameraTransform = getSceneMainTools()->getCamera3D()->getTransform()->getLocalTransform();
         Vec3DF cameraTargetPosition = getSceneMainTools()->getCamera3DTargetPosition();

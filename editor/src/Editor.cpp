@@ -94,6 +94,8 @@ namespace Maze
     //////////////////////////////////////////
     Editor::~Editor()
     {
+        m_editorToolsManager.reset();
+
         m_sceneManager.reset();
 
         m_editorManager.reset();

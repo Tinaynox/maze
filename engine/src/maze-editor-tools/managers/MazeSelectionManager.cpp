@@ -66,6 +66,8 @@ namespace Maze
                 EntityManager::GetInstancePtr()->getDefaultWorldRaw()->eventEntityRemoved.unsubscribe(this);
             }
         }
+
+        setECSWorld(nullptr);
         
         if (AssetManager::GetInstancePtr())
             AssetManager::GetInstancePtr()->eventAssetFileRemoved.unsubscribe(this);
@@ -82,7 +84,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SelectionManager::init()
     {
-        EntityManager::GetInstancePtr()->getDefaultWorldRaw()->eventEntityRemoved.subscribe(this, &SelectionManager::notifyEntityRemoved);
+        setECSWorld(EntityManager::GetInstancePtr()->getDefaultWorldRaw());
         AssetManager::GetInstancePtr()->eventAssetFileRemoved.subscribe(this, &SelectionManager::notifyAssetFileRemoved);
 
         return true;
@@ -142,6 +144,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    inline Set<EntityId> SelectionManager::getSelectedEntityIds()
+    {
+        Set<EntityId> entityIds;
+        for (EntityPtr const& entity : m_selectedEntities)
+            if (entity)
+                entityIds.insert(entity->getId());
+        return entityIds;
+    }
+
+    //////////////////////////////////////////
     void SelectionManager::selectObject(
         EntityPtr const& _object,
         bool _clearSelectionList,
@@ -162,6 +174,8 @@ namespace Maze
             return;
 
         m_selectedEntities.insert(_object);
+
+        setECSWorld(_object->getECSWorld());
 
         setSelectionType(SelectionType::Entities);
 
@@ -313,6 +327,25 @@ namespace Maze
     void SelectionManager::notifyAssetFileRemoved(AssetFilePtr const& _assetFile)
     {
         unselectObject(_assetFile);
+    }
+
+    //////////////////////////////////////////
+    void SelectionManager::setECSWorld(ECSWorld* _world)
+    {
+        if (m_world == _world)
+            return;
+
+        if (m_world)
+        {
+            m_world->eventEntityRemoved.unsubscribe(this);
+        }
+
+        m_world = _world;
+
+        if (m_world)
+        {
+            m_world->eventEntityRemoved.subscribe(this, &SelectionManager::notifyEntityRemoved);
+        }
     }
     
 } // namespace Maze

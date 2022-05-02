@@ -138,7 +138,7 @@ namespace Maze
             return;
 
         m_fpsTimeLeft -= _dt;
-        F32 currentFPS = 1.0f/ _dt;
+        F32 currentFPS = _dt > 0.0f ? 1.0f/ _dt : 0.0f;
         m_fpsLowest = Math::Min(m_fpsLowest, currentFPS);
         m_fpsAcc += currentFPS;
 

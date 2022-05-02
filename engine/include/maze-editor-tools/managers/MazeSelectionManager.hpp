@@ -98,6 +98,9 @@ namespace Maze
         inline Set<EntityPtr> const& getSelectedEntities() const { return m_selectedEntities; }
 
         //////////////////////////////////////////
+        inline Set<EntityId> getSelectedEntityIds();
+
+        //////////////////////////////////////////
         inline Set<ObjectPtr> const& getSelectedObjects() const { return m_selectedObjects; }
 
         //////////////////////////////////////////
@@ -166,8 +169,14 @@ namespace Maze
         //////////////////////////////////////////
         void notifyAssetFileRemoved(AssetFilePtr const& _assetFile);
 
+
+        //////////////////////////////////////////
+        void setECSWorld(ECSWorld* _world);
+
     protected:
         static SelectionManager* s_instance;
+
+        ECSWorld* m_world = nullptr;
 
         SelectionType m_selectionType;
 
