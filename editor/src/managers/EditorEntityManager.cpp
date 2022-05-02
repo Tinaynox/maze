@@ -39,6 +39,8 @@
 #include "maze-ui/ecs/systems/MazeInputSystem2D.hpp"
 #include "layout/EditorLayout.hpp"
 #include "managers/EditorManager.hpp"
+#include "managers/EditorWorkspaceManager.hpp"
+#include "maze-particles/ecs/systems/MazeParticlesDrawerSystem.hpp"
 
 
 //////////////////////////////////////////
@@ -91,10 +93,19 @@ namespace Maze
         m_workspaceWorld->addSystem(Bounds2DSystem::Create());
         m_workspaceWorld->addSystem(inputSystem);
 
+        m_workspaceWorld->addSystem(ParticlesDrawerSystem::Create(renderSystem));
+
 
         UpdateManager::GetInstancePtr()->addUpdatable(this);
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    void EditorEntityManager::start()
+    {
+        RenderBufferPtr const& renderBuffer = EditorWorkspaceManager::GetInstancePtr()->getWorkspaceRenderBuffer();
+        m_workspaceWorld->addSystem(GizmosSystem::Create(renderBuffer.get()));
     }
 
     //////////////////////////////////////////

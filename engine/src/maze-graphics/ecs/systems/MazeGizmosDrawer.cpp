@@ -65,11 +65,14 @@ namespace Maze
     //////////////////////////////////////////
     GizmosDrawer::~GizmosDrawer()
     {
-        if (m_lines.entity)
-            m_lines.entity->removeFromECSWorld();
+        for (S32 renderMode = 0; renderMode < (S32)MeshRenderMode::MAX; ++renderMode)
+        {
+            if (m_lines[renderMode].entity)
+                m_lines[renderMode].entity->removeFromECSWorld();
 
-        if (m_triangles.entity)
-            m_triangles.entity->removeFromECSWorld();
+            if (m_triangles[renderMode].entity)
+                m_triangles[renderMode].entity->removeFromECSWorld();
+        }
     }
 
     //////////////////////////////////////////
@@ -87,44 +90,77 @@ namespace Maze
 
         RenderSystem* renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw();
 
+        for (S32 renderMode = 0; renderMode < (S32)MeshRenderMode::MAX; ++renderMode)
         {
-            m_lines.vao = VertexArrayObject::Create(renderSystem);
-            m_lines.vao->setRenderDrawTopology(RenderDrawTopology::Lines);
-            m_lines.renderMesh = _renderTarget->createRenderMeshFromPool(1);
-            m_lines.renderMesh->setName("Lines");
-            m_lines.renderMesh->setVertexArrayObject(m_lines.vao);
+            {
+                MeshData& meshData = m_lines[renderMode];
 
-            MaterialPtr material = Material::Create(renderSystem->getMaterialManager()->getColorMaterial());
-            material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::Always);
-            material->getFirstRenderPass()->setRenderQueueIndex(5000);
+                meshData.vao = VertexArrayObject::Create(renderSystem);
+                meshData.vao->setRenderDrawTopology(RenderDrawTopology::Lines);
+                meshData.renderMesh = _renderTarget->createRenderMeshFromPool(1);
+                meshData.renderMesh->setName("Lines");
+                meshData.renderMesh->setVertexArrayObject(meshData.vao);
 
-            m_lines.entity = Entity::Create();
-            m_world->addEntity(m_lines.entity);
-            m_lines.entity->createComponent<Transform3D>();
-            MeshRendererPtr meshRenderer = m_lines.entity->createComponent<MeshRenderer>();
-            meshRenderer->setRenderMesh(m_lines.renderMesh);
-            meshRenderer->setMaterial(material);
-            meshRenderer->getRenderMask()->setMask(DefaultRenderMask::Gizmos);
-        }
+                MaterialPtr material = Material::Create(renderSystem->getMaterialManager()->getColorMaterial());
+                switch (MeshRenderMode(renderMode))
+                {
+                    case MeshRenderMode::Opaque:
+                    {
+                        material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::LessEqual);
+                        material->getFirstRenderPass()->setRenderQueueIndex(4900);
+                        break;
+                    }
+                    default:
+                    {
+                        material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::Always);
+                        material->getFirstRenderPass()->setRenderQueueIndex(5000);
+                        break;
+                    }
+                }
 
-        {
-            m_triangles.vao = VertexArrayObject::Create(renderSystem);
-            m_triangles.vao->setRenderDrawTopology(RenderDrawTopology::Triangles);
-            m_triangles.renderMesh = _renderTarget->createRenderMeshFromPool(1);
-            m_triangles.renderMesh->setName("Triangles");
-            m_triangles.renderMesh->setVertexArrayObject(m_triangles.vao);
+                meshData.entity = Entity::Create();
+                m_world->addEntity(meshData.entity);
+                meshData.entity->createComponent<Transform3D>();
+                MeshRendererPtr meshRenderer = meshData.entity->createComponent<MeshRenderer>();
+                meshRenderer->setRenderMesh(meshData.renderMesh);
+                meshRenderer->setMaterial(material);
+                meshRenderer->getRenderMask()->setMask(DefaultRenderMask::Gizmos);
+            }
 
-            MaterialPtr material = Material::Create(renderSystem->getMaterialManager()->getColorMaterial());
-            material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::Always);
-            material->getFirstRenderPass()->setRenderQueueIndex(5000);
+            {
+                MeshData& meshData = m_triangles[renderMode];
 
-            m_triangles.entity = Entity::Create();
-            m_world->addEntity(m_triangles.entity);
-            m_triangles.entity->createComponent<Transform3D>();
-            MeshRendererPtr meshRenderer = m_triangles.entity->createComponent<MeshRenderer>();
-            meshRenderer->setRenderMesh(m_triangles.renderMesh);
-            meshRenderer->setMaterial(material);
-            meshRenderer->getRenderMask()->setMask(DefaultRenderMask::Gizmos);
+                meshData.vao = VertexArrayObject::Create(renderSystem);
+                meshData.vao->setRenderDrawTopology(RenderDrawTopology::Triangles);
+                meshData.renderMesh = _renderTarget->createRenderMeshFromPool(1);
+                meshData.renderMesh->setName("Triangles");
+                meshData.renderMesh->setVertexArrayObject(meshData.vao);
+
+                MaterialPtr material = Material::Create(renderSystem->getMaterialManager()->getColorMaterial());
+                switch (MeshRenderMode(renderMode))
+                {
+                    case MeshRenderMode::Opaque:
+                    {
+                        material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::LessEqual);
+                        material->getFirstRenderPass()->setRenderQueueIndex(4900);
+                        break;
+                    }
+                    default:
+                    {
+                        material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::Always);
+                        material->getFirstRenderPass()->setRenderQueueIndex(5000);
+                        break;
+                    }
+                }
+
+                meshData.entity = Entity::Create();
+                m_world->addEntity(meshData.entity);
+                meshData.entity->createComponent<Transform3D>();
+                MeshRendererPtr meshRenderer = meshData.entity->createComponent<MeshRenderer>();
+                meshRenderer->setRenderMesh(meshData.renderMesh);
+                meshRenderer->setMaterial(material);
+                meshRenderer->getRenderMask()->setMask(DefaultRenderMask::Gizmos);
+            }
         }
 
         m_gizmoBillboardPool.reset(
@@ -170,15 +206,18 @@ namespace Maze
     //////////////////////////////////////////
     void GizmosDrawer::clear()
     {
-        m_lines.vao->clear();
-        m_lines.indices.clear();
-        m_lines.vertices.clear();
-        m_lines.colors.clear();
+        for (S32 renderMode = 0; renderMode < (S32)MeshRenderMode::MAX; ++renderMode)
+        {
+            m_lines[renderMode].vao->clear();
+            m_lines[renderMode].indices.clear();
+            m_lines[renderMode].vertices.clear();
+            m_lines[renderMode].colors.clear();
 
-        m_triangles.vao->clear();
-        m_triangles.indices.clear();
-        m_triangles.vertices.clear();
-        m_triangles.colors.clear();
+            m_triangles[renderMode].vao->clear();
+            m_triangles[renderMode].indices.clear();
+            m_triangles[renderMode].vertices.clear();
+            m_triangles[renderMode].colors.clear();
+        }
 
         m_billboardsData.clear();
     }
@@ -186,19 +225,22 @@ namespace Maze
     //////////////////////////////////////////
     void GizmosDrawer::drawLine(
         Vec3DF const& _point0,
-        Vec3DF const& _point1)
+        Vec3DF const& _point1,
+        MeshRenderMode _renderMode)
     {
-        U32 index0 = (U32)m_lines.vertices.size();
+        MeshData& lines = m_lines[(S32)_renderMode];
+
+        U32 index0 = (U32)lines.vertices.size();
         U32 index1 = index0 + 1;
 
-        m_lines.indices.emplace_back(index0);
-        m_lines.indices.emplace_back(index1);
+        lines.indices.emplace_back(index0);
+        lines.indices.emplace_back(index1);
 
-        m_lines.vertices.emplace_back(_point0);
-        m_lines.vertices.emplace_back(_point1);
+        lines.vertices.emplace_back(_point0);
+        lines.vertices.emplace_back(_point1);
 
-        m_lines.colors.emplace_back(m_color.value);
-        m_lines.colors.emplace_back(m_color.value);
+        lines.colors.emplace_back(m_color.value);
+        lines.colors.emplace_back(m_color.value);
     }
 
     //////////////////////////////////////////
@@ -206,7 +248,8 @@ namespace Maze
         Vec3DF const& _position,
         Vec3DF const& _direction,
         F32 _radius,
-        S32 _segmentsCount)
+        S32 _segmentsCount,
+        MeshRenderMode _renderMode)
     {
         F32 angleDelta = Math::c_twoPi / (F32)_segmentsCount;
         Size pointsCount = (Size)Math::Ceil((Math::c_twoPi / angleDelta) - angleDelta * 0.5f);
@@ -225,10 +268,10 @@ namespace Maze
             Vec3DF const& circlePoint0 = circlePoints[i];
             Vec3DF const& circlePoint1 = circlePoints[i + 1];
 
-            drawLine(circlePoint0, circlePoint1);
+            drawLine(circlePoint0, circlePoint1, _renderMode);
         }
 
-        drawLine(circlePoints.back(), circlePoints.front());
+        drawLine(circlePoints.back(), circlePoints.front(), _renderMode);
     }
 
     //////////////////////////////////////////
@@ -247,31 +290,31 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawAABB(AABB2D const& _aabb)
+    void GizmosDrawer::drawAABB(AABB2D const& _aabb, MeshRenderMode _renderMode)
     {
-        drawLine(_aabb.getMin().x, _aabb.getMin().y, _aabb.getMax().x, _aabb.getMin().y);
-        drawLine(_aabb.getMax().x, _aabb.getMin().y, _aabb.getMax().x, _aabb.getMax().y);
-        drawLine(_aabb.getMax().x, _aabb.getMax().y, _aabb.getMin().x, _aabb.getMax().y);
-        drawLine(_aabb.getMin().x, _aabb.getMax().y, _aabb.getMin().x, _aabb.getMin().y);
+        drawLine(_aabb.getMin().x, _aabb.getMin().y, _aabb.getMax().x, _aabb.getMin().y, _renderMode);
+        drawLine(_aabb.getMax().x, _aabb.getMin().y, _aabb.getMax().x, _aabb.getMax().y, _renderMode);
+        drawLine(_aabb.getMax().x, _aabb.getMax().y, _aabb.getMin().x, _aabb.getMax().y, _renderMode);
+        drawLine(_aabb.getMin().x, _aabb.getMax().y, _aabb.getMin().x, _aabb.getMin().y, _renderMode);
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawAABB(AABB3D const& _aabb)
+    void GizmosDrawer::drawAABB(AABB3D const& _aabb, MeshRenderMode _renderMode)
     {
-        drawLine(_aabb.getMin().x, _aabb.getMin().y, _aabb.getMin().z, _aabb.getMax().x, _aabb.getMin().y, _aabb.getMin().z);
-        drawLine(_aabb.getMax().x, _aabb.getMin().y, _aabb.getMin().z, _aabb.getMax().x, _aabb.getMax().y, _aabb.getMin().z);
-        drawLine(_aabb.getMax().x, _aabb.getMax().y, _aabb.getMin().z, _aabb.getMin().x, _aabb.getMax().y, _aabb.getMin().z);
-        drawLine(_aabb.getMin().x, _aabb.getMax().y, _aabb.getMin().z, _aabb.getMin().x, _aabb.getMin().y, _aabb.getMin().z);
+        drawLine(_aabb.getMin().x, _aabb.getMin().y, _aabb.getMin().z, _aabb.getMax().x, _aabb.getMin().y, _aabb.getMin().z, _renderMode);
+        drawLine(_aabb.getMax().x, _aabb.getMin().y, _aabb.getMin().z, _aabb.getMax().x, _aabb.getMax().y, _aabb.getMin().z, _renderMode);
+        drawLine(_aabb.getMax().x, _aabb.getMax().y, _aabb.getMin().z, _aabb.getMin().x, _aabb.getMax().y, _aabb.getMin().z, _renderMode);
+        drawLine(_aabb.getMin().x, _aabb.getMax().y, _aabb.getMin().z, _aabb.getMin().x, _aabb.getMin().y, _aabb.getMin().z, _renderMode);
 
-        drawLine(_aabb.getMin().x, _aabb.getMin().y, _aabb.getMax().z, _aabb.getMax().x, _aabb.getMin().y, _aabb.getMax().z);
-        drawLine(_aabb.getMax().x, _aabb.getMin().y, _aabb.getMax().z, _aabb.getMax().x, _aabb.getMax().y, _aabb.getMax().z);
-        drawLine(_aabb.getMax().x, _aabb.getMax().y, _aabb.getMax().z, _aabb.getMin().x, _aabb.getMax().y, _aabb.getMax().z);
-        drawLine(_aabb.getMin().x, _aabb.getMax().y, _aabb.getMax().z, _aabb.getMin().x, _aabb.getMin().y, _aabb.getMax().z);
+        drawLine(_aabb.getMin().x, _aabb.getMin().y, _aabb.getMax().z, _aabb.getMax().x, _aabb.getMin().y, _aabb.getMax().z, _renderMode);
+        drawLine(_aabb.getMax().x, _aabb.getMin().y, _aabb.getMax().z, _aabb.getMax().x, _aabb.getMax().y, _aabb.getMax().z, _renderMode);
+        drawLine(_aabb.getMax().x, _aabb.getMax().y, _aabb.getMax().z, _aabb.getMin().x, _aabb.getMax().y, _aabb.getMax().z, _renderMode);
+        drawLine(_aabb.getMin().x, _aabb.getMax().y, _aabb.getMax().z, _aabb.getMin().x, _aabb.getMin().y, _aabb.getMax().z, _renderMode);
 
-        drawLine(_aabb.getMin().x, _aabb.getMin().y, _aabb.getMin().z, _aabb.getMin().x, _aabb.getMin().y, _aabb.getMax().z);
-        drawLine(_aabb.getMax().x, _aabb.getMin().y, _aabb.getMin().z, _aabb.getMax().x, _aabb.getMin().y, _aabb.getMax().z);
-        drawLine(_aabb.getMax().x, _aabb.getMax().y, _aabb.getMin().z, _aabb.getMax().x, _aabb.getMax().y, _aabb.getMax().z);
-        drawLine(_aabb.getMin().x, _aabb.getMax().y, _aabb.getMin().z, _aabb.getMin().x, _aabb.getMax().y, _aabb.getMax().z);
+        drawLine(_aabb.getMin().x, _aabb.getMin().y, _aabb.getMin().z, _aabb.getMin().x, _aabb.getMin().y, _aabb.getMax().z, _renderMode);
+        drawLine(_aabb.getMax().x, _aabb.getMin().y, _aabb.getMin().z, _aabb.getMax().x, _aabb.getMin().y, _aabb.getMax().z, _renderMode);
+        drawLine(_aabb.getMax().x, _aabb.getMax().y, _aabb.getMin().z, _aabb.getMax().x, _aabb.getMax().y, _aabb.getMax().z, _renderMode);
+        drawLine(_aabb.getMin().x, _aabb.getMax().y, _aabb.getMin().z, _aabb.getMin().x, _aabb.getMax().y, _aabb.getMax().z, _renderMode);
     }
 
     //////////////////////////////////////////
@@ -299,21 +342,24 @@ namespace Maze
                 0
             };
 
-        if (!m_lines.vertices.empty())
+        for (S32 renderMode = 0; renderMode < (S32)MeshRenderMode::MAX; ++renderMode)
         {
-            m_lines.vao->setVerticesData((U8 const*)&m_lines.vertices[0], c_positionDescription, m_lines.vertices.size());
-            m_lines.vao->setVerticesData((U8 const*)&m_lines.colors[0], c_colorDescription, m_lines.colors.size());
-            m_lines.vao->setIndices((U8 const*)&m_lines.indices[0], VertexAttributeType::U32, m_lines.indices.size());
+            MeshData& lines = m_lines[(S32)renderMode];
+            if (!lines.vertices.empty())
+            {
+                lines.vao->setVerticesData((U8 const*)&lines.vertices[0], c_positionDescription, lines.vertices.size());
+                lines.vao->setVerticesData((U8 const*)&lines.colors[0], c_colorDescription, lines.colors.size());
+                lines.vao->setIndices((U8 const*)&lines.indices[0], VertexAttributeType::U32, lines.indices.size());
+            }
+
+            MeshData& triangles = m_triangles[(S32)renderMode];
+            if (!triangles.vertices.empty())
+            {
+                triangles.vao->setVerticesData((U8 const*)&triangles.vertices[0], c_positionDescription, triangles.vertices.size());
+                triangles.vao->setVerticesData((U8 const*)&triangles.colors[0], c_colorDescription, triangles.colors.size());
+                triangles.vao->setIndices((U8 const*)&triangles.indices[0], VertexAttributeType::U32, triangles.indices.size());
+            }
         }
-
-        if (!m_triangles.vertices.empty())
-        {
-            m_triangles.vao->setVerticesData((U8 const*)&m_triangles.vertices[0], c_positionDescription, m_triangles.vertices.size());
-            m_triangles.vao->setVerticesData((U8 const*)&m_triangles.colors[0], c_colorDescription, m_triangles.colors.size());
-            m_triangles.vao->setIndices((U8 const*)&m_triangles.indices[0], VertexAttributeType::U32, m_triangles.indices.size());
-        }
-
-
 
         Camera3DPtr const& camera3D = GizmosManager::GetInstancePtr()->getCamera();
         if (camera3D)
@@ -329,7 +375,7 @@ namespace Maze
 
             for (Size i = 0, in = m_billboards.size(); i < in; ++i)
             {
-                 GizmoBillboard3DPtr const& gizmoBillboard = m_billboards[i];
+                GizmoBillboard3DPtr const& gizmoBillboard = m_billboards[i];
                 BillboardData const& gizmoBillboardData = m_billboardsData[i];
 
                 MaterialPtr const& material = gizmoBillboard->getMeshRenderer()->getMaterial();

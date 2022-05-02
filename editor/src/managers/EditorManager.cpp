@@ -69,6 +69,7 @@
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
+#include "maze-graphics/ecs/systems/MazeGizmosSystem.hpp"
 #include "maze-gamepad/managers/MazeGamepadManager.hpp"
 #include "maze-gamepad/gamepad/MazeGamepad.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
@@ -82,6 +83,7 @@
 #include "maze-physics2d/ecs/components/MazeBoxCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeCircleCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
+#include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "Editor.hpp"
 #include "managers/EditorAssetsManager.hpp"
@@ -194,6 +196,7 @@ namespace Maze
     {
         setSceneMode(EditorSceneMode::None);
         m_editorWorkspaceManager->clearWorkspace();
+        m_editorPlaytestManager->clearWorkspace();
 
         m_editorPrefabManager->setPrefabAssetFile(nullptr);
         m_editorPrefabManager->setPrefabEntity(nullptr);
@@ -236,6 +239,9 @@ namespace Maze
     {
         m_editorWorkspaceManager->start();
         m_editorPlaytestManager->start();
+        m_editorEntityManager->start();
+
+        EditorToolsManager::GetInstancePtr()->setGizmosSystem(getMainECSWorld()->getSystem<GizmosSystem>());
     }
 
     //////////////////////////////////////////
@@ -275,6 +281,8 @@ namespace Maze
             m_editorPlaytestManager->destroyScenes();
             m_editorWorkspaceManager->createScenes();
         }
+
+        EditorToolsManager::GetInstancePtr()->setGizmosSystem(getMainECSWorld()->getSystem<GizmosSystem>());
 
         if (m_editorPrefabManager->getPrefabAssetFile())
             m_editorPrefabManager->updatePrefabAssetFile();

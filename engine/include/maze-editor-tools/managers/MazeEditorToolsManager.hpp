@@ -109,6 +109,9 @@ namespace Maze
             ComponentPtr const& _component,
             GizmosDrawer* _drawer);
 
+        //////////////////////////////////////////
+        void setGizmosSystem(GizmosSystemPtr const& _gizmosSystem);
+
     public:
 
         //////////////////////////////////////////
@@ -125,9 +128,6 @@ namespace Maze
 
         //////////////////////////////////////////
         void notifyComponentSystemAdded(ComponentSystemPtr const& _componentSystem);
-
-        //////////////////////////////////////////
-        void setGizmosSystem(GizmosSystemPtr const& _gizmosSystem);
 
         //////////////////////////////////////////
         void notifyPauseChanged(bool const& _value);

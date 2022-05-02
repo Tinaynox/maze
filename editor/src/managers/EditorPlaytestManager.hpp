@@ -100,7 +100,7 @@ namespace Maze
         void destroyScenes();
 
         //////////////////////////////////////////
-        void clearPlaytest();
+        void clearWorkspace();
 
         //////////////////////////////////////////
         Vec2DU calculatePlaytestRenderBuffer();

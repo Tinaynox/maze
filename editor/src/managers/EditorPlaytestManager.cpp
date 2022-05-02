@@ -159,7 +159,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EditorPlaytestManager::clearPlaytest()
+    void EditorPlaytestManager::clearWorkspace()
     {
         if (m_scenePlaytest)
             m_scenePlaytest->destroyAllEntities();

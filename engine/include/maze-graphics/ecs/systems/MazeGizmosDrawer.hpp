@@ -79,6 +79,15 @@ namespace Maze
             ColorF128 color;
         };
 
+        //////////////////////////////////////////
+        enum class MeshRenderMode
+        {
+            Opaque      = 0,
+            Transparent = 1,
+
+            MAX
+        };
+
     public:
 
         //////////////////////////////////////////
@@ -94,24 +103,27 @@ namespace Maze
         //////////////////////////////////////////
         void drawLine(
             Vec3DF const& _point0,
-            Vec3DF const& _point1);
+            Vec3DF const& _point1,
+            MeshRenderMode _renderMode = MeshRenderMode::Transparent);
 
         //////////////////////////////////////////
         inline void drawLine(
             F32 _x0,
             F32 _y0,
             F32 _x1,
-            F32 _y1)
+            F32 _y1,
+            MeshRenderMode _renderMode = MeshRenderMode::Transparent)
         {
-            drawLine({ _x0, _y0, 0.0f }, { _x1, _y1, 0.0f });
+            drawLine({ _x0, _y0, 0.0f }, { _x1, _y1, 0.0f }, _renderMode);
         }
 
         //////////////////////////////////////////
         inline void drawLine(
             Vec2DF const& _point0,
-            Vec2DF const& _point1)
+            Vec2DF const& _point1,
+            MeshRenderMode _renderMode = MeshRenderMode::Transparent)
         {
-            drawLine({ _point0.x, _point0.y, 0.0f }, { _point1.x, _point1.y, 0.0f });
+            drawLine({ _point0.x, _point0.y, 0.0f }, { _point1.x, _point1.y, 0.0f }, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -121,9 +133,10 @@ namespace Maze
             F32 _z0,
             F32 _x1,
             F32 _y1,
-            F32 _z1)
+            F32 _z1,
+            MeshRenderMode _renderMode = MeshRenderMode::Transparent)
         {
-            drawLine({ _x0, _y0, _z0 }, { _x1, _y1, _z1 });
+            drawLine({ _x0, _y0, _z0 }, { _x1, _y1, _z1 }, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -131,7 +144,8 @@ namespace Maze
             Vec3DF const& _position,
             Vec3DF const& _direction,
             F32 _radius,
-            S32 _segmentsCount = 12);
+            S32 _segmentsCount = 12,
+            MeshRenderMode _renderMode = MeshRenderMode::Transparent);
 
         //////////////////////////////////////////
         void drawBillboard(
@@ -140,10 +154,10 @@ namespace Maze
             ColorF128 const& _color);
 
         //////////////////////////////////////////
-        void drawAABB(AABB2D const& _aabb);
+        void drawAABB(AABB2D const& _aabb, MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
-        void drawAABB(AABB3D const& _aabb);
+        void drawAABB(AABB3D const& _aabb, MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
 
         //////////////////////////////////////////
@@ -169,8 +183,8 @@ namespace Maze
 
         ECSWorld* m_world;
 
-        MeshData m_lines;
-        MeshData m_triangles;
+        MeshData m_lines[(Size)MeshRenderMode::MAX];
+        MeshData m_triangles[(Size)MeshRenderMode::MAX];
 
         UniquePtr<SharedObjectPool<GizmoBillboard3D>> m_gizmoBillboardPool;
         Vector<BillboardData> m_billboardsData;
