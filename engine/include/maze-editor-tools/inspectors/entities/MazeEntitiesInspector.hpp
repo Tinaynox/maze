@@ -120,7 +120,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setECSWorld(ECSWorldPtr const& _world);
+        void setECSWorld(ECSWorld* _world);
 
     protected:
         Map<ClassUID, ComponentEditorPtr> m_componentEditors;
@@ -134,7 +134,7 @@ namespace Maze
 
         bool m_entitiesPropertiesListDirty;
 
-        ECSWorldPtr m_world;
+        ECSWorld* m_world = nullptr;
     };
 
 

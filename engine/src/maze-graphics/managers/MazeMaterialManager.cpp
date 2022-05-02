@@ -291,7 +291,7 @@ namespace Maze
                 renderPass->setDepthWriteEnabled(false);
                 renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
                 renderPass->setCullMode(CullMode::Off);
-                renderPass->setRenderQueueIndex(3000);
+                renderPass->setRenderQueueIndex(2998);
                 material->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
                 break;
             }
@@ -306,7 +306,7 @@ namespace Maze
                 renderPass->setDepthWriteEnabled(false);
                 renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
                 renderPass->setCullMode(CullMode::Off);
-                renderPass->setRenderQueueIndex(3000);
+                renderPass->setRenderQueueIndex(2999);
                 material->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
                 break;
             }

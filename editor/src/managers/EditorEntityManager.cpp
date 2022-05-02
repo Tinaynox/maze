@@ -38,6 +38,7 @@
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-ui/ecs/systems/MazeInputSystem2D.hpp"
 #include "layout/EditorLayout.hpp"
+#include "managers/EditorManager.hpp"
 
 
 //////////////////////////////////////////
@@ -99,7 +100,8 @@ namespace Maze
     //////////////////////////////////////////
     void EditorEntityManager::update(F32 _dt)
     {
-        m_workspaceWorld->update(_dt);
+        if (!EditorManager::GetInstancePtr()->getPlaytestModeEnabled())
+            m_workspaceWorld->update(_dt);
     }
 
 } // namespace Maze

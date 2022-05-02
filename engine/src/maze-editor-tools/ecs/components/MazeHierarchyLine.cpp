@@ -115,6 +115,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void HierarchyLine::setECSWorld(ECSWorld* _world)
+    {
+        m_world = _world;
+
+        updateIcon();
+    }
+
+    //////////////////////////////////////////
     void HierarchyLine::processEntityAwakened()
     {
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
@@ -197,9 +205,12 @@ namespace Maze
             {
                 if (m_type == HierarchyLineType::Entity)
                 {
+                    if (!m_world)
+                        return;
+
                     EntityId entityId = (EntityId)(reinterpret_cast<Size>(getUserData()));
 
-                    EntityPtr const& entity = EntityManager::GetInstancePtr()->getDefaultWorldRaw()->getEntityById(entityId);
+                    EntityPtr const& entity = m_world->getEntityById(entityId);
 
                     if (!entity)
                         return;
@@ -375,9 +386,14 @@ namespace Maze
     {
         if (m_type == HierarchyLineType::Entity)
         {
+            if (!m_world)
+                return;
+
             EntityId entityId = (EntityId)(reinterpret_cast<Size>(getUserData()));
 
-            EntityPtr const& entity = EntityManager::GetInstancePtr()->getDefaultWorldRaw()->getEntityById(entityId);
+            EntityPtr const& entity = m_world->getEntityById(entityId);
+            if (!entity)
+                return;
 
             SpritePtr sprite;
 

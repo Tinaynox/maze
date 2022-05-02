@@ -95,7 +95,8 @@ namespace Maze
         virtual ~HierarchyLine();
 
         //////////////////////////////////////////
-        static HierarchyLinePtr Create(HierarchyLineType _type);
+        static HierarchyLinePtr Create(
+            HierarchyLineType _type);
 
 
         //////////////////////////////////////////
@@ -121,6 +122,13 @@ namespace Maze
 
         //////////////////////////////////////////
         inline HierarchyLineType getType() const { return m_type; }
+
+
+        //////////////////////////////////////////
+        inline ECSWorld* getECSWorld() const { return m_world; }
+
+        //////////////////////////////////////////
+        void setECSWorld(ECSWorld* _world);
 
 
         /////////////////////////////////////////
@@ -149,7 +157,8 @@ namespace Maze
         using Component::init;
         
         //////////////////////////////////////////
-        bool init(HierarchyLineType _type);
+        bool init(
+            HierarchyLineType _type);
 
         //////////////////////////////////////////
         void processEntityAwakened() MAZE_OVERRIDE;
@@ -162,6 +171,8 @@ namespace Maze
 
 
     protected:
+        ECSWorld* m_world;
+
         String m_name;
         HierarchyLineType m_type;
         HierarchyLineDropDownState m_dropDownState;

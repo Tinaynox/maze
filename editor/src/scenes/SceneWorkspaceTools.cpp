@@ -32,6 +32,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
+#include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
@@ -193,6 +194,8 @@ namespace Maze
     //////////////////////////////////////////
     void SceneWorkspaceTools::update(F32 _dt)
     {
+        _dt = UpdateManager::GetInstancePtr()->getUnscaledDeltaTime();
+
         ECSRenderScene::update(_dt);
 
         if (!Editor::GetInstancePtr()->getMainRenderWindow()->getFocused())

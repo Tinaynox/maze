@@ -75,6 +75,10 @@ namespace Maze
         //////////////////////////////////////////
         static inline EditorEntityManager& GetInstance() { return *s_instance; }
 
+
+        //////////////////////////////////////////
+        virtual S32 getUpdatableOrder() const { return 19500; }
+
     protected:
 
         //////////////////////////////////////////

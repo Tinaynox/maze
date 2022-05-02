@@ -218,7 +218,7 @@ namespace Maze
             [](Button2D* _button, CursorInputEvent const& _event)
             {
                 EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
-                // debbugerSettings->switchPause();
+                debbugerSettings->switchPause();
             });
         SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Pause),

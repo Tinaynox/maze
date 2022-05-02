@@ -77,8 +77,7 @@ namespace Maze
 
     //////////////////////////////////////////
     EditorHierarchyController::EditorHierarchyController()
-        : m_world(nullptr)
-        , m_canvas(nullptr)
+        : m_canvas(nullptr)
     {
     }
 
@@ -97,11 +96,13 @@ namespace Maze
             hierarchyLineData.second.line->eventLinePressed.unsubscribe(this);
         }
 
-        m_world->eventEntityRemoved.unsubscribe(this);
-        m_world->eventEntityChanged.unsubscribe(this);
+        setECSWorld(nullptr);
 
         if (EditorManager::GetInstancePtr())
+        {
             EditorManager::GetInstancePtr()->eventSceneModeChanged.unsubscribe(this);
+            EditorManager::GetInstancePtr()->eventPlaytestModeEnabledChanged.unsubscribe(this);
+        }
 
         if (EditorPrefabManager::GetInstancePtr())
             EditorPrefabManager::GetInstancePtr()->eventPrefabEntityChanged.unsubscribe(this);
@@ -120,13 +121,12 @@ namespace Maze
     {
         UpdateManager::GetInstancePtr()->addUpdatable(this);
 
-        m_world = EntityManager::GetInstancePtr()->getDefaultWorldRaw();
-        m_world->eventEntityRemoved.subscribe(this, &EditorHierarchyController::notifyEntityRemoved);
-        m_world->eventEntityChanged.subscribe(this, &EditorHierarchyController::notifyEntityChanged);
+        setECSWorld(EditorEntityManager::GetInstancePtr()->getWorkspaceWorld().get());
 
         m_canvas = _canvas;
 
         EditorManager::GetInstancePtr()->eventSceneModeChanged.subscribe(this, &EditorHierarchyController::notifyEditorSceneModeChanged);
+        EditorManager::GetInstancePtr()->eventPlaytestModeEnabledChanged.subscribe(this, &EditorHierarchyController::notifyPlaytestModeEnabled);
         EditorPrefabManager::GetInstancePtr()->eventPrefabEntityChanged.subscribe(this, &EditorHierarchyController::notifyPrefabEntityChanged);
 
         return true;
@@ -552,6 +552,7 @@ namespace Maze
         if (!hierarchyLine)
         {
             hierarchyLine = m_hierarchyLinePool->createHierarchyLine(HierarchyLineType::Entity);
+            hierarchyLine->setECSWorld(EditorManager::GetInstancePtr()->getMainECSWorld());
             hierarchyLine->setUserData(reinterpret_cast<void*>((Size)_entityId));
             hierarchyLine->updateIcon();
             hierarchyLine->eventDropDownClick.subscribe(this, &EditorHierarchyController::notifyHierarchyLineDropDownClick);
@@ -572,6 +573,7 @@ namespace Maze
         if (!hierarchyLine)
         {
             hierarchyLine = m_hierarchyLinePool->createHierarchyLine(HierarchyLineType::Scene);
+            hierarchyLine->setECSWorld(EditorManager::GetInstancePtr()->getMainECSWorld());
             hierarchyLine->setUserData(static_cast<void*>(_scene.get()));
             hierarchyLine->eventDropDownClick.subscribe(this, &EditorHierarchyController::notifyHierarchyLineDropDownClick);
             hierarchyLine->eventLinePressed.subscribe(this, &EditorHierarchyController::notifyHierarchyLinePressed);
@@ -619,7 +621,8 @@ namespace Maze
             {
                 EntityId entityId = (EntityId)(reinterpret_cast<Size>(_hierarchyLine->getUserData()));
 
-                EntityPtr const& entity = EditorEntityManager::GetInstancePtr()->getWorkspaceWorld()->getEntityById(entityId);
+                ECSWorld* world = EditorManager::GetInstancePtr()->getSceneMain()->getWorld();
+                EntityPtr const& entity = world->getEntityById(entityId);
 
                 if (SelectionManager::GetInstancePtr()->isObjectSelected(entity))
                     SelectionManager::GetInstancePtr()->unselectObject(entity);
@@ -665,9 +668,36 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void EditorHierarchyController::notifyPlaytestModeEnabled(bool _value)
+    {
+        setECSWorld(EditorManager::GetInstancePtr()->getMainECSWorld());
+    }
+
+    //////////////////////////////////////////
     void EditorHierarchyController::notifyPrefabEntityChanged(EntityPtr const& _entity)
     {
 
+    }
+
+    //////////////////////////////////////////
+    void EditorHierarchyController::setECSWorld(ECSWorld* _world)
+    {
+        if (m_world == _world)
+            return;
+
+        if (m_world)
+        {
+            m_world->eventEntityRemoved.unsubscribe(this);
+            m_world->eventEntityChanged.unsubscribe(this);
+        }
+
+        m_world = _world;
+
+        if (m_world)
+        {
+            m_world->eventEntityRemoved.subscribe(this, &EditorHierarchyController::notifyEntityRemoved);
+            m_world->eventEntityChanged.subscribe(this, &EditorHierarchyController::notifyEntityChanged);
+        }
     }
 
 } // namespace Maze

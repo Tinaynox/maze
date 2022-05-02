@@ -32,6 +32,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
+#include "maze-core/managers/MazeTaskManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
@@ -103,6 +104,7 @@
 #include "managers/EditorAssetsModeManager.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorWorkspaceManager.hpp"
+#include "managers/EditorEntityManager.hpp"
 #include "editor/EditorSceneModeController.hpp"
 #include "editor/scene-mode-none/EditorSceneModeControllerNone.hpp"
 #include "editor/scene-mode-prefab/EditorSceneModeControllerPrefab.hpp"
@@ -376,13 +378,17 @@ namespace Maze
             m_workspaceCanvas->setRenderTarget(m_renderTarget);
             m_workspaceCanvas->setSortOrder(-1000000);
 
+            MaterialPtr const& spriteMaterial = SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial();
+            MaterialPtr workspaceSpriteMaterial = spriteMaterial->createCopy();
+            workspaceSpriteMaterial->getFirstRenderPass()->setBlendFactors(BlendFactor::One, BlendFactor::Zero);
+
             RenderBufferPtr const& workspaceRenderBuffer = EditorWorkspaceManager::GetInstancePtr()->getWorkspaceRenderBuffer();
             m_workspaceSprite = Sprite::Create(workspaceRenderBuffer->getColorTexture()->cast<Texture2D>());
             m_workspaceSpriteRenderer = SpriteHelper::CreateSprite(
                 m_workspaceSprite,
                 m_workspaceCanvas->getTransform()->getSize(),
                 Vec2DF(0.0f, 0.0f),
-                nullptr, // #TODO: One Zero mat
+                workspaceSpriteMaterial,
                 m_workspaceCanvas->getTransform(),
                 this,
                 Vec2DF::c_zero,
@@ -550,6 +556,9 @@ namespace Maze
 
         if (m_workspaceCanvas)
             m_workspaceCanvas->setClearColorFlag(!_value);
+
+        if (!_value)
+            EditorEntityManager::GetInstancePtr()->getWorkspaceWorld()->update(0.0f);
     }
 
     //////////////////////////////////////////

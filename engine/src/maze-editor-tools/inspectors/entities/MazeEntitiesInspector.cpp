@@ -154,7 +154,7 @@ namespace Maze
         m_entities = _entities;
 
         if (_entities.size())
-            setECSWorld((*_entities.begin())->getECSWorld()->cast<ECSWorld>());
+            setECSWorld((*_entities.begin())->getECSWorld());
         else
             setECSWorld(nullptr);
 
@@ -327,7 +327,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EntitiesInspector::setECSWorld(ECSWorldPtr const& _world)
+    void EntitiesInspector::setECSWorld(ECSWorld* _world)
     {
         if (m_world == _world)
             return;

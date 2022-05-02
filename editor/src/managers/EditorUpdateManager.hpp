@@ -25,16 +25,16 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_SceneMainTools_hpp_))
-#define _SceneMainTools_hpp_
+#if (!defined(_EditorUpdateManager_hpp_))
+#define _EditorUpdateManager_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-core/ecs/MazeECSScene.hpp"
-#include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
+#include "maze-core/system/MazeTimer.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeShader.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
@@ -43,90 +43,88 @@
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
+#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
+#include "scenes/SceneWorkspace.hpp"
+#include "editor/EditorSceneMode.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(SceneMainTools);
-    MAZE_USING_SHARED_PTR(MeshRenderer);
-    MAZE_USING_SHARED_PTR(DebugGridRenderer);
-    MAZE_USING_SHARED_PTR(Camera3D);
+    MAZE_USING_SHARED_PTR(EditorUpdateManager);
 
 
     //////////////////////////////////////////
-    // Class SceneMainTools
+    // Class EditorUpdateManager
     //
     //////////////////////////////////////////
-    class SceneMainTools
-        : public ECSRenderScene
-        , public MultiDelegateCallbackReceiver
+    class EditorUpdateManager
+        : public Updatable
+        , public Updater
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneMainTools, ECSRenderScene);
-
-    public:
-    
-        //////////////////////////////////////////
-        virtual ~SceneMainTools();
-
+        ~EditorUpdateManager();
 
         //////////////////////////////////////////
-        inline Camera3DPtr const& getCamera3D() const { return m_camera3D; }
-
-        //////////////////////////////////////////
-        inline Vec3DF const& getCamera3DTargetPosition() const { return m_camera3DTargetPosition; }
-
-        //////////////////////////////////////////
-        inline void setCamera3DTargetPosition(Vec3DF const& _value) { m_camera3DTargetPosition = _value; }
-
-        //////////////////////////////////////////
-        inline MeshRendererPtr const& getDebugAxesRenderer() const { return m_debugAxesRenderer; }
-
-        //////////////////////////////////////////
-        inline DebugGridRendererPtr const& getDebugGridRenderer() const { return m_debugGridRenderer; }
-
-        //////////////////////////////////////////
-        inline CanvasPtr const& getMainCanvas() const { return m_mainCanvas; }
+        static void Initialize(EditorUpdateManagerPtr& _manager);
+        
 
 
         //////////////////////////////////////////
-        inline F32 getYawAngle() const { return m_yawAngle; }
+        void processUpdate();
+
 
         //////////////////////////////////////////
-        inline void setYawAngle(F32 _value) { m_yawAngle = _value; }
+        inline U32 getMilliseconds() { return m_timer.getMilliseconds(); }
 
         //////////////////////////////////////////
-        inline F32 getPitchAngle() const { return m_pitchAngle; }
+        inline U32 getMicroseconds() { return m_timer.getMicroseconds(); }
+
 
         //////////////////////////////////////////
-        inline void setPitchAngle(F32 _value) { m_pitchAngle = _value; }
+        inline F32 getAppTime() const { return m_appTime; }
+
+        //////////////////////////////////////////
+        inline F32 getDeltaTime() const { return m_deltaTime; }
+
+
+        //////////////////////////////////////////
+        static inline EditorUpdateManager* GetInstancePtr() { return s_instance; }
+
+        //////////////////////////////////////////
+        static inline EditorUpdateManager& GetInstance() { return *s_instance; }
+
+
+        //////////////////////////////////////////
+        virtual void update(F32 _dt) MAZE_OVERRIDE;
 
     protected:
 
         //////////////////////////////////////////
-        SceneMainTools();
+        EditorUpdateManager();
 
         //////////////////////////////////////////
-        virtual bool init(RenderTargetPtr const& _renderTarget);
+        bool init();
+
+
 
     protected:
-        Camera3DPtr m_camera3D;
-        Vec3DF m_camera3DTargetPosition = Vec3DF::c_zero;
-        MeshRendererPtr m_debugAxesRenderer;
-        DebugGridRendererPtr m_debugGridRenderer;
+        static EditorUpdateManager* s_instance;
 
-        F32 m_yawAngle = 0.0f;
-        F32 m_pitchAngle = 0.0f;
-        Vec2DF m_cursorPositionLastFrame = Vec2DF::c_zero;
-        bool m_cursorDrag = false;
+        Timer m_timer;
 
-        CanvasPtr m_mainCanvas;
+        U32 m_lastFrameTimeMS = 0u;
+        U32 m_maxDeltaTimeMS = 50u;
+
+        F32 m_appTime = 0.0f;
+
+        F32 m_deltaTime = 0.0f;
     };
 
 
@@ -134,5 +132,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _SceneMainTools_hpp_
+#endif // _EditorUpdateManager_hpp_
 //////////////////////////////////////////

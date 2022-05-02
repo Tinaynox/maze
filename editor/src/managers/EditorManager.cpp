@@ -91,6 +91,7 @@
 #include "managers/EditorEntityManager.hpp"
 #include "managers/EditorWorkspaceManager.hpp"
 #include "managers/EditorPlaytestManager.hpp"
+#include "managers/EditorUpdateManager.hpp"
 #include "layout/EditorLayout.hpp"
 #include "scenes/SceneWorkspace.hpp"
 #include "scenes/SceneWorkspaceTools.hpp"
@@ -158,6 +159,10 @@ namespace Maze
 
         EditorPlaytestManager::Initialize(m_editorPlaytestManager);
         if (!m_editorPlaytestManager)
+            return false;
+
+        EditorUpdateManager::Initialize(m_editorUpdateManager);
+        if (!m_editorUpdateManager)
             return false;
 
         return true;
@@ -253,6 +258,11 @@ namespace Maze
         if (m_playtestModeEnabled == _value)
             return;
 
+        Mat4DF prevCameraTransform = getSceneMainTools()->getCamera3D()->getTransform()->getLocalTransform();
+        Vec3DF cameraTargetPosition = getSceneMainTools()->getCamera3DTargetPosition();
+        F32 yawAngle = getSceneMainTools()->getYawAngle();
+        F32 pitchAngle = getSceneMainTools()->getPitchAngle();
+
         m_playtestModeEnabled = _value;
 
         if (m_playtestModeEnabled)
@@ -262,12 +272,17 @@ namespace Maze
         }
         else
         {
-            m_editorWorkspaceManager->createScenes();
             m_editorPlaytestManager->destroyScenes();
+            m_editorWorkspaceManager->createScenes();
         }
 
         if (m_editorPrefabManager->getPrefabAssetFile())
             m_editorPrefabManager->updatePrefabAssetFile();
+
+        getSceneMainTools()->getCamera3D()->getTransform()->setLocalTransform(prevCameraTransform);
+        getSceneMainTools()->setCamera3DTargetPosition(cameraTargetPosition);
+        getSceneMainTools()->setYawAngle(yawAngle);
+        getSceneMainTools()->setPitchAngle(pitchAngle);
 
         eventPlaytestModeEnabledChanged(m_playtestModeEnabled);
     }
@@ -288,6 +303,15 @@ namespace Maze
             return m_editorPlaytestManager->getScenePlaytestTools();
         else
             return m_editorWorkspaceManager->getSceneWorkspaceTools();
+    }
+
+    //////////////////////////////////////////
+    ECSWorld* EditorManager::getMainECSWorld() const
+    {
+        if (m_playtestModeEnabled)
+            return EntityManager::GetInstancePtr()->getDefaultWorldRaw();
+        else
+            return EditorEntityManager::GetInstancePtr()->getWorkspaceWorld().get();
     }
 
 } // namespace Maze

@@ -145,12 +145,14 @@ namespace Maze
     {
         if (m_scenePlaytest)
         {
+            m_scenePlaytest->destroyAllEntities();
             Editor::GetInstancePtr()->getSceneManager()->destroyScene(m_scenePlaytest);
             m_scenePlaytest.reset();
         }
 
         if (m_scenePlaytestTools)
         {
+            m_scenePlaytestTools->destroyAllEntities();
             Editor::GetInstancePtr()->getSceneManager()->destroyScene(m_scenePlaytestTools);
             m_scenePlaytestTools.reset();
         }

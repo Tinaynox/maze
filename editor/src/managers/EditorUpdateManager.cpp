@@ -24,7 +24,7 @@
 
 
 //////////////////////////////////////////
-#include "EditorWorkspaceManager.hpp"
+#include "EditorUpdateManager.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
@@ -81,108 +81,78 @@
 #include "maze-physics2d/ecs/components/MazeCircleCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
 #include "Editor.hpp"
-#include "layout/EditorLayout.hpp"
-#include "scenes/SceneWorkspace.hpp"
-#include "scenes/SceneWorkspaceTools.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class EditorWorkspaceManager
+    // Class EditorUpdateManager
     //
     //////////////////////////////////////////
-    EditorWorkspaceManager* EditorWorkspaceManager::s_instance = nullptr;
+    EditorUpdateManager* EditorUpdateManager::s_instance = nullptr;
 
     //////////////////////////////////////////
-    EditorWorkspaceManager::EditorWorkspaceManager()
+    EditorUpdateManager::EditorUpdateManager()
     {
         s_instance = this;
     }
 
     //////////////////////////////////////////
-    EditorWorkspaceManager::~EditorWorkspaceManager()
+    EditorUpdateManager::~EditorUpdateManager()
     {
-        if (Editor::GetInstancePtr() && Editor::GetInstancePtr()->getMainRenderWindow())
-            Editor::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.unsubscribe(this);
-
         s_instance = nullptr;
+
+        
     }
 
     //////////////////////////////////////////
-    void EditorWorkspaceManager::Initialize(EditorWorkspaceManagerPtr& _manager)
+    void EditorUpdateManager::Initialize(EditorUpdateManagerPtr& _manager)
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorWorkspaceManager, _manager, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorUpdateManager, _manager, init());
     }
 
     //////////////////////////////////////////
-    bool EditorWorkspaceManager::init()
+    bool EditorUpdateManager::init()
     {
+        m_lastFrameTimeMS = m_timer.getMilliseconds();
 
+        addUpdatable(this);
+        
         return true;
     }
 
     //////////////////////////////////////////
-    void EditorWorkspaceManager::start()
+    void EditorUpdateManager::update(F32 _dt)
     {
-        Editor::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &EditorWorkspaceManager::notifyMainRenderWindowResized);
 
-        m_workspaceRenderBuffer = RenderBuffer::Create(
-            {
-                calculateWorkspaceRenderBuffer(),
-                PixelFormat::RGBA_U8,
-                PixelFormat::DEPTH_U24
-            });
 
-        createScenes();
     }
 
     //////////////////////////////////////////
-    void EditorWorkspaceManager::createScenes()
+    void EditorUpdateManager::processUpdate()
     {
-        destroyScenes();
-
-        m_sceneWorkspace = Editor::GetInstancePtr()->getSceneManager()->loadScene<SceneWorkspace>();
-        m_sceneWorkspaceTools = Editor::GetInstancePtr()->getSceneManager()->loadScene<SceneWorkspaceTools>();
-    }
-
-    //////////////////////////////////////////
-    void EditorWorkspaceManager::destroyScenes()
-    {
-        if (m_sceneWorkspace)
+        U32 currentFrameTimeMS = m_timer.getMilliseconds();
+        if (m_lastFrameTimeMS > currentFrameTimeMS)
         {
-            m_sceneWorkspace->destroyAllEntities();
-            Editor::GetInstancePtr()->getSceneManager()->destroyScene(m_sceneWorkspace);
-            m_sceneWorkspace.reset();
+            MAZE_WARNING("Timer is broken! currentFrameTime=%u m_lastFrameTime=%u", currentFrameTimeMS, m_lastFrameTimeMS);
+            m_lastFrameTimeMS = currentFrameTimeMS;
         }
 
-        if (m_sceneWorkspaceTools)
-        {
-            m_sceneWorkspaceTools->destroyAllEntities();
-            Editor::GetInstancePtr()->getSceneManager()->destroyScene(m_sceneWorkspaceTools);
-            m_sceneWorkspaceTools.reset();
-        }
-    }
+        // Skip frame
+        if (m_lastFrameTimeMS == currentFrameTimeMS)
+            return;
 
-    //////////////////////////////////////////
-    void EditorWorkspaceManager::clearWorkspace()
-    {
-        if (m_sceneWorkspace)
-            m_sceneWorkspace->destroyAllEntities();
-    }
+        U32 dtMS = Math::Min((currentFrameTimeMS - m_lastFrameTimeMS), m_maxDeltaTimeMS);
 
-    //////////////////////////////////////////
-    Vec2DU EditorWorkspaceManager::calculateWorkspaceRenderBuffer()
-    {
-        Rect2DF mainCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
-        return Vec2DU(mainCanvasViewport.size * (Vec2DF)Editor::GetInstancePtr()->getMainRenderWindow()->getRenderTargetSize());
-    }
+        m_lastFrameTimeMS = currentFrameTimeMS;
 
-    //////////////////////////////////////////
-    void EditorWorkspaceManager::notifyMainRenderWindowResized(RenderTarget* _renderTarget)
-    {
-        m_workspaceRenderBuffer->setSize(calculateWorkspaceRenderBuffer());
+        F32 dt = dtMS / 1000.0f;
+
+        m_deltaTime = dt;
+        m_appTime += dt;
+
+        Updater::processUpdate(dt);
     }
 
 } // namespace Maze

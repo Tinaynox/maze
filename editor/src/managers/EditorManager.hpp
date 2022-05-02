@@ -65,6 +65,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(EditorEntityManager);
     MAZE_USING_SHARED_PTR(EditorWorkspaceManager);
     MAZE_USING_SHARED_PTR(EditorPlaytestManager);
+    MAZE_USING_SHARED_PTR(EditorUpdateManager);
    
 
     //////////////////////////////////////////
@@ -152,6 +153,9 @@ namespace Maze
         //////////////////////////////////////////
         SceneMainToolsPtr getSceneMainTools() const;
 
+        //////////////////////////////////////////
+        ECSWorld* getMainECSWorld() const;
+
     public:
 
         //////////////////////////////////////////
@@ -182,6 +186,7 @@ namespace Maze
         EditorEntityManagerPtr m_editorEntityManager;
         EditorWorkspaceManagerPtr m_editorWorkspaceManager;
         EditorPlaytestManagerPtr m_editorPlaytestManager;
+        EditorUpdateManagerPtr m_editorUpdateManager;
 
         String m_currentEditFileFullPath;
 

@@ -232,8 +232,6 @@ namespace Maze
             this, &EditorSceneModeControllerPrefab::notifyDebugGridEnabledChanged);
 
 
-
-
         m_topBarRightLayout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Right,
             VerticalAlignment2D::Middle,

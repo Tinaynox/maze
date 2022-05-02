@@ -32,6 +32,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
+#include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
@@ -195,6 +196,8 @@ namespace Maze
     //////////////////////////////////////////
     void ScenePlaytestTools::update(F32 _dt)
     {
+        _dt = UpdateManager::GetInstancePtr()->getUnscaledDeltaTime();
+
         SceneMainTools::update(_dt);
 
         if (!Editor::GetInstancePtr()->getMainRenderWindow()->getFocused())
@@ -207,9 +210,7 @@ namespace Maze
         AABB2D aabb = AABB2D::FromRect2D(viewportRect);
 
         Vec2DF cursorPositionRWS = InputManager::GetInstancePtr()->getCursorPosition(0);
-        Vec2DF cursorPosition = EditorLayout::ConvertRenderWindowCoordsToWorkspaceViewport(cursorPositionRWS);
-
-        if (m_camera3D && aabb.contains(cursorPosition))
+        if (m_camera3D && aabb.contains(cursorPositionRWS))
         {
             Vec3DF cameraForwardDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3DF::c_unitZ;
             Vec3DF cameraRightDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3DF::c_unitX;
@@ -301,8 +302,7 @@ namespace Maze
                 {
                     if (m_camera3D && m_camera3D->getEntityRaw()->getActiveSelf())
                     {
-                        Vec2DF cursorPositionRWS = Vec2DF((F32)_data.x, (F32)_data.y);
-                        Vec2DF cursorPosition = EditorLayout::ConvertRenderWindowCoordsToWorkspaceViewport(cursorPositionRWS);
+                        Vec2DF cursorPosition = Vec2DF((F32)_data.x, (F32)_data.y);
                         Rect2DF viewportRect(
                             m_camera3D->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
                             m_camera3D->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,

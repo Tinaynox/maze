@@ -197,7 +197,14 @@ namespace Maze
         void notifyEditorSceneModeChanged(EditorSceneMode _mode);
 
         //////////////////////////////////////////
+        void notifyPlaytestModeEnabled(bool _value);
+
+        //////////////////////////////////////////
         void notifyPrefabEntityChanged(EntityPtr const& _entity);
+
+
+        //////////////////////////////////////////
+        void setECSWorld(ECSWorld* _world);
 
     protected:
         Canvas* m_canvas;
@@ -212,7 +219,7 @@ namespace Maze
         Transform2DPtr m_titleTransform;
         SpriteRenderer2DPtr m_titleBackground;
 
-        ECSWorld* m_world;
+        ECSWorld* m_world = nullptr;
 
         Map<EntityId, EditorHierarchyLineEntityData> m_hierarchyLinesPerEntity;
         UnorderedMap<String, EditorHierarchyLineSceneData> m_hierarchyLinesPerScene;
