@@ -67,7 +67,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        class TextureSheetAnimation
+        class MAZE_PARTICLES_API TextureSheetAnimation
             : public IJSONValueSerializable
         {
         public:

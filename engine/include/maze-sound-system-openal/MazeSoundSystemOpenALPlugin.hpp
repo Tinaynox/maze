@@ -63,6 +63,10 @@ namespace Maze
         , public std::enable_shared_from_this<SoundSystemOpenALPlugin>
     {
     public:
+        //////////////////////////////////////////
+        static constexpr CString const c_libraryName = "maze-sound-system-openal";
+        
+    public:
 
         //////////////////////////////////////////
         virtual ~SoundSystemOpenALPlugin();

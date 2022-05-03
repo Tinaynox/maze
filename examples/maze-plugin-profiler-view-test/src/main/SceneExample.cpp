@@ -116,8 +116,8 @@ namespace Maze
     //////////////////////////////////////////
     bool LoadPlugins()
     {
-        MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView, "maze-plugin-profiler-view");
-        MAZE_LOAD_PLATFORM_PLUGIN(Console, "maze-plugin-console");
+        MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView);
+        MAZE_LOAD_PLATFORM_PLUGIN(Console);
 
         if (SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>())
             SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>()->setActive(true);
@@ -217,7 +217,7 @@ namespace Maze
         MeshRendererPtr meshRenderer = objectEntity->createComponent<MeshRenderer>();
         meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultCubeMesh());
         // meshRenderer->setRenderMesh("DroneLP.obj");
-        meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getSpecularDSMaterial());
+        meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::SpecularDS));
         objectEntity->ensureComponent<Name>("Obj");
         Rotor3DPtr rotor = objectEntity->createComponent<Rotor3D>();
         rotor->setAxis({0.0f, -0.7071f, -0.7071f });
@@ -235,6 +235,8 @@ namespace Maze
                     bool active = StringHelper::StringToBool(_argv[0]);
                     SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>()->setActive(active);
                 }
+
+                return true;
             });
 
         return true;

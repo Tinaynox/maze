@@ -203,10 +203,10 @@ namespace Maze
         {
             RenderSystemOpenGLConfig config;
             config.multiContextPolicy = OpenGLMultiContextPolicy::Unified;
-            MAZE_LOAD_PLATFORM_PLUGIN(RenderSystemOpenGL3, "maze-render-system-opengl3", config);
+            MAZE_LOAD_PLATFORM_PLUGIN(RenderSystemOpenGL3, config);
         }
 #endif
-        MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG, "maze-plugin-loader-png");
+        MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG);
 
         Debug::log << "Available Render Systems: " << endl;
         for (auto const& renderSystemData : m_graphicsManager->getRenderSystems())

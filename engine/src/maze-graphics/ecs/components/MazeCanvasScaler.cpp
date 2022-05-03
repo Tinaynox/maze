@@ -182,7 +182,7 @@ namespace Maze
 
         F32 x = viewportSize.x / m_referenceResolution.x;
         F32 y = viewportSize.y / m_referenceResolution.y;
-        F32 screenSizeAR = viewportSize.x / viewportSize.y;
+        F32 screenSizeAR = viewportSize.y != 0.0f ? viewportSize.x / viewportSize.y : 1.0f;
 
         switch (m_screenMatchMode)
         {

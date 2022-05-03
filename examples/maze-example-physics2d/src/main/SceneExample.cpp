@@ -100,8 +100,8 @@ namespace Maze
     //////////////////////////////////////////
     bool LoadPlugins()
     {
-        MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView, "maze-plugin-profiler-view");
-        MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG, "maze-plugin-loader-png");
+        MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView);
+        MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG);
 
         return true;
     }

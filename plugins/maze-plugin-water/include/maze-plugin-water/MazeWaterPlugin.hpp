@@ -62,6 +62,10 @@ namespace Maze
         , public std::enable_shared_from_this<WaterPlugin>
     {
     public:
+        //////////////////////////////////////////
+        static constexpr CString const c_libraryName = "maze-plugin-water";
+
+    public:
 
         //////////////////////////////////////////
         virtual ~WaterPlugin();

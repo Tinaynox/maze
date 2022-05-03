@@ -35,57 +35,13 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeShader.hpp"
-#include "maze-editor-tools/managers/MazeInspectorManager.hpp"
-#include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawerDefault.hpp"
-#include "maze-particles/inspectors/entities/MazeComponentEditorParticleSystem3D.hpp"
-#include "maze-particles/property-drawers/MazePropertyDrawerParticleSystemParameterF32.hpp"
-#include "maze-particles/property-drawers/MazePropertyDrawerParticleSystemParameterColor.hpp"
-#include "maze-particles/property-drawers/MazePropertyDrawerParticleSystemBurst.hpp"
-#include "maze-particles/meta-property-drawers/MazeMetaPropertyDrawerParticleSystem3DMainModule.hpp"
-#include "maze-particles/meta-property-drawers/MazeMetaPropertyDrawerParticleSystem3DRendererModule.hpp"
-#include "maze-particles/meta-property-drawers/MazeMetaPropertyDrawerParticleSystem3DShapeModule.hpp"
-#include "maze-particles/meta-property-drawers/MazeMetaPropertyDrawerParticleSystem3DZoneData.hpp"
 #include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
-    //////////////////////////////////////////
-    using MetaPropertyDraweParticleSystemParameterF32 =
-        MetaPropertyDrawerDefault<
-            ParticleSystemParameterF32,
-            PropertyDrawerParticleSystemParameterF32>;
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDraweParticleSystemParameterF32, MetaPropertyDrawer);
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK_TEMPLATE(MetaPropertyDraweParticleSystemParameterF32);
-    template class MAZE_PARTICLES_API MetaPropertyDrawerDefault<ParticleSystemParameterF32, PropertyDrawerParticleSystemParameterF32>;
-
-    //////////////////////////////////////////
-    using MetaPropertyDraweParticleSystemParameterF32Positive =
-        MetaPropertyDrawerDefault<
-            ParticleSystemParameterF32,
-            PropertyDrawerParticleSystemParameterF32Positive>;
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDraweParticleSystemParameterF32Positive, MetaPropertyDrawer);
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK_TEMPLATE(MetaPropertyDraweParticleSystemParameterF32Positive);
-    template class MAZE_PARTICLES_API MetaPropertyDrawerDefault<ParticleSystemParameterF32, PropertyDrawerParticleSystemParameterF32Positive>;
-
-    //////////////////////////////////////////
-    using MetaPropertyDraweParticleSystemParameterF32Degrees =
-        MetaPropertyDrawerDefault<
-            ParticleSystemParameterF32,
-            PropertyDrawerParticleSystemParameterF32Degrees>;
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDraweParticleSystemParameterF32Degrees, MetaPropertyDrawer);
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK_TEMPLATE(MetaPropertyDraweParticleSystemParameterF32Degrees);
-    template class MAZE_PARTICLES_API MetaPropertyDrawerDefault<ParticleSystemParameterF32, PropertyDrawerParticleSystemParameterF32Degrees>;
-
-    //////////////////////////////////////////
-    using MetaPropertyDraweParticleSystemParameterColor =
-        MetaPropertyDrawerDefault<
-            ParticleSystemParameterColor,
-            PropertyDrawerParticleSystemParameterColor>;
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDraweParticleSystemParameterColor, MetaPropertyDrawer);
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK_TEMPLATE(MetaPropertyDraweParticleSystemParameterColor);
-    template class MAZE_PARTICLES_API MetaPropertyDrawerDefault<ParticleSystemParameterColor, PropertyDrawerParticleSystemParameterColor>;
+    
 
 
     //////////////////////////////////////////
@@ -116,27 +72,6 @@ namespace Maze
     bool ParticlesManager::init()
     {
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<ParticleSystem3D>("FX");
-
-
-        InspectorManager::GetInstancePtr()->registerPropertyDrawer<ParticleSystemParameterF32, PropertyDrawerParticleSystemParameterF32>();
-        InspectorManager::GetInstancePtr()->registerPropertyDrawer<ParticleSystemParameterColor, PropertyDrawerParticleSystemParameterColor>();
-
-        InspectorManager::GetInstancePtr()->registerPropertyDrawer<ParticleSystemBurst, PropertyDrawerParticleSystemBurst>();
-
-
-
-        InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystemParameterF32, MetaPropertyDraweParticleSystemParameterF32>();
-        InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystemParameterColor, MetaPropertyDraweParticleSystemParameterColor>();
-
-        InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystem3DMainModule, MetaPropertyDrawerParticleSystem3DMainModule>();
-        InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystem3DRendererModule, MetaPropertyDrawerParticleSystem3DRendererModule>();
-        InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystem3DShapeModule, MetaPropertyDrawerParticleSystem3DShapeModule>();
-
-        InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystem3DZoneData, MetaPropertyDrawerParticleSystem3DZoneData>();
-
-
-
-        InspectorManager::GetInstancePtr()->registerComponentEditor<ParticleSystem3D, ComponentEditorParticleSystem3D>();
         
         return true;
     }

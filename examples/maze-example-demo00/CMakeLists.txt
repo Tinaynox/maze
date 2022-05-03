@@ -41,7 +41,8 @@ set(EXAMPLE_MAZE_LIBS
     maze-plugin-profiler-view
     maze-plugin-console
     maze-plugin-loader-png
-    maze-plugin-water)
+    maze-plugin-water
+    maze-plugin-particles-editor-tools)
 
 
 ##########################################
@@ -70,6 +71,7 @@ add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-profiler-view" "${CMAKE_CURREN
 add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-console" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-console")
 add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-loader-png" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-loader-png")
 add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-water" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-water")
+add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-particles-editor-tools" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-particles-editor-tools")
 
 
 ##########################################

@@ -112,7 +112,7 @@ namespace Maze
     //////////////////////////////////////////
     bool LoadPlugins()
     {
-        MAZE_LOAD_PLATFORM_PLUGIN(ArchiveAssets, "maze-plugin-archive-assets");
+        MAZE_LOAD_PLATFORM_PLUGIN(ArchiveAssets);
 
         return true;
     }
@@ -207,7 +207,7 @@ namespace Maze
         transform->setLocalScale(0.1f);
         MeshRendererPtr meshRenderer = objectEntity->createComponent<MeshRenderer>();
         meshRenderer->setRenderMesh("Teapot.obj");
-        meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getSpecularDSMaterial());
+        meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::SpecularDS));
         objectEntity->ensureComponent<Name>("Obj");
         Rotor3DPtr rotor = objectEntity->createComponent<Rotor3D>();
         rotor->setAxis({0.0f, -0.7071f, -0.7071f });

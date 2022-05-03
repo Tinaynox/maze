@@ -190,8 +190,8 @@ void OnInit()
     MAZE_LOG("Package Name: %s\n", applicationId.c_str());
 #endif
 
-    MAZE_LOAD_PLATFORM_PLUGIN(RenderSystemOpenGL3, "maze-render-system-opengl3");
-    MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG, "maze-plugin-loader-png");
+    MAZE_LOAD_PLATFORM_PLUGIN(RenderSystemOpenGL3);
+    MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG);
 
 
     Maze::Debug::log << "Available Render Systems: " << Maze::endl;

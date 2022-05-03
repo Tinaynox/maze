@@ -63,6 +63,10 @@ namespace Maze
         , public std::enable_shared_from_this<RenderSystemOpenGL3Plugin>
     {
     public:
+        //////////////////////////////////////////
+        static constexpr CString const c_libraryName = "maze-render-system-opengl3";
+
+    public:
 
         //////////////////////////////////////////
         virtual ~RenderSystemOpenGL3Plugin();

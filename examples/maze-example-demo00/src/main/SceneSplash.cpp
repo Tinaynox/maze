@@ -92,6 +92,7 @@
 #include "maze-plugin-profiler-view/settings/MazeProfilerViewSettings.hpp"
 #include "maze-plugin-console/MazeConsolePlugin.hpp"
 #include "maze-plugin-console/MazeConsoleService.hpp"
+#include "maze-plugin-particles-editor-tools/MazeParticlesEditorToolsPlugin.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "main/SceneExample.hpp"
 #include "main/LevelBloomController.hpp"
@@ -126,7 +127,7 @@ namespace Maze
     //////////////////////////////////////////
     bool LoadPlugins()
     {
-        MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG, "maze-plugin-loader-png");
+        MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG);
         
         return true;
     }
@@ -303,18 +304,19 @@ namespace Maze
             }
             case 10:
             {
-                MAZE_LOAD_PLATFORM_PLUGIN(Water, "maze-plugin-water");
+                MAZE_LOAD_PLATFORM_PLUGIN(Water);
                 setCurrentProgress(0.9f);
                 break;
             }
             case 11:
             {
-                MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView, "maze-plugin-profiler-view");
-                MAZE_LOAD_PLATFORM_PLUGIN(Console, "maze-plugin-console");
+                MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView);
+                MAZE_LOAD_PLATFORM_PLUGIN(Console);
 #if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
                 if (SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>())
                     SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>()->setActive(true);
 #endif
+                MAZE_LOAD_PLATFORM_PLUGIN(ParticlesEditorTools);
 
                 ConsoleService::GetInstancePtr()->registerCommand(
                     "profile",

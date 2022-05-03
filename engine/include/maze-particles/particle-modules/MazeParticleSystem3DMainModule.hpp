@@ -70,7 +70,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        class EmissionModule
+        class MAZE_PARTICLES_API EmissionModule
             : public IJSONValueSerializable
         {
         public:
@@ -148,7 +148,7 @@ namespace Maze
         };
 
         //////////////////////////////////////////
-        class SizeOverLifetimeModule
+        class MAZE_PARTICLES_API SizeOverLifetimeModule
             : public IJSONValueSerializable
         {
         public:
@@ -199,7 +199,7 @@ namespace Maze
         };
 
         //////////////////////////////////////////
-        class VelocityOverLifetimeModule
+        class MAZE_PARTICLES_API VelocityOverLifetimeModule
             : public IJSONValueSerializable
         {
         public:
@@ -269,7 +269,7 @@ namespace Maze
         };
 
         //////////////////////////////////////////
-        class VelocityLimitOverLifetimeModule
+        class MAZE_PARTICLES_API VelocityLimitOverLifetimeModule
             : public IJSONValueSerializable
         {
         public:
@@ -320,7 +320,7 @@ namespace Maze
         };
 
         //////////////////////////////////////////
-        class RotationOverLifetimeModule
+        class MAZE_PARTICLES_API RotationOverLifetimeModule
             : public IJSONValueSerializable
         {
         public:
@@ -370,7 +370,7 @@ namespace Maze
         };
 
         //////////////////////////////////////////
-        class ColorOverLifetimeModule
+        class MAZE_PARTICLES_API ColorOverLifetimeModule
             : public IJSONValueSerializable
         {
         public:

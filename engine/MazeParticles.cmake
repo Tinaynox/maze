@@ -33,5 +33,4 @@ maze_add_module(
 target_link_libraries(
     maze-particles
     PUBLIC maze-core
-    PUBLIC maze-graphics
-    PUBLIC maze-editor-tools)
+    PUBLIC maze-graphics)

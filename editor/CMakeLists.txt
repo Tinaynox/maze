@@ -36,12 +36,14 @@ set(EXAMPLE_MAZE_LIBS
     maze-ui
     maze-gamepad
     maze-engine
+    maze-particles
     maze-sound
     maze-editor-tools
     maze-plugin-profiler-view
     maze-plugin-console
     maze-plugin-loader-png
-    maze-plugin-archive-assets)
+    maze-plugin-archive-assets
+    maze-plugin-particles-editor-tools)
 
 
 ##########################################
@@ -76,6 +78,7 @@ add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-profiler-view" "${CMAKE_CURREN
 add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-console" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-console")
 add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-loader-png" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-loader-png")
 add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-archive-assets" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-archive-assets")
+add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-particles-editor-tools" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-particles-editor-tools")
 
 
 ##########################################

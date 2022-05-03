@@ -62,6 +62,10 @@ namespace Maze
         , public std::enable_shared_from_this<ArchiveAssetsPlugin>
     {
     public:
+        //////////////////////////////////////////
+        static constexpr CString const c_libraryName = "maze-plugin-archive-assets";
+
+    public:
 
         //////////////////////////////////////////
         virtual ~ArchiveAssetsPlugin();

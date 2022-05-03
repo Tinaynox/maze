@@ -79,6 +79,7 @@
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
 #include "maze-plugin-profiler-view/MazeProfilerViewPlugin.hpp"
 #include "maze-plugin-loader-png/MazeLoaderPNGPlugin.hpp"
+#include "maze-plugin-particles-editor-tools/MazeParticlesEditorToolsPlugin.hpp"
 #include "main/LevelBloomController.hpp"
 #include "Example.hpp"
 
@@ -108,8 +109,9 @@ namespace Maze
     //////////////////////////////////////////
     bool LoadPlugins()
     {
-        MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView, "maze-plugin-profiler-view");
-        MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG, "maze-plugin-loader-png");
+        MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView);
+        MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG);
+        MAZE_LOAD_PLATFORM_PLUGIN(ParticlesEditorTools);
 
         return true;
     }

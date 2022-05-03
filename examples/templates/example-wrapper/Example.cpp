@@ -143,11 +143,11 @@ namespace Maze
     //////////////////////////////////////////
     void Example::update(F32 _dt)
     {
-        if (m_debuggerManager)
+        if (m_editorToolsManager)
         {
             F32 const debugEditorProgressSpeed = 5.0f;
 
-            if (m_debuggerManager->getDebugEditorActive())
+            if (m_editorToolsManager->getDebugEditorActive())
             {
                 if (m_debugEditorProgress < 1.0f)
                 {
@@ -233,7 +233,7 @@ namespace Maze
         m_inputManager->eventKeyboard.subscribe(this, &Example::notifyKeyboard);
 
         m_settingsManager->loadSettings();
-        m_settingsManager->getSettings<DebuggerSettings>()->getActiveChangedEvent().subscribe(this, &Example::notifyDebuggerActiveChanged);
+        m_settingsManager->getSettings<EditorToolsSettings>()->getActiveChangedEvent().subscribe(this, &Example::notifyDebuggerActiveChanged);
 
         Debug::Log("Example Init - 3 [%ums]", getTime());
 
@@ -266,14 +266,14 @@ namespace Maze
         {
             RenderSystemOpenGLConfig config;
             config.multiContextPolicy = OpenGLMultiContextPolicy::Unified;
-            MAZE_LOAD_PLATFORM_PLUGIN(RenderSystemOpenGL3, "maze-render-system-opengl3", config);
+            MAZE_LOAD_PLATFORM_PLUGIN(RenderSystemOpenGL3, config);
         }
 #endif
 
 #if MAZE_SOUND_SYSTEM_OPENAL_ENABLED
         {
             SoundSystemOpenALConfig config;
-            MAZE_LOAD_PLATFORM_PLUGIN(SoundSystemOpenAL, "maze-sound-system-openal", config);
+            MAZE_LOAD_PLATFORM_PLUGIN(SoundSystemOpenAL, config);
         }
 #endif
 
@@ -376,19 +376,19 @@ namespace Maze
     //////////////////////////////////////////
     void Example::openDebugEditor()
     {
-        m_debuggerManager->openDebugEditor(m_mainRenderWindow);
+        m_editorToolsManager->openDebugEditor(m_mainRenderWindow);
     }
 
     //////////////////////////////////////////
     void Example::closeDebugEditor()
     {
-        m_debuggerManager->closeDebugEditor();
+        m_editorToolsManager->closeDebugEditor();
     }
 
     //////////////////////////////////////////
     void Example::updateDebugEditor()
     {
-        if (SettingsManager::GetInstancePtr()->getSettings<DebuggerSettings>()->getActive())
+        if (SettingsManager::GetInstancePtr()->getSettings<EditorToolsSettings>()->getActive())
         {
             openDebugEditor();
         }
@@ -430,7 +430,7 @@ namespace Maze
                 case KeyCode::F1:
 #endif
                 {
-                    SettingsManager::GetInstancePtr()->getSettings<DebuggerSettings>()->switchActive();
+                    SettingsManager::GetInstancePtr()->getSettings<EditorToolsSettings>()->switchActive();
                     SettingsManager::GetInstancePtr()->saveSettings();
                     break;
                 }
@@ -485,7 +485,7 @@ namespace Maze
         createSecondaryECSWorldSystems(world, m_mainRenderWindow, m_graphicsManager->getDefaultRenderSystem());
 
         updateDebugEditor();
-        m_debugEditorProgress = m_debuggerManager->getDebugEditorActive() ? 1.0f : 0.0f;
+        m_debugEditorProgress = m_editorToolsManager->getDebugEditorActive() ? 1.0f : 0.0f;
         updateDebugEditorViewport();
     }
 

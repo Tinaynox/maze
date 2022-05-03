@@ -86,6 +86,7 @@
 #include "maze-plugin-profiler-view/MazeProfilerViewPlugin.hpp"
 #include "maze-plugin-profiler-view/MazeProfilerViewService.hpp"
 #include "maze-plugin-profiler-view/settings/MazeProfilerViewSettings.hpp"
+#include "maze-plugin-particles-editor-tools/MazeParticlesEditorToolsPlugin.hpp"
 #include "Editor.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "layout/EditorLayout.hpp"
@@ -275,9 +276,10 @@ namespace Maze
             }
             case 10:
             {
-                MAZE_LOAD_PLATFORM_PLUGIN(ArchiveAssets, "maze-plugin-archive-assets");
-                MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView, "maze-plugin-profiler-view");
-                MAZE_LOAD_PLATFORM_PLUGIN(Console, "maze-plugin-console");
+                MAZE_LOAD_PLATFORM_PLUGIN(ArchiveAssets);
+                MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView);
+                MAZE_LOAD_PLATFORM_PLUGIN(Console);
+                MAZE_LOAD_PLATFORM_PLUGIN(ParticlesEditorTools);
 #if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
                 if (SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>())
                     SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>()->setActive(true);

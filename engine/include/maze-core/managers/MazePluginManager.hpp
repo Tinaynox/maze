@@ -117,9 +117,9 @@ namespace Maze
 
 //////////////////////////////////////////
 #if (MAZE_STATIC)
-#   define MAZE_LOAD_PLATFORM_PLUGIN(DPluginTitle, DPluginName, ...) Maze::Install ## DPluginTitle ## Plugin(__VA_ARGS__);
+#   define MAZE_LOAD_PLATFORM_PLUGIN(DPluginTitle, ...) Maze::Install ## DPluginTitle ## Plugin(__VA_ARGS__);
 #else
-#   define MAZE_LOAD_PLATFORM_PLUGIN(DPluginTitle, DPluginName, ...) Maze::PluginManager::GetInstancePtr()->loadPlatformPlugin(DPluginName);
+#   define MAZE_LOAD_PLATFORM_PLUGIN(DPluginTitle, ...) Maze::PluginManager::GetInstancePtr()->loadPlatformPlugin(DPluginTitle ## Plugin :: c_libraryName);
 #endif
 
 

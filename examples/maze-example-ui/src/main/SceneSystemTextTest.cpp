@@ -116,6 +116,8 @@ namespace Maze
 
         m_decreaseFont->eventClick.unsubscribe(this);
         m_increaseFont->eventClick.unsubscribe(this);
+
+        m_changeFont->eventClick.unsubscribe(this);
     }
 
     //////////////////////////////////////////
