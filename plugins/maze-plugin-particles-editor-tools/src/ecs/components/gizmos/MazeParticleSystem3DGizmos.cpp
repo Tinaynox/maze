@@ -102,9 +102,28 @@ namespace Maze
         Transform3D* transform3D = _entity->getComponentRaw<Transform3D>();
         if (transform3D)
         {
-            ColorF128 color(0.79f, 1.0f, 1.0f);
+            ColorF128 const color(0.79f, 1.0f, 1.0f);
 
-            // #TODO: Scale
+            switch (particleSystem->getMainModule().getTransformPolicy())
+            {
+                case ParticleSystemSimulationSpace::Local:
+                {
+                    _drawer->pushTransform(transform3D->getWorldTransform());
+                    break;
+                }
+                case ParticleSystemSimulationSpace::World:
+                {
+                    _drawer->pushTransform(
+                        Mat4DF::CreateTranslationMatrix(transform3D->getWorldPosition()));
+                    break;
+                }
+                default:
+                {
+                    MAZE_NOT_IMPLEMENTED;
+                    _drawer->pushTransform(Mat4DF::c_identity);
+                    break;
+                }
+            }
 
             ParticleSystem3DZoneData const& zoneData = particleSystem->getShapeModule().getZoneData();
             switch (particleSystem->getShapeModule().getType())
@@ -112,7 +131,7 @@ namespace Maze
                 case ParticleSystem3DZoneType::Sphere:
                 {
                     _drawer->drawWireSphere(
-                        transform3D->getWorldPosition(),
+                        Vec3DF::c_zero,
                         zoneData.sphere.radius,
                         color);
                     break;
@@ -120,8 +139,8 @@ namespace Maze
                 case ParticleSystem3DZoneType::Hemisphere:
                 {
                     _drawer->drawWireHemisphere(
-                        transform3D->getWorldPosition(),
-                        transform3D->getWorldForwardDirection(),
+                        Vec3DF::c_zero,
+                        Vec3DF::c_unitZ,
                         zoneData.hemisphere.radius,
                         color);
                     break;
@@ -129,8 +148,8 @@ namespace Maze
                 case ParticleSystem3DZoneType::Cone:
                 {
                     _drawer->drawWireTruncatedCone(
-                        transform3D->getWorldPosition(),
-                        transform3D->getWorldForwardDirection() * zoneData.cone.length,
+                        Vec3DF::c_zero,
+                        Vec3DF::c_unitZ * zoneData.cone.length,
                         zoneData.cone.radius,
                         zoneData.cone.angle,
                         color);
@@ -139,8 +158,8 @@ namespace Maze
                 case ParticleSystem3DZoneType::Torus:
                 {
                     _drawer->drawWireTorus(
-                        transform3D->getWorldPosition(),
-                        transform3D->getWorldForwardDirection(),
+                        Vec3DF::c_zero,
+                        Vec3DF::c_unitZ,
                         zoneData.torus.radius,
                         zoneData.torus.torusRadius,
                         color,
@@ -148,7 +167,7 @@ namespace Maze
 
                     if (zoneData.torus.radiusThickness > 0.0f && zoneData.torus.radiusThickness < 1.0f)
                     {
-                        Vec3DF forward = transform3D->getWorldForwardDirection();
+                        Vec3DF forward = Vec3DF::c_unitZ;
                         Vec3DF up = forward.perpendicular();
                         Vec3DF right = up.crossProduct(forward).normalizedCopy();
 
@@ -157,16 +176,16 @@ namespace Maze
                         ColorF128 radiusThicknessColor(0.49f, 0.62f, 0.62f);
                         _drawer->setColor(radiusThicknessColor);
                         _drawer->drawWireCircle(
-                            transform3D->getWorldPosition() + up * zoneData.torus.radius, right,
+                            up * zoneData.torus.radius, right,
                             radiusThickness, GizmosDrawer::MeshRenderMode::Opaque);
                         _drawer->drawWireCircle(
-                            transform3D->getWorldPosition() - up * zoneData.torus.radius, right,
+                            -up * zoneData.torus.radius, right,
                             radiusThickness, GizmosDrawer::MeshRenderMode::Opaque);
                         _drawer->drawWireCircle(
-                            transform3D->getWorldPosition() + right * zoneData.torus.radius, up,
+                            right * zoneData.torus.radius, up,
                             radiusThickness, GizmosDrawer::MeshRenderMode::Opaque);
                         _drawer->drawWireCircle(
-                            transform3D->getWorldPosition() - right * zoneData.torus.radius, up,
+                            -right * zoneData.torus.radius, up,
                             radiusThickness, GizmosDrawer::MeshRenderMode::Opaque);
                     }
                     break;
@@ -174,10 +193,10 @@ namespace Maze
                 case ParticleSystem3DZoneType::Box:
                 {
                     _drawer->drawWireCube(
-                        transform3D->getWorldPosition(),
+                        Vec3DF::c_zero,
                         zoneData.box.scale,
-                        transform3D->getWorldForwardDirection(),
-                        transform3D->getWorldUpDirection(),
+                        Vec3DF::c_unitZ,
+                        Vec3DF::c_unitY,
                         color);
 
                     break;
@@ -186,8 +205,8 @@ namespace Maze
                 {
                     _drawer->setColor(color);
                     _drawer->drawWireCircle(
-                        transform3D->getWorldPosition(),
-                        transform3D->getWorldForwardDirection(),
+                        Vec3DF::c_zero,
+                        Vec3DF::c_unitZ,
                         zoneData.circle.radius,
                         GizmosDrawer::MeshRenderMode::Opaque);
 
@@ -199,6 +218,8 @@ namespace Maze
                     break;
                 }
             }
+
+            _drawer->popTransform();
         }
 
     }

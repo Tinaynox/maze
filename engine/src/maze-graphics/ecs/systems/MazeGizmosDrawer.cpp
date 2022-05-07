@@ -239,8 +239,8 @@ namespace Maze
         lines.indices.emplace_back(index0);
         lines.indices.emplace_back(index1);
 
-        lines.vertices.emplace_back(_point0);
-        lines.vertices.emplace_back(_point1);
+        lines.vertices.emplace_back(transformPoint(_point0));
+        lines.vertices.emplace_back(transformPoint(_point1));
 
         lines.colors.emplace_back(m_color.value);
         lines.colors.emplace_back(m_color.value);
@@ -260,7 +260,7 @@ namespace Maze
         }
 
         m_bufferedLines.emplace_back(
-            BufferedLine{ _duration, _point0, _point1, getColor(), _renderMode });
+            BufferedLine{ _duration, transformPoint(_point0), transformPoint(_point1), getColor(), _renderMode });
     }
 
     //////////////////////////////////////////
@@ -697,9 +697,9 @@ namespace Maze
         triangles.indices.emplace_back(index1);
         triangles.indices.emplace_back(index2);
 
-        triangles.vertices.emplace_back(_point0);
-        triangles.vertices.emplace_back(_point1);
-        triangles.vertices.emplace_back(_point2);
+        triangles.vertices.emplace_back(transformPoint(_point0));
+        triangles.vertices.emplace_back(transformPoint(_point1));
+        triangles.vertices.emplace_back(transformPoint(_point2));
 
         triangles.colors.emplace_back(m_color.value);
         triangles.colors.emplace_back(m_color.value);
@@ -721,7 +721,15 @@ namespace Maze
         }
 
         m_bufferedTriangles.emplace_back(
-            BufferedTriangle{ _duration, _point0, _point1, _point2, getColor(), _renderMode });
+            BufferedTriangle
+            {
+                _duration,
+                transformPoint(_point0),
+                transformPoint(_point1),
+                transformPoint(_point2),
+                getColor(),
+                _renderMode
+            });
     }
 
     //////////////////////////////////////////
@@ -733,10 +741,26 @@ namespace Maze
         m_billboardsData.emplace_back(
             BillboardData
             {
-                _point,
+                transformPoint(_point),
                 _sprite,
                 _color
             });
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer::pushTransform(Mat4DF const& _tm)
+    {
+        if (!m_transformStack.empty())
+            m_transformStack.push(m_transformStack.top() * _tm);
+        else
+            m_transformStack.push(_tm);
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer::popTransform()
+    {
+        MAZE_ERROR_RETURN_IF(m_transformStack.empty(), "Transform stack is empty!");
+        m_transformStack.pop();
     }
 
     //////////////////////////////////////////
@@ -857,6 +881,15 @@ namespace Maze
                 gizmoBillboard->getTransform()->setLocalTransform(mat);
             }
         }
+    }
+
+    //////////////////////////////////////////
+    Vec3DF GizmosDrawer::transformPoint(Vec3DF const& _p)
+    {
+        if (m_transformStack.empty())
+            return _p;
+        else
+            return m_transformStack.top().transformAffine(_p);
     }
 
     

@@ -503,6 +503,12 @@ namespace Maze
         //////////////////////////////////////////
         inline ColorF128 const& getColor() const { return m_color; }
 
+        //////////////////////////////////////////
+        void pushTransform(Mat4DF const& _tm);
+
+        //////////////////////////////////////////
+        void popTransform();
+
 
         //////////////////////////////////////////
         void update(F32 _dt);
@@ -518,8 +524,12 @@ namespace Maze
         //////////////////////////////////////////
         bool init(ECSWorld* _world, RenderTarget* _renderTarget);
 
+        //////////////////////////////////////////
+        Vec3DF transformPoint(Vec3DF const& _p);
+
     protected:
         ColorF128 m_color;
+        Stack<Mat4DF> m_transformStack;
 
         ECSWorld* m_world;
 
