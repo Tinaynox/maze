@@ -82,7 +82,11 @@ namespace Maze
         static GizmosSystemPtr Create(RenderTarget* _renderTarget);
 
         //////////////////////////////////////////
-        void drawGizmos();
+        void drawGizmos(F32 _dt);
+
+
+        //////////////////////////////////////////
+        inline GizmosDrawerPtr const& getDrawer() const { return m_drawer; }
 
 
         //////////////////////////////////////////

@@ -79,6 +79,7 @@
 #include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
 #include "maze-particles/managers/MazeParticlesManager.hpp"
 #include "maze-editor-tools/ecs/components/MazeDebugGridRenderer.hpp"
+#include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
 #include "managers/EditorEntityManager.hpp"
 #include "managers/EditorWorkspaceManager.hpp"
 #include "managers/EditorManager.hpp"

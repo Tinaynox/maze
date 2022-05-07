@@ -89,7 +89,7 @@ namespace Maze
     //////////////////////////////////////////
     void GizmosSystem::processUpdate(F32 _dt)
     {
-        drawGizmos();
+        drawGizmos(_dt);
     }
 
     //////////////////////////////////////////
@@ -119,7 +119,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosSystem::drawGizmos()
+    void GizmosSystem::drawGizmos(F32 _dt)
     {
         if (!m_drawer)
             return;
@@ -140,7 +140,7 @@ namespace Maze
             }
         }
 
-        m_drawer->rebuildMeshes();
+        m_drawer->update(_dt);
     }
 
     //////////////////////////////////////////

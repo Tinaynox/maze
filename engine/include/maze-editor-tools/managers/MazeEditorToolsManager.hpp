@@ -88,6 +88,8 @@ namespace Maze
         //////////////////////////////////////////
         inline AssetEditorToolsManagerPtr const& getAssetEditorToolsManager() const { return m_assetEditorToolsManager; }
 
+        //////////////////////////////////////////
+        inline GizmosSystemPtr const& getGizmosSystem() const { return m_gizmosSystem; }
 
         //////////////////////////////////////////
         virtual void update(F32 _dt) MAZE_OVERRIDE;

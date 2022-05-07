@@ -247,10 +247,28 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void GizmosDrawer::drawLine(
+        Vec3DF const& _point0,
+        Vec3DF const& _point1,
+        F32 _duration,
+        MeshRenderMode _renderMode)
+    {
+        if (_duration < 0.0f)
+        {
+            drawLine(_point0, _point1, _renderMode);
+            return;
+        }
+
+        m_bufferedLines.emplace_back(
+            BufferedLine{ _duration, _point0, _point1, getColor(), _renderMode });
+    }
+
+    //////////////////////////////////////////
     void GizmosDrawer::drawWireCircle(
         Vec3DF const& _position,
         Vec3DF const& _direction,
         F32 _radius,
+        F32 _duration,
         MeshRenderMode _renderMode)
     {
         Vec3DF forward = _direction.normalizedCopy() * _radius;
@@ -269,7 +287,7 @@ namespace Maze
 
             nextPoint = _position + matrix.transformAffine(nextPoint);
 
-            drawLine(lastPoint, nextPoint, _renderMode);
+            drawLine(lastPoint, nextPoint, _duration, _renderMode);
             lastPoint = nextPoint;
         }
     }
@@ -280,6 +298,7 @@ namespace Maze
         Vec3DF const& _forward,
         Vec3DF const& _up,
         F32 _radius,
+        F32 _duration,
         MeshRenderMode _renderMode)
     {
         Vec3DF forward = _forward.normalizedCopy() * _radius;
@@ -298,7 +317,7 @@ namespace Maze
 
             nextPoint = _position + matrix.transformAffine(nextPoint);
 
-            drawLine(lastPoint, nextPoint, _renderMode);
+            drawLine(lastPoint, nextPoint, _duration, _renderMode);
             lastPoint = nextPoint;
         }
     }
@@ -310,6 +329,7 @@ namespace Maze
         Vec3DF const& _forward,
         Vec3DF const& _up,
         ColorF128 const& _color,
+        F32 _duration,
         MeshRenderMode _renderMode)
     {
         Vec3DF forward = _forward.normalizedCopy();
@@ -322,53 +342,53 @@ namespace Maze
         drawLine(
             _position - right * halfScale - up * halfScale - forward * halfScale,
             _position - right * halfScale - up * halfScale + forward * halfScale,
-            _renderMode);
+            _duration, _renderMode);
         drawLine(
             _position + right * halfScale - up * halfScale - forward * halfScale,
             _position + right * halfScale - up * halfScale + forward * halfScale,
-            _renderMode);
+            _duration, _renderMode);
         drawLine(
             _position - right * halfScale - up * halfScale - forward * halfScale,
             _position + right * halfScale - up * halfScale - forward * halfScale,
-            _renderMode);
+            _duration, _renderMode);
         drawLine(
             _position - right * halfScale - up * halfScale + forward * halfScale,
             _position + right * halfScale - up * halfScale + forward * halfScale,
-            _renderMode);
+            _duration, _renderMode);
 
         drawLine(
             _position - right * halfScale + up * halfScale - forward * halfScale,
             _position - right * halfScale + up * halfScale + forward * halfScale,
-            _renderMode);
+            _duration, _renderMode);
         drawLine(
             _position + right * halfScale + up * halfScale - forward * halfScale,
             _position + right * halfScale + up * halfScale + forward * halfScale,
-            _renderMode);
+            _duration, _renderMode);
         drawLine(
             _position - right * halfScale + up * halfScale - forward * halfScale,
             _position + right * halfScale + up * halfScale - forward * halfScale,
-            _renderMode);
+            _duration, _renderMode);
         drawLine(
             _position - right * halfScale + up * halfScale + forward * halfScale,
             _position + right * halfScale + up * halfScale + forward * halfScale,
-            _renderMode);
+            _duration, _renderMode);
 
         drawLine(
             _position - right * halfScale - up * halfScale - forward * halfScale,
             _position - right * halfScale + up * halfScale - forward * halfScale,
-            _renderMode);
+            _duration, _renderMode);
         drawLine(
             _position + right * halfScale - up * halfScale - forward * halfScale,
             _position + right * halfScale + up * halfScale - forward * halfScale,
-            _renderMode);
+            _duration, _renderMode);
         drawLine(
             _position + right * halfScale - up * halfScale + forward * halfScale,
             _position + right * halfScale + up * halfScale + forward * halfScale,
-            _renderMode);
+            _duration, _renderMode);
         drawLine(
             _position - right * halfScale - up * halfScale + forward * halfScale,
             _position - right * halfScale + up * halfScale + forward * halfScale,
-            _renderMode);
+            _duration, _renderMode);
     }
 
     //////////////////////////////////////////
@@ -376,6 +396,7 @@ namespace Maze
         Vec3DF const& _position,
         F32 _radius,
         ColorF128 const& _color,
+        F32 _duration,
         MeshRenderMode _renderMode)
     {
         F32 angle = 10.0f;
@@ -392,9 +413,9 @@ namespace Maze
             Vec3DF newY = Vec3DF(_position.x + _radius * Math::Cos(Math::DegreesToRadians(angle * i)), _position.y, _position.z + _radius * Math::Sin(Math::DegreesToRadians(angle * i)));
             Vec3DF newZ = Vec3DF(_position.x + _radius * Math::Cos(Math::DegreesToRadians(angle * i)), _position.y + _radius * Math::Sin(Math::DegreesToRadians(angle * i)), _position.z);
 
-            drawLine(x, newX, _renderMode);
-            drawLine(y, newY, _renderMode);
-            drawLine(z, newZ, _renderMode);
+            drawLine(x, newX, _duration, _renderMode);
+            drawLine(y, newY, _duration, _renderMode);
+            drawLine(z, newZ, _duration, _renderMode);
 
             x = newX;
             y = newY;
@@ -408,6 +429,7 @@ namespace Maze
         Vec3DF const& _direction,
         F32 _radius,
         ColorF128 const& _color,
+        F32 _duration,
         MeshRenderMode _renderMode)
     {
         Vec3DF forward = _direction.normalizedCopy();
@@ -415,10 +437,10 @@ namespace Maze
         Vec3DF right = up.crossProduct(forward).normalizedCopy();
 
         setColor(_color);
-        drawWireCircle(_position, _direction, _radius, _renderMode);
+        drawWireCircle(_position, _direction, _radius, _duration, _renderMode);
 
-        drawWireHemicircle(_position, up, forward, _radius, _renderMode);
-        drawWireHemicircle(_position, right, forward, _radius, _renderMode);
+        drawWireHemicircle(_position, up, forward, _radius, _duration, _renderMode);
+        drawWireHemicircle(_position, right, forward, _radius, _duration, _renderMode);
     }
 
     //////////////////////////////////////////
@@ -427,6 +449,7 @@ namespace Maze
         Vec3DF const& _end,
         F32 _radius,
         ColorF128 const& _color,
+        F32 _duration,
         MeshRenderMode _renderMode)
     {
         Vec3DF forward = (_end - _start).normalizedCopy() * _radius;
@@ -436,24 +459,24 @@ namespace Maze
         setColor(_color);
 
         // Radial circles
-        drawWireCircle(_start, forward, _radius, _renderMode);
-        drawWireCircle(_end, -forward, _radius, _renderMode);
-        drawWireCircle((_start + _end) * 0.5f, forward, _radius, _renderMode);
+        drawWireCircle(_start, forward, _radius, _duration, _renderMode);
+        drawWireCircle(_end, -forward, _radius, _duration, _renderMode);
+        drawWireCircle((_start + _end) * 0.5f, forward, _radius, _duration, _renderMode);
 
         // Side lines
-        drawLine(_start + right, _end + right, _renderMode);
-        drawLine(_start - right, _end - right, _renderMode);
+        drawLine(_start + right, _end + right, _duration, _renderMode);
+        drawLine(_start - right, _end - right, _duration, _renderMode);
 
-        drawLine(_start + up, _end + up, _renderMode);
-        drawLine(_start - up, _end - up, _renderMode);
+        drawLine(_start + up, _end + up, _duration, _renderMode);
+        drawLine(_start - up, _end - up, _duration, _renderMode);
 
         // Start Endcap
-        drawLine(_start - right, _start + right, _renderMode);
-        drawLine(_start - up, _start + up, _renderMode);
+        drawLine(_start - right, _start + right, _duration, _renderMode);
+        drawLine(_start - up, _start + up, _duration, _renderMode);
 
         // End Endcap
-        drawLine(_end - right, _end + right, _renderMode);
-        drawLine(_end - up, _end + up, _renderMode);
+        drawLine(_end - right, _end + right, _duration, _renderMode);
+        drawLine(_end - up, _end + up, _duration, _renderMode);
     }
 
     //////////////////////////////////////////
@@ -462,6 +485,7 @@ namespace Maze
         Vec3DF const& _direction,
         F32 _angle,
         ColorF128 const& _color,
+        F32 _duration,
         MeshRenderMode _renderMode)
     {
         F32 len = _direction.length();
@@ -482,13 +506,13 @@ namespace Maze
 
         setColor(_color);
 
-        drawRay(_position, slerpedVector.normalizedCopy() * dist, _renderMode);
-        drawRay(_position, forward.slerp(-up, _angle / Math::c_halfPi).normalizedCopy() * dist, _renderMode);
-        drawRay(_position, forward.slerp(right, _angle / Math::c_halfPi).normalizedCopy() * dist, _renderMode);
-        drawRay(_position, forward.slerp(-right, _angle / Math::c_halfPi).normalizedCopy() * dist, _renderMode);
+        drawRay(_position, slerpedVector.normalizedCopy() * dist, _duration, _renderMode);
+        drawRay(_position, forward.slerp(-up, _angle / Math::c_halfPi).normalizedCopy() * dist, _duration, _renderMode);
+        drawRay(_position, forward.slerp(right, _angle / Math::c_halfPi).normalizedCopy() * dist, _duration, _renderMode);
+        drawRay(_position, forward.slerp(-right, _angle / Math::c_halfPi).normalizedCopy() * dist, _duration, _renderMode);
 
-        drawWireCircle(_position + forward, direction, (forward - (slerpedVector.normalizedCopy() * dist)).length(), _renderMode);
-        drawWireCircle(_position + (forward * 0.5f), direction, ((forward * 0.5f) - (slerpedVector.normalizedCopy() * (dist * 0.5f))).length(), _renderMode);
+        drawWireCircle(_position + forward, direction, (forward - (slerpedVector.normalizedCopy() * dist)).length(), _duration, _renderMode);
+        drawWireCircle(_position + (forward * 0.5f), direction, ((forward * 0.5f) - (slerpedVector.normalizedCopy() * (dist * 0.5f))).length(), _duration, _renderMode);
     }
 
     //////////////////////////////////////////
@@ -498,6 +522,7 @@ namespace Maze
         F32 _radius,
         F32 _angle,
         ColorF128 const& _color,
+        F32 _duration,
         MeshRenderMode _renderMode)
     {
         F32 len = _direction.length();
@@ -522,15 +547,15 @@ namespace Maze
 
         setColor(_color);
 
-        drawWireCircle(_position, _direction, _radius, _renderMode);
+        drawWireCircle(_position, _direction, _radius, _duration, _renderMode);
 
-        drawRay(_position + upN * _radius, slerpedVector.normalizedCopy() * dist, _renderMode);
-        drawRay(_position - upN * _radius, forward.slerp(-up, _angle / Math::c_halfPi).normalizedCopy() * dist, _renderMode);
-        drawRay(_position + rightN * _radius, forward.slerp(right, _angle / Math::c_halfPi).normalizedCopy() * dist, _renderMode);
-        drawRay(_position - rightN * _radius, forward.slerp(-right, _angle / Math::c_halfPi).normalizedCopy() * dist, _renderMode);
+        drawRay(_position + upN * _radius, slerpedVector.normalizedCopy() * dist, _duration, _renderMode);
+        drawRay(_position - upN * _radius, forward.slerp(-up, _angle / Math::c_halfPi).normalizedCopy() * dist, _duration, _renderMode);
+        drawRay(_position + rightN * _radius, forward.slerp(right, _angle / Math::c_halfPi).normalizedCopy() * dist, _duration, _renderMode);
+        drawRay(_position - rightN * _radius, forward.slerp(-right, _angle / Math::c_halfPi).normalizedCopy() * dist, _duration, _renderMode);
 
-        drawWireCircle(_position + forward, direction, (forward - (slerpedVector.normalizedCopy() * dist)).length() + _radius, _renderMode);
-        drawWireCircle(_position + (forward * 0.5f), direction, ((forward * 0.5f) - (slerpedVector.normalizedCopy() * (dist * 0.5f))).length() + _radius, _renderMode);
+        drawWireCircle(_position + forward, direction, (forward - (slerpedVector.normalizedCopy() * dist)).length() + _radius, _duration, _renderMode);
+        drawWireCircle(_position + (forward * 0.5f), direction, ((forward * 0.5f) - (slerpedVector.normalizedCopy() * (dist * 0.5f))).length() + _radius, _duration, _renderMode);
     }
 
     //////////////////////////////////////////
@@ -540,6 +565,7 @@ namespace Maze
         F32 _radius,
         F32 _torusRadius,
         ColorF128 const& _color,
+        F32 _duration,
         MeshRenderMode _renderMode)
     {
         Vec3DF forward = _direction;
@@ -547,15 +573,15 @@ namespace Maze
         Vec3DF right = up.crossProduct(forward).normalizedCopy();
 
         setColor(_color);
-        drawWireCircle(_position + _direction * _torusRadius, _direction, _radius, _renderMode);
-        drawWireCircle(_position - _direction * _torusRadius, _direction, _radius, _renderMode);
-        drawWireCircle(_position, _direction, _radius + _torusRadius, _renderMode);
-        drawWireCircle(_position, _direction, _radius - _torusRadius, _renderMode);
+        drawWireCircle(_position + _direction * _torusRadius, _direction, _radius, _duration, _renderMode);
+        drawWireCircle(_position - _direction * _torusRadius, _direction, _radius, _duration, _renderMode);
+        drawWireCircle(_position, _direction, _radius + _torusRadius, _duration, _renderMode);
+        drawWireCircle(_position, _direction, _radius - _torusRadius, _duration, _renderMode);
 
-        drawWireCircle(_position + up * _radius, right, _torusRadius, _renderMode);
-        drawWireCircle(_position - up * _radius, right, _torusRadius, _renderMode);
-        drawWireCircle(_position + right * _radius, up, _torusRadius, _renderMode);
-        drawWireCircle(_position - right * _radius, up, _torusRadius, _renderMode);
+        drawWireCircle(_position + up * _radius, right, _torusRadius, _duration, _renderMode);
+        drawWireCircle(_position - up * _radius, right, _torusRadius, _duration, _renderMode);
+        drawWireCircle(_position + right * _radius, up, _torusRadius, _duration, _renderMode);
+        drawWireCircle(_position - right * _radius, up, _torusRadius, _duration, _renderMode);
     }
 
     //////////////////////////////////////////
@@ -563,11 +589,12 @@ namespace Maze
         Vec3DF const& _position,
         Vec3DF const& _direction,
         ColorF128 const& _color,
+        F32 _duration,
         MeshRenderMode _renderMode)
     {
         setColor(_color);
-        drawRay(_position, _direction, _renderMode);
-        drawWireCone(_position + _direction, -_direction * 0.333f, Math::DegreesToRadians(15.0f), _color, _renderMode);
+        drawRay(_position, _direction, _duration, _renderMode);
+        drawWireCone(_position + _direction, -_direction * 0.333f, Math::DegreesToRadians(15.0f), _color, _duration, _renderMode);
     }
 
     //////////////////////////////////////////
@@ -576,6 +603,7 @@ namespace Maze
         Vec3DF const& _end,
         F32 _radius,
         ColorF128 const& _color,
+        F32 _duration,
         MeshRenderMode _renderMode)
     {
         Vec3DF forward = (_end - _start).normalizedCopy() * _radius;
@@ -592,30 +620,108 @@ namespace Maze
         setColor(_color);
 
         // Radial circles
-        drawWireCircle(start, forward, _radius, _renderMode);
-        drawWireCircle(end, -forward, _radius, _renderMode);
+        drawWireCircle(start, forward, _radius, _duration, _renderMode);
+        drawWireCircle(end, -forward, _radius, _duration, _renderMode);
 
         // Side lines
-        drawLine(start + right, end + right, _renderMode);
-        drawLine(start - right, end - right, _renderMode);
+        drawLine(start + right, end + right, _duration, _renderMode);
+        drawLine(start - right, end - right, _duration, _renderMode);
 
-        drawLine(start + up, end + up, _renderMode);
-        drawLine(start - up, end - up, _renderMode);
+        drawLine(start + up, end + up, _duration, _renderMode);
+        drawLine(start - up, end - up, _duration, _renderMode);
 
         for (S32 i = 1; i < 26; i++) {
 
             // Start endcap
-            drawLine(Vec3DF::SLerp(right, -forward, (F32)i / 25.0f) + start, Vec3DF::SLerp(right, -forward, F32(i - 1) / 25.0f) + start, _renderMode);
-            drawLine(Vec3DF::SLerp(-right, -forward, (F32)i / 25.0f) + start, Vec3DF::SLerp(-right, -forward, F32(i - 1) / 25.0f) + start, _renderMode);
-            drawLine(Vec3DF::SLerp(up, -forward, (F32)i / 25.0f) + start, Vec3DF::SLerp(up, -forward, F32(i - 1) / 25.0f) + start, _renderMode);
-            drawLine(Vec3DF::SLerp(-up, -forward, (F32)i / 25.0f) + start, Vec3DF::SLerp(-up, -forward, F32(i - 1) / 25.0f) + start, _renderMode);
+            drawLine(Vec3DF::SLerp(right, -forward, (F32)i / 25.0f) + start, Vec3DF::SLerp(right, -forward, F32(i - 1) / 25.0f) + start, _duration, _renderMode);
+            drawLine(Vec3DF::SLerp(-right, -forward, (F32)i / 25.0f) + start, Vec3DF::SLerp(-right, -forward, F32(i - 1) / 25.0f) + start, _duration, _renderMode);
+            drawLine(Vec3DF::SLerp(up, -forward, (F32)i / 25.0f) + start, Vec3DF::SLerp(up, -forward, F32(i - 1) / 25.0f) + start, _duration, _renderMode);
+            drawLine(Vec3DF::SLerp(-up, -forward, (F32)i / 25.0f) + start, Vec3DF::SLerp(-up, -forward, F32(i - 1) / 25.0f) + start, _duration, _renderMode);
 
             // End endcap
-            drawLine(Vec3DF::SLerp(right, forward, (F32)i / 25.0f) + end, Vec3DF::SLerp(right, forward, F32(i - 1) / 25.0f) + end, _renderMode);
-            drawLine(Vec3DF::SLerp(-right, forward, (F32)i / 25.0f) + end, Vec3DF::SLerp(-right, forward, F32(i - 1) / 25.0f) + end, _renderMode);
-            drawLine(Vec3DF::SLerp(up, forward, (F32)i / 25.0f) + end, Vec3DF::SLerp(up, forward, F32(i - 1) / 25.0f) + end, _renderMode);
-            drawLine(Vec3DF::SLerp(-up, forward, (F32)i / 25.0f) + end, Vec3DF::SLerp(-up, forward, F32(i - 1) / 25.0f) + end, _renderMode);
+            drawLine(Vec3DF::SLerp(right, forward, (F32)i / 25.0f) + end, Vec3DF::SLerp(right, forward, F32(i - 1) / 25.0f) + end, _duration, _renderMode);
+            drawLine(Vec3DF::SLerp(-right, forward, (F32)i / 25.0f) + end, Vec3DF::SLerp(-right, forward, F32(i - 1) / 25.0f) + end, _duration, _renderMode);
+            drawLine(Vec3DF::SLerp(up, forward, (F32)i / 25.0f) + end, Vec3DF::SLerp(up, forward, F32(i - 1) / 25.0f) + end, _duration, _renderMode);
+            drawLine(Vec3DF::SLerp(-up, forward, (F32)i / 25.0f) + end, Vec3DF::SLerp(-up, forward, F32(i - 1) / 25.0f) + end, _duration, _renderMode);
         }
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer::drawAABB(
+        AABB2D const& _aabb,
+        F32 _duration,
+        MeshRenderMode _renderMode)
+    {
+        drawLine(_aabb.getMin().x, _aabb.getMin().y, _aabb.getMax().x, _aabb.getMin().y, _duration, _renderMode);
+        drawLine(_aabb.getMax().x, _aabb.getMin().y, _aabb.getMax().x, _aabb.getMax().y, _duration, _renderMode);
+        drawLine(_aabb.getMax().x, _aabb.getMax().y, _aabb.getMin().x, _aabb.getMax().y, _duration, _renderMode);
+        drawLine(_aabb.getMin().x, _aabb.getMax().y, _aabb.getMin().x, _aabb.getMin().y, _duration, _renderMode);
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer::drawAABB(
+        AABB3D const& _aabb,
+        F32 _duration,
+        MeshRenderMode _renderMode)
+    {
+        drawLine(_aabb.getMin().x, _aabb.getMin().y, _aabb.getMin().z, _aabb.getMax().x, _aabb.getMin().y, _aabb.getMin().z, _duration, _renderMode);
+        drawLine(_aabb.getMax().x, _aabb.getMin().y, _aabb.getMin().z, _aabb.getMax().x, _aabb.getMax().y, _aabb.getMin().z, _duration, _renderMode);
+        drawLine(_aabb.getMax().x, _aabb.getMax().y, _aabb.getMin().z, _aabb.getMin().x, _aabb.getMax().y, _aabb.getMin().z, _duration, _renderMode);
+        drawLine(_aabb.getMin().x, _aabb.getMax().y, _aabb.getMin().z, _aabb.getMin().x, _aabb.getMin().y, _aabb.getMin().z, _duration, _renderMode);
+
+        drawLine(_aabb.getMin().x, _aabb.getMin().y, _aabb.getMax().z, _aabb.getMax().x, _aabb.getMin().y, _aabb.getMax().z, _duration, _renderMode);
+        drawLine(_aabb.getMax().x, _aabb.getMin().y, _aabb.getMax().z, _aabb.getMax().x, _aabb.getMax().y, _aabb.getMax().z, _duration, _renderMode);
+        drawLine(_aabb.getMax().x, _aabb.getMax().y, _aabb.getMax().z, _aabb.getMin().x, _aabb.getMax().y, _aabb.getMax().z, _duration, _renderMode);
+        drawLine(_aabb.getMin().x, _aabb.getMax().y, _aabb.getMax().z, _aabb.getMin().x, _aabb.getMin().y, _aabb.getMax().z, _duration, _renderMode);
+
+        drawLine(_aabb.getMin().x, _aabb.getMin().y, _aabb.getMin().z, _aabb.getMin().x, _aabb.getMin().y, _aabb.getMax().z, _duration, _renderMode);
+        drawLine(_aabb.getMax().x, _aabb.getMin().y, _aabb.getMin().z, _aabb.getMax().x, _aabb.getMin().y, _aabb.getMax().z, _duration, _renderMode);
+        drawLine(_aabb.getMax().x, _aabb.getMax().y, _aabb.getMin().z, _aabb.getMax().x, _aabb.getMax().y, _aabb.getMax().z, _duration, _renderMode);
+        drawLine(_aabb.getMin().x, _aabb.getMax().y, _aabb.getMin().z, _aabb.getMin().x, _aabb.getMax().y, _aabb.getMax().z, _duration, _renderMode);
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer::drawTriangle(
+        Vec3DF const& _point0,
+        Vec3DF const& _point1,
+        Vec3DF const& _point2,
+        MeshRenderMode _renderMode)
+    {
+        MeshData& triangles = m_triangles[(S32)_renderMode];
+
+        U32 index0 = (U32)triangles.vertices.size();
+        U32 index1 = index0 + 1;
+        U32 index2 = index1 + 1;
+
+        triangles.indices.emplace_back(index0);
+        triangles.indices.emplace_back(index1);
+        triangles.indices.emplace_back(index2);
+
+        triangles.vertices.emplace_back(_point0);
+        triangles.vertices.emplace_back(_point1);
+        triangles.vertices.emplace_back(_point2);
+
+        triangles.colors.emplace_back(m_color.value);
+        triangles.colors.emplace_back(m_color.value);
+        triangles.colors.emplace_back(m_color.value);
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer::drawTriangle(
+        Vec3DF const& _point0,
+        Vec3DF const& _point1,
+        Vec3DF const& _point2,
+        F32 _duration,
+        MeshRenderMode _renderMode)
+    {
+        if (_duration < 0.0f)
+        {
+            drawTriangle(_point0, _point1, _point2, _renderMode);
+            return;
+        }
+
+        m_bufferedTriangles.emplace_back(
+            BufferedTriangle{ _duration, _point0, _point1, _point2, getColor(), _renderMode });
     }
 
     //////////////////////////////////////////
@@ -634,31 +740,35 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawAABB(AABB2D const& _aabb, MeshRenderMode _renderMode)
+    void GizmosDrawer::update(F32 _dt)
     {
-        drawLine(_aabb.getMin().x, _aabb.getMin().y, _aabb.getMax().x, _aabb.getMin().y, _renderMode);
-        drawLine(_aabb.getMax().x, _aabb.getMin().y, _aabb.getMax().x, _aabb.getMax().y, _renderMode);
-        drawLine(_aabb.getMax().x, _aabb.getMax().y, _aabb.getMin().x, _aabb.getMax().y, _renderMode);
-        drawLine(_aabb.getMin().x, _aabb.getMax().y, _aabb.getMin().x, _aabb.getMin().y, _renderMode);
-    }
+        // Buffered lines
+        for (auto it = m_bufferedLines.begin(), end = m_bufferedLines.end(); it != end;)
+        {
+            setColor(it->color);
+            drawLine(it->point0, it->point1, it->renderMode);
 
-    //////////////////////////////////////////
-    void GizmosDrawer::drawAABB(AABB3D const& _aabb, MeshRenderMode _renderMode)
-    {
-        drawLine(_aabb.getMin().x, _aabb.getMin().y, _aabb.getMin().z, _aabb.getMax().x, _aabb.getMin().y, _aabb.getMin().z, _renderMode);
-        drawLine(_aabb.getMax().x, _aabb.getMin().y, _aabb.getMin().z, _aabb.getMax().x, _aabb.getMax().y, _aabb.getMin().z, _renderMode);
-        drawLine(_aabb.getMax().x, _aabb.getMax().y, _aabb.getMin().z, _aabb.getMin().x, _aabb.getMax().y, _aabb.getMin().z, _renderMode);
-        drawLine(_aabb.getMin().x, _aabb.getMax().y, _aabb.getMin().z, _aabb.getMin().x, _aabb.getMin().y, _aabb.getMin().z, _renderMode);
+            it->timer -= _dt;
+            if (it->timer <= 0.0f)
+                it = m_bufferedLines.erase(it);
+            else
+                ++it;
+        }
 
-        drawLine(_aabb.getMin().x, _aabb.getMin().y, _aabb.getMax().z, _aabb.getMax().x, _aabb.getMin().y, _aabb.getMax().z, _renderMode);
-        drawLine(_aabb.getMax().x, _aabb.getMin().y, _aabb.getMax().z, _aabb.getMax().x, _aabb.getMax().y, _aabb.getMax().z, _renderMode);
-        drawLine(_aabb.getMax().x, _aabb.getMax().y, _aabb.getMax().z, _aabb.getMin().x, _aabb.getMax().y, _aabb.getMax().z, _renderMode);
-        drawLine(_aabb.getMin().x, _aabb.getMax().y, _aabb.getMax().z, _aabb.getMin().x, _aabb.getMin().y, _aabb.getMax().z, _renderMode);
+        // Buffered triangles
+        for (auto it = m_bufferedTriangles.begin(), end = m_bufferedTriangles.end(); it != end;)
+        {
+            setColor(it->color);
+            drawTriangle(it->point0, it->point1, it->point2, it->renderMode);
 
-        drawLine(_aabb.getMin().x, _aabb.getMin().y, _aabb.getMin().z, _aabb.getMin().x, _aabb.getMin().y, _aabb.getMax().z, _renderMode);
-        drawLine(_aabb.getMax().x, _aabb.getMin().y, _aabb.getMin().z, _aabb.getMax().x, _aabb.getMin().y, _aabb.getMax().z, _renderMode);
-        drawLine(_aabb.getMax().x, _aabb.getMax().y, _aabb.getMin().z, _aabb.getMax().x, _aabb.getMax().y, _aabb.getMax().z, _renderMode);
-        drawLine(_aabb.getMin().x, _aabb.getMax().y, _aabb.getMin().z, _aabb.getMin().x, _aabb.getMax().y, _aabb.getMax().z, _renderMode);
+            it->timer -= _dt;
+            if (it->timer <= 0.0f)
+                it = m_bufferedTriangles.erase(it);
+            else
+                ++it;
+        }
+
+        rebuildMeshes();
     }
 
     //////////////////////////////////////////
