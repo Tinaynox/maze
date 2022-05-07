@@ -165,6 +165,15 @@ namespace Maze
             MeshRenderMode _renderMode = MeshRenderMode::Transparent);
 
         //////////////////////////////////////////
+        void drawWireCube(
+            Vec3DF const& _position,
+            Vec3DF const& _scale,
+            Vec3DF const& _forward,
+            Vec3DF const& _up,
+            ColorF128 const& _color = ColorF128::c_white,
+            MeshRenderMode _renderMode = MeshRenderMode::Opaque);
+
+        //////////////////////////////////////////
         void drawWireSphere(
             Vec3DF const& _position,
             F32 _radius = 1.0f,
@@ -201,6 +210,15 @@ namespace Maze
             Vec3DF const& _direction,
             F32 _radius = 1.0f,
             F32 _angle = Math::DegreesToRadians(45.0f),
+            ColorF128 const& _color = ColorF128::c_white,
+            MeshRenderMode _renderMode = MeshRenderMode::Opaque);
+
+        //////////////////////////////////////////
+        void GizmosDrawer::drawWireTorus(
+            Vec3DF const& _position,
+            Vec3DF const& _direction,
+            F32 _radius = 1.0f,
+            F32 _torusRadius = 0.2f,
             ColorF128 const& _color = ColorF128::c_white,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 

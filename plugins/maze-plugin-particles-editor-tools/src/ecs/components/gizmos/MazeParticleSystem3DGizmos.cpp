@@ -138,14 +138,59 @@ namespace Maze
                 }
                 case ParticleSystem3DZoneType::Torus:
                 {
+                    _drawer->drawWireTorus(
+                        transform3D->getWorldPosition(),
+                        transform3D->getWorldForwardDirection(),
+                        zoneData.torus.radius,
+                        zoneData.torus.torusRadius,
+                        color,
+                        GizmosDrawer::MeshRenderMode::Opaque);
+
+                    if (zoneData.torus.radiusThickness > 0.0f && zoneData.torus.radiusThickness < 1.0f)
+                    {
+                        Vec3DF forward = transform3D->getWorldForwardDirection();
+                        Vec3DF up = forward.perpendicular();
+                        Vec3DF right = up.crossProduct(forward).normalizedCopy();
+
+                        F32 radiusThickness = zoneData.torus.torusRadius * (1.0f - zoneData.torus.radiusThickness);
+
+                        ColorF128 radiusThicknessColor(0.49f, 0.62f, 0.62f);
+                        _drawer->setColor(radiusThicknessColor);
+                        _drawer->drawWireCircle(
+                            transform3D->getWorldPosition() + up * zoneData.torus.radius, right,
+                            radiusThickness, GizmosDrawer::MeshRenderMode::Opaque);
+                        _drawer->drawWireCircle(
+                            transform3D->getWorldPosition() - up * zoneData.torus.radius, right,
+                            radiusThickness, GizmosDrawer::MeshRenderMode::Opaque);
+                        _drawer->drawWireCircle(
+                            transform3D->getWorldPosition() + right * zoneData.torus.radius, up,
+                            radiusThickness, GizmosDrawer::MeshRenderMode::Opaque);
+                        _drawer->drawWireCircle(
+                            transform3D->getWorldPosition() - right * zoneData.torus.radius, up,
+                            radiusThickness, GizmosDrawer::MeshRenderMode::Opaque);
+                    }
                     break;
                 }
                 case ParticleSystem3DZoneType::Box:
                 {
+                    _drawer->drawWireCube(
+                        transform3D->getWorldPosition(),
+                        zoneData.box.scale,
+                        transform3D->getWorldForwardDirection(),
+                        transform3D->getWorldUpDirection(),
+                        color);
+
                     break;
                 }
                 case ParticleSystem3DZoneType::Circle:
                 {
+                    _drawer->setColor(color);
+                    _drawer->drawWireCircle(
+                        transform3D->getWorldPosition(),
+                        transform3D->getWorldForwardDirection(),
+                        zoneData.circle.radius,
+                        GizmosDrawer::MeshRenderMode::Opaque);
+
                     break;
                 }
                 default:

@@ -304,6 +304,74 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void GizmosDrawer::drawWireCube(
+        Vec3DF const& _position,
+        Vec3DF const& _scale,
+        Vec3DF const& _forward,
+        Vec3DF const& _up,
+        ColorF128 const& _color,
+        MeshRenderMode _renderMode)
+    {
+        Vec3DF forward = _forward.normalizedCopy();
+        Vec3DF up = _up.normalizedCopy();
+        Vec3DF right = up.crossProduct(forward).normalizedCopy();
+
+        Vec3DF halfScale = _scale * 0.5f;
+
+        setColor(_color);
+        drawLine(
+            _position - right * halfScale - up * halfScale - forward * halfScale,
+            _position - right * halfScale - up * halfScale + forward * halfScale,
+            _renderMode);
+        drawLine(
+            _position + right * halfScale - up * halfScale - forward * halfScale,
+            _position + right * halfScale - up * halfScale + forward * halfScale,
+            _renderMode);
+        drawLine(
+            _position - right * halfScale - up * halfScale - forward * halfScale,
+            _position + right * halfScale - up * halfScale - forward * halfScale,
+            _renderMode);
+        drawLine(
+            _position - right * halfScale - up * halfScale + forward * halfScale,
+            _position + right * halfScale - up * halfScale + forward * halfScale,
+            _renderMode);
+
+        drawLine(
+            _position - right * halfScale + up * halfScale - forward * halfScale,
+            _position - right * halfScale + up * halfScale + forward * halfScale,
+            _renderMode);
+        drawLine(
+            _position + right * halfScale + up * halfScale - forward * halfScale,
+            _position + right * halfScale + up * halfScale + forward * halfScale,
+            _renderMode);
+        drawLine(
+            _position - right * halfScale + up * halfScale - forward * halfScale,
+            _position + right * halfScale + up * halfScale - forward * halfScale,
+            _renderMode);
+        drawLine(
+            _position - right * halfScale + up * halfScale + forward * halfScale,
+            _position + right * halfScale + up * halfScale + forward * halfScale,
+            _renderMode);
+
+        drawLine(
+            _position - right * halfScale - up * halfScale - forward * halfScale,
+            _position - right * halfScale + up * halfScale - forward * halfScale,
+            _renderMode);
+        drawLine(
+            _position + right * halfScale - up * halfScale - forward * halfScale,
+            _position + right * halfScale + up * halfScale - forward * halfScale,
+            _renderMode);
+        drawLine(
+            _position + right * halfScale - up * halfScale + forward * halfScale,
+            _position + right * halfScale + up * halfScale + forward * halfScale,
+            _renderMode);
+        drawLine(
+            _position - right * halfScale - up * halfScale + forward * halfScale,
+            _position - right * halfScale + up * halfScale + forward * halfScale,
+            _renderMode);
+    }
+
+    //////////////////////////////////////////
     void GizmosDrawer::drawWireSphere(
         Vec3DF const& _position,
         F32 _radius,
@@ -463,6 +531,31 @@ namespace Maze
 
         drawWireCircle(_position + forward, direction, (forward - (slerpedVector.normalizedCopy() * dist)).length() + _radius, _renderMode);
         drawWireCircle(_position + (forward * 0.5f), direction, ((forward * 0.5f) - (slerpedVector.normalizedCopy() * (dist * 0.5f))).length() + _radius, _renderMode);
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer::drawWireTorus(
+        Vec3DF const& _position,
+        Vec3DF const& _direction,
+        F32 _radius,
+        F32 _torusRadius,
+        ColorF128 const& _color,
+        MeshRenderMode _renderMode)
+    {
+        Vec3DF forward = _direction;
+        Vec3DF up = forward.perpendicular();
+        Vec3DF right = up.crossProduct(forward).normalizedCopy();
+
+        setColor(_color);
+        drawWireCircle(_position + _direction * _torusRadius, _direction, _radius, _renderMode);
+        drawWireCircle(_position - _direction * _torusRadius, _direction, _radius, _renderMode);
+        drawWireCircle(_position, _direction, _radius + _torusRadius, _renderMode);
+        drawWireCircle(_position, _direction, _radius - _torusRadius, _renderMode);
+
+        drawWireCircle(_position + up * _radius, right, _torusRadius, _renderMode);
+        drawWireCircle(_position - up * _radius, right, _torusRadius, _renderMode);
+        drawWireCircle(_position + right * _radius, up, _torusRadius, _renderMode);
+        drawWireCircle(_position - right * _radius, up, _torusRadius, _renderMode);
     }
 
     //////////////////////////////////////////

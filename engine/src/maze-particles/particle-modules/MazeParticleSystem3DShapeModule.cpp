@@ -264,7 +264,7 @@ namespace Maze
 
         Vec3DF shift = l * zone.radius;
 
-        F32 innerRadius = zone.torusRadius * Math::Lerp(zone.radiusThickness, 1.0f, Math::UnitRandom());
+        F32 innerRadius = zone.torusRadius * Math::Lerp(Math::Clamp01(1.0f - zone.radiusThickness), 1.0f, Math::UnitRandom());
         Vec3DF k = l.crossProduct(Vec3DF::c_unitZ);
         Vec3DF t = (l * c1) + (k.crossProduct(l) * s1) + (k * k.dotProduct(l)) * (1 - c1);
         shift += t * innerRadius;
@@ -292,7 +292,7 @@ namespace Maze
 
         Vec3DF shift = l * zone.radius;
 
-        F32 innerRadius = zone.torusRadius * (Math::RangeRandom(0, 2) == 0 ? zone.radiusThickness : 1.0f);
+        F32 innerRadius = zone.torusRadius * (Math::RangeRandom(0, 2) == 0 ? Math::Clamp01(1.0f - zone.radiusThickness) : 1.0f);
         Vec3DF k = l.crossProduct(Vec3DF::c_unitZ);
         Vec3DF t = (l * c1) + (k.crossProduct(l) * s1) + (k * k.dotProduct(l)) * (1 - c1);
         shift += t * innerRadius;
