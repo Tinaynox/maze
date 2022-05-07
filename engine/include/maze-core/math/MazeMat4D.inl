@@ -139,6 +139,20 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
+    inline MAZE_CONSTEXPR Mat4D<TValue> Mat4D<TValue>::CreateChangeOfBasisMatrix(
+        Vec3D<TValue> const& _xBasis,
+        Vec3D<TValue> const& _yBasis,
+        Vec3D<TValue> const& _zBasis)
+    {
+        return Mat4D(
+            _xBasis.x, _yBasis.x, _zBasis.x, 0,
+            _xBasis.y, _yBasis.y, _zBasis.y, 0,
+            _xBasis.z, _yBasis.z, _zBasis.z, 0,
+            0, 0, 0, 1);
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
     inline MAZE_CONSTEXPR Mat4D<TValue> Mat4D<TValue>::CreateTranslationMatrix(Vec2D<TValue> const& _vector)
     {
         return CreateTranslationMatrix(_vector.x, _vector.y);

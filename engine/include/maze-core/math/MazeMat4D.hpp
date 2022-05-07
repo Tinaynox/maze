@@ -95,6 +95,12 @@ namespace Maze
             TValue _value30, TValue _value31, TValue _value32, TValue _value33);
 
         //////////////////////////////////////////
+        static inline MAZE_CONSTEXPR Mat4D CreateChangeOfBasisMatrix(
+            Vec3D<TValue> const& _xBasis,
+            Vec3D<TValue> const& _yBasis,
+            Vec3D<TValue> const& _zBasis);
+
+        //////////////////////////////////////////
         static inline MAZE_CONSTEXPR Mat4D CreateTranslationMatrix(TValue _x, TValue _y, TValue _z = 0);
 
         //////////////////////////////////////////

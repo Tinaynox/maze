@@ -154,7 +154,7 @@ namespace Maze
         F32 r = m_physicsWorld->convertMetersToUnits(_radius);
 
         m_drawer->setColor(color);
-        m_drawer->drawCircle(p, Vec3DF::c_negativeUnitZ, r);
+        m_drawer->drawWireCircle(p, Vec3DF::c_negativeUnitZ, r);
     }
 
     //////////////////////////////////////////
@@ -165,7 +165,7 @@ namespace Maze
         F32 r = m_physicsWorld->convertMetersToUnits(_radius);
 
         m_drawer->setColor(color);
-        m_drawer->drawCircle(p, Vec3DF::c_negativeUnitZ, r);
+        m_drawer->drawWireCircle(p, Vec3DF::c_negativeUnitZ, r);
     }
 
     //////////////////////////////////////////
@@ -193,7 +193,7 @@ namespace Maze
         F32 r = 0.1f;
 
         m_drawer->setColor(color);
-        m_drawer->drawCircle(p, Vec3DF::c_negativeUnitZ, r);
+        m_drawer->drawWireCircle(p, Vec3DF::c_negativeUnitZ, r);
     }
 
     

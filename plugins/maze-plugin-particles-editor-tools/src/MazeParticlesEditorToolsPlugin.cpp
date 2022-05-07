@@ -31,6 +31,7 @@
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
+#include "maze-graphics/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawerDefault.hpp"
 #include "maze-plugin-particles-editor-tools/inspectors/entities/MazeComponentEditorParticleSystem3D.hpp"
@@ -41,6 +42,7 @@
 #include "maze-plugin-particles-editor-tools/meta-property-drawers/MazeMetaPropertyDrawerParticleSystem3DRendererModule.hpp"
 #include "maze-plugin-particles-editor-tools/meta-property-drawers/MazeMetaPropertyDrawerParticleSystem3DShapeModule.hpp"
 #include "maze-plugin-particles-editor-tools/meta-property-drawers/MazeMetaPropertyDrawerParticleSystem3DZoneData.hpp"
+#include "maze-plugin-particles-editor-tools/ecs/components/gizmos/MazeParticleSystem3DGizmos.hpp"
 
 
 //////////////////////////////////////////
@@ -177,6 +179,8 @@ namespace Maze
         InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystem3DZoneData, MetaPropertyDrawerParticleSystem3DZoneData>();
 
         InspectorManager::GetInstancePtr()->registerComponentEditor<ParticleSystem3D, ComponentEditorParticleSystem3D>();
+
+        GizmosManager::GetInstancePtr()->registerGizmos<ParticleSystem3D, ParticleSystem3DGizmos>();
     }
 
     //////////////////////////////////////////

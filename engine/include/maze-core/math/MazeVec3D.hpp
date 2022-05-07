@@ -383,6 +383,24 @@ namespace Maze
             return Vec3D::c_zero;
         }
 
+        //////////////////////////////////////////
+        static inline Vec3D SLerp(Vec3D const& _start, Vec3D const& _end, F32 _percent)
+        {
+            TValue cosAlpha = _start.dotProduct(_end);
+            TValue alpha = Math::ACos(cosAlpha);
+            TValue sinAlpha = Math::Sin(alpha);
+            TValue t1 = Math::Sin((static_cast<TValue>(1) - static_cast<TValue>(_percent)) * alpha) / sinAlpha;
+            TValue t2 = Math::Sin(_percent * alpha) / sinAlpha;
+
+            return _start * t1 + _end * t2;
+        }
+
+        //////////////////////////////////////////
+        inline Vec3D slerp(Vec3D const& _end, F32 _percent)
+        {
+            return SLerp(*this, _end, _percent);
+        }
+
 
         //////////////////////////////////////////
         Vec3D perpendicular() const;

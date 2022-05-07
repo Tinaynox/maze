@@ -173,7 +173,10 @@ namespace Maze
 
         Vec3DF direction = Vec3DF::RandomDirection();
         _result.direction = direction;
-        _result.position = _center + direction * zone.radius * Math::UnitRandom();
+        F32 r = Math::UnitRandom() + Math::UnitRandom();
+        if (r > 1.0f)
+            r = 2.0f - r;
+        _result.position = _center + direction * r * zone.radius;
     }
 
     //////////////////////////////////////////
@@ -197,7 +200,10 @@ namespace Maze
 
         Vec2DF direction = Vec2DF::RandomDirection();
         _result.direction = direction;
-        _result.position = _center + direction * zone.radius * Math::UnitRandom();
+        F32 r = Math::UnitRandom() + Math::UnitRandom();
+        if (r > 1.0f)
+            r = 2.0f - r;
+        _result.position = _center + direction * r * zone.radius;
     }
 
     //////////////////////////////////////////
@@ -221,7 +227,10 @@ namespace Maze
 
         Vec3DF direction = Vec3DF::RandomHemisphereDirection(Vec3DF::c_unitZ);
         _result.direction = direction;
-        _result.position = _center + direction * zone.radius * Math::UnitRandom();
+        F32 r = Math::UnitRandom() + Math::UnitRandom();
+        if (r > 1.0f)
+            r = 2.0f - r;
+        _result.position = _center + direction * r * zone.radius;
     }
 
     //////////////////////////////////////////

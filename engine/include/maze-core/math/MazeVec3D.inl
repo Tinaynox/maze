@@ -703,22 +703,17 @@ namespace Maze
     //////////////////////////////////////////
     template <class TValue>
     Vec3D<TValue> Vec3D<TValue>::perpendicular() const
-    {
-        #pragma warning(push)
-        #pragma warning(disable : 4146)
-        
-        const TValue squareZero = (TValue)(1e-06 * 1e-06);
-        
-        Vec3D<TValue> perp = this->crossProduct(Vec3D<TValue>::c_unitX);
-        
-        if (perp.squaredLength() < squareZero)
-            perp = this->crossProduct(Vec3D<TValue>::c_unitY);
-        
-        perp.normalize();
-        
-        return perp;
-        
-        #pragma warning(pop)
+    {      
+        Vec3D<TValue> norm = normalizedCopy();
+
+        TValue const epsilon = 0.5f;
+        if (Math::Abs(norm.z) < epsilon)
+            return Vec3D(-y, x, z);
+        else
+        if (Math::Abs(norm.y) < epsilon)
+            return Vec3D(-z, y, x);
+        else
+            return Vec3D(x, -z, y);
     }
     
     //////////////////////////////////////////

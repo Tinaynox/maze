@@ -45,6 +45,8 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
+#include "maze-core/math/MazeRay.hpp"
+#include "maze-core/math/MazePlane.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 
 
@@ -107,7 +109,8 @@ namespace Maze
                     case MeshRenderMode::Opaque:
                     {
                         material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::LessEqual);
-                        material->getFirstRenderPass()->setRenderQueueIndex(4900);
+                        material->getFirstRenderPass()->setRenderQueueIndex(2500);
+                        material->getFirstRenderPass()->setDepthWriteEnabled(true);
                         break;
                     }
                     default:
@@ -244,34 +247,282 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::drawCircle(
+    void GizmosDrawer::drawWireCircle(
         Vec3DF const& _position,
         Vec3DF const& _direction,
         F32 _radius,
-        S32 _segmentsCount,
         MeshRenderMode _renderMode)
     {
-        F32 angleDelta = Math::c_twoPi / (F32)_segmentsCount;
-        Size pointsCount = (Size)Math::Ceil((Math::c_twoPi / angleDelta) - angleDelta * 0.5f);
-        Vector<Vec3DF> circlePoints;
-        for (F32 i = 0; i < Math::c_twoPi - angleDelta * 0.5f; i += angleDelta)
+        Vec3DF forward = _direction.normalizedCopy() * _radius;
+        Vec3DF up = forward.perpendicular();
+        Vec3DF right = up.crossProduct(forward).normalizedCopy() * _radius;
+
+        Mat4DF matrix = Mat4DF::CreateChangeOfBasisMatrix(right, up, forward);
+        Vec3DF lastPoint = _position + matrix.transformAffine(Vec3DF(Math::Cos(0.0f), Math::Sin(0.0f), 0.0f));
+        Vec3DF nextPoint = Vec3DF::c_zero;
+
+        for (S32 i = 0; i < 91; i++)
         {
-            F32 c = Math::Cos(i);
-            F32 s = Math::Sin(i);
+            nextPoint.x = Math::Cos(Math::DegreesToRadians(i * 4.0f));
+            nextPoint.y = Math::Sin(Math::DegreesToRadians(i * 4.0f));
+            nextPoint.z = 0;
 
-            Vec3DF d = _direction.crossProduct(Vec3DF(c, s, 0.0f) * _radius);
-            circlePoints.emplace_back(_position + d);
+            nextPoint = _position + matrix.transformAffine(nextPoint);
+
+            drawLine(lastPoint, nextPoint, _renderMode);
+            lastPoint = nextPoint;
         }
+    }
 
-        for (Size i = 0; i < pointsCount - 1; ++i)
+    //////////////////////////////////////////
+    void GizmosDrawer::drawWireHemicircle(
+        Vec3DF const& _position,
+        Vec3DF const& _forward,
+        Vec3DF const& _up,
+        F32 _radius,
+        MeshRenderMode _renderMode)
+    {
+        Vec3DF forward = _forward.normalizedCopy() * _radius;
+        Vec3DF up = _up.normalizedCopy() * _radius;
+        Vec3DF right = up.crossProduct(forward).normalizedCopy() * _radius;
+
+        Mat4DF matrix = Mat4DF::CreateChangeOfBasisMatrix(right, up, forward);
+        Vec3DF lastPoint = _position + matrix.transformAffine(Vec3DF(Math::Cos(0.0f), Math::Sin(0.0f), 0.0f));
+        Vec3DF nextPoint = Vec3DF::c_zero;
+
+        for (S32 i = 0; i < 46; i++)
         {
-            Vec3DF const& circlePoint0 = circlePoints[i];
-            Vec3DF const& circlePoint1 = circlePoints[i + 1];
+            nextPoint.x = Math::Cos(Math::DegreesToRadians(i * 4.0f));
+            nextPoint.y = Math::Sin(Math::DegreesToRadians(i * 4.0f));
+            nextPoint.z = 0;
 
-            drawLine(circlePoint0, circlePoint1, _renderMode);
+            nextPoint = _position + matrix.transformAffine(nextPoint);
+
+            drawLine(lastPoint, nextPoint, _renderMode);
+            lastPoint = nextPoint;
         }
+    }
 
-        drawLine(circlePoints.back(), circlePoints.front(), _renderMode);
+    //////////////////////////////////////////
+    void GizmosDrawer::drawWireSphere(
+        Vec3DF const& _position,
+        F32 _radius,
+        ColorF128 const& _color,
+        MeshRenderMode _renderMode)
+    {
+        F32 angle = 10.0f;
+
+        Vec3DF x = Vec3DF(_position.x, _position.y + _radius * Math::Sin(0.0f), _position.z + _radius * Math::Cos(0.0f));
+        Vec3DF y = Vec3DF(_position.x + _radius * Math::Cos(0.0f), _position.y, _position.z + _radius * Math::Sin(0.0f));
+        Vec3DF z = Vec3DF(_position.x + _radius * Math::Cos(0.0f), _position.y + _radius * Math::Sin(0.0f), _position.z);
+
+        setColor(_color);
+
+        for (S32 i = 1; i < 37; i++)
+        {
+            Vec3DF newX = Vec3DF(_position.x, _position.y + _radius * Math::Sin(Math::DegreesToRadians(angle * i)), _position.z + _radius * Math::Cos(Math::DegreesToRadians(angle * i)));
+            Vec3DF newY = Vec3DF(_position.x + _radius * Math::Cos(Math::DegreesToRadians(angle * i)), _position.y, _position.z + _radius * Math::Sin(Math::DegreesToRadians(angle * i)));
+            Vec3DF newZ = Vec3DF(_position.x + _radius * Math::Cos(Math::DegreesToRadians(angle * i)), _position.y + _radius * Math::Sin(Math::DegreesToRadians(angle * i)), _position.z);
+
+            drawLine(x, newX, _renderMode);
+            drawLine(y, newY, _renderMode);
+            drawLine(z, newZ, _renderMode);
+
+            x = newX;
+            y = newY;
+            z = newZ;
+        }
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer::drawWireHemisphere(
+        Vec3DF const& _position,
+        Vec3DF const& _direction,
+        F32 _radius,
+        ColorF128 const& _color,
+        MeshRenderMode _renderMode)
+    {
+        Vec3DF forward = _direction.normalizedCopy();
+        Vec3DF up = forward.perpendicular();
+        Vec3DF right = up.crossProduct(forward).normalizedCopy();
+
+        setColor(_color);
+        drawWireCircle(_position, _direction, _radius, _renderMode);
+
+        drawWireHemicircle(_position, up, forward, _radius, _renderMode);
+        drawWireHemicircle(_position, right, forward, _radius, _renderMode);
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer::drawWireCylinder(
+        Vec3DF const& _start,
+        Vec3DF const& _end,
+        F32 _radius,
+        ColorF128 const& _color,
+        MeshRenderMode _renderMode)
+    {
+        Vec3DF forward = (_end - _start).normalizedCopy() * _radius;
+        Vec3DF up = forward.perpendicular();
+        Vec3DF right = up.crossProduct(forward).normalizedCopy() * _radius;
+
+        setColor(_color);
+
+        // Radial circles
+        drawWireCircle(_start, forward, _radius, _renderMode);
+        drawWireCircle(_end, -forward, _radius, _renderMode);
+        drawWireCircle((_start + _end) * 0.5f, forward, _radius, _renderMode);
+
+        // Side lines
+        drawLine(_start + right, _end + right, _renderMode);
+        drawLine(_start - right, _end - right, _renderMode);
+
+        drawLine(_start + up, _end + up, _renderMode);
+        drawLine(_start - up, _end - up, _renderMode);
+
+        // Start Endcap
+        drawLine(_start - right, _start + right, _renderMode);
+        drawLine(_start - up, _start + up, _renderMode);
+
+        // End Endcap
+        drawLine(_end - right, _end + right, _renderMode);
+        drawLine(_end - up, _end + up, _renderMode);
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer::drawWireCone(
+        Vec3DF const& _position,
+        Vec3DF const& _direction,
+        F32 _angle,
+        ColorF128 const& _color,
+        MeshRenderMode _renderMode)
+    {
+        F32 len = _direction.length();
+
+        Vec3DF forward = _direction;
+        Vec3DF up = forward.perpendicular();
+        Vec3DF right = up.crossProduct(forward).normalizedCopy() * len;
+
+        Vec3DF direction = _direction.normalizedCopy();
+
+        Vec3DF slerpedVector = forward.slerp(up, _angle / Math::c_halfPi);
+
+        Plane farPlane(_position + forward, -direction);
+        Ray distRay(_position, slerpedVector);
+
+        F32 dist;
+        farPlane.raycast(distRay, dist);
+
+        setColor(_color);
+
+        drawRay(_position, slerpedVector.normalizedCopy() * dist, _renderMode);
+        drawRay(_position, forward.slerp(-up, _angle / Math::c_halfPi).normalizedCopy() * dist, _renderMode);
+        drawRay(_position, forward.slerp(right, _angle / Math::c_halfPi).normalizedCopy() * dist, _renderMode);
+        drawRay(_position, forward.slerp(-right, _angle / Math::c_halfPi).normalizedCopy() * dist, _renderMode);
+
+        drawWireCircle(_position + forward, direction, (forward - (slerpedVector.normalizedCopy() * dist)).length(), _renderMode);
+        drawWireCircle(_position + (forward * 0.5f), direction, ((forward * 0.5f) - (slerpedVector.normalizedCopy() * (dist * 0.5f))).length(), _renderMode);
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer::drawWireTruncatedCone(
+        Vec3DF const& _position,
+        Vec3DF const& _direction,
+        F32 _radius,
+        F32 _angle,
+        ColorF128 const& _color,
+        MeshRenderMode _renderMode)
+    {
+        F32 len = _direction.length();
+
+        Vec3DF forward = _direction;
+        Vec3DF up = forward.perpendicular();
+        Vec3DF right = up.crossProduct(forward).normalizedCopy() * len;
+
+        Vec3DF forwardN = forward.normalizedCopy();
+        Vec3DF upN = up.normalizedCopy();
+        Vec3DF rightN = right.normalizedCopy();
+
+        Vec3DF direction = _direction.normalizedCopy();
+
+        Vec3DF slerpedVector = forward.slerp(up, _angle / Math::c_halfPi);
+
+        Plane farPlane(_position + forward, -direction);
+        Ray distRay(_position, slerpedVector);
+
+        F32 dist;
+        farPlane.raycast(distRay, dist);
+
+        setColor(_color);
+
+        drawWireCircle(_position, _direction, _radius, _renderMode);
+
+        drawRay(_position + upN * _radius, slerpedVector.normalizedCopy() * dist, _renderMode);
+        drawRay(_position - upN * _radius, forward.slerp(-up, _angle / Math::c_halfPi).normalizedCopy() * dist, _renderMode);
+        drawRay(_position + rightN * _radius, forward.slerp(right, _angle / Math::c_halfPi).normalizedCopy() * dist, _renderMode);
+        drawRay(_position - rightN * _radius, forward.slerp(-right, _angle / Math::c_halfPi).normalizedCopy() * dist, _renderMode);
+
+        drawWireCircle(_position + forward, direction, (forward - (slerpedVector.normalizedCopy() * dist)).length() + _radius, _renderMode);
+        drawWireCircle(_position + (forward * 0.5f), direction, ((forward * 0.5f) - (slerpedVector.normalizedCopy() * (dist * 0.5f))).length() + _radius, _renderMode);
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer::drawWireArrow(
+        Vec3DF const& _position,
+        Vec3DF const& _direction,
+        ColorF128 const& _color,
+        MeshRenderMode _renderMode)
+    {
+        setColor(_color);
+        drawRay(_position, _direction, _renderMode);
+        drawWireCone(_position + _direction, -_direction * 0.333f, Math::DegreesToRadians(15.0f), _color, _renderMode);
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer::drawWireCapsule(
+        Vec3DF const& _start,
+        Vec3DF const& _end,
+        F32 _radius,
+        ColorF128 const& _color,
+        MeshRenderMode _renderMode)
+    {
+        Vec3DF forward = (_end - _start).normalizedCopy() * _radius;
+        Vec3DF up = forward.perpendicular();
+        Vec3DF right = up.crossProduct(forward).normalizedCopy() * _radius;
+
+        F32 height = (_start - _end).length();
+        F32 sideLength = Math::Max(0.0f, (height * 0.5f) - _radius);
+        Vec3DF middle = (_end + _start) * 0.5f;
+
+        Vec3DF start = middle + ((_start - middle).normalizedCopy() * sideLength);
+        Vec3DF end = middle + ((_end - middle).normalizedCopy() * sideLength);
+
+        setColor(_color);
+
+        // Radial circles
+        drawWireCircle(start, forward, _radius, _renderMode);
+        drawWireCircle(end, -forward, _radius, _renderMode);
+
+        // Side lines
+        drawLine(start + right, end + right, _renderMode);
+        drawLine(start - right, end - right, _renderMode);
+
+        drawLine(start + up, end + up, _renderMode);
+        drawLine(start - up, end - up, _renderMode);
+
+        for (S32 i = 1; i < 26; i++) {
+
+            // Start endcap
+            drawLine(Vec3DF::SLerp(right, -forward, (F32)i / 25.0f) + start, Vec3DF::SLerp(right, -forward, F32(i - 1) / 25.0f) + start, _renderMode);
+            drawLine(Vec3DF::SLerp(-right, -forward, (F32)i / 25.0f) + start, Vec3DF::SLerp(-right, -forward, F32(i - 1) / 25.0f) + start, _renderMode);
+            drawLine(Vec3DF::SLerp(up, -forward, (F32)i / 25.0f) + start, Vec3DF::SLerp(up, -forward, F32(i - 1) / 25.0f) + start, _renderMode);
+            drawLine(Vec3DF::SLerp(-up, -forward, (F32)i / 25.0f) + start, Vec3DF::SLerp(-up, -forward, F32(i - 1) / 25.0f) + start, _renderMode);
+
+            // End endcap
+            drawLine(Vec3DF::SLerp(right, forward, (F32)i / 25.0f) + end, Vec3DF::SLerp(right, forward, F32(i - 1) / 25.0f) + end, _renderMode);
+            drawLine(Vec3DF::SLerp(-right, forward, (F32)i / 25.0f) + end, Vec3DF::SLerp(-right, forward, F32(i - 1) / 25.0f) + end, _renderMode);
+            drawLine(Vec3DF::SLerp(up, forward, (F32)i / 25.0f) + end, Vec3DF::SLerp(up, forward, F32(i - 1) / 25.0f) + end, _renderMode);
+            drawLine(Vec3DF::SLerp(-up, forward, (F32)i / 25.0f) + end, Vec3DF::SLerp(-up, forward, F32(i - 1) / 25.0f) + end, _renderMode);
+        }
     }
 
     //////////////////////////////////////////

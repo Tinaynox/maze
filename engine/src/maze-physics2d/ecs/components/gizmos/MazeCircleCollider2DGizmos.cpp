@@ -100,11 +100,10 @@ namespace Maze
             F32 maxScale = Math::Max(scale.x, scale.y);
 
             _drawer->setColor(ColorF128::c_green);
-            _drawer->drawCircle(
+            _drawer->drawWireCircle(
                 transform3D->getWorldPosition(Vec3DF(offset, 0.0f)),
                 transform3D->getWorldForwardDirection(),
-                maxScale * radius,
-                24);
+                maxScale * radius);
         }
     }
 
