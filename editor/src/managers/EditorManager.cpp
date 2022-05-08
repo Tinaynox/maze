@@ -219,6 +219,10 @@ namespace Maze
     //////////////////////////////////////////
     void EditorManager::openPrefab(AssetFilePtr const& _value)
     {
+        if (getSceneMode() == EditorSceneMode::Prefab &&
+            m_editorPrefabManager->getPrefabAssetFile() == _value)
+            return;
+        
         setSceneMode(EditorSceneMode::Prefab);
         getSceneMain()->destroyAllEntities();
         m_editorPrefabManager->setPrefabAssetFile(_value);

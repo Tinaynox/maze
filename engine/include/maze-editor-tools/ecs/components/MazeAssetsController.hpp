@@ -119,6 +119,11 @@ namespace Maze
         //////////////////////////////////////////
         bool getAssetFileRename(AssetFilePtr const& _assetFile);
 
+
+    public:
+        //////////////////////////////////////////
+        MultiDelegate<String const&> eventAssetDoubleClick;
+
     protected:
 
         //////////////////////////////////////////
@@ -143,7 +148,10 @@ namespace Maze
         void notifyAssetTreeLineExpandedChanged(AssetLine* _line, bool _value);
 
         //////////////////////////////////////////
-        void notifyAssetTreeLinePressed(AssetLine* _line);
+        void notifyAssetTreeLineClick(AssetLine* _line);
+
+        //////////////////////////////////////////
+        void notifyAssetTreeLineDoubleClick(AssetLine* _line);
 
         //////////////////////////////////////////
         void clearSelectedAssetsFolder();

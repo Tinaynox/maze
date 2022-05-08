@@ -154,7 +154,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SystemTextDropdown2D::notifyClick(CursorInputEvent const& _inputEvent)
+    void SystemTextDropdown2D::notifyClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         eventClick(this, _inputEvent);
     }

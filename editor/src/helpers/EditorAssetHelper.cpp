@@ -174,7 +174,9 @@ namespace Maze
         {
             AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_fullPath);
             MAZE_ERROR_RETURN_IF(!assetFile, "Asset file %s is null!", _fullPath.c_str());
-            EditorManager::GetInstancePtr()->openPrefab(assetFile);
+
+            if (assetFile->getExtension() == "mzprefab")
+                EditorManager::GetInstancePtr()->openPrefab(assetFile);
         }
     };
 

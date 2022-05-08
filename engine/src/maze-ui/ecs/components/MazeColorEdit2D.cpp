@@ -142,7 +142,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ColorEdit2D::notifyClick(CursorInputEvent const& _inputEvent)
+    void ColorEdit2D::notifyClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;

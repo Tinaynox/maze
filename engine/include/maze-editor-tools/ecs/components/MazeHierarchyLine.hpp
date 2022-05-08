@@ -112,6 +112,9 @@ namespace Maze
         //////////////////////////////////////////
         void setDropDownState(HierarchyLineDropDownState _value);
 
+        //////////////////////////////////////////
+        inline HierarchyLineDropDownState getDropDownState() const { return m_dropDownState; }
+
 
         //////////////////////////////////////////
         inline void setName(String const& _value) { m_name = _value; }
@@ -146,7 +149,8 @@ namespace Maze
         /////////////////////////////////////////
         MultiDelegate<void*> eventUserDataChanged;
         MultiDelegate<HierarchyLine*> eventDropDownClick;
-        MultiDelegate<HierarchyLine*> eventLinePressed;
+        MultiDelegate<HierarchyLine*> eventLineClick;
+        MultiDelegate<HierarchyLine*> eventLineDoubleClick;
 
     protected:
 
@@ -167,7 +171,10 @@ namespace Maze
         void notifyDropDownClick(Button2D* _button, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
-        void notifyLinePressed(Button2D* _button, CursorInputEvent const& _inputEvent);
+        void notifyLineClick(Button2D* _button, CursorInputEvent const& _inputEvent);
+
+        //////////////////////////////////////////
+        void notifyLineDoubleClick(Button2D* _button, CursorInputEvent const& _inputEvent);
 
 
     protected:

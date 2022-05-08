@@ -46,11 +46,13 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_4_API(MAZE_UI_API, CursorInputType,
+    MAZE_DECLARE_ENUMCLASS_6_API(MAZE_UI_API, CursorInputType,
         Press,
         Move,
         Drag,
-        Release);
+        Release,
+        Click,
+        DoubleClick);
 
 
     //////////////////////////////////////////

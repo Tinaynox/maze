@@ -101,6 +101,7 @@
 #include "helpers/EditorHelper.hpp"
 #include "helpers/EditorAssetsModeHelper.hpp"
 #include "helpers/EditorProjectModeHelper.hpp"
+#include "helpers/EditorAssetHelper.hpp"
 #include "managers/EditorAssetsModeManager.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorWorkspaceManager.hpp"
@@ -450,6 +451,11 @@ namespace Maze
             EntityPtr assetsControllerEntity = createEntity();
             m_assetsController = AssetsController::Create(m_assetsCanvas.get());
             assetsControllerEntity->addComponent(m_assetsController);
+            m_assetsController->eventAssetDoubleClick.subscribe(
+                [](String const& _assetFullPath)
+                {
+                    EditorAssetHelper::Edit(_assetFullPath);
+                });
 
             updateAssetsController();
         }

@@ -194,7 +194,7 @@ namespace Maze
         void notifyPressedChanged(bool _pressed);
 
         //////////////////////////////////////////
-        void notifyClick(CursorInputEvent const& _inputEvent);
+        void notifyClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent);
 
 
         //////////////////////////////////////////

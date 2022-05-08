@@ -94,7 +94,10 @@ namespace Maze
         {
             ClickButton2D* button = m_textRenderer->getEntityRaw()->getComponentRaw<ClickButton2D>();
             if (button)
+            {
                 button->eventClick.unsubscribe(this);
+                button->eventDoubleClick.unsubscribe(this);
+            }
         }
     }
 
@@ -197,7 +200,8 @@ namespace Maze
             Vec2DF(0.0f, 0.5f));
         m_textRenderer->setColor(ColorU32::c_black);
         ClickButton2DPtr textButton = m_textRenderer->getEntityRaw()->ensureComponent<ClickButton2D>();
-        textButton->eventClick.subscribe(this, &HierarchyLine::notifyLinePressed);
+        textButton->eventClick.subscribe(this, &HierarchyLine::notifyLineClick);
+        textButton->eventDoubleClick.subscribe(this, &HierarchyLine::notifyLineDoubleClick);
 
         m_contextMenu = getEntityRaw()->ensureComponent<ContextMenu2D>();
         m_contextMenu->setCallbackFunction(
@@ -322,12 +326,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void HierarchyLine::notifyLinePressed(Button2D* _button, CursorInputEvent const& _inputEvent)
+    void HierarchyLine::notifyLineClick(Button2D* _button, CursorInputEvent const& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
 
-        eventLinePressed(this);
+        eventLineClick(this);
+    }
+
+    //////////////////////////////////////////
+    void HierarchyLine::notifyLineDoubleClick(Button2D* _button, CursorInputEvent const& _inputEvent)
+    {
+        if (_inputEvent.button != 0)
+            return;
+
+        eventLineDoubleClick(this);
     }
 
     //////////////////////////////////////////

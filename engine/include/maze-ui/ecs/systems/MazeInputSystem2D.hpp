@@ -93,6 +93,16 @@ namespace Maze
         };
 
         //////////////////////////////////////////
+        struct ClickData
+        {
+            Window* window = nullptr;
+            S32 cursorIndex = 0;
+            S32 buttonIndex = 0;
+            Vec2DF renderTargetCoords = Vec2DF::c_zero;
+            CursorInputSource inputSource;
+        };
+
+        //////////////////////////////////////////
         static inline Vec2DF DefaultCoordsConverter(Vec2DF const& _coords) { return _coords; }
 
     public:
@@ -158,6 +168,22 @@ namespace Maze
             CursorInputSource const& _inputSource);
 
         //////////////////////////////////////////
+        void processCursorClick(
+            Window* _window,
+            S32 _cursorIndex,
+            S32 _buttonIndex,
+            Vec2DF const& _renderTargetCoords,
+            CursorInputSource const& _inputSource);
+
+        //////////////////////////////////////////
+        void processCursorDoubleClick(
+            Window* _window,
+            S32 _cursorIndex,
+            S32 _buttonIndex,
+            Vec2DF const& _renderTargetCoords,
+            CursorInputSource const& _inputSource);
+
+        //////////////////////////////////////////
         void processCursorRelease(
             Window* _window,
             S32 _cursorIndex,
@@ -206,6 +232,12 @@ namespace Maze
         Vector<CanvasData> m_sortedUIElements2D;
 
         std::function<Vec2DF(Vec2DF const&)> m_coordsConverter = DefaultCoordsConverter;
+
+        Vec2DF m_firstCursorPressRenderTargetCoords = Vec2DF::c_zero;
+        U32 m_firstCursorPressTime = 0u;
+        U32 m_firstCursorReleaseTime = 0u;
+        ClickData m_clickData;
+        bool m_processClick = false;
     };
 
 

@@ -84,13 +84,13 @@ namespace Maze
         for (auto& hierarchyLineData : m_hierarchyLinesPerEntity)
         {
             hierarchyLineData.second.line->eventDropDownClick.unsubscribe(this);
-            hierarchyLineData.second.line->eventLinePressed.unsubscribe(this);
+            hierarchyLineData.second.line->eventLineClick.unsubscribe(this);
         }
 
         for (auto& hierarchyLineData : m_hierarchyLinesPerScene)
         {
             hierarchyLineData.second.line->eventDropDownClick.unsubscribe(this);
-            hierarchyLineData.second.line->eventLinePressed.unsubscribe(this);
+            hierarchyLineData.second.line->eventLineClick.unsubscribe(this);
         }
 
         m_world->eventEntityRemoved.unsubscribe(this);
@@ -477,7 +477,7 @@ namespace Maze
             hierarchyLine->setUserData(reinterpret_cast<void*>((Size)_entityId));
             hierarchyLine->updateIcon();
             hierarchyLine->eventDropDownClick.subscribe(this, &HierarchyController::notifyHierarchyLineDropDownClick);
-            hierarchyLine->eventLinePressed.subscribe(this, &HierarchyController::notifyHierarchyLinePressed);
+            hierarchyLine->eventLineClick.subscribe(this, &HierarchyController::notifyHierarchyLineClick);
         }
 
         hierarchyLine->getEntityRaw()->setActiveSelf(true);
@@ -496,7 +496,7 @@ namespace Maze
             hierarchyLine = m_hierarchyLinePool->createHierarchyLine(HierarchyLineType::Scene);
             hierarchyLine->setUserData(static_cast<void*>(_scene.get()));
             hierarchyLine->eventDropDownClick.subscribe(this, &HierarchyController::notifyHierarchyLineDropDownClick);
-            hierarchyLine->eventLinePressed.subscribe(this, &HierarchyController::notifyHierarchyLinePressed);
+            hierarchyLine->eventLineClick.subscribe(this, &HierarchyController::notifyHierarchyLineClick);
             CString className = _scene->getClassName();
             hierarchyLine->setName(className);
         }
@@ -533,7 +533,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void HierarchyController::notifyHierarchyLinePressed(HierarchyLine* _hierarchyLine)
+    void HierarchyController::notifyHierarchyLineClick(HierarchyLine* _hierarchyLine)
     {
         switch (_hierarchyLine->getType())
         {
@@ -574,7 +574,7 @@ namespace Maze
         if (it != m_hierarchyLinesPerEntity.end())
         {
             it->second.line->eventDropDownClick.unsubscribe(this);
-            it->second.line->eventLinePressed.unsubscribe(this);
+            it->second.line->eventLineClick.unsubscribe(this);
             m_hierarchyLinePool->releaseHierarchyLine(it->second.line);
             m_hierarchyLinesPerEntity.erase(it);
         }

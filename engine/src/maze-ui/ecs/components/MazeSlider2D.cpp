@@ -172,7 +172,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Slider2D::notifyClick(CursorInputEvent const& _inputEvent)
+    void Slider2D::notifyClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         eventClick(this, _inputEvent);
     }

@@ -76,7 +76,7 @@ namespace Maze
     //////////////////////////////////////////
     AssetLine::AssetLine()
         : m_selected(false)
-        , m_selectAssetFileByPress(false)
+        , m_selectAssetFileByClick(false)
     {
     }
 
@@ -87,14 +87,20 @@ namespace Maze
         {
             ClickButton2D* button = m_dropDownRenderer->getEntityRaw()->getComponentRaw<ClickButton2D>();
             if (button)
+            {
                 button->eventClick.unsubscribe(this);
+                button->eventDoubleClick.unsubscribe(this);
+            }
         }
         
         if (m_textRenderer && m_textRenderer->getEntityRaw())
         {
             ClickButton2D* button = m_textRenderer->getEntityRaw()->getComponentRaw<ClickButton2D>();
             if (button)
+            {
                 button->eventClick.unsubscribe(this);
+                button->eventDoubleClick.unsubscribe(this);
+            }
         }
 
         if (m_textEdit)
@@ -212,7 +218,8 @@ namespace Maze
         m_textEdit->getEntityRaw()->setActiveSelf(false);
 
         ClickButton2DPtr textButton = m_textRenderer->getEntityRaw()->ensureComponent<ClickButton2D>();
-        textButton->eventClick.subscribe(this, &AssetLine::notifyLinePressed);
+        textButton->eventClick.subscribe(this, &AssetLine::notifyLineClick);
+        textButton->eventDoubleClick.subscribe(this, &AssetLine::notifyLineDoubleClick);
 
         m_contextMenu = m_mainTransform->getEntityRaw()->ensureComponent<ContextMenu2D>();
         
@@ -250,12 +257,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetLine::notifyLinePressed(Button2D* _button, CursorInputEvent const& _inputEvent)
+    void AssetLine::notifyLineClick(Button2D* _button, CursorInputEvent const& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
 
-        if (m_selectAssetFileByPress)
+        if (m_selectAssetFileByClick)
         {
             if (SelectionManager::GetInstancePtr()->isObjectSelected(m_assetFile))
                 SelectionManager::GetInstancePtr()->unselectObject(m_assetFile);
@@ -263,7 +270,24 @@ namespace Maze
                 SelectionManager::GetInstancePtr()->selectObject(m_assetFile);
         }
 
-        eventLinePressed(this);
+        eventLineClick(this);
+    }
+
+    //////////////////////////////////////////
+    void AssetLine::notifyLineDoubleClick(Button2D* _button, CursorInputEvent const& _inputEvent)
+    {
+        if (_inputEvent.button != 0)
+            return;
+
+        if (m_selectAssetFileByClick)
+        {
+            if (SelectionManager::GetInstancePtr()->isObjectSelected(m_assetFile))
+                SelectionManager::GetInstancePtr()->unselectObject(m_assetFile);
+            else
+                SelectionManager::GetInstancePtr()->selectObject(m_assetFile);
+        }
+
+        eventLineDoubleClick(this);
     }
 
     //////////////////////////////////////////
@@ -278,6 +302,15 @@ namespace Maze
     {
         if (m_dropDownRenderer)
             m_dropDownRenderer->getEntityRaw()->setActiveSelf(_value);
+    }
+
+    //////////////////////////////////////////
+    bool AssetLine::getDropDownVisible() const
+    {
+        if (m_dropDownRenderer)
+            return m_dropDownRenderer->getEntityRaw()->getActiveSelf();
+
+        return false;
     }
 
     //////////////////////////////////////////

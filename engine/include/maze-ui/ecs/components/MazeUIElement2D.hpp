@@ -91,6 +91,12 @@ namespace Maze
         void processCursorPress(CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
+        void processCursorClick(CursorInputEvent const& _inputEvent);
+
+        //////////////////////////////////////////
+        void processCursorDoubleClick(CursorInputEvent const& _inputEvent);
+
+        //////////////////////////////////////////
         void processCursorRelease(CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
@@ -149,7 +155,8 @@ namespace Maze
 
         MultiDelegate<bool> eventFocusChanged;
         MultiDelegate<bool> eventPressedChanged;
-        MultiDelegate<CursorInputEvent const&> eventClick;
+        MultiDelegate<Vec2DF const&, CursorInputEvent const&> eventClick;
+        MultiDelegate<Vec2DF const&, CursorInputEvent const&> eventDoubleClick;
 
         MultiDelegate<CursorWheelInputEvent const&> eventCursorWheel;
 

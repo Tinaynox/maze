@@ -108,6 +108,9 @@ namespace Maze
         void setDropDownVisible(bool _value);
 
         //////////////////////////////////////////
+        bool getDropDownVisible() const;
+
+        //////////////////////////////////////////
         void setExpanded(bool _value);
 
         //////////////////////////////////////////
@@ -125,7 +128,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setSelectAssetFileByPress(bool _value) { m_selectAssetFileByPress = _value; }
+        void setSelectAssetFileByClick(bool _value) { m_selectAssetFileByClick = _value; }
 
 
     public:
@@ -133,7 +136,8 @@ namespace Maze
         //////////////////////////////////////////
         MultiDelegate<AssetLine*> eventDropDownClick;
         MultiDelegate<AssetLine*, bool> eventExpandedChanged;
-        MultiDelegate<AssetLine*> eventLinePressed;
+        MultiDelegate<AssetLine*> eventLineClick;
+        MultiDelegate<AssetLine*> eventLineDoubleClick;
 
     protected:
 
@@ -155,7 +159,10 @@ namespace Maze
         void notifyDropDownClick(Button2D* _button, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
-        void notifyLinePressed(Button2D* _button, CursorInputEvent const& _inputEvent);
+        void notifyLineClick(Button2D* _button, CursorInputEvent const& _inputEvent);
+
+        //////////////////////////////////////////
+        void notifyLineDoubleClick(Button2D* _button, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
         void updateSelectedUI();
@@ -187,7 +194,7 @@ namespace Maze
 
         bool m_selected;
 
-        bool m_selectAssetFileByPress;
+        bool m_selectAssetFileByClick;
     };
 
 

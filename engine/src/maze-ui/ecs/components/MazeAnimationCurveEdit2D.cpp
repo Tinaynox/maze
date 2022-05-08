@@ -154,7 +154,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AnimationCurveEdit2D::notifyClick(CursorInputEvent const& _inputEvent)
+    void AnimationCurveEdit2D::notifyClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;

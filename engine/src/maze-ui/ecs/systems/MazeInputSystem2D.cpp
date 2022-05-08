@@ -27,6 +27,7 @@
 #include "MazeUIHeader.hpp"
 #include "maze-ui/ecs/systems/MazeInputSystem2D.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
@@ -51,6 +52,13 @@
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    U32 const c_doubleClickTimeMS = 220u;
+    F32 const c_doubleClickShiftThresholdSq = 5.0f * 5.0f;
+    U32 const c_clickTimeMS = 150u;
+    F32 const c_clickShiftThresholdSq = 5.0f * 5.0f;
+
+
     //////////////////////////////////////////
     // Class InputSystem2D
     //
@@ -122,6 +130,23 @@ namespace Maze
     //////////////////////////////////////////
     void InputSystem2D::processUpdate(F32 _dt)
     {
+        if (m_processClick)
+        {
+            U32 curTime = UpdateManager::GetInstancePtr()->getMilliseconds();
+            if (curTime >= m_firstCursorPressTime + c_doubleClickTimeMS)
+            {
+                processCursorClick(
+                    m_clickData.window,
+                    m_clickData.cursorIndex,
+                    m_clickData.buttonIndex,
+                    m_clickData.renderTargetCoords,
+                    m_clickData.inputSource);
+                m_processClick = false;
+
+                m_firstCursorPressTime = 0u;
+            }
+        }
+
         struct Layout2DSortData
         {
             Layout2D* layout;
@@ -373,14 +398,148 @@ namespace Maze
             else
                 cursorInputEvent.position = cursorInputEvent.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
 
-            for (Vector<UIElement2D*>::const_reverse_iterator    it2 = sortedUIElements2D.rbegin(),
+            for (Vector<UIElement2D*>::const_reverse_iterator   it2 = sortedUIElements2D.rbegin(),
+                                                                end2 = sortedUIElements2D.rend();
+                                                                it2 != end2;
+                                                                ++it2)
+            {
+                UIElement2D* element = *it2;
+
+                element->processCursorPress(cursorInputEvent);
+
+                if (cursorInputEvent.hitCaptured)
+                    break;
+            }
+
+            if (cursorInputEvent.hitCaptured)
+                break;
+        }
+
+        if (_cursorIndex == 0 && _buttonIndex == 0)
+        {
+            U32 curTime = UpdateManager::GetInstancePtr()->getMilliseconds();
+            if (curTime - m_firstCursorPressTime < c_doubleClickTimeMS &&
+                (_renderTargetCoords - m_firstCursorPressRenderTargetCoords).squaredLength() <= c_doubleClickShiftThresholdSq)
+            {
+                processCursorDoubleClick(_window, _cursorIndex, _buttonIndex, _renderTargetCoords, _inputSource);
+
+                m_processClick = false;
+                m_firstCursorPressTime = 0u;
+            }
+            else
+            {
+                m_firstCursorPressTime = curTime;
+                m_firstCursorPressRenderTargetCoords = _renderTargetCoords;
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void InputSystem2D::processCursorClick(
+        Window* _window,
+        S32 _cursorIndex,
+        S32 _buttonIndex,
+        Vec2DF const& _renderTargetCoords,
+        CursorInputSource const& _inputSource)
+    {
+        CursorInputEvent cursorInputEvent(
+            CursorInputType::Click,
+            _cursorIndex,
+            Maze::Vec2DF::c_zero,
+            _buttonIndex,
+            _inputSource,
+            _window);
+
+        for (Vector<CanvasData>::const_reverse_iterator it = m_sortedUIElements2D.rbegin(),
+            end = m_sortedUIElements2D.rend();
+            it != end;
+            ++it)
+        {
+            CanvasData const& canvasData = *it;
+
+            if (canvasData.rootCanvas &&
+                canvasData.rootCanvas->getRenderTarget() &&
+                canvasData.rootCanvas->getRenderTarget()->getMetaClass()->isInheritedFrom<RenderWindow>())
+            {
+                if (_window != canvasData.rootCanvas->getRenderTarget()->castRaw<RenderWindow>()->getWindowRaw())
+                    continue;
+            }
+
+            cursorInputEvent.canvas = canvasData.canvas;
+            cursorInputEvent.rootCanvas = canvasData.rootCanvas;
+            Vector<UIElement2D*> const& sortedUIElements2D = canvasData.sortedUIElements2D;
+
+            if (cursorInputEvent.rootCanvas)
+                cursorInputEvent.position = cursorInputEvent.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+            else
+                cursorInputEvent.position = cursorInputEvent.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+
+            for (Vector<UIElement2D*>::const_reverse_iterator   it2 = sortedUIElements2D.rbegin(),
                 end2 = sortedUIElements2D.rend();
                 it2 != end2;
                 ++it2)
             {
                 UIElement2D* element = *it2;
 
-                element->processCursorPress(cursorInputEvent);
+                element->processCursorClick(cursorInputEvent);
+
+                if (cursorInputEvent.hitCaptured)
+                    break;
+            }
+
+            if (cursorInputEvent.hitCaptured)
+                break;
+        }
+    }
+
+    //////////////////////////////////////////
+    void InputSystem2D::processCursorDoubleClick(
+        Window* _window,
+        S32 _cursorIndex,
+        S32 _buttonIndex,
+        Vec2DF const& _renderTargetCoords,
+        CursorInputSource const& _inputSource)
+    {
+        CursorInputEvent cursorInputEvent(
+            CursorInputType::DoubleClick,
+            _cursorIndex,
+            Maze::Vec2DF::c_zero,
+            _buttonIndex,
+            _inputSource,
+            _window);
+
+        for (Vector<CanvasData>::const_reverse_iterator it = m_sortedUIElements2D.rbegin(),
+            end = m_sortedUIElements2D.rend();
+            it != end;
+            ++it)
+        {
+            CanvasData const& canvasData = *it;
+
+            if (canvasData.rootCanvas &&
+                canvasData.rootCanvas->getRenderTarget() &&
+                canvasData.rootCanvas->getRenderTarget()->getMetaClass()->isInheritedFrom<RenderWindow>())
+            {
+                if (_window != canvasData.rootCanvas->getRenderTarget()->castRaw<RenderWindow>()->getWindowRaw())
+                    continue;
+            }
+
+            cursorInputEvent.canvas = canvasData.canvas;
+            cursorInputEvent.rootCanvas = canvasData.rootCanvas;
+            Vector<UIElement2D*> const& sortedUIElements2D = canvasData.sortedUIElements2D;
+
+            if (cursorInputEvent.rootCanvas)
+                cursorInputEvent.position = cursorInputEvent.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+            else
+                cursorInputEvent.position = cursorInputEvent.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+
+            for (Vector<UIElement2D*>::const_reverse_iterator   it2 = sortedUIElements2D.rbegin(),
+                end2 = sortedUIElements2D.rend();
+                it2 != end2;
+                ++it2)
+            {
+                UIElement2D* element = *it2;
+
+                element->processCursorDoubleClick(cursorInputEvent);
 
                 if (cursorInputEvent.hitCaptured)
                     break;
@@ -441,6 +600,17 @@ namespace Maze
                 UIElement2D* element = *it2;
 
                 element->processCursorRelease(cursorInputEvent);
+            }
+        }
+
+        if (_cursorIndex == 0 && _buttonIndex == 0)
+        {
+            U32 curTime = UpdateManager::GetInstancePtr()->getMilliseconds();
+            if (curTime - m_firstCursorPressTime < c_clickTimeMS &&
+                (_renderTargetCoords - m_firstCursorPressRenderTargetCoords).squaredLength() <= c_clickShiftThresholdSq)
+            {
+                m_clickData = { _window, _cursorIndex, _buttonIndex, _renderTargetCoords, _inputSource };
+                m_processClick = true;
             }
         }
     }

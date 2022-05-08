@@ -143,6 +143,7 @@ namespace Maze
     public:
 
         MultiDelegate<Button2D*, CursorInputEvent const&> eventClick;
+        MultiDelegate<Button2D*, CursorInputEvent const&> eventDoubleClick;
         MultiDelegate<Button2D*, bool> eventFocusChanged;
         MultiDelegate<Button2D*, bool> eventPressedChanged;
         MultiDelegate<Button2D*, Vec2DF const&, CursorInputEvent const&> eventCursorPressIn;
@@ -171,7 +172,10 @@ namespace Maze
         void notifyPressedChanged(bool _pressed);
 
         //////////////////////////////////////////
-        void notifyClick(CursorInputEvent const& _inputEvent);
+        void notifyClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent);
+
+        //////////////////////////////////////////
+        void notifyDoubleClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent);
 
 
         //////////////////////////////////////////

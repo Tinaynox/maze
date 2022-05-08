@@ -100,7 +100,7 @@ namespace Maze
         void notifyTextChanged(SystemTextEditBox2D* _edit, String const& _text);
 
         //////////////////////////////////////////
-        void notifyBackgroundClick(CursorInputEvent const& _event);
+        void notifyBackgroundClick(Vec2DF const& _positionOS, CursorInputEvent const& _event);
 
         //////////////////////////////////////////
         void notifyRenderTargetResized(RenderTarget* _renderTarget);

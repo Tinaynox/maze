@@ -90,6 +90,7 @@ namespace Maze
         }
 
         clearAssetsTree();
+        clearSelectedAssetsFolder();
     }
 
     //////////////////////////////////////////
@@ -308,7 +309,8 @@ namespace Maze
         for (auto assetTreeLine : m_assetsTreeLines)
         {
             assetTreeLine.second->eventExpandedChanged.unsubscribe(this);
-            assetTreeLine.second->eventLinePressed.unsubscribe(this);
+            assetTreeLine.second->eventLineClick.unsubscribe(this);
+            assetTreeLine.second->eventLineDoubleClick.unsubscribe(this);
         }
 
         m_assetsTreeLines.clear();
@@ -378,7 +380,8 @@ namespace Maze
                 assetFile->getFullPath(),
                 line);
             line->eventExpandedChanged.subscribe(this, &AssetsController::notifyAssetTreeLineExpandedChanged);            
-            line->eventLinePressed.subscribe(this, &AssetsController::notifyAssetTreeLinePressed);
+            line->eventLineClick.subscribe(this, &AssetsController::notifyAssetTreeLineClick);
+            line->eventLineDoubleClick.subscribe(this, &AssetsController::notifyAssetTreeLineDoubleClick);
 
             line->setSelected(m_selectedAssetFolder == assetFile->getFullPath().c_str());
             notifyAssetTreeLineExpandedChanged(line.get(), getAssetFileExpanded(assetFile));
@@ -439,7 +442,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetsController::notifyAssetTreeLinePressed(AssetLine* _line)
+    void AssetsController::notifyAssetTreeLineClick(AssetLine* _line)
     {
         String fullPath = _line->getAssetFile()->getFullPath();
         
@@ -453,12 +456,35 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void AssetsController::notifyAssetTreeLineDoubleClick(AssetLine* _line)
+    {
+        String fullPath = _line->getAssetFile()->getFullPath();
+
+        const AssetFilePtr& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFullPath(fullPath);
+        if (assetFile)
+        {
+            auto it = m_assetsTreeLines.find(fullPath);
+            if (it != m_assetsTreeLines.end())
+            {
+                if (it->second->getDropDownVisible())
+                {
+                    if (assetFile->getMetaClass()->isInheritedFrom<AssetDirectory>())
+                        setAssetFileExpanded(assetFile, !getAssetFileExpanded(assetFile));
+                }
+            }
+        }
+
+        eventAssetDoubleClick(fullPath);
+    }
+
+    //////////////////////////////////////////
     void AssetsController::clearSelectedAssetsFolder()
     {
         for (auto assetTreeLine : m_selectedAssetsFolderLines)
         {
             assetTreeLine.second->eventExpandedChanged.unsubscribe(this);
-            assetTreeLine.second->eventLinePressed.unsubscribe(this);
+            assetTreeLine.second->eventLineClick.unsubscribe(this);
+            assetTreeLine.second->eventLineDoubleClick.unsubscribe(this);
         }
 
         m_selectedAssetsFolderLines.clear();
@@ -499,7 +525,9 @@ namespace Maze
             line->setDropDownVisible(false);
             line->setIcon(
                 AssetEditorToolsManager::GetInstancePtr()->getIconForAssetFile(assetFile));
-            line->setSelectAssetFileByPress(true);
+            line->setSelectAssetFileByClick(true);
+
+            line->eventLineDoubleClick.subscribe(this, &AssetsController::notifyAssetTreeLineDoubleClick);
 
             m_selectedAssetsFolderLines.insert(
                 fullPath,
