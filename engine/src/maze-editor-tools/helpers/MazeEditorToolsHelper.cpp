@@ -200,9 +200,9 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity(CString _entityName)
+        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity(CString _entityName, ECSScene* _scene)
         {
-            ECSScenePtr const& mainScene = SceneManager::GetInstancePtr()->getMainScene();
+            ECSScene* mainScene = _scene ? _scene : SceneManager::GetInstancePtr()->getMainScene().get();
             MAZE_ERROR_RETURN_VALUE_IF(!mainScene, nullptr, "MainScene is null!");
 
             EntityPtr entity = mainScene->createEntity(_entityName);
@@ -210,16 +210,16 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity2D(CString _entityName)
+        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity2D(CString _entityName, ECSScene* _scene)
         {
-            ECSScenePtr const& mainScene = SceneManager::GetInstancePtr()->getMainScene();
+            ECSScene* mainScene = _scene ? _scene : SceneManager::GetInstancePtr()->getMainScene().get();
             MAZE_ERROR_RETURN_VALUE_IF(!mainScene, nullptr, "MainScene is null!");
 
             Transform2DPtr transform = SpriteHelper::CreateTransform2D(
                 Vec2DF(100.0f, 100.0f),
                 Vec2DF::c_zero,
                 nullptr,
-                mainScene.get());
+                mainScene);
 
             if (_entityName)
                 transform->getEntity()->ensureComponent<Name>()->setName(_entityName);
@@ -228,9 +228,9 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity3D(CString _entityName)
+        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity3D(CString _entityName, ECSScene* _scene)
         {
-            EntityPtr entity = CreateEntity(_entityName);
+            EntityPtr entity = CreateEntity(_entityName, _scene);
 
             entity->ensureComponent<Transform3D>();
 

@@ -623,6 +623,7 @@ namespace Maze
 
                 ECSWorld* world = EditorManager::GetInstancePtr()->getSceneMain()->getWorld();
                 EntityPtr const& entity = world->getEntityById(entityId);
+                MAZE_WARNING_IF(!entity, "Entity with id=%u is not found in current workspace world!", entityId);
 
                 if (SelectionManager::GetInstancePtr()->isObjectSelected(entity))
                     SelectionManager::GetInstancePtr()->unselectObject(entity);

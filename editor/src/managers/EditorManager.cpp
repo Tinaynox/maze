@@ -242,6 +242,8 @@ namespace Maze
         m_editorPlaytestManager->start();
         m_editorEntityManager->start();
 
+        SceneManager::GetInstancePtr()->setMainScene(getSceneMain());
+
         EditorToolsManager::GetInstancePtr()->setGizmosSystem(getMainECSWorld()->getSystem<GizmosSystem>());
     }
 
@@ -288,6 +290,8 @@ namespace Maze
             m_editorPlaytestManager->destroyScenes();
             m_editorWorkspaceManager->createScenes();
         }
+
+        SceneManager::GetInstancePtr()->setMainScene(getSceneMain());
 
         EditorToolsManager::GetInstancePtr()->setGizmosSystem(getMainECSWorld()->getSystem<GizmosSystem>());
 

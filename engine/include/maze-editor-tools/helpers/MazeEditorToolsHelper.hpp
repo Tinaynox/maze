@@ -73,13 +73,13 @@ namespace Maze
         MAZE_EDITOR_TOOLS_API String BuildComponentName(CString _componentName, CString _label = nullptr);
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity(CString _entityName);
+        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity(CString _entityName, ECSScene* _scene = nullptr);
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity2D(CString _entityName);
+        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity2D(CString _entityName, ECSScene* _scene = nullptr);
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity3D(CString _entityName);
+        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity3D(CString _entityName, ECSScene* _scene = nullptr);
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API String BuildNewAssetFileName(String const& _fullPath);
