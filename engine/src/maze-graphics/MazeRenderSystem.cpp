@@ -28,6 +28,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
+#include "maze-graphics/managers/MazeMeshManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
@@ -67,6 +68,7 @@ namespace Maze
     {
         TextureManager::Initialize(m_textureManager, getSharedPtr());
         SpriteManager::Initialize(m_imageManager, getSharedPtr());
+        MeshManager::Initialize(m_meshManager, getSharedPtr());
         RenderMeshManager::Initialize(m_renderMeshManager, getSharedPtr());
         MaterialManager::Initialize(m_materialManager, getSharedPtr());
         SystemFontManager::Initialize(m_systemFontManager, getSharedPtr());
@@ -121,6 +123,7 @@ namespace Maze
         m_textureManager->createBuiltinTextures();
         m_shaderSystem->createBuiltinShaders();
         m_materialManager->createBuiltinMaterials();
+        m_meshManager->createBuiltinMeshes();
         m_renderMeshManager->createBuiltinRenderMeshes();
         m_systemFontManager->createBuiltinSystemFonts();
     }

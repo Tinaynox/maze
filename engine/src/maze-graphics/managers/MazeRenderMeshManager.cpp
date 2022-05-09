@@ -38,6 +38,7 @@
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
+#include "maze-graphics/managers/MazeMeshManager.hpp"
 
 
 //////////////////////////////////////////
@@ -110,17 +111,37 @@ namespace Maze
         {
             case BuiltinRenderMeshType::Quad:
             {
-                renderMesh = RenderMesh::Create(Maze::MeshHelper::CreateQuadMesh(), m_renderSystemRaw);
+                renderMesh = RenderMesh::Create(
+                    MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Quad),
+                    m_renderSystemRaw);
                 break;
             }
             case BuiltinRenderMeshType::Cube:
             {
-                renderMesh = RenderMesh::Create(Maze::MeshHelper::CreateCubeMesh(), m_renderSystemRaw);
+                renderMesh = RenderMesh::Create(
+                    MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cube),
+                    m_renderSystemRaw);
                 break;
             }
             case BuiltinRenderMeshType::Sphere:
             {
-                renderMesh = RenderMesh::Create(Maze::MeshHelper::CreateSpherifiedCubeMesh(), m_renderSystemRaw);
+                renderMesh = RenderMesh::Create(
+                    MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Sphere),
+                    m_renderSystemRaw);
+                break;
+            }
+            case BuiltinRenderMeshType::Cone:
+            {
+                renderMesh = RenderMesh::Create(
+                    MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cone),
+                    m_renderSystemRaw);
+                break;
+            }
+            case BuiltinRenderMeshType::Cylinder:
+            {
+                renderMesh = RenderMesh::Create(
+                    MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cylinder),
+                    m_renderSystemRaw);
                 break;
             }
             default:

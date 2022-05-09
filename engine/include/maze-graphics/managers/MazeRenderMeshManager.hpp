@@ -57,10 +57,12 @@ namespace Maze
     // Enum BuiltinRenderMeshType
     //
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_3_API(MAZE_GRAPHICS_API, BuiltinRenderMeshType,
+    MAZE_DECLARE_ENUMCLASS_5_API(MAZE_GRAPHICS_API, BuiltinRenderMeshType,
         Quad,
         Cube,
-        Sphere);
+        Sphere,
+        Cone,
+        Cylinder);
 
 
     //////////////////////////////////////////

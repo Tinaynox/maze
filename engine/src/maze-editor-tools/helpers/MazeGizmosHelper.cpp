@@ -117,6 +117,19 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void DrawWireQuad(
+            Vec3DF const& _position,
+            Vec3DF const& _forward,
+            Vec3DF const& _up,
+            Vec2DF const& _scale,
+            ColorF128 const& _color,
+            F32 _duration,
+            GizmosDrawer::MeshRenderMode _renderMode)
+        {
+            GetDrawer()->drawWireQuad(_position, _forward, _up, _scale, _color, _duration, _renderMode);
+        }
+
+        //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawWireCircle(
             Vec3DF const& _position,
             Vec3DF const& _direction,
@@ -142,14 +155,14 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawWireCube(
             Vec3DF const& _position,
-            Vec3DF const& _scale,
             Vec3DF const& _forward,
             Vec3DF const& _up,
+            Vec3DF const& _scale,
             ColorF128 const& _color,
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawWireCube(_position, _scale, _forward, _up, _color, _duration, _renderMode);
+            GetDrawer()->drawWireCube(_position, _forward, _up, _scale, _color, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -264,6 +277,42 @@ namespace Maze
             GizmosDrawer::MeshRenderMode _renderMode)
         {
             GetDrawer()->drawAABB(_aabb, _duration, _renderMode);
+        }
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void DrawTriangle(
+            Vec3DF const& _point0,
+            Vec3DF const& _point1,
+            Vec3DF const& _point2,
+            F32 _duration,
+            GizmosDrawer::MeshRenderMode _renderMode)
+        {
+            GetDrawer()->drawTriangle(_point0, _point1, _point2, _duration, _renderMode);
+        }
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void DrawQuad(
+            Vec3DF const& _position,
+            Vec3DF const& _forward,
+            Vec3DF const& _up,
+            Vec2DF const& _scale,
+            ColorF128 const& _color,
+            F32 _duration,
+            GizmosDrawer::MeshRenderMode _renderMode)
+        {
+            GetDrawer()->drawQuad(
+                _position, _forward, _up, _scale, _color, _duration, _renderMode);
+        }
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void DrawSphere(
+            Vec3DF const& _position,
+            F32 _radius,
+            ColorF128 const& _color,
+            F32 _duration,
+            GizmosDrawer::MeshRenderMode _renderMode)
+        {
+            GetDrawer()->drawSphere(_position, _radius, _color, _duration, _renderMode);
         }
 
 

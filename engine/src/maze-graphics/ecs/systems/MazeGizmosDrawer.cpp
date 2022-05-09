@@ -35,10 +35,13 @@
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
+#include "maze-graphics/managers/MazeMeshManager.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
+#include "maze-graphics/MazeMesh.hpp"
+#include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
@@ -145,7 +148,8 @@ namespace Maze
                     case MeshRenderMode::Opaque:
                     {
                         material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::LessEqual);
-                        material->getFirstRenderPass()->setRenderQueueIndex(4900);
+                        material->getFirstRenderPass()->setRenderQueueIndex(2500);
+                        material->getFirstRenderPass()->setDepthWriteEnabled(true);
                         break;
                     }
                     default:
@@ -264,6 +268,44 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void GizmosDrawer::drawWireQuad(
+        Vec3DF const& _position,
+        Vec3DF const& _forward,
+        Vec3DF const& _up,
+        Vec2DF const& _size,
+        ColorF128 const& _color,
+        F32 _duration,
+        MeshRenderMode _renderMode)
+    {
+        Vec3DF right = _up.crossProduct(_forward).normalizedCopy();
+
+        Vec2DF halfSize = _size * 0.5f;
+
+        setColor(_color);
+        drawLine(
+            _position - right * halfSize.x - _up * halfSize.y,
+            _position - right * halfSize.x + _up * halfSize.y,
+            _duration,
+            _renderMode);
+        drawLine(
+            _position + right * halfSize.x - _up * halfSize.y,
+            _position + right * halfSize.x + _up * halfSize.y,
+            _duration,
+            _renderMode);
+
+        drawLine(
+            _position - right * halfSize.x - _up * halfSize.y,
+            _position + right * halfSize.x - _up * halfSize.y,
+            _duration,
+            _renderMode);
+        drawLine(
+            _position - right * halfSize.x + _up * halfSize.y,
+            _position + right * halfSize.x + _up * halfSize.y,
+            _duration,
+            _renderMode);
+    }
+
+    //////////////////////////////////////////
     void GizmosDrawer::drawWireCircle(
         Vec3DF const& _position,
         Vec3DF const& _direction,
@@ -325,9 +367,9 @@ namespace Maze
     //////////////////////////////////////////
     void GizmosDrawer::drawWireCube(
         Vec3DF const& _position,
-        Vec3DF const& _scale,
         Vec3DF const& _forward,
         Vec3DF const& _up,
+        Vec3DF const& _scale,
         ColorF128 const& _color,
         F32 _duration,
         MeshRenderMode _renderMode)
@@ -730,6 +772,102 @@ namespace Maze
                 getColor(),
                 _renderMode
             });
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer::drawMesh(
+        MeshPtr const& _mesh,
+        Vec3DF const& _position,
+        ColorF128 const& _color,
+        F32 _duration,
+        MeshRenderMode _renderMode)
+    {
+        setColor(_color);
+
+        for (Size s = 0; s < _mesh->getSubMeshesCount(); ++s)
+        {
+            SubMeshPtr const& subMesh = _mesh->getSubMesh(s);
+            S32 indicesCount = subMesh->getIndicesCount();
+            for (S32 i = 0; i < indicesCount; i += 3)
+            {
+                S32* indices = (S32*)subMesh->getIndicesData();
+                S32 index0 = indices[i + 0];
+                S32 index1 = indices[i + 1];
+                S32 index2 = indices[i + 2];
+
+                Vec3DF* position = (Vec3DF*)subMesh->getVertexData(VertexAttributeSemantic::Position);
+                drawTriangle(
+                    _position + position[index0],
+                    _position + position[index1],
+                    _position + position[index2],
+                    _duration,
+                    _renderMode);
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer::drawQuad(
+        Vec3DF const& _position,
+        Vec3DF const& _forward,
+        Vec3DF const& _up,
+        Vec2DF const& _scale,
+        ColorF128 const& _color,
+        F32 _duration,
+        MeshRenderMode _renderMode)
+    {
+        Vec3DF right = _up.crossProduct(_forward).normalizedCopy();
+
+        pushTransform(
+            Mat4DF::CreateTranslationMatrix(_position) *
+            Mat4DF::CreateChangeOfBasisMatrix(right, _up, _forward) *
+            Mat4DF::CreateScaleMatrix(_scale.x, _scale.y, 1.0f));
+
+        MeshPtr const& mesh = MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Quad);
+        drawMesh(mesh, Vec3DF::c_zero, _color, _duration, _renderMode);
+
+        popTransform();
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer::drawCube(
+        Vec3DF const& _position,
+        Vec3DF const& _forward,
+        Vec3DF const& _up,
+        Vec3DF const& _scale,
+        ColorF128 const& _color,
+        F32 _duration,
+        MeshRenderMode _renderMode)
+    {
+        Vec3DF right = _up.crossProduct(_forward).normalizedCopy();
+
+        pushTransform(
+            Mat4DF::CreateTranslationMatrix(_position) *
+            Mat4DF::CreateChangeOfBasisMatrix(right, _up, _forward) *
+            Mat4DF::CreateScaleMatrix(_scale));
+
+        MeshPtr const& mesh = MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cube);
+        drawMesh(mesh, Vec3DF::c_zero, _color, _duration, _renderMode);
+
+        popTransform();
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer::drawSphere(
+        Vec3DF const& _position,
+        F32 _radius,
+        ColorF128 const& _color,
+        F32 _duration,
+        MeshRenderMode _renderMode)
+    {
+        pushTransform(
+            Mat4DF::CreateTranslationMatrix(_position) *
+            Mat4DF::CreateScaleMatrix(_radius / 0.5f));
+
+        MeshPtr const& mesh = MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Sphere);
+        drawMesh(mesh, Vec3DF::c_zero, _color, _duration, _renderMode);
+
+        popTransform();
     }
 
     //////////////////////////////////////////

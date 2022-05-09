@@ -169,6 +169,8 @@ namespace Maze
         MeshPtr const& _mesh,
         RenderTarget* _renderTarget)
     {
+        MAZE_ERROR_RETURN_IF(!_mesh, "Mesh is null!");
+
         Size currentVaoCount = m_vertexArrayObjects.size();
         Size requiredVaoCount = _mesh->getSubMeshesCount();
         m_vertexArrayObjects.resize(requiredVaoCount);

@@ -1190,6 +1190,208 @@ namespace Maze
             return mesh;
         }
 
+
+        //////////////////////////////////////////
+        SubMeshPtr MAZE_GRAPHICS_API CreateConeSubMesh(
+            F32 _radius,
+            F32 _height,
+            Vec4DF const& _color)
+        {
+            SubMeshPtr mesh = SubMesh::Create();
+            mesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
+
+            Vector<U32> indices;
+            Vector<Vec3DF> positions;
+            Vector<Vec3DF> normals;
+            Vector<Vec4DF> colors;
+            Vector<Vec2DF> uv0;
+
+            Vec3DF topPoint = Vec3DF::c_unitY * _height;
+
+            Vec3DF prevPos = Vec3DF(Math::Cos(0.0f), 0.0f, Math::Sin(0.0f)) * _radius;
+            Vec3DF prevNormPerp = Vec3DF(-Math::Sin(0.0f), 0.0f, Math::Cos(0.0f));
+            for (S32 i = 1; i <= 24; ++i)
+            {
+                F32 a = (i / 24.0f) * Math::c_twoPi;
+                Vec3DF pos = Vec3DF(Math::Cos(a), 0.0f, Math::Sin(a)) * _radius;
+                
+                positions.push_back(prevPos);
+                positions.push_back(pos);
+                positions.push_back(Vec3DF::c_zero);
+
+                for (S32 j = 0; j < 3; ++j)
+                    normals.push_back(Vec3DF::c_negativeUnitY);
+
+                positions.push_back(prevPos);
+                positions.push_back(pos);
+                positions.push_back(topPoint);
+
+                Vec3DF curNormPerp(-Math::Sin(a), 0.0f, Math::Cos(a));
+
+                Vec3DF prevNormal = (topPoint - prevPos).crossProduct(prevNormPerp).normalizedCopy();
+                Vec3DF curNormal = (topPoint - pos).crossProduct(curNormPerp).normalizedCopy();
+                normals.push_back(prevNormal);
+                normals.push_back(curNormal);
+                normals.push_back(Vec3DF::c_unitY);
+
+                prevPos = pos;
+                prevNormPerp = curNormPerp;
+            }
+
+            indices.resize(positions.size());
+            colors.resize(positions.size());
+            uv0.resize(positions.size());
+            for (Size i = 0; i < positions.size(); i++)
+            {
+                indices[i] = (U32)i;
+                colors[i] = _color;
+                uv0[i] = (Vec2DF(positions[i].x / _radius, positions[i].y / _radius) + 1.0f) * 0.5f;
+            }
+
+            mesh->setPositions(&positions[0], positions.size());
+            mesh->setNormals(&normals[0], normals.size());
+            mesh->setTexCoords(0, &uv0[0], uv0.size());
+            mesh->setColors(&colors[0], colors.size());
+            mesh->setIndices(&indices[0], indices.size());
+
+            // Generate tangents and bitangents
+            Vector<Vec3DF> tangents;
+            Vector<Vec3DF> bitangents;
+            if (SubMeshHelper::GenerateTangentsAndBitangents(
+                &indices[0],
+                indices.size(),
+                &positions[0],
+                &uv0[0],
+                &normals[0],
+                positions.size(),
+                tangents,
+                bitangents))
+            {
+                mesh->setTangents(&tangents[0], tangents.size());
+                mesh->setBitangents(&bitangents[0], bitangents.size());
+            }
+
+
+            return mesh;
+        }
+
+        //////////////////////////////////////////
+        MeshPtr MAZE_GRAPHICS_API CreateConeMesh(
+            F32 _radius,
+            F32 _height,
+            Vec4DF const& _color)
+        {
+            MeshPtr mesh = Mesh::Create();
+            mesh->addSubMesh(CreateConeSubMesh(_radius, _height, _color));
+            return mesh;
+        }
+
+
+        //////////////////////////////////////////
+        SubMeshPtr MAZE_GRAPHICS_API CreateCylinderSubMesh(
+            F32 _radius,
+            F32 _height,
+            Vec4DF const& _color)
+        {
+            SubMeshPtr mesh = SubMesh::Create();
+            mesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
+
+            Vector<U32> indices;
+            Vector<Vec3DF> positions;
+            Vector<Vec3DF> normals;
+            Vector<Vec4DF> colors;
+            Vector<Vec2DF> uv0;
+
+            Vec3DF prevVec = Vec3DF(Math::Cos(0.0f), 0.0f, Math::Sin(0.0f));
+            Vec3DF prevPos = prevVec * _radius;
+            for (S32 i = 1; i <= 24; ++i)
+            {
+                F32 a = (i / 24.0f) * Math::c_twoPi;
+                Vec3DF vec = Vec3DF(Math::Cos(a), 0.0f, Math::Sin(a));
+                Vec3DF pos = vec * _radius;
+
+                positions.push_back(prevPos - Vec3DF::c_unitY * _height * 0.5f);
+                positions.push_back(pos - Vec3DF::c_unitY * _height * 0.5f);
+                positions.push_back(Vec3DF::c_zero - Vec3DF::c_unitY * _height * 0.5f);
+                for (S32 j = 0; j < 3; ++j)
+                    normals.push_back(Vec3DF::c_negativeUnitY);
+
+                positions.push_back(prevPos + Vec3DF::c_unitY * _height * 0.5f);
+                positions.push_back(pos + Vec3DF::c_unitY * _height * 0.5f);
+                positions.push_back(Vec3DF::c_unitY * _height * 0.5f);
+                for (S32 j = 0; j < 3; ++j)
+                    normals.push_back(Vec3DF::c_unitY);
+
+                positions.push_back(prevPos - Vec3DF::c_unitY * _height * 0.5f);
+                positions.push_back(pos - Vec3DF::c_unitY * _height * 0.5f);
+                positions.push_back(pos + Vec3DF::c_unitY * _height * 0.5f);
+                positions.push_back(pos + Vec3DF::c_unitY * _height * 0.5f);
+                positions.push_back(prevPos + Vec3DF::c_unitY * _height * 0.5f);
+                positions.push_back(prevPos - Vec3DF::c_unitY * _height * 0.5f);
+
+                Vec3DF prevNormal = prevVec;
+                Vec3DF curNormal = vec;
+                normals.push_back(prevNormal);
+                normals.push_back(curNormal);
+                normals.push_back(curNormal);
+                normals.push_back(curNormal);
+                normals.push_back(prevNormal);
+                normals.push_back(prevNormal);
+
+                prevVec = vec;
+                prevPos = pos;
+            }
+
+            indices.resize(positions.size());
+            colors.resize(positions.size());
+            uv0.resize(positions.size());
+            for (Size i = 0; i < positions.size(); i++)
+            {
+                indices[i] = (U32)i;
+                colors[i] = _color;
+                uv0[i] = (Vec2DF(positions[i].x / _radius, positions[i].y / _radius) + 1.0f) * 0.5f;
+            }
+
+            mesh->setPositions(&positions[0], positions.size());
+            mesh->setNormals(&normals[0], normals.size());
+            mesh->setTexCoords(0, &uv0[0], uv0.size());
+            mesh->setColors(&colors[0], colors.size());
+            mesh->setIndices(&indices[0], indices.size());
+
+            // Generate tangents and bitangents
+            Vector<Vec3DF> tangents;
+            Vector<Vec3DF> bitangents;
+            if (SubMeshHelper::GenerateTangentsAndBitangents(
+                &indices[0],
+                indices.size(),
+                &positions[0],
+                &uv0[0],
+                &normals[0],
+                positions.size(),
+                tangents,
+                bitangents))
+            {
+                mesh->setTangents(&tangents[0], tangents.size());
+                mesh->setBitangents(&bitangents[0], bitangents.size());
+            }
+
+
+            return mesh;
+        }
+
+        //////////////////////////////////////////
+        MeshPtr MAZE_GRAPHICS_API CreateCylinderMesh(
+            F32 _radius,
+            F32 _height,
+            Vec4DF const& _color)
+        {
+            MeshPtr mesh = Mesh::Create();
+            mesh->addSubMesh(CreateCylinderSubMesh(_radius, _height, _color));
+            return mesh;
+        }
+
+
+
         //////////////////////////////////////////
         MeshPtr MAZE_GRAPHICS_API CreateCoordinateAxes(F32 _length)
         {

@@ -194,9 +194,9 @@ namespace Maze
                 {
                     _drawer->drawWireCube(
                         Vec3DF::c_zero,
-                        zoneData.box.scale,
                         Vec3DF::c_unitZ,
                         Vec3DF::c_unitY,
+                        zoneData.box.scale,
                         color);
 
                     break;

@@ -224,6 +224,16 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        void drawWireQuad(
+            Vec3DF const& _position,
+            Vec3DF const& _forward,
+            Vec3DF const& _up,
+            Vec2DF const& _size,
+            ColorF128 const& _color,
+            F32 _duration = 0.0f,
+            MeshRenderMode _renderMode = MeshRenderMode::Opaque);
+
+        //////////////////////////////////////////
         void drawWireCircle(
             Vec3DF const& _position,
             Vec3DF const& _direction,
@@ -264,9 +274,9 @@ namespace Maze
         //////////////////////////////////////////
         void drawWireCube(
             Vec3DF const& _position,
-            Vec3DF const& _scale,
             Vec3DF const& _forward,
             Vec3DF const& _up,
+            Vec3DF const& _scale,
             ColorF128 const& _color,
             F32 _duration,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
@@ -274,13 +284,13 @@ namespace Maze
         //////////////////////////////////////////
         void drawWireCube(
             Vec3DF const& _position,
-            Vec3DF const& _scale,
             Vec3DF const& _forward,
             Vec3DF const& _up,
+            Vec3DF const& _scale,
             ColorF128 const& _color = ColorF128::c_white,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque)
         {
-            drawWireCube(_position, _scale, _forward, _up, _color, -1.0f, _renderMode);
+            drawWireCube(_position, _forward, _up, _scale, _color, -1.0f, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -485,6 +495,42 @@ namespace Maze
             Vec3DF const& _point0,
             Vec3DF const& _point1,
             Vec3DF const& _point2,
+            F32 _duration,
+            MeshRenderMode _renderMode = MeshRenderMode::Opaque);
+
+        //////////////////////////////////////////
+        void drawMesh(
+            MeshPtr const& _mesh,
+            Vec3DF const& _position,
+            ColorF128 const& _color,
+            F32 _duration,
+            MeshRenderMode _renderMode = MeshRenderMode::Opaque);
+
+        //////////////////////////////////////////
+        void drawQuad(
+            Vec3DF const& _position,
+            Vec3DF const& _forward,
+            Vec3DF const& _up,
+            Vec2DF const& _scale,
+            ColorF128 const& _color,
+            F32 _duration,
+            MeshRenderMode _renderMode = MeshRenderMode::Opaque);
+
+        //////////////////////////////////////////
+        void drawCube(
+            Vec3DF const& _position,
+            Vec3DF const& _forward,
+            Vec3DF const& _up,
+            Vec3DF const& _scale,
+            ColorF128 const& _color,
+            F32 _duration,
+            MeshRenderMode _renderMode = MeshRenderMode::Opaque);
+
+        //////////////////////////////////////////
+        void drawSphere(
+            Vec3DF const& _position,
+            F32 _radius,
+            ColorF128 const& _color,
             F32 _duration,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 

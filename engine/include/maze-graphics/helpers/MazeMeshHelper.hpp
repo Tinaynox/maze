@@ -108,6 +108,33 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        SubMeshPtr MAZE_GRAPHICS_API CreateConeSubMesh(
+            F32 _radius = 0.5f,
+            F32 _height = 1.0f,
+            Vec4DF const& _color = Vec4DF::c_one);
+
+        //////////////////////////////////////////
+        MeshPtr MAZE_GRAPHICS_API CreateConeMesh(
+            F32 _radius = 0.5f,
+            F32 _height = 1.0f,
+            Vec4DF const& _color = Vec4DF::c_one);
+
+
+        //////////////////////////////////////////
+        SubMeshPtr MAZE_GRAPHICS_API CreateCylinderSubMesh(
+            F32 _radius = 0.5f,
+            F32 _height = 1.0f,
+            Vec4DF const& _color = Vec4DF::c_one);
+
+        //////////////////////////////////////////
+        MeshPtr MAZE_GRAPHICS_API CreateCylinderMesh(
+            F32 _radius = 0.5f,
+            F32 _height = 1.0f,
+            Vec4DF const& _color = Vec4DF::c_one);
+
+
+
+        //////////////////////////////////////////
         MeshPtr MAZE_GRAPHICS_API CreateCoordinateAxes(F32 _length = 100000.0f);
 
     } // namespace MeshHelper

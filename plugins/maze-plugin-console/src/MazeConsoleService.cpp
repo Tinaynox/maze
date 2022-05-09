@@ -175,7 +175,14 @@ namespace Maze
         if (renderWindows.empty())
             return;
 
-        setRenderWindow(*renderWindows.begin());
+        for (RenderWindow* renderWindow : renderWindows)
+        {
+            if (renderWindow->getWindow() && renderWindow->getWindow()->isOpened())
+            {
+                setRenderWindow(renderWindow);
+                break;
+            }
+        }
     }
 
     //////////////////////////////////////////

@@ -96,6 +96,16 @@ namespace Maze
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void DrawWireQuad(
+            Vec3DF const& _position,
+            Vec3DF const& _forward,
+            Vec3DF const& _up,
+            Vec2DF const& _scale,
+            ColorF128 const& _color,
+            F32 _duration = 0.0f,
+            GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
+
+        //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawWireCircle(
             Vec3DF const& _position,
             Vec3DF const& _direction,
@@ -203,6 +213,32 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawAABB(
             AABB3D const& _aabb,
+            F32 _duration = 0.0f,
+            GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void DrawTriangle(
+            Vec3DF const& _point0,
+            Vec3DF const& _point1,
+            Vec3DF const& _point2,
+            F32 _duration = 0.0f,
+            GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void DrawQuad(
+            Vec3DF const& _position,
+            Vec3DF const& _forward,
+            Vec3DF const& _up,
+            Vec2DF const& _scale,
+            ColorF128 const& _color,
+            F32 _duration = 0.0f,
+            GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void DrawSphere(
+            Vec3DF const& _position,
+            F32 _radius,
+            ColorF128 const& _color,
             F32 _duration = 0.0f,
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 

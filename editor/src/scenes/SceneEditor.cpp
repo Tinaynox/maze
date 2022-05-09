@@ -84,6 +84,7 @@
 #include "maze-editor-tools/ecs/components/MazePreviewController.hpp"
 #include "maze-editor-tools/ecs/components/MazeDebugGridRenderer.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
+#include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
 #include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
 #include "ecs/components/EditorHierarchyController.hpp"
 #include "ecs/components/EditorMainCanvasController.hpp"
@@ -183,6 +184,28 @@ namespace Maze
     //////////////////////////////////////////
     void SceneEditor::update(F32 _dt)
     {
+        GizmosHelper::DrawWireSphere(
+            Vec3DF(4.0f, 0.0f, 4.0f),
+            1.0f,
+            ColorF128::c_magenta);
+
+        GizmosHelper::DrawSphere(
+            Vec3DF(4.0f, 0.0f, 4.0f),
+            1.0f,
+            ColorF128::c_yellow);
+
+        GizmosHelper::DrawQuad(
+            Vec3DF(-4.0f, 0.0f, 4.0f),
+            Vec3DF::c_unitX,
+            Vec3DF::c_unitY,
+            Vec2DF(2.0f, 1.0f),
+            ColorF128::c_magenta);
+        GizmosHelper::DrawWireQuad(
+            Vec3DF(-4.0f, 0.0f, 4.0f),
+            Vec3DF::c_unitX,
+            Vec3DF::c_unitY,
+            Vec2DF(2.0f, 1.0f),
+            ColorF128::c_yellow);
     }
 
     //////////////////////////////////////////
