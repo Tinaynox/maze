@@ -862,9 +862,57 @@ namespace Maze
     {
         pushTransform(
             Mat4DF::CreateTranslationMatrix(_position) *
-            Mat4DF::CreateScaleMatrix(_radius / 0.5f));
+            Mat4DF::CreateScaleMatrix(_radius * 2.0f));
 
         MeshPtr const& mesh = MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Sphere);
+        drawMesh(mesh, Vec3DF::c_zero, _color, _duration, _renderMode);
+
+        popTransform();
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer::drawCone(
+        Vec3DF const& _position,
+        Vec3DF const& _forward,
+        Vec3DF const& _up,
+        F32 _radius,
+        F32 _height,
+        ColorF128 const& _color,
+        F32 _duration,
+        MeshRenderMode _renderMode)
+    {
+        Vec3DF right = _up.crossProduct(_forward).normalizedCopy();
+
+        pushTransform(
+            Mat4DF::CreateTranslationMatrix(_position) *
+            Mat4DF::CreateChangeOfBasisMatrix(right, _forward, _up) *
+            Mat4DF::CreateScaleMatrix(_radius * 2.0f, _height, _radius * 2.0f));
+
+        MeshPtr const& mesh = MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cone);
+        drawMesh(mesh, Vec3DF::c_zero, _color, _duration, _renderMode);
+
+        popTransform();
+    }
+
+    //////////////////////////////////////////
+    void GizmosDrawer::drawCylinder(
+        Vec3DF const& _position,
+        Vec3DF const& _forward,
+        Vec3DF const& _up,
+        F32 _radius,
+        F32 _height,
+        ColorF128 const& _color,
+        F32 _duration,
+        MeshRenderMode _renderMode)
+    {
+        Vec3DF right = _up.crossProduct(_forward).normalizedCopy();
+
+        pushTransform(
+            Mat4DF::CreateTranslationMatrix(_position) *
+            Mat4DF::CreateChangeOfBasisMatrix(right, _forward, _up) *
+            Mat4DF::CreateScaleMatrix(_radius * 2.0f, _height, _radius * 2.0f));
+
+        MeshPtr const& mesh = MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cylinder);
         drawMesh(mesh, Vec3DF::c_zero, _color, _duration, _renderMode);
 
         popTransform();

@@ -534,6 +534,28 @@ namespace Maze
             F32 _duration,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
+        //////////////////////////////////////////
+        void drawCone(
+            Vec3DF const& _position,
+            Vec3DF const& _forward,
+            Vec3DF const& _up,
+            F32 _radius,
+            F32 _height,
+            ColorF128 const& _color,
+            F32 _duration,
+            MeshRenderMode _renderMode = MeshRenderMode::Opaque);
+
+        //////////////////////////////////////////
+        void drawCylinder(
+            Vec3DF const& _position,
+            Vec3DF const& _forward,
+            Vec3DF const& _up,
+            F32 _radius,
+            F32 _height,
+            ColorF128 const& _color,
+            F32 _duration,
+            MeshRenderMode _renderMode = MeshRenderMode::Opaque);
+
 
 
         //////////////////////////////////////////

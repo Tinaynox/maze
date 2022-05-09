@@ -315,6 +315,34 @@ namespace Maze
             GetDrawer()->drawSphere(_position, _radius, _color, _duration, _renderMode);
         }
 
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void DrawCone(
+            Vec3DF const& _position,
+            Vec3DF const& _forward,
+            Vec3DF const& _up,
+            F32 _radius,
+            F32 _height,
+            ColorF128 const& _color,
+            F32 _duration,
+            GizmosDrawer::MeshRenderMode _renderMode)
+        {
+            GetDrawer()->drawCone(_position, _forward, _up, _radius, _height, _color, _duration, _renderMode);
+        }
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void DrawCylinder(
+            Vec3DF const& _position,
+            Vec3DF const& _forward,
+            Vec3DF const& _up,
+            F32 _radius,
+            F32 _height,
+            ColorF128 const& _color,
+            F32 _duration,
+            GizmosDrawer::MeshRenderMode _renderMode)
+        {
+            GetDrawer()->drawCylinder(_position, _forward, _up, _radius, _height, _color, _duration, _renderMode);
+        }
+
 
     } // namespace GizmosHelper
     //////////////////////////////////////////

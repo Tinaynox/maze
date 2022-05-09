@@ -242,6 +242,53 @@ namespace Maze
             F32 _duration = 0.0f,
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void DrawCone(
+            Vec3DF const& _position,
+            Vec3DF const& _forward,
+            Vec3DF const& _up,
+            F32 _radius,
+            F32 _height,
+            ColorF128 const& _color,
+            F32 _duration = 0.0f,
+            GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
+
+        //////////////////////////////////////////
+        inline void DrawCone(
+            Vec3DF const& _position,
+            Vec3DF const& _forward,
+            F32 _radius,
+            F32 _height,
+            ColorF128 const& _color,
+            F32 _duration = 0.0f,
+            GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque)
+        {
+            DrawCone(_position, _forward, _forward.perpendicular(), _radius, _height, _color, _duration, _renderMode);
+        }
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void DrawCylinder(
+            Vec3DF const& _position,
+            Vec3DF const& _forward,
+            Vec3DF const& _up,
+            F32 _radius,
+            F32 _height,
+            ColorF128 const& _color,
+            F32 _duration = 0.0f,
+            GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
+
+        //////////////////////////////////////////
+        inline void DrawCylinder(
+            Vec3DF const& _position,
+            Vec3DF const& _forward,
+            F32 _radius,
+            F32 _height,
+            ColorF128 const& _color,
+            F32 _duration = 0.0f,
+            GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque)
+        {
+            DrawCylinder(_position, _forward, _forward.perpendicular(), _radius, _height, _color, _duration, _renderMode);
+        }
 
     } // namespace GizmosHelper
     //////////////////////////////////////////

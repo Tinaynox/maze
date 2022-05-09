@@ -206,6 +206,45 @@ namespace Maze
             Vec3DF::c_unitY,
             Vec2DF(2.0f, 1.0f),
             ColorF128::c_yellow);
+
+        GizmosHelper::DrawCylinder(
+            Vec3DF::c_unitX * 0.5f,
+            Vec3DF::c_unitX,
+            0.125f * 0.25f,
+            1.0f,
+            ColorF128::c_red);
+        GizmosHelper::DrawCylinder(
+            Vec3DF::c_unitY * 0.5f,
+            Vec3DF::c_unitY,
+            0.125f * 0.25f,
+            1.0f,
+            ColorF128::c_green);
+        GizmosHelper::DrawCylinder(
+            Vec3DF::c_unitZ * 0.5f,
+            Vec3DF::c_unitZ,
+            0.125f * 0.25f,
+            1.0f,
+            ColorF128::c_blue);
+
+        GizmosHelper::DrawCone(
+            Vec3DF::c_unitX * 1.0f,
+            Vec3DF::c_unitX,
+            0.125f,
+            0.5f,
+            ColorF128::c_red);
+        GizmosHelper::DrawCone(
+            Vec3DF::c_unitY * 1.0f,
+            Vec3DF::c_unitY,
+            0.125f,
+            0.5f,
+            ColorF128::c_green);
+        GizmosHelper::DrawCone(
+            Vec3DF::c_unitZ * 1.0f,
+            Vec3DF::c_unitZ,
+            0.125f,
+            0.5f,
+            ColorF128::c_blue);
+
     }
 
     //////////////////////////////////////////
