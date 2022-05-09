@@ -35,6 +35,8 @@
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/assets/MazeAssetDirectory.hpp"
+#include "maze-graphics/MazeMaterial.hpp"
+#include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -135,7 +137,7 @@ namespace Maze
 
         registerPreviewInspectorByExtension<MaterialsPreviewInspector>("mzmaterial");
         registerPreviewInspectorByClassUID<MaterialsPreviewInspector, Material>();
-
+        
         registerPreviewInspectorByExtension<Texture2DPreviewInspector>("mztexture");
         registerPreviewInspectorByClassUID<Texture2DPreviewInspector, Texture2D>();
 
@@ -145,7 +147,6 @@ namespace Maze
         Vector<String> textureExtensions = TextureManager::GetCurrentInstancePtr()->getTextureLoaderExtensions();
         for (String const& textureExtension : textureExtensions)
             registerPreviewInspectorByExtension<Texture2DPreviewInspector>(textureExtension.c_str());
-
 
         registerPreviewInspectorByExtension<RenderMeshPreviewInspector>("obj");
         registerPreviewInspectorByClassUID<RenderMeshPreviewInspector, RenderMesh>();

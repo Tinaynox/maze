@@ -281,9 +281,7 @@ namespace Maze
 
         if (m_selectAssetFileByClick)
         {
-            if (SelectionManager::GetInstancePtr()->isObjectSelected(m_assetFile))
-                SelectionManager::GetInstancePtr()->unselectObject(m_assetFile);
-            else
+            if (!SelectionManager::GetInstancePtr()->isObjectSelected(m_assetFile))
                 SelectionManager::GetInstancePtr()->selectObject(m_assetFile);
         }
 

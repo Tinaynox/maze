@@ -139,26 +139,23 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TInspector>
+        static PreviewInspectorPtr ProcessSetupInspector(PreviewController* _controller)
+        {
+            return std::static_pointer_cast<PreviewInspector>(_controller->setupInspector<TInspector>());
+        }
+
+        //////////////////////////////////////////
+        template <typename TInspector>
         inline void registerPreviewInspectorByExtension(HashedCString _extension)
         {
-            static auto setupInspectorFunc = 
-                [](PreviewController* _controller)
-                {
-                    return std::static_pointer_cast<PreviewInspector>(_controller->setupInspector<TInspector>());
-                };
-            m_editorByExtension[_extension] = setupInspectorFunc;
+            m_editorByExtension[_extension] = ProcessSetupInspector<TInspector>;
         }
 
         //////////////////////////////////////////
         template <typename TInspector>
         inline void registerPreviewInspectorByClassUID(ClassUID _objectUID)
         {
-            static auto setupInspectorFunc =
-                [](PreviewController* _controller)
-                {
-                    return std::static_pointer_cast<PreviewInspector>(_controller->setupInspector<TInspector>());
-                };
-            m_editorByClassUID[_objectUID] = setupInspectorFunc;
+            m_editorByClassUID[_objectUID] = ProcessSetupInspector<TInspector>;
         }
 
         //////////////////////////////////////////
