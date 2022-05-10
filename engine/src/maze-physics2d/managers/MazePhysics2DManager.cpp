@@ -32,14 +32,12 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/ecs/MazeComponentFactory.hpp"
 #include "maze-physics2d/physics/MazePhysicsWorld2D.hpp"
-#include "maze-physics2d/ecs/components/gizmos/MazeBoxCollider2DGizmos.hpp"
-#include "maze-physics2d/ecs/components/gizmos/MazeCircleCollider2DGizmos.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
 #include "maze-physics2d/ecs/components/MazeBoxCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeCircleCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazePhysicsRotor2D.hpp"
 #include "maze-physics2d/managers/MazePhysicsMaterial2DManager.hpp"
-#include "maze-graphics/managers/MazeGizmosManager.hpp"
+#include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 
 
 //////////////////////////////////////////
@@ -75,9 +73,6 @@ namespace Maze
     bool Physics2DManager::init(PhysicsWorld2DConfig const& _defaultWorldConfig)
     {
         m_world = PhysicsWorld2D::Create(_defaultWorldConfig);
-
-        GizmosManager::GetInstancePtr()->registerGizmos<BoxCollider2D, BoxCollider2DGizmos>();
-        GizmosManager::GetInstancePtr()->registerGizmos<CircleCollider2D, CircleCollider2DGizmos>();
 
         PhysicsMaterial2DManager::Initialize(m_physicsMaterial2DManager);
         if (!m_physicsMaterial2DManager)

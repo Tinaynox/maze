@@ -43,7 +43,8 @@ set(EXAMPLE_MAZE_LIBS
     maze-plugin-console
     maze-plugin-loader-png
     maze-plugin-archive-assets
-    maze-plugin-particles-editor-tools)
+    maze-plugin-particles-editor-tools
+    maze-plugin-physics2d-editor-tools)
 
 
 ##########################################
@@ -79,6 +80,7 @@ add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-console" "${CMAKE_CURRENT_BINA
 add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-loader-png" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-loader-png")
 add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-archive-assets" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-archive-assets")
 add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-particles-editor-tools" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-particles-editor-tools")
+add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-physics2d-editor-tools" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-physics2d-editor-tools")
 
 
 ##########################################

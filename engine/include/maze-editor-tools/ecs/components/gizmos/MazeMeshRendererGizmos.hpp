@@ -25,36 +25,36 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeCamera3DGizmos_hpp_))
-#define _MazeCamera3DGizmos_hpp_
+#if (!defined(_MazeMeshRendererGizmos_hpp_))
+#define _MazeMeshRendererGizmos_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-graphics/MazeGraphicsHeader.hpp"
-#include "maze-graphics/ecs/components/gizmos/MazeComponentGizmos.hpp"
+#include "maze-editor-tools/MazeEditorToolsHeader.hpp"
+#include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(Camera3DGizmos);
+    MAZE_USING_SHARED_PTR(MeshRendererGizmos);
 
 
     //////////////////////////////////////////
-    // Class Camera3DGizmos
+    // Class MeshRendererGizmos
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API Camera3DGizmos
+    class MAZE_EDITOR_TOOLS_API MeshRendererGizmos
         : public ComponentGizmos
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(Camera3DGizmos, ComponentGizmos);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(MeshRendererGizmos, ComponentGizmos);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(Camera3DGizmos);
+        MAZE_DECLARE_MEMORY_ALLOCATION(MeshRendererGizmos);
 
     public:
 
@@ -73,16 +73,16 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~Camera3DGizmos();
+        virtual ~MeshRendererGizmos();
 
         //////////////////////////////////////////
-        static Camera3DGizmosPtr Create();
+        static MeshRendererGizmosPtr Create();
 
 
     protected:
 
         //////////////////////////////////////////
-        Camera3DGizmos();
+        MeshRendererGizmos();
 
         //////////////////////////////////////////
         bool init();
@@ -95,5 +95,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeCamera3DGizmos_hpp_
+#endif // _MazeMeshRendererGizmos_hpp_
 //////////////////////////////////////////

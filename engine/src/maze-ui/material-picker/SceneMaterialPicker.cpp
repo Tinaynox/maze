@@ -68,7 +68,6 @@
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
-#include "maze-graphics/managers/MazeGizmosManager.hpp"
 #include "maze-graphics/helpers/MazeColorHelper.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"

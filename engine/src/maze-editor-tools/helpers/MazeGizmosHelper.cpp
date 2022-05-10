@@ -28,7 +28,7 @@
 #include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
-#include "maze-graphics/ecs/systems/MazeGizmosSystem.hpp"
+#include "maze-editor-tools/ecs/systems/MazeGizmosSystem.hpp"
 #include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
 
 

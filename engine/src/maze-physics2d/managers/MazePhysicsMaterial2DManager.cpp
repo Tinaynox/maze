@@ -34,8 +34,6 @@
 #include "maze-physics2d/physics/MazePhysicsWorld2D.hpp"
 #include "maze-physics2d/physics/MazePhysicsMaterial2D.hpp"
 #include "maze-physics2d/ecs/components/MazeBoxCollider2D.hpp"
-#include "maze-physics2d/ecs/components/gizmos/MazeBoxCollider2DGizmos.hpp"
-#include "maze-graphics/managers/MazeGizmosManager.hpp"
 #include "maze-physics2d/physics/MazePhysicsMaterial2D.hpp"
 
 
@@ -77,8 +75,6 @@ namespace Maze
     //////////////////////////////////////////
     PhysicsMaterial2DPtr const& PhysicsMaterial2DManager::getMaterial(HashedCString _materialName)
     {
-        static MaterialPtr nullPointer;
-
         StringKeyMap<PhysicsMaterial2DPtr>::const_iterator it = m_materialsByName.find(_materialName);
         if (it != m_materialsByName.end())
             return it->second;

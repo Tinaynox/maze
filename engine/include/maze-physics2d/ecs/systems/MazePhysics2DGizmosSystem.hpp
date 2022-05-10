@@ -33,7 +33,7 @@
 #include "maze-physics2d/MazePhysics2DHeader.hpp"
 #include "maze-physics2d/physics/MazePhysicsWorld2D.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-graphics/ecs/systems/MazeGizmosDrawer.hpp"
+#include "maze-editor-tools/ecs/systems/MazeGizmosDrawer.hpp"
 #include "maze-core/ecs/MazeComponentSystem.hpp"
 
 

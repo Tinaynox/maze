@@ -24,13 +24,13 @@
 
 
 //////////////////////////////////////////
-#include "MazeGraphicsHeader.hpp"
-#include "maze-graphics/ecs/systems/MazeGizmosDrawer.hpp"
-#include "maze-graphics/ecs/components/gizmos/MazeComponentGizmos.hpp"
+#include "MazeEditorToolsHeader.hpp"
+#include "maze-editor-tools/ecs/systems/MazeGizmosDrawer.hpp"
+#include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
-#include "maze-graphics/managers/MazeGizmosManager.hpp"
+#include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
@@ -787,7 +787,7 @@ namespace Maze
         for (Size s = 0; s < _mesh->getSubMeshesCount(); ++s)
         {
             SubMeshPtr const& subMesh = _mesh->getSubMesh(s);
-            S32 indicesCount = subMesh->getIndicesCount();
+            S32 indicesCount = (S32)subMesh->getIndicesCount();
             for (S32 i = 0; i < indicesCount; i += 3)
             {
                 S32* indices = (S32*)subMesh->getIndicesData();
@@ -1025,46 +1025,49 @@ namespace Maze
             }
         }
 
-        Camera3DPtr const& camera3D = GizmosManager::GetInstancePtr()->getCamera();
-        if (camera3D)
+        if (GizmosManager::GetInstancePtr())
         {
-            while (m_billboards.size() < m_billboardsData.size())
-                m_billboards.emplace_back(m_gizmoBillboardPool->fetch());
-
-            while (m_billboards.size() > m_billboardsData.size())
+            Camera3DPtr const& camera3D = GizmosManager::GetInstancePtr()->getCamera();
+            if (camera3D)
             {
-                m_gizmoBillboardPool->release(m_billboards.back());
-                m_billboards.pop_back();
-            }
+                while (m_billboards.size() < m_billboardsData.size())
+                    m_billboards.emplace_back(m_gizmoBillboardPool->fetch());
 
-            for (Size i = 0, in = m_billboards.size(); i < in; ++i)
-            {
-                GizmoBillboard3DPtr const& gizmoBillboard = m_billboards[i];
-                BillboardData const& gizmoBillboardData = m_billboardsData[i];
-
-                MaterialPtr const& material = gizmoBillboard->getMeshRenderer()->getMaterial();
-
-                if (gizmoBillboardData.sprite)
+                while (m_billboards.size() > m_billboardsData.size())
                 {
-                    material->setUniform("u_baseMap", gizmoBillboardData.sprite->getTexture());
-                    material->setUniform("u_uv0", gizmoBillboardData.sprite->getTextureCoordLB());
-                    material->setUniform("u_uv1", gizmoBillboardData.sprite->getTextureCoordRT());
-                }
-                else
-                {
-                    material->setUniform("u_baseMap", renderSystem->getTextureManager()->getErrorTexture());
-                    material->setUniform("u_uv0", Vec2DF::c_zero);
-                    material->setUniform("u_uv1", Vec2DF::c_one);
+                    m_gizmoBillboardPool->release(m_billboards.back());
+                    m_billboards.pop_back();
                 }
 
-                material->setUniform("u_color", gizmoBillboardData.color.value);
-                
-                Mat4DF mat = Mat4DF::CreateLookAtMatrix(
-                    gizmoBillboardData.point,
-                    gizmoBillboardData.point - camera3D->getTransform()->getWorldForwardDirection(),
-                    camera3D->getTransform()->getWorldUpDirection());
+                for (Size i = 0, in = m_billboards.size(); i < in; ++i)
+                {
+                    GizmoBillboard3DPtr const& gizmoBillboard = m_billboards[i];
+                    BillboardData const& gizmoBillboardData = m_billboardsData[i];
 
-                gizmoBillboard->getTransform()->setLocalTransform(mat);
+                    MaterialPtr const& material = gizmoBillboard->getMeshRenderer()->getMaterial();
+
+                    if (gizmoBillboardData.sprite)
+                    {
+                        material->setUniform("u_baseMap", gizmoBillboardData.sprite->getTexture());
+                        material->setUniform("u_uv0", gizmoBillboardData.sprite->getTextureCoordLB());
+                        material->setUniform("u_uv1", gizmoBillboardData.sprite->getTextureCoordRT());
+                    }
+                    else
+                    {
+                        material->setUniform("u_baseMap", renderSystem->getTextureManager()->getErrorTexture());
+                        material->setUniform("u_uv0", Vec2DF::c_zero);
+                        material->setUniform("u_uv1", Vec2DF::c_one);
+                    }
+
+                    material->setUniform("u_color", gizmoBillboardData.color.value);
+
+                    Mat4DF mat = Mat4DF::CreateLookAtMatrix(
+                        gizmoBillboardData.point,
+                        gizmoBillboardData.point - camera3D->getTransform()->getWorldForwardDirection(),
+                        camera3D->getTransform()->getWorldUpDirection());
+
+                    gizmoBillboard->getTransform()->setLocalTransform(mat);
+                }
             }
         }
     }

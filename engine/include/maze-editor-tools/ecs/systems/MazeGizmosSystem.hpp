@@ -30,7 +30,7 @@
 
 
 //////////////////////////////////////////
-#include "maze-graphics/MazeGraphicsHeader.hpp"
+#include "maze-editor-tools/MazeEditorToolsHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-core/ecs/MazeComponentSystem.hpp"
@@ -51,7 +51,7 @@ namespace Maze
     // Class GizmosSystem
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API GizmosSystem
+    class MAZE_EDITOR_TOOLS_API GizmosSystem
         : public ComponentSystem
         , public MultiDelegateCallbackReceiver
     {

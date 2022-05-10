@@ -24,13 +24,13 @@
 
 
 //////////////////////////////////////////
-#include "MazeGraphicsHeader.hpp"
-#include "maze-graphics/ecs/components/gizmos/MazeLight3DGizmos.hpp"
+#include "MazeEditorToolsHeader.hpp"
+#include "maze-editor-tools/ecs/components/gizmos/MazeLight3DGizmos.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-graphics/ecs/components/MazeLight3D.hpp"
-#include "maze-graphics/managers/MazeGizmosManager.hpp"
+#include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"

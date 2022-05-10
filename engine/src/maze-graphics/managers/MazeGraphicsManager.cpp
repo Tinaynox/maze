@@ -34,7 +34,6 @@
 #include "maze-core/ecs/MazeComponentFactory.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
-#include "maze-graphics/managers/MazeGizmosManager.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
@@ -92,10 +91,6 @@ namespace Maze
         UpdateManager::GetInstancePtr()->addUpdatable(this);
         
         GraphicsUtilsHelper::ConstructAsciiSymbolsSheet8x8();
-
-        GizmosManager::Initialize(m_gizmosManager);
-        if (!m_gizmosManager)
-            return false;
 
 
         // 2D

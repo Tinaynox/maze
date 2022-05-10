@@ -24,22 +24,41 @@
 
 
 //////////////////////////////////////////
-#include "MazeGraphicsHeader.hpp"
-#include "maze-graphics/ecs/components/gizmos/MazeComponentGizmos.hpp"
+#pragma once
+#if (!defined(_MazePhysics2DEditorToolsHeader_hpp_))
+#define _MazePhysics2DEditorToolsHeader_hpp_
 
 
 //////////////////////////////////////////
-namespace Maze
-{
-    //////////////////////////////////////////
-    // Class ComponentGizmos
-    //
-    //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS(ComponentGizmos);
+#include "maze-core/preprocessor/MazePreprocessor_Platform.hpp"
+#include "maze-core/preprocessor/MazePreprocessor_CPlusPlus.hpp"
 
-    //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(ComponentGizmos);
 
-    
-} // namespace Maze
+//////////////////////////////////////////
+#if defined(MAZE_PLUGIN_PHYSICS2D_EDITOR_TOOLS_EXPORTS)
+#   define MAZE_PLUGIN_PHYSICS2D_EDITOR_TOOLS_API MAZE_API_EXPORT
+#else
+#   define MAZE_PLUGIN_PHYSICS2D_EDITOR_TOOLS_API MAZE_API_IMPORT
+#endif
+
+
+//////////////////////////////////////////
+#if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
+#    if (!defined(WIN32_LEAN_AND_MEAN))
+#        define WIN32_LEAN_AND_MEAN
+#    endif
+#    if (!defined(NOMINMAX) && defined(_MSC_VER))
+#        define NOMINMAX
+#    endif
+#    include "Windows.h"
+#    undef far
+#    undef near
+#   undef NEAR
+#   define NEAR
+#   undef FAR
+#   define FAR
+#endif
+
+
+#endif // _MazePhysics2DEditorToolsHeader_hpp_
 //////////////////////////////////////////

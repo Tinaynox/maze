@@ -30,7 +30,7 @@
 
 
 //////////////////////////////////////////
-#include "maze-graphics/MazeGraphicsHeader.hpp"
+#include "maze-editor-tools/MazeEditorToolsHeader.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/system/MazeWindowVideoMode.hpp"
@@ -64,7 +64,7 @@ namespace Maze
     // Class GizmosManager
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API GizmosManager 
+    class MAZE_EDITOR_TOOLS_API GizmosManager
         : public Updatable
     {
     public:

@@ -32,7 +32,7 @@
 #include "maze-core/ecs/systems/MazeTransformUtilsSystem.hpp"
 #include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
-#include "maze-graphics/ecs/systems/MazeGizmosSystem.hpp"
+#include "maze-editor-tools/ecs/systems/MazeGizmosSystem.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderPreparationSystem.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"

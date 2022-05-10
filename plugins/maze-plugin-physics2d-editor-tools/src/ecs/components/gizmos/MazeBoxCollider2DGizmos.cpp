@@ -24,8 +24,8 @@
 
 
 //////////////////////////////////////////
-#include "MazePhysics2DHeader.hpp"
-#include "maze-physics2d/ecs/components/gizmos/MazeBoxCollider2DGizmos.hpp"
+#include "MazePhysics2DEditorToolsHeader.hpp"
+#include "maze-plugin-physics2d-editor-tools/ecs/components/gizmos/MazeBoxCollider2DGizmos.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/services/MazeLogStream.hpp"

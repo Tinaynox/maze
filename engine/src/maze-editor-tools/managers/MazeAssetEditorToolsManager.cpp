@@ -42,8 +42,6 @@
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/helpers/MazeAssetEditorToolsHelper.hpp"
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
-#include "maze-graphics/ecs/systems/MazeGizmosSystem.hpp"
-#include "maze-graphics/ecs/components/gizmos/MazeComponentGizmos.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"

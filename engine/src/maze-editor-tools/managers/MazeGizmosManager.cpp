@@ -24,8 +24,8 @@
 
 
 //////////////////////////////////////////
-#include "MazeGraphicsHeader.hpp"
-#include "maze-graphics/managers/MazeGizmosManager.hpp"
+#include "MazeEditorToolsHeader.hpp"
+#include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
@@ -33,13 +33,13 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/ecs/components/MazeLight3D.hpp"
-#include "maze-graphics/ecs/components/gizmos/MazeLight3DGizmos.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
-#include "maze-graphics/ecs/components/gizmos/MazeCamera3DGizmos.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
-#include "maze-graphics/ecs/components/gizmos/MazeMeshRendererGizmos.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
+#include "maze-editor-tools/ecs/components/gizmos/MazeLight3DGizmos.hpp"
+#include "maze-editor-tools/ecs/components/gizmos/MazeCamera3DGizmos.hpp"
+#include "maze-editor-tools/ecs/components/gizmos/MazeMeshRendererGizmos.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 
 

@@ -25,36 +25,36 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeLight3DGizmos_hpp_))
-#define _MazeLight3DGizmos_hpp_
+#if (!defined(_MazeCamera3DGizmos_hpp_))
+#define _MazeCamera3DGizmos_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-graphics/MazeGraphicsHeader.hpp"
-#include "maze-graphics/ecs/components/gizmos/MazeComponentGizmos.hpp"
+#include "maze-editor-tools/MazeEditorToolsHeader.hpp"
+#include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(Light3DGizmos);
+    MAZE_USING_SHARED_PTR(Camera3DGizmos);
 
 
     //////////////////////////////////////////
-    // Class Light3DGizmos
+    // Class Camera3DGizmos
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API Light3DGizmos
+    class MAZE_EDITOR_TOOLS_API Camera3DGizmos
         : public ComponentGizmos
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(Light3DGizmos, ComponentGizmos);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(Camera3DGizmos, ComponentGizmos);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(Light3DGizmos);
+        MAZE_DECLARE_MEMORY_ALLOCATION(Camera3DGizmos);
 
     public:
 
@@ -73,16 +73,16 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~Light3DGizmos();
+        virtual ~Camera3DGizmos();
 
         //////////////////////////////////////////
-        static Light3DGizmosPtr Create();
+        static Camera3DGizmosPtr Create();
 
 
     protected:
 
         //////////////////////////////////////////
-        Light3DGizmos();
+        Camera3DGizmos();
 
         //////////////////////////////////////////
         bool init();
@@ -95,5 +95,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeLight3DGizmos_hpp_
+#endif // _MazeCamera3DGizmos_hpp_
 //////////////////////////////////////////

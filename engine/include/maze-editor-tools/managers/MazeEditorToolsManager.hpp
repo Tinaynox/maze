@@ -44,6 +44,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(EditorToolsManager);
     MAZE_USING_SHARED_PTR(SelectionManager);
     MAZE_USING_SHARED_PTR(InspectorManager);
+    MAZE_USING_SHARED_PTR(GizmosManager);
     MAZE_USING_SHARED_PTR(AssetEditorToolsManager);
     MAZE_USING_SHARED_PTR(RenderTarget);
     MAZE_USING_SHARED_PTR(ComponentGizmos);
@@ -142,6 +143,7 @@ namespace Maze
 
         SelectionManagerPtr m_selectionManager;
         InspectorManagerPtr m_inspectorManager;
+        GizmosManagerPtr m_gizmosManager;
         AssetEditorToolsManagerPtr m_assetEditorToolsManager;
 
         GizmosSystemPtr m_gizmosSystem;

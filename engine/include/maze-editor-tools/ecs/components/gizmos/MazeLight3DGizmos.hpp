@@ -25,36 +25,36 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeBoxCollider2DGizmos_hpp_))
-#define _MazeBoxCollider2DGizmos_hpp_
+#if (!defined(_MazeLight3DGizmos_hpp_))
+#define _MazeLight3DGizmos_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-physics2d/MazePhysics2DHeader.hpp"
-#include "maze-graphics/ecs/components/gizmos/MazeComponentGizmos.hpp"
+#include "maze-editor-tools/MazeEditorToolsHeader.hpp"
+#include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(BoxCollider2DGizmos);
+    MAZE_USING_SHARED_PTR(Light3DGizmos);
 
 
     //////////////////////////////////////////
-    // Class BoxCollider2DGizmos
+    // Class Light3DGizmos
     //
     //////////////////////////////////////////
-    class MAZE_PHYSICS2D_API BoxCollider2DGizmos
+    class MAZE_GRAPHICS_API Light3DGizmos
         : public ComponentGizmos
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(BoxCollider2DGizmos, ComponentGizmos);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(Light3DGizmos, ComponentGizmos);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(BoxCollider2DGizmos);
+        MAZE_DECLARE_MEMORY_ALLOCATION(Light3DGizmos);
 
     public:
 
@@ -73,16 +73,16 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~BoxCollider2DGizmos();
+        virtual ~Light3DGizmos();
 
         //////////////////////////////////////////
-        static BoxCollider2DGizmosPtr Create();
+        static Light3DGizmosPtr Create();
 
 
     protected:
 
         //////////////////////////////////////////
-        BoxCollider2DGizmos();
+        Light3DGizmos();
 
         //////////////////////////////////////////
         bool init();
@@ -95,5 +95,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeBoxCollider2DGizmos_hpp_
+#endif // _MazeLight3DGizmos_hpp_
 //////////////////////////////////////////

@@ -25,36 +25,36 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeMeshRendererGizmos_hpp_))
-#define _MazeMeshRendererGizmos_hpp_
+#if (!defined(_MazeCircleCollider2DGizmos_hpp_))
+#define _MazeCircleCollider2DGizmos_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-graphics/MazeGraphicsHeader.hpp"
-#include "maze-graphics/ecs/components/gizmos/MazeComponentGizmos.hpp"
+#include "maze-plugin-physics2d-editor-tools/MazePhysics2DEditorToolsHeader.hpp"
+#include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(MeshRendererGizmos);
+    MAZE_USING_SHARED_PTR(CircleCollider2DGizmos);
 
 
     //////////////////////////////////////////
-    // Class MeshRendererGizmos
+    // Class CircleCollider2DGizmos
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API MeshRendererGizmos
+    class MAZE_PLUGIN_PHYSICS2D_EDITOR_TOOLS_API CircleCollider2DGizmos
         : public ComponentGizmos
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(MeshRendererGizmos, ComponentGizmos);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(CircleCollider2DGizmos, ComponentGizmos);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(MeshRendererGizmos);
+        MAZE_DECLARE_MEMORY_ALLOCATION(CircleCollider2DGizmos);
 
     public:
 
@@ -73,16 +73,16 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~MeshRendererGizmos();
+        virtual ~CircleCollider2DGizmos();
 
         //////////////////////////////////////////
-        static MeshRendererGizmosPtr Create();
+        static CircleCollider2DGizmosPtr Create();
 
 
     protected:
 
         //////////////////////////////////////////
-        MeshRendererGizmos();
+        CircleCollider2DGizmos();
 
         //////////////////////////////////////////
         bool init();
@@ -95,5 +95,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeMeshRendererGizmos_hpp_
+#endif // _MazeCircleCollider2DGizmos_hpp_
 //////////////////////////////////////////

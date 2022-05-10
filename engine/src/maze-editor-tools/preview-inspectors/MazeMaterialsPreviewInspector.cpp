@@ -45,7 +45,6 @@
 #include "maze-graphics/ecs/components/MazeLight3D.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
-#include "maze-graphics/managers/MazeGizmosManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"

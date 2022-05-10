@@ -30,7 +30,7 @@
 
 
 //////////////////////////////////////////
-#include "maze-graphics/MazeGraphicsHeader.hpp"
+#include "maze-editor-tools/MazeEditorToolsHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
 #include "maze-core/math/MazeAABB3D.hpp"
@@ -57,7 +57,7 @@ namespace Maze
     // Class GizmosDrawer
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API GizmosDrawer
+    class MAZE_EDITOR_TOOLS_API GizmosDrawer
     {
     public:
 

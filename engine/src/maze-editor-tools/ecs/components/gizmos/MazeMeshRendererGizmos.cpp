@@ -24,8 +24,8 @@
 
 
 //////////////////////////////////////////
-#include "MazeGraphicsHeader.hpp"
-#include "maze-graphics/ecs/components/gizmos/MazeMeshRendererGizmos.hpp"
+#include "MazeEditorToolsHeader.hpp"
+#include "maze-editor-tools/ecs/components/gizmos/MazeMeshRendererGizmos.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/services/MazeLogStream.hpp"

@@ -34,12 +34,13 @@
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-editor-tools/scenes/SceneDebugEditor.hpp"
 #include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
-#include "maze-graphics/ecs/systems/MazeGizmosSystem.hpp"
-#include "maze-graphics/ecs/components/gizmos/MazeComponentGizmos.hpp"
+#include "maze-editor-tools/ecs/systems/MazeGizmosSystem.hpp"
+#include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
+#include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/managers/MazeAssetEditorToolsManager.hpp"
 
 
@@ -97,6 +98,10 @@ namespace Maze
         InspectorManager::Initialize(m_inspectorManager);
         if (!m_inspectorManager)
             return false;
+
+        GizmosManager::Initialize(m_gizmosManager);
+        if (!m_gizmosManager)
+            return false;        
 
         AssetEditorToolsManager::Initialize(m_assetEditorToolsManager);
         if (!m_assetEditorToolsManager)

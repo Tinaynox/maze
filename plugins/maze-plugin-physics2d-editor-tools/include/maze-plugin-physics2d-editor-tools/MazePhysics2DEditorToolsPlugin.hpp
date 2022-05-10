@@ -1,6 +1,6 @@
 //////////////////////////////////////////
 //
-// Maze Engine
+// Maze SoundSystemAL
 // Copyright (C) 2021 Dmitriy "Tinaynox" Nosov (tinaynox@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -25,64 +25,67 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeCircleCollider2DGizmos_hpp_))
-#define _MazeCircleCollider2DGizmos_hpp_
+#if (!defined(_MazePhysics2DEditorToolsPlugin_hpp_))
+#define _MazePhysics2DEditorToolsPlugin_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-physics2d/MazePhysics2DHeader.hpp"
-#include "maze-graphics/ecs/components/gizmos/MazeComponentGizmos.hpp"
+#include "maze-plugin-physics2d-editor-tools/MazePhysics2DEditorToolsHeader.hpp"
+#include "maze-core/system/MazePlugin.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(CircleCollider2DGizmos);
+    MAZE_USING_SHARED_PTR(Physics2DEditorToolsPlugin);
+    MAZE_USING_SHARED_PTR(Physics2DEditorTools);
+
+
+#if (MAZE_STATIC)
+
+    //////////////////////////////////////////
+    void InstallPhysics2DEditorToolsPlugin();
+
+    //////////////////////////////////////////
+    void UninstallPhysics2DEditorToolsPlugin();
+
+#endif
 
 
     //////////////////////////////////////////
-    // Class CircleCollider2DGizmos
+    // Class Physics2DEditorToolsPlugin
     //
     //////////////////////////////////////////
-    class MAZE_PHYSICS2D_API CircleCollider2DGizmos
-        : public ComponentGizmos
+    class MAZE_PLUGIN_PHYSICS2D_EDITOR_TOOLS_API Physics2DEditorToolsPlugin
+        : public Plugin
+        , public std::enable_shared_from_this<Physics2DEditorToolsPlugin>
     {
     public:
-
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(CircleCollider2DGizmos, ComponentGizmos);
-
-        //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(CircleCollider2DGizmos);
+        static constexpr CString const c_libraryName = "maze-plugin-physics2d-editor-tools";
 
     public:
 
         //////////////////////////////////////////
-        virtual void drawGizmos(
-            Entity* _entity,
-            ComponentPtr const& _component,
-            GizmosDrawer* _drawer) MAZE_OVERRIDE;
+        virtual ~Physics2DEditorToolsPlugin();
 
         //////////////////////////////////////////
-        virtual void drawGizmosSelected(
-            Entity* _entity,
-            ComponentPtr const& _component,
-            GizmosDrawer* _drawer) MAZE_OVERRIDE;
-
-    public:
+        static Physics2DEditorToolsPluginPtr Create();
 
         //////////////////////////////////////////
-        virtual ~CircleCollider2DGizmos();
+        virtual String const& getName() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        static CircleCollider2DGizmosPtr Create();
+        virtual void install() MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        virtual void uninstall() MAZE_OVERRIDE;
 
     protected:
 
         //////////////////////////////////////////
-        CircleCollider2DGizmos();
+        Physics2DEditorToolsPlugin();
 
         //////////////////////////////////////////
         bool init();
@@ -90,10 +93,9 @@ namespace Maze
     protected:
     };
 
-
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeCircleCollider2DGizmos_hpp_
+#endif // _MazePhysics2DEditorToolsPlugin_hpp_
 //////////////////////////////////////////

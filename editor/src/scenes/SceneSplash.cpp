@@ -59,7 +59,6 @@
 #include "maze-graphics/managers/MazeMeshManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/managers/MazeSystemFontManager.hpp"
-#include "maze-graphics/managers/MazeGizmosManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
@@ -88,6 +87,8 @@
 #include "maze-plugin-profiler-view/MazeProfilerViewService.hpp"
 #include "maze-plugin-profiler-view/settings/MazeProfilerViewSettings.hpp"
 #include "maze-plugin-particles-editor-tools/MazeParticlesEditorToolsPlugin.hpp"
+#include "maze-plugin-physics2d-editor-tools/MazePhysics2DEditorToolsPlugin.hpp"
+#include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "Editor.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "layout/EditorLayout.hpp"
@@ -253,7 +254,7 @@ namespace Maze
             }
             case 6:
             {
-                GraphicsManager::GetInstancePtr()->getGizmosManager()->createGizmosElements();
+                GizmosManager::GetInstancePtr()->createGizmosElements();
                 EditorGizmosManager::GetInstancePtr()->createGizmosElements();
                 setCurrentProgress(0.7f);
                 break;
@@ -282,6 +283,7 @@ namespace Maze
                 MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView);
                 MAZE_LOAD_PLATFORM_PLUGIN(Console);
                 MAZE_LOAD_PLATFORM_PLUGIN(ParticlesEditorTools);
+                MAZE_LOAD_PLATFORM_PLUGIN(Physics2DEditorTools);
 #if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
                 if (SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>())
                     SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>()->setActive(true);

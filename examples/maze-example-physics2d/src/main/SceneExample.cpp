@@ -72,6 +72,7 @@
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
 #include "maze-plugin-profiler-view/MazeProfilerViewPlugin.hpp"
 #include "maze-plugin-loader-png/MazeLoaderPNGPlugin.hpp"
+#include "maze-plugin-physics2d-editor-tools/MazePhysics2DEditorToolsPlugin.hpp"
 #include "Example.hpp"
 
 
@@ -102,6 +103,7 @@ namespace Maze
     {
         MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView);
         MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG);
+        MAZE_LOAD_PLATFORM_PLUGIN(Physics2DEditorTools);
 
         return true;
     }

@@ -31,7 +31,7 @@
 
 //////////////////////////////////////////
 #include "maze-graphics/MazeGraphicsHeader.hpp"
-#include "maze-graphics/ecs/components/gizmos/MazeComponentGizmos.hpp"
+#include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
 
 
 //////////////////////////////////////////

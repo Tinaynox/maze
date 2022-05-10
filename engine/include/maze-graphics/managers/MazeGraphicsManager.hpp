@@ -47,7 +47,6 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(GraphicsManager);
-    MAZE_USING_SHARED_PTR(GizmosManager);
     MAZE_USING_SHARED_PTR(RenderSystem);
 
 
@@ -105,9 +104,6 @@ namespace Maze
             return nullptr;
         }
 
-        //////////////////////////////////////////
-        inline GizmosManagerPtr const& getGizmosManager() const { return m_gizmosManager; }
-
         
     public:
 
@@ -131,8 +127,6 @@ namespace Maze
 
         StringKeyMap<RenderSystemPtr> m_renderSystems;
         RenderSystemPtr m_defaultRenderSystem;
-
-        GizmosManagerPtr m_gizmosManager;
     };
 
 } // namespace Maze

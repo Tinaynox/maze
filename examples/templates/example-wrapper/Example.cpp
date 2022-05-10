@@ -44,7 +44,6 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
-#include "maze-graphics/managers/MazeGizmosManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
@@ -55,13 +54,13 @@
 #include "maze-core/ecs/systems/MazeBounds2DSystem.hpp"
 #include "maze-core/ecs/systems/MazeSizePolicy2DSystem.hpp"
 #include "maze-core/ecs/systems/MazeTransformUtilsSystem.hpp"
-#include "maze-graphics/ecs/systems/MazeGizmosSystem.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderPreparationSystem.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-ui/ecs/systems/MazeInputSystem2D.hpp"
 #include "maze-ui/ecs/systems/MazeUITweenTransitionSystem.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
+#include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
 #include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
 #include "maze-physics2d/ecs/systems/MazePhysicsControlSystem2D.hpp"
@@ -493,7 +492,7 @@ namespace Maze
     void Example::loadCoreGameAssets()
     {
         RenderSystem::GetCurrentInstancePtr()->createBuiltinAssets();
-        GraphicsManager::GetInstancePtr()->getGizmosManager()->createGizmosElements();
+        GizmosManager::GetInstancePtr()->createGizmosElements();
         UIManager::GetInstancePtr()->createUIElements();
         ParticlesManager::GetInstancePtr()->createBuiltinAssets();
 

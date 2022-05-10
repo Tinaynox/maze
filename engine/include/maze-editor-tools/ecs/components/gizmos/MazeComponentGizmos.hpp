@@ -30,10 +30,10 @@
 
 
 //////////////////////////////////////////
-#include "maze-graphics/MazeGraphicsHeader.hpp"
+#include "maze-editor-tools/MazeEditorToolsHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-graphics/ecs/systems/MazeGizmosDrawer.hpp"
+#include "maze-editor-tools/ecs/systems/MazeGizmosDrawer.hpp"
 
 
 //////////////////////////////////////////
@@ -47,7 +47,7 @@ namespace Maze
     // Class ComponentGizmos
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API ComponentGizmos
+    class MAZE_EDITOR_TOOLS_API ComponentGizmos
     {
     public:
 

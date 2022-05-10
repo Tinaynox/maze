@@ -24,10 +24,10 @@
 
 
 //////////////////////////////////////////
-#include "MazeGraphicsHeader.hpp"
-#include "maze-graphics/ecs/systems/MazeGizmosSystem.hpp"
-#include "maze-graphics/ecs/components/gizmos/MazeComponentGizmos.hpp"
-#include "maze-graphics/managers/MazeGizmosManager.hpp"
+#include "MazeEditorToolsHeader.hpp"
+#include "maze-editor-tools/ecs/systems/MazeGizmosSystem.hpp"
+#include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
+#include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 

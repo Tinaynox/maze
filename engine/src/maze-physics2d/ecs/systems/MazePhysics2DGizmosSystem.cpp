@@ -27,8 +27,8 @@
 #include "MazePhysics2DHeader.hpp"
 #include "maze-physics2d/ecs/systems/MazePhysics2DGizmosSystem.hpp"
 #include "maze-physics2d/helpers/MazeBox2DHelper.hpp"
-#include "maze-graphics/ecs/components/gizmos/MazeComponentGizmos.hpp"
-#include "maze-graphics/managers/MazeGizmosManager.hpp"
+#include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
+#include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 
