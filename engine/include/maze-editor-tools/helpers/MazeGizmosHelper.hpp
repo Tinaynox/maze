@@ -55,6 +55,12 @@ namespace Maze
         MAZE_EDITOR_TOOLS_API ColorF128 const& GetColor();
 
         //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void PushTransform(Mat4DF const& _mat);
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void PopTransform();
+
+        //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawLine(
             Vec3DF const& _point0,
             Vec3DF const& _point1,
