@@ -195,49 +195,6 @@ namespace Maze
     //////////////////////////////////////////
     void SceneWorkspaceTools::update(F32 _dt)
     {
-        F32 cameraDistance = m_camera3D->getTransform()->getLocalPosition().length();
-        GizmosHelper::PushTransform(Mat4DF::CreateScaleMatrix(cameraDistance * 0.1f));
-       
-        F32 const length = 2.0f;
-        GizmosHelper::SetColor(ColorF128::c_red);
-        GizmosHelper::DrawLine(
-            Vec3DF::c_zero,
-            Vec3DF::c_unitX * length,
-            0.0f,
-            GizmosDrawer::MeshRenderMode::Opaque);
-        GizmosHelper::SetColor(ColorF128::c_green);
-        GizmosHelper::DrawLine(
-            Vec3DF::c_zero,
-            Vec3DF::c_unitY * length,
-            0.0f,
-            GizmosDrawer::MeshRenderMode::Opaque);
-        GizmosHelper::SetColor(ColorF128::c_blue);
-        GizmosHelper::DrawLine(
-            Vec3DF::c_zero,
-            Vec3DF::c_unitZ * length,
-            0.0f,
-            GizmosDrawer::MeshRenderMode::Opaque);
-
-        GizmosHelper::DrawCone(
-            Vec3DF::c_unitX * length,
-            Vec3DF::c_unitX,
-            0.135f,
-            0.475f,
-            ColorF128::c_red);
-        GizmosHelper::DrawCone(
-            Vec3DF::c_unitY * length,
-            Vec3DF::c_unitY,
-            0.135f,
-            0.475f,
-            ColorF128::c_green);
-        GizmosHelper::DrawCone(
-            Vec3DF::c_unitZ * length,
-            Vec3DF::c_unitZ,
-            0.135f,
-            0.475f,
-            ColorF128::c_blue);
-        GizmosHelper::PopTransform();
-
         _dt = UpdateManager::GetInstancePtr()->getUnscaledDeltaTime();
 
         ECSRenderScene::update(_dt);

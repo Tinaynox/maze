@@ -97,6 +97,25 @@ namespace Maze
 
         for (S32 renderMode = 0; renderMode < (S32)MeshRenderMode::MAX; ++renderMode)
         {
+            MaterialPtr& material = m_materials[renderMode];
+            material = Material::Create(renderSystem->getMaterialManager()->getColorMaterial());
+            switch (MeshRenderMode(renderMode))
+            {
+                case MeshRenderMode::Opaque:
+                {
+                    material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::LessEqual);
+                    material->getFirstRenderPass()->setRenderQueueIndex(2500);
+                    material->getFirstRenderPass()->setDepthWriteEnabled(true);
+                    break;
+                }
+                default:
+                {
+                    material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::Always);
+                    material->getFirstRenderPass()->setRenderQueueIndex(5000);
+                    break;
+                }
+            }
+
             {
                 MeshData& meshData = m_lines[renderMode];
 
@@ -105,24 +124,6 @@ namespace Maze
                 meshData.renderMesh = _renderTarget->createRenderMeshFromPool(1);
                 meshData.renderMesh->setName("Lines");
                 meshData.renderMesh->setVertexArrayObject(meshData.vao);
-
-                MaterialPtr material = Material::Create(renderSystem->getMaterialManager()->getColorMaterial());
-                switch (MeshRenderMode(renderMode))
-                {
-                    case MeshRenderMode::Opaque:
-                    {
-                        material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::LessEqual);
-                        material->getFirstRenderPass()->setRenderQueueIndex(2500);
-                        material->getFirstRenderPass()->setDepthWriteEnabled(true);
-                        break;
-                    }
-                    default:
-                    {
-                        material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::Always);
-                        material->getFirstRenderPass()->setRenderQueueIndex(5000);
-                        break;
-                    }
-                }
 
                 meshData.entity = Entity::Create();
                 m_world->addEntity(meshData.entity);
@@ -141,24 +142,6 @@ namespace Maze
                 meshData.renderMesh = _renderTarget->createRenderMeshFromPool(1);
                 meshData.renderMesh->setName("Triangles");
                 meshData.renderMesh->setVertexArrayObject(meshData.vao);
-
-                MaterialPtr material = Material::Create(renderSystem->getMaterialManager()->getColorMaterial());
-                switch (MeshRenderMode(renderMode))
-                {
-                    case MeshRenderMode::Opaque:
-                    {
-                        material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::LessEqual);
-                        material->getFirstRenderPass()->setRenderQueueIndex(2500);
-                        material->getFirstRenderPass()->setDepthWriteEnabled(true);
-                        break;
-                    }
-                    default:
-                    {
-                        material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::Always);
-                        material->getFirstRenderPass()->setRenderQueueIndex(5000);
-                        break;
-                    }
-                }
 
                 meshData.entity = Entity::Create();
                 m_world->addEntity(meshData.entity);

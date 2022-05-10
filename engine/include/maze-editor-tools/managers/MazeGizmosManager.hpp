@@ -44,6 +44,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(GizmosManager);
+    MAZE_USING_SHARED_PTR(GizmoToolsManager);
     MAZE_USING_SHARED_PTR(ComponentGizmos);
     MAZE_USING_SHARED_PTR(Camera3D);
     MAZE_USING_SHARED_PTR(Sprite);
@@ -146,6 +147,8 @@ namespace Maze
 
     protected:
         static GizmosManager* s_instance;
+
+        GizmoToolsManagerPtr m_gizmoToolsManager;
 
         UnorderedMap<ClassUID, ComponentGizmosPtr> m_gizmosPerComponentClass;
 

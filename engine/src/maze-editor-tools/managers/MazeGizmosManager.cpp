@@ -40,6 +40,7 @@
 #include "maze-editor-tools/ecs/components/gizmos/MazeLight3DGizmos.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeCamera3DGizmos.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeMeshRendererGizmos.hpp"
+#include "maze-editor-tools/managers/MazeGizmoToolsManager.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 
 
@@ -77,6 +78,10 @@ namespace Maze
         UpdateManager::GetInstancePtr()->addUpdatable(this);
         
         GraphicsUtilsHelper::ConstructAsciiSymbolsSheet8x8();
+
+        GizmoToolsManager::Initialize(m_gizmoToolsManager);
+        if (!m_gizmoToolsManager)
+            return false;
 
         registerGizmos<Light3D, Light3DGizmos>();
         registerGizmos<Camera3D, Camera3DGizmos>();

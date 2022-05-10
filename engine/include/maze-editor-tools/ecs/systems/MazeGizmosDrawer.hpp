@@ -601,6 +601,7 @@ namespace Maze
 
         ECSWorld* m_world;
 
+        MaterialPtr m_materials[(Size)MeshRenderMode::MAX];
         MeshData m_lines[(Size)MeshRenderMode::MAX];
         MeshData m_triangles[(Size)MeshRenderMode::MAX];
 
