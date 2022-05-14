@@ -89,6 +89,9 @@ namespace Maze
         //////////////////////////////////////////
         inline Vec3DF const& getDirection() const { return m_direction; }
 
+        //////////////////////////////////////////
+        inline Vec3DF getPoint(F32 _length) const { return m_point + m_direction * _length; }
+
 
         //////////////////////////////////////////
         inline Ray& operator=(Ray const& _plane)

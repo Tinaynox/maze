@@ -35,6 +35,8 @@
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeVec2D.hpp"
 #include "maze-core/math/MazeVec3D.hpp"
+#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeRay.hpp"
 
 
 //////////////////////////////////////////
@@ -225,6 +227,31 @@ namespace Maze
             return res;
         }
 
+        //////////////////////////////////////////
+        MAZE_CORE_API bool RaycastPlane(
+            Vec3DF const& _rayPoint,
+            Vec3DF const& _rayDirection,
+            Vec3DF const& _planePoint,
+            Vec3DF const& _planeNormal,
+            F32& _dist);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API bool RaycastSphere(
+            Vec3DF const& _rayPoint,
+            Vec3DF const& _rayDirection,
+            Vec3DF const& _sphereCenter,
+            F32 _sphereRadius,
+            F32& _dist);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API bool RaycastCylinder(
+            Vec3DF const& _rayPoint,
+            Vec3DF const& _rayDirection,
+            Vec3DF const& _cylinderCenter,
+            Vec3DF const& _cylinderForward,
+            F32 _cylinderRadius,
+            F32 _cylinderHeight,
+            F32& _dist);
 
     } // namespace Math
     //////////////////////////////////////////

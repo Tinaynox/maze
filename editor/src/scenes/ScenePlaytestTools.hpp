@@ -101,6 +101,9 @@ namespace Maze
         //////////////////////////////////////////
         void notifyMainRenderWindowResized(RenderTarget* _renderTarget);
 
+        //////////////////////////////////////////
+        virtual void processSceneStateChanged(ECSSceneState _state) MAZE_OVERRIDE;
+
     protected:
     };
 

@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
 #include "maze-core/math/MazePlane.hpp"
+#include "maze-core/math/MazeMathGeometry.hpp"
 
 
 //////////////////////////////////////////
@@ -38,18 +39,12 @@ namespace Maze
     //////////////////////////////////////////
     bool Plane::raycast(Ray const& _ray, F32& _dist)
     {
-        F32 denom = m_normal.dotProduct(_ray.getDirection());
-        if (Math::Abs(denom) > 0.0001f)
-        {
-            F32 t = (m_point - _ray.getPoint()).dotProduct(m_normal) / denom;
-            if (t >= 0.0f)
-            {
-                Vec3DF p = _ray.getPoint() + t * _ray.getDirection();
-                _dist = (p - _ray.getPoint()).length();
-                return true;
-            }
-        }
-        return false;
+        return Math::RaycastPlane(
+            _ray.getPoint(),
+            _ray.getDirection(),
+            m_point,
+            m_normal,
+            _dist);
     }
     
 

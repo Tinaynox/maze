@@ -136,15 +136,67 @@ namespace Maze
             return Vec2DF::c_zero;
 
         Mat4DF const& cameraTransform = getTransform()->getWorldTransform();
-        Vec4DF positionVS = cameraTransform.inversedAffineCopy() * _positionWS;
         Mat4DF projectionMatrix = calculateProjectionMatrix(getRenderTarget());
+
+        Vec4DF positionVS = cameraTransform.inversedAffineCopy() * _positionWS;
         Vec4DF positionCS = projectionMatrix * positionVS;
 
-        Vec2DF positionV = Vec2DF(positionCS.x, positionCS.y) / positionCS.w;
+        Vec2DF positionNDC = Vec2DF(positionCS.x, positionCS.y) / positionCS.w;
         Vec2DU renderTargetSize = m_renderTarget->getRenderTargetSize();
-        positionV = (positionV + 1.0f) * 0.5f * (Vec2DF)renderTargetSize;
+        Vec2DF positionV = (positionNDC + 1.0f) * 0.5f * (Vec2DF)renderTargetSize * getViewport().size;
 
         return positionV;
+    }
+
+    //////////////////////////////////////////
+    Vec3DF Camera3D::convertViewportCoordsToWorldCoords(Vec2DF const& _positionV) const
+    {
+        Vec2DU renderTargetSize = m_renderTarget->getRenderTargetSize();
+        if (renderTargetSize.x == 0u || renderTargetSize.y == 0u ||
+            getViewport().size.x == 0.0f || getViewport().size.y == 0.0f)
+            return Vec3DF::c_zero;
+
+        Mat4DF const& cameraTransform = getTransform()->getWorldTransform();
+        Mat4DF projectionMatrix = calculateProjectionMatrix(getRenderTarget());
+
+        Vec2DF p = _positionV / ((Vec2DF)renderTargetSize * getViewport().size);
+        Vec4DF positionNDC = Vec4DF((p * 2.0f - 1.0f), -1.0f, 0.0f);
+
+        Vec4DF positionCS = positionNDC;
+        
+        Vec4DF positionVS = projectionMatrix.inversedCopy() * positionCS;
+        positionVS.w = 1.0;
+        Vec4DF positionWS = cameraTransform * positionVS;
+
+        return positionWS.xyz();
+    }
+
+    //////////////////////////////////////////
+    Ray Camera3D::convertViewportCoordsToRay(Vec2DF const& _positionV) const
+    {
+        Vec2DU renderTargetSize = m_renderTarget->getRenderTargetSize();
+        if (renderTargetSize.x == 0u || renderTargetSize.y == 0u ||
+            getViewport().size.x == 0.0f || getViewport().size.y == 0.0f)
+            return Ray();
+
+        Mat4DF const& cameraTransform = getTransform()->getWorldTransform();
+        Vec3DF cameraPosition = Vec3DF(cameraTransform[0][3], cameraTransform[1][3], cameraTransform[2][3]);
+        Mat4DF projectionMatrix = calculateProjectionMatrix(getRenderTarget());
+
+        Vec2DF p = _positionV / ((Vec2DF)renderTargetSize * getViewport().size);
+        Vec4DF positionNDC = Vec4DF((p * 2.0f - 1.0f), -1.0f, 1.0f);
+        Vec4DF positionCS = positionNDC;
+
+        Vec4DF positionVS = projectionMatrix.inversedCopy() * positionCS;
+        positionVS.w = 1.0;
+        Vec4DF positionWS = cameraTransform * positionVS;
+
+        Ray ray;
+        ray.setDirection((positionWS.xyz() - cameraPosition).normalizedCopy());
+        ray.setPoint(positionWS.xyz() - ray.getDirection());
+        
+
+        return ray;
     }
 
     //////////////////////////////////////////

@@ -47,6 +47,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(GizmoToolsManager);
     MAZE_USING_SHARED_PTR(ComponentGizmos);
     MAZE_USING_SHARED_PTR(Camera3D);
+    MAZE_USING_SHARED_PTR(Canvas);
     MAZE_USING_SHARED_PTR(Sprite);
     MAZE_USING_SHARED_PTR(Texture2D);
 
@@ -124,6 +125,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline CanvasPtr const& getCanvas() const { return m_canvas; }
+
+        //////////////////////////////////////////
+        void setCanvas(CanvasPtr const& _canvas);
+
+
+        //////////////////////////////////////////
         inline SpritePtr const& getDefaultGizmosSprite(DefaultGizmosSprite uiSprite) const { return m_defaultGizmosSprites[(Size)uiSprite]; }
 
         //////////////////////////////////////////
@@ -132,6 +140,8 @@ namespace Maze
     public:
         //////////////////////////////////////////
         MultiDelegate<> eventGizmosPerComponentClassChanged;
+        MultiDelegate<CanvasPtr const&> eventCanvasWillBeChanged;
+        MultiDelegate<CanvasPtr const&> eventCanvasChanged;
 
     protected:
 
@@ -153,6 +163,7 @@ namespace Maze
         UnorderedMap<ClassUID, ComponentGizmosPtr> m_gizmosPerComponentClass;
 
         Camera3DPtr m_camera;
+        CanvasPtr m_canvas;
 
         Texture2DPtr m_gizmosElementsTexture;
         SpritePtr m_defaultGizmosSprites[(Size)DefaultGizmosSprite::MAX];

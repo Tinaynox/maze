@@ -63,6 +63,10 @@ namespace Maze
     //////////////////////////////////////////
     GizmosManager::~GizmosManager()
     {
+        setCamera(nullptr);
+        setCanvas(nullptr);
+        m_gizmoToolsManager.reset();
+
         s_instance = nullptr;
     }
 
@@ -94,6 +98,19 @@ namespace Maze
     void GizmosManager::update(F32 dt)
     {
         
+    }
+
+    //////////////////////////////////////////
+    void GizmosManager::setCanvas(CanvasPtr const& _canvas)
+    {
+        if (m_canvas == _canvas)
+            return;
+
+        eventCanvasWillBeChanged(m_canvas);
+
+        m_canvas = _canvas;
+
+        eventCanvasChanged(m_canvas);
     }
 
     //////////////////////////////////////////

@@ -31,13 +31,16 @@
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/helpers/MazeWindowHelper.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/math/MazeMathGeometry.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/ecs/components/MazeLight3D.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
+#include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
+#include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeLight3DGizmos.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeCamera3DGizmos.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeMeshRendererGizmos.hpp"
@@ -66,6 +69,12 @@ namespace Maze
     //////////////////////////////////////////
     GizmoToolsManager::~GizmoToolsManager()
     {
+        if (GizmosManager::GetInstancePtr())
+        {
+            GizmosManager::GetInstancePtr()->eventCanvasChanged.unsubscribe(this);
+            GizmosManager::GetInstancePtr()->eventCanvasWillBeChanged.unsubscribe(this);
+        }
+
         s_instance = nullptr;
     }
 
@@ -79,6 +88,11 @@ namespace Maze
     bool GizmoToolsManager::init()
     {
         UpdateManager::GetInstancePtr()->addUpdatable(this);
+
+        GizmosManager::GetInstancePtr()->eventCanvasChanged.subscribe(this, &GizmoToolsManager::notifyCanvasChanged);
+        GizmosManager::GetInstancePtr()->eventCanvasWillBeChanged.subscribe(this, &GizmoToolsManager::notifyCanvasWillBeChanged);
+        if (GizmosManager::GetInstancePtr()->getCanvas())
+            subscribeCanvas(GizmosManager::GetInstancePtr()->getCanvas());
 
         return true;
     }
@@ -99,6 +113,35 @@ namespace Maze
                     drawTranslation(mat);
                 }
             }
+        }
+
+        Camera3DPtr const& camera = GizmosManager::GetInstancePtr()->getCamera();
+        if (camera)
+        {
+            Ray r = camera->convertViewportCoordsToRay(m_cursorPos);
+            Debug::Log("%.1f %.1f %.1f", r.getDirection().x, r.getDirection().y, r.getDirection().z);
+
+            F32 dist;
+
+            Vec3DF sphereCenter = Vec3DF(4.0f, 6.0f, 1.0f);
+            F32 sphereRadius = 1.0f;
+            if (Math::RaycastSphere(r.getPoint(), r.getDirection(), sphereCenter, sphereRadius, dist))
+                GizmosHelper::DrawSphere(sphereCenter, sphereRadius, ColorF128::c_yellow);
+            else
+                GizmosHelper::DrawSphere(sphereCenter, sphereRadius, ColorF128::c_red);
+
+
+            Vec3DF cylinderCenter = Vec3DF(7.0f, 6.0f, 1.0f);
+            Vec3DF cylinderForward = (Vec3DF::c_unitY + Vec3DF::c_unitZ).normalizedCopy();
+            F32 cylinderRadius = 1.5f;
+            F32 cylinderHeight = 3.0f;
+            if (Math::RaycastCylinder(r.getPoint(), r.getDirection(), cylinderCenter, cylinderForward, cylinderRadius, cylinderHeight, dist))
+                GizmosHelper::DrawCylinder(cylinderCenter, cylinderForward, cylinderRadius, cylinderHeight, ColorF128::c_yellow);
+            else
+                GizmosHelper::DrawCylinder(cylinderCenter, cylinderForward, cylinderRadius, cylinderHeight, ColorF128::c_red);
+
+            GizmosHelper::SetColor(ColorF128::c_green);
+            GizmosHelper::DrawLine(r.getPoint(), r.getPoint(10.0f), 1.0f);
         }
     }
 
@@ -175,6 +218,54 @@ namespace Maze
             drawFunc.second();
 
         GizmosHelper::PopTransform();
+    }
+
+    //////////////////////////////////////////
+    void GizmoToolsManager::notifyCanvasChanged(CanvasPtr const& _canvas)
+    {
+        subscribeCanvas(_canvas);
+    }
+
+    //////////////////////////////////////////
+    void GizmoToolsManager::notifyCanvasWillBeChanged(CanvasPtr const& _canvas)
+    {
+        unsubscribeCanvas(_canvas);
+    }
+
+    //////////////////////////////////////////
+    void GizmoToolsManager::subscribeCanvas(CanvasPtr const& _canvas)
+    {
+        if (!_canvas)
+            return;
+
+        UIElement2DPtr element = _canvas->getEntityRaw()->ensureComponent<UIElement2D>();
+        element->eventCursorMoveIn.subscribe(this, &GizmoToolsManager::notifyCursorMoveIn);
+    }
+
+    //////////////////////////////////////////
+    void GizmoToolsManager::unsubscribeCanvas(CanvasPtr const& _canvas)
+    {
+        if (!_canvas)
+            return;
+
+        UIElement2DPtr element = _canvas->getEntityRaw()->ensureComponent<UIElement2D>();
+        element->eventCursorMoveIn.unsubscribe(this);
+    }
+
+    //////////////////////////////////////////
+    void GizmoToolsManager::notifyCursorMoveIn(Vec2DF const& _positionOS, CursorInputEvent const& _event)
+    {
+        processCursorMove(_positionOS);
+    }
+
+    //////////////////////////////////////////
+    void GizmoToolsManager::processCursorMove(Vec2DF const& _positionOS)
+    {
+        Camera3DPtr const& camera = GizmosManager::GetInstancePtr()->getCamera();
+        if (!camera)
+            return;
+
+        m_cursorPos = _positionOS;
     }
 
 

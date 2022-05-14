@@ -38,6 +38,7 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/math/MazeMat4D.hpp"
+#include "maze-ui/MazeCursorInputEvent.hpp"
 
 
 //////////////////////////////////////////
@@ -45,6 +46,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(GizmoToolsManager);
+    MAZE_USING_SHARED_PTR(Canvas);
     
 
     //////////////////////////////////////////
@@ -53,6 +55,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_EDITOR_TOOLS_API GizmoToolsManager
         : public Updatable
+        , public MultiDelegateCallbackReceiver
     {
     public:
 
@@ -85,9 +88,28 @@ namespace Maze
         //////////////////////////////////////////
         void drawTranslation(Mat4DF& _mat);
     
+        //////////////////////////////////////////
+        void notifyCanvasChanged(CanvasPtr const& _canvas);
+
+        //////////////////////////////////////////
+        void notifyCanvasWillBeChanged(CanvasPtr const& _canvas);
+
+        //////////////////////////////////////////
+        void subscribeCanvas(CanvasPtr const& _canvas);
+
+        //////////////////////////////////////////
+        void unsubscribeCanvas(CanvasPtr const& _canvas);
+
+        //////////////////////////////////////////
+        void notifyCursorMoveIn(Vec2DF const& _positionOS, CursorInputEvent const& _event);
+
+        //////////////////////////////////////////
+        void processCursorMove(Vec2DF const& _positionOS);
 
     protected:
         static GizmoToolsManager* s_instance;
+
+        Vec2DF m_cursorPos = Vec2DF::c_zero;
     };
 
 } // namespace Maze

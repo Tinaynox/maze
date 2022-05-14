@@ -184,6 +184,7 @@ namespace Maze
             m_mainCanvas->setRenderTarget(m_renderTarget);
             m_mainCanvas->setSortOrder(-1000000);
             m_mainCanvas->setViewport(EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport));
+            GizmosManager::GetInstancePtr()->setCanvas(m_mainCanvas);
 
             EntityPtr mainCanvasControllerEntity = createEntity();
             EditorMainCanvasControllerPtr mainCanvasController = EditorMainCanvasController::Create(m_mainCanvas.get());
@@ -348,6 +349,17 @@ namespace Maze
 
         if (m_mainCanvas)
             m_mainCanvas->setViewport(rect);
+    }
+
+    //////////////////////////////////////////
+    void ScenePlaytestTools::processSceneStateChanged(ECSSceneState _state)
+    {
+        if (_state == ECSSceneState::Destroy)
+        {
+            GizmosManager::GetInstancePtr()->setCamera(nullptr);
+            GizmosManager::GetInstancePtr()->setCanvas(nullptr);
+        }
+
     }
 
 

@@ -183,6 +183,7 @@ namespace Maze
             m_mainCanvas->setClearColor(ColorU32::c_zero);
             m_mainCanvas->setRenderTarget(m_renderTarget);
             m_mainCanvas->setSortOrder(-1000000);
+            GizmosManager::GetInstancePtr()->setCanvas(m_mainCanvas);
 
             EntityPtr mainCanvasControllerEntity = createEntity();
             EditorMainCanvasControllerPtr mainCanvasController = EditorMainCanvasController::Create(m_mainCanvas.get());
@@ -343,6 +344,16 @@ namespace Maze
     //////////////////////////////////////////
     void SceneWorkspaceTools::notifyMainRenderWindowResized(RenderTarget* _renderTarget)
     {
+    }
+
+    //////////////////////////////////////////
+    void SceneWorkspaceTools::processSceneStateChanged(ECSSceneState _state)
+    {
+        if (_state == ECSSceneState::Destroy)
+        {
+            GizmosManager::GetInstancePtr()->setCamera(nullptr);
+            GizmosManager::GetInstancePtr()->setCanvas(nullptr);
+        }
     }
 
 

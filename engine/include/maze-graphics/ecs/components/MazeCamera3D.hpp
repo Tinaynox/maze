@@ -33,6 +33,7 @@
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
+#include "maze-core/math/MazeRay.hpp"
 #include "maze-graphics/MazeColorU32.hpp"
 #include "maze-graphics/ecs/MazeLightingSettings.hpp"
 
@@ -157,6 +158,12 @@ namespace Maze
 
         //////////////////////////////////////////
         Vec2DF convertWorldCoordsToViewportCoords(Vec3DF const& _positionWS) const;
+
+        //////////////////////////////////////////
+        Vec3DF convertViewportCoordsToWorldCoords(Vec2DF const& _positionV) const;
+
+        //////////////////////////////////////////
+        Ray convertViewportCoordsToRay(Vec2DF const& _positionV) const;
 
         //////////////////////////////////////////
         Mat4DF calculateProjectionMatrix(RenderTargetPtr const& _renderTarget) const;
