@@ -110,43 +110,48 @@ namespace Maze
                 if (transform)
                 {
                     Mat4DF mat = transform->getWorldTransform();
-                    drawTranslation(mat);
+                    updateTranslation(mat);
                 }
             }
         }
 
-        Camera3DPtr const& camera = GizmosManager::GetInstancePtr()->getCamera();
-        if (camera)
-        {
-            Ray r = camera->convertViewportCoordsToRay(m_cursorPos);
-            Debug::Log("%.1f %.1f %.1f", r.getDirection().x, r.getDirection().y, r.getDirection().z);
+        
+        /*
+        F32 dist;
 
-            F32 dist;
+        Vec3DF sphereCenter = Vec3DF(4.0f, 6.0f, 1.0f);
+        F32 sphereRadius = 1.0f;
+        if (Math::RaycastSphere(r.getPoint(), r.getDirection(), sphereCenter, sphereRadius, dist))
+            GizmosHelper::DrawSphere(sphereCenter, sphereRadius, ColorF128::c_yellow);
+        else
+            GizmosHelper::DrawSphere(sphereCenter, sphereRadius, ColorF128::c_red);
 
-            Vec3DF sphereCenter = Vec3DF(4.0f, 6.0f, 1.0f);
-            F32 sphereRadius = 1.0f;
-            if (Math::RaycastSphere(r.getPoint(), r.getDirection(), sphereCenter, sphereRadius, dist))
-                GizmosHelper::DrawSphere(sphereCenter, sphereRadius, ColorF128::c_yellow);
-            else
-                GizmosHelper::DrawSphere(sphereCenter, sphereRadius, ColorF128::c_red);
+        Vec3DF cylinderCenter = Vec3DF(7.0f, 6.0f, 1.0f);
+        Vec3DF cylinderForward = (Vec3DF::c_unitY + Vec3DF::c_unitZ).normalizedCopy();
+        F32 cylinderRadius = 1.5f;
+        F32 cylinderHeight = 3.0f;
+        if (Math::RaycastCylinder(r.getPoint(), r.getDirection(), cylinderCenter, cylinderForward, cylinderRadius, cylinderHeight, dist))
+            GizmosHelper::DrawCylinder(cylinderCenter, cylinderForward, cylinderRadius, cylinderHeight, ColorF128::c_yellow);
+        else
+            GizmosHelper::DrawCylinder(cylinderCenter, cylinderForward, cylinderRadius, cylinderHeight, ColorF128::c_red);
 
 
-            Vec3DF cylinderCenter = Vec3DF(7.0f, 6.0f, 1.0f);
-            Vec3DF cylinderForward = (Vec3DF::c_unitY + Vec3DF::c_unitZ).normalizedCopy();
-            F32 cylinderRadius = 1.5f;
-            F32 cylinderHeight = 3.0f;
-            if (Math::RaycastCylinder(r.getPoint(), r.getDirection(), cylinderCenter, cylinderForward, cylinderRadius, cylinderHeight, dist))
-                GizmosHelper::DrawCylinder(cylinderCenter, cylinderForward, cylinderRadius, cylinderHeight, ColorF128::c_yellow);
-            else
-                GizmosHelper::DrawCylinder(cylinderCenter, cylinderForward, cylinderRadius, cylinderHeight, ColorF128::c_red);
+        Vec3DF coneCenter = Vec3DF(1.0f, 6.0f, 1.0f);
+        Vec3DF coneForward = (Vec3DF::c_unitY + Vec3DF::c_unitZ).normalizedCopy();
+        F32 coneRadius = 1.5f;
+        F32 coneHeight = 3.0f;
+        if (Math::RaycastCone(r.getPoint(), r.getDirection(), coneCenter, coneForward, coneRadius, coneHeight, dist))
+            GizmosHelper::DrawCone(coneCenter, coneForward, coneRadius, coneHeight, ColorF128::c_yellow);
+        else
+            GizmosHelper::DrawCone(coneCenter, coneForward, coneRadius, coneHeight, ColorF128::c_red);
 
-            GizmosHelper::SetColor(ColorF128::c_green);
-            GizmosHelper::DrawLine(r.getPoint(), r.getPoint(10.0f), 1.0f);
-        }
+        GizmosHelper::SetColor(ColorF128::c_green);
+        GizmosHelper::DrawLine(r.getPoint(), r.getPoint(10.0f), 1.0f);
+        */
     }
 
     //////////////////////////////////////////
-    void GizmoToolsManager::drawTranslation(Mat4DF& _mat)
+    void GizmoToolsManager::updateTranslation(Mat4DF& _mat)
     {
         Camera3DPtr const& camera = GizmosManager::GetInstancePtr()->getCamera();
         if (!camera)
@@ -158,11 +163,18 @@ namespace Maze
         Vec3DF up = { _mat[0][1], _mat[1][1], _mat[2][1] };
         Vec3DF forward = { _mat[0][2], _mat[1][2], _mat[2][2] };
         Vec3DF pos = { _mat[0][3], _mat[1][2], _mat[2][3] };
+
+        Vec3DF affineScale = _mat.getAffineScale();
         
         F32 cameraDistance = (pos - camera->getTransform()->getLocalPosition()).length();
-        GizmosHelper::PushTransform(
+        F32 scale = cameraDistance * 0.08f;
+        Mat4DF transform =
             _mat *
-            Mat4DF::CreateScaleMatrix(cameraDistance * 0.08f / _mat.getAffineScale()));
+            Mat4DF::CreateScaleMatrix(scale / affineScale);
+        Mat4DF basisTransform = transform;
+        basisTransform[0][3] = 0.0f;
+        basisTransform[1][3] = 0.0f;
+        basisTransform[2][3] = 0.0f;
 
         GizmosDrawer::MeshRenderMode const renderMode = GizmosDrawer::MeshRenderMode::Transparent;
 
@@ -174,11 +186,6 @@ namespace Maze
         {
             GizmosHelper::SetColor(_color);
             
-            // GizmosHelper::DrawLine(
-            //     Vec3DF::c_zero,
-            //     _axis * length,
-            //     0.0f,
-            //     renderMode);
             GizmosHelper::DrawCylinder(
                 _axis * length * 0.5f,
                 _axis,
@@ -196,27 +203,98 @@ namespace Maze
                 0.0f,
                 renderMode);
         };
-
-        auto drawX = [&]() { drawAxis(ColorF128::c_red, Vec3DF::c_unitX); };
-        auto drawY = [&]() { drawAxis(ColorF128::c_green, Vec3DF::c_unitY); };
-        auto drawZ = [&]() { drawAxis(ColorF128::c_blue, Vec3DF::c_unitZ); };
         
-        Vector<Pair<F32, std::function<void()>>> drawFuncs =
+        Ray ray = camera->convertViewportCoordsToRay(m_cursorPos);
+
+        auto checkAxis = [&](
+            Vec3DF const& _axis)
         {
-            {(pos + right).squaredDistance(cameraWorldPosition), drawX},
-            {(pos + up).squaredDistance(cameraWorldPosition), drawY},
-            {(pos + forward).squaredDistance(cameraWorldPosition), drawZ}
+            /*
+            GizmosHelper::DrawCylinder(
+                transform.transformAffine(_axis * length * 0.5f),
+                basisTransform.transformAffine(_axis).normalizedCopy(),
+                scale * 0.135f,
+                scale * length,
+                ColorF128::c_cyan,
+                0.0f,
+                renderMode);
+
+            GizmosHelper::DrawCone(
+                transform.transformAffine(_axis * length),
+                basisTransform.transformAffine(_axis).normalizedCopy(),
+                scale * 0.135f,
+                scale * 0.475f,
+                ColorF128::c_cyan,
+                0.0f,
+                renderMode);
+            */
+
+            F32 dist = 0.0;            
+            if (Math::RaycastCylinder(
+                ray.getPoint(),
+                ray.getDirection(),
+                transform.transformAffine(_axis * length * 0.5f),
+                basisTransform.transformAffine(_axis).normalizedCopy(),
+                scale * 0.135f,
+                scale * length,
+                dist))
+                return true;
+            if (Math::RaycastCone(
+                ray.getPoint(),
+                ray.getDirection(),
+                transform.transformAffine(_axis * length),
+                basisTransform.transformAffine(_axis).normalizedCopy(),
+                scale * 0.135f,
+                scale * 0.475f,
+                dist))
+                return true;
+            return false;
+        };
+
+        S32 selectedAxis = -1;
+        auto drawX = [&]() { drawAxis(selectedAxis == 0 ? ColorF128::c_yellow : ColorF128::c_red, Vec3DF::c_unitX); };
+        auto drawY = [&]() { drawAxis(selectedAxis == 1 ? ColorF128::c_yellow : ColorF128::c_green, Vec3DF::c_unitY); };
+        auto drawZ = [&]() { drawAxis(selectedAxis == 2 ? ColorF128::c_yellow : ColorF128::c_blue, Vec3DF::c_unitZ); };
+
+        auto checkX = [&]() { return checkAxis(Vec3DF::c_unitX); };
+        auto checkY = [&]() { return checkAxis(Vec3DF::c_unitY); };
+        auto checkZ = [&]() { return checkAxis(Vec3DF::c_unitZ); };
+        
+        struct Axis
+        {
+            S32 index = -1;
+            F32 sqDist = 0.0f;
+            std::function<void()> drawFunc;
+            std::function<bool()> checkFunc;
+        };
+
+        Vector<Axis> drawFuncs =
+        {
+            {0, (pos + right).squaredDistance(cameraWorldPosition), drawX, checkX},
+            {1, (pos + up).squaredDistance(cameraWorldPosition), drawY, checkY},
+            {2, (pos + forward).squaredDistance(cameraWorldPosition), drawZ, checkZ}
         };
         std::sort(
             drawFuncs.begin(),
             drawFuncs.end(),
-            [](Pair<F32, std::function<void()>> const& _a, Pair<F32, std::function<void()>> const& _b)
+            [](Axis const& _a, Axis const& _b)
             {
-                return _a.first > _b.first;
+                return _a.sqDist > _b.sqDist;
             });
-        for (auto drawFunc : drawFuncs)
-            drawFunc.second();
 
+        for (auto it = drawFuncs.rbegin(), end = drawFuncs.rend(); it != end; ++it)
+        {
+            if (it->checkFunc())
+            {
+                selectedAxis = it->index;
+                break;
+            }
+        }
+
+
+        GizmosHelper::PushTransform(transform);
+        for (auto drawFunc : drawFuncs)
+            drawFunc.drawFunc();
         GizmosHelper::PopTransform();
     }
 

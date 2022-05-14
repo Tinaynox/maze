@@ -253,6 +253,16 @@ namespace Maze
             F32 _cylinderHeight,
             F32& _dist);
 
+        //////////////////////////////////////////
+        MAZE_CORE_API bool RaycastCone(
+            Vec3DF const& _rayPoint,
+            Vec3DF const& _rayDirection,
+            Vec3DF const& _coneOrigin,
+            Vec3DF const& _coneForward,
+            F32 _coneRadius,
+            F32 _coneHeight,
+            F32& _dist);
+
     } // namespace Math
     //////////////////////////////////////////
 

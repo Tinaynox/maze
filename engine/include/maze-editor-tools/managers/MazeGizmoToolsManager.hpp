@@ -86,7 +86,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void drawTranslation(Mat4DF& _mat);
+        void updateTranslation(Mat4DF& _mat);
     
         //////////////////////////////////////////
         void notifyCanvasChanged(CanvasPtr const& _canvas);

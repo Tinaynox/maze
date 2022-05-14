@@ -149,7 +149,7 @@ namespace Maze
                 if (t2 > 0.0f && t2 < _dist)
                 {
                     Vec3DF point2 = localRay.getPoint(t2);
-                    if (point2.x * point2.x + point2.y * point2.y < _cylinderRadius)
+                    if (point2.x * point2.x + point2.y * point2.y < _cylinderRadius * _cylinderRadius)
                     {
                         _dist = t2;
                         pointFound = true;
@@ -160,45 +160,89 @@ namespace Maze
                 if (t3 > 0.0f && t3 < _dist)
                 {
                     Vec3DF point3 = localRay.getPoint(t3);
-                    if (point3.x * point3.x + point3.y * point3.y < _cylinderRadius)
+                    if (point3.x * point3.x + point3.y * point3.y < _cylinderRadius * _cylinderRadius)
                     {
                         _dist = t3;
                         pointFound = true;
                     }
                 }
             }
-            
 
             return pointFound;
-            /*
-            Vec3DF cylinderOrigin = _cylinderCenter;
-            cylinderOrigin.y -= _cylinderHeight * 0.5f;
+        }
 
-            F32 a = (_rayDirection.x * _rayDirection.x) + (_rayDirection.z * _rayDirection.z);
-            F32 b = 2.0f * (_rayDirection.x * (_rayPoint.x - cylinderOrigin.x) + _rayDirection.z * (_rayPoint.z - cylinderOrigin.z));
-            F32 c = (_rayPoint.x - cylinderOrigin.x) * (_rayPoint.x - cylinderOrigin.x) +
-                    (_rayPoint.z - cylinderOrigin.z) * (_rayPoint.z - cylinderOrigin.z) -
-                    (_cylinderRadius * _cylinderRadius);
+        //////////////////////////////////////////
+        MAZE_CORE_API bool RaycastCone(
+            Vec3DF const& _rayPoint,
+            Vec3DF const& _rayDirection,
+            Vec3DF const& _coneOrigin,
+            Vec3DF const& _coneForward,
+            F32 _coneRadius,
+            F32 _coneHeight,
+            F32& _dist)
+        {
+            Vec3DF _coneUp = _coneForward.perpendicular();
+            Vec3DF _coneRight = _coneUp.crossProduct(_coneForward).normalizedCopy();
+            Mat4DF coneTransform =
+                Mat4DF::CreateChangeOfBasisMatrix(_coneRight, _coneUp, _coneForward) *
+                Mat4DF::CreateScaleMatrix(_coneRadius, _coneRadius, _coneHeight);
+            coneTransform = coneTransform.inversedAffineCopy();
+            
+            Ray localRay(
+                coneTransform.transformAffine(_rayPoint - _coneOrigin) - Vec3DF::c_unitZ,
+                coneTransform.transformAffine(_rayDirection));
 
-            F32 delta = b * b - 4 * (a * c);
-            if (delta < 0.001f)
-                return false;
+            F32 a = localRay.getDirection().x * localRay.getDirection().x + localRay.getDirection().y * localRay.getDirection().y - localRay.getDirection().z * localRay.getDirection().z;
+            F32 b = 2.0f * (localRay.getPoint().x * localRay.getDirection().x + localRay.getPoint().y * localRay.getDirection().y - localRay.getPoint().z * localRay.getDirection().z);
+            F32 c = localRay.getPoint().x * localRay.getPoint().x + localRay.getPoint().y * localRay.getPoint().y - localRay.getPoint().z * localRay.getPoint().z;
 
-            F32 t1 = (-b - Sqrt(delta)) / (2.0f * a);
-            F32 t2 = (-b + Sqrt(delta)) / (2.0f * a);
+            _dist = 100e6;
+            bool pointFound = false;
 
-            if (t1 > t2)
-                _dist = t2;
-            else
-                _dist = t1;
+            F32 delta = b * b - 4 * a * c;
+            if (delta > 0.0f)
+            {
+                F32 deltaSqrt = Sqrt(delta);
+                F32 t0 = (-b + deltaSqrt) / (2 * a);
+                F32 t1 = (-b - deltaSqrt) / (2 * a);
 
-            F32 r = _rayPoint.y + _dist * _rayDirection.y;
+                if (t0 > 0.0f)
+                {
+                    Vec3DF point0 = localRay.getPoint(t0);
+                    if (point0.z > -1.0f && point0.z < 0.0f)
+                    {
+                        _dist = t0;
+                        pointFound = true;
+                    }
+                }
 
-            if ((r >= cylinderOrigin.y) && (r <= cylinderOrigin.y + _cylinderHeight))
-                return true;
-            else
-                return false;
-            */
+                if (t1 > 0.0f && t1 < _dist)
+                {
+                    Vec3DF point1 = localRay.getPoint(t1);
+                    if (point1.z > -1.0f && point1.z < 0.0f)
+                    {
+                        _dist = t1;
+                        pointFound = true;
+                    }
+                }
+
+            }
+
+            if (Abs(localRay.getDirection().z) > 0.00001f)
+            {
+                F32 t2 = (localRay.getPoint().z + 1) / -localRay.getDirection().z;
+                if (t2 > 0.0f && t2 < _dist)
+                {
+                    Vec3DF point2 = localRay.getPoint(t2);
+                    if (point2.x * point2.x + point2.y * point2.y < 1.0f)
+                    {
+                        _dist = t2;
+                        pointFound = true;
+                    }
+                }
+            }
+
+            return pointFound;
         }
 
     } // namespace Math
