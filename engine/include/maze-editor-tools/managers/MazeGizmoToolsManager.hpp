@@ -47,6 +47,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(GizmoToolsManager);
     MAZE_USING_SHARED_PTR(Canvas);
+    MAZE_USING_SHARED_PTR(GizmoTool);
     
 
     //////////////////////////////////////////
@@ -84,9 +85,6 @@ namespace Maze
         ////////////////////////////////////////// 
         virtual void update(F32 _dt) MAZE_OVERRIDE;
 
-
-        //////////////////////////////////////////
-        void updateTranslation(Mat4DF& _mat);
     
         //////////////////////////////////////////
         void notifyCanvasChanged(CanvasPtr const& _canvas);
@@ -104,12 +102,30 @@ namespace Maze
         void notifyCursorMoveIn(Vec2DF const& _positionOS, CursorInputEvent const& _event);
 
         //////////////////////////////////////////
+        void notifyCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _event);
+
+        //////////////////////////////////////////
+        void notifyCursorReleaseIn(Vec2DF const& _positionOS, CursorInputEvent const& _event);
+
+        //////////////////////////////////////////
+        void notifyCursorReleaseOut(CursorInputEvent const& _event);
+
+        //////////////////////////////////////////
         void processCursorMove(Vec2DF const& _positionOS);
+
+        //////////////////////////////////////////
+        void processCursorPressIn(Vec2DF const& _positionOS);
+
+        //////////////////////////////////////////
+        void processCursorRelease();
 
     protected:
         static GizmoToolsManager* s_instance;
 
+        GizmoToolPtr m_gizmoTool;
+
         Vec2DF m_cursorPos = Vec2DF::c_zero;
+        // S32 m_usingAxis = -1;
     };
 
 } // namespace Maze

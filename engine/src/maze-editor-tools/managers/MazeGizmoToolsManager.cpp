@@ -47,6 +47,8 @@
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 #include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
+#include "maze-editor-tools/gizmo-tools/MazeGizmoTool.hpp"
+#include "maze-editor-tools/gizmo-tools/MazeGizmoToolTranslation.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 
 
@@ -94,6 +96,8 @@ namespace Maze
         if (GizmosManager::GetInstancePtr()->getCanvas())
             subscribeCanvas(GizmosManager::GetInstancePtr()->getCanvas());
 
+        m_gizmoTool = GizmoToolTranslation::Create();
+
         return true;
     }
 
@@ -110,7 +114,12 @@ namespace Maze
                 if (transform)
                 {
                     Mat4DF mat = transform->getWorldTransform();
-                    updateTranslation(mat);
+                    if (m_gizmoTool)
+                    {
+                        m_gizmoTool->manipulate(mat, m_cursorPos);
+                        if (m_gizmoTool->isUsing())
+                            transform->setLocalTransform(mat);
+                    }
                 }
             }
         }
@@ -151,154 +160,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmoToolsManager::updateTranslation(Mat4DF& _mat)
-    {
-        Camera3DPtr const& camera = GizmosManager::GetInstancePtr()->getCamera();
-        if (!camera)
-            return;
-
-        Vec3DF const& cameraWorldPosition = camera->getTransform()->getWorldPosition();
-
-        Vec3DF right = { _mat[0][0], _mat[1][0], _mat[2][0] };
-        Vec3DF up = { _mat[0][1], _mat[1][1], _mat[2][1] };
-        Vec3DF forward = { _mat[0][2], _mat[1][2], _mat[2][2] };
-        Vec3DF pos = { _mat[0][3], _mat[1][2], _mat[2][3] };
-
-        Vec3DF affineScale = _mat.getAffineScale();
-        
-        F32 cameraDistance = (pos - camera->getTransform()->getLocalPosition()).length();
-        F32 scale = cameraDistance * 0.08f;
-        Mat4DF transform =
-            _mat *
-            Mat4DF::CreateScaleMatrix(scale / affineScale);
-        Mat4DF basisTransform = transform;
-        basisTransform[0][3] = 0.0f;
-        basisTransform[1][3] = 0.0f;
-        basisTransform[2][3] = 0.0f;
-
-        GizmosDrawer::MeshRenderMode const renderMode = GizmosDrawer::MeshRenderMode::Transparent;
-
-        F32 const length = 2.0f;
-
-        auto drawAxis = [&](
-            ColorF128 const& _color,
-            Vec3DF const& _axis)
-        {
-            GizmosHelper::SetColor(_color);
-            
-            GizmosHelper::DrawCylinder(
-                _axis * length * 0.5f,
-                _axis,
-                0.015f,
-                length,
-                _color,
-                0.0f,
-                renderMode);
-            GizmosHelper::DrawCone(
-                _axis * length,
-                _axis,
-                0.135f,
-                0.475f,
-                _color,
-                0.0f,
-                renderMode);
-        };
-        
-        Ray ray = camera->convertViewportCoordsToRay(m_cursorPos);
-
-        auto checkAxis = [&](
-            Vec3DF const& _axis)
-        {
-            /*
-            GizmosHelper::DrawCylinder(
-                transform.transformAffine(_axis * length * 0.5f),
-                basisTransform.transformAffine(_axis).normalizedCopy(),
-                scale * 0.135f,
-                scale * length,
-                ColorF128::c_cyan,
-                0.0f,
-                renderMode);
-
-            GizmosHelper::DrawCone(
-                transform.transformAffine(_axis * length),
-                basisTransform.transformAffine(_axis).normalizedCopy(),
-                scale * 0.135f,
-                scale * 0.475f,
-                ColorF128::c_cyan,
-                0.0f,
-                renderMode);
-            */
-
-            F32 dist = 0.0;            
-            if (Math::RaycastCylinder(
-                ray.getPoint(),
-                ray.getDirection(),
-                transform.transformAffine(_axis * length * 0.5f),
-                basisTransform.transformAffine(_axis).normalizedCopy(),
-                scale * 0.135f,
-                scale * length,
-                dist))
-                return true;
-            if (Math::RaycastCone(
-                ray.getPoint(),
-                ray.getDirection(),
-                transform.transformAffine(_axis * length),
-                basisTransform.transformAffine(_axis).normalizedCopy(),
-                scale * 0.135f,
-                scale * 0.475f,
-                dist))
-                return true;
-            return false;
-        };
-
-        S32 selectedAxis = -1;
-        auto drawX = [&]() { drawAxis(selectedAxis == 0 ? ColorF128::c_yellow : ColorF128::c_red, Vec3DF::c_unitX); };
-        auto drawY = [&]() { drawAxis(selectedAxis == 1 ? ColorF128::c_yellow : ColorF128::c_green, Vec3DF::c_unitY); };
-        auto drawZ = [&]() { drawAxis(selectedAxis == 2 ? ColorF128::c_yellow : ColorF128::c_blue, Vec3DF::c_unitZ); };
-
-        auto checkX = [&]() { return checkAxis(Vec3DF::c_unitX); };
-        auto checkY = [&]() { return checkAxis(Vec3DF::c_unitY); };
-        auto checkZ = [&]() { return checkAxis(Vec3DF::c_unitZ); };
-        
-        struct Axis
-        {
-            S32 index = -1;
-            F32 sqDist = 0.0f;
-            std::function<void()> drawFunc;
-            std::function<bool()> checkFunc;
-        };
-
-        Vector<Axis> drawFuncs =
-        {
-            {0, (pos + right).squaredDistance(cameraWorldPosition), drawX, checkX},
-            {1, (pos + up).squaredDistance(cameraWorldPosition), drawY, checkY},
-            {2, (pos + forward).squaredDistance(cameraWorldPosition), drawZ, checkZ}
-        };
-        std::sort(
-            drawFuncs.begin(),
-            drawFuncs.end(),
-            [](Axis const& _a, Axis const& _b)
-            {
-                return _a.sqDist > _b.sqDist;
-            });
-
-        for (auto it = drawFuncs.rbegin(), end = drawFuncs.rend(); it != end; ++it)
-        {
-            if (it->checkFunc())
-            {
-                selectedAxis = it->index;
-                break;
-            }
-        }
-
-
-        GizmosHelper::PushTransform(transform);
-        for (auto drawFunc : drawFuncs)
-            drawFunc.drawFunc();
-        GizmosHelper::PopTransform();
-    }
-
-    //////////////////////////////////////////
     void GizmoToolsManager::notifyCanvasChanged(CanvasPtr const& _canvas)
     {
         subscribeCanvas(_canvas);
@@ -318,6 +179,9 @@ namespace Maze
 
         UIElement2DPtr element = _canvas->getEntityRaw()->ensureComponent<UIElement2D>();
         element->eventCursorMoveIn.subscribe(this, &GizmoToolsManager::notifyCursorMoveIn);
+        element->eventCursorPressIn.subscribe(this, &GizmoToolsManager::notifyCursorPressIn);
+        element->eventCursorReleaseIn.subscribe(this, &GizmoToolsManager::notifyCursorReleaseIn);
+        element->eventCursorReleaseOut.subscribe(this, &GizmoToolsManager::notifyCursorReleaseOut);
     }
 
     //////////////////////////////////////////
@@ -328,12 +192,33 @@ namespace Maze
 
         UIElement2DPtr element = _canvas->getEntityRaw()->ensureComponent<UIElement2D>();
         element->eventCursorMoveIn.unsubscribe(this);
+        element->eventCursorPressIn.unsubscribe(this);
+        element->eventCursorReleaseIn.unsubscribe(this);
+        element->eventCursorReleaseOut.unsubscribe(this);
     }
 
     //////////////////////////////////////////
     void GizmoToolsManager::notifyCursorMoveIn(Vec2DF const& _positionOS, CursorInputEvent const& _event)
     {
         processCursorMove(_positionOS);
+    }
+
+    //////////////////////////////////////////
+    void GizmoToolsManager::notifyCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _event)
+    {
+        processCursorPressIn(_positionOS);
+    }
+
+    //////////////////////////////////////////
+    void GizmoToolsManager::notifyCursorReleaseIn(Vec2DF const& _positionOS, CursorInputEvent const& _event)
+    {
+        processCursorRelease();
+    }
+
+    //////////////////////////////////////////
+    void GizmoToolsManager::notifyCursorReleaseOut(CursorInputEvent const& _event)
+    {
+        processCursorRelease();
     }
 
     //////////////////////////////////////////
@@ -344,6 +229,20 @@ namespace Maze
             return;
 
         m_cursorPos = _positionOS;
+    }
+
+    //////////////////////////////////////////
+    void GizmoToolsManager::processCursorPressIn(Vec2DF const& _positionOS)
+    {
+        if (m_gizmoTool)
+            m_gizmoTool->processCursorPress(_positionOS);
+    }
+
+    //////////////////////////////////////////
+    void GizmoToolsManager::processCursorRelease()
+    {
+        if (m_gizmoTool)
+            m_gizmoTool->processCursorRelease();
     }
 
 
