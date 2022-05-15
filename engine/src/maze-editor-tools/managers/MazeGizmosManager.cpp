@@ -121,7 +121,7 @@ namespace Maze
 
         auto startPosFunc = [&](Vec2DS const& _pos) { return (iconSize * _pos) + Vec2DS((_pos.x + 1) * gap, (_pos.y + 1) * gap); };
 
-        PixelSheet2D uiElementsSheet(Vec2DS(4, 4) * iconSize, PixelFormat::RGBA_U8);
+        PixelSheet2D uiElementsSheet(Vec2DS(8, 8) * iconSize, PixelFormat::RGBA_U8);
         uiElementsSheet.fill(ColorU32::c_transparent);
 
         m_gizmosElementsTexture = Texture2D::Create();
@@ -133,8 +133,7 @@ namespace Maze
 
         // Light Gizmo
         {
-            Vec2DS sheetPos(0, 1);
-
+            Vec2DS sheetPos(0, 0);
             Vec2DS startPos = startPosFunc(sheetPos);
 
             F32 const radius = 7.0f;
@@ -168,14 +167,13 @@ namespace Maze
 
             m_defaultGizmosSprites[(Size)DefaultGizmosSprite::LightGizmo] = Sprite::Create(
                 m_gizmosElementsTexture,
-                Vec2DF(iconSize * sheetPos),
+                (Vec2DF)startPos,
                 Vec2DF(iconSize, iconSize));
         }
 
         // Camera Gizmo
         {
-            Vec2DS sheetPos(1, 1);
-
+            Vec2DS sheetPos(1, 0);
             Vec2DS startPos = startPosFunc(sheetPos);
 
             uiElementsSheet.drawFilledRect(
@@ -202,7 +200,167 @@ namespace Maze
 
             m_defaultGizmosSprites[(Size)DefaultGizmosSprite::CameraGizmo] = Sprite::Create(
                 m_gizmosElementsTexture,
-                Vec2DF(iconSize * sheetPos),
+                (Vec2DF)startPos,
+                Vec2DF(iconSize, iconSize));
+        }
+
+        // GizmoToolTranslate
+        {
+            Vec2DS sheetPos(2, 0);
+            Vec2DS startPos = startPosFunc(sheetPos);
+
+            uiElementsSheet.drawFilledTriangle(
+                Vec2DS(3, 16) + startPos,
+                Vec2DS(7, 20) + startPos,
+                Vec2DS(7, 11) + startPos,
+                ColorU32::c_white);
+            uiElementsSheet.drawFilledTriangle(
+                Vec2DS(3, 15) + startPos,
+                Vec2DS(7, 20) + startPos,
+                Vec2DS(7, 11) + startPos,
+                ColorU32::c_white);
+            uiElementsSheet.drawFilledRect(
+                Vec2DS(8, 14) + startPos,
+                Vec2DS(5, 4),
+                ColorU32::c_white);
+
+            uiElementsSheet.drawFilledTriangle(
+                Vec2DS(28, 16) + startPos,
+                Vec2DS(24, 20) + startPos,
+                Vec2DS(24, 11) + startPos,
+                ColorU32::c_white);
+            uiElementsSheet.drawFilledTriangle(
+                Vec2DS(28, 15) + startPos,
+                Vec2DS(24, 20) + startPos,
+                Vec2DS(24, 11) + startPos,
+                ColorU32::c_white);
+            uiElementsSheet.drawFilledRect(
+                Vec2DS(19, 14) + startPos,
+                Vec2DS(5, 4),
+                ColorU32::c_white);
+
+            uiElementsSheet.drawFilledTriangle(
+                Vec2DS(11, 7) + startPos,
+                Vec2DS(20, 7) + startPos,
+                Vec2DS(15, 3) + startPos,
+                ColorU32::c_white);
+            uiElementsSheet.drawFilledTriangle(
+                Vec2DS(11, 7) + startPos,
+                Vec2DS(20, 7) + startPos,
+                Vec2DS(16, 3) + startPos,
+                ColorU32::c_white);
+            uiElementsSheet.drawFilledRect(
+                Vec2DS(14, 8) + startPos,
+                Vec2DS(4, 5),
+                ColorU32::c_white);
+
+            uiElementsSheet.drawFilledTriangle(
+                Vec2DS(10, 23) + startPos,
+                Vec2DS(21, 23) + startPos,
+                Vec2DS(15, 28) + startPos,
+                ColorU32::c_white);
+            uiElementsSheet.drawFilledTriangle(
+                Vec2DS(10, 23) + startPos,
+                Vec2DS(21, 23) + startPos,
+                Vec2DS(16, 28) + startPos,
+                ColorU32::c_white);
+            uiElementsSheet.drawFilledRect(
+                Vec2DS(14, 19) + startPos,
+                Vec2DS(4, 5),
+                ColorU32::c_white);
+
+            m_defaultGizmosSprites[(Size)DefaultGizmosSprite::GizmoToolTranslate] = Sprite::Create(
+                m_gizmosElementsTexture,
+                (Vec2DF)startPos,
+                Vec2DF(iconSize, iconSize));
+        }
+
+        // GizmoToolRotate
+        {
+            Vec2DS sheetPos(3, 0);
+            Vec2DS startPos = startPosFunc(sheetPos);
+
+            uiElementsSheet.drawFilledCircle(
+                Vec2DS(16, 16) + startPos,
+                11,
+                ColorU32::c_white);
+            uiElementsSheet.drawFilledCircle(
+                Vec2DS(16, 16) + startPos,
+                9,
+                ColorU32::c_zero);
+
+            uiElementsSheet.drawFilledRect(
+                Vec2DS(14, 5) + startPos,
+                Vec2DS(3, 2),
+                ColorU32::c_zero);
+            uiElementsSheet.drawFilledRect(
+                Vec2DS(16, 26) + startPos,
+                Vec2DS(3, 2),
+                ColorU32::c_zero);
+
+            uiElementsSheet.drawFilledTriangle(
+                Vec2DS(13, 4) + startPos,
+                Vec2DS(8, 4) + startPos,
+                Vec2DS(13, 9) + startPos,
+                ColorU32::c_white);
+
+            uiElementsSheet.drawFilledTriangle(
+                Vec2DS(19, 23) + startPos,
+                Vec2DS(19, 27) + startPos,
+                Vec2DS(23, 27) + startPos,
+                ColorU32::c_white);
+
+            m_defaultGizmosSprites[(Size)DefaultGizmosSprite::GizmoToolRotate] = Sprite::Create(
+                m_gizmosElementsTexture,
+                (Vec2DF)startPos,
+                Vec2DF(iconSize, iconSize));
+        }
+
+        // GizmoToolScale
+        {
+            Vec2DS sheetPos(4, 0);
+            Vec2DS startPos = startPosFunc(sheetPos);
+
+            uiElementsSheet.drawFilledRect(
+                Vec2DS(5, 5) + startPos,
+                Vec2DS(22, 22),
+                ColorU32::c_white);
+
+            uiElementsSheet.drawFilledRect(
+                Vec2DS(7, 7) + startPos,
+                Vec2DS(5, 5),
+                ColorU32::c_zero);
+
+            uiElementsSheet.drawFilledRect(
+                Vec2DS(7, 14) + startPos,
+                Vec2DS(18, 11),
+                ColorU32::c_zero);
+            uiElementsSheet.drawFilledRect(
+                Vec2DS(14, 7) + startPos,
+                Vec2DS(11, 7),
+                ColorU32::c_zero);
+
+            uiElementsSheet.drawFilledTriangle(
+                Vec2DS(15, 21) + startPos,
+                Vec2DS(21, 21) + startPos,
+                Vec2DS(21, 15) + startPos,
+                ColorU32::c_white);
+            uiElementsSheet.drawFilledRect(
+                Vec2DS(15, 15) + startPos,
+                Vec2DS(2, 2),
+                ColorU32::c_white);
+            uiElementsSheet.drawFilledRect(
+                Vec2DS(16, 16) + startPos,
+                Vec2DS(2, 2),
+                ColorU32::c_white);
+            uiElementsSheet.drawFilledRect(
+                Vec2DS(17, 17) + startPos,
+                Vec2DS(2, 2),
+                ColorU32::c_white);
+
+            m_defaultGizmosSprites[(Size)DefaultGizmosSprite::GizmoToolScale] = Sprite::Create(
+                m_gizmosElementsTexture,
+                (Vec2DF)startPos,
                 Vec2DF(iconSize, iconSize));
         }
 

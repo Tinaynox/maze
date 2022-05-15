@@ -27,6 +27,7 @@
 #include "MazeEditorToolsHeader.hpp"
 #include "maze-editor-tools/managers/MazeGizmoToolsManager.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
+#include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/helpers/MazeWindowHelper.hpp"
@@ -49,6 +50,8 @@
 #include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
 #include "maze-editor-tools/gizmo-tools/MazeGizmoTool.hpp"
 #include "maze-editor-tools/gizmo-tools/MazeGizmoToolTranslation.hpp"
+#include "maze-editor-tools/gizmo-tools/MazeGizmoToolScale.hpp"
+#include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 
 
@@ -77,6 +80,12 @@ namespace Maze
             GizmosManager::GetInstancePtr()->eventCanvasWillBeChanged.unsubscribe(this);
         }
 
+        if (SettingsManager::GetInstancePtr())
+        {
+            EditorToolsSettings* editorToolsSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
+            editorToolsSettings->getSelectedGizmoToolChangedEvent().unsubscribe(this);
+        }
+
         s_instance = nullptr;
     }
 
@@ -96,7 +105,11 @@ namespace Maze
         if (GizmosManager::GetInstancePtr()->getCanvas())
             subscribeCanvas(GizmosManager::GetInstancePtr()->getCanvas());
 
-        m_gizmoTool = GizmoToolTranslation::Create();
+
+        EditorToolsSettings* editorToolsSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
+        editorToolsSettings->getSelectedGizmoToolChangedEvent().subscribe(this, &GizmoToolsManager::notifySelectedGizmoToolChanged);
+
+        updateSelectedGizmoTool();
 
         return true;
     }
@@ -246,6 +259,27 @@ namespace Maze
     {
         if (m_gizmoTool)
             m_gizmoTool->processCursorRelease();
+    }
+
+    //////////////////////////////////////////
+    void GizmoToolsManager::notifySelectedGizmoToolChanged(GizmoToolType const& _tool)
+    {
+        updateSelectedGizmoTool();
+    }
+
+    //////////////////////////////////////////
+    void GizmoToolsManager::updateSelectedGizmoTool()
+    {
+        EditorToolsSettings* editorToolsSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
+
+        m_gizmoTool.reset();
+
+        switch (editorToolsSettings->getSelectedGizmoTool())
+        {
+            case GizmoToolType::Translate: m_gizmoTool = GizmoToolTranslation::Create(); break;
+            case GizmoToolType::Rotate: break;
+            case GizmoToolType::Scale: m_gizmoTool = GizmoToolScale::Create(); break;
+        }
     }
 
 

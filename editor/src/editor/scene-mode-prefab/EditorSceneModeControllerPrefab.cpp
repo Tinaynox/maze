@@ -83,6 +83,7 @@
 #include "maze-editor-tools/ecs/components/MazeDebugGridRenderer.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "Editor.hpp"
 #include "scenes/SceneEditor.hpp"
 #include "scenes/SceneWorkspaceTools.hpp"
@@ -306,29 +307,12 @@ namespace Maze
     {
         SceneMainToolsPtr const& scene = EditorManager::GetInstancePtr()->getSceneMainTools();
 
-        ToggleButton2DPtr button = UIHelper::CreateToggleButton(
-            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
-            Vec2DF(18.0f, 18.0f),
-            Vec2DF::c_zero,
-            _parent,
-            scene.get(),
-            Vec2DF::c_zero,
-            Vec2DF::c_zero,
-            { 200, 200, 200 },
-            { 187, 187, 187 },
-            { 161, 161, 161 },
-            { 171, 171, 171 },
-            { 151, 151, 151 });
-        button->setCheckByClick(false);
-
-        SpriteRenderer2DPtr sprite = SpriteHelper::CreateSprite(
+        ToggleButton2DPtr button = EditorToolsUIHelper::CreateDefaultToggleButton(
             _sprite,
-            Vec2DF(14.0f, 14.0f),
-            Vec2DF::c_zero,
-            nullptr,
-            button->getTransform(),
+            _spriteColor,
+            _parent,
             scene.get());
-        sprite->setColor(_spriteColor);
+        button->setCheckByClick(false);
 
         return button;
     }

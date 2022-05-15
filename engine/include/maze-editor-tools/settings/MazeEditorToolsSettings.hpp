@@ -38,6 +38,7 @@
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
 #include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
+#include "maze-editor-tools/gizmo-tools/MazeGizmoToolConfig.hpp"
 
 
 //////////////////////////////////////////
@@ -96,10 +97,20 @@ namespace Maze
         inline void switchPause() { setPause(!getPause()); }
 
 
+        //////////////////////////////////////////
+        void setSelectedGizmoTool(GizmoToolType _value) { m_selectedGizmoTool = _value; }
+
+        //////////////////////////////////////////
+        inline GizmoToolType getSelectedGizmoTool() const { return m_selectedGizmoTool.getValue(); }
+
+        //////////////////////////////////////////
+        inline MultiDelegate<GizmoToolType const&>& getSelectedGizmoToolChangedEvent() { return m_selectedGizmoTool.eventValueChanged; }
+
     protected:
 
         ObservableValue<bool> m_active = true;
         ObservableValue<bool> m_pause = false;
+        ObservableValue<GizmoToolType> m_selectedGizmoTool = GizmoToolType::Translate;
     };
 
 

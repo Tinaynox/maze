@@ -39,6 +39,7 @@
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/math/MazeMat4D.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
+#include "maze-editor-tools/gizmo-tools/MazeGizmoToolConfig.hpp"
 
 
 //////////////////////////////////////////
@@ -121,6 +122,12 @@ namespace Maze
 
         //////////////////////////////////////////
         void processCursorRelease();
+
+        //////////////////////////////////////////
+        void notifySelectedGizmoToolChanged(GizmoToolType const& _tool);
+
+        //////////////////////////////////////////
+        void updateSelectedGizmoTool();
 
     protected:
         static GizmoToolsManager* s_instance;

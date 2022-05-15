@@ -51,11 +51,13 @@
 #include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
+#include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/inspectors/entities/MazeComponentEditor.hpp"
 #include "maze-editor-tools/inspectors/entities/MazeEntitiesInspector.hpp"
 #include "maze-editor-tools/inspectors/asset-materials/MazeAssetMaterialsInspector.hpp"
 #include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "managers/EditorManager.hpp"
@@ -89,6 +91,7 @@ namespace Maze
         {
             EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
             debbugerSettings->getPauseChangedEvent().unsubscribe(this);
+            debbugerSettings->getSelectedGizmoToolChangedEvent().unsubscribe(this);
         }
 
         if (EditorManager::GetInstancePtr())
@@ -154,6 +157,45 @@ namespace Maze
         m_bodyBackground->setColor(EditorToolsLayout::c_bodyBackgroundColor);
         m_bodyBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>();
         
+
+        m_leftLayout = UIHelper::CreateHorizontalLayout(
+            HorizontalAlignment2D::Left,
+            VerticalAlignment2D::Middle,
+            m_bodyBackground->getTransform()->getSize(),
+            Vec2DF::c_zero,
+            m_bodyBackground->getTransform(),
+            getEntityRaw()->getECSScene(),
+            Vec2DF::c_zero,
+            Vec2DF::c_zero);
+        m_leftLayout->setAutoWidth(false);
+        m_leftLayout->setAutoHeight(false);
+        m_leftLayout->setSpacing(2.0f);
+
+        SpritePtr gizmoToolsSprites[GizmoToolType::MAX] = 
+        {
+            nullptr,
+            GizmosManager::GetInstancePtr()->getDefaultGizmosSprite(DefaultGizmosSprite::GizmoToolTranslate),
+            GizmosManager::GetInstancePtr()->getDefaultGizmosSprite(DefaultGizmosSprite::GizmoToolRotate),
+            GizmosManager::GetInstancePtr()->getDefaultGizmosSprite(DefaultGizmosSprite::GizmoToolScale)
+        };
+        for (GizmoToolType tool = GizmoToolType(1); tool < GizmoToolType::MAX; ++tool)
+        {
+            m_gizmoToolButtons[tool] = EditorToolsUIHelper::CreateDefaultToggleButton(
+                gizmoToolsSprites[tool],
+                ColorU32(85, 85, 85),
+                m_leftLayout->getTransform(),
+                getEntityRaw()->getECSScene(),
+                Vec2DF(16.0f, 16.0f));
+            m_gizmoToolButtons[tool]->setCheckByClick(false);
+            m_gizmoToolButtons[tool]->eventClick.subscribe(
+                [tool](Button2D* _button, CursorInputEvent const& _event)
+            {
+                EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
+                debbugerSettings->setSelectedGizmoTool(tool);
+            });
+        }
+    
+
         
         m_layout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Center,
@@ -170,19 +212,9 @@ namespace Maze
         m_layout->setSpacing(2.0f);
 
 
-        m_playButton = UIHelper::CreateToggleButton(
-            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
-            Vec2DF(18.0f, 18.0f),
-            Vec2DF::c_zero,
+        m_playButton = EditorToolsUIHelper::CreateDefaultToggleButton(
             m_layout->getTransform(),
-            getEntityRaw()->getECSScene(),
-            Vec2DF(0.5f, 0.5f),
-            Vec2DF(0.5f, 0.5f),
-            { 200, 200, 200 },
-            { 187, 187, 187 },
-            { 161, 161, 161 },
-            { 171, 171, 171 },
-            { 151, 151, 151 });
+            getEntityRaw()->getECSScene());
         m_playButton->setCheckByClick(false);
         m_playButton->eventClick.subscribe(
             [](Button2D* _button, CursorInputEvent const& _event)
@@ -199,19 +231,9 @@ namespace Maze
             getEntityRaw()->getECSScene())->setColor(85, 85, 85);
 
 
-        m_pauseButton = UIHelper::CreateToggleButton(
-            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
-            Vec2DF(18.0f, 18.0f),
-            Vec2DF::c_zero,
+        m_pauseButton = EditorToolsUIHelper::CreateDefaultToggleButton(
             m_layout->getTransform(),
-            getEntityRaw()->getECSScene(),
-            Vec2DF(0.5f, 0.5f),
-            Vec2DF(0.5f, 0.5f),
-            { 200, 200, 200 },
-            { 187, 187, 187 },
-            { 161, 161, 161 },
-            { 171, 171, 171 },
-            { 151, 151, 151 });
+            getEntityRaw()->getECSScene());
         m_pauseButton->setCheckByClick(false);
         m_pauseButton->eventClick.subscribe(
             [](Button2D* _button, CursorInputEvent const& _event)
@@ -227,18 +249,9 @@ namespace Maze
             m_pauseButton->getTransform(),
             getEntityRaw()->getECSScene())->setColor(85, 85, 85);
 
-        m_stepButton = UIHelper::CreateDefaultClickButton(
-            "",
-            Vec2DF(18.0f, 18.0f),
-            Vec2DF::c_zero,
+        m_stepButton = EditorToolsUIHelper::CreateDefaultClickButton(
             m_layout->getTransform(),
-            getEntityRaw()->getECSScene(),
-            Vec2DF(0.5f, 0.5f),
-            Vec2DF(0.5f, 0.5f));
-        m_stepButton->setNormalColor({ 200, 200, 200 });
-        m_stepButton->setFocusedColor({ 187, 187, 187 });
-        m_stepButton->setSelectedColor({ 161, 161, 161 });
-        m_stepButton->setPressedColor({ 171, 171, 171 });
+            getEntityRaw()->getECSScene());
         m_stepButton->eventClick.subscribe(
             [](Button2D* _button, CursorInputEvent const& _event)
             {
@@ -256,12 +269,30 @@ namespace Maze
 
         EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
         debbugerSettings->getPauseChangedEvent().subscribe(this, &EditorTopBarController::notifyPauseChanged);
+        debbugerSettings->getSelectedGizmoToolChangedEvent().subscribe(this, &EditorTopBarController::notifySelectedGizmoToolChanged);
     }
 
     //////////////////////////////////////////
     void EditorTopBarController::notifyPauseChanged(bool const& _value)
     {
         updateUI();
+    }
+
+    //////////////////////////////////////////
+    void EditorTopBarController::notifySelectedGizmoToolChanged(GizmoToolType const& _tool)
+    {
+        updateGizmoToolsButtons();
+    }
+
+    //////////////////////////////////////////
+    void EditorTopBarController::updateGizmoToolsButtons()
+    {
+        EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
+
+        for (GizmoToolType tool = GizmoToolType(1); tool < GizmoToolType::MAX; ++tool)
+        {
+            m_gizmoToolButtons[tool]->setChecked(debbugerSettings->getSelectedGizmoTool() == tool);
+        }
     }
 
     //////////////////////////////////////////
@@ -272,6 +303,8 @@ namespace Maze
             EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
             m_pauseButton->setChecked(debbugerSettings->getPause());
         }
+
+        updateGizmoToolsButtons();
     }
 
     //////////////////////////////////////////

@@ -32,11 +32,16 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_ENUMCLASS(GizmoToolType);
+
+
+    //////////////////////////////////////////
     F32 const GizmoToolConfig::c_cameraScalePerDistance = 0.08f;
     F32 const GizmoToolConfig::c_transformGizmoToolLength = 2.0f;
     F32 const GizmoToolConfig::c_transformGizmoToolArrowLineRadius = 0.015f;
     F32 const GizmoToolConfig::c_transformGizmoToolArrowConeRadius = 0.135f;
     F32 const GizmoToolConfig::c_transformGizmoToolArrowConeHeight = 0.475f;
+    F32 const GizmoToolConfig::c_transformGizmoToolArrowCubeSize = GizmoToolConfig::c_transformGizmoToolArrowConeRadius * 2.0f;
     ColorF128 const GizmoToolConfig::c_transformGizmoToolAxisXColor = ColorF128::c_red;
     ColorF128 const GizmoToolConfig::c_transformGizmoToolAxisYColor = ColorF128::c_green;
     ColorF128 const GizmoToolConfig::c_transformGizmoToolAxisZColor = ColorF128::c_blue;

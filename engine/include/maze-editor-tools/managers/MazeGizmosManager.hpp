@@ -57,6 +57,9 @@ namespace Maze
     {
         LightGizmo = 0,
         CameraGizmo,
+        GizmoToolTranslate,
+        GizmoToolRotate,
+        GizmoToolScale,
 
         MAX
     };

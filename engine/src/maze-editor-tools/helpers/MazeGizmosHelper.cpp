@@ -317,6 +317,20 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void DrawCube(
+            Vec3DF const& _position,
+            Vec3DF const& _forward,
+            Vec3DF const& _up,
+            Vec3DF const& _scale,
+            ColorF128 const& _color,
+            F32 _duration,
+            GizmosDrawer::MeshRenderMode _renderMode)
+        {
+            GetDrawer()->drawCube(
+                _position, _forward, _up, _scale, _color, _duration, _renderMode);
+        }
+
+        //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawSphere(
             Vec3DF const& _position,
             F32 _radius,

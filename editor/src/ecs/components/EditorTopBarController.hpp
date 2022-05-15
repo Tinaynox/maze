@@ -42,6 +42,7 @@
 #include "maze-ui/ecs/components/MazeToggleButton2D.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-editor-tools/inspectors/MazeInspector.hpp"
+#include "maze-editor-tools/gizmo-tools/MazeGizmoToolConfig.hpp"
 
 
 //////////////////////////////////////////
@@ -109,7 +110,13 @@ namespace Maze
         void notifyPauseChanged(bool const& _value);
 
         //////////////////////////////////////////
+        void notifySelectedGizmoToolChanged(GizmoToolType const& _tool);
+
+        //////////////////////////////////////////
         void notifyPlaytestModeEnabledChanged(bool _value);
+
+        //////////////////////////////////////////
+        void updateGizmoToolsButtons();
 
     protected:
         Canvas* m_canvas;
@@ -118,8 +125,10 @@ namespace Maze
 
         SpriteRenderer2DPtr m_bodyBackground;
 
-        HorizontalLayout2DPtr m_layout;
+        HorizontalLayout2DPtr m_leftLayout;
+        ToggleButton2DPtr m_gizmoToolButtons[GizmoToolType::MAX];
 
+        HorizontalLayout2DPtr m_layout;
         ToggleButton2DPtr m_playButton;
         ToggleButton2DPtr m_pauseButton;
         ClickButton2DPtr m_stepButton;

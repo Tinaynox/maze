@@ -57,6 +57,7 @@
 #include "maze-editor-tools/inspectors/entities/MazeEntitiesInspector.hpp"
 #include "maze-editor-tools/inspectors/asset-materials/MazeAssetMaterialsInspector.hpp"
 #include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
@@ -163,19 +164,9 @@ namespace Maze
         SizePolicy2DPtr layoutSizePolicy = m_layout->getEntityRaw()->ensureComponent<SizePolicy2D>();
         m_layout->setSpacing(2.0f);
 
-        m_pauseButton = UIHelper::CreateToggleButton(
-            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
-            Vec2DF(18.0f, 18.0f),
-            Vec2DF::c_zero,
+        m_pauseButton = EditorToolsUIHelper::CreateDefaultToggleButton(
             m_layout->getTransform(),
-            getEntityRaw()->getECSScene(),
-            Vec2DF(0.5f, 0.5f),
-            Vec2DF(0.5f, 0.5f),
-            { 200, 200, 200 },
-            { 187, 187, 187 },
-            { 161, 161, 161 },
-            { 171, 171, 171 },
-            { 151, 151, 151 });
+            getEntityRaw()->getECSScene());
         m_pauseButton->setCheckByClick(false);
         m_pauseButton->eventClick.subscribe(
             [](Button2D* _button, CursorInputEvent const& _event)
@@ -191,18 +182,9 @@ namespace Maze
             m_pauseButton->getTransform(),
             getEntityRaw()->getECSScene())->setColor(85, 85, 85);
 
-        m_stepButton = UIHelper::CreateDefaultClickButton(
-            "",
-            Vec2DF(18.0f, 18.0f),
-            Vec2DF::c_zero,
+        m_stepButton = EditorToolsUIHelper::CreateDefaultClickButton(
             m_layout->getTransform(),
-            getEntityRaw()->getECSScene(),
-            Vec2DF(0.5f, 0.5f),
-            Vec2DF(0.5f, 0.5f));
-        m_stepButton->setNormalColor({ 200, 200, 200 });
-        m_stepButton->setFocusedColor({ 187, 187, 187 });
-        m_stepButton->setSelectedColor({ 161, 161, 161 });
-        m_stepButton->setPressedColor({ 171, 171, 171 });
+            getEntityRaw()->getECSScene());
         m_stepButton->eventClick.subscribe(
             [](Button2D* _button, CursorInputEvent const& _event)
             {
