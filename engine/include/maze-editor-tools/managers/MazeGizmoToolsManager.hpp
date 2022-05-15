@@ -74,6 +74,9 @@ namespace Maze
         static inline GizmoToolsManager& GetInstance() { return *s_instance; }
 
 
+        //////////////////////////////////////////
+        virtual S32 getUpdatableOrder() const { return 20100; }
+
     protected:
 
         //////////////////////////////////////////
@@ -125,7 +128,6 @@ namespace Maze
         GizmoToolPtr m_gizmoTool;
 
         Vec2DF m_cursorPos = Vec2DF::c_zero;
-        // S32 m_usingAxis = -1;
     };
 
 } // namespace Maze

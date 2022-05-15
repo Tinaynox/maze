@@ -39,34 +39,6 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    /*
-    Vec3DF ProjectionPointOnPlane(Vec3DF const& _point, Vec3DF const& _planePoint, Vec3DF const& _planeNorm)
-    {
-        Vec3DF v = _point - _planePoint;
-        F32 dist = v.dotProduct(_planeNorm);
-
-        return _point - dist * _planeNorm;
-    }
-    */
-
-    //////////////////////////////////////////
-    inline Vec3DF ClosestPointOnLine(
-        Vec3DF const& _lineA,
-        Vec3DF const& _lineB,
-        Vec3DF const& _point)
-    {
-        Vec3DF c = _point - _lineA;
-        Vec3DF v = _lineB - _lineA;
-        float d = v.length();
-        v.normalize();
-        float t = v.dotProduct(c);
-
-        v *= t;
-
-        return (_lineA + v);
-    }
-
-    //////////////////////////////////////////
     GizmoToolTranslationPtr GizmoToolTranslation::Create()
     {
         return MAZE_CREATE_SHARED_PTR(GizmoToolTranslation);
@@ -205,56 +177,44 @@ namespace Maze
 
         if (m_usingAxis >= 0)
         {
-            if (m_startPositionSet)
-            {
-                m_startPosition = pos;
-                m_startPositionSet = false;
-            }
-
-            Ray startRay = camera->convertViewportCoordsToRay(m_startCursorPos);
-
             Vec3DF axis = basisTransform.transformAffine(getWorldAxis(m_usingAxis)).normalizedCopy();
 
-            Vec3DF norm0;
-            Vec3DF norm1;
-            F32 d0 = 0.0f;
-            F32 d1 = 0.0f;
+            Vec3DF norm;
+            F32 d = 0.0f;
             for (S32 i = 0; i < 3; ++i)
             {
                 if (m_usingAxis == i)
                     continue;
 
                 Vec3DF crossAxis = basisTransform.transformAffine(getWorldAxis(i)).normalizedCopy();
-                F32 dot = crossAxis.dotProduct(startRay.getDirection());
-                if (Math::Abs(dot) > d0)
+                F32 dot = crossAxis.dotProduct(ray.getDirection());
+                if (Math::Abs(dot) > d)
                 {
-                    d0 = dot;
-                    norm0 = crossAxis;
-                }
-                dot = crossAxis.dotProduct(ray.getDirection());
-                if (Math::Abs(dot) > d1)
-                {
-                    d1 = dot;
-                    norm1 = crossAxis;
+                    d = Math::Abs(dot);
+                    norm = crossAxis;
                 }
             }
 
-            F32 dist0;
-            F32 dist1;
-            if (Math::RaycastPlane(startRay.getPoint(), startRay.getDirection(), pos, norm0, dist0) &&
-                Math::RaycastPlane(ray.getPoint(), ray.getDirection(), pos, norm1, dist1))
+            F32 dist;
+            if (Math::RaycastPlane(ray.getPoint(), ray.getDirection(), pos, norm, dist))
             {
-                Vec3DF point0 = startRay.getPoint(dist0);
-                Vec3DF point1 = ray.getPoint(dist1);
+                Vec3DF point = ray.getPoint(dist);
+                point = Math::ClosestPointOnLine(pos, pos + axis, point);
 
-                point0 = ClosestPointOnLine(pos, pos + axis, point0);
-                point1 = ClosestPointOnLine(pos, pos + axis, point1);
+                if (m_useRequest)
+                {
+                    m_useRequest = false;
+                    m_startPosition = pos;
+                    m_startPoint = point;
+                }
+                else
+                {
+                    Vec3DF delta = point - m_startPoint;
 
-                Vec3DF delta = point1 - point0;
-
-                _mat[0][3] = m_startPosition.x + delta.x;
-                _mat[1][3] = m_startPosition.y + delta.y;
-                _mat[2][3] = m_startPosition.z + delta.z;
+                    _mat[0][3] = m_startPosition.x + delta.x;
+                    _mat[1][3] = m_startPosition.y + delta.y;
+                    _mat[2][3] = m_startPosition.z + delta.z;
+                }
             }
         }
         else
@@ -282,8 +242,7 @@ namespace Maze
         if (m_selectedAxis >= 0)
         {
             m_usingAxis = m_selectedAxis;
-            m_startCursorPos = _cursorPos;
-            m_startPositionSet = true;
+            m_useRequest = true;
         }
     }
 

@@ -196,6 +196,23 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        MAZE_CORE_API inline Vec3DF ClosestPointOnLine(
+            Vec3DF const& _lineA,
+            Vec3DF const& _lineB,
+            Vec3DF const& _point)
+        {
+            Vec3DF c = _point - _lineA;
+            Vec3DF v = _lineB - _lineA;
+            float d = v.length();
+            v.normalize();
+            float t = v.dotProduct(c);
+
+            v *= t;
+
+            return (_lineA + v);
+        }
+
+        //////////////////////////////////////////
         MAZE_CORE_API inline Vec3DF ClosestPointOnSegment(
             Vec3DF const& _segmentPointA,
             Vec3DF const& _segmentPointB,

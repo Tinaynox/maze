@@ -90,9 +90,9 @@ namespace Maze
         S32 m_selectedAxis = -1;
         S32 m_usingAxis = -1;
 
+        bool m_useRequest = false;
         Vec3DF m_startPosition = Vec3DF::c_zero;
-        bool m_startPositionSet = false;
-        Vec2DF m_startCursorPos = Vec2DF::c_zero;
+        Vec3DF m_startPoint = Vec3DF::c_zero;
     };
 
 
