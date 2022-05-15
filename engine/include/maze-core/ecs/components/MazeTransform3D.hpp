@@ -201,6 +201,9 @@ namespace Maze
         Mat4DF const& getWorldTransform();
 
         //////////////////////////////////////////
+        void setWorldTransform(Mat4DF const& _worldTransform);
+
+        //////////////////////////////////////////
         inline bool isWorldTransformDirty() { return m_flags & Flags::WorldTransformDirty; }
 
         //////////////////////////////////////////

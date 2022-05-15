@@ -213,6 +213,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void Transform3D::setWorldTransform(Mat4DF const& _transform)
+    {
+        if (m_parent)
+        {
+            Mat4DF localTransform = m_parent->getWorldTransform().inversedAffineCopy() * _transform;
+            setLocalTransform(localTransform);
+        }
+        else
+        {
+            setLocalTransform(_transform);
+        }
+    }
+
+    //////////////////////////////////////////
     Mat4DF const& Transform3D::calculateWorldTransform()
     {
         if (m_parent)

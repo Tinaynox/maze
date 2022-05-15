@@ -118,7 +118,7 @@ namespace Maze
                     {
                         m_gizmoTool->manipulate(mat, m_cursorPos);
                         if (m_gizmoTool->isUsing())
-                            transform->setLocalTransform(mat);
+                            transform->setWorldTransform(mat);
                     }
                 }
             }
