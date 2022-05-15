@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeGizmoToolTranslation_hpp_))
-#define _MazeGizmoToolTranslation_hpp_
+#if (!defined(_MazeGizmoToolConfig_hpp_))
+#define _MazeGizmoToolConfig_hpp_
 
 
 //////////////////////////////////////////
@@ -38,64 +38,38 @@
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
 #include "maze-core/math/MazeMat4D.hpp"
-#include "maze-editor-tools/gizmo-tools/MazeGizmoTool.hpp"
+#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-graphics/MazeColorF128.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(GizmoToolTranslation);
-
-
-    //////////////////////////////////////////
-    // Class GizmoToolTranslation
+    // Class GizmoToolConfig
     //
     //////////////////////////////////////////
-    class MAZE_EDITOR_TOOLS_API GizmoToolTranslation
-        : public GizmoTool
+    class MAZE_EDITOR_TOOLS_API GizmoToolConfig
     {
     public:
 
         //////////////////////////////////////////
-        virtual ~GizmoToolTranslation() = default;
-
-        //////////////////////////////////////////
-        static GizmoToolTranslationPtr Create();
-
-        //////////////////////////////////////////
-        virtual void manipulate(Mat4DF& _mat, Vec2DF const& _cursorPos) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void processCursorPress(Vec2DF const& _cursorPos) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void processCursorRelease() MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual bool isUsing() MAZE_OVERRIDE { return m_usingAxis >= 0; }
-
-    protected:
-
-        //////////////////////////////////////////
-        GizmoToolTranslation() = default;
-
-        //////////////////////////////////////////
-        Vec3DF getWorldAxis(S32 _axis);
-
-    protected:
-        S32 m_selectedAxis = -1;
-        S32 m_usingAxis = -1;
-
-        bool m_useRequest = false;
-        Vec3DF m_startPosition = Vec3DF::c_zero;
-        Vec3DF m_startPoint = Vec3DF::c_zero;
+        static F32 const c_cameraScalePerDistance;
+        static F32 const c_transformGizmoToolLength;
+        static F32 const c_transformGizmoToolArrowLineRadius;
+        static F32 const c_transformGizmoToolArrowConeRadius;
+        static F32 const c_transformGizmoToolArrowConeHeight;
+        static ColorF128 const c_transformGizmoToolAxisXColor;
+        static ColorF128 const c_transformGizmoToolAxisYColor;
+        static ColorF128 const c_transformGizmoToolAxisZColor;
+        static ColorF128 const c_transformGizmoToolAxisSelectedColor;
+        
     };
-
+    
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeGizmoToolTranslation_hpp_
+#endif // _MazeGizmoToolConfig_hpp_
 //////////////////////////////////////////

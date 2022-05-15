@@ -28,6 +28,7 @@
 #include "maze-editor-tools/gizmo-tools/MazeGizmoToolTranslation.hpp"
 #include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
+#include "maze-editor-tools/gizmo-tools/MazeGizmoToolConfig.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
@@ -61,7 +62,7 @@ namespace Maze
         Vec3DF affineScale = _mat.getAffineScale();
 
         F32 cameraDistance = (pos - camera->getTransform()->getLocalPosition()).length();
-        F32 scale = cameraDistance * 0.08f;
+        F32 scale = cameraDistance * GizmoToolConfig::c_cameraScalePerDistance;
         Mat4DF transform =
             _mat *
             Mat4DF::CreateScaleMatrix(scale / affineScale);
@@ -72,7 +73,7 @@ namespace Maze
 
         GizmosDrawer::MeshRenderMode const renderMode = GizmosDrawer::MeshRenderMode::Transparent;
 
-        F32 const length = 2.0f;
+        F32 const length = GizmoToolConfig::c_transformGizmoToolLength;
 
         auto drawAxis = [&](
             ColorF128 const& _color,
@@ -83,7 +84,7 @@ namespace Maze
             GizmosHelper::DrawCylinder(
                 _axis * length * 0.5f,
                 _axis,
-                0.015f,
+                GizmoToolConfig::c_transformGizmoToolArrowLineRadius,
                 length,
                 _color,
                 0.0f,
@@ -91,8 +92,8 @@ namespace Maze
             GizmosHelper::DrawCone(
                 _axis * length,
                 _axis,
-                0.135f,
-                0.475f,
+                GizmoToolConfig::c_transformGizmoToolArrowConeRadius,
+                GizmoToolConfig::c_transformGizmoToolArrowConeHeight,
                 _color,
                 0.0f,
                 renderMode);
@@ -107,7 +108,7 @@ namespace Maze
             GizmosHelper::DrawCylinder(
                 transform.transformAffine(_axis * length * 0.5f),
                 basisTransform.transformAffine(_axis).normalizedCopy(),
-                scale * 0.135f,
+                scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius,
                 scale * length,
                 ColorF128::c_cyan,
                 0.0f,
@@ -116,8 +117,8 @@ namespace Maze
             GizmosHelper::DrawCone(
                 transform.transformAffine(_axis * length),
                 basisTransform.transformAffine(_axis).normalizedCopy(),
-                scale * 0.135f,
-                scale * 0.475f,
+                scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius,
+                scale * GizmoToolConfig::c_transformGizmoToolArrowConeHeight,
                 ColorF128::c_cyan,
                 0.0f,
                 renderMode);
@@ -129,7 +130,7 @@ namespace Maze
                 ray.getDirection(),
                 transform.transformAffine(_axis * length * 0.5f),
                 basisTransform.transformAffine(_axis).normalizedCopy(),
-                scale * 0.135f,
+                scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius,
                 scale * length,
                 dist))
                 return true;
@@ -138,16 +139,16 @@ namespace Maze
                 ray.getDirection(),
                 transform.transformAffine(_axis * length),
                 basisTransform.transformAffine(_axis).normalizedCopy(),
-                scale * 0.135f,
-                scale * 0.475f,
+                scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius,
+                scale * GizmoToolConfig::c_transformGizmoToolArrowConeHeight,
                 dist))
                 return true;
             return false;
         };
 
-        auto drawX = [&]() { drawAxis(m_selectedAxis == 0 ? ColorF128::c_yellow : ColorF128::c_red, Vec3DF::c_unitX); };
-        auto drawY = [&]() { drawAxis(m_selectedAxis == 1 ? ColorF128::c_yellow : ColorF128::c_green, Vec3DF::c_unitY); };
-        auto drawZ = [&]() { drawAxis(m_selectedAxis == 2 ? ColorF128::c_yellow : ColorF128::c_blue, Vec3DF::c_unitZ); };
+        auto drawX = [&]() { drawAxis(m_selectedAxis == 0 ? GizmoToolConfig::c_transformGizmoToolAxisSelectedColor : GizmoToolConfig::c_transformGizmoToolAxisXColor, Vec3DF::c_unitX); };
+        auto drawY = [&]() { drawAxis(m_selectedAxis == 1 ? GizmoToolConfig::c_transformGizmoToolAxisSelectedColor : GizmoToolConfig::c_transformGizmoToolAxisYColor, Vec3DF::c_unitY); };
+        auto drawZ = [&]() { drawAxis(m_selectedAxis == 2 ? GizmoToolConfig::c_transformGizmoToolAxisSelectedColor : GizmoToolConfig::c_transformGizmoToolAxisZColor, Vec3DF::c_unitZ); };
 
         auto checkX = [&]() { return checkAxis(Vec3DF::c_unitX); };
         auto checkY = [&]() { return checkAxis(Vec3DF::c_unitY); };
@@ -264,36 +265,6 @@ namespace Maze
         }
 
         return Vec3DF::c_zero;
-    }
-
-    //////////////////////////////////////////
-    Vec3DF GizmoToolTranslation::getWorldAxisPerpendicular(Vec3DF const& _axis, Vec3DF const& _dir)
-    {
-        Vec3DF norm = _axis.normalizedCopy();
-
-        F32 const epsilon = 0.5f;
-        if (Math::Abs(norm.z) >= epsilon)
-        {
-            if (Math::Abs(Vec3DF(_axis.x, -_axis.z, _axis.y).dotProduct(_dir)) > 0.1f)
-                return Vec3DF(_axis.x, -_axis.z, _axis.y);
-            else
-                return Vec3DF(-_axis.z, _axis.y, _axis.x);
-        }
-        else
-        if (Math::Abs(norm.y) >= epsilon)
-        {
-            if (Math::Abs(Vec3DF(-_axis.y, _axis.x, _axis.z).dotProduct(_dir)) > 0.1f)
-                return Vec3DF(-_axis.y, _axis.x, _axis.z);
-            else
-                return Vec3DF(_axis.x, _axis.z, -_axis.y);
-        }
-        else
-        {
-            if (Math::Abs(Vec3DF(_axis.y, -_axis.x, _axis.z).dotProduct(_dir)) > 0.1f)
-                return Vec3DF(_axis.y, -_axis.x, _axis.z);
-            else
-                return Vec3DF(_axis.z, _axis.y, -_axis.x);
-        }
     }
 
 } // namespace Maze
