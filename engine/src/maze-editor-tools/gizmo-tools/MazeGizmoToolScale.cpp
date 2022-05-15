@@ -75,22 +75,29 @@ namespace Maze
 
         F32 const length = GizmoToolConfig::c_transformGizmoToolLength;
 
-        auto drawAxis = [&](
+        auto drawAxis = [&, this](
             ColorF128 const& _color,
             Vec3DF const& _axis)
         {
             GizmosHelper::SetColor(_color);
 
+            F32 len = length;
+            if (m_usingAxis >= 0)
+            {
+                // if (getWorldAxis(m_usingAxis) == _axis)
+                //     len += m_deltaLength / scale;
+            }
+
             GizmosHelper::DrawCylinder(
-                _axis * length * 0.5f,
+                _axis * len * 0.5f,
                 _axis,
                 GizmoToolConfig::c_transformGizmoToolArrowLineRadius,
-                length,
+                len,
                 _color,
                 0.0f,
                 renderMode);
             GizmosHelper::DrawCube(
-                _axis * (length + GizmoToolConfig::c_transformGizmoToolArrowCubeSize * 0.5f),
+                _axis * (len + GizmoToolConfig::c_transformGizmoToolArrowCubeSize * 0.5f),
                 _axis,
                 _axis.perpendicular(),
                 Vec3DF(GizmoToolConfig::c_transformGizmoToolArrowCubeSize),
@@ -212,6 +219,8 @@ namespace Maze
                 else
                 {
                     Vec3DF delta = point - m_startPoint;
+                    m_deltaLength = delta.dotProduct(axis);
+                    
                     Vec3DF startScaleInv(
                         m_startScale.x != 0.0f ? 1.0f / m_startScale.x : 0.0f,
                         m_startScale.y != 0.0f ? 1.0f / m_startScale.y : 0.0f,
@@ -256,6 +265,7 @@ namespace Maze
     {
         m_usingAxis = -1;
         m_selectedAxis = -1;
+        m_deltaLength = 0.0f;
     }
 
     //////////////////////////////////////////

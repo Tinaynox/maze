@@ -91,6 +91,7 @@ namespace Maze
         Vec3DF m_startScale = Vec3DF::c_zero;
         Mat4DF m_startTransform = Mat4DF::c_identity;
         Vec3DF m_startPoint = Vec3DF::c_zero;
+        F32 m_deltaLength = 0.0f;
     };
 
 
