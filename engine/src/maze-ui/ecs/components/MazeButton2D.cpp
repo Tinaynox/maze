@@ -77,6 +77,7 @@ namespace Maze
             m_UIElement2D->eventFocusChanged.unsubscribe(this);
             m_UIElement2D->eventPressedChanged.unsubscribe(this);
             m_UIElement2D->eventClick.unsubscribe(this);
+            m_UIElement2D->eventSingleClick.unsubscribe(this);
             m_UIElement2D->eventDoubleClick.unsubscribe(this);
         }
     }
@@ -99,6 +100,7 @@ namespace Maze
         m_UIElement2D->eventFocusChanged.subscribe(this, &Button2D::notifyFocusChanged);
         m_UIElement2D->eventPressedChanged.subscribe(this, &Button2D::notifyPressedChanged);
         m_UIElement2D->eventClick.subscribe(this, &Button2D::notifyClick);
+        m_UIElement2D->eventSingleClick.subscribe(this, &Button2D::notifySingleClick);
         m_UIElement2D->eventDoubleClick.subscribe(this, &Button2D::notifyDoubleClick);
     }
 
@@ -126,6 +128,12 @@ namespace Maze
     void Button2D::notifyClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         eventClick(this, _inputEvent);
+    }
+
+    //////////////////////////////////////////
+    void Button2D::notifySingleClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    {
+        eventSingleClick(this, _inputEvent);
     }
 
     //////////////////////////////////////////

@@ -156,6 +156,7 @@ namespace Maze
         MultiDelegate<bool> eventFocusChanged;
         MultiDelegate<bool> eventPressedChanged;
         MultiDelegate<Vec2DF const&, CursorInputEvent const&> eventClick;
+        MultiDelegate<Vec2DF const&, CursorInputEvent const&> eventSingleClick;
         MultiDelegate<Vec2DF const&, CursorInputEvent const&> eventDoubleClick;
 
         MultiDelegate<CursorWheelInputEvent const&> eventCursorWheel;

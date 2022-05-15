@@ -137,7 +137,7 @@ namespace Maze
         if (m_cursorIndex != -1 && m_cursorIndex != _inputEvent.index)
             return;
 
-        if (!eventClick.empty() || m_captureCursorHits)
+        if (!eventSingleClick.empty() || m_captureCursorHits)
         {
             Vec2DF const& positionWS = _inputEvent.position;
 
@@ -153,7 +153,7 @@ namespace Maze
             if (m_captureCursorHits)
                 _inputEvent.captureHit();
 
-            eventClick(positionOS, _inputEvent);
+            eventSingleClick(positionOS, _inputEvent);
         }
     }
 
@@ -195,7 +195,7 @@ namespace Maze
 
         setPressed(false);
 
-        if (!eventCursorReleaseIn.empty() || !eventPressedChanged.empty() || !eventCursorReleaseOut.empty()/* || !eventClick.empty()*/)
+        if (!eventCursorReleaseIn.empty() || !eventPressedChanged.empty() || !eventCursorReleaseOut.empty() || !eventClick.empty())
         {
             Vec2DF const& positionWS = _inputEvent.position;
 
@@ -216,12 +216,10 @@ namespace Maze
             {
                 eventCursorReleaseIn(positionOS, _inputEvent);
 
-                /*
                 if (m_focused)
                 {
-                    eventClick(_inputEvent);
+                    eventClick(positionOS, _inputEvent);
                 }
-                */
             }
         }
     }
