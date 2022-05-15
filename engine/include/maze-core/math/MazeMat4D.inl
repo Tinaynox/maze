@@ -861,44 +861,44 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR TValue Mat4D<TValue>::getAffineScaleX() const
+    inline MAZE_CONSTEXPR TValue Mat4D<TValue>::getAffineScaleXSignless() const
     {
         return Vec3D<TValue>(m[0][0], m[1][0], m[2][0]).length();
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR TValue Mat4D<TValue>::getAffineScaleY() const
+    inline MAZE_CONSTEXPR TValue Mat4D<TValue>::getAffineScaleYSignless() const
     {
         return Vec3D<TValue>(m[0][1], m[1][1], m[2][1]).length();
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR TValue Mat4D<TValue>::getAffineScaleZ() const
+    inline MAZE_CONSTEXPR TValue Mat4D<TValue>::getAffineScaleZSignless() const
     {
         return Vec3D<TValue>(m[0][2], m[1][2], m[2][2]).length();
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR Vec3D<TValue> Mat4D<TValue>::getAffineScale() const
+    inline MAZE_CONSTEXPR Vec3D<TValue> Mat4D<TValue>::getAffineScaleSignless() const
     {
-        return Vec3D<TValue>(getAffineScaleX(), getAffineScaleY(), getAffineScaleZ());
+        return Vec3D<TValue>(getAffineScaleXSignless(), getAffineScaleYSignless(), getAffineScaleZSignless());
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR Vec2D<TValue> Mat4D<TValue>::getAffineScale2D() const
+    inline MAZE_CONSTEXPR Vec2D<TValue> Mat4D<TValue>::getAffineScale2DSignless() const
     {
-        return Vec2D<TValue>(getAffineScaleX(), getAffineScaleY());
+        return Vec2D<TValue>(getAffineScaleXSignless(), getAffineScaleYSignless());
     }
 
     //////////////////////////////////////////
     template <class TValue>
     inline MAZE_CONSTEXPR Rotation2D Mat4D<TValue>::getAffineRotation2D() const 
     { 
-        return Rotation2D((F32)m[1][0] / getAffineScaleX(), (F32)m[0][0] / getAffineScaleX()); 
+        return Rotation2D((F32)m[1][0] / getAffineScaleXSignless(), (F32)m[0][0] / getAffineScaleXSignless());
     }
     
     //////////////////////////////////////////

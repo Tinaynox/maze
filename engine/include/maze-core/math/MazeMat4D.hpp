@@ -292,19 +292,19 @@ namespace Maze
         inline bool compareAffine(Mat4D const& _m2) const;
 
         //////////////////////////////////////////
-        inline MAZE_CONSTEXPR TValue getAffineScaleX() const;
+        inline MAZE_CONSTEXPR TValue getAffineScaleXSignless() const;
 
         //////////////////////////////////////////
-        inline MAZE_CONSTEXPR TValue getAffineScaleY() const;
+        inline MAZE_CONSTEXPR TValue getAffineScaleYSignless() const;
 
         //////////////////////////////////////////
-        inline MAZE_CONSTEXPR TValue getAffineScaleZ() const;
+        inline MAZE_CONSTEXPR TValue getAffineScaleZSignless() const;
 
         //////////////////////////////////////////
-        inline MAZE_CONSTEXPR Vec3D<TValue> getAffineScale() const;
+        inline MAZE_CONSTEXPR Vec3D<TValue> getAffineScaleSignless() const;
 
         //////////////////////////////////////////
-        inline MAZE_CONSTEXPR Vec2D<TValue> getAffineScale2D() const;
+        inline MAZE_CONSTEXPR Vec2D<TValue> getAffineScale2DSignless() const;
 
         //////////////////////////////////////////
         inline MAZE_CONSTEXPR Rotation2D getAffineRotation2D() const;

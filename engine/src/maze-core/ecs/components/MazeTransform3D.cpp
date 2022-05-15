@@ -171,7 +171,7 @@ namespace Maze
         //Vec3DF eulerAngles = m_localTransform.getAffineRotationEulerAngles();
         Vec3DF eulerAngles = Quaternion::GetEuler(m_localTransform);
         m_localRotation.setEulerAngles(eulerAngles);
-        m_localScale = m_localTransform.getAffineScale();
+        m_localScale = m_localTransform.getAffineScaleSignless();  // #TODO: Signed scale
 
         m_flags &= ~Flags::LocalTransformDirty;
         dirtyWorldTransform();

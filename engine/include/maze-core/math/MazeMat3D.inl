@@ -523,51 +523,51 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR TValue Mat3D<TValue>::getAffineScale2DX() const 
+    inline MAZE_CONSTEXPR TValue Mat3D<TValue>::getAffineScale2DXSignless() const
     { 
         return Vec2D<TValue>(m[0][0], m[1][0]).length(); 
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR TValue Mat3D<TValue>::getAffineScale2DY() const 
+    inline MAZE_CONSTEXPR TValue Mat3D<TValue>::getAffineScale2DYSignless() const
     { 
         return Vec2D<TValue>(m[0][1], m[1][1]).length(); 
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR Vec2D<TValue> Mat3D<TValue>::getAffineScale2D() const
+    inline MAZE_CONSTEXPR Vec2D<TValue> Mat3D<TValue>::getAffineScale2DSignless() const
     { 
-        return Vec2D<TValue>(getAffineScaleX(), getAffineScaleY()); 
+        return Vec2D<TValue>(getAffineScaleXSignless(), getAffineScaleYSignless());
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR TValue Mat3D<TValue>::getAffineScaleX() const
+    inline MAZE_CONSTEXPR TValue Mat3D<TValue>::getAffineScaleXSignless() const
     {
         return Vec3D<TValue>(m[0][0], m[1][0], m[2][0]).length();
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR TValue Mat3D<TValue>::getAffineScaleY() const
+    inline MAZE_CONSTEXPR TValue Mat3D<TValue>::getAffineScaleYSignless() const
     {
         return Vec3D<TValue>(m[0][1], m[1][1], m[2][1]).length();
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR TValue Mat3D<TValue>::getAffineScaleZ() const
+    inline MAZE_CONSTEXPR TValue Mat3D<TValue>::getAffineScaleZSignless() const
     {
         return Vec3D<TValue>(m[0][2], m[1][2], m[2][2]).length();
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR Vec3D<TValue> Mat3D<TValue>::getAffineScale() const
+    inline MAZE_CONSTEXPR Vec3D<TValue> Mat3D<TValue>::getAffineScaleSignless() const
     {
-        return Vec3D<TValue>(getAffineScaleX(), getAffineScaleY(), getAffineScaleZ());
+        return Vec3D<TValue>(getAffineScaleXSignless(), getAffineScaleYSignless(), getAffineScaleZSignless());
     }
 
     //////////////////////////////////////////

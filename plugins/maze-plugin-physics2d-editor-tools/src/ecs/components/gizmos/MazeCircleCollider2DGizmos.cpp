@@ -96,7 +96,7 @@ namespace Maze
             F32 radius = circleCollider->getRadius();
             Vec2DF offset = circleCollider->getOffset();
 
-            Vec2DF scale = transform3D->getWorldTransform().getAffineScale2D();
+            Vec2DF scale = transform3D->getWorldTransform().getAffineScale2DSignless();
             F32 maxScale = Math::Max(scale.x, scale.y);
 
             _drawer->setColor(ColorF128::c_green);

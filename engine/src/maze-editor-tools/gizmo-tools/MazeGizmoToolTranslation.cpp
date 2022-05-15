@@ -59,7 +59,7 @@ namespace Maze
         Vec3DF forward = { _mat[0][2], _mat[1][2], _mat[2][2] };
         Vec3DF pos = { _mat[0][3], _mat[1][3], _mat[2][3] };
 
-        Vec3DF affineScale = _mat.getAffineScale();
+        Vec3DF affineScale = _mat.getAffineScaleSignless(); // #TODO: Signed scale!
 
         F32 cameraDistance = (pos - camera->getTransform()->getLocalPosition()).length();
         F32 scale = cameraDistance * GizmoToolConfig::c_cameraScalePerDistance;

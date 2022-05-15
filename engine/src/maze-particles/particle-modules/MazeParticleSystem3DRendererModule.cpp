@@ -277,12 +277,12 @@ namespace Maze
                 (F32)0, (F32)0, (F32)0, (F32)1);*/
 
         // PS Scale
-        Vec3DF particleSystemWorldScale = _particleSystemWorldTransform.getAffineScale();
+        Vec3DF particleSystemWorldScale = _particleSystemWorldTransform.getAffineScaleSignless();
 
         Mat4DF scaleMatrix;
         if (_scalingMode == ParticleSystemScalingMode::Local)
         {
-            Vec3DF particleSystemLocalScale = _particleSystemLocalTransform.getAffineScale();
+            Vec3DF particleSystemLocalScale = _particleSystemLocalTransform.getAffineScaleSignless();
             scaleMatrix = Mat4DF::CreateScaleMatrix(particleSystemLocalScale);
         }
         else
