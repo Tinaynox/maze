@@ -121,15 +121,15 @@ namespace Maze
                 0.0f,
                 renderMode);
 
-            GizmosHelper::DrawCone(
-                transform.transformAffine(_axis * length),
+            GizmosHelper::DrawCube(
+                transform.transformAffine(_axis * (length + GizmoToolConfig::c_transformGizmoToolArrowCubeSize * 0.5f)),
                 basisTransform.transformAffine(_axis).normalizedCopy(),
-                scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius,
-                scale * GizmoToolConfig::c_transformGizmoToolArrowConeHeight,
+                basisTransform.transformAffine(_axis.perpendicular()).normalizedCopy(),
+                Vec3DF(scale * GizmoToolConfig::c_transformGizmoToolArrowCubeSize),
                 ColorF128::c_cyan,
                 0.0f,
                 renderMode);
-            */
+            */            
 
             F32 dist = 0.0;
             if (Math::RaycastCylinder(
@@ -141,13 +141,13 @@ namespace Maze
                 scale * length,
                 dist))
                 return true;
-            if (Math::RaycastCone(
+            if (Math::RaycastCube(
                 ray.getPoint(),
                 ray.getDirection(),
-                transform.transformAffine(_axis * length),
+                transform.transformAffine(_axis * (length + GizmoToolConfig::c_transformGizmoToolArrowCubeSize * 0.5f)),
                 basisTransform.transformAffine(_axis).normalizedCopy(),
-                scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius,
-                scale * GizmoToolConfig::c_transformGizmoToolArrowConeHeight,
+                basisTransform.transformAffine(_axis.perpendicular()).normalizedCopy(),
+                Vec3DF(scale * GizmoToolConfig::c_transformGizmoToolArrowCubeSize),
                 dist))
                 return true;
             return false;

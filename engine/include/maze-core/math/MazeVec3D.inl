@@ -708,12 +708,12 @@ namespace Maze
 
         TValue const epsilon = 0.5f;
         if (Math::Abs(norm.z) < epsilon)
-            return Vec3D(-y, x, z);
+            return Vec3D(-y, x, z).crossProduct(*this);
         else
         if (Math::Abs(norm.y) < epsilon)
-            return Vec3D(-z, y, x);
+            return Vec3D(-z, y, x).crossProduct(*this);
         else
-            return Vec3D(x, -z, y);
+            return Vec3D(x, -z, y).crossProduct(*this);
     }
     
     //////////////////////////////////////////

@@ -247,7 +247,7 @@ namespace Maze
             Vec3DF const& _up,
             Vec3DF const& _scale,
             ColorF128 const& _color,
-            F32 _duration,
+            F32 _duration = 0.0f,
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
         //////////////////////////////////////////

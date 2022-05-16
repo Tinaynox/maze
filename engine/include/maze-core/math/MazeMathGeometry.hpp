@@ -253,6 +253,16 @@ namespace Maze
             F32& _dist);
 
         //////////////////////////////////////////
+        MAZE_CORE_API bool RaycastCube(
+            Vec3DF const& _rayPoint,
+            Vec3DF const& _rayDirection,
+            Vec3DF const& _cubeCenter,
+            Vec3DF const& _cubeForward,
+            Vec3DF const& _cubeUp,
+            Vec3DF const& _cubeScale,
+            F32& _dist);
+
+        //////////////////////////////////////////
         MAZE_CORE_API bool RaycastSphere(
             Vec3DF const& _rayPoint,
             Vec3DF const& _rayDirection,

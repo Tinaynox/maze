@@ -57,6 +57,105 @@ namespace Maze
         };
 
         //////////////////////////////////////////
+        MAZE_CORE_API bool RaycastCube(
+            Vec3DF const& _rayPoint,
+            Vec3DF const& _rayDirection,
+            Vec3DF const& _cubeCenter,
+            Vec3DF const& _cubeForward,
+            Vec3DF const& _cubeUp,
+            Vec3DF const& _cubeScale,
+            F32& _dist)
+        {
+            Vec3DF cubeRight = _cubeUp.crossProduct(_cubeForward).normalizedCopy();
+            Mat4DF cubeTransform = 
+                Mat4DF::CreateChangeOfBasisMatrix(cubeRight, _cubeUp, _cubeForward) *
+                Mat4DF::CreateScaleMatrix(_cubeScale * 0.5f);
+            cubeTransform = cubeTransform.inversedAffineCopy();
+
+            Ray localRay(
+                cubeTransform.transformAffine(_rayPoint - _cubeCenter),
+                cubeTransform.transformAffine(_rayDirection));
+
+            Vec3DF const& a = localRay.getPoint();
+            Vec3DF const& k = localRay.getDirection();
+            
+            F32 t[6];
+            F32 u[6];
+            F32 v[6];
+
+            // Front and back
+            if (Abs(k.z) > 0.000001f)
+            {
+                t[0] = (a.z - 1.0f) / -k.z;
+                t[1] = (a.z + 1.0f) / -k.z;
+                u[0] = a.x + k.x * t[0];
+                v[0] = a.y + k.y * t[0];
+                u[1] = a.x + k.x * t[1];
+                v[1] = a.y + k.y * t[1];
+            }
+            else
+            {
+                t[0] = t[1] = 100e6;
+                u[0] = v[0] = u[1] = v[1] = 0.0f;
+            }
+
+            // Left and Right
+            if (Abs(k.x) > 0.000001f)
+            {
+                t[2] = (a.x - 1.0f) / -k.x;
+                t[3] = (a.x + 1.0f) / -k.x;
+                u[2] = a.z + k.z * t[2];
+                v[2] = a.y + k.y * t[2];
+                u[3] = a.z + k.z * t[3];
+                v[3] = a.y + k.y * t[3];
+            }
+            else
+            {
+                t[2] = t[3] = 100e6;
+                u[2] = v[2] = u[3] = v[3] = 0.0f;
+            }
+
+            // Top and Bottom
+            if (Abs(k.y) > 0.000001f)
+            {
+                t[4] = (a.y - 1.0f) / -k.y;
+                t[5] = (a.y + 1.0f) / -k.y;
+                u[4] = a.x + k.x * t[4];
+                v[4] = a.z + k.z * t[4];
+                u[5] = a.x + k.x * t[5];
+                v[5] = a.z + k.z * t[5];
+            }
+            else
+            {
+                t[4] = t[5] = 100e6;
+                u[4] = v[4] = u[5] = v[5] = 0.0f;
+            }
+
+            F32 finalU = 0.0f;
+            F32 finalV = 0.0f;
+            F32 finalT = 100e6;
+            S32 finalIndex = -1;
+            for (S32 i = 0; i < 6; ++i)
+            {
+                if ((t[i] < finalT) && (t[i] > 0.0f) && (Math::Abs(u[i]) <= 1.0f) && (Math::Abs(v[i]) <= 1.0))
+                {
+                    finalT = t[i];
+                    finalIndex = i;
+                    finalU = u[i];
+                    finalV = v[i];
+                }
+            }
+
+            if (finalIndex >= 0)
+            {
+                _dist = finalT;
+                return true;
+            }
+
+            return false;
+        }
+
+        //////////////////////////////////////////
         MAZE_CORE_API bool RaycastSphere(
             Vec3DF const& _rayPoint,
             Vec3DF const& _rayDirection,
@@ -100,8 +199,8 @@ namespace Maze
             F32 cylinderHalfHeight = _cylinderHeight * 0.5f;
 
             Vec3DF _cylinderUp = _cylinderForward.perpendicular();
-            Vec3DF _cylinderRight = _cylinderUp.crossProduct(_cylinderForward).normalizedCopy();
-            Mat4DF cylinderTransform = Mat4DF::CreateChangeOfBasisMatrix(_cylinderRight, _cylinderUp, _cylinderForward).inversedAffineCopy();
+            Vec3DF cylinderRight = _cylinderUp.crossProduct(_cylinderForward).normalizedCopy();
+            Mat4DF cylinderTransform = Mat4DF::CreateChangeOfBasisMatrix(cylinderRight, _cylinderUp, _cylinderForward).inversedAffineCopy();
 
             Ray localRay(
                 cylinderTransform.transformAffine(_rayPoint - _cylinderCenter),
@@ -181,10 +280,10 @@ namespace Maze
             F32 _coneHeight,
             F32& _dist)
         {
-            Vec3DF _coneUp = _coneForward.perpendicular();
-            Vec3DF _coneRight = _coneUp.crossProduct(_coneForward).normalizedCopy();
+            Vec3DF coneUp = _coneForward.perpendicular();
+            Vec3DF coneRight = coneUp.crossProduct(_coneForward).normalizedCopy();
             Mat4DF coneTransform =
-                Mat4DF::CreateChangeOfBasisMatrix(_coneRight, _coneUp, _coneForward) *
+                Mat4DF::CreateChangeOfBasisMatrix(coneRight, coneUp, _coneForward) *
                 Mat4DF::CreateScaleMatrix(_coneRadius, _coneRadius, _coneHeight);
             coneTransform = coneTransform.inversedAffineCopy();
             
