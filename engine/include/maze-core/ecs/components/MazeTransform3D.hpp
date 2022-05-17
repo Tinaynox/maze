@@ -211,6 +211,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        Vec3DF getWorldScale() const;
+
+
+        //////////////////////////////////////////
         inline Vec3DF getWorldForwardDirection()
         {
             Mat4DF mat = getWorldTransform();

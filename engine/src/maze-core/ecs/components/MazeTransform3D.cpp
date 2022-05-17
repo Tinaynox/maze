@@ -240,6 +240,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    Vec3DF Transform3D::getWorldScale() const
+    {
+        if (m_parent)
+            return m_localScale * m_parent->getWorldScale();
+        else
+            return m_localScale;
+    }
+
+    //////////////////////////////////////////
     void Transform3D::setParent(Transform3DPtr const& _parent)
     {
         if (m_parent == _parent)

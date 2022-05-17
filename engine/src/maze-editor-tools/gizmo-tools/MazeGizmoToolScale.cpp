@@ -223,23 +223,22 @@ namespace Maze
                 if (m_useRequest)
                 {
                     m_useRequest = false;
-                    m_startScale = affineScale;
+                    m_startScale = entityTransform->getLocalScale();
                     m_startTransform = mat;
                     m_startPoint = point;
                 }
                 else
                 {
+                    
                     Vec3DF delta = point - m_startPoint;
                     m_deltaLength = delta.dotProduct(axis);
-                    
-                    Vec3DF startScaleInv(
-                        m_startScale.x != 0.0f ? 1.0f / m_startScale.x : 0.0f,
-                        m_startScale.y != 0.0f ? 1.0f / m_startScale.y : 0.0f,
-                        m_startScale.z != 0.0f ? 1.0f / m_startScale.z : 0.0f);
-                    Vec3DF newScale = (delta + m_startScale) * startScaleInv;
+                   
+                    Vec3DF parentWorldScale = entityTransform->getParent() ? entityTransform->getParent()->getWorldScale()
+                                                                           : Vec3DF::c_one;
+                    Vec3DF newWorldScale = m_deltaLength * getWorldAxis(m_usingAxis) + parentWorldScale * m_startScale;
 
-                    mat = m_startTransform * Mat4DF::CreateScaleMatrix(newScale);
-                    entityTransform->setWorldTransform(mat);
+                    Vec3DF newLocalScale = newWorldScale / parentWorldScale;
+                    entityTransform->setLocalScale(newLocalScale);
                 }
             }
         }
