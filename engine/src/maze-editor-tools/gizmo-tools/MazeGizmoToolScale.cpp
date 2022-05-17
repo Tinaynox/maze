@@ -117,6 +117,18 @@ namespace Maze
                 renderMode);
         };
 
+        auto drawCenterAll = [&, this](ColorF128 const& _color)
+        {
+            GizmosHelper::DrawCube(
+                Vec3DF(GizmoToolConfig::c_transformGizmoToolArrowCubeSize * 0.5f),
+                Vec3DF::c_unitZ,
+                Vec3DF::c_unitY,
+                Vec3DF(GizmoToolConfig::c_transformGizmoToolArrowCubeSize),
+                _color,
+                0.0f,
+                renderMode);
+        };
+
         Ray ray = camera->convertViewportCoordsToRay(_cursorPos);
 
         auto checkAxis = [&](
@@ -143,15 +155,26 @@ namespace Maze
             */            
 
             F32 dist = 0.0;
-            if (Math::RaycastCylinder(
+            if (!Math::RaycastCube(
                 ray.getPoint(),
                 ray.getDirection(),
-                transform.transformAffine(_axis * length * 0.5f),
-                basisTransform.transformAffine(_axis).normalizedCopy(),
-                scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius,
-                scale * length,
+                transform.transformAffine(Vec3DF(GizmoToolConfig::c_transformGizmoToolArrowCubeSize * 0.5f)),
+                basisTransform.transformAffine(Vec3DF::c_unitZ).normalizedCopy(),
+                basisTransform.transformAffine(Vec3DF::c_unitY).normalizedCopy(),
+                Vec3DF(scale * GizmoToolConfig::c_transformGizmoToolArrowCubeSize),
                 dist))
-                return true;
+            {
+                if (Math::RaycastCylinder(
+                    ray.getPoint(),
+                    ray.getDirection(),
+                    transform.transformAffine(_axis * length * 0.5f),
+                    basisTransform.transformAffine(_axis).normalizedCopy(),
+                    scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius,
+                    scale * length,
+                    dist))
+                    return true;
+            }
+
             if (Math::RaycastCube(
                 ray.getPoint(),
                 ray.getDirection(),
@@ -164,9 +187,25 @@ namespace Maze
             return false;
         };
 
+        auto checkC = [&]()
+        {
+            F32 dist = 0.0;
+            if (Math::RaycastCube(
+                ray.getPoint(),
+                ray.getDirection(),
+                transform.transformAffine(Vec3DF(GizmoToolConfig::c_transformGizmoToolArrowCubeSize * 0.5f)),
+                basisTransform.transformAffine(Vec3DF::c_unitZ).normalizedCopy(),
+                basisTransform.transformAffine(Vec3DF::c_unitY).normalizedCopy(),
+                Vec3DF(scale * GizmoToolConfig::c_transformGizmoToolArrowCubeSize),
+                dist))
+                return true;
+            return false;
+        };
+
         auto drawX = [&]() { drawAxis(m_selectedAxis == 0 ? GizmoToolConfig::c_transformGizmoToolAxisSelectedColor : GizmoToolConfig::c_transformGizmoToolAxisXColor, Vec3DF::c_unitX); };
         auto drawY = [&]() { drawAxis(m_selectedAxis == 1 ? GizmoToolConfig::c_transformGizmoToolAxisSelectedColor : GizmoToolConfig::c_transformGizmoToolAxisYColor, Vec3DF::c_unitY); };
         auto drawZ = [&]() { drawAxis(m_selectedAxis == 2 ? GizmoToolConfig::c_transformGizmoToolAxisSelectedColor : GizmoToolConfig::c_transformGizmoToolAxisZColor, Vec3DF::c_unitZ); };
+        auto drawC = [&]() { drawCenterAll(m_selectedAxis == 3 ? GizmoToolConfig::c_transformGizmoToolAxisSelectedColor : ColorF128::c_lightGray); };
 
         auto checkX = [&]() { return checkAxis(Vec3DF::c_unitX); };
         auto checkY = [&]() { return checkAxis(Vec3DF::c_unitY); };
@@ -184,7 +223,8 @@ namespace Maze
         {
             {0, (pos + right).squaredDistance(cameraWorldPosition), drawX, checkX},
             {1, (pos + up).squaredDistance(cameraWorldPosition), drawY, checkY},
-            {2, (pos + forward).squaredDistance(cameraWorldPosition), drawZ, checkZ}
+            {2, (pos + forward).squaredDistance(cameraWorldPosition), drawZ, checkZ},
+            {3, (pos).squaredDistance(cameraWorldPosition), drawC, checkC}
         };
         std::sort(
             drawFuncs.begin(),
@@ -196,21 +236,26 @@ namespace Maze
 
         if (m_usingAxis >= 0)
         {
-            Vec3DF axis = basisTransform.transformAffine(getWorldAxis(m_usingAxis)).normalizedCopy();
-
             Vec3DF norm;
-            F32 d = 0.0f;
-            for (S32 i = 0; i < 3; ++i)
+            if (m_usingAxis == 3)
             {
-                if (m_usingAxis == i)
-                    continue;
-
-                Vec3DF crossAxis = basisTransform.transformAffine(getWorldAxis(i)).normalizedCopy();
-                F32 dot = crossAxis.dotProduct(ray.getDirection());
-                if (Math::Abs(dot) > d)
+                norm = -camera->getTransform()->getWorldForwardDirection();
+            }
+            else
+            {
+                F32 d = 0.0f;
+                for (S32 i = 0; i < 3; ++i)
                 {
-                    d = Math::Abs(dot);
-                    norm = crossAxis;
+                    if (m_usingAxis == i)
+                        continue;
+
+                    Vec3DF crossAxis = basisTransform.transformAffine(getWorldAxis(i)).normalizedCopy();
+                    F32 dot = crossAxis.dotProduct(ray.getDirection());
+                    if (Math::Abs(dot) > d)
+                    {
+                        d = Math::Abs(dot);
+                        norm = crossAxis;
+                    }
                 }
             }
 
@@ -218,7 +263,19 @@ namespace Maze
             if (Math::RaycastPlane(ray.getPoint(), ray.getDirection(), pos, norm, dist))
             {
                 Vec3DF point = ray.getPoint(dist);
-                point = Math::ClosestPointOnLine(pos, pos + axis, point);
+
+                Vec3DF axis;
+
+                if (m_usingAxis < 3)
+                {
+                    axis = basisTransform.transformAffine(getWorldAxis(m_usingAxis)).normalizedCopy();
+                    point = Math::ClosestPointOnLine(pos, pos + axis, point);
+                    
+                }
+                else
+                {
+                    axis = camera->getTransform()->getWorldRightDirection();
+                }
 
                 if (m_useRequest)
                 {
@@ -231,12 +288,19 @@ namespace Maze
                 {
                     
                     Vec3DF delta = point - m_startPoint;
-                    m_deltaLength = delta.dotProduct(axis);
-                   
+
+                    if (m_usingAxis == 3)
+                    {
+                        m_deltaLength = 
+                            delta.dotProduct(camera->getTransform()->getWorldRightDirection()) +
+                            delta.dotProduct(camera->getTransform()->getWorldUpDirection());
+                    }
+                    else
+                        m_deltaLength = delta.dotProduct(axis);
+
                     Vec3DF parentWorldScale = entityTransform->getParent() ? entityTransform->getParent()->getWorldScale()
                                                                            : Vec3DF::c_one;
                     Vec3DF newWorldScale = m_deltaLength * getWorldAxis(m_usingAxis) + parentWorldScale * m_startScale;
-
                     Vec3DF newLocalScale = newWorldScale / parentWorldScale;
                     entityTransform->setLocalScale(newLocalScale);
                 }
@@ -257,7 +321,8 @@ namespace Maze
 
         GizmosHelper::PushTransform(transform);
         for (auto drawFunc : drawFuncs)
-            drawFunc.drawFunc();
+            if (drawFunc.drawFunc)
+                drawFunc.drawFunc();
         GizmosHelper::PopTransform();
     }
 
@@ -287,6 +352,7 @@ namespace Maze
             case 0: return Vec3DF::c_unitX;
             case 1: return Vec3DF::c_unitY;
             case 2: return Vec3DF::c_unitZ;
+            case 3: return m_startScale.normalizedCopy();
         }
 
         return Vec3DF::c_zero;
