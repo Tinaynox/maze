@@ -46,6 +46,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(GizmoTool);
+    MAZE_USING_SHARED_PTR(Entity);
 
 
     //////////////////////////////////////////
@@ -60,7 +61,7 @@ namespace Maze
         virtual ~GizmoTool() = default;
 
         //////////////////////////////////////////
-        virtual void manipulate(Mat4DF& _mat, Vec2DF const& _cursorPos) MAZE_ABSTRACT;
+        virtual void manipulate(Set<EntityPtr> const& _entities, Vec2DF const& _cursorPos) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual void processCursorPress(Vec2DF const& _cursorPos) MAZE_ABSTRACT;

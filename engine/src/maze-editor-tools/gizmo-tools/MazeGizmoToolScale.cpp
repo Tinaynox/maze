@@ -46,25 +46,36 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmoToolScale::manipulate(Mat4DF& _mat, Vec2DF const& _cursorPos)
+    void GizmoToolScale::manipulate(Set<EntityPtr> const& _entities, Vec2DF const& _cursorPos)
     {
         Camera3DPtr const& camera = GizmosManager::GetInstancePtr()->getCamera();
         if (!camera)
             return;
 
+        if (_entities.empty())
+            return;
+
+        // #TODO: Multiselection
+        EntityPtr const& entity = *_entities.begin();
+        Transform3D* entityTransform = entity->getComponentRaw<Transform3D>();
+        if (!entityTransform)
+            return;
+
+        Mat4DF mat = entityTransform->getWorldTransform();
+
         Vec3DF const& cameraWorldPosition = camera->getTransform()->getWorldPosition();
 
-        Vec3DF right = { _mat[0][0], _mat[1][0], _mat[2][0] };
-        Vec3DF up = { _mat[0][1], _mat[1][1], _mat[2][1] };
-        Vec3DF forward = { _mat[0][2], _mat[1][2], _mat[2][2] };
-        Vec3DF pos = { _mat[0][3], _mat[1][3], _mat[2][3] };
+        Vec3DF right = { mat[0][0], mat[1][0], mat[2][0] };
+        Vec3DF up = { mat[0][1], mat[1][1], mat[2][1] };
+        Vec3DF forward = { mat[0][2], mat[1][2], mat[2][2] };
+        Vec3DF pos = { mat[0][3], mat[1][3], mat[2][3] };
 
-        Vec3DF affineScale = _mat.getAffineScaleSignless();
+        Vec3DF affineScale = mat.getAffineScaleSignless();
 
         F32 cameraDistance = (pos - camera->getTransform()->getLocalPosition()).length();
         F32 scale = cameraDistance * GizmoToolConfig::c_cameraScalePerDistance;
         Mat4DF transform =
-            _mat *
+            mat *
             Mat4DF::CreateScaleMatrix(scale / affineScale);
         Mat4DF basisTransform = transform;
         basisTransform[0][3] = 0.0f;
@@ -213,7 +224,7 @@ namespace Maze
                 {
                     m_useRequest = false;
                     m_startScale = affineScale;
-                    m_startTransform = _mat;
+                    m_startTransform = mat;
                     m_startPoint = point;
                 }
                 else
@@ -227,7 +238,8 @@ namespace Maze
                         m_startScale.z != 0.0f ? 1.0f / m_startScale.z : 0.0f);
                     Vec3DF newScale = (delta + m_startScale) * startScaleInv;
 
-                    _mat = m_startTransform * Mat4DF::CreateScaleMatrix(newScale);
+                    mat = m_startTransform * Mat4DF::CreateScaleMatrix(newScale);
+                    entityTransform->setWorldTransform(mat);
                 }
             }
         }

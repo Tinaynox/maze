@@ -120,21 +120,8 @@ namespace Maze
         Set<EntityPtr> const& selectedEntities = SelectionManager::GetInstancePtr()->getSelectedEntities();
         if (selectedEntities.size() == 1)
         {
-            EntityPtr const& entity = *selectedEntities.begin();
-            if (entity)
-            {
-                Transform3D* transform = entity->getComponentRaw<Transform3D>();
-                if (transform)
-                {
-                    Mat4DF mat = transform->getWorldTransform();
-                    if (m_gizmoTool)
-                    {
-                        m_gizmoTool->manipulate(mat, m_cursorPos);
-                        if (m_gizmoTool->isUsing())
-                            transform->setWorldTransform(mat);
-                    }
-                }
-            }
+            if (m_gizmoTool)
+                m_gizmoTool->manipulate(selectedEntities, m_cursorPos);
         }
 
         /*

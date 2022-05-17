@@ -64,7 +64,7 @@ namespace Maze
         static GizmoToolTranslationPtr Create();
 
         //////////////////////////////////////////
-        virtual void manipulate(Mat4DF& _mat, Vec2DF const& _cursorPos) MAZE_OVERRIDE;
+        virtual void manipulate(Set<EntityPtr> const& _entities, Vec2DF const& _cursorPos) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual void processCursorPress(Vec2DF const& _cursorPos) MAZE_OVERRIDE;
