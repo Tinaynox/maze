@@ -67,6 +67,7 @@ namespace Maze
         static F32 const c_transformGizmoToolArrowConeRadius;
         static F32 const c_transformGizmoToolArrowConeHeight;
         static F32 const c_transformGizmoToolArrowCubeSize;
+        static F32 const c_transformGizmoToolArrowCenterCubeSize;
         static ColorF128 const c_transformGizmoToolAxisXColor;
         static ColorF128 const c_transformGizmoToolAxisYColor;
         static ColorF128 const c_transformGizmoToolAxisZColor;

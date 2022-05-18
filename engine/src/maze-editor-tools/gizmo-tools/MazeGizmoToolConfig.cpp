@@ -42,6 +42,7 @@ namespace Maze
     F32 const GizmoToolConfig::c_transformGizmoToolArrowConeRadius = 0.135f;
     F32 const GizmoToolConfig::c_transformGizmoToolArrowConeHeight = 0.475f;
     F32 const GizmoToolConfig::c_transformGizmoToolArrowCubeSize = GizmoToolConfig::c_transformGizmoToolArrowConeRadius * 2.0f;
+    F32 const GizmoToolConfig::c_transformGizmoToolArrowCenterCubeSize = GizmoToolConfig::c_transformGizmoToolArrowCubeSize * 1.33f;
     ColorF128 const GizmoToolConfig::c_transformGizmoToolAxisXColor = ColorF128::c_red;
     ColorF128 const GizmoToolConfig::c_transformGizmoToolAxisYColor = ColorF128::c_green;
     ColorF128 const GizmoToolConfig::c_transformGizmoToolAxisZColor = ColorF128::c_blue;

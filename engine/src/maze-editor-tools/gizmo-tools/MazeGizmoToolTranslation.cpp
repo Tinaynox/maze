@@ -70,7 +70,8 @@ namespace Maze
         Vec3DF forward = { mat[0][2], mat[1][2], mat[2][2] };
         Vec3DF pos = { mat[0][3], mat[1][3], mat[2][3] };
 
-        Vec3DF affineScale = mat.getAffineScaleSignless(); // #TODO: Signed scale!
+        // Vec3DF affineScale = mat.getAffineScaleSignless();
+        Vec3DF affineScale = entityTransform->getWorldScale();
 
         F32 cameraDistance = (pos - camera->getTransform()->getLocalPosition()).length();
         F32 scale = cameraDistance * GizmoToolConfig::c_cameraScalePerDistance;
@@ -222,12 +223,11 @@ namespace Maze
                 else
                 {
                     Vec3DF delta = point - m_startPoint;
+                    Vec3DF newWorldPosition = m_startPosition + delta;
 
-                    mat[0][3] = m_startPosition.x + delta.x;
-                    mat[1][3] = m_startPosition.y + delta.y;
-                    mat[2][3] = m_startPosition.z + delta.z;
-
-                    entityTransform->setWorldTransform(mat);
+                    Mat4DF parentWorldScale = entityTransform->getParent() ? entityTransform->getParent()->getWorldTransform()
+                                                                           : Mat4DF::c_identity;
+                    entityTransform->setLocalPosition(parentWorldScale.inversedAffineCopy().transformAffine(newWorldPosition));
                 }
             }
         }

@@ -70,7 +70,8 @@ namespace Maze
         Vec3DF forward = { mat[0][2], mat[1][2], mat[2][2] };
         Vec3DF pos = { mat[0][3], mat[1][3], mat[2][3] };
 
-        Vec3DF affineScale = mat.getAffineScaleSignless();
+        //Vec3DF affineScale = mat.getAffineScaleSignless();
+        Vec3DF affineScale = entityTransform->getWorldScale();
 
         F32 cameraDistance = (pos - camera->getTransform()->getLocalPosition()).length();
         F32 scale = cameraDistance * GizmoToolConfig::c_cameraScalePerDistance;
@@ -100,10 +101,10 @@ namespace Maze
             }
 
             GizmosHelper::DrawCylinder(
-                _axis * len * 0.5f,
+                _axis * ((len - GizmoToolConfig::c_transformGizmoToolArrowCenterCubeSize * 0.5f) * 0.5f + GizmoToolConfig::c_transformGizmoToolArrowCenterCubeSize * 0.5f),
                 _axis,
                 GizmoToolConfig::c_transformGizmoToolArrowLineRadius,
-                len,
+                len - GizmoToolConfig::c_transformGizmoToolArrowCenterCubeSize * 0.5f,
                 _color,
                 0.0f,
                 renderMode);
@@ -120,10 +121,10 @@ namespace Maze
         auto drawCenterAll = [&, this](ColorF128 const& _color)
         {
             GizmosHelper::DrawCube(
-                Vec3DF(GizmoToolConfig::c_transformGizmoToolArrowCubeSize * 0.5f),
+                Vec3DF::c_zero,
                 Vec3DF::c_unitZ,
                 Vec3DF::c_unitY,
-                Vec3DF(GizmoToolConfig::c_transformGizmoToolArrowCubeSize),
+                Vec3DF(GizmoToolConfig::c_transformGizmoToolArrowCenterCubeSize),
                 _color,
                 0.0f,
                 renderMode);
@@ -158,10 +159,10 @@ namespace Maze
             if (!Math::RaycastCube(
                 ray.getPoint(),
                 ray.getDirection(),
-                transform.transformAffine(Vec3DF(GizmoToolConfig::c_transformGizmoToolArrowCubeSize * 0.5f)),
+                transform.transformAffine(Vec3DF::c_zero),
                 basisTransform.transformAffine(Vec3DF::c_unitZ).normalizedCopy(),
                 basisTransform.transformAffine(Vec3DF::c_unitY).normalizedCopy(),
-                Vec3DF(scale * GizmoToolConfig::c_transformGizmoToolArrowCubeSize),
+                Vec3DF(scale * GizmoToolConfig::c_transformGizmoToolArrowCenterCubeSize),
                 dist))
             {
                 if (Math::RaycastCylinder(
@@ -193,10 +194,10 @@ namespace Maze
             if (Math::RaycastCube(
                 ray.getPoint(),
                 ray.getDirection(),
-                transform.transformAffine(Vec3DF(GizmoToolConfig::c_transformGizmoToolArrowCubeSize * 0.5f)),
+                transform.transformAffine(Vec3DF::c_zero),
                 basisTransform.transformAffine(Vec3DF::c_unitZ).normalizedCopy(),
                 basisTransform.transformAffine(Vec3DF::c_unitY).normalizedCopy(),
-                Vec3DF(scale * GizmoToolConfig::c_transformGizmoToolArrowCubeSize),
+                Vec3DF(scale * GizmoToolConfig::c_transformGizmoToolArrowCenterCubeSize),
                 dist))
                 return true;
             return false;
@@ -221,11 +222,12 @@ namespace Maze
 
         Vector<Axis> drawFuncs =
         {
-            {0, (pos + right).squaredDistance(cameraWorldPosition), drawX, checkX},
-            {1, (pos + up).squaredDistance(cameraWorldPosition), drawY, checkY},
-            {2, (pos + forward).squaredDistance(cameraWorldPosition), drawZ, checkZ},
+            {0, (pos + right * scale).squaredDistance(cameraWorldPosition), drawX, checkX},
+            {1, (pos + up * scale).squaredDistance(cameraWorldPosition), drawY, checkY},
+            {2, (pos + forward * scale).squaredDistance(cameraWorldPosition), drawZ, checkZ},
             {3, (pos).squaredDistance(cameraWorldPosition), drawC, checkC}
         };
+
         std::sort(
             drawFuncs.begin(),
             drawFuncs.end(),
