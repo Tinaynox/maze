@@ -556,6 +556,15 @@ namespace Maze
             F32 _duration,
             MeshRenderMode _renderMode = MeshRenderMode::Opaque);
 
+        //////////////////////////////////////////
+        void drawTorus(
+            Vec3DF const& _position,
+            Vec3DF const& _forward,
+            F32 _radius,
+            ColorF128 const& _color,
+            F32 _duration,
+            MeshRenderMode _renderMode = MeshRenderMode::Opaque);
+
 
 
         //////////////////////////////////////////

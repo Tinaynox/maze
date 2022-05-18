@@ -115,6 +115,11 @@ namespace Maze
                 mesh = MeshHelper::CreateCylinderMesh();
                 break;
             }
+            case BuiltinMeshType::Torus:
+            {
+                mesh = MeshHelper::CreateTorusMesh();
+                break;
+            }
             default:
             {
                 MAZE_NOT_IMPLEMENTED;

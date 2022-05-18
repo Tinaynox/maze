@@ -182,7 +182,7 @@ namespace Maze
                 transform.transformAffine(_axis * (length + GizmoToolConfig::c_transformGizmoToolArrowCubeSize * 0.5f)),
                 basisTransform.transformAffine(_axis).normalizedCopy(),
                 basisTransform.transformAffine(_axis.perpendicular()).normalizedCopy(),
-                Vec3DF(scale * GizmoToolConfig::c_transformGizmoToolArrowCubeSize),
+                Vec3DF(scale * GizmoToolConfig::c_transformGizmoToolArrowCubeSize * 2.0f),
                 dist))
                 return true;
             return false;
@@ -197,7 +197,7 @@ namespace Maze
                 transform.transformAffine(Vec3DF::c_zero),
                 basisTransform.transformAffine(Vec3DF::c_unitZ).normalizedCopy(),
                 basisTransform.transformAffine(Vec3DF::c_unitY).normalizedCopy(),
-                Vec3DF(scale * GizmoToolConfig::c_transformGizmoToolArrowCenterCubeSize),
+                Vec3DF(scale * GizmoToolConfig::c_transformGizmoToolArrowCenterCubeSize * 2.0f),
                 dist))
                 return true;
             return false;

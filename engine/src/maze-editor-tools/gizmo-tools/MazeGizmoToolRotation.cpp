@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
-#include "maze-editor-tools/gizmo-tools/MazeGizmoToolTranslation.hpp"
+#include "maze-editor-tools/gizmo-tools/MazeGizmoToolRotation.hpp"
 #include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/gizmo-tools/MazeGizmoToolConfig.hpp"
@@ -40,13 +40,13 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    GizmoToolTranslationPtr GizmoToolTranslation::Create()
+    GizmoToolRotationPtr GizmoToolRotation::Create()
     {
-        return MAZE_CREATE_SHARED_PTR(GizmoToolTranslation);
+        return MAZE_CREATE_SHARED_PTR(GizmoToolRotation);
     }
 
     //////////////////////////////////////////
-    void GizmoToolTranslation::manipulate(Set<EntityPtr> const& _entities, Vec2DF const& _cursorPos)
+    void GizmoToolRotation::manipulate(Set<EntityPtr> const& _entities, Vec2DF const& _cursorPos)
     {
         Camera3DPtr const& camera = GizmosManager::GetInstancePtr()->getCamera();
         if (!camera)
@@ -70,7 +70,6 @@ namespace Maze
         Vec3DF forward = { mat[0][2], mat[1][2], mat[2][2] };
         Vec3DF pos = { mat[0][3], mat[1][3], mat[2][3] };
 
-        // Vec3DF affineScale = mat.getAffineScaleSignless();
         Vec3DF affineScale = entityTransform->getWorldScale();
 
         F32 cameraDistance = (pos - camera->getTransform()->getLocalPosition()).length();
@@ -93,6 +92,7 @@ namespace Maze
         {
             GizmosHelper::SetColor(_color);
 
+            /*
             GizmosHelper::DrawCylinder(
                 _axis * length * 0.5f,
                 _axis,
@@ -101,12 +101,11 @@ namespace Maze
                 _color,
                 0.0f,
                 renderMode);
-            GizmosHelper::DrawCone(
-                _axis * length,
+            */
+            GizmosHelper::DrawWireCircle(
+                Vec3DF::c_zero,
                 _axis,
-                GizmoToolConfig::c_transformGizmoToolArrowConeRadius,
-                GizmoToolConfig::c_transformGizmoToolArrowConeHeight,
-                _color,
+                GizmoToolConfig::c_transformGizmoToolRotationRadius,
                 0.0f,
                 renderMode);
         };
@@ -116,27 +115,8 @@ namespace Maze
         auto checkAxis = [&](
             Vec3DF const& _axis)
         {
-            /*
-            GizmosHelper::DrawCylinder(
-                transform.transformAffine(_axis * length * 0.5f),
-                basisTransform.transformAffine(_axis).normalizedCopy(),
-                scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius,
-                scale * length,
-                ColorF128::c_cyan,
-                0.0f,
-                renderMode);
-
-            GizmosHelper::DrawCone(
-                transform.transformAffine(_axis * length),
-                basisTransform.transformAffine(_axis).normalizedCopy(),
-                scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius * 4.0f,
-                scale * GizmoToolConfig::c_transformGizmoToolArrowConeHeight * 2.0f,
-                ColorF128::c_cyan,
-                0.0f,
-                renderMode);
-            */
-
             F32 dist = 0.0;
+            /*
             if (Math::RaycastCylinder(
                 ray.getPoint(),
                 ray.getDirection(),
@@ -155,6 +135,7 @@ namespace Maze
                 scale * GizmoToolConfig::c_transformGizmoToolArrowConeHeight * 2.0f,
                 dist))
                 return true;
+            */
             return false;
         };
 
@@ -217,17 +198,19 @@ namespace Maze
                 if (m_useRequest)
                 {
                     m_useRequest = false;
-                    m_startPosition = pos;
+                    m_startRotation = entityTransform->getLocalRotation();
                     m_startPoint = point;
                 }
                 else
                 {
+                    /*
                     Vec3DF delta = point - m_startPoint;
                     Vec3DF newWorldPosition = m_startPosition + delta;
 
                     Mat4DF parentWorldScale = entityTransform->getParent() ? entityTransform->getParent()->getWorldTransform()
                                                                            : Mat4DF::c_identity;
                     entityTransform->setLocalPosition(parentWorldScale.inversedAffineCopy().transformAffine(newWorldPosition));
+                    */
                 }
             }
         }
@@ -251,7 +234,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmoToolTranslation::processCursorPress(Vec2DF const& _cursorPos)
+    void GizmoToolRotation::processCursorPress(Vec2DF const& _cursorPos)
     {
         if (m_selectedAxis >= 0)
         {
@@ -261,14 +244,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmoToolTranslation::processCursorRelease()
+    void GizmoToolRotation::processCursorRelease()
     {
         m_usingAxis = -1;
         m_selectedAxis = -1;
     }
 
     //////////////////////////////////////////
-    Vec3DF GizmoToolTranslation::getWorldAxis(S32 _axis)
+    Vec3DF GizmoToolRotation::getWorldAxis(S32 _axis)
     {
         switch (_axis)
         {

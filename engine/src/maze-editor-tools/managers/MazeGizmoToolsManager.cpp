@@ -50,6 +50,7 @@
 #include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
 #include "maze-editor-tools/gizmo-tools/MazeGizmoTool.hpp"
 #include "maze-editor-tools/gizmo-tools/MazeGizmoToolTranslation.hpp"
+#include "maze-editor-tools/gizmo-tools/MazeGizmoToolRotation.hpp"
 #include "maze-editor-tools/gizmo-tools/MazeGizmoToolScale.hpp"
 #include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
@@ -124,7 +125,7 @@ namespace Maze
                 m_gizmoTool->manipulate(selectedEntities, m_cursorPos);
         }
 
-        /*
+        
         if (GizmosManager::GetInstancePtr()->getCamera())
         {
             Ray r = GizmosManager::GetInstancePtr()->getCamera()->convertViewportCoordsToRay(m_cursorPos);
@@ -167,10 +168,21 @@ namespace Maze
             else
                 GizmosHelper::DrawCube(cubeCenter, cubeForward, cubeUp, cubeScale, ColorF128::c_red);
 
+
+            Vec3DF torusCenter = Vec3DF::c_zero;
+            Vec3DF torusForward = Vec3DF::c_unitZ;
+            F32 torusRadius = 0.5f;
+            F32 torusCsRadius = 0.1f;
+            if (Math::RaycastTorus(r.getPoint(), r.getDirection(), torusCenter, torusForward, torusRadius, torusCsRadius, dist))
+                GizmosHelper::DrawTorus(torusCenter, torusForward, torusRadius, ColorF128::c_yellow);
+            else
+                GizmosHelper::DrawTorus(torusCenter, torusForward, torusRadius, ColorF128::c_red);
+
+
             GizmosHelper::SetColor(ColorF128::c_green);
             GizmosHelper::DrawLine(r.getPoint(), r.getPoint(10.0f), 1.0f);
         }
-        */
+        
     }
 
     //////////////////////////////////////////
@@ -278,7 +290,7 @@ namespace Maze
         switch (editorToolsSettings->getSelectedGizmoTool())
         {
             case GizmoToolType::Translate: m_gizmoTool = GizmoToolTranslation::Create(); break;
-            case GizmoToolType::Rotate: break;
+            case GizmoToolType::Rotate: m_gizmoTool = GizmoToolRotation::Create(); break;
             case GizmoToolType::Scale: m_gizmoTool = GizmoToolScale::Create(); break;
         }
     }

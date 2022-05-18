@@ -133,6 +133,23 @@ namespace Maze
             Vec4DF const& _color = Vec4DF::c_one);
 
 
+        //////////////////////////////////////////
+        SubMeshPtr MAZE_GRAPHICS_API CreateTorusSubMesh(
+            F32 _radius = 0.5f,
+            F32 _csRadius = 0.1f,
+            S32 _sides = 20,
+            S32 _csSides = 20,
+            Vec4DF const& _color = Vec4DF::c_one);
+
+        //////////////////////////////////////////
+        MeshPtr MAZE_GRAPHICS_API CreateTorusMesh(
+            F32 _radius = 0.5f,
+            F32 _csRadius = 0.1f,
+            S32 _sides = 20,
+            S32 _csSides = 20,
+            Vec4DF const& _color = Vec4DF::c_one);
+
+
 
         //////////////////////////////////////////
         MeshPtr MAZE_GRAPHICS_API CreateCoordinateAxes(F32 _length = 100000.0f);

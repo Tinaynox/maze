@@ -290,6 +290,16 @@ namespace Maze
             F32 _coneHeight,
             F32& _dist);
 
+        //////////////////////////////////////////
+        MAZE_CORE_API bool RaycastTorus(
+            Vec3DF const& _rayPoint,
+            Vec3DF const& _rayDirection,
+            Vec3DF const& _torusOrigin,
+            Vec3DF const& _torusForward,
+            F32 _torusRadius,
+            F32 _torusCsRadius,
+            F32& _dist);
+
     } // namespace Math
     //////////////////////////////////////////
 

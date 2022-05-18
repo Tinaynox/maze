@@ -1391,6 +1391,31 @@ namespace Maze
         }
 
 
+        //////////////////////////////////////////
+        SubMeshPtr MAZE_GRAPHICS_API CreateTorusSubMesh(
+            F32 _radius,
+            F32 _csRadius,
+            S32 _sides,
+            S32 _csSides,
+            Vec4DF const& _color)
+        {
+            return CreateCylinderSubMesh(_radius); // #TODO
+        }
+
+        //////////////////////////////////////////
+        MeshPtr MAZE_GRAPHICS_API CreateTorusMesh(
+            F32 _radius,
+            F32 _csRadius,
+            S32 _sides,
+            S32 _csSides,
+            Vec4DF const& _color)
+        {
+            MeshPtr mesh = Mesh::Create();
+            mesh->addSubMesh(CreateTorusSubMesh(_radius, _csRadius, _sides, _csSides, _color));
+            return mesh;
+        }
+
+
 
         //////////////////////////////////////////
         MeshPtr MAZE_GRAPHICS_API CreateCoordinateAxes(F32 _length)

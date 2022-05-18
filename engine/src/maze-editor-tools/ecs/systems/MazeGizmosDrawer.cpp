@@ -902,6 +902,29 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void GizmosDrawer::drawTorus(
+        Vec3DF const& _position,
+        Vec3DF const& _forward,
+        F32 _radius,
+        ColorF128 const& _color,
+        F32 _duration,
+        MeshRenderMode _renderMode)
+    {
+        Vec3DF up = _forward.perpendicular();
+        Vec3DF right = up.crossProduct(_forward).normalizedCopy();
+
+        pushTransform(
+            Mat4DF::CreateTranslationMatrix(_position) *
+            Mat4DF::CreateChangeOfBasisMatrix(right, _forward, up) *
+            Mat4DF::CreateScaleMatrix(_radius * 2.0f));
+
+        MeshPtr const& mesh = MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Torus);
+        drawMesh(mesh, Vec3DF::c_zero, _color, _duration, _renderMode);
+
+        popTransform();
+    }
+
+    //////////////////////////////////////////
     void GizmosDrawer::drawBillboard(
         Vec3DF const& _point,
         SpritePtr const& _sprite,

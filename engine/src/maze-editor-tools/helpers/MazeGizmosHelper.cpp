@@ -369,6 +369,18 @@ namespace Maze
             GetDrawer()->drawCylinder(_position, _forward, _up, _radius, _height, _color, _duration, _renderMode);
         }
 
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API void DrawTorus(
+            Vec3DF const& _position,
+            Vec3DF const& _forward,
+            F32 _radius,
+            ColorF128 const& _color,
+            F32 _duration,
+            GizmosDrawer::MeshRenderMode _renderMode)
+        {
+            GetDrawer()->drawTorus(_position, _forward, _radius, _color, _duration, _renderMode);
+        }
+
 
     } // namespace GizmosHelper
     //////////////////////////////////////////

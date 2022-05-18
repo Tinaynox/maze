@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeGizmoToolConfig_hpp_))
-#define _MazeGizmoToolConfig_hpp_
+#if (!defined(_MazeGizmoToolRotation_hpp_))
+#define _MazeGizmoToolRotation_hpp_
 
 
 //////////////////////////////////////////
@@ -38,48 +38,65 @@
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
 #include "maze-core/math/MazeMat4D.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
-#include "maze-graphics/MazeColorF128.hpp"
+#include "maze-core/math/MazeQuaternion.hpp"
+#include "maze-editor-tools/gizmo-tools/MazeGizmoTool.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_3_API(MAZE_EDITOR_TOOLS_API, GizmoToolType,
-        Translate,
-        Rotate,
-        Scale)
+    MAZE_USING_SHARED_PTR(GizmoToolRotation);
 
 
     //////////////////////////////////////////
-    // Class GizmoToolConfig
+    // Class GizmoToolRotation
     //
     //////////////////////////////////////////
-    class MAZE_EDITOR_TOOLS_API GizmoToolConfig
+    class MAZE_EDITOR_TOOLS_API GizmoToolRotation
+        : public GizmoTool
     {
     public:
 
         //////////////////////////////////////////
-        static F32 const c_cameraScalePerDistance;
-        static F32 const c_transformGizmoToolLength;
-        static F32 const c_transformGizmoToolArrowLineRadius;
-        static F32 const c_transformGizmoToolArrowConeRadius;
-        static F32 const c_transformGizmoToolArrowConeHeight;
-        static F32 const c_transformGizmoToolArrowCubeSize;
-        static F32 const c_transformGizmoToolArrowCenterCubeSize;
-        static F32 const c_transformGizmoToolRotationRadius;
-        static ColorF128 const c_transformGizmoToolAxisXColor;
-        static ColorF128 const c_transformGizmoToolAxisYColor;
-        static ColorF128 const c_transformGizmoToolAxisZColor;
-        static ColorF128 const c_transformGizmoToolAxisSelectedColor;
-        
+        virtual ~GizmoToolRotation() = default;
+
+        //////////////////////////////////////////
+        static GizmoToolRotationPtr Create();
+
+        //////////////////////////////////////////
+        virtual void manipulate(Set<EntityPtr> const& _entities, Vec2DF const& _cursorPos) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void processCursorPress(Vec2DF const& _cursorPos) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void processCursorRelease() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual bool isUsing() MAZE_OVERRIDE { return m_usingAxis >= 0; }
+
+    protected:
+
+        //////////////////////////////////////////
+        GizmoToolRotation() = default;
+
+        //////////////////////////////////////////
+        Vec3DF getWorldAxis(S32 _axis);
+
+    protected:
+        S32 m_selectedAxis = -1;
+        S32 m_usingAxis = -1;
+
+        bool m_useRequest = false;
+        Quaternion m_startRotation = Vec3DF::c_zero;
+        Vec3DF m_startPoint = Vec3DF::c_zero;
     };
-    
+
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeGizmoToolConfig_hpp_
+#endif // _MazeGizmoToolRotation_hpp_
 //////////////////////////////////////////

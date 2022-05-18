@@ -144,6 +144,13 @@ namespace Maze
                     m_renderSystemRaw);
                 break;
             }
+            case BuiltinRenderMeshType::Torus:
+            {
+                renderMesh = RenderMesh::Create(
+                    MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Torus),
+                    m_renderSystemRaw);
+                break;
+            }
             default:
             {
                 MAZE_NOT_IMPLEMENTED;
