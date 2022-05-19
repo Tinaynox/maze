@@ -365,11 +365,11 @@ namespace Maze
 
             F32 sumDSqrd = dx * dx + dy * dy + dz * dz;
             F32 e = ox * ox + oy * oy + oz * oz -
-                _torusRadius * _torusRadius - _torusCsRadius * _torusCsRadius;
+                _torusCsRadius * _torusCsRadius - _torusRadius * _torusRadius;
             F32 f = ox * dx + oy * dy + oz * dz;
-            F32 fourASqrd = 4.0f * _torusRadius * _torusRadius;
+            F32 fourASqrd = 4.0f * _torusCsRadius * _torusCsRadius;
 
-            F32 c0 = e * e - fourASqrd * (_torusCsRadius * _torusCsRadius - oy * oy);
+            F32 c0 = e * e - fourASqrd * (_torusRadius * _torusRadius - oy * oy);
             F32 c1 = 4.0f * f * e + 2.0f * fourASqrd * oy * dy;
             F32 c2 = 2.0f * sumDSqrd * e + 4.0f * f * f + fourASqrd * dy * dy;
             F32 c3 = 4.0f * sumDSqrd * f;
