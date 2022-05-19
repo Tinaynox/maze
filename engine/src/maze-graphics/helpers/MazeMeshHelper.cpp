@@ -29,6 +29,7 @@
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
+#include "maze-core/math/MazeMathAlgebra.hpp"
 
 
 //////////////////////////////////////////
@@ -1399,7 +1400,117 @@ namespace Maze
             S32 _csSides,
             Vec4DF const& _color)
         {
-            return CreateCylinderSubMesh(_radius); // #TODO
+            SubMeshPtr mesh = SubMesh::Create();
+            mesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
+
+            Vector<U32> indices;
+            Vector<Vec3DF> positions;
+            Vector<Vec3DF> normals;
+            Vector<Vec4DF> colors;
+            Vector<Vec2DF> uv0;
+
+            S32 verticesCount = (_sides + 1) * (_csSides + 1);
+            S32 indicesCount = _sides * _csSides * 6;
+
+            indices.resize(indicesCount);
+            positions.resize(verticesCount);
+            normals.resize(verticesCount);
+            colors.resize(verticesCount);
+            uv0.resize(verticesCount);
+
+            S32 angleincs = 360 / _sides;
+            S32 csAngleincs = 360 / _csSides;
+
+            S32 vertexIndex = 0;
+            for (S32 j = 0; j <= 360; j += csAngleincs)
+            {
+                F32 angleJ = Math::DegreesToRadians(F32(j));
+                F32 currentradius = _radius + (_csRadius * Math::Cos(angleJ));
+                F32 zval = _csRadius * Math::Sin(angleJ);
+
+                for (S32 i = 0; i <= 360; i += angleincs)
+                {
+                    F32 angleI = Math::DegreesToRadians(F32(i));
+
+                    positions[vertexIndex].x = currentradius * Math::Cos(angleI);
+                    positions[vertexIndex].z = currentradius * Math::Sin(angleI);
+                    positions[vertexIndex].y = zval;
+
+                    F32 u = i / 360.0f;
+                    F32 v = 2.0f * j / 360.0f - 1.0f;
+                    if (v < 0.0f)
+                        v = -v;
+
+                    colors[vertexIndex] = _color;
+                    uv0[vertexIndex] = Vec2DF(u, v);
+
+                    vertexIndex++;
+                }
+            }
+
+            vertexIndex = 0;
+            for (S32 i = 0, nextrow = (_sides + 1) * 3; i <= 360; i += angleincs)
+            {
+                F32 angleI = Math::DegreesToRadians(F32(i));
+                F32 xc = _radius * Math::Cos(angleI);
+                F32 yc = _radius * Math::Sin(angleI);
+                for (S32 j = 0; j <= 360; j += csAngleincs)
+                {
+                    normals[vertexIndex].x = positions[vertexIndex].x - xc;
+                    normals[vertexIndex].z = positions[vertexIndex].z - yc;
+                    normals[vertexIndex].y = positions[vertexIndex].y;
+                    normals[vertexIndex].normalize();
+
+                    vertexIndex++;
+                }
+            }
+
+            S32 nextrow = _sides + 1;
+            S32 index = 0;
+            for (S32 i = 0; i < _csSides; i++)
+            {
+                for (S32 j = 0; j < _sides; j++)
+                {
+                    S32 a = i * nextrow + j;
+                    S32 b = (i + 1) * nextrow + j;
+                    S32 c = i * nextrow + j + 1;
+                    S32 d = (i + 1) * nextrow + j + 1;
+
+                    indices[index + 0] = a;
+                    indices[index + 1] = b;
+                    indices[index + 2] = c;
+
+                    indices[index + 3] = c;
+                    indices[index + 4] = b;
+                    indices[index + 5] = d;
+                    index += 6;
+                }
+            }
+
+            mesh->setPositions(&positions[0], positions.size());
+            mesh->setNormals(&normals[0], normals.size());
+            mesh->setTexCoords(0, &uv0[0], uv0.size());
+            mesh->setColors(&colors[0], colors.size());
+            mesh->setIndices(&indices[0], indices.size());
+
+            // Generate tangents and bitangents
+            Vector<Vec3DF> tangents;
+            Vector<Vec3DF> bitangents;
+            if (SubMeshHelper::GenerateTangentsAndBitangents(
+                &indices[0],
+                indices.size(),
+                &positions[0],
+                &uv0[0],
+                &normals[0],
+                positions.size(),
+                tangents,
+                bitangents))
+            {
+                mesh->setTangents(&tangents[0], tangents.size());
+                mesh->setBitangents(&bitangents[0], bitangents.size());
+            }
+
+            return mesh;
         }
 
         //////////////////////////////////////////
