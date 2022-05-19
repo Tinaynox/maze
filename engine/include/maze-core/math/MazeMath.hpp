@@ -281,6 +281,13 @@ namespace Maze
 
         //////////////////////////////////////////
         template <class TValue = F32>
+        inline MAZE_CONSTEXPR TValue Cbrt(TValue const& _value)
+        {
+            return static_cast<TValue>(pow(_value, 1.0f / 3.0f));
+        }
+
+        //////////////////////////////////////////
+        template <class TValue = F32>
         inline MAZE_CONSTEXPR TValue InvSqrt(TValue const& _value)
         {
             return static_cast<TValue>(1.0f / sqrt(_value));
@@ -376,6 +383,33 @@ namespace Maze
                 return true;
 
             return false;
+        }
+
+        //////////////////////////////////////////
+        template <class TValue = F32>
+        inline bool IsFinite(TValue const& _value)
+        {
+            return !IsNaN(_value) && !IsInfinity(_value);
+        }
+
+        //////////////////////////////////////////
+        template <class TValue = F32>
+        inline bool IsNear(TValue const& _value, TValue const& _otherValue, TValue const& _epsilon)
+        {
+            return Abs(_value - _otherValue) <= _epsilon;
+        }
+
+        //////////////////////////////////////////
+        template <class TValue = F32>
+        inline bool IsNearZero(TValue const& _value, TValue const& _epsilon)
+        {
+            return Abs(_value) <= _epsilon;
+        }
+
+        //////////////////////////////////////////
+        inline bool IsNearZero(F32 _value, F32 _epsilon = 1e-9f)
+        {
+            return IsNearZero<F32>(_value, _epsilon);
         }
 
         //////////////////////////////////////////

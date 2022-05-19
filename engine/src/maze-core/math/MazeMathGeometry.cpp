@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
+#include "maze-core/math/MazeMathAlgebra.hpp"
 
 
 //////////////////////////////////////////
@@ -354,8 +355,44 @@ namespace Maze
             F32 _torusCsRadius,
             F32& _dist)
         {
-            // #TODO:
-            return false;
+            F32 ox = _rayPoint.x;
+            F32 oy = _rayPoint.y;
+            F32 oz = _rayPoint.z;
+
+            F32 dx = _rayDirection.x;
+            F32 dy = _rayDirection.y;
+            F32 dz = _rayDirection.z;
+
+            F32 sumDSqrd = dx * dx + dy * dy + dz * dz;
+            F32 e = ox * ox + oy * oy + oz * oz -
+                _torusRadius * _torusRadius - _torusCsRadius * _torusCsRadius;
+            F32 f = ox * dx + oy * dy + oz * dz;
+            F32 fourASqrd = 4.0f * _torusRadius * _torusRadius;
+
+            F32 c0 = e * e - fourASqrd * (_torusCsRadius * _torusCsRadius - oy * oy);
+            F32 c1 = 4.0f * f * e + 2.0f * fourASqrd * oy * dy;
+            F32 c2 = 2.0f * sumDSqrd * e + 4.0f * f * f + fourASqrd * dy * dy;
+            F32 c3 = 4.0f * sumDSqrd * f;
+            F32 c4 = sumDSqrd * sumDSqrd;
+
+            Vector<F32> solution = Math::SolveQuadratic(c0, c1, c2, c3, c4);
+
+            // Ray misses the torus
+            if (!solution.size())
+                return false;
+
+            // Find the smallest root greater than kEpsilon, if any
+            // the roots array is not sorted
+            _dist = 1e6f;
+            bool found = false;
+            for (F32 t : solution)
+                if ((t > 0.0001f) && (t < _dist))
+                {
+                    _dist = t;
+                    found = true;
+                }
+
+            return found && Math::IsFinite(_dist);
         }
 
     } // namespace Math

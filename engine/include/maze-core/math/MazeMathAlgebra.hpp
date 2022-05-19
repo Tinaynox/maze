@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
+#include "maze-core/MazeTypes.hpp"
 #include "maze-core/math/MazeMath.hpp"
 
 
@@ -79,6 +80,31 @@ namespace Maze
         {
             return !(_x == 0) && !(_x & (_x - 1));
         }
+
+
+        //////////////////////////////////////////
+        // x^2 + px + q = 0
+        MAZE_CORE_API Vector<F32> SolveNormalQuadratic(F32 _p, F32 _q);
+
+        //////////////////////////////////////////
+        // c[0] + c[1]*x + c[2]*x^2 = 0
+        MAZE_CORE_API Vector<F32> SolveQuadratic(F32 _c0, F32 _c1, F32 _c2);
+
+        //////////////////////////////////////////
+        // x^3 + Ax^2 + Bx + C = 0 = 0
+        MAZE_CORE_API Vector<F32> SolveNormalCubic(F32 _p, F32 _q);
+
+        //////////////////////////////////////////
+        // c[0] + c[1]*x + c[2]*x^2 + c[3]*x^3 = 0
+        MAZE_CORE_API Vector<F32> SolveCubic(F32 _c0, F32 _c1, F32 _c2, F32 _c3);
+
+        //////////////////////////////////////////
+        // x^4 + Ax^3 + Bx^2 + Cx + D = 0
+        MAZE_CORE_API Vector<F32> SolveNormalQuadratic(F32 _a, F32 _b, F32 _c, F32 _d);
+
+        //////////////////////////////////////////
+        // c[0] + c[1]*x + c[2]*x^2 + c[3]*x^3 + c[4]*x^4 = 0
+        MAZE_CORE_API Vector<F32> SolveQuadratic(F32 _c0, F32 _c1, F32 _c2, F32 _c3, F32 _c4);
 
 
     } // namespace Math
