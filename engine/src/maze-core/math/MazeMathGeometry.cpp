@@ -355,13 +355,22 @@ namespace Maze
             F32 _torusCsRadius,
             F32& _dist)
         {
-            F32 ox = _rayPoint.x;
-            F32 oy = _rayPoint.y;
-            F32 oz = _rayPoint.z;
+            Vec3DF torusUp = _torusForward.perpendicular();
+            Vec3DF torusRight = torusUp.crossProduct(_torusForward).normalizedCopy();
+            Mat4DF torusTransform = Mat4DF::CreateChangeOfBasisMatrix(torusRight, torusUp, _torusForward);
+            torusTransform = torusTransform.inversedAffineCopy();
 
-            F32 dx = _rayDirection.x;
-            F32 dy = _rayDirection.y;
-            F32 dz = _rayDirection.z;
+            Ray localRay(
+                torusTransform.transformAffine(_rayPoint - _torusOrigin) - Vec3DF::c_unitZ,
+                torusTransform.transformAffine(_rayDirection));
+
+            F32 ox = localRay.getPoint().x;
+            F32 oy = localRay.getPoint().y;
+            F32 oz = localRay.getPoint().z;
+
+            F32 dx = localRay.getDirection().x;
+            F32 dy = localRay.getDirection().y;
+            F32 dz = localRay.getDirection().z;
 
             F32 sumDSqrd = dx * dx + dy * dy + dz * dz;
             F32 e = ox * ox + oy * oy + oz * oz -
@@ -375,7 +384,7 @@ namespace Maze
             F32 c3 = 4.0f * sumDSqrd * f;
             F32 c4 = sumDSqrd * sumDSqrd;
 
-            Vector<F32> solution = Math::SolveQuadratic(c0, c1, c2, c3, c4);
+            Vector<F32> solution = Math::SolveQuartic(c0, c1, c2, c3, c4);
 
             // Ray misses the torus
             if (!solution.size())

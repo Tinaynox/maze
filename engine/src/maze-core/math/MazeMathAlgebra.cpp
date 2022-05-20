@@ -137,7 +137,7 @@ namespace Maze
 
         //////////////////////////////////////////
         // x^4 + Ax^3 + Bx^2 + Cx + D = 0
-        MAZE_CORE_API Vector<F32> SolveNormalQuadratic(F32 _a, F32 _b, F32 _c, F32 _d)
+        MAZE_CORE_API Vector<F32> SolveNormalQuartic(F32 _a, F32 _b, F32 _c, F32 _d)
         {
             // Substitute x = y - A/4 to eliminate cubic term: x^4 + px^2 + qx + r = 0
             F32 aSq = _a * _a;
@@ -209,13 +209,13 @@ namespace Maze
 
         //////////////////////////////////////////
         // c[0] + c[1]*x + c[2]*x^2 + c[3]*x^3 + c[4]*x^4 = 0
-        MAZE_CORE_API Vector<F32> SolveQuadratic(F32 _c0, F32 _c1, F32 _c2, F32 _c3, F32 _c4)
+        MAZE_CORE_API Vector<F32> SolveQuartic(F32 _c0, F32 _c1, F32 _c2, F32 _c3, F32 _c4)
         {
             F32 a = _c3 / _c4;
             F32 b = _c2 / _c4;
             F32 c = _c1 / _c4;
             F32 d = _c0 / _c4;
-            return SolveNormalQuadratic(a, b, c, d);
+            return SolveNormalQuartic(a, b, c, d);
         }
         
     } // namespace Math
