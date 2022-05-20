@@ -36,7 +36,7 @@ namespace Maze
     namespace Math
     {
         //////////////////////////////////////////
-        // x^2 + px + q = 0 = 0
+        // x^2 + px + q = 0
         MAZE_CORE_API Vector<F32> SolveNormalQuadratic(F32 _p, F32 _q)
         {
             F32 d = _p * _p - _q;
@@ -68,17 +68,21 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        // x^3 + Ax^2 + Bx + C = 0 = 0
+        // x^3 + Ax^2 + Bx + C = 0
         MAZE_CORE_API Vector<F32> SolveNormalCubic(F32 _a, F32 _b, F32 _c)
         {
-            // Substitute x = y - A/3 to eliminate quadric term: x^3 +px + q = 0 
+            // Substitute x = t - A/3 to eliminate quadric term: t^3 + pt + q = 0 
             F32 aSq = _a * _a;
-            F32 p = 1.0f / 3.0f * (-1.0f / 3.0f * aSq + _b);
-            F32 q = 1.0f / 2.0f * (2.0f / 27.0f * _a * aSq - 1.0f / 3.0f * _a * _b + _c);
+            F32 aCb = aSq * _a;
+            F32 p = (-aSq / 3.0f + _b);
+            F32 q = (((2.0f * aCb / 27.0f) - (_a * _b) / 3.0f) + _c);
+
+            F32 p2 = p / 3.0f;
+            F32 q2 = q / 2.0f;
 
             // Use Cardano's formula
-            F32 pCb = p * p * p;
-            F32 d = q * q + pCb;
+            F32 pCb = p2 * p2 * p2;
+            F32 d = q2 * q2 + pCb;
 
             Vector<F32> s;
 
@@ -92,7 +96,7 @@ namespace Maze
                 else
                 // One single and one double solution
                 {
-                    F32 u = Math::Cbrt(-q);
+                    F32 u = Math::Cbrt(-q2);
                     s.push_back(2.0f * u);
                     s.push_back(-u);
                 }
@@ -101,8 +105,8 @@ namespace Maze
             // Casus irreducibilis : three real solutions
             if (d < 0)
             {
-                F32 phi = 1.0f / 3.0f * Math::ACos(-q / Math::Sqrt(-pCb));
-                F32 t = 2.0f * Math::Sqrt(-p);
+                F32 phi = Math::ACos(-q2 / Math::Sqrt(-pCb)) / 3.0f;
+                F32 t = 2.0f * Math::Sqrt(-p2);
                 s.push_back(t * Math::Cos(phi));
                 s.push_back(-t * Math::Cos(phi + Math::c_pi / 3.0f));
                 s.push_back(-t * Math::Cos(phi - Math::c_pi / 3.0f));
@@ -111,14 +115,15 @@ namespace Maze
             // One real solution
             {
                 F32 sqrtD = Math::Sqrt(d);
-                F32 u = Math::Cbrt(sqrtD - q);
-                F32 v = -Math::Cbrt(sqrtD + q);
-
-                s.push_back(u + v);
+                F32 u = Math::Cbrt(-q2 + sqrtD);
+                F32 v = Math::Cbrt(-q2 - sqrtD);
+                F32 t = u + v;
+                s.push_back(t);
+                s.push_back(-t * 0.5f);                
             }
 
             // Resubstitute
-            F32 sub = 1.0f / 3.0f * _a;
+            F32 sub = _a / 3.0f;
             for (F32& i : s)
                 i -= sub;
 
@@ -200,7 +205,7 @@ namespace Maze
             }
 
             // Resubstitute
-            F32 sub = 1.0f / 4.0f * _a;
+            F32 sub = _a / 4.0f;
             for (F32& i : s)
                 i -= sub;
 

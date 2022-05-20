@@ -361,24 +361,24 @@ namespace Maze
             torusTransform = torusTransform.inversedAffineCopy();
 
             Ray localRay(
-                torusTransform.transformAffine(_rayPoint - _torusOrigin) - Vec3DF::c_unitZ,
+                torusTransform.transformAffine(_rayPoint - _torusOrigin),
                 torusTransform.transformAffine(_rayDirection));
 
             F32 ox = localRay.getPoint().x;
-            F32 oy = localRay.getPoint().y;
-            F32 oz = localRay.getPoint().z;
+            F32 oy = localRay.getPoint().z;
+            F32 oz = localRay.getPoint().y;
 
             F32 dx = localRay.getDirection().x;
-            F32 dy = localRay.getDirection().y;
-            F32 dz = localRay.getDirection().z;
+            F32 dy = localRay.getDirection().z;
+            F32 dz = localRay.getDirection().y;
 
             F32 sumDSqrd = dx * dx + dy * dy + dz * dz;
             F32 e = ox * ox + oy * oy + oz * oz -
-                _torusCsRadius * _torusCsRadius - _torusRadius * _torusRadius;
+                _torusRadius * _torusRadius - _torusCsRadius * _torusCsRadius;
             F32 f = ox * dx + oy * dy + oz * dz;
-            F32 fourASqrd = 4.0f * _torusCsRadius * _torusCsRadius;
+            F32 fourASqrd = 4.0f * _torusRadius * _torusRadius;
 
-            F32 c0 = e * e - fourASqrd * (_torusRadius * _torusRadius - oy * oy);
+            F32 c0 = e * e - fourASqrd * (_torusCsRadius * _torusCsRadius - oy * oy);
             F32 c1 = 4.0f * f * e + 2.0f * fourASqrd * oy * dy;
             F32 c2 = 2.0f * sumDSqrd * e + 4.0f * f * f + fourASqrd * dy * dy;
             F32 c3 = 4.0f * sumDSqrd * f;

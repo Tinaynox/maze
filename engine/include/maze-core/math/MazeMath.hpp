@@ -283,7 +283,7 @@ namespace Maze
         template <class TValue = F32>
         inline MAZE_CONSTEXPR TValue Cbrt(TValue const& _value)
         {
-            return static_cast<TValue>(pow(_value, 1.0f / 3.0f));
+            return static_cast<TValue>(cbrt(_value));
         }
 
         //////////////////////////////////////////
