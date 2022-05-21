@@ -84,27 +84,27 @@ namespace Maze
 
         //////////////////////////////////////////
         // x^2 + px + q = 0
-        MAZE_CORE_API Vector<F32> SolveNormalQuadratic(F32 _p, F32 _q);
+        MAZE_CORE_API S32 SolveNormalQuadratic(F32 _p, F32 _q, F32 (&_out)[2]);
 
         //////////////////////////////////////////
         // c[0] + c[1]*x + c[2]*x^2 = 0
-        MAZE_CORE_API Vector<F32> SolveQuadratic(F32 _c0, F32 _c1, F32 _c2);
+        MAZE_CORE_API S32 SolveQuadratic(F32 _c0, F32 _c1, F32 _c2, F32(&_out)[2]);
 
         //////////////////////////////////////////
         // x^3 + Ax^2 + Bx + C = 0 = 0
-        MAZE_CORE_API Vector<F32> SolveNormalCubic(F32 _p, F32 _q);
+        MAZE_CORE_API S32 SolveNormalCubic(F32 _p, F32 _q, F32(&_out)[3]);
 
         //////////////////////////////////////////
         // c[0] + c[1]*x + c[2]*x^2 + c[3]*x^3 = 0
-        MAZE_CORE_API Vector<F32> SolveCubic(F32 _c0, F32 _c1, F32 _c2, F32 _c3);
+        MAZE_CORE_API S32 SolveCubic(F32 _c0, F32 _c1, F32 _c2, F32 _c3, F32(&_out)[3]);
 
         //////////////////////////////////////////
         // x^4 + Ax^3 + Bx^2 + Cx + D = 0
-        MAZE_CORE_API Vector<F32> SolveNormalQuartic(F32 _a, F32 _b, F32 _c, F32 _d);
+        MAZE_CORE_API S32 SolveNormalQuartic(F32 _a, F32 _b, F32 _c, F32 _d, F32(&_out)[4]);
 
         //////////////////////////////////////////
         // c[0] + c[1]*x + c[2]*x^2 + c[3]*x^3 + c[4]*x^4 = 0
-        MAZE_CORE_API Vector<F32> SolveQuartic(F32 _c0, F32 _c1, F32 _c2, F32 _c3, F32 _c4);
+        MAZE_CORE_API S32 SolveQuartic(F32 _c0, F32 _c1, F32 _c2, F32 _c3, F32 _c4, F32(&_out)[4]);
 
 
     } // namespace Math

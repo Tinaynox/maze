@@ -125,7 +125,6 @@ namespace Maze
                 m_gizmoTool->manipulate(selectedEntities, m_cursorPos);
         }
 
-        
         if (GizmosManager::GetInstancePtr()->getCamera())
         {
             Ray r = GizmosManager::GetInstancePtr()->getCamera()->convertViewportCoordsToRay(m_cursorPos);
@@ -169,8 +168,8 @@ namespace Maze
                 GizmosHelper::DrawCube(cubeCenter, cubeForward, cubeUp, cubeScale, ColorF128::c_red);
 
 
-            Vec3DF torusCenter = Vec3DF::c_zero;
-            Vec3DF torusForward = Vec3DF::c_unitZ;
+            Vec3DF torusCenter = Vec3DF(-3.0f, -3.0f, 0.0f);
+            Vec3DF torusForward = (Vec3DF::c_unitY + Vec3DF::c_unitZ).normalizedCopy();
             F32 torusRadius = 0.5f;
             F32 torusCsRadius = 0.1f;
             if (Math::RaycastTorus(r.getPoint(), r.getDirection(), torusCenter, torusForward, torusRadius, torusCsRadius, dist))
@@ -182,7 +181,6 @@ namespace Maze
             GizmosHelper::SetColor(ColorF128::c_green);
             GizmosHelper::DrawLine(r.getPoint(), r.getPoint(10.0f), 1.0f);
         }
-        
     }
 
     //////////////////////////////////////////

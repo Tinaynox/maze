@@ -37,39 +37,39 @@ namespace Maze
     {
         //////////////////////////////////////////
         // x^2 + px + q = 0
-        MAZE_CORE_API Vector<F32> SolveNormalQuadratic(F32 _p, F32 _q)
+        MAZE_CORE_API S32 SolveNormalQuadratic(F32 _p, F32 _q, F32(&_out)[2])
         {
             F32 d = _p * _p - _q;
             Vector<F32> s;
 
             if (Math::IsNearZero(d))
             {
-                s.push_back(-_p);
-                return s;
+                _out[0] = -_p;
+                return 1;
             }
             else
             if (d < 0.0f)
-                return Vector<F32>();
+                return 0;
 
             F32 sqrtD = Math::Sqrt(d);
             
-            s.push_back(sqrtD - _p);
-            s.push_back(-sqrtD - _p);
-            return s;
+            _out[0] = sqrtD - _p;
+            _out[1] = -sqrtD - _p;
+            return 2;
         }
 
         //////////////////////////////////////////
         // c[0] + c[1]*x + c[2]*x^2 = 0
-        MAZE_CORE_API Vector<F32> SolveQuadratic(F32 _c0, F32 _c1, F32 _c2)
+        MAZE_CORE_API S32 SolveQuadratic(F32 _c0, F32 _c1, F32 _c2, F32(&_out)[2])
         {
             F32 p = _c1 / (2.0f * _c2);
             F32 q = _c0 / _c2;
-            return SolveNormalQuadratic(p, q);
+            return SolveNormalQuadratic(p, q, _out);
         }
 
         //////////////////////////////////////////
         // x^3 + Ax^2 + Bx + C = 0
-        MAZE_CORE_API Vector<F32> SolveNormalCubic(F32 _a, F32 _b, F32 _c)
+        MAZE_CORE_API S32 SolveNormalCubic(F32 _a, F32 _b, F32 _c, F32(&_out)[3])
         {
             // Substitute x = t - A/3 to eliminate quadric term: t^3 + pt + q = 0 
             F32 aSq = _a * _a;
@@ -84,21 +84,21 @@ namespace Maze
             F32 pCb = p2 * p2 * p2;
             F32 d = q2 * q2 + pCb;
 
-            Vector<F32> s;
+            S32 outCount = 0;
 
             if (Math::IsNearZero(d))
             {
                 // One triple solution
                 if (Math::IsNearZero(q))
                 {
-                    s.push_back(0.0f);
+                    _out[outCount++] = 0.0f;
                 }
                 else
                 // One single and one double solution
                 {
                     F32 u = Math::Cbrt(-q2);
-                    s.push_back(2.0f * u);
-                    s.push_back(-u);
+                    _out[outCount++] = 2.0f * u;
+                    _out[outCount++] = -u;
                 }
             }
             else
@@ -107,9 +107,9 @@ namespace Maze
             {
                 F32 phi = Math::ACos(-q2 / Math::Sqrt(-pCb)) / 3.0f;
                 F32 t = 2.0f * Math::Sqrt(-p2);
-                s.push_back(t * Math::Cos(phi));
-                s.push_back(-t * Math::Cos(phi + Math::c_pi / 3.0f));
-                s.push_back(-t * Math::Cos(phi - Math::c_pi / 3.0f));
+                _out[outCount++] = t * Math::Cos(phi);
+                _out[outCount++] = -t * Math::Cos(phi + Math::c_pi / 3.0f);
+                _out[outCount++] = -t * Math::Cos(phi - Math::c_pi / 3.0f);
             }
             else
             // One real solution
@@ -118,109 +118,111 @@ namespace Maze
                 F32 u = Math::Cbrt(-q2 + sqrtD);
                 F32 v = Math::Cbrt(-q2 - sqrtD);
                 F32 t = u + v;
-                s.push_back(t);
-                s.push_back(-t * 0.5f);                
+                _out[outCount++] = t;
+                _out[outCount++] = -t * 0.5f;
             }
 
             // Resubstitute
             F32 sub = _a / 3.0f;
-            for (F32& i : s)
-                i -= sub;
+            for (S32 i = 0; i < outCount; ++i)
+                _out[i] -= sub;
 
-            return s;
+            return outCount;
         }
 
         //////////////////////////////////////////
         // c[0] + c[1]*x + c[2]*x^2 + c[3]*x^3 = 0
-        MAZE_CORE_API Vector<F32> SolveCubic(F32 _c0, F32 _c1, F32 _c2, F32 _c3)
+        MAZE_CORE_API S32 SolveCubic(F32 _c0, F32 _c1, F32 _c2, F32 _c3, F32(&_out)[3])
         {
             F32 a = _c2 / _c3;
             F32 b = _c1 / _c3;
             F32 c = _c0 / _c3;
-            return SolveNormalCubic(a, b, c);
+            return SolveNormalCubic(a, b, c, _out);
         }
 
         //////////////////////////////////////////
         // x^4 + Ax^3 + Bx^2 + Cx + D = 0
-        MAZE_CORE_API Vector<F32> SolveNormalQuartic(F32 _a, F32 _b, F32 _c, F32 _d)
+        MAZE_CORE_API S32 SolveNormalQuartic(F32 _a, F32 _b, F32 _c, F32 _d, F32(&_out)[4])
         {
             // Substitute x = y - A/4 to eliminate cubic term: x^4 + px^2 + qx + r = 0
             F32 aSq = _a * _a;
             F32 p = -3.0f / 8.0f * aSq + _b;
             F32 q = 1.0f / 8.0f * aSq * _a - 1.0f / 2.0f * _a * _b + _c;
             F32 r = -3.0f / 256.0f * aSq * aSq + 1.0f / 16.0f * aSq * _b - 1.0f / 4.0f * _a * _c + _d;
-            Vector<F32> s;
+            
+            S32 outCount = 0;
 
             if (Math::IsNearZero(r))
             {
                 // No absolute term: y(y^3 + py + q) = 0
-                s = SolveCubic(q, p, 0.0f, 1.0f);
-                s.push_back(0.0f);
+                outCount = SolveCubic(q, p, 0.0f, 1.0f, (F32 (&)[3])_out);
+                _out[outCount++] = 0.0f;
             }
             else
             {
                 // Solve the resolvent cubic
-                s = SolveCubic(
+                F32 res[3];
+                if (SolveCubic(
                     1.0f / 2.0f * r * p - 1.0f / 8.0f * q * q,
                     -r,
                     -1.0f / 2.0f * p,
-                    1.0f);
+                    1.0f,
+                    res) == 0)
+                    return 0;
 
                 // Take the one real solution
-                F32 z = s[0];
+                F32 z = res[0];
 
                 // To build two quadric equations
                 F32 u = z * z - r;
                 F32 v = 2.0f * z - p;
 
-                if (Math::IsNearZero(u))
+                if (Math::IsNearZero(u, 1e-7f))
                     u = 0.0f;
                 else
                 if (u > 0.0f)
                     u = Math::Sqrt(u);
                 else
-                    return {0.0f};
+                    return 0;
 
-                if (Math::IsNearZero(v))
+                if (Math::IsNearZero(v, 1e-7f))
                     v = 0.0f;
                 else
                 if (v > 0.0f)
                     v = Math::Sqrt(v);
                 else
-                    return { 0.0f };
+                    return 0;
 
-                s = SolveQuadratic(
+                outCount = SolveQuadratic(
                     z - u,
                     q < 0.0f ? -v : v,
-                    1.0f);
+                    1.0f,
+                    (F32(&)[2])_out);
 
-                Vector<F32> s2 = SolveQuadratic(
+                outCount += SolveQuadratic(
                     z + u,
                     q < 0.0f ? v : -v,
-                    1.0f);
-                s.insert(
-                    s.end(),
-                    std::make_move_iterator(s2.begin()),
-                    std::make_move_iterator(s2.end()));
+                    1.0f,
+                    (F32(&)[2])(*((F32*)_out + outCount)));
             }
 
             // Resubstitute
             F32 sub = _a / 4.0f;
-            for (F32& i : s)
-                i -= sub;
+            for (S32 i = 0; i < outCount; ++i)
+                _out[i] -= sub;
 
-            return s;
+            return outCount;
         }
 
         //////////////////////////////////////////
         // c[0] + c[1]*x + c[2]*x^2 + c[3]*x^3 + c[4]*x^4 = 0
-        MAZE_CORE_API Vector<F32> SolveQuartic(F32 _c0, F32 _c1, F32 _c2, F32 _c3, F32 _c4)
+        MAZE_CORE_API S32 SolveQuartic(F32 _c0, F32 _c1, F32 _c2, F32 _c3, F32 _c4, F32(&_out)[4])
         {
             F32 a = _c3 / _c4;
             F32 b = _c2 / _c4;
             F32 c = _c1 / _c4;
             F32 d = _c0 / _c4;
-            return SolveNormalQuartic(a, b, c, d);
+            return SolveNormalQuartic(a, b, c, d, _out);
         }
         
     } // namespace Math

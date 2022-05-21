@@ -384,22 +384,26 @@ namespace Maze
             F32 c3 = 4.0f * sumDSqrd * f;
             F32 c4 = sumDSqrd * sumDSqrd;
 
-            Vector<F32> solution = Math::SolveQuartic(c0, c1, c2, c3, c4);
+            F32 solution[4];
+            S32 solutionsCount = Math::SolveQuartic(c0, c1, c2, c3, c4, solution);
 
             // Ray misses the torus
-            if (!solution.size())
+            if (solutionsCount == 0)
                 return false;
 
-            // Find the smallest root greater than kEpsilon, if any
+            // Find the smallest root greater than epsilon, if any
             // the roots array is not sorted
             _dist = 1e6f;
             bool found = false;
-            for (F32 t : solution)
+            for (S32 i = 0; i < solutionsCount; ++i)
+            {
+                F32 t = solution[i];
                 if ((t > 0.0001f) && (t < _dist))
                 {
                     _dist = t;
                     found = true;
                 }
+            }
 
             return found && Math::IsFinite(_dist);
         }
