@@ -123,6 +123,7 @@ namespace Maze
         Mat4DF invParticleSystemWorldTransform = _particleSystemWorldTransform.inversedAffineCopy();
         invParticleSystemWorldTransform[0][3] = 0.0f;
         invParticleSystemWorldTransform[1][3] = 0.0f;
+        invParticleSystemWorldTransform[2][3] = 0.0f;
         Vec3DF gravityVector = invParticleSystemWorldTransform.transformAffine(Vec3DF::c_unitY);
         
         // Life
