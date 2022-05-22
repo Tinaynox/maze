@@ -66,6 +66,7 @@ namespace Maze
         {
             Opaque = 0,
             Transparent = 1,
+            TransparentTop = 2,
 
             MAX
         };

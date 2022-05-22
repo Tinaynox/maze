@@ -108,10 +108,21 @@ namespace Maze
                     material->getFirstRenderPass()->setDepthWriteEnabled(true);
                     break;
                 }
-                default:
+                case MeshRenderMode::Transparent:
+                {
+                    material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::Always);
+                    material->getFirstRenderPass()->setRenderQueueIndex(4500);
+                    break;
+                }
+                case MeshRenderMode::TransparentTop:
                 {
                     material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::Always);
                     material->getFirstRenderPass()->setRenderQueueIndex(5000);
+                    break;
+                }
+                default:
+                {
+                    MAZE_NOT_IMPLEMENTED;
                     break;
                 }
             }
@@ -164,7 +175,7 @@ namespace Maze
 
                     MaterialPtr material = Material::Create(
                         GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::ColorTextureCustomUV));
-                    material->getFirstRenderPass()->setRenderQueueIndex(5000);
+                    material->getFirstRenderPass()->setRenderQueueIndex(4800);
 
                     MeshRendererPtr meshRenderer = entity->createComponent<MeshRenderer>();
                     meshRenderer->setRenderMesh(GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getRenderMeshManager()->getDefaultQuadMesh());

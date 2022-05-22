@@ -83,7 +83,7 @@ namespace Maze
         basisTransform[1][3] = 0.0f;
         basisTransform[2][3] = 0.0f;
 
-        GizmosDrawer::MeshRenderMode const renderMode = GizmosDrawer::MeshRenderMode::Transparent;
+        GizmosDrawer::MeshRenderMode const renderMode = GizmosDrawer::MeshRenderMode::TransparentTop;
 
         F32 const length = GizmoToolConfig::c_transformGizmoToolLength;
 

@@ -91,6 +91,7 @@ namespace Maze
         {
             EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
             debbugerSettings->getPauseChangedEvent().unsubscribe(this);
+            debbugerSettings->getSelectedGizmoToolChangedEvent().unsubscribe(this);
         }
     }
 
@@ -149,6 +150,43 @@ namespace Maze
         m_bodyBackground->setColor(EditorToolsLayout::c_bodyBackgroundColor);
         m_bodyBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>();
         
+        m_leftLayout = UIHelper::CreateHorizontalLayout(
+            HorizontalAlignment2D::Left,
+            VerticalAlignment2D::Middle,
+            m_bodyBackground->getTransform()->getSize(),
+            Vec2DF::c_zero,
+            m_bodyBackground->getTransform(),
+            getEntityRaw()->getECSScene(),
+            Vec2DF::c_zero,
+            Vec2DF::c_zero);
+        m_leftLayout->setAutoWidth(false);
+        m_leftLayout->setAutoHeight(false);
+        m_leftLayout->setSpacing(2.0f);
+
+        SpritePtr gizmoToolsSprites[GizmoToolType::MAX] =
+        {
+            nullptr,
+            GizmosManager::GetInstancePtr()->getDefaultGizmosSprite(DefaultGizmosSprite::GizmoToolTranslate),
+            GizmosManager::GetInstancePtr()->getDefaultGizmosSprite(DefaultGizmosSprite::GizmoToolRotate),
+            GizmosManager::GetInstancePtr()->getDefaultGizmosSprite(DefaultGizmosSprite::GizmoToolScale)
+        };
+        for (GizmoToolType tool = GizmoToolType(1); tool < GizmoToolType::MAX; ++tool)
+        {
+            m_gizmoToolButtons[tool] = EditorToolsUIHelper::CreateDefaultToggleButton(
+                gizmoToolsSprites[tool],
+                ColorU32(85, 85, 85),
+                m_leftLayout->getTransform(),
+                getEntityRaw()->getECSScene(),
+                Vec2DF(16.0f, 16.0f));
+            m_gizmoToolButtons[tool]->setCheckByClick(false);
+            m_gizmoToolButtons[tool]->eventClick.subscribe(
+                [tool](Button2D* _button, CursorInputEvent const& _event)
+            {
+                EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
+                debbugerSettings->setSelectedGizmoTool(tool);
+            });
+        }
+
         
         m_layout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Center,
@@ -202,6 +240,7 @@ namespace Maze
 
         EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
         debbugerSettings->getPauseChangedEvent().subscribe(this, &TopBarController::notifyPauseChanged);
+        debbugerSettings->getSelectedGizmoToolChangedEvent().subscribe(this, &TopBarController::notifySelectedGizmoToolChanged);
     }
 
     //////////////////////////////////////////
@@ -211,10 +250,29 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void TopBarController::notifySelectedGizmoToolChanged(GizmoToolType const& _tool)
+    {
+        updateGizmoToolsButtons();
+    }
+
+    //////////////////////////////////////////
+    void TopBarController::updateGizmoToolsButtons()
+    {
+        EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
+
+        for (GizmoToolType tool = GizmoToolType(1); tool < GizmoToolType::MAX; ++tool)
+        {
+            m_gizmoToolButtons[tool]->setChecked(debbugerSettings->getSelectedGizmoTool() == tool);
+        }
+    }
+
+    //////////////////////////////////////////
     void TopBarController::updateUI()
     {
         EditorToolsSettings* debbugerSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
         m_pauseButton->setChecked(debbugerSettings->getPause());
+
+        updateGizmoToolsButtons();
     }
 
     

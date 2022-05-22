@@ -86,6 +86,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     F32 const EditorToolsLayout::c_titleHeight = 20.0f;
+    F32 const topBarHeight = 0.025f;
     ColorU32 const EditorToolsLayout::c_titleBackgroundColor = ColorU32(203, 203, 203, 255);
     U32 const EditorToolsLayout::c_titleFontSize = 10;
     F32 const EditorToolsLayout::c_titleLabelShift = 5.0f;
@@ -93,11 +94,11 @@ namespace Maze
     ColorU32 const EditorToolsLayout::c_bodySubBackgroundColor = ColorU32(164, 164, 164, 255);
     U32 const EditorToolsLayout::c_inspectorPropertyFontSize = 8;
     ColorU32 const EditorToolsLayout::c_inspectorPropertyColor = ColorU32(32, 32, 32, 255);
-    Rect2DF const EditorToolsLayout::c_hierarchyViewport(0.0f, 0.33f, 0.25f, 0.67f);
-    Rect2DF const EditorToolsLayout::c_inspectorViewport(0.75f, 0.33f, 0.25f, 0.67f);
+    Rect2DF const EditorToolsLayout::c_hierarchyViewport(0.0f, 0.33f, 0.25f, 0.67f - topBarHeight);
+    Rect2DF const EditorToolsLayout::c_inspectorViewport(0.75f, 0.33f, 0.25f, 0.67f - topBarHeight);
     Rect2DF const EditorToolsLayout::c_assetsViewport(0.0f, 0.0f, 0.5f, 0.33f);
     Rect2DF const EditorToolsLayout::c_sceneViewport(0.5f, 0.0f, 0.5f, 0.33f);
-    Rect2DF const EditorToolsLayout::c_topBarViewport(0.25f, 0.975f, 0.5f, 0.025f);
+    Rect2DF const EditorToolsLayout::c_topBarViewport(0.0f, 0.975f, 1.0f, topBarHeight);
     
 
 } // namespace Maze
