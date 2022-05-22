@@ -240,6 +240,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    Quaternion Transform3D::getWorldRotation() const
+    {
+        if (m_parent)
+            return m_localRotation * m_parent->getWorldRotation();
+        else
+            return m_localRotation;
+    }
+
+    //////////////////////////////////////////
     Vec3DF Transform3D::getWorldScale() const
     {
         if (m_parent)

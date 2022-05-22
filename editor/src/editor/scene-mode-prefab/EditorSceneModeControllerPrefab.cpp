@@ -154,7 +154,7 @@ namespace Maze
         debugLightEntity->ensureComponent<Transform3D>()->setParent(m_mainNode);
         m_debugLight->setColor(ColorU32(255, 244, 214));
         m_debugLight->getTransform()->setLocalDirection(0.577f, -0.577f, 0.577f);
-        m_debugLight->getTransform()->setLocalPosition(0.0f, 5.0f, -5.0f);
+        m_debugLight->getTransform()->setLocalPosition(0.0f, 5000.0f, -5000.0f);
 
 
 

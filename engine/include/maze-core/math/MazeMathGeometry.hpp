@@ -108,6 +108,17 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        MAZE_CORE_API inline Vec3DF ProjectionPointOnPlane(
+            Vec3DF const& _point,
+            Vec3DF const& _planeOrigin,
+            Vec3DF const& _planeNormal)
+        {
+            Vec3DF v = _point - _planeOrigin;
+            F32 dist = v.dotProduct(_planeNormal);
+            return _point - dist * _planeNormal;
+        }
+
+        //////////////////////////////////////////
         MAZE_CORE_API inline bool IsPointInTriangle(
             Vec3DF const& _point,
             Vec3DF const& _a,
@@ -203,9 +214,9 @@ namespace Maze
         {
             Vec3DF c = _point - _lineA;
             Vec3DF v = _lineB - _lineA;
-            float d = v.length();
+            F32 d = v.length();
             v.normalize();
-            float t = v.dotProduct(c);
+            F32 t = v.dotProduct(c);
 
             v *= t;
 
@@ -220,9 +231,9 @@ namespace Maze
         {
             Vec3DF c = _point - _segmentPointA;
             Vec3DF v = _segmentPointB - _segmentPointA;
-            float d = v.length();
+            F32 d = v.length();
             v.normalize();
-            float t = v.dotProduct(c);
+            F32 t = v.dotProduct(c);
  
             if (t < 0.0f)
                 return _segmentPointA;

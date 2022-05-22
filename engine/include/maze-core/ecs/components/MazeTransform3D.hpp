@@ -209,6 +209,8 @@ namespace Maze
         //////////////////////////////////////////
         Mat4DF const& calculateWorldTransform();
 
+        //////////////////////////////////////////
+        Quaternion getWorldRotation() const;
 
         //////////////////////////////////////////
         Vec3DF getWorldScale() const;

@@ -31,6 +31,7 @@
 #include "maze-editor-tools/gizmo-tools/MazeGizmoToolConfig.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
+#include "maze-core/services/MazeLogStream.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 
@@ -115,27 +116,26 @@ namespace Maze
         auto checkAxis = [&](
             Vec3DF const& _axis)
         {
-            F32 dist = 0.0;
             /*
-            if (Math::RaycastCylinder(
-                ray.getPoint(),
-                ray.getDirection(),
-                transform.transformAffine(_axis * length * 0.5f),
+            GizmosHelper::DrawTorus(
+                Vec3DF::c_zero,
                 basisTransform.transformAffine(_axis).normalizedCopy(),
-                scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius,
-                scale * length,
-                dist))
-                return true;
-            if (Math::RaycastCone(
-                ray.getPoint(),
-                ray.getDirection(),
-                transform.transformAffine(_axis * length),
-                basisTransform.transformAffine(_axis).normalizedCopy(),
-                scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius * 4.0f,
-                scale * GizmoToolConfig::c_transformGizmoToolArrowConeHeight * 2.0f,
-                dist))
-                return true;
+                scale * GizmoToolConfig::c_transformGizmoToolRotationRadius,
+                ColorF128::c_cyan,
+                0.0f,
+                renderMode);
             */
+            F32 dist = 0.0;
+            if (Math::RaycastTorus(
+                ray.getPoint(),
+                ray.getDirection(),
+                transform.transformAffine(Vec3DF::c_zero),
+                basisTransform.transformAffine(_axis).normalizedCopy(),
+                scale * GizmoToolConfig::c_transformGizmoToolRotationRadius,
+                scale * 0.2f,
+                dist))
+                return true;
+
             return false;
         };
 
@@ -171,46 +171,85 @@ namespace Maze
 
         if (m_usingAxis >= 0)
         {
-            Vec3DF axis = basisTransform.transformAffine(getWorldAxis(m_usingAxis)).normalizedCopy();
+            Vec3DF axis;
+            if (m_useRequest)
+                axis = basisTransform.transformAffine(getWorldAxis(m_usingAxis)).normalizedCopy();
+            else
+                axis = m_startAxis;
 
-            Vec3DF norm;
-            F32 d = 0.0f;
-            for (S32 i = 0; i < 3; ++i)
+            Vec3DF raycastPos = pos;
+            Vec3DF norm = axis;
+            Vec3DF vector;
+            bool vectorValid = false;
+            F32 dist;
+
+            F32 dot = Math::Abs(axis.dotProduct(ray.getDirection()));
+            if (dot < 0.15f)
             {
-                if (m_usingAxis == i)
-                    continue;
-
-                Vec3DF crossAxis = basisTransform.transformAffine(getWorldAxis(i)).normalizedCopy();
-                F32 dot = crossAxis.dotProduct(ray.getDirection());
-                if (Math::Abs(dot) > d)
+                norm = -camera->getTransform()->getWorldForwardDirection();
+                vectorValid = Math::RaycastPlane(ray.getPoint(), ray.getDirection(), raycastPos, norm, dist);
+                if (vectorValid)
                 {
-                    d = Math::Abs(dot);
-                    norm = crossAxis;
+                    Vec3DF point = ray.getPoint(dist);
+
+                    Vec3DF cross = (-norm).crossProduct(axis);
+                    point = Math::ClosestPointOnLine(
+                        raycastPos,
+                        raycastPos + cross,
+                        point);
+
+                    Vec3DF delta = (point - raycastPos);
+                    F32 d = delta.dotProduct(cross);
+                    F32 f = d / (scale * GizmoToolConfig::c_transformGizmoToolRotationRadius);
+                    F32 c = delta.normalizedCopy().dotProduct(camera->getTransform()->getWorldRightDirection()) +
+                            delta.normalizedCopy().dotProduct(camera->getTransform()->getWorldUpDirection());
+                    F32 value = Math::Abs(f) * Math::Sign(c);
+
+                    Vec3DF projectPoint = Math::ProjectionPointOnPlane(raycastPos + norm, raycastPos, axis);
+                    Vec3DF centerVector = (projectPoint - raycastPos).normalizedCopy();
+                    vector = centerVector.rotatedCopy(axis, value * Math::c_halfPi);
+                }
+            }
+            else
+            {
+                vectorValid = Math::RaycastPlane(ray.getPoint(), ray.getDirection(), raycastPos, norm, dist);
+                if (vectorValid)
+                {
+                    Vec3DF point = ray.getPoint(dist);
+                    vector = (point - pos).normalizedCopy();
+                    // point = pos + vector * scale * GizmoToolConfig::c_transformGizmoToolRotationRadius;
                 }
             }
 
-            F32 dist;
-            if (Math::RaycastPlane(ray.getPoint(), ray.getDirection(), pos, norm, dist))
+            
+            if (vectorValid)
             {
-                Vec3DF point = ray.getPoint(dist);
-                point = Math::ClosestPointOnLine(pos, pos + axis, point);
-
                 if (m_useRequest)
                 {
                     m_useRequest = false;
                     m_startRotation = entityTransform->getLocalRotation();
-                    m_startPoint = point;
+                    m_startVector = vector;
+                    m_startAxis = axis;
                 }
                 else
                 {
-                    /*
-                    Vec3DF delta = point - m_startPoint;
-                    Vec3DF newWorldPosition = m_startPosition + delta;
+                    F32 dotCheck = vector.dotProduct(m_startAxis);
+                    if (Math::IsNearZero(dotCheck, 1e-6f))
+                    {
+                        Quaternion parentWorldRotation = entityTransform->getParent() ? entityTransform->getParent()->getWorldRotation()
+                                                                                      : Quaternion::c_identity;
 
-                    Mat4DF parentWorldScale = entityTransform->getParent() ? entityTransform->getParent()->getWorldTransform()
-                                                                           : Mat4DF::c_identity;
-                    entityTransform->setLocalPosition(parentWorldScale.inversedAffineCopy().transformAffine(newWorldPosition));
-                    */
+                        Mat4DF parentWorldTransform = entityTransform->getParent() ? entityTransform->getParent()->getWorldTransform()
+                                                                                   : Mat4DF::c_identity;
+                        parentWorldTransform[0][3] = 0.0f;
+                        parentWorldTransform[1][3] = 0.0f;
+                        parentWorldTransform[2][3] = 0.0f;
+
+                        Quaternion newLocalRotation = Quaternion(
+                            parentWorldTransform.inversedAffineCopy().transformAffine(m_startVector).normalizedCopy(),
+                            parentWorldTransform.inversedAffineCopy().transformAffine(vector).normalizedCopy());
+                        entityTransform->setLocalRotation(newLocalRotation * m_startRotation);
+                    }
                 }
             }
         }

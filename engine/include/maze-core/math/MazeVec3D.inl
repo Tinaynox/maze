@@ -732,6 +732,25 @@ namespace Maze
         
         return length;
     }
+
+    //////////////////////////////////////////
+    template <class TValue>
+    Vec3D<TValue>& Vec3D<TValue>::rotate(Vec3D<TValue> const& _axis, F32 _theta)
+    {
+        F32 cosTheta = cos(_theta);
+        F32 sinTheta = sin(_theta);
+
+        return this->operator=((*this * cosTheta) + (_axis.crossProduct(*this) * sinTheta) + (_axis * _axis.dotProduct(*this)) * (1.0f - cosTheta));
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
+    Vec3D<TValue> Vec3D<TValue>::rotatedCopy(Vec3D<TValue> const& _axis, F32 _theta)
+    {
+        Vec3D<TValue> copy = *this;
+        copy.rotate(_axis, _theta);
+        return copy;
+    }
     
     //////////////////////////////////////////
     template <>

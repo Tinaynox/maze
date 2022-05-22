@@ -200,7 +200,7 @@ namespace Maze
                     continue;
 
                 Vec3DF crossAxis = basisTransform.transformAffine(getWorldAxis(i)).normalizedCopy();
-                F32 dot = crossAxis.dotProduct(ray.getDirection());
+                F32 dot = crossAxis.dotProduct(camera->getTransform()->getWorldForwardDirection());
                 if (Math::Abs(dot) > d)
                 {
                     d = Math::Abs(dot);

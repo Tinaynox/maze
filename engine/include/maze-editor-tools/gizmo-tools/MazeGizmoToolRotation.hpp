@@ -90,7 +90,8 @@ namespace Maze
 
         bool m_useRequest = false;
         Quaternion m_startRotation = Vec3DF::c_zero;
-        Vec3DF m_startPoint = Vec3DF::c_zero;
+        Vec3DF m_startAxis = Vec3DF::c_zero;
+        Vec3DF m_startVector = Vec3DF::c_zero;
     };
 
 

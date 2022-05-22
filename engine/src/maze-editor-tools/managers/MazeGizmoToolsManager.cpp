@@ -127,6 +127,7 @@ namespace Maze
 
         if (GizmosManager::GetInstancePtr()->getCamera())
         {
+            /*
             Ray r = GizmosManager::GetInstancePtr()->getCamera()->convertViewportCoordsToRay(m_cursorPos);
 
             F32 dist;
@@ -180,6 +181,7 @@ namespace Maze
 
             GizmosHelper::SetColor(ColorF128::c_green);
             GizmosHelper::DrawLine(r.getPoint(), r.getPoint(10.0f), 1.0f);
+            */
         }
     }
 

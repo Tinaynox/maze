@@ -68,6 +68,18 @@ namespace Maze
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
+        inline void DrawLine(
+            Vec3DF const& _point0,
+            Vec3DF const& _point1,
+            ColorF128 const& _color,
+            F32 _duration = 0.0f,
+            GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque)
+        {
+            SetColor(_color);
+            DrawLine(_point0, _point1, _duration, _renderMode);
+        }
+
+        //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawLine(
             F32 _x0,
             F32 _y0,

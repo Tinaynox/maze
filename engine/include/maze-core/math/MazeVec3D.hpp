@@ -412,6 +412,12 @@ namespace Maze
         TValue normalizeTo(TValue _requiredLength);
 
         //////////////////////////////////////////
+        Vec3D& rotate(Vec3D<TValue> const& _axis, F32 _theta);
+
+        //////////////////////////////////////////
+        Vec3D rotatedCopy(Vec3D<TValue> const& _axis, F32 _theta);
+
+        //////////////////////////////////////////
         static Vec3D<TValue> RandomDirection();
 
         //////////////////////////////////////////
