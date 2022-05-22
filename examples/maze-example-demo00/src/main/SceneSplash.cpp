@@ -55,6 +55,7 @@
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
+#include "maze-graphics/managers/MazeMeshManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
@@ -65,7 +66,6 @@
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
-#include "maze-graphics/managers/MazeGizmosManager.hpp"
 #include "maze-graphics/managers/MazeSystemFontManager.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
@@ -94,6 +94,7 @@
 #include "maze-plugin-console/MazeConsoleService.hpp"
 #include "maze-plugin-particles-editor-tools/MazeParticlesEditorToolsPlugin.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
+#include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "main/SceneExample.hpp"
 #include "main/LevelBloomController.hpp"
 #include "Example.hpp"
@@ -268,6 +269,7 @@ namespace Maze
             }
             case 4:
             {
+                MeshManager::GetCurrentInstancePtr()->createBuiltinMeshes();
                 RenderMeshManager::GetCurrentInstancePtr()->createBuiltinRenderMeshes();
                 setCurrentProgress(0.55f);
                 break;
@@ -280,7 +282,7 @@ namespace Maze
             }
             case 6:
             {
-                GraphicsManager::GetInstancePtr()->getGizmosManager()->createGizmosElements();
+                GizmosManager::GetInstancePtr()->createGizmosElements();
                 setCurrentProgress(0.7f);
                 break;
             }

@@ -184,7 +184,7 @@ namespace Maze
                 cameraPosition.y -= cameraTranslation;
             
                 Vec3DF cameraRotation = Quaternion::GetEuler(params.cameraTransform);
-                Vec3DF cameraScale = params.cameraTransform.getAffineScale();
+                Vec3DF cameraScale = params.cameraTransform.getAffineScaleSignless();
 
                 cameraRotation.x = -cameraRotation.x;
                                 
