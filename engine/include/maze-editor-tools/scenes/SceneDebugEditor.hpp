@@ -113,6 +113,8 @@ namespace Maze
 
     protected:
 
+        CanvasPtr m_mainCanvas;
+
         CanvasPtr m_hierarchyCanvas;
         Rect2DF m_hierarchyViewport;
 

@@ -300,6 +300,17 @@ namespace Maze
     void SceneDebugEditor::create2D()
     {
         {
+            EntityPtr mainCanvasEntity = createEntity();
+            m_mainCanvas = mainCanvasEntity->createComponent<Canvas>();
+            m_mainCanvas->setClearColorFlag(false);
+            m_mainCanvas->setClearColor(ColorU32::c_zero);
+            m_mainCanvas->setRenderTarget(m_renderTarget);
+            m_mainCanvas->setSortOrder(-1000000);
+            m_mainCanvas->setViewport(m_sceneViewport);
+            GizmosManager::GetInstancePtr()->setCanvas(m_mainCanvas);
+        }
+
+        {
             EntityPtr hierarchyCanvasEntity = createEntity();
             m_hierarchyCanvas = hierarchyCanvasEntity->createComponent<Canvas>();
             m_hierarchyCanvas->setClearColorFlag(false);

@@ -289,6 +289,9 @@ namespace Maze
     //////////////////////////////////////////
     Vec2DF SystemTextRenderer2D::getTextEnd(Size _rowIndex)
     {
+        if (!m_systemFont)
+            return Vec2DF::c_zero;
+
         Vec2DF const& size = m_transform->getSize();
         F32 fontScale = (F32)m_fontSize / (F32)(m_systemFont->charSize.x - m_systemFont->outline * 2);
 

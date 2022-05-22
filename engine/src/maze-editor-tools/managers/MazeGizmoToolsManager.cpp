@@ -216,11 +216,14 @@ namespace Maze
         if (!_canvas)
             return;
 
-        UIElement2DPtr element = _canvas->getEntityRaw()->ensureComponent<UIElement2D>();
-        element->eventCursorMoveIn.unsubscribe(this);
-        element->eventCursorPressIn.unsubscribe(this);
-        element->eventCursorReleaseIn.unsubscribe(this);
-        element->eventCursorReleaseOut.unsubscribe(this);
+        if (_canvas->getEntityRaw())
+        {
+            UIElement2DPtr element = _canvas->getEntityRaw()->ensureComponent<UIElement2D>();
+            element->eventCursorMoveIn.unsubscribe(this);
+            element->eventCursorPressIn.unsubscribe(this);
+            element->eventCursorReleaseIn.unsubscribe(this);
+            element->eventCursorReleaseOut.unsubscribe(this);
+        }
     }
 
     //////////////////////////////////////////
