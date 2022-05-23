@@ -1223,17 +1223,17 @@ namespace Maze
                 for (S32 j = 0; j < 3; ++j)
                     normals.push_back(Vec3DF::c_negativeUnitY);
 
-                positions.push_back(prevPos);
-                positions.push_back(pos);
                 positions.push_back(topPoint);
+                positions.push_back(pos);
+                positions.push_back(prevPos);
 
                 Vec3DF curNormPerp(-Math::Sin(a), 0.0f, Math::Cos(a));
 
                 Vec3DF prevNormal = (topPoint - prevPos).crossProduct(prevNormPerp).normalizedCopy();
                 Vec3DF curNormal = (topPoint - pos).crossProduct(curNormPerp).normalizedCopy();
-                normals.push_back(prevNormal);
-                normals.push_back(curNormal);
                 normals.push_back(Vec3DF::c_unitY);
+                normals.push_back(curNormal);
+                normals.push_back(prevNormal);
 
                 prevPos = pos;
                 prevNormPerp = curNormPerp;
@@ -1317,27 +1317,29 @@ namespace Maze
                 for (S32 j = 0; j < 3; ++j)
                     normals.push_back(Vec3DF::c_negativeUnitY);
 
-                positions.push_back(prevPos + Vec3DF::c_unitY * _height * 0.5f);
-                positions.push_back(pos + Vec3DF::c_unitY * _height * 0.5f);
                 positions.push_back(Vec3DF::c_unitY * _height * 0.5f);
+                positions.push_back(pos + Vec3DF::c_unitY * _height * 0.5f);
+                positions.push_back(prevPos + Vec3DF::c_unitY * _height * 0.5f);
                 for (S32 j = 0; j < 3; ++j)
                     normals.push_back(Vec3DF::c_unitY);
 
-                positions.push_back(prevPos - Vec3DF::c_unitY * _height * 0.5f);
+                positions.push_back(pos + Vec3DF::c_unitY * _height * 0.5f);
                 positions.push_back(pos - Vec3DF::c_unitY * _height * 0.5f);
-                positions.push_back(pos + Vec3DF::c_unitY * _height * 0.5f);
-                positions.push_back(pos + Vec3DF::c_unitY * _height * 0.5f);
-                positions.push_back(prevPos + Vec3DF::c_unitY * _height * 0.5f);
                 positions.push_back(prevPos - Vec3DF::c_unitY * _height * 0.5f);
+
+                positions.push_back(prevPos - Vec3DF::c_unitY * _height * 0.5f);
+                positions.push_back(prevPos + Vec3DF::c_unitY * _height * 0.5f);
+                positions.push_back(pos + Vec3DF::c_unitY * _height * 0.5f);
 
                 Vec3DF prevNormal = prevVec;
                 Vec3DF curNormal = vec;
-                normals.push_back(prevNormal);
-                normals.push_back(curNormal);
                 normals.push_back(curNormal);
                 normals.push_back(curNormal);
                 normals.push_back(prevNormal);
+
                 normals.push_back(prevNormal);
+                normals.push_back(prevNormal);
+                normals.push_back(curNormal);
 
                 prevVec = vec;
                 prevPos = pos;
@@ -1449,17 +1451,21 @@ namespace Maze
             }
 
             vertexIndex = 0;
-            for (S32 i = 0, nextrow = (_sides + 1) * 3; i <= 360; i += angleincs)
+            for (S32 j = 0; j <= 360; j += csAngleincs)
             {
-                F32 angleI = Math::DegreesToRadians(F32(i));
-                F32 xc = _radius * Math::Cos(angleI);
-                F32 yc = _radius * Math::Sin(angleI);
-                for (S32 j = 0; j <= 360; j += csAngleincs)
+                for (S32 i = 0; i <= 360; i += angleincs)
                 {
-                    normals[vertexIndex].x = positions[vertexIndex].x - xc;
-                    normals[vertexIndex].z = positions[vertexIndex].z - yc;
-                    normals[vertexIndex].y = positions[vertexIndex].y;
-                    normals[vertexIndex].normalize();
+                    F32 angleI = Math::DegreesToRadians(F32(i));
+                    F32 xc = _radius * Math::Cos(angleI);
+                    F32 yc = _radius * Math::Sin(angleI);
+
+                    Vec3DF const& pos = positions[vertexIndex];
+                    Vec3DF normal(
+                        pos.x - xc,
+                        pos.y,
+                        pos.z - yc);
+                    normal.normalize();
+                    normals[vertexIndex] = normal;
 
                     vertexIndex++;
                 }

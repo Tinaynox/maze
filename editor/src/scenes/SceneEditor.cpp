@@ -86,6 +86,7 @@
 #include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
 #include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
+#include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 #include "ecs/components/EditorHierarchyController.hpp"
 #include "ecs/components/EditorMainCanvasController.hpp"
 #include "ecs/components/EditorTopBarController.hpp"
@@ -285,14 +286,18 @@ namespace Maze
                 "Entity", "Create/3D/Light/Directional",
                 [](String const& _text) { EditorHelper::CreateDirectionalLight("Directional Light"); },
                 EditorHelper::IsValidSceneMode);
-            menuBar->addOption(
-                "Entity", "Create/3D/Mesh/Cube",
-                [](String const& _text) { EditorHelper::CreateCube("Cube"); },
-                EditorHelper::IsValidSceneMode);
-            menuBar->addOption(
-                "Entity", "Create/3D/Mesh/Sphere",
-                [](String const& _text) { EditorHelper::CreateSphere("Sphere"); },
-                EditorHelper::IsValidSceneMode);
+
+            for (BuiltinRenderMeshType meshType = BuiltinRenderMeshType(1); meshType != BuiltinRenderMeshType::MAX; ++meshType)
+            {
+                menuBar->addOption(
+                    "Entity", "Create/3D/Mesh/" + meshType.toString(),
+                    [meshType](String const& _text)
+                    {
+                        EntityPtr child = EditorHelper::CreateBuiltinMesh(meshType);
+                        SelectionManager::GetInstancePtr()->selectObject(child);
+                    },
+                    EditorHelper::IsValidSceneMode);
+            }
             menuBar->addOption(
                 "Entity", "Create/3D/FX/Particle System",
                 [](String const& _text) { EditorHelper::CreateNewParticleSystem3D("Particle System"); },
@@ -315,20 +320,18 @@ namespace Maze
                                 EntityPtr child = EditorHelper::CreateDirectionalLight("Directional Light");
                                 child->ensureComponent<Transform3D>()->setParent(transform3D->getSharedPtr());
                             });
-                        _menuListTree->addItem(
-                            "Add Child/3D/Mesh/Cube",
-                            [_entity, transform3D](String const& _text)
-                            {
-                                EntityPtr child = EditorHelper::CreateCube("Cube");
-                                child->ensureComponent<Transform3D>()->setParent(transform3D->getSharedPtr());
-                            });
-                        _menuListTree->addItem(
-                            "Add Child/3D/Mesh/Sphere",
-                            [_entity, transform3D](String const& _text)
-                            {
-                                EntityPtr child = EditorHelper::CreateCube("Sphere");
-                                child->ensureComponent<Transform3D>()->setParent(transform3D->getSharedPtr());
-                            });
+
+                        for (BuiltinRenderMeshType meshType = BuiltinRenderMeshType(1); meshType != BuiltinRenderMeshType::MAX; ++meshType)
+                        {
+                            _menuListTree->addItem(
+                                "Add Child/3D/Mesh/" + meshType.toString(),
+                                [_entity, transform3D, meshType](String const& _text)
+                                {
+                                    EntityPtr child = EditorHelper::CreateBuiltinMesh(meshType);
+                                    child->ensureComponent<Transform3D>()->setParent(transform3D->getSharedPtr());
+                                    SelectionManager::GetInstancePtr()->selectObject(child);
+                                });
+                        }
                         _menuListTree->addItem(
                             "Add Child/3D/FX/Particle System",
                             [_entity, transform3D](String const& _text)
@@ -350,18 +353,18 @@ namespace Maze
                         {
                             EditorHelper::CreateDirectionalLight("Directional Light");
                         });
-                    _menuListTree->addItem(
-                        "Add Child/3D/Mesh/Cube",
-                        [](String const& _text)
-                        {
-                            EditorHelper::CreateCube("Cube");
-                        });
-                    _menuListTree->addItem(
-                        "Add Child/3D/Mesh/Sphere",
-                        [](String const& _text)
-                        {
-                            EditorHelper::CreateCube("Sphere");
-                        });
+
+                    for (BuiltinRenderMeshType meshType = BuiltinRenderMeshType(1); meshType != BuiltinRenderMeshType::MAX; ++meshType)
+                    {
+                        _menuListTree->addItem(
+                            "Add Child/3D/Mesh/" + meshType.toString(),
+                            [meshType](String const& _text)
+                            {
+                                EntityPtr child = EditorHelper::CreateBuiltinMesh(meshType);
+                                SelectionManager::GetInstancePtr()->selectObject(child);
+                            });
+                    }
+                    
                     _menuListTree->addItem(
                         "Add Child/3D/FX/Particle System",
                         [](String const& _text)

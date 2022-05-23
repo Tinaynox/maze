@@ -208,28 +208,14 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        EntityPtr CreateCube(CString _entityName)
+        EntityPtr CreateBuiltinMesh(BuiltinRenderMeshType _meshType)
         {
-            EntityPtr gameObject = CreateEntity3D(_entityName);
+            EntityPtr gameObject = CreateEntity3D(_meshType.toCString());
             if (!gameObject)
                 return EntityPtr();
 
             MeshRendererPtr meshRenderer = gameObject->ensureComponent<MeshRenderer>();
-            meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultCubeMesh());
-            meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::Specular));
-
-            return gameObject;
-        }
-
-        //////////////////////////////////////////
-        EntityPtr CreateSphere(CString _entityName)
-        {
-            EntityPtr gameObject = CreateEntity3D(_entityName);
-            if (!gameObject)
-                return EntityPtr();
-
-            MeshRendererPtr meshRenderer = gameObject->ensureComponent<MeshRenderer>();
-            meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultSphereMesh());
+            meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getBuiltinRenderMesh(_meshType));
             meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::Specular));
 
             return gameObject;

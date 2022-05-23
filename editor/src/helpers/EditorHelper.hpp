@@ -47,6 +47,7 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
+#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
@@ -77,10 +78,7 @@ namespace Maze
         EntityPtr CreateEntity3D(CString _entityName);
 
         //////////////////////////////////////////
-        EntityPtr CreateCube(CString _entityName);
-
-        //////////////////////////////////////////
-        EntityPtr CreateSphere(CString _entityName);
+        EntityPtr CreateBuiltinMesh(BuiltinRenderMeshType _meshType);
 
         //////////////////////////////////////////
         EntityPtr CreateDirectionalLight(CString _entityName);
