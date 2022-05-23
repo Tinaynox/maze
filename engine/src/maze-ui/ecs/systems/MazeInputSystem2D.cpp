@@ -609,7 +609,7 @@ namespace Maze
             if (curTime - m_firstCursorPressTime < c_clickTimeMS &&
                 (_renderTargetCoords - m_firstCursorPressRenderTargetCoords).squaredLength() <= c_clickShiftThresholdSq)
             {
-                m_clickData = { _window, _cursorIndex, _buttonIndex, _renderTargetCoords, _inputSource };
+                m_clickData = ClickData(_window, _cursorIndex, _buttonIndex, _renderTargetCoords, _inputSource);
                 m_processClick = true;
             }
         }

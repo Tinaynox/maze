@@ -95,6 +95,20 @@ namespace Maze
         //////////////////////////////////////////
         struct ClickData
         {
+            //////////////////////////////////////////
+            ClickData(
+                Window* _window = nullptr,
+                S32 _cursorIndex = 0,
+                S32 _buttonIndex = 0,
+                Vec2DF _renderTargetCoords = Vec2DF::c_zero,
+                CursorInputSource _inputSource = CursorInputSource())
+                : window(_window)
+                , cursorIndex(_cursorIndex)
+                , buttonIndex(_buttonIndex)
+                , renderTargetCoords(_renderTargetCoords)
+                , inputSource(_inputSource)
+            {}
+
             Window* window = nullptr;
             S32 cursorIndex = 0;
             S32 buttonIndex = 0;

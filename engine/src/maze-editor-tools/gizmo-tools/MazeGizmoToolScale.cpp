@@ -214,6 +214,18 @@ namespace Maze
 
         struct Axis
         {
+            //////////////////////////////////////////
+            Axis(
+                S32 _index = -1,
+                F32 _sqDist = 0.0f,
+                std::function<void()> _drawFunc = nullptr,
+                std::function<bool()> _checkFunc = nullptr)
+                : index(_index)
+                , sqDist(_sqDist)
+                , drawFunc(_drawFunc)
+                , checkFunc(_checkFunc)
+            {}
+
             S32 index = -1;
             F32 sqDist = 0.0f;
             std::function<void()> drawFunc;
@@ -222,10 +234,10 @@ namespace Maze
 
         Vector<Axis> drawFuncs =
         {
-            {0, (pos + right * scale).squaredDistance(cameraWorldPosition), drawX, checkX},
-            {1, (pos + up * scale).squaredDistance(cameraWorldPosition), drawY, checkY},
-            {2, (pos + forward * scale).squaredDistance(cameraWorldPosition), drawZ, checkZ},
-            {3, (pos).squaredDistance(cameraWorldPosition), drawC, checkC}
+            Axis(0, (pos + right * scale).squaredDistance(cameraWorldPosition), drawX, checkX),
+            Axis(1, (pos + up * scale).squaredDistance(cameraWorldPosition), drawY, checkY),
+            Axis(2, (pos + forward * scale).squaredDistance(cameraWorldPosition), drawZ, checkZ),
+            Axis(3, (pos).squaredDistance(cameraWorldPosition), drawC, checkC)
         };
 
         std::sort(

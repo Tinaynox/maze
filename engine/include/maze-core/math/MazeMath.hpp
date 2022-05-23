@@ -389,27 +389,7 @@ namespace Maze
         template <class TValue = F32>
         inline bool IsFinite(TValue const& _value)
         {
-            return !IsNaN(_value) && !IsInfinity(_value);
-        }
-
-        //////////////////////////////////////////
-        template <class TValue = F32>
-        inline bool IsNear(TValue const& _value, TValue const& _otherValue, TValue const& _epsilon)
-        {
-            return Abs(_value - _otherValue) <= _epsilon;
-        }
-
-        //////////////////////////////////////////
-        template <class TValue = F32>
-        inline bool IsNearZero(TValue const& _value, TValue const& _epsilon)
-        {
-            return Abs(_value) <= _epsilon;
-        }
-
-        //////////////////////////////////////////
-        inline bool IsNearZero(F32 _value, F32 _epsilon = 1e-9f)
-        {
-            return IsNearZero<F32>(_value, _epsilon);
+            return !IsNaN<TValue>(_value) && !IsInfinity<TValue>(_value);
         }
 
         //////////////////////////////////////////
@@ -436,6 +416,26 @@ namespace Maze
         inline F64 Abs<F64>(F64 const& _value)
         {
             return fabs(_value);
+        }
+
+        //////////////////////////////////////////
+        template <class TValue = F32>
+        inline bool IsNear(TValue const& _value, TValue const& _otherValue, TValue const& _epsilon)
+        {
+            return Abs<TValue>(_value - _otherValue) <= _epsilon;
+        }
+
+        //////////////////////////////////////////
+        template <class TValue = F32>
+        inline bool IsNearZero(TValue const& _value, TValue const& _epsilon)
+        {
+            return Abs<TValue>(_value) <= _epsilon;
+        }
+
+        //////////////////////////////////////////
+        inline bool IsNearZero(F32 _value, F32 _epsilon = 1e-9f)
+        {
+            return IsNearZero<F32>(_value, _epsilon);
         }
 
         //////////////////////////////////////////

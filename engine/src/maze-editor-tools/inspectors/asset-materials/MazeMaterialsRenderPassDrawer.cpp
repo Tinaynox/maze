@@ -213,6 +213,7 @@ namespace Maze
                                     setShader(shader);
                                 }
                             },
+                            nullptr,
                             false);
                     }
 

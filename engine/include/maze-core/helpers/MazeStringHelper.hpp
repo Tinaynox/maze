@@ -1152,7 +1152,7 @@ namespace Maze
 
             TClass* object = reinterpret_cast<TClass*>(ptr);
             if (object)
-                _value = object->cast<TClass>();
+                _value = object->template cast<TClass>();
             else
                 _value.reset();
         }

@@ -293,7 +293,7 @@ namespace Maze
         }
         
         ////////////////////////////////////
-        MAZE_CORE_API FileStats GetFileStats(CString _fileFullPath)
+        MAZE_CORE_API FileStats GetFileStats(CString _fullPath)
         {
             FileStats result;
 

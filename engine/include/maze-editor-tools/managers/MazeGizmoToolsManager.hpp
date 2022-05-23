@@ -76,7 +76,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual S32 getUpdatableOrder() const { return 20100; }
+        virtual S32 getUpdatableOrder() const MAZE_OVERRIDE { return 20100; }
 
     protected:
 

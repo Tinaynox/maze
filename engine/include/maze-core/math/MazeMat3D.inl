@@ -574,7 +574,7 @@ namespace Maze
     template <class TValue>
     inline MAZE_CONSTEXPR Rotation2D Mat3D<TValue>::getAffineRotation2D() const 
     { 
-        return Rotation2D((F32)m[1][0] / getAffineScaleX(), (F32)m[0][0] / getAffineScaleX()); 
+        return Rotation2D((F32)m[1][0] / getAffineScaleXSignless(), (F32)m[0][0] / this->getAffineScaleXSignless());
     }
 
     //////////////////////////////////////////

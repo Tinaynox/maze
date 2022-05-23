@@ -295,6 +295,11 @@ namespace Maze
             case GizmoToolType::Translate: m_gizmoTool = GizmoToolTranslation::Create(); break;
             case GizmoToolType::Rotate: m_gizmoTool = GizmoToolRotation::Create(); break;
             case GizmoToolType::Scale: m_gizmoTool = GizmoToolScale::Create(); break;
+            default:
+            {
+                MAZE_NOT_IMPLEMENTED;
+                break;
+            }
         }
     }
 
