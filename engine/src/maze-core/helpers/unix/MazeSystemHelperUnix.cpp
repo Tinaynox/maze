@@ -44,6 +44,11 @@ namespace Maze
 
 
         }
+        
+        //////////////////////////////////////////
+        MAZE_CORE_API void OpenExplorer(String const& _fullPath, bool _select)
+        {
+        }
 
         //////////////////////////////////////////
         MAZE_CORE_API String const& GetOSVersion()

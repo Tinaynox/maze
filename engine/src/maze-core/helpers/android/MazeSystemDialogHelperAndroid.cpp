@@ -45,8 +45,6 @@ namespace Maze
             MAZE_NOT_IMPLEMENTED;
 
             return String();
-
-
         }
 
         //////////////////////////////////////////
@@ -58,6 +56,16 @@ namespace Maze
 
             return String();
 
+        }
+        
+        //////////////////////////////////////////
+        MAZE_CORE_API extern String OpenFolder(
+            CString _dialogTitle,
+            Window const* _modalToWindow)
+        {
+            MAZE_NOT_IMPLEMENTED;
+
+            return String();
         }
         
         //////////////////////////////////////////
