@@ -300,7 +300,11 @@ namespace Maze
             }
             menuBar->addOption(
                 "Entity", "Create/3D/FX/Particle System",
-                [](String const& _text) { EditorHelper::CreateNewParticleSystem3D("Particle System"); },
+                [](String const& _text)
+                {
+                    EntityPtr child = EditorHelper::CreateNewParticleSystem3D("Particle System");
+                    SelectionManager::GetInstancePtr()->selectObject(child);
+                },
                 EditorHelper::IsValidSceneMode);
                         
             
@@ -338,6 +342,7 @@ namespace Maze
                             {
                                 EntityPtr child = EditorHelper::CreateNewParticleSystem3D("Particle System");
                                 child->ensureComponent<Transform3D>()->setParent(transform3D->getSharedPtr());
+                                SelectionManager::GetInstancePtr()->selectObject(child);
                             });
                     }
                     
@@ -369,7 +374,8 @@ namespace Maze
                         "Add Child/3D/FX/Particle System",
                         [](String const& _text)
                         {
-                            EditorHelper::CreateNewParticleSystem3D("Particle System");
+                            EntityPtr child = EditorHelper::CreateNewParticleSystem3D("Particle System");
+                            SelectionManager::GetInstancePtr()->selectObject(child);
                         });
                 });
         }

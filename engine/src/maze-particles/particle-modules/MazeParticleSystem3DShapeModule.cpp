@@ -176,7 +176,7 @@ namespace Maze
         F32 r = Math::UnitRandom() + Math::UnitRandom();
         if (r > 1.0f)
             r = 2.0f - r;
-        _result.position = _center + direction * r * zone.radius;
+        _result.position = _center + zone.position + direction * r * zone.radius * zone.scale;
     }
 
     //////////////////////////////////////////
@@ -188,7 +188,7 @@ namespace Maze
 
         Vec3DF direction = Vec3DF::RandomDirection();
         _result.direction = direction;
-        _result.position = _center + direction * zone.radius;
+        _result.position = _center + zone.position + direction * zone.radius * zone.scale;
     }
 
     //////////////////////////////////////////
@@ -203,7 +203,7 @@ namespace Maze
         F32 r = Math::UnitRandom() + Math::UnitRandom();
         if (r > 1.0f)
             r = 2.0f - r;
-        _result.position = _center + direction * r * zone.radius;
+        _result.position = _center + zone.position + Vec3DF(direction) * r * zone.radius * zone.scale;
     }
 
     //////////////////////////////////////////
@@ -215,7 +215,7 @@ namespace Maze
 
         Vec2DF direction = Vec2DF::RandomDirection();
         _result.direction = direction;
-        _result.position = _center + direction * zone.radius;
+        _result.position = _center + zone.position + Vec3DF(direction) * zone.radius * zone.scale;
     }
 
     //////////////////////////////////////////
@@ -230,7 +230,7 @@ namespace Maze
         F32 r = Math::UnitRandom() + Math::UnitRandom();
         if (r > 1.0f)
             r = 2.0f - r;
-        _result.position = _center + direction * r * zone.radius;
+        _result.position = _center + zone.position + direction * r * zone.radius * zone.scale;
     }
 
     //////////////////////////////////////////
@@ -242,7 +242,7 @@ namespace Maze
 
         Vec3DF direction = Vec3DF::RandomHemisphereDirection(Vec3DF::c_unitZ);
         _result.direction = direction;
-        _result.position = _center + direction * zone.radius;
+        _result.position = _center + zone.position + direction * zone.radius * zone.scale;
     }
 
     //////////////////////////////////////////
@@ -269,7 +269,7 @@ namespace Maze
         Vec3DF t = (l * c1) + (k.crossProduct(l) * s1) + (k * k.dotProduct(l)) * (1 - c1);
         shift += t * innerRadius;
 
-        _result.position = _center + zone.position + shift;
+        _result.position = _center + zone.position + shift * zone.scale;
         _result.direction = shift.normalizedCopy();
     }
 
@@ -297,7 +297,7 @@ namespace Maze
         Vec3DF t = (l * c1) + (k.crossProduct(l) * s1) + (k * k.dotProduct(l)) * (1 - c1);
         shift += t * innerRadius;
 
-        _result.position = _center + zone.position + shift;
+        _result.position = _center + zone.position + shift * zone.scale;
         _result.direction = shift.normalizedCopy();
     }
 
@@ -325,7 +325,7 @@ namespace Maze
             s * radius,
             length);
         
-        _result.position = _center + zone.position + shift;
+        _result.position = _center + zone.position + shift * zone.scale;
         _result.direction = 
             Vec3DF
             (
@@ -357,7 +357,7 @@ namespace Maze
             s * radius,
             length);
 
-        _result.position = _center + zone.position + shift;
+        _result.position = _center + zone.position + shift * zone.scale;
         _result.direction =
             Vec3DF
             (
