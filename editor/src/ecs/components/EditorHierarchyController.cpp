@@ -108,6 +108,9 @@ namespace Maze
 
         if (EditorPrefabManager::GetInstancePtr())
             EditorPrefabManager::GetInstancePtr()->eventPrefabEntityChanged.unsubscribe(this);
+
+        if (SelectionManager::GetInstancePtr())
+            SelectionManager::GetInstancePtr()->eventSelectionChanged.unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -130,6 +133,8 @@ namespace Maze
         EditorManager::GetInstancePtr()->eventSceneModeChanged.subscribe(this, &EditorHierarchyController::notifyEditorSceneModeChanged);
         EditorManager::GetInstancePtr()->eventPlaytestModeEnabledChanged.subscribe(this, &EditorHierarchyController::notifyPlaytestModeEnabled);
         EditorPrefabManager::GetInstancePtr()->eventPrefabEntityChanged.subscribe(this, &EditorHierarchyController::notifyPrefabEntityChanged);
+
+        SelectionManager::GetInstancePtr()->eventSelectionChanged.subscribe(this, &EditorHierarchyController::notifySelectionChanged);
 
         return true;
     }
@@ -711,6 +716,12 @@ namespace Maze
             m_world->eventEntityRemoved.subscribe(this, &EditorHierarchyController::notifyEntityRemoved);
             m_world->eventEntityChanged.subscribe(this, &EditorHierarchyController::notifyEntityChanged);
         }
+    }
+
+    //////////////////////////////////////////
+    void EditorHierarchyController::notifySelectionChanged()
+    {
+
     }
 
 } // namespace Maze

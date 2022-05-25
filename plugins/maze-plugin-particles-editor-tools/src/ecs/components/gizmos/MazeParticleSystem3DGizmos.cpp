@@ -128,6 +128,10 @@ namespace Maze
             ParticleSystem3DZoneData const& zoneData = particleSystem->getShapeModule().getZoneData();
             switch (particleSystem->getShapeModule().getType())
             {
+                case ParticleSystem3DZoneType::None:
+                {
+                    break;
+                }
                 case ParticleSystem3DZoneType::Sphere:
                 {
                     _drawer->pushTransform(

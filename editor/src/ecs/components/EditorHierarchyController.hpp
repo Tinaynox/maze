@@ -205,6 +205,8 @@ namespace Maze
         //////////////////////////////////////////
         void notifyPrefabEntityChanged(EntityPtr const& _entity);
 
+        //////////////////////////////////////////
+        void notifySelectionChanged();
 
         //////////////////////////////////////////
         void setECSWorld(ECSWorld* _world);
