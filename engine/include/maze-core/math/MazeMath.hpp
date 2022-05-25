@@ -304,6 +304,19 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        // UnitRandomRadius - [0;1]
+        //
+        //////////////////////////////////////////
+        template <class TValue = F32>
+        inline MAZE_CONSTEXPR TValue UnitRandomRadius()
+        {
+            TValue r = UnitRandom<TValue>() + UnitRandom<TValue>();
+            if (r > (TValue)1)
+                r = (TValue)2 - r;
+            return r;
+        }
+
+        //////////////////////////////////////////
         // SymmetricRandom - [-1;1]
         //
         //////////////////////////////////////////
