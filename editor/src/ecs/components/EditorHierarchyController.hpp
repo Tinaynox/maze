@@ -211,6 +211,9 @@ namespace Maze
         //////////////////////////////////////////
         void setECSWorld(ECSWorld* _world);
 
+        //////////////////////////////////////////
+        void expandEntity(EntityPtr const& _entity);
+
     protected:
         Canvas* m_canvas;
 

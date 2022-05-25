@@ -228,10 +228,12 @@ namespace Maze
     void EditorHierarchyController::updateHierarchy()
     {
         for (auto& hierarchyLineData : m_hierarchyLinesPerEntity)
-            hierarchyLineData.second.line->getEntityRaw()->setActiveSelf(false);
+            if (hierarchyLineData.second.line->getEntityRaw())
+                hierarchyLineData.second.line->getEntityRaw()->setActiveSelf(false);
 
         for (auto& hierarchyLineData : m_hierarchyLinesPerScene)
-            hierarchyLineData.second.line->getEntityRaw()->setActiveSelf(false);
+            if (hierarchyLineData.second.line->getEntityRaw())
+                hierarchyLineData.second.line->getEntityRaw()->setActiveSelf(false);
 
         
         switch (EditorManager::GetInstancePtr()->getSceneMode())
@@ -721,7 +723,38 @@ namespace Maze
     //////////////////////////////////////////
     void EditorHierarchyController::notifySelectionChanged()
     {
+        Set<EntityPtr> const& selectedEntities = SelectionManager::GetInstancePtr()->getSelectedEntities();
+        if (selectedEntities.size() == 1)
+        {
+            expandEntity(*selectedEntities.begin());
+            updateHierarchy();
+        }
+    }
 
+    //////////////////////////////////////////
+    void EditorHierarchyController::expandEntity(EntityPtr const& _entity)
+    {
+        if (!_entity)
+            return;
+
+        EntityId eid = _entity->getId();
+        auto it = m_hierarchyLinesPerEntity.find(eid);
+        if (it != m_hierarchyLinesPerEntity.end())
+            it->second.expanded = true;
+
+        Transform3D* transform3D = _entity->getComponentRaw<Transform3D>();
+        if (transform3D)
+        {
+            if (transform3D->getParent())
+                expandEntity(transform3D->getParent()->getEntity());
+        }
+
+        Transform2D* transform2D = _entity->getComponentRaw<Transform2D>();
+        if (transform2D)
+        {
+            if (transform2D->getParent())
+                expandEntity(transform2D->getParent()->getEntity());
+        }
     }
 
 } // namespace Maze
