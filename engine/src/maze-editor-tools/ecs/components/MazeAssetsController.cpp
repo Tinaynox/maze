@@ -471,6 +471,13 @@ namespace Maze
                     if (assetFile->getMetaClass()->isInheritedFrom<AssetDirectory>())
                         setAssetFileExpanded(assetFile, !getAssetFileExpanded(assetFile));
                 }
+                else
+                if (assetFile->getMetaClass()->isInheritedFrom<AssetDirectory>())
+                {
+                    SelectionManager::GetInstancePtr()->unselectObject(assetFile);
+                    setSelectedAssetFolder(fullPath);
+                    return;
+                }
             }
         }
 
