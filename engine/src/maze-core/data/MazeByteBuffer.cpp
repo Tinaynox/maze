@@ -164,6 +164,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool ByteBuffer::isEqual(ByteBuffer const& _byteBuffer)
+    {
+        if (m_size != _byteBuffer.m_size)
+            return false;
+
+        return memcmp(m_data, _byteBuffer.m_data, m_size) == 0;
+    }
+
+    //////////////////////////////////////////
     void ByteBuffer::upload(U8 const* _data, Size _size)
     {
         resize(_size);

@@ -93,6 +93,12 @@ namespace Maze
         //////////////////////////////////////////
         inline bool set(RenderPassPtr const& _renderPass) { return set(*_renderPass.get()); }
 
+        //////////////////////////////////////////
+        bool isEqual(RenderPass const& _renderPass) const;
+
+        //////////////////////////////////////////
+        inline bool isEqual(RenderPassPtr const& _renderPass) const { return isEqual(*_renderPass.get()); }
+
         
         //////////////////////////////////////////
         inline RenderPassType getPassType() const { return m_passType; }

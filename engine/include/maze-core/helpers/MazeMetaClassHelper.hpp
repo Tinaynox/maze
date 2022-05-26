@@ -48,6 +48,9 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API bool CopyProperties(MetaInstance _dstMetaInstance, ConstMetaInstance _srcMetaInstance);
 
+        //////////////////////////////////////////
+        MAZE_CORE_API bool IsEqual(ConstMetaInstance _metaInstance0, ConstMetaInstance _metaInstance1);
+
 
     } // namespace MetaClassHelper
     //////////////////////////////////////////

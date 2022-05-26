@@ -117,6 +117,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool RenderPass::isEqual(RenderPass const& _renderPass) const
+    {
+        return MetaClassHelper::IsEqual(getMetaInstance(), _renderPass.getMetaInstance());
+    }
+
+    //////////////////////////////////////////
     void RenderPass::setShader(ShaderPtr const& _shader)
     { 
         if (m_shader == _shader)

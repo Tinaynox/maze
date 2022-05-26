@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
 #include "maze-core/helpers/MazeMetaClassHelper.hpp"
+#include "maze-core/data/MazeByteBuffer.hpp"
 
 
 //////////////////////////////////////////
@@ -77,6 +78,43 @@ namespace Maze
                 {
                     MetaProperty* metaProperty = srcSuperMetaClass->getProperty(i);
                     metaProperty->copy(_dstMetaInstance, _srcMetaInstance);
+                }
+            }
+
+            return true;
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API bool IsEqual(ConstMetaInstance _metaInstance0, ConstMetaInstance _metaInstance1)
+        {
+            MetaClass const* metaClass = _metaInstance0.getMetaClass();
+            if (metaClass != _metaInstance1.getMetaClass())
+                return false;
+
+            Vector<MetaClass*> const& superMetaClasses = metaClass->getAllSuperMetaClasses();
+
+            for (MetaClass* superMetaClass : superMetaClasses)
+            {
+                for (S32 i = 0; i < superMetaClass->getPropertiesCount(); ++i)
+                {
+                    MetaProperty* metaProperty = superMetaClass->getProperty(i);
+                    // #TODO: Rework: add isEqual
+                    if (metaProperty->toString(_metaInstance0) != metaProperty->toString(_metaInstance1))
+                        return false;
+                    /*
+                    U32 serializationSize = metaProperty->getSerializationSize(_metaInstance0);
+                    if (serializationSize != metaProperty->getSerializationSize(_metaInstance1))
+                        return false;
+
+                    ByteBuffer byteBuffer0(serializationSize);
+                    ByteBuffer byteBuffer1(serializationSize);
+
+                    metaProperty->serializeTo(_metaInstance0, byteBuffer0.getDataPointer());
+                    metaProperty->serializeTo(_metaInstance1, byteBuffer1.getDataPointer());
+                    
+                    if (!byteBuffer0.isEqual(byteBuffer1))
+                        return false;
+                    */
                 }
             }
 

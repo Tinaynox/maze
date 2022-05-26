@@ -106,7 +106,7 @@ namespace Maze
         void buildMaterialsPropertiesList();
 
         //////////////////////////////////////////
-        Set<MaterialPtr> getMaterials();
+        Set<MaterialPtr> const& getMaterials();
 
         //////////////////////////////////////////
         void clearRenderPassDrawers();
@@ -137,6 +137,8 @@ namespace Maze
         Transform2DPtr m_saveMaterialButtonRoot;
 
         bool m_materialsPropertiesListDirty;
+
+        MaterialPtr m_materialCopy;
     };
 
 

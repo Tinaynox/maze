@@ -127,6 +127,17 @@ namespace Maze
             shaderUniformVariantsDrawer->linkMaterials(getMaterials());
             shaderUniformVariantsDrawer->processDataToUI();
         }
+
+        Set<MaterialPtr> const& materials = getMaterials();
+        // #TODO: Multi material editor
+        if (materials.size() == 1 && m_materialCopy)
+        {
+            MaterialPtr const& material = *materials.begin();
+            if (!material->isEqual(m_materialCopy))
+            {
+                m_materialCopy->set(material);
+            }
+        }
     }
 
     //////////////////////////////////////////
@@ -146,10 +157,17 @@ namespace Maze
         createUniformVariantsDrawers();
         createSaveMaterialButton();
         m_materialsPropertiesListDirty = false;
+
+        Set<MaterialPtr> const& materials = getMaterials();
+        // #TODO: Multi material editor
+        if (materials.size() == 1)
+            m_materialCopy = (*materials.begin())->createCopy();
+        else
+            m_materialCopy.reset();
     }
 
     //////////////////////////////////////////
-    Set<MaterialPtr> MaterialsInspector::getMaterials()
+    Set<MaterialPtr> const& MaterialsInspector::getMaterials()
     {
         return m_materials;
     }
@@ -168,7 +186,7 @@ namespace Maze
     {
         clearRenderPassDrawers();
 
-        Set<MaterialPtr> materials = getMaterials();
+        Set<MaterialPtr> const& materials = getMaterials();
 
         // #TODO: Multi material editor
         if (materials.size() == 1)
@@ -218,7 +236,7 @@ namespace Maze
 
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
-        Set<MaterialPtr> materials = getMaterials();
+        Set<MaterialPtr> const& materials = getMaterials();
 
         // #TODO: Multi material editor
         if (materials.size() == 1)
@@ -332,7 +350,7 @@ namespace Maze
     {
         clearSaveMaterialButton();
 
-        Set<MaterialPtr> materials = getMaterials();
+        Set<MaterialPtr> const& materials = getMaterials();
 
         // #TODO: Multi material editor
         if (materials.size() == 1)

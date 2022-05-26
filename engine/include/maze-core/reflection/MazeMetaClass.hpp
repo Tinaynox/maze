@@ -188,7 +188,13 @@ namespace Maze
         virtual U32 getSerializationSize(MetaInstance const& _instance) const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
+        virtual U32 getSerializationSize(ConstMetaInstance const& _instance) const MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
         virtual void serializeTo(MetaInstance const& _instance, U8* _data) const MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual void serializeTo(ConstMetaInstance const& _instance, U8* _data) const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual void deserializeFrom(MetaInstance const& _instance, U8 const* _data) MAZE_ABSTRACT;
@@ -830,9 +836,28 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        virtual U32 getSerializationSize(ConstMetaInstance const& _instance) const MAZE_OVERRIDE
+        {
+            TObject const* obj = castMetaInstanceObject(_instance);
+
+            TValue value = (obj->*m_getter)();
+            U32 serializationSize = GetValueSerializationSize(value);
+            return serializationSize;
+        }
+
+        //////////////////////////////////////////
         virtual void serializeTo(MetaInstance const& _instance, U8* _data) const MAZE_OVERRIDE
         {
             TObject* obj = castMetaInstanceObject(_instance);
+
+            TValue value = (obj->*m_getter)();
+            SerializeValue(value, _data);
+        }
+
+        //////////////////////////////////////////
+        virtual void serializeTo(ConstMetaInstance const& _instance, U8* _data) const MAZE_OVERRIDE
+        {
+            TObject const* obj = castMetaInstanceObject(_instance);
 
             TValue value = (obj->*m_getter)();
             SerializeValue(value, _data);
@@ -847,6 +872,7 @@ namespace Maze
             DeserializeValue(value, _data);
             (obj->*m_setter)(value);
         }
+
 
     protected:
 

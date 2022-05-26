@@ -115,6 +115,9 @@ namespace Maze
         void fill(U8 _byte);
 
         //////////////////////////////////////////
+        bool isEqual(ByteBuffer const& _byteBuffer);
+
+        //////////////////////////////////////////
         inline U8 getByte(Size _i) const
         {
             MAZE_DEBUG_BP_IF(_i >= (U32)m_size);

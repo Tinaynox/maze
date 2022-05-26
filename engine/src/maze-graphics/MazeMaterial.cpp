@@ -205,6 +205,43 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool Material::isEqual(MaterialPtr const& _material) const
+    {
+        if (!_material)
+            return false;
+
+        if (getName() != _material->getName())
+            return false;
+
+        if (m_uniforms.size() != _material->m_uniforms.size())
+            return false;
+
+        for (Size i = 0, in = _material->m_uniforms.size(); i < in; ++i)
+        {
+            if (*m_uniforms[i].get() != *_material->m_uniforms[i].get())
+                return false;
+        }
+
+        for (RenderPassType passType = RenderPassType(1); passType < RenderPassType::MAX; ++passType)
+        {
+            Size passesCount = _material->m_passes[passType].size();
+            if (m_passes[passType].size() != passesCount)
+                return false;
+
+            for (Size i = 0; i < passesCount; ++i)
+            {
+                RenderPassPtr const& otherRenderPass = _material->m_passes[passType][i];
+                RenderPassPtr const& renderPass = m_passes[passType][i];
+
+                if (!renderPass->isEqual(otherRenderPass))
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    //////////////////////////////////////////
     void Material::loadFromXMLDocument(tinyxml2::XMLDocument& _doc)
     {
         tinyxml2::XMLNode* rootNode = _doc.FirstChild();

@@ -123,6 +123,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        bool isEqual(MaterialPtr const& _material) const;
+
+
+        //////////////////////////////////////////
         void loadFromXMLDocument(tinyxml2::XMLDocument& _doc);
 
         //////////////////////////////////////////
