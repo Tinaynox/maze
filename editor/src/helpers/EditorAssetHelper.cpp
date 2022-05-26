@@ -170,6 +170,25 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        String Duplicate(String const& _fullPath)
+        {
+            String dir = FileHelper::GetDirectoryInPath(_fullPath);
+
+            String newPrefabFullPath = EditorToolsHelper::BuildNewAssetFileName(_fullPath);
+            FileHelper::CopyRegularFile(_fullPath.c_str(), newPrefabFullPath.c_str());
+            AssetManager::GetInstancePtr()->updateAssets();
+
+            return newPrefabFullPath;
+        }
+
+        //////////////////////////////////////////
+        void Duplicate(AssetsController* _controller, String const& _fullPath)
+        {
+            String newPrefabFullPath = Duplicate(_fullPath);
+            Rename(_controller, newPrefabFullPath);
+        }
+
+        //////////////////////////////////////////
         void Edit(String const& _fullPath)
         {
             AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_fullPath);

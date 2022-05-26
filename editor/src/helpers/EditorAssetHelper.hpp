@@ -78,6 +78,12 @@ namespace Maze
         void Delete(String const& _fullPath);
 
         //////////////////////////////////////////
+        String Duplicate(String const& _fullPath);
+
+        //////////////////////////////////////////
+        void Duplicate(AssetsController* _controller, String const& _fullPath);
+
+        //////////////////////////////////////////
         void Edit(String const& _fullPath);
     };
 

@@ -209,12 +209,15 @@ namespace Maze
 
                     RenderWindowPtr const& renderWindow = Editor::GetInstancePtr()->getMainRenderWindow();
                     String path = EditorHelper::SelectAssetsFolder();
-                    editorSettings->setAssetsFullPath(path);
+                    if (!path.empty())
+                    {
+                        editorSettings->setAssetsFullPath(path);
 
-                    SettingsManager::GetInstancePtr()->saveSettings();
+                        SettingsManager::GetInstancePtr()->saveSettings();
 
-                    SceneManager::GetInstancePtr()->loadScene<SceneEditor>();
-                    SceneManager::GetInstancePtr()->unloadScene<SceneSelectMode>();
+                        SceneManager::GetInstancePtr()->loadScene<SceneEditor>();
+                        SceneManager::GetInstancePtr()->unloadScene<SceneSelectMode>();
+                    }
                 });
         }
 

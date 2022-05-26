@@ -187,8 +187,19 @@ namespace Maze
             if (extension == "mzprefab")
             {
                 _menuListTree->addItem(
+                    "Duplicate",
+                    [_controller, _fullPath](String const& _text) { EditorAssetHelper::Duplicate(_controller, _fullPath); });
+
+                _menuListTree->addItem(
                     "Edit",
                     [_fullPath](String const& _text) { EditorAssetHelper::Edit(_fullPath); });
+            }
+            else
+            if (extension == "mzmaterial")
+            {
+                _menuListTree->addItem(
+                    "Duplicate",
+                    [_controller, _fullPath](String const& _text) { EditorAssetHelper::Duplicate(_controller, _fullPath); });
             }
         });
     }
