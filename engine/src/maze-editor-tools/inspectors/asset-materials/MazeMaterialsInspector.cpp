@@ -70,6 +70,15 @@
 namespace Maze
 {
 
+    //////////////////////////////////////////
+    // Class EditorToolsMaterialChangedEvent
+    //
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS(EditorToolsMaterialChangedEvent);
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(EditorToolsMaterialChangedEvent);
+
 
     //////////////////////////////////////////
     // Class MaterialsInspector
@@ -135,7 +144,19 @@ namespace Maze
             MaterialPtr const& material = *materials.begin();
             if (!material->isEqual(m_materialCopy))
             {
+                m_materialChangedTimer = 0.5f;
                 m_materialCopy->set(material);
+            }
+            else
+            {
+                if (m_materialChangedTimer > 0.0f)
+                {
+                    m_materialChangedTimer -= _dt;
+                    if (m_materialChangedTimer <= 0.0f)
+                    {
+                        EventManager::GetInstancePtr()->generateEvent<EditorToolsMaterialChangedEvent>(material->getName());
+                    }
+                }
             }
         }
     }
@@ -164,6 +185,7 @@ namespace Maze
             m_materialCopy = (*materials.begin())->createCopy();
         else
             m_materialCopy.reset();
+        m_materialChangedTimer = 0.0f;
     }
 
     //////////////////////////////////////////

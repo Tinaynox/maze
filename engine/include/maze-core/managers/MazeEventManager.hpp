@@ -34,6 +34,8 @@
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/events/MazeEvent.hpp"
+#include "maze-core/utils/MazeSwitchableContainer.hpp"
 
 
 //////////////////////////////////////////
@@ -61,6 +63,16 @@ namespace Maze
     class MAZE_CORE_API EventManager
         : public Updatable
     {
+    public:
+
+        //////////////////////////////////////////
+        struct EventsBlock
+        {
+            MultiDelegate<ClassUID, Event*> event;
+            Vector<SharedPtr<Event>> events;
+        };
+
+
     public:
 
         //////////////////////////////////////////
@@ -99,6 +111,29 @@ namespace Maze
                 _args...);
         }
 
+        //////////////////////////////////////////
+        template <typename TEvent, typename ...TArgs>
+        inline void generateEvent(TArgs... _args)
+        {
+            Map<ClassUID, Vector<SharedPtr<Event>>>& allEvents = m_events.current();
+            Vector<SharedPtr<Event>>& events = allEvents[ClassInfo<TEvent>::UID()];
+            events.emplace_back(SharedPtr<Event>(MAZE_NEW_WITH_ARGS(TEvent, _args...)));
+        }
+
+        //////////////////////////////////////////
+        template <typename TEvent>
+        inline MultiDelegate<ClassUID, Event*>& getEventCallbacks()
+        {
+            return m_eventCallbacks[ClassInfo<TEvent>::UID()];
+        }
+
+        //////////////////////////////////////////
+        template <typename TEvent>
+        inline void subscribeEvent(void (*_functor)(TEvent*))
+        {
+            getEventCallbacks<TEvent>().subscribe(
+                [_functor](ClassUID _eventUID, Event* _event) { _functor((TEvent*)_event); });
+        }
 
     protected:
 
@@ -114,6 +149,8 @@ namespace Maze
     private:
 
         static EventManager* s_instance;
+        SwitchableContainer<Map<ClassUID, Vector<SharedPtr<Event>>>> m_events;
+        Map<ClassUID, MultiDelegate<ClassUID, Event*>> m_eventCallbacks;
     };
 
 

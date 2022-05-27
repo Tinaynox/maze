@@ -83,6 +83,7 @@
 #include "maze-physics2d/ecs/components/MazeCircleCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
 #include "maze-editor-tools/managers/MazeAssetEditorToolsManager.hpp"
+#include "maze-editor-tools/inspectors/asset-materials/MazeAssetMaterialsInspector.hpp"
 #include "Editor.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "helpers/EditorAssetHelper.hpp"
@@ -134,6 +135,18 @@ namespace Maze
             {
                 Editor::GetInstancePtr()->getMainRenderWindow()->getWindow()->eventWindowFocusChanged.subscribe(
                     this, &EditorAssetsManager::notifyWindowFocusChanged);
+            });
+
+        EventManager::GetInstancePtr()->subscribeEvent<EditorToolsMaterialChangedEvent>(
+            [](EditorToolsMaterialChangedEvent* _event)
+            {
+                AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_event->getMaterialName());
+                if (assetFile)
+                {
+                    MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getMaterial(_event->getMaterialName());
+                    if (material)
+                        material->saveToFile(assetFile->getFullPath());
+                }
             });
 
         registerAssetFileCallbacks();

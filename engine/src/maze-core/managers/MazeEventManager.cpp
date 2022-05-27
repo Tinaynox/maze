@@ -71,7 +71,19 @@ namespace Maze
     //////////////////////////////////////////
     void EventManager::update(F32 _dt)
     {
-        
+        auto& events = m_events.switchContainer();
+
+        for (auto& eventsMap : events)
+        {
+            if (eventsMap.second.size() > 0u)
+            {
+                MultiDelegate<ClassUID, Event*>& eventCallbacks = m_eventCallbacks[eventsMap.first];
+                for (auto& event : eventsMap.second)
+                    eventCallbacks(eventsMap.first, event.get());
+            }
+
+            eventsMap.second.clear();
+        }
     }
 
 } // namespace Maze

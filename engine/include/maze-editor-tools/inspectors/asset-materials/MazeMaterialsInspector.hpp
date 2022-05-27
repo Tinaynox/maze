@@ -64,6 +64,35 @@ namespace Maze
     
 
     //////////////////////////////////////////
+    // Class EditorToolsMaterialChangedEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_EDITOR_TOOLS_API EditorToolsMaterialChangedEvent
+        : public Event
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS(EditorToolsMaterialChangedEvent);
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_MEMORY_ALLOCATION(EditorToolsMaterialChangedEvent);
+
+    public:
+        //////////////////////////////////////////
+        EditorToolsMaterialChangedEvent(String const& _materialName = String())
+            : m_materialName(_materialName)
+        {}
+
+        //////////////////////////////////////////
+        String const& getMaterialName() const { return m_materialName; }
+
+    protected:
+        String m_materialName;
+    };
+
+
+    //////////////////////////////////////////
     // Class MaterialsInspector
     //
     //////////////////////////////////////////
@@ -139,6 +168,7 @@ namespace Maze
         bool m_materialsPropertiesListDirty;
 
         MaterialPtr m_materialCopy;
+        F32 m_materialChangedTimer = 0.0f;
     };
 
 
