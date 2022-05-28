@@ -27,7 +27,7 @@
 #include "MazeUIHeader.hpp"
 #include "maze-ui/managers/MazeAnimationCurveManager.hpp"
 #include "maze-ui/managers/MazeColorPickerManager.hpp"
-#include "maze-ui/curve-editor/SceneCurveEditor.hpp"
+#include "maze-ui/curve-editor/MazeSceneCurveEditor.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"

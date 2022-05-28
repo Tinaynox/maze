@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_SceneColorPicker_hpp_))
-#define _SceneColorPicker_hpp_
+#if (!defined(_MazeSceneColorPicker_hpp_))
+#define _MazeSceneColorPicker_hpp_
 
 
 //////////////////////////////////////////
@@ -239,5 +239,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _SceneColorPicker_hpp_
+#endif // _MazeSceneColorPicker_hpp_
 //////////////////////////////////////////

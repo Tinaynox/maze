@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_SceneMaterialPicker_hpp_))
-#define _SceneMaterialPicker_hpp_
+#if (!defined(_MazeSceneTexturePicker_hpp_))
+#define _MazeSceneTexturePicker_hpp_
 
 
 //////////////////////////////////////////
@@ -40,7 +40,7 @@
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeShader.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
-#include "maze-graphics/MazeMaterial.hpp"
+#include "maze-graphics/MazeTexture.hpp"
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
@@ -62,7 +62,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(SceneMaterialPicker);
+    MAZE_USING_SHARED_PTR(SceneTexturePicker);
     MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
     MAZE_USING_SHARED_PTR(UIElement2D);
     MAZE_USING_SHARED_PTR(ToggleButton2D);
@@ -70,24 +70,24 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class SceneMaterialPicker
+    // Class SceneTexturePicker
     //
     //////////////////////////////////////////
-    class MAZE_UI_API SceneMaterialPicker
+    class MAZE_UI_API SceneTexturePicker
         : public ECSRenderScene
         , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneMaterialPicker, ECSRenderScene);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneTexturePicker, ECSRenderScene);
 
     public:
 
         //////////////////////////////////////////
-        struct MaterialPreviewData
+        struct TexturePreviewData
         {
-            MaterialPtr material;
+            Texture2DPtr texture;
             Transform2DPtr bodyTransform;
             ToggleButton2DPtr button;
             SystemTextRenderer2DPtr titleText;
@@ -96,10 +96,10 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        static SceneMaterialPickerPtr Create(RenderTargetPtr const& _renderTarget);
+        static SceneTexturePickerPtr Create(RenderTargetPtr const& _renderTarget);
     
         //////////////////////////////////////////
-        virtual ~SceneMaterialPicker();
+        virtual ~SceneTexturePicker();
 
         //////////////////////////////////////////
         void setup();
@@ -111,8 +111,7 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        SceneMaterialPicker();
-
+        SceneTexturePicker();
 
         //////////////////////////////////////////
         virtual bool init(RenderTargetPtr const& _renderTarget);
@@ -122,10 +121,10 @@ namespace Maze
         void create2D();
 
         //////////////////////////////////////////
-        void notifyMaterialChanged(MaterialPtr const& _material);
+        void notifyTextureChanged(Texture2DPtr const& _material);
 
         //////////////////////////////////////////
-        void updateMaterials();
+        void updateTextures();
 
         //////////////////////////////////////////
         void updateUI();
@@ -139,7 +138,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MaterialPreviewData createMaterialPreview(MaterialPtr const& _material);
+        TexturePreviewData createTexturePreview(Texture2DPtr const& _material);
 
 
         //////////////////////////////////////////
@@ -152,7 +151,7 @@ namespace Maze
         CanvasPtr m_canvas;
         UIElement2DPtr m_canvasUIElement;
 
-        Vector<MaterialPreviewData> m_previews;
+        Vector<TexturePreviewData> m_previews;
         VerticalLayout2DPtr m_layout;
     };
 
@@ -161,5 +160,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _SceneMaterialPicker_hpp_
+#endif // _MazeSceneTexturePicker_hpp_
 //////////////////////////////////////////

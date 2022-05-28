@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_SceneCurveEditor_hpp_))
-#define _SceneCurveEditor_hpp_
+#if (!defined(_MazeSceneRenderMeshPicker_hpp_))
+#define _MazeSceneRenderMeshPicker_hpp_
 
 
 //////////////////////////////////////////
@@ -40,7 +40,7 @@
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeShader.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
-#include "maze-graphics/MazeMaterial.hpp"
+#include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
@@ -62,44 +62,48 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(SceneCurveEditor);
+    MAZE_USING_SHARED_PTR(SceneRenderMeshPicker);
     MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
     MAZE_USING_SHARED_PTR(UIElement2D);
+    MAZE_USING_SHARED_PTR(ToggleButton2D);
+    MAZE_USING_SHARED_PTR(SystemTextRenderer2D);
 
 
     //////////////////////////////////////////
-    // Class SceneCurveEditor
+    // Class SceneRenderMeshPicker
     //
     //////////////////////////////////////////
-    class MAZE_UI_API SceneCurveEditor
+    class MAZE_UI_API SceneRenderMeshPicker
         : public ECSRenderScene
         , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneCurveEditor, ECSRenderScene);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneRenderMeshPicker, ECSRenderScene);
 
+
+    public:
 
         //////////////////////////////////////////
-        enum CurveElement
+        struct RenderMeshPreviewData
         {
-            None,
-            Key,
-            InTangent,
-            OutTangent,
+            RenderMeshPtr renderMesh;
+            Transform2DPtr bodyTransform;
+            ToggleButton2DPtr button;
+            SystemTextRenderer2DPtr titleText;
         };
 
     public:
 
         //////////////////////////////////////////
-        static SceneCurveEditorPtr Create(RenderTargetPtr const& _renderTarget);
+        static SceneRenderMeshPickerPtr Create(RenderTargetPtr const& _renderTarget);
     
         //////////////////////////////////////////
-        virtual ~SceneCurveEditor();
+        virtual ~SceneRenderMeshPicker();
 
         //////////////////////////////////////////
-        void setup(AnimationCurveMinMaxMode _mode);
+        void setup();
 
         //////////////////////////////////////////
         virtual void update(F32 _dt) MAZE_OVERRIDE;
@@ -108,7 +112,8 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        SceneCurveEditor();       
+        SceneRenderMeshPicker();
+
 
         //////////////////////////////////////////
         virtual bool init(RenderTargetPtr const& _renderTarget);
@@ -118,39 +123,13 @@ namespace Maze
         void create2D();
 
         //////////////////////////////////////////
-        void notifyCurveChanged(AnimationCurve const& _curve);
+        void notifyRenderMeshChanged(RenderMeshPtr const& _material);
+
+        //////////////////////////////////////////
+        void updateRenderMeshs();
 
         //////////////////////////////////////////
         void updateUI();
-
-
-        //////////////////////////////////////////
-        void notifyModeChanged(SystemTextDropdown2D* _dropdown, S32 _index);
-
-
-        //////////////////////////////////////////
-        void processCurve();
-
-
-        //////////////////////////////////////////
-        void notifyCurveClickButtonClick(Button2D* _button, CursorInputEvent const& _event);
-        
-        //////////////////////////////////////////
-        void notifyCurveClickButtonCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _event);
-
-
-        //////////////////////////////////////////
-        Vec2DF getCurveOrigin();
-
-        //////////////////////////////////////////
-        F32 getCurveHeightScalar();
-
-        //////////////////////////////////////////
-        CurveElement getFocusedElement(S32& _key);
-
-
-        //////////////////////////////////////////
-        void changeCurrentKey(F32 _newTime, F32 _newValue);
 
 
         //////////////////////////////////////////
@@ -159,74 +138,23 @@ namespace Maze
         //////////////////////////////////////////
         void notifyCanvasCursorReleaseOut(CursorInputEvent const& _event);
 
-        //////////////////////////////////////////
-        void processDragging();
 
         //////////////////////////////////////////
-        void startDragging(CurveElement _element);
+        RenderMeshPreviewData createRenderMeshPreview(RenderMeshPtr const& _material);
 
 
         //////////////////////////////////////////
-        Vec2DF getKeyPoint(Size _keyIndex);
+        void clearPreviews();
 
         //////////////////////////////////////////
-        Vec2DF getInTangentPoint(Size _keyIndex);
-
-        //////////////////////////////////////////
-        Vec2DF getOutTangentPoint(Size _keyIndex);
-
-
-        //////////////////////////////////////////
-        void notifyCurveScalarEditTextInput(SystemTextEditBox2D* _edit);
-
-
-        //////////////////////////////////////////
-        void notifyValueEditTextInput(SystemTextEditBox2D* _edit);
-
-        //////////////////////////////////////////
-        void notifyLocationEditTextInput(SystemTextEditBox2D* _edit);
-
-        //////////////////////////////////////////
-        void notifyInTangentEditTextInput(SystemTextEditBox2D* _edit);
-
-        //////////////////////////////////////////
-        void notifyOutTangentEditTextInput(SystemTextEditBox2D* _edit);
+        void notifyButtonClick(Button2D* _button, CursorInputEvent const& _event);
 
     protected:
         CanvasPtr m_canvas;
         UIElement2DPtr m_canvasUIElement;
 
-        AnimationCurveMinMaxMode m_minMaxMode = AnimationCurveMinMaxMode::None;
-
-        SystemTextDropdown2DPtr m_modeDropdown;
-        ClickButton2DPtr m_copyButton;
-        ClickButton2DPtr m_pasteButton;
-        ClickButton2DPtr m_copyXMLButton;
-        ClickButton2DPtr m_pasteXMLButton;
-
-        SpriteRenderer2DPtr m_curveRendererHolder;
-        SpriteRenderer2DPtr m_curveRenderer;
-        ClickButton2DPtr m_curveClickButton;
-        Vec2DF m_curveClickPosition = Vec2DF::c_zero;
-
-        PixelSheet2D m_curvePixelSheet;
-        Texture2DPtr m_curveTexture;
-        SpritePtr m_curveSprite;
-
-        SystemTextEditBox2DPtr m_curveScalarEdit;
-
-        S32 m_keyIndex = -1;
-
-        CurveElement m_draggingElement = CurveElement::None;
-        Vec2DF m_draggingPrevCursorPositionCurveSpace = Vec2DF::c_zero;
-        F32 m_draggingDistance = 0.0f;
-
-        EntityPtr m_keyHolder;
-        SystemTextEditBox2DPtr m_valueEdit;
-        SystemTextEditBox2DPtr m_locationEdit;
-        EntityPtr m_tangentsHolder;
-        SystemTextEditBox2DPtr m_inTangentEdit;
-        SystemTextEditBox2DPtr m_outTangentEdit;
+        Vector<RenderMeshPreviewData> m_previews;
+        VerticalLayout2DPtr m_layout;
     };
 
 
@@ -234,5 +162,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _SceneCurveEditor_hpp_
+#endif // _MazeSceneRenderMeshPicker_hpp_
 //////////////////////////////////////////

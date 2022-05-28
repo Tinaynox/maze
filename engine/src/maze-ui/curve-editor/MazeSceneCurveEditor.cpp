@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeUIHeader.hpp"
-#include "maze-ui/curve-editor/SceneCurveEditor.hpp"
+#include "maze-ui/curve-editor/MazeSceneCurveEditor.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"

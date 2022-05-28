@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeUIHeader.hpp"
-#include "maze-ui/material-picker/SceneMaterialPicker.hpp"
+#include "maze-ui/material-picker/MazeSceneMaterialPicker.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"

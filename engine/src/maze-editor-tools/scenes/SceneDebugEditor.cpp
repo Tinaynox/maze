@@ -82,12 +82,12 @@
 #include "maze-editor-tools/ecs/components/MazeTopBarController.hpp"
 #include "maze-editor-tools/ecs/components/MazeDebugGridRenderer.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
-#include "maze-ui/color-picker/SceneColorPicker.hpp"
-#include "maze-ui/color-picker/SceneColorGradientPicker.hpp"
-#include "maze-ui/curve-editor/SceneCurveEditor.hpp"
-#include "maze-ui/material-picker/SceneMaterialPicker.hpp"
-#include "maze-ui/texture-picker/SceneTexturePicker.hpp"
-#include "maze-ui/render-mesh-picker/SceneRenderMeshPicker.hpp"
+#include "maze-ui/color-picker/MazeSceneColorPicker.hpp"
+#include "maze-ui/color-picker/MazeSceneColorGradientPicker.hpp"
+#include "maze-ui/curve-editor/MazeSceneCurveEditor.hpp"
+#include "maze-ui/material-picker/MazeSceneMaterialPicker.hpp"
+#include "maze-ui/texture-picker/MazeSceneTexturePicker.hpp"
+#include "maze-ui/render-mesh-picker/MazeSceneRenderMeshPicker.hpp"
 #include "layout/MazeEditorToolsLayout.hpp"
 
 

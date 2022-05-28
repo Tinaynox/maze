@@ -27,7 +27,7 @@
 #include "MazeUIHeader.hpp"
 #include "maze-ui/managers/MazeColorGradientPickerManager.hpp"
 #include "maze-ui/managers/MazeColorPickerManager.hpp"
-#include "maze-ui/color-picker/SceneColorGradientPicker.hpp"
+#include "maze-ui/color-picker/MazeSceneColorGradientPicker.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"

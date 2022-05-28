@@ -39,7 +39,7 @@
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/managers/MazeRenderMeshPickerManager.hpp"
-#include "maze-ui/render-mesh-picker/SceneRenderMeshPicker.hpp"
+#include "maze-ui/render-mesh-picker/MazeSceneRenderMeshPicker.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"

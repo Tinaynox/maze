@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeUIHeader.hpp"
-#include "maze-ui/texture-picker/SceneTexturePicker.hpp"
+#include "maze-ui/texture-picker/MazeSceneTexturePicker.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
