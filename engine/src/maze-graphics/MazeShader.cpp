@@ -94,7 +94,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ShaderUniformPtr const& Shader::ensureUniform(HashedCString _uniformName)
+    ShaderUniformPtr const& Shader::ensureUniform(HashedCString _uniformName, ShaderUniformType _type)
     {
         UnorderedMap<U32, ShaderUniformPtr>::const_iterator it = m_uniformsCache.find(_uniformName.hash);
         if (it != m_uniformsCache.end())
@@ -106,6 +106,13 @@ namespace Maze
         }
 
         return createUniformFromShader(_uniformName);
+    }
+
+    //////////////////////////////////////////
+    bool Shader::hasUniform(HashedCString _uniformName)
+    {
+        UnorderedMap<U32, ShaderUniformPtr>::const_iterator it = m_uniformsCache.find(_uniformName.hash);
+        return (it != m_uniformsCache.end()) && it->second;
     }
 
     ///////////////////////////f///////////////

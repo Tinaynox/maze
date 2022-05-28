@@ -200,5 +200,14 @@ namespace Maze
         return crc32;
     }
 
+    //////////////////////////////////////////
+    bool RenderPass::hasUniform(HashedCString _uniformName)
+    {
+        if (!m_shader)
+            return false;
+
+        return m_shader->hasUniform(_uniformName);
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

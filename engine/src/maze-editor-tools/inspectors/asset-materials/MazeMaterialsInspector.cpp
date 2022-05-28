@@ -144,6 +144,10 @@ namespace Maze
             MaterialPtr const& material = *materials.begin();
             if (!material->isEqual(m_materialCopy))
             {
+                if (material->getRenderPass() && m_materialCopy->getRenderPass() &&
+                    material->getRenderPass()->getShader() != m_materialCopy->getRenderPass()->getShader())
+                    m_materialsPropertiesListDirty = true;
+
                 m_materialChangedTimer = 0.35f;
                 m_materialCopy->set(material);
             }
@@ -271,6 +275,9 @@ namespace Maze
             FastVector<ShaderUniformVariantPtr> const& uniforms = material->getUniforms();
             for (ShaderUniformVariantPtr const& uniformVariant : uniforms)
             {
+                if (!material->hasUniform(uniformVariant->getName()))
+                    continue;
+
                 HashedString const& uniformName = uniformVariant->getName();
                 ShaderUniformType shaderUniformType = uniformVariant->getType();
 

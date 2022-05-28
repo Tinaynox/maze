@@ -159,7 +159,7 @@ namespace Maze
             ShaderOpenGLPtr const& _shader);
         
         //////////////////////////////////////////
-        virtual ShaderUniformPtr const& createUniformFromShader(HashedCString _uniformName) MAZE_OVERRIDE;
+        virtual ShaderUniformPtr const& createUniformFromShader(HashedCString _uniformName, ShaderUniformType _type = ShaderUniformType::None) MAZE_OVERRIDE;
     
 
         //////////////////////////////////////////
@@ -200,6 +200,10 @@ namespace Maze
 
         //////////////////////////////////////////
         String buildLocalShaderFeatures();
+
+
+        //////////////////////////////////////////
+        void assignUniforms();
 
     protected:
         ContextOpenGL* m_context;

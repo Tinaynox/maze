@@ -38,6 +38,7 @@
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/helpers/MazeMetaClassHelper.hpp"
 #include "maze-graphics/MazeVertex.hpp"
+#include "maze-render-system-opengl-core/MazeShaderUniformVariantOpenGL.hpp"
 
 
 
@@ -261,7 +262,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ShaderUniformPtr const& ShaderOpenGL::createUniformFromShader(HashedCString _uniformName)
+    ShaderUniformPtr const& ShaderOpenGL::createUniformFromShader(HashedCString _uniformName, ShaderUniformType _type)
     {
         static ShaderUniformPtr nullPointer;
 
@@ -290,7 +291,7 @@ namespace Maze
             return nullPointer;
         }
 
-        ShaderUniformOpenGLPtr newUniform = std::static_pointer_cast<ShaderUniformOpenGL>(ShaderUniform::Create(getSharedPtr()));
+        ShaderUniformOpenGLPtr newUniform = std::static_pointer_cast<ShaderUniformOpenGL>(ShaderUniform::Create(getSharedPtr(), _type));
         MAZE_ERROR_RETURN_VALUE_IF(!newUniform, nullPointer, "Shader Uniform creation error!");
         newUniform->setLocation(uniformLocation);
         newUniform->setName(_uniformName);
@@ -600,6 +601,7 @@ namespace Maze
             fragmentShaderId = 0;
         }
 
+        assignUniforms();
         assignDefaultUniforms();
 
         Debug::Log("Shader %s loaded.", getName().c_str());
@@ -927,6 +929,27 @@ namespace Maze
         applyCachedUniformVariants();
     }
 
+    //////////////////////////////////////////
+    void ShaderOpenGL::assignUniforms()
+    {
+        MAZE_GL_MUTEX_SCOPED_LOCK(getRenderSystemOpenGLRaw());
+        ShaderOpenGLScopeBind scopeBind(this);
+
+        MZGLint count;
+        mzglGetProgramiv(m_programId, MAZE_GL_ACTIVE_UNIFORMS, &count);
+
+        MZGLint size;
+        MZGLenum type;
+        MZGLsizei const bufSize = 128;
+        MZGLchar name[bufSize];
+        MZGLsizei length;
+        for (S32 i = 0; i < count; i++)
+        {
+            mzglGetActiveUniform(m_programId, (MZGLuint)i, bufSize, &length, &size, &type, name);
+            ShaderUniformType uniformType = GetShaderUniformTypeFromOpenGL(type);
+            ensureUniform(name, uniformType);
+        }
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

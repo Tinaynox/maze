@@ -229,6 +229,9 @@ namespace Maze
         //////////////////////////////////////////
         U32 calculateUniformsCRC32(U32 _seed = 0) const;
 
+        //////////////////////////////////////////
+        bool hasUniform(HashedCString _uniformName);
+
     public:
 
         //////////////////////////////////////////

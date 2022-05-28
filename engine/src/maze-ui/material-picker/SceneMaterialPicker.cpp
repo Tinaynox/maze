@@ -203,7 +203,9 @@ namespace Maze
     {
         clearPreviews();
 
-        Vector<MaterialPtr> materials = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getMaterialsSorted();
+        MaterialManager::GetCurrentInstance()->loadAllAssetMaterials();
+
+        Vector<MaterialPtr> materials = MaterialManager::GetCurrentInstance()->getMaterialsSorted();
         materials.insert(materials.begin(), MaterialPtr());
 
         m_layout->getTransform()->removeAllChildren();

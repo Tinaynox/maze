@@ -87,7 +87,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        ShaderUniformPtr const& ensureUniform(HashedCString _uniformName);
+        ShaderUniformPtr const& ensureUniform(HashedCString _uniformName, ShaderUniformType _type = ShaderUniformType::None);
+
+        //////////////////////////////////////////
+        bool hasUniform(HashedCString _uniformName);
 
 
         ///////////////////////////f///////////////
@@ -286,7 +289,7 @@ namespace Maze
         virtual bool init(ShaderPtr const& _shader);
 
         //////////////////////////////////////////
-        virtual ShaderUniformPtr const& createUniformFromShader(HashedCString _uniformName) MAZE_ABSTRACT;
+        virtual ShaderUniformPtr const& createUniformFromShader(HashedCString _uniformName, ShaderUniformType _type = ShaderUniformType::None) MAZE_ABSTRACT;
     
         //////////////////////////////////////////
         void assignDefaultUniforms();

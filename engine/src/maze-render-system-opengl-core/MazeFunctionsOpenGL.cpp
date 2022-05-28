@@ -63,6 +63,7 @@ MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglGetDoublev)(MZGLen
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglGetBufferParameteriv)(MZGLenum _target, MZGLenum _value, MZGLint* _data) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglGetProgramiv)(MZGLuint _program, MZGLenum _pname, MZGLint* _param) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API MZGLint (MAZE_GL_FUNCPTR *mzglGetUniformLocation)(MZGLuint _program, MZGLchar const* _name) = nullptr;
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglGetActiveUniform)(MZGLuint _program, MZGLuint _index, MZGLsizei _bufSize, MZGLsizei* _length, MZGLint* _size, MZGLenum* _type, MZGLchar* _name) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API MZGLint (MAZE_GL_FUNCPTR *mzglGetAttribLocation)(MZGLuint _program, MZGLchar const* _name) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglGetShaderiv)(MZGLuint _shader, MZGLenum _pname, MZGLint* _param) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglGetUniformfv)(MZGLuint _program, MZGLint _location, MZGLfloat* _params) = nullptr;

@@ -589,6 +589,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool Material::hasUniform(HashedCString _uniformName)
+    {
+        for (RenderPassType passType = RenderPassType(1); passType < RenderPassType::MAX; ++passType)
+            for (RenderPassPtr const& renderPass : m_passes[passType])
+                if (renderPass && renderPass->hasUniform(_uniformName))
+                    return true;
+
+        return false;
+    }
+
+    //////////////////////////////////////////
     void Material::FromString(MaterialPtr& _value, CString _data, Size _count)
     {
         if (!_data || strcmp(_data, "") == 0)
