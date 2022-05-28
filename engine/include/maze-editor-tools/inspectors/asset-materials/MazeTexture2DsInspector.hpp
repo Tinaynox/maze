@@ -123,6 +123,12 @@ namespace Maze
         //////////////////////////////////////////
         void setTextures(Set<Texture2DPtr> const& _textures);
 
+        //////////////////////////////////////////
+        virtual bool setAssetFiles(Set<AssetFilePtr> const& _assetFiles) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual bool setObjects(Set<ObjectPtr> const& _objects) MAZE_OVERRIDE;
+
     protected:
 
         //////////////////////////////////////////

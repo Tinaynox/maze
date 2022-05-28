@@ -39,6 +39,7 @@
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
@@ -54,7 +55,8 @@
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/inspectors/entities/MazeComponentEditor.hpp"
 #include "maze-editor-tools/inspectors/entities/MazeEntitiesInspector.hpp"
-#include "maze-editor-tools/inspectors/asset-materials/MazeAssetMaterialsInspector.hpp"
+#include "maze-editor-tools/inspectors/asset-materials/MazeMaterialsInspector.hpp"
+#include "maze-editor-tools/inspectors/asset-materials/MazeTexture2DsInspector.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
@@ -89,6 +91,16 @@ namespace Maze
         if (UpdateManager::GetInstancePtr())
             UpdateManager::GetInstancePtr()->removeUpdatable(this);
 
+        if (GraphicsManager::GetInstancePtr())
+        {
+            if (GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw())
+            {
+                if (GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getTextureManager())
+                {
+                    GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getTextureManager()->eventTextureLoaderAdded.unsubscribe(this);
+                }
+            }
+        }
 
         if (AssetManager::GetInstancePtr())
             AssetManager::GetInstancePtr()->eventAssetFileRemoved.unsubscribe(this);
@@ -109,6 +121,20 @@ namespace Maze
 
         SelectionManager::GetInstancePtr()->eventSelectionChanged.subscribe(this, &InspectorController::notifySelectionChanged);
         UpdateManager::GetInstancePtr()->addUpdatable(this);
+
+        
+        registerInspectorByExtension<MaterialsInspector>("mzmaterial");
+        registerInspectorByClassUID<MaterialsInspector, Material>();
+
+        registerInspectorByExtension<Texture2DsInspector>("mztexture");
+        registerInspectorByClassUID<Texture2DsInspector, Texture2D>();
+        
+        TextureManager::GetCurrentInstancePtr()->eventTextureLoaderAdded.subscribe(
+            this, &InspectorController::notifyTextureLoaderAdded);
+
+        Vector<String> textureExtensions = TextureManager::GetCurrentInstancePtr()->getTextureLoaderExtensions();
+        for (String const& textureExtension : textureExtensions)
+            registerInspectorByExtension<Texture2DsInspector>(textureExtension.c_str());
 
         AssetManager::GetInstancePtr()->eventAssetFileRemoved.subscribe(this, &InspectorController::notifyAssetFileRemoved);
 
@@ -274,35 +300,41 @@ namespace Maze
                         }
                         else
                         {
-                            if (extension == "mzmaterial")
+                            auto it = m_editorByExtension.find(extension);
+                            if (it != m_editorByExtension.end())
                             {
-                                AssetMaterialsInspectorPtr inspector = setupEditor<AssetMaterialsInspector>();
-                                inspector->setAssetFiles(assetFiles);
-
-                                inspector->update(0.0f);
-                                m_layout->alignChildren();
+                                InspectorPtr inspector = it->second(this);
+                                if (inspector)
+                                {
+                                    if (inspector->setAssetFiles(assetFiles))
+                                    {
+                                        m_layout->alignChildren();
+                                    }
+                                }
                             }
                             else
                             {
-                                // Not supported extension
                                 clearEditor();
+                                break;
                             }
                         }
                     }
                     else
-                        // Material
-                        if (objectsMetaClass->isInheritedFrom<Material>())
+                    {
+                        for (auto editorByClassUIDData : m_editorByClassUID)
                         {
-                            Set<MaterialPtr> materials;
-                            for (ObjectPtr const& object : objects)
-                                materials.insert(std::static_pointer_cast<Material>(object));
-
-                            MaterialsInspectorPtr inspector = setupEditor<MaterialsInspector>();
-                            inspector->setMaterials(materials);
-
-                            inspector->update(0.0f);
-                            m_layout->alignChildren();
+                            if (objectsMetaClass->isInheritedFrom(editorByClassUIDData.first))
+                            {
+                                InspectorPtr inspector = editorByClassUIDData.second(this);
+                                if (inspector)
+                                {
+                                    inspector->setObjects(objects);
+                                    m_layout->alignChildren();
+                                }
+                                break;
+                            }
                         }
+                    }
                 }
                 else
                 {
@@ -340,6 +372,12 @@ namespace Maze
         }
 
         m_inspector.reset();
+    }
+
+    //////////////////////////////////////////
+    void InspectorController::notifyTextureLoaderAdded(HashedCString _extension, TextureLoaderData const& _loader)
+    {
+        registerInspectorByExtension<Texture2DsInspector>(_extension);
     }
 
     //////////////////////////////////////////

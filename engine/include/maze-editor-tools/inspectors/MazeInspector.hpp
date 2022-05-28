@@ -52,6 +52,8 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Button2D);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(Entity);
+    MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_SHARED_PTR(Object);
 
 
     //////////////////////////////////////////
@@ -74,6 +76,13 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual ~Inspector();
+
+
+        //////////////////////////////////////////
+        virtual bool setAssetFiles(Set<AssetFilePtr> const& _assetFiles) { return false; }
+
+        //////////////////////////////////////////
+        virtual bool setObjects(Set<ObjectPtr> const& _objects) { return false; }
 
     protected:
 

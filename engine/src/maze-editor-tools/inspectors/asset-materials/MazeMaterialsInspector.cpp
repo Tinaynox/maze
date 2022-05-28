@@ -174,6 +174,38 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool MaterialsInspector::setAssetFiles(Set<AssetFilePtr> const& _assetFiles)
+    {
+        Set<MaterialPtr> materials;
+
+        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+        MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
+
+        for (AssetFilePtr const& assetFile : _assetFiles)
+        {
+            MaterialPtr const& material = materialManager->getMaterial(assetFile);
+            if (material)
+                materials.insert(material);
+        }
+
+        setMaterials(materials);
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool MaterialsInspector::setObjects(Set<ObjectPtr> const& _objects)
+    {
+        Set<MaterialPtr> materials;
+        for (ObjectPtr const& object : _objects)
+            materials.insert(std::static_pointer_cast<Material>(object));
+
+        setMaterials(materials);
+
+        return true;
+    }
+
+    //////////////////////////////////////////
     void MaterialsInspector::buildMaterialsPropertiesList()
     {
         Set<MaterialPtr> const& materials = getMaterials();

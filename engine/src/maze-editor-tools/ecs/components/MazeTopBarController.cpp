@@ -55,7 +55,6 @@
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/inspectors/entities/MazeComponentEditor.hpp"
 #include "maze-editor-tools/inspectors/entities/MazeEntitiesInspector.hpp"
-#include "maze-editor-tools/inspectors/asset-materials/MazeAssetMaterialsInspector.hpp"
 #include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"

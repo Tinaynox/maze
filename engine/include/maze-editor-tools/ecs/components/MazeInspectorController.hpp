@@ -34,6 +34,7 @@
 #include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
 #include "maze-ui/ecs/components/MazeLayout2D.hpp"
@@ -77,6 +78,9 @@ namespace Maze
         friend class Entity;
 
 
+        //////////////////////////////////////////
+        using SetupEditorFunc = std::function<InspectorPtr(InspectorController*)>;
+
     public:
 
         //////////////////////////////////////////
@@ -106,7 +110,49 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        template <typename TInspector>
+        inline SharedPtr<TInspector> setupEditor(Set<AssetFilePtr> const& _assetFiles)
+        {
+            SharedPtr<TInspector> inspector = setupEditor<TInspector>();
+            if (inspector)
+            {
+                if (inspector->setAssetFiles(_assetFiles))
+                    m_layout->alignChildren();
+            }
+            return inspector;
+        }
+
+        //////////////////////////////////////////
         void clearEditor();
+
+
+        //////////////////////////////////////////
+        template <typename TInspector>
+        static InspectorPtr ProcessSetupInspector(InspectorController* _controller)
+        {
+            return std::static_pointer_cast<Inspector>(_controller->setupEditor<TInspector>());
+        }
+
+        //////////////////////////////////////////
+        template <typename TInspector>
+        inline void registerInspectorByExtension(HashedCString _extension)
+        {
+            m_editorByExtension[_extension] = ProcessSetupInspector<TInspector>;
+        }
+
+        //////////////////////////////////////////
+        template <typename TInspector>
+        inline void registerInspectorByClassUID(ClassUID _objectUID)
+        {
+            m_editorByClassUID[_objectUID] = ProcessSetupInspector<TInspector>;
+        }
+
+        //////////////////////////////////////////
+        template <typename TInspector, typename TObject>
+        inline void registerInspectorByClassUID()
+        {
+            registerInspectorByClassUID<TInspector>(ClassInfo<TObject>::UID());
+        }
 
     protected:
 
@@ -133,6 +179,10 @@ namespace Maze
         //////////////////////////////////////////
         void updateEditors();
 
+
+        //////////////////////////////////////////
+        void notifyTextureLoaderAdded(HashedCString _extension, TextureLoaderData const& _loader);
+
     protected:
         bool m_editorsDirty = false;
 
@@ -145,6 +195,9 @@ namespace Maze
         VerticalLayout2DPtr m_layout;
 
         InspectorPtr m_inspector;
+
+        StringKeyMap<SetupEditorFunc> m_editorByExtension;
+        Map<ClassUID, SetupEditorFunc> m_editorByClassUID;
     };
 
 

@@ -47,6 +47,7 @@
 #include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
@@ -161,6 +162,38 @@ namespace Maze
         m_textures = _textures;
 
         m_texturesPropertiesListDirty = true;
+    }
+
+    //////////////////////////////////////////
+    bool Texture2DsInspector::setAssetFiles(Set<AssetFilePtr> const& _assetFiles)
+    {
+        Set<Texture2DPtr> textures;
+
+        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+        TextureManagerPtr const& textureManager = renderSystem->getTextureManager();
+
+        for (AssetFilePtr const& assetFile : _assetFiles)
+        {
+            Texture2DPtr const& texture = textureManager->getTexture2D(assetFile);
+            if (texture)
+                textures.insert(texture);
+        }
+
+        setTextures(textures);
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool Texture2DsInspector::setObjects(Set<ObjectPtr> const& _objects)
+    {
+        Set<Texture2DPtr> textures;
+        for (ObjectPtr const& object : _objects)
+            textures.insert(std::static_pointer_cast<Texture2D>(object));
+
+        setTextures(textures);
+
+        return true;
     }
 
     //////////////////////////////////////////
