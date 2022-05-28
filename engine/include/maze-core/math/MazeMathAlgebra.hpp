@@ -92,7 +92,7 @@ namespace Maze
 
         //////////////////////////////////////////
         // x^3 + Ax^2 + Bx + C = 0 = 0
-        MAZE_CORE_API S32 SolveNormalCubic(F32 _p, F32 _q, F32(&_out)[3]);
+        MAZE_CORE_API S32 SolveNormalCubic(F32 _a, F32 _b, F32 _c, F32(&_out)[3]);
 
         //////////////////////////////////////////
         // c[0] + c[1]*x + c[2]*x^2 + c[3]*x^3 = 0

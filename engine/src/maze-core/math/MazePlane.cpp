@@ -27,6 +27,7 @@
 #include "MazeCoreHeader.hpp"
 #include "maze-core/math/MazePlane.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
+#include "maze-core/math/MazeMathRaytracing.hpp"
 
 
 //////////////////////////////////////////

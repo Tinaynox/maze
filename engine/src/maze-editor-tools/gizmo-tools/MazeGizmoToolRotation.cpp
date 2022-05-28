@@ -31,6 +31,7 @@
 #include "maze-editor-tools/gizmo-tools/MazeGizmoToolConfig.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
+#include "maze-core/math/MazeMathRaytracing.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
