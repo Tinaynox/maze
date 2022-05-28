@@ -63,6 +63,7 @@
 #include "maze-ui/ecs/systems/MazeUITweenTransitionSystem.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
+#include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
 #include "maze-physics2d/ecs/systems/MazePhysicsControlSystem2D.hpp"
 #include "maze-physics2d/managers/MazePhysics2DManager.hpp"
@@ -164,6 +165,8 @@ namespace Maze
 
         if (!Engine::initMainManagers())
             return false;
+
+        InspectorManager::GetInstancePtr()->setSaveAssetButtonEnabled(false);
 
         m_inputManager->eventKeyboard.subscribe(this, &Editor::notifyKeyboard);
 

@@ -144,7 +144,7 @@ namespace Maze
             MaterialPtr const& material = *materials.begin();
             if (!material->isEqual(m_materialCopy))
             {
-                m_materialChangedTimer = 0.5f;
+                m_materialChangedTimer = 0.35f;
                 m_materialCopy->set(material);
             }
             else
@@ -172,6 +172,10 @@ namespace Maze
     //////////////////////////////////////////
     void MaterialsInspector::buildMaterialsPropertiesList()
     {
+        Set<MaterialPtr> const& materials = getMaterials();
+        if (m_materialCopy && m_materialChangedTimer > 0.0f)
+            EventManager::GetInstancePtr()->generateEvent<EditorToolsMaterialChangedEvent>(m_materialCopy->getName());
+
         m_parent->removeAllChildren();
 
         createRenderPassDrawers();
@@ -179,7 +183,6 @@ namespace Maze
         createSaveMaterialButton();
         m_materialsPropertiesListDirty = false;
 
-        Set<MaterialPtr> const& materials = getMaterials();
         // #TODO: Multi material editor
         if (materials.size() == 1)
             m_materialCopy = (*materials.begin())->createCopy();
@@ -371,6 +374,9 @@ namespace Maze
     void MaterialsInspector::createSaveMaterialButton()
     {
         clearSaveMaterialButton();
+
+        if (!InspectorManager::GetInstancePtr()->getSaveAssetButtonEnabled())
+            return;
 
         Set<MaterialPtr> const& materials = getMaterials();
 

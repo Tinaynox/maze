@@ -290,6 +290,13 @@ namespace Maze
         //////////////////////////////////////////
         Vector<std::pair<String, std::function<void(Entity*, Component*)>>> const& getInspectorComponentContextMenuOptions(ClassUID _classUID) const;
 
+
+        //////////////////////////////////////////
+        inline bool getSaveAssetButtonEnabled() const { return m_saveAssetButtonEnabled; }
+
+        //////////////////////////////////////////
+        inline void setSaveAssetButtonEnabled(bool _value) { m_saveAssetButtonEnabled = _value; }
+
     public:
 
         //////////////////////////////////////////
@@ -310,6 +317,8 @@ namespace Maze
         Map<ClassUID, std::function<PropertyDrawerPtr(String const&)>> m_propertyDrawers;
         Map<ClassUID, std::function<MetaPropertyDrawerPtr(MetaProperty*)>> m_metaPropertyDrawers;
         Map<ClassUID, Vector<std::pair<String, std::function<void(Entity*, Component*)>>>> m_inspectorComponentContextMenuOptions;
+
+        bool m_saveAssetButtonEnabled = true;
     };
     
 
