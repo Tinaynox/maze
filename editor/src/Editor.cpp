@@ -74,6 +74,10 @@
 #include "settings/MazeEditorSceneSettings.hpp"
 #include "scenes/SceneSplash.hpp"
 
+#if MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS
+#   include "../sys-res/win/WinResources.hpp"
+#endif
+
 
 //////////////////////////////////////////
 namespace Maze
@@ -246,6 +250,12 @@ namespace Maze
         params.windowParams->flags |= WindowStyleFlags::MinimizeButton;
         params.windowParams->flags |= WindowStyleFlags::MaximizeButton;
         params.windowParams->flags |= WindowStyleFlags::Resizable;
+
+#if MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS
+        params.windowParams->iconBig = IDI_ICON00;
+        params.windowParams->iconSmall = IDI_ICON01;
+#endif
+
         m_mainRenderWindow = RenderWindow::Create(params);
         if (!m_mainRenderWindow)
         {

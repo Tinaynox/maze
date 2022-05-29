@@ -308,7 +308,7 @@ namespace Maze
         //
         //////////////////////////////////////////
         template <class TValue = F32>
-        inline MAZE_CONSTEXPR TValue UnitRandomRadius()
+        inline TValue UnitRandomRadius()
         {
             TValue r = UnitRandom<TValue>() + UnitRandom<TValue>();
             if (r > (TValue)1)

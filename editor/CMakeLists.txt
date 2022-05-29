@@ -89,6 +89,18 @@ maze_sort_sources("${EXAMPLE_FILES}" EXAMPLE_FILES)
 
 
 ##########################################
+if(MAZE_TARGET_PLATFORM_IS_WINDOWS)
+
+    include_directories(
+        ${CMAKE_CURRENT_SOURCE_DIR}/sys-res/win)
+
+    maze_add_sources(${CMAKE_CURRENT_SOURCE_DIR}/sys-res/win SYS_RES)
+    maze_sort_sources("${SYS_RES}" SYS_RES)
+    source_group("System Resources" FILES ${SYS_RES})
+endif()
+
+
+##########################################
 if(MAZE_COMPILER_IS_MSVC)
     set(USER_FILE ${EXAMPLE_NAME}.vcxproj.user)
     set(OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/${USER_FILE})
@@ -106,7 +118,7 @@ endif()
 
 if(MAZE_TARGET_PLATFORM_IS_ANDROID)
 
-    add_library(${EXAMPLE_NAME} ${EXAMPLE_FILES})
+    add_library(${EXAMPLE_NAME} ${EXAMPLE_FILES} ${SYS_RES})
     
 elseif(MAZE_TARGET_PLATFORM_IS_OSX)
 
@@ -123,7 +135,7 @@ elseif(MAZE_TARGET_PLATFORM_IS_OSX)
 
     set(APP_RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/../prj/resources/resources-x1.0-nc/data)
 
-    add_executable(${EXAMPLE_NAME} MACOSX_BUNDLE ${EXAMPLE_FILES} ${APPLE_RESOURCES_GLOB} ${APP_RESOURCES} ${EXAMPLE_FRAMEWORKS})
+    add_executable(${EXAMPLE_NAME} MACOSX_BUNDLE ${EXAMPLE_FILES} ${APPLE_RESOURCES_GLOB} ${APP_RESOURCES} ${EXAMPLE_FRAMEWORKS} ${SYS_RES})
     set_target_properties(${EXAMPLE_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/sys-res/osx/InfoOSX.plist)
     set_source_files_properties(${APPLE_RESOURCES_GLOB} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
     set_source_files_properties(${APP_RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
@@ -160,7 +172,7 @@ elseif(MAZE_TARGET_PLATFORM_IS_OSX)
 else()
 
 
-    add_executable(${EXAMPLE_NAME} ${EXAMPLE_FILES})
+    add_executable(${EXAMPLE_NAME} ${EXAMPLE_FILES} ${SYS_RES})
 
 
 
