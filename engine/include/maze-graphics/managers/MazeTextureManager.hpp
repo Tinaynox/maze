@@ -139,6 +139,12 @@ namespace Maze
         //////////////////////////////////////////
         Texture2DPtr const& getTexture2D(AssetFilePtr const& _assetFile);
 
+        //////////////////////////////////////////
+        bool loadTextureMetaData(AssetFilePtr const& _assetFile, Texture2DPtr const& _texture);
+
+        //////////////////////////////////////////
+        bool saveTextureMetaData(AssetFilePtr const& _assetFile);
+
 
         //////////////////////////////////////////
         inline Texture2DPtr const& getBuiltinTexture2D(BuiltinTexture2DType _texture2DType) const { return m_builtinTexture2Ds[_texture2DType]; }

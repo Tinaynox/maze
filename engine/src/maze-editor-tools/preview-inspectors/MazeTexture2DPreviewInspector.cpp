@@ -199,19 +199,11 @@ namespace Maze
                 text,
                 "Type: %s\n"
                 "Size: %dx%d (%s KB)\n"
-                "Format: %s\n"
-                "Min: %s\n"
-                "Mag: %s\n"
-                "WS: %s\n"
-                "WT: %s",
+                "Format: %s\n",
                 texture->getType().toCString(),
                 texture->getSize().x, texture->getSize().y,
                 StringHelper::F32ToStdStringFormatted((F32)bytes / 1024.0f, 1).c_str(),
-                pixelFormat.c_str(),
-                texture->getMinFilter().toCString(),
-                texture->getMagFilter().toCString(),
-                texture->getWrapS().toCString(),
-                texture->getWrapT().toCString());
+                pixelFormat.c_str());
 
             SystemTextRenderer2DPtr info = SpriteHelper::CreateSystemText(
                 text.c_str(),

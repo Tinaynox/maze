@@ -407,11 +407,23 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    String AssetManager::getMetaDataFullPath(AssetFilePtr const& _assetFile)
+    {
+        return _assetFile->getFullPath().getString() + ".meta";
+    }
+
+    //////////////////////////////////////////
+    AssetFilePtr AssetManager::getMetaDataFile(AssetFilePtr const& _assetFile)
+    {
+        return getAssetFileByFullPath(getMetaDataFullPath(_assetFile));
+    }
+
+    //////////////////////////////////////////
     StringKeyMap<String> AssetManager::getMetaData(AssetFilePtr const& _assetFile)
     {
         StringKeyMap<String> metaData;
 
-        AssetFilePtr metaFile = getAssetFileByFileName(_assetFile->getFileName().getString() + ".meta");
+        AssetFilePtr metaFile = getMetaDataFile(_assetFile);
         if (metaFile)
         {
             String metaDataString;
@@ -437,6 +449,30 @@ namespace Maze
         }
 
         return metaData;
+    }
+
+    //////////////////////////////////////////
+    void AssetManager::saveMetaData(AssetFilePtr const& _assetFile, StringKeyMap<String> const& _metaData)
+    {
+        StringStream ss;
+
+        for (auto it = _metaData.begin(), end = _metaData.end(); it != end; ++it)
+            ss << it->first << "=" << it->second << "\n";
+
+        String str = ss.str();
+        if (str.empty())
+            return;
+
+        String assetFullPath = getMetaDataFullPath(_assetFile);
+
+        std::ofstream file;
+        file.open(assetFullPath.c_str(), std::ofstream::binary);
+        if (!file.is_open())
+            return;
+        
+        file << str;
+        file.flush();
+        file.close();
     }
 
     //////////////////////////////////////////

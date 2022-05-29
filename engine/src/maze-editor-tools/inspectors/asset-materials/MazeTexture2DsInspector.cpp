@@ -217,7 +217,7 @@ namespace Maze
         if (m_textureCopy && m_textureChangedTimer > 0.0f)
             EventManager::GetInstancePtr()->generateEvent<EditorToolsTexture2DChangedEvent>(m_textureCopy->getName());
 
-        m_parent->removeAllChildren();
+        m_parent->destroyAllChildren();
 
         m_propertyDrawers.clear();
         // #TODO: Multi texture editor

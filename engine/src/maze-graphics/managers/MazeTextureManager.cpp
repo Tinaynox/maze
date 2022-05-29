@@ -130,6 +130,18 @@ namespace Maze
         Texture2DPtr texture2D = Texture2D::Create(_assetFile, m_renderSystemRaw);
         texture2D->setName(_assetFile->getFileName());
 
+        loadTextureMetaData(_assetFile, texture2D);
+
+        return addTexture(texture2D);
+    }
+
+    //////////////////////////////////////////
+    bool TextureManager::loadTextureMetaData(AssetFilePtr const& _assetFile, Texture2DPtr const& _texture)
+    {
+        Texture2DPtr const& texture2D = _texture;
+        if (!texture2D)
+            return false;
+
         StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
         if (metaData["magFilter"] != String())
             texture2D->setMagFilter(TextureFilter::FromString(metaData["magFilter"]));
@@ -140,7 +152,25 @@ namespace Maze
         if (metaData["wrapT"] != String())
             texture2D->setWrapT(TextureWrap::FromString(metaData["wrapT"]));
 
-        return addTexture(texture2D);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool TextureManager::saveTextureMetaData(AssetFilePtr const& _assetFile)
+    {
+        Texture2DPtr const& texture2D = getTexture2D(_assetFile);
+        if (!texture2D)
+            return false;
+
+        StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
+        metaData["magFilter"] = texture2D->getMagFilter().toString();
+        metaData["minFilter"] = texture2D->getMinFilter().toString();
+        metaData["wrapS"] = texture2D->getWrapS().toString();
+        metaData["wrapT"] = texture2D->getWrapT().toString();
+
+        AssetManager::GetInstancePtr()->saveMetaData(_assetFile, metaData);
+
+        return true;
     }
 
     //////////////////////////////////////////

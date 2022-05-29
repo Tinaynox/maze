@@ -55,7 +55,7 @@ namespace Maze
     //////////////////////////////////////////
     U32 const c_doubleClickTimeMS = 175u;
     F32 const c_doubleClickShiftThresholdSq = 5.0f * 5.0f;
-    U32 const c_clickTimeMS = 145u;
+    U32 const c_clickTimeMS = 170u;
     F32 const c_clickShiftThresholdSq = 5.0f * 5.0f;
 
 

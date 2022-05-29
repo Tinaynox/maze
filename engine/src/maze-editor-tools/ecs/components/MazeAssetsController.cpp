@@ -523,6 +523,9 @@ namespace Maze
             String fileName = assetFile->getFileName();
             String fullPath = assetFile->getFullPath();
 
+            if (assetFile->getExtension() == "meta")
+                continue;
+
             Transform2DPtr lineParent = m_selectedAssetsFolderLayoutTransform;
 
             EntityPtr assetLineObject = getEntityRaw()->getECSScene()->createEntity();

@@ -102,7 +102,8 @@ namespace Maze
         {
             if (!m_inspector || m_inspector->getMetaClass() != TInspector::GetMetaClass())
             {
-                m_layout->getTransform()->destroyAllChildren();
+                clearEditor();
+
                 m_inspector = TInspector::Create(m_layout->getTransform());
             }
 

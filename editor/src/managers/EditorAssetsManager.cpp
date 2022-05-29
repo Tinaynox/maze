@@ -160,7 +160,7 @@ namespace Maze
                     Texture2DPtr const& texture = TextureManager::GetCurrentInstancePtr()->getTexture2D(_event->getTextureName());
                     if (texture)
                     {
-                        Debug::Log("#TODO: Save texture metafile");
+                        TextureManager::GetCurrentInstancePtr()->saveTextureMetaData(assetFile);
                     }
                 }
             });

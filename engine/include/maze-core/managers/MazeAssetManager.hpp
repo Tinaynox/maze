@@ -152,7 +152,16 @@ namespace Maze
         Vector<AssetFilePtr> getAssetFilesInFolder(String const& _folderFullPath);
 
         //////////////////////////////////////////
+        String getMetaDataFullPath(AssetFilePtr const& _assetFile);
+
+        //////////////////////////////////////////
+        AssetFilePtr getMetaDataFile(AssetFilePtr const& _assetFile);
+
+        //////////////////////////////////////////
         StringKeyMap<String> getMetaData(AssetFilePtr const& _assetFile);
+
+        //////////////////////////////////////////
+        void saveMetaData(AssetFilePtr const& _assetFile, StringKeyMap<String> const& _metaData);
 
 
         //////////////////////////////////////////
