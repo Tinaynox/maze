@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
+#include "maze-core/math/MazeMathAngles.hpp"
 
 
 //////////////////////////////////////////
@@ -596,9 +597,9 @@ namespace Maze
             euler.y = Math::ATan2(2.0f * q.x * q.w + 2.0f * q.y * q.z, 1.0f - 2.0f * (q.z * q.z + q.w * q.w));
             euler.z = Math::ATan2(2.0f * q.x * q.y + 2.0f * q.z * q.w, 1.0f - 2.0f * (q.y * q.y + q.z * q.z));
         }
-        Math::NormalizeAngle(euler.x);
-        Math::NormalizeAngle(euler.y);
-        Math::NormalizeAngle(euler.z);
+        Math::NormalizeAnglePI(euler.x);
+        Math::NormalizeAnglePI(euler.y);
+        Math::NormalizeAnglePI(euler.z);
 
         return euler;
     }

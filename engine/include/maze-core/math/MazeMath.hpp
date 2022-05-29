@@ -579,61 +579,6 @@ namespace Maze
             TValue avalue = Abs<TValue>(_value);
             return std::isinf(_value) ? (TValue)0.0 : Sign(_value) * (avalue - Floor<TValue>(avalue));
         }
-
-        //////////////////////////////////////////
-        inline void NormalizeAngle(F32& _angle)
-        {
-            while (_angle < -c_pi) _angle += c_twoPi;
-            while (_angle > c_pi) _angle -= c_twoPi;
-        }
-
-        //////////////////////////////////////////
-        inline F32 NormalizedAngle(F32 _angle)
-        {
-            while (_angle < -c_pi) _angle += c_twoPi;
-            while (_angle > c_pi) _angle -= c_twoPi;
-            return _angle;
-        }
-
-        //////////////////////////////////////////
-        inline F32 LerpAngle(F32 _angleFrom, F32 _angleTo, F32 _ratio)
-        {
-            NormalizeAngle(_angleFrom);
-            NormalizeAngle(_angleTo);
-
-            if (Abs(_angleTo - _angleFrom) > c_pi)
-            {
-                if (_angleTo > _angleFrom)
-                    _angleFrom += c_twoPi;
-                else
-                    _angleTo += c_twoPi;
-            }
-
-            return Lerp(_angleFrom, _angleTo, _ratio);
-        }
-
-        //////////////////////////////////////////
-        inline F32 AnglesDifference(F32 _angle0, F32 _angle1)
-        {
-            NormalizeAngle(_angle0);
-            NormalizeAngle(_angle1);
-
-            if (Abs(_angle1 - _angle0) > c_pi)
-            {
-                if (_angle1 > _angle0)
-                    _angle0 += c_twoPi;
-                else
-                    _angle1 += c_twoPi;
-            }
-
-            return _angle1 - _angle0;
-        }
-
-        //////////////////////////////////////////
-        inline F32 AbsAnglesDifference(F32 _angle0, F32 _angle1)
-        {
-            return Abs(AnglesDifference(_angle0, _angle1));
-        }
     
         //////////////////////////////////////////
         inline MAZE_CONSTEXPR Size Align(Size _x, Size _a) { return ((_x - 1) | (_a - 1)) + 1; }

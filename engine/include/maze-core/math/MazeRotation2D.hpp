@@ -32,7 +32,7 @@
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
-#include "maze-core/math/MazeMath.hpp"
+#include "maze-core/math/MazeMathAngles.hpp"
 #include "maze-core/math/MazeVec2D.hpp"
 #include <ostream>
 
@@ -186,7 +186,7 @@ namespace Maze
         //////////////////////////////////////////
         inline void normalize()
         {
-            set(Math::NormalizedAngle(toRadians()));
+            set(Math::NormalizedAnglePI(toRadians()));
         }
         
         //////////////////////////////////////////
