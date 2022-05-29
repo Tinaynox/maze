@@ -32,6 +32,7 @@
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
+#include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeShader.hpp"
@@ -129,10 +130,12 @@ namespace Maze
         renderPass->setDepthWriteEnabled(false);
         renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
         ShaderPtr shader = renderPass->getShader()->createCopy();
+        shader->setName("Particle");
         shader->addLocalFeature("MAZE_COLOR_STREAM", "(1)");
         shader->addLocalFeature("MAZE_UV_STREAM", "(1)");
         shader->recompile();
         renderPass->setShader(shader);
+        RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->addShaderToCache(shader);
 
         m_defaultParticleMaterial->setUniform("u_baseMap", m_defaultParticleTexture);
         renderSystem->getMaterialManager()->addMaterial(m_defaultParticleMaterial);

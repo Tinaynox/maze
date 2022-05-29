@@ -143,6 +143,9 @@ namespace Maze
         //////////////////////////////////////////
         Set<Texture2DPtr> const& getTextures();
 
+        //////////////////////////////////////////
+        void updatePropertyValues();
+
     protected:
         Set<Texture2DPtr> m_textures;
 
@@ -150,6 +153,8 @@ namespace Maze
 
         Texture2DPtr m_textureCopy;
         F32 m_textureChangedTimer = 0.0f;
+
+        Vector<MetaPropertyDrawerPtr> m_propertyDrawers;
     };
 
 

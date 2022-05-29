@@ -145,6 +145,13 @@ namespace Maze
         //////////////////////////////////////////
         void createBuiltinShaders();
 
+
+        //////////////////////////////////////////
+        ShaderPtr const& addShaderToCache(ShaderPtr const& _shader);
+
+        //////////////////////////////////////////
+        bool removeShaderFromCache(ShaderPtr const& _shader);
+
     public:
 
         MultiDelegate<> eventSystemInited;
@@ -156,13 +163,7 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool init(RenderSystemPtr const& _renderSystem);    
-    
-
-        //////////////////////////////////////////
-        ShaderPtr const& addShaderToCache(ShaderPtr const& _shader);
-
-        //////////////////////////////////////////
-        bool removeShaderFromCache(ShaderPtr const& _shader);
+   
 
         //////////////////////////////////////////
         void processSystemInited();

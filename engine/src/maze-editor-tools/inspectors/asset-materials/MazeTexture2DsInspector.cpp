@@ -38,6 +38,7 @@
 #include "maze-core/ecs/MazeComponentFactory.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/utils/MazeProfiler.hpp"
+#include "maze-core/helpers/MazeMetaClassHelper.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeContextMenuCanvas2D.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
@@ -129,17 +130,17 @@ namespace Maze
         if (m_texturesPropertiesListDirty)
             buildTexturesPropertiesList();
 
+        updatePropertyValues();
 
         Set<Texture2DPtr> const& textures = getTextures();
         // #TODO: Multi texture editor
         if (textures.size() == 1 && m_textureCopy)
         {
-            /*
             Texture2DPtr const& texture = *textures.begin();
-            if (!texture->isEqual(m_textureCopy))
+            if (!MetaClassHelper::IsEqual(m_textureCopy->getMetaInstance(), texture->getMetaInstance()))
             {
                 m_textureChangedTimer = 0.35f;
-                m_textureCopy->set(texture);
+                MetaClassHelper::CopyProperties(m_textureCopy->getMetaInstance(), texture->getMetaInstance());
             }
             else
             {
@@ -152,7 +153,20 @@ namespace Maze
                     }
                 }
             }
-            */
+        }
+    }
+
+    //////////////////////////////////////////
+    void Texture2DsInspector::updatePropertyValues()
+    {
+        Set<MetaInstance> metaInstances;
+        for (Texture2DPtr const& texture : m_textures)
+            metaInstances.insert(texture->getMetaInstance());
+
+        for (MetaPropertyDrawerPtr const& propertyDrawer : m_propertyDrawers)
+        {
+            propertyDrawer->linkMetaInstances(metaInstances);
+            propertyDrawer->processDataToUI();
         }
     }
 
@@ -205,13 +219,51 @@ namespace Maze
 
         m_parent->removeAllChildren();
 
+        m_propertyDrawers.clear();
         // #TODO: Multi texture editor
-        /*
         if (textures.size() == 1)
-            m_textureCopy = (*textures.begin())->createCopy();
+        {
+            Texture2DPtr const& texture = *textures.begin();
+
+            EntityPtr drawerObject = m_parent->getEntityRaw()->getECSScene()->createEntity();
+            Transform2DPtr transform = drawerObject->ensureComponent<Transform2D>();
+            transform->setParent(m_parent);
+            SizePolicy2DPtr sizePolicy = drawerObject->ensureComponent<SizePolicy2D>();
+            sizePolicy->setFlag(SizePolicy2D::Height, false);
+            sizePolicy->setSizeDelta(-16.0f, 0.0f);
+
+            VerticalLayout2DPtr verticalLayout = drawerObject->ensureComponent<VerticalLayout2D>();
+            verticalLayout->setAutoHeight(true);
+            verticalLayout->setPaddingLeft(8.0f);
+            verticalLayout->setPaddingTop(5.0f);
+
+            Vector<MetaClass*> const& componentSuperMetaClasses = texture->getMetaClass()->getAllSuperMetaClasses();
+            for (MetaClass* metaClass : componentSuperMetaClasses)
+            {
+                for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
+                {
+                    MetaProperty* metaProperty = metaClass->getProperty(i);
+                    MetaPropertyDrawerPtr propertyDrawer = InspectorManager::GetInstancePtr()->createMetaPropertyDrawer(metaProperty);
+                    if (propertyDrawer)
+                    {
+                        propertyDrawer->buildUI(verticalLayout->getTransform());
+                        m_propertyDrawers.push_back(propertyDrawer);
+                    }
+                }
+            }
+
+        }
+        m_texturesPropertiesListDirty = false;
+
+        // #TODO: Multi texture editor
+        if (textures.size() == 1)
+        {
+            Texture2DPtr const& texture = *textures.begin();
+            m_textureCopy = Texture2D::Create();
+            MetaClassHelper::CopyProperties(m_textureCopy->getMetaInstance(), texture->getMetaInstance());
+        }
         else
             m_textureCopy.reset();
-        */
         m_textureChangedTimer = 0.0f;
     }
 

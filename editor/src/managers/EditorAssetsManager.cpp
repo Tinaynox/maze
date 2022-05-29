@@ -51,6 +51,7 @@
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
@@ -147,6 +148,20 @@ namespace Maze
                     MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getMaterial(_event->getMaterialName());
                     if (material)
                         material->saveToFile(assetFile->getFullPath());
+                }
+            });
+
+        EventManager::GetInstancePtr()->subscribeEvent<EditorToolsTexture2DChangedEvent>(
+            [](EditorToolsTexture2DChangedEvent* _event)
+            {
+                AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_event->getTextureName());
+                if (assetFile)
+                {
+                    Texture2DPtr const& texture = TextureManager::GetCurrentInstancePtr()->getTexture2D(_event->getTextureName());
+                    if (texture)
+                    {
+                        Debug::Log("#TODO: Save texture metafile");
+                    }
                 }
             });
 
