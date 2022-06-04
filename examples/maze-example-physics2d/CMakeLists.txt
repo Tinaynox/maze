@@ -63,9 +63,9 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/../templates/CMakeExampleTemplate.cmake")
 
 
 ##########################################
-add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-physics2d-editor-tools" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-physics2d-editor-tools")
-add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-profiler-view" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-profiler-view")
-add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-loader-png" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-loader-png")
+add_subdirectory("${MAZE_DIR}/plugins/physics2d-editor-tools" "${CMAKE_CURRENT_BINARY_DIR}/plugins/physics2d-editor-tools")
+add_subdirectory("${MAZE_DIR}/plugins/profiler-view" "${CMAKE_CURRENT_BINARY_DIR}/plugins/profiler-view")
+add_subdirectory("${MAZE_DIR}/plugins/loader-png" "${CMAKE_CURRENT_BINARY_DIR}/plugins/loader-png")
 
 
 ##########################################

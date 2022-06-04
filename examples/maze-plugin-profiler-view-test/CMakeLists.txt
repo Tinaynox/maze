@@ -63,8 +63,8 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/../templates/CMakeExampleTemplate.cmake")
 
 
 ##########################################
-add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-profiler-view" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-profiler-view")
-add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-console" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-console")
+add_subdirectory("${MAZE_DIR}/plugins/profiler-view" "${CMAKE_CURRENT_BINARY_DIR}/plugins/profiler-view")
+add_subdirectory("${MAZE_DIR}/plugins/console" "${CMAKE_CURRENT_BINARY_DIR}/plugins/console")
 
 
 ##########################################

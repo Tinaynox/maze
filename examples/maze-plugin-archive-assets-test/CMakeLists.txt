@@ -55,7 +55,7 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/../templates/CMakeExampleTemplate.cmake")
 
 
 ##########################################
-add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-archive-assets" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-archive-assets")
+add_subdirectory("${MAZE_DIR}/plugins/archive-assets" "${CMAKE_CURRENT_BINARY_DIR}/plugins/archive-assets")
 
 
 ##########################################

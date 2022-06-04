@@ -67,11 +67,11 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/../templates/CMakeExampleTemplate.cmake")
 
 
 ##########################################
-add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-profiler-view" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-profiler-view")
-add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-console" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-console")
-add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-loader-png" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-loader-png")
-add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-water" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-water")
-add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-particles-editor-tools" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-particles-editor-tools")
+add_subdirectory("${MAZE_DIR}/plugins/profiler-view" "${CMAKE_CURRENT_BINARY_DIR}/plugins/profiler-view")
+add_subdirectory("${MAZE_DIR}/plugins/console" "${CMAKE_CURRENT_BINARY_DIR}/plugins/console")
+add_subdirectory("${MAZE_DIR}/plugins/loader-png" "${CMAKE_CURRENT_BINARY_DIR}/plugins/loader-png")
+add_subdirectory("${MAZE_DIR}/plugins/water" "${CMAKE_CURRENT_BINARY_DIR}/plugins/water")
+add_subdirectory("${MAZE_DIR}/plugins/particles-editor-tools" "${CMAKE_CURRENT_BINARY_DIR}/plugins/particles-editor-tools")
 
 
 ##########################################

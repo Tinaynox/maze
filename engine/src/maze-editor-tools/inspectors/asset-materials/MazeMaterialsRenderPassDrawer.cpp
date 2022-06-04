@@ -48,10 +48,10 @@
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
-#include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawerString.hpp"
-#include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawerS32.hpp"
-#include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawerEnumClass.hpp"
-#include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawerBool.hpp"
+#include "maze-editor-tools/meta-property-drawers/MazeString.hpp"
+#include "maze-editor-tools/meta-property-drawers/MazeS32.hpp"
+#include "maze-editor-tools/meta-property-drawers/MazeEnumClass.hpp"
+#include "maze-editor-tools/meta-property-drawers/MazeBool.hpp"
 
 
 //////////////////////////////////////////

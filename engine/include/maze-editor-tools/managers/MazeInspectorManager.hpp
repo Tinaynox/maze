@@ -35,12 +35,12 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/math/MazeVec2D.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-editor-tools/property-drawers/MazePropertyDrawerMaterial.hpp"
-#include "maze-editor-tools/property-drawers/MazePropertyDrawerRenderMesh.hpp"
-#include "maze-editor-tools/property-drawers/MazePropertyDrawerRadians.hpp"
-#include "maze-editor-tools/property-drawers/MazePropertyDrawerVec2DU.hpp"
-#include "maze-editor-tools/property-drawers/MazePropertyDrawerTexture2D.hpp"
-#include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawerDefault.hpp"
+#include "maze-editor-tools/property-drawers/MazeMaterial.hpp"
+#include "maze-editor-tools/property-drawers/MazeRenderMesh.hpp"
+#include "maze-editor-tools/property-drawers/MazeRadians.hpp"
+#include "maze-editor-tools/property-drawers/MazeVec2DU.hpp"
+#include "maze-editor-tools/property-drawers/MazeTexture2D.hpp"
+#include "maze-editor-tools/meta-property-drawers/MazeDefault.hpp"
 #include <functional>
 
 
