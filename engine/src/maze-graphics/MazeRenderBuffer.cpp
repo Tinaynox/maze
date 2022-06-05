@@ -78,6 +78,7 @@ namespace Maze
         MAZE_DEBUG_ERROR_RETURN_VALUE_IF(_specification.size.x == 0 || _specification.size.y == 0, RenderBufferPtr(), "Size is zero!");
 
         RenderBufferPtr renderBuffer = RenderBuffer::Create(_renderSystem, _deleter);
+        renderBuffer->setSize(_specification.size);
 
         for (Size i = 0; i < c_renderBufferColorTexturesMax; ++i)
         {
@@ -97,7 +98,8 @@ namespace Maze
                 else
                 {
                     Texture2DMSPtr texture = Texture2DMS::Create();
-                    texture->loadEmpty(_specification.size, textureFormat.pixelFormat, textureFormat.samples);
+                    if (!texture->loadEmpty(_specification.size, textureFormat.pixelFormat, textureFormat.samples))
+                        return nullptr;
                     colorTexture0 = texture;
                 }
 
@@ -150,8 +152,6 @@ namespace Maze
                 renderBuffer->setStencilTexture(stencilTexture);
             }
         }
-
-        renderBuffer->setSize(_specification.size);
 
         return renderBuffer;
     }
