@@ -594,13 +594,13 @@ namespace Maze
         StubFunction m_stubFunction{};
 
         ::std::shared_ptr<void> m_functorStore;
-        ::std::size_t m_functorStoreSize;
+        ::std::size_t m_functorStoreSize = 0;
         FunctorStoreClearFunctionType m_functorStoreClearFunction;
-        void* m_functorObject;
-        void* m_object;
+        void* m_functorObject = nullptr;
+        void* m_object = nullptr;
         
 #if (MAZE_DEBUG)
-        Char const* m_debugFunctorName;
+        Char const* m_debugFunctorName = "";
 #endif
     };
 
