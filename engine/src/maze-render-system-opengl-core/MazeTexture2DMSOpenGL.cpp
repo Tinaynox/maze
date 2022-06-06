@@ -199,8 +199,19 @@ namespace Maze
             }
         }
 #endif        
-
-        MAZE_GL_CALL(mzglTexImage2DMultisample(MAZE_GL_TEXTURE_2D_MULTISAMPLE, (MZGLsizei)m_samples, internalFormat, (MZGLsizei)_size.x, (MZGLsizei)_size.y, MAZE_GL_TRUE));
+        if (mzglTexImage2DMultisample)
+        {
+            MAZE_GL_CALL(mzglTexImage2DMultisample(MAZE_GL_TEXTURE_2D_MULTISAMPLE, (MZGLsizei)m_samples, internalFormat, (MZGLsizei)_size.x, (MZGLsizei)_size.y, MAZE_GL_TRUE));
+        }
+        else
+        if (mzglTexStorage2DMultisample)
+        {
+            MAZE_GL_CALL(mzglTexStorage2DMultisample(MAZE_GL_TEXTURE_2D_MULTISAMPLE, (MZGLsizei)m_samples, internalFormat, (MZGLsizei)_size.x, (MZGLsizei)_size.y, MAZE_GL_TRUE));
+        }
+        else
+        {
+            MAZE_ERROR_RETURN_VALUE(false, "There is no way to create Texture2DMS!");
+        }
     
 #if (MAZE_DEBUG_GL)
         {

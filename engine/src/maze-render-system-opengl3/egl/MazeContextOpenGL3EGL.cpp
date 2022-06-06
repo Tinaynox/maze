@@ -508,6 +508,13 @@ namespace Maze
         m_config.majorVersion = tmp;
         m_config.minorVersion = 0;
 #endif
+
+        m_maxAntialiasingLevelSupport = m_config.antialiasingLevel;
+        if (m_stateMachine)
+        {
+            m_stateMachine->setMultiSampleEnabled(m_maxAntialiasingLevelSupport > 0);
+            m_stateMachine->setAntialiasingLevelSupport(m_maxAntialiasingLevelSupport);
+        }
     }
 
     //////////////////////////////////////////
@@ -557,7 +564,8 @@ namespace Maze
                 EGL_BUFFER_SIZE,            static_cast<EGLint>(_bitsPerPixel),
                 EGL_DEPTH_SIZE,             static_cast<EGLint>(_config.depthBits),
                 EGL_STENCIL_SIZE,           static_cast<EGLint>(_config.stencilBits),
-                EGL_SAMPLE_BUFFERS,         static_cast<EGLint>(antialiasingLevel),
+                EGL_SAMPLES,                static_cast<EGLint>(antialiasingLevel),
+                EGL_SAMPLE_BUFFERS,         static_cast<EGLint>(antialiasingLevel > 0 ? 1 : 0),
                 EGL_SURFACE_TYPE,           EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
                 EGL_RENDERABLE_TYPE,        esVersion,
                 EGL_NONE

@@ -163,6 +163,7 @@ MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglCompressedT
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglGetTexLevelParameteriv)(MZGLenum _target, MZGLint _level, MZGLenum _pname, MZGLint* _params);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglTexImage2D)(MZGLenum _target, MZGLint _level, MZGLint _internalformat, MZGLsizei _width, MZGLsizei _height, MZGLint _border, MZGLenum _format, MZGLenum _type, const MZGLvoid* _pixels);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglTexImage2DMultisample)(MZGLenum _target, MZGLsizei _samples, MZGLenum _internalformat, MZGLsizei _width, MZGLsizei _height, MZGLboolean _fixedsamplelocations);
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglTexStorage2DMultisample)(MZGLenum _target, MZGLsizei _samples, MZGLenum _internalformat, MZGLsizei _width, MZGLsizei _height, MZGLboolean _fixedsamplelocations);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglGetTexImage)(MZGLenum _target, MZGLint _level, MZGLenum _format, MZGLenum _type, void* _pixels);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern MZGLenum (MAZE_GL_FUNCPTR *mzglCheckFramebufferStatus)(MZGLenum _target);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglBlitFramebuffer)(MZGLint _srcX0, MZGLint _srcY0, MZGLint _srcX1, MZGLint _srcY1, MZGLint _dstX0, MZGLint _dstY0, MZGLint _dstX1, MZGLint _dstY1, MZGLbitfield _mask, MZGLenum _filter);

@@ -33,7 +33,6 @@
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
-#include "maze-editor-tools/meta-property-drawers/MazeDefault.hpp"
 #include "maze-physics2d/ecs/components/MazeBoxCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeCircleCollider2D.hpp"
 #include "maze-plugin-physics2d-editor-tools/ecs/components/gizmos/MazeBoxCollider2DGizmos.hpp"

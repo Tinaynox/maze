@@ -63,15 +63,22 @@
 #   include <OpenGL/gl.h>
 #   include <OpenGL/OpenGL.h>
 #elif (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
-#    include <GLES/gl.h>
-#    include <GLES2/gl2.h>
-#    include <GLES3/gl3.h>
-#    include <GLES/glplatform.h>
+#   include <GLES/gl.h>
+#   include <GLES2/gl2.h>
+#   include <GLES3/gl3.h>
+#   include <GLES/glplatform.h>
 #   include <GLES/glext.h>
 #   include <GLES2/gl2platform.h>
 #   include <GLES2/gl2ext.h>
 #   include <GLES3/gl3platform.h>
 #   include <GLES3/gl3ext.h>
+#elif (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN)
+#   include <GLES/gl.h>
+#   include <GLES/glext.h>
+#   include <GLES2/gl2.h>
+#   include <GLES2/gl2ext.h>
+#   include <GLES3/gl3.h>
+#   include <GLES3/gl2ext.h>
 #elif (MAZE_PLATFORM == MAZE_PLATFORM_LINUX)
 #else
 #   include <GL/gl.h>

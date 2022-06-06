@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeRenderSystemOpenGL3Header.hpp"
 #include "maze-render-system-opengl3/MazeFunctionsOpenGL3.hpp"
+#include "maze-render-system-opengl3/MazeRenderSystemOpenGL3Header.hpp"
 #include "maze-render-system-opengl-core/MazeFunctionsOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
@@ -184,6 +185,7 @@ namespace Maze
         AssignOpenGLFunction(_renderContext, mzglGetTexLevelParameteriv, "glGetTexLevelParameteriv");
         AssignOpenGLFunction(_renderContext, mzglTexImage2D, "glTexImage2D");
         AssignOpenGLFunction(_renderContext, mzglTexImage2DMultisample, "glTexImage2DMultisample");
+        AssignOpenGLFunction(_renderContext, mzglTexStorage2DMultisample, "glTexStorage2DMultisample");
         AssignOpenGLFunction(_renderContext, mzglGetTexImage, "glGetTexImage");
         AssignOpenGLFunction(_renderContext, mzglCheckFramebufferStatus, "glCheckFramebufferStatus");
         AssignOpenGLFunction(_renderContext, mzglBlitFramebuffer, "glBlitFramebuffer");
@@ -321,6 +323,7 @@ namespace Maze
         AssignOpenGLFunction(_renderContext, mzglGetTexLevelParameteriv, "glGetTexLevelParameteriv");
         AssignOpenGLFunction(_renderContext, mzglTexImage2D, "glTexImage2D");
         AssignOpenGLFunction(_renderContext, mzglTexImage2DMultisample, "glTexImage2DMultisample");
+        AssignOpenGLFunction(_renderContext, mzglTexStorage2DMultisample, "glTexStorage2DMultisample");
         AssignOpenGLFunction(_renderContext, mzglGetTexImage, "glGetTexImage");
         AssignOpenGLFunction(_renderContext, mzglCheckFramebufferStatus, "glCheckFramebufferStatus");
         AssignOpenGLFunction(_renderContext, mzglBlitFramebuffer, "glBlitFramebuffer");
@@ -480,6 +483,7 @@ namespace Maze
         AssignOpenGLFunction(_renderContext, mzglGetTexLevelParameteriv, MAZE_NULL);
         AssignOpenGLFunction(_renderContext, mzglTexImage2D, glTexImage2D);
         AssignOpenGLFunction(_renderContext, mzglTexImage2DMultisample, glTexImage2DMultisample);
+        AssignOpenGLFunction(_renderContext, mzglTexStorage2DMultisample, glTexStorage2DMultisample);
         AssignOpenGLFunction(_renderContext, mzglGetTexImage, MAZE_NULL);
         AssignOpenGLFunction(_renderContext, mzglCheckFramebufferStatus, glCheckFramebufferStatus);
         AssignOpenGLFunction(_renderContext, mzglBlitFramebuffer, glBlitFramebuffer);
