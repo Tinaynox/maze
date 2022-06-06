@@ -75,12 +75,12 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/../engine/cmake/Utils.cmake")
 
 
 ##########################################
-add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-profiler-view" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-profiler-view")
-add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-console" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-console")
-add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-loader-png" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-loader-png")
-add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-archive-assets" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-archive-assets")
-add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-particles-editor-tools" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-particles-editor-tools")
-add_subdirectory("${MAZE_DIR}/plugins/maze-plugin-physics2d-editor-tools" "${CMAKE_CURRENT_BINARY_DIR}/maze-plugin-physics2d-editor-tools")
+add_subdirectory("${MAZE_DIR}/plugins/profiler-view" "${CMAKE_CURRENT_BINARY_DIR}/plugins/profiler-view")
+add_subdirectory("${MAZE_DIR}/plugins/console" "${CMAKE_CURRENT_BINARY_DIR}/plugins/console")
+add_subdirectory("${MAZE_DIR}/plugins/loader-png" "${CMAKE_CURRENT_BINARY_DIR}/plugins/loader-png")
+add_subdirectory("${MAZE_DIR}/plugins/archive-assets" "${CMAKE_CURRENT_BINARY_DIR}/plugins/archive-assets")
+add_subdirectory("${MAZE_DIR}/plugins/particles-editor-tools" "${CMAKE_CURRENT_BINARY_DIR}/plugins/particles-editor-tools")
+add_subdirectory("${MAZE_DIR}/plugins/physics2d-editor-tools" "${CMAKE_CURRENT_BINARY_DIR}/plugins/physics2d-editor-tools")
 
 
 ##########################################
