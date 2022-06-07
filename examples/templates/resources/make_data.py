@@ -28,7 +28,7 @@ class MakeData:
         self.texture_compression = args.tcompression
         self.mode = args.mode
         self.folder_iterator = folder_iterator.FolderIterator()
-        self.need_to_change_textures_extensions = True
+        self.need_to_change_textures_extensions = False
         self.root_folder = args.root
         self.cache_name = os.path.abspath('{0}/{1}'.format(self.temp, args.cache))
         if args.max_atlas_size:
