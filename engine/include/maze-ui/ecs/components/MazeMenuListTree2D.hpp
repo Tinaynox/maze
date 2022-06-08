@@ -181,6 +181,9 @@ namespace Maze
         //////////////////////////////////////////
         void rebuildItems();
 
+        //////////////////////////////////////////
+        void updateListPositions();
+
     public:
 
         //////////////////////////////////////////
@@ -215,8 +218,6 @@ namespace Maze
             Transform2DPtr const& _parent,
             MenuListItem2D* _parentItem = nullptr);
 
-        //////////////////////////////////////////
-        void updateListPositions();
 
         //////////////////////////////////////////
         void notifyCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent);

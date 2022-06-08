@@ -227,13 +227,20 @@ namespace Maze
             }
         }
 
-        updateListPositions();
-
         for (auto listData : m_lists)
         {
-            bool isActiveList = listData.first.empty();
-            listData.second->getEntityRaw()->setActiveSelf(isActiveList);
+            bool isMainList = listData.first.empty();
+
+            if (isMainList)
+            {
+                listData.second->updateListSize();
+                getTransform()->setSize(listData.second->getTransform()->getSize());
+            }
+
+            listData.second->getEntityRaw()->setActiveSelf(isMainList);
         }
+
+        updateListPositions();
     }
 
     //////////////////////////////////////////

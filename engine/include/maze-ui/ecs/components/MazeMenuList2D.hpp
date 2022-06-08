@@ -183,6 +183,9 @@ namespace Maze
         //////////////////////////////////////////
         Size getListItemIndex(MenuListItem2D* _item) const;
 
+        //////////////////////////////////////////
+        void updateListSize();
+
     public:
         //////////////////////////////////////////
         MultiDelegate<MenuList2D*, Size> eventListItemFocused;
@@ -204,9 +207,6 @@ namespace Maze
             
         //////////////////////////////////////////
         void rebuildItems();
-
-        //////////////////////////////////////////
-        void updateListSize();
 
     protected:
         Transform2DPtr m_transform;

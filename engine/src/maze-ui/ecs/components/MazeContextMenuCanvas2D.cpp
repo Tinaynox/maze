@@ -126,14 +126,19 @@ namespace Maze
 
         m_menuListTree->getTransform()->setParent(m_transform);
 
-        m_menuListTree->getTransform()->setLocalPosition(
-            { 
-                Math::Clamp(_positionWS.x, 0.0f, m_transform->getWidth() - m_menuListTree->getTransform()->getWidth()),
-                _positionWS.y
-            });
+        
         m_menuListTree->eventEnabledInHierarchyChanged.subscribe(this, &ContextMenuCanvas2D::notifyEnabledInHierarchyChanged);
 
         _initMenuFunc(m_menuListTree);
+
+        Vec2DF menuListTreeSize = m_menuListTree->getTransform()->getSize();
+        m_menuListTree->getTransform()->setLocalPosition(
+            {
+                Math::Clamp(_positionWS.x, 0.0f, m_transform->getWidth() - menuListTreeSize.x),
+                Math::Clamp(_positionWS.y, menuListTreeSize.y, m_transform->getHeight())
+            });
+        m_menuListTree->updateListPositions();
+
 
         return m_menuListTree;
     }
