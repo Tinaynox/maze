@@ -161,7 +161,7 @@ namespace Maze
 
             if (maxCountToEmit && m_mainModule.getEmission().enabled && m_state == ParticleSystemState::Playing)
             {
-                F32 iterationProgress = m_time / m_mainModule.getDuration();
+                F32 iterationProgress = m_time / m_mainModule.getCurrentDuration();
                 S32 emissionCount = calculateEmissionCount(iterationProgress, maxCountToEmit, iterationFinished);
 
                 if (emissionCount > 0)
@@ -169,7 +169,7 @@ namespace Maze
                     
                     m_particles.addAliveCount(emissionCount);
 
-                    emitParticles(aliveCount, aliveCount + emissionCount, _position, m_time / m_mainModule.getDuration());
+                    emitParticles(aliveCount, aliveCount + emissionCount, _position, m_time / m_mainModule.getCurrentDuration());
 
                     m_mainModule.updateLifetime(m_particles, aliveCount, aliveCount + emissionCount, _dt);
                     m_rendererModule.updateLifetime(m_particles, aliveCount, aliveCount + emissionCount, _dt);
@@ -285,7 +285,7 @@ namespace Maze
         if (m_mainModule.getEmission().enabled)
             m_timeEmission += _dt;
 
-        if (m_time < m_mainModule.getDuration())
+        if (m_time < m_mainModule.getCurrentDuration())
         {
             _iterationFinished = false;
             return;
@@ -294,12 +294,12 @@ namespace Maze
         if (m_mainModule.getLooped())
         {
             m_iteration++;
-            m_time -= Math::Floor(m_time / m_mainModule.getDuration()) * m_mainModule.getDuration();
+            m_time -= Math::Floor(m_time / m_mainModule.getCurrentDuration()) * m_mainModule.getCurrentDuration();
             m_currentBurstIndex = 0;
         }
         else
         {
-            m_time = m_mainModule.getDuration();
+            m_time = m_mainModule.getCurrentDuration();
         }
 
         _iterationFinished = true;
@@ -376,7 +376,7 @@ namespace Maze
         if (getState() == ParticleSystemState::Playing)
         {
             // Reset particle system, but don't remove alive particles
-            if (m_time >= m_mainModule.getDuration())
+            if (m_time >= m_mainModule.getCurrentDuration())
             {
                 m_time = 0.0f;
                 m_timeEmission = 0.0f;

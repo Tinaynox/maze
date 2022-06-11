@@ -78,6 +78,13 @@ namespace Maze
     //////////////////////////////////////////
     void ParticleSystemParameterF32::loadFromJSONValue(Json::Value const& _value)
     {
+        // #TODO: Back compatibility, remove later
+        if (_value.isDouble())
+        {
+            setConstant(_value.asFloat());
+            return;
+        }
+
         m_const0 = _value["c0"].asFloat();
         m_const1 = _value["c1"].asFloat();
         m_curve0.loadFromJSONValue(_value["cu0"]);

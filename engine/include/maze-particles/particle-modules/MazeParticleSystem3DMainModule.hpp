@@ -36,6 +36,7 @@
 #include "maze-particles/MazeParticles3D.hpp"
 #include "maze-particles/MazeParticleSystemState.hpp"
 #include "maze-particles/MazeParticleSystemParameterF32.hpp"
+#include "maze-particles/MazeParticleSystemParameterS32.hpp"
 #include "maze-particles/MazeParticleSystemParameterColor.hpp"
 #include "maze-particles/MazeParticleSystemBurst.hpp"
 #include "maze-core/serialization/MazeJSONSerializable.hpp"
@@ -423,10 +424,17 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        inline F32 getDuration() const { return m_duration; }
+        inline F32 getCurrentDuration() const { return m_currentDuration; }
+
 
         //////////////////////////////////////////
-        inline void setDuration(F32 _value) { m_duration = _value; }
+        inline ParticleSystemParameterF32& getDuration() { return m_duration; }
+
+        //////////////////////////////////////////
+        inline ParticleSystemParameterF32 const& getDuration() const { return m_duration; }
+
+        //////////////////////////////////////////
+        void setDuration(ParticleSystemParameterF32 const& _value) { m_duration = _value; }
 
 
         //////////////////////////////////////////
@@ -610,16 +618,21 @@ namespace Maze
         //////////////////////////////////////////
         bool operator!=(ParticleSystem3DMainModule const& _module) { return false; }
 
+        //////////////////////////////////////////
+        void generateDuration();
+
     public:
 
-            //////////////////////////////////////////
-            virtual void loadFromJSONValue(Json::Value const& _value) MAZE_OVERRIDE;
+        //////////////////////////////////////////
+        virtual void loadFromJSONValue(Json::Value const& _value) MAZE_OVERRIDE;
 
-            //////////////////////////////////////////
-            virtual Json::Value toJSONValue() const MAZE_OVERRIDE;
+        //////////////////////////////////////////
+        virtual Json::Value toJSONValue() const MAZE_OVERRIDE;
 
     protected:
-        F32 m_duration = 5.0f;
+        F32 m_currentDuration = 5.0f;
+
+        ParticleSystemParameterF32 m_duration = ParticleSystemParameterF32(5.0f);
         bool m_looped = true;
         bool m_prewarm = false;
         bool m_playOnAwake = true;

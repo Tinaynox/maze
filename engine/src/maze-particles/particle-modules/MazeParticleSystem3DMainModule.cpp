@@ -52,7 +52,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS(ParticleSystem3DMainModule,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, duration, 5.0f, getDuration, setDuration),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystemParameterF32, duration, ParticleSystemParameterF32(), getDuration, setDuration),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, looped, true, getLooped, setLooped),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, prewarm, true, getPrewarm, setPrewarm),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, playOnAwake, true, getPlayOnAwake, setPlayOnAwake),
@@ -351,6 +351,12 @@ namespace Maze
     Json::Value ParticleSystem3DMainModule::toJSONValue() const
     {
         return SerializeMetaInstanceToJSONValue(getMetaClass(), getMetaInstance());
+    }
+
+    //////////////////////////////////////////
+    void ParticleSystem3DMainModule::generateDuration()
+    {
+        m_duration.sample(0, 0.0f, m_currentDuration);
     }
 
 } // namespace Maze
