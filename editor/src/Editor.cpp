@@ -70,6 +70,7 @@
 #include "maze-particles/managers/MazeParticlesManager.hpp"
 #include "maze-plugin-loader-png/MazeLoaderPNGPlugin.hpp"
 #include "managers/EditorManager.hpp"
+#include "managers/EditorConfigManager.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "settings/MazeEditorSceneSettings.hpp"
 #include "scenes/SceneSplash.hpp"
@@ -193,6 +194,10 @@ namespace Maze
 
         EditorManager::Initialize(m_editorManager);
         if (!m_editorManager)
+            return false;
+
+        EditorConfigManager::Initialize(m_editorConfigManager);
+        if (!m_editorConfigManager)
             return false;
 
         m_physics2DManager->getWorld()->setGravity(Vec2DF::c_zero);

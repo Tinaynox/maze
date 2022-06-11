@@ -115,6 +115,8 @@ namespace Maze
 
         registerAssetFileCallbacks();
 
+        addPrefabExtension("mzprefab");
+
         return true;
     }
 
@@ -190,12 +192,6 @@ namespace Maze
             return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Material);
         });
 
-        registerIconCallbackForAssetFileExtension("mzprefab",
-            [](AssetFilePtr const& _assetFile)
-        {
-            return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Prefab);
-        });
-
         registerIconCallbackForAssetFileClass<AssetDirectory>(
             []()
         {
@@ -263,6 +259,18 @@ namespace Maze
             return it2->second();
 
         return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::File);
+    }
+
+    //////////////////////////////////////////
+    void AssetEditorToolsManager::addPrefabExtension(String const& _extension)
+    {
+        m_prefabExtensions.insert(_extension);
+
+        registerIconCallbackForAssetFileExtension(_extension,
+            [](AssetFilePtr const& _assetFile)
+        {
+            return UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Prefab);
+        });
     }
 
 } // namespace Maze

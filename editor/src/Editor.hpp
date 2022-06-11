@@ -43,6 +43,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Editor);
     MAZE_USING_SHARED_PTR(UIManager);
     MAZE_USING_SHARED_PTR(EditorManager);
+    MAZE_USING_SHARED_PTR(EditorConfigManager);
     
 
     //////////////////////////////////////////
@@ -137,6 +138,7 @@ namespace Maze
         EditorMainRenderWindowState m_mainRenderWindowState;
         RenderWindowPtr m_mainRenderWindow;
 
+        EditorConfigManagerPtr m_editorConfigManager;
         EditorManagerPtr m_editorManager;
     };
 

@@ -97,6 +97,7 @@
 #include "scenes/SceneDebug.hpp"
 #include "managers/EditorGizmosManager.hpp"
 #include "managers/EditorManager.hpp"
+#include "managers/EditorConfigManager.hpp"
 
 
 //////////////////////////////////////////
@@ -221,17 +222,23 @@ namespace Maze
             }
             case 1:
             {
+                EditorConfigManager::GetInstancePtr()->loadConfig();
+                setCurrentProgress(0.15f);
+                break;
+            }
+            case 2:
+            {
                 TextureManager::GetCurrentInstancePtr()->createBuiltinTextures();
                 setCurrentProgress(0.25f);
                 break;
             }
-            case 2:
+            case 3:
             {
                 RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->createBuiltinShaders();
                 setCurrentProgress(0.35f);
                 break;
             }
-            case 3:
+            case 4:
             {
                 MaterialManager::GetCurrentInstance()->createBuiltinMaterials();
                 SpriteManager::GetCurrentInstance()->setDefaultSpriteMaterial(
@@ -239,45 +246,45 @@ namespace Maze
                 setCurrentProgress(0.45f);
                 break;
             }
-            case 4:
+            case 5:
             {
                 MeshManager::GetCurrentInstancePtr()->createBuiltinMeshes();
                 RenderMeshManager::GetCurrentInstancePtr()->createBuiltinRenderMeshes();
                 setCurrentProgress(0.55f);
                 break;
             }
-            case 5:
+            case 6:
             {
                 SystemFontManager::GetCurrentInstancePtr()->createBuiltinSystemFonts();
                 setCurrentProgress(0.65f);
                 break;
             }
-            case 6:
+            case 7:
             {
                 GizmosManager::GetInstancePtr()->createGizmosElements();
                 EditorGizmosManager::GetInstancePtr()->createGizmosElements();
                 setCurrentProgress(0.7f);
                 break;
             }
-            case 7:
+            case 8:
             {
                 UIManager::GetInstancePtr()->createUIElements();
                 setCurrentProgress(0.75f);
                 break;
             }
-            case 8:
+            case 9:
             {
                 ParticlesManager::GetInstancePtr()->createBuiltinAssets();
                 setCurrentProgress(0.8f);
                 break;
             }
-            case 9:
+            case 10:
             {
                 Editor::GetInstancePtr()->eventCoreEditorResourcesLoaded();
                 setCurrentProgress(0.85f);
                 break;
             }
-            case 10:
+            case 11:
             {
                 MAZE_LOAD_PLATFORM_PLUGIN(ArchiveAssets);
                 MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView);
@@ -307,7 +314,7 @@ namespace Maze
                 setCurrentProgress(0.95f);
                 break;
             }
-            case 11:
+            case 12:
             {
                 EditorManager::GetInstancePtr()->start();
 
@@ -317,7 +324,7 @@ namespace Maze
                 delayToNextStep = 2;
                 break;
             }
-            case 12:
+            case 13:
             {
                 m_progressBarFill->getEntity()->setActiveSelf(false);
 

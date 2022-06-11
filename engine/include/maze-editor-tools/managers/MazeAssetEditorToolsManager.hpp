@@ -123,6 +123,16 @@ namespace Maze
         //////////////////////////////////////////
         void callAssetFileContextMenuCallback(AssetsController* _controller, String const& _fullPath, MenuListTree2DPtr const& _tree);
 
+
+        //////////////////////////////////////////
+        inline bool isPrefabExtension(String const& _extension) { return m_prefabExtensions.count(_extension) > 0; }
+
+        //////////////////////////////////////////
+        void addPrefabExtension(String const& _extension);
+
+        //////////////////////////////////////////
+        Set<String> const& getPrefabExtensions() const { return m_prefabExtensions; }
+
     protected:
 
         //////////////////////////////////////////
@@ -153,6 +163,8 @@ namespace Maze
         Map<ClassUID, std::function<SpritePtr()>> m_iconCallbackPerAssetFileClass;
 
         Vector<AssetFileContextMenuCallback> m_assetFileContextMenuCallbacks;
+
+        Set<String> m_prefabExtensions;
     };
     
 

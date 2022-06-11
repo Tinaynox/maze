@@ -102,7 +102,12 @@ namespace Maze
         for (String const& fullPath : rootAssetDirectories)
         {
             const AssetFilePtr& rootAsset = getAssetFileByFullPath(fullPath);
-            rootAsset->updateChildrenAssets(true, &addedFiles, &removedFiles);
+            if (rootAsset)
+                rootAsset->updateChildrenAssets(true, &addedFiles, &removedFiles);
+            else
+            {
+                MAZE_ERROR("Undefined rootAsset for path '%s'", fullPath.c_str());
+            }
         }
 
         for (AssetFilePtr const& addFile : addedFiles)

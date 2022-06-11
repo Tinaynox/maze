@@ -86,6 +86,7 @@
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
+#include "maze-editor-tools/managers/MazeAssetEditorToolsManager.hpp"
 #include "maze-particles/managers/MazeParticlesManager.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorPrefabManager.hpp"
@@ -194,7 +195,7 @@ namespace Maze
             AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_fullPath);
             MAZE_ERROR_RETURN_IF(!assetFile, "Asset file %s is null!", _fullPath.c_str());
 
-            if (assetFile->getExtension() == "mzprefab")
+            if (AssetEditorToolsManager::GetInstancePtr()->isPrefabExtension(assetFile->getExtension()))
                 EditorManager::GetInstancePtr()->openPrefab(assetFile);
         }
     };

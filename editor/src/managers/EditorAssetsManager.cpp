@@ -213,7 +213,7 @@ namespace Maze
                     [_fullPath](String const& _text) { EditorAssetHelper::Delete(_fullPath); });
             }
 
-            if (extension == "mzprefab")
+            if (AssetEditorToolsManager::GetInstancePtr()->isPrefabExtension(extension))
             {
                 _menuListTree->addItem(
                     "Duplicate",
