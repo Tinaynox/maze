@@ -356,7 +356,7 @@ namespace Maze
     //////////////////////////////////////////
     void ParticleSystem3DMainModule::generateDuration()
     {
-        m_duration.sample(0, 0.0f, m_currentDuration);
+        m_duration.sample(rand() % c_particleSystemParametersCount, 0.0f, m_currentDuration);
     }
 
 } // namespace Maze

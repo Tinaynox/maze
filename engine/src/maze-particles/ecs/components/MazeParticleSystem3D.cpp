@@ -202,7 +202,7 @@ namespace Maze
         {
             // Calculate emission rate
             F32 rate;
-            m_mainModule.getEmission().emissionPerSecond.sample(0, _iterationProgress, rate);
+            m_mainModule.getEmission().emissionPerSecond.sample(rand() % c_particleSystemParametersCount, _iterationProgress, rate);
 
             if (rate > 0.0f)
             {
@@ -388,6 +388,7 @@ namespace Maze
         }
 
         setState(ParticleSystemState::Playing);
+        m_mainModule.generateDuration();
 
         if (m_mainModule.getPrewarm() && m_mainModule.getLooped())
         {

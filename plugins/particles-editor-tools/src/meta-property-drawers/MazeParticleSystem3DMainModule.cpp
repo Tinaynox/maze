@@ -94,6 +94,11 @@ namespace Maze
         registerCustomPropertyDrawer<
             MetaPropertyDrawerDefault<
             ParticleSystemParameterF32,
+            PropertyDrawerParticleSystemParameterF32Constants>>("duration");
+
+        registerCustomPropertyDrawer<
+            MetaPropertyDrawerDefault<
+            ParticleSystemParameterF32,
             PropertyDrawerParticleSystemParameterF32Positive>>("size");
 
         registerCustomPropertyDrawer<

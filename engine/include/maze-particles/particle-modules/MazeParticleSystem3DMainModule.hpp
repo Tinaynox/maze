@@ -36,7 +36,6 @@
 #include "maze-particles/MazeParticles3D.hpp"
 #include "maze-particles/MazeParticleSystemState.hpp"
 #include "maze-particles/MazeParticleSystemParameterF32.hpp"
-#include "maze-particles/MazeParticleSystemParameterS32.hpp"
 #include "maze-particles/MazeParticleSystemParameterColor.hpp"
 #include "maze-particles/MazeParticleSystemBurst.hpp"
 #include "maze-core/serialization/MazeJSONSerializable.hpp"

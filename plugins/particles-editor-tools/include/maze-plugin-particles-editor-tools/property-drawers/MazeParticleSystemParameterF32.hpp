@@ -48,6 +48,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(PropertyDrawerParticleSystemParameterF32);
     MAZE_USING_SHARED_PTR(PropertyDrawerParticleSystemParameterF32Positive);
     MAZE_USING_SHARED_PTR(PropertyDrawerParticleSystemParameterF32Degrees);
+    MAZE_USING_SHARED_PTR(PropertyDrawerParticleSystemParameterF32Constants);
     MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
     MAZE_USING_SHARED_PTR(HorizontalLayout2D);
     MAZE_USING_SHARED_PTR(SystemTextDropdown2D);
@@ -204,6 +205,33 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual ParticleSystemParameterF32 getValue() const MAZE_OVERRIDE;
+    };
+
+
+    //////////////////////////////////////////
+    // Class PropertyDrawerParticleSystemParameterF32Constants
+    //
+    //////////////////////////////////////////
+    class MAZE_PLUGIN_PARTICLES_EDITOR_TOOLS_API PropertyDrawerParticleSystemParameterF32Constants
+        : public PropertyDrawerParticleSystemParameterF32
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(PropertyDrawerParticleSystemParameterF32Constants, PropertyDrawerParticleSystemParameterF32);
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_MEMORY_ALLOCATION(PropertyDrawerParticleSystemParameterF32Constants);
+
+    public:
+
+        //////////////////////////////////////////
+        static PropertyDrawerParticleSystemParameterF32ConstantsPtr Create(String const& _label);
+
+    protected:
+
+        //////////////////////////////////////////
+        PropertyDrawerParticleSystemParameterF32Constants();
     };
 
 } // namespace Maze

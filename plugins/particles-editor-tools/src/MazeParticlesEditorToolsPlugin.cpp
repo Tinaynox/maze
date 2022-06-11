@@ -116,6 +116,15 @@ namespace Maze
     template class MAZE_PLUGIN_PARTICLES_EDITOR_TOOLS_API MetaPropertyDrawerDefault<ParticleSystemParameterF32, PropertyDrawerParticleSystemParameterF32Degrees>;
 
     //////////////////////////////////////////
+    using MetaPropertyDraweParticleSystemParameterF32Constants =
+        MetaPropertyDrawerDefault<
+        ParticleSystemParameterF32,
+        PropertyDrawerParticleSystemParameterF32Constants>;
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDraweParticleSystemParameterF32Constants, MetaPropertyDrawer);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK_TEMPLATE(MetaPropertyDraweParticleSystemParameterF32Constants);
+    template class MAZE_PLUGIN_PARTICLES_EDITOR_TOOLS_API MetaPropertyDrawerDefault<ParticleSystemParameterF32, PropertyDrawerParticleSystemParameterF32Constants>;
+
+    //////////////////////////////////////////
     using MetaPropertyDraweParticleSystemParameterColor =
         MetaPropertyDrawerDefault<
         ParticleSystemParameterColor,

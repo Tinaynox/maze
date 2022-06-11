@@ -641,6 +641,14 @@ namespace Maze
             if (mode == ParticleSystemParameterF32SamplingMode::None)
                 continue;
 
+            // Curves disabled
+            if (m_curveMinMaxMode == AnimationCurveMinMaxMode::None)
+            {
+                if (mode == ParticleSystemParameterF32SamplingMode::Curve ||
+                    mode == ParticleSystemParameterF32SamplingMode::RandomBetweenCurves)
+                    continue;
+            }
+
             m_modeDropdown->addOption(mode.toString());
         }
 
@@ -650,7 +658,7 @@ namespace Maze
     //////////////////////////////////////////
     void PropertyDrawerParticleSystemParameterF32::notifyDropdownValueChanged(SystemTextDropdown2D* _dropdown, S32 _index)
     {
-        ParticleSystemParameterF32SamplingMode mode = ParticleSystemParameterF32SamplingMode(_index + 1);
+        ParticleSystemParameterF32SamplingMode mode = ParticleSystemParameterF32SamplingMode::FromString(_dropdown->getValueString());
         setMode(mode);
 
         eventUIData();
@@ -714,6 +722,29 @@ namespace Maze
         return value;
     }
 
+
+    //////////////////////////////////////////
+    // Class PropertyDrawerParticleSystemParameterF32Constants
+    //
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PropertyDrawerParticleSystemParameterF32Constants, PropertyDrawerParticleSystemParameterF32);
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(PropertyDrawerParticleSystemParameterF32Constants);
+
+    //////////////////////////////////////////
+    PropertyDrawerParticleSystemParameterF32Constants::PropertyDrawerParticleSystemParameterF32Constants()
+    {
+        m_curveMinMaxMode = AnimationCurveMinMaxMode::None;
+    }
+
+    //////////////////////////////////////////
+    PropertyDrawerParticleSystemParameterF32ConstantsPtr PropertyDrawerParticleSystemParameterF32Constants::Create(String const& _label)
+    {
+        PropertyDrawerParticleSystemParameterF32ConstantsPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerParticleSystemParameterF32Constants, object, init(_label));
+        return object;
+    }
 
 } // namespace Maze
 //////////////////////////////////////////
