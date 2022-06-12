@@ -71,6 +71,11 @@ namespace Maze
     //////////////////////////////////////////
     void TaskManager::update(F32 _dt)
     {
+        if (m_update)
+            return;
+
+        m_update = true;
+
         m_mainThreadTasks.switchContainer();
         FastVector<SharedPtr<TaskDelegate>>& mainThreadTasks = m_mainThreadTasks.other();
         for (SharedPtr<TaskDelegate>& mainThreadTask : mainThreadTasks)
@@ -91,7 +96,10 @@ namespace Maze
             {
                 ++it;
             }
+
         }
+
+        m_update = false;
     }
 
 } // namespace Maze

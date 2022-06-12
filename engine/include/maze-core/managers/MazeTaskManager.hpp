@@ -150,6 +150,8 @@ namespace Maze
 
         SwitchableContainer<FastVector<SharedPtr<TaskDelegate>>> m_mainThreadTasks;
         List<DelayedTask> m_delayedMainThreadTasks;
+
+        bool m_update = false;
     };
 
 
