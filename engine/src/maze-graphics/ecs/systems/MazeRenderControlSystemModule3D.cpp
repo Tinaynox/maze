@@ -404,7 +404,7 @@ namespace Maze
                             MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
 
                             MaterialPtr const* material = nullptr;
-                            if (materials.empty())
+                            if (materials.empty() || !materials[i % materials.size()])
                                 material = &m_renderSystem->getMaterialManager()->getErrorMaterial();
                             else
                                 material = &materials[i % materials.size()];
