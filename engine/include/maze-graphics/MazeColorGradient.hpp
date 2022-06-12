@@ -356,6 +356,14 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline void multiplyAlpha(F32 _power)
+        {
+            for (Size i = 0, in = m_keyframesAlpha.size(); i < in; ++i)
+                m_keyframesAlpha[i].value *= _power;
+        }
+
+
+        //////////////////////////////////////////
         inline bool empty() const { return emptyRGB() && emptyAlpha(); }
 
         //////////////////////////////////////////

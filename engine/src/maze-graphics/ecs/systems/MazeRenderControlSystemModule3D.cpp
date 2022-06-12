@@ -33,6 +33,7 @@
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/ecs/components/MazeTrailRenderer3D.hpp"
+#include "maze-graphics/ecs/components/MazeTrailRenderer3DHider.hpp"
 #include "maze-graphics/ecs/components/MazeLineRenderer3D.hpp"
 #include "maze-graphics/ecs/MazeECSRenderScene.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
@@ -86,6 +87,7 @@ namespace Maze
 
         m_meshRenderers = _world->requestInclusiveSample<MeshRenderer, Transform3D>();
         m_trailRenderers3DSample = _world->requestInclusiveSample<TrailRenderer3D, Transform3D>();
+        m_trailRendererHiders3DSample = _world->requestInclusiveSample<TrailRenderer3DHider, Transform3D>();
         m_lineRenderers3DSample = _world->requestInclusiveSample<LineRenderer3D, Transform3D>();
         m_cameras3DSample = _world->requestInclusiveSample<Camera3D>();
         m_lights3DSample = _world->requestInclusiveSample<Light3D>();
@@ -312,6 +314,12 @@ namespace Maze
     //////////////////////////////////////////
     void RenderControlSystemModule3D::processUpdate(F32 _dt)
     {
+        m_trailRendererHiders3DSample->process(
+            [_dt](Entity* _entity, TrailRenderer3DHider* _trailRendererHider, Transform3D* _transform)
+        {
+            _trailRendererHider->update(_dt);
+        });
+
         m_trailRenderers3DSample->process(
             [_dt](Entity* _entity, TrailRenderer3D* _trailRenderer, Transform3D* _transform)
             {

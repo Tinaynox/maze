@@ -53,6 +53,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(MeshRenderer);
     MAZE_USING_SHARED_PTR(Transform3D);
     MAZE_USING_SHARED_PTR(TrailRenderer3D);
+    MAZE_USING_SHARED_PTR(TrailRenderer3DHider);
     MAZE_USING_SHARED_PTR(LineRenderer3D);
     MAZE_USING_SHARED_PTR(LineRenderer2D);
     MAZE_USING_SHARED_PTR(RenderPass);
@@ -190,6 +191,7 @@ namespace Maze
 
         SharedPtr<GenericInclusiveEntitiesSample<MeshRenderer, Transform3D>> m_meshRenderers;
         SharedPtr<GenericInclusiveEntitiesSample<TrailRenderer3D, Transform3D>> m_trailRenderers3DSample;
+        SharedPtr<GenericInclusiveEntitiesSample<TrailRenderer3DHider, Transform3D>> m_trailRendererHiders3DSample;
         SharedPtr<GenericInclusiveEntitiesSample<LineRenderer3D, Transform3D>> m_lineRenderers3DSample;
         SharedPtr<GenericInclusiveEntitiesSample<Camera3D>> m_cameras3DSample;
         SharedPtr<GenericInclusiveEntitiesSample<Light3D>> m_lights3DSample;
