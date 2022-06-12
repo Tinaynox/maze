@@ -90,7 +90,7 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, time, 2.0f, getTime, setTime),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, minVertexDistance, 0.35f, getMinVertexDistance, setMinVertexDistance),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, width, 1.0f, getWidth, setWidth),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorF128, color, ColorF128::c_white, getColor, setColor));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorGradient, color, ColorGradient(), getColor, setColor));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(TrailRenderer3D);
@@ -290,14 +290,16 @@ namespace Maze
             vertexA = currentPosition + perpendicular * halfWidth;
             vertexB = currentPosition - perpendicular * halfWidth;
 
+            Vec4DF color = m_color.evaluate(progress);
+
             m_vertices[vertex] = vertexA;
             m_uvs[vertex] = Vec2DF(progress, 0.0f);
-            m_colors[vertex] = m_color.value;
+            m_colors[vertex] = color;
             ++vertex;
 
             m_vertices[vertex] = vertexB;
             m_uvs[vertex] = Vec2DF(progress, 1.0f);
-            m_colors[vertex] = m_color.value;
+            m_colors[vertex] = color;
             ++vertex;
 
             
@@ -316,14 +318,16 @@ namespace Maze
         vertexA = currentPosition + perpendicular * halfWidth;
         vertexB = currentPosition - perpendicular * halfWidth;
 
+        Vec4DF color = m_color.evaluate(1.0f);
+
         m_vertices[vertex] = vertexA;
         m_uvs[vertex] = Vec2DF(1.0f, 0.0f);
-        m_colors[vertex] = m_color.value;
+        m_colors[vertex] = color;
         ++vertex;
 
         m_vertices[vertex] = vertexB;
         m_uvs[vertex] = Vec2DF(1.0f, 1.0f);
-        m_colors[vertex] = m_color.value;
+        m_colors[vertex] = color;
         ++vertex;
 
         m_vao->setVerticesData((U8 const*)&m_vertices[0], c_positionDescription, verticesCount);
