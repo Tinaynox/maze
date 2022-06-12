@@ -35,6 +35,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/MazeColorF128.hpp"
+#include "maze-graphics/MazeColorGradient.hpp"
 
 
 //////////////////////////////////////////
@@ -122,10 +123,19 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setColor(ColorF128 const& _color) { m_color = _color; }
+        inline void setColor(Vec4DF const& _color) { setColor(ColorGradient(_color)); }
 
         //////////////////////////////////////////
-        inline ColorF128 const& getColor() const { return m_color; }
+        inline void setColor(ColorU32 const& _color) { setColor(ColorGradient(_color.toVec4DF())); }
+
+        //////////////////////////////////////////
+        inline void setColor(ColorF128 const& _color) { setColor(ColorGradient(_color.toVec4DF())); }
+
+        //////////////////////////////////////////
+        inline void setColor(ColorGradient const& _color) { m_color = _color; }
+
+        //////////////////////////////////////////
+        inline ColorGradient const& getColor() const { return m_color; }
 
 
         //////////////////////////////////////////
@@ -222,7 +232,7 @@ namespace Maze
         F32 m_minVertexDistance;
         F32 m_minVertexDistanceSqr;
         F32 m_width;
-        ColorF128 m_color;
+        ColorGradient m_color;
 
         VertexArrayObjectPtr m_vao;
         RenderMeshPtr m_renderMesh;
