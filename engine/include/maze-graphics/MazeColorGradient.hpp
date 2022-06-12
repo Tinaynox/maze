@@ -346,6 +346,15 @@ namespace Maze
             addKeyAlpha(_time, _value.w);
         }
 
+
+        //////////////////////////////////////////
+        inline void clear()
+        {
+            clearKeysRGB();
+            clearKeysAlpha();
+        }
+
+
         //////////////////////////////////////////
         inline bool empty() const { return emptyRGB() && emptyAlpha(); }
 

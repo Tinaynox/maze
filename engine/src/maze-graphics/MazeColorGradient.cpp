@@ -205,6 +205,12 @@ namespace Maze
     //////////////////////////////////////////
     void ColorGradient::loadFromJSONValue(Json::Value const& _value)
     {
+        if (!_value.isObject())
+        {
+            clear();
+            return;
+        }
+
         m_keyframesRGB.clear();
         for (Json::Value const& keyframe : _value["rgb"])
         {
