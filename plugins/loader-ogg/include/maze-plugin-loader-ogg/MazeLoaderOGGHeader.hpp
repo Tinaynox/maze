@@ -25,34 +25,40 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeLoaderPNG_hpp_))
-#define _MazeLoaderPNG_hpp_
+#if (!defined(_MazeLoaderOGGHeader_hpp_))
+#define _MazeLoaderOGGHeader_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-plugin-loader-png/MazeLoaderPNGHeader.hpp"
-#include "maze-graphics/MazePixelSheet2D.hpp"
-#include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/preprocessor/MazePreprocessor_Platform.hpp"
+#include "maze-core/preprocessor/MazePreprocessor_CPlusPlus.hpp"
 
 
 //////////////////////////////////////////
-namespace Maze
-{
-    //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_PNG_API bool LoadPNG(AssetFilePtr const& _file, Vector<PixelSheet2D>& _pixelSheets);
+#if defined(MAZE_PLUGIN_LOADER_OGG_EXPORTS)
+#   define MAZE_PLUGIN_LOADER_OGG_API MAZE_API_EXPORT
+#else
+#   define MAZE_PLUGIN_LOADER_OGG_API MAZE_API_IMPORT
+#endif
 
-    //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_PNG_API bool LoadPNG(ByteBufferPtr const& _fileData, Vector<PixelSheet2D>& _pixelSheets);
 
-    //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_PNG_API bool IsPNGFile(AssetFilePtr const& _file);
-
-    //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_PNG_API bool IsPNGFile(ByteBufferPtr const& _fileData);
-
-} // namespace Maze
 //////////////////////////////////////////
+#if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
+#    if (!defined(WIN32_LEAN_AND_MEAN))
+#        define WIN32_LEAN_AND_MEAN
+#    endif
+#    if (!defined(NOMINMAX) && defined(_MSC_VER))
+#        define NOMINMAX
+#    endif
+#    include "Windows.h"
+#    undef far
+#    undef near
+#   undef NEAR
+#   define NEAR
+#   undef FAR
+#   define FAR
+#endif
 
 
-#endif // _MazeLoaderPNG_hpp_
+#endif // _MazeLoaderOGGHeader_hpp_
 //////////////////////////////////////////

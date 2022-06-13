@@ -25,19 +25,7 @@ cmake_minimum_required(VERSION 3.6)
 
 
 ##########################################
-project(maze-example-sound)
-
-
-##########################################
-set(EXAMPLE_NAME "${PROJECT_NAME}")
-set(EXAMPLE_MAZE_LIBS
-    maze-core
-    maze-sound
-    maze-graphics
-    maze-ui
-    maze-engine
-    maze-editor-tools
-    maze-plugin-loader-ogg)
+project(maze-plugin-loader-ogg)
 
 
 ##########################################
@@ -47,19 +35,31 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Macros.cmake")
 
 
 ##########################################
-maze_add_sources(${CMAKE_CURRENT_SOURCE_DIR}/../templates/example-wrapper ADDITIONAL_EXAMPLE_FILES)
-maze_sort_sources("${ADDITIONAL_EXAMPLE_FILES}" ADDITIONAL_EXAMPLE_FILES)
-
-
-##########################################
-include("${CMAKE_CURRENT_SOURCE_DIR}/../templates/CMakeExampleTemplate.cmake")
-
-
-##########################################
-add_subdirectory("${MAZE_DIR}/plugins/loader-ogg" "${CMAKE_CURRENT_BINARY_DIR}/plugins/loader-ogg")
-
+maze_add_module(
+    ${PROJECT_NAME}
+    INCLUDE_DIR "include/${PROJECT_NAME}"
+    SRC_DIR "src"
+    FORWARD_HEADER MazeLoaderOGGHeader)
+    
 
 ##########################################
+# stb_vorbis
+include("${MAZE_DIR}/third-party/stb_vorbis.cmake")
+
+
+##########################################    
 target_include_directories(
-    ${EXAMPLE_NAME}
-    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../templates/example-wrapper")
+    ${PROJECT_NAME}
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+
+
+##########################################
+set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "MazePlugins")
+
+
+##########################################
+target_link_libraries(
+    ${PROJECT_NAME}
+    PUBLIC maze-core
+    PUBLIC maze-sound
+    PUBLIC stb_vorbis)

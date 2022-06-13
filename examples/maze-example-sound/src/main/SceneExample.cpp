@@ -32,6 +32,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
+#include "maze-core/managers/MazePluginManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
@@ -79,6 +80,7 @@
 #include "maze-sound/managers/MazeSoundManager.hpp"
 #include "maze-sound-system-openal/MazeSoundSystemOpenALPlugin.hpp"
 #include "maze-sound/MazeSound.hpp"
+#include "maze-plugin-loader-ogg/MazeLoaderOGGPlugin.hpp"
 #include "Example.hpp"
 
 
@@ -107,6 +109,8 @@ namespace Maze
     //////////////////////////////////////////
     bool LoadPlugins()
     {
+        MAZE_LOAD_PLATFORM_PLUGIN(LoaderOGG);
+
         return true;
     }
 

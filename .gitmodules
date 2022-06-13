@@ -19,3 +19,6 @@
 [submodule "third-party/libstem_gamepad"]
 	path = third-party/libstem_gamepad
 	url = git@github.com:Tinaynox/libstem_gamepad.git
+[submodule "third-party/stb"]
+	path = third-party/stb
+	url = git@github.com:Tinaynox/stb.git

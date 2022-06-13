@@ -24,35 +24,40 @@
 
 
 //////////////////////////////////////////
-#pragma once
-#if (!defined(_MazeLoaderPNG_hpp_))
-#define _MazeLoaderPNG_hpp_
-
-
-//////////////////////////////////////////
-#include "maze-plugin-loader-png/MazeLoaderPNGHeader.hpp"
-#include "maze-graphics/MazePixelSheet2D.hpp"
-#include "maze-core/assets/MazeAssetFile.hpp"
+#include "MazeLoaderOGGHeader.hpp"
+#include "maze-plugin-loader-ogg/loaders/MazeLoaderOGG.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_PNG_API bool LoadPNG(AssetFilePtr const& _file, Vector<PixelSheet2D>& _pixelSheets);
+    MAZE_PLUGIN_LOADER_OGG_API bool LoadOGG(AssetFilePtr const& _file, SoundDataPtr& _soundData)
+    {
+        ByteBufferPtr fileData = _file->readAsByteBuffer();
+        return LoadOGG(fileData, _soundData);
+    }
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_PNG_API bool LoadPNG(ByteBufferPtr const& _fileData, Vector<PixelSheet2D>& _pixelSheets);
+    MAZE_PLUGIN_LOADER_OGG_API bool LoadOGG(ByteBufferPtr const& _fileData, SoundDataPtr& _soundData)
+    {
+
+        return false;
+    }
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_PNG_API bool IsPNGFile(AssetFilePtr const& _file);
+    MAZE_PLUGIN_LOADER_OGG_API bool IsOGGFile(AssetFilePtr const& _file)
+    {
+        // #TODO:
+        ByteBufferPtr fileData = _file->readAsByteBuffer();
+        return IsOGGFile(fileData);
+    }
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_PNG_API bool IsPNGFile(ByteBufferPtr const& _fileData);
+    MAZE_PLUGIN_LOADER_OGG_API bool IsOGGFile(ByteBufferPtr const& _fileData)
+    {
+        return false;
+    }
 
 } // namespace Maze
-//////////////////////////////////////////
-
-
-#endif // _MazeLoaderPNG_hpp_
 //////////////////////////////////////////
