@@ -233,6 +233,27 @@ namespace Maze
                 }
             });
 
+        m_playMusic2Button = UIHelper::CreateDefaultClickButton(
+            "Music",
+            { 90.0f, 18.0f },
+            { 80.0f, 390.0f },
+            panel00->getTransform(),
+            this,
+            { 0.0f, 0.0f });
+        m_playMusic2Button->eventClick.subscribe(
+            [&](Button2D* _button, CursorInputEvent const& _event)
+        {
+            if (m_music2)
+            {
+                m_music2->stop();
+                m_music2.reset();
+            }
+            else
+            {
+                m_music2 = SoundSystem::GetCurrentInstancePtr()->play("Music01.ogg", false, m_musicGroup);
+            }
+        });
+
         m_soundVolumeSlider = UIHelper::CreateDefaultSlider(
             1.0f,
             { 90.0f, 18.0f },

@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeLoaderOGGHeader.hpp"
 #include "maze-plugin-loader-ogg/loaders/MazeLoaderOGG.hpp"
+#include <stb_vorbis.h>
 
 
 //////////////////////////////////////////
@@ -41,8 +42,59 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_PLUGIN_LOADER_OGG_API bool LoadOGG(ByteBufferPtr const& _fileData, SoundDataPtr& _soundData)
     {
+        S32 error = -1;
+        stb_vorbis* vorbis = stb_vorbis_open_memory(
+            _fileData->getDataPointer(),
+            _fileData->getSize(),
+            &error,
+            nullptr);
 
-        return false;
+        if (!vorbis)
+            return false;
+
+        if (error != VORBIS__no_error)
+        {
+            stb_vorbis_close(vorbis);
+            return false;
+        }
+
+        stb_vorbis_info info = stb_vorbis_get_info(vorbis);
+
+        S32 samples = stb_vorbis_stream_length_in_samples(vorbis);
+        S32 bitsPerSample = 16;
+        
+        ByteBufferPtr data = ByteBuffer::Create();
+        data->resize(samples * info.channels * sizeof(F32));
+
+        S32 smp = 0;
+        while (1)
+        {
+            F32** outputs;
+            S32 n = stb_vorbis_get_frame_float(vorbis, NULL, &outputs);
+            if (n == 0)
+                break;
+            
+            if (info.channels == 1)
+            {
+                memcpy(data->getDataPointer() + sizeof(F32) * smp, outputs[0], sizeof(F32) * n);
+            }
+            else
+            {
+                memcpy(data->getDataPointer() + sizeof(F32) * smp, outputs[0], sizeof(F32) * n);
+                memcpy(data->getDataPointer() + sizeof(F32) * (smp + samples), outputs[1], sizeof(F32) * n);
+            }
+            smp += n;
+        }
+
+        _soundData = std::make_shared<SoundData>(
+            data,
+            info.channels,
+            info.sample_rate,
+            bitsPerSample,
+            0u);
+        
+        stb_vorbis_close(vorbis);
+        return true;
     }
 
     //////////////////////////////////////////
@@ -56,6 +108,14 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_PLUGIN_LOADER_OGG_API bool IsOGGFile(ByteBufferPtr const& _fileData)
     {
+        Char header[5] = {0};
+
+        // Read header
+        _fileData->read(0, &header, sizeof(header));
+
+        if (!MAZE_STRNICMP(header, "OggS", 4))
+            return true;
+
         return false;
     }
 

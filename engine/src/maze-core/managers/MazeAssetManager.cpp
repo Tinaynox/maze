@@ -360,6 +360,14 @@ namespace Maze
     //////////////////////////////////////////
     Vector<AssetFilePtr> AssetManager::getAssetFilesWithExtensions(Set<String> const& _extensions)
     {
+        return getAssetFilesWithExtensions(_extensions, [](AssetFilePtr const& _assetFile) { return true; });
+    }
+
+    //////////////////////////////////////////
+    Vector<AssetFilePtr> AssetManager::getAssetFilesWithExtensions(
+        Set<String> const& _extensions,
+        std::function<bool(AssetFilePtr const&)> _pred)
+    {
         Vector<AssetFilePtr> result;
 
         StringKeyMap<AssetFilePtr>::iterator it = m_assetFilesByFullPath.begin();
@@ -367,7 +375,10 @@ namespace Maze
         for (; it != end; ++it)
         {
             if (_extensions.count((*it).second->getExtension()))
-                result.push_back((*it).second);
+            {
+                if (_pred((*it).second))
+                    result.push_back((*it).second);
+            }
         }
 
         return result;

@@ -279,19 +279,24 @@ namespace Maze
         return wr;
     }
 
-
     //////////////////////////////////////////
     MAZE_SOUND_API bool LoadWAV(AssetFilePtr const& _file, SoundDataPtr& _soundData)
+    {
+        ByteBufferPtr fileData = _file->readAsByteBuffer();
+        return LoadWAV(fileData, _soundData);
+    }
+
+    //////////////////////////////////////////
+    MAZE_SOUND_API bool LoadWAV(ByteBufferPtr const& _fileData, SoundDataPtr& _soundData)
     {
         WaveResult wr = WaveResult::OutOfMemory;
 
         WaveFileInfo waveInfo;
 
-        ByteBufferPtr data = _file->readAsByteBuffer();
-        if (!data)
+        if (!_fileData)
             return false;
 
-        if (S32(wr = ParseFile(data, &waveInfo)) >= 0)
+        if (S32(wr = ParseFile(_fileData, &waveInfo)) >= 0)
         {
             waveInfo.data = ByteBuffer::Create(waveInfo.dataSize);
             if (waveInfo.data)
@@ -300,7 +305,7 @@ namespace Maze
                 U32 offset = waveInfo.dataOffset;
 
                 // Read Sample Data
-                U32 bytesRead = data->read(offset, waveInfo.data->getDataPointer(), waveInfo.dataSize);
+                U32 bytesRead = _fileData->read(offset, waveInfo.data->getDataPointer(), waveInfo.dataSize);
                 offset += bytesRead;
                 if (bytesRead == waveInfo.dataSize)
                 {
@@ -339,6 +344,24 @@ namespace Maze
 
         // Read Wave file header
         headerByteBuffer->read(0, &waveFileHeader, sizeof(WaveFileHeader));
+
+        if (!MAZE_STRNICMP(waveFileHeader.riff, "RIFF", 4) && !MAZE_STRNICMP(waveFileHeader.wave, "WAVE", 4))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    //////////////////////////////////////////
+    MAZE_SOUND_API bool IsWAVFile(ByteBufferPtr const& _byteBuffer)
+    {
+        WaveFileHeader waveFileHeader;
+        RiffChunk riffChunk;
+        WaveFMT waveFmt;
+
+        // Read Wave file header
+        _byteBuffer->read(0, &waveFileHeader, sizeof(WaveFileHeader));
 
         if (!MAZE_STRNICMP(waveFileHeader.riff, "RIFF", 4) && !MAZE_STRNICMP(waveFileHeader.wave, "WAVE", 4))
         {

@@ -30,7 +30,9 @@
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/data/MazeByteBuffer.hpp"
 #include "maze-sound/MazeSound.hpp"
+#include "maze-sound/loaders/MazeLoaderWAV.hpp"
 
 
 //////////////////////////////////////////
@@ -65,7 +67,15 @@ namespace Maze
 
     //////////////////////////////////////////
     bool SoundManager::init()
-    {   
+    {
+        registerSoundLoader(
+            MAZE_HASHED_CSTRING("wav"),
+            SoundLoaderData(
+                (LoadSoundAssetFileFunction)&LoadWAV,
+                (LoadSoundByteBufferFunction)&LoadWAV,
+                (IsSoundAssetFileFunction)&IsWAVFile,
+                (IsSoundByteBufferFunction)&IsWAVFile));
+
         return true;
     }
 
@@ -179,10 +189,60 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    SoundDataPtr SoundManager::loadSoundData(AssetFilePtr const& _assetFile)
+    {
+        SoundDataPtr soundData;
+
+        if (!_assetFile)
+            return soundData;
+
+        Debug::Log("Loading sound data: %s...", _assetFile->getFileName().c_str());
+
+        StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
+
+        if (metaData.empty() || !metaData.contains("ext"))
+        {
+            bool loaderFound = false;
+            for (auto const& soundLoaderData : m_soundLoaders)
+            {
+                SoundLoaderData const& loaderData = soundLoaderData.second;
+                if (loaderData.isSoundAssetFileFunc(_assetFile))
+                {
+                    loaderFound = true;
+                    MAZE_ERROR_IF(!loaderData.loadSoundAssetFileFunc(_assetFile, soundData), "SoundData is not loaded - '%s'", _assetFile->getFileName().c_str());
+                    break;
+                }
+            }
+
+            MAZE_ERROR_IF(!loaderFound, "Unsupported sound format - %s!", _assetFile->getFileName().c_str());
+        }
+        else
+        {
+            HashedString fileExtension = StringHelper::ToLower(metaData["ext"]);
+
+            auto it = m_soundLoaders.find(fileExtension);
+            if (it != m_soundLoaders.end())
+            {
+                SoundLoaderData const& loaderData = it->second;
+                MAZE_ERROR_IF(!loaderData.loadSoundAssetFileFunc(_assetFile, soundData), "SoundData is not loaded - '%s'", _assetFile->getFileName().c_str());
+            }
+            else
+            {
+                MAZE_ERROR("Unsupported sound format - %s!", _assetFile->getFileName().c_str());
+            }
+        }
+
+        Debug::Log("Loaded.", _assetFile->getFileName().c_str());
+
+        return soundData;
+    }
+
+    //////////////////////////////////////////
     void SoundManager::loadSounds(Set<String> const& _tags)
     {
-        Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtension(
-            "wav",
+        Vector<String> extensions = getSoundLoaderExtensions();
+        Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions(
+            Set<String>(extensions.begin(), extensions.end()),
             [&](AssetFilePtr const& _assetFile)
             {
                 return _assetFile->hasAnyOfTags(_tags);
@@ -193,6 +253,16 @@ namespace Maze
             String fileName = assetFile->getFileName();
             getSound(fileName);
         }
+    }
+
+    //////////////////////////////////////////
+    Vector<String> SoundManager::getSoundLoaderExtensions()
+    {
+        Vector<String> result;
+        for (auto const& soundLoaderData : m_soundLoaders)
+            result.push_back(soundLoaderData.first);
+
+        return result;
     }
     
 } // namespace Maze

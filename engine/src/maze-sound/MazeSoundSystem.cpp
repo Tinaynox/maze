@@ -105,46 +105,5 @@ namespace Maze
         return play(_soundSet->fetch(), _looped, _soundGroup, _soundSet->getVolume());
     }
 
-    //////////////////////////////////////////
-    SoundDataPtr SoundSystem::loadSoundData(AssetFilePtr const& _assetFile)
-    {
-        SoundDataPtr soundData;
-
-        Debug::Log("Loading sound: %s...", _assetFile->getFileName().c_str());
-
-        StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
-
-        if (metaData.empty())
-        {
-            if (Maze::IsWAVFile(_assetFile))
-            {
-                MAZE_ERROR_IF(!Maze::LoadWAV(_assetFile, soundData), "SoundData is not loaded - '%s'", _assetFile->getFileName().c_str());
-            }
-            else
-            {
-                MAZE_ERROR("Unsupported sound format!");
-            }
-        }
-        else
-        {
-            String fileExtension = StringHelper::ToLower(metaData["ext"]);
-            if (fileExtension.empty())
-                fileExtension = FileHelper::GetFileExtension(_assetFile->getFileName());
-
-            if (fileExtension == "wav")
-            {
-                MAZE_ERROR_IF(!Maze::LoadWAV(_assetFile, soundData), "SoundData is not loaded - '%s'", _assetFile->getFileName().c_str());
-            }
-            else
-            {
-                MAZE_ERROR("Unsupported sound format!");
-            }
-        }
-
-        Debug::Log("Loaded.", _assetFile->getFileName().c_str());
-
-        return soundData;
-    }
-
 } // namespace Maze
 //////////////////////////////////////////

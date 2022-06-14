@@ -24,8 +24,11 @@
 
 
 ##########################################
-add_library(stb_vorbis STATIC ${CMAKE_CURRENT_LIST_DIR}/stb/stb_vorbis.c)
+add_library(stb_vorbis STATIC ${CMAKE_CURRENT_LIST_DIR}/stb/stb_vorbis.h ${CMAKE_CURRENT_LIST_DIR}/stb/stb_vorbis.c)
 set_property(TARGET stb_vorbis PROPERTY FOLDER "MazeThirdParty")
+target_include_directories(
+    stb_vorbis
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/stb>)
 set_target_properties(stb_vorbis
     PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY "${MAZE_ENGINE_DIR}/lib/${MAZE_ARCH_SUFFIX}"

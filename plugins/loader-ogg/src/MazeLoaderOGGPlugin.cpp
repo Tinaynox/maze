@@ -75,12 +75,6 @@ namespace Maze
 #endif
 
 
-    //////////////////////////////////////////
-    inline void RegisterSoundLoader(SoundSystemPtr const& _soundSystem)
-    {
-        
-    }
-
 
     //////////////////////////////////////////
     // Class LoaderOGGPlugin
@@ -121,16 +115,13 @@ namespace Maze
     {
         if (SoundManager::GetInstancePtr())
         {
-            /*
-            SoundManager::GetInstancePtr()->eventDefaultSoundSystemChanged.subscribe(
-                [](SoundSystemPtr const& _soundSystem)
-                {
-                    RegisterSoundLoader(_soundSystem);
-                });
-            */
-
-            if (SoundManager::GetInstancePtr()->getDefaultSoundSystemRaw())
-                RegisterSoundLoader(SoundManager::GetInstancePtr()->getDefaultSoundSystem());
+            SoundManager::GetInstancePtr()->registerSoundLoader(
+                MAZE_HASHED_CSTRING("ogg"),
+                SoundLoaderData(
+                    (LoadSoundAssetFileFunction)&LoadOGG,
+                    (LoadSoundByteBufferFunction)&LoadOGG,
+                    (IsSoundAssetFileFunction)&IsOGGFile,
+                    (IsSoundByteBufferFunction)&IsOGGFile));
         }
         
     }
@@ -138,15 +129,8 @@ namespace Maze
     //////////////////////////////////////////
     void LoaderOGGPlugin::uninstall()
     {
-        if (SoundManager::GetInstancePtr() && SoundSystem::GetCurrentInstancePtr())
-        {
-            SoundManager* soundManager = SoundManager::GetInstancePtr();
-            if (soundManager)
-            {
-                //soundManager->clearSoundLoader(
-                //    MAZE_HASHED_CSTRING("ogg"));
-            }
-        }
+        if (SoundManager::GetInstancePtr())
+            SoundManager::GetInstancePtr()->clearSoundLoader(MAZE_HASHED_CSTRING("ogg"));
     }
 
 } // namespace Maze

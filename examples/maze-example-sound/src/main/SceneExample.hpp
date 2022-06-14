@@ -110,6 +110,7 @@ namespace Maze
 
         ClickButton2DPtr m_playSoundButton;
         ClickButton2DPtr m_playMusicButton;
+        ClickButton2DPtr m_playMusic2Button;
 
         Slider2DPtr m_soundVolumeSlider;
         Slider2DPtr m_musicVolumeSlider;
@@ -119,6 +120,7 @@ namespace Maze
         SoundGroupPtr m_musicGroup;
 
         SoundSourcePtr m_music;
+        SoundSourcePtr m_music2;
     };
 
 

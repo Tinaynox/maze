@@ -34,6 +34,8 @@
 #include "maze-core/MazeTypes.hpp"
 #include "maze-sound/MazeSoundSystem.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
+#include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/data/MazeByteBuffer.hpp"
 
 
 //////////////////////////////////////////
@@ -43,6 +45,42 @@ namespace Maze
     MAZE_USING_SHARED_PTR(SoundManager);
     MAZE_USING_SHARED_PTR(SoundSystem);
     MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_SHARED_PTR(ByteBuffer);
+
+
+    //////////////////////////////////////////
+    using LoadSoundAssetFileFunction = bool(*)(AssetFilePtr const& _file, SoundDataPtr& _soundData);
+    using LoadSoundByteBufferFunction = bool(*)(ByteBufferPtr const& _fileData, SoundDataPtr& _soundData);
+    using IsSoundAssetFileFunction = bool(*)(AssetFilePtr const& _file);
+    using IsSoundByteBufferFunction = bool(*)(ByteBufferPtr const& _fileData);
+
+
+    //////////////////////////////////////////
+    // Struct SoundLoaderData
+    //
+    //////////////////////////////////////////
+    struct SoundLoaderData
+    {
+        //////////////////////////////////////////
+        SoundLoaderData() = default;
+
+        //////////////////////////////////////////
+        SoundLoaderData(
+            LoadSoundAssetFileFunction _loadSoundAssetFileFunc,
+            LoadSoundByteBufferFunction _loadSoundByteBufferFunc,
+            IsSoundAssetFileFunction _isSoundAssetFileFunc,
+            IsSoundByteBufferFunction _isSoundByteBufferFunc)
+            : loadSoundAssetFileFunc(_loadSoundAssetFileFunc)
+            , loadSoundByteBufferFunc(_loadSoundByteBufferFunc)
+            , isSoundAssetFileFunc(_isSoundAssetFileFunc)
+            , isSoundByteBufferFunc(_isSoundByteBufferFunc)
+        {}
+
+        LoadSoundAssetFileFunction loadSoundAssetFileFunc;
+        LoadSoundByteBufferFunction loadSoundByteBufferFunc;
+        IsSoundAssetFileFunction isSoundAssetFileFunc;
+        IsSoundByteBufferFunction isSoundByteBufferFunc;
+    };
 
 
     //////////////////////////////////////////
@@ -104,7 +142,35 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        SoundDataPtr loadSoundData(AssetFilePtr const& _assetFile);
+
+        //////////////////////////////////////////
         void loadSounds(Set<String> const& _tags);
+
+
+
+        //////////////////////////////////////////
+        inline void registerSoundLoader(
+            HashedCString _extension,
+            SoundLoaderData const& _data)
+        {
+            m_soundLoaders.insert(_extension, _data);
+            eventSoundLoaderAdded(_extension, _data);
+        }
+
+        //////////////////////////////////////////
+        inline void clearSoundLoader(HashedCString _extension)
+        {
+            m_soundLoaders.erase(_extension);
+        }
+
+        //////////////////////////////////////////
+        Vector<String> getSoundLoaderExtensions();
+
+    public:
+
+        //////////////////////////////////////////
+        MultiDelegate<HashedCString, SoundLoaderData const&> eventSoundLoaderAdded;
 
     protected:
 
@@ -122,6 +188,8 @@ namespace Maze
 
         StringKeyMap<SoundSystemPtr> m_soundSystems;
         SoundSystemPtr m_defaultSoundSystem;
+
+        StringKeyMap<SoundLoaderData> m_soundLoaders;
 
         StringKeyMap<SoundPtr> m_soundsByName;
     };

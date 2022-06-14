@@ -33,6 +33,7 @@
 #include "maze-sound/MazeSoundHeader.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/data/MazeByteBuffer.hpp"
 #include "maze-sound/MazeSoundData.hpp"
 
 
@@ -43,7 +44,13 @@ namespace Maze
     MAZE_SOUND_API bool LoadWAV(AssetFilePtr const& _file, SoundDataPtr& _soundData);
 
     //////////////////////////////////////////
+    MAZE_SOUND_API bool LoadWAV(ByteBufferPtr const& _fileData, SoundDataPtr& _soundData);
+
+    //////////////////////////////////////////
     MAZE_SOUND_API bool IsWAVFile(AssetFilePtr const& _file);
+
+    //////////////////////////////////////////
+    MAZE_SOUND_API bool IsWAVFile(ByteBufferPtr const& _file);
     
 
 } // namespace Maze

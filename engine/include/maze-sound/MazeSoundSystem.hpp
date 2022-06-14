@@ -102,10 +102,6 @@ namespace Maze
             bool _looped = false,
             SoundGroupPtr const& _soundGroup = nullptr);
 
-
-        //////////////////////////////////////////
-        SoundDataPtr loadSoundData(AssetFilePtr const& _assetFile);
-
     protected:
 
         //////////////////////////////////////////

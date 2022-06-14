@@ -218,7 +218,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void registerTextureLoader(
+        inline void registerTextureLoader(
             HashedCString _extension,
             TextureLoaderData const& _data)
         {
@@ -227,7 +227,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        void clearTextureLoader(HashedCString _extension)
+        inline void clearTextureLoader(HashedCString _extension)
         {
             m_textureLoaders.erase(_extension);
         }

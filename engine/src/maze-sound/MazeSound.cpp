@@ -105,7 +105,7 @@ namespace Maze
     //////////////////////////////////////////
     void Sound::loadFromAssetFile(AssetFilePtr const& _assetFile)
     {
-        SoundDataPtr soundData = SoundSystem::GetCurrentInstancePtr()->loadSoundData(_assetFile);
+        SoundDataPtr soundData = SoundManager::GetInstancePtr()->loadSoundData(_assetFile);
         loadSound(soundData);
     }
 
