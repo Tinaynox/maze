@@ -62,29 +62,12 @@ namespace Maze
 
         S32 samples = stb_vorbis_stream_length_in_samples(vorbis);
         S32 bitsPerSample = 16;
+        Size lengthSamples = samples * info.channels * sizeof(S16);
         
         ByteBufferPtr data = ByteBuffer::Create();
-        data->resize(samples * info.channels * sizeof(F32));
-
-        S32 smp = 0;
-        while (1)
-        {
-            F32** outputs;
-            S32 n = stb_vorbis_get_frame_float(vorbis, NULL, &outputs);
-            if (n == 0)
-                break;
-            
-            if (info.channels == 1)
-            {
-                memcpy(data->getDataPointer() + sizeof(F32) * smp, outputs[0], sizeof(F32) * n);
-            }
-            else
-            {
-                memcpy(data->getDataPointer() + sizeof(F32) * smp, outputs[0], sizeof(F32) * n);
-                memcpy(data->getDataPointer() + sizeof(F32) * (smp + samples), outputs[1], sizeof(F32) * n);
-            }
-            smp += n;
-        }
+        data->resize(lengthSamples);
+        
+        stb_vorbis_get_samples_short_interleaved(vorbis, info.channels, (S16*)data->getDataPointer(), lengthSamples);
 
         _soundData = std::make_shared<SoundData>(
             data,

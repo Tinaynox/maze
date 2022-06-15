@@ -200,7 +200,7 @@ namespace Maze
             this);
 
         m_playSoundButton = UIHelper::CreateDefaultClickButton(
-            "Sound",
+            "Sound WAV",
             { 90.0f, 18.0f },
             { 80.0f, 450.0f },
             panel00->getTransform(),
@@ -213,7 +213,7 @@ namespace Maze
             });
 
         m_playMusicButton = UIHelper::CreateDefaultClickButton(
-            "Music",
+            "Music WAV",
             { 90.0f, 18.0f },
             { 80.0f, 420.0f },
             panel00->getTransform(),
@@ -222,7 +222,13 @@ namespace Maze
         m_playMusicButton->eventClick.subscribe(
             [&](Button2D* _button, CursorInputEvent const& _event)
             {
-                if (m_music)
+                if (m_music2)
+                {
+                    m_music2->stop();
+                    m_music2.reset();
+                }
+
+                if (m_music && m_music->isPlaying())
                 {
                     m_music->stop();
                     m_music.reset();
@@ -234,7 +240,7 @@ namespace Maze
             });
 
         m_playMusic2Button = UIHelper::CreateDefaultClickButton(
-            "Music",
+            "Music OGG",
             { 90.0f, 18.0f },
             { 80.0f, 390.0f },
             panel00->getTransform(),
@@ -243,7 +249,13 @@ namespace Maze
         m_playMusic2Button->eventClick.subscribe(
             [&](Button2D* _button, CursorInputEvent const& _event)
         {
-            if (m_music2)
+            if (m_music)
+            {
+                m_music->stop();
+                m_music.reset();
+            }
+
+            if (m_music2 && m_music2->isPlaying())
             {
                 m_music2->stop();
                 m_music2.reset();
