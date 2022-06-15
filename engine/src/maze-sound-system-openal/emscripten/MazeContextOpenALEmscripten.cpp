@@ -71,10 +71,7 @@ namespace Maze
         if (!ContextOpenAL::init(_soundSystem, _deviceIndex))
             return false;
         
-        if (_soundSystem->getFunctionsAssigned())
-            setup();
-        else
-            _soundSystem->eventFunctionsAssigned.subscribe(this, &ContextOpenALEmscripten::notifyFunctionsAssigned);
+        setup();
 
         return true;
     }
@@ -98,7 +95,7 @@ namespace Maze
     //////////////////////////////////////////
     void ContextOpenALEmscripten::notifyFunctionsAssigned()
     {
-        setup();
+        
     }
 
 } // namespace Maze

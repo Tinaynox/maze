@@ -85,16 +85,25 @@ namespace Maze
     //////////////////////////////////////////
     bool ContextOpenAL::createALContext()
     {
-        destroyALContext();
+        destroyALContext();        
 
+#if MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN
+        m_device = mzalcOpenDevice(nullptr);
+        MAZE_ERROR_RETURN_VALUE_IF(!m_device, false, "Failed to open ALC Device!");
+        
+        m_context = mzalcCreateContext(m_device, nullptr);
+        MAZE_ERROR_RETURN_VALUE_IF(!m_context, false, "Failed to create ALC Context!");
+        mzalcMakeContextCurrent(m_context);
+#else
         DeviceInfoOpenAL const* deviceInfo = m_soundSystemRaw->getDeviceInfo(m_deviceIndex);
         MAZE_ERROR_RETURN_VALUE_IF(!deviceInfo, false, "DeviceInfo is null!");
 
         MAZE_AL_CALL(m_device = mzalcOpenDevice(deviceInfo->deviceName.c_str()));
         MAZE_ERROR_RETURN_VALUE_IF(!m_device, false, "Failed to open ALC Device!");
-        
+
         MAZE_AL_CALL(m_context = mzalcCreateContext(m_device, nullptr));
         MAZE_ERROR_RETURN_VALUE_IF(!m_context, false, "Failed to create ALC Context!");
+#endif
 
         return true;
     }

@@ -112,6 +112,8 @@ MAZE_SOUND_SYSTEM_OPENAL_API extern ALCcontext* (MAZE_AL_FUNCPTR* mzalcGetCurren
 MAZE_SOUND_SYSTEM_OPENAL_API extern ALCdevice* (MAZE_AL_FUNCPTR* mzalcGetContextsDevice)(ALCcontext* _context);
 MAZE_SOUND_SYSTEM_OPENAL_API extern ALCdevice* (MAZE_AL_FUNCPTR* mzalcOpenDevice)(ALCchar const* _devicename);
 MAZE_SOUND_SYSTEM_OPENAL_API extern ALCboolean (MAZE_AL_FUNCPTR* mzalcCloseDevice)(ALCdevice* _device);
+MAZE_SOUND_SYSTEM_OPENAL_API extern ALCdevice* (MAZE_AL_FUNCPTR* mzalcCaptureOpenDevice)(ALCchar const* _devicename, ALCuint _frequency, ALCenum _format, ALCsizei _buffersize);
+MAZE_SOUND_SYSTEM_OPENAL_API extern void (MAZE_AL_FUNCPTR* mzalcCaptureStart)(ALCdevice* _device);
 MAZE_SOUND_SYSTEM_OPENAL_API extern ALCenum (MAZE_AL_FUNCPTR* mzalcGetError)(ALCdevice* _device);
 MAZE_SOUND_SYSTEM_OPENAL_API extern ALCboolean (MAZE_AL_FUNCPTR* mzalcIsExtensionPresent)(ALCdevice* _device, ALCchar const* _extname);
 MAZE_SOUND_SYSTEM_OPENAL_API extern void* (MAZE_AL_FUNCPTR* mzalcGetProcAddress)(ALCdevice* _device, ALCchar const* _funcname);

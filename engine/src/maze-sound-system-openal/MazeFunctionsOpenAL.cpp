@@ -96,6 +96,8 @@ MAZE_SOUND_SYSTEM_OPENAL_API ALCcontext* (MAZE_AL_FUNCPTR* mzalcGetCurrentContex
 MAZE_SOUND_SYSTEM_OPENAL_API ALCdevice* (MAZE_AL_FUNCPTR* mzalcGetContextsDevice)(ALCcontext* _context) = nullptr;
 MAZE_SOUND_SYSTEM_OPENAL_API ALCdevice* (MAZE_AL_FUNCPTR* mzalcOpenDevice)(ALCchar const* _devicename) = nullptr;
 MAZE_SOUND_SYSTEM_OPENAL_API ALCboolean (MAZE_AL_FUNCPTR* mzalcCloseDevice)(ALCdevice* _device) = nullptr;
+MAZE_SOUND_SYSTEM_OPENAL_API ALCdevice* (MAZE_AL_FUNCPTR* mzalcCaptureOpenDevice)(ALCchar const* _devicename, ALCuint _frequency, ALCenum _format, ALCsizei _buffersize) = nullptr;
+MAZE_SOUND_SYSTEM_OPENAL_API void (MAZE_AL_FUNCPTR* mzalcCaptureStart)(ALCdevice* _device) = nullptr;
 MAZE_SOUND_SYSTEM_OPENAL_API ALCenum (MAZE_AL_FUNCPTR* mzalcGetError)(ALCdevice* _device) = nullptr;
 MAZE_SOUND_SYSTEM_OPENAL_API ALCboolean (MAZE_AL_FUNCPTR* mzalcIsExtensionPresent)(ALCdevice* _device, ALCchar const* _extname) = nullptr;
 MAZE_SOUND_SYSTEM_OPENAL_API void* (MAZE_AL_FUNCPTR* mzalcGetProcAddress)(ALCdevice* _device, ALCchar const* _funcname) = nullptr;
@@ -197,6 +199,8 @@ namespace Maze
         mzalcGetIntegerv = alcGetIntegerv;
         mzalcOpenDevice = alcOpenDevice;
         mzalcCloseDevice = alcCloseDevice;
+        mzalcCaptureOpenDevice = alcCaptureOpenDevice;
+        mzalcCaptureStart = alcCaptureStart;
         mzalcCreateContext = alcCreateContext;
         mzalcMakeContextCurrent = alcMakeContextCurrent;
         mzalcProcessContext = alcProcessContext;
@@ -267,6 +271,8 @@ namespace Maze
         AssignOpenALFunction(_soundContext, mzalcGetIntegerv, "alcGetIntegerv");
         AssignOpenALFunction(_soundContext, mzalcOpenDevice, "alcOpenDevice");
         AssignOpenALFunction(_soundContext, mzalcCloseDevice, "alcCloseDevice");
+        AssignOpenALFunction(_soundContext, mzalcCaptureOpenDevice, "alcCaptureOpenDevice");
+        AssignOpenALFunction(_soundContext, mzalcCaptureStart, "alcCaptureStart");
         AssignOpenALFunction(_soundContext, mzalcCreateContext, "alcCreateContext");
         AssignOpenALFunction(_soundContext, mzalcMakeContextCurrent, "alcMakeContextCurrent");
         AssignOpenALFunction(_soundContext, mzalcProcessContext, "alcProcessContext");

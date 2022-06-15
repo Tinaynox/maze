@@ -147,24 +147,21 @@ namespace Maze
     //////////////////////////////////////////
     bool SoundSystemOpenAL::setupSystem()
     {
-#if (MAZE_PLATFORM != MAZE_PLATFORM_EMSCRIPTEN)
+#if (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN)
+        assignFunctionsOpenAL(nullptr);
+#else
         m_dummyContext = createContext();
         if (!m_dummyContext)
             return false;
-#endif
 
         assignFunctionsOpenAL(m_dummyContext);
-
         updateDevicesInfo();
-
         MAZE_ERROR_RETURN_VALUE_IF(m_devicesInfo.empty(), false, "There are no available audio devices!");
+#endif
 
         m_mainContext = createContext(m_defaultDeviceIndex);
-        if (!m_mainContext)
-            return false;
-
-        if (!m_mainContext->makeCurrent())
-            return false;
+        MAZE_ERROR_RETURN_VALUE_IF(!m_mainContext, false, "Main Context is not created!");
+        MAZE_ERROR_RETURN_VALUE_IF(!m_mainContext->makeCurrent(), false, "Make main context current failed!");
 
         return true;
     }
