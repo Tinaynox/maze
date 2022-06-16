@@ -147,6 +147,16 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        template <class TScene>
+        SharedPtr<TScene> ensureScene()
+        {
+            SharedPtr<TScene> scene = getScene<TScene>();
+            if (scene)
+                return scene;
+            return loadScene<TScene>(true);
+        }
+
+        //////////////////////////////////////////
         ScenesList const& getScenes() const { return m_scenes; }
     
 

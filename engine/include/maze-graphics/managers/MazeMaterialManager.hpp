@@ -54,13 +54,15 @@ namespace Maze
     // Enum BuiltinMaterialType
     //
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_16_API(MAZE_GRAPHICS_API, BuiltinMaterialType,
+    MAZE_DECLARE_ENUMCLASS_18_API(MAZE_GRAPHICS_API, BuiltinMaterialType,
         Error,
         UV,
         Normal,
         Color,
         ColorTexture,
         ColorTextureCustomUV,
+        ColorTextureAdditive,
+        ColorTextureAdditivePA,
         ColorHDR,
         HSVRect,
         HSVBand,

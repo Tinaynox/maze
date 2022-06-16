@@ -239,6 +239,30 @@ namespace Maze
                 material->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
                 break;
             }
+            case BuiltinMaterialType::ColorTextureAdditive:
+            {
+                MaterialPtr const& originMaterial = ensureBuiltinMaterial(BuiltinMaterialType::ColorTexture);
+                if (originMaterial)
+                {
+                    material = originMaterial->createCopy();
+                    material->getFirstRenderPass()->setBlendSrcFactor(BlendFactor::One);
+                    material->getFirstRenderPass()->setBlendDestFactor(BlendFactor::One);
+                }
+
+                break;
+            }
+            case BuiltinMaterialType::ColorTextureAdditivePA:
+            {
+                MaterialPtr const& originMaterial = ensureBuiltinMaterial(BuiltinMaterialType::ColorTexture);
+                if (originMaterial)
+                {
+                    material = originMaterial->createCopy();
+                    material->getFirstRenderPass()->setBlendSrcFactor(BlendFactor::SrcAlpha);
+                    material->getFirstRenderPass()->setBlendDestFactor(BlendFactor::One);
+                }
+
+                break;
+            }
             case BuiltinMaterialType::ColorHDR:
             {
                 material = Material::Create(m_renderSystemRaw);
