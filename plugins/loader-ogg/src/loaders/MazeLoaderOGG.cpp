@@ -45,7 +45,7 @@ namespace Maze
         S32 error = -1;
         stb_vorbis* vorbis = stb_vorbis_open_memory(
             _fileData->getDataPointer(),
-            _fileData->getSize(),
+            (S32)_fileData->getSize(),
             &error,
             nullptr);
 
@@ -67,7 +67,7 @@ namespace Maze
         ByteBufferPtr data = ByteBuffer::Create();
         data->resize(lengthSamples);
         
-        stb_vorbis_get_samples_short_interleaved(vorbis, info.channels, (S16*)data->getDataPointer(), lengthSamples);
+        stb_vorbis_get_samples_short_interleaved(vorbis, info.channels, (S16*)data->getDataPointer(), (S32)lengthSamples);
 
         _soundData = std::make_shared<SoundData>(
             data,
