@@ -934,6 +934,7 @@ namespace Maze
             {
                 m_params->windowMode = WindowMode::Windowed;
                 MAZE_ERROR("Failed to change display mode for fullscreen!");
+                eventWindowModeChanged(this);
             }
         }
 
@@ -1185,6 +1186,7 @@ namespace Maze
             {
                 MAZE_ERROR("Failed to change display mode for fullscreen!");
                 m_params->windowMode = WindowMode::Windowed;
+                eventWindowModeChanged(this);
                 return false;
             }
 
@@ -1196,6 +1198,7 @@ namespace Maze
             {
                 MAZE_ERROR("Failed to change display mode for windowed!");
                 m_params->windowMode = WindowMode::Fullscreen;
+                eventWindowModeChanged(this);
                 return false;
             }
         }

@@ -185,8 +185,9 @@ namespace Maze
 
         m_params->windowMode = _fullscreen ? WindowMode::Fullscreen
                                            : WindowMode::Windowed;
-
-        return updateWindowMode();
+        bool result = updateWindowMode();
+        eventWindowModeChanged(this);
+        return result;
     }
 
     //////////////////////////////////////////

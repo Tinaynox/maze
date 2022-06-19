@@ -220,6 +220,7 @@ namespace Maze
         MultiDelegate<Window*> eventWindowWillClose;
         MultiDelegate<Window*> eventWindowClosed;
         MultiDelegate<Window*> eventWindowFocusChanged;
+        MultiDelegate<Window*> eventWindowModeChanged;
         MultiDelegate<Window*> eventDestroyed;
 
     protected:
