@@ -453,7 +453,11 @@ namespace Maze
     void TextureManager::loadAllAssetTextures()
     {
         {
-            Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions({ "mztexture" });
+            Vector<String> textureExtensions = getTextureLoaderExtensions();
+            textureExtensions.push_back("mztexture");
+
+            Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions(
+                Set<String>(textureExtensions.begin(), textureExtensions.end()));
             for (AssetFilePtr const& assetFile : assetFiles)
             {
                 getTexture2D(assetFile);
