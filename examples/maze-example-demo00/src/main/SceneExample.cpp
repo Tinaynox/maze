@@ -497,6 +497,7 @@ namespace Maze
                     if (viewportRect.contains(cursorPosition))
                     {
                         m_cursorDrag = true;
+                        m_cursorPositionLastFrame = cursorPosition;
                     }
                 }
                 break;
@@ -552,6 +553,7 @@ namespace Maze
                     if (viewportRect.contains(cursorPosition))
                     {
                         m_cursorDrag = true;
+                        m_cursorPositionLastFrame = cursorPosition;
                     }
                 }
                 break;
