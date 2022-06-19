@@ -106,6 +106,9 @@ namespace Maze
         if (TexturePickerManager::GetInstancePtr())
             TexturePickerManager::GetInstancePtr()->eventTextureChanged.unsubscribe(this);
 
+        if (m_filterEditBox)
+            m_filterEditBox->eventTextInput.unsubscribe(this);
+
         clearPreviews();
 
         if (m_canvasUIElement)
@@ -167,9 +170,24 @@ namespace Maze
         m_canvasUIElement->eventCursorReleaseIn.subscribe(this, &SceneTexturePicker::notifyCanvasCursorReleaseIn);
         m_canvasUIElement->eventCursorReleaseOut.subscribe(this, &SceneTexturePicker::notifyCanvasCursorReleaseOut);
 
+        m_filterEditBox = UIHelper::CreateDefaultEditBox(
+            "",
+            Vec2DF(m_canvas->getTransform()->getSize().x - 10.0f, 18),
+            Vec2DF(5, -2),
+            m_canvas->getTransform(),
+            m_canvas->getEntityRaw()->getECSScene(),
+            Vec2DF(0.0f, 1.0f),
+            Vec2DF(0.0f, 1.0f));
+        m_filterEditBox->eventTextInput.subscribe(this, &SceneTexturePicker::notifyFilterTextInput);
+        m_filterEditBox->getTransform()->setZ(100000);
+        SizePolicy2DPtr filterSizePolicy = m_filterEditBox->getEntityRaw()->ensureComponent<SizePolicy2D>();
+        filterSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
+        filterSizePolicy->setSizeDelta(-10.0f, 0.0f);
+
+        F32 const topOffset = 22.0f;
         ScrollRect2DPtr scrollRect = UIHelper::CreateDefaultScrollRect(
-            m_canvas->getTransform()->getSize(),
-            Vec2DF::c_zero,
+            m_canvas->getTransform()->getSize() - Vec2DF(0.0f, topOffset),
+            Vec2DF(0.0f, -topOffset),
             m_canvas->getTransform(),
             m_canvas->getEntityRaw()->getECSScene(),
             Vec2DF(0.0f, 1.0f),
@@ -177,7 +195,7 @@ namespace Maze
             false,
             true);
         scrollRect->getViewportTransform()->getEntityRaw()->getComponent<ScissorMask2D>()->setPadding(0, 0, 0, 0);
-        scrollRect->getEntityRaw()->ensureComponent<SizePolicy2D>();
+        scrollRect->getEntityRaw()->ensureComponent<SizePolicy2D>()->setSizeDelta(0.0f, -topOffset);
         scrollRect->getEntityRaw()->getComponent<MeshRenderer>()->setEnabled(false);
 
         m_layout = scrollRect->getContentTransform()->getEntityRaw()->createComponent<VerticalLayout2D>();
@@ -189,6 +207,8 @@ namespace Maze
         m_layout->setPaddingTop(5.0f);
         SizePolicy2DPtr layoutSizePolicy = m_layout->getEntityRaw()->ensureComponent<SizePolicy2D>();
         layoutSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
+
+        TextureManager::GetCurrentInstancePtr()->loadAllAssetTextures();
 
         updateTextures();
         updateUI();
@@ -205,18 +225,21 @@ namespace Maze
     {
         clearPreviews();
 
-        TextureManager::GetCurrentInstancePtr()->loadAllAssetTextures();
+        String const& filterText = m_filterEditBox->getText();
 
-        Vector<Texture2DPtr> materials = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getTextureManager()->getTextures2DSorted();
-        materials.insert(materials.begin(), Texture2DPtr());
+        Vector<Texture2DPtr> textures;
+        for (Texture2DPtr const& texture : TextureManager::GetCurrentInstancePtr()->getTextures2DSorted())
+            if (filterText.empty() || texture->getName().find(filterText) != String::npos)
+                textures.push_back(texture);
+        textures.insert(textures.begin(), Texture2DPtr());
 
         m_layout->getTransform()->removeAllChildren();
 
         HorizontalLayout2DPtr horizontalLayout;
 
-        for (S32 i = 0; i < (S32)materials.size(); ++i)
+        for (S32 i = 0; i < (S32)textures.size(); ++i)
         {
-            Texture2DPtr const& material = materials[i];
+            Texture2DPtr const& texture = textures[i];
 
             if (i % 4 == 0)
                 horizontalLayout.reset();
@@ -236,7 +259,7 @@ namespace Maze
                 horizontalLayout->setPaddingRight(4.0f);
             }
 
-            TexturePreviewData data = createTexturePreview(material);
+            TexturePreviewData data = createTexturePreview(texture);
             data.bodyTransform->setParent(horizontalLayout->getTransform());
             data.button->eventClick.subscribe(this, &SceneTexturePicker::notifyButtonClick);
 
@@ -364,6 +387,12 @@ namespace Maze
                 break;
             }
         }
+    }
+
+    //////////////////////////////////////////
+    void SceneTexturePicker::notifyFilterTextInput(SystemTextEditBox2D* _editBox)
+    {
+        updateTextures();
     }
 
 } // namespace Maze

@@ -107,6 +107,9 @@ namespace Maze
         if (RenderMeshPickerManager::GetInstancePtr())
             RenderMeshPickerManager::GetInstancePtr()->eventRenderMeshChanged.unsubscribe(this);
 
+        if (m_filterEditBox)
+            m_filterEditBox->eventTextInput.unsubscribe(this);
+
         clearPreviews();
 
         if (m_canvasUIElement)
@@ -167,9 +170,24 @@ namespace Maze
         m_canvasUIElement->eventCursorReleaseIn.subscribe(this, &SceneRenderMeshPicker::notifyCanvasCursorReleaseIn);
         m_canvasUIElement->eventCursorReleaseOut.subscribe(this, &SceneRenderMeshPicker::notifyCanvasCursorReleaseOut);
 
+        m_filterEditBox = UIHelper::CreateDefaultEditBox(
+            "",
+            Vec2DF(m_canvas->getTransform()->getSize().x - 10.0f, 18),
+            Vec2DF(5, -2),
+            m_canvas->getTransform(),
+            m_canvas->getEntityRaw()->getECSScene(),
+            Vec2DF(0.0f, 1.0f),
+            Vec2DF(0.0f, 1.0f));
+        m_filterEditBox->eventTextInput.subscribe(this, &SceneRenderMeshPicker::notifyFilterTextInput);
+        m_filterEditBox->getTransform()->setZ(100000);
+        SizePolicy2DPtr filterSizePolicy = m_filterEditBox->getEntityRaw()->ensureComponent<SizePolicy2D>();
+        filterSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
+        filterSizePolicy->setSizeDelta(-10.0f, 0.0f);
+
+        F32 const topOffset = 22.0f;
         ScrollRect2DPtr scrollRect = UIHelper::CreateDefaultScrollRect(
-            m_canvas->getTransform()->getSize(),
-            Vec2DF::c_zero,
+            m_canvas->getTransform()->getSize() - Vec2DF(0.0f, topOffset),
+            Vec2DF(0.0f, -topOffset),
             m_canvas->getTransform(),
             m_canvas->getEntityRaw()->getECSScene(),
             Vec2DF(0.0f, 1.0f),
@@ -177,7 +195,7 @@ namespace Maze
             false,
             true);
         scrollRect->getViewportTransform()->getEntityRaw()->getComponent<ScissorMask2D>()->setPadding(0, 0, 0, 0);
-        scrollRect->getEntityRaw()->ensureComponent<SizePolicy2D>();
+        scrollRect->getEntityRaw()->ensureComponent<SizePolicy2D>()->setSizeDelta(0.0f, -topOffset);
         scrollRect->getEntityRaw()->getComponent<MeshRenderer>()->setEnabled(false);
 
         m_layout = scrollRect->getContentTransform()->getEntityRaw()->createComponent<VerticalLayout2D>();
@@ -205,16 +223,21 @@ namespace Maze
     {
         clearPreviews();
 
-        Vector<RenderMeshPtr> materials = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getRenderMeshManager()->getRenderMeshesSorted();
-        materials.insert(materials.begin(), RenderMeshPtr());
+        String const& filterText = m_filterEditBox->getText();
+
+        Vector<RenderMeshPtr> meshes;
+        for (RenderMeshPtr const& mesh : RenderMeshManager::GetCurrentInstancePtr()->getRenderMeshesSorted())
+            if (filterText.empty() || mesh->getName().find(filterText) != String::npos)
+                meshes.push_back(mesh);
+        meshes.insert(meshes.begin(), RenderMeshPtr());
 
         m_layout->getTransform()->removeAllChildren();
 
         HorizontalLayout2DPtr horizontalLayout;
 
-        for (S32 i = 0; i < (S32)materials.size(); ++i)
+        for (S32 i = 0; i < (S32)meshes.size(); ++i)
         {
-            RenderMeshPtr const& material = materials[i];
+            RenderMeshPtr const& mesh = meshes[i];
 
             if (i % 4 == 0)
                 horizontalLayout.reset();
@@ -234,7 +257,7 @@ namespace Maze
                 horizontalLayout->setPaddingRight(4.0f);
             }
 
-            RenderMeshPreviewData data = createRenderMeshPreview(material);
+            RenderMeshPreviewData data = createRenderMeshPreview(mesh);
             data.bodyTransform->setParent(horizontalLayout->getTransform());
             data.button->eventClick.subscribe(this, &SceneRenderMeshPicker::notifyButtonClick);
 
@@ -353,6 +376,12 @@ namespace Maze
                 break;
             }
         }
+    }
+
+    //////////////////////////////////////////
+    void SceneRenderMeshPicker::notifyFilterTextInput(SystemTextEditBox2D* _editBox)
+    {
+        updateRenderMeshs();
     }
 
 } // namespace Maze

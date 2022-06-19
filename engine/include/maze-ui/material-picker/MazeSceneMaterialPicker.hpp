@@ -148,9 +148,14 @@ namespace Maze
         //////////////////////////////////////////
         void notifyButtonClick(Button2D* _button, CursorInputEvent const& _event);
 
+        //////////////////////////////////////////
+        void notifyFilterTextInput(SystemTextEditBox2D* _editBox);
+
     protected:
         CanvasPtr m_canvas;
         UIElement2DPtr m_canvasUIElement;
+
+        SystemTextEditBox2DPtr m_filterEditBox;
 
         Vector<MaterialPreviewData> m_previews;
         VerticalLayout2DPtr m_layout;

@@ -105,6 +105,9 @@ namespace Maze
         if (MaterialPickerManager::GetInstancePtr())
             MaterialPickerManager::GetInstancePtr()->eventMaterialChanged.unsubscribe(this);
 
+        if (m_filterEditBox)
+            m_filterEditBox->eventTextInput.unsubscribe(this);
+
         clearPreviews();
 
         if (m_canvasUIElement)
@@ -165,9 +168,24 @@ namespace Maze
         m_canvasUIElement->eventCursorReleaseIn.subscribe(this, &SceneMaterialPicker::notifyCanvasCursorReleaseIn);
         m_canvasUIElement->eventCursorReleaseOut.subscribe(this, &SceneMaterialPicker::notifyCanvasCursorReleaseOut);
 
+        m_filterEditBox = UIHelper::CreateDefaultEditBox(
+            "",
+            Vec2DF(m_canvas->getTransform()->getSize().x - 10.0f, 18),
+            Vec2DF(5, -2),
+            m_canvas->getTransform(),
+            m_canvas->getEntityRaw()->getECSScene(),
+            Vec2DF(0.0f, 1.0f),
+            Vec2DF(0.0f, 1.0f));
+        m_filterEditBox->eventTextInput.subscribe(this, &SceneMaterialPicker::notifyFilterTextInput);
+        m_filterEditBox->getTransform()->setZ(100000);
+        SizePolicy2DPtr filterSizePolicy = m_filterEditBox->getEntityRaw()->ensureComponent<SizePolicy2D>();
+        filterSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
+        filterSizePolicy->setSizeDelta(-10.0f, 0.0f);
+
+        F32 const topOffset = 22.0f;
         ScrollRect2DPtr scrollRect = UIHelper::CreateDefaultScrollRect(
-            m_canvas->getTransform()->getSize(),
-            Vec2DF::c_zero,
+            m_canvas->getTransform()->getSize() - Vec2DF(0.0f, topOffset),
+            Vec2DF(0.0f, -topOffset),
             m_canvas->getTransform(),
             m_canvas->getEntityRaw()->getECSScene(),
             Vec2DF(0.0f, 1.0f),
@@ -175,7 +193,7 @@ namespace Maze
             false,
             true);
         scrollRect->getViewportTransform()->getEntityRaw()->getComponent<ScissorMask2D>()->setPadding(0, 0, 0, 0);
-        scrollRect->getEntityRaw()->ensureComponent<SizePolicy2D>();
+        scrollRect->getEntityRaw()->ensureComponent<SizePolicy2D>()->setSizeDelta(0.0f, -topOffset);
         scrollRect->getEntityRaw()->getComponent<MeshRenderer>()->setEnabled(false);
 
         m_layout = scrollRect->getContentTransform()->getEntityRaw()->createComponent<VerticalLayout2D>();
@@ -187,6 +205,8 @@ namespace Maze
         m_layout->setPaddingTop(5.0f);
         SizePolicy2DPtr layoutSizePolicy = m_layout->getEntityRaw()->ensureComponent<SizePolicy2D>();
         layoutSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
+
+        MaterialManager::GetCurrentInstance()->loadAllAssetMaterials();
 
         updateMaterials();
         updateUI();
@@ -203,9 +223,12 @@ namespace Maze
     {
         clearPreviews();
 
-        MaterialManager::GetCurrentInstance()->loadAllAssetMaterials();
+        String const& filterText = m_filterEditBox->getText();
 
-        Vector<MaterialPtr> materials = MaterialManager::GetCurrentInstance()->getMaterialsSorted();
+        Vector<MaterialPtr> materials;
+        for (MaterialPtr const& material : MaterialManager::GetCurrentInstance()->getMaterialsSorted())
+            if (filterText.empty() || material->getName().find(filterText) != String::npos)
+                materials.push_back(material);
         materials.insert(materials.begin(), MaterialPtr());
 
         m_layout->getTransform()->removeAllChildren();
@@ -394,6 +417,12 @@ namespace Maze
                 break;
             }
         }
+    }
+
+    //////////////////////////////////////////
+    void SceneMaterialPicker::notifyFilterTextInput(SystemTextEditBox2D* _editBox)
+    {
+        updateMaterials();
     }
 
 } // namespace Maze
