@@ -27,6 +27,7 @@
 #include "MazeRenderSystemOpenGLCoreHeader.hpp"
 #include "maze-render-system-opengl-core/MazeTexture2DOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
+#include "maze-render-system-opengl-core/MazeExtensionsOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderSystemOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazePixelFormatOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeTextureOpenGL.hpp"
@@ -634,6 +635,87 @@ namespace Maze
         MAZE_WARNING("Not supported!");
 
         return PixelSheet2D();
+    }
+
+    ////////////////////////////////////
+    void Texture2DOpenGL::copyImageFrom(
+        Texture2DPtr const& _texture,
+        U32 _x,
+        U32 _y)
+    {
+        if (!_texture)
+            return;
+
+        MAZE_ERROR_RETURN_IF((S32)_x + _texture->getWidth() > m_size.x, "Can't copy image from texture!");
+        MAZE_ERROR_RETURN_IF((S32)_y + _texture->getHeight() > m_size.y, "Can't copy image from texture!");
+
+        Texture2DOpenGL* textureGL = _texture->castRaw<Texture2DOpenGL>();
+
+        if (m_glTexture == 0)
+            return;
+
+        ContextOpenGLScopeBind contextScopedBind(m_context);
+        MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+
+        if (m_context->getExtensionsRaw()->getSupportFrameBufferObject()
+            && m_context->getExtensionsRaw()->getSupportFrameBufferBlit())
+        {
+            Texture2DOpenGLScopeBind textureScopedBind(this);
+
+            // Save the current bindings so we can restore them after we are done
+            MZGLint readFramebuffer = 0;
+            MZGLint drawFramebuffer = 0;
+
+            MAZE_GL_CALL(mzglGetIntegerv(MAZE_GL_READ_FRAMEBUFFER_BINDING, &readFramebuffer));
+            MAZE_GL_CALL(mzglGetIntegerv(MAZE_GL_DRAW_FRAMEBUFFER_BINDING, &drawFramebuffer));
+
+            // Create the framebuffers
+            MZGLuint sourceFrameBuffer = 0;
+            MZGLuint destFrameBuffer = 0;
+            MAZE_GL_CALL(mzglGenFramebuffers(1, &sourceFrameBuffer));
+            MAZE_GL_CALL(mzglGenFramebuffers(1, &destFrameBuffer));
+
+            MAZE_ERROR_RETURN_IF(!sourceFrameBuffer || !destFrameBuffer, "Cannot copy texture, failed to create a frame buffer object");
+
+            // Link the source texture to the source frame buffer
+            MAZE_GL_CALL(mzglBindFramebuffer(MAZE_GL_READ_FRAMEBUFFER, sourceFrameBuffer));
+            MAZE_GL_CALL(mzglFramebufferTexture2D(MAZE_GL_READ_FRAMEBUFFER, MAZE_GL_COLOR_ATTACHMENT0, MAZE_GL_TEXTURE_2D, textureGL->m_glTexture, 0));
+
+            // Link the destination texture to the destination frame buffer
+            MAZE_GL_CALL(mzglBindFramebuffer(MAZE_GL_DRAW_FRAMEBUFFER, destFrameBuffer));
+            MAZE_GL_CALL(mzglFramebufferTexture2D(MAZE_GL_DRAW_FRAMEBUFFER, MAZE_GL_COLOR_ATTACHMENT0, MAZE_GL_TEXTURE_2D, m_glTexture, 0));
+
+            // A final check, just to be sure...
+            MZGLenum sourceStatus;
+            MAZE_GL_CALL(sourceStatus = mzglCheckFramebufferStatus(MAZE_GL_READ_FRAMEBUFFER));
+
+            MZGLenum destStatus;
+            MAZE_GL_CALL(destStatus = mzglCheckFramebufferStatus(MAZE_GL_DRAW_FRAMEBUFFER));
+
+            if ((sourceStatus == MAZE_GL_FRAMEBUFFER_COMPLETE) && (destStatus == MAZE_GL_FRAMEBUFFER_COMPLETE))
+            {
+                // Blit the texture contents from the source to the destination texture
+                MAZE_GL_CALL(mzglBlitFramebuffer(0, 0, _texture->getWidth(), _texture->getHeight(), _x, _y, _x + _texture->getWidth(), _y + _texture->getHeight(), MAZE_GL_COLOR_BUFFER_BIT, MAZE_GL_NEAREST));
+            }
+            else
+            {
+                MAZE_ERROR("Cannot copy texture, failed to link texture to frame buffer");
+            }
+
+            // Restore previously bound framebuffers
+            MAZE_GL_CALL(mzglBindFramebuffer(MAZE_GL_READ_FRAMEBUFFER, readFramebuffer));
+            MAZE_GL_CALL(mzglBindFramebuffer(MAZE_GL_DRAW_FRAMEBUFFER, drawFramebuffer));
+
+            // Delete the framebuffers
+            MAZE_GL_CALL(mzglDeleteFramebuffers(1, &sourceFrameBuffer));
+            MAZE_GL_CALL(mzglDeleteFramebuffers(1, &destFrameBuffer));
+
+            generateMipmaps();
+
+            return;
+        }
+
+        MAZE_NOT_IMPLEMENTED;
     }
 
     //////////////////////////////////////////

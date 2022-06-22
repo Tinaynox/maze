@@ -21,17 +21,50 @@
 # 3. This notice may not be removed or altered from any source distribution.
 #
 ##########################################
+cmake_minimum_required(VERSION 3.6)
+
+
+##########################################
+project(maze-plugin-loader-ttf)
+
+
+##########################################
+include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Utils.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Config.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Macros.cmake")
 
 
 ##########################################
 maze_add_module(
-    maze-ui
-    INCLUDE_DIR "include/maze-ui"
-    SRC_DIR "src/maze-ui"
-    FORWARD_HEADER MazeUIHeader)
+    ${PROJECT_NAME}
+    INCLUDE_DIR "include/${PROJECT_NAME}"
+    SRC_DIR "src"
+    FORWARD_HEADER MazeLoaderTTFHeader)
+    
+
+##########################################
+# Freetype2
+include("${MAZE_DIR}/third-party/freetype2.cmake")
 
 
+##########################################    
+target_include_directories(
+    ${PROJECT_NAME}
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+
+
+##########################################
+set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "MazePlugins")
+
+
+##########################################
 target_link_libraries(
-    maze-ui 
+    ${PROJECT_NAME}
     PUBLIC maze-core
-    PUBLIC maze-graphics)
+    PUBLIC maze-ui
+    PUBLIC ${ZLIB_NAME}
+    PUBLIC freetype)
+    
+target_include_directories(
+    ${PROJECT_NAME} 
+    PUBLIC "${MAZE_DIR}/third-party/freetype2/include")

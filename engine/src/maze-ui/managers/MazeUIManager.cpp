@@ -32,6 +32,7 @@
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/ecs/MazeComponentFactory.hpp"
+#include "maze-ui/managers/MazeFontManager.hpp"
 #include "maze-ui/managers/MazeColorPickerManager.hpp"
 #include "maze-ui/managers/MazeColorGradientPickerManager.hpp"
 #include "maze-ui/managers/MazeAnimationCurveManager.hpp"
@@ -92,6 +93,10 @@ namespace Maze
     //////////////////////////////////////////
     bool UIManager::init()
     {
+        FontManager::Initialize(m_fontManager);
+        if (!m_fontManager)
+            return false;
+
         ColorPickerManager::Initialize(m_colorPickerManager);
         if (!m_colorPickerManager)
             return false;

@@ -30,7 +30,13 @@ project(maze-example-ui)
 
 ##########################################
 set(EXAMPLE_NAME "${PROJECT_NAME}")
-set(EXAMPLE_MAZE_LIBS maze-core maze-graphics maze-ui maze-engine maze-editor-tools)
+set(EXAMPLE_MAZE_LIBS
+    maze-core
+    maze-graphics
+    maze-ui
+    maze-engine
+    maze-editor-tools
+    maze-plugin-loader-ttf)
 
 
 ##########################################
@@ -46,6 +52,10 @@ maze_sort_sources("${ADDITIONAL_EXAMPLE_FILES}" ADDITIONAL_EXAMPLE_FILES)
 
 ##########################################
 include("${CMAKE_CURRENT_SOURCE_DIR}/../templates/CMakeExampleTemplate.cmake")
+
+
+##########################################
+add_subdirectory("${MAZE_DIR}/plugins/loader-ttf" "${CMAKE_CURRENT_BINARY_DIR}/plugins/loader-ttf")
 
 
 ##########################################

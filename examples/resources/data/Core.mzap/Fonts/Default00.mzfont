@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Font>
+	<Main file="Roboto-Medium.ttf" />
+	<TrueType file="Roboto-Medium.ttf" >
+		<Symbols from="0x0000" to="0x00FF" />
+	</TrueType>	
+</Font>

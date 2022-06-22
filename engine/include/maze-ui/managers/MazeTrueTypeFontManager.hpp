@@ -25,105 +25,90 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeExtensionsOpenGL_hpp_))
-#define _MazeExtensionsOpenGL_hpp_
+#if (!defined(_MazeTrueTypeFontManager_hpp_))
+#define _MazeTrueTypeFontManager_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-render-system-opengl-core/MazeRenderSystemOpenGLCoreHeader.hpp"
-#include "maze-graphics/MazeRenderSystem.hpp"
+#include "maze-ui/MazeUIHeader.hpp"
+#include "maze-core/utils/MazeEnumClass.hpp"
+#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
+#include "maze-graphics/MazeTexture2D.hpp"
+#include "maze-graphics/MazeColorU32.hpp"
+#include "maze-graphics/MazeColorF128.hpp"
+#include <functional>
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(ExtensionsOpenGL);
-    MAZE_USING_SHARED_PTR(RenderSystemOpenGL);
-    MAZE_USING_SHARED_PTR(ContextOpenGL);
-
+    MAZE_USING_SHARED_PTR(TrueTypeFontManager);
+    MAZE_USING_SHARED_PTR(TrueTypeFont);
+    
 
     //////////////////////////////////////////
-    // Class ExtensionsOpenGL
+    // Class TrueTypeFontManager
     //
     //////////////////////////////////////////
-    class MAZE_RENDER_SYSTEM_OPENGL_CORE_API ExtensionsOpenGL
-        : public SharedObject<ExtensionsOpenGL>
+    class MAZE_UI_API TrueTypeFontManager
+        : public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        virtual ~ExtensionsOpenGL();
+        virtual ~TrueTypeFontManager();
 
         //////////////////////////////////////////
-        inline ContextOpenGL* getContext() const { return m_context; }
-
-        //////////////////////////////////////////
-        inline bool hasGLExtension(String const& _ext) { return m_extensions.count(_ext) != 0; }
-        
-
-        //////////////////////////////////////////
-        inline bool isLoaded() const { return m_extensionsLoaded; }
-
-        //////////////////////////////////////////
-        void printGLExtensions();
+        static void Initialize(TrueTypeFontManagerPtr& _manager);
 
 
         //////////////////////////////////////////
-        bool loadGLExtensions();
+        static inline TrueTypeFontManager* GetInstancePtr() { return s_instance; }
+
+        //////////////////////////////////////////
+        static inline TrueTypeFontManager& GetInstance() { return *s_instance; }
 
 
         //////////////////////////////////////////
-        inline bool getSupportArbBufferStorage() const { return m_supportArbBufferStorage; }
+        TrueTypeFontPtr const& getTrueTypeFont(HashedCString _assetFileName);
 
         //////////////////////////////////////////
-        inline bool getSupportMultisample() const { return m_supportMultisample; }
+        inline TrueTypeFontPtr const& getTrueTypeFont(String const& _assetFileName) { return getTrueTypeFont(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
 
         //////////////////////////////////////////
-        inline bool getSupportClipDistance() const { return m_supportClipDistance; }
+        inline TrueTypeFontPtr const& getTrueTypeFont(CString _assetFileName) { return getTrueTypeFont(MAZE_HASHED_CSTRING(_assetFileName)); }
 
         //////////////////////////////////////////
-        inline bool getSupportFrameBufferObject() const { return m_supportFrameBufferObject; }
+        TrueTypeFontPtr const& getTrueTypeFont(AssetFilePtr const& _assetFile);
 
         //////////////////////////////////////////
-        inline bool getSupportFrameBufferBlit() const { return m_supportFrameBufferBlit; }
-
-    public:
+        TrueTypeFontPtr const& addTrueTypeFont(TrueTypeFontPtr const& _trueTypeFont);
 
         //////////////////////////////////////////
-        MultiDelegate<> eventLoaded;
+        TrueTypeFontPtr createTrueTypeFont(
+            AssetFilePtr const& _assetFile);
 
     protected:
 
         //////////////////////////////////////////
-        ExtensionsOpenGL();
+        TrueTypeFontManager();
 
         //////////////////////////////////////////
-        virtual bool init(ContextOpenGL* _context);
+        bool init();
 
-        //////////////////////////////////////////
-        void saveCommonChecks();
-    
-        //////////////////////////////////////////
-        virtual bool loadGLExtensionsImpl();
 
     protected:
-        ContextOpenGL* m_context;
+        static TrueTypeFontManager* s_instance;
 
-        Set<String> m_extensions;
-
-        bool m_extensionsLoaded = false;
-
-        bool m_supportArbBufferStorage = false;
-        bool m_supportMultisample = false;
-        bool m_supportClipDistance = false;
-        bool m_supportFrameBufferObject = false;
-        bool m_supportFrameBufferBlit = false;
+        StringKeyMap<TrueTypeFontPtr> m_trueTypeFontsByName;
     };
+    
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeExtensionsOpenGL_hpp_
+#endif // _MazeTrueTypeFontManager_hpp_
 //////////////////////////////////////////
