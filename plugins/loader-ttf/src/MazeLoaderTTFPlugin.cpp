@@ -27,6 +27,7 @@
 #include "MazeLoaderTTFHeader.hpp"
 #include "MazeLoaderTTFPlugin.hpp"
 #include "maze-core/managers/MazePluginManager.hpp"
+#include "maze-ui/managers/MazeTrueTypeFontManager.hpp"
 #include "maze-plugin-loader-ttf/loaders/MazeLoaderTTF.hpp"
 
 
@@ -111,13 +112,18 @@ namespace Maze
     //////////////////////////////////////////
     void LoaderTTFPlugin::install()
     {
-                
+        TrueTypeFontManager::GetInstancePtr()->setTrueTypeFontLoader(
+            TrueTypeFontLoaderData(
+                (LoadTrueTypeFontAssetFileFunction)&LoadTTF,
+                (LoadTrueTypeFontByteBufferFunction)&LoadTTF,
+                (IsTrueTypeFontAssetFileFunction)&IsTTFFile,
+                (IsTrueTypeFontByteBufferFunction)&IsTTFFile));
     }
 
     //////////////////////////////////////////
     void LoaderTTFPlugin::uninstall()
     {
-        
+        TrueTypeFontManager::GetInstancePtr()->setTrueTypeFontLoader(TrueTypeFontLoaderData());
     }
 
 } // namespace Maze

@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeLoaderTTFHeader.hpp"
 #include "maze-plugin-loader-ttf/fonts/MazeTrueTypeFontFreetype.hpp"
+#include "maze-core/assets/MazeAssetFile.hpp"
 
 
 //////////////////////////////////////////
@@ -43,7 +44,7 @@ namespace Maze
     //////////////////////////////////////////
     TrueTypeFontFreetype::~TrueTypeFontFreetype()
     {
-        
+        cleanupFreeType();
     }
 
     //////////////////////////////////////////
@@ -67,16 +68,97 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    TrueTypeFontFreetypePtr TrueTypeFontFreetype::Create(
+        ByteBuffer const& _byteBuffer)
+    {
+        TrueTypeFontFreetypePtr trueTypeFont = TrueTypeFontFreetype::Create();
+
+        if (trueTypeFont)
+            trueTypeFont->loadFromByteBuffer(_byteBuffer);
+
+        return trueTypeFont;
+    }
+
+    //////////////////////////////////////////
     bool TrueTypeFontFreetype::init()
     {
         return true;
     }
 
     //////////////////////////////////////////
-    void TrueTypeFontFreetype::loadFromAssetFile(
+    void TrueTypeFontFreetype::cleanupFreeType()
+    {
+        // Destroy the stroker
+        if (m_stroker)
+            FT_Stroker_Done(m_stroker);
+
+        // Destroy the font face
+        if (m_face)
+            FT_Done_Face(m_face);
+
+        // Destroy the stream rec instance, if any (must be done after FT_Done_Face!)
+        if (m_streamRec)
+            delete m_streamRec;
+
+        // Close the library
+        if (m_library)
+            FT_Done_FreeType(m_library);
+
+        // Reset members
+        m_library = nullptr;
+        m_face = nullptr;
+        m_stroker = nullptr;
+        m_streamRec = nullptr;
+
+        for (auto& page : m_pages)
+            page.second->texture.reset();
+
+        for (auto& page : m_outlineThicknessPages)        
+            page.second->texture.reset();
+
+        m_pages.clear();
+    }
+
+    //////////////////////////////////////////
+    bool TrueTypeFontFreetype::loadFromAssetFile(
         AssetFilePtr const& _assetFile)
     {
+        ByteBuffer byteBuffer;
 
+        ClassUID classUID = _assetFile->getClassUID();
+        _assetFile->readToByteBuffer(byteBuffer);
+
+        return loadFromByteBuffer(byteBuffer);
+    }
+
+    //////////////////////////////////////////
+    bool TrueTypeFontFreetype::loadFromByteBuffer(
+        ByteBuffer const& _byteBuffer)
+    {
+        cleanupFreeType();
+
+        m_memoryBuffer = _byteBuffer;
+        MAZE_ERROR_RETURN_VALUE_IF(FT_Init_FreeType(&m_library) != 0, false, "Failed to load font! Failed to initialize FreeType!");
+        MAZE_ERROR_RETURN_VALUE_IF(FT_New_Memory_Face(m_library, (const FT_Byte*)(m_memoryBuffer.getDataPointer()), (FT_Long)m_memoryBuffer.getSize(), 0, &m_face) != 0, false, "Failed to load font! Failed to create the font face!");
+
+        if (FT_Stroker_New(m_library, &m_stroker) != 0)
+        {
+            MAZE_ERROR("Failed to load font! Failed to create the stroker!");
+            FT_Done_Face(m_face);
+            return false;
+        }
+
+        if (FT_Select_Charmap(m_face, FT_ENCODING_UNICODE) != 0)
+        {
+            MAZE_ERROR("Failed to load font! Failed to set the Unicode character set!");
+            FT_Stroker_Done(m_stroker);
+            FT_Done_Face(m_face);
+            return false;
+        }
+
+        m_family = m_face->family_name ? m_face->family_name : String();
+
+        return true;
     }
 
     ////////////////////////////////////

@@ -83,9 +83,12 @@ namespace Maze
         if (!assetFile)
             return nullPointer;
 
-        TrueTypeFontPtr renderMesh = createTrueTypeFont(assetFile);
-        renderMesh->setName(_trueTypeFont.str);
-        return addTrueTypeFont(renderMesh);
+        TrueTypeFontPtr font = createTrueTypeFont(assetFile);
+        if (!font)
+            return nullPointer;
+
+        font->setName(_trueTypeFont.str);
+        return addTrueTypeFont(font);
     }
 
     //////////////////////////////////////////
@@ -101,8 +104,12 @@ namespace Maze
     TrueTypeFontPtr TrueTypeFontManager::createTrueTypeFont(
         AssetFilePtr const& _assetFile)
     {
-        // #TODO: loaders here
-        return nullptr;
+        if (!m_trueTypeFontLoader.loadTrueTypeFontAssetFileFunc)
+            return nullptr;
+
+        TrueTypeFontPtr font;
+        m_trueTypeFontLoader.loadTrueTypeFontAssetFileFunc(_assetFile, font);
+        return font;
     }
 
 

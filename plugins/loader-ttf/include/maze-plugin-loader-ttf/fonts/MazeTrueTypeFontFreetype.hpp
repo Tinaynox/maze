@@ -61,13 +61,20 @@ namespace Maze
             AssetFilePtr const& _assetFile);
 
         //////////////////////////////////////////
+        static TrueTypeFontFreetypePtr Create(
+            ByteBuffer const& _byteBuffer);
+
+        //////////////////////////////////////////
         virtual ~TrueTypeFontFreetype();
 
 
         //////////////////////////////////////////
-        virtual void loadFromAssetFile(
+        virtual bool loadFromAssetFile(
             AssetFilePtr const& _assetFile) MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        virtual bool loadFromByteBuffer(
+            ByteBuffer const& _byteBuffer) MAZE_OVERRIDE;
 
 
         ////////////////////////////////////
@@ -112,6 +119,9 @@ namespace Maze
         ////////////////////////////////////
         bool selectFTPixelSize(U32 _characterSize);
 
+        //////////////////////////////////////////
+        void cleanupFreeType();
+
         ////////////////////////////////////
         template <typename TGlyphKey>
         inline FontGlyph loadGlyph(
@@ -126,16 +136,16 @@ namespace Maze
 
     protected:
 
-        FT_Library m_library;
+        FT_Library m_library = nullptr;
         FT_StreamRec* m_streamRec = nullptr;
-        FT_Face m_face;
-        FT_Stroker m_stroker;
+        FT_Face m_face = nullptr;
+        FT_Stroker m_stroker = nullptr;
 
         TTFPageTable<U32> m_pages;
         TTFPageTable<U64> m_outlineThicknessPages;
 
     private:
-        Vector<U8> m_pixelBuffer;
+        ByteBuffer m_memoryBuffer;
     };
 
 
@@ -236,9 +246,10 @@ namespace Maze
             glyph.bounds.size.y = static_cast<F32>(m_face->glyph->metrics.height) / static_cast<F32>(1 << 6) + _outlineThickness * 2;
 
             // Resize the pixel buffer to the new size and fill it with transparent white pixels
-            m_pixelBuffer.resize(width * height * 4);
+            Vector<U8> pixelBuffer;
+            pixelBuffer.resize(width * height * 4);
 
-            U8* current = &m_pixelBuffer[0];
+            U8* current = &pixelBuffer[0];
             U8* end = current + width * height * 4;
 
             while (current != end)
@@ -260,7 +271,7 @@ namespace Maze
                     {
                         // The color channels remain white, just fill the alpha channel
                         Size index = x + y * width;
-                        m_pixelBuffer[index * 4 + 3] = ((pixels[(x - padding) / 8]) & (1 << (7 - ((x - padding) % 8)))) ? 255 : 0;
+                        pixelBuffer[index * 4 + 3] = ((pixels[(x - padding) / 8]) & (1 << (7 - ((x - padding) % 8)))) ? 255 : 0;
                     }
                     pixels += bitmap.pitch;
                 }
@@ -274,7 +285,7 @@ namespace Maze
                     {
                         // The color channels remain white, just fill the alpha channel
                         Size index = x + y * width;
-                        m_pixelBuffer[index * 4 + 3] = pixels[x - padding];
+                        pixelBuffer[index * 4 + 3] = pixels[x - padding];
                     }
                     pixels += bitmap.pitch;
                 }
@@ -285,7 +296,7 @@ namespace Maze
             U32 y = glyph.textureRect.position.y - padding;
             U32 w = glyph.textureRect.size.x + 2 * padding;
             U32 h = glyph.textureRect.size.y + 2 * padding;
-            page->texture->copyImageFrom(&m_pixelBuffer[0], PixelFormat::RGBA_U8, w, h, x, y);
+            page->texture->copyImageFrom(&pixelBuffer[0], PixelFormat::RGBA_U8, w, h, x, y);
         }
 
         // Delete the FT glyph

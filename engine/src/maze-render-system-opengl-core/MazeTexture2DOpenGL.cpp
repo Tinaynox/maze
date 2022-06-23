@@ -311,8 +311,8 @@ namespace Maze
             }
             else
             {
-                if (    originFormat == MAZE_GL_DEPTH_COMPONENT
-                    ||    originFormat == MAZE_GL_DEPTH_STENCIL)
+                if (originFormat == MAZE_GL_DEPTH_COMPONENT ||
+                    originFormat == MAZE_GL_DEPTH_STENCIL)
                 {
                     MAZE_GL_CALL(mzglTexImage2D(MAZE_GL_TEXTURE_2D, (MZGLint)mipmapLevel, internalFormat, size.x, size.y, 0, originFormat, dataType, 0));
                 }

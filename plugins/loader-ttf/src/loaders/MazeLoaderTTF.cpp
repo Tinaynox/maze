@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeLoaderTTFHeader.hpp"
 #include "maze-plugin-loader-ttf/loaders/MazeLoaderTTF.hpp"
+#include "maze-plugin-loader-ttf/fonts/MazeTrueTypeFontFreetype.hpp"
 
 
 //////////////////////////////////////////
@@ -34,14 +35,15 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_PLUGIN_LOADER_TTF_API bool LoadTTF(AssetFilePtr const& _file, TrueTypeFontPtr& _font)
     {
-        ByteBufferPtr fileData = _file->readAsByteBuffer();
-        return LoadTTF(fileData, _font);
+        _font = TrueTypeFontFreetype::Create(_file);
+        return _font != nullptr;
     }
 
     //////////////////////////////////////////
     MAZE_PLUGIN_LOADER_TTF_API bool LoadTTF(ByteBufferPtr const& _fileData, TrueTypeFontPtr& _font)
     {
-        return false;
+        _font = TrueTypeFontFreetype::Create(*_fileData.get());
+        return _font != nullptr;
     }
 
     //////////////////////////////////////////

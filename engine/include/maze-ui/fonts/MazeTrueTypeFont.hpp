@@ -157,9 +157,12 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual void loadFromAssetFile(
+        virtual bool loadFromAssetFile(
             AssetFilePtr const& _assetFile) MAZE_ABSTRACT;
 
+        //////////////////////////////////////////
+        virtual bool loadFromByteBuffer(
+            ByteBuffer const& _byteBuffer) MAZE_ABSTRACT;
 
 
         ////////////////////////////////////

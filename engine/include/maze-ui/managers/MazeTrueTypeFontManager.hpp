@@ -49,6 +49,41 @@ namespace Maze
     
 
     //////////////////////////////////////////
+    using LoadTrueTypeFontAssetFileFunction = bool(*)(AssetFilePtr const& _file, TrueTypeFontPtr& _font);
+    using LoadTrueTypeFontByteBufferFunction = bool(*)(ByteBufferPtr const& _fileData, TrueTypeFontPtr& _font);
+    using IsTrueTypeFontAssetFileFunction = bool(*)(AssetFilePtr const& _file);
+    using IsTrueTypeFontByteBufferFunction = bool(*)(ByteBufferPtr const& _fileData);
+
+
+    //////////////////////////////////////////
+    // Struct TrueTypeFontLoaderData
+    //
+    //////////////////////////////////////////
+    struct TrueTypeFontLoaderData
+    {
+        //////////////////////////////////////////
+        TrueTypeFontLoaderData() = default;
+
+        //////////////////////////////////////////
+        TrueTypeFontLoaderData(
+            LoadTrueTypeFontAssetFileFunction _loadTrueTypeFontAssetFileFunc,
+            LoadTrueTypeFontByteBufferFunction _loadTrueTypeFontByteBufferFunc,
+            IsTrueTypeFontAssetFileFunction _isTrueTypeFontAssetFileFunc,
+            IsTrueTypeFontByteBufferFunction _isTrueTypeFontByteBufferFunc)
+            : loadTrueTypeFontAssetFileFunc(_loadTrueTypeFontAssetFileFunc)
+            , loadTrueTypeFontByteBufferFunc(_loadTrueTypeFontByteBufferFunc)
+            , isTrueTypeFontAssetFileFunc(_isTrueTypeFontAssetFileFunc)
+            , isTrueTypeFontByteBufferFunc(_isTrueTypeFontByteBufferFunc)
+        {}
+
+        LoadTrueTypeFontAssetFileFunction loadTrueTypeFontAssetFileFunc;
+        LoadTrueTypeFontByteBufferFunction loadTrueTypeFontByteBufferFunc;
+        IsTrueTypeFontAssetFileFunction isTrueTypeFontAssetFileFunc;
+        IsTrueTypeFontByteBufferFunction isTrueTypeFontByteBufferFunc;
+    };
+
+
+    //////////////////////////////////////////
     // Class TrueTypeFontManager
     //
     //////////////////////////////////////////
@@ -90,6 +125,13 @@ namespace Maze
         TrueTypeFontPtr createTrueTypeFont(
             AssetFilePtr const& _assetFile);
 
+
+        //////////////////////////////////////////
+        TrueTypeFontLoaderData const& getTrueTypeFontLoader() const { return m_trueTypeFontLoader; }
+
+        //////////////////////////////////////////
+        void setTrueTypeFontLoader(TrueTypeFontLoaderData const& _value) { m_trueTypeFontLoader = _value; }
+
     protected:
 
         //////////////////////////////////////////
@@ -103,6 +145,8 @@ namespace Maze
         static TrueTypeFontManager* s_instance;
 
         StringKeyMap<TrueTypeFontPtr> m_trueTypeFontsByName;
+
+        TrueTypeFontLoaderData m_trueTypeFontLoader;
     };
     
 
