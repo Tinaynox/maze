@@ -170,6 +170,9 @@ namespace Maze
         //////////////////////////////////////////
         inline Vec2DF const& getTextureCoordRT() const { return m_textureCoordRT; }
 
+        //////////////////////////////////////////
+        inline Vec2DF getTextureCoordSize() const { return m_textureCoordRT - m_textureCoordLB; }
+
 
         //////////////////////////////////////////
         inline void setSliceBorder(SpriteSliceBorder const& _sliceBorder)

@@ -33,6 +33,7 @@
 #include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/MazeColorU32.hpp"
 #include "maze-graphics/MazeColorF128.hpp"
@@ -46,6 +47,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(FontManager);
     MAZE_USING_SHARED_PTR(TrueTypeFontManager);
     MAZE_USING_SHARED_PTR(TrueTypeFont);
+    MAZE_USING_SHARED_PTR(Font);
     
 
     //////////////////////////////////////////
@@ -71,6 +73,18 @@ namespace Maze
         static inline FontManager& GetInstance() { return *s_instance; }
 
 
+        //////////////////////////////////////////
+        FontPtr const& getFont(HashedCString _assetFileName);
+
+        //////////////////////////////////////////
+        inline FontPtr const& getFont(String const& _assetFileName) { return getFont(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+
+        //////////////////////////////////////////
+        inline FontPtr const& getFont(CString _assetFileName) { return getFont(MAZE_HASHED_CSTRING(_assetFileName)); }
+
+        //////////////////////////////////////////
+        FontPtr const& addFont(FontPtr const& _font);
+
     protected:
 
         //////////////////////////////////////////
@@ -84,6 +98,8 @@ namespace Maze
         static FontManager* s_instance;
 
         TrueTypeFontManagerPtr m_trueTypeFontManager;
+
+        StringKeyMap<FontPtr> m_fontsByName;
     };
     
 

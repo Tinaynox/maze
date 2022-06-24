@@ -31,6 +31,8 @@
 
 //////////////////////////////////////////
 #include "maze-ui/MazeUIHeader.hpp"
+#include "maze-ui/fonts/MazeFontGlyph.hpp"
+#include "maze-ui/fonts/MazeTrueTypeFont.hpp"
 
 
 //////////////////////////////////////////
@@ -38,6 +40,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(Font);
+    MAZE_USING_SHARED_PTR(AssetFile);
     
 
     //////////////////////////////////////////
@@ -51,12 +54,78 @@ namespace Maze
         //////////////////////////////////////////
         ~Font();
 
+        //////////////////////////////////////////
+        static FontPtr Create();
+
+        //////////////////////////////////////////
+        static FontPtr Create(
+            AssetFilePtr const& _assetFile);
+
+
+        //////////////////////////////////////////
+        inline String const& getName() const { return m_name; }
+
+        //////////////////////////////////////////
+        inline void setName(String const& _name) { m_name = _name; }
+
+
+        //////////////////////////////////////////
+        bool loadFromAssetFile(
+            AssetFilePtr const& _assetFile);
+
+
+
+
+        //////////////////////////////////////////
+        FontGlyphStorageData* getGlyphStorageData(U32 _codePoint);
+
+        //////////////////////////////////////////
+        FontGlyph const& getGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize);
+
+        //////////////////////////////////////////
+        FontGlyph const& getGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, TTFPagePtr<U32>& _ttfPage);
+
+        //////////////////////////////////////////
+        FontGlyph const& getGlyph(U32 _codePoint, U32 _fontSize);
+
+        //////////////////////////////////////////
+        FontGlyph const& getOutlinedGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, F32 _outlineThickness);
+
+        //////////////////////////////////////////
+        FontGlyph const& getOutlinedGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr<U64>& _ttfPage);
+
+        //////////////////////////////////////////
+        FontGlyph const& getOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness);
+
+        //////////////////////////////////////////
+        F32 getLineSpacing(U32 _fontSize) const;
+
+        //////////////////////////////////////////
+        F32 getKerning(U32 _first, U32 _second, U32 _fontSize) const;
+
+        //////////////////////////////////////////
+        F32 getUnderlinePosition(U32 _fontSize) const;
+
+        //////////////////////////////////////////
+        F32 getUnderlineThickness(U32 _fontSize) const;
+
+        //////////////////////////////////////////
+        const TrueTypeFontPtr& getDefaultFont() const { return m_defaultGlyphsData.trueTypeFont; }
+
     protected:
 
         //////////////////////////////////////////
         Font();
 
+        //////////////////////////////////////////
+        bool init();
+
     protected:
+        String m_name;
+
+        Vector<FontGlyphStorageData> m_glyphsData;
+        FontGlyphStorageData m_defaultGlyphsData;
+        Map<U32, FontGlyphStorageData*> m_glyphsMap;
     };
     
 

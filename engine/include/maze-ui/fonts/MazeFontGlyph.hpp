@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
+#include "maze-core/ecs/MazeEntity.hpp"
 
 
 //////////////////////////////////////////
@@ -39,6 +40,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(Texture2D);
+    MAZE_USING_SHARED_PTR(TrueTypeFont);
     
 
     //////////////////////////////////////////
@@ -57,6 +59,85 @@ namespace Maze
         Rect2DS textureRect;
         // Texture coordinates of the glyph inside the font's texture
         Rect2DF textureCoords;
+    };
+
+
+    //////////////////////////////////////////
+    // Enum FontGlyphStorageType
+    //
+    //////////////////////////////////////////
+    enum class MAZE_UI_API FontGlyphStorageType
+    {
+        None = 0,
+        TrueTypeFont,
+        Sprite,
+        Entity
+    };
+
+
+    //////////////////////////////////////////
+    // Struct SpriteFontGlyphData
+    //
+    //////////////////////////////////////////
+    struct MAZE_UI_API SpriteFontGlyphData
+    {
+        //////////////////////////////////////////
+        FontGlyph const& getGlyph(U32 _fontSize);
+
+        U32 spriteGlyphFontSize;
+        FontGlyph spriteGlyph;
+        Map<U32, FontGlyph> glyphs;
+    };
+
+
+    //////////////////////////////////////////
+    // Struct EntityFontGlyphData
+    //
+    //////////////////////////////////////////
+    struct MAZE_UI_API EntityFontGlyphData
+    {
+        //////////////////////////////////////////
+        FontGlyph const& getGlyph(U32 _fontSize);
+
+        //////////////////////////////////////////
+        EntityPtr const& getPrefab();
+
+        EntityPtr prefab;
+        String prefabName;
+        U32 prefabGlyphFontSize;
+        FontGlyph prefabGlyph;
+        Map<U32, FontGlyph> glyphs;
+    };
+
+
+    //////////////////////////////////////////
+    // Struct FontGlyphStorageData
+    //
+    //////////////////////////////////////////
+    struct MAZE_UI_API FontGlyphStorageData
+    {
+        //////////////////////////////////////////
+        inline FontGlyphStorageData(FontGlyphStorageType _type = FontGlyphStorageType::None)
+            : fromCodePoints(0)
+            , toCodePoints(0)
+            , type(_type)
+        {
+        }
+
+        //////////////////////////////////////////
+        inline bool contains(U32 _codePoint) const
+        {
+            return (_codePoint >= fromCodePoints) && (_codePoint <= toCodePoints);
+        }
+
+        U32 fromCodePoints;
+        U32 toCodePoints;
+        FontGlyphStorageType type;
+
+
+        TrueTypeFontPtr trueTypeFont;
+        SpriteFontGlyphData spriteData;
+        EntityFontGlyphData entityData;
     };
     
 

@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeUIHeader.hpp"
 #include "maze-ui/managers/MazeFontManager.hpp"
+#include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
@@ -33,6 +34,7 @@
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-ui/managers/MazeTrueTypeFontManager.hpp"
+#include "maze-ui/fonts/MazeFont.hpp"
 
 
 //////////////////////////////////////////
@@ -70,6 +72,36 @@ namespace Maze
             return false;
         
         return true;
+    }
+
+    //////////////////////////////////////////
+    FontPtr const& FontManager::getFont(HashedCString _font)
+    {
+        static FontPtr nullPointer;
+
+        StringKeyMap<FontPtr>::const_iterator it = m_fontsByName.find(_font);
+        if (it != m_fontsByName.end())
+            return it->second;
+
+        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_font);
+        if (!assetFile)
+            return nullPointer;
+
+        FontPtr font = Font::Create(assetFile);
+        if (!font)
+            return nullPointer;
+
+        font->setName(_font.str);
+        return addFont(font);
+    }
+
+    //////////////////////////////////////////
+    FontPtr const& FontManager::addFont(FontPtr const& _font)
+    {
+        auto it2 = m_fontsByName.insert(
+            _font->getName(),
+            _font);
+        return *it2;
     }
 
 

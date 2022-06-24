@@ -116,9 +116,6 @@ namespace Maze
         inline TrueTypeFontPtr const& getTrueTypeFont(CString _assetFileName) { return getTrueTypeFont(MAZE_HASHED_CSTRING(_assetFileName)); }
 
         //////////////////////////////////////////
-        TrueTypeFontPtr const& getTrueTypeFont(AssetFilePtr const& _assetFile);
-
-        //////////////////////////////////////////
         TrueTypeFontPtr const& addTrueTypeFont(TrueTypeFontPtr const& _trueTypeFont);
 
         //////////////////////////////////////////

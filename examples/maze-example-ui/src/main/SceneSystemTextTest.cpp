@@ -72,11 +72,15 @@
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/managers/MazeColorPickerManager.hpp"
+#include "maze-ui/managers/MazeTrueTypeFontManager.hpp"
+#include "maze-ui/managers/MazeFontManager.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
+#include "maze-ui/fonts/MazeTrueTypeFont.hpp"
+#include "maze-ui/fonts/MazeFont.hpp"
 #include "Example.hpp"
 
 
