@@ -74,6 +74,7 @@
 #include "maze-ui/managers/MazeColorPickerManager.hpp"
 #include "maze-ui/managers/MazeTrueTypeFontManager.hpp"
 #include "maze-ui/managers/MazeFontManager.hpp"
+#include "maze-ui/managers/MazeFontMaterialManager.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
@@ -81,6 +82,7 @@
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/fonts/MazeTrueTypeFont.hpp"
 #include "maze-ui/fonts/MazeFont.hpp"
+#include "maze-ui/fonts/MazeFontMaterial.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "Example.hpp"
 
@@ -220,6 +222,8 @@ namespace Maze
                 nullptr,
                 square->getTransform(),
                 this);
+
+            FontMaterialPtr fontMaterial = FontMaterialManager::GetInstancePtr()->getFontMaterial("Default00.mzfontmaterial");
 
             m_text = UIHelper::CreateText(
                 "Hello, World!",

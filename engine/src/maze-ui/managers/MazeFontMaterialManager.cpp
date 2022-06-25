@@ -25,96 +25,87 @@
 
 //////////////////////////////////////////
 #include "MazeUIHeader.hpp"
-#include "maze-ui/managers/MazeFontManager.hpp"
-#include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-ui/managers/MazeFontMaterialManager.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
-#include "maze-ui/managers/MazeTrueTypeFontManager.hpp"
-#include "maze-ui/managers/MazeFontMaterialManager.hpp"
-#include "maze-ui/fonts/MazeFont.hpp"
+#include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-ui/fonts/MazeFontMaterial.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class FontManager
+    // Class FontMaterialManager
     //
     //////////////////////////////////////////
-    FontManager* FontManager::s_instance = nullptr;
+    FontMaterialManager* FontMaterialManager::s_instance = nullptr;
 
     //////////////////////////////////////////
-    FontManager::FontManager()
+    FontMaterialManager::FontMaterialManager()
     {
         s_instance = this;
     }
 
     //////////////////////////////////////////
-    FontManager::~FontManager()
+    FontMaterialManager::~FontMaterialManager()
     {
         s_instance = nullptr;
     }
 
     //////////////////////////////////////////
-    void FontManager::Initialize(FontManagerPtr& _uiManager)
+    void FontMaterialManager::Initialize(FontMaterialManagerPtr& _uiManager)
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(FontManager, _uiManager, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(FontMaterialManager, _uiManager, init());
     }
 
     //////////////////////////////////////////
-    bool FontManager::init()
+    bool FontMaterialManager::init()
     {
-        TrueTypeFontManager::Initialize(m_trueTypeFontManager);
-        if (!m_trueTypeFontManager)
-            return false;
-
-        FontMaterialManager::Initialize(m_fontMaterialManager);
-        if (!m_fontMaterialManager)
-            return false;
         
         return true;
     }
 
     //////////////////////////////////////////
-    FontPtr const& FontManager::getFont(HashedCString _font)
+    FontMaterialPtr const& FontMaterialManager::getFontMaterial(HashedCString _trueTypeFont)
     {
-        static FontPtr nullPointer;
+        static FontMaterialPtr nullPointer;
 
-        StringKeyMap<FontPtr>::const_iterator it = m_fontsByName.find(_font);
-        if (it != m_fontsByName.end())
+        StringKeyMap<FontMaterialPtr>::const_iterator it = m_fontMaterialsByName.find(_trueTypeFont);
+        if (it != m_fontMaterialsByName.end())
             return it->second;
 
-        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_font);
+        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_trueTypeFont);
         if (!assetFile)
             return nullPointer;
 
-        FontPtr font = Font::Create(assetFile);
+        FontMaterialPtr font = FontMaterial::Create(assetFile);
         if (!font)
             return nullPointer;
 
-        font->setName(_font.str);
-        return addFont(font);
+        font->setName(_trueTypeFont.str);
+        return addFontMaterial(font);
     }
 
     //////////////////////////////////////////
-    FontPtr const& FontManager::addFont(FontPtr const& _font)
+    FontMaterialPtr const& FontMaterialManager::addFontMaterial(FontMaterialPtr const& _trueTypeFont)
     {
-        auto it2 = m_fontsByName.insert(
-            _font->getName(),
-            _font);
+        auto it2 = m_fontMaterialsByName.insert(
+            _trueTypeFont->getName(),
+            _trueTypeFont);
         return *it2;
     }
 
     //////////////////////////////////////////
-    String const& FontManager::getFontName(Font const* _font)
+    String const& FontMaterialManager::getFontMaterialName(FontMaterial const* _font)
     {
         static String nullPointer;
 
-        for (auto const& fontData : m_fontsByName)
+        for (auto const& fontData : m_fontMaterialsByName)
         {
             if (fontData.second.get() == _font)
                 return fontData.first;

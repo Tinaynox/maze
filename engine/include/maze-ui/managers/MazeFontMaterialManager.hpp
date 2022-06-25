@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeFontManager_hpp_))
-#define _MazeFontManager_hpp_
+#if (!defined(_MazeFontMaterialManager_hpp_))
+#define _MazeFontMaterialManager_hpp_
 
 
 //////////////////////////////////////////
@@ -44,78 +44,62 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(FontManager);
     MAZE_USING_SHARED_PTR(FontMaterialManager);
-    MAZE_USING_SHARED_PTR(TrueTypeFontManager);
-    MAZE_USING_SHARED_PTR(TrueTypeFont);
-    MAZE_USING_SHARED_PTR(Font);
+    MAZE_USING_SHARED_PTR(FontMaterial);
     
 
     //////////////////////////////////////////
-    // Class FontManager
+    // Class FontMaterialManager
     //
     //////////////////////////////////////////
-    class MAZE_UI_API FontManager
+    class MAZE_UI_API FontMaterialManager
         : public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        virtual ~FontManager();
+        virtual ~FontMaterialManager();
 
         //////////////////////////////////////////
-        static void Initialize(FontManagerPtr& _manager);
-
-
-        //////////////////////////////////////////
-        static inline FontManager* GetInstancePtr() { return s_instance; }
-
-        //////////////////////////////////////////
-        static inline FontManager& GetInstance() { return *s_instance; }
+        static void Initialize(FontMaterialManagerPtr& _manager);
 
 
         //////////////////////////////////////////
-        FontPtr const& getFont(HashedCString _assetFileName);
+        static inline FontMaterialManager* GetInstancePtr() { return s_instance; }
 
         //////////////////////////////////////////
-        inline FontPtr const& getFont(String const& _assetFileName) { return getFont(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
-
-        //////////////////////////////////////////
-        inline FontPtr const& getFont(CString _assetFileName) { return getFont(MAZE_HASHED_CSTRING(_assetFileName)); }
-
-        //////////////////////////////////////////
-        FontPtr const& addFont(FontPtr const& _font);
+        static inline FontMaterialManager& GetInstance() { return *s_instance; }
 
 
         //////////////////////////////////////////
-        inline FontPtr const& getDefaultFont() const { return m_defaultFont; }
+        FontMaterialPtr const& getFontMaterial(HashedCString _assetFileName);
 
         //////////////////////////////////////////
-        inline void setDefaultFont(FontPtr const& _font) { m_defaultFont = _font; }
+        inline FontMaterialPtr const& getFontMaterial(String const& _assetFileName) { return getFontMaterial(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+
+        //////////////////////////////////////////
+        inline FontMaterialPtr const& getFontMaterial(CString _assetFileName) { return getFontMaterial(MAZE_HASHED_CSTRING(_assetFileName)); }
+
+        //////////////////////////////////////////
+        FontMaterialPtr const& addFontMaterial(FontMaterialPtr const& _trueTypeFont);
 
 
         //////////////////////////////////////////
-        String const& getFontName(Font const* _font);
+        String const& getFontMaterialName(FontMaterial const* _font);
 
     protected:
 
         //////////////////////////////////////////
-        FontManager();
+        FontMaterialManager();
 
         //////////////////////////////////////////
         bool init();
 
 
     protected:
-        static FontManager* s_instance;
+        static FontMaterialManager* s_instance;
 
-        TrueTypeFontManagerPtr m_trueTypeFontManager;
-
-        StringKeyMap<FontPtr> m_fontsByName;
-
-        FontMaterialManagerPtr m_fontMaterialManager;
-
-        FontPtr m_defaultFont;
+        StringKeyMap<FontMaterialPtr> m_fontMaterialsByName;
     };
     
 
@@ -123,5 +107,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeFontManager_hpp_
+#endif // _MazeFontMaterialManager_hpp_
 //////////////////////////////////////////
