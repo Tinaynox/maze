@@ -52,6 +52,7 @@
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-ui/ecs/components/MazeSystemTextEditBox2D.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
+#include "maze-ui/managers/MazeFontManager.hpp"
 #include "maze-ui/ecs/components/MazeToggleButton2D.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
@@ -1935,6 +1936,39 @@ namespace Maze
 
 
             return scrollRect;
+        }
+
+        //////////////////////////////////////////
+        MAZE_UI_API TextRenderer2DPtr CreateText(
+            CString _text,
+            U32 _fontSize,
+            HorizontalAlignment2D _horizontalAlignment,
+            VerticalAlignment2D _verticalAlignment,
+            Vec2DF const& _size,
+            Vec2DF const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2DF const& _anchor,
+            Vec2DF const& _pivot)
+        {
+            EntityPtr textRendererEntity = _ecsScene->createEntity();
+            textRendererEntity->ensureComponent<Name>("Text");
+
+            TextRenderer2DPtr textRenderer = textRendererEntity->createComponent<TextRenderer2D>();
+            textRenderer->setText(_text);
+            textRenderer->setFontSize(_fontSize);
+            textRenderer->setHorizontalAlignment(_horizontalAlignment);
+            textRenderer->setVerticalAlignment(_verticalAlignment);
+            textRenderer->setFont(FontManager::GetInstancePtr()->getDefaultFont());
+
+            Transform2DPtr transform = textRendererEntity->ensureComponent<Transform2D>();
+            transform->setParent(_parent);
+            transform->setSize(_size);
+            transform->setLocalPosition(_position);
+            transform->setAnchor(_anchor);
+            transform->setPivot(_pivot);
+
+            return textRenderer;
         }
     
     } // namespace UIHelper

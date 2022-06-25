@@ -53,6 +53,7 @@
 #include "maze-ui/ecs/components/MazeMenuBar2D.hpp"
 #include "maze-ui/ecs/components/MazeScrollbar2D.hpp"
 #include "maze-ui/ecs/components/MazeScrollRect2D.hpp"
+#include "maze-ui/ecs/components/MazeTextRenderer2D.hpp"
 
 
 //////////////////////////////////////////
@@ -273,6 +274,19 @@ namespace Maze
             Vec2DF const& _pivot = Vec2DF(0.0f, 1.0f),
             bool _horizontalScrollbar = true,
             bool _verticalScrollbar = true);
+
+        //////////////////////////////////////////
+        MAZE_UI_API TextRenderer2DPtr CreateText(
+            CString _text,
+            U32 _fontSize,
+            HorizontalAlignment2D _horizontalAlignment,
+            VerticalAlignment2D _verticalAlignment,
+            Vec2DF const& _size,
+            Vec2DF const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
+            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
 
     } // namespace UIHelper
     //////////////////////////////////////////

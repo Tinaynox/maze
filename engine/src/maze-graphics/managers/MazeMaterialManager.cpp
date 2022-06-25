@@ -399,6 +399,21 @@ namespace Maze
 
                 break;
             }
+            case BuiltinMaterialType::Font:
+            {
+                material = Material::Create(m_renderSystemRaw);
+                RenderPassPtr renderPass = material->createRenderPass();
+                renderPass->setShader(m_renderSystemRaw->getShaderSystem()->ensureBuiltinShader(BuiltinShaderType::Font));
+                renderPass->setBlendSrcFactor(BlendFactor::SrcAlpha);
+                renderPass->setBlendDestFactor(BlendFactor::OneMinusSrcAlpha);
+                renderPass->setDepthWriteEnabled(false);
+                renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
+                renderPass->setCullMode(CullMode::Off);
+                renderPass->setRenderQueueIndex(3000);
+                material->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
+                material->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteTexture());
+                break;
+            }
             default:
             {
                 MAZE_NOT_IMPLEMENTED;

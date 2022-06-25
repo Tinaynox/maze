@@ -104,6 +104,20 @@ namespace Maze
         return *it2;
     }
 
+    //////////////////////////////////////////
+    String const& FontManager::getFontName(Font const* _font)
+    {
+        static String nullPointer;
+
+        for (auto const& fontData : m_fontsByName)
+        {
+            if (fontData.second.get() == _font)
+                return fontData.first;
+        }
+
+        return nullPointer;
+    }
+
 
 } // namespace Maze
 //////////////////////////////////////////

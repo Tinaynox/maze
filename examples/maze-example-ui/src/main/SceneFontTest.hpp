@@ -25,101 +25,97 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeFontManager_hpp_))
-#define _MazeFontManager_hpp_
+#if (!defined(_SceneFontTest_hpp_))
+#define _SceneFontTest_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-ui/MazeUIHeader.hpp"
-#include "maze-core/utils/MazeEnumClass.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
-#include "maze-core/containers/MazeStringKeyMap.hpp"
+#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/math/MazeQuaternion.hpp"
+#include "maze-graphics/MazeMesh.hpp"
+#include "maze-graphics/MazeShader.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
-#include "maze-graphics/MazeColorU32.hpp"
-#include "maze-graphics/MazeColorF128.hpp"
-#include <functional>
+#include "maze-graphics/MazeMaterial.hpp"
+#include "maze-graphics/MazeRenderPass.hpp"
+#include "maze-graphics/MazeRenderTarget.hpp"
+#include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
+#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-ui/ecs/components/MazeButton2D.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
+
+
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(FontManager);
-    MAZE_USING_SHARED_PTR(TrueTypeFontManager);
-    MAZE_USING_SHARED_PTR(TrueTypeFont);
-    MAZE_USING_SHARED_PTR(Font);
+    MAZE_USING_SHARED_PTR(SceneFontTest);
+    MAZE_USING_SHARED_PTR(Camera3D);
+    MAZE_USING_SHARED_PTR(Canvas);
+    MAZE_USING_SHARED_PTR(MenuListTree2D);
+    MAZE_USING_SHARED_PTR(ScrollRect2D);
+    MAZE_USING_SHARED_PTR(SystemTextRenderer2D);
+    MAZE_USING_SHARED_PTR(ClickButton2D);
+    MAZE_USING_SHARED_PTR(SystemTextRenderer2D);
+    MAZE_USING_SHARED_PTR(TextRenderer2D);
     
 
     //////////////////////////////////////////
-    // Class FontManager
+    // Class SceneFontTest
     //
     //////////////////////////////////////////
-    class MAZE_UI_API FontManager
-        : public MultiDelegateCallbackReceiver
+    class SceneFontTest
+        : public ECSRenderScene
+        , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        virtual ~FontManager();
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneFontTest, ECSRenderScene);
+
+    public:
 
         //////////////////////////////////////////
-        static void Initialize(FontManagerPtr& _manager);
-
-
-        //////////////////////////////////////////
-        static inline FontManager* GetInstancePtr() { return s_instance; }
-
-        //////////////////////////////////////////
-        static inline FontManager& GetInstance() { return *s_instance; }
-
-
-        //////////////////////////////////////////
-        FontPtr const& getFont(HashedCString _assetFileName);
-
-        //////////////////////////////////////////
-        inline FontPtr const& getFont(String const& _assetFileName) { return getFont(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
-
-        //////////////////////////////////////////
-        inline FontPtr const& getFont(CString _assetFileName) { return getFont(MAZE_HASHED_CSTRING(_assetFileName)); }
-
-        //////////////////////////////////////////
-        FontPtr const& addFont(FontPtr const& _font);
-
-
-        //////////////////////////////////////////
-        inline FontPtr const& getDefaultFont() const { return m_defaultFont; }
-
-        //////////////////////////////////////////
-        inline void setDefaultFont(FontPtr const& _font) { m_defaultFont = _font; }
-
-
-        //////////////////////////////////////////
-        String const& getFontName(Font const* _font);
-
-    protected:
-
-        //////////////////////////////////////////
-        FontManager();
-
-        //////////////////////////////////////////
-        bool init();
-
-
-    protected:
-        static FontManager* s_instance;
-
-        TrueTypeFontManagerPtr m_trueTypeFontManager;
-
-        StringKeyMap<FontPtr> m_fontsByName;
-
-
-        FontPtr m_defaultFont;
-    };
+        static SceneFontTestPtr Create();
     
+        //////////////////////////////////////////
+        virtual ~SceneFontTest();
+
+        //////////////////////////////////////////
+        virtual void update(F32 _dt) MAZE_OVERRIDE;
+
+    protected:
+
+        //////////////////////////////////////////
+        SceneFontTest();
+
+        //////////////////////////////////////////
+        virtual bool init() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        void notifyMainRenderWindowViewportChanged(Rect2DF const& _mainRenderWindowViewport);
+
+        //////////////////////////////////////////
+        void create3D();
+
+        //////////////////////////////////////////
+        void create2D();
+
+
+    protected:        
+        CanvasPtr m_canvas;
+
+        SystemTextRenderer2DPtr m_systemText;
+        TextRenderer2DPtr m_text;
+    };
+
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeFontManager_hpp_
+#endif // _SceneFontTest_hpp_
 //////////////////////////////////////////

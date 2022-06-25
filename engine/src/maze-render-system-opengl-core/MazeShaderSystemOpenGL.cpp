@@ -189,6 +189,10 @@ namespace Maze
                 shaderSource =
 #include "shaders/MazeMeshPreviewShader.mzglsl"
                     ; break;
+            case BuiltinShaderType::Font:
+                shaderSource =
+#include "shaders/MazeFontShader.mzglsl"
+                    ; break;
             default:
             {
                 MAZE_NOT_IMPLEMENTED;

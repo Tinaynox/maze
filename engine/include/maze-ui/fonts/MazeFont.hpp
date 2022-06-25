@@ -41,6 +41,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(Font);
     MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_SHARED_PTR(Material);
     
 
     //////////////////////////////////////////
@@ -48,6 +49,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_UI_API Font
+        : public SharedObject<Font>
     {
     public:
 
@@ -110,7 +112,16 @@ namespace Maze
         F32 getUnderlineThickness(U32 _fontSize) const;
 
         //////////////////////////////////////////
-        const TrueTypeFontPtr& getDefaultFont() const { return m_defaultGlyphsData.trueTypeFont; }
+        TrueTypeFontPtr const& getDefaultFont() const { return m_defaultGlyphsData.trueTypeFont; }
+
+
+    public:
+
+        //////////////////////////////////////////
+        static void FromString(FontPtr& _value, CString _data, Size _count);
+
+        //////////////////////////////////////////
+        static void ToString(Font const* _value, String& _data);
 
     protected:
 
@@ -120,6 +131,9 @@ namespace Maze
         //////////////////////////////////////////
         bool init();
 
+        //////////////////////////////////////////
+        void updateMaterialTextures();
+
     protected:
         String m_name;
 
@@ -127,6 +141,51 @@ namespace Maze
         FontGlyphStorageData m_defaultGlyphsData;
         Map<U32, FontGlyphStorageData*> m_glyphsMap;
     };
+
+
+    //////////////////////////////////////////
+    MAZE_NOT_IMPLEMENTED_SERIALIZATION(Font);
+
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<FontPtr>::value), void>::type
+        ValueToString(FontPtr const& _value, String& _data)
+    {
+        Font::ToString(_value.get(), _data);
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<FontPtr>::value), void>::type
+        ValueFromString(FontPtr& _value, CString _data, Size _count)
+    {
+        Font::FromString(_value, _data, _count);
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<FontPtr>::value), U32>::type
+        GetValueSerializationSize(FontPtr const& _value)
+    {
+        MAZE_NOT_IMPLEMENTED_RETURN_VALUE(0);
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<FontPtr>::value), void>::type
+        SerializeValue(FontPtr const& _value, U8* _data)
+    {
+        MAZE_NOT_IMPLEMENTED;
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline typename ::std::enable_if<(IsSharedPtr<FontPtr>::value), void>::type
+        DeserializeValue(FontPtr& _value, U8 const* _data)
+    {
+        MAZE_NOT_IMPLEMENTED;
+    }
     
 
 } // namespace Maze

@@ -78,6 +78,7 @@
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
 #include "maze-plugin-loader-ttf/MazeLoaderTTFPlugin.hpp"
 #include "main/SceneSystemTextTest.hpp"
+#include "main/SceneFontTest.hpp"
 #include "Example.hpp"
 
 
@@ -94,7 +95,7 @@ namespace Maze
     void LoadFirstExampleScene(SceneManager* _sceneManager)
     {
         Example::GetInstancePtr()->loadCoreGameAssets();
-        _sceneManager->loadScene<SceneSystemTextTest>();
+        _sceneManager->loadScene<SceneFontTest>();
     }
     
     //////////////////////////////////////////

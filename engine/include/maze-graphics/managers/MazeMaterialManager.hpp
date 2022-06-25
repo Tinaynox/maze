@@ -54,7 +54,7 @@ namespace Maze
     // Enum BuiltinMaterialType
     //
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_18_API(MAZE_GRAPHICS_API, BuiltinMaterialType,
+    MAZE_DECLARE_ENUMCLASS_19_API(MAZE_GRAPHICS_API, BuiltinMaterialType,
         Error,
         UV,
         Normal,
@@ -72,7 +72,8 @@ namespace Maze
         Skybox,
         Specular,
         SpecularDS,
-        MeshPreview);
+        MeshPreview,
+        Font);
 
 
     //////////////////////////////////////////

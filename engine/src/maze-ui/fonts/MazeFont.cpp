@@ -27,9 +27,12 @@
 #include "MazeUIHeader.hpp"
 #include "maze-ui/fonts/MazeFont.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
+#include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/MazeSprite.hpp"
+#include "maze-graphics/MazeMaterial.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-ui/managers/MazeTrueTypeFontManager.hpp"
+#include "maze-ui/managers/MazeFontManager.hpp"
 
 
 //////////////////////////////////////////
@@ -427,6 +430,59 @@ namespace Maze
             return 1.0f;
 
         return m_defaultGlyphsData.trueTypeFont->getUnderlineThickness(_fontSize);
+    }
+
+    //////////////////////////////////////////
+    void Font::FromString(FontPtr& _value, CString _data, Size _count)
+    {
+        if (!_data || strcmp(_data, "") == 0)
+        {
+            _value.reset();
+            return;
+        }
+
+        if (_count == 0)
+            _count = strlen(_data);
+
+        FontManager* fontManager = FontManager::GetInstancePtr();
+
+        if (StringHelper::IsStartsWith(_data, "ptr:"))
+        {
+            String data = String(_data + 4, _data + _count);
+            StringHelper::StringToObjectPtr(_value, data);
+        }
+        else
+        {
+            _value = fontManager->getFont(MAZE_HASHED_CSTRING(_data));
+        }
+    }
+
+    //////////////////////////////////////////
+    void Font::ToString(Font const* _value, String& _data)
+    {
+        if (!_value)
+        {
+            _data.clear();
+            return;
+        }
+
+        FontManager* fontManager = FontManager::GetInstancePtr();
+
+        String const& fontName = fontManager->getFontName(_value);
+        if (!fontName.empty())
+        {
+            _data = fontName;
+        }
+        else
+        {
+            StringHelper::FormatString(_data, "ptr:%p", _value);
+        }
+    }
+
+    //////////////////////////////////////////
+    void Font::updateMaterialTextures()
+    {
+        TrueTypeFontPtr const& defaultFont = getDefaultFont();
     }
 
 } // namespace Maze

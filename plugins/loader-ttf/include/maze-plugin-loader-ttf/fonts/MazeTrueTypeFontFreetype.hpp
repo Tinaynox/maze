@@ -241,9 +241,10 @@ namespace Maze
 
             // Compute the glyph's bounding box
             glyph.bounds.position.x = static_cast<F32>(m_face->glyph->metrics.horiBearingX) / static_cast<F32>(1 << 6);
-            glyph.bounds.position.y = -static_cast<F32>(m_face->glyph->metrics.horiBearingY) / static_cast<F32>(1 << 6);
+            glyph.bounds.position.y = static_cast<F32>(m_face->glyph->metrics.horiBearingY) / static_cast<F32>(1 << 6);
             glyph.bounds.size.x = static_cast<F32>(m_face->glyph->metrics.width) / static_cast<F32>(1 << 6) + _outlineThickness * 2;
             glyph.bounds.size.y = static_cast<F32>(m_face->glyph->metrics.height) / static_cast<F32>(1 << 6) + _outlineThickness * 2;
+            glyph.bounds.position.y -= glyph.bounds.size.y;
 
             // Resize the pixel buffer to the new size and fill it with transparent white pixels
             Vector<U8> pixelBuffer;
@@ -270,7 +271,8 @@ namespace Maze
                     for (S32 x = (S32)padding; x < width - (S32)padding; ++x)
                     {
                         // The color channels remain white, just fill the alpha channel
-                        Size index = x + y * width;
+                        S32 flippedY = height - y - 1;
+                        Size index = x + flippedY * width;
                         pixelBuffer[index * 4 + 3] = ((pixels[(x - padding) / 8]) & (1 << (7 - ((x - padding) % 8)))) ? 255 : 0;
                     }
                     pixels += bitmap.pitch;
@@ -284,7 +286,8 @@ namespace Maze
                     for (S32 x = (S32)padding; x < width - (S32)padding; ++x)
                     {
                         // The color channels remain white, just fill the alpha channel
-                        Size index = x + y * width;
+                        S32 flippedY = height - y - 1;
+                        Size index = x + flippedY * width;
                         pixelBuffer[index * 4 + 3] = pixels[x - padding];
                     }
                     pixels += bitmap.pitch;
