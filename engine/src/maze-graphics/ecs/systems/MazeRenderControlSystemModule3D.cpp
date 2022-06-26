@@ -244,12 +244,16 @@ namespace Maze
 
                 renderQueue->addSelectRenderPassCommand(renderPass);
 
+                Vec4DF const* uvStreams[MAZE_UV_CHANNELS_MAX];
+                memset(uvStreams, 0, sizeof(uvStreams));
+                uvStreams[0] = data.uvStream;
+
                 renderQueue->addDrawVAOInstancedCommand(
                     vao,
                     data.count,
                     data.modelMatricies,
                     data.colorStream,
-                    data.uvStream);
+                    uvStreams);
 
                 prevRenderQueueIndex = currentRenderQueueIndex;
             }

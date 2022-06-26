@@ -267,12 +267,17 @@ namespace Maze
                                 S32 count = (S32)meshRenderer->getModelMatrices().size();
                                 if (count > 0)
                                 {
+                                    Vec4DF const* uvStreams[MAZE_UV_CHANNELS_MAX];
+                                    memset(uvStreams, 0, sizeof(uvStreams));
+                                    uvStreams[0] = meshRenderer->getUV0Data();
+                                    uvStreams[1] = meshRenderer->getUV1Data();
+
                                     renderQueue->addDrawVAOInstancedCommand(
                                         vao.get(),
                                         count,
                                         meshRenderer->getModelMatricesData(),
                                         meshRenderer->getColorsData(),
-                                        meshRenderer->getUV0Data());
+                                        uvStreams);
                                 }
                             }
 

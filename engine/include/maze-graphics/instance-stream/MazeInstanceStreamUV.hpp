@@ -95,9 +95,10 @@ namespace Maze
         InstanceStreamUV();
 
         //////////////////////////////////////////
-        bool init();
+        bool init(S32 _index);
 
     protected:
+        S32 m_index = -1;
         FastVector<Vec4DF> m_data;
         S32 m_dataOffset = 0;
     };

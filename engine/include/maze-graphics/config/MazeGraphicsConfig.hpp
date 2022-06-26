@@ -24,37 +24,33 @@
 
 
 //////////////////////////////////////////
-#include "MazeGraphicsHeader.hpp"
-#include "maze-graphics/instance-stream/MazeInstanceStreamUV.hpp"
+#pragma once
+#if (!defined(_MazeGraphicsConfig_hpp_))
+#define _MazeGraphicsConfig_hpp_
+
+
+//////////////////////////////////////////
+#include "maze-graphics/MazeGraphicsHeader.hpp"
+#include "maze-core/utils/MazeMultiDelegate.hpp"
+#include "maze-core/utils/MazeEnumClass.hpp"
+#include "maze-core/system/MazeWindowVideoMode.hpp"
+#include "maze-core/system/MazeWindow.hpp"
+#include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/system/MazeInputEvent.hpp"
+#include "maze-core/math/MazeVec3D.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
-
     //////////////////////////////////////////
-    // Class InstanceStreamUV
-    //
-    //////////////////////////////////////////
-    InstanceStreamUV::InstanceStreamUV()
-    {
+    #define MAZE_UV_CHANNELS_MAX (8)
 
-    }
-
-    //////////////////////////////////////////
-    InstanceStreamUV::~InstanceStreamUV()
-    {
-
-    }
-
-    //////////////////////////////////////////
-    bool InstanceStreamUV::init(S32 _index)
-    {
-        m_index = _index;
-        return true;
-    }
-    
 
 } // namespace Maze
+//////////////////////////////////////////
+
+
+#endif // _MazeGraphicsConfig_hpp_
 //////////////////////////////////////////

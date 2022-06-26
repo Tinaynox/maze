@@ -208,7 +208,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MaterialPtr const& FontMaterial::fetchMaterial(U32 _fontSize)
+    FontMaterialRenderData const& FontMaterial::fetchRenderData(U32 _fontSize)
     {
         auto it = m_renderData.find(_fontSize);
         if (it != m_renderData.end())
@@ -216,14 +216,20 @@ namespace Maze
             if (it->second.texturesDirty)
                 updateFontTextures(_fontSize);
 
-            return it->second.material;
+            return it->second;
         }
-            
+
         FontMaterialRenderData& data = m_renderData[_fontSize];
         if (m_assetMaterial)
             data.material = m_assetMaterial->createCopy();
         updateFontTextures(_fontSize);
-        return data.material;
+        return data;
+    }
+
+    //////////////////////////////////////////
+    MaterialPtr const& FontMaterial::fetchMaterial(U32 _fontSize)
+    {
+        return fetchRenderData(_fontSize).material;
     }
 
     //////////////////////////////////////////
@@ -257,6 +263,17 @@ namespace Maze
             renderData.second.texturesDirty = true;
 
         eventTexturesChanged();
+    }
+
+    //////////////////////////////////////////
+    S32 FontMaterial::getTextureIndex(U32 _fontSize, Texture2D* _texture)
+    {
+        FontMaterialRenderData const& renderData = fetchRenderData(_fontSize);
+        auto it = renderData.textureIndices.find(_texture);
+        if (it == renderData.textureIndices.end())
+            return -1;
+
+        return it->second;
     }
 
 

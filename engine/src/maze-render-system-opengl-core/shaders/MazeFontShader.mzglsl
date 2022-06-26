@@ -19,6 +19,7 @@ R"(
     OUT vec3 v_positionWS;
     OUT vec3 v_positionVS;
     OUT vec2 v_uv0;
+	OUT float v_uv1;
     OUT vec4 v_color;
 
     //////////////////////////////////////////
@@ -52,10 +53,13 @@ R"(
     #endif
 
     #if (MAZE_UV_STREAM)
-        vec4 uvStream = GetUVStream(instanceId);
+        vec4 uv0Stream = GetUV0Stream(instanceId);
         v_uv0 = vec2(
-            mix(uvStream.x, uvStream.y, v_uv0.x),
-            mix(uvStream.z, uvStream.w, v_uv0.y));
+            mix(uv0Stream.x, uv0Stream.y, v_uv0.x),
+            mix(uv0Stream.z, uv0Stream.w, v_uv0.y));
+
+		vec4 uv1Stream = GetUV1Stream(instanceId);
+        v_uv1 = int(uv1Stream.x);
     #endif
 
         gl_Position = positionCS;
@@ -75,6 +79,7 @@ R"(
 
     //////////////////////////////////////////
     IN vec2 v_uv0;
+	IN float v_uv1;
     IN vec4 v_color;
 
     //////////////////////////////////////////
@@ -85,6 +90,18 @@ R"(
     {
         MAZE_CLIP_DISTANCE_FRAGMENT;
 
-        out_color = v_color * texture(u_baseMaps[0], v_uv0) * u_color;
+		vec4 color;
+		switch(int(v_uv1))
+		{
+			case 0: color = v_color * texture(u_baseMaps[0], v_uv0) * u_color; break;
+			case 1: color = v_color * texture(u_baseMaps[1], v_uv0) * u_color; break;
+			case 2: color = v_color * texture(u_baseMaps[2], v_uv0) * u_color; break;
+			case 3: color = v_color * texture(u_baseMaps[3], v_uv0) * u_color; break;
+			case 4: color = v_color * texture(u_baseMaps[4], v_uv0) * u_color; break;
+			case 5: color = v_color * texture(u_baseMaps[5], v_uv0) * u_color; break;
+			case 6: color = v_color * texture(u_baseMaps[6], v_uv0) * u_color; break;
+			case 7: color = v_color * texture(u_baseMaps[7], v_uv0) * u_color; break;
+		}
+        out_color = color;
     }
 )"

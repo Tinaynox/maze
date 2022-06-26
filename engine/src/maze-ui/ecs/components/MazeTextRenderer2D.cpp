@@ -700,6 +700,9 @@ namespace Maze
         if (!_glyph.texture)
             return;
 
+        S32 textureIndex = m_fontMaterial->getTextureIndex(m_fontSize, _glyph.texture.get());
+        MAZE_ERROR_RETURN_IF(textureIndex == -1, "Texture index is -1!");
+
         MAZE_ERROR_RETURN_IF(_charIndex >= m_localMatrices.size(), "Out of bounds!");
         
         Vec2DF sizeV = (Vec2DF)_glyph.bounds.size;
@@ -717,6 +720,9 @@ namespace Maze
                 _glyph.textureCoords.position.y,
                 _glyph.textureCoords.position.y + _glyph.textureCoords.size.y));
 
+        m_meshRenderer->setUV1(
+            _charIndex,
+            Vec4DF((F32)textureIndex, 0.0f, 0.0f, 0.0f));
     }
 
     //////////////////////////////////////////
