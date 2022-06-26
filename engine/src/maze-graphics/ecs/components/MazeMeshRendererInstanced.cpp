@@ -57,7 +57,8 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, enabled, true, getEnabled, setEnabled),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Mat4DF>, modelMatricies, Vector<Mat4DF>(), getModelMatrices, setModelMatrices),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Vec4DF>, colors, Vector<Vec4DF>(), getColors, setColors),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Vec4DF>, uvs, Vector<Vec4DF>(), getUVs, setUVs));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Vec4DF>, uv0, Vector<Vec4DF>(), getUV0, setUV0),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Vec4DF>, uv1, Vector<Vec4DF>(), getUV1, setUV1));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(MeshRendererInstanced);
@@ -186,7 +187,8 @@ namespace Maze
     {
         m_modelMatricies.resize(_count);
         m_colors.resize(_count);
-        m_uvs.resize(_count);
+        m_uv0.resize(_count);
+        m_uv1.resize(_count);
     }
     
     

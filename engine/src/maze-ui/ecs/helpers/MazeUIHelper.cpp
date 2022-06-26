@@ -53,6 +53,7 @@
 #include "maze-ui/ecs/components/MazeSystemTextEditBox2D.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/managers/MazeFontManager.hpp"
+#include "maze-ui/managers/MazeFontMaterialManager.hpp"
 #include "maze-ui/ecs/components/MazeToggleButton2D.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
@@ -1959,7 +1960,7 @@ namespace Maze
             textRenderer->setFontSize(_fontSize);
             textRenderer->setHorizontalAlignment(_horizontalAlignment);
             textRenderer->setVerticalAlignment(_verticalAlignment);
-            textRenderer->setFont(FontManager::GetInstancePtr()->getDefaultFont());
+            textRenderer->setFontMaterial(FontMaterialManager::GetInstancePtr()->getDefaultFontMaterial());
 
             Transform2DPtr transform = textRendererEntity->ensureComponent<Transform2D>();
             transform->setParent(_parent);

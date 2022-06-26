@@ -87,6 +87,13 @@ namespace Maze
         //////////////////////////////////////////
         String const& getFontMaterialName(FontMaterial const* _font);
 
+
+        //////////////////////////////////////////
+        inline FontMaterialPtr const& getDefaultFontMaterial() const { return m_defaultFontMaterial; }
+
+        //////////////////////////////////////////
+        inline void setDefaultFontMaterial(FontMaterialPtr const& _value) { m_defaultFontMaterial = _value; }
+
     protected:
 
         //////////////////////////////////////////
@@ -100,6 +107,8 @@ namespace Maze
         static FontMaterialManager* s_instance;
 
         StringKeyMap<FontMaterialPtr> m_fontMaterialsByName;
+
+        FontMaterialPtr m_defaultFontMaterial;
     };
     
 

@@ -96,22 +96,22 @@ namespace Maze
         {
             m_instanceStreamModelMatrix = InstanceStreamModelMatrixOpenGL::Create(rsOpenGL, _contextOpenGL, InstanceStreamModeOpenGL::UniformTexture);
             m_instanceStreamColor = InstanceStreamColorOpenGL::Create(rsOpenGL, _contextOpenGL, InstanceStreamModeOpenGL::UniformTexture);
-            m_instanceStreamUV = InstanceStreamUVOpenGL::Create(rsOpenGL, _contextOpenGL, InstanceStreamModeOpenGL::UniformTexture);
+            m_instanceStreamUV0 = InstanceStreamUVOpenGL::Create(rsOpenGL, _contextOpenGL, InstanceStreamModeOpenGL::UniformTexture);
 
             instanceStreams.push_back(m_instanceStreamModelMatrix);
             instanceStreams.push_back(m_instanceStreamColor);
-            instanceStreams.push_back(m_instanceStreamUV);
+            instanceStreams.push_back(m_instanceStreamUV0);
         }
         else
         if (m_context->getModelMatricesArchitecture() == ModelMatricesArchitectureOpenGL::UniformArray)
         {
             m_instanceStreamModelMatrix = InstanceStreamModelMatrixOpenGL::Create(rsOpenGL, _contextOpenGL, InstanceStreamModeOpenGL::UniformArray);
             m_instanceStreamColor = InstanceStreamColorOpenGL::Create(rsOpenGL, _contextOpenGL, InstanceStreamModeOpenGL::UniformArray);
-            m_instanceStreamUV = InstanceStreamUVOpenGL::Create(rsOpenGL, _contextOpenGL, InstanceStreamModeOpenGL::UniformArray);
+            m_instanceStreamUV0 = InstanceStreamUVOpenGL::Create(rsOpenGL, _contextOpenGL, InstanceStreamModeOpenGL::UniformArray);
 
             instanceStreams.push_back(m_instanceStreamModelMatrix);
             instanceStreams.push_back(m_instanceStreamColor);
-            instanceStreams.push_back(m_instanceStreamUV);
+            instanceStreams.push_back(m_instanceStreamUV0);
         }
 
         m_maxInstancesPerDrawCall = m_instanceStreamModelMatrix->getMaxInstancesPerDrawCall();
@@ -140,7 +140,7 @@ namespace Maze
         processDrawBegin();
         m_instanceStreamModelMatrix->setOffset(0);        
         m_instanceStreamColor->setOffset(0);
-        m_instanceStreamUV->setOffset(0);
+        m_instanceStreamUV0->setOffset(0);
 
         m_renderCommandsBuffer.executeAndClear(
             [&](RenderCommand* _command)
@@ -175,8 +175,8 @@ namespace Maze
                             if (command->useColorStream)
                                 m_instanceStreamColor->castRaw<InstanceStreamColorOpenGL>()->prepareForRender(command->count);
 
-                            if (command->useUVStream)
-                                m_instanceStreamUV->castRaw<InstanceStreamUVOpenGL>()->prepareForRender(command->count);
+                            if (command->useUV0Stream)
+                                m_instanceStreamUV0->castRaw<InstanceStreamUVOpenGL>()->prepareForRender(command->count);
                         
                             ShaderOpenGL* shaderOpenGL = static_cast<ShaderOpenGL*>(m_context->getCurrentShader());
                             shaderOpenGL->bindTextures();
@@ -220,8 +220,8 @@ namespace Maze
                         if (command->useColorStream)
                             m_instanceStreamColor->setOffset(m_instanceStreamColor->getOffset() + command->count);
 
-                        if (command->useUVStream)
-                            m_instanceStreamUV->setOffset(m_instanceStreamUV->getOffset() + command->count);
+                        if (command->useUV0Stream)
+                            m_instanceStreamUV0->setOffset(m_instanceStreamUV0->getOffset() + command->count);
 
                         break;
                     }
@@ -315,7 +315,7 @@ namespace Maze
 
         m_instanceStreamModelMatrix->setOffset(0);
         m_instanceStreamColor->setOffset(0);
-        m_instanceStreamUV->setOffset(0);
+        m_instanceStreamUV0->setOffset(0);
     }
 
     //////////////////////////////////////////
@@ -369,7 +369,7 @@ namespace Maze
         // Stream data
         m_instanceStreamModelMatrix->castRaw<InstanceStreamModelMatrixOpenGL>()->bindRenderPass();
         m_instanceStreamColor->castRaw<InstanceStreamColorOpenGL>()->bindRenderPass();
-        m_instanceStreamUV->castRaw<InstanceStreamUVOpenGL>()->bindRenderPass();
+        m_instanceStreamUV0->castRaw<InstanceStreamUVOpenGL>()->bindRenderPass();
         
 
         // View matrix
@@ -434,7 +434,7 @@ namespace Maze
 
         m_instanceStreamModelMatrix->castRaw<InstanceStreamModelMatrixOpenGL>()->processDrawBegin();
         m_instanceStreamColor->castRaw<InstanceStreamColorOpenGL>()->processDrawBegin();
-        m_instanceStreamUV->castRaw<InstanceStreamUVOpenGL>()->processDrawBegin();
+        m_instanceStreamUV0->castRaw<InstanceStreamUVOpenGL>()->processDrawBegin();
         
     }
 

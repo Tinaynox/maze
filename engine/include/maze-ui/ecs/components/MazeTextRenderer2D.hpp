@@ -35,6 +35,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeAlignment2D.hpp"
 #include "maze-ui/fonts/MazeFont.hpp"
+#include "maze-ui/fonts/MazeFontMaterial.hpp"
 
 
 //////////////////////////////////////////
@@ -102,6 +103,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API TextRenderer2D
         : public Component
+        , public MultiDelegateCallbackReceiver
     {
     public:
 
@@ -168,10 +170,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline FontPtr const& getFont() const { return m_font; }
+        inline FontMaterialPtr const& getFontMaterial() const { return m_fontMaterial; }
 
         //////////////////////////////////////////
-        void setFont(FontPtr const& _systemFont);
+        void setFontMaterial(FontMaterialPtr const& _fontMaterial);
 
 
         //////////////////////////////////////////
@@ -399,6 +401,12 @@ namespace Maze
             FontGlyph const& _glyph,
             F32 _outlineThickness = 0.0f);
 
+        //////////////////////////////////////////
+        void notifyFontMaterialTexturesChanged();
+
+        //////////////////////////////////////////
+        void notifyFontMaterialMaterialChanged();
+
     protected:
         RenderSystem* m_renderSystem = nullptr;
 
@@ -415,7 +423,7 @@ namespace Maze
 
         ColorU32 m_color = ColorU32::c_white;
 
-        FontPtr m_font;
+        FontMaterialPtr m_fontMaterial;
         U32 m_fontSize = 18u;
 
         U32 m_styles = TextRenderer2DStyle::ColorTags;
@@ -431,7 +439,7 @@ namespace Maze
         F32 m_outlineThickness = 0.0f;
         ColorU32 m_outlineColor = ColorU32::c_white;
 
-        MaterialPtr m_material;
+        // MaterialPtr m_material;
     private:
         Vector<Mat4DF> m_localMatrices;
     };

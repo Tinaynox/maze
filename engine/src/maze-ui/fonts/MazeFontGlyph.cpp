@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeUIHeader.hpp"
 #include "maze-ui/fonts/MazeFontGlyph.hpp"
+#include "maze-ui/fonts/MazeTrueTypeFont.hpp"
 
 
 //////////////////////////////////////////
@@ -53,6 +54,16 @@ namespace Maze
         return glyph;
     }
 
+    //////////////////////////////////////////
+    void SpriteFontGlyphData::collectAllTextures(U32 _fontSize, Vector<Texture2DPtr>& _result) const
+    {
+        if (spriteGlyph.texture)
+        {
+            if (std::find(_result.begin(), _result.end(), spriteGlyph.texture) == _result.end())
+                _result.push_back(spriteGlyph.texture);
+        }
+    }
+
 
     //////////////////////////////////////////
     // Struct EntityFontGlyphData
@@ -78,6 +89,34 @@ namespace Maze
     {
         static EntityPtr const nullPointer;
         return nullPointer;
+    }
+
+
+    //////////////////////////////////////////
+    // Struct FontGlyphStorageData
+    //
+    //////////////////////////////////////////
+    void FontGlyphStorageData::collectAllTextures(U32 _fontSize, Vector<Texture2DPtr>& _result) const
+    {
+        if (trueTypeFont)
+            trueTypeFont->collectAllTextures(_fontSize, _result);
+        spriteData.collectAllTextures(_fontSize, _result);
+    }
+
+    //////////////////////////////////////////
+    void FontGlyphStorageData::setTrueTypeFont(TrueTypeFontPtr const& _trueTypeFont)
+    {
+        if (trueTypeFont)
+        {
+            trueTypeFont->eventTexturesChanged.unsubscribe(this);
+        }
+
+        trueTypeFont = _trueTypeFont;
+
+        if (trueTypeFont)
+        {
+            trueTypeFont->eventTexturesChanged.subscribe(this, &FontGlyphStorageData::notifyTexturesChanged);
+        }
     }
     
 

@@ -50,7 +50,7 @@ namespace Maze
     //////////////////////////////////////////
     Font::~Font()
     {
-        
+        unsubscribeGlyphsData();
     }
 
     //////////////////////////////////////////
@@ -91,6 +91,8 @@ namespace Maze
         if (!_assetFile->readToXMLDocument(doc))
             return false;
 
+        unsubscribeGlyphsData();
+
         tinyxml2::XMLNode* rootNode = doc.FirstChild();
         MAZE_ERROR_RETURN_VALUE_IF(!rootNode, false, "File '%s' loading error - empty root node!", _assetFile->getFileName().c_str());
         
@@ -116,101 +118,70 @@ namespace Maze
                 if (fileStr)
                 {
                     m_defaultGlyphsData.type = FontGlyphStorageType::TrueTypeFont;
-                    m_defaultGlyphsData.trueTypeFont = TrueTypeFontManager::GetInstancePtr()->getTrueTypeFont(fileStr);
+                    m_defaultGlyphsData.setTrueTypeFont(TrueTypeFontManager::GetInstancePtr()->getTrueTypeFont(fileStr));
                 }
             }
             else
-                if (strcmp(childElement->Name(), "TrueType") == 0)
+            if (strcmp(childElement->Name(), "TrueType") == 0)
+            {
+                CString fileStr = childElement->Attribute("file");
+                if (fileStr)
                 {
-                    CString fileStr = childElement->Attribute("file");
-                    if (fileStr)
+                    const TrueTypeFontPtr& trueTypeFont = TrueTypeFontManager::GetInstancePtr()->getTrueTypeFont(fileStr);
+                    if (trueTypeFont)
                     {
-                        const TrueTypeFontPtr& trueTypeFont = TrueTypeFontManager::GetInstancePtr()->getTrueTypeFont(fileStr);
-                        if (trueTypeFont)
-                        {
 
-                            tinyxml2::XMLNode* symbolsNode = childNode->FirstChild();
-                            while (symbolsNode)
+                        tinyxml2::XMLNode* symbolsNode = childNode->FirstChild();
+                        while (symbolsNode)
+                        {
+                            tinyxml2::XMLElement* symbolsElement = symbolsNode->ToElement();
+                            if (!symbolsElement)
                             {
-                                tinyxml2::XMLElement* symbolsElement = symbolsNode->ToElement();
-                                if (!symbolsElement)
-                                {
-                                    symbolsNode = symbolsNode->NextSibling();
-                                    continue;
-                                }
-
-                                CString fromStr = symbolsElement->Attribute("from");
-                                CString toStr = symbolsElement->Attribute("to");
-                                if (fromStr && toStr)
-                                {
-                                    U32 from = 0;
-                                    U32 to = 0;
-                                    {
-                                        StringStream ss;
-                                        ss << std::hex << fromStr;
-                                        ss >> from;
-                                    }
-                                    {
-                                        StringStream ss;
-                                        ss << std::hex << toStr;
-                                        ss >> to;
-                                    }
-
-                                    FontGlyphStorageData glyphsData;
-                                    glyphsData.fromCodePoints = from;
-                                    glyphsData.toCodePoints = to;
-                                    glyphsData.type = FontGlyphStorageType::TrueTypeFont;
-                                    glyphsData.trueTypeFont = trueTypeFont;
-                                    m_glyphsData.push_back(glyphsData);
-                                    m_glyphsMap.clear();
-                                }
-
                                 symbolsNode = symbolsNode->NextSibling();
+                                continue;
                             }
+
+                            CString fromStr = symbolsElement->Attribute("from");
+                            CString toStr = symbolsElement->Attribute("to");
+                            if (fromStr && toStr)
+                            {
+                                U32 from = 0;
+                                U32 to = 0;
+                                {
+                                    StringStream ss;
+                                    ss << std::hex << fromStr;
+                                    ss >> from;
+                                }
+                                {
+                                    StringStream ss;
+                                    ss << std::hex << toStr;
+                                    ss >> to;
+                                }
+
+                                FontGlyphStorageData glyphsData;
+                                glyphsData.fromCodePoints = from;
+                                glyphsData.toCodePoints = to;
+                                glyphsData.type = FontGlyphStorageType::TrueTypeFont;
+                                glyphsData.setTrueTypeFont(trueTypeFont);
+                                m_glyphsData.push_back(glyphsData);
+                                m_glyphsMap.clear();
+                            }
+
+                            symbolsNode = symbolsNode->NextSibling();
                         }
                     }
                 }
-                else
-                if (strcmp(childElement->Name(), "Sprite") == 0)
+            }
+            else
+            if (strcmp(childElement->Name(), "Sprite") == 0)
+            {
+                CString symbolStr = childElement->Attribute("symbol");
+                CString spriteStr = childElement->Attribute("sprite");
+
+                if (symbolStr && spriteStr)
                 {
-                    CString symbolStr = childElement->Attribute("symbol");
-                    CString spriteStr = childElement->Attribute("sprite");
-
-                    if (symbolStr && spriteStr)
-                    {
-                        SpritePtr const& sprite = SpriteManager::GetCurrentInstance()->getSprite(spriteStr);
-                        if (sprite)
-                        {
-                            U32 symbol = 0;
-                            StringStream ss;
-                            ss << std::hex << symbolStr;
-                            ss >> symbol;
-
-                            FontGlyphStorageData glyphsData;
-                            glyphsData.fromCodePoints = symbol;
-                            glyphsData.toCodePoints = symbol;
-                            glyphsData.type = FontGlyphStorageType::Sprite;
-                            glyphsData.spriteData.spriteGlyphFontSize = StringHelper::StringToU32(childElement->Attribute("fontSize"));
-                            glyphsData.spriteData.spriteGlyph.advance = StringHelper::StringToF32(childElement->Attribute("advance"));
-
-                            glyphsData.spriteData.spriteGlyph.bounds.position = sprite->getColorOffset() + Vec2DF::FromString(childElement->Attribute("boundsPosition"));
-                            glyphsData.spriteData.spriteGlyph.bounds.size = sprite->getColorSize();
-                            glyphsData.spriteData.spriteGlyph.texture = sprite->getTexture();
-
-                            glyphsData.spriteData.spriteGlyph.textureCoords.position = sprite->getTextureCoordLB();
-                            glyphsData.spriteData.spriteGlyph.textureCoords.size = sprite->getTextureCoordSize();
-                            m_glyphsData.push_back(glyphsData);
-                            m_glyphsMap.clear();
-                        }
-                    }
-                }
-                else
-                if (strcmp(childElement->Name(), "Entity") == 0)
-                {
-                    CString symbolStr = childElement->Attribute("symbol");
-                    CString prefabStr = childElement->Attribute("prefab");
-
-                    if (symbolStr && prefabStr)
+                    SpritePtr const& sprite = SpriteManager::GetCurrentInstance()->getSprite(spriteStr);
+                    if (sprite)
                     {
                         U32 symbol = 0;
                         StringStream ss;
@@ -220,21 +191,54 @@ namespace Maze
                         FontGlyphStorageData glyphsData;
                         glyphsData.fromCodePoints = symbol;
                         glyphsData.toCodePoints = symbol;
-                        glyphsData.type = FontGlyphStorageType::Entity;
-                        glyphsData.entityData.prefabName = prefabStr;
-                        glyphsData.entityData.prefab = nullptr; // prefabStr
-                        glyphsData.entityData.prefabGlyphFontSize = StringHelper::StringToU32(childElement->Attribute("fontSize"));
-                        glyphsData.entityData.prefabGlyph.advance = StringHelper::StringToF32(childElement->Attribute("advance"));
-                        glyphsData.entityData.prefabGlyph.bounds.position = Vec2DF::FromString(childElement->Attribute("boundsPosition"));
-                        glyphsData.entityData.prefabGlyph.bounds.size = Vec2DF::FromString(childElement->Attribute("boundsSize"));
+                        glyphsData.type = FontGlyphStorageType::Sprite;
+                        glyphsData.spriteData.spriteGlyphFontSize = StringHelper::StringToU32(childElement->Attribute("fontSize"));
+                        glyphsData.spriteData.spriteGlyph.advance = StringHelper::StringToF32(childElement->Attribute("advance"));
+
+                        glyphsData.spriteData.spriteGlyph.bounds.position = sprite->getColorOffset() + Vec2DF::FromString(childElement->Attribute("boundsPosition"));
+                        glyphsData.spriteData.spriteGlyph.bounds.size = sprite->getColorSize();
+                        glyphsData.spriteData.spriteGlyph.texture = sprite->getTexture();
+
+                        glyphsData.spriteData.spriteGlyph.textureCoords.position = sprite->getTextureCoordLB();
+                        glyphsData.spriteData.spriteGlyph.textureCoords.size = sprite->getTextureCoordSize();
                         m_glyphsData.push_back(glyphsData);
                         m_glyphsMap.clear();
                     }
                 }
+            }
+            else
+            if (strcmp(childElement->Name(), "Entity") == 0)
+            {
+                CString symbolStr = childElement->Attribute("symbol");
+                CString prefabStr = childElement->Attribute("prefab");
+
+                if (symbolStr && prefabStr)
+                {
+                    U32 symbol = 0;
+                    StringStream ss;
+                    ss << std::hex << symbolStr;
+                    ss >> symbol;
+
+                    FontGlyphStorageData glyphsData;
+                    glyphsData.fromCodePoints = symbol;
+                    glyphsData.toCodePoints = symbol;
+                    glyphsData.type = FontGlyphStorageType::Entity;
+                    glyphsData.entityData.prefabName = prefabStr;
+                    glyphsData.entityData.prefab = nullptr; // prefabStr
+                    glyphsData.entityData.prefabGlyphFontSize = StringHelper::StringToU32(childElement->Attribute("fontSize"));
+                    glyphsData.entityData.prefabGlyph.advance = StringHelper::StringToF32(childElement->Attribute("advance"));
+                    glyphsData.entityData.prefabGlyph.bounds.position = Vec2DF::FromString(childElement->Attribute("boundsPosition"));
+                    glyphsData.entityData.prefabGlyph.bounds.size = Vec2DF::FromString(childElement->Attribute("boundsSize"));
+                    m_glyphsData.push_back(glyphsData);
+                    m_glyphsMap.clear();
+                }
+            }
 
 
             childNode = childNode->NextSibling();
         }
+
+        subscribeGlyphsData();
 
         return true;
     }
@@ -273,8 +277,8 @@ namespace Maze
 
         if (!_storage)
         {
-            if (m_defaultGlyphsData.trueTypeFont)
-                return m_defaultGlyphsData.trueTypeFont->getGlyph(_codePoint, _fontSize);
+            if (m_defaultGlyphsData.getTrueTypeFont())
+                return m_defaultGlyphsData.getTrueTypeFont()->getGlyph(_codePoint, _fontSize);
 
             return nullGlyph;
         }
@@ -282,7 +286,7 @@ namespace Maze
         switch (_storage->type)
         {
             case FontGlyphStorageType::None: return nullGlyph;
-            case FontGlyphStorageType::TrueTypeFont: return _storage->trueTypeFont->getGlyph(_codePoint, _fontSize);
+            case FontGlyphStorageType::TrueTypeFont: return _storage->getTrueTypeFont()->getGlyph(_codePoint, _fontSize);
             case FontGlyphStorageType::Sprite: return _storage->spriteData.getGlyph(_fontSize);
             case FontGlyphStorageType::Entity: return _storage->entityData.getGlyph(_fontSize);
             default:
@@ -302,8 +306,8 @@ namespace Maze
 
         if (!_storage)
         {
-            if (m_defaultGlyphsData.trueTypeFont)
-                return m_defaultGlyphsData.trueTypeFont->getGlyph(_codePoint, _fontSize, _ttfPage);
+            if (m_defaultGlyphsData.getTrueTypeFont())
+                return m_defaultGlyphsData.getTrueTypeFont()->getGlyph(_codePoint, _fontSize, _ttfPage);
 
             return nullGlyph;
         }
@@ -311,7 +315,7 @@ namespace Maze
         switch (_storage->type)
         {
             case FontGlyphStorageType::None: return nullGlyph;
-            case FontGlyphStorageType::TrueTypeFont: return _storage->trueTypeFont->getGlyph(_codePoint, _fontSize, _ttfPage);
+            case FontGlyphStorageType::TrueTypeFont: return _storage->getTrueTypeFont()->getGlyph(_codePoint, _fontSize, _ttfPage);
             case FontGlyphStorageType::Sprite: return _storage->spriteData.getGlyph(_fontSize);
             case FontGlyphStorageType::Entity: return _storage->entityData.getGlyph(_fontSize);
             default:
@@ -338,8 +342,8 @@ namespace Maze
 
         if (!_storage)
         {
-            if (m_defaultGlyphsData.trueTypeFont)
-                return m_defaultGlyphsData.trueTypeFont->getOutlinedGlyph(_codePoint, _fontSize, _outlineThickness);
+            if (m_defaultGlyphsData.getTrueTypeFont())
+                return m_defaultGlyphsData.getTrueTypeFont()->getOutlinedGlyph(_codePoint, _fontSize, _outlineThickness);
 
             return nullGlyph;
         }
@@ -347,7 +351,7 @@ namespace Maze
         switch (_storage->type)
         {
             case FontGlyphStorageType::None: return nullGlyph;
-            case FontGlyphStorageType::TrueTypeFont: return _storage->trueTypeFont->getOutlinedGlyph(_codePoint, _fontSize, _outlineThickness);
+            case FontGlyphStorageType::TrueTypeFont: return _storage->getTrueTypeFont()->getOutlinedGlyph(_codePoint, _fontSize, _outlineThickness);
             case FontGlyphStorageType::Sprite: return _storage->spriteData.getGlyph(_fontSize);
             case FontGlyphStorageType::Entity: return _storage->entityData.getGlyph(_fontSize);
             default:
@@ -367,8 +371,8 @@ namespace Maze
 
         if (!_storage)
         {
-            if (m_defaultGlyphsData.trueTypeFont)
-                return m_defaultGlyphsData.trueTypeFont->getOutlinedGlyph(_codePoint, _fontSize, _outlineThickness, _ttfPage);
+            if (m_defaultGlyphsData.getTrueTypeFont())
+                return m_defaultGlyphsData.getTrueTypeFont()->getOutlinedGlyph(_codePoint, _fontSize, _outlineThickness, _ttfPage);
 
             return nullGlyph;
         }
@@ -376,7 +380,7 @@ namespace Maze
         switch (_storage->type)
         {
             case FontGlyphStorageType::None: return nullGlyph;
-            case FontGlyphStorageType::TrueTypeFont: return _storage->trueTypeFont->getOutlinedGlyph(_codePoint, _fontSize, _outlineThickness, _ttfPage);
+            case FontGlyphStorageType::TrueTypeFont: return _storage->getTrueTypeFont()->getOutlinedGlyph(_codePoint, _fontSize, _outlineThickness, _ttfPage);
             case FontGlyphStorageType::Sprite: return _storage->spriteData.getGlyph(_fontSize);
             case FontGlyphStorageType::Entity: return _storage->entityData.getGlyph(_fontSize);
             default:
@@ -399,37 +403,37 @@ namespace Maze
     //////////////////////////////////////////
     F32 Font::getLineSpacing(U32 _fontSize) const
     {
-        if (!m_defaultGlyphsData.trueTypeFont)
+        if (!m_defaultGlyphsData.getTrueTypeFont())
             return _fontSize * 1.5f;
 
-        return m_defaultGlyphsData.trueTypeFont->getLineSpacing(_fontSize);
+        return m_defaultGlyphsData.getTrueTypeFont()->getLineSpacing(_fontSize);
     }
 
     //////////////////////////////////////////
     F32 Font::getKerning(U32 _first, U32 _second, U32 _fontSize) const
     {
-        if (!m_defaultGlyphsData.trueTypeFont)
+        if (!m_defaultGlyphsData.getTrueTypeFont())
             return 0.0f;
 
-        return m_defaultGlyphsData.trueTypeFont->getKerning(_first, _second, _fontSize);
+        return m_defaultGlyphsData.getTrueTypeFont()->getKerning(_first, _second, _fontSize);
     }
 
     //////////////////////////////////////////
     F32 Font::getUnderlinePosition(U32 _fontSize) const
     {
-        if (!m_defaultGlyphsData.trueTypeFont)
+        if (!m_defaultGlyphsData.getTrueTypeFont())
             return 0.0f;
 
-        return m_defaultGlyphsData.trueTypeFont->getUnderlinePosition(_fontSize);
+        return m_defaultGlyphsData.getTrueTypeFont()->getUnderlinePosition(_fontSize);
     }
 
     //////////////////////////////////////////
     F32 Font::getUnderlineThickness(U32 _fontSize) const
     {
-        if (!m_defaultGlyphsData.trueTypeFont)
+        if (!m_defaultGlyphsData.getTrueTypeFont())
             return 1.0f;
 
-        return m_defaultGlyphsData.trueTypeFont->getUnderlineThickness(_fontSize);
+        return m_defaultGlyphsData.getTrueTypeFont()->getUnderlineThickness(_fontSize);
     }
 
     //////////////////////////////////////////
@@ -483,6 +487,39 @@ namespace Maze
     void Font::updateMaterialTextures()
     {
         TrueTypeFontPtr const& defaultFont = getDefaultFont();
+    }
+
+    //////////////////////////////////////////
+    void Font::subscribeGlyphsData()
+    {
+        for (FontGlyphStorageData& glyphsData : m_glyphsData)
+            glyphsData.eventTexturesChanged.subscribe(this, &Font::notifyTexturesChanged);
+
+        m_defaultGlyphsData.eventTexturesChanged.subscribe(this, &Font::notifyTexturesChanged);
+    }
+
+    //////////////////////////////////////////
+    void Font::unsubscribeGlyphsData()
+    {
+        for (FontGlyphStorageData& glyphsData : m_glyphsData)
+            glyphsData.eventTexturesChanged.unsubscribe(this);
+
+        m_defaultGlyphsData.eventTexturesChanged.unsubscribe(this);
+    }
+
+    //////////////////////////////////////////
+    void Font::collectAllTextures(U32 _fontSize, Vector<Texture2DPtr>& _result) const
+    {
+        for (FontGlyphStorageData const& data : m_glyphsData)
+            data.collectAllTextures(_fontSize, _result);
+
+        m_defaultGlyphsData.collectAllTextures(_fontSize, _result);
+    }
+
+    //////////////////////////////////////////
+    void Font::notifyTexturesChanged()
+    {
+        eventTexturesChanged();
     }
 
 } // namespace Maze

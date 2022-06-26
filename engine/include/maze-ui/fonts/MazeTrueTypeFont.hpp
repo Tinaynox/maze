@@ -195,6 +195,15 @@ namespace Maze
         ////////////////////////////////////
         virtual F32 getUnderlineThickness(U32 _fontSize) MAZE_ABSTRACT;
 
+
+        //////////////////////////////////////////
+        virtual void collectAllTextures(U32 _fontSize, Vector<Texture2DPtr>& _result) MAZE_ABSTRACT;
+
+    public:
+
+        //////////////////////////////////////////
+        MultiDelegate<> eventTexturesChanged;
+
     protected:
 
         //////////////////////////////////////////

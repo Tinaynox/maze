@@ -81,6 +81,12 @@ namespace Maze
         inline ShaderUniformType const& getType() const { return m_value.getType(); }
 
         //////////////////////////////////////////
+        inline void* getPtr() const { return m_value.getPtr(); }
+
+        //////////////////////////////////////////
+        inline U32 getCount() const { return m_value.getCount(); }
+
+        //////////////////////////////////////////
         inline S32 getS32() const { return m_value.getS32(); }
 
         //////////////////////////////////////////
@@ -180,6 +186,9 @@ namespace Maze
         {
             return set(_texture2D->cast<Texture2D>());
         }
+
+        //////////////////////////////////////////
+        bool set(Texture2D** _textures, U32 _count);
 
         //////////////////////////////////////////
         bool set(TextureCubePtr const& _textureCube);
@@ -307,6 +316,7 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual void uploadArrayUniform(Mat4DF const* _matrices, Size _count) MAZE_ABSTRACT;
+
     
     protected:
         ShaderWPtr m_shader;

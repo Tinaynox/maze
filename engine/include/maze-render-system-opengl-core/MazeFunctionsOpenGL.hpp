@@ -135,6 +135,10 @@ MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR* mzglUniform1fv)
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR* mzglUniform2fv)(MZGLint _location, MZGLsizei _count, MZGLfloat const* _value);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR* mzglUniform3fv)(MZGLint _location, MZGLsizei _count, MZGLfloat const* _value);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR* mzglUniform4fv)(MZGLint _location, MZGLsizei _count, MZGLfloat const* _value);
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR* mzglUniform1iv)(MZGLint _location, MZGLsizei _count, MZGLint const* _value);
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR* mzglUniform2iv)(MZGLint _location, MZGLsizei _count, MZGLint const* _value);
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR* mzglUniform3iv)(MZGLint _location, MZGLsizei _count, MZGLint const* _value);
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR* mzglUniform4iv)(MZGLint _location, MZGLsizei _count, MZGLint const* _value);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglUniformMatrix3fv)(MZGLint _location, MZGLsizei _count, MZGLboolean _transpose, const MZGLfloat* _value);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglUniformMatrix4fv)(MZGLint _location, MZGLsizei _count, MZGLboolean _transpose, const MZGLfloat* _value);
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API extern void (MAZE_GL_FUNCPTR *mzglGetVertexAttribiv)(MZGLuint _index, MZGLenum _pname, MZGLint* _params);

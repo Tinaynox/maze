@@ -272,7 +272,7 @@ namespace Maze
                                         count,
                                         meshRenderer->getModelMatricesData(),
                                         meshRenderer->getColorsData(),
-                                        meshRenderer->getUVsData());
+                                        meshRenderer->getUV0Data());
                                 }
                             }
 

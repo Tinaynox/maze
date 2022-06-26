@@ -84,6 +84,9 @@ namespace Maze
         //////////////////////////////////////////
         FontGlyph const& getGlyph(U32 _fontSize);
 
+        //////////////////////////////////////////
+        void collectAllTextures(U32 _fontSize, Vector<Texture2DPtr>& _result) const;
+
         U32 spriteGlyphFontSize;
         FontGlyph spriteGlyph;
         Map<U32, FontGlyph> glyphs;
@@ -115,6 +118,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     struct MAZE_UI_API FontGlyphStorageData
+        : public MultiDelegateCallbackReceiver
     {
         //////////////////////////////////////////
         inline FontGlyphStorageData(FontGlyphStorageType _type = FontGlyphStorageType::None)
@@ -125,19 +129,63 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        virtual ~FontGlyphStorageData()
+        {
+            setTrueTypeFont(nullptr);
+        }
+
+        //////////////////////////////////////////
+        inline FontGlyphStorageData(FontGlyphStorageData const& _other)
+        {
+            fromCodePoints = _other.fromCodePoints;
+            toCodePoints = _other.toCodePoints;
+            type = _other.type;
+
+            spriteData = _other.spriteData;
+            entityData = _other.entityData;
+
+            setTrueTypeFont(_other.trueTypeFont);
+        }
+
+        //////////////////////////////////////////
         inline bool contains(U32 _codePoint) const
         {
             return (_codePoint >= fromCodePoints) && (_codePoint <= toCodePoints);
         }
 
+        //////////////////////////////////////////
+        void collectAllTextures(U32 _fontSize, Vector<Texture2DPtr>& _result) const;
+
+
+        //////////////////////////////////////////
+        void setTrueTypeFont(TrueTypeFontPtr const& _trueTypeFont);
+
+        //////////////////////////////////////////
+        inline TrueTypeFontPtr const& getTrueTypeFont() const { return trueTypeFont; }
+
+    public:
+
+        //////////////////////////////////////////
+        MultiDelegate<> eventTexturesChanged;
+
+    private:
+
+        //////////////////////////////////////////
+        void notifyTexturesChanged()
+        {
+            eventTexturesChanged();
+        }
+
+    public:
         U32 fromCodePoints;
         U32 toCodePoints;
         FontGlyphStorageType type;
 
-
-        TrueTypeFontPtr trueTypeFont;
         SpriteFontGlyphData spriteData;
         EntityFontGlyphData entityData;
+
+    private:
+        TrueTypeFontPtr trueTypeFont;
     };
     
 

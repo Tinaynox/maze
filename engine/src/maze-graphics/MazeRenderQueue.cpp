@@ -163,28 +163,28 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderQueue::pushInstanceUV(
+    void RenderQueue::pushInstanceUV0(
         Vec4DF const& _uv)
     {
-        S32 offset = m_instanceStreamUV->getOffset();
+        S32 offset = m_instanceStreamUV0->getOffset();
 
-        MAZE_DEBUG_ERROR_RETURN_IF(offset >= (S32)m_instanceStreamUV->getDataSize(), "Index is out of bounds!");
+        MAZE_DEBUG_ERROR_RETURN_IF(offset >= (S32)m_instanceStreamUV0->getDataSize(), "Index is out of bounds!");
 
-        m_instanceStreamUV->setData(offset, _uv);
-        m_instanceStreamUV->setOffset(++offset);
+        m_instanceStreamUV0->setData(offset, _uv);
+        m_instanceStreamUV0->setOffset(++offset);
     }
 
     //////////////////////////////////////////
-    void RenderQueue::pushInstanceUVs(
+    void RenderQueue::pushInstanceUV0(
         Vec4DF const* _uvs,
         S32 _count)
     {
-        S32 offset = m_instanceStreamUV->getOffset();
+        S32 offset = m_instanceStreamUV0->getOffset();
 
-        MAZE_DEBUG_ERROR_RETURN_IF(offset + _count > (S32)m_instanceStreamUV->getDataSize(), "Index is out of bounds!");
+        MAZE_DEBUG_ERROR_RETURN_IF(offset + _count > (S32)m_instanceStreamUV0->getDataSize(), "Index is out of bounds!");
 
-        m_instanceStreamUV->setData(offset, _uvs, _count);
-        m_instanceStreamUV->setOffset(offset + _count);
+        m_instanceStreamUV0->setData(offset, _uvs, _count);
+        m_instanceStreamUV0->setOffset(offset + _count);
     }
 
 } // namespace Maze

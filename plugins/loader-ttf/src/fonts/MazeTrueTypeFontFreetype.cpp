@@ -166,7 +166,10 @@ namespace Maze
     {
         TTFPagePtr<U32>& page = m_pages[_fontSize];
         if (!page)
+        {
             page = std::make_shared<TTFPage<U32>>();
+            eventTexturesChanged();
+        }
         return page;
     }
 
@@ -175,7 +178,10 @@ namespace Maze
     {
         TTFPagePtr<U64>& page = m_outlineThicknessPages[_fontSize];
         if (!page)
+        {
             page = std::make_shared<TTFPage<U64>>();
+            eventTexturesChanged();
+        }
         return page;
     }
 
@@ -299,6 +305,35 @@ namespace Maze
         }
 
         return 0.0f;
+    }
+
+    //////////////////////////////////////////
+    void TrueTypeFontFreetype::collectAllTextures(U32 _fontSize, Vector<Texture2DPtr>& _result)
+    {
+        {
+            auto it = m_pages.find(_fontSize);
+            if (it != m_pages.end())
+            {
+                TTFPagePtr<U32> const& page = it->second;
+                if (page->texture)
+                {
+                    if (std::find(_result.begin(), _result.end(), page->texture) == _result.end())
+                        _result.push_back(page->texture);
+                }
+            }
+        }
+        {
+            auto it = m_outlineThicknessPages.find(_fontSize);
+            if (it != m_outlineThicknessPages.end())
+            {
+                TTFPagePtr<U64> const& page = it->second;
+                if (page->texture)
+                {
+                    if (std::find(_result.begin(), _result.end(), page->texture) == _result.end())
+                        _result.push_back(page->texture);
+                }
+            }            
+        }
     }
 
     ////////////////////////////////////

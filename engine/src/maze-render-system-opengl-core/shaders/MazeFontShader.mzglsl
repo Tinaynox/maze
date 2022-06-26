@@ -70,7 +70,7 @@ R"(
 R"(
 
     //////////////////////////////////////////
-    uniform sampler2D u_baseMap;
+    uniform sampler2D u_baseMaps[8];
     uniform vec4 u_color;
 
     //////////////////////////////////////////
@@ -85,6 +85,6 @@ R"(
     {
         MAZE_CLIP_DISTANCE_FRAGMENT;
 
-        out_color = v_color * texture(u_baseMap, v_uv0) * u_color;
+        out_color = v_color * texture(u_baseMaps[0], v_uv0) * u_color;
     }
 )"

@@ -26,15 +26,28 @@
 //////////////////////////////////////////
 #include "MazeUIHeader.hpp"
 #include "maze-ui/fonts/MazeFontMaterial.hpp"
+#include "maze-ui/fonts/MazeFont.hpp"
 #include "maze-ui/managers/MazeFontMaterialManager.hpp"
 #include "maze-ui/managers/MazeFontManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/MazeMaterial.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    void FontMaterialRenderData::updateMaterialUniforms()
+    {
+        if (!material)
+            return;
+
+        for (S32 i = 0, in = textures.size(); i < in; ++i)
+            material->ensureUniform("u_baseMaps")->set(&textures[0], textures.size());
+    }
+
+
     //////////////////////////////////////////
     // Class FontMaterial
     //
@@ -47,7 +60,7 @@ namespace Maze
     //////////////////////////////////////////
     FontMaterial::~FontMaterial()
     {
-        
+        setFont(nullptr);
     }
 
     //////////////////////////////////////////
@@ -101,10 +114,10 @@ namespace Maze
             return false;
 
         CString font = element->Attribute("font");
-        CString material = element->Attribute("material");
+        CString assetMaterial = element->Attribute("assetMaterial");
 
         setFont(font ? FontManager::GetInstancePtr()->getFont(font) : FontPtr());
-        setMaterial(material ? MaterialManager::GetCurrentInstance()->getMaterial(material) : MaterialPtr());
+        setAssetMaterial(assetMaterial ? MaterialManager::GetCurrentInstance()->getMaterial(assetMaterial) : MaterialPtr());
 
         return true;
     }
@@ -154,6 +167,96 @@ namespace Maze
         {
             StringHelper::FormatString(_data, "ptr:%p", _value);
         }
+    }
+
+    //////////////////////////////////////////
+    void FontMaterial::setFont(FontPtr const& _value)
+    {
+        if (m_font)
+        {
+            m_font->eventTexturesChanged.unsubscribe(this);
+        }
+
+        m_font = _value;
+
+        if (m_font)
+        {
+            m_font->eventTexturesChanged.subscribe(this, &FontMaterial::notifyTexturesChanged);
+        }
+    }
+
+    //////////////////////////////////////////
+    void FontMaterial::setAssetMaterial(MaterialPtr const& _value)
+    {
+        m_assetMaterial = _value;
+
+        if (m_assetMaterial)
+        {
+            for (auto& renderData : m_renderData)
+            {
+                renderData.second.material = m_assetMaterial->createCopy();
+                renderData.second.updateMaterialUniforms();
+            }
+        }
+        else
+        {
+            for (auto& renderData : m_renderData)
+                renderData.second.material.reset(); 
+        }
+
+        eventMaterialChanged();
+    }
+
+    //////////////////////////////////////////
+    MaterialPtr const& FontMaterial::fetchMaterial(U32 _fontSize)
+    {
+        auto it = m_renderData.find(_fontSize);
+        if (it != m_renderData.end())
+        {
+            if (it->second.texturesDirty)
+                updateFontTextures(_fontSize);
+
+            return it->second.material;
+        }
+            
+        FontMaterialRenderData& data = m_renderData[_fontSize];
+        if (m_assetMaterial)
+            data.material = m_assetMaterial->createCopy();
+        updateFontTextures(_fontSize);
+        return data.material;
+    }
+
+    //////////////////////////////////////////
+    void FontMaterial::updateFontTextures(U32 _fontSize)
+    {
+        FontMaterialRenderData& data = m_renderData[_fontSize];
+        data.textures.clear();
+        data.textureIndices.clear();
+
+        if (!m_font)
+            return;
+
+        data.texturesDirty = false;
+
+        Vector<Texture2DPtr> textures;
+        m_font->collectAllTextures(_fontSize, textures);
+        data.textures.resize(textures.size());
+        for (S32 i = 0, in = data.textures.size(); i < in; ++i)
+            data.textures[i] = textures[i].get();
+
+        for (S32 i = 0, in = data.textures.size(); i < in; ++i)
+            data.textureIndices[data.textures[i]] = i;
+
+        data.updateMaterialUniforms();
+    }
+
+    //////////////////////////////////////////
+    void FontMaterial::notifyTexturesChanged()
+    {
+        for (auto& renderData : m_renderData)
+            renderData.second.texturesDirty = true;
+
+        eventTexturesChanged();
     }
 
 

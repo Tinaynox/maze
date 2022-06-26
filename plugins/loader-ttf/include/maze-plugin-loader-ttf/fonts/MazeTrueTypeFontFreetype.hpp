@@ -107,6 +107,10 @@ namespace Maze
         ////////////////////////////////////
         virtual F32 getUnderlineThickness(U32 _fontSize) MAZE_OVERRIDE;
 
+
+        //////////////////////////////////////////
+        virtual void collectAllTextures(U32 _fontSize, Vector<Texture2DPtr>& _result) MAZE_OVERRIDE;
+
     protected:
 
         //////////////////////////////////////////
@@ -132,7 +136,7 @@ namespace Maze
 
         ////////////////////////////////////
         template <typename TGlyphKey>
-        Rect2DS findGlyphRect(TTFPagePtr<TGlyphKey> const& _page, U32 _width, U32 _height) const;
+        inline Rect2DS findGlyphRect(TTFPagePtr<TGlyphKey> const& _page, U32 _width, U32 _height);
 
     protected:
 
@@ -311,7 +315,7 @@ namespace Maze
 
     ////////////////////////////////////
     template <typename TGlyphKey>
-    Rect2DS TrueTypeFontFreetype::findGlyphRect(TTFPagePtr<TGlyphKey> const& _page, U32 _width, U32 _height) const
+    Rect2DS TrueTypeFontFreetype::findGlyphRect(TTFPagePtr<TGlyphKey> const& _page, U32 _width, U32 _height)
     {
         // Find the line that fits well the glyph
         TTFRow* row = nullptr;
@@ -336,6 +340,8 @@ namespace Maze
             row = &*it;
             bestRatio = ratio;
         }
+
+        bool texturesChanged = false;
 
         // If we didn't find a matching row, create a new one (10% taller than the glyph)
         if (!row)
@@ -363,6 +369,8 @@ namespace Maze
                         glyph.second.textureCoords.position = (Vec2DF)glyph.second.textureRect.position / _page->texture->getSize();
                         glyph.second.textureCoords.size = (Vec2DF)glyph.second.textureRect.size / _page->texture->getSize();
                     }
+
+                    texturesChanged = true;
                 }
                 else
                 {
@@ -383,6 +391,9 @@ namespace Maze
 
         // Update the row informations
         row->width += _width;
+
+        if (texturesChanged)
+            eventTexturesChanged();
 
         return rect;
     }

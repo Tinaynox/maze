@@ -66,13 +66,14 @@ namespace Maze
     
 
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_21_API(MAZE_GRAPHICS_API, ShaderUniformType,
+    MAZE_DECLARE_ENUMCLASS_22_API(MAZE_GRAPHICS_API, ShaderUniformType,
         UniformS32,
         UniformF32,
         UniformF64,
         UniformBool,
         UniformTexture2D,
         UniformTextureCube,
+        UniformTexture2DArray,
         UniformVec2DS,
         UniformVec3DS,
         UniformVec4DS,
@@ -127,6 +128,9 @@ namespace Maze
 
         //////////////////////////////////////////
         ShaderUniformVariant(RenderSystem* _renderSystem, Texture2DPtr const& _value);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Texture2D** _value, U32 _count);
 
         //////////////////////////////////////////
         ShaderUniformVariant(RenderSystem* _renderSystem, TextureCube* _value);
@@ -202,6 +206,12 @@ namespace Maze
         //////////////////////////////////////////
         inline ShaderUniformType const& getType() const { return m_type; }
 
+
+        //////////////////////////////////////////
+        inline void* getPtr() const { return m_ptr; }
+
+        //////////////////////////////////////////
+        inline U32 getCount() const { return m_count; }
 
 
         //////////////////////////////////////////
@@ -308,6 +318,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void set(TextureCubePtr const& _texture) { m_texture = _texture; m_type = ShaderUniformType::UniformTextureCube; }
+
+        //////////////////////////////////////////
+        inline void set(Texture2D** _textures, U32 _count) { m_ptr = _textures; m_count = _count; m_type = ShaderUniformType::UniformTexture2DArray; }
 
         //////////////////////////////////////////
         inline void set(Texture2D* _texture2D) { return set(_texture2D ? _texture2D->cast<Texture2D>() : nullptr); }
@@ -437,6 +450,12 @@ namespace Maze
 
         union
         {
+            struct
+            {
+                void* m_ptr;
+                U32 m_count;
+            };
+
             S32 m_S32;
             F32 m_F32;
             F64 m_F64;

@@ -135,17 +135,31 @@ namespace Maze
         //////////////////////////////////////////
         inline void setColor(Size _index, Vec4DF const& _value) { m_colors[_index] = _value; }
 
-        //////////////////////////////////////////
-        inline Vec4DF const* getUVsData() const { return &m_uvs[0]; }
 
         //////////////////////////////////////////
-        inline Vector<Vec4DF> const& getUVs() const { return m_uvs; }
+        inline Vec4DF const* getUV0Data() const { return &m_uv0[0]; }
 
         //////////////////////////////////////////
-        inline void setUVs(Vector<Vec4DF> const& _value) { m_uvs = _value; }
+        inline Vector<Vec4DF> const& getUV0() const { return m_uv0; }
 
         //////////////////////////////////////////
-        inline void setUV(Size _index, Vec4DF const& _value) { m_uvs[_index] = _value; }
+        inline void setUV0(Vector<Vec4DF> const& _value) { m_uv0 = _value; }
+
+        //////////////////////////////////////////
+        inline void setUV0(Size _index, Vec4DF const& _value) { m_uv0[_index] = _value; }
+
+
+        //////////////////////////////////////////
+        inline Vec4DF const* getUV1Data() const { return &m_uv1[0]; }
+
+        //////////////////////////////////////////
+        inline Vector<Vec4DF> const& getUV1() const { return m_uv1; }
+
+        //////////////////////////////////////////
+        inline void setUV1(Vector<Vec4DF> const& _value) { m_uv1 = _value; }
+
+        //////////////////////////////////////////
+        inline void setUV1(Size _index, Vec4DF const& _value) { m_uv1[_index] = _value; }
 
     protected:
 
@@ -181,7 +195,8 @@ namespace Maze
 
         Vector<Mat4DF> m_modelMatricies;
         Vector<Vec4DF> m_colors;
-        Vector<Vec4DF> m_uvs;
+        Vector<Vec4DF> m_uv0;
+        Vector<Vec4DF> m_uv1;
 
         bool m_enabled;
     };

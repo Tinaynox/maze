@@ -49,11 +49,28 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Struct FontMaterialRenderData
+    //
+    //////////////////////////////////////////
+    struct MAZE_UI_API FontMaterialRenderData
+    {
+        Vector<Texture2D*> textures;
+        Map<Texture2D*, S32> textureIndices;
+        MaterialPtr material;
+        bool texturesDirty = true;
+
+        //////////////////////////////////////////
+        void updateMaterialUniforms();
+    };
+
+
+    //////////////////////////////////////////
     // Class FontMaterial
     //
     //////////////////////////////////////////
     class MAZE_UI_API FontMaterial
         : public SharedObject<FontMaterial>
+        , public MultiDelegateCallbackReceiver
     {
     public:
 
@@ -79,14 +96,17 @@ namespace Maze
         inline FontPtr const& getFont() const { return m_font; }
 
         //////////////////////////////////////////
-        inline void setFont(FontPtr const& _value) { m_font = _value; }
+        void setFont(FontPtr const& _value);
 
         //////////////////////////////////////////
-        inline MaterialPtr const& getMaterial() const { return m_material; }
+        inline MaterialPtr const& getAssetMaterial() const { return m_assetMaterial; }
 
         //////////////////////////////////////////
-        inline void setMaterial(MaterialPtr const& _value) { m_material = _value; }
+        void setAssetMaterial(MaterialPtr const& _value);
 
+
+        //////////////////////////////////////////
+        MaterialPtr const& fetchMaterial(U32 _fontSize);
 
         //////////////////////////////////////////
         virtual bool loadFromAssetFile(
@@ -100,6 +120,12 @@ namespace Maze
         //////////////////////////////////////////
         static void ToString(FontMaterial const* _value, String& _data);
 
+    public:
+
+        //////////////////////////////////////////
+        MultiDelegate<> eventTexturesChanged;
+        MultiDelegate<> eventMaterialChanged;
+
     protected:
 
         //////////////////////////////////////////
@@ -108,11 +134,22 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init();
 
+
+        //////////////////////////////////////////
+        void updateFontTextures(U32 _fontSize);
+
+        //////////////////////////////////////////
+        void notifyTexturesChanged();
+
     protected:
         String m_name;
 
         FontPtr m_font;
-        MaterialPtr m_material;
+        MaterialPtr m_assetMaterial;
+
+    protected:
+
+        Map<U32, FontMaterialRenderData> m_renderData;
     };
 
 

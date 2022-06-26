@@ -770,12 +770,24 @@ namespace Maze
             if (!uniform)
                 continue;
 
-            if (    uniform->getType() == ShaderUniformType::UniformTexture2D
-                || uniform->getType() == ShaderUniformType::UniformTextureCube)
+            if (uniform->getType() == ShaderUniformType::UniformTexture2D ||
+                uniform->getType() == ShaderUniformType::UniformTextureCube)
             {
                 uniform->castRaw<ShaderUniformOpenGL>()->setTextureIndex(textureIndex);
                 ++textureIndex;
             }
+            else
+            if (uniform->getType() == ShaderUniformType::UniformTexture2DArray)
+            {
+                FastVector<MZGLint> indices;
+                indices.resize(uniform->getCount());
+                for (S32 i = 0; i < (S32)uniform->getCount(); ++i)
+                    indices[i] = textureIndex + i;
+
+                uniform->castRaw<ShaderUniformOpenGL>()->setTextureIndices(&indices[0], uniform->getCount());
+                textureIndex += uniform->getCount();
+            }
+
         }
     }
 
@@ -807,6 +819,19 @@ namespace Maze
 
                 m_context->activeTexture(textureIndex);
                 m_context->bindTextureCube(uniform->getTextureCube());
+            }
+            else
+            if (uniform->getType() == ShaderUniformType::UniformTexture2DArray)
+            {
+                Maze::ContextOpenGLScopeBind contextOpenGLScopedLock(m_context);
+
+                MZGLint textureIndex = uniform->castRaw<ShaderUniformOpenGL>()->getTextureIndex();
+
+                for (U32 i = 0; i < uniform->getCount(); ++i)
+                {
+                    m_context->activeTexture(textureIndex + (S32)i);
+                    m_context->bindTexture2D(*((Texture2D**)uniform->getPtr() + i));
+                }
             }
         }
     }

@@ -117,6 +117,7 @@ namespace Maze
 
             case ShaderUniformType::UniformTexture2D:
             case ShaderUniformType::UniformTextureCube:
+            case ShaderUniformType::UniformTexture2DArray:
             {
                 m_textureIndex = -1;
                 m_shaderRaw->castRaw<ShaderOpenGL>()->assignUniformTextureIndexes();
@@ -263,6 +264,8 @@ namespace Maze
             }
 
             case ShaderUniformType::UniformTexture2D:
+            case ShaderUniformType::UniformTextureCube:
+            case ShaderUniformType::UniformTexture2DArray:
             {
 
                 break;
@@ -401,6 +404,7 @@ namespace Maze
         MAZE_GL_CALL(mzglUniformMatrix4fv((MZGLint)m_location, (MZGLsizei)_count, MAZE_GL_FALSE, _matrices[0].getPlaneMatrix()));
     }
 
+
     //////////////////////////////////////////
     void ShaderUniformOpenGL::setTextureIndex(MZGLint _textureIndex)
     {
@@ -409,14 +413,32 @@ namespace Maze
 
         m_textureIndex = _textureIndex;
 
-        if (    getType() == ShaderUniformType::UniformTexture2D
-            ||  getType() == ShaderUniformType::UniformTextureCube)
+        if (getType() == ShaderUniformType::UniformTexture2D ||
+            getType() == ShaderUniformType::UniformTextureCube)
         {
             ShaderOpenGLScopeBind scopeBind(m_shaderRaw);
 
             MAZE_GL_MUTEX_SCOPED_LOCK(getRenderSystemOpenGLRaw());
 
             MAZE_GL_CALL(mzglUniform1i((MZGLint)m_location, m_textureIndex));
+        }
+    }
+
+    //////////////////////////////////////////
+    void ShaderUniformOpenGL::setTextureIndices(MZGLint* _textureIndices, U32 _count)
+    {
+        if (m_textureIndex == *_textureIndices)
+            return;
+
+        m_textureIndex = *_textureIndices;
+
+        if (getType() == ShaderUniformType::UniformTexture2DArray)
+        {
+            ShaderOpenGLScopeBind scopeBind(m_shaderRaw);
+
+            MAZE_GL_MUTEX_SCOPED_LOCK(getRenderSystemOpenGLRaw());
+
+            MAZE_GL_CALL(mzglUniform1iv((MZGLint)m_location, (MZGLsizei)_count, (MZGLint const*)_textureIndices));
         }
     }
 

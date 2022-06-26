@@ -105,6 +105,10 @@ MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR* mzglUniform1fv)(MZGLin
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR* mzglUniform2fv)(MZGLint _location, MZGLsizei _count, MZGLfloat const* _value) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR* mzglUniform3fv)(MZGLint _location, MZGLsizei _count, MZGLfloat const* _value) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR* mzglUniform4fv)(MZGLint _location, MZGLsizei _count, MZGLfloat const* _value) = nullptr;
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR* mzglUniform1iv)(MZGLint _location, MZGLsizei _count, MZGLint const* _value) = nullptr;
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR* mzglUniform2iv)(MZGLint _location, MZGLsizei _count, MZGLint const* _value) = nullptr;
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR* mzglUniform3iv)(MZGLint _location, MZGLsizei _count, MZGLint const* _value) = nullptr;
+MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR* mzglUniform4iv)(MZGLint _location, MZGLsizei _count, MZGLint const* _value) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglUniformMatrix3fv)(MZGLint _location, MZGLsizei _count, MZGLboolean _transpose, MZGLfloat const* _value) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglUniformMatrix4fv)(MZGLint _location, MZGLsizei _count, MZGLboolean _transpose, MZGLfloat const* _value) = nullptr;
 MAZE_RENDER_SYSTEM_OPENGL_CORE_API void (MAZE_GL_FUNCPTR *mzglGetVertexAttribiv)(MZGLuint _index, MZGLenum _pname, MZGLint* _params) = nullptr;

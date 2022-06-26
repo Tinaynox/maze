@@ -50,11 +50,12 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_UI_API Font
         : public SharedObject<Font>
+        , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        ~Font();
+        virtual ~Font();
 
         //////////////////////////////////////////
         static FontPtr Create();
@@ -112,8 +113,16 @@ namespace Maze
         F32 getUnderlineThickness(U32 _fontSize) const;
 
         //////////////////////////////////////////
-        TrueTypeFontPtr const& getDefaultFont() const { return m_defaultGlyphsData.trueTypeFont; }
+        inline TrueTypeFontPtr const& getDefaultFont() const { return m_defaultGlyphsData.getTrueTypeFont(); }
 
+
+        //////////////////////////////////////////
+        void collectAllTextures(U32 _fontSize, Vector<Texture2DPtr>& _result) const;
+
+    public:
+
+        //////////////////////////////////////////
+        MultiDelegate<> eventTexturesChanged;
 
     public:
 
@@ -133,6 +142,15 @@ namespace Maze
 
         //////////////////////////////////////////
         void updateMaterialTextures();
+
+        //////////////////////////////////////////
+        void subscribeGlyphsData();
+
+        //////////////////////////////////////////
+        void unsubscribeGlyphsData();
+
+        //////////////////////////////////////////
+        void notifyTexturesChanged();
 
     protected:
         String m_name;

@@ -117,11 +117,15 @@ namespace Maze
         virtual void uploadArrayUniform(Mat4DF const* _matrices, Size _count) MAZE_OVERRIDE;
     
 
+
         //////////////////////////////////////////
         RenderSystemOpenGL* getRenderSystemOpenGLRaw() const;
 
         //////////////////////////////////////////
-        void setTextureIndex(MZGLint textureIndex);
+        void setTextureIndex(MZGLint _textureIndex);
+
+        //////////////////////////////////////////
+        void setTextureIndices(MZGLint* _textureIndices, U32 _count);
 
     protected:
         MZGLint m_location;
