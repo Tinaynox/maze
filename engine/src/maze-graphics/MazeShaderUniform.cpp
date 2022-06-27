@@ -429,6 +429,7 @@ namespace Maze
         return true;
     }
 
+    /*
     //////////////////////////////////////////
     bool ShaderUniform::set(F32 const* _values, Size _count)
     {
@@ -476,6 +477,7 @@ namespace Maze
         uploadArrayUniform(_matrices, _count);
         return true;
     }
+    */
 
     //////////////////////////////////////////
     bool ShaderUniform::set(ColorF128 const& _value)

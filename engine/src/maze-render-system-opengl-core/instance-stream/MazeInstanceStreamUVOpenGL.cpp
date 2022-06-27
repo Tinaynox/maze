@@ -174,7 +174,7 @@ namespace Maze
                 ShaderUniformPtr const& uvStreamUniform = m_context->getCurrentShader()->ensureUniform(c_uvStreamUniformName[m_index]);
 
                 if (uvStreamUniform)
-                    uvStreamUniform->set(&m_data[m_dataOffset], _instancesCount);
+                    uvStreamUniform->upload(&m_data[m_dataOffset], _instancesCount);
 
                 break;
             }

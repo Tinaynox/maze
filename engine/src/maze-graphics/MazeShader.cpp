@@ -408,7 +408,7 @@ namespace Maze
             return;
         }
 
-        uniform->set(_matrices, _count);
+        uniform->upload(_matrices, _count);
     }
 
     //////////////////////////////////////////
@@ -422,7 +422,7 @@ namespace Maze
             return;
         }
 
-        uniform->set(_matrices, _count);
+        uniform->upload(_matrices, _count);
     }
 
     //////////////////////////////////////////
