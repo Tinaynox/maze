@@ -10,7 +10,10 @@ R"(
     #ifndef MAZE_COLOR_STREAM
     #define MAZE_COLOR_STREAM (0)
     #endif
-    #ifndef MAZE_UV_STREAM
-    #define MAZE_UV_STREAM (0)
+    #ifndef MAZE_UV0_STREAM
+    #define MAZE_UV0_STREAM (0)
+    #endif
+	#ifndef MAZE_UV1_STREAM
+    #define MAZE_UV1_STREAM (0)
     #endif
 )"

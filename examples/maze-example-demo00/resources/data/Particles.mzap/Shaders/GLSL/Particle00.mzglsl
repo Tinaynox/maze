@@ -57,8 +57,8 @@ void main()
         v_color *= GetColorStream(instanceId);
 #endif
 
-#if (MAZE_UV_STREAM)
-        vec4 uvStream = GetUVStream(instanceId);
+#if (MAZE_UV0_STREAM)
+        vec4 uvStream = GetUV0Stream(instanceId);
         v_uv0 = vec2(
             mix(uvStream.x, uvStream.y, v_uv0.x),
             mix(uvStream.z, uvStream.w, v_uv0.y));

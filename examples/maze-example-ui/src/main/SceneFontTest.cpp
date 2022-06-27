@@ -227,7 +227,7 @@ namespace Maze
             FontMaterialManager::GetInstancePtr()->setDefaultFontMaterial(fontMaterial);
 
             m_text = UIHelper::CreateText(
-                "Hello, World! 123",
+                "Hello, 123 World!",
                 16,
                 HorizontalAlignment2D::Center,
                 VerticalAlignment2D::Middle,

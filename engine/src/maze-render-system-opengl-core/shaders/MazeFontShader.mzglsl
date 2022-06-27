@@ -3,7 +3,8 @@ R"(
     #type vertex
 
 	#define MAZE_COLOR_STREAM (1)
-	#define MAZE_UV_STREAM (1)
+	#define MAZE_UV0_STREAM (1)
+	#define MAZE_UV1_STREAM (1)
 )"
 #include "MazePrecisionHigh.mzglsl"
 #include "MazeVertex.mzglsl"
@@ -52,12 +53,13 @@ R"(
         v_color *= GetColorStream(instanceId);
     #endif
 
-    #if (MAZE_UV_STREAM)
+    #if (MAZE_UV0_STREAM)
         vec4 uv0Stream = GetUV0Stream(instanceId);
         v_uv0 = vec2(
             mix(uv0Stream.x, uv0Stream.y, v_uv0.x),
             mix(uv0Stream.z, uv0Stream.w, v_uv0.y));
-
+	#endif
+	#if (MAZE_UV1_STREAM)
 		vec4 uv1Stream = GetUV1Stream(instanceId);
         v_uv1 = int(uv1Stream.x);
     #endif

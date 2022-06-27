@@ -49,7 +49,7 @@ R"(
         v_color *= GetColorStream(instanceId);
     #endif
 
-    #if (MAZE_UV_STREAM)
+    #if (MAZE_UV0_STREAM)
         vec4 uv0Stream = GetUV0Stream(instanceId);
         v_uv0 = vec2(
             mix(uv0Stream.x, uv0Stream.y, v_uv0.x),
