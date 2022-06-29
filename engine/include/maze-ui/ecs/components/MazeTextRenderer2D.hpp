@@ -66,18 +66,9 @@ namespace Maze
     // Enum TextRenderer2DWidthPolicy
     //
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_3_API(MAZE_GRAPHICS_API, TextRenderer2DWidthPolicy,
-        Autosize,
+    MAZE_DECLARE_ENUMCLASS_2_API(MAZE_GRAPHICS_API, TextRenderer2DWidthPolicy,
         Abut,
         WordWrap);
-
-
-    //////////////////////////////////////////
-    // Enum TextRenderer2DHeightPolicy
-    //
-    //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_1_API(MAZE_GRAPHICS_API, TextRenderer2DHeightPolicy,
-        Autosize);
 
 
     //////////////////////////////////////////
@@ -313,20 +304,6 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline TextRenderer2DHeightPolicy getHeightPolicy() const { return m_heightPolicy; }
-
-        //////////////////////////////////////////
-        inline void setHeightPolicy(TextRenderer2DHeightPolicy _value)
-        {
-            if (m_heightPolicy == _value)
-                return;
-
-            m_heightPolicy = _value;
-
-            updateMeshData();
-        }
-
-        //////////////////////////////////////////
         inline F32 getOutlineThickness() const { return m_outlineThickness; }
 
         //////////////////////////////////////////
@@ -433,15 +410,14 @@ namespace Maze
 
         U32 m_symbolsLimit = 0u;
         TextRenderer2DSymbolsLimitPolicy m_symbolsLimitPolicy = TextRenderer2DSymbolsLimitPolicy::Crop;
-        TextRenderer2DWidthPolicy m_widthPolicy = TextRenderer2DWidthPolicy::Autosize;
-        TextRenderer2DHeightPolicy m_heightPolicy = TextRenderer2DHeightPolicy::Autosize;
+        TextRenderer2DWidthPolicy m_widthPolicy = TextRenderer2DWidthPolicy::None;
 
         F32 m_outlineThickness = 0.0f;
         ColorU32 m_outlineColor = ColorU32::c_white;
 
-        // MaterialPtr m_material;
     private:
         Vector<Mat4DF> m_localMatrices;
+        Vector<Vec4DF> m_localColors;
     };
 
 

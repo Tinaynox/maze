@@ -248,6 +248,28 @@ namespace Maze
         return 0.0f;
     }
 
+    //////////////////////////////////////////
+    F32 TrueTypeFontFreetype::getAscender(U32 _fontSize)
+    {
+        if (m_face && selectFTPixelSize(_fontSize))
+        {
+            return static_cast<F32>(FT_MulFix(m_face->ascender, m_face->size->metrics.y_scale)) / static_cast<F32>(1 << 6);
+        }
+
+        return 0.0f;
+    }
+
+    //////////////////////////////////////////
+    F32 TrueTypeFontFreetype::getDescender(U32 _fontSize)
+    {
+        if (m_face && selectFTPixelSize(_fontSize))
+        {
+            return static_cast<F32>(FT_MulFix(m_face->descender, m_face->size->metrics.y_scale)) / static_cast<F32>(1 << 6);
+        }
+
+        return 0.0f;
+    }
+
     ////////////////////////////////////
     F32 TrueTypeFontFreetype::getKerning(U32 _first, U32 _second, U32 _fontSize)
     {

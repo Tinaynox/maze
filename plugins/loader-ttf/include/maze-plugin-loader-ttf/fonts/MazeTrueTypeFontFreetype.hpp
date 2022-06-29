@@ -98,6 +98,12 @@ namespace Maze
         ////////////////////////////////////
         virtual F32 getLineSpacing(U32 _fontSize) MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        virtual F32 getAscender(U32 _fontSize) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual F32 getDescender(U32 _fontSize) MAZE_OVERRIDE;
+
         ////////////////////////////////////
         virtual F32 getKerning(U32 _first, U32 _second, U32 _fontSize) MAZE_OVERRIDE;
 
@@ -106,6 +112,9 @@ namespace Maze
 
         ////////////////////////////////////
         virtual F32 getUnderlineThickness(U32 _fontSize) MAZE_OVERRIDE;
+
+        
+
 
 
         //////////////////////////////////////////
@@ -244,6 +253,8 @@ namespace Maze
             glyph.textureCoords.size = (Vec2DF)glyph.textureRect.size / glyph.texture->getSize();
 
             // Compute the glyph's bounding box
+            // The metrics found in face->glyph->metrics are normally expressed in 26.6 pixel format (i.e., 1/64th of pixels),
+            // unless you use the FT_LOAD_NO_SCALE flag when calling FT_Load_Glyph or FT_Load_Char
             glyph.bounds.position.x = static_cast<F32>(m_face->glyph->metrics.horiBearingX) / static_cast<F32>(1 << 6);
             glyph.bounds.position.y = static_cast<F32>(m_face->glyph->metrics.horiBearingY) / static_cast<F32>(1 << 6);
             glyph.bounds.size.x = static_cast<F32>(m_face->glyph->metrics.width) / static_cast<F32>(1 << 6) + _outlineThickness * 2;

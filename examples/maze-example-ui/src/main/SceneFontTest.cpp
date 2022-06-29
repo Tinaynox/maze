@@ -197,7 +197,7 @@ namespace Maze
         {
             SpriteRenderer2DPtr textSquare = SpriteHelper::CreateSprite(
                 ColorU32::c_blackSoft,
-                Vec2DF(200.0f, 50.0f),
+                Vec2DF(200.0f, 150.0f),
                 Vec2DF(-150.0f, 0.0f),
                 nullptr,
                 square->getTransform(),
@@ -217,7 +217,7 @@ namespace Maze
         {
             SpriteRenderer2DPtr textSquare = SpriteHelper::CreateSprite(
                 ColorU32::c_blackSoft,
-                Vec2DF(200.0f, 50.0f),
+                Vec2DF(200.0f, 150.0f),
                 Vec2DF(150.0f, 0.0f),
                 nullptr,
                 square->getTransform(),
@@ -227,7 +227,7 @@ namespace Maze
             FontMaterialManager::GetInstancePtr()->setDefaultFontMaterial(fontMaterial);
 
             m_text = UIHelper::CreateText(
-                "Hello, 123 World!",
+                "Hello, World!\nHello, 123 #{255;160;0}World#{-}!\nHello, #{255;10;10}World#{-}!",
                 16,
                 HorizontalAlignment2D::Center,
                 VerticalAlignment2D::Middle,

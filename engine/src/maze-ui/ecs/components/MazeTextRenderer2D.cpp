@@ -74,9 +74,6 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_ENUMCLASS(TextRenderer2DWidthPolicy);
 
-    //////////////////////////////////////////
-    MAZE_IMPLEMENT_ENUMCLASS(TextRenderer2DHeightPolicy);
-
 
     //////////////////////////////////////////
     // Struct TempGlyphData
@@ -242,43 +239,8 @@ namespace Maze
 
         Vec2DF const& size = m_transform->getSize();
 
-        Vec2DF autoSize = size;
-
         if (!m_fontMaterial || m_text.empty())
-        {
-            if (m_heightPolicy == TextRenderer2DHeightPolicy::Autosize)
-            {
-                if (getCropBottomIndent())
-                {
-                    if (m_fontMaterial)
-                    {
-                        const FontGlyph& glyph = m_fontMaterial->getFont()->getGlyph(L' ', m_fontSize);
-                        autoSize.y = (F32)m_fontSize + glyph.bounds.position.y + glyph.bounds.size.y;
-                    }
-                    else
-                    {
-                        autoSize.y = (F32)m_fontSize;
-                    }
-                }
-                else
-                {
-                    if (m_fontMaterial)
-                    {
-                        F32 vSpace = (F32)(m_fontMaterial->getFont()->getLineSpacing(m_fontSize));
-                        F32 bottomIndent = Math::Max(0.0f, vSpace - m_fontSize);
-                        autoSize.y = m_fontSize + bottomIndent;
-                    }
-                    else
-                    {
-                        autoSize.y = (F32)m_fontSize;
-                    }
-
-
-                }
-            }
-
             return;
-        }
 
         String finalText = m_text;
 
@@ -298,7 +260,7 @@ namespace Maze
                 if (colorString == "-")
                     color = getColor();
                 else
-                    color = ColorF128::FromString(colorString);
+                    color = ColorU32::FromString(colorString);
 
                 finalText.erase(startTagPosition, endTagPosition - startTagPosition + 1);
                 colorTags.push_back(std::make_pair(startTagPosition, color));
@@ -353,24 +315,24 @@ namespace Maze
         TTFPagePtr<U32> ttfPage = m_fontMaterial->getFont()->getDefaultFont()->getTTFPage(m_fontSize);
         TTFPagePtr<U64> ttfOutlineThicknessPage = m_fontMaterial->getFont()->getDefaultFont()->getTTFOutlineThicknessPage(m_fontSize);
 
+        F32 ascent = m_fontMaterial->getFont()->getDefaultFont()->getAscender(m_fontSize);
+        F32 descent = m_fontMaterial->getFont()->getDefaultFont()->getDescender(m_fontSize);
+        F32 linespace = m_fontMaterial->getFont()->getLineSpacing(m_fontSize);
+
         Rect2DF xBounds = m_fontMaterial->getFont()->getDefaultFont()->getGlyph(L'x', m_fontSize, ttfPage).bounds;
 
         F32 hSpace = static_cast<F32>(m_fontMaterial->getFont()->getDefaultFont()->getGlyph(L' ', m_fontSize, ttfPage).advance);
-        F32 vSpace = static_cast<F32>(m_fontMaterial->getFont()->getLineSpacing(m_fontSize));
-        F32 bottomIndent = Math::Max(0.0f, vSpace - m_fontSize);
+        F32 vSpace = linespace;
 
+        
 
         Vector<TempGlyphData> glyphs;
         glyphs.reserve(finalText.size());
 
-        FastVector<F32> rowMaxTopIndents;
-        FastVector<F32> rowMaxBottomIndents;
         FastVector<F32> rowLengths;
         F32 rowLengthMax = 0.0f;
         {
             F32 x = 0.0f;
-            F32 maxTopIndent = 0.0f;
-            F32 maxBottomIndent = 0.0f;
 
             U32 prevChar = 0;
             U32 curChar = 0;
@@ -398,12 +360,7 @@ namespace Maze
                     rowLengths.push_back(totalLength);
                     rowLengthMax = Math::Max(rowLengthMax, totalLength);
 
-                    rowMaxTopIndents.push_back(maxTopIndent);
-                    rowMaxBottomIndents.push_back(maxBottomIndent);
-
                     x = 0;
-                    maxTopIndent = 0;
-                    maxBottomIndent = 0;
                     continue;
                 }
 
@@ -455,25 +412,35 @@ namespace Maze
 
 
                 x += glyphData.glyph->advance;
-                maxTopIndent = Math::Max(maxTopIndent, -glyphData.glyph->bounds.position.y);
-                maxBottomIndent = Math::Max(maxBottomIndent, glyphData.glyph->bounds.position.y + glyphData.glyph->bounds.size.y);
             }
             F32 totalLength = x + m_outlineThickness * 2;
             rowLengths.push_back(totalLength);
             rowLengthMax = Math::Max(rowLengthMax, totalLength);
-
-            rowMaxTopIndents.push_back(maxTopIndent);
-            rowMaxBottomIndents.push_back(maxBottomIndent);
         }
 
         Size actualRowsCount = rowLengths.size();
 
-        if (m_widthPolicy == TextRenderer2DWidthPolicy::Autosize)
-            autoSize.x = rowLengthMax;
+        F32 totalTextHeight = (F32)actualRowsCount * vSpace;
 
         F32 x = 0.0f;
-        F32 y = getCropTopIndent() ? rowMaxTopIndents[0]
-                                   : Math::Max(static_cast<F32>(m_fontSize), rowMaxTopIndents[0]);
+        F32 y = 0.0f;
+        
+        switch (m_verticalAlignment)
+        {
+            case VerticalAlignment2D::Top:
+                y = size.y - ascent;
+                break;
+            case VerticalAlignment2D::Middle:
+                y = (size.y - totalTextHeight) * 0.5f - descent + F32(actualRowsCount - 1) * linespace;
+                break;
+            case VerticalAlignment2D::Bottom:
+                y = -descent + F32(actualRowsCount - 1) * linespace;
+                break;
+        default:
+            MAZE_NOT_IMPLEMENTED;
+            break;
+        }
+
         F32 glyphX = x;
         F32 glyphY = y;
 
@@ -496,6 +463,7 @@ namespace Maze
         Size charsCount = glyphs.size();
         m_meshRenderer->resize(charsCount);
         m_localMatrices.resize(charsCount);
+        m_localColors.resize(charsCount);
 
         // Build mesh
         while ((it != end) && (curChar = utf8::next(it, end)))
@@ -535,8 +503,7 @@ namespace Maze
                 ++currentRow;
                 xAlignOffset = calculateXAlignOffset(rowLengths, currentRow);
 
-                y += (currentRow < rowMaxTopIndents.size()) ? Math::Max(vSpace, rowMaxTopIndents[currentRow] + bottomIndent)
-                                                            : vSpace;
+                y -= vSpace;
                 x = 0;
                 curCharOffset = it - finalTextBegin;
                 continue;
@@ -595,16 +562,6 @@ namespace Maze
             ++curGlyphIndex;
         }
 
-
-        if (m_heightPolicy == TextRenderer2DHeightPolicy::Autosize)
-        {
-            if (getCropBottomIndent())
-                autoSize.y = y + rowMaxBottomIndents.back();
-            else
-                autoSize.y = y + bottomIndent;
-        }
-
-
         updateMeshRendererModelMatrices();
         updateMeshRendererColors();
     }
@@ -644,7 +601,7 @@ namespace Maze
 
         Size colorsCount = m_meshRenderer->getColors().size();
         for (Size i = 0; i < colorsCount; ++i)
-            m_meshRenderer->setColor(i, vertexColor * m_color.toVec4DF());
+            m_meshRenderer->setColor(i, m_localColors[i] * vertexColor * m_color.toVec4DF());
     }
 
     //////////////////////////////////////////
@@ -704,12 +661,14 @@ namespace Maze
         MAZE_ERROR_RETURN_IF(textureIndex == -1, "Texture index is -1!");
 
         MAZE_ERROR_RETURN_IF(_charIndex >= m_localMatrices.size(), "Out of bounds!");
+        MAZE_ERROR_RETURN_IF(_charIndex >= m_localColors.size(), "Out of bounds!");
         
         Vec2DF sizeV = (Vec2DF)_glyph.bounds.size;
         Vec2DF positionShiftV = _position + _glyph.bounds.size * 0.5f + _glyph.bounds.position;
 
         Mat4DF localTransform = Mat4DF::CreateTranslationMatrix(positionShiftV) * Mat4DF::CreateScaleMatrix(sizeV);
         m_localMatrices[_charIndex] = localTransform;
+        m_localColors[_charIndex] = _color;
 
         m_meshRenderer->setColor(_charIndex, _color);
         m_meshRenderer->setUV0(

@@ -186,6 +186,12 @@ namespace Maze
         ////////////////////////////////////
         virtual F32 getLineSpacing(U32 _fontSize) MAZE_ABSTRACT;
 
+        //////////////////////////////////////////
+        virtual F32 getAscender(U32 _fontSize) MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual F32 getDescender(U32 _fontSize) MAZE_ABSTRACT;
+
         ////////////////////////////////////
         virtual F32 getKerning(U32 _first, U32 _second, U32 _fontSize) MAZE_ABSTRACT;
 
@@ -194,6 +200,8 @@ namespace Maze
 
         ////////////////////////////////////
         virtual F32 getUnderlineThickness(U32 _fontSize) MAZE_ABSTRACT;
+
+        
 
 
         //////////////////////////////////////////
