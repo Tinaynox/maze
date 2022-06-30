@@ -260,7 +260,7 @@ namespace Maze
                 Mat4DF localTransform = Mat4DF::CreateTranslationMatrix(positionShiftV) * Mat4DF::CreateScaleMatrix(sizeV);
                 m_localMatrices[charIndex] = localTransform;
 
-                m_meshRenderer->setUV(charIndex, uv);
+                m_meshRenderer->setUV0(charIndex, uv);
 
                 ++charIndex;
 

@@ -81,6 +81,12 @@ namespace Maze
         inline ShaderUniformType const& getType() const { return m_value.getType(); }
 
         //////////////////////////////////////////
+        inline void* getPtr() const { return m_value.getPtr(); }
+
+        //////////////////////////////////////////
+        inline U32 getCount() const { return m_value.getCount(); }
+
+        //////////////////////////////////////////
         inline S32 getS32() const { return m_value.getS32(); }
 
         //////////////////////////////////////////
@@ -182,6 +188,9 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        bool set(Texture2D** _textures, U32 _count);
+
+        //////////////////////////////////////////
         bool set(TextureCubePtr const& _textureCube);
 
         //////////////////////////////////////////
@@ -243,6 +252,7 @@ namespace Maze
         bool set(ShaderUniformVariant const& _variant);
         
 
+        /*
         //////////////////////////////////////////
         bool set(F32 const* _values, Size _count);
 
@@ -260,6 +270,27 @@ namespace Maze
 
         //////////////////////////////////////////
         bool set(Mat4DF const* _matrices, Size _count);
+        */
+
+        //////////////////////////////////////////
+        virtual void upload(F32 const* _value, Size _count) MAZE_ABSTRACT;
+
+
+        //////////////////////////////////////////
+        virtual void upload(Vec2DF const* _vectors, Size _count) MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual void upload(Vec3DF const* _vectors, Size _count) MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual void upload(Vec4DF const* _vectors, Size _count) MAZE_ABSTRACT;
+
+
+        //////////////////////////////////////////
+        virtual void upload(Mat3DF const* _matrices, Size _count) MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual void upload(Mat4DF const* _matrices, Size _count) MAZE_ABSTRACT;
         
         
         //////////////////////////////////////////
@@ -288,25 +319,6 @@ namespace Maze
         virtual void processSimpleUniformChanged() MAZE_ABSTRACT;
 
 
-        //////////////////////////////////////////
-        virtual void uploadArrayUniform(F32 const* _value, Size _count) MAZE_ABSTRACT;
-
-
-        //////////////////////////////////////////
-        virtual void uploadArrayUniform(Vec2DF const* _vectors, Size _count) MAZE_ABSTRACT;
-
-        //////////////////////////////////////////
-        virtual void uploadArrayUniform(Vec3DF const* _vectors, Size _count) MAZE_ABSTRACT;
-
-        //////////////////////////////////////////
-        virtual void uploadArrayUniform(Vec4DF const* _vectors, Size _count) MAZE_ABSTRACT;
-
-
-        //////////////////////////////////////////
-        virtual void uploadArrayUniform(Mat3DF const* _matrices, Size _count) MAZE_ABSTRACT;
-
-        //////////////////////////////////////////
-        virtual void uploadArrayUniform(Mat4DF const* _matrices, Size _count) MAZE_ABSTRACT;
     
     protected:
         ShaderWPtr m_shader;

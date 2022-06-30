@@ -91,7 +91,7 @@ namespace Maze
         VertexArrayObject* vao;
         S32 count;
         bool useColorStream = false;
-        bool useUVStream = false;
+        U8 uvMask = 0x0;
     };
 
 

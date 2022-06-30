@@ -1,0 +1,109 @@
+R"(
+    //////////////////////////////////////////
+    #type vertex
+
+	#define MAZE_COLOR_STREAM (1)
+	#define MAZE_UV0_STREAM (1)
+	#define MAZE_UV1_STREAM (1)
+)"
+#include "MazePrecisionHigh.mzglsl"
+#include "MazeVertex.mzglsl"
+R"(
+    
+    //////////////////////////////////////////
+    IN vec3 a_position;
+    IN vec2 a_texCoords0;
+    IN vec4 a_color;
+
+    //////////////////////////////////////////
+    OUT vec3 v_positionOS;
+    OUT vec3 v_positionWS;
+    OUT vec3 v_positionVS;
+    OUT vec2 v_uv0;
+	OUT float v_uv1;
+    OUT vec4 v_color;
+
+    //////////////////////////////////////////
+    void main()
+    {
+    
+        int instanceId = gl_InstanceID;
+    
+        mat4 modelMatrix = GetModelMatrix(instanceId);
+
+        vec4 positionOS = vec4(a_position, 1.0);
+        vec4 positionWS = positionOS * modelMatrix;
+		MAZE_CLIP_DISTANCE_VERTEX(positionWS);
+        vec4 positionVS = positionWS * u_viewMatrix;
+        vec4 positionCS = positionVS * u_projectionMatrix;
+        
+    #if (MAZE_LHCS)
+        positionCS.z = -positionCS.z;
+    #endif
+    
+        v_positionOS = positionOS.xyz;
+        v_positionWS = positionWS.xyz;
+        v_positionVS = positionVS.xyz;
+
+        v_uv0 = a_texCoords0;
+
+        v_color = a_color;
+
+    #if (MAZE_COLOR_STREAM)
+        v_color *= GetColorStream(instanceId);
+    #endif
+
+    #if (MAZE_UV0_STREAM)
+        vec4 uv0Stream = GetUV0Stream(instanceId);
+        v_uv0 = vec2(
+            mix(uv0Stream.x, uv0Stream.y, v_uv0.x),
+            mix(uv0Stream.z, uv0Stream.w, v_uv0.y));
+	#endif
+	#if (MAZE_UV1_STREAM)
+		vec4 uv1Stream = GetUV1Stream(instanceId);
+        v_uv1 = uv1Stream.x;
+    #endif
+
+        gl_Position = positionCS;
+    }
+
+    //////////////////////////////////////////
+    #type fragment
+
+)"
+#include "MazePrecisionHigh.mzglsl"
+#include "MazeFragment.mzglsl"
+R"(
+
+    //////////////////////////////////////////
+    uniform sampler2D u_baseMaps[8];
+    uniform vec4 u_color;
+
+    //////////////////////////////////////////
+    IN vec2 v_uv0;
+	IN float v_uv1;
+    IN vec4 v_color;
+
+    //////////////////////////////////////////
+    layout(location=0) out vec4 out_color;
+
+    //////////////////////////////////////////
+    void main()
+    {
+        MAZE_CLIP_DISTANCE_FRAGMENT;
+
+		vec4 color;
+		switch(int(v_uv1))
+		{
+			case 0: color = v_color * texture(u_baseMaps[0], v_uv0) * u_color; break;
+			case 1: color = v_color * texture(u_baseMaps[1], v_uv0) * u_color; break;
+			case 2: color = v_color * texture(u_baseMaps[2], v_uv0) * u_color; break;
+			case 3: color = v_color * texture(u_baseMaps[3], v_uv0) * u_color; break;
+			case 4: color = v_color * texture(u_baseMaps[4], v_uv0) * u_color; break;
+			case 5: color = v_color * texture(u_baseMaps[5], v_uv0) * u_color; break;
+			case 6: color = v_color * texture(u_baseMaps[6], v_uv0) * u_color; break;
+			case 7: color = v_color * texture(u_baseMaps[7], v_uv0) * u_color; break;
+		}
+        out_color = color;
+    }
+)"

@@ -38,6 +38,7 @@
 #include "maze-graphics/instance-stream/MazeInstanceStreamModelMatrix.hpp"
 #include "maze-graphics/instance-stream/MazeInstanceStreamColor.hpp"
 #include "maze-graphics/instance-stream/MazeInstanceStreamUV.hpp"
+#include "maze-graphics/config/MazeGraphicsConfig.hpp"
 
 
 //////////////////////////////////////////
@@ -107,20 +108,37 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        static inline U8 ConstructUVMask(Vec4DF const* _uvs[MAZE_UV_CHANNELS_MAX])
+        {
+            if (_uvs == nullptr)
+                return 0x0;
+
+            return
+                ((_uvs[0] != nullptr) ? 1 << 0 : 0) |
+                ((_uvs[1] != nullptr) ? 1 << 1 : 0) |
+                ((_uvs[2] != nullptr) ? 1 << 2 : 0) |
+                ((_uvs[3] != nullptr) ? 1 << 3 : 0) |
+                ((_uvs[4] != nullptr) ? 1 << 4 : 0) |
+                ((_uvs[5] != nullptr) ? 1 << 5 : 0) |
+                ((_uvs[6] != nullptr) ? 1 << 6 : 0) |
+                ((_uvs[7] != nullptr) ? 1 << 7 : 0);
+        }
+
+        //////////////////////////////////////////
         inline void addDrawVAOInstancedCommand(
             VertexArrayObject* _vao,
             Mat4DF const& _modelMatrix = Mat4DF::c_identity,
             Vec4DF const* _color = nullptr,
-            Vec4DF const* _uv = nullptr)
+            Vec4DF const* _uvs[MAZE_UV_CHANNELS_MAX] = nullptr)
         {
             bool useColorStream = (_color != nullptr);
-            bool useUVStream = (_uv != nullptr);
+            U8 uvMask = ConstructUVMask(_uvs);
 
             if (   m_lastDrawVAOInstancedCommand 
                 && m_lastDrawVAOInstancedCommand->vao == _vao
                 && m_lastDrawVAOInstancedCommand->count < (S32)m_maxInstancesPerDrawCall
                 && useColorStream == (m_instanceStreamColor->getOffset() > 0)
-                && useUVStream == (m_instanceStreamUV->getOffset() > 0))
+                && m_lastDrawVAOInstancedCommand->uvMask == uvMask)
             {
                 ++m_lastDrawVAOInstancedCommand->count;
             }
@@ -128,7 +146,7 @@ namespace Maze
             {
                 m_lastDrawVAOInstancedCommand = m_renderCommandsBuffer.createCommand<RenderCommandDrawVAOInstanced>(_vao);
                 m_lastDrawVAOInstancedCommand->useColorStream = useColorStream;
-                m_lastDrawVAOInstancedCommand->useUVStream = useUVStream;
+                m_lastDrawVAOInstancedCommand->uvMask = uvMask;
             }
 
             pushInstanceModelMatrix(_modelMatrix);
@@ -136,8 +154,9 @@ namespace Maze
             if (useColorStream)
                 pushInstanceColor(*_color);
 
-            if (useUVStream)
-                pushInstanceUV(*_uv);
+            for (S32 i = 0; i < MAZE_UV_CHANNELS_MAX; ++i)
+                if (uvMask & (1 << i))
+                    pushInstanceUV(i, *_uvs[i]);
         }
 
         //////////////////////////////////////////
@@ -146,10 +165,10 @@ namespace Maze
             S32 _count,
             Mat4DF const* _modelMatricies,
             Vec4DF const* _colors = nullptr,
-            Vec4DF const* _uvs = nullptr)
+            Vec4DF const* _uvs[MAZE_UV_CHANNELS_MAX] = nullptr)
         {
             bool useColorStream = (_colors != nullptr);
-            bool useUVStream = (_uvs != nullptr);
+            U8 uvMask = ConstructUVMask(_uvs);
 
             S32 maxInstancesPerDrawCall = m_maxInstancesPerDrawCall;
 
@@ -157,7 +176,7 @@ namespace Maze
                 && m_lastDrawVAOInstancedCommand->vao == _vao
                 && m_lastDrawVAOInstancedCommand->count + _count <= maxInstancesPerDrawCall
                 && useColorStream == (m_instanceStreamColor->getOffset() > 0)
-                && useUVStream == (m_instanceStreamUV->getOffset() > 0))
+                && m_lastDrawVAOInstancedCommand->uvMask == uvMask)
             {
                 m_lastDrawVAOInstancedCommand->count += _count;
 
@@ -166,8 +185,9 @@ namespace Maze
                 if (useColorStream)
                     pushInstanceColors(_colors, _count);
 
-                if (useUVStream)
-                    pushInstanceUVs(_uvs, _count);
+                for (S32 i = 0; i < MAZE_UV_CHANNELS_MAX; ++i)
+                    if (uvMask & (1 << i))
+                        pushInstanceUV(i, _uvs[i], _count);
             }
             else
             {
@@ -175,7 +195,7 @@ namespace Maze
                 {
                     m_lastDrawVAOInstancedCommand = m_renderCommandsBuffer.createCommand<RenderCommandDrawVAOInstanced>(_vao, maxInstancesPerDrawCall);
                     m_lastDrawVAOInstancedCommand->useColorStream = useColorStream;
-                    m_lastDrawVAOInstancedCommand->useUVStream = useUVStream;
+                    m_lastDrawVAOInstancedCommand->uvMask = uvMask;
 
                     pushInstanceModelMatricies(_modelMatricies, maxInstancesPerDrawCall);
                     _modelMatricies += maxInstancesPerDrawCall;
@@ -186,11 +206,12 @@ namespace Maze
                         _colors += maxInstancesPerDrawCall;
                     }
 
-                    if (useUVStream)
-                    {
-                        pushInstanceUVs(_uvs, maxInstancesPerDrawCall);
-                        _uvs += maxInstancesPerDrawCall;
-                    }
+                    for (S32 i = 0; i < MAZE_UV_CHANNELS_MAX; ++i)
+                        if (uvMask & (1 << i))
+                        {
+                            pushInstanceUV(i, _uvs[i], maxInstancesPerDrawCall);
+                            _uvs[i] += maxInstancesPerDrawCall;
+                        }
 
                     _count -= maxInstancesPerDrawCall;
                 }
@@ -198,15 +219,16 @@ namespace Maze
                 
                 m_lastDrawVAOInstancedCommand = m_renderCommandsBuffer.createCommand<RenderCommandDrawVAOInstanced>(_vao, _count);
                 m_lastDrawVAOInstancedCommand->useColorStream = useColorStream;
-                m_lastDrawVAOInstancedCommand->useUVStream = useUVStream;
+                m_lastDrawVAOInstancedCommand->uvMask = uvMask;
 
                 pushInstanceModelMatricies(_modelMatricies, _count);
 
                 if (useColorStream)
                     pushInstanceColors(_colors, _count);
 
-                if (useUVStream)
-                    pushInstanceUVs(_uvs, _count);
+                for (S32 i = 0; i < MAZE_UV_CHANNELS_MAX; ++i)
+                    if (uvMask & (1 << i))
+                        pushInstanceUV(i, _uvs[i], _count);
             }
 
             
@@ -227,7 +249,7 @@ namespace Maze
             S32 _count,
             Mat4DF const* _modelMatricies,
             Vec4DF const* _colors = nullptr,
-            Vec4DF const* _uvs = nullptr)
+            Vec4DF const* _uvs[MAZE_UV_CHANNELS_MAX] = nullptr)
         {
             addDrawVAOInstancedCommand(_vao.get(), _count, _modelMatricies, _colors, _uvs);
         }
@@ -321,10 +343,12 @@ namespace Maze
 
         //////////////////////////////////////////
         void pushInstanceUV(
+            S32 _index,
             Vec4DF const& _uv);
 
         //////////////////////////////////////////
-        void pushInstanceUVs(
+        void pushInstanceUV(
+            S32 _index,
             Vec4DF const* _uvs,
             S32 _count);
 
@@ -344,7 +368,7 @@ namespace Maze
 
         InstanceStreamModelMatrixPtr m_instanceStreamModelMatrix;
         InstanceStreamColorPtr m_instanceStreamColor;
-        InstanceStreamUVPtr m_instanceStreamUV;
+        InstanceStreamUVPtr m_instanceStreamUVs[MAZE_UV_CHANNELS_MAX];
     };
 
 } // namespace Maze

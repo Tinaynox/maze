@@ -38,10 +38,50 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    static HashedCString const c_uvStreamUniformName = MAZE_HASHED_CSTRING("u_uvStream");
-    static HashedCString const c_uvStreamTextureUniformName = MAZE_HASHED_CSTRING("u_uvStreamTexture");
-    static HashedCString const c_uvStreamTextureSizeUniformName = MAZE_HASHED_CSTRING("u_uvStreamTextureSize");
-    static HashedCString const c_uvStreamOffsetUniformName = MAZE_HASHED_CSTRING("u_uvStreamOffset");
+    static HashedCString const c_uvStreamUniformName[MAZE_UV_CHANNELS_MAX] =
+    {
+        MAZE_HASHED_CSTRING("u_uv0Stream"),
+        MAZE_HASHED_CSTRING("u_uv1Stream"),
+        MAZE_HASHED_CSTRING("u_uv2Stream"),
+        MAZE_HASHED_CSTRING("u_uv3Stream"),
+        MAZE_HASHED_CSTRING("u_uv4Stream"),
+        MAZE_HASHED_CSTRING("u_uv5Stream"),
+        MAZE_HASHED_CSTRING("u_uv6Stream"),
+        MAZE_HASHED_CSTRING("u_uv7Stream"),
+    };
+    static HashedCString const c_uvStreamTextureUniformName[MAZE_UV_CHANNELS_MAX] =
+    {
+        MAZE_HASHED_CSTRING("u_uv0StreamTexture"),
+        MAZE_HASHED_CSTRING("u_uv1StreamTexture"),
+        MAZE_HASHED_CSTRING("u_uv2StreamTexture"),
+        MAZE_HASHED_CSTRING("u_uv3StreamTexture"),
+        MAZE_HASHED_CSTRING("u_uv4StreamTexture"),
+        MAZE_HASHED_CSTRING("u_uv5StreamTexture"),
+        MAZE_HASHED_CSTRING("u_uv6StreamTexture"),
+        MAZE_HASHED_CSTRING("u_uv7StreamTexture"),
+    };
+    static HashedCString const c_uvStreamTextureSizeUniformName[MAZE_UV_CHANNELS_MAX] =
+    {
+        MAZE_HASHED_CSTRING("u_uv0StreamTextureSize"),
+        MAZE_HASHED_CSTRING("u_uv1StreamTextureSize"),
+        MAZE_HASHED_CSTRING("u_uv2StreamTextureSize"),
+        MAZE_HASHED_CSTRING("u_uv3StreamTextureSize"),
+        MAZE_HASHED_CSTRING("u_uv4StreamTextureSize"),
+        MAZE_HASHED_CSTRING("u_uv5StreamTextureSize"),
+        MAZE_HASHED_CSTRING("u_uv6StreamTextureSize"),
+        MAZE_HASHED_CSTRING("u_uv7StreamTextureSize"),
+    };
+    static HashedCString const c_uvStreamOffsetUniformName[MAZE_UV_CHANNELS_MAX] =
+    {
+        MAZE_HASHED_CSTRING("u_uv0StreamOffset"),
+        MAZE_HASHED_CSTRING("u_uv1StreamOffset"),
+        MAZE_HASHED_CSTRING("u_uv2StreamOffset"),
+        MAZE_HASHED_CSTRING("u_uv3StreamOffset"),
+        MAZE_HASHED_CSTRING("u_uv4StreamOffset"),
+        MAZE_HASHED_CSTRING("u_uv5StreamOffset"),
+        MAZE_HASHED_CSTRING("u_uv6StreamOffset"),
+        MAZE_HASHED_CSTRING("u_uv7StreamOffset"),
+    };
 
 
     //////////////////////////////////////////
@@ -64,23 +104,25 @@ namespace Maze
 
     //////////////////////////////////////////
     InstanceStreamUVOpenGLPtr InstanceStreamUVOpenGL::Create(
+        S32 _index,
         RenderSystemOpenGL* _rs,
         ContextOpenGL* _contextOpenGL,
         InstanceStreamModeOpenGL _mode)
     {
         InstanceStreamUVOpenGLPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(InstanceStreamUVOpenGL, object, init(_rs, _contextOpenGL, _mode));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(InstanceStreamUVOpenGL, object, init(_index, _rs, _contextOpenGL, _mode));
         return object;
     }
 
 
     //////////////////////////////////////////
     bool InstanceStreamUVOpenGL::init(
+        S32 _index,
         RenderSystemOpenGL* _rs,
         ContextOpenGL* _contextOpenGL,
         InstanceStreamModeOpenGL _mode)
     {
-        if (!InstanceStreamUV::init())
+        if (!InstanceStreamUV::init(_index))
             return false;
 
         m_context = _contextOpenGL;
@@ -129,21 +171,21 @@ namespace Maze
         {
             case InstanceStreamModeOpenGL::UniformArray:
             {
-                ShaderUniformPtr const& uvStreamUniform = m_context->getCurrentShader()->ensureUniform(c_uvStreamUniformName);
+                ShaderUniformPtr const& uvStreamUniform = m_context->getCurrentShader()->ensureUniform(c_uvStreamUniformName[m_index]);
 
                 if (uvStreamUniform)
-                    uvStreamUniform->set(&m_data[m_dataOffset], _instancesCount);
+                    uvStreamUniform->upload(&m_data[m_dataOffset], _instancesCount);
 
                 break;
             }
             case InstanceStreamModeOpenGL::UniformTexture:
             {
-                ShaderUniformPtr const& uvStreamTextureUniform = m_context->getCurrentShader()->ensureUniform(c_uvStreamTextureUniformName);
+                ShaderUniformPtr const& uvStreamTextureUniform = m_context->getCurrentShader()->ensureUniform(c_uvStreamTextureUniformName[m_index]);
 
                 if (uvStreamTextureUniform)
                 {
-                    ShaderUniformPtr const& uvStreamTextureSizeUniform = m_context->getCurrentShader()->ensureUniform(c_uvStreamTextureSizeUniformName);
-                    ShaderUniformPtr const& uvStreamOffsetUniform = m_context->getCurrentShader()->ensureUniform(c_uvStreamOffsetUniformName);
+                    ShaderUniformPtr const& uvStreamTextureSizeUniform = m_context->getCurrentShader()->ensureUniform(c_uvStreamTextureSizeUniformName[m_index]);
+                    ShaderUniformPtr const& uvStreamOffsetUniform = m_context->getCurrentShader()->ensureUniform(c_uvStreamOffsetUniformName[m_index]);
 
                     Texture2DPtr const& bufferTexture = m_bufferInfo.buffer->getTexture();
 

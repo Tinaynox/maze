@@ -132,7 +132,7 @@ namespace Maze
         ShaderPtr shader = renderPass->getShader()->createCopy();
         shader->setName("Particle");
         shader->addLocalFeature("MAZE_COLOR_STREAM", "(1)");
-        shader->addLocalFeature("MAZE_UV_STREAM", "(1)");
+        shader->addLocalFeature("MAZE_UV0_STREAM", "(1)");
         shader->recompile();
         renderPass->setShader(shader);
         RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->addShaderToCache(shader);

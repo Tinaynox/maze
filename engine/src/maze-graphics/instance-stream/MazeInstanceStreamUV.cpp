@@ -49,8 +49,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool InstanceStreamUV::init()
+    bool InstanceStreamUV::init(S32 _index)
     {
+        m_index = _index;
         return true;
     }
     

@@ -107,6 +107,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, Texture2D** _value, U32 _count)
+        : m_renderSystem(_renderSystem)
+        , m_type(ShaderUniformType::UniformTexture2DArray)
+        , m_ptr(_value)
+        , m_count(_count)
+    {
+
+    }
+
+    //////////////////////////////////////////
     ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, TextureCube* _value)
         : m_renderSystem(_renderSystem)
         , m_type(ShaderUniformType::UniformTextureCube)
@@ -877,28 +887,29 @@ namespace Maze
 
         switch (_variant.getType())
         {
-            case ShaderUniformType::None:                 m_type = ShaderUniformType::None; break;
-            case ShaderUniformType::UniformS32:           set(_variant.getS32()); break;
-            case ShaderUniformType::UniformF32:           set(_variant.getF32()); break;
-            case ShaderUniformType::UniformF64:           set(_variant.getF64()); break;
-            case ShaderUniformType::UniformBool:          set(_variant.getBool()); break;
-            case ShaderUniformType::UniformTexture2D:     set(std::static_pointer_cast<Texture2D>(_variant.getTexture())); break;
-            case ShaderUniformType::UniformTextureCube:   set(std::static_pointer_cast<TextureCube>(_variant.getTexture())); break;
-            case ShaderUniformType::UniformVec2DS:        set(_variant.getVec2DS()); break;
-            case ShaderUniformType::UniformVec3DS:        set(_variant.getVec3DS()); break;
-            case ShaderUniformType::UniformVec4DS:        set(_variant.getVec4DS()); break;
-            case ShaderUniformType::UniformVec2DU:        set(_variant.getVec2DU()); break;
-            case ShaderUniformType::UniformVec3DU:        set(_variant.getVec3DU()); break;
-            case ShaderUniformType::UniformVec4DU:        set(_variant.getVec4DU()); break;
-            case ShaderUniformType::UniformVec2DF:        set(_variant.getVec2DF()); break;
-            case ShaderUniformType::UniformVec3DF:        set(_variant.getVec3DF()); break;
-            case ShaderUniformType::UniformVec4DF:        set(_variant.getVec4DF()); break;
-            case ShaderUniformType::UniformVec2DB:        set(_variant.getVec2DB()); break;
-            case ShaderUniformType::UniformVec3DB:        set(_variant.getVec3DB()); break;
-            case ShaderUniformType::UniformVec4DB:        set(_variant.getVec4DB()); break;
-            case ShaderUniformType::UniformMat3DF:        set(_variant.getMat3DF()); break;
-            case ShaderUniformType::UniformMat4DF:        set(_variant.getMat4DF()); break;
-            case ShaderUniformType::UniformColorF128:     set(_variant.getColorF128()); break;
+            case ShaderUniformType::None:                  m_type = ShaderUniformType::None; break;
+            case ShaderUniformType::UniformS32:            set(_variant.getS32()); break;
+            case ShaderUniformType::UniformF32:            set(_variant.getF32()); break;
+            case ShaderUniformType::UniformF64:            set(_variant.getF64()); break;
+            case ShaderUniformType::UniformBool:           set(_variant.getBool()); break;
+            case ShaderUniformType::UniformTexture2D:      set(std::static_pointer_cast<Texture2D>(_variant.getTexture())); break;
+            case ShaderUniformType::UniformTextureCube:    set(std::static_pointer_cast<TextureCube>(_variant.getTexture())); break;
+            case ShaderUniformType::UniformTexture2DArray: set(static_cast<Texture2D**>(_variant.getPtr()), _variant.getCount()); break;
+            case ShaderUniformType::UniformVec2DS:         set(_variant.getVec2DS()); break;
+            case ShaderUniformType::UniformVec3DS:         set(_variant.getVec3DS()); break;
+            case ShaderUniformType::UniformVec4DS:         set(_variant.getVec4DS()); break;
+            case ShaderUniformType::UniformVec2DU:         set(_variant.getVec2DU()); break;
+            case ShaderUniformType::UniformVec3DU:         set(_variant.getVec3DU()); break;
+            case ShaderUniformType::UniformVec4DU:         set(_variant.getVec4DU()); break;
+            case ShaderUniformType::UniformVec2DF:         set(_variant.getVec2DF()); break;
+            case ShaderUniformType::UniformVec3DF:         set(_variant.getVec3DF()); break;
+            case ShaderUniformType::UniformVec4DF:         set(_variant.getVec4DF()); break;
+            case ShaderUniformType::UniformVec2DB:         set(_variant.getVec2DB()); break;
+            case ShaderUniformType::UniformVec3DB:         set(_variant.getVec3DB()); break;
+            case ShaderUniformType::UniformVec4DB:         set(_variant.getVec4DB()); break;
+            case ShaderUniformType::UniformMat3DF:         set(_variant.getMat3DF()); break;
+            case ShaderUniformType::UniformMat4DF:         set(_variant.getMat4DF()); break;
+            case ShaderUniformType::UniformColorF128:      set(_variant.getColorF128()); break;
             default:
             {
                 MAZE_ERROR("Unsupported uniform variant - %d", (S32)_variant.getType());    

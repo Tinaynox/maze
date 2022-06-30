@@ -43,6 +43,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(UIManager);
     MAZE_USING_SHARED_PTR(Texture2D);
     MAZE_USING_SHARED_PTR(Sprite);
+    MAZE_USING_SHARED_PTR(FontManager);
     MAZE_USING_SHARED_PTR(ColorPickerManager);
     MAZE_USING_SHARED_PTR(ColorGradientPickerManager);
     MAZE_USING_SHARED_PTR(AnimationCurveManager);
@@ -147,6 +148,7 @@ namespace Maze
     protected:
         static UIManager* s_instance;
 
+        FontManagerPtr m_fontManager;
         ColorPickerManagerPtr m_colorPickerManager;
         ColorGradientPickerManagerPtr m_colorGradientPickerManager;
         AnimationCurveManagerPtr m_animationCurveManager;

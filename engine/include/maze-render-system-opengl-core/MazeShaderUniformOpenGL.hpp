@@ -78,6 +78,25 @@ namespace Maze
         //////////////////////////////////////////
         void validateState();
 
+
+        //////////////////////////////////////////
+        virtual void upload(F32 const* _values, Size _count) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void upload(Vec2DF const* _vectors, Size _count) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void upload(Vec3DF const* _vectors, Size _count) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void upload(Vec4DF const* _vectors, Size _count) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void upload(Mat3DF const* _matrices, Size _count) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void upload(Mat4DF const* _matrices, Size _count) MAZE_OVERRIDE;
+
     protected:
 
         //////////////////////////////////////////
@@ -98,30 +117,15 @@ namespace Maze
         //////////////////////////////////////////
         virtual void processSimpleUniformChanged() MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        virtual void uploadArrayUniform(F32 const* _values, Size _count) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void uploadArrayUniform(Vec2DF const* _vectors, Size _count) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void uploadArrayUniform(Vec3DF const* _vectors, Size _count) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void uploadArrayUniform(Vec4DF const* _vectors, Size _count) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void uploadArrayUniform(Mat3DF const* _matrices, Size _count) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void uploadArrayUniform(Mat4DF const* _matrices, Size _count) MAZE_OVERRIDE;
-    
 
         //////////////////////////////////////////
         RenderSystemOpenGL* getRenderSystemOpenGLRaw() const;
 
         //////////////////////////////////////////
-        void setTextureIndex(MZGLint textureIndex);
+        void setTextureIndex(MZGLint _textureIndex);
+
+        //////////////////////////////////////////
+        void setTextureIndices(MZGLint* _textureIndices, U32 _count);
 
     protected:
         MZGLint m_location;

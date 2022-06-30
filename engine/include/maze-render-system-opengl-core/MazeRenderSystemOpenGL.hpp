@@ -112,6 +112,9 @@ namespace Maze
         virtual S32 getCurrentAntialiasingLevelSupport() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
+        virtual S32 getTextureMaxSize() MAZE_OVERRIDE { return m_textureMaxSize; }
+
+        //////////////////////////////////////////
         inline void lockGLMutex() { m_glMutex.lock(); }
 
         //////////////////////////////////////////

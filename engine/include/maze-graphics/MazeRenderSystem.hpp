@@ -119,6 +119,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual S32 getCurrentAntialiasingLevelSupport() MAZE_ABSTRACT;
 
+        //////////////////////////////////////////
+        virtual S32 getTextureMaxSize() MAZE_ABSTRACT;
+
 
         //////////////////////////////////////////
         virtual bool setCurrentRenderTarget(RenderTarget* _renderTarget) MAZE_ABSTRACT;

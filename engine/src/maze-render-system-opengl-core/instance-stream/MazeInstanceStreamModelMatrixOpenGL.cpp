@@ -123,7 +123,7 @@ namespace Maze
             {
                 if (m_context->getCurrentShader()->getModelMatricesUniform())
                 {
-                    m_context->getCurrentShader()->getModelMatricesUniform()->set(&m_data[m_dataOffset], _instancesCount);
+                    m_context->getCurrentShader()->getModelMatricesUniform()->upload(&m_data[m_dataOffset], _instancesCount);
                 }
 
                 break;

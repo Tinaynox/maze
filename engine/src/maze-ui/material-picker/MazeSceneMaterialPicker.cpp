@@ -344,7 +344,7 @@ namespace Maze
                 renderPass->setShader(shader);
 
                 renderPass->getShader()->removeLocalFeature("MAZE_COLOR_STREAM");
-                renderPass->getShader()->removeLocalFeature("MAZE_UV_STREAM");
+                renderPass->getShader()->removeLocalFeature("MAZE_UV0_STREAM");
                 renderPass->getShader()->recompile();
 
 

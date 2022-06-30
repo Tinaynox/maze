@@ -106,6 +106,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    Texture2DPtr Texture2D::Create(
+        U32 _width,
+        U32 _height,
+        PixelFormat::Enum _pixelFormat,
+        RenderSystem* _renderSystem)
+    {
+        Texture2DPtr texture = Texture2D::Create(_renderSystem);
+        if (!texture)
+            return nullptr;
+        texture->loadEmpty({ _width, _height }, _pixelFormat);
+        return texture;
+    }
+
+    //////////////////////////////////////////
     bool Texture2D::init(RenderSystem* _renderSystem)
     {
         if (!Texture::init(_renderSystem))
@@ -140,6 +154,36 @@ namespace Maze
         PixelSheet2D pixelSheet(_size, _pixelFormat);
         loadTexture(pixelSheet, _pixelFormat);
         return true;
+    }
+
+    ////////////////////////////////////
+    bool Texture2D::loadFromBuffer(
+        ByteBufferPtr const& _buffer,
+        PixelFormat::Enum _bufferPixelFormat,
+        Vec2DU const& _size,
+        PixelFormat::Enum _pixelFormat)
+    {
+        Vector<ByteBufferPtr> buffers = { _buffer };
+        return loadFromBuffers(buffers, _bufferPixelFormat, _size, _pixelFormat);
+    }
+
+    ////////////////////////////////////
+    bool Texture2D::loadFromBuffers(
+        Vector<ByteBufferPtr> const& _buffers,
+        PixelFormat::Enum _bufferPixelFormat,
+        Vec2DU const& _size,
+        PixelFormat::Enum _pixelFormat)
+    {
+        Vector<PixelSheet2D> pixelSheets;
+        pixelSheets.resize(_buffers.size());
+        for (Size i = 0, in = _buffers.size(); i < in; ++i)
+        {
+            ByteBufferPtr const& byteBuffer = _buffers[i];
+            PixelSheet2D& pixelSheet = pixelSheets[i];
+            pixelSheet.copyFrom(byteBuffer->getDataPointer(), (Vec2DS)_size, _bufferPixelFormat);
+        }
+
+        return loadTexture(pixelSheets, _pixelFormat);
     }
 
     //////////////////////////////////////////

@@ -32,6 +32,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
+#include "maze-core/managers/MazePluginManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
@@ -75,7 +76,9 @@
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
+#include "maze-plugin-loader-ttf/MazeLoaderTTFPlugin.hpp"
 #include "main/SceneSystemTextTest.hpp"
+#include "main/SceneFontTest.hpp"
 #include "Example.hpp"
 
 
@@ -92,7 +95,7 @@ namespace Maze
     void LoadFirstExampleScene(SceneManager* _sceneManager)
     {
         Example::GetInstancePtr()->loadCoreGameAssets();
-        _sceneManager->loadScene<SceneSystemTextTest>();
+        _sceneManager->loadScene<SceneFontTest>();
     }
     
     //////////////////////////////////////////
@@ -104,6 +107,7 @@ namespace Maze
     //////////////////////////////////////////
     bool LoadPlugins()
     {
+        MAZE_LOAD_PLATFORM_PLUGIN(LoaderTTF);
         return true;
     }
 

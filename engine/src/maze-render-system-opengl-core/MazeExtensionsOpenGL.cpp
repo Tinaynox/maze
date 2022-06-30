@@ -132,9 +132,13 @@ namespace Maze
     //////////////////////////////////////////
     void ExtensionsOpenGL::saveCommonChecks()
     {
+        bool isGLES = m_context->getConfig().flags & ContextOpenGLFlags::EmbeddedSystems;
+
         m_supportArbBufferStorage = m_context->hasMinVersion(4, 4) || hasGLExtension("GL_ARB_buffer_storage");
         m_supportMultisample = m_context->hasMinVersion(3, 3) || hasGLExtension("EXT_multisample_compatibility");
         m_supportClipDistance = hasGLExtension("GL_ARB_cull_distance") || hasGLExtension("GL_APPLE_clip_distance");
+        m_supportFrameBufferObject = isGLES || hasGLExtension("GL_EXT_framebuffer_object");
+        m_supportFrameBufferBlit = isGLES || hasGLExtension("GL_EXT_framebuffer_blit");
     }
 
 

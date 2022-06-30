@@ -117,6 +117,7 @@ namespace Maze
 
             case ShaderUniformType::UniformTexture2D:
             case ShaderUniformType::UniformTextureCube:
+            case ShaderUniformType::UniformTexture2DArray:
             {
                 m_textureIndex = -1;
                 m_shaderRaw->castRaw<ShaderOpenGL>()->assignUniformTextureIndexes();
@@ -263,6 +264,8 @@ namespace Maze
             }
 
             case ShaderUniformType::UniformTexture2D:
+            case ShaderUniformType::UniformTextureCube:
+            case ShaderUniformType::UniformTexture2DArray:
             {
 
                 break;
@@ -366,40 +369,41 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ShaderUniformOpenGL::uploadArrayUniform(F32 const* _value, Size _count)
+    void ShaderUniformOpenGL::upload(F32 const* _value, Size _count)
     {
         MAZE_GL_CALL(mzglUniform1fv((MZGLint)m_location, (MZGLsizei)_count, (MZGLfloat const*)_value));
     }
 
     //////////////////////////////////////////
-    void ShaderUniformOpenGL::uploadArrayUniform(Vec2DF const* _vectors, Size _count)
+    void ShaderUniformOpenGL::upload(Vec2DF const* _vectors, Size _count)
     {
         MAZE_GL_CALL(mzglUniform2fv((MZGLint)m_location, (MZGLsizei)_count, (MZGLfloat const*)_vectors));
     }
 
     //////////////////////////////////////////
-    void ShaderUniformOpenGL::uploadArrayUniform(Vec3DF const* _vectors, Size _count)
+    void ShaderUniformOpenGL::upload(Vec3DF const* _vectors, Size _count)
     {
         MAZE_GL_CALL(mzglUniform3fv((MZGLint)m_location, (MZGLsizei)_count, (MZGLfloat const*)_vectors));
     }
 
     //////////////////////////////////////////
-    void ShaderUniformOpenGL::uploadArrayUniform(Vec4DF const* _vectors, Size _count)
+    void ShaderUniformOpenGL::upload(Vec4DF const* _vectors, Size _count)
     {
         MAZE_GL_CALL(mzglUniform4fv((MZGLint)m_location, (MZGLsizei)_count, (MZGLfloat const*)_vectors));
     }
 
     //////////////////////////////////////////
-    void ShaderUniformOpenGL::uploadArrayUniform(Mat3DF const* _matrices, Size _count)
+    void ShaderUniformOpenGL::upload(Mat3DF const* _matrices, Size _count)
     {
         MAZE_GL_CALL(mzglUniformMatrix3fv((MZGLint)m_location, (MZGLsizei)_count, MAZE_GL_FALSE, _matrices[0].getPlaneMatrix()));
     }
 
     //////////////////////////////////////////
-    void ShaderUniformOpenGL::uploadArrayUniform(Mat4DF const* _matrices, Size _count)
+    void ShaderUniformOpenGL::upload(Mat4DF const* _matrices, Size _count)
     {
         MAZE_GL_CALL(mzglUniformMatrix4fv((MZGLint)m_location, (MZGLsizei)_count, MAZE_GL_FALSE, _matrices[0].getPlaneMatrix()));
     }
+
 
     //////////////////////////////////////////
     void ShaderUniformOpenGL::setTextureIndex(MZGLint _textureIndex)
@@ -409,14 +413,32 @@ namespace Maze
 
         m_textureIndex = _textureIndex;
 
-        if (    getType() == ShaderUniformType::UniformTexture2D
-            ||  getType() == ShaderUniformType::UniformTextureCube)
+        if (getType() == ShaderUniformType::UniformTexture2D ||
+            getType() == ShaderUniformType::UniformTextureCube)
         {
             ShaderOpenGLScopeBind scopeBind(m_shaderRaw);
 
             MAZE_GL_MUTEX_SCOPED_LOCK(getRenderSystemOpenGLRaw());
 
             MAZE_GL_CALL(mzglUniform1i((MZGLint)m_location, m_textureIndex));
+        }
+    }
+
+    //////////////////////////////////////////
+    void ShaderUniformOpenGL::setTextureIndices(MZGLint* _textureIndices, U32 _count)
+    {
+        if (m_textureIndex == *_textureIndices)
+            return;
+
+        m_textureIndex = *_textureIndices;
+
+        if (getType() == ShaderUniformType::UniformTexture2DArray)
+        {
+            ShaderOpenGLScopeBind scopeBind(m_shaderRaw);
+
+            MAZE_GL_MUTEX_SCOPED_LOCK(getRenderSystemOpenGLRaw());
+
+            MAZE_GL_CALL(mzglUniform1iv((MZGLint)m_location, (MZGLsizei)_count, (MZGLint const*)_textureIndices));
         }
     }
 

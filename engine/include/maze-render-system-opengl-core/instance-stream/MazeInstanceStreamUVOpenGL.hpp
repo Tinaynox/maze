@@ -57,6 +57,7 @@ namespace Maze
 
         //////////////////////////////////////////
         static InstanceStreamUVOpenGLPtr Create(
+            S32 _index,
             RenderSystemOpenGL* _rs,
             ContextOpenGL* _contextOpenGL,
             InstanceStreamModeOpenGL _mode);
@@ -83,6 +84,7 @@ namespace Maze
 
         //////////////////////////////////////////
         bool init(
+            S32 _index,
             RenderSystemOpenGL* _rs,
             ContextOpenGL* _contextOpenGL,
             InstanceStreamModeOpenGL _mode);

@@ -82,6 +82,12 @@ namespace Maze
         //////////////////////////////////////////
         inline bool getSupportClipDistance() const { return m_supportClipDistance; }
 
+        //////////////////////////////////////////
+        inline bool getSupportFrameBufferObject() const { return m_supportFrameBufferObject; }
+
+        //////////////////////////////////////////
+        inline bool getSupportFrameBufferBlit() const { return m_supportFrameBufferBlit; }
+
     public:
 
         //////////////////////////////////////////
@@ -111,6 +117,8 @@ namespace Maze
         bool m_supportArbBufferStorage = false;
         bool m_supportMultisample = false;
         bool m_supportClipDistance = false;
+        bool m_supportFrameBufferObject = false;
+        bool m_supportFrameBufferBlit = false;
     };
 
 } // namespace Maze

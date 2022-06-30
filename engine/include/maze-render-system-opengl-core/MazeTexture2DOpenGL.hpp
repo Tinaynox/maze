@@ -118,6 +118,7 @@ namespace Maze
             Vector<PixelSheet2D> const& _pixelSheets,
             PixelFormat::Enum _internalPixelFormat = PixelFormat::None) MAZE_OVERRIDE;
 
+
         ////////////////////////////////////
         virtual bool setMagFilter(TextureFilter _value) MAZE_OVERRIDE;
 
@@ -141,6 +142,12 @@ namespace Maze
         {
             return m_renderSystem->castRaw<RenderSystemOpenGL>();
         }
+
+        ////////////////////////////////////
+        virtual void copyImageFrom(
+            Texture2DPtr const& _texture,
+            U32 _x = 0,
+            U32 _y = 0) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual void copyImageFrom(

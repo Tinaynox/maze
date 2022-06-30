@@ -281,6 +281,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void PixelSheet2D::copyFrom(U8 const* _data, Vec2DS const& _size, PixelFormat::Enum _pixelFormat)
+    {
+        setFormat(_pixelFormat);
+        setSize(_size);
+        m_data.copyFrom(_data, getDataSize());
+    }
+
+    //////////////////////////////////////////
     void PixelSheet2D::drawLine(
         S32 _x0, S32 _y0,
         S32 _x1, S32 _y1,

@@ -30,9 +30,8 @@ maze_add_module(
     SRC_DIR "src/maze-ui"
     FORWARD_HEADER MazeUIHeader)
 
+
 target_link_libraries(
     maze-ui 
     PUBLIC maze-core
-    PUBLIC maze-graphics
-    PUBLIC ${ZLIB_NAME}
-    PUBLIC ${PNGLIB_NAME})
+    PUBLIC maze-graphics)

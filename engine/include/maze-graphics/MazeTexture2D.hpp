@@ -81,6 +81,13 @@ namespace Maze
             String const& _assetFileName,
             RenderSystem* _renderSystem = nullptr);
 
+        //////////////////////////////////////////
+        static Texture2DPtr Create(
+            U32 _width,
+            U32 _height,
+            PixelFormat::Enum _pixelFormat,
+            RenderSystem* _renderSystem = nullptr);
+
 
         //////////////////////////////////////////
         virtual bool isValid() MAZE_ABSTRACT;
@@ -99,6 +106,22 @@ namespace Maze
         {
             return loadEmpty(Vec2DU{_w, _h}, _pixelFormat);
         }
+
+        ////////////////////////////////////
+        bool loadFromBuffer(
+            ByteBufferPtr const& _buffer,
+            PixelFormat::Enum _bufferPixelFormat,
+            Vec2DU const& _size,
+            PixelFormat::Enum _pixelFormat);
+
+        ////////////////////////////////////
+        bool loadFromBuffers(
+            Vector<ByteBufferPtr> const& _buffers,
+            PixelFormat::Enum _bufferPixelFormat,
+            Vec2DU const& _size,
+            PixelFormat::Enum _pixelFormat);
+
+
 
         //////////////////////////////////////////
         inline AssetFilePtr const& getAssetFile() const { return m_assetFile; }
@@ -143,6 +166,12 @@ namespace Maze
 
         ////////////////////////////////////
         PixelFormat::Enum getInternalPixelFormat() const { return m_internalPixelFormat; }
+
+        ////////////////////////////////////
+        virtual void copyImageFrom(
+            Texture2DPtr const& _texture,
+            U32 _x = 0,
+            U32 _y = 0) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual void copyImageFrom(
