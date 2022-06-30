@@ -371,12 +371,11 @@ namespace Maze
         F32 calculateXAlignOffset(FastVector<F32> const& _rowLengths, U32 _currentRow);
 
         //////////////////////////////////////////
-        void addGlyphQuad(
-            Size _charIndex,
+        void setGlyphQuad(
+            Size _quadIndex,
             Vec2DF const& _position,
             ColorF128 const& _color,
-            FontGlyph const& _glyph,
-            F32 _outlineThickness = 0.0f);
+            FontGlyph const& _glyph);
 
         //////////////////////////////////////////
         void notifyFontMaterialTexturesChanged();

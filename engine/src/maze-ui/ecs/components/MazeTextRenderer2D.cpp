@@ -62,7 +62,10 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(FontMaterialPtr, fontMaterial, FontMaterialPtr(), getFontMaterial, setFontMaterial),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(U32, fontSize, 32, getFontSize, setFontSize),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(HorizontalAlignment2D, horizontalAlignment, HorizontalAlignment2D::Left, getHorizontalAlignment, setHorizontalAlignment),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(VerticalAlignment2D, verticalAlignment, VerticalAlignment2D::Top, getVerticalAlignment, setVerticalAlignment));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(VerticalAlignment2D, verticalAlignment, VerticalAlignment2D::Top, getVerticalAlignment, setVerticalAlignment),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(TextRenderer2DWidthPolicy, widthPolicy, TextRenderer2DWidthPolicy::None, getWidthPolicy, setWidthPolicy),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, outlineThickness, 0.0f, getOutlineThickness, setOutlineThickness),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, outlineColor, ColorU32::c_white, getOutlineColor, setOutlineColor));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(TextRenderer2D);
@@ -327,7 +330,10 @@ namespace Maze
         
 
         Vector<TempGlyphData> glyphs;
-        glyphs.reserve(finalText.size());
+        glyphs.reserve(getSymbolsCount());
+
+        Size quadsCount = 0u;
+        Size outlineQuadsCount = 0u;
 
         FastVector<F32> rowLengths;
         F32 rowLengthMax = 0.0f;
@@ -408,8 +414,31 @@ namespace Maze
                 if (m_outlineThickness)
                     glyphData.outlineThicknessGlyph = &(m_fontMaterial->getFont()->getOutlinedGlyphFromStorage(glyphStorageData, curChar, m_fontSize, m_outlineThickness, ttfOutlineThicknessPage));
 
-                glyphs.emplace_back(glyphData);
+                
+                if (glyphData.glyphStorageData)
+                {
+                    switch (glyphData.glyphStorageData->type)
+                    {
+                        case FontGlyphStorageType::TrueTypeFont:
+                            ++quadsCount;
+                            if (m_outlineThickness)
+                                ++outlineQuadsCount;
+                            break;
+                        case FontGlyphStorageType::Sprite:
+                            ++quadsCount;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else
+                {
+                    ++quadsCount;
+                    if (m_outlineThickness)
+                        ++outlineQuadsCount;
+                }
 
+                glyphs.emplace_back(glyphData);
 
                 x += glyphData.glyph->advance;
             }
@@ -447,7 +476,8 @@ namespace Maze
         U32 currentRow = 0;
         U32 prevChar = 0;
         U32 curChar = 0;
-        U32 curGlyphIndex = 0;
+        U32 curQuadIndex = 0;
+        U32 curOutlineQuadIndex = 0;
 
         String::iterator finalTextBegin = finalText.begin();
         String::iterator it = finalText.begin();
@@ -460,10 +490,10 @@ namespace Maze
 
         S32 glyphIndex = 0;
 
-        Size charsCount = glyphs.size();
-        m_meshRenderer->resize(charsCount);
-        m_localMatrices.resize(charsCount);
-        m_localColors.resize(charsCount);
+        Size totalQuadsCount = quadsCount + outlineQuadsCount;
+        m_meshRenderer->resize(totalQuadsCount);
+        m_localMatrices.resize(totalQuadsCount);
+        m_localColors.resize(totalQuadsCount);
 
         // Build mesh
         while ((it != end) && (curChar = utf8::next(it, end)))
@@ -509,8 +539,6 @@ namespace Maze
                 continue;
             }
 
-            bool thickness = (m_outlineThickness != 0);
-
             glyphX = x + xAlignOffset + m_outlineThickness;
             glyphY = y + m_outlineThickness;
 
@@ -536,18 +564,17 @@ namespace Maze
             }
             else
             {
-                addGlyphQuad(curGlyphIndex, Vec2DF(glyphX, glyphY), currentGlyphColor, (*glyphData.glyph));
-
-                // #TODO: outline
-                /*
-                if (glyphData.glyphStorageData && glyphData.glyphStorageData->type != FontGlyphStorageType::TrueTypeFont)
-                    thickness = false;
-
-                if (thickness)
+                if (m_outlineThickness)
                 {
-                    addGlyphQuad(Vec2DF(glyphX, glyphY), m_outlineColor, (*glyphData.outlineThicknessGlyph), m_outlineThickness);
+                    if (!glyphData.glyphStorageData || glyphData.glyphStorageData->type == FontGlyphStorageType::TrueTypeFont)
+                    {
+                        setGlyphQuad(curOutlineQuadIndex, Vec2DF(glyphX, glyphY), m_outlineColor, (*glyphData.outlineThicknessGlyph));
+                        ++curOutlineQuadIndex;
+                    }
                 }
-                */
+
+                setGlyphQuad(outlineQuadsCount + curQuadIndex, Vec2DF(glyphX, glyphY), currentGlyphColor, (*glyphData.glyph));
+                ++curQuadIndex;
             }
 
             x += glyphData.glyph->advance;
@@ -558,8 +585,6 @@ namespace Maze
                 x = Math::Round(x);
 
             curCharOffset = it - finalTextBegin;
-
-            ++curGlyphIndex;
         }
 
         updateMeshRendererModelMatrices();
@@ -652,12 +677,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void TextRenderer2D::addGlyphQuad(
-        Size _charIndex,
+    void TextRenderer2D::setGlyphQuad(
+        Size _quadIndex,
         Vec2DF const& _position,
         ColorF128 const& _color,
-        FontGlyph const& _glyph,
-        F32 _outlineThickness)
+        FontGlyph const& _glyph)
     {
 
         if (!_glyph.texture)
@@ -666,19 +690,19 @@ namespace Maze
         S32 textureIndex = m_fontMaterial->getTextureIndex(m_fontSize, _glyph.texture.get());
         MAZE_ERROR_RETURN_IF(textureIndex == -1, "Texture index is -1!");
 
-        MAZE_ERROR_RETURN_IF(_charIndex >= m_localMatrices.size(), "Out of bounds!");
-        MAZE_ERROR_RETURN_IF(_charIndex >= m_localColors.size(), "Out of bounds!");
+        MAZE_ERROR_RETURN_IF(_quadIndex >= m_localMatrices.size(), "Out of bounds!");
+        MAZE_ERROR_RETURN_IF(_quadIndex >= m_localColors.size(), "Out of bounds!");
         
         Vec2DF sizeV = (Vec2DF)_glyph.bounds.size;
         Vec2DF positionShiftV = _position + _glyph.bounds.size * 0.5f + _glyph.bounds.position;
 
         Mat4DF localTransform = Mat4DF::CreateTranslationMatrix(positionShiftV) * Mat4DF::CreateScaleMatrix(sizeV);
-        m_localMatrices[_charIndex] = localTransform;
-        m_localColors[_charIndex] = _color.toVec4DF();
+        m_localMatrices[_quadIndex] = localTransform;
+        m_localColors[_quadIndex] = _color.toVec4DF();
 
-        m_meshRenderer->setColor(_charIndex, _color);
+        m_meshRenderer->setColor(_quadIndex, _color);
         m_meshRenderer->setUV0(
-            _charIndex,
+            _quadIndex,
             Vec4DF(
                 _glyph.textureCoords.position.x,
                 _glyph.textureCoords.position.x + _glyph.textureCoords.size.x,
@@ -686,7 +710,7 @@ namespace Maze
                 _glyph.textureCoords.position.y + _glyph.textureCoords.size.y));
 
         m_meshRenderer->setUV1(
-            _charIndex,
+            _quadIndex,
             Vec4DF((F32)textureIndex, 0.0f, 0.0f, 0.0f));
     }
 

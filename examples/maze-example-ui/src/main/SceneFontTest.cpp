@@ -235,6 +235,8 @@ namespace Maze
                 Vec2DF::c_zero,
                 textSquare->getTransform(),
                 this);
+            //m_text->setOutlineThickness(3.0f);
+            //m_text->setOutlineColor(ColorU32::ColorU32::c_darkGray);
         }
 
     }
