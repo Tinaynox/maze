@@ -80,7 +80,7 @@ namespace Maze
             return nullptr;
 
         if (!fontMaterial->loadFromAssetFile(_assetFile))
-            return false;
+            return nullptr;
 
         return fontMaterial;
     }

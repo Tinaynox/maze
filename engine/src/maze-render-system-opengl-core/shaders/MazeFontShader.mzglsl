@@ -61,7 +61,7 @@ R"(
 	#endif
 	#if (MAZE_UV1_STREAM)
 		vec4 uv1Stream = GetUV1Stream(instanceId);
-        v_uv1 = int(uv1Stream.x);
+        v_uv1 = uv1Stream.x;
     #endif
 
         gl_Position = positionCS;

@@ -34,6 +34,7 @@
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/data/MazeByteBuffer.hpp"
+#include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-ui/fonts/MazeFontGlyph.hpp"
 
 

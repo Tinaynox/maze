@@ -235,7 +235,6 @@ namespace Maze
                 Vec2DF::c_zero,
                 textSquare->getTransform(),
                 this);
-            FontManager::GetInstancePtr()->getDefaultFont()->getGlyph('W', 32).texture->saveToFileAsTGA("glyph.tga");
         }
 
     }

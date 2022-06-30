@@ -371,7 +371,7 @@ namespace Maze
         F32 calculateXAlignOffset(FastVector<F32> const& _rowLengths, U32 _currentRow);
 
         //////////////////////////////////////////
-        void TextRenderer2D::addGlyphQuad(
+        void addGlyphQuad(
             Size _charIndex,
             Vec2DF const& _position,
             ColorF128 const& _color,

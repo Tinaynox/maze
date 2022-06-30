@@ -129,7 +129,7 @@ namespace Maze
             VertexArrayObject* _vao,
             Mat4DF const& _modelMatrix = Mat4DF::c_identity,
             Vec4DF const* _color = nullptr,
-            Vec4DF const* _uvs[MAZE_UV_CHANNELS_MAX] = { nullptr })
+            Vec4DF const* _uvs[MAZE_UV_CHANNELS_MAX] = nullptr)
         {
             bool useColorStream = (_color != nullptr);
             U8 uvMask = ConstructUVMask(_uvs);
@@ -165,7 +165,7 @@ namespace Maze
             S32 _count,
             Mat4DF const* _modelMatricies,
             Vec4DF const* _colors = nullptr,
-            Vec4DF const* _uvs[MAZE_UV_CHANNELS_MAX] = { nullptr })
+            Vec4DF const* _uvs[MAZE_UV_CHANNELS_MAX] = nullptr)
         {
             bool useColorStream = (_colors != nullptr);
             U8 uvMask = ConstructUVMask(_uvs);
@@ -249,7 +249,7 @@ namespace Maze
             S32 _count,
             Mat4DF const* _modelMatricies,
             Vec4DF const* _colors = nullptr,
-            Vec4DF const* _uvs[MAZE_UV_CHANNELS_MAX] = { nullptr })
+            Vec4DF const* _uvs[MAZE_UV_CHANNELS_MAX] = nullptr)
         {
             addDrawVAOInstancedCommand(_vao.get(), _count, _modelMatricies, _colors, _uvs);
         }

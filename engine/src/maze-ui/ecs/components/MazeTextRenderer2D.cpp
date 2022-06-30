@@ -630,6 +630,9 @@ namespace Maze
                 case HorizontalAlignment2D::Left: return Math::Min(0.0f, size.x - _rowLengths[_currentRow]);
                 case HorizontalAlignment2D::Right: return Math::Max(0.0f, size.x - _rowLengths[_currentRow]);
                 case HorizontalAlignment2D::Center: return (size.x - _rowLengths[_currentRow]) / 2.0f;
+                default:
+                    MAZE_NOT_IMPLEMENTED;
+                    break;
             }
         }
         else
@@ -639,6 +642,9 @@ namespace Maze
                 case HorizontalAlignment2D::Left: return 0.0f;
                 case HorizontalAlignment2D::Right: return size.x - _rowLengths[_currentRow];
                 case HorizontalAlignment2D::Center: return (size.x - _rowLengths[_currentRow]) / 2.0f;
+                default:
+                    MAZE_NOT_IMPLEMENTED;
+                    break;
             }
         }
 
@@ -668,7 +674,7 @@ namespace Maze
 
         Mat4DF localTransform = Mat4DF::CreateTranslationMatrix(positionShiftV) * Mat4DF::CreateScaleMatrix(sizeV);
         m_localMatrices[_charIndex] = localTransform;
-        m_localColors[_charIndex] = _color;
+        m_localColors[_charIndex] = _color.toVec4DF();
 
         m_meshRenderer->setColor(_charIndex, _color);
         m_meshRenderer->setUV0(
