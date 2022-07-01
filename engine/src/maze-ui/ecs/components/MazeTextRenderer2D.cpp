@@ -626,7 +626,7 @@ namespace Maze
 
         Size colorsCount = m_meshRenderer->getColors().size();
         for (Size i = 0; i < colorsCount; ++i)
-            m_meshRenderer->setColor(i, m_localColors[i] * vertexColor * m_color.toVec4DF());
+            m_meshRenderer->setColor(i, m_localColors[i] * vertexColor);
     }
 
     //////////////////////////////////////////
@@ -700,7 +700,9 @@ namespace Maze
         m_localMatrices[_quadIndex] = localTransform;
         m_localColors[_quadIndex] = _color.toVec4DF();
 
-        m_meshRenderer->setColor(_quadIndex, _color);
+        Vec4DF const vertexColor = Vec4DF(1.0f, 1.0f, 1.0f, m_canvasRenderer ? m_canvasRenderer->getAlpha() : 1.0f);
+
+        m_meshRenderer->setColor(_quadIndex, _color * vertexColor);
         m_meshRenderer->setUV0(
             _quadIndex,
             Vec4DF(
