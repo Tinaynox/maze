@@ -47,6 +47,7 @@
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasRenderer.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
@@ -70,6 +71,7 @@
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
+#include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-ui/managers/MazeAnimationCurveManager.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
@@ -267,7 +269,7 @@ namespace Maze
             rowLayout->setAutoWidth(false);
             rowLayout->setSpacing(5.0f);
 
-            SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+            SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
                 "Mode",
                 8,
                 HorizontalAlignment2D::Left,
@@ -415,7 +417,7 @@ namespace Maze
             m_curveClickButton->getTransitionSprite()->setColor(ColorU32::c_transparent);
 
 
-            m_curveScalarEdit = UIHelper::CreateDefaultEditBox(
+            m_curveScalarEdit = SystemUIHelper::CreateDefaultEditBox(
                 StringHelper::F32ToStringFormatted(curve.getScalar(), 4).c_str(),
                 Vec2DF(30, 12),
                 Vec2DF(40 - 3, -25),
@@ -450,7 +452,7 @@ namespace Maze
                 rowLayout->setExpand(true);
                 rowLayout->setAutoWidth(false);
 
-                SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+                SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
                     "Value",
                     8,
                     HorizontalAlignment2D::Left,
@@ -461,7 +463,7 @@ namespace Maze
                     this);
                 label->setColor(ColorU32::c_black);
 
-                m_valueEdit = UIHelper::CreateDefaultEditBox(
+                m_valueEdit = SystemUIHelper::CreateDefaultEditBox(
                     "51.5",
                     Vec2DF(80.0f, 18.0f),
                     Vec2DF::c_zero,
@@ -484,7 +486,7 @@ namespace Maze
                 rowLayout->setExpand(true);
                 rowLayout->setAutoWidth(false);
 
-                SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+                SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
                     "Location",
                     8,
                     HorizontalAlignment2D::Left,
@@ -495,7 +497,7 @@ namespace Maze
                     this);
                 label->setColor(ColorU32::c_black);
 
-                m_locationEdit = UIHelper::CreateDefaultEditBox(
+                m_locationEdit = SystemUIHelper::CreateDefaultEditBox(
                     "51.5",
                     Vec2DF(45.0f, 18.0f),
                     Vec2DF::c_zero,
@@ -503,7 +505,7 @@ namespace Maze
                     this);
                 m_locationEdit->eventTextInput.subscribe(this, &SceneCurveEditor::notifyLocationEditTextInput);
 
-                SystemTextRenderer2DPtr label2 = SpriteHelper::CreateSystemText(
+                SystemTextRenderer2DPtr label2 = SystemUIHelper::CreateSystemText(
                     "%",
                     8,
                     HorizontalAlignment2D::Left,
@@ -536,7 +538,7 @@ namespace Maze
                 rowLayout->setExpand(true);
                 rowLayout->setAutoWidth(false);
 
-                SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+                SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
                     "In Tan",
                     8,
                     HorizontalAlignment2D::Left,
@@ -547,7 +549,7 @@ namespace Maze
                     this);
                 label->setColor(ColorU32::c_black);
 
-                m_inTangentEdit = UIHelper::CreateDefaultEditBox(
+                m_inTangentEdit = SystemUIHelper::CreateDefaultEditBox(
                     "51.5",
                     Vec2DF(80.0f, 18.0f),
                     Vec2DF::c_zero,
@@ -570,7 +572,7 @@ namespace Maze
                 rowLayout->setExpand(true);
                 rowLayout->setAutoWidth(false);
 
-                SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+                SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
                     "Out Tan",
                     8,
                     HorizontalAlignment2D::Left,
@@ -581,7 +583,7 @@ namespace Maze
                     this);
                 label->setColor(ColorU32::c_black);
 
-                m_outTangentEdit = UIHelper::CreateDefaultEditBox(
+                m_outTangentEdit = SystemUIHelper::CreateDefaultEditBox(
                     "51.5",
                     Vec2DF(80.0f, 18.0f),
                     Vec2DF::c_zero,

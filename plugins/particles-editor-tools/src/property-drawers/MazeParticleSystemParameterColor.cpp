@@ -33,6 +33,7 @@
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
 #include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
@@ -125,7 +126,7 @@ namespace Maze
         layout->setExpand(true);
         m_rootEntity = layout->getEntity();
 
-        SystemTextRenderer2DPtr systemText = SpriteHelper::CreateSystemText(
+        SystemTextRenderer2DPtr systemText = SystemUIHelper::CreateSystemText(
             EditorToolsHelper::BuildPropertyName(m_label.c_str(), _label).c_str(),
             EditorToolsLayout::c_inspectorPropertyFontSize,
             HorizontalAlignment2D::Left,
@@ -548,7 +549,7 @@ namespace Maze
                 checkMarkSprite->getEntityRaw()->ensureComponent<Name>()->setName("CheckMark");
                 checkMarkSprite->setColor(ColorU32::c_black);
 
-                SystemTextRenderer2DPtr itemTextRenderer = SpriteHelper::CreateSystemText(
+                SystemTextRenderer2DPtr itemTextRenderer = SystemUIHelper::CreateSystemText(
                     "Option 1",
                     8,
                     HorizontalAlignment2D::Left,

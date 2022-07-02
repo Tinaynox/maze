@@ -34,6 +34,7 @@
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
@@ -145,7 +146,7 @@ namespace Maze
         m_expandButton = m_expandButtonSprite->getEntityRaw()->ensureComponent<ClickButton2D>();
         m_expandButton->eventClick.subscribe(this, &PropertyDrawerVector::notifyExpandButtonClick);
 
-        SystemTextRenderer2DPtr systemText = SpriteHelper::CreateSystemText(
+        SystemTextRenderer2DPtr systemText = SystemUIHelper::CreateSystemText(
             _label,
             EditorToolsLayout::c_inspectorPropertyFontSize,
             HorizontalAlignment2D::Left,

@@ -50,6 +50,7 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
 #include "maze-editor-tools/scenes/SceneDebugEditor.hpp"
@@ -59,6 +60,7 @@
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
+#include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -194,7 +196,7 @@ namespace Maze
         x += (F32)charSize + 4;
 
         String label = FileHelper::GetFileNameWithoutExtension(m_assetFile->getFileName());
-        m_textRenderer = SpriteHelper::CreateSystemText(
+        m_textRenderer = SystemUIHelper::CreateSystemText(
             label.c_str(),
             charSize,
             HorizontalAlignment2D::Left,
@@ -207,7 +209,7 @@ namespace Maze
             Vec2DF(0.0f, 0.5f));
         m_textRenderer->setColor(ColorU32::c_black);
 
-        m_textEdit = UIHelper::CreateDefaultEditBox(
+        m_textEdit = SystemUIHelper::CreateDefaultEditBox(
             label.c_str(),
             Vec2DF(200, (F32)charSize + 4.0f),
             Vec2DF(x, 0),

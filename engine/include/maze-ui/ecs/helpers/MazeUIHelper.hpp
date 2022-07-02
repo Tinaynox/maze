@@ -64,16 +64,6 @@ namespace Maze
     namespace UIHelper
     {
         //////////////////////////////////////////
-        MAZE_UI_API SystemTextEditBox2DPtr CreateDefaultEditBox(
-            CString _text,
-            Vec2DF const& _size,
-            Vec2DF const& _position,
-            Transform2DPtr const& _parent,
-            ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
-
-        //////////////////////////////////////////
         MAZE_UI_API HorizontalLayout2DPtr CreateHorizontalLayout(
             HorizontalAlignment2D _horizontalAlignment,
             VerticalAlignment2D _verticalAlignment,

@@ -32,7 +32,9 @@
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
+#include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
@@ -118,7 +120,7 @@ namespace Maze
         layout->setAutoWidth(false);
         layout->setExpand(true);
 
-        SystemTextRenderer2DPtr systemText = SpriteHelper::CreateSystemText(
+        SystemTextRenderer2DPtr systemText = SystemUIHelper::CreateSystemText(
             EditorToolsHelper::BuildPropertyName(m_label.c_str(), _label).c_str(),
             EditorToolsLayout::c_inspectorPropertyFontSize,
             HorizontalAlignment2D::Left,
@@ -177,7 +179,7 @@ namespace Maze
             _parent->getEntityRaw()->getECSScene());
         layout->setSpacing(1.0f);
 
-        SystemTextRenderer2DPtr systemText = SpriteHelper::CreateSystemText(
+        SystemTextRenderer2DPtr systemText = SystemUIHelper::CreateSystemText(
             _name,
             6,
             HorizontalAlignment2D::Left,
@@ -190,7 +192,7 @@ namespace Maze
             Vec2DF::c_zero);
         systemText->setColor(ColorU32::c_black);
 
-        SystemTextEditBox2DPtr editBox = UIHelper::CreateDefaultEditBox(
+        SystemTextEditBox2DPtr editBox = SystemUIHelper::CreateDefaultEditBox(
             "",
             Vec2DF(60, 18),
             Vec2DF(0, 0),

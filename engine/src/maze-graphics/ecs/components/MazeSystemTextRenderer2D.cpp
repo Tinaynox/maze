@@ -55,7 +55,7 @@ namespace Maze
     // Class SystemTextRenderer2D
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SystemTextRenderer2D, Component,
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SystemTextRenderer2D, AbstractTextRenderer2D,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(String, text, String(), getText, setText),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, color, ColorU32::c_white, getColor, setColor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(SystemFontPtr, systemFont, SystemFontPtr(), getSystemFont, setSystemFont),
@@ -69,10 +69,7 @@ namespace Maze
 
     //////////////////////////////////////////
     SystemTextRenderer2D::SystemTextRenderer2D()
-        : m_renderSystem(nullptr)
-        , m_transform(nullptr)
-        , m_canvasRenderer(nullptr)
-        , m_color(ColorU32::c_white)
+        : m_color(ColorU32::c_white)
         , m_fontSize(32)
         , m_horizontalAlignment(HorizontalAlignment2D::Left)
         , m_verticalAlignment(VerticalAlignment2D::Top)
@@ -114,9 +111,7 @@ namespace Maze
         ECSWorld* _world,
         EntityCopyData _copyData)
     {
-        m_renderSystem = _component->castRaw<SystemTextRenderer2D>()->m_renderSystem;
-
-        if (!Component::init(
+        if (!AbstractTextRenderer2D::init(
             _component,
             _world,
             _copyData))
@@ -394,10 +389,9 @@ namespace Maze
     //////////////////////////////////////////
     void SystemTextRenderer2D::processEntityAwakened()
     {
-        m_transform = getEntityRaw()->ensureComponent<Transform2D>();
-        m_meshRenderer = getEntityRaw()->ensureComponent<MeshRendererInstanced>();
-        m_canvasRenderer = getEntityRaw()->ensureComponent<CanvasRenderer>();
+        AbstractTextRenderer2D::processEntityAwakened();
 
+        m_meshRenderer = getEntityRaw()->ensureComponent<MeshRendererInstanced>();
         m_meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultQuadMesh());
 
         updateMaterial();

@@ -30,6 +30,7 @@
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/managers/MazeSystemFontManager.hpp"
 
 
@@ -113,7 +114,7 @@ namespace Maze
                 viewData.graph->setColor(ColorF128::c_green);
                 viewData.graph->resizePositions(Profiler::c_samplesCount - 1u);
 
-                viewData.label0 = SpriteHelper::CreateSystemText(
+                viewData.label0 = SystemUIHelper::CreateSystemText(
                     "PROFILER",
                     8,
                     HorizontalAlignment2D::Left,
@@ -126,7 +127,7 @@ namespace Maze
                     Vec2DF(0.0f, 1.0f));
                 viewData.label0->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefaultOutlined());
 
-                viewData.label1 = SpriteHelper::CreateSystemText(
+                viewData.label1 = SystemUIHelper::CreateSystemText(
                     "",
                     8,
                     HorizontalAlignment2D::Left,

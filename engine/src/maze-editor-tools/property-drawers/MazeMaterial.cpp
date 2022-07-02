@@ -34,6 +34,7 @@
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
@@ -116,7 +117,7 @@ namespace Maze
         layout->setAutoWidth(false);
         layout->setExpand(true);
 
-        SystemTextRenderer2DPtr systemText = SpriteHelper::CreateSystemText(
+        SystemTextRenderer2DPtr systemText = SystemUIHelper::CreateSystemText(
             EditorToolsHelper::BuildPropertyName(m_label.c_str(), _label).c_str(),
             EditorToolsLayout::c_inspectorPropertyFontSize,
             HorizontalAlignment2D::Left,
@@ -163,7 +164,7 @@ namespace Maze
                 Vec2DF(0.0f, 0.5f),
                 Vec2DF(0.5f, 0.5f));
 
-            m_materialNameDrawer = SpriteHelper::CreateSystemText(
+            m_materialNameDrawer = SystemUIHelper::CreateSystemText(
                 "",
                 8,
                 HorizontalAlignment2D::Left,

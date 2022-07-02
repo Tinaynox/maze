@@ -31,10 +31,12 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/managers/MazeSystemFontManager.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
+#include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-plugin-console/MazeConsoleService.hpp"
 
 
@@ -139,7 +141,7 @@ namespace Maze
         m_backgroundElement->setCaptureCursorHits(true);
         m_backgroundElement->eventClick.subscribe(this, &SceneConsole::notifyBackgroundClick);
 
-        m_consoleText = SpriteHelper::CreateSystemText(
+        m_consoleText = SystemUIHelper::CreateSystemText(
             "",
             8,
             HorizontalAlignment2D::Left,
@@ -154,7 +156,7 @@ namespace Maze
         m_consoleText->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefaultOutlined());
         updateLogText();
 
-        m_edit = UIHelper::CreateDefaultEditBox(
+        m_edit = SystemUIHelper::CreateDefaultEditBox(
             "",
             Vec2DF(m_canvas->getTransform()->getWidth(), 18.0f),
             Vec2DF(0.0f, 0.0f),
@@ -168,7 +170,7 @@ namespace Maze
         m_edit->eventTextInput.subscribe(this, &SceneConsole::notifyTextInput);
         m_edit->eventTextChanged.subscribe(this, &SceneConsole::notifyTextChanged);
 
-        m_hintText = SpriteHelper::CreateSystemText(
+        m_hintText = SystemUIHelper::CreateSystemText(
             "",
             8,
             HorizontalAlignment2D::Left,

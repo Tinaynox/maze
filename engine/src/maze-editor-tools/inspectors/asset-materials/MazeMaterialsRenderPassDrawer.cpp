@@ -41,6 +41,7 @@
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
@@ -131,7 +132,7 @@ namespace Maze
         topBlockLayout->setPaddingBottom(10.0f);
         topBlockLayout->setSpacing(2.0f);
 
-        SpriteHelper::CreateSystemText(
+        SystemUIHelper::CreateSystemText(
             ("Render Pass - " + m_renderPassType.toString() + " #" + StringHelper::ToString(m_renderPassIndex)).c_str(),
             8,
             HorizontalAlignment2D::Left,
@@ -156,7 +157,7 @@ namespace Maze
             layout->setExpand(true);
             layout->setAutoWidth(false);
 
-            SystemTextRenderer2DPtr topBlockShaderText = SpriteHelper::CreateSystemText(
+            SystemTextRenderer2DPtr topBlockShaderText = SystemUIHelper::CreateSystemText(
                 "Shader",
                 8,
                 HorizontalAlignment2D::Left,
@@ -176,7 +177,7 @@ namespace Maze
                 Vec2DF(0.0f, 0.5f),
                 Vec2DF(0.0f, 0.5f));
 
-            m_topBlockShaderNameText = SpriteHelper::CreateSystemText(
+            m_topBlockShaderNameText = SystemUIHelper::CreateSystemText(
                 "",
                 8,
                 HorizontalAlignment2D::Center,

@@ -48,6 +48,7 @@
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasRenderer.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
@@ -72,6 +73,7 @@
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
+#include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-ui/managers/MazeMaterialPickerManager.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
@@ -168,7 +170,7 @@ namespace Maze
         m_canvasUIElement->eventCursorReleaseIn.subscribe(this, &SceneMaterialPicker::notifyCanvasCursorReleaseIn);
         m_canvasUIElement->eventCursorReleaseOut.subscribe(this, &SceneMaterialPicker::notifyCanvasCursorReleaseOut);
 
-        m_filterEditBox = UIHelper::CreateDefaultEditBox(
+        m_filterEditBox = SystemUIHelper::CreateDefaultEditBox(
             "",
             Vec2DF(m_canvas->getTransform()->getSize().x - 10.0f, 18),
             Vec2DF(5, -2),
@@ -375,7 +377,7 @@ namespace Maze
 
         materialName = FileHelper::GetFileNameWithoutExtension(materialName);
 
-        data.titleText = SpriteHelper::CreateSystemText(
+        data.titleText = SystemUIHelper::CreateSystemText(
             materialName.c_str(),
             8,
             HorizontalAlignment2D::Center,

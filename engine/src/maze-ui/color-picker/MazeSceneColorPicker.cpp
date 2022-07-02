@@ -45,6 +45,7 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
@@ -68,6 +69,7 @@
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
+#include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-ui/managers/MazeColorPickerManager.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
@@ -342,7 +344,7 @@ namespace Maze
         rightScaleMarkRenderer->getTransform()->setLocalScale(-1.0f, 1.0f);
 
 
-        m_floatLabel = SpriteHelper::CreateSystemText(
+        m_floatLabel = SystemUIHelper::CreateSystemText(
             "",
             8,
             HorizontalAlignment2D::Left,
@@ -382,7 +384,7 @@ namespace Maze
             rowLayout->setAutoWidth(false);
 
 
-            SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+            SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
                 "R",
                 8,
                 HorizontalAlignment2D::Left,
@@ -416,7 +418,7 @@ namespace Maze
                 Vec2DF(0.0f, 0.0f));
             m_rgbaRenderers[0]->getMaterial()->setUniform("u_channel", 0);
 
-            m_rgbaTextEdits[0] = UIHelper::CreateDefaultEditBox(
+            m_rgbaTextEdits[0] = SystemUIHelper::CreateDefaultEditBox(
                 "255",
                 Vec2DF(45.0f, 18.0f),
                 Vec2DF::c_zero,
@@ -438,7 +440,7 @@ namespace Maze
             rowLayout->setExpand(true);
             rowLayout->setAutoWidth(false);
 
-            SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+            SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
                 "G",
                 8,
                 HorizontalAlignment2D::Left,
@@ -472,7 +474,7 @@ namespace Maze
                 Vec2DF(0.0f, 0.0f));
             m_rgbaRenderers[1]->getMaterial()->setUniform("u_channel", 1);
 
-            m_rgbaTextEdits[1] = UIHelper::CreateDefaultEditBox(
+            m_rgbaTextEdits[1] = SystemUIHelper::CreateDefaultEditBox(
                 "0",
                 Vec2DF(45.0f, 18.0f),
                 Vec2DF::c_zero,
@@ -494,7 +496,7 @@ namespace Maze
             rowLayout->setExpand(true);
             rowLayout->setAutoWidth(false);
 
-            SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+            SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
                 "B",
                 8,
                 HorizontalAlignment2D::Left,
@@ -528,7 +530,7 @@ namespace Maze
                 Vec2DF(0.0f, 0.0f));
             m_rgbaRenderers[2]->getMaterial()->setUniform("u_channel", 2);
 
-            m_rgbaTextEdits[2] = UIHelper::CreateDefaultEditBox(
+            m_rgbaTextEdits[2] = SystemUIHelper::CreateDefaultEditBox(
                 "0",
                 Vec2DF(45.0f, 18.0f),
                 Vec2DF::c_zero,
@@ -550,7 +552,7 @@ namespace Maze
             rowLayout->setExpand(true);
             rowLayout->setAutoWidth(false);
 
-            SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+            SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
                 "A",
                 8,
                 HorizontalAlignment2D::Left,
@@ -601,7 +603,7 @@ namespace Maze
                 Vec2DF(0.0f, 0.0f));
             m_rgbaRenderers[3]->getMaterial()->setUniform("u_channel", 3);
 
-            m_rgbaTextEdits[3] = UIHelper::CreateDefaultEditBox(
+            m_rgbaTextEdits[3] = SystemUIHelper::CreateDefaultEditBox(
                 "255",
                 Vec2DF(45.0f, 18.0f),
                 Vec2DF::c_zero,
@@ -623,7 +625,7 @@ namespace Maze
             rowLayout->setExpand(true);
             rowLayout->setAutoWidth(false);
 
-            SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+            SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
                 "Hexadecimal",
                 8,
                 HorizontalAlignment2D::Left,
@@ -634,7 +636,7 @@ namespace Maze
                 this);
             label->setColor(ColorU32::c_black);
 
-            m_hexadecimalTextEdit = UIHelper::CreateDefaultEditBox(
+            m_hexadecimalTextEdit = SystemUIHelper::CreateDefaultEditBox(
                 "#FFFFFF",
                 Vec2DF(80.0f, 18.0f),
                 Vec2DF::c_zero,
@@ -685,7 +687,7 @@ namespace Maze
 
             m_intensityEntity = rowLayout->getEntity();
 
-            SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+            SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
                 "I",
                 8,
                 HorizontalAlignment2D::Left,
@@ -704,7 +706,7 @@ namespace Maze
                 this);
             m_intensitySlider->eventValueChanged.subscribe(this, &SceneColorPicker::notifyIntensitySliderValueChanged);
 
-            m_intensityTextEdit = UIHelper::CreateDefaultEditBox(
+            m_intensityTextEdit = SystemUIHelper::CreateDefaultEditBox(
                 "0",
                 Vec2DF(45.0f, 18.0f),
                 Vec2DF::c_zero,

@@ -190,39 +190,6 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_GRAPHICS_API SystemTextRenderer2DPtr CreateSystemText(
-            CString _text,
-            U32 _fontSize,
-            HorizontalAlignment2D _horizontalAlignment,
-            VerticalAlignment2D _verticalAlignment,
-            Vec2DF const& _size, 
-            Vec2DF const& _position,
-            Transform2DPtr const& _parent,
-            ECSScene* _ecsScene,
-            Vec2DF const& _anchor,
-            Vec2DF const& _pivot)
-        {
-            Maze::EntityPtr textRendererEntity = _ecsScene->createEntity();
-            textRendererEntity->ensureComponent<Name>("Text");
-        
-            Maze::SystemTextRenderer2DPtr textRenderer = textRendererEntity->createComponent<Maze::SystemTextRenderer2D>();
-            textRenderer->setText(_text);
-            textRenderer->setFontSize(_fontSize);
-            textRenderer->setHorizontalAlignment(_horizontalAlignment);
-            textRenderer->setVerticalAlignment(_verticalAlignment);
-            textRenderer->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefault());
-
-            Transform2DPtr transform = textRendererEntity->ensureComponent<Transform2D>();
-            transform->setParent(_parent);
-            transform->setSize(_size);
-            transform->setLocalPosition(_position);
-            transform->setAnchor(_anchor);
-            transform->setPivot(_pivot);
-
-            return textRenderer;
-        }
-
-        //////////////////////////////////////////
         MAZE_GRAPHICS_API LineRenderer2DPtr CreateLineRenderer(
             Vec2DF const& _position,
             Transform2DPtr const& _parent,

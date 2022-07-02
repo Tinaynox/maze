@@ -50,6 +50,7 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
 #include "maze-editor-tools/scenes/SceneDebugEditor.hpp"
@@ -187,7 +188,7 @@ namespace Maze
 
         updateIcon();
 
-        m_textRenderer = SpriteHelper::CreateSystemText(
+        m_textRenderer = SystemUIHelper::CreateSystemText(
             "XXX",
             charSize,
             HorizontalAlignment2D::Left,

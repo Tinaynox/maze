@@ -44,6 +44,7 @@
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
@@ -384,7 +385,7 @@ namespace Maze
             topBlockLayout->setPaddingTop(10.0f);
             topBlockLayout->setSpacing(2.0f);
 
-            SpriteHelper::CreateSystemText(
+            SystemUIHelper::CreateSystemText(
                 "Uniforms",
                 8,
                 HorizontalAlignment2D::Left,

@@ -41,6 +41,7 @@
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 #include "maze-graphics/ecs/components/MazeLight3D.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
@@ -205,7 +206,7 @@ namespace Maze
                 StringHelper::F32ToStdStringFormatted((F32)bytes / 1024.0f, 1).c_str(),
                 pixelFormat.c_str());
 
-            SystemTextRenderer2DPtr info = SpriteHelper::CreateSystemText(
+            SystemTextRenderer2DPtr info = SystemUIHelper::CreateSystemText(
                 text.c_str(),
                 8,
                 HorizontalAlignment2D::Left,

@@ -132,19 +132,6 @@ namespace Maze
             Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
 
         //////////////////////////////////////////
-        MAZE_GRAPHICS_API SystemTextRenderer2DPtr CreateSystemText(
-            CString _text,
-            U32 _fontSize,
-            HorizontalAlignment2D _horizontalAlignment,
-            VerticalAlignment2D _verticalAlignment,
-            Vec2DF const& _size, 
-            Vec2DF const& _position,
-            Transform2DPtr const& _parent,
-            ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
-
-        //////////////////////////////////////////
         MAZE_GRAPHICS_API LineRenderer2DPtr CreateLineRenderer(
             Vec2DF const& _position,
             Transform2DPtr const& _parent,

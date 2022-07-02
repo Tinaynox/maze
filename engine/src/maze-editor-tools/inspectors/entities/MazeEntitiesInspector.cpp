@@ -41,6 +41,7 @@
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
@@ -109,7 +110,7 @@ namespace Maze
             Vec2DF(0.0f, 0.5f));
         m_entitiesEnabledToggleButton->eventCheckedChanged.subscribe(this, &EntitiesInspector::notifyEntitiesEnabledToggleCheckedChanged);
 
-        m_entityIdText = SpriteHelper::CreateSystemText(
+        m_entityIdText = SystemUIHelper::CreateSystemText(
             "Entity Id: 500",
             8,
             HorizontalAlignment2D::Left,

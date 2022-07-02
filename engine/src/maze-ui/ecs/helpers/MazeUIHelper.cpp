@@ -48,6 +48,7 @@
 #include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/ecs/MazeECSRenderScene.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-ui/ecs/components/MazeSystemTextEditBox2D.hpp"
@@ -66,107 +67,6 @@ namespace Maze
     // Namespace UIHelper
     namespace UIHelper
     {
-        //////////////////////////////////////////
-        MAZE_UI_API SystemTextEditBox2DPtr CreateDefaultEditBox(
-            CString _text,
-            Vec2DF const& _size,
-            Vec2DF const& _position,
-            Transform2DPtr const& _parent,
-            ECSScene* _ecsScene,
-            Vec2DF const& _anchor,
-            Vec2DF const& _pivot)
-        {
-            RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-
-            EntityPtr editBoxEntity = _ecsScene->createEntity();
-            editBoxEntity->ensureComponent<Name>("EdidBox");
-
-            SystemTextEditBox2DPtr editBox = editBoxEntity->createComponent<SystemTextEditBox2D>();
-
-            ScissorMask2DPtr scissorMask = editBoxEntity->createComponent<ScissorMask2D>();
-
-            Transform2DPtr const& transform = editBox->getTransform();
-            transform->setParent(_parent);
-            transform->setSize(_size);
-            transform->setLocalPosition(_position);
-            transform->setAnchor(_anchor);
-            transform->setPivot(_pivot);
-
-            SpriteRenderer2DPtr spriteRenderer = editBoxEntity->createComponent<SpriteRenderer2D>();
-            SpriteRenderer2D* spriteRendererRaw = spriteRenderer.get();
-            spriteRenderer->setSprite(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));
-            spriteRenderer->setMaterial(
-                renderSystem->getMaterialManager()->getColorTextureMaterial());
-            spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
-
-            auto updateEditBoxState =
-                [](SystemTextEditBox2D* _editBox, SpriteRenderer2D* _spriteRenderer)
-                {
-                    if (_editBox->getSelected())
-                    {
-                        _spriteRenderer->setSprite(
-                            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Selected));
-                    }
-                    else
-                    {
-                        if (_editBox->getFocused())
-                        {
-                            _spriteRenderer->setSprite(
-                                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Focused));
-                        }
-                        else
-                        {
-                            _spriteRenderer->setSprite(
-                                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));
-                        }
-                    }
-                };
-
-            editBox->eventFocusChanged.subscribe(
-                [=](SystemTextEditBox2D* _editBox, bool _value)
-                {
-                    updateEditBoxState(_editBox, spriteRendererRaw);
-                });
-
-            editBox->eventSelectedChanged.subscribe(
-                [=](SystemTextEditBox2D* _editBox, bool _value)
-                {
-                    updateEditBoxState(_editBox, spriteRendererRaw);
-                });
-
-            SystemTextRenderer2DPtr textRenderer = SpriteHelper::CreateSystemText(
-                "",
-                8,
-                HorizontalAlignment2D::Left,
-                VerticalAlignment2D::Middle,
-                _size + Vec2DF(-10.0f, 0.0f),
-                Vec2DF::c_zero,
-                transform,
-                _ecsScene);
-            textRenderer->setColor(ColorU32::c_black);
-
-            SizePolicy2DPtr textSizePolicy = textRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
-            textSizePolicy->setSizeDelta(-10.0f, 0.0f);
-
-            editBox->setSystemTextRenderer(textRenderer);
-            editBox->setText(_text);
-
-            F32 cursorHeight = 8.0f + 4.0f;
-            SpriteRenderer2DPtr cursorRenderer = SpriteHelper::CreateSprite(
-                textRenderer->getColor(),
-                Vec2DF(1.0f, cursorHeight),
-                Vec2DF::c_zero,
-                renderSystem->getMaterialManager()->getColorMaterial(),
-                textRenderer->getTransform(),
-                _ecsScene,
-                Vec2DF::c_zero,
-                Vec2DF(0.0f, (0.5f * (cursorHeight - (F32)textRenderer->getFontSize()) - 1) / cursorHeight));
-
-            editBox->setCursorRenderer(cursorRenderer);
-
-            return editBox;
-        }
-
         //////////////////////////////////////////
         MAZE_UI_API HorizontalLayout2DPtr CreateHorizontalLayout(
             HorizontalAlignment2D _horizontalAlignment,
@@ -405,7 +305,7 @@ namespace Maze
 
             if (_text && strcmp(_text, "") != 0)
             {
-                SystemTextRenderer2DPtr textRenderer = SpriteHelper::CreateSystemText(
+                SystemTextRenderer2DPtr textRenderer = SystemUIHelper::CreateSystemText(
                     _text,
                     8,
                     HorizontalAlignment2D::Center,
@@ -674,7 +574,7 @@ namespace Maze
             };
             
 
-            SystemTextRenderer2DPtr textRenderer = SpriteHelper::CreateSystemText(
+            SystemTextRenderer2DPtr textRenderer = SystemUIHelper::CreateSystemText(
                 "Dropdown",
                 8,
                 HorizontalAlignment2D::Left,
@@ -773,7 +673,7 @@ namespace Maze
                     checkMarkSprite->getEntityRaw()->ensureComponent<Name>()->setName("CheckMark");
                     checkMarkSprite->setColor(ColorU32::c_black);
                     
-                    SystemTextRenderer2DPtr itemTextRenderer = SpriteHelper::CreateSystemText(
+                    SystemTextRenderer2DPtr itemTextRenderer = SystemUIHelper::CreateSystemText(
                         "Option 1",
                         8,
                         HorizontalAlignment2D::Left,
@@ -975,7 +875,7 @@ namespace Maze
             SystemTextRenderer2D* itemTextRendererRaw = nullptr;
             if (_hdrLabel)
             {
-                SystemTextRenderer2DPtr itemTextRenderer = SpriteHelper::CreateSystemText(
+                SystemTextRenderer2DPtr itemTextRenderer = SystemUIHelper::CreateSystemText(
                     "HDR",
                     8,
                     HorizontalAlignment2D::Center,
@@ -1464,7 +1364,7 @@ namespace Maze
             subMenuMarkSprite->setColor(ColorU32::c_black);
             menuListItem->setSubMenuNode(subMenuMarkSprite->getEntity());
 
-            SystemTextRenderer2DPtr itemTextRenderer = SpriteHelper::CreateSystemText(
+            SystemTextRenderer2DPtr itemTextRenderer = SystemUIHelper::CreateSystemText(
                 _name.c_str(),
                 8,
                 HorizontalAlignment2D::Left,
@@ -1687,7 +1587,7 @@ namespace Maze
                 toggleButtonSpriteRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
                 toggleButton->setTransitionSprite(toggleButtonSpriteRenderer);
 
-                SystemTextRenderer2DPtr text = SpriteHelper::CreateSystemText(
+                SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
                     "File",
                     8,
                     HorizontalAlignment2D::Center,
