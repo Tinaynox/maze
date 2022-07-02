@@ -105,6 +105,12 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline void setColor(U8 _r, U8 _g, U8 _b, U8 _a)
+        {
+            setColor({ _r, _g, _b, _a });
+        }
+
+        //////////////////////////////////////////
         virtual ColorU32 getColor() const MAZE_ABSTRACT;
 
 

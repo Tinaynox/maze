@@ -87,7 +87,7 @@ namespace Maze
         //////////////////////////////////////////
         void collectAllTextures(U32 _fontSize, Vector<Texture2DPtr>& _result) const;
 
-        U32 spriteGlyphFontSize;
+        U32 spriteGlyphFontSize = 0u;
         FontGlyph spriteGlyph;
         Map<U32, FontGlyph> glyphs;
     };
@@ -107,7 +107,7 @@ namespace Maze
 
         EntityPtr prefab;
         String prefabName;
-        U32 prefabGlyphFontSize;
+        U32 prefabGlyphFontSize = 0u;
         FontGlyph prefabGlyph;
         Map<U32, FontGlyph> glyphs;
     };

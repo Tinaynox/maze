@@ -34,6 +34,7 @@
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeAlignment2D.hpp"
+#include "maze-graphics/ecs/components/MazeAbstractTextRenderer2D.hpp"
 #include "maze-ui/fonts/MazeFont.hpp"
 #include "maze-ui/fonts/MazeFontMaterial.hpp"
 
@@ -93,13 +94,13 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API TextRenderer2D
-        : public Component
+        : public AbstractTextRenderer2D
         , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(TextRenderer2D, Component);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(TextRenderer2D, AbstractTextRenderer2D);
 
         //////////////////////////////////////////
         MAZE_DECLARE_MEMORY_ALLOCATION(TextRenderer2D);
@@ -117,28 +118,15 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        Transform2DPtr const& getTransform() const { return m_transform; }
-
-        //////////////////////////////////////////
-        CanvasRendererPtr const& getCanvasRenderer() const { return m_canvasRenderer; }
-
-        //////////////////////////////////////////
         MeshRendererInstancedPtr const& getMeshRenderer() const { return m_meshRenderer; }
 
 
         //////////////////////////////////////////
-        void setText(String const& _text);
+        virtual void setText(String const& _text) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        inline void setTextFormatted(CString _text, ...)
-        {
-            String newText;
-            MAZE_FORMAT_VA_STRING(_text, newText);
-            setText(newText);
-        }
+        virtual String const& getText() const MAZE_OVERRIDE { return m_text; }
 
-        //////////////////////////////////////////
-        inline String const& getText() const { return m_text; }
 
         //////////////////////////////////////////
         void removeSymbol();
@@ -148,16 +136,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setColor(ColorU32 _color);
+        using AbstractTextRenderer2D::setColor;
 
         //////////////////////////////////////////
-        inline void setColor(U8 _r, U8 _g, U8 _b)
-        {
-            setColor({ _r, _g, _b });
-        }
+        virtual void setColor(ColorU32 _color) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        inline ColorU32 getColor() const { return m_color; }            
+        virtual ColorU32 getColor() const MAZE_OVERRIDE { return m_color; }
 
 
         //////////////////////////////////////////
@@ -229,10 +214,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        HorizontalAlignment2D getHorizontalAlignment() const { return m_horizontalAlignment; }
+        virtual HorizontalAlignment2D getHorizontalAlignment() const MAZE_OVERRIDE { return m_horizontalAlignment; }
 
         //////////////////////////////////////////
-        inline void setHorizontalAlignment(HorizontalAlignment2D _horizontalAlignment)
+        virtual void setHorizontalAlignment(HorizontalAlignment2D _horizontalAlignment) MAZE_OVERRIDE
         {
             if (m_horizontalAlignment == _horizontalAlignment)
                 return;
@@ -244,10 +229,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline VerticalAlignment2D getVerticalAlignment() const { return m_verticalAlignment; }
+        virtual VerticalAlignment2D getVerticalAlignment() const MAZE_OVERRIDE { return m_verticalAlignment; }
 
         //////////////////////////////////////////
-        inline void setVerticalAlignment(VerticalAlignment2D _verticalAlignment)
+        virtual void setVerticalAlignment(VerticalAlignment2D _verticalAlignment) MAZE_OVERRIDE
         {
             if (m_verticalAlignment == _verticalAlignment)
                 return;
@@ -332,6 +317,9 @@ namespace Maze
         }
 
 
+        //////////////////////////////////////////
+        virtual Vec2DF getTextEnd(Size _rowIndex = 0) MAZE_OVERRIDE;
+
 
         //////////////////////////////////////////
         void updateMeshData();
@@ -383,12 +371,14 @@ namespace Maze
         //////////////////////////////////////////
         void notifyFontMaterialMaterialChanged();
 
-    protected:
-        RenderSystem* m_renderSystem = nullptr;
 
-        Transform2DPtr m_transform;
+        //////////////////////////////////////////
+        F32 calculateY(
+            F32 _totalTextHeight,
+            Size _actualRowsCount);
+
+    protected:
         MeshRendererInstancedPtr m_meshRenderer;
-        CanvasRendererPtr m_canvasRenderer;
 
     protected:
         String m_text;
@@ -417,6 +407,8 @@ namespace Maze
     private:
         Vector<Mat4DF> m_localMatrices;
         Vector<Vec4DF> m_localColors;
+
+        Vec2DF m_lastGlyphOffset = Vec2DF::c_zero;
     };
 
 

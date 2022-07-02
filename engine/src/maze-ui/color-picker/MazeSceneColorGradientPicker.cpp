@@ -498,7 +498,7 @@ namespace Maze
                 Vec2DF::c_zero,
                 rowLayout->getTransform(),
                 this);
-            m_alphaEdit->getSystemTextRenderer()->setHorizontalAlignment(HorizontalAlignment2D::Center);
+            m_alphaEdit->getTextRenderer()->setHorizontalAlignment(HorizontalAlignment2D::Center);
             m_alphaEdit->eventTextInput.subscribe(this, &SceneColorGradientPicker::notifyAlphaEditTextInput);
         }
 

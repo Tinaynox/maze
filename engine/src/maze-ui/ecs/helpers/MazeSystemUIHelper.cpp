@@ -149,7 +149,7 @@ namespace Maze
             SizePolicy2DPtr textSizePolicy = textRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
             textSizePolicy->setSizeDelta(-10.0f, 0.0f);
 
-            editBox->setSystemTextRenderer(textRenderer);
+            editBox->setTextRenderer(textRenderer->cast<AbstractTextRenderer2D>());
             editBox->setText(_text);
 
             F32 cursorHeight = 8.0f + 4.0f;

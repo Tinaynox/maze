@@ -33,7 +33,7 @@
 #include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeAbstractTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
@@ -44,8 +44,8 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(RenderMesh);
-    MAZE_USING_SHARED_PTR(Transform2D);
     MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
+    MAZE_USING_SHARED_PTR(Transform2D);
     MAZE_USING_SHARED_PTR(UIElement2D);
 
 
@@ -99,36 +99,36 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setSystemTextRenderer(SystemTextRenderer2DPtr const& _systemTextRenderer)
+        inline void setTextRenderer(AbstractTextRenderer2DPtr const& _systemTextRenderer)
         {
-            if (m_systemTextRenderer == _systemTextRenderer)
+            if (m_textRenderer == _systemTextRenderer)
                 return;
 
-            m_systemTextRenderer = _systemTextRenderer;
+            m_textRenderer = _systemTextRenderer;
 
-            updateSystemTextRenderer();
+            updateTextRenderer();
             updateCursorRendererPosition();
         }
 
         //////////////////////////////////////////
-        inline SystemTextRenderer2DPtr const& getSystemTextRenderer() const { return m_systemTextRenderer; }
+        inline AbstractTextRenderer2DPtr const& getTextRenderer() const { return m_textRenderer; }
 
         //////////////////////////////////////////
-        inline void setSystemTextRenderer(ComponentPtr _avatar)
+        inline void setTextRenderer(ComponentPtr _avatar)
         {
             if (_avatar)
             {
-                MAZE_DEBUG_BP_RETURN_IF(_avatar->getClassUID() != ClassInfo<SystemTextRenderer2D>::UID());
-                setSystemTextRenderer(_avatar->cast<SystemTextRenderer2D>());
+                MAZE_DEBUG_BP_RETURN_IF(!_avatar->getMetaClass()->isInheritedFrom<AbstractTextRenderer2D>());
+                setTextRenderer(_avatar->cast<AbstractTextRenderer2D>());
             }
             else
             {
-                setSystemTextRenderer(SystemTextRenderer2DPtr());
+                setTextRenderer(AbstractTextRenderer2DPtr());
             }
         }
 
         //////////////////////////////////////////
-        inline ComponentPtr getSystemTextRendererComponent() const { return m_systemTextRenderer; }
+        inline ComponentPtr getTextRendererComponent() const { return m_textRenderer; }
 
 
         //////////////////////////////////////////
@@ -250,7 +250,7 @@ namespace Maze
         void notifyClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
-        void updateSystemTextRenderer();
+        void updateTextRenderer();
 
         //////////////////////////////////////////
         void updateCursorRendererPosition();
@@ -271,7 +271,7 @@ namespace Maze
     protected:
         Transform2DPtr m_transform;
         UIElement2DPtr m_UIElement2D;
-        SystemTextRenderer2DPtr m_systemTextRenderer;
+        AbstractTextRenderer2DPtr m_textRenderer;
         SpriteRenderer2DPtr m_cursorRenderer;
 
         String m_text;

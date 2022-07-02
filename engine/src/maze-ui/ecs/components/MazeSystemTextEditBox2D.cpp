@@ -49,7 +49,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SystemTextEditBox2D, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, selected, false, getSelected, setSelected),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, systemTextRenderer, ComponentPtr(), getSystemTextRendererComponent, setSystemTextRenderer),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, systemTextRenderer, ComponentPtr(), getTextRendererComponent, setTextRenderer),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(String, text, String(), getText, setText));
 
     //////////////////////////////////////////
@@ -262,12 +262,12 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    void SystemTextEditBox2D::updateSystemTextRenderer()
+    void SystemTextEditBox2D::updateTextRenderer()
     {
-        if (!m_systemTextRenderer)
+        if (!m_textRenderer)
             return;
 
-        m_systemTextRenderer->setText(m_text);
+        m_textRenderer->setText(m_text);
     
     }
 
@@ -277,10 +277,10 @@ namespace Maze
         if (!m_cursorRenderer)
             return;
 
-        if (!m_systemTextRenderer)
+        if (!m_textRenderer)
             return;
 
-        Vec2DF textShift = m_systemTextRenderer->getTextEnd();
+        Vec2DF textShift = m_textRenderer->getTextEnd();
         m_cursorRenderer->getTransform()->setLocalPosition(textShift);
     }
 
@@ -298,7 +298,7 @@ namespace Maze
     void SystemTextEditBox2D::processTextChanged()
     {
         resetBlinkTimer();
-        updateSystemTextRenderer();
+        updateTextRenderer();
         updateCursorRendererPosition();
 
         eventTextChanged(this, m_text);
@@ -307,7 +307,7 @@ namespace Maze
     //////////////////////////////////////////
     void SystemTextEditBox2D::setHorizontalAlignment(HorizontalAlignment2D _alignment)
     {
-        m_systemTextRenderer->setHorizontalAlignment(_alignment);
+        m_textRenderer->setHorizontalAlignment(_alignment);
         
         resetBlinkTimer();
         updateCursorRendererPosition();
@@ -316,7 +316,7 @@ namespace Maze
     //////////////////////////////////////////
     void SystemTextEditBox2D::setVerticalAlignment(VerticalAlignment2D _alignment)
     {
-        m_systemTextRenderer->setVerticalAlignment(_alignment);
+        m_textRenderer->setVerticalAlignment(_alignment);
         
         resetBlinkTimer();
         updateCursorRendererPosition();

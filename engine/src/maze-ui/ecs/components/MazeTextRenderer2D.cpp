@@ -144,9 +144,7 @@ namespace Maze
         ECSWorld* _world,
         EntityCopyData _copyData)
     {
-        m_renderSystem = _component->castRaw<TextRenderer2D>()->m_renderSystem;
-
-        if (!Component::init(
+        if (!AbstractTextRenderer2D::init(
             _component,
             _world,
             _copyData))
@@ -232,6 +230,58 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    Vec2DF TextRenderer2D::getTextEnd(Size _rowIndex)
+    {
+        if (!m_fontMaterial)
+            m_lastGlyphOffset = Vec2DF(0.0f, 0.0f);
+
+        if (m_text.empty())
+        {
+            F32 linespace = m_fontMaterial->getFont()->getLineSpacing(m_fontSize);
+
+            F32 y = calculateY(linespace, 1);
+            m_lastGlyphOffset = Vec2DF(0.0f, y);
+        }
+
+        return m_lastGlyphOffset;
+    }
+
+    //////////////////////////////////////////
+    F32 TextRenderer2D::calculateY(
+        F32 _totalTextHeight,
+        Size _actualRowsCount)
+    {
+        F32 y = 0.0f;
+
+        if (!m_transform || !m_fontMaterial)
+            return y;
+
+        Vec2DF const& size = m_transform->getSize();
+
+        F32 ascent = m_fontMaterial->getFont()->getDefaultFont()->getAscender(m_fontSize);
+        F32 descent = m_fontMaterial->getFont()->getDefaultFont()->getDescender(m_fontSize);
+        F32 linespace = m_fontMaterial->getFont()->getLineSpacing(m_fontSize);
+
+        switch (m_verticalAlignment)
+        {
+        case VerticalAlignment2D::Top:
+            y = size.y - ascent;
+            break;
+        case VerticalAlignment2D::Middle:
+            y = (size.y - _totalTextHeight) * 0.5f - descent + F32(_actualRowsCount - 1) * linespace;
+            break;
+        case VerticalAlignment2D::Bottom:
+            y = -descent + F32(_actualRowsCount - 1) * linespace;
+            break;
+        default:
+            MAZE_NOT_IMPLEMENTED;
+            break;
+        }
+
+        return y;
+    }
+
+    //////////////////////////////////////////
     void TextRenderer2D::updateMeshData()
     {
         if (!m_canvasRenderer)
@@ -243,7 +293,10 @@ namespace Maze
         Vec2DF const& size = m_transform->getSize();
 
         if (!m_fontMaterial || m_text.empty())
+        {
+            m_meshRenderer->resize(0);
             return;
+        }
 
         String finalText = m_text;
 
@@ -452,23 +505,7 @@ namespace Maze
         F32 totalTextHeight = (F32)actualRowsCount * vSpace;
 
         F32 x = 0.0f;
-        F32 y = 0.0f;
-        
-        switch (m_verticalAlignment)
-        {
-            case VerticalAlignment2D::Top:
-                y = size.y - ascent;
-                break;
-            case VerticalAlignment2D::Middle:
-                y = (size.y - totalTextHeight) * 0.5f - descent + F32(actualRowsCount - 1) * linespace;
-                break;
-            case VerticalAlignment2D::Bottom:
-                y = -descent + F32(actualRowsCount - 1) * linespace;
-                break;
-        default:
-            MAZE_NOT_IMPLEMENTED;
-            break;
-        }
+        F32 y = calculateY(totalTextHeight, actualRowsCount);
 
         F32 glyphX = x;
         F32 glyphY = y;
@@ -587,6 +624,9 @@ namespace Maze
             curCharOffset = it - finalTextBegin;
         }
 
+        m_lastGlyphOffset.x = x + xAlignOffset + m_outlineThickness;
+        m_lastGlyphOffset.y = y + m_outlineThickness;
+
         updateMeshRendererModelMatrices();
         updateMeshRendererColors();
     }
@@ -606,10 +646,9 @@ namespace Maze
     //////////////////////////////////////////
     void TextRenderer2D::processEntityAwakened()
     {
-        m_transform = getEntityRaw()->ensureComponent<Transform2D>();
-        m_meshRenderer = getEntityRaw()->ensureComponent<MeshRendererInstanced>();
-        m_canvasRenderer = getEntityRaw()->ensureComponent<CanvasRenderer>();
+        AbstractTextRenderer2D::processEntityAwakened();
 
+        m_meshRenderer = getEntityRaw()->ensureComponent<MeshRendererInstanced>();
         m_meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultQuadMesh());
 
         updateMaterial();

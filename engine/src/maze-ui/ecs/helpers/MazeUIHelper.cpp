@@ -68,6 +68,113 @@ namespace Maze
     namespace UIHelper
     {
         //////////////////////////////////////////
+        MAZE_UI_API SystemTextEditBox2DPtr CreateDefaultEditBox(
+            CString _text,
+            U32 _fontSize,
+            Vec2DF const& _size,
+            Vec2DF const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2DF const& _anchor,
+            Vec2DF const& _pivot)
+        {
+            RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+
+            EntityPtr editBoxEntity = _ecsScene->createEntity();
+            editBoxEntity->ensureComponent<Name>("EdidBox");
+
+            SystemTextEditBox2DPtr editBox = editBoxEntity->createComponent<SystemTextEditBox2D>();
+
+            ScissorMask2DPtr scissorMask = editBoxEntity->createComponent<ScissorMask2D>();
+
+            Transform2DPtr const& transform = editBox->getTransform();
+            transform->setParent(_parent);
+            transform->setSize(_size);
+            transform->setLocalPosition(_position);
+            transform->setAnchor(_anchor);
+            transform->setPivot(_pivot);
+
+            SpriteRenderer2DPtr spriteRenderer = editBoxEntity->createComponent<SpriteRenderer2D>();
+            SpriteRenderer2D* spriteRendererRaw = spriteRenderer.get();
+            spriteRenderer->setSprite(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));
+            spriteRenderer->setMaterial(
+                renderSystem->getMaterialManager()->getColorTextureMaterial());
+            spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
+
+            auto updateEditBoxState =
+                [](SystemTextEditBox2D* _editBox, SpriteRenderer2D* _spriteRenderer)
+            {
+                if (_editBox->getSelected())
+                {
+                    _spriteRenderer->setSprite(
+                        UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Selected));
+                }
+                else
+                {
+                    if (_editBox->getFocused())
+                    {
+                        _spriteRenderer->setSprite(
+                            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Focused));
+                    }
+                    else
+                    {
+                        _spriteRenderer->setSprite(
+                            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));
+                    }
+                }
+            };
+
+            editBox->eventFocusChanged.subscribe(
+                [=](SystemTextEditBox2D* _editBox, bool _value)
+            {
+                updateEditBoxState(_editBox, spriteRendererRaw);
+            });
+
+            editBox->eventSelectedChanged.subscribe(
+                [=](SystemTextEditBox2D* _editBox, bool _value)
+            {
+                updateEditBoxState(_editBox, spriteRendererRaw);
+            });
+
+            TextRenderer2DPtr textRenderer = UIHelper::CreateText(
+                "",
+                _fontSize,
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Middle,
+                _size + Vec2DF(-10.0f, 0.0f),
+                Vec2DF::c_zero,
+                transform,
+                _ecsScene);
+            textRenderer->setColor(ColorU32::c_black);
+
+            SizePolicy2DPtr textSizePolicy = textRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
+            textSizePolicy->setSizeDelta(-10.0f, 0.0f);
+
+            editBox->setTextRenderer(textRenderer->cast<AbstractTextRenderer2D>());
+            editBox->setText(_text);
+
+            TrueTypeFontPtr const& ttf = textRenderer->getFontMaterial()->getFont()->getDefaultFont();
+
+            F32 ascent = ttf->getAscender(_fontSize);
+            F32 descent = ttf->getDescender(_fontSize);            
+
+            F32 cursorHeight = ascent - descent;
+            SpriteRenderer2DPtr cursorRenderer = SpriteHelper::CreateSprite(
+                textRenderer->getColor(),
+                Vec2DF(1.0f, cursorHeight),
+                Vec2DF(0.0f, 0.0f),
+                renderSystem->getMaterialManager()->getColorMaterial(),
+                textRenderer->getTransform(),
+                _ecsScene,
+                Vec2DF::c_zero,
+                Vec2DF(0.0f, -descent / cursorHeight));
+
+            editBox->setCursorRenderer(cursorRenderer);
+
+            return editBox;
+        }
+
+        //////////////////////////////////////////
         MAZE_UI_API HorizontalLayout2DPtr CreateHorizontalLayout(
             HorizontalAlignment2D _horizontalAlignment,
             VerticalAlignment2D _verticalAlignment,
