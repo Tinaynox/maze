@@ -35,6 +35,8 @@
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
+#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
+#include "maze-graphics/ecs/systems/MazeRenderControlSystemModule2D.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-graphics/MazeRenderQueue.hpp"
@@ -71,7 +73,11 @@ namespace Maze
     //////////////////////////////////////////
     UISystem2D::~UISystem2D()
     {
-
+        if (m_module2D)
+        {
+            m_module2D->eventPostUpdate.unsubscribe(this);
+            m_module2D.reset();
+        }
     }
 
     //////////////////////////////////////////
@@ -93,25 +99,48 @@ namespace Maze
     void UISystem2D::processSystemAdded()
     {
         m_textRenderers2DSample = m_worldRaw->requestInclusiveSample<TextRenderer2D>();
+
+        RenderControlSystemPtr renderControlSystem = m_worldRaw->getSystem<RenderControlSystem>();
+        MAZE_ERROR_RETURN_IF(!renderControlSystem, "RenderControlSystem is not available!");
+        m_module2D = renderControlSystem->getModule2D();
+        m_module2D->eventPostUpdate.subscribe(
+            this,
+            &UISystem2D::nofifyRenderControlSystemModule2DPostUpdate);
+    }
+
+    //////////////////////////////////////////
+    void UISystem2D::processSystemRemoved()
+    {
+        if (m_module2D)
+        {
+            m_module2D->eventPostUpdate.unsubscribe(this);
+            m_module2D.reset();
+        }
     }
 
     //////////////////////////////////////////
     void UISystem2D::processUpdate(F32 _dt)
     {
+        
+    }
+
+    //////////////////////////////////////////
+    void UISystem2D::nofifyRenderControlSystemModule2DPostUpdate(F32 _dt)
+    {
         m_textRenderers2DSample->process(
             [](Entity* _entity, TextRenderer2D* _textRenderer2D)
+        {
+            if (_textRenderer2D->getTransform()->isSizeChanged())
+                _textRenderer2D->updateMeshData();
+            else
             {
-                if (_textRenderer2D->getTransform()->isSizeChanged())
-                    _textRenderer2D->updateMeshData();
-                else
-                {
-                    if (_textRenderer2D->getTransform()->isWorldTransformChanged())
-                        _textRenderer2D->updateMeshRendererModelMatrices();
+                if (_textRenderer2D->getTransform()->isWorldTransformChanged())
+                    _textRenderer2D->updateMeshRendererModelMatrices();
 
-                    if (_textRenderer2D->getCanvasRenderer()->isAlphaDirty())
-                        _textRenderer2D->updateMeshRendererColors();
-                }
-            });
+                if (_textRenderer2D->getCanvasRenderer()->isAlphaDirty())
+                    _textRenderer2D->updateMeshRendererColors();
+            }
+        });
     }
     
 } // namespace Maze

@@ -719,6 +719,7 @@ namespace Maze
     //////////////////////////////////////////
     void TextRenderer2D::notifyFontMaterialTexturesChanged()
     {
+        // #TODO: dirty flag here
         updateMaterial();
         updateMeshData();
     }

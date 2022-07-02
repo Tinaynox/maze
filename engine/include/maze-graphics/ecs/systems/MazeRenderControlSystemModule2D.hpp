@@ -140,6 +140,11 @@ namespace Maze
         void processPostUpdate(F32 _dt);
 
 
+    public:
+
+        //////////////////////////////////////////
+        MultiDelegate<F32> eventPostUpdate;
+
     protected:
 
         //////////////////////////////////////////

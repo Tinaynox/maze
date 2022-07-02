@@ -400,6 +400,8 @@ namespace Maze
                 }
             });
 
+        eventPostUpdate(_dt);
+
         updateSortedMeshRenderersList();
     }
 

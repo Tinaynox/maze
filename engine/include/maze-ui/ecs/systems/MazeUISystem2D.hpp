@@ -54,6 +54,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(EntitiesSample);
     MAZE_USING_SHARED_PTR(UISystem2D);
     MAZE_USING_SHARED_PTR(TextRenderer2D);
+    MAZE_USING_SHARED_PTR(RenderControlSystemModule2D);
 
 
     //////////////////////////////////////////
@@ -100,11 +101,18 @@ namespace Maze
         virtual void processSystemAdded() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
+        virtual void processSystemRemoved() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
         virtual void processUpdate(F32 _dt) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        void nofifyRenderControlSystemModule2DPostUpdate(F32 _dt);
 
     protected:
         SharedPtr<GenericInclusiveEntitiesSample<TextRenderer2D>> m_textRenderers2DSample;
         
+        RenderControlSystemModule2DPtr m_module2D;
     };
 
 
