@@ -107,7 +107,7 @@ namespace Maze
     //////////////////////////////////////////
     template <typename TGlyphKey>
     TTFPage<TGlyphKey>::TTFPage()
-        : nextRow(3)
+        : nextRow(3u)
     {
         Size size = 512u;
         ByteBufferPtr byteBuffer = ByteBuffer::Create(size * size * 4u, 0);
@@ -116,7 +116,7 @@ namespace Maze
         texture->setName("ttf_texture");
         texture->setMinFilter(TextureFilter::Linear);
         texture->setMagFilter(TextureFilter::Linear);
-        texture->loadFromBuffer(byteBuffer, PixelFormat::RGBA_U8, Vec2DU(size, size), PixelFormat::RGBA_U8);
+        texture->loadFromBuffer(byteBuffer, PixelFormat::RGBA_U8, Vec2DU((U32)size, (U32)size), PixelFormat::RGBA_U8);
     }
 
 

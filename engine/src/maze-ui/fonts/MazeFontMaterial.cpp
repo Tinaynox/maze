@@ -43,8 +43,8 @@ namespace Maze
         if (!material)
             return;
 
-        for (S32 i = 0, in = textures.size(); i < in; ++i)
-            material->ensureUniform("u_baseMaps")->set(&textures[0], textures.size());
+        for (S32 i = 0, in = (S32)textures.size(); i < in; ++i)
+            material->ensureUniform("u_baseMaps")->set(&textures[0], (U32)textures.size());
     }
 
 
@@ -247,10 +247,10 @@ namespace Maze
         Vector<Texture2DPtr> textures;
         m_font->collectAllTextures(_fontSize, textures);
         data.textures.resize(textures.size());
-        for (S32 i = 0, in = data.textures.size(); i < in; ++i)
+        for (S32 i = 0, in = (S32)data.textures.size(); i < in; ++i)
             data.textures[i] = textures[i].get();
 
-        for (S32 i = 0, in = data.textures.size(); i < in; ++i)
+        for (S32 i = 0, in = (S32)data.textures.size(); i < in; ++i)
             data.textureIndices[data.textures[i]] = i;
 
         data.updateMaterialUniforms();

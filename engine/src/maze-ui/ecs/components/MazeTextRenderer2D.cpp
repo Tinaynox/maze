@@ -528,7 +528,7 @@ namespace Maze
         S32 glyphIndex = 0;
 
         Size totalQuadsCount = quadsCount + outlineQuadsCount;
-        m_meshRenderer->resize(totalQuadsCount);
+        m_meshRenderer->resize((S32)totalQuadsCount);
         m_localMatrices.resize(totalQuadsCount);
         m_localColors.resize(totalQuadsCount);
 
