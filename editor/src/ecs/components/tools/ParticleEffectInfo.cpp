@@ -49,6 +49,7 @@
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
 #include "maze-editor-tools/scenes/SceneDebugEditor.hpp"
@@ -145,7 +146,7 @@ namespace Maze
             { 1.0f, 0.0f });
         backgroundSprite->setColor(255, 255, 255, 140);
     
-        SystemTextRenderer2DPtr titleText = SpriteHelper::CreateSystemText(
+        SystemTextRenderer2DPtr titleText = SystemUIHelper::CreateSystemText(
             "Particle Effect",
             8,
             HorizontalAlignment2D::Center,
@@ -203,7 +204,7 @@ namespace Maze
 
         {
             {
-                SystemTextRenderer2DPtr text = SpriteHelper::CreateSystemText(
+                SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
                     "Particles",
                     8,
                     HorizontalAlignment2D::Left,
@@ -218,7 +219,7 @@ namespace Maze
             }
 
             {
-                m_particlesValueText = SpriteHelper::CreateSystemText(
+                m_particlesValueText = SystemUIHelper::CreateSystemText(
                     "0",
                     8,
                     HorizontalAlignment2D::Left,
@@ -235,7 +236,7 @@ namespace Maze
 
         {
             {
-                SystemTextRenderer2DPtr text = SpriteHelper::CreateSystemText(
+                SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
                     "Time",
                     8,
                     HorizontalAlignment2D::Left,
@@ -250,7 +251,7 @@ namespace Maze
             }
 
             {
-                m_timeValueText = SpriteHelper::CreateSystemText(
+                m_timeValueText = SystemUIHelper::CreateSystemText(
                     "0",
                     8,
                     HorizontalAlignment2D::Left,
@@ -267,7 +268,7 @@ namespace Maze
 
         {
             {
-                SystemTextRenderer2DPtr text = SpriteHelper::CreateSystemText(
+                SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
                     "Iterations",
                     8,
                     HorizontalAlignment2D::Left,
@@ -282,7 +283,7 @@ namespace Maze
             }
 
             {
-                m_iteractionsValueText = SpriteHelper::CreateSystemText(
+                m_iteractionsValueText = SystemUIHelper::CreateSystemText(
                     "0",
                     8,
                     HorizontalAlignment2D::Left,
@@ -299,7 +300,7 @@ namespace Maze
 
         {
             {
-                SystemTextRenderer2DPtr text = SpriteHelper::CreateSystemText(
+                SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
                     "Recursive",
                     8,
                     HorizontalAlignment2D::Left,

@@ -48,6 +48,7 @@
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
@@ -173,7 +174,7 @@ namespace Maze
             this);
         layout->setSpacing(5.0f);
 
-        SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+        SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
             "EDITOR MODE",
             8,
             HorizontalAlignment2D::Center,

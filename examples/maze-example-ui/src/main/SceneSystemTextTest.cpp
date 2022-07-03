@@ -69,6 +69,7 @@
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/managers/MazeColorPickerManager.hpp"
@@ -81,6 +82,7 @@
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/fonts/MazeTrueTypeFont.hpp"
 #include "maze-ui/fonts/MazeFont.hpp"
+#include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "Example.hpp"
 
 
@@ -225,7 +227,7 @@ namespace Maze
             m_canvas->getTransform(),
             this);
 
-        m_text = SpriteHelper::CreateSystemText(
+        m_text = SystemUIHelper::CreateSystemText(
             "Hello, World!",
             8,
             HorizontalAlignment2D::Center,

@@ -42,6 +42,7 @@
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
@@ -186,7 +187,7 @@ namespace Maze
         MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
 
         String fpsText;
-        m_fpsSystemTextRenderer = SpriteHelper::CreateSystemText(
+        m_fpsSystemTextRenderer = SystemUIHelper::CreateSystemText(
             fpsText.c_str(),
             8,
             HorizontalAlignment2D::Left,

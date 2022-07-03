@@ -68,6 +68,7 @@
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/managers/MazeColorPickerManager.hpp"
@@ -75,6 +76,7 @@
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
+#include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "Example.hpp"
 
 
@@ -197,7 +199,7 @@ namespace Maze
         m_canvas->setRenderTarget(renderTarget);
         m_canvas->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
 
-        SpriteHelper::CreateSystemText(
+        SystemUIHelper::CreateSystemText(
             "SOME TEST TEXT",
             8,
             HorizontalAlignment2D::Center,
@@ -207,7 +209,7 @@ namespace Maze
             m_canvas->getTransform(),
             this);
 
-        SpriteHelper::CreateSystemText(
+        SystemUIHelper::CreateSystemText(
             "SECOND TEXT HERE",
             8,
             HorizontalAlignment2D::Center,
@@ -573,7 +575,7 @@ namespace Maze
             this);
         layout->setSpacing(5.0f);
 
-        SystemTextRenderer2DPtr systemText = SpriteHelper::CreateSystemText(
+        SystemTextRenderer2DPtr systemText = SystemUIHelper::CreateSystemText(
             _name,
             8,
             HorizontalAlignment2D::Left,
@@ -586,7 +588,7 @@ namespace Maze
             Vec2DF::c_zero);
         systemText->setColor(ColorU32::c_black);
 
-        SystemTextEditBox2DPtr xEditBox = UIHelper::CreateDefaultEditBox(
+        EditBox2DPtr xEditBox = SystemUIHelper::CreateDefaultEditBox(
             "0",
             Vec2DF(85, 18),
             Vec2DF(0, 0),
@@ -617,7 +619,7 @@ namespace Maze
             this);
         layout->setExpand(true);
 
-        SystemTextRenderer2DPtr systemText = SpriteHelper::CreateSystemText(
+        SystemTextRenderer2DPtr systemText = SystemUIHelper::CreateSystemText(
             _name,
             8,
             HorizontalAlignment2D::Left,

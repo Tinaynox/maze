@@ -49,6 +49,7 @@
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeScissorMask2D.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
 #include "maze-editor-tools/scenes/SceneDebugEditor.hpp"
@@ -179,7 +180,7 @@ namespace Maze
         m_titleBackground->setColor(EditorToolsLayout::c_titleBackgroundColor);
         m_titleBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
 
-        SystemTextRenderer2DPtr hierarchyText = SpriteHelper::CreateSystemText(
+        SystemTextRenderer2DPtr hierarchyText = SystemUIHelper::CreateSystemText(
             "Hierarchy",
             EditorToolsLayout::c_titleFontSize,
             HorizontalAlignment2D::Left,
