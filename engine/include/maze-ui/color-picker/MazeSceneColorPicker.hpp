@@ -60,7 +60,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(SceneColorPicker);
-    MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
+    MAZE_USING_SHARED_PTR(EditBox2D);
     MAZE_USING_SHARED_PTR(UIElement2D);
 
 
@@ -159,19 +159,19 @@ namespace Maze
         void processRGBBandPick(S32 _channel, Vec2DF const& _positionOS);
 
         //////////////////////////////////////////
-        void notifyRGBATextInput(SystemTextEditBox2D* _editBox);
+        void notifyRGBATextInput(EditBox2D* _editBox);
 
         //////////////////////////////////////////
-        void notifyRGBATextSelectedChanged(SystemTextEditBox2D* _editBox, bool _selected);
+        void notifyRGBATextSelectedChanged(EditBox2D* _editBox, bool _selected);
 
         //////////////////////////////////////////
         void notifyIntensitySliderValueChanged(Slider2D* _slider, F32 _value);
 
         //////////////////////////////////////////
-        void notifyIntensityTextInput(SystemTextEditBox2D* _editBox);
+        void notifyIntensityTextInput(EditBox2D* _editBox);
 
         //////////////////////////////////////////
-        void notifyIntensityTextSelectedChanged(SystemTextEditBox2D* _editBox, bool _selected);
+        void notifyIntensityTextSelectedChanged(EditBox2D* _editBox, bool _selected);
 
         //////////////////////////////////////////
         void processIntensityFromEditBox();
@@ -180,7 +180,7 @@ namespace Maze
         void processIntensityFromSlider();
 
         //////////////////////////////////////////
-        void processRGBAFromEditBox(SystemTextEditBox2D* _editBox);
+        void processRGBAFromEditBox(EditBox2D* _editBox);
 
         //////////////////////////////////////////
         void processRGBtoHSV();
@@ -220,9 +220,9 @@ namespace Maze
         SpriteRenderer2DPtr m_rgbaRenderers[4];
         UIElement2DPtr m_rgbaButtons[4];
         SpriteRenderer2DPtr m_rgbaCarriages[4];
-        SystemTextEditBox2DPtr m_rgbaTextEdits[4];
+        EditBox2DPtr m_rgbaTextEdits[4];
 
-        SystemTextEditBox2DPtr m_hexadecimalTextEdit;
+        EditBox2DPtr m_hexadecimalTextEdit;
 
 
         Vec3DF m_hsv;
@@ -231,7 +231,7 @@ namespace Maze
 
         EntityPtr m_intensityEntity;
         Slider2DPtr m_intensitySlider;
-        SystemTextEditBox2DPtr m_intensityTextEdit;
+        EditBox2DPtr m_intensityTextEdit;
     };
 
 

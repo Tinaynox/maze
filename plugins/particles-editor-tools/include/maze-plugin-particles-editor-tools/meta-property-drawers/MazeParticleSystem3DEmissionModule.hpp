@@ -52,7 +52,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(MetaPropertyDrawerParticleSystem3DEmissionModule);
     MAZE_USING_SHARED_PTR(PropertyDrawerParticleSystemBurst);
-    MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
+    MAZE_USING_SHARED_PTR(EditBox2D);
     MAZE_USING_SHARED_PTR(ToggleButton2D);
     MAZE_USING_SHARED_PTR(HorizontalLayout2D);
 

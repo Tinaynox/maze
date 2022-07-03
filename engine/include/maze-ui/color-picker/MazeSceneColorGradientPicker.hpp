@@ -63,7 +63,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(SceneColorGradientPicker);
-    MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
+    MAZE_USING_SHARED_PTR(EditBox2D);
     MAZE_USING_SHARED_PTR(UIElement2D);
 
 
@@ -128,7 +128,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void notifyModeChanged(SystemTextDropdown2D* _dropdown, S32 _index);
+        void notifyModeChanged(Dropdown2D* _dropdown, S32 _index);
 
 
         //////////////////////////////////////////
@@ -172,10 +172,10 @@ namespace Maze
         void notifyAlphaSliderValueChanged(Slider2D* _slider, F32 _value);
         
         //////////////////////////////////////////
-        void notifyAlphaEditTextInput(SystemTextEditBox2D* _edit);
+        void notifyAlphaEditTextInput(EditBox2D* _edit);
 
         //////////////////////////////////////////
-        void notifyLocationEditTextInput(SystemTextEditBox2D* _edit);
+        void notifyLocationEditTextInput(EditBox2D* _edit);
 
         //////////////////////////////////////////
         void changeCurrentAlphaTagTime(F32 _newTime);
@@ -201,7 +201,7 @@ namespace Maze
         CanvasPtr m_canvas;
         UIElement2DPtr m_canvasUIElement;
 
-        SystemTextDropdown2DPtr m_modeDropdown;
+        Dropdown2DPtr m_modeDropdown;
         ClickButton2DPtr m_copyButton;
 
         SpriteRenderer2DPtr m_gradientRendererHolder;
@@ -211,13 +211,13 @@ namespace Maze
 
         EntityPtr m_alphaHolder;
         Slider2DPtr m_alphaSlider;
-        SystemTextEditBox2DPtr m_alphaEdit;
+        EditBox2DPtr m_alphaEdit;
 
         EntityPtr m_colorHolder;
         ColorHDREdit2DPtr m_colorEdit;
 
         EntityPtr m_locationHolder;
-        SystemTextEditBox2DPtr m_locationEdit;
+        EditBox2DPtr m_locationEdit;
 
         Vector<ColorSliderTag2DPtr> m_alphaTags;
         Vector<ColorSliderTag2DPtr> m_colorTags;

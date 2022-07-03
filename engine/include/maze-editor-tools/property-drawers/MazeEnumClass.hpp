@@ -45,8 +45,8 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(PropertyDrawerEnumClass);
-    MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
-    MAZE_USING_SHARED_PTR(SystemTextDropdown2D);
+    MAZE_USING_SHARED_PTR(EditBox2D);
+    MAZE_USING_SHARED_PTR(Dropdown2D);
     MAZE_USING_SHARED_PTR(SystemTextRenderer2D);
 
 
@@ -110,10 +110,10 @@ namespace Maze
                 
 
         //////////////////////////////////////////
-        void notifyValueChanged(SystemTextDropdown2D* _dropdown, S32 _value);
+        void notifyValueChanged(Dropdown2D* _dropdown, S32 _value);
 
     protected:
-        SystemTextDropdown2DPtr m_dropdown;
+        Dropdown2DPtr m_dropdown;
         Vector<String> m_enumValues;
     };
 

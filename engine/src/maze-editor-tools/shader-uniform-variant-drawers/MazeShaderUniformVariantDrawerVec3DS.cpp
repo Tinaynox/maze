@@ -153,7 +153,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SystemTextEditBox2DPtr ShaderUniformVariantDrawerVec3DS::createF32Edit(
+    EditBox2DPtr ShaderUniformVariantDrawerVec3DS::createF32Edit(
         CString _name,
         Transform2DPtr const& _parent)
     {
@@ -179,7 +179,7 @@ namespace Maze
             Vec2DF::c_zero);
         systemText->setColor(ColorU32::c_black);
 
-        SystemTextEditBox2DPtr editBox = SystemUIHelper::CreateDefaultEditBox(
+        EditBox2DPtr editBox = SystemUIHelper::CreateDefaultEditBox(
             "",
             Vec2DF(60, 18),
             Vec2DF(0, 0),
@@ -194,13 +194,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ShaderUniformVariantDrawerVec3DS::notifyTextInput(SystemTextEditBox2D* _editBox)
+    void ShaderUniformVariantDrawerVec3DS::notifyTextInput(EditBox2D* _editBox)
     {
         processDataFromUI();
     }
 
     //////////////////////////////////////////
-    void ShaderUniformVariantDrawerVec3DS::notifySelectedChanged(SystemTextEditBox2D* _editBox, bool _selected)
+    void ShaderUniformVariantDrawerVec3DS::notifySelectedChanged(EditBox2D* _editBox, bool _selected)
     {
         if (!_selected)
         {

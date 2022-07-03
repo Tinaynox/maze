@@ -112,23 +112,23 @@ namespace Maze
         virtual bool init(String const& _label) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        SystemTextEditBox2DPtr createEdit(
+        EditBox2DPtr createEdit(
             CString _name,
             Transform2DPtr const& _parent);
 
         //////////////////////////////////////////
-        void notifyTextInput(SystemTextEditBox2D* _edit);
+        void notifyTextInput(EditBox2D* _edit);
 
         //////////////////////////////////////////
-        void notifySelectedChanged(SystemTextEditBox2D* _edit, bool _selected);
+        void notifySelectedChanged(EditBox2D* _edit, bool _selected);
 
     protected:
         EntityPtr m_rootEntity;
         HorizontalLayout2DPtr m_layout;
         
-        SystemTextEditBox2DPtr m_editBoxTime;
-        SystemTextEditBox2DPtr m_editBoxMinCount;
-        SystemTextEditBox2DPtr m_editBoxMaxCount;
+        EditBox2DPtr m_editBoxTime;
+        EditBox2DPtr m_editBoxMinCount;
+        EditBox2DPtr m_editBoxMaxCount;
     };
 
 

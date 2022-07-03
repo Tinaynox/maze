@@ -43,8 +43,8 @@
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
-#include "maze-ui/ecs/components/MazeSystemTextEditBox2D.hpp"
-#include "maze-ui/ecs/components/MazeSystemTextDropdown2D.hpp"
+#include "maze-ui/ecs/components/MazeEditBox2D.hpp"
+#include "maze-ui/ecs/components/MazeDropdown2D.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 
@@ -119,8 +119,8 @@ namespace Maze
         m_UIElements2DSample->eventEntityAdded.subscribe(this, &InputSystem2D::processUIElement2DEntityAdded);
         m_UIElements2DSample->eventEntityRemoved.subscribe(this, &InputSystem2D::processUIElement2DEntityRemoved);
 
-        m_systemTextEditBoxesSample = m_worldRaw->requestInclusiveSample<SystemTextEditBox2D>();
-        m_systemTextDropdownsSample = m_worldRaw->requestInclusiveSample<SystemTextDropdown2D>();
+        m_systemTextEditBoxesSample = m_worldRaw->requestInclusiveSample<EditBox2D>();
+        m_systemTextDropdownsSample = m_worldRaw->requestInclusiveSample<Dropdown2D>();
         m_horizontalLayouts2D = m_worldRaw->requestInclusiveSample<HorizontalLayout2D>();
         m_verticalLayouts2D = m_worldRaw->requestInclusiveSample<VerticalLayout2D>();
         m_sizePolicy2D = m_worldRaw->requestInclusiveSample<SizePolicy2D>();
@@ -224,13 +224,13 @@ namespace Maze
             layoutData.layout->update();
 
         m_systemTextEditBoxesSample->process(
-            [&](Entity* _entity, SystemTextEditBox2D* _editBox)
+            [&](Entity* _entity, EditBox2D* _editBox)
             {
                 _editBox->update(_dt);
             });
 
         m_systemTextDropdownsSample->process(
-            [&](Entity* _entity, SystemTextDropdown2D* _dropdown)
+            [&](Entity* _entity, Dropdown2D* _dropdown)
             {
                 _dropdown->update(_dt);
             });

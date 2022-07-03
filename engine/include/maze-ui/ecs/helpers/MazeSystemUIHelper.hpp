@@ -37,7 +37,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeColorGradient.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
-#include "maze-ui/ecs/components/MazeSystemTextEditBox2D.hpp"
+#include "maze-ui/ecs/components/MazeEditBox2D.hpp"
 #include "maze-ui/ecs/components/MazeColorEdit2D.hpp"
 #include "maze-ui/ecs/components/MazeColorHDREdit2D.hpp"
 #include "maze-ui/ecs/components/MazeColorGradientEdit2D.hpp"
@@ -45,7 +45,7 @@
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeToggleButton2D.hpp"
-#include "maze-ui/ecs/components/MazeSystemTextDropdown2D.hpp"
+#include "maze-ui/ecs/components/MazeDropdown2D.hpp"
 #include "maze-ui/ecs/components/MazeSlider2D.hpp"
 #include "maze-ui/ecs/components/MazeMenuListItem2D.hpp"
 #include "maze-ui/ecs/components/MazeMenuList2D.hpp"
@@ -64,8 +64,17 @@ namespace Maze
     namespace SystemUIHelper
     {
         //////////////////////////////////////////
-        MAZE_UI_API SystemTextEditBox2DPtr CreateDefaultEditBox(
+        MAZE_UI_API EditBox2DPtr CreateDefaultEditBox(
             CString _text,
+            Vec2DF const& _size,
+            Vec2DF const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
+            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
+
+        //////////////////////////////////////////
+        MAZE_UI_API Dropdown2DPtr CreateDefaultDropdown(
             Vec2DF const& _size,
             Vec2DF const& _position,
             Transform2DPtr const& _parent,

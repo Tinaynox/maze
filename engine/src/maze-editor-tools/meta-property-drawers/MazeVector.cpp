@@ -37,7 +37,7 @@
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
-#include "maze-ui/ecs/components/MazeSystemTextDropdown2D.hpp"
+#include "maze-ui/ecs/components/MazeDropdown2D.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
@@ -406,7 +406,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void MetaPropertyDrawerVector::notifyValueChanged(SystemTextDropdown2D* _dropdown, S32 _value)
+    void MetaPropertyDrawerVector::notifyValueChanged(Dropdown2D* _dropdown, S32 _value)
     {
         processDataFromUI();
     }

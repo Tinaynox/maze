@@ -56,8 +56,8 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Camera3D);
     MAZE_USING_SHARED_PTR(MeshRenderer);
     MAZE_USING_SHARED_PTR(Transform2D);
-    MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
-    MAZE_USING_SHARED_PTR(SystemTextDropdown2D);
+    MAZE_USING_SHARED_PTR(EditBox2D);
+    MAZE_USING_SHARED_PTR(Dropdown2D);
     MAZE_USING_SHARED_PTR(HorizontalLayout2D);
     MAZE_USING_SHARED_PTR(VerticalLayout2D);
     MAZE_USING_SHARED_PTR(SizePolicy2D);
@@ -233,8 +233,8 @@ namespace Maze
         SharedPtr<GenericInclusiveEntitiesSample<Canvas>> m_canvasesSample;
         SharedPtr<GenericInclusiveEntitiesSample<CanvasScaler>> m_canvasScalersSample;
         SharedPtr<GenericInclusiveEntitiesSample<UIElement2D>> m_UIElements2DSample;
-        SharedPtr<GenericInclusiveEntitiesSample<SystemTextEditBox2D>> m_systemTextEditBoxesSample;
-        SharedPtr<GenericInclusiveEntitiesSample<SystemTextDropdown2D>> m_systemTextDropdownsSample;
+        SharedPtr<GenericInclusiveEntitiesSample<EditBox2D>> m_systemTextEditBoxesSample;
+        SharedPtr<GenericInclusiveEntitiesSample<Dropdown2D>> m_systemTextDropdownsSample;
         SharedPtr<GenericInclusiveEntitiesSample<HorizontalLayout2D>> m_horizontalLayouts2D;
         SharedPtr<GenericInclusiveEntitiesSample<VerticalLayout2D>> m_verticalLayouts2D;
         SharedPtr<GenericInclusiveEntitiesSample<SizePolicy2D>> m_sizePolicy2D;

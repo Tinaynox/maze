@@ -47,7 +47,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(MetaPropertyDrawerRect2DF);
-    MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
+    MAZE_USING_SHARED_PTR(EditBox2D);
 
 
     //////////////////////////////////////////
@@ -95,7 +95,7 @@ namespace Maze
             CString _label) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        SystemTextEditBox2DPtr createF32Edit(
+        EditBox2DPtr createF32Edit(
             CString _name,
             Transform2DPtr const& _parent);
 

@@ -971,13 +971,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::notifyRGBATextInput(SystemTextEditBox2D* _editBox)
+    void SceneColorPicker::notifyRGBATextInput(EditBox2D* _editBox)
     {
         processRGBAFromEditBox(_editBox);
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::notifyRGBATextSelectedChanged(SystemTextEditBox2D* _editBox, bool _selected)
+    void SceneColorPicker::notifyRGBATextSelectedChanged(EditBox2D* _editBox, bool _selected)
     {
         if (!_selected)
         {
@@ -992,13 +992,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::notifyIntensityTextInput(SystemTextEditBox2D* _editBox)
+    void SceneColorPicker::notifyIntensityTextInput(EditBox2D* _editBox)
     {
         processIntensityFromEditBox();
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::notifyIntensityTextSelectedChanged(SystemTextEditBox2D* _editBox, bool _selected)
+    void SceneColorPicker::notifyIntensityTextSelectedChanged(EditBox2D* _editBox, bool _selected)
     {
         if (!_selected)
         {
@@ -1046,7 +1046,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::processRGBAFromEditBox(SystemTextEditBox2D* _editBox)
+    void SceneColorPicker::processRGBAFromEditBox(EditBox2D* _editBox)
     {
         ColorU32 color;
         F32 intensity = 0.0f;

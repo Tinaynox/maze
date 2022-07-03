@@ -49,9 +49,9 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(PropertyDrawerParticleSystemParameterColor);
-    MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
+    MAZE_USING_SHARED_PTR(EditBox2D);
     MAZE_USING_SHARED_PTR(HorizontalLayout2D);
-    MAZE_USING_SHARED_PTR(SystemTextDropdown2D);
+    MAZE_USING_SHARED_PTR(Dropdown2D);
 
 
     //////////////////////////////////////////
@@ -130,7 +130,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void notifyDropdownValueChanged(SystemTextDropdown2D* _dropdown, S32 _index);
+        void notifyDropdownValueChanged(Dropdown2D* _dropdown, S32 _index);
 
     protected:
         EntityPtr m_rootEntity;
@@ -140,7 +140,7 @@ namespace Maze
         ColorGradientEdit2DPtr m_gradientFrom;
         ColorGradientEdit2DPtr m_gradientTo;
 
-        SystemTextDropdown2DPtr m_modeDropdown;
+        Dropdown2DPtr m_modeDropdown;
 
         ParticleSystemParameterColor m_parameter;
         ParticleSystemParameterColorSamplingMode m_mode = ParticleSystemParameterColorSamplingMode::None;

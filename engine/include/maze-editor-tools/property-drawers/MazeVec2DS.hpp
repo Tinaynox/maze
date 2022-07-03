@@ -46,7 +46,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(PropertyDrawerVec2DS);
-    MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
+    MAZE_USING_SHARED_PTR(EditBox2D);
 
 
     //////////////////////////////////////////
@@ -106,21 +106,21 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        SystemTextEditBox2DPtr createS32Edit(
+        EditBox2DPtr createS32Edit(
             CString _name,
             Transform2DPtr const& _parent);
 
         //////////////////////////////////////////
-        void notifyTextInput(SystemTextEditBox2D* _editBox);
+        void notifyTextInput(EditBox2D* _editBox);
 
         //////////////////////////////////////////
-        void notifySelectedChanged(SystemTextEditBox2D* _editBox, bool _selected);
+        void notifySelectedChanged(EditBox2D* _editBox, bool _selected);
 
     protected:
         EntityPtr m_rootEntity;
 
-        SystemTextEditBox2DPtr m_editBoxX;
-        SystemTextEditBox2DPtr m_editBoxY;
+        EditBox2DPtr m_editBoxX;
+        EditBox2DPtr m_editBoxY;
     };
 
 

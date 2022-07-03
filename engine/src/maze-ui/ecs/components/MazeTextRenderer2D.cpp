@@ -56,7 +56,7 @@ namespace Maze
     // Class TextRenderer2D
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(TextRenderer2D, Component,
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(TextRenderer2D, AbstractTextRenderer2D,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(String, text, String(), getText, setText),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, color, ColorU32::c_white, getColor, setColor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(FontMaterialPtr, fontMaterial, FontMaterialPtr(), getFontMaterial, setFontMaterial),

@@ -53,8 +53,8 @@
 #include "maze-ui/ecs/components/MazeMenuListItem2D.hpp"
 #include "maze-ui/ecs/components/MazeMenuListTree2D.hpp"
 #include "maze-ui/ecs/components/MazeSlider2D.hpp"
-#include "maze-ui/ecs/components/MazeSystemTextDropdown2D.hpp"
-#include "maze-ui/ecs/components/MazeSystemTextEditBox2D.hpp"
+#include "maze-ui/ecs/components/MazeDropdown2D.hpp"
+#include "maze-ui/ecs/components/MazeEditBox2D.hpp"
 #include "maze-ui/ecs/components/MazeToggleButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
@@ -136,8 +136,8 @@ namespace Maze
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<MenuListItem2D>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<MenuListTree2D>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<Slider2D>("UI");
-        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<SystemTextDropdown2D>("UI");
-        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<SystemTextEditBox2D>("UI");
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<Dropdown2D>("UI");
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<EditBox2D>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<ToggleButton2D>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<UIElement2D>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<UITweenTransitionAlpha>("UI");

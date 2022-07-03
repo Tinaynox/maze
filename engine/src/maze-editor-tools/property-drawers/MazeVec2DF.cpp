@@ -142,7 +142,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SystemTextEditBox2DPtr PropertyDrawerVec2DF::createF32Edit(
+    EditBox2DPtr PropertyDrawerVec2DF::createF32Edit(
         CString _name,
         Transform2DPtr const& _parent)
     {
@@ -168,7 +168,7 @@ namespace Maze
             Vec2DF::c_zero);
         systemText->setColor(ColorU32::c_black);
 
-        SystemTextEditBox2DPtr editBox = SystemUIHelper::CreateDefaultEditBox(
+        EditBox2DPtr editBox = SystemUIHelper::CreateDefaultEditBox(
             "",
             Vec2DF(60, 18),
             Vec2DF(0, 0),
@@ -199,13 +199,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerVec2DF::notifyTextInput(SystemTextEditBox2D* _editBox)
+    void PropertyDrawerVec2DF::notifyTextInput(EditBox2D* _editBox)
     {
         eventUIData();
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerVec2DF::notifySelectedChanged(SystemTextEditBox2D* _editBox, bool _selected)
+    void PropertyDrawerVec2DF::notifySelectedChanged(EditBox2D* _editBox, bool _selected)
     {
         if (!_selected)
         {

@@ -180,13 +180,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerSliderF32::notifyTextInput(SystemTextEditBox2D* _editBox)
+    void PropertyDrawerSliderF32::notifyTextInput(EditBox2D* _editBox)
     {
         eventUIData();
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerSliderF32::notifySelectedChanged(SystemTextEditBox2D* _editBox, bool _selected)
+    void PropertyDrawerSliderF32::notifySelectedChanged(EditBox2D* _editBox, bool _selected)
     {
         if (!_selected)
         {

@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeUIHeader.hpp"
-#include "maze-ui/ecs/components/MazeSystemTextDropdown2D.hpp"
+#include "maze-ui/ecs/components/MazeDropdown2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-ui/ecs/components/MazeToggleButton2D.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
@@ -48,27 +48,27 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class SystemTextDropdown2D
+    // Class Dropdown2D
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SystemTextDropdown2D, Component,
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Dropdown2D, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, selected, false, getSelected, setSelected),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, systemTextRenderer, ComponentPtr(), getSystemTextRendererComponent, setSystemTextRenderer),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, systemTextRenderer, ComponentPtr(), getTextRendererComponent, setTextRenderer),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, listCanvas, ComponentPtr(), getListCanvasComponent, setListCanvas),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, itemPrefabTransform, ComponentPtr(), getItemPrefabTransformComponent, setItemPrefabTransform));
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(SystemTextDropdown2D);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(Dropdown2D);
 
     //////////////////////////////////////////
-    SystemTextDropdown2D::SystemTextDropdown2D()
+    Dropdown2D::Dropdown2D()
         : m_selected(false)
         , m_value(0)
     {
     }
 
     //////////////////////////////////////////
-    SystemTextDropdown2D::~SystemTextDropdown2D()
+    Dropdown2D::~Dropdown2D()
     {
         if (m_UIElement2D)
         {
@@ -81,48 +81,48 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SystemTextDropdown2DPtr SystemTextDropdown2D::Create()
+    Dropdown2DPtr Dropdown2D::Create()
     {
-        SystemTextDropdown2DPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(SystemTextDropdown2D, object, init());
+        Dropdown2DPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(Dropdown2D, object, init());
         return object;
     }
 
     //////////////////////////////////////////
-    bool SystemTextDropdown2D::init()
+    bool Dropdown2D::init()
     {
 
         return true;
     }
 
     //////////////////////////////////////////
-    void SystemTextDropdown2D::update(F32 _dt)
+    void Dropdown2D::update(F32 _dt)
     {
         
     }
 
     //////////////////////////////////////////
-    void SystemTextDropdown2D::processEntityAwakened()
+    void Dropdown2D::processEntityAwakened()
     {
         m_transform = getEntityRaw()->ensureComponent<Transform2D>();
         m_UIElement2D = getEntityRaw()->ensureComponent<UIElement2D>();
         m_UIElement2D->setCaptureCursorHits(true);
 
-        m_UIElement2D->eventCursorPressIn.subscribe(this, &SystemTextDropdown2D::notifyCursorPressIn);
-        m_UIElement2D->eventCursorReleaseOut.subscribe(this, &SystemTextDropdown2D::notifyCursorReleaseOut);
-        m_UIElement2D->eventFocusChanged.subscribe(this, &SystemTextDropdown2D::notifyFocusChanged);
-        m_UIElement2D->eventPressedChanged.subscribe(this, &SystemTextDropdown2D::notifyPressedChanged);
-        m_UIElement2D->eventClick.subscribe(this, &SystemTextDropdown2D::notifyClick);
+        m_UIElement2D->eventCursorPressIn.subscribe(this, &Dropdown2D::notifyCursorPressIn);
+        m_UIElement2D->eventCursorReleaseOut.subscribe(this, &Dropdown2D::notifyCursorReleaseOut);
+        m_UIElement2D->eventFocusChanged.subscribe(this, &Dropdown2D::notifyFocusChanged);
+        m_UIElement2D->eventPressedChanged.subscribe(this, &Dropdown2D::notifyPressedChanged);
+        m_UIElement2D->eventClick.subscribe(this, &Dropdown2D::notifyClick);
     }
 
     //////////////////////////////////////////
-    void SystemTextDropdown2D::notifyCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void Dropdown2D::notifyCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
     {
             
     }
 
     //////////////////////////////////////////
-    void SystemTextDropdown2D::notifyCursorReleaseOut(CursorInputEvent const& _inputEvent)
+    void Dropdown2D::notifyCursorReleaseOut(CursorInputEvent const& _inputEvent)
     {
         if (m_listCanvas)
         {
@@ -137,13 +137,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SystemTextDropdown2D::notifyFocusChanged(bool _focused)
+    void Dropdown2D::notifyFocusChanged(bool _focused)
     {
         eventFocusChanged(this, _focused);
     }
 
     //////////////////////////////////////////
-    void SystemTextDropdown2D::notifyPressedChanged(bool _pressed)
+    void Dropdown2D::notifyPressedChanged(bool _pressed)
     {
         if (_pressed)
         {
@@ -154,13 +154,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SystemTextDropdown2D::notifyClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void Dropdown2D::notifyClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         eventClick(this, _inputEvent);
     }
 
     //////////////////////////////////////////
-    void SystemTextDropdown2D::setSelected(bool _selected)
+    void Dropdown2D::setSelected(bool _selected)
     {
         if (m_selected == _selected)
             return;
@@ -171,7 +171,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SystemTextDropdown2D::setValue(S32 _value)
+    void Dropdown2D::setValue(S32 _value)
     {
         if (m_value == _value)
             return;
@@ -185,7 +185,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    String SystemTextDropdown2D::getValueString()
+    String Dropdown2D::getValueString()
     {
         if (m_value >= 0 && m_value < (S32)m_options.size())
             return m_options[m_value].text;
@@ -194,14 +194,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SystemTextDropdown2D::setValue(String const& _value)
+    void Dropdown2D::setValue(String const& _value)
     {
         S32 value = getOptionIndex(_value);
         setValue(value);
     }
 
     //////////////////////////////////////////
-    S32 SystemTextDropdown2D::getOptionIndex(String const& _value)
+    S32 Dropdown2D::getOptionIndex(String const& _value)
     {
         for (S32 i = 0, in = (S32)m_options.size(); i < in; ++i)
         {
@@ -213,17 +213,17 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    void SystemTextDropdown2D::updateSystemTextRenderer()
+    void Dropdown2D::updateTextRenderer()
     {
-        if (!m_systemTextRenderer)
+        if (!m_textRenderer)
             return;
 
-        m_systemTextRenderer->setText("None");
+        m_textRenderer->setText("None");
     
     }
 
     //////////////////////////////////////////
-    void SystemTextDropdown2D::addOption(OptionData const& _optionData)
+    void Dropdown2D::addOption(OptionData const& _optionData)
     {
         m_options.push_back(_optionData);
 
@@ -232,7 +232,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SystemTextDropdown2D::addOptions(Vector<OptionData> const& _options)
+    void Dropdown2D::addOptions(Vector<OptionData> const& _options)
     {
         m_options.insert(
             m_options.end(),
@@ -244,7 +244,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SystemTextDropdown2D::addOptions(Vector<String> const& _options)
+    void Dropdown2D::addOptions(Vector<String> const& _options)
     {
         for (String const& option : _options)
         {
@@ -256,7 +256,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SystemTextDropdown2D::clearOptions()
+    void Dropdown2D::clearOptions()
     {
         m_options.clear();
 
@@ -264,7 +264,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SystemTextDropdown2D::rebuildOptions()
+    void Dropdown2D::rebuildOptions()
     {
         Transform2DPtr const& listTransform = m_listCanvas->getTransform();
 
@@ -288,7 +288,7 @@ namespace Maze
             itemTransform->setParent(listTransform);
             itemTransform->setLocalPosition(m_itemPrefabTransform->getLocalPosition().x, y);
 
-            SystemTextRenderer2D* labelTextRenderer = itemTransform->findChildComponent<SystemTextRenderer2D>("Label");
+            AbstractTextRenderer2D* labelTextRenderer = itemTransform->findChildComponentInheritedFrom<AbstractTextRenderer2D>("Label");
             if (labelTextRenderer)
             {
                 labelTextRenderer->setText(optionData.text);
@@ -339,7 +339,7 @@ namespace Maze
                         backgroundSpriteRenderer);
                 });
 
-            SystemTextDropdown2D* dropdown = this;
+            Dropdown2D* dropdown = this;
 
             button->eventClick.subscribe(
                 [dropdown, optionText](Button2D* _button, CursorInputEvent const& _inputEvent)
@@ -361,16 +361,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SystemTextDropdown2D::updateCaption()
+    void Dropdown2D::updateCaption()
     {
-        if (!m_systemTextRenderer)
+        if (!m_textRenderer)
             return;
 
-        m_systemTextRenderer->setText(getValueString());
+        m_textRenderer->setText(getValueString());
     }
 
     //////////////////////////////////////////
-    void SystemTextDropdown2D::updateSelectedOption()
+    void Dropdown2D::updateSelectedOption()
     {
         if (!m_listCanvas)
             return;

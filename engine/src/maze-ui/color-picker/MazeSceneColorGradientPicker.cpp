@@ -270,7 +270,7 @@ namespace Maze
                 this);
             label->setColor(ColorU32::c_black);
 
-            m_modeDropdown = UIHelper::CreateDefaultDropdown(
+            m_modeDropdown = SystemUIHelper::CreateDefaultDropdown(
                 Vec2DF(188.0f, 18.0f),
                 Vec2DF(0.0f, 0.0f),
                 rowLayout->getTransform(),
@@ -621,7 +621,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneColorGradientPicker::notifyModeChanged(SystemTextDropdown2D* _dropdown, S32 _index)
+    void SceneColorGradientPicker::notifyModeChanged(Dropdown2D* _dropdown, S32 _index)
     {
         ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
 
@@ -1017,7 +1017,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneColorGradientPicker::notifyAlphaEditTextInput(SystemTextEditBox2D* _edit)
+    void SceneColorGradientPicker::notifyAlphaEditTextInput(EditBox2D* _edit)
     {
         if (m_colorTagIndex < 0)
             return;
@@ -1040,7 +1040,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneColorGradientPicker::notifyLocationEditTextInput(SystemTextEditBox2D* _edit)
+    void SceneColorGradientPicker::notifyLocationEditTextInput(EditBox2D* _edit)
     {
         if (m_colorTagIndex < 0)
             return;

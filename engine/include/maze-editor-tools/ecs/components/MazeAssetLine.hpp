@@ -56,7 +56,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Sprite);
     MAZE_USING_SHARED_PTR(ContextMenu2D);
     MAZE_USING_SHARED_PTR(AssetsController);
-    MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
+    MAZE_USING_SHARED_PTR(EditBox2D);
 
 
     //////////////////////////////////////////
@@ -169,10 +169,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void notifyTextEditSelectedChanged(SystemTextEditBox2D* _edit, bool _value);
+        void notifyTextEditSelectedChanged(EditBox2D* _edit, bool _value);
 
         //////////////////////////////////////////
-        void notifyTextEditInput(SystemTextEditBox2D* _edit);
+        void notifyTextEditInput(EditBox2D* _edit);
 
     protected:
         AssetsController* m_assetsController = nullptr;
@@ -185,7 +185,7 @@ namespace Maze
         SpriteRenderer2DPtr m_dropDownRenderer;
         SpriteRenderer2DPtr m_iconRenderer;
         SystemTextRenderer2DPtr m_textRenderer;
-        SystemTextEditBox2DPtr m_textEdit;
+        EditBox2DPtr m_textEdit;
 
         ContextMenu2DPtr m_contextMenu;
 

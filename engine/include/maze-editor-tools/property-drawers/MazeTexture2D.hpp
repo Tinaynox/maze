@@ -45,7 +45,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(PropertyDrawerTexture2D);
-    MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
+    MAZE_USING_SHARED_PTR(EditBox2D);
     MAZE_USING_SHARED_PTR(Button2D);
     MAZE_USING_SHARED_PTR(Texture2D);
     MAZE_USING_SHARED_PTR(Sprite);

@@ -150,13 +150,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerRadians::notifyTextInput(SystemTextEditBox2D* _editBox)
+    void PropertyDrawerRadians::notifyTextInput(EditBox2D* _editBox)
     {
         eventUIData();
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerRadians::notifySelectedChanged(SystemTextEditBox2D* _editBox, bool _selected)
+    void PropertyDrawerRadians::notifySelectedChanged(EditBox2D* _editBox, bool _selected)
     {
         if (!_selected)
         {

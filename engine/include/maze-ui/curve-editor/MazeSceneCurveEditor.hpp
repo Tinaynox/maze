@@ -63,7 +63,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(SceneCurveEditor);
-    MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
+    MAZE_USING_SHARED_PTR(EditBox2D);
     MAZE_USING_SHARED_PTR(UIElement2D);
 
 
@@ -125,7 +125,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void notifyModeChanged(SystemTextDropdown2D* _dropdown, S32 _index);
+        void notifyModeChanged(Dropdown2D* _dropdown, S32 _index);
 
 
         //////////////////////////////////////////
@@ -177,20 +177,20 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void notifyCurveScalarEditTextInput(SystemTextEditBox2D* _edit);
+        void notifyCurveScalarEditTextInput(EditBox2D* _edit);
 
 
         //////////////////////////////////////////
-        void notifyValueEditTextInput(SystemTextEditBox2D* _edit);
+        void notifyValueEditTextInput(EditBox2D* _edit);
 
         //////////////////////////////////////////
-        void notifyLocationEditTextInput(SystemTextEditBox2D* _edit);
+        void notifyLocationEditTextInput(EditBox2D* _edit);
 
         //////////////////////////////////////////
-        void notifyInTangentEditTextInput(SystemTextEditBox2D* _edit);
+        void notifyInTangentEditTextInput(EditBox2D* _edit);
 
         //////////////////////////////////////////
-        void notifyOutTangentEditTextInput(SystemTextEditBox2D* _edit);
+        void notifyOutTangentEditTextInput(EditBox2D* _edit);
 
     protected:
         CanvasPtr m_canvas;
@@ -198,7 +198,7 @@ namespace Maze
 
         AnimationCurveMinMaxMode m_minMaxMode = AnimationCurveMinMaxMode::None;
 
-        SystemTextDropdown2DPtr m_modeDropdown;
+        Dropdown2DPtr m_modeDropdown;
         ClickButton2DPtr m_copyButton;
         ClickButton2DPtr m_pasteButton;
         ClickButton2DPtr m_copyXMLButton;
@@ -213,7 +213,7 @@ namespace Maze
         Texture2DPtr m_curveTexture;
         SpritePtr m_curveSprite;
 
-        SystemTextEditBox2DPtr m_curveScalarEdit;
+        EditBox2DPtr m_curveScalarEdit;
 
         S32 m_keyIndex = -1;
 
@@ -222,11 +222,11 @@ namespace Maze
         F32 m_draggingDistance = 0.0f;
 
         EntityPtr m_keyHolder;
-        SystemTextEditBox2DPtr m_valueEdit;
-        SystemTextEditBox2DPtr m_locationEdit;
+        EditBox2DPtr m_valueEdit;
+        EditBox2DPtr m_locationEdit;
         EntityPtr m_tangentsHolder;
-        SystemTextEditBox2DPtr m_inTangentEdit;
-        SystemTextEditBox2DPtr m_outTangentEdit;
+        EditBox2DPtr m_inTangentEdit;
+        EditBox2DPtr m_outTangentEdit;
     };
 
 

@@ -37,7 +37,7 @@
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
-#include "maze-ui/ecs/components/MazeSystemTextDropdown2D.hpp"
+#include "maze-ui/ecs/components/MazeDropdown2D.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
@@ -403,7 +403,7 @@ namespace Maze
         EntityPtr dropdownEntity = m_layout->getEntityRaw()->getECSScene()->createEntity();
         dropdownEntity->ensureComponent<Name>("Dropdown");
 
-        m_modeDropdown = dropdownEntity->createComponent<SystemTextDropdown2D>();
+        m_modeDropdown = dropdownEntity->createComponent<Dropdown2D>();
 
         Transform2DPtr const& transform = m_modeDropdown->getTransform();
         transform->setParent(m_layout->getTransform());
@@ -419,7 +419,7 @@ namespace Maze
 
         auto updateDropdownState =
             [](
-                SystemTextDropdown2D* _dropdown,
+                Dropdown2D* _dropdown,
                 SpriteRenderer2D* _spriteRenderer,
                 Entity* _listEntity)
         {
@@ -577,13 +577,13 @@ namespace Maze
         }
 
         m_modeDropdown->eventFocusChanged.subscribe(
-            [=](SystemTextDropdown2D* _dropdown, bool _value)
+            [=](Dropdown2D* _dropdown, bool _value)
             {
                 updateDropdownState(_dropdown, spriteRendererRaw, listEntity);
             });
 
         m_modeDropdown->eventSelectedChanged.subscribe(
-            [=](SystemTextDropdown2D* _dropdown, bool _value)
+            [=](Dropdown2D* _dropdown, bool _value)
             {
                 updateDropdownState(_dropdown, spriteRendererRaw, listEntity);
             });
@@ -603,7 +603,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerParticleSystemParameterColor::notifyDropdownValueChanged(SystemTextDropdown2D* _dropdown, S32 _index)
+    void PropertyDrawerParticleSystemParameterColor::notifyDropdownValueChanged(Dropdown2D* _dropdown, S32 _index)
     {
         ParticleSystemParameterColorSamplingMode mode = ParticleSystemParameterColorSamplingMode(_index + 1);
         setMode(mode);

@@ -25,19 +25,16 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeSystemTextDropdown2D_hpp_))
-#define _MazeSystemTextDropdown2D_hpp_
+#if (!defined(_MazeEditBox2D_hpp_))
+#define _MazeEditBox2D_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
+#include "maze-graphics/ecs/components/MazeAbstractTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
-#include "maze-graphics/ecs/components/MazeCanvas.hpp"
-#include "maze-ui/ecs/components/MazeSystemTextDropdown2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 
@@ -47,27 +44,26 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(RenderMesh);
+    MAZE_USING_SHARED_PTR(EditBox2D);
     MAZE_USING_SHARED_PTR(Transform2D);
-    MAZE_USING_SHARED_PTR(SystemTextDropdown2D);
     MAZE_USING_SHARED_PTR(UIElement2D);
-    MAZE_USING_SHARED_PTR(Canvas);
 
 
     //////////////////////////////////////////
-    // Class SystemTextDropdown2D
+    // Class EditBox2D
     //
     //////////////////////////////////////////
-    class MAZE_UI_API SystemTextDropdown2D
+    class MAZE_UI_API EditBox2D
         : public Component
         , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SystemTextDropdown2D, Component);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EditBox2D, Component);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(SystemTextDropdown2D);
+        MAZE_DECLARE_MEMORY_ALLOCATION(EditBox2D);
 
         //////////////////////////////////////////
         friend class Entity;
@@ -75,18 +71,10 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        struct OptionData
-        {
-            String text;
-        };
-
-    public:
+        virtual ~EditBox2D();
 
         //////////////////////////////////////////
-        virtual ~SystemTextDropdown2D();
-
-        //////////////////////////////////////////
-        static SystemTextDropdown2DPtr Create();
+        static EditBox2DPtr Create();
 
 
         //////////////////////////////////////////
@@ -111,117 +99,125 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline S32 getValue() const { return m_value; }
-
-        //////////////////////////////////////////
-        String getValueString();
-
-        //////////////////////////////////////////
-        void setValue(S32 _value);
-
-        //////////////////////////////////////////
-        void setValue(String const& _value);
-
-        //////////////////////////////////////////
-        S32 getOptionIndex(String const& _value);
-
-
-        //////////////////////////////////////////
-        inline void setSystemTextRenderer(SystemTextRenderer2DPtr const& _systemTextRenderer)
+        inline void setTextRenderer(AbstractTextRenderer2DPtr const& _systemTextRenderer)
         {
-            if (m_systemTextRenderer == _systemTextRenderer)
+            if (m_textRenderer == _systemTextRenderer)
                 return;
 
-            m_systemTextRenderer = _systemTextRenderer;
+            m_textRenderer = _systemTextRenderer;
 
-            updateSystemTextRenderer();
+            updateTextRenderer();
+            updateCursorRendererPosition();
         }
 
         //////////////////////////////////////////
-        inline SystemTextRenderer2DPtr const& getSystemTextRenderer() const { return m_systemTextRenderer; }
+        inline AbstractTextRenderer2DPtr const& getTextRenderer() const { return m_textRenderer; }
 
         //////////////////////////////////////////
-        inline void setSystemTextRenderer(ComponentPtr _avatar) { setSystemTextRenderer(_avatar ? _avatar->cast<SystemTextRenderer2D>() : nullptr); }
-
-        //////////////////////////////////////////
-        inline ComponentPtr getSystemTextRendererComponent() const { return m_systemTextRenderer; }
-
-
-        //////////////////////////////////////////
-        inline void setListCanvas(CanvasPtr const& _value)
+        inline void setTextRenderer(ComponentPtr _avatar)
         {
-            if (m_listCanvas == _value)
+            if (_avatar)
+            {
+                MAZE_DEBUG_BP_RETURN_IF(!_avatar->getMetaClass()->isInheritedFrom<AbstractTextRenderer2D>());
+                setTextRenderer(_avatar->cast<AbstractTextRenderer2D>());
+            }
+            else
+            {
+                setTextRenderer(AbstractTextRenderer2DPtr());
+            }
+        }
+
+        //////////////////////////////////////////
+        inline ComponentPtr getTextRendererComponent() const { return m_textRenderer; }
+
+
+        //////////////////////////////////////////
+        inline void setCursorRenderer(SpriteRenderer2DPtr const& _cursorRenderer)
+        {
+            if (m_cursorRenderer == _cursorRenderer)
                 return;
 
-            m_listCanvas = _value;
+            m_cursorRenderer = _cursorRenderer;
 
-            updateSystemTextRenderer();
+            updateCursorRendererPosition();
+            updateCursorRendererEnabled();
         }
 
         //////////////////////////////////////////
-        inline CanvasPtr const& getListCanvas() const { return m_listCanvas; }
+        inline SpriteRenderer2DPtr const& getCursorRenderer() const { return m_cursorRenderer; }
 
         //////////////////////////////////////////
-        inline void setListCanvas(ComponentPtr _value) { setListCanvas(_value ? _value->safeCast<Canvas>() : nullptr); }
-
-        //////////////////////////////////////////
-        inline ComponentPtr getListCanvasComponent() const { return m_listCanvas; }
-
-
-        //////////////////////////////////////////
-        inline void setItemPrefabTransform(Transform2DPtr const& _value)
+        inline void setCursorRenderer(ComponentPtr _component)
         {
-            if (m_itemPrefabTransform == _value)
+            if (_component)
+            {
+                MAZE_DEBUG_BP_RETURN_IF(_component->getClassUID() != ClassInfo<SpriteRenderer2D>::UID());
+                setCursorRenderer(_component->cast<SpriteRenderer2D>());
+            }
+            else
+            {
+                setCursorRenderer(SpriteRenderer2DPtr());
+            }
+        }
+
+        //////////////////////////////////////////
+        inline ComponentPtr getCursorRendererComponent() const { return m_cursorRenderer; }
+
+
+        //////////////////////////////////////////
+        void setText(String const& _text);
+
+        //////////////////////////////////////////
+        inline void setText(CString _text) { setText(String(_text)); }
+
+        //////////////////////////////////////////
+        inline String const& getText() const { return m_text; }
+
+        //////////////////////////////////////////
+        inline void addChar(char _char)
+        {
+            m_text.push_back(_char);
+
+            processTextChanged();
+        }
+
+        //////////////////////////////////////////
+        inline void popChar()
+        {
+            if (m_text.empty())
                 return;
 
-            m_itemPrefabTransform = _value;
+            m_text.pop_back();
 
-            rebuildOptions();
+            processTextChanged();
         }
 
         //////////////////////////////////////////
-        inline Transform2DPtr const& getItemPrefabTransform() const { return m_itemPrefabTransform; }
-
-        //////////////////////////////////////////
-        inline void setItemPrefabTransform(ComponentPtr _value) { setItemPrefabTransform(_value ? _value->safeCast<Transform2D>() : nullptr); }
-
-        //////////////////////////////////////////
-        inline ComponentPtr getItemPrefabTransformComponent() const { return m_itemPrefabTransform; }
-
-
-        //////////////////////////////////////////
-        void addOption(OptionData const& _optionData);
-
-        //////////////////////////////////////////
-        inline void addOption(String const& _optionData)
+        inline bool isTextInputAvailable()
         {
-            addOption(OptionData{ _optionData });
+            return getSelected() && !getUIElement()->getPressed();
         }
 
         //////////////////////////////////////////
-        void addOptions(Vector<OptionData> const& _options);
-
-
-        //////////////////////////////////////////
-        void addOptions(Vector<String> const& _options);
-
+        void setHorizontalAlignment(HorizontalAlignment2D _alignment);
 
         //////////////////////////////////////////
-        void clearOptions();
+        void setVerticalAlignment(VerticalAlignment2D _alignment);
+
 
     public:
 
-        MultiDelegate<SystemTextDropdown2D*, CursorInputEvent const&> eventClick;
-        MultiDelegate<SystemTextDropdown2D*, bool> eventFocusChanged;
-        MultiDelegate<SystemTextDropdown2D*, bool> eventPressedChanged;
-        MultiDelegate<SystemTextDropdown2D*, bool> eventSelectedChanged;
-        MultiDelegate<SystemTextDropdown2D*, S32> eventValueChanged;
-        MultiDelegate<SystemTextDropdown2D*> eventTextInput;
+        MultiDelegate<EditBox2D*, CursorInputEvent const&> eventClick;
+        MultiDelegate<EditBox2D*, bool> eventFocusChanged;
+        MultiDelegate<EditBox2D*, bool> eventPressedChanged;
+        MultiDelegate<EditBox2D*, bool> eventSelectedChanged;
+        MultiDelegate<EditBox2D*> eventTextInput;
+        MultiDelegate<EditBox2D*, String const&> eventTextChanged;
 
     protected:
 
         //////////////////////////////////////////
-        SystemTextDropdown2D();
+        EditBox2D();
 
         //////////////////////////////////////////
         using Component::init;
@@ -230,10 +226,16 @@ namespace Maze
         bool init();
 
         //////////////////////////////////////////
+        void notifyText(InputEventTextData const& _event);
+
+        //////////////////////////////////////////
+        void notifyKeyboard(InputEventKeyboardData const& _event);
+
+        //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
             
         //////////////////////////////////////////
-        void notifyCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyCursorPressOut(CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
         void notifyCursorReleaseOut(CursorInputEvent const& _inputEvent);
@@ -248,32 +250,37 @@ namespace Maze
         void notifyClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
-        void updateSystemTextRenderer();
-
-
-        //////////////////////////////////////////
-        void rebuildOptions();
-
+        void updateTextRenderer();
 
         //////////////////////////////////////////
-        void updateCaption();
+        void updateCursorRendererPosition();
 
         //////////////////////////////////////////
-        void updateSelectedOption();
+        void updateCursorRendererEnabled();
+
+        //////////////////////////////////////////
+        void processTextChanged();
+
+        //////////////////////////////////////////
+        inline void resetBlinkTimer()
+        {
+            m_cursorBlink = true;
+            m_cursorBlinkTimer = 0.0f;
+        }
 
     protected:
         Transform2DPtr m_transform;
         UIElement2DPtr m_UIElement2D;
-        SystemTextRenderer2DPtr m_systemTextRenderer;
+        AbstractTextRenderer2DPtr m_textRenderer;
+        SpriteRenderer2DPtr m_cursorRenderer;
 
-        CanvasPtr m_listCanvas;
-        Transform2DPtr m_itemPrefabTransform;
+        String m_text;
 
         bool m_selected;
 
-        Vector<OptionData> m_options;
-
-        S32 m_value;
+        F32 m_cursorBlinkTimer;
+        F32 m_cursorBlinkTime;
+        bool m_cursorBlink;
     };
 
 
@@ -281,5 +288,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeSystemTextDropdown2D_hpp_
+#endif // _MazeEditBox2D_hpp_
 //////////////////////////////////////////

@@ -137,13 +137,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ShaderUniformVariantDrawerF32::notifyTextInput(SystemTextEditBox2D* _editBox)
+    void ShaderUniformVariantDrawerF32::notifyTextInput(EditBox2D* _editBox)
     {
         processDataFromUI();
     }
 
     //////////////////////////////////////////
-    void ShaderUniformVariantDrawerF32::notifySelectedChanged(SystemTextEditBox2D* _editBox, bool _selected)
+    void ShaderUniformVariantDrawerF32::notifySelectedChanged(EditBox2D* _editBox, bool _selected)
     {
         if (!_selected)
         {

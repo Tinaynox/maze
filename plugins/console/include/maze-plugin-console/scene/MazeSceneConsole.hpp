@@ -38,7 +38,7 @@
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeLineRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeSimpleLineRenderer2D.hpp"
-#include "maze-ui/ecs/components/MazeSystemTextEditBox2D.hpp"
+#include "maze-ui/ecs/components/MazeEditBox2D.hpp"
 
 
 //////////////////////////////////////////
@@ -94,10 +94,10 @@ namespace Maze
         void notifyLogChanged(String const& _log);
 
         //////////////////////////////////////////
-        void notifyTextInput(SystemTextEditBox2D* _edit);
+        void notifyTextInput(EditBox2D* _edit);
 
         //////////////////////////////////////////
-        void notifyTextChanged(SystemTextEditBox2D* _edit, String const& _text);
+        void notifyTextChanged(EditBox2D* _edit, String const& _text);
 
         //////////////////////////////////////////
         void notifyBackgroundClick(Vec2DF const& _positionOS, CursorInputEvent const& _event);
@@ -125,7 +125,7 @@ namespace Maze
         SpriteRenderer2DPtr m_background;
         UIElement2DPtr m_backgroundElement;
         SystemTextRenderer2DPtr m_consoleText;
-        SystemTextEditBox2DPtr m_edit;
+        EditBox2DPtr m_edit;
         SystemTextRenderer2DPtr m_hintText;
 
 

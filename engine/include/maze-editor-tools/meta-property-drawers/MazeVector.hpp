@@ -47,8 +47,8 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(MetaPropertyDrawerVector);
-    MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
-    MAZE_USING_SHARED_PTR(SystemTextDropdown2D);
+    MAZE_USING_SHARED_PTR(EditBox2D);
+    MAZE_USING_SHARED_PTR(Dropdown2D);
     MAZE_USING_SHARED_PTR(SystemTextRenderer2D);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(ClickButton2D);
@@ -127,7 +127,7 @@ namespace Maze
         void notifyExpandButtonClick(Button2D* _button, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
-        void notifyValueChanged(SystemTextDropdown2D* _dropdown, S32 _value);
+        void notifyValueChanged(Dropdown2D* _dropdown, S32 _value);
 
         //////////////////////////////////////////
         void ensureItemDrawers(Size _count);

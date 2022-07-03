@@ -422,7 +422,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneMaterialPicker::notifyFilterTextInput(SystemTextEditBox2D* _editBox)
+    void SceneMaterialPicker::notifyFilterTextInput(EditBox2D* _editBox)
     {
         updateMaterials();
     }

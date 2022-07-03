@@ -392,7 +392,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneTexturePicker::notifyFilterTextInput(SystemTextEditBox2D* _editBox)
+    void SceneTexturePicker::notifyFilterTextInput(EditBox2D* _editBox)
     {
         updateTextures();
     }

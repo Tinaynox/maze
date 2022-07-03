@@ -49,9 +49,9 @@ namespace Maze
     MAZE_USING_SHARED_PTR(PropertyDrawerParticleSystemParameterF32Positive);
     MAZE_USING_SHARED_PTR(PropertyDrawerParticleSystemParameterF32Degrees);
     MAZE_USING_SHARED_PTR(PropertyDrawerParticleSystemParameterF32Constants);
-    MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
+    MAZE_USING_SHARED_PTR(EditBox2D);
     MAZE_USING_SHARED_PTR(HorizontalLayout2D);
-    MAZE_USING_SHARED_PTR(SystemTextDropdown2D);
+    MAZE_USING_SHARED_PTR(Dropdown2D);
 
 
     //////////////////////////////////////////
@@ -112,10 +112,10 @@ namespace Maze
         
 
         //////////////////////////////////////////
-        void notifyTextInput(SystemTextEditBox2D* _editBox);
+        void notifyTextInput(EditBox2D* _editBox);
 
         //////////////////////////////////////////
-        void notifySelectedChanged(SystemTextEditBox2D* _editBox, bool _selected);
+        void notifySelectedChanged(EditBox2D* _editBox, bool _selected);
 
         //////////////////////////////////////////
         void notifyCurveChanged(AnimationCurveEdit2D* _edit, AnimationCurve const& _curve);
@@ -133,17 +133,17 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void notifyDropdownValueChanged(SystemTextDropdown2D* _dropdown, S32 _index);
+        void notifyDropdownValueChanged(Dropdown2D* _dropdown, S32 _index);
 
     protected:
         EntityPtr m_rootEntity;
         HorizontalLayout2DPtr m_layout;
-        SystemTextEditBox2DPtr m_editBoxFrom;
-        SystemTextEditBox2DPtr m_editBoxTo;
+        EditBox2DPtr m_editBoxFrom;
+        EditBox2DPtr m_editBoxTo;
         AnimationCurveEdit2DPtr m_curveFrom;
         AnimationCurveEdit2DPtr m_curveTo;
 
-        SystemTextDropdown2DPtr m_modeDropdown;
+        Dropdown2DPtr m_modeDropdown;
 
         ParticleSystemParameterF32 m_parameter;
         ParticleSystemParameterF32SamplingMode m_mode = ParticleSystemParameterF32SamplingMode::None;

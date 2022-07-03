@@ -280,7 +280,7 @@ namespace Maze
                 this);
             label->setColor(ColorU32::c_black);
 
-            m_modeDropdown = UIHelper::CreateDefaultDropdown(
+            m_modeDropdown = SystemUIHelper::CreateDefaultDropdown(
                 Vec2DF(188.0f, 18.0f),
                 Vec2DF(0.0f, 0.0f),
                 rowLayout->getTransform(),
@@ -612,7 +612,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneCurveEditor::notifyModeChanged(SystemTextDropdown2D* _dropdown, S32 _index)
+    void SceneCurveEditor::notifyModeChanged(Dropdown2D* _dropdown, S32 _index)
     {
         AnimationCurve curve = AnimationCurveManager::GetInstancePtr()->getCurve();
 
@@ -1497,7 +1497,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneCurveEditor::notifyCurveScalarEditTextInput(SystemTextEditBox2D* _edit)
+    void SceneCurveEditor::notifyCurveScalarEditTextInput(EditBox2D* _edit)
     {
         if (StringHelper::IsF32Number(_edit->getText()))
             _edit->setText(StringHelper::F32ToStringFormatted(StringHelper::StringToF32(_edit->getText()), 4));
@@ -1519,7 +1519,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneCurveEditor::notifyValueEditTextInput(SystemTextEditBox2D* _edit)
+    void SceneCurveEditor::notifyValueEditTextInput(EditBox2D* _edit)
     {
         AnimationCurve const& curve = AnimationCurveManager::GetInstancePtr()->getCurve();
 
@@ -1544,7 +1544,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneCurveEditor::notifyLocationEditTextInput(SystemTextEditBox2D* _edit)
+    void SceneCurveEditor::notifyLocationEditTextInput(EditBox2D* _edit)
     {
         AnimationCurve const& curve = AnimationCurveManager::GetInstancePtr()->getCurve();
         
@@ -1562,7 +1562,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneCurveEditor::notifyInTangentEditTextInput(SystemTextEditBox2D* _edit)
+    void SceneCurveEditor::notifyInTangentEditTextInput(EditBox2D* _edit)
     {
         AnimationCurve curve = AnimationCurveManager::GetInstancePtr()->getCurve();
 
@@ -1580,7 +1580,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneCurveEditor::notifyOutTangentEditTextInput(SystemTextEditBox2D* _edit)
+    void SceneCurveEditor::notifyOutTangentEditTextInput(EditBox2D* _edit)
     {
         AnimationCurve curve = AnimationCurveManager::GetInstancePtr()->getCurve();
 

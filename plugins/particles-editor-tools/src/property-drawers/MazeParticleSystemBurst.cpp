@@ -38,7 +38,7 @@
 #include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
-#include "maze-ui/ecs/components/MazeSystemTextDropdown2D.hpp"
+#include "maze-ui/ecs/components/MazeDropdown2D.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
@@ -196,7 +196,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SystemTextEditBox2DPtr PropertyDrawerParticleSystemBurst::createEdit(
+    EditBox2DPtr PropertyDrawerParticleSystemBurst::createEdit(
         CString _name,
         Transform2DPtr const& _parent)
     {
@@ -222,7 +222,7 @@ namespace Maze
             Vec2DF::c_zero);
         systemText->setColor(ColorU32::c_black);
 
-        SystemTextEditBox2DPtr editBox = SystemUIHelper::CreateDefaultEditBox(
+        EditBox2DPtr editBox = SystemUIHelper::CreateDefaultEditBox(
             "",
             Vec2DF(40, 18),
             Vec2DF(0, 0),
@@ -237,13 +237,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerParticleSystemBurst::notifyTextInput(SystemTextEditBox2D* _edit)
+    void PropertyDrawerParticleSystemBurst::notifyTextInput(EditBox2D* _edit)
     {
         eventUIData();
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerParticleSystemBurst::notifySelectedChanged(SystemTextEditBox2D* _edit, bool _selected)
+    void PropertyDrawerParticleSystemBurst::notifySelectedChanged(EditBox2D* _edit, bool _selected)
     {
         if (!_selected)
         {

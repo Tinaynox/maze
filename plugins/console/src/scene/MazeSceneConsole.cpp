@@ -201,7 +201,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneConsole::notifyTextInput(SystemTextEditBox2D* _edit)
+    void SceneConsole::notifyTextInput(EditBox2D* _edit)
     {
         String command = m_edit->getText();
         m_edit->setText("");
@@ -228,7 +228,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneConsole::notifyTextChanged(SystemTextEditBox2D* _edit, String const& _text)
+    void SceneConsole::notifyTextChanged(EditBox2D* _edit, String const& _text)
     {
         updateHintText();
     }

@@ -44,7 +44,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(PropertyDrawerSliderF32);
-    MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
+    MAZE_USING_SHARED_PTR(EditBox2D);
     MAZE_USING_SHARED_PTR(Slider2D);
 
 
@@ -114,10 +114,10 @@ namespace Maze
         
 
         //////////////////////////////////////////
-        void notifyTextInput(SystemTextEditBox2D* _editBox);
+        void notifyTextInput(EditBox2D* _editBox);
 
         //////////////////////////////////////////
-        void notifySelectedChanged(SystemTextEditBox2D* _editBox, bool _selected);
+        void notifySelectedChanged(EditBox2D* _editBox, bool _selected);
 
         //////////////////////////////////////////
         void notifySliderValueChanged(Slider2D* _slider, F32 _value);
@@ -127,7 +127,7 @@ namespace Maze
 
     protected:
         Slider2DPtr m_slider;
-        SystemTextEditBox2DPtr m_editBox;
+        EditBox2DPtr m_editBox;
 
         F32 m_fromValue;
         F32 m_toValue;

@@ -35,9 +35,10 @@
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
+#include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
-#include "maze-ui/ecs/components/MazeSystemTextDropdown2D.hpp"
+#include "maze-ui/ecs/components/MazeDropdown2D.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
@@ -141,7 +142,7 @@ namespace Maze
         spriteRenderer->setColor(ColorU32::c_gray);
 
 
-        m_dropdown = UIHelper::CreateDefaultDropdown(
+        m_dropdown = SystemUIHelper::CreateDefaultDropdown(
             Vec2DF(180, 18),
             Vec2DF(0, 0),
             spriteRenderer->getTransform(),
@@ -179,7 +180,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerEnumClass::notifyValueChanged(SystemTextDropdown2D* _dropdown, S32 _value)
+    void PropertyDrawerEnumClass::notifyValueChanged(Dropdown2D* _dropdown, S32 _value)
     {
         eventUIData();
     }

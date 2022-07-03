@@ -382,14 +382,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetLine::notifyTextEditSelectedChanged(SystemTextEditBox2D* _edit, bool _value)
+    void AssetLine::notifyTextEditSelectedChanged(EditBox2D* _edit, bool _value)
     {
         if (!_value)
             m_assetsController->setAssetFileRename(m_assetFile, false);
     }
 
     //////////////////////////////////////////
-    void AssetLine::notifyTextEditInput(SystemTextEditBox2D* _edit)
+    void AssetLine::notifyTextEditInput(EditBox2D* _edit)
     {
         String newFileName = _edit->getText();
 

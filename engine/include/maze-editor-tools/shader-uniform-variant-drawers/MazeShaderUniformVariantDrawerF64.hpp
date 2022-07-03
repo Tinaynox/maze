@@ -44,7 +44,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(ShaderUniformVariantDrawerF64);
-    MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
+    MAZE_USING_SHARED_PTR(EditBox2D);
 
 
     //////////////////////////////////////////
@@ -96,14 +96,14 @@ namespace Maze
             CString _label) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        void notifyTextInput(SystemTextEditBox2D* _editBox);
+        void notifyTextInput(EditBox2D* _editBox);
 
         //////////////////////////////////////////
-        void notifySelectedChanged(SystemTextEditBox2D* _editBox, bool _selected);
+        void notifySelectedChanged(EditBox2D* _editBox, bool _selected);
 
 
     protected:
-        SystemTextEditBox2DPtr m_editBox;
+        EditBox2DPtr m_editBox;
     };
 
 

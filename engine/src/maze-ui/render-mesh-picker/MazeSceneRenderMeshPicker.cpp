@@ -381,7 +381,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneRenderMeshPicker::notifyFilterTextInput(SystemTextEditBox2D* _editBox)
+    void SceneRenderMeshPicker::notifyFilterTextInput(EditBox2D* _editBox)
     {
         updateRenderMeshs();
     }

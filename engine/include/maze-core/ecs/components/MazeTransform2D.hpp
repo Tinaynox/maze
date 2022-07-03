@@ -378,7 +378,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TComponent>
-        TComponent* findChildComponent(String const& _name)
+        inline TComponent* findChildComponent(String const& _name)
         {
             for (Transform2D* child : m_children)
             {
@@ -399,7 +399,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TComponent>
-        TComponent* findChildComponentRecursive(String const& _name)
+        inline TComponent* findChildComponentRecursive(String const& _name)
         {
             for (Transform2D* child : m_children)
             {
@@ -417,6 +417,27 @@ namespace Maze
 
                 result = child->findChildComponentRecursive<TComponent>(_name);
                 if (result)
+                    return result;
+            }
+
+            return nullptr;
+        }
+
+        //////////////////////////////////////////
+        template <typename TComponent>
+        inline TComponent* findChildComponentInheritedFrom(String const& _name)
+        {
+            for (Transform2D* child : m_children)
+            {
+                TComponent* result = child->getEntityRaw()->getComponentRawInheritedFrom<TComponent>();
+                if (!result)
+                    continue;
+
+                Name* name = child->getEntityRaw()->getComponentRaw<Name>();
+                if (!name)
+                    continue;
+
+                if (name->getName() == _name)
                     return result;
             }
 

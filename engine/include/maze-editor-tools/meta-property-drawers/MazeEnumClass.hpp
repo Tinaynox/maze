@@ -46,8 +46,8 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(MetaPropertyDrawerEnumClass);
-    MAZE_USING_SHARED_PTR(SystemTextEditBox2D);
-    MAZE_USING_SHARED_PTR(SystemTextDropdown2D);
+    MAZE_USING_SHARED_PTR(EditBox2D);
+    MAZE_USING_SHARED_PTR(Dropdown2D);
     MAZE_USING_SHARED_PTR(SystemTextRenderer2D);
 
 
