@@ -61,6 +61,7 @@
 #include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeExperimental.hpp"
+#include "maze-ui/ecs/components/MazeTextRenderer2D.hpp"
 
 
 //////////////////////////////////////////
@@ -143,6 +144,7 @@ namespace Maze
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<UITweenTransitionAlpha>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<UITweenTransitionScale>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<Experimental>("UI");
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<TextRenderer2D>("UI");
 
         return true;
     }
