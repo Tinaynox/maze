@@ -104,8 +104,6 @@ namespace Maze
 
     //////////////////////////////////////////
     TextRenderer2D::TextRenderer2D()
-        : m_horizontalAlignment()
-        , m_verticalAlignment()
     {
         
     }
@@ -295,6 +293,8 @@ namespace Maze
         if (!m_fontMaterial || m_text.empty())
         {
             m_meshRenderer->resize(0);
+            m_localMatrices.clear();
+            m_localColors.clear();
             return;
         }
 
