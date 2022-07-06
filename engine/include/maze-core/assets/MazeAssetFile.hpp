@@ -36,6 +36,7 @@
 #include "maze-core/system/MazeWindowVideoMode.hpp"
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/system/MazeFileStats.hpp"
+#include "maze-core/system/MazePath.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
@@ -75,10 +76,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual HashedString const& getFullPath() const MAZE_ABSTRACT;
+        virtual Path const& getFullPath() const MAZE_ABSTRACT;
         
         //////////////////////////////////////////
-        virtual HashedString const& getFileName() const MAZE_ABSTRACT;
+        virtual Path const& getFileName() const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual Size getFileSize() MAZE_ABSTRACT;
@@ -90,7 +91,7 @@ namespace Maze
         virtual bool isFileExists() MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual bool move(String const& _newFullPath, Vector<Pair<String, AssetFilePtr>>& _renamedFiles) MAZE_ABSTRACT;
+        virtual bool move(Path const& _newFullPath, Vector<Pair<Path, AssetFilePtr>>& _renamedFiles) MAZE_ABSTRACT;
         
 
         //////////////////////////////////////////
@@ -159,7 +160,7 @@ namespace Maze
         ByteBufferPtr readHeaderAsByteBuffer(Size _size);
 
         //////////////////////////////////////////
-        String getExtension() const;
+        Path getExtension() const;
 
 
         //////////////////////////////////////////

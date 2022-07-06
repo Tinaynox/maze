@@ -25,44 +25,43 @@
 
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
-#include "maze-core/managers/Win/MazeAssetManagerWin.hpp"
-#include "maze-core/system/MazeDisplay.hpp"
-#include "maze-core/helpers/Win/MazeWindowHelperWin.hpp"
-#include "maze-core/helpers/MazeFileHelper.hpp"
+#include "maze-core/system/win/MazePathWin.hpp"
+#include "maze-core/math/MazeMath.hpp"
+#include "maze-core/helpers/win/MazeTextHelperWin.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class AssetManagerWin
-    //
-    //////////////////////////////////////////
-    AssetManagerWin::AssetManagerWin()
+    PathWin::PathWin(String const& _value)
     {
-    }
-    
-    //////////////////////////////////////////
-    AssetManagerWin::~AssetManagerWin()
-    {
-    }
-    
-    //////////////////////////////////////////
-    bool AssetManagerWin::init()
-    {
-        if (!AssetManager::init())
-            return false;
-       
-        
-        return true;
+        m_path = TextHelper::ConvertUTF8ToUCS2(_value.c_str());
     }
 
     //////////////////////////////////////////
-    Path AssetManagerWin::getDefaultAssetsDirectory()
+    PathWin::PathWin(Char const* _value)
     {
-        return FileHelper::GetWorkingDirectory();
+        m_path = TextHelper::ConvertUTF8ToUCS2(_value);
     }
-   
-    
+
+    //////////////////////////////////////////
+    PathWin::PathWin(Char _value)
+    {
+        m_path = _value;
+    }
+
+    //////////////////////////////////////////
+    PathWin::operator String() const
+    {
+        return TextHelper::ConvertUCS2ToUTF8(m_path.c_str());
+    }
+
+    //////////////////////////////////////////
+    String PathWin::toUTF8() const
+    {
+        return TextHelper::ConvertUCS2ToUTF8(m_path.c_str());
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

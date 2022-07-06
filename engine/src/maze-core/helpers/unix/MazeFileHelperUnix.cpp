@@ -57,22 +57,22 @@ namespace Maze
     namespace FileHelper
     {
         //////////////////////////////////////////
-        MAZE_CORE_API bool IsFileExists(CString _fullPath)
+        MAZE_CORE_API bool IsFileExists(Path const& _fullPath)
         {
             struct stat st;
 
-            if (stat(_fullPath, &st) == 0)
+            if (stat(_fullPath.c_str(), &st) == 0)
                 return true;
 
             return false;
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API bool IsDirectory(CString _fullPath)
+        MAZE_CORE_API bool IsDirectory(Path const& _fullPath)
         {
             struct stat st;
 
-            if (stat(_fullPath, &st) == 0)
+            if (stat(_fullPath.c_str(), &st) == 0)
             {
                 if (S_ISDIR(st.st_mode))
                 {
@@ -84,11 +84,11 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API U32 GetFileSize(CString _fullPath)
+        MAZE_CORE_API U32 GetFileSize(Path const& _fullPath)
         {
             struct stat st;
 
-            if (stat(_fullPath, &st) == 0)
+            if (stat(_fullPath.c_str(), &st) == 0)
             {
                 return static_cast<U32>(st.st_size);
             }
@@ -97,11 +97,11 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API UnixTime GetFileModificationTimestamp(CString _fullPath)
+        MAZE_CORE_API UnixTime GetFileModificationTimestamp(Path const& _fullPath)
         {
             struct stat st;
 
-            if (stat(_fullPath, &st) == 0)
+            if (stat(_fullPath.c_str(), &st) == 0)
             {
                 return static_cast<UnixTime>(st.st_mtime);
             }
@@ -110,7 +110,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API bool CreateDirectoryRecursive(CString _fullPath)
+        MAZE_CORE_API bool CreateDirectoryRecursive(Path const& _fullPath)
         {
             String path = _fullPath;
             NormalizeFilePath(path);
@@ -158,18 +158,18 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API Vector<String> GetRegularFileNamesInPath(CString _localPath)
+        MAZE_CORE_API Vector<Path> GetRegularFileNamesInPath(Path const& _localPath)
         {
 
 #if (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN)
             // Forbidden
-            if (    strcmp(_localPath, "proc") == 0
-                ||  strcmp(_localPath, "/proc") == 0 )
-                return Vector<String>();
+            if (strcmp(_localPath.c_str(), "proc") == 0 ||
+                strcmp(_localPath.c_str(), "/proc") == 0 )
+                return Vector<Path>();
 #endif
 
 
-            Vector<String> result;
+            Vector<Path> result;
             String fullPath = ConvertLocalPathToFullPath(_localPath);
 
             DIR* dp;
@@ -199,16 +199,16 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API bool CopyRegularFile(CString _sourceFullPath, CString _destFullPath)
+        MAZE_CORE_API bool CopyRegularFile(Path const& _sourceFullPath, Path const& _destFullPath)
         {
             char buf[BUFSIZ];
             size_t size;
 
-            FILE* source = fopen(_sourceFullPath, "rb");
+            FILE* source = fopen(_sourceFullPath.c_str(), "rb");
             if (!source)
                 return false;
 
-            FILE* dest = fopen(_destFullPath, "wb");
+            FILE* dest = fopen(_destFullPath.c_str(), "wb");
             if (!dest)
             {
                 fclose(source);
@@ -229,14 +229,14 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API bool CopyDirectory(CString _sourceFullPath, CString _destFullPath)
+        MAZE_CORE_API bool CopyDirectory(Path const& _sourceFullPath, Path const& _destFullPath)
         {
             MAZE_ERROR("Not implemented yet!");
             return false;
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API bool DeleteRegularFile(CString _fileFullPath)
+        MAZE_CORE_API bool DeleteRegularFile(Path const& _fileFullPath)
         {
             if (std::remove(_fileFullPath) != 0)
                 return false;
@@ -244,6 +244,7 @@ namespace Maze
             return true;
         }
 
+        //////////////////////////////////////////
         MAZE_CORE_API int DeleteFileHelper(const char* _fpath, const struct stat* _sb, int _typeflag, struct FTW* _ftwbuf)
         {
             int rv = remove(_fpath);
@@ -257,14 +258,14 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API bool DeleteDirectory(CString _fullPath)
+        MAZE_CORE_API bool DeleteDirectory(Path const& _fullPath)
         {
-            nftw(_fullPath, DeleteFileHelper, 64, FTW_DEPTH | FTW_PHYS);
+            nftw(_fullPath.c_str(), DeleteFileHelper, 64, FTW_DEPTH | FTW_PHYS);
             return true;
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API bool MoveRegularFile(CString _sourceFullPath, CString _destFullPath)
+        MAZE_CORE_API bool MoveRegularFile(Path const& _sourceFullPath, Path const& _destFullPath)
         {
             MAZE_ERROR("Not implemented yet!");
             return false;
@@ -273,7 +274,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MAZE_CORE_API bool MoveDirectory(CString _fullPath, CString _destFullPath)
+        MAZE_CORE_API bool MoveDirectory(Path const& _fullPath, Path const& _destFullPath)
         {
             MAZE_ERROR("Not implemented yet!");
             return false;
@@ -281,10 +282,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MAZE_CORE_API String ConvertLocalPathToFullPath(CString _localPath)
+        MAZE_CORE_API Path ConvertLocalPathToFullPath(Path const& _localPath)
         {
             S8 buff[PATH_MAX + 1];
-            if (!realpath(_localPath, buff))
+            if (!realpath(_localPath.c_str(), buff))
             {
                 return _localPath;
             }
@@ -293,12 +294,12 @@ namespace Maze
         }
         
         ////////////////////////////////////
-        MAZE_CORE_API FileStats GetFileStats(CString _fullPath)
+        MAZE_CORE_API FileStats GetFileStats(Path const& _fullPath)
         {
             FileStats result;
 
             struct stat st;
-            if (stat(_fullPath, &st) == 0)
+            if (stat(_fullPath.c_str(), &st) == 0)
             {
                 result.creationTimeUTC = st.st_ctime;
                 result.modifiedTimeUTC = st.st_mtime;

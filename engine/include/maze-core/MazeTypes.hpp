@@ -34,6 +34,7 @@
 #include "maze-core/memory/MazeStdMemoryAllocator.hpp"
 #include "maze-core/hash/MazeHashCRC.hpp"
 #include "maze-core/hash/MazeHashSuperFast.hpp"
+#include "maze-core/hash/MazeHashFNV1.hpp"
 #include <string>
 #include <vector>
 #include <list>
@@ -292,7 +293,6 @@ namespace Maze
         return CalculateSuperFastHash(_text.c_str(), (S32)_text.size());
     }
 
-
 } // namespace Maze
 //////////////////////////////////////////
 
@@ -304,9 +304,19 @@ namespace std
     template <>
     struct hash<Maze::String>
     {
-        std::size_t operator()(const Maze::String& k) const
+        inline std::size_t operator()(const Maze::String& k) const
         {
-            return static_cast<std::size_t>(Maze::CalculateSuperFastHash(k));
+            return static_cast<std::size_t>(Maze::CalculateFNV1(k.c_str()));
+        }
+    };
+
+    //////////////////////////////////////////
+    template <>
+    struct hash<Maze::WString>
+    {
+        inline std::size_t operator()(const Maze::WString& k) const
+        {
+            return static_cast<std::size_t>(Maze::CalculateFNV1(k.c_str()));
         }
     };
 

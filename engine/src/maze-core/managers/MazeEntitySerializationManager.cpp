@@ -40,6 +40,7 @@
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/MazeComponentFactory.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
+#include "maze-core/helpers/MazeXMLHelper.hpp"
 #include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
@@ -85,7 +86,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool EntitySerializationManager::savePrefabToXMLFile(EntityPtr const& _entity, String const& _fileFullPath) const
+    bool EntitySerializationManager::savePrefabToXMLFile(EntityPtr const& _entity, Path const& _fileFullPath) const
     {
         if (!_entity)
             return false;
@@ -93,8 +94,8 @@ namespace Maze
         if (_fileFullPath.empty())
             return false;
 
-        String directoryFullPath = FileHelper::GetDirectoryInPath(_fileFullPath);
-        FileHelper::CreateDirectoryRecursive(directoryFullPath.c_str());
+        Path directoryFullPath = FileHelper::GetDirectoryInPath(_fileFullPath);
+        FileHelper::CreateDirectoryRecursive(directoryFullPath);
 
         tinyxml2::XMLDocument doc;
 
@@ -107,10 +108,10 @@ namespace Maze
 
         doc.InsertEndChild(root);
 
-        tinyxml2::XMLError loadError = doc.SaveFile(_fileFullPath.c_str());
+        tinyxml2::XMLError loadError = XMLHelper::SaveXMLFile(_fileFullPath, doc);
         if (tinyxml2::XML_SUCCESS != loadError)
         {
-            MAZE_ERROR("Saving file '%s' error - %d!", _fileFullPath.c_str(), loadError);
+            MAZE_ERROR("Saving file '%s' error - %d!", _fileFullPath.toUTF8().c_str(), loadError);
             return false;
         }
 
@@ -201,7 +202,7 @@ namespace Maze
 
     //////////////////////////////////////////
     EntityPtr EntitySerializationManager::loadPrefabFromXMLFile(
-        String const& _fileFullPath,
+        Path const& _fileFullPath,
         ECSWorld* _world,
         ECSScene* _scene) const
     {
@@ -210,23 +211,23 @@ namespace Maze
         if (_fileFullPath.empty())
             return nullPointer;
 
-        Debug::Log("Loading file %s'...", _fileFullPath.c_str());
+        Debug::Log("Loading file %s'...", _fileFullPath.toUTF8().c_str());
 
         tinyxml2::XMLDocument doc;
-        tinyxml2::XMLError loadError = doc.LoadFile(_fileFullPath.c_str());
+        tinyxml2::XMLError loadError = XMLHelper::LoadXMLFile(_fileFullPath, doc);
         if (tinyxml2::XML_SUCCESS != loadError)
         {
             if (tinyxml2::XML_ERROR_FILE_NOT_FOUND == loadError)
                 return nullPointer;
 
-            MAZE_ERROR("File '%s' loading error - XMLError: %d!", _fileFullPath.c_str(), (S32)loadError);
+            MAZE_ERROR("File '%s' loading error - XMLError: %d!", _fileFullPath.toUTF8().c_str(), (S32)loadError);
             return nullPointer;
         }
 
         tinyxml2::XMLNode* rootNode = doc.FirstChild();
         if (!rootNode)
         {
-            MAZE_ERROR("File '%s' loading error - empty root node!", _fileFullPath.c_str());
+            MAZE_ERROR("File '%s' loading error - empty root node!", _fileFullPath.toUTF8().c_str());
             return nullPointer;
         }
 
@@ -264,7 +265,7 @@ namespace Maze
 
     //////////////////////////////////////////
     EntityPtr EntitySerializationManager::loadPrefab(
-        String const& _assetFileName,
+        Path const& _assetFileName,
         ECSWorld* _world,
         ECSScene* _scene) const
     {

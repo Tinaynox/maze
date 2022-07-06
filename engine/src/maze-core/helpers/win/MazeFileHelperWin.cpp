@@ -31,6 +31,7 @@
 #include "maze-core/helpers/MazeStdHelper.hpp"
 #include "maze-core/helpers/MazeDateTimeHelper.hpp"
 #include <ShlObj.h>
+#include <cwchar>
 
 
 //////////////////////////////////////////
@@ -40,22 +41,22 @@ namespace Maze
     namespace FileHelper
     {
         //////////////////////////////////////////
-        MAZE_CORE_API bool IsFileExists(CString _fullPath)
+        MAZE_CORE_API bool IsFileExists(Path const& _fullPath)
         {
             struct _stat st;
 
-            if (_stat(_fullPath, &st) == 0)
+            if (_wstat(_fullPath.c_str(), &st) == 0)
                  return true;
 
             return false;
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API bool IsDirectory(CString _fullPath)
+        MAZE_CORE_API bool IsDirectory(Path const& _fullPath)
         {
             struct _stat st;
 
-            if (_stat(_fullPath, &st) == 0)
+            if (_wstat(_fullPath.c_str(), &st) == 0)
             {
                 if (st.st_mode & _S_IFDIR)
                 {
@@ -67,11 +68,11 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API U32 GetFileSize(CString _fullPath)
+        MAZE_CORE_API U32 GetFileSize(Path const& _fullPath)
         {
             struct _stat st;
 
-            if (_stat(_fullPath, &st) == 0)
+            if (_wstat(_fullPath.c_str(), &st) == 0)
             {
                 return st.st_size;
             }
@@ -80,11 +81,11 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API UnixTime GetFileModificationTimestamp(CString _fullPath)
+        MAZE_CORE_API UnixTime GetFileModificationTimestamp(Path const& _fullPath)
         {
             struct _stat st;
 
-            if (_stat(_fullPath, &st) == 0)
+            if (_wstat(_fullPath.c_str(), &st) == 0)
             {
                 return st.st_mtime;
             }
@@ -93,37 +94,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetWorkingDirectory()
-        {
-            String result;
-            result.resize(MAX_PATH);
-
-            while (true)
-            {
-                DWORD r = GetCurrentDirectoryA((DWORD)result.size(), &result[0]);
-                if (r < result.size() && r != 0) 
-                {
-                    result.resize(r);
-                    break;
-                }            
-
-                if (GetLastError() == ERROR_INSUFFICIENT_BUFFER)
-                {
-                    result.resize(result.size() * 2);
-                } 
-                else
-                {
-                    return String();
-                }
-            }
-
-            NormalizeFilePath(result);
-        
-            return result;
-        }
-
-        //////////////////////////////////////////
-        MAZE_CORE_API WString GetWorkingDirectoryW()
+        MAZE_CORE_API Path GetWorkingDirectory()
         {
             WString result;
             result.resize(MAX_PATH);
@@ -138,30 +109,27 @@ namespace Maze
                 }            
 
                 if (GetLastError() == ERROR_INSUFFICIENT_BUFFER)
-                {
                     result.resize(result.size() * 2);
-                } 
                 else
-                {
-                    return WString();
-                }
+                    return Path();
             }
 
-            NormalizeFilePath(result);
+            Path path = std::move(result);
+            NormalizeFilePath(path);
         
-            return result;
+            return path;
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetBinaryFullPath()
+        MAZE_CORE_API Path GetBinaryFullPath()
         {
-            String result;
+            WString result;
             result.resize(MAX_PATH);
-            HMODULE hModule = GetModuleHandleA(NULL);
+            HMODULE hModule = GetModuleHandleW(NULL);
 
             while (true)
             {
-                DWORD r = GetModuleFileNameA(hModule, &result[0], MAX_PATH);
+                DWORD r = GetModuleFileNameW(hModule, &result[0], MAX_PATH);
                 if (r < result.size() && r != 0) 
                 {
                     result.resize(r);
@@ -174,28 +142,28 @@ namespace Maze
                 } 
                 else
                 {
-                    return String();
+                    return Path();
                 }
             }
 
-            NormalizeFilePath(result);
-
-            return result;
+            Path path = std::move(result);
+            NormalizeFilePath(path);
+            return path;
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetBinaryDirectory()
+        MAZE_CORE_API Path GetBinaryDirectory()
         {
             return GetDirectoryInPath(GetBinaryFullPath());
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetDocumentsDirectory()
+        MAZE_CORE_API Path GetDocumentsDirectory()
         {
 #if ((MAZE_ARCH == MAZE_ARCH_X86) || (MAZE_ARCH == MAZE_ARCH_X64))
 
-            CHAR myDocuments[MAX_PATH];
-            HRESULT result = SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, myDocuments);
+            WCHAR myDocuments[MAX_PATH];
+            HRESULT result = SHGetFolderPathW(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, myDocuments);
 
             if (result != S_OK)
                 return GetBinaryDirectory();
@@ -204,72 +172,72 @@ namespace Maze
 #else
 
             MAZE_TODO;
-            return String();
+            return Path();
 
 #endif
 
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetDefaultTemporaryDirectory()
+        MAZE_CORE_API Path GetDefaultTemporaryDirectory()
         {
-            return GetBinaryDirectory() + "/temp";
+            return GetBinaryDirectory() + L"/temp";
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetDefaultLogDirectory()
+        MAZE_CORE_API Path GetDefaultLogDirectory()
         {
-            return GetBinaryDirectory() + "/log";
+            return GetBinaryDirectory() + L"/log";
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API bool CreateDirectoryRecursive(CString _path)
+        MAZE_CORE_API bool CreateDirectoryRecursive(Path const& _path)
         {
-            String path = _path;
+            Path path = _path;
             NormalizeFilePath(path);
 
-            String tempLocal;
-            Vector<String> directories;
+            Path tempLocal;
+            Vector<WString> directories;
             StringHelper::SplitWords(path, directories, '/');
             for (S32 i = 0; i < (S32)directories.size(); ++i)
             {
-                String directoryPath = tempLocal + directories[i];
+                Path directoryPath = tempLocal + directories[i];
 
-                DWORD pathAttr = GetFileAttributesA(directoryPath.c_str());
+                DWORD pathAttr = GetFileAttributesW(directoryPath.c_str());
                 if (pathAttr == INVALID_FILE_ATTRIBUTES || !(pathAttr & FILE_ATTRIBUTE_DIRECTORY))
                 {
-                    if (!CreateDirectory(directoryPath.c_str(), NULL))
+                    if (!CreateDirectoryW(directoryPath.c_str(), NULL))
                         return false;
                 }
 
-                tempLocal += directories[i] + '/';
+                tempLocal += directories[i] + L'/';
             }
 
             return true;
         }
     
         //////////////////////////////////////////
-        MAZE_CORE_API Vector<String> GetRegularFileNamesInPath(CString _localPath)
+        MAZE_CORE_API Vector<Path> GetRegularFileNamesInPath(Path const& _localPath)
         {
-            Vector<String> result;
+            Vector<Path> result;
 
-            String fullPath = ConvertLocalPathToFullPath(_localPath);
+            Path fullPath = ConvertLocalPathToFullPath(_localPath);
 
-            WIN32_FIND_DATA f;
-            HANDLE h = FindFirstFile((fullPath + "/*").c_str(), &f);
+            WIN32_FIND_DATAW f;
+            HANDLE h = FindFirstFileW((fullPath + L"/*").c_str(), &f);
             if (h != INVALID_HANDLE_VALUE)
             {
                 do
                 {
-                    if (strcmp(f.cFileName, ".") == 0)
+                    if (wcscmp(f.cFileName, L".") == 0)
                         continue;
 
-                    if (strcmp(f.cFileName, "..") == 0)
+                    if (wcscmp(f.cFileName, L"..") == 0)
                         continue;
 
                     result.push_back(f.cFileName);
                 } 
-                while (FindNextFile(h, &f));
+                while (FindNextFileW(h, &f));
             }
 
             FindClose(h);
@@ -278,16 +246,16 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API bool CopyRegularFile(CString _sourceFullPath, CString _destFullPath)
+        MAZE_CORE_API bool CopyRegularFile(Path const& _sourceFullPath, Path const& _destFullPath)
         {
-            char buf[BUFSIZ];
+            CHAR buf[BUFSIZ];
             Size size;
 
             FILE* source = StdHelper::OpenFile(_sourceFullPath, "rb");
             if (!source)
                 return false;
 
-            CreateDirectoryRecursive(FileHelper::GetDirectoryInPath(_destFullPath).c_str());
+            CreateDirectoryRecursive(FileHelper::GetDirectoryInPath(_destFullPath));
 
             FILE* dest = StdHelper::OpenFile(_destFullPath, "wb");
             if (!dest)
@@ -310,60 +278,60 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API bool CopyDirectory(CString _sourceFullPath, CString _destFullPath)
+        MAZE_CORE_API bool CopyDirectory(Path const& _sourceFullPath, Path const& _destFullPath)
         {
-            WIN32_FIND_DATA info;
+            WIN32_FIND_DATAW info;
             HANDLE handle;
-            S8 temp[MAX_PATH] = "";
-            S8 temp1[MAX_PATH] = "";
+            WChar temp[MAX_PATH] = L"";
+            WChar temp1[MAX_PATH] = L"";
     
-            S8 tempSrc[MAX_PATH];
-            S8 tempDest[MAX_PATH];
+            WChar tempSrc[MAX_PATH];
+            WChar tempDest[MAX_PATH];
 
-            String srcDirectory = NormalizedFilePath(_sourceFullPath);
+            Path srcDirectory = NormalizedFilePath(_sourceFullPath);
             if (srcDirectory.back() != '/')
                 srcDirectory += '/';
 
-            String destDirectory = NormalizedFilePath(_destFullPath);
+            Path destDirectory = NormalizedFilePath(_destFullPath);
             if (destDirectory.back() != '/')
                 destDirectory += '/';
         
 
 
-            strcpy_s(temp1, srcDirectory.c_str());
-            strcat_s(temp1, "/*.*");
+            wcscpy_s(temp1, srcDirectory.c_str());
+            wcscat_s(temp1, L"/*.*");
     
     
             CreateDirectoryRecursive(destDirectory.c_str());
 
-            handle = FindFirstFile(temp1, &info);
+            handle = FindFirstFileW(temp1, &info);
             do
             {
-                if (!strcmp(info.cFileName, ".")) 
+                if (!wcscmp(info.cFileName, L"."))
                     continue;
 
-                if (!strcmp(info.cFileName, ".."))
+                if (!wcscmp(info.cFileName, L".."))
                     continue;
 
-                strcpy_s(tempSrc, srcDirectory.c_str());
-                strcat_s(tempSrc, "/");
-                strcat_s(tempSrc, info.cFileName);
+                wcscpy_s(tempSrc, srcDirectory.c_str());
+                wcscat_s(tempSrc, L"/");
+                wcscat_s(tempSrc, info.cFileName);
         
                 if (info.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY)
                 {
-                    strcpy_s(tempDest, destDirectory.c_str());
-                    strcat_s(tempDest, "/");
-                    strcat_s(tempDest, info.cFileName);
+                    wcscpy_s(tempDest, destDirectory.c_str());
+                    wcscat_s(tempDest, L"/");
+                    wcscat_s(tempDest, info.cFileName);
                 
                     CopyDirectory(tempSrc, tempDest);
                 }
                 else
                 {
-                    strcpy_s(temp, destDirectory.c_str());
-                    strcat_s(temp, "/");
-                    strcat_s(temp, info.cFileName);
+                    wcscpy_s(temp, destDirectory.c_str());
+                    wcscat_s(temp, L"/");
+                    wcscat_s(temp, info.cFileName);
     
-                    char buf[BUFSIZ];
+                    Char buf[BUFSIZ];
                     Size size;
 
                     FILE* source = StdHelper::OpenFile(tempSrc, "rb");
@@ -389,7 +357,7 @@ namespace Maze
                 }
         
             }
-            while (FindNextFile(handle, &info));
+            while (FindNextFileW(handle, &info));
 
             FindClose(handle);
 
@@ -397,42 +365,42 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API bool DeleteRegularFile(CString _fileFullPath)
+        MAZE_CORE_API bool DeleteRegularFile(Path const& _fileFullPath)
         {
-            if (std::remove(_fileFullPath) != 0)
+            if (_wremove(_fileFullPath.c_str()) != 0)
                 return false;
 
             return true;
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API bool DeleteDirectory(CString _path)
+        MAZE_CORE_API bool DeleteDirectory(Path const& _path)
         {
-            WIN32_FIND_DATA info;
+            WIN32_FIND_DATAW info;
             HANDLE handle;
-            S8 temp[MAX_PATH] = "";
-            S8 temp1[MAX_PATH] = "";
+            WChar temp[MAX_PATH] = L"";
+            WChar temp1[MAX_PATH] = L"";
     
-            S8 tempSrc[MAX_PATH];
+            WChar tempSrc[MAX_PATH];
 
-            String srcDirectory = NormalizedFilePath(_path);
+            Path srcDirectory = NormalizedFilePath(_path);
 
-            strcpy_s(temp1, srcDirectory.c_str());
-            strcat_s(temp1, "/*.*");
+            wcscpy_s(temp1, srcDirectory.c_str());
+            wcscat_s(temp1, L"/*.*");
     
 
-            handle = FindFirstFile(temp1, &info);
+            handle = FindFirstFileW(temp1, &info);
             do
             {
-                if (!strcmp(info.cFileName, ".")) 
+                if (!wcscmp(info.cFileName, L"."))
                     continue;
 
-                if (!strcmp(info.cFileName, ".."))
+                if (!wcscmp(info.cFileName, L".."))
                     continue;
 
-                strcpy_s(tempSrc, srcDirectory.c_str());
-                strcat_s(tempSrc, "/");
-                strcat_s(tempSrc, info.cFileName);
+                wcscpy_s(tempSrc, srcDirectory.c_str());
+                wcscat_s(tempSrc, L"/");
+                wcscat_s(tempSrc, info.cFileName);
         
                 if (info.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY)
                 {
@@ -445,107 +413,98 @@ namespace Maze
                 }
         
             }
-            while (FindNextFile(handle, &info));
+            while (FindNextFileW(handle, &info));
 
             FindClose(handle);
 
 
-            bool result = (RemoveDirectory(srcDirectory.c_str()) == TRUE);
+            bool result = (RemoveDirectoryW(srcDirectory.c_str()) == TRUE);
             return result;
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API bool MoveRegularFile(CString _sourceFullPath, CString _destFullPath)
+        MAZE_CORE_API bool MoveRegularFile(Path const& _sourceFullPath, Path const& _destFullPath)
         {
-            /*
-            if (!CopyRegularFile(_sourceFullPath, _destFullPath))
-                return false;
-
-            if (!DeleteRegularFile(_sourceFullPath))
-                return false;
-
-            return true;
-            */
-            return MoveFileA(_sourceFullPath, _destFullPath);
+            return MoveFileW(_sourceFullPath.c_str(), _destFullPath.c_str());
         }
 
 
         //////////////////////////////////////////
-        MAZE_CORE_API bool MoveDirectory(CString _sourceFullPath, CString _destFullPath)
+        MAZE_CORE_API bool MoveDirectory(Path const& _sourceFullPath, Path const& _destFullPath)
         {
-            WIN32_FIND_DATA info;
+            WIN32_FIND_DATAW info;
             HANDLE handle;
-            S8 temp[MAX_PATH] = "";
-            S8 temp1[MAX_PATH] = "";
+            WChar temp[MAX_PATH] = L"";
+            WChar temp1[MAX_PATH] = L"";
     
-            S8 tempSrc[MAX_PATH];
-            S8 tempDest[MAX_PATH];
+            WChar tempSrc[MAX_PATH];
+            WChar tempDest[MAX_PATH];
 
-            String srcDirectory = NormalizedFilePath(_sourceFullPath);
+            Path srcDirectory = NormalizedFilePath(_sourceFullPath);
             if (srcDirectory.back() != '/')
                 srcDirectory += '/';
 
-            String destDirectory = NormalizedFilePath(_destFullPath);
+            Path destDirectory = NormalizedFilePath(_destFullPath);
             if (destDirectory.back() != '/')
                 destDirectory += '/';
 
-            strcpy_s(temp1, srcDirectory.c_str());
-            strcat_s(temp1, "/*.*");
+            wcscpy_s(temp1, srcDirectory.c_str());
+            wcscat_s(temp1, L"/*.*");
     
     
             CreateDirectoryRecursive(destDirectory.c_str());
 
-            handle = FindFirstFile(temp1, &info);
+            handle = FindFirstFileW(temp1, &info);
             do
             {
-                if (!strcmp(info.cFileName , ".")) 
+                if (!wcscmp(info.cFileName , L"."))
                     continue;
 
-                if (!strcmp(info.cFileName , ".."))
+                if (!wcscmp(info.cFileName , L".."))
                     continue;
 
-                strcpy_s(tempSrc, srcDirectory.c_str());
-                strcat_s(tempSrc, "/");
-                strcat_s(tempSrc, info.cFileName);
+                wcscpy_s(tempSrc, srcDirectory.c_str());
+                wcscat_s(tempSrc, L"/");
+                wcscat_s(tempSrc, info.cFileName);
         
                 if (info.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY)
                 {
-                    strcpy_s(tempDest, destDirectory.c_str());
-                    strcat_s(tempDest, "/");
-                    strcat_s(tempDest, info.cFileName);
+                    wcscpy_s(tempDest, destDirectory.c_str());
+                    wcscat_s(tempDest, L"/");
+                    wcscat_s(tempDest, info.cFileName);
                 
                     MoveDirectory(tempSrc, tempDest);
             
                 }
                 else
                 {
-                    strcpy_s(temp, destDirectory.c_str());
-                    strcat_s(temp, "/");
-                    strcat_s(temp, info.cFileName);
+                    wcscpy_s(temp, destDirectory.c_str());
+                    wcscat_s(temp, L"/");
+                    wcscat_s(temp, info.cFileName);
 
                     MoveRegularFile(tempSrc, temp);
                 }
         
             }
-            while (FindNextFile(handle, &info));
+            while (FindNextFileW(handle, &info));
 
             FindClose(handle);
 
-            RemoveDirectory(srcDirectory.c_str());
+            RemoveDirectoryW(srcDirectory.c_str());
 
             return true;
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String ConvertLocalPathToFullPath(CString _localPath)
+        MAZE_CORE_API Path ConvertLocalPathToFullPath(Path const& _localPath)
         {
             U32 size = MAX_PATH;
-            String buffer;
+            WString buffer;
 
             while (true)
             {
                 buffer.resize(size + 1);
-                DWORD r = GetFullPathNameA(_localPath, size, &buffer[0], nullptr);
+                DWORD r = GetFullPathNameW(_localPath.c_str(), size, &buffer[0], nullptr);
                 if (r < size && r != 0) 
                 {
                     buffer.resize(r);
@@ -558,22 +517,23 @@ namespace Maze
                 } 
                 else
                 {
-                    return String();
+                    return Path();
                 }
             }
 
-            NormalizeFilePath(buffer);
+            Path path = std::move(buffer);
+            NormalizeFilePath(path);
         
-            return buffer;
+            return path;
         }
 
         ////////////////////////////////////
-        MAZE_CORE_API FileStats GetFileStats(CString _fileFullPath)
+        MAZE_CORE_API FileStats GetFileStats(Path const& _fileFullPath)
         {
             FileStats result;
 
             struct _stat st;
-            if (_stat(_fileFullPath, &st) == 0)
+            if (_wstat(_fileFullPath.c_str(), &st) == 0)
             {
                 result.creationTimeUTC = st.st_ctime;
                 result.modifiedTimeUTC = st.st_mtime;

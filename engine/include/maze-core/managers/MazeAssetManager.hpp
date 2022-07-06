@@ -65,14 +65,14 @@ namespace Maze
 
         
         //////////////////////////////////////////
-        virtual String getDefaultAssetsDirectory() MAZE_ABSTRACT;
+        virtual Path getDefaultAssetsDirectory() MAZE_ABSTRACT;
         
         
         //////////////////////////////////////////
-        void addAssetsDirectoryPath(String const& _path);
+        void addAssetsDirectoryPath(Path const& _path);
 
         //////////////////////////////////////////
-        void removeAssetsDirectoryPath(String const& _path);
+        void removeAssetsDirectoryPath(Path const& _path);
 
         //////////////////////////////////////////
         void updateAssets();
@@ -82,37 +82,31 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        const AssetFilePtr& getAssetFileByFileName(HashedCString _fileName);
+        const AssetFilePtr& getAssetFileByFileName(Path const& _fileName);
 
         //////////////////////////////////////////
-        inline const AssetFilePtr& getAssetFileByFileName(String const& _fileName) { return getAssetFileByFileName(MAZE_HASHED_CSTRING(_fileName.c_str())); }
+        inline const AssetFilePtr& getAssetFileByFileName(HashedCString _fileName)
+        {
+            return getAssetFileByFileName(Path(_fileName.str));
+        }
 
         //////////////////////////////////////////
-        inline const AssetFilePtr& getAssetFileByFileName(CString _fileName) { return getAssetFileByFileName(MAZE_HASHED_CSTRING(_fileName)); }
-        
-        //////////////////////////////////////////
-        const AssetFilePtr& getAssetFileByFullPath(HashedCString _fileFullPath);
+        const AssetFilePtr& getAssetFileByFullPath(Path const& _fileFullPath);
 
         //////////////////////////////////////////
-        inline const AssetFilePtr& getAssetFileByFullPath(String const& _fileFullPath) { return getAssetFileByFullPath(MAZE_HASHED_CSTRING(_fileFullPath.c_str())); }
+        const AssetFilePtr& getAssetFile(Path const& _string);
 
         //////////////////////////////////////////
-        inline const AssetFilePtr& getAssetFileByFullPath(CString _fileFullPath) { return getAssetFileByFullPath(MAZE_HASHED_CSTRING(_fileFullPath)); }
-
-        //////////////////////////////////////////
-        const AssetFilePtr& getAssetFile(HashedCString _string);
-
-        //////////////////////////////////////////
-        inline const AssetFilePtr& getAssetFile(String const& _string) { return getAssetFile(MAZE_HASHED_CSTRING(_string.c_str())); }
-
-        //////////////////////////////////////////
-        inline const AssetFilePtr& getAssetFile(CString _string) { return getAssetFile(MAZE_HASHED_CSTRING(_string)); }
+        inline const AssetFilePtr& getAssetFile(HashedCString _string)
+        {
+            return getAssetFile(Path(_string.str));
+        }
 
         //////////////////////////////////////////
         void deleteAssetFile(const AssetFilePtr& _assetFile);
 
         //////////////////////////////////////////
-        void moveAssetFile(const AssetFilePtr& _assetFile, String const& _newFullPath);
+        void moveAssetFile(const AssetFilePtr& _assetFile, Path const& _newFullPath);
 
 
         //////////////////////////////////////////
@@ -125,7 +119,7 @@ namespace Maze
         //////////////////////////////////////////
         bool openXMLDocumentAssetFile(
             tinyxml2::XMLDocument& _doc,
-            String const& _fileName,
+            Path const& _fileName,
             bool _warningIfNotExists);
 
 
@@ -152,10 +146,10 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        Vector<AssetFilePtr> getAssetFilesInFolder(String const& _folderFullPath);
+        Vector<AssetFilePtr> getAssetFilesInFolder(Path const& _folderFullPath);
 
         //////////////////////////////////////////
-        String getMetaDataFullPath(AssetFilePtr const& _assetFile);
+        Path getMetaDataFullPath(AssetFilePtr const& _assetFile);
 
         //////////////////////////////////////////
         AssetFilePtr getMetaDataFile(AssetFilePtr const& _assetFile);
@@ -180,7 +174,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline FileChildrenProcessor getFileChildrenProcessor(String const& _extension) const
+        inline FileChildrenProcessor getFileChildrenProcessor(Path const& _extension) const
         {
             auto it = m_fileChildrenProcessors.find(_extension);
             if (it != m_fileChildrenProcessors.end())
@@ -190,12 +184,12 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline Set<String> const& getAssetDirectoryPathes() const { return m_assetDirectoryPathes; }
+        inline Set<Path> const& getAssetDirectoryPathes() const { return m_assetDirectoryPathes; }
 
     public:
         MultiDelegate<AssetFilePtr const&> eventAssetFileAdded;
         MultiDelegate<AssetFilePtr const&> eventAssetFileRemoved;
-        MultiDelegate<AssetFilePtr const&, String const&> eventAssetFileMoved;
+        MultiDelegate<AssetFilePtr const&, Path const&> eventAssetFileMoved;
 
     protected:
 
@@ -208,7 +202,7 @@ namespace Maze
 
         ////////////////////////////////////
         void addFilesInPath(
-            String const& _path,
+            Path const& _path,
             bool _recursive = false,
             Vector<AssetFilePtr>* _addedFiles = nullptr);
         
@@ -223,22 +217,22 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void addAssetsDirectory(String const& _path, bool _recursive = true);
+        void addAssetsDirectory(Path const& _path, bool _recursive = true);
 
         //////////////////////////////////////////
-        void removeAssetsDirectory(String const& _path, bool _recursive = true);
+        void removeAssetsDirectory(Path const& _path, bool _recursive = true);
     
         //////////////////////////////////////////
-        Set<String> collectRootAssetDirectoryPathes();
+        Set<Path> collectRootAssetDirectoryPathes();
 
     protected:
         static AssetManager* s_instance;
         
     protected:
-        Set<String> m_assetDirectoryPathes;
+        Set<Path> m_assetDirectoryPathes;
 
-        StringKeyMap<AssetFilePtr> m_assetFilesByFileName;
-        StringKeyMap<AssetFilePtr> m_assetFilesByFullPath;
+        UnorderedMap<Path, AssetFilePtr> m_assetFilesByFileName;
+        UnorderedMap<Path, AssetFilePtr> m_assetFilesByFullPath;
         Map<AssetFilePtr, UnixTime> m_assetFilesUpdateTimeUTC;
 
         StringKeyMap<FileChildrenProcessor> m_fileChildrenProcessors;

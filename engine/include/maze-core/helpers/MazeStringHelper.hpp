@@ -910,6 +910,23 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline void SplitWords(WString const& _line, Vector<WString>& _words, WChar _separator = ' ') noexcept
+        {
+            _words.clear();
+            Size pos = 0;
+            Size prevPos = 0;
+
+            while ((pos = _line.find_first_of(_separator, pos)) != String::npos)
+            {
+                _words.emplace_back(
+                    _line.substr(prevPos, pos - prevPos));
+                prevPos = ++pos;
+            }
+
+            _words.push_back(_line.substr(prevPos, pos - prevPos));
+        }
+
+        //////////////////////////////////////////
         inline bool IsNumber(StdString const& _s) noexcept
         {
             return !_s.empty()
@@ -981,6 +998,22 @@ namespace Maze
                 // Locate the substring to replace
                 pos = _s.find(_search, pos);
                 if (pos == String::npos)
+                    break;
+
+                // Replace by erasing and inserting
+                _s.erase(pos, _search.length());
+                _s.insert(pos, _replace);
+            }
+        }
+
+        //////////////////////////////////////////
+        inline void ReplaceSubstring(WString& _s, WString const& _search, WString const& _replace) noexcept
+        {
+            for (Size pos = 0, l = _replace.length(); ; pos += l)
+            {
+                // Locate the substring to replace
+                pos = _s.find(_search, pos);
+                if (pos == WString::npos)
                     break;
 
                 // Replace by erasing and inserting
@@ -1110,6 +1143,15 @@ namespace Maze
 
         //////////////////////////////////////////
         inline bool IsStartsWith(String const& _value, String const& _start) noexcept
+        {
+            if (_start.size() > _value.size())
+                return false;
+
+            return std::equal(_start.begin(), _start.end(), _value.begin());
+        }
+
+        //////////////////////////////////////////
+        inline bool IsStartsWith(WString const& _value, WString const& _start) noexcept
         {
             if (_start.size() > _value.size())
                 return false;

@@ -42,7 +42,7 @@ namespace Maze
     namespace AssetHelper
     {
         //////////////////////////////////////////
-        MAZE_CORE_API Vector<AssetFilePtr> GetAllAssetFilesInDirectory(String const& _path);
+        MAZE_CORE_API Vector<AssetFilePtr> GetAllAssetFilesInDirectory(Path const& _path);
 
 
     } // namespace AssetHelper

@@ -65,7 +65,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        DynLibPtr const& loadLibrary(String const& _libraryFullPath);
+        DynLibPtr const& loadLibrary(Path const& _libraryFullPath);
 
         //////////////////////////////////////////
         void unloadLibrary(DynLib* _lib);
@@ -93,7 +93,7 @@ namespace Maze
     protected:
         static DynLibManager* s_instance;
 
-        StringKeyMap<DynLibPtr> m_loadedLibs;
+        UnorderedMap<Path, DynLibPtr> m_loadedLibs;
     };
 
 

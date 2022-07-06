@@ -91,7 +91,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        String const& getAssetFileName() const;
+        Path const& getAssetFileName() const;
 
 
         //////////////////////////////////////////

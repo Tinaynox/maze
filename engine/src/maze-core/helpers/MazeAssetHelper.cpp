@@ -37,16 +37,16 @@ namespace Maze
     namespace AssetHelper
     {
         //////////////////////////////////////////
-        MAZE_CORE_API Vector<AssetFilePtr> GetAllAssetFilesInDirectory(String const& _path)
+        MAZE_CORE_API Vector<AssetFilePtr> GetAllAssetFilesInDirectory(Path const& _path)
         {
             Vector<AssetFilePtr> result;
 
-            Vector<String> fileNames = FileHelper::GetRegularFileNamesInPath(_path.c_str());
-            for (String const& fileName : fileNames)
+            Vector<Path> fileNames = FileHelper::GetRegularFileNamesInPath(_path);
+            for (Path const& fileName : fileNames)
             {
-                String fullPath = _path + "/" + fileName;
+                Path fullPath = _path + "/" + fileName;
                 AssetFilePtr const& file = AssetManager::GetInstancePtr()->getAssetFileByFullPath(fullPath);
-                MAZE_ERROR_CONTINUE_IF(!file, "File %s is not asset file!", fullPath.c_str());
+                MAZE_ERROR_CONTINUE_IF(!file, "File %s is not asset file!", fullPath.toUTF8().c_str());
                 result.emplace_back(file);
             }
 

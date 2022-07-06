@@ -46,10 +46,16 @@ namespace Maze
     namespace XMLHelper
     {
         //////////////////////////////////////////
-        MAZE_CORE_API extern bool SaveXMLFile(String const& _fileFullPath, tinyxml2::XMLNode* _rootNode);
+        MAZE_CORE_API extern bool SaveXMLFile(Path const& _fileFullPath, tinyxml2::XMLNode* _rootNode);
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern bool SaveXMLFile(String const& _fileFullPath, IXMLElementSerializable* _serializable);
+        MAZE_CORE_API extern bool SaveXMLFile(Path const& _fileFullPath, IXMLElementSerializable* _serializable);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API extern tinyxml2::XMLError LoadXMLFile(Path const& _fileFullPath, tinyxml2::XMLDocument& _doc);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API extern tinyxml2::XMLError SaveXMLFile(Path const& _fileFullPath, tinyxml2::XMLDocument& _doc);
 
 
 

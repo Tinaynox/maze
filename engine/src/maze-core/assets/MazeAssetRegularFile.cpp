@@ -28,6 +28,7 @@
 #include "maze-core/assets/MazeAssetRegularFile.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/helpers/MazeStdHelper.hpp"
+#include "maze-core/helpers/MazeXMLHelper.hpp"
 
 
 
@@ -53,7 +54,7 @@ namespace Maze
     }
 
     ////////////////////////////////////
-    AssetRegularFilePtr AssetRegularFile::Create(String const& _fullPath)
+    AssetRegularFilePtr AssetRegularFile::Create(Path const& _fullPath)
     {
         AssetRegularFilePtr result;
         MAZE_CREATE_AND_INIT_SHARED_PTR(AssetRegularFile, result, init(_fullPath));
@@ -61,7 +62,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool AssetRegularFile::init(String const& _fullPath, bool _normalizePath)
+    bool AssetRegularFile::init(Path const& _fullPath, bool _normalizePath)
     {
         if (!AssetFile::init())
             return false;
@@ -72,7 +73,7 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    void AssetRegularFile::setFullPath(String const& _fullPath, bool _normalizePath)
+    void AssetRegularFile::setFullPath(Path const& _fullPath, bool _normalizePath)
     {
         m_fullPath = _fullPath;
         
@@ -93,7 +94,7 @@ namespace Maze
     //////////////////////////////////////////
     FileStats AssetRegularFile::getFileStats()
     {
-        return FileHelper::GetFileStats(m_fullPath.c_str());
+        return FileHelper::GetFileStats(m_fullPath);
     }
 
     //////////////////////////////////////////
@@ -103,7 +104,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool AssetRegularFile::move(String const& _newFullPath, Vector<Pair<String, AssetFilePtr>>& _movedFiles)
+    bool AssetRegularFile::move(Path const& _newFullPath, Vector<Pair<Path, AssetFilePtr>>& _movedFiles)
     {
         if (m_fullPath == _newFullPath)
             return false;
@@ -111,16 +112,16 @@ namespace Maze
         bool isFullPathExists = FileHelper::IsFileExists(m_fullPath);
         bool isNewFullPathExists = FileHelper::IsFileExists(_newFullPath);
 
-        MAZE_WARNING_RETURN_VALUE_IF(isFullPathExists && isNewFullPathExists, false, "File is already exists - %s!", _newFullPath.c_str());
-        MAZE_WARNING_RETURN_VALUE_IF(!isFullPathExists && !isNewFullPathExists, false, "File is not exists - %s!", m_fullPath.c_str());
+        MAZE_WARNING_RETURN_VALUE_IF(isFullPathExists && isNewFullPathExists, false, "File is already exists - %s!", _newFullPath.toUTF8().c_str());
+        MAZE_WARNING_RETURN_VALUE_IF(!isFullPathExists && !isNewFullPathExists, false, "File is not exists - %s!", m_fullPath.toUTF8().c_str());
 
         if (isFullPathExists && !isNewFullPathExists)
         {
-            if (!FileHelper::Move(m_fullPath.c_str(), _newFullPath.c_str()))
+            if (!FileHelper::Move(m_fullPath, _newFullPath))
                 return false;
         }
         
-        _movedFiles.push_back(Pair<String, AssetFilePtr>(m_fullPath, getSharedPtr()));
+        _movedFiles.push_back(Pair<Path, AssetFilePtr>(m_fullPath, getSharedPtr()));
         setFullPath(_newFullPath);
 
         return true;
@@ -129,7 +130,7 @@ namespace Maze
     //////////////////////////////////////////
     Size AssetRegularFile::calculateFileSize()
     {
-        FILE* fileHandler = StdHelper::OpenFile(m_fullPath.c_str(), "rb");
+        FILE* fileHandler = StdHelper::OpenFile(m_fullPath, "rb");
         if (!fileHandler)
             return 0;
 
@@ -148,20 +149,18 @@ namespace Maze
     //////////////////////////////////////////
     Size AssetRegularFile::readToString(String& _string)
     {
-        std::ifstream ifs(m_fullPath.c_str());
-        _string.assign((std::istreambuf_iterator<S8>(ifs)),
-                       (std::istreambuf_iterator<S8>()));
-        
+        FileHelper::ReadFileToString(m_fullPath, _string);
         return _string.size();
     }
 
     //////////////////////////////////////////
     bool AssetRegularFile::readToXMLDocument(tinyxml2::XMLDocument& _doc)
     {
-        tinyxml2::XMLError loadError = _doc.LoadFile(getFullPath().c_str());
+        tinyxml2::XMLDocument doc;
+        tinyxml2::XMLError loadError = XMLHelper::LoadXMLFile(getFullPath(), _doc);
         if (tinyxml2::XML_SUCCESS != loadError)
         {
-            MAZE_ERROR("File '%s' loading error - XMLError: %d!", getFileName().c_str(), (S32)loadError);
+            MAZE_ERROR("File '%s' loading error - XMLError: %d!", getFileName().toUTF8().c_str(), (S32)loadError);
             return false;
         }
 
@@ -171,7 +170,7 @@ namespace Maze
     //////////////////////////////////////////
     bool AssetRegularFile::readToByteBuffer(ByteBuffer& _byteBuffer)
     {
-        FILE* fileHandler = StdHelper::OpenFile(m_fullPath.c_str(), "rb");
+        FILE* fileHandler = StdHelper::OpenFile(m_fullPath, "rb");
         if (!fileHandler)
             return false;
 
@@ -200,7 +199,7 @@ namespace Maze
     //////////////////////////////////////////
     bool AssetRegularFile::readHeaderToByteBuffer(ByteBuffer& _byteBuffer, Size _size)
     {
-        FILE* fileHandler = StdHelper::OpenFile(m_fullPath.c_str(), "rb");
+        FILE* fileHandler = StdHelper::OpenFile(m_fullPath, "rb");
         if (!fileHandler)
             return false;
 

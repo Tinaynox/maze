@@ -110,17 +110,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    String AssetFile::getExtension() const
+    Path AssetFile::getExtension() const
     {
-        String const& fileName = getFileName();
+        Path const& fileName = getFileName();
         if (fileName.empty())
+            return Path();
+        
+        Size position = fileName.getPath().find_last_of('.');
+        if (position == Path::StringType::npos)
             return String();
         
-        Size position = fileName.find_last_of('.');
-        if (position == String::npos)
-            return String();
-        
-        return fileName.substr(position + 1, fileName.size() - position - 1);
+        return fileName.getPath().substr(position + 1, fileName.size() - position - 1);
     }
 
     //////////////////////////////////////////

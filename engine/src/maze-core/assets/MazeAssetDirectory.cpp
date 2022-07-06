@@ -53,7 +53,7 @@ namespace Maze
     }
 
     ////////////////////////////////////
-    AssetDirectoryPtr AssetDirectory::Create(String const& _fullPath)
+    AssetDirectoryPtr AssetDirectory::Create(Path const& _fullPath)
     {
         AssetDirectoryPtr result;
         MAZE_CREATE_AND_INIT_SHARED_PTR(AssetDirectory, result, initAssetDirectory(_fullPath));
@@ -61,7 +61,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool AssetDirectory::initAssetDirectory(String const& _fullPath)
+    bool AssetDirectory::initAssetDirectory(Path const& _fullPath)
     {
         if (!AssetRegularFile::init(_fullPath, false))
             return false;
@@ -78,14 +78,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool AssetDirectory::move(String const& _newFullPath, Vector<Pair<String, AssetFilePtr>>& _movedFiles)
+    bool AssetDirectory::move(Path const& _newFullPath, Vector<Pair<Path, AssetFilePtr>>& _movedFiles)
     {
         if (!AssetRegularFile::move(_newFullPath, _movedFiles))
             return false;
 
         for (auto childrenAssetData : m_childrenAssets)
         {
-            String newFullPath = m_fullPath.getString() + "/" + childrenAssetData.second->getFileName().getString();
+            Path newFullPath = m_fullPath + "/" + childrenAssetData.second->getFileName();
             if (!childrenAssetData.second->move(newFullPath, _movedFiles))
                 return false;
         }
@@ -99,13 +99,13 @@ namespace Maze
         Vector<AssetFilePtr>* _addedFiles,
         Vector<AssetFilePtr>* _removedFiles)
     {
-        Vector<String> const fileNames = FileHelper::GetRegularFileNamesInPath(m_fullPath.c_str());
+        Vector<Path> const fileNames = FileHelper::GetRegularFileNamesInPath(m_fullPath);
 
-        Set<String> confirmedFileFullPathes;
+        Set<Path> confirmedFileFullPathes;
 
         for (Size i = 0, c = fileNames.size(); i < c; ++i)
         {
-            String const fileFullPath = FileHelper::ConvertLocalPathToFullPath((m_fullPath.getString() + '/' + fileNames[i]).c_str());
+            Path const fileFullPath = FileHelper::ConvertLocalPathToFullPath(m_fullPath + '/' + fileNames[i]);
 
             confirmedFileFullPathes.emplace(fileFullPath);
 

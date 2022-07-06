@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
 #include "maze-core/utils/MazeStringPerfectHashGenerator.hpp"
+#include "maze-core/hash/MazeHashSuperFast.hpp"
 
 
 //////////////////////////////////////////

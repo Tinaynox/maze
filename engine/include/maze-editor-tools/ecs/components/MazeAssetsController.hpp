@@ -96,14 +96,14 @@ namespace Maze
         inline Transform2DPtr const& getTransform() const { return m_transform; }
 
         //////////////////////////////////////////
-        inline String const& getSelectedAssetFolder() const { return m_selectedAssetFolder; }
+        inline Path const& getSelectedAssetFolder() const { return m_selectedAssetFolder; }
 
         //////////////////////////////////////////
-        void setSelectedAssetFolder(String const& _value);
+        void setSelectedAssetFolder(Path const& _value);
 
 
         //////////////////////////////////////////
-        void setAssetsFullPath(String const& _assetsFullPath);
+        void setAssetsFullPath(Path const& _assetsFullPath);
 
 
         //////////////////////////////////////////
@@ -172,7 +172,7 @@ namespace Maze
         void notifyAssetFileRemoved(AssetFilePtr const& _file);
 
         //////////////////////////////////////////
-        void notifyAssetFileMoved(AssetFilePtr const& _file, String const& _prevFullPath);
+        void notifyAssetFileMoved(AssetFilePtr const& _file, Path const& _prevFullPath);
 
     protected:
         Canvas* m_canvas;
@@ -183,7 +183,7 @@ namespace Maze
 
         Map<AssetFilePtr, AssetLineInfo> m_assetFilesInfo;
 
-        String m_assetsFullPath;
+        Path m_assetsFullPath;
 
         HorizontalLayout2DPtr m_layout;
 
@@ -195,7 +195,7 @@ namespace Maze
         Transform2DPtr m_selectedAssetsFolderLayoutTransform;
         StringKeyMap<AssetLinePtr> m_selectedAssetsFolderLines;
 
-        String m_selectedAssetFolder;
+        Path m_selectedAssetFolder;
 
         bool m_assetsTreeDirty = false;
         bool m_selectedAssetsFolder = false;

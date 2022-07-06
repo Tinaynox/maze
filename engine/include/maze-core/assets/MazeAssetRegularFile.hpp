@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/system/MazePath.hpp"
 #include <tinyxml2.h>
 
 
@@ -66,10 +67,10 @@ namespace Maze
 
         
         //////////////////////////////////////////
-        virtual HashedString const& getFullPath() const MAZE_OVERRIDE { return m_fullPath; }
+        virtual Path const& getFullPath() const MAZE_OVERRIDE { return m_fullPath; }
         
         //////////////////////////////////////////
-        virtual HashedString const& getFileName() const MAZE_OVERRIDE { return m_fileName; }
+        virtual Path const& getFileName() const MAZE_OVERRIDE { return m_fileName; }
 
 
         //////////////////////////////////////////
@@ -82,7 +83,7 @@ namespace Maze
         virtual bool isFileExists() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual bool move(String const& _newFullPath, Vector<Pair<String, AssetFilePtr>>& _movedFiles) MAZE_OVERRIDE;
+        virtual bool move(Path const& _newFullPath, Vector<Pair<Path, AssetFilePtr>>& _movedFiles) MAZE_OVERRIDE;
 
 
         //////////////////////////////////////////
@@ -100,7 +101,7 @@ namespace Maze
     protected:
 
         ////////////////////////////////////
-        static AssetRegularFilePtr Create(String const& _fullPath);
+        static AssetRegularFilePtr Create(Path const& _fullPath);
 
         //////////////////////////////////////////
         AssetRegularFile();
@@ -109,11 +110,11 @@ namespace Maze
         using AssetFile::init;
         
         //////////////////////////////////////////
-        virtual bool init(String const& _fullPath, bool _normalizePath = true);
+        virtual bool init(Path const& _fullPath, bool _normalizePath = true);
 
         
         //////////////////////////////////////////
-        void setFullPath(String const& _fullPath, bool _normalizePath = true);
+        void setFullPath(Path const& _fullPath, bool _normalizePath = true);
     
         //////////////////////////////////////////
         void updateFileName();
@@ -122,10 +123,10 @@ namespace Maze
         Size calculateFileSize();
     
     protected:
-        HashedString m_fullPath;
+        Path m_fullPath;
         
     private:
-        HashedString m_fileName;
+        Path m_fileName;
     };
 
 

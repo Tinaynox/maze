@@ -25,66 +25,82 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeDynLibWin_hpp_))
-#define _MazeDynLibWin_hpp_
+#if (!defined(_MazePathWin_hpp_))
+#define _MazePathWin_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
-#include "maze-core/system/MazeDynLib.hpp"
+#include "maze-core/MazeTypes.hpp"
+#include "maze-core/system/MazeGenericPath.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(DynLibWin);
-
-
-    //////////////////////////////////////////
-    // Class DynLibWin
+    // Class PathWin
     //
     //////////////////////////////////////////
-    class DynLibWin
-        : public DynLib
+    class PathWin : public GenericPath<PathWin, WString>
     {
     public:
 
         //////////////////////////////////////////
-        friend class DynLib;
+        using ParentClass = GenericPath<PathWin, WString>;
 
     public:
 
         //////////////////////////////////////////
-        virtual ~DynLibWin();
+        inline PathWin() : ParentClass() {}
+
+        //////////////////////////////////////////
+        inline PathWin(PathWin const& _value) : ParentClass(_value) {}
+
+        //////////////////////////////////////////
+        inline PathWin(PathWin&& _value) : ParentClass(std::move(_value)) {}
+
+        //////////////////////////////////////////
+        inline PathWin(WString const& _path) : ParentClass(_path) {}
+
+        //////////////////////////////////////////
+        inline PathWin(WString&& _path) : ParentClass(std::move(_path)) {}
+
+        //////////////////////////////////////////
+        inline PathWin(ParentClass::CharType const* _path) : ParentClass(_path) {}
+
+        //////////////////////////////////////////
+        inline PathWin(ParentClass::CharType _char) : ParentClass(_char) {}
+
+        //////////////////////////////////////////
+        PathWin(String const& _value);
+
+        //////////////////////////////////////////
+        PathWin(Char const* _value);
+
+        //////////////////////////////////////////
+        PathWin(Char _value);
 
 
         //////////////////////////////////////////
-        virtual bool load() MAZE_OVERRIDE;
+        inline PathWin& operator=(PathWin const& _value) { return ParentClass::operator=(_value); }
 
         //////////////////////////////////////////
-        virtual void unload() MAZE_OVERRIDE;
+        inline PathWin& operator=(PathWin&& _value) { return ParentClass::operator=(std::move(_value)); }
+
 
         //////////////////////////////////////////
-        virtual void* getSymbol(String const& _symbolName) MAZE_OVERRIDE;
+        operator String() const;
 
-    protected:
-
-        //////////////////////////////////////////
-        DynLibWin();
 
         //////////////////////////////////////////
-        virtual bool init(Path const& _libraryFullPath) MAZE_OVERRIDE;
-
-    protected:
-        HMODULE m_handle;
+        virtual String toUTF8() const MAZE_OVERRIDE;
     };
-    
     
 } // namespace Maze
 //////////////////////////////////////////
     
 
-#endif // _MazeDynLibWin_hpp_
+#endif // _MazePathWin_hpp_
 //////////////////////////////////////////

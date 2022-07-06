@@ -33,6 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/system/MazeGeoLocation.hpp"
+#include "maze-core/system/MazePath.hpp"
 
 
 //////////////////////////////////////////
@@ -49,10 +50,10 @@ namespace Maze
         MAZE_CORE_API String ConstructSystemInfo();
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern void OpenURL(String const& _url);
+        MAZE_CORE_API extern void OpenURL(Path const& _url);
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern void OpenExplorer(String const& _fullPath, bool _select = true);
+        MAZE_CORE_API extern void OpenExplorer(Path const& _fullPath, bool _select = true);
 
         //////////////////////////////////////////
         MAZE_CORE_API extern String const& GetOSVersion();

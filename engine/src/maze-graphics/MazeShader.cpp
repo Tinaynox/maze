@@ -426,14 +426,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    String const& Shader::getAssetFileName()
+    Path const& Shader::getAssetFileName()
     {
-        static String nullValue;
+        static Path nullValue;
 
         if (!m_assetFile)
             return nullValue;
 
-        return m_assetFile->getFileName().getString();
+        return m_assetFile->getFileName();
     }
 
 
@@ -526,15 +526,15 @@ namespace Maze
                     CString shaderFileName = shaderChildElement->Attribute("shader");
                     if (shaderFileName)
                     {
-                        shaderFile = assetManager->getAssetFileByFileName(shaderFileName);
+                        shaderFile = assetManager->getAssetFileByFileName(Path(shaderFileName));
                     }
                     else
                     {
                         CString vertexShaderFileName = shaderChildElement->Attribute("vertex");
                         CString fragmentShaderFileName = shaderChildElement->Attribute("fragment");
 
-                        vertexShaderFile = vertexShaderFileName ? assetManager->getAssetFileByFileName(vertexShaderFileName) : AssetFilePtr();
-                        fragmentShaderFile = fragmentShaderFileName ? assetManager->getAssetFileByFileName(fragmentShaderFileName) : AssetFilePtr();
+                        vertexShaderFile = vertexShaderFileName ? assetManager->getAssetFileByFileName(Path(vertexShaderFileName)) : AssetFilePtr();
+                        fragmentShaderFile = fragmentShaderFileName ? assetManager->getAssetFileByFileName(Path(fragmentShaderFileName)) : AssetFilePtr();
 
                         MAZE_ERROR_IF(vertexShaderFileName && !vertexShaderFile, "Undefined vertex shader: %s", vertexShaderFileName);
                         MAZE_ERROR_IF(fragmentShaderFileName && !fragmentShaderFile, "Undefined vertex shader: %s", fragmentShaderFileName);

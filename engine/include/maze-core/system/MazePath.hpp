@@ -24,45 +24,52 @@
 
 
 //////////////////////////////////////////
-#include "MazeCoreHeader.hpp"
-#include "maze-core/managers/Win/MazeAssetManagerWin.hpp"
-#include "maze-core/system/MazeDisplay.hpp"
-#include "maze-core/helpers/Win/MazeWindowHelperWin.hpp"
-#include "maze-core/helpers/MazeFileHelper.hpp"
+#pragma once
+#if (!defined(_MazePath_hpp_))
+#define _MazePath_hpp_
+
+
+//////////////////////////////////////////
+#include "maze-core/MazeCoreHeader.hpp"
+#include "maze-core/MazeBaseTypes.hpp"
+#include MAZE_PLATFORM_FILE(MazePath)
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class AssetManagerWin
-    //
-    //////////////////////////////////////////
-    AssetManagerWin::AssetManagerWin()
-    {
-    }
-    
-    //////////////////////////////////////////
-    AssetManagerWin::~AssetManagerWin()
-    {
-    }
-    
-    //////////////////////////////////////////
-    bool AssetManagerWin::init()
-    {
-        if (!AssetManager::init())
-            return false;
-       
-        
-        return true;
-    }
+    using Path = MAZE_PLATFORM_OBJECT(Path);
+
 
     //////////////////////////////////////////
-    Path AssetManagerWin::getDefaultAssetsDirectory()
+    inline std::ostream& operator<<(std::ostream& _o, Path const& _path)
     {
-        return FileHelper::GetWorkingDirectory();
+        _o << _path.getPath().c_str();
+        return _o;
     }
-   
     
 } // namespace Maze
+//////////////////////////////////////////
+
+
+//////////////////////////////////////////
+namespace std
+{
+    //////////////////////////////////////////
+    template<>
+    struct hash<Maze::Path>
+    {
+        inline size_t operator()(Maze::Path const& _path) const noexcept
+        {
+            return _path.getHash();
+        }
+    };
+
+
+} // namespace std
+//////////////////////////////////////////
+    
+
+#endif // _MazePath_hpp_
 //////////////////////////////////////////

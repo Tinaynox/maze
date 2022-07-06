@@ -252,7 +252,7 @@ namespace Maze
 
         mesh = Mesh::Create(m_renderSystemRaw);
 
-        Debug::Log("Loading render mesh: %s...", _assetFile->getFileName().c_str());
+        Debug::Log("Loading render mesh: %s...", _assetFile->getFileName().toUTF8().c_str());
 
         StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
 

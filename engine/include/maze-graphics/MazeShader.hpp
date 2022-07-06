@@ -191,7 +191,7 @@ namespace Maze
         inline AssetFilePtr const& getAssetFile() const { return m_assetFile; }
 
         //////////////////////////////////////////
-        String const& getAssetFileName();
+        Path const& getAssetFileName();
 
 
 

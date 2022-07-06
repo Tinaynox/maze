@@ -42,7 +42,7 @@ namespace Maze
     namespace FileHelper
     {
         //////////////////////////////////////////
-        MAZE_CORE_API String GetWorkingDirectory()
+        MAZE_CORE_API Path GetWorkingDirectory()
         {
             S8 buff[PATH_MAX + 1];
             getcwd(buff, sizeof(buff));
@@ -50,15 +50,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API WString GetWorkingDirectoryW()
-        {
-            WString text;
-            StringHelper::FormatString(text, L"%s", GetWorkingDirectory().c_str());
-            return text;
-        }
-
-        //////////////////////////////////////////
-        MAZE_CORE_API String GetBinaryFullPath()
+        MAZE_CORE_API Path GetBinaryFullPath()
         {
             S8 pathbuf[PATH_MAX + 1];
             uint32_t bufsize = (uint32_t)sizeof(pathbuf);
@@ -67,13 +59,13 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetBinaryDirectory()
+        MAZE_CORE_API Path GetBinaryDirectory()
         {
             return GetDirectoryInPath(GetBinaryFullPath());
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetDocumentsDirectory()
+        MAZE_CORE_API Path GetDocumentsDirectory()
         {
             CFBundleRef mainBundle = CFBundleGetMainBundle();
             CFURLRef bundleURL = CFBundleCopyBundleURL(mainBundle);
@@ -85,13 +77,13 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetDefaultTemporaryDirectory()
+        MAZE_CORE_API Path GetDefaultTemporaryDirectory()
         {
             return "/tmp";
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetDefaultLogDirectory()
+        MAZE_CORE_API Path GetDefaultLogDirectory()
         {
             CFBundleRef mainBundle = CFBundleGetMainBundle();
             CFURLRef bundleURL = CFBundleCopyBundleURL(mainBundle);

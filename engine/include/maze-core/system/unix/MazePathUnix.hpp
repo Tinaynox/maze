@@ -8,7 +8,7 @@
 //
 // Permission is granted to anyone to use this software for any purpose,
 // including commercial applications, and to alter it and redistribute it freely,
-// subject to the following restrictions:
+// subject to the folloUnixg restrictions:
 //
 // 1. The origin of this software must not be misrepresented;
 //    you must not claim that you wrote the original software.
@@ -25,66 +25,63 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeDynLibWin_hpp_))
-#define _MazeDynLibWin_hpp_
+#if (!defined(_MazePathUnix_hpp_))
+#define _MazePathUnix_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
-#include "maze-core/system/MazeDynLib.hpp"
+#include "maze-core/MazeTypes.hpp"
+#include "maze-core/system/MazeGenericPath.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(DynLibWin);
-
-
-    //////////////////////////////////////////
-    // Class DynLibWin
+    // Class PathUnix
     //
     //////////////////////////////////////////
-    class DynLibWin
-        : public DynLib
+    class PathUnix : public GenericPath<PathUnix, String>
     {
     public:
 
         //////////////////////////////////////////
-        friend class DynLib;
+        using ParentClass = GenericPath<PathUnix, String>;
 
     public:
 
         //////////////////////////////////////////
-        virtual ~DynLibWin();
+        inline PathUnix() : ParentClass() {}
+
+        //////////////////////////////////////////
+        inline PathUnix(PathUnix const& _value) : ParentClass(_value) {}
+
+        //////////////////////////////////////////
+        inline PathUnix(PathUnix&& _value) : ParentClass(std::move(_value)) {}
+
+        //////////////////////////////////////////
+        inline PathUnix(ParentClass::CharType const* _path) : ParentClass(_path) {}
+
+        //////////////////////////////////////////
+        inline PathUnix(ParentClass::CharType _char) : ParentClass(_char) {}
 
 
         //////////////////////////////////////////
-        virtual bool load() MAZE_OVERRIDE;
+        inline PathUnix& operator=(PathUnix const& _value) { return ParentClass::operator=(_value); }
 
         //////////////////////////////////////////
-        virtual void unload() MAZE_OVERRIDE;
+        inline PathUnix& operator=(PathUnix&& _value) { return ParentClass::operator=(std::move(_value)); }
+
 
         //////////////////////////////////////////
-        virtual void* getSymbol(String const& _symbolName) MAZE_OVERRIDE;
-
-    protected:
-
-        //////////////////////////////////////////
-        DynLibWin();
-
-        //////////////////////////////////////////
-        virtual bool init(Path const& _libraryFullPath) MAZE_OVERRIDE;
-
-    protected:
-        HMODULE m_handle;
+        virtual String toUTF8() const MAZE_OVERRIDE;
     };
-    
     
 } // namespace Maze
 //////////////////////////////////////////
     
 
-#endif // _MazeDynLibWin_hpp_
+#endif // _MazePathUnix_hpp_
 //////////////////////////////////////////

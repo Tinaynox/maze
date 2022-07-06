@@ -24,45 +24,26 @@
 
 
 //////////////////////////////////////////
-#include "MazeCoreHeader.hpp"
-#include "maze-core/managers/Win/MazeAssetManagerWin.hpp"
-#include "maze-core/system/MazeDisplay.hpp"
-#include "maze-core/helpers/Win/MazeWindowHelperWin.hpp"
-#include "maze-core/helpers/MazeFileHelper.hpp"
+#pragma once
+#if (!defined(_MazePathOSX_hpp_))
+#define _MazePathOSX_hpp_
+
+
+//////////////////////////////////////////
+#include "maze-core/MazeBaseTypes.hpp"
+#include "maze-core/system/unix/MazePathUnix.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class AssetManagerWin
-    //
-    //////////////////////////////////////////
-    AssetManagerWin::AssetManagerWin()
-    {
-    }
-    
-    //////////////////////////////////////////
-    AssetManagerWin::~AssetManagerWin()
-    {
-    }
-    
-    //////////////////////////////////////////
-    bool AssetManagerWin::init()
-    {
-        if (!AssetManager::init())
-            return false;
-       
-        
-        return true;
-    }
+    using PathOSX = PathUnix;
 
-    //////////////////////////////////////////
-    Path AssetManagerWin::getDefaultAssetsDirectory()
-    {
-        return FileHelper::GetWorkingDirectory();
-    }
-   
     
 } // namespace Maze
+//////////////////////////////////////////
+    
+
+#endif // _MazePathOSX_hpp_
 //////////////////////////////////////////

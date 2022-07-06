@@ -138,7 +138,7 @@ namespace Maze
     private:
         static SettingsManager* s_instance;
 
-        String m_settingsFileFullPath;
+        Path m_settingsFileFullPath;
 
         Map<MetaClass*, SettingsPtr> m_settings;
         StringKeyMap<Vector<Pair<String, String>>> m_unregisteredSettings;

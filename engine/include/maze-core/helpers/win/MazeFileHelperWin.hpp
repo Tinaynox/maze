@@ -33,6 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/system/MazeFileStats.hpp"
+#include "maze-core/system/MazePath.hpp"
 
 
 //////////////////////////////////////////
@@ -42,68 +43,65 @@ namespace Maze
     namespace FileHelper
     {
         //////////////////////////////////////////
-        MAZE_CORE_API extern bool IsFileExists(CString _fullPath);
+        MAZE_CORE_API extern bool IsFileExists(Path const& _fullPath);
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern bool IsDirectory(CString _fullPath);
+        MAZE_CORE_API extern bool IsDirectory(Path const& _fullPath);
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern U32 GetFileSize(CString _fullPath);
+        MAZE_CORE_API extern U32 GetFileSize(Path const& _fullPath);
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern UnixTime GetFileModificationTimestamp(CString _fullPath);
+        MAZE_CORE_API extern UnixTime GetFileModificationTimestamp(Path const& _fullPath);
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern String GetWorkingDirectory();
+        MAZE_CORE_API extern Path GetWorkingDirectory();
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern WString GetWorkingDirectoryW();
+        MAZE_CORE_API extern Path GetBinaryFullPath();
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern String GetBinaryFullPath();
+        MAZE_CORE_API extern Path GetBinaryDirectory();
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern String GetBinaryDirectory();
+        MAZE_CORE_API extern Path GetDocumentsDirectory();
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern String GetDocumentsDirectory();
+        MAZE_CORE_API extern Path GetDefaultTemporaryDirectory();
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern String GetDefaultTemporaryDirectory();
+        MAZE_CORE_API extern Path GetDefaultLogDirectory();
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern String GetDefaultLogDirectory();
+        MAZE_CORE_API extern bool CreateDirectoryRecursive(Path const& _path);
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern bool CreateDirectoryRecursive(CString _path);
+        MAZE_CORE_API extern Vector<Path> GetRegularFileNamesInPath(Path const& _localPath);
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern Vector<String> GetRegularFileNamesInPath(CString _localPath);
+        MAZE_CORE_API extern bool CopyRegularFile(Path const& _sourceFullPath, Path const& _destFullPath);
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern bool CopyRegularFile(CString _sourceFullPath, CString _destFullPath);
+        MAZE_CORE_API extern bool CopyDirectory(Path const& _sourceFullPath, Path const& _destFullPath);
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern bool CopyDirectory(CString _sourceFullPath, CString _destFullPath);
+        MAZE_CORE_API extern bool DeleteRegularFile(Path const& _fileFullPath);
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern bool DeleteRegularFile(CString _fileFullPath);
-
-        //////////////////////////////////////////
-        MAZE_CORE_API extern bool DeleteDirectory(CString _path);
+        MAZE_CORE_API extern bool DeleteDirectory(Path const& _path);
 
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern bool MoveRegularFile(CString _sourceFullPath, CString _destFullPath);
+        MAZE_CORE_API extern bool MoveRegularFile(Path const& _sourceFullPath, Path const& _destFullPath);
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern bool MoveDirectory(CString _sourceFullPath, CString _destFullPath);
+        MAZE_CORE_API extern bool MoveDirectory(Path const& _sourceFullPath, Path const& _destFullPath);
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern String ConvertLocalPathToFullPath(CString _localPath);
+        MAZE_CORE_API extern Path ConvertLocalPathToFullPath(Path const& _localPath);
 
         ////////////////////////////////////
-        MAZE_CORE_API extern FileStats GetFileStats(CString _fileFullPath);
+        MAZE_CORE_API extern FileStats GetFileStats(Path const& _fileFullPath);
 
     } // namespace FileHelper
     //////////////////////////////////////////
