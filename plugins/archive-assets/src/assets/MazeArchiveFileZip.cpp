@@ -53,7 +53,7 @@ namespace Maze
     
 
     //////////////////////////////////////////
-    bool ArchiveFileZip::init(String const& _fullPath)
+    bool ArchiveFileZip::init(Path const& _fullPath)
     {
         m_fullPath = _fullPath;
 
@@ -64,7 +64,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ArchiveFileZipPtr ArchiveFileZip::Create(String const& _fullPath)
+    ArchiveFileZipPtr ArchiveFileZip::Create(Path const& _fullPath)
     {
         ArchiveFileZipPtr result;
         MAZE_CREATE_AND_INIT_SHARED_PTR(ArchiveFileZip, result, init(_fullPath));
@@ -72,14 +72,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ArchiveFileZip::openZip(String const& _fullPath)
+    bool ArchiveFileZip::openZip(Path const& _fullPath)
     {
         closeZip();
 
         MAZE_MUTEX_SCOPED_LOCK(m_zipMutex);
 
-        m_zipHandle = unzOpen(_fullPath.c_str());
-        MAZE_ERROR_RETURN_VALUE_IF(!m_zipHandle, false, "%s is cannot be opened as zip archive!", _fullPath.c_str());
+        m_zipHandle = unzOpen(_fullPath.toUTF8().c_str());
+        MAZE_ERROR_RETURN_VALUE_IF(!m_zipHandle, false, "%s is cannot be opened as zip archive!", _fullPath.toUTF8().c_str());
 
         m_zipNavigationMapDirty = true;
 
@@ -102,14 +102,14 @@ namespace Maze
         if (!m_zipNavigationMapDirty)
             return true;
 
-        String archiveFileName = FileHelper::GetFileNameInPath(getFullPath());
-        Debug::Log("Creating navigation map for zip archive: %s...", archiveFileName.c_str());
+        Path archiveFileName = FileHelper::GetFileNameInPath(getFullPath());
+        Debug::Log("Creating navigation map for zip archive: %s...", archiveFileName.toUTF8().c_str());
 
         m_zipNavigationMap.clear();
 
         S8 currentFileName[512];
-        String fileName;
-        String currentFilePathNormalized;
+        Path fileName;
+        Path currentFilePathNormalized;
         
         S32 err = unzGoToFirstFile(m_zipHandle);
 
@@ -145,9 +145,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vector<String> ArchiveFileZip::getArchivedFilePathes()
+    Vector<Path> ArchiveFileZip::getArchivedFilePathes()
     {
-        Vector<String> result;
+        Vector<Path> result;
 
         updateZipNavigationMap();
         for (ZipNavigationMap::const_iterator it = m_zipNavigationMap.begin(),
@@ -162,12 +162,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Size ArchiveFileZip::readArchivedFileToBuffer(String const& _filePath, U8* _bytes, Size _bufferSize)
+    Size ArchiveFileZip::readArchivedFileToBuffer(Path const& _filePath, U8* _bytes, Size _bufferSize)
     {
         updateZipNavigationMap();
 
         ZipNavigationMap::const_iterator it = m_zipNavigationMap.find(_filePath);
-        MAZE_WARNING_RETURN_VALUE_IF(it == m_zipNavigationMap.end(), 0, "Cannot locate file in archive '%s'!", _filePath.c_str());
+        MAZE_WARNING_RETURN_VALUE_IF(it == m_zipNavigationMap.end(), 0, "Cannot locate file in archive '%s'!", _filePath.toUTF8().c_str());
         const ZipFileInfo& zipFileInfo = it->second;
         Size bytesLoaded = 0;
 
@@ -196,7 +196,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Size ArchiveFileZip::readArchivedFileToString(String const& _filePath, String& _stringBuffer)
+    Size ArchiveFileZip::readArchivedFileToString(Path const& _filePath, String& _stringBuffer)
     {
         updateZipNavigationMap();
 
@@ -233,7 +233,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ByteBufferPtr ArchiveFileZip::readArchivedFileAsByteBuffer(String const& _filePath)
+    ByteBufferPtr ArchiveFileZip::readArchivedFileAsByteBuffer(Path const& _filePath)
     {
         updateZipNavigationMap();
 
@@ -266,7 +266,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Size ArchiveFileZip::getArchivedFileLength(String const& _filePath)
+    Size ArchiveFileZip::getArchivedFileLength(Path const& _filePath)
     {
         updateZipNavigationMap();
 
@@ -276,7 +276,7 @@ namespace Maze
     }
 
     ////////////////////////////////////
-    FileStats ArchiveFileZip::getArchivedFileStats(String const& _filePath)
+    FileStats ArchiveFileZip::getArchivedFileStats(Path const& _filePath)
     {
         // #TODO: Implement
         return FileStats();
@@ -289,7 +289,7 @@ namespace Maze
     }
 
     ////////////////////////////////////
-    bool ArchiveFileZip::isFileExists(String const& _filePath)
+    bool ArchiveFileZip::isFileExists(Path const& _filePath)
     {
         if (!isFileExists())
             return false;
@@ -298,7 +298,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    S32 ArchiveFileZip::tryUnzOpenCurrentFile(String const& _fileName, unzFile _file)
+    S32 ArchiveFileZip::tryUnzOpenCurrentFile(Path const& _fileName, unzFile _file)
     {
         if (m_passwordFunction)
         {

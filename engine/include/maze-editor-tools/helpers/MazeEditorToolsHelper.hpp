@@ -82,7 +82,7 @@ namespace Maze
         MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity3D(CString _entityName, ECSScene* _scene = nullptr);
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API String BuildNewAssetFileName(String const& _fullPath);
+        MAZE_EDITOR_TOOLS_API Path BuildNewAssetFileName(Path const& _fullPath);
 
 
     } // namespace EditorToolsHelper

@@ -52,7 +52,7 @@ namespace Maze
     }
 
     ////////////////////////////////////
-    AssetRegularArchivePtr AssetRegularArchive::Create(String const& _fullPath)
+    AssetRegularArchivePtr AssetRegularArchive::Create(Path const& _fullPath)
     {
         AssetRegularArchivePtr result;
         MAZE_CREATE_AND_INIT_SHARED_PTR(AssetRegularArchive, result, init(_fullPath));
@@ -60,7 +60,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool AssetRegularArchive::init(String const& _fullPath, bool _normalizePath)
+    bool AssetRegularArchive::init(Path const& _fullPath, bool _normalizePath)
     {
         if (!AssetRegularFile::init(_fullPath, _normalizePath))
             return false;
@@ -79,13 +79,13 @@ namespace Maze
         Vector<AssetFilePtr>* _addedFiles,
         Vector<AssetFilePtr>* _removedFiles)
     {
-        Set<String> confirmedFileFullPathes;
+        Set<Path> confirmedFileFullPathes;
 
-        Vector<String> archivedFilePathes = m_archive->getArchivedFilePathes();
+        Vector<Path> archivedFilePathes = m_archive->getArchivedFilePathes();
 
         for (Size j = 0, jn = archivedFilePathes.size(); j < jn; ++j)
         {
-            String const& archivedFilePath = archivedFilePathes[j];
+            Path const& archivedFilePath = archivedFilePathes[j];
 
             auto it = m_childrenAssets.find(archivedFilePath);
             if (it == m_childrenAssets.end())
@@ -98,9 +98,10 @@ namespace Maze
                 {
                     confirmedFileFullPathes.emplace(archivedFile->getFullPath());
 
-                    m_childrenAssets.insert(
-                        archivedFile->getFullPath(),
-                        archivedFile);
+                    m_childrenAssets.emplace(
+                        std::piecewise_construct,
+                        std::forward_as_tuple(archivedFile->getFullPath()),
+                        std::forward_as_tuple(archivedFile));
 
                     if (_addedFiles)
                         _addedFiles->push_back(archivedFile);
@@ -108,9 +109,9 @@ namespace Maze
             }
         }
 
-        for (StringKeyMap<AssetFilePtr>::iterator it = m_childrenAssets.begin(),
-                                                  end = m_childrenAssets.end();
-                                                  it != end;)
+        for (UnorderedMap<Path, AssetFilePtr>::iterator it = m_childrenAssets.begin(),
+                                                        end = m_childrenAssets.end();
+                                                        it != end;)
         {
             if (confirmedFileFullPathes.count((*it).first) == 0)
             {

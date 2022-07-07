@@ -95,7 +95,7 @@ namespace Maze
         
 
         //////////////////////////////////////////
-        virtual StringKeyMap<AssetFilePtr> const* getChildrenAssets() const;
+        virtual UnorderedMap<Path, AssetFilePtr> const* getChildrenAssets() const;
 
         //////////////////////////////////////////
         virtual void updateChildrenAssets(

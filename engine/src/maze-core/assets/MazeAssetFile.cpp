@@ -58,7 +58,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    StringKeyMap<AssetFilePtr> const* AssetFile::getChildrenAssets() const
+    UnorderedMap<Path, AssetFilePtr> const* AssetFile::getChildrenAssets() const
     {
         return nullptr;
     }
@@ -69,7 +69,7 @@ namespace Maze
         ClassUID _classUID,
         bool _recursive) const
     {
-        StringKeyMap<AssetFilePtr> const* childrenAssets = getChildrenAssets();
+        UnorderedMap<Path, AssetFilePtr> const* childrenAssets = getChildrenAssets();
         if (!childrenAssets)
             return;
 
@@ -88,7 +88,7 @@ namespace Maze
         Vector<AssetFilePtr>& _outResult,
         bool _recursive) const
     {
-        StringKeyMap<AssetFilePtr> const* childrenAssets = getChildrenAssets();
+        UnorderedMap<Path, AssetFilePtr> const* childrenAssets = getChildrenAssets();
         if (!childrenAssets)
             return;
 

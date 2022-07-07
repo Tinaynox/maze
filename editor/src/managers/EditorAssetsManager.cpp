@@ -183,9 +183,9 @@ namespace Maze
     void EditorAssetsManager::registerAssetFileCallbacks()
     {
         AssetEditorToolsManager::GetInstancePtr()->registerAssetFileContextMenuCallback(
-            [](AssetsController* _controller, String const& _fullPath, MenuListTree2DPtr const& _menuListTree)
+            [](AssetsController* _controller, Path const& _fullPath, MenuListTree2DPtr const& _menuListTree)
         {
-            String extension = FileHelper::GetFileExtension(_fullPath);
+            Path extension = FileHelper::GetFileExtension(_fullPath);
 
             _menuListTree->addItem(
                 "Create/Folder",

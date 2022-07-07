@@ -66,7 +66,7 @@ namespace Maze
         virtual ~AssetDirectory();
 
         //////////////////////////////////////////
-        virtual StringKeyMap<AssetFilePtr> const* getChildrenAssets() const MAZE_OVERRIDE;
+        virtual UnorderedMap<Path, AssetFilePtr> const* getChildrenAssets() const MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         bool move(Path const& _newFullPath, Vector<Pair<Path, AssetFilePtr>>& _movedFiles) MAZE_OVERRIDE;
@@ -90,7 +90,7 @@ namespace Maze
 
     protected:
 
-        StringKeyMap<AssetFilePtr> m_childrenAssets;
+        UnorderedMap<Path, AssetFilePtr> m_childrenAssets;
     };
 
 } // namespace Maze

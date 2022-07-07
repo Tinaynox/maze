@@ -238,24 +238,24 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API String BuildNewAssetFileName(String const& _fullPath)
+        MAZE_EDITOR_TOOLS_API Path BuildNewAssetFileName(Path const& _fullPath)
         {
             if (!AssetManager::GetInstancePtr()->getAssetFileByFullPath(_fullPath))
                 return _fullPath;
 
             S32 i = 1;
 
-            String dir = FileHelper::GetParentDirectoryInPath(_fullPath);
-            String fileName = FileHelper::GetFileNameInPath(_fullPath);
-            String fileNameWithoutExtension = FileHelper::GetFileNameWithoutExtension(fileName);
-            String fileExtension = FileHelper::GetFileExtension(fileName);
+            Path dir = FileHelper::GetParentDirectoryInPath(_fullPath);
+            Path fileName = FileHelper::GetFileNameInPath(_fullPath);
+            Path fileNameWithoutExtension = FileHelper::GetFileNameWithoutExtension(fileName);
+            Path fileExtension = FileHelper::GetFileExtension(fileName);
 
-            String newPath;
+            Path newPath;
             do
             {
                 newPath = dir + "/" + fileNameWithoutExtension + " " + StringHelper::ToString(i);
                 if (!fileExtension.empty())
-                    newPath += "." + fileExtension;
+                    newPath += Path(".") + fileExtension;
                 ++i;
             }
             while (AssetManager::GetInstancePtr()->getAssetFileByFullPath(newPath));

@@ -1046,7 +1046,19 @@ namespace Maze
 
                 _s.erase(pos, _search.length());
             }
+        }
 
+        //////////////////////////////////////////
+        inline void RemoveSubstring(WString& _s, WString const& _search) noexcept
+        {
+            for (Size pos = 0; ; pos += 1)
+            {
+                pos = _s.find(_search, pos);
+                if (pos == String::npos)
+                    break;
+
+                _s.erase(pos, _search.length());
+            }
         }
 
         //////////////////////////////////////////

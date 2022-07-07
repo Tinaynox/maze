@@ -52,7 +52,7 @@ namespace Maze
     }
 
     ////////////////////////////////////
-    MAZE_PLUGIN_ARCHIVE_ASSETS_API String CallObfuscationPasswordFunction(String const& _fileName)
+    MAZE_PLUGIN_ARCHIVE_ASSETS_API String CallObfuscationPasswordFunction(Path const& _fileName)
     {
         if (g_obfuscationPasswordFunction)
             return g_obfuscationPasswordFunction(_fileName);
@@ -61,59 +61,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    inline void StartMinizipObfuscation()
-    {
-        /*
-        zipFile zf = zipOpen("minizip-dummy", APPEND_STATUS_CREATE);
-
-        if (ZIP_OK == zipOpenNewFileInZip3(
-            zf,
-            "dummy-file",
-            nullptr,
-            nullptr,
-            0,
-            nullptr,
-            0,
-            nullptr,
-            Z_DEFLATED,
-            MZ_COMPRESS_METHOD_STORE,
-            0,
-            -MAX_WBITS,
-            MZ_COMPRESS_LEVEL_DEFAULT,
-            0,
-            "dummy-password",
-            0
-        ))
-        {
-            CString dummyData = "dummy-data";
-            zipWriteInFileInZip(zf, dummyData, sizeof(dummyData));
-            zipCloseFileInZip(zf);
-        }
-
-        zipClose(zf, nullptr);
-
-        FileHelper::DeleteRegularFile("minizip-dummy");
-
-        srand(ZCR_SEED2);
-        */
-    }
-
-    //////////////////////////////////////////
-    inline void EndMinizipObfuscation()
-    {
-
-    }
-
-    //////////////////////////////////////////
-    inline void AddAssetFilesIntoZip(zipFile zf, Vector<AssetFilePtr>& _files, String _path)
+    inline void AddAssetFilesIntoZip(zipFile zf, Vector<AssetFilePtr>& _files, Path _path)
     {
         for (AssetFilePtr const& file : _files)
         {
-            String fileName = file->getFileName();
+            Path fileName = file->getFileName();
 
             if (file->getMetaClass()->isInheritedFrom<AssetDirectory>())
             {
-                String directoryPath = file->castRaw<AssetDirectory>()->getFullPath();
+                Path directoryPath = file->castRaw<AssetDirectory>()->getFullPath();
                 Vector<AssetFilePtr> folderFiles = AssetHelper::GetAllAssetFilesInDirectory(directoryPath);
 
                 AddAssetFilesIntoZip(zf, folderFiles, _path + "/" + fileName);
@@ -124,7 +80,7 @@ namespace Maze
 
                 S32 result = zipOpenNewFileInZip3(
                     zf,
-                    (_path + '/' + fileName).c_str(),
+                    (_path + '/' + fileName).toUTF8().c_str(),
                     nullptr,
                     nullptr,
                     0,
@@ -142,16 +98,16 @@ namespace Maze
 
                 if (result == ZIP_OK)
                 {
-                    Debug::Log("Packing %s...", fileName.c_str());
+                    Debug::Log("Packing %s...", fileName.toUTF8().c_str());
 
                     if (zipWriteInFileInZip(zf, byteBuffer->getData(), (U32)byteBuffer->getSize()))
                     {
-                        MAZE_WARNING("Can not write file %s into zip archive", fileName.c_str());
+                        MAZE_WARNING("Can not write file %s into zip archive", fileName.toUTF8().c_str());
                     }
 
                     if (zipCloseFileInZip(zf))
                     {
-                        MAZE_WARNING("Can not close file %s in zip archive", fileName.c_str());
+                        MAZE_WARNING("Can not close file %s in zip archive", fileName.toUTF8().c_str());
                     }
                 }
                 else
@@ -164,8 +120,8 @@ namespace Maze
 
     //////////////////////////////////////////
     MAZE_PLUGIN_ARCHIVE_ASSETS_API void ObfuscateAssetPacks(
-        String const& _srcPath,
-        String const& _destPath)
+        Path const& _srcPath,
+        Path const& _destPath)
     {
         ObfuscateAssetPacks(
             _srcPath,
@@ -176,15 +132,15 @@ namespace Maze
 
     //////////////////////////////////////////
     MAZE_PLUGIN_ARCHIVE_ASSETS_API void ObfuscateAssetPacks(
-        String const& _srcPath,
-        String const& _destPath,
-        String const& _targetSrcPath,
-        String const& _targetDestPath)
+        Path const& _srcPath,
+        Path const& _destPath,
+        Path const& _targetSrcPath,
+        Path const& _targetDestPath)
     {
-        String targetSrcFullPath = FileHelper::ConvertLocalPathToFullPath(_targetSrcPath.c_str());
-        String targetDestFullPath = FileHelper::ConvertLocalPathToFullPath(_targetDestPath.c_str());
+        Path targetSrcFullPath = FileHelper::ConvertLocalPathToFullPath(_targetSrcPath);
+        Path targetDestFullPath = FileHelper::ConvertLocalPathToFullPath(_targetDestPath);
 
-        FileHelper::CreateDirectoryRecursive(_destPath.c_str());
+        FileHelper::CreateDirectoryRecursive(_destPath);
 
         Vector<AssetFilePtr> files = AssetHelper::GetAllAssetFilesInDirectory(_srcPath);
         for (AssetFilePtr const& file : files)
@@ -193,14 +149,14 @@ namespace Maze
             {
                 if (file->getExtension() == "mzap")
                 {
-                    String fileFullPath = file->getFullPath();
-                    String relPath = fileFullPath;
+                    Path fileFullPath = file->getFullPath();
+                    Path::StringType relPath = fileFullPath;
                     StringHelper::RemoveSubstring(relPath, _targetSrcPath);
-                    String targetPackFullPath = _targetDestPath + relPath;
-                    String targetPackDirectoryFullPath = FileHelper::GetDirectoryInPath(targetPackFullPath);
+                    Path targetPackFullPath = _targetDestPath + relPath;
+                    Path targetPackDirectoryFullPath = FileHelper::GetDirectoryInPath(targetPackFullPath);
                     FileHelper::CreateDirectoryRecursive(targetPackDirectoryFullPath.c_str());
 
-                    zipFile zf = zipOpen(targetPackFullPath.c_str(), APPEND_STATUS_CREATE);
+                    zipFile zf = zipOpen(targetPackFullPath.toUTF8().c_str(), APPEND_STATUS_CREATE);
                     if (!zf)
                         continue;
 
@@ -220,12 +176,12 @@ namespace Maze
             }
             else
             {
-                String fileFullPath = file->getFullPath();
-                String relPath = fileFullPath;
+                Path fileFullPath = file->getFullPath();
+                Path::StringType relPath = fileFullPath;
                 StringHelper::RemoveSubstring(relPath, _targetSrcPath);
-                String targetPackFullPath = _targetDestPath + relPath;
+                Path targetPackFullPath = _targetDestPath + relPath;
 
-                FileHelper::CopyRegularFile(file->getFullPath().c_str(), targetPackFullPath.c_str());
+                FileHelper::CopyRegularFile(file->getFullPath(), targetPackFullPath);
             }
         }
     }

@@ -81,7 +81,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        bool loadOALLibrary(CString _libFullPath = nullptr);
+        bool loadOALLibrary(Path const& _libFullPath = Path());
 
         //////////////////////////////////////////
         void unloadOALLibrary();

@@ -65,8 +65,8 @@ namespace Maze
         {
             unz_file_pos filePos;
             U32 uncompressedSize;
-            String fullPath;
-            String fileName;
+            Path fullPath;
+            Path fileName;
         };
 
         //////////////////////////////////////////
@@ -78,39 +78,39 @@ namespace Maze
         virtual ~ArchiveFileZip();
 
         ////////////////////////////////////
-        static ArchiveFileZipPtr Create(String const& _fullPath);
+        static ArchiveFileZipPtr Create(Path const& _fullPath);
 
 
         //////////////////////////////////////////
-        inline HashedString const& getFullPath() const { return m_fullPath; }
+        inline Path const& getFullPath() const { return m_fullPath; }
 
 
         //////////////////////////////////////////
         bool updateZipNavigationMap();
 
         //////////////////////////////////////////
-        Vector<String> getArchivedFilePathes();
+        Vector<Path> getArchivedFilePathes();
 
         ////////////////////////////////////
-        Size readArchivedFileToBuffer(String const& _filePath, U8* _bytes, Size _bufferSize);
+        Size readArchivedFileToBuffer(Path const& _filePath, U8* _bytes, Size _bufferSize);
 
         ////////////////////////////////////
-        Size readArchivedFileToString(String const& _filePath, String& _stringBuffer);
+        Size readArchivedFileToString(Path const& _filePath, String& _stringBuffer);
 
         ////////////////////////////////////
-        ByteBufferPtr readArchivedFileAsByteBuffer(String const& _filePath);
+        ByteBufferPtr readArchivedFileAsByteBuffer(Path const& _filePath);
 
         ////////////////////////////////////
-        Size getArchivedFileLength(String const& _filePath);
+        Size getArchivedFileLength(Path const& _filePath);
 
         ////////////////////////////////////
-        FileStats getArchivedFileStats(String const& _filePath);
+        FileStats getArchivedFileStats(Path const& _filePath);
 
         ////////////////////////////////////
         bool isFileExists();
 
         ////////////////////////////////////
-        bool isFileExists(String const& _filePath);
+        bool isFileExists(Path const& _filePath);
 
     protected:
 
@@ -118,20 +118,20 @@ namespace Maze
         ArchiveFileZip();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _fullPath);
+        virtual bool init(Path const& _fullPath);
 
 
         //////////////////////////////////////////
-        bool openZip(String const& _fullPath);
+        bool openZip(Path const& _fullPath);
 
         //////////////////////////////////////////
         void closeZip();
     
         ////////////////////////////////////
-        S32 tryUnzOpenCurrentFile(String const& _fileName, unzFile _file);
+        S32 tryUnzOpenCurrentFile(Path const& _fileName, unzFile _file);
 
     protected:
-        HashedString m_fullPath;
+        Path m_fullPath;
         unzFile m_zipHandle = nullptr;
 
         ZipNavigationMap m_zipNavigationMap;

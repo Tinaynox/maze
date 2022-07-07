@@ -55,7 +55,7 @@ namespace Maze
     ////////////////////////////////////
     AssetArchivedFilePtr AssetArchivedFile::Create(
         ArchiveFileZipPtr const& _archive,
-        String const& _zipArchiveFilePath)
+        Path const& _zipArchiveFilePath)
     {
         AssetArchivedFilePtr result;
         MAZE_CREATE_AND_INIT_SHARED_PTR(AssetArchivedFile, result, init(_archive, _zipArchiveFilePath));
@@ -65,12 +65,12 @@ namespace Maze
     //////////////////////////////////////////
     bool AssetArchivedFile::init(
         ArchiveFileZipPtr const& _archive,
-        String const& _zipArchiveFilePath)
+        Path const& _zipArchiveFilePath)
     {
         m_archive = _archive;
         m_zipArchiveFilePath = _zipArchiveFilePath;
         m_fileName = FileHelper::GetFileNameInPath(_zipArchiveFilePath);
-        m_fullPath = _archive->getFullPath().getString() + _zipArchiveFilePath;
+        m_fullPath = _archive->getFullPath() + _zipArchiveFilePath;
         
         return true;
     }
@@ -94,14 +94,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool AssetArchivedFile::move(String const& _newFullPath, Vector<Pair<String, AssetFilePtr>>& _renamedFiles)
+    bool AssetArchivedFile::move(Path const& _newFullPath, Vector<Pair<Path, AssetFilePtr>>& _renamedFiles)
     {
         MAZE_NOT_IMPLEMENTED;
         return false;
     }
 
     //////////////////////////////////////////
-    StringKeyMap<AssetFilePtr> const* AssetArchivedFile::getChildrenAssets() const
+    UnorderedMap<Path, AssetFilePtr> const* AssetArchivedFile::getChildrenAssets() const
     {
         return nullptr;
     }

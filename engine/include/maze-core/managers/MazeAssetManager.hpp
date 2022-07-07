@@ -46,7 +46,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    using FileChildrenProcessor = std::function<AssetFilePtr(String const, Vector<AssetFilePtr>*, Vector<AssetFilePtr>*)>;
+    using FileChildrenProcessor = std::function<AssetFilePtr(Path const, Vector<AssetFilePtr>*, Vector<AssetFilePtr>*)>;
 
 
     //////////////////////////////////////////
@@ -174,7 +174,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline FileChildrenProcessor getFileChildrenProcessor(Path const& _extension) const
+        inline FileChildrenProcessor getFileChildrenProcessor(String const& _extension) const
         {
             auto it = m_fileChildrenProcessors.find(_extension);
             if (it != m_fileChildrenProcessors.end())

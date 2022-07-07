@@ -70,7 +70,7 @@ namespace Maze
     {
     public:
         //////////////////////////////////////////
-        using AssetFileContextMenuCallback = std::function<void(AssetsController*, String const&, MenuListTree2DPtr const&)>;
+        using AssetFileContextMenuCallback = std::function<void(AssetsController*, Path const&, MenuListTree2DPtr const&)>;
 
     public:
 
@@ -121,7 +121,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        void callAssetFileContextMenuCallback(AssetsController* _controller, String const& _fullPath, MenuListTree2DPtr const& _tree);
+        void callAssetFileContextMenuCallback(AssetsController* _controller, Path const& _fullPath, MenuListTree2DPtr const& _tree);
 
 
         //////////////////////////////////////////
