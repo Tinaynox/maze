@@ -269,7 +269,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetsController::setAssetsFullPath(String const& _assetsFullPath)
+    void AssetsController::setAssetsFullPath(Path const& _assetsFullPath)
     {
         if (m_assetsFullPath == _assetsFullPath)
             return;
@@ -339,7 +339,7 @@ namespace Maze
             assetDirectories.end(),
             [](AssetFilePtr const& _a, AssetFilePtr const& _b) -> bool
             {
-                return _a->getFullPath().getString() < _b->getFullPath().getString();
+                return _a->getFullPath() < _b->getFullPath();
             });
 
         for (AssetFilePtr const& assetFile : assetDirectories)
@@ -405,7 +405,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetsController::setSelectedAssetFolder(String const& _value)
+    void AssetsController::setSelectedAssetFolder(Path const& _value)
     {
         if (m_selectedAssetFolder == _value)
             return;
@@ -516,7 +516,7 @@ namespace Maze
             assetFiles.end(),
             [](AssetFilePtr const& _a, AssetFilePtr const& _b) -> bool
             {
-                return _a->getFullPath().getString() < _b->getFullPath().getString();
+                return _a->getFullPath() < _b->getFullPath();
             });
 
         for (AssetFilePtr const& assetFile : assetFiles)
@@ -603,7 +603,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetsController::notifyAssetFileMoved(AssetFilePtr const& _file, String const& _prevFullPath)
+    void AssetsController::notifyAssetFileMoved(AssetFilePtr const& _file, Path const& _prevFullPath)
     {
         m_assetsTreeDirty = true;
         m_selectedAssetsFolder = true;

@@ -77,7 +77,7 @@ namespace Maze
 
     //////////////////////////////////////////
     MAZE_PLUGIN_ARCHIVE_ASSETS_API AssetFilePtr ProcessMazeAssetPack(
-        String const& _fileFullPath,
+        Path const& _fileFullPath,
         Vector<AssetFilePtr>* _addedFiles,
         Vector<AssetFilePtr>* _removedFiles)
     {

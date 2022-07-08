@@ -81,13 +81,13 @@ namespace Maze
         ArchiveFileZipPtr const& getAssetArchive() const { return m_archive; }
 
         //////////////////////////////////////////
-        String const& getZipArchiveFilePath() const { return m_zipArchiveFilePath; }
+        Path const& getZipArchiveFilePath() const { return m_zipArchiveFilePath; }
 
         //////////////////////////////////////////
-        HashedString const& getFileName() const MAZE_OVERRIDE { return m_fileName; }
+        Path const& getFileName() const MAZE_OVERRIDE { return m_fileName; }
 
         //////////////////////////////////////////
-        HashedString const& getFullPath() const MAZE_OVERRIDE { return m_fullPath; }
+        Path const& getFullPath() const MAZE_OVERRIDE { return m_fullPath; }
 
         //////////////////////////////////////////
         virtual Size getFileSize() MAZE_OVERRIDE;
@@ -99,11 +99,11 @@ namespace Maze
         virtual bool isFileExists() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual bool move(String const& _newFullPath, Vector<Pair<String, AssetFilePtr>>& _renamedFiles) MAZE_OVERRIDE;
+        virtual bool move(Path const& _newFullPath, Vector<Pair<Path, AssetFilePtr>>& _renamedFiles) MAZE_OVERRIDE;
 
 
         //////////////////////////////////////////
-        virtual StringKeyMap<AssetFilePtr> const* getChildrenAssets() const MAZE_OVERRIDE;
+        virtual UnorderedMap<Path, AssetFilePtr> const* getChildrenAssets() const MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual void updateChildrenAssets(
@@ -129,7 +129,7 @@ namespace Maze
         ////////////////////////////////////
         static AssetArchivedFilePtr Create(
             ArchiveFileZipPtr const& _archive,
-            String const& _zipArchiveFilePath);
+            Path const& _zipArchiveFilePath);
 
         //////////////////////////////////////////
         AssetArchivedFile();
@@ -140,14 +140,14 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init(
             ArchiveFileZipPtr const& _archive,
-            String const& _zipArchiveFilePath);
+            Path const& _zipArchiveFilePath);
 
     
     protected:
         ArchiveFileZipPtr m_archive;
-        String m_zipArchiveFilePath;
-        HashedString m_fileName;
-        HashedString m_fullPath;
+        Path m_zipArchiveFilePath;
+        Path m_fileName;
+        Path m_fullPath;
     };
 
 

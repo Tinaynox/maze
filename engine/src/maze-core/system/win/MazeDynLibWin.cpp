@@ -51,7 +51,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    bool DynLibWin::init(String const& _libraryFullPath)
+    bool DynLibWin::init(Path const& _libraryFullPath)
     {
         if (!DynLib::init(_libraryFullPath))
             return false;
@@ -63,17 +63,17 @@ namespace Maze
     //////////////////////////////////////////
     bool DynLibWin::load()
     {
-        Debug::log << "Loading dynamic library: " << m_libraryFullPath << "..." << endl;
+        Debug::log << "Loading dynamic library: " << m_libraryFullPath.toUTF8() << "..." << endl;
 
-        String libraryFullPath = m_libraryFullPath;
+        Path libraryFullPath = m_libraryFullPath;
         
-        if (libraryFullPath.substr(libraryFullPath.find_last_of(".") + 1) != "dll")
+        if (libraryFullPath.getPath().substr(libraryFullPath.getPath().find_last_of(Path(".").c_str()) + 1) != Path("dll").c_str())
             libraryFullPath += ".dll";
 
-        m_handle = LoadLibraryEx(libraryFullPath.c_str(), NULL, 0);
-        MAZE_ERROR_RETURN_VALUE_IF(m_handle == nullptr, false, "Failed to load dynamic library: %s", libraryFullPath.c_str());
+        m_handle = LoadLibraryEx(libraryFullPath.toUTF8().c_str(), NULL, 0);
+        MAZE_ERROR_RETURN_VALUE_IF(m_handle == nullptr, false, "Failed to load dynamic library: %s", libraryFullPath.toUTF8().c_str());
 
-        Debug::log << "Dynamic library loaded: " << m_libraryFullPath << endl;
+        Debug::log << "Dynamic library loaded: " << m_libraryFullPath.toUTF8() << endl;
 
         return true;
     }
@@ -84,15 +84,15 @@ namespace Maze
         if (m_handle == nullptr)
             return;
 
-        Debug::log << "Unloading dynamic library: " << m_libraryFullPath << "..." << endl;
+        Debug::log << "Unloading dynamic library: " << m_libraryFullPath.toUTF8() << "..." << endl;
 
         if (!FreeLibrary(m_handle))
         {
-            MAZE_ERROR("Failed to unload dynamic library: %s", m_libraryFullPath.c_str());
+            MAZE_ERROR("Failed to unload dynamic library: %s", m_libraryFullPath.toUTF8().c_str());
         }
         else
         {
-            Debug::log << "Dynamic library unloaded: " << m_libraryFullPath << endl;
+            Debug::log << "Dynamic library unloaded: " << m_libraryFullPath.toUTF8() << endl;
         }
 
         m_handle = nullptr;

@@ -36,6 +36,7 @@
 #include "maze-core/system/MazeThread.hpp"
 #include "maze-core/system/std/MazeThread_std.hpp"
 #include "maze-core/system/MazeTimer.hpp"
+#include "maze-core/system/MazePath.hpp"
 #include "maze-core/services/MazeLogService.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
@@ -265,7 +266,6 @@ void OnInit()
     Maze::ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
 
     shaderSystem->findAssetShadersAndAddToCache();
-
 
     g_main->scene = g_main->sceneManager->loadScene<SceneExample>();
 }

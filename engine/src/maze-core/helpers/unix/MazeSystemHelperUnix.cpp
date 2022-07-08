@@ -39,14 +39,14 @@ namespace Maze
     namespace SystemHelper
     {
         //////////////////////////////////////////
-        MAZE_CORE_API void OpenURL(String const& _url)
+        MAZE_CORE_API void OpenURL(Path const& _url)
         {
 
 
         }
         
         //////////////////////////////////////////
-        MAZE_CORE_API void OpenExplorer(String const& _fullPath, bool _select)
+        MAZE_CORE_API void OpenExplorer(Path const& _fullPath, bool _select)
         {
         }
 

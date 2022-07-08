@@ -88,6 +88,49 @@ namespace Maze
     #define MAZE_HASHED_CSTRING_CT(DText) HashedCString { DText, HashedCString::HashCalculator<CalculateFNV1(DText)>::hash }
 
 
+    //////////////////////////////////////////
+    // Struct HashedCWString
+    //
+    //////////////////////////////////////////
+    struct MAZE_CORE_API HashedCWString
+    {
+        CWString str = nullptr;
+        U32 hash = 0u;
+
+        //////////////////////////////////////////
+        inline HashedCWString() : str(L""), hash(CalculateFNV1(L"")) {}
+
+        //////////////////////////////////////////
+        inline HashedCWString(CWString _str, U32 _hash) : str(_str), hash(_hash) {}
+
+        //////////////////////////////////////////
+        inline HashedCWString(CWString _str) : str(_str), hash(CalculateFNV1(_str)) {}
+
+        //////////////////////////////////////////
+        inline bool operator==(HashedCWString const& _value) const
+        {
+            if (hash != _value.hash)
+                return false;
+
+            return wcscmp(str, _value.str) == 0;
+        }
+
+        //////////////////////////////////////////
+        inline bool operator!=(HashedCWString const& _value) const
+        {
+            return !this->operator==(_value);
+        }
+
+        template <U32 THashValue>
+        struct HashCalculator { static MAZE_CONSTEXPR U32 const hash = THashValue; };
+    };
+
+
+    //////////////////////////////////////////
+    #define MAZE_HASHED_CWSTRING(DText) HashedCWString { DText, CalculateFNV1(DText) }
+    #define MAZE_HASHED_CWSTRING_CT(DText) HashedCWString { DText, HashedCString::HashCalculator<CalculateFNV1(DText)>::hash }
+
+
 } // namespace Maze
 //////////////////////////////////////////
 

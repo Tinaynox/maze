@@ -41,7 +41,7 @@ namespace Maze
     namespace SystemHelper
     {
         //////////////////////////////////////////
-        MAZE_CORE_API void OpenURL(String const& _url);
+        MAZE_CORE_API void OpenURL(Path const& _url);
 
         //////////////////////////////////////////
         MAZE_CORE_API String const& GetOSVersion();

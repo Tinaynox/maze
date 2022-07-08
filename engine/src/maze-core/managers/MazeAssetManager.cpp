@@ -79,14 +79,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetManager::addAssetsDirectoryPath(String const& _path)
+    void AssetManager::addAssetsDirectoryPath(Path const& _path)
     {
         m_assetDirectoryPathes.insert(_path);
         addAssetsDirectory(_path, true);
     }
 
     //////////////////////////////////////////
-    void AssetManager::removeAssetsDirectoryPath(String const& _path)
+    void AssetManager::removeAssetsDirectoryPath(Path const& _path)
     {
         m_assetDirectoryPathes.erase(_path);
         removeAssetsDirectory(_path, true);
@@ -98,15 +98,15 @@ namespace Maze
         Vector<AssetFilePtr> addedFiles;
         Vector<AssetFilePtr> removedFiles;
 
-        Set<String> rootAssetDirectories = AssetManager::collectRootAssetDirectoryPathes();
-        for (String const& fullPath : rootAssetDirectories)
+        Set<Path> rootAssetDirectories = AssetManager::collectRootAssetDirectoryPathes();
+        for (Path const& fullPath : rootAssetDirectories)
         {
             const AssetFilePtr& rootAsset = getAssetFileByFullPath(fullPath);
             if (rootAsset)
                 rootAsset->updateChildrenAssets(true, &addedFiles, &removedFiles);
             else
             {
-                MAZE_ERROR("Undefined rootAsset for path '%s'", fullPath.c_str());
+                MAZE_ERROR("Undefined rootAsset for path '%s'", fullPath.toUTF8().c_str());
             }
         }
 
@@ -127,15 +127,15 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    void AssetManager::addAssetsDirectory(String const& _path, bool _recursive)
+    void AssetManager::addAssetsDirectory(Path const& _path, bool _recursive)
     {
-        String fullPath = FileHelper::ConvertLocalPathToFullPath(_path.c_str());
+        Path fullPath = FileHelper::ConvertLocalPathToFullPath(_path);
         
         MAZE_ERROR_RETURN_IF(!FileHelper::IsDirectory(fullPath), "%s is not a directory!", _path.c_str());
 
         AssetDirectoryPtr directory;
 
-        StringKeyMap<AssetFilePtr>::iterator it = m_assetFilesByFullPath.find(fullPath);
+        UnorderedMap<Path, AssetFilePtr>::iterator it = m_assetFilesByFullPath.find(fullPath);
         if (it == m_assetFilesByFullPath.end())
         {
             directory = AssetDirectory::Create(fullPath);
@@ -146,7 +146,7 @@ namespace Maze
         }
         else
         {
-            MAZE_ERROR_RETURN_IF(it->second->getClassUID() != ClassInfo<AssetDirectory>::UID(), "%s is not a AssetDirectory!", _path.c_str());
+            MAZE_ERROR_RETURN_IF(it->second->getClassUID() != ClassInfo<AssetDirectory>::UID(), "%s is not a AssetDirectory!", _path.toUTF8().c_str());
             directory = it->second->cast<AssetDirectory>();
         }
 
@@ -171,9 +171,9 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    void AssetManager::removeAssetsDirectory(String const& _path, bool _recursive)
+    void AssetManager::removeAssetsDirectory(Path const& _path, bool _recursive)
     {
-        String fullPath = FileHelper::ConvertLocalPathToFullPath(_path.c_str());
+        Path fullPath = FileHelper::ConvertLocalPathToFullPath(_path.c_str());
     
         Vector<AssetFilePtr> removedFiles;
         
@@ -187,7 +187,7 @@ namespace Maze
         String info;
         
         info += "[Assets Info]\n";
-        info += "\tDefault Assets Directory: " + getDefaultAssetsDirectory() + "\n";
+        info += "\tDefault Assets Directory: " + getDefaultAssetsDirectory().toUTF8() + "\n";
         
         info += "Assets:\n";
         for (auto const& assetFileByFileNameData : m_assetFilesByFileName)
@@ -202,13 +202,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    AssetFilePtr const& AssetManager::getAssetFileByFileName(HashedCString _fileName)
+    AssetFilePtr const& AssetManager::getAssetFileByFileName(Path const& _fileName)
     {
         static AssetFilePtr nullPtr;
 
-        MAZE_ERROR_RETURN_VALUE_IF(strcmp(_fileName.str, "") == 0, nullPtr, "Empty file name!");
+        MAZE_ERROR_RETURN_VALUE_IF(strcmp(_fileName.toUTF8().c_str(), "") == 0, nullPtr, "Empty file name!");
 
-        StringKeyMap<AssetFilePtr>::iterator it = m_assetFilesByFileName.find(_fileName);
+        UnorderedMap<Path, AssetFilePtr>::iterator it = m_assetFilesByFileName.find(_fileName);
         if (it == m_assetFilesByFileName.end())
             return nullPtr;
 
@@ -216,11 +216,11 @@ namespace Maze
     }
         
     //////////////////////////////////////////
-    AssetFilePtr const& AssetManager::getAssetFileByFullPath(HashedCString _fileFullPath)
+    AssetFilePtr const& AssetManager::getAssetFileByFullPath(Path const& _fileFullPath)
     {
         static AssetFilePtr nullPtr;
         
-        StringKeyMap<AssetFilePtr>::iterator it = m_assetFilesByFullPath.find(_fileFullPath);
+        UnorderedMap<Path, AssetFilePtr>::iterator it = m_assetFilesByFullPath.find(_fileFullPath);
         if (it == m_assetFilesByFullPath.end())
             return nullPtr;
         
@@ -228,10 +228,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    const AssetFilePtr& AssetManager::getAssetFile(HashedCString _string)
+    const AssetFilePtr& AssetManager::getAssetFile(Path const& _string)
     {
-        return strstr(_string.str, "/") != nullptr ? getAssetFileByFullPath(_string.str)
-                                                   : getAssetFileByFileName(_string.str);
+        if (_string.getPath().find('/') != Path::StringType::npos)
+            return getAssetFileByFullPath(_string);
+        else
+            return getAssetFileByFileName(_string);
     }
 
     //////////////////////////////////////////
@@ -245,7 +247,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetManager::moveAssetFile(const AssetFilePtr& _assetFile, String const& _newFullPath)
+    void AssetManager::moveAssetFile(const AssetFilePtr& _assetFile, Path const& _newFullPath)
     {
         if (!_assetFile)
             return;
@@ -254,13 +256,13 @@ namespace Maze
             m_assetDirectoryPathes.find(_assetFile->getFullPath()) != m_assetDirectoryPathes.end(),
             "It's forbidden to move root asset directories!");
 
-        Vector<Pair<String, AssetFilePtr>> movedFiles;
+        Vector<Pair<Path, AssetFilePtr>> movedFiles;
         if (_assetFile->move(_newFullPath, movedFiles))
         {
             for (auto movedFileData : movedFiles)
             {
-                String const& fullPath = movedFileData.first;
-                String fileName = FileHelper::GetFileNameInPath(fullPath);
+                Path const& fullPath = movedFileData.first;
+                Path fileName = FileHelper::GetFileNameInPath(fullPath);
 
                 AssetFilePtr const& assetFile = movedFileData.second;
 
@@ -317,7 +319,7 @@ namespace Maze
     //////////////////////////////////////////
     bool AssetManager::openXMLDocumentAssetFile(
         tinyxml2::XMLDocument& _doc,
-        String const& _fileName,
+        Path const& _fileName,
         bool _warningIfNotExists)
     {
         AssetFilePtr const& assetFile = getAssetFileByFileName(_fileName);
@@ -343,8 +345,8 @@ namespace Maze
     {
         Vector<AssetFilePtr> result;
 
-        StringKeyMap<AssetFilePtr>::iterator it = m_assetFilesByFullPath.begin();
-        StringKeyMap<AssetFilePtr>::iterator end = m_assetFilesByFullPath.end();
+        UnorderedMap<Path, AssetFilePtr>::iterator it = m_assetFilesByFullPath.begin();
+        UnorderedMap<Path, AssetFilePtr>::iterator end = m_assetFilesByFullPath.end();
         for (; it != end; ++it)
         {
             if ((*it).second->getExtension() == _extension)
@@ -370,8 +372,8 @@ namespace Maze
     {
         Vector<AssetFilePtr> result;
 
-        StringKeyMap<AssetFilePtr>::iterator it = m_assetFilesByFullPath.begin();
-        StringKeyMap<AssetFilePtr>::iterator end = m_assetFilesByFullPath.end();
+        UnorderedMap<Path, AssetFilePtr>::iterator it = m_assetFilesByFullPath.begin();
+        UnorderedMap<Path, AssetFilePtr>::iterator end = m_assetFilesByFullPath.end();
         for (; it != end; ++it)
         {
             if (_extensions.count((*it).second->getExtension()))
@@ -401,20 +403,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vector<AssetFilePtr> AssetManager::getAssetFilesInFolder(String const& _folderFullPath)
+    Vector<AssetFilePtr> AssetManager::getAssetFilesInFolder(Path const& _folderFullPath)
     {
         Vector<AssetFilePtr> result;
         for (auto data : m_assetFilesByFullPath)
         {
-            if (data.second->getFullPath().getString() != _folderFullPath &&
+            if (data.second->getFullPath() != _folderFullPath &&
                 data.second->getFullPath().size() > _folderFullPath.size() + 1u &&
                 data.second->getFullPath()[_folderFullPath.size()] == '/' &&
-                StringHelper::IsStartsWith(data.second->getFullPath(), _folderFullPath))
+                StringHelper::IsStartsWith(data.second->getFullPath().getPath(), _folderFullPath.getPath()))
             {
-                String relativePath = data.second->getFullPath().getString().substr(
+                Path relativePath = data.second->getFullPath().getPath().substr(
                     _folderFullPath.size() + 1, data.second->getFullPath().size() - _folderFullPath.size() - 1);
 
-                if (relativePath.find('/') == String::npos)
+                if (relativePath.getPath().find('/') == Path::StringType::npos)
                     result.emplace_back(data.second);
             }
         }
@@ -423,9 +425,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    String AssetManager::getMetaDataFullPath(AssetFilePtr const& _assetFile)
+    Path AssetManager::getMetaDataFullPath(AssetFilePtr const& _assetFile)
     {
-        return _assetFile->getFullPath().getString() + ".meta";
+        return _assetFile->getFullPath() + ".meta";
     }
 
     //////////////////////////////////////////
@@ -492,25 +494,25 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Set<String> AssetManager::collectRootAssetDirectoryPathes()
+    Set<Path> AssetManager::collectRootAssetDirectoryPathes()
     {
-        Set<String> result = m_assetDirectoryPathes;
+        Set<Path> result = m_assetDirectoryPathes;
 
         // Remove sub directories
         for (auto it = result.begin(),
                   end = result.end();
                   it != end;)
         {
-            String const& fullPath = *it;
+            Path const& fullPath = *it;
             bool isSubDirectory = std::find_if(
                 result.begin(),
                 result.end(),
-                [&fullPath](String const& _fullPath)
+                [&fullPath](Path const& _fullPath)
                 {
                     if (fullPath == _fullPath)
                         return false;
 
-                    return StringHelper::IsStartsWith(_fullPath, fullPath);
+                    return StringHelper::IsStartsWith(_fullPath.getPath(), fullPath.getPath());
                 }) != result.end();
 
             if (isSubDirectory)

@@ -102,12 +102,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ContextOpenALWin::loadOALLibrary(CString _libFullPath)
+    bool ContextOpenALWin::loadOALLibrary(Path const& _libFullPath)
     {
-        if (_libFullPath)
-            m_openALDLL = LoadLibrary(_libFullPath);
+        if (!_libFullPath.empty())
+            m_openALDLL = LoadLibraryW(_libFullPath.c_str());
         else
-            m_openALDLL = LoadLibrary("openal32.dll");
+            m_openALDLL = LoadLibraryW(L"openal32.dll");
 
         if (!m_openALDLL)
             return false;

@@ -52,14 +52,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool LogServiceBase::setLogFile(CString _fullPath)
+    bool LogServiceBase::setLogFile(Path const& _fullPath)
     {
-        logFormatted(c_logPriority_Default, "Log File: %s\n", _fullPath);
+        logFormatted(c_logPriority_Default, "Log File: %s\n", _fullPath.toUTF8().c_str());
 
-        String logDir = FileHelper::GetDirectoryInPath(_fullPath);
-        FileHelper::CreateDirectoryRecursive(logDir.c_str());
+        Path logDir = FileHelper::GetDirectoryInPath(_fullPath);
+        FileHelper::CreateDirectoryRecursive(logDir);
         
-        m_logFile.open(_fullPath, std::ofstream::binary | std::ofstream::trunc);
+        m_logFile.open(_fullPath.c_str(), std::ofstream::binary | std::ofstream::trunc);
         if (!m_logFile.is_open())
         {
             logFormatted(c_logPriority_Error, "Log File cannot be opened!\n");

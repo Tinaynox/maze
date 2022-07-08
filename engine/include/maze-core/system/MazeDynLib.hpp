@@ -33,6 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/MazeTypes.hpp"
+#include "maze-core/system/MazePath.hpp"
 
 
 //////////////////////////////////////////
@@ -55,11 +56,11 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        static DynLibPtr Create(String const& _libraryFullPath);
+        static DynLibPtr Create(Path const& _libraryFullPath);
 
 
         //////////////////////////////////////////
-        String const& getLibraryFullPath() const { return m_libraryFullPath; }
+        Path const& getLibraryFullPath() const { return m_libraryFullPath; }
 
 
         //////////////////////////////////////////
@@ -77,10 +78,10 @@ namespace Maze
         DynLib();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _libraryFullPath);
+        virtual bool init(Path const& _libraryFullPath);
 
     protected:
-        String m_libraryFullPath;
+        Path m_libraryFullPath;
     };
 
     

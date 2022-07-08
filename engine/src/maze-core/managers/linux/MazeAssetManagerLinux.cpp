@@ -58,7 +58,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    String AssetManagerLinux::getDefaultAssetsDirectory()
+    Path AssetManagerLinux::getDefaultAssetsDirectory()
     {
         return FileHelper::GetBinaryDirectory();
     }

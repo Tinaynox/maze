@@ -58,19 +58,19 @@ namespace Maze
     MAZE_PLUGIN_ARCHIVE_ASSETS_API void SetObfuscationPasswordFunction(ObfuscationPasswordFunction _func);
 
     ////////////////////////////////////
-    MAZE_PLUGIN_ARCHIVE_ASSETS_API String CallObfuscationPasswordFunction(String const&);
+    MAZE_PLUGIN_ARCHIVE_ASSETS_API String CallObfuscationPasswordFunction(Path const&);
 
     //////////////////////////////////////////
     MAZE_PLUGIN_ARCHIVE_ASSETS_API void ObfuscateAssetPacks(
-        String const& _srcPath,
-        String const& _destPath);
+        Path const& _srcPath,
+        Path const& _destPath);
 
     //////////////////////////////////////////
     MAZE_PLUGIN_ARCHIVE_ASSETS_API void ObfuscateAssetPacks(
-        String const& _srcPath,
-        String const& _destPath,
-        String const& _targetSrcPath,
-        String const& _targetDestPath);
+        Path const& _srcPath,
+        Path const& _destPath,
+        Path const& _targetSrcPath,
+        Path const& _targetDestPath);
 
 
 } // namespace Maze

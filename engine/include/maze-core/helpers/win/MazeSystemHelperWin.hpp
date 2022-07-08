@@ -45,7 +45,7 @@ namespace Maze
         MAZE_CORE_API GeoLocation GetGeoLocation();
 
         //////////////////////////////////////////
-        MAZE_CORE_API void OpenURL(String const& _url);
+        MAZE_CORE_API void OpenURL(Path const& _url);
 
         //////////////////////////////////////////
         MAZE_CORE_API String const& GetOSVersion();

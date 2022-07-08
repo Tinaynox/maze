@@ -58,7 +58,7 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    String AssetManagerEmscripten::getDefaultAssetsDirectory()
+    Path AssetManagerEmscripten::getDefaultAssetsDirectory()
     {
         return FileHelper::GetWorkingDirectory();
     }

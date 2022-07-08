@@ -135,14 +135,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    String const& TextureCube::getAssetFileName() const
+    Path const& TextureCube::getAssetFileName() const
     {
-        static String nullValue;
+        static Path nullValue;
 
         if (!m_assetFile)
             return nullValue;
 
-        return m_assetFile->getFileName().getString();
+        return m_assetFile->getFileName();
     }
 
     //////////////////////////////////////////

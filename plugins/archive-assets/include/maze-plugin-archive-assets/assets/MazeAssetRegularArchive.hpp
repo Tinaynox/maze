@@ -78,7 +78,7 @@ namespace Maze
         virtual ~AssetRegularArchive();
 
         ////////////////////////////////////
-        static AssetRegularArchivePtr Create(String const& _fullPath);
+        static AssetRegularArchivePtr Create(Path const& _fullPath);
 
 
         //////////////////////////////////////////
@@ -86,7 +86,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual StringKeyMap<AssetFilePtr> const* getChildrenAssets() const MAZE_OVERRIDE { return &m_childrenAssets; }
+        virtual UnorderedMap<Path, AssetFilePtr> const* getChildrenAssets() const MAZE_OVERRIDE { return &m_childrenAssets; }
 
 
         //////////////////////////////////////////
@@ -103,12 +103,12 @@ namespace Maze
         using AssetFile::init;
 
         //////////////////////////////////////////
-        virtual bool init(String const& _fullPath, bool _normalizePath = true) MAZE_OVERRIDE;
+        virtual bool init(Path const& _fullPath, bool _normalizePath = true) MAZE_OVERRIDE;
 
     
     protected:
         ArchiveFileZipPtr m_archive;
-        StringKeyMap<AssetFilePtr> m_childrenAssets;
+        UnorderedMap<Path, AssetFilePtr> m_childrenAssets;
     };
 
 

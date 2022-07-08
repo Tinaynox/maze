@@ -263,7 +263,7 @@ namespace Maze
         MAZE_ERROR_RETURN_VALUE_IF(!_assetFile, false, "Asset File is null!");
 
         tinyxml2::XMLDocument doc;
-        MAZE_LOG("Loading Material: %s...", _assetFile->getFileName().c_str());
+        MAZE_LOG("Loading Material: %s...", _assetFile->getFileName().toUTF8().c_str());
         _assetFile->readToXMLDocument(doc);
         loadFromXMLDocument(doc);
 

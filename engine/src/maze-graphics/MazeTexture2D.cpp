@@ -187,14 +187,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    String const& Texture2D::getAssetFileName() const
+    Path const& Texture2D::getAssetFileName() const
     {
-        static String nullValue;
+        static Path nullValue;
 
         if (!m_assetFile)
             return nullValue;
 
-        return m_assetFile->getFileName().getString();
+        return m_assetFile->getFileName();
     }
 
     //////////////////////////////////////////

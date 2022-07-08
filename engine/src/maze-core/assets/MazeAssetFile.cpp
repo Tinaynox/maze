@@ -58,7 +58,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    StringKeyMap<AssetFilePtr> const* AssetFile::getChildrenAssets() const
+    UnorderedMap<Path, AssetFilePtr> const* AssetFile::getChildrenAssets() const
     {
         return nullptr;
     }
@@ -69,7 +69,7 @@ namespace Maze
         ClassUID _classUID,
         bool _recursive) const
     {
-        StringKeyMap<AssetFilePtr> const* childrenAssets = getChildrenAssets();
+        UnorderedMap<Path, AssetFilePtr> const* childrenAssets = getChildrenAssets();
         if (!childrenAssets)
             return;
 
@@ -88,7 +88,7 @@ namespace Maze
         Vector<AssetFilePtr>& _outResult,
         bool _recursive) const
     {
-        StringKeyMap<AssetFilePtr> const* childrenAssets = getChildrenAssets();
+        UnorderedMap<Path, AssetFilePtr> const* childrenAssets = getChildrenAssets();
         if (!childrenAssets)
             return;
 
@@ -110,17 +110,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    String AssetFile::getExtension() const
+    Path AssetFile::getExtension() const
     {
-        String const& fileName = getFileName();
+        Path const& fileName = getFileName();
         if (fileName.empty())
+            return Path();
+        
+        Size position = fileName.getPath().find_last_of('.');
+        if (position == Path::StringType::npos)
             return String();
         
-        Size position = fileName.find_last_of('.');
-        if (position == String::npos)
-            return String();
-        
-        return fileName.substr(position + 1, fileName.size() - position - 1);
+        return fileName.getPath().substr(position + 1, fileName.size() - position - 1);
     }
 
     //////////////////////////////////////////

@@ -40,7 +40,7 @@ namespace Maze
     namespace FileHelper
     {
         //////////////////////////////////////////
-        MAZE_CORE_API String GetWorkingDirectory()
+        MAZE_CORE_API Path GetWorkingDirectory()
         {
             S8 buff[PATH_MAX + 1];
             getcwd(buff, sizeof(buff));
@@ -48,15 +48,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API WString GetWorkingDirectoryW()
-        {
-            WString text;
-            StringHelper::FormatString(text, L"%s", GetWorkingDirectory().c_str());
-            return text;
-        }
-
-        //////////////////////////////////////////
-        MAZE_CORE_API String GetBinaryFullPath()
+        MAZE_CORE_API Path GetBinaryFullPath()
         {
             std::vector<char> buf(400);
             ssize_t len;
@@ -71,7 +63,7 @@ namespace Maze
             if (len > 0)
             {
                 buf[len] = '\0';
-                return (String( &( buf[0] ) ) );
+                return (Path( &( buf[0] ) ) );
             }
 
             return "";
@@ -79,33 +71,33 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetBinaryDirectory()
+        MAZE_CORE_API Path GetBinaryDirectory()
         {
             return GetDirectoryInPath(GetBinaryFullPath());
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetDocumentsDirectory()
+        MAZE_CORE_API Path GetDocumentsDirectory()
         {
             return GetInternalDataDirectory();
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetDefaultTemporaryDirectory()
+        MAZE_CORE_API Path GetDefaultTemporaryDirectory()
         {
             return GetExternalDataDirectory() + "/tmp";
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetDefaultLogDirectory()
+        MAZE_CORE_API Path GetDefaultLogDirectory()
         {
             return GetExternalDataDirectory() + "/log";
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetPackageName()
+        MAZE_CORE_API Path GetPackageName()
         {
-            static String s_packageName;
+            static Path s_packageName;
 
             if (s_packageName.empty())
             {
@@ -126,51 +118,51 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetLibDirectory()
+        MAZE_CORE_API Path GetLibDirectory()
         {
             return "/data/data/" + GetPackageName() + "/lib";
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetInternalDataDirectory()
+        MAZE_CORE_API Path GetInternalDataDirectory()
         {
             SystemManager* systemManager = SystemManager::GetInstancePtr();
-            MAZE_ERROR_RETURN_VALUE_IF(!systemManager, String(), "SystemManager is null!");
+            MAZE_ERROR_RETURN_VALUE_IF(!systemManager, Path(), "SystemManager is null!");
 
             SystemManagerAndroid* systemManagerAndroid = systemManager->castRaw<SystemManagerAndroid>();
 
             android_app* androidApp = systemManagerAndroid->getAndroidApp();
-            MAZE_ERROR_RETURN_VALUE_IF(!androidApp, String(), "android_app is null!");
+            MAZE_ERROR_RETURN_VALUE_IF(!androidApp, Path(), "android_app is null!");
 
             ANativeActivity* nativeActivity = androidApp->activity;
-            MAZE_ERROR_RETURN_VALUE_IF(!nativeActivity, String(), "nativeActivity is null!");
+            MAZE_ERROR_RETURN_VALUE_IF(!nativeActivity, Path(), "nativeActivity is null!");
 
-            MAZE_ERROR_RETURN_VALUE_IF(!nativeActivity->internalDataPath, String(), "internalDataPath is null!");
+            MAZE_ERROR_RETURN_VALUE_IF(!nativeActivity->internalDataPath, Path(), "internalDataPath is null!");
 
             return nativeActivity->internalDataPath;
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetExternalDataDirectory()
+        MAZE_CORE_API Path GetExternalDataDirectory()
         {
             SystemManager* systemManager = SystemManager::GetInstancePtr();
-            MAZE_ERROR_RETURN_VALUE_IF(!systemManager, String(), "SystemManager is null!");
+            MAZE_ERROR_RETURN_VALUE_IF(!systemManager, Path(), "SystemManager is null!");
 
             SystemManagerAndroid* systemManagerAndroid = systemManager->castRaw< SystemManagerAndroid >();
 
             android_app* androidApp = systemManagerAndroid->getAndroidApp();
-            MAZE_ERROR_RETURN_VALUE_IF(!androidApp, String(), "android_app is null!");
+            MAZE_ERROR_RETURN_VALUE_IF(!androidApp, Path(), "android_app is null!");
 
             ANativeActivity* nativeActivity = androidApp->activity;
-            MAZE_ERROR_RETURN_VALUE_IF(!nativeActivity, String(), "nativeActivity is null!");
+            MAZE_ERROR_RETURN_VALUE_IF(!nativeActivity, Path(), "nativeActivity is null!");
 
-            MAZE_ERROR_RETURN_VALUE_IF(!nativeActivity->externalDataPath, String(), "externalDataPath is null!");
+            MAZE_ERROR_RETURN_VALUE_IF(!nativeActivity->externalDataPath, Path(), "externalDataPath is null!");
 
             return nativeActivity->externalDataPath;
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetUnpackedAssetsDirectory()
+        MAZE_CORE_API Path GetUnpackedAssetsDirectory()
         {
             return FileHelper::GetExternalDataDirectory() + "/assets";
         }

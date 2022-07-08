@@ -29,6 +29,7 @@
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
+#include "maze-core/helpers/MazeXMLHelper.hpp"
 #include <tinyxml2.h>
 
 
@@ -90,30 +91,30 @@ namespace Maze
         if (m_settingsFileFullPath.empty())
             return false;
         
-        Debug::Log("Loading settings file %s'...", m_settingsFileFullPath.c_str());
+        Debug::Log("Loading settings file %s'...", m_settingsFileFullPath.toUTF8().c_str());
 
         tinyxml2::XMLDocument doc;
-        tinyxml2::XMLError loadError = doc.LoadFile(m_settingsFileFullPath.c_str());
+        tinyxml2::XMLError loadError = XMLHelper::LoadXMLFile(m_settingsFileFullPath, doc);
         if (tinyxml2::XML_SUCCESS != loadError)
         {
             if (tinyxml2::XML_ERROR_FILE_NOT_FOUND == loadError)
                 return false;
 
-            MAZE_ERROR("File '%s' loading error - XMLError: %d!", m_settingsFileFullPath.c_str(), (S32)loadError);
+            MAZE_ERROR("File '%s' loading error - XMLError: %d!", m_settingsFileFullPath.toUTF8().c_str(), (S32)loadError);
             return false;
         }
 
         tinyxml2::XMLNode* rootNode = doc.FirstChild();
         if (!rootNode)
         {
-            MAZE_ERROR("File '%s' loading error - empty root node!", m_settingsFileFullPath.c_str());
+            MAZE_ERROR("File '%s' loading error - empty root node!", m_settingsFileFullPath.toUTF8().c_str());
             return false;
         }
 
         rootNode = rootNode->NextSibling();
         if (!rootNode)
         {
-            MAZE_ERROR("File '%s' loading error - empty root node children!", m_settingsFileFullPath.c_str());
+            MAZE_ERROR("File '%s' loading error - empty root node children!", m_settingsFileFullPath.toUTF8().c_str());
             return false;
         }
 
@@ -165,7 +166,7 @@ namespace Maze
             settingsNode = settingsNode->NextSibling();
         }
 
-        Debug::Log("Settings file '%s' loaded", m_settingsFileFullPath.c_str());
+        Debug::Log("Settings file '%s' loaded", m_settingsFileFullPath.toUTF8().c_str());
 
         return true;
     }
@@ -177,7 +178,7 @@ namespace Maze
             return false;
 
         String settingsFileDirectoryFullPath = FileHelper::GetDirectoryInPath(m_settingsFileFullPath);
-        FileHelper::CreateDirectoryRecursive(settingsFileDirectoryFullPath.c_str());
+        FileHelper::CreateDirectoryRecursive(settingsFileDirectoryFullPath);
 
         tinyxml2::XMLDocument doc;
 
@@ -223,14 +224,14 @@ namespace Maze
             }
         }
 
-        tinyxml2::XMLError loadError = doc.SaveFile(m_settingsFileFullPath.c_str());
+        tinyxml2::XMLError loadError = XMLHelper::SaveXMLFile(m_settingsFileFullPath, doc);
         if (tinyxml2::XML_SUCCESS != loadError)
         {
-            MAZE_ERROR("Saving settings file '%s' error - %d!", m_settingsFileFullPath.c_str(), loadError);
+            MAZE_ERROR("Saving settings file '%s' error - %d!", m_settingsFileFullPath.toUTF8().c_str(), loadError);
             return false;
         }
 
-        Debug::Log("Settings file '%s' saved.", m_settingsFileFullPath.c_str());
+        Debug::Log("Settings file '%s' saved.", m_settingsFileFullPath.toUTF8().c_str());
 
         return true;
     }

@@ -50,21 +50,21 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API void OpenURL(String const& _url)
+        MAZE_CORE_API void OpenURL(Path const& _url)
         {
-            ShellExecuteA(NULL, "open", _url.c_str(), NULL, NULL, SW_SHOW);
+            ShellExecuteW(NULL, L"open", _url.c_str(), NULL, NULL, SW_SHOW);
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern void OpenExplorer(String const& _fullPath, bool _select)
+        MAZE_CORE_API extern void OpenExplorer(Path const& _fullPath, bool _select)
         {
-            String winPath = _fullPath;
-            StringHelper::ReplaceSubstring(winPath, "/", "\\");
+            WString winPath = _fullPath;
+            StringHelper::ReplaceSubstring(winPath, L"/", L"\\");
 
             if (_select)
-                ShellExecuteA(NULL, "open", "explorer.exe", ("/select," + winPath).c_str(), NULL, SW_SHOW);
+                ShellExecuteW(NULL, L"open", L"explorer.exe", (L"/select," + winPath).c_str(), NULL, SW_SHOW);
             else
-                ShellExecuteA(NULL, "open", "explorer.exe", (winPath).c_str(), NULL, SW_SHOW);
+                ShellExecuteW(NULL, L"open", L"explorer.exe", (winPath).c_str(), NULL, SW_SHOW);
         }
 
         //////////////////////////////////////////
@@ -228,7 +228,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API void SetupMazeDynLibDirectoriesPolicy()
         {
-            WString workingDirectory = FileHelper::GetWorkingDirectoryW();
+            WString workingDirectory = FileHelper::GetWorkingDirectory();
             WString libDirectoryW = workingDirectory + L"/lib";
 
             WString archSubDirW = L"/" MAZE_ARCH_SUFFIX_WSTR;

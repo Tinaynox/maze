@@ -63,28 +63,28 @@ namespace Maze
     namespace EditorAssetHelper
     {
         //////////////////////////////////////////
-        void CreateFolder(AssetsController* _controller, String const& _fullPath);
+        void CreateFolder(AssetsController* _controller, Path const& _fullPath);
 
         //////////////////////////////////////////
-        void CreateMaterial(AssetsController* _controller, String const& _fullPath);
+        void CreateMaterial(AssetsController* _controller, Path const& _fullPath);
 
         //////////////////////////////////////////
-        void CreatePrefab3D(AssetsController* _controller, String const& _fullPath);
+        void CreatePrefab3D(AssetsController* _controller, Path const& _fullPath);
 
         //////////////////////////////////////////
-        void Rename(AssetsController* _controller, String const& _fullPath);
+        void Rename(AssetsController* _controller, Path const& _fullPath);
 
         //////////////////////////////////////////
-        void Delete(String const& _fullPath);
+        void Delete(Path const& _fullPath);
 
         //////////////////////////////////////////
-        String Duplicate(String const& _fullPath);
+        Path Duplicate(Path const& _fullPath);
 
         //////////////////////////////////////////
-        void Duplicate(AssetsController* _controller, String const& _fullPath);
+        void Duplicate(AssetsController* _controller, Path const& _fullPath);
 
         //////////////////////////////////////////
-        void Edit(String const& _fullPath);
+        void Edit(Path const& _fullPath);
     };
 
 

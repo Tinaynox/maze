@@ -66,10 +66,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        bool loadPlugin(String const& _pluginLibraryFullPath);
+        bool loadPlugin(Path const& _pluginLibraryFullPath);
 
         //////////////////////////////////////////
-        void unloadPlugin(String const& _pluginLibraryFullPath);
+        void unloadPlugin(Path const& _pluginLibraryFullPath);
 
         //////////////////////////////////////////
         bool loadPlatformPlugin(String const& _pluginName);
@@ -106,7 +106,7 @@ namespace Maze
     protected:
         static PluginManager* s_instance;
 
-        StringKeyMap<DynLibPtr> m_pluginLibs;
+        UnorderedMap<Path, DynLibPtr> m_pluginLibs;
         Vector<PluginPtr> m_plugins;
     };
 

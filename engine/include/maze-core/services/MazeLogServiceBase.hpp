@@ -33,6 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/system/MazeMutex.hpp"
+#include "maze-core/system/MazePath.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include <ostream>
 
@@ -63,7 +64,7 @@ namespace Maze
         
         
         //////////////////////////////////////////
-        virtual bool setLogFile(CString _fullPath);
+        virtual bool setLogFile(Path const& _fullPath);
         
         //////////////////////////////////////////
         inline std::ofstream const& getLogFile() const { return m_logFile; }

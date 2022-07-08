@@ -69,14 +69,14 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        bool savePrefabToXMLFile(EntityPtr const& _entity, String const& _fileFullPath) const;
+        bool savePrefabToXMLFile(EntityPtr const& _entity, Path const& _fileFullPath) const;
 
         //////////////////////////////////////////
         tinyxml2::XMLElement* savePrefabToXMLElement(EntityPtr const& _entity, tinyxml2::XMLDocument& _doc) const;
 
         //////////////////////////////////////////
         EntityPtr loadPrefabFromXMLFile(
-            String const& _fileFullPath,
+            Path const& _fileFullPath,
             ECSWorld* _world = nullptr,
             ECSScene* _scene = nullptr) const;
 
@@ -100,7 +100,7 @@ namespace Maze
 
         //////////////////////////////////////////
         EntityPtr loadPrefab(
-            String const& _assetFileName,
+            Path const& _assetFileName,
             ECSWorld* _world = nullptr,
             ECSScene* _scene = nullptr) const;
 

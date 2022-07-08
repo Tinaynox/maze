@@ -53,7 +53,7 @@ namespace Maze
     }
 
     ////////////////////////////////////
-    AssetDirectoryPtr AssetDirectory::Create(String const& _fullPath)
+    AssetDirectoryPtr AssetDirectory::Create(Path const& _fullPath)
     {
         AssetDirectoryPtr result;
         MAZE_CREATE_AND_INIT_SHARED_PTR(AssetDirectory, result, initAssetDirectory(_fullPath));
@@ -61,7 +61,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool AssetDirectory::initAssetDirectory(String const& _fullPath)
+    bool AssetDirectory::initAssetDirectory(Path const& _fullPath)
     {
         if (!AssetRegularFile::init(_fullPath, false))
             return false;
@@ -72,20 +72,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    StringKeyMap<AssetFilePtr> const* AssetDirectory::getChildrenAssets() const
+    UnorderedMap<Path, AssetFilePtr> const* AssetDirectory::getChildrenAssets() const
     {
         return &m_childrenAssets;
     }
 
     //////////////////////////////////////////
-    bool AssetDirectory::move(String const& _newFullPath, Vector<Pair<String, AssetFilePtr>>& _movedFiles)
+    bool AssetDirectory::move(Path const& _newFullPath, Vector<Pair<Path, AssetFilePtr>>& _movedFiles)
     {
         if (!AssetRegularFile::move(_newFullPath, _movedFiles))
             return false;
 
         for (auto childrenAssetData : m_childrenAssets)
         {
-            String newFullPath = m_fullPath.getString() + "/" + childrenAssetData.second->getFileName().getString();
+            Path newFullPath = m_fullPath + "/" + childrenAssetData.second->getFileName();
             if (!childrenAssetData.second->move(newFullPath, _movedFiles))
                 return false;
         }
@@ -99,13 +99,13 @@ namespace Maze
         Vector<AssetFilePtr>* _addedFiles,
         Vector<AssetFilePtr>* _removedFiles)
     {
-        Vector<String> const fileNames = FileHelper::GetRegularFileNamesInPath(m_fullPath.c_str());
+        Vector<Path> const fileNames = FileHelper::GetRegularFileNamesInPath(m_fullPath);
 
-        Set<String> confirmedFileFullPathes;
+        Set<Path> confirmedFileFullPathes;
 
         for (Size i = 0, c = fileNames.size(); i < c; ++i)
         {
-            String const fileFullPath = FileHelper::ConvertLocalPathToFullPath((m_fullPath.getString() + '/' + fileNames[i]).c_str());
+            Path const fileFullPath = FileHelper::ConvertLocalPathToFullPath(m_fullPath + '/' + fileNames[i]);
 
             confirmedFileFullPathes.emplace(fileFullPath);
 
@@ -115,9 +115,10 @@ namespace Maze
                 AssetFilePtr file = AssetManager::GetInstancePtr()->getAssetFileByFullPath(fileFullPath);
                 if (file)
                 {
-                    m_childrenAssets.insert(
-                        file->getFullPath(),
-                        file);
+                    m_childrenAssets.emplace(
+                        std::piecewise_construct,
+                        std::forward_as_tuple(file->getFullPath()),
+                        std::forward_as_tuple(file));
                     continue;
                 }
 
@@ -147,9 +148,10 @@ namespace Maze
 
                 if (file)
                 {
-                    m_childrenAssets.insert(
-                        file->getFullPath(),
-                        file);
+                    m_childrenAssets.emplace(
+                        std::piecewise_construct,
+                        std::forward_as_tuple(file->getFullPath()),
+                        std::forward_as_tuple(file));
 
                     if (_addedFiles)
                         _addedFiles->push_back(file);
@@ -162,9 +164,9 @@ namespace Maze
             }
         }
 
-        for (StringKeyMap<AssetFilePtr>::iterator it = m_childrenAssets.begin(),
-                                                  end = m_childrenAssets.end();
-                                                  it != end;)
+        for (UnorderedMap<Path, AssetFilePtr>::iterator it = m_childrenAssets.begin(),
+                                                        end = m_childrenAssets.end();
+                                                        it != end;)
         {
             if (confirmedFileFullPathes.count((*it).first) == 0)
             {

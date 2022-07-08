@@ -74,7 +74,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    bool DynLibIOS::init(String const& _libraryFullPath)
+    bool DynLibIOS::init(Path const& _libraryFullPath)
     {
         if (!DynLib::init(_libraryFullPath))
             return false;

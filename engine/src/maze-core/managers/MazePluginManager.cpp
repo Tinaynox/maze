@@ -73,17 +73,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool PluginManager::loadPlugin(String const& _pluginLibraryFullPath)
+    bool PluginManager::loadPlugin(Path const& _pluginLibraryFullPath)
     {
         DynLibManager* dynLibManager = DynLibManager::GetInstancePtr();
         MAZE_ERROR_RETURN_VALUE_IF(!dynLibManager, false, "DynLibManager is not exists!");
 
         DynLibPtr const& pluginLibrary = dynLibManager->loadLibrary(_pluginLibraryFullPath);
-        MAZE_ERROR_RETURN_VALUE_IF(!pluginLibrary, false, "Failed to load plugin - %s", _pluginLibraryFullPath.c_str());
+        MAZE_ERROR_RETURN_VALUE_IF(!pluginLibrary, false, "Failed to load plugin - %s", _pluginLibraryFullPath.toUTF8().c_str());
 
         if (m_pluginLibs.find(_pluginLibraryFullPath) == m_pluginLibs.end())
         {
-            m_pluginLibs.insert(_pluginLibraryFullPath, pluginLibrary);
+            m_pluginLibs.emplace(
+                std::piecewise_construct,
+                std::forward_as_tuple(_pluginLibraryFullPath),
+                std::forward_as_tuple(pluginLibrary));
 
             // Call startup function
 #if (defined(__GNUC__))
@@ -91,7 +94,7 @@ namespace Maze
 #endif
             PluginDynLibStartFunction func = (PluginDynLibStartFunction)pluginLibrary->getSymbol("StartPlugin");
 
-            MAZE_ERROR_RETURN_VALUE_IF(!func, false, "Cannot find symbol StartPlugin in library: %s", _pluginLibraryFullPath.c_str());
+            MAZE_ERROR_RETURN_VALUE_IF(!func, false, "Cannot find symbol StartPlugin in library: %s", _pluginLibraryFullPath.toUTF8().c_str());
 
             // This must call installPlugin
             func();
@@ -101,9 +104,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PluginManager::unloadPlugin(String const& _pluginLibraryFullPath)
+    void PluginManager::unloadPlugin(Path const& _pluginLibraryFullPath)
     {
-        StringKeyMap<DynLibPtr>::iterator it;
+        UnorderedMap<Path, DynLibPtr>::iterator it;
 
         for (it = m_pluginLibs.begin(); it != m_pluginLibs.end(); ++it)
         {
@@ -115,7 +118,7 @@ namespace Maze
 #endif
                 PluginDynLibStopFunction func = (PluginDynLibStopFunction)(*it).second->getSymbol("StopPlugin");
 
-                MAZE_ERROR_RETURN_IF(!func, "Cannot find symbol StopPlugin in library: %s", (*it).first.c_str());
+                MAZE_ERROR_RETURN_IF(!func, "Cannot find symbol StopPlugin in library: %s", (*it).first.toUTF8().c_str());
 
                 // This must call installPlugin
                 func();

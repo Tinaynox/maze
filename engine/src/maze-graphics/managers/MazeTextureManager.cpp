@@ -346,7 +346,7 @@ namespace Maze
         if (!_assetFile)
             return pixelSheets;
 
-        Debug::Log("Loading texture pixel sheet: %s...", _assetFile->getFileName().c_str());
+        Debug::Log("Loading texture pixel sheet: %s...", _assetFile->getFileName().toUTF8().c_str());
 
         StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
 

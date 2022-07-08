@@ -105,7 +105,7 @@ namespace Maze
     namespace EditorAssetHelper
     {
         //////////////////////////////////////////
-        void CreateFolder(AssetsController* _controller, String const& _fullPath)
+        void CreateFolder(AssetsController* _controller, Path const& _fullPath)
         {
             String dir = FileHelper::GetDirectoryInPath(_fullPath);
             String newFolderFullPath = EditorToolsHelper::BuildNewAssetFileName(dir + "/New Folder");
@@ -116,7 +116,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        void CreateMaterial(AssetsController* _controller, String const& _fullPath)
+        void CreateMaterial(AssetsController* _controller, Path const& _fullPath)
         {
             String dir = FileHelper::GetDirectoryInPath(_fullPath);
             MaterialPtr srcMaterial = MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::Specular);
@@ -134,13 +134,13 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        void CreatePrefab3D(AssetsController* _controller, String const& _fullPath)
+        void CreatePrefab3D(AssetsController* _controller, Path const& _fullPath)
         {
-            String dir = FileHelper::GetDirectoryInPath(_fullPath);
+            Path dir = FileHelper::GetDirectoryInPath(_fullPath);
 
-            String newPrefabFullPath = EditorToolsHelper::BuildNewAssetFileName(dir + "/New Prefab.mzprefab");
+            Path newPrefabFullPath = EditorToolsHelper::BuildNewAssetFileName(dir + "/New Prefab.mzprefab");
 
-            String name = FileHelper::GetFileNameWithoutExtension(newPrefabFullPath);
+            Path name = FileHelper::GetFileNameWithoutExtension(newPrefabFullPath);
             EntityPtr entity = EditorManager::GetInstancePtr()->getSceneMain()->createEntity(name);
             EntitySerializationManager::GetInstancePtr()->savePrefabToXMLFile(entity, newPrefabFullPath);
             AssetManager::GetInstancePtr()->updateAssets();
@@ -156,7 +156,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        void Rename(AssetsController* _controller, String const& _fullPath)
+        void Rename(AssetsController* _controller, Path const& _fullPath)
         {
             AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_fullPath);
             if (assetFile)
@@ -164,18 +164,18 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        void Delete(String const& _fullPath)
+        void Delete(Path const& _fullPath)
         {
             AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_fullPath);
             AssetManager::GetInstancePtr()->deleteAssetFile(assetFile);
         }
 
         //////////////////////////////////////////
-        String Duplicate(String const& _fullPath)
+        Path Duplicate(Path const& _fullPath)
         {
-            String dir = FileHelper::GetDirectoryInPath(_fullPath);
+            Path dir = FileHelper::GetDirectoryInPath(_fullPath);
 
-            String newPrefabFullPath = EditorToolsHelper::BuildNewAssetFileName(_fullPath);
+            Path newPrefabFullPath = EditorToolsHelper::BuildNewAssetFileName(_fullPath);
             FileHelper::CopyRegularFile(_fullPath.c_str(), newPrefabFullPath.c_str());
             AssetManager::GetInstancePtr()->updateAssets();
 
@@ -183,17 +183,17 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        void Duplicate(AssetsController* _controller, String const& _fullPath)
+        void Duplicate(AssetsController* _controller, Path const& _fullPath)
         {
-            String newPrefabFullPath = Duplicate(_fullPath);
+            Path newPrefabFullPath = Duplicate(_fullPath);
             Rename(_controller, newPrefabFullPath);
         }
 
         //////////////////////////////////////////
-        void Edit(String const& _fullPath)
+        void Edit(Path const& _fullPath)
         {
             AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_fullPath);
-            MAZE_ERROR_RETURN_IF(!assetFile, "Asset file %s is null!", _fullPath.c_str());
+            MAZE_ERROR_RETURN_IF(!assetFile, "Asset file %s is null!", _fullPath.toUTF8().c_str());
 
             if (AssetEditorToolsManager::GetInstancePtr()->isPrefabExtension(assetFile->getExtension()))
                 EditorManager::GetInstancePtr()->openPrefab(assetFile);

@@ -42,7 +42,7 @@ namespace Maze
     namespace FileHelper
     {
         //////////////////////////////////////////
-        MAZE_CORE_API String GetWorkingDirectory()
+        MAZE_CORE_API Path GetWorkingDirectory()
         {
             S8 buff[PATH_MAX + 1];
             getcwd(buff, sizeof(buff));
@@ -50,44 +50,36 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API WString GetWorkingDirectoryW()
+        MAZE_CORE_API Path GetBinaryFullPath()
         {
-            WString text;
-            StringHelper::FormatString(text, L"%s", GetWorkingDirectory().c_str());
-            return text;
-        }
-
-        //////////////////////////////////////////
-        MAZE_CORE_API String GetBinaryFullPath()
-        {
-            static String s_executablePath = NormalizedFilePath([[[NSBundle mainBundle] executablePath] UTF8String]);
+            static Path s_executablePath = NormalizedFilePath([[[NSBundle mainBundle] executablePath] UTF8String]);
             return s_executablePath;
         }
         
         //////////////////////////////////////////
-        MAZE_CORE_API String GetBinaryDirectory()
+        MAZE_CORE_API Path GetBinaryDirectory()
         {
             return GetDirectoryInPath(GetBinaryFullPath());
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetDocumentsDirectory()
+        MAZE_CORE_API Path GetDocumentsDirectory()
         {
-            static String s_homeDirectory = getenv("HOME");
+            static Path s_homeDirectory = getenv("HOME");
             return NormalizedFilePath(s_homeDirectory) + "/Documents";
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetDefaultTemporaryDirectory()
+        MAZE_CORE_API Path GetDefaultTemporaryDirectory()
         {
-            static String s_tempPath = NormalizedFilePath([NSTemporaryDirectory() UTF8String]);
+            static Path s_tempPath = NormalizedFilePath([NSTemporaryDirectory() UTF8String]);
             return s_tempPath;
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetDefaultLogDirectory()
+        MAZE_CORE_API Path GetDefaultLogDirectory()
         {
-            static String s_homeDirectory = getenv("HOME");
+            static Path s_homeDirectory = getenv("HOME");
             return NormalizedFilePath(s_homeDirectory) + "/Documents/Log";
         }
     

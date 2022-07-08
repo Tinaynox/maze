@@ -33,6 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/utils/MazeClassInfo.hpp"
+#include "maze-core/system/MazePath.hpp"
 
 
 //////////////////////////////////////////
@@ -43,7 +44,7 @@ namespace Maze
     namespace StdHelper
     {
         //////////////////////////////////////////
-        MAZE_CORE_API extern FILE* OpenFile(CString _fullPath, CString _mode);
+        MAZE_CORE_API extern FILE* OpenFile(Path const& _fullPath, Path const& _mode);
 
         //////////////////////////////////////////
         template <typename T>

@@ -68,7 +68,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        using ArchivePasswordFunction = String(*)(String const&);
+        using ArchivePasswordFunction = String(*)(Path const&);
 
     public:
 

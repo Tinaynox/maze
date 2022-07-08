@@ -212,7 +212,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetEditorToolsManager::callAssetFileContextMenuCallback(AssetsController* _controller, String const& _fullPath, MenuListTree2DPtr const& _menuListTree)
+    void AssetEditorToolsManager::callAssetFileContextMenuCallback(AssetsController* _controller, Path const& _fullPath, MenuListTree2DPtr const& _menuListTree)
     {
         for (auto callback : m_assetFileContextMenuCallbacks)
             callback(_controller, _fullPath, _menuListTree);

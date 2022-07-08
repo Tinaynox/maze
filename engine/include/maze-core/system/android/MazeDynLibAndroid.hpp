@@ -71,7 +71,7 @@ namespace Maze
         DynLibAndroid();
 
         //////////////////////////////////////////
-        virtual bool init(String const& _libraryFullPath) MAZE_OVERRIDE;
+        virtual bool init(Path const& _libraryFullPath) MAZE_OVERRIDE;
 
     protected:
         void* m_handle;

@@ -40,25 +40,22 @@ namespace Maze
     namespace FileHelper
     {
         //////////////////////////////////////////
-        MAZE_CORE_API String GetWorkingDirectory();
+        MAZE_CORE_API Path GetWorkingDirectory();
 
         //////////////////////////////////////////
-        MAZE_CORE_API WString GetWorkingDirectoryW();
+        MAZE_CORE_API Path GetBinaryFullPath();
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetBinaryFullPath();
+        MAZE_CORE_API Path GetBinaryDirectory();
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetBinaryDirectory();
+        MAZE_CORE_API Path GetDocumentsDirectory();
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetDocumentsDirectory();
+        MAZE_CORE_API Path GetDefaultTemporaryDirectory();
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetDefaultTemporaryDirectory();
-
-        //////////////////////////////////////////
-        MAZE_CORE_API String GetDefaultLogDirectory();
+        MAZE_CORE_API Path GetDefaultLogDirectory();
 
     } // namespace FileHelper
     //////////////////////////////////////////

@@ -54,7 +54,7 @@ namespace Maze
         virtual ~AssetManagerAndroid();
         
         //////////////////////////////////////////
-        virtual String getDefaultAssetsDirectory() MAZE_OVERRIDE;
+        virtual Path getDefaultAssetsDirectory() MAZE_OVERRIDE;
         
     protected:
         
@@ -65,7 +65,7 @@ namespace Maze
         virtual bool init() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        bool extractFileFromAPK(String const& _assetFilePath, bool _errorNoExists);
+        bool extractFileFromAPK(Path const& _assetFilePath, bool _errorNoExists);
 
         //////////////////////////////////////////
         void extractAssetsFromAPK();

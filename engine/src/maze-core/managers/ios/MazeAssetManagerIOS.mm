@@ -58,9 +58,9 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    String AssetManagerIOS::getDefaultAssetsDirectory()
+    Path AssetManagerIOS::getDefaultAssetsDirectory()
     {
-        static String s_defaultAssetsDirectory; 
+        static Path s_defaultAssetsDirectory; 
         
         if (s_defaultAssetsDirectory.empty())
         {
@@ -70,7 +70,7 @@ namespace Maze
             CFStringEncoding encodingMethod = CFStringGetSystemEncoding();
             CString path = CFStringGetCStringPtr(bundlePath, encodingMethod);
             
-            s_defaultAssetsDirectory = path + String("/Contents/Assets/");
+            s_defaultAssetsDirectory = path + Path("/Contents/Assets/");
         }
         
         return s_defaultAssetsDirectory;

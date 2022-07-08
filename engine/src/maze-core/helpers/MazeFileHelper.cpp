@@ -38,118 +38,109 @@ namespace Maze
     namespace FileHelper
     {
         //////////////////////////////////////////
-        MAZE_CORE_API void NormalizeFilePath(String& _path) noexcept
+        MAZE_CORE_API void NormalizeFilePath(Path& _path) noexcept
         {
             if (_path.empty())
                 return;
 
-            std::replace(_path.begin(), _path.end(), '\\', '/');
-            _path.erase(_path.find_last_not_of("/") + 1);
-
-            StringHelper::ReplaceSubstring(_path, "/./", "/");
+            Path::StringType string = _path.getPath();
+            std::replace(string.begin(), string.end(), '\\', '/');
+            string.erase(string.find_last_not_of('/') + 1);
+            StringHelper::ReplaceSubstring(string, Path("/./").getPath(), Path("/").getPath()); // #TODO: optimize
+            _path = string;
         }
 
-        //////////////////////////////////////////
-        MAZE_CORE_API void NormalizeFilePath(WString& _path) noexcept
-        {
-            if (_path.empty())
-                return;
-
-            std::replace(_path.begin(), _path.end(), L'\\', L'/');
-            _path.erase(_path.find_last_not_of(L"/") + 1);
-
-        }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String NormalizedFilePath(String const& _path) noexcept
+        MAZE_CORE_API Path NormalizedFilePath(Path const& _path) noexcept
         {
-            String result = _path;
+            Path result = _path;
             NormalizeFilePath(result);
             return result;
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetDirectoryInPath(String const& _path) noexcept
+        MAZE_CORE_API Path GetDirectoryInPath(Path const& _path) noexcept
         {
             if (IsDirectory(_path))
             {
                 return _path;
             }
 
-            Size pos = String(_path).find_last_of('/');
+            Size pos = _path.getPath().find_last_of('/');
 
-            if (pos == String::npos)
-                return String();
+            if (pos == Path::StringType::npos)
+                return Path();
 
-            return _path.substr(0, pos);            
+            return _path.getPath().substr(0, pos);
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetParentDirectoryInPath(String const& _path) noexcept
+        MAZE_CORE_API Path GetParentDirectoryInPath(Path const& _path) noexcept
         {
-            String directory = GetDirectoryInPath(_path);
+            Path directory = GetDirectoryInPath(_path);
 
             if (!IsDirectory(_path))
                 return directory;
 
-            Size pos = String(_path).find_last_of('/');
+            Size pos = _path.getPath().find_last_of('/');
 
-            if (pos == String::npos)
-                return String();
+            if (pos == Path::StringType::npos)
+                return Path();
 
-            return _path.substr(0, pos);
+            return _path.getPath().substr(0, pos);
         }
         
         //////////////////////////////////////////
-        MAZE_CORE_API String GetFileNameInPath(String const& _path) noexcept
+        MAZE_CORE_API Path GetFileNameInPath(Path const& _path) noexcept
         {
-            Size pos = _path.find_last_of('/');
-            if (pos == String::npos)
+            Size pos = _path.getPath().find_last_of('/');
+            if (pos == Path::StringType::npos)
             {
                 return _path;
             }
             
-            return _path.substr(pos + 1, _path.size() - pos - 1);
+            return _path.getPath().substr(pos + 1, _path.size() - pos - 1);
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetFileExtension(String const& _fileFullPath)
+        MAZE_CORE_API Path GetFileExtension(Path const& _fileFullPath)
         {
-            String fileName;
-            Size position = _fileFullPath.find_last_of('/');
-            if (position != String::npos)
-                fileName = _fileFullPath.substr(position + 1, _fileFullPath.size() - position - 1);
+            Path fileName;
+            Size position = _fileFullPath.getPath().find_last_of('/');
+            if (position != Path::StringType::npos)
+                fileName = _fileFullPath.getPath().substr(position + 1, _fileFullPath.size() - position - 1);
             else
                 fileName = _fileFullPath;
 
-            position = fileName.find_last_of('.');
-            if (position == String::npos)
-                return String();
+            position = fileName.getPath().find_last_of('.');
+            if (position == Path::StringType::npos)
+                return Path();
 
-            return fileName.substr(position + 1, fileName.size() - position - 1);
+            return fileName.getPath().substr(position + 1, fileName.size() - position - 1);
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String GetFileNameWithoutExtension(String const& _fileFullPath)
+        MAZE_CORE_API Path GetFileNameWithoutExtension(Path const& _fileFullPath)
         {
-            String fileName;
-            Size position =  _fileFullPath.find_last_of('/');
-            if (position != String::npos)
-                fileName = _fileFullPath.substr(position + 1, _fileFullPath.size() - position - 1);
+            Path fileName;
+            Size position =  _fileFullPath.getPath().find_last_of('/');
+            if (position != Path::StringType::npos)
+                fileName = _fileFullPath.getPath().substr(position + 1, _fileFullPath.size() - position - 1);
             else
                 fileName = _fileFullPath;
         
-            position =  fileName.find_last_of('.');
-            if (position == String::npos)
+            position =  fileName.getPath().find_last_of('.');
+            if (position == Path::StringType::npos)
                 return fileName;
         
-            return fileName.substr(0, position);
+            return fileName.getPath().substr(0, position);
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API Size ReadFileToString(CString _fileFullPath, String& _string)
+        MAZE_CORE_API Size ReadFileToString(Path const& _fileFullPath, String& _string)
         {
-            std::ifstream ifs(_fileFullPath);
+            std::ifstream ifs(_fileFullPath.c_str());
             _string.assign(
                 (std::istreambuf_iterator<S8>(ifs)),
                 (std::istreambuf_iterator<S8>()));
@@ -158,7 +149,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String ReadFileAsString(CString _fileFullPath)
+        MAZE_CORE_API String ReadFileAsString(Path const& _fileFullPath)
         {
             String result;
             ReadFileToString(_fileFullPath, result);
@@ -166,10 +157,10 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API Size ReadFileToByteBuffer(CString _fileFullPath, ByteBuffer& _byteBuffer)
+        MAZE_CORE_API Size ReadFileToByteBuffer(Path const& _fileFullPath, ByteBuffer& _byteBuffer)
         {
             InputFileStream file;
-            file.open(_fileFullPath, std::ios::binary | std::ios::ate);
+            file.open(_fileFullPath.c_str(), std::ios::binary | std::ios::ate);
             if (!file.is_open())
                 return 0;
         
@@ -184,7 +175,7 @@ namespace Maze
         }
     
         //////////////////////////////////////////
-        MAZE_CORE_API ByteBufferPtr ReadFileAsByteBuffer(CString _fileFullPath)
+        MAZE_CORE_API ByteBufferPtr ReadFileAsByteBuffer(Path const& _fileFullPath)
         {
             ByteBufferPtr byteBuffer = ByteBuffer::Create();
             ReadFileToByteBuffer(_fileFullPath, (*byteBuffer.get()));

@@ -36,7 +36,7 @@ namespace Maze
     namespace XMLHelper
     {
         //////////////////////////////////////////
-        MAZE_CORE_API extern bool SaveXMLFile(String const& _fileFullPath, tinyxml2::XMLNode* _rootNode)
+        MAZE_CORE_API extern bool SaveXMLFile(Path const& _fileFullPath, tinyxml2::XMLNode* _rootNode)
         {
             if (!_rootNode)
                 return false;
@@ -44,8 +44,8 @@ namespace Maze
             if (_fileFullPath.empty())
                 return false;
 
-            String directoryFullPath = FileHelper::GetDirectoryInPath(_fileFullPath);
-            FileHelper::CreateDirectoryRecursive(directoryFullPath.c_str());
+            Path directoryFullPath = FileHelper::GetDirectoryInPath(_fileFullPath);
+            FileHelper::CreateDirectoryRecursive(directoryFullPath);
 
             tinyxml2::XMLDocument doc;
 
@@ -54,10 +54,10 @@ namespace Maze
 
             doc.InsertEndChild(_rootNode);
 
-            tinyxml2::XMLError loadError = doc.SaveFile(_fileFullPath.c_str());
-            if (tinyxml2::XML_SUCCESS != loadError)
+            tinyxml2::XMLError saveError = SaveXMLFile(_fileFullPath, doc);
+            if (tinyxml2::XML_SUCCESS != saveError)
             {
-                MAZE_ERROR("Saving file '%s' error - %d!", _fileFullPath.c_str(), loadError);
+                MAZE_ERROR("Saving file '%s' error - %d!", _fileFullPath.toUTF8().c_str(), saveError);
                 return false;
             }
 
@@ -66,7 +66,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern bool SaveXMLFile(String const& _fileFullPath, IXMLElementSerializable* _serializable)
+        MAZE_CORE_API extern bool SaveXMLFile(Path const& _fileFullPath, IXMLElementSerializable* _serializable)
         {
             if (!_serializable)
                 return false;
@@ -74,8 +74,8 @@ namespace Maze
             if (_fileFullPath.empty())
                 return false;
 
-            String directoryFullPath = FileHelper::GetDirectoryInPath(_fileFullPath);
-            FileHelper::CreateDirectoryRecursive(directoryFullPath.c_str());
+            Path directoryFullPath = FileHelper::GetDirectoryInPath(_fileFullPath);
+            FileHelper::CreateDirectoryRecursive(directoryFullPath.toUTF8().c_str());
 
             tinyxml2::XMLDocument doc;
 
@@ -86,14 +86,36 @@ namespace Maze
 
             doc.InsertEndChild(rootNode);
 
-            tinyxml2::XMLError loadError = doc.SaveFile(_fileFullPath.c_str());
-            if (tinyxml2::XML_SUCCESS != loadError)
+            tinyxml2::XMLError saveError = SaveXMLFile(_fileFullPath, doc);
+            if (tinyxml2::XML_SUCCESS != saveError)
             {
-                MAZE_ERROR("Saving file '%s' error - %d!", _fileFullPath.c_str(), loadError);
+                MAZE_ERROR("Saving file '%s' error - %d!", _fileFullPath.toUTF8().c_str(), saveError);
                 return false;
             }
 
             return true;
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API extern tinyxml2::XMLError LoadXMLFile(Path const& _fileFullPath, tinyxml2::XMLDocument& _doc)
+        {
+            FILE* file = StdHelper::OpenFile(_fileFullPath, "rb");
+            if (!file)
+                return tinyxml2::XMLError::XML_ERROR_FILE_NOT_FOUND;
+            tinyxml2::XMLError loadError = _doc.LoadFile(file);
+            fclose(file);
+            return loadError;
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API extern tinyxml2::XMLError SaveXMLFile(Path const& _fileFullPath, tinyxml2::XMLDocument& _doc)
+        {
+            FILE* file = StdHelper::OpenFile(_fileFullPath, "wb");
+            if (!file)
+                return tinyxml2::XMLError::XML_ERROR_FILE_COULD_NOT_BE_OPENED;
+            tinyxml2::XMLError saveError = _doc.SaveFile(file);
+            fclose(file);
+            return saveError;
         }
 
     } // namespace XMLHelper

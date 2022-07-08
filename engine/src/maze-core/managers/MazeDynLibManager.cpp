@@ -77,11 +77,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    DynLibPtr const& DynLibManager::loadLibrary(String const& _libraryFullPath)
+    DynLibPtr const& DynLibManager::loadLibrary(Path const& _libraryFullPath)
     {
         static DynLibPtr const nullPtr;
 
-        StringKeyMap<DynLibPtr>::iterator it = m_loadedLibs.find(_libraryFullPath);
+        UnorderedMap<Path, DynLibPtr>::iterator it = m_loadedLibs.find(_libraryFullPath);
         if (it != m_loadedLibs.end())
         {
             return it->second;
@@ -95,7 +95,10 @@ namespace Maze
             if (!dynLib->load())
                 return nullPtr;
 
-            DynLibPtr* insertedDynLib = m_loadedLibs.insert(_libraryFullPath, dynLib);
+            DynLibPtr* insertedDynLib = &m_loadedLibs.emplace(
+                std::piecewise_construct,
+                std::forward_as_tuple(_libraryFullPath),
+                std::forward_as_tuple(dynLib)).first->second;
             return *insertedDynLib;
         }
     }
@@ -103,11 +106,11 @@ namespace Maze
     //////////////////////////////////////////
     void DynLibManager::unloadLibrary(DynLib* _lib)
     {
-        StringKeyMap<DynLibPtr>::iterator it =
+        UnorderedMap<Path, DynLibPtr>::iterator it =
             std::find_if(
                 m_loadedLibs.begin(),
                 m_loadedLibs.end(),
-                [_lib](Pair<String, DynLibPtr> const& _value) -> bool
+                [_lib](Pair<Path, DynLibPtr> const& _value) -> bool
                 {
                     return _value.second.get() == _lib;
                 });

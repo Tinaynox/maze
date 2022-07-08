@@ -58,7 +58,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    String AssetManagerWin::getDefaultAssetsDirectory()
+    Path AssetManagerWin::getDefaultAssetsDirectory()
     {
         return FileHelper::GetWorkingDirectory();
     }

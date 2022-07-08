@@ -48,7 +48,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    DynLibPtr DynLib::Create(String const& _libraryFullPath)
+    DynLibPtr DynLib::Create(Path const& _libraryFullPath)
     {
         DynLibPtr lib;
         MAZE_CREATE_AND_INIT_OS_OBJECT_SHARED_PTR(DynLib, lib, init(_libraryFullPath));
@@ -56,7 +56,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool DynLib::init(String const& _libraryFullPath)
+    bool DynLib::init(Path const& _libraryFullPath)
     {
         m_libraryFullPath = _libraryFullPath;
 
