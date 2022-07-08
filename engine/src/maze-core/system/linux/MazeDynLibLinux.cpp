@@ -48,7 +48,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool DynLibLinux::init(String const& _libraryFullPath)
+    bool DynLibLinux::init(Path const& _libraryFullPath)
     {
         if (!DynLib::init(_libraryFullPath))
             return false;

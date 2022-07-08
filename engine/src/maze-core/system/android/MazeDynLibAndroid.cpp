@@ -48,7 +48,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool DynLibAndroid::init(String const& _libraryFullPath)
+    bool DynLibAndroid::init(Path const& _libraryFullPath)
     {
         if (!DynLib::init(_libraryFullPath))
             return false;

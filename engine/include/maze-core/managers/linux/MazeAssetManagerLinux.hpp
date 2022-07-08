@@ -54,7 +54,7 @@ namespace Maze
         virtual ~AssetManagerLinux();
         
         //////////////////////////////////////////
-        virtual String getDefaultAssetsDirectory() MAZE_OVERRIDE;
+        virtual Path getDefaultAssetsDirectory() MAZE_OVERRIDE;
         
     protected:
         

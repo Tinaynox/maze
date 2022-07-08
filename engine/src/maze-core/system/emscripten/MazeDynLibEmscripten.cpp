@@ -50,7 +50,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    bool DynLibEmscripten::init(String const& _libraryFullPath)
+    bool DynLibEmscripten::init(Path const& _libraryFullPath)
     {
         if (!DynLib::init(_libraryFullPath))
             return false;

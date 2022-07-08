@@ -65,7 +65,7 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    String AssetManagerAndroid::getDefaultAssetsDirectory()
+    Path AssetManagerAndroid::getDefaultAssetsDirectory()
     {
         return FileHelper::GetDocumentsDirectory();
     }
@@ -77,7 +77,7 @@ namespace Maze
 
         SystemManagerAndroid* systemManagerAndroid = SystemManager::GetInstancePtr()->castRaw<SystemManagerAndroid>();
 
-        String assetsHashFullPath = FileHelper::GetUnpackedAssetsDirectory() + "/assets.hash";
+        Path assetsHashFullPath = FileHelper::GetUnpackedAssetsDirectory() + "/assets.hash";
         String unpackedAssetsHash;
         std::ifstream ifs(assetsHashFullPath.c_str());
         unpackedAssetsHash.assign(  (std::istreambuf_iterator<S8>(ifs)),
@@ -128,13 +128,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool AssetManagerAndroid::extractFileFromAPK(String const& _assetFilePath, bool _errorNoExists)
+    bool AssetManagerAndroid::extractFileFromAPK(Path const& _assetFilePath, bool _errorNoExists)
     {
         char buffer[BUFSIZ];
 
-        String fullPath = FileHelper::GetUnpackedAssetsDirectory() + "/" + _assetFilePath;
-        String fullPathDir = FileHelper::GetDirectoryInPath(fullPath);
-        FileHelper::CreateDirectoryRecursive(fullPathDir.c_str());
+        Path fullPath = FileHelper::GetUnpackedAssetsDirectory() + "/" + _assetFilePath;
+        Path fullPathDir = FileHelper::GetDirectoryInPath(fullPath);
+        FileHelper::CreateDirectoryRecursive(fullPathDir);
 
         SystemManagerAndroid* systemManagerAndroid = SystemManager::GetInstancePtr()->castRaw<SystemManagerAndroid>();
         AAssetManager* assetManager = systemManagerAndroid->getAssetManager();

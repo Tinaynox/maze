@@ -112,18 +112,19 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API bool CreateDirectoryRecursive(Path const& _fullPath)
         {
-            String path = _fullPath;
+            Path path = _fullPath;
             NormalizeFilePath(path);
 
             struct stat st;
 
-            String tempLocal;
+            Path tempLocal;
+            String pathTemp = path;
             Vector<String> directories;
-            StringHelper::SplitWords(path, directories, '/');
+            StringHelper::SplitWords(pathTemp, directories, '/');
 
             for (S32 i = 0; i < (S32)directories.size(); ++i)
             {
-                String directoryPath = tempLocal + directories[i];
+                Path directoryPath = tempLocal + directories[i];
                 do
                 {
                     if (directoryPath.empty())
@@ -238,7 +239,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API bool DeleteRegularFile(Path const& _fileFullPath)
         {
-            if (std::remove(_fileFullPath) != 0)
+            if (std::remove(_fileFullPath.c_str()) != 0)
                 return false;
 
             return true;

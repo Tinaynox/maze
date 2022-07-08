@@ -62,6 +62,12 @@ namespace Maze
         inline PathUnix(PathUnix&& _value) : ParentClass(std::move(_value)) {}
 
         //////////////////////////////////////////
+        inline PathUnix(String const& _path) : ParentClass(_path) {}
+
+        //////////////////////////////////////////
+        inline PathUnix(String&& _path) : ParentClass(std::move(_path)) {}
+
+        //////////////////////////////////////////
         inline PathUnix(ParentClass::CharType const* _path) : ParentClass(_path) {}
 
         //////////////////////////////////////////

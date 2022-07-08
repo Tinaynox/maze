@@ -37,9 +37,9 @@ namespace Maze
     namespace StdHelper
     {
         //////////////////////////////////////////
-        MAZE_CORE_API FILE* OpenFile(CString _fullPath, CString _mode)
+        MAZE_CORE_API FILE* OpenFile(Path const& _fullPath, Path const& _mode)
         {
-            FILE* file = fopen(_fullPath, _mode);
+            FILE* file = fopen(_fullPath.c_str(), _mode.c_str());
             return file;
         }
 

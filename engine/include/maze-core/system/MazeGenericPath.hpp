@@ -44,7 +44,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        using StringType = typename TString;
+        using StringType = TString;
         using CharType = typename TString::value_type;
 
     public:
@@ -69,7 +69,7 @@ namespace Maze
         {}
 
         //////////////////////////////////////////
-        inline GenericPath(typename CharType const* _path)
+        inline GenericPath(CharType const* _path)
         {
             if (_path)
                 m_path = _path;
@@ -158,7 +158,7 @@ namespace Maze
         inline Size size() const { return m_path.size(); }
 
         //////////////////////////////////////////
-        inline void clear() { return setPath(Path()); }
+        inline void clear() { return setPath(TString()); }
 
         //////////////////////////////////////////
         inline operator TString() const { return m_path; }

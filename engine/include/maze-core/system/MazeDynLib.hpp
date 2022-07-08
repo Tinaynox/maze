@@ -60,7 +60,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        String const& getLibraryFullPath() const { return m_libraryFullPath; }
+        Path const& getLibraryFullPath() const { return m_libraryFullPath; }
 
 
         //////////////////////////////////////////

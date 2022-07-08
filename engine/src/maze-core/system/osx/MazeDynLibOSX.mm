@@ -74,7 +74,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    bool DynLibOSX::init(String const& _libraryFullPath)
+    bool DynLibOSX::init(Path const& _libraryFullPath)
     {
         if (!DynLib::init(_libraryFullPath))
             return false;
