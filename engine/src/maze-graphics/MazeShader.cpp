@@ -467,7 +467,7 @@ namespace Maze
         tinyxml2::XMLNode* rootNode = doc.FirstChild();
         if (!rootNode)
         {
-            MAZE_ERROR("File '%s' loading error - empty root node!", _shaderFile->getFileName().c_str());
+            MAZE_ERROR("File '%s' loading error - empty root node!", _shaderFile->getFileName().toUTF8().c_str());
             return false;
         }
 
@@ -475,7 +475,7 @@ namespace Maze
         rootNode = rootNode->NextSibling();
         if (!rootNode)
         {
-            MAZE_ERROR("File '%s' loading error - empty root node children!", _shaderFile->getFileName().c_str());
+            MAZE_ERROR("File '%s' loading error - empty root node children!", _shaderFile->getFileName().toUTF8().c_str());
             return false;
         }
         
@@ -575,7 +575,7 @@ namespace Maze
         }
         else
         {
-            MAZE_ERROR("%s: Invalid shader file syntax!", m_assetFile->getFileName().c_str());
+            MAZE_ERROR("%s: Invalid shader file syntax!", m_assetFile->getFileName().toUTF8().c_str());
         }
 
         for (ShaderXMLUniformData const& uniformData : uniformsData)

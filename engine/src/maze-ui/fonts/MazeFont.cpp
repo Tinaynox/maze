@@ -94,10 +94,10 @@ namespace Maze
         unsubscribeGlyphsData();
 
         tinyxml2::XMLNode* rootNode = doc.FirstChild();
-        MAZE_ERROR_RETURN_VALUE_IF(!rootNode, false, "File '%s' loading error - empty root node!", _assetFile->getFileName().c_str());
+        MAZE_ERROR_RETURN_VALUE_IF(!rootNode, false, "File '%s' loading error - empty root node!", _assetFile->getFileName().toUTF8().c_str());
         
         rootNode = rootNode->NextSibling();
-        MAZE_ERROR_RETURN_VALUE_IF(!rootNode, false, "File '%s' loading error - empty root node children!", _assetFile->getFileName().c_str());
+        MAZE_ERROR_RETURN_VALUE_IF(!rootNode, false, "File '%s' loading error - empty root node children!", _assetFile->getFileName().toUTF8().c_str());
 
         m_glyphsData.clear();
         m_glyphsMap.clear();

@@ -428,7 +428,7 @@ namespace Maze
             
             if (m_assetFile)
             {
-                Debug::LogError("File: %s", m_assetFile->getFileName().c_str());
+                Debug::LogError("File: %s", m_assetFile->getFileName().toUTF8().c_str());
             }
 
             Vector<String> words;
@@ -465,7 +465,7 @@ namespace Maze
              Debug::LogError("Fragment shader compilation error!");
             if (m_assetFile)
             {
-                Debug::LogError("File: %s", m_assetFile->getFileName().c_str());
+                Debug::LogError("File: %s", m_assetFile->getFileName().toUTF8().c_str());
             }
 
             Vector<String> words;
@@ -524,7 +524,7 @@ namespace Maze
             {
                 if (m_assetFile)
                 {
-                    Debug::LogError("File: %s", m_assetFile->getFileName().c_str());
+                    Debug::LogError("File: %s", m_assetFile->getFileName().toUTF8().c_str());
                 }
                 else
                 {
@@ -538,7 +538,7 @@ namespace Maze
             }
             {
                 if (m_assetFile)
-                    Debug::LogError("File: %s", m_assetFile->getFileName().c_str());
+                    Debug::LogError("File: %s", m_assetFile->getFileName().toUTF8().c_str());
                 else
                     Debug::LogError("Fragment Shader:");
                 

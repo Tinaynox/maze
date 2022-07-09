@@ -128,7 +128,7 @@ namespace Maze
 
         if (!byteBuffer)
         {
-            MAZE_ERROR("File %s unzipping error!", getFileName().c_str());
+            MAZE_ERROR("File %s unzipping error!", getFileName().toUTF8().c_str());
             return false;
         }
         else
@@ -137,7 +137,7 @@ namespace Maze
 
             if (tinyxml2::XML_SUCCESS != loadError)
             {
-                MAZE_ERROR("File '%s' loading error - XMLError: %d!", getFileName().c_str(), (S32)loadError);
+                MAZE_ERROR("File '%s' loading error - XMLError: %d!", getFileName().toUTF8().c_str(), (S32)loadError);
                 return false;
             }
 

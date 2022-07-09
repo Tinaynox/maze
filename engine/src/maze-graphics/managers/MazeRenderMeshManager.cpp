@@ -265,12 +265,12 @@ namespace Maze
                 if (loaderData.isRenderMeshAssetFileFunc(_assetFile))
                 {
                     loaderFound = true;
-                    MAZE_ERROR_IF(!loaderData.loadRenderMeshAssetFileFunc(_assetFile, mesh), "Mesh is not loaded - '%s'", _assetFile->getFileName().c_str());
+                    MAZE_ERROR_IF(!loaderData.loadRenderMeshAssetFileFunc(_assetFile, mesh), "Mesh is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
                     break;
                 }
             }
 
-            MAZE_ERROR_IF(!loaderFound, "Unsupported texture format - %s!", _assetFile->getFileName().c_str());
+            MAZE_ERROR_IF(!loaderFound, "Unsupported texture format - %s!", _assetFile->getFileName().toUTF8().c_str());
         }
         else
         {
@@ -280,15 +280,15 @@ namespace Maze
             if (it != m_renderMeshLoaders.end())
             {
                 RenderMeshLoaderData const& loaderData = it->second;
-                MAZE_ERROR_IF(!loaderData.loadRenderMeshAssetFileFunc(_assetFile, mesh), "Mesh is not loaded - '%s'", _assetFile->getFileName().c_str());
+                MAZE_ERROR_IF(!loaderData.loadRenderMeshAssetFileFunc(_assetFile, mesh), "Mesh is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
             }
             else
             {
-                MAZE_ERROR("Unsupported texture format - %s!", _assetFile->getFileName().c_str());
+                MAZE_ERROR("Unsupported texture format - %s!", _assetFile->getFileName().toUTF8().c_str());
             }
         }
 
-        Debug::Log("Loaded.", _assetFile->getFileName().c_str());
+        Debug::Log("Loaded.", _assetFile->getFileName().toUTF8().c_str());
 
         return mesh;
     }

@@ -85,7 +85,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline String UTF8CodePointToBFString(U32 _codepoint) noexcept
+        inline String UTF8CodePointToString(U32 _codepoint) noexcept
         {    
             if (!_codepoint)
                 return String();

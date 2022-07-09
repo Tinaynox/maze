@@ -196,7 +196,7 @@ namespace Maze
         if (!_assetFile)
             return soundData;
 
-        Debug::Log("Loading sound data: %s...", _assetFile->getFileName().c_str());
+        Debug::Log("Loading sound data: %s...", _assetFile->getFileName().toUTF8().c_str());
 
         StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
 
@@ -209,12 +209,12 @@ namespace Maze
                 if (loaderData.isSoundAssetFileFunc(_assetFile))
                 {
                     loaderFound = true;
-                    MAZE_ERROR_IF(!loaderData.loadSoundAssetFileFunc(_assetFile, soundData), "SoundData is not loaded - '%s'", _assetFile->getFileName().c_str());
+                    MAZE_ERROR_IF(!loaderData.loadSoundAssetFileFunc(_assetFile, soundData), "SoundData is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
                     break;
                 }
             }
 
-            MAZE_ERROR_IF(!loaderFound, "Unsupported sound format - %s!", _assetFile->getFileName().c_str());
+            MAZE_ERROR_IF(!loaderFound, "Unsupported sound format - %s!", _assetFile->getFileName().toUTF8().c_str());
         }
         else
         {
@@ -224,15 +224,15 @@ namespace Maze
             if (it != m_soundLoaders.end())
             {
                 SoundLoaderData const& loaderData = it->second;
-                MAZE_ERROR_IF(!loaderData.loadSoundAssetFileFunc(_assetFile, soundData), "SoundData is not loaded - '%s'", _assetFile->getFileName().c_str());
+                MAZE_ERROR_IF(!loaderData.loadSoundAssetFileFunc(_assetFile, soundData), "SoundData is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
             }
             else
             {
-                MAZE_ERROR("Unsupported sound format - %s!", _assetFile->getFileName().c_str());
+                MAZE_ERROR("Unsupported sound format - %s!", _assetFile->getFileName().toUTF8().c_str());
             }
         }
 
-        Debug::Log("Loaded.", _assetFile->getFileName().c_str());
+        Debug::Log("Loaded.", _assetFile->getFileName().toUTF8().c_str());
 
         return soundData;
     }
