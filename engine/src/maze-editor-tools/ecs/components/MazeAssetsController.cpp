@@ -282,19 +282,19 @@ namespace Maze
         Set<AssetFilePtr> const& assetFiles = SelectionManager::GetInstancePtr()->getSelectedAssetFiles();
         if (!assetFiles.empty())
         {
-            String selectedDirectory;
+            Path selectedDirectory;
             for (AssetFilePtr const& assetFile : assetFiles)
             {
-                String directory = FileHelper::GetDirectoryInPath(assetFile->getFullPath());
+                Path directory = FileHelper::GetDirectoryInPath(assetFile->getFullPath());
 
                 if (selectedDirectory.empty())
                     selectedDirectory = directory;
                 else
-                    if (selectedDirectory != directory)
-                    {
-                        selectedDirectory.clear();
-                        break;
-                    }
+                if (selectedDirectory != directory)
+                {
+                    selectedDirectory.clear();
+                    break;
+                }
             }
 
             if (!selectedDirectory.empty())
@@ -325,7 +325,7 @@ namespace Maze
 
         clearAssetsTree();
 
-        String assetsFullPath = m_assetsFullPath;
+        Path assetsFullPath = m_assetsFullPath;
         
         const AssetFilePtr& assetDirectory = AssetManager::GetInstancePtr()->getAssetFileByFullPath(assetsFullPath);
         if (!assetDirectory)
@@ -344,10 +344,10 @@ namespace Maze
 
         for (AssetFilePtr const& assetFile : assetDirectories)
         {
-            String fileName = assetFile->getFileName();
-            String fullPath = assetFile->getFullPath();
+            Path fileName = assetFile->getFileName();
+            Path fullPath = assetFile->getFullPath();
 
-            if (!StringHelper::IsStartsWith(fullPath, assetsFullPath))
+            if (!StringHelper::IsStartsWith(fullPath.c_str(), assetsFullPath.c_str()))
                 continue;
 
             Transform2DPtr lineParent = m_assetsTreeLayoutTransform;
@@ -355,10 +355,10 @@ namespace Maze
             EntityPtr assetLineObject = getEntityRaw()->getECSScene()->createEntity();
             AssetLinePtr line = assetLineObject->ensureComponent<AssetLine>(this, assetFile);
 
-            Size fullPathLastSlashPosition = fullPath.find_last_of('/');
+            Size fullPathLastSlashPosition = fullPath.getPath().find_last_of('/');
             if (fullPathLastSlashPosition != String::npos)
             {
-                String parentFullPath = fullPath.substr(0, fullPathLastSlashPosition);
+                Path parentFullPath = fullPath.getPath().substr(0, fullPathLastSlashPosition);
                 if (!parentFullPath.empty()/* && parentFullPath != assetsFullPath*/)
                 {
                     auto assetsTreeLinesIt = m_assetsTreeLines.find(parentFullPath);
@@ -377,14 +377,15 @@ namespace Maze
             line->setDropDownVisible(false);
             line->getIconRenderer()->setColor(ColorU32(192, 192, 192));
 
-            m_assetsTreeLines.insert(
-                assetFile->getFullPath(),
-                line);
+            m_assetsTreeLines.emplace(
+                std::piecewise_construct,
+                std::forward_as_tuple(assetFile->getFullPath()),
+                std::forward_as_tuple(line));
             line->eventExpandedChanged.subscribe(this, &AssetsController::notifyAssetTreeLineExpandedChanged);            
             line->eventLineClick.subscribe(this, &AssetsController::notifyAssetTreeLineClick);
             line->eventLineDoubleClick.subscribe(this, &AssetsController::notifyAssetTreeLineDoubleClick);
 
-            line->setSelected(m_selectedAssetFolder == assetFile->getFullPath().c_str());
+            line->setSelected(m_selectedAssetFolder == assetFile->getFullPath());
             notifyAssetTreeLineExpandedChanged(line.get(), getAssetFileExpanded(assetFile));
 
             ContextMenu2DPtr lineContextMenu = line->getEntityRaw()->ensureComponent<ContextMenu2D>();
@@ -459,7 +460,7 @@ namespace Maze
     //////////////////////////////////////////
     void AssetsController::notifyAssetTreeLineDoubleClick(AssetLine* _line)
     {
-        String fullPath = _line->getAssetFile()->getFullPath();
+        Path fullPath = _line->getAssetFile()->getFullPath();
 
         const AssetFilePtr& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFullPath(fullPath);
         if (assetFile)
@@ -521,8 +522,8 @@ namespace Maze
 
         for (AssetFilePtr const& assetFile : assetFiles)
         {
-            String fileName = assetFile->getFileName();
-            String fullPath = assetFile->getFullPath();
+            Path fileName = assetFile->getFileName();
+            Path fullPath = assetFile->getFullPath();
 
             if (assetFile->getExtension() == "meta")
                 continue;
@@ -540,9 +541,10 @@ namespace Maze
 
             line->eventLineDoubleClick.subscribe(this, &AssetsController::notifyAssetTreeLineDoubleClick);
 
-            m_selectedAssetsFolderLines.insert(
-                fullPath,
-                line);
+            m_selectedAssetsFolderLines.emplace(
+                std::piecewise_construct,
+                std::forward_as_tuple(fullPath),
+                std::forward_as_tuple(line));
 
             ContextMenu2DPtr lineContextMenu = line->getEntityRaw()->ensureComponent<ContextMenu2D>();
             lineContextMenu->setCallbackFunction(

@@ -127,7 +127,7 @@ namespace Maze
         //////////////////////////////////////////
         inline bool operator<(TPath const& _value) const
         {
-            return getHash() < _value.getHash();
+            return m_path < _value.m_path;
         }
 
         //////////////////////////////////////////

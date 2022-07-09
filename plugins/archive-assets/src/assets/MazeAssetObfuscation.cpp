@@ -154,7 +154,7 @@ namespace Maze
                     StringHelper::RemoveSubstring(relPath, _targetSrcPath);
                     Path targetPackFullPath = _targetDestPath + relPath;
                     Path targetPackDirectoryFullPath = FileHelper::GetDirectoryInPath(targetPackFullPath);
-                    FileHelper::CreateDirectoryRecursive(targetPackDirectoryFullPath.c_str());
+                    FileHelper::CreateDirectoryRecursive(targetPackDirectoryFullPath);
 
                     zipFile zf = zipOpen(targetPackFullPath.toUTF8().c_str(), APPEND_STATUS_CREATE);
                     if (!zf)

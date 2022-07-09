@@ -189,11 +189,11 @@ namespace Maze
 
         ScrollRect2DPtr m_assetsTreeRoot;
         Transform2DPtr m_assetsTreeLayoutTransform;
-        StringKeyMap<AssetLinePtr> m_assetsTreeLines;
+        UnorderedMap<Path, AssetLinePtr> m_assetsTreeLines;
 
         ScrollRect2DPtr m_selectedAssetsFolderRoot;
         Transform2DPtr m_selectedAssetsFolderLayoutTransform;
-        StringKeyMap<AssetLinePtr> m_selectedAssetsFolderLines;
+        UnorderedMap<Path, AssetLinePtr> m_selectedAssetsFolderLines;
 
         Path m_selectedAssetFolder;
 

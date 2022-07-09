@@ -82,7 +82,7 @@ namespace Maze
         Vector<AssetFilePtr>* _removedFiles)
     {
         AssetRegularArchivePtr assetArchive = AssetRegularArchive::Create(_fileFullPath);
-        MAZE_WARNING_RETURN_VALUE_IF(!assetArchive, AssetFilePtr(), "Zip archive %s is corrupted!", _fileFullPath.c_str());
+        MAZE_WARNING_RETURN_VALUE_IF(!assetArchive, AssetFilePtr(), "Zip archive %s is corrupted!", _fileFullPath.toUTF8().c_str());
         assetArchive->updateChildrenAssets(_addedFiles, _removedFiles);
         return assetArchive;
     }

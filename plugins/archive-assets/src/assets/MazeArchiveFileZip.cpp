@@ -201,7 +201,7 @@ namespace Maze
         updateZipNavigationMap();
 
         ZipNavigationMap::const_iterator it = m_zipNavigationMap.find(_filePath);
-        MAZE_WARNING_RETURN_VALUE_IF(it == m_zipNavigationMap.end(), 0, "Cannot locate file in archive '%s'!", _filePath.c_str());
+        MAZE_WARNING_RETURN_VALUE_IF(it == m_zipNavigationMap.end(), 0, "Cannot locate file in archive '%s'!", _filePath.toUTF8().c_str());
         const ZipFileInfo& zipFileInfo = it->second;
         Size bytesLoaded = 0;
 
@@ -238,7 +238,7 @@ namespace Maze
         updateZipNavigationMap();
 
         ZipNavigationMap::const_iterator it = m_zipNavigationMap.find(_filePath);
-        MAZE_WARNING_RETURN_VALUE_IF(it == m_zipNavigationMap.end(), 0, "Cannot locate file in archive '%s'!", _filePath.c_str());
+        MAZE_WARNING_RETURN_VALUE_IF(it == m_zipNavigationMap.end(), 0, "Cannot locate file in archive '%s'!", _filePath.toUTF8().c_str());
         const ZipFileInfo& zipFileInfo = it->second;
         ByteBufferPtr byteBuffer = ByteBuffer::Create();
 
@@ -271,7 +271,7 @@ namespace Maze
         updateZipNavigationMap();
 
         ZipNavigationMap::const_iterator it = m_zipNavigationMap.find(_filePath);
-        MAZE_WARNING_RETURN_VALUE_IF(it == m_zipNavigationMap.end(), 0, "Cannot locate file in archive '%s'!", _filePath.c_str());
+        MAZE_WARNING_RETURN_VALUE_IF(it == m_zipNavigationMap.end(), 0, "Cannot locate file in archive '%s'!", _filePath.toUTF8().c_str());
         return it->second.uncompressedSize;
     }
 

@@ -1178,6 +1178,12 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline bool IsStartsWith(CWString _value, CWString _start) noexcept
+        {
+            return (wcsncmp(_value, _start, wcslen(_start)) == 0);
+        }
+
+        //////////////////////////////////////////
         inline bool IsEndsWith(StdString const& _value, StdString const& _ending) noexcept
         {
             if (_ending.size() > _value.size())
