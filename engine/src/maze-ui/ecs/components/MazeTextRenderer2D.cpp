@@ -400,6 +400,7 @@ namespace Maze
 
             while ((it != end) && (curChar = utf8::next(it, end)))
             {
+                // #TODO: Rework - take kerning from the current glyph storage
                 x += m_fontMaterial->getFont()->getKerning(prevChar, curChar, m_fontSize);
                 prevChar = curChar;
 
@@ -535,6 +536,7 @@ namespace Maze
         // Build mesh
         while ((it != end) && (curChar = utf8::next(it, end)))
         {
+            // #TODO: Rework - take kerning from the current glyph storage
             x += m_fontMaterial->getFont()->getKerning(prevChar, curChar, m_fontSize);
             prevChar = curChar;
 
