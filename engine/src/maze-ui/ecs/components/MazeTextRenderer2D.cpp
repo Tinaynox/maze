@@ -189,7 +189,7 @@ namespace Maze
 
         m_color = _color;
 
-        updateMeshRendererColors();
+        updateMeshData(); // #TODO: Rework
     }
 
     //////////////////////////////////////////
