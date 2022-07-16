@@ -279,12 +279,13 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline void setPosition(Vec2DF const& _position)
+        inline void setPosition(Vec2DF const& _position, bool _resetStartPosition = true)
         {
             if (!m_body)
                 return;
 
-            m_fixedUpdateStartPosition = _position;
+            if (_resetStartPosition)
+                m_fixedUpdateStartPosition = _position;
 
             if (m_world->getBox2DWorld()->IsLocked())
                 m_flags |= Rigidbody2DFlag::TransformDirty;
@@ -293,10 +294,12 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline void setPositionX(F32 _x) { setPosition({ _x, getPosition().y }); }
+        inline void setPositionX(F32 _x, bool _resetStartPosition = true)
+        { setPosition({ _x, getPosition().y }, _resetStartPosition); }
 
         //////////////////////////////////////////
-        inline void setPositionY(F32 _y) { setPosition({ getPosition().x, _y}); }
+        inline void setPositionY(F32 _y, bool _resetStartPosition = true)
+        { setPosition({ getPosition().x, _y}, _resetStartPosition); }
 
         //////////////////////////////////////////
         inline F32 getAngle() const
