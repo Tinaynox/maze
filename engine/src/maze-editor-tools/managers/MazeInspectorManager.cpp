@@ -156,6 +156,7 @@ namespace Maze
     {
         registerPropertyDrawer<bool, PropertyDrawerBool>();
         registerPropertyDrawer<S32, PropertyDrawerS32>();
+        registerPropertyDrawer<U32, PropertyDrawerS32>();
         registerPropertyDrawer<F32, PropertyDrawerF32>();
         registerPropertyDrawer<Vec2DF, PropertyDrawerVec2DF>();
         registerPropertyDrawer<Vec2DS, PropertyDrawerVec2DS>();
@@ -174,6 +175,7 @@ namespace Maze
 
         registerMetaPropertyDrawer<bool, MetaPropertyDrawerBool>();
         registerMetaPropertyDrawer<S32, MetaPropertyDrawerS32>();
+        registerMetaPropertyDrawer<U32, MetaPropertyDrawerS32>();
         registerMetaPropertyDrawer<F32, MetaPropertyDrawerF32>();
         registerMetaPropertyDrawer<Vec2DF, MetaPropertyDrawerVec2DF>();
         registerMetaPropertyDrawer<Vec2DS, MetaPropertyDrawerVec2DS>();
