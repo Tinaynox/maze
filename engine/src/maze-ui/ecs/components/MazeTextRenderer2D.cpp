@@ -300,8 +300,6 @@ namespace Maze
 
         String finalText = m_text;
 
-        // #TODO: Localization callback here
-
         // Process color tags
         Deque<Pair<Size, ColorF128>> colorTags;
         if (getColorTags())
@@ -401,7 +399,8 @@ namespace Maze
             while ((it != end) && (curChar = utf8::next(it, end)))
             {
                 // #TODO: Rework - take kerning from the current glyph storage
-                x += m_fontMaterial->getFont()->getKerning(prevChar, curChar, m_fontSize);
+                F32 kerning = m_fontMaterial->getFont()->getKerning(prevChar, curChar, m_fontSize);
+                x += kerning;
                 prevChar = curChar;
 
                 if (curChar == ' ')
@@ -537,7 +536,8 @@ namespace Maze
         while ((it != end) && (curChar = utf8::next(it, end)))
         {
             // #TODO: Rework - take kerning from the current glyph storage
-            x += m_fontMaterial->getFont()->getKerning(prevChar, curChar, m_fontSize);
+            F32 kerning = m_fontMaterial->getFont()->getKerning(prevChar, curChar, m_fontSize);
+            x += kerning;
             prevChar = curChar;
 
             if (!colorTags.empty())
