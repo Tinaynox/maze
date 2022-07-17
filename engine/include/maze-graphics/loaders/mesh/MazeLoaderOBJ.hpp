@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-graphics/MazePixelSheet2D.hpp"
+#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 
 
@@ -42,10 +43,16 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Mesh);
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool LoadOBJ(AssetFilePtr const& _file, MeshPtr const& _mesh);
+    MAZE_GRAPHICS_API bool LoadOBJ(
+        AssetFilePtr const& _file,
+        MeshPtr const& _mesh,
+        RenderMeshLoaderProperties const& _props);
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool LoadOBJ(ByteBufferPtr const& _fileData, MeshPtr const& _mesh);
+    MAZE_GRAPHICS_API bool LoadOBJ(
+        ByteBufferPtr const& _fileData,
+        MeshPtr const& _mesh,
+        RenderMeshLoaderProperties const& _props);
 
     //////////////////////////////////////////
     MAZE_GRAPHICS_API bool IsOBJFile(AssetFilePtr const& _file);

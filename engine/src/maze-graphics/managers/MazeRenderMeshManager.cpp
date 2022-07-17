@@ -256,6 +256,10 @@ namespace Maze
 
         StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
 
+        RenderMeshLoaderProperties loaderProps;
+        if (metaData.contains("scale"))
+            loaderProps.scale = StringHelper::StringToF32(metaData["scale"]);
+
         if (metaData.empty() || !metaData.contains("ext"))
         {
             bool loaderFound = false;
@@ -265,7 +269,7 @@ namespace Maze
                 if (loaderData.isRenderMeshAssetFileFunc(_assetFile))
                 {
                     loaderFound = true;
-                    MAZE_ERROR_IF(!loaderData.loadRenderMeshAssetFileFunc(_assetFile, mesh), "Mesh is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
+                    MAZE_ERROR_IF(!loaderData.loadRenderMeshAssetFileFunc(_assetFile, mesh, loaderProps), "Mesh is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
                     break;
                 }
             }
@@ -280,7 +284,7 @@ namespace Maze
             if (it != m_renderMeshLoaders.end())
             {
                 RenderMeshLoaderData const& loaderData = it->second;
-                MAZE_ERROR_IF(!loaderData.loadRenderMeshAssetFileFunc(_assetFile, mesh), "Mesh is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
+                MAZE_ERROR_IF(!loaderData.loadRenderMeshAssetFileFunc(_assetFile, mesh, loaderProps), "Mesh is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
             }
             else
             {

@@ -38,10 +38,13 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool LoadOBJ(AssetFilePtr const& _file, MeshPtr const& _mesh)
+    MAZE_GRAPHICS_API bool LoadOBJ(
+        AssetFilePtr const& _file,
+        MeshPtr const& _mesh,
+        RenderMeshLoaderProperties const& _props)
     {
         ByteBufferPtr fileData = _file->readAsByteBuffer();
-        return LoadOBJ(fileData, _mesh);
+        return LoadOBJ(fileData, _mesh, _props);
     }
 
     //////////////////////////////////////////
@@ -469,7 +472,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool LoadOBJ(ByteBufferPtr const& _fileData, MeshPtr const& _mesh)
+    MAZE_GRAPHICS_API bool LoadOBJ(
+        ByteBufferPtr const& _fileData,
+        MeshPtr const& _mesh,
+        RenderMeshLoaderProperties const& _props)
     {
         _mesh->clear();
 
@@ -496,7 +502,10 @@ namespace Maze
                 for (S32 i = 0, in = (S32)indices.size(); i < in; i += 3)
                     std::swap(indices[i], indices[i + 2]);
                 for (Vec3DF& finalPosition : finalPositions)
+                {
                     finalPosition.x = -finalPosition.x;
+                    finalPosition *= _props.scale;
+                }
                 for (Vec3DF& finalNormal : finalNormals)
                     finalNormal.x = -finalNormal.x;
 
