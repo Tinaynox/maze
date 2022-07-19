@@ -533,6 +533,11 @@ namespace Maze
                                 componentIndex = --autoComponentIndexCounter;
 
                             ComponentPtr const& component = components[componentIndex];
+                            if (!component)
+                            {
+                                componentNode = componentNode->NextSibling();
+                                continue;
+                            }
 
                             MetaClass const* componentMetaClass = component->getMetaClass();
                             MetaInstance componentMetaInstance = component->getMetaInstance();
