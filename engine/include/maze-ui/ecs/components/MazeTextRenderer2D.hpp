@@ -56,7 +56,7 @@ namespace Maze
     // Enum TextRenderer2DSymbolsLimitPolicy
     //
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_4_API(MAZE_GRAPHICS_API, TextRenderer2DSymbolsLimitPolicy,
+    MAZE_DECLARE_ENUMCLASS_4_API(MAZE_UI_API, TextRenderer2DSymbolsLimitPolicy,
         DenyInput,
         Crop,
         Dot,
@@ -67,7 +67,7 @@ namespace Maze
     // Enum TextRenderer2DWidthPolicy
     //
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_2_API(MAZE_GRAPHICS_API, TextRenderer2DWidthPolicy,
+    MAZE_DECLARE_ENUMCLASS_2_API(MAZE_UI_API, TextRenderer2DWidthPolicy,
         Abut,
         WordWrap);
 
@@ -93,7 +93,7 @@ namespace Maze
     // Class TextRenderer2D
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API TextRenderer2D
+    class MAZE_UI_API TextRenderer2D
         : public AbstractTextRenderer2D
         , public MultiDelegateCallbackReceiver
     {

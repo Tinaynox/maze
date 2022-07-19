@@ -30,7 +30,7 @@
 
 
 //////////////////////////////////////////
-#include "maze-physics2d/MazePhysics2DHeader.hpp"
+#include "maze-plugin-physics2d-editor-tools/MazePhysics2DEditorToolsHeader.hpp"
 #include "maze-physics2d/physics/MazePhysicsWorld2D.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-editor-tools/ecs/systems/MazeGizmosDrawer.hpp"
@@ -51,7 +51,7 @@ namespace Maze
     // Class Physics2DGizmosSystem
     //
     //////////////////////////////////////////
-    class MAZE_PHYSICS2D_API Physics2DGizmosSystem
+    class MAZE_PLUGIN_PHYSICS2D_EDITOR_TOOLS_API Physics2DGizmosSystem
         : public ComponentSystem
         , public MultiDelegateCallbackReceiver
         , public b2Draw

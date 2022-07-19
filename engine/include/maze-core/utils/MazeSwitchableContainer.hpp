@@ -47,7 +47,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     template <typename TContainer>
-    class MAZE_CORE_API SwitchableContainer
+    class SwitchableContainer
     {
     public:
 

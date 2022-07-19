@@ -45,7 +45,7 @@ namespace Maze
     // Class Light3DGizmos
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API Light3DGizmos
+    class MAZE_EDITOR_TOOLS_API Light3DGizmos
         : public ComponentGizmos
     {
     public:

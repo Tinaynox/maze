@@ -46,7 +46,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    enum class VertexAttributeSemantic
+    enum class MAZE_GRAPHICS_API VertexAttributeSemantic
     {
         Position = 0,
         Normal,
@@ -70,7 +70,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    enum class VertexAttributeType
+    enum class MAZE_GRAPHICS_API VertexAttributeType
     {
         S8,
         U8,
@@ -97,7 +97,7 @@ namespace Maze
     //            |OFFSET->|
     //
     //////////////////////////////////////////
-    struct VertexAttributeDescription 
+    struct MAZE_GRAPHICS_API VertexAttributeDescription
     {
         //////////////////////////////////////////
         VertexAttributeDescription();
@@ -120,7 +120,7 @@ namespace Maze
     };
 
     //////////////////////////////////////////
-    struct VertexDataDescription
+    struct MAZE_GRAPHICS_API VertexDataDescription
     {
         Size bytesPerVertex;
         VertexAttributeDescription const* vertexAttributesDescriptions;
