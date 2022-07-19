@@ -43,7 +43,7 @@ namespace Maze
     // Class PathWin
     //
     //////////////////////////////////////////
-    class PathWin : public GenericPath<PathWin, WString>
+    class MAZE_CORE_API PathWin : public GenericPath<PathWin, WString>
     {
     public:
 

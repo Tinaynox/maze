@@ -43,7 +43,7 @@ namespace Maze
     // Class PathUnix
     //
     //////////////////////////////////////////
-    class PathUnix : public GenericPath<PathUnix, String>
+    class MAZE_CORE_API PathUnix : public GenericPath<PathUnix, String>
     {
     public:
 
