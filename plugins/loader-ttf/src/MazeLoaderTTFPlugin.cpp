@@ -123,7 +123,8 @@ namespace Maze
     //////////////////////////////////////////
     void LoaderTTFPlugin::uninstall()
     {
-        TrueTypeFontManager::GetInstancePtr()->setTrueTypeFontLoader(TrueTypeFontLoaderData());
+        if (TrueTypeFontManager::GetInstancePtr())
+            TrueTypeFontManager::GetInstancePtr()->setTrueTypeFontLoader(TrueTypeFontLoaderData());
     }
 
 } // namespace Maze
