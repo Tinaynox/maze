@@ -42,6 +42,7 @@
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/helpers/MazeSystemDialogHelper.hpp"
+#include "maze-core/assets/MazeAssetDirectory.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
@@ -316,6 +317,21 @@ namespace Maze
             }
             case 12:
             {
+                AssetFilePtr const& pluginsDirectory = AssetManager::GetInstancePtr()->getAssetFile(MAZE_HASHED_CSTRING("plugins"));
+                if (pluginsDirectory && pluginsDirectory->getClassUID() == ClassInfo<AssetDirectory>::UID())
+                {
+                    Vector<AssetFilePtr> pluginAssets = AssetManager::GetInstancePtr()->getAssetFilesInFolder(pluginsDirectory->getFullPath());
+                    for (AssetFilePtr const& pluginAsset : pluginAssets)
+                    {
+                        Path pluginPlatformName = FileHelper::GetFileNameWithoutExtension(pluginAsset->getFileName());
+                        Path pluginName = PluginManager::GetPluginNameFromPlatformName(pluginPlatformName);
+                        if (!pluginName.empty())
+                        {
+                            PluginManager::GetInstancePtr()->loadPlugin(pluginAsset->getFullPath());
+                        }
+                    }
+                }
+
                 EditorManager::GetInstancePtr()->start();
 
                 SceneManager::GetInstancePtr()->loadScene<SceneDebug>();

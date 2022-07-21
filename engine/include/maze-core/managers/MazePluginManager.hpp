@@ -59,6 +59,14 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        static Path GetPlatformPluginName(Path const& _pluginName);
+
+        //////////////////////////////////////////
+        static Path GetPluginNameFromPlatformName(Path const& _pluginPlatformName);
+
+    public:
+
+        //////////////////////////////////////////
         virtual ~PluginManager();
 
         //////////////////////////////////////////
@@ -72,7 +80,7 @@ namespace Maze
         void unloadPlugin(Path const& _pluginLibraryFullPath);
 
         //////////////////////////////////////////
-        bool loadPlatformPlugin(String const& _pluginName);
+        bool loadPlatformPlugin(Path const& _pluginName);
 
         //////////////////////////////////////////
         void unloadAllPlugins();

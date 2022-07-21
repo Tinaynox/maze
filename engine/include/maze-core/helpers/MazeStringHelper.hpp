@@ -1193,7 +1193,16 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline bool IsEndsWith(String const& _value, const String& _ending) noexcept
+        inline bool IsEndsWith(String const& _value, String const& _ending) noexcept
+        {
+            if (_ending.size() > _value.size())
+                return false;
+
+            return std::equal(_ending.rbegin(), _ending.rend(), _value.rbegin());
+        }
+
+        //////////////////////////////////////////
+        inline bool IsEndsWith(WString const& _value, WString const& _ending) noexcept
         {
             if (_ending.size() > _value.size())
                 return false;

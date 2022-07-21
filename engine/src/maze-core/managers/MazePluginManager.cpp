@@ -39,6 +39,49 @@
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    static Path BuildPlatformPluginPrefix()
+    {
+#if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
+        return "lib";
+#elif (MAZE_PLATFORM == MAZE_PLATFORM_OSX)
+        return "lib";
+#endif
+        return Path();
+    }
+
+    //////////////////////////////////////////
+    static Path const& GetPlatformPluginPrefix()
+    {
+        static Path const prefix = BuildPlatformPluginPrefix();
+        return prefix;
+    }
+
+    //////////////////////////////////////////
+    static Path BuildPlatformPluginPostfix()
+    {
+        Path postfix;
+#if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
+#   if (MAZE_ARCH == MAZE_ARCH_X86)
+        postfix += "-x86";
+#   else
+        postfix += "-x64";
+#   endif
+#endif
+
+#if MAZE_DEBUG
+        postfix += "-d";
+#endif
+        return postfix;
+    }
+
+    //////////////////////////////////////////
+    static Path const& GetPlatformPluginPostfix()
+    {
+        static Path const postfix = BuildPlatformPluginPostfix();
+        return postfix;
+    }
+
 
     //////////////////////////////////////////
     // Class PluginManager
@@ -70,6 +113,28 @@ namespace Maze
     
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    Path PluginManager::GetPlatformPluginName(Path const& _pluginName)
+    {
+        return GetPlatformPluginPrefix() + _pluginName + GetPlatformPluginPostfix();
+    }
+
+    //////////////////////////////////////////
+    Path PluginManager::GetPluginNameFromPlatformName(Path const& _pluginPlatformName)
+    {
+        Path::StringType const& prefixString = GetPlatformPluginPrefix().getPath();
+        Path::StringType const& postfixString = GetPlatformPluginPostfix().getPath();
+        if (!StringHelper::IsStartsWith(_pluginPlatformName.getPath(), prefixString))
+            return Path();
+        if (!StringHelper::IsEndsWith(_pluginPlatformName.getPath(), postfixString))
+            return Path();
+
+        Path::StringType stringPath = _pluginPlatformName.getPath().substr(
+            prefixString.size(),
+            _pluginPlatformName.size() - prefixString.size() - postfixString.size());
+        return stringPath;
     }
 
     //////////////////////////////////////////
@@ -134,26 +199,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool PluginManager::loadPlatformPlugin(String const& _pluginName)
+    bool PluginManager::loadPlatformPlugin(Path const& _pluginName)
     {
-        String pluginName = _pluginName;
-
-#if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
-#   if (MAZE_ARCH == MAZE_ARCH_X86)
-        pluginName += "-x86";
-#   else
-        pluginName += "-x64";
-#   endif
-#elif (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
-        pluginName = "lib" + pluginName;
-#elif (MAZE_PLATFORM == MAZE_PLATFORM_OSX)
-        pluginName = "lib" + pluginName;
-#endif
-        
-#if MAZE_DEBUG
-        pluginName += "-d";
-#endif
-
+        Path pluginName = GetPlatformPluginName(_pluginName);
         return loadPlugin(pluginName);
     }
 

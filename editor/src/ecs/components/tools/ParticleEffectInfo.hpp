@@ -61,7 +61,7 @@ namespace Maze
     // Class ParticleEffectInfo
     //
     //////////////////////////////////////////
-    class MAZE_EDITOR_TOOLS_API ParticleEffectInfo
+    class ParticleEffectInfo
         : public Component
         , public Updatable
         , public MultiDelegateCallbackReceiver

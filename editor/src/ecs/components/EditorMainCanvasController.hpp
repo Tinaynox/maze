@@ -57,7 +57,7 @@ namespace Maze
     // Class EditorMainCanvasController
     //
     //////////////////////////////////////////
-    class MAZE_EDITOR_TOOLS_API EditorMainCanvasController
+    class EditorMainCanvasController
         : public Component
         , public Updatable
         , public MultiDelegateCallbackReceiver

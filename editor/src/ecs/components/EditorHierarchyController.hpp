@@ -85,7 +85,7 @@ namespace Maze
     // Class EditorHierarchyController
     //
     //////////////////////////////////////////
-    class MAZE_EDITOR_TOOLS_API EditorHierarchyController
+    class EditorHierarchyController
         : public Component
         , public Updatable
         , public MultiDelegateCallbackReceiver
