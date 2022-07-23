@@ -184,6 +184,9 @@ namespace Maze
                         }
                         
                         String properyStringValue = metaProperty->toString(metaInstance);
+
+                        MAZE_ERROR_IF(StringHelper::IsStartsWith(properyStringValue.c_str(), "ptr:"), "Trying to save property '%s' as pointer!", propertyName);
+
                         componentElement->SetAttribute(propertyName, properyStringValue.c_str());
                         
                     }
@@ -553,6 +556,8 @@ namespace Maze
                                     CString attributeValue = componentElement->Attribute(propertyName);
                                     if (attributeValue)
                                     {
+                                        MAZE_ERROR_CONTINUE_IF(StringHelper::IsStartsWith(attributeValue, "ptr:"), "Pointer value in '%s' property!", propertyName);
+
                                         ClassUID metaPropertyUID = metaProperty->getValueClassUID();
                                         if (metaPropertyUID != 0)
                                         {

@@ -79,6 +79,10 @@
 #   include "../sys-res/win/WinResources.hpp"
 #endif
 
+#if MAZE_SOUND_SYSTEM_OPENAL_ENABLED
+#   include "maze-sound-system-openal/MazeSoundSystemOpenALPlugin.hpp"
+#endif
+
 
 //////////////////////////////////////////
 namespace Maze
@@ -217,6 +221,14 @@ namespace Maze
             MAZE_LOAD_PLATFORM_PLUGIN(RenderSystemOpenGL3, config);
         }
 #endif
+
+#if MAZE_SOUND_SYSTEM_OPENAL_ENABLED
+        {
+            SoundSystemOpenALConfig config;
+            MAZE_LOAD_PLATFORM_PLUGIN(SoundSystemOpenAL, config);
+        }
+#endif
+
         MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG);
 
         Debug::log << "Available Render Systems: " << endl;
