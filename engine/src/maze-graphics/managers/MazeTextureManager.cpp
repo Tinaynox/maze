@@ -206,6 +206,14 @@ namespace Maze
                 texture->setMinFilter(TextureFilter::Nearest);
                 break;
             }
+            case BuiltinTexture2DType::Normal:
+            {
+                texture = Texture2D::Create(m_renderSystemRaw);
+                texture->loadTexture(PixelSheet2D(Vec2DS(1, 1), ColorU32(127, 127, 255)));
+                texture->setMagFilter(TextureFilter::Nearest);
+                texture->setMinFilter(TextureFilter::Nearest);
+                break;
+            }
             case BuiltinTexture2DType::Error:
             {
                 texture = Texture2D::Create(m_renderSystemRaw);
