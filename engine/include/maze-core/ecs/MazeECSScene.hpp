@@ -231,7 +231,7 @@ namespace Maze
         Set<Entity*> m_entities;
         Vector<ComponentSystemPtr> m_systems;
 
-        ECSWorld* m_world;
+        ECSWorld* m_world = nullptr;
     };
 
 

@@ -186,7 +186,7 @@ namespace Maze
             Vector<RenderUnit>& _renderData);
 
     protected:
-        ECSWorld* m_world;
+        ECSWorld* m_world = nullptr;
         RenderSystemPtr m_renderSystem;
 
         SharedPtr<GenericInclusiveEntitiesSample<MeshRenderer, Transform3D>> m_meshRenderers;

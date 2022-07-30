@@ -77,7 +77,6 @@ namespace Maze
     HierarchyLine::HierarchyLine()
         : m_type(HierarchyLineType::Entity)
         , m_dropDownState(HierarchyLineDropDownState::None)
-        , m_userData(nullptr)
     {
     }
 

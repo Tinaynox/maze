@@ -417,8 +417,8 @@ namespace Maze
         inline bool getActiveInHierarchyPrevFrame() const { return getFlag(Flags::ActiveInHierarchyPrevFrame); }
 
     protected:
-        ECSWorld* m_world;
-        ECSScene* m_scene;
+        ECSWorld* m_world = nullptr;
+        ECSScene* m_scene = nullptr;
         EntityId m_id;
         ComponentsContainer m_components;
         Set<ClassUID> m_componentUIDs;
