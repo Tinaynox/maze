@@ -366,8 +366,8 @@ namespace Maze
         }
 
         FontGlyphStorageData* glyphStorageData = nullptr;
-        TTFPagePtr<U32> ttfPage = m_fontMaterial->getFont()->getDefaultFont()->getTTFPage(m_fontSize);
-        TTFPagePtr<U64> ttfOutlineThicknessPage = m_fontMaterial->getFont()->getDefaultFont()->getTTFOutlineThicknessPage(m_fontSize);
+        TTFPagePtr& ttfPage = m_fontMaterial->getFont()->getDefaultFont()->getTTFPage(m_fontSize);
+        TTFPagePtr& ttfOutlineThicknessPage = m_fontMaterial->getFont()->getDefaultFont()->getTTFOutlineThicknessPage(m_fontSize, m_outlineThickness);
 
         F32 ascent = m_fontMaterial->getFont()->getDefaultFont()->getAscender(m_fontSize);
         F32 descent = m_fontMaterial->getFont()->getDefaultFont()->getDescender(m_fontSize);
@@ -415,7 +415,7 @@ namespace Maze
                 }
                 if (curChar == '\n')
                 {
-                    F32 totalLength = x + m_outlineThickness * 2;
+                    F32 totalLength = x;
                     rowLengths.push_back(totalLength);
                     rowLengthMax = Math::Max(rowLengthMax, totalLength);
 
@@ -438,7 +438,7 @@ namespace Maze
 
                             if (m_outlineThickness)
                             {
-                                ttfOutlineThicknessPage = glyphStorageData->getTrueTypeFont()->getTTFOutlineThicknessPage(m_fontSize);
+                                ttfOutlineThicknessPage = glyphStorageData->getTrueTypeFont()->getTTFOutlineThicknessPage(m_fontSize, m_outlineThickness);
                             }
                         }
                     }
@@ -447,7 +447,7 @@ namespace Maze
                         ttfPage = m_fontMaterial->getFont()->getDefaultFont()->getTTFPage(m_fontSize);
 
                         if (m_outlineThickness)
-                            ttfOutlineThicknessPage = m_fontMaterial->getFont()->getDefaultFont()->getTTFOutlineThicknessPage(m_fontSize);
+                            ttfOutlineThicknessPage = m_fontMaterial->getFont()->getDefaultFont()->getTTFOutlineThicknessPage(m_fontSize, m_outlineThickness);
                     }
                 }
                 glyphData.glyph = &(m_fontMaterial->getFont()->getGlyphFromStorage(glyphStorageData, curChar, m_fontSize, ttfPage));
@@ -495,7 +495,7 @@ namespace Maze
 
                 x += glyphData.glyph->advance;
             }
-            F32 totalLength = x + m_outlineThickness * 2;
+            F32 totalLength = x;
             rowLengths.push_back(totalLength);
             rowLengthMax = Math::Max(rowLengthMax, totalLength);
         }
@@ -578,8 +578,8 @@ namespace Maze
                 continue;
             }
 
-            glyphX = x + xAlignOffset + m_outlineThickness;
-            glyphY = y + m_outlineThickness;
+            glyphX = x + xAlignOffset;
+            glyphY = y;
 
             TempGlyphData& glyphData = glyphs[glyphIndex];
             ++glyphIndex;
@@ -627,7 +627,7 @@ namespace Maze
         }
 
         m_lastGlyphOffset.x = x + xAlignOffset + m_outlineThickness;
-        m_lastGlyphOffset.y = y + m_outlineThickness;
+        m_lastGlyphOffset.y = y;
 
         updateMeshRendererModelMatrices();
         updateMeshRendererColors();

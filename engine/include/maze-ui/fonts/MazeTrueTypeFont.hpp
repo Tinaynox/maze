@@ -81,10 +81,13 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    using GlyphKeyType = U32;
+
+
+    //////////////////////////////////////////
     // Struct TTFPage
     //
     //////////////////////////////////////////
-    template <typename TGlyphKey>
     struct TTFPage
     {
         //////////////////////////////////////////
@@ -92,7 +95,7 @@ namespace Maze
 
 
         // Table mapping code points to their corresponding glyph
-        TTFGlyphTable<TGlyphKey> glyphs;
+        TTFGlyphTable<GlyphKeyType> glyphs;
 
         // Texture containing the pixels of the glyphs
         Texture2DPtr texture;
@@ -105,8 +108,7 @@ namespace Maze
     };
 
     //////////////////////////////////////////
-    template <typename TGlyphKey>
-    TTFPage<TGlyphKey>::TTFPage()
+    TTFPage::TTFPage()
         : nextRow(3u)
     {
         Size size = 512u;
@@ -121,11 +123,10 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    template <typename TGlyphKey>
-    using TTFPagePtr = SharedPtr<struct TTFPage<TGlyphKey>>;
+    using TTFPagePtr = SharedPtr<struct TTFPage>;
 
     template <typename TGlyphKey>
-    using TTFPageTable = Map<U32, TTFPagePtr<TGlyphKey>>;
+    using TTFPageTable = Map<TGlyphKey, TTFPagePtr>;
 
 
     //////////////////////////////////////////
@@ -167,19 +168,19 @@ namespace Maze
 
 
         ////////////////////////////////////
-        virtual TTFPagePtr<U32>& getTTFPage(U32 _fontSize) MAZE_ABSTRACT;
+        virtual TTFPagePtr& getTTFPage(U32 _fontSize) MAZE_ABSTRACT;
 
         ////////////////////////////////////
-        virtual TTFPagePtr<U64>& getTTFOutlineThicknessPage(U32 _fontSize) MAZE_ABSTRACT;
+        virtual TTFPagePtr& getTTFOutlineThicknessPage(U32 _fontSize, F32 _outlineThickness) MAZE_ABSTRACT;
 
         ////////////////////////////////////
-        virtual FontGlyph const& getGlyph(U32 _codePoint, U32 _fontSize, TTFPagePtr<U32>& _page) MAZE_ABSTRACT;
+        virtual FontGlyph const& getGlyph(U32 _codePoint, U32 _fontSize, TTFPagePtr& _page) MAZE_ABSTRACT;
 
         ////////////////////////////////////
         virtual FontGlyph const& getGlyph(U32 _codePoint, U32 _fontSize) MAZE_ABSTRACT;
 
         ////////////////////////////////////
-        virtual FontGlyph const& getOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr< U64 >& _page) MAZE_ABSTRACT;
+        virtual FontGlyph const& getOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr& _page) MAZE_ABSTRACT;
 
         ////////////////////////////////////
         virtual FontGlyph const& getOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness) MAZE_ABSTRACT;

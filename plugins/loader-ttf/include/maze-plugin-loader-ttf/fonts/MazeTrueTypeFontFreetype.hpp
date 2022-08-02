@@ -78,19 +78,19 @@ namespace Maze
 
 
         ////////////////////////////////////
-        virtual TTFPagePtr<U32>& getTTFPage(U32 _fontSize) MAZE_OVERRIDE;
+        virtual TTFPagePtr& getTTFPage(U32 _fontSize) MAZE_OVERRIDE;
 
         ////////////////////////////////////
-        virtual TTFPagePtr<U64>& getTTFOutlineThicknessPage(U32 _fontSize) MAZE_OVERRIDE;
+        virtual TTFPagePtr& getTTFOutlineThicknessPage(U32 _fontSize, F32 _outlineThickness) MAZE_OVERRIDE;
 
         ////////////////////////////////////
-        virtual FontGlyph const& getGlyph(U32 _codePoint, U32 _fontSize, TTFPagePtr<U32>& _page) MAZE_OVERRIDE;
+        virtual FontGlyph const& getGlyph(U32 _codePoint, U32 _fontSize, TTFPagePtr& _page) MAZE_OVERRIDE;
 
         ////////////////////////////////////
         virtual FontGlyph const& getGlyph(U32 _codePoint, U32 _fontSize) MAZE_OVERRIDE;
 
         ////////////////////////////////////
-        virtual FontGlyph const& getOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr< U64 >& _page) MAZE_OVERRIDE;
+        virtual FontGlyph const& getOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr& _page) MAZE_OVERRIDE;
 
         ////////////////////////////////////
         virtual FontGlyph const& getOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness) MAZE_OVERRIDE;
@@ -136,16 +136,20 @@ namespace Maze
         void cleanupFreeType();
 
         ////////////////////////////////////
-        template <typename TGlyphKey>
         inline FontGlyph loadGlyph(
-            TTFPageTable<TGlyphKey>& _table,
+            TTFPagePtr& _page,
             U32 _codePoint,
             U32 _fontSize,
             F32 _outlineThickness = 0.0f);
 
         ////////////////////////////////////
-        template <typename TGlyphKey>
-        inline Rect2DS findGlyphRect(TTFPagePtr<TGlyphKey> const& _page, U32 _width, U32 _height);
+        inline Rect2DS findGlyphRect(TTFPagePtr const& _page, U32 _width, U32 _height);
+
+        ////////////////////////////////////
+        inline U64 getTTFOutlineGlyphKey(U32 _fontSize, F32 _outlineThickness) const
+        {
+            return (static_cast<U64>(*reinterpret_cast<U32*>(&_outlineThickness)) << 32) | (static_cast<U64>(_fontSize));
+        }
 
     protected:
 
@@ -163,9 +167,8 @@ namespace Maze
 
 
     ////////////////////////////////////
-    template <typename TGlyphKey>
     FontGlyph TrueTypeFontFreetype::loadGlyph(
-        TTFPageTable<TGlyphKey>& _table,
+        TTFPagePtr& _page,
         U32 _codePoint,
         U32 _fontSize,
         F32 _outlineThickness)
@@ -232,15 +235,13 @@ namespace Maze
             width += 2 * padding;
             height += 2 * padding;
 
-            TTFPagePtr<TGlyphKey>& page = _table[_fontSize];
+            if (!_page)
+                _page = std::make_shared<TTFPage>();
 
-            if (!page)
-                page = std::make_shared<TTFPage<TGlyphKey>>();
-
-            glyph.texture = page->texture;
+            glyph.texture = _page->texture;
 
             // Find a good position for the new glyph into the texture
-            glyph.textureRect = findGlyphRect(page, width, height);
+            glyph.textureRect = findGlyphRect(_page, width, height);
 
             // Make sure the texture data is positioned in the center
             // of the allocated texture rectangle
@@ -314,7 +315,7 @@ namespace Maze
             U32 y = glyph.textureRect.position.y - padding;
             U32 w = glyph.textureRect.size.x + 2 * padding;
             U32 h = glyph.textureRect.size.y + 2 * padding;
-            page->texture->copyImageFrom(&pixelBuffer[0], PixelFormat::RGBA_U8, w, h, x, y);
+            _page->texture->copyImageFrom(&pixelBuffer[0], PixelFormat::RGBA_U8, w, h, x, y);
         }
 
         // Delete the FT glyph
@@ -325,8 +326,7 @@ namespace Maze
 
 
     ////////////////////////////////////
-    template <typename TGlyphKey>
-    Rect2DS TrueTypeFontFreetype::findGlyphRect(TTFPagePtr<TGlyphKey> const& _page, U32 _width, U32 _height)
+    inline Rect2DS TrueTypeFontFreetype::findGlyphRect(TTFPagePtr const& _page, U32 _width, U32 _height)
     {
         // Find the line that fits well the glyph
         TTFRow* row = nullptr;

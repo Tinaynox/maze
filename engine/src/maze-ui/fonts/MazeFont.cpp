@@ -300,7 +300,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    FontGlyph const& Font::getGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, TTFPagePtr<U32>& _ttfPage)
+    FontGlyph const& Font::getGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, TTFPagePtr& _ttfPage)
     {
         static FontGlyph nullGlyph;
 
@@ -365,7 +365,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    FontGlyph const& Font::getOutlinedGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr<U64>& _ttfPage)
+    FontGlyph const& Font::getOutlinedGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr& _ttfPage)
     {
         static FontGlyph nullGlyph;
 

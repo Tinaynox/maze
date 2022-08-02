@@ -51,6 +51,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Transform2D);
     MAZE_USING_SHARED_PTR(Dropdown2D);
     MAZE_USING_SHARED_PTR(UIElement2D);
+    MAZE_USING_SHARED_PTR(ClickButton2D);
     MAZE_USING_SHARED_PTR(Canvas);
 
 
@@ -210,6 +211,56 @@ namespace Maze
         //////////////////////////////////////////
         void clearOptions();
 
+
+        //////////////////////////////////////////
+        inline F32 getTopIndent() const { return m_topIndent; }
+
+        //////////////////////////////////////////
+        inline void setTopIndent(F32 _value) { m_topIndent = _value; }
+
+        //////////////////////////////////////////
+        inline F32 getBottomIndent() const { return m_bottomIndent; }
+
+        //////////////////////////////////////////
+        inline void setBottomIndent(F32 _value) { m_bottomIndent = _value; }
+
+
+        //////////////////////////////////////////
+        inline ColorU32 getUnselectedItemBackgroundDefaultColor() const { return m_unselectedItemBackgroundDefaultColor; }
+
+        //////////////////////////////////////////
+        inline void setUnselectedItemBackgroundDefaultColor(ColorU32 _value) { m_unselectedItemBackgroundDefaultColor = _value; }
+
+        //////////////////////////////////////////
+        inline ColorU32 getUnselectedItemBackgroundFocusedColor() const { return m_unselectedItemBackgroundFocusedColor; }
+
+        //////////////////////////////////////////
+        inline void setUnselectedItemBackgroundFocusedColor(ColorU32 _value) { m_unselectedItemBackgroundFocusedColor = _value; }
+
+        //////////////////////////////////////////
+        inline ColorU32 getUnselectedItemBackgroundPressedColor() const { return m_unselectedItemBackgroundPressedColor; }
+
+        //////////////////////////////////////////
+        inline void setUnselectedItemBackgroundPressedColor(ColorU32 _value) { m_unselectedItemBackgroundPressedColor = _value; }
+
+        //////////////////////////////////////////
+        inline ColorU32 getSelectedItemBackgroundDefaultColor() const { return m_selectedItemBackgroundDefaultColor; }
+
+        //////////////////////////////////////////
+        inline void setSelectedItemBackgroundDefaultColor(ColorU32 _value) { m_selectedItemBackgroundDefaultColor = _value; }
+
+        //////////////////////////////////////////
+        inline ColorU32 getSelectedItemBackgroundFocusedColor() const { return m_selectedItemBackgroundFocusedColor; }
+
+        //////////////////////////////////////////
+        inline void setSelectedItemBackgroundFocusedColor(ColorU32 _value) { m_selectedItemBackgroundFocusedColor = _value; }
+
+        //////////////////////////////////////////
+        inline ColorU32 getSelectedItemBackgroundPressedColor() const { return m_selectedItemBackgroundPressedColor; }
+
+        //////////////////////////////////////////
+        inline void setSelectedItemBackgroundPressedColor(ColorU32 _value) { m_selectedItemBackgroundPressedColor = _value; }
+
     public:
 
         MultiDelegate<Dropdown2D*, CursorInputEvent const&> eventClick;
@@ -262,6 +313,10 @@ namespace Maze
         //////////////////////////////////////////
         void updateSelectedOption();
 
+
+        //////////////////////////////////////////
+        S32 getButtonIndex(ClickButton2D* _button) const;
+
     protected:
         Transform2DPtr m_transform;
         UIElement2DPtr m_UIElement2D;
@@ -275,6 +330,16 @@ namespace Maze
         Vector<OptionData> m_options;
 
         S32 m_value;
+
+        F32 m_topIndent = 0.0f;
+        F32 m_bottomIndent = 0.0f;
+
+        ColorU32 m_unselectedItemBackgroundDefaultColor = ColorU32(250, 250, 250);
+        ColorU32 m_unselectedItemBackgroundFocusedColor = ColorU32(245, 245, 245);
+        ColorU32 m_unselectedItemBackgroundPressedColor = ColorU32(200, 200, 200);
+        ColorU32 m_selectedItemBackgroundDefaultColor = ColorU32(250, 250, 250);
+        ColorU32 m_selectedItemBackgroundFocusedColor = ColorU32(245, 245, 245);
+        ColorU32 m_selectedItemBackgroundPressedColor = ColorU32(200, 200, 200);
     };
 
 
