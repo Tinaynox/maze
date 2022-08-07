@@ -211,16 +211,12 @@ namespace Maze
             Vec2DF halfSize = _size/2.0f;
             Vec2DF centerHalfSize = centerSize/2.0f;
 
-            Vec2DF centerPositionLB = -centerHalfSize;
+            //Vec2DF centerPositionLB = -centerHalfSize;
+            Vec2DF centerPositionLB = Vec2DF(_sliceBorder.left, _sliceBorder.bottom) - halfSize;
+            Vec2DF centerPositionRT = centerPositionLB + centerSize;
+
             Vec2DF lbPosition = -halfSize;
-            Vec2DF centerPositionRT = +centerHalfSize;
             Vec2DF rtPosition = halfSize;
-
-            Vec2DF ltPosition = Vec2DF(-halfSize.x, centerHalfSize.y);
-            Vec2DF ltPositionRT = Vec2DF(-centerHalfSize.x, halfSize.y);
-
-            Vec2DF rbPosition = Vec2DF(centerHalfSize.x, -halfSize.y);
-            Vec2DF rbPositionRT = Vec2DF(halfSize.x, -centerHalfSize.y);
 
             Vec2DF deltaUV = _uv.zw() - _uv.xy();
 
@@ -235,45 +231,45 @@ namespace Maze
                 Maze::Vec3DF(lbPosition.x, lbPosition.y, 0.0f) + _positionShift,                // Bottom left
                 Maze::Vec3DF(lbPosition.x, centerPositionLB.y, 0.0f) + _positionShift,          // Top left
                 // LT
-                Maze::Vec3DF(ltPositionRT.x, ltPositionRT.y, 0.0f) + _positionShift,            // Top right
-                Maze::Vec3DF(ltPositionRT.x, ltPosition.y, 0.0f) + _positionShift,              // Bottom right
-                Maze::Vec3DF(ltPosition.x, ltPosition.y, 0.0f) + _positionShift,                // Bottom left
-                Maze::Vec3DF(ltPosition.x, ltPositionRT.y, 0.0f) + _positionShift,              // Top left
+                Maze::Vec3DF(centerPositionLB.x, rtPosition.y, 0.0f) + _positionShift,          // Top right
+                Maze::Vec3DF(centerPositionLB.x, centerPositionRT.y, 0.0f) + _positionShift,    // Bottom right
+                Maze::Vec3DF(lbPosition.x, centerPositionRT.y, 0.0f) + _positionShift,          // Bottom left
+                Maze::Vec3DF(lbPosition.x, rtPosition.y, 0.0f) + _positionShift,                // Top left
                 // RT
                 Maze::Vec3DF(rtPosition.x, rtPosition.y, 0.0f) + _positionShift,                // Top right
                 Maze::Vec3DF(rtPosition.x, centerPositionRT.y, 0.0f) + _positionShift,          // Bottom right
                 Maze::Vec3DF(centerPositionRT.x, centerPositionRT.y, 0.0f) + _positionShift,    // Bottom left
                 Maze::Vec3DF(centerPositionRT.x, rtPosition.y, 0.0f) + _positionShift,          // Top left
                 // RB
-                Maze::Vec3DF(rbPositionRT.x, rbPositionRT.y, 0.0f) + _positionShift,            // Top right
-                Maze::Vec3DF(rbPositionRT.x, rbPosition.y, 0.0f) + _positionShift,              // Bottom right
-                Maze::Vec3DF(rbPosition.x, rbPosition.y, 0.0f) + _positionShift,                // Bottom left
-                Maze::Vec3DF(rbPosition.x, rbPositionRT.y, 0.0f) + _positionShift,              // Top left
+                Maze::Vec3DF(rtPosition.x, centerPositionLB.y, 0.0f) + _positionShift,          // Top right
+                Maze::Vec3DF(rtPosition.x, lbPosition.y, 0.0f) + _positionShift,                // Bottom right
+                Maze::Vec3DF(centerPositionRT.x, lbPosition.y, 0.0f) + _positionShift,          // Bottom left
+                Maze::Vec3DF(centerPositionRT.x, centerPositionLB.y, 0.0f) + _positionShift,    // Top left
                 // L
-                Maze::Vec3DF(-centerHalfSize.x, centerHalfSize.y, 0.0f) + _positionShift,       // Top right
-                Maze::Vec3DF(-centerHalfSize.x, -centerHalfSize.y, 0.0f) + _positionShift,      // Bottom right
-                Maze::Vec3DF(-halfSize.x, -centerHalfSize.y, 0.0f) + _positionShift,            // Bottom left
-                Maze::Vec3DF(-halfSize.x, centerHalfSize.y, 0.0f) + _positionShift,             // Top left
+                Maze::Vec3DF(centerPositionLB.x, centerPositionRT.y, 0.0f) + _positionShift,    // Top right
+                Maze::Vec3DF(centerPositionLB.x, centerPositionLB.y, 0.0f) + _positionShift,    // Bottom right
+                Maze::Vec3DF(lbPosition.x, centerPositionLB.y, 0.0f) + _positionShift,          // Bottom left
+                Maze::Vec3DF(lbPosition.x, centerPositionRT.y, 0.0f) + _positionShift,          // Top left
                 // T
-                Maze::Vec3DF(centerHalfSize.x, halfSize.y, 0.0f) + _positionShift,              // Top right
-                Maze::Vec3DF(centerHalfSize.x, centerHalfSize.y, 0.0f) + _positionShift,        // Bottom right
-                Maze::Vec3DF(-centerHalfSize.x, centerHalfSize.y, 0.0f) + _positionShift,       // Bottom left
-                Maze::Vec3DF(-centerHalfSize.x, halfSize.y, 0.0f) + _positionShift,             // Top left
+                Maze::Vec3DF(centerPositionRT.x, rtPosition.y, 0.0f) + _positionShift,          // Top right
+                Maze::Vec3DF(centerPositionRT.x, centerPositionRT.y, 0.0f) + _positionShift,    // Bottom right
+                Maze::Vec3DF(centerPositionLB.x, centerPositionRT.y, 0.0f) + _positionShift,    // Bottom left
+                Maze::Vec3DF(centerPositionLB.x, rtPosition.y, 0.0f) + _positionShift,          // Top left
                 // R
-                Maze::Vec3DF(halfSize.x, centerHalfSize.y, 0.0f) + _positionShift,              // Top right
-                Maze::Vec3DF(halfSize.x, -centerHalfSize.y, 0.0f) + _positionShift,             // Bottom right
-                Maze::Vec3DF(centerHalfSize.x, -centerHalfSize.y, 0.0f) + _positionShift,       // Bottom left
-                Maze::Vec3DF(centerHalfSize.x, centerHalfSize.y, 0.0f) + _positionShift,        // Top left
+                Maze::Vec3DF(rtPosition.x, centerPositionRT.y, 0.0f) + _positionShift,          // Top right
+                Maze::Vec3DF(rtPosition.x, centerPositionLB.y, 0.0f) + _positionShift,          // Bottom right
+                Maze::Vec3DF(centerPositionRT.x, centerPositionLB.y, 0.0f) + _positionShift,    // Bottom left
+                Maze::Vec3DF(centerPositionRT.x, centerPositionRT.y, 0.0f) + _positionShift,    // Top left
                 // B
-                Maze::Vec3DF(centerHalfSize.x, -centerHalfSize.y, 0.0f) + _positionShift,       // Top right
-                Maze::Vec3DF(centerHalfSize.x, -halfSize.y, 0.0f) + _positionShift,             // Bottom right
-                Maze::Vec3DF(-centerHalfSize.x, -halfSize.y, 0.0f) + _positionShift,            // Bottom left
-                Maze::Vec3DF(-centerHalfSize.x, -centerHalfSize.y, 0.0f) + _positionShift,      // Top left
+                Maze::Vec3DF(centerPositionRT.x, centerPositionLB.y, 0.0f) + _positionShift,    // Top right
+                Maze::Vec3DF(centerPositionRT.x, lbPosition.y, 0.0f) + _positionShift,          // Bottom right
+                Maze::Vec3DF(centerPositionLB.x, lbPosition.y, 0.0f) + _positionShift,          // Bottom left
+                Maze::Vec3DF(centerPositionLB.x, centerPositionLB.y, 0.0f) + _positionShift,    // Top left
                 // C
-                Maze::Vec3DF(centerHalfSize.x, centerHalfSize.y, 0.0f) + _positionShift,        // Top right
-                Maze::Vec3DF(centerHalfSize.x, -centerHalfSize.y, 0.0f) + _positionShift,       // Bottom right
-                Maze::Vec3DF(-centerHalfSize.x, -centerHalfSize.y, 0.0f) + _positionShift,      // Bottom left
-                Maze::Vec3DF(-centerHalfSize.x, centerHalfSize.y, 0.0f) + _positionShift,       // Top left
+                Maze::Vec3DF(centerPositionRT.x, centerPositionRT.y, 0.0f) + _positionShift,    // Top right
+                Maze::Vec3DF(centerPositionRT.x, centerPositionLB.y, 0.0f) + _positionShift,    // Bottom right
+                Maze::Vec3DF(centerPositionLB.x, centerPositionLB.y, 0.0f) + _positionShift,    // Bottom left
+                Maze::Vec3DF(centerPositionLB.x, centerPositionRT.y, 0.0f) + _positionShift,    // Top left
             };
             mesh->setPositions(positions, sizeof(positions) / sizeof(positions[0]));
 
