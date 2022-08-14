@@ -78,6 +78,7 @@ namespace Maze
         ColorU32 clearColor;
         bool clearDepthFlag;
         bool clearSkyBoxFlag;
+        bool drawFlag;
         LightingSettingsPtr lightingSettings;
     };
 

@@ -34,8 +34,10 @@
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
 #include "maze-core/math/MazeRay.hpp"
+#include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-graphics/MazeColorU32.hpp"
 #include "maze-graphics/ecs/MazeLightingSettings.hpp"
+#include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 
 
 //////////////////////////////////////////
@@ -146,6 +148,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline bool getDrawFlag() const { return m_drawFlag; }
+
+        //////////////////////////////////////////
+        inline void setDrawFlag(bool _value) { m_drawFlag = _value; }
+
+
+        //////////////////////////////////////////
         inline S32 getRenderMask() const { return m_renderMask; }
 
         //////////////////////////////////////////
@@ -186,20 +195,22 @@ namespace Maze
         Transform3DPtr m_transform;
 
         RenderTargetPtr m_renderTarget;
-        Rect2DF m_viewport;
+        Rect2DF m_viewport = { 0.0f, 0.0f, 1.0f, 1.0f };
 
-        F32 m_fieldOfViewY;
-        F32 m_nearZ;
-        F32 m_farZ;
+        F32 m_fieldOfViewY = Math::DegreesToRadians(60);
+        F32 m_nearZ = 0.01f;
+        F32 m_farZ = 200.0f;
             
-        bool m_clearColorFlag;
-        ColorU32 m_clearColor;
+        bool m_clearColorFlag = true;
+        ColorU32 m_clearColor = ColorU32(99, 101, 140, 255);
 
-        bool m_clearDepthFlag;
+        bool m_clearDepthFlag = true;
 
-        bool m_clearSkyBoxFlag;
+        bool m_clearSkyBoxFlag = false;
 
-        S32 m_renderMask;
+        bool m_drawFlag = true;
+
+        S32 m_renderMask = ~S32(DefaultRenderMask::Gizmos);
     };
 
 
