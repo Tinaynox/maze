@@ -145,8 +145,7 @@ namespace Maze
             TValue const& _destFrom,
             TValue const& _destTo)
         {
-            TValue p = (_v - _srcFrom) / (_srcTo - _srcFrom);
-            return p * (_destTo - _destFrom) + _destFrom;
+            return ((_v - _srcFrom) / (_srcTo - _srcFrom)) * (_destTo - _destFrom) + _destFrom;
         }
 
         //////////////////////////////////////////
