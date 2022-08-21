@@ -435,7 +435,7 @@ namespace Maze
         Transform2DPtr const& listTransform = m_listCanvas->getTransform();
 
         S32 index = 0;
-        for (S32 i = 0, in = listTransform->getChildren().size(); i < in; ++i)
+        for (S32 i = 0, in = (S32)listTransform->getChildren().size(); i < in; ++i)
         {
             ClickButton2D* button = listTransform->getChild(i)->getEntityRaw()->getComponentRaw<ClickButton2D>();
             if (button)
