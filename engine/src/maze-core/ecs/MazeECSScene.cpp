@@ -227,6 +227,40 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    EntityPtr ECSScene::ensureEntity(String const& _name)
+    {
+        EntityPtr entity = findEntity(_name.c_str());
+        if (entity)
+            return entity;
+        return createEntity(_name);
+    }
+
+    //////////////////////////////////////////
+    EntityPtr ECSScene::ensureEntity(CString _name)
+    {
+        EntityPtr entity = findEntity(_name);
+        if (entity)
+            return entity;
+        return createEntity(_name);
+    }
+
+    //////////////////////////////////////////
+    EntityPtr ECSScene::findEntity(CString _name)
+    {
+        if (!_name)
+            return nullptr;
+
+        for (auto it = m_entities.begin(), end = m_entities.end(); it != end; ++it)
+        {
+            Name* component = (*it)->getComponentRaw<Name>();
+            if (component && component->getName() == _name)
+                return (*it)->getSharedPtr();
+        }
+
+        return nullptr;
+    }
+
+    //////////////////////////////////////////
     void ECSScene::processEntityAdded(Entity* _entity)
     {
         m_entities.emplace(_entity);

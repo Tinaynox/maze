@@ -333,14 +333,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vector<AssetFilePtr> AssetManager::getAssetFilesWithExtension(String const& _extension)
+    Vector<AssetFilePtr> AssetManager::getAssetFilesWithExtension(Path const& _extension)
     {
         return getAssetFilesWithExtension(_extension, [](AssetFilePtr const& _assetFile) { return true; });
     }
 
     //////////////////////////////////////////
     Vector<AssetFilePtr> AssetManager::getAssetFilesWithExtension(
-        String const& _extension,
+        Path const& _extension,
         std::function<bool(AssetFilePtr const&)> _pred)
     {
         Vector<AssetFilePtr> result;
@@ -360,14 +360,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vector<AssetFilePtr> AssetManager::getAssetFilesWithExtensions(Set<String> const& _extensions)
+    Vector<AssetFilePtr> AssetManager::getAssetFilesWithExtensions(Set<Path> const& _extensions)
     {
         return getAssetFilesWithExtensions(_extensions, [](AssetFilePtr const& _assetFile) { return true; });
     }
 
     //////////////////////////////////////////
     Vector<AssetFilePtr> AssetManager::getAssetFilesWithExtensions(
-        Set<String> const& _extensions,
+        Set<Path> const& _extensions,
         std::function<bool(AssetFilePtr const&)> _pred)
     {
         Vector<AssetFilePtr> result;

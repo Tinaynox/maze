@@ -127,6 +127,15 @@ namespace Maze
         EntityPtr createEntity(CString _name);
 
         //////////////////////////////////////////
+        EntityPtr ensureEntity(String const& _name);
+
+        //////////////////////////////////////////
+        EntityPtr ensureEntity(CString _name);
+
+        //////////////////////////////////////////
+        EntityPtr findEntity(CString _name);
+
+        //////////////////////////////////////////
         void destroyAllEntities();
 
         //////////////////////////////////////////

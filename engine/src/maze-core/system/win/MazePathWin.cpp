@@ -42,7 +42,10 @@ namespace Maze
     //////////////////////////////////////////
     PathWin::PathWin(Char const* _value)
     {
-        m_path = TextHelper::ConvertUTF8ToUCS2(_value);
+        if (_value)
+            m_path = TextHelper::ConvertUTF8ToUCS2(_value);
+        else
+            m_path.clear();
     }
 
     //////////////////////////////////////////

@@ -101,6 +101,9 @@ namespace Maze
     //////////////////////////////////////////
     void PhysicsWorld2D::update(F32 _dt)
     {
+        if (!m_active)
+            return;
+
         MAZE_MUTEX_SCOPED_LOCK(m_worldMutex);
 
         if (m_world)

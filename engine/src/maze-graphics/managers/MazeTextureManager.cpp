@@ -473,7 +473,7 @@ namespace Maze
         }
 
         {
-            Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions({ "mzcubemap" });
+            Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions(Set<Path>{ "mzcubemap" });
             for (AssetFilePtr const& assetFile : assetFiles)
             {
                 getTextureCube(assetFile);
