@@ -48,6 +48,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Button2D, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, transitionSprite, ComponentPtr(), getTransitionSpriteComponent, setTransitionSprite),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, enabled, true, getEnabled, setEnabled),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, normalColor, ColorU32(255, 255, 255, 255), getNormalColor, setNormalColor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, focusedColor, ColorU32(245, 245, 245, 255), getFocusedColor, setFocusedColor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, pressedColor, ColorU32(200, 200, 200, 255), getPressedColor, setPressedColor),
@@ -127,18 +128,27 @@ namespace Maze
     //////////////////////////////////////////
     void Button2D::notifyClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
     {
+        if (!getEnabled())
+            return;
+
         eventClick(this, _inputEvent);
     }
 
     //////////////////////////////////////////
     void Button2D::notifySingleClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
     {
+        if (!getEnabled())
+            return;
+
         eventSingleClick(this, _inputEvent);
     }
 
     //////////////////////////////////////////
     void Button2D::notifyDoubleClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
     {
+        if (!getEnabled())
+            return;
+
         eventDoubleClick(this, _inputEvent);
     }
 
@@ -154,23 +164,42 @@ namespace Maze
         if (!m_UIElement2D)
             return;
 
-        if (getPressed())
+        if (!getEnabled())
         {
-            m_transitionSprite->setColor(getPressedColor());
+            m_transitionSprite->setColor(getDisabledColor());
         }
         else
         {
-            if (getFocused())
+            if (getPressed())
             {
-                m_transitionSprite->setColor(getFocusedColor());
+                m_transitionSprite->setColor(getPressedColor());
             }
             else
             {
-                m_transitionSprite->setColor(getNormalColor());
+                if (getFocused())
+                {
+                    m_transitionSprite->setColor(getFocusedColor());
+                }
+                else
+                {
+                    m_transitionSprite->setColor(getNormalColor());
+                }
             }
         }
     }
     
+    //////////////////////////////////////////
+    void Button2D::setEnabled(bool _value)
+    {
+        if (m_enabled == _value)
+            return;
+
+        m_enabled = _value;
+
+        updateTransitionUI();
+        eventEnabledChanged(this, m_enabled);
+    }
+
     
 } // namespace Maze
 //////////////////////////////////////////

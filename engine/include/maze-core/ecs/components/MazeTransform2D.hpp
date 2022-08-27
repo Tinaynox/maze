@@ -146,6 +146,12 @@ namespace Maze
         inline void setPivot(F32 _x, F32 _y) { setPivot(Vec2DF(_x, _y)); }
 
         //////////////////////////////////////////
+        inline void setPivotX(F32 _x) { setPivot(Vec2DF(_x, m_pivot.y)); }
+
+        //////////////////////////////////////////
+        inline void setPivotY(F32 _y) { setPivot(Vec2DF(m_pivot.x, _y)); }
+
+        //////////////////////////////////////////
         inline Vec2DF const& getPivot() const { return m_pivot; }
 
         //////////////////////////////////////////
