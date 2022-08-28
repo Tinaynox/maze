@@ -105,6 +105,19 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline void setHiddenAlpha(F32 _value) { m_hiddenAlpha = _value; }
+
+        //////////////////////////////////////////
+        inline F32 getHiddenAlpha() const { return m_hiddenAlpha; }
+
+        //////////////////////////////////////////
+        inline void setShownAlpha(F32 _value) { m_shownAlpha = _value; }
+
+        //////////////////////////////////////////
+        inline F32 getShownAlpha() const { return m_shownAlpha; }
+
+
+        //////////////////////////////////////////
         void setShowTime(F32 _showTime);
 
         //////////////////////////////////////////

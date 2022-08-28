@@ -233,7 +233,7 @@ namespace Maze
     //////////////////////////////////////////
     void UITweenTransitionAlpha::updateCanvasGroup()
     {
-        F32 alpha = Math::SmoothStep(
+        F32 alpha = Math::SmoothLerp(
             m_hiddenAlpha,
             m_shownAlpha,
             1.0f - m_hidingProgress);
