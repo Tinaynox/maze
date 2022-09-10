@@ -146,8 +146,8 @@ namespace Maze
 
     public:
 
-        MultiDelegate<> eventShowComplete;
-        MultiDelegate<> eventHideComplete;
+        MultiDelegate<UITweenTransitionAlpha*> eventShowComplete;
+        MultiDelegate<UITweenTransitionAlpha*> eventHideComplete;
 
     protected:
 

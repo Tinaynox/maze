@@ -151,7 +151,7 @@ namespace Maze
             {
                 m_hidingProgress = 1.0f;
 
-                eventHideComplete();
+                eventHideComplete(this);
 
                 if (m_onHideComplete)
                 {
@@ -169,7 +169,7 @@ namespace Maze
             {
                 m_hidingProgress = 0.0f;
 
-                eventShowComplete();
+                eventShowComplete(this);
 
                 if (m_onShowComplete)
                 {
@@ -205,7 +205,7 @@ namespace Maze
         m_hidingProgress = 0.0f;
         updateCanvasGroup();
 
-        eventShowComplete();
+        eventShowComplete(this);
 
         if (m_onShowComplete)
         {
@@ -221,7 +221,7 @@ namespace Maze
         m_hidingProgress = 1.0f;
         updateCanvasGroup();
 
-        eventHideComplete();
+        eventHideComplete(this);
 
         if (m_onHideComplete)
         {
