@@ -146,6 +146,12 @@ namespace Maze
         //////////////////////////////////////////
         void pause(bool _recursive);
 
+        //////////////////////////////////////////
+        void setEmissionEnabled(bool _value);
+
+        //////////////////////////////////////////
+        void setEmissionEnabled(bool _value, bool _recursive);
+
 
         //////////////////////////////////////////
         void setRenderMesh(String const& _renderMeshName);

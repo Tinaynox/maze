@@ -127,6 +127,12 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline TValue getLeft() const { return position.x; }
+
+        //////////////////////////////////////////
+        inline TValue getBottom() const { return position.y; }
+
+        //////////////////////////////////////////
         inline TValue getRight() const { return position.x + size.x; }
 
         //////////////////////////////////////////
