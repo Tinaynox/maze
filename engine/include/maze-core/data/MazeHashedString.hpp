@@ -161,6 +161,12 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline bool operator==(CString _other) const
+        {
+            return strcmp(m_string.c_str(), _other) == 0;
+        }
+
+        //////////////////////////////////////////
         inline Char const& operator [](Size _i) const
         {
             return m_string[_i];
