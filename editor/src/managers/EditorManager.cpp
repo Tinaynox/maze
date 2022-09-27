@@ -227,7 +227,7 @@ namespace Maze
         getSceneMain()->destroyAllEntities();
         m_editorPrefabManager->setPrefabAssetFile(_value);
 
-        setWindowTitle("Editor - %s", _value->getFileName().c_str());
+        setWindowTitle("Editor - %s", _value->getFileName().toUTF8().c_str());
     }
 
     //////////////////////////////////////////
