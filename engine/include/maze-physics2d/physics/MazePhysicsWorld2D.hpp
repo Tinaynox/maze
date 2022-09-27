@@ -101,10 +101,17 @@ namespace Maze
         static PhysicsWorld2DPtr Create(PhysicsWorld2DConfig const& _config = PhysicsWorld2DConfig());
 
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
+        inline void setActive(bool _active) { m_active = _active; }
+
+        //////////////////////////////////////////
+        inline bool getActive() const { return m_active; }
+
+
+        //////////////////////////////////////////
         inline b2World* getBox2DWorld() const { return m_world; }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         void setGravity(Vec2DF const& _gravityUnits);
 
 
@@ -219,6 +226,7 @@ namespace Maze
         virtual void EndContact(b2Contact* _contact) MAZE_OVERRIDE;
 
     protected:
+        bool m_active = true;
         b2World* m_world;
         Mutex m_worldMutex;
 

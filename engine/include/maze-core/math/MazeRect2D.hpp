@@ -125,6 +125,18 @@ namespace Maze
 
             return Rect2D::c_zero;
         }
+
+        //////////////////////////////////////////
+        inline TValue getLeft() const { return position.x; }
+
+        //////////////////////////////////////////
+        inline TValue getBottom() const { return position.y; }
+
+        //////////////////////////////////////////
+        inline TValue getRight() const { return position.x + size.x; }
+
+        //////////////////////////////////////////
+        inline TValue getTop() const { return position.y + size.y; }
         
     public:
         Vec2D<TValue> position;

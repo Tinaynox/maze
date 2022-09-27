@@ -55,7 +55,15 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, selected, false, getSelected, setSelected),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, systemTextRenderer, ComponentPtr(), getTextRendererComponent, setTextRenderer),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, listCanvas, ComponentPtr(), getListCanvasComponent, setListCanvas),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, itemPrefabTransform, ComponentPtr(), getItemPrefabTransformComponent, setItemPrefabTransform));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, itemPrefabTransform, ComponentPtr(), getItemPrefabTransformComponent, setItemPrefabTransform),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, topIndent, 0.0f, getTopIndent, setTopIndent),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, bottomIndent, 0.0f, getBottomIndent, setBottomIndent),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, unselectedItemBackgroundDefaultColor, ColorU32(250, 250, 250), getUnselectedItemBackgroundDefaultColor, setUnselectedItemBackgroundDefaultColor),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, unselectedItemBackgroundFocusedColor, ColorU32(245, 245, 245), getUnselectedItemBackgroundFocusedColor, setUnselectedItemBackgroundFocusedColor),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, unselectedItemBackgroundPressedColor, ColorU32(200, 200, 200), getUnselectedItemBackgroundPressedColor, setUnselectedItemBackgroundPressedColor),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, selectedItemBackgroundDefaultColor, ColorU32(250, 250, 250), getSelectedItemBackgroundDefaultColor, setSelectedItemBackgroundDefaultColor),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, selectedItemBackgroundFocusedColor, ColorU32(245, 245, 245), getSelectedItemBackgroundFocusedColor, setSelectedItemBackgroundFocusedColor),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, selectedItemBackgroundPressedColor, ColorU32(200, 200, 200), getSelectedItemBackgroundPressedColor, setSelectedItemBackgroundPressedColor));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(Dropdown2D);
@@ -179,6 +187,7 @@ namespace Maze
         m_value = _value;
 
         updateCaption();
+        rebuildOptions();
         updateSelectedOption();
 
         eventValueChanged(this, m_value);
@@ -273,7 +282,7 @@ namespace Maze
 
         listTransform->destroyAllChildren();
 
-        F32 y = 0;
+        F32 y = -m_topIndent;
 
         for (OptionData const& optionData : m_options)
         {
@@ -297,25 +306,47 @@ namespace Maze
             SpriteRenderer2D* backgroundSpriteRenderer = itemTransform->findChildComponent<SpriteRenderer2D>("Background");            
 
             static auto updateClickButtonState =
-                [](
-                    Button2D* _button,
-                    SpriteRenderer2D* _backgroundRenderer)
+                [](Dropdown2D* _dropdown,
+                   Button2D* _button,
+                   SpriteRenderer2D* _backgroundRenderer)
             {
-                ToggleButton2D* toggleButton = _button->castRaw<ToggleButton2D>();
+                S32 buttonIndex = _dropdown->getButtonIndex(_button->castRaw<ClickButton2D>());
+                bool isSelected = (buttonIndex == _dropdown->getValue());
 
-                if (toggleButton->getPressed())
+                if (isSelected)
                 {
-                    _backgroundRenderer->setColor(200, 200, 200);
-                }
-                else
-                {
-                    if (toggleButton->getFocused())
+                    if (_button->getPressed())
                     {
-                        _backgroundRenderer->setColor(245, 245, 245);
+                        _backgroundRenderer->setColor(_dropdown->getSelectedItemBackgroundPressedColor());
                     }
                     else
                     {
-                        _backgroundRenderer->setColor(250, 250, 250);
+                        if (_button->getFocused())
+                        {
+                            _backgroundRenderer->setColor(_dropdown->getSelectedItemBackgroundFocusedColor());
+                        }
+                        else
+                        {
+                            _backgroundRenderer->setColor(_dropdown->getSelectedItemBackgroundDefaultColor());
+                        }
+                    }
+                }
+                else
+                {
+                    if (_button->getPressed())
+                    {
+                        _backgroundRenderer->setColor(_dropdown->getUnselectedItemBackgroundPressedColor());
+                    }
+                    else
+                    {
+                        if (_button->getFocused())
+                        {
+                            _backgroundRenderer->setColor(_dropdown->getUnselectedItemBackgroundFocusedColor());
+                        }
+                        else
+                        {
+                            _backgroundRenderer->setColor(_dropdown->getUnselectedItemBackgroundDefaultColor());
+                        }
                     }
                 }
 
@@ -327,6 +358,7 @@ namespace Maze
                 [=](Button2D* _button, bool _value)
                 {
                     updateClickButtonState(
+                        this,
                         _button,
                         backgroundSpriteRenderer);
                 });
@@ -335,6 +367,7 @@ namespace Maze
                 [=](Button2D* _button, bool _value)
                 {
                     updateClickButtonState(
+                        this,
                         _button,
                         backgroundSpriteRenderer);
                 });
@@ -349,13 +382,17 @@ namespace Maze
                 });
 
             updateClickButtonState(
+                this,
                 button,
                 backgroundSpriteRenderer);
 
             y -= m_itemPrefabTransform->getHeight();
         }
 
-        listTransform->setHeight(m_options.size() * m_itemPrefabTransform->getHeight());
+        F32 listHeight = m_options.size() * m_itemPrefabTransform->getHeight();
+        listHeight += m_topIndent;
+        listHeight += m_bottomIndent;
+        listTransform->setHeight(listHeight);
 
         updateSelectedOption();
     }
@@ -390,6 +427,27 @@ namespace Maze
                 checkMarkSpriteRenderer->getMeshRenderer()->setEnabled(i == m_value);
             }
         }
+    }
+
+    //////////////////////////////////////////
+    S32 Dropdown2D::getButtonIndex(ClickButton2D* _button) const
+    {
+        Transform2DPtr const& listTransform = m_listCanvas->getTransform();
+
+        S32 index = 0;
+        for (S32 i = 0, in = (S32)listTransform->getChildren().size(); i < in; ++i)
+        {
+            ClickButton2D* button = listTransform->getChild(i)->getEntityRaw()->getComponentRaw<ClickButton2D>();
+            if (button)
+            {
+                if (_button == button)
+                    return index;
+
+                ++index;
+            }
+        }
+
+        return -1;
     }
 
 } // namespace Maze

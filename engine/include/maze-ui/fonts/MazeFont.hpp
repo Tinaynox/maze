@@ -86,7 +86,7 @@ namespace Maze
         FontGlyph const& getGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize);
 
         //////////////////////////////////////////
-        FontGlyph const& getGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, TTFPagePtr<U32>& _ttfPage);
+        FontGlyph const& getGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, TTFPagePtr& _ttfPage);
 
         //////////////////////////////////////////
         FontGlyph const& getGlyph(U32 _codePoint, U32 _fontSize);
@@ -95,7 +95,7 @@ namespace Maze
         FontGlyph const& getOutlinedGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, F32 _outlineThickness);
 
         //////////////////////////////////////////
-        FontGlyph const& getOutlinedGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr<U64>& _ttfPage);
+        FontGlyph const& getOutlinedGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr& _ttfPage);
 
         //////////////////////////////////////////
         FontGlyph const& getOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness);

@@ -51,6 +51,7 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, clearColor, ColorU32(99, 101, 140, 255), getClearColor, setClearColor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, clearDepthFlag, true, getClearDepthFlag, setClearDepthFlag),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, clearSkyBoxFlag, false, getClearSkyBoxFlag, setClearSkyBoxFlag),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, drawFlag, true, getDrawFlag, setDrawFlag),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, renderMask, 0xFFFFFFFF, getRenderMask, setRenderMask));
 
     //////////////////////////////////////////
@@ -58,15 +59,6 @@ namespace Maze
 
     //////////////////////////////////////////
     Camera3D::Camera3D()
-        : m_viewport(0.0f, 0.0f, 1.0f, 1.0f)
-        , m_fieldOfViewY(Maze::Math::DegreesToRadians(60))
-        , m_nearZ(0.01f)
-        , m_farZ(200.0f)
-        , m_clearColorFlag(true)
-        , m_clearColor(ColorU32(99, 101, 140, 255))
-        , m_clearDepthFlag(true)
-        , m_clearSkyBoxFlag(false)
-        , m_renderMask(~S32(DefaultRenderMask::Gizmos))
     {
 
     }

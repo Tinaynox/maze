@@ -153,7 +153,7 @@ namespace Maze
         if (it != m_soundsByName.end())
             return it->second;
 
-        MAZE_ERROR_RETURN_VALUE_IF(!m_defaultSoundSystem, nullPointer, "SoundSystem is not available!");
+        MAZE_WARNING_RETURN_VALUE_IF(!m_defaultSoundSystem, nullPointer, "SoundSystem is not available!");
 
         SoundPtr sound = Sound::Create(_assetFile, m_defaultSoundSystem.get());
         if (!sound)

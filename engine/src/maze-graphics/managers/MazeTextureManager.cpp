@@ -206,6 +206,14 @@ namespace Maze
                 texture->setMinFilter(TextureFilter::Nearest);
                 break;
             }
+            case BuiltinTexture2DType::Normal:
+            {
+                texture = Texture2D::Create(m_renderSystemRaw);
+                texture->loadTexture(PixelSheet2D(Vec2DS(1, 1), ColorU32(127, 127, 255)));
+                texture->setMagFilter(TextureFilter::Nearest);
+                texture->setMinFilter(TextureFilter::Nearest);
+                break;
+            }
             case BuiltinTexture2DType::Error:
             {
                 texture = Texture2D::Create(m_renderSystemRaw);
@@ -465,7 +473,7 @@ namespace Maze
         }
 
         {
-            Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions({ "mzcubemap" });
+            Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions(Set<Path>{ "mzcubemap" });
             for (AssetFilePtr const& assetFile : assetFiles)
             {
                 getTextureCube(assetFile);

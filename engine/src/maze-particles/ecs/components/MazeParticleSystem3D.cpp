@@ -489,6 +489,27 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void ParticleSystem3D::setEmissionEnabled(bool _value)
+    {
+        m_mainModule.getEmission().setEnabled(_value);
+    }
+
+    //////////////////////////////////////////
+    void ParticleSystem3D::setEmissionEnabled(bool _value, bool _recursive)
+    {
+        setEmissionEnabled(_value);
+
+        if (!_recursive)
+            return;
+
+        iterateChildParticleSystems(
+            [_value, _recursive](ParticleSystem3D* _particleSystem)
+            {
+                _particleSystem->setEmissionEnabled(_value, _recursive);
+            });
+    }
+
+    //////////////////////////////////////////
     void ParticleSystem3D::setRenderMesh(String const& _renderMeshName)
     {
         m_rendererModule.setRenderMesh(m_renderSystem->getRenderMeshManager()->getRenderMesh(_renderMeshName));

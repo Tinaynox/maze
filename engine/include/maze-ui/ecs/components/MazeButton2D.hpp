@@ -88,6 +88,12 @@ namespace Maze
         inline bool getPressed() const { return m_UIElement2D->getPressed(); }
 
 
+        //////////////////////////////////////////
+        inline bool getEnabled() const { return m_enabled; }
+
+        //////////////////////////////////////////
+        void setEnabled(bool _value);
+
 
         //////////////////////////////////////////
         inline void setTransitionSprite(SpriteRenderer2DPtr const& _transitionSprite)
@@ -147,6 +153,7 @@ namespace Maze
         MultiDelegate<Button2D*, CursorInputEvent const&> eventDoubleClick;
         MultiDelegate<Button2D*, bool> eventFocusChanged;
         MultiDelegate<Button2D*, bool> eventPressedChanged;
+        MultiDelegate<Button2D*, bool> eventEnabledChanged;
         MultiDelegate<Button2D*, Vec2DF const&, CursorInputEvent const&> eventCursorPressIn;
 
     protected:
@@ -188,6 +195,8 @@ namespace Maze
     protected:
         Transform2DPtr m_transform;
         UIElement2DPtr m_UIElement2D;
+
+        bool m_enabled = true;
 
         SpriteRenderer2DPtr m_transitionSprite;
         ColorU32 m_normalColor;

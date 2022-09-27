@@ -226,7 +226,12 @@ namespace Maze
     inline typename ::std::enable_if<(!std::is_class<F32>::value), void>::type
         ValueFromString(F32& _value, CString _data, Size _count)
     {
-        _value = StringHelper::StringToF32(String(_data, _count));
+        // #TODO Don't copy string, use StringView or CString
+        String s(_data, _count);
+        if (StringHelper::IsF32Number(s))
+            _value = StringHelper::StringToF32(s);
+        else
+            _value = 0.0f;
     }
 
 

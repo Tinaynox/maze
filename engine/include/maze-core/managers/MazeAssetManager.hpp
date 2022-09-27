@@ -124,16 +124,76 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        Vector<AssetFilePtr> getAssetFilesWithExtension(String const& _extension);
+        Vector<AssetFilePtr> getAssetFilesWithExtension(Path const& _extension);
 
         //////////////////////////////////////////
-        Vector<AssetFilePtr> getAssetFilesWithExtension(String const& _extension, std::function<bool(AssetFilePtr const&)> _pred);
+        Vector<AssetFilePtr> getAssetFilesWithExtension(Path const& _extension, std::function<bool(AssetFilePtr const&)> _pred);
 
         //////////////////////////////////////////
-        Vector<AssetFilePtr> getAssetFilesWithExtensions(Set<String> const& _extensions);
+        Vector<AssetFilePtr> getAssetFilesWithExtensions(Set<Path> const& _extensions);
 
         //////////////////////////////////////////
-        Vector<AssetFilePtr> getAssetFilesWithExtensions(Set<String> const& _extensions, std::function<bool(AssetFilePtr const&)> _pred);
+        Vector<AssetFilePtr> getAssetFilesWithExtensions(Set<Path> const& _extensions, std::function<bool(AssetFilePtr const&)> _pred);
+
+        //////////////////////////////////////////
+        inline Vector<AssetFilePtr> getAssetFilesWithExtension(CString const& _extension)
+        {
+            return getAssetFilesWithExtension(Path(_extension));
+        }
+
+        //////////////////////////////////////////
+        inline Vector<AssetFilePtr> getAssetFilesWithExtension(CString const& _extension, std::function<bool(AssetFilePtr const&)> _pred)
+        {
+            return getAssetFilesWithExtension(Path(_extension), _pred);
+        }
+
+        //////////////////////////////////////////
+        inline Vector<AssetFilePtr> getAssetFilesWithExtensions(Set<CString> const& _extensions)
+        {
+            Set<Path> extensions;
+            for (CString const& ext : _extensions)
+                extensions.insert(ext);
+            return getAssetFilesWithExtensions(extensions);
+        }
+
+        //////////////////////////////////////////
+        inline Vector<AssetFilePtr> getAssetFilesWithExtensions(Set<CString> const& _extensions, std::function<bool(AssetFilePtr const&)> _pred)
+        {
+            Set<Path> extensions;
+            for (CString const& ext : _extensions)
+                extensions.insert(ext);
+            return getAssetFilesWithExtensions(extensions, _pred);
+        }
+
+        //////////////////////////////////////////
+        inline Vector<AssetFilePtr> getAssetFilesWithExtension(String const& _extension)
+        {
+            return getAssetFilesWithExtension(Path(_extension));
+        }
+
+        //////////////////////////////////////////
+        inline Vector<AssetFilePtr> getAssetFilesWithExtension(String const& _extension, std::function<bool(AssetFilePtr const&)> _pred)
+        {
+            return getAssetFilesWithExtension(Path(_extension), _pred);
+        }
+
+        //////////////////////////////////////////
+        inline Vector<AssetFilePtr> getAssetFilesWithExtensions(Set<String> const& _extensions)
+        {
+            Set<Path> extensions;
+            for (String const& ext : _extensions)
+                extensions.insert(ext);
+            return getAssetFilesWithExtensions(extensions);
+        }
+
+        //////////////////////////////////////////
+        inline Vector<AssetFilePtr> getAssetFilesWithExtensions(Set<String> const& _extensions, std::function<bool(AssetFilePtr const&)> _pred)
+        {
+            Set<Path> extensions;
+            for (String const& ext : _extensions)
+                extensions.insert(ext);
+            return getAssetFilesWithExtensions(extensions, _pred);
+        }
 
         //////////////////////////////////////////
         Vector<AssetFilePtr> getAssetFiles(ClassUID _uid);

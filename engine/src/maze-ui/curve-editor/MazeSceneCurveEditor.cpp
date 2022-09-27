@@ -599,7 +599,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneCurveEditor::notifyCurveChanged(AnimationCurve const& _curve)
     {
-        updateUI();
+        setup(_curve.getMinMaxMode());
     }
 
     //////////////////////////////////////////
@@ -991,6 +991,8 @@ namespace Maze
             }
         }
 
+        if (!m_curveScalarEdit->getSelected())
+            m_curveScalarEdit->setText(StringHelper::F32ToStringFormatted(curve.getScalar()));
 
         m_curveTexture->loadTexture(m_curvePixelSheet);
         m_curveSprite->set(m_curveTexture);

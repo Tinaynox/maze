@@ -609,7 +609,7 @@ namespace Maze
         ColorF128 m_color;
         Stack<Mat4DF> m_transformStack;
 
-        ECSWorld* m_world;
+        ECSWorld* m_world = nullptr;
 
         MaterialPtr m_materials[(Size)MeshRenderMode::MAX];
         MeshData m_lines[(Size)MeshRenderMode::MAX];

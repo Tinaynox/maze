@@ -178,12 +178,12 @@ namespace Maze
 
 
     protected:
-        ECSWorld* m_world;
+        ECSWorld* m_world = nullptr;
 
         String m_name;
         HierarchyLineType m_type;
         HierarchyLineDropDownState m_dropDownState;
-        void* m_userData;
+        void* m_userData = nullptr;
 
         Transform2DPtr m_transform;
         SpriteRenderer2DPtr m_dropDownRenderer;

@@ -193,18 +193,21 @@ namespace Maze
                 }
             }           
 
-            eventGatherRenderUnits(_renderTarget, _params, renderData);
+            // Draw render units
+            if (_params.drawFlag)
+            {
+                eventGatherRenderUnits(_renderTarget, _params, renderData);
 
-            for (RenderUnit& data : renderData)
-                data.sqrDistanceToCamera = (cameraPosition - data.worldPosition).squaredLength();
+                for (RenderUnit& data : renderData)
+                    data.sqrDistanceToCamera = (cameraPosition - data.worldPosition).squaredLength();
 
-            // Sort render queue
-            std::sort(
-                renderData.begin(),
-                renderData.end(),
-                [](
-                    RenderUnit const& _a,
-                    RenderUnit const& _b)
+                // Sort render queue
+                std::sort(
+                    renderData.begin(),
+                    renderData.end(),
+                    [](
+                        RenderUnit const& _a,
+                        RenderUnit const& _b)
                 {
                     if (_a.renderPass->getRenderQueueIndex() < _b.renderPass->getRenderQueueIndex())
                         return true;
@@ -219,47 +222,48 @@ namespace Maze
                 });
 
 
-            if (_beginDrawCallback)
-                _beginDrawCallback(renderQueue);
+                if (_beginDrawCallback)
+                    _beginDrawCallback(renderQueue);
 
-            S32 prevRenderQueueIndex = -1;
+                S32 prevRenderQueueIndex = -1;
 
-            for (RenderUnit const& data : renderData)
-            {
-                RenderPassPtr const& renderPass = data.renderPass;
-                ShaderPtr const& shader = renderPass->getShader();
+                for (RenderUnit const& data : renderData)
+                {
+                    RenderPassPtr const& renderPass = data.renderPass;
+                    ShaderPtr const& shader = renderPass->getShader();
 
-                S32 currentRenderQueueIndex = renderPass->getRenderQueueIndex();
+                    S32 currentRenderQueueIndex = renderPass->getRenderQueueIndex();
 
-                VertexArrayObjectPtr const& vao = data.vao;
+                    VertexArrayObjectPtr const& vao = data.vao;
 
-                MAZE_DEBUG_ERROR_IF(vao == nullptr, "VAO is null!");
+                    MAZE_DEBUG_ERROR_IF(vao == nullptr, "VAO is null!");
 
-                if (shader->getMainLightColorUniform())
-                    shader->getMainLightColorUniform()->set(mainLightColor);
+                    if (shader->getMainLightColorUniform())
+                        shader->getMainLightColorUniform()->set(mainLightColor);
 
-                if (shader->getMainLightDirectionUniform())
-                    shader->getMainLightDirectionUniform()->set(mainLightDirection);
+                    if (shader->getMainLightDirectionUniform())
+                        shader->getMainLightDirectionUniform()->set(mainLightDirection);
 
 
-                renderQueue->addSelectRenderPassCommand(renderPass);
+                    renderQueue->addSelectRenderPassCommand(renderPass);
 
-                Vec4DF const* uvStreams[MAZE_UV_CHANNELS_MAX];
-                memset(uvStreams, 0, sizeof(uvStreams));
-                uvStreams[0] = data.uvStream;
+                    Vec4DF const* uvStreams[MAZE_UV_CHANNELS_MAX];
+                    memset(uvStreams, 0, sizeof(uvStreams));
+                    uvStreams[0] = data.uvStream;
 
-                renderQueue->addDrawVAOInstancedCommand(
-                    vao,
-                    data.count,
-                    data.modelMatricies,
-                    data.colorStream,
-                    uvStreams);
+                    renderQueue->addDrawVAOInstancedCommand(
+                        vao,
+                        data.count,
+                        data.modelMatricies,
+                        data.colorStream,
+                        uvStreams);
 
-                prevRenderQueueIndex = currentRenderQueueIndex;
+                    prevRenderQueueIndex = currentRenderQueueIndex;
+                }
+
+                if (_endDrawCallback)
+                    _endDrawCallback(renderQueue);
             }
-
-            if (_endDrawCallback)
-                _endDrawCallback(renderQueue);
 
             renderQueue->addPopScissorRectCommand();
 
@@ -298,6 +302,7 @@ namespace Maze
                 params.clearColor = _camera3D->getClearColor();
                 params.clearDepthFlag = _camera3D->getClearDepthFlag();
                 params.clearSkyBoxFlag = _camera3D->getClearSkyBoxFlag();
+                params.drawFlag = _camera3D->getDrawFlag();
                 params.lightingSettings = _camera3D->getLightingSettings();
 
                 eventPrePass(

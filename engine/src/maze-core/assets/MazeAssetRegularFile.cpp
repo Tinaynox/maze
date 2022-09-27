@@ -160,7 +160,7 @@ namespace Maze
         tinyxml2::XMLError loadError = XMLHelper::LoadXMLFile(getFullPath(), _doc);
         if (tinyxml2::XML_SUCCESS != loadError)
         {
-            MAZE_ERROR("File '%s' loading error - XMLError: %d!", getFileName().toUTF8().c_str(), (S32)loadError);
+            MAZE_WARNING("File '%s' loading error - XMLError: %d!", getFileName().toUTF8().c_str(), (S32)loadError);
             return false;
         }
 

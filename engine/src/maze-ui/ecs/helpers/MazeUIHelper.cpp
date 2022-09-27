@@ -174,234 +174,234 @@ namespace Maze
             return editBox;
         }
 
-            //////////////////////////////////////////
-            MAZE_UI_API Dropdown2DPtr CreateDefaultDropdown(
-                U32 _fontSize,
-                Vec2DF const& _size,
-                Vec2DF const& _position,
-                Transform2DPtr const& _parent,
-                ECSScene* _ecsScene,
-                Vec2DF const& _anchor,
-                Vec2DF const& _pivot)
+        //////////////////////////////////////////
+        MAZE_UI_API Dropdown2DPtr CreateDefaultDropdown(
+            U32 _fontSize,
+            Vec2DF const& _size,
+            Vec2DF const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2DF const& _anchor,
+            Vec2DF const& _pivot)
+        {
+            RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+
+            EntityPtr dropdownEntity = _ecsScene->createEntity();
+            dropdownEntity->ensureComponent<Name>("Dropdown");
+
+            Dropdown2DPtr dropdown = dropdownEntity->createComponent<Dropdown2D>();
+
+            Transform2DPtr const& transform = dropdown->getTransform();
+            transform->setParent(_parent);
+            transform->setSize(_size);
+            transform->setLocalPosition(_position);
+            transform->setAnchor(_anchor);
+            transform->setPivot(_pivot);
+
+            SpriteRenderer2DPtr spriteRenderer = dropdownEntity->createComponent<SpriteRenderer2D>();
+            SpriteRenderer2D* spriteRendererRaw = spriteRenderer.get();
+            spriteRenderer->setSprite(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));
+            spriteRenderer->setMaterial(
+                renderSystem->getMaterialManager()->getColorTextureMaterial());
+            spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
+            spriteRenderer->setColor(ColorU32(250, 250, 250));
+
+            auto updateDropdownState =
+                [](
+                    Dropdown2D* _dropdown,
+                    SpriteRenderer2D* _spriteRenderer,
+                    Entity* _listEntity)
             {
-                RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
+                _listEntity->setActiveSelf(_dropdown->getSelected());
 
-                EntityPtr dropdownEntity = _ecsScene->createEntity();
-                dropdownEntity->ensureComponent<Name>("Dropdown");
-
-                Dropdown2DPtr dropdown = dropdownEntity->createComponent<Dropdown2D>();
-
-                Transform2DPtr const& transform = dropdown->getTransform();
-                transform->setParent(_parent);
-                transform->setSize(_size);
-                transform->setLocalPosition(_position);
-                transform->setAnchor(_anchor);
-                transform->setPivot(_pivot);
-
-                SpriteRenderer2DPtr spriteRenderer = dropdownEntity->createComponent<SpriteRenderer2D>();
-                SpriteRenderer2D* spriteRendererRaw = spriteRenderer.get();
-                spriteRenderer->setSprite(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));
-                spriteRenderer->setMaterial(
-                    renderSystem->getMaterialManager()->getColorTextureMaterial());
-                spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
-                spriteRenderer->setColor(ColorU32(250, 250, 250));
-
-                auto updateDropdownState =
-                    [](
-                        Dropdown2D* _dropdown,
-                        SpriteRenderer2D* _spriteRenderer,
-                        Entity* _listEntity)
+                Transform2DPtr transform = _listEntity->getComponent<Transform2D>();
+                Canvas* rootCanvas = transform->getLastTrunkComponent<Canvas>();
+                if (rootCanvas)
                 {
-                    _listEntity->setActiveSelf(_dropdown->getSelected());
+                    transform->setAnchor(0.0f, 0.0f);
+                    transform->setPivot(0.0f, 1.0f);
+                    transform->setLocalPosition(0.0f, 0.0f);
 
-                    Transform2DPtr transform = _listEntity->getComponent<Transform2D>();
-                    Canvas* rootCanvas = transform->getLastTrunkComponent<Canvas>();
-                    if (rootCanvas)
-                    {
-                        transform->setAnchor(0.0f, 0.0f);
-                        transform->setPivot(0.0f, 1.0f);
-                        transform->setLocalPosition(0.0f, 0.0f);
+                    Transform2D* root = rootCanvas->getTransform().get();
+                    Vec2DF const& rootSize = root->getSize();
 
-                        Transform2D* root = rootCanvas->getTransform().get();
-                        Vec2DF const& rootSize = root->getSize();
+                    Vec2DF positionOS(
+                        transform->getWidth(),
+                        transform->getHeight());
 
-                        Vec2DF positionOS(
-                            transform->getWidth(),
-                            transform->getHeight());
+                    Vec2DF positionWS = transform->getWorldTransform().transformAffine(positionOS);
+                    positionWS.y = Math::Clamp(positionWS.y, transform->getHeight(), rootSize.y);
 
-                        Vec2DF positionWS = transform->getWorldTransform().transformAffine(positionOS);
-                        positionWS.y = Math::Clamp(positionWS.y, transform->getHeight(), rootSize.y);
+                    Vec2DF menuListPositionOS = transform->getParent()->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
 
-                        Vec2DF menuListPositionOS = transform->getParent()->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
+                    transform->setPivot(1.0f, 1.0f);
+                    transform->setAnchor(0.0f, 0.0f);
+                    transform->setLocalPosition(menuListPositionOS);
+                }
 
-                        transform->setPivot(1.0f, 1.0f);
-                        transform->setAnchor(0.0f, 0.0f);
-                        transform->setLocalPosition(menuListPositionOS);
-                    }
-
-                    if (_dropdown->getSelected())
+                if (_dropdown->getSelected())
+                {
+                    _spriteRenderer->setSprite(
+                        UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Selected));
+                }
+                else
+                {
+                    if (_dropdown->getFocused())
                     {
                         _spriteRenderer->setSprite(
-                            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Selected));
+                            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Focused));
                     }
                     else
                     {
-                        if (_dropdown->getFocused())
-                        {
-                            _spriteRenderer->setSprite(
-                                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Focused));
-                        }
-                        else
-                        {
-                            _spriteRenderer->setSprite(
-                                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));
-                        }
-                    }
-                };
-
-
-                TextRenderer2DPtr textRenderer = UIHelper::CreateText(
-                    "Dropdown",
-                    _fontSize,
-                    HorizontalAlignment2D::Left,
-                    VerticalAlignment2D::Middle,
-                    _size,
-                    Vec2DF::c_zero,
-                    transform,
-                    _ecsScene);
-                textRenderer->setColor(ColorU32::c_black);
-                ScissorMask2DPtr scissorMask = textRenderer->getEntityRaw()->createComponent<ScissorMask2D>();
-
-                SizePolicy2DPtr textSizePolicy = textRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
-                textSizePolicy->setSizeDelta(-10.0f, 0.0f);
-
-                dropdown->setTextRenderer(textRenderer->cast<AbstractTextRenderer2D>());
-
-
-                SpriteRenderer2DPtr expandButtonSprite = SpriteHelper::CreateSprite(
-                    UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::DropDownButtonExpanded),
-                    Vec2DF(8.0f, 8.0f) * 1.75f,
-                    Vec2DF(-5.0f, 0.0f),
-                    renderSystem->getMaterialManager()->getColorTextureMaterial(),
-                    transform,
-                    spriteRenderer->getEntityRaw()->getECSScene(),
-                    Vec2DF(1.0f, 0.5f),
-                    Vec2DF(1.0f, 0.5f));
-                expandButtonSprite->setColor(ColorU32::c_black);
-
-
-                // List entity
-                Entity* listEntity = nullptr;
-                {
-
-                    SpriteRenderer2DPtr listTemplateSpriteRenderer = SpriteHelper::CreateSprite(
-                        UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
-                        Vec2DF(_size.x, 140.0f),
-                        Vec2DF::c_zero,
-                        renderSystem->getMaterialManager()->getColorTextureMaterial(),
-                        transform,
-                        _ecsScene,
-                        Vec2DF(0.0f, 0.0f),
-                        Vec2DF(0.0f, 1.0f));
-                    listTemplateSpriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
-
-                    listEntity = listTemplateSpriteRenderer->getEntityRaw();
-
-                    CanvasPtr canvas = listEntity->ensureComponent<Canvas>();
-
-                    canvas->setClearColor(ColorU32::c_red);
-                    canvas->setClearColorFlag(false);
-                    canvas->setSortOrder(300000);
-                    canvas->getCanvasScaler()->setScaleMode(CanvasScaler::ScaleMode::None);
-                    canvas->setViewportTransformPolicy(ViewportTransformPolicy::TransformToViewport);
-
-
-                    UIElement2DPtr uiElement = listEntity->ensureComponent<UIElement2D>();
-                    uiElement->setCaptureCursorHits(true);
-
-                    dropdown->setListCanvas(canvas);
-
-                    // Item Prefab
-                    {
-                        Transform2DPtr itemPrefabTransform = SpriteHelper::CreateTransform2D(
-                            Vec2DF(_size.x - 2.0f, 20.0f),
-                            Vec2DF(1.0f, 0.0f),
-                            transform,
-                            _ecsScene,
-                            Vec2DF(0.0f, 1.0f),
-                            Vec2DF(0.0f, 1.0f));
-
-                        itemPrefabTransform->getEntityRaw()->setActiveSelf(false);
-
-                        SizePolicy2DPtr itemPrefabSizePolicy = itemPrefabTransform->getEntityRaw()->ensureComponent<SizePolicy2D>();
-                        itemPrefabSizePolicy->setFlag(SizePolicy2D::Height, false);
-                        itemPrefabSizePolicy->setSizeDelta(-4.0f, 0.0f);
-
-                        SpriteRenderer2DPtr backgroundSpriteRenderer = SpriteHelper::CreateSprite(
-                            ColorU32::c_white,
-                            Vec2DF(_size.x, 20.0f - 4.0f),
-                            Vec2DF(0.0f, 2.0f),
-                            renderSystem->getMaterialManager()->getColorTextureMaterial(),
-                            itemPrefabTransform,
-                            _ecsScene);
-                        backgroundSpriteRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Background");
-                        backgroundSpriteRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
-
-                        SpriteRenderer2DPtr checkMarkSprite = SpriteHelper::CreateSprite(
-                            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::CheckMark),
-                            Vec2DF(8.0f, 8.0f) * 1.75f,
-                            Vec2DF(10.0f, 10.0f),
-                            renderSystem->getMaterialManager()->getColorTextureMaterial(),
-                            itemPrefabTransform,
-                            spriteRenderer->getEntityRaw()->getECSScene(),
-                            Vec2DF(0.0f, 0.0f),
-                            Vec2DF(0.5f, 0.5f));
-                        checkMarkSprite->getEntityRaw()->ensureComponent<Name>()->setName("CheckMark");
-                        checkMarkSprite->setColor(ColorU32::c_black);
-
-                        TextRenderer2DPtr itemTextRenderer = UIHelper::CreateText(
-                            "Option 1",
-                            _fontSize,
-                            HorizontalAlignment2D::Left,
-                            VerticalAlignment2D::Middle,
-                            Vec2DF(_size.x, 20.0f),
-                            Vec2DF(20.0f, 0.0f),
-                            itemPrefabTransform,
-                            _ecsScene,
-                            Vec2DF::c_zero,
-                            Vec2DF::c_zero);
-                        itemTextRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Label");
-                        itemTextRenderer->setColor(ColorU32::c_black);
-                        ScissorMask2DPtr scissorMask = itemTextRenderer->getEntityRaw()->createComponent<ScissorMask2D>();
-                        SizePolicy2DPtr itemTextRendererSizePolicy = itemTextRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
-                        itemTextRendererSizePolicy->setSizeDelta(-20.0f, -2.0f);
-
-                        ClickButton2DPtr button = itemPrefabTransform->getEntityRaw()->createComponent<ClickButton2D>();
-                        button->getUIElement()->setCaptureCursorHits(false);
-
-
-
-                        dropdown->setItemPrefabTransform(itemPrefabTransform);
-
+                        _spriteRenderer->setSprite(
+                            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));
                     }
                 }
+            };
 
-                dropdown->eventFocusChanged.subscribe(
-                    [=](Dropdown2D* _dropdown, bool _value)
+
+            TextRenderer2DPtr textRenderer = UIHelper::CreateText(
+                "Dropdown",
+                _fontSize,
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Middle,
+                _size,
+                Vec2DF::c_zero,
+                transform,
+                _ecsScene);
+            textRenderer->setColor(ColorU32::c_black);
+            ScissorMask2DPtr scissorMask = textRenderer->getEntityRaw()->createComponent<ScissorMask2D>();
+
+            SizePolicy2DPtr textSizePolicy = textRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
+            textSizePolicy->setSizeDelta(-10.0f, 0.0f);
+
+            dropdown->setTextRenderer(textRenderer->cast<AbstractTextRenderer2D>());
+
+
+            SpriteRenderer2DPtr expandButtonSprite = SpriteHelper::CreateSprite(
+                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::DropDownButtonExpanded),
+                Vec2DF(8.0f, 8.0f) * 1.75f,
+                Vec2DF(-5.0f, 0.0f),
+                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                transform,
+                spriteRenderer->getEntityRaw()->getECSScene(),
+                Vec2DF(1.0f, 0.5f),
+                Vec2DF(1.0f, 0.5f));
+            expandButtonSprite->setColor(ColorU32::c_black);
+
+
+            // List entity
+            Entity* listEntity = nullptr;
+            {
+
+                SpriteRenderer2DPtr listTemplateSpriteRenderer = SpriteHelper::CreateSprite(
+                    UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
+                    Vec2DF(_size.x, 140.0f),
+                    Vec2DF::c_zero,
+                    renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                    transform,
+                    _ecsScene,
+                    Vec2DF(0.0f, 0.0f),
+                    Vec2DF(0.0f, 1.0f));
+                listTemplateSpriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
+
+                listEntity = listTemplateSpriteRenderer->getEntityRaw();
+
+                CanvasPtr canvas = listEntity->ensureComponent<Canvas>();
+
+                canvas->setClearColor(ColorU32::c_red);
+                canvas->setClearColorFlag(false);
+                canvas->setSortOrder(300000);
+                canvas->getCanvasScaler()->setScaleMode(CanvasScaler::ScaleMode::None);
+                canvas->setViewportTransformPolicy(ViewportTransformPolicy::TransformToViewport);
+
+
+                UIElement2DPtr uiElement = listEntity->ensureComponent<UIElement2D>();
+                uiElement->setCaptureCursorHits(true);
+
+                dropdown->setListCanvas(canvas);
+
+                // Item Prefab
                 {
-                    updateDropdownState(_dropdown, spriteRendererRaw, listEntity);
-                });
+                    Transform2DPtr itemPrefabTransform = SpriteHelper::CreateTransform2D(
+                        Vec2DF(_size.x - 2.0f, 20.0f),
+                        Vec2DF(1.0f, 0.0f),
+                        transform,
+                        _ecsScene,
+                        Vec2DF(0.0f, 1.0f),
+                        Vec2DF(0.0f, 1.0f));
 
-                dropdown->eventSelectedChanged.subscribe(
-                    [=](Dropdown2D* _dropdown, bool _value)
-                {
-                    updateDropdownState(_dropdown, spriteRendererRaw, listEntity);
-                });
+                    itemPrefabTransform->getEntityRaw()->setActiveSelf(false);
 
-                updateDropdownState(dropdown.get(), spriteRendererRaw, listEntity);
+                    SizePolicy2DPtr itemPrefabSizePolicy = itemPrefabTransform->getEntityRaw()->ensureComponent<SizePolicy2D>();
+                    itemPrefabSizePolicy->setFlag(SizePolicy2D::Height, false);
+                    itemPrefabSizePolicy->setSizeDelta(-4.0f, 0.0f);
 
-                return dropdown;
+                    SpriteRenderer2DPtr backgroundSpriteRenderer = SpriteHelper::CreateSprite(
+                        ColorU32::c_white,
+                        Vec2DF(_size.x, 20.0f - 4.0f),
+                        Vec2DF(0.0f, 2.0f),
+                        renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                        itemPrefabTransform,
+                        _ecsScene);
+                    backgroundSpriteRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Background");
+                    backgroundSpriteRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
+
+                    SpriteRenderer2DPtr checkMarkSprite = SpriteHelper::CreateSprite(
+                        UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::CheckMark),
+                        Vec2DF(8.0f, 8.0f) * 1.75f,
+                        Vec2DF(10.0f, 10.0f),
+                        renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                        itemPrefabTransform,
+                        spriteRenderer->getEntityRaw()->getECSScene(),
+                        Vec2DF(0.0f, 0.0f),
+                        Vec2DF(0.5f, 0.5f));
+                    checkMarkSprite->getEntityRaw()->ensureComponent<Name>()->setName("CheckMark");
+                    checkMarkSprite->setColor(ColorU32::c_black);
+
+                    TextRenderer2DPtr itemTextRenderer = UIHelper::CreateText(
+                        "Option 1",
+                        _fontSize,
+                        HorizontalAlignment2D::Left,
+                        VerticalAlignment2D::Middle,
+                        Vec2DF(_size.x, 20.0f),
+                        Vec2DF(20.0f, 0.0f),
+                        itemPrefabTransform,
+                        _ecsScene,
+                        Vec2DF::c_zero,
+                        Vec2DF::c_zero);
+                    itemTextRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Label");
+                    itemTextRenderer->setColor(ColorU32::c_black);
+                    ScissorMask2DPtr scissorMask = itemTextRenderer->getEntityRaw()->createComponent<ScissorMask2D>();
+                    SizePolicy2DPtr itemTextRendererSizePolicy = itemTextRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
+                    itemTextRendererSizePolicy->setSizeDelta(-20.0f, -2.0f);
+
+                    ClickButton2DPtr button = itemPrefabTransform->getEntityRaw()->createComponent<ClickButton2D>();
+                    button->getUIElement()->setCaptureCursorHits(false);
+
+
+
+                    dropdown->setItemPrefabTransform(itemPrefabTransform);
+
+                }
             }
+
+            dropdown->eventFocusChanged.subscribe(
+                [=](Dropdown2D* _dropdown, bool _value)
+            {
+                updateDropdownState(_dropdown, spriteRendererRaw, listEntity);
+            });
+
+            dropdown->eventSelectedChanged.subscribe(
+                [=](Dropdown2D* _dropdown, bool _value)
+            {
+                updateDropdownState(_dropdown, spriteRendererRaw, listEntity);
+            });
+
+            updateDropdownState(dropdown.get(), spriteRendererRaw, listEntity);
+
+            return dropdown;
+        }
 
         //////////////////////////////////////////
         MAZE_UI_API HorizontalLayout2DPtr CreateHorizontalLayout(

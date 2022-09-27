@@ -137,6 +137,18 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        template <class TValue>
+        inline MAZE_CONSTEXPR TValue Convert(
+            TValue const& _v,
+            TValue const& _srcFrom,
+            TValue const& _srcTo,
+            TValue const& _destFrom,
+            TValue const& _destTo)
+        {
+            return ((_v - _srcFrom) / (_srcTo - _srcFrom)) * (_destTo - _destFrom) + _destFrom;
+        }
+
+        //////////////////////////////////////////
         template <typename TValue, typename TScalar = F32>
         inline MAZE_CONSTEXPR TValue Lerp(TValue const& _v0, TValue const& _v1, TScalar _s) 
         {

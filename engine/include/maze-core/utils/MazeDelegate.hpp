@@ -595,7 +595,7 @@ namespace Maze
 
         ::std::shared_ptr<void> m_functorStore;
         ::std::size_t m_functorStoreSize = 0;
-        FunctorStoreClearFunctionType m_functorStoreClearFunction;
+        FunctorStoreClearFunctionType m_functorStoreClearFunction = nullptr;
         void* m_functorObject = nullptr;
         void* m_object = nullptr;
         

@@ -58,9 +58,10 @@ namespace Maze
     // Enum BuiltinTexture2DType
     //
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_3_API(MAZE_GRAPHICS_API, BuiltinTexture2DType,
+    MAZE_DECLARE_ENUMCLASS_4_API(MAZE_GRAPHICS_API, BuiltinTexture2DType,
         White,
         Black,
+        Normal,
         Error);
 
 

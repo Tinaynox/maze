@@ -127,6 +127,15 @@ namespace Maze
         EntityPtr createEntity(CString _name);
 
         //////////////////////////////////////////
+        EntityPtr ensureEntity(String const& _name);
+
+        //////////////////////////////////////////
+        EntityPtr ensureEntity(CString _name);
+
+        //////////////////////////////////////////
+        EntityPtr findEntity(CString _name);
+
+        //////////////////////////////////////////
         void destroyAllEntities();
 
         //////////////////////////////////////////
@@ -231,7 +240,7 @@ namespace Maze
         Set<Entity*> m_entities;
         Vector<ComponentSystemPtr> m_systems;
 
-        ECSWorld* m_world;
+        ECSWorld* m_world = nullptr;
     };
 
 

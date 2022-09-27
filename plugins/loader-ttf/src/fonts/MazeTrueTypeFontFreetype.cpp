@@ -162,34 +162,36 @@ namespace Maze
     }
 
     ////////////////////////////////////
-    TTFPagePtr<U32>& TrueTypeFontFreetype::getTTFPage(U32 _fontSize)
+    TTFPagePtr& TrueTypeFontFreetype::getTTFPage(U32 _fontSize)
     {
-        TTFPagePtr<U32>& page = m_pages[_fontSize];
+        TTFPagePtr& page = m_pages[_fontSize];
         if (!page)
         {
-            page = std::make_shared<TTFPage<U32>>();
+            page = std::make_shared<TTFPage>();
             eventTexturesChanged();
         }
         return page;
     }
 
     ////////////////////////////////////
-    TTFPagePtr<U64>& TrueTypeFontFreetype::getTTFOutlineThicknessPage(U32 _fontSize)
+    TTFPagePtr& TrueTypeFontFreetype::getTTFOutlineThicknessPage(U32 _fontSize, F32 _outlineThickness)
     {
-        TTFPagePtr<U64>& page = m_outlineThicknessPages[_fontSize];
+        U64 key = getTTFOutlineGlyphKey(_fontSize, _outlineThickness);
+
+        TTFPagePtr& page = m_outlineThicknessPages[key];
         if (!page)
         {
-            page = std::make_shared<TTFPage<U64>>();
+            page = std::make_shared<TTFPage>();
             eventTexturesChanged();
         }
         return page;
     }
 
     ////////////////////////////////////
-    FontGlyph const& TrueTypeFontFreetype::getGlyph(U32 _codePoint, U32 _fontSize, TTFPagePtr<U32>& _page)
+    FontGlyph const& TrueTypeFontFreetype::getGlyph(U32 _codePoint, U32 _fontSize, TTFPagePtr& _page)
     {
         // Get the page corresponding to the character size
-        TTFGlyphTable<U32>& glyphs = _page->glyphs;
+        TTFGlyphTable<GlyphKeyType>& glyphs = _page->glyphs;
 
          // Search the glyph into the cache
         auto it = glyphs.find(_codePoint);
@@ -201,7 +203,7 @@ namespace Maze
         else
         {
             // Not found: we have to load it
-            FontGlyph glyph = loadGlyph(m_pages, _codePoint, _fontSize);
+            FontGlyph glyph = loadGlyph(_page, _codePoint, _fontSize);
             return glyphs.emplace(_codePoint, glyph).first->second;
         }
     }
@@ -213,10 +215,10 @@ namespace Maze
     }
 
     ////////////////////////////////////
-    FontGlyph const& TrueTypeFontFreetype::getOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr< U64 >& _page)
+    FontGlyph const& TrueTypeFontFreetype::getOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr& _page)
     {
         // Get the page corresponding to the character size
-        TTFGlyphTable<U64>& glyphs = _page->glyphs;
+        TTFGlyphTable<GlyphKeyType>& glyphs = _page->glyphs;
 
         // Search the glyph into the cache
         auto it = glyphs.find(_codePoint);
@@ -226,7 +228,7 @@ namespace Maze
         }
         else
         {
-            FontGlyph glyph = loadGlyph(m_outlineThicknessPages, _codePoint, _fontSize, _outlineThickness);
+            FontGlyph glyph = loadGlyph(_page, _codePoint, _fontSize, _outlineThickness);
             return glyphs.insert(std::make_pair(_codePoint, glyph)).first->second;
         }
     }
@@ -234,7 +236,7 @@ namespace Maze
     ////////////////////////////////////
     FontGlyph const& TrueTypeFontFreetype::getOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness)
     {
-        return getOutlinedGlyph(_codePoint, _fontSize, _outlineThickness, getTTFOutlineThicknessPage(_fontSize));
+        return getOutlinedGlyph(_codePoint, _fontSize, _outlineThickness, getTTFOutlineThicknessPage(_fontSize, _outlineThickness));
     }
 
     ////////////////////////////////////
@@ -336,7 +338,7 @@ namespace Maze
             auto it = m_pages.find(_fontSize);
             if (it != m_pages.end())
             {
-                TTFPagePtr<U32> const& page = it->second;
+                TTFPagePtr const& page = it->second;
                 if (page->texture)
                 {
                     if (std::find(_result.begin(), _result.end(), page->texture) == _result.end())
@@ -345,16 +347,22 @@ namespace Maze
             }
         }
         {
-            auto it = m_outlineThicknessPages.find(_fontSize);
-            if (it != m_outlineThicknessPages.end())
+            for (TTFPageTable<U64>::iterator it = m_outlineThicknessPages.begin(),
+                                             end = m_outlineThicknessPages.end();
+                                             it != end;
+                                             ++it)
             {
-                TTFPagePtr<U64> const& page = it->second;
-                if (page->texture)
+                U32 fontSize = *((U32*)&it->first);
+                if (fontSize == _fontSize)
                 {
-                    if (std::find(_result.begin(), _result.end(), page->texture) == _result.end())
-                        _result.push_back(page->texture);
+                    TTFPagePtr const& page = it->second;
+                    if (page->texture)
+                    {
+                        if (std::find(_result.begin(), _result.end(), page->texture) == _result.end())
+                            _result.push_back(page->texture);
+                    }
                 }
-            }            
+            }
         }
     }
 
