@@ -76,6 +76,7 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS(ParticleSystem3DMainModule::EmissionModule,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, enabled, true, getEnabled, setEnabled),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystemParameterF32, emissionPerSecond, ParticleSystemParameterF32(), getEmissionPerSecond, setEmissionPerSecond),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystemParameterF32, emissionPerDistance, ParticleSystemParameterF32(), getEmissionPerDistance, setEmissionPerDistance),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<ParticleSystemBurst>, bursts, Vector<ParticleSystemBurst>(), getBursts, setBursts));
 
     //////////////////////////////////////////

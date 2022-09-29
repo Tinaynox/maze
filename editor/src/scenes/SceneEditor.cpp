@@ -140,11 +140,6 @@ namespace Maze
             }
         }
 
-        if (GizmosManager::GetInstancePtr())
-        {
-            GizmosManager::GetInstancePtr()->setCamera(nullptr);
-        }
-
         if (EditorAssetsModeManager::GetInstancePtr())
             EditorAssetsModeManager::GetInstancePtr()->eventCurrentAssetsFullPath.unsubscribe(this);
 

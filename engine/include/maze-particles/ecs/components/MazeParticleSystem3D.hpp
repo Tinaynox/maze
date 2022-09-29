@@ -220,6 +220,9 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        virtual void processEntityEnabled() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
@@ -230,7 +233,11 @@ namespace Maze
         S32 updateEmitter(F32 _dt, const Vec3DF& _position);
 
         //////////////////////////////////////////
-        S32 calculateEmissionCount(F32 _scalar, S32 _maxCountToEmit, bool _ended);
+        S32 calculateEmissionCount(
+            S32 _particleSeed,
+            F32 _scalar,
+            S32 _maxCountToEmit,
+            bool _ended);
 
         //////////////////////////////////////////
         void emitParticles(
@@ -257,6 +264,8 @@ namespace Maze
         F32 m_timeEmission;
         S32 m_iteration = 0;
         S32 m_currentBurstIndex = 0;
+        Vec3DF m_emissionPerDistancePreviousPositionWS = Vec3DF::c_zero;
+        bool m_emissionPerDistancePreviousPositionWSDirty = true;
 
         ParticleSystem3DMainModule m_mainModule;
         ParticleSystem3DShapeModule m_shapeModule;

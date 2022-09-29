@@ -107,6 +107,7 @@ namespace Maze
     protected:
         PropertyDrawerBoolPtr m_enabledDrawer;
         PropertyDrawerParticleSystemParameterF32Ptr m_emissionPerSecondDrawer;
+        PropertyDrawerParticleSystemParameterF32Ptr m_emissionPerDistanceDrawer;
         PropertyDrawerVectorPtr m_burstsDrawer;
 
         bool m_processingDataToUI = false;

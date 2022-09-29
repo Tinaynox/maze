@@ -82,6 +82,12 @@ namespace Maze
             m_emissionPerSecondDrawer->eventUIData.unsubscribe(this);
             m_emissionPerSecondDrawer.reset();
         }
+
+        if (m_emissionPerDistanceDrawer)
+        {
+            m_emissionPerDistanceDrawer->eventUIData.unsubscribe(this);
+            m_emissionPerDistanceDrawer.reset();
+        }
     }
 
     //////////////////////////////////////////
@@ -103,6 +109,9 @@ namespace Maze
 
         m_emissionPerSecondDrawer = PropertyDrawerParticleSystemParameterF32Positive::Create("Per Second");
         m_emissionPerSecondDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DEmissionModule::processDataFromUI);
+
+        m_emissionPerDistanceDrawer = PropertyDrawerParticleSystemParameterF32Positive::Create("Per Meters");
+        m_emissionPerDistanceDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DEmissionModule::processDataFromUI);
 
         m_burstsDrawer = PropertyDrawerVector::Create(
             ParticleSystemBurst::GetMetaClass()->getClassUID(),
@@ -151,6 +160,7 @@ namespace Maze
         
         m_enabledDrawer->buildUI(verticalLayout->getTransform(), _label);
         m_emissionPerSecondDrawer->buildUI(verticalLayout->getTransform(), _label);
+        m_emissionPerDistanceDrawer->buildUI(verticalLayout->getTransform(), _label);
         m_burstsDrawer->buildUI(verticalLayout->getTransform(), "Bursts");
     }
 
@@ -164,9 +174,11 @@ namespace Maze
         m_processingDataToUI = true;
         {
             m_emissionPerSecondDrawer->setValue(value.getEmissionPerSecond());
+            m_emissionPerDistanceDrawer->setValue(value.getEmissionPerDistance());
             m_enabledDrawer->setValue(value.getEnabled());
 
             m_emissionPerSecondDrawer->getRootEntity()->setActiveSelf(value.getEnabled());
+            m_emissionPerDistanceDrawer->getRootEntity()->setActiveSelf(value.getEnabled());
 
             m_burstsDrawer->setVector(value.getBursts());
         }
@@ -182,6 +194,7 @@ namespace Maze
         ParticleSystem3DMainModule::EmissionModule value;
         value.setEnabled(m_enabledDrawer->getValue());
         value.setEmissionPerSecond(m_emissionPerSecondDrawer->getValue());
+        value.setEmissionPerDistance(m_emissionPerDistanceDrawer->getValue());
 
         Vector<ParticleSystemBurst> bursts = m_burstsDrawer->getVector<ParticleSystemBurst>();
         bool burstsInderectOrder = false;

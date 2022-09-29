@@ -129,7 +129,8 @@ namespace Maze
 
         if (GizmosManager::GetInstancePtr())
         {
-            GizmosManager::GetInstancePtr()->setCamera(nullptr);
+            if (m_camera3D == GizmosManager::GetInstancePtr()->getCamera())
+                GizmosManager::GetInstancePtr()->setCamera(nullptr);
         }
     }
 

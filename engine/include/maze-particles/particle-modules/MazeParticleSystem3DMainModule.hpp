@@ -96,6 +96,15 @@ namespace Maze
             //////////////////////////////////////////
             inline ParticleSystemParameterF32 const& getEmissionPerSecond() const { return emissionPerSecond; }
 
+            //////////////////////////////////////////
+            inline void setEmissionPerDistance(ParticleSystemParameterF32 const& _parameter) { emissionPerDistance = _parameter; }
+
+            //////////////////////////////////////////
+            inline ParticleSystemParameterF32& getEmissionPerDistance() { return emissionPerDistance; }
+
+            //////////////////////////////////////////
+            inline ParticleSystemParameterF32 const& getEmissionPerDistance() const { return emissionPerDistance; }
+
 
             //////////////////////////////////////////
             inline void setBursts(Vector<ParticleSystemBurst> const& _value)
@@ -117,7 +126,9 @@ namespace Maze
                 if (bursts != _value.bursts)
                     return false;
 
-                return enabled == _value.enabled && emissionPerSecond == _value.emissionPerSecond;
+                return enabled == _value.enabled &&
+                       emissionPerSecond == _value.emissionPerSecond &&
+                       emissionPerDistance == _value.emissionPerDistance;
             }
 
             //////////////////////////////////////////
@@ -144,6 +155,7 @@ namespace Maze
 
             bool enabled = true;
             ParticleSystemParameterF32 emissionPerSecond = ParticleSystemParameterF32(1.0f);
+            ParticleSystemParameterF32 emissionPerDistance = ParticleSystemParameterF32(0.0f);
             Vector<ParticleSystemBurst> bursts;
         };
 

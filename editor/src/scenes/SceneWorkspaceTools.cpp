@@ -352,8 +352,11 @@ namespace Maze
     {
         if (_state == ECSSceneState::Destroy)
         {
-            GizmosManager::GetInstancePtr()->setCamera(nullptr);
-            GizmosManager::GetInstancePtr()->setCanvas(nullptr);
+            if (m_camera3D == GizmosManager::GetInstancePtr()->getCamera())
+                GizmosManager::GetInstancePtr()->setCamera(nullptr);
+
+            if (m_mainCanvas == GizmosManager::GetInstancePtr()->getCanvas())
+                GizmosManager::GetInstancePtr()->setCanvas(nullptr);
         }
     }
 

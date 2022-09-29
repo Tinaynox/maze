@@ -161,20 +161,78 @@ namespace Maze
 
             if (maxCountToEmit && m_mainModule.getEmission().enabled && m_state == ParticleSystemState::Playing)
             {
+                S32 particleSeed = rand() % c_particleSystemParametersCount;
+
                 F32 iterationProgress = m_time / m_mainModule.getCurrentDuration();
-                S32 emissionCount = calculateEmissionCount(iterationProgress, maxCountToEmit, iterationFinished);
 
-                if (emissionCount > 0)
+                auto postEmitUpdate = [&](S32 _emissionCount)
                 {
-                    
-                    m_particles.addAliveCount(emissionCount);
+                    m_mainModule.updateLifetime(m_particles, aliveCount, aliveCount + _emissionCount, _dt);
+                    m_rendererModule.updateLifetime(m_particles, aliveCount, aliveCount + _emissionCount, _dt);
 
-                    emitParticles(aliveCount, aliveCount + emissionCount, _position, m_time / m_mainModule.getCurrentDuration());
+                    aliveCount += _emissionCount;
+                    maxCountToEmit -= _emissionCount;
+                };
 
-                    m_mainModule.updateLifetime(m_particles, aliveCount, aliveCount + emissionCount, _dt);
-                    m_rendererModule.updateLifetime(m_particles, aliveCount, aliveCount + emissionCount, _dt);
+                auto emit = [&](S32 _emissionCount, Vec3DF _spawnPosition)
+                {
+                    m_particles.addAliveCount(_emissionCount);
 
-                    aliveCount += emissionCount;
+                    emitParticles(aliveCount, aliveCount + _emissionCount, _spawnPosition, iterationProgress);
+                    postEmitUpdate(_emissionCount);
+                };
+
+                S32 emissionCount = calculateEmissionCount(particleSeed, iterationProgress, maxCountToEmit, iterationFinished);
+                if (emissionCount > 0)
+                    emit(emissionCount, _position);
+
+                // Emission per distance
+                F32 emissionPerLength;
+                m_mainModule.getEmission().emissionPerDistance.sample(particleSeed, iterationProgress, emissionPerLength);
+                if (emissionPerLength > 0.0f)
+                {
+                    Vec3DF posWS = m_transform->getWorldPosition();
+                    if (m_emissionPerDistancePreviousPositionWSDirty)
+                    {
+                        m_emissionPerDistancePreviousPositionWSDirty = false;
+                        m_emissionPerDistancePreviousPositionWS = posWS;
+                    }
+                    else
+                    {
+                        Vec3DF toPosWS = posWS - m_emissionPerDistancePreviousPositionWS;
+                        F32 distanceOffsetSq = toPosWS.squaredLength();
+                        if (distanceOffsetSq > 0.0f)
+                        {
+                            F32 distanceOffset = Math::Sqrt(distanceOffsetSq);
+                            Vec3DF toPosWSDir = toPosWS / distanceOffset;
+                            if (distanceOffset > emissionPerLength)
+                            {
+                                emissionCount = Math::Min(S32(distanceOffset / emissionPerLength), maxCountToEmit);
+                                if (emissionCount > 0)
+                                {
+                                    Vec3DF offsetPerEmission = emissionPerLength * toPosWSDir;
+
+                                    if (ParticleSystemSimulationSpace::World == m_mainModule.getTransformPolicy())
+                                    {
+                                        m_particles.addAliveCount(emissionCount);
+
+                                        for (S32 i = 0; i < emissionCount; ++i)
+                                        {
+                                            m_emissionPerDistancePreviousPositionWS += offsetPerEmission;
+                                            emitParticles(aliveCount + i, aliveCount + i + 1, m_emissionPerDistancePreviousPositionWS, iterationProgress);
+                                        }
+
+                                        postEmitUpdate(emissionCount);
+                                    }
+                                    else
+                                    {
+                                        emit(emissionCount, _position);
+                                        m_emissionPerDistancePreviousPositionWS += F32(emissionCount) * offsetPerEmission;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -191,7 +249,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    S32 ParticleSystem3D::calculateEmissionCount(F32 _iterationProgress, S32 _maxCountToEmit, bool _iterationFinished)
+    S32 ParticleSystem3D::calculateEmissionCount(
+        S32 _particleSeed,
+        F32 _iterationProgress,
+        S32 _maxCountToEmit,
+        bool _iterationFinished)
     {
         if (_iterationProgress < 0.0f)
             return 0;
@@ -201,23 +263,25 @@ namespace Maze
         if (!_iterationFinished)
         {
             // Calculate emission rate
-            F32 rate;
-            m_mainModule.getEmission().emissionPerSecond.sample(rand() % c_particleSystemParametersCount, _iterationProgress, rate);
+            F32 emissionPerSecond;
+            m_mainModule.getEmission().emissionPerSecond.sample(_particleSeed, _iterationProgress, emissionPerSecond);
 
-            if (rate > 0.0f)
+            if (emissionPerSecond > 0.0f)
             {
-                count = Math::Min(_maxCountToEmit, (S32)Math::Floor(m_timeEmission * rate));
-                m_timeEmission -= count / rate;
+                count = Math::Min(_maxCountToEmit, (S32)Math::Floor(m_timeEmission * emissionPerSecond));
+                m_timeEmission -= count / emissionPerSecond;
 
                 // Emission time can't be less than zero
                 m_timeEmission = Math::Max(m_timeEmission, 0.0f);
             }
             else
-            if (rate == 0.0f)
+            if (emissionPerSecond == 0.0f)
             {
                 count = 0;
                 m_timeEmission = 0.0f;
             }
+
+            
         }
 
         //  Emit particles by bursts
@@ -323,10 +387,18 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void ParticleSystem3D::processEntityEnabled()
+    {
+        m_emissionPerDistancePreviousPositionWSDirty = true;
+    }
+
+    //////////////////////////////////////////
     void ParticleSystem3D::processEntityAwakened()
     {
         m_transform = getEntityRaw()->ensureComponent<Transform3D>();
         m_renderMask = getEntityRaw()->ensureComponent<RenderMask>();
+
+        m_emissionPerDistancePreviousPositionWSDirty = true;
 
         if (m_mainModule.getPlayOnAwake())
             play();
