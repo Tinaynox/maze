@@ -442,6 +442,8 @@ namespace Maze
         Vec2DF const& _renderTargetCoords,
         CursorInputSource const& _inputSource)
     {
+        updateSortedUIElements2DList();
+
         CursorInputEvent cursorInputEvent(
             CursorInputType::Click,
             _cursorIndex,
@@ -500,6 +502,8 @@ namespace Maze
         Vec2DF const& _renderTargetCoords,
         CursorInputSource const& _inputSource)
     {
+        updateSortedUIElements2DList();
+
         CursorInputEvent cursorInputEvent(
             CursorInputType::DoubleClick,
             _cursorIndex,
@@ -827,7 +831,7 @@ namespace Maze
                         }
 
                         UIElement2D* element = entity->getComponentRaw<UIElement2D>();
-                        if (element)
+                        if (element && element->getEntityRaw())
                         {
                             canvasData.sortedUIElements2D.emplace_back(element);
                         }
