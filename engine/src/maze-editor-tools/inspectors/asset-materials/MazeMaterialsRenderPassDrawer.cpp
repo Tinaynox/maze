@@ -191,10 +191,12 @@ namespace Maze
             ScissorMask2DPtr shaderPanelBackgroundScissorMask = m_topBlockShaderNameText->getEntityRaw()->ensureComponent<ScissorMask2D>();
             shaderPanelBackgroundScissorMask->setPadding(1.0, 1.0f, 1.0f, 1.0f);
 
+            MaterialsRenderPassDrawerWPtr drawerWeak = cast<MaterialsRenderPassDrawer>();
+
             ContextMenu2DPtr shaderClickButtonContextMenu = shaderClickButton->getEntityRaw()->ensureComponent<ContextMenu2D>();
             shaderClickButtonContextMenu->setCursorButtonIndex(0);
             shaderClickButtonContextMenu->setCallbackFunction(
-                [this](MenuListTree2DPtr const& _listTree)
+                [drawerWeak](MenuListTree2DPtr const& _listTree)
                 {
                     RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
                     StringKeyMap<ShaderPtr> const& shadersCache = renderSystem->getShaderSystem()->getShadersCache();
@@ -206,12 +208,14 @@ namespace Maze
 
                         _listTree->addItem(
                             shader->getName(),
-                            [this, shaderWeak](String const& _text)
+                            [drawerWeak, shaderWeak](String const& _text)
                             {
                                 ShaderPtr shader = shaderWeak.lock();
                                 if (shader)
                                 {
-                                    setShader(shader);
+                                    auto drawer = drawerWeak.lock();
+                                    if (drawer)
+                                        drawer->setShader(shader);
                                 }
                             },
                             nullptr,
