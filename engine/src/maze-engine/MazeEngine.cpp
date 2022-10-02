@@ -174,7 +174,6 @@ namespace Maze
         U32 timeAfterUpdateMS = updateManager->getMilliseconds();
         while (timeAfterUpdateMS - currentFrameTimeMS < m_config.minFrameDeltaTimeMS)
         {
-            ThreadHelper::SleepCurrentThread(1);
             timeAfterUpdateMS = updateManager->getMilliseconds();
         }
 
