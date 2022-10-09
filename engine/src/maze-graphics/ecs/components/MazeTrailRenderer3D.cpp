@@ -192,10 +192,14 @@ namespace Maze
             TrailEdge& lastKeyframe = m_edges[edgesCount - 1];
             TrailEdge& penultimateKeyframe = m_edges[edgesCount - 2];
             
+            Vec3DF penultimateToLast = (worldPosition - penultimateKeyframe.position);
+            F32 penultimateToLastLengthSq = penultimateToLast.squaredLength();
+            if (penultimateToLastLengthSq <= 1e-6)
+                return;
+
             lastKeyframe.position = worldPosition;
 
-            Vec3DF penultimateToLast = (lastKeyframe.position - penultimateKeyframe.position);
-            F32 penultimateToLastLength = penultimateToLast.length();
+            F32 penultimateToLastLength = sqrt(penultimateToLastLengthSq);
             Vec3DF direction = penultimateToLast / penultimateToLastLength;
             lastKeyframe.direction = direction;
 
@@ -228,7 +232,7 @@ namespace Maze
 
             rebuildMesh();
 
-            if (lastKeyframe.position.squaredDistance(penultimateKeyframe.position) >= m_minVertexDistanceSqr)
+            if (penultimateToLastLengthSq >= m_minVertexDistanceSqr)
             {
                 addEdge(m_timer, worldPosition);
             }
