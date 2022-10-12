@@ -45,7 +45,7 @@ namespace Maze
             return ::GetCurrentThreadId();
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         MAZE_CORE_API void SleepCurrentThread(U32 _ms)
         {
             TIMECAPS tc;
@@ -54,6 +54,18 @@ namespace Maze
             timeBeginPeriod(tc.wPeriodMin);
             ::Sleep(_ms);
             timeEndPeriod(tc.wPeriodMin);
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API void SetCurrentThreadPriority(ThreadPriority _priority)
+        {
+            SetThreadPriority(GetCurrentThread(), ConvertToWinThreadPriority(_priority));
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API ThreadPriority GetCurrentThreadPriority()
+        {
+            return ConvertFromWinThreadPriority(GetThreadPriority(GetCurrentThread()));
         }
 
     } // namespace ThreadHelper

@@ -47,6 +47,12 @@ namespace Maze
         ////////////////////////////////////
         MAZE_CORE_API extern void SleepCurrentThread(U32 _ms);
 
+        //////////////////////////////////////////
+        MAZE_CORE_API extern void SetCurrentThreadPriority(ThreadPriority _priority);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API extern ThreadPriority GetCurrentThreadPriority();
+
     } // namespace ThreadHelper
     //////////////////////////////////////////
 
