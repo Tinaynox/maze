@@ -281,43 +281,53 @@ namespace Maze
     {
         MAZE_PROFILER_SCOPED_LOCK(3D);
 
+        Vector<Camera3D*> cameras;
         m_cameras3DSample->process(
             [&](Entity* _entity, Camera3D* _camera3D)
             {
-                RenderTargetPtr const& renderTarget = _camera3D->getRenderTarget();
-
-                if (_renderTarget != renderTarget.get())
-                    return;
-
-                DefaultPassParams params;
-
-                params.renderMask = _camera3D->getRenderMask();
-                params.cameraTransform = _camera3D->getTransform()->getWorldTransform();
-                params.projectionMatrix = _camera3D->calculateProjectionMatrix(renderTarget);
-                params.viewport = _camera3D->getViewport();
-                params.nearZ = _camera3D->getNearZ();
-                params.farZ = _camera3D->getFarZ();
-                params.fieldOfViewY = _camera3D->getFOV();
-                params.clearColorFlag = _camera3D->getClearColorFlag();
-                params.clearColor = _camera3D->getClearColor();
-                params.clearDepthFlag = _camera3D->getClearDepthFlag();
-                params.clearSkyBoxFlag = _camera3D->getClearSkyBoxFlag();
-                params.drawFlag = _camera3D->getDrawFlag();
-                params.lightingSettings = _camera3D->getLightingSettings();
-
-                eventPrePass(
-                    _renderTarget,
-                    params);
-
-                drawDefaultPass(
-                    _renderTarget,
-                    params);
-
-                eventPostPass(
-                    _renderTarget,
-                    params);
-                
+                cameras.push_back(_camera3D);
             });
+        std::sort(
+            cameras.begin(),
+            cameras.end(),
+            [](Camera3D* _cameraA, Camera3D* _cameraB) { return _cameraA->getSortOrder() < _cameraB->getSortOrder(); });
+
+        for (Camera3D* camera : cameras)
+        {
+            RenderTargetPtr const& renderTarget = camera->getRenderTarget();
+
+            if (_renderTarget != renderTarget.get())
+                continue;
+
+            DefaultPassParams params;
+
+            params.renderMask = camera->getRenderMask();
+            params.cameraTransform = camera->getTransform()->getWorldTransform();
+            params.projectionMatrix = camera->calculateProjectionMatrix(renderTarget);
+            params.viewport = camera->getViewport();
+            params.nearZ = camera->getNearZ();
+            params.farZ = camera->getFarZ();
+            params.fieldOfViewY = camera->getFOV();
+            params.clearColorFlag = camera->getClearColorFlag();
+            params.clearColor = camera->getClearColor();
+            params.clearDepthFlag = camera->getClearDepthFlag();
+            params.clearSkyBoxFlag = camera->getClearSkyBoxFlag();
+            params.drawFlag = camera->getDrawFlag();
+            params.lightingSettings = camera->getLightingSettings();
+
+            eventPrePass(
+                _renderTarget,
+                params);
+
+            drawDefaultPass(
+                _renderTarget,
+                params);
+
+            eventPostPass(
+                _renderTarget,
+                params);
+                
+        }
     }
 
     //////////////////////////////////////////

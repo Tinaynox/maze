@@ -162,6 +162,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline S32 getSortOrder() const { return m_sortOrder; }
+
+        //////////////////////////////////////////
+        inline void setSortOrder(S32 _sortOrder) { m_sortOrder = _sortOrder; }
+
+
+        //////////////////////////////////////////
         LightingSettingsPtr const& getLightingSettings();
 
 
@@ -211,6 +218,8 @@ namespace Maze
         bool m_drawFlag = true;
 
         S32 m_renderMask = ~S32(DefaultRenderMask::Gizmos);
+
+        S32 m_sortOrder = 0;
     };
 
 
