@@ -333,7 +333,7 @@ namespace Maze
             MAZE_PROFILER_SCOPED_LOCK(SWAP);
 
             SwapBuffers(m_deviceContext);
-            mzglFinish(); // To disable latency when using triple buffering (fullscreen) and vsync
+            MAZE_GL_CALL(mzglFinish()); // To disable latency when using triple buffering (fullscreen) and vsync
         }
         
 

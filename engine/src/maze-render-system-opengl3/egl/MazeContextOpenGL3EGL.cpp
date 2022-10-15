@@ -440,6 +440,10 @@ namespace Maze
         {
             MAZE_PROFILER_SCOPED_LOCK(SWAP);
             MAZE_EGL_CALL(eglSwapBuffers(m_eglDisplay, m_eglSurface));
+            
+#if (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN)
+            MAZE_GL_CALL(mzglFinish());
+#endif
         }
 
     }
