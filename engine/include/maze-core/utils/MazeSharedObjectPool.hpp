@@ -122,8 +122,11 @@ namespace Maze
             for (S32 i = 0; i < _count; ++i)
             {
                 ObjectSharedPtr element = m_createFunc();
-                ++m_countAll;
-                release(element);
+                if (element)
+                {
+                    ++m_countAll;
+                    release(element);
+                }
             }
         }
 
