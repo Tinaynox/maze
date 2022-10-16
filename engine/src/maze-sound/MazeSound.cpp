@@ -140,6 +140,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void Sound::reload()
+    {
+        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(m_name);
+        if (assetFile)
+            loadFromAssetFile(assetFile);
+    }
+
+    //////////////////////////////////////////
     void Sound::FromString(SoundPtr& _value, CString _data, Size _count)
     {
         if (!_data || strcmp(_data, "") == 0)

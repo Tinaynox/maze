@@ -105,6 +105,10 @@ namespace Maze
             SoundGroupPtr const& _soundGroup = nullptr,
             F32 _volume = 1.0f);
 
+
+        //////////////////////////////////////////
+        void reload();
+
     public:
 
         //////////////////////////////////////////

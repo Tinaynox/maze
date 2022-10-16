@@ -264,6 +264,15 @@ namespace Maze
 
         return result;
     }
+
+    //////////////////////////////////////////
+    void SoundManager::reloadAllAssetSounds()
+    {
+        for (auto const& soundData : m_soundsByName)
+        {
+            soundData.second->reload();
+        }
+    }
     
 } // namespace Maze
 //////////////////////////////////////////
