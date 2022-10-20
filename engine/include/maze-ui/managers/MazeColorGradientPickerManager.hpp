@@ -84,7 +84,7 @@ namespace Maze
 
         //////////////////////////////////////////
         void openGradientPicker(
-            ColorPickerCallback _callback,
+            ColorPickerCallback _callback = nullptr,
             ColorGradient const& _gradient = ColorGradient(0.0f, Vec4DF::c_one, 1.0f, Vec4DF::c_one));
 
 

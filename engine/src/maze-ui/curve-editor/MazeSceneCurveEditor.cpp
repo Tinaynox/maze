@@ -182,6 +182,14 @@ namespace Maze
     {
         m_minMaxMode = _mode;
 
+        if (_mode == AnimationCurveMinMaxMode::Normalized || _mode == AnimationCurveMinMaxMode::NormalizedPositive)
+        {
+            AnimationCurve curve = AnimationCurveManager::GetInstancePtr()->getCurve();
+            curve.normalize();
+            if (curve != AnimationCurveManager::GetInstancePtr()->getCurve())
+                AnimationCurveManager::GetInstancePtr()->setCurve(curve);
+        }
+
         updateUI();
     }
 

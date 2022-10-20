@@ -271,7 +271,7 @@ namespace Maze
             label->setColor(ColorU32::c_black);
 
             m_modeDropdown = SystemUIHelper::CreateDefaultDropdown(
-                Vec2DF(188.0f, 18.0f),
+                Vec2DF(158.0f, 18.0f),
                 Vec2DF(0.0f, 0.0f),
                 rowLayout->getTransform(),
                 this);
@@ -286,7 +286,7 @@ namespace Maze
             m_copyButton = UIHelper::CreateDefaultClickButton(
                 "C",
                 { 18.0f, 18.0f },
-                { -12.0f, -12.0f },
+                { -32.0f, -12.0f },
                 m_canvas->getTransform(),
                 this,
                 Vec2DF(1.0f, 1.0f),
@@ -297,6 +297,59 @@ namespace Maze
                     ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
                     SystemManager::GetInstancePtr()->setClipboardString(gradient.toString());
                 });
+
+            m_pasteButton = UIHelper::CreateDefaultClickButton(
+                "P",
+                { 18.0f, 18.0f },
+                { -12.0f, -12.0f },
+                m_canvas->getTransform(),
+                this,
+                Vec2DF(1.0f, 1.0f),
+                Vec2DF(1.0f, 1.0f));
+            m_pasteButton->eventClick.subscribe(
+                [](Button2D* _button, CursorInputEvent const& _event)
+            {
+                String text = SystemManager::GetInstancePtr()->getClipboardAsString();
+                ColorGradient gradient = ColorGradient::FromString(text);
+                ColorGradientPickerManager::GetInstancePtr()->setGradient(gradient);
+
+            });
+
+
+            m_copyXMLButton = UIHelper::CreateDefaultClickButton(
+                "CX",
+                { 18.0f, 18.0f },
+                { -72.0f, -12.0f },
+                m_canvas->getTransform(),
+                this,
+                Vec2DF(1.0f, 1.0f),
+                Vec2DF(1.0f, 1.0f));
+            m_copyXMLButton->eventClick.subscribe(
+                [](Button2D* _button, CursorInputEvent const& _event)
+            {
+                ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
+                String text = gradient.toString();
+                StringHelper::ReplaceSubstring(text, "\"", "&quot;");
+                SystemManager::GetInstancePtr()->setClipboardString(text);
+            });
+
+            m_pasteXMLButton = UIHelper::CreateDefaultClickButton(
+                "PX",
+                { 18.0f, 18.0f },
+                { -52.0f, -12.0f },
+                m_canvas->getTransform(),
+                this,
+                Vec2DF(1.0f, 1.0f),
+                Vec2DF(1.0f, 1.0f));
+            m_pasteXMLButton->eventClick.subscribe(
+                [](Button2D* _button, CursorInputEvent const& _event)
+            {
+                String text = SystemManager::GetInstancePtr()->getClipboardAsString();
+                StringHelper::ReplaceSubstring(text, "&quot;", "\"");
+                ColorGradient gradient = ColorGradient::FromString(text);
+                ColorGradientPickerManager::GetInstancePtr()->setGradient(gradient);
+
+            });
         }
 
         // Gradient
