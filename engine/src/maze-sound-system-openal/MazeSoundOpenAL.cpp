@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeSoundSystemOpenALHeader.hpp"
 #include "maze-sound-system-openal/MazeSoundOpenAL.hpp"
+#include "maze-sound-system-openal/MazeSoundSourceOpenAL.hpp"
 #include "maze-sound-system-openal/MazeFunctionsOpenAL.hpp"
 #include "maze-sound/MazeSoundSystem.hpp"
 
@@ -116,6 +117,28 @@ namespace Maze
             return false;
         }
 
+        // Unbind sources
+        Vector<std::pair<SoundSourceOpenAL*, bool>> stoppedSources;
+        SoundSourceOpenAL::IterateSoundSourcesOpenAL(
+            [&, this](SoundSourceOpenAL* _source)
+            {
+                if (_source->getSound().get() == this)
+                {
+                    bool stopped = false;
+                    if (_source->isPlaying())
+                    {
+                        _source->stop();
+                        stopped = true;
+                    }
+
+                    MAZE_AL_CALL(mzalSourcei(_source->getSourceID(), AL_BUFFER, 0));
+
+                    stoppedSources.emplace_back(std::make_pair(_source, stopped));
+                }
+
+                return true;
+            });
+
         MAZE_AL_CALL(
             mzalBufferData(
                 m_bufferID,
@@ -123,6 +146,18 @@ namespace Maze
                 _soundData->getData()->getData(),
                 (MZALsizei)_soundData->getData()->getSize(),
                 (MZALsizei)_soundData->getFrequency()));
+
+
+        // Rebind sources
+        for (auto sourceData : stoppedSources)
+            if (sourceData.first->getSound().get() == this)
+            {
+                MAZE_AL_CALL(mzalSourcei(sourceData.first->getSourceID(), AL_BUFFER, m_bufferID));
+
+                if (sourceData.second)
+                    sourceData.first->play();
+            }
+
         return true;
     }
 
