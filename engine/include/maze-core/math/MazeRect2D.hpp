@@ -137,6 +137,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline TValue getTop() const { return position.y + size.y; }
+
+        //////////////////////////////////////////
+        inline Vec2D<TValue> getCenter() const { return position + size * 0.5f; }
         
     public:
         Vec2D<TValue> position;
