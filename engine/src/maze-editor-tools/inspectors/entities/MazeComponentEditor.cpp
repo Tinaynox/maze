@@ -32,6 +32,8 @@
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/managers/MazeEntitySerializationManager.hpp"
+#include "maze-core/managers/MazeSystemManager.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
@@ -202,6 +204,52 @@ namespace Maze
                     {
                         eventRemoveComponentPressed(componentUID);
                     });
+
+                if (SelectionManager::GetInstancePtr()->getSelectedEntities().size() == 1)
+                {
+                    _menuListTree->addItem(
+                        "Copy as string",
+                        [this, componentUID](String const& _item)
+                        {
+                            Set<EntityPtr> selectedEntites = SelectionManager::GetInstancePtr()->getSelectedEntities();
+                            if (selectedEntites.size() == 1)
+                            {
+                                ComponentPtr component = (*selectedEntites.begin())->getComponentByUID(componentUID);
+                                if (component)
+                                {
+                                    String result;
+
+                                    MetaClass const* metaClass = component->getMetaClass();
+                                    MetaInstance metaInstance = component->getMetaInstance();
+
+                                    for (MetaClass* metaClass : metaClass->getAllSuperMetaClasses())
+                                    {
+                                        for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
+                                        {
+                                            MetaProperty* metaProperty = metaClass->getProperty(i);
+
+                                            CString propertyName = metaProperty->getName();
+
+                                            MetaClass const* metaPropertyMetaClass = metaProperty->getMetaClass();
+                                            if (metaPropertyMetaClass)
+                                            {
+                                                if (metaPropertyMetaClass->isInheritedFrom<Component>() || metaPropertyMetaClass->isInheritedFrom<Entity>())
+                                                    continue;
+                                            }
+
+                                            String properyStringValue = metaProperty->toString(metaInstance);
+
+                                            if (!result.empty())
+                                                result += " ";
+                                            result += propertyName + String("=\"") + properyStringValue + "\"";
+                                        }
+                                    }
+
+                                    SystemManager::GetInstancePtr()->setClipboardString(result);
+                                }
+                            }
+                        });
+                }
 
                 auto const& options = InspectorManager::GetInstancePtr()->getInspectorComponentContextMenuOptions(componentUID);
                 for (auto const& optionData : options)
