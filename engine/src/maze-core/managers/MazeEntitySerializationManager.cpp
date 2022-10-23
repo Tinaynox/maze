@@ -628,11 +628,19 @@ namespace Maze
 
         // Add to ECS scene
         for (auto entityData : entities)
+        {
+            if (!entityData.second)
+                continue;
+
             entityData.second->setECSScene(scene);
+        }
 
         // Awake
         for (auto entityData : entities)
         {
+            if (!entityData.second)
+                continue;
+
             entityData.second->setAwakeForbidden(false);
             entityData.second->tryAwake();
         }
