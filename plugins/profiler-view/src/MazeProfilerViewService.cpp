@@ -237,8 +237,8 @@ namespace Maze
         {
             case InputEventKeyboardType::KeyDown:
             {
-                if (_keyboardData.isShiftDown() &&
-                    _keyboardData.keyCode == KeyCode::P)
+                if (_keyboardData.isAltDown() &&
+                    _keyboardData.keyCode == KeyCode::I)
                 {
                     if (SettingsManager::GetInstancePtr())
                     {
