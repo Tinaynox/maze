@@ -33,6 +33,7 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
+#include "maze-core/managers/MazeSystemManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
@@ -170,6 +171,8 @@ namespace Maze
     //////////////////////////////////////////
     void SceneColorPicker::setup(bool _hdr)
     {
+        m_setup = true;
+
         m_hdr = _hdr;
 
         if (m_hdr)
@@ -186,6 +189,8 @@ namespace Maze
         m_intensityEntity->setActiveSelf(m_hdr);
 
         processRGBtoHSV();
+
+        m_setup = false;
     }
 
     //////////////////////////////////////////
@@ -206,6 +211,54 @@ namespace Maze
         m_canvas->setClearDepthFlag(true);
         m_canvas->setClearColor(ColorU32(203, 203, 203, 255));
         m_canvas->setRenderTarget(m_renderTarget);
+
+
+        m_copyButton = UIHelper::CreateDefaultClickButton(
+            "C",
+            { 18.0f, 18.0f },
+            { 12.0f, -15.0f },
+            m_canvas->getTransform(),
+            this,
+            Vec2DF(0.0f, 1.0f),
+            Vec2DF(0.0f, 1.0f));
+        m_copyButton->eventClick.subscribe(
+            [this](Button2D* _button, CursorInputEvent const& _event)
+            {
+                if (m_hdr)
+                {
+                    ColorF128 const& color = ColorPickerManager::GetInstancePtr()->getColorHDR();
+                    SystemManager::GetInstancePtr()->setClipboardString(color.toString());
+                }
+                else
+                {
+                    ColorU32 const& color = ColorPickerManager::GetInstancePtr()->getColor();
+                    SystemManager::GetInstancePtr()->setClipboardString(color.toString());
+                }
+            });
+
+        m_pasteButton = UIHelper::CreateDefaultClickButton(
+            "P",
+            { 18.0f, 18.0f },
+            { 32.0f, -15.0f },
+            m_canvas->getTransform(),
+            this,
+            Vec2DF(0.0f, 1.0f),
+            Vec2DF(0.0f, 1.0f));
+        m_pasteButton->eventClick.subscribe(
+            [this](Button2D* _button, CursorInputEvent const& _event)
+            {
+                String text = SystemManager::GetInstancePtr()->getClipboardAsString();
+                if (m_hdr)
+                {
+                    ColorF128 color = ColorF128::FromString(text);
+                    ColorPickerManager::GetInstancePtr()->setColorHDR(color);
+                }
+                else
+                {
+                    ColorU32 color = ColorU32::FromString(text);
+                    ColorPickerManager::GetInstancePtr()->setColor(color);
+                }
+            });
 
 
         SpriteRenderer2DPtr transparentChessPrevNextRenderer = SpriteHelper::CreateSprite(
@@ -730,13 +783,21 @@ namespace Maze
     //////////////////////////////////////////
     void SceneColorPicker::notifyColorChanged(ColorU32 const& _color)
     {
-        
+        if (m_setup)
+            return;
+
+        if (!m_hdr)
+            setup(false);
     }
 
     //////////////////////////////////////////
     void SceneColorPicker::notifyColorHDRChanged(ColorF128 const& _color)
     {
+        if (m_setup)
+            return;
 
+        if (m_hdr)
+            setup(true);
     }
 
     //////////////////////////////////////////
@@ -1120,19 +1181,20 @@ namespace Maze
 
     //////////////////////////////////////////
     void SceneColorPicker::processHSVtoRGB()
-    {
-        ColorU32 color = ColorHelper::ConvertHSVToRGB(m_hsv);
-        color.a = m_alpha;
-
+    {        
         if (m_hdr)
         {
+            auto rgb = ColorHelper::ConvertHSVToRGB(m_hsv);
             ColorPickerManager::GetInstancePtr()->setColorHDR(
-                ColorF128::FromColorU32AndIntensity(
-                    color,
+                ColorF128::FromVec4DFAndIntensity(
+                    Vec4DF(rgb, m_alpha),
                     m_intensity));
         }
         else
         {
+            ColorU32 color = ColorHelper::ConvertHSVToRGB(m_hsv);
+            color.a = m_alpha;
+
             ColorPickerManager::GetInstancePtr()->setColor(color);
         }
     }

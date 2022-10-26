@@ -77,7 +77,7 @@ namespace Maze
 
         //////////////////////////////////////////
         void openColorPicker(
-            ColorPickerCallback _callback,
+            ColorPickerCallback _callback = nullptr,
             ColorU32 const& _color = ColorU32::c_white);
 
 
@@ -90,7 +90,7 @@ namespace Maze
 
         //////////////////////////////////////////
         void openColorHDRPicker(
-            ColorHDRPickerCallback _callback,
+            ColorHDRPickerCallback _callback = nullptr,
             ColorF128 const& _color = ColorF128::c_white);
 
 

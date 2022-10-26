@@ -326,6 +326,20 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        static inline ColorF128 FromVec4DFAndIntensity(
+            Vec4DF const& _color,
+            F32 _intensity)
+        {
+            F32 multiplier = 1.0f + _intensity;
+
+            return ColorF128(
+                _color.x * multiplier,
+                _color.y * multiplier,
+                _color.z * multiplier,
+                _color.w);
+        }
+
+        //////////////////////////////////////////
         static inline ColorF128 FromColorU32AndIntensity(
             ColorU32 const& _color,
             F32 _intensity)

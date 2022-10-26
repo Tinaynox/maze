@@ -134,6 +134,9 @@ namespace Maze
     //////////////////////////////////////////
     void AnimationCurve::loadFromJSONValue(Json::Value const& _value)
     {
+        if (!_value.isObject())
+            return;
+
         m_keyframes.clear();
         for (Json::Value const& keyframe : _value["k"])
         {

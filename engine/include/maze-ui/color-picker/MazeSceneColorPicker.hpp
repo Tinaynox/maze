@@ -200,6 +200,9 @@ namespace Maze
 
         CanvasPtr m_canvas;
 
+        ClickButton2DPtr m_copyButton;
+        ClickButton2DPtr m_pasteButton;
+
         ColorU32 m_prevColor;
         F32 m_prevColorIntensity;
 
@@ -232,6 +235,8 @@ namespace Maze
         EntityPtr m_intensityEntity;
         Slider2DPtr m_intensitySlider;
         EditBox2DPtr m_intensityTextEdit;
+
+        bool m_setup = false;
     };
 
 
