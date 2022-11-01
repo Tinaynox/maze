@@ -29,6 +29,7 @@
 #include "maze-sound-system-openal/MazeSoundOpenAL.hpp"
 #include "maze-sound-system-openal/MazeSoundSystemOpenAL.hpp"
 #include "maze-sound-system-openal/MazeFunctionsOpenAL.hpp"
+#include "maze-core/helpers/MazeThreadHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -98,7 +99,14 @@ namespace Maze
         DeviceInfoOpenAL const* deviceInfo = m_soundSystemRaw->getDeviceInfo(m_deviceIndex);
         MAZE_ERROR_RETURN_VALUE_IF(!deviceInfo, false, "DeviceInfo is null!");
 
-        MAZE_AL_CALL(m_device = mzalcOpenDevice(deviceInfo->deviceName.c_str()));
+        m_device = NULL;
+        for (S32 i = 0; i < 3; ++i)
+        {
+            MAZE_AL_CALL(m_device = mzalcOpenDevice(deviceInfo->deviceName.c_str()));
+            if (m_device != NULL)
+                break;
+            ThreadHelper::SleepCurrentThread(100);
+        }
         MAZE_ERROR_RETURN_VALUE_IF(!m_device, false, "Failed to open ALC Device!");
 
         MAZE_AL_CALL(m_context = mzalcCreateContext(m_device, nullptr));
