@@ -313,6 +313,15 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        MAZE_PHYSICS2D_API Vector<OverlapHit2DPtr> OverlapPointAll(
+            Vec2DF const& _position)
+        {
+            PhysicsWorld2DPtr const& world = Physics2DManager::GetInstancePtr()->getWorld();
+
+            return OverlapRectAll(_position, world->convertMetersToUnits({ 0.00002f, 0.00002f }));
+        }
+
+        //////////////////////////////////////////
         MAZE_PHYSICS2D_API Vector<OverlapHit2DPtr> OverlapCircleAll(
             Vec2DF const& _position,
             F32 _radius)
