@@ -1185,17 +1185,21 @@ namespace Maze
         if (m_hdr)
         {
             auto rgb = ColorHelper::ConvertHSVToRGB(m_hsv);
-            ColorPickerManager::GetInstancePtr()->setColorHDR(
-                ColorF128::FromVec4DFAndIntensity(
-                    Vec4DF(rgb, m_alpha),
-                    m_intensity));
+
+            ColorF128 color = ColorF128::FromVec4DFAndIntensity(
+                Vec4DF(rgb, m_alpha),
+                m_intensity);
+
+            if (color != ColorPickerManager::GetInstancePtr()->getColorHDR())
+                ColorPickerManager::GetInstancePtr()->setColorHDR(color);
         }
         else
         {
             ColorU32 color = ColorHelper::ConvertHSVToRGB(m_hsv);
             color.a = m_alpha;
 
-            ColorPickerManager::GetInstancePtr()->setColor(color);
+            if (color != ColorPickerManager::GetInstancePtr()->getColor())
+                ColorPickerManager::GetInstancePtr()->setColor(color);
         }
     }
 
