@@ -82,15 +82,17 @@ namespace Maze
         //////////////////////////////////////////
         friend class Entity;
 
-    protected:
-
         //////////////////////////////////////////
         struct CanvasData
         {
             Canvas* canvas;
+            AABB2D canvasRenderTargetAABB;
+
             Canvas* rootCanvas;
             Vector<UIElement2D*> sortedUIElements2D;
         };
+
+    protected:
 
         //////////////////////////////////////////
         struct ClickData

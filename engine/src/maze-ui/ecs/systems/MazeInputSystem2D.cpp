@@ -57,6 +57,7 @@ namespace Maze
     F32 const c_doubleClickShiftThresholdSq = 5.0f * 5.0f;
     U32 const c_clickTimeMS = 170u;
     F32 const c_clickShiftThresholdSq = 5.0f * 5.0f;
+    Vec2DF const c_outCanvasCursorPosition = Vec2DF(-1e6f, -1e6f);
 
 
     //////////////////////////////////////////
@@ -357,6 +358,30 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void SetupCursorInputEventForCanvasData(
+        CursorInputEvent& _event,
+        InputSystem2D::CanvasData const& _canvasData,
+        Vec2DF const& _renderTargetCoords)
+    {
+        _event.canvas = _canvasData.canvas;
+        _event.rootCanvas = _canvasData.rootCanvas;
+
+        bool canvasContainsCursor = _canvasData.canvasRenderTargetAABB.contains(_renderTargetCoords);
+        if (canvasContainsCursor)
+        {
+            if (_event.rootCanvas)
+                _event.position = _event.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+            else
+                _event.position = _event.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+        }
+        else
+        {
+            _event.position = c_outCanvasCursorPosition;
+        }
+    }
+
+
+    //////////////////////////////////////////
     void InputSystem2D::processCursorPress(
         Window* _window,
         S32 _cursorIndex,
@@ -389,14 +414,8 @@ namespace Maze
                     continue;
             }
 
-            cursorInputEvent.canvas = canvasData.canvas;
-            cursorInputEvent.rootCanvas = canvasData.rootCanvas;
             Vector<UIElement2D*> const& sortedUIElements2D = canvasData.sortedUIElements2D;
-
-            if (cursorInputEvent.rootCanvas)
-                cursorInputEvent.position = cursorInputEvent.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
-            else
-                cursorInputEvent.position = cursorInputEvent.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+            SetupCursorInputEventForCanvasData(cursorInputEvent, canvasData, _renderTargetCoords);
 
             for (Vector<UIElement2D*>::const_reverse_iterator   it2 = sortedUIElements2D.rbegin(),
                                                                 end2 = sortedUIElements2D.rend();
@@ -407,11 +426,11 @@ namespace Maze
 
                 element->processCursorPress(cursorInputEvent);
 
-                if (cursorInputEvent.hitCaptured)
+                if (cursorInputEvent.isCaptured())
                     break;
             }
 
-            if (cursorInputEvent.hitCaptured)
+            if (cursorInputEvent.isCaptured())
                 break;
         }
 
@@ -467,16 +486,10 @@ namespace Maze
                     continue;
             }
 
-            cursorInputEvent.canvas = canvasData.canvas;
-            cursorInputEvent.rootCanvas = canvasData.rootCanvas;
             Vector<UIElement2D*> const& sortedUIElements2D = canvasData.sortedUIElements2D;
+            SetupCursorInputEventForCanvasData(cursorInputEvent, canvasData, _renderTargetCoords);
 
-            if (cursorInputEvent.rootCanvas)
-                cursorInputEvent.position = cursorInputEvent.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
-            else
-                cursorInputEvent.position = cursorInputEvent.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
-
-            for (Vector<UIElement2D*>::const_reverse_iterator   it2 = sortedUIElements2D.rbegin(),
+            for (Vector<UIElement2D*>::const_reverse_iterator it2 = sortedUIElements2D.rbegin(),
                 end2 = sortedUIElements2D.rend();
                 it2 != end2;
                 ++it2)
@@ -485,11 +498,11 @@ namespace Maze
 
                 element->processCursorClick(cursorInputEvent);
 
-                if (cursorInputEvent.hitCaptured)
+                if (cursorInputEvent.isCaptured())
                     break;
             }
 
-            if (cursorInputEvent.hitCaptured)
+            if (cursorInputEvent.isCaptured())
                 break;
         }
     }
@@ -527,14 +540,8 @@ namespace Maze
                     continue;
             }
 
-            cursorInputEvent.canvas = canvasData.canvas;
-            cursorInputEvent.rootCanvas = canvasData.rootCanvas;
             Vector<UIElement2D*> const& sortedUIElements2D = canvasData.sortedUIElements2D;
-
-            if (cursorInputEvent.rootCanvas)
-                cursorInputEvent.position = cursorInputEvent.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
-            else
-                cursorInputEvent.position = cursorInputEvent.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+            SetupCursorInputEventForCanvasData(cursorInputEvent, canvasData, _renderTargetCoords);
 
             for (Vector<UIElement2D*>::const_reverse_iterator   it2 = sortedUIElements2D.rbegin(),
                 end2 = sortedUIElements2D.rend();
@@ -545,11 +552,11 @@ namespace Maze
 
                 element->processCursorDoubleClick(cursorInputEvent);
 
-                if (cursorInputEvent.hitCaptured)
+                if (cursorInputEvent.isCaptured())
                     break;
             }
 
-            if (cursorInputEvent.hitCaptured)
+            if (cursorInputEvent.isCaptured())
                 break;
         }
     }
@@ -587,14 +594,8 @@ namespace Maze
                     continue;
             }
 
-            cursorInputEvent.canvas = canvasData.canvas;
-            cursorInputEvent.rootCanvas = canvasData.rootCanvas;
             Vector<UIElement2D*> const& sortedUIElements2D = canvasData.sortedUIElements2D;
-
-            if (cursorInputEvent.rootCanvas)
-                cursorInputEvent.position = cursorInputEvent.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
-            else
-                cursorInputEvent.position = cursorInputEvent.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+            SetupCursorInputEventForCanvasData(cursorInputEvent, canvasData, _renderTargetCoords);
 
             for (Vector<UIElement2D*>::const_reverse_iterator    it2 = sortedUIElements2D.rbegin(),
                                                                 end2 = sortedUIElements2D.rend();
@@ -652,14 +653,8 @@ namespace Maze
                     continue;
             }
 
-            cursorInputEvent.canvas = canvasData.canvas;
-            cursorInputEvent.rootCanvas = canvasData.rootCanvas;
             Vector<UIElement2D*> const& sortedUIElements2D = canvasData.sortedUIElements2D;
-
-            if (cursorInputEvent.rootCanvas)
-                cursorInputEvent.position = cursorInputEvent.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
-            else
-                cursorInputEvent.position = cursorInputEvent.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+            SetupCursorInputEventForCanvasData(cursorInputEvent, canvasData, _renderTargetCoords);
 
             for (Vector<UIElement2D*>::const_reverse_iterator it2 = sortedUIElements2D.rbegin(),
                                                               end2 = sortedUIElements2D.rend();
@@ -668,7 +663,7 @@ namespace Maze
             {
                 UIElement2D* element = *it2;
 
-                if (!cursorInputEvent.hitCaptured)
+                if (!cursorInputEvent.isCaptured())
                     element->processCursorMove(cursorInputEvent);
                 else
                 {
@@ -713,14 +708,8 @@ namespace Maze
                     continue;
             }
 
-            cursorInputEvent.canvas = canvasData.canvas;
-            cursorInputEvent.rootCanvas = canvasData.rootCanvas;
             Vector<UIElement2D*> const& sortedUIElements2D = canvasData.sortedUIElements2D;
-
-            if (cursorInputEvent.rootCanvas)
-                cursorInputEvent.position = cursorInputEvent.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
-            else
-                cursorInputEvent.position = cursorInputEvent.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+            SetupCursorInputEventForCanvasData(cursorInputEvent, canvasData, _renderTargetCoords);
 
             for (Vector<UIElement2D*>::const_reverse_iterator it2 = sortedUIElements2D.rbegin(),
                                                               end2 = sortedUIElements2D.rend();
@@ -729,7 +718,7 @@ namespace Maze
             {
                 UIElement2D* element = *it2;
 
-                if (!cursorInputEvent.hitCaptured)
+                if (!cursorInputEvent.isCaptured())
                     element->processCursorDrag(cursorInputEvent);
                 else
                 {
@@ -771,14 +760,22 @@ namespace Maze
                     continue;
             }
 
+            Vector<UIElement2D*> const& sortedUIElements2D = canvasData.sortedUIElements2D;
             cursorInputEvent.canvas = canvasData.canvas;
             cursorInputEvent.rootCanvas = canvasData.rootCanvas;
-            Vector<UIElement2D*> const& sortedUIElements2D = canvasData.sortedUIElements2D;
 
-            if (cursorInputEvent.rootCanvas)
-                cursorInputEvent.position = cursorInputEvent.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+            bool canvasContainsCursor = canvasData.canvasRenderTargetAABB.contains(_renderTargetCoords);
+            if (canvasContainsCursor)
+            {
+                if (cursorInputEvent.rootCanvas)
+                    cursorInputEvent.position = cursorInputEvent.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+                else
+                    cursorInputEvent.position = cursorInputEvent.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+            }
             else
-                cursorInputEvent.position = cursorInputEvent.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+            {
+                cursorInputEvent.position = c_outCanvasCursorPosition;
+            }
 
             for (Vector<UIElement2D*>::const_reverse_iterator it2 = sortedUIElements2D.rbegin(),
                                                               end2 = sortedUIElements2D.rend();
@@ -789,11 +786,11 @@ namespace Maze
 
                 element->processCursorWheel(cursorInputEvent);
 
-                if (cursorInputEvent.hitCaptured)
+                if (cursorInputEvent.isCaptured())
                     break;
             }
 
-            if (cursorInputEvent.hitCaptured)
+            if (cursorInputEvent.isCaptured())
                 break;
         }
     }
@@ -810,6 +807,7 @@ namespace Maze
         {
             CanvasData canvasData;
             canvasData.canvas = _canvas;
+            canvasData.canvasRenderTargetAABB = _canvas->getRenderTargetAABB();
 
             if (_canvas->getTransform()->getParent())
                 canvasData.rootCanvas = _canvas->getTransform()->getRootTransform()->getEntityRaw()->getComponentRaw<Canvas>();

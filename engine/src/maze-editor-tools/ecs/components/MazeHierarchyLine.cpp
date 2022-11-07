@@ -203,7 +203,7 @@ namespace Maze
         textButton->eventClick.subscribe(this, &HierarchyLine::notifyLineClick);
         textButton->eventDoubleClick.subscribe(this, &HierarchyLine::notifyLineDoubleClick);
 
-        m_contextMenu = getEntityRaw()->ensureComponent<ContextMenu2D>();
+        m_contextMenu = m_textRenderer->getEntityRaw()->ensureComponent<ContextMenu2D>();
         m_contextMenu->setCallbackFunction(
             [this](MenuListTree2DPtr const& _menuListTree)
             {

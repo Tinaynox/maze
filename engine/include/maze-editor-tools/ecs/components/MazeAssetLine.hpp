@@ -101,6 +101,10 @@ namespace Maze
         //////////////////////////////////////////
         SpriteRenderer2DPtr const& getIconRenderer() const { return m_iconRenderer; }
 
+
+        //////////////////////////////////////////
+        inline ContextMenu2DPtr const& getContextMenu() const { return m_contextMenu; }
+
         //////////////////////////////////////////
         void setIcon(SpritePtr const& _sprite);
 

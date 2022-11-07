@@ -96,9 +96,9 @@ namespace Maze
             }
         }
         
-        if (m_textRenderer && m_textRenderer->getEntityRaw())
+        if (m_mainTransform && m_mainTransform->getEntityRaw())
         {
-            ClickButton2D* button = m_textRenderer->getEntityRaw()->getComponentRaw<ClickButton2D>();
+            ClickButton2D* button = m_mainTransform->getEntityRaw()->getComponentRaw<ClickButton2D>();
             if (button)
             {
                 button->eventClick.unsubscribe(this);
@@ -221,7 +221,7 @@ namespace Maze
         m_textEdit->eventTextInput.subscribe(this, &AssetLine::notifyTextEditInput);
         m_textEdit->getEntityRaw()->setActiveSelf(false);
 
-        ClickButton2DPtr textButton = m_textRenderer->getEntityRaw()->ensureComponent<ClickButton2D>();
+        ClickButton2DPtr textButton = m_mainTransform->getEntityRaw()->ensureComponent<ClickButton2D>();
         textButton->eventSingleClick.subscribe(this, &AssetLine::notifyLineSingleClick);
         textButton->eventDoubleClick.subscribe(this, &AssetLine::notifyLineDoubleClick);
 

@@ -105,7 +105,7 @@ namespace Maze
         if (!m_callback)
             return;
 
-        if (_inputEvent.hitCaptured)
+        if (_inputEvent.capturerHandle != 0 && _inputEvent.capturerHandle != (S32)getEntityId())
             return;
 
         if (_inputEvent.button == m_cursorButtonIndex)
@@ -122,7 +122,7 @@ namespace Maze
                 {
                     m_callback(_menuListTree);
                 });
-            _inputEvent.captureHit();
+            _inputEvent.captureHit((S32)getEntityId());
         }
     }
 

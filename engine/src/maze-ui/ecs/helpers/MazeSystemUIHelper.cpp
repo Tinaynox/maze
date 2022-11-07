@@ -145,6 +145,7 @@ namespace Maze
                 transform,
                 _ecsScene);
             textRenderer->setColor(ColorU32::c_black);
+            textRenderer->getEntityRaw()->ensureComponent<Name>()->setName("EditBoxText");
 
             SizePolicy2DPtr textSizePolicy = textRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
             textSizePolicy->setSizeDelta(-10.0f, 0.0f);

@@ -120,7 +120,7 @@ namespace Maze
             }
             
             if (m_captureCursorHits)
-                _inputEvent.captureHit();
+                _inputEvent.captureHit((S32)getEntityId());
 
             m_cursorIndex = _inputEvent.index;
 
@@ -151,7 +151,7 @@ namespace Maze
                 return;
 
             if (m_captureCursorHits)
-                _inputEvent.captureHit();
+                _inputEvent.captureHit((S32)getEntityId());
 
             eventSingleClick(positionOS, _inputEvent);
         }
@@ -178,7 +178,7 @@ namespace Maze
                 return;
 
             if (m_captureCursorHits)
-                _inputEvent.captureHit();
+                _inputEvent.captureHit((S32)getEntityId());
 
             eventDoubleClick(positionOS, _inputEvent);
         }
@@ -214,6 +214,12 @@ namespace Maze
             }
             else
             {
+                if (_inputEvent.capturerHandle != 0 && _inputEvent.capturerHandle != (S32)getEntityId())
+                    return;
+
+                if (m_captureCursorHits)
+                    _inputEvent.captureHit((S32)getEntityId());
+
                 eventCursorReleaseIn(positionOS, _inputEvent);
 
                 if (m_focused)
@@ -262,7 +268,7 @@ namespace Maze
                 setFocused(true);
             
             if (m_captureCursorHits)
-                _inputEvent.captureHit();
+                _inputEvent.captureHit((S32)getEntityId());
 
             eventCursorMoveIn(positionOS, _inputEvent);
         }
@@ -302,7 +308,7 @@ namespace Maze
                 setFocused(true);
             
             if (m_captureCursorHits)
-                _inputEvent.captureHit();
+                _inputEvent.captureHit((S32)getEntityId());
 
             eventCursorDrag(positionOS, _inputEvent);
         }

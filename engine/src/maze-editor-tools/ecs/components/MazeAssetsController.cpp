@@ -388,7 +388,7 @@ namespace Maze
             line->setSelected(m_selectedAssetFolder == assetFile->getFullPath());
             notifyAssetTreeLineExpandedChanged(line.get(), getAssetFileExpanded(assetFile));
 
-            ContextMenu2DPtr lineContextMenu = line->getEntityRaw()->ensureComponent<ContextMenu2D>();
+            ContextMenu2DPtr const& lineContextMenu = line->getContextMenu();
             lineContextMenu->setCallbackFunction(
                 [controllerWeak, fullPath](MenuListTree2DPtr const& _menuListTree)
                 {
@@ -546,7 +546,7 @@ namespace Maze
                 std::forward_as_tuple(fullPath),
                 std::forward_as_tuple(line));
 
-            ContextMenu2DPtr lineContextMenu = line->getEntityRaw()->ensureComponent<ContextMenu2D>();
+            ContextMenu2DPtr const& lineContextMenu = line->getContextMenu();
             lineContextMenu->setCallbackFunction(
                 [controllerWeak, fullPath](MenuListTree2DPtr const& _menuListTree)
                 {

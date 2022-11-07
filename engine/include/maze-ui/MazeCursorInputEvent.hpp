@@ -77,7 +77,7 @@ namespace Maze
             : type(_type)
             , index(_index)
             , position(_position)
-            , hitCaptured(false)
+            , capturerHandle(0)
             , button(_button)
             , inputSource(_inputSource)
             , window(_window)
@@ -86,12 +86,15 @@ namespace Maze
         {}
 
         //////////////////////////////////////////
-        inline void captureHit() const { hitCaptured = true; }
+        inline void captureHit(S32 _capturerHandle) const { capturerHandle = _capturerHandle; }
+
+        //////////////////////////////////////////
+        inline bool isCaptured() const { return capturerHandle != 0; }
 
         CursorInputType type;
         S32 index;
         Vec2DF position;
-        mutable bool hitCaptured;
+        mutable S32 capturerHandle;
         S32 button;
         CursorInputSource inputSource;
         Window* window;
@@ -114,19 +117,22 @@ namespace Maze
             : index(_index)
             , position(Vec2DF::c_zero)
             , deltaWheel(_deltaWheel)
-            , hitCaptured(false)
+            , capturerHandle(0)
             , window(_window)
             , canvas(nullptr)
             , rootCanvas(nullptr)
         {}
 
         //////////////////////////////////////////
-        inline void captureHit() const { hitCaptured = true; }
+        inline void captureHit(S32 _capturerHandle) const { capturerHandle = _capturerHandle; }
+
+        //////////////////////////////////////////
+        inline bool isCaptured() const { return capturerHandle != 0; }
 
         S32 index;
         Vec2DF position;
         F32 deltaWheel;
-        mutable bool hitCaptured;
+        mutable S32 capturerHandle;
         Window* window;
         Canvas* canvas;
         Canvas* rootCanvas;
