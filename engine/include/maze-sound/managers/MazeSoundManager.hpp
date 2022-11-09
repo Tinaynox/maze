@@ -113,6 +113,9 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline StringKeyMap<SoundPtr> const& getSounds() const { return m_soundsByName; }
+
+        //////////////////////////////////////////
         SoundPtr const& getSound(HashedCString _assetFileName);
 
         //////////////////////////////////////////

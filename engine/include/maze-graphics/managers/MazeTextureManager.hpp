@@ -129,6 +129,9 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline StringKeyMap<Texture2DPtr> const& getTextures2D() const { return m_textures2DByName; }
+
+        //////////////////////////////////////////
         Texture2DPtr const& getTexture2D(HashedCString _assetFileName);
 
         //////////////////////////////////////////
