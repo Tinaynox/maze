@@ -195,9 +195,11 @@ namespace Maze
 
         setPressed(false);
 
-        if (!eventCursorReleaseIn.empty() || !eventPressedChanged.empty() || !eventCursorReleaseOut.empty() || !eventClick.empty())
+        if (!eventCursorReleaseIn.empty() || !eventPressedChanged.empty() || !eventCursorRelease.empty() || !eventCursorReleaseOut.empty() || !eventClick.empty())
         {
             Vec2DF const& positionWS = _inputEvent.position;
+
+            eventCursorRelease(_inputEvent);
 
             if (!m_bounds->getBounds().contains(positionWS))
             {

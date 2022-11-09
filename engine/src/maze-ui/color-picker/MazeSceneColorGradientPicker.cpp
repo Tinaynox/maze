@@ -198,27 +198,38 @@ namespace Maze
             {
                 Vec2DF const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
 
-                ColorGradient const& gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
+                Vec2DF cursorPositionGradientSpace;
+                m_gradientRenderer->getTransform()->getWorldTransform().inversedAffineCopy().transformAffine(
+                    cursorPosition,
+                    cursorPositionGradientSpace);
 
-                if (m_editMode == EditMode::AlphaTag)
+                m_draggingTagDistance += m_draggingTagPrevCursorPositionGradientSpace.distance(cursorPositionGradientSpace);
+                m_draggingTagPrevCursorPositionGradientSpace = cursorPositionGradientSpace;
+
+                if (m_draggingTagDistance > 1.0f)
                 {
-                    if (m_colorTagIndex < gradient.getKeysAlpha().size())
-                    {
-                        Vec2DF localPosition = m_gradientRenderer->getTransform()->getWorldTransform().inversedCopy().transformAffine(cursorPosition);
+                    ColorGradient const& gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
 
-                        F32 t = Math::Clamp01(localPosition.x / m_gradientRenderer->getTransform()->getWidth());
-                        changeCurrentAlphaTagTime(t);
+                    if (m_editMode == EditMode::AlphaTag)
+                    {
+                        if (m_colorTagIndex < gradient.getKeysAlpha().size())
+                        {
+                            Vec2DF localPosition = m_gradientRenderer->getTransform()->getWorldTransform().inversedCopy().transformAffine(cursorPosition);
+
+                            F32 t = Math::Clamp01(localPosition.x / m_gradientRenderer->getTransform()->getWidth());
+                            changeCurrentAlphaTagTime(t);
+                        }
                     }
-                }
-                else
-                if (m_editMode == EditMode::ColorTag)
-                {
-                    if (m_colorTagIndex < gradient.getKeysRGB().size())
+                    else
+                    if (m_editMode == EditMode::ColorTag)
                     {
-                        Vec2DF localPosition = m_gradientRenderer->getTransform()->getWorldTransform().inversedCopy().transformAffine(cursorPosition);
+                        if (m_colorTagIndex < gradient.getKeysRGB().size())
+                        {
+                            Vec2DF localPosition = m_gradientRenderer->getTransform()->getWorldTransform().inversedCopy().transformAffine(cursorPosition);
 
-                        F32 t = Math::Clamp01(localPosition.x / m_gradientRenderer->getTransform()->getWidth());
-                        changeCurrentColorTagTime(t);
+                            F32 t = Math::Clamp01(localPosition.x / m_gradientRenderer->getTransform()->getWidth());
+                            changeCurrentColorTagTime(t);
+                        }
                     }
                 }
             }
@@ -238,8 +249,7 @@ namespace Maze
         m_canvas->setClearColor(ColorU32(203, 203, 203, 255));
         m_canvas->setRenderTarget(m_renderTarget);
         m_canvasUIElement = canvasEntity->ensureComponent<UIElement2D>();
-        m_canvasUIElement->eventCursorReleaseIn.subscribe(this, &SceneColorGradientPicker::notifyCanvasCursorReleaseIn);
-        m_canvasUIElement->eventCursorReleaseOut.subscribe(this, &SceneColorGradientPicker::notifyCanvasCursorReleaseOut);
+        m_canvasUIElement->eventCursorRelease.subscribe(this, &SceneColorGradientPicker::notifyCanvasCursorRelease);
 
         ColorGradient const& gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
 
@@ -894,6 +904,13 @@ namespace Maze
             updateColorTagUI();
 
             m_draggingTag = true;
+            m_draggingTagDistance = 0.0f;
+
+            Vec2DF const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
+
+            m_gradientRenderer->getTransform()->getWorldTransform().inversedAffineCopy().transformAffine(
+                cursorPosition,
+                m_draggingTagPrevCursorPositionGradientSpace);
         }
         else
         if (_buttonId == 1)
@@ -927,6 +944,13 @@ namespace Maze
             updateColorTagUI();
 
             m_draggingTag = true;
+            m_draggingTagDistance = 0.0f;
+
+            Vec2DF const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
+
+            m_gradientRenderer->getTransform()->getWorldTransform().inversedAffineCopy().transformAffine(
+                cursorPosition,
+                m_draggingTagPrevCursorPositionGradientSpace);
         }
         else
         if (_buttonId == 1)
@@ -1196,15 +1220,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneColorGradientPicker::notifyCanvasCursorReleaseIn(Vec2DF const& _positionOS, CursorInputEvent const& _event)
+    void SceneColorGradientPicker::notifyCanvasCursorRelease(CursorInputEvent const& _event)
     {
         m_draggingTag = false;
-    }
-
-    //////////////////////////////////////////
-    void SceneColorGradientPicker::notifyCanvasCursorReleaseOut(CursorInputEvent const& _event)
-    {
-        m_draggingTag = false;
+        m_draggingTagDistance = 0.0f;
     }
 
     //////////////////////////////////////////

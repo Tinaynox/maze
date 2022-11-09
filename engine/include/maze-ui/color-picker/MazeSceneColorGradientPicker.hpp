@@ -183,12 +183,8 @@ namespace Maze
         //////////////////////////////////////////
         void changeCurrentColorTagTime(F32 _newTime);
 
-
         //////////////////////////////////////////
-        void notifyCanvasCursorReleaseIn(Vec2DF const& _positionOS, CursorInputEvent const& _event);
-
-        //////////////////////////////////////////
-        void notifyCanvasCursorReleaseOut(CursorInputEvent const& _event);
+        void notifyCanvasCursorRelease(CursorInputEvent const& _event);
 
 
         //////////////////////////////////////////
@@ -228,6 +224,9 @@ namespace Maze
         EditMode m_editMode = EditMode::None;
         Size m_colorTagIndex = -1;
         bool m_draggingTag = false;
+
+        Vec2DF m_draggingTagPrevCursorPositionGradientSpace = Vec2DF::c_zero;
+        F32 m_draggingTagDistance = 0.0f;
     };
 
 
