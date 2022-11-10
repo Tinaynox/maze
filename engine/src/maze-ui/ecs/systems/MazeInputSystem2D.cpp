@@ -366,7 +366,7 @@ namespace Maze
         _event.canvas = _canvasData.canvas;
         _event.rootCanvas = _canvasData.rootCanvas;
 
-        bool canvasContainsCursor = _canvasData.canvasRenderTargetAABB.contains(_renderTargetCoords);
+        bool canvasContainsCursor = _canvasData.canvas->getRenderTargetAABB().contains(_renderTargetCoords);
         if (canvasContainsCursor)
         {
             if (_event.rootCanvas)
@@ -764,7 +764,7 @@ namespace Maze
             cursorInputEvent.canvas = canvasData.canvas;
             cursorInputEvent.rootCanvas = canvasData.rootCanvas;
 
-            bool canvasContainsCursor = canvasData.canvasRenderTargetAABB.contains(_renderTargetCoords);
+            bool canvasContainsCursor = canvasData.canvas->getRenderTargetAABB().contains(_renderTargetCoords);
             if (canvasContainsCursor)
             {
                 if (cursorInputEvent.rootCanvas)
@@ -807,7 +807,6 @@ namespace Maze
         {
             CanvasData canvasData;
             canvasData.canvas = _canvas;
-            canvasData.canvasRenderTargetAABB = _canvas->getRenderTargetAABB();
 
             if (_canvas->getTransform()->getParent())
                 canvasData.rootCanvas = _canvas->getTransform()->getRootTransform()->getEntityRaw()->getComponentRaw<Canvas>();
