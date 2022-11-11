@@ -151,7 +151,7 @@ namespace Maze
                 {
                     Path fileFullPath = file->getFullPath();
                     Path::StringType relPath = fileFullPath;
-                    StringHelper::RemoveSubstring(relPath, _targetSrcPath);
+                    StringHelper::RemoveSubstring(relPath, (Path::StringType)_targetSrcPath);
                     Path targetPackFullPath = _targetDestPath + relPath;
                     Path targetPackDirectoryFullPath = FileHelper::GetDirectoryInPath(targetPackFullPath);
                     FileHelper::CreateDirectoryRecursive(targetPackDirectoryFullPath);
@@ -178,7 +178,7 @@ namespace Maze
             {
                 Path fileFullPath = file->getFullPath();
                 Path::StringType relPath = fileFullPath;
-                StringHelper::RemoveSubstring(relPath, _targetSrcPath);
+                StringHelper::RemoveSubstring(relPath, (Path::StringType)_targetSrcPath);
                 Path targetPackFullPath = _targetDestPath + relPath;
 
                 FileHelper::CopyRegularFile(file->getFullPath(), targetPackFullPath);

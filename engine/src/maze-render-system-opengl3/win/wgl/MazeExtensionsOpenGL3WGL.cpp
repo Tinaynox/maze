@@ -101,11 +101,11 @@ namespace Maze
             return false;
         }
 
-        const char* strExtList = reinterpret_cast<const char*>(mzwglGetExtensionsString(deviceContext));
+        CString strExtList = reinterpret_cast<const char*>(mzwglGetExtensionsString(deviceContext));
         if (strExtList)
         {
             Vector<String> words;
-            StringHelper::SplitWords(strExtList, words);
+            StringHelper::SplitWords((String)strExtList, words);
             for (Size i = 0, in = words.size(); i < in; ++i)
                 if (!words[i].empty())
                     m_extensions.insert(words[i]);

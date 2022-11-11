@@ -822,7 +822,7 @@ namespace Maze
         }
 
 
-#if (((MAZE_COMPILER == MAZE_COMPILER_CLANG) || (MAZE_COMPILER == MAZE_COMPILER_GNUC)) && (MAZE_PLATFORM != MAZE_PLATFORM_ANDROID))
+    #if (((MAZE_COMPILER == MAZE_COMPILER_CLANG) || (MAZE_COMPILER == MAZE_COMPILER_GNUC)) && (MAZE_PLATFORM != MAZE_PLATFORM_ANDROID))
 
         //////////////////////////////////////////
         inline StdString ToStdString(Size _value) noexcept { return ToStdString(static_cast<U64>(_value)); }
@@ -876,24 +876,8 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline void SplitWords(StdString const& _line, Vector<StdString>& _words, S8 _separator = ' ') noexcept
-        {
-            _words.clear();
-            Size pos = 0;
-            Size prevPos = 0;
-
-            while ((pos = _line.find_first_of(_separator, pos)) != StdString::npos)
-            {
-                _words.push_back(
-                    _line.substr(prevPos, pos - prevPos));
-                prevPos = ++pos;
-            }
-
-            _words.push_back(_line.substr(prevPos, pos - prevPos));
-        }
-
-        //////////////////////////////////////////
-        inline void SplitWords(String const& _line, Vector<String>& _words, S8 _separator = ' ') noexcept
+        template <typename TString, typename TChar = typename TString::value_type>
+        inline void SplitWords(TString const& _line, Vector<TString>& _words, TChar _separator = ' ') noexcept
         {
             _words.clear();
             Size pos = 0;
@@ -910,52 +894,24 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline void SplitWords(WString const& _line, Vector<WString>& _words, WChar _separator = ' ') noexcept
-        {
-            _words.clear();
-            Size pos = 0;
-            Size prevPos = 0;
-
-            while ((pos = _line.find_first_of(_separator, pos)) != String::npos)
-            {
-                _words.emplace_back(
-                    _line.substr(prevPos, pos - prevPos));
-                prevPos = ++pos;
-            }
-
-            _words.push_back(_line.substr(prevPos, pos - prevPos));
-        }
-
-        //////////////////////////////////////////
-        inline bool IsNumber(StdString const& _s) noexcept
+        template <typename TString, typename TChar = typename TString::value_type>
+        inline bool IsNumber(TString const& _s) noexcept
         {
             return !_s.empty()
                 && std::find_if(
                     _s.begin(),
                     _s.end(),
-                    [](S8 _c)
+                    [](TChar _c)
                     {
                         return !std::isdigit(_c);
                     }) == _s.end();
         }
 
         //////////////////////////////////////////
-        inline bool IsNumber(String const& _s) noexcept
+        template <typename TString>
+        inline void TrimString(TString& _str, bool _left = true, bool _right = true) noexcept
         {
-            return !_s.empty()
-                && std::find_if(
-                    _s.begin(),
-                    _s.end(),
-                    [](S8 _c)
-                    {
-                        return !std::isdigit(_c);
-                    }) == _s.end();
-        }
-
-        //////////////////////////////////////////
-        inline void TrimString(StdString& _str, bool _left = true, bool _right = true) noexcept
-        {
-            static StdString const delims = " \t\r\n";
+            static TString const delims = " \t\r\n";
 
             if (_right)
                 _str.erase(_str.find_last_not_of(delims) + 1);
@@ -964,115 +920,63 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline void TrimString(String& _str, bool _left = true, bool _right = true) noexcept
+        template <typename TString>
+        inline Size StringLength(TString const& _s)
         {
-            static String const delims = " \t\r\n";
-
-            if (_right)
-                _str.erase(_str.find_last_not_of(delims) + 1);
-            if (_left)
-                _str.erase(0, _str.find_first_not_of(delims));
+            return _s.size();
         }
 
         //////////////////////////////////////////
-        inline void ReplaceSubstring(StdString& _s, StdString const& _search, StdString const& _replace) noexcept
+        inline Size StringLength(CString _s)
         {
-            for (Size pos = 0, l = _replace.length(); ; pos += l)
+            return strlen(_s);
+        }
+
+        //////////////////////////////////////////
+        inline Size StringLength(CWString _s)
+        {
+            return wcslen(_s);
+        }
+
+        //////////////////////////////////////////
+        template <typename TString, typename TSearchString, typename TReplaceString>
+        inline void ReplaceSubstring(TString& _s, TSearchString const& _search, TReplaceString const& _replace) noexcept
+        {
+            Size searchSize = StringLength(_search);
+
+            for (Size pos = 0, l = StringLength(_replace); ; pos += l)
             {
                 // Locate the substring to replace
                 pos = _s.find(_search, pos);
-                if (pos == String::npos)
+                if (pos == TString::npos)
                     break;
 
                 // Replace by erasing and inserting
-                _s.erase(pos, _search.length());
+                _s.erase(pos, searchSize);
                 _s.insert(pos, _replace);
             }
         }
 
         //////////////////////////////////////////
-        inline void ReplaceSubstring(String& _s, String const& _search, String const& _replace) noexcept
-        {
-            for (Size pos = 0, l = _replace.length(); ; pos += l)
-            {
-                // Locate the substring to replace
-                pos = _s.find(_search, pos);
-                if (pos == String::npos)
-                    break;
-
-                // Replace by erasing and inserting
-                _s.erase(pos, _search.length());
-                _s.insert(pos, _replace);
-            }
-        }
-
-        //////////////////////////////////////////
-        inline void ReplaceSubstring(WString& _s, WString const& _search, WString const& _replace) noexcept
-        {
-            for (Size pos = 0, l = _replace.length(); ; pos += l)
-            {
-                // Locate the substring to replace
-                pos = _s.find(_search, pos);
-                if (pos == WString::npos)
-                    break;
-
-                // Replace by erasing and inserting
-                _s.erase(pos, _search.length());
-                _s.insert(pos, _replace);
-            }
-        }
-
-        //////////////////////////////////////////
-        inline void RemoveSubstring(StdString& _s, StdString const& _search) noexcept
+        template <typename TString, typename TSearchString>
+        inline void RemoveSubstring(TString& _s, TSearchString const& _search) noexcept
         {
             for (Size pos = 0; ; pos += 1)
             {
                 pos = _s.find(_search, pos);
-                if (pos == StdString::npos)
+                if (pos == TString::npos)
                     break;
 
-                _s.erase(pos, _search.length());
+                _s.erase(pos, StringLength(_search));
             }
         }
 
         //////////////////////////////////////////
-        inline void RemoveSubstring(String& _s, String const& _search) noexcept
+        template <typename TString, typename TSymbolsString>
+        inline void RemoveSymbols(TString& _s, TSymbolsString const& _symbols) noexcept
         {
-            for (Size pos = 0; ; pos += 1)
-            {
-                pos = _s.find(_search, pos);
-                if (pos == String::npos)
-                    break;
-
-                _s.erase(pos, _search.length());
-            }
-        }
-
-        //////////////////////////////////////////
-        inline void RemoveSubstring(WString& _s, WString const& _search) noexcept
-        {
-            for (Size pos = 0; ; pos += 1)
-            {
-                pos = _s.find(_search, pos);
-                if (pos == String::npos)
-                    break;
-
-                _s.erase(pos, _search.length());
-            }
-        }
-
-        //////////////////////////////////////////
-        inline void RemoveSymbols(StdString& _s, StdString const& _symbols) noexcept
-        {
-            for (Size i = 0, in = _symbols.size(); i < in; ++i)
-                _s.erase(std::remove(_s.begin(), _s.end(), _symbols[i]), _s.end());
-        }
-
-        //////////////////////////////////////////
-        inline void RemoveSymbols(String& _s, String const& _symbols) noexcept
-        {
-            for (Size i = 0, in = _symbols.size(); i < in; ++i)
-                _s.erase(std::remove(_s.begin(), _s.end(), _symbols[i]), _s.end());
+            for (auto ch : _symbols)
+                _s.erase(std::remove(_s.begin(), _s.end(), ch), _s.end());
         }
 
         //////////////////////////////////////////
@@ -1113,57 +1017,26 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline StdString ToLower(StdString const& _text) noexcept
+        template <typename TString>
+        inline TString ToLower(TString const& _text) noexcept
         {
-            StdString copy = _text;
+            TString copy = _text;
             std::transform(copy.begin(), copy.end(), copy.begin(), ::tolower);
             return copy;
         }
 
         //////////////////////////////////////////
-        inline String ToLower(String const& _text) noexcept
+        template <typename TString>
+        inline TString ToUpper(TString const& _text) noexcept
         {
-            String copy = _text;
-            std::transform(copy.begin(), copy.end(), copy.begin(), ::tolower);
-            return copy;
-        }
-
-        //////////////////////////////////////////
-        inline StdString ToUpper(StdString const& _text) noexcept
-        {
-            StdString copy = _text;
+            TString copy = _text;
             std::transform(copy.begin(), copy.end(), copy.begin(), ::toupper);
             return copy;
         }
 
         //////////////////////////////////////////
-        inline String ToUpper(String const& _text) noexcept
-        {
-            String copy = _text;
-            std::transform(copy.begin(), copy.end(), copy.begin(), ::toupper);
-            return copy;
-        }
-
-        //////////////////////////////////////////
-        inline bool IsStartsWith(StdString const& _value, StdString const& _start) noexcept
-        {
-            if (_start.size() > _value.size())
-                return false;
-
-            return std::equal(_start.begin(), _start.end(), _value.begin());
-        }
-
-        //////////////////////////////////////////
-        inline bool IsStartsWith(String const& _value, String const& _start) noexcept
-        {
-            if (_start.size() > _value.size())
-                return false;
-
-            return std::equal(_start.begin(), _start.end(), _value.begin());
-        }
-
-        //////////////////////////////////////////
-        inline bool IsStartsWith(WString const& _value, WString const& _start) noexcept
+        template <typename TString>
+        inline bool IsStartsWith(TString const& _value, TString const& _start) noexcept
         {
             if (_start.size() > _value.size())
                 return false;
@@ -1184,7 +1057,8 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline bool IsEndsWith(StdString const& _value, StdString const& _ending) noexcept
+        template <typename TString>
+        inline bool IsEndsWith(TString const& _value, TString const& _ending) noexcept
         {
             if (_ending.size() > _value.size())
                 return false;
@@ -1193,21 +1067,25 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline bool IsEndsWith(String const& _value, String const& _ending) noexcept
+        inline bool IsEndsWith(CString _value, CString _ending) noexcept
         {
-            if (_ending.size() > _value.size())
+            Size valueSize = strlen(_value);
+            Size endingSize = strlen(_ending);
+            if (valueSize < endingSize)
                 return false;
 
-            return std::equal(_ending.rbegin(), _ending.rend(), _value.rbegin());
+            return (strncmp(_value + valueSize - endingSize, _ending, endingSize) == 0);
         }
 
         //////////////////////////////////////////
-        inline bool IsEndsWith(WString const& _value, WString const& _ending) noexcept
+        inline bool IsEndsWith(CWString _value, CWString _ending) noexcept
         {
-            if (_ending.size() > _value.size())
+            Size valueSize = wcslen(_value);
+            Size endingSize = wcslen(_ending);
+            if (valueSize < endingSize)
                 return false;
 
-            return std::equal(_ending.rbegin(), _ending.rend(), _value.rbegin());
+            return (wcsncmp(_value + valueSize - endingSize, _ending, endingSize) == 0);
         }
 
         //////////////////////////////////////////

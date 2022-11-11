@@ -198,7 +198,7 @@ namespace Maze
 
             Path tempLocal;
             Vector<WString> directories;
-            StringHelper::SplitWords(path, directories, '/');
+            StringHelper::SplitWords((WString)path, directories, L'/');
             for (S32 i = 0; i < (S32)directories.size(); ++i)
             {
                 Path directoryPath = tempLocal + directories[i];
