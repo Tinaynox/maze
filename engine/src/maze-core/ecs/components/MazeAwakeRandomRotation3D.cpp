@@ -30,6 +30,7 @@
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
+#include "maze-core/math/MazeRandom.hpp"
 
 
 //////////////////////////////////////////
@@ -86,7 +87,7 @@ namespace Maze
             Vec3DF angles = Vec3DF::c_zero;
             for (Size i = 0; i < 3; ++i)
                 if (m_axes[i])
-                    angles[i] = Math::RangeRandom(-Math::c_pi, Math::c_pi);
+                    angles[i] = Random::RangeRandom(-Math::c_pi, Math::c_pi);
             getEntityRaw()->ensureComponent<Transform3D>()->setLocalRotation(angles);
         }
     }

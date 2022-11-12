@@ -838,8 +838,8 @@ namespace Maze
     template <class TValue>
     Vec3D<TValue> Vec3D<TValue>::RandomDirection()
     {
-        F32 phi = Math::RangeRandom<F32>(0.0f, Math::c_twoPi);
-        F32 cosTheta = Math::RangeRandom<F32>(-1.0f, 1.0f);
+        F32 phi = Random::RangeRandom<F32>(0.0f, Math::c_twoPi);
+        F32 cosTheta = Random::RangeRandom<F32>(-1.0f, 1.0f);
         F32 theta = Math::ACos(cosTheta);
         
         Vec3D<TValue> result;

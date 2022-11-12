@@ -30,6 +30,7 @@
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/math/MazeRandom.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -99,7 +100,7 @@ namespace Maze
     //////////////////////////////////////////
     void TrailRenderer3DHider::startHiding()
     {
-        m_time = Math::RangeRandom(m_duration.x, m_duration.y);
+        m_time = Random::RangeRandom(m_duration.x, m_duration.y);
         m_timer = m_time;
 
         updateColor();

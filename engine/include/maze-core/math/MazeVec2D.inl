@@ -686,7 +686,7 @@ namespace Maze
     template <class TValue>
     Vec2D<TValue> Vec2D<TValue>::randomDeviant(F32 _angle) const
     {
-        _angle *= Math::UnitRandom() * Math::c_twoPi;
+        _angle *= Random::UnitRandom() * Math::c_twoPi;
         F32 cosa = cosf(_angle);
         F32 sina = sinf(_angle);
         return  Vec2D<TValue>(
@@ -739,7 +739,7 @@ namespace Maze
     template <class TValue> 
     MAZE_CONSTEXPR Vec2D<TValue> Vec2D<TValue>::RandomDirection()
     {
-        return FromAngle(Math::UnitRandom() * Math::c_twoPi);
+        return FromAngle(Random::UnitRandom() * Math::c_twoPi);
     }
     
     //////////////////////////////////////////

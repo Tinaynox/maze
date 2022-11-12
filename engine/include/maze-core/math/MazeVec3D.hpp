@@ -33,6 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/math/MazeMath.hpp"
+#include "maze-core/math/MazeRandom.hpp"
 #include "maze-core/math/MazeVec2D.hpp"
 #include <ostream>
 

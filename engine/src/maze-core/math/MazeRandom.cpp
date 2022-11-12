@@ -25,38 +25,19 @@
 
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
-#include "maze-core/math/MazeMath.hpp"
+#include "maze-core/math/MazeRandom.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    namespace Math
+    namespace Random
     {
         //////////////////////////////////////////
-        U8 g_bytesMultiplicationTable[256][256];
-        F32 g_sinByDegreeTable[360];
-        F32 g_cosByDegreeTable[360];
-
-        //////////////////////////////////////////
-        MAZE_CORE_API bool SetupMath()
-        {
-            // Fill bytes multiplication table
-            for (S32 i = 0; i < 256; ++i)
-                for (S32 j = 0; j < 256; ++j)
-                    g_bytesMultiplicationTable[i][j] = static_cast<U8>(i * j / 255);
-
-            // Fill sin and cos tables
-            for (S32 i = 0; i < 360; ++i)
-            {
-                F32 angle = c_pi * (F32)i / 180.0f;
-                g_sinByDegreeTable[i] = sinf(angle);
-                g_cosByDegreeTable[i] = cosf(angle);
-            }
-
-            return true;
-        }
+        MAZE_CORE_API std::random_device g_randomDevice;
+        MAZE_CORE_API std::mt19937 g_mt19937 = std::mt19937(g_randomDevice());
+        
 
     } // namespace Math
     //////////////////////////////////////////

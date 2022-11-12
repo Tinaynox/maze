@@ -39,6 +39,7 @@
 #include "maze-core/system/MazeInputEvent.hpp"
 #include "maze-core/math/MazeVec3D.hpp"
 #include "maze-core/math/MazeVec4D.hpp"
+#include "maze-core/math/MazeRandom.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-graphics/MazeColorU32.hpp"
 
@@ -374,7 +375,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <>
-    inline ColorF128 Math::RangeRandom(ColorF128 const& _low, ColorF128 const& _high)
+    inline ColorF128 Random::RangeRandom(ColorF128 const& _low, ColorF128 const& _high)
     {
         return ColorF128::Lerp(_low, _high, UnitRandom());
     }

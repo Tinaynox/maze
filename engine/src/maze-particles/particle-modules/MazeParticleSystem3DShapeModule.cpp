@@ -31,6 +31,7 @@
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSScene.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
+#include "maze-core/math/MazeRandom.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -173,7 +174,7 @@ namespace Maze
 
         Vec3DF direction = Vec3DF::RandomDirection();
         _result.direction = direction;
-        F32 r = Math::UnitRandomRadius();
+        F32 r = Random::UnitRandomRadius();
         _result.position = _center + zone.position + direction * r * zone.radius * zone.scale;
     }
 
@@ -198,7 +199,7 @@ namespace Maze
 
         Vec2DF direction = Vec2DF::RandomDirection();
         _result.direction = direction;
-        F32 r = Math::UnitRandomRadius();
+        F32 r = Random::UnitRandomRadius();
         _result.position = _center + zone.position + Vec3DF(direction) * r * zone.radius * zone.scale;
     }
 
@@ -223,7 +224,7 @@ namespace Maze
 
         Vec3DF direction = Vec3DF::RandomHemisphereDirection(Vec3DF::c_unitZ);
         _result.direction = direction;
-        F32 r = Math::UnitRandomRadius();
+        F32 r = Random::UnitRandomRadius();
         _result.position = _center + zone.position + direction * r * zone.radius * zone.scale;
     }
 
@@ -246,11 +247,11 @@ namespace Maze
     {
         ParticleSystem3DZoneTorus const& zone = m_zoneData.torus;
 
-        F32 angle0 = Math::RangeRandom(0.0f, Math::c_twoPi);
+        F32 angle0 = Random::RangeRandom(0.0f, Math::c_twoPi);
         F32 s0 = Math::Sin(angle0);
         F32 c0 = Math::Cos(angle0);
 
-        F32 angle1 = Math::RangeRandom(0.0f, Math::c_twoPi);
+        F32 angle1 = Random::RangeRandom(0.0f, Math::c_twoPi);
         F32 s1 = Math::Sin(angle1);
         F32 c1 = Math::Cos(angle1);
 
@@ -258,7 +259,7 @@ namespace Maze
 
         Vec3DF shift = l * zone.radius;
 
-        F32 innerRadius = zone.torusRadius * Math::Lerp(Math::Clamp01(1.0f - zone.radiusThickness), 1.0f, Math::UnitRandom());
+        F32 innerRadius = zone.torusRadius * Math::Lerp(Math::Clamp01(1.0f - zone.radiusThickness), 1.0f, Random::UnitRandom());
         Vec3DF k = l.crossProduct(Vec3DF::c_unitZ);
         Vec3DF t = (l * c1) + (k.crossProduct(l) * s1) + (k * k.dotProduct(l)) * (1 - c1);
         shift += t * innerRadius;
@@ -274,11 +275,11 @@ namespace Maze
     {
         ParticleSystem3DZoneTorus const& zone = m_zoneData.torus;
 
-        F32 angle0 = Math::RangeRandom(0.0f, Math::c_twoPi);
+        F32 angle0 = Random::RangeRandom(0.0f, Math::c_twoPi);
         F32 s0 = Math::Sin(angle0);
         F32 c0 = Math::Cos(angle0);
 
-        F32 angle1 = Math::RangeRandom(0.0f, Math::c_twoPi);
+        F32 angle1 = Random::RangeRandom(0.0f, Math::c_twoPi);
         F32 s1 = Math::Sin(angle1);
         F32 c1 = Math::Cos(angle1);
 
@@ -286,7 +287,7 @@ namespace Maze
 
         Vec3DF shift = l * zone.radius;
 
-        F32 innerRadius = zone.torusRadius * (Math::RangeRandom(0, 2) == 0 ? Math::Clamp01(1.0f - zone.radiusThickness) : 1.0f);
+        F32 innerRadius = zone.torusRadius * (Random::RangeRandom(0, 2) == 0 ? Math::Clamp01(1.0f - zone.radiusThickness) : 1.0f);
         Vec3DF k = l.crossProduct(Vec3DF::c_unitZ);
         Vec3DF t = (l * c1) + (k.crossProduct(l) * s1) + (k * k.dotProduct(l)) * (1 - c1);
         shift += t * innerRadius;
@@ -302,15 +303,15 @@ namespace Maze
     {
         ParticleSystem3DZoneCone const& zone = m_zoneData.cone;
 
-        F32 l = Math::UnitRandom();
+        F32 l = Random::UnitRandom();
         F32 length = zone.length * l;
 
         F32 finalRadius = zone.radius + tanf(zone.angle) * zone.length;
         F32 radius = zone.radius + tanf(zone.angle) * length;
-        F32 u = Math::UnitRandomRadius();
+        F32 u = Random::UnitRandomRadius();
         radius *= u;
 
-        F32 angle = Math::RangeRandom(0.0f, Math::c_twoPi);
+        F32 angle = Random::RangeRandom(0.0f, Math::c_twoPi);
         F32 s = Math::Sin(angle);
         F32 c = Math::Cos(angle);
 
@@ -336,13 +337,13 @@ namespace Maze
     {
         ParticleSystem3DZoneCone const& zone = m_zoneData.cone;
 
-        F32 l = Math::UnitRandom();
+        F32 l = Random::UnitRandom();
         F32 length = zone.length * l;
 
         F32 finalRadius = zone.radius + tanf(zone.angle) * zone.length;
         F32 radius = zone.radius + tanf(zone.angle) * length;
         
-        F32 angle = Math::RangeRandom(0.0f, Math::c_twoPi);
+        F32 angle = Random::RangeRandom(0.0f, Math::c_twoPi);
         F32 s = Math::Sin(angle);
         F32 c = Math::Cos(angle);
 
@@ -373,9 +374,9 @@ namespace Maze
         Vec3DF halfScale = zone.scale * 0.5f;
 
         Vec3DF shift = Vec3DF(
-            Math::RangeRandom(-halfScale.x, +halfScale.x),
-            Math::RangeRandom(-halfScale.y, +halfScale.y),
-            Math::RangeRandom(-halfScale.z, +halfScale.z));
+            Random::RangeRandom(-halfScale.x, +halfScale.x),
+            Random::RangeRandom(-halfScale.y, +halfScale.y),
+            Random::RangeRandom(-halfScale.z, +halfScale.z));
 
         _result.position = _center + zone.position + shift;
         _result.direction = shift.normalizedCopy();
@@ -391,36 +392,36 @@ namespace Maze
         Vec3DF halfScale = zone.scale * 0.5f;
 
         Vec3DF shift;
-        switch (Math::RangeRandomMT(0, 6))
+        switch (Random::RangeRandomMT(0, 6))
         {
             case 0:
             {
-                shift = Vec3DF(-halfScale.x, Math::RangeRandom(-halfScale.y, +halfScale.y), Math::RangeRandom(-halfScale.z, +halfScale.z));
+                shift = Vec3DF(-halfScale.x, Random::RangeRandom(-halfScale.y, +halfScale.y), Random::RangeRandom(-halfScale.z, +halfScale.z));
                 break;
             }
             case 1:
             {
-                shift = Vec3DF(+halfScale.x, Math::RangeRandom(-halfScale.y, +halfScale.y), Math::RangeRandom(-halfScale.z, +halfScale.z));
+                shift = Vec3DF(+halfScale.x, Random::RangeRandom(-halfScale.y, +halfScale.y), Random::RangeRandom(-halfScale.z, +halfScale.z));
                 break;
             }
             case 2:
             {
-                shift = Vec3DF(Math::RangeRandom(-halfScale.x, +halfScale.x), -halfScale.y, Math::RangeRandom(-halfScale.z, +halfScale.z));
+                shift = Vec3DF(Random::RangeRandom(-halfScale.x, +halfScale.x), -halfScale.y, Random::RangeRandom(-halfScale.z, +halfScale.z));
                 break;
             }
             case 3:
             {
-                shift = Vec3DF(Math::RangeRandom(-halfScale.x, +halfScale.x), +halfScale.y, Math::RangeRandom(-halfScale.z, +halfScale.z));
+                shift = Vec3DF(Random::RangeRandom(-halfScale.x, +halfScale.x), +halfScale.y, Random::RangeRandom(-halfScale.z, +halfScale.z));
                 break;
             }
             case 4:
             {
-                shift = Vec3DF(Math::RangeRandom(-halfScale.x, +halfScale.x), Math::RangeRandom(-halfScale.y, +halfScale.y), -halfScale.z);
+                shift = Vec3DF(Random::RangeRandom(-halfScale.x, +halfScale.x), Random::RangeRandom(-halfScale.y, +halfScale.y), -halfScale.z);
                 break;
             }
             case 5:
             {
-                shift = Vec3DF(Math::RangeRandom(-halfScale.x, +halfScale.x), Math::RangeRandom(-halfScale.y, +halfScale.y), +halfScale.z);
+                shift = Vec3DF(Random::RangeRandom(-halfScale.x, +halfScale.x), Random::RangeRandom(-halfScale.y, +halfScale.y), +halfScale.z);
                 break;
             }
             default:

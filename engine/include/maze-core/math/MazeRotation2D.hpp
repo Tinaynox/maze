@@ -34,6 +34,7 @@
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/math/MazeMathAngles.hpp"
 #include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeRandom.hpp"
 #include <ostream>
 
 
@@ -144,7 +145,7 @@ namespace Maze
         //////////////////////////////////////////
         static inline Rotation2D Random()
         {
-            return Rotation2D(Math::RangeRandom(0.0f, Math::c_pi));
+            return Rotation2D(Random::RangeRandom(0.0f, Math::c_pi));
         }
 
         //////////////////////////////////////////

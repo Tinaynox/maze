@@ -27,6 +27,7 @@
 #include "MazeSoundHeader.hpp"
 #include "maze-sound/MazeSoundSet.hpp"
 #include "maze-sound/managers/MazeSoundManager.hpp"
+#include "maze-core/math/MazeRandom.hpp"
 
 
 //////////////////////////////////////////
@@ -103,7 +104,7 @@ namespace Maze
         if (m_sounds.size() == 1)
             return m_sounds[0];
 
-        S32 fetchIndex = Math::RangeRandom(0, (S32)m_sounds.size());
+        S32 fetchIndex = Random::RangeRandom(0, (S32)m_sounds.size());
         if (m_noRepeats && fetchIndex == m_prevFetchIndex)
             fetchIndex = (fetchIndex + 1) % (S32)m_sounds.size();
 

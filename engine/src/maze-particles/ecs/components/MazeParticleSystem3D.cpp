@@ -31,6 +31,7 @@
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSScene.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
+#include "maze-core/math/MazeRandom.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -299,7 +300,7 @@ namespace Maze
                     if (minCount > maxCount)
                         std::swap(minCount, maxCount);
 
-                    count += Math::RangeRandom(minCount, maxCount + 1);
+                    count += Random::RangeRandom(minCount, maxCount + 1);
                     ++m_currentBurstIndex;
                 }
             }
