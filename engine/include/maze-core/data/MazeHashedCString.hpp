@@ -55,13 +55,13 @@ namespace Maze
         U32 hash = 0u;
 
         //////////////////////////////////////////
-        inline HashedCString() : str(""), hash(CalculateFNV1("")) {}
+        inline HashedCString() : str(""), hash(Hash::CalculateFNV1("")) {}
 
         //////////////////////////////////////////
         inline HashedCString(CString _str, U32 _hash) : str(_str), hash(_hash) {}
 
         //////////////////////////////////////////
-        inline HashedCString(CString _str) : str(_str), hash(CalculateFNV1(_str)) {}
+        inline HashedCString(CString _str) : str(_str), hash(Hash::CalculateFNV1(_str)) {}
 
         //////////////////////////////////////////
         inline bool operator==(HashedCString const& _value) const
@@ -84,8 +84,8 @@ namespace Maze
    
 
     //////////////////////////////////////////
-    #define MAZE_HASHED_CSTRING(DText) HashedCString { DText, CalculateFNV1(DText) }
-    #define MAZE_HASHED_CSTRING_CT(DText) HashedCString { DText, HashedCString::HashCalculator<CalculateFNV1(DText)>::hash }
+    #define MAZE_HASHED_CSTRING(DText) Maze::HashedCString { DText, Maze::Hash::CalculateFNV1(DText) }
+    #define MAZE_HASHED_CSTRING_CT(DText) Maze::HashedCString { DText, Maze::HashedCString::HashCalculator<Maze::Hash::CalculateFNV1(DText)>::hash }
 
 
     //////////////////////////////////////////
@@ -98,13 +98,13 @@ namespace Maze
         U32 hash = 0u;
 
         //////////////////////////////////////////
-        inline HashedCWString() : str(L""), hash(CalculateFNV1(L"")) {}
+        inline HashedCWString() : str(L""), hash(Hash::CalculateFNV1(L"")) {}
 
         //////////////////////////////////////////
         inline HashedCWString(CWString _str, U32 _hash) : str(_str), hash(_hash) {}
 
         //////////////////////////////////////////
-        inline HashedCWString(CWString _str) : str(_str), hash(CalculateFNV1(_str)) {}
+        inline HashedCWString(CWString _str) : str(_str), hash(Hash::CalculateFNV1(_str)) {}
 
         //////////////////////////////////////////
         inline bool operator==(HashedCWString const& _value) const

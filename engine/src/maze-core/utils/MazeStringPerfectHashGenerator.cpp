@@ -58,7 +58,7 @@ namespace Maze
     //////////////////////////////////////////
     Size StringPerfectHashGenerator::generateNewHash(String const& _string)
     {
-        Size hash = static_cast<Size>(CalculateSuperFastHash(_string));
+        Size hash = static_cast<Size>(Hash::CalculateSuperFastHash(_string));
         while (m_hashToString.find(hash) != m_hashToString.end())
             ++hash;
 

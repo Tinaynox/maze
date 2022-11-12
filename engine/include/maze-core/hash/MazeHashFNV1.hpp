@@ -38,114 +38,119 @@
 //////////////////////////////////////////
 namespace Maze
 {
-    template <typename THashType>
-    struct FNV1Data;
-
-    template<>
-    struct FNV1Data<U32>
-    {
-        MAZE_CONSTEXPR static U32 const c_Offset = 0x811C9DC5;
-        MAZE_CONSTEXPR static U32 const c_Prime  = 0x01000193;
-    };
-
     //////////////////////////////////////////
-    template <typename TChar, typename THashType>
-    inline MAZE_CORE_API MAZE_CONSTEXPR THashType CalculateFNV1(
-        TChar const* const _text,
-        THashType const _hash = FNV1Data<THashType>::c_Offset)
+    namespace Hash
     {
-        return ((*_text == '\0') ? _hash : CalculateFNV1<TChar, THashType>(
-            _text + 1,
-            (_hash * FNV1Data<THashType>::c_Prime) ^ THashType(*_text)));
-    }
 
-    //////////////////////////////////////////
-    template <typename TChar, typename THashType>
-    inline MAZE_CORE_API MAZE_CONSTEXPR THashType CalculateFNV1Sized(
-        TChar const* const _text,
-        Size const _length,
-        THashType const _hash = FNV1Data<THashType>::c_Offset)
-    {
-        return (_length == 0) ? _hash : CalculateFNV1Sized<TChar, THashType>(
-            _text + 1,
-            _length - 1,
-            (_hash * FNV1Data<THashType>::c_Prime) ^ THashType(*_text));
-    }
+        template <typename THashType>
+        struct FNV1Data;
 
-    //////////////////////////////////////////
-    template <typename TChar, typename THashType>
-    inline MAZE_CORE_API MAZE_CONSTEXPR THashType CalculateFNV1A(
-        TChar const* const _text,
-        THashType const _hash = FNV1Data<THashType>::c_Offset)
-    {
-        return (*_text == '\0') ? _hash : CalculateFNV1A<TChar, THashType>(
-            _text + 1,
-            (_hash ^ THashType(*_text)) * FNV1Data<THashType>::c_Prime);
-    }
+        template<>
+        struct FNV1Data<U32>
+        {
+            MAZE_CONSTEXPR static U32 const c_Offset = 0x811C9DC5;
+            MAZE_CONSTEXPR static U32 const c_Prime  = 0x01000193;
+        };
 
-    //////////////////////////////////////////
-    template <typename TChar, typename THashType>
-    inline MAZE_CORE_API MAZE_CONSTEXPR THashType CalculateFNV1ASized(
-        TChar const* const _text,
-        Size const _length,
-        THashType const _hash = FNV1Data<THashType>::c_Offset)
-    {
-        return (_length == 0) ? _hash : CalculateFNV1ASized<TChar, THashType>(
-            _text + 1,
-            _length - 1,
-            (_hash ^ THashType(*_text)) * FNV1Data<THashType>::c_Prime);
-    }
+        //////////////////////////////////////////
+        template <typename TChar, typename THashType>
+        inline MAZE_CORE_API MAZE_CONSTEXPR THashType CalculateFNV1(
+            TChar const* const _text,
+            THashType const _hash = FNV1Data<THashType>::c_Offset)
+        {
+            return ((*_text == '\0') ? _hash : CalculateFNV1<TChar, THashType>(
+                _text + 1,
+                (_hash * FNV1Data<THashType>::c_Prime) ^ THashType(*_text)));
+        }
+
+        //////////////////////////////////////////
+        template <typename TChar, typename THashType>
+        inline MAZE_CORE_API MAZE_CONSTEXPR THashType CalculateFNV1Sized(
+            TChar const* const _text,
+            Size const _length,
+            THashType const _hash = FNV1Data<THashType>::c_Offset)
+        {
+            return (_length == 0) ? _hash : CalculateFNV1Sized<TChar, THashType>(
+                _text + 1,
+                _length - 1,
+                (_hash * FNV1Data<THashType>::c_Prime) ^ THashType(*_text));
+        }
+
+        //////////////////////////////////////////
+        template <typename TChar, typename THashType>
+        inline MAZE_CORE_API MAZE_CONSTEXPR THashType CalculateFNV1A(
+            TChar const* const _text,
+            THashType const _hash = FNV1Data<THashType>::c_Offset)
+        {
+            return (*_text == '\0') ? _hash : CalculateFNV1A<TChar, THashType>(
+                _text + 1,
+                (_hash ^ THashType(*_text)) * FNV1Data<THashType>::c_Prime);
+        }
+
+        //////////////////////////////////////////
+        template <typename TChar, typename THashType>
+        inline MAZE_CORE_API MAZE_CONSTEXPR THashType CalculateFNV1ASized(
+            TChar const* const _text,
+            Size const _length,
+            THashType const _hash = FNV1Data<THashType>::c_Offset)
+        {
+            return (_length == 0) ? _hash : CalculateFNV1ASized<TChar, THashType>(
+                _text + 1,
+                _length - 1,
+                (_hash ^ THashType(*_text)) * FNV1Data<THashType>::c_Prime);
+        }
     
-    //////////////////////////////////////////
-    inline MAZE_CORE_API MAZE_CONSTEXPR U32 CalculateFNV1(Char const* const _text)
-    {
-        return CalculateFNV1<Char, U32>(_text);
-    }
+        //////////////////////////////////////////
+        inline MAZE_CORE_API MAZE_CONSTEXPR U32 CalculateFNV1(Char const* const _text)
+        {
+            return CalculateFNV1<Char, U32>(_text);
+        }
     
-    //////////////////////////////////////////
-    inline MAZE_CORE_API MAZE_CONSTEXPR U32 CalculateFNV1(Char const* const _text, Size const _length)
-    {
-        return CalculateFNV1Sized<Char, U32>(_text, _length);
-    }
+        //////////////////////////////////////////
+        inline MAZE_CORE_API MAZE_CONSTEXPR U32 CalculateFNV1(Char const* const _text, Size const _length)
+        {
+            return CalculateFNV1Sized<Char, U32>(_text, _length);
+        }
 
-    //////////////////////////////////////////
-    inline MAZE_CORE_API MAZE_CONSTEXPR U32 CalculateFNV1A(Char const* const _text)
-    {
-        return CalculateFNV1A<Char, U32>(_text);
-    }
+        //////////////////////////////////////////
+        inline MAZE_CORE_API MAZE_CONSTEXPR U32 CalculateFNV1A(Char const* const _text)
+        {
+            return CalculateFNV1A<Char, U32>(_text);
+        }
 
-    //////////////////////////////////////////
-    inline MAZE_CORE_API MAZE_CONSTEXPR U32 CalculateFNV1A(Char const* const _text, Size const _length)
-    {
-        return CalculateFNV1ASized<Char, U32>(_text, _length);
-    }
+        //////////////////////////////////////////
+        inline MAZE_CORE_API MAZE_CONSTEXPR U32 CalculateFNV1A(Char const* const _text, Size const _length)
+        {
+            return CalculateFNV1ASized<Char, U32>(_text, _length);
+        }
 
 
-    //////////////////////////////////////////
-    inline MAZE_CORE_API MAZE_CONSTEXPR U32 CalculateFNV1(WChar const* const _text)
-    {
-        return CalculateFNV1<WChar, U32>(_text);
-    }
+        //////////////////////////////////////////
+        inline MAZE_CORE_API MAZE_CONSTEXPR U32 CalculateFNV1(WChar const* const _text)
+        {
+            return CalculateFNV1<WChar, U32>(_text);
+        }
 
-    //////////////////////////////////////////
-    inline MAZE_CORE_API MAZE_CONSTEXPR U32 CalculateFNV1(WChar const* const _text, Size const _length)
-    {
-        return CalculateFNV1Sized<WChar, U32>(_text, _length);
-    }
+        //////////////////////////////////////////
+        inline MAZE_CORE_API MAZE_CONSTEXPR U32 CalculateFNV1(WChar const* const _text, Size const _length)
+        {
+            return CalculateFNV1Sized<WChar, U32>(_text, _length);
+        }
 
-    //////////////////////////////////////////
-    inline MAZE_CORE_API MAZE_CONSTEXPR U32 CalculateFNV1A(WChar const* const _text)
-    {
-        return CalculateFNV1A<WChar, U32>(_text);
-    }
+        //////////////////////////////////////////
+        inline MAZE_CORE_API MAZE_CONSTEXPR U32 CalculateFNV1A(WChar const* const _text)
+        {
+            return CalculateFNV1A<WChar, U32>(_text);
+        }
 
-    //////////////////////////////////////////
-    inline MAZE_CORE_API MAZE_CONSTEXPR U32 CalculateFNV1A(WChar const* const _text, Size const _length)
-    {
-        return CalculateFNV1ASized<WChar, U32>(_text, _length);
-    }
+        //////////////////////////////////////////
+        inline MAZE_CORE_API MAZE_CONSTEXPR U32 CalculateFNV1A(WChar const* const _text, Size const _length)
+        {
+            return CalculateFNV1ASized<WChar, U32>(_text, _length);
+        }
     
-    
+    } // namespace Hash
+    //////////////////////////////////////////
 
 } // namespace Maze
 //////////////////////////////////////////

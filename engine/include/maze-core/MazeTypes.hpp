@@ -279,19 +279,22 @@ namespace Maze
         struct IsQueue<Maze::Queue<_Ty>> : std::true_type {};
 
 
-
-
     //////////////////////////////////////////
-    MAZE_CORE_API inline U32 CalculateCRC32(String const& _text, U32 _crc = 0)
+    namespace Hash
     {
-        return CalculateCRC32(_text.c_str(), _text.size(), _crc);
-    }
+        //////////////////////////////////////////
+        MAZE_CORE_API inline U32 CalculateCRC32(String const& _text, U32 _crc = 0)
+        {
+            return CalculateCRC32(_text.c_str(), _text.size(), _crc);
+        }
 
-    ////////////////////////////////////
-    MAZE_CORE_API inline U32 CalculateSuperFastHash(String const& _text)
-    {
-        return CalculateSuperFastHash(_text.c_str(), (S32)_text.size());
-    }
+        ////////////////////////////////////
+        MAZE_CORE_API inline U32 CalculateSuperFastHash(String const& _text)
+        {
+            return CalculateSuperFastHash(_text.c_str(), (S32)_text.size());
+        }
+    } // namespace Hash
+    //////////////////////////////////////////
 
 } // namespace Maze
 //////////////////////////////////////////
@@ -306,7 +309,7 @@ namespace std
     {
         inline std::size_t operator()(const Maze::String& k) const
         {
-            return static_cast<std::size_t>(Maze::CalculateFNV1(k.c_str()));
+            return static_cast<std::size_t>(Maze::Hash::CalculateFNV1(k.c_str()));
         }
     };
 
@@ -316,7 +319,7 @@ namespace std
     {
         inline std::size_t operator()(const Maze::WString& k) const
         {
-            return static_cast<std::size_t>(Maze::CalculateFNV1(k.c_str()));
+            return static_cast<std::size_t>(Maze::Hash::CalculateFNV1(k.c_str()));
         }
     };
 

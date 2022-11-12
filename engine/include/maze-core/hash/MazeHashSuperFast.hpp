@@ -40,53 +40,58 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_CORE_API U32 SuperFastHashIncremental(Char const* _data, S32 _len, U32 _lastHash);
-
-    //////////////////////////////////////////
-    MAZE_CORE_API inline U32 CalculateSuperFastHash(Char const* _text, S32 _length, U32 _lastHash)
+    namespace Hash
     {
-        static S32 const c_incrementalReadBlock = 65536;
+        //////////////////////////////////////////
+        MAZE_CORE_API U32 SuperFastHashIncremental(Char const* _data, S32 _len, U32 _lastHash);
 
-        S32 bytesRemaining = _length;
-        U32 lastHash = _lastHash;
-        S32 offset = 0;
-
-        while (bytesRemaining >= c_incrementalReadBlock)
+        //////////////////////////////////////////
+        MAZE_CORE_API inline U32 CalculateSuperFastHash(Char const* _text, S32 _length, U32 _lastHash)
         {
-            lastHash = SuperFastHashIncremental(_text + offset, c_incrementalReadBlock, lastHash);
-            bytesRemaining -= c_incrementalReadBlock;
-            offset += c_incrementalReadBlock;
+            static S32 const c_incrementalReadBlock = 65536;
+
+            S32 bytesRemaining = _length;
+            U32 lastHash = _lastHash;
+            S32 offset = 0;
+
+            while (bytesRemaining >= c_incrementalReadBlock)
+            {
+                lastHash = SuperFastHashIncremental(_text + offset, c_incrementalReadBlock, lastHash);
+                bytesRemaining -= c_incrementalReadBlock;
+                offset += c_incrementalReadBlock;
+            }
+
+            if (bytesRemaining > 0)
+            {
+                lastHash = SuperFastHashIncremental(_text + offset, bytesRemaining, lastHash);
+            }
+
+            return lastHash;
         }
 
-        if (bytesRemaining > 0)
+        //////////////////////////////////////////
+        MAZE_CORE_API inline U32 CalculateSuperFastHash(Char const* _text, S32 _length)
         {
-            lastHash = SuperFastHashIncremental(_text + offset, bytesRemaining, lastHash);
+            return CalculateSuperFastHash(_text, _length, _length);
         }
 
-        return lastHash;
-    }
+        //////////////////////////////////////////
+        MAZE_CORE_API inline U32 CalculateSuperFastHash(Char const* _text)
+        {
+            return CalculateSuperFastHash(_text, (S32)strlen(_text));
+        }
 
-    //////////////////////////////////////////
-    MAZE_CORE_API inline U32 CalculateSuperFastHash(Char const* _text, S32 _length)
-    {
-        return CalculateSuperFastHash(_text, _length, _length);
-    }
+        //////////////////////////////////////////
+        MAZE_CORE_API inline U32 CalculateSuperFastHash(StdString const& _text)
+        {
+            return CalculateSuperFastHash(_text.c_str(), (S32)_text.size());
+        }
 
-    //////////////////////////////////////////
-    MAZE_CORE_API inline U32 CalculateSuperFastHash(Char const* _text)
-    {
-        return CalculateSuperFastHash(_text, (S32)strlen(_text));
-    }
+        //////////////////////////////////////////
+        MAZE_CORE_API U32 CalculateSuperFastHash(std::ifstream& _file);
 
-    //////////////////////////////////////////
-    MAZE_CORE_API inline U32 CalculateSuperFastHash(StdString const& _text)
-    {
-        return CalculateSuperFastHash(_text.c_str(), (S32)_text.size());
-    }
-
-    //////////////////////////////////////////
-    MAZE_CORE_API U32 CalculateSuperFastHash(std::ifstream& _file);
-
+    } // namespace Hash
+    ////////////////////////////////////
 
 } // namespace Maze
 ////////////////////////////////////

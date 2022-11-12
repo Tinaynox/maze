@@ -39,11 +39,16 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_CORE_API U32 CalculateCRC32(Char const* _text, Size _length, U32 _crc = 0);
+    namespace Hash
+    {
+        //////////////////////////////////////////
+        MAZE_CORE_API U32 CalculateCRC32(Char const* _text, Size _length, U32 _crc = 0);
 
-    //////////////////////////////////////////
-    MAZE_CORE_API U32 CalculateCRC32(std::ifstream& _file, U32 _crc = 0);
+        //////////////////////////////////////////
+        MAZE_CORE_API U32 CalculateCRC32(std::ifstream& _file, U32 _crc = 0);
     
+    } // namespace Hash
+    //////////////////////////////////////////
 
 } // namespace Maze
 //////////////////////////////////////////

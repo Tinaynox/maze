@@ -121,10 +121,10 @@ namespace Maze
         inline U32 calculateHash()
         {
             U32 hash = 0;
-            hash = CalculateSuperFastHash((Char const*)&size, sizeof(size));
-            hash = CalculateSuperFastHash((Char const*)&colorTextureFormats, sizeof(colorTextureFormats), hash);
-            hash = CalculateSuperFastHash((Char const*)&depthTextureFormat, sizeof(depthTextureFormat), hash);
-            hash = CalculateSuperFastHash((Char const*)&stencilTextureFormat, sizeof(stencilTextureFormat), hash);
+            hash = Hash::CalculateSuperFastHash((Char const*)&size, sizeof(size));
+            hash = Hash::CalculateSuperFastHash((Char const*)&colorTextureFormats, sizeof(colorTextureFormats), hash);
+            hash = Hash::CalculateSuperFastHash((Char const*)&depthTextureFormat, sizeof(depthTextureFormat), hash);
+            hash = Hash::CalculateSuperFastHash((Char const*)&stencilTextureFormat, sizeof(stencilTextureFormat), hash);
 
             return hash;
         }

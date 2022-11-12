@@ -168,7 +168,7 @@ namespace Maze
         {
             if (m_hashDirty)
             {
-                m_hash = CalculateFNV1(m_path.c_str());
+                m_hash = Hash::CalculateFNV1(m_path.c_str());
                 m_hashDirty = false;
             }
             return m_hash;

@@ -184,18 +184,18 @@ namespace Maze
     {
         U32 crc32 = m_material->calculateUniformsCRC32(_seed);
 
-        crc32 = CalculateCRC32((Char const*)&m_passType, sizeof(m_passType), crc32);
-        crc32 = CalculateCRC32((Char const*)&m_renderQueueIndex, sizeof(m_renderQueueIndex), crc32);
+        crc32 = Hash::CalculateCRC32((Char const*)&m_passType, sizeof(m_passType), crc32);
+        crc32 = Hash::CalculateCRC32((Char const*)&m_renderQueueIndex, sizeof(m_renderQueueIndex), crc32);
 
         Shader* const shaderRaw = m_shader.get();
-        crc32 = CalculateCRC32((Char const*)&shaderRaw, sizeof(Shader*), crc32);
+        crc32 = Hash::CalculateCRC32((Char const*)&shaderRaw, sizeof(Shader*), crc32);
 
-        crc32 = CalculateCRC32((Char const*)&m_blendOperation, sizeof(m_blendOperation), crc32);
-        crc32 = CalculateCRC32((Char const*)&m_blendSrcFactor, sizeof(m_blendSrcFactor), crc32);
-        crc32 = CalculateCRC32((Char const*)&m_blendDestFactor, sizeof(m_blendDestFactor), crc32);
-        crc32 = CalculateCRC32((Char const*)&m_depthTestCompareFunction, sizeof(m_depthTestCompareFunction), crc32);
-        crc32 = CalculateCRC32((Char const*)&m_depthWriteEnabled, sizeof(m_depthWriteEnabled), crc32);
-        crc32 = CalculateCRC32((Char const*)&m_cullMode, sizeof(m_cullMode), crc32);
+        crc32 = Hash::CalculateCRC32((Char const*)&m_blendOperation, sizeof(m_blendOperation), crc32);
+        crc32 = Hash::CalculateCRC32((Char const*)&m_blendSrcFactor, sizeof(m_blendSrcFactor), crc32);
+        crc32 = Hash::CalculateCRC32((Char const*)&m_blendDestFactor, sizeof(m_blendDestFactor), crc32);
+        crc32 = Hash::CalculateCRC32((Char const*)&m_depthTestCompareFunction, sizeof(m_depthTestCompareFunction), crc32);
+        crc32 = Hash::CalculateCRC32((Char const*)&m_depthWriteEnabled, sizeof(m_depthWriteEnabled), crc32);
+        crc32 = Hash::CalculateCRC32((Char const*)&m_cullMode, sizeof(m_cullMode), crc32);
 
         return crc32;
     }

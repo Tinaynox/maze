@@ -128,7 +128,7 @@ namespace Maze
     //////////////////////////////////////////
     static inline ClassUID GetClassUIDByQualifiedName(CString _name)
     {
-        return CalculateCRC32(_name, strlen(_name));
+        return Hash::CalculateCRC32(_name, strlen(_name));
     }
 
     //////////////////////////////////////////
@@ -165,7 +165,7 @@ namespace Maze
         {
             static StdMap<ClassUID, Char const*> s_registeredClasses;
 
-            ClassUID classUID = CalculateCRC32(_name, strlen(_name));
+            ClassUID classUID = Hash::CalculateCRC32(_name, strlen(_name));
             if (s_registeredClasses.find(classUID) != s_registeredClasses.end())
             {
                 return GenerateUID((StdString(_name) + '_').c_str());

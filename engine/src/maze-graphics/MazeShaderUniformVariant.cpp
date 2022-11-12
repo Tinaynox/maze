@@ -337,105 +337,105 @@ namespace Maze
         {
             case ShaderUniformType::UniformS32:
             {
-                return CalculateCRC32((const S8*)&m_S32, sizeof(S32), _seed);
+                return Hash::CalculateCRC32((const S8*)&m_S32, sizeof(S32), _seed);
                 break;
             }
             case ShaderUniformType::UniformF32:
             {
-                return CalculateCRC32((const S8*)&m_F32, sizeof(F32), _seed);
+                return Hash::CalculateCRC32((const S8*)&m_F32, sizeof(F32), _seed);
                 break;
             }
             case ShaderUniformType::UniformF64:
             {
-                return CalculateCRC32((const S8*)&m_F64, sizeof(F64), _seed);
+                return Hash::CalculateCRC32((const S8*)&m_F64, sizeof(F64), _seed);
                 break;
             }
             case ShaderUniformType::UniformBool:
             {
-                return CalculateCRC32((const S8*)&m_bool, sizeof(bool), _seed);
+                return Hash::CalculateCRC32((const S8*)&m_bool, sizeof(bool), _seed);
                 break;
             }
             case ShaderUniformType::UniformTexture2D:
             case ShaderUniformType::UniformTextureCube:
             {
                 Texture const* textureRaw = m_texture.get();
-                U32 hash = CalculateCRC32((const S8*)&textureRaw, sizeof(Texture*), _seed);
+                U32 hash = Hash::CalculateCRC32((const S8*)&textureRaw, sizeof(Texture*), _seed);
                 return hash;
                 break;
             }
             case ShaderUniformType::UniformVec2DS:
             {
-                return CalculateCRC32((const S8*)&m_vectorS, sizeof(Vec2DS), _seed);
+                return Hash::CalculateCRC32((const S8*)&m_vectorS, sizeof(Vec2DS), _seed);
                 break;
             }
             case ShaderUniformType::UniformVec3DS:
             {
-                return CalculateCRC32((const S8*)&m_vectorS, sizeof(Vec3DS), _seed);
+                return Hash::CalculateCRC32((const S8*)&m_vectorS, sizeof(Vec3DS), _seed);
                 break;
             }
             case ShaderUniformType::UniformVec4DS:
             {
-                return CalculateCRC32((const S8*)&m_vectorS, sizeof(Vec4DS), _seed);
+                return Hash::CalculateCRC32((const S8*)&m_vectorS, sizeof(Vec4DS), _seed);
                 break;
             }
             case ShaderUniformType::UniformVec2DU:
             {
-                return CalculateCRC32((const S8*)&m_vectorU, sizeof(Vec2DU), _seed);
+                return Hash::CalculateCRC32((const S8*)&m_vectorU, sizeof(Vec2DU), _seed);
                 break;
             }
             case ShaderUniformType::UniformVec3DU:
             {
-                return CalculateCRC32((const S8*)&m_vectorU, sizeof(Vec3DU), _seed);
+                return Hash::CalculateCRC32((const S8*)&m_vectorU, sizeof(Vec3DU), _seed);
                 break;
             }
             case ShaderUniformType::UniformVec4DU:
             {
-                return CalculateCRC32((const S8*)&m_vectorU, sizeof(Vec4DU), _seed);
+                return Hash::CalculateCRC32((const S8*)&m_vectorU, sizeof(Vec4DU), _seed);
                 break;
             }
             case ShaderUniformType::UniformVec2DB:
             {
-                return CalculateCRC32((const S8*)&m_vectorB, sizeof(Vec2DB), _seed);
+                return Hash::CalculateCRC32((const S8*)&m_vectorB, sizeof(Vec2DB), _seed);
                 break;
             }
             case ShaderUniformType::UniformVec3DB:
             {
-                return CalculateCRC32((const S8*)&m_vectorB, sizeof(Vec3DB), _seed);
+                return Hash::CalculateCRC32((const S8*)&m_vectorB, sizeof(Vec3DB), _seed);
                 break;
             }
             case ShaderUniformType::UniformVec4DB:
             {
-                return CalculateCRC32((const S8*)&m_vectorB, sizeof(Vec4DB), _seed);
+                return Hash::CalculateCRC32((const S8*)&m_vectorB, sizeof(Vec4DB), _seed);
                 break;
             }
             case ShaderUniformType::UniformVec2DF:
             {
-                return CalculateCRC32((const S8*)&m_vectorF, sizeof(Vec2DF), _seed);
+                return Hash::CalculateCRC32((const S8*)&m_vectorF, sizeof(Vec2DF), _seed);
                 break;
             }
             case ShaderUniformType::UniformVec3DF:
             {
-                return CalculateCRC32((const S8*)&m_vectorF, sizeof(Vec3DF), _seed);
+                return Hash::CalculateCRC32((const S8*)&m_vectorF, sizeof(Vec3DF), _seed);
                 break;
             }
             case ShaderUniformType::UniformVec4DF:
             {
-                return CalculateCRC32((const S8*)&m_vectorF, sizeof(Vec4DF), _seed);
+                return Hash::CalculateCRC32((const S8*)&m_vectorF, sizeof(Vec4DF), _seed);
                 break;
             }
             case ShaderUniformType::UniformMat3DF:
             {
-                return CalculateCRC32((const S8*)&m_matrix3DF, sizeof(Mat3DF), _seed);
+                return Hash::CalculateCRC32((const S8*)&m_matrix3DF, sizeof(Mat3DF), _seed);
                 break;
             }
             case ShaderUniformType::UniformMat4DF:
             {
-                return CalculateCRC32((const S8*)&m_matrix4DF, sizeof(Mat4DF), _seed);
+                return Hash::CalculateCRC32((const S8*)&m_matrix4DF, sizeof(Mat4DF), _seed);
                 break;
             }
             case ShaderUniformType::UniformColorF128:
             {
-                return CalculateCRC32((const S8*)&m_vectorF, sizeof(Vec4DF), _seed);
+                return Hash::CalculateCRC32((const S8*)&m_vectorF, sizeof(Vec4DF), _seed);
                 break;
             }
             default:
