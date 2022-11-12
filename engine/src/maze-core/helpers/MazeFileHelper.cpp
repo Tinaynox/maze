@@ -46,7 +46,11 @@ namespace Maze
             Path::StringType string = _path.getPath();
             std::replace(string.begin(), string.end(), '\\', '/');
             string.erase(string.find_last_not_of('/') + 1);
-            StringHelper::ReplaceSubstring(string, Path("/./").getPath(), Path("/").getPath()); // #TODO: optimize
+            static CString searchPath = "/./";
+            static CString replacePath = "/";
+            static Path::StringType const search = Path::StringType((Char*)searchPath, (Char*)searchPath + strlen(searchPath));
+            static Path::StringType const replace = Path::StringType((Char*)replacePath, (Char*)replacePath + strlen(replacePath));
+            StringHelper::ReplaceSubstring(string, search, replace);
             _path = string;
         }
 

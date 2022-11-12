@@ -961,13 +961,15 @@ namespace Maze
         template <typename TString, typename TSearchString>
         inline void RemoveSubstring(TString& _s, TSearchString const& _search) noexcept
         {
+            Size searchSize = StringLength(_search);
+
             for (Size pos = 0; ; pos += 1)
             {
                 pos = _s.find(_search, pos);
                 if (pos == TString::npos)
                     break;
 
-                _s.erase(pos, StringLength(_search));
+                _s.erase(pos, searchSize);
             }
         }
 

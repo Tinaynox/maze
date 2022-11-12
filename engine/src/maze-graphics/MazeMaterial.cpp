@@ -83,7 +83,7 @@ namespace Maze
                 return nullptr;
 
             String name = _assetFile->getFileName();
-            StringHelper::RemoveSubstring(name, String(".mzmaterial"));
+            StringHelper::RemoveSubstring(name, ".mzmaterial");
             material->setName(name);
             
         }
@@ -102,7 +102,7 @@ namespace Maze
                 return nullptr;
 
             String name = _assetFileName;
-            StringHelper::RemoveSubstring(name, String(".mzmaterial"));
+            StringHelper::RemoveSubstring(name, ".mzmaterial");
             material->setName(name);
         }
 
