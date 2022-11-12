@@ -673,7 +673,7 @@ namespace Maze
                     (S32)x, (S32)c_bottomOffset,
                     (S32)x, (S32)(c_bottomOffset + height),
                     (i + 1) == 10 ? mainLineColor
-                    : (i + 1) % 2 == 0 ? secondaryLineColor : thirdyLineColor);
+                    : ((i + 1) & 1) == 0 ? secondaryLineColor : thirdyLineColor);
             }
 
             // X labels
@@ -738,7 +738,7 @@ namespace Maze
                     m_curvePixelSheet.drawLine(
                         (S32)origin.x, (S32)y,
                         (S32)(origin.x + width), (S32)y,
-                        (i + 1) % 2 == 0 ? secondaryLineColor : thirdyLineColor);
+                        ((i + 1) & 1) == 0 ? secondaryLineColor : thirdyLineColor);
 
                     F32 value = (F32)(i + 1) * delta;
                     
@@ -763,7 +763,7 @@ namespace Maze
                         m_curvePixelSheet.drawLine(
                             (S32)origin.x, (S32)y,
                             (S32)(origin.x + width), (S32)y,
-                            (i + 1) % 2 == 0 ? secondaryLineColor : thirdyLineColor);
+                            ((i + 1) & 1) == 0 ? secondaryLineColor : thirdyLineColor);
 
                         m_curvePixelSheet.drawText(
                             (S32)origin.x - 5, (S32)y,
