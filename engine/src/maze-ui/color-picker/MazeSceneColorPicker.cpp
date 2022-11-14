@@ -1187,7 +1187,7 @@ namespace Maze
             auto rgb = ColorHelper::ConvertHSVToRGB(m_hsv);
 
             ColorF128 color = ColorF128::FromVec4DFAndIntensity(
-                Vec4DF(rgb, m_alpha),
+                Vec4DF(rgb, (F32)m_alpha / 255.0f),
                 m_intensity);
 
             if (color != ColorPickerManager::GetInstancePtr()->getColorHDR())
