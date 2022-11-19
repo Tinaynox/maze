@@ -128,8 +128,7 @@ namespace Maze
 
         if (m_canvasUIElement)
         {
-            m_canvasUIElement->eventCursorReleaseIn.unsubscribe(this);
-            m_canvasUIElement->eventCursorReleaseOut.unsubscribe(this);
+            m_canvasUIElement->eventCursorRelease.unsubscribe(this);
         }
 
         if (m_valueEdit)
@@ -257,8 +256,7 @@ namespace Maze
         m_canvas->setClearColor(ColorU32(203, 203, 203, 255));
         m_canvas->setRenderTarget(m_renderTarget);
         m_canvasUIElement = canvasEntity->ensureComponent<UIElement2D>();
-        m_canvasUIElement->eventCursorReleaseIn.subscribe(this, &SceneCurveEditor::notifyCanvasCursorReleaseIn);
-        m_canvasUIElement->eventCursorReleaseOut.subscribe(this, &SceneCurveEditor::notifyCanvasCursorReleaseOut);
+        m_canvasUIElement->eventCursorRelease.subscribe(this, &SceneCurveEditor::notifyCanvasCursorRelease);        
 
         AnimationCurve const& curve = AnimationCurveManager::GetInstancePtr()->getCurve();
 
@@ -1297,14 +1295,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneCurveEditor::notifyCanvasCursorReleaseIn(Vec2DF const& _positionOS, CursorInputEvent const& _event)
-    {
-        m_draggingElement = CurveElement::None;
-        m_draggingDistance = 0.0f;
-    }
-
-    //////////////////////////////////////////
-    void SceneCurveEditor::notifyCanvasCursorReleaseOut(CursorInputEvent const& _event)
+    void SceneCurveEditor::notifyCanvasCursorRelease(CursorInputEvent const& _event)
     {
         m_draggingElement = CurveElement::None;
         m_draggingDistance = 0.0f;

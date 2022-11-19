@@ -153,11 +153,9 @@ namespace Maze
         void changeCurrentKey(F32 _newTime, F32 _newValue);
 
 
-        //////////////////////////////////////////
-        void notifyCanvasCursorReleaseIn(Vec2DF const& _positionOS, CursorInputEvent const& _event);
 
         //////////////////////////////////////////
-        void notifyCanvasCursorReleaseOut(CursorInputEvent const& _event);
+        void notifyCanvasCursorRelease(CursorInputEvent const& _event);
 
         //////////////////////////////////////////
         void processDragging();
