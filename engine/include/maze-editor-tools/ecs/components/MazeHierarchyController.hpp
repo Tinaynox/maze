@@ -122,6 +122,9 @@ namespace Maze
         inline void addIgnoreScene(ClassUID _classUID) { m_ignoreScenes.insert(_classUID); }
 
 
+        //////////////////////////////////////////
+        void setECSWorld(ECSWorld* _world);
+
     protected:
 
         //////////////////////////////////////////

@@ -94,8 +94,7 @@ namespace Maze
             hierarchyLineData.second.line->eventLineClick.unsubscribe(this);
         }
 
-        m_world->eventEntityRemoved.unsubscribe(this);
-        m_world->eventEntityChanged.unsubscribe(this);
+        setECSWorld(nullptr);
     }
 
     //////////////////////////////////////////
@@ -111,9 +110,7 @@ namespace Maze
     {
         UpdateManager::GetInstancePtr()->addUpdatable(this);
 
-        m_world = EntityManager::GetInstancePtr()->getDefaultWorldRaw();
-        m_world->eventEntityRemoved.subscribe(this, &HierarchyController::notifyEntityRemoved);
-        m_world->eventEntityChanged.subscribe(this, &HierarchyController::notifyEntityChanged);
+        setECSWorld(EntityManager::GetInstancePtr()->getDefaultWorldRaw());
 
         m_canvas = _canvas;
 
@@ -475,6 +472,7 @@ namespace Maze
         if (!hierarchyLine)
         {
             hierarchyLine = m_hierarchyLinePool->createHierarchyLine(HierarchyLineType::Entity);
+            hierarchyLine->setECSWorld(m_world);
             hierarchyLine->setUserData(reinterpret_cast<void*>((Size)_entityId));
             hierarchyLine->updateIcon();
             hierarchyLine->eventDropDownClick.subscribe(this, &HierarchyController::notifyHierarchyLineDropDownClick);
@@ -495,6 +493,7 @@ namespace Maze
         if (!hierarchyLine)
         {
             hierarchyLine = m_hierarchyLinePool->createHierarchyLine(HierarchyLineType::Scene);
+            hierarchyLine->setECSWorld(m_world);
             hierarchyLine->setUserData(static_cast<void*>(_scene.get()));
             hierarchyLine->eventDropDownClick.subscribe(this, &HierarchyController::notifyHierarchyLineDropDownClick);
             hierarchyLine->eventLineClick.subscribe(this, &HierarchyController::notifyHierarchyLineClick);
@@ -578,6 +577,27 @@ namespace Maze
             it->second.line->eventLineClick.unsubscribe(this);
             m_hierarchyLinePool->releaseHierarchyLine(it->second.line);
             m_hierarchyLinesPerEntity.erase(it);
+        }
+    }
+
+    //////////////////////////////////////////
+    void HierarchyController::setECSWorld(ECSWorld* _world)
+    {
+        if (m_world == _world)
+            return;
+
+        if (m_world)
+        {
+            m_world->eventEntityRemoved.unsubscribe(this);
+            m_world->eventEntityChanged.unsubscribe(this);
+        }
+
+        m_world = _world;
+
+        if (m_world)
+        {
+            m_world->eventEntityRemoved.subscribe(this, &HierarchyController::notifyEntityRemoved);
+            m_world->eventEntityChanged.subscribe(this, &HierarchyController::notifyEntityChanged);
         }
     }
     
