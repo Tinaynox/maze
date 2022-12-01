@@ -565,6 +565,9 @@ namespace Maze
     void ParticleSystem3D::setEmissionEnabled(bool _value)
     {
         m_mainModule.getEmission().setEnabled(_value);
+
+        if (!_value)
+            m_emissionPerDistancePreviousPositionWSDirty = true;
     }
 
     //////////////////////////////////////////
