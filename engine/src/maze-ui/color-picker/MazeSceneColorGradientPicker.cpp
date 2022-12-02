@@ -155,8 +155,7 @@ namespace Maze
 
         if (m_canvasUIElement)
         {
-            m_canvasUIElement->eventCursorReleaseIn.unsubscribe(this);
-            m_canvasUIElement->eventCursorReleaseOut.unsubscribe(this);
+            m_canvasUIElement->eventCursorRelease.unsubscribe(this);
         }
 
         m_canvas.reset();
