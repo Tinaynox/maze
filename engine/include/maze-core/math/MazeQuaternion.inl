@@ -243,6 +243,11 @@ namespace Maze
         return 1 - d * d < _tolerance;
     }
 
+    //////////////////////////////////////////
+    inline Quaternion Quaternion::FromEuler(F32 _x, F32 _y, F32 _z)
+    {
+        return Quaternion(Vec3DF(_x, _y, _z));
+    }
 
 
 } // namespace Maze

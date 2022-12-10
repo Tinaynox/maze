@@ -260,6 +260,9 @@ namespace Maze
         if (metaData.contains("scale"))
             loaderProps.scale = StringHelper::StringToF32(metaData["scale"]);
 
+        if (metaData.contains("mergeSubMeshes"))
+            loaderProps.mergeSubMeshes = StringHelper::StringToBool(metaData["mergeSubMeshes"]);
+
         if (metaData.empty() || !metaData.contains("ext"))
         {
             bool loaderFound = false;

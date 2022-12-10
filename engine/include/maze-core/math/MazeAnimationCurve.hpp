@@ -195,12 +195,14 @@ namespace Maze
             Keyframe const& _value0,
             Keyframe const& _value1,
             EvaluateMode _mode = EvaluateMode::Linear,
-            F32 _scalar = 1.0f)
+            F32 _scalar = 1.0f,
+            AnimationCurveMinMaxMode _minMaxMode = AnimationCurveMinMaxMode::NormalizedPositive)
         {
             addKey(_value0);
             addKey(_value1);
             setMode(_mode);
             setScalar(_scalar);
+            setMinMaxMode(_minMaxMode);
         }
 
         //////////////////////////////////////////

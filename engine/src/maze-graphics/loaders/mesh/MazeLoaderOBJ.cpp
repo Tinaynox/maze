@@ -569,7 +569,8 @@ namespace Maze
                         if (!indices.empty() && !finalPositions.empty())
                         {
                             // Create Mesh
-                            processCreateSubMesh();
+                            if (!_props.mergeSubMeshes)
+                                processCreateSubMesh();
 
                             meshName = tail;
                         }
@@ -682,6 +683,10 @@ namespace Maze
                     if (!indices.empty() && !finalPositions.empty())
                     {
                         // Create Mesh
+                        if (!_props.mergeSubMeshes)
+                            processCreateSubMesh();
+                        /*
+                        // Create Mesh
                         SubMeshPtr subMesh = SubMesh::Create();
                         subMesh->setName(meshName);
 
@@ -728,6 +733,7 @@ namespace Maze
                         finalUVs.clear();
                         finalNormals.clear();
                         indices.clear();
+                        */
                     }
                 }
                 else

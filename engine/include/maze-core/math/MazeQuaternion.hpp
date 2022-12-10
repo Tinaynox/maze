@@ -305,6 +305,9 @@ namespace Maze
         static Quaternion LookRotation(Vec3DF const& _forward, Vec3DF const& _up);
 
         //////////////////////////////////////////
+        static inline Quaternion FromEuler(F32 _x, F32 _y, F32 _z);
+
+        //////////////////////////////////////////
         inline F32 getRoll() const { return getEuler().z; }
 
         //////////////////////////////////////////

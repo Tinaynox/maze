@@ -70,6 +70,7 @@ namespace Maze
     struct RenderMeshLoaderProperties
     {
         F32 scale = 1.0f;
+        bool mergeSubMeshes = false;
     };
 
 
