@@ -110,6 +110,14 @@ namespace Maze
         {
             return Abs(AnglesDifference(_angle0, _angle1));
         }
+
+
+        //////////////////////////////////////////
+        inline F32 RenormAngle(F32 _angle, F32 _pivotAngle)
+        {
+            F32 delta = _pivotAngle - _angle;
+            return abs(delta) > c_pi ? _angle + (delta > 0.0f ? 1.0f : -1.0f) * c_twoPi : _angle;
+        }
         
     
     
