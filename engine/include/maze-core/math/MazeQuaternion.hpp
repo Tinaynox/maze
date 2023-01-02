@@ -308,6 +308,12 @@ namespace Maze
         static inline Quaternion FromEuler(F32 _x, F32 _y, F32 _z);
 
         //////////////////////////////////////////
+        static inline Quaternion FromEuler(Vec3DF const& _value)
+        {
+            return Quaternion::FromEuler(_value.x, _value.y, _value.z);
+        }
+
+        //////////////////////////////////////////
         inline F32 getRoll() const { return getEuler().z; }
 
         //////////////////////////////////////////
