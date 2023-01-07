@@ -170,6 +170,15 @@ namespace Maze
         //////////////////////////////////////////
         inline void setLocalScale(F32 _scaleX, F32 _scaleY, F32 _scaleZ) { setLocalScale(Vec3DF(_scaleX, _scaleY, _scaleZ)); }
 
+        //////////////////////////////////////////
+        inline void setLocalScaleX(F32 _scale) { setLocalScale(_scale, m_localScale.y, m_localScale.z); }
+
+        //////////////////////////////////////////
+        inline void setLocalScaleY(F32 _scale) { setLocalScale(m_localScale.x, _scale, m_localScale.z); }
+
+        //////////////////////////////////////////
+        inline void setLocalScaleZ(F32 _scale) { setLocalScale(m_localScale.x, m_localScale.y, _scale); }
+
 
         //////////////////////////////////////////
         void rotate(Vec3DF const& _axis, F32 _angle);
