@@ -307,9 +307,10 @@ namespace Maze
     {
         RenderBuffer::endDraw();
 
-#if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
+//#if ((MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS) || \
+//     (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN))
         mzglFlush();
-#endif
+//#endif
 
         eventRenderBufferEndDraw(this);
     }
