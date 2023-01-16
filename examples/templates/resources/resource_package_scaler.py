@@ -59,7 +59,7 @@ class ResourcePackageScaler:
 
                 copy_to_stat = os.stat(copy_to)
 
-                if copy_from_time - copy_to_stat.st_mtime > 1:
+                if copy_from_time != copy_to_stat.st_mtime:
                     copy_required = True
                     print(file_name + ': Time is different')
                 else:

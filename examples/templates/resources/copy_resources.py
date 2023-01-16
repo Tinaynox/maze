@@ -35,7 +35,7 @@ class CopyResources:
             copy_to = '{0}/{1}'.format(self.output, full_path)
 
             copy_required = not os.path.exists(copy_to)
-            if (not copy_required) and (os.stat(copy_from).st_mtime - os.stat(copy_to).st_mtime > 1):
+            if (not copy_required) and (os.stat(copy_from).st_mtime != os.stat(copy_to).st_mtime):
                 copy_required = True
 
             if copy_required:
