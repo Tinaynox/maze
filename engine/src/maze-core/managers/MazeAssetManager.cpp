@@ -286,7 +286,7 @@ namespace Maze
         m_assetFilesByFileName[_file->getFileName()] = _file;
         m_assetFilesByFullPath[_file->getFullPath()] = _file;
 
-        m_assetFilesUpdateTimeUTC[_file] = _file->getFileStats().modifiedTimeUTC;
+        m_assetFilesUpdateTimeUTC[_file] = _file->getFileStats().getLastChangeTimeUTC();
     }
 
     //////////////////////////////////////////

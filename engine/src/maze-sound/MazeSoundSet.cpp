@@ -39,9 +39,11 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS(SoundSet,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<SoundPtr>, sounds, Vector<SoundPtr>(), getSounds, setSounds),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, volume, 1.0, getVolume, setVolume),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, volume, 1.0f, getVolume, setVolume),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, prevFetchIndex, -1, getPrevFetchIndex, setPrevFetchIndex),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, noRepeats, false, getNoRepeats, setNoRepeats));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, noRepeats, false, getNoRepeats, setNoRepeats),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, minPitch, 1.0f, getMinPitch, setMinPitch),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, maxPitch, 1.0, getMaxPitch, setMaxPitch));
 
     //////////////////////////////////////////
     SoundSet::SoundSet(

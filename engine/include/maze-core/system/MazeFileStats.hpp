@@ -33,6 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/MazeTypes.hpp"
+#include "maze-core/math/MazeMath.hpp"
 #include "maze-core/system/MazeDateTime.hpp"
 
 
@@ -49,6 +50,9 @@ namespace Maze
         UnixTime modifiedTimeUTC = 0u;
         UnixTime accessedTimeUTC = 0u;
         Size fileSize = 0u;
+
+        //////////////////////////////////////////
+        inline UnixTime getLastChangeTimeUTC() const { return Math::Max(creationTimeUTC, modifiedTimeUTC); }
     };
     
 } // namespace Maze

@@ -107,6 +107,19 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline void setMinPitch(F32 _value) { m_minPitch = _value; }
+
+        //////////////////////////////////////////
+        inline F32 getMinPitch() const { return m_minPitch; }
+
+        //////////////////////////////////////////
+        inline void setMaxPitch(F32 _value) { m_maxPitch = _value; }
+
+        //////////////////////////////////////////
+        inline F32 getMaxPitch() const { return m_maxPitch; }
+
+
+        //////////////////////////////////////////
         SoundPtr const& fetch();
 
     public:
@@ -150,6 +163,8 @@ namespace Maze
         F32 m_volume = 1.0f;
         S32 m_prevFetchIndex = -1;
         bool m_noRepeats = false;
+        F32 m_minPitch = 1.0f;
+        F32 m_maxPitch = 1.0f;
     };
 
 
