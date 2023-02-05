@@ -51,7 +51,7 @@ namespace Maze
 
     //////////////////////////////////////////
     RenderMask::RenderMask()
-        : m_mask(MAZE_BIT(0))
+        : m_mask((S32)DefaultRenderMask::Default)
     {
     }
 

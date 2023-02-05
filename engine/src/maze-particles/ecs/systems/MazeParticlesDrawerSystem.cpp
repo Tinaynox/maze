@@ -127,8 +127,11 @@ namespace Maze
         Vec3DF cameraUp = (cameraTransform.transformAffine(Vec3DF::c_unitY)).normalizedCopy();
 
         m_particleSystem3DSample->process(
-            [_renderTarget, &_renderData, &cameraPosition, &cameraForward, &cameraUp](Entity* _entity, ParticleSystem3D* _particleSystem)
+            [_renderTarget, &_renderData, &cameraPosition, &cameraForward, &cameraUp, &_params](Entity* _entity, ParticleSystem3D* _particleSystem)
             {
+                if (!(_particleSystem->getRenderMask()->getMask() & _params.renderMask))
+                    return;
+
                 S32 aliveParticles = _particleSystem->getAliveParticles();
 
                 if (aliveParticles == 0)

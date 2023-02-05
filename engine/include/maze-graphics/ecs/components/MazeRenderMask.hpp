@@ -43,11 +43,42 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    enum class DefaultRenderMask
+    enum class DefaultRenderMask : S32
     {
         Default = MAZE_BIT(0),
         Gizmos = MAZE_BIT(1),
         Water = MAZE_BIT(2),
+
+        MazeReserved0 = MAZE_BIT(3),
+        MazeReserved1 = MAZE_BIT(4),
+        MazeReserved2 = MAZE_BIT(5),
+        MazeReserved3 = MAZE_BIT(6),
+        MazeReserved4 = MAZE_BIT(7),
+        MazeReserved5 = MAZE_BIT(8),
+        MazeReserved6 = MAZE_BIT(9),
+        MazeReserved7 = MAZE_BIT(10),
+        MazeReserved8 = MAZE_BIT(11),
+        MazeReserved9 = MAZE_BIT(12),
+        MazeReserved10 = MAZE_BIT(13),
+        MazeReserved11 = MAZE_BIT(14),
+        MazeReserved12 = MAZE_BIT(15),
+
+        UserMask0 = MAZE_BIT(16),
+        UserMask1 = MAZE_BIT(17),
+        UserMask2 = MAZE_BIT(18),
+        UserMask3 = MAZE_BIT(19),
+        UserMask4 = MAZE_BIT(20),
+        UserMask5 = MAZE_BIT(21),
+        UserMask6 = MAZE_BIT(22),
+        UserMask7 = MAZE_BIT(23),
+        UserMask8 = MAZE_BIT(24),
+        UserMask9 = MAZE_BIT(25),
+        UserMask10 = MAZE_BIT(26),
+        UserMask11 = MAZE_BIT(27),
+        UserMask12 = MAZE_BIT(28),
+        UserMask13 = MAZE_BIT(29),
+        UserMask14 = MAZE_BIT(30),
+        UserMask15 = MAZE_BIT(31),
     };
 
 
