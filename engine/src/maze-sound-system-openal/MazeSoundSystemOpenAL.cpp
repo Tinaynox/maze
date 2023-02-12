@@ -326,5 +326,20 @@ namespace Maze
         return sourceCount;
     }
 
+    //////////////////////////////////////////
+    bool SoundSystemOpenAL::findSoundSource(std::function<bool(SoundSource*)> const& _callback)
+    {
+        bool result = false;
+        FastVector<SoundSourceOpenALPtr> soundSourcesCopy = m_soundSources;
+        for (SoundSourceOpenALPtr const& soundSource : soundSourcesCopy)
+        {
+            result = _callback(soundSource.get());
+            if (result)
+                break;
+        }
+
+        return result;
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

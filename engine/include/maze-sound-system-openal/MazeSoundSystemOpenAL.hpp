@@ -108,6 +108,10 @@ namespace Maze
         //////////////////////////////////////////
         DeviceInfoOpenAL const* getDeviceInfo(Size _index) const;
 
+
+        //////////////////////////////////////////
+        virtual bool findSoundSource(std::function<bool(SoundSource*)> const& _callback) MAZE_OVERRIDE;
+
     public:
 
         //////////////////////////////////////////

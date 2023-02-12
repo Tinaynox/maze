@@ -102,6 +102,10 @@ namespace Maze
             bool _looped = false,
             SoundGroupPtr const& _soundGroup = nullptr);
 
+
+        //////////////////////////////////////////
+        virtual bool findSoundSource(std::function<bool(SoundSource*)> const& _callback) MAZE_ABSTRACT;
+
     protected:
 
         //////////////////////////////////////////
