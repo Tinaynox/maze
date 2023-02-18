@@ -324,6 +324,12 @@ namespace Maze
         //////////////////////////////////////////
         void updateMeshData();
 
+        //////////////////////////////////////////
+        void ensureAllGlyphs();
+
+        //////////////////////////////////////////
+        void updateMeshDataNow();
+
 
         //////////////////////////////////////////
         void updateMeshRendererColors();
@@ -409,6 +415,8 @@ namespace Maze
         Vector<Vec4DF> m_localColors;
 
         Vec2DF m_lastGlyphOffset = Vec2DF::c_zero;
+
+        bool m_debugUpdatingMeshData = false;
     };
 
 

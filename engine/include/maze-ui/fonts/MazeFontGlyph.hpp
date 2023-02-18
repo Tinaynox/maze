@@ -82,7 +82,7 @@ namespace Maze
     struct MAZE_UI_API SpriteFontGlyphData
     {
         //////////////////////////////////////////
-        FontGlyph const& getGlyph(U32 _fontSize);
+        FontGlyph const& ensureGlyph(U32 _fontSize);
 
         //////////////////////////////////////////
         void collectAllTextures(U32 _fontSize, Vector<Texture2DPtr>& _result) const;
@@ -100,7 +100,7 @@ namespace Maze
     struct MAZE_UI_API EntityFontGlyphData
     {
         //////////////////////////////////////////
-        FontGlyph const& getGlyph(U32 _fontSize);
+        FontGlyph const& ensureGlyph(U32 _fontSize);
 
         //////////////////////////////////////////
         EntityPtr const& getPrefab();

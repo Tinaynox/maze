@@ -36,7 +36,7 @@ namespace Maze
     // Struct SpriteFontGlyphData
     //
     //////////////////////////////////////////
-    FontGlyph const& SpriteFontGlyphData::getGlyph(U32 _fontSize)
+    FontGlyph const& SpriteFontGlyphData::ensureGlyph(U32 _fontSize)
     {
         Map<U32, FontGlyph>::iterator it = glyphs.find(_fontSize);
         if (it != glyphs.end())
@@ -69,7 +69,7 @@ namespace Maze
     // Struct EntityFontGlyphData
     //
     //////////////////////////////////////////
-    FontGlyph const& EntityFontGlyphData::getGlyph(U32 _fontSize)
+    FontGlyph const& EntityFontGlyphData::ensureGlyph(U32 _fontSize)
     {
         Map<U32, FontGlyph>::iterator it = glyphs.find(_fontSize);
         if (it != glyphs.end())

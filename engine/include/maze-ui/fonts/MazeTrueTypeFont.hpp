@@ -122,6 +122,7 @@ namespace Maze
     }
 
 
+
     //////////////////////////////////////////
     using TTFPagePtr = SharedPtr<struct TTFPage>;
 
@@ -168,22 +169,22 @@ namespace Maze
 
 
         ////////////////////////////////////
-        virtual TTFPagePtr& getTTFPage(U32 _fontSize) MAZE_ABSTRACT;
+        virtual TTFPagePtr const& ensureTTFPage(U32 _fontSize) MAZE_ABSTRACT;
 
         ////////////////////////////////////
-        virtual TTFPagePtr& getTTFOutlineThicknessPage(U32 _fontSize, F32 _outlineThickness) MAZE_ABSTRACT;
+        virtual TTFPagePtr const& ensureTTFOutlineThicknessPage(U32 _fontSize, F32 _outlineThickness) MAZE_ABSTRACT;
 
         ////////////////////////////////////
-        virtual FontGlyph const& getGlyph(U32 _codePoint, U32 _fontSize, TTFPagePtr& _page) MAZE_ABSTRACT;
+        virtual FontGlyph const& ensureGlyph(U32 _codePoint, U32 _fontSize, TTFPagePtr const& _page) MAZE_ABSTRACT;
 
         ////////////////////////////////////
-        virtual FontGlyph const& getGlyph(U32 _codePoint, U32 _fontSize) MAZE_ABSTRACT;
+        virtual FontGlyph const& ensureGlyph(U32 _codePoint, U32 _fontSize) MAZE_ABSTRACT;
 
         ////////////////////////////////////
-        virtual FontGlyph const& getOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr& _page) MAZE_ABSTRACT;
+        virtual FontGlyph const& ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr const& _page) MAZE_ABSTRACT;
 
         ////////////////////////////////////
-        virtual FontGlyph const& getOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness) MAZE_ABSTRACT;
+        virtual FontGlyph const& ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness) MAZE_ABSTRACT;
 
         ////////////////////////////////////
         virtual F32 getLineSpacing(U32 _fontSize) MAZE_ABSTRACT;

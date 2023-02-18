@@ -271,14 +271,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    FontGlyph const& Font::getGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize)
+    FontGlyph const& Font::ensureGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize)
     {
         static FontGlyph nullGlyph;
 
         if (!_storage)
         {
             if (m_defaultGlyphsData.getTrueTypeFont())
-                return m_defaultGlyphsData.getTrueTypeFont()->getGlyph(_codePoint, _fontSize);
+                return m_defaultGlyphsData.getTrueTypeFont()->ensureGlyph(_codePoint, _fontSize);
 
             return nullGlyph;
         }
@@ -286,9 +286,9 @@ namespace Maze
         switch (_storage->type)
         {
             case FontGlyphStorageType::None: return nullGlyph;
-            case FontGlyphStorageType::TrueTypeFont: return _storage->getTrueTypeFont()->getGlyph(_codePoint, _fontSize);
-            case FontGlyphStorageType::Sprite: return _storage->spriteData.getGlyph(_fontSize);
-            case FontGlyphStorageType::Entity: return _storage->entityData.getGlyph(_fontSize);
+            case FontGlyphStorageType::TrueTypeFont: return _storage->getTrueTypeFont()->ensureGlyph(_codePoint, _fontSize);
+            case FontGlyphStorageType::Sprite: return _storage->spriteData.ensureGlyph(_fontSize);
+            case FontGlyphStorageType::Entity: return _storage->entityData.ensureGlyph(_fontSize);
             default:
             {
                 MAZE_NOT_IMPLEMENTED;
@@ -300,14 +300,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    FontGlyph const& Font::getGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, TTFPagePtr& _ttfPage)
+    FontGlyph const& Font::ensureGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, TTFPagePtr const& _ttfPage)
     {
         static FontGlyph nullGlyph;
 
         if (!_storage)
         {
             if (m_defaultGlyphsData.getTrueTypeFont())
-                return m_defaultGlyphsData.getTrueTypeFont()->getGlyph(_codePoint, _fontSize, _ttfPage);
+                return m_defaultGlyphsData.getTrueTypeFont()->ensureGlyph(_codePoint, _fontSize, _ttfPage);
 
             return nullGlyph;
         }
@@ -315,9 +315,9 @@ namespace Maze
         switch (_storage->type)
         {
             case FontGlyphStorageType::None: return nullGlyph;
-            case FontGlyphStorageType::TrueTypeFont: return _storage->getTrueTypeFont()->getGlyph(_codePoint, _fontSize, _ttfPage);
-            case FontGlyphStorageType::Sprite: return _storage->spriteData.getGlyph(_fontSize);
-            case FontGlyphStorageType::Entity: return _storage->entityData.getGlyph(_fontSize);
+            case FontGlyphStorageType::TrueTypeFont: return _storage->getTrueTypeFont()->ensureGlyph(_codePoint, _fontSize, _ttfPage);
+            case FontGlyphStorageType::Sprite: return _storage->spriteData.ensureGlyph(_fontSize);
+            case FontGlyphStorageType::Entity: return _storage->entityData.ensureGlyph(_fontSize);
             default:
             {
                 MAZE_NOT_IMPLEMENTED;
@@ -329,21 +329,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    FontGlyph const& Font::getGlyph(U32 _codePoint, U32 _fontSize)
+    FontGlyph const& Font::ensureGlyph(U32 _codePoint, U32 _fontSize)
     {
         FontGlyphStorageData* glyphStorageData = getGlyphStorageData(_codePoint);
-        return getGlyphFromStorage(glyphStorageData, _codePoint, _fontSize);
+        return ensureGlyphFromStorage(glyphStorageData, _codePoint, _fontSize);
     }
 
     //////////////////////////////////////////
-    FontGlyph const& Font::getOutlinedGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, F32 _outlineThickness)
+    FontGlyph const& Font::ensureOutlinedGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, F32 _outlineThickness)
     {
         static FontGlyph nullGlyph;
 
         if (!_storage)
         {
             if (m_defaultGlyphsData.getTrueTypeFont())
-                return m_defaultGlyphsData.getTrueTypeFont()->getOutlinedGlyph(_codePoint, _fontSize, _outlineThickness);
+                return m_defaultGlyphsData.getTrueTypeFont()->ensureOutlinedGlyph(_codePoint, _fontSize, _outlineThickness);
 
             return nullGlyph;
         }
@@ -351,9 +351,9 @@ namespace Maze
         switch (_storage->type)
         {
             case FontGlyphStorageType::None: return nullGlyph;
-            case FontGlyphStorageType::TrueTypeFont: return _storage->getTrueTypeFont()->getOutlinedGlyph(_codePoint, _fontSize, _outlineThickness);
-            case FontGlyphStorageType::Sprite: return _storage->spriteData.getGlyph(_fontSize);
-            case FontGlyphStorageType::Entity: return _storage->entityData.getGlyph(_fontSize);
+            case FontGlyphStorageType::TrueTypeFont: return _storage->getTrueTypeFont()->ensureOutlinedGlyph(_codePoint, _fontSize, _outlineThickness);
+            case FontGlyphStorageType::Sprite: return _storage->spriteData.ensureGlyph(_fontSize);
+            case FontGlyphStorageType::Entity: return _storage->entityData.ensureGlyph(_fontSize);
             default:
             {
                 MAZE_NOT_IMPLEMENTED;
@@ -365,14 +365,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    FontGlyph const& Font::getOutlinedGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr& _ttfPage)
+    FontGlyph const& Font::ensureOutlinedGlyphFromStorage(FontGlyphStorageData* _storage, U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr const& _ttfPage)
     {
         static FontGlyph nullGlyph;
 
         if (!_storage)
         {
             if (m_defaultGlyphsData.getTrueTypeFont())
-                return m_defaultGlyphsData.getTrueTypeFont()->getOutlinedGlyph(_codePoint, _fontSize, _outlineThickness, _ttfPage);
+                return m_defaultGlyphsData.getTrueTypeFont()->ensureOutlinedGlyph(_codePoint, _fontSize, _outlineThickness, _ttfPage);
 
             return nullGlyph;
         }
@@ -380,9 +380,9 @@ namespace Maze
         switch (_storage->type)
         {
             case FontGlyphStorageType::None: return nullGlyph;
-            case FontGlyphStorageType::TrueTypeFont: return _storage->getTrueTypeFont()->getOutlinedGlyph(_codePoint, _fontSize, _outlineThickness, _ttfPage);
-            case FontGlyphStorageType::Sprite: return _storage->spriteData.getGlyph(_fontSize);
-            case FontGlyphStorageType::Entity: return _storage->entityData.getGlyph(_fontSize);
+            case FontGlyphStorageType::TrueTypeFont: return _storage->getTrueTypeFont()->ensureOutlinedGlyph(_codePoint, _fontSize, _outlineThickness, _ttfPage);
+            case FontGlyphStorageType::Sprite: return _storage->spriteData.ensureGlyph(_fontSize);
+            case FontGlyphStorageType::Entity: return _storage->entityData.ensureGlyph(_fontSize);
             default:
             {
                 MAZE_NOT_IMPLEMENTED;
@@ -394,10 +394,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    FontGlyph const& Font::getOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness)
+    FontGlyph const& Font::ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness)
     {
         FontGlyphStorageData* glyphStorageData = getGlyphStorageData(_codePoint);
-        return getOutlinedGlyphFromStorage(glyphStorageData, _codePoint, _fontSize, _outlineThickness);
+        return ensureOutlinedGlyphFromStorage(glyphStorageData, _codePoint, _fontSize, _outlineThickness);
     }
 
     //////////////////////////////////////////

@@ -162,7 +162,7 @@ namespace Maze
     }
 
     ////////////////////////////////////
-    TTFPagePtr& TrueTypeFontFreetype::getTTFPage(U32 _fontSize)
+    TTFPagePtr const& TrueTypeFontFreetype::ensureTTFPage(U32 _fontSize)
     {
         TTFPagePtr& page = m_pages[_fontSize];
         if (!page)
@@ -174,7 +174,7 @@ namespace Maze
     }
 
     ////////////////////////////////////
-    TTFPagePtr& TrueTypeFontFreetype::getTTFOutlineThicknessPage(U32 _fontSize, F32 _outlineThickness)
+    TTFPagePtr const& TrueTypeFontFreetype::ensureTTFOutlineThicknessPage(U32 _fontSize, F32 _outlineThickness)
     {
         U64 key = getTTFOutlineGlyphKey(_fontSize, _outlineThickness);
 
@@ -188,7 +188,7 @@ namespace Maze
     }
 
     ////////////////////////////////////
-    FontGlyph const& TrueTypeFontFreetype::getGlyph(U32 _codePoint, U32 _fontSize, TTFPagePtr& _page)
+    FontGlyph const& TrueTypeFontFreetype::ensureGlyph(U32 _codePoint, U32 _fontSize, TTFPagePtr const& _page)
     {
         // Get the page corresponding to the character size
         TTFGlyphTable<GlyphKeyType>& glyphs = _page->glyphs;
@@ -209,13 +209,13 @@ namespace Maze
     }
 
     ////////////////////////////////////
-    FontGlyph const& TrueTypeFontFreetype::getGlyph(U32 _codePoint, U32 _fontSize)
+    FontGlyph const& TrueTypeFontFreetype::ensureGlyph(U32 _codePoint, U32 _fontSize)
     {
-        return getGlyph(_codePoint, _fontSize, getTTFPage(_fontSize));
+        return ensureGlyph(_codePoint, _fontSize, ensureTTFPage(_fontSize));
     }
 
     ////////////////////////////////////
-    FontGlyph const& TrueTypeFontFreetype::getOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr& _page)
+    FontGlyph const& TrueTypeFontFreetype::ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr const& _page)
     {
         // Get the page corresponding to the character size
         TTFGlyphTable<GlyphKeyType>& glyphs = _page->glyphs;
@@ -234,9 +234,9 @@ namespace Maze
     }
 
     ////////////////////////////////////
-    FontGlyph const& TrueTypeFontFreetype::getOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness)
+    FontGlyph const& TrueTypeFontFreetype::ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness)
     {
-        return getOutlinedGlyph(_codePoint, _fontSize, _outlineThickness, getTTFOutlineThicknessPage(_fontSize, _outlineThickness));
+        return ensureOutlinedGlyph(_codePoint, _fontSize, _outlineThickness, ensureTTFOutlineThicknessPage(_fontSize, _outlineThickness));
     }
 
     ////////////////////////////////////

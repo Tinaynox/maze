@@ -78,22 +78,22 @@ namespace Maze
 
 
         ////////////////////////////////////
-        virtual TTFPagePtr& getTTFPage(U32 _fontSize) MAZE_OVERRIDE;
+        virtual TTFPagePtr const& ensureTTFPage(U32 _fontSize) MAZE_OVERRIDE;
 
         ////////////////////////////////////
-        virtual TTFPagePtr& getTTFOutlineThicknessPage(U32 _fontSize, F32 _outlineThickness) MAZE_OVERRIDE;
+        virtual TTFPagePtr const& ensureTTFOutlineThicknessPage(U32 _fontSize, F32 _outlineThickness) MAZE_OVERRIDE;
 
         ////////////////////////////////////
-        virtual FontGlyph const& getGlyph(U32 _codePoint, U32 _fontSize, TTFPagePtr& _page) MAZE_OVERRIDE;
+        virtual FontGlyph const& ensureGlyph(U32 _codePoint, U32 _fontSize, TTFPagePtr const& _page) MAZE_OVERRIDE;
 
         ////////////////////////////////////
-        virtual FontGlyph const& getGlyph(U32 _codePoint, U32 _fontSize) MAZE_OVERRIDE;
+        virtual FontGlyph const& ensureGlyph(U32 _codePoint, U32 _fontSize) MAZE_OVERRIDE;
 
         ////////////////////////////////////
-        virtual FontGlyph const& getOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr& _page) MAZE_OVERRIDE;
+        virtual FontGlyph const& ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr const& _page) MAZE_OVERRIDE;
 
         ////////////////////////////////////
-        virtual FontGlyph const& getOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness) MAZE_OVERRIDE;
+        virtual FontGlyph const& ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness) MAZE_OVERRIDE;
 
         ////////////////////////////////////
         virtual F32 getLineSpacing(U32 _fontSize) MAZE_OVERRIDE;
@@ -137,7 +137,7 @@ namespace Maze
 
         ////////////////////////////////////
         inline FontGlyph loadGlyph(
-            TTFPagePtr& _page,
+            TTFPagePtr const& _page,
             U32 _codePoint,
             U32 _fontSize,
             F32 _outlineThickness = 0.0f);
@@ -168,7 +168,7 @@ namespace Maze
 
     ////////////////////////////////////
     FontGlyph TrueTypeFontFreetype::loadGlyph(
-        TTFPagePtr& _page,
+        TTFPagePtr const& _page,
         U32 _codePoint,
         U32 _fontSize,
         F32 _outlineThickness)
@@ -234,9 +234,6 @@ namespace Maze
 
             width += 2 * padding;
             height += 2 * padding;
-
-            if (!_page)
-                _page = std::make_shared<TTFPage>();
 
             glyph.texture = _page->texture;
 
