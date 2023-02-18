@@ -65,6 +65,10 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    using FontMaterialRenderDataPtr = Maze::SharedPtr<struct FontMaterialRenderData>;
+
+
+    //////////////////////////////////////////
     // Class FontMaterial
     //
     //////////////////////////////////////////
@@ -156,7 +160,7 @@ namespace Maze
 
     protected:
 
-        Map<U32, FontMaterialRenderData> m_renderData;
+        Map<U32, FontMaterialRenderDataPtr> m_renderData;
     };
 
 

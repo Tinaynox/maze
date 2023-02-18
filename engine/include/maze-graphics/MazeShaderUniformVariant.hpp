@@ -444,7 +444,7 @@ namespace Maze
     protected:
         RenderSystem* m_renderSystem;
 
-        ShaderUniformType m_type;
+        ShaderUniformType m_type = ShaderUniformType::None;
 
         TexturePtr m_texture;
 

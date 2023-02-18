@@ -30,6 +30,7 @@
 #include "maze-ui/managers/MazeFontMaterialManager.hpp"
 #include "maze-ui/managers/MazeFontManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 
@@ -43,8 +44,15 @@ namespace Maze
         if (!material)
             return;
 
-        for (S32 i = 0, in = (S32)textures.size(); i < in; ++i)
-            material->ensureUniform("u_baseMaps")->set(&textures[0], (U32)textures.size());
+        if (textures.empty())
+        {
+            Texture2D** errorTexture = (Texture2D**)TextureManager::GetCurrentInstancePtr()->getErrorTexture().get();
+            material->ensureUniform(MAZE_HASHED_CSTRING("u_baseMaps"))->set(errorTexture, 1);
+        }
+        else
+        {
+            material->ensureUniform(MAZE_HASHED_CSTRING("u_baseMaps"))->set(&textures[0], (U32)textures.size());
+        }
     }
 
 
@@ -194,14 +202,14 @@ namespace Maze
         {
             for (auto& renderData : m_renderData)
             {
-                renderData.second.material = m_assetMaterial->createCopy();
-                renderData.second.updateMaterialUniforms();
+                renderData.second->material = m_assetMaterial->createCopy();
+                renderData.second->updateMaterialUniforms();
             }
         }
         else
         {
             for (auto& renderData : m_renderData)
-                renderData.second.material.reset(); 
+                renderData.second->material.reset(); 
         }
 
         eventMaterialChanged();
@@ -213,17 +221,20 @@ namespace Maze
         auto it = m_renderData.find(_fontSize);
         if (it != m_renderData.end())
         {
-            if (it->second.texturesDirty)
+            if (it->second->texturesDirty)
                 updateFontTextures(_fontSize);
 
-            return it->second;
+            return *it->second;
         }
 
-        FontMaterialRenderData& data = m_renderData[_fontSize];
+        FontMaterialRenderDataPtr& data = m_renderData[_fontSize];
+        if (!data)
+            data = std::make_shared<FontMaterialRenderData>();
+
         if (m_assetMaterial)
-            data.material = m_assetMaterial->createCopy();
+            data->material = m_assetMaterial->createCopy();
         updateFontTextures(_fontSize);
-        return data;
+        return *data;
     }
 
     //////////////////////////////////////////
@@ -235,32 +246,35 @@ namespace Maze
     //////////////////////////////////////////
     void FontMaterial::updateFontTextures(U32 _fontSize)
     {
-        FontMaterialRenderData& data = m_renderData[_fontSize];
-        data.textures.clear();
-        data.textureIndices.clear();
+        FontMaterialRenderDataPtr& data = m_renderData[_fontSize];
+        if (!data)
+            data = std::make_shared<FontMaterialRenderData>();
+
+        data->textures.clear();
+        data->textureIndices.clear();
 
         if (!m_font)
             return;
 
-        data.texturesDirty = false;
+        data->texturesDirty = false;
 
         Vector<Texture2DPtr> textures;
         m_font->collectAllTextures(_fontSize, textures);
-        data.textures.resize(textures.size());
-        for (S32 i = 0, in = (S32)data.textures.size(); i < in; ++i)
-            data.textures[i] = textures[i].get();
+        data->textures.resize(textures.size());
+        for (S32 i = 0, in = (S32)data->textures.size(); i < in; ++i)
+            data->textures[i] = textures[i].get();
 
-        for (S32 i = 0, in = (S32)data.textures.size(); i < in; ++i)
-            data.textureIndices[data.textures[i]] = i;
+        for (S32 i = 0, in = (S32)data->textures.size(); i < in; ++i)
+            data->textureIndices[data->textures[i]] = i;
 
-        data.updateMaterialUniforms();
+        data->updateMaterialUniforms();
     }
 
     //////////////////////////////////////////
     void FontMaterial::notifyTexturesChanged()
     {
         for (auto& renderData : m_renderData)
-            renderData.second.texturesDirty = true;
+            renderData.second->texturesDirty = true;
 
         eventTexturesChanged();
     }
