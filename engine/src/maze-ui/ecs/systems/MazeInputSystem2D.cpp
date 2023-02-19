@@ -61,6 +61,35 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    class InputSystem2DSimpleBoolMutex
+    {
+    public:
+        //////////////////////////////////////////
+        InputSystem2DSimpleBoolMutex(bool& _mutex)
+            : m_mutex(_mutex)
+        {
+            MAZE_ERROR_IF(_mutex, "Already locked!");
+            m_mutex = true;
+        }
+
+        //////////////////////////////////////////
+        ~InputSystem2DSimpleBoolMutex()
+        {
+            m_mutex = false;
+        }
+
+    private:
+        bool& m_mutex;
+    };
+
+#if MAZE_DEBUG
+#   define INPUT_SYSTEM2D_ELEMENTS_LOCK() InputSystem2DSimpleBoolMutex elementsLock(m_sortedUIElements2DLocked)
+#else
+#   define INPUT_SYSTEM2D_ELEMENTS_LOCK()
+#endif
+
+
+    //////////////////////////////////////////
     // Class InputSystem2D
     //
     //////////////////////////////////////////
@@ -389,6 +418,7 @@ namespace Maze
         Vec2DF const& _renderTargetCoords,
         CursorInputSource const& _inputSource)
     {
+        INPUT_SYSTEM2D_ELEMENTS_LOCK();
         updateSortedUIElements2DList();
 
         CursorInputEvent cursorInputEvent(
@@ -461,6 +491,7 @@ namespace Maze
         Vec2DF const& _renderTargetCoords,
         CursorInputSource const& _inputSource)
     {
+        INPUT_SYSTEM2D_ELEMENTS_LOCK();
         updateSortedUIElements2DList();
 
         CursorInputEvent cursorInputEvent(
@@ -515,6 +546,7 @@ namespace Maze
         Vec2DF const& _renderTargetCoords,
         CursorInputSource const& _inputSource)
     {
+        INPUT_SYSTEM2D_ELEMENTS_LOCK();
         updateSortedUIElements2DList();
 
         CursorInputEvent cursorInputEvent(
@@ -569,6 +601,7 @@ namespace Maze
         Vec2DF const& _renderTargetCoords,
         CursorInputSource const& _inputSource)
     {
+        INPUT_SYSTEM2D_ELEMENTS_LOCK();
         updateSortedUIElements2DList();
 
         CursorInputEvent cursorInputEvent(
@@ -628,6 +661,7 @@ namespace Maze
         Vec2DF const& _renderTargetCoords,
         CursorInputSource const& _inputSource)
     {
+        INPUT_SYSTEM2D_ELEMENTS_LOCK();
         updateSortedUIElements2DList();
 
         CursorInputEvent cursorInputEvent(
@@ -683,6 +717,7 @@ namespace Maze
         Vec2DF const& _renderTargetCoords,
         CursorInputSource const& _inputSource)
     {
+        INPUT_SYSTEM2D_ELEMENTS_LOCK();
         updateSortedUIElements2DList();
 
         CursorInputEvent cursorInputEvent(
@@ -738,6 +773,7 @@ namespace Maze
         Vec2DF const& _renderTargetCoords,
         CursorInputSource const& _inputSource)
     {
+        INPUT_SYSTEM2D_ELEMENTS_LOCK();
         updateSortedUIElements2DList();
 
         CursorWheelInputEvent cursorInputEvent(

@@ -252,6 +252,11 @@ namespace Maze
         U32 m_firstCursorReleaseTime = 0u;
         ClickData m_clickData;
         bool m_processClick = false;
+
+    private:
+#if MAZE_DEBUG
+        bool m_sortedUIElements2DLocked = false;
+#endif
     };
 
 
