@@ -418,50 +418,52 @@ namespace Maze
         Vec2DF const& _renderTargetCoords,
         CursorInputSource const& _inputSource)
     {
-        INPUT_SYSTEM2D_ELEMENTS_LOCK();
-        updateSortedUIElements2DList();
-
-        CursorInputEvent cursorInputEvent(
-            CursorInputType::Press,
-            _cursorIndex,
-            Maze::Vec2DF::c_zero,
-            _buttonIndex,
-            _inputSource,
-            _window);
-
-        for (Vector<CanvasData>::const_reverse_iterator it = m_sortedUIElements2D.rbegin(),
-                                                        end = m_sortedUIElements2D.rend();
-                                                        it != end;
-                                                        ++it)
         {
-            CanvasData const& canvasData = *it;
+            INPUT_SYSTEM2D_ELEMENTS_LOCK();
+            updateSortedUIElements2DList();
 
-            if (canvasData.rootCanvas &&
-                canvasData.rootCanvas->getRenderTarget() &&
-                canvasData.rootCanvas->getRenderTarget()->getMetaClass()->isInheritedFrom<RenderWindow>())
+            CursorInputEvent cursorInputEvent(
+                CursorInputType::Press,
+                _cursorIndex,
+                Maze::Vec2DF::c_zero,
+                _buttonIndex,
+                _inputSource,
+                _window);
+
+            for (Vector<CanvasData>::const_reverse_iterator it = m_sortedUIElements2D.rbegin(),
+                end = m_sortedUIElements2D.rend();
+                it != end;
+                ++it)
             {
-                if (_window != canvasData.rootCanvas->getRenderTarget()->castRaw<RenderWindow>()->getWindowRaw())
-                    continue;
-            }
+                CanvasData const& canvasData = *it;
 
-            Vector<UIElement2D*> const& sortedUIElements2D = canvasData.sortedUIElements2D;
-            SetupCursorInputEventForCanvasData(cursorInputEvent, canvasData, _renderTargetCoords);
+                if (canvasData.rootCanvas &&
+                    canvasData.rootCanvas->getRenderTarget() &&
+                    canvasData.rootCanvas->getRenderTarget()->getMetaClass()->isInheritedFrom<RenderWindow>())
+                {
+                    if (_window != canvasData.rootCanvas->getRenderTarget()->castRaw<RenderWindow>()->getWindowRaw())
+                        continue;
+                }
 
-            for (Vector<UIElement2D*>::const_reverse_iterator   it2 = sortedUIElements2D.rbegin(),
-                                                                end2 = sortedUIElements2D.rend();
-                                                                it2 != end2;
-                                                                ++it2)
-            {
-                UIElement2D* element = *it2;
+                Vector<UIElement2D*> const& sortedUIElements2D = canvasData.sortedUIElements2D;
+                SetupCursorInputEventForCanvasData(cursorInputEvent, canvasData, _renderTargetCoords);
 
-                element->processCursorPress(cursorInputEvent);
+                for (Vector<UIElement2D*>::const_reverse_iterator   it2 = sortedUIElements2D.rbegin(),
+                    end2 = sortedUIElements2D.rend();
+                    it2 != end2;
+                    ++it2)
+                {
+                    UIElement2D* element = *it2;
+
+                    element->processCursorPress(cursorInputEvent);
+
+                    if (cursorInputEvent.isCaptured())
+                        break;
+                }
 
                 if (cursorInputEvent.isCaptured())
                     break;
             }
-
-            if (cursorInputEvent.isCaptured())
-                break;
         }
 
         if (_cursorIndex == 0 && _buttonIndex == 0)
