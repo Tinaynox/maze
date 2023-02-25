@@ -213,5 +213,14 @@ namespace Maze
         eventSystemInited();
     }
 
+    //////////////////////////////////////////
+    void ShaderSystem::reloadShaders()
+    {
+        for (auto const& shaderData : m_shadersCache)
+        {
+            shaderData.second->reload();
+        }
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

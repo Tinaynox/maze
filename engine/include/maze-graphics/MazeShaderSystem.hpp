@@ -153,6 +153,10 @@ namespace Maze
         //////////////////////////////////////////
         bool removeShaderFromCache(ShaderPtr const& _shader);
 
+
+        //////////////////////////////////////////
+        void reloadShaders();
+
     public:
 
         MultiDelegate<> eventSystemInited;
