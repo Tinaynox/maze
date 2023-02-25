@@ -235,7 +235,7 @@ namespace Maze
 
         if (m_text.empty())
         {
-            F32 linespace = m_fontMaterial->getFont()->getLineSpacing(m_fontSize);
+            F32 linespace = m_fontMaterial->getFont()->getLineSpacing(m_fontSize) * getLineSpacingScale();
 
             F32 y = calculateY(linespace, 1);
             m_lastGlyphOffset = Vec2DF(0.0f, y);
@@ -258,7 +258,7 @@ namespace Maze
 
         F32 ascent = m_fontMaterial->getFont()->getDefaultFont()->getAscender(m_fontSize);
         F32 descent = m_fontMaterial->getFont()->getDefaultFont()->getDescender(m_fontSize);
-        F32 linespace = m_fontMaterial->getFont()->getLineSpacing(m_fontSize);
+        F32 linespace = m_fontMaterial->getFont()->getLineSpacing(m_fontSize) * getLineSpacingScale();
 
         switch (m_verticalAlignment)
         {
@@ -436,7 +436,7 @@ namespace Maze
 
         F32 ascent = m_fontMaterial->getFont()->getDefaultFont()->getAscender(m_fontSize);
         F32 descent = m_fontMaterial->getFont()->getDefaultFont()->getDescender(m_fontSize);
-        F32 linespace = m_fontMaterial->getFont()->getLineSpacing(m_fontSize);
+        F32 linespace = m_fontMaterial->getFont()->getLineSpacing(m_fontSize) * getLineSpacingScale();
 
         Rect2DF xBounds = m_fontMaterial->getFont()->getDefaultFont()->ensureGlyph(L'x', m_fontSize, *ttfPage).bounds;
 

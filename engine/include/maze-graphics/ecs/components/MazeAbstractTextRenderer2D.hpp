@@ -131,6 +131,13 @@ namespace Maze
         //////////////////////////////////////////
         virtual Vec2DF getTextEnd(Size _rowIndex = 0) MAZE_ABSTRACT;
 
+
+        //////////////////////////////////////////
+        virtual F32 getLineSpacingScale() const MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual void setLineSpacingScale(F32 _value) MAZE_ABSTRACT;
+
     protected:
 
         //////////////////////////////////////////

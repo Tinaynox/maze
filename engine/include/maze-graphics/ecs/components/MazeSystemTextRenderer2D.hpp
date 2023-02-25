@@ -120,6 +120,20 @@ namespace Maze
             updateMeshData();
         }
 
+        //////////////////////////////////////////
+        virtual F32 getLineSpacingScale() const MAZE_OVERRIDE { return m_lineSpacingScale; }
+
+        //////////////////////////////////////////
+        virtual void setLineSpacingScale(F32 _value) MAZE_OVERRIDE
+        {
+            if (m_lineSpacingScale == _value)
+                return;
+
+            m_lineSpacingScale = _value;
+
+            updateMeshData();
+        }
+
 
         //////////////////////////////////////////
         virtual HorizontalAlignment2D getHorizontalAlignment() const MAZE_OVERRIDE { return m_horizontalAlignment; }
@@ -206,6 +220,7 @@ namespace Maze
 
         SystemFontPtr m_systemFont;
         U32 m_fontSize;
+        F32 m_lineSpacingScale = 1.0f;
 
         HorizontalAlignment2D m_horizontalAlignment;
         VerticalAlignment2D m_verticalAlignment;

@@ -163,7 +163,20 @@ namespace Maze
 
             m_fontSize = _fontSize;
 
-            updateMaterial();
+            updateMeshData();
+        }
+
+        //////////////////////////////////////////
+        virtual F32 getLineSpacingScale() const MAZE_OVERRIDE { return m_lineSpacingScale; }
+
+        //////////////////////////////////////////
+        virtual void setLineSpacingScale(F32 _value) MAZE_OVERRIDE
+        {
+            if (m_lineSpacingScale == _value)
+                return;
+
+            m_lineSpacingScale = _value;
+
             updateMeshData();
         }
 
@@ -397,6 +410,7 @@ namespace Maze
 
         FontMaterialPtr m_fontMaterial;
         U32 m_fontSize = 18u;
+        F32 m_lineSpacingScale = 1.0f;
 
         U32 m_styles = TextRenderer2DStyle::ColorTags;
 
