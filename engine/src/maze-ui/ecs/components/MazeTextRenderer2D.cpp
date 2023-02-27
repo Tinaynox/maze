@@ -304,7 +304,7 @@ namespace Maze
         auto ttfPage = &m_fontMaterial->getFont()->getDefaultFont()->ensureTTFPage(m_fontSize);
         auto ttfOutlineThicknessPage = &m_fontMaterial->getFont()->getDefaultFont()->ensureTTFOutlineThicknessPage(m_fontSize, m_outlineThickness);
 
-        m_fontMaterial->getFont()->getDefaultFont()->ensureGlyph(L'x', m_fontSize, *ttfPage).bounds;
+        m_fontMaterial->getFont()->getDefaultFont()->ensureGlyph(L'x', m_fontSize, *ttfPage);
         m_fontMaterial->getFont()->getDefaultFont()->ensureGlyph(L' ', m_fontSize, *ttfPage);
         m_fontMaterial->getFont()->getDefaultFont()->ensureGlyph(L'.', m_fontSize, *ttfPage);
 
