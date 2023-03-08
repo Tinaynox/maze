@@ -195,6 +195,15 @@ namespace Maze
         //////////////////////////////////////////
         template <typename TComponent>
         inline void addComponentContextMenuOptions(
+            String const& _title,
+            std::function<void(Entity*, TComponent*)> _callback)
+        {
+            this->addComponentContextMenuOption<TComponent>(_title, _callback);
+        }
+
+        //////////////////////////////////////////
+        template <typename TComponent>
+        inline void addComponentContextMenuOptions(
             String const& _title0, std::function<void(Entity*, TComponent*)> _callback0,
             String const& _title1, std::function<void(Entity*, TComponent*)> _callback1)
         {
