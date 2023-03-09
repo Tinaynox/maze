@@ -29,6 +29,7 @@
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
+#include "maze-core/managers/MazeTaskManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
@@ -225,7 +226,11 @@ namespace Maze
         m_stepButton->eventClick.subscribe(
             [](Button2D* _button, CursorInputEvent const& _event)
             {
-                UpdateManager::GetInstancePtr()->processStep(1.0f / 60.0f);
+                TaskManager::GetInstancePtr()->addMainThreadTask(
+                    []()
+                    {
+                        UpdateManager::GetInstancePtr()->processStep(1.0f / 60.0f);
+                    });
             });
         SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::StepUpdate),
