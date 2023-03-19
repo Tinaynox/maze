@@ -177,7 +177,34 @@ namespace Maze
                 else
                 if (metaPropertyClassUID == ClassInfo<Vector<ComponentPtr>>::UID())
                 {
-                    MAZE_NOT_IMPLEMENTED
+                    Vector<ComponentPtr> components;
+                    data.metaProperty->getValue(data.objMetaInstance, components);
+
+                    Vector<ComponentPtr> copiedComponents;
+                    copiedComponents.resize(components.size());
+
+                    for (Size i = 0, in = components.size(); i < in; ++i)
+                    {
+                        if (components[i])
+                        {
+                            auto const& it = _copyData.getComponents().find(components[i].get());
+                            if (it != _copyData.getComponents().end())
+                            {
+                                ComponentPtr copiedComponent = it->second->getSharedPtr();
+                                copiedComponents[i] = copiedComponent;
+                            }
+                            else
+                            {
+                                copiedComponents[i] = components[i];
+                            }
+                        }
+                        else
+                        {
+                            copiedComponents[i] = components[i];
+                        }
+                    }
+
+                    data.metaProperty->setValue(data.metaInstance, &copiedComponents);
                 }
                 else
                 {
