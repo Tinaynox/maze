@@ -108,5 +108,17 @@ namespace Maze
         CloseClipboard();
     }
 
+    //////////////////////////////////////////
+    void SystemManagerWin::showSystemCursor()
+    {
+        while (::ShowCursor(TRUE) < 0);
+    }
+
+    //////////////////////////////////////////
+    void SystemManagerWin::hideSystemCursor()
+    {
+        while (::ShowCursor(FALSE) >= 0);
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

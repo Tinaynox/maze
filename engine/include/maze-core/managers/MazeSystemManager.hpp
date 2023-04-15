@@ -107,6 +107,13 @@ namespace Maze
         ////////////////////////////////////
         virtual void setClipboardString(String const& _text);
 
+
+        //////////////////////////////////////////
+        virtual void showSystemCursor() {}
+
+        //////////////////////////////////////////
+        virtual void hideSystemCursor() {}
+
     public:
 
         //////////////////////////////////////////
