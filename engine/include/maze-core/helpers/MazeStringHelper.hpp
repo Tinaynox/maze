@@ -417,19 +417,19 @@ namespace Maze
         //////////////////////////////////////////
         inline U32 StringToU32(CString _str) noexcept
         {
-            return static_cast<U32>(std::atoi(_str));
+            return static_cast<U32>(std::atoll(_str));
         }
 
         //////////////////////////////////////////
         inline U32 StringToU32(StdString const& _str) noexcept
         {
-            return _str.empty() ? 0u : static_cast<U32>(std::stoi(_str));
+            return _str.empty() ? 0u : static_cast<U32>(std::stoll(_str));
         }
 
         //////////////////////////////////////////
         inline U32 StringToU32(String const& _str) noexcept
         {
-            return _str.empty() ? 0u : static_cast<U32>(std::stoi(_str.c_str()));
+            return _str.empty() ? 0u : static_cast<U32>(std::stoll(_str.c_str()));
         }
 
 
