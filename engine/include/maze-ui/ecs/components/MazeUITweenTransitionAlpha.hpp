@@ -98,7 +98,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setHideKoef(F32 _value) { m_hideKoef = _value; }
+        inline void setHideKoef(F32 _value) { m_hideKoef = _value; updateHideSpeed(); }
 
         //////////////////////////////////////////
         inline F32 getHideKoef() const { return m_hideKoef; }
