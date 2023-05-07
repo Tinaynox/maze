@@ -142,6 +142,9 @@ namespace Maze
 
         FileHelper::CreateDirectoryRecursive(_destPath);
 
+        CString mzapMetaExt = "mzap.meta";
+        Path::StringType mzapMetaExtPath = Path::StringType((Char*)mzapMetaExt, (Char*)mzapMetaExt + strlen(mzapMetaExt));
+
         Vector<AssetFilePtr> files = AssetHelper::GetAllAssetFilesInDirectory(_srcPath);
         for (AssetFilePtr const& file : files)
         {
@@ -154,9 +157,15 @@ namespace Maze
                     StringHelper::RemoveSubstring(relPath, (Path::StringType)_targetSrcPath);
                     Path targetPackFullPath = _targetDestPath + relPath;
                     Path targetPackDirectoryFullPath = FileHelper::GetDirectoryInPath(targetPackFullPath);
-                    FileHelper::CreateDirectoryRecursive(targetPackDirectoryFullPath);
 
-                    zipFile zf = zipOpen(targetPackFullPath.toUTF8().c_str(), APPEND_STATUS_CREATE);
+                    Path packName = FileHelper::GetFileNameWithoutExtension(file->getFileName());
+                    targetPackDirectoryFullPath += "/";
+                    targetPackDirectoryFullPath += packName;
+                    FileHelper::CreateDirectoryRecursive(targetPackDirectoryFullPath);
+                    targetPackDirectoryFullPath += "/";
+                    targetPackDirectoryFullPath += file->getFileName();
+
+                    zipFile zf = zipOpen(targetPackDirectoryFullPath.toUTF8().c_str(), APPEND_STATUS_CREATE);
                     if (!zf)
                         continue;
 
@@ -180,6 +189,20 @@ namespace Maze
                 Path::StringType relPath = fileFullPath;
                 StringHelper::RemoveSubstring(relPath, (Path::StringType)_targetSrcPath);
                 Path targetPackFullPath = _targetDestPath + relPath;
+
+                if (StringHelper::IsEndsWith(fileFullPath.getPath(), mzapMetaExtPath))
+                {
+                    Path targetPackDirectoryFullPath = FileHelper::GetDirectoryInPath(targetPackFullPath);
+
+                    Path packName = FileHelper::GetFileNameWithoutExtension(FileHelper::GetFileNameWithoutExtension(file->getFileName()));
+                    targetPackDirectoryFullPath += "/";
+                    targetPackDirectoryFullPath += packName;
+                    FileHelper::CreateDirectoryRecursive(targetPackDirectoryFullPath);
+                    targetPackDirectoryFullPath += "/";
+                    targetPackDirectoryFullPath += file->getFileName();
+
+                    targetPackFullPath = targetPackDirectoryFullPath;
+                }
 
                 FileHelper::CopyRegularFile(file->getFullPath(), targetPackFullPath);
             }
