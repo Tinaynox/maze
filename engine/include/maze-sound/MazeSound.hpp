@@ -98,6 +98,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool loadSound(SoundDataPtr const& _soundData) MAZE_ABSTRACT;
 
+        //////////////////////////////////////////
+        virtual F32 getLength() const MAZE_ABSTRACT;
+
 
         //////////////////////////////////////////
         SoundSourcePtr play(

@@ -95,6 +95,9 @@ namespace Maze
         virtual bool isPlaying() MAZE_ABSTRACT;
 
         //////////////////////////////////////////
+        virtual bool rewindOffset(F32 _seconds) MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
         void setSoundGroup(SoundGroupPtr const& _soundGroup);
 
         //////////////////////////////////////////

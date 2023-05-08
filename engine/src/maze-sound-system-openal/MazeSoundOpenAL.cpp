@@ -162,6 +162,24 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    F32 SoundOpenAL::getLength() const
+    {
+        MZALint size;
+        MZALint bits;
+        MZALint channels;
+        MZALint sampleRate;
+        MAZE_AL_CALL(alGetBufferi(m_bufferID, AL_SIZE, &size));
+        MAZE_AL_CALL(alGetBufferi(m_bufferID, AL_BITS, &bits));
+        MAZE_AL_CALL(alGetBufferi(m_bufferID, AL_CHANNELS, &channels));
+        MAZE_AL_CALL(alGetBufferi(m_bufferID, AL_FREQUENCY, &sampleRate));
+
+        MZALint samples = (ALuint)(size / (channels * bits / 8));
+        F32 lengthSeconds = (F32)samples / (F32)Math::Max(sampleRate, 1);
+
+        return lengthSeconds;
+    }
+
+    //////////////////////////////////////////
     void SoundOpenAL::generateALObjects()
     {
         if (m_bufferID != 0)

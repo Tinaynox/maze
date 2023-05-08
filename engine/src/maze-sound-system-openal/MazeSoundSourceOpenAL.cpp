@@ -117,6 +117,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool SoundSourceOpenAL::rewindOffset(F32 _seconds)
+    {
+        if (!m_sound)
+            return false;
+
+        MAZE_AL_CALL(mzalSourcef(m_sourceID, AL_SEC_OFFSET, _seconds));
+        return true;
+    }
+
+    //////////////////////////////////////////
     bool SoundSourceOpenAL::update(F32 _dt)
     {
         MZALint state;

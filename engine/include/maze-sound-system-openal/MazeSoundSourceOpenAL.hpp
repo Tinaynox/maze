@@ -73,6 +73,9 @@ namespace Maze
         virtual bool isPlaying() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
+        virtual bool rewindOffset(F32 _seconds) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
         bool update(F32 _dt);
 
         //////////////////////////////////////////

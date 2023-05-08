@@ -67,6 +67,9 @@ namespace Maze
         virtual bool loadSound(SoundDataPtr const& _soundData) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
+        virtual F32 getLength() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
         inline MZALuint getBufferID() const { return m_bufferID; }
 
     protected:
