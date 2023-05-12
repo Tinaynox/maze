@@ -100,14 +100,14 @@ namespace Maze
         MAZE_ERROR_RETURN_VALUE_IF(!deviceInfo, false, "DeviceInfo is null!");
 
         m_device = NULL;
-        for (S32 i = 0; i < 3; ++i)
+        for (S32 i = 0; i < 50; ++i)
         {
             MAZE_AL_CALL(m_device = mzalcOpenDevice(deviceInfo->deviceName.c_str()));
             if (m_device != NULL)
                 break;
             ThreadHelper::SleepCurrentThread(100);
         }
-        MAZE_ERROR_RETURN_VALUE_IF(!m_device, false, "Failed to open ALC Device!");
+        MAZE_ERROR_RETURN_VALUE_IF(!m_device, false, "Failed to open ALC Device! deviceName=%s", deviceInfo->deviceName.c_str());
 
         MAZE_AL_CALL(m_context = mzalcCreateContext(m_device, nullptr));
         MAZE_ERROR_RETURN_VALUE_IF(!m_context, false, "Failed to create ALC Context!");
