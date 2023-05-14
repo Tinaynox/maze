@@ -63,6 +63,8 @@ namespace Maze
 
     //////////////////////////////////////////
     static String const c_WindowClassName = "EngineWindow";
+    static S32 c_snapshotHotKeyId = 0;
+    static S32 c_altSnapshotHotKeyId = 1;
     
 
     //////////////////////////////////////////
@@ -531,18 +533,6 @@ namespace Maze
             
             case WM_KEYUP:
             {
-                if (_wParam == VK_SNAPSHOT)
-                {
-                    InputEventKeyboardData event;
-                    event.type = InputEventKeyboardType::KeyDown;
-                    event.data = _lParam;
-                    event.scanCode = S64((_lParam >> 16) & 0xFF);
-                    event.virtualCode = _wParam;
-                    event.modifiers = InputHelper::CollectInputEventKeyboardModifiers(_message, _wParam, _lParam);
-                    event.keyCode = InputHelper::ConvertVirtualCodeToKeyCode(event.virtualCode, event.modifiers); 
-                    inputManager->generateInputEvent(event);
-                }
-
                 InputEventKeyboardData event;
                 event.type = InputEventKeyboardType::KeyUp;
                 event.data = _lParam;
@@ -562,8 +552,6 @@ namespace Maze
                     inputManager->generateInputEvent(event);
                 }
                 
-
-
                 break;
             }
             
@@ -590,6 +578,35 @@ namespace Maze
                 event.modifiers = InputHelper::CollectInputEventKeyboardModifiers(_message, _wParam, _lParam);
                 event.keyCode = InputHelper::ConvertVirtualCodeToKeyCode(event.virtualCode, event.modifiers); 
                 inputManager->generateInputEvent(event);
+                break;
+            }
+
+            case WM_HOTKEY:
+            {
+                if (_wParam == c_snapshotHotKeyId || _wParam == c_altSnapshotHotKeyId)
+                {
+                    InputEventKeyboardData event;
+                    event.type = InputEventKeyboardType::KeyDown;
+                    event.data = 0;
+                    event.scanCode = 0;
+                    event.virtualCode = VK_SNAPSHOT;
+
+                    if (_lParam & MOD_SHIFT)
+                        event.modifiers |= InputEventKeyboardModifiers::ShiftDown;
+
+                    if (_lParam & MOD_CONTROL)
+                        event.modifiers |= InputEventKeyboardModifiers::ControlDown;
+
+                    if (_lParam & MOD_ALT)
+                        event.modifiers |= InputEventKeyboardModifiers::AltDown;
+
+                    if (_lParam & MOD_WIN)
+                        event.modifiers |= InputEventKeyboardModifiers::CommandDown;
+
+                    event.keyCode = KeyCode::PrintScreen;
+                    inputManager->generateInputEvent(event);
+                }
+
                 break;
             }
             
@@ -984,6 +1001,8 @@ namespace Maze
         SetForegroundWindow(hwnd);
         SetFocus(hwnd);
         
+        MAZE_WARNING_IF(!RegisterHotKey(hwnd, c_snapshotHotKeyId, MOD_NOREPEAT, VK_SNAPSHOT), "SNAPSHOT hotkey registration failed.");
+        MAZE_WARNING_IF(!RegisterHotKey(hwnd, c_altSnapshotHotKeyId, MOD_NOREPEAT | MOD_ALT, VK_SNAPSHOT), "ALT+SNAPSHOT hotkey registration failed.");
 
         HICON hIconSmall = (HICON)LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(m_params->iconSmall), IMAGE_ICON, 32, 32, 0);
         SendMessage(hwnd, WM_SETICON,ICON_SMALL, (LPARAM)hIconSmall);
@@ -1001,7 +1020,6 @@ namespace Maze
             bb.hRgnBlur = CreateRectRgn(0, 0, 1, 1);
             DwmEnableBlurBehindWindow(hwnd, &bb);
         }
-
         
         processWindowCreated();
 
@@ -1026,7 +1044,10 @@ namespace Maze
 
         m_handle = 0;
 
-        DestroyWindow((HWND)handle);
+        UnregisterHotKey(handle, c_snapshotHotKeyId);
+        UnregisterHotKey(handle, c_altSnapshotHotKeyId);
+
+        DestroyWindow(handle);
 
         if (getFullscreen())
             ChangeDisplaySettings(NULL, 0);

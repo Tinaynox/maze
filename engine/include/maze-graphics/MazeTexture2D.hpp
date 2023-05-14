@@ -199,7 +199,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual void saveToFileAsTGA(String const& _fileName, Vec2DU _size = Vec2DU::c_zero) MAZE_ABSTRACT;
+        virtual void saveToFileAsTGA(
+            String const& _fileName,
+            Vec2DU _size = Vec2DU::c_zero,
+            bool _resetAlpha = false) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual PixelSheet2D readAsPixelSheet() MAZE_ABSTRACT;

@@ -140,6 +140,9 @@ namespace Maze
         void processPostUpdate(F32 _dt);
 
 
+        //////////////////////////////////////////
+        inline void dirtySortedMeshRenderers() { m_sortedMeshRenderersDirty = true; }
+
     public:
 
         //////////////////////////////////////////

@@ -132,7 +132,10 @@ namespace Maze
         virtual bool setWrapT(TextureWrap _value) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void saveToFileAsTGA(String const& _fileName, Vec2DU _size = Vec2DU::c_zero) MAZE_OVERRIDE;
+        virtual void saveToFileAsTGA(
+            String const& _fileName,
+            Vec2DU _size = Vec2DU::c_zero,
+            bool _resetAlpha = false) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual PixelSheet2D readAsPixelSheet() MAZE_OVERRIDE;

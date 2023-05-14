@@ -89,6 +89,23 @@ namespace Maze
         //////////////////////////////////////////
         RenderControlSystemModule2DPtr const getModule2D() const { return m_module2D; }
 
+
+        //////////////////////////////////////////
+        void updateRenderTargets();
+
+        //////////////////////////////////////////
+        void render();
+
+        //////////////////////////////////////////
+        void update(F32 _dt);
+
+
+        //////////////////////////////////////////
+        inline SharedPtr<GenericInclusiveEntitiesSample<Canvas>> const& getCanvasesSample() const { return m_canvasesSample; }
+
+        //////////////////////////////////////////
+        inline SharedPtr<GenericInclusiveEntitiesSample<Camera3D>> const& getCameras3DSample() const { return m_cameras3DSample; }
+
     protected:
 
         //////////////////////////////////////////
@@ -115,9 +132,6 @@ namespace Maze
         //////////////////////////////////////////
         void processCameraEntityRemoved(Entity* _entity, Camera3D* _camera);
 
-
-        //////////////////////////////////////////
-        void updateRenderTargets();
 
         //////////////////////////////////////////
         void addRenderTarget(RenderTarget* _renderTarget);

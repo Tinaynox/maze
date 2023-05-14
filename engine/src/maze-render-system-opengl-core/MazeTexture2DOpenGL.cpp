@@ -432,7 +432,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Texture2DOpenGL::saveToFileAsTGA(String const& _fileName, Vec2DU _size)
+    void Texture2DOpenGL::saveToFileAsTGA(
+        String const& _fileName,
+        Vec2DU _size,
+        bool _resetAlpha)
     {
         ContextOpenGLScopeBind contextScopedBind(m_context);
         MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
@@ -507,8 +510,15 @@ namespace Maze
                 if (channelsPerPixel > 2)
                     b = ConvertPixelChannelDataToU8(pixel + 2 * bytesPerChannel, pixelFormat);
 
-                if (channelsPerPixel > 3)
-                    a = ConvertPixelChannelDataToU8(pixel + 3 * bytesPerChannel, pixelFormat);
+                if (!_resetAlpha)
+                {
+                    if (channelsPerPixel > 3)
+                        a = ConvertPixelChannelDataToU8(pixel + 3 * bytesPerChannel, pixelFormat);
+                }
+                else
+                {
+                    a = 255;
+                }
 
                 // BGRA
                 *(tgaDataPointer++) = b;

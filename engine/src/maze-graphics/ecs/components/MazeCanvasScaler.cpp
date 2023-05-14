@@ -174,6 +174,9 @@ namespace Maze
     //////////////////////////////////////////
     void CanvasScaler::handleScaleWithViewportSize()
     {
+        if (!m_canvas->getRenderTarget())
+            return;
+
         Vec2DF viewportSize = (Vec2DF)m_canvas->getRenderTarget()->getRenderTargetSize() * m_canvas->getViewport().size;
 
         F32 scaleFactor = 0;
