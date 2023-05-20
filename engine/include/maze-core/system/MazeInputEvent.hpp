@@ -51,6 +51,7 @@ namespace Maze
         Mouse,
         Keyboard,
         Touch,
+        VirtualCursor,
         Text,
         MAX
     };
@@ -88,6 +89,17 @@ namespace Maze
         Press,
         Release,
         Cancel,
+        MAX
+    };
+
+    //////////////////////////////////////////
+    enum class InputEventVirtualCursorType
+    {
+        None = 0,
+        Move,
+        Drag,
+        Press,
+        Release,
         MAX
     };
 
@@ -217,6 +229,16 @@ namespace Maze
         Window* window;
     };
 
+    //////////////////////////////////////////
+    struct InputEventVirtualCursorData
+    {
+        InputEventVirtualCursorType type;        
+        S32 x;
+        S32 y;
+
+        Window* window;
+    };
+
 
     //////////////////////////////////////////
     struct InputEventTextData
@@ -264,6 +286,13 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        InputEvent(InputEventVirtualCursorData&& _event) noexcept
+            : type(InputEventType::VirtualCursor)
+            , virtualCursor(std::move(_event))
+        {
+        }
+
+        //////////////////////////////////////////
         InputEvent(InputEventTextData&& _event) noexcept
             : type(InputEventType::Text)
             , text(std::move(_event))
@@ -278,6 +307,7 @@ namespace Maze
             InputEventMouseData mouse;
             InputEventKeyboardData keyboard;
             InputEventTouchData touch;
+            InputEventVirtualCursorData virtualCursor;
             InputEventTextData text;
         };
     };
