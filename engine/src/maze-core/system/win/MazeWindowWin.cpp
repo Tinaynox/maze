@@ -36,6 +36,7 @@
 #include "maze-core/math/MazeVec2D.hpp"
 #include "maze-core/system/win/MazeSystemCursorWin.hpp"
 #include "maze-core/system/MazeDisplay.hpp"
+#include "maze-core/events/MazeSystemEvents.hpp"
 #include <utf8/utf8.h>
 #include <dwmapi.h>
 #include <WinUser.h>
@@ -287,8 +288,7 @@ namespace Maze
         InputManager* inputManager = InputManager::GetInstancePtr();
 
         switch (_message)
-        {
-            
+        {   
             case WM_MOUSEMOVE:
             {
                 InputEventMouseData event;
@@ -824,7 +824,15 @@ namespace Maze
                 break;
             }
 #endif
-            
+            case WM_DEVICECHANGE:
+            {
+                if (_wParam == 0x0007) // DBT_DEVNODES_CHANGED
+                {
+                    EventManager::GetInstancePtr()->generateEvent<SystemDevicesChanged>();
+                }
+                
+                break;
+            }
         }
 
         return true;

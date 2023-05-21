@@ -135,6 +135,27 @@ namespace Maze
                 [_functor](ClassUID _eventUID, Event* _event) { _functor((TEvent*)_event); });
         }
 
+        //////////////////////////////////////////
+        template <typename TEvent, typename C>
+        inline void subscribeEvent(C* _object, void(C::* const _method)(ClassUID, Event*))
+        {
+            getEventCallbacks<TEvent>().subscribe(_object, _method);
+        }
+
+        //////////////////////////////////////////
+        template <typename TEvent, typename C>
+        inline void unsubscribeEvent(C* _object, void(C::* const _method)(ClassUID, Event*))
+        {
+            getEventCallbacks<TEvent>().unsubscribe(_object, _method);
+        }
+
+        //////////////////////////////////////////
+        template <typename TEvent, typename C>
+        inline void unsubscribeEvent(C* _object)
+        {
+            getEventCallbacks<TEvent>().unsubscribe(_object);
+        }
+
     protected:
 
         //////////////////////////////////////////

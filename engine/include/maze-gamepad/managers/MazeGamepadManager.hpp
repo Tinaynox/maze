@@ -33,6 +33,7 @@
 #include "maze-gamepad/MazeGamepadHeader.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/math/MazeVec2D.hpp"
 #include "maze-gamepad/gamepad/MazeGamepad.hpp"
 
@@ -44,6 +45,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(GamepadManager);
     MAZE_USING_SHARED_PTR(Gamepad);
     MAZE_USING_SHARED_PTR(GamepadProvider);
+    MAZE_USING_SHARED_PTR(Event);
 
 
     //////////////////////////////////////////
@@ -52,6 +54,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_GAMEPAD_API GamepadManager
         : public Updatable
+        , public MultiDelegateCallbackReceiver
     {
     public:
 
@@ -159,6 +162,10 @@ namespace Maze
         //////////////////////////////////////////
         GamepadPtr const& getVirtualGamepad() const { return m_virtualGamepad; }
 
+
+        //////////////////////////////////////////
+        void notifySystemDevicesChanged(ClassUID _eventUID, Event* _event);
+
     public:
 
         //////////////////////////////////////////
@@ -181,6 +188,8 @@ namespace Maze
         GamepadPtr m_virtualGamepad;
 
         Vector<GamepadProviderPtr> m_gamepadProviders;
+
+        F32 m_detectGamepadsTimer = 0.0f;
     };
 
 
