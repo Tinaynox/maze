@@ -1306,5 +1306,21 @@ namespace Maze
         return nullPointer;
     }
 
+    //////////////////////////////////////////
+    Vec2DF WindowWin::convertSystemScreenCoordsToWindowCoords(Vec2DF const& _posDS)
+    {
+        POINT pos = { (LONG)_posDS.x, (LONG)_posDS.y };
+        ScreenToClient((HWND)m_handle, &pos);
+        return { (F32)pos.x, (F32)getClientSize().y - (F32)pos.y };
+    }
+
+    //////////////////////////////////////////
+    Vec2DF WindowWin::convertWindowCoordsToSystemScreenCoords(Vec2DF const& _posWS)
+    {
+        POINT pos = { (LONG)_posWS.x, (LONG)getClientSize().y - (LONG)_posWS.y };
+        ClientToScreen((HWND)m_handle, &pos);
+        return Vec2DF((F32)pos.x, (F32)pos.y);
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

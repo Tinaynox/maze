@@ -212,6 +212,12 @@ namespace Maze
         //////////////////////////////////////////
         virtual DisplayPtr const& getRelatedDisplay() MAZE_ABSTRACT;
 
+        //////////////////////////////////////////
+        virtual Vec2DF convertSystemScreenCoordsToWindowCoords(Vec2DF const& _posDS) { return _posDS; }
+
+        //////////////////////////////////////////
+        virtual Vec2DF convertWindowCoordsToSystemScreenCoords(Vec2DF const& _posWS) { return _posWS; }
+
     public:
 
         MultiDelegate<Window*> eventWindowCreated;

@@ -129,6 +129,12 @@ namespace Maze
         //////////////////////////////////////////
         virtual DisplayPtr const& getRelatedDisplay() MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        virtual Vec2DF convertSystemScreenCoordsToWindowCoords(Vec2DF const& _posDS) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual Vec2DF convertWindowCoordsToSystemScreenCoords(Vec2DF const& _posWS) MAZE_OVERRIDE;
+
     protected:
 
 
