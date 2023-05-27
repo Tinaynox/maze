@@ -467,8 +467,7 @@ namespace Maze
         MAZE_DEBUG_BP_IF(h != m_size.y);
 
 
-        PixelFormat::Enum pixelFormat = m_internalPixelFormat;
-        pixelFormat = PixelFormat::RGBA_U8;
+        PixelFormat::Enum pixelFormat = PixelFormat::RGBA_U8;
 
         U32 bytesPerPixel = PixelFormat::GetBytesPerPixel(pixelFormat);
         U32 channelsPerPixel = PixelFormat::GetChannelsPerPixel(pixelFormat);
@@ -542,19 +541,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PixelSheet2D Texture2DOpenGL::readAsPixelSheet()
-    {        
+    PixelSheet2D Texture2DOpenGL::readAsPixelSheet(
+        PixelFormat::Enum _outputFormat)
+    {   
+        if (_outputFormat == PixelFormat::None)
+            _outputFormat = m_internalPixelFormat;
+
         if (mzglGetTexImage)
         {
             PixelSheet2D result;
 
-            PixelFormat::Enum pixelFormat = m_internalPixelFormat;
-            result.setFormat(pixelFormat);
+            result.setFormat(_outputFormat);
             result.setSize(m_size);
 
-            MZGLint originFormat = GetOpenGLOriginFormat(pixelFormat);
-
-            MZGLint dataType = GetOpenGLDataType(pixelFormat);
+            MZGLint originFormat = GetOpenGLOriginFormat(_outputFormat);
+            MZGLint dataType = GetOpenGLDataType(_outputFormat);
 
             ContextOpenGLScopeBind contextScopedBind(m_context);
             MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
@@ -567,8 +568,9 @@ namespace Maze
 
         if (mzglFramebufferTexture2D)
         {
-            MAZE_GL_CALL(mzglPixelStorei(MAZE_GL_PACK_ALIGNMENT, 1));
+            MAZE_WARNING_IF(_outputFormat != PixelFormat::RGBA_U8, "Unsupported format - %d", _outputFormat);
 
+            MAZE_GL_CALL(mzglPixelStorei(MAZE_GL_PACK_ALIGNMENT, 1));
 
             MZGLint currentFBO = 0;
             MZGLuint tempFBO = 0;

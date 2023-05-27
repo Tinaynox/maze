@@ -235,19 +235,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PixelSheet2D Texture2DMSOpenGL::readAsPixelSheet()
-    {        
+    PixelSheet2D Texture2DMSOpenGL::readAsPixelSheet(PixelFormat::Enum _outputFormat)
+    {   
+        if (_outputFormat == PixelFormat::None)
+            _outputFormat = m_internalPixelFormat;
+
         if (mzglGetTexImage)
         {
             PixelSheet2D result;
 
-            PixelFormat::Enum pixelFormat = m_internalPixelFormat;
-            result.setFormat(pixelFormat);
+            result.setFormat(_outputFormat);
             result.setSize(m_size);
 
-            MZGLint originFormat = GetOpenGLOriginFormat(pixelFormat);
-
-            MZGLint dataType = GetOpenGLDataType(pixelFormat);
+            MZGLint originFormat = GetOpenGLOriginFormat(_outputFormat);
+            MZGLint dataType = GetOpenGLDataType(_outputFormat);
 
             ContextOpenGLScopeBind contextScopedBind(m_context);
             MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
@@ -260,6 +261,8 @@ namespace Maze
 
         if (mzglFramebufferTexture2D)
         {
+            MAZE_WARNING_IF(_outputFormat != PixelFormat::RGBA_U8, "Unsupported format - %d", _outputFormat);
+
             MAZE_GL_CALL(mzglPixelStorei(MAZE_GL_PACK_ALIGNMENT, 1));
 
 

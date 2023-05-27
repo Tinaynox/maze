@@ -138,7 +138,7 @@ namespace Maze
             bool _resetAlpha = false) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual PixelSheet2D readAsPixelSheet() MAZE_OVERRIDE;
+        virtual PixelSheet2D readAsPixelSheet(PixelFormat::Enum _outputFormat = PixelFormat::None) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         RenderSystemOpenGL* getRenderSystemOpenGLRaw()

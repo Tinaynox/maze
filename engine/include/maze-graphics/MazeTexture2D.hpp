@@ -205,7 +205,7 @@ namespace Maze
             bool _resetAlpha = false) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual PixelSheet2D readAsPixelSheet() MAZE_ABSTRACT;
+        virtual PixelSheet2D readAsPixelSheet(PixelFormat::Enum _outputFormat = PixelFormat::None) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual void generateMipmaps() MAZE_ABSTRACT;
