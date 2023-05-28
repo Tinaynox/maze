@@ -1094,11 +1094,9 @@ namespace Maze
     //////////////////////////////////////////
     void WindowWin::maximizeFullscreen()
     {
-        WindowManager* windowManager = WindowManager::GetInstancePtr();
-        DisplayPtr const& primaryDisplay = windowManager->getPrimaryDisplay();
+        DisplayPtr const& relatedDisplay = getRelatedDisplay();
 
-        
-        WindowVideoMode windowVideoMode = WindowHelper::GetDisplayCurrentMode(primaryDisplay);
+        WindowVideoMode windowVideoMode = WindowHelper::GetDisplayCurrentMode(relatedDisplay);
         m_params->clientSize.x = windowVideoMode.width;
         m_params->clientSize.y = windowVideoMode.height;
         m_params->bpp = windowVideoMode.bpp;
@@ -1198,34 +1196,51 @@ namespace Maze
     //////////////////////////////////////////
     bool WindowWin::updateWindowStyle()
     {
+        // Get the monitor handle where the window is currently located
+        HMONITOR hMonitor = MonitorFromWindow(m_handle, MONITOR_DEFAULTTONEAREST);
+
+        // Get the monitor's screen rectangle
+        MONITORINFO monitorInfo = { sizeof(MONITORINFO) };
+        GetMonitorInfo(hMonitor, &monitorInfo);
+        RECT monitorRect = monitorInfo.rcMonitor;
+
         if (m_params->windowMode == WindowMode::Fullscreen)
         {
-            DEVMODE devMode;
+            DEVMODEA currentMode = {0};
+            currentMode.dmSize = sizeof(DEVMODEA);
+            if (!EnumDisplaySettingsA(NULL, ENUM_CURRENT_SETTINGS, &currentMode))
+            {
+                MAZE_ERROR("Failed to retrieve current display settings!");
+                return false;
+            }
+
+            DEVMODE devMode = {0};
             devMode.dmSize       = sizeof(devMode);
-            devMode.dmPelsWidth  = m_params->clientSize.x;
-            devMode.dmPelsHeight = m_params->clientSize.y;
-            devMode.dmBitsPerPel = m_params->bpp;
+            devMode.dmPelsWidth  = currentMode.dmPelsWidth;
+            devMode.dmPelsHeight = currentMode.dmPelsHeight;
+            devMode.dmBitsPerPel = currentMode.dmBitsPerPel;
             devMode.dmFields     = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL;
 
             // Reset display settings because of some bug
             ChangeDisplaySettingsA(NULL, 0);
 
             // Apply fullscreen mode
-            if (ChangeDisplaySettingsA(&devMode, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
+            auto result = ChangeDisplaySettingsA(&devMode, CDS_FULLSCREEN);
+            if (result != DISP_CHANGE_SUCCESSFUL)
             {
-                MAZE_ERROR("Failed to change display mode for fullscreen!");
+                MAZE_ERROR("Failed to change display mode for fullscreen! Error=%d", result);
                 m_params->windowMode = WindowMode::Windowed;
                 eventWindowModeChanged(this);
                 return false;
             }
-
         }
         else
         {
             // Apply window mode
-            if (ChangeDisplaySettingsA(NULL, 0) != DISP_CHANGE_SUCCESSFUL)
+            auto result = ChangeDisplaySettingsA(NULL, 0);
+            if (result != DISP_CHANGE_SUCCESSFUL)
             {
-                MAZE_ERROR("Failed to change display mode for windowed!");
+                MAZE_ERROR("Failed to change display mode for windowed! Error=%d", result);
                 m_params->windowMode = WindowMode::Fullscreen;
                 eventWindowModeChanged(this);
                 return false;
@@ -1236,7 +1251,14 @@ namespace Maze
         SetWindowLongPtr((HWND)m_handle, GWL_EXSTYLE, getWindowExStyle(m_params->windowMode));
         SetWindowLongPtr((HWND)m_handle, GWL_STYLE, getWindowStyle(m_params->windowMode));
 
-        SetWindowPos((HWND)m_handle, HWND_TOP, 0, 0, m_params->clientSize.x, m_params->clientSize.y, SWP_FRAMECHANGED);
+        SetWindowPos(
+            (HWND)m_handle,
+            HWND_TOP,
+            monitorRect.left,
+            monitorRect.top,
+            m_params->clientSize.x,
+            m_params->clientSize.y,
+            SWP_FRAMECHANGED);
 
 
         updateClientSize();
