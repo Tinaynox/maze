@@ -527,7 +527,7 @@ namespace Maze
             return path;
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         MAZE_CORE_API FileStats GetFileStats(Path const& _fileFullPath)
         {
             FileStats result;

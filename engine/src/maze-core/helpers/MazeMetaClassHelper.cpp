@@ -35,7 +35,7 @@ namespace Maze
     //////////////////////////////////////////
     namespace MetaClassHelper
     {
-        ////////////////////////////////////
+        //////////////////////////////////////////
         MAZE_CORE_API void CopyProperties(void* _destObject, MetaClass const* _metaClass, void const* _srcObject)
         {
             for (S32 i = 0, c = _metaClass->getPropertiesCount(); i < c; ++i)

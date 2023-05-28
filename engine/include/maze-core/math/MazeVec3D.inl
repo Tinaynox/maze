@@ -834,7 +834,7 @@ namespace Maze
         return length;
     }
     
-    ////////////////////////////////////
+    //////////////////////////////////////////
     template <class TValue>
     Vec3D<TValue> Vec3D<TValue>::RandomDirection()
     {
@@ -849,7 +849,7 @@ namespace Maze
         return result;
     }
     
-    ////////////////////////////////////
+    //////////////////////////////////////////
     template <class TValue>
     Vec3D<TValue> Vec3D<TValue>::RandomHemisphereDirection(Vec3D<TValue> const& _normal)
     {

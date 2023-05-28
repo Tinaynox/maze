@@ -37,16 +37,16 @@ namespace Maze
 #if (MAZE_USE_DELEGATES_PROTECTION)
 
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     // Class MultiDelegateCallbackReceiver
     //
-    ////////////////////////////////////
+    //////////////////////////////////////////
     MultiDelegateCallbackReceiver::MultiDelegateCallbackReceiver()
     {
         
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     MultiDelegateCallbackReceiver::~MultiDelegateCallbackReceiver()
     {
         for (Size i = 0, in = m_delegates.size(); i != in; ++i)
@@ -57,13 +57,13 @@ namespace Maze
         }
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void MultiDelegateCallbackReceiver::subscribeDelegate(IMultiDelegate* _delegate)
     {
         m_delegates.push_back(_delegate);
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void MultiDelegateCallbackReceiver::unsubscribeDelegate(IMultiDelegate* _delegate)
     {
         FastVector<IMultiDelegate*>::iterator it = m_delegates.begin();
@@ -82,22 +82,22 @@ namespace Maze
     }
 
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     // Class IMultiDelegate
     //
-    ////////////////////////////////////
+    //////////////////////////////////////////
     IMultiDelegate::IMultiDelegate()
     {
         
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     IMultiDelegate::~IMultiDelegate()
     {
         unsubscribeAllReceivers();
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void IMultiDelegate::unsubscribeAllReceivers()
     {
         FastVector<MultiDelegateCallbackReceiver*>::iterator it = m_receivers.begin();
@@ -108,7 +108,7 @@ namespace Maze
         m_receivers.clear();
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void IMultiDelegate::subscribeDelegate(MultiDelegateCallbackReceiver* _receiver)
     {
         _receiver->subscribeDelegate(this);
@@ -116,7 +116,7 @@ namespace Maze
         m_receivers.push_back(_receiver);
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void IMultiDelegate::unsubscribeDelegate(MultiDelegateCallbackReceiver* _receiver)
     {
         _receiver->unsubscribeDelegate(this);
@@ -138,8 +138,8 @@ namespace Maze
 
 
 #endif // (MAZE_USE_DELEGATES_PROTECTION)
-////////////////////////////////////
+    //////////////////////////////////////////
 
 
 } // namespace Maze
-////////////////////////////////////
+//////////////////////////////////////////

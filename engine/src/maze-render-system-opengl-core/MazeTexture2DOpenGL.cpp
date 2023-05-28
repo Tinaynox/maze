@@ -353,7 +353,7 @@ namespace Maze
         return true;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool Texture2DOpenGL::setMagFilter(TextureFilter _value)
     {
         if (m_magFilter == _value)
@@ -372,7 +372,7 @@ namespace Maze
         return true;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool Texture2DOpenGL::setMinFilter(TextureFilter _value)
     {
         if (m_minFilter == _value)
@@ -392,7 +392,7 @@ namespace Maze
 
         return true;
     }
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool Texture2DOpenGL::setWrapS(TextureWrap _value)
     {
         if (m_wrapS == _value)
@@ -412,7 +412,7 @@ namespace Maze
         return true;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool Texture2DOpenGL::setWrapT(TextureWrap _value)
     {
         if (m_wrapT == _value)
@@ -649,7 +649,7 @@ namespace Maze
         return PixelSheet2D();
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void Texture2DOpenGL::copyImageFrom(
         Texture2DPtr const& _texture,
         U32 _x,

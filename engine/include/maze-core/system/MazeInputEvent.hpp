@@ -158,7 +158,7 @@ namespace Maze
     {
     public:
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         InputEventKeyboardData()
             : type(InputEventKeyboardType::None)
             , scanCode(0)
@@ -170,40 +170,40 @@ namespace Maze
             memset(textUtf8, 0, 5);
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline bool isCapsLockOn() const { return (modifiers & InputEventKeyboardModifiers::CapsLockOn) != 0; }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline bool isNumLockOn() const { return (modifiers & InputEventKeyboardModifiers::NumLockOn) != 0; }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline bool isScrollLockOn() const { return (modifiers & InputEventKeyboardModifiers::ScrollLockOn) != 0; }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline bool isShiftDown() const { return (modifiers & InputEventKeyboardModifiers::ShiftDown) != 0; }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline bool isControlDown() const { return (modifiers & InputEventKeyboardModifiers::ControlDown) != 0; }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline bool isAltDown() const { return (modifiers & InputEventKeyboardModifiers::AltDown) != 0; }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline bool isCommandDown() const { return (modifiers & InputEventKeyboardModifiers::CommandDown) != 0; }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline bool isFnDown() const { return (modifiers & InputEventKeyboardModifiers::FnDown) != 0; }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline bool isKeyPad() const { return (modifiers & InputEventKeyboardModifiers::IsKeyPad) != 0; }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline bool isLeft() const { return (modifiers & InputEventKeyboardModifiers::IsLeft) != 0; }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline bool isRight() const { return (modifiers & InputEventKeyboardModifiers::IsRight) != 0; }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline bool isKeyRepeat() const { return (modifiers & InputEventKeyboardModifiers::IsKeyRepeat) != 0; }
 
     public:

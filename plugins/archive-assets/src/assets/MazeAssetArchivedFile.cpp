@@ -52,7 +52,7 @@ namespace Maze
     {
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     AssetArchivedFilePtr AssetArchivedFile::Create(
         ArchiveFileZipPtr const& _archive,
         Path const& _zipArchiveFilePath)

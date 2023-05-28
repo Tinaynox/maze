@@ -192,7 +192,7 @@ namespace Maze
     {
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void* ConstMetaInstance::createCopy()
     {
         void* obj = m_metaClass->createInstance();

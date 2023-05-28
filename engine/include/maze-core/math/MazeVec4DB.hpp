@@ -52,7 +52,7 @@ namespace Maze
     {
     public:
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         static Vec4DB const c_false;
         static Vec4DB const c_true;
 
@@ -117,7 +117,7 @@ namespace Maze
         }
 
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         template <class UValue>
         inline MAZE_CONSTEXPR Vec4DB(
             Vec2D<UValue> const& _vec,
@@ -140,7 +140,7 @@ namespace Maze
         {
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         template <class UValue>
         inline MAZE_CONSTEXPR Vec4DB(
             Vec2D<UValue> const& _vecXY,

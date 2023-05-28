@@ -282,7 +282,7 @@ namespace Maze
         //////////////////////////////////////////
         inline Vector<SuperMetaClassData> const& getSuperMetaClassesData() const { return m_superMetaClassesData; }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline S32 getPropertiesCount() const { return m_propertiesCount; }
 
 
@@ -426,7 +426,7 @@ namespace Maze
     {
     public:
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         GenericMetaClass(
                          CString _name,
                          MetaProperty** _properties,
@@ -452,7 +452,7 @@ namespace Maze
                 std::forward_as_tuple(this));
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         GenericMetaClass(
                          CString _name,
                          const Vector<SuperMetaClassData>& _superMetaClassesData,
@@ -518,29 +518,29 @@ namespace Maze
     {
     public:
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         ConstMetaInstance();
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         ConstMetaInstance(MetaClass const* _metaClass, void const* _object);
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         ConstMetaInstance(MetaInstance const& _instance);
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline operator bool(void) const
         {
             return (m_metaClass != nullptr) && (m_object != nullptr);
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         template <typename TClass>
         inline const TClass* reinterpretObjectCast() const
         {
             return reinterpret_cast<TClass const*>(m_object);
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         template <typename TClass>
         inline TClass const* staticObjectCast() const
         {
@@ -550,7 +550,7 @@ namespace Maze
             return nullptr;
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         template <typename TClass>
         inline TClass const* dynamicObjectCast() const
         {
@@ -577,10 +577,10 @@ namespace Maze
             return nullptr;
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline MetaClass const* getMetaClass() const { return m_metaClass; }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         void* createCopy();
 
     protected:
@@ -598,27 +598,27 @@ namespace Maze
     {
     public:
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         MetaInstance();
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         MetaInstance(MetaClass const* _metaClass, void* _object);
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         template <typename TClass>
         inline TClass* reinterpretObjectCast() const
         {
             return const_cast<TClass*>(ConstMetaInstance::reinterpretObjectCast<TClass>());
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         template <typename TClass>
         inline TClass* staticObjectCast() const
         {
             return const_cast<TClass*>(ConstMetaInstance::staticObjectCast<TClass>());
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         template <typename TClass>
         inline TClass* dynamicObjectCast() const
         {

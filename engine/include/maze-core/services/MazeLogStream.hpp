@@ -52,7 +52,7 @@ namespace Maze
     {
     public:
         
-        ////////////////////////////////////
+        //////////////////////////////////////////
         LogStream(S32 _priority);
         
     protected:

@@ -36,7 +36,7 @@ namespace Maze
     //////////////////////////////////////////
     // Class Vec4DB
     //
-    ////////////////////////////////////
+    //////////////////////////////////////////
     Vec4DB const Vec4DB::c_false = { false, false, false, false };
     Vec4DB const Vec4DB::c_true = { true, true, true, true };
     

@@ -53,7 +53,7 @@ namespace Maze
     {
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     AssetRegularFilePtr AssetRegularFile::Create(Path const& _fullPath)
     {
         AssetRegularFilePtr result;

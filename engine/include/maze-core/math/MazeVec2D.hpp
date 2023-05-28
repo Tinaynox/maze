@@ -51,7 +51,7 @@ namespace Maze
     {
     public:
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         static Vec2D const c_zero;
         static Vec2D const c_one;
         static Vec2D const c_negativeOne;

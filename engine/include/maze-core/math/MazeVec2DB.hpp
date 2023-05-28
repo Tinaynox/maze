@@ -50,7 +50,7 @@ namespace Maze
     {
     public:
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         static Vec2DB const c_false;
         static Vec2DB const c_true;
 

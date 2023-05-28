@@ -156,7 +156,7 @@ namespace Maze
         return true;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool Texture2D::loadFromBuffer(
         ByteBufferPtr const& _buffer,
         PixelFormat::Enum _bufferPixelFormat,
@@ -167,7 +167,7 @@ namespace Maze
         return loadFromBuffers(buffers, _bufferPixelFormat, _size, _pixelFormat);
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool Texture2D::loadFromBuffers(
         Vector<ByteBufferPtr> const& _buffers,
         PixelFormat::Enum _bufferPixelFormat,

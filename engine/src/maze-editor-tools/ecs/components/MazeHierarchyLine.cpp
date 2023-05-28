@@ -381,7 +381,7 @@ namespace Maze
             m_iconRenderer->setColor(_color);
     }
 
-    /////////////////////////////////////////
+    //////////////////////////////////////////
     void HierarchyLine::setUserData(void* _userData)
     {
         if (m_userData == _userData)
@@ -394,7 +394,7 @@ namespace Maze
         eventUserDataChanged(m_userData);
     }
 
-    /////////////////////////////////////////
+    //////////////////////////////////////////
     void HierarchyLine::updateIcon()
     {
         if (m_type == HierarchyLineType::Entity)

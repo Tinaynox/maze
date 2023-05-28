@@ -87,10 +87,10 @@ namespace Maze
     {
     public:
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual ~WindowParams() {};
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         static WindowParamsPtr Create(
             Vec2DU _clientSize = Vec2DU(640, 480),
             U32 _bpp = 32,
@@ -101,7 +101,7 @@ namespace Maze
             S32 _iconSmall = 0,
             U8 _flags = WindowStyleFlags::Titlebar | WindowStyleFlags::CloseButton | WindowStyleFlags::Background);
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         static WindowParamsPtr Create(WindowParamsPtr const& _windowParams);
 
 
@@ -123,7 +123,7 @@ namespace Maze
 
     protected:
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         bool init(
             Vec2DU _clientSize = Vec2DU(640, 480),
             U32 _bpp = 32,
@@ -134,7 +134,7 @@ namespace Maze
             S32 _iconSmall = 0,
             U8 _flags = WindowStyleFlags::Titlebar | WindowStyleFlags::CloseButton | WindowStyleFlags::Background);
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual bool init(WindowParamsPtr const& _windowParams);
     };
 

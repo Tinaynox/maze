@@ -51,7 +51,7 @@ namespace Maze
     {
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     AssetRegularArchivePtr AssetRegularArchive::Create(Path const& _fullPath)
     {
         AssetRegularArchivePtr result;

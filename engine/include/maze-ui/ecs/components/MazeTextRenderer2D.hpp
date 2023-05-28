@@ -257,7 +257,7 @@ namespace Maze
 
 
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline void setSymbolsLimit(U32 _symbolsLimit)
         {
             if (m_symbolsLimit == _symbolsLimit)
@@ -268,7 +268,7 @@ namespace Maze
             updateMeshData();
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline U32 getSymbolsLimit() const { return m_symbolsLimit; }
 
 

@@ -156,7 +156,7 @@ namespace Maze
     {
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool WindowParamsWin::init(WindowParamsPtr const& _windowParams)
     {
         if (!WindowParams::init(_windowParams))
@@ -838,7 +838,7 @@ namespace Maze
         return true;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void WindowWin::setClientSize(Vec2DU const& _size)
     {
         m_params->clientSize = _size;

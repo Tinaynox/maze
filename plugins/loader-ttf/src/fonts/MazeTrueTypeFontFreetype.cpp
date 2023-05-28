@@ -161,7 +161,7 @@ namespace Maze
         return true;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     TTFPagePtr const& TrueTypeFontFreetype::ensureTTFPage(U32 _fontSize)
     {
         TTFPagePtr& page = m_pages[_fontSize];
@@ -173,7 +173,7 @@ namespace Maze
         return page;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     TTFPagePtr const& TrueTypeFontFreetype::ensureTTFOutlineThicknessPage(U32 _fontSize, F32 _outlineThickness)
     {
         U64 key = getTTFOutlineGlyphKey(_fontSize, _outlineThickness);
@@ -187,7 +187,7 @@ namespace Maze
         return page;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     FontGlyph const& TrueTypeFontFreetype::ensureGlyph(U32 _codePoint, U32 _fontSize, TTFPagePtr const& _page)
     {
         // Get the page corresponding to the character size
@@ -208,13 +208,13 @@ namespace Maze
         }
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     FontGlyph const& TrueTypeFontFreetype::ensureGlyph(U32 _codePoint, U32 _fontSize)
     {
         return ensureGlyph(_codePoint, _fontSize, ensureTTFPage(_fontSize));
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     FontGlyph const& TrueTypeFontFreetype::ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr const& _page)
     {
         // Get the page corresponding to the character size
@@ -233,13 +233,13 @@ namespace Maze
         }
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     FontGlyph const& TrueTypeFontFreetype::ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness)
     {
         return ensureOutlinedGlyph(_codePoint, _fontSize, _outlineThickness, ensureTTFOutlineThicknessPage(_fontSize, _outlineThickness));
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     F32 TrueTypeFontFreetype::getLineSpacing(U32 _fontSize)
     {
         if (m_face && selectFTPixelSize(_fontSize))
@@ -272,7 +272,7 @@ namespace Maze
         return 0.0f;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     F32 TrueTypeFontFreetype::getKerning(U32 _first, U32 _second, U32 _fontSize)
     {
         // Special case where first or second is 0 (null character)
@@ -302,7 +302,7 @@ namespace Maze
         return 0.0f;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     F32 TrueTypeFontFreetype::getUnderlinePosition(U32 _fontSize)
     {
         if (m_face && selectFTPixelSize(_fontSize))
@@ -317,7 +317,7 @@ namespace Maze
         return 0.0f;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     F32 TrueTypeFontFreetype::getUnderlineThickness(U32 _fontSize)
     {
         if (m_face && selectFTPixelSize(_fontSize))
@@ -366,7 +366,7 @@ namespace Maze
         }
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool TrueTypeFontFreetype::selectFTPixelSize(U32 _characterSize)
     {
         FT_UShort currentSize = m_face->size->metrics.x_ppem;

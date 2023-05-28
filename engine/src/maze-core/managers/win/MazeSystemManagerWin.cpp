@@ -62,7 +62,7 @@ namespace Maze
         return true;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     String SystemManagerWin::getClipboardAsString()
     {
         if (!OpenClipboard(nullptr))
@@ -87,7 +87,7 @@ namespace Maze
         return text;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void SystemManagerWin::setClipboardString(String const& _text)
     {
         if (!OpenClipboard(nullptr))

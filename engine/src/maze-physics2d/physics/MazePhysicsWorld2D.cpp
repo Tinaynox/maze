@@ -89,7 +89,7 @@ namespace Maze
         return true;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void PhysicsWorld2D::setGravity(Vec2DF const& _gravityUnits)
     {
         if (!m_world)
@@ -186,7 +186,7 @@ namespace Maze
         Debug::log << "Box2D world destroyed." << endl;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void PhysicsWorld2D::clear()
     {
         m_size = Vec2DF::c_zero;
@@ -201,7 +201,7 @@ namespace Maze
         eventClear();
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void PhysicsWorld2D::destroyDefaultBodies()
     {
         if (!m_world)
@@ -220,7 +220,7 @@ namespace Maze
         }
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void PhysicsWorld2D::createDefaultBodies()
     {
         if (!m_world)
@@ -257,7 +257,7 @@ namespace Maze
         bottomWall->SetFriction(1.0f);
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void PhysicsWorld2D::BeginContact(b2Contact* _contact)
     {
         b2Fixture* fixtureA = _contact->GetFixtureA();
@@ -327,7 +327,7 @@ namespace Maze
         }
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void PhysicsWorld2D::PreSolve(b2Contact* _contact, const b2Manifold* _oldManifold)
     {
         b2Fixture* fixtureA = _contact->GetFixtureA();
@@ -397,7 +397,7 @@ namespace Maze
         }
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void PhysicsWorld2D::PostSolve(b2Contact* _contact, const b2ContactImpulse* _impulse)
     {
         b2Fixture* fixtureA = _contact->GetFixtureA();
@@ -442,7 +442,7 @@ namespace Maze
         }
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void PhysicsWorld2D::EndContact(b2Contact* _contact)
     {
         b2Fixture* fixtureA = _contact->GetFixtureA();

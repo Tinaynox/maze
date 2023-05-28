@@ -44,7 +44,7 @@ namespace Maze
     //////////////////////////////////////////
     namespace InputHelper
     {
-        ////////////////////////////////////
+        //////////////////////////////////////////
         MAZE_CORE_API KeyCode ConvertVirtualCodeToKeyCode(S64 _virtualCode, U32 _modifiers)
         {
             switch (_virtualCode)
@@ -282,7 +282,7 @@ namespace Maze
             return KeyCode::None;
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         MAZE_CORE_API S64 ConvertKeyCodeToVirtualCode(KeyCode _keyCode, U32 _modifiers)
         {
             switch (_keyCode)

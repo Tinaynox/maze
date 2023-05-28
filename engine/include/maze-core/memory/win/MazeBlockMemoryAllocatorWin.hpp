@@ -91,7 +91,7 @@ namespace Maze
     {
     public:
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         BlockMemoryAllocatorWin()
             : m_head(nullptr)
         {
@@ -99,16 +99,16 @@ namespace Maze
             m_alignedBlocksPerPage = TPageSize / m_alignedBlockSize;
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         ~BlockMemoryAllocatorWin()
         {
             
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline static SharedPtr<BlockMemoryAllocatorWin> Create() { return std::make_shared<BlockMemoryAllocatorWin>(); }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         void* allocBlock()
         {
             MAZE_MUTEX_SCOPED_LOCK(m_mutex);
@@ -121,7 +121,7 @@ namespace Maze
             return tmp;
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         void freeBlock(void* _tmp) 
         {
             MAZE_MUTEX_SCOPED_LOCK(m_mutex);
@@ -130,13 +130,13 @@ namespace Maze
             m_head = _tmp;
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual CString getName() MAZE_OVERRIDE
         { 
             return ClassInfo<BlockMemoryAllocatorWin<TBlockSize, TPageSize, TAlignment>>::Name();
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual Size getAllocatedMemorySize() MAZE_OVERRIDE
         { 
             return getPagesCount() * TPageSize; 
@@ -144,7 +144,7 @@ namespace Maze
 
     protected:
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         void formatNewPage()
         {
             void* tmp = allocPage();

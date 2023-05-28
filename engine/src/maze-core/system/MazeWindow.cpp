@@ -38,7 +38,7 @@ namespace Maze
     //////////////////////////////////////////
     // Struct WindowParams
     //
-    ////////////////////////////////////
+    //////////////////////////////////////////
     WindowParamsPtr WindowParams::Create(
         Vec2DU _clientSize,
         U32 _bpp,
@@ -65,7 +65,7 @@ namespace Maze
         return object;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     WindowParamsPtr WindowParams::Create(WindowParamsPtr const& _windowParams)
     {
         WindowParamsPtr object;
@@ -99,7 +99,7 @@ namespace Maze
         return true;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool WindowParams::init(WindowParamsPtr const& _windowParams)
     {
         clientSize = _windowParams->clientSize;

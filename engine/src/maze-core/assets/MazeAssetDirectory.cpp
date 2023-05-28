@@ -52,7 +52,7 @@ namespace Maze
     {
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     AssetDirectoryPtr AssetDirectory::Create(Path const& _fullPath)
     {
         AssetDirectoryPtr result;

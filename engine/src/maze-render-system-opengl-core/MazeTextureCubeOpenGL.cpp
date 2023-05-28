@@ -309,7 +309,7 @@ namespace Maze
         return true;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool TextureCubeOpenGL::setMagFilter(TextureFilter _value)
     {
         if (m_magFilter == _value)
@@ -328,7 +328,7 @@ namespace Maze
         return true;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool TextureCubeOpenGL::setMinFilter(TextureFilter _value)
     {
         if (m_minFilter == _value)
@@ -348,7 +348,7 @@ namespace Maze
 
         return true;
     }
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool TextureCubeOpenGL::setWrapS(TextureWrap _value)
     {
         if (m_wrapS == _value)
@@ -368,7 +368,7 @@ namespace Maze
         return true;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool TextureCubeOpenGL::setWrapT(TextureWrap _value)
     {
         if (m_wrapT == _value)
@@ -387,7 +387,7 @@ namespace Maze
         return true;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool TextureCubeOpenGL::setWrapR(TextureWrap _value)
     {
         if (m_wrapR == _value)

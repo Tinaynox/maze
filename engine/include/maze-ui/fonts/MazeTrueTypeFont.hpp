@@ -168,25 +168,25 @@ namespace Maze
             ByteBuffer const& _byteBuffer) MAZE_ABSTRACT;
 
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual TTFPagePtr const& ensureTTFPage(U32 _fontSize) MAZE_ABSTRACT;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual TTFPagePtr const& ensureTTFOutlineThicknessPage(U32 _fontSize, F32 _outlineThickness) MAZE_ABSTRACT;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual FontGlyph const& ensureGlyph(U32 _codePoint, U32 _fontSize, TTFPagePtr const& _page) MAZE_ABSTRACT;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual FontGlyph const& ensureGlyph(U32 _codePoint, U32 _fontSize) MAZE_ABSTRACT;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual FontGlyph const& ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr const& _page) MAZE_ABSTRACT;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual FontGlyph const& ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness) MAZE_ABSTRACT;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual F32 getLineSpacing(U32 _fontSize) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
@@ -195,13 +195,13 @@ namespace Maze
         //////////////////////////////////////////
         virtual F32 getDescender(U32 _fontSize) MAZE_ABSTRACT;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual F32 getKerning(U32 _first, U32 _second, U32 _fontSize) MAZE_ABSTRACT;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual F32 getUnderlinePosition(U32 _fontSize) MAZE_ABSTRACT;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual F32 getUnderlineThickness(U32 _fontSize) MAZE_ABSTRACT;
 
         

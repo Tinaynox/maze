@@ -118,7 +118,7 @@ namespace Maze
             setSamplingMode(ParticleSystemParameterColorSamplingMode::Color);
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         void setRandomBetweenColors(Vec4DF const& _value0, Vec4DF const& _value1)
         {
             m_color0 = _value0;

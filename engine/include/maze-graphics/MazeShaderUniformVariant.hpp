@@ -371,7 +371,7 @@ namespace Maze
         //////////////////////////////////////////
         inline void set(Mat3DF const& _matrix) { m_matrix3DF = _matrix; m_type = ShaderUniformType::UniformMat3DF; }
                 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline void set(Mat4DF const& _matrix) { m_matrix4DF = _matrix; m_type = ShaderUniformType::UniformMat4DF; }
         
 

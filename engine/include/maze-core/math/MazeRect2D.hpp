@@ -51,7 +51,7 @@ namespace Maze
     {
     public:
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         static Rect2D const c_zero;
 
     public:
