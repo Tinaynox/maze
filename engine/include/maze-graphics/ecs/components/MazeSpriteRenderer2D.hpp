@@ -109,6 +109,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void setMaterial(MaterialPtr const& _material);
+
+        //////////////////////////////////////////
+        void setMaterial(CString _materialName);
             
 
         //////////////////////////////////////////

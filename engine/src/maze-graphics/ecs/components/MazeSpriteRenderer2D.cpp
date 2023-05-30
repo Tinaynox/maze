@@ -34,6 +34,7 @@
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
+#include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasRenderer.hpp"
@@ -160,6 +161,13 @@ namespace Maze
         m_material = _material ? _material->createCopy() : MaterialPtr();
 
         updateMaterial();
+    }
+
+    //////////////////////////////////////////
+    void SpriteRenderer2D::setMaterial(CString _materialName)
+    {
+        MaterialPtr material = MaterialManager::GetCurrentInstance()->getMaterial(_materialName);
+        setMaterial(material);
     }
 
     //////////////////////////////////////////
