@@ -64,7 +64,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SpriteRenderer2D, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(SpritePtr, sprite, SpritePtr(), getSprite, setSprite),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(MaterialPtr, material, MaterialPtr(), getMaterial, setMaterial),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(MaterialPtr, material, MaterialPtr(), getMaterial, setMaterialCopy),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, color, ColorU32::c_white, getColor, setColor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(SpriteRenderMode, renderMode, SpriteRenderMode::Simple, getRenderMode, setRenderMode));
 
@@ -158,7 +158,7 @@ namespace Maze
         if (m_material == _material)
             return;
 
-        m_material = _material ? _material->createCopy() : MaterialPtr();
+        m_material = _material;
 
         updateMaterial();
     }
@@ -166,8 +166,22 @@ namespace Maze
     //////////////////////////////////////////
     void SpriteRenderer2D::setMaterial(CString _materialName)
     {
-        MaterialPtr material = MaterialManager::GetCurrentInstance()->getMaterial(_materialName);
+        MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getMaterial(_materialName);
         setMaterial(material);
+    }
+
+    //////////////////////////////////////////
+    void SpriteRenderer2D::setMaterialCopy(MaterialPtr const& _material)
+    {
+        m_material = _material ? _material->createCopy() : MaterialPtr();
+        updateMaterial();
+    }
+
+    //////////////////////////////////////////
+    void SpriteRenderer2D::setMaterialCopy(CString _materialName)
+    {
+        MaterialPtr const& material = MaterialManager::GetCurrentInstance()->getMaterial(_materialName);
+        setMaterialCopy(material);
     }
 
     //////////////////////////////////////////

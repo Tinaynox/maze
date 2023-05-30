@@ -112,6 +112,12 @@ namespace Maze
 
         //////////////////////////////////////////
         void setMaterial(CString _materialName);
+
+        //////////////////////////////////////////
+        void setMaterialCopy(MaterialPtr const& _material);
+
+        //////////////////////////////////////////
+        void setMaterialCopy(CString _materialName);
             
 
         //////////////////////////////////////////

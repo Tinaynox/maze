@@ -123,6 +123,9 @@ namespace Maze
         //////////////////////////////////////////
         void setAlphaPower(F32 _alphaPower) { m_alphaPower = _alphaPower; }
 
+        //////////////////////////////////////////
+        inline F32 getShowTime() const { return m_showTime; }
+
 
         //////////////////////////////////////////
         void processUpdate(F32 _dt);
