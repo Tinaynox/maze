@@ -35,6 +35,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
 #include "maze-core/utils/MazeDelegate.hpp"
+#include "maze-core/math/MazeAnimationCurve.hpp"
 
 
 //////////////////////////////////////////
@@ -83,6 +84,17 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline AnimationCurve const& getAnimationCurve() const { return m_animationCurve; }
+
+        //////////////////////////////////////////
+        inline void setAnimationCurve(AnimationCurve const& _value)
+        {
+            m_animationCurve = _value;
+            updateCanvasGroup();
+        }
+
+
+        //////////////////////////////////////////
         inline F32 getHidingProgress() const { return m_hidingProgress; }
 
 
@@ -105,13 +117,21 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setHiddenAlpha(F32 _value) { m_hiddenAlpha = _value; }
+        inline void setHiddenAlpha(F32 _value)
+        {
+            m_hiddenAlpha = _value;
+            updateCanvasGroup();
+        }
 
         //////////////////////////////////////////
         inline F32 getHiddenAlpha() const { return m_hiddenAlpha; }
 
         //////////////////////////////////////////
-        inline void setShownAlpha(F32 _value) { m_shownAlpha = _value; }
+        inline void setShownAlpha(F32 _value)
+        {
+            m_shownAlpha = _value;
+            updateCanvasGroup();
+        }
 
         //////////////////////////////////////////
         inline F32 getShownAlpha() const { return m_shownAlpha; }
@@ -179,6 +199,7 @@ namespace Maze
         bool m_unscaledDeltaTime = false;
 
         bool m_isHidden;
+        AnimationCurve m_animationCurve = AnimationCurve::c_smooth01;
         F32 m_showTime;
         F32 m_hideKoef;
         F32 m_hiddenAlpha;

@@ -45,6 +45,7 @@
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
+#include "maze-ui/ecs/components/MazeUITweenTransitionTranslation.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
 
 
@@ -106,6 +107,7 @@ namespace Maze
     protected:
         SharedPtr<GenericInclusiveEntitiesSample<UITweenTransitionAlpha>> m_UITweenTransitionAlphaSample;
         SharedPtr<GenericInclusiveEntitiesSample<UITweenTransitionScale>> m_UITweenTransitionScaleSample;
+        SharedPtr<GenericInclusiveEntitiesSample<UITweenTransitionTranslation>> m_UITweenTransitionTranslationSample;
     };
 
 

@@ -99,7 +99,7 @@ namespace Maze
         virtual ~SceneCurveEditor();
 
         //////////////////////////////////////////
-        void setup(AnimationCurveMinMaxMode _mode);
+        void setup();
 
         //////////////////////////////////////////
         virtual void update(F32 _dt) MAZE_OVERRIDE;
@@ -126,6 +126,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void notifyModeChanged(Dropdown2D* _dropdown, S32 _index);
+
+        //////////////////////////////////////////
+        void notifyMinMaxModeChanged(Dropdown2D* _dropdown, S32 _index);
 
 
         //////////////////////////////////////////
@@ -190,13 +193,16 @@ namespace Maze
         //////////////////////////////////////////
         void notifyOutTangentEditTextInput(EditBox2D* _edit);
 
+
+        //////////////////////////////////////////
+        void updateNormalization();
+
     protected:
         CanvasPtr m_canvas;
         UIElement2DPtr m_canvasUIElement;
 
-        AnimationCurveMinMaxMode m_minMaxMode = AnimationCurveMinMaxMode::None;
-
         Dropdown2DPtr m_modeDropdown;
+        Dropdown2DPtr m_minMaxModeDropdown;
         ClickButton2DPtr m_copyButton;
         ClickButton2DPtr m_pasteButton;
         ClickButton2DPtr m_copyXMLButton;

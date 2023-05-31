@@ -25,15 +25,15 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeUITweenTransitionScale_hpp_))
-#define _MazeUITweenTransitionScale_hpp_
+#if (!defined(_MazeUITweenTransitionTranslation_hpp_))
+#define _MazeUITweenTransitionTranslation_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
+#include "maze-ui/ecs/components/MazeUITweenTransitionTranslation.hpp"
 #include "maze-core/utils/MazeDelegate.hpp"
 #include "maze-core/math/MazeAnimationCurve.hpp"
 
@@ -44,25 +44,25 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(Transform2D);
-    MAZE_USING_SHARED_PTR(UITweenTransitionScale);
+    MAZE_USING_SHARED_PTR(UITweenTransitionTranslation);
     MAZE_USING_SHARED_PTR(UIElement2D);
     MAZE_USING_SHARED_PTR(CanvasGroup);
 
 
     //////////////////////////////////////////
-    // Class UITweenTransitionScale
+    // Class UITweenTransitionTranslation
     //
     //////////////////////////////////////////
-    class MAZE_UI_API UITweenTransitionScale
+    class MAZE_UI_API UITweenTransitionTranslation
         : public Component
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(UITweenTransitionScale, Component);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(UITweenTransitionTranslation, Component);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(UITweenTransitionScale);
+        MAZE_DECLARE_MEMORY_ALLOCATION(UITweenTransitionTranslation);
 
         //////////////////////////////////////////
         friend class Entity;
@@ -70,10 +70,10 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~UITweenTransitionScale();
+        virtual ~UITweenTransitionTranslation();
 
         //////////////////////////////////////////
-        static UITweenTransitionScalePtr Create();
+        static UITweenTransitionTranslationPtr Create();
 
 
         //////////////////////////////////////////
@@ -99,22 +99,22 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        Vec2DF const& getHiddenScale() const { return m_hiddenScale; }
+        Vec2DF const& getHiddenPosition() const { return m_hiddenPosition; }
 
         //////////////////////////////////////////
-        void setHiddenScale(Vec2DF const& _hiddenScale)
+        void setHiddenPosition(Vec2DF const& _hiddenPosition)
         {
-            m_hiddenScale = _hiddenScale;
+            m_hiddenPosition = _hiddenPosition;
             updateTransform();
         }
 
         //////////////////////////////////////////
-        Vec2DF const& getShownScale() const { return m_shownScale; }
+        Vec2DF const& getShownPosition() const { return m_shownPosition; }
 
         //////////////////////////////////////////
-        void setShownScale(Vec2DF const& _shownScale)
+        void setShownPosition(Vec2DF const& _shownPosition)
         {
-            m_shownScale = _shownScale;
+            m_shownPosition = _shownPosition;
             updateTransform();
         }
 
@@ -158,7 +158,7 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        UITweenTransitionScale();
+        UITweenTransitionTranslation();
 
         //////////////////////////////////////////
         using Component::init;
@@ -180,16 +180,16 @@ namespace Maze
 
         bool m_unscaledDeltaTime = false;
 
-        bool m_isHidden;
+        bool m_isHidden = true;
         AnimationCurve m_animationCurve = AnimationCurve::c_linear01;
-        F32 m_showTime;
-        F32 m_hideKoef;
-        Vec2DF m_hiddenScale;
-        Vec2DF m_shownScale;
+        F32 m_showTime = 0.3f;
+        F32 m_hideKoef = 1.0f;
+        Vec2DF m_hiddenPosition = Vec2DF::c_zero;
+        Vec2DF m_shownPosition = Vec2DF::c_zero;
 
-        F32 m_hidingProgress;
-        F32 m_showSpeed;
-        F32 m_hideSpeed;
+        F32 m_hidingProgress = 1.0f;
+        F32 m_showSpeed = 0.0f;
+        F32 m_hideSpeed = 0.0f;
 
         Delegate<void> m_onShowComplete;
         Delegate<void> m_onHideComplete;
@@ -200,5 +200,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeUITweenTransitionScale_hpp_
+#endif // _MazeUITweenTransitionTranslation_hpp_
 //////////////////////////////////////////

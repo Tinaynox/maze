@@ -164,8 +164,7 @@ namespace Maze
             {
                 setCurve(_value);
             },
-            m_curve,
-            getMinMaxMode());
+            m_curve);
 
         eventClick(this);
     }

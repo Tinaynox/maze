@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeUIHeader.hpp"
-#include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
+#include "maze-ui/ecs/components/MazeUITweenTransitionTranslation.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
@@ -45,50 +45,42 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class UITweenTransitionScale
+    // Class UITweenTransitionTranslation
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UITweenTransitionScale, Component);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UITweenTransitionTranslation, Component);
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(UITweenTransitionScale);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(UITweenTransitionTranslation);
 
     //////////////////////////////////////////
-    UITweenTransitionScale::UITweenTransitionScale()
-        : m_isHidden(true)
-        , m_showTime(0.3f)
-        , m_hideKoef(1.0f)
-        , m_hiddenScale(Vec2DF::c_zero)
-        , m_shownScale(Vec2DF::c_one)
-        , m_hidingProgress(1.0f)
-        , m_showSpeed(0.0f)
-        , m_hideSpeed(0.0f)
+    UITweenTransitionTranslation::UITweenTransitionTranslation()
     {
     }
 
     //////////////////////////////////////////
-    UITweenTransitionScale::~UITweenTransitionScale()
+    UITweenTransitionTranslation::~UITweenTransitionTranslation()
     {
 
     }
 
     //////////////////////////////////////////
-    UITweenTransitionScalePtr UITweenTransitionScale::Create()
+    UITweenTransitionTranslationPtr UITweenTransitionTranslation::Create()
     {
-        UITweenTransitionScalePtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(UITweenTransitionScale, object, init());
+        UITweenTransitionTranslationPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(UITweenTransitionTranslation, object, init());
         return object;
     }
 
     //////////////////////////////////////////
-    bool UITweenTransitionScale::init()
+    bool UITweenTransitionTranslation::init()
     {
 
         return true;
     }
 
     //////////////////////////////////////////
-    void UITweenTransitionScale::processEntityAwakened()
+    void UITweenTransitionTranslation::processEntityAwakened()
     {
         m_transform = getEntityRaw()->ensureComponent<Transform2D>();
 
@@ -103,7 +95,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void UITweenTransitionScale::setHidden(bool _isHidden, bool _resetProgress)
+    void UITweenTransitionTranslation::setHidden(bool _isHidden, bool _resetProgress)
     {
         if (m_isHidden == _isHidden)
             return;
@@ -126,7 +118,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void UITweenTransitionScale::setShowTime(F32 _showTime)
+    void UITweenTransitionTranslation::setShowTime(F32 _showTime)
     {
         if (m_showTime == _showTime)
             return;
@@ -137,7 +129,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void UITweenTransitionScale::processUpdate(F32 _dt)
+    void UITweenTransitionTranslation::processUpdate(F32 _dt)
     {
         if (m_unscaledDeltaTime)
             _dt = UpdateManager::GetInstancePtr()->getUnscaledDeltaTime();
@@ -181,7 +173,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void UITweenTransitionScale::show(Delegate<void> const& _onComplete)
+    void UITweenTransitionTranslation::show(Delegate<void> const& _onComplete)
     {
         m_onShowComplete = _onComplete;
 
@@ -189,7 +181,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void UITweenTransitionScale::hide(Delegate<void> const& _onComplete)
+    void UITweenTransitionTranslation::hide(Delegate<void> const& _onComplete)
     {
         m_onHideComplete = _onComplete;
 
@@ -197,7 +189,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void UITweenTransitionScale::showInstantly()
+    void UITweenTransitionTranslation::showInstantly()
     {
         m_isHidden = false;
         m_hidingProgress = 0.0f;
@@ -213,7 +205,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void UITweenTransitionScale::hideInstantly()
+    void UITweenTransitionTranslation::hideInstantly()
     {
         m_isHidden = true;
         m_hidingProgress = 1.0f;
@@ -229,18 +221,18 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void UITweenTransitionScale::updateTransform()
+    void UITweenTransitionTranslation::updateTransform()
     {
         F32 showingProgress = 1.0f - m_hidingProgress;
 
         F32 progress = m_animationCurve.evaluate(showingProgress);
-        Vec2DF scale = Math::Lerp(m_hiddenScale, m_shownScale, progress);
+        Vec2DF position = Math::Lerp(m_hiddenPosition, m_shownPosition, progress);
 
-        m_transform->setLocalScale(scale);
+        m_transform->setLocalPosition(position);
     }
 
     //////////////////////////////////////////
-    void UITweenTransitionScale::updateShowSpeed()
+    void UITweenTransitionTranslation::updateShowSpeed()
     {
         if (m_showTime > 0.0f)
             m_showSpeed = 1.0f / m_showTime;
@@ -251,7 +243,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void UITweenTransitionScale::updateHideSpeed()
+    void UITweenTransitionTranslation::updateHideSpeed()
     {
         if (m_hideKoef > 0.0f)
             m_hideSpeed = m_showSpeed / m_hideKoef;

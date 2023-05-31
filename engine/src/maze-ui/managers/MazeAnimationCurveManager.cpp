@@ -84,8 +84,7 @@ namespace Maze
     //////////////////////////////////////////
     void AnimationCurveManager::openCurveEditor(
         AnimationCurveCallback _callback,
-        AnimationCurve const& _curve,
-        AnimationCurveMinMaxMode _mode)
+        AnimationCurve const& _curve)
     {
         m_callback = nullptr;
 
@@ -93,7 +92,7 @@ namespace Maze
 
         m_callback = _callback;
 
-        openAnimationCurveEditorWindow(_mode);
+        openAnimationCurveEditorWindow();
     }
 
     //////////////////////////////////////////
@@ -108,7 +107,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AnimationCurveManager::openAnimationCurveEditorWindow(AnimationCurveMinMaxMode _mode)
+    void AnimationCurveManager::openAnimationCurveEditorWindow()
     {
         if (m_animationCurveEditorRenderWindow &&
             m_animationCurveEditorRenderWindow->getWindow() &&
@@ -116,7 +115,7 @@ namespace Maze
         {
             m_animationCurveEditorRenderWindow->getWindow()->setFocused(true);
 
-            openAnimationCurveEditorScene(_mode);
+            openAnimationCurveEditorScene();
 
             return;
         }
@@ -137,7 +136,7 @@ namespace Maze
             m_animationCurveEditorRenderWindow->getWindow()->eventWindowWillClose.subscribe(this, &AnimationCurveManager::notifyWindowWillClose);
             m_animationCurveEditorRenderWindow->getWindow()->eventWindowFocusChanged.subscribe(this, &AnimationCurveManager::notifyWindowFocusChanged);
 
-            openAnimationCurveEditorScene(_mode);
+            openAnimationCurveEditorScene();
         }
     }
 
@@ -161,7 +160,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AnimationCurveManager::openAnimationCurveEditorScene(AnimationCurveMinMaxMode _mode)
+    void AnimationCurveManager::openAnimationCurveEditorScene()
     {
         SceneCurveEditorPtr scene = SceneManager::GetInstancePtr()->getScene<SceneCurveEditor>();
         if (!scene)
@@ -169,7 +168,7 @@ namespace Maze
             scene = SceneManager::GetInstancePtr()->loadScene<SceneCurveEditor>(true, m_animationCurveEditorRenderWindow);
         }
 
-        scene->setup(_mode);
+        scene->setup();
     }
 
     //////////////////////////////////////////
