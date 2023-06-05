@@ -86,8 +86,7 @@ namespace Maze
         //////////////////////////////////////////
         void openCurveEditor(
             AnimationCurveCallback _callback = nullptr,
-            AnimationCurve const& _curve = AnimationCurve(0.0f, 0.0f, 1.0f, 1.0f),
-            AnimationCurveMinMaxMode _mode = AnimationCurveMinMaxMode::NormalizedPositive);
+            AnimationCurve const& _curve = AnimationCurve(0.0f, 0.0f, 1.0f, 1.0f));
 
 
         //////////////////////////////////////////
@@ -118,13 +117,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void openAnimationCurveEditorWindow(AnimationCurveMinMaxMode _mode);
+        void openAnimationCurveEditorWindow();
 
         //////////////////////////////////////////
         void closeAnimationCurveEditorWindow();
 
         //////////////////////////////////////////
-        void openAnimationCurveEditorScene(AnimationCurveMinMaxMode _mode);
+        void openAnimationCurveEditorScene();
 
         //////////////////////////////////////////
         void closeAnimationCurveEditorScene();

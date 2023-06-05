@@ -37,7 +37,7 @@ namespace Maze
     namespace Hash
     {
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         // Define
 #if ((defined(__GNUC__) && defined(__i386__)) || defined(__WATCOMC__) \
   || defined(_MSC_VER) || defined (__BORLANDC__) || defined (__TURBOC__))

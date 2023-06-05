@@ -105,7 +105,7 @@ namespace Maze
         {
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         template <class UValue>
         inline MAZE_CONSTEXPR Vec3D(Vec2D<UValue> const& _vec, UValue _z = 0)
             : x(static_cast<TValue>(_vec.x))

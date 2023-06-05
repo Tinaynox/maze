@@ -298,7 +298,7 @@ namespace Maze
         m_assetFilesUpdateTimeUTC.erase(_file);
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void AssetManager::updateFileInfo(AssetFilePtr const& _file)
     {
         Set<String> tags;

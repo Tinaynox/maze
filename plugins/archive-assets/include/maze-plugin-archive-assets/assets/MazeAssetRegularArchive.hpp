@@ -77,7 +77,7 @@ namespace Maze
         //////////////////////////////////////////
         virtual ~AssetRegularArchive();
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         static AssetRegularArchivePtr Create(Path const& _fullPath);
 
 

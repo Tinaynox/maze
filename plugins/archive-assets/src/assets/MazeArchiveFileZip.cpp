@@ -275,20 +275,20 @@ namespace Maze
         return it->second.uncompressedSize;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     FileStats ArchiveFileZip::getArchivedFileStats(Path const& _filePath)
     {
         // #TODO: Implement
         return FileStats();
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool ArchiveFileZip::isFileExists()
     {
         return FileHelper::IsFileExists(m_fullPath);
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool ArchiveFileZip::isFileExists(Path const& _filePath)
     {
         if (!isFileExists())

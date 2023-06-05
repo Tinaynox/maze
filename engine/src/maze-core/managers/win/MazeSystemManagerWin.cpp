@@ -62,7 +62,7 @@ namespace Maze
         return true;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     String SystemManagerWin::getClipboardAsString()
     {
         if (!OpenClipboard(nullptr))
@@ -87,7 +87,7 @@ namespace Maze
         return text;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void SystemManagerWin::setClipboardString(String const& _text)
     {
         if (!OpenClipboard(nullptr))
@@ -118,6 +118,20 @@ namespace Maze
     void SystemManagerWin::hideSystemCursor()
     {
         while (::ShowCursor(FALSE) >= 0);
+    }
+
+    //////////////////////////////////////////
+    void SystemManagerWin::setSystemCursorPosition(Vec2DF _posSystemScreen)
+    {
+        ::SetCursorPos((S32)_posSystemScreen.x, (S32)_posSystemScreen.y);
+    }
+
+    //////////////////////////////////////////
+    Vec2DF SystemManagerWin::getSystemCursorPosition()
+    {
+        ::POINT lp;
+        GetCursorPos(&lp);
+        return Vec2DF((F32)lp.x, (F32)lp.y);
     }
 
 } // namespace Maze

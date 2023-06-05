@@ -77,25 +77,25 @@ namespace Maze
             ByteBuffer const& _byteBuffer) MAZE_OVERRIDE;
 
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual TTFPagePtr const& ensureTTFPage(U32 _fontSize) MAZE_OVERRIDE;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual TTFPagePtr const& ensureTTFOutlineThicknessPage(U32 _fontSize, F32 _outlineThickness) MAZE_OVERRIDE;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual FontGlyph const& ensureGlyph(U32 _codePoint, U32 _fontSize, TTFPagePtr const& _page) MAZE_OVERRIDE;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual FontGlyph const& ensureGlyph(U32 _codePoint, U32 _fontSize) MAZE_OVERRIDE;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual FontGlyph const& ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness, TTFPagePtr const& _page) MAZE_OVERRIDE;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual FontGlyph const& ensureOutlinedGlyph(U32 _codePoint, U32 _fontSize, F32 _outlineThickness) MAZE_OVERRIDE;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual F32 getLineSpacing(U32 _fontSize) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
@@ -104,13 +104,13 @@ namespace Maze
         //////////////////////////////////////////
         virtual F32 getDescender(U32 _fontSize) MAZE_OVERRIDE;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual F32 getKerning(U32 _first, U32 _second, U32 _fontSize) MAZE_OVERRIDE;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual F32 getUnderlinePosition(U32 _fontSize) MAZE_OVERRIDE;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual F32 getUnderlineThickness(U32 _fontSize) MAZE_OVERRIDE;
 
         
@@ -129,23 +129,23 @@ namespace Maze
         virtual bool init() MAZE_OVERRIDE;
 
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         bool selectFTPixelSize(U32 _characterSize);
 
         //////////////////////////////////////////
         void cleanupFreeType();
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline FontGlyph loadGlyph(
             TTFPagePtr const& _page,
             U32 _codePoint,
             U32 _fontSize,
             F32 _outlineThickness = 0.0f);
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline Rect2DS findGlyphRect(TTFPagePtr const& _page, U32 _width, U32 _height);
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline U64 getTTFOutlineGlyphKey(U32 _fontSize, F32 _outlineThickness) const
         {
             return (static_cast<U64>(*reinterpret_cast<U32*>(&_outlineThickness)) << 32) | (static_cast<U64>(_fontSize));
@@ -166,7 +166,7 @@ namespace Maze
     };
 
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     FontGlyph TrueTypeFontFreetype::loadGlyph(
         TTFPagePtr const& _page,
         U32 _codePoint,
@@ -322,7 +322,7 @@ namespace Maze
     }
 
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     inline Rect2DS TrueTypeFontFreetype::findGlyphRect(TTFPagePtr const& _page, U32 _width, U32 _height)
     {
         // Find the line that fits well the glyph

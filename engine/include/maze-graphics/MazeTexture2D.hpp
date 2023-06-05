@@ -107,14 +107,14 @@ namespace Maze
             return loadEmpty(Vec2DU{_w, _h}, _pixelFormat);
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         bool loadFromBuffer(
             ByteBufferPtr const& _buffer,
             PixelFormat::Enum _bufferPixelFormat,
             Vec2DU const& _size,
             PixelFormat::Enum _pixelFormat);
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         bool loadFromBuffers(
             Vector<ByteBufferPtr> const& _buffers,
             PixelFormat::Enum _bufferPixelFormat,
@@ -140,34 +140,34 @@ namespace Maze
             PixelFormat::Enum _internalPixelFormat = PixelFormat::None);
 
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual bool setMagFilter(TextureFilter _value) MAZE_ABSTRACT;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline TextureFilter getMagFilter() const { return m_magFilter; }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual bool setMinFilter(TextureFilter _value) MAZE_ABSTRACT;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline TextureFilter getMinFilter() const { return m_minFilter; }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual bool setWrapS(TextureWrap _value) MAZE_ABSTRACT;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline TextureWrap getWrapS() const { return m_wrapS; }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual bool setWrapT(TextureWrap _value) MAZE_ABSTRACT;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline TextureWrap getWrapT() const { return m_wrapT; }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         PixelFormat::Enum getInternalPixelFormat() const { return m_internalPixelFormat; }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual void copyImageFrom(
             Texture2DPtr const& _texture,
             U32 _x = 0,
@@ -199,10 +199,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual void saveToFileAsTGA(String const& _fileName, Vec2DU _size = Vec2DU::c_zero) MAZE_ABSTRACT;
+        virtual void saveToFileAsTGA(
+            String const& _fileName,
+            Vec2DU _size = Vec2DU::c_zero,
+            bool _resetAlpha = false) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual PixelSheet2D readAsPixelSheet() MAZE_ABSTRACT;
+        virtual PixelSheet2D readAsPixelSheet(PixelFormat::Enum _outputFormat = PixelFormat::None) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual void generateMipmaps() MAZE_ABSTRACT;

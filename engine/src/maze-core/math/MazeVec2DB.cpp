@@ -36,7 +36,7 @@ namespace Maze
     //////////////////////////////////////////
     // Class Vec2DB
     //
-    ////////////////////////////////////
+    //////////////////////////////////////////
     Vec2DB const Vec2DB::c_false = { false, false };
     Vec2DB const Vec2DB::c_true = { true, true };
     

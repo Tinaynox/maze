@@ -45,6 +45,10 @@ endif()
 add_subdirectory("${MAZE_DIR}/third-party/libpng" "${CMAKE_CURRENT_BINARY_DIR}/third-party/libpng")
 set_property(TARGET ${PNGLIB_NAME} PROPERTY FOLDER "MazeThirdParty")
 set_property(TARGET genfiles PROPERTY FOLDER "MazeThirdParty")
+if(BUILD_SHARED_LIBS)
+    set_property(TARGET pngfix PROPERTY FOLDER "MazeThirdParty")
+    set_property(TARGET png-fix-itxt PROPERTY FOLDER "MazeThirdParty")
+endif()
 target_include_directories(
     ${PNGLIB_NAME}
     PUBLIC $<BUILD_INTERFACE:${MAZE_DIR}/third-party/libpng>

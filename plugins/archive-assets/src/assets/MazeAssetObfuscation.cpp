@@ -42,16 +42,16 @@
 namespace Maze
 { 
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     ObfuscationPasswordFunction g_obfuscationPasswordFunction = nullptr;
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     MAZE_PLUGIN_ARCHIVE_ASSETS_API void SetObfuscationPasswordFunction(ObfuscationPasswordFunction _func)
     {
         g_obfuscationPasswordFunction = _func;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     MAZE_PLUGIN_ARCHIVE_ASSETS_API String CallObfuscationPasswordFunction(Path const& _fileName)
     {
         if (g_obfuscationPasswordFunction)

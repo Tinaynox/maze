@@ -369,7 +369,7 @@ namespace Maze
                 }
 
                 sprite->setRenderMode(SpriteRenderMode::Simple);
-                sprite->setMaterial(materialCopy);
+                sprite->setMaterialCopy(materialCopy);
             }
         }
 

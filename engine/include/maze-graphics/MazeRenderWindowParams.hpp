@@ -51,7 +51,7 @@ namespace Maze
     //////////////////////////////////////////
     struct MAZE_GRAPHICS_API RenderWindowParams
     {
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline RenderWindowParams(
             RenderSystemPtr const& _renderSystem = RenderSystemPtr(),
             WindowParamsPtr _windowParams = WindowParamsPtr(),
@@ -62,7 +62,7 @@ namespace Maze
         {
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline WindowParamsPtr const& EnsureWindowParams()
         {
             if (!windowParams)

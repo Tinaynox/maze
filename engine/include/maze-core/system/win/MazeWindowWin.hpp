@@ -39,7 +39,7 @@
 //////////////////////////////////////////
 namespace Maze
 {
-    ///////////////////////////////////////
+    //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(WindowWin);
     MAZE_USING_SHARED_PTR(WindowParamsWin);
 
@@ -62,7 +62,7 @@ namespace Maze
     protected:
         WindowParamsWin();
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual bool init(WindowParamsPtr const& _windowParams);
 
     };
@@ -96,7 +96,7 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool isOpened() MAZE_OVERRIDE;
         
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual void setClientSize(Vec2DU const& _size) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
@@ -128,6 +128,12 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual DisplayPtr const& getRelatedDisplay() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual Vec2DF convertSystemScreenCoordsToWindowCoords(Vec2DF const& _posDS) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual Vec2DF convertWindowCoordsToSystemScreenCoords(Vec2DF const& _posWS) MAZE_OVERRIDE;
 
     protected:
 

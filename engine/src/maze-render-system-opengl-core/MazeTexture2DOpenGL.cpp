@@ -353,7 +353,7 @@ namespace Maze
         return true;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool Texture2DOpenGL::setMagFilter(TextureFilter _value)
     {
         if (m_magFilter == _value)
@@ -372,7 +372,7 @@ namespace Maze
         return true;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool Texture2DOpenGL::setMinFilter(TextureFilter _value)
     {
         if (m_minFilter == _value)
@@ -392,7 +392,7 @@ namespace Maze
 
         return true;
     }
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool Texture2DOpenGL::setWrapS(TextureWrap _value)
     {
         if (m_wrapS == _value)
@@ -412,7 +412,7 @@ namespace Maze
         return true;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool Texture2DOpenGL::setWrapT(TextureWrap _value)
     {
         if (m_wrapT == _value)
@@ -432,7 +432,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Texture2DOpenGL::saveToFileAsTGA(String const& _fileName, Vec2DU _size)
+    void Texture2DOpenGL::saveToFileAsTGA(
+        String const& _fileName,
+        Vec2DU _size,
+        bool _resetAlpha)
     {
         ContextOpenGLScopeBind contextScopedBind(m_context);
         MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
@@ -464,8 +467,7 @@ namespace Maze
         MAZE_DEBUG_BP_IF(h != m_size.y);
 
 
-        PixelFormat::Enum pixelFormat = m_internalPixelFormat;
-        pixelFormat = PixelFormat::RGBA_U8;
+        PixelFormat::Enum pixelFormat = PixelFormat::RGBA_U8;
 
         U32 bytesPerPixel = PixelFormat::GetBytesPerPixel(pixelFormat);
         U32 channelsPerPixel = PixelFormat::GetChannelsPerPixel(pixelFormat);
@@ -507,8 +509,15 @@ namespace Maze
                 if (channelsPerPixel > 2)
                     b = ConvertPixelChannelDataToU8(pixel + 2 * bytesPerChannel, pixelFormat);
 
-                if (channelsPerPixel > 3)
-                    a = ConvertPixelChannelDataToU8(pixel + 3 * bytesPerChannel, pixelFormat);
+                if (!_resetAlpha)
+                {
+                    if (channelsPerPixel > 3)
+                        a = ConvertPixelChannelDataToU8(pixel + 3 * bytesPerChannel, pixelFormat);
+                }
+                else
+                {
+                    a = 255;
+                }
 
                 // BGRA
                 *(tgaDataPointer++) = b;
@@ -532,19 +541,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PixelSheet2D Texture2DOpenGL::readAsPixelSheet()
-    {        
+    PixelSheet2D Texture2DOpenGL::readAsPixelSheet(
+        PixelFormat::Enum _outputFormat)
+    {   
+        if (_outputFormat == PixelFormat::None)
+            _outputFormat = m_internalPixelFormat;
+
         if (mzglGetTexImage)
         {
             PixelSheet2D result;
 
-            PixelFormat::Enum pixelFormat = m_internalPixelFormat;
-            result.setFormat(pixelFormat);
+            result.setFormat(_outputFormat);
             result.setSize(m_size);
 
-            MZGLint originFormat = GetOpenGLOriginFormat(pixelFormat);
-
-            MZGLint dataType = GetOpenGLDataType(pixelFormat);
+            MZGLint originFormat = GetOpenGLOriginFormat(_outputFormat);
+            MZGLint dataType = GetOpenGLDataType(_outputFormat);
 
             ContextOpenGLScopeBind contextScopedBind(m_context);
             MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
@@ -557,8 +568,9 @@ namespace Maze
 
         if (mzglFramebufferTexture2D)
         {
-            MAZE_GL_CALL(mzglPixelStorei(MAZE_GL_PACK_ALIGNMENT, 1));
+            MAZE_WARNING_IF(_outputFormat != PixelFormat::RGBA_U8, "Unsupported format - %d", _outputFormat);
 
+            MAZE_GL_CALL(mzglPixelStorei(MAZE_GL_PACK_ALIGNMENT, 1));
 
             MZGLint currentFBO = 0;
             MZGLuint tempFBO = 0;
@@ -637,7 +649,7 @@ namespace Maze
         return PixelSheet2D();
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void Texture2DOpenGL::copyImageFrom(
         Texture2DPtr const& _texture,
         U32 _x,

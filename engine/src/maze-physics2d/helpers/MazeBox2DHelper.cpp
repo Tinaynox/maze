@@ -269,7 +269,7 @@ namespace Maze
         }
 
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         b2AABB GetBodyAABB(b2Body const* _body)
         {
             b2AABB result;
@@ -298,7 +298,7 @@ namespace Maze
             return _world->convertMetersToUnits(ToAABB2D(aabb));
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         bool IsOverlap(b2World const* _world, b2Body const* _body, ReportFixturePredicate _pred)
         {
             CheckBodyOverlapCallback callback(_body, _pred);
@@ -306,7 +306,7 @@ namespace Maze
             return callback.isOverlap;
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         bool IsOverlap(b2World const* _world, b2Vec2 const& _pos, ReportFixturePredicate _pred)
         {
             b2AABB aabb;
@@ -319,7 +319,7 @@ namespace Maze
         }
 
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         bool IsOverlap(b2World const* _world, b2AABB const& _aabb, ReportFixturePredicate _pred)
         {
             CustomOverlapCallback callback(_pred);
@@ -327,7 +327,7 @@ namespace Maze
             return callback.isOverlap;
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         Set<Entity*> GetEntitiesOverlap(b2World const* _world, b2AABB const& _aabb, ReportFixturePredicate _pred)
         {
             QueryEntitiesOverlapCallback callback(_pred);

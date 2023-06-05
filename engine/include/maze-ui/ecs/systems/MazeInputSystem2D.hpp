@@ -159,10 +159,13 @@ namespace Maze
         void updateSortedCanvasesList();
 
         //////////////////////////////////////////
-        void notifyMouse(Maze::InputEventMouseData const& _mouseData);
+        void notifyMouse(InputEventMouseData const& _mouseData);
 
         //////////////////////////////////////////
-        void notifyTouch(Maze::InputEventTouchData const& _touchData);
+        void notifyTouch(InputEventTouchData const& _touchData);
+
+        //////////////////////////////////////////
+        void notifyVirtualCursor(InputEventVirtualCursorData const& _virtualCursorData);
 
         //////////////////////////////////////////
         void processUIElement2DEntityAdded(Entity* _entity, UIElement2D* _UIElement2D);

@@ -30,6 +30,8 @@
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeSystemManager.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
+#include "maze-core/managers/MazeEventManager.hpp"
+#include "maze-core/events/MazeSystemEvents.hpp"
 #include "maze-gamepad/gamepad/MazeGamepad.hpp"
 #include "maze-gamepad/providers/MazeGamepadProvider.hpp"
 
@@ -64,6 +66,9 @@ namespace Maze
             eventGamepadWillBeRemoved(m_gamepads.begin()->second);
             m_gamepads.erase(m_gamepads.begin());
         }
+
+        if (EventManager::GetInstancePtr())
+            EventManager::GetInstancePtr()->unsubscribeEvent<SystemDevicesChanged>(this);
     }
 
     //////////////////////////////////////////
@@ -84,6 +89,8 @@ namespace Maze
 
         UpdateManager::GetInstancePtr()->addUpdatable(this);
 
+        EventManager::GetInstancePtr()->subscribeEvent<SystemDevicesChanged>(this, &GamepadManager::notifySystemDevicesChanged);
+
 #if (MAZE_LIBSTEM_GAMEPAD_ENABLED)
         m_gamepadProviders.emplace_back(GamepadProviderLibstem::Create());
 #endif
@@ -96,6 +103,15 @@ namespace Maze
     //////////////////////////////////////////
     void GamepadManager::update(F32 _dt)
     {
+        if (m_detectGamepadsTimer > 0.0f)
+        {
+            m_detectGamepadsTimer -= _dt;
+            if (m_detectGamepadsTimer < 0.0f)
+            {
+                detectGamepads();
+            }
+        }
+
         for (GamepadProviderPtr const& gamepadProvider : m_gamepadProviders)
             gamepadProvider->update(_dt);
     }
@@ -103,6 +119,7 @@ namespace Maze
     //////////////////////////////////////////
     void GamepadManager::detectGamepads()
     {
+        Debug::Log("Detecting gamepads...");
         for (GamepadProviderPtr const& gamepadProvider : m_gamepadProviders)
             gamepadProvider->detectGamepads();
     }
@@ -206,6 +223,11 @@ namespace Maze
         return result;
     }
 
+    //////////////////////////////////////////
+    void GamepadManager::notifySystemDevicesChanged(ClassUID _eventUID, Event* _event)
+    {
+        m_detectGamepadsTimer = 0.3f;
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

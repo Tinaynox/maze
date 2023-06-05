@@ -39,44 +39,44 @@
 ////////////////////////////////////
 namespace Maze
 {
-    ////////////////////////////////////
+    //////////////////////////////////////////
     // Forward Declaration
     class IMultiDelegate;
 
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     // Define
 #if (MAZE_DEBUG)
 #   define MAZE_DEBUG_DELEGATES (0)
 #   define MAZE_USE_DELEGATES_PROTECTION (1)
 #endif
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     // Class MultiDelegateCallbackReceiver
     //
-    ////////////////////////////////////
+    //////////////////////////////////////////
     class MAZE_CORE_API MultiDelegateCallbackReceiver
     {
 #if (MAZE_USE_DELEGATES_PROTECTION)
     public:    
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         friend class IMultiDelegate;
 
     public:
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         MultiDelegateCallbackReceiver();
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual ~MultiDelegateCallbackReceiver();
 
     protected:
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         void subscribeDelegate(IMultiDelegate* delegate);
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         void unsubscribeDelegate(IMultiDelegate* delegate);
 
 
@@ -86,31 +86,31 @@ namespace Maze
     };
 
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     // Class IMultiDelegate
     //
-    ////////////////////////////////////
+    //////////////////////////////////////////
     class MAZE_CORE_API IMultiDelegate
     {
 #if (MAZE_USE_DELEGATES_PROTECTION)
     public:
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         IMultiDelegate();
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual ~IMultiDelegate();
 
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         void subscribeDelegate(MultiDelegateCallbackReceiver* _receiver);
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         void unsubscribeDelegate(MultiDelegateCallbackReceiver* _receiver);
 
     protected:
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         void unsubscribeAllReceivers();
 
     public:
@@ -120,17 +120,17 @@ namespace Maze
     };
 
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     // Class MultiDelegate
     //
-    ////////////////////////////////////
+    //////////////////////////////////////////
     template <class ...TArgs>
     class MultiDelegate
         : public IMultiDelegate
     {
     protected:
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         using DelegateType = Delegate<void, TArgs...>;
         using DelegatesList = FastVector<DelegateType>;
         using DelegateListErase = DelegateType* (DelegatesList::*)(DelegateType*);
@@ -142,7 +142,7 @@ namespace Maze
 
     public:
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         MultiDelegate(bool _unordered = false)
             : m_delegatesListErase(
                 _unordered ? (DelegateListErase)&DelegatesList::eraseUnordered
@@ -152,12 +152,12 @@ namespace Maze
     
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         ~MultiDelegate()
         {
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline void subscribe(DelegateType const& _delegate)
         {
 #if ((MAZE_DEBUG) && (MAZE_DEBUG_DELEGATES))
@@ -172,7 +172,7 @@ namespace Maze
             
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         template <typename C>
         inline void subscribe(C* _object, void(C::* const _method)(TArgs...))
         {
@@ -195,7 +195,7 @@ namespace Maze
             subscribe(DelegateType::From(_object, _method));
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         template <typename TFunctor>
         inline void subscribe(TFunctor&& _f)
         {
@@ -213,13 +213,13 @@ namespace Maze
             
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline void subscribe(void(*const _function)(TArgs...))
         {
             subscribe(DelegateType::From(_function));
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline bool unsubscribe(DelegateType const& _delegate)
         {
             for (DelegateType& d : m_delegatesList)
@@ -234,7 +234,7 @@ namespace Maze
             return false;
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline bool unsubscribe(DelegateType& _delegate)
         {
             for (DelegateType& d : m_delegatesList)
@@ -249,7 +249,7 @@ namespace Maze
             return false;
         }        
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         template <typename C>
         inline bool unsubscribe(C* _object)
         {
@@ -273,7 +273,7 @@ namespace Maze
             return result;
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         template <typename C>
         inline bool unsubscribe(C* _object, void(C::* const _method)(TArgs...))
         {
@@ -296,7 +296,7 @@ namespace Maze
             return false;
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline bool unsubscribe(void(*const _function)(TArgs...))
         {
             for (DelegateType& d : m_delegatesList)
@@ -311,7 +311,7 @@ namespace Maze
             return false;
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         template <
             typename TFunctor,
             typename = typename ::std::enable_if<!(::std::is_pointer<TFunctor>{})>::type>
@@ -322,7 +322,7 @@ namespace Maze
             return false;
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         void operator()(TArgs... _args)
         {
             Maze::Size delegatesCount = m_delegatesList.size();
@@ -346,7 +346,7 @@ namespace Maze
             }
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline void updateDelegatesList()
         {
             Maze::Size delegatesCount = m_delegatesList.size();
@@ -369,10 +369,10 @@ namespace Maze
             }
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline bool empty() const { return m_delegatesList.empty(); }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         inline void clear()
         { 
             for (DelegateType& d : m_delegatesList)
@@ -390,8 +390,8 @@ namespace Maze
 
 
 } // namespace Maze
-////////////////////////////////////
+//////////////////////////////////////////
 
 
 #endif // _MazeMultiDelegate_h_
-////////////////////////////////////
+//////////////////////////////////////////

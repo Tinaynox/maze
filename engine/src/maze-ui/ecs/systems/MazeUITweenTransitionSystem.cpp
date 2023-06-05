@@ -85,6 +85,7 @@ namespace Maze
     {
         m_UITweenTransitionAlphaSample = m_worldRaw->requestInclusiveSample<UITweenTransitionAlpha>();
         m_UITweenTransitionScaleSample = m_worldRaw->requestInclusiveSample<UITweenTransitionScale>();
+        m_UITweenTransitionTranslationSample = m_worldRaw->requestInclusiveSample<UITweenTransitionTranslation>();
     }
 
     //////////////////////////////////////////
@@ -98,6 +99,12 @@ namespace Maze
 
         m_UITweenTransitionScaleSample->process(
             [_dt](Entity* _entity, UITweenTransitionScale* _tweenTransition)
+            {
+                _tweenTransition->processUpdate(_dt);
+            });
+
+        m_UITweenTransitionTranslationSample->process(
+            [_dt](Entity* _entity, UITweenTransitionTranslation* _tweenTransition)
             {
                 _tweenTransition->processUpdate(_dt);
             });

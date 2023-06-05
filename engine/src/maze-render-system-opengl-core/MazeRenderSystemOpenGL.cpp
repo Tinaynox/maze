@@ -115,7 +115,7 @@ namespace Maze
         return true;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool RenderSystemOpenGL::makeCurrentContext(ContextOpenGL* _context, bool _includeSurface)
     {
         ContextOpenGL* currentContext = m_currentContext;

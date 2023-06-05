@@ -888,7 +888,7 @@ namespace Maze
         return bestAntialisingLevelSupport;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void ContextOpenGL3WGL::selectBestDevicePixelFormat(U32 _bitsPerPixel)
     {
         S32 bestFormat = 0;

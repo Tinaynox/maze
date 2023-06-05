@@ -58,7 +58,7 @@ namespace Maze
         return true;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool ExtensionsOpenGL::loadGLExtensionsImpl()
     {
         m_extensions.clear();

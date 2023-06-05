@@ -104,7 +104,7 @@ namespace Maze
         return result;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void GPUByteBufferGatewayOpenGL::unmap(
         GPUByteBufferUnmapOptions _unmapOption,
         Size _flushElementStart,
@@ -149,7 +149,7 @@ namespace Maze
         // m_lastMappingCount = 0;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void GPUByteBufferGatewayOpenGL::upload(
         void const* _data,
         Size _elementStart,

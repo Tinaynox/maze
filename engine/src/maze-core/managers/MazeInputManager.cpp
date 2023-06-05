@@ -166,6 +166,32 @@ namespace Maze
                     eventTouch(event.touch);
                     break;
                 }
+                case InputEventType::VirtualCursor:
+                {
+                    switch (event.virtualCursor.type)
+                    {
+                        case InputEventVirtualCursorType::Press:
+                        {
+                            m_cursorStates[0][0] = true;
+                            break;
+                        }
+                        case InputEventVirtualCursorType::Release:
+                        {
+                            m_cursorStates[0][0] = false;
+                            break;
+                        }
+                        case InputEventVirtualCursorType::Move:
+                        {
+                            m_cursorPositions[0] = Vec2DF((F32)event.mouse.x, (F32)event.mouse.y);
+                            break;
+                        }
+                        default:
+                            break;
+                    }
+
+                    eventVirtualCursor(event.virtualCursor);
+                    break;
+                }
                 case InputEventType::Text:
                 {
                     eventText(event.text);

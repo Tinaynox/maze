@@ -169,6 +169,20 @@ namespace Maze
         return true;
     }
 
+    //////////////////////////////////////////
+    template <class TValue>
+    inline bool Rect2D<TValue>::hasCircleIntersection(Vec2D<TValue> const& _pos, TValue _radius)
+    {
+        TValue closestX = Math::Max(getLeft(), Math::Min(_pos.x, getRight()));
+        TValue closestY = Math::Max(getTop(), Math::Min(_pos.y, getBottom()));
+
+        TValue distanceX = _pos.x - closestX;
+        TValue distanceY = _pos.y - closestY;
+        TValue distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
+
+        return distanceSquared < (_radius * _radius);
+    }
+
 
 } // namespace Maze
 //////////////////////////////////////////

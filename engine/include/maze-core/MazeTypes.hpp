@@ -288,7 +288,7 @@ namespace Maze
             return CalculateCRC32(_text.c_str(), _text.size(), _crc);
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         MAZE_CORE_API inline U32 CalculateSuperFastHash(String const& _text)
         {
             return CalculateSuperFastHash(_text.c_str(), (S32)_text.size());

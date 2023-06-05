@@ -36,6 +36,7 @@
 #include "maze-core/math/MazeVec2D.hpp"
 #include "maze-core/system/win/MazeSystemCursorWin.hpp"
 #include "maze-core/system/MazeDisplay.hpp"
+#include "maze-core/events/MazeSystemEvents.hpp"
 #include <utf8/utf8.h>
 #include <dwmapi.h>
 #include <WinUser.h>
@@ -63,6 +64,8 @@ namespace Maze
 
     //////////////////////////////////////////
     static String const c_WindowClassName = "EngineWindow";
+    static S32 c_snapshotHotKeyId = 0;
+    static S32 c_altSnapshotHotKeyId = 1;
     
 
     //////////////////////////////////////////
@@ -153,7 +156,7 @@ namespace Maze
     {
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool WindowParamsWin::init(WindowParamsPtr const& _windowParams)
     {
         if (!WindowParams::init(_windowParams))
@@ -285,8 +288,7 @@ namespace Maze
         InputManager* inputManager = InputManager::GetInstancePtr();
 
         switch (_message)
-        {
-            
+        {   
             case WM_MOUSEMOVE:
             {
                 InputEventMouseData event;
@@ -531,18 +533,6 @@ namespace Maze
             
             case WM_KEYUP:
             {
-                if (_wParam == VK_SNAPSHOT)
-                {
-                    InputEventKeyboardData event;
-                    event.type = InputEventKeyboardType::KeyDown;
-                    event.data = _lParam;
-                    event.scanCode = S64((_lParam >> 16) & 0xFF);
-                    event.virtualCode = _wParam;
-                    event.modifiers = InputHelper::CollectInputEventKeyboardModifiers(_message, _wParam, _lParam);
-                    event.keyCode = InputHelper::ConvertVirtualCodeToKeyCode(event.virtualCode, event.modifiers); 
-                    inputManager->generateInputEvent(event);
-                }
-
                 InputEventKeyboardData event;
                 event.type = InputEventKeyboardType::KeyUp;
                 event.data = _lParam;
@@ -562,8 +552,6 @@ namespace Maze
                     inputManager->generateInputEvent(event);
                 }
                 
-
-
                 break;
             }
             
@@ -590,6 +578,35 @@ namespace Maze
                 event.modifiers = InputHelper::CollectInputEventKeyboardModifiers(_message, _wParam, _lParam);
                 event.keyCode = InputHelper::ConvertVirtualCodeToKeyCode(event.virtualCode, event.modifiers); 
                 inputManager->generateInputEvent(event);
+                break;
+            }
+
+            case WM_HOTKEY:
+            {
+                if (_wParam == c_snapshotHotKeyId || _wParam == c_altSnapshotHotKeyId)
+                {
+                    InputEventKeyboardData event;
+                    event.type = InputEventKeyboardType::KeyDown;
+                    event.data = 0;
+                    event.scanCode = 0;
+                    event.virtualCode = VK_SNAPSHOT;
+
+                    if (_lParam & MOD_SHIFT)
+                        event.modifiers |= InputEventKeyboardModifiers::ShiftDown;
+
+                    if (_lParam & MOD_CONTROL)
+                        event.modifiers |= InputEventKeyboardModifiers::ControlDown;
+
+                    if (_lParam & MOD_ALT)
+                        event.modifiers |= InputEventKeyboardModifiers::AltDown;
+
+                    if (_lParam & MOD_WIN)
+                        event.modifiers |= InputEventKeyboardModifiers::CommandDown;
+
+                    event.keyCode = KeyCode::PrintScreen;
+                    inputManager->generateInputEvent(event);
+                }
+
                 break;
             }
             
@@ -807,13 +824,21 @@ namespace Maze
                 break;
             }
 #endif
-            
+            case WM_DEVICECHANGE:
+            {
+                if (_wParam == 0x0007) // DBT_DEVNODES_CHANGED
+                {
+                    EventManager::GetInstancePtr()->generateEvent<SystemDevicesChanged>();
+                }
+                
+                break;
+            }
         }
 
         return true;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void WindowWin::setClientSize(Vec2DU const& _size)
     {
         m_params->clientSize = _size;
@@ -984,6 +1009,8 @@ namespace Maze
         SetForegroundWindow(hwnd);
         SetFocus(hwnd);
         
+        MAZE_WARNING_IF(!RegisterHotKey(hwnd, c_snapshotHotKeyId, MOD_NOREPEAT, VK_SNAPSHOT), "SNAPSHOT hotkey registration failed.");
+        MAZE_WARNING_IF(!RegisterHotKey(hwnd, c_altSnapshotHotKeyId, MOD_NOREPEAT | MOD_ALT, VK_SNAPSHOT), "ALT+SNAPSHOT hotkey registration failed.");
 
         HICON hIconSmall = (HICON)LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(m_params->iconSmall), IMAGE_ICON, 32, 32, 0);
         SendMessage(hwnd, WM_SETICON,ICON_SMALL, (LPARAM)hIconSmall);
@@ -1001,7 +1028,6 @@ namespace Maze
             bb.hRgnBlur = CreateRectRgn(0, 0, 1, 1);
             DwmEnableBlurBehindWindow(hwnd, &bb);
         }
-
         
         processWindowCreated();
 
@@ -1026,7 +1052,10 @@ namespace Maze
 
         m_handle = 0;
 
-        DestroyWindow((HWND)handle);
+        UnregisterHotKey(handle, c_snapshotHotKeyId);
+        UnregisterHotKey(handle, c_altSnapshotHotKeyId);
+
+        DestroyWindow(handle);
 
         if (getFullscreen())
             ChangeDisplaySettings(NULL, 0);
@@ -1065,11 +1094,9 @@ namespace Maze
     //////////////////////////////////////////
     void WindowWin::maximizeFullscreen()
     {
-        WindowManager* windowManager = WindowManager::GetInstancePtr();
-        DisplayPtr const& primaryDisplay = windowManager->getPrimaryDisplay();
+        DisplayPtr const& relatedDisplay = getRelatedDisplay();
 
-        
-        WindowVideoMode windowVideoMode = WindowHelper::GetDisplayCurrentMode(primaryDisplay);
+        WindowVideoMode windowVideoMode = WindowHelper::GetDisplayCurrentMode(relatedDisplay);
         m_params->clientSize.x = windowVideoMode.width;
         m_params->clientSize.y = windowVideoMode.height;
         m_params->bpp = windowVideoMode.bpp;
@@ -1169,34 +1196,51 @@ namespace Maze
     //////////////////////////////////////////
     bool WindowWin::updateWindowStyle()
     {
+        // Get the monitor handle where the window is currently located
+        HMONITOR hMonitor = MonitorFromWindow(m_handle, MONITOR_DEFAULTTONEAREST);
+
+        // Get the monitor's screen rectangle
+        MONITORINFO monitorInfo = { sizeof(MONITORINFO) };
+        GetMonitorInfo(hMonitor, &monitorInfo);
+        RECT monitorRect = monitorInfo.rcMonitor;
+
         if (m_params->windowMode == WindowMode::Fullscreen)
         {
-            DEVMODE devMode;
+            DEVMODEA currentMode = {0};
+            currentMode.dmSize = sizeof(DEVMODEA);
+            if (!EnumDisplaySettingsA(NULL, ENUM_CURRENT_SETTINGS, &currentMode))
+            {
+                MAZE_ERROR("Failed to retrieve current display settings!");
+                return false;
+            }
+
+            DEVMODE devMode = {0};
             devMode.dmSize       = sizeof(devMode);
-            devMode.dmPelsWidth  = m_params->clientSize.x;
-            devMode.dmPelsHeight = m_params->clientSize.y;
-            devMode.dmBitsPerPel = m_params->bpp;
+            devMode.dmPelsWidth  = currentMode.dmPelsWidth;
+            devMode.dmPelsHeight = currentMode.dmPelsHeight;
+            devMode.dmBitsPerPel = currentMode.dmBitsPerPel;
             devMode.dmFields     = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL;
 
             // Reset display settings because of some bug
             ChangeDisplaySettingsA(NULL, 0);
 
             // Apply fullscreen mode
-            if (ChangeDisplaySettingsA(&devMode, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
+            auto result = ChangeDisplaySettingsA(&devMode, CDS_FULLSCREEN);
+            if (result != DISP_CHANGE_SUCCESSFUL)
             {
-                MAZE_ERROR("Failed to change display mode for fullscreen!");
+                MAZE_ERROR("Failed to change display mode for fullscreen! Error=%d", result);
                 m_params->windowMode = WindowMode::Windowed;
                 eventWindowModeChanged(this);
                 return false;
             }
-
         }
         else
         {
             // Apply window mode
-            if (ChangeDisplaySettingsA(NULL, 0) != DISP_CHANGE_SUCCESSFUL)
+            auto result = ChangeDisplaySettingsA(NULL, 0);
+            if (result != DISP_CHANGE_SUCCESSFUL)
             {
-                MAZE_ERROR("Failed to change display mode for windowed!");
+                MAZE_ERROR("Failed to change display mode for windowed! Error=%d", result);
                 m_params->windowMode = WindowMode::Fullscreen;
                 eventWindowModeChanged(this);
                 return false;
@@ -1207,7 +1251,14 @@ namespace Maze
         SetWindowLongPtr((HWND)m_handle, GWL_EXSTYLE, getWindowExStyle(m_params->windowMode));
         SetWindowLongPtr((HWND)m_handle, GWL_STYLE, getWindowStyle(m_params->windowMode));
 
-        SetWindowPos((HWND)m_handle, HWND_TOP, 0, 0, m_params->clientSize.x, m_params->clientSize.y, SWP_FRAMECHANGED);
+        SetWindowPos(
+            (HWND)m_handle,
+            HWND_TOP,
+            monitorRect.left,
+            monitorRect.top,
+            m_params->clientSize.x,
+            m_params->clientSize.y,
+            SWP_FRAMECHANGED);
 
 
         updateClientSize();
@@ -1283,6 +1334,22 @@ namespace Maze
         }
 
         return nullPointer;
+    }
+
+    //////////////////////////////////////////
+    Vec2DF WindowWin::convertSystemScreenCoordsToWindowCoords(Vec2DF const& _posDS)
+    {
+        POINT pos = { (LONG)_posDS.x, (LONG)_posDS.y };
+        ScreenToClient((HWND)m_handle, &pos);
+        return { (F32)pos.x, (F32)getClientSize().y - (F32)pos.y };
+    }
+
+    //////////////////////////////////////////
+    Vec2DF WindowWin::convertWindowCoordsToSystemScreenCoords(Vec2DF const& _posWS)
+    {
+        POINT pos = { (LONG)_posWS.x, (LONG)getClientSize().y - (LONG)_posWS.y };
+        ClientToScreen((HWND)m_handle, &pos);
+        return Vec2DF((F32)pos.x, (F32)pos.y);
     }
 
 } // namespace Maze

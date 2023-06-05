@@ -42,7 +42,7 @@ namespace Maze
     MAZE_DECLARE_ENUMCLASS_3_API(MAZE_UI_API, CursorInputSource,
         Mouse,
         Touch,
-        Joystick);
+        VirtualCursor);
 
 
     //////////////////////////////////////////

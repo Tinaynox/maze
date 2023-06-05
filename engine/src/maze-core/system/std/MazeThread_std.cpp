@@ -42,7 +42,7 @@ namespace Maze
     {
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool Thread_std::run()
     {
         if (!m_entryPoint)
@@ -65,7 +65,7 @@ namespace Maze
         return true;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void Thread_std::terminate()
     {
         if (m_thread)
@@ -74,7 +74,7 @@ namespace Maze
         }
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void Thread_std::wait()
     {
         if (m_thread)
@@ -83,7 +83,7 @@ namespace Maze
         }
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool Thread_std::isRunning()
     {
         return (m_thread != 0);
@@ -97,14 +97,14 @@ namespace Maze
 
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     ThreadPriority Thread_std::getPriority() const
     {
         return ThreadPriority::None;
     }
 
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     void Thread_std::entryPoint()
     {    
         m_entryPoint->run();

@@ -115,6 +115,7 @@ namespace Maze
 
         InputManager::GetInstancePtr()->eventMouse.unsubscribe(this);
         InputManager::GetInstancePtr()->eventTouch.unsubscribe(this);
+        InputManager::GetInstancePtr()->eventVirtualCursor.unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -130,6 +131,7 @@ namespace Maze
     {
         InputManager::GetInstancePtr()->eventMouse.subscribe(this, &InputSystem2D::notifyMouse);
         InputManager::GetInstancePtr()->eventTouch.subscribe(this, &InputSystem2D::notifyTouch);        
+        InputManager::GetInstancePtr()->eventVirtualCursor.subscribe(this, &InputSystem2D::notifyVirtualCursor);
 
         return true;
     }
@@ -377,6 +379,40 @@ namespace Maze
             case InputEventTouchType::Move:
             {
                 processCursorMove(_touchData.window, _touchData.index, 0, touchPosition, CursorInputSource::Touch);
+                break;
+            }
+            default:
+            {
+                break;
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    void InputSystem2D::notifyVirtualCursor(Maze::InputEventVirtualCursorData const& _virtualCursorData)
+    {
+        Vec2DF mousePosition = m_coordsConverter(Vec2DF((F32)_virtualCursorData.x, (F32)_virtualCursorData.y));
+
+        switch (_virtualCursorData.type)
+        {
+            case InputEventVirtualCursorType::Press:
+            {
+                processCursorPress(_virtualCursorData.window, 0, 0, mousePosition, CursorInputSource::VirtualCursor);
+                break;
+            }
+            case InputEventVirtualCursorType::Release:
+            {
+                processCursorRelease(_virtualCursorData.window, 0, 0, mousePosition, CursorInputSource::VirtualCursor);
+                break;
+            }
+            case InputEventVirtualCursorType::Move:
+            {
+                processCursorMove(_virtualCursorData.window, 0, 0, mousePosition, CursorInputSource::VirtualCursor);
+                break;
+            }
+            case InputEventVirtualCursorType::Drag:
+            {
+                processCursorDrag(_virtualCursorData.window, 0, 0, mousePosition, CursorInputSource::VirtualCursor);
                 break;
             }
             default:

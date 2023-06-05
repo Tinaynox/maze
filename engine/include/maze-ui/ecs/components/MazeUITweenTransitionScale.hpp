@@ -35,6 +35,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
 #include "maze-core/utils/MazeDelegate.hpp"
+#include "maze-core/math/MazeAnimationCurve.hpp"
 
 
 //////////////////////////////////////////
@@ -80,6 +81,17 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline AnimationCurve const& getAnimationCurve() const { return m_animationCurve; }
+
+        //////////////////////////////////////////
+        inline void setAnimationCurve(AnimationCurve const& _value)
+        {
+            m_animationCurve = _value;
+            updateTransform();
+        }
+
+
+        //////////////////////////////////////////
         inline void setUnscaledDeltaTime(bool _value) { m_unscaledDeltaTime = _value; }
 
         //////////////////////////////////////////
@@ -90,13 +102,21 @@ namespace Maze
         Vec2DF const& getHiddenScale() const { return m_hiddenScale; }
 
         //////////////////////////////////////////
-        void setHiddenScale(Vec2DF const& _hiddenScale) { m_hiddenScale = _hiddenScale; }
+        void setHiddenScale(Vec2DF const& _hiddenScale)
+        {
+            m_hiddenScale = _hiddenScale;
+            updateTransform();
+        }
 
         //////////////////////////////////////////
         Vec2DF const& getShownScale() const { return m_shownScale; }
 
         //////////////////////////////////////////
-        void setShownScale(Vec2DF const& _shownScale) { m_shownScale = _shownScale; }
+        void setShownScale(Vec2DF const& _shownScale)
+        {
+            m_shownScale = _shownScale;
+            updateTransform();
+        }
 
 
         //////////////////////////////////////////
@@ -105,6 +125,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void setShowTime(F32 _showTime);
+
+        //////////////////////////////////////////
+        inline F32 getShowTime() const { return m_showTime; }
 
 
         //////////////////////////////////////////
@@ -158,6 +181,7 @@ namespace Maze
         bool m_unscaledDeltaTime = false;
 
         bool m_isHidden;
+        AnimationCurve m_animationCurve = AnimationCurve::c_linear01;
         F32 m_showTime;
         F32 m_hideKoef;
         Vec2DF m_hiddenScale;

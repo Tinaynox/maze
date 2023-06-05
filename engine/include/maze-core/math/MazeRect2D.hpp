@@ -51,7 +51,7 @@ namespace Maze
     {
     public:
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         static Rect2D const c_zero;
 
     public:
@@ -105,6 +105,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline bool contains(Vec2D<TValue> const& _p);
+
+        //////////////////////////////////////////
+        inline bool hasCircleIntersection(Vec2D<TValue> const& _pos, TValue _radius);
 
         //////////////////////////////////////////
         inline String toString() const { return StringHelper::ToString(position.x) + ";" + StringHelper::ToString(position.y) + ";" + StringHelper::ToString(size.x) + ";" + StringHelper::ToString(size.y); }

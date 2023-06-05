@@ -52,7 +52,7 @@ namespace Maze
     {
     public:
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         static Vec4D const c_zero;
         static Vec4D const c_one;
         static Vec4D const c_negativeOne;
@@ -112,7 +112,7 @@ namespace Maze
         {
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         template <class UValue>
         inline MAZE_CONSTEXPR Vec4D(
             Vec2D<UValue> const& _vec,
@@ -146,7 +146,7 @@ namespace Maze
         {
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         template <class UValue>
         inline MAZE_CONSTEXPR Vec4D(
             Vec2D<UValue> const& _vecXY,

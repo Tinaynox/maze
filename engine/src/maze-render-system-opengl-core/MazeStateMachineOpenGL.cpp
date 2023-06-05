@@ -422,7 +422,7 @@ namespace Maze
         if (m_activeTexture == _activeTexture)
             return;
 
-        MAZE_DEBUG_ERROR_RETURN_IF(_activeTexture < MAZE_GL_TEXTURE0 || _activeTexture > MAZE_GL_TEXTURE15, "Invalid active texture index!");
+        MAZE_DEBUG_ERROR_RETURN_IF(_activeTexture < MAZE_GL_TEXTURE0 || _activeTexture > MAZE_GL_TEXTURE31, "Invalid active texture index!");
 
 
         m_activeTexture = _activeTexture;

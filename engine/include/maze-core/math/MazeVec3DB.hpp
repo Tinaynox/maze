@@ -50,7 +50,7 @@ namespace Maze
     {
     public:
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         static Vec3DB const c_false;
         static Vec3DB const c_true;
 
@@ -115,7 +115,7 @@ namespace Maze
         {
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         template <class UValue>
         inline MAZE_CONSTEXPR Vec3DB(Vec2D<UValue> const& _vec, UValue _z = 0)
             : x(static_cast<bool>(_vec.x))

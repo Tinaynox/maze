@@ -256,7 +256,7 @@ namespace Maze
         }
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     MAZE_RENDER_SYSTEM_OPENGL_CORE_API void GLCallEnded(CString _file, U32 _line, CString _expression)
     {
         

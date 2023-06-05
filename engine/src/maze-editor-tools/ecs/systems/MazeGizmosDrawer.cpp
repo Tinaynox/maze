@@ -131,6 +131,7 @@ namespace Maze
                 MeshData& meshData = m_lines[renderMode];
 
                 meshData.vao = VertexArrayObject::Create(renderSystem);
+                MAZE_ERROR_RETURN_VALUE_IF(!meshData.vao, false, "Failed to created Lines VAO!");
                 meshData.vao->setRenderDrawTopology(RenderDrawTopology::Lines);
                 meshData.renderMesh = _renderTarget->createRenderMeshFromPool(1);
                 meshData.renderMesh->setName("Lines");
@@ -149,6 +150,7 @@ namespace Maze
                 MeshData& meshData = m_triangles[renderMode];
 
                 meshData.vao = VertexArrayObject::Create(renderSystem);
+                MAZE_ERROR_RETURN_VALUE_IF(!meshData.vao, false, "Failed to created Triangles VAO!");
                 meshData.vao->setRenderDrawTopology(RenderDrawTopology::Triangles);
                 meshData.renderMesh = _renderTarget->createRenderMeshFromPool(1);
                 meshData.renderMesh->setName("Triangles");

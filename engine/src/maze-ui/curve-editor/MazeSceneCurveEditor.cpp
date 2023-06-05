@@ -117,6 +117,11 @@ namespace Maze
             m_modeDropdown->eventValueChanged.unsubscribe(this);
         }
 
+        if (m_minMaxModeDropdown)
+        {
+            m_minMaxModeDropdown->eventValueChanged.unsubscribe(this);
+        }
+
         if (m_curveClickButton)
         {
             m_curveClickButton->eventClick.unsubscribe(this);
@@ -177,19 +182,23 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneCurveEditor::setup(AnimationCurveMinMaxMode _mode)
+    void SceneCurveEditor::setup()
     {
-        m_minMaxMode = _mode;
+        updateNormalization();
+        updateUI();
+    }
 
-        if (_mode == AnimationCurveMinMaxMode::Normalized || _mode == AnimationCurveMinMaxMode::NormalizedPositive)
+    //////////////////////////////////////////
+    void SceneCurveEditor::updateNormalization()
+    {
+        AnimationCurve curve = AnimationCurveManager::GetInstancePtr()->getCurve();
+        if (curve.getMinMaxMode() == AnimationCurveMinMaxMode::Normalized ||
+            curve.getMinMaxMode() == AnimationCurveMinMaxMode::NormalizedPositive)
         {
-            AnimationCurve curve = AnimationCurveManager::GetInstancePtr()->getCurve();
             curve.normalize();
             if (curve != AnimationCurveManager::GetInstancePtr()->getCurve())
                 AnimationCurveManager::GetInstancePtr()->setCurve(curve);
         }
-
-        updateUI();
     }
 
     //////////////////////////////////////////
@@ -211,7 +220,7 @@ namespace Maze
             if (!m_valueEdit->getSelected())
             {
                 F32 value = keyframe.value;
-                switch (m_minMaxMode)
+                switch (curve.getMinMaxMode())
                 {
                     case AnimationCurveMinMaxMode::NormalizedPositive:
                         value *= curve.getScalar();
@@ -259,114 +268,6 @@ namespace Maze
         m_canvasUIElement->eventCursorRelease.subscribe(this, &SceneCurveEditor::notifyCanvasCursorRelease);        
 
         AnimationCurve const& curve = AnimationCurveManager::GetInstancePtr()->getCurve();
-
-        // Mode
-        {
-            HorizontalLayout2DPtr rowLayout = UIHelper::CreateHorizontalLayout(
-                HorizontalAlignment2D::Left,
-                VerticalAlignment2D::Top,
-                Vec2DF(336.0f, 18.0f),
-                Vec2DF(12.0f, -10.0f),
-                m_canvas->getTransform(),
-                this,
-                Vec2DF(0.0f, 1.0f),
-                Vec2DF(0.0f, 1.0f));
-            rowLayout->setExpand(false);
-            rowLayout->setAutoWidth(false);
-            rowLayout->setSpacing(5.0f);
-
-            SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
-                "Mode",
-                8,
-                HorizontalAlignment2D::Left,
-                VerticalAlignment2D::Middle,
-                { 80.0f, 18.0f },
-                Vec2DF::c_zero,
-                rowLayout->getTransform(),
-                this);
-            label->setColor(ColorU32::c_black);
-
-            m_modeDropdown = SystemUIHelper::CreateDefaultDropdown(
-                Vec2DF(188.0f, 18.0f),
-                Vec2DF(0.0f, 0.0f),
-                rowLayout->getTransform(),
-                this);
-            m_modeDropdown->eventValueChanged.subscribe(this, &SceneCurveEditor::notifyModeChanged);
-
-            m_copyButton = UIHelper::CreateDefaultClickButton(
-                "C",
-                { 18.0f, 18.0f },
-                { -32.0f, -12.0f },
-                m_canvas->getTransform(),
-                this,
-                Vec2DF(1.0f, 1.0f),
-                Vec2DF(1.0f, 1.0f));
-            m_copyButton->eventClick.subscribe(
-                [](Button2D* _button, CursorInputEvent const& _event)
-                {
-                    AnimationCurve curve = AnimationCurveManager::GetInstancePtr()->getCurve();
-                    SystemManager::GetInstancePtr()->setClipboardString(curve.toString());
-                });
-
-            m_pasteButton = UIHelper::CreateDefaultClickButton(
-                "P",
-                { 18.0f, 18.0f },
-                { -12.0f, -12.0f },
-                m_canvas->getTransform(),
-                this,
-                Vec2DF(1.0f, 1.0f),
-                Vec2DF(1.0f, 1.0f));
-            m_pasteButton->eventClick.subscribe(
-                [](Button2D* _button, CursorInputEvent const& _event)
-                {
-                    String text = SystemManager::GetInstancePtr()->getClipboardAsString();
-                    AnimationCurve curve = AnimationCurve::FromString(text);
-                    AnimationCurveManager::GetInstancePtr()->setCurve(curve);
-                    
-                });
-
-
-            m_copyXMLButton = UIHelper::CreateDefaultClickButton(
-                "CX",
-                { 18.0f, 18.0f },
-                { -72.0f, -12.0f },
-                m_canvas->getTransform(),
-                this,
-                Vec2DF(1.0f, 1.0f),
-                Vec2DF(1.0f, 1.0f));
-            m_copyXMLButton->eventClick.subscribe(
-                [](Button2D* _button, CursorInputEvent const& _event)
-                {
-                    AnimationCurve curve = AnimationCurveManager::GetInstancePtr()->getCurve();
-                    String text = curve.toString();
-                    StringHelper::ReplaceSubstring(text, "\"", "&quot;");
-                    SystemManager::GetInstancePtr()->setClipboardString(text);
-                });
-
-            m_pasteXMLButton = UIHelper::CreateDefaultClickButton(
-                "PX",
-                { 18.0f, 18.0f },
-                { -52.0f, -12.0f },
-                m_canvas->getTransform(),
-                this,
-                Vec2DF(1.0f, 1.0f),
-                Vec2DF(1.0f, 1.0f));
-            m_pasteXMLButton->eventClick.subscribe(
-                [](Button2D* _button, CursorInputEvent const& _event)
-                {
-                    String text = SystemManager::GetInstancePtr()->getClipboardAsString();
-                    StringHelper::ReplaceSubstring(text, "&quot;", "\"");
-                    AnimationCurve curve = AnimationCurve::FromString(text);
-                    AnimationCurveManager::GetInstancePtr()->setCurve(curve);
-
-                });
-
-            m_modeDropdown->addOption("Fixed");
-            m_modeDropdown->addOption("Linear");
-            m_modeDropdown->addOption("Smooth");
-
-            m_modeDropdown->setValue((S32)curve.getMode());
-        }
 
         // Curve        
         {
@@ -433,6 +334,155 @@ namespace Maze
                 Vec2DF(1.0f, 0.5f));
             m_curveScalarEdit->setHorizontalAlignment(HorizontalAlignment2D::Right);
             m_curveScalarEdit->eventTextInput.subscribe(this, &SceneCurveEditor::notifyCurveScalarEditTextInput);
+        }
+
+        // Mode
+        {
+            HorizontalLayout2DPtr rowLayout = UIHelper::CreateHorizontalLayout(
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Top,
+                Vec2DF(336.0f, 18.0f),
+                Vec2DF(12.0f, -10.0f),
+                m_canvas->getTransform(),
+                this,
+                Vec2DF(0.0f, 1.0f),
+                Vec2DF(0.0f, 1.0f));
+            rowLayout->setExpand(false);
+            rowLayout->setAutoWidth(false);
+            rowLayout->setSpacing(5.0f);
+
+            HorizontalLayout2DPtr row2Layout = UIHelper::CreateHorizontalLayout(
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Top,
+                Vec2DF(336.0f, 18.0f),
+                Vec2DF(12.0f, -28.0f),
+                m_canvas->getTransform(),
+                this,
+                Vec2DF(0.0f, 1.0f),
+                Vec2DF(0.0f, 1.0f));
+            row2Layout->setExpand(false);
+            row2Layout->setAutoWidth(false);
+            row2Layout->setSpacing(5.0f);
+
+            SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
+                "Mode",
+                8,
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Middle,
+                { 80.0f, 18.0f },
+                Vec2DF::c_zero,
+                rowLayout->getTransform(),
+                this);
+            label->setColor(ColorU32::c_black);
+
+            m_modeDropdown = SystemUIHelper::CreateDefaultDropdown(
+                Vec2DF(188.0f, 18.0f),
+                Vec2DF(0.0f, 0.0f),
+                rowLayout->getTransform(),
+                this);
+            m_modeDropdown->eventValueChanged.subscribe(this, &SceneCurveEditor::notifyModeChanged);
+
+            m_modeDropdown->addOption("Fixed");
+            m_modeDropdown->addOption("Linear");
+            m_modeDropdown->addOption("Smooth");
+
+            m_modeDropdown->setValue((S32)curve.getMode());
+
+
+            SystemTextRenderer2DPtr label2 = SystemUIHelper::CreateSystemText(
+                "MinMax",
+                8,
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Middle,
+                { 80.0f, 18.0f },
+                Vec2DF::c_zero,
+                row2Layout->getTransform(),
+                this);
+            label2->setColor(ColorU32::c_black);
+
+            m_minMaxModeDropdown = SystemUIHelper::CreateDefaultDropdown(
+                Vec2DF(188.0f, 18.0f),
+                Vec2DF(0.0f, 0.0f),
+                row2Layout->getTransform(),
+                this);
+            m_minMaxModeDropdown->eventValueChanged.subscribe(this, &SceneCurveEditor::notifyMinMaxModeChanged);
+
+            for (AnimationCurveMinMaxMode mode = AnimationCurveMinMaxMode(1); mode < AnimationCurveMinMaxMode::MAX; ++mode)
+                m_minMaxModeDropdown->addOption(mode.toString());
+
+            m_minMaxModeDropdown->setValue((S32)curve.getMinMaxMode() - 1);
+
+
+
+            m_copyButton = UIHelper::CreateDefaultClickButton(
+                "C",
+                { 18.0f, 18.0f },
+                { -32.0f, -12.0f },
+                m_canvas->getTransform(),
+                this,
+                Vec2DF(1.0f, 1.0f),
+                Vec2DF(1.0f, 1.0f));
+            m_copyButton->eventClick.subscribe(
+                [](Button2D* _button, CursorInputEvent const& _event)
+            {
+                AnimationCurve curve = AnimationCurveManager::GetInstancePtr()->getCurve();
+                SystemManager::GetInstancePtr()->setClipboardString(curve.toString());
+            });
+
+            m_pasteButton = UIHelper::CreateDefaultClickButton(
+                "P",
+                { 18.0f, 18.0f },
+                { -12.0f, -12.0f },
+                m_canvas->getTransform(),
+                this,
+                Vec2DF(1.0f, 1.0f),
+                Vec2DF(1.0f, 1.0f));
+            m_pasteButton->eventClick.subscribe(
+                [](Button2D* _button, CursorInputEvent const& _event)
+            {
+                String text = SystemManager::GetInstancePtr()->getClipboardAsString();
+                AnimationCurve curve = AnimationCurve::FromString(text);
+                AnimationCurveManager::GetInstancePtr()->setCurve(curve);
+
+            });
+
+
+            m_copyXMLButton = UIHelper::CreateDefaultClickButton(
+                "CX",
+                { 18.0f, 18.0f },
+                { -72.0f, -12.0f },
+                m_canvas->getTransform(),
+                this,
+                Vec2DF(1.0f, 1.0f),
+                Vec2DF(1.0f, 1.0f));
+            m_copyXMLButton->eventClick.subscribe(
+                [](Button2D* _button, CursorInputEvent const& _event)
+            {
+                AnimationCurve curve = AnimationCurveManager::GetInstancePtr()->getCurve();
+                String text = curve.toString();
+                StringHelper::ReplaceSubstring(text, "\"", "&quot;");
+                SystemManager::GetInstancePtr()->setClipboardString(text);
+            });
+
+            m_pasteXMLButton = UIHelper::CreateDefaultClickButton(
+                "PX",
+                { 18.0f, 18.0f },
+                { -52.0f, -12.0f },
+                m_canvas->getTransform(),
+                this,
+                Vec2DF(1.0f, 1.0f),
+                Vec2DF(1.0f, 1.0f));
+            m_pasteXMLButton->eventClick.subscribe(
+                [](Button2D* _button, CursorInputEvent const& _event)
+            {
+                String text = SystemManager::GetInstancePtr()->getClipboardAsString();
+                StringHelper::ReplaceSubstring(text, "&quot;", "\"");
+                AnimationCurve curve = AnimationCurve::FromString(text);
+                AnimationCurveManager::GetInstancePtr()->setCurve(curve);
+
+            });
+
+
         }
 
         // Key
@@ -605,7 +655,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneCurveEditor::notifyCurveChanged(AnimationCurve const& _curve)
     {
-        setup(_curve.getMinMaxMode());
+        setup();
     }
 
     //////////////////////////////////////////
@@ -625,6 +675,18 @@ namespace Maze
         curve.setMode((AnimationCurve::EvaluateMode)_index);
 
         AnimationCurveManager::GetInstancePtr()->setCurve(curve);
+    }
+
+    //////////////////////////////////////////
+    void SceneCurveEditor::notifyMinMaxModeChanged(Dropdown2D* _dropdown, S32 _index)
+    {
+        AnimationCurve curve = AnimationCurveManager::GetInstancePtr()->getCurve();
+
+        curve.setMinMaxMode((AnimationCurveMinMaxMode)(_index + 1));
+
+        AnimationCurveManager::GetInstancePtr()->setCurve(curve);
+
+        updateNormalization();
     }
 
     //////////////////////////////////////////
@@ -754,7 +816,7 @@ namespace Maze
                         2,
                         1);
 
-                    if (m_minMaxMode == AnimationCurveMinMaxMode::Normalized)
+                    if (curve.getMinMaxMode() == AnimationCurveMinMaxMode::Normalized)
                     {
                         y = origin.y - shift;
 
@@ -776,7 +838,7 @@ namespace Maze
                 } while ((i + 1) * cellSize < heightScalar);
             }
 
-            if (m_minMaxMode == AnimationCurveMinMaxMode::Normalized)
+            if (curve.getMinMaxMode() == AnimationCurveMinMaxMode::Normalized)
             {
                 m_curvePixelSheet.drawText(
                     (S32)origin.x - 5, (S32)c_bottomOffset,
@@ -1004,6 +1066,7 @@ namespace Maze
         m_curveSprite->set(m_curveTexture);
         
         m_modeDropdown->setValue((S32)curve.getMode());
+        m_minMaxModeDropdown->setValue((S32)curve.getMinMaxMode() - 1);
     }
 
     //////////////////////////////////////////
@@ -1113,9 +1176,11 @@ namespace Maze
     //////////////////////////////////////////
     Vec2DF SceneCurveEditor::getCurveOrigin()
     {
+        AnimationCurve const& curve = AnimationCurveManager::GetInstancePtr()->getCurve();
+
         Vec2DF origin;
 
-        switch (m_minMaxMode)
+        switch (curve.getMinMaxMode())
         {
             case AnimationCurveMinMaxMode::NormalizedPositive:
             {
@@ -1143,11 +1208,13 @@ namespace Maze
     //////////////////////////////////////////
     F32 SceneCurveEditor::getCurveHeightScalar()
     {
+        AnimationCurve const& curve = AnimationCurveManager::GetInstancePtr()->getCurve();
+
         F32 height = m_curveRenderer->getTransform()->getSize().y - c_bottomOffset - c_topOffset;
 
         F32 heightScalar;
 
-        switch (m_minMaxMode)
+        switch (curve.getMinMaxMode())
         {
             case AnimationCurveMinMaxMode::NormalizedPositive:
             {
@@ -1529,7 +1596,7 @@ namespace Maze
 
         F32 newValue = StringHelper::StringToF32(_edit->getText());
 
-        switch (m_minMaxMode)
+        switch (curve.getMinMaxMode())
         {
             case AnimationCurveMinMaxMode::NormalizedPositive:
                 newValue /= curve.getScalar();

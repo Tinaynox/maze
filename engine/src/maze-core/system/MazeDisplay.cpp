@@ -49,7 +49,7 @@ namespace Maze
     {
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     DisplayPtr Display::Create(
         String const& _name,
         U64 _handle,
@@ -61,7 +61,7 @@ namespace Maze
         return display;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     bool Display::init(
         String const& _name,
         U64 _handle,

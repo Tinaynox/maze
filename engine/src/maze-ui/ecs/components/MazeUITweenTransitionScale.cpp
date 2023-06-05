@@ -233,9 +233,8 @@ namespace Maze
     {
         F32 showingProgress = 1.0f - m_hidingProgress;
 
-        Vec2DF scale(
-            Math::Lerp(m_hiddenScale.x, m_shownScale.x, showingProgress),
-            Math::Lerp(m_hiddenScale.y, m_shownScale.y, showingProgress));
+        F32 progress = m_animationCurve.evaluate(showingProgress);
+        Vec2DF scale = Math::Lerp(m_hiddenScale, m_shownScale, progress);
 
         m_transform->setLocalScale(scale);
     }

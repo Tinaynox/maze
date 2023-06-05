@@ -260,19 +260,19 @@ namespace Maze
         virtual bool init();
 
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         void addFilesInPath(
             Path const& _path,
             bool _recursive = false,
             Vector<AssetFilePtr>* _addedFiles = nullptr);
         
-        ////////////////////////////////////
+        //////////////////////////////////////////
         void processAddFile(AssetFilePtr const& _file);
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         void processRemoveFile(AssetFilePtr const& _file);
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         void updateFileInfo(AssetFilePtr const& _file);
 
 

@@ -75,7 +75,7 @@ namespace Maze
         return true;
     }
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     ComponentPtr ComponentFactory::createComponent(CString _className)
     {
         for (Size i = 0; i < m_sceneObjectCreationData.size(); ++i)

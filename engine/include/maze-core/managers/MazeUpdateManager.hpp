@@ -147,16 +147,22 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        ScopedPause()
+        ScopedPause(bool _value = true)
+            : m_pause(_value)
         {
-            UpdateManager::GetInstancePtr()->pushPause();
+            if (m_pause)
+                UpdateManager::GetInstancePtr()->pushPause();
         }
 
         //////////////////////////////////////////
         ~ScopedPause()
         {
-            UpdateManager::GetInstancePtr()->popPause();
+            if (m_pause)
+                UpdateManager::GetInstancePtr()->popPause();
         }
+
+    private:
+        bool m_pause = true;
     };
 
 

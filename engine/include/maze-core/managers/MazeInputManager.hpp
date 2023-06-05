@@ -125,6 +125,9 @@ namespace Maze
         inline bool getCursorButtonState(S32 _cursorId, S32 _buttonIndex) { return m_cursorStates[_cursorId][_buttonIndex]; }
 
         //////////////////////////////////////////
+        inline void setCursorPosition(S32 _cursorId, Vec2DF const& _value) { m_cursorPositions[_cursorId] = _value; }
+
+        //////////////////////////////////////////
         inline Vec2DF const& getCursorPosition(S32 _cursorId) const { return m_cursorPositions[_cursorId]; }
 
         //////////////////////////////////////////
@@ -142,6 +145,7 @@ namespace Maze
         MultiDelegate<InputEventMouseData const&> eventMouse;
         MultiDelegate<InputEventKeyboardData const&> eventKeyboard;
         MultiDelegate<InputEventTouchData const&> eventTouch;
+        MultiDelegate<InputEventVirtualCursorData const&> eventVirtualCursor;
         MultiDelegate<InputEventTextData const&> eventText;
 
     protected:

@@ -46,21 +46,21 @@ namespace Maze
     MAZE_USING_SHARED_PTR(ContextOpenGL);
     
 
-    ////////////////////////////////////
+    //////////////////////////////////////////
     // Class Texture2DOpenGLScopeBind
     //
-    ////////////////////////////////////
+    //////////////////////////////////////////
     class Texture2DOpenGLScopeBind
     {
     public:
 
-        ////////////////////////////////////    
+        //////////////////////////////////////////    
         Texture2DOpenGLScopeBind(Texture2DOpenGL* _newTexture);
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         Texture2DOpenGLScopeBind(Texture2DOpenGLPtr const& _newTexture);
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         ~Texture2DOpenGLScopeBind();
 
     private:
@@ -119,23 +119,26 @@ namespace Maze
             PixelFormat::Enum _internalPixelFormat = PixelFormat::None) MAZE_OVERRIDE;
 
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual bool setMagFilter(TextureFilter _value) MAZE_OVERRIDE;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual bool setMinFilter(TextureFilter _value) MAZE_OVERRIDE;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual bool setWrapS(TextureWrap _value) MAZE_OVERRIDE;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual bool setWrapT(TextureWrap _value) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void saveToFileAsTGA(String const& _fileName, Vec2DU _size = Vec2DU::c_zero) MAZE_OVERRIDE;
+        virtual void saveToFileAsTGA(
+            String const& _fileName,
+            Vec2DU _size = Vec2DU::c_zero,
+            bool _resetAlpha = false) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual PixelSheet2D readAsPixelSheet() MAZE_OVERRIDE;
+        virtual PixelSheet2D readAsPixelSheet(PixelFormat::Enum _outputFormat = PixelFormat::None) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         RenderSystemOpenGL* getRenderSystemOpenGLRaw()
@@ -143,7 +146,7 @@ namespace Maze
             return m_renderSystem->castRaw<RenderSystemOpenGL>();
         }
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual void copyImageFrom(
             Texture2DPtr const& _texture,
             U32 _x = 0,

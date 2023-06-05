@@ -76,6 +76,13 @@ namespace Maze
             MAZE_DEBUG_BP_IF(!getSharedPtr());
             return std::static_pointer_cast<U>(getSharedPtr()); 
         }
+
+        //////////////////////////////////////////
+        template <class U>
+        inline WeakPtr<U> castWeak()
+        {
+            return this->cast<U>();
+        }
         
         //////////////////////////////////////////
         template <class U>

@@ -58,10 +58,10 @@ namespace Maze
         virtual bool initApplication() MAZE_OVERRIDE;
 
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual String getClipboardAsString() MAZE_OVERRIDE;
 
-        ////////////////////////////////////
+        //////////////////////////////////////////
         virtual void setClipboardString(String const& _text) MAZE_OVERRIDE;
 
 
@@ -70,6 +70,12 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual void hideSystemCursor() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setSystemCursorPosition(Vec2DF _posSystemScreen) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual Vec2DF getSystemCursorPosition() MAZE_OVERRIDE;
 
     protected:
 

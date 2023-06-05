@@ -412,7 +412,7 @@ namespace Maze
         SpriteRenderer2DPtr spriteRenderer = dropdownEntity->createComponent<SpriteRenderer2D>();
         SpriteRenderer2D* spriteRendererRaw = spriteRenderer.get();
         spriteRenderer->setSprite(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));
-        spriteRenderer->setMaterial(
+        spriteRenderer->setMaterialCopy(
             renderSystem->getMaterialManager()->getColorTextureMaterial());
         spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
         spriteRenderer->setColor(ColorU32(250, 250, 250, 100));

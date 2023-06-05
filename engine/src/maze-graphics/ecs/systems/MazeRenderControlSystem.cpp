@@ -166,23 +166,34 @@ namespace Maze
     {
         MAZE_PROFILER_SCOPED_LOCK(RENDER);
 
+        update(_dt);
+    }
+
+    //////////////////////////////////////////
+    void RenderControlSystem::update(F32 _dt)
+    {
         m_module3D->processUpdate(_dt);
         m_module2D->processUpdate(_dt);
 
+        render();
+
+        m_module3D->processPostUpdate(_dt);
+        m_module2D->processPostUpdate(_dt);
+    }
+
+    //////////////////////////////////////////
+    void RenderControlSystem::render()
+    {
         if (m_renderTargetsDirty)
             updateRenderTargets();
 
         for (RenderTarget* renderTarget : m_renderTargets)
-        {            
+        {
             m_module3D->draw(renderTarget);
             m_module2D->draw(renderTarget);
 
             renderTarget->swapBuffers();
         }
-
-        m_module3D->processPostUpdate(_dt);
-        m_module2D->processPostUpdate(_dt);
-
     }
 
     //////////////////////////////////////////
