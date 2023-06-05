@@ -89,9 +89,40 @@
     uniform vec4 u_uv0Stream[32];
 
     //////////////////////////////////////////
-    vec4 GetUVStream(int instanceId)
+    vec4 GetUV0Stream(int instanceId)
     {
         return u_uv0Stream[instanceId];
+    }
+
+#endif
+
+
+//////////////////////////////////////////
+#if (MAZE_INSTANCE_STREAM_VIA_TEXTURE)
+    uniform sampler2D u_uv1StreamTexture;
+    uniform int u_uv1StreamTextureSize;
+    uniform int u_uv1StreamOffset;
+
+
+    //////////////////////////////////////////
+    vec4 GetUV1Stream(int instanceId)
+    {
+        int uvIndex = instanceId + u_uv1StreamOffset;
+        int r = uvIndex / u_uv1StreamTextureSize;
+        int c = uvIndex % u_uv1StreamTextureSize;
+
+        ivec2 pos = ivec2(c, r);
+    
+        return texelFetch(u_uv1StreamTexture, pos, 0).xyzw;
+    }
+
+#elif (MAZE_INSTANCE_STREAM_VIA_ARRAY)
+    uniform vec4 u_uv1Stream[32];
+
+    //////////////////////////////////////////
+    vec4 GetUV1Stream(int instanceId)
+    {
+        return u_uv1Stream[instanceId];
     }
 
 #endif
@@ -105,6 +136,11 @@ vec3 SampleNormalTS(
 {
 #if defined(NORMAL_MAP) && (NORMAL_MAP)
     vec4 packedNormal = MAZE_GET_TEXEL2D(normalMap, uv);
+    
+#if defined(NORMAL_MAP_INV_Y) && (NORMAL_MAP_INV_Y)
+    packedNormal.y = 1.0 - packedNormal.y;
+#endif
+    
     vec3 normal;
     normal.xyz = packedNormal.rgb * 2.0 - 1.0;
     normal.xy *= -normalScale;
