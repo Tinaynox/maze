@@ -30,7 +30,14 @@ project(maze-example-game00)
 
 ##########################################
 set(EXAMPLE_NAME "${PROJECT_NAME}")
-set(EXAMPLE_MAZE_LIBS maze-core maze-graphics maze-ui maze-gamepad maze-engine maze-editor-tools)
+set(EXAMPLE_MAZE_LIBS
+    maze-core
+    maze-graphics
+    maze-ui
+    maze-gamepad
+    maze-engine
+    maze-editor-tools
+    maze-plugin-loader-png)
 
 
 ##########################################
@@ -47,6 +54,10 @@ endif()
 
 ##########################################
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../../engine" "${CMAKE_CURRENT_BINARY_DIR}/MazeEngine")
+
+
+##########################################
+add_subdirectory("${MAZE_DIR}/plugins/loader-png" "${CMAKE_CURRENT_BINARY_DIR}/plugins/loader-png")
 
 
 ##########################################

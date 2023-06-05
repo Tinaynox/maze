@@ -91,12 +91,13 @@ void OnInit()
     Maze::Debug::log << Maze::SystemHelper::ConstructSystemInfo();
     
     Maze::Debug::log << "Adding resources directory: " << g_assetManager->getDefaultAssetsDirectory() << "..." << Maze::endl;
-    g_assetManager->addAssetsDirectory(g_assetManager->getDefaultAssetsDirectory(), true);
+    g_assetManager->addAssetsDirectoryPath(g_assetManager->getDefaultAssetsDirectory());
     Maze::Debug::log << "Asset directory added." << Maze::endl;
 
     Maze::Debug::log << g_assetManager->constructAssetsInfo();
 
-    Maze::AssetFilePtr testFile = g_assetManager->getAssetFileByFileName("Test.txt");
+    Maze::AssetFilePtr testFile = g_assetManager->getAssetFileByFileName(
+        MAZE_HASHED_CSTRING("Test.txt"));
     Maze::String testFileText;
     if (testFile)
     {

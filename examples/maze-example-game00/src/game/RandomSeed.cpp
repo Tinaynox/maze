@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "RandomSeed.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
+#include "maze-core/math/MazeRandom.hpp"
 
 
 //////////////////////////////////////////
@@ -43,7 +44,7 @@ namespace Maze
 
     //////////////////////////////////////////
     RandomSeed::RandomSeed()
-        : m_randomSeed(Math::RangeRandom(S32_MIN, S32_MAX))
+        : m_randomSeed(Random::RangeRandom(S32_MIN, S32_MAX))
     {
     }
 

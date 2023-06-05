@@ -86,7 +86,7 @@ namespace Maze
         SpaceObject* spaceObject = _component->castRaw<SpaceObject>();
 
         _drawer->setColor(ColorF128::c_magenta);
-        _drawer->drawCircle(
+        _drawer->drawWireCircle(
             spaceObject->getTransform()->getLocalPosition() + spaceObject->getWeaponPointDirected(),
             Vec3DF::c_unitZ,
             0.1f);

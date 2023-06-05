@@ -51,7 +51,6 @@
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
-#include "maze-graphics/loaders/texture/MazeLoaderPNG.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/MazeGPUTextureBuffer.hpp"
@@ -60,7 +59,7 @@
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
-#include "maze-graphics/managers/MazeGizmosManager.hpp"
+#include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-gamepad/managers/MazeGamepadManager.hpp"
 #include "maze-gamepad/gamepad/MazeGamepad.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
@@ -153,7 +152,7 @@ namespace Maze
     //////////////////////////////////////////
     void GameManager::updateDrawCallsLimit()
     {
-        DebuggerSettingsPtr debuggerSettings = SettingsManager::GetInstancePtr()->getSettings<DebuggerSettings>();
+        EditorToolsSettingsPtr debuggerSettings = SettingsManager::GetInstancePtr()->getSettings<EditorToolsSettings>();
 
         RenderWindowPtr const& renderWindow = Game::GetInstancePtr()->getMainRenderWindow();
 

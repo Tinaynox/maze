@@ -50,7 +50,6 @@
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
-#include "maze-graphics/loaders/texture/MazeLoaderPNG.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/MazeGPUTextureBuffer.hpp"
@@ -59,6 +58,7 @@
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
@@ -183,14 +183,13 @@ namespace Maze
         MaterialPtr const& spriteMaterial = spriteManager->getDefaultSpriteMaterial();
 
         String fpsText;
-        m_fpsSystemTextRenderer = SpriteHelper::CreateSystemText(
+        m_fpsSystemTextRenderer = SystemUIHelper::CreateSystemText(
             fpsText.c_str(),
             8,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Top,
             Vec2DF(300, 300),
             Vec2DF(15.0f, -1.0f),
-            spriteMaterial,
             m_canvas->getTransform(),
             this);
         m_fpsSystemTextRenderer->getTransform()->setAnchor(Vec2DF(0.0f, 1.0f));

@@ -26,6 +26,8 @@
 //////////////////////////////////////////
 #include "UIHelper.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
+#include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 
 
 
@@ -120,28 +122,26 @@ namespace Maze
                     case 7: offset = Vec2DF(+outlineOffset, -outlineOffset); break;
                 }
 
-                SystemTextRenderer2DPtr systemText = SpriteHelper::CreateSystemText(
+                SystemTextRenderer2DPtr systemText = SystemUIHelper::CreateSystemText(
                     _label.c_str(),
                     16,
                     HorizontalAlignment2D::Center,
                     VerticalAlignment2D::Middle,
                     buttonSprite->getTransform()->getSize(),
                     Vec2DF(0.0f, 2.0f) + offset,
-                    spriteManager->getDefaultSpriteMaterial(),
                     labelEntityTransform,
                     _scene);
                 systemText->setColor(ColorU32(38, 32, 27, 255));
                 systemText->getEntityRaw()->ensureComponent<Name>("Shadow");
             }
 
-            SystemTextRenderer2DPtr systemText = SpriteHelper::CreateSystemText(
+            SystemTextRenderer2DPtr systemText = SystemUIHelper::CreateSystemText(
                 _label.c_str(),
                 16,
                 HorizontalAlignment2D::Center,
                 VerticalAlignment2D::Middle,
                 buttonSprite->getTransform()->getSize(),
                 Vec2DF(0.0f, 2.0f),
-                spriteManager->getDefaultSpriteMaterial(),
                 labelEntityTransform,
                 _scene);
             systemText->setColor(ColorU32(255, 160, 0, 255));
@@ -256,28 +256,26 @@ namespace Maze
                     case 7: offset = Vec2DF(+outlineOffset, -outlineOffset); break;
                 }
 
-                SystemTextRenderer2DPtr systemText = SpriteHelper::CreateSystemText(
+                SystemTextRenderer2DPtr systemText = SystemUIHelper::CreateSystemText(
                     _label.c_str(),
                     16,
                     HorizontalAlignment2D::Center,
                     VerticalAlignment2D::Middle,
                     buttonSprite->getTransform()->getSize(),
                     Vec2DF(0.0f, 2.0f) + offset,
-                    spriteManager->getDefaultSpriteMaterial(),
                     labelEntityTransform,
                     _scene);
                 systemText->setColor(ColorU32(38, 32, 27, 255));
                 systemText->getEntityRaw()->ensureComponent<Name>("Shadow");
             }
 
-            SystemTextRenderer2DPtr systemText = SpriteHelper::CreateSystemText(
+            SystemTextRenderer2DPtr systemText = SystemUIHelper::CreateSystemText(
                 _label.c_str(),
                 16,
                 HorizontalAlignment2D::Center,
                 VerticalAlignment2D::Middle,
                 buttonSprite->getTransform()->getSize(),
                 Vec2DF(0.0f, 2.0f),
-                spriteManager->getDefaultSpriteMaterial(),
                 labelEntityTransform,
                 _scene);
             systemText->setColor(ColorU32(255, 160, 0, 255));

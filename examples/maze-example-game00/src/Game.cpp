@@ -42,8 +42,14 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazePluginManager.hpp"
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
+#include "maze-graphics/managers/MazeMeshManager.hpp"
+#include "maze-graphics/managers/MazeRenderMeshManager.hpp"
+#include "maze-graphics/managers/MazeSystemFontManager.hpp"
+#include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
@@ -51,10 +57,10 @@
 #include "maze-core/ecs/systems/MazeBounds2DSystem.hpp"
 #include "maze-core/ecs/systems/MazeSizePolicy2DSystem.hpp"
 #include "maze-core/ecs/systems/MazeTransformUtilsSystem.hpp"
-#include "maze-graphics/ecs/systems/MazeGizmosSystem.hpp"
+#include "maze-editor-tools/ecs/systems/MazeGizmosSystem.hpp"
+#include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderPreparationSystem.hpp"
-#include "maze-graphics/managers/MazeGizmosManager.hpp"
 #include "maze-ui/ecs/systems/MazeInputSystem2D.hpp"
 #include "maze-ui/ecs/systems/MazeUITweenTransitionSystem.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
@@ -62,6 +68,7 @@
 #include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
 #include "maze-physics2d/ecs/systems/MazePhysicsControlSystem2D.hpp"
 #include "maze-physics2d/managers/MazePhysics2DManager.hpp"
+#include "maze-plugin-loader-png/MazeLoaderPNGPlugin.hpp"
 #include "settings/GameGraphicsSettings.hpp"
 #include "settings/GameDebugSettings.hpp"
 #include "scenes/SceneSplash.hpp"
@@ -98,7 +105,7 @@ namespace Maze
 
         m_mainRenderWindow.reset();
 
-        m_settingsManager->getSettings<DebuggerSettings>()->eventActiveChanged.unsubscribe(this);
+        m_settingsManager->getSettings<EditorToolsSettings>()->getActiveChangedEvent().unsubscribe(this);
 
         s_instance = nullptr;
 
@@ -127,11 +134,11 @@ namespace Maze
     //////////////////////////////////////////
     void Game::update(F32 _dt)
     {
-        if (m_debuggerManager)
+        if (m_editorToolsManager)
         {
             F32 const debugEditorProgressSpeed = 5.0f;
 
-            if (m_debuggerManager->getDebugEditorActive())
+            if (m_editorToolsManager->getDebugEditorActive())
             {
                 if (m_debugEditorProgress < 1.0f)
                 {
@@ -214,7 +221,7 @@ namespace Maze
         m_settingsManager->registerSettings<GameGraphicsSettings>();
         m_settingsManager->registerSettings<GameDebugSettings>();
         m_settingsManager->loadSettings();
-        m_settingsManager->getSettings<DebuggerSettings>()->eventActiveChanged.subscribe(this, &Game::notifyDebuggerActiveChanged);
+        m_settingsManager->getSettings<EditorToolsSettings>()->getActiveChangedEvent().subscribe(this, &Game::notifyDebuggerActiveChanged);
 
         if (!Game::initGameManagers())
             return false;
@@ -344,19 +351,29 @@ namespace Maze
         if (!createMainRenderWindow())
             return false;
 
-        AssetManager::GetInstancePtr()->addAssetsDirectory(AssetManager::GetInstancePtr()->getDefaultAssetsDirectory(), true);
+        AssetManager::GetInstancePtr()->addAssetsDirectoryPath(
+            AssetManager::GetInstancePtr()->getDefaultAssetsDirectory());
         RenderSystemPtr const& renderSystem = m_graphicsManager->getDefaultRenderSystem();
         ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
 
+        RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->createBuiltinShaders();
+        TextureManager::GetCurrentInstancePtr()->createBuiltinTextures();
+        MaterialManager::GetCurrentInstance()->createBuiltinMaterials();
+        MeshManager::GetCurrentInstancePtr()->createBuiltinMeshes();
+        RenderMeshManager::GetCurrentInstancePtr()->createBuiltinRenderMeshes();
+        SystemFontManager::GetCurrentInstancePtr()->createBuiltinSystemFonts();
+        GizmosManager::GetInstancePtr()->createGizmosElements();
+        UIManager::GetInstancePtr()->createUIElements();
+
+        MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG);
+
         shaderSystem->findAssetShadersAndAddToCache();
 
-        m_graphicsManager->getGizmosManager()->createGizmosElements();
-        m_uiManager->createUIElements();
 
         EntityManager* entityManager = EntityManager::GetInstancePtr();
         ECSWorldPtr const& world = entityManager->getDefaultWorld();
 
-        createDefaultECSWorldSystems(world, m_mainRenderWindow, m_graphicsManager->getDefaultRenderSystem());
+        createPrimaryECSWorldSystems(world, m_mainRenderWindow, m_graphicsManager->getDefaultRenderSystem());
 
         m_sceneManager->loadScene<SceneSplash>();
         
@@ -367,19 +384,19 @@ namespace Maze
     //////////////////////////////////////////
     void Game::openDebugEditor()
     {
-        m_debuggerManager->openDebugEditor(m_mainRenderWindow);
+        m_editorToolsManager->openDebugEditor(m_mainRenderWindow);
     }
 
     //////////////////////////////////////////
     void Game::closeDebugEditor()
     {
-        m_debuggerManager->closeDebugEditor();
+        m_editorToolsManager->closeDebugEditor();
     }
 
     //////////////////////////////////////////
     void Game::updateDebugEditor()
     {
-        if (SettingsManager::GetInstancePtr()->getSettings<DebuggerSettings>()->getActive())
+        if (SettingsManager::GetInstancePtr()->getSettings<EditorToolsSettings>()->getActive())
         {
             openDebugEditor();
         }
@@ -401,7 +418,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Game::notifyDebuggerActiveChanged(bool _active)
+    void Game::notifyDebuggerActiveChanged(bool const& _active)
     {
         updateDebugEditor();
     }
@@ -417,7 +434,7 @@ namespace Maze
                 {
                     case KeyCode::F1:
                     {
-                        SettingsManager::GetInstancePtr()->getSettings<DebuggerSettings>()->switchActive();
+                        SettingsManager::GetInstancePtr()->getSettings<EditorToolsSettings>()->switchActive();
                         SettingsManager::GetInstancePtr()->saveSettings();
                         break;
                     }

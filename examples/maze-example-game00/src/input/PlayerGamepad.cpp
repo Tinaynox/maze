@@ -50,7 +50,6 @@
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
-#include "maze-graphics/loaders/texture/MazeLoaderPNG.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/MazeGPUTextureBuffer.hpp"
@@ -237,7 +236,7 @@ namespace Maze
             {
                 GamepadPtr const& gamepad = GamepadManager::GetInstancePtr()->getGamepadById(m_deviceNumber);
                 MAZE_DEBUG_BP_RETURN_VALUE_IF(!gamepad, String());
-                return gamepad->getDescription();
+                return gamepad->getName();
             }
             default:
             {

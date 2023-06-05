@@ -158,7 +158,7 @@ bool SceneExample::init()
     }
     
 
-    Maze::SpritePtr sprite = spriteManager->getSprite("Panel00.mztexture");
+    Maze::SpritePtr sprite = spriteManager->getSprite("Panel00.png");
     if (sprite)
         sprite->setSliceBorder(
             40.0f,

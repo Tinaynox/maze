@@ -54,11 +54,11 @@
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
-#include "maze-graphics/loaders/texture/MazeLoaderPNG.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/MazeGPUTextureBuffer.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeSprite.hpp"
@@ -307,14 +307,13 @@ namespace Maze
                     videoMenu,
                     this);
 
-                SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+                SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
                     "FULLSCREEN",
                     10,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Top,
                     { 200.0f, 10.0f },
                     { 0.0f, 0.0f },
-                    nullptr,
                     layout->getTransform(),
                     this);
                 label->setColor(ColorU32(255, 150, 0));
@@ -342,14 +341,13 @@ namespace Maze
                     videoMenu,
                     this);
 
-                SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+                SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
                     "VSYNC",
                     10,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Top,
                     { 200.0f, 10.0f },
                     { 0.0f, 0.0f },
-                    nullptr,
                     layout->getTransform(),
                     this);
                 label->setColor(ColorU32(255, 150, 0));
@@ -377,14 +375,13 @@ namespace Maze
                     videoMenu,
                     this);
 
-                SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+                SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
                     "POST PROCESS FX",
                     10,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Top,
                     { 200.0f, 10.0f },
                     { 0.0f, 0.0f },
-                    nullptr,
                     layout->getTransform(),
                     this);
                 label->setColor(ColorU32(255, 150, 0));
@@ -408,14 +405,13 @@ namespace Maze
         {
             // Debug options
             {
-                SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+                SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
                     "DEBUG OPTIONS",
                     10,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
                     { 200.0f, 20.0f },
                     { 0.0f, 0.0f },
-                    nullptr,
                     gameMenu,
                     this);
                 label->setColor(ColorU32(255, 0, 0));
@@ -430,14 +426,13 @@ namespace Maze
                     gameMenu,
                     this);
 
-                SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+                SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
                     "DISABLE ENEMIES",
                     10,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Top,
                     { 200.0f, 10.0f },
                     { 0.0f, 0.0f },
-                    nullptr,
                     layout->getTransform(),
                     this);
                 label->setColor(ColorU32(255, 150, 0));
@@ -465,26 +460,26 @@ namespace Maze
                     gameMenu,
                     this);
 
-                SystemTextRenderer2DPtr label = SpriteHelper::CreateSystemText(
+                SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
                     "FORCE AVATAR",
                     10,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Top,
                     { 200.0f, 10.0f },
                     { 0.0f, 0.0f },
-                    nullptr,
                     layout->getTransform(),
                     this);
                 label->setColor(ColorU32(255, 150, 0));
 
                 m_forcePlayerAvatarDropdown = UIHelper::CreateDefaultDropdown(
+                    10,
                     Vec2DF(150, 18),
                     Vec2DF(0, 0),
                     layout->getTransform(),
                     this);
                 m_forcePlayerAvatarDropdown->addOptions(SpaceObjectAvatarType::AllStringsWithNone());
                 m_forcePlayerAvatarDropdown->eventValueChanged.subscribe(
-                    [](SystemTextDropdown2D* _dropdown, S32 _value)
+                    [](Dropdown2D* _dropdown, S32 _value)
                     {
                         GameDebugSettings* debugSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<GameDebugSettings>();
 

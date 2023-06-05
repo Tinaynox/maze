@@ -49,7 +49,7 @@
 #include "maze-ui/MazeCursorInputEvent.hpp"
 #include "maze-ui/ecs/components/MazeButton2D.hpp"
 #include "maze-ui/ecs/components/MazeToggleButton2D.hpp"
-#include "maze-ui/ecs/components/MazeSystemTextDropdown2D.hpp"
+#include "maze-ui/ecs/components/MazeDropdown2D.hpp"
 #include "game/SpaceObjectAvatarType.hpp"
 
 
@@ -174,7 +174,7 @@ namespace Maze
 
         // Debug settings
         ToggleButton2DPtr m_disableEnemiesSpawnToggle;
-        SystemTextDropdown2DPtr m_forcePlayerAvatarDropdown;
+        Dropdown2DPtr m_forcePlayerAvatarDropdown;
     };
 
 

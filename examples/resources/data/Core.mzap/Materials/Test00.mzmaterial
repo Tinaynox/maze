@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Material>
-    <ShaderUniformVariant name="u_baseMap" type="UniformTexture2D" value="SMG.mztexture" />
+    <ShaderUniformVariant name="u_baseMap" type="UniformTexture2D" value="SMG.png" />
     <RenderPass 
         passType="Default"
         renderQueueIndex="2000"

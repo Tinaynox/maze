@@ -28,6 +28,7 @@
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/math/MazeRandom.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
@@ -59,7 +60,7 @@ namespace Maze
 
     //////////////////////////////////////////
     SpaceObjectAI_SinMovement::SpaceObjectAI_SinMovement()
-        : m_timer(Math::Random(3.0f))
+        : m_timer(Random::Random(3.0f))
     {
     }
 

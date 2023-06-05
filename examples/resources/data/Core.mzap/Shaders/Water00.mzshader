@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Shader>
-    <Uniform name="u_dudvMap" type="UniformTexture2D" value="WaterDUDV.mztexture" />
-    <Uniform name="u_normalMap" type="UniformTexture2D" value="WaterNormal.mztexture" />
+    <Uniform name="u_dudvMap" type="UniformTexture2D" value="WaterDUDV.png" />
+    <Uniform name="u_normalMap" type="UniformTexture2D" value="WaterNormal.png" />
     <Uniform name="u_normalScale" type="UniformF32" value="1.0" />
     <Uniform name="u_tiling" type="UniformF32" value="3.0" />
     <Uniform name="u_waveStrength" type="UniformF32" value="0.02" />

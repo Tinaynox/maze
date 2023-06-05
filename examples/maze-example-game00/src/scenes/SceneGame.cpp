@@ -61,7 +61,6 @@
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
-#include "maze-graphics/loaders/texture/MazeLoaderPNG.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/MazeGPUTextureBuffer.hpp"
@@ -239,7 +238,7 @@ namespace Maze
         {
             m_bloomController->update(_dt);
 
-            m_renderColorSprite->getMaterial()->ensureUniform("u_bloomMap", ShaderUniformType::UniformTexture2D)->set(m_bloomController->getBloomRenderBuffer()->getColorTexture());
+            m_renderColorSprite->getMaterial()->ensureUniform("u_bloomMap", ShaderUniformType::UniformTexture2D)->set(m_bloomController->getBloomRenderBuffer()->getColorTexture2D());
         }
     }
 
@@ -322,8 +321,8 @@ namespace Maze
                     PixelFormat::RGBA_F16,
                     PixelFormat::DEPTH_U24
                 });
-            m_renderBuffer->getColorTexture()->setMinFilter(TextureFilter::Linear);
-            m_renderBuffer->getColorTexture()->setMagFilter(TextureFilter::Linear);
+            m_renderBuffer->getColorTexture2D()->setMinFilter(TextureFilter::Linear);
+            m_renderBuffer->getColorTexture2D()->setMagFilter(TextureFilter::Linear);
         }
 
         EntityPtr canvasEntity = createEntity("Canvas");
@@ -344,7 +343,7 @@ namespace Maze
         if (SettingsManager::GetInstancePtr()->getSettings<GameGraphicsSettings>()->getPostProcessEnabled())
         {
             m_renderColorSprite = SpriteHelper::CreateSprite(
-                Sprite::Create(m_renderBuffer->getColorTexture()),
+                Sprite::Create(m_renderBuffer->getColorTexture2D()),
                 m_canvas->getTransform()->getSize(),
                 Vec2DF::c_zero,
                 GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getMaterial("PostFX00.mzmaterial"),
@@ -355,7 +354,7 @@ namespace Maze
             m_renderColorSprite->getEntityRaw()->ensureComponent<SizePolicy2D>();
         
             m_renderDepthSprite = SpriteHelper::CreateSprite(
-                Sprite::Create(m_renderBuffer->getDepthTexture()),
+                Sprite::Create(m_renderBuffer->getDepthTexture()->cast<Texture2D>()),
                 m_canvas->getTransform()->getSize(),
                 Vec2DF::c_zero,
                 GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getMaterial("DepthBuffer00.mzmaterial"),

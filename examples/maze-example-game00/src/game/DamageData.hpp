@@ -83,7 +83,7 @@ namespace Maze
             : damageValue(_damageValue)
             , criticalScale(_criticalScale)
             , type(_type)
-            , seed(Math::RangeRandom(S32_MIN, S32_MAX))
+            , seed(Random::RangeRandom(S32_MIN, S32_MAX))
         {
         }
 

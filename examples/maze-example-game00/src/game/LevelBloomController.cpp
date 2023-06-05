@@ -147,7 +147,7 @@ namespace Maze
 
         // First downscale
         {
-            Texture2DPtr const& baseMap = m_sceneGame->getRenderBuffer()->getColorTexture();
+            Texture2DPtr const& baseMap = m_sceneGame->getRenderBuffer()->getColorTexture2D();
             m_bloomBaseMapUniform->set(baseMap);
             m_bloomBaseMapTexelSizeUniform->set(1.0f / (Vec2DF)baseMap->getSize());
             currentRenderBuffer->blit(m_bloomMaterial, 0);
@@ -159,7 +159,7 @@ namespace Maze
         {
             RenderBufferPtr bloomMipMapRenderBuffer = m_bloomMipMapRenderBuffers[i];
 
-            Texture2DPtr const& baseMap = srcBuffer->getColorTexture();
+            Texture2DPtr const& baseMap = srcBuffer->getColorTexture2D();
             m_bloomBaseMapUniform->set(baseMap);
             m_bloomBaseMapTexelSizeUniform->set(1.0f / (Vec2DF)baseMap->getSize());
             bloomMipMapRenderBuffer->blit(m_bloomMaterial, 1);
@@ -175,7 +175,7 @@ namespace Maze
             Size j = m_blurIterations - 2 - i;
             RenderBufferPtr bloomMipMapRenderBuffer = m_bloomMipMapRenderBuffers[j];
 
-            Texture2DPtr const& baseMap = srcBuffer->getColorTexture();
+            Texture2DPtr const& baseMap = srcBuffer->getColorTexture2D();
             m_bloomBaseMapUniform->set(baseMap);
             m_bloomBaseMapTexelSizeUniform->set(1.0f / (Vec2DF)baseMap->getSize());
             bloomMipMapRenderBuffer->blit(m_bloomMaterial, 2);
@@ -187,9 +187,9 @@ namespace Maze
 
         // Final upscale
         {
-            m_bloomPrevBloomMapUniform->set(prevRenderBuffer->getColorTexture());
+            m_bloomPrevBloomMapUniform->set(prevRenderBuffer->getColorTexture2D());
 
-            Texture2DPtr const& baseMap = srcBuffer->getColorTexture();
+            Texture2DPtr const& baseMap = srcBuffer->getColorTexture2D();
             m_bloomBaseMapUniform->set(baseMap);
             m_bloomBaseMapTexelSizeUniform->set(1.0f / (Vec2DF)baseMap->getSize());
             currentRenderBuffer->blit(m_bloomMaterial, 3);
@@ -214,8 +214,8 @@ namespace Maze
                     bloomRenderBufferSize,
                     PixelFormat::RGBA_U8
                 });
-            m_bloomRenderBuffer[i]->getColorTexture()->setMinFilter(TextureFilter::Linear);
-            m_bloomRenderBuffer[i]->getColorTexture()->setMagFilter(TextureFilter::Linear);
+            m_bloomRenderBuffer[i]->getColorTexture2D()->setMinFilter(TextureFilter::Linear);
+            m_bloomRenderBuffer[i]->getColorTexture2D()->setMagFilter(TextureFilter::Linear);
         }
 
         m_bloomMipMapRenderBuffers.clear();
@@ -229,8 +229,8 @@ namespace Maze
                 },
                 PixelFormat::RGBA_U8
             });
-            renderBuffer->getColorTexture()->setMinFilter(TextureFilter::Linear);
-            renderBuffer->getColorTexture()->setMagFilter(TextureFilter::Linear);
+            renderBuffer->getColorTexture2D()->setMinFilter(TextureFilter::Linear);
+            renderBuffer->getColorTexture2D()->setMagFilter(TextureFilter::Linear);
             m_bloomMipMapRenderBuffers.push_back(renderBuffer);
         }
     }

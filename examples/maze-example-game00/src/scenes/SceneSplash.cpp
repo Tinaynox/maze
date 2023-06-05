@@ -52,7 +52,6 @@
 #include "maze-graphics/MazeVertexArrayObject.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
-#include "maze-graphics/loaders/texture/MazeLoaderPNG.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/MazeGPUTextureBuffer.hpp"
@@ -71,6 +70,8 @@
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
 #include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
+#include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "Game.hpp"
 #include "scenes/SceneFadePreloader.hpp"
 #include "scenes/SceneMainMenu.hpp"
@@ -224,14 +225,13 @@ namespace Maze
             this);
          m_graySquare->getEntityRaw()->ensureComponent<Name>("GraySquare");
 
-        m_loadingText = SpriteHelper::CreateSystemText(
+        m_loadingText = SystemUIHelper::CreateSystemText(
             "Loading...",
             16,
             HorizontalAlignment2D::Center,
             VerticalAlignment2D::Middle,
             Vec2DF(200, 100),
             Vec2DF::c_zero,
-            spriteManager->getDefaultSpriteMaterial(),
             m_graySquare->getTransform(),
             this);
         m_loadingText->getEntityRaw()->ensureComponent<Name>("LoadingText");

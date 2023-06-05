@@ -59,7 +59,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Canvas);
     MAZE_USING_SHARED_PTR(MenuListTree2D);
     MAZE_USING_SHARED_PTR(ScrollRect2D);
-    MAZE_USING_SHARED_PTR(SystemTextDropdown2D);
+    MAZE_USING_SHARED_PTR(Dropdown2D);
     
 
     //////////////////////////////////////////
@@ -115,7 +115,7 @@ namespace Maze
         void updateGamepadData();
 
         //////////////////////////////////////////
-        void notifyGamepadsDropdownValueChanged(SystemTextDropdown2D* _dropdown, S32 _index);
+        void notifyGamepadsDropdownValueChanged(Dropdown2D* _dropdown, S32 _index);
 
         //////////////////////////////////////////
         AxisUIData createAxisUI(S32 _index, Transform2DPtr const& _root);
@@ -133,7 +133,7 @@ namespace Maze
         S32 m_selectedGamepadIndex = 0;
 
         Transform2DPtr m_gamepadsUIRoot;
-        SystemTextDropdown2DPtr m_gamepadsDropdown;
+        Dropdown2DPtr m_gamepadsDropdown;
         SystemTextRenderer2DPtr m_enabledText;
         Vector<AxisUIData> m_axesUI;
         Vector<SpriteRenderer2DPtr> m_buttonsUI;

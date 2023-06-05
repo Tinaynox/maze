@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Material>
-    <ShaderUniformVariant name="u_baseMap0" type="UniformTexture2D" value="Terrain02.mztexture" />
+    <ShaderUniformVariant name="u_baseMap0" type="UniformTexture2D" value="Terrain02.png" />
     <ShaderUniformVariant name="u_baseMap0ST" type="UniformVec4DF" value="5.0;5.0;0.0;0.0" />
-    <ShaderUniformVariant name="u_baseMap1" type="UniformTexture2D" value="Terrain01.mztexture" />
+    <ShaderUniformVariant name="u_baseMap1" type="UniformTexture2D" value="Terrain01.png" />
     <ShaderUniformVariant name="u_baseMap1ST" type="UniformVec4DF" value="5.0;5.0;0.0;0.0" />
-    <ShaderUniformVariant name="u_baseMap2" type="UniformTexture2D" value="Terrain00.mztexture" />
+    <ShaderUniformVariant name="u_baseMap2" type="UniformTexture2D" value="Terrain00.png" />
     <ShaderUniformVariant name="u_baseMap2ST" type="UniformVec4DF" value="8.0;8.0;0.0;0.0" />
     <ShaderUniformVariant name="u_height0" type="UniformF32" value="0.4" />
     <ShaderUniformVariant name="u_height1" type="UniformF32" value="1.0" />

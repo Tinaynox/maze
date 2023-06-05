@@ -54,6 +54,7 @@
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/MazeGPUTextureBuffer.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
@@ -76,7 +77,7 @@
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
-#include "maze-ui/ecs/components/MazeSystemTextDropdown2D.hpp"
+#include "maze-ui/ecs/components/MazeDropdown2D.hpp"
 #include "maze-gamepad/managers/MazeGamepadManager.hpp"
 #include "maze-gamepad/gamepad/MazeGamepad.hpp"
 #include "Example.hpp"
@@ -213,7 +214,7 @@ namespace Maze
             { 0.0f, 0.0f },
             { 0.0f, 0.0f });
         
-        m_gamepadsCountText = SpriteHelper::CreateSystemText(
+        m_gamepadsCountText = SystemUIHelper::CreateSystemText(
             "123", 8,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Top,
@@ -257,6 +258,7 @@ namespace Maze
         layout->setSpacing(5.0f);
 
         m_gamepadsDropdown = UIHelper::CreateDefaultDropdown(
+            10,
             { 400.0f, 18.0f },
             { 0.0f, 0.0f },
             layout->getTransform(),
@@ -289,7 +291,7 @@ namespace Maze
         
         {
             String str = "[CONNECTED]";
-            m_enabledText = SpriteHelper::CreateSystemText(
+            m_enabledText = SystemUIHelper::CreateSystemText(
                 str.c_str(),
                 8,
                 HorizontalAlignment2D::Left,
@@ -305,7 +307,7 @@ namespace Maze
 
         {
             String str = "Id: " + StringHelper::ToString(gamepad->getId());
-            SystemTextRenderer2DPtr text = SpriteHelper::CreateSystemText(
+            SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
                 str.c_str(),
                 8,
                 HorizontalAlignment2D::Left,
@@ -321,7 +323,7 @@ namespace Maze
 
         {
             String str = "Name: " + gamepad->getName();
-            SystemTextRenderer2DPtr text = SpriteHelper::CreateSystemText(
+            SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
                 str.c_str(),
                 8,
                 HorizontalAlignment2D::Left,
@@ -337,7 +339,7 @@ namespace Maze
 
         {
             String str = "Vendor Id: " + StringHelper::ToString(gamepad->getVendorId());
-            SystemTextRenderer2DPtr text = SpriteHelper::CreateSystemText(
+            SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
                 str.c_str(),
                 8,
                 HorizontalAlignment2D::Left,
@@ -353,7 +355,7 @@ namespace Maze
 
         {
             String str = "Product Id: " + StringHelper::ToString(gamepad->getProductId());
-            SystemTextRenderer2DPtr text = SpriteHelper::CreateSystemText(
+            SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
                 str.c_str(),
                 8,
                 HorizontalAlignment2D::Left,
@@ -369,7 +371,7 @@ namespace Maze
 
         {
             String str = "Device Id: " + StringHelper::ToString(gamepad->getDeviceId());
-            SystemTextRenderer2DPtr text = SpriteHelper::CreateSystemText(
+            SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
                 str.c_str(),
                 8,
                 HorizontalAlignment2D::Left,
@@ -385,7 +387,7 @@ namespace Maze
 
         {
             String str = "Axes: " + StringHelper::ToString(gamepad->getAxesCount());
-            SystemTextRenderer2DPtr text = SpriteHelper::CreateSystemText(
+            SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
                 str.c_str(),
                 8,
                 HorizontalAlignment2D::Left,
@@ -418,7 +420,7 @@ namespace Maze
 
         {
             String str = "Buttons: " + StringHelper::ToString(gamepad->getButtonsCount());
-            SystemTextRenderer2DPtr text = SpriteHelper::CreateSystemText(
+            SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
                 str.c_str(),
                 8,
                 HorizontalAlignment2D::Left,
@@ -523,7 +525,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneExample::notifyGamepadsDropdownValueChanged(SystemTextDropdown2D* _dropdown, S32 _index)
+    void SceneExample::notifyGamepadsDropdownValueChanged(Dropdown2D* _dropdown, S32 _index)
     {
         m_selectedGamepadIndex = _index;
 
@@ -547,7 +549,7 @@ namespace Maze
         layout->setSpacing(0.0f);
 
         String str = "Axis " + StringHelper::ToString(_index);
-        SystemTextRenderer2DPtr text = SpriteHelper::CreateSystemText(
+        SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
             str.c_str(),
             8,
             HorizontalAlignment2D::Center,
@@ -576,7 +578,7 @@ namespace Maze
             { 0.5f, 0.5f},
             { 0.0f, 0.5f });
 
-        data.value = SpriteHelper::CreateSystemText(
+        data.value = SystemUIHelper::CreateSystemText(
             "0",
             8,
             HorizontalAlignment2D::Center,
@@ -605,7 +607,7 @@ namespace Maze
         layout->setSpacing(0.0f);
 
         String str = StringHelper::ToString(_index);
-        SystemTextRenderer2DPtr text = SpriteHelper::CreateSystemText(
+        SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
             str.c_str(),
             8,
             HorizontalAlignment2D::Center,

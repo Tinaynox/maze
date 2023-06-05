@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Material>
-    <ShaderUniformVariant name="u_baseMap" type="UniformTexture2D" value="Mine000_Diffuse.mztexture" />
-    <ShaderUniformVariant name="u_emissionMap" type="UniformTexture2D" value="Mine000_Emission.mztexture" />
+    <ShaderUniformVariant name="u_baseMap" type="UniformTexture2D" value="Mine000_Diffuse.png" />
+    <ShaderUniformVariant name="u_emissionMap" type="UniformTexture2D" value="Mine000_Emission.png" />
     <ShaderUniformVariant name="u_color" type="UniformColorF128" value="1.0;1.0;1.0;1.0" />
     <ShaderUniformVariant name="u_ambientLightColor" type="UniformColorF128" value="0.0;0.0;0.0;1.0" />
     <ShaderUniformVariant name="u_shininess" type="UniformF32" value="0.03" />
