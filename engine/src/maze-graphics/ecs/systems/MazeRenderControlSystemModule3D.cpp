@@ -63,8 +63,6 @@ namespace Maze
     //////////////////////////////////////////
     RenderControlSystemModule3D::~RenderControlSystemModule3D()
     {
-        m_meshRenderers->eventEntityAdded.unsubscribe(this);
-        m_meshRenderers->eventEntityRemoved.unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -86,11 +84,13 @@ namespace Maze
         m_renderSystem = _renderSystem;
 
         m_meshRenderers = _world->requestInclusiveSample<MeshRenderer, Transform3D>();
+        m_meshRenderersInstancedSample = _world->requestInclusiveSample<MeshRendererInstanced, Transform3D>();
         m_trailRenderers3DSample = _world->requestInclusiveSample<TrailRenderer3D, Transform3D>();
         m_trailRendererHiders3DSample = _world->requestInclusiveSample<TrailRenderer3DHider, Transform3D>();
         m_lineRenderers3DSample = _world->requestInclusiveSample<LineRenderer3D, Transform3D>();
         m_cameras3DSample = _world->requestInclusiveSample<Camera3D>();
         m_lights3DSample = _world->requestInclusiveSample<Light3D>();
+        m_systemTextRenderer3DsSample = _world->requestInclusiveSample<SystemTextRenderer3D>();
         
         eventGatherRenderUnits.subscribe(this, &RenderControlSystemModule3D::notifyGatherRenderUnits);
 
@@ -247,16 +247,13 @@ namespace Maze
 
                     renderQueue->addSelectRenderPassCommand(renderPass);
 
-                    Vec4DF const* uvStreams[MAZE_UV_CHANNELS_MAX];
-                    memset(uvStreams, 0, sizeof(uvStreams));
-                    uvStreams[0] = data.uvStream;
 
                     renderQueue->addDrawVAOInstancedCommand(
-                        vao,
+                        vao.get(),
                         data.count,
                         data.modelMatricies,
                         data.colorStream,
-                        uvStreams);
+                        (Vec4DF const**)data.uvStreams);
 
                     prevRenderQueueIndex = currentRenderQueueIndex;
                 }
@@ -344,6 +341,13 @@ namespace Maze
             {
                 _trailRenderer->update(_dt);
             });
+
+        m_systemTextRenderer3DsSample->process(
+            [](Entity* _entity, SystemTextRenderer3D* _systemTextRenderer3D)
+        {
+            if (_systemTextRenderer3D->getTransform()->isWorldTransformChanged())
+                _systemTextRenderer3D->updateMeshRendererModelMatrices();
+        });
     }
 
     //////////////////////////////////////////
@@ -404,6 +408,57 @@ namespace Maze
                     }
                 }
             });
+        // Mesh Instances
+        m_meshRenderersInstancedSample->process(
+            [&](Entity* _entity, MeshRendererInstanced* _meshRenderer, Transform3D* _transform3D)
+        {
+            if (!_meshRenderer->getEnabled())
+                return;
+
+            if (_meshRenderer->getRenderMask()->getMask() & _params.renderMask)
+            {
+                if (_meshRenderer->getRenderMesh())
+                {
+                    Material const* material = _meshRenderer->getMaterial().get();
+                    if (!material)
+                        material = _renderTarget->getRenderSystem()->getMaterialManager()->getErrorMaterial().get();
+
+                    Vector<VertexArrayObjectPtr> const& vaos = _meshRenderer->getRenderMesh()->getVertexArrayObjects();
+
+                    if (vaos.empty())
+                        return;
+
+                    S32 count = (S32)_meshRenderer->getModelMatrices().size();
+                    if (count > 0)
+                    {
+                        for (Size i = 0, in = vaos.size(); i < in; ++i)
+                        {
+                            VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
+
+                            MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
+                        
+                            Vec4DF const* uvStreams[MAZE_UV_CHANNELS_MAX];
+                            memset(uvStreams, 0, sizeof(uvStreams));
+                            uvStreams[0] = _meshRenderer->getUV0Data();
+                            uvStreams[1] = _meshRenderer->getUV1Data();
+
+                            _renderData.emplace_back(
+                                RenderUnit
+                                (
+                                    material->getFirstRenderPass(),
+                                    vao,
+                                    _transform3D->getWorldPosition(),
+                                    count,
+                                    _meshRenderer->getModelMatricesData(),
+                                    _meshRenderer->getColorsData(),
+                                    uvStreams
+                                ));
+                        }
+
+                    }
+                }
+            }
+        });
 
         // Trails
         m_trailRenderers3DSample->process(

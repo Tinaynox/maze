@@ -67,7 +67,7 @@ namespace Maze
     bool RenderSystem::init()
     {
         TextureManager::Initialize(m_textureManager, getSharedPtr());
-        SpriteManager::Initialize(m_imageManager, getSharedPtr());
+        SpriteManager::Initialize(m_spriteManager, getSharedPtr());
         MeshManager::Initialize(m_meshManager, getSharedPtr());
         RenderMeshManager::Initialize(m_renderMeshManager, getSharedPtr());
         MaterialManager::Initialize(m_materialManager, getSharedPtr());
@@ -126,6 +126,9 @@ namespace Maze
         m_meshManager->createBuiltinMeshes();
         m_renderMeshManager->createBuiltinRenderMeshes();
         m_systemFontManager->createBuiltinSystemFonts();
+
+        if (!m_spriteManager->getDefaultSpriteMaterial())
+            m_spriteManager->setDefaultSpriteMaterial(m_materialManager->getColorTextureMaterial());
     }
 
 } // namespace Maze

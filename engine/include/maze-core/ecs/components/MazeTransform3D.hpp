@@ -216,6 +216,15 @@ namespace Maze
         inline bool isWorldTransformDirty() { return m_flags & Flags::WorldTransformDirty; }
 
         //////////////////////////////////////////
+        inline bool isWorldTransformChangedCurrentFrame() { return m_flags & Flags::WorldTransformChangedCurrentFrame; }
+
+        //////////////////////////////////////////
+        inline bool isWorldTransformChangedPreviousFrame() { return m_flags & Flags::WorldTransformChangedPreviousFrame; }
+
+        //////////////////////////////////////////
+        inline bool isWorldTransformChanged() { return isWorldTransformChangedCurrentFrame() || isWorldTransformChangedPreviousFrame(); }
+
+        //////////////////////////////////////////
         Mat4DF const& calculateWorldTransform();
 
         //////////////////////////////////////////

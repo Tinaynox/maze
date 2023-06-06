@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Shader>
+    <Uniform name="u_color" type="UniformColorF128" value="1.0;1.0;1.0;1.0" />
+    
+    <GLSL shader="Skybox00.mzglsl" />
+</Shader>

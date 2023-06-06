@@ -265,6 +265,7 @@ namespace Maze
         {
             RenderSystemOpenGLConfig config;
             config.multiContextPolicy = OpenGLMultiContextPolicy::Unified;
+            config.useDummyContext = true;
             MAZE_LOAD_PLATFORM_PLUGIN(RenderSystemOpenGL3, config);
         }
 #endif
@@ -323,6 +324,7 @@ namespace Maze
         params.windowParams->flags |= WindowStyleFlags::MinimizeButton;
         params.windowParams->flags |= WindowStyleFlags::MaximizeButton;
         params.windowParams->flags |= WindowStyleFlags::Resizable;
+        params.antialiasingLevel = 16;
         m_mainRenderWindow = RenderWindow::Create(params);
         if (!m_mainRenderWindow)
         {

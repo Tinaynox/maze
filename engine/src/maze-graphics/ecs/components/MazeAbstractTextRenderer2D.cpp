@@ -55,7 +55,7 @@ namespace Maze
     // Class AbstractTextRenderer2D
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(AbstractTextRenderer2D, Component);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(AbstractTextRenderer2D, AbstractTextRenderer);
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(AbstractTextRenderer2D);
@@ -76,10 +76,8 @@ namespace Maze
     //////////////////////////////////////////
     bool AbstractTextRenderer2D::init(RenderSystem* _renderSystem)
     {
-        if (!_renderSystem)
+        if (!AbstractTextRenderer::init(_renderSystem))
             return false;
-
-        m_renderSystem = _renderSystem;
 
         return true;
     }
@@ -90,9 +88,7 @@ namespace Maze
         ECSWorld* _world,
         EntityCopyData _copyData)
     {
-        m_renderSystem = _component->castRaw<AbstractTextRenderer2D>()->m_renderSystem;
-
-        if (!Component::init(
+        if (!AbstractTextRenderer::init(
             _component,
             _world,
             _copyData))

@@ -123,6 +123,8 @@ namespace Maze
         //////////////////////////////////////////
         SpritePtr const& getDefaultUISprite(DefaultUISprite uiSprite) const { return m_defaultUISprites[(Size)uiSprite];}
 
+        //////////////////////////////////////////
+        inline Texture2DPtr const& getTransparentChessTexture() const { return m_transparentChessTexture; }
 
         //////////////////////////////////////////
         void createUIElements();

@@ -200,7 +200,7 @@ namespace Maze
         inline TextureManagerPtr const& getTextureManager() const { return m_textureManager; }
 
         //////////////////////////////////////////
-        inline SpriteManagerPtr const& getSpriteManager() const { return m_imageManager; }
+        inline SpriteManagerPtr const& getSpriteManager() const { return m_spriteManager; }
 
         //////////////////////////////////////////
         inline MeshManagerPtr const& getMeshManager() const { return m_meshManager; }
@@ -265,7 +265,7 @@ namespace Maze
         ShaderSystemPtr m_shaderSystem;
 
         TextureManagerPtr m_textureManager;
-        SpriteManagerPtr m_imageManager;
+        SpriteManagerPtr m_spriteManager;
         MeshManagerPtr m_meshManager;
         RenderMeshManagerPtr m_renderMeshManager;
         MaterialManagerPtr m_materialManager;

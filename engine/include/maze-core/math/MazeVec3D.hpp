@@ -145,6 +145,9 @@ namespace Maze
         inline Vec2D<TValue> xy() const;
 
         //////////////////////////////////////////
+        inline Vec2D<TValue> xz() const;
+
+        //////////////////////////////////////////
         inline void swap(Vec3D& _other);
 
         //////////////////////////////////////////

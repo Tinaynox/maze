@@ -35,6 +35,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeAlignment2D.hpp"
 #include "maze-graphics/MazeSystemFont.hpp"
+#include "maze-graphics/ecs/components/MazeAbstractTextRenderer.hpp"
 
 
 //////////////////////////////////////////
@@ -54,12 +55,12 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API AbstractTextRenderer2D
-        : public Component
+        : public AbstractTextRenderer
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(AbstractTextRenderer2D, Component);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(AbstractTextRenderer2D, AbstractTextRenderer);
 
         //////////////////////////////////////////
         MAZE_DECLARE_MEMORY_ALLOCATION(AbstractTextRenderer2D);
@@ -78,65 +79,6 @@ namespace Maze
 
         //////////////////////////////////////////
         CanvasRendererPtr const& getCanvasRenderer() const { return m_canvasRenderer; }
-
-
-        //////////////////////////////////////////
-        virtual void setText(String const& _text) MAZE_ABSTRACT;
-
-        //////////////////////////////////////////
-        inline void setTextFormatted(CString _text, ...)
-        {
-            String newText;
-            MAZE_FORMAT_VA_STRING(_text, newText);
-            setText(newText);
-        }
-
-        //////////////////////////////////////////
-        virtual String const& getText() const MAZE_ABSTRACT;
-
-
-        //////////////////////////////////////////
-        virtual void setColor(ColorU32 _color) MAZE_ABSTRACT;
-
-        //////////////////////////////////////////
-        inline void setColor(U8 _r, U8 _g, U8 _b)
-        {
-            setColor({ _r, _g, _b });
-        }
-
-        //////////////////////////////////////////
-        inline void setColor(U8 _r, U8 _g, U8 _b, U8 _a)
-        {
-            setColor({ _r, _g, _b, _a });
-        }
-
-        //////////////////////////////////////////
-        virtual ColorU32 getColor() const MAZE_ABSTRACT;
-
-
-        //////////////////////////////////////////
-        virtual HorizontalAlignment2D getHorizontalAlignment() const MAZE_ABSTRACT;
-
-        //////////////////////////////////////////
-        virtual void setHorizontalAlignment(HorizontalAlignment2D _horizontalAlignment) MAZE_ABSTRACT;
-
-
-        //////////////////////////////////////////
-        virtual VerticalAlignment2D getVerticalAlignment() const MAZE_ABSTRACT;
-
-        //////////////////////////////////////////
-        virtual void setVerticalAlignment(VerticalAlignment2D _verticalAlignment) MAZE_ABSTRACT;
-
-
-        //////////////////////////////////////////
-        virtual Vec2DF getTextEnd(Size _rowIndex = 0) MAZE_ABSTRACT;
-
-
-        //////////////////////////////////////////
-        virtual F32 getLineSpacingScale() const MAZE_ABSTRACT;
-
-        //////////////////////////////////////////
-        virtual void setLineSpacingScale(F32 _value) MAZE_ABSTRACT;
 
     protected:
 
@@ -159,7 +101,6 @@ namespace Maze
         virtual void processEntityAwakened() MAZE_OVERRIDE;
 
     protected:
-        RenderSystem* m_renderSystem = nullptr;
 
         Transform2DPtr m_transform;
         CanvasRendererPtr m_canvasRenderer;

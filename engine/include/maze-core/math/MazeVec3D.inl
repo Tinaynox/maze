@@ -189,6 +189,13 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
+    inline Vec2D<TValue> Vec3D<TValue>::xz() const
+    {
+        return Vec2D<TValue>(x, z);
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
     inline void Vec3D<TValue>::swap(Vec3D& _other)
     {
         std::swap(x, _other.x);
