@@ -107,6 +107,9 @@ namespace Maze
         //////////////////////////////////////////
         void addTexturePreview(String const& _textureName);
 
+        //////////////////////////////////////////
+        void addTexturePreviewSpace();
+
     protected:
         CanvasPtr m_canvas;
         Camera3DPtr m_camera3D;
@@ -116,6 +119,7 @@ namespace Maze
         Vec2DF m_cursorPositionLastFrame = Vec2DF::c_zero;
 
         S32 m_texturesCount = 0;
+        F32 m_texturesOffset = 0.0f;
     };
 
 

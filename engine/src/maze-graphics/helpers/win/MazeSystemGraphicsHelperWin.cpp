@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/helpers/win/MazeSystemGraphicsHelperWin.hpp"
+#include "maze-graphics/helpers/MazePixelSheet2DHelper.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-core/helpers/MazeLogHelper.hpp"
@@ -44,15 +45,7 @@ namespace Maze
 
             // Convert RGBA to BGRA
             PixelSheet2D bgraImage = _value;
-            for (S32 r = 0; r < bgraImage.getHeight(); ++r)
-            {
-                Size offset = (Size)r * (Size)_value.getBytesPerRow();
-                for (S32 _c = 0; _c < bgraImage.getWidth(); ++_c)
-                {
-                    U8* pixelData = bgraImage.getDataPointer() + offset + (Size)_c * (Size)bgraImage.getBytesPerPixel();
-                    std::swap(*pixelData, *(pixelData + 2));
-                }
-            }
+            PixelSheet2DHelper::ConvertRGBToBGR(bgraImage);
             
 
             BITMAPINFO bitmapInfo = { 0 };

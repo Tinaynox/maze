@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "maze-render-system-opengl-core/MazeRenderSystemOpenGLCoreHeader.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
+#include "maze-render-system-opengl-core/MazeHeaderOpenGL.hpp"
 
 
 //////////////////////////////////////////
@@ -67,6 +68,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void printGLExtensions();
+
+        //////////////////////////////////////////
+        void printSupportedCompressedTextureFormats();
 
 
         //////////////////////////////////////////
@@ -119,6 +123,8 @@ namespace Maze
         bool m_supportClipDistance = false;
         bool m_supportFrameBufferObject = false;
         bool m_supportFrameBufferBlit = false;
+
+        Vector<MZGLint> m_supportedCompressedTextureFormats;
     };
 
 } // namespace Maze

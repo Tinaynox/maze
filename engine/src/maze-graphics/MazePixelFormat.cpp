@@ -57,7 +57,7 @@ namespace Maze
             case RG_F32:        return "RG_F32";
 
             case RGB_U3_3_2:    return "RGB_U3_3_2";
-            case RGB_U5_6_5:    return "RGB_U3_3_2";
+            case RGB_U5_6_5:    return "RGB_U5_6_5";
             case RGB_S8:        return "RGB_S8";
             case RGB_U8:        return "RGB_U8";
             case RGB_F32:       return "RGB_F32";
@@ -75,10 +75,10 @@ namespace Maze
 
             case BGRA_U8:       return "BGRA_U8";
 
-            case DXT1_RGBA:     return "DXT1_RGBA";
-            case DXT2_RGBA:     return "DXT2_RGBA";
+            case DXT1_RGB:      return "DXT1_RGB";
+            // case DXT2_RGBA:     return "DXT2_RGBA";
             case DXT3_RGBA:     return "DXT3_RGBA";
-            case DXT4_RGBA:     return "DXT4_RGBA";
+            // case DXT4_RGBA:     return "DXT4_RGBA";
             case DXT5_RGBA:     return "DXT5_RGBA";
                 
             case PVRTC1_RGBA4:  return "PVRTC1_RGBA4";
@@ -157,7 +157,7 @@ namespace Maze
         if (_value == "RG_F32") return RG_F32;
         
         if (_value == "RGB_U3_3_2") return RGB_U3_3_2;
-        if (_value == "RGB_U5_6_5") return RGB_U3_3_2;
+        if (_value == "RGB_U5_6_5") return RGB_U5_6_5;
         if (_value == "RGB_S8") return RGB_S8;
         if (_value == "RGB_U8") return RGB_U8;
         if (_value == "RGB_F32") return RGB_F32;
@@ -175,10 +175,10 @@ namespace Maze
         
         if (_value == "BGRA_U8") return BGRA_U8;
 
-        if ("DXT1_RGBA" == _value) return DXT1_RGBA;
-        if ("DXT2_RGBA" == _value) return DXT2_RGBA;
+        if ("DXT1_RGB" == _value) return DXT1_RGB;
+        // if ("DXT2_RGBA" == _value) return DXT2_RGBA;
         if ("DXT3_RGBA" == _value) return DXT3_RGBA;
-        if ("DXT4_RGBA" == _value) return DXT4_RGBA;
+        // if ("DXT4_RGBA" == _value) return DXT4_RGBA;
         if ("DXT5_RGBA" == _value) return DXT5_RGBA;
         
         if ("PVRTC1_RGBA4" == _value) return PVRTC1_RGBA4;
@@ -272,10 +272,10 @@ namespace Maze
 
             case PixelFormat::BGRA_U8: return 4;
             
-            case PixelFormat::DXT1_RGBA: return 0;
-            case PixelFormat::DXT2_RGBA: return 0;
+            case PixelFormat::DXT1_RGB: return 0;
+            // case PixelFormat::DXT2_RGBA: return 0;
             case PixelFormat::DXT3_RGBA: return 0;
-            case PixelFormat::DXT4_RGBA: return 0;
+            // case PixelFormat::DXT4_RGBA: return 0;
             case PixelFormat::DXT5_RGBA: return 0;
             
             case PixelFormat::PVRTC1_RGBA4: return 0;
@@ -348,10 +348,10 @@ namespace Maze
             case PixelFormat::BGRA_U8:
                 return 4;
             
-            case PixelFormat::DXT1_RGBA:
-            case PixelFormat::DXT2_RGBA:
+            case PixelFormat::DXT1_RGB:
+            // case PixelFormat::DXT2_RGBA:
             case PixelFormat::DXT3_RGBA:
-            case PixelFormat::DXT4_RGBA:
+            // case PixelFormat::DXT4_RGBA:
             case PixelFormat::DXT5_RGBA:
                 return 0;
             
@@ -388,10 +388,10 @@ namespace Maze
     {
         switch (_pixelFormat)
         {
-            case PixelFormat::DXT1_RGBA:
-            case PixelFormat::DXT2_RGBA:
+            case PixelFormat::DXT1_RGB:
+            // case PixelFormat::DXT2_RGBA:
             case PixelFormat::DXT3_RGBA:
-            case PixelFormat::DXT4_RGBA:
+            // case PixelFormat::DXT4_RGBA:
             case PixelFormat::DXT5_RGBA:
                 
             case PixelFormat::PVRTC1_RGBA4:
@@ -462,11 +462,11 @@ namespace Maze
     {
         switch (_pixelFormat)
         {
-            case PixelFormat::DXT1_RGBA:
+            case PixelFormat::DXT1_RGB:
                 return ((_width + 3) / 4) * ((_height + 3) / 4) * 8 * _depth;
-            case PixelFormat::DXT2_RGBA:
+            // case PixelFormat::DXT2_RGBA:
             case PixelFormat::DXT3_RGBA:
-            case PixelFormat::DXT4_RGBA:
+            // case PixelFormat::DXT4_RGBA:
             case PixelFormat::DXT5_RGBA:
                 return ((_width + 3) / 4) * ((_height + 3) / 4) * 16 * _depth;
             

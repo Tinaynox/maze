@@ -79,10 +79,10 @@ namespace Maze
             case PixelFormat::BGRA_U8:
                 return MAZE_GL_BGRA;
 
-            case PixelFormat::DXT1_RGBA:
-            case PixelFormat::DXT2_RGBA:
+            case PixelFormat::DXT1_RGB:
+            // case PixelFormat::DXT2_RGBA:
             case PixelFormat::DXT3_RGBA:
-            case PixelFormat::DXT4_RGBA:
+            // case PixelFormat::DXT4_RGBA:
             case PixelFormat::DXT5_RGBA:
                 return 0;
 
@@ -178,7 +178,7 @@ namespace Maze
             case PixelFormat::BGR_U5_6_5:    return MAZE_GL_RGB565;
             case PixelFormat::BGR_U8:        return _normalized ? MAZE_GL_RGB8 : MAZE_GL_RGB8UI;
 
-            case PixelFormat::RGBA_U5_5_5_1: return 0;
+            case PixelFormat::RGBA_U5_5_5_1: return MAZE_GL_RGB5_A1;
             case PixelFormat::RGBA_S8:       return _normalized ? MAZE_GL_RGBA8_SNORM : MAZE_GL_RGBA8I;
             case PixelFormat::RGBA_U8:       return _normalized ? MAZE_GL_RGBA8 : MAZE_GL_RGBA8UI;
             case PixelFormat::RGBA_S16:      return _normalized ? MAZE_GL_RGBA16_SNORM : MAZE_GL_RGBA16I;
@@ -188,10 +188,10 @@ namespace Maze
 
             case PixelFormat::BGRA_U8:       return MAZE_GL_RGBA8;
 
-            case PixelFormat::DXT1_RGBA:     return MAZE_GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-            case PixelFormat::DXT2_RGBA:     MAZE_ERROR("Not supported"); return 0;
+            case PixelFormat::DXT1_RGB:     return MAZE_GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+            // case PixelFormat::DXT2_RGBA:     MAZE_ERROR("Not supported"); return 0;
             case PixelFormat::DXT3_RGBA:     return MAZE_GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-            case PixelFormat::DXT4_RGBA:     MAZE_ERROR("Not supported"); return 0;
+            // case PixelFormat::DXT4_RGBA:     MAZE_ERROR("Not supported"); return 0;
             case PixelFormat::DXT5_RGBA:     return MAZE_GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 
             case PixelFormat::PVRTC1_RGBA4:
@@ -336,10 +336,10 @@ namespace Maze
 
             case PixelFormat::BGRA_U8:          return MAZE_GL_UNSIGNED_BYTE;
 
-            case PixelFormat::DXT1_RGBA:
-            case PixelFormat::DXT2_RGBA:
+            case PixelFormat::DXT1_RGB:
+            // case PixelFormat::DXT2_RGBA:
             case PixelFormat::DXT3_RGBA:
-            case PixelFormat::DXT4_RGBA:
+            // case PixelFormat::DXT4_RGBA:
             case PixelFormat::DXT5_RGBA:
                 return 0;
 

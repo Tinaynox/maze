@@ -25,21 +25,7 @@ cmake_minimum_required(VERSION 3.6)
 
 
 ##########################################
-project(maze-example-formats)
-
-
-##########################################
-set(EXAMPLE_NAME "${PROJECT_NAME}")
-set(EXAMPLE_MAZE_LIBS
-    maze-core
-    maze-graphics
-    maze-ui
-    maze-engine
-    maze-editor-tools
-    maze-plugin-profiler-view
-    maze-plugin-loader-png
-    maze-plugin-loader-dds
-    maze-plugin-loader-tga)
+project(maze-plugin-loader-tga)
 
 
 ##########################################
@@ -49,22 +35,25 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/../../engine/cmake/Macros.cmake")
 
 
 ##########################################
-maze_add_sources(${CMAKE_CURRENT_SOURCE_DIR}/../templates/example-wrapper ADDITIONAL_EXAMPLE_FILES)
-maze_sort_sources("${ADDITIONAL_EXAMPLE_FILES}" ADDITIONAL_EXAMPLE_FILES)
+maze_add_module(
+    ${PROJECT_NAME}
+    INCLUDE_DIR "include/${PROJECT_NAME}"
+    SRC_DIR "src"
+    FORWARD_HEADER MazeLoaderTGAHeader)
+    
 
-
-##########################################
-include("${CMAKE_CURRENT_SOURCE_DIR}/../templates/CMakeExampleTemplate.cmake")
-
-
-##########################################
-add_subdirectory("${MAZE_DIR}/plugins/profiler-view" "${CMAKE_CURRENT_BINARY_DIR}/plugins/profiler-view")
-add_subdirectory("${MAZE_DIR}/plugins/loader-png" "${CMAKE_CURRENT_BINARY_DIR}/plugins/loader-png")
-add_subdirectory("${MAZE_DIR}/plugins/loader-dds" "${CMAKE_CURRENT_BINARY_DIR}/plugins/loader-dds")
-add_subdirectory("${MAZE_DIR}/plugins/loader-tga" "${CMAKE_CURRENT_BINARY_DIR}/plugins/loader-tga")
-
-
-##########################################
+##########################################    
 target_include_directories(
-    ${EXAMPLE_NAME}
-    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../templates/example-wrapper")
+    ${PROJECT_NAME}
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+
+
+##########################################
+set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "MazePlugins")
+
+
+##########################################
+target_link_libraries(
+    ${PROJECT_NAME}
+    PUBLIC maze-core
+    PUBLIC maze-graphics)

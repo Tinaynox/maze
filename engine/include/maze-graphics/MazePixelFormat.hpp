@@ -99,10 +99,10 @@ namespace Maze
 
 
             // DXT
-            DXT1_RGBA               = 200,
-            DXT2_RGBA               = 201,
+            DXT1_RGB                = 200,
+            // DXT2_RGBA            = 201,
             DXT3_RGBA               = 202,
-            DXT4_RGBA               = 203,
+            // DXT4_RGBA            = 203,
             DXT5_RGBA               = 204,
 
             // PVRTC

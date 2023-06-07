@@ -125,6 +125,7 @@ namespace Maze
 
             m_dummyContext->getExtensions()->loadGLExtensions();
             m_dummyContext->getExtensions()->printGLExtensions();
+            m_dummyContext->getExtensions()->printSupportedCompressedTextureFormats();
 
             m_dummyContext->flushConfig();
 
@@ -183,6 +184,7 @@ namespace Maze
 #if (MAZE_PLATFORM != MAZE_PLATFORM_EMSCRIPTEN)
             _context->getExtensions()->printGLExtensions();
 #endif
+            _context->getExtensions()->printSupportedCompressedTextureFormats();
 
             _context->flushConfig();
         }

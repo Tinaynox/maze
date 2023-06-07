@@ -126,10 +126,18 @@ namespace Maze
     //////////////////////////////////////////
     void PixelSheet2D::updateDataSize()
     {
-        S32 pixelsCount = getRowsCount() * getColumnsCount();
-        S32 dataSize = pixelsCount * m_bytesPerPixel;
+        if (PixelFormat::IsCompressed(m_format))
+        {
+            S32 dataSize = PixelFormat::CalculateRequiredBytes(m_size.x, m_size.y, 1, m_format);
+            m_data.resize(dataSize);
+        }
+        else
+        {
+            S32 pixelsCount = getRowsCount() * getColumnsCount();
+            S32 dataSize = pixelsCount * m_bytesPerPixel;
 
-        m_data.resize(dataSize);
+            m_data.resize(dataSize);
+        }
     }
 
     //////////////////////////////////////////

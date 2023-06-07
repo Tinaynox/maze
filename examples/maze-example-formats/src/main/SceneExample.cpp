@@ -81,6 +81,8 @@
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
 #include "maze-plugin-profiler-view/MazeProfilerViewPlugin.hpp"
 #include "maze-plugin-loader-png/MazeLoaderPNGPlugin.hpp"
+#include "maze-plugin-loader-dds/MazeLoaderDDSPlugin.hpp"
+#include "maze-plugin-loader-tga/MazeLoaderTGAPlugin.hpp"
 #include "Example.hpp"
 #include "ExampleHelper.hpp"
 #include "ExampleFPSCameraController.hpp"
@@ -113,6 +115,8 @@ namespace Maze
     {
         MAZE_LOAD_PLATFORM_PLUGIN(ProfilerView);
         MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG);
+        MAZE_LOAD_PLATFORM_PLUGIN(LoaderDDS);
+        MAZE_LOAD_PLATFORM_PLUGIN(LoaderTGA);
 
         return true;
     }
@@ -198,7 +202,7 @@ namespace Maze
         lightEntity->ensureComponent<Name>("Light");
 
 
-        Vec2DF levelSize(40.0f, 20.0f);
+        Vec2DF levelSize(80.0f, 30.0f);
 
 
         // FPS Controller
@@ -224,14 +228,31 @@ namespace Maze
             config);
 
 
-        addTexturePreview("sp3d_logo.png");
-        addTexturePreview("sp3d_logo.bmp");
-        /*addTexturePreview("MazeLogo_128x128.png");
-        addTexturePreview("MazeLogo_128x128.png");
-        addTexturePreview("MazeLogo_128x128.png");
-        addTexturePreview("MazeLogo_128x128.png");
-        addTexturePreview("MazeLogo_128x128.png");
-        addTexturePreview("MazeLogo_128x128.png")*/;
+        // BMP
+        addTexturePreview("sp3d_logo_16.bmp");
+        addTexturePreview("sp3d_logo_24.bmp");
+        addTexturePreview("sp3d_logo_32.bmp");
+        addTexturePreviewSpace();
+
+        // PNG
+        addTexturePreview("sp3d_logo_32.png");
+        addTexturePreview("sp3d_logo_64.png");
+        addTexturePreviewSpace();
+
+        // TGA
+        addTexturePreview("sp3d_logo_16.tga");
+        addTexturePreview("sp3d_logo_16_rle.tga");
+        addTexturePreview("sp3d_logo_24.tga");
+        addTexturePreview("sp3d_logo_24_rle.tga");
+        addTexturePreview("sp3d_logo_32.tga");
+        addTexturePreview("sp3d_logo_32_rle.tga");
+        addTexturePreviewSpace();
+
+        // DDS
+        addTexturePreview("sp3d_logo_dxt1.dds");
+        addTexturePreview("sp3d_logo_dxt3.dds");
+        addTexturePreview("sp3d_logo_dxt5.dds");
+        addTexturePreviewSpace();
 
         return true;
     }
@@ -306,9 +327,12 @@ namespace Maze
         Texture2DPtr const& texture2D = TextureManager::GetCurrentInstancePtr()->getTexture2D(_textureName);
         material->setUniform("u_baseMap", texture2D);
         meshRenderer->setMaterial(material);
+        
+        AssetFilePtr const& textureAssetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_textureName);
 
-        F32 sign = (m_texturesCount % 2 == 0) ? 1.0f : -1.0f;
-        F32 x = ((m_texturesCount + 1) / 2) * sign * 3.0f;
+        //F32 sign = (m_texturesCount % 2 == 0) ? 1.0f : -1.0f;
+        //F32 x = ((m_texturesCount + 1) / 2) * sign * 3.0f;
+        F32 x = (m_texturesCount - 5) * 3.0f + m_texturesOffset;
         transform->setLocalPosition(x, 1.5f, 3.0f);
 
 
@@ -326,6 +350,7 @@ namespace Maze
             meshRenderer->setMaterial("Pedestal00.mzmaterial");
         }
 
+        if (texture2D)
         {
             EntityPtr labelEntity = createEntity("Label");
             SystemTextRenderer3DPtr labelRenderer = labelEntity->ensureComponent<SystemTextRenderer3D>();
@@ -333,15 +358,23 @@ namespace Maze
                 transform->getLocalPosition().x,
                 0.65f,
                 transform->getLocalPosition().z);
+
+            S32 bytesCount = PixelFormat::CalculateRequiredBytes(
+                texture2D->getWidth(),
+                texture2D->getHeight(),
+                1,
+                texture2D->getInternalPixelFormat());
             labelRenderer->setTextFormatted(
-                "%s\n"
-                "Size: %dx%d\n"
+                "%s (%d b)\n"
+                "Size: %dx%d (%d b)\n"
                 "Format: %s\n"
                 "Min: %s Mag: %s\n"
                 "WrapS: %s WrapT: %s",
                 _textureName.c_str(),
+                (S32)textureAssetFile->getFileSize(),
                 texture2D->getWidth(),
                 texture2D->getHeight(),
+                bytesCount,
                 PixelFormat::ToString(texture2D->getInternalPixelFormat()).c_str(),
                 texture2D->getMinFilter().toCString(), texture2D->getMagFilter().toCString(),
                 texture2D->getWrapS().toCString(), texture2D->getWrapT().toCString());
@@ -353,6 +386,12 @@ namespace Maze
         }
 
         ++m_texturesCount;
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::addTexturePreviewSpace()
+    {
+        m_texturesOffset += 3.0f;
     }
 
 

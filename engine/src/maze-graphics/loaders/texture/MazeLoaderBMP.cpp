@@ -27,6 +27,7 @@
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/loaders/texture/MazeLoaderBMP.hpp"
 #include "maze-graphics/MazePixelFormat.hpp"
+#include "maze-graphics/helpers/MazePixelSheet2DHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -115,6 +116,11 @@ namespace Maze
                 pixelSheet.setFormat(PixelFormat::R_U8);
                 break;
             }
+            case 16:
+            {
+                pixelSheet.setFormat(PixelFormat::RGBA_U5_5_5_1);
+                break;
+            }
             case 24:
             {
                 pixelSheet.setFormat(PixelFormat::RGB_U8);
@@ -136,11 +142,16 @@ namespace Maze
 
         memcpy(pixelSheet.getDataPointer(), _fileData->getData() + bufferShift, imageSize);
             
-        // Turn BGR to RGB
         if (bpp >= 24)
         {
-            for (S32 i = 0; i < (S32)imageSize; i += bytesPP)
-                pixelSheet.swapBytes(i, i + 2);
+            // Convert BGR to RGB
+            PixelSheet2DHelper::ConvertRGBToBGR(pixelSheet);
+        }
+        else
+        if (bpp == 16)
+        {
+            // Convert A1_RGB5 to RGB5_A1
+            PixelSheet2DHelper::ConvertA1RGB5ToRGB5A1(pixelSheet);
         }
 
         return true;
