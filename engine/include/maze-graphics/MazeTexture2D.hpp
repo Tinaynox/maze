@@ -153,6 +153,14 @@ namespace Maze
         inline TextureFilter getMinFilter() const { return m_minFilter; }
 
         //////////////////////////////////////////
+        inline void setMagMinFilters(TextureFilter _mag, TextureFilter _min)
+        {
+            setMagFilter(_mag);
+            setMinFilter(_min);
+        }
+
+
+        //////////////////////////////////////////
         virtual bool setWrapS(TextureWrap _value) MAZE_ABSTRACT;
 
         //////////////////////////////////////////

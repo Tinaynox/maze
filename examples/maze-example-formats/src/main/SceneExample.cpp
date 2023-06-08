@@ -381,7 +381,7 @@ namespace Maze
 
             labelRenderer->setFontSize(8);
             labelRenderer->getTransform()->setLocalScaleX(0.7f);
-            labelRenderer->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefaultOutlined());
+            labelRenderer->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefault3DOutlined());
 
         }
 

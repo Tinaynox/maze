@@ -54,9 +54,11 @@ namespace Maze
     // Enum BuiltinSystemFontType
     //
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_2_API(MAZE_GRAPHICS_API, BuiltinSystemFontType,
+    MAZE_DECLARE_ENUMCLASS_4_API(MAZE_GRAPHICS_API, BuiltinSystemFontType,
         Default,
-        DefaultOutlined);
+        DefaultOutlined,
+        Default3D,
+        Default3DOutlined);
 
 
     //////////////////////////////////////////
@@ -95,6 +97,12 @@ namespace Maze
 
         //////////////////////////////////////////
         SystemFontPtr const& getSystemFontDefaultOutlined() const { return getBuiltinSystemFont(BuiltinSystemFontType::DefaultOutlined); }
+
+        //////////////////////////////////////////
+        SystemFontPtr const& getSystemFontDefault3D() const { return getBuiltinSystemFont(BuiltinSystemFontType::Default3D); }
+
+        //////////////////////////////////////////
+        SystemFontPtr const& getSystemFontDefault3DOutlined() const { return getBuiltinSystemFont(BuiltinSystemFontType::Default3DOutlined); }
 
 
         //////////////////////////////////////////

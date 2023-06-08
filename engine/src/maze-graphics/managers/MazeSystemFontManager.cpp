@@ -126,6 +126,7 @@ namespace Maze
         switch (_fontType)
         {
             case BuiltinSystemFontType::Default:
+            case BuiltinSystemFontType::Default3D:
             {
                 S32 const extrude = 1;
                 S32 const upscale = 2;
@@ -152,11 +153,19 @@ namespace Maze
                     (Vec2DS(8, 8) + extrude * 2) * upscale,
                     Vec2DS(extrude, extrude) * upscale);
 
+                if (_fontType == BuiltinSystemFontType::Default3D)
+                    systemFont->texture->setMagMinFilters(TextureFilter::Linear, TextureFilter::LinearMipmapLinear);
+
                 break;
             }
             case BuiltinSystemFontType::DefaultOutlined:
+            case BuiltinSystemFontType::Default3DOutlined:
             {
                 systemFont = createSystemFontOutlined(_fontType.toCString(), ColorU32::c_black);
+
+                if (_fontType == BuiltinSystemFontType::Default3DOutlined)
+                    systemFont->texture->setMagMinFilters(TextureFilter::Linear, TextureFilter::LinearMipmapLinear);
+
                 break;
             }
             default:
