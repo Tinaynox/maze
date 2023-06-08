@@ -125,14 +125,14 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline void setByte(Size _i, U8 _byte) const
+        inline void setByte(Size _i, U8 _byte)
         {
             MAZE_DEBUG_BP_IF(_i >= (U32)m_size);
             m_data[_i] = _byte;
         }
 
         //////////////////////////////////////////
-        inline void swapBytes(Size _i, Size _j) const
+        inline void swapBytes(Size _i, Size _j)
         {
             MAZE_DEBUG_BP_IF(_i >= (U32)m_size);
             MAZE_DEBUG_BP_IF(_j >= (U32)m_size);
@@ -140,7 +140,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline U32 readUnsafe(U32 _srcOffset, void* _dst, U32 _size)
+        inline U32 readUnsafe(U32 _srcOffset, void* _dst, U32 _size) const
         {
             MAZE_DEBUG_BP_IF((U32)_srcOffset + _size > m_size);
             memcpy(_dst, m_data + _srcOffset, _size);
@@ -148,7 +148,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline U32 read(U32 _srcOffset, void* _dst, U32 _size)
+        inline U32 read(U32 _srcOffset, void* _dst, U32 _size) const
         {
             _size = Math::Min(_size, m_size - _srcOffset);
             return readUnsafe(_srcOffset, _dst, _size);

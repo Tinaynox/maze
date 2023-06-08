@@ -39,16 +39,16 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_PNG_API bool LoadPNG(AssetFilePtr const& _file, Vector<PixelSheet2D>& _pixelSheets);
+    MAZE_PLUGIN_LOADER_PNG_API bool LoadPNG(AssetFile const& _file, Vector<PixelSheet2D>& _pixelSheets);
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_PNG_API bool LoadPNG(ByteBufferPtr const& _fileData, Vector<PixelSheet2D>& _pixelSheets);
+    MAZE_PLUGIN_LOADER_PNG_API bool LoadPNG(ByteBuffer const& _fileData, Vector<PixelSheet2D>& _pixelSheets);
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_PNG_API bool IsPNGFile(AssetFilePtr const& _file);
+    MAZE_PLUGIN_LOADER_PNG_API bool IsPNGFile(AssetFile const& _file);
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_PNG_API bool IsPNGFile(ByteBufferPtr const& _fileData);
+    MAZE_PLUGIN_LOADER_PNG_API bool IsPNGFile(ByteBuffer const& _fileData);
 
 } // namespace Maze
 //////////////////////////////////////////

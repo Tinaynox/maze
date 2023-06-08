@@ -75,10 +75,10 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    using LoadTextureAssetFileFunction = bool(*)(AssetFilePtr const& _file, Vector<PixelSheet2D>& _pixelSheets);
-    using LoadTextureByteBufferFunction = bool(*)(ByteBufferPtr const& _fileData, Vector<PixelSheet2D>& _pixelSheets);
-    using IsTextureAssetFileFunction = bool(*)(AssetFilePtr const& _file);
-    using IsTextureByteBufferFunction = bool(*)(ByteBufferPtr const& _fileData);
+    using LoadTextureAssetFileFunction = bool(*)(AssetFile const& _file, Vector<PixelSheet2D>& _pixelSheets);
+    using LoadTextureByteBufferFunction = bool(*)(ByteBuffer const& _fileData, Vector<PixelSheet2D>& _pixelSheets);
+    using IsTextureAssetFileFunction = bool(*)(AssetFile const& _file);
+    using IsTextureByteBufferFunction = bool(*)(ByteBuffer const& _fileData);
 
 
     //////////////////////////////////////////

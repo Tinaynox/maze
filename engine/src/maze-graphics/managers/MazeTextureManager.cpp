@@ -364,10 +364,10 @@ namespace Maze
             for (auto const& textureLoaderData : m_textureLoaders)
             {
                 TextureLoaderData const& loaderData = textureLoaderData.second;
-                if (loaderData.isTextureAssetFileFunc(_assetFile))
+                if (loaderData.isTextureAssetFileFunc(*_assetFile.get()))
                 {
                     loaderFound = true;
-                    MAZE_ERROR_IF(!loaderData.loadTextureAssetFileFunc(_assetFile, pixelSheets), "PixelSheet is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
+                    MAZE_ERROR_IF(!loaderData.loadTextureAssetFileFunc(*_assetFile.get(), pixelSheets), "PixelSheet is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
                     break;
                 }
             }
@@ -382,7 +382,7 @@ namespace Maze
             if (it != m_textureLoaders.end())
             {
                 TextureLoaderData const& loaderData = it->second;
-                MAZE_ERROR_IF(!loaderData.loadTextureAssetFileFunc(_assetFile, pixelSheets), "PixelSheet is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
+                MAZE_ERROR_IF(!loaderData.loadTextureAssetFileFunc(*_assetFile.get(), pixelSheets), "PixelSheet is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
             }
             else
             {

@@ -54,22 +54,23 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_TGA_API bool LoadTGA(AssetFilePtr const& _file, Vector<PixelSheet2D>& _pixelSheets)
+    MAZE_PLUGIN_LOADER_TGA_API bool LoadTGA(AssetFile const& _file, Vector<PixelSheet2D>& _pixelSheets)
     {
-        ByteBufferPtr fileData = _file->readAsByteBuffer();
+        ByteBuffer fileData;
+        _file.readToByteBuffer(fileData);
         return LoadTGA(fileData, _pixelSheets);
     }
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_TGA_API bool LoadTGA(ByteBufferPtr const& _fileData, Vector<PixelSheet2D>& _pixelSheets)
+    MAZE_PLUGIN_LOADER_TGA_API bool LoadTGA(ByteBuffer const& _fileData, Vector<PixelSheet2D>& _pixelSheets)
     {
         MAZE_DEBUG_ERROR_RETURN_VALUE_IF(
-            !_fileData || _fileData->getSize() == 0,
+            _fileData.getSize() == 0,
             false,
             "File loading error!");
         
         TGAHeader header;
-        U32 bytesRead = _fileData->read(0, &header, sizeof(TGAHeader));
+        U32 bytesRead = _fileData.read(0, &header, sizeof(TGAHeader));
         if (bytesRead < sizeof(TGAHeader))
             return false;
 
@@ -118,13 +119,13 @@ namespace Maze
             while (pixelIndex < pixelCount)
             {
                 U8 chunkHeader;
-                bytesRead += _fileData->read(bytesRead, &chunkHeader, sizeof(chunkHeader));
+                bytesRead += _fileData.read(bytesRead, &chunkHeader, sizeof(chunkHeader));
 
                 if (chunkHeader < 128)
                 {
                     // Raw packet: RLE packet with length (chunkHeader + 1)
                     S32 packetLength = chunkHeader + 1;
-                    bytesRead += _fileData->read(bytesRead, pixelSheet.getDataPointer() + pixelIndex * channels, packetLength * channels);
+                    bytesRead += _fileData.read(bytesRead, pixelSheet.getDataPointer() + pixelIndex * channels, packetLength * channels);
                     pixelIndex += packetLength;
                 }
                 else
@@ -132,7 +133,7 @@ namespace Maze
                     // RLE packet: Repeated pixel value (chunkHeader - 127) times
                     S32 packetLength = chunkHeader - 127;
                     U8 pixelData[4];
-                    bytesRead += _fileData->read(bytesRead, pixelData, channels);
+                    bytesRead += _fileData.read(bytesRead, pixelData, channels);
 
                     for (S32 i = 0; i < packetLength; ++i)
                     {
@@ -144,7 +145,7 @@ namespace Maze
         }
         else
         {
-            bytesRead += _fileData->read(bytesRead, pixelSheet.getDataPointer(), pixelSheet.getDataSize());
+            bytesRead += _fileData.read(bytesRead, pixelSheet.getDataPointer(), pixelSheet.getDataSize());
         }
 
         if (channels > 2)
@@ -166,18 +167,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_TGA_API bool IsTGAFile(AssetFilePtr const& _file)
+    MAZE_PLUGIN_LOADER_TGA_API bool IsTGAFile(AssetFile const& _file)
     {
         // #TODO:
-        ByteBufferPtr fileData = _file->readAsByteBuffer();
+        ByteBuffer fileData;
+        _file.readToByteBuffer(fileData);
         return IsTGAFile(fileData);
     }
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_TGA_API bool IsTGAFile(ByteBufferPtr const& _fileData)
+    MAZE_PLUGIN_LOADER_TGA_API bool IsTGAFile(ByteBuffer const& _fileData)
     {
         TGAHeader header;
-        if (_fileData->read(0, &header, sizeof(TGAHeader)) < sizeof(TGAHeader))
+        if (_fileData.read(0, &header, sizeof(TGAHeader)) < sizeof(TGAHeader))
             return false;
 
         if (header.idLength > 0 || header.colorMapType != 0)

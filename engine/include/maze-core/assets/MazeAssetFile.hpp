@@ -82,13 +82,13 @@ namespace Maze
         virtual Path const& getFileName() const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual Size getFileSize() MAZE_ABSTRACT;
+        virtual Size getFileSize() const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual FileStats getFileStats() MAZE_ABSTRACT;
+        virtual FileStats getFileStats() const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual bool isFileExists() MAZE_ABSTRACT;
+        virtual bool isFileExists() const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual bool move(Path const& _newFullPath, Vector<Pair<Path, AssetFilePtr>>& _renamedFiles) MAZE_ABSTRACT;
@@ -132,32 +132,32 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        virtual Size readToString(String& _string) { return 0; }
+        virtual Size readToString(String& _string) const { return 0; }
         
         //////////////////////////////////////////
-        virtual String readAsString();
+        virtual String readAsString() const;
 
         //////////////////////////////////////////
-        virtual bool readToXMLDocument(tinyxml2::XMLDocument& _doc) { return false; }
+        virtual bool readToXMLDocument(tinyxml2::XMLDocument& _doc) const { return false; }
 
         //////////////////////////////////////////
-        virtual bool readToByteBuffer(ByteBuffer& _byteBuffer) { MAZE_NOT_IMPLEMENTED; return 0; }
+        virtual bool readToByteBuffer(ByteBuffer& _byteBuffer) const { MAZE_NOT_IMPLEMENTED; return 0; }
 
         //////////////////////////////////////////
-        virtual bool readHeaderToByteBuffer(ByteBuffer& _byteBuffer, Size _size) { MAZE_NOT_IMPLEMENTED; return 0; }
+        virtual bool readHeaderToByteBuffer(ByteBuffer& _byteBuffer, Size _size) const { MAZE_NOT_IMPLEMENTED; return 0; }
 
 
         //////////////////////////////////////////
-        bool readToByteBuffer(ByteBufferPtr const& _byteBuffer);
+        bool readToByteBuffer(ByteBufferPtr const& _byteBuffer) const;
 
         //////////////////////////////////////////
-        bool readHeaderToByteBuffer(ByteBufferPtr const& _byteBuffer, Size _size);
+        bool readHeaderToByteBuffer(ByteBufferPtr const& _byteBuffer, Size _size) const;
 
         //////////////////////////////////////////
-        ByteBufferPtr readAsByteBuffer();
+        ByteBufferPtr readAsByteBuffer() const;
 
         //////////////////////////////////////////
-        ByteBufferPtr readHeaderAsByteBuffer(Size _size);
+        ByteBufferPtr readHeaderAsByteBuffer(Size _size) const;
 
         //////////////////////////////////////////
         Path getExtension() const;

@@ -280,17 +280,18 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_DDS_API bool LoadDDS(AssetFilePtr const& _file, Vector<PixelSheet2D>& _pixelSheets)
+    MAZE_PLUGIN_LOADER_DDS_API bool LoadDDS(AssetFile const& _file, Vector<PixelSheet2D>& _pixelSheets)
     {
-        ByteBufferPtr fileData = _file->readAsByteBuffer();
+        ByteBuffer fileData;
+        _file.readToByteBuffer(fileData);
         return LoadDDS(fileData, _pixelSheets);
     }
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_DDS_API bool LoadDDS(ByteBufferPtr const& _fileData, Vector<PixelSheet2D>& _pixelSheets)
+    MAZE_PLUGIN_LOADER_DDS_API bool LoadDDS(ByteBuffer const& _fileData, Vector<PixelSheet2D>& _pixelSheets)
     {
         MAZE_DEBUG_ERROR_RETURN_VALUE_IF(
-            !_fileData || _fileData->getSize() == 0,
+            _fileData.getSize() == 0,
             false,
             "File loading error!");
         
@@ -302,14 +303,14 @@ namespace Maze
         {
 
             S32 magic = 0;
-            memcpy(&magic, _fileData->getData() + bufferShift, sizeof(S32));
+            memcpy(&magic, _fileData.getData() + bufferShift, sizeof(S32));
             bufferShift += sizeof(S32);
 
             MAZE_ERROR_RETURN_VALUE_IF(magic != MAGIC_DDS, false , "This texture is not actually DDS!");
 
             // Direct3D 9 format
             D3D_SurfaceDesc2 header;
-            memcpy(&header, _fileData->getData() + bufferShift, sizeof(D3D_SurfaceDesc2));
+            memcpy(&header, _fileData.getData() + bufferShift, sizeof(D3D_SurfaceDesc2));
             bufferShift += sizeof(D3D_SurfaceDesc2);
 
             // Remember info for users of this object
@@ -408,7 +409,7 @@ namespace Maze
                 if (format != DDS_FORMAT_RGBA8)
                 {
                     // First read in temp buffer
-                    memcpy(temp, _fileData->getData() + bufferShift, bytes);
+                    memcpy(temp, _fileData.getData() + bufferShift, bytes);
                     bufferShift += bytes;
 
                     // Flip & copy to actual pixel buffer
@@ -458,7 +459,7 @@ namespace Maze
                         "Failed to read DDS to pixel sheet. PixelSheet size=%d dataSize=%d",
                         (S32)_pixelSheets[i].getDataSize(),
                         bytes);
-                    memcpy(_pixelSheets[i].getDataPointer(), _fileData->getData() + bufferShift, bytes);
+                    memcpy(_pixelSheets[i].getDataPointer(), _fileData.getData() + bufferShift, bytes);
                     bufferShift += bytes;
 
                     // RGBA8
@@ -482,18 +483,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_DDS_API bool IsDDSFile(AssetFilePtr const& _file)
+    MAZE_PLUGIN_LOADER_DDS_API bool IsDDSFile(AssetFile const& _file)
     {
         // #TODO:
-        ByteBufferPtr fileData = _file->readAsByteBuffer();
+        ByteBuffer fileData;
+        _file.readToByteBuffer(fileData);
         return IsDDSFile(fileData);
     }
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_DDS_API bool IsDDSFile(ByteBufferPtr const& _fileData)
+    MAZE_PLUGIN_LOADER_DDS_API bool IsDDSFile(ByteBuffer const& _fileData)
     {
         U8 fileHeaderData[sizeof(S32)];
-        _fileData->read(0, fileHeaderData, sizeof(S32));
+        _fileData.read(0, fileHeaderData, sizeof(S32));
         S32 magic = *((S32*)&fileHeaderData);
 
         return magic == MAGIC_DDS;

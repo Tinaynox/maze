@@ -73,29 +73,30 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool LoadBMP(AssetFilePtr const& _file, Vector<PixelSheet2D>& _pixelSheets)
+    MAZE_GRAPHICS_API bool LoadBMP(AssetFile const& _file, Vector<PixelSheet2D>& _pixelSheets)
     {
-        ByteBufferPtr fileData = _file->readAsByteBuffer();
+        ByteBuffer fileData;
+        _file.readToByteBuffer(fileData);
         return LoadBMP(fileData, _pixelSheets);
     }
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool LoadBMP(ByteBufferPtr const& _fileData, Vector<PixelSheet2D>& _pixelSheets)
+    MAZE_GRAPHICS_API bool LoadBMP(ByteBuffer const& _fileData, Vector<PixelSheet2D>& _pixelSheets)
     {
         MAZE_DEBUG_ERROR_RETURN_VALUE_IF(
-            !_fileData || _fileData->getSize() == 0,
+            _fileData.getSize() == 0,
             false,
             "File loading error!");
         
         _BITMAPFILEHEADER bitmapFileHeader;
         U32 bufferShift = 0;
-        memcpy(&bitmapFileHeader, _fileData->getData() + bufferShift, sizeof(_BITMAPFILEHEADER));
+        memcpy(&bitmapFileHeader, _fileData.getData() + bufferShift, sizeof(_BITMAPFILEHEADER));
         bufferShift += sizeof(_BITMAPFILEHEADER);
         MAZE_ERROR_RETURN_VALUE_IF(bitmapFileHeader.bfType != 0x4D42, false, "Is not a valid Bitmap!");
 
         // Information
         _BITMAPINFOHEADER bitmapInfoHeader;
-        memcpy(&bitmapInfoHeader, _fileData->getData() + bufferShift, sizeof(_BITMAPINFOHEADER));
+        memcpy(&bitmapInfoHeader, _fileData.getData() + bufferShift, sizeof(_BITMAPINFOHEADER));
         bufferShift += sizeof(_BITMAPINFOHEADER);
         
         bufferShift = bitmapFileHeader.bfOffBits;
@@ -140,7 +141,7 @@ namespace Maze
 
         MAZE_ERROR_RETURN_VALUE_IF((Size)imageSize > pixelSheet.getDataSize(), false, "Invalid buffer size!");
 
-        memcpy(pixelSheet.getDataPointer(), _fileData->getData() + bufferShift, imageSize);
+        memcpy(pixelSheet.getDataPointer(), _fileData.getData() + bufferShift, imageSize);
             
         if (bpp >= 24)
         {
@@ -158,22 +159,23 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool IsBMPFile(AssetFilePtr const& _file)
+    MAZE_GRAPHICS_API bool IsBMPFile(AssetFile const& _file)
     {
         // #TODO:
-        ByteBufferPtr fileData = _file->readAsByteBuffer();
+        ByteBuffer fileData;
+        _file.readToByteBuffer(fileData);
         return IsBMPFile(fileData);
     }
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool IsBMPFile(ByteBufferPtr const& _fileData)
+    MAZE_GRAPHICS_API bool IsBMPFile(ByteBuffer const& _fileData)
     {
         _BITMAPFILEHEADER bitmapFileHeader;
         
-        if (_fileData->getSize() < sizeof(_BITMAPFILEHEADER))
+        if (_fileData.getSize() < sizeof(_BITMAPFILEHEADER))
             return false;
 
-        memcpy(&bitmapFileHeader, _fileData->getDataPointer(), sizeof(_BITMAPFILEHEADER));
+        memcpy(&bitmapFileHeader, _fileData.getDataPointer(), sizeof(_BITMAPFILEHEADER));
     
         if (bitmapFileHeader.bfType != 0x4D42)
             return false;

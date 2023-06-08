@@ -86,19 +86,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Size AssetRegularFile::getFileSize()
+    Size AssetRegularFile::getFileSize() const
     {
         return getFileStats().fileSize;
     }
 
     //////////////////////////////////////////
-    FileStats AssetRegularFile::getFileStats()
+    FileStats AssetRegularFile::getFileStats() const
     {
         return FileHelper::GetFileStats(m_fullPath);
     }
 
     //////////////////////////////////////////
-    bool AssetRegularFile::isFileExists()
+    bool AssetRegularFile::isFileExists() const
     {
         return FileHelper::IsFileExists(m_fullPath);
     }
@@ -128,7 +128,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Size AssetRegularFile::calculateFileSize()
+    Size AssetRegularFile::calculateFileSize() const
     {
         FILE* fileHandler = StdHelper::OpenFile(m_fullPath, "rb");
         if (!fileHandler)
@@ -147,14 +147,14 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    Size AssetRegularFile::readToString(String& _string)
+    Size AssetRegularFile::readToString(String& _string) const
     {
         FileHelper::ReadFileToString(m_fullPath, _string);
         return _string.size();
     }
 
     //////////////////////////////////////////
-    bool AssetRegularFile::readToXMLDocument(tinyxml2::XMLDocument& _doc)
+    bool AssetRegularFile::readToXMLDocument(tinyxml2::XMLDocument& _doc) const
     {
         tinyxml2::XMLDocument doc;
         tinyxml2::XMLError loadError = XMLHelper::LoadXMLFile(getFullPath(), _doc);
@@ -168,7 +168,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool AssetRegularFile::readToByteBuffer(ByteBuffer& _byteBuffer)
+    bool AssetRegularFile::readToByteBuffer(ByteBuffer& _byteBuffer) const
     {
         FILE* fileHandler = StdHelper::OpenFile(m_fullPath, "rb");
         if (!fileHandler)
@@ -197,7 +197,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool AssetRegularFile::readHeaderToByteBuffer(ByteBuffer& _byteBuffer, Size _size)
+    bool AssetRegularFile::readHeaderToByteBuffer(ByteBuffer& _byteBuffer, Size _size) const
     {
         FILE* fileHandler = StdHelper::OpenFile(m_fullPath, "rb");
         if (!fileHandler)

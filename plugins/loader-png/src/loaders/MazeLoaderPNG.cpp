@@ -34,9 +34,10 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_PNG_API bool LoadPNG(AssetFilePtr const& _file, Vector<PixelSheet2D>& _pixelSheets)
+    MAZE_PLUGIN_LOADER_PNG_API bool LoadPNG(AssetFile const& _file, Vector<PixelSheet2D>& _pixelSheets)
     {
-        ByteBufferPtr fileData = _file->readAsByteBuffer();
+        ByteBuffer fileData;
+        _file.readToByteBuffer(fileData);
         return LoadPNG(fileData, _pixelSheets);
     }
 
@@ -76,10 +77,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_PNG_API bool LoadPNG(ByteBufferPtr const& _fileData, Vector<PixelSheet2D>& _pixelSheets)
+    MAZE_PLUGIN_LOADER_PNG_API bool LoadPNG(ByteBuffer const& _fileData, Vector<PixelSheet2D>& _pixelSheets)
     {
         MAZE_DEBUG_ERROR_RETURN_VALUE_IF(
-            !_fileData || _fileData->getSize() == 0,
+            _fileData.getSize() == 0,
             false,
             "File loading error!");
         
@@ -91,10 +92,10 @@ namespace Maze
         do
         {
             // PNG header len is 8 bytes
-            MAZE_ERROR_RETURN_VALUE_IF(_fileData->getSize() < PNGSIGSIZE, false, "Corrupted PNG!");
+            MAZE_ERROR_RETURN_VALUE_IF(_fileData.getSize() < PNGSIGSIZE, false, "Corrupted PNG!");
 
             // Check the data is png or not
-            memcpy(header, _fileData->getData(), PNGSIGSIZE);
+            memcpy(header, _fileData.getData(), PNGSIGSIZE);
             MAZE_ERROR_RETURN_VALUE_IF(png_sig_cmp(header, 0, PNGSIGSIZE), false, "This texture is not actually PNG!");
 
             // Init png_struct
@@ -112,8 +113,8 @@ namespace Maze
 
             // Set the read call back function
             ImageSource imageSource;
-            imageSource.data = _fileData->getDataPointer();
-            imageSource.size = _fileData->getSize();
+            imageSource.data = _fileData.getDataPointer();
+            imageSource.size = _fileData.getSize();
             imageSource.offset = 0;
             png_set_read_fn(pngStruct, &imageSource, ReadPNGBlock);
 
@@ -216,23 +217,24 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_PNG_API bool IsPNGFile(AssetFilePtr const& _file)
+    MAZE_PLUGIN_LOADER_PNG_API bool IsPNGFile(AssetFile const& _file)
     {
         // #TODO:
-        ByteBufferPtr fileData = _file->readAsByteBuffer();
+        ByteBuffer fileData;
+        _file.readToByteBuffer(fileData);
         return IsPNGFile(fileData);
     }
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_PNG_API bool IsPNGFile(ByteBufferPtr const& _fileData)
+    MAZE_PLUGIN_LOADER_PNG_API bool IsPNGFile(ByteBuffer const& _fileData)
     {
         png_byte header[PNGSIGSIZE] = {0};
 
-        if (_fileData->getSize() < PNGSIGSIZE)
+        if (_fileData.getSize() < PNGSIGSIZE)
             return false;
 
         // Check the data is png or not
-        memcpy(header, _fileData->getDataPointer(), PNGSIGSIZE);
+        memcpy(header, _fileData.getDataPointer(), PNGSIGSIZE);
         if (png_sig_cmp(header, 0, PNGSIGSIZE))
             return false;
 

@@ -74,29 +74,29 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual Size getFileSize() MAZE_OVERRIDE;
+        virtual Size getFileSize() const MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual FileStats getFileStats() MAZE_OVERRIDE;
+        virtual FileStats getFileStats() const MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual bool isFileExists() MAZE_OVERRIDE;
+        virtual bool isFileExists() const MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual bool move(Path const& _newFullPath, Vector<Pair<Path, AssetFilePtr>>& _movedFiles) MAZE_OVERRIDE;
 
 
         //////////////////////////////////////////
-        virtual Size readToString(String& string) MAZE_OVERRIDE;
+        virtual Size readToString(String& string) const MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual bool readToXMLDocument(tinyxml2::XMLDocument& _doc) MAZE_OVERRIDE;
+        virtual bool readToXMLDocument(tinyxml2::XMLDocument& _doc) const MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual bool readToByteBuffer(ByteBuffer& _byteBuffer) MAZE_OVERRIDE;
+        virtual bool readToByteBuffer(ByteBuffer& _byteBuffer) const MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual bool readHeaderToByteBuffer(ByteBuffer& _byteBuffer, Size _size) MAZE_OVERRIDE;
+        virtual bool readHeaderToByteBuffer(ByteBuffer& _byteBuffer, Size _size) const MAZE_OVERRIDE;
 
     protected:
 
@@ -120,7 +120,7 @@ namespace Maze
         void updateFileName();
         
         //////////////////////////////////////////
-        Size calculateFileSize();
+        Size calculateFileSize() const;
     
     protected:
         Path m_fullPath;

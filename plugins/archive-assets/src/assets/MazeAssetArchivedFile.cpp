@@ -76,19 +76,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Size AssetArchivedFile::getFileSize()
+    Size AssetArchivedFile::getFileSize() const
     {
         return m_archive->getArchivedFileLength(m_zipArchiveFilePath);
     }
 
     //////////////////////////////////////////
-    FileStats AssetArchivedFile::getFileStats()
+    FileStats AssetArchivedFile::getFileStats() const
     {
         return m_archive->getArchivedFileStats(m_zipArchiveFilePath);
     }
 
     //////////////////////////////////////////
-    bool AssetArchivedFile::isFileExists()
+    bool AssetArchivedFile::isFileExists() const
     {
         return m_archive->isFileExists();
     }
@@ -116,13 +116,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Size AssetArchivedFile::readToString(String& _string)
+    Size AssetArchivedFile::readToString(String& _string) const
     {
         return m_archive->readArchivedFileToString(m_zipArchiveFilePath, _string);
     }
 
     //////////////////////////////////////////
-    bool AssetArchivedFile::readToXMLDocument(tinyxml2::XMLDocument& _doc)
+    bool AssetArchivedFile::readToXMLDocument(tinyxml2::XMLDocument& _doc) const
     {
         ByteBufferPtr byteBuffer = m_archive->readArchivedFileAsByteBuffer(m_zipArchiveFilePath);
 
@@ -148,7 +148,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool AssetArchivedFile::readToByteBuffer(ByteBuffer& _byteBuffer)
+    bool AssetArchivedFile::readToByteBuffer(ByteBuffer& _byteBuffer) const
     {
         _byteBuffer.resize(getFileSize());
         return m_archive->readArchivedFileToBuffer(
@@ -159,7 +159,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool AssetArchivedFile::readHeaderToByteBuffer(ByteBuffer& _byteBuffer, Size _size)
+    bool AssetArchivedFile::readHeaderToByteBuffer(ByteBuffer& _byteBuffer, Size _size) const
     {
         _byteBuffer.resize(_size);
         return m_archive->readArchivedFileToBuffer(

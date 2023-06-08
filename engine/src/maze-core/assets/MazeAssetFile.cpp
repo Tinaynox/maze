@@ -102,7 +102,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    String AssetFile::readAsString()
+    String AssetFile::readAsString() const
     {
         String result;
         readToString(result);
@@ -124,21 +124,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool AssetFile::readToByteBuffer(ByteBufferPtr const& _byteBuffer)
+    bool AssetFile::readToByteBuffer(ByteBufferPtr const& _byteBuffer) const
     {
         ByteBuffer& buffer = *_byteBuffer.get();
         return readToByteBuffer(buffer);
     }
 
     //////////////////////////////////////////
-    bool AssetFile::readHeaderToByteBuffer(ByteBufferPtr const& _byteBuffer, Size _size)
+    bool AssetFile::readHeaderToByteBuffer(ByteBufferPtr const& _byteBuffer, Size _size) const
     {
         ByteBuffer& buffer = *_byteBuffer.get();
         return readHeaderToByteBuffer(buffer, _size);
     }
     
     //////////////////////////////////////////
-    ByteBufferPtr AssetFile::readAsByteBuffer()
+    ByteBufferPtr AssetFile::readAsByteBuffer() const
     {
         ByteBufferPtr byteBuffer = ByteBuffer::Create();
         readToByteBuffer(byteBuffer);
@@ -147,7 +147,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ByteBufferPtr AssetFile::readHeaderAsByteBuffer(Size _size)
+    ByteBufferPtr AssetFile::readHeaderAsByteBuffer(Size _size) const
     {
         ByteBufferPtr byteBuffer = ByteBuffer::Create(_size);
         readHeaderToByteBuffer(byteBuffer, _size);

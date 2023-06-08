@@ -42,17 +42,18 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_JPG_API bool LoadJPG(AssetFilePtr const& _file, Vector<PixelSheet2D>& _pixelSheets)
+    MAZE_PLUGIN_LOADER_JPG_API bool LoadJPG(AssetFile const& _file, Vector<PixelSheet2D>& _pixelSheets)
     {
-        ByteBufferPtr fileData = _file->readAsByteBuffer();
+        ByteBuffer fileData;
+        _file.readToByteBuffer(fileData);
         return LoadJPG(fileData, _pixelSheets);
     }
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_JPG_API bool LoadJPG(ByteBufferPtr const& _fileData, Vector<PixelSheet2D>& _pixelSheets)
+    MAZE_PLUGIN_LOADER_JPG_API bool LoadJPG(ByteBuffer const& _fileData, Vector<PixelSheet2D>& _pixelSheets)
     {
         MAZE_DEBUG_ERROR_RETURN_VALUE_IF(
-            !_fileData || _fileData->getSize() == 0,
+            _fileData.getSize() == 0,
             false,
             "File loading error!");
 
@@ -68,7 +69,7 @@ namespace Maze
         jerr.error_exit = ProcessJPGError;
         
         jpeg_create_decompress(&cinfo);
-        jpeg_mem_src(&cinfo, _fileData->getDataPointer(), _fileData->getSize());
+        jpeg_mem_src(&cinfo, _fileData.getDataPointer(), _fileData.getSize());
 
         // Read JPEG header
         S32 readHeaderRes = jpeg_read_header(&cinfo, TRUE);
@@ -116,18 +117,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_JPG_API bool IsJPGFile(AssetFilePtr const& _file)
+    MAZE_PLUGIN_LOADER_JPG_API bool IsJPGFile(AssetFile const& _file)
     {
         // #TODO:
-        ByteBufferPtr fileData = _file->readAsByteBuffer();
+        ByteBuffer fileData;
+        _file.readToByteBuffer(fileData);
         return IsJPGFile(fileData);
     }
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_JPG_API bool IsJPGFile(ByteBufferPtr const& _fileData)
+    MAZE_PLUGIN_LOADER_JPG_API bool IsJPGFile(ByteBuffer const& _fileData)
     {
         U8 header[2];
-        _fileData->read(0, header, 2);
+        _fileData.read(0, header, 2);
 
         bool isJPEG = (header[0] == 0xFF) && (header[1] == 0xD8);
         return isJPEG;

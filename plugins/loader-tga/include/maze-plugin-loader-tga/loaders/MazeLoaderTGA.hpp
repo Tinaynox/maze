@@ -39,16 +39,16 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_TGA_API bool LoadTGA(AssetFilePtr const& _file, Vector<PixelSheet2D>& _pixelSheets);
+    MAZE_PLUGIN_LOADER_TGA_API bool LoadTGA(AssetFile const& _file, Vector<PixelSheet2D>& _pixelSheets);
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_TGA_API bool LoadTGA(ByteBufferPtr const& _fileData, Vector<PixelSheet2D>& _pixelSheets);
+    MAZE_PLUGIN_LOADER_TGA_API bool LoadTGA(ByteBuffer const& _fileData, Vector<PixelSheet2D>& _pixelSheets);
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_TGA_API bool IsTGAFile(AssetFilePtr const& _file);
+    MAZE_PLUGIN_LOADER_TGA_API bool IsTGAFile(AssetFile const& _file);
 
     //////////////////////////////////////////
-    MAZE_PLUGIN_LOADER_TGA_API bool IsTGAFile(ByteBufferPtr const& _fileData);
+    MAZE_PLUGIN_LOADER_TGA_API bool IsTGAFile(ByteBuffer const& _fileData);
 
 } // namespace Maze
 //////////////////////////////////////////
