@@ -24,13 +24,14 @@
 
 
 ##########################################
+set(JPEG_BUILD_EXECUTABLES OFF)
 add_subdirectory("${MAZE_DIR}/third-party/libjpeg-cmake" "${CMAKE_CURRENT_BINARY_DIR}/third-party/libjpeg-cmake")
 set_property(TARGET libjpeg PROPERTY FOLDER "MazeThirdParty")
-set_property(TARGET cjpeg PROPERTY FOLDER "MazeThirdParty")
-set_property(TARGET djpeg PROPERTY FOLDER "MazeThirdParty")
-set_property(TARGET jpegtran PROPERTY FOLDER "MazeThirdParty")
-set_property(TARGET rdjpgcom PROPERTY FOLDER "MazeThirdParty")
-set_property(TARGET wrjpgcom PROPERTY FOLDER "MazeThirdParty")
+#set_property(TARGET cjpeg PROPERTY FOLDER "MazeThirdParty")
+#set_property(TARGET djpeg PROPERTY FOLDER "MazeThirdParty")
+#set_property(TARGET jpegtran PROPERTY FOLDER "MazeThirdParty")
+#set_property(TARGET rdjpgcom PROPERTY FOLDER "MazeThirdParty")
+#set_property(TARGET wrjpgcom PROPERTY FOLDER "MazeThirdParty")
 target_include_directories(
     libjpeg
     PUBLIC $<BUILD_INTERFACE:${MAZE_DIR}/third-party/libjpeg-cmake>
