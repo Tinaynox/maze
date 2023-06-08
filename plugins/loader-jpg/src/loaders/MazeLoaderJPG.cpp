@@ -69,7 +69,7 @@ namespace Maze
         jerr.error_exit = ProcessJPGError;
         
         jpeg_create_decompress(&cinfo);
-        jpeg_mem_src(&cinfo, _fileData.getDataPointer(), _fileData.getSize());
+        jpeg_mem_src(&cinfo, _fileData.getDataPointer(), (U32)_fileData.getSize());
 
         // Read JPEG header
         S32 readHeaderRes = jpeg_read_header(&cinfo, TRUE);

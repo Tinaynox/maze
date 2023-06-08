@@ -145,7 +145,7 @@ namespace Maze
         }
         else
         {
-            bytesRead += _fileData.read(bytesRead, pixelSheet.getDataPointer(), pixelSheet.getDataSize());
+            bytesRead += _fileData.read(bytesRead, pixelSheet.getDataPointer(), (U32)pixelSheet.getDataSize());
         }
 
         if (channels > 2)
