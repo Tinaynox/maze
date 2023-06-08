@@ -44,21 +44,21 @@ namespace Maze
 
     //////////////////////////////////////////
     MAZE_GRAPHICS_API bool LoadOBJ(
-        AssetFilePtr const& _file,
-        MeshPtr const& _mesh,
+        AssetFile const& _file,
+        Mesh& _mesh,
         RenderMeshLoaderProperties const& _props);
 
     //////////////////////////////////////////
     MAZE_GRAPHICS_API bool LoadOBJ(
-        ByteBufferPtr const& _fileData,
-        MeshPtr const& _mesh,
+        ByteBuffer const& _fileData,
+        Mesh& _mesh,
         RenderMeshLoaderProperties const& _props);
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool IsOBJFile(AssetFilePtr const& _file);
+    MAZE_GRAPHICS_API bool IsOBJFile(AssetFile const& _file);
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool IsOBJFile(ByteBufferPtr const& _fileData);
+    MAZE_GRAPHICS_API bool IsOBJFile(ByteBuffer const& _fileData);
 
 } // namespace Maze
 //////////////////////////////////////////

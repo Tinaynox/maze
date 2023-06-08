@@ -269,10 +269,10 @@ namespace Maze
             for (auto const& renderMeshLoaderData : m_renderMeshLoaders)
             {
                 RenderMeshLoaderData const& loaderData = renderMeshLoaderData.second;
-                if (loaderData.isRenderMeshAssetFileFunc(_assetFile))
+                if (loaderData.isRenderMeshAssetFileFunc(*_assetFile.get()))
                 {
                     loaderFound = true;
-                    MAZE_ERROR_IF(!loaderData.loadRenderMeshAssetFileFunc(_assetFile, mesh, loaderProps), "Mesh is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
+                    MAZE_ERROR_IF(!loaderData.loadRenderMeshAssetFileFunc(*_assetFile.get(), *mesh.get(), loaderProps), "Mesh is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
                     break;
                 }
             }
@@ -287,7 +287,7 @@ namespace Maze
             if (it != m_renderMeshLoaders.end())
             {
                 RenderMeshLoaderData const& loaderData = it->second;
-                MAZE_ERROR_IF(!loaderData.loadRenderMeshAssetFileFunc(_assetFile, mesh, loaderProps), "Mesh is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
+                MAZE_ERROR_IF(!loaderData.loadRenderMeshAssetFileFunc(*_assetFile.get(), *mesh.get(), loaderProps), "Mesh is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
             }
             else
             {

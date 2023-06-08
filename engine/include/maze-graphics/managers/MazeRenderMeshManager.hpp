@@ -76,15 +76,15 @@ namespace Maze
 
     //////////////////////////////////////////
     using LoadRenderMeshAssetFileFunction = bool(*)(
-        AssetFilePtr const& _file,
-        MeshPtr const& _mesh,
+        AssetFile const& _file,
+        Mesh& _mesh,
         RenderMeshLoaderProperties const& _props);
     using LoadRenderMeshByteBufferFunction = bool(*)(
-        ByteBufferPtr const& _fileData,
-        MeshPtr const& _mesh,
+        ByteBuffer const& _fileData,
+        Mesh& _mesh,
         RenderMeshLoaderProperties const& _props);
-    using IsRenderMeshAssetFileFunction = bool(*)(AssetFilePtr const& _file);
-    using IsRenderMeshByteBufferFunction = bool(*)(ByteBufferPtr const& _fileData);
+    using IsRenderMeshAssetFileFunction = bool(*)(AssetFile const& _file);
+    using IsRenderMeshByteBufferFunction = bool(*)(ByteBuffer const& _fileData);
 
 
     //////////////////////////////////////////

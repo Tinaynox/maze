@@ -39,11 +39,12 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_GRAPHICS_API bool LoadOBJ(
-        AssetFilePtr const& _file,
-        MeshPtr const& _mesh,
+        AssetFile const& _file,
+        Mesh& _mesh,
         RenderMeshLoaderProperties const& _props)
     {
-        ByteBufferPtr fileData = _file->readAsByteBuffer();
+        ByteBuffer fileData;
+        _file.readToByteBuffer(fileData);
         return LoadOBJ(fileData, _mesh, _props);
     }
 
@@ -473,11 +474,11 @@ namespace Maze
 
     //////////////////////////////////////////
     MAZE_GRAPHICS_API bool LoadOBJ(
-        ByteBufferPtr const& _fileData,
-        MeshPtr const& _mesh,
+        ByteBuffer const& _fileData,
+        Mesh& _mesh,
         RenderMeshLoaderProperties const& _props)
     {
-        _mesh->clear();
+        _mesh.clear();
 
         Vector<Vec3DF> positions;
         Vector<Vec2DF> uvs;
@@ -531,7 +532,7 @@ namespace Maze
                     subMesh->setBitangents(&bitangents[0], bitangents.size());
                 }
 
-                _mesh->addSubMesh(subMesh);
+                _mesh.addSubMesh(subMesh);
 
                 // Cleanup
                 finalPositions.clear();
@@ -746,9 +747,9 @@ namespace Maze
 
         String line;
         Size i = 0;
-        while (i < _fileData->getSize())
+        while (i < _fileData.getSize())
         {
-            Char c = _fileData->getByte(i);
+            Char c = _fileData.getByte(i);
 
             if (c == '\n')
             {
@@ -775,20 +776,18 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool IsOBJFile(AssetFilePtr const& _file)
+    MAZE_GRAPHICS_API bool IsOBJFile(AssetFile const& _file)
     {
         // #TODO:
-        return _file->getExtension() == "obj";
-        // ByteBufferPtr fileData = _file->readAsByteBuffer();
-        // return IsOBJFile(fileData);        
+        return _file.getExtension() == "obj";
     }
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool IsOBJFile(ByteBufferPtr const& _fileData)
+    MAZE_GRAPHICS_API bool IsOBJFile(ByteBuffer const& _fileData)
     {
         // #TODO:
         MAZE_NOT_IMPLEMENTED;
-        return true;
+        return false;
     }
 
 } // namespace Maze
