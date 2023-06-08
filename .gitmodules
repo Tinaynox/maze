@@ -25,3 +25,6 @@
 [submodule "third-party/freetype2"]
 	path = third-party/freetype2
 	url = git://git.savannah.gnu.org/freetype/freetype2.git
+[submodule "third-party/libjpeg-cmake"]
+	path = third-party/libjpeg-cmake
+	url = git@github.com:Tinaynox/libjpeg-cmake.git

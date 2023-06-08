@@ -24,32 +24,32 @@
 
 
 //////////////////////////////////////////
-#include "MazeLoaderPNGHeader.hpp"
-#include "MazeLoaderPNGPlugin.hpp"
+#include "MazeLoaderJPGHeader.hpp"
+#include "MazeLoaderJPGPlugin.hpp"
 #include "maze-core/managers/MazePluginManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
-#include "maze-plugin-loader-png/loaders/MazeLoaderPNG.hpp"
+#include "maze-plugin-loader-jpg/loaders/MazeLoaderJPG.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    static LoaderPNGPluginPtr s_plugin;
+    static LoaderJPGPluginPtr s_plugin;
 
 
 #if (MAZE_STATIC)
 
     //////////////////////////////////////////
-    void InstallLoaderPNGPlugin()
+    void InstallLoaderJPGPlugin()
     {
-        s_plugin = LoaderPNGPlugin::Create();
+        s_plugin = LoaderJPGPlugin::Create();
         PluginManager::GetInstancePtr()->installPlugin(std::static_pointer_cast<Plugin>(s_plugin));
     }
 
     //////////////////////////////////////////
-    void UninstallLoaderPNGPlugin()
+    void UninstallLoaderJPGPlugin()
     {
         Maze::PluginManager::GetInstancePtr()->uninstallPlugin(std::static_pointer_cast<Plugin>(s_plugin));
         s_plugin.reset();
@@ -58,14 +58,14 @@ namespace Maze
 #else
 
     //////////////////////////////////////////
-    extern "C" MAZE_PLUGIN_LOADER_PNG_API void StartPlugin()
+    extern "C" MAZE_PLUGIN_LOADER_JPG_API void StartPlugin()
     {
-        s_plugin = LoaderPNGPlugin::Create();
+        s_plugin = LoaderJPGPlugin::Create();
         Maze::PluginManager::GetInstancePtr()->installPlugin(std::static_pointer_cast<Plugin>(s_plugin));
     }
 
     //////////////////////////////////////////
-    extern "C" MAZE_PLUGIN_LOADER_PNG_API void StopPlugin()
+    extern "C" MAZE_PLUGIN_LOADER_JPG_API void StopPlugin()
     {
         if (PluginManager::GetInstancePtr())
             PluginManager::GetInstancePtr()->uninstallPlugin(std::static_pointer_cast<Plugin>(s_plugin));
@@ -75,7 +75,7 @@ namespace Maze
 #endif
 
     //////////////////////////////////////////
-    static HashedCString const c_textureExtension = MAZE_HASHED_CSTRING("png");
+    static HashedCString const c_textureExtension = MAZE_HASHED_CSTRING("jpg");
 
     //////////////////////////////////////////
     static inline void RegisterTextureLoader(RenderSystemPtr const& _renderSystem)
@@ -85,50 +85,50 @@ namespace Maze
             _renderSystem->getTextureManager()->registerTextureLoader(
                 c_textureExtension,
                 TextureLoaderData(
-                    (LoadTextureAssetFileFunction)&LoadPNG,
-                    (LoadTextureByteBufferFunction)&LoadPNG,
-                    (IsTextureAssetFileFunction)&IsPNGFile,
-                    (IsTextureByteBufferFunction)&IsPNGFile));
+                    (LoadTextureAssetFileFunction)&LoadJPG,
+                    (LoadTextureByteBufferFunction)&LoadJPG,
+                    (IsTextureAssetFileFunction)&IsJPGFile,
+                    (IsTextureByteBufferFunction)&IsJPGFile));
         }
     }
 
 
     //////////////////////////////////////////
-    // Class LoaderPNGPlugin
+    // Class LoaderJPGPlugin
     //
     //////////////////////////////////////////
-    LoaderPNGPlugin::LoaderPNGPlugin()
+    LoaderJPGPlugin::LoaderJPGPlugin()
     {
     }
 
     //////////////////////////////////////////
-    LoaderPNGPlugin::~LoaderPNGPlugin()
+    LoaderJPGPlugin::~LoaderJPGPlugin()
     {
     }
 
     //////////////////////////////////////////
-    LoaderPNGPluginPtr LoaderPNGPlugin::Create()
+    LoaderJPGPluginPtr LoaderJPGPlugin::Create()
     {
-        LoaderPNGPluginPtr plugin;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(LoaderPNGPlugin, plugin, init());
+        LoaderJPGPluginPtr plugin;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(LoaderJPGPlugin, plugin, init());
         return plugin;
     }
 
     //////////////////////////////////////////
-    bool LoaderPNGPlugin::init()
+    bool LoaderJPGPlugin::init()
     {
         return true;
     }
 
     //////////////////////////////////////////
-    String const& LoaderPNGPlugin::getName()
+    String const& LoaderJPGPlugin::getName()
     {
-        static String s_pluginName = "LoaderPNG";
+        static String s_pluginName = "LoaderJPG";
         return s_pluginName;
     }
 
     //////////////////////////////////////////
-    void LoaderPNGPlugin::install()
+    void LoaderJPGPlugin::install()
     {
         if (GraphicsManager::GetInstancePtr())
         {
@@ -145,7 +145,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void LoaderPNGPlugin::uninstall()
+    void LoaderJPGPlugin::uninstall()
     {
         if (GraphicsManager::GetInstancePtr() && RenderSystem::GetCurrentInstancePtr())
         {

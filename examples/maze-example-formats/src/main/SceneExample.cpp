@@ -83,6 +83,7 @@
 #include "maze-plugin-loader-png/MazeLoaderPNGPlugin.hpp"
 #include "maze-plugin-loader-dds/MazeLoaderDDSPlugin.hpp"
 #include "maze-plugin-loader-tga/MazeLoaderTGAPlugin.hpp"
+#include "maze-plugin-loader-jpg/MazeLoaderJPGPlugin.hpp"
 #include "Example.hpp"
 #include "ExampleHelper.hpp"
 #include "ExampleFPSCameraController.hpp"
@@ -117,6 +118,7 @@ namespace Maze
         MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG);
         MAZE_LOAD_PLATFORM_PLUGIN(LoaderDDS);
         MAZE_LOAD_PLATFORM_PLUGIN(LoaderTGA);
+        MAZE_LOAD_PLATFORM_PLUGIN(LoaderJPG);
 
         return true;
     }
@@ -202,7 +204,7 @@ namespace Maze
         lightEntity->ensureComponent<Name>("Light");
 
 
-        Vec2DF levelSize(80.0f, 30.0f);
+        Vec2DF levelSize(100.0f, 30.0f);
 
 
         // FPS Controller
@@ -237,6 +239,11 @@ namespace Maze
         // PNG
         addTexturePreview("sp3d_logo_32.png");
         addTexturePreview("sp3d_logo_64.png");
+        addTexturePreviewSpace();
+
+        // JPG
+        addTexturePreview("sp3d_logo_lq.jpg");
+        addTexturePreview("sp3d_logo_hq.jpg");
         addTexturePreviewSpace();
 
         // TGA
@@ -332,7 +339,7 @@ namespace Maze
 
         //F32 sign = (m_texturesCount % 2 == 0) ? 1.0f : -1.0f;
         //F32 x = ((m_texturesCount + 1) / 2) * sign * 3.0f;
-        F32 x = (m_texturesCount - 5) * 3.0f + m_texturesOffset;
+        F32 x = (m_texturesCount - 10) * 3.0f + m_texturesOffset;
         transform->setLocalPosition(x, 1.5f, 3.0f);
 
 
