@@ -46,7 +46,7 @@ R"(
         vec4 tangentOS = vec4(a_tangent, 1.0);
         vec4 bitangentOS = vec4(a_bitangent, 1.0);
     
-        mat4 normalMatrix = transpose(inverse(modelMatrix));
+        mat3 normalMatrix = mat3(transpose(inverse(modelMatrix)));
     
         
     #if (MAZE_LHCS)
@@ -57,7 +57,7 @@ R"(
         v_positionWS = positionWS.xyz;
         v_positionVS = positionVS.xyz;
     
-        vec3 normalWS = normalize(normalOS * normalMatrix).xyz;  
+        vec3 normalWS = normalize(normalOS.xyz * normalMatrix).xyz;  
     
         v_normalOS = normalOS.xyz;
         v_normalWS = normalWS.xyz;
