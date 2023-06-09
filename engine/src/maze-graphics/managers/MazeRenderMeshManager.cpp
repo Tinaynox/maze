@@ -37,7 +37,6 @@
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
-#include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/managers/MazeMeshManager.hpp"
 
 
@@ -85,13 +84,7 @@ namespace Maze
 
         m_renderSystemRaw->eventSystemInited.subscribe(this, &RenderMeshManager::notifyRenderSystemInited);
 
-        registerRenderMeshLoader(
-            MAZE_HASHED_CSTRING("obj"),
-            RenderMeshLoaderData(
-                (LoadRenderMeshAssetFileFunction)&LoadOBJ,
-                (LoadRenderMeshByteBufferFunction)&LoadOBJ,
-                (IsRenderMeshAssetFileFunction)&IsOBJFile,
-                (IsRenderMeshByteBufferFunction)&IsOBJFile));
+        
 
         return true;
     }
@@ -243,67 +236,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MeshPtr RenderMeshManager::loadMesh(AssetFilePtr const& _assetFile)
-    {
-        MeshPtr mesh;
-
-        if (!_assetFile)
-            return mesh;
-
-        mesh = Mesh::Create(m_renderSystemRaw);
-
-        Debug::Log("Loading render mesh: %s...", _assetFile->getFileName().toUTF8().c_str());
-
-        StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
-
-        RenderMeshLoaderProperties loaderProps;
-        if (metaData.contains("scale"))
-            loaderProps.scale = StringHelper::StringToF32(metaData["scale"]);
-
-        if (metaData.contains("mergeSubMeshes"))
-            loaderProps.mergeSubMeshes = StringHelper::StringToBool(metaData["mergeSubMeshes"]);
-
-        if (metaData.empty() || !metaData.contains("ext"))
-        {
-            bool loaderFound = false;
-            for (auto const& renderMeshLoaderData : m_renderMeshLoaders)
-            {
-                RenderMeshLoaderData const& loaderData = renderMeshLoaderData.second;
-                if (loaderData.isRenderMeshAssetFileFunc(*_assetFile.get()))
-                {
-                    loaderFound = true;
-                    MAZE_ERROR_IF(!loaderData.loadRenderMeshAssetFileFunc(*_assetFile.get(), *mesh.get(), loaderProps), "Mesh is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
-                    break;
-                }
-            }
-
-            MAZE_ERROR_IF(!loaderFound, "Unsupported texture format - %s!", _assetFile->getFileName().toUTF8().c_str());
-        }
-        else
-        {
-            HashedString fileExtension = StringHelper::ToLower(metaData["ext"]);
-
-            auto it = m_renderMeshLoaders.find(fileExtension);
-            if (it != m_renderMeshLoaders.end())
-            {
-                RenderMeshLoaderData const& loaderData = it->second;
-                MAZE_ERROR_IF(!loaderData.loadRenderMeshAssetFileFunc(*_assetFile.get(), *mesh.get(), loaderProps), "Mesh is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
-            }
-            else
-            {
-                MAZE_ERROR("Unsupported texture format - %s!", _assetFile->getFileName().toUTF8().c_str());
-            }
-        }
-
-        Debug::Log("Loaded.", _assetFile->getFileName().toUTF8().c_str());
-
-        return mesh;
-    }
-
-    //////////////////////////////////////////
     void RenderMeshManager::loadAllAssetRenderMeshes()
     {
-        Vector<String> loaderExtensions = getRenderMeshLoaderExtensions();
+        Vector<String> loaderExtensions = MeshManager::GetCurrentInstancePtr()->getMeshLoaderExtensions();
 
         Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions(
             Set<String>(loaderExtensions.begin(), loaderExtensions.end()));
@@ -318,15 +253,6 @@ namespace Maze
         }
     }
 
-    //////////////////////////////////////////
-    Vector<String> RenderMeshManager::getRenderMeshLoaderExtensions()
-    {
-        Vector<String> result;
-        for (auto const& renderMeshLoaderData : m_renderMeshLoaders)
-            result.push_back(renderMeshLoaderData.first);
-
-        return result;
-    }
     
 } // namespace Maze
 //////////////////////////////////////////

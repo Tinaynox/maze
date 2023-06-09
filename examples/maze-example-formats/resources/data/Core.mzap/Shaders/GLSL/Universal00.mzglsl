@@ -28,7 +28,9 @@ OUT vec3 v_positionWS;
 OUT vec3 v_positionVS;
 OUT vec3 v_normalOS;
 OUT vec3 v_normalWS;
+OUT vec3 v_tangentOS;
 OUT vec3 v_tangentWS;
+OUT vec3 v_bitangentOS;
 OUT vec3 v_bitangentWS;
 OUT vec4 v_color;
 OUT vec2 v_uv0;
@@ -58,8 +60,7 @@ void main()
     vec4 tangentOS = vec4(a_tangent, 1.0);
     vec4 bitangentOS = vec4(a_bitangent, 1.0);
     
-    mat4 normalMatrix = transpose(inverse(modelMatrix));
-    
+    mat3 normalMatrix = mat3(transpose(inverse(modelMatrix)));
     
         
 #if (MAZE_LHCS)
@@ -70,13 +71,15 @@ void main()
     v_positionWS = positionWS.xyz;
     v_positionVS = positionVS.xyz;
     
-    vec3 normalWS = normalize(normalOS * normalMatrix).xyz;
+    vec3 normalWS = normalize(normalOS.xyz * normalMatrix).xyz;
     
 #if defined(NORMAL_MAP) && (NORMAL_MAP)
-    vec3 tangentWS = normalize(tangentOS * normalMatrix).xyz;
-    vec3 bitangentWS = normalize(bitangentOS * normalMatrix).xyz;
+    vec3 tangentWS = normalize(tangentOS.xyz * normalMatrix).xyz;
+    vec3 bitangentWS = normalize(bitangentOS.xyz * normalMatrix).xyz;
     
+    v_tangentOS = tangentOS.xyz;
     v_tangentWS = tangentWS.xyz;
+    v_bitangentOS = tangentOS.xyz;
     v_bitangentWS = bitangentWS.xyz;
 #endif
     
@@ -138,7 +141,9 @@ IN vec3 v_positionWS;
 IN vec3 v_positionVS;
 IN vec3 v_normalOS;
 IN vec3 v_normalWS;
+IN vec3 v_tangentOS;
 IN vec3 v_tangentWS;
+IN vec3 v_bitangentOS;
 IN vec3 v_bitangentWS;
 IN vec4 v_color;
 IN vec2 v_uv0;
@@ -213,6 +218,9 @@ void main()
     vec3 normalTS = SampleNormalTS(u_normalMap, v_uv0, u_normalScale);
     mat3 tangentToWorld = mat3(normalize(v_tangentWS), normalize(v_bitangentWS), normalize(v_normalWS));
     vec3 normalWS = normalize(TransformTangentToWorld(normalTS, tangentToWorld));
+    
+    //out_color = vec4((normalWS + vec3(1.0, 1.0, 1.0f))*0.5, 1);
+    //return;
 #else
     vec3 normalWS = normalize(v_normalWS);
 #endif

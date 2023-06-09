@@ -154,7 +154,10 @@ namespace Maze
                     Vec2DS(extrude, extrude) * upscale);
 
                 if (_fontType == BuiltinSystemFontType::Default3D)
+                {
                     systemFont->texture->setMagMinFilters(TextureFilter::Linear, TextureFilter::LinearMipmapLinear);
+                    systemFont->material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::LessEqual);
+                }
 
                 break;
             }
@@ -164,7 +167,10 @@ namespace Maze
                 systemFont = createSystemFontOutlined(_fontType.toCString(), ColorU32::c_black);
 
                 if (_fontType == BuiltinSystemFontType::Default3DOutlined)
+                {
                     systemFont->texture->setMagMinFilters(TextureFilter::Linear, TextureFilter::LinearMipmapLinear);
+                    systemFont->material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::LessEqual);
+                }
 
                 break;
             }

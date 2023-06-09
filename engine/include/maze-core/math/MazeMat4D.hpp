@@ -238,10 +238,10 @@ namespace Maze
         inline MAZE_CONSTEXPR Mat4D transpose() const;
 
         //////////////////////////////////////////
-        inline void setTranslation(Vec2D<TValue>& _v);
+        inline void setTranslation(Vec2D<TValue> const& _v);
 
         //////////////////////////////////////////
-        inline void setTranslation(Vec3D<TValue>& _v);
+        inline void setTranslation(Vec3D<TValue> const& _v);
 
         //////////////////////////////////////////
         inline MAZE_CONSTEXPR Vec3D<TValue> getAffineTranslation() const;

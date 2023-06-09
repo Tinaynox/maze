@@ -426,19 +426,29 @@ namespace Maze
                 switch (_data.keyCode)
                 {
 #if MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN
-                case KeyCode::F8:
+                    case KeyCode::F8:
 #else
-                case KeyCode::F1:
+                    case KeyCode::F1:
 #endif
-                {
-                    SettingsManager::GetInstancePtr()->getSettings<EditorToolsSettings>()->switchActive();
-                    SettingsManager::GetInstancePtr()->saveSettings();
-                    break;
-                }
-                default:
-                {
-                    break;
-                }
+                    {
+                        SettingsManager::GetInstancePtr()->getSettings<EditorToolsSettings>()->switchActive();
+                        SettingsManager::GetInstancePtr()->saveSettings();
+                        break;
+                    }
+                    case KeyCode::S:
+                    {
+                        if (_data.isAltDown())
+                        {
+                            Debug::Log("Reload shaders");
+                            RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->reloadShaders();
+                        }
+
+                        break;
+                    }
+                    default:
+                    {
+                        break;
+                    }
                 }
 
                 break;

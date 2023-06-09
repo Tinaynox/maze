@@ -67,55 +67,6 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    struct RenderMeshLoaderProperties
-    {
-        F32 scale = 1.0f;
-        bool mergeSubMeshes = false;
-    };
-
-
-    //////////////////////////////////////////
-    using LoadRenderMeshAssetFileFunction = bool(*)(
-        AssetFile const& _file,
-        Mesh& _mesh,
-        RenderMeshLoaderProperties const& _props);
-    using LoadRenderMeshByteBufferFunction = bool(*)(
-        ByteBuffer const& _fileData,
-        Mesh& _mesh,
-        RenderMeshLoaderProperties const& _props);
-    using IsRenderMeshAssetFileFunction = bool(*)(AssetFile const& _file);
-    using IsRenderMeshByteBufferFunction = bool(*)(ByteBuffer const& _fileData);
-
-
-    //////////////////////////////////////////
-    // Struct RenderMeshLoaderData
-    //
-    //////////////////////////////////////////
-    struct RenderMeshLoaderData
-    {
-        //////////////////////////////////////////
-        RenderMeshLoaderData() = default;
-
-        //////////////////////////////////////////
-        RenderMeshLoaderData(
-            LoadRenderMeshAssetFileFunction _loadRenderMeshAssetFileFunc,
-            LoadRenderMeshByteBufferFunction _loadRenderMeshByteBufferFunc,
-            IsRenderMeshAssetFileFunction _isRenderMeshAssetFileFunc,
-            IsRenderMeshByteBufferFunction _isRenderMeshByteBufferFunc)
-            : loadRenderMeshAssetFileFunc(_loadRenderMeshAssetFileFunc)
-            , loadRenderMeshByteBufferFunc(_loadRenderMeshByteBufferFunc)
-            , isRenderMeshAssetFileFunc(_isRenderMeshAssetFileFunc)
-            , isRenderMeshByteBufferFunc(_isRenderMeshByteBufferFunc)
-        {}
-
-        LoadRenderMeshAssetFileFunction loadRenderMeshAssetFileFunc;
-        LoadRenderMeshByteBufferFunction loadRenderMeshByteBufferFunc;
-        IsRenderMeshAssetFileFunction isRenderMeshAssetFileFunc;
-        IsRenderMeshByteBufferFunction isRenderMeshByteBufferFunc;
-    };
-
-
-    //////////////////////////////////////////
     // Class RenderMeshManager
     //
     //////////////////////////////////////////
@@ -181,34 +132,6 @@ namespace Maze
         void loadAllAssetRenderMeshes();
 
 
-
-        //////////////////////////////////////////
-        void registerRenderMeshLoader(
-            HashedCString _extension,
-            RenderMeshLoaderData const& _data)
-        {
-            m_renderMeshLoaders.insert(_extension, _data);
-            eventRenderMeshLoaderAdded(_extension, _data);
-        }
-
-        //////////////////////////////////////////
-        void clearRenderMeshLoader(HashedCString _extension)
-        {
-            m_renderMeshLoaders.erase(_extension);
-        }
-
-        //////////////////////////////////////////
-        Vector<String> getRenderMeshLoaderExtensions();
-
-
-        //////////////////////////////////////////
-        MeshPtr loadMesh(AssetFilePtr const& _assetFile);
-
-    public:
-
-        //////////////////////////////////////////
-        MultiDelegate<HashedCString, RenderMeshLoaderData const&> eventRenderMeshLoaderAdded;
-
     protected:
 
         //////////////////////////////////////////
@@ -223,8 +146,6 @@ namespace Maze
     protected:
         RenderSystemWPtr m_renderSystem;
         RenderSystem* m_renderSystemRaw;
-
-        StringKeyMap<RenderMeshLoaderData> m_renderMeshLoaders;
 
         RenderMeshPtr m_builtinRenderMeshes[BuiltinRenderMeshType::MAX];
 

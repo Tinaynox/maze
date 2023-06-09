@@ -143,7 +143,7 @@ vec3 SampleNormalTS(
     
     vec3 normal;
     normal.xyz = packedNormal.rgb * 2.0 - 1.0;
-    normal.xy *= -normalScale;
+    normal.xy *= normalScale;
     return normal;
 #else
     return vec3(0.0, 0.0, 1.0);

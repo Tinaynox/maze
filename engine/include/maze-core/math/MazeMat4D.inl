@@ -653,7 +653,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    inline void Mat4D<TValue>::setTranslation(Vec2D<TValue>& _v)
+    inline void Mat4D<TValue>::setTranslation(Vec2D<TValue> const& _v)
     {
         m[0][3] = _v.x;
         m[1][3] = _v.y;
@@ -661,7 +661,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    inline void Mat4D<TValue>::setTranslation(Vec3D<TValue>& _v)
+    inline void Mat4D<TValue>::setTranslation(Vec3D<TValue> const& _v)
     {
         m[0][3] = _v.x;
         m[1][3] = _v.y;

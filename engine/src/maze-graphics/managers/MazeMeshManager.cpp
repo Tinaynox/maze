@@ -80,6 +80,15 @@ namespace Maze
     {
         m_renderSystem = _renderSystem;
         m_renderSystemRaw = _renderSystem.get();
+
+        registerMeshLoader(
+            MAZE_HASHED_CSTRING("obj"),
+            MeshLoaderData(
+            (LoadMeshAssetFileFunction)&LoadOBJ,
+                (LoadMeshByteBufferFunction)&LoadOBJ,
+                (IsMeshAssetFileFunction)&IsOBJFile,
+                (IsMeshByteBufferFunction)&IsOBJFile));
+
         return true;
     }
 
@@ -147,6 +156,73 @@ namespace Maze
             ensureBuiltinMesh(t);
     }
 
+    //////////////////////////////////////////
+    Vector<String> MeshManager::getMeshLoaderExtensions()
+    {
+        Vector<String> result;
+        for (auto const& renderMeshLoaderData : m_meshLoaders)
+            result.push_back(renderMeshLoaderData.first);
+
+        return result;
+    }
+
+    //////////////////////////////////////////
+    MeshPtr MeshManager::loadMesh(AssetFilePtr const& _assetFile)
+    {
+        MeshPtr mesh;
+
+        if (!_assetFile)
+            return mesh;
+
+        mesh = Mesh::Create(m_renderSystemRaw);
+
+        Debug::Log("Loading render mesh: %s...", _assetFile->getFileName().toUTF8().c_str());
+
+        StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
+
+        MeshLoaderProperties loaderProps;
+        if (metaData.contains("scale"))
+            loaderProps.scale = StringHelper::StringToF32(metaData["scale"]);
+
+        if (metaData.contains("mergeSubMeshes"))
+            loaderProps.mergeSubMeshes = StringHelper::StringToBool(metaData["mergeSubMeshes"]);
+
+        if (metaData.empty() || !metaData.contains("ext"))
+        {
+            bool loaderFound = false;
+            for (auto const& renderMeshLoaderData : m_meshLoaders)
+            {
+                MeshLoaderData const& loaderData = renderMeshLoaderData.second;
+                if (loaderData.isMeshAssetFileFunc(*_assetFile.get()))
+                {
+                    loaderFound = true;
+                    MAZE_ERROR_IF(!loaderData.loadMeshAssetFileFunc(*_assetFile.get(), *mesh.get(), loaderProps), "Mesh is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
+                    break;
+                }
+            }
+
+            MAZE_ERROR_IF(!loaderFound, "Unsupported mesh format - %s!", _assetFile->getFileName().toUTF8().c_str());
+        }
+        else
+        {
+            HashedString fileExtension = StringHelper::ToLower(metaData["ext"]);
+
+            auto it = m_meshLoaders.find(fileExtension);
+            if (it != m_meshLoaders.end())
+            {
+                MeshLoaderData const& loaderData = it->second;
+                MAZE_ERROR_IF(!loaderData.loadMeshAssetFileFunc(*_assetFile.get(), *mesh.get(), loaderProps), "Mesh is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
+            }
+            else
+            {
+                MAZE_ERROR("Unsupported texture format - %s!", _assetFile->getFileName().toUTF8().c_str());
+            }
+        }
+
+        Debug::Log("Loaded.", _assetFile->getFileName().toUTF8().c_str());
+
+        return mesh;
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

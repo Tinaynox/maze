@@ -110,6 +110,16 @@ namespace Maze
         //////////////////////////////////////////
         void addTexturePreviewSpace();
 
+
+        //////////////////////////////////////////
+        void addMeshPreview(
+            String const& _meshName,
+            String const& _materialName,
+            F32 _scale);
+
+        //////////////////////////////////////////
+        void addMeshPreviewSpace();
+
     protected:
         CanvasPtr m_canvas;
         Camera3DPtr m_camera3D;
@@ -120,6 +130,9 @@ namespace Maze
 
         S32 m_texturesCount = 0;
         F32 m_texturesOffset = 0.0f;
+
+        S32 m_meshesCount = 0;
+        F32 m_meshesOffset = 0.0f;
     };
 
 

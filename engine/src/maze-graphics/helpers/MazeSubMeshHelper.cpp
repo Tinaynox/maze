@@ -171,7 +171,7 @@ namespace Maze
                 tangentRes = Math::Ortogonalize(_normals[i], tangentRes);
                 bitangentRes = Math::Ortogonalize(_normals[i], bitangentRes);
 
-                _outTangents[i] = -tangentRes; // Minus for LHCS
+                _outTangents[i] = tangentRes;
                 _outBitangents[i] = bitangentRes;
             }
 

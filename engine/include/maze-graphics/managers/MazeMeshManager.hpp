@@ -67,6 +67,55 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    struct MeshLoaderProperties
+    {
+        F32 scale = 1.0f;
+        bool mergeSubMeshes = false;
+    };
+
+
+    //////////////////////////////////////////
+    using LoadMeshAssetFileFunction = bool(*)(
+        AssetFile const& _file,
+        Mesh& _mesh,
+        MeshLoaderProperties const& _props);
+    using LoadMeshByteBufferFunction = bool(*)(
+        ByteBuffer const& _fileData,
+        Mesh& _mesh,
+        MeshLoaderProperties const& _props);
+    using IsMeshAssetFileFunction = bool(*)(AssetFile const& _file);
+    using IsMeshByteBufferFunction = bool(*)(ByteBuffer const& _fileData);
+
+
+    //////////////////////////////////////////
+    // Struct MeshLoaderData
+    //
+    //////////////////////////////////////////
+    struct MeshLoaderData
+    {
+        //////////////////////////////////////////
+        MeshLoaderData() = default;
+
+        //////////////////////////////////////////
+        MeshLoaderData(
+            LoadMeshAssetFileFunction _loadMeshAssetFileFunc,
+            LoadMeshByteBufferFunction _loadMeshByteBufferFunc,
+            IsMeshAssetFileFunction _isMeshAssetFileFunc,
+            IsMeshByteBufferFunction _isMeshByteBufferFunc)
+            : loadMeshAssetFileFunc(_loadMeshAssetFileFunc)
+            , loadMeshByteBufferFunc(_loadMeshByteBufferFunc)
+            , isMeshAssetFileFunc(_isMeshAssetFileFunc)
+            , isMeshByteBufferFunc(_isMeshByteBufferFunc)
+        {}
+
+        LoadMeshAssetFileFunction loadMeshAssetFileFunc;
+        LoadMeshByteBufferFunction loadMeshByteBufferFunc;
+        IsMeshAssetFileFunction isMeshAssetFileFunc;
+        IsMeshByteBufferFunction isMeshByteBufferFunc;
+    };
+
+
+    //////////////////////////////////////////
     // Class MeshManager
     //
     //////////////////////////////////////////
@@ -108,6 +157,34 @@ namespace Maze
         void createBuiltinMeshes();
 
 
+
+        //////////////////////////////////////////
+        void registerMeshLoader(
+            HashedCString _extension,
+            MeshLoaderData const& _data)
+        {
+            m_meshLoaders.insert(_extension, _data);
+            eventMeshLoaderAdded(_extension, _data);
+        }
+
+        //////////////////////////////////////////
+        void clearMeshLoader(HashedCString _extension)
+        {
+            m_meshLoaders.erase(_extension);
+        }
+
+        //////////////////////////////////////////
+        Vector<String> getMeshLoaderExtensions();
+
+
+        //////////////////////////////////////////
+        MeshPtr loadMesh(AssetFilePtr const& _assetFile);
+
+    public:
+
+        //////////////////////////////////////////
+        MultiDelegate<HashedCString, MeshLoaderData const&> eventMeshLoaderAdded;
+
     protected:
 
         //////////////////////////////////////////
@@ -121,6 +198,8 @@ namespace Maze
         RenderSystem* m_renderSystemRaw;
 
         MeshPtr m_builtinMeshes[BuiltinMeshType::MAX];
+
+        StringKeyMap<MeshLoaderData> m_meshLoaders;
     };
 
 } // namespace Maze

@@ -151,7 +151,7 @@ namespace Maze
     {
         MAZE_ERROR_RETURN_IF(!_assetFile, "Null AssetFile");
 
-        MeshPtr mesh = m_renderSystem->getRenderMeshManager()->loadMesh(_assetFile);
+        MeshPtr mesh = m_renderSystem->getMeshManager()->loadMesh(_assetFile);
         loadFromMesh(mesh, _renderTarget);
     }
 

@@ -103,6 +103,7 @@ R"(
 			case 5: color = v_color * texture(u_baseMaps[5], v_uv0) * u_color; break;
 			case 6: color = v_color * texture(u_baseMaps[6], v_uv0) * u_color; break;
 			case 7: color = v_color * texture(u_baseMaps[7], v_uv0) * u_color; break;
+			default: color = vec4(0.0, 0.0, 0.0, 0.0);
 		}
         out_color = color;
     }

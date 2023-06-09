@@ -41,6 +41,7 @@ set(EXAMPLE_MAZE_LIBS
     maze-plugin-loader-dds
     maze-plugin-loader-tga
     maze-plugin-loader-jpg
+    maze-plugin-loader-fbx
 )
 
 
@@ -65,6 +66,7 @@ add_subdirectory("${MAZE_DIR}/plugins/loader-png" "${CMAKE_CURRENT_BINARY_DIR}/p
 add_subdirectory("${MAZE_DIR}/plugins/loader-dds" "${CMAKE_CURRENT_BINARY_DIR}/plugins/loader-dds")
 add_subdirectory("${MAZE_DIR}/plugins/loader-tga" "${CMAKE_CURRENT_BINARY_DIR}/plugins/loader-tga")
 add_subdirectory("${MAZE_DIR}/plugins/loader-jpg" "${CMAKE_CURRENT_BINARY_DIR}/plugins/loader-jpg")
+add_subdirectory("${MAZE_DIR}/plugins/loader-fbx" "${CMAKE_CURRENT_BINARY_DIR}/plugins/loader-fbx")
 
 
 ##########################################

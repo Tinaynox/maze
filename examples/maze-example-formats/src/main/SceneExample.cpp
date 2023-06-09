@@ -28,6 +28,7 @@
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/components/MazeRotor3D.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
@@ -52,6 +53,7 @@
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
+#include "maze-graphics/managers/MazeMeshManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
@@ -84,6 +86,7 @@
 #include "maze-plugin-loader-dds/MazeLoaderDDSPlugin.hpp"
 #include "maze-plugin-loader-tga/MazeLoaderTGAPlugin.hpp"
 #include "maze-plugin-loader-jpg/MazeLoaderJPGPlugin.hpp"
+#include "maze-plugin-loader-fbx/MazeLoaderFBXPlugin.hpp"
 #include "Example.hpp"
 #include "ExampleHelper.hpp"
 #include "ExampleFPSCameraController.hpp"
@@ -119,6 +122,7 @@ namespace Maze
         MAZE_LOAD_PLATFORM_PLUGIN(LoaderDDS);
         MAZE_LOAD_PLATFORM_PLUGIN(LoaderTGA);
         MAZE_LOAD_PLATFORM_PLUGIN(LoaderJPG);
+        MAZE_LOAD_PLATFORM_PLUGIN(LoaderFBX);
 
         return true;
     }
@@ -261,6 +265,22 @@ namespace Maze
         addTexturePreview("sp3d_logo_dxt5.dds");
         addTexturePreviewSpace();
 
+
+
+        
+        // Drone
+        F32 const drone0Scale = 0.35f;
+        addMeshPreview("drone0.obj", "drone0.mzmaterial", drone0Scale);
+        addMeshPreview("drone0.fbx", "drone0.mzmaterial", drone0Scale);
+        // addMeshPreview("drone1.fbx", "drone0.mzmaterial");
+        addMeshPreviewSpace();
+
+        // testBox
+        F32 const testBoxScale = 0.75f;
+        addMeshPreview("testBox.obj", "testBox.mzmaterial", testBoxScale);
+        addMeshPreview("testBox.fbx", "testBox.mzmaterial", testBoxScale);
+
+
         return true;
     }
 
@@ -331,16 +351,16 @@ namespace Maze
         meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultQuadMesh());
 
         MaterialPtr material = MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::ColorTexture)->createCopy();
+        material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::LessEqual);
         Texture2DPtr const& texture2D = TextureManager::GetCurrentInstancePtr()->getTexture2D(_textureName);
         material->setUniform("u_baseMap", texture2D);
         meshRenderer->setMaterial(material);
         
         AssetFilePtr const& textureAssetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_textureName);
 
-        //F32 sign = (m_texturesCount % 2 == 0) ? 1.0f : -1.0f;
-        //F32 x = ((m_texturesCount + 1) / 2) * sign * 3.0f;
         F32 x = (m_texturesCount - 10) * 3.0f + m_texturesOffset;
-        transform->setLocalPosition(x, 1.5f, 3.0f);
+        transform->setLocalPosition(-x, 1.5f, -8.0f);
+        transform->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
 
 
         {
@@ -351,6 +371,7 @@ namespace Maze
                 transform->getLocalPosition().x,
                 pedestalTransform->getLocalScale().y * 0.5f,
                 transform->getLocalPosition().z);
+            pedestalTransform->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
             MeshRendererPtr meshRenderer = pedestalEntity->createComponent<MeshRenderer>();
             meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getBuiltinRenderMesh(BuiltinRenderMeshType::Cylinder));
 
@@ -365,6 +386,7 @@ namespace Maze
                 transform->getLocalPosition().x,
                 0.65f,
                 transform->getLocalPosition().z);
+            labelRenderer->getTransform()->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
 
             S32 bytesCount = PixelFormat::CalculateRequiredBytes(
                 texture2D->getWidth(),
@@ -399,6 +421,109 @@ namespace Maze
     void SceneExample::addTexturePreviewSpace()
     {
         m_texturesOffset += 3.0f;
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::addMeshPreview(
+        String const& _meshName,
+        String const& _materialName,
+        F32 _scale)
+    {
+        EntityPtr objectEntity = createEntity("MeshPreview");
+        Transform3DPtr transform = objectEntity->createComponent<Transform3D>();
+        MeshRendererPtr meshRenderer = objectEntity->createComponent<MeshRenderer>();
+        AssetFilePtr const& meshAssetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_meshName);
+        MeshPtr const& mesh = MeshManager::GetCurrentInstancePtr()->loadMesh(meshAssetFile);
+        RenderMeshPtr const& renderMesh = RenderMesh::Create(mesh);
+        meshRenderer->setRenderMesh(renderMesh);
+        meshRenderer->setMaterial(_materialName);
+
+
+        transform->setLocalScale(_scale);
+        transform->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
+        //transform->setLocalRotationDegrees(-90.0f, 0.0f, 0.0f);
+        /*
+        Rotor3DPtr rotor = objectEntity->ensureComponent<Rotor3D>();
+        rotor->setAxis(Vec3DF::c_unitY);
+        rotor->setSpeed(0.3f);
+        */
+        
+        F32 x = (m_meshesCount - 1) * 3.0f + m_meshesOffset;
+        transform->setLocalPosition(x, 1.5f, 8.0f);
+
+
+        {
+            EntityPtr pedestalEntity = createEntity("Pedestal");
+            Transform3DPtr pedestalTransform = pedestalEntity->createComponent<Transform3D>();
+            pedestalTransform->setLocalScale(1.0f, 0.2f, 1.0f);
+            pedestalTransform->setLocalPosition(
+                transform->getLocalPosition().x,
+                pedestalTransform->getLocalScale().y * 0.5f,
+                transform->getLocalPosition().z);
+            MeshRendererPtr meshRenderer = pedestalEntity->createComponent<MeshRenderer>();
+            meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getBuiltinRenderMesh(BuiltinRenderMeshType::Cylinder));
+
+            meshRenderer->setMaterial("Pedestal00.mzmaterial");
+        }
+
+        if (renderMesh)
+        {
+            EntityPtr labelEntity = createEntity("Label");
+            SystemTextRenderer3DPtr labelRenderer = labelEntity->ensureComponent<SystemTextRenderer3D>();
+            labelRenderer->getTransform()->setLocalPosition(
+                transform->getLocalPosition().x,
+                0.65f,
+                transform->getLocalPosition().z);
+
+            S32 verticesCount = 0;
+
+            for (S32 i = 0, in = (S32)mesh->getSubMeshesCount(); i != in; ++i)
+            {
+                SubMeshPtr const& subMesh = mesh->getSubMesh(i);
+                verticesCount += (S32)subMesh->getVerticesCount(VertexAttributeSemantic::Position);
+                switch (subMesh->getRenderDrawTopology())
+                {
+                    case RenderDrawTopology::Points:
+                    {
+                        break;
+                    }
+                    case RenderDrawTopology::Lines:
+                    {
+                        break;
+                    }
+                    case RenderDrawTopology::Triangles:
+                    {
+                        break;
+                    }
+                    default:
+                    {
+                        MAZE_NOT_IMPLEMENTED;
+                    }
+                }
+            }
+
+            labelRenderer->setTextFormatted(
+                "%s (%d b)\n"
+                "Sub meshes count: %d\n"
+                "Vertices count: %d (%d tr)",
+                _meshName.c_str(),
+                (S32)meshAssetFile->getFileSize(),
+                (S32)mesh->getSubMeshesCount(),
+                verticesCount, verticesCount/3);
+
+            labelRenderer->setFontSize(8);
+            labelRenderer->getTransform()->setLocalScaleX(0.7f);
+            labelRenderer->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefault3DOutlined());
+
+        }
+
+        ++m_meshesCount;
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::addMeshPreviewSpace()
+    {
+        m_meshesOffset += 3.0f;
     }
 
 

@@ -41,7 +41,7 @@ namespace Maze
     MAZE_GRAPHICS_API bool LoadOBJ(
         AssetFile const& _file,
         Mesh& _mesh,
-        RenderMeshLoaderProperties const& _props)
+        MeshLoaderProperties const& _props)
     {
         ByteBuffer fileData;
         _file.readToByteBuffer(fileData);
@@ -476,7 +476,7 @@ namespace Maze
     MAZE_GRAPHICS_API bool LoadOBJ(
         ByteBuffer const& _fileData,
         Mesh& _mesh,
-        RenderMeshLoaderProperties const& _props)
+        MeshLoaderProperties const& _props)
     {
         _mesh.clear();
 
@@ -776,14 +776,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool IsOBJFile(AssetFile const& _file)
+    MAZE_GRAPHICS_API bool IsOBJFile(
+        AssetFile const& _file)
     {
         // #TODO:
         return _file.getExtension() == "obj";
     }
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool IsOBJFile(ByteBuffer const& _fileData)
+    MAZE_GRAPHICS_API bool IsOBJFile(
+        ByteBuffer const& _fileData)
     {
         // #TODO:
         MAZE_NOT_IMPLEMENTED;

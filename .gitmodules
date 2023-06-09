@@ -28,3 +28,9 @@
 [submodule "third-party/libjpeg-cmake"]
 	path = third-party/libjpeg-cmake
 	url = git@github.com:Tinaynox/libjpeg-cmake.git
+[submodule "third-party/OpenFBX"]
+	path = third-party/OpenFBX
+	url = git@github.com:Tinaynox/OpenFBX.git
+[submodule "third-party/miniz"]
+	path = third-party/miniz
+	url = git@github.com:Tinaynox/miniz.git

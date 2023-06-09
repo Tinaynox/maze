@@ -58,7 +58,7 @@ void main()
     vec4 tangentOS = vec4(a_tangent, 1.0);
     vec4 bitangentOS = vec4(a_bitangent, 1.0);
     
-    mat4 normalMatrix = transpose(inverse(modelMatrix));
+    mat3 normalMatrix = mat3(transpose(inverse(modelMatrix)));
     
     
         
@@ -71,11 +71,11 @@ void main()
     v_positionVS = positionVS.xyz;
     v_positionCS = positionCS;
     
-    vec3 normalWS = normalize(normalOS * normalMatrix).xyz;
+    vec3 normalWS = normalize(normalOS.xyz * normalMatrix).xyz;
         
 #if defined(NORMAL_MAP) && (NORMAL_MAP)
-    vec3 tangentWS = normalize(tangentOS * normalMatrix).xyz;
-    vec3 bitangentWS = normalize(bitangentOS * normalMatrix).xyz;
+    vec3 tangentWS = normalize(tangentOS.xyz * normalMatrix).xyz;
+    vec3 bitangentWS = normalize(bitangentOS.xyz * normalMatrix).xyz;
     
     v_tangentWS = tangentWS.xyz;
     v_bitangentWS = bitangentWS.xyz;
