@@ -270,9 +270,8 @@ namespace Maze
         
         // Drone
         F32 const drone0Scale = 0.35f;
-        addMeshPreview("drone0.obj", "drone0.mzmaterial", drone0Scale);
-        addMeshPreview("drone0.fbx", "drone0.mzmaterial", drone0Scale);
-        // addMeshPreview("drone1.fbx", "drone0.mzmaterial");
+        //addMeshPreview("drone0.obj", "drone0.mzmaterial", drone0Scale);
+        //addMeshPreview("drone0.fbx", "drone0.mzmaterial", drone0Scale);
         addMeshPreviewSpace();
 
         // testBox

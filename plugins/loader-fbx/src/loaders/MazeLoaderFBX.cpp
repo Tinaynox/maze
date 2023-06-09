@@ -103,6 +103,17 @@ namespace Maze
 
 
             Vector<Vec3DF> bitangents;
+
+            // #TODO: Move to func
+            // Flip X for LHCS
+            for (S32 i = 0, in = (S32)indices.size(); i < in; i += 3)
+                std::swap(indices[i], indices[i + 2]);
+            for (Vec3DF& finalPosition : positions)
+            {
+                finalPosition.x = -finalPosition.x;
+            }
+            for (Vec3DF& normal : normals)
+                normal.x = -normal.x;
          
             
             for (Vec3DF& position : positions)
@@ -250,8 +261,8 @@ namespace Maze
 
             if (!_props.mergeSubMeshes)
                 processCreateSubMesh();
-
-            indicesOffset += indexCount;
+            else
+                indicesOffset += indexCount;
         }
 
         if (_props.mergeSubMeshes)
