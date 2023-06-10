@@ -362,17 +362,28 @@ namespace Maze
         {
             String assetFileExtension = _assetFile->getExtension().toUTF8();
             bool isMazeTexture = assetFileExtension == ".mztexture";
-
             bool loaderFound = false;
-            for (auto const& textureLoaderData : m_textureLoaders)
+
+            if (!isMazeTexture)
             {
-                TextureLoaderData const& loaderData = textureLoaderData.second;
-                if ((assetFileExtension == textureLoaderData.first) ||
-                    (isMazeTexture && loaderData.isTextureAssetFileFunc(*_assetFile.get())))
+                auto it = m_textureLoaders.find(assetFileExtension);
+                if (it != m_textureLoaders.end())
                 {
                     loaderFound = true;
-                    MAZE_ERROR_IF(!loaderData.loadTextureAssetFileFunc(*_assetFile.get(), pixelSheets), "PixelSheet is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
-                    break;
+                    MAZE_ERROR_IF(!it->second.loadTextureAssetFileFunc(*_assetFile.get(), pixelSheets), "PixelSheet is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
+                }
+            }
+            else
+            {
+                for (auto const& textureLoaderData : m_textureLoaders)
+                {
+                    TextureLoaderData const& loaderData = textureLoaderData.second;
+                    if (loaderData.isTextureAssetFileFunc(*_assetFile.get()))
+                    {
+                        loaderFound = true;
+                        MAZE_ERROR_IF(!loaderData.loadTextureAssetFileFunc(*_assetFile.get(), pixelSheets), "PixelSheet is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
+                        break;
+                    }
                 }
             }
 
