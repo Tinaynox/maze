@@ -485,9 +485,8 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_PLUGIN_LOADER_DDS_API bool IsDDSFile(AssetFile const& _file)
     {
-        // #TODO:
         ByteBuffer fileData;
-        _file.readToByteBuffer(fileData);
+        _file.readHeaderToByteBuffer(fileData, sizeof(S32));
         return IsDDSFile(fileData);
     }
 

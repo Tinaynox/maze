@@ -219,9 +219,8 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_PLUGIN_LOADER_PNG_API bool IsPNGFile(AssetFile const& _file)
     {
-        // #TODO:
         ByteBuffer fileData;
-        _file.readToByteBuffer(fileData);
+        _file.readHeaderToByteBuffer(fileData, PNGSIGSIZE);
         return IsPNGFile(fileData);
     }
 

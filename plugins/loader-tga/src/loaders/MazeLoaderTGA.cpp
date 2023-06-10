@@ -169,9 +169,8 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_PLUGIN_LOADER_TGA_API bool IsTGAFile(AssetFile const& _file)
     {
-        // #TODO:
         ByteBuffer fileData;
-        _file.readToByteBuffer(fileData);
+        _file.readHeaderToByteBuffer(fileData, sizeof(TGAHeader));
         return IsTGAFile(fileData);
     }
 

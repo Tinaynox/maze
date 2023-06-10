@@ -119,9 +119,8 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_PLUGIN_LOADER_JPG_API bool IsJPGFile(AssetFile const& _file)
     {
-        // #TODO:
         ByteBuffer fileData;
-        _file.readToByteBuffer(fileData);
+        _file.readHeaderToByteBuffer(fileData, 2);
         return IsJPGFile(fileData);
     }
 
@@ -129,7 +128,8 @@ namespace Maze
     MAZE_PLUGIN_LOADER_JPG_API bool IsJPGFile(ByteBuffer const& _fileData)
     {
         U8 header[2];
-        _fileData.read(0, header, 2);
+        if (_fileData.read(0, header, 2) < 2)
+            return false;
 
         bool isJPEG = (header[0] == 0xFF) && (header[1] == 0xD8);
         return isJPEG;

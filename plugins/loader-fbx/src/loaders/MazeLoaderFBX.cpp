@@ -39,6 +39,12 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    Size const c_fbxHeaderSize = 23;
+    MAZE_CONSTEXPR CString const c_fbxHeaderTextBinary = "Kaydara FBX Binary";
+    MAZE_CONSTEXPR CString const c_fbxHeaderTextASCII = "Kaydara FBX ASCII";
+
+
+    //////////////////////////////////////////
     inline ofbx::u16 ConstuctLoadFlags()
     {
         ofbx::LoadFlags flags =
@@ -322,9 +328,8 @@ namespace Maze
     MAZE_PLUGIN_LOADER_FBX_API bool IsFBXFile(
         AssetFile const& _file)
     {
-        // #TODO:
         ByteBuffer fileData;
-        _file.readToByteBuffer(fileData);
+        _file.readHeaderToByteBuffer(fileData, c_fbxHeaderSize);
         return IsFBXFile(fileData);
     }
 
@@ -332,13 +337,12 @@ namespace Maze
     MAZE_PLUGIN_LOADER_FBX_API bool IsFBXFile(
         ByteBuffer const& _fileData)
     {
-        // #TODO: Optimize?
-        ofbx::u16 flags = ConstuctLoadFlags();
-        ofbx::IScene* scene = ofbx::load(_fileData.getData(), (S32)_fileData.getSize(), flags);
-        bool result = (scene != nullptr);
-        if (scene)
-            scene->destroy();
-        return result;
+        if (_fileData.getSize() < c_fbxHeaderSize)
+            return false;
+
+        bool isFBX = (strncmp((CString)_fileData.getData(), c_fbxHeaderTextBinary, strlen(c_fbxHeaderTextBinary)) == 0 ||
+                      strncmp((CString)_fileData.getData(), c_fbxHeaderTextASCII, strlen(c_fbxHeaderTextASCII)) == 0);
+        return isFBX;
     }
 
 } // namespace Maze
