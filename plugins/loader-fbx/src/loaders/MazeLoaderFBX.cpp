@@ -131,7 +131,7 @@ namespace Maze
                 subMesh->setTangents(&tangents[0], tangents.size());
 
                 bitangents.resize(tangents.size());
-                for (S32 i = 0, in = bitangents.size(); i != in; ++i)
+                for (S32 i = 0, in = (S32)bitangents.size(); i != in; ++i)
                     bitangents[i] = normals[i].crossProduct(tangents[i]);
 
                 subMesh->setBitangents(&tangents[0], tangents.size());
@@ -310,7 +310,7 @@ namespace Maze
             "File loading error!");
 
         ofbx::u16 flags = ConstuctLoadFlags();
-        ofbx::IScene* scene = ofbx::load(_fileData.getData(), _fileData.getSize(), flags);
+        ofbx::IScene* scene = ofbx::load(_fileData.getData(), (S32)_fileData.getSize(), flags);
         bool result = LoadFBX(scene, _mesh, _props);
         if (scene)
             scene->destroy();
@@ -334,7 +334,7 @@ namespace Maze
     {
         // #TODO: Optimize?
         ofbx::u16 flags = ConstuctLoadFlags();
-        ofbx::IScene* scene = ofbx::load(_fileData.getData(), _fileData.getSize(), flags);
+        ofbx::IScene* scene = ofbx::load(_fileData.getData(), (S32)_fileData.getSize(), flags);
         bool result = (scene != nullptr);
         if (scene)
             scene->destroy();
