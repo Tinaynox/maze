@@ -58,6 +58,14 @@ namespace Maze
             Vector<Vec3DF>& _outTangents,
             Vector<Vec3DF>& _outBitangents);
 
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API void FlipX(
+            RenderDrawTopology _drawTopology,
+            Vector<U32>& _indices,
+            Vector<Vec3DF>* _positions,
+            Vector<Vec3DF>* _normals,
+            Vector<Vec3DF>* _tangents);
+
     } // namespace SubMeshHelper
     //////////////////////////////////////////
 

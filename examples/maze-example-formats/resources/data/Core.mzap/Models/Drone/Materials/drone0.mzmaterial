@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Material name="drone0.mzmaterial">
-    <ShaderUniformVariant name="u_baseMap" type="UniformTexture2D" value="drone0_Diffuse.png"/>
-    <ShaderUniformVariant name="u_normalMap" type="UniformTexture2D" value="drone0_Normal.png"/>
-    <ShaderUniformVariant name="u_specularMap" type="UniformTexture2D" value="drone0_Specular.png"/>
-    <ShaderUniformVariant name="u_emissionMap" type="UniformTexture2D" value="drone0_Emission.png"/>
+    <ShaderUniformVariant name="u_baseMap" type="UniformTexture2D" value="Drone0_Diffuse.png"/>
+    <ShaderUniformVariant name="u_normalMap" type="UniformTexture2D" value="Drone0_Normal.png"/>
+    <ShaderUniformVariant name="u_specularMap" type="UniformTexture2D" value="Drone0_Specular.png"/>
+    <ShaderUniformVariant name="u_emissionMap" type="UniformTexture2D" value="Drone0_Emission.png"/>
     <ShaderUniformVariant name="u_color" type="UniformColorF128" value="1.100000;1.100000;1.100000;1.000000"/>
     <ShaderUniformVariant name="u_ambientLightColor" type="UniformColorF128" value="0.278431;0.227451;0.200000;1.000000"/>
     <ShaderUniformVariant name="u_shininess" type="UniformF32" value="0.10000"/>

@@ -79,7 +79,7 @@ void main()
     
     v_tangentOS = tangentOS.xyz;
     v_tangentWS = tangentWS.xyz;
-    v_bitangentOS = tangentOS.xyz;
+    v_bitangentOS = bitangentOS.xyz;
     v_bitangentWS = bitangentWS.xyz;
 #endif
     
@@ -133,6 +133,9 @@ uniform float u_backLightBend;
 
 // LAMBERT_THRESHOLD
 uniform float u_lambertThreshold;
+
+// DEBUG
+uniform int u_debugMaterial;
 
 
 //////////////////////////////////////////
@@ -219,10 +222,28 @@ void main()
     mat3 tangentToWorld = mat3(normalize(v_tangentWS), normalize(v_bitangentWS), normalize(v_normalWS));
     vec3 normalWS = normalize(TransformTangentToWorld(normalTS, tangentToWorld));
     
-    //out_color = vec4((normalWS + vec3(1.0, 1.0, 1.0f))*0.5, 1);
-    //return;
+    
 #else
     vec3 normalWS = normalize(v_normalWS);
+#endif
+
+#if defined(DEBUG_MATERIAL) && (DEBUG_MATERIAL)
+    if (u_debugMaterial == 0)
+        out_color = vec4((normalWS + vec3(1.0, 1.0, 1.0)) * 0.5, 1.0);
+    else
+    if (u_debugMaterial == 1)
+        out_color = vec4((v_tangentOS + vec3(1.0, 1.0, 1.0)) * 0.5, 1.0);
+    else
+    if (u_debugMaterial == 2)
+        out_color = vec4((v_bitangentOS + vec3(1.0, 1.0, 1.0)) * 0.5, 1.0);
+    else
+    if (u_debugMaterial == 3)
+        out_color = vec4(MAZE_GET_TEXEL2D(u_baseMap, v_uv0).rgb, 1.0);
+    else
+    if (u_debugMaterial == 4)
+        out_color = vec4(v_color.rgb, 1.0);
+        
+    return;
 #endif
     
     // Ambient light

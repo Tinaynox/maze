@@ -500,15 +500,15 @@ namespace Maze
                 subMesh->setName(meshName);
 
                 // Flip X for LHCS
-                for (S32 i = 0, in = (S32)indices.size(); i < in; i += 3)
-                    std::swap(indices[i], indices[i + 2]);
-                for (Vec3DF& finalPosition : finalPositions)
-                {
-                    finalPosition.x = -finalPosition.x;
-                    finalPosition *= _props.scale;
-                }
-                for (Vec3DF& finalNormal : finalNormals)
-                    finalNormal.x = -finalNormal.x;
+                SubMeshHelper::FlipX(
+                    subMesh->getRenderDrawTopology(),
+                    indices,
+                    &finalPositions,
+                    &finalNormals,
+                    nullptr);
+                
+                for (Vec3DF& position : finalPositions)
+                    position *= _props.scale;
 
                 subMesh->setIndices(&indices[0], indices.size());
                 subMesh->setPositions(&finalPositions[0], finalPositions.size());

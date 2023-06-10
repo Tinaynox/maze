@@ -104,20 +104,17 @@ namespace Maze
 
             Vector<Vec3DF> bitangents;
 
-            // #TODO: Move to func
             // Flip X for LHCS
-            for (S32 i = 0, in = (S32)indices.size(); i < in; i += 3)
-                std::swap(indices[i], indices[i + 2]);
-            for (Vec3DF& finalPosition : positions)
-            {
-                finalPosition.x = -finalPosition.x;
-            }
-            for (Vec3DF& normal : normals)
-                normal.x = -normal.x;
+            SubMeshHelper::FlipX(
+                subMesh->getRenderDrawTopology(),
+                indices,
+                &positions,
+                &normals,
+                &tangents);
          
             
             for (Vec3DF& position : positions)
-                position *= _props.scale;
+                position *= _props.scale * 0.01f;
 
             subMesh->setIndices(&indices[0], indices.size());
             subMesh->setPositions(&positions[0], positions.size());
@@ -169,6 +166,18 @@ namespace Maze
             indices.clear();
         };
 
+        Mat4DF fixOrientationMat = Mat4DF::c_identity;
+
+        // Fix orientation for LHCS
+        if (sceneGlobalSettings->CoordAxis == ofbx::CoordSystem::CoordSystem_RightHanded)
+        {
+            if (sceneGlobalSettings->UpAxis == ofbx::UpVector::UpVector_AxisY && sceneGlobalSettings->CoordAxisSign < 0)
+                fixOrientationMat = Mat4DF::CreateRotationYMatrix(Math::c_pi);
+            else
+            if (sceneGlobalSettings->UpAxis == ofbx::UpVector::UpVector_AxisZ && sceneGlobalSettings->CoordAxisSign > 0)
+                fixOrientationMat = Mat4DF::CreateRotationXMatrix(-Math::c_halfPi);
+
+        }
 
         S32 indicesOffset = 0;
 
@@ -184,7 +193,10 @@ namespace Maze
             Mat4DF meshGeometricTransformMat = ConvertOpenFBXMatrixToMat4DF(meshGeometricTransform);
             Mat4DF meshGlobalTransformMat = ConvertOpenFBXMatrixToMat4DF(meshGlobalTransform);
 
-            Mat4DF transformMat = meshGeometricTransformMat * meshGlobalTransformMat;
+            Mat4DF transformMat = fixOrientationMat * meshGeometricTransformMat * meshGlobalTransformMat;
+
+
+            
 
             meshName = mesh.name;
 

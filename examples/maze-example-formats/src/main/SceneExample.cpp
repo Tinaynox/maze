@@ -61,6 +61,7 @@
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
 #include "maze-graphics/MazeGPUTextureBuffer.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
@@ -129,6 +130,10 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_ENUMCLASS(ExampleMeshRenderMode);
+
+
+    //////////////////////////////////////////
     // Class SceneExample
     //
     //////////////////////////////////////////
@@ -158,6 +163,9 @@ namespace Maze
             }
         }
 
+        if (InputManager::GetInstancePtr())
+            InputManager::GetInstancePtr()->eventKeyboard.unsubscribe(this);
+
         Example::GetInstancePtr()->eventMainRenderWindowViewportChanged.unsubscribe(this);
         Example::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.unsubscribe(this);
     }
@@ -184,16 +192,31 @@ namespace Maze
         UIElement2DPtr canvasUIElement = canvasEntity->ensureComponent<UIElement2D>();
         canvasUIElement->eventCursorPressIn.subscribe(this, &SceneExample::processCursorPress);
         canvasUIElement->eventCursorDrag.subscribe(this, &SceneExample::processCursorDrag);
-        // m_canvas->setClearColorFlag(false);
-        // m_canvas->setClearColor(ColorU32::c_zero);
 
         CanvasScalerPtr canvasScaler = canvasEntity->ensureComponent<CanvasScaler>();
+        canvasScaler->setReferenceResolution(Vec2DF(1600, 800));
         canvasScaler->setScaleMode(CanvasScaler::ScaleMode::ScaleWithViewportSize);
         canvasScaler->setScreenMatchMode(CanvasScaler::ScreenMatchMode::MatchWidthOrHeight);
         canvasScaler->setMatchWidthOrHeight(1.0f);
         canvasScaler->updateCanvasScale();
 
 
+        m_hintText = SystemUIHelper::CreateSystemText(
+            "",
+            8,
+            HorizontalAlignment2D::Left,
+            VerticalAlignment2D::Top,
+            Vec2DF::c_zero,
+            Vec2DF(10.0f, -10.0f),
+            m_canvas->getTransform(),
+            this,
+            Vec2DF(0.0f, 1.0f),
+            Vec2DF(0.0f, 1.0f));
+        m_hintText->setColor(ColorU32(255, 255, 255, 220));
+        updateHintText();
+
+
+        InputManager::GetInstancePtr()->eventKeyboard.subscribe(this, &SceneExample::notifyKeyboard);
 
         Example::GetInstancePtr()->eventMainRenderWindowViewportChanged.subscribe(this, &SceneExample::notifyMainRenderWindowViewportChanged);
         Example::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &SceneExample::notifyRenderTargetResized);
@@ -235,34 +258,34 @@ namespace Maze
 
 
         // BMP
-        addTexturePreview("sp3d_logo_16.bmp");
-        addTexturePreview("sp3d_logo_24.bmp");
-        addTexturePreview("sp3d_logo_32.bmp");
+        addTexturePreview("SP3DLogo_16.bmp");
+        addTexturePreview("SP3DLogo_24.bmp");
+        addTexturePreview("SP3DLogo_32.bmp");
         addTexturePreviewSpace();
 
         // PNG
-        addTexturePreview("sp3d_logo_32.png");
-        addTexturePreview("sp3d_logo_64.png");
+        addTexturePreview("SP3DLogo_32.png");
+        addTexturePreview("SP3DLogo_64.png");
         addTexturePreviewSpace();
 
         // JPG
-        addTexturePreview("sp3d_logo_lq.jpg");
-        addTexturePreview("sp3d_logo_hq.jpg");
+        addTexturePreview("SP3DLogo_lq.jpg");
+        addTexturePreview("SP3DLogo_hq.jpg");
         addTexturePreviewSpace();
 
         // TGA
-        addTexturePreview("sp3d_logo_16.tga");
-        addTexturePreview("sp3d_logo_16_rle.tga");
-        addTexturePreview("sp3d_logo_24.tga");
-        addTexturePreview("sp3d_logo_24_rle.tga");
-        addTexturePreview("sp3d_logo_32.tga");
-        addTexturePreview("sp3d_logo_32_rle.tga");
+        addTexturePreview("SP3DLogo_16.tga");
+        addTexturePreview("SP3DLogo_16_rle.tga");
+        addTexturePreview("SP3DLogo_24.tga");
+        addTexturePreview("SP3DLogo_24_rle.tga");
+        addTexturePreview("SP3DLogo_32.tga");
+        addTexturePreview("SP3DLogo_32_rle.tga");
         addTexturePreviewSpace();
 
         // DDS
-        addTexturePreview("sp3d_logo_dxt1.dds");
-        addTexturePreview("sp3d_logo_dxt3.dds");
-        addTexturePreview("sp3d_logo_dxt5.dds");
+        addTexturePreview("SP3DLogo_dxt1.dds");
+        addTexturePreview("SP3DLogo_dxt3.dds");
+        addTexturePreview("SP3DLogo_dxt5.dds");
         addTexturePreviewSpace();
 
 
@@ -270,14 +293,14 @@ namespace Maze
         
         // Drone
         F32 const drone0Scale = 0.35f;
-        //addMeshPreview("drone0.obj", "drone0.mzmaterial", drone0Scale);
-        //addMeshPreview("drone0.fbx", "drone0.mzmaterial", drone0Scale);
+        addMeshPreview("Drone0.obj", "Drone0.mzmaterial", drone0Scale);
+        addMeshPreview("Drone0.fbx", "Drone0.mzmaterial", drone0Scale);
         addMeshPreviewSpace();
 
         // testBox
         F32 const testBoxScale = 0.75f;
-        addMeshPreview("testBox.obj", "testBox.mzmaterial", testBoxScale);
-        addMeshPreview("testBox.fbx", "testBox.mzmaterial", testBoxScale);
+        addMeshPreview("TestBox.obj", "TestBox.mzmaterial", testBoxScale);
+        addMeshPreview("TestBox.fbx", "TestBox.mzmaterial", testBoxScale);
 
 
         return true;
@@ -428,6 +451,8 @@ namespace Maze
         String const& _materialName,
         F32 _scale)
     {
+        
+
         EntityPtr objectEntity = createEntity("MeshPreview");
         Transform3DPtr transform = objectEntity->createComponent<Transform3D>();
         MeshRendererPtr meshRenderer = objectEntity->createComponent<MeshRenderer>();
@@ -440,14 +465,38 @@ namespace Maze
 
         transform->setLocalScale(_scale);
         transform->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
-        //transform->setLocalRotationDegrees(-90.0f, 0.0f, 0.0f);
-        /*
+        
         Rotor3DPtr rotor = objectEntity->ensureComponent<Rotor3D>();
         rotor->setAxis(Vec3DF::c_unitY);
         rotor->setSpeed(0.3f);
-        */
+        rotor->setActive(m_rotorEnabled);
+
+        ExampleMeshData meshData;
+        meshData.renderer = meshRenderer;
+        meshData.material = meshRenderer->getMaterial();
+        {
+            meshData.materialDebugNormalWS = meshData.material->createCopy();
+            ShaderPtr shader = meshData.materialDebugNormalWS->getFirstRenderPass()->getShader()->createCopy();
+            shader->addLocalFeature("DEBUG_MATERIAL", "(1)");
+            shader->recompile();
+            meshData.materialDebugNormalWS->getFirstRenderPass()->setShader(shader);
+            meshData.materialDebugNormalWS->setUniform(MAZE_HASHED_CSTRING("u_debugMaterial"), 0);
+
+            meshData.materialDebugTangentOS = meshData.materialDebugNormalWS->createCopy();
+            meshData.materialDebugTangentOS->setUniform(MAZE_HASHED_CSTRING("u_debugMaterial"), 1);
+
+            meshData.materialDebugBitangentOS = meshData.materialDebugNormalWS->createCopy();
+            meshData.materialDebugBitangentOS->setUniform(MAZE_HASHED_CSTRING("u_debugMaterial"), 2);
+
+            meshData.materialDebugDiffuse = meshData.materialDebugNormalWS->createCopy();
+            meshData.materialDebugDiffuse->setUniform(MAZE_HASHED_CSTRING("u_debugMaterial"), 3);
+
+            meshData.materialDebugColor = meshData.materialDebugNormalWS->createCopy();
+            meshData.materialDebugColor->setUniform(MAZE_HASHED_CSTRING("u_debugMaterial"), 4);
+        }
+        meshData.rotor = rotor;
         
-        F32 x = (m_meshesCount - 1) * 3.0f + m_meshesOffset;
+        F32 x = ((S32)m_meshData.size() - 1) * 3.0f + m_meshesOffset;
         transform->setLocalPosition(x, 1.5f, 8.0f);
 
 
@@ -516,13 +565,152 @@ namespace Maze
 
         }
 
-        ++m_meshesCount;
+        m_meshData.emplace_back(meshData);
     }
 
     //////////////////////////////////////////
     void SceneExample::addMeshPreviewSpace()
     {
         m_meshesOffset += 3.0f;
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::updateHintText()
+    {
+        m_hintText->setTextFormatted(
+            "[CONTROLS]\n"
+            "Movement - WASD, Camera - RMB (Hold)\n"
+            "Change Mesh Material - 1..%d\n"
+            "%s - R\n"
+            "\n"
+            "[INFO]\n"
+            "Mesh Material: %s\n"
+            "Mesh Rotor: %s",
+            (S32)ExampleMeshRenderMode::MAX - 1,
+            m_rotorEnabled ? "Disable Rotor" : "Enable Rotor",
+            m_meshRenderMode.toCString(),
+            m_rotorEnabled ? "ON" : "OFF"
+        );
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::setExampleMeshRenderMode(ExampleMeshRenderMode _mode)
+    {
+        if (m_meshRenderMode == _mode)
+            return;
+
+        m_meshRenderMode = _mode;
+
+        updateExampleMeshRenderMode();
+        updateHintText();
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::setRotorEnabled(bool _value)
+    {
+        if (m_rotorEnabled == _value)
+            return;
+
+        m_rotorEnabled = _value;
+
+        for (ExampleMeshData const& meshData : m_meshData)
+            meshData.rotor->setActive(m_rotorEnabled);
+        updateHintText();
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::updateExampleMeshRenderMode()
+    {
+        for (ExampleMeshData const& meshData : m_meshData)
+        {
+            MaterialPtr material;
+
+            switch (m_meshRenderMode)
+            {
+                case ExampleMeshRenderMode::Default:
+                {
+                    material = meshData.material;
+                    break;
+                }
+                case ExampleMeshRenderMode::UV:
+                {
+                    material = MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::UV);
+                    break;
+                }
+                case ExampleMeshRenderMode::NormalOS:
+                {
+                    material = MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::Normal);
+                    break;
+                }
+                case ExampleMeshRenderMode::NormalWS:
+                {
+                    material = meshData.materialDebugNormalWS;
+                    break;
+                }
+                case ExampleMeshRenderMode::TangentOS:
+                {
+                    material = meshData.materialDebugTangentOS;
+                    break;
+                }
+                case ExampleMeshRenderMode::BitangentOS:
+                {
+                    material = meshData.materialDebugBitangentOS;
+                    break;
+                }
+                case ExampleMeshRenderMode::Diffuse:
+                {
+                    material = meshData.materialDebugDiffuse;
+                    break;
+                }
+                case ExampleMeshRenderMode::Color:
+                {
+                    material = meshData.materialDebugColor;
+                    break;
+                }
+                default:
+                    break;
+            }
+
+            meshData.renderer->setMaterial(material);
+        }
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::notifyKeyboard(InputEventKeyboardData const& _data)
+    {
+        switch (_data.type)
+        {
+            case InputEventKeyboardType::KeyDown:
+            {
+                switch (_data.keyCode)
+                {
+                    case KeyCode::Number1:
+                    case KeyCode::Number2:
+                    case KeyCode::Number3:
+                    case KeyCode::Number4:
+                    case KeyCode::Number5:
+                    case KeyCode::Number6:
+                    case KeyCode::Number7:
+                    case KeyCode::Number8:
+                    {
+                        S32 index = (S32)_data.keyCode - (S32)KeyCode::Number1 + 1;
+                        setExampleMeshRenderMode(ExampleMeshRenderMode(index));
+
+                        break;
+                    }
+                    case KeyCode::R:
+                    {
+                        setRotorEnabled(!m_rotorEnabled);
+                        break;
+                    }
+                    default:
+                        break;
+                }
+                break;
+            }
+            default:
+                break;
+        }
     }
 
 

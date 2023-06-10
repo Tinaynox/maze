@@ -34,6 +34,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
+#include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeShader.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
@@ -41,6 +42,7 @@
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
+#include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/MazeECSRenderScene.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
@@ -49,14 +51,39 @@
 //////////////////////////////////////////
 namespace Maze
 {
-
-
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(SceneExample);
     MAZE_USING_SHARED_PTR(Camera3D);
     MAZE_USING_SHARED_PTR(Rigidbody2D);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(ExampleFPSCameraController);
+    MAZE_USING_SHARED_PTR(Rotor3D);
+
+
+    //////////////////////////////////////////
+    MAZE_DECLARE_ENUMCLASS_8(ExampleMeshRenderMode,
+        Default,
+        UV,
+        NormalOS,
+        NormalWS,
+        TangentOS,
+        BitangentOS,
+        Diffuse,
+        Color);
+
+
+    //////////////////////////////////////////
+    struct ExampleMeshData
+    {
+        MeshRendererPtr renderer;
+        MaterialPtr material;
+        MaterialPtr materialDebugNormalWS;
+        MaterialPtr materialDebugTangentOS;
+        MaterialPtr materialDebugBitangentOS;
+        MaterialPtr materialDebugDiffuse;
+        MaterialPtr materialDebugColor;
+        Rotor3DPtr rotor;
+    };
 
 
     //////////////////////////////////////////
@@ -120,9 +147,29 @@ namespace Maze
         //////////////////////////////////////////
         void addMeshPreviewSpace();
 
+        //////////////////////////////////////////
+        void updateHintText();
+
+
+        //////////////////////////////////////////
+        void setExampleMeshRenderMode(ExampleMeshRenderMode _mode);
+
+        //////////////////////////////////////////
+        void updateExampleMeshRenderMode();
+
+
+        //////////////////////////////////////////
+        void setRotorEnabled(bool _value);
+
+
+        //////////////////////////////////////////
+        void notifyKeyboard(InputEventKeyboardData const& _data);
+
     protected:
         CanvasPtr m_canvas;
         Camera3DPtr m_camera3D;
+
+        SystemTextRenderer2DPtr m_hintText;
         
         ExampleFPSCameraControllerPtr m_fpsController;
 
@@ -131,8 +178,12 @@ namespace Maze
         S32 m_texturesCount = 0;
         F32 m_texturesOffset = 0.0f;
 
-        S32 m_meshesCount = 0;
+        Vector<ExampleMeshData> m_meshData;
         F32 m_meshesOffset = 0.0f;
+
+        bool m_rotorEnabled = true;
+        ExampleMeshRenderMode m_meshRenderMode = ExampleMeshRenderMode::Default;
+
     };
 
 

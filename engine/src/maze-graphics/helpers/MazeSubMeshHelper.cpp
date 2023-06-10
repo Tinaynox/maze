@@ -178,6 +178,50 @@ namespace Maze
             return true;
         }
 
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API void FlipX(
+            RenderDrawTopology _drawTopology,
+            Vector<U32>& _indices,
+            Vector<Vec3DF>* _positions,
+            Vector<Vec3DF>* _normals,
+            Vector<Vec3DF>* _tangents)
+        {
+            switch (_drawTopology)
+            {
+                case RenderDrawTopology::Lines:
+                {
+                    for (S32 i = 0, in = (S32)_indices.size(); i < in; i += 2)
+                        std::swap(_indices[i], _indices[i + 1]);
+
+                    break;
+                }
+                case RenderDrawTopology::Triangles:
+                {
+                    for (S32 i = 0, in = (S32)_indices.size(); i < in; i += 3)
+                        std::swap(_indices[i], _indices[i + 2]);
+
+                    break;
+                }
+                default:
+                {
+                    MAZE_NOT_IMPLEMENTED;
+                }
+            }
+
+            auto flipX =
+                [](Vector<Vec3DF>* _array)
+                {
+                    if (_array)
+                    {
+                        for (Vec3DF& value : *_array)
+                            value.x = -value.x;
+                    }
+                };
+            flipX(_positions);
+            flipX(_normals);
+            flipX(_tangents);
+        }
+
     } // namespace SubMeshHelper
     //////////////////////////////////////////
 
