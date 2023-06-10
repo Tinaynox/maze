@@ -258,7 +258,10 @@ namespace Maze
                 ofbx::Vec2 const* uvsPtr = geom.getUVs();
                 uvs.reserve(uvs.capacity() + vertexCount);
                 for (S32 i = 0; i < vertexCount; ++i)
-                    uvs.push_back(Vec2DF((F32)uvsPtr[i].x, (F32)uvsPtr[i].y));
+                {
+                    Vec2DF uv = SubMeshHelper::NormalizeUV(Vec2DF((F32)uvsPtr[i].x, (F32)uvsPtr[i].y));
+                    uvs.push_back(uv);
+                }
             }
 
             // Colors

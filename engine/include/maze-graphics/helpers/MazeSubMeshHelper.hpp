@@ -66,6 +66,9 @@ namespace Maze
             Vector<Vec3DF>* _normals,
             Vector<Vec3DF>* _tangents);
 
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API Vec2DF NormalizeUV(Vec2DF const& _uv);
+
     } // namespace SubMeshHelper
     //////////////////////////////////////////
 

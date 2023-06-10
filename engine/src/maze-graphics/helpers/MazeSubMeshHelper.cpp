@@ -222,6 +222,17 @@ namespace Maze
             flipX(_tangents);
         }
 
+        //////////////////////////////////////////
+        MAZE_GRAPHICS_API Vec2DF NormalizeUV(Vec2DF const& _uv)
+        {
+            Vec2DF uv = _uv;
+            while (uv.x > 1.0f) uv.x -= 1.0f;
+            while (uv.x < 0.0f) uv.x += 1.0f;
+            while (uv.y > 1.0f) uv.y -= 1.0f;
+            while (uv.y < 0.0f) uv.y += 1.0f;
+            return uv;
+        }
+
     } // namespace SubMeshHelper
     //////////////////////////////////////////
 

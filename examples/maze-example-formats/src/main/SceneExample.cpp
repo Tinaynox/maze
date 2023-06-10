@@ -193,13 +193,14 @@ namespace Maze
         canvasUIElement->eventCursorPressIn.subscribe(this, &SceneExample::processCursorPress);
         canvasUIElement->eventCursorDrag.subscribe(this, &SceneExample::processCursorDrag);
 
+        /*
         CanvasScalerPtr canvasScaler = canvasEntity->ensureComponent<CanvasScaler>();
         canvasScaler->setReferenceResolution(Vec2DF(1600, 800));
         canvasScaler->setScaleMode(CanvasScaler::ScaleMode::ScaleWithViewportSize);
         canvasScaler->setScreenMatchMode(CanvasScaler::ScreenMatchMode::MatchWidthOrHeight);
         canvasScaler->setMatchWidthOrHeight(1.0f);
         canvasScaler->updateCanvasScale();
-
+        */
 
         m_hintText = SystemUIHelper::CreateSystemText(
             "",
@@ -213,6 +214,7 @@ namespace Maze
             Vec2DF(0.0f, 1.0f),
             Vec2DF(0.0f, 1.0f));
         m_hintText->setColor(ColorU32(255, 255, 255, 220));
+        m_hintText->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getBuiltinSystemFont(BuiltinSystemFontType::DefaultOutlined));
         updateHintText();
 
 
@@ -297,11 +299,10 @@ namespace Maze
         addMeshPreview("Drone0.fbx", "Drone0.mzmaterial", drone0Scale);
         addMeshPreviewSpace();
 
-        // testBox
+        // TestBox
         F32 const testBoxScale = 0.75f;
         addMeshPreview("TestBox.obj", "TestBox.mzmaterial", testBoxScale);
         addMeshPreview("TestBox.fbx", "TestBox.mzmaterial", testBoxScale);
-
 
         return true;
     }
@@ -367,6 +368,8 @@ namespace Maze
     //////////////////////////////////////////
     void SceneExample::addTexturePreview(String const& _textureName)
     {
+        Timer timer;
+
         EntityPtr objectEntity = createEntity("TexturePreview");
         Transform3DPtr transform = objectEntity->createComponent<Transform3D>();
         MeshRendererPtr meshRenderer = objectEntity->createComponent<MeshRenderer>();
@@ -374,7 +377,11 @@ namespace Maze
 
         MaterialPtr material = MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::ColorTexture)->createCopy();
         material->getFirstRenderPass()->setDepthTestCompareFunction(CompareFunction::LessEqual);
+
+        U32 timerStart = timer.getMilliseconds();
         Texture2DPtr const& texture2D = TextureManager::GetCurrentInstancePtr()->getTexture2D(_textureName);
+        U32 loadTime = timer.getMilliseconds() - timerStart;
+
         material->setUniform("u_baseMap", texture2D);
         meshRenderer->setMaterial(material);
         
@@ -420,7 +427,8 @@ namespace Maze
                 "Size: %dx%d (%d b)\n"
                 "Format: %s\n"
                 "Min: %s Mag: %s\n"
-                "WrapS: %s WrapT: %s",
+                "WrapS: %s WrapT: %s\n"
+                "Load time: %u ms",
                 _textureName.c_str(),
                 (S32)textureAssetFile->getFileSize(),
                 texture2D->getWidth(),
@@ -428,7 +436,8 @@ namespace Maze
                 bytesCount,
                 PixelFormat::ToString(texture2D->getInternalPixelFormat()).c_str(),
                 texture2D->getMinFilter().toCString(), texture2D->getMagFilter().toCString(),
-                texture2D->getWrapS().toCString(), texture2D->getWrapT().toCString());
+                texture2D->getWrapS().toCString(), texture2D->getWrapT().toCString(),
+                loadTime);
 
             labelRenderer->setFontSize(8);
             labelRenderer->getTransform()->setLocalScaleX(0.7f);
@@ -451,13 +460,17 @@ namespace Maze
         String const& _materialName,
         F32 _scale)
     {
-        
+        Timer timer;
 
         EntityPtr objectEntity = createEntity("MeshPreview");
         Transform3DPtr transform = objectEntity->createComponent<Transform3D>();
         MeshRendererPtr meshRenderer = objectEntity->createComponent<MeshRenderer>();
         AssetFilePtr const& meshAssetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_meshName);
+
+        U32 timerStart = timer.getMilliseconds();
         MeshPtr const& mesh = MeshManager::GetCurrentInstancePtr()->loadMesh(meshAssetFile);
+        U32 loadTime = timer.getMilliseconds() - timerStart;
+
         RenderMeshPtr const& renderMesh = RenderMesh::Create(mesh);
         meshRenderer->setRenderMesh(renderMesh);
         meshRenderer->setMaterial(_materialName);
@@ -553,11 +566,13 @@ namespace Maze
             labelRenderer->setTextFormatted(
                 "%s (%d b)\n"
                 "Sub meshes count: %d\n"
-                "Vertices count: %d (%d tr)",
+                "Vertices count: %d (%d tr)\n"
+                "Load time: %u ms",
                 _meshName.c_str(),
                 (S32)meshAssetFile->getFileSize(),
                 (S32)mesh->getSubMeshesCount(),
-                verticesCount, verticesCount/3);
+                verticesCount, verticesCount/3,
+                loadTime);
 
             labelRenderer->setFontSize(8);
             labelRenderer->getTransform()->setLocalScaleX(0.7f);
