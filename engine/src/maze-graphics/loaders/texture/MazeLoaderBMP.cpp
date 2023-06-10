@@ -161,9 +161,8 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_GRAPHICS_API bool IsBMPFile(AssetFile const& _file)
     {
-        // #TODO:
         ByteBuffer fileData;
-        _file.readToByteBuffer(fileData);
+        _file.readHeaderToByteBuffer(fileData, sizeof(_BITMAPFILEHEADER));
         return IsBMPFile(fileData);
     }
 
