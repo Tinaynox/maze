@@ -233,7 +233,7 @@ namespace Maze
                 {
                     Vec3DF normal = Vec3DF((F32)normalsPtr[i].x, (F32)normalsPtr[i].y, (F32)normalsPtr[i].z);
                     normal = transformMat.transformAffine(normal);
-                    normals.push_back(normal);
+                    normals.push_back(normal.normalizedCopy());
                 }
             }
 
@@ -247,7 +247,7 @@ namespace Maze
                 {
                     Vec3DF tangent = Vec3DF((F32)tangentsPtr[i].x, (F32)tangentsPtr[i].y, (F32)tangentsPtr[i].z);
                     tangent = transformMat.transformAffine(tangent);
-                    tangents.push_back(tangent);
+                    tangents.push_back(tangent.normalizedCopy());
                 }
             }
 
