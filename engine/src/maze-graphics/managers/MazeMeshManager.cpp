@@ -189,11 +189,15 @@ namespace Maze
 
         if (metaData.empty() || !metaData.contains("ext"))
         {
+            String assetFileExtension = _assetFile->getExtension().toUTF8();
+            bool isMazeMesh = assetFileExtension == ".mzmesh";
+
             bool loaderFound = false;
             for (auto const& renderMeshLoaderData : m_meshLoaders)
             {
                 MeshLoaderData const& loaderData = renderMeshLoaderData.second;
-                if (loaderData.isMeshAssetFileFunc(*_assetFile.get()))
+                if ((renderMeshLoaderData.first == assetFileExtension) ||
+                    (isMazeMesh && loaderData.isMeshAssetFileFunc(*_assetFile.get())))
                 {
                     loaderFound = true;
                     MAZE_ERROR_IF(!loaderData.loadMeshAssetFileFunc(*_assetFile.get(), *mesh.get(), loaderProps), "Mesh is not loaded - '%s'", _assetFile->getFileName().toUTF8().c_str());
