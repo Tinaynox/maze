@@ -209,7 +209,7 @@ namespace Maze
         //////////////////////////////////////////
         template <typename TValue>
         inline void iterateAs(
-            std::function<void(typename TValue&)> const& _cb,
+            std::function<void(TValue&)> const& _cb,
             Size _startOffset = 0u)
         {
             TValue* start = (TValue*)(m_data + _startOffset);
