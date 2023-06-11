@@ -25,14 +25,15 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeLoaderOBJ_hpp_))
-#define _MazeLoaderOBJ_hpp_
+#if (!defined(_MazeLoaderMZMESH_hpp_))
+#define _MazeLoaderMZMESH_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-graphics/managers/MazeMeshManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
+#include "maze-core/system/MazePath.hpp"
 
 
 //////////////////////////////////////////
@@ -42,28 +43,31 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Mesh);
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool LoadOBJ(
+    MAZE_GRAPHICS_API bool LoadMZMESH(
         AssetFile const& _file,
         Mesh& _mesh,
         MeshLoaderProperties const& _props);
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool LoadOBJ(
+    MAZE_GRAPHICS_API bool LoadMZMESH(
         ByteBuffer const& _fileData,
         Mesh& _mesh,
         MeshLoaderProperties const& _props);
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool IsOBJFile(
-        AssetFile const& _file);
+    MAZE_GRAPHICS_API bool IsMZMESHFile(AssetFile const& _file);
 
     //////////////////////////////////////////
-    MAZE_GRAPHICS_API bool IsOBJFile(
-        ByteBuffer const& _fileData);
+    MAZE_GRAPHICS_API bool IsMZMESHFile(ByteBuffer const& _fileData);
+
+    //////////////////////////////////////////
+    MAZE_GRAPHICS_API bool SaveMZMESH(
+        Mesh const& _mesh,
+        Path _filePath);
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeLoaderOBJ_hpp_
+#endif // _MazeLoaderMZMESH_hpp_
 //////////////////////////////////////////

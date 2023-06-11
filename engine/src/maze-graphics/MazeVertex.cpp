@@ -84,7 +84,7 @@ namespace Maze
     //////////////////////////////////////////
     VertexAttributeDescription::VertexAttributeDescription()
         : semantic(VertexAttributeSemantic::Position)
-        , count(0)
+        , count(0u)
         , type(VertexAttributeType::S32)
         , normalized(false)
         , stride(0)
@@ -96,7 +96,7 @@ namespace Maze
     //////////////////////////////////////////
     VertexAttributeDescription::VertexAttributeDescription(
         VertexAttributeSemantic _semantic,
-        Size _count,
+        U8 _count,
         VertexAttributeType _type,
         bool _normalized,
         Size _stride,

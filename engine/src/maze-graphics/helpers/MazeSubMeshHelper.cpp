@@ -136,10 +136,15 @@ namespace Maze
                 bitangents.emplace_back(bitangent);
             }
 
+            Vector<Vec3DF> rt;
+            Vector<Vec3DF> rb;
+            rt.reserve(_verticesCount);
+            rb.reserve(_verticesCount);
+
             for (Size i = 0; i < _verticesCount; ++i)
             {
-                Vector<Vec3DF> rt;
-                Vector<Vec3DF> rb;
+                rt.clear();
+                rb.clear();
 
                 for (Size triangleIndex = 0; triangleIndex < trianglesCount; ++triangleIndex)
                 {
@@ -160,7 +165,7 @@ namespace Maze
 
                 Vec3DF tangentRes(0.0f, 0.0f, 0.0f);
                 Vec3DF bitangentRes(0.0f, 0.0f, 0.0f);
-                for (Size j = 0; j < rt.size(); ++j)
+                for (Size j = 0, jn = rt.size(); j < jn; ++j)
                 {
                     tangentRes += rt[j];
                     bitangentRes += rb[j];

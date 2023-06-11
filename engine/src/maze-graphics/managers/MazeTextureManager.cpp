@@ -361,10 +361,9 @@ namespace Maze
         if (metaData.empty() || !metaData.contains("ext"))
         {
             String assetFileExtension = _assetFile->getExtension().toUTF8();
-            bool isMazeTexture = assetFileExtension == ".mztexture";
             bool loaderFound = false;
 
-            if (!isMazeTexture)
+            if (!assetFileExtension.empty())
             {
                 auto it = m_textureLoaders.find(assetFileExtension);
                 if (it != m_textureLoaders.end())

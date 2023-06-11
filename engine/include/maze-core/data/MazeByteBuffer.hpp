@@ -39,6 +39,7 @@
 #include "maze-core/serialization/MazeStringSerializable.hpp"
 #include "maze-core/utils/MazeSharedCopyable.hpp"
 #include <cstring>
+#include <functional>
 
 
 //////////////////////////////////////////
@@ -195,6 +196,29 @@ namespace Maze
         {
             MAZE_DEBUG_ERROR_RETURN_IF((U32)_size > m_size, "Buffer overload!");
             memcpy(m_data, _data, _size);
+        }
+
+        //////////////////////////////////////////
+        void append(ByteBuffer const& _byteBuffer);
+
+
+
+        //////////////////////////////////////////
+        inline U8 const* getEnd() const { return m_data + m_size; }
+
+        //////////////////////////////////////////
+        template <typename TValue>
+        inline void iterateAs(
+            std::function<void(typename TValue&)> const& _cb,
+            Size _startOffset = 0u)
+        {
+            TValue* start = (TValue*)(m_data + _startOffset);
+            TValue const* end = (TValue const*)getEnd();
+
+            MAZE_DEBUG_BP_IF(start > end);
+
+            for (TValue* it = start; it < end; ++it)
+                _cb(*it);
         }
 
 

@@ -37,6 +37,7 @@
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
+#include "maze-graphics/loaders/mesh/MazeLoaderMZMESH.hpp"
 
 
 //////////////////////////////////////////
@@ -84,10 +85,18 @@ namespace Maze
         registerMeshLoader(
             MAZE_HASHED_CSTRING("obj"),
             MeshLoaderData(
-            (LoadMeshAssetFileFunction)&LoadOBJ,
+                (LoadMeshAssetFileFunction)&LoadOBJ,
                 (LoadMeshByteBufferFunction)&LoadOBJ,
                 (IsMeshAssetFileFunction)&IsOBJFile,
                 (IsMeshByteBufferFunction)&IsOBJFile));
+
+        registerMeshLoader(
+            MAZE_HASHED_CSTRING("mzmesh"),
+            MeshLoaderData(
+                (LoadMeshAssetFileFunction)&LoadMZMESH,
+                (LoadMeshByteBufferFunction)&LoadMZMESH,
+                (IsMeshAssetFileFunction)&IsMZMESHFile,
+                (IsMeshByteBufferFunction)&IsMZMESHFile));
 
         return true;
     }
@@ -190,10 +199,9 @@ namespace Maze
         if (metaData.empty() || !metaData.contains("ext"))
         {
             String assetFileExtension = _assetFile->getExtension().toUTF8();
-            bool isMazeMesh = assetFileExtension == ".mzmesh";
             bool loaderFound = false;
 
-            if (!isMazeMesh)
+            if (!assetFileExtension.empty())
             {
                 auto it = m_meshLoaders.find(assetFileExtension);
                 if (it != m_meshLoaders.end())

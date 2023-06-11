@@ -133,7 +133,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SubMeshPtr const& Mesh::getSubMesh(Size _index)
+    SubMeshPtr const& Mesh::getSubMesh(Size _index) const
     {
         static SubMeshPtr nullPointer;
 
@@ -141,13 +141,42 @@ namespace Maze
             return nullPointer;
         
 
-        return m_subMeshes[ _index ];
+        return m_subMeshes[_index];
     }
 
     //////////////////////////////////////////
     void Mesh::addSubMesh(SubMeshPtr const& _subMesh)
     {
         m_subMeshes.push_back(_subMesh);
+    }
+
+    //////////////////////////////////////////
+    void Mesh::scale(F32 _scale)
+    {
+        for (SubMeshPtr const& subMesh : m_subMeshes)
+            subMesh->scale(_scale);
+    }
+
+    //////////////////////////////////////////
+    void Mesh::mergeSubMeshes()
+    {
+        for (S32 i = 0; i < (S32)m_subMeshes.size(); ++i)
+        {
+            for (S32 j = i + 1; j < (S32)m_subMeshes.size(); )
+            {
+                SubMeshPtr const& subMesh0 = m_subMeshes[i];
+                SubMeshPtr const& subMesh1 = m_subMeshes[j];
+
+                if (subMesh0->mergeWith(subMesh1))
+                {
+                    m_subMeshes.erase(m_subMeshes.begin() + j);
+                }
+                else
+                {
+                    ++j;
+                }
+            }
+        }
     }
 
 } // namespace Maze

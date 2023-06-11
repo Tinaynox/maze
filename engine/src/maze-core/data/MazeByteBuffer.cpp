@@ -138,12 +138,16 @@ namespace Maze
         if (m_size == (U32)_size)
             return;
 
-        clear();
+        if (_size == 0)
+        {
+            clear();
+            return;
+        }
+
+        U8* prevData = m_data;
+        U32 prevSize = m_size;
 
         m_size = (U32)_size;
-
-        if (m_size == 0)
-            return;
 
         try 
         {
@@ -155,6 +159,11 @@ namespace Maze
             throw;
         }
         
+        if (prevData)
+        {
+            std::memcpy(m_data, prevData, Math::Min(prevSize, m_size));
+            MAZE_DELETE_ARRAY(prevData);
+        }
     }
 
     //////////////////////////////////////////
@@ -177,6 +186,14 @@ namespace Maze
     {
         resize(_size);
         copyFrom(_data, _size);
+    }
+
+    //////////////////////////////////////////
+    void ByteBuffer::append(ByteBuffer const& _byteBuffer)
+    {
+        Size size = getSize();
+        resize(size + _byteBuffer.getSize());
+        memcpy(m_data + size, _byteBuffer.getData(), _byteBuffer.getSize());
     }
 
     //////////////////////////////////////////

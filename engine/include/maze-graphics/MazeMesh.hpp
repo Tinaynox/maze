@@ -98,14 +98,21 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        SubMeshPtr const& getSubMesh(Size _index);
+        SubMeshPtr const& getSubMesh(Size _index) const;
 
         //////////////////////////////////////////
-        inline Size getSubMeshesCount() { return m_subMeshes.size(); }
+        inline Size getSubMeshesCount() const { return m_subMeshes.size(); }
 
 
         //////////////////////////////////////////
         void addSubMesh(SubMeshPtr const& _subMesh);
+
+
+        //////////////////////////////////////////
+        void scale(F32 _scale);
+
+        //////////////////////////////////////////
+        void mergeSubMeshes();
 
     protected:
 

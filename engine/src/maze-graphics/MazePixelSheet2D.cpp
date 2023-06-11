@@ -128,7 +128,7 @@ namespace Maze
     {
         if (PixelFormat::IsCompressed(m_format))
         {
-            S32 dataSize = PixelFormat::CalculateRequiredBytes(m_size.x, m_size.y, 1, m_format);
+            S32 dataSize = (S32)PixelFormat::CalculateRequiredBytes(m_size.x, m_size.y, 1, m_format);
             m_data.resize(dataSize);
         }
         else

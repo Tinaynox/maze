@@ -89,7 +89,7 @@ namespace Maze
                                                                                     public:\
                                                                                         MAZE_DECLARE_METACLASS_WITH_PARENT(DEnumClassName, EnumClass);\
                                                                                     public:\
-                                                                                        enum Enum\
+                                                                                        enum Enum : U8\
                                                                                         {\
                                                                                             None = 0,\
                                                                                             DEnumBlock1\

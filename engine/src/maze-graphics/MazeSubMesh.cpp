@@ -121,139 +121,236 @@ namespace Maze
     //////////////////////////////////////////
     void SubMesh::setIndices(U32 const* _indices, Size _count)
     {
-        m_indicesType = VertexAttributeType::U32;
+        ByteBufferPtr const& indicesBuffer = allocateIndices(
+            VertexAttributeType::U32,
+            _count);
+        indicesBuffer->copyFrom((U8 const*)_indices, indicesBuffer->getSize());
+    }
+
+    //////////////////////////////////////////
+    ByteBufferPtr const& SubMesh::allocateIndices(VertexAttributeType _type, Size _count)
+    {
+        m_indicesType = _type;
 
         Size bytesPerIndex = GetVertexAttributeTypeSize(m_indicesType);
         Size bytesPerIndices = bytesPerIndex * _count;
         m_indicesBuffer = ByteBuffer::Create();
-        m_indicesBuffer->upload((U8 const*)_indices, bytesPerIndices);
+        m_indicesBuffer->resize(bytesPerIndices);
         m_indicesCount = _count;
+
+        return m_indicesBuffer;
+    }
+
+    //////////////////////////////////////////
+    ByteBufferPtr const& SubMesh::allocateVertexAttributes(
+        VertexAttributeSemantic _vertexSemantic,
+        VertexAttributeType _type,
+        U8 _attributesCount,
+        Size _count,
+        bool _normalized)
+    {
+        MeshVertexAttributeDescription& vertexData = m_vertexData[(Size)_vertexSemantic];
+        VertexAttributeDescription& vertexDescription = vertexData.description;
+        vertexDescription.semantic = _vertexSemantic;
+        vertexDescription.count = _attributesCount;
+        vertexDescription.type = _type;
+        vertexDescription.normalized = _normalized;
+        vertexDescription.stride = vertexDescription.count * GetVertexAttributeTypeSize(vertexDescription.type);
+        vertexDescription.offset = 0;
+        vertexData.byteBuffer = ByteBuffer::Create();
+        vertexData.byteBuffer->resize(vertexDescription.stride * _count);
+        vertexData.count = _count;
+
+        return vertexData.byteBuffer;
     }
 
     //////////////////////////////////////////
     void SubMesh::setPositions(Vec3DF const* _positions, Size _count)
     {
-        VertexAttributeSemantic vertexSemantic = VertexAttributeSemantic::Position;
-
-        MeshVertexAttributeDescription& vertexData = m_vertexData[(Size)vertexSemantic];
-        VertexAttributeDescription& vertexDescription = vertexData.description;
-        vertexDescription.semantic = vertexSemantic;
-        vertexDescription.count = 3;
-        vertexDescription.type = VertexAttributeType::F32;
-        vertexDescription.normalized = false;
-        vertexDescription.stride = vertexDescription.count * GetVertexAttributeTypeSize(vertexDescription.type);
-        vertexDescription.offset = 0;
-        vertexData.byteBuffer = ByteBuffer::Create();
-        vertexData.byteBuffer->upload((U8 const*)_positions, vertexDescription.stride * _count);
-        vertexData.count = _count;
+        ByteBufferPtr const& buffer = allocateVertexAttributes(
+            VertexAttributeSemantic::Position,
+            VertexAttributeType::F32,
+            3,
+            _count,
+            false);
+        buffer->copyFrom((U8 const*)_positions, buffer->getSize());
     }
 
     //////////////////////////////////////////
     void SubMesh::setNormals(Vec3DF const* _normals, Size _count)
     {
-        VertexAttributeSemantic vertexSemantic = VertexAttributeSemantic::Normal;
-
-        MeshVertexAttributeDescription& vertexData = m_vertexData[(Size)vertexSemantic];
-        VertexAttributeDescription& vertexDescription = vertexData.description;
-        vertexDescription.semantic = vertexSemantic;
-        vertexDescription.count = 3;
-        vertexDescription.type = VertexAttributeType::F32;
-        vertexDescription.normalized = false;
-        vertexDescription.stride = vertexDescription.count * GetVertexAttributeTypeSize(vertexDescription.type);
-        vertexDescription.offset = 0;
-        vertexData.byteBuffer = ByteBuffer::Create();
-        vertexData.byteBuffer->upload((U8 const*)_normals, vertexDescription.stride * _count);
-        vertexData.count = _count;
+        ByteBufferPtr const& buffer = allocateVertexAttributes(
+            VertexAttributeSemantic::Normal,
+            VertexAttributeType::F32,
+            3,
+            _count,
+            false);
+        buffer->copyFrom((U8 const*)_normals, buffer->getSize());
     }
 
     //////////////////////////////////////////
     void SubMesh::setTangents(Vec3DF const* _tangents, Size _count)
     {
-        VertexAttributeSemantic vertexSemantic = VertexAttributeSemantic::Tangent;
-
-        MeshVertexAttributeDescription& vertexData = m_vertexData[(Size)vertexSemantic];
-        VertexAttributeDescription& vertexDescription = vertexData.description;
-        vertexDescription.semantic = vertexSemantic;
-        vertexDescription.count = 3;
-        vertexDescription.type = VertexAttributeType::F32;
-        vertexDescription.normalized = false;
-        vertexDescription.stride = vertexDescription.count * GetVertexAttributeTypeSize(vertexDescription.type);
-        vertexDescription.offset = 0;
-        vertexData.byteBuffer = ByteBuffer::Create();
-        vertexData.byteBuffer->upload((U8 const*)_tangents, vertexDescription.stride * _count);
-        vertexData.count = _count;
+        ByteBufferPtr const& buffer = allocateVertexAttributes(
+            VertexAttributeSemantic::Tangent,
+            VertexAttributeType::F32,
+            3,
+            _count,
+            false);
+        buffer->copyFrom((U8 const*)_tangents, buffer->getSize());
     }
 
     //////////////////////////////////////////
     void SubMesh::setBitangents(Vec3DF const* _bitangents, Size _count)
     {
-        VertexAttributeSemantic vertexSemantic = VertexAttributeSemantic::Bitangent;
-
-        MeshVertexAttributeDescription& vertexData = m_vertexData[(Size)vertexSemantic];
-        VertexAttributeDescription& vertexDescription = vertexData.description;
-        vertexDescription.semantic = vertexSemantic;
-        vertexDescription.count = 3;
-        vertexDescription.type = VertexAttributeType::F32;
-        vertexDescription.normalized = false;
-        vertexDescription.stride = vertexDescription.count * GetVertexAttributeTypeSize(vertexDescription.type);
-        vertexDescription.offset = 0;
-        vertexData.byteBuffer = ByteBuffer::Create();
-        vertexData.byteBuffer->upload((U8 const*)_bitangents, vertexDescription.stride * _count);
-        vertexData.count = _count;
+        ByteBufferPtr const& buffer = allocateVertexAttributes(
+            VertexAttributeSemantic::Bitangent,
+            VertexAttributeType::F32,
+            3,
+            _count,
+            false);
+        buffer->copyFrom((U8 const*)_bitangents, buffer->getSize());
     }
 
     //////////////////////////////////////////
     void SubMesh::setColors(Vec4DF const* _colors, Size _count)
     {
-        VertexAttributeSemantic vertexSemantic = VertexAttributeSemantic::Color;
-
-        MeshVertexAttributeDescription& vertexData = m_vertexData[(Size)vertexSemantic];
-        VertexAttributeDescription& vertexDescription = vertexData.description;
-        vertexDescription.semantic = vertexSemantic;
-        vertexDescription.count = 4;
-        vertexDescription.type = VertexAttributeType::F32;
-        vertexDescription.normalized = false;
-        vertexDescription.stride = vertexDescription.count * GetVertexAttributeTypeSize(vertexDescription.type);
-        vertexDescription.offset = 0;
-        vertexData.byteBuffer = ByteBuffer::Create();
-        vertexData.byteBuffer->upload((U8 const*)_colors, vertexDescription.stride * _count);
-        vertexData.count = _count;
+        ByteBufferPtr const& buffer = allocateVertexAttributes(
+            VertexAttributeSemantic::Color,
+            VertexAttributeType::F32,
+            4,
+            _count,
+            false);
+        buffer->copyFrom((U8 const*)_colors, buffer->getSize());
     }
 
     //////////////////////////////////////////
     void SubMesh::setTexCoords(S32 _uvIndex, Vec2DF const* _data, Size _count)
     {
         VertexAttributeSemantic vertexSemantic = (VertexAttributeSemantic)((Size)VertexAttributeSemantic::TexCoords0 + _uvIndex);
-
-        MeshVertexAttributeDescription& vertexData = m_vertexData[(Size)vertexSemantic];
-        VertexAttributeDescription& vertexDescription = vertexData.description;
-        vertexDescription.semantic = vertexSemantic;
-        vertexDescription.count = 2;
-        vertexDescription.type = VertexAttributeType::F32;
-        vertexDescription.normalized = false;
-        vertexDescription.stride = vertexDescription.count * GetVertexAttributeTypeSize(vertexDescription.type);
-        vertexDescription.offset = 0;
-        vertexData.byteBuffer = ByteBuffer::Create();
-        vertexData.byteBuffer->upload((U8 const*)_data, vertexDescription.stride * _count);
-        vertexData.count = _count;
+        ByteBufferPtr const& buffer = allocateVertexAttributes(
+            vertexSemantic,
+            VertexAttributeType::F32,
+            2,
+            _count,
+            false);
+        buffer->copyFrom((U8 const*)_data, buffer->getSize());
     }
 
     //////////////////////////////////////////
     void SubMesh::setTexCoords(S32 _uvIndex, Vec4DF const* _data, Size _count)
     {
         VertexAttributeSemantic vertexSemantic = (VertexAttributeSemantic)((Size)VertexAttributeSemantic::TexCoords0 + _uvIndex);
+        ByteBufferPtr const& buffer = allocateVertexAttributes(
+            vertexSemantic,
+            VertexAttributeType::F32,
+            4,
+            _count,
+            false);
+        buffer->copyFrom((U8 const*)_data, buffer->getSize());
+    }
 
-        MeshVertexAttributeDescription& vertexData = m_vertexData[(Size)vertexSemantic];
-        VertexAttributeDescription& vertexDescription = vertexData.description;
-        vertexDescription.semantic = vertexSemantic;
-        vertexDescription.count = 4;
-        vertexDescription.type = VertexAttributeType::F32;
-        vertexDescription.normalized = false;
-        vertexDescription.stride = vertexDescription.count * GetVertexAttributeTypeSize(vertexDescription.type);
-        vertexDescription.offset = 0;
-        vertexData.byteBuffer = ByteBuffer::Create();
-        vertexData.byteBuffer->upload((U8 const*)_data, vertexDescription.stride * _count);
-        vertexData.count = _count;
+    //////////////////////////////////////////
+    void SubMesh::scale(F32 _scale)
+    {
+        MeshVertexAttributeDescription const& data = m_vertexData[(Size)VertexAttributeSemantic::Position];
+        ByteBufferPtr const& byteBuffer = data.byteBuffer;
+        if (!byteBuffer)
+            return;
+
+        Size typeSize = GetVertexAttributeTypeSize(data.description.type);
+        switch (data.description.type)
+        {
+            case VertexAttributeType::F32:
+            {
+                byteBuffer->iterateAs<F32>([_scale](F32& _value) { _value *= _scale; });
+                break;
+            }
+            default:
+            {
+                MAZE_NOT_IMPLEMENTED;
+            }
+        }
+    }
+
+    //////////////////////////////////////////
+    bool SubMesh::mergeWith(SubMeshPtr const& _otherSubMesh)
+    {
+        if (m_renderDrawTopology != _otherSubMesh->m_renderDrawTopology)
+            return false;
+        if (m_indicesType != _otherSubMesh->m_indicesType)
+            return false;
+
+        MeshVertexAttributeDescription const& positionData = m_vertexData[(Size)VertexAttributeSemantic::Position];
+        ByteBufferPtr const& positionBuffer = positionData.byteBuffer;
+        if (!positionBuffer)
+            return false;
+
+        for (VertexAttributeSemantic s = VertexAttributeSemantic(0);
+            s < VertexAttributeSemantic::MAX;
+            s = VertexAttributeSemantic((S32)s + 1))
+        {
+            MeshVertexAttributeDescription const& data0 = m_vertexData[(Size)s];
+            MeshVertexAttributeDescription const& data1 = _otherSubMesh->m_vertexData[(Size)s];
+            if ((bool)data0.byteBuffer != (bool)data1.byteBuffer)
+                return false;
+
+            if (data0.byteBuffer)
+            {
+                if (data0.description.type != data1.description.type ||
+                    data0.description.count != data1.description.count ||
+                    data0.description.normalized != data1.description.normalized ||
+                    data0.description.stride != data1.description.stride ||
+                    data0.description.offset != data1.description.offset)
+                    return false;
+            }
+        }
+
+        Size verticesCount = positionData.count;
+
+        Size indicesBufferPrevSize = m_indicesBuffer->getSize();
+        m_indicesBuffer->append(*_otherSubMesh->m_indicesBuffer.get());
+        switch (m_indicesType)
+        {
+            #define CASE_SUBMESH_MERGE_INDEX_PROCESSOR(DType) \
+                case VertexAttributeType:: DType :            \
+            {                                                 \
+                m_indicesBuffer->iterateAs<DType>(            \
+                    [verticesCount](DType& _value)            \
+                    {                                         \
+                        _value += (DType)verticesCount;       \
+                    },                                        \
+                    indicesBufferPrevSize);                   \
+                break;                                        \
+            }
+            CASE_SUBMESH_MERGE_INDEX_PROCESSOR(S8);
+            CASE_SUBMESH_MERGE_INDEX_PROCESSOR(U8);
+            CASE_SUBMESH_MERGE_INDEX_PROCESSOR(S16);
+            CASE_SUBMESH_MERGE_INDEX_PROCESSOR(U16);
+            CASE_SUBMESH_MERGE_INDEX_PROCESSOR(S32);
+            CASE_SUBMESH_MERGE_INDEX_PROCESSOR(U32);
+            #undef CASE_SUBMESH_MERGE_INDEX_PROCESSOR
+            default:
+            {
+                MAZE_NOT_IMPLEMENTED
+            }
+        }
+        m_indicesCount += _otherSubMesh->m_indicesCount;
+
+        for (VertexAttributeSemantic s = VertexAttributeSemantic(0);
+            s < VertexAttributeSemantic::MAX;
+            s = VertexAttributeSemantic((S32)s + 1))
+        {
+            MeshVertexAttributeDescription& data0 = m_vertexData[(Size)s];
+            if (!data0.byteBuffer)
+                continue;
+
+            MeshVertexAttributeDescription const& data1 = _otherSubMesh->m_vertexData[(Size)s];
+            data0.byteBuffer->append(*data1.byteBuffer.get());
+            data0.count += data1.count;
+        }
+
+        return true;
     }
 
 } // namespace Maze

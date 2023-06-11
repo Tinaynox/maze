@@ -115,10 +115,23 @@ namespace Maze
         void setIndices(U32 const* _indices, Size _count);
 
         //////////////////////////////////////////
+        ByteBufferPtr const& allocateIndices(VertexAttributeType _type, Size _count);
+
+        //////////////////////////////////////////
         inline void setIndices(Vector<U32> const& _indices)
         {
             setIndices(&_indices[0], _indices.size());
         }
+
+
+
+        //////////////////////////////////////////
+        ByteBufferPtr const& allocateVertexAttributes(
+            VertexAttributeSemantic _semantic,
+            VertexAttributeType _type,
+            U8 _attributesCount,
+            Size _count,
+            bool _normalized = false);
 
         //////////////////////////////////////////
         void setPositions(Vec3DF const* _positions, Size _count);
@@ -227,12 +240,18 @@ namespace Maze
             if (!byteBuffer)
                 return false;
 
-            _data = byteBuffer->getDataPointer();
+            _data = byteBuffer->getData();
             _description = data.description;
             _count = data.count;
 
             return true;
         }
+
+        //////////////////////////////////////////
+        void scale(F32 _scale);
+
+        //////////////////////////////////////////
+        bool mergeWith(SubMeshPtr const& _otherSubMesh);
 
     protected:
 

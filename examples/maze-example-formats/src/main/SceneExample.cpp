@@ -50,6 +50,7 @@
 #include "maze-core/math/MazeMathGeometry.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -72,6 +73,7 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer3D.hpp"
+#include "maze-graphics/loaders/mesh/MazeLoaderMZMESH.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
@@ -292,17 +294,19 @@ namespace Maze
 
 
 
-        
         // Drone
         F32 const drone0Scale = 0.35f;
         addMeshPreview("Drone0.obj", "Drone0.mzmaterial", drone0Scale);
         addMeshPreview("Drone0.fbx", "Drone0.mzmaterial", drone0Scale);
+        addMeshPreview("Drone0.mzmesh", "Drone0.mzmaterial", drone0Scale);
         addMeshPreviewSpace();
+        
 
         // TestBox
         F32 const testBoxScale = 0.75f;
         addMeshPreview("TestBox.obj", "TestBox.mzmaterial", testBoxScale);
         addMeshPreview("TestBox.fbx", "TestBox.mzmaterial", testBoxScale);
+        addMeshPreview("TestBox.mzmesh", "TestBox.mzmaterial", testBoxScale);
 
         return true;
     }
@@ -417,10 +421,10 @@ namespace Maze
                 transform->getLocalPosition().z);
             labelRenderer->getTransform()->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
 
-            S32 bytesCount = PixelFormat::CalculateRequiredBytes(
-                texture2D->getWidth(),
-                texture2D->getHeight(),
-                1,
+            S32 bytesCount = (S32)PixelFormat::CalculateRequiredBytes(
+                (U32)texture2D->getWidth(),
+                (U32)texture2D->getHeight(),
+                1u,
                 texture2D->getInternalPixelFormat());
             labelRenderer->setTextFormatted(
                 "%s (%d b)\n"
@@ -470,6 +474,8 @@ namespace Maze
         U32 timerStart = timer.getMilliseconds();
         MeshPtr const& mesh = MeshManager::GetCurrentInstancePtr()->loadMesh(meshAssetFile);
         U32 loadTime = timer.getMilliseconds() - timerStart;
+
+        //SaveMZMESH(*mesh.get(), FileHelper::GetFileNameWithoutExtension(meshAssetFile->getFileName()) + ".mzmesh");
 
         RenderMeshPtr const& renderMesh = RenderMesh::Create(mesh);
         meshRenderer->setRenderMesh(renderMesh);
@@ -536,11 +542,13 @@ namespace Maze
                 0.65f,
                 transform->getLocalPosition().z);
 
+            S32 indicesCount = 0;
             S32 verticesCount = 0;
 
             for (S32 i = 0, in = (S32)mesh->getSubMeshesCount(); i != in; ++i)
             {
                 SubMeshPtr const& subMesh = mesh->getSubMesh(i);
+                indicesCount += (S32)subMesh->getIndicesCount();
                 verticesCount += (S32)subMesh->getVerticesCount(VertexAttributeSemantic::Position);
                 switch (subMesh->getRenderDrawTopology())
                 {
@@ -566,12 +574,14 @@ namespace Maze
             labelRenderer->setTextFormatted(
                 "%s (%d b)\n"
                 "Sub meshes count: %d\n"
-                "Vertices count: %d (%d tr)\n"
+                "Indices count: %d (%d tr)\n"
+                "Vertices count: %d\n"
                 "Load time: %u ms",
                 _meshName.c_str(),
                 (S32)meshAssetFile->getFileSize(),
                 (S32)mesh->getSubMeshesCount(),
-                verticesCount, verticesCount/3,
+                indicesCount, indicesCount/3,
+                verticesCount,
                 loadTime);
 
             labelRenderer->setFontSize(8);

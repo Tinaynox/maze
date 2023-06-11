@@ -46,7 +46,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    enum class MAZE_GRAPHICS_API VertexAttributeSemantic
+    enum class MAZE_GRAPHICS_API VertexAttributeSemantic : U8
     {
         Position = 0,
         Normal,
@@ -70,7 +70,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    enum class MAZE_GRAPHICS_API VertexAttributeType
+    enum class MAZE_GRAPHICS_API VertexAttributeType : U8
     {
         S8,
         U8,
@@ -105,14 +105,14 @@ namespace Maze
         //////////////////////////////////////////
         VertexAttributeDescription(
             VertexAttributeSemantic _semantic,
-            Size _count,
+            U8 _count,
             VertexAttributeType _type,
             bool _normalized,
             Size _stride,
             Size _offset);
 
         VertexAttributeSemantic semantic;
-        Size count;
+        U8 count;
         VertexAttributeType type;
         bool normalized;
         Size stride;
