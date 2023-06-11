@@ -503,7 +503,7 @@ namespace Maze
     //////////////////////////////////////////
     void Example::loadCoreGameAssets()
     {
-        RenderSystem::GetCurrentInstancePtr()->createBuiltinAssets();
+        GraphicsManager::GetInstancePtr()->createBuiltinAssets();
         GizmosManager::GetInstancePtr()->createGizmosElements();
         UIManager::GetInstancePtr()->createUIElements();
         ParticlesManager::GetInstancePtr()->createBuiltinAssets();

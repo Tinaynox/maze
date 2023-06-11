@@ -472,7 +472,7 @@ namespace Maze
         AssetFilePtr const& meshAssetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_meshName);
 
         U32 timerStart = timer.getMilliseconds();
-        MeshPtr const& mesh = MeshManager::GetCurrentInstancePtr()->loadMesh(meshAssetFile);
+        MeshPtr const& mesh = MeshManager::GetInstancePtr()->loadMesh(meshAssetFile);
         U32 loadTime = timer.getMilliseconds() - timerStart;
 
         //SaveMZMESH(*mesh.get(), FileHelper::GetFileNameWithoutExtension(meshAssetFile->getFileName()) + ".mzmesh");
