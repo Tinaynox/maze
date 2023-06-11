@@ -105,42 +105,42 @@ namespace Maze
             case BuiltinRenderMeshType::Quad:
             {
                 renderMesh = RenderMesh::Create(
-                    MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Quad),
+                    MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Quad),
                     m_renderSystemRaw);
                 break;
             }
             case BuiltinRenderMeshType::Cube:
             {
                 renderMesh = RenderMesh::Create(
-                    MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cube),
+                    MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cube),
                     m_renderSystemRaw);
                 break;
             }
             case BuiltinRenderMeshType::Sphere:
             {
                 renderMesh = RenderMesh::Create(
-                    MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Sphere),
+                    MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Sphere),
                     m_renderSystemRaw);
                 break;
             }
             case BuiltinRenderMeshType::Cone:
             {
                 renderMesh = RenderMesh::Create(
-                    MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cone),
+                    MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cone),
                     m_renderSystemRaw);
                 break;
             }
             case BuiltinRenderMeshType::Cylinder:
             {
                 renderMesh = RenderMesh::Create(
-                    MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cylinder),
+                    MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cylinder),
                     m_renderSystemRaw);
                 break;
             }
             case BuiltinRenderMeshType::Torus:
             {
                 renderMesh = RenderMesh::Create(
-                    MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Torus),
+                    MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Torus),
                     m_renderSystemRaw);
                 break;
             }
@@ -238,7 +238,7 @@ namespace Maze
     //////////////////////////////////////////
     void RenderMeshManager::loadAllAssetRenderMeshes()
     {
-        Vector<String> loaderExtensions = MeshManager::GetCurrentInstancePtr()->getMeshLoaderExtensions();
+        Vector<String> loaderExtensions = MeshManager::GetInstancePtr()->getMeshLoaderExtensions();
 
         Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions(
             Set<String>(loaderExtensions.begin(), loaderExtensions.end()));

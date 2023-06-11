@@ -77,21 +77,6 @@ namespace Maze
     //////////////////////////////////////////
     static HashedCString const c_meshExtension = MAZE_HASHED_CSTRING("fbx");
 
-    //////////////////////////////////////////
-    static inline void RegisterTextureLoader(RenderSystemPtr const& _renderSystem)
-    {
-        if (_renderSystem && _renderSystem->getTextureManager())
-        {
-            _renderSystem->getMeshManager()->registerMeshLoader(
-                c_meshExtension,
-                MeshLoaderData(
-                    (LoadMeshAssetFileFunction)&LoadFBX,
-                    (LoadMeshByteBufferFunction)&LoadFBX,
-                    (IsMeshAssetFileFunction)&IsFBXFile,
-                    (IsMeshByteBufferFunction)&IsFBXFile));
-        }
-    }
-
 
     //////////////////////////////////////////
     // Class LoaderFBXPlugin
@@ -130,31 +115,23 @@ namespace Maze
     //////////////////////////////////////////
     void LoaderFBXPlugin::install()
     {
-        if (GraphicsManager::GetInstancePtr())
-        {
-            GraphicsManager::GetInstancePtr()->eventDefaultRenderSystemChanged.subscribe(
-                [](RenderSystemPtr const& _renderSystem)
-                {
-                    RegisterTextureLoader(_renderSystem);
-                });
-
-            if (GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw())
-                RegisterTextureLoader(GraphicsManager::GetInstancePtr()->getDefaultRenderSystem());
-        }
+        if (MeshManager::GetInstancePtr())
+            MeshManager::GetInstancePtr()->registerMeshLoader(
+                c_meshExtension,
+                MeshLoaderData(
+                    (LoadMeshAssetFileFunction)&LoadFBX,
+                    (LoadMeshByteBufferFunction)&LoadFBX,
+                    (IsMeshAssetFileFunction)&IsFBXFile,
+                    (IsMeshByteBufferFunction)&IsFBXFile));;
         
     }
 
     //////////////////////////////////////////
     void LoaderFBXPlugin::uninstall()
     {
-        if (GraphicsManager::GetInstancePtr() && RenderSystem::GetCurrentInstancePtr())
-        {
-            MeshManagerPtr renderMeshManager = RenderSystem::GetCurrentInstancePtr()->getMeshManager();
-            if (renderMeshManager)
-            {
-                renderMeshManager->clearMeshLoader(c_meshExtension);
-            }
-        }
+        if (MeshManager::GetInstancePtr())
+            MeshManager::GetInstancePtr()->clearMeshLoader(
+                c_meshExtension);
     }
 
 } // namespace Maze

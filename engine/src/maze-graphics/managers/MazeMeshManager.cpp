@@ -51,36 +51,30 @@ namespace Maze
     // Class MeshManager
     //
     //////////////////////////////////////////
+    MeshManager* MeshManager::s_instance = nullptr;
+
+    //////////////////////////////////////////
     MeshManager::MeshManager()
-        : m_renderSystemRaw(nullptr)
     {
-        
+        s_instance = this;
     }
 
     //////////////////////////////////////////
     MeshManager::~MeshManager()
     {
-        if (m_renderSystemRaw)
-            m_renderSystemRaw->eventSystemInited.unsubscribe(this);
+        s_instance = nullptr;
     }
 
     //////////////////////////////////////////
-    void MeshManager::Initialize(MeshManagerPtr& _meshManager, RenderSystemPtr const& _renderSystem)
+    void MeshManager::Initialize(MeshManagerPtr& _meshManager)
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(MeshManager, _meshManager, init(_renderSystem));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(MeshManager, _meshManager, init());
     }
 
-    //////////////////////////////////////////
-    MeshManagerPtr const& MeshManager::GetCurrentInstancePtr()
-    {
-        return RenderSystem::GetCurrentInstancePtr()->getMeshManager();
-    }
 
     //////////////////////////////////////////
-    bool MeshManager::init(RenderSystemPtr const& _renderSystem)
+    bool MeshManager::init()
     {
-        m_renderSystem = _renderSystem;
-        m_renderSystemRaw = _renderSystem.get();
 
         registerMeshLoader(
             MAZE_HASHED_CSTRING("obj"),
@@ -183,11 +177,13 @@ namespace Maze
         if (!_assetFile)
             return mesh;
 
-        mesh = Mesh::Create(m_renderSystemRaw);
+        mesh = Mesh::Create();
 
         Debug::Log("Loading render mesh: %s...", _assetFile->getFileName().toUTF8().c_str());
 
-        StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
+        StringKeyMap<String> metaData;
+        if (AssetManager::GetInstancePtr())
+            metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
 
         MeshLoaderProperties loaderProps;
         if (metaData.contains("scale"))

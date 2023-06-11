@@ -47,7 +47,6 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(Mesh);
-    MAZE_USING_SHARED_PTR(RenderSystem);
     MAZE_USING_SHARED_PTR(SubMesh);
     
 
@@ -61,14 +60,10 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        static MeshPtr Create(RenderSystem* _renderSystem = nullptr);
+        static MeshPtr Create();
 
         //////////////////////////////////////////
         virtual ~Mesh();
-
-
-        //////////////////////////////////////////
-        inline RenderSystem* getRenderSystem() const { return m_renderSystem; }
 
 
         //////////////////////////////////////////
@@ -120,15 +115,13 @@ namespace Maze
         Mesh();
 
         //////////////////////////////////////////
-        virtual bool init(RenderSystem* _renderSystem);    
+        virtual bool init();    
     
 
         //////////////////////////////////////////
         SubMeshPtr const& ensureSubMesh();
 
     protected:
-        RenderSystem* m_renderSystem;
-
         FastVector<SubMeshPtr> m_subMeshes;
     };
 

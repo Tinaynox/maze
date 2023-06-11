@@ -49,21 +49,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MeshPtr Mesh::Create(RenderSystem* _renderSystem)
+    MeshPtr Mesh::Create()
     {
-        if (!_renderSystem)
-            _renderSystem = Maze::GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw();
-
         MeshPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(Mesh, object, init(_renderSystem));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(Mesh, object, init());
         return object;
     }
 
     //////////////////////////////////////////
-    bool Mesh::init(RenderSystem* _renderSystem)
+    bool Mesh::init()
     {
-        m_renderSystem = _renderSystem;
-
         return true;
     }
 

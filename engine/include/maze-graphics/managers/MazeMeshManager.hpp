@@ -45,7 +45,6 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(MeshManager);
-    MAZE_USING_SHARED_PTR(RenderSystem);
     MAZE_USING_SHARED_PTR(Texture);
     MAZE_USING_SHARED_PTR(Mesh);
     MAZE_USING_SHARED_PTR(ByteBuffer);
@@ -128,12 +127,15 @@ namespace Maze
         virtual ~MeshManager();
 
         //////////////////////////////////////////
-        static void Initialize(MeshManagerPtr& _meshManager, RenderSystemPtr const& _renderSystem);
+        static void Initialize(MeshManagerPtr& _meshManager);
 
         //////////////////////////////////////////
-        static MeshManagerPtr const& GetCurrentInstancePtr();
+        static inline MeshManager* GetInstancePtr() { return s_instance; }
 
+        //////////////////////////////////////////
+        static inline MeshManager& GetInstance() { return *s_instance; }
 
+       
         //////////////////////////////////////////
         inline MeshPtr const& getDefaultQuadMesh() const { return getBuiltinMesh(BuiltinMeshType::Quad); }
 
@@ -191,11 +193,10 @@ namespace Maze
         MeshManager();
 
         //////////////////////////////////////////
-        virtual bool init(RenderSystemPtr const& _renderSystem);
+        virtual bool init();
     
     protected:
-        RenderSystemWPtr m_renderSystem;
-        RenderSystem* m_renderSystemRaw;
+        static MeshManager* s_instance;
 
         MeshPtr m_builtinMeshes[BuiltinMeshType::MAX];
 

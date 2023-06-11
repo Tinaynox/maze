@@ -34,6 +34,7 @@
 #include "maze-core/ecs/MazeComponentFactory.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/helpers/MazeGraphicsUtilsHelper.hpp"
+#include "maze-graphics/managers/MazeMeshManager.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
@@ -90,6 +91,9 @@ namespace Maze
     bool GraphicsManager::init()
     {
         UpdateManager::GetInstancePtr()->addUpdatable(this);
+
+        MeshManager::Initialize(m_meshManager);
+
         
         GraphicsUtilsHelper::ConstructAsciiSymbolsSheet8x8();
 
@@ -177,6 +181,15 @@ namespace Maze
         eventDefaultRenderSystemWillBeChanged(_renderSystem);
         m_defaultRenderSystem = _renderSystem;
         eventDefaultRenderSystemChanged(m_defaultRenderSystem);
+    }
+
+    //////////////////////////////////////////
+    void GraphicsManager::createBuiltinAssets()
+    {
+        m_meshManager->createBuiltinMeshes();
+
+        if (m_defaultRenderSystem)
+            m_defaultRenderSystem->createBuiltinAssets();
     }
 
 } // namespace Maze

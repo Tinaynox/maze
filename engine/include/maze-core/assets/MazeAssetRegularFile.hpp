@@ -63,6 +63,9 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        static AssetRegularFilePtr Create(Path const& _fullPath);
+
+        //////////////////////////////////////////
         virtual ~AssetRegularFile();
 
         
@@ -99,9 +102,6 @@ namespace Maze
         virtual bool readHeaderToByteBuffer(ByteBuffer& _byteBuffer, Size _size) const MAZE_OVERRIDE;
 
     protected:
-
-        //////////////////////////////////////////
-        static AssetRegularFilePtr Create(Path const& _fullPath);
 
         //////////////////////////////////////////
         AssetRegularFile();

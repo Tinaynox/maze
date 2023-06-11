@@ -64,6 +64,18 @@ namespace Maze
         inline HashedCString(CString _str) : str(_str), hash(Hash::CalculateFNV1(_str)) {}
 
         //////////////////////////////////////////
+        inline HashedCString(HashedCString const& _other) = default;
+
+        //////////////////////////////////////////
+        inline HashedCString(HashedCString&& _other) = default;
+
+        //////////////////////////////////////////
+        inline HashedCString& operator=(HashedCString const& _other) = default;
+
+        //////////////////////////////////////////
+        inline HashedCString& operator=(HashedCString&& _other) = default;
+
+        //////////////////////////////////////////
         inline bool operator==(HashedCString const& _value) const
         {
             if (hash != _value.hash)

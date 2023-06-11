@@ -194,9 +194,10 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline StringKeyMap(StringKeyMap&& _other)
-            : m_map(std::move(_other.m_map))
-        {}
+        // #TODO:
+        //inline StringKeyMap(StringKeyMap&& _other)
+        //    : m_map(std::move(_other.m_map))
+        //{}
 
         //////////////////////////////////////////
         inline StringKeyMap& operator=(StringKeyMap const& _other)
@@ -208,11 +209,12 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline StringKeyMap& operator=(StringKeyMap&& _other)
-        {
-            m_map = std::move(_other.m_map);
-            return *this;
-        }
+        // #TODO:
+        //inline StringKeyMap& operator=(StringKeyMap&& _other)
+        //{
+        //    m_map = std::move(_other.m_map);
+        //    return *this;
+        //}
 
         //////////////////////////////////////////
         inline iterator begin() { return m_map.begin(); }

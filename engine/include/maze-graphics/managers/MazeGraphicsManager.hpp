@@ -48,6 +48,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(GraphicsManager);
     MAZE_USING_SHARED_PTR(RenderSystem);
+    MAZE_USING_SHARED_PTR(MeshManager);
 
 
     //////////////////////////////////////////
@@ -104,7 +105,14 @@ namespace Maze
             return nullptr;
         }
 
+
+        //////////////////////////////////////////
+        inline MeshManagerPtr const& getMeshManager() const { return m_meshManager; }
         
+
+        //////////////////////////////////////////
+        void createBuiltinAssets();
+
     public:
 
         //////////////////////////////////////////
@@ -127,6 +135,8 @@ namespace Maze
 
         StringKeyMap<RenderSystemPtr> m_renderSystems;
         RenderSystemPtr m_defaultRenderSystem;
+
+        MeshManagerPtr m_meshManager;
     };
 
 } // namespace Maze
