@@ -819,7 +819,7 @@ namespace Maze
             Mat4DF::CreateChangeOfBasisMatrix(right, _up, _forward) *
             Mat4DF::CreateScaleMatrix(_scale.x, _scale.y, 1.0f));
 
-        MeshPtr const& mesh = MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Quad);
+        MeshPtr const& mesh = MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Quad);
         drawMesh(mesh, Vec3DF::c_zero, _color, _duration, _renderMode);
 
         popTransform();
@@ -842,7 +842,7 @@ namespace Maze
             Mat4DF::CreateChangeOfBasisMatrix(right, _up, _forward) *
             Mat4DF::CreateScaleMatrix(_scale));
 
-        MeshPtr const& mesh = MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cube);
+        MeshPtr const& mesh = MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cube);
         drawMesh(mesh, Vec3DF::c_zero, _color, _duration, _renderMode);
 
         popTransform();
@@ -860,7 +860,7 @@ namespace Maze
             Mat4DF::CreateTranslationMatrix(_position) *
             Mat4DF::CreateScaleMatrix(_radius * 2.0f));
 
-        MeshPtr const& mesh = MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Sphere);
+        MeshPtr const& mesh = MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Sphere);
         drawMesh(mesh, Vec3DF::c_zero, _color, _duration, _renderMode);
 
         popTransform();
@@ -884,7 +884,7 @@ namespace Maze
             Mat4DF::CreateChangeOfBasisMatrix(right, _forward, _up) *
             Mat4DF::CreateScaleMatrix(_radius * 2.0f, _height, _radius * 2.0f));
 
-        MeshPtr const& mesh = MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cone);
+        MeshPtr const& mesh = MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cone);
         drawMesh(mesh, Vec3DF::c_zero, _color, _duration, _renderMode);
 
         popTransform();
@@ -908,7 +908,7 @@ namespace Maze
             Mat4DF::CreateChangeOfBasisMatrix(right, _forward, _up) *
             Mat4DF::CreateScaleMatrix(_radius * 2.0f, _height, _radius * 2.0f));
 
-        MeshPtr const& mesh = MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cylinder);
+        MeshPtr const& mesh = MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cylinder);
         drawMesh(mesh, Vec3DF::c_zero, _color, _duration, _renderMode);
 
         popTransform();
@@ -931,7 +931,7 @@ namespace Maze
             Mat4DF::CreateChangeOfBasisMatrix(right, _forward, up) *
             Mat4DF::CreateScaleMatrix(_radius * 2.0f));
 
-        MeshPtr const& mesh = MeshManager::GetCurrentInstancePtr()->getBuiltinMesh(BuiltinMeshType::Torus);
+        MeshPtr const& mesh = MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Torus);
         drawMesh(mesh, Vec3DF::c_zero, _color, _duration, _renderMode);
 
         popTransform();
