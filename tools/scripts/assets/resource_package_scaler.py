@@ -76,7 +76,7 @@ class ResourcePackageScaler:
                 copy_to = os.path.normpath(os.path.join(os.getcwd(), copy_to))
                 print('Processing: ' + copy_to)
 
-                is_texture = ext is maze_config.textures_extensions
+                is_texture = ext in maze_config.textures_extensions
                 if is_texture:
                     if (scale == 1.0) or (not self.rescale_enabled):
                         shutil.copy2(copy_from, copy_to)
