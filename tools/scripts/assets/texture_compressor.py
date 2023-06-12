@@ -1,6 +1,7 @@
 import os
 import platform
 import shutil
+import texture_utils
 
 from utils import mkdir_p
 
@@ -44,6 +45,7 @@ class TextureCompressor:
                         'tool': 'crunch/osx/crunch',
                         'index': TextureCompressor.COMPRESSOR_CRUNCH,
                         'format': 'dds -dxt5',
+                        'format_alpha': 'dds -dxt1',
                         'args': ''
                     },
                 "Linux":
@@ -51,6 +53,7 @@ class TextureCompressor:
                         'tool': 'PVRTexTool/CLI/Linux_x86_32/PVRTexToolCLI',
                         'index': TextureCompressor.COMPRESSOR_PVRTEXTOOL,
                         'format': 'DXT5',
+                        'format_alpha': 'DXT1',
                         'args': ''
                     },
                 "Windows":
@@ -58,6 +61,7 @@ class TextureCompressor:
                         'tool': 'TheCompressonator\\TheCompressonator.exe',
                         'index': TextureCompressor.COMPRESSOR_COMPRESSONATOR,
                         'format': 'DXT5',
+                        'format_alpha': 'DXT1',
                         'args': ''
                     }
             }
@@ -66,6 +70,7 @@ class TextureCompressor:
             self.tool = self.tools_folder + tools[system]['tool']
             self.tool_index = tools[system]['index']
             self.tool_format = tools[system]['format']
+            self.tool_format_alpha = tools[system]['format_alpha']
             self.tool_args = tools[system]['args']
             self.tool_file_extension = 'dds'
 
@@ -77,6 +82,7 @@ class TextureCompressor:
                         'tool': 'PVRTexTool/CLI/OSX_x86/PVRTexToolCLI',
                         'index': TextureCompressor.COMPRESSOR_PVRTEXTOOL,
                         'format': 'PVRTC1_4',
+                        'format_alpha': 'PVRTC1_4',
                         'args': '-m -pot + -square + -q {0}'.format(quality_mode)
                     },
                 "Linux":
@@ -84,6 +90,7 @@ class TextureCompressor:
                         'tool': 'PVRTexTool/CLI/Linux_x86_32/PVRTexToolCLI',
                         'index': TextureCompressor.COMPRESSOR_PVRTEXTOOL,
                         'format': 'PVRTC1_4',
+                        'format_alpha': 'PVRTC1_4',
                         'args': '-m -pot + -square + -q {0}'.format(quality_mode)
                     },
                 "Windows":
@@ -91,6 +98,7 @@ class TextureCompressor:
                         'tool': 'PVRTexTool\\CLI\\Windows_x86_32\\PVRTexToolCLI.exe',
                         'index': TextureCompressor.COMPRESSOR_PVRTEXTOOL,
                         'format': 'PVRTC1_4',
+                        'format_alpha': 'PVRTC1_4',
                         'args': '-m -pot + -square + -q {0}'.format(quality_mode)
                     }
             }
@@ -99,6 +107,7 @@ class TextureCompressor:
             self.tool = self.tools_folder + tools[system]['tool']
             self.tool_index = tools[system]['index']
             self.tool_format = tools[system]['format']
+            self.tool_format_alpha = tools[system]['format_alpha']
             self.tool_args = tools[system]['args']
             self.tool_file_extension = 'pvr'
 
@@ -110,6 +119,7 @@ class TextureCompressor:
                         'tool': 'PVRTexTool/CLI/OSX_x86/PVRTexToolCLI',
                         'index': TextureCompressor.COMPRESSOR_PVRTEXTOOL,
                         'format': 'ASTC_4x4',
+                        'format_alpha': 'ASTC_4x4',
                         'args': '-m -pot + -square + -q {0}'.format(quality_mode)
                     },
                 "Linux":
@@ -117,6 +127,7 @@ class TextureCompressor:
                         'tool': 'PVRTexTool/CLI/Linux_x86_32/PVRTexToolCLI',
                         'index': TextureCompressor.COMPRESSOR_PVRTEXTOOL,
                         'format': 'ASTC_4x4',
+                        'format_alpha': 'ASTC_4x4',
                         'args': '-m -pot + -square + -q {0}'.format(quality_mode)
                     },
                 "Windows":
@@ -124,6 +135,7 @@ class TextureCompressor:
                         'tool': 'PVRTexTool\\CLI\\Windows_x86_32\\PVRTexToolCLI.exe',
                         'index': TextureCompressor.COMPRESSOR_PVRTEXTOOL,
                         'format': 'ASTC_4x4',
+                        'format_alpha': 'ASTC_4x4',
                         'args': '-m -pot + -square + -q {0}'.format(quality_mode)
                     }
             }
@@ -132,6 +144,7 @@ class TextureCompressor:
             self.tool = self.tools_folder + tools[system]['tool']
             self.tool_index = tools[system]['index']
             self.tool_format = tools[system]['format']
+            self.tool_format_alpha = tools[system]['format_alpha']
             self.tool_args = tools[system]['args']
             self.tool_file_extension = 'astc'
 
@@ -143,6 +156,7 @@ class TextureCompressor:
                         'tool': 'PVRTexTool/CLI/OSX_x86/PVRTexToolCLI',
                         'index': TextureCompressor.COMPRESSOR_PVRTEXTOOL,
                         'format': 'ASTC_6x6',
+                        'format_alpha': 'ASTC_6x6',
                         'args': '-m -pot + -square + -q {0}'.format(quality_mode)
                     },
                 "Linux":
@@ -150,6 +164,7 @@ class TextureCompressor:
                         'tool': 'PVRTexTool/CLI/Linux_x86_32/PVRTexToolCLI',
                         'index': TextureCompressor.COMPRESSOR_PVRTEXTOOL,
                         'format': 'ASTC_6x6',
+                        'format_alpha': 'ASTC_6x6',
                         'args': '-m -pot + -square + -q {0}'.format(quality_mode)
                     },
                 "Windows":
@@ -157,6 +172,7 @@ class TextureCompressor:
                         'tool': 'PVRTexTool\\CLI\\Windows_x86_32\\PVRTexToolCLI.exe',
                         'index': TextureCompressor.COMPRESSOR_PVRTEXTOOL,
                         'format': 'ASTC_6x6',
+                        'format_alpha': 'ASTC_6x6',
                         'args': '-m -pot + -square + -q {0}'.format(quality_mode)
                     }
             }
@@ -165,6 +181,7 @@ class TextureCompressor:
             self.tool = self.tools_folder + tools[system]['tool']
             self.tool_index = tools[system]['index']
             self.tool_format = tools[system]['format']
+            self.tool_format_alpha = tools[system]['format_alpha']
             self.tool_args = tools[system]['args']
             self.tool_file_extension = 'astc'
 
@@ -176,6 +193,7 @@ class TextureCompressor:
                         'tool': 'PVRTexTool/CLI/OSX_x86/PVRTexToolCLI',
                         'index': TextureCompressor.COMPRESSOR_PVRTEXTOOL,
                         'format': 'ETC2_RGBA',
+                        'format_alpha': 'ETC2_RGBA',
                         'args': '-m -pot + -square + -q {0}'.format(quality_mode)
                     },
                 "Linux":
@@ -183,6 +201,7 @@ class TextureCompressor:
                         'tool': 'PVRTexTool/CLI/Linux_x86_32/PVRTexToolCLI',
                         'index': TextureCompressor.COMPRESSOR_PVRTEXTOOL,
                         'format': 'ETC2_RGBA',
+                        'format_alpha': 'ETC2_RGBA',
                         'args': '-m -pot + -square + -q {0}'.format(quality_mode)
                     },
                 "Windows":
@@ -190,6 +209,7 @@ class TextureCompressor:
                         'tool': 'PVRTexTool\\CLI\\Windows_x86_32\\PVRTexToolCLI.exe',
                         'index': TextureCompressor.COMPRESSOR_PVRTEXTOOL,
                         'format': 'ETC2_RGBA',
+                        'format_alpha': 'ETC2_RGBA',
                         'args': '-m -pot + -square + -q {0}'.format(quality_mode)
                     }
             }
@@ -198,6 +218,7 @@ class TextureCompressor:
             self.tool = self.tools_folder + tools[system]['tool']
             self.tool_index = tools[system]['index']
             self.tool_format = tools[system]['format']
+            self.tool_format_alpha = tools[system]['format_alpha']
             self.tool_args = tools[system]['args']
             self.tool_file_extension = 'etc'
 
@@ -210,18 +231,20 @@ class TextureCompressor:
         final_ext = self.tool_file_extension
 
         if self.tool_index == TextureCompressor.COMPRESSOR_COMPRESSONATOR:
+            has_alpha = texture_utils.has_transparent_pixel(texture_full_path)
+            tool_format = self.tool_format_alpha if has_alpha else self.tool_format
             new_full_path = (os.path.dirname(texture_full_path) +
                              '/' +
                              name +
                              '.' +
                              final_ext).replace('\\', '/')
 
-            print('\t{0} COMPRESSION...'.format(self.tool_format))
+            print('\t{0} COMPRESSION...'.format(tool_format))
             system_command = '{0} -convert -overwrite {1} {2} +fourCC {3}'.format(
                 self.tool,
                 texture_full_path,
                 new_full_path,
-                self.tool_format)
+                tool_format)
             print(system_command)
             os.system(system_command)
             print(' ')
@@ -234,6 +257,8 @@ class TextureCompressor:
                 return texture_full_path
 
         if self.tool_index == TextureCompressor.COMPRESSOR_PVRTEXTOOL:
+            has_alpha = texture_utils.has_transparent_pixel(texture_full_path)
+            tool_format = self.tool_format_alpha if has_alpha else self.tool_format
             prev_full_path = (os.path.dirname(texture_full_path) + '/' + name + '.pvr').replace('\\', '/')
             new_full_path = (os.path.dirname(texture_full_path) +
                              '/' +
@@ -241,12 +266,12 @@ class TextureCompressor:
                              '.' +
                              final_ext).replace('\\', '/')
 
-            print('\t{0} COMPRESSION...'.format(self.tool_format))
+            print('\t{0} COMPRESSION...'.format(tool_format))
             system_command = '{0} -i {1} -o {2} -f {3} {4}'.format(
                 self.tool,
                 texture_full_path,
                 prev_full_path,
-                self.tool_format,
+                tool_format,
                 self.tool_args)
             print(system_command)
             os.system(system_command)
@@ -261,18 +286,20 @@ class TextureCompressor:
                 return texture_full_path
 
         if self.tool_index == TextureCompressor.COMPRESSOR_CRUNCH:
+            has_alpha = texture_utils.has_transparent_pixel(texture_full_path)
+            tool_format = self.tool_format_alpha if has_alpha else self.tool_format
             new_full_path = (os.path.dirname(texture_full_path) +
                              '/' +
                              name +
                              '.' +
                              final_ext).replace('\\', '/')
 
-            print('\t{0} COMPRESSION...'.format(self.tool_format))
+            print('\t{0} COMPRESSION...'.format(tool_format))
             system_command = '{0} -file {1} -out {2} -fileformat {3} {4}'.format(
                 self.tool,
                 texture_full_path,
                 new_full_path,
-                self.tool_format,
+                tool_format,
                 self.tool_args)
             print(system_command)
             os.system(system_command)
@@ -286,6 +313,8 @@ class TextureCompressor:
                 return texture_full_path
 
         if self.tool_index == TextureCompressor.COMPRESSOR_ASTCEVALUATIONCODEC:
+            has_alpha = texture_utils.has_transparent_pixel(texture_full_path)
+            tool_format = self.tool_format_alpha if has_alpha else self.tool_format
             astc_full_path = (os.path.dirname(texture_full_path) + '/' + name + '.astc').replace('\\', '/')
             new_full_path = (os.path.dirname(texture_full_path) +
                              '/' +
@@ -293,12 +322,12 @@ class TextureCompressor:
                              '.' +
                              final_ext).replace('\\', '/')
 
-            print('\t{0} COMPRESSION...'.format(self.tool_format))
+            print('\t{0} COMPRESSION...'.format(tool_format))
             system_command = '{0} -c {1} {2} 4x4 -f {3} {4}'.format(
                 self.tool,
                 texture_full_path,
                 astc_full_path,
-                self.tool_format,
+                tool_format,
                 self.tool_args)
             print(system_command)
             os.system(system_command)
