@@ -178,6 +178,10 @@ class MakeData:
                     shutil.copyfile(copy_from, copy_to)
 
                 if is_texture:
+
+                    if name.endswith('_Normal'):
+                        compression_enabled = False
+
                     im_src = Image.open(copy_to)
                     parameters.append('width={0}'.format(im_src.size[0]))
                     parameters.append('height={0}'.format(im_src.size[1]))
