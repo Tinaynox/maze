@@ -58,6 +58,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(ExampleFPSCameraController);
     MAZE_USING_SHARED_PTR(Rotor3D);
+    MAZE_USING_SHARED_PTR(SystemTextRenderer3D);
 
 
     //////////////////////////////////////////
@@ -73,9 +74,24 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    struct ExampleTextureData
+    {
+        MeshRendererPtr renderer;
+        AssetFilePtr file;
+        String textureName;
+        U32 loadTime = 0u;
+        MaterialPtr material;
+        Texture2DPtr texture;
+        SystemTextRenderer3DPtr labelRenderer;
+    };
+
+
+    //////////////////////////////////////////
     struct ExampleMeshData
     {
         MeshRendererPtr renderer;
+        AssetFilePtr file;
+        U32 loadTime = 0u;
         MaterialPtr material;
         MaterialPtr materialDebugNormalWS;
         MaterialPtr materialDebugTangentOS;
@@ -135,6 +151,9 @@ namespace Maze
         void addTexturePreview(String const& _textureName);
 
         //////////////////////////////////////////
+        void updateTextureLabel(ExampleTextureData const& _value);
+
+        //////////////////////////////////////////
         void addTexturePreviewSpace();
 
 
@@ -149,6 +168,13 @@ namespace Maze
 
         //////////////////////////////////////////
         void updateHintText();
+
+
+        //////////////////////////////////////////
+        void setTextureMipmapsEnabled(bool _value);
+
+        //////////////////////////////////////////
+        void updateTextureMipmaps();
 
 
         //////////////////////////////////////////
@@ -175,7 +201,8 @@ namespace Maze
 
         Vec2DF m_cursorPositionLastFrame = Vec2DF::c_zero;
 
-        S32 m_texturesCount = 0;
+        bool m_textureMipmapsEnabled = false;
+        Vector<ExampleTextureData> m_textureData;
         F32 m_texturesOffset = 0.0f;
 
         Vector<ExampleMeshData> m_meshData;

@@ -391,10 +391,17 @@ namespace Maze
         
         AssetFilePtr const& textureAssetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_textureName);
 
-        F32 x = (m_texturesCount - 10) * 3.0f + m_texturesOffset;
+        F32 x = ((S32)m_textureData.size() - 10) * 3.0f + m_texturesOffset;
         transform->setLocalPosition(-x, 1.5f, -8.0f);
         transform->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
 
+        ExampleTextureData textureData;
+        textureData.renderer = meshRenderer;
+        textureData.file = textureAssetFile;
+        textureData.loadTime = loadTime;
+        textureData.material = material;
+        textureData.texture = texture2D;
+        textureData.textureName = _textureName;
 
         {
             EntityPtr pedestalEntity = createEntity("Pedestal");
@@ -421,35 +428,42 @@ namespace Maze
                 transform->getLocalPosition().z);
             labelRenderer->getTransform()->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
 
-            S32 bytesCount = (S32)PixelFormat::CalculateRequiredBytes(
-                (U32)texture2D->getWidth(),
-                (U32)texture2D->getHeight(),
-                1u,
-                texture2D->getInternalPixelFormat());
-            labelRenderer->setTextFormatted(
-                "%s (%d b)\n"
-                "Size: %dx%d (%d b)\n"
-                "Format: %s\n"
-                "Min: %s Mag: %s\n"
-                "WrapS: %s WrapT: %s\n"
-                "Load time: %u ms",
-                _textureName.c_str(),
-                (S32)textureAssetFile->getFileSize(),
-                texture2D->getWidth(),
-                texture2D->getHeight(),
-                bytesCount,
-                PixelFormat::ToString(texture2D->getInternalPixelFormat()).c_str(),
-                texture2D->getMinFilter().toCString(), texture2D->getMagFilter().toCString(),
-                texture2D->getWrapS().toCString(), texture2D->getWrapT().toCString(),
-                loadTime);
+            textureData.labelRenderer = labelRenderer;
 
             labelRenderer->setFontSize(8);
             labelRenderer->getTransform()->setLocalScaleX(0.7f);
             labelRenderer->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefault3DOutlined());
 
+            updateTextureLabel(textureData);
         }
 
-        ++m_texturesCount;
+        m_textureData.emplace_back(textureData);
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::updateTextureLabel(ExampleTextureData const& _value)
+    {
+        S32 bytesCount = (S32)PixelFormat::CalculateRequiredBytes(
+            (U32)_value.texture->getWidth(),
+            (U32)_value.texture->getHeight(),
+            1u,
+            _value.texture->getInternalPixelFormat());
+        _value.labelRenderer->setTextFormatted(
+            "%s (%d b)\n"
+            "Size: %dx%d (%d b)\n"
+            "Format: %s\n"
+            "Min: %s Mag: %s\n"
+            "WrapS: %s WrapT: %s\n"
+            "Load time: %u ms",
+            _value.textureName.c_str(),
+            (S32)_value.file->getFileSize(),
+            _value.texture->getWidth(),
+            _value.texture->getHeight(),
+            bytesCount,
+            PixelFormat::ToString(_value.texture->getInternalPixelFormat()).c_str(),
+            _value.texture->getMinFilter().toCString(), _value.texture->getMagFilter().toCString(),
+            _value.texture->getWrapS().toCString(), _value.texture->getWrapT().toCString(),
+            _value.loadTime);
     }
 
     //////////////////////////////////////////
@@ -492,6 +506,8 @@ namespace Maze
 
         ExampleMeshData meshData;
         meshData.renderer = meshRenderer;
+        meshData.file = meshAssetFile;
+        meshData.loadTime = loadTime;
         meshData.material = meshRenderer->getMaterial();
         {
             meshData.materialDebugNormalWS = meshData.material->createCopy();
@@ -605,17 +621,47 @@ namespace Maze
         m_hintText->setTextFormatted(
             "[CONTROLS]\n"
             "Movement - WASD, Camera - RMB (Hold)\n"
+            "%s - M\n"
             "Change Mesh Material - 1..%d\n"
             "%s - R\n"
             "\n"
             "[INFO]\n"
+            "Texture Mipmaps: %s\n"
             "Mesh Material: %s\n"
             "Mesh Rotor: %s",
+            m_textureMipmapsEnabled ? "Disable Mipmaps" : "Enable Mipmaps",
             (S32)ExampleMeshRenderMode::MAX - 1,
             m_rotorEnabled ? "Disable Rotor" : "Enable Rotor",
+            m_textureMipmapsEnabled ? "ON" : "OFF",
             m_meshRenderMode.toCString(),
             m_rotorEnabled ? "ON" : "OFF"
         );
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::setTextureMipmapsEnabled(bool _value)
+    {
+        if (m_textureMipmapsEnabled == _value)
+            return;
+        
+        m_textureMipmapsEnabled = _value;
+
+        updateTextureMipmaps();
+        updateHintText();
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::updateTextureMipmaps()
+    {
+        for (ExampleTextureData const& textureData : m_textureData)
+        {
+            if (textureData.texture)
+            {
+                textureData.texture->setMinFilter(
+                    m_textureMipmapsEnabled ? TextureFilter::LinearMipmapLinear : TextureFilter::Linear);
+                updateTextureLabel(textureData);
+            }
+        }
     }
 
     //////////////////////////////////////////
@@ -726,6 +772,11 @@ namespace Maze
                     case KeyCode::R:
                     {
                         setRotorEnabled(!m_rotorEnabled);
+                        break;
+                    }
+                    case KeyCode::M:
+                    {
+                        setTextureMipmapsEnabled(!m_textureMipmapsEnabled);
                         break;
                     }
                     default:
