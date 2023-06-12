@@ -224,11 +224,14 @@ class TextureCompressor:
                 self.tool_format)
             print(system_command)
             os.system(system_command)
-            os.remove(texture_full_path)
             print(' ')
-            print('\tCOMPRESSED.')
-
-            return new_full_path
+            if os.path.exists(new_full_path):
+                os.remove(texture_full_path)
+                print('\tCOMPRESSED.')
+                return new_full_path
+            else:
+                print('\tCOMPRESSION FAILED.')
+                return texture_full_path
 
         if self.tool_index == TextureCompressor.COMPRESSOR_PVRTEXTOOL:
             prev_full_path = (os.path.dirname(texture_full_path) + '/' + name + '.pvr').replace('\\', '/')
@@ -247,13 +250,15 @@ class TextureCompressor:
                 self.tool_args)
             print(system_command)
             os.system(system_command)
-            os.remove(texture_full_path)
-            os.rename(prev_full_path, new_full_path)
-            print('final_ext=' + final_ext + ' new_full_path=' + new_full_path)
             print(' ')
-            print('\tCOMPRESSED.')
-
-            return new_full_path
+            if os.path.exists(prev_full_path):
+                os.remove(texture_full_path)
+                os.rename(prev_full_path, new_full_path)
+                print('\tCOMPRESSED.')
+                return new_full_path
+            else:
+                print('\tCOMPRESSION FAILED.')
+                return texture_full_path
 
         if self.tool_index == TextureCompressor.COMPRESSOR_CRUNCH:
             new_full_path = (os.path.dirname(texture_full_path) +
@@ -271,11 +276,14 @@ class TextureCompressor:
                 self.tool_args)
             print(system_command)
             os.system(system_command)
-            os.remove(texture_full_path)
             print(' ')
-            print('\tCOMPRESSED.')
-
-            return new_full_path
+            if os.path.exists(new_full_path):
+                os.remove(texture_full_path)
+                print('\tCOMPRESSED.')
+                return new_full_path
+            else:
+                print('\tCOMPRESSION FAILED.')
+                return texture_full_path
 
         if self.tool_index == TextureCompressor.COMPRESSOR_ASTCEVALUATIONCODEC:
             astc_full_path = (os.path.dirname(texture_full_path) + '/' + name + '.astc').replace('\\', '/')
@@ -294,12 +302,15 @@ class TextureCompressor:
                 self.tool_args)
             print(system_command)
             os.system(system_command)
-            os.remove(texture_full_path)
-            os.rename(astc_full_path, new_full_path)
             print(' ')
-            print('\tCOMPRESSED.')
-
-            return new_full_path
+            if os.path.exists(astc_full_path):
+                os.remove(texture_full_path)
+                os.rename(astc_full_path, new_full_path)
+                print('\tCOMPRESSED.')
+                return new_full_path
+            else:
+                print('\tCOMPRESSION FAILED.')
+                return texture_full_path
 
         return texture_full_path
 
