@@ -8,5 +8,5 @@ if not exist %BUILD_DIR% (
 cd %BUILD_DIR%
 
 call %~dp0\assembly-resources-x1.0-nc.bat
-call python %MAZE_ENGINE_DIR%\..\examples\templates\resources\copy_resources.py --src %RESOURCES_X1_NC_DIR% --dst %BUILD_DIR%\data
+call python %MAZE_ENGINE_DIR%\..\tools\scripts\assets\copy_resources.py --src %RESOURCES_X1_NC_DIR% --dst %BUILD_DIR%\data
 xcopy /s/y/e/q  %EXAMPLES_LIB_DIR%\x64 %BUILD_DIR%

@@ -13,6 +13,9 @@ class TextureCompressor:
     COMPRESSOR_CRUNCH = 3
     COMPRESSOR_ASTCEVALUATIONCODEC = 4
 
+    EXTENSION_COMPRESSION = 0
+    EXTENSION_DO_NOT_CHANGE = 1
+
     def __init__(self, texture_compression, mode, tools_folder, temp_folder):
         self.texture_compression = texture_compression
         self.mode = mode
@@ -203,13 +206,15 @@ class TextureCompressor:
         if self.tool_index == TextureCompressor.COMPRESSOR_NONE:
             return texture_full_path
 
+        name, ext = os.path.splitext(os.path.basename(texture_full_path))
+        final_ext = self.tool_file_extension
+
         if self.tool_index == TextureCompressor.COMPRESSOR_COMPRESSONATOR:
-            name, ext = os.path.splitext(os.path.basename(texture_full_path))
             new_full_path = (os.path.dirname(texture_full_path) +
                              '/' +
                              name +
                              '.' +
-                             self.tool_file_extension).replace('\\', '/')
+                             final_ext).replace('\\', '/')
 
             print('\t{0} COMPRESSION...'.format(self.tool_format))
             system_command = '{0} -convert -overwrite {1} {2} +fourCC {3}'.format(
@@ -226,13 +231,12 @@ class TextureCompressor:
             return new_full_path
 
         if self.tool_index == TextureCompressor.COMPRESSOR_PVRTEXTOOL:
-            name, ext = os.path.splitext(os.path.basename(texture_full_path))
             prev_full_path = (os.path.dirname(texture_full_path) + '/' + name + '.pvr').replace('\\', '/')
             new_full_path = (os.path.dirname(texture_full_path) +
                              '/' +
                              name +
                              '.' +
-                             self.tool_file_extension).replace('\\', '/')
+                             final_ext).replace('\\', '/')
 
             print('\t{0} COMPRESSION...'.format(self.tool_format))
             system_command = '{0} -i {1} -o {2} -f {3} {4}'.format(
@@ -245,20 +249,18 @@ class TextureCompressor:
             os.system(system_command)
             os.remove(texture_full_path)
             os.rename(prev_full_path, new_full_path)
+            print('final_ext=' + final_ext + ' new_full_path=' + new_full_path)
             print(' ')
             print('\tCOMPRESSED.')
 
             return new_full_path
 
         if self.tool_index == TextureCompressor.COMPRESSOR_CRUNCH:
-
-            name, ext = os.path.splitext(os.path.basename(texture_full_path))
-
             new_full_path = (os.path.dirname(texture_full_path) +
                              '/' +
                              name +
                              '.' +
-                             self.tool_file_extension).replace('\\', '/')
+                             final_ext).replace('\\', '/')
 
             print('\t{0} COMPRESSION...'.format(self.tool_format))
             system_command = '{0} -file {1} -out {2} -fileformat {3} {4}'.format(
@@ -276,13 +278,12 @@ class TextureCompressor:
             return new_full_path
 
         if self.tool_index == TextureCompressor.COMPRESSOR_ASTCEVALUATIONCODEC:
-            name, ext = os.path.splitext(os.path.basename(texture_full_path))
             astc_full_path = (os.path.dirname(texture_full_path) + '/' + name + '.astc').replace('\\', '/')
             new_full_path = (os.path.dirname(texture_full_path) +
                              '/' +
                              name +
                              '.' +
-                             self.tool_file_extension).replace('\\', '/')
+                             final_ext).replace('\\', '/')
 
             print('\t{0} COMPRESSION...'.format(self.tool_format))
             system_command = '{0} -c {1} {2} 4x4 -f {3} {4}'.format(

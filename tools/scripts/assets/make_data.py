@@ -18,6 +18,9 @@ from utils import mkdir_p
 
 class MakeData:
 
+    TEXTURE_EXTENSION_POLICY_DEFAULT = 0
+    TEXTURE_EXTENSION_POLICY_DO_NOT_CHANGE = 1
+
     def __init__(self, args):
         self.cache = None
         self.input = os.path.abspath(args.src)
@@ -26,9 +29,11 @@ class MakeData:
         self.temp = os.path.abspath(args.temp)
 
         self.texture_compression = args.tcompression
+        self.texture_compression_ext_policy = args.tcompression_ext_policy
+
         self.mode = args.mode
         self.folder_iterator = folder_iterator.FolderIterator()
-        self.need_to_change_textures_extensions = False
+        self.need_to_change_textures_extensions = False #TODO: Rework with self.texture_compression_ext_policy
         self.root_folder = args.root
         self.cache_name = os.path.abspath('{0}/{1}'.format(self.temp, args.cache))
         if args.max_atlas_size:
@@ -181,6 +186,12 @@ class MakeData:
                     if compression_enabled:
                         copy_to = self.texture_compressor.compress_texture(copy_to)
                 compressed_name, compressed_ext = os.path.splitext(copy_to)
+
+                if is_texture and compression_enabled:
+                    if self.texture_compression_ext_policy == MakeData.TEXTURE_EXTENSION_POLICY_DO_NOT_CHANGE:
+                        new_full_name = copy_to.replace(compressed_ext, ext)
+                        os.rename(copy_to, new_full_name)
+                        copy_to = new_full_name
 
                 if is_texture and self.need_to_change_textures_extensions and change_extension_enabled:
                     if os.path.exists(final_full_path_name):
@@ -367,6 +378,12 @@ class MakeData:
                                     full_name = self.texture_compressor.compress_texture(full_name)
                                 compressed_name, compressed_ext = os.path.splitext(full_name)
 
+                                if compression_enabled:
+                                    if self.texture_compression_ext_policy == MakeData.TEXTURE_EXTENSION_POLICY_DO_NOT_CHANGE:
+                                        new_full_name = full_name.replace(compressed_ext, local_ext)
+                                        os.rename(full_name, new_full_name)
+                                        full_name = new_full_name
+
                                 if self.need_to_change_textures_extensions and change_extension_enabled:
                                     new_name = output_folder + local_name + maze_config.maze_texture_extension
                                     if os.path.exists(new_name):
@@ -425,6 +442,7 @@ if __name__ == '__main__':
     parser.add_argument('--tools', type=str, help='Tools folder')
     parser.add_argument('--temp', type=str, help='Temp folder')
     parser.add_argument('--tcompression', type=str, help='Texture compression')
+    parser.add_argument('--tcompression-ext-policy', type=int, help='Texture compression extension policy')
     parser.add_argument('--cache', type=str, help='Cache name')
     parser.add_argument('--root', type=str, help='Root folder')
     parser.add_argument('--mode', type=str, help='Production mode')

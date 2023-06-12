@@ -23,7 +23,7 @@ class CopyResources:
 
         self.prepare()
 
-        print('Assembly Data...')
+        print('Copying assets...')
         print('Input: ' + self.input)
         print('Output: ' + self.output)
 
