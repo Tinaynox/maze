@@ -44,24 +44,24 @@ class TextureCompressor:
                     {
                         'tool': 'crunch/osx/crunch',
                         'index': TextureCompressor.COMPRESSOR_CRUNCH,
-                        'format': 'dds -dxt5',
-                        'format_alpha': 'dds -dxt1',
+                        'format': 'dds -dxt1',
+                        'format_alpha': 'dds -dxt5',
                         'args': ''
                     },
                 "Linux":
                     {
                         'tool': 'PVRTexTool/CLI/Linux_x86_32/PVRTexToolCLI',
                         'index': TextureCompressor.COMPRESSOR_PVRTEXTOOL,
-                        'format': 'DXT5',
-                        'format_alpha': 'DXT1',
+                        'format': 'DXT1',
+                        'format_alpha': 'DXT5',
                         'args': ''
                     },
                 "Windows":
                     {
                         'tool': 'TheCompressonator\\TheCompressonator.exe',
                         'index': TextureCompressor.COMPRESSOR_COMPRESSONATOR,
-                        'format': 'DXT5',
-                        'format_alpha': 'DXT1',
+                        'format': 'DXT1',
+                        'format_alpha': 'DXT5',
                         'args': ''
                     }
             }
