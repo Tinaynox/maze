@@ -227,12 +227,16 @@ class TextureCompressor:
         if self.tool_index == TextureCompressor.COMPRESSOR_NONE:
             return texture_full_path
 
+        if not texture_utils.is_pot_texture(texture_full_path):
+            return texture_full_path
+
+        has_alpha = texture_utils.has_transparent_pixel(texture_full_path)
+        tool_format = self.tool_format_alpha if has_alpha else self.tool_format
+
         name, ext = os.path.splitext(os.path.basename(texture_full_path))
         final_ext = self.tool_file_extension
 
         if self.tool_index == TextureCompressor.COMPRESSOR_COMPRESSONATOR:
-            has_alpha = texture_utils.has_transparent_pixel(texture_full_path)
-            tool_format = self.tool_format_alpha if has_alpha else self.tool_format
             new_full_path = (os.path.dirname(texture_full_path) +
                              '/' +
                              name +
@@ -257,8 +261,6 @@ class TextureCompressor:
                 return texture_full_path
 
         if self.tool_index == TextureCompressor.COMPRESSOR_PVRTEXTOOL:
-            has_alpha = texture_utils.has_transparent_pixel(texture_full_path)
-            tool_format = self.tool_format_alpha if has_alpha else self.tool_format
             prev_full_path = (os.path.dirname(texture_full_path) + '/' + name + '.pvr').replace('\\', '/')
             new_full_path = (os.path.dirname(texture_full_path) +
                              '/' +
@@ -286,8 +288,6 @@ class TextureCompressor:
                 return texture_full_path
 
         if self.tool_index == TextureCompressor.COMPRESSOR_CRUNCH:
-            has_alpha = texture_utils.has_transparent_pixel(texture_full_path)
-            tool_format = self.tool_format_alpha if has_alpha else self.tool_format
             new_full_path = (os.path.dirname(texture_full_path) +
                              '/' +
                              name +
@@ -313,8 +313,6 @@ class TextureCompressor:
                 return texture_full_path
 
         if self.tool_index == TextureCompressor.COMPRESSOR_ASTCEVALUATIONCODEC:
-            has_alpha = texture_utils.has_transparent_pixel(texture_full_path)
-            tool_format = self.tool_format_alpha if has_alpha else self.tool_format
             astc_full_path = (os.path.dirname(texture_full_path) + '/' + name + '.astc').replace('\\', '/')
             new_full_path = (os.path.dirname(texture_full_path) +
                              '/' +

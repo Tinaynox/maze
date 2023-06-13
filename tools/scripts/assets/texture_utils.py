@@ -11,3 +11,14 @@ def has_transparent_pixel(image_path):
             return True
     image.close()
     return False
+
+
+def is_power_of_two(n):
+    return n > 0 and (n & (n - 1)) == 0
+
+
+def is_pot_texture(image_path):
+    image = Image.open(image_path)
+    result = is_power_of_two(image.size[0]) and is_power_of_two(image.size[1])
+    image.close()
+    return result
