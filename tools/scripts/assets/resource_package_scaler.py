@@ -56,7 +56,7 @@ class ResourcePackageScaler:
             copy_from_time = copy_from_stat.st_mtime
 
             info_file_path = '{0}.meta'.format(copy_from)
-            parameters = []
+            parameters = {}
             if os.path.exists(info_file_path):
                 info_input_file = open(info_file_path)
                 content = info_input_file.read()
