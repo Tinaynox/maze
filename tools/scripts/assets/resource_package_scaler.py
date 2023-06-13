@@ -55,6 +55,18 @@ class ResourcePackageScaler:
             copy_from_stat = os.stat(copy_from)
             copy_from_time = copy_from_stat.st_mtime
 
+            info_file_path = '{0}.meta'.format(copy_from)
+            parameters = []
+            if os.path.exists(info_file_path):
+                info_input_file = open(info_file_path)
+                content = info_input_file.read()
+                info_input_file.close()
+
+                for entry in content.split('\n'):
+                    s = entry.split('=')
+                    if len(s) == 2:
+                        parameters[s[0]] = s[1]
+
             if not copy_required:
 
                 copy_to_stat = os.stat(copy_to)
@@ -78,7 +90,12 @@ class ResourcePackageScaler:
 
                 is_texture = ext in maze_config.textures_extensions
                 if is_texture:
-                    if (scale == 1.0) or (not self.rescale_enabled):
+                    rescale_enabled = self.rescale_enabled
+
+                    if ('rescale_disabled' in self.src_parameters) and (self.src_parameters['rescale_disabled'] == '1'):
+                        rescale_enabled = False
+
+                    if (scale == 1.0) or (not rescale_enabled):
                         shutil.copy2(copy_from, copy_to)
                     else:
                         im_src = Image.open(copy_from)
