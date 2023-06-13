@@ -92,7 +92,7 @@ class ResourcePackageScaler:
                 if is_texture:
                     rescale_enabled = self.rescale_enabled
 
-                    if ('rescale_disabled' in self.src_parameters) and (self.src_parameters['rescale_disabled'] == '1'):
+                    if ('rescale_disabled' in parameters) and (parameters['rescale_disabled'] == '1'):
                         rescale_enabled = False
 
                     if (scale == 1.0) or (not rescale_enabled):
