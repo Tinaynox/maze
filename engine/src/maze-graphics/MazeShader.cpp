@@ -833,7 +833,7 @@ namespace Maze
 
         for (auto const& uniformData : m_uniformsCache)
         {
-            if (uniformData.second)
+            if (uniformData.second && uniformData.second->getType() != ShaderUniformType::None)
                 uniforms.push_back(uniformData.second->getValue());
         }
 

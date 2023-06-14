@@ -516,12 +516,16 @@ namespace Maze
             case ShaderUniformType::UniformVec2DF:         return set(_variant.getVec2DF());
             case ShaderUniformType::UniformVec3DF:         return set(_variant.getVec3DF());
             case ShaderUniformType::UniformVec4DF:         return set(_variant.getVec4DF());
+            case ShaderUniformType::UniformVec2DB:         return set(_variant.getVec2DB());
+            case ShaderUniformType::UniformVec3DB:         return set(_variant.getVec3DB());
+            case ShaderUniformType::UniformVec4DB:         return set(_variant.getVec4DB());
             case ShaderUniformType::UniformMat3DF:         return set(_variant.getMat3DF());
             case ShaderUniformType::UniformMat4DF:         return set(_variant.getMat4DF());
             case ShaderUniformType::UniformColorF128:      return set(_variant.getColorF128());
             default:
             {
-                MAZE_ERROR("Unsupported uniform variant - %d", (S32)_variant.getType());    
+                MAZE_ERROR("%s: Unsupported ShaderUniformType - %s(%d), value=%s",
+                    getName().c_str(), _variant.getType().toCString(), (S32)_variant.getType(), _variant.toStringValue().c_str());
             }
         }
 

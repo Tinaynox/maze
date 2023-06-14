@@ -912,7 +912,8 @@ namespace Maze
             case ShaderUniformType::UniformColorF128:      set(_variant.getColorF128()); break;
             default:
             {
-                MAZE_ERROR("Unsupported uniform variant - %d", (S32)_variant.getType());    
+                MAZE_ERROR("%s: Unsupported ShaderUniformType - %s(%d), value=%s",
+                    getName().c_str(), _variant.getType().toCString(), (S32)_variant.getType(), _variant.toStringValue().c_str());
             }
         }
 
