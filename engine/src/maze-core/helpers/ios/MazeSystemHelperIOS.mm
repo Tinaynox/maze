@@ -36,14 +36,14 @@ namespace Maze
 {
     //////////////////////////////////////////
     namespace SystemHelper
-    {
+    {        
         //////////////////////////////////////////
-        MAZE_CORE_API void OpenURL(String const& _url)
+        MAZE_CORE_API void OpenURL(Path const& _url)
         {
             CFURLRef urlR = CFURLCreateWithBytes (
                 NULL,
                 (UInt8*)_url.c_str(),
-                _url.length(),
+                _url.size(),
                 kCFStringEncodingASCII,
                 NULL);
             

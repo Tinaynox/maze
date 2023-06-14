@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/helpers/MazeSystemHelper.hpp"
+#include "maze-core/system/MazePath.hpp"
 
 
 //////////////////////////////////////////
@@ -41,7 +42,7 @@ namespace Maze
     namespace SystemHelper
     {
         //////////////////////////////////////////
-        MAZE_CORE_API void OpenURL(String const& _url);
+        MAZE_CORE_API void OpenURL(Path const& _url);
     
         //////////////////////////////////////////
         MAZE_CORE_API GeoLocation GetGeoLocation();

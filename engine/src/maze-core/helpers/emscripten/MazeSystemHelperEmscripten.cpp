@@ -28,6 +28,7 @@
 #include "maze-core/helpers/emscripten/MazeSystemHelperEmscripten.hpp"
 #include "maze-core/helpers/MazeSystemHelper.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
+#include <emscripten.h>
 
 
 //////////////////////////////////////////
@@ -36,6 +37,14 @@ namespace Maze
     //////////////////////////////////////////
     namespace SystemHelper
     {
+        //////////////////////////////////////////
+        MAZE_CORE_API void OpenURL(Path const& _url)
+        {
+            EM_ASM_({
+                window.open(UTF8ToString($0), '_blank');
+            }, _url.c_str());
+        }
+        
         //////////////////////////////////////////
         MAZE_CORE_API GeoLocation GetGeoLocation()
         {

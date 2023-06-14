@@ -38,6 +38,13 @@ namespace Maze
     namespace SystemHelper
     {
         //////////////////////////////////////////
+        MAZE_CORE_API void OpenURL(Path const& _url)
+        {
+
+
+        }
+        
+        //////////////////////////////////////////
         MAZE_CORE_API GeoLocation GetGeoLocation()
         {
             CString countryCode = [[[NSLocale currentLocale] countryCode] UTF8String];
