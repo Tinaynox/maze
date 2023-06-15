@@ -33,6 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/system/MazeGeoLocation.hpp"
+#include "maze-core/system/MazeGeoLanguage.hpp"
 #include "maze-core/system/MazePath.hpp"
 
 
@@ -45,6 +46,12 @@ namespace Maze
     {
         //////////////////////////////////////////
         MAZE_CORE_API extern GeoLocation GetGeoLocation();
+
+        //////////////////////////////////////////
+        MAZE_CORE_API extern GeoLanguage GetUserLanguage();
+
+        //////////////////////////////////////////
+        MAZE_CORE_API extern GeoLanguage GetSystemLanguage();
 
         //////////////////////////////////////////
         MAZE_CORE_API String ConstructSystemInfo();

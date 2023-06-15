@@ -32,7 +32,6 @@
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
-#include "maze-core/system/MazeGeoLocation.hpp"
 
 
 //////////////////////////////////////////

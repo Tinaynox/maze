@@ -50,6 +50,21 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        MAZE_CORE_API GeoLanguage GetUserLanguage()
+        {
+            HKL keyboardLayout = GetKeyboardLayout(0);
+            LANGID languageId = LOWORD(keyboardLayout);
+            return LCIDToGeoLanguage((S32)languageId);
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API GeoLanguage GetSystemLanguage()
+        {
+            LANGID languageId = GetSystemDefaultUILanguage();
+            return LCIDToGeoLanguage((S32)languageId);
+        }
+
+        //////////////////////////////////////////
         MAZE_CORE_API void OpenURL(Path const& _url)
         {
             ShellExecuteW(NULL, L"open", _url.c_str(), NULL, NULL, SW_SHOW);

@@ -4,7 +4,7 @@ call var.bat
 
 
 set CMAKELISTS_DIR=%~dp0..\..\
-call ..\..\..\templates\prj\win\configure-emscripten-static.bat
+call ..\..\..\templates\prj\win\configure-emscripten-static-release.bat
 
 cd %~dp0
 xcopy /y/q ..\..\sys-res\enscripten\index.html %BUILD_DIR%\

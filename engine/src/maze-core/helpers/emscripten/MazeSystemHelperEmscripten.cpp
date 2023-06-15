@@ -28,7 +28,35 @@
 #include "maze-core/helpers/emscripten/MazeSystemHelperEmscripten.hpp"
 #include "maze-core/helpers/MazeSystemHelper.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
+#include "maze-core/services/MazeLogService.hpp"
+#include "maze-core/services/MazeLogStream.hpp"
 #include <emscripten.h>
+
+
+//////////////////////////////////////////
+inline Maze::String GetEmscriptenSystemLanguage()
+{
+    Maze::String result;
+    
+    const char* language = (const char*)EM_ASM_INT({
+        var language = navigator.language;
+        var buffer = Module._malloc(language.length + 1);
+        stringToUTF8(language, buffer, language.length + 1);
+        return buffer;
+    });
+    
+    if (language)
+    {
+        result = language;
+    
+        EM_ASM_INT({
+            Module._free($0);
+        }, language);
+    
+    }
+    
+    return result;
+}
 
 
 //////////////////////////////////////////
@@ -48,7 +76,6 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API GeoLocation GetGeoLocation()
         {
-            
             return GeoLocation::Unknown;
         }
         

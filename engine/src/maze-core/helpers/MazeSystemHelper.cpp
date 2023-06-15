@@ -49,6 +49,8 @@ namespace Maze
             info += String("\tDate Time(Local): ") + Maze::DateTimeHelper::GetDateTimeLocal().formatDateTime() + " (UTC+" + StringHelper::ToString((U32)timeZoneHours) + ")\n";
             info += String("\tDate Time(UTC): ") + Maze::DateTimeHelper::GetDateTimeUTC().formatDateTime() + "\n";
             info += String("\tGeoLocation: ") + GeoLocationToString(SystemHelper::GetGeoLocation()) + "\n";
+            info += String("\tSystemLanguage: ") + GeoLanguageToString(SystemHelper::GetSystemLanguage()) + "\n";
+            info += String("\tUserLanguage: ") + GeoLanguageToString(SystemHelper::GetUserLanguage()) + "\n";
             info += String("\tDevice Name: ") + GetDeviceName() + "\n";
 
             return info;
