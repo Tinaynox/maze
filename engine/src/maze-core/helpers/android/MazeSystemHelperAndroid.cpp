@@ -58,6 +58,18 @@ namespace Maze
         }
         
         //////////////////////////////////////////
+        MAZE_CORE_API GeoLanguage GetUserLanguage()
+        {
+            return GeoLanguage::Unknown;
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API GeoLanguage GetSystemLanguage()
+        {
+            return GeoLanguage::Unknown;
+        }
+        
+        //////////////////////////////////////////
         MAZE_CORE_API void SetupMazeDynLibDirectoriesPolicy()
         {
             

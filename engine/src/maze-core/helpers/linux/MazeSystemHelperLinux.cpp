@@ -66,6 +66,18 @@ namespace Maze
 
             return CallingCodeToGeoLocation(telephonePrefixS32);
         }
+        
+        //////////////////////////////////////////
+        MAZE_CORE_API GeoLanguage GetUserLanguage()
+        {
+            return GeoLanguage::Unknown;
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API GeoLanguage GetSystemLanguage()
+        {
+            return GeoLanguage::Unknown;
+        }
 
         //////////////////////////////////////////
         MAZE_CORE_API void SetupMazeDynLibDirectoriesPolicy()

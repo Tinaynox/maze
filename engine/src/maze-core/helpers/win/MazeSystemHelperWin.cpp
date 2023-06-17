@@ -54,14 +54,14 @@ namespace Maze
         {
             HKL keyboardLayout = GetKeyboardLayout(0);
             LANGID languageId = LOWORD(keyboardLayout);
-            return LCIDToGeoLanguage((S32)languageId);
+            return LocaleCodeToGeoLanguage((S32)languageId);
         }
 
         //////////////////////////////////////////
         MAZE_CORE_API GeoLanguage GetSystemLanguage()
         {
             LANGID languageId = GetSystemDefaultUILanguage();
-            return LCIDToGeoLanguage((S32)languageId);
+            return LocaleCodeToGeoLanguage((S32)languageId);
         }
 
         //////////////////////////////////////////

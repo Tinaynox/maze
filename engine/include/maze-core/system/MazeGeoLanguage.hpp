@@ -42,7 +42,7 @@ namespace Maze
     {
         String name;
         String ietfTag;
-        Set<S32> lcidCodes;
+        Set<S32> localeCodes;
     };
 
 
@@ -194,7 +194,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    GeoLanguage LCIDToGeoLanguage(S32 _value);
+    GeoLanguage LocaleCodeToGeoLanguage(S32 _value);
     
 } // namespace Maze
 //////////////////////////////////////////

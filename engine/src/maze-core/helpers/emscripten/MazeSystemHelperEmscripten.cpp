@@ -34,7 +34,7 @@
 
 
 //////////////////////////////////////////
-inline Maze::String GetEmscriptenSystemLanguage()
+inline Maze::String GetSystemLocale()
 {
     Maze::String result;
     
@@ -77,6 +77,25 @@ namespace Maze
         MAZE_CORE_API GeoLocation GetGeoLocation()
         {
             return GeoLocation::Unknown;
+        }
+        
+        //////////////////////////////////////////
+        MAZE_CORE_API GeoLanguage GetUserLanguage()
+        {
+            return GetSystemLanguage();
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API GeoLanguage GetSystemLanguage()
+        {
+            Maze::String localeLanguage = GetSystemLocale();
+            if (localeLanguage.empty())
+                return GeoLanguage::Unknown;
+            
+            Vector<String> words;
+            StringHelper::SplitWords(localeLanguage, words, '-');
+            
+            return IETFTagToGeoLanguage(words[0]);
         }
         
         //////////////////////////////////////////

@@ -32,6 +32,8 @@
 //////////////////////////////////////////
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/helpers/MazeSystemHelper.hpp"
+#include "maze-core/system/MazeGeoLocation.hpp"
+#include "maze-core/system/MazeGeoLanguage.hpp"
 #include "maze-core/system/MazePath.hpp"
 
 
@@ -46,6 +48,12 @@ namespace Maze
         
         //////////////////////////////////////////
         MAZE_CORE_API GeoLocation GetGeoLocation();
+        
+        //////////////////////////////////////////
+        MAZE_CORE_API GeoLanguage GetUserLanguage();
+
+        //////////////////////////////////////////
+        MAZE_CORE_API GeoLanguage GetSystemLanguage();
 
         //////////////////////////////////////////
         MAZE_CORE_API void SetupMazeDynLibDirectoriesPolicy();
