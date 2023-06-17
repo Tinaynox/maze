@@ -47,7 +47,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    enum class GeoLanguage
+    enum class GeoLanguage : U8
     {
         Unknown                 = 0,
         Afrikaans,
@@ -195,6 +195,41 @@ namespace Maze
 
     //////////////////////////////////////////
     GeoLanguage LocaleCodeToGeoLanguage(S32 _value);
+
+
+
+    //////////////////////////////////////////
+    // Serialization
+    //
+    //////////////////////////////////////////
+    inline void ValueToString(GeoLanguage const& _value, String& _data)
+    {
+        _data = GeoLanguageToString(_value);
+    }
+
+    //////////////////////////////////////////
+    inline void ValueFromString(GeoLanguage& _value, CString _data, Size _count)
+    {
+        _value = StringToGeoLanguage(String(_data, _count));
+    }
+
+    //////////////////////////////////////////
+    inline U32 GetValueSerializationSize(GeoLanguage const& _value)
+    {
+        return sizeof(GeoLanguage);
+    }
+
+    //////////////////////////////////////////
+    inline void SerializeValue(GeoLanguage const& _value, U8* _data)
+    {
+        memcpy(_data, (U8 const*)(&_value), sizeof(GeoLanguage));
+    }
+
+    //////////////////////////////////////////
+    inline void DeserializeValue(GeoLanguage& _value, U8 const* _data)
+    {
+        memcpy((U8*)&_value, _data, sizeof(GeoLanguage));
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

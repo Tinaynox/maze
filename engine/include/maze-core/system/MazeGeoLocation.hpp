@@ -48,7 +48,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    enum class GeoLocation
+    enum class GeoLocation : U32
     {
         Unknown                                               = 0,
         AntiguaAndBarbuda                                     = 2,
@@ -376,6 +376,41 @@ namespace Maze
 
     //////////////////////////////////////////
     GeoLocation ISO3ToGeoLocation(String const& _code);
+
+
+
+    //////////////////////////////////////////
+    // Serialization
+    //
+    //////////////////////////////////////////
+    inline void ValueToString(GeoLocation const& _value, String& _data)
+    {
+        _data = GeoLocationToString(_value);
+    }
+
+    //////////////////////////////////////////
+    inline void ValueFromString(GeoLocation& _value, CString _data, Size _count)
+    {
+        _value = StringToGeoLocation(String(_data, _count));
+    }
+
+    //////////////////////////////////////////
+    inline U32 GetValueSerializationSize(GeoLocation const& _value)
+    {
+        return sizeof(GeoLocation);
+    }
+
+    //////////////////////////////////////////
+    inline void SerializeValue(GeoLocation const& _value, U8* _data)
+    {
+        memcpy(_data, (U8 const*)(&_value), sizeof(GeoLocation));
+    }
+
+    //////////////////////////////////////////
+    inline void DeserializeValue(GeoLocation& _value, U8 const* _data)
+    {
+        memcpy((U8*)&_value, _data, sizeof(GeoLocation));
+    }
     
     
 } // namespace Maze
