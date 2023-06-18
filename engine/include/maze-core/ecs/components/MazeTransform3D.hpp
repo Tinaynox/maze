@@ -397,6 +397,29 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        template <typename TComponent>
+        inline TComponent* getFirstTrunkComponent()
+        {
+            TComponent* component = this->getEntityRaw()->template getComponentRaw<TComponent>();
+            if (component)
+                return component;
+
+            if (m_parent)
+                return m_parent->template getFirstTrunkComponent<TComponent>();
+
+            return nullptr;
+        }
+
+        //////////////////////////////////////////
+        template <typename TComponent>
+        inline TComponent* getLastTrunkComponent()
+        {
+            TComponent* component = nullptr;
+            getLastTrunkComponentHelper<TComponent>(component);
+            return component;
+        }
+
+        //////////////////////////////////////////
         virtual bool isMetaPropertyCopyable(MetaProperty* _metaProperty) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
@@ -442,6 +465,19 @@ namespace Maze
 
         //////////////////////////////////////////
         void processEntityDisabled() MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
+        template <typename TComponent>
+        inline void getLastTrunkComponentHelper(TComponent*& _value)
+        {
+            TComponent* component = this->getEntityRaw()->template getComponentRaw<TComponent>();
+            if (component)
+                _value = component;
+
+            if (m_parent)
+                m_parent->template getLastTrunkComponentHelper<TComponent>(_value);
+        }
 
     public:
         //////////////////////////////////////////
