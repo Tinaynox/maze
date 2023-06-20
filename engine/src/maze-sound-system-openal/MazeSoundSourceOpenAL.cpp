@@ -178,6 +178,20 @@ namespace Maze
             pitch *= m_soundGroup->getPitch();
 
         MAZE_AL_CALL(mzalSourcef(m_sourceID, AL_PITCH, pitch));
+
+        MZALint state;
+        MAZE_AL_CALL(mzalGetSourcei(m_sourceID, AL_SOURCE_STATE, &state));
+        if (state != AL_STOPPED)
+        {
+            if (pitch == 0.0f)
+            {
+                MAZE_AL_CALL(mzalSourcePause(m_sourceID));
+            }
+            else
+            {
+                MAZE_AL_CALL(mzalSourcePlay(m_sourceID));
+            }
+        }
     }
 
     //////////////////////////////////////////
