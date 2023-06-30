@@ -27,6 +27,7 @@
 #include "MazeLoaderPNGHeader.hpp"
 #include "maze-plugin-loader-png/loaders/MazeLoaderPNG.hpp"
 #include "maze-graphics/MazePixelFormat.hpp"
+#include "maze-core/helpers/MazeFileHelper.hpp"
 #include <png.h>
 
 
@@ -236,6 +237,54 @@ namespace Maze
         memcpy(header, _fileData.getDataPointer(), PNGSIGSIZE);
         if (png_sig_cmp(header, 0, PNGSIGSIZE))
             return false;
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    MAZE_PLUGIN_LOADER_PNG_API bool SavePNGFile(Path _filePath, PixelSheet2D const& _pixelSheet)
+    {
+        MAZE_ERROR_RETURN_VALUE_IF(_pixelSheet.getFormat() != PixelFormat::RGBA_U8, false, "Usupported PixelSheet2D=%s!", ToString(_pixelSheet.getFormat()).c_str());
+
+        MAZE_ERROR_RETURN_VALUE_IF(_pixelSheet.getWidth() == 0 || _pixelSheet.getHeight() == 0, false, "Invalid pixelSheet!");
+
+        png_structp pngPtr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+        MAZE_ERROR_RETURN_VALUE_IF(!pngPtr, false, "Faile to create png struct!");
+
+        png_infop infoPtr = png_create_info_struct(pngPtr);
+        if (!infoPtr)
+        {
+            png_destroy_write_struct(&pngPtr, nullptr);
+            MAZE_ERROR_RETURN_VALUE(false, "Faile to create png info struct!");
+        }
+
+        FILE* file = StdHelper::OpenFile(_filePath, "wb");
+        MAZE_ERROR_RETURN_VALUE_IF(!file, false, "Failed to open file %s!", _filePath.toUTF8().c_str());
+        png_init_io(pngPtr, file);
+
+        png_set_IHDR(pngPtr, infoPtr, _pixelSheet.getWidth(), _pixelSheet.getHeight(), 8, PNG_COLOR_TYPE_RGBA,
+            PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+
+        png_write_info(pngPtr, infoPtr);
+        png_set_compression_level(pngPtr, 2);
+        png_set_compression_strategy(pngPtr, 2);
+        png_set_filter(pngPtr, 0, PNG_FILTER_NONE);
+
+        U8 const** rowPointers = new U8 const*[_pixelSheet.getHeight()];
+        for (S32 i = 0; i < _pixelSheet.getHeight(); i++)
+        {
+            U8 const* rowPointer = (_pixelSheet.getDataPointer() + _pixelSheet.getBytesPerRow() * (_pixelSheet.getHeight() - i - 1));
+            rowPointers[i] = rowPointer;
+        }
+
+        png_write_image(pngPtr, (png_bytepp)rowPointers);
+
+        png_write_end(pngPtr, infoPtr);
+        png_destroy_write_struct(&pngPtr, &infoPtr);
+
+        MAZE_DELETE_ARRAY(rowPointers);
+
+        fclose(file);
 
         return true;
     }

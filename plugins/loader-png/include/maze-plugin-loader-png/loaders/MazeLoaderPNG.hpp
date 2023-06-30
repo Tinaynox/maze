@@ -50,6 +50,9 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_PLUGIN_LOADER_PNG_API bool IsPNGFile(ByteBuffer const& _fileData);
 
+    //////////////////////////////////////////
+    MAZE_PLUGIN_LOADER_PNG_API bool SavePNGFile(Path _filePath, PixelSheet2D const& _pixelSheet);
+
 } // namespace Maze
 //////////////////////////////////////////
 
