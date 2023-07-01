@@ -270,7 +270,7 @@ namespace Maze
         png_set_compression_strategy(pngPtr, 2);
         png_set_filter(pngPtr, 0, PNG_FILTER_NONE);
 
-        U8 const** rowPointers = new U8 const*[_pixelSheet.getHeight()];
+        U8 const** rowPointers = MAZE_NEW_ARRAY(U8 const*, _pixelSheet.getHeight());
         for (S32 i = 0; i < _pixelSheet.getHeight(); i++)
         {
             U8 const* rowPointer = (_pixelSheet.getDataPointer() + _pixelSheet.getBytesPerRow() * (_pixelSheet.getHeight() - i - 1));
