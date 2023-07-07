@@ -76,7 +76,9 @@ namespace Maze
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
             Vec2DF const& _anchor,
-            Vec2DF const& _pivot)
+            Vec2DF const& _pivot,
+            HorizontalAlignment2D _horizontalAlignment,
+            VerticalAlignment2D _verticalAlignment)
         {
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
@@ -139,8 +141,8 @@ namespace Maze
             TextRenderer2DPtr textRenderer = UIHelper::CreateText(
                 "",
                 _fontSize,
-                HorizontalAlignment2D::Left,
-                VerticalAlignment2D::Middle,
+                _horizontalAlignment,
+                _verticalAlignment,
                 _size + Vec2DF(-10.0f, 0.0f),
                 Vec2DF::c_zero,
                 transform,

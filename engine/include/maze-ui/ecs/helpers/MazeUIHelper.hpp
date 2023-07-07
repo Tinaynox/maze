@@ -72,7 +72,9 @@ namespace Maze
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
             Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
+            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f),
+            HorizontalAlignment2D _horizontalAlignment = HorizontalAlignment2D::Left,
+            VerticalAlignment2D _verticalAlignment = VerticalAlignment2D::Middle);
 
         //////////////////////////////////////////
         MAZE_UI_API Dropdown2DPtr CreateDefaultDropdown(
