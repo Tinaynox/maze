@@ -84,7 +84,7 @@ IN vec3 v_cubeCoords;
 
 
 //////////////////////////////////////////
-layout(location=0) out vec4 out_color;
+MAZE_LAYOUT_LOCATION(0) out vec4 out_color;
 
 
 //////////////////////////////////////////

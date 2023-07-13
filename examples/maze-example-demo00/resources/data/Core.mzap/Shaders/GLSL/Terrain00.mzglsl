@@ -159,7 +159,7 @@ IN vec3 v_viewDirWS;
 
 
 //////////////////////////////////////////
-layout(location=0) out vec4 out_color;
+MAZE_LAYOUT_LOCATION(0) out vec4 out_color;
 
 
 //////////////////////////////////////////

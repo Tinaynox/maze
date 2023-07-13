@@ -400,6 +400,10 @@ namespace Maze
         shaderVersion += "\n#define MAZE_INSTANCE_STREAM_VIA_TEXTURE ";
         shaderVersion += (currentContext->getModelMatricesArchitecture() == ModelMatricesArchitectureOpenGL::UniformTexture) ? "(1)" : "(0)";
 
+        shaderVersion += "\n#define MAZE_LAYOUT_LOCATION(__location) ";
+        if (m_context->hasMinVersion(3, 3))
+            shaderVersion += "layout( location = __location )";
+
 
         String vertexExtensionFeatures;
         if (currentContext->getExtensionsRaw()->getSupportClipDistance())

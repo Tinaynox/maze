@@ -60,7 +60,7 @@ R"(
     IN vec2 v_uv0;
 
     //////////////////////////////////////////
-    layout(location=0) out vec4 out_color;
+    MAZE_LAYOUT_LOCATION(0) out vec4 out_color;
 
     //////////////////////////////////////////
     void main()
