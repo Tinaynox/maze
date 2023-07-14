@@ -46,33 +46,9 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    static const String c_commonShaderHeader =          "#define MAZE_LHCS (1)                         \n"
-                                                        "#if (MAZE_GLSL_VERSION >= 300)                \n"
-                                                        "#    define MAZE_GET_TEXEL2D texture          \n"
-                                                        "#else                                         \n"
-                                                        "#    define MAZE_GET_TEXEL2D texture2D        \n"
-                                                        "#endif                                        \n"
-                                                        "                                              \n";
-
-    static const String c_vertexShaderHeader = c_commonShaderHeader +
-                                                        "                                              \n"
-                                                        "#if (MAZE_GLSL_VERSION > 120)                 \n"
-                                                        "#    define IN in                             \n"
-                                                        "#    define OUT out                           \n"
-                                                        "#else                                         \n"
-                                                        "#    define IN attribute                      \n"
-                                                        "#    define OUT varying                       \n"
-                                                        "#endif                                        \n"
-                                                        "                                              \n";
-                                                        
-
-    static const String c_fragmentShaderHeader = c_commonShaderHeader +
-                                                        "#if (MAZE_GLSL_VERSION > 120)                 \n"
-                                                        "#    define IN in                             \n"
-                                                        "#else                                         \n"
-                                                        "#    define IN varying                        \n"
-                                                        "#endif                                        \n"
-                                                        "                                              \n";
+    static String const c_commonShaderHeader =
+#include "shaders/MazeCommonShaderHeader.mzglsl"
+    ;
 
     //////////////////////////////////////////
     inline static MZGLenum ShaderTypeFromString(String const& _type)
@@ -400,10 +376,6 @@ namespace Maze
         shaderVersion += "\n#define MAZE_INSTANCE_STREAM_VIA_TEXTURE ";
         shaderVersion += (currentContext->getModelMatricesArchitecture() == ModelMatricesArchitectureOpenGL::UniformTexture) ? "(1)" : "(0)";
 
-        shaderVersion += "\n#define MAZE_LAYOUT_LOCATION(__location) ";
-        if (m_context->hasMinVersion(3, 3))
-            shaderVersion += "layout( location = __location )";
-
 
         String vertexExtensionFeatures;
         if (currentContext->getExtensionsRaw()->getSupportClipDistance())
@@ -417,7 +389,7 @@ namespace Maze
 
         String completeVertexShader =
             shaderVersion + '\n' +
-            c_vertexShaderHeader + '\n' + 
+            c_commonShaderHeader + '\n' +
             vertexExtensionFeatures + '\n' +
             buildLocalShaderFeatures() + '\n' +
             makeInternalShaderPreprocessing(_vertexShaderSource);
@@ -459,7 +431,7 @@ namespace Maze
 
         String completeFragmentShader = 
             shaderVersion + '\n' +
-            c_fragmentShaderHeader + '\n' + 
+            c_commonShaderHeader + '\n' +
             fragmentExtensionFeatures + '\n' +
             buildLocalShaderFeatures() + '\n' +
             makeInternalShaderPreprocessing(_fragmentShaderSource);

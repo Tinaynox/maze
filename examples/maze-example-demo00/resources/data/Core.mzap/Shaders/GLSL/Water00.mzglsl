@@ -58,7 +58,7 @@ void main()
     vec4 tangentOS = vec4(a_tangent, 1.0);
     vec4 bitangentOS = vec4(a_bitangent, 1.0);
     
-    mat3 normalMatrix = mat3(transpose(inverse(modelMatrix)));
+    mat3 normalMatrix = mat3(transpose(MAZE_INVERSE(modelMatrix)));
     
     
         

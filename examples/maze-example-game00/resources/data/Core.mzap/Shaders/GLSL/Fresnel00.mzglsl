@@ -47,7 +47,7 @@ void main()
     vec4 positionCS = positionVS * u_projectionMatrix;
     
     vec4 normalOS = vec4(a_normal, 1.0);
-    vec4 normalWS = normalize(normalOS * transpose(inverse(modelMatrix)));
+    vec4 normalWS = normalize(normalOS * transpose(MAZE_INVERSE(modelMatrix)));
         
 #if (MAZE_LHCS)
     positionCS.z = -positionCS.z;
