@@ -47,7 +47,7 @@ namespace Maze
         bool _minimized,
         S32 _iconBig,
         S32 _iconSmall,
-        U8 _flags)
+        WindowParams::Flags _flags)
     {
         WindowParamsPtr object = MAZE_CREATE_SHARED_PTR(MAZE_PLATFORM_OBJECT(WindowParams));
 
@@ -85,7 +85,7 @@ namespace Maze
         bool _minimized,
         S32 _iconBig,
         S32 _iconSmall,
-        U8 _flags)
+        WindowParams::Flags _flags)
     {
         clientSize = _clientSize;
         bpp = _bpp;
@@ -199,6 +199,18 @@ namespace Maze
         m_params->minimized = _minimized;
 
         return updateMinimized();
+    }
+
+    //////////////////////////////////////////
+    bool Window::setFlags(WindowParams::Flags _flags)
+    {
+        if (m_params->flags == _flags)
+            return false;
+
+        m_params->flags = _flags;
+        
+        updateWindowMode();
+        return true;
     }
 
     //////////////////////////////////////////

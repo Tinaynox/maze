@@ -69,7 +69,8 @@ namespace Maze
             Background        = MAZE_BIT(2),
             MinimizeButton    = MAZE_BIT(3),
             MaximizeButton    = MAZE_BIT(4),
-            CloseButton       = MAZE_BIT(5)
+            CloseButton       = MAZE_BIT(5),
+            Topmost           = MAZE_BIT(6)
         };
     }
 
@@ -91,6 +92,9 @@ namespace Maze
         virtual ~WindowParams() {};
 
         //////////////////////////////////////////
+        using Flags = U8;
+
+        //////////////////////////////////////////
         static WindowParamsPtr Create(
             Vec2DU _clientSize = Vec2DU(640, 480),
             U32 _bpp = 32,
@@ -99,7 +103,7 @@ namespace Maze
             bool _minimized = false,
             S32 _iconBig = 0,
             S32 _iconSmall = 0,
-            U8 _flags = WindowStyleFlags::Titlebar | WindowStyleFlags::CloseButton | WindowStyleFlags::Background);
+            Flags _flags = WindowStyleFlags::Titlebar | WindowStyleFlags::CloseButton | WindowStyleFlags::Background);
 
         //////////////////////////////////////////
         static WindowParamsPtr Create(WindowParamsPtr const& _windowParams);
@@ -119,7 +123,7 @@ namespace Maze
         S32 iconSmall;
         SystemCursorPtr cursor;
 
-        U8 flags;
+        Flags flags;
 
     protected:
 
@@ -132,7 +136,7 @@ namespace Maze
             bool _minimized = false,
             S32 _iconBig = 0,
             S32 _iconSmall = 0,
-            U8 _flags = WindowStyleFlags::Titlebar | WindowStyleFlags::CloseButton | WindowStyleFlags::Background);
+            Flags _flags = WindowStyleFlags::Titlebar | WindowStyleFlags::CloseButton | WindowStyleFlags::Background);
 
         //////////////////////////////////////////
         virtual bool init(WindowParamsPtr const& _windowParams);
@@ -178,6 +182,12 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool getMinimized() const { return m_params->minimized; }
+
+        //////////////////////////////////////////
+        virtual bool setFlags(WindowParams::Flags _flags);
+
+        //////////////////////////////////////////
+        virtual WindowParams::Flags getFlags() const { return m_params->flags; }
 
         //////////////////////////////////////////
         inline WindowMode getWindowMode() const { return m_params->windowMode; }

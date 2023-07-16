@@ -1187,6 +1187,11 @@ namespace Maze
             {
                 dwExStyle |= WS_EX_LAYERED;
             }
+
+            if (m_params->flags & WindowStyleFlags::Topmost)
+            {
+                dwExStyle |= WS_EX_TOPMOST;
+            }
         }
         
             
