@@ -201,6 +201,9 @@ namespace Maze
         //////////////////////////////////////////
         String buildLocalShaderFeatures();
 
+        //////////////////////////////////////////
+        String buildMissingShaderDefines(String const _shaderText);
+
 
         //////////////////////////////////////////
         void assignUniforms();

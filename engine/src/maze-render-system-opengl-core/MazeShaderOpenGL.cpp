@@ -377,6 +377,9 @@ namespace Maze
         shaderVersion += (currentContext->getModelMatricesArchitecture() == ModelMatricesArchitectureOpenGL::UniformTexture) ? "(1)" : "(0)";
 
 
+        String localShaderFeatures = buildLocalShaderFeatures();
+
+
         String vertexExtensionFeatures;
         if (currentContext->getExtensionsRaw()->getSupportClipDistance())
         {
@@ -387,12 +390,14 @@ namespace Maze
             vertexExtensionFeatures += "#define MAZE_CLIP_DISTANCE_VERTEX(_pos) v_clipDistance0 = dot(positionWS, u_clipDistance0); \n";
         }
 
+        String vertexShaderBody = makeInternalShaderPreprocessing(_vertexShaderSource);
         String completeVertexShader =
             shaderVersion + '\n' +
             c_commonShaderHeader + '\n' +
             vertexExtensionFeatures + '\n' +
-            buildLocalShaderFeatures() + '\n' +
-            makeInternalShaderPreprocessing(_vertexShaderSource);
+            localShaderFeatures + '\n' +
+            buildMissingShaderDefines(vertexShaderBody) + '\n' +
+            vertexShaderBody;
 
         
         
@@ -429,12 +434,14 @@ namespace Maze
             fragmentExtensionFeatures += "#define MAZE_CLIP_DISTANCE_FRAGMENT if (u_clipDistanceEnable[0] && v_clipDistance0 < 0.0) discard; \n";
         }
 
+        String fragmentShaderBody = makeInternalShaderPreprocessing(_fragmentShaderSource);
         String completeFragmentShader = 
             shaderVersion + '\n' +
             c_commonShaderHeader + '\n' +
             fragmentExtensionFeatures + '\n' +
-            buildLocalShaderFeatures() + '\n' +
-            makeInternalShaderPreprocessing(_fragmentShaderSource);
+            localShaderFeatures + '\n' +
+            buildMissingShaderDefines(fragmentShaderBody) + '\n' +
+            fragmentShaderBody;
 
          if (!compileGLShader(fragmentShaderId, MAZE_GL_FRAGMENT_SHADER, completeFragmentShader.c_str())) 
         {
@@ -620,12 +627,12 @@ namespace Maze
             index = _shader.find("#include");
             if (index != String::npos)
             {
-                Size endOfLaneIndex = _shader.find_first_of('\n', index);
-                MAZE_DEBUG_BP_IF(endOfLaneIndex == String::npos);
-                Size symbols = endOfLaneIndex - index;
-                String lane = _shader.substr(index, symbols);
+                Size endOfLineIndex = _shader.find_first_of('\n', index);
+                MAZE_DEBUG_BP_IF(endOfLineIndex == String::npos);
+                Size symbols = endOfLineIndex - index;
+                String line = _shader.substr(index, symbols);
 
-                String fileName = lane.substr(lane.find_first_of('"') + 1, lane.find_last_of('"') - lane.find_first_of('"') - 1);
+                String fileName = line.substr(line.find_first_of('"') + 1, line.find_last_of('"') - line.find_first_of('"') - 1);
                 Size fileNameLastSlashIndex = fileName.find_last_of('/');
                 if (fileNameLastSlashIndex != String::npos)
                     fileName = fileName.substr(fileNameLastSlashIndex + 1, fileName.size() - fileNameLastSlashIndex - 1);
@@ -914,6 +921,43 @@ namespace Maze
 
         for (auto const& localFeatureData : m_localFeatures)
             result += (String)"#define " + localFeatureData.first + " " + localFeatureData.second + '\n';
+
+        return result;
+    }
+
+    //////////////////////////////////////////
+    String ShaderOpenGL::buildMissingShaderDefines(String const _shaderText)
+    {
+        Set<String> foundDefines;
+        Size pos = 0u;
+
+        String const definedPattern = "defined(";
+
+        while ((pos = _shaderText.find(definedPattern, pos)) != std::string::npos)
+        {
+            pos += definedPattern.length();
+
+            Size endPos = _shaderText.find(")", pos);
+            if (endPos != String::npos) {
+                String definedValue = _shaderText.substr(pos, endPos - pos);
+                foundDefines.insert(definedValue);
+                pos = endPos + 1;
+            }
+            else {
+                break;
+            }
+        }
+
+        String result;
+
+        for (String const& foundDefine : foundDefines)
+        {
+            if (_shaderText.find(" (" + foundDefine + ")") != _shaderText.npos)
+                result +=
+                    "#if !defined(" + foundDefine + ") \n"
+                    "#define " + foundDefine + " (0)\n"
+                    "#endif\n";
+        }
 
         return result;
     }
