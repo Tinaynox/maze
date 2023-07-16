@@ -181,13 +181,13 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API Path GetDefaultTemporaryDirectory()
         {
-            return GetBinaryDirectory() + L"/temp";
+            return GetWorkingDirectory() + L"/.temp";
         }
 
         //////////////////////////////////////////
         MAZE_CORE_API Path GetDefaultLogDirectory()
         {
-            return GetBinaryDirectory() + L"/log";
+            return GetWorkingDirectory() + L"/.log";
         }
 
         //////////////////////////////////////////
