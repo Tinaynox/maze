@@ -48,14 +48,28 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Texture, Object);
 
     //////////////////////////////////////////
+    Texture* Texture::s_instancesList = nullptr;
+
+    //////////////////////////////////////////
     Texture::Texture()
         : m_renderSystem(nullptr)
     {
+        if (s_instancesList)
+            s_instancesList->m_instancesListNext = this;
+        m_instancesListPrev = s_instancesList;
+        s_instancesList = this;
     }
 
     //////////////////////////////////////////
     Texture::~Texture()
     {
+        if (m_instancesListPrev)
+            m_instancesListPrev->m_instancesListNext = m_instancesListNext;
+        if (m_instancesListNext)
+            m_instancesListNext->m_instancesListPrev = m_instancesListPrev;
+        else
+        if (s_instancesList == this)
+            s_instancesList = m_instancesListPrev;
     }
 
     //////////////////////////////////////////
@@ -67,6 +81,19 @@ namespace Maze
         m_renderSystem = _renderSystem;
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    void Texture::IterateTextures(std::function<bool(Texture*)> _cb)
+    {
+        Texture* instance = s_instancesList;
+        while (instance)
+        {
+            if (!_cb(instance))
+                break;
+
+            instance = instance->m_instancesListPrev;
+        }
     }
 
 

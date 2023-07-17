@@ -106,6 +106,10 @@ namespace Maze
         //////////////////////////////////////////
         inline SoundGroupPtr const& getSoundGroup() const { return m_soundGroup; }
 
+    public:
+
+        //////////////////////////////////////////
+        static void IterateSoundSources(std::function<bool(SoundSource*)> _cb);
 
     protected:
 
@@ -139,6 +143,12 @@ namespace Maze
         F32 m_volume = 1.0f;
         F32 m_pitch = 1.0f;
         bool m_looped = false;
+
+
+    protected:
+        static SoundSource* s_instancesList;
+        SoundSource* m_instancesListNext = nullptr;
+        SoundSource* m_instancesListPrev = nullptr;
     };
     
 

@@ -119,8 +119,8 @@ namespace Maze
 
         // Unbind sources
         Vector<std::pair<SoundSourceOpenAL*, bool>> stoppedSources;
-        SoundSourceOpenAL::IterateSoundSourcesOpenAL(
-            [&, this](SoundSourceOpenAL* _source)
+        SoundSourceOpenAL::IterateSoundSources(
+            [&, this](SoundSource* _source)
             {
                 if (_source->getSound().get() == this)
                 {
@@ -131,9 +131,10 @@ namespace Maze
                         stopped = true;
                     }
 
-                    MAZE_AL_CALL(mzalSourcei(_source->getSourceID(), AL_BUFFER, 0));
+                    SoundSourceOpenAL* sourceAM = _source->castRaw<SoundSourceOpenAL>();
+                    MAZE_AL_CALL(mzalSourcei(sourceAM->getSourceID(), AL_BUFFER, 0));
 
-                    stoppedSources.emplace_back(std::make_pair(_source, stopped));
+                    stoppedSources.emplace_back(std::make_pair(sourceAM, stopped));
                 }
 
                 return true;

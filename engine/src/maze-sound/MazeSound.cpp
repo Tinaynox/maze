@@ -43,14 +43,27 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS(Sound);
 
     //////////////////////////////////////////
+    Sound* Sound::s_instancesList = nullptr;
+
+    //////////////////////////////////////////
     Sound::Sound()
     {
+        if (s_instancesList)
+            s_instancesList->m_instancesListNext = this;
+        m_instancesListPrev = s_instancesList;
+        s_instancesList = this;
     }
 
     //////////////////////////////////////////
     Sound::~Sound()
     {
-        
+        if (m_instancesListPrev)
+            m_instancesListPrev->m_instancesListNext = m_instancesListNext;
+        if (m_instancesListNext)
+            m_instancesListNext->m_instancesListPrev = m_instancesListPrev;
+        else
+        if (s_instancesList == this)
+            s_instancesList = m_instancesListPrev;
     }
 
     //////////////////////////////////////////
@@ -187,6 +200,19 @@ namespace Maze
         else
         {
             StringHelper::FormatString(_data, "ptr:%p", _value);
+        }
+    }
+
+    //////////////////////////////////////////
+    void Sound::IterateSounds(std::function<bool(Sound*)> _cb)
+    {
+        Sound* instance = s_instancesList;
+        while (instance)
+        {
+            if (!_cb(instance))
+                break;
+
+            instance = instance->m_instancesListPrev;
         }
     }
 

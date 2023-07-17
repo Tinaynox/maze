@@ -42,8 +42,15 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS(SoundSource);
 
     //////////////////////////////////////////
+    SoundSource* SoundSource::s_instancesList = nullptr;
+
+    //////////////////////////////////////////
     SoundSource::SoundSource()
     {
+        if (s_instancesList)
+            s_instancesList->m_instancesListNext = this;
+        m_instancesListPrev = s_instancesList;
+        s_instancesList = this;
     }
 
     //////////////////////////////////////////
@@ -55,6 +62,14 @@ namespace Maze
             m_soundGroup->eventPitchChanged.unsubscribe(this);
             m_soundGroup.reset();
         }
+
+        if (m_instancesListPrev)
+            m_instancesListPrev->m_instancesListNext = m_instancesListNext;
+        if (m_instancesListNext)
+            m_instancesListNext->m_instancesListPrev = m_instancesListPrev;
+        else
+        if (s_instancesList == this)
+            s_instancesList = m_instancesListPrev;
     }
 
     //////////////////////////////////////////
@@ -100,6 +115,19 @@ namespace Maze
     void SoundSource::notifySoundGroupPitchChanged(F32 _pitch)
     {
         updatePitch();
+    }
+
+    //////////////////////////////////////////
+    void SoundSource::IterateSoundSources(std::function<bool(SoundSource*)> _cb)
+    {
+        SoundSource* instance = s_instancesList;
+        while (instance)
+        {
+            if (!_cb(instance))
+                break;
+
+            instance = instance->m_instancesListPrev;
+        }
     }
 
 } // namespace Maze

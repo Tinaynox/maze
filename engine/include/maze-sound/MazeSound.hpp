@@ -140,6 +140,11 @@ namespace Maze
         //////////////////////////////////////////
         static void ToString(Sound const* _value, String& _data);
 
+    public:
+
+        //////////////////////////////////////////
+        static void IterateSounds(std::function<bool(Sound*)> _cb);
+
     protected:
 
         //////////////////////////////////////////
@@ -149,9 +154,14 @@ namespace Maze
         virtual bool init(SoundSystem* _soundSystem);
 
     protected:
-        SoundSystem* m_soundSystem;
+        SoundSystem* m_soundSystem = nullptr;
 
         String m_name;
+
+    protected:
+        static Sound* s_instancesList;
+        Sound* m_instancesListNext = nullptr;
+        Sound* m_instancesListPrev = nullptr;
     };
 
 

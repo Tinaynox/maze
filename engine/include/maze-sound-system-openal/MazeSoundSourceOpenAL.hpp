@@ -91,12 +91,6 @@ namespace Maze
         //////////////////////////////////////////
         inline MZALuint getSourceID() const { return m_sourceID; }
 
-    public:
-
-        //////////////////////////////////////////
-        static void IterateSoundSourcesOpenAL(std::function<bool(SoundSourceOpenAL*)> _cb);
-
-
     protected:
 
         //////////////////////////////////////////
@@ -129,9 +123,6 @@ namespace Maze
         MZALuint m_sourceID = 0;
 
     private:
-        static SoundSourceOpenAL* s_sourcesList;
-        SoundSourceOpenAL* m_sourcesListNext = nullptr;
-        SoundSourceOpenAL* m_sourcesListPrev = nullptr;
     };
 
 } // namespace Maze

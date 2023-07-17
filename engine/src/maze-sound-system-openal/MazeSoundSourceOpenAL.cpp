@@ -42,29 +42,15 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SoundSourceOpenAL, SoundSource);
 
     //////////////////////////////////////////
-    SoundSourceOpenAL* SoundSourceOpenAL::s_sourcesList = nullptr;
-
-    //////////////////////////////////////////
     SoundSourceOpenAL::SoundSourceOpenAL()
     {
-        if (s_sourcesList)
-            s_sourcesList->m_sourcesListNext = this;
-        m_sourcesListPrev = s_sourcesList;
-        s_sourcesList = this;
+        
     }
 
     //////////////////////////////////////////
     SoundSourceOpenAL::~SoundSourceOpenAL()
     {
         deleteALObjects();
-
-        if (m_sourcesListPrev)
-            m_sourcesListPrev->m_sourcesListNext = m_sourcesListNext;
-        if (m_sourcesListNext)
-            m_sourcesListNext->m_sourcesListPrev = m_sourcesListPrev;
-        else
-        if (s_sourcesList == this)
-            s_sourcesList = m_sourcesListPrev;
     }
 
     //////////////////////////////////////////
@@ -225,19 +211,6 @@ namespace Maze
     void SoundSourceOpenAL::bindSound(MZALuint _bufferID)
     {
         MAZE_AL_CALL(mzalSourcei(m_sourceID, AL_BUFFER, _bufferID));
-    }
-
-    //////////////////////////////////////////
-    void SoundSourceOpenAL::IterateSoundSourcesOpenAL(std::function<bool(SoundSourceOpenAL*)> _cb)
-    {
-        SoundSourceOpenAL* source = s_sourcesList;
-        while (source)
-        {
-            if (!_cb(source))
-                break;
-
-            source = source->m_sourcesListPrev;
-        }
     }
 
 } // namespace Maze

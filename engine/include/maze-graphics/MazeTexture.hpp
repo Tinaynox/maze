@@ -100,6 +100,11 @@ namespace Maze
         //////////////////////////////////////////
         inline TextureType getType() const { return m_type; }
 
+    public:
+
+        //////////////////////////////////////////
+        static void IterateTextures(std::function<bool(Texture*)> _cb);
+
     protected:
 
         //////////////////////////////////////////
@@ -114,6 +119,11 @@ namespace Maze
         String m_name;
 
         TextureType m_type = TextureType::None;
+
+    protected:
+        static Texture* s_instancesList;
+        Texture* m_instancesListNext = nullptr;
+        Texture* m_instancesListPrev = nullptr;
     };
 
 } // namespace Maze
