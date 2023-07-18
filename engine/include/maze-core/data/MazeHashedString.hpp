@@ -167,6 +167,12 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline bool operator<(HashedString const& _other) const
+        {
+            return m_string < _other.m_string;
+        }
+
+        //////////////////////////////////////////
         inline Char const& operator [](Size _i) const
         {
             return m_string[_i];
@@ -188,6 +194,14 @@ namespace Maze
         String m_string;
         U32 m_hash;
     };
+
+
+    //////////////////////////////////////////
+    inline std::ostream& operator<<(std::ostream& _o, HashedString const& _v)
+    {
+        _o << _v.c_str();
+        return _o;
+    }
    
 
 } // namespace Maze

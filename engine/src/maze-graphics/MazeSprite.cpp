@@ -29,6 +29,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 
 
@@ -178,7 +179,7 @@ namespace Maze
         if (m_texture)
         {
             if (m_name.empty())
-                m_name = m_texture->getAssetFileName();
+                m_name = m_texture->getName();
 
             if (m_colorSize == Vec2DF::c_zero)
                 m_colorSize = m_nativeSize = m_texture->getSize();

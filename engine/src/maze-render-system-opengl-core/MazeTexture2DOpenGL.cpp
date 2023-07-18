@@ -31,6 +31,7 @@
 #include "maze-render-system-opengl-core/MazeRenderSystemOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazePixelFormatOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeTextureOpenGL.hpp"
+#include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 
 
@@ -844,9 +845,10 @@ namespace Maze
     //////////////////////////////////////////
     void Texture2DOpenGL::reload()
     {
-        if (m_assetFile)
+        Texture2DLibraryData const* libraryData = m_renderSystem->getTextureManager()->getTexture2DLibraryData(getName().asHashedCString());
+        if (libraryData && libraryData->assetFile)
         {
-            loadFromAssetFile(m_assetFile);
+            loadFromAssetFile(libraryData->assetFile);
         }
         else
         if (!m_pixelSheetsTEMP.empty())

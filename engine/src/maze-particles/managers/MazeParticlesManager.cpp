@@ -120,7 +120,7 @@ namespace Maze
         }
 
         m_defaultParticleTexture->loadTexture(defaultParticleSheet);
-        renderSystem->getTextureManager()->addTexture(m_defaultParticleTexture);
+        renderSystem->getTextureManager()->addTextureToLibrary(m_defaultParticleTexture);
 
         m_defaultParticleMaterial = renderSystem->getMaterialManager()->getColorTextureMaterial()->createCopy();
         m_defaultParticleMaterial->setName("DefaultParticle");

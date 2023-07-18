@@ -97,9 +97,10 @@ namespace Maze
                 _imageName,
                 sprite);
 
-            if (texture2D->getAssetFile())
+            Texture2DLibraryData const* libraryData = m_renderSystemRaw->getTextureManager()->getTexture2DLibraryData(texture2D->getName().asHashedCString());
+            if (libraryData && libraryData->assetFile)
             {
-                StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(texture2D->getAssetFile());
+                StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(libraryData->assetFile);
                 auto metaDataIt = metaData.find("sliceBorder");
                 if (metaDataIt != metaData.end())
                 {

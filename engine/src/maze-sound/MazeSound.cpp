@@ -30,6 +30,7 @@
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
+#include "maze-sound/managers/MazeSoundManager.hpp"
 
 
 //////////////////////////////////////////
@@ -155,9 +156,9 @@ namespace Maze
     //////////////////////////////////////////
     void Sound::reload()
     {
-        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(m_name);
-        if (assetFile)
-            loadFromAssetFile(assetFile);
+        SoundLibraryData const* libraryData = SoundManager::GetInstancePtr()->getSoundLibraryData(m_name.asHashedCString());
+        if (libraryData && libraryData->assetFile)
+            loadFromAssetFile(libraryData->assetFile);
     }
 
     //////////////////////////////////////////

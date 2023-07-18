@@ -131,8 +131,6 @@ namespace Maze
     //////////////////////////////////////////
     void Texture2D::loadFromAssetFile(AssetFilePtr const& _assetFile)
     {
-        m_assetFile = _assetFile;
-
         TextureManagerPtr const& textureManager = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getTextureManager();
         Maze::Vector<Maze::PixelSheet2D> pixelSheets = textureManager->loadPixelSheets2D(_assetFile);
         
@@ -187,17 +185,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Path const& Texture2D::getAssetFileName() const
-    {
-        static Path nullValue;
-
-        if (!m_assetFile)
-            return nullValue;
-
-        return m_assetFile->getFileName();
-    }
-
-    //////////////////////////////////////////
     bool Texture2D::loadTexture(
         PixelSheet2D const& _pixelSheet,
         PixelFormat::Enum _internalPixelFormat)
@@ -209,9 +196,10 @@ namespace Maze
     //////////////////////////////////////////
     void Texture2D::reload()
     {
-        if (m_assetFile)
+        Texture2DLibraryData const* libraryData = m_renderSystem->getTextureManager()->getTexture2DLibraryData(getName().asHashedCString());
+        if (libraryData && libraryData->assetFile)
         {
-            loadFromAssetFile(m_assetFile);
+            loadFromAssetFile(libraryData->assetFile);
         }
     }
 

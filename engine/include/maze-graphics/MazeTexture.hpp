@@ -92,13 +92,23 @@ namespace Maze
         virtual ~Texture();
 
         //////////////////////////////////////////
-        inline String const& getName() const { return m_name; }
+        inline HashedString const& getName() const { return m_name; }
+
+        //////////////////////////////////////////
+        inline void setName(HashedString const& _name) { m_name = _name; }
+
+        //////////////////////////////////////////
+        inline void setName(CString _name) { m_name = _name; }
 
         //////////////////////////////////////////
         inline void setName(String const& _name) { m_name = _name; }
 
         //////////////////////////////////////////
         inline TextureType getType() const { return m_type; }
+
+
+        //////////////////////////////////////////
+        inline RenderSystem* getRenderSystem() const { return m_renderSystem; }
 
     public:
 
@@ -116,7 +126,7 @@ namespace Maze
     protected:
         RenderSystem* m_renderSystem;
 
-        String m_name;
+        HashedString m_name;
 
         TextureType m_type = TextureType::None;
 

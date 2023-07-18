@@ -85,7 +85,7 @@ namespace Maze
     // Struct TextureLoaderData
     //
     //////////////////////////////////////////
-    struct TextureLoaderData
+    struct MAZE_GRAPHICS_API TextureLoaderData
     {
         //////////////////////////////////////////
         TextureLoaderData() = default;
@@ -110,6 +110,44 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Struct Texture2DLibraryData
+    //
+    //////////////////////////////////////////
+    struct MAZE_GRAPHICS_API Texture2DLibraryData
+    {
+        //////////////////////////////////////////
+        Texture2DLibraryData(
+            Texture2DPtr const& _texture = nullptr,
+            AssetFilePtr const& _assetFile = nullptr)
+            : texture(_texture)
+            , assetFile(_assetFile)
+        {}
+
+        Texture2DPtr texture;
+        AssetFilePtr assetFile;
+    };
+
+
+    //////////////////////////////////////////
+    // Struct TextureCubeLibraryData
+    //
+    //////////////////////////////////////////
+    struct MAZE_GRAPHICS_API TextureCubeLibraryData
+    {
+        //////////////////////////////////////////
+        TextureCubeLibraryData(
+            TextureCubePtr const& _texture = nullptr,
+            AssetFilePtr const& _assetFile = nullptr)
+            : texture(_texture)
+            , assetFile(_assetFile)
+        {}
+
+        TextureCubePtr texture;
+        AssetFilePtr assetFile;
+    };
+
+
+    //////////////////////////////////////////
     // Class TextureManager
     //
     //////////////////////////////////////////
@@ -129,7 +167,18 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline StringKeyMap<Texture2DPtr> const& getTextures2D() const { return m_textures2DByName; }
+        inline StringKeyMap<Texture2DLibraryData> const& getTextures2DLibrary() const { return m_textures2DLibrary; }
+
+
+        //////////////////////////////////////////
+        Texture2DLibraryData const* getTexture2DLibraryData(HashedCString _textureName);
+
+        //////////////////////////////////////////
+        Texture2DLibraryData const* getTexture2DLibraryData(String const& _assetFileName) { return getTexture2DLibraryData(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+
+        //////////////////////////////////////////
+        Texture2DLibraryData const* getTexture2DLibraryData(CString _assetFileName) { return getTexture2DLibraryData(MAZE_HASHED_CSTRING(_assetFileName)); }
+
 
         //////////////////////////////////////////
         Texture2DPtr const& getTexture2D(HashedCString _assetFileName);
@@ -142,6 +191,8 @@ namespace Maze
 
         //////////////////////////////////////////
         Texture2DPtr const& getTexture2D(AssetFilePtr const& _assetFile);
+
+
 
         //////////////////////////////////////////
         bool loadTextureMetaData(AssetFilePtr const& _assetFile, Texture2DPtr const& _texture);
@@ -183,7 +234,17 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        Texture2DPtr const& addTexture(Texture2DPtr const& _texture);
+        Texture2DLibraryData* addTextureToLibrary(Texture2DPtr const& _texture);
+
+        //////////////////////////////////////////
+        void removeTexture2DFromLibrary(HashedCString _textureName);
+
+        //////////////////////////////////////////
+        inline void removeTexture2DFromLibrary(CString _textureName) { removeTexture2DFromLibrary(_textureName); }
+
+        //////////////////////////////////////////
+        inline void removeTexture2DFromLibrary(String const& _textureName) { removeTexture2DFromLibrary(_textureName); }
+
 
         //////////////////////////////////////////
         Vector<Texture2DPtr> getTextures2DSorted();
@@ -195,6 +256,20 @@ namespace Maze
         //////////////////////////////////////////
         Vector<PixelSheet2D> loadPixelSheets2D(String const& _assetFileName);
 
+
+
+        //////////////////////////////////////////
+        inline StringKeyMap<TextureCubeLibraryData> const& getTexturesCubeLibrary() const { return m_texturesCubeLibrary; }
+
+
+        //////////////////////////////////////////
+        TextureCubeLibraryData const* getTextureCubeLibraryData(HashedCString _textureName);
+
+        //////////////////////////////////////////
+        TextureCubeLibraryData const* getTextureCubeLibraryData(String const& _assetFileName) { return getTextureCubeLibraryData(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+
+        //////////////////////////////////////////
+        TextureCubeLibraryData const* getTextureCubeLibraryData(CString _assetFileName) { return getTextureCubeLibraryData(MAZE_HASHED_CSTRING(_assetFileName)); }
 
 
         //////////////////////////////////////////
@@ -211,7 +286,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        TextureCubePtr const& addTexture(TextureCubePtr const& _texture);
+        TextureCubeLibraryData* addTextureToLibrary(TextureCubePtr const& _texture);
+
+        //////////////////////////////////////////
+        void removeTextureCubeFromLibrary(HashedCString _textureName);
+
+        //////////////////////////////////////////
+        inline void removeTextureCubeFromLibrary(CString _textureName) { removeTextureCubeFromLibrary(_textureName); }
+
+        //////////////////////////////////////////
+        inline void removeTextureCubeFromLibrary(String const& _textureName) { removeTextureCubeFromLibrary(_textureName); }
 
 
         //////////////////////////////////////////
@@ -219,6 +303,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void reloadAllAssetTextures();
+
+        //////////////////////////////////////////
+        void unloadAssetTextures(Set<String> const& _tags);
 
 
         //////////////////////////////////////////
@@ -265,8 +352,8 @@ namespace Maze
 
         StringKeyMap<TextureLoaderData> m_textureLoaders;
 
-        StringKeyMap<Texture2DPtr> m_textures2DByName;
-        StringKeyMap<TextureCubePtr> m_texturesCubeByName;
+        StringKeyMap<Texture2DLibraryData> m_textures2DLibrary;
+        StringKeyMap<TextureCubeLibraryData> m_texturesCubeLibrary;
 
         Texture2DPtr m_builtinTexture2Ds[BuiltinTexture2DType::MAX];
         TextureCubePtr m_builtinTextureCubes[BuiltinTexture2DType::MAX];

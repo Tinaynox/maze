@@ -231,7 +231,7 @@ namespace Maze
 
         Vector<Texture2DPtr> textures;
         for (Texture2DPtr const& texture : TextureManager::GetCurrentInstancePtr()->getTextures2DSorted())
-            if (filterText.empty() || texture->getName().find(filterText) != String::npos)
+            if (filterText.empty() || texture->getName().getString().find(filterText) != String::npos)
                 textures.push_back(texture);
         textures.insert(textures.begin(), Texture2DPtr());
 

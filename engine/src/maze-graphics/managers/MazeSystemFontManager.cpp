@@ -146,7 +146,7 @@ namespace Maze
                 }
 
                 texture->loadTexture(pixelSheets);
-                m_renderSystemRaw->getTextureManager()->addTexture(texture);
+                m_renderSystemRaw->getTextureManager()->addTextureToLibrary(texture);
                 systemFont = createSystemFont(
                     texture,
                     Vec2DS(8, 8) * upscale,
@@ -265,7 +265,7 @@ namespace Maze
         }
 
         texture->loadTexture(pixelSheets);
-        m_renderSystemRaw->getTextureManager()->addTexture(texture);
+        m_renderSystemRaw->getTextureManager()->addTextureToLibrary(texture);
         SystemFontPtr systemFont = createSystemFont(
             texture,
             (Vec2DS(8, 8) + outline * 2) * upscale,

@@ -93,6 +93,14 @@ namespace Maze
         template <U32 THashValue>
         struct HashCalculator { static MAZE_CONSTEXPR U32 const hash = THashValue; };
     };
+
+
+    //////////////////////////////////////////
+    inline std::ostream& operator<<(std::ostream& _o, HashedCString const& _v)
+    {
+        _o << _v.str;
+        return _o;
+    }
    
 
     //////////////////////////////////////////
@@ -136,6 +144,14 @@ namespace Maze
         template <U32 THashValue>
         struct HashCalculator { static MAZE_CONSTEXPR U32 const hash = THashValue; };
     };
+
+
+    //////////////////////////////////////////
+    inline std::wostream& operator<<(std::wostream& _o, HashedCWString const& _v)
+    {
+        _o << _v.str;
+        return _o;
+    }
 
 
     //////////////////////////////////////////

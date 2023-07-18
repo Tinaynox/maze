@@ -122,13 +122,6 @@ namespace Maze
             PixelFormat::Enum _pixelFormat);
 
 
-
-        //////////////////////////////////////////
-        inline AssetFilePtr const& getAssetFile() const { return m_assetFile; }
-
-        //////////////////////////////////////////
-        Path const& getAssetFileName() const; // #TODO: REMOVE THIS METHOD!
-
         //////////////////////////////////////////
         virtual bool loadTexture(
             Vector<PixelSheet2D> const& _pixelSheets,
@@ -247,8 +240,6 @@ namespace Maze
         TextureWrap m_wrapT;
 
         PixelFormat::Enum m_internalPixelFormat;
-
-        AssetFilePtr m_assetFile; // #TODO: REMOVE THIS!
     };
 
     //////////////////////////////////////////

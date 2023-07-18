@@ -59,7 +59,7 @@ namespace Maze
     // Struct SoundLoaderData
     //
     //////////////////////////////////////////
-    struct SoundLoaderData
+    struct MAZE_SOUND_API SoundLoaderData
     {
         //////////////////////////////////////////
         SoundLoaderData() = default;
@@ -80,6 +80,25 @@ namespace Maze
         LoadSoundByteBufferFunction loadSoundByteBufferFunc;
         IsSoundAssetFileFunction isSoundAssetFileFunc;
         IsSoundByteBufferFunction isSoundByteBufferFunc;
+    };
+
+
+    //////////////////////////////////////////
+    // Struct SoundLibraryData
+    //
+    //////////////////////////////////////////
+    struct MAZE_SOUND_API SoundLibraryData
+    {
+        //////////////////////////////////////////
+        SoundLibraryData(
+            SoundPtr const& _sound = nullptr,
+            AssetFilePtr const& _assetFile = nullptr)
+            : sound(_sound)
+            , assetFile(_assetFile)
+        {}
+
+        SoundPtr sound;
+        AssetFilePtr assetFile;
     };
 
 
@@ -113,7 +132,18 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline StringKeyMap<SoundPtr> const& getSounds() const { return m_soundsByName; }
+        inline StringKeyMap<SoundLibraryData> const& getSoundsLibrary() const { return m_soundsLibrary; }
+
+
+        //////////////////////////////////////////
+        SoundLibraryData const* getSoundLibraryData(HashedCString _soundName);
+
+        //////////////////////////////////////////
+        SoundLibraryData const* getSoundLibraryData(String const& _soundName) { return getSoundLibraryData(MAZE_HASHED_CSTRING(_soundName.c_str())); }
+
+        //////////////////////////////////////////
+        SoundLibraryData const* getSoundLibraryData(CString _soundName) { return getSoundLibraryData(MAZE_HASHED_CSTRING(_soundName)); }
+
 
         //////////////////////////////////////////
         SoundPtr const& getSound(HashedCString _assetFileName);
@@ -148,7 +178,10 @@ namespace Maze
         SoundDataPtr loadSoundData(AssetFilePtr const& _assetFile);
 
         //////////////////////////////////////////
-        void loadSounds(Set<String> const& _tags);
+        void loadAssetSounds(Set<String> const& _tags);
+
+        //////////////////////////////////////////
+        void unloadAssetSounds(Set<String> const& _tags);
 
 
 
@@ -178,6 +211,10 @@ namespace Maze
         //////////////////////////////////////////
         MultiDelegate<HashedCString, SoundLoaderData const&> eventSoundLoaderAdded;
 
+
+        //////////////////////////////////////////
+        SoundLibraryData* addSoundToLibrary(SoundPtr const& _sound);
+
     protected:
 
         //////////////////////////////////////////
@@ -185,9 +222,6 @@ namespace Maze
 
         //////////////////////////////////////////
         bool init();
-
-        //////////////////////////////////////////
-        SoundPtr const& addSound(SoundPtr const& _sound);
 
     protected:
         static SoundManager* s_instance;
@@ -197,7 +231,7 @@ namespace Maze
 
         StringKeyMap<SoundLoaderData> m_soundLoaders;
 
-        StringKeyMap<SoundPtr> m_soundsByName;
+        StringKeyMap<SoundLibraryData> m_soundsLibrary;
     };
     
 

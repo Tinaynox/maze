@@ -105,13 +105,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    Texture2DLibraryData const* TextureManager::getTexture2DLibraryData(HashedCString _textureName)
+    {
+        StringKeyMap<Texture2DLibraryData>::const_iterator it = m_textures2DLibrary.find(_textureName);
+        if (it != m_textures2DLibrary.end())
+            return &it->second;
+        return nullptr;
+    }
+
+    //////////////////////////////////////////
     Texture2DPtr const& TextureManager::getTexture2D(HashedCString _textureName)
     {
         static Texture2DPtr nullPointer;
 
-        StringKeyMap<Texture2DPtr>::const_iterator it = m_textures2DByName.find(_textureName);
-        if (it != m_textures2DByName.end())
-            return it->second;
+        Texture2DLibraryData const* libraryData = getTexture2DLibraryData(_textureName);
+        if (libraryData)
+            return libraryData->texture;
 
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_textureName);
         if (!assetFile)
@@ -123,16 +132,18 @@ namespace Maze
     //////////////////////////////////////////
     Texture2DPtr const& TextureManager::getTexture2D(AssetFilePtr const& _assetFile)
     {
-        StringKeyMap<Texture2DPtr>::const_iterator it = m_textures2DByName.find(_assetFile->getFileName());
-        if (it != m_textures2DByName.end())
-            return it->second;
+        Texture2DLibraryData const* libraryData = getTexture2DLibraryData(_assetFile->getFileName());
+        if (libraryData)
+            return libraryData->texture;
 
         Texture2DPtr texture2D = Texture2D::Create(_assetFile, m_renderSystemRaw);
         texture2D->setName(_assetFile->getFileName());
 
         loadTextureMetaData(_assetFile, texture2D);
 
-        return addTexture(texture2D);
+        Texture2DLibraryData* data = addTextureToLibrary(texture2D);
+        data->assetFile = _assetFile;
+        return data->texture;
     }
 
     //////////////////////////////////////////
@@ -232,7 +243,7 @@ namespace Maze
         if (texture)
         {
             texture->setName(_texture2DType.toCString());
-            addTexture(texture);
+            addTextureToLibrary(texture);
         }
 
         return texture;
@@ -291,7 +302,7 @@ namespace Maze
         if (texture)
         {
             texture->setName(_textureCubeType.toCString());
-            addTexture(texture);
+            addTextureToLibrary(texture);
         }
 
         return texture;
@@ -318,13 +329,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Texture2DPtr const& TextureManager::addTexture(Texture2DPtr const& _texture)
+    Texture2DLibraryData* TextureManager::addTextureToLibrary(Texture2DPtr const& _texture)
     {
-        auto it2 = m_textures2DByName.insert(
+        auto it2 = m_textures2DLibrary.insert(
             _texture->getName(),
-            _texture);
+            { _texture, nullptr });
 
-        return *it2;
+        return it2;
+    }
+
+    //////////////////////////////////////////
+    void TextureManager::removeTexture2DFromLibrary(HashedCString _textureName)
+    {
+        m_textures2DLibrary.erase(_textureName);
     }
 
     //////////////////////////////////////////
@@ -332,8 +349,8 @@ namespace Maze
     {
         Vector<Texture2DPtr> result;
 
-        for (auto const& value : m_textures2DByName)
-            result.emplace_back(value.second);
+        for (auto const& value : m_textures2DLibrary)
+            result.emplace_back(value.second.texture);
 
         std::sort(
             result.begin(),
@@ -419,15 +436,23 @@ namespace Maze
         return loadPixelSheets2D(assetFile);
     }
 
+    //////////////////////////////////////////
+    TextureCubeLibraryData const* TextureManager::getTextureCubeLibraryData(HashedCString _textureName)
+    {
+        StringKeyMap<TextureCubeLibraryData>::const_iterator it = m_texturesCubeLibrary.find(_textureName);
+        if (it != m_texturesCubeLibrary.end())
+            return &it->second;
+        return nullptr;
+    }
 
     //////////////////////////////////////////
     TextureCubePtr const& TextureManager::getTextureCube(String const& _textureName)
     {
         static TextureCubePtr nullPointer;
 
-        StringKeyMap<TextureCubePtr>::const_iterator it = m_texturesCubeByName.find(_textureName);
-        if (it != m_texturesCubeByName.end())
-            return it->second;
+        TextureCubeLibraryData const* libraryData = getTextureCubeLibraryData(_textureName);
+        if (libraryData)
+            return libraryData->texture;
 
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_textureName);
         if (!assetFile)
@@ -439,9 +464,9 @@ namespace Maze
     //////////////////////////////////////////
     TextureCubePtr const& TextureManager::getTextureCube(AssetFilePtr const& _assetFile)
     {
-        StringKeyMap<TextureCubePtr>::const_iterator it = m_texturesCubeByName.find(_assetFile->getFileName());
-        if (it != m_texturesCubeByName.end())
-            return it->second;
+        TextureCubeLibraryData const* libraryData = getTextureCubeLibraryData(_assetFile->getFileName());
+        if (libraryData)
+            return libraryData->texture;
 
         TextureCubePtr textureCube = TextureCube::Create(_assetFile, m_renderSystemRaw);
         textureCube->setName(_assetFile->getFileName());
@@ -458,17 +483,25 @@ namespace Maze
         if (metaData["wrapR"] != String())
             textureCube->setWrapR(TextureWrap::FromString(metaData["wrapR"]));
 
-        return addTexture(textureCube);
+        TextureCubeLibraryData* data = addTextureToLibrary(textureCube);
+        data->assetFile = _assetFile;
+        return data->texture;
     }
 
     //////////////////////////////////////////
-    TextureCubePtr const& TextureManager::addTexture(TextureCubePtr const& _texture)
+    TextureCubeLibraryData* TextureManager::addTextureToLibrary(TextureCubePtr const& _texture)
     {
-        auto it2 = m_texturesCubeByName.insert(
+        auto it2 = m_texturesCubeLibrary.insert(
             _texture->getName(),
-            _texture);
+            { _texture, nullptr });
 
-        return *it2;
+        return it2;
+    }
+
+    //////////////////////////////////////////
+    void TextureManager::removeTextureCubeFromLibrary(HashedCString _textureName)
+    {
+        m_texturesCubeLibrary.erase(_textureName);
     }
 
     //////////////////////////////////////////
@@ -498,10 +531,47 @@ namespace Maze
     //////////////////////////////////////////
     void TextureManager::reloadAllAssetTextures()
     {
-        for (auto const& textureData : m_textures2DByName)
+        for (auto const& textureData : m_textures2DLibrary)
         {
-            if (textureData.second->getAssetFile())
-                textureData.second->reload();
+            if (textureData.second.assetFile)
+                textureData.second.texture->loadFromAssetFile(textureData.second.assetFile);
+        }
+    }
+
+    //////////////////////////////////////////
+    void TextureManager::unloadAssetTextures(Set<String> const& _tags)
+    {
+        {
+            StringKeyMap<Texture2DLibraryData>::iterator it = m_textures2DLibrary.begin();
+            StringKeyMap<Texture2DLibraryData>::iterator end = m_textures2DLibrary.end();
+            for (; it != end; )
+            {
+                if (it->second.assetFile && it->second.assetFile->hasAnyOfTags(_tags))
+                {
+                    it = m_textures2DLibrary.erase(it);
+                    end = m_textures2DLibrary.end();
+                }
+                else
+                {
+                    ++it;
+                }
+            }
+        }
+        {
+            StringKeyMap<TextureCubeLibraryData>::iterator it = m_texturesCubeLibrary.begin();
+            StringKeyMap<TextureCubeLibraryData>::iterator end = m_texturesCubeLibrary.end();
+            for (; it != end; )
+            {
+                if (it->second.assetFile && it->second.assetFile->hasAnyOfTags(_tags))
+                {
+                    it = m_texturesCubeLibrary.erase(it);
+                    end = m_texturesCubeLibrary.end();
+                }
+                else
+                {
+                    ++it;
+                }
+            }
         }
     }
 
@@ -520,9 +590,9 @@ namespace Maze
     {
         static String nullPointer;
 
-        for (auto const& textureData : m_textures2DByName)
+        for (auto const& textureData : m_textures2DLibrary)
         {
-            if (textureData.second.get() == _texture)
+            if (textureData.second.texture.get() == _texture)
                 return textureData.first;
         }
 

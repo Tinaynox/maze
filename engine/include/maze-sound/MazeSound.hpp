@@ -83,7 +83,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline String const& getName() const { return m_name; }
+        inline HashedString const& getName() const { return m_name; }
+
+        //////////////////////////////////////////
+        inline void setName(HashedString const& _name) { m_name = _name; }
+
+        //////////////////////////////////////////
+        inline void setName(CString _name) { m_name = _name; }
 
         //////////////////////////////////////////
         inline void setName(String const& _name) { m_name = _name; }
@@ -156,7 +162,7 @@ namespace Maze
     protected:
         SoundSystem* m_soundSystem = nullptr;
 
-        String m_name;
+        HashedString m_name;
 
     protected:
         static Sound* s_instancesList;
