@@ -109,13 +109,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    MaterialLibraryData const* MaterialManager::getMaterialLibraryData(HashedCString _materialName)
+    {
+        StringKeyMap<MaterialLibraryData>::const_iterator it = m_materialsLibrary.find(_materialName);
+        if (it != m_materialsLibrary.end())
+            return &it->second;
+        return nullptr;
+    }
+
+    //////////////////////////////////////////
     MaterialPtr const& MaterialManager::getMaterial(HashedCString _materialName)
     {
         static MaterialPtr nullPointer;
 
-        StringKeyMap<MaterialPtr>::const_iterator it = m_materialsByName.find(_materialName);
-        if (it != m_materialsByName.end())
-            return it->second;
+        MaterialLibraryData const* libraryData = getMaterialLibraryData(_materialName);
+        if (libraryData != nullptr)
+            return libraryData->material;
 
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_materialName);
         if (!assetFile)
@@ -126,19 +135,23 @@ namespace Maze
 
         MaterialPtr material = Material::Create(assetFile);
         material->setName(_materialName.str);
-        return addMaterial(material);
+        MaterialLibraryData* data = addMaterialToLibrary(material);
+        return data->material;
     }
 
     //////////////////////////////////////////
     MaterialPtr const& MaterialManager::getMaterial(AssetFilePtr const& _assetFile)
     {
-        StringKeyMap<MaterialPtr>::const_iterator it = m_materialsByName.find(_assetFile->getFileName());
-        if (it != m_materialsByName.end())
-            return it->second;
+        MaterialLibraryData const* libraryData = getMaterialLibraryData(_assetFile->getFileName());
+        if (libraryData != nullptr)
+            return libraryData->material;
 
         MaterialPtr material = Material::Create(_assetFile);
         material->setName(_assetFile->getFileName());
-        return addMaterial(material);
+
+        MaterialLibraryData* data = addMaterialToLibrary(material);
+        data->assetFile = _assetFile;
+        return data->material;
     }
 
     //////////////////////////////////////////
@@ -146,9 +159,9 @@ namespace Maze
     {
         static String nullPointer;
 
-        for (auto const& materialData : m_materialsByName)
+        for (auto const& materialData : m_materialsLibrary)
         {
-            if (materialData.second.get() == _material)
+            if (materialData.second.material.get() == _material)
                 return materialData.first;
         }
 
@@ -424,7 +437,7 @@ namespace Maze
         if (material)
         {
             material->setName(_materialType.toCString());
-            addMaterial(material);
+            addMaterialToLibrary(material);
         }
 
         return material;
@@ -450,10 +463,18 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MaterialPtr const& MaterialManager::addMaterial(MaterialPtr const& _material)
+    MaterialLibraryData* MaterialManager::addMaterialToLibrary(MaterialPtr const& _material)
     {
-        auto it2 = m_materialsByName.insert(_material->getName(), _material);
-        return *it2;
+        auto it2 = m_materialsLibrary.insert(
+            _material->getName(),
+            _material);
+        return it2;
+    }
+
+    //////////////////////////////////////////
+    void MaterialManager::removeMaterialFromLibrary(HashedCString _materialName)
+    {
+        m_materialsLibrary.erase(_materialName);
     }
 
     //////////////////////////////////////////
@@ -461,8 +482,8 @@ namespace Maze
     {
         Vector<MaterialPtr> result;
 
-        for (auto const& value : m_materialsByName)
-            result.emplace_back(value.second);
+        for (auto const& value : m_materialsLibrary)
+            result.emplace_back(value.second.material);
 
         std::sort(
             result.begin(),
@@ -481,12 +502,31 @@ namespace Maze
         Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtension("mzmaterial");
         for (AssetFilePtr const& assetFile : assetFiles)
         {
-            if (m_materialsByName.find(assetFile->getFileName()) != m_materialsByName.end())
+            if (m_materialsLibrary.find(assetFile->getFileName()) != m_materialsLibrary.end())
                 continue;
 
             MaterialPtr material = Material::Create(assetFile);
             material->setName(assetFile->getFileName());
-            addMaterial(material);
+            addMaterialToLibrary(material);
+        }
+    }
+
+    //////////////////////////////////////////
+    void MaterialManager::unloadAssetMaterials(Set<String> const& _tags)
+    {
+        StringKeyMap<MaterialLibraryData>::iterator it = m_materialsLibrary.begin();
+        StringKeyMap<MaterialLibraryData>::iterator end = m_materialsLibrary.end();
+        for (; it != end; )
+        {
+            if (it->second.assetFile && it->second.assetFile->hasAnyOfTags(_tags))
+            {
+                it = m_materialsLibrary.erase(it);
+                end = m_materialsLibrary.end();
+            }
+            else
+            {
+                ++it;
+            }
         }
     }
     

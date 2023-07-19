@@ -34,6 +34,7 @@
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-ui/fonts/MazeTrueTypeFont.hpp"
+#include "maze-core/assets/MazeAssetFile.hpp"
 
 
 //////////////////////////////////////////
@@ -71,13 +72,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    TrueTypeFontLibraryData const* TrueTypeFontManager::getTrueTypeFontLibraryData(HashedCString _fontName)
+    {
+        StringKeyMap<TrueTypeFontLibraryData>::const_iterator it = m_trueTypeFontsLibrary.find(_fontName);
+        if (it != m_trueTypeFontsLibrary.end())
+            return &it->second;
+        return nullptr;
+    }
+
+    //////////////////////////////////////////
     TrueTypeFontPtr const& TrueTypeFontManager::getTrueTypeFont(HashedCString _trueTypeFont)
     {
         static TrueTypeFontPtr nullPointer;
 
-        StringKeyMap<TrueTypeFontPtr>::const_iterator it = m_trueTypeFontsByName.find(_trueTypeFont);
-        if (it != m_trueTypeFontsByName.end())
-            return it->second;
+        TrueTypeFontLibraryData const* libraryData = getTrueTypeFontLibraryData(_trueTypeFont);
+        if (libraryData)
+            return libraryData->trueTypeFont;
 
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_trueTypeFont);
         if (!assetFile)
@@ -88,16 +98,24 @@ namespace Maze
             return nullPointer;
 
         font->setName(_trueTypeFont.str);
-        return addTrueTypeFont(font);
+
+        TrueTypeFontLibraryData* data = addTrueTypeFontToLibrary(font);
+        return data->trueTypeFont;
     }
 
     //////////////////////////////////////////
-    TrueTypeFontPtr const& TrueTypeFontManager::addTrueTypeFont(TrueTypeFontPtr const& _trueTypeFont)
+    TrueTypeFontLibraryData* TrueTypeFontManager::addTrueTypeFontToLibrary(TrueTypeFontPtr const& _trueTypeFont)
     {
-        auto it2 = m_trueTypeFontsByName.insert(
+        auto it2 = m_trueTypeFontsLibrary.insert(
             _trueTypeFont->getName(),
             _trueTypeFont);
-        return *it2;
+        return it2;
+    }
+
+    //////////////////////////////////////////
+    void TrueTypeFontManager::removeTrueTypeFontFromLibrary(HashedCString _fontName)
+    {
+        m_trueTypeFontsLibrary.erase(_fontName);
     }
 
     //////////////////////////////////////////
@@ -110,6 +128,25 @@ namespace Maze
         TrueTypeFontPtr font;
         m_trueTypeFontLoader.loadTrueTypeFontAssetFileFunc(_assetFile, font);
         return font;
+    }
+
+    //////////////////////////////////////////
+    void TrueTypeFontManager::unloadAssetTrueTypeFonts(Set<String> const& _tags)
+    {
+        StringKeyMap<TrueTypeFontLibraryData>::iterator it = m_trueTypeFontsLibrary.begin();
+        StringKeyMap<TrueTypeFontLibraryData>::iterator end = m_trueTypeFontsLibrary.end();
+        for (; it != end; )
+        {
+            if (it->second.assetFile && it->second.assetFile->hasAnyOfTags(_tags))
+            {
+                it = m_trueTypeFontsLibrary.erase(it);
+                end = m_trueTypeFontsLibrary.end();
+            }
+            else
+            {
+                ++it;
+            }
+        }
     }
 
 

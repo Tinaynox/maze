@@ -138,7 +138,7 @@ namespace Maze
         RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->addShaderToCache(shader);
 
         m_defaultParticleMaterial->setUniform("u_baseMap", m_defaultParticleTexture);
-        renderSystem->getMaterialManager()->addMaterial(m_defaultParticleMaterial);
+        renderSystem->getMaterialManager()->addMaterialToLibrary(m_defaultParticleMaterial);
 
 
         // m_defaultParticleTexture->saveToFileAsTGA("defaultParticleTexture.tga");

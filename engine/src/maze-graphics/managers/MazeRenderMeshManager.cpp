@@ -96,6 +96,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    RenderMeshLibraryData const* RenderMeshManager::getRenderMeshLibraryData(HashedCString _renderMeshName)
+    {
+        StringKeyMap<RenderMeshLibraryData>::const_iterator it = m_renderMeshesLibrary.find(_renderMeshName);
+        if (it != m_renderMeshesLibrary.end())
+            return &it->second;
+        return nullptr;
+    }
+
+    //////////////////////////////////////////
     RenderMeshPtr const& RenderMeshManager::createBuiltinRenderMesh(BuiltinRenderMeshType _renderMeshType)
     {
         RenderMeshPtr& renderMesh = m_builtinRenderMeshes[_renderMeshType];
@@ -154,7 +163,7 @@ namespace Maze
         if (renderMesh)
         {
             renderMesh->setName(_renderMeshType.toCString());
-            addRenderMesh(renderMesh);
+            addRenderMeshToLibrary(renderMesh);
         }
 
         return renderMesh;
@@ -182,9 +191,9 @@ namespace Maze
     {
         static RenderMeshPtr nullPointer;
 
-        StringKeyMap<RenderMeshPtr>::const_iterator it = m_renderMeshesByName.find(_renderMeshName);
-        if (it != m_renderMeshesByName.end())
-            return it->second;
+        RenderMeshLibraryData const* libraryData = getRenderMeshLibraryData(_renderMeshName);
+        if (libraryData != nullptr)
+            return libraryData->renderMesh;
 
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_renderMeshName);
         if (!assetFile)
@@ -192,28 +201,37 @@ namespace Maze
 
         RenderMeshPtr renderMesh = RenderMesh::Create(assetFile);
         renderMesh->setName(_renderMeshName.str);
-        return addRenderMesh(renderMesh);
+        RenderMeshLibraryData* data = addRenderMeshToLibrary(renderMesh);
+        return data->renderMesh;
     }
 
     //////////////////////////////////////////
     RenderMeshPtr const& RenderMeshManager::getRenderMesh(AssetFilePtr const& _assetFile)
     {
-        StringKeyMap<RenderMeshPtr>::const_iterator it = m_renderMeshesByName.find(_assetFile->getFileName());
-        if (it != m_renderMeshesByName.end())
-            return it->second;
+        StringKeyMap<RenderMeshLibraryData>::const_iterator it = m_renderMeshesLibrary.find(_assetFile->getFileName());
+        if (it != m_renderMeshesLibrary.end())
+            return it->second.renderMesh;
 
         RenderMeshPtr renderMesh = RenderMesh::Create(_assetFile);
         renderMesh->setName(_assetFile->getFileName());
-        return addRenderMesh(renderMesh);
+        RenderMeshLibraryData* data = addRenderMeshToLibrary(renderMesh);
+        data->assetFile = _assetFile;
+        return data->renderMesh;
     }
 
     //////////////////////////////////////////
-    RenderMeshPtr const& RenderMeshManager::addRenderMesh(RenderMeshPtr const& _renderMesh)
+    RenderMeshLibraryData* RenderMeshManager::addRenderMeshToLibrary(RenderMeshPtr const& _renderMesh)
     {
-        auto it2 = m_renderMeshesByName.insert(
+        auto it2 = m_renderMeshesLibrary.insert(
             _renderMesh->getName(),
             _renderMesh);
-        return *it2;
+        return it2;
+    }
+
+    //////////////////////////////////////////
+    void RenderMeshManager::removeRenderMeshFromLibrary(HashedCString _renderMeshName)
+    {
+        m_renderMeshesLibrary.erase(_renderMeshName);
     }
 
     //////////////////////////////////////////
@@ -221,8 +239,8 @@ namespace Maze
     {
         Vector<RenderMeshPtr> result;
 
-        for (auto const& value : m_renderMeshesByName)
-            result.emplace_back(value.second);
+        for (auto const& value : m_renderMeshesLibrary)
+            result.emplace_back(value.second.renderMesh);
 
         std::sort(
             result.begin(),
@@ -244,12 +262,31 @@ namespace Maze
             Set<String>(loaderExtensions.begin(), loaderExtensions.end()));
         for (AssetFilePtr const& assetFile : assetFiles)
         {
-            if (m_renderMeshesByName.find(assetFile->getFileName()) != m_renderMeshesByName.end())
+            if (m_renderMeshesLibrary.find(assetFile->getFileName()) != m_renderMeshesLibrary.end())
                 continue;
 
             RenderMeshPtr renderMesh = RenderMesh::Create(assetFile);
             renderMesh->setName(assetFile->getFileName());
-            addRenderMesh(renderMesh);
+            addRenderMeshToLibrary(renderMesh);
+        }
+    }
+
+    //////////////////////////////////////////
+    void RenderMeshManager::unloadAssetRenderMeshes(Set<String> const& _tags)
+    {
+        StringKeyMap<RenderMeshLibraryData>::iterator it = m_renderMeshesLibrary.begin();
+        StringKeyMap<RenderMeshLibraryData>::iterator end = m_renderMeshesLibrary.end();
+        for (; it != end; )
+        {
+            if (it->second.assetFile && it->second.assetFile->hasAnyOfTags(_tags))
+            {
+                it = m_renderMeshesLibrary.erase(it);
+                end = m_renderMeshesLibrary.end();
+            }
+            else
+            {
+                ++it;
+            }
         }
     }
 

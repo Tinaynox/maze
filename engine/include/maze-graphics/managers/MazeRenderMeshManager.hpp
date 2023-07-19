@@ -67,6 +67,25 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Struct RenderMeshLibraryData
+    //
+    //////////////////////////////////////////
+    struct MAZE_GRAPHICS_API RenderMeshLibraryData
+    {
+        //////////////////////////////////////////
+        RenderMeshLibraryData(
+            RenderMeshPtr const& _renderMesh = nullptr,
+            AssetFilePtr const& _assetFile = nullptr)
+            : renderMesh(_renderMesh)
+            , assetFile(_assetFile)
+        {}
+
+        RenderMeshPtr renderMesh;
+        AssetFilePtr assetFile;
+    };
+
+
+    //////////////////////////////////////////
     // Class RenderMeshManager
     //
     //////////////////////////////////////////
@@ -83,6 +102,16 @@ namespace Maze
 
         //////////////////////////////////////////
         static RenderMeshManagerPtr const& GetCurrentInstancePtr();
+
+
+        //////////////////////////////////////////
+        RenderMeshLibraryData const* getRenderMeshLibraryData(HashedCString _renderMeshName);
+
+        //////////////////////////////////////////
+        RenderMeshLibraryData const* getRenderMeshLibraryData(String const& _assetFileName) { return getRenderMeshLibraryData(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+
+        //////////////////////////////////////////
+        RenderMeshLibraryData const* getRenderMeshLibraryData(CString _assetFileName) { return getRenderMeshLibraryData(MAZE_HASHED_CSTRING(_assetFileName)); }
 
 
         //////////////////////////////////////////
@@ -122,7 +151,17 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        RenderMeshPtr const& addRenderMesh(RenderMeshPtr const& _renderMesh);
+        RenderMeshLibraryData* addRenderMeshToLibrary(RenderMeshPtr const& _renderMesh);
+
+        //////////////////////////////////////////
+        void removeRenderMeshFromLibrary(HashedCString _renderMeshName);
+
+        //////////////////////////////////////////
+        inline void removeRenderMeshFromLibrary(CString _renderMeshName) { removeRenderMeshFromLibrary(_renderMeshName); }
+
+        //////////////////////////////////////////
+        inline void removeRenderMeshFromLibrary(String const& _renderMeshName) { removeRenderMeshFromLibrary(_renderMeshName); }
+
 
         //////////////////////////////////////////
         Vector<RenderMeshPtr> getRenderMeshesSorted();
@@ -130,6 +169,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void loadAllAssetRenderMeshes();
+
+        //////////////////////////////////////////
+        void unloadAssetRenderMeshes(Set<String> const& _tags);
 
 
     protected:
@@ -149,7 +191,7 @@ namespace Maze
 
         RenderMeshPtr m_builtinRenderMeshes[BuiltinRenderMeshType::MAX];
 
-        StringKeyMap<RenderMeshPtr> m_renderMeshesByName;
+        StringKeyMap<RenderMeshLibraryData> m_renderMeshesLibrary;
     };
 
 } // namespace Maze

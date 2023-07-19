@@ -48,6 +48,25 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Struct PhysicsMaterial2DLibraryData
+    //
+    //////////////////////////////////////////
+    struct MAZE_PHYSICS2D_API PhysicsMaterial2DLibraryData
+    {
+        //////////////////////////////////////////
+        PhysicsMaterial2DLibraryData(
+            PhysicsMaterial2DPtr const& _physicsMaterial2D = nullptr,
+            AssetFilePtr const& _assetFile = nullptr)
+            : physicsMaterial2D(_physicsMaterial2D)
+            , assetFile(_assetFile)
+        {}
+
+        PhysicsMaterial2DPtr physicsMaterial2D;
+        AssetFilePtr assetFile;
+    };
+
+
+    //////////////////////////////////////////
     // Class PhysicsMaterial2DManager
     //
     //////////////////////////////////////////
@@ -74,6 +93,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        PhysicsMaterial2DLibraryData const* getPhysicsMaterial2DLibraryData(HashedCString _physicsMaterial2DName);
+
+        //////////////////////////////////////////
+        PhysicsMaterial2DLibraryData const* getPhysicsMaterial2DLibraryData(String const& _assetFileName) { return getPhysicsMaterial2DLibraryData(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+
+        //////////////////////////////////////////
+        PhysicsMaterial2DLibraryData const* getPhysicsMaterial2DLibraryData(CString _assetFileName) { return getPhysicsMaterial2DLibraryData(MAZE_HASHED_CSTRING(_assetFileName)); }
+
+
+        //////////////////////////////////////////
         PhysicsMaterial2DPtr const& getMaterial(HashedCString _materialName);
 
         //////////////////////////////////////////
@@ -88,6 +117,25 @@ namespace Maze
         //////////////////////////////////////////
         String const& getMaterialName(PhysicsMaterial2D const* _material);
 
+
+        //////////////////////////////////////////
+        PhysicsMaterial2DLibraryData* addFontToLibrary(
+            HashedCString _physicsMaterial2DName,
+            PhysicsMaterial2DPtr const& _physicsMaterial2D);
+
+        //////////////////////////////////////////
+        void removeFontFromLibrary(HashedCString _physicsMaterial2DName);
+
+        //////////////////////////////////////////
+        inline void removeFontFromLibrary(CString _physicsMaterial2DName) { removeFontFromLibrary(_physicsMaterial2DName); }
+
+        //////////////////////////////////////////
+        inline void removeFontFromLibrary(String const& _physicsMaterial2DName) { removeFontFromLibrary(_physicsMaterial2DName); }
+
+
+        //////////////////////////////////////////
+        void unloadAssetPhysicsMaterial2Ds(Set<String> const& _tags);
+
     protected:
 
         //////////////////////////////////////////
@@ -101,7 +149,7 @@ namespace Maze
 
         PhysicsMaterial2DPtr m_defaultMaterial;
 
-        StringKeyMap<PhysicsMaterial2DPtr> m_materialsByName;
+        StringKeyMap<PhysicsMaterial2DLibraryData> m_materialsLibrary;
     };
     
 

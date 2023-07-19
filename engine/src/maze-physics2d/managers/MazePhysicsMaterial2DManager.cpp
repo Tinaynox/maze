@@ -73,11 +73,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    PhysicsMaterial2DLibraryData const* PhysicsMaterial2DManager::getPhysicsMaterial2DLibraryData(HashedCString _physicsMaterial2DName)
+    {
+        StringKeyMap<PhysicsMaterial2DLibraryData>::const_iterator it = m_materialsLibrary.find(_physicsMaterial2DName);
+        if (it != m_materialsLibrary.end())
+            return &it->second;
+        return nullptr;
+    }
+
+    //////////////////////////////////////////
     PhysicsMaterial2DPtr const& PhysicsMaterial2DManager::getMaterial(HashedCString _materialName)
     {
-        StringKeyMap<PhysicsMaterial2DPtr>::const_iterator it = m_materialsByName.find(_materialName);
-        if (it != m_materialsByName.end())
-            return it->second;
+        PhysicsMaterial2DLibraryData const* libraryData = getPhysicsMaterial2DLibraryData(_materialName);
+        if (libraryData)
+            return libraryData->physicsMaterial2D;
 
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_materialName);
         if (!assetFile)
@@ -87,24 +96,25 @@ namespace Maze
         }
 
         PhysicsMaterial2DPtr material = PhysicsMaterial2D::Create(assetFile);
-        auto it2 = m_materialsByName.insert(
+        auto it2 = m_materialsLibrary.insert(
             _materialName,
             material);
-        return *it2;
+        return it2->physicsMaterial2D;
     }
 
     //////////////////////////////////////////
     PhysicsMaterial2DPtr const& PhysicsMaterial2DManager::getMaterial(AssetFilePtr const& _assetFile)
     {
-        StringKeyMap<PhysicsMaterial2DPtr>::const_iterator it = m_materialsByName.find(_assetFile->getFileName());
-        if (it != m_materialsByName.end())
-            return it->second;
+        PhysicsMaterial2DLibraryData const* libraryData = getPhysicsMaterial2DLibraryData(_assetFile->getFileName());
+        if (libraryData)
+            return libraryData->physicsMaterial2D;
 
         PhysicsMaterial2DPtr material = PhysicsMaterial2D::Create(_assetFile);
-        auto it2 = m_materialsByName.insert(
-            _assetFile->getFileName(),
+        PhysicsMaterial2DLibraryData* data = addFontToLibrary(
+            _assetFile->getFileName().toUTF8().c_str(),
             material);
-        return *it2;
+        data->assetFile = _assetFile;
+        return data->physicsMaterial2D;
     }
 
     //////////////////////////////////////////
@@ -112,13 +122,49 @@ namespace Maze
     {
         static String nullPointer;
 
-        for (auto const& materialData : m_materialsByName)
+        for (auto const& materialData : m_materialsLibrary)
         {
-            if (materialData.second.get() == _material)
+            if (materialData.second.physicsMaterial2D.get() == _material)
                 return materialData.first;
         }
 
         return nullPointer;
+    }
+
+    //////////////////////////////////////////
+    PhysicsMaterial2DLibraryData* PhysicsMaterial2DManager::addFontToLibrary(
+        HashedCString _physicsMaterial2DName,
+        PhysicsMaterial2DPtr const& _physicsMaterial2D)
+    {
+        auto it2 = m_materialsLibrary.insert(
+            _physicsMaterial2DName,
+            { _physicsMaterial2D, nullptr });
+        return it2;
+    }
+
+    //////////////////////////////////////////
+    void PhysicsMaterial2DManager::removeFontFromLibrary(HashedCString _physicsMaterial2DName)
+    {
+        m_materialsLibrary.erase(_physicsMaterial2DName);
+    }
+
+    //////////////////////////////////////////
+    void PhysicsMaterial2DManager::unloadAssetPhysicsMaterial2Ds(Set<String> const& _tags)
+    {
+        StringKeyMap<PhysicsMaterial2DLibraryData>::iterator it = m_materialsLibrary.begin();
+        StringKeyMap<PhysicsMaterial2DLibraryData>::iterator end = m_materialsLibrary.end();
+        for (; it != end; )
+        {
+            if (it->second.assetFile && it->second.assetFile->hasAnyOfTags(_tags))
+            {
+                it = m_materialsLibrary.erase(it);
+                end = m_materialsLibrary.end();
+            }
+            else
+            {
+                ++it;
+            }
+        }
     }
     
 } // namespace Maze

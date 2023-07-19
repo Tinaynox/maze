@@ -52,6 +52,25 @@ namespace Maze
     
 
     //////////////////////////////////////////
+    // Struct FontLibraryData
+    //
+    //////////////////////////////////////////
+    struct MAZE_UI_API FontLibraryData
+    {
+        //////////////////////////////////////////
+        FontLibraryData(
+            FontPtr const& _font = nullptr,
+            AssetFilePtr const& _assetFile = nullptr)
+            : font(_font)
+            , assetFile(_assetFile)
+        {}
+
+        FontPtr font;
+        AssetFilePtr assetFile;
+    };
+
+
+    //////////////////////////////////////////
     // Class FontManager
     //
     //////////////////////////////////////////
@@ -75,6 +94,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        FontLibraryData const* getFontLibraryData(HashedCString _fontName);
+
+        //////////////////////////////////////////
+        FontLibraryData const* getFontLibraryData(String const& _assetFileName) { return getFontLibraryData(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+
+        //////////////////////////////////////////
+        FontLibraryData const* getFontLibraryData(CString _assetFileName) { return getFontLibraryData(MAZE_HASHED_CSTRING(_assetFileName)); }
+
+
+        //////////////////////////////////////////
         FontPtr const& getFont(HashedCString _assetFileName);
 
         //////////////////////////////////////////
@@ -83,8 +112,18 @@ namespace Maze
         //////////////////////////////////////////
         inline FontPtr const& getFont(CString _assetFileName) { return getFont(MAZE_HASHED_CSTRING(_assetFileName)); }
 
+
         //////////////////////////////////////////
-        FontPtr const& addFont(FontPtr const& _font);
+        FontLibraryData* addFontToLibrary(FontPtr const& _font);
+
+        //////////////////////////////////////////
+        void removeFontFromLibrary(HashedCString _fontName);
+
+        //////////////////////////////////////////
+        inline void removeFontFromLibrary(CString _fontMaterialName) { removeFontFromLibrary(_fontMaterialName); }
+
+        //////////////////////////////////////////
+        inline void removeFontFromLibrary(String const& _fontMaterialName) { removeFontFromLibrary(_fontMaterialName); }
 
 
         //////////////////////////////////////////
@@ -96,6 +135,10 @@ namespace Maze
 
         //////////////////////////////////////////
         String const& getFontName(Font const* _font);
+
+
+        //////////////////////////////////////////
+        void unloadAssetFontMaterials(Set<String> const& _tags);
 
     protected:
 
@@ -111,7 +154,7 @@ namespace Maze
 
         TrueTypeFontManagerPtr m_trueTypeFontManager;
 
-        StringKeyMap<FontPtr> m_fontsByName;
+        StringKeyMap<FontLibraryData> m_fontsLibrary;
 
         FontMaterialManagerPtr m_fontMaterialManager;
 

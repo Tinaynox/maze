@@ -49,6 +49,25 @@ namespace Maze
     
 
     //////////////////////////////////////////
+    // Struct FontMaterialLibraryData
+    //
+    //////////////////////////////////////////
+    struct MAZE_UI_API FontMaterialLibraryData
+    {
+        //////////////////////////////////////////
+        FontMaterialLibraryData(
+            FontMaterialPtr const& _fontMaterial = nullptr,
+            AssetFilePtr const& _assetFile = nullptr)
+            : fontMaterial(_fontMaterial)
+            , assetFile(_assetFile)
+        {}
+
+        FontMaterialPtr fontMaterial;
+        AssetFilePtr assetFile;
+    };
+
+
+    //////////////////////////////////////////
     // Class FontMaterialManager
     //
     //////////////////////////////////////////
@@ -72,6 +91,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        FontMaterialLibraryData const* getFontMaterialLibraryData(HashedCString _fontMaterialName);
+
+        //////////////////////////////////////////
+        FontMaterialLibraryData const* getFontMaterialLibraryData(String const& _assetFileName) { return getFontMaterialLibraryData(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+
+        //////////////////////////////////////////
+        FontMaterialLibraryData const* getFontMaterialLibraryData(CString _assetFileName) { return getFontMaterialLibraryData(MAZE_HASHED_CSTRING(_assetFileName)); }
+
+
+        //////////////////////////////////////////
         FontMaterialPtr const& getFontMaterial(HashedCString _assetFileName);
 
         //////////////////////////////////////////
@@ -80,8 +109,18 @@ namespace Maze
         //////////////////////////////////////////
         inline FontMaterialPtr const& getFontMaterial(CString _assetFileName) { return getFontMaterial(MAZE_HASHED_CSTRING(_assetFileName)); }
 
+
         //////////////////////////////////////////
-        FontMaterialPtr const& addFontMaterial(FontMaterialPtr const& _trueTypeFont);
+        FontMaterialLibraryData* addFontMaterialToLibrary(FontMaterialPtr const& _trueTypeFont);
+
+        //////////////////////////////////////////
+        void removeFontMaterialFromLibrary(HashedCString _fontMaterialName);
+
+        //////////////////////////////////////////
+        inline void removeFontMaterialFromLibrary(CString _fontMaterialName) { removeFontMaterialFromLibrary(_fontMaterialName); }
+
+        //////////////////////////////////////////
+        inline void removeFontMaterialFromLibrary(String const& _fontMaterialName) { removeFontMaterialFromLibrary(_fontMaterialName); }
 
 
         //////////////////////////////////////////
@@ -93,6 +132,10 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void setDefaultFontMaterial(FontMaterialPtr const& _value) { m_defaultFontMaterial = _value; }
+
+
+        //////////////////////////////////////////
+        void unloadAssetFontMaterials(Set<String> const& _tags);
 
     protected:
 
@@ -106,7 +149,7 @@ namespace Maze
     protected:
         static FontMaterialManager* s_instance;
 
-        StringKeyMap<FontMaterialPtr> m_fontMaterialsByName;
+        StringKeyMap<FontMaterialLibraryData> m_fontMaterialsLibrary;
 
         FontMaterialPtr m_defaultFontMaterial;
     };

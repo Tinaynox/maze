@@ -33,6 +33,7 @@
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-ui/fonts/MazeFontMaterial.hpp"
 
 
@@ -71,13 +72,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    FontMaterialLibraryData const* FontMaterialManager::getFontMaterialLibraryData(HashedCString _fontMaterialName)
+    {
+        StringKeyMap<FontMaterialLibraryData>::const_iterator it = m_fontMaterialsLibrary.find(_fontMaterialName);
+        if (it != m_fontMaterialsLibrary.end())
+            return &it->second;
+        return nullptr;
+    }
+
+    //////////////////////////////////////////
     FontMaterialPtr const& FontMaterialManager::getFontMaterial(HashedCString _trueTypeFont)
     {
         static FontMaterialPtr nullPointer;
 
-        StringKeyMap<FontMaterialPtr>::const_iterator it = m_fontMaterialsByName.find(_trueTypeFont);
-        if (it != m_fontMaterialsByName.end())
-            return it->second;
+        FontMaterialLibraryData const* libraryData = getFontMaterialLibraryData(_trueTypeFont);
+        if (libraryData)
+            return libraryData->fontMaterial;
 
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_trueTypeFont);
         if (!assetFile)
@@ -88,16 +98,23 @@ namespace Maze
             return nullPointer;
 
         font->setName(_trueTypeFont.str);
-        return addFontMaterial(font);
+        FontMaterialLibraryData* data = addFontMaterialToLibrary(font);
+        return data->fontMaterial;
     }
 
     //////////////////////////////////////////
-    FontMaterialPtr const& FontMaterialManager::addFontMaterial(FontMaterialPtr const& _trueTypeFont)
+    FontMaterialLibraryData* FontMaterialManager::addFontMaterialToLibrary(FontMaterialPtr const& _trueTypeFont)
     {
-        auto it2 = m_fontMaterialsByName.insert(
+        auto it2 = m_fontMaterialsLibrary.insert(
             _trueTypeFont->getName(),
             _trueTypeFont);
-        return *it2;
+        return it2;
+    }
+
+    //////////////////////////////////////////
+    void FontMaterialManager::removeFontMaterialFromLibrary(HashedCString _fontMaterialName)
+    {
+        m_fontMaterialsLibrary.erase(_fontMaterialName);
     }
 
     //////////////////////////////////////////
@@ -105,13 +122,32 @@ namespace Maze
     {
         static String nullPointer;
 
-        for (auto const& fontData : m_fontMaterialsByName)
+        for (auto const& fontData : m_fontMaterialsLibrary)
         {
-            if (fontData.second.get() == _font)
+            if (fontData.second.fontMaterial.get() == _font)
                 return fontData.first;
         }
 
         return nullPointer;
+    }
+
+    //////////////////////////////////////////
+    void FontMaterialManager::unloadAssetFontMaterials(Set<String> const& _tags)
+    {
+        StringKeyMap<FontMaterialLibraryData>::iterator it = m_fontMaterialsLibrary.begin();
+        StringKeyMap<FontMaterialLibraryData>::iterator end = m_fontMaterialsLibrary.end();
+        for (; it != end; )
+        {
+            if (it->second.assetFile && it->second.assetFile->hasAnyOfTags(_tags))
+            {
+                it = m_fontMaterialsLibrary.erase(it);
+                end = m_fontMaterialsLibrary.end();
+            }
+            else
+            {
+                ++it;
+            }
+        }
     }
 
 

@@ -77,6 +77,25 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Struct MaterialLibraryData
+    //
+    //////////////////////////////////////////
+    struct MAZE_GRAPHICS_API MaterialLibraryData
+    {
+        //////////////////////////////////////////
+        MaterialLibraryData(
+            MaterialPtr const& _material = nullptr,
+            AssetFilePtr const& _assetFile = nullptr)
+            : material(_material)
+            , assetFile(_assetFile)
+        {}
+
+        MaterialPtr material;
+        AssetFilePtr assetFile;
+    };
+
+
+    //////////////////////////////////////////
     // Class MaterialManager
     //
     //////////////////////////////////////////
@@ -94,6 +113,15 @@ namespace Maze
         //////////////////////////////////////////
         static MaterialManagerPtr const& GetCurrentInstance();
 
+
+        //////////////////////////////////////////
+        MaterialLibraryData const* getMaterialLibraryData(HashedCString _materialName);
+
+        //////////////////////////////////////////
+        MaterialLibraryData const* getMaterialLibraryData(String const& _assetFileName) { return getMaterialLibraryData(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+
+        //////////////////////////////////////////
+        MaterialLibraryData const* getMaterialLibraryData(CString _assetFileName) { return getMaterialLibraryData(MAZE_HASHED_CSTRING(_assetFileName)); }
 
         //////////////////////////////////////////
         MaterialPtr const& getMaterial(HashedCString _assetFileName);
@@ -136,7 +164,17 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MaterialPtr const& addMaterial(MaterialPtr const& _material);
+        MaterialLibraryData* addMaterialToLibrary(MaterialPtr const& _material);
+
+        //////////////////////////////////////////
+        void removeMaterialFromLibrary(HashedCString _materialName);
+
+        //////////////////////////////////////////
+        inline void removeMaterialFromLibrary(CString _materialName) { removeMaterialFromLibrary(_materialName); }
+
+        //////////////////////////////////////////
+        inline void removeMaterialFromLibrary(String const& _materialName) { removeMaterialFromLibrary(_materialName); }
+
 
         //////////////////////////////////////////
         Vector<MaterialPtr> getMaterialsSorted();
@@ -144,6 +182,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void loadAllAssetMaterials();
+
+        //////////////////////////////////////////
+        void unloadAssetMaterials(Set<String> const& _tags);
 
     public:
         //////////////////////////////////////////
@@ -167,7 +208,7 @@ namespace Maze
         RenderSystemWPtr m_renderSystem;
         RenderSystem* m_renderSystemRaw;
 
-        StringKeyMap<MaterialPtr> m_materialsByName;
+        StringKeyMap<MaterialLibraryData> m_materialsLibrary;
 
         MaterialPtr m_builtinMaterials[BuiltinMaterialType::MAX];
     };

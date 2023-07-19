@@ -56,10 +56,29 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Struct TrueTypeFontLibraryData
+    //
+    //////////////////////////////////////////
+    struct MAZE_UI_API TrueTypeFontLibraryData
+    {
+        //////////////////////////////////////////
+        TrueTypeFontLibraryData(
+            TrueTypeFontPtr const& _trueTypeFont = nullptr,
+            AssetFilePtr const& _assetFile = nullptr)
+            : trueTypeFont(_trueTypeFont)
+            , assetFile(_assetFile)
+        {}
+
+        TrueTypeFontPtr trueTypeFont;
+        AssetFilePtr assetFile;
+    };
+
+
+    //////////////////////////////////////////
     // Struct TrueTypeFontLoaderData
     //
     //////////////////////////////////////////
-    struct TrueTypeFontLoaderData
+    struct MAZE_UI_API TrueTypeFontLoaderData
     {
         //////////////////////////////////////////
         TrueTypeFontLoaderData() = default;
@@ -107,6 +126,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        TrueTypeFontLibraryData const* getTrueTypeFontLibraryData(HashedCString _fontName);
+
+        //////////////////////////////////////////
+        TrueTypeFontLibraryData const* getTrueTypeFontLibraryData(String const& _assetFileName) { return getTrueTypeFontLibraryData(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+
+        //////////////////////////////////////////
+        TrueTypeFontLibraryData const* getTrueTypeFontLibraryData(CString _assetFileName) { return getTrueTypeFontLibraryData(MAZE_HASHED_CSTRING(_assetFileName)); }
+
+
+        //////////////////////////////////////////
         TrueTypeFontPtr const& getTrueTypeFont(HashedCString _assetFileName);
 
         //////////////////////////////////////////
@@ -115,8 +144,19 @@ namespace Maze
         //////////////////////////////////////////
         inline TrueTypeFontPtr const& getTrueTypeFont(CString _assetFileName) { return getTrueTypeFont(MAZE_HASHED_CSTRING(_assetFileName)); }
 
+
         //////////////////////////////////////////
-        TrueTypeFontPtr const& addTrueTypeFont(TrueTypeFontPtr const& _trueTypeFont);
+        TrueTypeFontLibraryData* addTrueTypeFontToLibrary(TrueTypeFontPtr const& _trueTypeFont);
+
+        //////////////////////////////////////////
+        void removeTrueTypeFontFromLibrary(HashedCString _fontName);
+
+        //////////////////////////////////////////
+        inline void removeTrueTypeFontFromLibrary(CString _fontName) { removeTrueTypeFontFromLibrary(_fontName); }
+
+        //////////////////////////////////////////
+        inline void removeTrueTypeFontFromLibrary(String const& _fontName) { removeTrueTypeFontFromLibrary(_fontName); }
+
 
         //////////////////////////////////////////
         TrueTypeFontPtr createTrueTypeFont(
@@ -128,6 +168,10 @@ namespace Maze
 
         //////////////////////////////////////////
         void setTrueTypeFontLoader(TrueTypeFontLoaderData const& _value) { m_trueTypeFontLoader = _value; }
+
+
+        //////////////////////////////////////////
+        void unloadAssetTrueTypeFonts(Set<String> const& _tags);
 
     protected:
 
@@ -141,7 +185,7 @@ namespace Maze
     protected:
         static TrueTypeFontManager* s_instance;
 
-        StringKeyMap<TrueTypeFontPtr> m_trueTypeFontsByName;
+        StringKeyMap<TrueTypeFontLibraryData> m_trueTypeFontsLibrary;
 
         TrueTypeFontLoaderData m_trueTypeFontLoader;
     };
