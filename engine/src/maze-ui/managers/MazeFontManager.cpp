@@ -107,7 +107,9 @@ namespace Maze
             return nullPointer;
 
         font->setName(_font.str);
-         addFontToLibrary(font);
+        FontLibraryData* data = addFontToLibrary(font);
+        data->assetFile = assetFile;
+        return data->font;
     }
 
     //////////////////////////////////////////

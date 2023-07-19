@@ -99,6 +99,7 @@ namespace Maze
 
         font->setName(_trueTypeFont.str);
         FontMaterialLibraryData* data = addFontMaterialToLibrary(font);
+        data->assetFile = assetFile;
         return data->fontMaterial;
     }
 

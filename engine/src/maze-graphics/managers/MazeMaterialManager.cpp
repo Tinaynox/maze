@@ -136,6 +136,7 @@ namespace Maze
         MaterialPtr material = Material::Create(assetFile);
         material->setName(_materialName.str);
         MaterialLibraryData* data = addMaterialToLibrary(material);
+        data->assetFile = assetFile;
         return data->material;
     }
 
@@ -507,7 +508,8 @@ namespace Maze
 
             MaterialPtr material = Material::Create(assetFile);
             material->setName(assetFile->getFileName());
-            addMaterialToLibrary(material);
+            MaterialLibraryData* libraryData = addMaterialToLibrary(material);
+            libraryData->assetFile = assetFile;
         }
     }
 

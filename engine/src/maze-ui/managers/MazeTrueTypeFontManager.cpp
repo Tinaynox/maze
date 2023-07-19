@@ -100,6 +100,7 @@ namespace Maze
         font->setName(_trueTypeFont.str);
 
         TrueTypeFontLibraryData* data = addTrueTypeFontToLibrary(font);
+        data->assetFile = assetFile;
         return data->trueTypeFont;
     }
 

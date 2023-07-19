@@ -202,6 +202,7 @@ namespace Maze
         RenderMeshPtr renderMesh = RenderMesh::Create(assetFile);
         renderMesh->setName(_renderMeshName.str);
         RenderMeshLibraryData* data = addRenderMeshToLibrary(renderMesh);
+        data->assetFile = assetFile;
         return data->renderMesh;
     }
 
