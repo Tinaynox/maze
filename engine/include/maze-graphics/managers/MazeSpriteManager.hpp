@@ -48,6 +48,23 @@ namespace Maze
     MAZE_USING_SHARED_PTR(SpriteManager);
     MAZE_USING_SHARED_PTR(Sprite);
     MAZE_USING_SHARED_PTR(Material);
+    MAZE_USING_SHARED_PTR(AssetFile);
+
+
+    //////////////////////////////////////////
+    // Struct SpriteLibraryData
+    //
+    //////////////////////////////////////////
+    struct MAZE_GRAPHICS_API SpriteLibraryData
+    {
+        //////////////////////////////////////////
+        SpriteLibraryData(
+            SpritePtr const& _sprite = nullptr)
+            : sprite(_sprite)
+        {}
+
+        SpritePtr sprite;
+    };
 
 
     //////////////////////////////////////////
@@ -67,6 +84,21 @@ namespace Maze
         //////////////////////////////////////////
         static SpriteManagerPtr const& GetCurrentInstance();
 
+
+        //////////////////////////////////////////
+        inline StringKeyMap<SpriteLibraryData> const& getSpritesLibrary() const { return m_spritesLibrary; }
+
+
+        //////////////////////////////////////////
+        SpriteLibraryData const* getSpriteLibraryData(HashedCString _spriteName);
+
+        //////////////////////////////////////////
+        SpriteLibraryData const* getSpriteLibraryData(String const& _assetFileName) { return getSpriteLibraryData(MAZE_HASHED_CSTRING(_assetFileName.c_str())); }
+
+        //////////////////////////////////////////
+        SpriteLibraryData const* getSpriteLibraryData(CString _assetFileName) { return getSpriteLibraryData(MAZE_HASHED_CSTRING(_assetFileName)); }
+
+
         //////////////////////////////////////////
         SpritePtr const& getSprite(HashedCString _imageName);
 
@@ -83,6 +115,23 @@ namespace Maze
         //////////////////////////////////////////
         MaterialPtr const& getDefaultSpriteMaterial() const { return m_defaultSpriteMaterial; }
 
+
+        //////////////////////////////////////////
+        SpriteLibraryData* addSpriteToLibrary(SpritePtr const& _sprite);
+
+        //////////////////////////////////////////
+        void removeSpriteFromLibrary(HashedCString _spriteName);
+
+        //////////////////////////////////////////
+        inline void removeSpriteFromLibrary(CString _spriteName) { removeSpriteFromLibrary(_spriteName); }
+
+        //////////////////////////////////////////
+        inline void removeSpriteFromLibrary(String const& _spriteName) { removeSpriteFromLibrary(_spriteName); }
+
+
+        //////////////////////////////////////////
+        void unloadAssetSprites(Set<String> const& _tags);
+
     protected:
 
         //////////////////////////////////////////
@@ -95,7 +144,7 @@ namespace Maze
         RenderSystemWPtr m_renderSystem;
         RenderSystem* m_renderSystemRaw;
 
-        StringKeyMap<SpritePtr> m_imagesByName;
+        StringKeyMap<SpriteLibraryData> m_spritesLibrary;
 
         MaterialPtr m_defaultSpriteMaterial;
     };

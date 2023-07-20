@@ -71,7 +71,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(SpriteRenderer2D);
 
-    
+
     //////////////////////////////////////////
     SpriteRenderer2D::SpriteRenderer2D()
         : m_renderSystem(nullptr)
@@ -79,7 +79,6 @@ namespace Maze
         , m_renderMode(SpriteRenderMode::Simple)
         , m_customRenderCallback(nullptr)
     {
-        
     }
 
     //////////////////////////////////////////

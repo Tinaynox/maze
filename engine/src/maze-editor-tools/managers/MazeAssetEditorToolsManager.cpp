@@ -67,6 +67,7 @@ namespace Maze
         if (texture)
         {
             result = Sprite::Create(texture);
+            result->setName("TextureFileIcon_" + _assetFile->getFileName().toUTF8());
         }
 
         return result;

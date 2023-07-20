@@ -206,6 +206,11 @@ namespace Maze
         //////////////////////////////////////////
         static void ToString(Sprite const* _value, String& _data);
 
+    public:
+
+        //////////////////////////////////////////
+        static void IterateSprites(std::function<bool(Sprite*)> _cb);
+
     protected:
 
         //////////////////////////////////////////
@@ -235,6 +240,11 @@ namespace Maze
         Vec2DF m_textureCoordRT;
 
         SpriteSliceBorder m_sliceBorder;
+
+    protected:
+        static Sprite* s_instancesList;
+        Sprite* m_instancesListNext = nullptr;
+        Sprite* m_instancesListPrev = nullptr;
     };
 
 

@@ -115,6 +115,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline StringKeyMap<MaterialLibraryData> const& getMaterialsLibrary() const { return m_materialsLibrary; }
+
+
+        //////////////////////////////////////////
         MaterialLibraryData const* getMaterialLibraryData(HashedCString _materialName);
 
         //////////////////////////////////////////

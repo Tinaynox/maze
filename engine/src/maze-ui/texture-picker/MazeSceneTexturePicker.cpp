@@ -339,6 +339,7 @@ namespace Maze
         {
             // #TODO: REWORK
             SpritePtr fakeSprite = Sprite::Create(_texture);
+            fakeSprite->setName("TexturePickerSprite");
             sprite->setSprite(fakeSprite);
             
         }

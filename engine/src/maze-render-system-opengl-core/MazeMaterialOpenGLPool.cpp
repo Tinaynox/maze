@@ -57,18 +57,18 @@ namespace Maze
     {
         MAZE_MUTEX_SCOPED_LOCK(m_mutex);
 
-        Stack<MaterialOpenGL*>* renderMeshPool = nullptr;
+        Stack<MaterialOpenGL*>* materialPool = nullptr;
 
-        Map<ContextOpenGL*, Stack<MaterialOpenGL*>>::iterator it = m_renderMeshPools.find(_contextOpenGL);
-        if (it == m_renderMeshPools.end())
+        Map<ContextOpenGL*, Stack<MaterialOpenGL*>>::iterator it = m_materialPools.find(_contextOpenGL);
+        if (it == m_materialPools.end())
         {
             _contextOpenGL->eventDestroyed.subscribe(this, &MaterialOpenGLPool::notifyContextDestroyed);
 
-            renderMeshPool = &m_renderMeshPools[_contextOpenGL];
+            materialPool = &m_materialPools[_contextOpenGL];
         }
         else
         {
-            renderMeshPool = &it->second;
+            materialPool = &it->second;
         }
 
         std::function<void(MaterialOpenGL* _ptr)> const deleter = 
@@ -77,10 +77,10 @@ namespace Maze
                 releaseMaterialOpenGL(_ptr, _contextOpenGL);
             };
 
-        if (!renderMeshPool->empty())
+        if (!materialPool->empty())
         {
-            MaterialOpenGL* ptr = renderMeshPool->top();
-            renderMeshPool->pop();
+            MaterialOpenGL* ptr = materialPool->top();
+            materialPool->pop();
 
             MaterialOpenGLPtr sharedPtr(
                 ptr,
@@ -107,8 +107,10 @@ namespace Maze
     {
         MAZE_MUTEX_SCOPED_LOCK(m_mutex);
 
-        auto& renderMeshPool = m_renderMeshPools[_contextOpenGL];
-        renderMeshPool.push(_ptr);
+        auto& materialPool = m_materialPools[_contextOpenGL];
+        _ptr->clearAllRenderPasses();
+        _ptr->clearAllUniforms();
+        materialPool.push(_ptr);
     }
 
     //////////////////////////////////////////
@@ -116,17 +118,17 @@ namespace Maze
     {
         MAZE_MUTEX_SCOPED_LOCK(m_mutex);
 
-        for (auto& renderMeshPool : m_renderMeshPools)
+        for (auto& materialPool : m_materialPools)
         {
-            while (!renderMeshPool.second.empty())
+            while (!materialPool.second.empty())
             {
-                MAZE_DELETE(renderMeshPool.second.top());
-                renderMeshPool.second.pop();
+                MAZE_DELETE(materialPool.second.top());
+                materialPool.second.pop();
             }
 
-            renderMeshPool.first->eventDestroyed.unsubscribe(this);
+            materialPool.first->eventDestroyed.unsubscribe(this);
         }
-        m_renderMeshPools.clear();
+        m_materialPools.clear();
     }
 
     //////////////////////////////////////////
@@ -134,15 +136,15 @@ namespace Maze
     {
         _contextOpenGL->eventDestroyed.unsubscribe(this);
 
-        auto& renderMeshPool = m_renderMeshPools[_contextOpenGL];
+        auto& materialPool = m_materialPools[_contextOpenGL];
 
-        while (!renderMeshPool.empty())
+        while (!materialPool.empty())
         {
-            MAZE_DELETE(renderMeshPool.top());
-            renderMeshPool.pop();
+            MAZE_DELETE(materialPool.top());
+            materialPool.pop();
         }
 
-        m_renderMeshPools.erase(_contextOpenGL);
+        m_materialPools.erase(_contextOpenGL);
     }
     
 } // namespace Maze

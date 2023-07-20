@@ -363,6 +363,7 @@ namespace Maze
                         {
                             Texture2DPtr texture2D = texture->cast<Texture2D>();
                             SpritePtr fakeSprite = Sprite::Create(texture2D);
+                            fakeSprite->setName("MaterialPickerSprite");
                             sprite->setSprite(fakeSprite);
                         }
                     }

@@ -49,6 +49,10 @@ namespace Maze
 {
 
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_ENUMCLASS(DefaultGizmosSprite);
+
+
+    //////////////////////////////////////////
     // Class GizmosManager
     //
     //////////////////////////////////////////
@@ -369,7 +373,11 @@ namespace Maze
         for (DefaultGizmosSprite spriteType = DefaultGizmosSprite(0); spriteType < DefaultGizmosSprite::MAX; spriteType = DefaultGizmosSprite((S32)spriteType + 1))
         {
             if (m_defaultGizmosSprites[(Size)spriteType])
+            {
+                String name = "DefaultGizmosSprite_" + DefaultGizmosSprite(spriteType).toString();
+                m_defaultGizmosSprites[(Size)spriteType]->setName(name);
                 m_defaultGizmosSprites[(Size)spriteType]->updateTextureCoords();
+            }
         }
     }
 

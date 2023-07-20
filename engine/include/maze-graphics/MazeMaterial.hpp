@@ -116,6 +116,9 @@ namespace Maze
         RenderPassPtr const& getFirstRenderPass(RenderPassType _passType = RenderPassType::Default) const;
 
         //////////////////////////////////////////
+        void clear();
+
+        //////////////////////////////////////////
         void clearAllRenderPasses();
 
         //////////////////////////////////////////
@@ -251,6 +254,11 @@ namespace Maze
         //////////////////////////////////////////
         static void ToString(Material const* _value, String& _data);
 
+    public:
+
+        //////////////////////////////////////////
+        static void IterateMaterials(std::function<bool(Material*)> _cb);
+
     protected:
 
         //////////////////////////////////////////
@@ -273,6 +281,11 @@ namespace Maze
 
         Vector<RenderPassPtr> m_passes[RenderPassType::MAX];
         FastVector<ShaderUniformVariantPtr> m_uniforms;
+
+    protected:
+        static Material* s_instancesList;
+        Material* m_instancesListNext = nullptr;
+        Material* m_instancesListPrev = nullptr;
     };
 
 

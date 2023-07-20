@@ -68,6 +68,9 @@ namespace Maze
     // Class Sprite
     //
     //////////////////////////////////////////
+    Sprite* Sprite::s_instancesList = nullptr;
+
+    //////////////////////////////////////////
     Sprite::Sprite()
         : m_colorOffset(Vec2DF::c_zero)
         , m_colorPosition(Vec2DF::c_zero)
@@ -76,11 +79,22 @@ namespace Maze
         , m_textureCoordLB(Vec2DF::c_zero)
         , m_textureCoordRT(Vec2DF::c_one)
     {
+        if (s_instancesList)
+            s_instancesList->m_instancesListNext = this;
+        m_instancesListPrev = s_instancesList;
+        s_instancesList = this;
     }
 
     //////////////////////////////////////////
     Sprite::~Sprite()
     {
+        if (m_instancesListPrev)
+            m_instancesListPrev->m_instancesListNext = m_instancesListNext;
+        if (m_instancesListNext)
+            m_instancesListNext->m_instancesListPrev = m_instancesListPrev;
+        else
+        if (s_instancesList == this)
+            s_instancesList = m_instancesListPrev;
     }
 
     //////////////////////////////////////////
@@ -270,10 +284,6 @@ namespace Maze
             return;
         }
 
-        // RenderSystemPtr const& renderSystem = Maze::GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        // SpriteManagerPtr const& spriteManager = renderSystem->getSpriteManager();
-        // String const& spriteName = spriteManager->getSpriteName(_value);
-
         String const& spriteName = _value->getName();
         if (!spriteName.empty())
         {
@@ -282,6 +292,19 @@ namespace Maze
         else
         {
             StringHelper::FormatString(_data, "ptr:%p", _value);
+        }
+    }
+
+    //////////////////////////////////////////
+    void Sprite::IterateSprites(std::function<bool(Sprite*)> _cb)
+    {
+        Sprite* instance = s_instancesList;
+        while (instance)
+        {
+            if (!_cb(instance))
+                break;
+
+            instance = instance->m_instancesListPrev;
         }
     }
 

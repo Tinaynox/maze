@@ -78,50 +78,99 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    SpriteLibraryData const* SpriteManager::getSpriteLibraryData(HashedCString _spriteName)
+    {
+        StringKeyMap<SpriteLibraryData>::const_iterator it = m_spritesLibrary.find(_spriteName);
+        if (it != m_spritesLibrary.end())
+            return &it->second;
+        return nullptr;
+    }
+
+    //////////////////////////////////////////
     SpritePtr const& SpriteManager::getSprite(HashedCString _imageName)
     {
         static SpritePtr nullPointer;
 
-        StringKeyMap<SpritePtr>::const_iterator it = m_imagesByName.find(_imageName);
-        if (it != m_imagesByName.end())
-            return it->second;
+        SpriteLibraryData const* libraryData = getSpriteLibraryData(_imageName);
+        if (libraryData)
+            return libraryData->sprite;
         
         TextureManagerPtr const& textureManager = m_renderSystemRaw->getTextureManager();
 
         Texture2DPtr texture2D = textureManager->getTexture2D(_imageName);
-        if (texture2D)
-        {
-            
-            SpritePtr sprite = Sprite::Create(texture2D);
-            auto it2 = m_imagesByName.insert(
-                _imageName,
-                sprite);
+        if (!texture2D)
+            return nullPointer;
 
-            Texture2DLibraryData const* libraryData = m_renderSystemRaw->getTextureManager()->getTexture2DLibraryData(texture2D->getName().asHashedCString());
-            if (libraryData && libraryData->assetFile)
+        SpritePtr sprite = Sprite::Create(texture2D);
+
+        Texture2DLibraryData const* textureLibraryData = m_renderSystemRaw->getTextureManager()->getTexture2DLibraryData(texture2D->getName().asHashedCString());
+        if (textureLibraryData && textureLibraryData->assetFile)
+        {
+            StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(textureLibraryData->assetFile);
+            auto metaDataIt = metaData.find("sliceBorder");
+            if (metaDataIt != metaData.end())
             {
-                StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(libraryData->assetFile);
-                auto metaDataIt = metaData.find("sliceBorder");
-                if (metaDataIt != metaData.end())
+                String const& borderData = metaDataIt->second;
+                Vector<String> words;
+                StringHelper::SplitWords(borderData, words, ',');
+                if (words.size() == 4)
                 {
-                    String const& borderData = metaDataIt->second;
-                    Vector<String> words;
-                    StringHelper::SplitWords(borderData, words, ',');
-                    if (words.size() == 4)
-                    {
-                        sprite->setSliceBorder(
-                            StringHelper::StringToF32(words[0]),
-                            StringHelper::StringToF32(words[1]),
-                            StringHelper::StringToF32(words[2]),
-                            StringHelper::StringToF32(words[3]));
-                    }
+                    sprite->setSliceBorder(
+                        StringHelper::StringToF32(words[0]),
+                        StringHelper::StringToF32(words[1]),
+                        StringHelper::StringToF32(words[2]),
+                        StringHelper::StringToF32(words[3]));
                 }
             }
-
-            return *it2;
         }
 
-        return nullPointer;
+        SpriteLibraryData* data = addSpriteToLibrary(sprite);
+        return data->sprite;
+    }
+
+    //////////////////////////////////////////
+    SpriteLibraryData* SpriteManager::addSpriteToLibrary(SpritePtr const& _sprite)
+    {
+        MAZE_ERROR_IF(_sprite->getName().empty(), "Sprite with no name!");
+
+        auto it2 = m_spritesLibrary.insert(
+            _sprite->getName(),
+            _sprite);
+
+        return it2;
+    }
+
+    //////////////////////////////////////////
+    void SpriteManager::removeSpriteFromLibrary(HashedCString _textureName)
+    {
+        m_spritesLibrary.erase(_textureName);
+    }
+
+    //////////////////////////////////////////
+    void SpriteManager::unloadAssetSprites(Set<String> const& _tags)
+    {
+        StringKeyMap<SpriteLibraryData>::iterator it = m_spritesLibrary.begin();
+        StringKeyMap<SpriteLibraryData>::iterator end = m_spritesLibrary.end();
+        for (; it != end; )
+        {
+            bool unload = false;
+
+            if (it->second.sprite && it->second.sprite->getTexture())
+            {
+                Texture2DLibraryData const* textureLibraryData = m_renderSystemRaw->getTextureManager()->getTexture2DLibraryData(it->second.sprite->getTexture()->getName().asHashedCString());
+                unload = textureLibraryData && textureLibraryData->assetFile && textureLibraryData->assetFile->hasAnyOfTags(_tags);
+            }
+
+            if (unload)
+            {
+                it = m_spritesLibrary.erase(it);
+                end = m_spritesLibrary.end();
+            }
+            else
+            {
+                ++it;
+            }
+        }
     }
 
 } // namespace Maze

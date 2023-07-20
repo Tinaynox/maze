@@ -416,6 +416,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline Size size() const { return m_map.size(); }
+
+
+        //////////////////////////////////////////
         inline TValue& operator[](String const& _key) { return ensure(_key); }
 
         //////////////////////////////////////////

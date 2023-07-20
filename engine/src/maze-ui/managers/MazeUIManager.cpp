@@ -68,6 +68,57 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    inline CString GetDefaultUISpriteName(DefaultUISprite _type)
+    {
+        switch (_type)
+        {
+            case DefaultUISprite::DropDownButtonCollapsed: return "DropDownButtonCollapsed";
+            case DefaultUISprite::DropDownButtonExpanded: return "DropDownButtonExpanded";
+            case DefaultUISprite::EntityObject3D: return "EntityObject3D";
+            case DefaultUISprite::EntityObject2D: return "EntityObject2D";
+            case DefaultUISprite::EntityObject: return "EntityObject";
+            case DefaultUISprite::Scene: return "Scene";
+            case DefaultUISprite::MainScene: return "MainScene";
+            case DefaultUISprite::Panel00Default: return "Panel00Default";
+            case DefaultUISprite::Panel00Focused: return "Panel00Focused";
+            case DefaultUISprite::Panel00Selected: return "Panel00Selected";
+            case DefaultUISprite::Panel00Flat: return "Panel00Flat";
+            case DefaultUISprite::Panel01Default: return "Panel01Default";
+            case DefaultUISprite::Panel01Focused: return "Panel01Focused";
+            case DefaultUISprite::Panel01Selected: return "Panel01Selected";
+            case DefaultUISprite::Panel02: return "Panel02";
+            case DefaultUISprite::Panel03: return "Panel03";
+            case DefaultUISprite::Frame01: return "Frame01";
+            case DefaultUISprite::ColorPickerCircle: return "ColorPickerCircle";
+            case DefaultUISprite::ScaleMark: return "ScaleMark";
+            case DefaultUISprite::ColorSliderTagFrame: return "ColorSliderTagFrame";
+            case DefaultUISprite::ColorSliderTagBody: return "ColorSliderTagBody";
+            case DefaultUISprite::SubMenuMark: return "SubMenuMark";
+            case DefaultUISprite::CheckMark: return "CheckMark";
+            case DefaultUISprite::TransparentChess: return "TransparentChess";
+            case DefaultUISprite::SliderHandle: return "SliderHandle";
+            case DefaultUISprite::FolderClosed: return "FolderClosed";
+            case DefaultUISprite::FolderOpened: return "FolderOpened";
+            case DefaultUISprite::File: return "File";
+            case DefaultUISprite::TextFile: return "TextFile";
+            case DefaultUISprite::Material: return "Material";
+            case DefaultUISprite::Mesh: return "Mesh";
+            case DefaultUISprite::PhysicsMaterial2D: return "PhysicsMaterial2D";
+            case DefaultUISprite::Shader: return "Shader";
+            case DefaultUISprite::SelectAsset: return "SelectAsset";
+            case DefaultUISprite::Play: return "Play";
+            case DefaultUISprite::Pause: return "Pause";
+            case DefaultUISprite::StepUpdate: return "StepUpdate";
+            case DefaultUISprite::Prefab: return "Prefab";
+            default:
+                break;
+        }
+        MAZE_ERROR("Unsupported DefaultUISprite: %d", _type);
+        return "Unknown DefaultUISprite";
+    }
+
+
+    //////////////////////////////////////////
     // Class UIManager
     //
     //////////////////////////////////////////
@@ -1630,7 +1681,11 @@ namespace Maze
         for (DefaultUISprite spriteType = DefaultUISprite(0); spriteType < DefaultUISprite::MAX; spriteType = DefaultUISprite((S32)spriteType + 1))
         {
             if (m_defaultUISprites[(Size)spriteType])
+            {
+                String name = String("DefaultUISprite_") + GetDefaultUISpriteName(spriteType);
+                m_defaultUISprites[(Size)spriteType]->setName(name);
                 m_defaultUISprites[(Size)spriteType]->updateTextureCoords();
+            }
         }
     }
 

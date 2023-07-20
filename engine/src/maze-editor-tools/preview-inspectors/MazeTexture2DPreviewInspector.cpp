@@ -184,6 +184,7 @@ namespace Maze
             }
 
             SpritePtr sprite = Sprite::Create(texture);
+            sprite->setName("Texture2DPreview");
             SpriteHelper::CreateSprite(
                 sprite,
                 spriteSize,

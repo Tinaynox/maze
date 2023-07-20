@@ -53,16 +53,12 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    enum class DefaultGizmosSprite
-    {
-        LightGizmo = 0,
+    MAZE_DECLARE_ENUMCLASS_5_API(MAZE_EDITOR_TOOLS_API, DefaultGizmosSprite,
+        LightGizmo,
         CameraGizmo,
         GizmoToolTranslate,
         GizmoToolRotate,
-        GizmoToolScale,
-
-        MAX
-    };
+        GizmoToolScale);
 
 
     //////////////////////////////////////////

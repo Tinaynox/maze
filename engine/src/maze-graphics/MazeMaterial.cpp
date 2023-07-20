@@ -49,14 +49,28 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(String, name, String(), getName, setName));
 
     //////////////////////////////////////////
+    Material* Material::s_instancesList = nullptr;
+
+    //////////////////////////////////////////
     Material::Material()
         : m_renderSystem(nullptr)
     {
+        if (s_instancesList)
+            s_instancesList->m_instancesListNext = this;
+        m_instancesListPrev = s_instancesList;
+        s_instancesList = this;
     }
 
     //////////////////////////////////////////
     Material::~Material()
     {
+        if (m_instancesListPrev)
+            m_instancesListPrev->m_instancesListNext = m_instancesListNext;
+        if (m_instancesListNext)
+            m_instancesListNext->m_instancesListPrev = m_instancesListPrev;
+        else
+            if (s_instancesList == this)
+                s_instancesList = m_instancesListPrev;
     }
 
     //////////////////////////////////////////
@@ -189,6 +203,13 @@ namespace Maze
             return nullPointer;
 
         return passesByType.front();
+    }
+
+    //////////////////////////////////////////
+    void Material::clear()
+    {
+        clearAllRenderPasses();
+        clearAllUniforms();
     }
 
     //////////////////////////////////////////
@@ -504,8 +525,7 @@ namespace Maze
     //////////////////////////////////////////
     void Material::loadFromXMLElement(tinyxml2::XMLElement const* _element)
     {
-        clearAllRenderPasses();
-        clearAllUniforms();
+        clear();
 
         DeserializeMetaInstanceFromXMLElement(getMetaClass(), getMetaInstance(), _element);
 
@@ -645,6 +665,19 @@ namespace Maze
         else
         {
             StringHelper::FormatString(_data, "ptr:%p", _value);            
+        }
+    }
+
+    //////////////////////////////////////////
+    void Material::IterateMaterials(std::function<bool(Material*)> _cb)
+    {
+        Material* instance = s_instancesList;
+        while (instance)
+        {
+            if (!_cb(instance))
+                break;
+
+            instance = instance->m_instancesListPrev;
         }
     }
 
