@@ -79,7 +79,7 @@ namespace Maze
 
     private:
 
-        SharedPtr<SharedObjectPool<TComponent>> m_pool;
+        WeakPtr<SharedObjectPool<TComponent>> m_pool;
     };
 
 
@@ -116,7 +116,8 @@ namespace Maze
     template <typename TComponent>
     void ComponentPoolObject<TComponent>::release(SharedPtr<TComponent> const& _component)
     {
-        m_pool->release(_component);
+        if (SharedPtr<SharedObjectPool<TComponent>> pool = m_pool.lock())
+            pool->release(_component);
     }
 
     

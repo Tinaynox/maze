@@ -78,12 +78,7 @@ namespace Maze
         //////////////////////////////////////////
         inline ~SharedObjectPool()
         {
-            while (!m_poolStack.empty())
-            {
-                ObjectSharedPtr const&  obj = m_poolStack.top();
-                m_destroyFunc(obj);
-                m_poolStack.pop();
-            }
+            clear();
         }
 
         //////////////////////////////////////////
@@ -146,7 +141,11 @@ namespace Maze
         inline void clear()
         {
             while (!m_poolStack.empty())
+            {
+                ObjectSharedPtr const& obj = m_poolStack.top();
+                m_destroyFunc(obj);
                 m_poolStack.pop();
+            }
 
             m_countAll = 0;
         }
