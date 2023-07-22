@@ -97,7 +97,7 @@ namespace Maze
 
     private:
 
-        EntityPoolPtr m_pool;
+        EntityPoolWPtr m_pool;
     };
 
     

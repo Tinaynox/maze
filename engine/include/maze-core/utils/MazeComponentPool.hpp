@@ -118,6 +118,10 @@ namespace Maze
     {
         if (SharedPtr<SharedObjectPool<TComponent>> pool = m_pool.lock())
             pool->release(_component);
+        else
+        {
+            MAZE_ERROR("Pool is not exists!");
+        }
     }
 
     

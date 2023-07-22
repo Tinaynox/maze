@@ -66,7 +66,12 @@ namespace Maze
     //////////////////////////////////////////
     void EntityPoolObject::release()
     {
-        m_pool->release(getEntityRaw()->getSharedPtr());
+        if (EntityPoolPtr pool = m_pool.lock())
+            pool->release(getEntityRaw()->getSharedPtr());
+        else
+        {
+            MAZE_ERROR("Pool is not exists!");
+        }
     }
 
 

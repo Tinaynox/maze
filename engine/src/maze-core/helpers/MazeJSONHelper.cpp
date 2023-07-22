@@ -37,7 +37,8 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API String ToString(Json::Value const& _value)
         {
-            Json::StreamWriterBuilder builder;
+            static Json::StreamWriterBuilder builder;
+
             builder["commentStyle"] = "None";
             builder["indentation"] = "";
             StdString string = Json::writeString(builder, _value);
@@ -53,11 +54,13 @@ namespace Maze
             if (_value.empty())
                 return Json::Value::null;
 
-            Json::CharReaderBuilder builder;
+            static Json::CharReaderBuilder builder;
+            static UniquePtr<Json::CharReader> charReader(builder.newCharReader());
+            
             CString begin = &(*_value.begin());
             CString end = begin + _value.size();
 
-            builder.newCharReader()->parse(begin, end, &value, nullptr);
+            charReader->parse(begin, end, &value, nullptr);
 
             return value;
         }
