@@ -85,6 +85,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    PixelSheet2D::~PixelSheet2D()
+    {
+    }
+
+    //////////////////////////////////////////
     PixelSheet2D& PixelSheet2D::operator=(PixelSheet2D const& _copy)
     {
         m_size = _copy.m_size;

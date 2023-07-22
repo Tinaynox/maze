@@ -52,7 +52,7 @@ namespace Maze
     // Class PixelSheet2D
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API PixelSheet2D
+    class MAZE_GRAPHICS_API PixelSheet2D MAZE_FINAL
     {
     public:
 
@@ -74,6 +74,9 @@ namespace Maze
 
         //////////////////////////////////////////
         PixelSheet2D(PixelSheet2D&& _other) noexcept;
+
+        //////////////////////////////////////////
+        ~PixelSheet2D();
 
         //////////////////////////////////////////
         void setSize(Vec2DS const& _size);

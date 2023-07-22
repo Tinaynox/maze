@@ -45,7 +45,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     template <class TReturnType, class ...TArgs>
-    class Delegate
+    class Delegate MAZE_FINAL
     {
     public:
 
@@ -433,10 +433,10 @@ namespace Maze
         
 
         //////////////////////////////////////////
-        inline ::std::shared_ptr<void>& getFunctorStore() { return m_functorStore; }
+        inline SharedPtr<void>& getFunctorStore() { return m_functorStore; }
 
         //////////////////////////////////////////
-        inline ::std::size_t getFunctorStoreSize() { return m_functorStoreSize; }
+        inline Size getFunctorStoreSize() { return m_functorStoreSize; }
         
 
         //////////////////////////////////////////
@@ -593,8 +593,8 @@ namespace Maze
     private:
         StubFunction m_stubFunction{};
 
-        ::std::shared_ptr<void> m_functorStore;
-        ::std::size_t m_functorStoreSize = 0;
+        SharedPtr<void> m_functorStore;
+        Size m_functorStoreSize = 0;
         FunctorStoreClearFunctionType m_functorStoreClearFunction = nullptr;
         void* m_functorObject = nullptr;
         void* m_object = nullptr;

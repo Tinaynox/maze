@@ -54,7 +54,7 @@ namespace Maze
     // Class ByteBuffer
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API ByteBuffer
+    class MAZE_CORE_API ByteBuffer MAZE_FINAL
         : public IBinarySerializable
         , public IStringSerializable
         , public ISharedCopyable<ByteBuffer>
@@ -77,7 +77,7 @@ namespace Maze
         ByteBuffer(ByteBuffer&& _byteBuffer) noexcept;
 
         //////////////////////////////////////////
-        virtual ~ByteBuffer();
+        ~ByteBuffer();
 
         //////////////////////////////////////////
         static ByteBufferPtr Create(Size _size = 0);
