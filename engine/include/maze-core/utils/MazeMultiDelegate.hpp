@@ -172,7 +172,7 @@ namespace Maze
             m_delegatesList.emplace_back(_delegate);
 #endif
             
-            if MAZE_CONSTEXPR (_updateDelegatesList)
+            if MAZE_CONSTEXPR14 (_updateDelegatesList)
                 updateDelegatesList();
         }
 
@@ -220,7 +220,7 @@ namespace Maze
             m_delegatesList.emplace_back(::std::forward<TFunctor>(_f));
 #endif
 
-            if MAZE_CONSTEXPR (_updateDelegatesList)
+            if MAZE_CONSTEXPR14 (_updateDelegatesList)
                 updateDelegatesList();
         }
 
@@ -249,7 +249,7 @@ namespace Maze
                 }
             }
 
-            if MAZE_CONSTEXPR (_updateDelegatesList)
+            if MAZE_CONSTEXPR14 (_updateDelegatesList)
                 updateDelegatesList();
 
             return result;
@@ -272,7 +272,7 @@ namespace Maze
                 }
             }
 
-            if MAZE_CONSTEXPR (_updateDelegatesList)
+            if MAZE_CONSTEXPR14 (_updateDelegatesList)
                 updateDelegatesList();
 
             return result;
@@ -302,7 +302,7 @@ namespace Maze
                 }
             }
 
-            if MAZE_CONSTEXPR (_updateDelegatesList)
+            if MAZE_CONSTEXPR14 (_updateDelegatesList)
                 updateDelegatesList();
 
             return result;
@@ -335,7 +335,7 @@ namespace Maze
                 }
             }
 
-            if MAZE_CONSTEXPR (_updateDelegatesList)
+            if MAZE_CONSTEXPR14 (_updateDelegatesList)
                 updateDelegatesList();
 
             return result;
@@ -356,7 +356,7 @@ namespace Maze
                 }
             }
 
-            if MAZE_CONSTEXPR (_updateDelegatesList)
+            if MAZE_CONSTEXPR14 (_updateDelegatesList)
                 updateDelegatesList();
 
             return false;
