@@ -827,9 +827,9 @@ namespace Maze
 
         if (m_context)
         {
-            m_context->eventDestroyed.unsubscribe(this);
-            m_context->eventGLContextWillBeDestroyed.unsubscribe(this);
-            m_context->eventGLContextSetup.unsubscribe(this);
+            m_context->eventDestroyed.unsubscribe(this, &ShaderOpenGL::notifyContextOpenGLDestroyed);
+            m_context->eventGLContextWillBeDestroyed.unsubscribe(this, &ShaderOpenGL::notifyContextOpenGLContextWillBeDestroyed);
+            m_context->eventGLContextSetup.unsubscribe(this, &ShaderOpenGL::notifyContextOpenGLContextSetup);
         }
 
         m_context = _contextOpenGL;
@@ -837,11 +837,8 @@ namespace Maze
         if (m_context)
         {
             m_context->eventDestroyed.subscribe(this, &ShaderOpenGL::notifyContextOpenGLDestroyed);
-            m_context->eventDestroyed.updateDelegatesList();
             m_context->eventGLContextWillBeDestroyed.subscribe(this, &ShaderOpenGL::notifyContextOpenGLContextWillBeDestroyed);
-            m_context->eventGLContextWillBeDestroyed.updateDelegatesList();
             m_context->eventGLContextSetup.subscribe(this, &ShaderOpenGL::notifyContextOpenGLContextSetup);
-            m_context->eventGLContextSetup.updateDelegatesList();
         }
     }
 

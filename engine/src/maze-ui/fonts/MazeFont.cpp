@@ -502,9 +502,9 @@ namespace Maze
     void Font::unsubscribeGlyphsData()
     {
         for (FontGlyphStorageData& glyphsData : m_glyphsData)
-            glyphsData.eventTexturesChanged.unsubscribe(this);
+            glyphsData.eventTexturesChanged.unsubscribe(this, &Font::notifyTexturesChanged);
 
-        m_defaultGlyphsData.eventTexturesChanged.unsubscribe(this);
+        m_defaultGlyphsData.eventTexturesChanged.unsubscribe(this, &Font::notifyTexturesChanged);
     }
 
     //////////////////////////////////////////

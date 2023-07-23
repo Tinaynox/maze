@@ -64,50 +64,49 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ShaderPtr const& ShaderSystem::addShaderToCache(ShaderPtr const& _shader)
+    ShaderLibraryData* ShaderSystem::addShaderToLibrary(ShaderPtr const& _shader)
     {
-        static ShaderPtr const nullShader;
-
         if (!_shader)
-            return nullShader;
+            return nullptr;
 
         String const& name = _shader->getName();
 
         if (name.empty())
         {
             MAZE_WARNING("You cant add null name shader into the cache!");
-            return nullShader;
+            return nullptr;
         }
 
-        StringKeyMap<ShaderPtr>::iterator it = m_shadersCache.find(name);
-        if (m_shadersCache.end() != it)
-            return nullShader;
+        StringKeyMap<ShaderLibraryData>::iterator it = m_shadersLibrary.find(name);
+        if (m_shadersLibrary.end() != it)
+            return nullptr;
         
-        ShaderPtr* shader = m_shadersCache.insert(name, _shader);
-        return *shader;
+        return m_shadersLibrary.insert(
+            name,
+            { _shader, nullptr });
     }
 
     //////////////////////////////////////////
-    bool ShaderSystem::removeShaderFromCache(ShaderPtr const& _shader)
+    bool ShaderSystem::removeShaderFromLibrary(ShaderPtr const& _shader)
     {
         String const& name = _shader->getName();
-        StringKeyMap<ShaderPtr>::iterator it = m_shadersCache.find(name);
-        if (m_shadersCache.end() == it)
+        StringKeyMap<ShaderLibraryData>::iterator it = m_shadersLibrary.find(name);
+        if (m_shadersLibrary.end() == it)
             return false;
 
-        m_shadersCache.erase(it);
+        m_shadersLibrary.erase(it);
         return true;
     }
 
     //////////////////////////////////////////
-    ShaderPtr const& ShaderSystem::getShaderFromCache(HashedCString _shaderName)
+    ShaderPtr const& ShaderSystem::getShaderFromLibrary(HashedCString _shaderName)
     {
         static ShaderPtr nullShader;
-        StringKeyMap<ShaderPtr>::iterator it = m_shadersCache.find(_shaderName);
-        if (m_shadersCache.end() == it)
+        StringKeyMap<ShaderLibraryData>::iterator it = m_shadersLibrary.find(_shaderName);
+        if (m_shadersLibrary.end() == it)
             return nullShader;
 
-        return (*it).second;
+        return (*it).second.shader;
     }
 
     //////////////////////////////////////////
@@ -115,7 +114,7 @@ namespace Maze
     {
         static ShaderPtr nullShader;
 
-        ShaderPtr const& result = getShaderFromCache(_shaderName);
+        ShaderPtr const& result = getShaderFromLibrary(_shaderName);
         if (result)
             return result;
 
@@ -125,24 +124,28 @@ namespace Maze
         {
             ShaderPtr shader = Shader::CreateFromFile(getRenderSystem(), assetFile);
             if (shader)
-                return addShaderToCache(shader);
+            {
+                ShaderLibraryData* libraryData = addShaderToLibrary(shader);
+                libraryData->assetFile = assetFile;
+                return libraryData->shader;
+            }
         }
 
         return nullShader;
     }
 
     //////////////////////////////////////////
-    void ShaderSystem::findAssetShadersAndAddToCache()
+    void ShaderSystem::findAssetShadersAndAddToLibrary()
     {
         AssetManager* assetManager = AssetManager::GetInstancePtr();
 
         Vector<AssetFilePtr> files = assetManager->getAssetFilesWithExtension("mzshader");
 
-        addAssetFileShadersToCache(files);
+        addAssetFileShadersToLibrary(files);
     }
 
     //////////////////////////////////////////
-    void ShaderSystem::addAssetFileShadersToCache(Vector<AssetFilePtr> const& _files)
+    void ShaderSystem::addAssetFileShadersToLibrary(Vector<AssetFilePtr> const& _files)
     {
         for (AssetFilePtr const& file : _files)
         {
@@ -152,7 +155,8 @@ namespace Maze
             ShaderPtr shader = Shader::CreateFromFile(getRenderSystem(), file);
             if (shader)
             {
-                addShaderToCache(shader);
+                ShaderLibraryData* libraryData = addShaderToLibrary(shader);
+                libraryData->assetFile = file;
             }
 
         }
@@ -168,7 +172,7 @@ namespace Maze
         ShaderPtr const& createdShader = createBuiltinShader(_shaderType);
         if (createdShader)
         {
-            addShaderToCache(createdShader);
+            addShaderToLibrary(createdShader);
         }
         return createdShader;
     }
@@ -181,24 +185,24 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ShaderSystem::removeAssetFileShadersFromCache(Vector<AssetFilePtr> const& _files)
+    void ShaderSystem::removeAssetFileShadersFromLibrary(Vector<AssetFilePtr> const& _files)
     {
         for (AssetFilePtr const& file : _files)
         {
-            StringKeyMap<ShaderPtr>::iterator it = std::find_if(
-                m_shadersCache.begin(),
-                m_shadersCache.end(),
-                [file](Pair<String, ShaderPtr> const& _a) -> bool
+            StringKeyMap<ShaderLibraryData>::iterator it = std::find_if(
+                m_shadersLibrary.begin(),
+                m_shadersLibrary.end(),
+                [file](Pair<String, ShaderLibraryData> const& _a) -> bool
                 {
-                    if (_a.second->getShaderFile() == file)
+                    if (_a.second.shader->getShaderFile() == file)
                         return true;
 
                     return false;
                 });
 
-            if (it != m_shadersCache.end())
+            if (it != m_shadersLibrary.end())
             {
-                m_shadersCache.erase(it);
+                m_shadersLibrary.erase(it);
             }
         }
     }
@@ -216,9 +220,9 @@ namespace Maze
     //////////////////////////////////////////
     void ShaderSystem::reloadShaders()
     {
-        for (auto const& shaderData : m_shadersCache)
+        for (auto const& shaderData : m_shadersLibrary)
         {
-            shaderData.second->reload();
+            shaderData.second.shader->reload();
         }
     }
 

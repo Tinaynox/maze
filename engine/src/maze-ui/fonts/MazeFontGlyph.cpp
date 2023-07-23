@@ -108,7 +108,7 @@ namespace Maze
     {
         if (trueTypeFont)
         {
-            trueTypeFont->eventTexturesChanged.unsubscribe(this);
+            trueTypeFont->eventTexturesChanged.unsubscribe(this, &FontGlyphStorageData::notifyTexturesChanged);
         }
 
         trueTypeFont = _trueTypeFont;

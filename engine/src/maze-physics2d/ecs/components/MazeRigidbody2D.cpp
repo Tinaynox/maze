@@ -95,7 +95,6 @@ namespace Maze
         , m_fixedUpdateStartPosition(Vec2DF::c_zero)
         , m_fixedUpdateStartAngle(0.0f)
     {
-        
     }
 
     //////////////////////////////////////////
@@ -230,8 +229,8 @@ namespace Maze
 
         if (m_world)
         {
-            m_world->eventDestroyed.unsubscribe(this);
-            m_world->eventClear.unsubscribe(this);
+            m_world->eventDestroyed.unsubscribe(this, &Rigidbody2D::notifyWorldDestroyed);
+            m_world->eventClear.unsubscribe(this, &Rigidbody2D::notifyWorldClear);
         }
 
         m_world = _world;

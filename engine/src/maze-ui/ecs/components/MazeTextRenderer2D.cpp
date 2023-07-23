@@ -211,8 +211,8 @@ namespace Maze
 
         if (m_fontMaterial)
         {
-            m_fontMaterial->eventTexturesChanged.unsubscribe(this);
-            m_fontMaterial->eventMaterialChanged.unsubscribe(this);
+            m_fontMaterial->eventTexturesChanged.unsubscribe(this, &TextRenderer2D::notifyFontMaterialTexturesChanged);
+            m_fontMaterial->eventMaterialChanged.unsubscribe(this, &TextRenderer2D::notifyFontMaterialMaterialChanged);
         }
 
         m_fontMaterial = _fontMaterial;

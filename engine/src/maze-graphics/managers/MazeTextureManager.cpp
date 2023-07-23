@@ -539,7 +539,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void TextureManager::unloadAssetTextures(Set<String> const& _tags)
+    void TextureManager::unloadAssetTextures(
+        Set<String> const& _tags,
+        Vector<Texture2DPtr>* _unloadedTextures2D)
     {
         {
             StringKeyMap<Texture2DLibraryData>::iterator it = m_textures2DLibrary.begin();
@@ -548,6 +550,9 @@ namespace Maze
             {
                 if (it->second.assetFile && it->second.assetFile->hasAnyOfTags(_tags))
                 {
+                    if (_unloadedTextures2D)
+                        _unloadedTextures2D->push_back(it->second.texture);
+
                     it = m_textures2DLibrary.erase(it);
                     end = m_textures2DLibrary.end();
                 }

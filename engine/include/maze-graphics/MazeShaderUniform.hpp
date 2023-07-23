@@ -99,6 +99,9 @@ namespace Maze
         inline bool getBool() const { return m_value.getBool(); }
 
         //////////////////////////////////////////
+        inline TexturePtr const& getTexture() const { return m_value.getTexture(); }
+
+        //////////////////////////////////////////
         inline Texture2DPtr getTexture2D() const { return std::static_pointer_cast<Texture2D>(m_value.getTexture()); }
 
         //////////////////////////////////////////

@@ -264,6 +264,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline UnorderedMap<U32, ShaderUniformPtr> const& getUniforms() const { return m_uniformsCache; }
+
+
+        //////////////////////////////////////////
         Vector<ShaderUniformVariant> getUniformVariants() const;
 
         //////////////////////////////////////////

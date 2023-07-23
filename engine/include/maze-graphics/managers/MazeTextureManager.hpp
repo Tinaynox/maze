@@ -305,7 +305,9 @@ namespace Maze
         void reloadAllAssetTextures();
 
         //////////////////////////////////////////
-        void unloadAssetTextures(Set<String> const& _tags);
+        void unloadAssetTextures(
+            Set<String> const& _tags,
+            Vector<Texture2DPtr>* _unloadedTextures2D);
 
 
         //////////////////////////////////////////

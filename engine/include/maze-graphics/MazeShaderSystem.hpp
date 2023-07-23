@@ -75,6 +75,25 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Struct ShaderLibraryData
+    //
+    //////////////////////////////////////////
+    struct MAZE_GRAPHICS_API ShaderLibraryData
+    {
+        //////////////////////////////////////////
+        ShaderLibraryData(
+            ShaderPtr const& _shader = nullptr,
+            AssetFilePtr const& _assetFile = nullptr)
+            : shader(_shader)
+            , assetFile(_assetFile)
+        {}
+
+        ShaderPtr shader;
+        AssetFilePtr assetFile;
+    };
+
+
+    //////////////////////////////////////////
     // Class ShaderSystem
     //
     //////////////////////////////////////////
@@ -92,13 +111,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void findAssetShadersAndAddToCache();
+        void findAssetShadersAndAddToLibrary();
 
         //////////////////////////////////////////
-        void addAssetFileShadersToCache(Vector<AssetFilePtr> const& _files);
+        void addAssetFileShadersToLibrary(Vector<AssetFilePtr> const& _files);
 
         //////////////////////////////////////////
-        void removeAssetFileShadersFromCache(Vector<AssetFilePtr> const& _files);
+        void removeAssetFileShadersFromLibrary(Vector<AssetFilePtr> const& _files);
 
         //////////////////////////////////////////
         inline RenderSystemPtr getRenderSystem() const { return m_renderSystem.lock(); }
@@ -112,16 +131,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline StringKeyMap<ShaderPtr> const& getShadersCache() const { return m_shadersCache; }
+        inline StringKeyMap<ShaderLibraryData> const& getShadersLibrary() const { return m_shadersLibrary; }
 
         //////////////////////////////////////////
-        ShaderPtr const& getShaderFromCache(HashedCString _shaderName);
+        ShaderPtr const& getShaderFromLibrary(HashedCString _shaderName);
 
         //////////////////////////////////////////
-        inline ShaderPtr const& getShaderFromCache(String const& _shaderName) { return getShaderFromCache(MAZE_HASHED_CSTRING(_shaderName.c_str())); }
+        inline ShaderPtr const& getShaderFromLibrary(String const& _shaderName) { return getShaderFromLibrary(MAZE_HASHED_CSTRING(_shaderName.c_str())); }
 
         //////////////////////////////////////////
-        inline ShaderPtr const& getShaderFromCache(CString _shaderName) { return getShaderFromCache(MAZE_HASHED_CSTRING(_shaderName)); }
+        inline ShaderPtr const& getShaderFromLibrary(CString _shaderName) { return getShaderFromLibrary(MAZE_HASHED_CSTRING(_shaderName)); }
 
 
         //////////////////////////////////////////
@@ -148,10 +167,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        ShaderPtr const& addShaderToCache(ShaderPtr const& _shader);
+        ShaderLibraryData* addShaderToLibrary(ShaderPtr const& _shader);
 
         //////////////////////////////////////////
-        bool removeShaderFromCache(ShaderPtr const& _shader);
+        bool removeShaderFromLibrary(ShaderPtr const& _shader);
 
 
         //////////////////////////////////////////
@@ -179,7 +198,7 @@ namespace Maze
         RenderSystemWPtr m_renderSystem;
         RenderSystem* m_renderSystemRaw;
 
-        StringKeyMap<ShaderPtr> m_shadersCache;
+        StringKeyMap<ShaderLibraryData> m_shadersLibrary;
 
         ShaderPtr m_builtinShaders[(Size)BuiltinShaderType::MAX];
     };

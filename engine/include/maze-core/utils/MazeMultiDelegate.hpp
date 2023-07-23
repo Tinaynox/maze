@@ -158,7 +158,9 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline void subscribe(DelegateType const& _delegate)
+        inline void subscribe(
+            DelegateType const& _delegate,
+            bool _updateDelegatesList = true)
         {
 #if ((MAZE_DEBUG) && (MAZE_DEBUG_DELEGATES))
             for (DelegateType& d : m_delegatesList)
@@ -170,11 +172,16 @@ namespace Maze
             m_delegatesList.emplace_back(_delegate);
 #endif
             
+            if MAZE_CONSTEXPR (_updateDelegatesList)
+                updateDelegatesList();
         }
 
         //////////////////////////////////////////
         template <typename C>
-        inline void subscribe(C* _object, void(C::* const _method)(TArgs...))
+        inline void subscribe(
+            C* _object,
+            void(C::* const _method)(TArgs...),
+            bool _updateDelegatesList = true)
         {
             static_assert(std::is_base_of<MultiDelegateCallbackReceiver,C>::value, "C must derive from MultiDelegateCallbackReceiver");
 
@@ -192,12 +199,14 @@ namespace Maze
             subscribeDelegate(_object);
 #endif
 
-            subscribe(DelegateType::From(_object, _method));
+            subscribe(DelegateType::From(_object, _method), _updateDelegatesList);
         }
 
         //////////////////////////////////////////
         template <typename TFunctor>
-        inline void subscribe(TFunctor&& _f)
+        inline void subscribe(
+            TFunctor&& _f,
+            bool _updateDelegatesList = true)
         {
             
 #if ((MAZE_DEBUG) && (MAZE_DEBUG_DELEGATES))
@@ -210,48 +219,70 @@ namespace Maze
 #else
             m_delegatesList.emplace_back(::std::forward<TFunctor>(_f));
 #endif
-            
+
+            if MAZE_CONSTEXPR (_updateDelegatesList)
+                updateDelegatesList();
         }
 
         //////////////////////////////////////////
-        inline void subscribe(void(*const _function)(TArgs...))
+        inline void subscribe(
+            void(*const _function)(TArgs...),
+            bool _updateDelegatesList = true)
         {
-            subscribe(DelegateType::From(_function));
+            subscribe(DelegateType::From(_function), _updateDelegatesList);
         }
 
         //////////////////////////////////////////
-        inline bool unsubscribe(DelegateType const& _delegate)
+        inline bool unsubscribe(
+            DelegateType const& _delegate,
+            bool _updateDelegatesList = false)
         {
+            bool result = false;
             for (DelegateType& d : m_delegatesList)
             {
                 if (d == _delegate)
                 {
                     d.reset();
-                    return true;
+                    m_containsEmptyDelegates = true;
+                    result = true;
+                    break;
                 }
             }
 
-            return false;
+            if MAZE_CONSTEXPR (_updateDelegatesList)
+                updateDelegatesList();
+
+            return result;
         }
 
         //////////////////////////////////////////
-        inline bool unsubscribe(DelegateType& _delegate)
+        inline bool unsubscribe(
+            DelegateType& _delegate,
+            bool _updateDelegatesList = false)
         {
+            bool result = false;
             for (DelegateType& d : m_delegatesList)
             {
                 if (d == _delegate)
                 {
                     d.reset();
-                    return true;
+                    m_containsEmptyDelegates = true;
+                    result = true;
+                    break;
                 }
             }
 
-            return false;
+            if MAZE_CONSTEXPR (_updateDelegatesList)
+                updateDelegatesList();
+
+            return result;
         }        
 
         //////////////////////////////////////////
         template <typename C>
-        inline bool unsubscribe(C* _object)
+        inline bool unsubscribe(
+            C* _object,
+            bool _updateDelegatesList = false)
         {
             static_assert(std::is_base_of<MultiDelegateCallbackReceiver,C>::value, "C must derive from MultiDelegateCallbackReceiver");
 
@@ -261,6 +292,7 @@ namespace Maze
                 if (d.getObjectAddress() == _object)
                 {
                     d.reset();
+                    m_containsEmptyDelegates = true;
 
 #if (MAZE_USE_DELEGATES_PROTECTION)
                     unsubscribeDelegate(_object);
@@ -270,43 +302,62 @@ namespace Maze
                 }
             }
 
+            if MAZE_CONSTEXPR (_updateDelegatesList)
+                updateDelegatesList();
+
             return result;
         }
 
         //////////////////////////////////////////
         template <typename C>
-        inline bool unsubscribe(C* _object, void(C::* const _method)(TArgs...))
+        inline bool unsubscribe(
+            C* _object,
+            void(C::* const _method)(TArgs...),
+            bool _updateDelegatesList = false)
         {
             static_assert(std::is_base_of<MultiDelegateCallbackReceiver,C>::value, "C must derive from MultiDelegateCallbackReceiver");
+
+            bool result = false;
 
             for (DelegateType& d : m_delegatesList)
             {
                 if (d.isEqual(_object, _method))
                 {
                     d.reset();
+                    m_containsEmptyDelegates = true;
 
 #if (MAZE_USE_DELEGATES_PROTECTION)
                     unsubscribeDelegate(_object);
 #endif
 
-                    return true;
+                    result = true;
+                    break;
                 }
             }
 
-            return false;
+            if MAZE_CONSTEXPR (_updateDelegatesList)
+                updateDelegatesList();
+
+            return result;
         }
 
         //////////////////////////////////////////
-        inline bool unsubscribe(void(*const _function)(TArgs...))
+        inline bool unsubscribe(
+            void(*const _function)(TArgs...),
+            bool _updateDelegatesList = false)
         {
             for (DelegateType& d : m_delegatesList)
             {
                 if (d.isEqual(_function))
                 {
                     d.reset();
+                    m_containsEmptyDelegates = true;
                     return true;
                 }
             }
+
+            if MAZE_CONSTEXPR (_updateDelegatesList)
+                updateDelegatesList();
 
             return false;
         }
@@ -315,7 +366,9 @@ namespace Maze
         template <
             typename TFunctor,
             typename = typename ::std::enable_if<!(::std::is_pointer<TFunctor>{})>::type>
-        bool unsubscribe(TFunctor&& _f)
+        bool unsubscribe(
+            TFunctor&& _f,
+            bool _updateDelegatesList = false)
         {
             MAZE_ERROR("Functors unsubscribing is forbidden!");
 
@@ -329,6 +382,9 @@ namespace Maze
             if (delegatesCount == 0)
                 return;
             
+            m_containsEmptyDelegates = false;
+
+            ++m_callLock;
             for (Maze::Size i = 0; i < delegatesCount;)
             {
                 auto& delegate = m_delegatesList[i];
@@ -344,6 +400,7 @@ namespace Maze
                     ++i;
                 }
             }
+            --m_callLock;
         }
 
         //////////////////////////////////////////
@@ -351,6 +408,12 @@ namespace Maze
         {
             Maze::Size delegatesCount = m_delegatesList.size();
             if (delegatesCount == 0)
+                return;
+
+            if (!m_containsEmptyDelegates)
+                return;
+
+            if (m_callLock > 0)
                 return;
             
             for (Maze::Size i = 0; i < delegatesCount;)
@@ -367,6 +430,8 @@ namespace Maze
                     ++i;
                 }
             }
+
+            m_containsEmptyDelegates = false;
         }
 
         //////////////////////////////////////////
@@ -386,6 +451,8 @@ namespace Maze
     protected:
         DelegatesList m_delegatesList;
         DelegateListErase m_delegatesListErase;
+        bool m_containsEmptyDelegates = false;
+        S32 m_callLock = 0;
     };
 
 

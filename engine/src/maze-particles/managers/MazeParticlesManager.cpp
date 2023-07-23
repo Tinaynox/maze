@@ -135,7 +135,7 @@ namespace Maze
         shader->addLocalFeature("MAZE_UV0_STREAM", "(1)");
         shader->recompile();
         renderPass->setShader(shader);
-        RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->addShaderToCache(shader);
+        RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->addShaderToLibrary(shader);
 
         m_defaultParticleMaterial->setUniform("u_baseMap", m_defaultParticleTexture);
         renderSystem->getMaterialManager()->addMaterialToLibrary(m_defaultParticleMaterial);

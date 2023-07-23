@@ -199,11 +199,11 @@ namespace Maze
                 [drawerWeak](MenuListTree2DPtr const& _listTree)
                 {
                     RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-                    StringKeyMap<ShaderPtr> const& shadersCache = renderSystem->getShaderSystem()->getShadersCache();
+                    StringKeyMap<ShaderLibraryData> const& shadersLibrary = renderSystem->getShaderSystem()->getShadersLibrary();
 
-                    for (auto const& shaderData : shadersCache)
+                    for (auto const& shaderData : shadersLibrary)
                     {
-                        ShaderPtr const& shader = shaderData.second;
+                        ShaderPtr const& shader = shaderData.second.shader;
                         ShaderWPtr shaderWeak = shader;
 
                         _listTree->addItem(

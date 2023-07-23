@@ -793,9 +793,9 @@ namespace Maze
         {
             deleteGLObjects();
 
-            m_context->eventDestroyed.unsubscribe(this);
-            m_context->eventGLContextWillBeDestroyed.unsubscribe(this);
-            m_context->eventGLContextSetup.unsubscribe(this);
+            m_context->eventDestroyed.unsubscribe(this, &Texture2DOpenGL::notifyContextOpenGLDestroyed);
+            m_context->eventGLContextWillBeDestroyed.unsubscribe(this, &Texture2DOpenGL::notifyContextOpenGLContextWillBeDestroyed);
+            m_context->eventGLContextSetup.unsubscribe(this, &Texture2DOpenGL::notifyContextOpenGLContextSetup);
         }
 
         m_context = _contextOpenGL;
@@ -803,11 +803,8 @@ namespace Maze
         if (m_context)
         {
             m_context->eventDestroyed.subscribe(this, &Texture2DOpenGL::notifyContextOpenGLDestroyed);
-            m_context->eventDestroyed.updateDelegatesList();
             m_context->eventGLContextWillBeDestroyed.subscribe(this, &Texture2DOpenGL::notifyContextOpenGLContextWillBeDestroyed);
-            m_context->eventGLContextWillBeDestroyed.updateDelegatesList();
             m_context->eventGLContextSetup.subscribe(this, &Texture2DOpenGL::notifyContextOpenGLContextSetup);
-            m_context->eventGLContextSetup.updateDelegatesList();
         }
     }
 

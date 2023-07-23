@@ -182,7 +182,7 @@ namespace Maze
     {
         if (m_font)
         {
-            m_font->eventTexturesChanged.unsubscribe(this);
+            m_font->eventTexturesChanged.unsubscribe(this, &FontMaterial::notifyTexturesChanged);
         }
 
         m_font = _value;

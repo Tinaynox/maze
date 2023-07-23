@@ -67,14 +67,14 @@ namespace Maze
     {
         if (m_canvasesSample)
         {
-            m_canvasesSample->eventEntityAdded.unsubscribe(this);
-            m_canvasesSample->eventEntityRemoved.unsubscribe(this);
+            m_canvasesSample->eventEntityAdded.unsubscribe(this, &RenderControlSystem::processCanvasEntityAdded);
+            m_canvasesSample->eventEntityRemoved.unsubscribe(this, &RenderControlSystem::processCanvasEntityRemoved);
         }
 
         if (m_cameras3DSample)
         {
-            m_cameras3DSample->eventEntityAdded.unsubscribe(this);
-            m_cameras3DSample->eventEntityRemoved.unsubscribe(this);
+            m_cameras3DSample->eventEntityAdded.unsubscribe(this, &RenderControlSystem::processCameraEntityAdded);
+            m_cameras3DSample->eventEntityRemoved.unsubscribe(this, &RenderControlSystem::processCameraEntityRemoved);
         }
 
         clearRenderTargets();
@@ -224,8 +224,8 @@ namespace Maze
         if (it == m_renderTargets.end())
             return;
 
-        (*it)->eventRenderTargetOrderChanged.unsubscribe(this);
-        (*it)->eventRenderTargetDestroyed.unsubscribe(this);
+        (*it)->eventRenderTargetOrderChanged.unsubscribe(this, &RenderControlSystem::notifyRenderTargetOrderChanged);
+        (*it)->eventRenderTargetDestroyed.unsubscribe(this, &RenderControlSystem::notifyRenderTargetDestroyed);
 
         m_renderTargets.erase(it);
     }
@@ -236,8 +236,8 @@ namespace Maze
         while (!m_renderTargets.empty())
         {
             RenderTarget* renderTarget = m_renderTargets.back();
-            renderTarget->eventRenderTargetOrderChanged.unsubscribe(this);
-            renderTarget->eventRenderTargetDestroyed.unsubscribe(this);
+            renderTarget->eventRenderTargetOrderChanged.unsubscribe(this, &RenderControlSystem::notifyRenderTargetOrderChanged);
+            renderTarget->eventRenderTargetDestroyed.unsubscribe(this, &RenderControlSystem::notifyRenderTargetDestroyed);
 
             m_renderTargets.pop_back();
         }
