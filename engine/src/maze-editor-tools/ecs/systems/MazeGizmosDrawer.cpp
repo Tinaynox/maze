@@ -1088,6 +1088,14 @@ namespace Maze
                     gizmoBillboard->getTransform()->setLocalTransform(mat);
                 }
             }
+            else
+            {
+                while (!m_billboards.empty())
+                {
+                    m_gizmoBillboardPool->release(m_billboards.back());
+                    m_billboards.pop_back();
+                }
+            }
         }
     }
 
