@@ -27,6 +27,7 @@
 #include "MazeCoreHeader.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/services/MazeLogService.hpp"
+#include "maze-core/MazeTypes.hpp"
 #include <iostream>
 
 
@@ -51,7 +52,7 @@ namespace Maze
         : m_priority(_priority)
     {
         static S32 const c_size = 256;
-        char* buffer = MAZE_NEW_ARRAY(char, c_size);
+        Char* buffer = MAZE_NEW_ARRAY(Char, c_size);
         setp(buffer, buffer + c_size);
     }
     
@@ -93,7 +94,11 @@ namespace Maze
             // Print the contents of the write buffer into the standard error output
             Size size = static_cast<int>(pptr() - pbase());
             
-            LogService::GetInstancePtr()->log(m_priority, pbase(), size);
+            if (LogService::GetInstancePtr()->getLastLogEndsWithEndline())
+                LogService::GetInstancePtr()->appendPrefix(m_priority);
+            
+            LogService::GetInstancePtr()->append(m_priority, pbase(), size);
+
             //fwrite(pbase(), 1, size, stdout);
             
             // Reset the pointer position to the beginning of the write buffer

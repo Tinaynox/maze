@@ -69,6 +69,37 @@ namespace Maze
         //////////////////////////////////////////
         inline std::ofstream const& getLogFile() const { return m_logFile; }
            
+        
+        //////////////////////////////////////////
+        void append(S32 _priority, CString _text, Size _size);
+        
+        //////////////////////////////////////////
+        inline void append(CString _text, Size _size) { append(c_logPriority_Default, _text, _size); }
+
+        //////////////////////////////////////////
+        void append(S32 _priority, CWString _text, Size _size);
+        
+        //////////////////////////////////////////
+        inline void append(CWString _text, Size _size) { append(c_logPriority_Default, _text, _size); }
+        
+
+        //////////////////////////////////////////
+        void appendPrefix(S32 _priority);
+
+
+        //////////////////////////////////////////
+        void log(S32 _priority, CString _text, Size _size);
+
+        //////////////////////////////////////////
+        inline void log(CString _text, Size _size) { log(c_logPriority_Default, _text, _size); }
+
+        //////////////////////////////////////////
+        void log(S32 _priority, CWString _text, Size _size);
+
+        //////////////////////////////////////////
+        inline void log(CWString _text, Size _size) { log(c_logPriority_Default, _text, _size); }
+
+
 
         //////////////////////////////////////////
         void log(S32 _priority, CString _text);
@@ -83,22 +114,8 @@ namespace Maze
         inline void log(CWString _text) { log(c_logPriority_Default, _text); }
         
 
-
-        
         //////////////////////////////////////////
-        void log(S32 _priority, CString _text, Size _size);
-        
-        //////////////////////////////////////////
-        inline void log(CString _text, Size _size) { log(c_logPriority_Default, _text, _size); }
-
-        //////////////////////////////////////////
-        void log(S32 _priority, CWString _text, Size _size);
-        
-        //////////////////////////////////////////
-        inline void log(CWString _text, Size _size) { log(c_logPriority_Default, _text, _size); }
-        
-        
-
+        inline bool getLastLogEndsWithEndline() const { return m_lastLogEndsWithEndline; }
 
 
         //////////////////////////////////////////
@@ -114,21 +131,51 @@ namespace Maze
         void logFormatted(CWString _text, ...);
 
 
+        //////////////////////////////////////////
+        void splitAndLog(S32 _priority, CString _text, Size _size, Char _separator = '\n');
+
+        //////////////////////////////////////////
+        inline void splitAndLog(String const& _text, Char _separator = '\n') { splitAndLog(c_logPriority_Default, _text.c_str(), _text.size(), _separator); }
+
+
+        //////////////////////////////////////////
+        void setPriorityMark(S32 _priority, Char _mark);
+
     public:
 
         //////////////////////////////////////////
         MultiDelegate<S32, CString, Size> eventLog;
+        MultiDelegate<S32, CWString, Size> eventLogW;
         
     protected:
         
         //////////////////////////////////////////
         LogServiceBase();
+
+        //////////////////////////////////////////
+        void preparePrefix(S32 _priority);
         
+        //////////////////////////////////////////
+        void appendToDefaultStream(S32 _priority, CString _text, Size _size);
+
+        //////////////////////////////////////////
+        void appendToDefaultStream(S32 _priority, CWString _text, Size _size);
+
+        //////////////////////////////////////////
+        void appendToLogFile(CString _text, Size _size);
+
+        //////////////////////////////////////////
+        void appendToLogFile(CWString _text, Size _size);
         
     protected:
         std::ofstream m_logFile;
         String m_tempLogBuffer;
         Mutex m_mutex;
+        FastVector<Char> m_priorityMarks;
+        bool m_lastLogEndsWithEndline = true;
+
+    private:
+        String m_prefixBuffer;
     };
     
     

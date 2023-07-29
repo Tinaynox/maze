@@ -207,10 +207,10 @@ void OnInit()
     }
 
 
-    Maze::Debug::log << Maze::PlatformHelper::ConstructApplicationInfo();
-    Maze::Debug::log << Maze::PlatformHelper::ConstructEngineInfo();
-    Maze::Debug::log << Maze::SystemHelper::ConstructSystemInfo();
-    Maze::Debug::log << g_main->windowManager->constructDisplaysInfo();    
+    LogService::GetInstancePtr()->splitAndLog(Maze::PlatformHelper::ConstructApplicationInfo());
+    LogService::GetInstancePtr()->splitAndLog(Maze::PlatformHelper::ConstructEngineInfo());
+    LogService::GetInstancePtr()->splitAndLog(Maze::SystemHelper::ConstructSystemInfo());
+    LogService::GetInstancePtr()->splitAndLog(g_main->windowManager->constructDisplaysInfo());    
     
 
     Maze::RenderWindowParams params;

@@ -128,7 +128,7 @@ namespace Maze
     //////////////////////////////////////////
     bool Engine::init(EngineConfig const& _config)
     {
-        Debug::log << "Engine::init started...";
+        Debug::log << "Engine::init started..." << endl;
 
         m_config = _config;
 
@@ -146,7 +146,7 @@ namespace Maze
         if (m_config.shutdownDelegate)
             eventShutdown.subscribe(m_config.shutdownDelegate);
 
-        Debug::log << "SystemManager::Initialize started...";
+        Debug::log << "SystemManager::Initialize started..." << endl;
         SystemManager::Initialize(m_systemManager, m_config.commandLineArguments);
         if (!m_systemManager)
             return false;
@@ -154,7 +154,7 @@ namespace Maze
         m_systemManager->eventApplicationInit.subscribe(this, &Engine::notifyApplicationInit);
         m_systemManager->eventApplicationFrame.subscribe(this, &Engine::notifyApplicationFrame);
 
-        Debug::log << "SystemManager initApplication started...";
+        Debug::log << "SystemManager initApplication started..." << endl;
         m_systemManager->initApplication();
 
         return true;

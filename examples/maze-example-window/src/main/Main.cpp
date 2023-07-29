@@ -71,10 +71,10 @@ void OnInit()
     Maze::Debug::log << "WindowManager Initialization..." << Maze::endl;
     Maze::WindowManager::Initialize(g_windowManager);
 
-    Maze::Debug::log << Maze::PlatformHelper::ConstructApplicationInfo();
-    Maze::Debug::log << Maze::PlatformHelper::ConstructEngineInfo();
-    Maze::Debug::log << Maze::SystemHelper::ConstructSystemInfo();
-    Maze::Debug::log << g_windowManager->constructDisplaysInfo();
+    Maze::LogService::GetInstancePtr()->splitAndLog(Maze::PlatformHelper::ConstructApplicationInfo());
+    Maze::LogService::GetInstancePtr()->splitAndLog(Maze::PlatformHelper::ConstructEngineInfo());
+    Maze::LogService::GetInstancePtr()->splitAndLog(Maze::SystemHelper::ConstructSystemInfo());
+    Maze::LogService::GetInstancePtr()->splitAndLog(g_windowManager->constructDisplaysInfo());
 
     Maze::WindowParamsPtr window0Params = Maze::WindowParams::Create();
     window0Params->flags |= Maze::WindowStyleFlags::MinimizeButton;
@@ -117,7 +117,7 @@ void OnInit()
         Maze::Debug::log << "Window1 was failed to create!" << Maze::endl;
     }
 
-    Maze::Debug::log << g_windowManager->constructWindowsInfo();
+    Maze::LogService::GetInstancePtr()->splitAndLog(g_windowManager->constructWindowsInfo());
 }
 
 //////////////////////////////////////////

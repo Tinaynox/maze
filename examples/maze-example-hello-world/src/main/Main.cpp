@@ -57,16 +57,16 @@ Maze::S32 SecondThreadEntry()
 Maze::S32 main(Maze::S32 _argc, Maze::S8 const* _argv[])
 {
 
-    Maze::Debug::log << Maze::PlatformHelper::ConstructApplicationInfo();
-    Maze::Debug::log << Maze::PlatformHelper::ConstructEngineInfo();
-    Maze::Debug::log << Maze::SystemHelper::ConstructSystemInfo();
+    Maze::LogService::GetInstancePtr()->splitAndLog(Maze::PlatformHelper::ConstructApplicationInfo());
+    Maze::LogService::GetInstancePtr()->splitAndLog(Maze::PlatformHelper::ConstructEngineInfo());
+    Maze::LogService::GetInstancePtr()->splitAndLog(Maze::SystemHelper::ConstructSystemInfo());
     Maze::Debug::log << Maze::endl;
 
     Maze::Thread thread(SecondThreadEntry);
     thread.run();
     thread.wait();
 
-    Maze::LogService::GetInstancePtr()->logFormatted("qwerty %d\n", 42);
+    Maze::LogService::GetInstancePtr()->logFormatted("qwerty %d", 42);
     Maze::LogService::GetInstancePtr()->setLogFile("log.log");
     Maze::Debug::log << "123" << Maze::endl;
 

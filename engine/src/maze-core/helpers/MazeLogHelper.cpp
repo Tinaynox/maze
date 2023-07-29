@@ -42,7 +42,7 @@ namespace Maze
         {
             String newText;
             MAZE_FORMAT_VA_STRING(_text, newText);
-            LogService::GetInstancePtr()->logFormatted(c_logPriority_Default, "%s\n", newText.c_str());
+            LogService::GetInstancePtr()->logFormatted(c_logPriority_Default, "%s", newText.c_str());
         }
     
         //////////////////////////////////////////
@@ -50,7 +50,7 @@ namespace Maze
         {
             WString newText;
             MAZE_FORMAT_VA_STRING(_text, newText);
-            LogService::GetInstancePtr()->logFormatted(c_logPriority_Default, L"%s\n", newText.c_str());
+            LogService::GetInstancePtr()->logFormatted(c_logPriority_Default, L"%s", newText.c_str());
         }
     
         //////////////////////////////////////////
@@ -58,7 +58,7 @@ namespace Maze
         {
             String newText;
             MAZE_FORMAT_VA_STRING(_text, newText);
-            LogService::GetInstancePtr()->logFormatted(c_logPriority_Minor, "%s\n", newText.c_str());
+            LogService::GetInstancePtr()->logFormatted(c_logPriority_Minor, "%s", newText.c_str());
         }
     
         //////////////////////////////////////////
@@ -66,7 +66,7 @@ namespace Maze
         {
             WString newText;
             MAZE_FORMAT_VA_STRING(_text, newText);
-            LogService::GetInstancePtr()->logFormatted(c_logPriority_Minor, L"%s\n", newText.c_str());
+            LogService::GetInstancePtr()->logFormatted(c_logPriority_Minor, L"%s", newText.c_str());
         }
     
     
@@ -75,7 +75,7 @@ namespace Maze
         {
             String newText;
             MAZE_FORMAT_VA_STRING(_text, newText);
-            LogService::GetInstancePtr()->logFormatted(c_logPriority_Warning, "%s\n", newText.c_str());
+            LogService::GetInstancePtr()->logFormatted(c_logPriority_Warning, "%s", newText.c_str());
         }
     
         //////////////////////////////////////////
@@ -83,7 +83,7 @@ namespace Maze
         {
             WString newText;
             MAZE_FORMAT_VA_STRING(_text, newText);
-            LogService::GetInstancePtr()->logFormatted(c_logPriority_Warning, L"%s\n", newText.c_str());
+            LogService::GetInstancePtr()->logFormatted(c_logPriority_Warning, L"%s", newText.c_str());
         }
     
         //////////////////////////////////////////
@@ -91,7 +91,7 @@ namespace Maze
         {
             String newText;
             MAZE_FORMAT_VA_STRING(_text, newText);
-            LogService::GetInstancePtr()->logFormatted(c_logPriority_Error, "%s\n", newText.c_str());
+            LogService::GetInstancePtr()->logFormatted(c_logPriority_Error, "%s", newText.c_str());
         }
     
         //////////////////////////////////////////
@@ -99,7 +99,7 @@ namespace Maze
         {
             WString newText;
             MAZE_FORMAT_VA_STRING(_text, newText);
-            LogService::GetInstancePtr()->logFormatted(c_logPriority_Error, L"%s\n", newText.c_str());
+            LogService::GetInstancePtr()->logFormatted(c_logPriority_Error, L"%s", newText.c_str());
         }
     
     } // namespace Debug

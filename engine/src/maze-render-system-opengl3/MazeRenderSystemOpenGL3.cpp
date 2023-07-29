@@ -31,6 +31,7 @@
 #include "maze-render-system-opengl3/MazeFunctionsOpenGL3.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderSystemOpenGL.hpp"
+#include "maze-core/services/MazeLogStream.hpp"
 
 #if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
 #    include "maze-render-system-opengl3/win/wgl/MazeRenderSystemOpenGL3WGL.hpp"
@@ -196,16 +197,12 @@ namespace Maze
         }
 
 
-        Debug::Log(
-            "[Setup Config]\n"
-            "\tVersion: %u.%u\n"
-            "\tDepth bits: %u\n"
-            "\tStencil bits: %u\n"
-            "\tAntialiasing level: %u",
-            _context->getConfig().majorVersion, _context->getConfig().minorVersion,
-            _context->getConfig().depthBits,
-            _context->getConfig().stencilBits,
-            _context->getConfig().antialiasingLevel);
+        Debug::log << "[Setup Config]" << endl;
+        Debug::log << "\tVersion: " << _context->getConfig().majorVersion << "." << _context->getConfig().minorVersion << endl;
+        Debug::log << "\tDepth bits: " << _context->getConfig().depthBits << endl;
+        Debug::log << "\tStencil bits: " << _context->getConfig().stencilBits << endl;
+        Debug::log << "\tAntialiasing level: " << _context->getConfig().antialiasingLevel << endl;
+
 
         MAZE_GL_MUTEX_SCOPED_LOCK(this);
 
@@ -215,8 +212,8 @@ namespace Maze
             MAZE_GL_CALL(mzglGetIntegerv(MAZE_GL_MAX_TEXTURE_IMAGE_UNITS, &m_textureUniformsMaxCount));
         }
 
-        Debug::Log("GL_MAX_TEXTURE_SIZE: %d", m_textureMaxSize);
-        Debug::Log("GL_MAX_TEXTURE_IMAGE_UNITS: %d", m_textureUniformsMaxCount);
+        Debug::log << "GL_MAX_TEXTURE_SIZE: " << m_textureMaxSize << endl;
+        Debug::log << "GL_MAX_TEXTURE_IMAGE_UNITS: " << m_textureUniformsMaxCount << endl;
 
         ShaderSystemOpenGL::Initialize(m_shaderSystem, getSharedPtr());
 

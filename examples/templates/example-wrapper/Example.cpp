@@ -299,10 +299,10 @@ namespace Maze
             Debug::log << endl;
         }
 
-        Debug::log << PlatformHelper::ConstructApplicationInfo();
-        Debug::log << PlatformHelper::ConstructEngineInfo();
-        Debug::log << SystemHelper::ConstructSystemInfo();
-        Debug::log << m_windowManager->constructDisplaysInfo();
+        LogService::GetInstancePtr()->splitAndLog(PlatformHelper::ConstructApplicationInfo());
+        LogService::GetInstancePtr()->splitAndLog(PlatformHelper::ConstructEngineInfo());
+        LogService::GetInstancePtr()->splitAndLog(SystemHelper::ConstructSystemInfo());
+        LogService::GetInstancePtr()->splitAndLog(m_windowManager->constructDisplaysInfo());
 
         return true;
     }
@@ -343,7 +343,7 @@ namespace Maze
         m_mainRenderWindow->setVSync(0);
 #endif
 
-        Debug::log << m_windowManager->constructWindowsInfo();
+        LogService::GetInstancePtr()->splitAndLog(m_windowManager->constructWindowsInfo());
 
         m_mainRenderWindowState = ExampleMainRenderWindowState::Created;
         eventMainRenderWindowCreated();
@@ -486,7 +486,7 @@ namespace Maze
 
         if (IsLoadAllAssets())
         {
-            shaderSystem->findAssetShadersAndAddToCache();
+            shaderSystem->findAssetShadersAndAddToLibrary();
             renderSystem->getTextureManager()->loadAllAssetTextures();
             renderSystem->getMaterialManager()->loadAllAssetMaterials();
         }

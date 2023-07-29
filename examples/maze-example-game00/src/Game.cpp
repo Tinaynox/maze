@@ -289,10 +289,10 @@ namespace Maze
         }
 
 
-        Debug::log << PlatformHelper::ConstructApplicationInfo();
-        Debug::log << PlatformHelper::ConstructEngineInfo();
-        Debug::log << SystemHelper::ConstructSystemInfo();
-        Debug::log << m_windowManager->constructDisplaysInfo();
+        LogService::GetInstancePtr()->splitAndLog(PlatformHelper::ConstructApplicationInfo());
+        LogService::GetInstancePtr()->splitAndLog(PlatformHelper::ConstructEngineInfo());
+        LogService::GetInstancePtr()->splitAndLog(SystemHelper::ConstructSystemInfo());
+        LogService::GetInstancePtr()->splitAndLog(m_windowManager->constructDisplaysInfo());
 
         return true;
     }

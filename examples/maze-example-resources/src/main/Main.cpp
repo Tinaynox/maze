@@ -86,9 +86,9 @@ void OnInit()
     Maze::Debug::log << "AssetManager Initialization..." << Maze::endl;
     Maze::AssetManager::Initialize(g_assetManager);
 
-    Maze::Debug::log << Maze::PlatformHelper::ConstructApplicationInfo();
-    Maze::Debug::log << Maze::PlatformHelper::ConstructEngineInfo();
-    Maze::Debug::log << Maze::SystemHelper::ConstructSystemInfo();
+    Maze::LogService::GetInstancePtr()->splitAndLog(Maze::PlatformHelper::ConstructApplicationInfo());
+    Maze::LogService::GetInstancePtr()->splitAndLog(Maze::PlatformHelper::ConstructEngineInfo());
+    Maze::LogService::GetInstancePtr()->splitAndLog(Maze::SystemHelper::ConstructSystemInfo());
     
     Maze::Debug::log << "Adding resources directory: " << g_assetManager->getDefaultAssetsDirectory() << "..." << Maze::endl;
     g_assetManager->addAssetsDirectoryPath(g_assetManager->getDefaultAssetsDirectory());
