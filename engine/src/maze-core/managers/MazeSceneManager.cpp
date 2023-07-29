@@ -30,6 +30,7 @@
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/services/MazeLogStream.hpp"
 
 
 //////////////////////////////////////////
@@ -75,6 +76,7 @@ namespace Maze
         if (_scene->getState() == ECSSceneState::Destroy)
             return;
 
+        Debug::log << "Destroying Scene '" << _scene->getMetaClass()->getName() << "'..." << endl;
         _scene->setState(ECSSceneState::Destroy);        
     }
 

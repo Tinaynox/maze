@@ -200,6 +200,10 @@ namespace Maze
                 case MAZE_GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT: name = "GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT"; break;
                 case MAZE_GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT: name = "GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT"; break;
                 case MAZE_GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT: name = "GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT"; break;
+
+                case MAZE_GL_COMPRESSED_RGB_FXT1_3DFX: name = "GL_COMPRESSED_RGB_FXT1_3DFX"; break;
+                case MAZE_GL_COMPRESSED_RGBA_FXT1_3DFX: name = "GL_COMPRESSED_RGBA_FXT1_3DFX"; break;
+
                 default:
                     break;
             }

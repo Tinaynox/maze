@@ -34,8 +34,10 @@
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-core/utils/MazeClassInfo.hpp"
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/services/MazeLogStream.hpp"
 
 
 
@@ -110,6 +112,7 @@ namespace Maze
             }
 
             {
+                Debug::log << "Creating Scene '" << ClassInfo<TScene>::Name() << "'..." << endl;
                 ECSScenePtr scene = std::static_pointer_cast<ECSScene>(TScene::Create(_args...));
                 MAZE_RETURN_VALUE_IF(!scene, nullPointer);
 
