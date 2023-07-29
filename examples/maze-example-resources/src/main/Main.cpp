@@ -86,7 +86,7 @@ void OnInit()
     Maze::Debug::log << "AssetManager Initialization..." << Maze::endl;
     Maze::AssetManager::Initialize(g_assetManager);
 
-    Maze::Debug::log << Maze::PlatformHelper::ConstructPlatformInfo();
+    Maze::Debug::log << Maze::PlatformHelper::ConstructApplicationInfo();
     Maze::Debug::log << Maze::PlatformHelper::ConstructEngineInfo();
     Maze::Debug::log << Maze::SystemHelper::ConstructSystemInfo();
     

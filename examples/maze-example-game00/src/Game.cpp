@@ -289,7 +289,7 @@ namespace Maze
         }
 
 
-        Debug::log << PlatformHelper::ConstructPlatformInfo();
+        Debug::log << PlatformHelper::ConstructApplicationInfo();
         Debug::log << PlatformHelper::ConstructEngineInfo();
         Debug::log << SystemHelper::ConstructSystemInfo();
         Debug::log << m_windowManager->constructDisplaysInfo();

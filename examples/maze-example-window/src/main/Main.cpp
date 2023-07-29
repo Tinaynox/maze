@@ -71,7 +71,7 @@ void OnInit()
     Maze::Debug::log << "WindowManager Initialization..." << Maze::endl;
     Maze::WindowManager::Initialize(g_windowManager);
 
-    Maze::Debug::log << Maze::PlatformHelper::ConstructPlatformInfo();
+    Maze::Debug::log << Maze::PlatformHelper::ConstructApplicationInfo();
     Maze::Debug::log << Maze::PlatformHelper::ConstructEngineInfo();
     Maze::Debug::log << Maze::SystemHelper::ConstructSystemInfo();
     Maze::Debug::log << g_windowManager->constructDisplaysInfo();

@@ -57,7 +57,7 @@ Maze::S32 SecondThreadEntry()
 Maze::S32 main(Maze::S32 _argc, Maze::S8 const* _argv[])
 {
 
-    Maze::Debug::log << Maze::PlatformHelper::ConstructPlatformInfo();
+    Maze::Debug::log << Maze::PlatformHelper::ConstructApplicationInfo();
     Maze::Debug::log << Maze::PlatformHelper::ConstructEngineInfo();
     Maze::Debug::log << Maze::SystemHelper::ConstructSystemInfo();
     Maze::Debug::log << Maze::endl;

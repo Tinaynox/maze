@@ -207,7 +207,7 @@ void OnInit()
     }
 
 
-    Maze::Debug::log << Maze::PlatformHelper::ConstructPlatformInfo();
+    Maze::Debug::log << Maze::PlatformHelper::ConstructApplicationInfo();
     Maze::Debug::log << Maze::PlatformHelper::ConstructEngineInfo();
     Maze::Debug::log << Maze::SystemHelper::ConstructSystemInfo();
     Maze::Debug::log << g_main->windowManager->constructDisplaysInfo();    

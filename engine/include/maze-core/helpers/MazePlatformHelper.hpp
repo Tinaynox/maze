@@ -56,7 +56,7 @@ namespace Maze
         MAZE_CORE_API String ConstructEngineInfo();
 
         //////////////////////////////////////////
-        MAZE_CORE_API String ConstructPlatformInfo();
+        MAZE_CORE_API String ConstructApplicationInfo();
 
     } // namespace PlatformHelper
     //////////////////////////////////////////

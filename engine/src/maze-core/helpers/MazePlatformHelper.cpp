@@ -173,11 +173,11 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API String ConstructPlatformInfo()
+        MAZE_CORE_API String ConstructApplicationInfo()
         {
             String info;
 
-            info += "[Platform Info]\n";
+            info += "[Application Info]\n";
             info += String("\tCompiler: ") + MAZE_COMPILER_NAME + " (" + StringHelper::ToString(MAZE_COMPILER_VERSION) + ")" + "\n";
             info += String("\tC++ Standart: ") + MAZE_CPP_STANDARD_NAME + "\n";
             info += String("\tArchitecture: ") + MAZE_ARCH_SUFFIX_STR + "\n";
