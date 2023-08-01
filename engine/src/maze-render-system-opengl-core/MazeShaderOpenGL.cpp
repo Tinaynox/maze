@@ -417,7 +417,7 @@ namespace Maze
             for (Size i = 0; i < words.size(); ++i)
                 Debug::LogError("[%d]%s", i, words[i].c_str());
 
-            MAZE_DEBUG_BP;
+            MAZE_FATAL("Failed to compile the vertex shader");
 
             vertexShaderId = 0;
             return false;
@@ -456,7 +456,7 @@ namespace Maze
             for (Size i = 0; i < words.size(); ++i)
                 Debug::LogError("[%d]%s", i, words[i].c_str());
 
-            MAZE_DEBUG_BP;
+            MAZE_FATAL("Failed to compile the fragment shader");
 
             fragmentShaderId = 0;
             return false;
@@ -533,7 +533,7 @@ namespace Maze
                 }
             }
             
-            MAZE_ERROR("Failed to link program: %i\n%s", m_programId, log.c_str());
+            MAZE_FATAL("Failed to link program: %i\n%s", m_programId, log.c_str());
 
             unloadGLShader();
             return false;
@@ -685,12 +685,12 @@ namespace Maze
             if (_type == MAZE_GL_VERTEX_SHADER)
             {
                 Debug::LogError("Vertex Shader: %s", logForOpenGLShader(_shader).c_str());
-                MAZE_BP;
+                MAZE_DEBUG_BP;
             }
             else
             {
                 Debug::LogError("Fragment Shader: %s", logForOpenGLShader(_shader).c_str());
-                MAZE_BP;
+                MAZE_DEBUG_BP;
             }
         }
 

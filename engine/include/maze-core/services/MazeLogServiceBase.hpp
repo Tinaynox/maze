@@ -68,6 +68,12 @@ namespace Maze
         
         //////////////////////////////////////////
         inline std::ofstream const& getLogFile() const { return m_logFile; }
+
+        //////////////////////////////////////////
+        virtual bool setLogErrorFile(Path const& _fullPath);
+
+        //////////////////////////////////////////
+        inline std::ofstream const& getLogErrorFile() const { return m_logErrorFile; }
            
         
         //////////////////////////////////////////
@@ -162,14 +168,19 @@ namespace Maze
         void appendToDefaultStream(S32 _priority, CWString _text, Size _size);
 
         //////////////////////////////////////////
-        void appendToLogFile(CString _text, Size _size);
+        void appendToLogFile(S32 _priority, CString _text, Size _size);
 
         //////////////////////////////////////////
-        void appendToLogFile(CWString _text, Size _size);
+        void appendToLogFile(S32 _priority, CWString _text, Size _size);
         
     protected:
         std::ofstream m_logFile;
         String m_tempLogBuffer;
+
+        std::ofstream m_logErrorFile;
+        String m_tempLogErrorBuffer;
+
+
         Mutex m_mutex;
         FastVector<Char> m_priorityMarks;
         bool m_lastLogEndsWithEndline = true;

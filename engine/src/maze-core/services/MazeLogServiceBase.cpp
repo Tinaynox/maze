@@ -85,6 +85,31 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool LogServiceBase::setLogErrorFile(Path const& _fullPath)
+    {
+        logFormatted(c_logPriority_Default, "Log Error File: %s", _fullPath.toUTF8().c_str());
+
+        Path logDir = FileHelper::GetDirectoryInPath(_fullPath);
+        FileHelper::CreateDirectoryRecursive(logDir);
+
+        m_logErrorFile.open(_fullPath.c_str(), std::ofstream::binary | std::ofstream::trunc);
+        if (!m_logErrorFile.is_open())
+        {
+            logFormatted(c_logPriority_Error, "Log File cannot be opened!");
+            return false;
+        }
+
+        if (!m_tempLogErrorBuffer.empty())
+        {
+            m_logErrorFile << m_tempLogErrorBuffer;
+            m_logErrorFile.flush();
+            m_tempLogErrorBuffer.clear();
+        }
+
+        return true;
+    }
+
+    //////////////////////////////////////////
     void LogServiceBase::log(S32 _priority, CString _text)
     {
         log(_priority, _text, strlen(_text));
@@ -105,7 +130,7 @@ namespace Maze
         MAZE_MUTEX_SCOPED_LOCK(m_mutex);
 
         appendToDefaultStream(_priority, _text, _size);
-        appendToLogFile(_text, _size);       
+        appendToLogFile(_priority, _text, _size);
         m_lastLogEndsWithEndline = (_text[_size - 1] == '\n');
 
         eventLog(_priority, _text, _size);
@@ -120,7 +145,7 @@ namespace Maze
         MAZE_MUTEX_SCOPED_LOCK(m_mutex);
 
         appendToDefaultStream(_priority, _text, _size);
-        appendToLogFile(_text, _size);
+        appendToLogFile(_priority, _text, _size);
         m_lastLogEndsWithEndline = (_text[_size - 1] == L'\n');
 
         eventLogW(_priority, _text, _size);
@@ -245,30 +270,45 @@ namespace Maze
     {
         switch (_priority)
         {
-        case c_logPriority_Warning:
-        case c_logPriority_Error:
-            std::wcerr.write(_text, _size);
-            break;
-        default:
-            std::wcout.write(_text, _size);
-            break;
+            case c_logPriority_Warning:
+            case c_logPriority_Error:
+                std::wcerr.write(_text, _size);
+                break;
+            default:
+                std::wcout.write(_text, _size);
+                break;
         }
     }
 
     //////////////////////////////////////////
-    void LogServiceBase::appendToLogFile(CString _text, Size _size)
+    void LogServiceBase::appendToLogFile(S32 _priority, CString _text, Size _size)
     {
+        if (_priority == c_logPriority_Warning || _priority == c_logPriority_Error)
+        {
+            if (m_logErrorFile.is_open())
+            {
+                m_logErrorFile.write(_text, _size);
+                m_logErrorFile.flush();
+            }
+            else
+            {
+                m_tempLogErrorBuffer.append(_text, _size);
+            }
+        }
+
         if (m_logFile.is_open())
         {
             m_logFile.write(_text, _size);
             m_logFile.flush();
         }
         else
+        {
             m_tempLogBuffer.append(_text, _size);
+        }
     }
 
     //////////////////////////////////////////
-    void LogServiceBase::appendToLogFile(CWString _text, Size _size)
+    void LogServiceBase::appendToLogFile(S32 _priority, CWString _text, Size _size)
     {
         // Not implemented
     }

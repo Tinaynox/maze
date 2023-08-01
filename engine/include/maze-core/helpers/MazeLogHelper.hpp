@@ -269,6 +269,14 @@ namespace Maze
 
 
 //////////////////////////////////////////
+#define MAZE_FATAL(...) \
+{\
+    MAZE_LOG_ERROR(__VA_ARGS__);\
+    MAZE_BP;\
+}
+
+
+//////////////////////////////////////////
 #define MAZE_NOT_IMPLEMENTED MAZE_ERROR("Not implemented!");
 #define MAZE_NOT_IMPLEMENTED_RETURN MAZE_ERROR_RETURN("Not implemented!");
 #define MAZE_NOT_IMPLEMENTED_RETURN_VALUE(__value) MAZE_ERROR_RETURN_VALUE(__value, "Not implemented!");
