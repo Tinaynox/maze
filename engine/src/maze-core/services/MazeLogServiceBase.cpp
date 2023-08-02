@@ -81,6 +81,8 @@ namespace Maze
             m_tempLogBuffer.clear();
         }
 
+        eventLogFileSet(_fullPath);
+
         return true;
     }
 
@@ -105,6 +107,8 @@ namespace Maze
             m_logErrorFile.flush();
             m_tempLogErrorBuffer.clear();
         }
+
+        eventLogErrorFileSet(_fullPath);
 
         return true;
     }

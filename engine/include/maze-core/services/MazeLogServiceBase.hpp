@@ -152,6 +152,10 @@ namespace Maze
         //////////////////////////////////////////
         MultiDelegate<S32, CString, Size> eventLog;
         MultiDelegate<S32, CWString, Size> eventLogW;
+
+        //////////////////////////////////////////
+        MultiDelegate<Path const&> eventLogFileSet;
+        MultiDelegate<Path const&> eventLogErrorFileSet;
         
     protected:
         
