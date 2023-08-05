@@ -95,6 +95,9 @@ class ResourcePackageScaler:
                     if ('rescale_disabled' in parameters) and (parameters['rescale_disabled'] == '1'):
                         rescale_enabled = False
 
+                    if os.path.exists(info_file_path):
+                        shutil.copy2(info_file_path, "{0}.meta".format(copy_to))
+
                     if (scale == 1.0) or (not rescale_enabled):
                         shutil.copy2(copy_from, copy_to)
                     else:
@@ -109,6 +112,10 @@ class ResourcePackageScaler:
                         new_info_input_file.write('rescale={0}'.format(self.scale))
                         new_info_input_file.close()
                 else:
+                    if ext == ".meta" and ext[:-5] in maze_config.textures_extensions:
+                        # We will process texture meta data manually
+                        return
+
                     shutil.copy2(copy_from, copy_to)
 
         def it_folder_function(full_path, folder_name):
