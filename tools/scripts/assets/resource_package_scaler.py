@@ -104,6 +104,10 @@ class ResourcePackageScaler:
                         im_src.save(copy_to)
                         im_src.close()
                         os.utime(copy_to, (copy_from_time, copy_from_time))
+
+                        new_info_input_file = open("{0}.meta".format(copy_to), 'a')
+                        new_info_input_file.write('rescale={0}'.format(self.scale))
+                        new_info_input_file.close()
                 else:
                     shutil.copy2(copy_from, copy_to)
 
