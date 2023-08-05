@@ -112,9 +112,11 @@ class ResourcePackageScaler:
                         new_info_input_file.write('rescale={0}'.format(self.scale))
                         new_info_input_file.close()
                 else:
-                    if ext == ".meta" and ext[:-5] in maze_config.textures_extensions:
-                        # We will process texture meta data manually
-                        return
+                    if ext == ".meta":
+                        _, originExt = os.path.splitext(name)
+                        if originExt in maze_config.textures_extensions:
+                            # We will process texture meta data manually
+                            return
 
                     shutil.copy2(copy_from, copy_to)
 
