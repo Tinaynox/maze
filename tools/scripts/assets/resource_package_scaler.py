@@ -113,8 +113,8 @@ class ResourcePackageScaler:
                         new_info_input_file.close()
                 else:
                     if ext == ".meta":
-                        _, originExt = os.path.splitext(name)
-                        if originExt in maze_config.textures_extensions:
+                        _, origin_ext = os.path.splitext(name)
+                        if origin_ext in maze_config.textures_extensions:
                             # We will process texture meta data manually
                             return
 
