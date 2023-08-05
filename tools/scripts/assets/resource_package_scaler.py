@@ -109,7 +109,7 @@ class ResourcePackageScaler:
                         os.utime(copy_to, (copy_from_time, copy_from_time))
 
                         new_info_input_file = open("{0}.meta".format(copy_to), 'a')
-                        new_info_input_file.write('rescale={0}'.format(self.scale))
+                        new_info_input_file.write('\nrescale={0}'.format(self.scale))
                         new_info_input_file.close()
                 else:
                     if ext == ".meta":
