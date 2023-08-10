@@ -284,8 +284,10 @@ namespace Maze
 
         F32 y = -m_topIndent;
 
-        for (OptionData const& optionData : m_options)
+        for (S32 i = 0; i < (S32)m_options.size(); ++i)
         {
+            OptionData const& optionData = m_options[i];
+
             String optionText = optionData.text;
 
             Entity* itemPrefabEntity = m_itemPrefabTransform->getEntityRaw();
@@ -375,9 +377,9 @@ namespace Maze
             Dropdown2D* dropdown = this;
 
             button->eventClick.subscribe(
-                [dropdown, optionText](Button2D* _button, CursorInputEvent const& _inputEvent)
+                [dropdown, i](Button2D* _button, CursorInputEvent const& _inputEvent)
                 {
-                    dropdown->setValue(optionText);
+                    dropdown->setValue(i);
                     dropdown->setSelected(false);
                 });
 
