@@ -1013,10 +1013,10 @@ namespace Maze
         MAZE_WARNING_IF(!RegisterHotKey(hwnd, c_snapshotHotKeyId, MOD_NOREPEAT, VK_SNAPSHOT), "SNAPSHOT hotkey registration failed.");
         MAZE_WARNING_IF(!RegisterHotKey(hwnd, c_altSnapshotHotKeyId, MOD_NOREPEAT | MOD_ALT, VK_SNAPSHOT), "ALT+SNAPSHOT hotkey registration failed.");
 
-        HICON hIconSmall = (HICON)LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(m_params->iconSmall), IMAGE_ICON, 32, 32, 0);
+        HICON hIconSmall = LoadIcon(GetModuleHandle(0), MAKEINTRESOURCE(m_params->iconSmall));
         SendMessage(hwnd, WM_SETICON,ICON_SMALL, (LPARAM)hIconSmall);
-        HICON hIconBig = (HICON)LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(m_params->iconBig), IMAGE_ICON, 256, 256, 0);
-        SendMessage(hwnd, WM_SETICON,ICON_BIG, (LPARAM)hIconBig);
+        HICON hIconBig = LoadIcon(GetModuleHandle(0), MAKEINTRESOURCE(m_params->iconBig));
+        SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)hIconBig);
 
 
         if (!(m_params->flags & WindowStyleFlags::Background))
