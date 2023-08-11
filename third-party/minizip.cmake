@@ -37,6 +37,7 @@ set(MZ_PKCRYPT ON)
 set(MZ_WZAES OFF)
 set(SKIP_INSTALL_LIBRARIES ON)
 set(MZ_FETCH_LIBS OFF)
+set(MZ_DISABLE_RANDOM ON)
 add_subdirectory("${MAZE_DIR}/third-party/minizip-ng" "${CMAKE_CURRENT_BINARY_DIR}/third-party/minizip-ng")
 set_property(TARGET minizip PROPERTY FOLDER "MazeThirdParty")
 set_target_properties(minizip
