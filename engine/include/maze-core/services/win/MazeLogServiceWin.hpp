@@ -38,6 +38,31 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    // Enum LogServiceWinColor
+    //
+    //////////////////////////////////////////
+    enum class LogServiceWinColor
+    {
+        Black = 0,
+        DarkBlue = 1,
+        DarkGreen = 2,
+        DarkCyan = 3,
+        DarkRed = 4,
+        DarkMagenta = 5,
+        DarkYellow = 6,
+        Gray = 7,
+        DarkGray = 8,
+        Blue = 9,
+        Green = 10,
+        Cyan = 11,
+        Red = 12,
+        Magenta = 13,
+        Yellow = 14,
+        White = 15
+    };
+
+
+    //////////////////////////////////////////
     // Class LogService
     //
     //////////////////////////////////////////
@@ -60,8 +85,26 @@ namespace Maze
         //////////////////////////////////////////
         static inline LogService* GetInstancePtr() { return &GetInstance(); }
         
+
+        //////////////////////////////////////////
+        void applyConsoleColor(U8 _consoleColor);
+
+        //////////////////////////////////////////
+        void setPriorityColor(S32 _priority, LogServiceWinColor _symbolColor, LogServiceWinColor _backgroundColor);
+
+
     protected:
-        
+
+        //////////////////////////////////////////
+        virtual void appendToDefaultStream(S32 _priority, CString _text, Size _size) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void appendToDefaultStream(S32 _priority, CWString _text, Size _size) MAZE_OVERRIDE;
+
+    protected:
+        HANDLE m_consoleHandle = 0;
+        U8 m_currentConsoleColor = 0;
+        FastVector<U8> m_priorityColors;
     };
 
 } // namespace Maze

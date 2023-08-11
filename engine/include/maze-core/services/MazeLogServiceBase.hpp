@@ -166,10 +166,10 @@ namespace Maze
         void preparePrefix(S32 _priority);
         
         //////////////////////////////////////////
-        void appendToDefaultStream(S32 _priority, CString _text, Size _size);
+        virtual void appendToDefaultStream(S32 _priority, CString _text, Size _size);
 
         //////////////////////////////////////////
-        void appendToDefaultStream(S32 _priority, CWString _text, Size _size);
+        virtual void appendToDefaultStream(S32 _priority, CWString _text, Size _size);
 
         //////////////////////////////////////////
         void appendToLogFile(S32 _priority, CString _text, Size _size);
