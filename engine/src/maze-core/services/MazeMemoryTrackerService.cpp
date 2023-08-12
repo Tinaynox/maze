@@ -78,7 +78,8 @@ namespace Maze
 
         auto it = s_allocationMap.find(_ptr);
 
-        MAZE_ERROR_IF(it == s_allocationMap.end(), "This memory was not allocated via MAZE_NEW!");
+        MAZE_ERROR_RETURN_IF(it == s_allocationMap.end(), "This memory was not allocated via MAZE_NEW!");
+        s_totalAllocatedMemorySize -= it->second.bytes;
         s_allocationMap.erase(it);
     }
 
