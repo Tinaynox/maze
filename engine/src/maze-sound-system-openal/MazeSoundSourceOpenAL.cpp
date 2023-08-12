@@ -203,6 +203,7 @@ namespace Maze
         if (m_sourceID == 0)
             return;
 
+        MAZE_AL_CALL(mzalSourcei(m_sourceID, AL_BUFFER, AL_NONE));
         MAZE_AL_CALL(mzalDeleteSources(1, &m_sourceID));
         m_sourceID = 0;
     }

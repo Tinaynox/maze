@@ -92,7 +92,7 @@ namespace Maze
         F32 _volume)
     {
         SoundPtr const& sound = SoundManager::GetInstancePtr()->getSound(_soundAssetName);
-        MAZE_ERROR_RETURN_VALUE_IF(!sound, nullptr, "Sound is not found - %s", _soundAssetName.c_str());
+        MAZE_WARNING_RETURN_VALUE_IF(!sound, nullptr, "Sound is not found - %s", _soundAssetName.c_str());
         return play(sound, _looped, _soundGroup, _volume);
     }
 

@@ -132,7 +132,7 @@ namespace Maze
                     }
 
                     SoundSourceOpenAL* sourceAM = _source->castRaw<SoundSourceOpenAL>();
-                    MAZE_AL_CALL(mzalSourcei(sourceAM->getSourceID(), AL_BUFFER, 0));
+                    MAZE_AL_CALL(mzalSourcei(sourceAM->getSourceID(), AL_BUFFER, AL_NONE));
 
                     stoppedSources.emplace_back(std::make_pair(sourceAM, stopped));
                 }
