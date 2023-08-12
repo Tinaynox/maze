@@ -84,6 +84,10 @@ Maze::S32 main(Maze::S32 argc, Maze::S8 const* argv[])
         Maze::Debug::log << i << " -> " << argv[i] << Maze::endl;
     }
 
+#if (MAZE_DEBUG_MEMORY)
+    Maze::MemoryTrackerService::StartMemoryTracking();
+#endif
+
     Maze::Vector<Maze::S8 const*> commandLineArguments;
     for (Maze::S32 i = 0; i < argc; ++i)
         commandLineArguments.emplace_back(argv[i]);
@@ -96,6 +100,10 @@ Maze::S32 main(Maze::S32 argc, Maze::S8 const* argv[])
         Maze::ExamplePtr example = Maze::Example::Create(engineConfig);
         example->run();
     }
+
+#if (MAZE_DEBUG_MEMORY)
+    Maze::MemoryTrackerService::StopMemoryTracking();
+#endif
 
     return 0;
 }

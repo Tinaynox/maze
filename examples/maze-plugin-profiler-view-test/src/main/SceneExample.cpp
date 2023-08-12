@@ -239,6 +239,24 @@ namespace Maze
                 return true;
             });
 
+        ConsoleService::GetInstancePtr()->registerCommand(
+            "memory.dump",
+            [](String* _argv, S32 _argc)
+            {
+                Debug::log << MemoryTrackerService::DumpCurrentAllocations() << endl;
+
+                return true;
+            });
+
+        ConsoleService::GetInstancePtr()->registerCommand(
+            "memory.log",
+            [](String* _argv, S32 _argc)
+            {
+                MemoryTrackerService::LogCurrentAllocationsByType();
+
+                return true;
+            });
+
         return true;
     }
 

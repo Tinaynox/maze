@@ -33,6 +33,7 @@
 // Include
 #include "MazePreprocessor_CPlusPlus.hpp"
 #include "maze-core/memory/MazeStdMemoryAllocators.hpp"
+#include "maze-core/services/MazeMemoryTrackerService.hpp"
 #include "maze-core/utils/MazeClassInfo.hpp"
 
 
@@ -40,6 +41,8 @@
 // Memory tracking
 //
 //////////////////////////////////////////
+#define MAZE_DEBUG_MEMORY (0)
+
 #if (MAZE_DEBUG_MEMORY)
 #    define MAZE_NEW(__DClass) (__DClass*)::Maze::MemoryTrackerService::TrackAlloc(new __DClass(), sizeof(__DClass), Maze::ClassInfo<__DClass>::QualifiedName(), __FILE__, __LINE__, __FUNCTION__)
 #    define MAZE_NEW_WITH_ARGS(__DClass, ...) (__DClass*)::Maze::MemoryTrackerService::TrackAlloc(new __DClass(__VA_ARGS__), sizeof(__DClass), Maze::ClassInfo<__DClass>::QualifiedName(), __FILE__, __LINE__, __FUNCTION__)
