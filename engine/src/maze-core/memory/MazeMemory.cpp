@@ -43,9 +43,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MAZE_CORE_API std::string BuildMemoryAllocatorsDebugInfo()
+    MAZE_CORE_API StdString BuildMemoryAllocatorsDebugInfo()
     {
-        std::string result;
+        StdString result;
 
         StdVector<MemoryAllocatorBase*> memoryAllocators = s_memoryAllocators;
 
@@ -61,10 +61,10 @@ namespace Maze
         for (MemoryAllocatorBase* allocator : memoryAllocators)
         {
             totalMemoryAllocationSize += allocator->getAllocatedMemorySize();
-            result += std::string(allocator->getName()) + " -> " + StringHelper::F32ToStringFormatted((F32)allocator->getAllocatedMemorySize() / (1024*1024)).c_str() + " MB\n";
+            result += StdString(allocator->getName()) + " -> " + StringHelper::F32ToStringFormatted((F32)allocator->getAllocatedMemorySize() / (1024*1024)).c_str() + " MB\n";
         }
 
-        result += (std::string)"TOTAL ALLOCATED MEMORY SIZE: " + StringHelper::ToString(totalMemoryAllocationSize).c_str() + "(" + StringHelper::ToString((F64)totalMemoryAllocationSize/(1024.0f*1024.0f)).c_str() + "MB)";
+        result += (StdString)"TOTAL ALLOCATED MEMORY SIZE: " + StringHelper::ToString(totalMemoryAllocationSize).c_str() + "(" + StringHelper::ToString((F64)totalMemoryAllocationSize/(1024.0f*1024.0f)).c_str() + "MB)";
 
         return result;
     }
