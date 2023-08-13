@@ -108,8 +108,12 @@ namespace Maze
         MAZE_MUTEX_SCOPED_LOCK(m_mutex);
 
         auto& materialPool = m_materialPools[_contextOpenGL];
-        _ptr->clearAllRenderPasses();
-        _ptr->clearAllUniforms();
+#if (MAZE_DEBUG)
+        _ptr->setName("PoolMaterialOpenGL");
+#else
+        _ptr->setName(String());
+#endif
+        _ptr->clear();
         materialPool.push(_ptr);
     }
 
