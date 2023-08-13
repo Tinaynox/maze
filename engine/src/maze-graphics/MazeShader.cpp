@@ -51,14 +51,28 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(AssetFilePtr, assetFile, AssetFilePtr(), getAssetFile, setAssetFile));
 
     //////////////////////////////////////////
+    Shader* Shader::s_instancesList = nullptr;
+
+    //////////////////////////////////////////
     Shader::Shader()
         : m_renderSystemRaw(nullptr)
     {
+        if (s_instancesList)
+            s_instancesList->m_instancesListNext = this;
+        m_instancesListPrev = s_instancesList;
+        s_instancesList = this;
     }
 
     //////////////////////////////////////////
     Shader::~Shader()
     {
+        if (m_instancesListPrev)
+            m_instancesListPrev->m_instancesListNext = m_instancesListNext;
+        if (m_instancesListNext)
+            m_instancesListNext->m_instancesListPrev = m_instancesListPrev;
+        else
+        if (s_instancesList == this)
+            s_instancesList = m_instancesListPrev;
     }
 
     //////////////////////////////////////////
@@ -851,6 +865,19 @@ namespace Maze
     {
         for (auto const& uniformData : m_cachedUniformVariants)
             setUniform(uniformData);
+    }
+
+    //////////////////////////////////////////
+    void Shader::IterateShaders(std::function<bool(Shader*)> _cb)
+    {
+        Shader* instance = s_instancesList;
+        while (instance)
+        {
+            if (!_cb(instance))
+                break;
+
+            instance = instance->m_instancesListPrev;
+        }
     }
 
 } // namespace Maze

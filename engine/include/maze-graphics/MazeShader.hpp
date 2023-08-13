@@ -281,6 +281,9 @@ namespace Maze
         //////////////////////////////////////////
         static void FromString(ShaderPtr& _value, CString _data, Size _count);
 
+        //////////////////////////////////////////
+        static void IterateShaders(std::function<bool(Shader*)> _cb);
+
     protected:
 
         //////////////////////////////////////////
@@ -334,6 +337,11 @@ namespace Maze
         ShaderUniformPtr m_mainLightDirectionUniform;
 
         Vector<ShaderUniformVariant> m_cachedUniformVariants;
+
+    protected:
+        static Shader* s_instancesList;
+        Shader* m_instancesListNext = nullptr;
+        Shader* m_instancesListPrev = nullptr;
     };
 
 
