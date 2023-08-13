@@ -26,6 +26,8 @@
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/MazeTexture.hpp"
+#include "maze-graphics/events/MazeGraphicsEvents.hpp"
+#include "maze-core/managers/MazeEventManager.hpp"
 
 
 //////////////////////////////////////////
@@ -70,6 +72,9 @@ namespace Maze
         else
         if (s_instancesList == this)
             s_instancesList = m_instancesListPrev;
+
+        if (EventManager::GetInstancePtr())
+            EventManager::GetInstancePtr()->generateEventImmediate<TextureDestroyedEvent>(this);
     }
 
     //////////////////////////////////////////

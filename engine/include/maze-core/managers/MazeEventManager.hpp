@@ -121,6 +121,15 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        template <typename TEvent, typename ...TArgs>
+        inline void generateEventImmediate(TArgs... _args)
+        {
+            TEvent evt(_args...);
+            auto& cb = getEventCallbacks<TEvent>();
+            cb(ClassInfo<TEvent>::UID(), &evt);
+        }
+
+        //////////////////////////////////////////
         template <typename TEvent>
         inline MultiDelegate<ClassUID, Event*>& getEventCallbacks()
         {

@@ -30,11 +30,13 @@
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeEventManager.hpp"
 #include "maze-core/helpers/MazeMetaClassHelper.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
+#include "maze-graphics/events/MazeGraphicsEvents.hpp"
 #include <tinyxml2.h>
 
 
@@ -73,6 +75,9 @@ namespace Maze
         else
         if (s_instancesList == this)
             s_instancesList = m_instancesListPrev;
+
+        if (EventManager::GetInstancePtr())
+            EventManager::GetInstancePtr()->generateEventImmediate<ShaderDestroyedEvent>(this);
     }
 
     //////////////////////////////////////////

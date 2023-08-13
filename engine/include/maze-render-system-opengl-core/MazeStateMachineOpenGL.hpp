@@ -42,6 +42,7 @@
 #include "maze-render-system-opengl-core/MazeConfigOpenGL.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
 #include "maze-core/math/MazeVec4D.hpp"
+#include "maze-core/events/MazeEvent.hpp"
 #include <functional>
 
 
@@ -299,6 +300,16 @@ namespace Maze
         //////////////////////////////////////////
         inline void bindTextureCube(MZGLuint _textureId) { bindTexture(MAZE_GL_TEXTURE_CUBE_MAP, _textureId); }
     
+        
+        //////////////////////////////////////////
+        void notifyTextureDestroyed(ClassUID _eventUID, Event* _event);
+
+        //////////////////////////////////////////
+        void notifyShaderDestroyed(ClassUID _eventUID, Event* _event);
+
+        //////////////////////////////////////////
+        void notifyRenderBufferDestroyed(ClassUID _eventUID, Event* _event);
+
     protected:
         ContextOpenGL* m_context;
 

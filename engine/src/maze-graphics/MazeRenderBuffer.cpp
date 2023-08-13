@@ -30,10 +30,12 @@
 #include "maze-graphics/MazeTexture2DMS.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
+#include "maze-core/managers/MazeEventManager.hpp"
 #include "maze-core/helpers/MazeMetaClassHelper.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
+#include "maze-graphics/events/MazeGraphicsEvents.hpp"
 #include <tinyxml2.h>
 
 
@@ -56,6 +58,8 @@ namespace Maze
     //////////////////////////////////////////
     RenderBuffer::~RenderBuffer()
     {
+        if (EventManager::GetInstancePtr())
+            EventManager::GetInstancePtr()->generateEventImmediate<RenderBufferDestroyedEvent>(this);
     }
 
     //////////////////////////////////////////

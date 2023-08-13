@@ -32,10 +32,10 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class SystemDevicesChanged
+    // Class SystemDevicesChangedEvent
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SystemDevicesChanged, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SystemDevicesChangedEvent, Event);
 
 
 } // namespace Maze

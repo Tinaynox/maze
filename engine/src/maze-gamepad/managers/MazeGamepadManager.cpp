@@ -68,7 +68,7 @@ namespace Maze
         }
 
         if (EventManager::GetInstancePtr())
-            EventManager::GetInstancePtr()->unsubscribeEvent<SystemDevicesChanged>(this);
+            EventManager::GetInstancePtr()->unsubscribeEvent<SystemDevicesChangedEvent>(this);
     }
 
     //////////////////////////////////////////
@@ -89,7 +89,7 @@ namespace Maze
 
         UpdateManager::GetInstancePtr()->addUpdatable(this);
 
-        EventManager::GetInstancePtr()->subscribeEvent<SystemDevicesChanged>(this, &GamepadManager::notifySystemDevicesChanged);
+        EventManager::GetInstancePtr()->subscribeEvent<SystemDevicesChangedEvent>(this, &GamepadManager::notifySystemDevicesChanged);
 
 #if (MAZE_LIBSTEM_GAMEPAD_ENABLED)
         m_gamepadProviders.emplace_back(GamepadProviderLibstem::Create());

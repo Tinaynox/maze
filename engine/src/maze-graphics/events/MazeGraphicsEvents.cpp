@@ -24,38 +24,22 @@
 
 
 //////////////////////////////////////////
-#pragma once
-#if (!defined(_MazeSystemEvents_hpp_))
-#define _MazeSystemEvents_hpp_
-
-
-//////////////////////////////////////////
-#include "maze-core/MazeCoreHeader.hpp"
-#include "maze-core/utils/MazeEnumClass.hpp"
-#include "maze-core/utils/MazeUpdater.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
-#include "maze-core/events/MazeEvent.hpp"
+#include "MazeGraphicsHeader.hpp"
+#include "maze-graphics/events/MazeGraphicsEvents.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class SystemDevicesChangedEvent
-    //
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(TextureDestroyedEvent, Event);
+
     //////////////////////////////////////////
-    class MAZE_CORE_API SystemDevicesChangedEvent
-        : public GenericEvent<SystemDevicesChangedEvent>
-    {
-    public:
-        //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SystemDevicesChangedEvent, Event);
-    };
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(ShaderDestroyedEvent, Event);
 
-    
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(RenderBufferDestroyedEvent, Event);
+
+
 } // namespace Maze
-//////////////////////////////////////////
-
-
-#endif // _MazeSystemEvents_hpp_
 //////////////////////////////////////////

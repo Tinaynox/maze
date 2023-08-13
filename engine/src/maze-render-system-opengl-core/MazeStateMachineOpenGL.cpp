@@ -25,6 +25,8 @@
 
 //////////////////////////////////////////
 #include "MazeRenderSystemOpenGLCoreHeader.hpp"
+#include "maze-core/managers/MazeEventManager.hpp"
+#include "maze-graphics/events/MazeGraphicsEvents.hpp"
 #include "maze-render-system-opengl-core/MazeHeaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeStateMachineOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderSystemOpenGL.hpp"
@@ -82,6 +84,13 @@ namespace Maze
     {
         m_context->eventGLContextCreated.subscribe(this, &StateMachineOpenGL::notifyGLContextCreated);
         m_context->eventGLContextWillBeDestroyed.subscribe(this, &StateMachineOpenGL::notifyGLContextWillBeDestroyed);
+
+        if (EventManager::GetInstancePtr())
+        {
+            EventManager::GetInstancePtr()->subscribeEvent<TextureDestroyedEvent>(this, &StateMachineOpenGL::notifyTextureDestroyed);
+            EventManager::GetInstancePtr()->subscribeEvent<ShaderDestroyedEvent>(this, &StateMachineOpenGL::notifyShaderDestroyed);
+            EventManager::GetInstancePtr()->subscribeEvent<RenderBufferDestroyedEvent>(this, &StateMachineOpenGL::notifyRenderBufferDestroyed);
+        }
     }
 
     //////////////////////////////////////////
@@ -89,6 +98,13 @@ namespace Maze
     {
         m_context->eventGLContextCreated.unsubscribe(this);
         m_context->eventGLContextWillBeDestroyed.unsubscribe(this);
+
+        if (EventManager::GetInstancePtr())
+        {
+            EventManager::GetInstancePtr()->unsubscribeEvent<TextureDestroyedEvent>(this, &StateMachineOpenGL::notifyTextureDestroyed);
+            EventManager::GetInstancePtr()->unsubscribeEvent<ShaderDestroyedEvent>(this, &StateMachineOpenGL::notifyShaderDestroyed);
+            EventManager::GetInstancePtr()->unsubscribeEvent<RenderBufferDestroyedEvent>(this, &StateMachineOpenGL::notifyRenderBufferDestroyed);
+        }
     }
 
     //////////////////////////////////////////
@@ -1026,6 +1042,46 @@ namespace Maze
         m_currentShader = nullptr;
         for (Size i = 0; i < MAZE_GL_MAX_TEXTURES_COUNT; ++i)
             m_currentTextures[i] = nullptr;
+    }
+
+    //////////////////////////////////////////
+    void StateMachineOpenGL::notifyTextureDestroyed(ClassUID _eventUID, Event* _event)
+    {
+        if (ClassInfo<TextureDestroyedEvent>::UID() == _eventUID)
+        {
+            Texture* texture = _event->castRaw<TextureDestroyedEvent>()->texture;
+
+            for (Size i = 0; i < MAZE_GL_MAX_TEXTURES_COUNT; ++i)
+                if (m_currentTextures[i] == texture)
+                {
+                    m_currentTextures[i] = nullptr;
+                    m_bindTextureIds[i] = 0;
+                }
+        }
+    }
+
+    //////////////////////////////////////////
+    void StateMachineOpenGL::notifyShaderDestroyed(ClassUID _eventUID, Event* _event)
+    {
+        if (ClassInfo<ShaderDestroyedEvent>::UID() == _eventUID)
+        {
+            Shader* shader = _event->castRaw<ShaderDestroyedEvent>()->shader;
+
+            if (m_currentShader == shader)
+                m_currentShader = nullptr;
+        }
+    }
+
+    //////////////////////////////////////////
+    void StateMachineOpenGL::notifyRenderBufferDestroyed(ClassUID _eventUID, Event* _event)
+    {
+        if (ClassInfo<RenderBufferDestroyedEvent>::UID() == _eventUID)
+        {
+            RenderBuffer* renderBuffer = _event->castRaw<RenderBufferDestroyedEvent>()->renderBuffer;
+
+            if (m_currentRenderBuffer == renderBuffer)
+                m_currentRenderBuffer = nullptr;
+        }
     }
 
 } // namespace Maze
