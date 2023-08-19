@@ -91,18 +91,18 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TEvent, typename ...TArgs>
-        inline auto generateAndSendEventImmediate(
+        inline UniquePtr<TEvent, Maze::DefaultDelete<TEvent>> generateAndSendEventImmediate(
             IEventReceiver* _receiver,
             TArgs... _args)
         {
             TEvent* newEvent = MAZE_NEW_WITH_ARGS(TEvent, _args...);
             _receiver->processEvent(newEvent);
-            return UniquePtr<TEvent, Maze::DefaultDelete<TEvent> >(newEvent);
+            return UniquePtr<TEvent, Maze::DefaultDelete<TEvent>>(newEvent);
         }
 
         //////////////////////////////////////////
         template <typename TEvent, typename ...TArgs>
-        inline auto generateAndSendEventImmediate(
+        inline UniquePtr<TEvent, Maze::DefaultDelete<TEvent>> generateAndSendEventImmediate(
             IEventReceiverPtr const& _receiver,
             TArgs... _args)
         {
