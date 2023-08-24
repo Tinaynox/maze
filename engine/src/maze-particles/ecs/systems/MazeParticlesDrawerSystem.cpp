@@ -105,6 +105,8 @@ namespace Maze
     //////////////////////////////////////////
     void ParticlesDrawerSystem::processUpdate(F32 _dt)
     {
+        MAZE_PROFILE_EVENT("ParticlesDrawerSystem::processUpdate");
+
         m_particleSystem3DSample->process(
             [_dt](Entity* _entity, ParticleSystem3D* _particleSystem)
             {

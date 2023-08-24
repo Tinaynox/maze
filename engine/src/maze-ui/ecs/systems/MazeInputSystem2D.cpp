@@ -162,6 +162,8 @@ namespace Maze
     //////////////////////////////////////////
     void InputSystem2D::processUpdate(F32 _dt)
     {
+        MAZE_PROFILE_EVENT("InputSystem2D::processUpdate");
+
         if (m_processClick)
         {
             U32 curTime = UpdateManager::GetInstancePtr()->getMilliseconds();

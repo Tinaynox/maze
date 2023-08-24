@@ -77,6 +77,7 @@ namespace Maze
     //////////////////////////////////////////
     void InputManager::update(F32 _dt)
     {
+        MAZE_PROFILE_EVENT("InputManager::update");
 
         Size inputEventsIndex = m_inputEventsIndex;
         m_inputEventsIndex = (m_inputEventsIndex == 1) ? 0 : 1;

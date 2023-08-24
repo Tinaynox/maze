@@ -84,6 +84,8 @@ namespace Maze
     //////////////////////////////////////////
     void TransformUtilsSystem::processUpdate(F32 _dt)
     {
+        MAZE_PROFILE_EVENT("TransformUtilsSystem::processUpdate");
+
         m_rotors3D->process(
             [_dt](Entity* entity, Rotor3D* _rotor)
             {

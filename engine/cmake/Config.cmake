@@ -310,7 +310,13 @@ if(       (MAZE_TARGET_PLATFORM_IS_WINDOWS AND (NOT IS_ARM_ARCH))
     
 endif()
 
-
+# optick
+if (MAZE_USE_OPTICK)
+    if(MAZE_TARGET_PLATFORM_IS_WINDOWS)
+        set(MAZE_PROFILER_OPTICK_ENABLED 1)
+        add_definitions("-DMAZE_PROFILER_OPTICK_ENABLED=1")
+    endif()
+endif()
 
 endif(NOT _Config_cmake_)
 ##########################################

@@ -40,6 +40,9 @@ message("MAZE_ARCH_SUFFIX=${MAZE_ARCH_SUFFIX}")
 message("MAZE_COMPILER=${MAZE_COMPILER}")
 
 
+##########################################
+option(MAZE_USE_OPTICK "Use Optick Profiler" OFF)
+
 
 ##########################################
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)

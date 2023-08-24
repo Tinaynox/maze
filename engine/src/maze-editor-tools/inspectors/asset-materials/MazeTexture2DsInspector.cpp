@@ -126,6 +126,7 @@ namespace Maze
     void Texture2DsInspector::update(F32 _dt)
     {
         MAZE_PROFILER_SCOPED_LOCK(INSPECTOR);
+        MAZE_PROFILE_EVENT("Texture2DsInspector::update");
 
         if (m_texturesPropertiesListDirty)
             buildTexturesPropertiesList();

@@ -160,6 +160,8 @@ namespace Maze
     //////////////////////////////////////////
     void PreviewController::update(F32 _dt)
     {
+        MAZE_PROFILE_EVENT("PreviewController::update");
+
         if (m_canvas && m_renderBuffer)
         {
             Vec2DU size = (Vec2DU)m_bodyBackground->getTransform()->getSize();

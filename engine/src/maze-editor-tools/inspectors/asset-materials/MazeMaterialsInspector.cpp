@@ -125,6 +125,7 @@ namespace Maze
     void MaterialsInspector::update(F32 _dt)
     {
         MAZE_PROFILER_SCOPED_LOCK(INSPECTOR);
+        MAZE_PROFILE_EVENT("MaterialsInspector::update");
 
         if (m_materialsPropertiesListDirty)
             buildMaterialsPropertiesList();

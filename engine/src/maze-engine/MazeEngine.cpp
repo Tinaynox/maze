@@ -163,6 +163,8 @@ namespace Maze
     //////////////////////////////////////////
     bool Engine::frame()
     {
+        MAZE_PROFILE_FRAME("Engine Frame");
+
         UpdateManager* updateManager = UpdateManager::GetInstancePtr();
 
         U32 currentFrameTimeMS = updateManager->getMilliseconds();

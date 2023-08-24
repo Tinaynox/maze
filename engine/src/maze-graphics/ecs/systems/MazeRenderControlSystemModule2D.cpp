@@ -123,6 +123,7 @@ namespace Maze
     void RenderControlSystemModule2D::draw(RenderTarget* _renderTarget)
     {
         MAZE_PROFILER_SCOPED_LOCK(2D);
+        MAZE_PROFILE_EVENT("RenderControlSystemModule2D::draw");
 
         for (auto& canvasRenderData : m_sortedCanvasRenderData)
         {

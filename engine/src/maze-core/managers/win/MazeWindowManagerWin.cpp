@@ -115,6 +115,8 @@ namespace Maze
     //////////////////////////////////////////
     void WindowManagerWin::update(F32 _dt)
     {
+        MAZE_PROFILE_EVENT("WindowManagerWin::update");
+
         if (m_processWindowsMessages)
         {
             MSG msg;

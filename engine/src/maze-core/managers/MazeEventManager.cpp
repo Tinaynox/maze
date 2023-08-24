@@ -71,6 +71,8 @@ namespace Maze
     //////////////////////////////////////////
     void EventManager::update(F32 _dt)
     {
+        MAZE_PROFILE_EVENT("EventManager::update");
+
         auto& events = m_events.switchContainer();
 
         for (auto& eventsMap : events)

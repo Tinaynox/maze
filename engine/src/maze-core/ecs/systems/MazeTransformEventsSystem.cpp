@@ -80,6 +80,8 @@ namespace Maze
     //////////////////////////////////////////
     void TransformEventsSystem::processUpdate(F32 _dt)
     {
+        MAZE_PROFILE_EVENT("TransformEventsSystem::processUpdate");
+
         m_transform2Ds->process(
             [](Entity* entity, Transform2D* _transform2D)
             {

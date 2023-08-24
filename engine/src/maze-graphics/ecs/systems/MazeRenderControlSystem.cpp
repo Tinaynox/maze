@@ -165,6 +165,7 @@ namespace Maze
     void RenderControlSystem::processUpdate(F32 _dt)
     {
         MAZE_PROFILER_SCOPED_LOCK(RENDER);
+        MAZE_PROFILE_EVENT("RenderControlSystem::processUpdate");
 
         update(_dt);
     }

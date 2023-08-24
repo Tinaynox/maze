@@ -145,6 +145,8 @@ namespace Maze
     //////////////////////////////////////////
     void InspectorController::update(F32 _dt)
     {
+        MAZE_PROFILE_EVENT("InspectorController::update");
+
         if (m_editorsDirty)
         {
             updateEditors();

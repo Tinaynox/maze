@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "preprocessor/MazePreprocessor_Platform.hpp"
 #include "preprocessor/MazePreprocessor_CPlusPlus.hpp"
+#include "preprocessor/MazePreprocessor_Profiler.hpp"
 
 
 //////////////////////////////////////////

@@ -79,6 +79,8 @@ namespace Maze
     //////////////////////////////////////////
     void UpdateManager::processUpdate()
     {
+        MAZE_PROFILE_EVENT("UpdateManager::processUpdate");
+
         U32 currentFrameTimeMS = m_timer.getMilliseconds();
         if (m_lastFrameTimeMS > currentFrameTimeMS)
         {

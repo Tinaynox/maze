@@ -103,6 +103,8 @@ namespace Maze
     //////////////////////////////////////////
     void DebugGridRenderer::update(F32 _dt)
     {
+        MAZE_PROFILE_EVENT("DebugGridRenderer::update");
+
         Vec3DF const& cameraPosition = m_camera->getTransform()->getWorldPosition();
 
         if (cameraPosition.squaredDistance(m_prevMeshCameraPosition) >= 1.0f)

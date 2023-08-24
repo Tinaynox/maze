@@ -95,6 +95,8 @@ namespace Maze
     //////////////////////////////////////////
     void AssetManager::updateAssets()
     {
+        MAZE_PROFILE_EVENT("AssetManager::updateAssets");
+
         Vector<AssetFilePtr> addedFiles;
         Vector<AssetFilePtr> removedFiles;
 

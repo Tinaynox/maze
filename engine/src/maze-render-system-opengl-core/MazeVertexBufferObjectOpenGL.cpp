@@ -236,6 +236,7 @@ namespace Maze
         else
         {
             MAZE_PROFILER_SCOPED_LOCK(BUFFDATA);
+            MAZE_PROFILE_EVENT("mzglBufferData");
             MAZE_GL_CALL(
                 mzglBufferData(
                     MAZE_GL_ARRAY_BUFFER,

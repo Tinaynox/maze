@@ -118,6 +118,8 @@ namespace Maze
     //////////////////////////////////////////
     void GizmoToolsManager::update(F32 dt)
     {
+        MAZE_PROFILE_EVENT("GizmoToolsManager::update");
+
         Set<EntityPtr> const& selectedEntities = SelectionManager::GetInstancePtr()->getSelectedEntities();
         if (selectedEntities.size() == 1)
         {

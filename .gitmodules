@@ -34,3 +34,6 @@
 [submodule "third-party/miniz"]
 	path = third-party/miniz
 	url = git@github.com:Tinaynox/miniz.git
+[submodule "third-party/optick"]
+	path = third-party/optick
+	url = git@github.com:Tinaynox/optick.git

@@ -78,6 +78,8 @@ namespace Maze
     //////////////////////////////////////////
     void ColorGradientPickerManager::update(F32 _dt)
     {
+        MAZE_PROFILE_EVENT("ColorGradientPickerManager::update");
+
         if (isColorGradientPickerWindowOpened() && !isColorGradientPickerWindowFocused())
             m_checkClose = true;
 

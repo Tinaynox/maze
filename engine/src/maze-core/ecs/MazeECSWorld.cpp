@@ -90,6 +90,8 @@ namespace Maze
     //////////////////////////////////////////
     void ECSWorld::update(F32 _dt)
     {
+        MAZE_PROFILE_EVENT("ECSWorld::update");
+
         processStartedEntities();
         processAddingEntities();
         processChangedEntities();
@@ -376,6 +378,8 @@ namespace Maze
     //////////////////////////////////////////
     void ECSWorld::processChangedEntities()
     {
+        MAZE_PROFILE_EVENT("ECSWorld::processChangedEntities");
+
         while (!m_componentsChangedEntities.empty())
         {
             Entity* entity = m_componentsChangedEntities.front();

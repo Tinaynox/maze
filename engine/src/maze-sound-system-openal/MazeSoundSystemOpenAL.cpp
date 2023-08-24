@@ -88,6 +88,8 @@ namespace Maze
     //////////////////////////////////////////
     void SoundSystemOpenAL::update(F32 _dt)
     {
+        MAZE_PROFILE_EVENT("SoundSystemOpenAL::update");
+
         Stack<Size> deadSourceIds;
         for (Size i = 0, in = m_soundSources.size(); i != in; ++i)
         {

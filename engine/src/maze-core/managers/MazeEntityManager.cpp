@@ -127,6 +127,7 @@ namespace Maze
     //////////////////////////////////////////
     void EntityManager::update(F32 _dt)
     {
+        MAZE_PROFILE_EVENT("EntityManager::update");
         m_defaultWorld->update(_dt);
     }
 

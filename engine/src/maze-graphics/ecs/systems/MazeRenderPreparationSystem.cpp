@@ -90,6 +90,8 @@ namespace Maze
     //////////////////////////////////////////
     void RenderPreparationSystem::processUpdate(F32 _dt)
     {
+        MAZE_PROFILE_EVENT("RenderPreparationSystem::processUpdate");
+
         m_canvasesSample->process(
             [_dt](Entity* _entity, Canvas* _canvas)
             {

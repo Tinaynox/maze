@@ -120,6 +120,8 @@ namespace Maze
     //////////////////////////////////////////
     void AssetsController::update(F32 _dt)
     {
+        MAZE_PROFILE_EVENT("AssetsController::update");
+
         if (m_assetsTreeDirty)
         {
             updateAssetsTree();

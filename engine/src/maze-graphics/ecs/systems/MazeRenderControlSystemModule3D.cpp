@@ -196,30 +196,45 @@ namespace Maze
             // Draw render units
             if (_params.drawFlag)
             {
-                eventGatherRenderUnits(_renderTarget, _params, renderData);
-
-                for (RenderUnit& data : renderData)
-                    data.sqrDistanceToCamera = (cameraPosition - data.worldPosition).squaredLength();
-
-                // Sort render queue
-                std::sort(
-                    renderData.begin(),
-                    renderData.end(),
-                    [](
-                        RenderUnit const& _a,
-                        RenderUnit const& _b)
                 {
-                    if (_a.renderPass->getRenderQueueIndex() < _b.renderPass->getRenderQueueIndex())
-                        return true;
+                    MAZE_PROFILE_EVENT("3D GatherRenderUnits");
+                    eventGatherRenderUnits(_renderTarget, _params, renderData);
+                }
 
-                    if (_a.renderPass->getRenderQueueIndex() > _b.renderPass->getRenderQueueIndex())
-                        return false;
+                S32 renderDataSize = (S32)renderData.size();
+                Vector<S32> indices;
+                indices.resize(renderDataSize);
 
-                    if (_a.renderPass->getRenderQueueIndex() < (S32)RenderQueueIndex::Transparent)
-                        return _a.sqrDistanceToCamera < _b.sqrDistanceToCamera;
-                    else
-                        return _a.sqrDistanceToCamera > _b.sqrDistanceToCamera;
-                });
+                for (S32 i = 0; i < renderDataSize; ++i)
+                {
+                    indices[i] = i;
+                    RenderUnit& data = renderData[i];
+                    data.sqrDistanceToCamera = (cameraPosition - data.worldPosition).squaredLength();
+                }
+
+                {
+                    MAZE_PROFILE_EVENT("3D Sort Render Queue");
+                    // Sort render queue
+                    std::sort(
+                        indices.begin(),
+                        indices.end(),
+                        [&renderData](S32 _idxA, S32 _idxB)
+                    {
+                        RenderUnit const& a = renderData[_idxA];
+                        RenderUnit const& b = renderData[_idxB];
+
+                        if (a.renderPass->getRenderQueueIndex() < b.renderPass->getRenderQueueIndex())
+                            return true;
+
+                        if (a.renderPass->getRenderQueueIndex() > b.renderPass->getRenderQueueIndex())
+                            return false;
+
+                        if (a.renderPass->getRenderQueueIndex() < (S32)RenderQueueIndex::Transparent)
+                            return a.sqrDistanceToCamera < b.sqrDistanceToCamera;
+                        else
+                            return a.sqrDistanceToCamera > b.sqrDistanceToCamera;
+                    });
+                }
 
 
                 if (_beginDrawCallback)
@@ -227,35 +242,40 @@ namespace Maze
 
                 S32 prevRenderQueueIndex = -1;
 
-                for (RenderUnit const& data : renderData)
                 {
-                    RenderPassPtr const& renderPass = data.renderPass;
-                    ShaderPtr const& shader = renderPass->getShader();
+                    MAZE_PROFILE_EVENT("3D Preparation Render Queue");
+                    for (S32 i = 0; i < renderDataSize; ++i)
+                    {
+                        RenderUnit const& data = renderData[indices[i]];
 
-                    S32 currentRenderQueueIndex = renderPass->getRenderQueueIndex();
+                        RenderPassPtr const& renderPass = data.renderPass;
+                        ShaderPtr const& shader = renderPass->getShader();
 
-                    VertexArrayObjectPtr const& vao = data.vao;
+                        S32 currentRenderQueueIndex = renderPass->getRenderQueueIndex();
 
-                    MAZE_DEBUG_ERROR_IF(vao == nullptr, "VAO is null!");
+                        VertexArrayObjectPtr const& vao = data.vao;
 
-                    if (shader->getMainLightColorUniform())
-                        shader->getMainLightColorUniform()->set(mainLightColor);
+                        MAZE_DEBUG_ERROR_IF(vao == nullptr, "VAO is null!");
 
-                    if (shader->getMainLightDirectionUniform())
-                        shader->getMainLightDirectionUniform()->set(mainLightDirection);
+                        if (shader->getMainLightColorUniform())
+                            shader->getMainLightColorUniform()->set(mainLightColor);
+
+                        if (shader->getMainLightDirectionUniform())
+                            shader->getMainLightDirectionUniform()->set(mainLightDirection);
 
 
-                    renderQueue->addSelectRenderPassCommand(renderPass);
+                        renderQueue->addSelectRenderPassCommand(renderPass);
 
 
-                    renderQueue->addDrawVAOInstancedCommand(
-                        vao.get(),
-                        data.count,
-                        data.modelMatricies,
-                        data.colorStream,
-                        (Vec4DF const**)data.uvStreams);
+                        renderQueue->addDrawVAOInstancedCommand(
+                            vao.get(),
+                            data.count,
+                            data.modelMatricies,
+                            data.colorStream,
+                            (Vec4DF const**)data.uvStreams);
 
-                    prevRenderQueueIndex = currentRenderQueueIndex;
+                        prevRenderQueueIndex = currentRenderQueueIndex;
+                    }
                 }
 
                 if (_endDrawCallback)
@@ -267,7 +287,10 @@ namespace Maze
             if (_endRenderQueueCallback)
                 _endRenderQueueCallback(renderQueue);
 
-            renderQueue->draw();
+            {
+                MAZE_PROFILE_EVENT("3D Draw Render Queue");
+                renderQueue->draw();
+            }
 
             _renderTarget->endDraw();
         }
@@ -277,6 +300,7 @@ namespace Maze
     void RenderControlSystemModule3D::draw(RenderTarget* _renderTarget)
     {
         MAZE_PROFILER_SCOPED_LOCK(3D);
+        MAZE_PROFILE_EVENT("RenderControlSystemModule3D::draw");
 
         Vector<Camera3D*> cameras;
         m_cameras3DSample->process(

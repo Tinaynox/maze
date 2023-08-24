@@ -140,6 +140,7 @@ namespace Maze
     void EntitiesInspector::update(F32 _dt)
     {
         MAZE_PROFILER_SCOPED_LOCK(INSPECTOR);
+        MAZE_PROFILE_EVENT("EntitiesInspector::update");
 
         if (m_entitiesPropertiesListDirty)
             buildEntitiesPropertiesList();

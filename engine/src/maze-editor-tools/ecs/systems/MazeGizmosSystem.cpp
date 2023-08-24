@@ -72,8 +72,7 @@ namespace Maze
         m_renderTarget = _renderTarget;
         m_renderTarget->eventRenderTargetDestroyed.subscribe(this, &GizmosSystem::notifyRenderTargetDestroyed);
 
-        GizmosManager::GetInstancePtr()->eventGizmosPerComponentClassChanged.subscribe(this, &GizmosSystem::notifyGizmosPerComponentClass);
-    
+        GizmosManager::GetInstancePtr()->eventGizmosPerComponentClassChanged.subscribe(this, &GizmosSystem::notifyGizmosPerComponentClass);        
 
         return true;
     }
@@ -82,6 +81,8 @@ namespace Maze
     void GizmosSystem::processSystemAdded()
     {
         m_drawer = GizmosDrawer::Create(m_worldRaw, m_renderTarget);
+        m_canvasesSample = m_worldRaw->requestInclusiveSample<Canvas>();
+        m_cameras3DSample = m_worldRaw->requestInclusiveSample<Camera3D>();
 
         updateGizmosSamples();
     }
@@ -89,7 +90,17 @@ namespace Maze
     //////////////////////////////////////////
     void GizmosSystem::processUpdate(F32 _dt)
     {
-        drawGizmos(_dt);
+        MAZE_PROFILE_EVENT("GizmosSystem::processUpdate");
+
+        bool haveGizmosMask = false;
+        m_cameras3DSample->process(
+            [&haveGizmosMask](Entity* _entity, Camera3D* _camera)
+            {
+                haveGizmosMask |= (_camera->getRenderMask() & S32(DefaultRenderMask::Gizmos));
+            });
+
+        if (haveGizmosMask)
+            drawGizmos(_dt);
     }
 
     //////////////////////////////////////////

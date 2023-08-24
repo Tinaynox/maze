@@ -103,6 +103,8 @@ namespace Maze
     //////////////////////////////////////////
     void GamepadManager::update(F32 _dt)
     {
+        MAZE_PROFILE_EVENT("GamepadManager::update");
+
         if (m_detectGamepadsTimer > 0.0f)
         {
             m_detectGamepadsTimer -= _dt;

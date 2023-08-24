@@ -89,6 +89,8 @@ namespace Maze
     //////////////////////////////////////////
     void SceneManager::update(F32 _dt)
     {
+        MAZE_PROFILE_EVENT("SceneManager::update");
+
         m_deadScenes.clear();
 
 

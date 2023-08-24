@@ -89,6 +89,8 @@ namespace Maze
     //////////////////////////////////////////
     void Physics2DManager::update(F32 _dt)
     {
+        MAZE_PROFILE_EVENT("Physics2DManager::update");
+
         if (m_world)
             m_world->update(_dt);
     }

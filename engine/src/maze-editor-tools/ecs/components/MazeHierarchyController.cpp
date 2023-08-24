@@ -120,6 +120,8 @@ namespace Maze
     //////////////////////////////////////////
     void HierarchyController::update(F32 _dt)
     {
+        MAZE_PROFILE_EVENT("HierarchyController::update");
+
         updateHierarchy();
     }
 

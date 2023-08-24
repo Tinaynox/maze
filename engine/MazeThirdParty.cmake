@@ -34,3 +34,11 @@ include("${MAZE_DIR}/third-party/jsoncpp.cmake")
 
 # zlib
 include("${MAZE_DIR}/third-party/zlib.cmake")
+
+# optick
+if (MAZE_USE_OPTICK)
+    if(MAZE_TARGET_PLATFORM_IS_WINDOWS)
+        add_definitions(-DMAZE_USE_OPTICK)
+        include("${MAZE_DIR}/third-party/optick.cmake")
+    endif()
+endif()

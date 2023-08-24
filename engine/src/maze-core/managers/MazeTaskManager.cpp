@@ -71,6 +71,8 @@ namespace Maze
     //////////////////////////////////////////
     void TaskManager::update(F32 _dt)
     {
+        MAZE_PROFILE_EVENT("TaskManager::update");
+
         if (m_update)
             return;
 

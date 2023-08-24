@@ -33,6 +33,8 @@
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
+#include "maze-graphics/ecs/components/MazeCanvas.hpp"
+#include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-core/ecs/MazeComponentSystem.hpp"
 
 
@@ -126,6 +128,9 @@ namespace Maze
         Vector<GizmosSample> m_samples;
 
         GizmosDrawerPtr m_drawer;
+
+        SharedPtr<GenericInclusiveEntitiesSample<Canvas>> m_canvasesSample;
+        SharedPtr<GenericInclusiveEntitiesSample<Camera3D>> m_cameras3DSample;
     };
 
 

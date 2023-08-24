@@ -55,6 +55,13 @@ if(MAZE_TARGET_PLATFORM_IS_WINDOWS)
     
     endif()
     
+    if (MAZE_USE_OPTICK)
+        target_link_libraries(maze-core 
+            PUBLIC OptickCore)
+        target_include_directories(maze-core
+            PUBLIC "${MAZE_DIR}/third-party/optick/src")
+    endif()
+    
 elseif(MAZE_TARGET_PLATFORM_IS_LINUX)
 
     find_package(Threads)
