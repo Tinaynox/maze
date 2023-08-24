@@ -178,9 +178,11 @@ namespace Maze
         void appendToLogFile(S32 _priority, CWString _text, Size _size);
         
     protected:
+        Path m_logFilePath;
         std::ofstream m_logFile;
         String m_tempLogBuffer;
 
+        Path m_logErrorFilePath;
         std::ofstream m_logErrorFile;
         String m_tempLogErrorBuffer;
 
