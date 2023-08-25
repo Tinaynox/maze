@@ -120,6 +120,8 @@ namespace Maze
         DefaultPassParams const& _params,
         Vector<RenderUnit>& _renderData)
     {
+        MAZE_PROFILE_EVENT("ParticlesDrawerSystem::notifyGatherRenderUnits");
+
         Vec3DF cameraPosition = _params.cameraTransform.getAffineTranslation();
         Mat4DF cameraTransform = _params.cameraTransform;
         cameraTransform[0][3] = 0.0f;

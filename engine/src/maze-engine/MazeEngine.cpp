@@ -173,10 +173,13 @@ namespace Maze
 
         eventFrame();
 
-        U32 timeAfterUpdateMS = updateManager->getMilliseconds();
-        while (timeAfterUpdateMS - currentFrameTimeMS < m_config.minFrameDeltaTimeMS)
         {
-            timeAfterUpdateMS = updateManager->getMilliseconds();
+            MAZE_PROFILE_EVENT("Idle");
+            U32 timeAfterUpdateMS = updateManager->getMilliseconds();
+            while (timeAfterUpdateMS - currentFrameTimeMS < m_config.minFrameDeltaTimeMS)
+            {
+                timeAfterUpdateMS = updateManager->getMilliseconds();
+            }
         }
 
         if (!m_running)
