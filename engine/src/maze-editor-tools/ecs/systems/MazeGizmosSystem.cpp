@@ -96,7 +96,7 @@ namespace Maze
         m_cameras3DSample->process(
             [&haveGizmosMask](Entity* _entity, Camera3D* _camera)
             {
-                haveGizmosMask |= (_camera->getRenderMask() & S32(DefaultRenderMask::Gizmos));
+                haveGizmosMask |= (bool)(_camera->getRenderMask() & S32(DefaultRenderMask::Gizmos));
             });
 
         if (haveGizmosMask)
