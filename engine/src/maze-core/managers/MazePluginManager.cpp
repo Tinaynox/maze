@@ -140,6 +140,8 @@ namespace Maze
     //////////////////////////////////////////
     bool PluginManager::loadPlugin(Path const& _pluginLibraryFullPath)
     {
+        MAZE_PROFILE_EVENT("PluginManager::loadPlugin");
+
         DynLibManager* dynLibManager = DynLibManager::GetInstancePtr();
         MAZE_ERROR_RETURN_VALUE_IF(!dynLibManager, false, "DynLibManager is not exists!");
 
@@ -171,6 +173,8 @@ namespace Maze
     //////////////////////////////////////////
     void PluginManager::unloadPlugin(Path const& _pluginLibraryFullPath)
     {
+        MAZE_PROFILE_EVENT("PluginManager::unloadPlugin");
+
         UnorderedMap<Path, DynLibPtr>::iterator it;
 
         for (it = m_pluginLibs.begin(); it != m_pluginLibs.end(); ++it)

@@ -101,6 +101,8 @@ namespace Maze
     //////////////////////////////////////////
     void PhysicsWorld2D::update(F32 _dt)
     {
+        MAZE_PROFILE_EVENT("PhysicsWorld2D::update");
+
         if (!m_active)
             return;
 

@@ -313,6 +313,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderOpenGL::loadGLShader(String const& _vertexShaderSource, String const& _fragmentShaderSource)
     {
+        MAZE_PROFILE_EVENT("ShaderOpenGL::loadGLShader");
+
         MAZE_ERROR_RETURN_VALUE_IF(_vertexShaderSource.empty(), false, "Vertex Shader Source is empty!");
         MAZE_ERROR_RETURN_VALUE_IF(_fragmentShaderSource.empty(), false, "Fragment Shader Source is empty!");
 

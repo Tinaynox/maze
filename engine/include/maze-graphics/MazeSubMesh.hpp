@@ -263,9 +263,6 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool init(SubMeshPtr const& _subMesh);
-    
-        //////////////////////////////////////////
-        void generateTangentsAndBitangents();
 
     protected:
         

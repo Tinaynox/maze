@@ -149,6 +149,8 @@ namespace Maze
     //////////////////////////////////////////
     void SpriteManager::unloadAssetSprites(Set<String> const& _tags)
     {
+        MAZE_PROFILE_EVENT("SpriteManager::unloadAssetSprites");
+
         StringKeyMap<SpriteLibraryData>::iterator it = m_spritesLibrary.begin();
         StringKeyMap<SpriteLibraryData>::iterator end = m_spritesLibrary.end();
         for (; it != end; )

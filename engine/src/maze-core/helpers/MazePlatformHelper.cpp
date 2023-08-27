@@ -175,7 +175,7 @@ namespace Maze
             info += "\Production mode: No\n";
 #endif
 
-#if (MAZE_USE_OPTICK)
+#if (MAZE_PROFILER_OPTICK_ENABLED)
             info += "\Profiler: Optick\n";
 #else
             info += "\Profiler: None\n";

@@ -80,6 +80,8 @@ namespace Maze
     //////////////////////////////////////////
     void ParticlesManager::createBuiltinAssets()
     {
+        MAZE_PROFILE_EVENT("ParticlesManager::createBuiltinAssets");
+
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
         S32 const chunkSize = 32;

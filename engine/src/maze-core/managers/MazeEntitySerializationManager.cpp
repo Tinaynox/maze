@@ -88,6 +88,8 @@ namespace Maze
     //////////////////////////////////////////
     bool EntitySerializationManager::savePrefabToXMLFile(EntityPtr const& _entity, Path const& _fileFullPath) const
     {
+        MAZE_PROFILE_EVENT("EntitySerializationManager::savePrefabToXMLFile");
+
         if (!_entity)
             return false;
 
@@ -121,6 +123,8 @@ namespace Maze
     //////////////////////////////////////////
     tinyxml2::XMLElement* EntitySerializationManager::savePrefabToXMLElement(EntityPtr const& _entity, tinyxml2::XMLDocument& _doc) const
     {
+        MAZE_PROFILE_EVENT("EntitySerializationManager::savePrefabToXMLElement");
+
         Map<EntityPtr, Vector<ComponentPtr>> entityComponents = collectEntityComponentsMap(_entity);
 
         S32 indexCounter = 0;
@@ -209,6 +213,8 @@ namespace Maze
         ECSWorld* _world,
         ECSScene* _scene) const
     {
+        MAZE_PROFILE_EVENT("EntitySerializationManager::loadPrefabFromXMLFile");
+
         static EntityPtr nullPointer;
 
         if (_fileFullPath.empty())
@@ -285,6 +291,8 @@ namespace Maze
         ECSWorld* _world,
         ECSScene* _scene) const
     {
+        MAZE_PROFILE_EVENT("EntitySerializationManager::loadPrefabFromXMLElement");
+
         static EntityPtr nullPointer;
 
         if (!_element)

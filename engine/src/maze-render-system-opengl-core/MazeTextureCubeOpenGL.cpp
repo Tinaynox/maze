@@ -165,6 +165,8 @@ namespace Maze
         Vector<PixelSheet2D> const _pixelSheets[6],
         PixelFormat::Enum _internalPixelFormat)
     {
+        MAZE_PROFILE_EVENT("TextureCubeOpenGL::loadTexture");
+
         if (    _pixelSheets[0].empty()
             &&  _pixelSheets[1].empty()
             &&  _pixelSheets[2].empty()

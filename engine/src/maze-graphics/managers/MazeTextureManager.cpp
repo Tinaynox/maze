@@ -321,6 +321,8 @@ namespace Maze
     //////////////////////////////////////////
     void TextureManager::createBuiltinTextures()
     {
+        MAZE_PROFILE_EVENT("TextureManager::createBuiltinTextures");
+
         for (BuiltinTexture2DType t = BuiltinTexture2DType(1); t < BuiltinTexture2DType::MAX; ++t)
             ensureBuiltinTexture2D(t);
         
@@ -366,6 +368,8 @@ namespace Maze
     //////////////////////////////////////////
     Vector<PixelSheet2D> TextureManager::loadPixelSheets2D(AssetFilePtr const& _assetFile)
     {
+        MAZE_PROFILE_EVENT("TextureManager::loadPixelSheets2D");
+
         Vector<PixelSheet2D> pixelSheets;
 
         if (!_assetFile)
@@ -507,6 +511,7 @@ namespace Maze
     //////////////////////////////////////////
     void TextureManager::loadAllAssetTextures()
     {
+        MAZE_PROFILE_EVENT("TextureManager::loadAllAssetTextures");
         {
             Vector<String> textureExtensions = getTextureLoaderExtensions();
             textureExtensions.push_back("mztexture");
@@ -543,6 +548,8 @@ namespace Maze
         Set<String> const& _tags,
         Vector<Texture2DPtr>* _unloadedTextures2D)
     {
+        MAZE_PROFILE_EVENT("TextureManager::unloadAssetTextures");
+
         {
             StringKeyMap<Texture2DLibraryData>::iterator it = m_textures2DLibrary.begin();
             StringKeyMap<Texture2DLibraryData>::iterator end = m_textures2DLibrary.end();

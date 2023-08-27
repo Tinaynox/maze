@@ -155,6 +155,8 @@ namespace Maze
     //////////////////////////////////////////
     void MeshManager::createBuiltinMeshes()
     {
+        MAZE_PROFILE_EVENT("MeshManager::createBuiltinMeshes");
+
         for (BuiltinMeshType t = BuiltinMeshType(1); t < BuiltinMeshType::MAX; ++t)
             ensureBuiltinMesh(t);
     }
@@ -172,6 +174,8 @@ namespace Maze
     //////////////////////////////////////////
     MeshPtr MeshManager::loadMesh(AssetFilePtr const& _assetFile)
     {
+        MAZE_PROFILE_EVENT("MeshManager::loadMesh");
+
         MeshPtr mesh;
 
         if (!_assetFile)

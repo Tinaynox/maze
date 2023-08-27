@@ -251,6 +251,8 @@ namespace Maze
     //////////////////////////////////////////
     void SoundManager::loadAssetSounds(Set<String> const& _tags)
     {
+        MAZE_PROFILE_EVENT("SoundManager::loadAssetSounds");
+
         Vector<String> extensions = getSoundLoaderExtensions();
         Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions(
             Set<String>(extensions.begin(), extensions.end()),
@@ -269,6 +271,8 @@ namespace Maze
     //////////////////////////////////////////
     void SoundManager::unloadAssetSounds(Set<String> const& _tags)
     {
+        MAZE_PROFILE_EVENT("SoundManager::unloadAssetSounds");
+
         StringKeyMap<SoundLibraryData>::iterator it = m_soundsLibrary.begin();
         StringKeyMap<SoundLibraryData>::iterator end = m_soundsLibrary.end();
         for (; it != end; )

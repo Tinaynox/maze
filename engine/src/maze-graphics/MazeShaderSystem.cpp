@@ -137,6 +137,8 @@ namespace Maze
     //////////////////////////////////////////
     void ShaderSystem::findAssetShadersAndAddToLibrary()
     {
+        MAZE_PROFILE_EVENT("ShaderSystem::findAssetShadersAndAddToLibrary");
+
         AssetManager* assetManager = AssetManager::GetInstancePtr();
 
         Vector<AssetFilePtr> files = assetManager->getAssetFilesWithExtension("mzshader");
@@ -180,6 +182,8 @@ namespace Maze
     //////////////////////////////////////////
     void ShaderSystem::createBuiltinShaders()
     {
+        MAZE_PROFILE_EVENT("ShaderSystem::createBuiltinShaders");
+
         for (BuiltinShaderType t = BuiltinShaderType(1); t < BuiltinShaderType::MAX; ++t)
             ensureBuiltinShader(t);
     }

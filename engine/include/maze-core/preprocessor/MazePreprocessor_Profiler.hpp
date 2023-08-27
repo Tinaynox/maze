@@ -37,7 +37,7 @@
 // Maze Profiler
 //
 //////////////////////////////////////////
-#if (MAZE_USE_OPTICK)
+#if (MAZE_PROFILER_OPTICK_ENABLED)
 #   include "optick.h"
 #   define MAZE_PROFILE_FRAME(FRAME_NAME, ...) OPTICK_FRAME(FRAME_NAME, __VA_ARGS__)
 #   define MAZE_PROFILE_EVENT(...) OPTICK_EVENT(__VA_ARGS__)

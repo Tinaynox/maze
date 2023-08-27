@@ -96,6 +96,8 @@ namespace Maze
             Vector<Vec3DF>& _outTangents,
             Vector<Vec3DF>& _outBitangents)
         {
+            MAZE_PROFILE_EVENT("GenerateTangentsAndBitangents");
+
             Vector<Vec3DF> tangents;
             Vector<Vec3DF> bitangents;
 

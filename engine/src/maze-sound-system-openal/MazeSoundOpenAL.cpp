@@ -78,6 +78,8 @@ namespace Maze
     //////////////////////////////////////////
     bool SoundOpenAL::loadSound(SoundDataPtr const& _soundData)
     {
+        MAZE_PROFILE_EVENT("SoundOpenAL::loadSound");
+
         S32 channels = _soundData->getChannels();
         S32 bitsPerSample = _soundData->getBitsPerSample();
 

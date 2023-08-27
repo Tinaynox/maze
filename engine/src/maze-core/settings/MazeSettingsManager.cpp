@@ -97,6 +97,8 @@ namespace Maze
     //////////////////////////////////////////
     bool SettingsManager::loadSettings()
     {
+        MAZE_PROFILE_EVENT("SettingsManager::loadSettings");
+
         if (m_settingsFileFullPath.empty())
             return false;
         
@@ -183,6 +185,8 @@ namespace Maze
     //////////////////////////////////////////
     bool SettingsManager::saveSettings()
     {
+        MAZE_PROFILE_EVENT("SettingsManager::saveSettings");
+
         if (m_settingsFileFullPath.empty())
             return false;
 

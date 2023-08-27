@@ -120,6 +120,8 @@ namespace Maze
     //////////////////////////////////////////
     void GizmosManager::createGizmosElements()
     {
+        MAZE_PROFILE_EVENT("GizmosManager::createGizmosElements");
+
         S32 const iconSize = 32;
         S32 const gap = 1;
 

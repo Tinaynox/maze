@@ -182,6 +182,8 @@ namespace Maze
     //////////////////////////////////////////
     void RenderMeshManager::createBuiltinRenderMeshes()
     {
+        MAZE_PROFILE_EVENT("RenderMeshManager::createBuiltinRenderMeshes");
+
         for (BuiltinRenderMeshType t = BuiltinRenderMeshType(1); t < BuiltinRenderMeshType::MAX; ++t)
             ensureBuiltinRenderMesh(t);
     }
@@ -257,6 +259,8 @@ namespace Maze
     //////////////////////////////////////////
     void RenderMeshManager::loadAllAssetRenderMeshes()
     {
+        MAZE_PROFILE_EVENT("RenderMeshManager::loadAllAssetRenderMeshes");
+
         Vector<String> loaderExtensions = MeshManager::GetInstancePtr()->getMeshLoaderExtensions();
 
         Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtensions(
@@ -275,6 +279,8 @@ namespace Maze
     //////////////////////////////////////////
     void RenderMeshManager::unloadAssetRenderMeshes(Set<String> const& _tags)
     {
+        MAZE_PROFILE_EVENT("RenderMeshManager::unloadAssetRenderMeshes");
+
         StringKeyMap<RenderMeshLibraryData>::iterator it = m_renderMeshesLibrary.begin();
         StringKeyMap<RenderMeshLibraryData>::iterator end = m_renderMeshesLibrary.end();
         for (; it != end; )

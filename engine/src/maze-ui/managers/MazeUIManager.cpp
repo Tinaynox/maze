@@ -203,6 +203,8 @@ namespace Maze
     //////////////////////////////////////////
     void UIManager::createUIElements()
     {
+        MAZE_PROFILE_EVENT("UIManager::createUIElements");
+
         S32 const chunkSize = 32;
         S32 const gap = 1;
 

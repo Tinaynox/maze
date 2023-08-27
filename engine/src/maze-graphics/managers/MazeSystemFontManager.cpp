@@ -203,6 +203,8 @@ namespace Maze
     //////////////////////////////////////////
     void SystemFontManager::createBuiltinSystemFonts()
     {
+        MAZE_PROFILE_EVENT("SystemFontManager::createBuiltinSystemFonts");
+
         for (BuiltinSystemFontType t = BuiltinSystemFontType(1); t < BuiltinSystemFontType::MAX; ++t)
             ensureBuiltinSystemFont(t);        
     }

@@ -230,6 +230,8 @@ namespace Maze
         Vector<PixelSheet2D> const& _pixelSheets,
         PixelFormat::Enum _internalPixelFormat)
     {
+        MAZE_PROFILE_EVENT("Texture2DOpenGL::loadTexture");
+
         if (_pixelSheets.empty())
             return false;
 
@@ -828,6 +830,8 @@ namespace Maze
 
             if (mzglGenerateMipmap)
             {
+                MAZE_PROFILE_EVENT("mzglGenerateMipmap");
+
                 Debug::log << getName() << ": mzglGenerateMipmap started..." << endl;
                 MAZE_GL_CALL(mzglGenerateMipmap(MAZE_GL_TEXTURE_2D));
                 Debug::log << getName() << ": mzglGenerateMipmap finished." << endl;

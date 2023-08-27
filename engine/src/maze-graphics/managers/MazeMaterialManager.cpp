@@ -457,6 +457,8 @@ namespace Maze
     //////////////////////////////////////////
     void MaterialManager::createBuiltinMaterials()
     {
+        MAZE_PROFILE_EVENT("MaterialManager::createBuiltinMaterials");
+
         for (BuiltinMaterialType t = BuiltinMaterialType(1); t < BuiltinMaterialType::MAX; ++t)
             ensureBuiltinMaterial(t);
 
@@ -500,6 +502,8 @@ namespace Maze
     //////////////////////////////////////////
     void MaterialManager::loadAllAssetMaterials()
     {
+        MAZE_PROFILE_EVENT("MaterialManager::loadAllAssetMaterials");
+
         Vector<AssetFilePtr> assetFiles = AssetManager::GetInstancePtr()->getAssetFilesWithExtension("mzmaterial");
         for (AssetFilePtr const& assetFile : assetFiles)
         {
@@ -516,6 +520,8 @@ namespace Maze
     //////////////////////////////////////////
     void MaterialManager::unloadAssetMaterials(Set<String> const& _tags)
     {
+        MAZE_PROFILE_EVENT("MaterialManager::unloadAssetMaterials");
+
         StringKeyMap<MaterialLibraryData>::iterator it = m_materialsLibrary.begin();
         StringKeyMap<MaterialLibraryData>::iterator end = m_materialsLibrary.end();
         for (; it != end; )

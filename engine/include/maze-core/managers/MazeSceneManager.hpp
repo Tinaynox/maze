@@ -92,6 +92,8 @@ namespace Maze
         {
             static SharedPtr<TScene> nullPointer;
 
+            MAZE_PROFILE_EVENT("SceneManager::loadScene");
+
             if (!_additive)
             {
                 for (Size i = 0; i < m_scenes.size(); ++i)
