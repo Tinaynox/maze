@@ -65,7 +65,16 @@ namespace Maze
     //////////////////////////////////////////
     bool SettingsManager::init(String const& _projectName)
     {
-        m_settingsFileFullPath = FileHelper::GetDocumentsDirectory() + "/" + _projectName + "/settings.xml";
+        m_settingsFileFullPath = FileHelper::GetDocumentsDirectory() + "/" + _projectName;
+
+#if !(MAZE_PRODUCTION)
+        m_settingsFileFullPath += "/.dev";
+#endif
+#if (MAZE_DEBUG)
+        m_settingsFileFullPath += "/.debug";
+#endif
+
+        m_settingsFileFullPath += "/settings.xml";
         return true;
     }
 

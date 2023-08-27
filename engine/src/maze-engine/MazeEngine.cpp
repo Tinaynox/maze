@@ -317,9 +317,11 @@ namespace Maze
         if (!m_soundManager)
             return false;
 
+#if !(MAZE_PRODUCTION)
         EditorToolsManager::Initialize(m_editorToolsManager);
         if (!m_editorToolsManager)
             return false;
+#endif
 
         ParticlesManager::Initialize(m_particlesManager);
         if (!m_particlesManager)
@@ -353,7 +355,10 @@ namespace Maze
         RenderWindowPtr const& _renderWindow,
         RenderSystemPtr const& _renderSystem)
     {
+#if !(MAZE_PRODUCTION)
         _world->addSystem(GizmosSystem::Create(_renderWindow.get()));
+#endif
+
         _world->addSystem(ParticlesDrawerSystem::Create(_renderSystem));
         _world->addSystem(PhysicsControlSystem2D::Create());
     }

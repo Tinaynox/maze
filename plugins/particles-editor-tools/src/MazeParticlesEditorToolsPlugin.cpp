@@ -173,23 +173,27 @@ namespace Maze
     //////////////////////////////////////////
     void ParticlesEditorToolsPlugin::install()
     {
-        InspectorManager::GetInstancePtr()->registerPropertyDrawer<ParticleSystemParameterF32, PropertyDrawerParticleSystemParameterF32>();
-        InspectorManager::GetInstancePtr()->registerPropertyDrawer<ParticleSystemParameterColor, PropertyDrawerParticleSystemParameterColor>();
+        if (InspectorManager::GetInstancePtr())
+        {
+            InspectorManager::GetInstancePtr()->registerPropertyDrawer<ParticleSystemParameterF32, PropertyDrawerParticleSystemParameterF32>();
+            InspectorManager::GetInstancePtr()->registerPropertyDrawer<ParticleSystemParameterColor, PropertyDrawerParticleSystemParameterColor>();
 
-        InspectorManager::GetInstancePtr()->registerPropertyDrawer<ParticleSystemBurst, PropertyDrawerParticleSystemBurst>();
+            InspectorManager::GetInstancePtr()->registerPropertyDrawer<ParticleSystemBurst, PropertyDrawerParticleSystemBurst>();
 
-        InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystemParameterF32, MetaPropertyDraweParticleSystemParameterF32>();
-        InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystemParameterColor, MetaPropertyDraweParticleSystemParameterColor>();
+            InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystemParameterF32, MetaPropertyDraweParticleSystemParameterF32>();
+            InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystemParameterColor, MetaPropertyDraweParticleSystemParameterColor>();
 
-        InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystem3DMainModule, MetaPropertyDrawerParticleSystem3DMainModule>();
-        InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystem3DRendererModule, MetaPropertyDrawerParticleSystem3DRendererModule>();
-        InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystem3DShapeModule, MetaPropertyDrawerParticleSystem3DShapeModule>();
+            InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystem3DMainModule, MetaPropertyDrawerParticleSystem3DMainModule>();
+            InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystem3DRendererModule, MetaPropertyDrawerParticleSystem3DRendererModule>();
+            InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystem3DShapeModule, MetaPropertyDrawerParticleSystem3DShapeModule>();
 
-        InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystem3DZoneData, MetaPropertyDrawerParticleSystem3DZoneData>();
+            InspectorManager::GetInstancePtr()->registerMetaPropertyDrawer<ParticleSystem3DZoneData, MetaPropertyDrawerParticleSystem3DZoneData>();
 
-        InspectorManager::GetInstancePtr()->registerComponentEditor<ParticleSystem3D, ComponentEditorParticleSystem3D>();
+            InspectorManager::GetInstancePtr()->registerComponentEditor<ParticleSystem3D, ComponentEditorParticleSystem3D>();
+        }
 
-        GizmosManager::GetInstancePtr()->registerGizmos<ParticleSystem3D, ParticleSystem3DGizmos>();
+        if (GizmosManager::GetInstancePtr())
+            GizmosManager::GetInstancePtr()->registerGizmos<ParticleSystem3D, ParticleSystem3DGizmos>();
     }
 
     //////////////////////////////////////////

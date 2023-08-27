@@ -41,6 +41,7 @@ message("MAZE_COMPILER=${MAZE_COMPILER}")
 
 
 ##########################################
+option(MAZE_PRODUCTION "Production mode" OFF)
 option(MAZE_USE_OPTICK "Use Optick Profiler" OFF)
 
 

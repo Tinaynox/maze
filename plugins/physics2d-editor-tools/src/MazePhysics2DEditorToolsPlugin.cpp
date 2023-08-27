@@ -119,8 +119,11 @@ namespace Maze
     //////////////////////////////////////////
     void Physics2DEditorToolsPlugin::install()
     {
-        GizmosManager::GetInstancePtr()->registerGizmos<BoxCollider2D, BoxCollider2DGizmos>();
-        GizmosManager::GetInstancePtr()->registerGizmos<CircleCollider2D, CircleCollider2DGizmos>();
+        if (GizmosManager::GetInstancePtr())
+        {
+            GizmosManager::GetInstancePtr()->registerGizmos<BoxCollider2D, BoxCollider2DGizmos>();
+            GizmosManager::GetInstancePtr()->registerGizmos<CircleCollider2D, CircleCollider2DGizmos>();
+        }
     }
 
     //////////////////////////////////////////

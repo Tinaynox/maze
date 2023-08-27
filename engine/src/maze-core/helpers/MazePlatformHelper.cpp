@@ -169,6 +169,18 @@ namespace Maze
             info += "\tDynamic Linking: Yes\n";
 #endif
 
+#if (MAZE_PRODUCTION)
+            info += "\Production mode: Yes\n";
+#else
+            info += "\Production mode: No\n";
+#endif
+
+#if (MAZE_USE_OPTICK)
+            info += "\Profiler: Optick\n";
+#else
+            info += "\Profiler: None\n";
+#endif
+
             return info;
         }
 

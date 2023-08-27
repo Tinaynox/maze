@@ -310,6 +310,12 @@ if(       (MAZE_TARGET_PLATFORM_IS_WINDOWS AND (NOT IS_ARM_ARCH))
     
 endif()
 
+# Production mode
+if (MAZE_PRODUCTION)
+    set(MAZE_PRODUCTION 1)
+    add_definitions("-DMAZE_PRODUCTION=1")
+endif()
+
 # optick
 if (MAZE_USE_OPTICK)
     if(MAZE_TARGET_PLATFORM_IS_WINDOWS)
