@@ -1038,6 +1038,8 @@ namespace Maze
     //////////////////////////////////////////
     void WindowWin::close()
     {
+        MAZE_PROFILE_EVENT("WindowWin::close");
+
         if (!isOpened())
             return;
 
