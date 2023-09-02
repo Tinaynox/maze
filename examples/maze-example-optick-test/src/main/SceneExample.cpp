@@ -128,11 +128,15 @@ namespace Maze
     //////////////////////////////////////////
     SceneExample::SceneExample()
     {
+        MAZE_PROFILE_START_CAPTURE();
     }
 
     //////////////////////////////////////////
     SceneExample::~SceneExample()
     {
+        MAZE_PROFILE_STOP_CAPTURE();
+        MAZE_PROFILE_SAVE_CAPTURE("data.opt");
+
         InputManager* inputManager = InputManager::GetInstancePtr();
         if (inputManager)
         {
