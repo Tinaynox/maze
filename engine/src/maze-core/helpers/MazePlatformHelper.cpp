@@ -170,15 +170,15 @@ namespace Maze
 #endif
 
 #if (MAZE_PRODUCTION)
-            info += "\Production mode: Yes\n";
+            info += "\tProduction mode: Yes\n";
 #else
-            info += "\Production mode: No\n";
+            info += "\tProduction mode: No\n";
 #endif
 
 #if (MAZE_PROFILER_OPTICK_ENABLED)
-            info += "\Profiler: Optick\n";
+            info += "\tProfiler: Optick\n";
 #else
-            info += "\Profiler: None\n";
+            info += "\tProfiler: None\n";
 #endif
 
             return info;
