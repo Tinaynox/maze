@@ -96,7 +96,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void ValueFromString(IStringSerializable& _value, CString _data, Size _count)
     {
-        _value.setString(String(_data, _count));
+        _value.setString(_data, _count);
     }
 
     //////////////////////////////////////////

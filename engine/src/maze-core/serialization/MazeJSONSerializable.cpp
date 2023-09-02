@@ -74,9 +74,9 @@ namespace Maze
                 if (!_value[propertyName])
                     continue;
 
-                CString attributeValue = _value[propertyName].asCString();
-                if (attributeValue)
-                    metaProperty->setString(_metaInstance, attributeValue);
+                Json::String attributeValue = _value[propertyName].asString();
+                if (!attributeValue.empty())
+                    metaProperty->setString(_metaInstance, attributeValue.c_str(), attributeValue.size());
             }
         }
     }
