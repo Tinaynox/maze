@@ -174,6 +174,8 @@ namespace Maze
     //////////////////////////////////////////
     bool RenderSystemOpenGL3::setupSystem(ContextOpenGLPtr const& _context)
     {
+        MAZE_PROFILE_EVENT("RenderSystemOpenGL3::setupSystem");
+
         MAZE_ERROR_RETURN_VALUE_IF(m_systemInited, false, "Render system is already inited!");
 
         if (true)
