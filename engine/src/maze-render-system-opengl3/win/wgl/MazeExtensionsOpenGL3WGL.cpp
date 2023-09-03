@@ -76,6 +76,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ExtensionsOpenGL3WGL::loadGLExtensionsImpl()
     {
+        MAZE_PROFILE_EVENT("ExtensionsOpenGL3WGL::loadGLExtensionsImpl");
+
         if (!ExtensionsOpenGL3::loadGLExtensionsImpl())
             return false;
 

@@ -452,6 +452,8 @@ namespace Maze
     //////////////////////////////////////////
     void ContextOpenGL3EGL::destroyGLContext()
     {
+        MAZE_PROFILE_EVENT("ContextOpenGL3EGL::destroyGLContext");
+
         RenderTarget* prevRenderTarget = getRenderSystemRaw()->getCurrentRenderTarget();
         ContextOpenGL* prevRenderContext = getRenderSystemRaw()->getCurrentContext();
 
