@@ -77,6 +77,7 @@ namespace Maze
             return false;
 
         m_commandLineArguments = _commandLineArguments;
+        parseCommandLineArguments();
 
         return true;
     }
@@ -104,6 +105,83 @@ namespace Maze
     void SystemManager::setClipboardString(String const& _text)
     {
         MAZE_NOT_IMPLEMENTED;
+    }
+
+    //////////////////////////////////////////
+    bool SystemManager::hasCommandLineArgumentFlag(HashedCString _key)
+    {
+        return m_commandLineArgumentFlags.count(_key) > 0;
+    }
+
+    //////////////////////////////////////////
+    CString SystemManager::getCommandLineArgumentValue(HashedCString _key)
+    {
+        auto it = m_commandLineArgumentValues.find(_key);
+        if (it == m_commandLineArgumentValues.end())
+            return nullptr;
+
+        if (it->second.empty())
+            return nullptr;
+
+        return it->second[0];
+    }
+
+    //////////////////////////////////////////
+    Vector<CString> const& SystemManager::getCommandLineArgumentValues(HashedCString _key)
+    {
+        static Vector<CString> nullValue;
+
+        auto it = m_commandLineArgumentValues.find(_key);
+        if (it == m_commandLineArgumentValues.end())
+            return nullValue;
+
+        return it->second;
+    }
+
+    //////////////////////////////////////////
+    void SystemManager::parseCommandLineArguments()
+    {
+        m_commandLineArgumentFlags.clear();
+        m_commandLineArgumentValues.clear();
+
+        CString currentKey = nullptr;
+        Vector<CString> currentValues;
+
+        auto finishCurrentFlag =
+            [&]()
+            {
+                if (!currentKey)
+                    return;
+
+                if (*currentKey != '\0')
+                {
+                    if (currentValues.empty())
+                        m_commandLineArgumentFlags.insert(currentKey);
+                    else
+                        m_commandLineArgumentValues.insert(currentKey, std::move(currentValues));
+                }
+
+                currentKey = nullptr;
+                currentValues.clear();
+            };
+
+        for (CString value : m_commandLineArguments)
+        {
+            if (value[0] == '-')
+            {
+                finishCurrentFlag();
+
+                currentKey = value + 1;
+                while (*currentKey == '-' && *currentKey != '\0') { ++currentKey; }
+            }
+            else
+            {
+                if (currentKey)
+                    currentValues.push_back(value);
+            }
+        }
+
+        finishCurrentFlag();
     }
 
 

@@ -35,6 +35,7 @@
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
 #include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/containers/MazeStringKeyMap.hpp"
 
 
 //////////////////////////////////////////
@@ -121,6 +122,16 @@ namespace Maze
         //////////////////////////////////////////
         virtual Vec2DF getSystemCursorPosition() { return Vec2DF::c_zero; }
 
+
+        //////////////////////////////////////////
+        bool hasCommandLineArgumentFlag(HashedCString _key);
+
+        //////////////////////////////////////////
+        CString getCommandLineArgumentValue(HashedCString _key);
+
+        //////////////////////////////////////////
+        Vector<CString> const& getCommandLineArgumentValues(HashedCString _key);
+
     public:
 
         //////////////////////////////////////////
@@ -135,10 +146,15 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init(Vector<Maze::S8 const*> const& _commandLineArguments);
 
+        //////////////////////////////////////////
+        void parseCommandLineArguments();
+
     protected:
         static SystemManager* s_instance;
 
-        Vector<S8 const*> m_commandLineArguments;
+        Vector<CString> m_commandLineArguments;
+        Set<HashedCString> m_commandLineArgumentFlags;
+        StringKeyMap<Vector<CString>> m_commandLineArgumentValues;
 
         UpdateManagerPtr m_updateManager;
 
