@@ -597,6 +597,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderOpenGL::unloadGLShader()
     {
+        MAZE_PROFILE_EVENT("ShaderOpenGL::unloadGLShader");
+
         RenderSystemOpenGL* renderSystem = getRenderSystemOpenGLRaw();
         if (!renderSystem)
             return false;

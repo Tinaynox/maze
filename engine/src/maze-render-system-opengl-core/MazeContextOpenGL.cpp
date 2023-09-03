@@ -391,6 +391,8 @@ namespace Maze
     //////////////////////////////////////////
     void ContextOpenGL::setupDefaultStates()
     {
+        MAZE_PROFILE_EVENT("ContextOpenGL::setupDefaultStates");
+
 #if (MAZE_DEBUG_GL)
         
         if (getExtensionsRaw()->hasGLExtension("GL_KHR_debug"))
