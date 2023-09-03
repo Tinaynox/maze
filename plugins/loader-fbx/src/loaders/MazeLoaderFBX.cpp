@@ -310,6 +310,8 @@ namespace Maze
         Mesh& _mesh,
         MeshLoaderProperties const& _props)
     {
+        MAZE_PROFILE_EVENT("LoadFBX");
+
         MAZE_DEBUG_ERROR_RETURN_VALUE_IF(
             _fileData.getSize() == 0,
             false,

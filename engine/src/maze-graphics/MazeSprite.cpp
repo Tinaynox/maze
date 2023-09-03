@@ -252,6 +252,8 @@ namespace Maze
     //////////////////////////////////////////
     void Sprite::FromString(SpritePtr& _value, CString _data, Size _count)
     {
+        MAZE_PROFILE_EVENT("Sprite::FromString");
+
         if (!_data || strcmp(_data, "") == 0)
         {
             _value.reset();
@@ -278,6 +280,8 @@ namespace Maze
     //////////////////////////////////////////
     void Sprite::ToString(Sprite const* _value, String& _data)
     {
+        MAZE_PROFILE_EVENT("Sprite::ToString");
+
         if (!_value)
         {
             _data.clear();

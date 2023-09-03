@@ -119,6 +119,7 @@ namespace Maze
     //////////////////////////////////////////
     void Sound::loadFromAssetFile(AssetFilePtr const& _assetFile)
     {
+        MAZE_PROFILE_EVENT("Sound::loadFromAssetFile");
         SoundDataPtr soundData = SoundManager::GetInstancePtr()->loadSoundData(_assetFile);
         loadSound(soundData);
     }
@@ -126,6 +127,7 @@ namespace Maze
     //////////////////////////////////////////
     void Sound::loadFromAssetFile(String const& _assetFileName)
     {
+        MAZE_PROFILE_EVENT("Sound::loadFromAssetFile");
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_assetFileName);
         loadFromAssetFile(assetFile);
     }
@@ -164,6 +166,8 @@ namespace Maze
     //////////////////////////////////////////
     void Sound::FromString(SoundPtr& _value, CString _data, Size _count)
     {
+        MAZE_PROFILE_EVENT("Sound::FromString");
+
         if (!_data || strcmp(_data, "") == 0)
         {
             _value.reset();
@@ -187,6 +191,8 @@ namespace Maze
     //////////////////////////////////////////
     void Sound::ToString(Sound const* _value, String& _data)
     {
+        MAZE_PROFILE_EVENT("Sound::ToString");
+
         if (!_value)
         {
             _data.clear();

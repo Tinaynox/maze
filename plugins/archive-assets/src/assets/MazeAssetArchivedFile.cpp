@@ -124,6 +124,8 @@ namespace Maze
     //////////////////////////////////////////
     bool AssetArchivedFile::readToXMLDocument(tinyxml2::XMLDocument& _doc) const
     {
+        MAZE_PROFILE_EVENT("AssetArchivedFile::readToXMLDocument");
+
         ByteBufferPtr byteBuffer = m_archive->readArchivedFileAsByteBuffer(m_zipArchiveFilePath);
 
         if (!byteBuffer)

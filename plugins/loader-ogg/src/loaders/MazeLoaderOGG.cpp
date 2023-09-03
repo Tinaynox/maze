@@ -42,6 +42,8 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_PLUGIN_LOADER_OGG_API bool LoadOGG(ByteBufferPtr const& _fileData, SoundDataPtr& _soundData)
     {
+        MAZE_PROFILE_EVENT("LoadOGG");
+
         S32 error = -1;
         stb_vorbis* vorbis = stb_vorbis_open_memory(
             _fileData->getDataPointer(),

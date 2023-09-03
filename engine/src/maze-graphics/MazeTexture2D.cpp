@@ -131,6 +131,8 @@ namespace Maze
     //////////////////////////////////////////
     void Texture2D::loadFromAssetFile(AssetFilePtr const& _assetFile)
     {
+        MAZE_PROFILE_EVENT("Texture2D::loadFromAssetFile");
+
         TextureManagerPtr const& textureManager = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getTextureManager();
         Maze::Vector<Maze::PixelSheet2D> pixelSheets = textureManager->loadPixelSheets2D(_assetFile);
         
@@ -140,6 +142,8 @@ namespace Maze
     //////////////////////////////////////////
     void Texture2D::loadFromAssetFile(String const& _assetFileName)
     {
+        MAZE_PROFILE_EVENT("Texture2D::loadFromAssetFile");
+
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_assetFileName);
         loadFromAssetFile(assetFile);
     }
@@ -149,6 +153,8 @@ namespace Maze
         Vec2DU const& _size,
         PixelFormat::Enum _pixelFormat)
     {
+        MAZE_PROFILE_EVENT("Texture2D::loadEmpty");
+
         PixelSheet2D pixelSheet(_size, _pixelFormat);
         loadTexture(pixelSheet, _pixelFormat);
         return true;
@@ -161,6 +167,8 @@ namespace Maze
         Vec2DU const& _size,
         PixelFormat::Enum _pixelFormat)
     {
+        MAZE_PROFILE_EVENT("Texture2D::loadFromBuffer");
+
         Vector<ByteBufferPtr> buffers = { _buffer };
         return loadFromBuffers(buffers, _bufferPixelFormat, _size, _pixelFormat);
     }
@@ -172,6 +180,8 @@ namespace Maze
         Vec2DU const& _size,
         PixelFormat::Enum _pixelFormat)
     {
+        MAZE_PROFILE_EVENT("Texture2D::loadFromBuffers");
+
         Vector<PixelSheet2D> pixelSheets;
         pixelSheets.resize(_buffers.size());
         for (Size i = 0, in = _buffers.size(); i < in; ++i)
@@ -189,6 +199,8 @@ namespace Maze
         PixelSheet2D const& _pixelSheet,
         PixelFormat::Enum _internalPixelFormat)
     {
+        MAZE_PROFILE_EVENT("Texture2D::loadTexture");
+
         Vector<PixelSheet2D> pixelSheets = { _pixelSheet };
         return loadTexture(pixelSheets, _internalPixelFormat);
     }
@@ -196,6 +208,8 @@ namespace Maze
     //////////////////////////////////////////
     void Texture2D::reload()
     {
+        MAZE_PROFILE_EVENT("Texture2D::reload");
+
         Texture2DLibraryData const* libraryData = m_renderSystem->getTextureManager()->getTexture2DLibraryData(getName().asHashedCString());
         if (libraryData && libraryData->assetFile)
         {
@@ -214,6 +228,8 @@ namespace Maze
     //////////////////////////////////////////
     void Texture2D::FromString(Texture2DPtr& _value, CString _data, Size _count)
     {
+        MAZE_PROFILE_EVENT("Texture2D::FromString");
+
         if (!_data || strcmp(_data, "") == 0)
         {
             _value.reset();
@@ -240,6 +256,8 @@ namespace Maze
     //////////////////////////////////////////
     void Texture2D::ToString(Texture2D const* _value, String& _data)
     {
+        MAZE_PROFILE_EVENT("Texture2D::ToString");
+
         if (!_value)
         {
             _data.clear();

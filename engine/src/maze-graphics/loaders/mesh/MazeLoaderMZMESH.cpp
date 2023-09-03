@@ -82,6 +82,8 @@ namespace Maze
         Mesh& _mesh,
         MeshLoaderProperties const& _props)
     {
+        MAZE_PROFILE_EVENT("LoadMZMESH");
+
         MAZE_DEBUG_ERROR_RETURN_VALUE_IF(
             _fileData.getSize() == 0,
             false,
@@ -253,6 +255,8 @@ namespace Maze
         Mesh const& _mesh,
         Path _filePath)
     {
+        MAZE_PROFILE_EVENT("SaveMZMESH");
+
         std::ofstream outputFile(_filePath.c_str(), std::ios::binary);
 
         MAZE_ERROR_RETURN_VALUE_IF(!outputFile, false, "Failed to open file: %s", _filePath.toUTF8().c_str());

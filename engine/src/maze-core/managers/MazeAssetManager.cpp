@@ -131,6 +131,8 @@ namespace Maze
     //////////////////////////////////////////
     void AssetManager::addAssetsDirectory(Path const& _path, bool _recursive)
     {
+        MAZE_PROFILE_EVENT("AssetManager::addAssetsDirectory");
+
         Path fullPath = FileHelper::ConvertLocalPathToFullPath(_path);
         
         MAZE_ERROR_RETURN_IF(!FileHelper::IsDirectory(fullPath), "%s is not a directory!", _path.c_str());
@@ -324,6 +326,8 @@ namespace Maze
         Path const& _fileName,
         bool _warningIfNotExists)
     {
+        MAZE_PROFILE_EVENT("AssetManager::openXMLDocumentAssetFile");
+
         AssetFilePtr const& assetFile = getAssetFileByFileName(_fileName);
         if (!assetFile)
         {

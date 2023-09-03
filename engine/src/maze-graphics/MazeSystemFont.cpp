@@ -36,6 +36,8 @@ namespace Maze
     //////////////////////////////////////////
     void SystemFont::FromString(SystemFontPtr& _value, CString _data, Size _count)
     {
+        MAZE_PROFILE_EVENT("SystemFont::FromString");
+
         if (!_data || strcmp(_data, "") == 0)
         {
             _value.reset();
@@ -62,6 +64,8 @@ namespace Maze
     //////////////////////////////////////////
     void SystemFont::ToString(SystemFont const* _value, String& _data)
     {
+        MAZE_PROFILE_EVENT("SystemFont::ToString");
+
         if (!_value)
         {
             _data.clear();

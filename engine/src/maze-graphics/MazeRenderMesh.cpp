@@ -149,6 +149,8 @@ namespace Maze
         AssetFilePtr const& _assetFile,
         RenderTarget* _renderTarget)
     {
+        MAZE_PROFILE_EVENT("RenderMesh::loadFromAssetFile");
+
         MAZE_ERROR_RETURN_IF(!_assetFile, "Null AssetFile");
 
         MeshPtr mesh = MeshManager::GetInstancePtr()->loadMesh(_assetFile);
@@ -160,6 +162,8 @@ namespace Maze
         String const& _assetFileName,
         RenderTarget* _renderTarget)
     {
+        MAZE_PROFILE_EVENT("RenderMesh::loadFromAssetFile");
+
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_assetFileName);
         loadFromAssetFile(assetFile, _renderTarget);
     }
@@ -169,6 +173,8 @@ namespace Maze
         MeshPtr const& _mesh,
         RenderTarget* _renderTarget)
     {
+        MAZE_PROFILE_EVENT("RenderMesh::loadFromMesh");
+
         MAZE_ERROR_RETURN_IF(!_mesh, "Mesh is null!");
 
         Size currentVaoCount = m_vertexArrayObjects.size();

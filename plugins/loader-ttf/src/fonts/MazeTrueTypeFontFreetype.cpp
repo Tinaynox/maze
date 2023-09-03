@@ -123,6 +123,8 @@ namespace Maze
     bool TrueTypeFontFreetype::loadFromAssetFile(
         AssetFilePtr const& _assetFile)
     {
+        MAZE_PROFILE_EVENT("Font::loadFromAssetFile");
+
         ByteBuffer byteBuffer;
 
         ClassUID classUID = _assetFile->getClassUID();

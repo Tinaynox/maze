@@ -471,6 +471,8 @@ namespace Maze
     //////////////////////////////////////////
     bool Shader::loadFromAssetFile(AssetFilePtr const& _shaderFile)
     {
+        MAZE_PROFILE_EVENT("Shader::loadFromAssetFile");
+
         if (!_shaderFile)
             return false;
 

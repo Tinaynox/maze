@@ -106,6 +106,8 @@ namespace Maze
     //////////////////////////////////////////
     void TextureCube::loadFromAssetFile(AssetFilePtr const& _assetFile)
     {
+        MAZE_PROFILE_EVENT("TextureCube::loadFromAssetFile");
+
         m_assetFile = _assetFile;
 
         String assetFileString;
