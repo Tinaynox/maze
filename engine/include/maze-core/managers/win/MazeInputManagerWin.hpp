@@ -63,6 +63,8 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init() MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        virtual bool getKeyState(KeyCode const& _keyCode) MAZE_OVERRIDE;
 
     protected:
 

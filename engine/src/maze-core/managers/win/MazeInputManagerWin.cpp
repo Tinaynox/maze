@@ -28,6 +28,7 @@
 #include "maze-core/managers/win/MazeInputManagerWin.hpp"
 #include "maze-core/system/MazeDisplay.hpp"
 #include "maze-core/system/win/MazeWindowWin.hpp"
+#include "maze-core/helpers/win/MazeInputHelperWin.hpp"
 #include "maze-core/helpers/win/MazeWindowHelperWin.hpp"
 
 
@@ -54,6 +55,13 @@ namespace Maze
             return false;
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    bool InputManagerWin::getKeyState(KeyCode const& _keyCode)
+    {
+        S64 winKeyCode = InputHelper::ConvertKeyCodeToVirtualCode(_keyCode);
+        return GetAsyncKeyState((S32)winKeyCode) & 0x8000;
     }
 
 

@@ -44,13 +44,13 @@ namespace Maze
     namespace InputHelper
     {
         ////////////////////////////////////
-        MAZE_CORE_API KeyCode ConvertVirtualCodeToKeyCode(S64 _virtualCode, U32 _modifiers);
+        MAZE_CORE_API KeyCode ConvertVirtualCodeToKeyCode(S64 _virtualCode, U32 _modifiers = 0u);
 
         ////////////////////////////////////
-        MAZE_CORE_API S64 ConvertKeyCodeToVirtualCode(KeyCode _keyCode, U32 _modifiers);
+        MAZE_CORE_API S64 ConvertKeyCodeToVirtualCode(KeyCode _keyCode, U32 _modifiers = 0u);
 
         //////////////////////////////////////////
-        MAZE_CORE_API String TranslateWin32Text(S32 _virtualCode, S32 _scanCode, U32 _modifiers);
+        MAZE_CORE_API String TranslateWin32Text(S32 _virtualCode, S32 _scanCode, U32 _modifiers = 0u);
 
         //////////////////////////////////////////
         MAZE_CORE_API bool IsKeyDown(WPARAM _wparam);
