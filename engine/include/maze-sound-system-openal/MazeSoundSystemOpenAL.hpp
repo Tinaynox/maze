@@ -136,6 +136,9 @@ namespace Maze
         void updateDevicesInfo();
 
         //////////////////////////////////////////
+        void printDevicesInfo();
+
+        //////////////////////////////////////////
         U32 testMaxNumSources();
 
     protected:
