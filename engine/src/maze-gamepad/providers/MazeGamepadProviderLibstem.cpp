@@ -33,6 +33,7 @@
 #include "maze-gamepad/providers/MazeGamepadProviderLibstem.hpp"
 #include "maze-gamepad/gamepad/MazeGamepad.hpp"
 #include "maze-gamepad/managers/MazeGamepadManager.hpp"
+#include "maze-core/services/MazeLogStream.hpp"
 #include <gamepad/Gamepad.h>
 
 
@@ -119,6 +120,27 @@ namespace Maze
         GamepadManager::GetInstancePtr()->detachGamepad(_device->deviceID);
     }
 
+    //////////////////////////////////////////
+    void OnGamepadLog(S32 _gamepadLogPriority, CString _format, ...)
+    {
+        String newText;
+        MAZE_FORMAT_VA_STRING(_format, newText);
+        if (!newText.empty() && newText.back() == '\n')
+            newText.pop_back();
+
+        switch (_gamepadLogPriority)
+        {
+            case gamepad_log_warning:
+                LogService::GetInstancePtr()->logFormatted(c_logPriority_Warning, "Libstem: %s", newText.c_str());
+                break;
+            case gamepad_log_error:
+                LogService::GetInstancePtr()->logFormatted(c_logPriority_Error, "Libstem: %s", newText.c_str());
+                break;
+            default:
+                LogService::GetInstancePtr()->logFormatted(c_logPriority_Default, "Libstem: %s", newText.c_str());
+        }
+    }
+
 
     //////////////////////////////////////////
     // Class GamepadProviderLibstem
@@ -171,23 +193,32 @@ namespace Maze
     //////////////////////////////////////////
     void GamepadProviderLibstem::initLibstem()
     {
+        Debug::Log("Init Libstem...");
+
         Gamepad_deviceAttachFunc(OnGamepadDeviceAttached, (void*)0x1);
         Gamepad_deviceRemoveFunc(OnGamepadDeviceRemoved, (void*)0x2);
         Gamepad_buttonDownFunc(OnGamepadButtonDown, (void*)0x3);
         Gamepad_buttonUpFunc(OnGamepadButtonUp, (void*)0x4);
         Gamepad_axisMoveFunc(OnGamepadAxisMoved, (void*)0x5);
+        Gamepad_logFunc(OnGamepadLog);
         Gamepad_init();
+
+        Debug::Log("Libstem inited.");
     }
 
     //////////////////////////////////////////
     void GamepadProviderLibstem::shutdownLibstem()
     {
+        Debug::Log("Shutdown Libstem...");
+
         Gamepad_deviceAttachFunc(nullptr, (void*)0x0);
         Gamepad_deviceRemoveFunc(nullptr, (void*)0x0);
         Gamepad_buttonDownFunc(nullptr, (void*)0x0);
         Gamepad_buttonUpFunc(nullptr, (void*)0x0);
         Gamepad_axisMoveFunc(nullptr, (void*)0x0);
         Gamepad_shutdown();
+
+        Debug::Log("Libstem shutdowned.");
     }
     
 } // namespace Maze
