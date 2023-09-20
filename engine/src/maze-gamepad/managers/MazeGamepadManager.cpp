@@ -228,6 +228,7 @@ namespace Maze
     //////////////////////////////////////////
     void GamepadManager::notifySystemDevicesChanged(ClassUID _eventUID, Event* _event)
     {
+        Debug::Log("SystemDevicesChangedEvent invoked - preparing to detect gamepads...");
         m_detectGamepadsTimer = 0.3f;
     }
     

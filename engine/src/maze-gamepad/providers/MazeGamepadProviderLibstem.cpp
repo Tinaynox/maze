@@ -187,7 +187,9 @@ namespace Maze
     //////////////////////////////////////////
     void GamepadProviderLibstem::detectGamepads()
     {
+        Debug::Log("Libstem: detectDevices startes...");
         Gamepad_detectDevices();
+        Debug::Log("Libstem: detectDevices finished.");
     }
 
     //////////////////////////////////////////
