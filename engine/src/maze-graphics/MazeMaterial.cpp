@@ -184,7 +184,7 @@ namespace Maze
     //////////////////////////////////////////
     RenderPassPtr const& Material::getRenderPass(RenderPassType _passType, Size _index)
     {
-        static RenderPassPtr nullPointer;
+        static RenderPassPtr const nullPointer;
 
         Vector<RenderPassPtr>& passesByType = m_passes[_passType];
         if (passesByType.empty() || _index >= passesByType.size())
@@ -196,7 +196,7 @@ namespace Maze
     //////////////////////////////////////////
     RenderPassPtr const& Material::getFirstRenderPass(RenderPassType _passType) const
     {
-        static RenderPassPtr nullPointer;
+        static RenderPassPtr const nullPointer;
 
         Vector<RenderPassPtr> const& passesByType = m_passes[_passType];
         if (passesByType.empty())
@@ -492,7 +492,7 @@ namespace Maze
     //////////////////////////////////////////
     ShaderUniformVariantPtr const& Material::getUniform(HashedCString _uniformName)
     {
-        static ShaderUniformVariantPtr nullPointer;
+        static ShaderUniformVariantPtr const nullPointer;
 
         for (ShaderUniformVariantPtr const& uniform : m_uniforms)
             if (uniform->getName() == _uniformName)

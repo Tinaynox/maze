@@ -83,7 +83,7 @@ namespace Maze
     //////////////////////////////////////////
     FontMaterialPtr const& FontMaterialManager::getFontMaterial(HashedCString _trueTypeFont)
     {
-        static FontMaterialPtr nullPointer;
+        static FontMaterialPtr const nullPointer;
 
         FontMaterialLibraryData const* libraryData = getFontMaterialLibraryData(_trueTypeFont);
         if (libraryData)
@@ -99,8 +99,13 @@ namespace Maze
 
         font->setName(_trueTypeFont.str);
         FontMaterialLibraryData* data = addFontMaterialToLibrary(font);
-        data->assetFile = assetFile;
-        return data->fontMaterial;
+        if (data)
+        {
+            data->assetFile = assetFile;
+            return data->fontMaterial;
+        }
+
+        return nullPointer;
     }
 
     //////////////////////////////////////////

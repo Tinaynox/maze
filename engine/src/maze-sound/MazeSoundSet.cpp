@@ -98,7 +98,7 @@ namespace Maze
     //////////////////////////////////////////
     SoundPtr const& SoundSet::fetch()
     {
-        static SoundPtr nullPointer;
+        static SoundPtr const nullPointer;
 
         if (m_sounds.size() == 0)
             return nullPointer;

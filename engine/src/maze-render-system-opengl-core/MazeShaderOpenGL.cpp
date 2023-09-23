@@ -240,7 +240,7 @@ namespace Maze
     //////////////////////////////////////////
     ShaderUniformPtr const& ShaderOpenGL::createUniformFromShader(HashedCString _uniformName, ShaderUniformType _type)
     {
-        static ShaderUniformPtr nullPointer;
+        static ShaderUniformPtr const nullPointer;
 
         UnorderedMap<U32, ShaderUniformPtr>::const_iterator it = m_uniformsCache.find(_uniformName.hash);
         if (it != m_uniformsCache.end())

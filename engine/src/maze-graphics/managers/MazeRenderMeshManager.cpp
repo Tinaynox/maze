@@ -191,7 +191,7 @@ namespace Maze
     //////////////////////////////////////////
     RenderMeshPtr const& RenderMeshManager::getRenderMesh(HashedCString _renderMeshName)
     {
-        static RenderMeshPtr nullPointer;
+        static RenderMeshPtr const nullPointer;
 
         RenderMeshLibraryData const* libraryData = getRenderMeshLibraryData(_renderMeshName);
         if (libraryData != nullptr)
@@ -204,13 +204,20 @@ namespace Maze
         RenderMeshPtr renderMesh = RenderMesh::Create(assetFile);
         renderMesh->setName(_renderMeshName.str);
         RenderMeshLibraryData* data = addRenderMeshToLibrary(renderMesh);
-        data->assetFile = assetFile;
-        return data->renderMesh;
+        if (data)
+        {
+            data->assetFile = assetFile;
+            return data->renderMesh;
+        }
+
+        return nullPointer;
     }
 
     //////////////////////////////////////////
     RenderMeshPtr const& RenderMeshManager::getRenderMesh(AssetFilePtr const& _assetFile)
     {
+        static RenderMeshPtr const nullPointer;
+
         StringKeyMap<RenderMeshLibraryData>::const_iterator it = m_renderMeshesLibrary.find(_assetFile->getFileName());
         if (it != m_renderMeshesLibrary.end())
             return it->second.renderMesh;
@@ -218,8 +225,14 @@ namespace Maze
         RenderMeshPtr renderMesh = RenderMesh::Create(_assetFile);
         renderMesh->setName(_assetFile->getFileName());
         RenderMeshLibraryData* data = addRenderMeshToLibrary(renderMesh);
-        data->assetFile = _assetFile;
-        return data->renderMesh;
+
+        if (data)
+        {
+            data->assetFile = _assetFile;
+            return data->renderMesh;
+        }
+
+        return nullPointer;
     }
 
     //////////////////////////////////////////
@@ -271,8 +284,11 @@ namespace Maze
                 continue;
 
             RenderMeshPtr renderMesh = RenderMesh::Create(assetFile);
-            renderMesh->setName(assetFile->getFileName());
-            addRenderMeshToLibrary(renderMesh);
+            if (renderMesh)
+            {
+                renderMesh->setName(assetFile->getFileName());
+                addRenderMeshToLibrary(renderMesh);
+            }
         }
     }
 

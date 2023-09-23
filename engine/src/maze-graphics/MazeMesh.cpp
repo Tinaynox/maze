@@ -130,7 +130,7 @@ namespace Maze
     //////////////////////////////////////////
     SubMeshPtr const& Mesh::getSubMesh(Size _index) const
     {
-        static SubMeshPtr nullPointer;
+        static SubMeshPtr const nullPointer;
 
         if (_index >= m_subMeshes.size())
             return nullPointer;

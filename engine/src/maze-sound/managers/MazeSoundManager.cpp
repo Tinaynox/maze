@@ -140,7 +140,7 @@ namespace Maze
     //////////////////////////////////////////
     SoundPtr const& SoundManager::getSound(HashedCString _assetFileName)
     {
-        static SoundPtr nullPointer;
+        static SoundPtr const nullPointer;
 
         SoundLibraryData const* libraryData = getSoundLibraryData(_assetFileName);
         if (libraryData)
@@ -171,8 +171,13 @@ namespace Maze
         sound->setName(_assetFile->getFileName());
 
         SoundLibraryData* data = addSoundToLibrary(sound);
-        data->assetFile = _assetFile;
-        return data->sound;
+        if (data)
+        {
+            data->assetFile = _assetFile;
+            return data->sound;
+        }
+
+        return nullPointer;
     }
 
     //////////////////////////////////////////

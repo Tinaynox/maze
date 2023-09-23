@@ -92,7 +92,7 @@ namespace Maze
     //////////////////////////////////////////
     FontPtr const& FontManager::getFont(HashedCString _font)
     {
-        static FontPtr nullPointer;
+        static FontPtr const nullPointer;
 
         FontLibraryData const* libraryData = getFontLibraryData(_font);
         if (libraryData)
@@ -108,8 +108,13 @@ namespace Maze
 
         font->setName(_font.str);
         FontLibraryData* data = addFontToLibrary(font);
-        data->assetFile = assetFile;
-        return data->font;
+        if (data)
+        {
+            data->assetFile = assetFile;
+            return data->font;
+        }
+
+        return nullPointer;
     }
 
     //////////////////////////////////////////
