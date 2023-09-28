@@ -169,8 +169,10 @@ namespace Maze
         TTFPagePtr& page = m_pages[_fontSize];
         if (!page)
         {
+            Debug::Log("TrueTypeFontFreetype: Creating TTFPage...");
             page = std::make_shared<TTFPage>();
             eventTexturesChanged();
+            Debug::Log("TrueTypeFontFreetype: TTFPage created.");
         }
         return page;
     }

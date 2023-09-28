@@ -132,13 +132,18 @@ namespace Maze
             ContextOpenGLConfig contextConfig;
             contextConfig.antialiasingLevel = _antialiasingLevel;
 
+            Debug::Log("RenderWindowOpenGL: Creating context...");
             m_context = ContextOpenGL::Create(
                 getRenderSystem()->cast<RenderSystemOpenGL>(),
                 m_window,
                 &contextConfig);
             String contextName = "RenderWindow_" + StringHelper::ToString(s_contextCounter++);
             m_context->setName(contextName);
+            Debug::Log("RenderWindowOpenGL: Context created.");
+
+            Debug::Log("RenderWindowOpenGL: Creating render queue...");
             m_renderQueue = RenderQueueOpenGL::Create(this, m_context.get());
+            Debug::Log("RenderWindowOpenGL: Rrender queue created.");
         }
         else
         if (!m_context->isValid())

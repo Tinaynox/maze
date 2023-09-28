@@ -333,6 +333,14 @@ namespace Maze
     VertexArrayObjectPtr RenderSystemOpenGL::createVertexArrayObject(RenderTarget* _renderTarget)
     {
         ContextOpenGL* contextOpenGL = ensureDefaultContext(_renderTarget);
+        MAZE_ERROR_RETURN_VALUE_IF(
+            !contextOpenGL,
+            nullptr,
+            "Context is null! current currentContext=%x, defaultRenderContext=%x sharedContext=%x",
+            (ContextOpenGL*)m_currentContext,
+            m_defaultRenderContext.get(),
+            m_sharedContext.get());
+
         VertexArrayObjectOpenGLPtr vao = VertexArrayObjectOpenGL::Create(this, contextOpenGL);
         MAZE_DEBUG_ERROR_IF(!vao, "VAO is null");
         return vao;
@@ -345,7 +353,13 @@ namespace Maze
         RenderTarget* _renderTarget)
     {
         ContextOpenGL* contextOpenGL = ensureDefaultContext(_renderTarget);
-        MAZE_ERROR_RETURN_VALUE_IF(!contextOpenGL, nullptr, "Context is null!");
+        MAZE_ERROR_RETURN_VALUE_IF(
+            !contextOpenGL,
+            nullptr,
+            "Context is null! current currentContext=%x, defaultRenderContext=%x sharedContext=%x",
+            (ContextOpenGL*)m_currentContext,
+            m_defaultRenderContext.get(),
+            m_sharedContext.get());
 
         return createVertexBufferObject(
             contextOpenGL,
@@ -369,25 +383,61 @@ namespace Maze
     //////////////////////////////////////////
     Texture2DPtr RenderSystemOpenGL::createTexture2D()
     {
-        return Texture2DOpenGL::Create(this, ensureCurrentContext());
+        ContextOpenGL* contextOpenGL = ensureDefaultContext();
+        MAZE_ERROR_RETURN_VALUE_IF(
+            !contextOpenGL,
+            nullptr,
+            "Context is null! current currentContext=%x, defaultRenderContext=%x sharedContext=%x",
+            (ContextOpenGL*)m_currentContext,
+            m_defaultRenderContext.get(),
+            m_sharedContext.get());
+
+        return Texture2DOpenGL::Create(this, contextOpenGL);
     }
 
     //////////////////////////////////////////
     Texture2DMSPtr RenderSystemOpenGL::createTexture2DMS()
     {
-        return Texture2DMSOpenGL::Create(this, ensureCurrentContext());
+        ContextOpenGL* contextOpenGL = ensureDefaultContext();
+        MAZE_ERROR_RETURN_VALUE_IF(
+            !contextOpenGL,
+            nullptr,
+            "Context is null! current currentContext=%x, defaultRenderContext=%x sharedContext=%x",
+            (ContextOpenGL*)m_currentContext,
+            m_defaultRenderContext.get(),
+            m_sharedContext.get());
+
+        return Texture2DMSOpenGL::Create(this, contextOpenGL);
     }
 
     //////////////////////////////////////////
     TextureCubePtr RenderSystemOpenGL::createTextureCube()
     {
-        return TextureCubeOpenGL::Create(this, ensureCurrentContext());
+        ContextOpenGL* contextOpenGL = ensureDefaultContext();
+        MAZE_ERROR_RETURN_VALUE_IF(
+            !contextOpenGL,
+            nullptr,
+            "Context is null! current currentContext=%x, defaultRenderContext=%x sharedContext=%x",
+            (ContextOpenGL*)m_currentContext,
+            m_defaultRenderContext.get(),
+            m_sharedContext.get());
+
+        return TextureCubeOpenGL::Create(this, contextOpenGL);
     }
 
     //////////////////////////////////////////
     MaterialPtr RenderSystemOpenGL::createMaterial()
     {
-        return MaterialOpenGL::Create(this, ensureCurrentContext());
+        ContextOpenGL* contextOpenGL = ensureDefaultContext();
+        MAZE_ERROR_RETURN_VALUE_IF(
+            !contextOpenGL,
+            nullptr,
+            "Context is null! current currentContext=%x, defaultRenderContext=%x sharedContext=%x",
+            (ContextOpenGL*)m_currentContext,
+            m_defaultRenderContext.get(),
+            m_sharedContext.get());
+
+        return MaterialOpenGL::Create(this, contextOpenGL);
     }
 
     //////////////////////////////////////////
@@ -405,7 +455,13 @@ namespace Maze
         void* _initialData)
     {
         ContextOpenGL* contextOpenGL = ensureDefaultContext();
-        MAZE_ERROR_RETURN_VALUE_IF(!contextOpenGL, nullptr, "Context is null!");
+        MAZE_ERROR_RETURN_VALUE_IF(
+            !contextOpenGL,
+            nullptr,
+            "Context is null! current currentContext=%x, defaultRenderContext=%x sharedContext=%x",
+            (ContextOpenGL*)m_currentContext,
+            m_defaultRenderContext.get(),
+            m_sharedContext.get());
 
         return createGPUVertexBuffer(
             contextOpenGL,
@@ -441,7 +497,13 @@ namespace Maze
         void* _initialData)
     {
         ContextOpenGL* contextOpenGL = ensureDefaultContext();
-        MAZE_ERROR_RETURN_VALUE_IF(!contextOpenGL, nullptr, "Context is null!");
+        MAZE_ERROR_RETURN_VALUE_IF(
+            !contextOpenGL,
+            nullptr,
+            "Context is null! current currentContext=%x, defaultRenderContext=%x sharedContext=%x",
+            (ContextOpenGL*)m_currentContext,
+            m_defaultRenderContext.get(),
+            m_sharedContext.get());
 
         return createGPUTextureBuffer(
             contextOpenGL,
@@ -475,7 +537,13 @@ namespace Maze
         RenderTarget* _renderTarget)
     {
         ContextOpenGL* contextOpenGL = ensureDefaultContext(_renderTarget);
-        MAZE_ERROR_RETURN_VALUE_IF(!contextOpenGL, nullptr, "Context is null!");
+        MAZE_ERROR_RETURN_VALUE_IF(
+            !contextOpenGL,
+            nullptr,
+            "Context is null! current currentContext=%x, defaultRenderContext=%x sharedContext=%x",
+            (ContextOpenGL*)m_currentContext,
+            m_defaultRenderContext.get(),
+            m_sharedContext.get());
 
         return RenderBufferOpenGL::Create(this, contextOpenGL, _deleter);
     }
