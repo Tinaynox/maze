@@ -166,7 +166,7 @@ namespace Maze
         for (S32 i = 0; i < 5; ++i)
         {
             m_mainContext = createContext(m_defaultDeviceIndex);
-            if (m_mainContext)
+            if (m_mainContext && m_mainContext->makeCurrent())
                 break;
             ThreadHelper::SleepCurrentThread(500);
             Debug::Log("Updating audio devices list...");
