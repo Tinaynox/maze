@@ -74,6 +74,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ArchiveFileZip::openZip(Path const& _fullPath)
     {
+        MAZE_PROFILE_EVENT("ArchiveFileZip::openZip");
+
         closeZip();
 
         MAZE_MUTEX_SCOPED_LOCK(m_zipMutex);
@@ -99,6 +101,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ArchiveFileZip::updateZipNavigationMap()
     {
+        MAZE_PROFILE_EVENT("ArchiveFileZip::updateZipNavigationMap");
+
         if (!m_zipNavigationMapDirty)
             return true;
 
@@ -164,6 +168,8 @@ namespace Maze
     //////////////////////////////////////////
     Size ArchiveFileZip::readArchivedFileToBuffer(Path const& _filePath, U8* _bytes, Size _bufferSize)
     {
+        MAZE_PROFILE_EVENT("AssetArchivedFile::readArchivedFileToBuffer");
+
         updateZipNavigationMap();
 
         ZipNavigationMap::const_iterator it = m_zipNavigationMap.find(_filePath);
@@ -198,6 +204,8 @@ namespace Maze
     //////////////////////////////////////////
     Size ArchiveFileZip::readArchivedFileToString(Path const& _filePath, String& _stringBuffer)
     {
+        MAZE_PROFILE_EVENT("ArchiveFileZip::readArchivedFileToString");
+
         updateZipNavigationMap();
 
         ZipNavigationMap::const_iterator it = m_zipNavigationMap.find(_filePath);
@@ -235,6 +243,8 @@ namespace Maze
     //////////////////////////////////////////
     ByteBufferPtr ArchiveFileZip::readArchivedFileAsByteBuffer(Path const& _filePath)
     {
+        MAZE_PROFILE_EVENT("ArchiveFileZip::readArchivedFileAsByteBuffer");
+
         updateZipNavigationMap();
 
         ZipNavigationMap::const_iterator it = m_zipNavigationMap.find(_filePath);
@@ -300,6 +310,8 @@ namespace Maze
     //////////////////////////////////////////
     S32 ArchiveFileZip::tryUnzOpenCurrentFile(Path const& _fileName, unzFile _file)
     {
+        MAZE_PROFILE_EVENT("ArchiveFileZip::tryUnzOpenCurrentFile");
+
         if (m_passwordFunction)
         {
             String password = m_passwordFunction(_fileName);

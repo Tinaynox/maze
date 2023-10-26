@@ -131,6 +131,11 @@ namespace Maze
     //////////////////////////////////////////
     void AssetManager::addAssetsDirectory(Path const& _path, bool _recursive)
     {
+        MAZE_PROFILE_EVENT("AssetManager::addAssetsDirectory");
+
+        String pathUTF8 = _path.toUTF8();
+        Debug::Log("Adding assets directory '%s'...", pathUTF8.c_str());
+
         Path fullPath = FileHelper::ConvertLocalPathToFullPath(_path);
         
         MAZE_ERROR_RETURN_IF(!FileHelper::IsDirectory(fullPath), "%s is not a directory!", _path.c_str());
@@ -170,6 +175,8 @@ namespace Maze
             processRemoveFile(removeFile);
             eventAssetFileRemoved(removeFile);
         }
+
+        Debug::Log("Assets directory '%s' added.", pathUTF8.c_str());
     }
     
     //////////////////////////////////////////
@@ -324,6 +331,8 @@ namespace Maze
         Path const& _fileName,
         bool _warningIfNotExists)
     {
+        MAZE_PROFILE_EVENT("AssetManager::openXMLDocumentAssetFile");
+
         AssetFilePtr const& assetFile = getAssetFileByFileName(_fileName);
         if (!assetFile)
         {

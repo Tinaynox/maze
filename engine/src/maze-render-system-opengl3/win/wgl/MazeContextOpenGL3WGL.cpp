@@ -132,6 +132,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ContextOpenGL3WGL::createGLContextWindow()
     {
+        MAZE_PROFILE_EVENT("ContextOpenGL3WGL::createGLContextWindow");
+
         destroyGLContext();
 
         WindowManager* windowManager = WindowManager::GetInstancePtr();
@@ -149,6 +151,8 @@ namespace Maze
     //////////////////////////////////////////
     bool ContextOpenGL3WGL::createGLContextPixelBuffer()
     {
+        MAZE_PROFILE_EVENT("ContextOpenGL3WGL::createGLContextPixelBuffer");
+
         destroyGLContext();
 
         WindowManager* windowManager = WindowManager::GetInstancePtr();
@@ -438,6 +442,8 @@ namespace Maze
     //////////////////////////////////////////
     void ContextOpenGL3WGL::createWGLContext()
     {
+        MAZE_PROFILE_EVENT("ContextOpenGL3WGL::createWGLContext");
+
         RenderSystemOpenGL* renderSystemOpenGL = getRenderSystemRaw()->castRaw<RenderSystemOpenGL>();
 
         if (renderSystemOpenGL->getDefaultContext())
@@ -627,6 +633,8 @@ namespace Maze
     //////////////////////////////////////////
     void ContextOpenGL3WGL::createExtensions()
     {
+        MAZE_PROFILE_EVENT("ContextOpenGL3WGL::createExtensions");
+
         m_extensions = ExtensionsOpenGL3WGL::Create(this);
 
         if (getRenderSystemRaw()->getSystemInited())
@@ -1050,6 +1058,8 @@ namespace Maze
     //////////////////////////////////////////
     void ContextOpenGL3WGL::destroyGLContext()
     {
+        MAZE_PROFILE_EVENT("ContextOpenGL3WGL::destroyGLContext");
+
         if (m_deviceContext == nullptr)
             return;
 

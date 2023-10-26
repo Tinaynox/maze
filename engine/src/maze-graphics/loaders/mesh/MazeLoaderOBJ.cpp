@@ -467,6 +467,8 @@ namespace Maze
         Mesh& _mesh,
         MeshLoaderProperties const& _props)
     {
+        MAZE_PROFILE_EVENT("LoadOBJ");
+
         _mesh.clear();
 
         Vector<Vec3DF> positions;

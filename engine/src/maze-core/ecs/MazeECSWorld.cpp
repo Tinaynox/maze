@@ -257,7 +257,7 @@ namespace Maze
     //////////////////////////////////////////
     EntityPtr const& ECSWorld::getEntityById(EntityId _id) const
     {
-        static EntityPtr nullPointer;
+        static EntityPtr const nullPointer;
         
         if (_id == 0)
             return nullPointer;

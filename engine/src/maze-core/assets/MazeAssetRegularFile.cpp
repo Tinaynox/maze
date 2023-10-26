@@ -106,6 +106,8 @@ namespace Maze
     //////////////////////////////////////////
     bool AssetRegularFile::move(Path const& _newFullPath, Vector<Pair<Path, AssetFilePtr>>& _movedFiles)
     {
+        MAZE_PROFILE_EVENT("AssetRegularFile::move");
+
         if (m_fullPath == _newFullPath)
             return false;
 
@@ -156,6 +158,8 @@ namespace Maze
     //////////////////////////////////////////
     bool AssetRegularFile::readToXMLDocument(tinyxml2::XMLDocument& _doc) const
     {
+        MAZE_PROFILE_EVENT("AssetRegularFile::readToXMLDocument");
+
         tinyxml2::XMLDocument doc;
         tinyxml2::XMLError loadError = XMLHelper::LoadXMLFile(getFullPath(), _doc);
         if (tinyxml2::XML_SUCCESS != loadError)
@@ -170,6 +174,8 @@ namespace Maze
     //////////////////////////////////////////
     bool AssetRegularFile::readToByteBuffer(ByteBuffer& _byteBuffer) const
     {
+        MAZE_PROFILE_EVENT("AssetRegularFile::readToByteBuffer");
+
         FILE* fileHandler = StdHelper::OpenFile(m_fullPath, "rb");
         if (!fileHandler)
             return false;
@@ -199,6 +205,8 @@ namespace Maze
     //////////////////////////////////////////
     bool AssetRegularFile::readHeaderToByteBuffer(ByteBuffer& _byteBuffer, Size _size) const
     {
+        MAZE_PROFILE_EVENT("AssetRegularFile::readHeaderToByteBuffer");
+
         FILE* fileHandler = StdHelper::OpenFile(m_fullPath, "rb");
         if (!fileHandler)
             return false;

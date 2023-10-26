@@ -105,6 +105,8 @@ namespace Maze
     //////////////////////////////////////////
     PhysicsMaterial2DPtr const& PhysicsMaterial2DManager::getMaterial(AssetFilePtr const& _assetFile)
     {
+        static PhysicsMaterial2DPtr const nullPointer;
+
         PhysicsMaterial2DLibraryData const* libraryData = getPhysicsMaterial2DLibraryData(_assetFile->getFileName());
         if (libraryData)
             return libraryData->physicsMaterial2D;
@@ -113,8 +115,14 @@ namespace Maze
         PhysicsMaterial2DLibraryData* data = addFontToLibrary(
             _assetFile->getFileName().toUTF8().c_str(),
             material);
-        data->assetFile = _assetFile;
-        return data->physicsMaterial2D;
+
+        if (data)
+        {
+            data->assetFile = _assetFile;
+            return data->physicsMaterial2D;
+        }
+
+        return nullPointer;
     }
 
     //////////////////////////////////////////

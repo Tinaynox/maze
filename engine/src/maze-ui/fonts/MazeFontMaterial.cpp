@@ -103,6 +103,8 @@ namespace Maze
     bool FontMaterial::loadFromAssetFile(
         AssetFilePtr const& _assetFile)
     {
+        MAZE_PROFILE_EVENT("FontMaterial::loadFromAssetFile");
+
         MAZE_ERROR_RETURN_VALUE_IF(!_assetFile, false, "Null asset file!");
 
         setName(_assetFile->getFileName());
@@ -133,6 +135,8 @@ namespace Maze
     //////////////////////////////////////////
     void FontMaterial::FromString(FontMaterialPtr& _value, CString _data, Size _count)
     {
+        MAZE_PROFILE_EVENT("FontMaterial::FromString");
+
         if (!_data || strcmp(_data, "") == 0)
         {
             _value.reset();
@@ -158,6 +162,8 @@ namespace Maze
     //////////////////////////////////////////
     void FontMaterial::ToString(FontMaterial const* _value, String& _data)
     {
+        MAZE_PROFILE_EVENT("FontMaterial::ToString");
+
         if (!_value)
         {
             _data.clear();

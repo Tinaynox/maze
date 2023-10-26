@@ -98,7 +98,7 @@ namespace Maze
     //////////////////////////////////////////
     SoundPtr const& SoundSet::fetch()
     {
-        static SoundPtr nullPointer;
+        static SoundPtr const nullPointer;
 
         if (m_sounds.size() == 0)
             return nullPointer;
@@ -132,6 +132,8 @@ namespace Maze
     //////////////////////////////////////////
     void SoundSet::FromString(SoundSetPtr& _value, CString _data, Size _count)
     {
+        MAZE_PROFILE_EVENT("SoundSet::FromString");
+
         if (!_data || strcmp(_data, "") == 0)
         {
             _value.reset();
@@ -160,6 +162,8 @@ namespace Maze
     //////////////////////////////////////////
     void SoundSet::ToString(SoundSet const* _value, String& _data)
     {
+        MAZE_PROFILE_EVENT("SoundSet::ToString");
+
         if (!_value)
         {
             _data.clear();

@@ -32,6 +32,8 @@
 #include "maze-sound-system-openal/MazeFunctionsOpenAL.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-sound-system-openal/MazeContextOpenAL.hpp"
+#include "maze-core/helpers/MazeThreadHelper.hpp"
+#include "maze-core/services/MazeLogStream.hpp"
 
 #if MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS
 #   include "maze-sound-system-openal/win/MazeContextOpenALWin.hpp"
@@ -151,6 +153,7 @@ namespace Maze
     {
 #if (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN)
         assignFunctionsOpenAL(nullptr);
+        m_mainContext = createContext(m_defaultDeviceIndex);
 #else
         m_dummyContext = createContext();
         if (!m_dummyContext)
@@ -158,12 +161,23 @@ namespace Maze
 
         assignFunctionsOpenAL(m_dummyContext);
         updateDevicesInfo();
-        MAZE_ERROR_RETURN_VALUE_IF(m_devicesInfo.empty(), false, "There are no available audio devices!");
-#endif
+        printDevicesInfo();
 
-        m_mainContext = createContext(m_defaultDeviceIndex);
+        for (S32 i = 0; i < 5; ++i)
+        {
+            m_mainContext = createContext(m_defaultDeviceIndex);
+            if (m_mainContext && m_mainContext->makeCurrent())
+                break;
+            ThreadHelper::SleepCurrentThread(500);
+            Debug::Log("Updating audio devices list...");
+            updateDevicesInfo();
+            printDevicesInfo();
+        }
+#endif
         MAZE_ERROR_RETURN_VALUE_IF(!m_mainContext, false, "Main Context is not created!");
         MAZE_ERROR_RETURN_VALUE_IF(!m_mainContext->makeCurrent(), false, "Make main context current failed!");
+
+        Debug::Log("Main Audio Context: %s", m_devicesInfo[m_mainContext->getDeviceIndex()].deviceName.c_str());
 
         return true;
     }
@@ -296,6 +310,26 @@ namespace Maze
         m_defaultDeviceIndex = defaultDeviceIndex;
 
         eventDevicesInfoLoaded();
+    }
+
+    //////////////////////////////////////////
+    void SoundSystemOpenAL::printDevicesInfo()
+    {
+        Debug::log << "[Audio Devices]" << endl;
+        if (m_devicesInfo.empty())
+            Debug::logwarn << "\tAudio devices are not found!" << endl;
+        else
+        {
+            for (DeviceInfoOpenAL const& deviceInfo : m_devicesInfo)
+            {
+                Debug::log << "- " << deviceInfo.deviceName << " (" << deviceInfo.majorVersion << "." << deviceInfo.minorVersion << ")"
+                    << (deviceInfo.selected ? " [+]" : "") << endl;
+                Debug::log << "  sourceCount=" << deviceInfo.sourceCount << endl;
+                Debug::log << "  extensions:" << endl;
+                for (String const& extension : deviceInfo.extensions)
+                    Debug::log << "    * " << extension << endl;
+            }
+        }
     }
 
     //////////////////////////////////////////

@@ -273,7 +273,7 @@ namespace Maze
     //////////////////////////////////////////
     ComponentPtr const& Entity::addComponent(ComponentPtr const& _component)
     {
-        static ComponentPtr nullPointer;
+        static ComponentPtr const nullPointer;
         MAZE_DEBUG_BP_RETURN_VALUE_IF(!_component, nullPointer);
         
         ComponentPtr& componentRef = m_components[_component->getClassUID()];

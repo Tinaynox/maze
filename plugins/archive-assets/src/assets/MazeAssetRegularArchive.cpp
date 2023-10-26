@@ -79,6 +79,8 @@ namespace Maze
         Vector<AssetFilePtr>* _addedFiles,
         Vector<AssetFilePtr>* _removedFiles)
     {
+        MAZE_PROFILE_EVENT("AssetRegularArchive::updateChildrenAssets");
+
         Set<Path> confirmedFileFullPathes;
 
         Vector<Path> archivedFilePathes = m_archive->getArchivedFilePathes();

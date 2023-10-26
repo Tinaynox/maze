@@ -290,6 +290,8 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_PLUGIN_LOADER_DDS_API bool LoadDDS(ByteBuffer const& _fileData, Vector<PixelSheet2D>& _pixelSheets)
     {
+        MAZE_PROFILE_EVENT("LoadDDS");
+
         MAZE_DEBUG_ERROR_RETURN_VALUE_IF(
             _fileData.getSize() == 0,
             false,

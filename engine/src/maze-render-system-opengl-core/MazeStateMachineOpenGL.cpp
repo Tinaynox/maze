@@ -128,6 +128,8 @@ namespace Maze
     //////////////////////////////////////////
     void StateMachineOpenGL::syncStates()
     {
+        MAZE_PROFILE_EVENT("StateMachineOpenGL::syncStates");
+
         RenderSystemOpenGL* renderSystem = m_context->getRenderSystemRaw();
         RenderTarget* prevRenderTarget = renderSystem->getCurrentRenderTarget();
         ContextOpenGL* prevRenderContext = renderSystem->getCurrentContext();
@@ -400,6 +402,8 @@ namespace Maze
     //////////////////////////////////////////
     void StateMachineOpenGL::notifyGLContextWillBeDestroyed(ContextOpenGL* _contextOpenGL)
     {
+        MAZE_PROFILE_EVENT("StateMachineOpenGL::notifyGLContextWillBeDestroyed");
+
         m_activeTexture = MAZE_GL_TEXTURE0;
 
         for (S32 i = 0; i < MAZE_GL_MAX_TEXTURES_COUNT; ++i)

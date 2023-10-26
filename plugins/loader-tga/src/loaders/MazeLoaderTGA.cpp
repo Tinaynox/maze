@@ -64,6 +64,8 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_PLUGIN_LOADER_TGA_API bool LoadTGA(ByteBuffer const& _fileData, Vector<PixelSheet2D>& _pixelSheets)
     {
+        MAZE_PROFILE_EVENT("LoadTGA");
+
         MAZE_DEBUG_ERROR_RETURN_VALUE_IF(
             _fileData.getSize() == 0,
             false,

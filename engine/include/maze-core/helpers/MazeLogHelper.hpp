@@ -275,6 +275,15 @@ namespace Maze
     MAZE_BP;\
 }
 
+//////////////////////////////////////////
+#define MAZE_FATAL_IF(__condition, ...)\
+{\
+    if (__condition)\
+    {\
+        MAZE_FATAL(__VA_ARGS__);\
+    }\
+}
+
 
 //////////////////////////////////////////
 #define MAZE_NOT_IMPLEMENTED MAZE_ERROR("Not implemented!");

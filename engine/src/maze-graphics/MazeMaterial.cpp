@@ -184,7 +184,7 @@ namespace Maze
     //////////////////////////////////////////
     RenderPassPtr const& Material::getRenderPass(RenderPassType _passType, Size _index)
     {
-        static RenderPassPtr nullPointer;
+        static RenderPassPtr const nullPointer;
 
         Vector<RenderPassPtr>& passesByType = m_passes[_passType];
         if (passesByType.empty() || _index >= passesByType.size())
@@ -196,7 +196,7 @@ namespace Maze
     //////////////////////////////////////////
     RenderPassPtr const& Material::getFirstRenderPass(RenderPassType _passType) const
     {
-        static RenderPassPtr nullPointer;
+        static RenderPassPtr const nullPointer;
 
         Vector<RenderPassPtr> const& passesByType = m_passes[_passType];
         if (passesByType.empty())
@@ -265,6 +265,8 @@ namespace Maze
     //////////////////////////////////////////
     void Material::loadFromXMLDocument(tinyxml2::XMLDocument& _doc)
     {
+        MAZE_PROFILE_EVENT("Material::loadFromXMLDocument");
+
         tinyxml2::XMLNode* rootNode = _doc.FirstChild();
 
         MAZE_ERROR_RETURN_IF(!rootNode, "File loading error - empty root node!");
@@ -281,6 +283,8 @@ namespace Maze
     //////////////////////////////////////////
     bool Material::loadFromAssetFile(AssetFilePtr const& _assetFile)
     {
+        MAZE_PROFILE_EVENT("Material::loadFromAssetFile");
+
         MAZE_ERROR_RETURN_VALUE_IF(!_assetFile, false, "Asset File is null!");
 
         tinyxml2::XMLDocument doc;
@@ -488,7 +492,7 @@ namespace Maze
     //////////////////////////////////////////
     ShaderUniformVariantPtr const& Material::getUniform(HashedCString _uniformName)
     {
-        static ShaderUniformVariantPtr nullPointer;
+        static ShaderUniformVariantPtr const nullPointer;
 
         for (ShaderUniformVariantPtr const& uniform : m_uniforms)
             if (uniform->getName() == _uniformName)
@@ -622,6 +626,8 @@ namespace Maze
     //////////////////////////////////////////
     void Material::FromString(MaterialPtr& _value, CString _data, Size _count)
     {
+        MAZE_PROFILE_EVENT("Material::FromString");
+
         if (!_data || strcmp(_data, "") == 0)
         {
             _value.reset();
@@ -648,6 +654,8 @@ namespace Maze
     //////////////////////////////////////////
     void Material::ToString(Material const* _value, String& _data)
     {
+        MAZE_PROFILE_EVENT("Material::ToString");
+
         if (!_value)
         {
             _data.clear();

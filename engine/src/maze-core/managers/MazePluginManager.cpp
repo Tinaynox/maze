@@ -221,6 +221,8 @@ namespace Maze
     //////////////////////////////////////////
     void PluginManager::installPlugin(PluginPtr const& _plugin)
     {
+        MAZE_PROFILE_EVENT("PluginManager::installPlugin");
+
         Debug::log << "Installing plugin: " << _plugin->getName() << "..." << endl;
 
         m_plugins.push_back(_plugin);
@@ -233,6 +235,8 @@ namespace Maze
     //////////////////////////////////////////
     void PluginManager::uninstallPlugin(Plugin* _plugin)
     {
+        MAZE_PROFILE_EVENT("PluginManager::uninstallPlugin");
+
         Vector<PluginPtr>::iterator it = 
             std::find_if(
                 m_plugins.begin(),

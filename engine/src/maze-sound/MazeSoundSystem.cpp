@@ -76,6 +76,8 @@ namespace Maze
         SoundGroupPtr const& _soundGroup,
         F32 _volume)
     {
+        MAZE_PROFILE_EVENT("SoundSystem::play");
+
         SoundSourcePtr soundSource = createSoundSource(_sound);
         soundSource->setLooped(_looped);
         soundSource->setSoundGroup(_soundGroup);

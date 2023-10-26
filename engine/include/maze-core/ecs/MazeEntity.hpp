@@ -167,7 +167,7 @@ namespace Maze
         {
             ComponentsContainer::const_iterator it = m_components.find(_uid);
             
-            static ComponentPtr nullPointer;
+            static ComponentPtr const nullPointer;
             if (it == m_components.end())
             {
                 return nullPointer;

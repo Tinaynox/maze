@@ -123,6 +123,8 @@ namespace Maze
     bool TrueTypeFontFreetype::loadFromAssetFile(
         AssetFilePtr const& _assetFile)
     {
+        MAZE_PROFILE_EVENT("Font::loadFromAssetFile");
+
         ByteBuffer byteBuffer;
 
         ClassUID classUID = _assetFile->getClassUID();
@@ -167,8 +169,10 @@ namespace Maze
         TTFPagePtr& page = m_pages[_fontSize];
         if (!page)
         {
+            Debug::Log("TrueTypeFontFreetype: Creating TTFPage...");
             page = std::make_shared<TTFPage>();
             eventTexturesChanged();
+            Debug::Log("TrueTypeFontFreetype: TTFPage created.");
         }
         return page;
     }

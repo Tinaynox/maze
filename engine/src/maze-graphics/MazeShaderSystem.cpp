@@ -79,7 +79,10 @@ namespace Maze
 
         StringKeyMap<ShaderLibraryData>::iterator it = m_shadersLibrary.find(name);
         if (m_shadersLibrary.end() != it)
+        {
+            MAZE_WARNING("Shader duplicate detected: %s!", name.c_str());
             return nullptr;
+        }
         
         return m_shadersLibrary.insert(
             name,
@@ -126,8 +129,11 @@ namespace Maze
             if (shader)
             {
                 ShaderLibraryData* libraryData = addShaderToLibrary(shader);
-                libraryData->assetFile = assetFile;
-                return libraryData->shader;
+                if (libraryData)
+                {
+                    libraryData->assetFile = assetFile;
+                    return libraryData->shader;
+                }
             }
         }
 
@@ -158,7 +164,10 @@ namespace Maze
             if (shader)
             {
                 ShaderLibraryData* libraryData = addShaderToLibrary(shader);
-                libraryData->assetFile = file;
+                if (libraryData)
+                {
+                    libraryData->assetFile = file;
+                }
             }
 
         }

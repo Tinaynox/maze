@@ -104,7 +104,7 @@ namespace Maze
         //////////////////////////////////////////
         inline GamepadPtr const& getGamepadByDeviceId(U32 _deviceId) const
         {
-            static GamepadPtr nullPointer;
+            static GamepadPtr const nullPointer;
             GamepadListByDeviceId::const_iterator it = m_gamepads.find(_deviceId);
             if (it == m_gamepads.end())
                 return nullPointer;
@@ -139,7 +139,7 @@ namespace Maze
         //////////////////////////////////////////
         inline GamepadPtr const& getFirstActiveGamepad() const
         {
-            static GamepadPtr nullPointer;
+            static GamepadPtr const nullPointer;
             for (auto& gamepadData : m_gamepads)
                 if (gamepadData.second->getConnected())
                     return gamepadData.second;

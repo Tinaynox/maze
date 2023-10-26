@@ -368,7 +368,7 @@ namespace Maze
     //////////////////////////////////////////
     Transform2DPtr const& ScrollRect2D::ensureViewTransform()
     {
-        static Transform2DPtr nullPointer;
+        static Transform2DPtr const nullPointer;
 
         if (m_viewRectTransform == nullptr)
             m_viewRectTransform = m_viewportTransform;

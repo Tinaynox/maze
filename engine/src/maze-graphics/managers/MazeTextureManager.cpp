@@ -116,7 +116,7 @@ namespace Maze
     //////////////////////////////////////////
     Texture2DPtr const& TextureManager::getTexture2D(HashedCString _textureName)
     {
-        static Texture2DPtr nullPointer;
+        static Texture2DPtr const nullPointer;
 
         Texture2DLibraryData const* libraryData = getTexture2DLibraryData(_textureName);
         if (libraryData)
@@ -132,6 +132,8 @@ namespace Maze
     //////////////////////////////////////////
     Texture2DPtr const& TextureManager::getTexture2D(AssetFilePtr const& _assetFile)
     {
+        static Texture2DPtr const nullPointer;
+
         Texture2DLibraryData const* libraryData = getTexture2DLibraryData(_assetFile->getFileName());
         if (libraryData)
             return libraryData->texture;
@@ -142,8 +144,13 @@ namespace Maze
         loadTextureMetaData(_assetFile, texture2D);
 
         Texture2DLibraryData* data = addTextureToLibrary(texture2D);
-        data->assetFile = _assetFile;
-        return data->texture;
+        if (data)
+        {
+            data->assetFile = _assetFile;
+            return data->texture;
+        }
+
+        return nullPointer;
     }
 
     //////////////////////////////////////////
@@ -452,7 +459,7 @@ namespace Maze
     //////////////////////////////////////////
     TextureCubePtr const& TextureManager::getTextureCube(String const& _textureName)
     {
-        static TextureCubePtr nullPointer;
+        static TextureCubePtr const nullPointer;
 
         TextureCubeLibraryData const* libraryData = getTextureCubeLibraryData(_textureName);
         if (libraryData)
@@ -468,6 +475,8 @@ namespace Maze
     //////////////////////////////////////////
     TextureCubePtr const& TextureManager::getTextureCube(AssetFilePtr const& _assetFile)
     {
+        static TextureCubePtr const nullPointer;
+
         TextureCubeLibraryData const* libraryData = getTextureCubeLibraryData(_assetFile->getFileName());
         if (libraryData)
             return libraryData->texture;
@@ -488,8 +497,13 @@ namespace Maze
             textureCube->setWrapR(TextureWrap::FromString(metaData["wrapR"]));
 
         TextureCubeLibraryData* data = addTextureToLibrary(textureCube);
-        data->assetFile = _assetFile;
-        return data->texture;
+        if (data)
+        {
+            data->assetFile = _assetFile;
+            return data->texture;
+        }
+
+        return nullPointer;
     }
 
     //////////////////////////////////////////

@@ -146,6 +146,8 @@ namespace Maze
     //////////////////////////////////////////
     void PhysicsMaterial2D::loadFromAssetFile(AssetFilePtr const& _assetFile)
     {
+        MAZE_PROFILE_EVENT("PhysicsMaterial2D::loadFromAssetFile");
+
         tinyxml2::XMLDocument doc;
         MAZE_LOG("Loading PhysicsMaterial2D: %s...", _assetFile->getFileName().toUTF8().c_str());
         _assetFile->readToXMLDocument(doc);
@@ -155,6 +157,8 @@ namespace Maze
     //////////////////////////////////////////
     void PhysicsMaterial2D::loadFromAssetFile(String const& _assetFileName)
     {
+        MAZE_PROFILE_EVENT("PhysicsMaterial2D::loadFromAssetFile");
+
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_assetFileName);
         loadFromAssetFile(assetFile);
     }
@@ -162,12 +166,16 @@ namespace Maze
     //////////////////////////////////////////
     void PhysicsMaterial2D::loadFromXMLElement(tinyxml2::XMLElement const* _element)
     {
+        MAZE_PROFILE_EVENT("PhysicsMaterial2D::loadFromXMLElement");
+
         DeserializeMetaInstanceFromXMLElement(getMetaClass(), getMetaInstance(), _element);
     }
 
     //////////////////////////////////////////
     tinyxml2::XMLElement* PhysicsMaterial2D::toXMLElement(tinyxml2::XMLDocument& _doc) const
     {
+        MAZE_PROFILE_EVENT("PhysicsMaterial2D::toXMLElement");
+
         tinyxml2::XMLElement* element = SerializeMetaInstanceToXMLElement(getMetaClass(), getMetaInstance(), _doc);
 
         return element;
@@ -176,6 +184,8 @@ namespace Maze
     //////////////////////////////////////////
     void PhysicsMaterial2D::FromString(PhysicsMaterial2DPtr& _value, CString _data, Size _count)
     {
+        MAZE_PROFILE_EVENT("PhysicsMaterial2D::FromString");
+
         if (!_data || strcmp(_data, "") == 0)
         {
             _value.reset();
@@ -199,6 +209,8 @@ namespace Maze
     //////////////////////////////////////////
     void PhysicsMaterial2D::ToString(PhysicsMaterial2D const* _value, String& _data)
     {
+        MAZE_PROFILE_EVENT("PhysicsMaterial2D::ToString");
+
         if (!_value)
         {
             _data.clear();

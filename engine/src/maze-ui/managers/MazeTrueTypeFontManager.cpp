@@ -83,7 +83,7 @@ namespace Maze
     //////////////////////////////////////////
     TrueTypeFontPtr const& TrueTypeFontManager::getTrueTypeFont(HashedCString _trueTypeFont)
     {
-        static TrueTypeFontPtr nullPointer;
+        static TrueTypeFontPtr const nullPointer;
 
         TrueTypeFontLibraryData const* libraryData = getTrueTypeFontLibraryData(_trueTypeFont);
         if (libraryData)
@@ -100,8 +100,13 @@ namespace Maze
         font->setName(_trueTypeFont.str);
 
         TrueTypeFontLibraryData* data = addTrueTypeFontToLibrary(font);
-        data->assetFile = assetFile;
-        return data->trueTypeFont;
+        if (data)
+        {
+            data->assetFile = assetFile;
+            return data->trueTypeFont;
+        }
+
+        return nullPointer;
     }
 
     //////////////////////////////////////////

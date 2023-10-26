@@ -144,6 +144,8 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API Size ReadFileToString(Path const& _fileFullPath, String& _string)
         {
+            MAZE_PROFILE_EVENT("ReadFileToString");
+
             std::ifstream ifs(_fileFullPath.c_str());
             _string.assign(
                 (std::istreambuf_iterator<S8>(ifs)),
@@ -155,6 +157,8 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API String ReadFileAsString(Path const& _fileFullPath)
         {
+            MAZE_PROFILE_EVENT("ReadFileAsString");
+
             String result;
             ReadFileToString(_fileFullPath, result);
             return result;
@@ -163,6 +167,8 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API Size ReadFileToByteBuffer(Path const& _fileFullPath, ByteBuffer& _byteBuffer)
         {
+            MAZE_PROFILE_EVENT("ReadFileToByteBuffer");
+
             InputFileStream file;
             file.open(_fileFullPath.c_str(), std::ios::binary | std::ios::ate);
             if (!file.is_open())
@@ -181,6 +187,8 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API ByteBufferPtr ReadFileAsByteBuffer(Path const& _fileFullPath)
         {
+            MAZE_PROFILE_EVENT("ReadFileAsByteBuffer");
+
             ByteBufferPtr byteBuffer = ByteBuffer::Create();
             ReadFileToByteBuffer(_fileFullPath, (*byteBuffer.get()));
             return byteBuffer; 

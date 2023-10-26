@@ -107,7 +107,7 @@ namespace Maze
     //////////////////////////////////////////
     LightingSettingsPtr const& Camera3D::getLightingSettings()
     {
-        static LightingSettingsPtr nullPointer;
+        static LightingSettingsPtr const nullPointer;
 
         ECSScene* cameraScene = getEntityRaw()->getECSScene();
         if (cameraScene)

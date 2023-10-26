@@ -97,7 +97,7 @@ namespace Maze
     //////////////////////////////////////////
     SystemFontPtr const& SystemFontManager::getSystemFont(HashedCString _fontName)
     {
-        static SystemFontPtr nullPointer;
+        static SystemFontPtr const nullPointer;
 
         SystemFontPtr* it = m_systemFontsByName.tryGet(_fontName);
         if (it != nullptr)

@@ -76,6 +76,12 @@ namespace Maze
         inline HashedCString& operator=(HashedCString&& _other) = default;
 
         //////////////////////////////////////////
+        inline bool operator<(HashedCString const& _value) const
+        {
+            return hash < _value.hash || (hash == _value.hash && strcmp(str, _value.str) < 0);
+        }
+
+        //////////////////////////////////////////
         inline bool operator==(HashedCString const& _value) const
         {
             if (hash != _value.hash)

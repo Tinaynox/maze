@@ -93,7 +93,7 @@ namespace Maze
         //////////////////////////////////////////
         inline MaterialPtr const& getMaterial() const
         {
-            static MaterialPtr nullPointer;
+            static MaterialPtr const nullPointer;
 
             if (!m_materials.empty())
                 return m_materials.front();

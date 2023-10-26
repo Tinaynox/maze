@@ -137,6 +137,8 @@ namespace Maze
     //////////////////////////////////////////
     void RenderQueueOpenGL::draw()
     {
+        MAZE_PROFILE_EVENT("RenderQueueOpenGL::draw");
+
         Maze::ContextOpenGLScopeBind contextOpenGLScopedLock(m_context);
 
 #if 0

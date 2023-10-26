@@ -89,7 +89,7 @@ namespace Maze
     //////////////////////////////////////////
     SpritePtr const& SpriteManager::getSprite(HashedCString _imageName)
     {
-        static SpritePtr nullPointer;
+        static SpritePtr const nullPointer;
 
         SpriteLibraryData const* libraryData = getSpriteLibraryData(_imageName);
         if (libraryData)
@@ -125,7 +125,10 @@ namespace Maze
         }
 
         SpriteLibraryData* data = addSpriteToLibrary(sprite);
-        return data->sprite;
+        if (data)
+            return data->sprite;
+
+        return nullPointer;
     }
 
     //////////////////////////////////////////

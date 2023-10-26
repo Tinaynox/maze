@@ -215,7 +215,7 @@ namespace Maze
     {
         MAZE_PROFILE_EVENT("EntitySerializationManager::loadPrefabFromXMLFile");
 
-        static EntityPtr nullPointer;
+        static EntityPtr const nullPointer;
 
         if (_fileFullPath.empty())
             return nullPointer;
@@ -293,7 +293,7 @@ namespace Maze
     {
         MAZE_PROFILE_EVENT("EntitySerializationManager::loadPrefabFromXMLElement");
 
-        static EntityPtr nullPointer;
+        static EntityPtr const nullPointer;
 
         if (!_element)
             return nullPointer;

@@ -46,7 +46,7 @@ namespace Maze
     //////////////////////////////////////////
     InputManager::InputManager()
         : m_inputEventsIndex(0)
-        , m_keyStates{ false }
+        , m_cachedKeyStates{ false }
         , m_cursorStates{ {false} }
         , m_cursorPositions{ Vec2DF::c_zero }
     {
@@ -124,12 +124,12 @@ namespace Maze
                     {
                         case InputEventKeyboardType::KeyDown:
                         {
-                            m_keyStates[(Size)event.keyboard.keyCode] = true;
+                            m_cachedKeyStates[(Size)event.keyboard.keyCode] = true;
                             break;
                         }
                         case InputEventKeyboardType::KeyUp:
                         {
-                            m_keyStates[(Size)event.keyboard.keyCode] = false;
+                            m_cachedKeyStates[(Size)event.keyboard.keyCode] = false;
                             break;
                         }
                         default:

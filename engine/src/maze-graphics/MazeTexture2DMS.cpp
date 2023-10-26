@@ -123,7 +123,7 @@ namespace Maze
     //////////////////////////////////////////
     Texture2DMSPtr const& Texture2DMS::FromString(CString _data, Size _count)
     {
-        static Texture2DMSPtr nullPointer;
+        static Texture2DMSPtr const nullPointer;
 
         MAZE_NOT_IMPLEMENTED;
 

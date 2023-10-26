@@ -80,6 +80,8 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_PLUGIN_LOADER_PNG_API bool LoadPNG(ByteBuffer const& _fileData, Vector<PixelSheet2D>& _pixelSheets)
     {
+        MAZE_PROFILE_EVENT("LoadPNG");
+
         MAZE_DEBUG_ERROR_RETURN_VALUE_IF(
             _fileData.getSize() == 0,
             false,
@@ -244,6 +246,8 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_PLUGIN_LOADER_PNG_API bool SavePNGFile(Path _filePath, PixelSheet2D const& _pixelSheet)
     {
+        MAZE_PROFILE_EVENT("SavePNGFile");
+
         MAZE_ERROR_RETURN_VALUE_IF(_pixelSheet.getFormat() != PixelFormat::RGBA_U8, false, "Usupported PixelSheet2D=%s!", ToString(_pixelSheet.getFormat()).c_str());
 
         MAZE_ERROR_RETURN_VALUE_IF(_pixelSheet.getWidth() == 0 || _pixelSheet.getHeight() == 0, false, "Invalid pixelSheet!");

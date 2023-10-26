@@ -41,7 +41,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API GizmosDrawerPtr const& GetDrawer()
         {
-            static GizmosDrawerPtr nullPointer;
+            static GizmosDrawerPtr const nullPointer;
             if (EditorToolsManager::GetInstancePtr() &&
                 EditorToolsManager::GetInstancePtr()->getGizmosSystem())
                 return EditorToolsManager::GetInstancePtr()->getGizmosSystem()->getDrawer();

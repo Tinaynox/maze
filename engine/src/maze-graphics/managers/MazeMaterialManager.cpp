@@ -120,7 +120,7 @@ namespace Maze
     //////////////////////////////////////////
     MaterialPtr const& MaterialManager::getMaterial(HashedCString _materialName)
     {
-        static MaterialPtr nullPointer;
+        static MaterialPtr const nullPointer;
 
         MaterialLibraryData const* libraryData = getMaterialLibraryData(_materialName);
         if (libraryData != nullptr)
@@ -136,13 +136,20 @@ namespace Maze
         MaterialPtr material = Material::Create(assetFile);
         material->setName(_materialName.str);
         MaterialLibraryData* data = addMaterialToLibrary(material);
-        data->assetFile = assetFile;
-        return data->material;
+        if (data)
+        {
+            data->assetFile = assetFile;
+            return data->material;
+        }
+
+        return nullPointer;
     }
 
     //////////////////////////////////////////
     MaterialPtr const& MaterialManager::getMaterial(AssetFilePtr const& _assetFile)
     {
+        static MaterialPtr const nullPointer;
+
         MaterialLibraryData const* libraryData = getMaterialLibraryData(_assetFile->getFileName());
         if (libraryData != nullptr)
             return libraryData->material;
@@ -151,8 +158,13 @@ namespace Maze
         material->setName(_assetFile->getFileName());
 
         MaterialLibraryData* data = addMaterialToLibrary(material);
-        data->assetFile = _assetFile;
-        return data->material;
+        if (data)
+        {
+            data->assetFile = _assetFile;
+            return data->material;
+        }
+
+        return nullPointer;
     }
 
     //////////////////////////////////////////
@@ -513,7 +525,10 @@ namespace Maze
             MaterialPtr material = Material::Create(assetFile);
             material->setName(assetFile->getFileName());
             MaterialLibraryData* libraryData = addMaterialToLibrary(material);
-            libraryData->assetFile = assetFile;
+            if (libraryData)
+            {
+                libraryData->assetFile = assetFile;
+            }
         }
     }
 

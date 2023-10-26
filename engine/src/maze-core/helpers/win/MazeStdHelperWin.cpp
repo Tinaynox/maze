@@ -40,6 +40,8 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API FILE* OpenFile(Path const& _fullPath, Path const& _mode)
         {
+            MAZE_PROFILE_EVENT("OpenFile");
+
             FILE* file = nullptr;
             _wfopen_s(&file, _fullPath.c_str(), _mode.c_str());
             return file;

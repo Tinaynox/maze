@@ -1038,6 +1038,8 @@ namespace Maze
     //////////////////////////////////////////
     void WindowWin::close()
     {
+        MAZE_PROFILE_EVENT("WindowWin::close");
+
         if (!isOpened())
             return;
 
@@ -1318,7 +1320,7 @@ namespace Maze
     //////////////////////////////////////////
     DisplayPtr const& WindowWin::getRelatedDisplay()
     {
-        static DisplayPtr nullPointer;
+        static DisplayPtr const nullPointer;
         if (!isOpened())
             return nullPointer;
 

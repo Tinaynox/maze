@@ -111,6 +111,10 @@ namespace Maze
         //////////////////////////////////////////
         static void Initialize(InputManagerPtr& _inputManager);
 
+
+        //////////////////////////////////////////
+        virtual bool getKeyState(KeyCode const& _keyCode) { return getCachedKeyState(_keyCode); }
+
         //////////////////////////////////////////
         template <typename TInputEvent>
         inline void generateInputEvent(TInputEvent&& _event)
@@ -119,7 +123,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline bool getKeyState(KeyCode const& _keyCode) { return m_keyStates[(Size)_keyCode]; }
+        inline bool getCachedKeyState(KeyCode const& _keyCode) { return m_cachedKeyStates[(Size)_keyCode]; }
 
         //////////////////////////////////////////
         inline bool getCursorButtonState(S32 _cursorId, S32 _buttonIndex) { return m_cursorStates[_cursorId][_buttonIndex]; }
@@ -165,7 +169,7 @@ namespace Maze
         Size m_inputEventsIndex;
         InputEventsPool m_inputEventsPool[2];
 
-        bool m_keyStates[(Size)KeyCode::MAX];
+        bool m_cachedKeyStates[(Size)KeyCode::MAX];
         bool m_cursorStates[c_cursorsCountMax][c_cursorButtonsCountMax];
         Vec2DF m_cursorPositions[c_cursorsCountMax];
     };
