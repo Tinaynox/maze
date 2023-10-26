@@ -101,7 +101,3 @@ Start by cloning the repository with `git clone --recursive https://github.com/T
   <summary>Physics 2D</summary>
   <img src="/res/art/Physics2D00.gif" loading="lazy" />
 </details>
-<details>
-  <summary>Game Example</summary>
-  <img src="/res/art/SpacePressure3D00.gif" loading="lazy" />
-</details>
