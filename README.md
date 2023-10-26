@@ -10,7 +10,7 @@ At the moment it is my main pet project, developed for the purpose of learning a
 ## Projects on this engine
 **Space Pressure 3D: Prelude**
 
-[![Space Pressure 3D: Prelude](/res/art/projects/sp3d/SP3DPromo00.gif)](https://www.youtube.com/watch?v=8cEmIaxGbxk)
+[![Space Pressure 3D: Prelude](/res/art/projects/sp3d/SP3DPromo00.gif)](https://store.steampowered.com/app/1864190/Space_Pressure_3D_Prelude/)
 
 [![Steam](/res/art/SteamIcon_32x32.png?raw=true "Steam")](https://store.steampowered.com/app/1864190/Space_Pressure_3D_Prelude/)
 
