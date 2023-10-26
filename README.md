@@ -6,6 +6,13 @@
 **MAZE** (**M**y **A**ma**Z**ing **E**ngine) is the self-written open-source cross-platform game engine in the active development stage.
 At the moment it is my main pet project, developed for the purpose of learning and preserving different game dev technologies.
 
+
+## Projects on this engine
+**Space Pressure 3D: Prelude**
+<img src="/res/art/projects/sp3d/SP3DPromo00.gif" loading="lazy" />
+[![Steam](/res/art/SteamIcon_32x32.png?raw=true "Steam")](https://store.steampowered.com/app/1864190/Space_Pressure_3D_Prelude/)
+
+
 ## Getting Started
 Start by cloning the repository with `git clone --recursive https://github.com/Tinaynox/maze`.
 
