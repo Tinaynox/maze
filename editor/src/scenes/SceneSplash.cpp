@@ -249,7 +249,7 @@ namespace Maze
             }
             case 5:
             {
-                MeshManager::GetCurrentInstancePtr()->createBuiltinMeshes();
+                MeshManager::GetInstancePtr()->createBuiltinMeshes();
                 RenderMeshManager::GetCurrentInstancePtr()->createBuiltinRenderMeshes();
                 setCurrentProgress(0.55f);
                 break;
