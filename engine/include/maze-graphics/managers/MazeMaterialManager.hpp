@@ -174,10 +174,10 @@ namespace Maze
         void removeMaterialFromLibrary(HashedCString _materialName);
 
         //////////////////////////////////////////
-        inline void removeMaterialFromLibrary(CString _materialName) { removeMaterialFromLibrary(_materialName); }
+        inline void removeMaterialFromLibrary(CString _materialName) { removeMaterialFromLibrary(HashedCString(_materialName)); }
 
         //////////////////////////////////////////
-        inline void removeMaterialFromLibrary(String const& _materialName) { removeMaterialFromLibrary(_materialName); }
+        inline void removeMaterialFromLibrary(String const& _materialName) { removeMaterialFromLibrary(HashedCString(_materialName.c_str())); }
 
 
         //////////////////////////////////////////

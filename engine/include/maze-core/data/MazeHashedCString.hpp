@@ -110,8 +110,22 @@ namespace Maze
    
 
     //////////////////////////////////////////
-    #define MAZE_HASHED_CSTRING(DText) Maze::HashedCString { DText, Maze::Hash::CalculateFNV1(DText) }
-    #define MAZE_HASHED_CSTRING_CT(DText) Maze::HashedCString { DText, Maze::HashedCString::HashCalculator<Maze::Hash::CalculateFNV1(DText)>::hash }
+    #define MAZE_HASHED_CSTRING(DText)    Maze::HashedCString                                                               \
+                                          {                                                                                 \
+                                              DText,                                                                        \
+                                              MAZE_PRAGMA(warning(push))                                                    \
+                                              MAZE_PRAGMA(warning(disable:4307))                                            \
+                                              Maze::Hash::CalculateFNV1(DText)                                              \
+                                              MAZE_PRAGMA(warning(pop))                                                     \
+                                          }
+    #define MAZE_HASHED_CSTRING_CT(DText) Maze::HashedCString                                                               \
+                                          {                                                                                 \
+                                              DText,                                                                        \
+                                              MAZE_PRAGMA(warning(push))                                                    \
+                                              MAZE_PRAGMA(warning(disable:4307))                                            \
+                                              Maze::HashedCString::HashCalculator<Maze::Hash::CalculateFNV1(DText)>::hash   \
+                                              MAZE_PRAGMA(warning(pop))                                                     \
+                                          }
 
 
     //////////////////////////////////////////

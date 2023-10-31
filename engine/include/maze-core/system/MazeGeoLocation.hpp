@@ -48,7 +48,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    enum class GeoLocation : U32
+    enum class MAZE_CORE_API GeoLocation : U32
     {
         Unknown                                               = 0,
         AntiguaAndBarbuda                                     = 2,
@@ -354,28 +354,28 @@ namespace Maze
     };
 
     //////////////////////////////////////////
-    String const& GeoLocationToString(GeoLocation _location);
+    MAZE_CORE_API String const& GeoLocationToString(GeoLocation _location);
     
     //////////////////////////////////////////
-    GeoLocation StringToGeoLocation(String const& _str);
+    MAZE_CORE_API GeoLocation StringToGeoLocation(String const& _str);
 
     //////////////////////////////////////////
-    S32 GeoLocationToCallingCode(GeoLocation _location);
+    MAZE_CORE_API S32 GeoLocationToCallingCode(GeoLocation _location);
 
     //////////////////////////////////////////
-    GeoLocation CallingCodeToGeoLocation(S32 _code);
+    MAZE_CORE_API GeoLocation CallingCodeToGeoLocation(S32 _code);
 
     //////////////////////////////////////////
-    String const& GeoLocationToISO2(GeoLocation _location);
+    MAZE_CORE_API String const& GeoLocationToISO2(GeoLocation _location);
 
     //////////////////////////////////////////
-    GeoLocation ISO2ToGeoLocation(String const& _code);
+    MAZE_CORE_API GeoLocation ISO2ToGeoLocation(String const& _code);
 
     //////////////////////////////////////////
-    String const& GeoLocationToISO3(GeoLocation _location);
+    MAZE_CORE_API String const& GeoLocationToISO3(GeoLocation _location);
 
     //////////////////////////////////////////
-    GeoLocation ISO3ToGeoLocation(String const& _code);
+    MAZE_CORE_API GeoLocation ISO3ToGeoLocation(String const& _code);
 
 
 

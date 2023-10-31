@@ -32,7 +32,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    static Map<GeoLocation, GeoLocationData> const c_GeoLocations = 
+    static Map<GeoLocation, GeoLocationData> const c_geoLocations =
     {
         std::make_pair(GeoLocation::AntiguaAndBarbuda, GeoLocationData{ "AntiguaAndBarbuda", 268, "AG", "ATG" }),
         std::make_pair(GeoLocation::Afghanistan, GeoLocationData{ "Afghanistan", 93, "AF", "AFG" }),
@@ -338,22 +338,22 @@ namespace Maze
     };
 
     //////////////////////////////////////////
-    String const& GeoLocationToString(GeoLocation _location)
+    MAZE_CORE_API String const& GeoLocationToString(GeoLocation _location)
     {
         static String const nullString = "Unknown";
 
-        Map<GeoLocation, GeoLocationData>::const_iterator it = c_GeoLocations.find(_location);
-        if (it != c_GeoLocations.end())
+        Map<GeoLocation, GeoLocationData>::const_iterator it = c_geoLocations.find(_location);
+        if (it != c_geoLocations.end())
             return it->second.name;
 
         return nullString;
     }
     
     //////////////////////////////////////////
-    GeoLocation StringToGeoLocation(String const& _str)
+    MAZE_CORE_API GeoLocation StringToGeoLocation(String const& _str)
     {
-        for (Map<GeoLocation, GeoLocationData>::const_iterator  it = c_GeoLocations.begin(),
-                                                                end = c_GeoLocations.end();
+        for (Map<GeoLocation, GeoLocationData>::const_iterator  it = c_geoLocations.begin(),
+                                                                end = c_geoLocations.end();
                                                                 it != end;
                                                                 ++it)
         {
@@ -365,20 +365,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    S32 GeoLocationToCallingCode(GeoLocation _location)
+    MAZE_CORE_API S32 GeoLocationToCallingCode(GeoLocation _location)
     {
-        Map<GeoLocation, GeoLocationData>::const_iterator it = c_GeoLocations.find(_location);
-        if (it != c_GeoLocations.end())
+        Map<GeoLocation, GeoLocationData>::const_iterator it = c_geoLocations.find(_location);
+        if (it != c_geoLocations.end())
             return it->second.callingCode;
 
         return -1;
     }
 
     //////////////////////////////////////////
-    GeoLocation CallingCodeToGeoLocation(S32 _code)
+    MAZE_CORE_API GeoLocation CallingCodeToGeoLocation(S32 _code)
     {
-        for (Map<GeoLocation, GeoLocationData>::const_iterator  it = c_GeoLocations.begin(),
-                                                                end = c_GeoLocations.end();
+        for (Map<GeoLocation, GeoLocationData>::const_iterator  it = c_geoLocations.begin(),
+                                                                end = c_geoLocations.end();
                                                                 it != end;
                                                                 ++it)
         {
@@ -390,22 +390,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    String const& GeoLocationToISO2(GeoLocation _location)
+    MAZE_CORE_API String const& GeoLocationToISO2(GeoLocation _location)
     {
         static String const nullString = "";
 
-        Map<GeoLocation, GeoLocationData>::const_iterator it = c_GeoLocations.find(_location);
-        if (it != c_GeoLocations.end())
+        Map<GeoLocation, GeoLocationData>::const_iterator it = c_geoLocations.find(_location);
+        if (it != c_geoLocations.end())
             return it->second.iso2;
 
         return nullString;
     }
     
     //////////////////////////////////////////
-    GeoLocation ISO2ToGeoLocation(String const& _str)
+    MAZE_CORE_API GeoLocation ISO2ToGeoLocation(String const& _str)
     {
-        for (Map<GeoLocation, GeoLocationData>::const_iterator  it = c_GeoLocations.begin(),
-                                                                end = c_GeoLocations.end();
+        for (Map<GeoLocation, GeoLocationData>::const_iterator  it = c_geoLocations.begin(),
+                                                                end = c_geoLocations.end();
                                                                 it != end;
                                                                 ++it)
         {
@@ -417,22 +417,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    String const& GeoLocationToISO3(GeoLocation _location)
+    MAZE_CORE_API String const& GeoLocationToISO3(GeoLocation _location)
     {
         static String const nullString = "";
 
-        Map<GeoLocation, GeoLocationData>::const_iterator it = c_GeoLocations.find(_location);
-        if (it != c_GeoLocations.end())
+        Map<GeoLocation, GeoLocationData>::const_iterator it = c_geoLocations.find(_location);
+        if (it != c_geoLocations.end())
             return it->second.iso3;
 
         return nullString;
     }
     
     //////////////////////////////////////////
-    GeoLocation ISO3ToGeoLocation(String const& _str)
+    MAZE_CORE_API GeoLocation ISO3ToGeoLocation(String const& _str)
     {
-        for (Map<GeoLocation, GeoLocationData>::const_iterator  it = c_GeoLocations.begin(),
-                                                                end = c_GeoLocations.end();
+        for (Map<GeoLocation, GeoLocationData>::const_iterator  it = c_geoLocations.begin(),
+                                                                end = c_geoLocations.end();
                                                                 it != end;
                                                                 ++it)
         {

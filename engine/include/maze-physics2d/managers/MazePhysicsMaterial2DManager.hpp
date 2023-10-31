@@ -127,10 +127,10 @@ namespace Maze
         void removeFontFromLibrary(HashedCString _physicsMaterial2DName);
 
         //////////////////////////////////////////
-        inline void removeFontFromLibrary(CString _physicsMaterial2DName) { removeFontFromLibrary(_physicsMaterial2DName); }
+        inline void removeFontFromLibrary(CString _physicsMaterial2DName) { removeFontFromLibrary(HashedCString(_physicsMaterial2DName)); }
 
         //////////////////////////////////////////
-        inline void removeFontFromLibrary(String const& _physicsMaterial2DName) { removeFontFromLibrary(_physicsMaterial2DName); }
+        inline void removeFontFromLibrary(String const& _physicsMaterial2DName) { removeFontFromLibrary(HashedCString(_physicsMaterial2DName.c_str())); }
 
 
         //////////////////////////////////////////

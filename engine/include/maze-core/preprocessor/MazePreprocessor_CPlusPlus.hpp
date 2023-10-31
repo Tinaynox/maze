@@ -299,6 +299,17 @@
 
 
 //////////////////////////////////////////
+// Code macro
+//
+//////////////////////////////////////////
+#if (MAZE_COMPILER == MAZE_COMPILER_MSVC)
+#   define MAZE_PRAGMA(x) __pragma(x)
+#else
+#   define MAZE_PRAGMA(x)
+#endif
+
+
+//////////////////////////////////////////
 // Unused
 #define MAZE_UNUSED(__expr) do { (void)(__expr); } while (0);
 

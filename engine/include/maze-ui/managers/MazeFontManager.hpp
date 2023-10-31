@@ -120,10 +120,10 @@ namespace Maze
         void removeFontFromLibrary(HashedCString _fontName);
 
         //////////////////////////////////////////
-        inline void removeFontFromLibrary(CString _fontMaterialName) { removeFontFromLibrary(_fontMaterialName); }
+        inline void removeFontFromLibrary(CString _fontMaterialName) { removeFontFromLibrary(HashedCString(_fontMaterialName)); }
 
         //////////////////////////////////////////
-        inline void removeFontFromLibrary(String const& _fontMaterialName) { removeFontFromLibrary(_fontMaterialName); }
+        inline void removeFontFromLibrary(String const& _fontMaterialName) { removeFontFromLibrary(HashedCString(_fontMaterialName.c_str())); }
 
 
         //////////////////////////////////////////
