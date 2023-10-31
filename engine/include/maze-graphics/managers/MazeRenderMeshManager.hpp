@@ -157,10 +157,10 @@ namespace Maze
         void removeRenderMeshFromLibrary(HashedCString _renderMeshName);
 
         //////////////////////////////////////////
-        inline void removeRenderMeshFromLibrary(CString _renderMeshName) { removeRenderMeshFromLibrary(_renderMeshName); }
+        inline void removeRenderMeshFromLibrary(CString _renderMeshName) { removeRenderMeshFromLibrary(HashedCString(_renderMeshName)); }
 
         //////////////////////////////////////////
-        inline void removeRenderMeshFromLibrary(String const& _renderMeshName) { removeRenderMeshFromLibrary(_renderMeshName); }
+        inline void removeRenderMeshFromLibrary(String const& _renderMeshName) { removeRenderMeshFromLibrary(HashedCString(_renderMeshName.c_str())); }
 
 
         //////////////////////////////////////////

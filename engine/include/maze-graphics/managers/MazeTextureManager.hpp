@@ -240,10 +240,10 @@ namespace Maze
         void removeTexture2DFromLibrary(HashedCString _textureName);
 
         //////////////////////////////////////////
-        inline void removeTexture2DFromLibrary(CString _textureName) { removeTexture2DFromLibrary(_textureName); }
+        inline void removeTexture2DFromLibrary(CString _textureName) { removeTexture2DFromLibrary(HashedCString(_textureName)); }
 
         //////////////////////////////////////////
-        inline void removeTexture2DFromLibrary(String const& _textureName) { removeTexture2DFromLibrary(_textureName); }
+        inline void removeTexture2DFromLibrary(String const& _textureName) { removeTexture2DFromLibrary(HashedCString(_textureName.c_str())); }
 
 
         //////////////////////////////////////////
@@ -292,10 +292,10 @@ namespace Maze
         void removeTextureCubeFromLibrary(HashedCString _textureName);
 
         //////////////////////////////////////////
-        inline void removeTextureCubeFromLibrary(CString _textureName) { removeTextureCubeFromLibrary(_textureName); }
+        inline void removeTextureCubeFromLibrary(CString _textureName) { removeTextureCubeFromLibrary(HashedCString(_textureName)); }
 
         //////////////////////////////////////////
-        inline void removeTextureCubeFromLibrary(String const& _textureName) { removeTextureCubeFromLibrary(_textureName); }
+        inline void removeTextureCubeFromLibrary(String const& _textureName) { removeTextureCubeFromLibrary(HashedCString(_textureName.c_str())); }
 
 
         //////////////////////////////////////////

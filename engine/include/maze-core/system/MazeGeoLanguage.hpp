@@ -47,7 +47,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    enum class GeoLanguage : U8
+    enum class MAZE_CORE_API GeoLanguage : U8
     {
         Unknown                 = 0,
         Afrikaans,
@@ -180,21 +180,21 @@ namespace Maze
     };
 
     //////////////////////////////////////////
-    String const& GeoLanguageToString(GeoLanguage _location);
+    MAZE_CORE_API String const& GeoLanguageToString(GeoLanguage _location);
     
     //////////////////////////////////////////
-    GeoLanguage StringToGeoLanguage(String const& _str);
+    MAZE_CORE_API GeoLanguage StringToGeoLanguage(String const& _str);
 
 
     //////////////////////////////////////////
-    String const& GeoLanguageToIETFTag(GeoLanguage _location);
+    MAZE_CORE_API String const& GeoLanguageToIETFTag(GeoLanguage _location);
 
     //////////////////////////////////////////
-    GeoLanguage IETFTagToGeoLanguage(String const& _code);
+    MAZE_CORE_API GeoLanguage IETFTagToGeoLanguage(String const& _code);
 
 
     //////////////////////////////////////////
-    GeoLanguage LocaleCodeToGeoLanguage(S32 _value);
+    MAZE_CORE_API GeoLanguage LocaleCodeToGeoLanguage(S32 _value);
 
 
 

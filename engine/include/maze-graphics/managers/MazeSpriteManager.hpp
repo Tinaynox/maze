@@ -123,10 +123,10 @@ namespace Maze
         void removeSpriteFromLibrary(HashedCString _spriteName);
 
         //////////////////////////////////////////
-        inline void removeSpriteFromLibrary(CString _spriteName) { removeSpriteFromLibrary(_spriteName); }
+        inline void removeSpriteFromLibrary(CString _spriteName) { removeSpriteFromLibrary(HashedCString(_spriteName)); }
 
         //////////////////////////////////////////
-        inline void removeSpriteFromLibrary(String const& _spriteName) { removeSpriteFromLibrary(_spriteName); }
+        inline void removeSpriteFromLibrary(String const& _spriteName) { removeSpriteFromLibrary(HashedCString(_spriteName.c_str())); }
 
 
         //////////////////////////////////////////
