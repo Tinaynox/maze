@@ -180,6 +180,12 @@ namespace Maze
                 });
             );
         }
+        
+        //////////////////////////////////////////
+        MAZE_CORE_API bool IsSyncEmscriptenLocalStorageInProgress()
+        {
+            return g_syncEmscriptenLocalStorageCallback != nullptr;
+        }
 
 
     } // namespace FileHelper
