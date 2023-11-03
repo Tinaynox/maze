@@ -27,6 +27,7 @@
 #include "MazeCoreHeader.hpp"
 #include "maze-core/managers/emscripten/MazeSystemManagerEmscripten.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
+#include "maze-core/helpers/emscripten/MazeFileHelperEmscripten.hpp"
 #include <emscripten/emscripten.h>
 
 
@@ -63,13 +64,16 @@ namespace Maze
     //////////////////////////////////////////
     bool SystemManagerEmscripten::initApplication()
     {
-        processApplicationInit();
+        FileHelper::MountEmscriptenLocalStorage(
+            [this](bool _result)
+            {
+                processApplicationInit();
+            });
         
         emscripten_set_main_loop(
             OnEmscriptenFrame,
             0,
-            1 );
-            
+            1 ); 
         
         return true;
     }
@@ -79,6 +83,7 @@ namespace Maze
     {
         if (!SystemManagerUnix::init(_commandLineArguments))
             return false;
+        
 
         return true;
     }

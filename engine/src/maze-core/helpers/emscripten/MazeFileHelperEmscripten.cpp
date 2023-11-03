@@ -28,7 +28,9 @@
 #include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/helpers/emscripten/MazeFileHelperEmscripten.hpp"
+#include "maze-core/services/MazeLogService.hpp"
 #include <unistd.h>
+#include <emscripten.h>
 
 
 //////////////////////////////////////////
@@ -37,6 +39,56 @@ namespace Maze
     //////////////////////////////////////////
     namespace FileHelper
     {
+        //////////////////////////////////////////
+        static std::function<void(bool)> g_mountEmscriptenLocalStorageCallback = nullptr;
+        static std::function<void(bool)> g_syncEmscriptenLocalStorageCallback = nullptr;
+        
+    } // namespace FileHelper
+    //////////////////////////////////////////
+
+
+} // namespace Maze
+//////////////////////////////////////////
+
+
+//////////////////////////////////////////
+extern "C"
+{
+    //////////////////////////////////////////
+    void EMSCRIPTEN_KEEPALIVE OnMountEmscriptenLocalStorageFinished(bool _result)
+    {
+        Maze::Debug::Log("OnMountEmscriptenLocalStorageFinished: %d", (Maze::S32)_result);
+        
+        if (Maze::FileHelper::g_mountEmscriptenLocalStorageCallback)
+        {
+            std::function<void(bool)> tmpCb = Maze::FileHelper::g_mountEmscriptenLocalStorageCallback;
+            Maze::FileHelper::g_mountEmscriptenLocalStorageCallback = nullptr;
+            tmpCb(_result);
+        }
+    }
+    
+    //////////////////////////////////////////
+    void EMSCRIPTEN_KEEPALIVE OnSyncEmscriptenLocalStorageFinished(bool _result)
+    {
+        Maze::Debug::Log("OnSyncEmscriptenLocalStorageFinished: %d", (Maze::S32)_result);
+        
+        if (Maze::FileHelper::g_syncEmscriptenLocalStorageCallback)
+        {
+            std::function<void(bool)> tmpCb = Maze::FileHelper::g_syncEmscriptenLocalStorageCallback;
+            Maze::FileHelper::g_syncEmscriptenLocalStorageCallback = nullptr;
+            tmpCb(_result);
+        }
+    }
+}
+
+
+//////////////////////////////////////////
+namespace Maze
+{
+    //////////////////////////////////////////
+    namespace FileHelper
+    {
+        
         //////////////////////////////////////////
         MAZE_CORE_API Path GetWorkingDirectory()
         {
@@ -48,8 +100,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API Path GetBinaryFullPath()
         {
-            MAZE_TODO;
-            return "";
+            return GetWorkingDirectory();
         }
 
         //////////////////////////////////////////
@@ -61,21 +112,73 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API Path GetDocumentsDirectory()
         {
-            MAZE_TODO;
-            return "";
+            return MAZE_EMSCRIPTEN_LOCAL_STORAGE_DIR "/documents";
         }
 
         //////////////////////////////////////////
         MAZE_CORE_API Path GetDefaultTemporaryDirectory()
         {
-            return "/tmp";
+            return MAZE_EMSCRIPTEN_LOCAL_STORAGE_DIR "/tmp";
         }
 
         //////////////////////////////////////////
         MAZE_CORE_API Path GetDefaultLogDirectory()
         {
-            MAZE_TODO;
-            return "";
+            return MAZE_EMSCRIPTEN_LOCAL_STORAGE_DIR "/.log";
+        }
+        
+        //////////////////////////////////////////
+        MAZE_CORE_API void MountEmscriptenLocalStorage(std::function<void(bool)> _mountCb)
+        {
+            MAZE_ERROR_RETURN_IF(g_mountEmscriptenLocalStorageCallback != nullptr, "Local storage mounting is in progress already!");
+            
+            g_mountEmscriptenLocalStorageCallback = _mountCb;
+            
+            Debug::Log("Mounting Emscripten localStorage as '%s' started...", MAZE_EMSCRIPTEN_LOCAL_STORAGE_DIR);
+            
+            EM_ASM_({
+                
+                FS.mkdir(UTF8ToString($0));
+                FS.mount(IDBFS, {}, UTF8ToString($0));
+                
+                FS.syncfs(true, function (err) {
+                    if (err) {
+                        console.warn("Mounting Emscripten localStorage failed:", err);
+                        
+                        ccall('OnMountEmscriptenLocalStorageFinished', 'void', ['number'], [0]);
+                    }
+                    else {
+                        console.log("Mounting Emscripten localStorage successful.");
+                        
+                        ccall('OnMountEmscriptenLocalStorageFinished', 'void', ['number'], [1]);
+                    }
+                });
+            }, MAZE_EMSCRIPTEN_LOCAL_STORAGE_DIR);
+        }
+        
+        //////////////////////////////////////////
+        MAZE_CORE_API void SyncEmscriptenLocalStorage(std::function<void(bool)> _syncCb)
+        {
+            MAZE_ERROR_RETURN_IF(g_syncEmscriptenLocalStorageCallback != nullptr, "Local storage syncing is in progress already!");
+            
+            g_syncEmscriptenLocalStorageCallback = _syncCb;
+            
+            Debug::Log("Syncing Emscripten localStorage started...");
+            
+            EM_ASM(
+                FS.syncfs(function (err) {
+                    if (err) {
+                        console.warn("Syncing Emscripten localStorage failed:", err);
+                        
+                        ccall('OnSyncEmscriptenLocalStorageFinished', 'void', ['number'], [0]);
+                    }
+                    else {
+                        console.log("Syncing Emscripten localStorage successful.");
+                        
+                        ccall('OnSyncEmscriptenLocalStorageFinished', 'void', ['number'], [1]);
+                    }
+                });
+            );
         }
 
 

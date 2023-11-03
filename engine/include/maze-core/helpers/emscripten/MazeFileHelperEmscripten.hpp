@@ -37,6 +37,10 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    #define MAZE_EMSCRIPTEN_LOCAL_STORAGE_DIR "/localStorage"
+    
+    
+    //////////////////////////////////////////
     namespace FileHelper
     {
         //////////////////////////////////////////
@@ -56,6 +60,12 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_CORE_API Path GetDefaultLogDirectory();
+        
+        //////////////////////////////////////////
+        MAZE_CORE_API void MountEmscriptenLocalStorage(std::function<void(bool)> _mountCb = nullptr);
+        
+        //////////////////////////////////////////
+        MAZE_CORE_API void SyncEmscriptenLocalStorage(std::function<void(bool)> _syncCb = nullptr);
 
     } // namespace FileHelper
     //////////////////////////////////////////
