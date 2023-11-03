@@ -186,6 +186,15 @@ namespace Maze
         {
             return g_syncEmscriptenLocalStorageCallback != nullptr;
         }
+        
+        //////////////////////////////////////////
+        MAZE_CORE_API void TrySyncEmscriptenLocalStorage()
+        {
+            if (IsSyncEmscriptenLocalStorageInProgress())
+                return;
+            
+            SyncEmscriptenLocalStorage();
+        }
 
 
     } // namespace FileHelper

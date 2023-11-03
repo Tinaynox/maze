@@ -69,6 +69,9 @@ namespace Maze
         
         //////////////////////////////////////////
         MAZE_CORE_API bool IsSyncEmscriptenLocalStorageInProgress();
+        
+        //////////////////////////////////////////
+        MAZE_CORE_API void TrySyncEmscriptenLocalStorage();
 
     } // namespace FileHelper
     //////////////////////////////////////////
