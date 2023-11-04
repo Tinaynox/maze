@@ -73,6 +73,7 @@
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/managers/MazeColorPickerManager.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
+#include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
@@ -257,8 +258,7 @@ namespace Maze
             { 0.0f, 1.0f });
         layout->setSpacing(5.0f);
 
-        m_gamepadsDropdown = UIHelper::CreateDefaultDropdown(
-            10,
+        m_gamepadsDropdown = SystemUIHelper::CreateDefaultDropdown(
             { 400.0f, 18.0f },
             { 0.0f, 0.0f },
             layout->getTransform(),
