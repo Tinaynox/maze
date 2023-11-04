@@ -32,6 +32,10 @@
 #include "maze-core/helpers/MazeXMLHelper.hpp"
 #include <tinyxml2.h>
 
+#if (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN)
+#   include "maze-core/helpers/emscripten/MazeFileHelperEmscripten.hpp"
+#endif
+
 
 //////////////////////////////////////////
 namespace Maze
@@ -245,6 +249,10 @@ namespace Maze
         }
 
         Debug::Log("Settings file '%s' saved.", m_settingsFileFullPath.toUTF8().c_str());
+
+#if (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN)
+        Maze::FileHelper::TrySyncEmscriptenLocalStorage();
+#endif
 
         return true;
     }
