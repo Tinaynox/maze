@@ -39,6 +39,10 @@
 #   include "maze-gamepad/providers/MazeGamepadProviderLibstem.hpp"
 #endif
 
+#if (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN)
+#   include "maze-gamepad/providers/emscripten/MazeGamepadProviderEmscripten.hpp"
+#endif
+
 
 //////////////////////////////////////////
 namespace Maze
@@ -92,7 +96,23 @@ namespace Maze
         EventManager::GetInstancePtr()->subscribeEvent<SystemDevicesChangedEvent>(this, &GamepadManager::notifySystemDevicesChanged);
 
 #if (MAZE_LIBSTEM_GAMEPAD_ENABLED)
-        m_gamepadProviders.emplace_back(GamepadProviderLibstem::Create());
+        Debug::Log("GamepadProviderLibstem creating...");
+        auto providerLibstem = GamepadProviderLibstem::Create();
+        if (providerLibstem)
+        {
+            m_gamepadProviders.emplace_back(providerLibstem);
+            Debug::Log("GamepadProviderLibstem created.");
+        }
+#endif
+
+#if (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN)
+        Debug::Log("GamepadProviderEmscripten creating...");
+        auto providerEmscripten = GamepadProviderEmscripten::Create();
+        if (providerEmscripten)
+        {
+            m_gamepadProviders.emplace_back(providerEmscripten);
+            Debug::Log("GamepadProviderEmscripten created.");
+        }
 #endif
 
         detectGamepads();
@@ -145,12 +165,12 @@ namespace Maze
             if (!it->second)
                 continue;
             
-            if (false == it->second->getConnected()
-                && it->second->getName() == _name
-                && it->second->getVendorId() == _vendorId
-                && it->second->getProductId() == _productId
-                && it->second->getAxesCount() == _axesCount
-                && it->second->getButtonsCount() == _buttonsCount)
+            if (!it->second->getConnected() &&
+                it->second->getName() == _name &&
+                it->second->getVendorId() == _vendorId &&
+                it->second->getProductId() == _productId &&
+                it->second->getAxesCount() == _axesCount &&
+                it->second->getButtonsCount() == _buttonsCount)
             {
                 // Gamepad reconnected with new deviceId
                 gamepad = it->second;
@@ -164,6 +184,13 @@ namespace Maze
 
         if (!gamepad)
             gamepad = Gamepad::Create(_deviceId, _name, _vendorId, _productId, _axesCount, _buttonsCount);
+
+        auto existingGamepadIt = m_gamepads.find(_deviceId);
+        if (existingGamepadIt != m_gamepads.end())
+        {
+            eventGamepadWillBeRemoved(existingGamepadIt->second);
+            m_gamepads.erase(existingGamepadIt);
+        }
 
         m_gamepads.insert(GamepadListByDeviceId::value_type(_deviceId, gamepad));
         gamepad->setConnected(true);

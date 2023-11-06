@@ -159,6 +159,7 @@ namespace Maze
         create2D();
 
         GamepadManager::GetInstancePtr()->eventGamepadsChanged.subscribe(this, &SceneExample::updateUI);
+        GamepadManager::GetInstancePtr()->eventGamepadAdded.subscribe(this, &SceneExample::notifyGamepadAdded);
 
         return true;
     }
@@ -177,12 +178,14 @@ namespace Maze
         m_gamepadsCountText->setText("Gamepads Count: " +
             StringHelper::ToString(GamepadManager::GetInstancePtr()->getGamepadsCount()));
 
+#if (MAZE_PLATFORM != MAZE_PLATFORM_EMSCRIPTEN)
         m_detectGamepadsTimer += _dt;
         if (m_detectGamepadsTimer >= 1.0f)
         {
             m_detectGamepadsTimer = 0.0f;
             GamepadManager::GetInstancePtr()->detectGamepads();
         }
+#endif
 
         updateGamepadData();
     }
@@ -259,7 +262,7 @@ namespace Maze
         layout->setSpacing(5.0f);
 
         m_gamepadsDropdown = SystemUIHelper::CreateDefaultDropdown(
-            { 400.0f, 18.0f },
+            { 500.0f, 18.0f },
             { 0.0f, 0.0f },
             layout->getTransform(),
             this,
@@ -338,7 +341,13 @@ namespace Maze
         }
 
         {
-            String str = "Vendor Id: " + StringHelper::ToString(gamepad->getVendorId());
+            String str;
+            StringHelper::FormatString(
+                str,
+                "Vendor Id : %d (0x%04X)",
+                gamepad->getVendorId(),
+                gamepad->getVendorId());
+
             SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
                 str.c_str(),
                 8,
@@ -354,7 +363,13 @@ namespace Maze
         }
 
         {
-            String str = "Product Id: " + StringHelper::ToString(gamepad->getProductId());
+            String str;
+            StringHelper::FormatString(
+                str,
+                "Product Id : %d (0x%04X)",
+                gamepad->getProductId(),
+                gamepad->getProductId());
+
             SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
                 str.c_str(),
                 8,
@@ -452,6 +467,12 @@ namespace Maze
         }
 
         updateGamepadData();
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::notifyGamepadAdded(GamepadPtr const& _gamepad)
+    {
+        updateUI();
     }
 
     //////////////////////////////////////////

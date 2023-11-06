@@ -123,6 +123,9 @@ namespace Maze
         //////////////////////////////////////////
         SpriteRenderer2DPtr createButtonUI(S32 _index, Transform2DPtr const& _root);
 
+        //////////////////////////////////////////
+        void notifyGamepadAdded(GamepadPtr const& _gamepad);
+
     protected:
         CanvasPtr m_canvas;
 
