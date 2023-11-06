@@ -134,7 +134,10 @@ namespace Maze
         }
 
         if (GamepadManager::GetInstancePtr())
+        {
             GamepadManager::GetInstancePtr()->eventGamepadsChanged.unsubscribe(this);
+            GamepadManager::GetInstancePtr()->eventGamepadAdded.unsubscribe(this);
+        }
 
         if (m_gamepadsDropdown)
             m_gamepadsDropdown->eventValueChanged.unsubscribe(this);
