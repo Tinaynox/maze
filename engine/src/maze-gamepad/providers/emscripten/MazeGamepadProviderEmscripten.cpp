@@ -91,7 +91,8 @@ namespace Maze
         {
             gamepadName = _event->id;
             
-            if (strstr(_event->id, "XInput") != nullptr)
+            String idLower = StringHelper::ToLower<String>(_event->id);
+            if (idLower.find("xinput") != String::npos)
             {
                 vendorId = 0x45E;
                 productId = 0x28E;
