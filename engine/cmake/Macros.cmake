@@ -298,7 +298,7 @@ macro(maze_add_module MODULE_NAME)
         PUBLIC $<BUILD_INTERFACE:${MAZE_DIR}/third-party>)
 
     
-    set(MAZE_LIBRARY_OUTPUT_DIRECTORY "${MAZE_ENGINE_DIR}/lib/${MAZE_ARCH_SUFFIX}")
+    set(MAZE_LIBRARY_OUTPUT_DIRECTORY "${MAZE_OUTPUT_DIR}/lib/${MAZE_ARCH_SUFFIX}/$<CONFIG>")
     set_target_properties(${MODULE_NAME}
         PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY "${MAZE_LIBRARY_OUTPUT_DIRECTORY}"
@@ -405,12 +405,12 @@ macro(maze_add_module MODULE_NAME)
             # DLLs export debug symbols in the linker PDB (the compiler PDB is an intermediate file)
             set_target_properties(${MODULE_NAME} PROPERTIES
                                    PDB_NAME "${MODULE_NAME}${MAZE_PDB_POSTFIX}"
-                                   PDB_OUTPUT_DIRECTORY "${MAZE_ENGINE_DIR}/lib/${MAZE_ARCH_SUFFIX}")
+                                   PDB_OUTPUT_DIRECTORY "${MAZE_OUTPUT_DIR}/lib/${MAZE_ARCH_SUFFIX}/$<CONFIG>")
         else()
             # Static libraries have no linker PDBs, thus the compiler PDBs are relevant
             set_target_properties(${MODULE_NAME} PROPERTIES
                                   COMPILE_PDB_NAME "${MODULE_NAME}-s${MAZE_PDB_POSTFIX}"
-                                  COMPILE_PDB_OUTPUT_DIRECTORY "${MAZE_ENGINE_DIR}/lib/${MAZE_ARCH_SUFFIX}")
+                                  COMPILE_PDB_OUTPUT_DIRECTORY "${MAZE_OUTPUT_DIR}/lib/${MAZE_ARCH_SUFFIX}/$<CONFIG>")
         endif()
 
     endif()

@@ -58,7 +58,7 @@ dependencies {
 
 
 task copyFiles(type: Copy) {
-	from '../../../../prj/maze-example-gamepad/resources/resources-x1.0-nc/data'
+	from '../../../../_otp/prj/maze-example-gamepad/resources/resources-x1.0-nc/data'
 	into 'src/main/assets/data'
 }
 

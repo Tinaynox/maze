@@ -58,7 +58,7 @@ dependencies {
 
 
 task copyFiles(type: Copy) {
-	from '../../../../prj/maze-plugin-profiler-view-test/resources/resources-x1.0-nc/data'
+	from '../../../../_otp/prj/maze-plugin-profiler-view-test/resources/resources-x1.0-nc/data'
 	into 'src/main/assets/data'
 }
 

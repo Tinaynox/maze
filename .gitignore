@@ -14,6 +14,7 @@ examples/bin/*.app
 # =============== #
 # Generated Files #
 # =============== #
+/_otp
 /prj
 prj.vs17-x86-static
 prj.vs17-x86-shared

@@ -98,7 +98,7 @@ elseif(MAZE_TARGET_PLATFORM_IS_OSX)
     file(GLOB APPLE_RESOURCES_GLOB "${APPLE_RESOURCES}/*.*")
     list(REMOVE_ITEM APPLE_RESOURCES_GLOB ${APPLE_RESOURCES}/.DS_Store)
 
-    set(APP_RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/../../prj/resources/resources-x1.0-nc/data)
+    set(APP_RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/../../_otp/prj/resources/resources-x1.0-nc/data)
 
     add_executable(${EXAMPLE_NAME} MACOSX_BUNDLE ${EXAMPLE_FILES} ${APPLE_RESOURCES_GLOB} ${APP_RESOURCES} ${EXAMPLE_FRAMEWORKS})
     set_target_properties(${EXAMPLE_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/../sys-res/osx/InfoOSX.plist)
@@ -108,7 +108,7 @@ elseif(MAZE_TARGET_PLATFORM_IS_OSX)
     
 
     set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../engine/lib/${MAZE_ARCH_SUFFIX}")
-    set(BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../prj/${EXAMPLE_NAME}/build.${MAZE_ARCH_SUFFIX}")
+    set(BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../_otp/prj/${EXAMPLE_NAME}/build.${MAZE_ARCH_SUFFIX}")
 
     set_target_properties(${EXAMPLE_NAME}
         PROPERTIES
@@ -144,7 +144,7 @@ else()
 
     if(MAZE_TARGET_PLATFORM_IS_LINUX)
 
-        set (BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../prj/${EXAMPLE_NAME}/build.${MAZE_ARCH_SUFFIX}")
+        set (BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../_otp/prj/${EXAMPLE_NAME}/build.${MAZE_ARCH_SUFFIX}")
 
         set_target_properties(${EXAMPLE_NAME}
             PROPERTIES
@@ -170,7 +170,7 @@ endif()
 
 if(MAZE_TARGET_PLATFORM_IS_EMSCRIPTEN)
 
-    append_linker_flags(${EXAMPLE_NAME} "-s DEMANGLE_SUPPORT=1 --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/../../prj/${EXAMPLE_NAME}/resources/resources-x1.0-nc@/ --bind --emrun -v")
+    append_linker_flags(${EXAMPLE_NAME} "-s DEMANGLE_SUPPORT=1 --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/../../_otp/prj/${EXAMPLE_NAME}/resources/resources-x1.0-nc@/ --bind --emrun -v")
 
 endif()
 
@@ -193,7 +193,7 @@ if(MAZE_TARGET_PLATFORM_IS_WINDOWS)
     if(BUILD_SHARED_LIBS AND NOT MODULE_STATIC)
     
         STRING(REGEX REPLACE "/" "\\\\" COPY_SRC \"${CMAKE_CURRENT_SOURCE_DIR}/../../engine/lib/${MAZE_ARCH_SUFFIX}/*.dll\")
-        STRING(REGEX REPLACE "/" "\\\\" COPY_DST \"${CMAKE_CURRENT_SOURCE_DIR}/../../prj/${EXAMPLE_NAME}/build.${MAZE_ARCH_SUFFIX}/\")
+        STRING(REGEX REPLACE "/" "\\\\" COPY_DST \"${CMAKE_CURRENT_SOURCE_DIR}/../../_otp/prj/${EXAMPLE_NAME}/build.${MAZE_ARCH_SUFFIX}/\")
     
         add_custom_command(TARGET ${EXAMPLE_NAME} POST_BUILD
             COMMAND COMMAND copy ${COPY_SRC} ${COPY_DST}

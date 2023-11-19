@@ -43,6 +43,9 @@ message("MAZE_COMPILER=${MAZE_COMPILER}")
 ##########################################
 option(MAZE_PRODUCTION "Production mode" OFF)
 option(MAZE_USE_OPTICK "Use Optick Profiler" OFF)
+if(NOT DEFINED MAZE_OUTPUT_DIR)
+    set(MAZE_OUTPUT_DIR "${MAZE_DIR}/_otp" CACHE STRING "Output dir")
+endif()
 
 
 ##########################################
