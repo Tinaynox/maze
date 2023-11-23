@@ -191,7 +191,7 @@ namespace Maze
         MaterialPtr const& material = MaterialManager::GetCurrentInstance()->ensureBuiltinMaterial(BuiltinMaterialType::ColorTexture);
         SpriteManager::GetCurrentInstance()->setDefaultSpriteMaterial(material);
         SpriteHelper::CreateSprite(
-            "MazeLogo_128x128.mztexture",
+            "MazeLogo_128x128.png",
             Vec2DF(128.0f, 128.0f),
             Vec2DF::c_zero,
             m_canvas->getTransform(),

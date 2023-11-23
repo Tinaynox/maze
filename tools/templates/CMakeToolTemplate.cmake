@@ -149,8 +149,8 @@ target_link_libraries(${TOOL_NAME} ${TOOL_MAZE_LIBS})
 if(MAZE_TARGET_PLATFORM_IS_WINDOWS)
     if(BUILD_SHARED_LIBS AND NOT MODULE_STATIC)
     
-        STRING(REGEX REPLACE "/" "\\\\" COPY_SRC \"${CMAKE_CURRENT_SOURCE_DIR}/../../engine/lib/${MAZE_ARCH_SUFFIX}/*.dll\")
-        STRING(REGEX REPLACE "/" "\\\\" COPY_DST \"${CMAKE_CURRENT_SOURCE_DIR}/../../prj/${TOOL_NAME}/build.${MAZE_ARCH_SUFFIX}/\")
+        STRING(REGEX REPLACE "/" "\\\\" COPY_SRC \"${MAZE_OUTPUT_DIR}/lib/${MAZE_ARCH_SUFFIX}/$<CONFIG>/*.dll\")
+        STRING(REGEX REPLACE "/" "\\\\" COPY_DST \"${MAZE_OUTPUT_DIR}/prj/${TOOL_NAME}/build.${MAZE_ARCH_SUFFIX}/\")
             
         add_custom_command(TARGET ${TOOL_NAME} POST_BUILD
             COMMAND COMMAND copy ${COPY_SRC} ${COPY_DST}

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Material>
-	<ShaderUniformVariant name="u_baseMap" type="UniformTexture2D" value="Fireball.mztexture" />
-	<ShaderUniformVariant name="u_emissionMap" type="UniformTexture2D" value="FireBallEmission.mztexture" />
+	<ShaderUniformVariant name="u_baseMap" type="UniformTexture2D" value="Fireball.png" />
+	<ShaderUniformVariant name="u_emissionMap" type="UniformTexture2D" value="FireBallEmission.png" />
 	<ShaderUniformVariant name="u_color" type="UniformVec4DF" value="1.4;1.2;1.2;1.0" />
 	<ShaderUniformVariant name="u_emissionColor" type="UniformVec4DF" value="1.6;0.9;1.35;1.0" />
 	<RenderPass 

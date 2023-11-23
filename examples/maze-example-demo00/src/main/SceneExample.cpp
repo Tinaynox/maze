@@ -239,7 +239,7 @@ namespace Maze
         terrainMesh->setCellsCount({ 50, 50 });
         terrainMesh->setSize({ 20, 20 });
         terrainMesh->setHeight(2.25f);
-        terrainMesh->setHeightMap(renderSystem->getTextureManager()->getTexture2D("Heightmap02.mztexture"));
+        terrainMesh->setHeightMap(renderSystem->getTextureManager()->getTexture2D("Heightmap02.png"));
         MeshRendererPtr terrainMeshRenderer = terrainEntity->ensureComponent<MeshRenderer>();
         terrainMeshRenderer->setMaterial("Terrain00.mzmaterial");
 

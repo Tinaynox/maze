@@ -50,7 +50,7 @@ namespace Maze
     // Class ExampleFPSCameraController
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API ExampleFPSCameraController
+    class ExampleFPSCameraController
         : public Component
     {
     public:
