@@ -33,6 +33,7 @@
 #include "MazePreprocessor_Platform.hpp"
 #include "maze-core/MazeStdTypes.hpp"
 #include <csignal>
+#include <cassert>
 
 
 //////////////////////////////////////////

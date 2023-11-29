@@ -96,6 +96,12 @@ namespace Maze
             return !this->operator==(_value);
         }
 
+        //////////////////////////////////////////
+        inline bool empty() const
+        {
+            return (str == nullptr || strcmp(str, "") == 0);
+        }
+
         template <U32 THashValue>
         struct HashCalculator { static MAZE_CONSTEXPR U32 const hash = THashValue; };
     };

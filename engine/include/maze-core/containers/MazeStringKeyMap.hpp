@@ -248,29 +248,36 @@ namespace Maze
         inline TValue* insert(HashedString const& _key, TValue const& _value) { return insert(_key.asHashedCString(), _value); }
 
         //////////////////////////////////////////
+        template <typename UValue>
+        inline TValue* emplace(HashedCString _key, UValue _value)
+        {
+            Pair<String, TValue> valueData = std::make_pair<String, TValue>(
+                _key.str,
+                std::forward<TValue>(_value));
+
+            auto at = m_map.emplace(
+                std::piecewise_construct,
+                std::forward_as_tuple(_key),
+                std::forward_as_tuple(std::move(valueData)));
+
+            if (at.second)
+            {
+                HashedCString* newKey = const_cast<HashedCString*>(&at.first->first);
+                newKey->str = &at.first->second.first[0];
+
+                return &at.first->second.second;
+            }
+
+            return nullptr;
+        }
+
+        //////////////////////////////////////////
         inline TValue* insert(HashedCString _key, TValue&& _value)
         {
             auto it = m_map.find(_key);
             if (it == m_map.end())
             {
-                Pair<String, TValue> valueData = std::make_pair<String, TValue>(
-                    _key.str,
-                    std::move(_value));
-
-                auto at = m_map.emplace(
-                    std::piecewise_construct,
-                    std::forward_as_tuple(_key),
-                    std::forward_as_tuple(std::move(valueData)));
-
-                if (at.second)
-                {
-                    HashedCString* newKey = const_cast<HashedCString*>(&at.first->first);
-                    newKey->str = &at.first->second.first[0];
-
-                    return &at.first->second.second;
-                }
-
-                return nullptr;
+                return emplace(_key, std::move(_value));
             }
             else
             {
@@ -285,24 +292,7 @@ namespace Maze
             auto it = m_map.find(_key);
             if (it == m_map.end())
             {
-                Pair<String, TValue> valueData = Pair<String, TValue>(
-                    _key.str,
-                    _value);
-
-                auto at = m_map.emplace(
-                    std::piecewise_construct,
-                    std::forward_as_tuple(_key),
-                    std::forward_as_tuple(std::move(valueData)));
-
-                if (at.second)
-                {
-                    HashedCString* newKey = const_cast<HashedCString*>(&at.first->first);
-                    newKey->str = &at.first->second.first[0];
-
-                    return &at.first->second.second;
-                }
-
-                return nullptr;
+                return emplace(_key, _value);
             }
             else
             {

@@ -133,23 +133,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ByteBuffer::resize(Size _size)
+    bool ByteBuffer::reallocate(Size _size)
     {
         if (m_size == (U32)_size)
-            return;
+            return false;
 
         if (_size == 0)
         {
             clear();
-            return;
+            return false;
         }
-
-        U8* prevData = m_data;
-        U32 prevSize = m_size;
 
         m_size = (U32)_size;
 
-        try 
+        try
         {
             m_data = MAZE_NEW_ARRAY(U8, m_size);
         }
@@ -158,12 +155,54 @@ namespace Maze
             MAZE_ERROR("Allocation failed: %s", e.what());
             throw;
         }
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void ByteBuffer::resize(Size _size)
+    {
+        U8* prevData = m_data;
+        U32 prevSize = m_size;
+
+        if (!reallocate(_size))
+            return;
         
         if (prevData)
         {
             std::memcpy(m_data, prevData, Math::Min(prevSize, m_size));
             MAZE_DELETE_ARRAY(prevData);
         }
+    }
+
+    //////////////////////////////////////////
+    U8* ByteBuffer::insert(U32 _at, Size _size)
+    {
+        MAZE_ASSERT(_at <= m_size);
+
+        U8* prevData = m_data;
+        U32 prevSize = m_size;
+
+        if (!reallocate(m_size + _size))
+            return nullptr;
+
+        if (prevData)
+        {
+            std::memcpy(m_data, prevData, _at);
+            std::memcpy(m_data + _at + _size, prevData + _at, prevSize - _at);
+            MAZE_DELETE_ARRAY(prevData);
+        }
+
+        return m_data + _at;
+    }
+
+    //////////////////////////////////////////
+    void ByteBuffer::erase(U32 _at, Size _size)
+    {
+        MAZE_ASSERT(_at + _size <= m_size);
+
+        memmove(m_data + _at, m_data + _at + _size, m_size - (_at +_size));
+        resize(m_size - _size);
     }
 
     //////////////////////////////////////////
