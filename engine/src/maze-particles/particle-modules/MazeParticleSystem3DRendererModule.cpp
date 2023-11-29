@@ -127,6 +127,7 @@ namespace Maze
         Vec3DF const& _cameraForward,
         Vec3DF const& _cameraUp)
     {
+        MAZE_PROFILE_EVENT("ParticleSystem3DRendererModule::prepareToRender");
 
         S32 aliveCount = _particles.getAliveCount();
 
