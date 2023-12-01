@@ -122,6 +122,16 @@ namespace Maze
         void erase(U32 _at, Size _size);
 
         //////////////////////////////////////////
+        void append(U8 const* _data, Size _size);
+
+        //////////////////////////////////////////
+        template <typename TValue>
+        inline void append(TValue const& _data)
+        {
+            append((U8 const*)&_data, sizeof(TValue));
+        }
+
+        //////////////////////////////////////////
         void fill(U8 _byte);
 
         //////////////////////////////////////////

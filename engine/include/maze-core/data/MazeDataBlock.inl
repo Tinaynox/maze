@@ -203,7 +203,7 @@ namespace Maze
         U8 const* _data)
     {
         Param param;
-        param.nameId = _nameId;
+        param.nameId = (U32)_nameId;
         param.type = (U32)_type;
 
         if (_size <= MAZE_DATA_BLOCK_INPLACE_PARAM_SIZE)
@@ -234,10 +234,10 @@ namespace Maze
 
     //////////////////////////////////////////
     template <>
-    inline DataBlock::ParamIndex DataBlock::insertParamAt(DataBlock::ParamIndex _at, SharedStringId _nameId, CString const& _value)
+    inline DataBlock::ParamIndex DataBlock::insertParamAt(ParamIndex _at, SharedStringId _nameId, CString const& _value)
     {
         Param param;
-        param.nameId = _nameId;
+        param.nameId = (U32)_nameId;
         param.type = (U32)TypeOf<CString>::type;
         param.value = addString(_value ? _value : "", _value ? strlen(_value) : 0);
         insertDataAt(_at * sizeof(Param), sizeof(Param), (U8 const*)&param);
@@ -249,7 +249,7 @@ namespace Maze
     template <class TValue>
     inline DataBlock::ParamIndex DataBlock::addParamByNameId(SharedStringId _nameId, TValue const& _value)
     {
-        return insertParamAt<TValue>(getParamsCount(), _nameId, _value);
+        return insertParamAt<TValue>((ParamIndex)getParamsCount(), _nameId, _value);
     }
 
     //////////////////////////////////////////

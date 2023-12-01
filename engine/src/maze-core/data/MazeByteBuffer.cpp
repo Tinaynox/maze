@@ -206,6 +206,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void ByteBuffer::append(U8 const* _data, Size _size)
+    {
+        U32 prevSize = m_size;
+        resize(m_size + _size);
+        std::memcpy(m_data + prevSize, _data, _size);
+    }
+
+    //////////////////////////////////////////
     void ByteBuffer::fill(U8 _byte)
     {
         memset(m_data, _byte, m_size);

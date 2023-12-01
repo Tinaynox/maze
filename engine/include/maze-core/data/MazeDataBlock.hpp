@@ -198,7 +198,7 @@ namespace Maze
         //////////////////////////////////////////
         struct Param
         {
-            SharedStringId nameId : 24;
+            U32 nameId : 24;
             U32 type : 8;
             ParamValue value;
         };
@@ -232,7 +232,19 @@ namespace Maze
         inline SharedStringId getNameId() const { return m_nameIdAndFlags & 0xFFFFFF; }
 
         //////////////////////////////////////////
+        inline SharedStringId getNameIdAndFlags() const { return m_nameIdAndFlags; }
+
+        //////////////////////////////////////////
         HashedCString getName() const;
+
+        //////////////////////////////////////////
+        inline DataBlockShared const* getShared() const { return m_shared; }
+
+        //////////////////////////////////////////
+        inline DataBlockShared* getShared() { return m_shared; }
+
+        //////////////////////////////////////////
+        inline DataBlockDataBuffer const* getDataBuffer() const { return m_dataBuffer; }
 
 
 
@@ -249,7 +261,12 @@ namespace Maze
         void clearParams();
 
         //////////////////////////////////////////
-        void clearData();
+        void clear();
+
+
+
+        //////////////////////////////////////////
+        // Serialization API
 
         //////////////////////////////////////////
         void appendParamsFrom(DataBlock const* _from);
@@ -263,12 +280,21 @@ namespace Maze
         //////////////////////////////////////////
         DataBlock* duplicate() const;
 
+        //////////////////////////////////////////
+        bool saveToByteBuffer(ByteBuffer& _byteBuffer) const;
+
+        //////////////////////////////////////////
+        ByteBufferPtr saveToByteBuffer() const;
+
+        //////////////////////////////////////////
+        bool loadFromByteBuffer(ByteBuffer const& _byteBuffer);
+
 
         //////////////////////////////////////////
         // Params API
 
         //////////////////////////////////////////
-        inline U32 getParamsCount() const { return m_paramsCount; }
+        inline U16 getParamsCount() const { return m_paramsCount; }
 
 #define MAZE_DECLARE_DATA_BLOCK_GET_SET_API_BASE(__DValueType, __DValueRefType, __typeName)             \
   __DValueType get##__typeName(ParamIndex _index) const;                                                \
@@ -328,7 +354,7 @@ namespace Maze
         // DataBlocks API
 
         //////////////////////////////////////////
-        inline U32 getDataBlocksCount() const { return m_dataBlocksCount; }
+        inline U16 getDataBlocksCount() const { return m_dataBlocksCount; }
 
         //////////////////////////////////////////
         DataBlock* addDataBlock(HashedCString _name);
@@ -371,6 +397,7 @@ namespace Maze
 
         //////////////////////////////////////////
         bool removeDataBlock(DataBlockIndex _index);
+
 
     private:
 
@@ -436,13 +463,13 @@ namespace Maze
         inline Param* getParamsPtr() { return (Param*)getMemoryBufferData(); }
 
         //////////////////////////////////////////
-        inline Param* getParamsEndPtr() { return getParamsPtr() + getParamsCount(); }
+        inline Param* getParamsEndPtr() { return getParamsPtr() + (Size)getParamsCount(); }
 
         //////////////////////////////////////////
         inline Param const* getParamsPtr() const { return (Param const*)getMemoryBufferData(); }
 
         //////////////////////////////////////////
-        inline Param const* getParamsEndPtr() const { return getParamsPtr() + getParamsCount(); }
+        inline Param const* getParamsEndPtr() const { return getParamsPtr() + (Size)getParamsCount(); }
 
         //////////////////////////////////////////
         Param& getParam(ParamIndex _index);

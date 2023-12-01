@@ -156,46 +156,6 @@ namespace Maze
     //////////////////////////////////////////
     SceneExample::SceneExample()
     {
-        DataBlock test;
-        test.addS32("some", 42);
-        test.addMat4DF("some2", Mat4DF::c_identity);
-        test.addVec4DF("some3", Vec4DF(1.0f, 2.0f, 3.0f, 4.0f));
-        test.addString("some4", "Hello world!");
-
-        test.removeParam("some3");
-
-        DataBlock* subBlock1 = test.addDataBlock("block1");
-        subBlock1->addS32("block1_param", 422);
-        // test.removeBlock("block1");
-
-        S32 b = test.getS32("some");
-        Mat4DF b2 = test.getMat4DF("some2");
-        Vec4DF b3 = test.getVec4DF("some3");
-        CString b4 = test.getString("some4");
-
-        DataBlock* subBlock2 = test.addDataBlock("block2");
-
-
-        S32 block1_param = subBlock1->getS32("block1_param");
-
-        //ByteBuffer buffer;
-        //buffer.resize(5);
-        //buffer.setByte(0, 0);
-        //buffer.setByte(1, 1);
-        //buffer.setByte(2, 2);
-        //buffer.setByte(3, 3);
-        //buffer.setByte(4, 4);
-        //buffer.insert(2, 2);
-
-        DataBlock* dataBlock = test.duplicate();
-        S32 ab = dataBlock->getS32("some");
-        Mat4DF ab2 = dataBlock->getMat4DF("some2");
-        Vec4DF ab3 = dataBlock->getVec4DF("some3");
-        CString ab4 = dataBlock->getString("some4");
-        S32 hhh = dataBlock->getDataBlock("block1")->getS32("block1_param");
-        MAZE_DELETE(dataBlock);
-
-        int a = 0;
     }
 
     //////////////////////////////////////////

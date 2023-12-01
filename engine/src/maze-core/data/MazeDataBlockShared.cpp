@@ -40,13 +40,30 @@ namespace Maze
     // DataBlockShared
     //
     //////////////////////////////////////////
+    bool DataBlockShared::setString(HashedString _name, DataBlock::SharedStringId _id)
+    {
+#if MAZE_DEBUG
+        auto it = m_strings.find(_name);
+        MAZE_ERROR_RETURN_VALUE_IF(
+            it != m_strings.end(),
+            false,
+            "%s is already exists with id=%d (_id=%d)",
+            _name.getString().c_str(), (S32)it->second, (S32)_id);
+#endif
+
+        m_strings.emplace(_name, _id);
+        return true;
+    }
+
+    //////////////////////////////////////////
     DataBlock::SharedStringId DataBlockShared::addString(HashedCString _name)
     {
         auto it = m_strings.find(_name);
         if (it != m_strings.end())
             return it->second;
 
-        DataBlock::SharedStringId id = DataBlock::SharedStringId(m_strings.size() + 1u);
+
+        DataBlock::SharedStringId id = DataBlock::SharedStringId(++m_stringsIndexCounter);
         m_strings.emplace(_name, id);
         return id;
     }
@@ -58,7 +75,7 @@ namespace Maze
         if (it != m_strings.end())
             return it->second;
 
-        return -1;
+        return 0u;
     }
 
     //////////////////////////////////////////
@@ -79,6 +96,13 @@ namespace Maze
                 return it.key();
 
         return HashedCString();
+    }
+
+    //////////////////////////////////////////
+    void DataBlockShared::clear()
+    {
+        m_strings.clear();
+        m_stringsIndexCounter = 0;
     }
 
 } // namespace Maze

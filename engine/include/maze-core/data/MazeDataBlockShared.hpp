@@ -78,6 +78,8 @@ namespace Maze
         //////////////////////////////////////////
         void freeDataBlock(void* _ptr) { return m_dataBlockAllocator.freeBlock(_ptr); }
 
+        //////////////////////////////////////////
+        bool setString(HashedString _name, DataBlock::SharedStringId _id);
 
         //////////////////////////////////////////
         DataBlock::SharedStringId addString(HashedCString _name);
@@ -103,11 +105,25 @@ namespace Maze
         //////////////////////////////////////////
         HashedCString getHashedCString(DataBlock::SharedStringId _index);
 
+
+        //////////////////////////////////////////
+        inline StringKeyMap<DataBlock::SharedStringId> const& getStrings() const { return m_strings; }
+
+        //////////////////////////////////////////
+        inline DataBlock::SharedStringId getStringsIndexCounter() const { return m_stringsIndexCounter; }
+
+        //////////////////////////////////////////
+        inline void setStringsIndexCounter(DataBlock::SharedStringId _counter) { m_stringsIndexCounter = _counter; }
+
+        //////////////////////////////////////////
+        void clear();
+
     private:
         BlockMemoryAllocator<sizeof(DataBlockDataBuffer), sizeof(DataBlockDataBuffer) * 128> m_dataBufferAllocator;
         BlockMemoryAllocator<sizeof(DataBlock), sizeof(DataBlock) * 32> m_dataBlockAllocator;
 
         StringKeyMap<DataBlock::SharedStringId> m_strings;
+        DataBlock::SharedStringId m_stringsIndexCounter = 0;
     };
 
 } // namespace Maze

@@ -230,34 +230,29 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline TValue* insert(String const& _key, TValue&& _value) { return insert(MAZE_HASHED_CSTRING(_key.c_str()), std::move(_value)); }
+        inline TValue* insert(String const& _key, TValue&& _value) { return insert(HashedString(_key.c_str()), std::move(_value)); }
 
         //////////////////////////////////////////
-        inline TValue* insert(String const& _key, TValue const& _value) { return insert(MAZE_HASHED_CSTRING(_key.c_str()), _value); }
+        inline TValue* insert(String const& _key, TValue const& _value) { return insert(HashedString(_key.c_str()), _value); }
 
         //////////////////////////////////////////
-        inline TValue* insert(CString _key, TValue&& _value) { return insert(MAZE_HASHED_CSTRING(_key), std::move(_value)); }
+        inline TValue* insert(CString _key, TValue&& _value) { return insert(HashedString(_key), std::move(_value)); }
 
         //////////////////////////////////////////
-        inline TValue* insert(CString _key, TValue const& _value) { return insert(MAZE_HASHED_CSTRING(_key), _value); }
+        inline TValue* insert(CString _key, TValue const& _value) { return insert(HashedString(_key), _value); }
 
-        //////////////////////////////////////////
-        inline TValue* insert(HashedString const& _key, TValue&& _value) { return insert(_key.asHashedCString(), std::move(_value)); }
-
-        //////////////////////////////////////////
-        inline TValue* insert(HashedString const& _key, TValue const& _value) { return insert(_key.asHashedCString(), _value); }
 
         //////////////////////////////////////////
         template <typename UValue>
-        inline TValue* emplace(HashedCString _key, UValue _value)
+        inline TValue* emplace(HashedString _key, UValue _value)
         {
-            Pair<String, TValue> valueData = std::make_pair<String, TValue>(
-                _key.str,
+            Pair<String, TValue> valueData(
+                _key.getString(),
                 std::forward<TValue>(_value));
 
             auto at = m_map.emplace(
                 std::piecewise_construct,
-                std::forward_as_tuple(_key),
+                std::forward_as_tuple(_key.asHashedCString()),
                 std::forward_as_tuple(std::move(valueData)));
 
             if (at.second)
@@ -272,7 +267,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline TValue* insert(HashedCString _key, TValue&& _value)
+        inline TValue* insert(HashedString _key, TValue&& _value)
         {
             auto it = m_map.find(_key);
             if (it == m_map.end())
@@ -287,7 +282,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline TValue* insert(HashedCString _key, TValue const& _value)
+        inline TValue* insert(HashedString _key, TValue const& _value)
         {
             auto it = m_map.find(_key);
             if (it == m_map.end())

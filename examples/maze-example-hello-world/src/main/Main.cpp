@@ -43,76 +43,133 @@
 #include "maze-core/helpers/MazeSystemHelper.hpp"
 
 
+#include "maze-core/data/MazeDataBlock.hpp"
+
+
 //////////////////////////////////////////
-Maze::S32 SecondThreadEntry()
+using namespace Maze;
+
+
+//////////////////////////////////////////
+S32 SecondThreadEntry()
 {
-    Maze::String text = "Second Thread!";
-    Maze::Debug::log << "Hello from " << text << Maze::endl;
+    String text = "Second Thread!";
+    Debug::log << "Hello from " << text << endl;
 
     return 1;
 }
 
 
 //////////////////////////////////////////
-Maze::S32 main(Maze::S32 _argc, Maze::S8 const* _argv[])
+void test()
 {
+    DataBlock test;
+    test.addS32("some", 42);
+    test.addMat4DF("some2", Mat4DF::c_identity);
+    test.addVec4DF("some3", Vec4DF(1.0f, 2.0f, 3.0f, 4.0f));
+    test.addString("some4", "Hello world!");
 
-    Maze::LogService::GetInstancePtr()->splitAndLog(Maze::PlatformHelper::ConstructApplicationInfo());
-    Maze::LogService::GetInstancePtr()->splitAndLog(Maze::PlatformHelper::ConstructEngineInfo());
-    Maze::LogService::GetInstancePtr()->splitAndLog(Maze::SystemHelper::ConstructSystemInfo());
-    Maze::Debug::log << Maze::endl;
+    test.removeParam("some3");
 
-    Maze::Thread thread(SecondThreadEntry);
+    DataBlock* subBlock1 = test.addDataBlock("block1");
+    subBlock1->addS32("block1_param", 422);
+    // test.removeBlock("block1");
+
+    S32 b = test.getS32("some");
+    Mat4DF b2 = test.getMat4DF("some2");
+    Vec4DF b3 = test.getVec4DF("some3");
+    CString b4 = test.getString("some4");
+
+    DataBlock* subBlock2 = test.addDataBlock("block2");
+
+
+    S32 block1_param = subBlock1->getS32("block1_param");
+
+    //ByteBuffer buffer;
+    //buffer.resize(5);
+    //buffer.setByte(0, 0);
+    //buffer.setByte(1, 1);
+    //buffer.setByte(2, 2);
+    //buffer.setByte(3, 3);
+    //buffer.setByte(4, 4);
+    //buffer.insert(2, 2);
+
+    DataBlock* dataBlock = test.duplicate();
+    S32 ab = dataBlock->getS32("some");
+    Mat4DF ab2 = dataBlock->getMat4DF("some2");
+    Vec4DF ab3 = dataBlock->getVec4DF("some3");
+    CString ab4 = dataBlock->getString("some4");
+    S32 hhh = dataBlock->getDataBlock("block1")->getS32("block1_param");
+    //MAZE_DELETE(dataBlock);
+
+    ByteBufferPtr byteBuffer = dataBlock->saveToByteBuffer();
+    dataBlock->loadFromByteBuffer(*byteBuffer.get());
+
+    int a = 0;
+}
+
+//////////////////////////////////////////
+S32 main(S32 _argc, S8 const* _argv[])
+{
+    test();
+    return 0;
+
+    LogService::GetInstancePtr()->splitAndLog(PlatformHelper::ConstructApplicationInfo());
+    LogService::GetInstancePtr()->splitAndLog(PlatformHelper::ConstructEngineInfo());
+    LogService::GetInstancePtr()->splitAndLog(SystemHelper::ConstructSystemInfo());
+    Debug::log << endl;
+
+    Thread thread(SecondThreadEntry);
     thread.run();
     thread.wait();
 
-    Maze::LogService::GetInstancePtr()->logFormatted("qwerty %d", 42);
-    Maze::LogService::GetInstancePtr()->setLogFile("log.log");
-    Maze::Debug::log << "123" << Maze::endl;
+    LogService::GetInstancePtr()->logFormatted("qwerty %d", 42);
+    LogService::GetInstancePtr()->setLogFile("log.log");
+    Debug::log << "123" << endl;
 
-    Maze::Vec2DS a(42, 228);
-    a = Maze::Vec2DS::c_zero;
+    Vec2DS a(42, 228);
+    a = Vec2DS::c_zero;
     a += 55;
     a.y = 0;
     auto aa = a.squaredLength();
-    Maze::Debug::log << aa << Maze::endl;
+    Debug::log << aa << endl;
 
 
-    Maze::Vec2DF b(42, 228);
-    b = Maze::Vec2DF::c_zero;
+    Vec2DF b(42, 228);
+    b = Vec2DF::c_zero;
     b += 33.5f;
     b.x = 0;
     auto bb = b.squaredLength();
-    Maze::Debug::log << bb << Maze::endl;
+    Debug::log << bb << endl;
 
 
 
-    Maze::Vec3DF c(a);
+    Vec3DF c(a);
 
 
-    Maze::Mat3DF mm(Maze::Mat3DF::c_identity);
-    Maze::Mat4DF mmm(Maze::Mat4DF::c_identity);
+    Mat3DF mm(Mat3DF::c_identity);
+    Mat4DF mmm(Mat4DF::c_identity);
 
-    Maze::Debug::log << a << Maze::endl;
-    Maze::Debug::log << b << Maze::endl;
-    Maze::Debug::log << c << Maze::endl;
-    Maze::Debug::log << mm << Maze::endl;
-    Maze::Debug::log << mmm << Maze::endl;
+    Debug::log << a << endl;
+    Debug::log << b << endl;
+    Debug::log << c << endl;
+    Debug::log << mm << endl;
+    Debug::log << mmm << endl;
 
-    Maze::AABB2D aabb(a, b);
-    Maze::Debug::log << aabb << Maze::endl;
+    AABB2D aabb(a, b);
+    Debug::log << aabb << endl;
 
-    Maze::Rect2DU rect = aabb.toRect<Maze::U32>();
-    Maze::Debug::log << rect << Maze::endl;
+    Rect2DU rect = aabb.toRect<U32>();
+    Debug::log << rect << endl;
 
-    Maze::Debug::log << "Hello, world!" << Maze::endl;
+    Debug::log << "Hello, world!" << endl;
 
 
-    Maze::Char text[256];
-    Maze::StringHelper::FormatString(text, 256, "Check %d! %s", 123, "456");
-    Maze::Debug::log << text << Maze::endl;
+    Char text[256];
+    StringHelper::FormatString(text, 256, "Check %d! %s", 123, "456");
+    Debug::log << text << endl;
 
-    Maze::Debug::log << Maze::StringHelper::FormattedStringSize("Check %d! %s", 123, "456") << Maze::endl;
+    Debug::log << StringHelper::FormattedStringSize("Check %d! %s", 123, "456") << endl;
 
     MAZE_ERROR("Hello, error! [2]");
 

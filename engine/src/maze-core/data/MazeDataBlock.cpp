@@ -40,6 +40,7 @@
 #include "maze-core/serialization/MazeValueSerialization.hpp"
 #include "maze-core/data/MazeDataBlockShared.hpp"
 #include "maze-core/math/MazeMath.hpp"
+#include "maze-core/helpers/MazeDataBlockHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -136,7 +137,7 @@ namespace Maze
         if (!m_shared && !m_dataBuffer)
             return;
 
-        for (U32 i = 0, e = getDataBlocksCount(); i < e; ++i)
+        for (DataBlockIndex i = 0, e = (DataBlockIndex)getDataBlocksCount(); i < e; ++i)
         {
             DataBlock* dataBlock = getDataBlock(i);
             dataBlock->~DataBlock();
@@ -170,15 +171,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void DataBlock::clearData()
+    void DataBlock::clear()
     {
-        for (U32 i = 0, e = getDataBlocksCount(); i < e; ++i)
+        for (DataBlockIndex i = 0, e = (DataBlockIndex)getDataBlocksCount(); i < e; ++i)
         {
             DataBlock* dataBlock = getDataBlock(i);
             dataBlock->~DataBlock();
             m_shared->freeDataBlock(dataBlock);
         }
 
+        m_shared->clear();
         m_dataBuffer->clear();
 
         m_paramsCount = 0;
@@ -193,7 +195,7 @@ namespace Maze
 
         Param const* paramPtr = _from->getParamsPtr();
 
-        for (ParamIndex i = 0, e = _from->getParamsCount(); i < e; ++i, ++paramPtr)
+        for (ParamIndex i = 0, e = (ParamIndex)_from->getParamsCount(); i < e; ++i, ++paramPtr)
         {
             Param const& param = *paramPtr;
             SharedStringId paramNameId = addString(_from->getSharedHashedCString(param.nameId));
@@ -233,12 +235,12 @@ namespace Maze
         if (_from == this)
             return;
 
-        clearData();
+        clear();
         if (_from == nullptr)
             return;
 
         copyParamsFrom(_from);
-        for (DataBlockIndex i = 0, e = _from->getDataBlocksCount(); i < e; ++i)
+        for (DataBlockIndex i = 0, e = (DataBlockIndex)_from->getDataBlocksCount(); i < e; ++i)
             addNewDataBlock(_from->getDataBlock(i));
     }
 
@@ -251,16 +253,37 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool DataBlock::saveToByteBuffer(ByteBuffer& _byteBuffer) const
+    {
+        return DataBlockHelper::SaveToByteBuffer(*this, _byteBuffer);
+    }
+
+    //////////////////////////////////////////
+    ByteBufferPtr DataBlock::saveToByteBuffer() const
+    {
+        ByteBufferPtr byteBuffer = ByteBuffer::Create();
+        if (!saveToByteBuffer(*byteBuffer.get()))
+            return nullptr;
+        return byteBuffer;
+    }
+
+    //////////////////////////////////////////
+    bool DataBlock::loadFromByteBuffer(ByteBuffer const& _byteBuffer)
+    {
+        return DataBlockHelper::LoadFromByteBuffer(*this, _byteBuffer);
+    }
+
+    //////////////////////////////////////////
     DataBlock::Param& DataBlock::getParam(ParamIndex _index)
     {
-        MAZE_ASSERT((Size)_index < getParamsCount());
+        MAZE_ASSERT(_index < (ParamIndex)getParamsCount());
         return getParamsPtr()[_index];
     }
 
     //////////////////////////////////////////
     DataBlock::Param const& DataBlock::getParam(ParamIndex _index) const
     {
-        MAZE_ASSERT((Size)_index < getParamsCount());
+        MAZE_ASSERT(_index < (ParamIndex)getParamsCount());
         return getParamsPtr()[_index];
     }
 
@@ -379,7 +402,7 @@ namespace Maze
     }                                                                                                                             \
     bool DataBlock::set##__typeName(ParamIndex _index, __DValueRefType _value)                                                    \
     {                                                                                                                             \
-        if ((Size)_index >= getParamsCount())                                                                                           \
+        if (_index >= (ParamIndex)getParamsCount())                                                                                           \
           return false;                                                                                                           \
         return setParam<__DValueType>(_index, _value);                                                                            \
     }                                                                                                                             \
@@ -434,7 +457,7 @@ namespace Maze
             return false;
 
         SharedStringId nameId = getStringId(_name);
-        if (nameId < 0)
+        if (nameId == 0)
             return false;
 
         ParamIndex paramIdx = findParamIndexReverse(nameId, (ParamIndex)m_paramsCount);
@@ -467,6 +490,8 @@ namespace Maze
     DataBlock* DataBlock::getDataBlock(HashedCString _name)
     {
         SharedStringId nameId = getStringId(_name);
+        if (nameId == 0)
+            return nullptr;
         return getDataBlockByNameId(nameId);
     }
 
@@ -474,13 +499,15 @@ namespace Maze
     DataBlock const* DataBlock::getDataBlock(HashedCString _name) const
     {
         SharedStringId nameId = getStringId(_name);
+        if (nameId == 0)
+            return nullptr;
         return getDataBlockByNameId(nameId);
     }
 
     //////////////////////////////////////////
     DataBlock* DataBlock::getDataBlock(DataBlockIndex _index)
     {
-        if ((U32)_index < getDataBlocksCount())
+        if ((DataBlockIndex)_index < getDataBlocksCount())
             return *(getDataBlocksPtr() + _index);
         return nullptr;
     }
@@ -488,7 +515,7 @@ namespace Maze
     //////////////////////////////////////////
     DataBlock const* DataBlock::getDataBlock(DataBlockIndex _index) const
     {
-        if ((U32)_index < getDataBlocksCount())
+        if ((DataBlockIndex)_index < getDataBlocksCount())
             return *(getDataBlocksPtr() + _index);
         return nullptr;
     }
@@ -523,7 +550,7 @@ namespace Maze
         newBlock->copyParamsFrom(_copyFrom);
 
         // Copy blocks
-        for (DataBlockIndex i = 0, e = _copyFrom->getDataBlocksCount(); i < e; ++i)
+        for (DataBlockIndex i = 0, e = (DataBlockIndex)_copyFrom->getDataBlocksCount(); i < e; ++i)
             newBlock->addNewDataBlock(_copyFrom->getDataBlock(i));
 
         return newBlock;
@@ -546,7 +573,7 @@ namespace Maze
     DataBlock::DataBlockIndex DataBlock::findDataBlockIndex(SharedStringId _nameId, DataBlockIndex _startAfter) const
     {
         DataBlock const** blockPtr = getDataBlocksPtr() + _startAfter;
-        for (U32 i = _startAfter, e = getDataBlocksCount(); i < e; ++i, ++blockPtr)
+        for (DataBlockIndex i = _startAfter, e = (DataBlockIndex)getDataBlocksCount(); i < e; ++i, ++blockPtr)
             if ((*blockPtr)->getNameId() == _nameId)
                 return i;
         return -1;
@@ -575,6 +602,9 @@ namespace Maze
     bool DataBlock::isDataBlockExists(HashedCString _name) const
     {
         SharedStringId nameId = getStringId(_name);
+        if (nameId == 0)
+            return false;
+
         return getDataBlockByNameId(nameId) != nullptr;
     }
 
@@ -585,7 +615,7 @@ namespace Maze
             return false;
 
         SharedStringId nameId = getStringId(_name);
-        if (nameId < 0)
+        if (nameId == 0)
             return false;
 
         DataBlockIndex blockIndex = findDataBlockIndexReverse(nameId, (DataBlockIndex)m_dataBlocksCount);
