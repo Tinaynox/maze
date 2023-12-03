@@ -270,6 +270,9 @@ namespace Maze
         inline bool isTopmost() const { return m_nameIdAndFlags & U32(DataBlockFlags::TopmostBlock); }
 
         //////////////////////////////////////////
+        inline bool isEmpty() const { return getParamsCount() == 0 && getDataBlocksCount() == 0; }
+
+        //////////////////////////////////////////
         inline SharedStringId getNameId() const { return m_nameIdAndFlags & 0xFFFFFF; }
 
         //////////////////////////////////////////
@@ -405,12 +408,40 @@ namespace Maze
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec4DB, Vec4DB);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Mat3DF, Mat3DF);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Mat4DF, Mat4DF);
-        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(CString, String);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(CString, CString);
 
 #undef MAZE_DECLARE_DATA_BLOCK_GET_SET_API_BASE
 #undef MAZE_DECLARE_DATA_BLOCK_GET_SET_API
 #undef MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF
+
+        //////////////////////////////////////////
+        String const& getString(ParamIndex _index) const;
+
+        //////////////////////////////////////////
+        String const& getString(HashedCString _name, String const& _defaultValue) const;
+
+        //////////////////////////////////////////
+        String const& getString(HashedCString _name) const;
+
+        //////////////////////////////////////////
+        String const& getStringByNameId(SharedStringId _nameId, String const& _defaultValue) const;
+
+        //////////////////////////////////////////
+        bool setString(ParamIndex _index, String const& _value);
+
+        //////////////////////////////////////////
+        ParamIndex setStringByNameId(SharedStringId _nameId, String const& _value);
+
+        //////////////////////////////////////////
+        ParamIndex setString(HashedCString _name, String const& _value);
+
+        //////////////////////////////////////////
+        ParamIndex addString(HashedCString _name, String const& _value);
+
+        //////////////////////////////////////////
+        ParamIndex addNewStringByNameId(SharedStringId _nameId, String const& _value);
     
+
         //////////////////////////////////////////
         ParamIndex findParamIndex(SharedStringId _nameId) const;
 
@@ -418,7 +449,7 @@ namespace Maze
         ParamIndex findParamIndexReverse(SharedStringId _nameId, ParamIndex _startBefore) const;
 
         //////////////////////////////////////////
-        inline bool isParamExists(HashedCString _name) const { return findParamIndex(getStringId(_name)) >= 0; }
+        inline bool isParamExists(HashedCString _name) const { return findParamIndex(getSharedStringId(_name)) >= 0; }
 
         //////////////////////////////////////////
         bool removeParam(HashedCString _name);
@@ -489,6 +520,9 @@ namespace Maze
         template <class TValue>
         inline TValue getParamValue(ParamIndex _index, TValue const& _defaultValue) const;
 
+        //////////////////////////////////////////        
+        inline String const& getParamValue(ParamIndex _index, String const& _defaultValue) const;
+
         //////////////////////////////////////////
         template <class TValue>
         inline TValue getParamValueByNameId(SharedStringId _nameId, TValue const &_defaultValue) const;
@@ -499,6 +533,10 @@ namespace Maze
 
         //////////////////////////////////////////
         inline CString getParamValueCString(ParamValue _value) const;
+
+        //////////////////////////////////////////
+        inline String const& getParamValueString(ParamValue _value) const;
+
 
 
         //////////////////////////////////////////
@@ -530,19 +568,25 @@ namespace Maze
         inline ParamIndex insertParamAt(ParamIndex _at, SharedStringId _nameId, TValue const& _value);
 
         //////////////////////////////////////////
+        inline ParamIndex insertParamAt(ParamIndex _at, SharedStringId _nameId, String const& _value);
+
+        //////////////////////////////////////////
         template <class TValue>
         inline ParamIndex addParamByNameId(SharedStringId _nameId, TValue const& _value);
+
+        //////////////////////////////////////////
+        inline ParamIndex addParamByNameId(SharedStringId _nameId, String const& _value);
 
 
 
         //////////////////////////////////////////
-        inline Param* getParamsPtr() { return (Param*)getMemoryBufferData(); }
+        inline Param* getParamsPtr() { return (Param*)getDataBufferData(); }
 
         //////////////////////////////////////////
         inline Param* getParamsEndPtr() { return getParamsPtr() + (Size)getParamsCount(); }
 
         //////////////////////////////////////////
-        inline Param const* getParamsPtr() const { return (Param const*)getMemoryBufferData(); }
+        inline Param const* getParamsPtr() const { return (Param const*)getDataBufferData(); }
 
         //////////////////////////////////////////
         inline Param const* getParamsEndPtr() const { return getParamsPtr() + (Size)getParamsCount(); }
@@ -560,38 +604,39 @@ namespace Maze
         template <class TValue>
         MAZE_FORCEINLINE static TValue castParamValue(U8 const* _value);
 
-        //////////////////////////////////////////
-        template <class TValue>
-        MAZE_FORCEINLINE TValue castParamValueCString(CString) const;
-
     private:
 
         //////////////////////////////////////////
         // DataBlocks private
 
         //////////////////////////////////////////
-        inline Size getDataBlocksOffset() const { return m_dataBuffer->getDataSize() - getDataBlocksCount() * sizeof(DataBlock*); }
+        inline Size getDataBlocksOffset() const
+        {
+            MAZE_ASSERT(m_dataBuffer);
+            return m_dataBuffer->getDataSize() - getDataBlocksCount() * sizeof(DataBlock*);
+        }
 
         //////////////////////////////////////////
-        inline DataBlock** getDataBlocksPtr() { return (DataBlock**)(getMemoryBufferData() + getDataBlocksOffset()); }
+        inline DataBlock** getDataBlocksPtr() { return (DataBlock**)(getDataBufferData() + getDataBlocksOffset()); }
 
         //////////////////////////////////////////
-        inline DataBlock const** getDataBlocksPtr() const { return (DataBlock const**)(getMemoryBufferData() + getDataBlocksOffset()); }
+        inline DataBlock const** getDataBlocksPtr() const { return (DataBlock const**)(getDataBufferData() + getDataBlocksOffset()); }
 
 
     protected:
 
         //////////////////////////////////////////
-        inline U8* getMemoryBufferData(Size _offs = 0u)
+        inline U8* getDataBufferData(Size _offs = 0u)
         {
-            MAZE_ASSERT(m_dataBuffer);
-            return m_dataBuffer->getDataUnsafe(_offs);
+            return ensureDataBuffer()->getDataUnsafe(_offs);
         }
 
         //////////////////////////////////////////
-        inline U8 const* getMemoryBufferData(Size _offs = 0u) const
+        inline U8 const* getDataBufferData(Size _offs = 0u) const
         {
-            MAZE_ASSERT(m_dataBuffer);
+            if (!m_dataBuffer)
+                return nullptr;
+
             return m_dataBuffer->getDataUnsafe(_offs);
         }
 
@@ -602,22 +647,28 @@ namespace Maze
         void deleteBuffers();
 
         //////////////////////////////////////////
+        inline DataBlockDataBuffer* ensureDataBuffer();
+
+        //////////////////////////////////////////
         U8* insertDataAt(U32 _at, Size _size, U8 const* _data);
 
         //////////////////////////////////////////
-        SharedStringId addString(HashedCString _name);
+        SharedStringId addSharedString(HashedCString _name);
 
         //////////////////////////////////////////
-        SharedStringId getStringId(HashedCString _name) const;
+        SharedStringId getSharedStringId(HashedCString _name) const;
 
         //////////////////////////////////////////
-        SharedStringId addString(CString _str, Size _length);
+        SharedStringId addSharedString(CString _str, Size _length);
 
         //////////////////////////////////////////
-        SharedStringId getStringId(CString _str, Size _length) const;
+        SharedStringId getSharedStringId(CString _str, Size _length) const;
 
         //////////////////////////////////////////
         CString getSharedCString(SharedStringId _nameId) const;
+
+        //////////////////////////////////////////
+        String const& getSharedString(SharedStringId _nameId) const;
 
         //////////////////////////////////////////
         HashedCString getSharedHashedCString(SharedStringId _nameId) const;

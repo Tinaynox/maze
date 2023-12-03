@@ -62,7 +62,6 @@ namespace Maze
         if (it != m_strings.end())
             return it->second;
 
-
         DataBlock::SharedStringId id = DataBlock::SharedStringId(++m_stringsIndexCounter);
         m_strings.emplace(_name, id);
         return id;

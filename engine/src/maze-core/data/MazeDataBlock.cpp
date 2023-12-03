@@ -117,7 +117,6 @@ namespace Maze
         : m_shared(MAZE_NEW(DataBlockShared))
     {
         m_nameIdAndFlags |= U32(DataBlockFlags::TopmostBlock);
-        createDataBuffer();
     }
 
     //////////////////////////////////////////
@@ -143,8 +142,7 @@ namespace Maze
     DataBlock::DataBlock(DataBlockShared* _shared, HashedCString _name)
         : m_shared(_shared)
     {
-        m_nameIdAndFlags |= addString(_name);
-        createDataBuffer();
+        m_nameIdAndFlags |= addSharedString(_name);
     }
 
     //////////////////////////////////////////
@@ -176,13 +174,18 @@ namespace Maze
     //////////////////////////////////////////
     Size DataBlock::getComplexParamsUsedSize() const
     {
+        if (!m_dataBuffer)
+            return 0;
+
         return m_dataBuffer->getDataSize() - (getBlocksUsedSize() + getParamsUsedSize());
     }
 
     //////////////////////////////////////////
     void DataBlock::clearParams()
     {
-        m_dataBuffer->erase(0, m_dataBuffer->getDataSize() - getBlocksUsedSize());
+        if (m_dataBuffer)
+            m_dataBuffer->erase(0, m_dataBuffer->getDataSize() - getBlocksUsedSize());
+
         m_paramsCount = 0;
     }
 
@@ -197,7 +200,9 @@ namespace Maze
         }
 
         m_shared->clear();
-        m_dataBuffer->clear();
+
+        if (m_dataBuffer)
+            m_dataBuffer->clear();
 
         m_paramsCount = 0;
         m_dataBlocksCount = 0;
@@ -214,7 +219,7 @@ namespace Maze
         for (ParamIndex i = 0, e = (ParamIndex)_from->getParamsCount(); i < e; ++i, ++paramPtr)
         {
             Param const& param = *paramPtr;
-            SharedStringId paramNameId = addString(_from->getSharedHashedCString(param.nameId));
+            SharedStringId paramNameId = addSharedString(_from->getSharedHashedCString(param.nameId));
             
             if (param.type == U32(DataBlockParamType::ParamString))
             {
@@ -227,7 +232,7 @@ namespace Maze
             {
                 Size size = c_dataBlockParamTypeInfo[param.type].size;
                 U8 const* paramData = (size <= MAZE_DATA_BLOCK_INPLACE_PARAM_SIZE) ? (U8 const*)&param.value
-                                                                                   : _from->getMemoryBufferData(_from->getParamsUsedSize() + param.value);
+                                                                                   : _from->getDataBufferData(_from->getParamsUsedSize() + param.value);
                 insertParamAt(
                     (ParamIndex)getParamsCount(),
                     paramNameId,
@@ -251,7 +256,7 @@ namespace Maze
         clearParams();
 
         m_paramsCount = _paramsCount;
-        m_dataBuffer->insertAt(0, _paramsDataSize, _paramsData);
+        ensureDataBuffer()->insertAt(0, _paramsDataSize, _paramsData);
     }
 
     //////////////////////////////////////////
@@ -371,7 +376,7 @@ namespace Maze
         if (c_dataBlockParamTypeInfo[param.type].size <= MAZE_DATA_BLOCK_INPLACE_PARAM_SIZE)
             return (U8 const*)(&value);
         else
-            return getMemoryBufferData(getParamsUsedSize() + value);
+            return getDataBufferData(getParamsUsedSize() + value);
     }
 
     //////////////////////////////////////////
@@ -430,29 +435,29 @@ namespace Maze
     //////////////////////////////////////////
     U8* DataBlock::insertDataAt(U32 _at, Size _size, U8 const* _data)
     {
-        return m_dataBuffer->insertAt(_at, _size, _data);
+        return ensureDataBuffer()->insertAt(_at, _size, _data);
     }
 
     //////////////////////////////////////////
-    DataBlock::SharedStringId DataBlock::addString(HashedCString _name)
+    DataBlock::SharedStringId DataBlock::addSharedString(HashedCString _name)
     {
         return m_shared->addString(_name);
     }
 
     //////////////////////////////////////////
-    DataBlock::SharedStringId DataBlock::getStringId(HashedCString _name) const
+    DataBlock::SharedStringId DataBlock::getSharedStringId(HashedCString _name) const
     {
         return m_shared->getStringId(_name);
     }
 
     //////////////////////////////////////////
-    DataBlock::SharedStringId DataBlock::addString(CString _str, Size _length)
+    DataBlock::SharedStringId DataBlock::addSharedString(CString _str, Size _length)
     {
         return m_shared->addString(_str, _length);
     }
 
     //////////////////////////////////////////
-    DataBlock::SharedStringId DataBlock::getStringId(CString _str, Size _length) const
+    DataBlock::SharedStringId DataBlock::getSharedStringId(CString _str, Size _length) const
     {
         return m_shared->getStringId(_str, _length);
     }
@@ -464,36 +469,42 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    String const& DataBlock::getSharedString(SharedStringId _nameId) const
+    {
+        return m_shared->getString(_nameId);
+    }
+
+    //////////////////////////////////////////
     HashedCString DataBlock::getSharedHashedCString(SharedStringId _nameId) const
     {
         return m_shared->getHashedCString(_nameId);
     }
 
     //////////////////////////////////////////
-#define MAZE_DECLARE_DATA_BLOCK_GET_SET_API_BASE(__DValueType, __DValueRefType, __typeName)                                     \
+#define MAZE_DECLARE_DATA_BLOCK_GET_SET_API_BASE(__DValueType, __DValueRefType, __typeName)                                       \
     __DValueType DataBlock::get##__typeName(DataBlock::ParamIndex _index) const                                                   \
     {                                                                                                                             \
-        return getParamValue<__DValueType>(_index);                                                                                    \
+        return getParamValue<__DValueType>(_index);                                                                               \
     }                                                                                                                             \
     __DValueType DataBlock::get##__typeName(HashedCString _name, __DValueRefType _defaultValue) const                             \
     {                                                                                                                             \
-        return getParamValueByName<__DValueType>(_name, _defaultValue);                                                                \
+        return getParamValueByName<__DValueType>(_name, _defaultValue);                                                           \
     }                                                                                                                             \
     __DValueType DataBlock::get##__typeName(HashedCString _name) const                                                            \
     {                                                                                                                             \
-        return getParamValueByName<__DValueType>(_name);                                                                               \
+        return getParamValueByName<__DValueType>(_name);                                                                          \
     }                                                                                                                             \
-    __DValueType DataBlock::get##__typeName##ByNameId(DataBlock::SharedStringId _nameId, __DValueRefType _defaultValue) const        \
+    __DValueType DataBlock::get##__typeName##ByNameId(DataBlock::SharedStringId _nameId, __DValueRefType _defaultValue) const     \
     {                                                                                                                             \
-        return getParamValueByNameId<__DValueType>(_nameId, _defaultValue);                                                            \
+        return getParamValueByNameId<__DValueType>(_nameId, _defaultValue);                                                       \
     }                                                                                                                             \
     bool DataBlock::set##__typeName(ParamIndex _index, __DValueRefType _value)                                                    \
     {                                                                                                                             \
-        if (_index >= (ParamIndex)getParamsCount())                                                                                           \
+        if (_index >= (ParamIndex)getParamsCount())                                                                               \
           return false;                                                                                                           \
         return setParam<__DValueType>(_index, _value);                                                                            \
     }                                                                                                                             \
-    DataBlock::ParamIndex DataBlock::set##__typeName##ByNameId(DataBlock::SharedStringId _nameId, __DValueRefType _value)            \
+    DataBlock::ParamIndex DataBlock::set##__typeName##ByNameId(DataBlock::SharedStringId _nameId, __DValueRefType _value)         \
     {                                                                                                                             \
         return setParamByNameId<__DValueType>(_nameId, _value);                                                                   \
     }                                                                                                                             \
@@ -505,7 +516,7 @@ namespace Maze
     {                                                                                                                             \
         return addParamByName<__DValueType>(_name, _value);                                                                       \
     }                                                                                                                             \
-    DataBlock::ParamIndex DataBlock::addNew##__typeName##ByNameId(DataBlock::SharedStringId _nameId, __DValueRefType _value)         \
+    DataBlock::ParamIndex DataBlock::addNew##__typeName##ByNameId(DataBlock::SharedStringId _nameId, __DValueRefType _value)      \
     {                                                                                                                             \
         return addParamByNameId<__DValueType>(_nameId, _value);                                                                   \
     }
@@ -534,11 +545,77 @@ namespace Maze
     MAZE_IMPLEMENT_DATA_BLOCK_GET_SET_API_REF(Vec4DB, Vec4DB);
     MAZE_IMPLEMENT_DATA_BLOCK_GET_SET_API_REF(Mat3DF, Mat3DF);
     MAZE_IMPLEMENT_DATA_BLOCK_GET_SET_API_REF(Mat4DF, Mat4DF);
-    MAZE_IMPLEMENT_DATA_BLOCK_GET_SET_API_REF(CString, String);
+    MAZE_IMPLEMENT_DATA_BLOCK_GET_SET_API_REF(CString, CString);
 
 #undef MAZE_IMPLEMENT_DATA_BLOCK_GET_SET_API_BASE
 #undef MAZE_IMPLEMENT_DATA_BLOCK_GET_SET_API
 #undef MAZE_IMPLEMENT_DATA_BLOCK_GET_SET_API_REF
+
+    //////////////////////////////////////////
+    String const& DataBlock::getString(ParamIndex _index) const
+    {
+        String const nullValue;
+        return getParamValue(_index, nullValue);
+    }
+
+    //////////////////////////////////////////
+    String const& DataBlock::getString(HashedCString _name, String const& _defaultValue) const
+    {
+        SharedStringId nameId = getSharedStringId(_name);
+        return nameId < 0 ? _defaultValue : getStringByNameId(nameId, _defaultValue);
+    }
+
+    //////////////////////////////////////////
+    String const& DataBlock::getString(HashedCString _name) const
+    {
+        String const nullValue;
+        return getString(_name, nullValue);
+    }
+
+    //////////////////////////////////////////
+    String const& DataBlock::getStringByNameId(SharedStringId _nameId, String const& _defaultValue) const
+    {
+        ParamIndex paramIdx = findParamIndex(_nameId);
+        return paramIdx < 0 ? _defaultValue : getString(paramIdx);
+    }
+
+    //////////////////////////////////////////
+    bool DataBlock::setString(ParamIndex _index, String const& _value)
+    {
+        if (_index >= (ParamIndex)getParamsCount())
+            return false;
+        return setParam<String const&>(_index, _value);
+    }
+
+    //////////////////////////////////////////
+    DataBlock::ParamIndex DataBlock::setStringByNameId(SharedStringId _nameId, String const& _value)
+    {
+        ParamIndex paramIdx = findParamIndex(_nameId);
+        if (paramIdx < 0)
+            return addParamByNameId(_nameId, _value);
+        setParam(paramIdx, _value);
+        return paramIdx;
+    }
+
+    //////////////////////////////////////////
+    DataBlock::ParamIndex DataBlock::setString(HashedCString _name, String const& _value)
+    {
+        SharedStringId nameId = addSharedString(_name);
+        return setStringByNameId(nameId, _value);
+    }
+
+    //////////////////////////////////////////
+    DataBlock::ParamIndex DataBlock::addString(HashedCString _name, String const& _value)
+    {
+        SharedStringId nameId = addSharedString(_name);
+        return addParamByNameId(nameId, _value);
+    }
+
+    //////////////////////////////////////////
+    DataBlock::ParamIndex DataBlock::addNewStringByNameId(SharedStringId _nameId, String const& _value)
+    {
+        return addParamByNameId(_nameId, _value);
+    }
 
     //////////////////////////////////////////
     bool DataBlock::removeParam(HashedCString _name)
@@ -546,7 +623,7 @@ namespace Maze
         if (m_paramsCount == 0)
             return false;
 
-        SharedStringId nameId = getStringId(_name);
+        SharedStringId nameId = getSharedStringId(_name);
         if (nameId == 0)
             return false;
 
@@ -571,7 +648,7 @@ namespace Maze
         if (_index >= (ParamIndex)m_paramsCount)
             return false;
 
-        m_dataBuffer->erase(_index * sizeof(Param), sizeof(Param));
+        ensureDataBuffer()->erase(_index * sizeof(Param), sizeof(Param));
         --m_paramsCount;
         return true;
     }
@@ -579,7 +656,7 @@ namespace Maze
     //////////////////////////////////////////
     DataBlock* DataBlock::getDataBlock(HashedCString _name)
     {
-        SharedStringId nameId = getStringId(_name);
+        SharedStringId nameId = getSharedStringId(_name);
         if (nameId == 0)
             return nullptr;
         return getDataBlockByNameId(nameId);
@@ -588,7 +665,7 @@ namespace Maze
     //////////////////////////////////////////
     DataBlock const* DataBlock::getDataBlock(HashedCString _name) const
     {
-        SharedStringId nameId = getStringId(_name);
+        SharedStringId nameId = getSharedStringId(_name);
         if (nameId == 0)
             return nullptr;
         return getDataBlockByNameId(nameId);
@@ -623,7 +700,7 @@ namespace Maze
     DataBlock* DataBlock::addNewDataBlock(HashedCString _name)
     {
         DataBlock* newBlock = new (m_shared->allocateDataBlock()) DataBlock(m_shared, _name);
-        insertDataAt(m_dataBuffer->getDataSize(), sizeof(DataBlock*), (U8 const*)&newBlock);
+        insertDataAt(ensureDataBuffer()->getDataSize(), sizeof(DataBlock*), (U8 const*)&newBlock);
         m_dataBlocksCount++;
         return newBlock;
     }
@@ -691,7 +768,7 @@ namespace Maze
     //////////////////////////////////////////
     bool DataBlock::isDataBlockExists(HashedCString _name) const
     {
-        SharedStringId nameId = getStringId(_name);
+        SharedStringId nameId = getSharedStringId(_name);
         if (nameId == 0)
             return false;
 
@@ -704,7 +781,7 @@ namespace Maze
         if (m_dataBlocksCount == 0)
             return false;
 
-        SharedStringId nameId = getStringId(_name);
+        SharedStringId nameId = getSharedStringId(_name);
         if (nameId == 0)
             return false;
 
@@ -731,7 +808,7 @@ namespace Maze
         DataBlock** dataBlock = getDataBlocksPtr() + _index;
         (*dataBlock)->~DataBlock();
         m_shared->freeDataBlock(*dataBlock);
-        m_dataBuffer->erase(U32((ptrdiff_t)getDataBlocksPtr() - (ptrdiff_t)getParamsPtr()), sizeof(DataBlock*));
+        ensureDataBuffer()->erase(U32((ptrdiff_t)getDataBlocksPtr() - (ptrdiff_t)getParamsPtr()), sizeof(DataBlock*));
         --m_dataBlocksCount;
         return true;
     }

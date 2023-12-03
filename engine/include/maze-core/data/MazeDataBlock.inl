@@ -103,13 +103,41 @@ namespace Maze
             return _defaultValue;
         }
 
-        if MAZE_CONSTEXPR14 ((U8)TypeOf<TValue>::type == (U8)DataBlockParamType::ParamString)
-            return castParamValueCString<TValue>(getParamValueCString(value));
-
         if MAZE_CONSTEXPR14 (sizeof(TValue) <= MAZE_DATA_BLOCK_INPLACE_PARAM_SIZE)
             return castParamValue<TValue, ParamValue>(value);
 
-        return castParamValue<TValue>(getMemoryBufferData(getParamsUsedSize() + value));
+        return castParamValue<TValue>(getDataBufferData(getParamsUsedSize() + value));
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline CString DataBlock::getParamValue(DataBlock::ParamIndex _index, CString const& _defaultValue) const
+    {
+        Param const& param = getParam(_index);
+        ParamValue const& value = param.value;
+
+        if ((U8)param.type != (U8)TypeOf<CString>::type)
+        {
+            MAZE_ERROR("Param type mismatch. Inner type: %d. Requested type: %d", (S32)param.type, TypeOf<CString>::type);
+            return _defaultValue;
+        }
+
+        return getParamValueCString(value);
+    }
+
+    //////////////////////////////////////////        
+    inline String const& DataBlock::getParamValue(ParamIndex _index, String const& _defaultValue) const
+    {
+        Param const& param = getParam(_index);
+        ParamValue const& value = param.value;
+
+        if ((U8)param.type != (U8)TypeOf<CString>::type)
+        {
+            MAZE_ERROR("Param type mismatch. Inner type: %d. Requested type: %d", (S32)param.type, TypeOf<CString>::type);
+            return _defaultValue;
+        }
+
+        return getParamValueString(value);
     }
 
     //////////////////////////////////////////
@@ -124,7 +152,7 @@ namespace Maze
     template <class TValue>
     inline TValue DataBlock::getParamValueByName(HashedCString _name, TValue const& _defaultValue) const
     {
-        SharedStringId nameId = getStringId(_name);
+        SharedStringId nameId = getSharedStringId(_name);
         return nameId < 0 ? _defaultValue : getParamValueByNameId(nameId, _defaultValue);
     }
 
@@ -132,6 +160,12 @@ namespace Maze
     inline CString DataBlock::getParamValueCString(ParamValue _value) const
     {
         return getSharedCString(_value);
+    }
+
+    //////////////////////////////////////////
+    inline String const& DataBlock::getParamValueString(ParamValue _value) const
+    {
+        return getSharedString(_value);
     }
 
     //////////////////////////////////////////
@@ -149,7 +183,7 @@ namespace Maze
         if (sizeof(TValue) <= MAZE_DATA_BLOCK_INPLACE_PARAM_SIZE)
             memcpy(&value, &_value, sizeof(TValue));
         else
-            memcpy(getMemoryBufferData(getParamsUsedSize() + value), &_value, sizeof(TValue));
+            memcpy(getDataBufferData(getParamsUsedSize() + value), &_value, sizeof(TValue));
 
         return true;
     }
@@ -168,7 +202,23 @@ namespace Maze
         ParamValue& value = param.value;
         Size length = _value ? strlen(_value) : 0;
 
-        value = addString(_value ? _value : "", length);
+        value = addSharedString(_value ? _value : "", length);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline bool DataBlock::setParam(DataBlock::ParamIndex _index, const String& _value)
+    {
+        Param& param = getParam(_index);
+        if ((U8)param.type != (U8)TypeOf<CString>::type)
+        {
+            MAZE_ERROR("Param type mismatch. Prev type: %d. New type: %d", (S32)param.type, TypeOf<CString>::type);
+            return false;
+        }
+
+        ParamValue& value = param.value;
+        value = addSharedString(_value.c_str(), _value.size());
         return true;
     }
 
@@ -187,7 +237,7 @@ namespace Maze
     template <class TValue>
     int DataBlock::setParamByName(HashedCString _name, TValue const& _value)
     {
-        SharedStringId nameId = addString(_name);
+        SharedStringId nameId = addSharedString(_name);
         return setParamByNameId<TValue>(nameId, _value);
     }
 
@@ -195,7 +245,7 @@ namespace Maze
     template <class TValue>
     int DataBlock::addParamByName(HashedCString _name, TValue const& _value)
     {
-        SharedStringId nameId = addString(_name);
+        SharedStringId nameId = addSharedString(_name);
         return addParamByNameId<TValue>(nameId, _value);
     }
 
@@ -207,6 +257,9 @@ namespace Maze
         Size _size,
         U8 const* _data)
     {
+        MAZE_ASSERT(_type != DataBlockParamType::None);
+        MAZE_ASSERT(_type != DataBlockParamType::ParamString);
+
         Param param;
         param.nameId = (U32)_nameId;
         param.type = (U32)_type;
@@ -244,7 +297,19 @@ namespace Maze
         Param param;
         param.nameId = (U32)_nameId;
         param.type = (U32)TypeOf<CString>::type;
-        param.value = addString(_value ? _value : "", _value ? strlen(_value) : 0);
+        param.value = addSharedString(_value ? _value : "", _value ? strlen(_value) : 0);
+        insertDataAt(_at * sizeof(Param), sizeof(Param), (U8 const*)&param);
+        ++m_paramsCount;
+        return _at;
+    }
+
+    //////////////////////////////////////////
+    inline DataBlock::ParamIndex DataBlock::insertParamAt(ParamIndex _at, SharedStringId _nameId, String const& _value)
+    {
+        Param param;
+        param.nameId = (U32)_nameId;
+        param.type = (U32)TypeOf<CString>::type;
+        param.value = addSharedString(_value.c_str(), _value.size());
         insertDataAt(_at * sizeof(Param), sizeof(Param), (U8 const*)&param);
         ++m_paramsCount;
         return _at;
@@ -258,11 +323,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    template <>
-    MAZE_FORCEINLINE CString DataBlock::castParamValueCString(CString _string) const
+    inline DataBlock::ParamIndex DataBlock::addParamByNameId(SharedStringId _nameId, String const& _value)
     {
-        return _string;
-    };
+        return insertParamAt((ParamIndex)getParamsCount(), _nameId, _value);
+    }
 
     //////////////////////////////////////////
     template <class TValue, class TFrom>
@@ -283,11 +347,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    template <class TValue>
-    MAZE_FORCEINLINE TValue DataBlock::castParamValueCString(CString) const
+    inline DataBlockDataBuffer* DataBlock::ensureDataBuffer()
     {
-        return TValue();
-    };
+        if (!m_dataBuffer)
+            createDataBuffer();
+        return m_dataBuffer;
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

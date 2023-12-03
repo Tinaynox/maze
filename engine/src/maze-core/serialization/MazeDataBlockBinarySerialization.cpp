@@ -58,7 +58,8 @@ namespace Maze
             // Params
             _stream << _dataBlock.getParamsCount();
             _stream << complexParamsUsedSize;
-            _stream.write(_dataBlock.getDataBuffer()->getDataUnsafe(), paramUsedSize + complexParamsUsedSize);
+            if (paramUsedSize + complexParamsUsedSize > 0)
+                _stream.write(_dataBlock.getDataBuffer()->getDataUnsafe(), paramUsedSize + complexParamsUsedSize);
 
             // Sub blocks
             _stream << _dataBlock.getDataBlocksCount();

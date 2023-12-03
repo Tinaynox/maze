@@ -162,7 +162,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API void WriteDataBlockText(
+        MAZE_CORE_API bool WriteDataBlockText(
             ByteBufferWriteStream& _stream,
             DataBlock const& _dataBlock,
             S32 _level,
@@ -178,23 +178,30 @@ namespace Maze
                     if (_size > 0)
                         _stream.write((U8 const*)c_space8, _size);
                 };
+
+            auto isNameIsSimple =
+                [](String const& _name)
+                {
+                    bool result = true;
+                    if (_name.empty())
+                        result = false;
+
+                    for (Size i = 0, e = _name.size(); i < e && result; ++i)
+                        result = IsDataBlockStringSimpleChar(_name[i]);
+
+                    return result;
+                };
             
 
             bool skipNextIndent = false;
 
+            // Params
             for (DataBlock::ParamIndex i = 0; i < (DataBlock::ParamIndex)_dataBlock.getParamsCount(); ++i)
             {
                 DataBlock::Param const& param = _dataBlock.getParam(i);
 
                 String const& name = _dataBlock.getShared()->getString(param.nameId);
-                bool nameIsSimple = true;
-
-
-                if (name.empty())
-                    nameIsSimple = false;
-
-                for (Size i = 0, e = name.size(); i < e && nameIsSimple; ++i)
-                    nameIsSimple = IsDataBlockStringSimpleChar(name[i]);
+                bool nameIsSimple = isNameIsSimple(name);
 
                 // Indent
                 if (_level > 0)
@@ -218,7 +225,7 @@ namespace Maze
                 _stream << "=";
                 if (param.type == U32(DataBlockParamType::ParamString))
                 {
-                    WriteComplexString(_stream, _dataBlock.getString(i));
+                    WriteComplexString(_stream, _dataBlock.getCString(i));
                 }
                 else
                 {
@@ -281,8 +288,72 @@ namespace Maze
 
                     _stream << buff;
                 }
-                writeEndOfLine();
+                if (_compact && _dataBlock.getParamsCount() == 1 && _dataBlock.getDataBlocksCount() == 0)
+                    _stream << ";";
+                else
+                {
+                    // TODO: Side comments
+
+                    writeEndOfLine();
+                }
             }
+
+            // Data Blocks
+            bool paramsBlocksSeparated = false;
+            for (DataBlock::DataBlockIndex i = 0, e = _dataBlock.getDataBlocksCount(); i < e; ++i)
+            {
+                DataBlock const* dataBlock = _dataBlock.getDataBlock(i);
+
+                String const& name = _dataBlock.getShared()->getString(dataBlock->getNameId());
+                bool nameIsSimple = isNameIsSimple(name);
+
+                // TODO: Comments
+
+                if (!_compact && !paramsBlocksSeparated)
+                {
+                    paramsBlocksSeparated = true;
+                    writeEndOfLine();
+                }
+
+                if (!_compact && _level > 0)
+                    writeIndent(_level * 2);
+
+                if (nameIsSimple)
+                    WriteSimpleString(_stream, name.c_str(), name.size());
+                else
+                    WriteComplexString(_stream, name.c_str(), name.size());
+
+                if (dataBlock->isEmpty())
+                {
+                    _stream.write("{}", 2);
+                    writeEndOfLine();
+                    continue;
+                }
+
+                // Opening bracket
+                _stream.write("\n", 1);
+                if (!_compact && _level > 0)
+                    writeIndent(_level * 2);
+                _stream.write("{", 1);
+
+                if (!(_compact && dataBlock->getParamsCount() == 1 && dataBlock->getDataBlocksCount() == 0))                
+                    writeEndOfLine();
+
+                if (!WriteDataBlockText(_stream, *dataBlock, _level + 1, _compact))
+                    return false;
+
+                // Closing bracket
+                if (!_compact && _level > 0)
+                    writeIndent(_level * 2);
+                _stream.write("}", 1);
+
+                writeEndOfLine();
+
+                if (i != e - 1 && !_compact)
+                    writeEndOfLine();
+            }
+
+            return true;
         }
         
         //////////////////////////////////////////

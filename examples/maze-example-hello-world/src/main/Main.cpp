@@ -69,7 +69,7 @@ void test()
         S32 ab = fileTest->getS32("some");
         Mat4DF ab2 = fileTest->getMat4DF("some2");
         Vec4DF ab3 = fileTest->getVec4DF("some3");
-        CString ab4 = fileTest->getString("some4");
+        String const& ab4 = fileTest->getString("some4");
         if (fileTest->getDataBlock("block1"))
         {
             S32 hhh = fileTest->getDataBlock("block1")->getS32("block1_param");
@@ -83,7 +83,8 @@ void test()
     test.addS32("some", 42);
     test.addMat4DF("some2", Mat4DF::c_identity);
     test.addVec4DF("some3", Vec4DF(1.0f, 2.0f, 3.0f, 4.0f));
-    test.addString("some4", "Hello world!");
+    //test.addCString("some4", "Hello world!");
+    test.setString("some4", "Hello world!");
 
     test.removeParam("some3");
 
@@ -91,10 +92,13 @@ void test()
     subBlock1->addS32("block1_param", 422);
     // test.removeBlock("block1");
 
+    DataBlock* subBlock11 = subBlock1->addDataBlock("block11");
+    subBlock11->addMat3DF("HEHEH", Mat3DF::c_identity);
+
     S32 b = test.getS32("some");
     Mat4DF b2 = test.getMat4DF("some2");
     Vec4DF b3 = test.getVec4DF("some3");
-    CString b4 = test.getString("some4");
+    CString b4 = test.getCString("some4");
 
     DataBlock* subBlock2 = test.addDataBlock("block2");
 
@@ -128,7 +132,7 @@ void test()
     S32 ab = dataBlock->getS32("some");
     Mat4DF ab2 = dataBlock->getMat4DF("some2");
     Vec4DF ab3 = dataBlock->getVec4DF("some3");
-    CString ab4 = dataBlock->getString("some4");
+    CString ab4 = dataBlock->getCString("some4");
     S32 hhh = dataBlock->getDataBlock("block1")->getS32("block1_param");
     //MAZE_DELETE(dataBlock);
 
@@ -139,7 +143,7 @@ void test()
     S32 qab = yyyBuffer.getS32("some");
     Mat4DF qab2 = yyyBuffer.getMat4DF("some2");
     Vec4DF qab3 = yyyBuffer.getVec4DF("some3");
-    CString qab4 = yyyBuffer.getString("some4");
+    CString qab4 = yyyBuffer.getCString("some4");
     S32 qhhh = yyyBuffer.getDataBlock("block1")->getS32("block1_param");
 
     /*
