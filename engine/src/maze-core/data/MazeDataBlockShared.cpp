@@ -79,7 +79,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    CString DataBlockShared::getCString(DataBlock::SharedStringId _index)
+    CString DataBlockShared::getCString(DataBlock::SharedStringId _index) const
     {
         for (auto it = m_strings.begin(), end = m_strings.end(); it != end; ++it)
             if (it->second == _index)
@@ -89,13 +89,25 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    HashedCString DataBlockShared::getHashedCString(DataBlock::SharedStringId _index)
+    HashedCString DataBlockShared::getHashedCString(DataBlock::SharedStringId _index) const
     {
         for (auto it = m_strings.begin(), end = m_strings.end(); it != end; ++it)
             if (it->second == _index)
                 return it.key();
 
         return HashedCString();
+    }
+
+    //////////////////////////////////////////
+    String const& DataBlockShared::getString(DataBlock::SharedStringId _index) const
+    {
+        static String nullValue;
+
+        for (auto it = m_strings.begin(), end = m_strings.end(); it != end; ++it)
+            if (it->second == _index)
+                return it->first;
+
+        return nullValue;
     }
 
     //////////////////////////////////////////

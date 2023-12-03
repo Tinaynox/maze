@@ -63,6 +63,22 @@ S32 SecondThreadEntry()
 //////////////////////////////////////////
 void test()
 {
+    DataBlock* fileTest = DataBlock::LoadBinaryFile("data.mzdata");
+    if (fileTest)
+    {
+        S32 ab = fileTest->getS32("some");
+        Mat4DF ab2 = fileTest->getMat4DF("some2");
+        Vec4DF ab3 = fileTest->getVec4DF("some3");
+        CString ab4 = fileTest->getString("some4");
+        if (fileTest->getDataBlock("block1"))
+        {
+            S32 hhh = fileTest->getDataBlock("block1")->getS32("block1_param");
+            int b = 0;
+        }
+        int a = 0;
+    }
+
+
     DataBlock test;
     test.addS32("some", 42);
     test.addMat4DF("some2", Mat4DF::c_identity);
@@ -85,14 +101,28 @@ void test()
 
     S32 block1_param = subBlock1->getS32("block1_param");
 
-    //ByteBuffer buffer;
-    //buffer.resize(5);
-    //buffer.setByte(0, 0);
-    //buffer.setByte(1, 1);
-    //buffer.setByte(2, 2);
-    //buffer.setByte(3, 3);
-    //buffer.setByte(4, 4);
-    //buffer.insert(2, 2);
+    /*
+    ByteBuffer buffer;
+    
+    buffer.append((U8)1);
+    buffer.append((U8)2);
+    buffer.append((U8)3);
+    buffer.append((U8)4);
+    buffer.append((U8)5);
+    buffer.append((U8)6);
+    buffer.append((U8)7);
+
+    buffer.resize(5);
+    buffer.setByte(0, 0);
+    buffer.setByte(1, 1);
+    buffer.setByte(2, 2);
+    buffer.setByte(3, 3);
+    buffer.setByte(4, 4);
+    buffer.insert(2, 2);
+
+    ByteBuffer buffer2;
+    buffer2 = std::move(buffer);
+    */
 
     DataBlock* dataBlock = test.duplicate();
     S32 ab = dataBlock->getS32("some");
@@ -102,8 +132,44 @@ void test()
     S32 hhh = dataBlock->getDataBlock("block1")->getS32("block1_param");
     //MAZE_DELETE(dataBlock);
 
-    ByteBufferPtr byteBuffer = dataBlock->saveToByteBuffer();
-    dataBlock->loadFromByteBuffer(*byteBuffer.get());
+    ByteBufferPtr byteBuffer = dataBlock->saveBinary();
+
+    DataBlock yyyBuffer;
+    yyyBuffer.loadBinary(*byteBuffer.get());
+    S32 qab = yyyBuffer.getS32("some");
+    Mat4DF qab2 = yyyBuffer.getMat4DF("some2");
+    Vec4DF qab3 = yyyBuffer.getVec4DF("some3");
+    CString qab4 = yyyBuffer.getString("some4");
+    S32 qhhh = yyyBuffer.getDataBlock("block1")->getS32("block1_param");
+
+    /*
+    for (Size i = 0; i < 2000; ++i)
+        yyyBuffer.addMat4DF(("Mat" + StringHelper::ToString(i)).c_str(), Mat4DF::c_identity);
+    */
+    yyyBuffer.setBool("Bool", true);
+    yyyBuffer.setS32("S32", S32_MAX);
+    yyyBuffer.setS64("S64", S64_MAX);
+    yyyBuffer.setU32("U32", U32_MAX);
+    yyyBuffer.setU64("U64", U64_MAX);
+    yyyBuffer.setF32("F32", F32_MAX);
+    yyyBuffer.setF64("F64", F64_MAX);
+    yyyBuffer.setVec2DS("Vec2DS", Vec2DS(8));
+    yyyBuffer.setVec3DS("Vec3DS", Vec3DS(9));
+    yyyBuffer.setVec4DS("Vec4DS", Vec4DS(10));
+    yyyBuffer.setVec2DU("Vec2DU", Vec2DU(11));
+    yyyBuffer.setVec3DU("Vec3DU", Vec3DU(12));
+    yyyBuffer.setVec4DU("Vec4DU", Vec4DU(13));
+    yyyBuffer.setVec2DF("Vec2DF", Vec2DF(14.0f));
+    yyyBuffer.setVec3DF("Vec3DF", Vec3DF(15.0f));
+    yyyBuffer.setVec4DF("Vec4DF", Vec4DF(16.0f));
+    yyyBuffer.setVec2DB("Vec2DB", Vec2DB(true));
+    yyyBuffer.setVec3DB("Vec3DB", Vec3DB(false));
+    yyyBuffer.setVec4DB("Vec4DB", Vec4DB(true));
+    yyyBuffer.setMat3DF("Mat3DF", Mat3DF::c_identity);
+    yyyBuffer.setMat4DF("Mat4DF", Mat4DF::c_identity);
+    
+    yyyBuffer.saveBinaryFile("data.mzdata");
+    yyyBuffer.saveTextFile("text.mzdata");
 
     int a = 0;
 }

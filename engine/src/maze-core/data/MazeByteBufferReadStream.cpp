@@ -81,10 +81,32 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ByteBufferReadStream::setOffset(Size _value)
+    bool ByteBufferReadStream::canRead(Size _size)
+    {
+        return m_offset + _size <= m_byteBuffer->getSize();
+    }
+
+    //////////////////////////////////////////
+    bool ByteBufferReadStream::setOffset(Size _value)
     {
         MAZE_ASSERT(m_byteBuffer);
-        m_offset = Math::Min(_value, m_byteBuffer->getSize());
+        if (_value <= m_byteBuffer->getSize())
+        {
+            m_offset = _value;
+            return true;
+        }
+        else
+        {
+            m_offset = m_byteBuffer->getSize();
+            return false;
+        }
+    }
+
+    //////////////////////////////////////////
+    U8 const* ByteBufferReadStream::getDataPointer() const
+    {
+        MAZE_ASSERT(m_byteBuffer);
+        return m_byteBuffer->getData() + m_offset;
     }
 
 

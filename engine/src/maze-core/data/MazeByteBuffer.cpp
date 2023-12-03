@@ -41,8 +41,6 @@ namespace Maze
     //
     //////////////////////////////////////////
     ByteBuffer::ByteBuffer(Size _size)
-        : m_data(nullptr)
-        , m_size(0)
     {
         resize(_size);
     }
@@ -72,9 +70,11 @@ namespace Maze
     ByteBuffer::ByteBuffer(ByteBuffer&& _byteBuffer) noexcept
         : m_data(std::move(_byteBuffer.m_data))
         , m_size(std::move(_byteBuffer.m_size))
+        , m_capacity(std::move(_byteBuffer.m_capacity))
     {
         _byteBuffer.m_data = nullptr;
         _byteBuffer.m_size = 0;
+        _byteBuffer.m_capacity = 0;
     }
 
     //////////////////////////////////////////
@@ -123,6 +123,7 @@ namespace Maze
         MAZE_DELETE_ARRAY(m_data);
         m_data = nullptr;
         m_size = 0;
+        m_capacity = 0;
     }
 
     //////////////////////////////////////////
@@ -133,22 +134,23 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ByteBuffer::reallocate(Size _size)
+    bool ByteBuffer::reallocate(Size _capacity)
     {
-        if (m_size == (U32)_size)
+        if (m_capacity == (U32)_capacity)
             return false;
 
-        if (_size == 0)
+        if (_capacity == 0)
         {
             clear();
             return false;
         }
 
-        m_size = (U32)_size;
+        m_capacity = (U32)_capacity;
+        m_size = Math::Min(m_size, m_capacity);
 
         try
         {
-            m_data = MAZE_NEW_ARRAY(U8, m_size);
+            m_data = MAZE_NEW_ARRAY(U8, m_capacity);
         }
         catch (std::bad_alloc const& e)
         {
@@ -160,19 +162,31 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ByteBuffer::resize(Size _size)
+    void ByteBuffer::reserve(Size _capacity)
     {
+        if (_capacity <= m_capacity)
+            return;
+
         U8* prevData = m_data;
         U32 prevSize = m_size;
 
-        if (!reallocate(_size))
+        if (!reallocate(_capacity))
             return;
-        
+
         if (prevData)
         {
-            std::memcpy(m_data, prevData, Math::Min(prevSize, m_size));
+            std::memcpy(m_data, prevData, m_size);
             MAZE_DELETE_ARRAY(prevData);
         }
+    }
+
+    //////////////////////////////////////////
+    void ByteBuffer::resize(Size _size)
+    {
+        if (_size > m_capacity)
+            reserve(_size);
+
+        m_size = _size;
     }
 
     //////////////////////////////////////////
@@ -180,18 +194,29 @@ namespace Maze
     {
         MAZE_ASSERT(_at <= m_size);
 
-        U8* prevData = m_data;
-        U32 prevSize = m_size;
+        U32 requiredSize = m_size + _size;
 
-        if (!reallocate(m_size + _size))
-            return nullptr;
-
-        if (prevData)
+        if (requiredSize <= m_capacity)
         {
-            std::memcpy(m_data, prevData, _at);
-            std::memcpy(m_data + _at + _size, prevData + _at, prevSize - _at);
-            MAZE_DELETE_ARRAY(prevData);
+            std::memmove(m_data + _at + _size, m_data + _at, m_size - _at);
         }
+        else
+        {
+            U8* prevData = m_data;
+            U32 prevSize = m_size;
+
+            if (!reallocate(Math::Max(requiredSize, m_capacity + (m_capacity >> 1) + 1)))
+                return nullptr;
+
+            if (prevData)
+            {
+                std::memcpy(m_data, prevData, _at);
+                std::memcpy(m_data + _at + _size, prevData + _at, prevSize - _at);
+                MAZE_DELETE_ARRAY(prevData);
+            }
+        }
+
+        m_size += _size;
 
         return m_data + _at;
     }
@@ -199,18 +224,25 @@ namespace Maze
     //////////////////////////////////////////
     void ByteBuffer::erase(U32 _at, Size _size)
     {
-        MAZE_ASSERT(_at + _size <= m_size);
+        if (_size == 0)
+            return;
+
+        MAZE_ASSERT(_at < m_size && _at + _size <= m_size);
 
         memmove(m_data + _at, m_data + _at + _size, m_size - (_at +_size));
-        resize(m_size - _size);
+        m_size -= _size;
     }
 
     //////////////////////////////////////////
     void ByteBuffer::append(U8 const* _data, Size _size)
     {
-        U32 prevSize = m_size;
-        resize(m_size + _size);
-        std::memcpy(m_data + prevSize, _data, _size);
+        U32 requiredSize = m_size + _size;
+
+        if (requiredSize > m_capacity)
+            reserve(Math::Max(requiredSize, m_capacity + (m_capacity >> 1) + 1));
+
+        std::memcpy(m_data + m_size, _data, _size);
+        m_size += _size;
     }
 
     //////////////////////////////////////////

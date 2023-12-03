@@ -40,6 +40,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    using Bool               = bool;
     using S8                 = char;
     using U8                 = unsigned char;
     using S16                = short;

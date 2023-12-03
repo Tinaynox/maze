@@ -57,6 +57,7 @@
 #include "maze-core/math/MazeMat3D.hpp"
 #include "maze-core/math/MazeMat4D.hpp"
 #include "maze-core/data/MazeHashedCString.hpp"
+#include "maze-core/utils/MazeClassInfo.hpp"
 
 
 //////////////////////////////////////////
@@ -68,10 +69,27 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    enum class MAZE_CORE_API DataBlockBinaryFlags : U32
+    {
+        CheckSumProtection = MAZE_BIT(0)
+    };
+
+
+    //////////////////////////////////////////
+    enum class MAZE_CORE_API DataBlockTextFlags : U32
+    {
+        Compact = MAZE_BIT(0)
+    };
+
+
+    //////////////////////////////////////////
     enum class MAZE_CORE_API DataBlockParamType : U8
     {
         None,
         ParamS32,
+        ParamS64,
+        ParamU32,
+        ParamU64,
         ParamF32,
         ParamF64,
         ParamBool,
@@ -94,29 +112,49 @@ namespace Maze
         MAX
     };
 
+
     //////////////////////////////////////////
-    Size const MAZE_CORE_API c_dataBlockParamTypeSize[(Size)DataBlockParamType::MAX] = 
+    struct MAZE_CORE_API DataBlockParamTypeInfo
     {
-        0u,
-        sizeof(S32),
-        sizeof(F32),
-        sizeof(F64),
-        sizeof(bool),
-        sizeof(Vec2DS),
-        sizeof(Vec3DS),
-        sizeof(Vec4DS),
-        sizeof(Vec2DU),
-        sizeof(Vec3DU),
-        sizeof(Vec4DU),
-        sizeof(Vec2DF),
-        sizeof(Vec3DF),
-        sizeof(Vec4DF),
-        sizeof(Vec2DB),
-        sizeof(Vec3DB),
-        sizeof(Vec4DB),
-        sizeof(Mat3DF),
-        sizeof(Mat4DF),
-        0u
+        //////////////////////////////////////////
+        DataBlockParamTypeInfo(
+            CString _name,
+            Size _size)
+            : name(_name)
+            , size(_size)
+        {}
+
+        CString name;
+        Size size;
+    };
+
+
+    //////////////////////////////////////////
+    DataBlockParamTypeInfo const MAZE_CORE_API c_dataBlockParamTypeInfo[(Size)DataBlockParamType::MAX] =
+    {
+        DataBlockParamTypeInfo("", 0u),
+        DataBlockParamTypeInfo("S32", sizeof(S32)),
+        DataBlockParamTypeInfo("S64", sizeof(S64)),
+        DataBlockParamTypeInfo("U32", sizeof(U32)),
+        DataBlockParamTypeInfo("U64", sizeof(U64)),
+        DataBlockParamTypeInfo("F32", sizeof(F32)),
+        DataBlockParamTypeInfo("F64", sizeof(F64)),
+        DataBlockParamTypeInfo("Bool", sizeof(Bool)),
+        DataBlockParamTypeInfo("Vec2DS", sizeof(Vec2DS)),
+        DataBlockParamTypeInfo("Vec3DS", sizeof(Vec3DS)),
+        DataBlockParamTypeInfo("Vec4DS", sizeof(Vec4DS)),
+        DataBlockParamTypeInfo("Vec2DU", sizeof(Vec2DU)),
+        DataBlockParamTypeInfo("Vec3DU", sizeof(Vec3DU)),
+        DataBlockParamTypeInfo("Vec4DU", sizeof(Vec4DU)),
+        DataBlockParamTypeInfo("Vec2DF", sizeof(Vec2DF)),
+        DataBlockParamTypeInfo("Vec3DF", sizeof(Vec3DF)),
+        DataBlockParamTypeInfo("Vec4DF", sizeof(Vec4DF)),
+        DataBlockParamTypeInfo("Vec2DB", sizeof(Vec2DB)),
+        DataBlockParamTypeInfo("Vec3DB", sizeof(Vec3DB)),
+        DataBlockParamTypeInfo("Vec4DB", sizeof(Vec4DB)),
+        DataBlockParamTypeInfo("Mat3DF", sizeof(Mat3DF)),
+        DataBlockParamTypeInfo("Mat4DF", sizeof(Mat4DF)),
+        DataBlockParamTypeInfo("String", 0u)
     };
 
 
@@ -213,6 +251,9 @@ namespace Maze
         static DataBlock* Create();
 
         //////////////////////////////////////////
+        static DataBlock* LoadBinaryFile(Path const& _path);
+
+        //////////////////////////////////////////
         DataBlock();
 
         //////////////////////////////////////////
@@ -275,19 +316,46 @@ namespace Maze
         void copyParamsFrom(DataBlock const* _from);
 
         //////////////////////////////////////////
+        void copyParamsFrom(U16 _paramsCount, U8 const* _paramsData, U32 _paramsDataSize);
+
+        //////////////////////////////////////////
         void copyFrom(DataBlock const* _from);
 
         //////////////////////////////////////////
         DataBlock* duplicate() const;
 
-        //////////////////////////////////////////
-        bool saveToByteBuffer(ByteBuffer& _byteBuffer) const;
 
         //////////////////////////////////////////
-        ByteBufferPtr saveToByteBuffer() const;
+        bool saveBinary(ByteBuffer& _byteBuffer, U32 _flags = 0u) const;
 
         //////////////////////////////////////////
-        bool loadFromByteBuffer(ByteBuffer const& _byteBuffer);
+        ByteBufferPtr saveBinary(U32 _flags = 0u) const;
+
+        //////////////////////////////////////////
+        bool loadBinary(ByteBuffer const& _byteBuffer);
+
+        //////////////////////////////////////////
+        bool saveBinaryFile(Path const& _path, U32 _flags = 0u) const;
+
+        //////////////////////////////////////////
+        bool loadBinaryFile(Path const& _path);
+
+
+        //////////////////////////////////////////
+        bool saveText(ByteBuffer& _byteBuffer, U32 _flags = 0u) const;
+
+        //////////////////////////////////////////
+        ByteBufferPtr saveText(U32 _flags = 0u) const;
+
+        //////////////////////////////////////////
+        bool loadText(ByteBuffer const& _byteBuffer);
+
+        //////////////////////////////////////////
+        bool saveTextFile(Path const& _path, U32 _flags = 0u) const;
+
+        //////////////////////////////////////////
+        bool loadTextFile(Path const& _path);
+
 
 
         //////////////////////////////////////////
@@ -295,6 +363,12 @@ namespace Maze
 
         //////////////////////////////////////////
         inline U16 getParamsCount() const { return m_paramsCount; }
+
+        //////////////////////////////////////////
+        Param const& getParam(ParamIndex _index) const;
+
+        //////////////////////////////////////////
+        U8 const* getParamData(ParamIndex _index) const;
 
 #define MAZE_DECLARE_DATA_BLOCK_GET_SET_API_BASE(__DValueType, __DValueRefType, __typeName)             \
   __DValueType get##__typeName(ParamIndex _index) const;                                                \
@@ -311,9 +385,12 @@ namespace Maze
 #define MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(__DValueType, __typeName) MAZE_DECLARE_DATA_BLOCK_GET_SET_API_BASE(__DValueType, __DValueType const&, __typeName)
 
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(S32, S32);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(S64, S64);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(U32, U32);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(U64, U64);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(F32, F32);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(F64, F64);
-        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(bool, Bool);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(Bool, Bool);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec2DS, Vec2DS);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec3DS, Vec3DS);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec4DS, Vec4DS);
@@ -421,8 +498,7 @@ namespace Maze
         inline TValue getParamValueByName(HashedCString _name, TValue const& _defaultValue = TValue()) const;
 
         //////////////////////////////////////////
-        template <class TValue>
-        inline TValue getParamValueString(ParamValue _value) const;
+        inline CString getParamValueCString(ParamValue _value) const;
 
 
         //////////////////////////////////////////
@@ -474,8 +550,6 @@ namespace Maze
         //////////////////////////////////////////
         Param& getParam(ParamIndex _index);
 
-        //////////////////////////////////////////
-        Param const& getParam(ParamIndex _index) const;
 
 
         //////////////////////////////////////////
@@ -488,7 +562,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <class TValue>
-        MAZE_FORCEINLINE TValue castParamValueString(CString) const;
+        MAZE_FORCEINLINE TValue castParamValueCString(CString) const;
 
     private:
 

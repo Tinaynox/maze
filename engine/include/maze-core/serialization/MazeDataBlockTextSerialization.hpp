@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeDataBlockHelper_hpp_))
-#define _MazeDataBlockHelper_hpp_
+#if (!defined(_MazeDataBlockTextSerialization_hpp_))
+#define _MazeDataBlockTextSerialization_hpp_
 
 
 //////////////////////////////////////////
@@ -40,15 +40,21 @@ namespace Maze
 {
 
     //////////////////////////////////////////
-    namespace DataBlockHelper
+    namespace DataBlockTextSerialization
     {
         //////////////////////////////////////////
-        MAZE_CORE_API bool SaveToByteBuffer(DataBlock const& _dataBlock, ByteBuffer& _buffer);
+        MAZE_CORE_API bool SaveText(DataBlock const& _dataBlock, ByteBuffer& _buffer, U32 _flags = 0);
 
         //////////////////////////////////////////
-        MAZE_CORE_API bool LoadFromByteBuffer(DataBlock& _dataBlock, ByteBuffer const& _buffer);
+        MAZE_CORE_API bool LoadText(DataBlock& _dataBlock, ByteBuffer const& _buffer);
 
-    } // namespace DataBlockHelper
+        //////////////////////////////////////////
+        MAZE_CORE_API bool SaveTextFile(DataBlock const& _dataBlock, Path const& _path, U32 _flags = 0);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API bool LoadTextFile(DataBlock& _dataBlock, Path const& _path);
+
+    } // namespace DataBlockTextSerialization
     //////////////////////////////////////////
     
     
@@ -56,5 +62,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeDataBlockHelper_hpp_
+#endif // _MazeDataBlockTextSerialization_hpp_
 //////////////////////////////////////////

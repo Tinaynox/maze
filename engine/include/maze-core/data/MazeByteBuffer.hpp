@@ -107,10 +107,13 @@ namespace Maze
         inline Size getSize() const { return m_size; }
 
         //////////////////////////////////////////
+        inline Size getCapacity() const { return m_capacity; }
+
+        //////////////////////////////////////////
         void clear();
 
         //////////////////////////////////////////
-        bool reallocate(Size _size);
+        void reserve(Size _capacity);
 
         //////////////////////////////////////////
         void resize(Size _size);
@@ -199,10 +202,9 @@ namespace Maze
         //////////////////////////////////////////
         inline ByteBuffer& operator=(ByteBuffer&& _v) noexcept
         {
-            m_data = std::move(_v.m_data);
-            m_size = std::move(_v.m_size);
-            _v.m_data = nullptr;
-            _v.m_size = 0;
+            std::swap(m_data, _v.m_data);
+            std::swap(m_size, _v.m_size);
+            std::swap(m_capacity, _v.m_capacity);
 
             return *this;
         }
@@ -259,9 +261,15 @@ namespace Maze
         //////////////////////////////////////////
         virtual ByteBufferPtr createCopy() MAZE_OVERRIDE;
 
+    private:
+
+        //////////////////////////////////////////
+        bool reallocate(Size _size);
+
     protected:
-        U8* m_data;
-        U32 m_size;
+        U8* m_data = nullptr;
+        U32 m_size = 0u;
+        U32 m_capacity = 0u;
     };
 
 

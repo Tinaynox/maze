@@ -25,40 +25,42 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeHashCRC_hpp_))
-#define _MazeHashCRC_hpp_
+#if (!defined(_MazeDataBlockBinarySerialization_hpp_))
+#define _MazeDataBlockBinarySerialization_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
-#include "maze-core/MazeBaseTypes.hpp"
-#include <fstream>
+#include "maze-core/MazeTypes.hpp"
+#include "maze-core/data/MazeDataBlock.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
+
     //////////////////////////////////////////
-    namespace Hash
+    namespace DataBlockBinarySerialization
     {
         //////////////////////////////////////////
-        MAZE_CORE_API U32 CalculateCRC32(Char const* _text, Size _length, U32 _crc = 0);
+        MAZE_CORE_API bool SaveBinary(DataBlock const& _dataBlock, ByteBuffer& _buffer, U32 _flags = 0);
 
         //////////////////////////////////////////
-        inline MAZE_CORE_API U32 CalculateCRC32(U8 const* _data, Size _length, U32 _crc = 0)
-        {
-            return CalculateCRC32((Char const*)_data, _length, _crc);
-        }
+        MAZE_CORE_API bool LoadBinary(DataBlock& _dataBlock, ByteBuffer const& _buffer);
 
         //////////////////////////////////////////
-        MAZE_CORE_API U32 CalculateCRC32(std::ifstream& _file, U32 _crc = 0);
-    
-    } // namespace Hash
+        MAZE_CORE_API bool SaveBinaryFile(DataBlock const& _dataBlock, Path const& _path, U32 _flags = 0);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API bool LoadBinaryFile(DataBlock& _dataBlock, Path const& _path);
+
+    } // namespace DataBlockBinarySerialization
     //////////////////////////////////////////
-
+    
+    
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeHashCRC_hpp_
+#endif // _MazeDataBlockBinarySerialization_hpp_
 //////////////////////////////////////////

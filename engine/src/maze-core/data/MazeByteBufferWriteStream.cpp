@@ -67,13 +67,39 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    Size ByteBufferWriteStream::getBufferSize() const
+    {
+        MAZE_ASSERT(m_byteBuffer);
+        return m_byteBuffer->getSize();
+    }
+
+    //////////////////////////////////////////
+    Size ByteBufferWriteStream::getBufferCapacity() const
+    {
+        MAZE_ASSERT(m_byteBuffer);
+        return m_byteBuffer->getSize();
+    }
+
+    //////////////////////////////////////////
+    void ByteBufferWriteStream::reserve(Size _size)
+    {
+        MAZE_ASSERT(m_byteBuffer);
+        m_byteBuffer->reserve(_size);
+    }
+
+    //////////////////////////////////////////
     void ByteBufferWriteStream::write(U8 const* _src, Size _size)
     {
         MAZE_ASSERT(m_byteBuffer);
 
         Size requiredSize = m_offset + _size;
         if (m_byteBuffer->getSize() < requiredSize)
+        {
+            if (requiredSize > m_byteBuffer->getCapacity())
+                reserve(Math::Max(requiredSize, m_byteBuffer->getCapacity() + (m_byteBuffer->getCapacity() >> 1) + 1));
+
             m_byteBuffer->resize(requiredSize);
+        }
 
         memcpy(m_byteBuffer->getDataPointer() + m_offset, _src, _size);
         m_offset += _size;

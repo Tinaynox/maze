@@ -75,20 +75,58 @@ namespace Maze
         //////////////////////////////////////////
         void setBuffer(ByteBuffer* _byteBuffer);
 
+        //////////////////////////////////////////
+        Size getBufferSize() const;
+
+        //////////////////////////////////////////
+        Size getBufferCapacity() const;
+
+        //////////////////////////////////////////
+        void reserve(Size _size);
+
 
         //////////////////////////////////////////
         void write(U8 const* _src, Size _size);
+
+        //////////////////////////////////////////
+        inline void write(CString _src, Size _size) { write((U8 const*)_src, _size); }
+
 
         //////////////////////////////////////////
         template <typename TValue>
         inline void write(TValue const& _value);
 
         //////////////////////////////////////////
+        template <Size TSize>
+        inline void write(S8 const(&_value)[TSize]);
+
+        //////////////////////////////////////////
+        template <>
+        inline void write(CString const& _value);
+
+
+
+        //////////////////////////////////////////
         template <typename TValue>
         inline ByteBufferWriteStream& operator<<(TValue const& _value);
 
+        /////////////////////////////////////////
+        template <Size TSize>
+        inline ByteBufferWriteStream& operator<<(S8 const(&_value)[TSize]);
+
+        /////////////////////////////////////////
+        template <>
+        inline ByteBufferWriteStream& operator<<(String const& _value);
+
+        /////////////////////////////////////////
+        template <>
+        inline ByteBufferWriteStream& operator<<(CString const& _value);
+
         //////////////////////////////////////////
         void setOffset(Size _value);
+
+        //////////////////////////////////////////
+        inline Size getOffset() const { return m_offset; }
 
     protected:
         ByteBuffer* m_byteBuffer;
@@ -100,8 +138,25 @@ namespace Maze
     template <typename TValue>
     inline void ByteBufferWriteStream::write(TValue const& _value)
     {
-        return write((U8 const*)&_value, sizeof(TValue));
+        write((U8 const*)&_value, sizeof(TValue));
     }
+
+    //////////////////////////////////////////
+    template <Size TSize>
+    inline void ByteBufferWriteStream::write(S8 const(&_value)[TSize])
+    {
+        Size size = strlen(_value);
+        write((U8 const*)_value, size);
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline void ByteBufferWriteStream::write(CString const& _value)
+    {
+        Size size = strlen(_value);
+        write((U8 const*)_value, size);
+    }
+
 
     //////////////////////////////////////////
     template <typename TValue>
@@ -111,6 +166,29 @@ namespace Maze
         return *this;
     }
 
+    /////////////////////////////////////////
+    template <Size TSize>
+    inline ByteBufferWriteStream& ByteBufferWriteStream::operator<<(S8 const(&_value)[TSize])
+    {
+        write(_value);
+        return *this;
+    }
+
+    /////////////////////////////////////////
+    template <>
+    inline ByteBufferWriteStream& ByteBufferWriteStream::operator<<(String const& _value)
+    {
+        write((U8 const*)&_value[0], _value.size());
+        return *this;
+    }
+
+    /////////////////////////////////////////
+    template <>
+    inline ByteBufferWriteStream& ByteBufferWriteStream::operator<<(CString const& _value)
+    {
+        write(_value);
+        return *this;
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

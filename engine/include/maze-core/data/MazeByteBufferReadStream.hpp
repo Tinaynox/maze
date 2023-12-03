@@ -84,11 +84,20 @@ namespace Maze
         inline Size read(TValue& _value);
 
         //////////////////////////////////////////
+        bool canRead(Size _size);
+
+        //////////////////////////////////////////
         template <typename TValue>
         inline ByteBufferReadStream& operator>>(TValue& _value);
 
         //////////////////////////////////////////
-        void setOffset(Size _value);
+        bool setOffset(Size _value);
+
+        //////////////////////////////////////////
+        inline Size getOffset() const { return m_offset; }
+
+        //////////////////////////////////////////
+        U8 const* getDataPointer() const;
 
     protected:
         ByteBuffer const* m_byteBuffer;

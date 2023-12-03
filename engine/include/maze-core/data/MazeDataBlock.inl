@@ -38,6 +38,12 @@ namespace Maze
     template <>
     struct DataBlock::TypeOf<S32> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamS32; };
     template <>
+    struct DataBlock::TypeOf<S64> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamS64; };
+    template <>
+    struct DataBlock::TypeOf<U32> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamU32; };
+    template <>
+    struct DataBlock::TypeOf<U64> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamU64; };
+    template <>
     struct DataBlock::TypeOf<F32> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamF32; };
     template <>
     struct DataBlock::TypeOf<F64> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamF64; };
@@ -56,7 +62,7 @@ namespace Maze
     template <>
     struct DataBlock::TypeOf<Vec4DU> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec4DU; };
     template <>
-    struct DataBlock::TypeOf<Vec2DF> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec2DU; };
+    struct DataBlock::TypeOf<Vec2DF> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec2DF; };
     template <>
     struct DataBlock::TypeOf<Vec3DF> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec3DF; };
     template <>
@@ -98,7 +104,7 @@ namespace Maze
         }
 
         if MAZE_CONSTEXPR14 ((U8)TypeOf<TValue>::type == (U8)DataBlockParamType::ParamString)
-            return getParamValueString<TValue>(value);
+            return castParamValueCString<TValue>(getParamValueCString(value));
 
         if MAZE_CONSTEXPR14 (sizeof(TValue) <= MAZE_DATA_BLOCK_INPLACE_PARAM_SIZE)
             return castParamValue<TValue, ParamValue>(value);
@@ -123,10 +129,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    template <class TValue>
-    inline TValue DataBlock::getParamValueString(ParamValue _value) const
+    inline CString DataBlock::getParamValueCString(ParamValue _value) const
     {
-        return castParamValueString<TValue>(getSharedCString(_value));
+        return getSharedCString(_value);
     }
 
     //////////////////////////////////////////
@@ -254,7 +259,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <>
-    MAZE_FORCEINLINE CString DataBlock::castParamValueString(CString _string) const
+    MAZE_FORCEINLINE CString DataBlock::castParamValueCString(CString _string) const
     {
         return _string;
     };
@@ -279,7 +284,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    MAZE_FORCEINLINE TValue DataBlock::castParamValueString(CString) const
+    MAZE_FORCEINLINE TValue DataBlock::castParamValueCString(CString) const
     {
         return TValue();
     };

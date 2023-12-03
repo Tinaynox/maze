@@ -37,10 +37,10 @@
 #include "maze-core/services/MazeLogService.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/encoding/MazeEncodingBase64.hpp"
-#include "maze-core/serialization/MazeValueSerialization.hpp"
 #include "maze-core/data/MazeDataBlockShared.hpp"
 #include "maze-core/math/MazeMath.hpp"
-#include "maze-core/helpers/MazeDataBlockHelper.hpp"
+#include "maze-core/serialization/MazeDataBlockBinarySerialization.hpp"
+#include "maze-core/serialization/MazeDataBlockTextSerialization.hpp"
 
 
 //////////////////////////////////////////
@@ -94,6 +94,22 @@ namespace Maze
     DataBlock* DataBlock::Create()
     {
         return MAZE_NEW(DataBlock);
+    }
+
+    //////////////////////////////////////////
+    DataBlock* DataBlock::LoadBinaryFile(Path const& _path)
+    {
+        DataBlock* block = Create();
+        if (!block)
+            return nullptr;
+
+        if (!block->loadBinaryFile(_path))
+        {
+            MAZE_DELETE(block);
+            return nullptr;
+        }
+
+        return block;
     }
 
     //////////////////////////////////////////
@@ -205,11 +221,11 @@ namespace Maze
                 insertParamAt<CString>(
                     (ParamIndex)getParamsCount(),
                     paramNameId,
-                    _from->getParamValueString<CString>(param.value));
+                    _from->getParamValueCString(param.value));
             }
             else
             {
-                Size size = c_dataBlockParamTypeSize[param.type];
+                Size size = c_dataBlockParamTypeInfo[param.type].size;
                 U8 const* paramData = (size <= MAZE_DATA_BLOCK_INPLACE_PARAM_SIZE) ? (U8 const*)&param.value
                                                                                    : _from->getMemoryBufferData(_from->getParamsUsedSize() + param.value);
                 insertParamAt(
@@ -227,6 +243,15 @@ namespace Maze
     {
         clearParams();
         appendParamsFrom(_from);
+    }
+
+    //////////////////////////////////////////
+    void DataBlock::copyParamsFrom(U16 _paramsCount, U8 const* _paramsData, U32 _paramsDataSize)
+    {
+        clearParams();
+
+        m_paramsCount = _paramsCount;
+        m_dataBuffer->insertAt(0, _paramsDataSize, _paramsData);
     }
 
     //////////////////////////////////////////
@@ -252,26 +277,74 @@ namespace Maze
         return newBlock;
     }
 
+
     //////////////////////////////////////////
-    bool DataBlock::saveToByteBuffer(ByteBuffer& _byteBuffer) const
+    bool DataBlock::saveBinary(ByteBuffer& _byteBuffer, U32 _flags) const
     {
-        return DataBlockHelper::SaveToByteBuffer(*this, _byteBuffer);
+        return DataBlockBinarySerialization::SaveBinary(*this, _byteBuffer, _flags);
     }
 
     //////////////////////////////////////////
-    ByteBufferPtr DataBlock::saveToByteBuffer() const
+    ByteBufferPtr DataBlock::saveBinary(U32 _flags) const
     {
         ByteBufferPtr byteBuffer = ByteBuffer::Create();
-        if (!saveToByteBuffer(*byteBuffer.get()))
+        if (!saveBinary(*byteBuffer.get(), _flags))
             return nullptr;
         return byteBuffer;
     }
 
     //////////////////////////////////////////
-    bool DataBlock::loadFromByteBuffer(ByteBuffer const& _byteBuffer)
+    bool DataBlock::loadBinary(ByteBuffer const& _byteBuffer)
     {
-        return DataBlockHelper::LoadFromByteBuffer(*this, _byteBuffer);
+        return DataBlockBinarySerialization::LoadBinary(*this, _byteBuffer);
     }
+
+    //////////////////////////////////////////
+    bool DataBlock::saveBinaryFile(Path const& _path, U32 _flags) const
+    {
+        return DataBlockBinarySerialization::SaveBinaryFile(*this, _path, _flags);
+    }
+
+    //////////////////////////////////////////
+    bool DataBlock::loadBinaryFile(Path const& _path)
+    {
+        return DataBlockBinarySerialization::LoadBinaryFile(*this, _path);
+    }
+
+
+    //////////////////////////////////////////
+    bool DataBlock::saveText(ByteBuffer& _byteBuffer, U32 _flags) const
+    {
+        return DataBlockTextSerialization::SaveText(*this, _byteBuffer, _flags);
+    }
+
+    //////////////////////////////////////////
+    ByteBufferPtr DataBlock::saveText(U32 _flags) const
+    {
+        ByteBufferPtr byteBuffer = ByteBuffer::Create();
+        if (!saveText(*byteBuffer.get(), _flags))
+            return nullptr;
+        return byteBuffer;
+    }
+
+    //////////////////////////////////////////
+    bool DataBlock::loadText(ByteBuffer const& _byteBuffer)
+    {
+        return DataBlockTextSerialization::LoadText(*this, _byteBuffer);
+    }
+
+    //////////////////////////////////////////
+    bool DataBlock::saveTextFile(Path const& _path, U32 _flags) const
+    {
+        return DataBlockTextSerialization::SaveTextFile(*this, _path, _flags);
+    }
+
+    //////////////////////////////////////////
+    bool DataBlock::loadTextFile(Path const& _path)
+    {
+        return DataBlockTextSerialization::LoadTextFile(*this, _path);
+    }
+
 
     //////////////////////////////////////////
     DataBlock::Param& DataBlock::getParam(ParamIndex _index)
@@ -285,6 +358,20 @@ namespace Maze
     {
         MAZE_ASSERT(_index < (ParamIndex)getParamsCount());
         return getParamsPtr()[_index];
+    }
+
+    //////////////////////////////////////////
+    U8 const* DataBlock::getParamData(ParamIndex _index) const
+    {
+        DataBlock::Param const& param = getParam(_index);
+        ParamValue const& value = param.value;
+        if (param.type == U32(DataBlockParamType::ParamString))
+            return (U8 const*)getSharedCString(value);
+        
+        if (c_dataBlockParamTypeInfo[param.type].size <= MAZE_DATA_BLOCK_INPLACE_PARAM_SIZE)
+            return (U8 const*)(&value);
+        else
+            return getMemoryBufferData(getParamsUsedSize() + value);
     }
 
     //////////////////////////////////////////
@@ -427,9 +514,12 @@ namespace Maze
 #define MAZE_IMPLEMENT_DATA_BLOCK_GET_SET_API_REF(__DValueType, __typeName) MAZE_DECLARE_DATA_BLOCK_GET_SET_API_BASE(__DValueType, __DValueType const&, __typeName)
 
     MAZE_IMPLEMENT_DATA_BLOCK_GET_SET_API_VAL(S32, S32);
+    MAZE_IMPLEMENT_DATA_BLOCK_GET_SET_API_VAL(S64, S64);
+    MAZE_IMPLEMENT_DATA_BLOCK_GET_SET_API_VAL(U32, U32);
+    MAZE_IMPLEMENT_DATA_BLOCK_GET_SET_API_VAL(U64, U64);
     MAZE_IMPLEMENT_DATA_BLOCK_GET_SET_API_VAL(F32, F32);
     MAZE_IMPLEMENT_DATA_BLOCK_GET_SET_API_VAL(F64, F64);
-    MAZE_IMPLEMENT_DATA_BLOCK_GET_SET_API_VAL(bool, Bool);
+    MAZE_IMPLEMENT_DATA_BLOCK_GET_SET_API_VAL(Bool, Bool);
     MAZE_IMPLEMENT_DATA_BLOCK_GET_SET_API_REF(Vec2DS, Vec2DS);
     MAZE_IMPLEMENT_DATA_BLOCK_GET_SET_API_REF(Vec3DS, Vec3DS);
     MAZE_IMPLEMENT_DATA_BLOCK_GET_SET_API_REF(Vec4DS, Vec4DS);

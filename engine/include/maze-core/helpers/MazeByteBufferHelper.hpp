@@ -25,40 +25,35 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeHashCRC_hpp_))
-#define _MazeHashCRC_hpp_
+#if (!defined(_MazeByteBufferHelper_hpp_))
+#define _MazeByteBufferHelper_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
-#include "maze-core/MazeBaseTypes.hpp"
-#include <fstream>
+#include "maze-core/MazeTypes.hpp"
+#include "maze-core/data/MazeByteBuffer.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    namespace Hash
+    namespace ByteBufferHelper
     {
         //////////////////////////////////////////
-        MAZE_CORE_API U32 CalculateCRC32(Char const* _text, Size _length, U32 _crc = 0);
+        MAZE_CORE_API bool SaveBinaryFile(ByteBuffer const& _byteBuffer, Path const& _path);
 
         //////////////////////////////////////////
-        inline MAZE_CORE_API U32 CalculateCRC32(U8 const* _data, Size _length, U32 _crc = 0)
-        {
-            return CalculateCRC32((Char const*)_data, _length, _crc);
-        }
+        MAZE_CORE_API bool LoadBinaryFile(ByteBuffer& _byteBuffer, Path const& _path);
 
-        //////////////////////////////////////////
-        MAZE_CORE_API U32 CalculateCRC32(std::ifstream& _file, U32 _crc = 0);
-    
-    } // namespace Hash
+    } // namespace ByteBufferHelper
     //////////////////////////////////////////
-
+    
+    
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeHashCRC_hpp_
+#endif // _MazeByteBufferHelper_hpp_
 //////////////////////////////////////////

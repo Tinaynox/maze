@@ -90,9 +90,9 @@
     
 
 //////////////////////////////////////////
-#define MAZE_BIT(__bit)                                     (1 << (__bit))
 #define MAZE_BIT_S32(__bit)                                 (1 << (__bit))
 #define MAZE_BIT_U32(__bit)                                 (1u << (__bit))
+#define MAZE_BIT(__bit)                                     MAZE_BIT_S32(__bit)
     
     
 //////////////////////////////////////////

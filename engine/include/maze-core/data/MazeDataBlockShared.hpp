@@ -100,10 +100,13 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        CString getCString(DataBlock::SharedStringId _index);
+        CString getCString(DataBlock::SharedStringId _index) const;
 
         //////////////////////////////////////////
-        HashedCString getHashedCString(DataBlock::SharedStringId _index);
+        HashedCString getHashedCString(DataBlock::SharedStringId _index) const;
+
+        //////////////////////////////////////////
+        String const& getString(DataBlock::SharedStringId _index) const;
 
 
         //////////////////////////////////////////
