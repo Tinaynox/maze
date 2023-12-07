@@ -228,7 +228,7 @@ namespace Maze
     {
         // #TODO Don't copy string, use StringView or CString
         String s(_data, _count);
-        if (StringHelper::IsF32Number(s))
+        if (StringHelper::IsFloatNumber(s))
             _value = StringHelper::StringToF32(s);
         else
             _value = 0.0f;

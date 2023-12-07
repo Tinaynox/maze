@@ -62,6 +62,33 @@ namespace Maze
         return -1;
     }
 
+    //////////////////////////////////////////
+    MAZE_CORE_API static inline StringKeyMap<DataBlockParamType> ConstructDataBlockParamTypeByName()
+    {
+        StringKeyMap<DataBlockParamType> result;
+
+        for (Size i = 0; i < (Size)DataBlockParamType::MAX; ++i)
+        {
+            DataBlockParamTypeInfo const& info = c_dataBlockParamTypeInfo[i];
+            result.insert(info.name, DataBlockParamType(i));
+        }
+
+        return result;
+    }
+
+    //////////////////////////////////////////
+    StringKeyMap<DataBlockParamType> const MAZE_CORE_API c_dataBlockParamTypeByName = ConstructDataBlockParamTypeByName();
+
+    //////////////////////////////////////////
+    MAZE_CORE_API DataBlockParamType GetDataBlockParamType(HashedCString _name)
+    {
+        auto it = c_dataBlockParamTypeByName.find(_name);
+        if (it != c_dataBlockParamTypeByName.end())
+            return it->second;
+        
+        return DataBlockParamType::None;
+    }
+
 
     //////////////////////////////////////////
     // DataBlockDataBuffer
@@ -104,6 +131,22 @@ namespace Maze
             return nullptr;
 
         if (!block->loadBinaryFile(_path))
+        {
+            MAZE_DELETE(block);
+            return nullptr;
+        }
+
+        return block;
+    }
+
+    //////////////////////////////////////////
+    DataBlock* DataBlock::LoadTextFile(Path const& _path)
+    {
+        DataBlock* block = Create();
+        if (!block)
+            return nullptr;
+
+        if (!block->loadTextFile(_path))
         {
             MAZE_DELETE(block);
             return nullptr;
@@ -377,6 +420,12 @@ namespace Maze
             return (U8 const*)(&value);
         else
             return getDataBufferData(getParamsUsedSize() + value);
+    }
+
+    //////////////////////////////////////////
+    DataBlockParamType DataBlock::getParamType(ParamIndex _index) const
+    {
+        return _index < (ParamIndex)getParamsCount() ? (DataBlockParamType)getParam(_index).type : DataBlockParamType::None;
     }
 
     //////////////////////////////////////////

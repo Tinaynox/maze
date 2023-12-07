@@ -38,6 +38,7 @@
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/services/MazeLogService.hpp"
+#include "maze-core/data/MazeSpan.hpp"
 #include <cstring>
 #include <cctype>
 #include <cstdio>
@@ -258,58 +259,73 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline bool IsF32Number(StdString const& _s) noexcept
+        inline bool IsFloatNumber(CString _s, Size _size) noexcept
         {
-            if (_s.empty())
+            if (_s == 0 || _size == 0)
                 return false;
 
-            StdString::const_iterator begin = _s.begin();
+            Char const* __restrict it = _s;
+            Char const* __restrict end = _s + _size;
 
-            if (*begin == '-')
-                ++begin;
+            if (it == end)
+                return false;
+
+            if (*it == '-')
+                ++it;
+
+            if (it == end)
+                return false;
 
             S32 point = 1;
-            return  std::find_if(
-                begin,
-                _s.end(),
+            return std::find_if(
+                it,
+                end,
                 [&point](S8 _c)
-            {
-                if (_c == '.' && point == 1)
                 {
-                    point++;
-                    return false;
-                }
-                return !std::isdigit(_c);
-            }) == _s.end();
+                    if (_c == '.' && point == 1)
+                    {
+                        point++;
+                        return false;
+                    }
+                    return !std::isdigit(_c);
+                }) == end;
         }
 
         //////////////////////////////////////////
-        inline bool IsF32Number(String const& _s) noexcept
+        inline bool IsFloatNumber(CString _s) noexcept
         {
-            if (_s.empty())
+            if (_s == 0 || *_s == 0)
                 return false;
 
-            String::const_iterator begin = _s.begin();
+            CString it = _s;
 
-            if (*begin == '-')
-                ++begin;
-
-            if (begin == _s.end())
-                return false;
+            if (*it == '-')
+                ++it;
 
             S32 point = 1;
-            return  std::find_if(
-                begin,
-                _s.end(),
-                [&point](S8 _c)
+            for (; *it; it++)
             {
-                if (_c == '.' && point == 1)
+                if (*it == '.' && point == 1)
                 {
                     point++;
-                    return false;
+                    continue;
                 }
-                return !std::isdigit(_c);
-            }) == _s.end();
+                if (!std::isdigit(*it))
+                    return false;
+            }
+            return true;
+        }
+
+        //////////////////////////////////////////
+        inline bool IsFloatNumber(StdString const& _s) noexcept
+        {
+            return IsFloatNumber(&_s[0], _s.size());
+        }
+
+        //////////////////////////////////////////
+        inline bool IsFloatNumber(String const& _s) noexcept
+        {
+            return IsFloatNumber(&_s[0], _s.size());
         }
 
         //////////////////////////////////////////
@@ -436,7 +452,7 @@ namespace Maze
         //////////////////////////////////////////
         inline U64 StringToU64(CString _str) noexcept
         {
-            return static_cast<U64>(std::atoll(_str));
+            return static_cast<U64>(std::strtoull(_str, nullptr, 10));
         }
 
         //////////////////////////////////////////
@@ -464,6 +480,15 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline F32 StringToF32Safe(CString _str) noexcept
+        {
+            if (!IsFloatNumber(_str))
+                return 0.0f;
+
+            return static_cast<F32>(std::atof(_str));
+        }
+
+        //////////////////////////////////////////
         inline F32 StringToF32(StdString const& _str) noexcept
         {
             return _str.empty() ? 0.0f : std::stof(_str);
@@ -481,7 +506,7 @@ namespace Maze
         //////////////////////////////////////////
         inline F32 StringToF32Safe(String const& _str) noexcept
         {
-            if (_str.empty() || !IsF32Number(_str))
+            if (_str.empty() || !IsFloatNumber(_str))
                 return 0.0f;
 
             return std::stof(_str.c_str());
@@ -491,6 +516,15 @@ namespace Maze
         inline F64 StringToF64(CString _str) noexcept
         {
             return _str ? std::atof(_str) : 0.0;
+        }
+
+        //////////////////////////////////////////
+        inline F64 StringToF64Safe(CString _str) noexcept
+        {
+            if (!IsFloatNumber(_str))
+                return 0.0;
+
+            return std::atof(_str);
         }
 
         //////////////////////////////////////////
@@ -876,6 +910,25 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline void SplitWords(CString _line, Vector<ConstSpan<Char>>& _words, Char _separator = ' ') noexcept
+        {
+            _words.clear();
+            Size prevPos = 0;
+
+            Char const* it = _line;
+
+            for (; *it; it++)
+            {
+                if (*it == _separator)
+                {
+                    _words.emplace_back(_line + prevPos, it - _line);
+                    prevPos = it - _line + 1;
+                }
+            }
+            _words.emplace_back(_line + prevPos, it - (_line + prevPos));
+        }
+
+        //////////////////////////////////////////
         template <typename TString, typename TChar = typename TString::value_type>
         inline void SplitWords(TString const& _line, Vector<TString>& _words, TChar _separator = ' ') noexcept
         {
@@ -883,7 +936,7 @@ namespace Maze
             Size pos = 0;
             Size prevPos = 0;
 
-            while ((pos = _line.find_first_of(_separator, pos)) != String::npos)
+            while ((pos = _line.find_first_of(_separator, pos)) != TString::npos)
             {
                 _words.emplace_back(
                     _line.substr(prevPos, pos - prevPos));

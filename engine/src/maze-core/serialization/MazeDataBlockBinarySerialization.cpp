@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
 #include "maze-core/serialization/MazeDataBlockBinarySerialization.hpp"
+#include "maze-core/serialization/MazeDataBlockSerializationUtils.hpp"
 #include "maze-core/data/MazeDataBlockShared.hpp"
 #include "maze-core/data/MazeByteBufferWriteStream.hpp"
 #include "maze-core/data/MazeByteBufferReadStream.hpp"
@@ -88,7 +89,7 @@ namespace Maze
             if (!_stream.canRead(paramsAndComplexParamsSize))
                 return false;
 
-            _dataBlock.copyParamsFrom(paramsCount, _stream.getDataPointer(), paramsAndComplexParamsSize);
+            _dataBlock.copyParamsFrom(paramsCount, _stream.getData() + _stream.getOffset(), paramsAndComplexParamsSize);
             _stream.setOffset(_stream.getOffset() + paramsAndComplexParamsSize);
 
             // Sub blocks

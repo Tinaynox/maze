@@ -118,13 +118,13 @@ namespace Maze
     {
         //////////////////////////////////////////
         DataBlockParamTypeInfo(
-            CString _name,
+            HashedCString _name,
             Size _size)
             : name(_name)
             , size(_size)
         {}
 
-        CString name;
+        HashedCString name;
         Size size;
     };
 
@@ -132,30 +132,34 @@ namespace Maze
     //////////////////////////////////////////
     DataBlockParamTypeInfo const MAZE_CORE_API c_dataBlockParamTypeInfo[(Size)DataBlockParamType::MAX] =
     {
-        DataBlockParamTypeInfo("", 0u),
-        DataBlockParamTypeInfo("S32", sizeof(S32)),
-        DataBlockParamTypeInfo("S64", sizeof(S64)),
-        DataBlockParamTypeInfo("U32", sizeof(U32)),
-        DataBlockParamTypeInfo("U64", sizeof(U64)),
-        DataBlockParamTypeInfo("F32", sizeof(F32)),
-        DataBlockParamTypeInfo("F64", sizeof(F64)),
-        DataBlockParamTypeInfo("Bool", sizeof(Bool)),
-        DataBlockParamTypeInfo("Vec2DS", sizeof(Vec2DS)),
-        DataBlockParamTypeInfo("Vec3DS", sizeof(Vec3DS)),
-        DataBlockParamTypeInfo("Vec4DS", sizeof(Vec4DS)),
-        DataBlockParamTypeInfo("Vec2DU", sizeof(Vec2DU)),
-        DataBlockParamTypeInfo("Vec3DU", sizeof(Vec3DU)),
-        DataBlockParamTypeInfo("Vec4DU", sizeof(Vec4DU)),
-        DataBlockParamTypeInfo("Vec2DF", sizeof(Vec2DF)),
-        DataBlockParamTypeInfo("Vec3DF", sizeof(Vec3DF)),
-        DataBlockParamTypeInfo("Vec4DF", sizeof(Vec4DF)),
-        DataBlockParamTypeInfo("Vec2DB", sizeof(Vec2DB)),
-        DataBlockParamTypeInfo("Vec3DB", sizeof(Vec3DB)),
-        DataBlockParamTypeInfo("Vec4DB", sizeof(Vec4DB)),
-        DataBlockParamTypeInfo("Mat3DF", sizeof(Mat3DF)),
-        DataBlockParamTypeInfo("Mat4DF", sizeof(Mat4DF)),
-        DataBlockParamTypeInfo("String", 0u)
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING(""), 0u),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("S32"), sizeof(S32)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("S64"), sizeof(S64)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("U32"), sizeof(U32)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("U64"), sizeof(U64)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("F32"), sizeof(F32)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("F64"), sizeof(F64)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Bool"), sizeof(Bool)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec2DS"), sizeof(Vec2DS)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec3DS"), sizeof(Vec3DS)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec4DS"), sizeof(Vec4DS)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec2DU"), sizeof(Vec2DU)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec3DU"), sizeof(Vec3DU)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec4DU"), sizeof(Vec4DU)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec2DF"), sizeof(Vec2DF)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec3DF"), sizeof(Vec3DF)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec4DF"), sizeof(Vec4DF)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec2DB"), sizeof(Vec2DB)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec3DB"), sizeof(Vec3DB)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec4DB"), sizeof(Vec4DB)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Mat3DF"), sizeof(Mat3DF)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Mat4DF"), sizeof(Mat4DF)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("String"), 0u)
     };
+
+
+    //////////////////////////////////////////
+    MAZE_CORE_API DataBlockParamType GetDataBlockParamType(HashedCString _name);
 
 
     //////////////////////////////////////////
@@ -252,6 +256,9 @@ namespace Maze
 
         //////////////////////////////////////////
         static DataBlock* LoadBinaryFile(Path const& _path);
+
+        //////////////////////////////////////////
+        static DataBlock* LoadTextFile(Path const& _path);
 
         //////////////////////////////////////////
         DataBlock();
@@ -372,6 +379,9 @@ namespace Maze
 
         //////////////////////////////////////////
         U8 const* getParamData(ParamIndex _index) const;
+
+        //////////////////////////////////////////
+        DataBlockParamType getParamType(ParamIndex _index) const;
 
 #define MAZE_DECLARE_DATA_BLOCK_GET_SET_API_BASE(__DValueType, __DValueRefType, __typeName)             \
   __DValueType get##__typeName(ParamIndex _index) const;                                                \

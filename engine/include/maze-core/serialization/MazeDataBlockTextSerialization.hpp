@@ -33,12 +33,12 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/data/MazeDataBlock.hpp"
+#include "maze-core/data/MazeByteBufferReadStream.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
-
     //////////////////////////////////////////
     namespace DataBlockTextSerialization
     {
@@ -56,7 +56,99 @@ namespace Maze
 
     } // namespace DataBlockTextSerialization
     //////////////////////////////////////////
-    
+
+
+    //////////////////////////////////////////
+    // Class DataBlockTextParser
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API DataBlockTextParser
+    {
+    public:
+
+        //////////////////////////////////////////
+        enum class Statement
+        {
+            None,
+            Param,
+            Block
+        };
+
+        //////////////////////////////////////////
+        struct PendingComment
+        {
+            //////////////////////////////////////////
+            PendingComment(
+                Size _startOffset = 0,
+                Size _endOffset = 0,
+                bool _cppStyle = false)
+                : startOffset(_startOffset)
+                , endOffset(_endOffset)
+                , cppStyle(_cppStyle)
+            {}
+
+            Size startOffset = 0;
+            Size endOffset = 0;
+            bool cppStyle = false;
+        };
+
+    public: 
+
+        //////////////////////////////////////////
+        DataBlockTextParser(ByteBuffer const& _buffer);
+
+        //////////////////////////////////////////
+        ~DataBlockTextParser();
+
+        //////////////////////////////////////////
+        bool parse(DataBlock& _dataBlock);
+
+    protected:
+
+        //////////////////////////////////////////
+        bool parseDataBlock(DataBlock& _dataBlock, Bool _isTopmost);
+
+        //////////////////////////////////////////
+        bool skipWhite(
+            Bool _allowCRLF = true,
+            Bool _trackNewLineAfterParam = false);
+
+        //////////////////////////////////////////
+        bool parseIdentifier(String& _name);
+
+        //////////////////////////////////////////
+        bool parseValue(String& _value);
+
+        //////////////////////////////////////////
+        inline bool isEndOfBuffer() const { return m_readStream.isEndOfBuffer(); }
+
+        //////////////////////////////////////////
+        void incCurrentLine();
+
+        //////////////////////////////////////////
+        void processSyntaxError(CString _message);
+
+        //////////////////////////////////////////
+        Char readCharNoRewind(Size _index = 0);
+
+        //////////////////////////////////////////
+        Char readChar();
+
+        //////////////////////////////////////////
+        void flushPendingComments(DataBlock& _dataBlock, Bool _toParams);
+
+    private:
+        DataBlock* m_dataBlock;
+        ByteBufferReadStream m_readStream;
+        S32 m_currentLine = 1;
+        Size m_currentLineOffset = 0;
+
+        Bool m_wasNewLineAfterStatement = false;
+        Statement m_lastStatement = Statement::None;
+
+        
+        FastVector<PendingComment> m_pendingComments;
+    };
     
 } // namespace Maze
 //////////////////////////////////////////

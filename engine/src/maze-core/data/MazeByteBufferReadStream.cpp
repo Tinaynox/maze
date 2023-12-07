@@ -69,14 +69,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Size ByteBufferReadStream::read(U8* _dst, Size _size)
+    Size ByteBufferReadStream::readNoRewind(U8* _dst, Size _size)
     {
         MAZE_ASSERT(m_byteBuffer);
         Size readSize = Math::Min(_size, m_byteBuffer->getSize() - m_offset);
 
         memcpy(_dst, m_byteBuffer->getData() + m_offset, _size);
-        m_offset += readSize;
+        return readSize;
+    }
 
+    //////////////////////////////////////////
+    Size ByteBufferReadStream::read(U8* _dst, Size _size)
+    {
+        Size readSize = readNoRewind(_dst, _size);
+        m_offset += readSize;
         return readSize;
     }
 
@@ -103,10 +109,31 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    U8 const* ByteBufferReadStream::getDataPointer() const
+    Size ByteBufferReadStream::rewind(Size _delta)
+    {
+        if (_delta > 0)
+            setOffset(m_offset + _delta);
+        else
+        if (_delta >= m_offset)
+            setOffset(m_offset - _delta);
+        else
+            setOffset(0);
+
+        return m_offset;
+    }
+
+    //////////////////////////////////////////
+    U8 const* ByteBufferReadStream::getData() const
     {
         MAZE_ASSERT(m_byteBuffer);
-        return m_byteBuffer->getData() + m_offset;
+        return m_byteBuffer->getData();
+    }
+
+    //////////////////////////////////////////
+    bool ByteBufferReadStream::isEndOfBuffer() const
+    {
+        MAZE_ASSERT(m_byteBuffer);
+        return m_offset >= m_byteBuffer->getSize();
     }
 
 

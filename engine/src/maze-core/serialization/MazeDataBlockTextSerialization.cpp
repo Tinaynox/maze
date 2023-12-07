@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
 #include "maze-core/serialization/MazeDataBlockTextSerialization.hpp"
+#include "maze-core/serialization/MazeDataBlockSerializationUtils.hpp"
 #include "maze-core/data/MazeDataBlockShared.hpp"
 #include "maze-core/data/MazeByteBufferWriteStream.hpp"
 #include "maze-core/data/MazeByteBufferReadStream.hpp"
@@ -43,7 +44,7 @@ namespace Maze
     namespace DataBlockTextSerialization
     {
         //////////////////////////////////////////
-        static inline bool IsDataBlockStringSimpleChar(Char _char)
+        static inline bool IsDataBlockIdentifierChar(Char _char)
         {
             return (
                 (_char >= 'a' && _char <= 'z') || 
@@ -128,7 +129,6 @@ namespace Maze
             // Opening quote
             _stream.write((U8 const*)quote, quoteLen);
 
-            //_stream.write((U8 const*)_value, _size);
             for (CString p = _value; *p; ++p)
             {
                 Char c = *p;
@@ -187,7 +187,7 @@ namespace Maze
                         result = false;
 
                     for (Size i = 0, e = _name.size(); i < e && result; ++i)
-                        result = IsDataBlockStringSimpleChar(_name[i]);
+                        result = IsDataBlockIdentifierChar(_name[i]);
 
                     return result;
                 };
@@ -375,7 +375,8 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API bool LoadText(DataBlock& _dataBlock, ByteBuffer const& _buffer)
         {
-            _dataBlock.clear();
+            DataBlockTextParser parser(_buffer);
+            parser.parse(_dataBlock);
 
             return true;
         }
@@ -403,6 +404,845 @@ namespace Maze
 
     } // namespace DataBlockTextSerialization
     //////////////////////////////////////////
+
+
+    //////////////////////////////////////////
+    MAZE_CORE_API static inline DataBlock::ParamIndex AddParam(
+        DataBlock& _dataBlock,
+        HashedCString _name,
+        DataBlockParamType _type,
+        CString _value,
+        Size _size)
+    {
+        DataBlock::ParamIndex at = -1;
+
+        DataBlock::ParamIndex itemId = _dataBlock.findParamIndex(_dataBlock.getShared()->getStringId(_name));
+        if ((itemId >= 0) && (_dataBlock.getParamType(itemId) != _type))
+        {
+            return -1;
+        }
+
+        if (_type == DataBlockParamType::ParamString)
+        {
+            at = _dataBlock.addString(_name, String(_value, _value + _size));
+        }
+        else
+        {
+            switch (_type)
+            {
+                case DataBlockParamType::ParamS32:
+                {
+                    S32 value = StringHelper::StringToS32(_value);
+                    at = _dataBlock.addS32(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamS64:
+                {
+                    S64 value = StringHelper::StringToS64(_value);
+                    at = _dataBlock.addS64(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamU32:
+                {
+                    U32 value = StringHelper::StringToU32(_value);
+                    at = _dataBlock.addU32(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamU64:
+                {
+                    U64 value = StringHelper::StringToU64(_value);
+                    at = _dataBlock.addU64(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamF32:
+                {
+                    F32 value = StringHelper::StringToF32Safe(_value);
+                    at = _dataBlock.addF32(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamF64:
+                {
+                    F64 value = StringHelper::StringToF64Safe(_value);
+                    at = _dataBlock.addF64(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamBool:
+                {
+                    Bool value = false;
+                    MAZE_TODO;
+                    at = _dataBlock.addBool(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec2DS:
+                {
+                    Vec2DS value = Vec2DS::c_zero;
+                    MAZE_TODO;
+                    at = _dataBlock.addVec2DS(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec3DS:
+                {
+                    Vec3DS value = Vec3DS::c_zero;
+                    MAZE_TODO;
+                    at = _dataBlock.addVec3DS(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec4DS:
+                {
+                    Vec4DS value = Vec4DS::c_zero;
+                    MAZE_TODO;
+                    at = _dataBlock.addVec4DS(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec2DU:
+                {
+                    Vec2DU value = Vec2DU::c_zero;
+                    MAZE_TODO;
+                    at = _dataBlock.addVec2DU(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec3DU:
+                {
+                    Vec3DU value = Vec3DU::c_zero;
+                    MAZE_TODO;
+                    at = _dataBlock.addVec3DU(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec4DU:
+                {
+                    Vec4DU value = Vec4DU::c_zero;
+                    MAZE_TODO;
+                    at = _dataBlock.addVec4DU(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec2DF:
+                {
+                    Vec2DF value = Vec2DF::c_zero;
+                    MAZE_TODO;
+                    at = _dataBlock.addVec2DF(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec3DF:
+                {
+                    Vec3DF value = Vec3DF::c_zero;
+                    MAZE_TODO;
+                    at = _dataBlock.addVec3DF(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec4DF:
+                {
+                    Vec4DF value = Vec4DF::c_zero;
+                    MAZE_TODO;
+                    at = _dataBlock.addVec4DF(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec2DB:
+                {
+                    Vec2DB value = Vec2DB(false);
+                    MAZE_TODO;
+                    at = _dataBlock.addVec2DB(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec3DB:
+                {
+                    Vec3DB value = Vec3DB(false);
+                    MAZE_TODO;
+                    at = _dataBlock.addVec3DB(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec4DB:
+                {
+                    Vec4DB value = Vec4DB(false);
+                    MAZE_TODO;
+                    at = _dataBlock.addVec4DB(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamMat3DF:
+                {
+                    Mat3DF value = Mat3DF::c_zero;
+                    MAZE_TODO;
+                    at = _dataBlock.addMat3DF(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamMat4DF:
+                {
+                    Mat4DF value = Mat4DF::c_zero;
+                    MAZE_TODO;
+                    at = _dataBlock.addMat4DF(_name, value);
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+
+        return at;
+    }
+
+
+    //////////////////////////////////////////
+    // Class DataBlockTextParser
+    //
+    //////////////////////////////////////////
+    DataBlockTextParser::DataBlockTextParser(ByteBuffer const& _buffer)
+        : m_readStream(_buffer)
+    {
+
+    }
+
+    //////////////////////////////////////////
+    DataBlockTextParser::~DataBlockTextParser()
+    {
+
+    }
+
+    //////////////////////////////////////////
+    bool DataBlockTextParser::parse(DataBlock& _dataBlock)
+    {
+        m_dataBlock = &_dataBlock;
+        m_dataBlock->clear();
+        return parseDataBlock(*m_dataBlock, true);
+    }
+
+    //////////////////////////////////////////
+    bool DataBlockTextParser::parseDataBlock(DataBlock& _dataBlock, Bool _isTopmost)
+    {
+        String nameText;
+        String typeNameText;
+        String valueText;
+
+        for (;;)
+        {
+            if (!skipWhite(true))
+                return false;
+
+            if (isEndOfBuffer())
+            {
+                if (!_isTopmost)
+                {
+                    processSyntaxError("Unexpected EOF");
+                    return false;
+                }
+
+                break;
+            }
+
+            if (readCharNoRewind() == '}')
+            {
+                if (_isTopmost)
+                {
+                    processSyntaxError("Unexpected '}' in topmost block");
+                    return false;
+                }
+                m_readStream.rewind(1);
+
+                flushPendingComments(_dataBlock, false);
+                break;
+            }
+
+            Size startOffset = m_readStream.getOffset();
+            nameText.clear();
+            if (!parseIdentifier(nameText))
+            {
+                processSyntaxError("Expected identifier");
+                return false;
+            }
+
+            if (!skipWhite())
+                return false;
+
+            if (isEndOfBuffer())
+            {
+                processSyntaxError("Unexpected EOF");
+                return false;
+            }
+
+            if (readCharNoRewind() == '{')
+            {
+                m_readStream.rewind(1);
+                DataBlock* newBlock = nullptr;
+
+                m_wasNewLineAfterStatement = false;
+                m_lastStatement = Statement::None;
+                flushPendingComments(_dataBlock, false);
+
+                newBlock = _dataBlock.addNewDataBlock(HashedString(nameText));
+
+                if (newBlock)
+                {
+                    if (!parseDataBlock(*newBlock, false))
+                        return false;
+                }
+                
+                m_lastStatement = Statement::None;
+            }
+            else
+            if (readCharNoRewind() == ':')
+            {
+                flushPendingComments(_dataBlock, true);
+
+                m_readStream.rewind(1);
+                typeNameText.clear();
+                if (!parseIdentifier(typeNameText))
+                {
+                    processSyntaxError("Expected type identifier");
+                    return false;
+                }
+
+                DataBlockParamType paramType = GetDataBlockParamType(MAZE_HASHED_CSTRING(typeNameText.c_str()));
+                if (paramType == DataBlockParamType::None)
+                {
+                    processSyntaxError("Unknown type");
+                    return false;
+                }
+
+                if (!skipWhite())
+                    return false;
+
+                if (isEndOfBuffer())
+                {
+                    processSyntaxError("Unexpected EOF");
+                    return false;
+                }
+
+                if (readChar() != '=')
+                {
+                    processSyntaxError("Expected '-'");
+                    return false;
+                }
+
+                if (!skipWhite())
+                    return false;
+
+                if (strchr("\r\n", readCharNoRewind()))
+                {
+                    processSyntaxError("unexpected CR/LF");
+                    return false;
+                }
+
+                if (isEndOfBuffer())
+                {
+                    processSyntaxError("Unexpected EOF");
+                    return false;
+                }
+
+                valueText.clear();
+                if (!parseValue(valueText))
+                    return false;
+
+                if (AddParam(_dataBlock, HashedString(nameText), paramType, valueText.c_str(), valueText.size()) < 0)
+                {
+                    processSyntaxError("Invalid value");
+                    return false;
+                }
+
+                m_wasNewLineAfterStatement = false;
+                m_lastStatement = Statement::Param;
+            }
+            else
+            if (readCharNoRewind() == '=')
+            {
+                MAZE_TODO;
+            }
+            else
+            {
+                processSyntaxError("Syntax error!");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool DataBlockTextParser::skipWhite(
+        Bool _allowCRLF,
+        Bool _trackNewLineAfterParam)
+    {
+        for (;;)
+        {
+            if (isEndOfBuffer())
+                break;
+
+            Char ch = 0;
+            m_readStream >> ch;
+            if (ch == ' ' || ch == '\t' || ch == '\x1A')
+                continue;
+
+            if (ch == 0)
+            {
+                continue;
+            }
+
+            if (_allowCRLF)
+            {
+                // CR
+                if (ch == '\r')
+                {
+                    Char nextCh = 0;
+                    m_readStream.readNoRewind(nextCh);
+
+                    if (!isEndOfBuffer() && nextCh == '\n')
+                    {
+                        m_readStream.rewind(1);
+                        incCurrentLine();
+                        if (_trackNewLineAfterParam)
+                            m_wasNewLineAfterStatement = true;
+                    }
+                    continue;
+                }
+                else
+                // LF
+                if (ch == '\n')
+                {
+                    incCurrentLine();
+                    if (_trackNewLineAfterParam)
+                        m_wasNewLineAfterStatement = true;
+                    continue;
+                }
+            }
+
+            if (ch == '/')
+            {
+                if (!isEndOfBuffer())
+                {
+                    Char nextCh = 0;
+                    m_readStream >> nextCh;
+                    if (nextCh == '/')
+                    {
+                        Size cppCommentStartOffset = m_readStream.getOffset();
+
+                        while (!isEndOfBuffer())
+                        {
+                            Char nextNextCh = 0;
+                            m_readStream >> nextNextCh;
+                            if (nextNextCh == '\r' || nextNextCh == '\n')
+                                break;
+                        }
+
+                        if (m_wasNewLineAfterStatement || m_lastStatement == Statement::None)
+                            m_pendingComments.emplace_back(cppCommentStartOffset, m_readStream.getOffset() - 1, true);
+                        else
+                        if (m_lastStatement == Statement::Param)
+                        {
+                            m_dataBlock->addString(
+                                MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_CPP),
+                                String(m_readStream.getData() + cppCommentStartOffset, m_readStream.getData() + m_readStream.getOffset() - 1));
+                        }
+                        else
+                        {
+                            m_dataBlock->addNewDataBlock(
+                                MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_CPP))->addString(
+                                    MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_CPP),
+                                    String(m_readStream.getData() + cppCommentStartOffset, m_readStream.getData() + m_readStream.getOffset() - 1));
+                        }
+
+                        continue;
+                    }
+                    else
+                    if (nextCh == '*')
+                    {
+                        Size cCommentStartOffset = m_readStream.getOffset();
+                        S32 count = 1;
+                        while (m_readStream.canRead(2))
+                        {
+                            Char nextNextChars[2];
+                            m_readStream >> nextNextChars;
+
+                            if (nextNextChars[0] == '/' && nextNextChars[1] == '*')
+                            {
+                                m_readStream.rewind(2);
+                                ++count;
+                            }
+                            else
+                            if (nextNextChars[0] == '*' && nextNextChars[1] == '/')
+                            {
+                                m_readStream.rewind(2);
+                                if (--count <= 0)
+                                    break;
+                            }
+                            else
+                            {
+                                m_readStream.rewind(1);
+                            }
+                        }
+
+                        if (count > 0 && !m_readStream.canRead(2))
+                        {
+                            processSyntaxError("Unexpected EOF inside comment");
+                            return false;
+                        }
+
+                        if (m_wasNewLineAfterStatement || m_lastStatement == Statement::None)
+                            m_pendingComments.emplace_back(cCommentStartOffset, m_readStream.getOffset() - 2, false);
+                        else
+                        if (m_lastStatement == Statement::Param)
+                        {
+                            m_dataBlock->addString(
+                                MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_C),
+                                String(m_readStream.getData() + cCommentStartOffset, m_readStream.getData() + m_readStream.getOffset() - 2));
+                        }
+                        else
+                        {
+                            m_dataBlock->addNewDataBlock(
+                                MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_C))->addString(
+                                    MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_C),
+                                    String(m_readStream.getData() + cCommentStartOffset, m_readStream.getData() + m_readStream.getOffset() - 2));
+                        }
+
+                        continue;
+                    }
+                    else
+                    {
+                        m_readStream.rewind(-1);
+                    }
+                }
+
+                m_readStream.rewind(-1);
+                break;
+            }
+            else
+            {
+                m_readStream.rewind(-1);
+                break;
+            }
+        }
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool DataBlockTextParser::parseIdentifier(String& _name)
+    {
+        for (;;)
+        {
+            if (!skipWhite())
+                return false;
+
+            if (isEndOfBuffer())
+                break;
+
+            Char ch = readCharNoRewind();
+            if (IsDataBlockIdentifierChar(ch))
+            {
+                Size identifierOffset = m_readStream.getOffset();
+                m_readStream.rewind(1);
+                while (!isEndOfBuffer())
+                {
+                    if (!IsDataBlockIdentifierChar(readCharNoRewind()))
+                        break;
+                    m_readStream.rewind(1);
+                }
+
+                Size identifierLength = m_readStream.getOffset() - identifierOffset;
+
+                _name.resize(identifierLength + 1);
+                memcpy(&_name[0], m_readStream.getData() + identifierOffset, identifierLength);
+                _name[identifierLength] = 0;
+
+                return true;
+            }
+            else
+            if (ch == '"' || ch == '\'')
+                return parseValue(_name);
+            else
+                break;
+        }
+        return false;
+    }
+
+    //////////////////////////////////////////
+    bool DataBlockTextParser::parseValue(String& _value)
+    {
+        _value.clear();
+
+        Bool multiLineString = false;
+
+        Char quotCh = 0;
+        if (readCharNoRewind() == '"' || readCharNoRewind() == '\'')
+        {
+            m_readStream.read(quotCh);
+
+            Char twoCh[2];
+            m_readStream.readNoRewind((U8*)twoCh, 2);
+
+            // Triple quot (MultiLine value prefix like '''\n )
+            if (twoCh[0] == quotCh && twoCh[1] == quotCh)
+            {
+                multiLineString = true;
+                m_readStream.rewind(2);
+
+                // Skip first \n (start) of multiline
+                CString ch = (CString)(m_readStream.getData() + m_readStream.getOffset());
+                for (CString p = ch; *p; ++p)
+                {
+                    if (*p == '\n')
+                    {
+                        m_readStream.setOffset((U8*)p - m_readStream.getData() + 1);
+                        break;
+                    }
+                    else
+                    if (!strchr(" \r\t", *p))
+                        break;
+                }
+
+            }
+        }
+
+        Size multiLineCommentOffset = Size(-1);
+        Size rewindToOffset = Size(-1);
+
+        for (;;)
+        {
+            if (isEndOfBuffer())
+            {
+                processSyntaxError("Unexpected EOF");
+                return false;
+            }
+
+            Char ch = 0;
+            m_readStream.readNoRewind(ch);
+
+            // MultiLine comment
+            if (multiLineCommentOffset != Size(-1))
+            {
+                Char ch2 = 0;
+                m_readStream.readNoRewind(ch2);
+
+                // CRLF
+                if (ch == '\r')
+                {
+                    if (ch2 == '\n')
+                    {
+                        m_readStream.rewind(2);
+                        incCurrentLine();
+                    }
+                    rewindToOffset = multiLineCommentOffset;
+                    break;
+                }
+                else
+                if (ch == '\n')
+                {
+                    m_readStream.rewind(1);
+                    incCurrentLine();
+                    rewindToOffset = multiLineCommentOffset;
+                    break;
+                }
+                else
+                if (ch == 0)
+                {
+                    processSyntaxError("Unclosed comment");
+                    return false;
+                }
+                else
+                if ((ch == '*') && (ch2 == '/'))
+                {
+                    m_readStream.rewind(2);
+                    m_readStream.readNoRewind(ch);
+                    if (ch == '\r' || ch == '\n')
+                    {
+                        rewindToOffset = multiLineCommentOffset;
+                    }
+                    multiLineCommentOffset = Size(-1);
+                }
+                else
+                {
+                    m_readStream.rewind(1);
+                    continue;
+                }
+            }
+
+            // String value
+            if (quotCh)
+            {
+                if (ch == quotCh && !multiLineString)
+                {
+                    m_readStream.rewind(1);
+                    if (!skipWhite())
+                        return false;
+
+                    if (readCharNoRewind() == ';')
+                        m_readStream.rewind(1);
+                    break;
+                }
+                else
+                if (ch == quotCh && multiLineString && readCharNoRewind(1) == quotCh && readCharNoRewind(2) == quotCh)
+                {
+                    // Crop last multiline \n (end)
+                    if (_value.size() > 1 && _value[_value.size() - 1] == '\n')
+                        _value.erase(_value.size() - 1, 1);
+                    m_readStream.rewind(3);
+
+                    if (!skipWhite())
+                        return false;
+                    if (readCharNoRewind() == ';')
+                        m_readStream.rewind(1);
+                    break;
+                }
+                else
+                if (((ch == '\r' || ch == '\n') && !multiLineString) || ch == 0)
+                {
+                    processSyntaxError("Unclosed string");
+                    return false;
+                }
+                else
+                if (ch == '~')
+                {
+                    m_readStream.rewind(1);
+
+                    if (isEndOfBuffer())
+                    {
+                        processSyntaxError("Unclosed string");
+                        return false;
+                    }
+
+                    ch = readCharNoRewind();
+                    if (ch == 'r')
+                        ch = '\r';
+                    else
+                    if (ch == 'n')
+                        ch = '\n';
+                    else
+                    if (ch == 't')
+                        ch = '\t';
+                }
+                else
+                if (ch == '\r')
+                {
+                    m_readStream.rewind(1);
+                    continue;
+                }
+            }
+            else
+            {
+                if (ch == ';' || ch == '\r' || ch == '\n' || ch == 0 || ch == '}')
+                {
+                    if (ch == ';')
+                        m_readStream.rewind(1);
+                    break;
+                }
+                else
+                if (ch == '/')
+                {
+                    Char nextChar = readCharNoRewind(1);
+
+                    if (nextChar == '/')
+                        break;
+                    else
+                    if (nextChar == '*')
+                    {
+                        multiLineCommentOffset = m_readStream.getOffset() - 1;
+                        m_readStream.rewind(2);
+                        continue;
+                    }
+                }
+            }
+
+            _value.push_back(ch);
+            m_readStream.rewind(1);
+        }
+
+        // MultiLine comment end
+        if (multiLineCommentOffset != Size(-1))
+        {
+            for (;;)
+            {
+                Char ch = readCharNoRewind();
+                if (ch == 0)
+                {
+                    processSyntaxError("Unclosed string");
+                    return false;
+                }
+                else
+                if ((ch == '\r') && (readCharNoRewind(1) == '\n'))
+                {
+                    m_readStream.rewind(1);
+                    incCurrentLine();
+                }
+                else
+                if (ch == '\n')
+                {
+                    incCurrentLine();
+                }
+                else
+                if ((ch == '*') && (readCharNoRewind(1) == '/'))
+                {
+                    m_readStream.rewind(2);
+                    multiLineCommentOffset = Size(-1);
+                }
+
+                m_readStream.rewind(1);
+            }
+        }
+
+        if (quotCh == 0)
+        {
+            S32 i = 0;
+            for (i = (S32)_value.size() - 1; i >= 0; --i)
+            {
+                if (_value[i] != ' ' && _value[i] != '\t')
+                    break;
+            }
+            ++i;
+            if (i < (S32)_value.size())
+                _value.erase(i, _value.size() - 1);
+        }
+
+        _value.push_back(0);
+
+        if (rewindToOffset != Size(-1))
+            m_readStream.setOffset(rewindToOffset);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void DataBlockTextParser::incCurrentLine()
+    {
+        ++m_currentLine;
+        m_currentLineOffset = m_readStream.getOffset();
+    }
+
+    //////////////////////////////////////////
+    void DataBlockTextParser::processSyntaxError(CString _message)
+    {
+        MAZE_ERROR("%s", _message);
+    }
+
+    //////////////////////////////////////////
+    Char DataBlockTextParser::readCharNoRewind(Size _index)
+    {
+        MAZE_ASSERT(_index < 3 && "Index is out of bounds");
+        Char ch[3] = {0, 0, 0};
+        m_readStream.readNoRewind((U8*)ch, 3);
+        return ch[_index];
+    }
+
+    //////////////////////////////////////////
+    Char DataBlockTextParser::readChar()
+    {
+        Char ch = 0;
+        m_readStream >> ch;
+        return ch;
+    }
+
+    //////////////////////////////////////////
+    void DataBlockTextParser::flushPendingComments(DataBlock& _dataBlock, Bool _toParams)
+    {
+        for (auto& pendingComment : m_pendingComments)
+        {
+            HashedCString commentKey = pendingComment.cppStyle ? MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_SUFFIX_CPP)
+                                                               : MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_SUFFIX_C);
+            if (_toParams)
+                _dataBlock.addString(
+                    commentKey,
+                    String(m_readStream.getData() + pendingComment.startOffset, m_readStream.getData() + pendingComment.endOffset));
+            else
+                _dataBlock.addNewDataBlock(commentKey)->addString(
+                    commentKey,
+                    String(m_readStream.getData() + pendingComment.startOffset, m_readStream.getData() + pendingComment.endOffset));
+        }
+        m_pendingComments.clear();
+    }
 
 
 } // namespace Maze

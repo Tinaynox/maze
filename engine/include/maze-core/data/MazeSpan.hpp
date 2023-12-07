@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeByteBufferReadStream_hpp_))
-#define _MazeByteBufferReadStream_hpp_
+#if (!defined(_MazeSpan_hpp_))
+#define _MazeSpan_hpp_s
 
 
 //////////////////////////////////////////
@@ -34,116 +34,105 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_CPlusPlus.hpp"
-#include "maze-core/helpers/MazeLogHelper.hpp"
-#include "maze-core/data/MazeByteBuffer.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    template <typename TValue>
+    class Span;
+    template <typename TValue>
+    using ConstSpan = Span<TValue const>;
+
 
     //////////////////////////////////////////
-    // Class ByteBufferReadStream
+    // Class Span
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API ByteBufferReadStream MAZE_FINAL
+    template <typename TValue>
+    class Span MAZE_FINAL   
     {
     public:
 
         //////////////////////////////////////////
-        ByteBufferReadStream(ByteBuffer const* _byteBuffer = nullptr);
+        inline Span() = default;
 
         //////////////////////////////////////////
-        ByteBufferReadStream(ByteBuffer const& _byteBuffer);
+        inline Span(TValue* _ptr, Size _size)
+            : m_ptr(_ptr)
+            , m_size(_size)
+        {}
 
         //////////////////////////////////////////
-        ByteBufferReadStream(ByteBufferReadStream const& _stream) = delete;
+        inline ~Span() = default;
 
         //////////////////////////////////////////
-        ByteBufferReadStream(ByteBufferReadStream&& _stream) = delete;
+        inline Span(Span const&) = default;
 
         //////////////////////////////////////////
-        ~ByteBufferReadStream();
+        inline Span(Span&&) = default;
 
         //////////////////////////////////////////
-        ByteBufferReadStream& operator=(ByteBufferReadStream const& _stream) = delete;
+        inline Span& operator=(Span const&) = default;
 
         //////////////////////////////////////////
-        ByteBufferReadStream& operator=(ByteBufferReadStream&& _stream) = delete;
-
-
-        //////////////////////////////////////////
-        void setBuffer(ByteBuffer const* _byteBuffer);
+        inline Span& operator=(Span&&) = default;
 
 
         //////////////////////////////////////////
-        Size readNoRewind(U8* _dst, Size _size);
+        inline void set(TValue* _ptr, Size _size)
+        {
+            m_ptr = _ptr;
+            m_size = _size;
+        }
 
         //////////////////////////////////////////
-        Size read(U8* _dst, Size _size);
+        inline void setSize(Size _size) { m_size = _size; }
 
         //////////////////////////////////////////
-        template <typename TValue>
-        inline Size readNoRewind(TValue& _value);
+        inline TValue* getPtr() const { return m_ptr; }
 
         //////////////////////////////////////////
-        template <typename TValue>
-        inline Size read(TValue& _value);
+        inline Size getSize() const { return m_size; }
+
 
         //////////////////////////////////////////
-        bool canRead(Size _size);
+        MAZE_FORCEINLINE TValue const& operator[](Size _i) const
+        {
+            MAZE_ASSERT(_i < m_size);
+            return m_ptr[_i];
+        }
 
         //////////////////////////////////////////
-        template <typename TValue>
-        inline ByteBufferReadStream& operator>>(TValue& _value);
+        MAZE_FORCEINLINE TValue& operator[](Size _i)
+        {
+            MAZE_ASSERT(_i < m_size);
+            return m_ptr[_i];
+        }
 
         //////////////////////////////////////////
-        bool setOffset(Size _value);
+        inline TValue const& at(Size _i) const
+        {
+            MAZE_ASSERT(_i < m_size);
+            return m_ptr[_i];
+        }
 
         //////////////////////////////////////////
-        inline Size getOffset() const { return m_offset; }
+        inline TValue& at(Size _i)
+        {
+            MAZE_ASSERT(_i < m_size);
+            return m_ptr[_i];
+        }
 
-        //////////////////////////////////////////
-        Size rewind(Size _delta);
-
-        //////////////////////////////////////////
-        U8 const* getData() const;
-
-        //////////////////////////////////////////
-        bool isEndOfBuffer() const;
-
-    protected:
-        ByteBuffer const* m_byteBuffer;
-        Size m_offset = 0u;
+    private:
+        TValue* m_ptr = nullptr;
+        Size m_size = 0;
     };
-
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline Size ByteBufferReadStream::readNoRewind(TValue& _value)
-    {
-        return readNoRewind((U8*)&_value, sizeof(TValue));
-    }
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline Size ByteBufferReadStream::read(TValue& _value)
-    {
-        return read((U8*)&_value, sizeof(TValue));
-    }
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline ByteBufferReadStream& ByteBufferReadStream::operator>>(TValue& _value)
-    {
-        read(_value);
-        return *this;
-    }
-
 
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeByteBufferReadStream_h_
+#endif // _MazeSpan_h_
 //////////////////////////////////////////
