@@ -43,6 +43,7 @@
 #include <cctype>
 #include <cstdio>
 #include <cstdarg>
+#include <fast_float/fast_float.h>
 
 
 //////////////////////////////////////////
@@ -329,6 +330,99 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        template <typename TIntType>
+        inline CString ParseInteger(Char const* _str, Char const* _end, TIntType& _value)
+        {
+            if (!_str || !_end)
+            {
+                _value = TIntType(0);
+                return nullptr;
+            }
+
+            bool isNegative = false;
+            if (*_str == '-')
+            {
+                isNegative = true;
+                ++_str;
+            }
+            else
+            if (*_str == '+')
+                ++_str;
+
+            if (_str == _end || !std::isdigit(*_str))
+            {
+                _value = TIntType(0);
+                return nullptr;
+            }
+
+            TIntType result = 0;
+
+            // Hex
+            if (_str[0] == '0' && !isNegative && (_end - _str) >= 2 && _str[1] == 'x')
+            {
+                for (_str += 2; _str != _end; ++_str)
+                {
+                    Char ch = *_str;
+                    if (std::isdigit(ch))
+                        ch = (ch - '0');
+                    else
+                    if (ch >= 'a' && ch <= 'f')
+                        ch = (ch - ('a' - 10));
+                    else
+                    if (ch >= 'A' && ch <= 'F')
+                        ch = (ch - ('A' - 10));
+                    else
+                        break;
+                    result = (result << 4) | ch;
+                }
+                _value = result;
+                return _str;
+            }
+
+            do
+            {
+                result *= 10;
+                result += *_str - '0';
+            }
+            while (++_str != _end && std::isdigit(*_str));
+            _value = isNegative ? TIntType(-(typename std::make_signed<TIntType>::type)(result)) : TIntType(result);
+            return _str;
+        }
+
+        //////////////////////////////////////////
+        template <typename TIntType>
+        inline CString ParseInteger(Char const* __restrict _str, Size _size, TIntType& _value)
+        {
+            if (_size == 0)
+            {
+                _value = TIntType(0);
+                return nullptr;
+            }
+
+            return ParseInteger<TIntType>(_str, (Char const* __restrict)(_str + _size), _value);
+        }
+
+        //////////////////////////////////////////
+        inline CString SkipChar(Char const* _str, Char const* _end, Char _ch)
+        {
+            for (; _str != _end; ++_str)
+                if (*_str != _ch)
+                    break;
+
+            return _str;
+        }
+
+        //////////////////////////////////////////
+        inline CString SkipChar(Char const* __restrict _str, Size _size, Char _ch)
+        {
+            return !_size ? _str : SkipChar(_str, (Char const* __restrict)(_str + _size), _ch);
+        }
+
+
+        //////////////////////////////////////////
+        // Bool
+        //
+        //////////////////////////////////////////
         inline bool StringToBool(CString _str) noexcept
         {
             return strcmp(_str, "1") == 0 ? true : false;
@@ -338,6 +432,16 @@ namespace Maze
         inline bool StringToBool(String const& _str) noexcept
         {
             return (_str == "1");
+        }
+
+
+        //////////////////////////////////////////
+        // S8
+        //
+        //////////////////////////////////////////
+        inline CString ParseS8(Char const* _str, Size _size, S8& _value)
+        {
+            return ParseInteger<S8>(_str, std::min(_size, 4u), _value);
         }
 
         //////////////////////////////////////////
@@ -358,6 +462,16 @@ namespace Maze
             return _str.empty() ? 0 : static_cast<S8>(std::stoi(_str.c_str()));
         }
 
+
+        //////////////////////////////////////////
+        // U8
+        //
+        //////////////////////////////////////////
+        inline CString ParseU8(Char const* _str, Size _size, U8& _value)
+        {
+            return ParseInteger<U8>(_str, std::min(_size, 3u), _value);
+        }
+
         //////////////////////////////////////////
         inline U8 StringToU8(CString _str) noexcept
         {
@@ -374,6 +488,16 @@ namespace Maze
         inline U8 StringToU8(String const& _str) noexcept
         {
             return _str.empty() ? 0 : static_cast<U8>(std::stoi(_str.c_str()));
+        }
+
+
+        //////////////////////////////////////////
+        // S16
+        //
+        //////////////////////////////////////////
+        inline CString ParseS16(Char const* _str, Size _size, S16& _value)
+        {
+            return ParseInteger<S16>(_str, std::min(_size, 6u), _value);
         }
 
         //////////////////////////////////////////
@@ -394,6 +518,16 @@ namespace Maze
             return _str.empty() ? 0 : static_cast<S16>(std::stoi(_str.c_str()));
         }
 
+
+        //////////////////////////////////////////
+        // U16
+        //
+        //////////////////////////////////////////
+        inline CString ParseU16(Char const* _str, Size _size, U16& _value)
+        {
+            return ParseInteger<U16>(_str, std::min(_size, 5u), _value);
+        }
+
         //////////////////////////////////////////
         inline U16 StringToU16(CString _str) noexcept
         {
@@ -412,6 +546,16 @@ namespace Maze
             return _str.empty() ? 0 : static_cast<U16>(std::stoi(_str.c_str()));
         }
 
+
+        //////////////////////////////////////////
+        // S32
+        //
+        //////////////////////////////////////////
+        inline CString ParseS32(Char const* _str, Size _size, S32& _value)
+        {
+            return ParseInteger<S32>(_str, std::min(_size, 11u), _value);
+        }
+
         //////////////////////////////////////////
         inline S32 StringToS32(CString _str) noexcept
         {
@@ -428,6 +572,16 @@ namespace Maze
         inline S32 StringToS32(String const& _str) noexcept
         {
             return _str.empty() ? 0 : std::stoi(_str.c_str());
+        }
+
+
+        //////////////////////////////////////////
+        // U32
+        //
+        //////////////////////////////////////////
+        inline CString ParseU32(Char const* _str, Size _size, U32& _value)
+        {
+            return ParseInteger<U32>(_str, std::min(_size, 10u), _value);
         }
 
         //////////////////////////////////////////
@@ -450,6 +604,31 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        // S64
+        //
+        //////////////////////////////////////////
+        inline CString ParseS64(Char const* _str, Size _size, S64& _value)
+        {
+            return ParseInteger<S64>(_str, std::min(_size, 20u), _value);
+        }
+
+        //////////////////////////////////////////
+        inline S64 StringToS64(String const& _str) noexcept
+        {
+            return _str.empty() ? 0 : static_cast<S64>(std::atoll(_str.c_str()));
+        }
+
+
+        //////////////////////////////////////////
+        // U64
+        //
+        //////////////////////////////////////////
+        inline CString ParseU64(Char const* _str, Size _size, U64& _value)
+        {
+            return ParseInteger<U64>(_str, std::min(_size, 19u), _value);
+        }
+
+        //////////////////////////////////////////
         inline U64 StringToU64(CString _str) noexcept
         {
             return static_cast<U64>(std::strtoull(_str, nullptr, 10));
@@ -467,10 +646,21 @@ namespace Maze
             return _str.empty() ? 0u : static_cast<U64>(std::stoull(_str.c_str()));
         }
 
+
         //////////////////////////////////////////
-        inline S64 StringToS64(String const& _str) noexcept
+        // F32
+        //
+        //////////////////////////////////////////
+        inline CString ParseF32(CString _str, CString _end, F32& _value) noexcept
         {
-            return _str.empty() ? 0 : static_cast<S64>(std::atoll(_str.c_str()));
+            auto result = fast_float::from_chars(_str, _end, _value);
+            return result.ec == std::errc() ? result.ptr : nullptr;
+        }
+
+        //////////////////////////////////////////
+        inline CString ParseF32(Char const* __restrict _str, Size _size, F32& _value) noexcept
+        {
+            return ParseF32(_str, (Char const* __restrict)(_str + _size), _value);
         }
 
         //////////////////////////////////////////
@@ -486,6 +676,14 @@ namespace Maze
                 return 0.0f;
 
             return static_cast<F32>(std::atof(_str));
+        }
+
+        //////////////////////////////////////////
+        inline F32 StringToF32(CString _str, Size _size) noexcept
+        {
+            F32 value = 0.0f;
+            fast_float::from_chars(_str, _str + _size, value);
+            return value;
         }
 
         //////////////////////////////////////////
@@ -510,6 +708,23 @@ namespace Maze
                 return 0.0f;
 
             return std::stof(_str.c_str());
+        }
+
+
+        //////////////////////////////////////////
+        // F64
+        //
+        //////////////////////////////////////////
+        inline CString ParseF64(CString _str, CString _end, F64& _value) noexcept
+        {
+            auto result = fast_float::from_chars(_str, _end, _value);
+            return result.ec == std::errc() ? result.ptr : nullptr;
+        }
+
+        //////////////////////////////////////////
+        inline CString ParseF64(Char const* __restrict _str, Size _size, F64& _value) noexcept
+        {
+            return ParseF64(_str, (Char const* __restrict)(_str + _size), _value);
         }
 
         //////////////////////////////////////////
@@ -539,6 +754,10 @@ namespace Maze
             return std::stod(_str.c_str());
         }
 
+
+        //////////////////////////////////////////
+        // Bool
+        //
         //////////////////////////////////////////
         inline StdString BoolToStdString(bool _value) noexcept
         {
@@ -558,6 +777,10 @@ namespace Maze
         inline String ToString(bool _value) noexcept { return BoolToString(_value); }
 
 
+
+        //////////////////////////////////////////
+        // CString
+        //
         //////////////////////////////////////////
         inline StdString ToStdString(CString _value) noexcept { return _value ? StdString(_value)
                                                                               : StdString(); }
@@ -567,6 +790,9 @@ namespace Maze
                                                                         : String(); }
 
 
+        //////////////////////////////////////////
+        // U8
+        //
         //////////////////////////////////////////
         inline StdString U8ToStdString(U8 _value) noexcept
         {
@@ -587,6 +813,9 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        // S32
+        //
+        //////////////////////////////////////////
         inline StdString S32ToStdString(S32 _value) noexcept
         {
             return std::to_string(_value);
@@ -604,6 +833,10 @@ namespace Maze
         //////////////////////////////////////////
         inline String ToString(S32 _value) noexcept { return S32ToString(_value); }
 
+
+        //////////////////////////////////////////
+        // U32
+        //
         //////////////////////////////////////////
         inline StdString U32ToStdString(U32 _value) noexcept
         {
@@ -624,6 +857,9 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        // U64
+        //
+        //////////////////////////////////////////
         inline StdString U64ToStdString(U64 _value) noexcept
         {
             return std::to_string(_value);
@@ -641,6 +877,10 @@ namespace Maze
         //////////////////////////////////////////
         inline String ToString(U64 _value) noexcept { return U64ToString(_value); }
 
+
+        //////////////////////////////////////////
+        // S64
+        //
         //////////////////////////////////////////
         inline StdString S64ToStdString(S64 _value) noexcept
         {
@@ -659,6 +899,10 @@ namespace Maze
         //////////////////////////////////////////
         inline String ToString(S64 _value) noexcept { return S64ToString(_value); }
 
+
+        //////////////////////////////////////////
+        // F32
+        //
         //////////////////////////////////////////
         inline StdString F32ToStdString(F32 _value) noexcept
         {
@@ -765,6 +1009,10 @@ namespace Maze
             return result;
         }
 
+
+        //////////////////////////////////////////
+        // F64
+        //
         //////////////////////////////////////////
         inline StdString F64ToStdString(F64 _value) noexcept
         {
@@ -856,7 +1104,7 @@ namespace Maze
         }
 
 
-    #if (((MAZE_COMPILER == MAZE_COMPILER_CLANG) || (MAZE_COMPILER == MAZE_COMPILER_GNUC)) && (MAZE_PLATFORM != MAZE_PLATFORM_ANDROID))
+#if (((MAZE_COMPILER == MAZE_COMPILER_CLANG) || (MAZE_COMPILER == MAZE_COMPILER_GNUC)) && (MAZE_PLATFORM != MAZE_PLATFORM_ANDROID))
 
         //////////////////////////////////////////
         inline StdString ToStdString(Size _value) noexcept { return ToStdString(static_cast<U64>(_value)); }
@@ -870,7 +1118,7 @@ namespace Maze
         //////////////////////////////////////////
         inline String ToString(UnixTime _value) noexcept { return ToString(static_cast<U64>(_value)); }
 
-    #endif
+#endif
 
 
         //////////////////////////////////////////

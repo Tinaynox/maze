@@ -418,23 +418,41 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline String toString() const { return StringHelper::ToString(x) + ";" + StringHelper::ToString(y) + ";" + StringHelper::ToString(z) + ";" + StringHelper::ToString(w); }
+        inline String toString(Char _separator = ';') const { return StringHelper::ToString(x) + _separator + StringHelper::ToString(y) + _separator + StringHelper::ToString(z) + _separator + StringHelper::ToString(w); }
 
         //////////////////////////////////////////
-        static Vec4D FromString(String const& _string)
+        static CString ParseString(CString _string, Size _size, Vec4D& _result, Char _separator = ';')
         {
-            Vector<String> words;
-            StringHelper::SplitWords(_string, words, ';');
-            if (words.size() == 4)
-            {
-                return Vec4D(
-                    static_cast<TValue>(StringHelper::StringToF32(words[0])),
-                    static_cast<TValue>(StringHelper::StringToF32(words[1])),
-                    static_cast<TValue>(StringHelper::StringToF32(words[2])),
-                    static_cast<TValue>(StringHelper::StringToF32(words[3])));
-            }
+            CString end = _string + _size;
 
-            return Vec4D::c_zero;
+            _string = StringHelper::ParseInteger<TValue>(_string, end, _result.x);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ParseInteger<TValue>(_string, end, _result.y);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ParseInteger<TValue>(_string, end, _result.z);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ParseInteger<TValue>(_string, end, _result.w);
+            return _string;
+        }
+
+        //////////////////////////////////////////
+        static Vec4D FromString(CString _string, Size _size, Char _separator = ';')
+        {
+            Vec4D result = Vec3D::c_zero;
+            ParseString(_string, _size, result, _separator);
+            return result;
+        }
+
+        //////////////////////////////////////////
+        static Vec4D FromString(String const& _string, Char _separator = ';')
+        {
+            return FromString(&_string[0], _string.size(), _separator);
         }
 
 
@@ -597,6 +615,29 @@ namespace Maze
     inline MAZE_CONSTEXPR Vec4DF Math::Round<Vec4DF>(Vec4DF const& _value)
     { 
         return Vec4DF(Round(_value.x), Round(_value.y), Round(_value.z), Round(_value.w)); 
+    }
+
+    //////////////////////////////////////////
+    template <>
+    static CString Vec4DF::ParseString(CString _string, Size _size, Vec4DF& _result, Char _separator)
+    {
+        CString end = _string + _size;
+
+        Vec4DF result;
+        _string = StringHelper::ParseF32(_string, end, _result.x);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::SkipChar(_string, end, _separator);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ParseF32(_string, end, _result.y);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::SkipChar(_string, end, _separator);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ParseF32(_string, end, _result.z);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::SkipChar(_string, end, _separator);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ParseF32(_string, end, _result.w);
+        return _string;
     }
 
 

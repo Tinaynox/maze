@@ -110,23 +110,42 @@ namespace Maze
         inline bool hasCircleIntersection(Vec2D<TValue> const& _pos, TValue _radius);
 
         //////////////////////////////////////////
-        inline String toString() const { return StringHelper::ToString(position.x) + ";" + StringHelper::ToString(position.y) + ";" + StringHelper::ToString(size.x) + ";" + StringHelper::ToString(size.y); }
+        inline String toString(Char _separator = ';') const { return StringHelper::ToString(position.x) + _separator + StringHelper::ToString(position.y) + _separator + StringHelper::ToString(size.x) + _separator + StringHelper::ToString(size.y); }
+
 
         //////////////////////////////////////////
-        inline static Rect2D FromString(String const& _string)
+        static inline CString ParseString(CString _string, Size _size, Rect2D& _result, Char _separator = ';')
         {
-            Vector<String> words;
-            StringHelper::SplitWords(_string, words, ';');
-            if (words.size() == 4)
-            {
-                return Rect2D(
-                    StringHelper::StringToF32(words[0]),
-                    StringHelper::StringToF32(words[1]),
-                    StringHelper::StringToF32(words[2]),
-                    StringHelper::StringToF32(words[3]));
-            }
+            CString end = _string + _size;
 
-            return Rect2D::c_zero;
+            _string = StringHelper::ParseF32(_string, end, _result.position.x);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ParseF32(_string, end, _result.position.y);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ParseF32(_string, end, _result.size.y);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ParseF32(_string, end, _result.size.y);
+            return _string;
+        }
+
+        //////////////////////////////////////////
+        static inline Rect2D FromString(CString _string, Size _size, Char _separator = ';')
+        {
+            Rect2D result = Rect2D::c_zero;
+            ParseString(_string, _size, result, _separator);
+            return result;
+        }
+
+        //////////////////////////////////////////
+        static inline Rect2D FromString(String const& _string, Char _separator = ';')
+        {
+            return FromString(&_string[0], _string.size(), _separator);
         }
 
         //////////////////////////////////////////

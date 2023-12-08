@@ -125,21 +125,33 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline String toString() const { return m_point.toString() + ":" + m_normal.toString(); }
+        inline String toString(Char _separator = ':') const { return m_point.toString() + _separator + m_normal.toString(); }
 
         //////////////////////////////////////////
-        inline static Plane FromString(String const& _string)
+        static inline CString ParseString(CString _string, Size _size, Plane& _result, Char _separator = ':')
         {
-            Vector<String> words;
-            StringHelper::SplitWords(_string, words, ':');
-            if (words.size() == 2)
-            {
-                return Plane(
-                    Vec3DF::FromString(words[0]),
-                    Vec3DF::FromString(words[1]));
-            }
+            CString end = _string + _size;
 
-            return Plane();
+            _string = Vec3DF::ParseString(_string, _size, _result.m_point);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = Vec3DF::ParseString(_string, end - _string, _result.m_normal);
+            return _string;
+        }
+
+        //////////////////////////////////////////
+        static inline Plane FromString(CString _string, Size _size, Char _separator = ':')
+        {
+            Plane result;
+            ParseString(_string, _size, result, _separator);
+            return result;
+        }
+
+        //////////////////////////////////////////
+        inline static Plane FromString(String const& _string, Char _separator = ':')
+        {
+            return FromString(&_string[0], _string.size(), _separator);
         }
 
     protected:

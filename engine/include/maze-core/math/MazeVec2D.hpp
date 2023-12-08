@@ -292,21 +292,33 @@ namespace Maze
         inline F32 toAngle() const;
 
         //////////////////////////////////////////
-        inline String toString() const { return StringHelper::ToString(x) + ";" + StringHelper::ToString(y); }
+        inline String toString(Char _separator = ';') const { return StringHelper::ToString(x) + _separator + StringHelper::ToString(y); }
 
         //////////////////////////////////////////
-        static Vec2D FromString(String const& _string)
+        static CString ParseString(CString _string, Size _size, Vec2D& _result, Char _separator = ';')
         {
-            Vector<String> words;
-            StringHelper::SplitWords(_string, words, ';');
-            if (words.size() == 2)
-            {
-                return Vec2D(
-                    static_cast<TValue>(StringHelper::StringToF32(words[0])),
-                    static_cast<TValue>(StringHelper::StringToF32(words[1])));
-            }
+            CString end = _string + _size;
 
-            return Vec2D::c_zero;
+            _string = StringHelper::ParseInteger<TValue>(_string, end, _result.x);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ParseInteger<TValue>(_string, end, _result.y);
+            return _string;
+        }
+
+        //////////////////////////////////////////
+        static Vec2D FromString(CString _string, Size _size, Char _separator = ';')
+        {
+            Vec2D result = Vec2D::c_zero;
+            ParseString(_string, _size, result, _separator);
+            return result;
+        }
+
+        //////////////////////////////////////////
+        static inline Vec2D FromString(String const& _string, Char _separator = ';')
+        {
+            return FromString(&_string[0], _string.size(), _separator);
         }
 
 
@@ -487,6 +499,20 @@ namespace Maze
     inline MAZE_CONSTEXPR Vec2DF Math::Round<Vec2DF>(Vec2DF const& _value)
     { 
         return Vec2DF(Round(_value.x), Round(_value.y)); 
+    }
+
+    //////////////////////////////////////////
+    template <>
+    static CString Vec2DF::ParseString(CString _string, Size _size, Vec2DF& _result, Char _separator)
+    {
+        CString end = _string + _size;
+
+        _string = StringHelper::ParseF32(_string, end, _result.x);
+        _string = StringHelper::SkipChar(_string, end - _string, ' ');
+        _string = StringHelper::SkipChar(_string, end - _string, _separator);
+        _string = StringHelper::SkipChar(_string, end - _string, ' ');
+        _string = StringHelper::ParseF32(_string, end, _result.y);
+        return _string;
     }
     
 

@@ -123,21 +123,33 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline String toString() const { return m_point.toString() + ":" + m_direction.toString(); }
+        inline String toString(Char _separator = ':') const { return m_point.toString() + _separator + m_direction.toString(); }
 
         //////////////////////////////////////////
-        inline static Ray FromString(String const& _string)
+        static inline CString ParseString(CString _string, Size _size, Ray& _result, Char _separator = ':')
         {
-            Vector<String> words;
-            StringHelper::SplitWords(_string, words, ':');
-            if (words.size() == 2)
-            {
-                return Ray(
-                    Vec3DF::FromString(words[0]),
-                    Vec3DF::FromString(words[1]));
-            }
+            CString end = _string + _size;
 
-            return Ray();
+            _string = Vec3DF::ParseString(_string, _size, _result.m_point);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = Vec3DF::ParseString(_string, end - _string, _result.m_direction);
+            return _string;
+        }
+
+        //////////////////////////////////////////
+        static inline Ray FromString(CString _string, Size _size, Char _separator = ':')
+        {
+            Ray result;
+            ParseString(_string, _size, result, _separator);
+            return result;
+        }
+
+        //////////////////////////////////////////
+        static inline Ray FromString(String const& _string, Char _separator = ':')
+        {
+            return FromString(&_string[0], _string.size(), _separator);
         }
 
     protected:

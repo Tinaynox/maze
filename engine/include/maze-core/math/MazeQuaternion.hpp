@@ -332,23 +332,41 @@ namespace Maze
         }
         
         //////////////////////////////////////////
-        inline String toString() const { return StringHelper::ToString(w) + ";" + StringHelper::ToString(x) + ";" + StringHelper::ToString(y) + ";" + StringHelper::ToString(z); }
+        inline String toString(Char _separator = ';') const { return StringHelper::ToString(w) + _separator + StringHelper::ToString(x) + _separator + StringHelper::ToString(y) + _separator + StringHelper::ToString(z); }
 
         //////////////////////////////////////////
-        inline static Quaternion FromString(String const& _string)
+        static CString ParseString(CString _string, Size _size, Quaternion& _result, Char _separator = ';')
         {
-            Vector<String> words;
-            StringHelper::SplitWords(_string, words, ';');
-            if (words.size() == 4)
-            {
-                return Quaternion(
-                    StringHelper::StringToF32(words[0]),
-                    StringHelper::StringToF32(words[1]),
-                    StringHelper::StringToF32(words[2]),
-                    StringHelper::StringToF32(words[3]));
-            }
+            CString end = _string + _size;
 
-            return Quaternion::c_identity;
+            _string = StringHelper::ParseF32(_string, end, _result.x);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ParseF32(_string, end, _result.y);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ParseF32(_string, end, _result.z);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ParseF32(_string, end, _result.w);
+            return _string;
+        }
+
+        //////////////////////////////////////////
+        inline static Quaternion FromString(CString _string, Size _size, Char _separator = ';')
+        {
+            Quaternion result = c_identity;
+            ParseString(_string, _size, result, _separator);
+            return result;
+        }
+
+        //////////////////////////////////////////
+        inline static Quaternion FromString(String const& _string, Char _separator = ';')
+        {
+            return FromString(&_string[0], _string.size(), _separator);
         }
 
     public:

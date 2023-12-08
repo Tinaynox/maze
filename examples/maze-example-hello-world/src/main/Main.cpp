@@ -41,10 +41,10 @@
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/helpers/MazePlatformHelper.hpp"
 #include "maze-core/helpers/MazeSystemHelper.hpp"
-#include "maze-core/data/MazeSpan.hpp"
 
 
 #include "maze-core/data/MazeDataBlock.hpp"
+#include <fast_float/fast_float.h>
 
 
 //////////////////////////////////////////
@@ -64,6 +64,15 @@ S32 SecondThreadEntry()
 //////////////////////////////////////////
 void test()
 {
+    CString some22 = "12.2456, 3,6.3";
+    F32 testF;
+    CString some23 = StringHelper::ParseF32(some22, 3, testF);
+    some23 = StringHelper::ParseF32(some23 + 1, strlen(some23 + 1), testF);
+
+    U8 s;
+    CString ss = StringHelper::ParseU8(some22 + 3, 3, s);
+    Vec2DF vec2 = Vec2DF::FromString(some22, strlen(some22), ',');
+
     DataBlock* fileTest0 = DataBlock::LoadTextFile("text0.mzdata");
     S32 fileTest0_some = fileTest0->getS32("some");
     S64 fileTest0_S64 = fileTest0->getS64("S64");

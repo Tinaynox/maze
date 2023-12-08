@@ -191,21 +191,33 @@ namespace Maze
         }
         
         //////////////////////////////////////////
-        inline String toString() const { return StringHelper::ToString(m_s) + ";" + StringHelper::ToString(m_c); }
+        inline String toString(Char _separator = ';') const { return StringHelper::ToString(m_s) + _separator + StringHelper::ToString(m_c); }
 
         //////////////////////////////////////////
-        inline static Rotation2D FromString(String const& _string)
+        static inline CString ParseString(CString _string, Size _size, Rotation2D& _result, Char _separator = ';')
         {
-            Vector<String> words;
-            StringHelper::SplitWords(_string, words, ';');
-            if (words.size() == 2)
-            {
-                return Rotation2D(
-                    StringHelper::StringToF32(words[0]),
-                    StringHelper::StringToF32(words[1]));
-            }
+            CString end = _string + _size;
 
-            return Rotation2D();
+            _string = StringHelper::ParseF32(_string, end, _result.m_s);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ParseF32(_string, end, _result.m_c);
+            return _string;
+        }
+
+        //////////////////////////////////////////
+        static inline Rotation2D FromString(CString _string, Size _size, Char _separator = ';')
+        {
+            Rotation2D result;
+            ParseString(_string, _size, result, _separator);
+            return result;
+        }
+
+        //////////////////////////////////////////
+        static inline Rotation2D FromString(String const& _string, Char _separator = ';')
+        {
+            return FromString(&_string[0], _string.size(), _separator);
         }
 
     protected:

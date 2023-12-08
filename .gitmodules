@@ -37,3 +37,6 @@
 [submodule "third-party/optick"]
 	path = third-party/optick
 	url = git@github.com:Tinaynox/optick.git
+[submodule "third-party/fast_float"]
+	path = third-party/fast_float
+	url = git@github.com:Tinaynox/fast_float.git

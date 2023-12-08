@@ -369,22 +369,37 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline String toString() const { return StringHelper::ToString(x) + ";" + StringHelper::ToString(y) + ";" + StringHelper::ToString(z); }
+        inline String toString(Char _separator = ';') const { return StringHelper::ToString(x) + _separator + StringHelper::ToString(y) + _separator + StringHelper::ToString(z); }
 
         //////////////////////////////////////////
-        static Vec3D FromString(String const& _string)
+        static CString ParseString(CString _string, Size _size, Vec3D& _result, Char _separator = ';')
         {
-            Vector<String> words;
-            StringHelper::SplitWords(_string, words, ';');
-            if (words.size() == 3)
-            {
-                return Vec3D(
-                    static_cast<TValue>(StringHelper::StringToF32(words[0])),
-                    static_cast<TValue>(StringHelper::StringToF32(words[1])),
-                    static_cast<TValue>(StringHelper::StringToF32(words[2])));
-            }
+            CString end = _string + _size;
 
-            return Vec3D::c_zero;
+            _string = StringHelper::ParseInteger<TValue>(_string, end, _result.x);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ParseInteger<TValue>(_string, end, _result.y);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ParseInteger<TValue>(_string, end, _result.z);
+            return _string;
+        }
+
+        //////////////////////////////////////////
+        static Vec3D FromString(CString _string, Size _size, Char _separator = ';')
+        {
+            Vec3D result = Vec3D::c_zero;
+            ParseString(_string, _size, result, _separator);
+            return result;
+        }
+
+        //////////////////////////////////////////
+        static Vec3D FromString(String const& _string, Char _separator = ';')
+        {
+            return FromString(&_string[0], _string.size(), _separator);
         }
 
         //////////////////////////////////////////
@@ -596,6 +611,24 @@ namespace Maze
     inline MAZE_CONSTEXPR Vec3DF Math::Round<Vec3DF>(Vec3DF const& _value)
     { 
         return Vec3DF(Round(_value.x), Round(_value.y), Round(_value.z)); 
+    }
+
+    //////////////////////////////////////////
+    template <>
+    static CString Vec3DF::ParseString(CString _string, Size _size, Vec3DF& _result, Char _separator)
+    {
+        CString end = _string + _size;
+
+        _string = StringHelper::ParseF32(_string, end, _result.x);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::SkipChar(_string, end, _separator);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ParseF32(_string, end, _result.y);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::SkipChar(_string, end, _separator);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ParseF32(_string, end, _result.z);
+        return _string;
     }
     
 
