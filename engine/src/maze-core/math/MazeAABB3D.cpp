@@ -36,6 +36,60 @@ namespace Maze
     //
     //////////////////////////////////////////
     AABB3D const AABB3D::c_zero = AABB3D();
+
+    //////////////////////////////////////////
+    String AABB3D::toString(Char _separator) const
+    {
+        return StringHelper::ToString(m_min.x) + _separator +
+               StringHelper::ToString(m_min.y) + _separator +
+               StringHelper::ToString(m_min.z) + _separator +
+               StringHelper::ToString(m_max.x) + _separator +
+               StringHelper::ToString(m_max.y) + _separator +
+               StringHelper::ToString(m_max.z);
+    }
+
+    //////////////////////////////////////////
+    CString AABB3D::ParseString(CString _string, Size _size, AABB3D& _result, Char _separator)
+    {
+        CString end = _string + _size;
+
+        _string = StringHelper::ParseF32(_string, end, _result.m_min.x);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ParseF32(_string, end, _result.m_min.y);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ParseF32(_string, end, _result.m_min.z);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ParseF32(_string, end, _result.m_max.x);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ParseF32(_string, end, _result.m_max.y);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ParseF32(_string, end, _result.m_max.z);
+        return _string;
+    }
+
+    //////////////////////////////////////////
+    AABB3D AABB3D::FromString(CString _string, Size _size, Char _separator)
+    {
+        AABB3D result = AABB3D::c_zero;
+        ParseString(_string, _size, result, _separator);
+        return result;
+    }
+
+    //////////////////////////////////////////
+    AABB3D AABB3D::FromString(String const& _string, Char _separator)
+    {
+        return FromString(&_string[0], _string.size(), _separator);
+    }
     
 
 } // namespace Maze

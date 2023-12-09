@@ -120,15 +120,15 @@ namespace Maze
 
             _string = StringHelper::ParseF32(_string, end, _result.position.x);
             _string = StringHelper::SkipChar(_string, end, ' ');
-            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::ExpectSkipChar(_string, end, _separator);
             _string = StringHelper::SkipChar(_string, end, ' ');
             _string = StringHelper::ParseF32(_string, end, _result.position.y);
             _string = StringHelper::SkipChar(_string, end, ' ');
-            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::ExpectSkipChar(_string, end, _separator);
             _string = StringHelper::SkipChar(_string, end, ' ');
             _string = StringHelper::ParseF32(_string, end, _result.size.y);
             _string = StringHelper::SkipChar(_string, end, ' ');
-            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::ExpectSkipChar(_string, end, _separator);
             _string = StringHelper::SkipChar(_string, end, ' ');
             _string = StringHelper::ParseF32(_string, end, _result.size.y);
             return _string;

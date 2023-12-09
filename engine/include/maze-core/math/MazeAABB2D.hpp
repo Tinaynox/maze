@@ -348,42 +348,16 @@ namespace Maze
         }
         
         //////////////////////////////////////////
-        inline String toString(Char _separator = ';') const { return StringHelper::ToString(m_min.x) + _separator + StringHelper::ToString(m_min.y) + _separator + StringHelper::ToString(m_max.x) + _separator + StringHelper::ToString(m_max.y); }
+        String toString(Char _separator = ';') const;
 
         //////////////////////////////////////////
-        static inline CString ParseString(CString _string, Size _size, AABB2D& _result, Char _separator = ';')
-        {
-            CString end = _string + _size;
-
-            _string = StringHelper::ParseF32(_string, end, _result.m_min.x);
-            _string = StringHelper::SkipChar(_string, end, ' ');
-            _string = StringHelper::SkipChar(_string, end, _separator);
-            _string = StringHelper::SkipChar(_string, end, ' ');
-            _string = StringHelper::ParseF32(_string, end, _result.m_min.y);
-            _string = StringHelper::SkipChar(_string, end, ' ');
-            _string = StringHelper::SkipChar(_string, end, _separator);
-            _string = StringHelper::SkipChar(_string, end, ' ');
-            _string = StringHelper::ParseF32(_string, end, _result.m_max.x);
-            _string = StringHelper::SkipChar(_string, end, ' ');
-            _string = StringHelper::SkipChar(_string, end, _separator);
-            _string = StringHelper::SkipChar(_string, end, ' ');
-            _string = StringHelper::ParseF32(_string, end, _result.m_max.y);
-            return _string;
-        }
+        static CString ParseString(CString _string, Size _size, AABB2D& _result, Char _separator = ';');
 
         //////////////////////////////////////////
-        static inline AABB2D FromString(CString _string, Size _size, Char _separator = ';')
-        {
-            AABB2D result = AABB2D::c_zero;
-            ParseString(_string, _size, result, _separator);
-            return result;
-        }
+        static AABB2D FromString(CString _string, Size _size, Char _separator = ';');
 
         //////////////////////////////////////////
-        static inline AABB2D FromString(String const& _string, Char _separator = ';')
-        {
-            return FromString(&_string[0], _string.size(), _separator);
-        }
+        static inline AABB2D FromString(String const& _string, Char _separator = ';');
         
     protected:
         Vec2DF m_min;

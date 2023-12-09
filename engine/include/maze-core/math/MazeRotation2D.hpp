@@ -200,7 +200,7 @@ namespace Maze
 
             _string = StringHelper::ParseF32(_string, end, _result.m_s);
             _string = StringHelper::SkipChar(_string, end, ' ');
-            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::ExpectSkipChar(_string, end, _separator);
             _string = StringHelper::SkipChar(_string, end, ' ');
             _string = StringHelper::ParseF32(_string, end, _result.m_c);
             return _string;

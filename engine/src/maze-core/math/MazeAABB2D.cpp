@@ -36,6 +36,50 @@ namespace Maze
     //
     //////////////////////////////////////////
     AABB2D const AABB2D::c_zero = AABB2D();
+
+    //////////////////////////////////////////
+    String AABB2D::toString(Char _separator) const
+    {
+        return StringHelper::ToString(m_min.x) + _separator +
+               StringHelper::ToString(m_min.y) + _separator +
+               StringHelper::ToString(m_max.x) + _separator +
+               StringHelper::ToString(m_max.y);
+    }
+
+    //////////////////////////////////////////
+    CString AABB2D::ParseString(CString _string, Size _size, AABB2D& _result, Char _separator)
+    {
+        CString end = _string + _size;
+
+        _string = StringHelper::ParseF32(_string, end, _result.m_min.x);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ParseF32(_string, end, _result.m_min.y);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ParseF32(_string, end, _result.m_max.x);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ParseF32(_string, end, _result.m_max.y);
+        return _string;
+    }
+
+    //////////////////////////////////////////
+    AABB2D AABB2D::FromString(CString _string, Size _size, Char _separator)
+    {
+        AABB2D result = AABB2D::c_zero;
+        ParseString(_string, _size, result, _separator);
+        return result;
+    }
+
+    //////////////////////////////////////////
+    AABB2D AABB2D::FromString(String const& _string, Char _separator)
+    {
+        return FromString(&_string[0], _string.size(), _separator);
+    }
     
 
 } // namespace Maze

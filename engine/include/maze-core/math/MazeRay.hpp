@@ -132,7 +132,7 @@ namespace Maze
 
             _string = Vec3DF::ParseString(_string, _size, _result.m_point);
             _string = StringHelper::SkipChar(_string, end, ' ');
-            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::ExpectSkipChar(_string, end, _separator);
             _string = StringHelper::SkipChar(_string, end, ' ');
             _string = Vec3DF::ParseString(_string, end - _string, _result.m_direction);
             return _string;
