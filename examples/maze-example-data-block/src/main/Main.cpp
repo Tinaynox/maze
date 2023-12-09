@@ -146,7 +146,6 @@ S32 main(S32 _argc, S8 const* _argv[])
             auto v20 = _dataBlock["subBlock"]["strings"].getString("stringValue2"); MAZE_ASSERT(v20 == stringValue2);
         };
 
-    /*
     // Read binary test
     {
         DataBlock readTestBuffer;
@@ -167,11 +166,6 @@ S32 main(S32 _argc, S8 const* _argv[])
         MAZE_ASSERT(readTestBuffer.loadTextFile(textCompactFileName));
         validateBuffer(readTestBuffer);
     }
-    */
-
-    DataBlock readTestBuffer2;
-    MAZE_ASSERT(readTestBuffer2.loadTextFile("TestText2.mzdata"));
-    readTestBuffer2.saveTextFile("TestText3.mzdata");
 
     return 0;
 }
