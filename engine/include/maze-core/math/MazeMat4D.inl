@@ -1009,5 +1009,97 @@ namespace Maze
         0,   0,   0,   1);
     }
 
+
+    //////////////////////////////////////////
+    template <class TValue>
+    inline String Mat4D<TValue>::toString(Char _separator) const
+    {
+        String result;
+
+        for (S32 i = 0; i < 16; ++i)
+        {
+            if (!result.empty())
+                result += _separator;
+
+            result += StringHelper::ToString(planeMatrix[i]);
+        }
+
+        return result;
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
+    inline CString Mat4D<TValue>::ParseString(CString _string, Size _size, Mat4D& _result, Char _separator)
+    {
+        CString end = _string + _size;
+
+        S32 i = 0;
+        for (; i < 15; ++i)
+        {
+            _string = StringHelper::ParseNumber<TValue>(_string, end, _result.planeMatrix[i]);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+        }
+        _string = StringHelper::ParseNumber<TValue>(_string, end, _result.planeMatrix[i]);
+        return _string;
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
+    inline CString Mat4D<TValue>::ParseStringPretty(CString _string, Size _size, Mat4D& _result, Char _separator)
+    {
+        TValue v;
+
+        CString end = _string + _size;
+        _string = StringHelper::ExpectSkipChar(_string, end, '[', 1);
+        for (S32 i = 0; i < 4; ++i)
+        {
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ExpectSkipChar(_string, end, '[', 1);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+
+            _string = StringHelper::ParseNumber<TValue>(_string, end, v);
+            _result[i][0] = v;
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ParseNumber<TValue>(_string, end, v);
+            _result[i][1] = v;
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ParseNumber<TValue>(_string, end, v);
+            _result[i][2] = v;
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ParseNumber<TValue>(_string, end, v);
+            _result[i][3] = v;
+
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ExpectSkipChar(_string, end, ']', 1);
+        }
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ExpectSkipChar(_string, end, ']', 1);
+        return _string;
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
+    inline Mat4D<TValue> Mat4D<TValue>::FromString(CString _string, Size _size, Char _separator)
+    {
+        Mat4D result = Mat4D::c_zero;
+        ParseString(_string, _size, result, _separator);
+        return result;
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
+    Mat4D<TValue> Mat4D<TValue>::FromString(String const& _string, Char _separator)
+    {
+        return FromString(&_string[0], _string.size(), _separator);
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

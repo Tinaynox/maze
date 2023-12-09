@@ -292,34 +292,16 @@ namespace Maze
         inline F32 toAngle() const;
 
         //////////////////////////////////////////
-        inline String toString(Char _separator = ';') const { return StringHelper::ToString(x) + _separator + StringHelper::ToString(y); }
+        inline String toString(Char _separator = ';') const;
 
         //////////////////////////////////////////
-        static CString ParseString(CString _string, Size _size, Vec2D& _result, Char _separator = ';')
-        {
-            CString end = _string + _size;
-
-            _string = StringHelper::ParseInteger<TValue>(_string, end, _result.x);
-            _string = StringHelper::SkipChar(_string, end, ' ');
-            _string = StringHelper::SkipChar(_string, end, _separator);
-            _string = StringHelper::SkipChar(_string, end, ' ');
-            _string = StringHelper::ParseInteger<TValue>(_string, end, _result.y);
-            return _string;
-        }
+        static CString ParseString(CString _string, Size _size, Vec2D& _result, Char _separator = ';');
 
         //////////////////////////////////////////
-        static Vec2D FromString(CString _string, Size _size, Char _separator = ';')
-        {
-            Vec2D result = Vec2D::c_zero;
-            ParseString(_string, _size, result, _separator);
-            return result;
-        }
+        static Vec2D FromString(CString _string, Size _size, Char _separator = ';');
 
         //////////////////////////////////////////
-        static inline Vec2D FromString(String const& _string, Char _separator = ';')
-        {
-            return FromString(&_string[0], _string.size(), _separator);
-        }
+        static inline Vec2D FromString(String const& _string, Char _separator = ';');
 
 
         //////////////////////////////////////////
@@ -501,19 +483,6 @@ namespace Maze
         return Vec2DF(Round(_value.x), Round(_value.y)); 
     }
 
-    //////////////////////////////////////////
-    template <>
-    static CString Vec2DF::ParseString(CString _string, Size _size, Vec2DF& _result, Char _separator)
-    {
-        CString end = _string + _size;
-
-        _string = StringHelper::ParseF32(_string, end, _result.x);
-        _string = StringHelper::SkipChar(_string, end - _string, ' ');
-        _string = StringHelper::SkipChar(_string, end - _string, _separator);
-        _string = StringHelper::SkipChar(_string, end - _string, ' ');
-        _string = StringHelper::ParseF32(_string, end, _result.y);
-        return _string;
-    }
     
 
 } // namespace Maze

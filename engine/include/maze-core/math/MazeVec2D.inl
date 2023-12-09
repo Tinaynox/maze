@@ -679,9 +679,6 @@ namespace Maze
     }
     
     
-    
-    
-    
     //////////////////////////////////////////
     template <class TValue>
     Vec2D<TValue> Vec2D<TValue>::randomDeviant(F32 _angle) const
@@ -694,8 +691,7 @@ namespace Maze
         static_cast<TValue>(sina * x + cosa * y));
     }
     
-    
-    
+
     //////////////////////////////////////////
     template <class TValue> 
     Vec2D<TValue> Vec2D<TValue>::rotatedCopy(F32 _angle) const
@@ -732,9 +728,6 @@ namespace Maze
     }
     
     
-    
-    
-    
     //////////////////////////////////////////
     template <class TValue> 
     MAZE_CONSTEXPR Vec2D<TValue> Vec2D<TValue>::RandomDirection()
@@ -759,6 +752,44 @@ namespace Maze
     inline MAZE_CONSTEXPR F32 Vec2D<TValue>::angleBetween(Vec2D<TValue> const& _vec) const
     {
         return NormalizedAngle(acosf((F32)dotProduct(_vec) / length() * _vec.length()));
+    }
+
+
+    //////////////////////////////////////////
+    template <class TValue>
+    inline String Vec2D<TValue>::toString(Char _separator) const
+    {
+        return StringHelper::ToString(x) + _separator + StringHelper::ToString(y);
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
+    CString Vec2D<TValue>::ParseString(CString _string, Size _size, Vec2D& _result, Char _separator)
+    {
+        CString end = _string + _size;
+
+        _string = StringHelper::ParseNumber<TValue>(_string, end, _result.x);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ParseNumber<TValue>(_string, end, _result.y);
+        return _string;
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
+    Vec2D<TValue> Vec2D<TValue>::FromString(CString _string, Size _size, Char _separator)
+    {
+        Vec2D result = Vec2D::c_zero;
+        ParseString(_string, _size, result, _separator);
+        return result;
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
+    inline Vec2D<TValue> Vec2D<TValue>::FromString(String const& _string, Char _separator)
+    {
+        return FromString(&_string[0], _string.size(), _separator);
     }
 
 

@@ -137,6 +137,14 @@ namespace Maze
         //////////////////////////////////////////
         void flushPendingComments(DataBlock& _dataBlock, Bool _toParams);
 
+        //////////////////////////////////////////
+        bool addParam(
+            DataBlock& _dataBlock,
+            HashedCString _name,
+            DataBlockParamType _type,
+            CString _value,
+            Size _size);
+
     private:
         DataBlock* m_dataBlock;
         ByteBufferReadStream m_readStream;

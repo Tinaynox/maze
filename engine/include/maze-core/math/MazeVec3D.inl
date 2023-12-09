@@ -868,6 +868,48 @@ namespace Maze
         return dir;
     }
 
+
+    //////////////////////////////////////////
+    template <class TValue>
+    inline String Vec3D<TValue>::toString(Char _separator) const
+    {
+        return StringHelper::ToString(x) + _separator + StringHelper::ToString(y) + _separator + StringHelper::ToString(z);
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
+    CString Vec3D<TValue>::ParseString(CString _string, Size _size, Vec3D& _result, Char _separator)
+    {
+        CString end = _string + _size;
+
+        _string = StringHelper::ParseNumber<TValue>(_string, end, _result.x);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ParseNumber<TValue>(_string, end, _result.y);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ParseNumber<TValue>(_string, end, _result.z);
+        return _string;
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
+    Vec3D<TValue> Vec3D<TValue>::FromString(CString _string, Size _size, Char _separator)
+    {
+        Vec3D result = Vec3D::c_zero;
+        ParseString(_string, _size, result, _separator);
+        return result;
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
+    Vec3D<TValue> Vec3D<TValue>::FromString(String const& _string, Char _separator)
+    {
+        return FromString(&_string[0], _string.size(), _separator);
+    }
+
 #pragma warning(pop)
 
 } // namespace Maze

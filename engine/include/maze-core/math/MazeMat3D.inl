@@ -818,6 +818,91 @@ namespace Maze
     }
 
     
+    //////////////////////////////////////////
+    template <class TValue>
+    inline String Mat3D<TValue>::toString(Char _separator) const
+    {
+        String result;
+
+        for (S32 i = 0; i < 9; ++i)
+        {
+            if (!result.empty())
+                result += _separator;
+
+            result += StringHelper::ToString(planeMatrix[i]);
+        }
+
+        return result;
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
+    inline CString Mat3D<TValue>::ParseString(CString _string, Size _size, Mat3D& _result, Char _separator)
+    {
+        CString end = _string + _size;
+
+        S32 i = 0;
+        for (; i < 8; ++i)
+        {
+            _string = StringHelper::ParseNumber<TValue>(_string, end, _result.planeMatrix[i]);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+        }
+        _string = StringHelper::ParseNumber<TValue>(_string, end, _result.planeMatrix[i]);
+        return _string;
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
+    inline CString Mat3D<TValue>::ParseStringPretty(CString _string, Size _size, Mat3D& _result, Char _separator)
+    {
+        TValue v;
+
+        CString end = _string + _size;
+        _string = StringHelper::ExpectSkipChar(_string, end, '[', 1);
+        for (S32 i = 0; i < 3; ++i)
+        {
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ExpectSkipChar(_string, end, '[', 1);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+
+            _string = StringHelper::ParseNumber<TValue>(_string, end, v);
+            _result[i][0] = v;
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ParseNumber<TValue>(_string, end, v);
+            _result[i][1] = v;
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ParseNumber<TValue>(_string, end, v);
+            _result[i][2] = v;
+
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ExpectSkipChar(_string, end, ']', 1);
+        }
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ExpectSkipChar(_string, end, ']', 1);
+        return _string;
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
+    inline Mat3D<TValue> Mat3D<TValue>::FromString(CString _string, Size _size, Char _separator)
+    {
+        Mat3D result = Mat3D::c_zero;
+        ParseString(_string, _size, result, _separator);
+        return result;
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
+    Mat3D<TValue> Mat3D<TValue>::FromString(String const& _string, Char _separator)
+    {
+        return FromString(&_string[0], _string.size(), _separator);
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

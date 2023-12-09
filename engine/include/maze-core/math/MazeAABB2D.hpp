@@ -348,23 +348,41 @@ namespace Maze
         }
         
         //////////////////////////////////////////
-        inline String toString() const { return StringHelper::ToString(m_min.x) + ";" + StringHelper::ToString(m_min.y) + ";" + StringHelper::ToString(m_max.x) + ";" + StringHelper::ToString(m_max.y); }
+        inline String toString(Char _separator = ';') const { return StringHelper::ToString(m_min.x) + _separator + StringHelper::ToString(m_min.y) + _separator + StringHelper::ToString(m_max.x) + _separator + StringHelper::ToString(m_max.y); }
 
         //////////////////////////////////////////
-        inline static AABB2D FromString(String const& _string)
+        static inline CString ParseString(CString _string, Size _size, AABB2D& _result, Char _separator = ';')
         {
-            Vector<String> words;
-            StringHelper::SplitWords(_string, words, ';');
-            if (words.size() == 4)
-            {
-                return AABB2D(
-                    StringHelper::StringToF32(words[0]),
-                    StringHelper::StringToF32(words[1]),
-                    StringHelper::StringToF32(words[2]),
-                    StringHelper::StringToF32(words[3]));
-            }
+            CString end = _string + _size;
 
-            return AABB2D::c_zero;
+            _string = StringHelper::ParseF32(_string, end, _result.m_min.x);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ParseF32(_string, end, _result.m_min.y);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ParseF32(_string, end, _result.m_max.x);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::SkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ParseF32(_string, end, _result.m_max.y);
+            return _string;
+        }
+
+        //////////////////////////////////////////
+        static inline AABB2D FromString(CString _string, Size _size, Char _separator = ';')
+        {
+            AABB2D result = AABB2D::c_zero;
+            ParseString(_string, _size, result, _separator);
+            return result;
+        }
+
+        //////////////////////////////////////////
+        static inline AABB2D FromString(String const& _string, Char _separator = ';')
+        {
+            return FromString(&_string[0], _string.size(), _separator);
         }
         
     protected:

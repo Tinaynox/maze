@@ -39,6 +39,50 @@ namespace Maze
     //////////////////////////////////////////
     Vec2DB const Vec2DB::c_false = { false, false };
     Vec2DB const Vec2DB::c_true = { true, true };
+
+    //////////////////////////////////////////
+    String Vec2DB::toString(Char _separator) const
+    {
+        return StringHelper::ToString(x) + _separator + StringHelper::ToString(y);
+    }
+
+    //////////////////////////////////////////
+    CString Vec2DB::ParseString(CString _string, Size _size, Vec2DB& _result, Char _separator)
+    {
+        CString end = _string + _size;
+        _string = StringHelper::ParseBool(_string, end, _result.x);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ParseBool(_string, end, _result.y);
+        return _string;
+    }
+
+    //////////////////////////////////////////
+    CString Vec2DB::ParseStringPretty(CString _string, Size _size, Vec2DB& _result, Char _separator)
+    {
+        CString end = _string + _size;
+        _string = StringHelper::ParseBoolPretty(_string, end, _result.x);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ParseBoolPretty(_string, end, _result.y);
+        return _string;
+    }
+
+    //////////////////////////////////////////
+    Vec2DB Vec2DB::FromString(CString _string, Size _size, Char _separator)
+    {
+        Vec2DB result = Vec2DB(false);
+        ParseString(_string, _size, result, _separator);
+        return result;
+    }
+
+    //////////////////////////////////////////
+    Vec2DB Vec2DB::FromString(String const& _string, Char _separator)
+    {
+        return FromString(&_string[0], _string.size(), _separator);
+    }
     
 
 } // namespace Maze

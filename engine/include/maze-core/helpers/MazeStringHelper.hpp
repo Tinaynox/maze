@@ -393,7 +393,7 @@ namespace Maze
         template <typename TIntType>
         inline CString ParseInteger(Char const* __restrict _str, Size _size, TIntType& _value)
         {
-            if (_size == 0)
+            if (!_str || _size == 0)
             {
                 _value = TIntType(0);
                 return nullptr;
@@ -405,6 +405,9 @@ namespace Maze
         //////////////////////////////////////////
         inline CString SkipChar(Char const* _str, Char const* _end, Char _ch)
         {
+            if (!_str)
+                return nullptr;
+
             for (; _str != _end; ++_str)
                 if (*_str != _ch)
                     break;
@@ -415,13 +418,73 @@ namespace Maze
         //////////////////////////////////////////
         inline CString SkipChar(Char const* __restrict _str, Size _size, Char _ch)
         {
-            return !_size ? _str : SkipChar(_str, (Char const* __restrict)(_str + _size), _ch);
+            return _str && _size ? SkipChar(_str, (Char const* __restrict)(_str + _size), _ch) : _str;
+        }
+
+        //////////////////////////////////////////
+        inline CString ExpectSkipChar(Char const* _str, Char const* _end, Char _ch, Size _count = 1)
+        {
+            if (!_count)
+                return _str;
+
+            if (!_str)
+                return nullptr;
+
+            for (; _str != _end && _count; ++_str)
+                if (*_str == _ch)
+                    --_count;
+                else
+                    return nullptr;
+
+            return _count == 0 ? _str : nullptr;
         }
 
 
         //////////////////////////////////////////
         // Bool
         //
+        //////////////////////////////////////////
+        inline CString ParseBool(CString _str, CString _end, Bool& _value)
+        {
+            S8 temp = 0;
+            _str = StringHelper::ParseInteger<S8>(_str, _end, temp);
+            _value = (temp == 1);
+
+            return _str;
+        }
+
+        //////////////////////////////////////////
+        inline CString ParseBoolPretty(CString _str, CString _end, Bool& _value)
+        {
+            Size size = _end - _str;
+
+            if (size >= 4 && MAZE_STRNICMP(_str, "true", 4) == 0)
+            {
+                _value = true;
+                _str += 4;
+            }
+            else
+            if (size >= 1 && MAZE_STRNICMP(_str, "1", 1) == 0)
+            {
+                _value = true;
+                _str += 1;
+            }
+            else
+            if (size >= 5 && MAZE_STRNICMP(_str, "false", 5) == 0)
+            {
+                _value = false;
+                _str += 5;
+            }
+            else
+            if (size >= 1 && MAZE_STRNICMP(_str, "0", 1) == 0)
+            {
+                _value = false;
+                _str += 1;
+            }
+
+            return _str;
+        }
+
         //////////////////////////////////////////
         inline bool StringToBool(CString _str) noexcept
         {
@@ -1156,6 +1219,36 @@ namespace Maze
         {
             return _str;
         }
+
+        //////////////////////////////////////////
+        template <typename TNumberType>
+        inline CString ParseNumber(Char const* _str, Char const* _end, TNumberType& _value)
+        {
+            MAZE_ERROR("Unsupported number type!");
+            return _str;
+        }
+        //////////////////////////////////////////
+        template <>
+        inline CString ParseNumber(Char const* _str, Char const* _end, S8& _value) { return ParseInteger<S8>(_str, _end, _value); }
+        template <>
+        inline CString ParseNumber(Char const* _str, Char const* _end, U8& _value) { return ParseInteger<U8>(_str, _end, _value); }
+        template <>
+        inline CString ParseNumber(Char const* _str, Char const* _end, S16& _value) { return ParseInteger<S16>(_str, _end, _value); }
+        template <>
+        inline CString ParseNumber(Char const* _str, Char const* _end, U16& _value) { return ParseInteger<U16>(_str, _end, _value); }
+        template <>
+        inline CString ParseNumber(Char const* _str, Char const* _end, S32& _value) { return ParseInteger<S32>(_str, _end, _value); }
+        template <>
+        inline CString ParseNumber(Char const* _str, Char const* _end, U32& _value) { return ParseInteger<U32>(_str, _end, _value); }
+        template <>
+        inline CString ParseNumber(Char const* _str, Char const* _end, S64& _value) { return ParseInteger<S64>(_str, _end, _value); }
+        template <>
+        inline CString ParseNumber(Char const* _str, Char const* _end, U64& _value) { return ParseInteger<U64>(_str, _end, _value); }
+        template <>
+        inline CString ParseNumber(Char const* _str, Char const* _end, F32& _value) { return ParseF32(_str, _end, _value); }
+        template <>
+        inline CString ParseNumber(Char const* _str, Char const* _end, F64& _value) { return ParseF64(_str, _end, _value); }
+
 
         //////////////////////////////////////////
         inline void SplitWords(CString _line, Vector<ConstSpan<Char>>& _words, Char _separator = ' ') noexcept

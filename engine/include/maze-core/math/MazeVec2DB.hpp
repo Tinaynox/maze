@@ -197,41 +197,19 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline String toString(Char _separator = ';') const { return StringHelper::ToString(x) + _separator + StringHelper::ToString(y); }
+        String toString(Char _separator = ';') const;
 
         //////////////////////////////////////////
-        static CString ParseString(CString _string, Size _size, Vec2DB& _result, Char _separator = ';')
-        {
-            CString end = _string + _size;
-
-            S8 temp = 0;
-
-            _string = StringHelper::ParseInteger<S8>(_string, end, temp);
-            _result.x = (temp == 1);
-
-            _string = StringHelper::SkipChar(_string, end, ' ');
-            _string = StringHelper::SkipChar(_string, end, _separator);
-            _string = StringHelper::SkipChar(_string, end, ' ');
-
-            _string = StringHelper::ParseInteger<S8>(_string, end, temp);
-            _result.y = (temp == 1);
-
-            return _string;
-        }
+        static CString ParseString(CString _string, Size _size, Vec2DB& _result, Char _separator = ';');
 
         //////////////////////////////////////////
-        static Vec2DB FromString(CString _string, Size _size, Char _separator = ';')
-        {
-            Vec2DB result = Vec2DB(false);
-            ParseString(_string, _size, result, _separator);
-            return result;
-        }
+        static CString ParseStringPretty(CString _string, Size _size, Vec2DB& _result, Char _separator = ';');
 
         //////////////////////////////////////////
-        static Vec2DB FromString(String const& _string, Char _separator = ';')
-        {
-            return FromString(&_string[0], _string.size(), _separator);
-        }
+        static Vec2DB FromString(CString _string, Size _size, Char _separator = ';');
+
+        //////////////////////////////////////////
+        static Vec2DB FromString(String const& _string, Char _separator = ';');
 
     public:
         bool x = false;

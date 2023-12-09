@@ -297,40 +297,19 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline String toString() const
-        {
-            String result;
-
-            for (S32 i = 0; i < 9; ++i)
-            {
-                if (!result.empty())
-                    result += ';';
-
-                result += StringHelper::ToString(planeMatrix[i]);
-            }
-
-            return result;
-        }
+        inline String toString(Char _separator = ';') const;
 
         //////////////////////////////////////////
-        static Mat3D FromString(String const& _string)
-        {
-            Mat3D result;
+        static inline CString ParseString(CString _string, Size _size, Mat3D& _result, Char _separator = ';');
 
-            Vector<String> words;
-            StringHelper::SplitWords(_string, words, ';');
-            if (words.size() == 9)
-            {
-                for (S32 i = 0; i < 9; ++i)
-                {
-                    result.planeMatrix[i] = StringHelper::StringToF32(words[i]);
-                }
+        //////////////////////////////////////////
+        static inline CString ParseStringPretty(CString _string, Size _size, Mat3D& _result, Char _separator = ',');
 
-                return result;
-            }
+        //////////////////////////////////////////
+        static inline Mat3D FromString(CString _string, Size _size, Char _separator = ';');
 
-            return Mat3D::c_zero;
-        }
+        //////////////////////////////////////////
+        static Mat3D FromString(String const& _string, Char _separator = ';');
 
     public:
 

@@ -39,6 +39,58 @@ namespace Maze
     //////////////////////////////////////////
     Vec3DB const Vec3DB::c_false = { false, false, false };
     Vec3DB const Vec3DB::c_true = { true, true, true };
+
+    //////////////////////////////////////////
+    String Vec3DB::toString(Char _separator) const
+    {
+        return StringHelper::ToString(x) + _separator + StringHelper::ToString(y) + _separator + StringHelper::ToString(z);
+    }
+
+    //////////////////////////////////////////
+    CString Vec3DB::ParseString(CString _string, Size _size, Vec3DB& _result, Char _separator)
+    {
+        CString end = _string + _size;
+        _string = StringHelper::ParseBool(_string, end, _result.x);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ParseBool(_string, end, _result.y);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ParseBool(_string, end, _result.z);
+        return _string;
+    }
+
+    //////////////////////////////////////////
+    CString Vec3DB::ParseStringPretty(CString _string, Size _size, Vec3DB& _result, Char _separator)
+    {
+        CString end = _string + _size;
+        _string = StringHelper::ParseBoolPretty(_string, end, _result.x);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ParseBoolPretty(_string, end, _result.y);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+        _string = StringHelper::SkipChar(_string, end, ' ');
+        _string = StringHelper::ParseBoolPretty(_string, end, _result.z);
+        return _string;
+    }
+
+    //////////////////////////////////////////
+    Vec3DB Vec3DB::FromString(CString _string, Size _size, Char _separator)
+    {
+        Vec3DB result = Vec3DB(false);
+        ParseString(_string, _size, result, _separator);
+        return result;
+    }
+
+    //////////////////////////////////////////
+    Vec3DB Vec3DB::FromString(String const& _string, Char _separator)
+    {
+        return FromString(&_string[0], _string.size(), _separator);
+    }
     
 
 } // namespace Maze

@@ -407,177 +407,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    MAZE_CORE_API static inline DataBlock::ParamIndex AddParam(
-        DataBlock& _dataBlock,
-        HashedCString _name,
-        DataBlockParamType _type,
-        CString _value,
-        Size _size)
-    {
-        DataBlock::ParamIndex at = -1;
-
-        DataBlock::ParamIndex itemId = _dataBlock.findParamIndex(_dataBlock.getShared()->getStringId(_name));
-        if ((itemId >= 0) && (_dataBlock.getParamType(itemId) != _type))
-        {
-            return -1;
-        }
-
-        if (_type == DataBlockParamType::ParamString)
-        {
-            at = _dataBlock.addString(_name, String(_value, _value + _size));
-        }
-        else
-        {
-            switch (_type)
-            {
-                case DataBlockParamType::ParamS32:
-                {
-                    S32 value = StringHelper::StringToS32(_value);
-                    at = _dataBlock.addS32(_name, value);
-                    break;
-                }
-                case DataBlockParamType::ParamS64:
-                {
-                    S64 value = StringHelper::StringToS64(_value);
-                    at = _dataBlock.addS64(_name, value);
-                    break;
-                }
-                case DataBlockParamType::ParamU32:
-                {
-                    U32 value = StringHelper::StringToU32(_value);
-                    at = _dataBlock.addU32(_name, value);
-                    break;
-                }
-                case DataBlockParamType::ParamU64:
-                {
-                    U64 value = StringHelper::StringToU64(_value);
-                    at = _dataBlock.addU64(_name, value);
-                    break;
-                }
-                case DataBlockParamType::ParamF32:
-                {
-                    F32 value = StringHelper::StringToF32Safe(_value);
-                    at = _dataBlock.addF32(_name, value);
-                    break;
-                }
-                case DataBlockParamType::ParamF64:
-                {
-                    F64 value = StringHelper::StringToF64Safe(_value);
-                    at = _dataBlock.addF64(_name, value);
-                    break;
-                }
-                case DataBlockParamType::ParamBool:
-                {
-                    Bool value = false;
-                    MAZE_TODO;
-                    at = _dataBlock.addBool(_name, value);
-                    break;
-                }
-                case DataBlockParamType::ParamVec2DS:
-                {
-                    Vec2DS value = Vec2DS::c_zero;
-                    MAZE_TODO;
-                    at = _dataBlock.addVec2DS(_name, value);
-                    break;
-                }
-                case DataBlockParamType::ParamVec3DS:
-                {
-                    Vec3DS value = Vec3DS::c_zero;
-                    MAZE_TODO;
-                    at = _dataBlock.addVec3DS(_name, value);
-                    break;
-                }
-                case DataBlockParamType::ParamVec4DS:
-                {
-                    Vec4DS value = Vec4DS::c_zero;
-                    MAZE_TODO;
-                    at = _dataBlock.addVec4DS(_name, value);
-                    break;
-                }
-                case DataBlockParamType::ParamVec2DU:
-                {
-                    Vec2DU value = Vec2DU::c_zero;
-                    MAZE_TODO;
-                    at = _dataBlock.addVec2DU(_name, value);
-                    break;
-                }
-                case DataBlockParamType::ParamVec3DU:
-                {
-                    Vec3DU value = Vec3DU::c_zero;
-                    MAZE_TODO;
-                    at = _dataBlock.addVec3DU(_name, value);
-                    break;
-                }
-                case DataBlockParamType::ParamVec4DU:
-                {
-                    Vec4DU value = Vec4DU::c_zero;
-                    MAZE_TODO;
-                    at = _dataBlock.addVec4DU(_name, value);
-                    break;
-                }
-                case DataBlockParamType::ParamVec2DF:
-                {
-                    Vec2DF value = Vec2DF::c_zero;
-                    MAZE_TODO;
-                    at = _dataBlock.addVec2DF(_name, value);
-                    break;
-                }
-                case DataBlockParamType::ParamVec3DF:
-                {
-                    Vec3DF value = Vec3DF::c_zero;
-                    MAZE_TODO;
-                    at = _dataBlock.addVec3DF(_name, value);
-                    break;
-                }
-                case DataBlockParamType::ParamVec4DF:
-                {
-                    Vec4DF value = Vec4DF::c_zero;
-                    MAZE_TODO;
-                    at = _dataBlock.addVec4DF(_name, value);
-                    break;
-                }
-                case DataBlockParamType::ParamVec2DB:
-                {
-                    Vec2DB value = Vec2DB(false);
-                    MAZE_TODO;
-                    at = _dataBlock.addVec2DB(_name, value);
-                    break;
-                }
-                case DataBlockParamType::ParamVec3DB:
-                {
-                    Vec3DB value = Vec3DB(false);
-                    MAZE_TODO;
-                    at = _dataBlock.addVec3DB(_name, value);
-                    break;
-                }
-                case DataBlockParamType::ParamVec4DB:
-                {
-                    Vec4DB value = Vec4DB(false);
-                    MAZE_TODO;
-                    at = _dataBlock.addVec4DB(_name, value);
-                    break;
-                }
-                case DataBlockParamType::ParamMat3DF:
-                {
-                    Mat3DF value = Mat3DF::c_zero;
-                    MAZE_TODO;
-                    at = _dataBlock.addMat3DF(_name, value);
-                    break;
-                }
-                case DataBlockParamType::ParamMat4DF:
-                {
-                    Mat4DF value = Mat4DF::c_zero;
-                    MAZE_TODO;
-                    at = _dataBlock.addMat4DF(_name, value);
-                    break;
-                }
-                default:
-                    break;
-            }
-        }
-
-        return at;
-    }
+    
 
 
     //////////////////////////////////////////
@@ -730,11 +560,8 @@ namespace Maze
                 if (!parseValue(valueText))
                     return false;
 
-                if (AddParam(_dataBlock, HashedString(nameText), paramType, valueText.c_str(), valueText.size()) < 0)
-                {
-                    processSyntaxError("Invalid value");
+                if (!addParam(_dataBlock, HashedString(nameText), paramType, valueText.c_str(), valueText.size()))
                     return false;
-                }
 
                 m_wasNewLineAfterStatement = false;
                 m_lastStatement = Statement::Param;
@@ -1242,6 +1069,275 @@ namespace Maze
                     String(m_readStream.getData() + pendingComment.startOffset, m_readStream.getData() + pendingComment.endOffset));
         }
         m_pendingComments.clear();
+    }
+
+    //////////////////////////////////////////
+    bool DataBlockTextParser::addParam(
+        DataBlock& _dataBlock,
+        HashedCString _name,
+        DataBlockParamType _type,
+        CString _value,
+        Size _size)
+    {
+        DataBlock::ParamIndex itemId = _dataBlock.findParamIndex(_dataBlock.getShared()->getStringId(_name));
+        if ((itemId >= 0) && (_dataBlock.getParamType(itemId) != _type))
+        {
+            processSyntaxError("Invalid type");
+            return false;
+        }
+
+        if (_size == 0)
+        {
+            processSyntaxError("Param is empty");
+            return false;
+        }
+
+        if (_type == DataBlockParamType::ParamString)
+        {
+            _dataBlock.addString(_name, String(_value, _value + _size));
+        }
+        else
+        {
+            switch (_type)
+            {
+                case DataBlockParamType::ParamS32:
+                {
+                    S32 value = 0;
+                    if (!StringHelper::ParseNumber<S32>(_value, _value + _size, value))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addS32(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamS64:
+                {
+                    S64 value = 0;
+                    if (!StringHelper::ParseNumber<S64>(_value, _value + _size, value))
+                    {                        
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addS64(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamU32:
+                {
+                    U32 value = 0;
+                    if (!StringHelper::ParseNumber<U32>(_value, _value + _size, value))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addU32(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamU64:
+                {
+                    U64 value = 0;
+                    if (!StringHelper::ParseNumber<U64>(_value, _value + _size, value))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addU64(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamF32:
+                {
+                    F32 value = 0.0f;
+                    if (!StringHelper::ParseNumber<F32>(_value, _value + _size, value))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addF32(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamF64:
+                {
+                    F64 value = 0.0f;
+                    if (!StringHelper::ParseNumber<F64>(_value, _value + _size, value))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addF64(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamBool:
+                {
+                    Bool value = false;
+                    if (!StringHelper::ParseBoolPretty(_value, _value + _size, value))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+
+                    _dataBlock.addBool(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec2DS:
+                {
+                    Vec2DS value = Vec2DS::c_zero;
+                    if (!Vec2DS::ParseString(_value, _size, value, ','))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addVec2DS(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec3DS:
+                {
+                    Vec3DS value = Vec3DS::c_zero;
+                    if (!Vec3DS::ParseString(_value, _size, value, ','))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addVec3DS(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec4DS:
+                {
+                    Vec4DS value = Vec4DS::c_zero;
+                    if (!Vec4DS::ParseString(_value, _size, value, ','))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addVec4DS(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec2DU:
+                {
+                    Vec2DU value = Vec2DU::c_zero;
+                    if (!Vec2DU::ParseString(_value, _size, value, ','))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addVec2DU(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec3DU:
+                {
+                    Vec3DU value = Vec3DU::c_zero;
+                    if (!Vec3DU::ParseString(_value, _size, value, ','))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addVec3DU(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec4DU:
+                {
+                    Vec4DU value = Vec4DU::c_zero;
+                    if (!Vec4DU::ParseString(_value, _size, value, ','))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addVec4DU(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec2DF:
+                {
+                    Vec2DF value = Vec2DF::c_zero;
+                    if (!Vec2DF::ParseString(_value, _size, value, ','))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addVec2DF(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec3DF:
+                {
+                    Vec3DF value = Vec3DF::c_zero;
+                    if (!Vec3DF::ParseString(_value, _size, value, ','))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addVec3DF(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec4DF:
+                {
+                    Vec4DF value = Vec4DF::c_zero;
+                    if (!Vec4DF::ParseString(_value, _size, value, ','))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addVec4DF(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec2DB:
+                {
+                    Vec2DB value = Vec2DB(false);
+                    if (!Vec2DB::ParseStringPretty(_value, _size, value, ','))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addVec2DB(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec3DB:
+                {
+                    Vec3DB value = Vec3DB(false);
+                    if (!Vec3DB::ParseStringPretty(_value, _size, value, ','))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addVec3DB(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec4DB:
+                {
+                    Vec4DB value = Vec4DB(false);
+                    if (!Vec4DB::ParseStringPretty(_value, _size, value, ','))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addVec4DB(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamMat3DF:
+                {
+                    Mat3DF value = Mat3DF::c_zero;
+                    if (!Mat3DF::ParseStringPretty(_value, _size, value, ','))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addMat3DF(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamMat4DF:
+                {
+                    Mat4DF value = Mat4DF::c_zero;
+                    if (!Mat4DF::ParseStringPretty(_value, _size, value, ','))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addMat4DF(_name, value);
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+
+        return true;
     }
 
 
