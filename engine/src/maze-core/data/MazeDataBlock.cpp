@@ -737,6 +737,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    DataBlock& DataBlock::operator[](HashedCString _name)
+    {
+        DataBlock* result = getDataBlock(_name);
+        if (result != nullptr)
+            return *result;
+        return *addNewDataBlock(_name);
+    }
+
+    //////////////////////////////////////////
     DataBlock* DataBlock::addDataBlock(HashedCString _name)
     {
         DataBlock* blk = getDataBlock(_name);

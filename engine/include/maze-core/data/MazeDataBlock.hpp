@@ -495,6 +495,11 @@ namespace Maze
         //////////////////////////////////////////
         DataBlock const* getDataBlock(DataBlockIndex _index) const;
 
+
+        //////////////////////////////////////////
+        DataBlock& operator[](HashedCString _name);
+
+
         //////////////////////////////////////////
         DataBlock const* getDataBlockByNameId(SharedStringId _nameId, DataBlockIndex _startAfter = 0) const;
 

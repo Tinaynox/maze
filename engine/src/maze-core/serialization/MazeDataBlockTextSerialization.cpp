@@ -115,44 +115,44 @@ namespace Maze
                 quoteLen = 4;
             }
             else
-            if (hasLineBreak)
-            {
-                quote = "\"\"\"\n\"\"\"";
-                quoteLen = 4;
-            }
+if (hasLineBreak)
+{
+    quote = "\"\"\"\n\"\"\"";
+    quoteLen = 4;
+}
+else
+if (hasQuote && !hasTick)
+{
+    quote = "'";
+}
+
+// Opening quote
+_stream.write((U8 const*)quote, quoteLen);
+
+for (CString p = _value; *p; ++p)
+{
+    Char c = *p;
+
+    if (c == '~')
+        _stream.write("~~", 2);
+    else
+        if (c == quote[0] && (quoteLen == 1 || p[1] == c))
+            _stream.write(c == '\"' ? "~\"" : "~\'", 2);
+        else
+            if (c == '\r' && quoteLen == 1)
+                _stream.write("~r", 2);
             else
-            if (hasQuote && !hasTick)
-            {
-                quote = "'";
-            }
-
-            // Opening quote
-            _stream.write((U8 const*)quote, quoteLen);
-
-            for (CString p = _value; *p; ++p)
-            {
-                Char c = *p;
-
-                if (c == '~')
-                    _stream.write("~~", 2);
-                else
-                if (c == quote[0] && (quoteLen == 1 || p[1] == c))
-                    _stream.write(c == '\"' ? "~\"" : "~\'", 2);
-                else
-                if (c == '\r' && quoteLen == 1)
-                    _stream.write("~r", 2);
-                else
                 if (c == '\n' && quoteLen == 1)
                     _stream.write("~n", 2);
                 else
-                if (c == '\t')
-                    _stream.write("~t", 2);
-                else
-                    _stream.write(&c, 1);
-            }
+                    if (c == '\t')
+                        _stream.write("~t", 2);
+                    else
+                        _stream.write(&c, 1);
+}
 
-            // Closing quote
-            _stream.write((U8 const*)(quote + quoteLen - 1), quoteLen);
+// Closing quote
+_stream.write((U8 const*)(quote + quoteLen - 1), quoteLen);
         };
 
         //////////////////////////////////////////
@@ -171,27 +171,27 @@ namespace Maze
             auto writeEndOfLine = [&]() { _stream << "\n"; };
             auto writeIndent =
                 [&](Size _size)
-                {
-                    static CString c_space8 = "        ";
-                    for (; _size >= 8; _size -= 8)
-                        _stream.write((U8 const*)c_space8, 8);
-                    if (_size > 0)
-                        _stream.write((U8 const*)c_space8, _size);
-                };
+            {
+                static CString c_space8 = "        ";
+                for (; _size >= 8; _size -= 8)
+                    _stream.write((U8 const*)c_space8, 8);
+                if (_size > 0)
+                    _stream.write((U8 const*)c_space8, _size);
+            };
 
             auto isNameIsSimple =
                 [](String const& _name)
-                {
-                    bool result = true;
-                    if (_name.empty())
-                        result = false;
+            {
+                bool result = true;
+                if (_name.empty())
+                    result = false;
 
-                    for (Size i = 0, e = _name.size(); i < e && result; ++i)
-                        result = IsDataBlockIdentifierChar(_name[i]);
+                for (Size i = 0, e = _name.size(); i < e && result; ++i)
+                    result = IsDataBlockIdentifierChar(_name[i]);
 
-                    return result;
-                };
-            
+                return result;
+            };
+
 
             bool skipNextIndent = false;
 
@@ -212,7 +212,26 @@ namespace Maze
                         skipNextIndent = false;
                 }
 
-                // TODO: Comments here
+                if (name.size() >= 3 && MAZE_STRNICMP(name.c_str(), MAZE_DATA_BLOCK_COMMENT_PREFIX, MAZE_DATA_BLOCK_COMMENT_PREFIX_LEN) == 0)
+                {
+                    // C-style comment
+                    if (name.c_str()[2] == *MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_C || name.c_str()[2] == *MAZE_DATA_BLOCK_COMMENT_SUFFIX_C)
+                    {
+                        _stream << "/*";
+                        _stream << _dataBlock.getCString(i);
+                        _stream << "*/";
+                        writeEndOfLine();
+                    }
+                    else
+                    // CPP-style comment
+                    if (name.c_str()[2] == *MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_CPP || name.c_str()[2] == *MAZE_DATA_BLOCK_COMMENT_SUFFIX_CPP)
+                    {
+                        _stream << "//";
+                        _stream << _dataBlock.getCString(i);
+                        writeEndOfLine();
+                    }
+                    continue;
+                }
 
 
                 if (nameIsSimple)
@@ -221,7 +240,7 @@ namespace Maze
                     WriteComplexString(_stream, name.c_str(), name.size());
                 
                 _stream << ":";
-                _stream << c_dataBlockParamTypeInfo[param.type].name;
+                _stream << c_dataBlockParamTypeInfo[param.type].name.str;
                 _stream << "=";
                 if (param.type == U32(DataBlockParamType::ParamString))
                 {
@@ -292,14 +311,28 @@ namespace Maze
                     _stream << ";";
                 else
                 {
-                    // TODO: Side comments
+                    if (i + 1 < _dataBlock.getParamsCount())
+                    {
+                        String const& nextParamName = _dataBlock.getShared()->getString(_dataBlock.getParam(i + 1).nameId);
+
+                        if (nextParamName.size() >= 3 &&
+                            MAZE_STRNICMP(nextParamName.c_str(), MAZE_DATA_BLOCK_COMMENT_PREFIX, MAZE_DATA_BLOCK_COMMENT_PREFIX_LEN) == 0 &&
+                            (nextParamName.c_str()[2] == *MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_C) || (nextParamName.c_str()[2] == *MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_CPP))
+                        {
+                            _stream << " ";
+                            skipNextIndent = true;
+                            continue;
+                        }
+                    }
 
                     writeEndOfLine();
                 }
             }
 
+            if (!_compact && _dataBlock.getParamsCount() > 0 && _dataBlock.getDataBlocksCount() > 0)
+                writeEndOfLine();
+
             // Data Blocks
-            bool paramsBlocksSeparated = false;
             for (DataBlock::DataBlockIndex i = 0, e = _dataBlock.getDataBlocksCount(); i < e; ++i)
             {
                 DataBlock const* dataBlock = _dataBlock.getDataBlock(i);
@@ -307,12 +340,28 @@ namespace Maze
                 String const& name = _dataBlock.getShared()->getString(dataBlock->getNameId());
                 bool nameIsSimple = isNameIsSimple(name);
 
-                // TODO: Comments
-
-                if (!_compact && !paramsBlocksSeparated)
+                if (name.size() >= 3 && MAZE_STRNICMP(name.c_str(), MAZE_DATA_BLOCK_COMMENT_PREFIX, MAZE_DATA_BLOCK_COMMENT_PREFIX_LEN) == 0)
                 {
-                    paramsBlocksSeparated = true;
-                    writeEndOfLine();
+                    if (!_compact && _level > 0)
+                        writeIndent(_level * 2);
+
+                    // C-style comment
+                    if (name.c_str()[2] == *MAZE_DATA_BLOCK_COMMENT_SUFFIX_C)
+                    {
+                        _stream << "/*";
+                        _stream << dataBlock->getCString(0);
+                        _stream << "*/";
+                        writeEndOfLine();
+                    }
+                    else
+                    // CPP-style comment
+                    if (name.c_str()[2] == *MAZE_DATA_BLOCK_COMMENT_SUFFIX_CPP)
+                    {
+                        _stream << "//";
+                        _stream << dataBlock->getCString(0);
+                        writeEndOfLine();
+                    }
+                    continue;
                 }
 
                 if (!_compact && _level > 0)
@@ -674,7 +723,7 @@ namespace Maze
                         while (m_readStream.canRead(2))
                         {
                             Char nextNextChars[2];
-                            m_readStream >> nextNextChars;
+                            m_readStream.readNoRewind(nextNextChars);
 
                             if (nextNextChars[0] == '/' && nextNextChars[1] == '*')
                             {
@@ -1057,8 +1106,8 @@ namespace Maze
     {
         for (auto& pendingComment : m_pendingComments)
         {
-            HashedCString commentKey = pendingComment.cppStyle ? MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_SUFFIX_CPP)
-                                                               : MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_SUFFIX_C);
+            HashedCString commentKey = pendingComment.cppStyle ? MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_CPP)
+                                                               : MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_C);
             if (_toParams)
                 _dataBlock.addString(
                     commentKey,

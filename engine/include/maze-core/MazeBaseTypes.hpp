@@ -83,35 +83,40 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    #define S8_MAX            SCHAR_MAX
-    #define S8_MIN            SCHAR_MIN
+    #define S8_MAX                  (SCHAR_MAX)
+    #define S8_MIN                  (SCHAR_MIN)
 
-    #define S16_MAX           SHRT_MAX
-    #define S16_MIN           SHRT_MIN
+    #define S16_MAX                 (SHRT_MAX)
+    #define S16_MIN                 (SHRT_MIN)
 
-    #define S32_MAX           INT_MAX
-    #define S32_MIN           INT_MIN
+    #define S32_MAX                 (INT_MAX)
+    #define S32_MIN                 (INT_MIN)
 
-    #define S64_MAX           LLONG_MAX
-    #define S64_MIN           LLONG_MIN
+    #define S64_MAX                 (LLONG_MAX)
+    #define S64_MIN                 (LLONG_MIN)
 
-    #define U8_MAX            UCHAR_MAX
-    #define U8_MIN            0
+    #define U8_MAX                  (UCHAR_MAX)
+    #define U8_MIN                  (0)
 
-    #define U16_MAX           USHRT_MAX
-    #define U16_MIN           0
+    #define U16_MAX                 (USHRT_MAX)
+    #define U16_MIN                 (0)
 
-    #define U32_MAX           UINT_MAX
-    #define U32_MIN           0u
+    #define U32_MAX                 (UINT_MAX)
+    #define U32_MIN                 (0u)
 
-    #define U64_MAX           ULLONG_MAX
-    #define U64_MIN           0ui64
+    #define U64_MAX                 (ULLONG_MAX)
+    #define U64_MIN                 (0ui64)
 
-    #define F32_MAX           3.402823466e+38F
-    #define F32_MIN           1.175494351e-38F
+    #define F32_MAX                 (3.402823466e+38f)
+    #define F32_MIN                 (1.175494351e-38f)
+    #define F32_VERY_SMALL_NUMBER   (4e-19f)
+    #define F32_VERY_BIG_NUMBER     (2147440000.0f)
 
-    #define F64_MAX           1.7976931348623158e+308
-    #define F64_MIN           2.2250738585072014e-308
+    #define F64_MAX                 (1.7976931348623158e+308)
+    #define F64_MIN                 (2.2250738585072014e-308)
+    #define F64_VERY_SMALL_NUMBER   (1.34078e-154) 
+    #define F64_VERY_BIG_NUMBER     (9007200000000000.0)
+
 
 
 } // namespace Maze

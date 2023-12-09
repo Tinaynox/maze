@@ -55,13 +55,13 @@ namespace Maze
         U32 hash = 0u;
 
         //////////////////////////////////////////
-        inline HashedCString() : str(""), hash(Hash::CalculateFNV1("")) {}
+        MAZE_FORCEINLINE HashedCString() : str(""), hash(Hash::CalculateFNV1("")) {}
 
         //////////////////////////////////////////
-        inline HashedCString(CString _str, U32 _hash) : str(_str), hash(_hash) {}
+        MAZE_FORCEINLINE HashedCString(CString _str, U32 _hash) : str(_str), hash(_hash) {}
 
         //////////////////////////////////////////
-        inline HashedCString(CString _str) : str(_str), hash(Hash::CalculateFNV1(_str)) {}
+        MAZE_FORCEINLINE HashedCString(CString _str) : str(_str), hash(Hash::CalculateFNV1(_str)) {}
 
         //////////////////////////////////////////
         inline HashedCString(HashedCString const& _other) = default;
