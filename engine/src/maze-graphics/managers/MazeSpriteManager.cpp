@@ -111,16 +111,9 @@ namespace Maze
             if (metaDataIt != metaData.end())
             {
                 String const& borderData = metaDataIt->second;
-                Vector<String> words;
-                StringHelper::SplitWords(borderData, words, ',');
-                if (words.size() == 4)
-                {
-                    sprite->setSliceBorder(
-                        StringHelper::StringToF32(words[0]),
-                        StringHelper::StringToF32(words[1]),
-                        StringHelper::StringToF32(words[2]),
-                        StringHelper::StringToF32(words[3]));
-                }
+                Vec4DF sliceBorder;
+                if (Vec4DF::ParseString(borderData.c_str(), borderData.size(), sliceBorder, ','))
+                    sprite->setSliceBorder(sliceBorder.x, sliceBorder.y, sliceBorder.z, sliceBorder.w);
             }
         }
 

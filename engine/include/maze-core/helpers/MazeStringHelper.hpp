@@ -1251,18 +1251,44 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void SplitWords(CString _line, Vector<ConstSpan<Char>>& _words, Char _separator = ' ') noexcept
+        template <typename TChar>
+        inline void SplitWords(TChar const* _line, Vector<ConstSpan<TChar>>& _words, TChar _separator = ' ') noexcept
         {
             _words.clear();
             Size prevPos = 0;
 
-            Char const* it = _line;
+            TChar const* it = _line;
 
             for (; *it; it++)
             {
                 if (*it == _separator)
                 {
-                    _words.emplace_back(_line + prevPos, it - _line);
+                    _words.emplace_back(_line + prevPos, it - (_line + prevPos));
+                    prevPos = it - _line + 1;
+                }
+            }
+            _words.emplace_back(_line + prevPos, it - (_line + prevPos));
+        }
+
+        //////////////////////////////////////////
+        template <typename TChar>
+        inline void SplitWords(TChar const* _line, Size _size, Vector<ConstSpan<TChar>>& _words, TChar _separator = ' ') noexcept
+        {
+            _words.clear();
+
+            if (!_size)
+                return;
+
+            Size prevPos = 0;
+
+            TChar const* __restrict it = _line;
+            TChar const* __restrict end = _line + _size;
+
+            for (; it != end; it++)
+            {
+                if (*it == _separator)
+                {
+                    _words.emplace_back(_line + prevPos, it - (_line + prevPos));
                     prevPos = it - _line + 1;
                 }
             }

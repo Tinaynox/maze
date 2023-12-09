@@ -319,7 +319,7 @@ namespace Maze
             Vector<String> words;
             StringHelper::SplitWords(tagsString, words, ',');
             for (String const& word : words)
-                tags.emplace(word);
+                tags.emplace(std::move(word));
         }
 
         _file->setTags(tags);
@@ -470,10 +470,10 @@ namespace Maze
                 StringHelper::SplitWords(metaDataLines[i], metaDataValues, '=');
 
                 if (metaDataValues.size() == 1)
-                    metaData[metaDataValues[0]] = String();
+                    metaData.emplace(std::move(metaDataValues[0]), String());
                 else
                 if (metaDataValues.size() == 2)
-                    metaData[metaDataValues[0]] = metaDataValues[1];
+                    metaData.emplace(std::move(metaDataValues[0]), std::move(metaDataValues[1]));
             }
         }
 

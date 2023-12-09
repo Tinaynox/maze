@@ -125,6 +125,7 @@ namespace Maze
 
         String tail = GetTail(_line);
 
+        // #TODO: Rework to ConstSpan<Char>
         StringHelper::SplitWords(tail, sface, ' ');
 
         bool noNormal = false;
@@ -135,6 +136,7 @@ namespace Maze
             // See What type the vertex is.
             S32 vertexType;
 
+            // #TODO: Rework to ConstSpan<Char>
             StringHelper::SplitWords(sface[i], svert, '/');
 
             // Check for just position - v1
@@ -585,6 +587,7 @@ namespace Maze
                 if (firstToken == "v")
                 {
                     Vector<String> words;
+                    // #TODO: Rework to ConstSpan<Char>
                     StringHelper::SplitWords(tail, words, ' ');
 
                     Vec3DF vertexPosition;
@@ -602,6 +605,7 @@ namespace Maze
                 if (firstToken == "vt")
                 {
                     Vector<String> words;
+                    // #TODO: Rework to ConstSpan<Char>
                     StringHelper::SplitWords(tail, words, ' ');
 
                     Vec2DF uv;
@@ -618,6 +622,7 @@ namespace Maze
                 if (firstToken == "vn")
                 {
                     Vector<String> words;
+                    // #TODO: Rework to ConstSpan<Char>
                     StringHelper::SplitWords(tail, words, ' ');
 
                     Vec3DF vertexNormal;

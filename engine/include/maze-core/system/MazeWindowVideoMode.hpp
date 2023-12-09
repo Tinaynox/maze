@@ -56,7 +56,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        static WindowVideoMode FromString(const String& _videoMode)
+        static WindowVideoMode FromString(String const& _videoMode)
         {
             WindowVideoMode result;
 

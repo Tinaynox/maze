@@ -330,11 +330,14 @@ namespace Maze
     //////////////////////////////////////////
     void LogServiceBase::splitAndLog(S32 _priority, CString _text, Size _size, Char _separator)
     {
-        Vector<String> words;
-        StringHelper::SplitWords(String(_text, _size), words, _separator);
-        for (String const& word : words)
+        Vector<ConstSpan<Char>> words;
+        StringHelper::SplitWords(_text, _size, words, _separator);
+        for (ConstSpan<Char> const& word : words)
         {
-            log(_priority, word.c_str(), word.size());
+            if (!word.getSize())
+                continue;
+
+            log(_priority, word.getPtr(), word.getSize());
         }
     }
 

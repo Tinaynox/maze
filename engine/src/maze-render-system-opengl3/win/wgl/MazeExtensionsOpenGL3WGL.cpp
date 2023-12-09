@@ -110,7 +110,7 @@ namespace Maze
             StringHelper::SplitWords((String)strExtList, words);
             for (Size i = 0, in = words.size(); i < in; ++i)
                 if (!words[i].empty())
-                    m_extensions.insert(words[i]);
+                    m_extensions.insert(std::move(words[i]));
         }
 
         return true;
