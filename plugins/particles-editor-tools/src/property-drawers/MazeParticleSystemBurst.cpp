@@ -113,12 +113,12 @@ namespace Maze
         HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(_parent->getWidth(), 18),
-            Vec2DF(0, 0),
+            Vec2F(_parent->getWidth(), 18),
+            Vec2F(0, 0),
             _parent,
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         layout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
         layout->setAutoWidth(false);
         layout->setExpand(true);
@@ -129,23 +129,23 @@ namespace Maze
             EditorToolsLayout::c_inspectorPropertyFontSize,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(8, 18),
-            Vec2DF(0, 0),
+            Vec2F(8, 18),
+            Vec2F(0, 0),
             layout->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF::c_zero);
+            Vec2F(0.0f, 0.5f),
+            Vec2F::c_zero);
         systemText->setColor(EditorToolsLayout::c_inspectorPropertyColor);
 
         m_layout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(_parent->getWidth(), 18),
-            Vec2DF(0, 0),
+            Vec2F(_parent->getWidth(), 18),
+            Vec2F(0, 0),
             layout->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         m_layout->setAutoWidth(true);
         m_layout->setAutoHeight(false);
         m_layout->setExpand(false);
@@ -203,8 +203,8 @@ namespace Maze
         HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(60, 18),
-            Vec2DF(0, 0),
+            Vec2F(60, 18),
+            Vec2F(0, 0),
             _parent,
             _parent->getEntityRaw()->getECSScene());
         layout->setSpacing(2.0f);
@@ -214,22 +214,22 @@ namespace Maze
             6,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(12, 18),
-            Vec2DF(0, 0),
+            Vec2F(12, 18),
+            Vec2F(0, 0),
             layout->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF::c_zero);
+            Vec2F(0.0f, 0.5f),
+            Vec2F::c_zero);
         systemText->setColor(ColorU32::c_black);
 
         EditBox2DPtr editBox = SystemUIHelper::CreateDefaultEditBox(
             "",
-            Vec2DF(40, 18),
-            Vec2DF(0, 0),
+            Vec2F(40, 18),
+            Vec2F(0, 0),
             layout->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.5f, 0.5f),
-            Vec2DF::c_zero);
+            Vec2F(0.5f, 0.5f),
+            Vec2F::c_zero);
         editBox->eventTextInput.subscribe(this, &PropertyDrawerParticleSystemBurst::notifyTextInput);
         editBox->eventSelectedChanged.subscribe(this, &PropertyDrawerParticleSystemBurst::notifySelectedChanged);
 

@@ -68,7 +68,7 @@ namespace Maze
         //////////////////////////////////////////
         using GenerateRandomPointCallback = void (ParticleSystem3DShapeModule::*)(
             ParticleSystem3DZoneEmissionPoint& _result,
-            Vec3DF const& _center) const;
+            Vec3F const& _center) const;
 
     public:
 
@@ -102,22 +102,22 @@ namespace Maze
         //////////////////////////////////////////
         inline void generateRandomPoint(
             ParticleSystem3DZoneEmissionPoint& _result,
-            Vec3DF const& _center) const
+            Vec3F const& _center) const
         {
             (this->*m_generateRandomPointCallback)(_result, _center);
         }
 
         //////////////////////////////////////////
         void updateInitial(
-            Vec3DF const& _emitterPosition,
+            Vec3F const& _emitterPosition,
             Particles3D& _particles,
             S32 _first,
             S32 _last,
             F32 _emitterTimePercent,
             ParticleSystemSimulationSpace _simulationSpace,
             ParticleSystemScalingMode _scalingMode,
-            Mat4DF const& _particleSystemLocalTransform,
-            Mat4DF const& _particleSystemWorldTransform);
+            Mat4F const& _particleSystemLocalTransform,
+            Mat4F const& _particleSystemWorldTransform);
 
 
         //////////////////////////////////////////
@@ -154,67 +154,67 @@ namespace Maze
         //////////////////////////////////////////
         void generateRandomPointNone(
             ParticleSystem3DZoneEmissionPoint& _result,
-            Vec3DF const& _center) const;
+            Vec3F const& _center) const;
 
         //////////////////////////////////////////
         void generateRandomPointSphereVolume(
             ParticleSystem3DZoneEmissionPoint& _result,
-            Vec3DF const& _center) const;
+            Vec3F const& _center) const;
 
         //////////////////////////////////////////
         void generateRandomPointSphereShell(
             ParticleSystem3DZoneEmissionPoint& _result,
-            Vec3DF const& _center) const;
+            Vec3F const& _center) const;
 
         //////////////////////////////////////////
         void generateRandomPointCircleVolume(
             ParticleSystem3DZoneEmissionPoint& _result,
-            Vec3DF const& _center) const;
+            Vec3F const& _center) const;
 
         //////////////////////////////////////////
         void generateRandomPointCircleShell(
             ParticleSystem3DZoneEmissionPoint& _result,
-            Vec3DF const& _center) const;
+            Vec3F const& _center) const;
 
         //////////////////////////////////////////
         void generateRandomPointHemisphereVolume(
             ParticleSystem3DZoneEmissionPoint& _result,
-            Vec3DF const& _center) const;
+            Vec3F const& _center) const;
 
         //////////////////////////////////////////
         void generateRandomPointHemisphereShell(
             ParticleSystem3DZoneEmissionPoint& _result,
-            Vec3DF const& _center) const;
+            Vec3F const& _center) const;
 
         //////////////////////////////////////////
         void generateRandomPointTorusVolume(
             ParticleSystem3DZoneEmissionPoint& _result,
-            Vec3DF const& _center) const;
+            Vec3F const& _center) const;
 
         //////////////////////////////////////////
         void generateRandomPointTorusShell(
             ParticleSystem3DZoneEmissionPoint& _result,
-            Vec3DF const& _center) const;
+            Vec3F const& _center) const;
 
         //////////////////////////////////////////
         void generateRandomPointConeVolume(
             ParticleSystem3DZoneEmissionPoint& _result,
-            Vec3DF const& _center) const;
+            Vec3F const& _center) const;
 
         //////////////////////////////////////////
         void generateRandomPointConeShell(
             ParticleSystem3DZoneEmissionPoint& _result,
-            Vec3DF const& _center) const;
+            Vec3F const& _center) const;
 
         //////////////////////////////////////////
         void generateRandomPointBoxVolume(
             ParticleSystem3DZoneEmissionPoint& _result,
-            Vec3DF const& _center) const;
+            Vec3F const& _center) const;
 
         //////////////////////////////////////////
         void generateRandomPointBoxShell(
             ParticleSystem3DZoneEmissionPoint& _result,
-            Vec3DF const& _center) const;
+            Vec3F const& _center) const;
 
         //////////////////////////////////////////
         void updateShapeCallbacks();

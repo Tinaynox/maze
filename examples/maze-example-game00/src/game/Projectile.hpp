@@ -105,17 +105,17 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Vec2DF const& getExtraSpeed() const { return m_extraSpeed; }
+        inline Vec2F32 const& getExtraSpeed() const { return m_extraSpeed; }
 
         //////////////////////////////////////////
-        inline void setExtraSpeed(Vec2DF const& _extraSpeed) { m_extraSpeed = _extraSpeed; }
+        inline void setExtraSpeed(Vec2F32 const& _extraSpeed) { m_extraSpeed = _extraSpeed; }
 
 
         //////////////////////////////////////////
-        inline Vec2DF const& getDirection() const { return m_direction; }
+        inline Vec2F32 const& getDirection() const { return m_direction; }
 
         //////////////////////////////////////////
-        inline void setDirection(Vec2DF const& _direction) { m_direction = _direction; }
+        inline void setDirection(Vec2F32 const& _direction) { m_direction = _direction; }
 
 
         //////////////////////////////////////////
@@ -174,9 +174,9 @@ namespace Maze
         F32 m_speed;
         F32 m_damage;
 
-        Vec2DF m_extraSpeed;
+        Vec2F32 m_extraSpeed;
 
-        Vec2DF m_direction;
+        Vec2F32 m_direction;
 
         SpecialEffectType m_destroyEffect = SpecialEffectType::None;
 

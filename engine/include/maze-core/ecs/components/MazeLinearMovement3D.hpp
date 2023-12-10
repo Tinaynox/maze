@@ -32,7 +32,7 @@
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/math/MazeRotation2D.hpp"
 
 
@@ -68,7 +68,7 @@ namespace Maze
         virtual ~LinearMovement3D();
 
         //////////////////////////////////////////
-        static LinearMovement3DPtr Create(Vec3DF const& _axis = Vec3DF::c_unitY, F32 _speed = 5.0f);
+        static LinearMovement3DPtr Create(Vec3F const& _axis = Vec3F::c_unitY, F32 _speed = 5.0f);
 
 
         //////////////////////////////////////////
@@ -83,10 +83,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Vec3DF const& getAxis() const { return m_axis; }
+        inline Vec3F const& getAxis() const { return m_axis; }
 
         //////////////////////////////////////////
-        inline void setAxis(Vec3DF const& _axis) { m_axis = _axis; }
+        inline void setAxis(Vec3F const& _axis) { m_axis = _axis; }
 
 
         //////////////////////////////////////////
@@ -104,14 +104,14 @@ namespace Maze
         using Component::init;
         
         //////////////////////////////////////////
-        bool init(Vec3DF const& _axis = Vec3DF::c_unitY, F32 _speed = 5.0f);
+        bool init(Vec3F const& _axis = Vec3F::c_unitY, F32 _speed = 5.0f);
 
         //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
 
     protected:
         bool m_active = true;
-        Vec3DF m_axis = Vec3DF::c_unitY;
+        Vec3F m_axis = Vec3F::c_unitY;
         F32 m_speed = 5.0f;
 
         Transform3DPtr m_transform;

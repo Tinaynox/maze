@@ -170,7 +170,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual Vec2DF getTextEnd(Size _rowIndex = 0) MAZE_OVERRIDE;
+        virtual Vec2F getTextEnd(Size _rowIndex = 0) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void updateMeshRendererColors();
@@ -225,7 +225,7 @@ namespace Maze
         HorizontalAlignment2D m_horizontalAlignment;
         VerticalAlignment2D m_verticalAlignment;
 
-        Vector<Mat4DF> m_localMatrices;
+        Vector<Mat4F> m_localMatrices;
     };
 
 

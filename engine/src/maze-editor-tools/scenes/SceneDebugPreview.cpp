@@ -111,7 +111,7 @@ namespace Maze
     SceneDebugPreview::SceneDebugPreview()
         : m_yawAngle(0.0f)
         , m_pitchAngle(0.0f)
-        , m_cursorPositionLastFrame(Vec2DF::c_zero)
+        , m_cursorPositionLastFrame(Vec2F::c_zero)
         , m_cursorDrag(false)
     {
         setIsSystemScene();
@@ -168,7 +168,7 @@ namespace Maze
         // Camera
         EntityPtr cameraEntity = createEntity();
         m_camera3D = cameraEntity->createComponent<Camera3D>();
-        m_camera3D->getTransform()->setLocalPosition(Vec3DF(3.0f, 3.0f, -5.0f));
+        m_camera3D->getTransform()->setLocalPosition(Vec3F(3.0f, 3.0f, -5.0f));
         m_yawAngle = Math::DegreesToRadians(-30.0f);
         //m_pitchAngle = DegreesToRadians(27.0f);
         m_pitchAngle = Math::DegreesToRadians(17.0f);

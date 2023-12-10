@@ -222,10 +222,10 @@ namespace Maze
         virtual void setupDefaultStates();
 
         //////////////////////////////////////////
-        inline Vec4DF const& getClearColor() const { return m_stateMachine->getClearColor(); }
+        inline Vec4F const& getClearColor() const { return m_stateMachine->getClearColor(); }
 
         //////////////////////////////////////////
-        inline void setClearColor(Vec4DF const& _clearColor) { m_stateMachine->setClearColor(_clearColor); }
+        inline void setClearColor(Vec4F const& _clearColor) { m_stateMachine->setClearColor(_clearColor); }
 
         //////////////////////////////////////////
         inline F32 getClearDepth() const { return m_stateMachine->getClearDepth(); }

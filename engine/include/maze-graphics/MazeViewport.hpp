@@ -37,11 +37,11 @@
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
+#include "maze-core/math/MazeVec3.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
-#include "maze-core/math/MazeMat3D.hpp"
+#include "maze-core/math/MazeMat3.hpp"
 
 
 //////////////////////////////////////////
@@ -97,16 +97,16 @@ namespace Maze
         inline U32 getAbsoluteHeight() const { return getAbsoluteRect().size.y; }
 
         //////////////////////////////////////////
-        inline Vec2DU const& getAbsoluteSize() const { return getAbsoluteRect().size; }
+        inline Vec2U const& getAbsoluteSize() const { return getAbsoluteRect().size; }
 
         //////////////////////////////////////////
-        inline Mat3DF const& getExternalTransform() const { return m_externalTransform; }
+        inline Mat3F const& getExternalTransform() const { return m_externalTransform; }
 
         //////////////////////////////////////////
-        void setExternalTransform(Mat3DF const& _matrix);
+        void setExternalTransform(Mat3F const& _matrix);
 
         //////////////////////////////////////////
-        inline Mat3DF const& getTransform() const { return m_transform; }
+        inline Mat3F const& getTransform() const { return m_transform; }
 
 
         //////////////////////////////////////////
@@ -115,7 +115,7 @@ namespace Maze
 
         
         //////////////////////////////////////////
-        Vec2DF convertRenderTargetCoordsToViewportCoords(Vec2DF const& _renderTargetCoords);
+        Vec2F convertRenderTargetCoordsToViewportCoords(Vec2F const& _renderTargetCoords);
 
 
         //////////////////////////////////////////
@@ -164,8 +164,8 @@ namespace Maze
 
         Rect2DF m_relativeRect;
         Rect2DU m_absoluteRect;
-        Mat3DF m_transform;
-        Mat3DF m_externalTransform;
+        Mat3F m_transform;
+        Mat3F m_externalTransform;
 
         S32 m_z;
         U32 m_orderOfArrival;

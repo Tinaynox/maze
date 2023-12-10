@@ -134,15 +134,15 @@ namespace Maze
 
             F32 dist;
 
-            Vec3DF sphereCenter = Vec3DF(4.0f, 6.0f, 1.0f);
+            Vec3F sphereCenter = Vec3F(4.0f, 6.0f, 1.0f);
             F32 sphereRadius = 1.0f;
             if (Math::RaycastSphere(r.getPoint(), r.getDirection(), sphereCenter, sphereRadius, dist))
                 GizmosHelper::DrawSphere(sphereCenter, sphereRadius, ColorF128::c_yellow);
             else
                 GizmosHelper::DrawSphere(sphereCenter, sphereRadius, ColorF128::c_red);
 
-            Vec3DF cylinderCenter = Vec3DF(7.0f, 6.0f, 1.0f);
-            Vec3DF cylinderForward = (Vec3DF::c_unitY + Vec3DF::c_unitZ).normalizedCopy();
+            Vec3F cylinderCenter = Vec3F(7.0f, 6.0f, 1.0f);
+            Vec3F cylinderForward = (Vec3F::c_unitY + Vec3F::c_unitZ).normalizedCopy();
             F32 cylinderRadius = 1.5f;
             F32 cylinderHeight = 3.0f;
             if (Math::RaycastCylinder(r.getPoint(), r.getDirection(), cylinderCenter, cylinderForward, cylinderRadius, cylinderHeight, dist))
@@ -151,8 +151,8 @@ namespace Maze
                 GizmosHelper::DrawCylinder(cylinderCenter, cylinderForward, cylinderRadius, cylinderHeight, ColorF128::c_red);
 
 
-            Vec3DF coneCenter = Vec3DF(1.0f, 6.0f, 1.0f);
-            Vec3DF coneForward = (Vec3DF::c_unitY + Vec3DF::c_unitZ).normalizedCopy();
+            Vec3F coneCenter = Vec3F(1.0f, 6.0f, 1.0f);
+            Vec3F coneForward = (Vec3F::c_unitY + Vec3F::c_unitZ).normalizedCopy();
             F32 coneRadius = 1.5f;
             F32 coneHeight = 3.0f;
             if (Math::RaycastCone(r.getPoint(), r.getDirection(), coneCenter, coneForward, coneRadius, coneHeight, dist))
@@ -161,18 +161,18 @@ namespace Maze
                 GizmosHelper::DrawCone(coneCenter, coneForward, coneRadius, coneHeight, ColorF128::c_red);
 
 
-            Vec3DF cubeCenter = Vec3DF(-3.0f, 3.0f, 0.0f);
-            Vec3DF cubeForward = (Vec3DF::c_unitY + Vec3DF::c_unitZ).normalizedCopy();
-            Vec3DF cubeUp = cubeForward.crossProduct((Vec3DF::c_unitY + Vec3DF::c_unitX).normalizedCopy());
-            Vec3DF cubeScale = Vec3DF(3.0f, 0.5f, 5.0f);
+            Vec3F cubeCenter = Vec3F(-3.0f, 3.0f, 0.0f);
+            Vec3F cubeForward = (Vec3F::c_unitY + Vec3F::c_unitZ).normalizedCopy();
+            Vec3F cubeUp = cubeForward.crossProduct((Vec3F::c_unitY + Vec3F::c_unitX).normalizedCopy());
+            Vec3F cubeScale = Vec3F(3.0f, 0.5f, 5.0f);
             if (Math::RaycastCube(r.getPoint(), r.getDirection(), cubeCenter, cubeForward, cubeUp, cubeScale, dist))
                 GizmosHelper::DrawCube(cubeCenter, cubeForward, cubeUp, cubeScale, ColorF128::c_yellow);
             else
                 GizmosHelper::DrawCube(cubeCenter, cubeForward, cubeUp, cubeScale, ColorF128::c_red);
 
 
-            Vec3DF torusCenter = Vec3DF(-3.0f, -3.0f, 0.0f);
-            Vec3DF torusForward = (Vec3DF::c_unitY + Vec3DF::c_unitZ).normalizedCopy();
+            Vec3F torusCenter = Vec3F(-3.0f, -3.0f, 0.0f);
+            Vec3F torusForward = (Vec3F::c_unitY + Vec3F::c_unitZ).normalizedCopy();
             F32 torusRadius = 0.5f;
             F32 torusCsRadius = 0.1f;
             if (Math::RaycastTorus(r.getPoint(), r.getDirection(), torusCenter, torusForward, torusRadius, torusCsRadius, dist))
@@ -229,20 +229,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmoToolsManager::notifyCursorMoveIn(Vec2DF const& _positionOS, CursorInputEvent const& _event)
+    void GizmoToolsManager::notifyCursorMoveIn(Vec2F const& _positionOS, CursorInputEvent const& _event)
     {
         processCursorMove(_positionOS);
     }
 
     //////////////////////////////////////////
-    void GizmoToolsManager::notifyCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _event)
+    void GizmoToolsManager::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _event)
     {
         if (_event.button == 0)
             processCursorPressIn(_positionOS);
     }
 
     //////////////////////////////////////////
-    void GizmoToolsManager::notifyCursorReleaseIn(Vec2DF const& _positionOS, CursorInputEvent const& _event)
+    void GizmoToolsManager::notifyCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent const& _event)
     {
         if (_event.button == 0)
             processCursorRelease();
@@ -256,7 +256,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmoToolsManager::processCursorMove(Vec2DF const& _positionOS)
+    void GizmoToolsManager::processCursorMove(Vec2F const& _positionOS)
     {
         Camera3DPtr const& camera = GizmosManager::GetInstancePtr()->getCamera();
         if (!camera)
@@ -266,7 +266,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmoToolsManager::processCursorPressIn(Vec2DF const& _positionOS)
+    void GizmoToolsManager::processCursorPressIn(Vec2F const& _positionOS)
     {
         if (m_gizmoTool)
             m_gizmoTool->processCursorPress(_positionOS);

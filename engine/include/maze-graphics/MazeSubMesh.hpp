@@ -134,64 +134,64 @@ namespace Maze
             bool _normalized = false);
 
         //////////////////////////////////////////
-        void setPositions(Vec3DF const* _positions, Size _count);
+        void setPositions(Vec3F const* _positions, Size _count);
 
         //////////////////////////////////////////
-        inline void setPositions(Vector<Vec3DF> const& _positions)
+        inline void setPositions(Vector<Vec3F> const& _positions)
         {
             setPositions(&_positions[0], _positions.size());
         }
 
         //////////////////////////////////////////
-        void setNormals(Vec3DF const* _normals, Size _count);
+        void setNormals(Vec3F const* _normals, Size _count);
 
         //////////////////////////////////////////
-        inline void setNormals(Vector<Vec3DF> const& _normals)
+        inline void setNormals(Vector<Vec3F> const& _normals)
         {
             setNormals(&_normals[0], _normals.size());
         }
 
         //////////////////////////////////////////
-        void setTangents(Vec3DF const* _tangents, Size _count);
+        void setTangents(Vec3F const* _tangents, Size _count);
 
         //////////////////////////////////////////
-        inline void setTangents(Vector<Vec3DF> const& _tangents)
+        inline void setTangents(Vector<Vec3F> const& _tangents)
         {
             setTangents(&_tangents[0], _tangents.size());
         }
 
         //////////////////////////////////////////
-        void setBitangents(Vec3DF const* _bitangents, Size _count);
+        void setBitangents(Vec3F const* _bitangents, Size _count);
 
         //////////////////////////////////////////
-        inline void setBitangents(Vector<Vec3DF> const& _bitangents)
+        inline void setBitangents(Vector<Vec3F> const& _bitangents)
         {
             setBitangents(&_bitangents[0], _bitangents.size());
         }
 
         //////////////////////////////////////////
-        void setColors(Vec4DF const* _colors, Size _count);
+        void setColors(Vec4F const* _colors, Size _count);
 
         //////////////////////////////////////////
-        inline void setColors(Vector<Vec4DF> const& _colors)
+        inline void setColors(Vector<Vec4F> const& _colors)
         {
             setColors(&_colors[0], _colors.size());
         }
 
         //////////////////////////////////////////
-        void setTexCoords(S32 _uvIndex, Vec2DF const* _data, Size _count);
+        void setTexCoords(S32 _uvIndex, Vec2F const* _data, Size _count);
 
         //////////////////////////////////////////
-        inline void setTexCoords(S32 _uvIndex, Vector<Vec2DF> const& _data)
+        inline void setTexCoords(S32 _uvIndex, Vector<Vec2F> const& _data)
         {
             setTexCoords(_uvIndex, &_data[0], _data.size());
         }
 
         //////////////////////////////////////////
-        void setTexCoords(S32 _uvIndex, Vec4DF const* _data, Size _count);
+        void setTexCoords(S32 _uvIndex, Vec4F const* _data, Size _count);
 
         //////////////////////////////////////////
-        inline void setTexCoords(S32 _uvIndex, Vector<Vec4DF> const& _data)
+        inline void setTexCoords(S32 _uvIndex, Vector<Vec4F> const& _data)
         {
             setTexCoords(_uvIndex, &_data[0], _data.size());
         }

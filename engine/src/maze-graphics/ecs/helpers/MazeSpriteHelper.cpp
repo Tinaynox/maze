@@ -53,12 +53,12 @@ namespace Maze
     {
         //////////////////////////////////////////
         MAZE_GRAPHICS_API Transform2DPtr CreateTransform2D(
-            Vec2DF const& _size, 
-            Vec2DF const& _position,
+            Vec2F const& _size, 
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor,
-            Vec2DF const& _pivot)
+            Vec2F const& _anchor,
+            Vec2F const& _pivot)
         {
             Maze::EntityPtr spriteRendererEntity = _ecsScene->createEntity();
             spriteRendererEntity->ensureComponent<Name>("Node2D");
@@ -76,13 +76,13 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_GRAPHICS_API SpriteRenderer2DPtr CreateSprite(
             SpritePtr const& _sprite,
-            Vec2DF const& _size, 
-            Vec2DF const& _position,
+            Vec2F const& _size, 
+            Vec2F const& _position,
             MaterialPtr const& _material,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor,
-            Vec2DF const& _pivot)
+            Vec2F const& _anchor,
+            Vec2F const& _pivot)
         {
             Maze::EntityPtr spriteRendererEntity = _ecsScene->createEntity();
             spriteRendererEntity->ensureComponent<Name>("Sprite");
@@ -107,13 +107,13 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_GRAPHICS_API SpriteRenderer2DPtr CreateSprite(
             CString _spriteName,
-            Vec2DF const& _size, 
-            Vec2DF const& _position,
+            Vec2F const& _size, 
+            Vec2F const& _position,
             MaterialPtr const& _material,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor,
-            Vec2DF const& _pivot)
+            Vec2F const& _anchor,
+            Vec2F const& _pivot)
         {
             Maze::EntityPtr spriteRendererEntity = _ecsScene->createEntity();
             spriteRendererEntity->ensureComponent<Name>("Sprite");
@@ -141,13 +141,13 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_GRAPHICS_API SpriteRenderer2DPtr CreateSprite(
             CString _spriteName,
-            Vec2DF const& _size, 
-            Vec2DF const& _position,
+            Vec2F const& _size, 
+            Vec2F const& _position,
             CString _materialName,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor,
-            Vec2DF const& _pivot)
+            Vec2F const& _anchor,
+            Vec2F const& _pivot)
         {
             return CreateSprite(
                 _spriteName,
@@ -164,13 +164,13 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_GRAPHICS_API SpriteRenderer2DPtr CreateSprite(
             ColorU32 _color,
-            Vec2DF const& _size, 
-            Vec2DF const& _position,
+            Vec2F const& _size, 
+            Vec2F const& _position,
             MaterialPtr const& _material,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor,
-            Vec2DF const& _pivot)
+            Vec2F const& _anchor,
+            Vec2F const& _pivot)
         {
             Maze::EntityPtr spriteRendererEntity = _ecsScene->createEntity();
             spriteRendererEntity->ensureComponent<Name>("Sprite");
@@ -191,11 +191,11 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_GRAPHICS_API LineRenderer2DPtr CreateLineRenderer(
-            Vec2DF const& _position,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor,
-            Vec2DF const& _pivot)
+            Vec2F const& _anchor,
+            Vec2F const& _pivot)
         {
             Maze::EntityPtr lineRendererEntity = _ecsScene->createEntity();
             lineRendererEntity->ensureComponent<Name>("LineRenderer");
@@ -206,7 +206,7 @@ namespace Maze
             Transform2DPtr transform = lineRendererEntity->ensureComponent<Transform2D>();
             transform->setParent(_parent);
             transform->setLocalPosition(_position);
-            transform->setSize(Vec2DF::c_zero);
+            transform->setSize(Vec2F::c_zero);
             transform->setAnchor(_anchor);
             transform->setPivot(_pivot);
 
@@ -215,11 +215,11 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_GRAPHICS_API SimpleLineRenderer2DPtr CreateSimpleLineRenderer(
-            Vec2DF const& _position,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor,
-            Vec2DF const& _pivot)
+            Vec2F const& _anchor,
+            Vec2F const& _pivot)
         {
             Maze::EntityPtr lineRendererEntity = _ecsScene->createEntity();
             lineRendererEntity->ensureComponent<Name>("LineRenderer");
@@ -230,7 +230,7 @@ namespace Maze
             Transform2DPtr transform = lineRendererEntity->ensureComponent<Transform2D>();
             transform->setParent(_parent);
             transform->setLocalPosition(_position);
-            transform->setSize(Vec2DF::c_zero);
+            transform->setSize(Vec2F::c_zero);
             transform->setAnchor(_anchor);
             transform->setPivot(_pivot);
 

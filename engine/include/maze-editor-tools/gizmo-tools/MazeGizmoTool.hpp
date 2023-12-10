@@ -37,8 +37,8 @@
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeMat4.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 
 
 //////////////////////////////////////////
@@ -61,10 +61,10 @@ namespace Maze
         virtual ~GizmoTool() = default;
 
         //////////////////////////////////////////
-        virtual void manipulate(Set<EntityPtr> const& _entities, Vec2DF const& _cursorPos) MAZE_ABSTRACT;
+        virtual void manipulate(Set<EntityPtr> const& _entities, Vec2F const& _cursorPos) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual void processCursorPress(Vec2DF const& _cursorPos) MAZE_ABSTRACT;
+        virtual void processCursorPress(Vec2F const& _cursorPos) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual void processCursorRelease() MAZE_ABSTRACT;

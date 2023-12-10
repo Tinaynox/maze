@@ -96,7 +96,7 @@ namespace Maze
         F32 const toAngle = +Math::c_pi + sector * 0.5f;
         
         F32 angle = Math::Lerp(fromAngle, toAngle, value);
-        Vec2DF throttle = Vec2DF::FromAngle(angle);
+        Vec2F32 throttle = Vec2F32::FromAngle(angle);
         m_spaceObject->setThrottle(throttle);
     }
 

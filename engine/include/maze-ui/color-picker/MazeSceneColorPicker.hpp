@@ -121,42 +121,42 @@ namespace Maze
         void updateUI();
 
         //////////////////////////////////////////
-        void notifyHSVRectCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyHSVRectCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
-        void notifyHSVRectCursorDrag(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyHSVRectCursorDrag(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
         void notifyHSVRectCursorMoveOut(CursorInputEvent const& _inputEvent);
         
         //////////////////////////////////////////
-        void processHSVRectPick(Vec2DF const& _positionOS);
+        void processHSVRectPick(Vec2F const& _positionOS);
 
 
         //////////////////////////////////////////
-        void notifyHSVBandCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyHSVBandCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
-        void notifyHSVBandCursorDrag(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyHSVBandCursorDrag(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
         void notifyHSVBandCursorMoveOut(CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
-        void processHSVBandPick(Vec2DF const& _positionOS);
+        void processHSVBandPick(Vec2F const& _positionOS);
 
 
         //////////////////////////////////////////
-        void notifyRGBBandCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyRGBBandCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
-        void notifyRGBBandCursorDrag(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyRGBBandCursorDrag(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
         void notifyRGBBandCursorMoveOut(CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
-        void processRGBBandPick(S32 _channel, Vec2DF const& _positionOS);
+        void processRGBBandPick(S32 _channel, Vec2F const& _positionOS);
 
         //////////////////////////////////////////
         void notifyRGBATextInput(EditBox2D* _editBox);
@@ -191,7 +191,7 @@ namespace Maze
 
         //////////////////////////////////////////
         void setHSV(
-            Vec3DF const& _hsv,
+            Vec3F const& _hsv,
             U8 _alpha,
             F32 _intensity);
 
@@ -228,7 +228,7 @@ namespace Maze
         EditBox2DPtr m_hexadecimalTextEdit;
 
 
-        Vec3DF m_hsv;
+        Vec3F m_hsv;
         U8 m_alpha;
         F32 m_intensity;
 

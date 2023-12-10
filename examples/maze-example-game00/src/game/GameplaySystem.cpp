@@ -121,7 +121,7 @@ namespace Maze
             });
 
         Rect2DF const& gameplayBounds = m_sceneGame->getGameplayBounds();
-        Vec2DF const outOfGameplayBorder(5.0f, 5.0f);
+        Vec2F32 const outOfGameplayBorder(5.0f, 5.0f);
 
         F32 leftSpaceshipBounds = gameplayBounds.position.x - outOfGameplayBorder.x;
         F32 rightSpaceshipBounds = gameplayBounds.position.x + gameplayBounds.size.x + outOfGameplayBorder.x;
@@ -202,7 +202,7 @@ namespace Maze
             return;
 
         Rect2DF const& gameplayBounds = m_sceneGame->getGameplayBounds();
-        Vec2DF const outOfGameplayBorder(5.0f, 5.0f);
+        Vec2F32 const outOfGameplayBorder(5.0f, 5.0f);
 
         F32 leftSpaceshipBounds = gameplayBounds.position.x - outOfGameplayBorder.x;
         // F32 rightSpaceshipBounds = gameplayBounds.position.x + gameplayBounds.size.x + outOfGameplayBorder.x;

@@ -119,13 +119,13 @@ namespace Maze
         S32 _first,
         S32 _last,
         F32 _emitterTimePercent,
-        Mat4DF const& _particleSystemWorldTransform)
+        Mat4F const& _particleSystemWorldTransform)
     {
-        Mat4DF invParticleSystemWorldTransform = _particleSystemWorldTransform.inversedAffineCopy();
+        Mat4F invParticleSystemWorldTransform = _particleSystemWorldTransform.inversedAffineCopy();
         invParticleSystemWorldTransform[0][3] = 0.0f;
         invParticleSystemWorldTransform[1][3] = 0.0f;
         invParticleSystemWorldTransform[2][3] = 0.0f;
-        Vec3DF gravityVector = invParticleSystemWorldTransform.transformAffine(Vec3DF::c_unitY);
+        Vec3F gravityVector = invParticleSystemWorldTransform.transformAffine(Vec3F::c_unitY);
         
         // Life
         {
@@ -164,8 +164,8 @@ namespace Maze
                 S32 seed = _particles.accessSeed(i);
                 m_rotation.sample(seed, _emitterTimePercent, valueF32);
 
-                Vec3DF& direction = _particles.accessDirection(i);
-                valueF32 += Vec2DF(direction.x, direction.y).normalizedCopy().toAngle();
+                Vec3F& direction = _particles.accessDirection(i);
+                valueF32 += Vec2F(direction.x, direction.y).normalizedCopy().toAngle();
 
                 Particles3D::ParticleRotation& rotation = _particles.accessRotation(i);
                 rotation.initial = valueF32;
@@ -188,7 +188,7 @@ namespace Maze
 
         // Color
         {
-            Vec4DF value;
+            Vec4F value;
             for (S32 i = _first; i < _last; ++i)
             {
                 S32 seed = _particles.accessSeed(i);
@@ -210,7 +210,7 @@ namespace Maze
                 m_gravity.sample(seed, _emitterTimePercent, gravityValue);
 
                 Particles3D::ParticleMovement& movement = _particles.accessMovement(i);
-                Vec3DF& direction = _particles.accessDirection(i);
+                Vec3F& direction = _particles.accessDirection(i);
                 movement.velocity = direction * speedValue;
                 movement.acceleration = gravityVector * gravityValue;
             }
@@ -256,7 +256,7 @@ namespace Maze
         // Velocity over lifetime
         if (m_velocityOverLifetime.enabled)
         {
-            Vec3DF value;
+            Vec3F value;
             for (S32 i = _first; i < _last; ++i)
             {
                 S32 seed = _particles.accessSeed(i);
@@ -314,13 +314,13 @@ namespace Maze
         // Color over lifetime
         if (m_colorOverLifetime.enabled)
         {
-            Vec4DF value;
+            Vec4F value;
             for (S32 i = _first; i < _last; ++i)
             {
                 S32 seed = _particles.accessSeed(i);
                 Particles3D::ParticleLife& life = _particles.accessLife(i);
-                Vec4DF const& initalColor = _particles.accessColorInitial(i);
-                Vec4DF& currentColor = _particles.accessColorCurrent(i);
+                Vec4F const& initalColor = _particles.accessColorInitial(i);
+                Vec4F& currentColor = _particles.accessColorCurrent(i);
 
                 m_colorOverLifetime.parameter.sample(seed, life.scalar, value);
 
@@ -332,7 +332,7 @@ namespace Maze
         for (S32 i = _first; i < _last; ++i)
         {
             Particles3D::ParticleMovement& movement = _particles.accessMovement(i);
-            Vec3DF& position = _particles.accessPosition(i);
+            Vec3F& position = _particles.accessPosition(i);
 
             movement.velocity += movement.acceleration * _dt;
 

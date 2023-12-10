@@ -120,9 +120,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec2DF PlayerGamepad::getMoveAxis()
+    Vec2F32 PlayerGamepad::getMoveAxis()
     {
-        Vec2DF result;
+        Vec2F32 result;
         result.x = getBindValue(m_bindMap[PlayerGamepadDeviceCommand::MoveRight]) - getBindValue(m_bindMap[PlayerGamepadDeviceCommand::MoveLeft]);
         result.y = getBindValue(m_bindMap[PlayerGamepadDeviceCommand::MoveUp]) - getBindValue(m_bindMap[PlayerGamepadDeviceCommand::MoveDown]);
         if (result.length() > 1.0f)

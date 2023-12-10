@@ -102,7 +102,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        ProjectilePtr createProjectile(Vec2DF const& _position);
+        ProjectilePtr createProjectile(Vec2F32 const& _position);
 
 
         //////////////////////////////////////////

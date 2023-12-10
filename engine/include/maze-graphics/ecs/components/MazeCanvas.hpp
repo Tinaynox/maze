@@ -152,13 +152,13 @@ namespace Maze
         inline CanvasScalerPtr getCanvasScaler() const { return m_canvasScaler.lock(); }
 
         //////////////////////////////////////////
-        inline Vec2DF convertRenderTargetCoordsToViewportCoords(Vec2DF const& _renderTargetPosition) const
+        inline Vec2F convertRenderTargetCoordsToViewportCoords(Vec2F const& _renderTargetPosition) const
         {
             return _renderTargetPosition - m_originPosition;
         }
 
         //////////////////////////////////////////
-        inline Vec2DF convertViewportCoordsToRenderTargetCoords(Vec2DF const& _viewportPosition) const
+        inline Vec2F convertViewportCoordsToRenderTargetCoords(Vec2F const& _viewportPosition) const
         {
             return _viewportPosition + m_originPosition;
         }
@@ -200,7 +200,7 @@ namespace Maze
 
         S32 m_sortOrder;
 
-        Vec2DF m_originPosition;
+        Vec2F m_originPosition;
 
         ViewportTransformPolicy m_viewportTransformPolicy;
     };

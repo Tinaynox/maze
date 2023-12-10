@@ -182,10 +182,10 @@ namespace Maze
     }
         
     //////////////////////////////////////////
-    bool ShaderUniform::set(Vec2DF const& _vector)
+    bool ShaderUniform::set(Vec2F const& _vector)
     {
-        if (getVec2DF() == _vector &&
-            getType() == ShaderUniformType::UniformVec2DF)
+        if (getVec2F32() == _vector &&
+            getType() == ShaderUniformType::UniformVec2F32)
             return false;
         
         processUniformWillBeChanged();
@@ -198,10 +198,10 @@ namespace Maze
     }
         
     //////////////////////////////////////////
-    bool ShaderUniform::set(Vec3DF const& _vector)
+    bool ShaderUniform::set(Vec3F const& _vector)
     {
-        if (getVec3DF() == _vector &&
-            getType() == ShaderUniformType::UniformVec3DF)
+        if (getVec3F32() == _vector &&
+            getType() == ShaderUniformType::UniformVec3F32)
             return false;
         
         processUniformWillBeChanged();
@@ -214,10 +214,10 @@ namespace Maze
     }
         
     //////////////////////////////////////////
-    bool ShaderUniform::set(Vec4DF const& _vector)
+    bool ShaderUniform::set(Vec4F const& _vector)
     {
-        if (getVec4DF() == _vector &&
-            getType() == ShaderUniformType::UniformVec4DF)
+        if (getVec4F32() == _vector &&
+            getType() == ShaderUniformType::UniformVec4F32)
             return false;
         
         processUniformWillBeChanged();
@@ -231,10 +231,10 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    bool ShaderUniform::set(Vec2DS const& _vector)
+    bool ShaderUniform::set(Vec2S const& _vector)
     {
-        if (getVec2DS() == _vector &&
-            getType() == ShaderUniformType::UniformVec2DS)
+        if (getVec2S32() == _vector &&
+            getType() == ShaderUniformType::UniformVec2S32)
             return false;
         
         processUniformWillBeChanged();
@@ -247,10 +247,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ShaderUniform::set(Vec3DS const& _vector)
+    bool ShaderUniform::set(Vec3S const& _vector)
     {
-        if (getVec3DS() == _vector &&
-            getType() == ShaderUniformType::UniformVec3DS)
+        if (getVec3S32() == _vector &&
+            getType() == ShaderUniformType::UniformVec3S32)
             return false;
         
         processUniformWillBeChanged();
@@ -263,10 +263,10 @@ namespace Maze
     }
         
     //////////////////////////////////////////
-    bool ShaderUniform::set(Vec4DS const& _vector)
+    bool ShaderUniform::set(Vec4S const& _vector)
     {
-        if (getVec4DS() == _vector &&
-            getType() == ShaderUniformType::UniformVec4DS)
+        if (getVec4S32() == _vector &&
+            getType() == ShaderUniformType::UniformVec4S32)
             return false;
         
         processUniformWillBeChanged();
@@ -280,10 +280,10 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    bool ShaderUniform::set(Vec2DU const& _vector)
+    bool ShaderUniform::set(Vec2U const& _vector)
     {
-        if (getVec2DU() == _vector &&
-            getType() == ShaderUniformType::UniformVec2DU)
+        if (getVec2U32() == _vector &&
+            getType() == ShaderUniformType::UniformVec2U32)
             return false;
         
         processUniformWillBeChanged();
@@ -296,10 +296,10 @@ namespace Maze
     }
         
     //////////////////////////////////////////
-    bool ShaderUniform::set(Vec3DU const& _vector)
+    bool ShaderUniform::set(Vec3U const& _vector)
     {
-        if (getVec3DU() == _vector &&
-            getType() == ShaderUniformType::UniformVec3DU)
+        if (getVec3U32() == _vector &&
+            getType() == ShaderUniformType::UniformVec3U32)
             return false;
         
         processUniformWillBeChanged();
@@ -312,10 +312,10 @@ namespace Maze
     }
         
     //////////////////////////////////////////
-    bool ShaderUniform::set(Vec4DU const& _vector)
+    bool ShaderUniform::set(Vec4U const& _vector)
     {
-        if (getVec4DU() == _vector &&
-            getType() == ShaderUniformType::UniformVec4DU)
+        if (getVec4U32() == _vector &&
+            getType() == ShaderUniformType::UniformVec4U32)
             return false;
         
         processUniformWillBeChanged();
@@ -329,10 +329,10 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    bool ShaderUniform::set(Vec2DB const& _vector)
+    bool ShaderUniform::set(Vec2B const& _vector)
     {
-        if (getVec2DB() == _vector &&
-            getType() == ShaderUniformType::UniformVec2DB)
+        if (getVec2B() == _vector &&
+            getType() == ShaderUniformType::UniformVec2B)
             return false;
 
         processUniformWillBeChanged();
@@ -345,10 +345,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ShaderUniform::set(Vec3DB const& _vector)
+    bool ShaderUniform::set(Vec3B const& _vector)
     {
-        if (getVec3DB() == _vector &&
-            getType() == ShaderUniformType::UniformVec3DB)
+        if (getVec3B() == _vector &&
+            getType() == ShaderUniformType::UniformVec3B)
             return false;
 
         processUniformWillBeChanged();
@@ -361,10 +361,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ShaderUniform::set(Vec4DB const& _vector)
+    bool ShaderUniform::set(Vec4B const& _vector)
     {
-        if (getVec4DB() == _vector &&
-            getType() == ShaderUniformType::UniformVec4DB)
+        if (getVec4B() == _vector &&
+            getType() == ShaderUniformType::UniformVec4B)
             return false;
 
         processUniformWillBeChanged();
@@ -378,10 +378,10 @@ namespace Maze
         
 
     //////////////////////////////////////////
-    bool ShaderUniform::set(Mat3DF const& _matrix)
+    bool ShaderUniform::set(Mat3F const& _matrix)
     {
-        if (getMat3DF() == _matrix &&
-            getType() == ShaderUniformType::UniformMat3DF)
+        if (getMat3F32() == _matrix &&
+            getType() == ShaderUniformType::UniformMat3F32)
         {
             return false;
         }
@@ -396,10 +396,10 @@ namespace Maze
     }
         
     //////////////////////////////////////////
-    bool ShaderUniform::setAffineMat(Mat3DF const& _matrix)
+    bool ShaderUniform::setAffineMat(Mat3F const& _matrix)
     {
-        if (getMat3DF().compareAffine(_matrix) &&
-            getType() == ShaderUniformType::UniformMat3DF)
+        if (getMat3F32().compareAffine(_matrix) &&
+            getType() == ShaderUniformType::UniformMat3F32)
         {
             return false;
         }
@@ -414,10 +414,10 @@ namespace Maze
     }
         
     //////////////////////////////////////////
-    bool ShaderUniform::set(Mat4DF const& _matrix)
+    bool ShaderUniform::set(Mat4F const& _matrix)
     {
-        if (getMat4DF() == _matrix &&
-            getType() == ShaderUniformType::UniformMat4DF)
+        if (getMat4F32() == _matrix &&
+            getType() == ShaderUniformType::UniformMat4F32)
             return false;
         
         processUniformWillBeChanged();
@@ -439,7 +439,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ShaderUniform::set(Vec2DF const* _vectors, Size _count)
+    bool ShaderUniform::set(Vec2F const* _vectors, Size _count)
     {
         m_value.reset();
         uploadArrayUniform(_vectors, _count);
@@ -447,7 +447,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ShaderUniform::set(Vec3DF const* _vectors, Size _count)
+    bool ShaderUniform::set(Vec3F const* _vectors, Size _count)
     {
         m_value.reset();
         uploadArrayUniform(_vectors, _count);
@@ -455,7 +455,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ShaderUniform::set(Vec4DF const* _vectors, Size _count)
+    bool ShaderUniform::set(Vec4F const* _vectors, Size _count)
     {
         m_value.reset();
         uploadArrayUniform(_vectors, _count);
@@ -463,7 +463,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ShaderUniform::set(Mat3DF const* _matrices, Size _count)
+    bool ShaderUniform::set(Mat3F const* _matrices, Size _count)
     {
         m_value.reset();
         uploadArrayUniform(_matrices, _count);
@@ -471,7 +471,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ShaderUniform::set(Mat4DF const* _matrices, Size _count)
+    bool ShaderUniform::set(Mat4F const* _matrices, Size _count)
     {
         m_value.reset();
         uploadArrayUniform(_matrices, _count);
@@ -482,7 +482,7 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(ColorF128 const& _value)
     {
-        if (   getVec4DF() == _value
+        if (   getVec4F32() == _value
             && getType() == ShaderUniformType::UniformColorF128)
             return false;
 
@@ -507,20 +507,20 @@ namespace Maze
             case ShaderUniformType::UniformTexture2D:      return set(std::static_pointer_cast<Texture2D>(_variant.getTexture()));
             case ShaderUniformType::UniformTextureCube:    return set(std::static_pointer_cast<TextureCube>(_variant.getTexture()));
             case ShaderUniformType::UniformTexture2DArray: return set(static_cast<Texture2D**>(_variant.getPtr()), _variant.getCount());
-            case ShaderUniformType::UniformVec2DS:         return set(_variant.getVec2DS());
-            case ShaderUniformType::UniformVec3DS:         return set(_variant.getVec3DS());
-            case ShaderUniformType::UniformVec4DS:         return set(_variant.getVec4DS());
-            case ShaderUniformType::UniformVec2DU:         return set(_variant.getVec2DU());
-            case ShaderUniformType::UniformVec3DU:         return set(_variant.getVec3DU());
-            case ShaderUniformType::UniformVec4DU:         return set(_variant.getVec4DU());
-            case ShaderUniformType::UniformVec2DF:         return set(_variant.getVec2DF());
-            case ShaderUniformType::UniformVec3DF:         return set(_variant.getVec3DF());
-            case ShaderUniformType::UniformVec4DF:         return set(_variant.getVec4DF());
-            case ShaderUniformType::UniformVec2DB:         return set(_variant.getVec2DB());
-            case ShaderUniformType::UniformVec3DB:         return set(_variant.getVec3DB());
-            case ShaderUniformType::UniformVec4DB:         return set(_variant.getVec4DB());
-            case ShaderUniformType::UniformMat3DF:         return set(_variant.getMat3DF());
-            case ShaderUniformType::UniformMat4DF:         return set(_variant.getMat4DF());
+            case ShaderUniformType::UniformVec2S32:         return set(_variant.getVec2S32());
+            case ShaderUniformType::UniformVec3S32:         return set(_variant.getVec3S32());
+            case ShaderUniformType::UniformVec4S32:         return set(_variant.getVec4S32());
+            case ShaderUniformType::UniformVec2U32:         return set(_variant.getVec2U32());
+            case ShaderUniformType::UniformVec3U32:         return set(_variant.getVec3U32());
+            case ShaderUniformType::UniformVec4U32:         return set(_variant.getVec4U32());
+            case ShaderUniformType::UniformVec2F32:         return set(_variant.getVec2F32());
+            case ShaderUniformType::UniformVec3F32:         return set(_variant.getVec3F32());
+            case ShaderUniformType::UniformVec4F32:         return set(_variant.getVec4F32());
+            case ShaderUniformType::UniformVec2B:         return set(_variant.getVec2B());
+            case ShaderUniformType::UniformVec3B:         return set(_variant.getVec3B());
+            case ShaderUniformType::UniformVec4B:         return set(_variant.getVec4B());
+            case ShaderUniformType::UniformMat3F32:         return set(_variant.getMat3F32());
+            case ShaderUniformType::UniformMat4F32:         return set(_variant.getMat4F32());
             case ShaderUniformType::UniformColorF128:      return set(_variant.getColorF128());
             default:
             {

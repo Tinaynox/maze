@@ -189,7 +189,7 @@ namespace Maze
         if (!m_currentMenu.empty())
         {
             Canvas* canvas = m_transform->getFirstTrunkComponent<Canvas>();
-            Vec2DF positionRTS = canvas->convertViewportCoordsToRenderTargetCoords(button->getTransform()->getWorldPosition());
+            Vec2F positionRTS = canvas->convertViewportCoordsToRenderTargetCoords(button->getTransform()->getWorldPosition());
 
             contextMenuCanvas->openContextMenu(
                 this,
@@ -207,8 +207,8 @@ namespace Maze
                             if (optionsIt == m_options.end())
                                 return true;
 
-                            Vec2DF const& positionWS = _inputEvent.position;
-                            Vec2DF positionRTS = _inputEvent.rootCanvas->convertViewportCoordsToRenderTargetCoords(positionWS);
+                            Vec2F const& positionWS = _inputEvent.position;
+                            Vec2F positionRTS = _inputEvent.rootCanvas->convertViewportCoordsToRenderTargetCoords(positionWS);
 
                             Canvas* buttonRootCanvas = optionsIt->second.button->getTransform()->getLastTrunkComponent<Canvas>();
                             if (buttonRootCanvas)

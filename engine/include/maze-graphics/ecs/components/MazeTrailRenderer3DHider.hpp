@@ -83,10 +83,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setDuration(Vec2DF const& _value) { m_duration = _value; }
+        inline void setDuration(Vec2F const& _value) { m_duration = _value; }
 
         //////////////////////////////////////////
-        inline Vec2DF const& getDuration() const { return m_duration; }
+        inline Vec2F const& getDuration() const { return m_duration; }
 
 
         //////////////////////////////////////////
@@ -112,7 +112,7 @@ namespace Maze
 
     protected:
         ColorGradient m_color;
-        Vec2DF m_duration = Vec2DF(1.0f, 2.0f);
+        Vec2F m_duration = Vec2F(1.0f, 2.0f);
 
         TrailRenderer3DPtr m_trailRenderer;
 

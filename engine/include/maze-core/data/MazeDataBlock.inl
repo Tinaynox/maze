@@ -50,33 +50,33 @@ namespace Maze
     template <>
     struct DataBlock::TypeOf<bool> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamBool; };
     template <>
-    struct DataBlock::TypeOf<Vec2DS> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec2DS; };
+    struct DataBlock::TypeOf<Vec2S> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec2S32; };
     template <>
-    struct DataBlock::TypeOf<Vec3DS> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec3DS; };
+    struct DataBlock::TypeOf<Vec3S> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec3S32; };
     template <>
-    struct DataBlock::TypeOf<Vec4DS> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec4DS; };
+    struct DataBlock::TypeOf<Vec4S> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec4S32; };
     template <>
-    struct DataBlock::TypeOf<Vec2DU> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec2DU; };
+    struct DataBlock::TypeOf<Vec2U> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec2U32; };
     template <>
-    struct DataBlock::TypeOf<Vec3DU> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec3DU; };
+    struct DataBlock::TypeOf<Vec3U> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec3U32; };
     template <>
-    struct DataBlock::TypeOf<Vec4DU> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec4DU; };
+    struct DataBlock::TypeOf<Vec4U> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec4U32; };
     template <>
-    struct DataBlock::TypeOf<Vec2DF> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec2DF; };
+    struct DataBlock::TypeOf<Vec2F> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec2F32; };
     template <>
-    struct DataBlock::TypeOf<Vec3DF> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec3DF; };
+    struct DataBlock::TypeOf<Vec3F> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec3F32; };
     template <>
-    struct DataBlock::TypeOf<Vec4DF> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec4DF; };
+    struct DataBlock::TypeOf<Vec4F> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec4F32; };
     template <>
-    struct DataBlock::TypeOf<Vec2DB> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec2DB; };
+    struct DataBlock::TypeOf<Vec2B> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec2B; };
     template <>
-    struct DataBlock::TypeOf<Vec3DB> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec3DB; };
+    struct DataBlock::TypeOf<Vec3B> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec3B; };
     template <>
-    struct DataBlock::TypeOf<Vec4DB> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec4DB; };
+    struct DataBlock::TypeOf<Vec4B> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec4B; };
     template <>
-    struct DataBlock::TypeOf<Mat3DF> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamMat3DF; };
+    struct DataBlock::TypeOf<Mat3F> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamMat3F32; };
     template <>
-    struct DataBlock::TypeOf<Mat4DF> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamMat4DF; };
+    struct DataBlock::TypeOf<Mat4F> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamMat4F32; };
     template <>
     struct DataBlock::TypeOf<CString> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamString; };
 

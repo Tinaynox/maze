@@ -132,7 +132,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Vec2DS const& getSize() const { return m_size; }
+        inline Vec2S const& getSize() const { return m_size; }
 
         //////////////////////////////////////////
         inline S32 getWidth() const { return m_size.x; }
@@ -157,7 +157,7 @@ namespace Maze
     
 
     protected:
-        Vec2DS m_size = Vec2DS::c_zero;
+        Vec2S m_size = Vec2S::c_zero;
 
         TextureFilter m_magFilter = TextureFilter::Linear;
         TextureFilter m_minFilter = TextureFilter::Linear;

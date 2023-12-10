@@ -93,34 +93,34 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    void WindowOSX::setClientSize(Vec2DU const& _size)
+    void WindowOSX::setClientSize(Vec2U32 const& _size)
     {
         m_params->clientSize = _size;
         updateWindowStyle();
     }
     
     //////////////////////////////////////////
-    Vec2DU WindowOSX::getClientSize()
+    Vec2U32 WindowOSX::getClientSize()
     {
         auto size = [[m_windowDelegateOSX contentView] frame].size;
         auto backingSize = [[m_windowDelegateOSX contentView] convertSizeToBacking:size];
-        return Vec2DU(
+        return Vec2U32(
             backingSize.width,
             backingSize.height);
     }
     
     //////////////////////////////////////////
-    Vec2DU WindowOSX::getFullSize()
+    Vec2U32 WindowOSX::getFullSize()
     {
         auto size = [m_windowDelegateOSX frame].size;
         auto backingSize = [[m_windowDelegateOSX contentView] convertSizeToBacking:size];
-        return Vec2DU(
+        return Vec2U32(
             backingSize.width,
             backingSize.height);
     }
     
     //////////////////////////////////////////
-    void WindowOSX::setPosition(Vec2DS const& _position)
+    void WindowOSX::setPosition(Vec2S32 const& _position)
     {
         if (!isOpened())
             return;
@@ -134,9 +134,9 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    Vec2DS WindowOSX::getPosition()
+    Vec2S32 WindowOSX::getPosition()
     {
-        return Vec2DS(
+        return Vec2S32(
             [m_windowDelegateOSX frame].origin.x,
             [m_windowDelegateOSX frame].origin.y);
     }
@@ -342,7 +342,7 @@ namespace Maze
         
         WindowVideoMode desktopMode = windowManager->getPrimaryDisplayVideoMode();
         
-        Vec2DU currentClientSize = getClientSize();
+        Vec2U32 currentClientSize = getClientSize();
         
         F32 scaleFactor = desktopMode.pixelScale;
         
@@ -362,7 +362,7 @@ namespace Maze
             [m_windowDelegateOSX setCollectionBehavior: NSWindowCollectionBehaviorFullScreenPrimary];
             [m_windowDelegateOSX setOpaque: YES];
             
-            Vec2DF size(
+            Vec2F32 size(
                 desktopMode.width / scaleFactor,
                 desktopMode.height / scaleFactor);
             

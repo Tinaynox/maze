@@ -74,7 +74,7 @@ namespace Maze
             ColorU32 const& _spriteColor,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _spriteSize = Vec2DF(14.0f, 14.0f));
+            Vec2F const& _spriteSize = Vec2F(14.0f, 14.0f));
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API ClickButton2DPtr CreateDefaultClickButton(
@@ -87,7 +87,7 @@ namespace Maze
             ColorU32 const& _spriteColor,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _spriteSize = Vec2DF(14.0f, 14.0f));
+            Vec2F const& _spriteSize = Vec2F(14.0f, 14.0f));
 
 
     } // namespace EditorToolsUIHelper

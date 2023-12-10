@@ -72,12 +72,12 @@ namespace Maze
 
     //////////////////////////////////////////
     Sprite::Sprite()
-        : m_colorOffset(Vec2DF::c_zero)
-        , m_colorPosition(Vec2DF::c_zero)
-        , m_colorSize(Vec2DF::c_zero)
-        , m_nativeSize(Vec2DF::c_zero)
-        , m_textureCoordLB(Vec2DF::c_zero)
-        , m_textureCoordRT(Vec2DF::c_one)
+        : m_colorOffset(Vec2F::c_zero)
+        , m_colorPosition(Vec2F::c_zero)
+        , m_colorSize(Vec2F::c_zero)
+        , m_nativeSize(Vec2F::c_zero)
+        , m_textureCoordLB(Vec2F::c_zero)
+        , m_textureCoordRT(Vec2F::c_one)
     {
         if (s_instancesList)
             s_instancesList->m_instancesListNext = this;
@@ -111,10 +111,10 @@ namespace Maze
     //////////////////////////////////////////
     SpritePtr Sprite::Create(
         Texture2DPtr const& _texture,
-        Vec2DF const& _colorPosition,
-        Vec2DF const& _colorSize,
-        Vec2DF const& _colorOffset,
-        Vec2DF const& _nativeSize)
+        Vec2F const& _colorPosition,
+        Vec2F const& _colorSize,
+        Vec2F const& _colorOffset,
+        Vec2F const& _nativeSize)
     {
         SpritePtr object;
         MAZE_CREATE_AND_INIT_SHARED_PTR(
@@ -132,14 +132,14 @@ namespace Maze
     //////////////////////////////////////////
     SpritePtr Sprite::Create(
         Texture2DPtr const& _texture,
-        Vec2DF const& _nativePosition,
-        Vec2DF const& _nativeSize)
+        Vec2F const& _nativePosition,
+        Vec2F const& _nativeSize)
     {
         return Create(
             _texture,
             _nativePosition,
             _nativeSize,
-            Vec2DF::c_zero,
+            Vec2F::c_zero,
             _nativeSize);
     }
 
@@ -152,10 +152,10 @@ namespace Maze
     //////////////////////////////////////////
     bool Sprite::init(
         Texture2DPtr const& _texture,
-        Vec2DF const& _colorPosition,
-        Vec2DF const& _colorSize,
-        Vec2DF const& _colorOffset,
-        Vec2DF const& _nativeSize)
+        Vec2F const& _colorPosition,
+        Vec2F const& _colorSize,
+        Vec2F const& _colorOffset,
+        Vec2F const& _nativeSize)
     {
         set(_texture, _colorPosition, _colorSize, _colorOffset, _nativeSize);
 
@@ -169,9 +169,9 @@ namespace Maze
         {
             set(
                 _texture,
-                Vec2DF::c_zero,
+                Vec2F::c_zero,
                 _texture->getSize(),
-                Vec2DF::c_zero,
+                Vec2F::c_zero,
                 _texture->getSize());
         }
     }
@@ -179,10 +179,10 @@ namespace Maze
     //////////////////////////////////////////
     void Sprite::set(
         Texture2DPtr const& _texture,
-        Vec2DF const& _colorPosition,
-        Vec2DF const& _colorSize,
-        Vec2DF const& _colorOffset,
-        Vec2DF const& _nativeSize)
+        Vec2F const& _colorPosition,
+        Vec2F const& _colorSize,
+        Vec2F const& _colorOffset,
+        Vec2F const& _nativeSize)
     {
         m_texture = _texture;
         m_colorPosition = _colorPosition;
@@ -195,7 +195,7 @@ namespace Maze
             if (m_name.empty())
                 m_name = m_texture->getName();
 
-            if (m_colorSize == Vec2DF::c_zero)
+            if (m_colorSize == Vec2F::c_zero)
                 m_colorSize = m_nativeSize = m_texture->getSize();
         }
 
@@ -205,7 +205,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Sprite::setColorSize(Vec2DF const& _colorSize)
+    void Sprite::setColorSize(Vec2F const& _colorSize)
     {
         m_colorSize = _colorSize;
         updateTextureCoords();
@@ -214,7 +214,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Sprite::setColorPosition(Vec2DF const& _colorPosition)
+    void Sprite::setColorPosition(Vec2F const& _colorPosition)
     {
         m_colorPosition = _colorPosition;
         updateTextureCoords();
@@ -223,7 +223,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Sprite::setNativeSize(Vec2DF const& _nativeSize)
+    void Sprite::setNativeSize(Vec2F const& _nativeSize)
     {
         m_nativeSize = _nativeSize;
         setColorSize(m_nativeSize);
@@ -240,11 +240,11 @@ namespace Maze
         F32 tw = (F32)m_texture->getWidth();
         F32 th = (F32)m_texture->getHeight();
 
-        m_textureCoordLB = Vec2DF(
+        m_textureCoordLB = Vec2F(
             m_colorPosition.x / tw,
             m_colorPosition.y / th);
 
-        m_textureCoordRT = Vec2DF(
+        m_textureCoordRT = Vec2F(
             (m_colorPosition.x + m_colorSize.x) / tw,
             (m_colorPosition.y + m_colorSize.y) / th);
     }

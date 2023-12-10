@@ -115,12 +115,12 @@ namespace Maze
         VerticalLayout2DPtr layout = UIHelper::CreateVerticalLayout(
             HorizontalAlignment2D::Center,
             VerticalAlignment2D::Top,
-            Vec2DF(_parent->getWidth(), 100.0f),
-            Vec2DF(0, 0),
+            Vec2F(_parent->getWidth(), 100.0f),
+            Vec2F(0, 0),
             _parent,
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         layout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
         layout->setControlChildHeight(false);
 
@@ -135,46 +135,46 @@ namespace Maze
 
         SpriteRenderer2DPtr spriteRenderer = SpriteHelper::CreateSprite(
             ColorU32(200, 200, 200),
-            Vec2DF(_parent->getWidth(), 20),
-            Vec2DF(0, 0),
+            Vec2F(_parent->getWidth(), 20),
+            Vec2F(0, 0),
             materialManager->getColorTextureMaterial(),
             _parent,
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         spriteRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
 
         SpriteRenderer2DPtr lineRenderer = SpriteHelper::CreateSprite(
             ColorU32(127, 127, 127),
-            Vec2DF(spriteRenderer->getTransform()->getWidth(), 1),
-            Vec2DF(0, 0),
+            Vec2F(spriteRenderer->getTransform()->getWidth(), 1),
+            Vec2F(0, 0),
             materialManager->getColorTextureMaterial(),
             spriteRenderer->getTransform(),
             spriteRenderer->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         lineRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
 
         SpriteRenderer2DPtr lineRenderer2 = SpriteHelper::CreateSprite(
             ColorU32(186, 186, 186),
-            Vec2DF(spriteRenderer->getTransform()->getWidth(), 1),
-            Vec2DF(0, 0),
+            Vec2F(spriteRenderer->getTransform()->getWidth(), 1),
+            Vec2F(0, 0),
             materialManager->getColorTextureMaterial(),
             spriteRenderer->getTransform(),
             spriteRenderer->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 0.0f),
-            Vec2DF(0.0f, 0.0f));
+            Vec2F(0.0f, 0.0f),
+            Vec2F(0.0f, 0.0f));
         lineRenderer2->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
 
         m_expandButtonSprite = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::DropDownButtonExpanded),
-            Vec2DF(8, 8) * 1.75f,
-            Vec2DF(10, 1),
+            Vec2F(8, 8) * 1.75f,
+            Vec2F(10, 1),
             materialManager->getColorTextureMaterial(),
             spriteRenderer->getTransform(),
             spriteRenderer->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF(0.5f, 0.5f));
+            Vec2F(0.0f, 0.5f),
+            Vec2F(0.5f, 0.5f));
         m_expandButtonSprite->setColor(ColorU32::c_black);
         m_expandButton = m_expandButtonSprite->getEntityRaw()->ensureComponent<ClickButton2D>();
         m_expandButton->eventClick.subscribe(this, &ComponentEditor::notifyExpandButtonClick);
@@ -184,12 +184,12 @@ namespace Maze
             9,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(8, 18),
-            Vec2DF(20, 0),            
+            Vec2F(8, 18),
+            Vec2F(20, 0),            
             spriteRenderer->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF(0.0f, 0.5f));
+            Vec2F(0.0f, 0.5f),
+            Vec2F(0.0f, 0.5f));
         systemText->setColor(ColorU32::c_black);
 
         
@@ -297,12 +297,12 @@ namespace Maze
         VerticalLayout2DPtr layout = UIHelper::CreateVerticalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Top,
-            Vec2DF(_parent->getWidth() - paddingLeft - paddingRight, 0.0f),
-            Vec2DF(paddingLeft, 0),
+            Vec2F(_parent->getWidth() - paddingLeft - paddingRight, 0.0f),
+            Vec2F(paddingLeft, 0),
             _parent,
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         SizePolicy2DPtr layoutSizePolicy = layout->getEntityRaw()->ensureComponent<SizePolicy2D>();
         layoutSizePolicy->setFlag(SizePolicy2D::Height, false);
         layoutSizePolicy->setSizeDelta(-paddingLeft - paddingRight, 0.0f);

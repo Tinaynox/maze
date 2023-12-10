@@ -231,7 +231,7 @@ namespace Maze
         if (itemsListLayout)
             itemsListLayout->update();
 
-        Vec2DF const& size = m_itemsListTransform->getSize();
+        Vec2F const& size = m_itemsListTransform->getSize();
         getTransform()->setSize(size);
     }
 

@@ -94,12 +94,12 @@ namespace Maze
         {
             ToggleButton2DPtr button = UIHelper::CreateToggleButton(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
-                Vec2DF(18.0f, 18.0f),
-                Vec2DF::c_zero,
+                Vec2F(18.0f, 18.0f),
+                Vec2F::c_zero,
                 _parent,
                 _ecsScene,
-                Vec2DF(0.5f, 0.5f),
-                Vec2DF(0.5f, 0.5f),
+                Vec2F(0.5f, 0.5f),
+                Vec2F(0.5f, 0.5f),
                 { 200, 200, 200 },
                 { 187, 187, 187 },
                 { 161, 161, 161 },
@@ -115,14 +115,14 @@ namespace Maze
             ColorU32 const& _spriteColor,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _spriteSize)
+            Vec2F const& _spriteSize)
         {
             ToggleButton2DPtr button = CreateDefaultToggleButton(_parent, _ecsScene);
 
             SpriteRenderer2DPtr sprite = SpriteHelper::CreateSprite(
                 _sprite,
                 _spriteSize,
-                Vec2DF::c_zero,
+                Vec2F::c_zero,
                 nullptr,
                 button->getTransform(),
                 _ecsScene);
@@ -138,12 +138,12 @@ namespace Maze
         {
             ClickButton2DPtr button = UIHelper::CreateDefaultClickButton(
                 "",
-                Vec2DF(18.0f, 18.0f),
-                Vec2DF::c_zero,
+                Vec2F(18.0f, 18.0f),
+                Vec2F::c_zero,
                 _parent,
                 _ecsScene,
-                Vec2DF(0.5f, 0.5f),
-                Vec2DF(0.5f, 0.5f));
+                Vec2F(0.5f, 0.5f),
+                Vec2F(0.5f, 0.5f));
             button->setNormalColor({ 200, 200, 200 });
             button->setFocusedColor({ 187, 187, 187 });
             button->setSelectedColor({ 161, 161, 161 });
@@ -158,14 +158,14 @@ namespace Maze
             ColorU32 const& _spriteColor,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _spriteSize)
+            Vec2F const& _spriteSize)
         {
             ClickButton2DPtr button = CreateDefaultClickButton(_parent, _ecsScene);
 
             SpriteRenderer2DPtr sprite = SpriteHelper::CreateSprite(
                 _sprite,
                 _spriteSize,
-                Vec2DF::c_zero,
+                Vec2F::c_zero,
                 nullptr,
                 button->getTransform(),
                 _ecsScene);

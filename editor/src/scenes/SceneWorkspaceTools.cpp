@@ -151,7 +151,7 @@ namespace Maze
         // Camera
         EntityPtr cameraEntity = createEntity();
         m_camera3D = cameraEntity->createComponent<Camera3D>();
-        m_camera3DTargetPosition = Vec3DF(3.0f, 3.0f, -5.0f);
+        m_camera3DTargetPosition = Vec3F32(3.0f, 3.0f, -5.0f);
         m_camera3D->getTransform()->setLocalPosition(m_camera3DTargetPosition);
         m_yawAngle = Math::DegreesToRadians(-30.0f);
         m_pitchAngle = Math::DegreesToRadians(20.0f);
@@ -204,18 +204,18 @@ namespace Maze
             return;
 
         Rect2DF viewportRect = m_camera3D->getViewport();
-        viewportRect.position *= (Vec2DF)m_camera3D->getRenderTarget()->getRenderTargetSize();
-        viewportRect.size *= (Vec2DF)m_camera3D->getRenderTarget()->getRenderTargetSize();
+        viewportRect.position *= (Vec2F32)m_camera3D->getRenderTarget()->getRenderTargetSize();
+        viewportRect.size *= (Vec2F32)m_camera3D->getRenderTarget()->getRenderTargetSize();
 
         AABB2D aabb = AABB2D::FromRect2D(viewportRect);
 
-        Vec2DF cursorPositionRWS = InputManager::GetInstancePtr()->getCursorPosition(0);
-        Vec2DF cursorPosition = EditorLayout::ConvertRenderWindowCoordsToWorkspaceViewport(cursorPositionRWS);
+        Vec2F32 cursorPositionRWS = InputManager::GetInstancePtr()->getCursorPosition(0);
+        Vec2F32 cursorPosition = EditorLayout::ConvertRenderWindowCoordsToWorkspaceViewport(cursorPositionRWS);
 
         if (m_camera3D && aabb.contains(cursorPosition))
         {
-            Vec3DF cameraForwardDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3DF::c_unitZ;
-            Vec3DF cameraRightDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3DF::c_unitX;
+            Vec3F32 cameraForwardDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3F32::c_unitZ;
+            Vec3F32 cameraRightDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3F32::c_unitX;
 
             F32 speed = 3.0f;
 
@@ -282,11 +282,11 @@ namespace Maze
         {
             case InputEventMouseType::Move:
             {
-                Vec2DF cursorPosition = Vec2DF((F32)_data.x, (F32)_data.y);
+                Vec2F32 cursorPosition = Vec2F32((F32)_data.x, (F32)_data.y);
 
                 if (m_cursorDrag)
                 {
-                    Vec2DF deltaPosition = cursorPosition - m_cursorPositionLastFrame;
+                    Vec2F32 deltaPosition = cursorPosition - m_cursorPositionLastFrame;
 
                     if (m_camera3D && m_camera3D->getEntityRaw()->getActiveSelf())
                     {
@@ -304,8 +304,8 @@ namespace Maze
                 {
                     if (m_camera3D && m_camera3D->getEntityRaw()->getActiveSelf())
                     {
-                        Vec2DF cursorPositionRWS = Vec2DF((F32)_data.x, (F32)_data.y);
-                        Vec2DF cursorPosition = EditorLayout::ConvertRenderWindowCoordsToWorkspaceViewport(cursorPositionRWS);
+                        Vec2F32 cursorPositionRWS = Vec2F32((F32)_data.x, (F32)_data.y);
+                        Vec2F32 cursorPosition = EditorLayout::ConvertRenderWindowCoordsToWorkspaceViewport(cursorPositionRWS);
                         Rect2DF viewportRect(
                             m_camera3D->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
                             m_camera3D->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,

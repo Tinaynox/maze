@@ -32,7 +32,7 @@
 //////////////////////////////////////////
 #include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/MazeColorU32.hpp"
@@ -85,7 +85,7 @@ namespace Maze
         //////////////////////////////////////////
         void openGradientPicker(
             ColorPickerCallback _callback = nullptr,
-            ColorGradient const& _gradient = ColorGradient(0.0f, Vec4DF::c_one, 1.0f, Vec4DF::c_one));
+            ColorGradient const& _gradient = ColorGradient(0.0f, Vec4F::c_one, 1.0f, Vec4F::c_one));
 
 
         //////////////////////////////////////////

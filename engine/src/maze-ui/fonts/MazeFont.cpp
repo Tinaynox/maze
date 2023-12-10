@@ -197,7 +197,7 @@ namespace Maze
                         glyphsData.spriteData.spriteGlyphFontSize = StringHelper::StringToU32(childElement->Attribute("fontSize"));
                         glyphsData.spriteData.spriteGlyph.advance = StringHelper::StringToF32(childElement->Attribute("advance"));
 
-                        glyphsData.spriteData.spriteGlyph.bounds.position = sprite->getColorOffset() + Vec2DF::FromString(childElement->Attribute("boundsPosition"));
+                        glyphsData.spriteData.spriteGlyph.bounds.position = sprite->getColorOffset() + Vec2F::FromString(childElement->Attribute("boundsPosition"));
                         glyphsData.spriteData.spriteGlyph.bounds.size = sprite->getColorSize();
                         glyphsData.spriteData.spriteGlyph.texture = sprite->getTexture();
 
@@ -229,8 +229,8 @@ namespace Maze
                     glyphsData.entityData.prefab = nullptr; // prefabStr
                     glyphsData.entityData.prefabGlyphFontSize = StringHelper::StringToU32(childElement->Attribute("fontSize"));
                     glyphsData.entityData.prefabGlyph.advance = StringHelper::StringToF32(childElement->Attribute("advance"));
-                    glyphsData.entityData.prefabGlyph.bounds.position = Vec2DF::FromString(childElement->Attribute("boundsPosition"));
-                    glyphsData.entityData.prefabGlyph.bounds.size = Vec2DF::FromString(childElement->Attribute("boundsSize"));
+                    glyphsData.entityData.prefabGlyph.bounds.position = Vec2F::FromString(childElement->Attribute("boundsPosition"));
+                    glyphsData.entityData.prefabGlyph.bounds.size = Vec2F::FromString(childElement->Attribute("boundsSize"));
                     m_glyphsData.push_back(glyphsData);
                     m_glyphsMap.clear();
                 }

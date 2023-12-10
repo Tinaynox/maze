@@ -129,24 +129,24 @@ namespace Maze
 
         Transform2DPtr canvasTransform = SpriteHelper::CreateTransform2D(
             m_canvas->getTransform()->getSize(),
-            Vec2DF(0.0f, 0.0f),
+            Vec2F(0.0f, 0.0f),
             m_canvas->getTransform(),
             getEntityRaw()->getECSScene(),
-            Vec2DF::c_zero,
-            Vec2DF::c_zero);
+            Vec2F::c_zero,
+            Vec2F::c_zero);
         canvasTransform->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>();
 
         m_bodyBackground = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
-            Vec2DF(
+            Vec2F(
                 canvasTransform->getSize().x, 
                 canvasTransform->getSize().y),
-            Vec2DF(0.0f, 0.0f),
+            Vec2F(0.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_canvas->getTransform(),
             getEntityRaw()->getECSScene(),
-            Vec2DF::c_zero,
-            Vec2DF::c_zero);
+            Vec2F::c_zero,
+            Vec2F::c_zero);
         m_bodyBackground->setColor(EditorToolsLayout::c_bodyBackgroundColor);
         m_bodyBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>();
         
@@ -154,11 +154,11 @@ namespace Maze
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
             m_bodyBackground->getTransform()->getSize(),
-            Vec2DF::c_zero,
+            Vec2F::c_zero,
             m_bodyBackground->getTransform(),
             getEntityRaw()->getECSScene(),
-            Vec2DF::c_zero,
-            Vec2DF::c_zero);
+            Vec2F::c_zero,
+            Vec2F::c_zero);
         m_leftLayout->setAutoWidth(false);
         m_leftLayout->setAutoHeight(false);
         m_leftLayout->setSpacing(2.0f);
@@ -177,7 +177,7 @@ namespace Maze
                 ColorU32(85, 85, 85),
                 m_leftLayout->getTransform(),
                 getEntityRaw()->getECSScene(),
-                Vec2DF(16.0f, 16.0f));
+                Vec2F(16.0f, 16.0f));
             m_gizmoToolButtons[tool]->setCheckByClick(false);
             m_gizmoToolButtons[tool]->eventClick.subscribe(
                 [tool](Button2D* _button, CursorInputEvent const& _event)
@@ -192,11 +192,11 @@ namespace Maze
             HorizontalAlignment2D::Center,
             VerticalAlignment2D::Middle,
             m_bodyBackground->getTransform()->getSize(),
-            Vec2DF::c_zero,
+            Vec2F::c_zero,
             m_bodyBackground->getTransform(),
             getEntityRaw()->getECSScene(),
-            Vec2DF::c_zero,
-            Vec2DF::c_zero);
+            Vec2F::c_zero,
+            Vec2F::c_zero);
         m_layout->setAutoWidth(false);
         m_layout->setAutoHeight(false);
         SizePolicy2DPtr layoutSizePolicy = m_layout->getEntityRaw()->ensureComponent<SizePolicy2D>();
@@ -214,8 +214,8 @@ namespace Maze
             });
         SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Pause),
-            Vec2DF(18.0f, 18.0f),
-            Vec2DF::c_zero,
+            Vec2F(18.0f, 18.0f),
+            Vec2F::c_zero,
             MaterialManager::GetCurrentInstance()->getColorTextureMaterial(),
             m_pauseButton->getTransform(),
             getEntityRaw()->getECSScene())->setColor(85, 85, 85);
@@ -234,8 +234,8 @@ namespace Maze
             });
         SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::StepUpdate),
-            Vec2DF(18.0f, 18.0f),
-            Vec2DF::c_zero,
+            Vec2F(18.0f, 18.0f),
+            Vec2F::c_zero,
             MaterialManager::GetCurrentInstance()->getColorTextureMaterial(),
             m_stepButton->getTransform(),
             getEntityRaw()->getECSScene())->setColor(85, 85, 85);

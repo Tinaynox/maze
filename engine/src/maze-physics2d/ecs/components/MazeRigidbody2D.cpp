@@ -92,7 +92,7 @@ namespace Maze
         , m_categoryMask(1)
         , m_flags(0)
         , m_body(nullptr)
-        , m_fixedUpdateStartPosition(Vec2DF::c_zero)
+        , m_fixedUpdateStartPosition(Vec2F::c_zero)
         , m_fixedUpdateStartAngle(0.0f)
     {
     }
@@ -279,20 +279,20 @@ namespace Maze
         b2BodyDef bd;
         bd.type = GetBox2DBodyType(m_type);
 
-        Vec2DF position = Vec2DF::c_zero;
+        Vec2F position = Vec2F::c_zero;
         F32 angle = 0.0f;
-        Vec2DF scale = Vec2DF::c_one;
+        Vec2F scale = Vec2F::c_one;
 
         if (m_transform2D)
         {
             position = m_transform2D->getWorldPosition();
-            angle = m_transform2D->getWorldTransform().transformAffine(Vec2DF::c_unitX).toAngle();
+            angle = m_transform2D->getWorldTransform().transformAffine(Vec2F::c_unitX).toAngle();
             scale = m_transform2D->getWorldTransform().getAffineScale2DSignless();
         }
         else
         if (m_transform3D)
         {
-            Vec3DF worldPosition = m_transform3D->getWorldPosition();
+            Vec3F worldPosition = m_transform3D->getWorldPosition();
             position = { worldPosition.x, worldPosition.y };
             // angle = m_transform3D->getWorldTransform().getAffineRotationEulerAngles().z;
             angle = Quaternion::GetEuler(m_transform3D->getWorldTransform()).z;

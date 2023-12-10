@@ -35,7 +35,7 @@
 #include "maze-core/utils/MazeSharedObject.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 #include "maze-graphics/MazeAlignment2D.hpp"
 #include "maze-graphics/MazeColorU32.hpp"
 
@@ -63,12 +63,12 @@ namespace Maze
             U32 _fontSize,
             HorizontalAlignment2D _horizontalAlignment,
             VerticalAlignment2D _verticalAlignment,
-            Vec2DF const& _size, 
-            Vec2DF const& _position,
+            Vec2F const& _size, 
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 
     } // namespace SystemUIHelper
     //////////////////////////////////////////

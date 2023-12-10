@@ -39,10 +39,10 @@
 #include "maze-editor-tools/property-drawers/MazeBool.hpp"
 #include "maze-editor-tools/property-drawers/MazeS32.hpp"
 #include "maze-editor-tools/property-drawers/MazeF32.hpp"
-#include "maze-editor-tools/property-drawers/MazeVec2DF.hpp"
-#include "maze-editor-tools/property-drawers/MazeVec2DS.hpp"
-#include "maze-editor-tools/property-drawers/MazeVec2DU.hpp"
-#include "maze-editor-tools/property-drawers/MazeVec3DF.hpp"
+#include "maze-editor-tools/property-drawers/MazeVec2F32.hpp"
+#include "maze-editor-tools/property-drawers/MazeVec2S32.hpp"
+#include "maze-editor-tools/property-drawers/MazeVec2U32.hpp"
+#include "maze-editor-tools/property-drawers/MazeVec3F32.hpp"
 #include "maze-editor-tools/property-drawers/MazeRect2DF.hpp"
 #include "maze-editor-tools/property-drawers/MazeString.hpp"
 #include "maze-editor-tools/property-drawers/MazeQuaternion.hpp"
@@ -58,8 +58,8 @@
 #include "maze-editor-tools/meta-property-drawers/MazeBool.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeS32.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeF32.hpp"
-#include "maze-editor-tools/meta-property-drawers/MazeVec2DF.hpp"
-#include "maze-editor-tools/meta-property-drawers/MazeVec3DF.hpp"
+#include "maze-editor-tools/meta-property-drawers/MazeVec2F32.hpp"
+#include "maze-editor-tools/meta-property-drawers/MazeVec3F32.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeRect2DF.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeString.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeQuaternion.hpp"
@@ -103,19 +103,19 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    using MetaPropertyDrawerVec2DS =
+    using MetaPropertyDrawerVec2S32 =
         MetaPropertyDrawerDefault<
-        Vec2DS,
-        PropertyDrawerVec2DU>;
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerVec2DS, MetaPropertyDrawer);
+        Vec2S,
+        PropertyDrawerVec2U32>;
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerVec2S32, MetaPropertyDrawer);
 
 
     //////////////////////////////////////////
-    using MetaPropertyDrawerVec2DU =
+    using MetaPropertyDrawerVec2U32 =
         MetaPropertyDrawerDefault<
-        Vec2DU,
-        PropertyDrawerVec2DU>;
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerVec2DU, MetaPropertyDrawer);
+        Vec2U,
+        PropertyDrawerVec2U32>;
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerVec2U32, MetaPropertyDrawer);
 
 
     //////////////////////////////////////////
@@ -158,10 +158,10 @@ namespace Maze
         registerPropertyDrawer<S32, PropertyDrawerS32>();
         registerPropertyDrawer<U32, PropertyDrawerS32>();
         registerPropertyDrawer<F32, PropertyDrawerF32>();
-        registerPropertyDrawer<Vec2DF, PropertyDrawerVec2DF>();
-        registerPropertyDrawer<Vec2DS, PropertyDrawerVec2DS>();
-        registerPropertyDrawer<Vec2DU, PropertyDrawerVec2DU>();
-        registerPropertyDrawer<Vec3DF, PropertyDrawerVec3DF>();
+        registerPropertyDrawer<Vec2F, PropertyDrawerVec2F32>();
+        registerPropertyDrawer<Vec2S, PropertyDrawerVec2S32>();
+        registerPropertyDrawer<Vec2U, PropertyDrawerVec2U32>();
+        registerPropertyDrawer<Vec3F, PropertyDrawerVec3F32>();
         registerPropertyDrawer<Rect2DF, PropertyDrawerRect2DF>();
         registerPropertyDrawer<String, PropertyDrawerString>();
         registerPropertyDrawer<Quaternion, PropertyDrawerQuaternion>();
@@ -177,10 +177,10 @@ namespace Maze
         registerMetaPropertyDrawer<S32, MetaPropertyDrawerS32>();
         registerMetaPropertyDrawer<U32, MetaPropertyDrawerS32>();
         registerMetaPropertyDrawer<F32, MetaPropertyDrawerF32>();
-        registerMetaPropertyDrawer<Vec2DF, MetaPropertyDrawerVec2DF>();
-        registerMetaPropertyDrawer<Vec2DS, MetaPropertyDrawerVec2DS>();
-        registerMetaPropertyDrawer<Vec2DU, MetaPropertyDrawerVec2DU>();
-        registerMetaPropertyDrawer<Vec3DF, MetaPropertyDrawerVec3DF>();
+        registerMetaPropertyDrawer<Vec2F, MetaPropertyDrawerVec2F32>();
+        registerMetaPropertyDrawer<Vec2S, MetaPropertyDrawerVec2S32>();
+        registerMetaPropertyDrawer<Vec2U, MetaPropertyDrawerVec2U32>();
+        registerMetaPropertyDrawer<Vec3F, MetaPropertyDrawerVec3F32>();
         registerMetaPropertyDrawer<Rect2DF, MetaPropertyDrawerRect2DF>();
         registerMetaPropertyDrawer<String, MetaPropertyDrawerString>();
         registerMetaPropertyDrawer<Quaternion, MetaPropertyDrawerQuaternion>();
@@ -210,7 +210,7 @@ namespace Maze
             "Paste Position",
             [](Entity* _entity, Transform3D* _component)
             {
-                _component->setLocalPosition(Vec3DF::FromString(SystemManager::GetInstancePtr()->getClipboardAsString()));
+                _component->setLocalPosition(Vec3F::FromString(SystemManager::GetInstancePtr()->getClipboardAsString()));
             });
         addComponentContextMenuOption<Transform3D>(
             "Copy Rotation",
@@ -234,7 +234,7 @@ namespace Maze
             "Paste Scale",
             [](Entity* _entity, Transform3D* _component)
             {
-                _component->setLocalScale(Vec3DF::FromString(SystemManager::GetInstancePtr()->getClipboardAsString()));
+                _component->setLocalScale(Vec3F::FromString(SystemManager::GetInstancePtr()->getClipboardAsString()));
             });
         addComponentContextMenuOption<Transform3D>(
             "Copy Transform",
@@ -246,7 +246,7 @@ namespace Maze
             "Paste Transform",
             [](Entity* _entity, Transform3D* _component)
             {
-                _component->setLocalTransform(Mat4DF::FromString(SystemManager::GetInstancePtr()->getClipboardAsString()));
+                _component->setLocalTransform(Mat4F::FromString(SystemManager::GetInstancePtr()->getClipboardAsString()));
             });
 
         return true;

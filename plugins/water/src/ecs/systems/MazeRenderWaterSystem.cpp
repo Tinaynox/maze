@@ -113,7 +113,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderWaterSystem::createBuffers(Vec2DU const& _size)
+    void RenderWaterSystem::createBuffers(Vec2U32 const& _size)
     {
         Debug::Log("Creating RenderWaterSystem buffers: %ux%u", _size.x, _size.y);
         m_reflectionBuffer = RenderBuffer::Create(
@@ -137,7 +137,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderWaterSystem::resizeBuffers(Vec2DU const& _size)
+    void RenderWaterSystem::resizeBuffers(Vec2U32 const& _size)
     {
         createBuffers(_size);
     }
@@ -152,7 +152,7 @@ namespace Maze
             createBuffers(_renderTarget->getRenderTargetSize());
         }
 
-        Vec3DF cameraPosition = _params.cameraTransform.getAffineTranslation();
+        Vec3F32 cameraPosition = _params.cameraTransform.getAffineTranslation();
 
         m_waterRenderersSample->process(
             [&](Entity* _entity, WaterRenderer3D* _waterRenderer)
@@ -183,16 +183,16 @@ namespace Maze
                 F32 cameraTranslation = 2.0f * (cameraPosition.y - waterY);
                 cameraPosition.y -= cameraTranslation;
             
-                Vec3DF cameraRotation = Quaternion::GetEuler(params.cameraTransform);
-                Vec3DF cameraScale = params.cameraTransform.getAffineScaleSignless();
+                Vec3F32 cameraRotation = Quaternion::GetEuler(params.cameraTransform);
+                Vec3F32 cameraScale = params.cameraTransform.getAffineScaleSignless();
 
                 cameraRotation.x = -cameraRotation.x;
                                 
-                params.cameraTransform = Mat4DF::CreateTranslationMatrix(cameraPosition);
+                params.cameraTransform = Mat4F32F::CreateTranslationMatrix(cameraPosition);
                 params.cameraTransform = params.cameraTransform *
                     //Quaternion(cameraRotation).toRotationMatrix();
-                    Mat4DF::CreateRotationMatrix(cameraRotation);
-                params.cameraTransform = params.cameraTransform * Mat4DF::CreateScaleMatrix(cameraScale);
+                    Mat4F32F::CreateRotationMatrix(cameraRotation);
+                params.cameraTransform = params.cameraTransform * Mat4F32F::CreateScaleMatrix(cameraScale);
                 
                 // Reflection buffer (Above the water level)
                 m_renderControlSystem->getModule3D()->drawDefaultPass(

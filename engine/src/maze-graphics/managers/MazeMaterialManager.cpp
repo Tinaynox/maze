@@ -247,7 +247,7 @@ namespace Maze
                 renderPass->setRenderQueueIndex(3000);
                 material->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
                 material->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteTexture());
-                material->setUniform("u_baseMapST", Vec4DF(1.0f, 1.0f, 0.0f, 0.0f));
+                material->setUniform("u_baseMapST", Vec4F(1.0f, 1.0f, 0.0f, 0.0f));
                 break;
             }
             case BuiltinMaterialType::ColorTextureCustomUV:
@@ -386,7 +386,7 @@ namespace Maze
                 renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
                 renderPass->setCullMode(CullMode::Back);
                 renderPass->setRenderQueueIndex(2000);
-                material->setUniform("u_baseMapST", Vec4DF(1.0f, 1.0f, 0.0f, 0.0f));
+                material->setUniform("u_baseMapST", Vec4F(1.0f, 1.0f, 0.0f, 0.0f));
                 material->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteTexture());
                 material->setUniform("u_color", ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
                 material->setUniform("u_ambientLightColor", ColorF128(0.1f, 0.1f, 0.1f, 1.0f));
@@ -416,7 +416,7 @@ namespace Maze
                 renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
                 renderPass->setCullMode(CullMode::Off);
                 renderPass->setRenderQueueIndex(2000);
-                material->setUniform("u_baseMapST", Vec4DF(1.0f, 1.0f, 0.0f, 0.0f));
+                material->setUniform("u_baseMapST", Vec4F(1.0f, 1.0f, 0.0f, 0.0f));
                 material->setUniform("u_baseMap", m_renderSystemRaw->getTextureManager()->getWhiteTexture());
                 material->setUniform("u_color", ColorF128(0.77f, 0.77f, 0.77f, 1.0f));
                 material->setUniform("u_ambientLightColor", ColorF128(0.1f, 0.1f, 0.1f, 1.0f));

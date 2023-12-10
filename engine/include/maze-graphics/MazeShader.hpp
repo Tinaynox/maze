@@ -40,11 +40,11 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/utils/MazeSharedCopyable.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
-#include "maze-core/math/MazeVec4D.hpp"
-#include "maze-core/math/MazeMat3D.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
+#include "maze-core/math/MazeVec3.hpp"
+#include "maze-core/math/MazeVec4.hpp"
+#include "maze-core/math/MazeMat3.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
 
@@ -109,50 +109,50 @@ namespace Maze
         void setUniform(HashedCString _uniformName, Texture2DPtr const& _texture2D, bool _warningIfNotExists = false);
 
         //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Vec2DF const& _vector, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, Vec2F const& _vector, bool _warningIfNotExists = false);
 
         //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Vec3DF const& _vector, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, Vec3F const& _vector, bool _warningIfNotExists = false);
 
         //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Vec4DF const& _vector, bool _warningIfNotExists = false);
-
-
-        //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Vec2DS const& _vector, bool _warningIfNotExists = false);
-
-        //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Vec3DS const& _vector, bool _warningIfNotExists = false);
-
-        //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Vec4DS const& _vector, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, Vec4F const& _vector, bool _warningIfNotExists = false);
 
 
         //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Vec2DU const& _vector, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, Vec2S const& _vector, bool _warningIfNotExists = false);
 
         //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Vec3DU const& _vector, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, Vec3S const& _vector, bool _warningIfNotExists = false);
 
         //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Vec4DU const& _vector, bool _warningIfNotExists = false);
-
-
-        //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Vec2DB const& _vector, bool _warningIfNotExists = false);
-
-        //////////////////////////////////////////
-        void setUniform(HashedCString _uniformNamee, Vec3DB const& _vector, bool _warningIfNotExists = false);
-
-        //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Vec4DB const& _vector, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, Vec4S const& _vector, bool _warningIfNotExists = false);
 
 
         //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Mat3DF const& _matrix, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, Vec2U const& _vector, bool _warningIfNotExists = false);
 
         //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Mat4DF const& _matrix, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, Vec3U const& _vector, bool _warningIfNotExists = false);
+
+        //////////////////////////////////////////
+        void setUniform(HashedCString _uniformName, Vec4U const& _vector, bool _warningIfNotExists = false);
+
+
+        //////////////////////////////////////////
+        void setUniform(HashedCString _uniformName, Vec2B const& _vector, bool _warningIfNotExists = false);
+
+        //////////////////////////////////////////
+        void setUniform(HashedCString _uniformNamee, Vec3B const& _vector, bool _warningIfNotExists = false);
+
+        //////////////////////////////////////////
+        void setUniform(HashedCString _uniformName, Vec4B const& _vector, bool _warningIfNotExists = false);
+
+
+        //////////////////////////////////////////
+        void setUniform(HashedCString _uniformName, Mat3F const& _matrix, bool _warningIfNotExists = false);
+
+        //////////////////////////////////////////
+        void setUniform(HashedCString _uniformName, Mat4F const& _matrix, bool _warningIfNotExists = false);
 
 
         //////////////////////////////////////////
@@ -160,10 +160,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Mat3DF* _matrices, Size _count, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, Mat3F* _matrices, Size _count, bool _warningIfNotExists = false);
 
         //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Mat4DF* _matrices, Size _count, bool _warningIfNotExists = false);
+        void setUniform(HashedCString _uniformName, Mat4F* _matrices, Size _count, bool _warningIfNotExists = false);
 
 
         //////////////////////////////////////////

@@ -96,14 +96,14 @@ namespace Maze
             F32 halfWidth = boxCollider->getSize().x * 0.5f;
             F32 halfHeight = boxCollider->getSize().y * 0.5f;
 
-            Vec3DF positionLB = transform3D->getWorldTransform().transformAffine(
-                boxCollider->getOffset() + Vec2DF{ -halfWidth, -halfHeight });
-            Vec3DF positionLT = transform3D->getWorldTransform().transformAffine(
-                boxCollider->getOffset() + Vec2DF{ -halfWidth, +halfHeight });
-            Vec3DF positionRT = transform3D->getWorldTransform().transformAffine(
-                boxCollider->getOffset() + Vec2DF{ +halfWidth, +halfHeight });
-            Vec3DF positionRB = transform3D->getWorldTransform().transformAffine(
-                boxCollider->getOffset() + Vec2DF{ +halfWidth, -halfHeight });
+            Vec3F positionLB = transform3D->getWorldTransform().transformAffine(
+                boxCollider->getOffset() + Vec2F{ -halfWidth, -halfHeight });
+            Vec3F positionLT = transform3D->getWorldTransform().transformAffine(
+                boxCollider->getOffset() + Vec2F{ -halfWidth, +halfHeight });
+            Vec3F positionRT = transform3D->getWorldTransform().transformAffine(
+                boxCollider->getOffset() + Vec2F{ +halfWidth, +halfHeight });
+            Vec3F positionRB = transform3D->getWorldTransform().transformAffine(
+                boxCollider->getOffset() + Vec2F{ +halfWidth, -halfHeight });
 
             _drawer->setColor(ColorF128::c_green);
             _drawer->drawLine(positionLB, positionLT);

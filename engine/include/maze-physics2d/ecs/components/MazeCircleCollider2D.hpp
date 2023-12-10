@@ -32,7 +32,7 @@
 //////////////////////////////////////////
 #include "maze-physics2d/MazePhysics2DHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 #include "maze-physics2d/ecs/components/MazeCollider2D.hpp"
 
 
@@ -71,10 +71,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Vec2DF const& getOffset() const { return m_offset; }
+        inline Vec2F const& getOffset() const { return m_offset; }
 
         //////////////////////////////////////////
-        inline void setOffset(Vec2DF const& _offset) { m_offset = _offset; }
+        inline void setOffset(Vec2F const& _offset) { m_offset = _offset; }
 
         //////////////////////////////////////////
         inline F32 getRadius() const { return m_radius; }
@@ -97,7 +97,7 @@ namespace Maze
         virtual void processComponentAdded() MAZE_OVERRIDE;
 
     protected:
-        Vec2DF m_offset;
+        Vec2F m_offset;
         F32 m_radius;
     };
 

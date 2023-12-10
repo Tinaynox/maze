@@ -119,7 +119,7 @@ namespace Maze
 
         Stack<Rect2DS> m_scissorRects;
 
-        Vec4DF m_clipPlanes[MAZE_GL_MAX_CLIP_DISTANCES_COUNT] = { Vec4DF::c_zero };
+        Vec4F m_clipPlanes[MAZE_GL_MAX_CLIP_DISTANCES_COUNT] = { Vec4F::c_zero };
     };
 
 } // namespace Maze

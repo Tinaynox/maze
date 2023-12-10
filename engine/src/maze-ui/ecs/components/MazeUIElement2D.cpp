@@ -102,7 +102,7 @@ namespace Maze
 
         if (!eventCursorPressIn.empty() || !eventCursorPressOut.empty() || !eventPressedChanged.empty() || m_captureCursorHits)
         {
-            Vec2DF const& positionWS = _inputEvent.position;
+            Vec2F const& positionWS = _inputEvent.position;
 
             if (!m_bounds->getBounds().contains(positionWS))
             {
@@ -110,7 +110,7 @@ namespace Maze
                 return;
             }
 
-            Vec2DF positionOS = m_transform->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
+            Vec2F positionOS = m_transform->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
 
             if (positionOS.x < 0 || positionOS.y < 0 ||
                 positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
@@ -139,12 +139,12 @@ namespace Maze
 
         if (!eventSingleClick.empty() || m_captureCursorHits)
         {
-            Vec2DF const& positionWS = _inputEvent.position;
+            Vec2F const& positionWS = _inputEvent.position;
 
             if (!m_bounds->getBounds().contains(positionWS))
                 return;
 
-            Vec2DF positionOS = m_transform->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
+            Vec2F positionOS = m_transform->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
 
             if (positionOS.x < 0 || positionOS.y < 0 ||
                 positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
@@ -166,12 +166,12 @@ namespace Maze
 
         if (!eventDoubleClick.empty() || m_captureCursorHits)
         {
-            Vec2DF const& positionWS = _inputEvent.position;
+            Vec2F const& positionWS = _inputEvent.position;
 
             if (!m_bounds->getBounds().contains(positionWS))
                 return;
 
-            Vec2DF positionOS = m_transform->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
+            Vec2F positionOS = m_transform->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
 
             if (positionOS.x < 0 || positionOS.y < 0 ||
                 positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
@@ -197,7 +197,7 @@ namespace Maze
 
         if (!eventCursorReleaseIn.empty() || !eventPressedChanged.empty() || !eventCursorRelease.empty() || !eventCursorReleaseOut.empty() || !eventClick.empty())
         {
-            Vec2DF const& positionWS = _inputEvent.position;
+            Vec2F const& positionWS = _inputEvent.position;
 
             eventCursorRelease(_inputEvent);
 
@@ -207,7 +207,7 @@ namespace Maze
                 return;
             }
 
-            Vec2DF positionOS = m_transform->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
+            Vec2F positionOS = m_transform->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
 
             if (positionOS.x < 0 || positionOS.y < 0 ||
                 positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
@@ -241,7 +241,7 @@ namespace Maze
 
         if (!eventCursorMoveIn.empty() || !eventCursorMoveOut.empty() || !eventFocusChanged.empty() || m_captureCursorHits)
         {
-            Vec2DF const& positionWS = _inputEvent.position;
+            Vec2F const& positionWS = _inputEvent.position;
 
             if (!m_bounds->getBounds().contains(positionWS))
             {
@@ -253,7 +253,7 @@ namespace Maze
                 return;
             }
 
-            Vec2DF positionOS = m_transform->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
+            Vec2F positionOS = m_transform->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
 
             if (positionOS.x < 0 || positionOS.y < 0 ||
                 positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
@@ -285,7 +285,7 @@ namespace Maze
 
         if (!eventCursorDrag.empty() || !eventFocusChanged.empty() || m_captureCursorHits)
         {
-            Vec2DF const& positionWS = _inputEvent.position;
+            Vec2F const& positionWS = _inputEvent.position;
 
             if (!m_bounds->getBounds().contains(positionWS))
             {
@@ -295,7 +295,7 @@ namespace Maze
                 return;
             }
 
-            Vec2DF positionOS = m_transform->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
+            Vec2F positionOS = m_transform->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
 
             if (positionOS.x < 0 || positionOS.y < 0 ||
                 positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
@@ -321,12 +321,12 @@ namespace Maze
     {
         if (!eventCursorWheel.empty())
         {
-            Vec2DF const& positionWS = _inputEvent.position;
+            Vec2F const& positionWS = _inputEvent.position;
 
             if (!m_bounds->getBounds().contains(positionWS))
                 return;
 
-            Vec2DF positionOS = m_transform->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
+            Vec2F positionOS = m_transform->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
             if (positionOS.x < 0 || positionOS.y < 0 ||
                 positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
             {

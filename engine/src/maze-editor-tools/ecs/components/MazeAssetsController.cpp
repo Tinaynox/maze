@@ -147,24 +147,24 @@ namespace Maze
 
         Transform2DPtr canvasTransform = SpriteHelper::CreateTransform2D(
             m_canvas->getTransform()->getSize(),
-            Vec2DF(0.0f, 0.0f),
+            Vec2F(0.0f, 0.0f),
             m_canvas->getTransform(),
             getEntityRaw()->getECSScene(),
-            Vec2DF::c_zero,
-            Vec2DF::c_zero);
+            Vec2F::c_zero,
+            Vec2F::c_zero);
         canvasTransform->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>();
 
         SpriteRenderer2DPtr titleBackground = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
-            Vec2DF(
+            Vec2F(
                 m_canvas->getTransform()->getSize().x,
                 EditorToolsLayout::c_titleHeight),
-            Vec2DF(0.0f, 0.0f),
+            Vec2F(0.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             canvasTransform,
             getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         titleBackground->setColor(EditorToolsLayout::c_titleBackgroundColor);
         titleBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
 
@@ -173,25 +173,25 @@ namespace Maze
             EditorToolsLayout::c_titleFontSize,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(100, EditorToolsLayout::c_titleHeight),
-            Vec2DF(EditorToolsLayout::c_titleLabelShift, 0),
+            Vec2F(100, EditorToolsLayout::c_titleHeight),
+            Vec2F(EditorToolsLayout::c_titleLabelShift, 0),
             titleBackground->getTransform(),
             getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF(0.0f, 0.5f));
+            Vec2F(0.0f, 0.5f),
+            Vec2F(0.0f, 0.5f));
         hierarchyText->setColor(ColorU32::c_black);
 
         m_bodyBackground = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
-            Vec2DF(
+            Vec2F(
                 canvasTransform->getSize().x, 
                 canvasTransform->getSize().y - EditorToolsLayout::c_titleHeight),
-            Vec2DF(0.0f, 0.0f),
+            Vec2F(0.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_canvas->getTransform(),
             getEntityRaw()->getECSScene(),
-            Vec2DF::c_zero,
-            Vec2DF::c_zero);
+            Vec2F::c_zero,
+            Vec2F::c_zero);
         m_bodyBackground->setColor(EditorToolsLayout::c_bodyBackgroundColor);
         m_bodyBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>()->setSizeDelta(0.0f, -EditorToolsLayout::c_titleHeight);
         
@@ -199,23 +199,23 @@ namespace Maze
             HorizontalAlignment2D::Center,
             VerticalAlignment2D::Top,
             m_bodyBackground->getTransform()->getSize(),
-            Vec2DF::c_zero,
+            Vec2F::c_zero,
             m_bodyBackground->getTransform(),
             getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         m_layout->setExpand(true);
         m_layout->setControlChildWidth(true);
         m_layout->setAutoWidth(false);
         m_layout->getEntityRaw()->ensureComponent<SizePolicy2D>();
 
         m_assetsTreeRoot = UIHelper::CreateDefaultScrollRect(
-            Vec2DF(m_bodyBackground->getTransform()->getWidth() / 2.0f, m_bodyBackground->getTransform()->getHeight()),
-            Vec2DF::c_zero,
+            Vec2F(m_bodyBackground->getTransform()->getWidth() / 2.0f, m_bodyBackground->getTransform()->getHeight()),
+            Vec2F::c_zero,
             m_layout->getTransform(),
             getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f),
             true,
             true);
         
@@ -224,7 +224,7 @@ namespace Maze
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02));
 
         m_assetsTreeLayoutTransform = m_assetsTreeRoot->getContentTransform();
-        m_assetsTreeLayoutTransform->setSize(Vec2DF::c_zero);
+        m_assetsTreeLayoutTransform->setSize(Vec2F::c_zero);
         VerticalLayout2DPtr assetsTreeLayoutTransformLayout = m_assetsTreeLayoutTransform->getEntityRaw()->ensureComponent<VerticalLayout2D>();
         assetsTreeLayoutTransformLayout->setPadding(0.0f, 0.0f, 4.0f, 4.0f);
         assetsTreeLayoutTransformLayout->setSpacing(5.0f);
@@ -232,12 +232,12 @@ namespace Maze
         assetsTreeLayoutSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
 
         m_selectedAssetsFolderRoot = UIHelper::CreateDefaultScrollRect(
-            Vec2DF(m_bodyBackground->getTransform()->getWidth() / 2.0f, m_bodyBackground->getTransform()->getHeight()),
-            Vec2DF(m_bodyBackground->getTransform()->getWidth() / 2.0f, 0.0f),
+            Vec2F(m_bodyBackground->getTransform()->getWidth() / 2.0f, m_bodyBackground->getTransform()->getHeight()),
+            Vec2F(m_bodyBackground->getTransform()->getWidth() / 2.0f, 0.0f),
             m_layout->getTransform(),
             getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f),
             true,
             true);
         
@@ -260,7 +260,7 @@ namespace Maze
             });
 
         m_selectedAssetsFolderLayoutTransform = m_selectedAssetsFolderRoot->getContentTransform();
-        m_selectedAssetsFolderLayoutTransform->setSize(Vec2DF::c_zero);
+        m_selectedAssetsFolderLayoutTransform->setSize(Vec2F::c_zero);
         VerticalLayout2DPtr assetsFolderLayoutTransformLayout = m_selectedAssetsFolderLayoutTransform->getEntityRaw()->ensureComponent<VerticalLayout2D>();
         assetsFolderLayoutTransformLayout->setPadding(0.0f, 0.0f, 4.0f, 4.0f);
         assetsFolderLayoutTransformLayout->setSpacing(5.0f);

@@ -104,12 +104,12 @@ namespace Maze
         {
             m_bounds->getBounds();
 
-            Vec2DF const& size = m_transform->getSize();
-            Mat4DF const& worldTransform = m_transform->getWorldTransform();
-            Vec2DF lb = worldTransform.transformAffine(Vec2DF(m_paddingLeft, m_paddingBottom));
-            Vec2DF rb = worldTransform.transformAffine(Vec2DF(size.x - m_paddingRight, m_paddingBottom));
-            Vec2DF rt = worldTransform.transformAffine(Vec2DF(size.x - m_paddingRight, size.y - m_paddingTop));
-            Vec2DF lt = worldTransform.transformAffine(Vec2DF(m_paddingLeft, size.y - m_paddingTop));
+            Vec2F const& size = m_transform->getSize();
+            Mat4F const& worldTransform = m_transform->getWorldTransform();
+            Vec2F lb = worldTransform.transformAffine(Vec2F(m_paddingLeft, m_paddingBottom));
+            Vec2F rb = worldTransform.transformAffine(Vec2F(size.x - m_paddingRight, m_paddingBottom));
+            Vec2F rt = worldTransform.transformAffine(Vec2F(size.x - m_paddingRight, size.y - m_paddingTop));
+            Vec2F lt = worldTransform.transformAffine(Vec2F(m_paddingLeft, size.y - m_paddingTop));
 
             F32 minX = Math::Min(lb.x, rb.x, rt.x, lt.x);
             F32 maxX = Math::Max(lb.x, rb.x, rt.x, lt.x);

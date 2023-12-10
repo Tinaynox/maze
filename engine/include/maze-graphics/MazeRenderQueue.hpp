@@ -32,7 +32,7 @@
 //////////////////////////////////////////
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-graphics/MazeRenderCommands.hpp"
 #include "maze-graphics/MazeRenderCommandsBuffer.hpp"
 #include "maze-graphics/instance-stream/MazeInstanceStreamModelMatrix.hpp"
@@ -108,7 +108,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        static inline U8 ConstructUVMask(Vec4DF const* _uvs[MAZE_UV_CHANNELS_MAX])
+        static inline U8 ConstructUVMask(Vec4F const* _uvs[MAZE_UV_CHANNELS_MAX])
         {
             if (_uvs == nullptr)
                 return 0x0;
@@ -127,9 +127,9 @@ namespace Maze
         //////////////////////////////////////////
         inline void addDrawVAOInstancedCommand(
             VertexArrayObject* _vao,
-            Mat4DF const& _modelMatrix = Mat4DF::c_identity,
-            Vec4DF const* _color = nullptr,
-            Vec4DF const* _uvs[MAZE_UV_CHANNELS_MAX] = nullptr)
+            Mat4F const& _modelMatrix = Mat4F::c_identity,
+            Vec4F const* _color = nullptr,
+            Vec4F const* _uvs[MAZE_UV_CHANNELS_MAX] = nullptr)
         {
             bool useColorStream = (_color != nullptr);
             U8 uvMask = ConstructUVMask(_uvs);
@@ -163,9 +163,9 @@ namespace Maze
         inline void addDrawVAOInstancedCommand(
             VertexArrayObject* _vao,
             S32 _count,
-            Mat4DF const* _modelMatricies,
-            Vec4DF const* _colors = nullptr,
-            Vec4DF const* _uvs[MAZE_UV_CHANNELS_MAX] = nullptr)
+            Mat4F const* _modelMatricies,
+            Vec4F const* _colors = nullptr,
+            Vec4F const* _uvs[MAZE_UV_CHANNELS_MAX] = nullptr)
         {
             bool useColorStream = (_colors != nullptr);
             U8 uvMask = ConstructUVMask(_uvs);
@@ -237,8 +237,8 @@ namespace Maze
         //////////////////////////////////////////
         inline void addDrawVAOInstancedCommand(
             VertexArrayObjectPtr const& _vao,
-            Mat4DF const& _modelMatrix = Mat4DF::c_identity,
-            Vec4DF const* _color = nullptr)
+            Mat4F const& _modelMatrix = Mat4F::c_identity,
+            Vec4F const* _color = nullptr)
         {
             addDrawVAOInstancedCommand(_vao.get(), _modelMatrix, _color);
         }
@@ -247,9 +247,9 @@ namespace Maze
         inline void addDrawVAOInstancedCommand(
             VertexArrayObjectPtr const& _vao,
             S32 _count,
-            Mat4DF const* _modelMatricies,
-            Vec4DF const* _colors = nullptr,
-            Vec4DF const* _uvs[MAZE_UV_CHANNELS_MAX] = nullptr)
+            Mat4F const* _modelMatricies,
+            Vec4F const* _colors = nullptr,
+            Vec4F const* _uvs[MAZE_UV_CHANNELS_MAX] = nullptr)
         {
             addDrawVAOInstancedCommand(_vao.get(), _count, _modelMatricies, _colors, _uvs);
         }
@@ -282,7 +282,7 @@ namespace Maze
         //////////////////////////////////////////
         inline void addEnableClipPlaneCommand(
             S32 _index,
-            Vec4DF const& _plane)
+            Vec4F const& _plane)
         {
             m_lastDrawVAOInstancedCommand = nullptr;
             m_renderCommandsBuffer.createCommand<RenderCommandEnableClipPlane>(_index, _plane);
@@ -323,33 +323,33 @@ namespace Maze
 
         //////////////////////////////////////////
         void pushInstanceModelMatrix(
-            Mat4DF const& _modelMatrix);
+            Mat4F const& _modelMatrix);
 
         //////////////////////////////////////////
         void pushInstanceModelMatricies(
-            Mat4DF const* _modelMatricies,
+            Mat4F const* _modelMatricies,
             S32 _count);
 
 
         //////////////////////////////////////////
         void pushInstanceColor(
-            Vec4DF const& _color);
+            Vec4F const& _color);
 
         //////////////////////////////////////////
         void pushInstanceColors(
-            Vec4DF const* _colors,
+            Vec4F const* _colors,
             S32 _count);
 
 
         //////////////////////////////////////////
         void pushInstanceUV(
             S32 _index,
-            Vec4DF const& _uv);
+            Vec4F const& _uv);
 
         //////////////////////////////////////////
         void pushInstanceUV(
             S32 _index,
-            Vec4DF const* _uvs,
+            Vec4F const* _uvs,
             S32 _count);
 
     protected:

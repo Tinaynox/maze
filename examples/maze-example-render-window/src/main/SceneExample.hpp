@@ -92,16 +92,16 @@ protected:
 
     Maze::F32 m_timer;
 
-    Maze::Mat4DF m_modelMatrix;
-    Maze::Mat4DF m_modelMatrix2;
-    Maze::Mat4DF m_modelMatrix3;
+    Maze::Mat4F32F m_modelMatrix;
+    Maze::Mat4F32F m_modelMatrix2;
+    Maze::Mat4F32F m_modelMatrix3;
 
     Maze::Transform3DPtr m_cameraTransform3D;
 
     Maze::F32 m_yawAngle;
     Maze::F32 m_pitchAngle;
 
-    Maze::Vec2DF m_cursorPositionLastFrame;
+    Maze::Vec2F32 m_cursorPositionLastFrame;
     bool m_cursorDrag;
 };
 

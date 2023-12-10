@@ -170,7 +170,7 @@ namespace Maze
         //////////////////////////////////////////
         inline RenderCommandEnableClipPlane(
             S32 _index,
-            Vec4DF const& _plane)
+            Vec4F const& _plane)
             : RenderCommand(RenderCommandType::EnableClipPlane)
             , index(_index)
             , plane(_plane)
@@ -178,7 +178,7 @@ namespace Maze
 
     public:
         S32 index;
-        Vec4DF plane;
+        Vec4F plane;
     };
 
     //////////////////////////////////////////

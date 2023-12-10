@@ -60,34 +60,34 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    inline Quaternion::Quaternion(Mat3DF const& _rotationMatrix)
+    inline Quaternion::Quaternion(Mat3F const& _rotationMatrix)
     {
         setRotationMatrix(_rotationMatrix);
     }
 
     //////////////////////////////////////////
-    inline Quaternion::Quaternion(Mat4DF const& _rotationMatrix)
+    inline Quaternion::Quaternion(Mat4F const& _rotationMatrix)
     {
         setRotationMatrix(_rotationMatrix);
     }
 
     //////////////////////////////////////////
-    inline Quaternion::Quaternion(F32 const& _angle, Vec3DF const& _axis)
+    inline Quaternion::Quaternion(F32 const& _angle, Vec3F const& _axis)
     {
         setAngleAxis(_angle, _axis);
     }
 
     //////////////////////////////////////////
     inline Quaternion::Quaternion(
-        Vec3DF const& _xAxis,
-        Vec3DF const& _yAxis,
-        Vec3DF const& _zAxis)
+        Vec3F const& _xAxis,
+        Vec3F const& _yAxis,
+        Vec3F const& _zAxis)
     {
         setAxes(_xAxis, _yAxis, _zAxis);
     }
 
     //////////////////////////////////////////
-    inline Quaternion::Quaternion(Vec3DF const* _axes)
+    inline Quaternion::Quaternion(Vec3F const* _axes)
     {
         setAxes(_axes);
     }
@@ -109,15 +109,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    inline Quaternion::Quaternion(Vec3DF const& _eulerAngles)
+    inline Quaternion::Quaternion(Vec3F const& _eulerAngles)
     {
         setEulerAngles(_eulerAngles.x, _eulerAngles.y, _eulerAngles.z);
     }
 
     //////////////////////////////////////////
     inline Quaternion::Quaternion(
-        Vec3DF const& _fromVector,
-        Vec3DF const& _toVector)
+        Vec3F const& _fromVector,
+        Vec3F const& _toVector)
     {
         F32 d = _fromVector.dotProduct(_toVector);
 
@@ -127,7 +127,7 @@ namespace Maze
         }
         else
         {
-            Vec3DF a = _fromVector.crossProduct(_toVector);
+            Vec3F a = _fromVector.crossProduct(_toVector);
             x = a.x;
             y = a.y;
             z = a.z;
@@ -246,7 +246,7 @@ namespace Maze
     //////////////////////////////////////////
     inline Quaternion Quaternion::FromEuler(F32 _x, F32 _y, F32 _z)
     {
-        return Quaternion(Vec3DF(_x, _y, _z));
+        return Quaternion(Vec3F(_x, _y, _z));
     }
 
 

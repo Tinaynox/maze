@@ -133,7 +133,7 @@ namespace Maze
         Transform3D* _someObject,
         Rotor3D* _rotor)
     {
-        _someObject->translate(Vec3DF::c_unitY * _dt * 0.2f);
+        _someObject->translate(Vec3F32::c_unitY * _dt * 0.2f);
     }
 
     //////////////////////////////////////////
@@ -143,7 +143,7 @@ namespace Maze
         Transform3D* _someObject,
         Rotor3D* _rotor)
     {
-        _someObject->translate(Vec3DF::c_unitX * 1.0f);
+        _someObject->translate(Vec3F32::c_unitX * 1.0f);
     }
 
     //////////////////////////////////////////
@@ -220,7 +220,7 @@ namespace Maze
         // Camera
         EntityPtr cameraEntity = createEntity("Camera");
         m_camera3D = cameraEntity->createComponent<Camera3D>();
-        m_camera3D->getTransform()->setLocalPosition(Vec3DF(8.0f, 4.0f, 8.0f));
+        m_camera3D->getTransform()->setLocalPosition(Vec3F32(8.0f, 4.0f, 8.0f));
         // m_camera3D->setFOV(Math::DegreesToRadians(30));
         m_camera3D->setClearColorFlag(true);
         // m_camera3D->setClearSkyBoxFlag(true);
@@ -284,11 +284,11 @@ namespace Maze
         {
             case InputEventMouseType::Move:
             {
-                Vec2DF cursorPosition = Vec2DF((F32)_data.x, (F32)_data.y);
+                Vec2F32 cursorPosition = Vec2F32((F32)_data.x, (F32)_data.y);
 
                 if (m_cursorDrag)
                 {
-                    Vec2DF deltaPosition = cursorPosition - m_cursorPositionLastFrame;
+                    Vec2F32 deltaPosition = cursorPosition - m_cursorPositionLastFrame;
 
                     m_yawAngle += deltaPosition.x * 0.0075f * 0.25f;
                     m_pitchAngle -= deltaPosition.y * 0.0075f * 0.25f;
@@ -301,7 +301,7 @@ namespace Maze
             {
                 if (_data.buttonId == 1)
                 {
-                    Vec2DF cursorPosition = Vec2DF((F32)_data.x, (F32)_data.y);
+                    Vec2F32 cursorPosition = Vec2F32((F32)_data.x, (F32)_data.y);
                     Rect2DF viewportRect(
                         m_canvas->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
                         m_canvas->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
@@ -345,11 +345,11 @@ namespace Maze
         {
             case InputEventTouchType::Move:
             {
-                Vec2DF cursorPosition = Vec2DF((F32)_data.x, (F32)_data.y);
+                Vec2F32 cursorPosition = Vec2F32((F32)_data.x, (F32)_data.y);
 
                 if (m_cursorDrag)
                 {
-                    Vec2DF deltaPosition = cursorPosition - m_cursorPositionLastFrame;
+                    Vec2F32 deltaPosition = cursorPosition - m_cursorPositionLastFrame;
 
                     m_yawAngle += deltaPosition.x * 0.0075f * 0.25f;
                     m_pitchAngle -= deltaPosition.y * 0.0075f * 0.25f;
@@ -362,7 +362,7 @@ namespace Maze
             {
                 if (_data.index == 0)
                 {
-                    Vec2DF cursorPosition = Vec2DF((F32)_data.x, (F32)_data.y);
+                    Vec2F32 cursorPosition = Vec2F32((F32)_data.x, (F32)_data.y);
                     Rect2DF viewportRect(
                         m_canvas->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
                         m_canvas->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,

@@ -39,8 +39,8 @@
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeVec3.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
@@ -92,7 +92,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual Vec2DU getRenderTargetSize() const MAZE_ABSTRACT;
+        virtual Vec2U getRenderTargetSize() const MAZE_ABSTRACT;
 
 
         //////////////////////////////////////////
@@ -176,22 +176,22 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Vec3DF const& getViewPosition() const { return m_viewPosition; }
+        inline Vec3F const& getViewPosition() const { return m_viewPosition; }
 
         //////////////////////////////////////////
-        inline void setViewPosition(Vec3DF const& _viewPosition) { m_viewPosition = _viewPosition; }
+        inline void setViewPosition(Vec3F const& _viewPosition) { m_viewPosition = _viewPosition; }
 
         //////////////////////////////////////////
-        inline Mat4DF const& getViewMatrix() const { return m_viewMatrix; }
+        inline Mat4F const& getViewMatrix() const { return m_viewMatrix; }
 
         //////////////////////////////////////////
-        inline void setViewMatrix(Mat4DF const& _viewMatrix) { m_viewMatrix = _viewMatrix; }
+        inline void setViewMatrix(Mat4F const& _viewMatrix) { m_viewMatrix = _viewMatrix; }
 
         //////////////////////////////////////////
-        inline Mat4DF const& getProjectionMatrix() const { return m_projectionMatrix; }
+        inline Mat4F const& getProjectionMatrix() const { return m_projectionMatrix; }
 
         //////////////////////////////////////////
-        inline void setProjectionMatrix(Mat4DF const& _projectionMatrix) { m_projectionMatrix = _projectionMatrix; }
+        inline void setProjectionMatrix(Mat4F const& _projectionMatrix) { m_projectionMatrix = _projectionMatrix; }
 
         //////////////////////////////////////////
         void setProjectionMatrixPerspective(
@@ -260,10 +260,10 @@ namespace Maze
         RenderQueuePtr m_renderQueue;
 
         Rect2DF m_viewport;
-        Vec3DF m_viewPosition;
-        Mat4DF m_viewMatrix;
+        Vec3F m_viewPosition;
+        Mat4F m_viewMatrix;
 
-        Mat4DF m_projectionMatrix;
+        Mat4F m_projectionMatrix;
         F32 m_near;
         F32 m_far;
 

@@ -67,9 +67,9 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SpaceObject, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, damage, 40.0f, getDamage, setDamage),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2DF, engineForce, Vec2DF(80.0f, 60.0f), getEngineForce, setEngineForce),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2DF, throttle, Vec2DF::c_zero, getThrottle, setThrottle),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2DF, weaponPoint, Vec2DF::c_zero, getWeaponPoint, setWeaponPoint),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F32, engineForce, Vec2F32(80.0f, 60.0f), getEngineForce, setEngineForce),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F32, throttle, Vec2F32::c_zero, getThrottle, setThrottle),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F32, weaponPoint, Vec2F32::c_zero, getWeaponPoint, setWeaponPoint),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, fire, false, getFire, setFire),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, fireCooldown, 0.1f, getFireCooldown, setFireCooldown),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, collisionDamage, 10.0f, getCollisionDamage, setCollisionDamage),
@@ -84,9 +84,9 @@ namespace Maze
     //////////////////////////////////////////
     SpaceObject::SpaceObject()
         : m_damage(40.0f)
-        , m_engineForce(Vec2DF(80.0f, 60.0f))
-        , m_throttle(Vec2DF::c_zero)
-        , m_weaponPoint(Vec2DF::c_zero)
+        , m_engineForce(Vec2F32(80.0f, 60.0f))
+        , m_throttle(Vec2F32::c_zero)
+        , m_weaponPoint(Vec2F32::c_zero)
         , m_fire(false)
         , m_fireTimer(0.0f)
         , m_fireCooldown(0.1f)
@@ -250,14 +250,14 @@ namespace Maze
         if (m_projectileAvatar == ProjectileAvatarType::None)
             return;
 
-        Vec2DF velocity = m_rigibody2D->getVelocity();
+        Vec2F32 velocity = m_rigibody2D->getVelocity();
 
         ProjectilePtr projectile = m_levelAdapter->getProjectilePool()->createProjectile(m_projectileAvatar);
 
         switch (m_direction)
         {
-            case SpaceObjectAvatarDirection::Right: projectile->setDirection(Vec2DF::c_unitX); break;
-            case SpaceObjectAvatarDirection::Left: projectile->setDirection(Vec2DF::c_negativeUnitX); break;
+            case SpaceObjectAvatarDirection::Right: projectile->setDirection(Vec2F32::c_unitX); break;
+            case SpaceObjectAvatarDirection::Left: projectile->setDirection(Vec2F32::c_negativeUnitX); break;
             default:
                 break;
         }

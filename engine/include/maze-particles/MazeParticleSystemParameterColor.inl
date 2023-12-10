@@ -27,32 +27,32 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    inline void ParticleSystemParameterColor::sample(S32 _particleSeed, F32 _scalar, Vec4DF& _result) const
+    inline void ParticleSystemParameterColor::sample(S32 _particleSeed, F32 _scalar, Vec4F& _result) const
     {
         MAZE_DEBUG_BP_IF(_scalar < 0.0f || _scalar > 1.0f);
         (this->*m_samplingRefFunc)(_particleSeed, _scalar, _result);
     }
 
     //////////////////////////////////////////
-    inline void ParticleSystemParameterColor::sampleRefNone(S32 _particleSeed, F32 _scalar, Vec4DF& _result) const
+    inline void ParticleSystemParameterColor::sampleRefNone(S32 _particleSeed, F32 _scalar, Vec4F& _result) const
     {
 
     }
 
     //////////////////////////////////////////
-    inline void ParticleSystemParameterColor::sampleRefConstant(S32 _particleSeed, F32 _scalar, Vec4DF& _result) const
+    inline void ParticleSystemParameterColor::sampleRefConstant(S32 _particleSeed, F32 _scalar, Vec4F& _result) const
     {
         _result = m_color0;
     }
 
     //////////////////////////////////////////
-    inline void ParticleSystemParameterColor::sampleRefGradient(S32 _particleSeed, F32 _scalar, Vec4DF& _result) const
+    inline void ParticleSystemParameterColor::sampleRefGradient(S32 _particleSeed, F32 _scalar, Vec4F& _result) const
     {
         _result = m_gradient0.evaluate(_scalar);
     }
 
     //////////////////////////////////////////
-    inline void ParticleSystemParameterColor::sampleRefRandomBetweenColors(S32 _particleSeed, F32 _scalar, Vec4DF& _result) const
+    inline void ParticleSystemParameterColor::sampleRefRandomBetweenColors(S32 _particleSeed, F32 _scalar, Vec4F& _result) const
     {
         F32 seed01 = (F32)_particleSeed * c_invParticleSystemParametersCount;
 
@@ -60,16 +60,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    inline void ParticleSystemParameterColor::sampleRefRandomBetweenGradients(S32 _particleSeed, F32 _scalar, Vec4DF& _result) const
+    inline void ParticleSystemParameterColor::sampleRefRandomBetweenGradients(S32 _particleSeed, F32 _scalar, Vec4F& _result) const
     {
-        Vec4DF value0 = m_gradient0.evaluate(_scalar);
-        Vec4DF value1 = m_gradient1.evaluate(_scalar);
+        Vec4F value0 = m_gradient0.evaluate(_scalar);
+        Vec4F value1 = m_gradient1.evaluate(_scalar);
 
         F32 seed01 = (F32)_particleSeed * c_invParticleSystemParametersCount;
 
-        Vec4DF midValue = Math::Lerp(value0, value1, seed01);
+        Vec4F midValue = Math::Lerp(value0, value1, seed01);
 
-        _result = static_cast<Vec4DF>(midValue);
+        _result = static_cast<Vec4F>(midValue);
     }
 
 

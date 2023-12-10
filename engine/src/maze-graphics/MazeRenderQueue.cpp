@@ -114,7 +114,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void RenderQueue::pushInstanceModelMatrix(
-        Mat4DF const& _modelMatrix)
+        Mat4F const& _modelMatrix)
     {
         S32 offset = m_instanceStreamModelMatrix->getOffset();
 
@@ -126,7 +126,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void RenderQueue::pushInstanceModelMatricies(
-        Mat4DF const* _modelMatricies,
+        Mat4F const* _modelMatricies,
         S32 _count)
     {
         S32 offset = m_instanceStreamModelMatrix->getOffset();
@@ -139,7 +139,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void RenderQueue::pushInstanceColor(
-        Vec4DF const& _color)
+        Vec4F const& _color)
     {
         S32 offset = m_instanceStreamColor->getOffset();
 
@@ -151,7 +151,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void RenderQueue::pushInstanceColors(
-        Vec4DF const* _colors,
+        Vec4F const* _colors,
         S32 _count)
     {
         S32 offset = m_instanceStreamColor->getOffset();
@@ -165,7 +165,7 @@ namespace Maze
     //////////////////////////////////////////
     void RenderQueue::pushInstanceUV(
         S32 _index,
-        Vec4DF const& _uv)
+        Vec4F const& _uv)
     {
         S32 offset = m_instanceStreamUVs[_index]->getOffset();
 
@@ -178,7 +178,7 @@ namespace Maze
     //////////////////////////////////////////
     void RenderQueue::pushInstanceUV(
         S32 _index,
-        Vec4DF const* _uvs,
+        Vec4F const* _uvs,
         S32 _count)
     {
         S32 offset = m_instanceStreamUVs[_index]->getOffset();

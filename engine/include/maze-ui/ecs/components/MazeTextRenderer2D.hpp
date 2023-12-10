@@ -331,7 +331,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual Vec2DF getTextEnd(Size _rowIndex = 0) MAZE_OVERRIDE;
+        virtual Vec2F getTextEnd(Size _rowIndex = 0) MAZE_OVERRIDE;
 
 
         //////////////////////////////////////////
@@ -380,7 +380,7 @@ namespace Maze
         //////////////////////////////////////////
         void setGlyphQuad(
             Size _quadIndex,
-            Vec2DF const& _position,
+            Vec2F const& _position,
             ColorF128 const& _color,
             FontGlyph const& _glyph);
 
@@ -425,10 +425,10 @@ namespace Maze
         ColorU32 m_outlineColor = ColorU32::c_white;
 
     private:
-        Vector<Mat4DF> m_localMatrices;
-        Vector<Vec4DF> m_localColors;
+        Vector<Mat4F> m_localMatrices;
+        Vector<Vec4F> m_localColors;
 
-        Vec2DF m_lastGlyphOffset = Vec2DF::c_zero;
+        Vec2F m_lastGlyphOffset = Vec2F::c_zero;
 
         bool m_debugUpdatingMeshData = false;
     };

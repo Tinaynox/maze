@@ -68,7 +68,7 @@ namespace Maze
     DebugGridRenderer::DebugGridRenderer()
         : m_renderSystem(nullptr)
         , m_camera(nullptr)
-        , m_prevMeshCameraPosition(Vec3DF::c_zero)
+        , m_prevMeshCameraPosition(Vec3F::c_zero)
     {
     }
 
@@ -105,7 +105,7 @@ namespace Maze
     {
         MAZE_PROFILE_EVENT("DebugGridRenderer::update");
 
-        Vec3DF const& cameraPosition = m_camera->getTransform()->getWorldPosition();
+        Vec3F const& cameraPosition = m_camera->getTransform()->getWorldPosition();
 
         if (cameraPosition.squaredDistance(m_prevMeshCameraPosition) >= 1.0f)
         {
@@ -130,16 +130,16 @@ namespace Maze
 
         Size iterations = 128;
         F32 const increment = 1.0f;
-        Vec4DF const primaryColor = ColorU32(192, 192, 192, 130).toVec4DF();
-        Vec4DF const secondaryColor = ColorU32(192, 192, 192, 50).toVec4DF();
+        Vec4F const primaryColor = ColorU32(192, 192, 192, 130).toVec4F32();
+        Vec4F const secondaryColor = ColorU32(192, 192, 192, 50).toVec4F32();
         S32 const majorLineIncrement = 10;
 
         F32 length = iterations * increment;
         ++iterations;
 
-        Vector<Vec3DF> positions;
-        Vector<Vec3DF> normals;
-        Vector<Vec4DF> colors;
+        Vector<Vec3F> positions;
+        Vector<Vec3F> normals;
+        Vector<Vec4F> colors;
         Vector<U32> indices;
 
         positions.resize(iterations * 4);
@@ -147,16 +147,16 @@ namespace Maze
         colors.resize(iterations * 4);
         indices.resize(iterations * 4);
 
-        Vec3DF pivot(
+        Vec3F pivot(
             m_camera->getTransform()->getWorldPosition().x,
             0.0f,
             m_camera->getTransform()->getWorldPosition().z);
 
-        Vec3DF tangent = Vec3DF::c_unitX;
-        Vec3DF bitangent = Vec3DF::c_unitZ;
+        Vec3F tangent = Vec3F::c_unitX;
+        Vec3F bitangent = Vec3F::c_unitZ;
 
-        static std::function<F32(Vec3DF const& _val, Vec3DF const& _mask)> const valueFromMaskFunc =
-            [](Vec3DF const& _val, Vec3DF const& _mask) -> F32
+        static std::function<F32(Vec3F const& _val, Vec3F const& _mask)> const valueFromMaskFunc =
+            [](Vec3F const& _val, Vec3F const& _mask) -> F32
             {
                 if (Math::Abs(_mask.x) > 0.0001f)
                     return _val.x;
@@ -168,17 +168,17 @@ namespace Maze
             };
     
 
-        Vec3DF start = pivot - tangent * (length * 0.5f) - bitangent * (length * 0.5f);
+        Vec3F start = pivot - tangent * (length * 0.5f) - bitangent * (length * 0.5f);
 
-        static std::function<Vec3DF(Vec3DF const& _val, Vec3DF const& _mask, F32 _snapValue)> const snapValueByMaskFunc =
-            [&](Vec3DF const& _val, Vec3DF const& _mask, F32 _snapValue) -> Vec3DF
+        static std::function<Vec3F(Vec3F const& _val, Vec3F const& _mask, F32 _snapValue)> const snapValueByMaskFunc =
+            [&](Vec3F const& _val, Vec3F const& _mask, F32 _snapValue) -> Vec3F
         {
             F32 x = _val.x;
             F32 y = _val.y;
             F32 z = _val.z;
 
             F32 const c_epsilon = 0.0001f;
-            return Vec3DF(
+            return Vec3F(
                 Math::Abs(_mask.x) < c_epsilon ? x : _snapValue * Math::Round(x / _snapValue),
                 Math::Abs(_mask.y) < c_epsilon ? y : _snapValue * Math::Round(y / _snapValue),
                 Math::Abs(_mask.z) < c_epsilon ? z : _snapValue * Math::Round(z / _snapValue));
@@ -198,8 +198,8 @@ namespace Maze
 
         for (Size i = 0; i < iterations; ++i)
         {
-            Vec3DF a = start + tangent * i * increment;
-            Vec3DF b = start + bitangent * i * increment;
+            Vec3F a = start + tangent * i * increment;
+            Vec3F b = start + bitangent * i * increment;
 
             positions[vertex + 0] = a;
             positions[vertex + 1] = a + bitangent * length;
@@ -212,7 +212,7 @@ namespace Maze
             indices[index++] = vertex + 2;
             indices[index++] = vertex + 3;
 
-            Vec4DF color = (i + highlightOffsetTangent) % majorLineIncrement == 0 ? primaryColor : secondaryColor;
+            Vec4F color = (i + highlightOffsetTangent) % majorLineIncrement == 0 ? primaryColor : secondaryColor;
 
             colors[vertex + 0] = color;
             colors[vertex + 1] = color;
@@ -225,7 +225,7 @@ namespace Maze
             vertex += 4;
         }
 
-        Vec3DF normal = bitangent.crossProduct(tangent);
+        Vec3F normal = bitangent.crossProduct(tangent);
         for (Size i = 0; i < iterations * 4; ++i)
             normals[i] = normal;
 

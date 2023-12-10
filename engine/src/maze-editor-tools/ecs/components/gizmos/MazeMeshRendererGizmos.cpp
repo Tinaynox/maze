@@ -99,9 +99,9 @@ namespace Maze
         Transform3D* transform3D = _entity->getComponentRaw<Transform3D>();
         if (transform3D)
         {
-            Vector<Vec3DF> vertices;
+            Vector<Vec3F> vertices;
 
-            Mat4DF const& worldTransform = transform3D->getWorldTransform();
+            Mat4F const& worldTransform = transform3D->getWorldTransform();
             if (meshRenderer->getRenderMesh())
             {
                 for (VertexArrayObjectPtr const& vao : meshRenderer->getRenderMesh()->getVertexArrayObjects())
@@ -115,9 +115,9 @@ namespace Maze
                         for (Size i = 0; i < verticesCount; i++, positionData += positionDesc.stride)
                         {
                             U8 const* data = positionData + positionDesc.offset;
-                            Vec3DF position = *(Vec3DF*)data;
+                            Vec3F position = *(Vec3F*)data;
 
-                            Vec3DF worldPosition = worldTransform.transformAffine(position);
+                            Vec3F worldPosition = worldTransform.transformAffine(position);
                             vertices.emplace_back(worldPosition);
                         }
                     }

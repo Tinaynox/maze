@@ -94,12 +94,12 @@ namespace Maze
         HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(_parent->getWidth(), 18),
-            Vec2DF(0, 0),
+            Vec2F(_parent->getWidth(), 18),
+            Vec2F(0, 0),
             _parent,
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         layout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
         layout->setAutoWidth(false);
         layout->setExpand(true);
@@ -109,26 +109,26 @@ namespace Maze
             EditorToolsLayout::c_inspectorPropertyFontSize,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(8, 18),
-            Vec2DF(0, 0),
+            Vec2F(8, 18),
+            Vec2F(0, 0),
             layout->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF::c_zero);
+            Vec2F(0.0f, 0.5f),
+            Vec2F::c_zero);
         systemText->setColor(EditorToolsLayout::c_inspectorPropertyColor);
 
         m_colorEdit = UIHelper::CreateDefaultColorGradientEdit(
             ColorGradient(
                 0.0f,
-                Vec4DF::c_one,
+                Vec4F::c_one,
                 1.0f,
-                Vec4DF::c_one),
-            Vec2DF(60, 18),
-            Vec2DF(0, 0),
+                Vec4F::c_one),
+            Vec2F(60, 18),
+            Vec2F(0, 0),
             layout->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.5f, 0.5f),
-            Vec2DF::c_zero);
+            Vec2F(0.5f, 0.5f),
+            Vec2F::c_zero);
         m_colorEdit->eventGradientChanged.subscribe(this, &PropertyDrawerColorGradient::notifyGradientChanged);
     }
 

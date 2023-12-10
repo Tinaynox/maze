@@ -195,8 +195,8 @@ namespace Maze
                 MaterialPtr const& material = MaterialManager::GetCurrentInstance()->ensureBuiltinMaterial(BuiltinMaterialType::Color);
                 SpriteRenderer2DPtr frame = SpriteHelper::CreateSprite(
                     ColorU32::c_lightGray,
-                    Vec2DF(96.0f, 10.0f),
-                    Vec2DF(0.0f, -34.0f),
+                    Vec2F32(96.0f, 10.0f),
+                    Vec2F32(0.0f, -34.0f),
                     material,
                     m_canvas->getTransform(),
                     this);
@@ -204,20 +204,20 @@ namespace Maze
                 SpriteRenderer2DPtr back = SpriteHelper::CreateSprite(
                     ColorU32::c_blackSoft,
                     frame->getTransform()->getSize() - 4.0f,
-                    Vec2DF::c_zero,
+                    Vec2F32::c_zero,
                     material,
                     frame->getTransform(),
                     this);
 
                 m_progressBarFill = SpriteHelper::CreateSprite(
                     ColorU32::c_whiteSoft,
-                    Vec2DF(0.0f, back->getTransform()->getHeight()),
-                    Vec2DF::c_zero,
+                    Vec2F32(0.0f, back->getTransform()->getHeight()),
+                    Vec2F32::c_zero,
                     material,
                     back->getTransform(),
                     this,
-                    Vec2DF(0.0f, 0.5f),
-                    Vec2DF(0.0f, 0.5f));
+                    Vec2F32(0.0f, 0.5f),
+                    Vec2F32(0.0f, 0.5f));
 
                 break;
             }

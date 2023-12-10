@@ -199,7 +199,7 @@ namespace Maze
         m_blackFade = SpriteHelper::CreateSprite(
             ColorU32::c_black,
             m_canvas->getTransform()->getSize(),
-             Vec2DF(0.0f, 0.0f),
+             Vec2F32(0.0f, 0.0f),
             spriteMaterial,
             m_canvas->getTransform(),
             this);

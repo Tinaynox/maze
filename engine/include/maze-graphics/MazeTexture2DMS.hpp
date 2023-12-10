@@ -73,7 +73,7 @@ namespace Maze
 
         //////////////////////////////////////////
         static Texture2DMSPtr Create(
-            Vec2DU const& _size,
+            Vec2U const& _size,
             PixelFormat::Enum _internalPixelFormat,
             S32 _samples,
             RenderSystem* _renderSystem = nullptr);
@@ -90,7 +90,7 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool loadEmpty(
-            Vec2DU const& _size,
+            Vec2U const& _size,
             PixelFormat::Enum _internalPixelFormat,
             S32 _samples) MAZE_ABSTRACT;
 
@@ -110,7 +110,7 @@ namespace Maze
         
 
         //////////////////////////////////////////
-        inline Vec2DS const& getSize() const { return m_size; }
+        inline Vec2S const& getSize() const { return m_size; }
 
         //////////////////////////////////////////
         inline S32 getWidth() const { return m_size.x; }
@@ -128,7 +128,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual void saveToFileAsTGA(String const& _fileName, Vec2DU _size = Vec2DU::c_zero) MAZE_ABSTRACT;
+        virtual void saveToFileAsTGA(String const& _fileName, Vec2U _size = Vec2U::c_zero) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual PixelSheet2D readAsPixelSheet(PixelFormat::Enum _outputFormat = PixelFormat::None) MAZE_ABSTRACT;
@@ -154,7 +154,7 @@ namespace Maze
         virtual bool init(RenderSystem* _renderSystem) MAZE_OVERRIDE;
     
     protected:
-        Vec2DS m_size;
+        Vec2S m_size;
         S32 m_samples = 0;
 
         PixelFormat::Enum m_internalPixelFormat;

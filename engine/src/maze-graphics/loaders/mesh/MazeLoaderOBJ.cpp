@@ -112,12 +112,12 @@ namespace Maze
 
     //////////////////////////////////////////
     void MAZE_GRAPHICS_API GenVerticesFromRawOBJ(
-        Vector<Vec3DF>& _outPositions,
-        Vector<Vec2DF>& _outUVs,
-        Vector<Vec3DF>& _outNormals,
-        Vector<Vec3DF> const& _positions,
-        Vector<Vec2DF> const& _uvs,
-        Vector<Vec3DF> const& _normals,
+        Vector<Vec3F>& _outPositions,
+        Vector<Vec2F>& _outUVs,
+        Vector<Vec3F>& _outNormals,
+        Vector<Vec3F> const& _positions,
+        Vector<Vec2F> const& _uvs,
+        Vector<Vec3F> const& _normals,
         String _line)
     {
         Vector<String> sface;
@@ -175,14 +175,14 @@ namespace Maze
                 // P
                 case 1:
                 {
-                    Vec3DF finalPosition = GetElement(_positions, svert[0]);
+                    Vec3F finalPosition = GetElement(_positions, svert[0]);
                     if (std::find(_outPositions.begin(), _outPositions.end(), finalPosition) == _outPositions.end())
                     {
-                        Vec2DF finalUV = Vec2DF::c_zero;
+                        Vec2F finalUV = Vec2F::c_zero;
                         noNormal = true;
                         _outPositions.push_back(finalPosition);
                         _outUVs.push_back(finalUV);
-                        _outNormals.push_back(Vec3DF::c_zero);
+                        _outNormals.push_back(Vec3F::c_zero);
                     }
 
                     break;
@@ -190,14 +190,14 @@ namespace Maze
                 // P/T
                 case 2:
                 {
-                    Vec3DF finalPosition = GetElement(_positions, svert[0]);
+                    Vec3F finalPosition = GetElement(_positions, svert[0]);
                     if (std::find(_outPositions.begin(), _outPositions.end(), finalPosition) == _outPositions.end())
                     {
-                        Vec2DF finalUV = SubMeshHelper::NormalizeUV(GetElement(_uvs, svert[1]));
+                        Vec2F finalUV = SubMeshHelper::NormalizeUV(GetElement(_uvs, svert[1]));
                         noNormal = true;
                         _outPositions.push_back(finalPosition);
                         _outUVs.push_back(finalUV);
-                        _outNormals.push_back(Vec3DF::c_zero);
+                        _outNormals.push_back(Vec3F::c_zero);
                     }
 
                     break;
@@ -205,11 +205,11 @@ namespace Maze
                 // P//N
                 case 3: 
                 {
-                    Vec3DF finalPosition = GetElement(_positions, svert[0]);
+                    Vec3F finalPosition = GetElement(_positions, svert[0]);
                     if (std::find(_outPositions.begin(), _outPositions.end(), finalPosition) == _outPositions.end())
                     {
-                        Vec2DF finalUV = Vec2DF::c_zero;
-                        Vec3DF finalNormal = GetElement(_normals, svert[2]);
+                        Vec2F finalUV = Vec2F::c_zero;
+                        Vec3F finalNormal = GetElement(_normals, svert[2]);
 
                         _outPositions.push_back(finalPosition);
                         _outUVs.push_back(finalUV);
@@ -221,11 +221,11 @@ namespace Maze
                 // P/T/N
                 case 4:
                 {
-                    Vec3DF finalPosition = GetElement(_positions, svert[0]);
+                    Vec3F finalPosition = GetElement(_positions, svert[0]);
                     if (std::find(_outPositions.begin(), _outPositions.end(), finalPosition) == _outPositions.end())
                     {
-                        Vec2DF finalUV = SubMeshHelper::NormalizeUV(GetElement(_uvs, svert[1]));
-                        Vec3DF finalNormal = GetElement(_normals, svert[2]);
+                        Vec2F finalUV = SubMeshHelper::NormalizeUV(GetElement(_uvs, svert[1]));
+                        Vec3F finalNormal = GetElement(_normals, svert[2]);
 
                         _outPositions.push_back(finalPosition);
                         _outUVs.push_back(finalUV);
@@ -243,10 +243,10 @@ namespace Maze
 
         if (noNormal)
         {
-            Vec3DF a = _outPositions[0] - _outPositions[1];
-            Vec3DF b = _outPositions[2] - _outPositions[1];
+            Vec3F a = _outPositions[0] - _outPositions[1];
+            Vec3F b = _outPositions[2] - _outPositions[1];
 
-            Vec3DF normal = a.crossProduct(b);
+            Vec3F normal = a.crossProduct(b);
 
             for (S32 i = 0; i < S32(_outPositions.size()); ++i)
             {
@@ -258,9 +258,9 @@ namespace Maze
     //////////////////////////////////////////
     void ProcessVertexTriangluation(
         Vector<U32>& _outIndices,
-        Vector<Vec3DF> const& _positions,
-        Vector<Vec2DF> const& _uvs,
-        Vector<Vec3DF> const& _normals)
+        Vector<Vec3F> const& _positions,
+        Vector<Vec2F> const& _uvs,
+        Vector<Vec3F> const& _normals)
     {
         // If there are 2 or less verts,
         // no triangle can be created,
@@ -279,18 +279,18 @@ namespace Maze
         }
 
         // Create a list of vertices
-        Vector<Vec3DF> positions = _positions;
-        Vector<Vec2DF> uvs = _uvs;
-        Vector<Vec3DF> normals = _normals;
+        Vector<Vec3F> positions = _positions;
+        Vector<Vec2F> uvs = _uvs;
+        Vector<Vec3F> normals = _normals;
 
         while (true)
         {
             // For every vertex
             for (S32 i = 0; i < S32(positions.size()); ++i)
             {
-                Vec3DF prevPosition;
-                Vec2DF prevUV;
-                Vec3DF prevNormal;
+                Vec3F prevPosition;
+                Vec2F prevUV;
+                Vec3F prevNormal;
 
                 if (i == 0)
                 {
@@ -302,10 +302,10 @@ namespace Maze
                 }
 
                 
-                Vec3DF currentPosition = positions[i];
+                Vec3F currentPosition = positions[i];
 
                 // nextPosition = the next vertex in the list
-                Vec3DF nextPosition;
+                Vec3F nextPosition;
                 if (i == positions.size() - 1)
                 {
                     nextPosition = positions[0];
@@ -336,7 +336,7 @@ namespace Maze
                 }
                 if (positions.size() == 4)
                 {
-                    Vec3DF fourthPosition;
+                    Vec3F fourthPosition;
                     for (S32 j = 0; j < S32(positions.size()); ++j)
                     {
                         if (   positions[j] != currentPosition
@@ -397,7 +397,7 @@ namespace Maze
                 }
 
                 // If Vertex is not an interior vertex
-                F32 angle = Vec3DF::GetAngleBetween(
+                F32 angle = Vec3F::GetAngleBetween(
                     prevPosition - currentPosition,
                     nextPosition - currentPosition);
 
@@ -473,14 +473,14 @@ namespace Maze
 
         _mesh.clear();
 
-        Vector<Vec3DF> positions;
-        Vector<Vec2DF> uvs;
-        Vector<Vec3DF> normals;
+        Vector<Vec3F> positions;
+        Vector<Vec2F> uvs;
+        Vector<Vec3F> normals;
 
         Vector<U32> indices;
-        Vector<Vec3DF> finalPositions;
-        Vector<Vec2DF> finalUVs;
-        Vector<Vec3DF> finalNormals;
+        Vector<Vec3F> finalPositions;
+        Vector<Vec2F> finalUVs;
+        Vector<Vec3F> finalNormals;
 
         bool listening = false;
         String meshName;
@@ -500,7 +500,7 @@ namespace Maze
                     &finalNormals,
                     nullptr);
                 
-                for (Vec3DF& position : finalPositions)
+                for (Vec3F& position : finalPositions)
                     position *= _props.scale;
 
                 subMesh->setIndices(&indices[0], indices.size());
@@ -509,8 +509,8 @@ namespace Maze
                 subMesh->setTexCoords(0, &finalUVs[0], finalUVs.size());
 
                 // Generate tangents and bitangents
-                Vector<Vec3DF> tangents;
-                Vector<Vec3DF> bitangents;
+                Vector<Vec3F> tangents;
+                Vector<Vec3F> bitangents;
                 if (SubMeshHelper::GenerateTangentsAndBitangents(
                     &indices[0],
                     indices.size(),
@@ -590,7 +590,7 @@ namespace Maze
                     // #TODO: Rework to ConstSpan<Char>
                     StringHelper::SplitWords(tail, words, ' ');
 
-                    Vec3DF vertexPosition;
+                    Vec3F vertexPosition;
                     if (words.size() >= 3)
                     {
                         vertexPosition.x = StringHelper::StringToF32Safe(words[0]);
@@ -608,7 +608,7 @@ namespace Maze
                     // #TODO: Rework to ConstSpan<Char>
                     StringHelper::SplitWords(tail, words, ' ');
 
-                    Vec2DF uv;
+                    Vec2F uv;
                     if (words.size() >= 2)
                     {
                         uv.x = StringHelper::StringToF32Safe(words[0]);
@@ -625,7 +625,7 @@ namespace Maze
                     // #TODO: Rework to ConstSpan<Char>
                     StringHelper::SplitWords(tail, words, ' ');
 
-                    Vec3DF vertexNormal;
+                    Vec3F vertexNormal;
                     if (words.size() >= 3)
                     {
                         vertexNormal.x = StringHelper::StringToF32Safe(words[0]);
@@ -639,9 +639,9 @@ namespace Maze
                 // Face
                 if (firstToken == "f")
                 {
-                    Vector<Vec3DF> tempPositions;
-                    Vector<Vec2DF> tempUVs;
-                    Vector<Vec3DF> tempNormals;
+                    Vector<Vec3F> tempPositions;
+                    Vector<Vec2F> tempUVs;
+                    Vector<Vec3F> tempNormals;
                     GenVerticesFromRawOBJ(
                         tempPositions,
                         tempUVs,
@@ -651,13 +651,13 @@ namespace Maze
                         normals,
                         _line);
 
-                    for (Vec3DF const& tempPosition : tempPositions)
+                    for (Vec3F const& tempPosition : tempPositions)
                         finalPositions.push_back(tempPosition);
 
-                    for (Vec2DF const& tempUV : tempUVs)
+                    for (Vec2F const& tempUV : tempUVs)
                         finalUVs.push_back(tempUV);
 
-                    for (Vec3DF const& tempNormal : tempNormals)
+                    for (Vec3F const& tempNormal : tempNormals)
                         finalNormals.push_back(tempNormal);
 
                     Vector<U32> tempIndices;
@@ -693,8 +693,8 @@ namespace Maze
                         subMesh->setTexCoords(0, &finalUVs[0], finalUVs.size());
 
                         // Generate tangents and bitangents
-                        Vector<Vec3DF> tangents;
-                        Vector<Vec3DF> bitangents;
+                        Vector<Vec3F> tangents;
+                        Vector<Vec3F> bitangents;
                         if (SubMeshHelper::GenerateTangentsAndBitangents(
                             &indices[0],
                             indices.size(),

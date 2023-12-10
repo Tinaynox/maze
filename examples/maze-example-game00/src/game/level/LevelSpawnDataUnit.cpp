@@ -118,7 +118,7 @@ namespace Maze
 
         spaceObject->getPlayerOwner()->setPlayer(m_player);
         spaceObject->setDirection(SpaceObjectAvatarDirection::Left);
-        spaceObject->setThrottle(Vec2DF::c_negativeUnitX);
+        spaceObject->setThrottle(Vec2F32::c_negativeUnitX);
         spaceObject->setFire(true);
     }
     

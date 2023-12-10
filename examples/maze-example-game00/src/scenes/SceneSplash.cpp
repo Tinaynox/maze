@@ -207,8 +207,8 @@ namespace Maze
 
         SpriteRenderer2DPtr splashSprite = SpriteHelper::CreateSprite(
             "Splash00.mztexture",
-            Vec2DF(800, 600),
-            Vec2DF::c_zero,
+            Vec2F32(800, 600),
+            Vec2F32::c_zero,
             spriteManager->getDefaultSpriteMaterial(),
             m_canvas->getTransform(),
             this);
@@ -218,8 +218,8 @@ namespace Maze
 
          m_graySquare = SpriteHelper::CreateSprite(
             ColorU32::c_black,
-            Vec2DF(200, 100),
-             Vec2DF(0.0f, -100.0f),
+            Vec2F32(200, 100),
+             Vec2F32(0.0f, -100.0f),
             spriteManager->getDefaultSpriteMaterial(),
             m_canvas->getTransform(),
             this);
@@ -230,8 +230,8 @@ namespace Maze
             16,
             HorizontalAlignment2D::Center,
             VerticalAlignment2D::Middle,
-            Vec2DF(200, 100),
-            Vec2DF::c_zero,
+            Vec2F32(200, 100),
+            Vec2F32::c_zero,
             m_graySquare->getTransform(),
             this);
         m_loadingText->getEntityRaw()->ensureComponent<Name>("LoadingText");
@@ -240,7 +240,7 @@ namespace Maze
         m_blackFade = SpriteHelper::CreateSprite(
             ColorU32::c_black,
             m_canvas->getTransform()->getSize(),
-             Vec2DF(0.0f, 0.0f),
+             Vec2F32(0.0f, 0.0f),
             spriteManager->getDefaultSpriteMaterial(),
             m_canvas->getTransform(),
             this);

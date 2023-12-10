@@ -716,6 +716,12 @@ namespace Maze
         //////////////////////////////////////////
         inline CString ParseF32(CString _str, CString _end, F32& _value) noexcept
         {
+            if (!_str || !_end)
+            {
+                _value = 0.0f;
+                return nullptr;
+            }
+
             auto result = fast_float::from_chars(_str, _end, _value);
             return result.ec == std::errc() ? result.ptr : nullptr;
         }
@@ -723,6 +729,18 @@ namespace Maze
         //////////////////////////////////////////
         inline CString ParseF32(Char const* __restrict _str, Size _size, F32& _value) noexcept
         {
+            if (!_str)
+            {
+                _value = 0.0f;
+                return nullptr;
+            }
+
+            if (!_size)
+            {
+                _value = 0.0f;
+                return _str;
+            }
+
             return ParseF32(_str, (Char const* __restrict)(_str + _size), _value);
         }
 
@@ -780,6 +798,12 @@ namespace Maze
         //////////////////////////////////////////
         inline CString ParseF64(CString _str, CString _end, F64& _value) noexcept
         {
+            if (!_str || !_end)
+            {
+                _value = 0.0;
+                return nullptr;
+            }
+
             auto result = fast_float::from_chars(_str, _end, _value);
             return result.ec == std::errc() ? result.ptr : nullptr;
         }
@@ -787,6 +811,18 @@ namespace Maze
         //////////////////////////////////////////
         inline CString ParseF64(Char const* __restrict _str, Size _size, F64& _value) noexcept
         {
+            if (!_str)
+            {
+                _value = 0.0;
+                return nullptr;
+            }
+
+            if (!_size)
+            {
+                _value = 0.0;
+                return _str;
+            }
+
             return ParseF64(_str, (Char const* __restrict)(_str + _size), _value);
         }
 

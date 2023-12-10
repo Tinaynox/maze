@@ -195,9 +195,9 @@ namespace Maze
         {
             if (m_colorTagIndex >= 0)
             {
-                Vec2DF const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
+                Vec2F const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
 
-                Vec2DF cursorPositionGradientSpace;
+                Vec2F cursorPositionGradientSpace;
                 m_gradientRenderer->getTransform()->getWorldTransform().inversedAffineCopy().transformAffine(
                     cursorPosition,
                     cursorPositionGradientSpace);
@@ -213,7 +213,7 @@ namespace Maze
                     {
                         if (m_colorTagIndex < gradient.getKeysAlpha().size())
                         {
-                            Vec2DF localPosition = m_gradientRenderer->getTransform()->getWorldTransform().inversedCopy().transformAffine(cursorPosition);
+                            Vec2F localPosition = m_gradientRenderer->getTransform()->getWorldTransform().inversedCopy().transformAffine(cursorPosition);
 
                             F32 t = Math::Clamp01(localPosition.x / m_gradientRenderer->getTransform()->getWidth());
                             changeCurrentAlphaTagTime(t);
@@ -224,7 +224,7 @@ namespace Maze
                     {
                         if (m_colorTagIndex < gradient.getKeysRGB().size())
                         {
-                            Vec2DF localPosition = m_gradientRenderer->getTransform()->getWorldTransform().inversedCopy().transformAffine(cursorPosition);
+                            Vec2F localPosition = m_gradientRenderer->getTransform()->getWorldTransform().inversedCopy().transformAffine(cursorPosition);
 
                             F32 t = Math::Clamp01(localPosition.x / m_gradientRenderer->getTransform()->getWidth());
                             changeCurrentColorTagTime(t);
@@ -258,12 +258,12 @@ namespace Maze
             HorizontalLayout2DPtr rowLayout = UIHelper::CreateHorizontalLayout(
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Top,
-                Vec2DF(336.0f, 18.0f),
-                Vec2DF(12.0f, -10.0f),
+                Vec2F(336.0f, 18.0f),
+                Vec2F(12.0f, -10.0f),
                 m_canvas->getTransform(),
                 this,
-                Vec2DF(0.0f, 1.0f),
-                Vec2DF(0.0f, 1.0f));
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 1.0f));
             rowLayout->setExpand(false);
             rowLayout->setAutoWidth(false);
             rowLayout->setSpacing(5.0f);
@@ -274,14 +274,14 @@ namespace Maze
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 80.0f, 18.0f },
-                Vec2DF::c_zero,
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
             label->setColor(ColorU32::c_black);
 
             m_modeDropdown = SystemUIHelper::CreateDefaultDropdown(
-                Vec2DF(158.0f, 18.0f),
-                Vec2DF(0.0f, 0.0f),
+                Vec2F(158.0f, 18.0f),
+                Vec2F(0.0f, 0.0f),
                 rowLayout->getTransform(),
                 this);
             m_modeDropdown->eventValueChanged.subscribe(this, &SceneColorGradientPicker::notifyModeChanged);
@@ -298,8 +298,8 @@ namespace Maze
                 { -32.0f, -12.0f },
                 m_canvas->getTransform(),
                 this,
-                Vec2DF(1.0f, 1.0f),
-                Vec2DF(1.0f, 1.0f));
+                Vec2F(1.0f, 1.0f),
+                Vec2F(1.0f, 1.0f));
             m_copyButton->eventClick.subscribe(
                 [](Button2D* _button, CursorInputEvent const& _event)
                 {
@@ -313,8 +313,8 @@ namespace Maze
                 { -12.0f, -12.0f },
                 m_canvas->getTransform(),
                 this,
-                Vec2DF(1.0f, 1.0f),
-                Vec2DF(1.0f, 1.0f));
+                Vec2F(1.0f, 1.0f),
+                Vec2F(1.0f, 1.0f));
             m_pasteButton->eventClick.subscribe(
                 [](Button2D* _button, CursorInputEvent const& _event)
             {
@@ -331,8 +331,8 @@ namespace Maze
                 { -72.0f, -12.0f },
                 m_canvas->getTransform(),
                 this,
-                Vec2DF(1.0f, 1.0f),
-                Vec2DF(1.0f, 1.0f));
+                Vec2F(1.0f, 1.0f),
+                Vec2F(1.0f, 1.0f));
             m_copyXMLButton->eventClick.subscribe(
                 [](Button2D* _button, CursorInputEvent const& _event)
             {
@@ -348,8 +348,8 @@ namespace Maze
                 { -52.0f, -12.0f },
                 m_canvas->getTransform(),
                 this,
-                Vec2DF(1.0f, 1.0f),
-                Vec2DF(1.0f, 1.0f));
+                Vec2F(1.0f, 1.0f),
+                Vec2F(1.0f, 1.0f));
             m_pasteXMLButton->eventClick.subscribe(
                 [](Button2D* _button, CursorInputEvent const& _event)
             {
@@ -365,27 +365,27 @@ namespace Maze
         {
             m_gradientRendererHolder = SpriteHelper::CreateSprite(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Frame01),
-                Vec2DF(340.0f, 44.0f),
-                Vec2DF(10.0f, -50.0f),
+                Vec2F(340.0f, 44.0f),
+                Vec2F(10.0f, -50.0f),
                 GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
                 m_canvas->getTransform(),
                 this,
-                Vec2DF(0.0f, 1.0f),
-                Vec2DF(0.0f, 1.0f));
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 1.0f));
             m_gradientRendererHolder->setColor(bandColor);
 
             SpriteRenderer2DPtr chessRenderer = SpriteHelper::CreateSprite(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::TransparentChess),
-                m_gradientRendererHolder->getTransform()->getSize() - Vec2DF(2.0f, 2.0f),
-                Vec2DF(1.0f, 1.0f),
+                m_gradientRendererHolder->getTransform()->getSize() - Vec2F(2.0f, 2.0f),
+                Vec2F(1.0f, 1.0f),
                 GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
                 m_gradientRendererHolder->getTransform(),
                 this,
-                Vec2DF(0.0f, 0.0f),
-                Vec2DF(0.0f, 0.0f));
+                Vec2F(0.0f, 0.0f),
+                Vec2F(0.0f, 0.0f));
             chessRenderer->getMaterial()->setUniform(
                 "u_baseMapST",
-                Vec4DF(
+                Vec4F(
                     chessRenderer->getTransform()->getWidth() / 8.0f,
                     chessRenderer->getTransform()->getHeight() / 8.0f,
                     0.0f,
@@ -393,13 +393,13 @@ namespace Maze
 
             m_gradientRenderer = SpriteHelper::CreateSprite(
                 ColorU32::c_white,
-                m_gradientRendererHolder->getTransform()->getSize() - Vec2DF(2.0f, 2.0f),
-                Vec2DF(1.0f, 1.0f),
+                m_gradientRendererHolder->getTransform()->getSize() - Vec2F(2.0f, 2.0f),
+                Vec2F(1.0f, 1.0f),
                 GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
                 m_gradientRendererHolder->getTransform(),
                 this,
-                Vec2DF(0.0f, 0.0f),
-                Vec2DF(0.0f, 0.0f));
+                Vec2F(0.0f, 0.0f),
+                Vec2F(0.0f, 0.0f));
 
             m_gradientRenderer->setCustomRenderCallback(
                 [](SpriteRenderer2D* _spriteRenderer) -> MeshPtr
@@ -409,10 +409,10 @@ namespace Maze
                     gradient.addKey(0.0f, gradient.evaluate(0.0f));
                     gradient.addKey(1.0f, gradient.evaluate(1.0f));
 
-                    Vec2DF const& size = _spriteRenderer->getTransform()->getSize();
-                    Vec4DF uv = Vec4DF(0.0f, 0.0f, 1.0f, 1.0f);
+                    Vec2F const& size = _spriteRenderer->getTransform()->getSize();
+                    Vec4F uv = Vec4F(0.0f, 0.0f, 1.0f, 1.0f);
                     F32 canvasRendererAlpha = _spriteRenderer->getCanvasRenderer()->getAlpha();
-                    FastVector<Pair<F32, Vec4DF>> gradientColors = gradient.toRawColors();
+                    FastVector<Pair<F32, Vec4F>> gradientColors = gradient.toRawColors();
 
                     F32 startTime = gradientColors.front().first;
                     F32 deltaTime = gradientColors.back().first - gradientColors.front().first;
@@ -422,10 +422,10 @@ namespace Maze
                     SubMeshPtr subMesh = SubMesh::Create();
                     subMesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
 
-                    Vector<Vec3DF> positions;
-                    Vector<Vec3DF> normals;
-                    Vector<Vec4DF> colors;
-                    Vector<Vec2DF> uvs;
+                    Vector<Vec3F> positions;
+                    Vector<Vec3F> normals;
+                    Vector<Vec4F> colors;
+                    Vector<Vec2F> uvs;
 
                     Vector<U32> indices;
 
@@ -437,8 +437,8 @@ namespace Maze
                         F32 p0 = (t0 - startTime) / deltaTime;
                         F32 p1 = (t1 - startTime) / deltaTime;
 
-                        Vec4DF color0 = gradientColors[i].second;
-                        Vec4DF color1 = gradientColors[i + 1].second;
+                        Vec4F color0 = gradientColors[i].second;
+                        Vec4F color1 = gradientColors[i + 1].second;
 
                         color0.w *= canvasRendererAlpha;
                         color1.w *= canvasRendererAlpha;
@@ -446,15 +446,15 @@ namespace Maze
                         F32 x0 = p0 * size.x;
                         F32 x1 = p1 * size.x;
 
-                        positions.emplace_back(Vec3DF(x1, size.y, 0.0f));    // Top right
-                        positions.emplace_back(Vec3DF(x1, 0.0f, 0.0f));      // Bottom right
-                        positions.emplace_back(Vec3DF(x0, 0.0f, 0.0f));      // Bottom left
-                        positions.emplace_back(Vec3DF(x0, size.y, 0.0f));    // Top left
+                        positions.emplace_back(Vec3F(x1, size.y, 0.0f));    // Top right
+                        positions.emplace_back(Vec3F(x1, 0.0f, 0.0f));      // Bottom right
+                        positions.emplace_back(Vec3F(x0, 0.0f, 0.0f));      // Bottom left
+                        positions.emplace_back(Vec3F(x0, size.y, 0.0f));    // Top left
 
-                        normals.emplace_back(Vec3DF(+0.0f, +0.0f, +1.0f));   // Top right
-                        normals.emplace_back(Vec3DF(+0.0f, +0.0f, +1.0f));   // Bottom right
-                        normals.emplace_back(Vec3DF(+0.0f, +0.0f, +1.0f));   // Bottom left
-                        normals.emplace_back(Vec3DF(+0.0f, +0.0f, +1.0f));   // Top left                    
+                        normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Top right
+                        normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Bottom right
+                        normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Bottom left
+                        normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Top left                    
 
                         if (gradient.getMode() == ColorGradient::EvaluateMode::Fixed)
                         {
@@ -471,10 +471,10 @@ namespace Maze
                             colors.emplace_back(color0);    // Top left
                         }
 
-                        uvs.emplace_back(Vec2DF(uv.z, uv.w));    // Top right
-                        uvs.emplace_back(Vec2DF(uv.z, uv.y));    // Bottom right
-                        uvs.emplace_back(Vec2DF(uv.x, uv.y));    // Bottom left
-                        uvs.emplace_back(Vec2DF(uv.x, uv.w));    // Top left
+                        uvs.emplace_back(Vec2F(uv.z, uv.w));    // Top right
+                        uvs.emplace_back(Vec2F(uv.z, uv.y));    // Bottom right
+                        uvs.emplace_back(Vec2F(uv.x, uv.y));    // Bottom left
+                        uvs.emplace_back(Vec2F(uv.x, uv.w));    // Top left
 
                         U32 quadStart = (U32)i * 4;
                         indices.emplace_back(0 + quadStart);
@@ -500,8 +500,8 @@ namespace Maze
 
             m_gradientClickButton = UIHelper::CreateDefaultClickButton(
                 nullptr,
-                Vec2DF(m_gradientRenderer->getTransform()->getWidth() + 8, m_gradientRenderer->getTransform()->getHeight() + 30),
-                Vec2DF::c_zero,
+                Vec2F(m_gradientRenderer->getTransform()->getWidth() + 8, m_gradientRenderer->getTransform()->getHeight() + 30),
+                Vec2F::c_zero,
                 m_gradientRenderer->getTransform(),
                 this);
             m_gradientClickButton->eventClick.subscribe(this, &SceneColorGradientPicker::notifyGradientClickButtonClick);
@@ -526,12 +526,12 @@ namespace Maze
             HorizontalLayout2DPtr rowLayout = UIHelper::CreateHorizontalLayout(
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
-                Vec2DF(155.0f, 18.0f),
-                Vec2DF(20.0f, -120.0f),
+                Vec2F(155.0f, 18.0f),
+                Vec2F(20.0f, -120.0f),
                 alphaHolderTransform,
                 this,
-                Vec2DF(0.0f, 1.0f),
-                Vec2DF(0.0f, 1.0f));
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 1.0f));
             rowLayout->setExpand(true);
             rowLayout->setAutoWidth(false);
 
@@ -541,23 +541,23 @@ namespace Maze
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 8.0f * 5.0f, 18.0f },
-                Vec2DF::c_zero,
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
             label->setColor(ColorU32::c_black);
 
             m_alphaSlider = UIHelper::CreateDefaultSlider(
                 0.0f,
-                Vec2DF(60.0f, 18.0f),
-                Vec2DF::c_zero,
+                Vec2F(60.0f, 18.0f),
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
             m_alphaSlider->eventValueChanged.subscribe(this, &SceneColorGradientPicker::notifyAlphaSliderValueChanged);
 
             m_alphaEdit = SystemUIHelper::CreateDefaultEditBox(
                 "255",
-                Vec2DF(30.0f, 18.0f),
-                Vec2DF::c_zero,
+                Vec2F(30.0f, 18.0f),
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
             m_alphaEdit->getTextRenderer()->setHorizontalAlignment(HorizontalAlignment2D::Center);
@@ -576,12 +576,12 @@ namespace Maze
             HorizontalLayout2DPtr rowLayout = UIHelper::CreateHorizontalLayout(
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
-                Vec2DF(125.0f, 18.0f),
-                Vec2DF(30.0f, -120.0f),
+                Vec2F(125.0f, 18.0f),
+                Vec2F(30.0f, -120.0f),
                 colorHolderTransform,
                 this,
-                Vec2DF(0.0f, 1.0f),
-                Vec2DF(0.0f, 1.0f));
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 1.0f));
             rowLayout->setExpand(true);
             rowLayout->setAutoWidth(false);
 
@@ -591,19 +591,19 @@ namespace Maze
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 8.0f * 5, 18.0f },
-                Vec2DF::c_zero,
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
             label->setColor(ColorU32::c_black);
 
             m_colorEdit = UIHelper::CreateDefaultColorHDREdit(
                 ColorF128::c_red,
-                Vec2DF(60.0f, 18.0f),
-                Vec2DF::c_zero,
+                Vec2F(60.0f, 18.0f),
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this,
-                Vec2DF(0.5f, 0.5f),
-                Vec2DF(0.5f, 0.5f),
+                Vec2F(0.5f, 0.5f),
+                Vec2F(0.5f, 0.5f),
                 false,
                 false);
             m_colorEdit->eventColorChanged.subscribe(this, &SceneColorGradientPicker::notifyColorEditColorChanged);
@@ -621,12 +621,12 @@ namespace Maze
             HorizontalLayout2DPtr rowLayout = UIHelper::CreateHorizontalLayout(
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
-                Vec2DF(135.0f, 18.0f),
-                Vec2DF(200.0f, -120.0f),
+                Vec2F(135.0f, 18.0f),
+                Vec2F(200.0f, -120.0f),
                 locationHolderTransform,
                 this,
-                Vec2DF(0.0f, 1.0f),
-                Vec2DF(0.0f, 1.0f));
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 1.0f));
             rowLayout->setExpand(true);
             rowLayout->setAutoWidth(false);
 
@@ -636,15 +636,15 @@ namespace Maze
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 8.0f * 8.0f, 18.0f },
-                Vec2DF::c_zero,
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
             label->setColor(ColorU32::c_black);
 
             m_locationEdit = SystemUIHelper::CreateDefaultEditBox(
                 "51.5",
-                Vec2DF(45.0f, 18.0f),
-                Vec2DF::c_zero,
+                Vec2F(45.0f, 18.0f),
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
             m_locationEdit->eventTextInput.subscribe(this, &SceneColorGradientPicker::notifyLocationEditTextInput);
@@ -655,7 +655,7 @@ namespace Maze
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 8.0f, 18.0f },
-                Vec2DF::c_zero,
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
             label2->setColor(ColorU32::c_black);
@@ -697,7 +697,7 @@ namespace Maze
     {
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
-        Vec2DF size(9.0f, 14.0f);
+        Vec2F size(9.0f, 14.0f);
 
         EntityPtr entity = createEntity();
         entity->ensureComponent<Name>("ClickButton");
@@ -709,7 +709,7 @@ namespace Maze
         SpriteRenderer2DPtr colorRenderer = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::ColorSliderTagBody),
             size,
-            Vec2DF::c_zero,
+            Vec2F::c_zero,
             renderSystem->getMaterialManager()->getColorTextureMaterial(),
             colorSliderTag->getTransform(),
             this);
@@ -718,11 +718,11 @@ namespace Maze
         ToggleButton2DPtr button = UIHelper::CreateToggleButton(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::ColorSliderTagFrame),
             size,
-            Vec2DF::c_zero,
+            Vec2F::c_zero,
             colorSliderTag->getTransform(),
             this,
-            Vec2DF(0.5f, 0.5f),
-            Vec2DF(0.5f, 0.5f),
+            Vec2F(0.5f, 0.5f),
+            Vec2F(0.5f, 0.5f),
             { 100, 100, 100 },
             { 30, 175, 255 },
             { 0, 145, 255 },
@@ -820,7 +820,7 @@ namespace Maze
             colorSliderTag->getTransform()->setLocalX(keyframe.time * m_gradientRenderer->getTransform()->getWidth());
             colorSliderTag->getTransform()->setLocalY(-1.0f);
 
-            colorSliderTag->getColorRenderer()->setColor(ColorU32::FromVec4DF(keyframe.value));
+            colorSliderTag->getColorRenderer()->setColor(ColorU32::FromVec4F32(keyframe.value));
 
             if (m_editMode == EditMode::ColorTag)
                 colorSliderTag->getToggleButton()->setChecked(i == m_colorTagIndex);
@@ -843,7 +843,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneColorGradientPicker::notifyColorSliderTagCursorPressIn(Button2D* _button, Vec2DF const& _positionOS, CursorInputEvent const& _event)
+    void SceneColorGradientPicker::notifyColorSliderTagCursorPressIn(Button2D* _button, Vec2F const& _positionOS, CursorInputEvent const& _event)
     {
         if (m_draggingTag)
             return;
@@ -905,7 +905,7 @@ namespace Maze
             m_draggingTag = true;
             m_draggingTagDistance = 0.0f;
 
-            Vec2DF const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
+            Vec2F const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
 
             m_gradientRenderer->getTransform()->getWorldTransform().inversedAffineCopy().transformAffine(
                 cursorPosition,
@@ -945,7 +945,7 @@ namespace Maze
             m_draggingTag = true;
             m_draggingTagDistance = 0.0f;
 
-            Vec2DF const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
+            Vec2F const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
 
             m_gradientRenderer->getTransform()->getWorldTransform().inversedAffineCopy().transformAffine(
                 cursorPosition,
@@ -1130,7 +1130,7 @@ namespace Maze
         {
             if (m_colorTagIndex < gradient.getKeysAlpha().size())
             {
-                if (StringHelper::IsF32Number(_edit->getText()))
+                if (StringHelper::IsFloatNumber(_edit->getText()))
                     _edit->setText(StringHelper::F32ToStringFormatted(Math::Clamp(StringHelper::StringToF32(_edit->getText()), 0.0f, 100.0f), 1));
                 else
                     _edit->setText("0");
@@ -1145,7 +1145,7 @@ namespace Maze
         {
             if (m_colorTagIndex < gradient.getKeysRGB().size())
             {
-                if (StringHelper::IsF32Number(_edit->getText()))
+                if (StringHelper::IsFloatNumber(_edit->getText()))
                     _edit->setText(StringHelper::F32ToStringFormatted(Math::Clamp(StringHelper::StringToF32(_edit->getText()), 0.0f, 100.0f), 1));
                 else
                     _edit->setText("0");
@@ -1203,7 +1203,7 @@ namespace Maze
         }
 
         F32 prevTime = gradient.getKeysRGB()[m_colorTagIndex].time;
-        Vec3DF prevValue = gradient.getKeysRGB()[m_colorTagIndex].value;
+        Vec3F prevValue = gradient.getKeysRGB()[m_colorTagIndex].value;
         Size insertionIndex = gradient.getInsertionIndexRGB(_newTime);
 
         gradient.setKeyRGBTime(m_colorTagIndex, _newTime);
@@ -1234,7 +1234,7 @@ namespace Maze
             {
                 ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
 
-                Vec2DF localPosition = m_gradientRenderer->getTransform()->getWorldTransform().inversedCopy().transformAffine(_event.position);
+                Vec2F localPosition = m_gradientRenderer->getTransform()->getWorldTransform().inversedCopy().transformAffine(_event.position);
 
                 F32 t = Math::Clamp01(localPosition.x / m_gradientRenderer->getTransform()->getWidth());
 
@@ -1269,7 +1269,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneColorGradientPicker::notifyGradientClickButtonCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _event)
+    void SceneColorGradientPicker::notifyGradientClickButtonCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _event)
     {
         m_gradientClickPosition = _event.position;
     }

@@ -97,18 +97,18 @@ namespace Maze
     void ExampleFPSCameraController::update(F32 _dt)
     {
         Rect2DF viewportRect = m_camera3D->getViewport();
-        viewportRect.position *= (Vec2DF)m_camera3D->getRenderTarget()->getRenderTargetSize();
-        viewportRect.size *= (Vec2DF)m_camera3D->getRenderTarget()->getRenderTargetSize();
+        viewportRect.position *= (Vec2F32)m_camera3D->getRenderTarget()->getRenderTargetSize();
+        viewportRect.size *= (Vec2F32)m_camera3D->getRenderTarget()->getRenderTargetSize();
 
         AABB2D aabb = AABB2D::FromRect2D(viewportRect);
-        Vec2DF cursorPositionRWS = InputManager::GetInstancePtr()->getCursorPosition(0);
+        Vec2F32 cursorPositionRWS = InputManager::GetInstancePtr()->getCursorPosition(0);
 
         if (m_camera3D && aabb.contains(cursorPositionRWS))
         {
-            Vec3DF cameraForwardDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3DF::c_unitZ;
+            Vec3F32 cameraForwardDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3F32::c_unitZ;
             cameraForwardDirection.y = 0.0f;
             cameraForwardDirection.normalize();
-            Vec3DF cameraRightDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3DF::c_unitX;
+            Vec3F32 cameraRightDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3F32::c_unitX;
             cameraRightDirection.y = 0.0f;
             cameraRightDirection.normalize();
 
@@ -140,7 +140,7 @@ namespace Maze
                 m_targetPosition += cameraRightDirection * _dt * speed;
             }
 
-            Vec2DF clampedSize = m_levelSize - Vec2DF(m_radius);
+            Vec2F32 clampedSize = m_levelSize - Vec2F32(m_radius);
             m_targetPosition.x = Math::Clamp(m_targetPosition.x, -clampedSize.x * 0.5f, +clampedSize.x * 0.5f);
             m_targetPosition.z = Math::Clamp(m_targetPosition.z, -clampedSize.y * 0.5f, +clampedSize.y * 0.5f);
 

@@ -32,7 +32,7 @@
 //////////////////////////////////////////
 #include "maze-physics2d/MazePhysics2DHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 #include "maze-physics2d/ecs/components/MazeCollider2D.hpp"
 
 
@@ -71,16 +71,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Vec2DF const& getOffset() const { return m_offset; }
+        inline Vec2F const& getOffset() const { return m_offset; }
 
         //////////////////////////////////////////
-        inline void setOffset(Vec2DF const& _offset) { m_offset = _offset; }
+        inline void setOffset(Vec2F const& _offset) { m_offset = _offset; }
 
         //////////////////////////////////////////
-        inline Vec2DF const& getSize() const { return m_size; }
+        inline Vec2F const& getSize() const { return m_size; }
 
         //////////////////////////////////////////
-        inline void setSize(Vec2DF const& _size) { m_size = _size; }
+        inline void setSize(Vec2F const& _size) { m_size = _size; }
 
         //////////////////////////////////////////
         inline void setSize(F32 _width, F32 _height) { setSize({_width, _height}); }
@@ -100,8 +100,8 @@ namespace Maze
         virtual void processComponentAdded() MAZE_OVERRIDE;
 
     protected:
-        Vec2DF m_offset;
-        Vec2DF m_size;
+        Vec2F m_offset;
+        Vec2F m_size;
     };
 
 

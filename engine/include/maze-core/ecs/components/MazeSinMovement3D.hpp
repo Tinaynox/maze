@@ -32,7 +32,7 @@
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/math/MazeRotation2D.hpp"
 
 
@@ -69,7 +69,7 @@ namespace Maze
 
         //////////////////////////////////////////
         static SinMovement3DPtr Create(
-            Vec3DF const& _axis = Vec3DF::c_unitY,
+            Vec3F const& _axis = Vec3F::c_unitY,
             F32 _frequency = 2.0f,
             F32 _amplitude = 1.0f);
 
@@ -79,10 +79,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Vec3DF const& getAxis() const { return m_axis; }
+        inline Vec3F const& getAxis() const { return m_axis; }
 
         //////////////////////////////////////////
-        inline void setAxis(Vec3DF const& _axis) { m_axis = _axis; }
+        inline void setAxis(Vec3F const& _axis) { m_axis = _axis; }
 
 
         //////////////////////////////////////////
@@ -108,7 +108,7 @@ namespace Maze
         
         //////////////////////////////////////////
         bool init(
-            Vec3DF const& _axis = Vec3DF::c_unitY,
+            Vec3F const& _axis = Vec3F::c_unitY,
             F32 _frequency = 2.0f,
             F32 _amplitude = 1.0f);
 
@@ -116,10 +116,10 @@ namespace Maze
         virtual void processEntityAwakened() MAZE_OVERRIDE;
 
     protected:
-        Vec3DF m_axis;
+        Vec3F m_axis;
         F32 m_frequency;
         F32 m_amplitude;
-        Vec3DF m_startPosition;
+        Vec3F m_startPosition;
 
         F32 m_timer;
 

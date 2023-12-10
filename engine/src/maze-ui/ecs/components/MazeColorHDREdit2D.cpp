@@ -113,7 +113,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ColorHDREdit2D::notifyCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void ColorHDREdit2D::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
     {
             
     }
@@ -143,7 +143,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ColorHDREdit2D::notifyClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void ColorHDREdit2D::notifyClick(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;

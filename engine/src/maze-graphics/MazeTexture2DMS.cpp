@@ -46,7 +46,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     Texture2DMS::Texture2DMS()
-        : m_size(Vec2DS::c_zero)
+        : m_size(Vec2S::c_zero)
         , m_internalPixelFormat(PixelFormat::None)
     {
         m_type = TextureType::TwoDimensionalMultisample;
@@ -69,7 +69,7 @@ namespace Maze
 
     //////////////////////////////////////////
     Texture2DMSPtr Texture2DMS::Create(
-        Vec2DU const& _size,
+        Vec2U const& _size,
         PixelFormat::Enum _internalPixelFormat,
         S32 _samples,
         RenderSystem* _renderSystem)

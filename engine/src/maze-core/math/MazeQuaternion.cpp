@@ -41,7 +41,7 @@ namespace Maze
     Quaternion const Quaternion::c_identity(1, 0, 0, 0);
 
     //////////////////////////////////////////
-    void Quaternion::setRotationMatrix(Mat3DF const& _rotationMatrix)
+    void Quaternion::setRotationMatrix(Mat3F const& _rotationMatrix)
     {
         F32 trace = _rotationMatrix[0][0] + _rotationMatrix[1][1] + _rotationMatrix[2][2];
         F32 root;
@@ -87,12 +87,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Quaternion::setRotationMatrix(Mat3DF const& _rotationMatrix, bool _multInvScale)
+    void Quaternion::setRotationMatrix(Mat3F const& _rotationMatrix, bool _multInvScale)
     {
         if (_multInvScale)
         {
-            Vec3DF scale = _rotationMatrix.getAffineScaleSignless(); // #TODO: Maybe we need scale sign here?
-            Mat3DF unscaledMat = _rotationMatrix * Mat3DF::CreateScaleMatrix(1.0f / scale);
+            Vec3F scale = _rotationMatrix.getAffineScaleSignless(); // #TODO: Maybe we need scale sign here?
+            Mat3F unscaledMat = _rotationMatrix * Mat3F::CreateScaleMatrix(1.0f / scale);
             setRotationMatrix(unscaledMat);
         }
         else
@@ -102,7 +102,7 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    void Quaternion::toRotationMatrix(Mat3DF& _rotationMatrix) const
+    void Quaternion::toRotationMatrix(Mat3F& _rotationMatrix) const
     {
         F32 tx = x + x;
         F32 ty = y + y;
@@ -129,9 +129,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Quaternion::toRotationMatrix(Mat4DF& _rotationMatrix) const
+    void Quaternion::toRotationMatrix(Mat4F& _rotationMatrix) const
     {
-        Mat3DF m;
+        Mat3F m;
         toRotationMatrix(m);
         _rotationMatrix = m;
         _rotationMatrix[0][3] = 0;
@@ -144,7 +144,7 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    void Quaternion::setAngleAxis(F32 const& _angle, Vec3DF const& _axis)
+    void Quaternion::setAngleAxis(F32 const& _angle, Vec3F const& _axis)
     {
         F32 halangle(0.5f * _angle);
         F32 s = Math::Sin(halangle);
@@ -155,7 +155,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Quaternion::toAngleAxis(F32& _angle, Vec3DF& _axis) const
+    void Quaternion::toAngleAxis(F32& _angle, Vec3F& _axis) const
     {
         // The quaternion representing the rotation is
         // q = cos(A/2)+sin(A/2)*(x*i+y*j+z*k)
@@ -180,9 +180,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Quaternion::setAxes(Vec3DF const* _axis)
+    void Quaternion::setAxes(Vec3F const* _axis)
     {
-        Mat3DF rotationMatrix;
+        Mat3F rotationMatrix;
 
         for (Size c = 0; c < 3; c++)
         {
@@ -196,11 +196,11 @@ namespace Maze
 
     //////////////////////////////////////////
     void Quaternion::setAxes(
-        Vec3DF const& _xAxis,
-        Vec3DF const& _yAxis,
-        Vec3DF const& _zAxis)
+        Vec3F const& _xAxis,
+        Vec3F const& _yAxis,
+        Vec3F const& _zAxis)
     {
-        Mat3DF rotationMatrix;
+        Mat3F rotationMatrix;
 
         rotationMatrix.setAxes(_xAxis, _yAxis, _zAxis);
 
@@ -233,9 +233,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Quaternion::toAxes(Vec3DF* _axes) const
+    void Quaternion::toAxes(Vec3F* _axes) const
     {
-        Mat3DF rotationMatrix;
+        Mat3F rotationMatrix;
 
         toRotationMatrix(rotationMatrix);
 
@@ -248,7 +248,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec3DF Quaternion::getXAxis() const
+    Vec3F Quaternion::getXAxis() const
     {
         F32 ty = 2.0f * y;
         F32 tz = 2.0f * z;
@@ -259,11 +259,11 @@ namespace Maze
         F32 tyy = ty * y;
         F32 tzz = tz * z;
 
-        return Vec3DF(1.0f - (tyy + tzz), txy + twz, txz - twy);
+        return Vec3F(1.0f - (tyy + tzz), txy + twz, txz - twy);
     }
     
     //////////////////////////////////////////
-    Vec3DF Quaternion::getYAxis() const
+    Vec3F Quaternion::getYAxis() const
     {
         F32 tx = 2.0f * x;
         F32 ty = 2.0f * y;
@@ -275,11 +275,11 @@ namespace Maze
         F32 tyz = tz * y;
         F32 tzz = tz * z;
 
-        return Vec3DF(txy - twz, 1.0f - (txx + tzz), tyz + twx);
+        return Vec3F(txy - twz, 1.0f - (txx + tzz), tyz + twx);
     }
     
     //////////////////////////////////////////
-    Vec3DF Quaternion::getZAxis() const
+    Vec3F Quaternion::getZAxis() const
     {
         F32 tx = 2.0f * x;
         F32 ty = 2.0f * y;
@@ -291,16 +291,16 @@ namespace Maze
         F32 tyy = ty * y;
         F32 tyz = tz * y;
 
-        return Vec3DF(txz + twy, tyz - twx, 1.0f - (txx + tyy));
+        return Vec3F(txz + twy, tyz - twx, 1.0f - (txx + tyy));
     }
 
     //////////////////////////////////////////
     void Quaternion::toAxes(
-        Vec3DF& _xAxis,
-        Vec3DF& _yAxis,
-        Vec3DF& _zAxis) const
+        Vec3F& _xAxis,
+        Vec3F& _yAxis,
+        Vec3F& _zAxis) const
     {
-        Mat3DF rotationMatrix;
+        Mat3F rotationMatrix;
 
         toRotationMatrix(rotationMatrix);
 
@@ -430,11 +430,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec3DF Quaternion::operator*(Vec3DF const& _v) const
+    Vec3F Quaternion::operator*(Vec3F const& _v) const
     {
-        Vec3DF uv;
-        Vec3DF uuv;
-        Vec3DF qvec(x, y, z);
+        Vec3F uv;
+        Vec3F uuv;
+        Vec3F qvec(x, y, z);
         uv = qvec.crossProduct(_v);
         uuv = qvec.crossProduct(uv);
         uv *= (2.0f * w);
@@ -564,7 +564,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec3DF Quaternion::getEuler() const
+    Vec3F Quaternion::getEuler() const
     {
         // If the input quaternion is normalized, this is exactly one. Otherwise, this acts as a correction factor for the quaternion not-normalizedness
         F32 unit = (x * x) + (y * y) + (z * z) + (w * w);
@@ -572,7 +572,7 @@ namespace Maze
         // This will have a magnitude of 0.5 or greater if and only if this is a singularity case
         F32 test = x * w - y * z;
 
-        Vec3DF euler;
+        Vec3F euler;
 
         // Singularity at north pole
         if (test > 0.49995f * unit)
@@ -605,11 +605,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Quaternion Quaternion::LookRotation(Vec3DF const& _forward, Vec3DF const& _up)
+    Quaternion Quaternion::LookRotation(Vec3F const& _forward, Vec3F const& _up)
     {
-        Vec3DF vector = _forward.normalizedCopy();
-        Vec3DF vector2 = _up.crossProduct(vector).normalizedCopy();
-        Vec3DF vector3 = vector.crossProduct(vector2);
+        Vec3F vector = _forward.normalizedCopy();
+        Vec3F vector2 = _up.crossProduct(vector).normalizedCopy();
+        Vec3F vector3 = vector.crossProduct(vector2);
 
         F32 m00 = vector2.x;
         F32 m01 = vector2.y;

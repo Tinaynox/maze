@@ -176,16 +176,16 @@ namespace Maze
                     rootViewport.size.x * (F32)renderTarget->getRenderTargetWidth(),
                     rootViewport.size.y * (F32)renderTarget->getRenderTargetHeight());
                     
-                Vec3DF canvasCameraPosition = Vec3DF(
+                Vec3F canvasCameraPosition = Vec3F(
                     (F32)renderTarget->getRenderTargetWidth() / 2.0f,
                     (F32)renderTarget->getRenderTargetHeight() / 2.0f,
                     0.0f);
                     
-                Mat4DF canvasCameraTransform = Mat4DF::CreateTranslationMatrix(canvasCameraPosition);
-                canvasCameraTransform = Mat4DF::c_identity;
+                Mat4F canvasCameraTransform = Mat4F::CreateTranslationMatrix(canvasCameraPosition);
+                canvasCameraTransform = Mat4F::c_identity;
 
                 // View matrix
-                Mat4DF viewMatrix = canvasCameraTransform.inversedAffineCopy();
+                Mat4F viewMatrix = canvasCameraTransform.inversedAffineCopy();
                 renderTarget->setViewMatrix(viewMatrix);
 
                 // View position
@@ -231,7 +231,7 @@ namespace Maze
 
                                 renderQueue->addSelectRenderPassCommand((*material)->getFirstRenderPass());
 
-                                Mat4DF const& worldTransform = transform2D->getWorldTransform();
+                                Mat4F const& worldTransform = transform2D->getWorldTransform();
 
                                 renderQueue->addDrawVAOInstancedCommand(vao, worldTransform);
                             }
@@ -268,7 +268,7 @@ namespace Maze
                                 S32 count = (S32)meshRenderer->getModelMatrices().size();
                                 if (count > 0)
                                 {
-                                    Vec4DF const* uvStreams[MAZE_UV_CHANNELS_MAX];
+                                    Vec4F const* uvStreams[MAZE_UV_CHANNELS_MAX];
                                     memset(uvStreams, 0, sizeof(uvStreams));
                                     uvStreams[0] = meshRenderer->getUV0Data();
                                     uvStreams[1] = meshRenderer->getUV1Data();
@@ -291,7 +291,7 @@ namespace Maze
                             
                             AABB2D const& aabb = scissorMask->getScissorBounds();
                             Rect2DF rect = aabb.toRect();
-                            Vec2DF renderTargetSize = (Vec2DF)renderTarget->getRenderTargetSize();
+                            Vec2F renderTargetSize = (Vec2F)renderTarget->getRenderTargetSize();
                             rect.position /= renderTargetSize;
                             rect.size /= renderTargetSize;
                             rect.position += rootViewport.position;

@@ -248,7 +248,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool RenderBufferOpenGL::setSize(Vec2DU const& _size)
+    bool RenderBufferOpenGL::setSize(Vec2U const& _size)
     {
         if (!RenderBuffer::setSize(_size))
             return false;
@@ -320,7 +320,7 @@ namespace Maze
         MAZE_ERROR_RETURN_IF(!destColorTexture, "Color Texture is null");
         MAZE_ERROR_RETURN_IF(!srcColorTexture, "Color Texture in src buffer is null");
 
-        Vec2DS destColorTextureSize;
+        Vec2S destColorTextureSize;
         switch (destColorTexture->getType())
         {
             case TextureType::TwoDimensional:
@@ -339,7 +339,7 @@ namespace Maze
             }
         }
 
-        Vec2DS srcColorTextureSize;
+        Vec2S srcColorTextureSize;
         switch (srcColorTexture->getType())
         {
             case TextureType::TwoDimensional:
@@ -633,7 +633,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderBufferOpenGL::resizeTexture(TexturePtr const& _texture, Vec2DU const& _size)
+    void RenderBufferOpenGL::resizeTexture(TexturePtr const& _texture, Vec2U const& _size)
     {
         if (!_texture)
             return;

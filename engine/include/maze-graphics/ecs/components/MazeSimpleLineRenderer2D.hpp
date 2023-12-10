@@ -96,14 +96,14 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setPosition(Size _i, Vec2DF const& _position) { m_positions[_i] = _position; }
+        inline void setPosition(Size _i, Vec2F const& _position) { m_positions[_i] = _position; }
 
 
         //////////////////////////////////////////
-        inline void setPositions(Vector<Vec3DF> const& _positions) { m_positions = _positions; rebuildMesh(); }
+        inline void setPositions(Vector<Vec3F> const& _positions) { m_positions = _positions; rebuildMesh(); }
 
         //////////////////////////////////////////
-        inline Vector<Vec3DF> const& getPositions() const { return m_positions; }
+        inline Vector<Vec3F> const& getPositions() const { return m_positions; }
 
 
 
@@ -165,9 +165,9 @@ namespace Maze
         VertexArrayObjectPtr m_vao;
         RenderMeshPtr m_renderMesh;
 
-        Vector<Vec3DF> m_positions;
+        Vector<Vec3F> m_positions;
 
-        FastVector<Vec4DF> m_colors;
+        FastVector<Vec4F> m_colors;
         FastVector<U32> m_indices;
     };
 

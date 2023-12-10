@@ -201,17 +201,17 @@ namespace Maze
         //////////////////////////////////////////
         F32 RayCast(
             PhysicsWorld2DPtr const& _world,
-            Vec2DF const& _fromUnits,
-            Vec2DF const& _toUnits,
+            Vec2F const& _fromUnits,
+            Vec2F const& _toUnits,
             std::function<
             bool(
                 Rigidbody2D* _rigidbody2D,
                 Collider2D* _collider2D,
-                Vec2DF const& _point,
-                Vec2DF const& _normal)> _filter)
+                Vec2F const& _point,
+                Vec2F const& _normal)> _filter)
         {
-            Vec2DF positionMeters = _world->convertUnitsToMeters(_fromUnits);
-            Vec2DF targetMeters = _world->convertUnitsToMeters(_toUnits);
+            Vec2F positionMeters = _world->convertUnitsToMeters(_fromUnits);
+            Vec2F targetMeters = _world->convertUnitsToMeters(_toUnits);
 
             // Box2D assert prevention
             if (targetMeters == positionMeters)
@@ -245,13 +245,13 @@ namespace Maze
                         !_filter(
                             rigidbody2D,
                             collider2D,
-                            _world->convertMetersToUnits(Box2DHelper::ToVec2DF(_point)),
-                            Box2DHelper::ToVec2DF(_normal)))
+                            _world->convertMetersToUnits(Box2DHelper::ToVec2F32(_point)),
+                            Box2DHelper::ToVec2F32(_normal)))
                     {
                         return -1;
                     }
 
-                    Vec2DF pt = ToVec2DF(_point);
+                    Vec2F pt = ToVec2F32(_point);
 
                     result = (pt - positionMeters).length();
 

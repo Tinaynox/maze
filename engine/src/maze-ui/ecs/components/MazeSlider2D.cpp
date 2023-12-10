@@ -119,7 +119,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Slider2D::notifyCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void Slider2D::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
@@ -137,7 +137,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Slider2D::notifyCursorDrag(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void Slider2D::notifyCursorDrag(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
@@ -172,7 +172,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Slider2D::notifyClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void Slider2D::notifyClick(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         eventClick(this, _inputEvent);
     }
@@ -219,12 +219,12 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    void Slider2D::pickValueByCursor(Vec2DF const& _positionWS)
+    void Slider2D::pickValueByCursor(Vec2F const& _positionWS)
     {
         if (m_handleTransform)
         {
             Transform2DPtr const& handleSlideArea = m_handleTransform->getParent();
-            Vec2DF handleSlideAreaPositionOS = handleSlideArea->getWorldTransform().inversedAffineCopy().transformAffine(_positionWS);
+            Vec2F handleSlideAreaPositionOS = handleSlideArea->getWorldTransform().inversedAffineCopy().transformAffine(_positionWS);
             setValue(handleSlideAreaPositionOS.x / handleSlideArea->getWidth());
         }
     }

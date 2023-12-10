@@ -112,7 +112,7 @@ namespace Maze
         , m_sceneViewport(EditorToolsLayout::c_sceneViewport)
         , m_yawAngle(0.0f)
         , m_pitchAngle(0.0f)
-        , m_cursorPositionLastFrame(Vec2DF::c_zero)
+        , m_cursorPositionLastFrame(Vec2F::c_zero)
         , m_cursorDrag(false)
     {
         setIsSystemScene();
@@ -165,15 +165,15 @@ namespace Maze
         _dt = UpdateManager::GetInstancePtr()->getUnscaledDeltaTime();
 
         Rect2DF viewportRect = m_camera3D->getViewport();
-        viewportRect.position *= (Vec2DF)m_camera3D->getRenderTarget()->getRenderTargetSize();
-        viewportRect.size *= (Vec2DF)m_camera3D->getRenderTarget()->getRenderTargetSize();
+        viewportRect.position *= (Vec2F)m_camera3D->getRenderTarget()->getRenderTargetSize();
+        viewportRect.size *= (Vec2F)m_camera3D->getRenderTarget()->getRenderTargetSize();
 
         AABB2D aabb = AABB2D::FromRect2D(viewportRect);
 
         if (aabb.contains(InputManager::GetInstancePtr()->getCursorPosition(0)))
         {
-            Vec3DF cameraForwardDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3DF::c_unitZ;
-            Vec3DF cameraRightDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3DF::c_unitX;
+            Vec3F cameraForwardDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3F::c_unitZ;
+            Vec3F cameraRightDirection = m_camera3D->getTransform()->getLocalRotation() * Vec3F::c_unitX;
 
             F32 speed = 2.0f;
 
@@ -218,11 +218,11 @@ namespace Maze
         {
             case InputEventMouseType::Move:
             {
-                Vec2DF cursorPosition = Vec2DF((F32)_data.x, (F32)_data.y);
+                Vec2F cursorPosition = Vec2F((F32)_data.x, (F32)_data.y);
 
                 if (m_cursorDrag)
                 {
-                    Vec2DF deltaPosition = cursorPosition - m_cursorPositionLastFrame;
+                    Vec2F deltaPosition = cursorPosition - m_cursorPositionLastFrame;
 
                     m_yawAngle += deltaPosition.x * 0.0075f;
                     m_pitchAngle -= deltaPosition.y * 0.0075f;
@@ -235,7 +235,7 @@ namespace Maze
             {
                 if (_data.buttonId == 1)
                 {
-                    Vec2DF cursorPosition = Vec2DF((F32)_data.x, (F32)_data.y);
+                    Vec2F cursorPosition = Vec2F((F32)_data.x, (F32)_data.y);
                     Rect2DF viewportRect(
                         m_camera3D->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
                         m_camera3D->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
@@ -270,7 +270,7 @@ namespace Maze
     {
         EntityPtr cameraEntity = createEntity();
         m_camera3D = cameraEntity->createComponent<Camera3D>();
-        m_camera3D->getTransform()->setLocalPosition(Vec3DF(3.0f, 3.0f, -5.0f));
+        m_camera3D->getTransform()->setLocalPosition(Vec3F(3.0f, 3.0f, -5.0f));
         m_yawAngle = Math::DegreesToRadians(-30.0f);
         m_pitchAngle = Math::DegreesToRadians(20.0f);
         m_camera3D->getTransform()->setLocalRotation(Quaternion(m_pitchAngle, m_yawAngle, 0.0f));

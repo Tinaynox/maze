@@ -106,7 +106,7 @@ namespace Maze
         void clearWorkspace();
 
         //////////////////////////////////////////
-        Vec2DU calculateWorkspaceRenderBuffer();
+        Vec2U32 calculateWorkspaceRenderBuffer();
 
     protected:
 

@@ -280,7 +280,7 @@ namespace Maze
         }
 #endif        
 
-        Vec2DU size = m_size;
+        Vec2U size = m_size;
         for (Size mipmapLevel = 0, in = _pixelSheets.size(); mipmapLevel < in; ++mipmapLevel)
         {
             PixelSheet2D const& pixelSheet = _pixelSheets[mipmapLevel];
@@ -437,14 +437,14 @@ namespace Maze
     //////////////////////////////////////////
     void Texture2DOpenGL::saveToFileAsTGA(
         String const& _fileName,
-        Vec2DU _size,
+        Vec2U _size,
         bool _resetAlpha)
     {
         ContextOpenGLScopeBind contextScopedBind(m_context);
         MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
         Texture2DOpenGLScopeBind textureScopedBind(this);
 
-        if (Vec2DU::c_zero == _size)
+        if (Vec2U::c_zero == _size)
         {
             _size = m_size;
         }

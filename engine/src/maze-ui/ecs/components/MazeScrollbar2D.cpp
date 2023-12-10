@@ -135,7 +135,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Scrollbar2D::notifyCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void Scrollbar2D::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
@@ -163,7 +163,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Scrollbar2D::notifyCursorDrag(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void Scrollbar2D::notifyCursorDrag(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
@@ -202,7 +202,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Scrollbar2D::notifyClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void Scrollbar2D::notifyClick(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         eventClick(this, _inputEvent);
     }
@@ -247,19 +247,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Scrollbar2D::pickValueByCursor(Vec2DF const& _positionWS)
+    void Scrollbar2D::pickValueByCursor(Vec2F const& _positionWS)
     {
         F32 value = cursorPositionToValue(_positionWS);
         setValue(value - m_deltaValue);
     }
 
     //////////////////////////////////////////
-    F32 Scrollbar2D::cursorPositionToValue(Vec2DF const& _positionWS)
+    F32 Scrollbar2D::cursorPositionToValue(Vec2F const& _positionWS)
     {
         if (m_handleTransform)
         {
             Transform2DPtr const& handleSlideArea = m_handleTransform->getParent();
-            Vec2DF handleSlideAreaPositionOS = handleSlideArea->getWorldTransform().inversedAffineCopy().transformAffine(_positionWS);
+            Vec2F handleSlideAreaPositionOS = handleSlideArea->getWorldTransform().inversedAffineCopy().transformAffine(_positionWS);
 
             switch (m_direction)
             {

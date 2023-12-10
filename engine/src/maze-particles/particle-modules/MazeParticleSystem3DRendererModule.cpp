@@ -50,7 +50,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS(ParticleSystem3DRendererModule::TextureSheetAnimation,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, enabled, false, getEnabled, setEnabled),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2DS, tiles, Vec2DS(1, 1), getTiles, setTiles),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2S, tiles, Vec2S(1, 1), getTiles, setTiles),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystemParameterF32, startFrame, ParticleSystemParameterF32(), getStartFrame, setStartFrame),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystemParameterF32, frameOverTime, ParticleSystemParameterF32(), getFrameOverTime, setFrameOverTime));
 
@@ -121,11 +121,11 @@ namespace Maze
         Particles3D& _particles,
         ParticleSystemSimulationSpace _transformPolicy,
         ParticleSystemScalingMode _scalingMode,
-        Mat4DF const& _particleSystemLocalTransform,
-        Mat4DF const& _particleSystemWorldTransform,
-        Vec3DF const& _cameraPosition,
-        Vec3DF const& _cameraForward,
-        Vec3DF const& _cameraUp)
+        Mat4F const& _particleSystemLocalTransform,
+        Mat4F const& _particleSystemWorldTransform,
+        Vec3F const& _cameraPosition,
+        Vec3F const& _cameraForward,
+        Vec3F const& _cameraUp)
     {
         MAZE_PROFILE_EVENT("ParticleSystem3DRendererModule::prepareToRender");
 
@@ -145,10 +145,10 @@ namespace Maze
                 {
                     indices[i] = i;
 
-                    Vec3DF position = _particles.accessPosition(i);
+                    Vec3F position = _particles.accessPosition(i);
                     F32& sqrDistanceToCamera = _particles.accessSqrDistanceToCamera(i);
 
-                    Vec3DF positionWS = _particleSystemWorldTransform.transformAffine(position);
+                    Vec3F positionWS = _particleSystemWorldTransform.transformAffine(position);
 
                     sqrDistanceToCamera = (positionWS - _cameraPosition).squaredLength();
                 }
@@ -160,7 +160,7 @@ namespace Maze
                 {
                     indices[i] = i;
 
-                    Vec3DF position = _particles.accessPosition(i);
+                    Vec3F position = _particles.accessPosition(i);
                     F32& sqrDistanceToCamera = _particles.accessSqrDistanceToCamera(i);
 
                     sqrDistanceToCamera = (position - _cameraPosition).squaredLength();
@@ -187,17 +187,17 @@ namespace Maze
 
         /*
         // Render transform callback
-        std::function<Mat4DF(Mat4DF const& _lookAtMatrix)> renderTransformCallback;
+        std::function<Mat4F(Mat4F const& _lookAtMatrix)> renderTransformCallback;
         switch (_transformPolicy)
         {
             case ParticleSystemSimulationSpace::Local:
             {
-                renderTransformCallback = [&_particleSystemWorldTransform](Mat4DF const& _lookAtMatrix) { return _lookAtMatrix; };
+                renderTransformCallback = [&_particleSystemWorldTransform](Mat4F const& _lookAtMatrix) { return _lookAtMatrix; };
                 break;
             }
             case ParticleSystemSimulationSpace::World:
             {
-                renderTransformCallback = [](Mat4DF const& _lookAtMatrix) { return _lookAtMatrix; };
+                renderTransformCallback = [](Mat4F const& _lookAtMatrix) { return _lookAtMatrix; };
                 break;
             }
             default:
@@ -210,11 +210,11 @@ namespace Maze
 
 
         // Render UV callback
-        std::function<Vec4DF(S32 _index)> renderUVCallback;
+        std::function<Vec4F(S32 _index)> renderUVCallback;
         if (m_textureSheetAnimation.enabled)
         {
-            Vec2DS tiles = m_textureSheetAnimation.tiles;
-            Vec2DF invTiles = 1.0f / (Vec2DF)tiles;
+            Vec2S tiles = m_textureSheetAnimation.tiles;
+            Vec2F invTiles = 1.0f / (Vec2F)tiles;
             S32 frames = tiles.x * tiles.y;
 
             renderUVCallback = 
@@ -229,7 +229,7 @@ namespace Maze
                     F32 x = c * invTiles.x;
                     F32 y = r * invTiles.y;
 
-                    return Vec4DF(
+                    return Vec4F(
                         x,
                         x + invTiles.x,
                         y,
@@ -238,18 +238,18 @@ namespace Maze
         }
         else
         {
-            renderUVCallback = [](S32 _index) { return Vec4DF(0.0f, 1.0f, 0.0f, 1.0f); };
+            renderUVCallback = [](S32 _index) { return Vec4F(0.0f, 1.0f, 0.0f, 1.0f); };
         }
         
 
         // PS Translation
-        Vec3DF particleSystemWorldTranslation = _particleSystemWorldTransform.getAffineTranslation();
-        Mat4DF particleSystemWorldTranslatonMatrix = Mat4DF::CreateTranslationMatrix(particleSystemWorldTranslation);
+        Vec3F particleSystemWorldTranslation = _particleSystemWorldTransform.getAffineTranslation();
+        Mat4F particleSystemWorldTranslatonMatrix = Mat4F::CreateTranslationMatrix(particleSystemWorldTranslation);
 
         // PS Rotation
-        //Vec3DF particleSystemWorldRotation = _particleSystemWorldTransform.getAffineRotationEulerAngles();
-        Vec3DF particleSystemWorldRotation = Quaternion::GetEuler(_particleSystemWorldTransform);
-        Mat4DF particleSystemWorldRotationMatrix = Mat4DF::CreateRotationMatrix(particleSystemWorldRotation);
+        //Vec3F particleSystemWorldRotation = _particleSystemWorldTransform.getAffineRotationEulerAngles();
+        Vec3F particleSystemWorldRotation = Quaternion::GetEuler(_particleSystemWorldTransform);
+        Mat4F particleSystemWorldRotationMatrix = Mat4F::CreateRotationMatrix(particleSystemWorldRotation);
         /*
         F32 cx = cosf(particleSystemWorldRotation.x);
         F32 sx = sinf(particleSystemWorldRotation.x);
@@ -260,38 +260,38 @@ namespace Maze
         F32 cz = cosf(particleSystemWorldRotation.z);
         F32 sz = sinf(particleSystemWorldRotation.z);
 
-        Mat4DF particleSystemWorldRotationMatrix = 
-            Mat4DF(
+        Mat4F particleSystemWorldRotationMatrix = 
+            Mat4F(
                 (F32)cz, (F32)-sz, (F32)0, (F32)0,
                 (F32)sz, (F32)cz, (F32)0, (F32)0,
                 (F32)0, (F32)0, (F32)1, (F32)0,
                 (F32)0, (F32)0, (F32)0, (F32)1) *
-            Mat4DF(
+            Mat4F(
                 (F32)cy, (F32)0, (F32)sy, (F32)0,
                 (F32)0, (F32)1, (F32)0, (F32)0,
                 (F32)-sy, (F32)0, (F32)cy, (F32)0,
                 (F32)0, (F32)0, (F32)0, (F32)1) *
-            Mat4DF(
+            Mat4F(
                 (F32)1, (F32)0, (F32)0, (F32)0,
                 (F32)0, (F32)cx, (F32)-sx, (F32)0,
                 (F32)0, (F32)sx, (F32)cx, (F32)0,
                 (F32)0, (F32)0, (F32)0, (F32)1);*/
 
         // PS Scale
-        Vec3DF particleSystemWorldScale = _particleSystemWorldTransform.getAffineScaleSignless();
+        Vec3F particleSystemWorldScale = _particleSystemWorldTransform.getAffineScaleSignless();
 
-        Mat4DF scaleMatrix;
+        Mat4F scaleMatrix;
         if (_scalingMode == ParticleSystemScalingMode::Local)
         {
-            Vec3DF particleSystemLocalScale = _particleSystemLocalTransform.getAffineScaleSignless();
-            scaleMatrix = Mat4DF::CreateScaleMatrix(particleSystemLocalScale);
+            Vec3F particleSystemLocalScale = _particleSystemLocalTransform.getAffineScaleSignless();
+            scaleMatrix = Mat4F::CreateScaleMatrix(particleSystemLocalScale);
         }
         else
         {
-            scaleMatrix = Mat4DF::CreateScaleMatrix(particleSystemWorldScale);
+            scaleMatrix = Mat4F::CreateScaleMatrix(particleSystemWorldScale);
         }
 
-        Mat4DF localTransformMatrix;
+        Mat4F localTransformMatrix;
         if (_transformPolicy == ParticleSystemSimulationSpace::Local)
         {
             localTransformMatrix = (particleSystemWorldTranslatonMatrix * particleSystemWorldRotationMatrix * scaleMatrix);
@@ -303,17 +303,17 @@ namespace Maze
         {
             S32 index = indices[i];
 
-            Vec3DF position = _particles.accessPosition(index);
-            Vec4DF colorCurrent = _particles.accessColorCurrent(index);
+            Vec3F position = _particles.accessPosition(index);
+            Vec4F colorCurrent = _particles.accessColorCurrent(index);
             Particles3D::ParticleSize const& size = _particles.accessSize(index);
             F32 sizeCurrent = size.current;
 
             Particles3D::ParticleRotation const& rotation = _particles.accessRotation(index);
             F32 rotationCurrent = rotation.current;
 
-            Mat4DF& renderTransform = _particles.accessRenderTransform(i);
-            Vec4DF& renderColor = _particles.accessRenderColor(i);
-            Vec4DF& renderUV = _particles.accessRenderUV(i);
+            Mat4F& renderTransform = _particles.accessRenderTransform(i);
+            Vec4F& renderColor = _particles.accessRenderColor(i);
+            Vec4F& renderUV = _particles.accessRenderUV(i);
 
 
             // #TODO: Optimize if
@@ -323,7 +323,7 @@ namespace Maze
             }
             
             // Translation
-            Mat4DF mat = Mat4DF::CreateTranslationMatrix(position);
+            Mat4F mat = Mat4F::CreateTranslationMatrix(position);
 
             // Apply world scale
             mat = mat * scaleMatrix;
@@ -332,7 +332,7 @@ namespace Maze
             // Render Alignment
             if (renderAlignment == ParticleSystemRenderAlignment::View)
             {
-                Mat4DF lookAtViewMat = Mat4DF::CreateLookAtMatrix(
+                Mat4F lookAtViewMat = Mat4F::CreateLookAtMatrix(
                     position,
                     position - _cameraForward,
                     _cameraUp);
@@ -352,7 +352,7 @@ namespace Maze
             F32 c = cosf(rotationCurrent);
             F32 s = sinf(rotationCurrent);
 
-            mat = mat * Mat4DF(
+            mat = mat * Mat4F(
                 c, -s, 0.0f, 0.0f,
                 s, c, 0.0f, 0.0f,
                 0.0f, 0.0f, 1.0f, 0.0f,
@@ -361,7 +361,7 @@ namespace Maze
 
             // Apply particle size
 #if 0
-            mat = mat * Mat4DF::CreateScaleMatrix(size.current);
+            mat = mat * Mat4F32::CreateScaleMatrix(size.current);
 #else
             mat[0][0] *= sizeCurrent;
             mat[0][1] *= sizeCurrent;

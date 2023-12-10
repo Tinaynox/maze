@@ -100,7 +100,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ContextMenu2D::notifyCursorReleaseIn(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void ContextMenu2D::notifyCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         if (!m_callback)
             return;
@@ -113,7 +113,7 @@ namespace Maze
             ContextMenuCanvas2DPtr contextMenuCanvas = ContextMenuCanvas2D::EnsureContextMenuCanvas(getEntityRaw()->getECSScene());
             
             Canvas* canvas = m_transform->getFirstTrunkComponent<Canvas>();
-            Vec2DF positionRTS = canvas->convertViewportCoordsToRenderTargetCoords(_inputEvent.position);    
+            Vec2F positionRTS = canvas->convertViewportCoordsToRenderTargetCoords(_inputEvent.position);    
 
             contextMenuCanvas->openContextMenu(
                 this,

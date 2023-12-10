@@ -99,12 +99,12 @@ namespace Maze
         HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(_parent->getWidth(), 18),
-            Vec2DF(0, 0),
+            Vec2F(_parent->getWidth(), 18),
+            Vec2F(0, 0),
             _parent,
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         layout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
         layout->setAutoWidth(false);
         layout->setExpand(true);
@@ -115,32 +115,32 @@ namespace Maze
             EditorToolsLayout::c_inspectorPropertyFontSize,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(8, 18),
-            Vec2DF(0, 0),
+            Vec2F(8, 18),
+            Vec2F(0, 0),
             layout->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF::c_zero);
+            Vec2F(0.0f, 0.5f),
+            Vec2F::c_zero);
         systemText->setColor(EditorToolsLayout::c_inspectorPropertyColor);
 
 
         HorizontalLayout2DPtr textureBlockLayout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(_parent->getWidth(), 18),
-            Vec2DF(0, 0),
+            Vec2F(_parent->getWidth(), 18),
+            Vec2F(0, 0),
             layout->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         textureBlockLayout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
         textureBlockLayout->setAutoWidth(true);
         textureBlockLayout->setExpand(false);
 
         m_selectAssetButton = UIHelper::CreateClickButton(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::SelectAsset),
-            Vec2DF(18, 18),
-            Vec2DF::c_zero,
+            Vec2F(18, 18),
+            Vec2F::c_zero,
             textureBlockLayout->getTransform(),
             _parent->getEntityRaw()->getECSScene());
         m_selectAssetButton->setNormalColor({ 50, 50, 50 });
@@ -151,8 +151,8 @@ namespace Maze
 
         SpriteRenderer2DPtr textureHolder = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
-            Vec2DF(18, 18),
-            Vec2DF::c_zero,
+            Vec2F(18, 18),
+            Vec2F::c_zero,
             materialManager->getColorMaterial(),
             textureBlockLayout->getTransform(),
             _parent->getEntityRaw()->getECSScene());
@@ -163,8 +163,8 @@ namespace Maze
 
         m_textureRenderer = SpriteHelper::CreateSprite(
             m_sprite,
-            Vec2DF(16, 16),
-            Vec2DF::c_zero,
+            Vec2F(16, 16),
+            Vec2F::c_zero,
             materialManager->getColorTextureMaterial(),
             textureHolder->getTransform(),
             _parent->getEntityRaw()->getECSScene());

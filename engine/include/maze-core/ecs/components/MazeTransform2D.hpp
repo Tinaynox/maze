@@ -34,7 +34,7 @@
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/math/MazeRotation2D.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
 #include <functional>
@@ -96,72 +96,72 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Vec2DF const& getLocalPosition() const { return m_localPosition; }
+        inline Vec2F const& getLocalPosition() const { return m_localPosition; }
 
         //////////////////////////////////////////
-        void setLocalPosition(Vec2DF const& _localPosition);
+        void setLocalPosition(Vec2F const& _localPosition);
 
         //////////////////////////////////////////
         inline void setLocalPosition(F32 _x, F32 _y)
         {
-            setLocalPosition(Vec2DF(_x, _y));
+            setLocalPosition(Vec2F(_x, _y));
         }
 
         //////////////////////////////////////////
         inline void setLocalX(F32 _x)
         {
-            setLocalPosition(Vec2DF(_x, m_localPosition.y));
+            setLocalPosition(Vec2F(_x, m_localPosition.y));
         }
 
         //////////////////////////////////////////
         inline void setLocalY(F32 _y)
         {
-            setLocalPosition(Vec2DF(m_localPosition.x, _y));
+            setLocalPosition(Vec2F(m_localPosition.x, _y));
         }
 
         //////////////////////////////////////////
-        void translate(Vec2DF const& _offset);
+        void translate(Vec2F const& _offset);
 
         //////////////////////////////////////////
-        inline Vec2DF getWorldPosition() { return getWorldTransform().transformAffine(Vec2DF::c_zero); }
+        inline Vec2F getWorldPosition() { return getWorldTransform().transformAffine(Vec2F::c_zero); }
 
 
         //////////////////////////////////////////
-        void calculateLocalCorners(Vec2DF _corners[4]);
+        void calculateLocalCorners(Vec2F _corners[4]);
 
         //////////////////////////////////////////
         AABB2D calculateLocalAABB();
 
         //////////////////////////////////////////
-        void calculateWorldCorners(Vec2DF _corners[4]);
+        void calculateWorldCorners(Vec2F _corners[4]);
 
         //////////////////////////////////////////
         AABB2D calculateWorldAABB();
 
 
         //////////////////////////////////////////
-        void setPivot(Vec2DF const& _pivot);
+        void setPivot(Vec2F const& _pivot);
 
         //////////////////////////////////////////
-        inline void setPivot(F32 _x, F32 _y) { setPivot(Vec2DF(_x, _y)); }
+        inline void setPivot(F32 _x, F32 _y) { setPivot(Vec2F(_x, _y)); }
 
         //////////////////////////////////////////
-        inline void setPivotX(F32 _x) { setPivot(Vec2DF(_x, m_pivot.y)); }
+        inline void setPivotX(F32 _x) { setPivot(Vec2F(_x, m_pivot.y)); }
 
         //////////////////////////////////////////
-        inline void setPivotY(F32 _y) { setPivot(Vec2DF(m_pivot.x, _y)); }
+        inline void setPivotY(F32 _y) { setPivot(Vec2F(m_pivot.x, _y)); }
 
         //////////////////////////////////////////
-        inline Vec2DF const& getPivot() const { return m_pivot; }
+        inline Vec2F const& getPivot() const { return m_pivot; }
 
         //////////////////////////////////////////
-        void setSize(Vec2DF const& _size);
+        void setSize(Vec2F const& _size);
 
         //////////////////////////////////////////
-        inline void setSize(F32 _x, F32 _y) { setSize(Vec2DF(_x, _y)); }
+        inline void setSize(F32 _x, F32 _y) { setSize(Vec2F(_x, _y)); }
 
         //////////////////////////////////////////
-        inline Vec2DF const& getSize() const { return m_size; }
+        inline Vec2F const& getSize() const { return m_size; }
 
         //////////////////////////////////////////
         inline F32 getWidth() const { return m_size.x; }
@@ -176,19 +176,19 @@ namespace Maze
         inline void setHeight(F32 _h) { setSize(m_size.x, _h); }
 
         //////////////////////////////////////////
-        void setAnchor(Vec2DF const& _anchor);
+        void setAnchor(Vec2F const& _anchor);
 
         //////////////////////////////////////////
-        inline void setAnchor(F32 _x, F32 _y) { setAnchor(Vec2DF(_x, _y)); }
+        inline void setAnchor(F32 _x, F32 _y) { setAnchor(Vec2F(_x, _y)); }
 
         //////////////////////////////////////////
-        inline void setAnchorX(F32 _x) { setAnchor(Vec2DF(_x, m_anchor.y)); }
+        inline void setAnchorX(F32 _x) { setAnchor(Vec2F(_x, m_anchor.y)); }
 
         //////////////////////////////////////////
-        inline void setAnchorY(F32 _y) { setAnchor(Vec2DF(m_anchor.x, _y)); }
+        inline void setAnchorY(F32 _y) { setAnchor(Vec2F(m_anchor.x, _y)); }
 
         //////////////////////////////////////////
-        inline Vec2DF const& getAnchor() const { return m_anchor; }
+        inline Vec2F const& getAnchor() const { return m_anchor; }
 
 
         //////////////////////////////////////////
@@ -200,20 +200,20 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        Vec2DF const& getLocalScale() const { return m_localScale; }
+        Vec2F const& getLocalScale() const { return m_localScale; }
 
         //////////////////////////////////////////
-        void setLocalScale(Vec2DF const& _localScale);
+        void setLocalScale(Vec2F const& _localScale);
 
         //////////////////////////////////////////
-        inline void setLocalScale(F32 _localScale) { setLocalScale(Vec2DF(_localScale)); }
+        inline void setLocalScale(F32 _localScale) { setLocalScale(Vec2F(_localScale)); }
 
         //////////////////////////////////////////
-        inline void setLocalScale(F32 _x, F32 _y) { setLocalScale(Vec2DF(_x, _y)); }
+        inline void setLocalScale(F32 _x, F32 _y) { setLocalScale(Vec2F(_x, _y)); }
 
 
         //////////////////////////////////////////
-        Mat4DF const& getLocalTransform();
+        Mat4F const& getLocalTransform();
 
         //////////////////////////////////////////
         inline bool isLocalTransformDirty() { return m_flags & Flags::LocalTransformDirty; }
@@ -228,14 +228,14 @@ namespace Maze
         inline bool isLocalTransformChanged() { return isLocalTransformChangedCurrentFrame() || isLocalTransformChangedPreviousFrame(); }
 
         //////////////////////////////////////////
-        Mat4DF const& calculateLocalTransform();
+        Mat4F const& calculateLocalTransform();
 
         //////////////////////////////////////////
-        void setLocalTransform(Mat4DF const& _localTransform);
+        void setLocalTransform(Mat4F const& _localTransform);
 
 
         //////////////////////////////////////////
-        Mat4DF const& getWorldTransform();
+        Mat4F const& getWorldTransform();
 
         //////////////////////////////////////////
         inline bool isWorldTransformDirty() { return m_flags & Flags::WorldTransformDirty; }
@@ -250,7 +250,7 @@ namespace Maze
         inline bool isWorldTransformChanged() { return isWorldTransformChangedCurrentFrame() || isWorldTransformChangedPreviousFrame(); }
 
         //////////////////////////////////////////
-        Mat4DF const& calculateWorldTransform();
+        Mat4F const& calculateWorldTransform();
 
 
         //////////////////////////////////////////
@@ -627,16 +627,16 @@ namespace Maze
 
     protected:
 
-        Vec2DF m_localPosition;
+        Vec2F m_localPosition;
         Rotation2D m_localRotation;
-        Vec2DF m_localScale;
-        Vec2DF m_pivot;
-        Vec2DF m_size;
-        Vec2DF m_anchor;
+        Vec2F m_localScale;
+        Vec2F m_pivot;
+        Vec2F m_size;
+        Vec2F m_anchor;
 
         S32 m_flags;
-        Mat4DF m_localTransform;
-        Mat4DF m_worldTransform;
+        Mat4F m_localTransform;
+        Mat4F m_worldTransform;
 
         Transform2DPtr m_parent;
         Vector<Transform2D*> m_children;

@@ -66,21 +66,21 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_UI_API EditBox2DPtr CreateDefaultEditBox(
             CString _text,
-            Vec2DF const& _size,
-            Vec2DF const& _position,
+            Vec2F const& _size,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 
         //////////////////////////////////////////
         MAZE_UI_API Dropdown2DPtr CreateDefaultDropdown(
-            Vec2DF const& _size,
-            Vec2DF const& _position,
+            Vec2F const& _size,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 
     } // namespace SystemUIHelper
     //////////////////////////////////////////

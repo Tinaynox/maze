@@ -85,10 +85,10 @@ namespace Maze
         virtual bool getCanvasActive() const { return false; }
 
         //////////////////////////////////////////
-        virtual void processCursorPress(Vec2DF const& _positionOS, CursorInputEvent const& _event) {};
+        virtual void processCursorPress(Vec2F const& _positionOS, CursorInputEvent const& _event) {};
 
         //////////////////////////////////////////
-        virtual void processCursorDrag(Vec2DF const& _positionOS, CursorInputEvent const& _event) {};
+        virtual void processCursorDrag(Vec2F const& _positionOS, CursorInputEvent const& _event) {};
 
         //////////////////////////////////////////
         virtual void processCursorWheel(CursorWheelInputEvent const& _event) {};

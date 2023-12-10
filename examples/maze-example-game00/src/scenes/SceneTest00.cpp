@@ -176,7 +176,7 @@ namespace Maze
 
         EntityPtr cameraEntity = createEntity();
         Camera3DPtr camera3D = cameraEntity->createComponent<Camera3D>();
-        camera3D->getTransform()->setLocalPosition(Vec3DF(0.0f, 0.5f, -18.0f));
+        camera3D->getTransform()->setLocalPosition(Vec3F32(0.0f, 0.5f, -18.0f));
         camera3D->setFOV(Math::DegreesToRadians(30));
         camera3D->setViewport(Game::GetInstancePtr()->getMainRenderWindowViewport());
         camera3D->setRenderTarget(Game::GetInstancePtr()->getMainRenderWindow());
@@ -199,7 +199,7 @@ namespace Maze
             // transform->setLocalRotation(Quaternion(0.0f, -c_halfPi, 0.0f));
             SpaceObjectPtr spaceObject = spaceObjectEntity->createComponent<SpaceObject>(nullptr);
 
-            transform->setLocalScale(Vec3DF(0.015f, 0.015f, 0.015f));
+            transform->setLocalScale(Vec3F32(0.015f, 0.015f, 0.015f));
 
             spaceObjectEntity->ensureComponent<Name>("SpaceObject");
         }

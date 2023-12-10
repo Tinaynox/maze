@@ -33,12 +33,12 @@
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-editor-tools/property-drawers/MazeMaterial.hpp"
 #include "maze-editor-tools/property-drawers/MazeRenderMesh.hpp"
 #include "maze-editor-tools/property-drawers/MazeRadians.hpp"
-#include "maze-editor-tools/property-drawers/MazeVec2DU.hpp"
+#include "maze-editor-tools/property-drawers/MazeVec2U32.hpp"
 #include "maze-editor-tools/property-drawers/MazeTexture2D.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeDefault.hpp"
 #include <functional>
@@ -63,8 +63,8 @@ namespace Maze
     template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<MaterialPtr, PropertyDrawerMaterial>;
     template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<RenderMeshPtr, PropertyDrawerRenderMesh>;
     template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<F32, PropertyDrawerRadians>;
-    template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<Vec2DS, PropertyDrawerVec2DU>;
-    template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<Vec2DU, PropertyDrawerVec2DU>;
+    template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<Vec2S, PropertyDrawerVec2U32>;
+    template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<Vec2U, PropertyDrawerVec2U32>;
     template class MAZE_EDITOR_TOOLS_API MetaPropertyDrawerDefault<Texture2DPtr, PropertyDrawerTexture2D>;
 
 

@@ -53,9 +53,9 @@ namespace Maze
         , m_clearColor(ColorU32::c_lightGray)
         , m_clearDepth(1.0f)
         , m_viewport(Rect2DF(0.0f, 0.0f, 1.0f, 1.0f))
-        , m_viewPosition(Vec3DF::c_zero)
-        , m_viewMatrix(Mat4DF::c_identity)
-        , m_projectionMatrix(Mat4DF::c_identity)
+        , m_viewPosition(Vec3F::c_zero)
+        , m_viewMatrix(Mat4F::c_identity)
+        , m_projectionMatrix(Mat4F::c_identity)
         , m_near(0.0f)
         , m_far(0.0f)
     {
@@ -156,13 +156,13 @@ namespace Maze
                 viewportWidth,
                 viewportHeight);
                     
-            Vec3DF canvasCameraPosition = Vec3DF(
+            Vec3F canvasCameraPosition = Vec3F(
                 (F32)renderTarget->getRenderTargetWidth() * 0.5f,
                 (F32)renderTarget->getRenderTargetHeight() * 0.5f,
                 0.0f);
                     
             // View matrix
-            renderTarget->setViewMatrix(Mat4DF::c_identity);
+            renderTarget->setViewMatrix(Mat4F::c_identity);
 
             // View position
             renderTarget->setViewPosition(canvasCameraPosition);
@@ -172,7 +172,7 @@ namespace Maze
             renderQueue->addSelectRenderPassCommand(_material->getRenderPass(RenderPassType::Default, _renderPassIndex));
             renderQueue->addDrawVAOInstancedCommand(
                 vao, 
-                Mat4DF(
+                Mat4F(
                     viewportWidth,   0.0f,                0.0f,    viewportWidth * 0.5f,
                     0.0f,            viewportHeight,      0.0f,    viewportHeight * 0.5f,
                     0.0f,            0.0f,                0.0f,    0.0f,
@@ -195,12 +195,12 @@ namespace Maze
         setNear(_nearZ);
         setFar(_farZ);
 
-        Vec2DU const& renderTargetSize = getRenderTargetSize();
+        Vec2U const& renderTargetSize = getRenderTargetSize();
 
         F32 aspectRatio = (m_viewport.size.x * (F32)renderTargetSize.x) / (m_viewport.size.y * (F32)renderTargetSize.y);
 
         setProjectionMatrix(
-            Mat4DF::CreateProjectionPerspectiveLHMatrix(
+            Mat4F::CreateProjectionPerspectiveLHMatrix(
                 _fieldOfViewY,
                 aspectRatio,
                 _nearZ,
@@ -218,7 +218,7 @@ namespace Maze
         setFar(1.0f);
 
         setProjectionMatrix(
-            Mat4DF::CreateProjection2DMatrix(_x, _y, _w, _h));
+            Mat4F::CreateProjection2DMatrix(_x, _y, _w, _h));
     }
 
     //////////////////////////////////////////

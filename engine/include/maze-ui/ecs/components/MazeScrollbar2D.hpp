@@ -225,13 +225,13 @@ namespace Maze
         virtual void processEntityAwakened() MAZE_OVERRIDE;
         
         //////////////////////////////////////////
-        void notifyCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
         void notifyCursorReleaseOut(CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
-        void notifyCursorDrag(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyCursorDrag(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
         void notifyCursorMoveOut(CursorInputEvent const& _inputEvent);
@@ -243,13 +243,13 @@ namespace Maze
         void notifyPressedChanged(bool _pressed);
 
         //////////////////////////////////////////
-        void notifyClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyClick(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
-        void pickValueByCursor(Vec2DF const& _positionWS);
+        void pickValueByCursor(Vec2F const& _positionWS);
 
         //////////////////////////////////////////
-        F32 cursorPositionToValue(Vec2DF const& _positionWS);
+        F32 cursorPositionToValue(Vec2F const& _positionWS);
 
     protected:
         Transform2DPtr m_transform;

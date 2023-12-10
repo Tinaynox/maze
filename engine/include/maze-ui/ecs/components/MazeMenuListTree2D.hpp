@@ -220,14 +220,14 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void notifyCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
         void notifyCursorPressOut(CursorInputEvent const& _inputEvent);
 
 
         //////////////////////////////////////////
-        bool isMenuContainsPoint(Vec2DF const& _positionWS);
+        bool isMenuContainsPoint(Vec2F const& _positionWS);
 
     protected:
         Transform2DPtr m_transform;

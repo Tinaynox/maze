@@ -96,7 +96,7 @@ namespace Maze
 
         //////////////////////////////////////////
         ClickButton2DPtr createButton(
-            Vec2DF _position,
+            Vec2F32 _position,
             String const& _label,
             Delegate<void, Button2D*, CursorInputEvent const&> _onClickDelegate);
 

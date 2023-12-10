@@ -108,63 +108,63 @@ namespace Maze
         inline TextureCubePtr getTextureCube() const { return std::static_pointer_cast<TextureCube>(m_value.getTexture()); }
 
         //////////////////////////////////////////
-        inline Vec4DF const& getVecF() const { return m_value.getVecF(); }
+        inline Vec4F const& getVecF() const { return m_value.getVec4F32(); }
 
         //////////////////////////////////////////
-        inline Vec2DF getVec2DF() const { return m_value.getVec2DF(); }
+        inline Vec2F getVec2F32() const { return m_value.getVec2F32(); }
 
         //////////////////////////////////////////
-        inline Vec3DF getVec3DF() const { return m_value.getVec3DF(); }
+        inline Vec3F getVec3F32() const { return m_value.getVec3F32(); }
 
         //////////////////////////////////////////
-        inline Vec4DF getVec4DF() const { return m_value.getVec4DF(); }
-
-
-        //////////////////////////////////////////
-        inline Vec4DS const& getVecS() const { return m_value.getVecS(); }
-
-        //////////////////////////////////////////
-        inline Vec2DS getVec2DS() const { return m_value.getVec2DS(); }
-
-        //////////////////////////////////////////
-        inline Vec3DS getVec3DS() const { return m_value.getVec3DS(); }
-
-        //////////////////////////////////////////
-        inline Vec4DS getVec4DS() const { return m_value.getVec4DS(); }
+        inline Vec4F getVec4F32() const { return m_value.getVec4F32(); }
 
 
         //////////////////////////////////////////
-        inline Vec4DU const& getVecU() const { return m_value.getVecU(); }
+        inline Vec4S const& getVecS() const { return m_value.getVecS(); }
 
         //////////////////////////////////////////
-        inline Vec2DU getVec2DU() const { return m_value.getVec2DU(); }
+        inline Vec2S getVec2S32() const { return m_value.getVec2S32(); }
 
         //////////////////////////////////////////
-        inline Vec3DU getVec3DU() const { return m_value.getVec3DU(); }
+        inline Vec3S getVec3S32() const { return m_value.getVec3S32(); }
 
         //////////////////////////////////////////
-        inline Vec4DU getVec4DU() const { return m_value.getVec4DU(); }
+        inline Vec4S getVec4S32() const { return m_value.getVec4S32(); }
 
 
         //////////////////////////////////////////
-        inline Vec4DB const& getVecB() const { return m_value.getVecB(); }
+        inline Vec4U const& getVecU() const { return m_value.getVecU(); }
 
         //////////////////////////////////////////
-        inline Vec2DB getVec2DB() const { return m_value.getVec2DB(); }
+        inline Vec2U getVec2U32() const { return m_value.getVec2U32(); }
 
         //////////////////////////////////////////
-        inline Vec3DB getVec3DB() const { return m_value.getVec3DB(); }
+        inline Vec3U getVec3U32() const { return m_value.getVec3U32(); }
 
         //////////////////////////////////////////
-        inline Vec4DB getVec4DB() const { return m_value.getVec4DB(); }
+        inline Vec4U getVec4U32() const { return m_value.getVec4U32(); }
+
+
+        //////////////////////////////////////////
+        inline Vec4B const& getVecB() const { return m_value.getVecB(); }
+
+        //////////////////////////////////////////
+        inline Vec2B getVec2B() const { return m_value.getVec2B(); }
+
+        //////////////////////////////////////////
+        inline Vec3B getVec3B() const { return m_value.getVec3B(); }
+
+        //////////////////////////////////////////
+        inline Vec4B getVec4B() const { return m_value.getVec4B(); }
         
 
         
         //////////////////////////////////////////
-        inline Mat3DF const& getMat3DF() const { return m_value.getMat3DF(); }
+        inline Mat3F const& getMat3F32() const { return m_value.getMat3F32(); }
         
         //////////////////////////////////////////
-        inline Mat4DF const& getMat4DF() const { return m_value.getMat4DF(); }
+        inline Mat4F const& getMat4F32() const { return m_value.getMat4F32(); }
 
         
         
@@ -203,53 +203,53 @@ namespace Maze
         }
         
         //////////////////////////////////////////
-        bool set(Vec2DF const& _vector);
+        bool set(Vec2F const& _vector);
         
         //////////////////////////////////////////
-        bool set(Vec3DF const& _vector);
+        bool set(Vec3F const& _vector);
         
         //////////////////////////////////////////
-        bool set(Vec4DF const& _vector);
+        bool set(Vec4F const& _vector);
 
 
         //////////////////////////////////////////
-        bool set(Vec2DS const& _vector);
+        bool set(Vec2S const& _vector);
         
         //////////////////////////////////////////
-        bool set(Vec3DS const& _vector);
+        bool set(Vec3S const& _vector);
         
         //////////////////////////////////////////
-        bool set(Vec4DS const& _vector);
+        bool set(Vec4S const& _vector);
 
 
         //////////////////////////////////////////
-        bool set(Vec2DU const& _vector);
+        bool set(Vec2U const& _vector);
         
         //////////////////////////////////////////
-        bool set(Vec3DU const& _vector);
+        bool set(Vec3U const& _vector);
         
         //////////////////////////////////////////
-        bool set(Vec4DU const& _vector);
+        bool set(Vec4U const& _vector);
 
 
         //////////////////////////////////////////
-        bool set(Vec2DB const& _vector);
+        bool set(Vec2B const& _vector);
 
         //////////////////////////////////////////
-        bool set(Vec3DB const& _vector);
+        bool set(Vec3B const& _vector);
 
         //////////////////////////////////////////
-        bool set(Vec4DB const& _vector);
+        bool set(Vec4B const& _vector);
 
 
         //////////////////////////////////////////
-        bool set(Mat3DF const& _matrix);
+        bool set(Mat3F const& _matrix);
         
         //////////////////////////////////////////
-        bool setAffineMat(Mat3DF const& _matrix);
+        bool setAffineMat(Mat3F const& _matrix);
         
         //////////////////////////////////////////
-        bool set(Mat4DF const& _matrix);
+        bool set(Mat4F const& _matrix);
        
         //////////////////////////////////////////
         bool set(ShaderUniformVariant const& _variant);
@@ -260,19 +260,19 @@ namespace Maze
         bool set(F32 const* _values, Size _count);
 
         //////////////////////////////////////////
-        bool set(Vec2DF const* _vectors, Size _count);
+        bool set(Vec2F const* _vectors, Size _count);
 
         //////////////////////////////////////////
-        bool set(Vec3DF const* _vectors, Size _count);
+        bool set(Vec3F const* _vectors, Size _count);
 
         //////////////////////////////////////////
-        bool set(Vec4DF const* _vectors, Size _count);
+        bool set(Vec4F const* _vectors, Size _count);
 
         //////////////////////////////////////////
-        bool set(Mat3DF const* _matrices, Size _count);
+        bool set(Mat3F const* _matrices, Size _count);
 
         //////////////////////////////////////////
-        bool set(Mat4DF const* _matrices, Size _count);
+        bool set(Mat4F const* _matrices, Size _count);
         */
 
         //////////////////////////////////////////
@@ -280,20 +280,20 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual void upload(Vec2DF const* _vectors, Size _count) MAZE_ABSTRACT;
+        virtual void upload(Vec2F const* _vectors, Size _count) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual void upload(Vec3DF const* _vectors, Size _count) MAZE_ABSTRACT;
+        virtual void upload(Vec3F const* _vectors, Size _count) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual void upload(Vec4DF const* _vectors, Size _count) MAZE_ABSTRACT;
+        virtual void upload(Vec4F const* _vectors, Size _count) MAZE_ABSTRACT;
 
 
         //////////////////////////////////////////
-        virtual void upload(Mat3DF const* _matrices, Size _count) MAZE_ABSTRACT;
+        virtual void upload(Mat3F const* _matrices, Size _count) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual void upload(Mat4DF const* _matrices, Size _count) MAZE_ABSTRACT;
+        virtual void upload(Mat4F const* _matrices, Size _count) MAZE_ABSTRACT;
         
         
         //////////////////////////////////////////

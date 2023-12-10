@@ -165,13 +165,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec3DF ColorU32::toVec3DF() const
+    Vec3F ColorU32::toVec3F32() const
     {
-        return Vec3DF(r/255.0f, g/255.0f, b/255.0f);
+        return Vec3F(r/255.0f, g/255.0f, b/255.0f);
     }
 
     //////////////////////////////////////////
-    void ColorU32::setVec3DF(Vec3DF const& _vec)
+    void ColorU32::setVec3F32(Vec3F const& _vec)
     {
         r = (U8)(Math::Clamp(_vec.x*255.0f, 0.0f, 255.0f));
         g = (U8)(Math::Clamp(_vec.y*255.0f, 0.0f, 255.0f));
@@ -180,13 +180,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec4DF ColorU32::toVec4DF() const
+    Vec4F ColorU32::toVec4F32() const
     {
-        return Vec4DF(r/255.0f, g/255.0f, b/255.0f, a/255.0f);
+        return Vec4F(r/255.0f, g/255.0f, b/255.0f, a/255.0f);
     }
 
     //////////////////////////////////////////
-    void ColorU32::setVec4DF(Vec4DF const& _vec)
+    void ColorU32::setVec4F32(Vec4F const& _vec)
     {
         r = (U8)(Math::Clamp(_vec.x*255.0f, 0.0f, 255.0f));
         g = (U8)(Math::Clamp(_vec.y*255.0f, 0.0f, 255.0f));

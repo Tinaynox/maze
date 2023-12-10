@@ -27,7 +27,7 @@
 #include "MazeCoreHeader.hpp"
 #include "maze-core/math/MazeMathRaytracing.hpp"
 #include "maze-core/math/MazeMath.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/math/MazeRay.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 
@@ -40,10 +40,10 @@ namespace Maze
     {
         //////////////////////////////////////////
         MAZE_CORE_API bool RaycastPlane(
-            Vec3DF const& _rayPoint,
-            Vec3DF const& _rayDirection,
-            Vec3DF const& _planePoint,
-            Vec3DF const& _planeNormal,
+            Vec3F const& _rayPoint,
+            Vec3F const& _rayDirection,
+            Vec3F const& _planePoint,
+            Vec3F const& _planeNormal,
             F32& _dist)
         {
             F32 denom = _planeNormal.dotProduct(_rayDirection);
@@ -52,7 +52,7 @@ namespace Maze
                 F32 t = (_planePoint - _rayPoint).dotProduct(_planeNormal) / denom;
                 if (t >= 0.0f)
                 {
-                    Vec3DF p = _rayPoint + t * _rayDirection;
+                    Vec3F p = _rayPoint + t * _rayDirection;
                     _dist = (p - _rayPoint).length();
                     return true;
                 }
@@ -62,26 +62,26 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_CORE_API bool RaycastCube(
-            Vec3DF const& _rayPoint,
-            Vec3DF const& _rayDirection,
-            Vec3DF const& _cubeCenter,
-            Vec3DF const& _cubeForward,
-            Vec3DF const& _cubeUp,
-            Vec3DF const& _cubeScale,
+            Vec3F const& _rayPoint,
+            Vec3F const& _rayDirection,
+            Vec3F const& _cubeCenter,
+            Vec3F const& _cubeForward,
+            Vec3F const& _cubeUp,
+            Vec3F const& _cubeScale,
             F32& _dist)
         {
-            Vec3DF cubeRight = _cubeUp.crossProduct(_cubeForward).normalizedCopy();
-            Mat4DF cubeTransform =
-                Mat4DF::CreateChangeOfBasisMatrix(cubeRight, _cubeUp, _cubeForward) *
-                Mat4DF::CreateScaleMatrix(_cubeScale * 0.5f);
+            Vec3F cubeRight = _cubeUp.crossProduct(_cubeForward).normalizedCopy();
+            Mat4F cubeTransform =
+                Mat4F::CreateChangeOfBasisMatrix(cubeRight, _cubeUp, _cubeForward) *
+                Mat4F::CreateScaleMatrix(_cubeScale * 0.5f);
             cubeTransform = cubeTransform.inversedAffineCopy();
 
             Ray localRay(
                 cubeTransform.transformAffine(_rayPoint - _cubeCenter),
                 cubeTransform.transformAffine(_rayDirection));
 
-            Vec3DF const& a = localRay.getPoint();
-            Vec3DF const& k = localRay.getDirection();
+            Vec3F const& a = localRay.getPoint();
+            Vec3F const& k = localRay.getDirection();
 
             F32 t[6];
             F32 u[6];
@@ -161,13 +161,13 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_CORE_API bool RaycastSphere(
-            Vec3DF const& _rayPoint,
-            Vec3DF const& _rayDirection,
-            Vec3DF const& _sphereCenter,
+            Vec3F const& _rayPoint,
+            Vec3F const& _rayDirection,
+            Vec3F const& _sphereCenter,
             F32 _sphereRadius,
             F32& _dist)
         {
-            Vec3DF m = _rayPoint - _sphereCenter;
+            Vec3F m = _rayPoint - _sphereCenter;
             F32 b = m.dotProduct(_rayDirection);
             F32 c = m.dotProduct(m) - _sphereRadius * _sphereRadius;
 
@@ -192,19 +192,19 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_CORE_API bool RaycastCylinder(
-            Vec3DF const& _rayPoint,
-            Vec3DF const& _rayDirection,
-            Vec3DF const& _cylinderCenter,
-            Vec3DF const& _cylinderForward,
+            Vec3F const& _rayPoint,
+            Vec3F const& _rayDirection,
+            Vec3F const& _cylinderCenter,
+            Vec3F const& _cylinderForward,
             F32 _cylinderRadius,
             F32 _cylinderHeight,
             F32& _dist)
         {
             F32 cylinderHalfHeight = _cylinderHeight * 0.5f;
 
-            Vec3DF _cylinderUp = _cylinderForward.perpendicular();
-            Vec3DF cylinderRight = _cylinderUp.crossProduct(_cylinderForward).normalizedCopy();
-            Mat4DF cylinderTransform = Mat4DF::CreateChangeOfBasisMatrix(cylinderRight, _cylinderUp, _cylinderForward).inversedAffineCopy();
+            Vec3F _cylinderUp = _cylinderForward.perpendicular();
+            Vec3F cylinderRight = _cylinderUp.crossProduct(_cylinderForward).normalizedCopy();
+            Mat4F cylinderTransform = Mat4F::CreateChangeOfBasisMatrix(cylinderRight, _cylinderUp, _cylinderForward).inversedAffineCopy();
 
             Ray localRay(
                 cylinderTransform.transformAffine(_rayPoint - _cylinderCenter),
@@ -226,7 +226,7 @@ namespace Maze
 
                 if (t0 > 0.0f)
                 {
-                    Vec3DF point0 = localRay.getPoint(t0);
+                    Vec3F point0 = localRay.getPoint(t0);
                     if (Abs(point0.z) <= cylinderHalfHeight)
                     {
                         _dist = t0;
@@ -236,7 +236,7 @@ namespace Maze
 
                 if (t1 > 0.0f && t1 < _dist)
                 {
-                    Vec3DF point1 = localRay.getPoint(t1);
+                    Vec3F point1 = localRay.getPoint(t1);
                     if (Abs(point1.z) <= cylinderHalfHeight)
                     {
                         _dist = t1;
@@ -251,7 +251,7 @@ namespace Maze
                 F32 t2 = (localRay.getPoint().z - cylinderHalfHeight) / -localRay.getDirection().z;
                 if (t2 > 0.0f && t2 < _dist)
                 {
-                    Vec3DF point2 = localRay.getPoint(t2);
+                    Vec3F point2 = localRay.getPoint(t2);
                     if (point2.x * point2.x + point2.y * point2.y < _cylinderRadius * _cylinderRadius)
                     {
                         _dist = t2;
@@ -262,7 +262,7 @@ namespace Maze
                 F32 t3 = (localRay.getPoint().z + cylinderHalfHeight) / -localRay.getDirection().z;
                 if (t3 > 0.0f && t3 < _dist)
                 {
-                    Vec3DF point3 = localRay.getPoint(t3);
+                    Vec3F point3 = localRay.getPoint(t3);
                     if (point3.x * point3.x + point3.y * point3.y < _cylinderRadius * _cylinderRadius)
                     {
                         _dist = t3;
@@ -276,23 +276,23 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_CORE_API bool RaycastCone(
-            Vec3DF const& _rayPoint,
-            Vec3DF const& _rayDirection,
-            Vec3DF const& _coneOrigin,
-            Vec3DF const& _coneForward,
+            Vec3F const& _rayPoint,
+            Vec3F const& _rayDirection,
+            Vec3F const& _coneOrigin,
+            Vec3F const& _coneForward,
             F32 _coneRadius,
             F32 _coneHeight,
             F32& _dist)
         {
-            Vec3DF coneUp = _coneForward.perpendicular();
-            Vec3DF coneRight = coneUp.crossProduct(_coneForward).normalizedCopy();
-            Mat4DF coneTransform =
-                Mat4DF::CreateChangeOfBasisMatrix(coneRight, coneUp, _coneForward) *
-                Mat4DF::CreateScaleMatrix(_coneRadius, _coneRadius, _coneHeight);
+            Vec3F coneUp = _coneForward.perpendicular();
+            Vec3F coneRight = coneUp.crossProduct(_coneForward).normalizedCopy();
+            Mat4F coneTransform =
+                Mat4F::CreateChangeOfBasisMatrix(coneRight, coneUp, _coneForward) *
+                Mat4F::CreateScaleMatrix(_coneRadius, _coneRadius, _coneHeight);
             coneTransform = coneTransform.inversedAffineCopy();
 
             Ray localRay(
-                coneTransform.transformAffine(_rayPoint - _coneOrigin) - Vec3DF::c_unitZ,
+                coneTransform.transformAffine(_rayPoint - _coneOrigin) - Vec3F::c_unitZ,
                 coneTransform.transformAffine(_rayDirection));
 
             F32 a = localRay.getDirection().x * localRay.getDirection().x + localRay.getDirection().y * localRay.getDirection().y - localRay.getDirection().z * localRay.getDirection().z;
@@ -311,7 +311,7 @@ namespace Maze
 
                 if (t0 > 0.0f)
                 {
-                    Vec3DF point0 = localRay.getPoint(t0);
+                    Vec3F point0 = localRay.getPoint(t0);
                     if (point0.z > -1.0f && point0.z < 0.0f)
                     {
                         _dist = t0;
@@ -321,7 +321,7 @@ namespace Maze
 
                 if (t1 > 0.0f && t1 < _dist)
                 {
-                    Vec3DF point1 = localRay.getPoint(t1);
+                    Vec3F point1 = localRay.getPoint(t1);
                     if (point1.z > -1.0f && point1.z < 0.0f)
                     {
                         _dist = t1;
@@ -336,7 +336,7 @@ namespace Maze
                 F32 t2 = (localRay.getPoint().z + 1) / -localRay.getDirection().z;
                 if (t2 > 0.0f && t2 < _dist)
                 {
-                    Vec3DF point2 = localRay.getPoint(t2);
+                    Vec3F point2 = localRay.getPoint(t2);
                     if (point2.x * point2.x + point2.y * point2.y < 1.0f)
                     {
                         _dist = t2;
@@ -350,17 +350,17 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_CORE_API bool RaycastTorus(
-            Vec3DF const& _rayPoint,
-            Vec3DF const& _rayDirection,
-            Vec3DF const& _torusOrigin,
-            Vec3DF const& _torusForward,
+            Vec3F const& _rayPoint,
+            Vec3F const& _rayDirection,
+            Vec3F const& _torusOrigin,
+            Vec3F const& _torusForward,
             F32 _torusRadius,
             F32 _torusCsRadius,
             F32& _dist)
         {
-            Vec3DF torusUp = _torusForward.perpendicular();
-            Vec3DF torusRight = torusUp.crossProduct(_torusForward).normalizedCopy();
-            Mat4DF torusTransform = Mat4DF::CreateChangeOfBasisMatrix(torusRight, torusUp, _torusForward);
+            Vec3F torusUp = _torusForward.perpendicular();
+            Vec3F torusRight = torusUp.crossProduct(_torusForward).normalizedCopy();
+            Mat4F torusTransform = Mat4F::CreateChangeOfBasisMatrix(torusRight, torusUp, _torusForward);
             torusTransform = torusTransform.inversedAffineCopy();
 
             Ray localRay(

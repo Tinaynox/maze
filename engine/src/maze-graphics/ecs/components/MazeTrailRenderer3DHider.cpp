@@ -48,7 +48,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(TrailRenderer3DHider, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorGradient, color, ColorGradient(), getColor, setColor),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2DF, duration, Vec2DF(1.0f, 2.0f), getDuration, setDuration));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F, duration, Vec2F(1.0f, 2.0f), getDuration, setDuration));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(TrailRenderer3DHider);

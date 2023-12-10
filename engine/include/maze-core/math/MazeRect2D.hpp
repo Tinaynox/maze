@@ -33,7 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/math/MazeMath.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 #include <ostream>
 
 
@@ -67,8 +67,8 @@ namespace Maze
 
         //////////////////////////////////////////
         inline MAZE_CONSTEXPR Rect2D(
-            Vec2D<TValue> const& _p,
-            Vec2D<TValue> const& _s);
+            Vec2<TValue> const& _p,
+            Vec2<TValue> const& _s);
 
         //////////////////////////////////////////
         inline MAZE_CONSTEXPR Rect2D(
@@ -104,10 +104,10 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline bool contains(Vec2D<TValue> const& _p);
+        inline bool contains(Vec2<TValue> const& _p);
 
         //////////////////////////////////////////
-        inline bool hasCircleIntersection(Vec2D<TValue> const& _pos, TValue _radius);
+        inline bool hasCircleIntersection(Vec2<TValue> const& _pos, TValue _radius);
 
         //////////////////////////////////////////
         inline String toString(Char _separator = ';') const { return StringHelper::ToString(position.x) + _separator + StringHelper::ToString(position.y) + _separator + StringHelper::ToString(size.x) + _separator + StringHelper::ToString(size.y); }
@@ -161,11 +161,11 @@ namespace Maze
         inline TValue getTop() const { return position.y + size.y; }
 
         //////////////////////////////////////////
-        inline Vec2D<TValue> getCenter() const { return position + size * 0.5f; }
+        inline Vec2<TValue> getCenter() const { return position + size * 0.5f; }
         
     public:
-        Vec2D<TValue> position;
-        Vec2D<TValue> size;
+        Vec2<TValue> position;
+        Vec2<TValue> size;
     }; 
 
 

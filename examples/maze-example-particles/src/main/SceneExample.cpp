@@ -155,7 +155,7 @@ namespace Maze
         if (!ECSRenderScene::init(Example::GetInstancePtr()->getMainRenderWindow()))
             return false;
 
-        Vec2DU renderBufferSize = Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize();
+        Vec2U32 renderBufferSize = Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize();
         m_renderBuffer = RenderBuffer::Create(
             {
                 renderBufferSize,
@@ -185,7 +185,7 @@ namespace Maze
         m_renderColorSprite = SpriteHelper::CreateSprite(
             Sprite::Create(m_renderBuffer->getColorTexture()->cast<Texture2D>()),
             m_canvas->getTransform()->getSize(),
-            Vec2DF::c_zero,
+            Vec2F32::c_zero,
             postFXMaterial,
             m_canvas->getTransform(),
             this);
@@ -209,7 +209,7 @@ namespace Maze
         // Camera
         EntityPtr cameraEntity = createEntity();
         m_camera3D = cameraEntity->createComponent<Camera3D>();
-        m_camera3D->getTransform()->setLocalPosition(Vec3DF(0.0f, 0.5f, -18.0f));
+        m_camera3D->getTransform()->setLocalPosition(Vec3F32(0.0f, 0.5f, -18.0f));
         m_camera3D->setFOV(Math::DegreesToRadians(30));
         m_camera3D->setClearColor(ColorU32(20, 20, 20));
         m_camera3D->setRenderTarget(m_renderBuffer);
@@ -264,7 +264,7 @@ namespace Maze
         // Particle System
         EntityPtr psEntity = createEntity();
         ParticleSystem3DPtr ps = psEntity->ensureComponent<ParticleSystem3D>();
-        ps->getTransform()->rotate(Vec3DF::c_unitX, -Math::c_halfPi);
+        ps->getTransform()->rotate(Vec3F32::c_unitX, -Math::c_halfPi);
 
         ps->getMainModule().setTransformPolicy(ParticleSystemSimulationSpace::World);
         ps->getMainModule().getLifetime().setConstant(0.9f);
@@ -277,7 +277,7 @@ namespace Maze
         MaterialPtr material = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getMaterial("Fireball00.mzmaterial");
 
         ps->getRendererModule().getTextureSheetAnimation().enabled = true;
-        ps->getRendererModule().getTextureSheetAnimation().tiles = Vec2DS(7, 7);
+        ps->getRendererModule().getTextureSheetAnimation().tiles = Vec2S32(7, 7);
         ps->getRendererModule().getTextureSheetAnimation().startFrame.setConstant(0);
 
         {

@@ -33,7 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/math/MazeMath.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
+#include "maze-core/math/MazeVec3.hpp"
 #include "maze-core/math/MazeRay.hpp"
 #include <ostream>
 
@@ -52,8 +52,8 @@ namespace Maze
 
         //////////////////////////////////////////
         inline MAZE_CONSTEXPR Plane() 
-            : m_point(Vec3DF::c_zero)
-            , m_normal(Vec3DF::c_unitZ)
+            : m_point(Vec3F::c_zero)
+            , m_normal(Vec3F::c_unitZ)
         { 
         }
 
@@ -72,23 +72,23 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline explicit Plane(Vec3DF const& _point, Vec3DF const& _normal)
+        inline explicit Plane(Vec3F const& _point, Vec3F const& _normal)
             : m_point(_point)
             , m_normal(_normal)
         {
         }
 
         //////////////////////////////////////////
-        inline void setPoint(Vec3DF const& _normal) { m_point = _normal; }
+        inline void setPoint(Vec3F const& _normal) { m_point = _normal; }
 
         //////////////////////////////////////////
-        inline Vec3DF const& getPoint() const { return m_point; }
+        inline Vec3F const& getPoint() const { return m_point; }
 
         //////////////////////////////////////////
-        inline void setNormal(Vec3DF const& _normal) { m_normal = _normal; }
+        inline void setNormal(Vec3F const& _normal) { m_normal = _normal; }
 
         //////////////////////////////////////////
-        inline Vec3DF const& getNormal() const { return m_normal; }
+        inline Vec3F const& getNormal() const { return m_normal; }
 
 
         //////////////////////////////////////////
@@ -132,11 +132,11 @@ namespace Maze
         {
             CString end = _string + _size;
 
-            _string = Vec3DF::ParseString(_string, _size, _result.m_point);
+            _string = Vec3F::ParseString(_string, _size, _result.m_point);
             _string = StringHelper::SkipChar(_string, end, ' ');
             _string = StringHelper::ExpectSkipChar(_string, end, _separator);
             _string = StringHelper::SkipChar(_string, end, ' ');
-            _string = Vec3DF::ParseString(_string, end - _string, _result.m_normal);
+            _string = Vec3F::ParseString(_string, end - _string, _result.m_normal);
             return _string;
         }
 
@@ -155,8 +155,8 @@ namespace Maze
         }
 
     protected:
-        Vec3DF m_point;
-        Vec3DF m_normal;
+        Vec3F m_point;
+        Vec3F m_normal;
     };
 
     

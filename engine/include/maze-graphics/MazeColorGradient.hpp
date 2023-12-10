@@ -33,10 +33,10 @@
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/math/MazeMath.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
-#include "maze-core/math/MazeVec4D.hpp"
-#include "maze-core/math/MazeMat3D.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeVec3.hpp"
+#include "maze-core/math/MazeVec4.hpp"
+#include "maze-core/math/MazeMat3.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/math/MazeRotation2D.hpp"
 #include "maze-core/containers/MazeFastVector.hpp"
 #include "maze-core/serialization/MazeJSONSerializable.hpp"
@@ -71,7 +71,7 @@ namespace Maze
             { }
 
             //////////////////////////////////////////
-            KeyframeRGB(F32 _time, Vec3DF const& _value)
+            KeyframeRGB(F32 _time, Vec3F const& _value)
                 : time(_time)
                 , value(_value)
             {
@@ -111,7 +111,7 @@ namespace Maze
             virtual Json::Value toJSONValue() const MAZE_OVERRIDE;
 
             F32 time = 0.0f;
-            Vec3DF value = Vec3DF::c_zero;
+            Vec3F value = Vec3F::c_zero;
         };
 
         //////////////////////////////////////////
@@ -181,7 +181,7 @@ namespace Maze
         };
 
         //////////////////////////////////////////
-        using EvaluteRGBCallback = Vec3DF(ColorGradient::*)(KeyframeRGB const& _keyframe0, KeyframeRGB const& _keyframe1, F32 _time) const;
+        using EvaluteRGBCallback = Vec3F(ColorGradient::*)(KeyframeRGB const& _keyframe0, KeyframeRGB const& _keyframe1, F32 _time) const;
         using EvaluteAlphaCallback = F32(ColorGradient::*)(KeyframeAlpha const& _keyframe0, KeyframeAlpha const& _keyframe1, F32 _time) const;
 
     public:
@@ -192,17 +192,17 @@ namespace Maze
         //////////////////////////////////////////
         inline ColorGradient(
             F32 _time0,
-            Vec4DF const& _color0);
+            Vec4F const& _color0);
 
         //////////////////////////////////////////
-        inline ColorGradient(Vec4DF const& _color0);
+        inline ColorGradient(Vec4F const& _color0);
 
         //////////////////////////////////////////
         inline ColorGradient(
             F32 _time0,
-            Vec4DF const& _color0,
+            Vec4F const& _color0,
             F32 _time1,
-            Vec4DF const& _color1);
+            Vec4F const& _color1);
 
 
         //////////////////////////////////////////
@@ -216,14 +216,14 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline void addKeyRGB(F32 _time, Vec3DF const& _value)
+        inline void addKeyRGB(F32 _time, Vec3F const& _value)
         {
             m_keyframesRGB.emplace_back(KeyframeRGB{_time, _value});
             sortKeyframesRGB();
         }
 
         //////////////////////////////////////////
-        inline void setKeyRGB(Size _index, Vec3DF const& _value)
+        inline void setKeyRGB(Size _index, Vec3F const& _value)
         {
             m_keyframesRGB[_index].value = _value;
         }
@@ -340,9 +340,9 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void addKey(F32 _time, Vec4DF const& _value)
+        inline void addKey(F32 _time, Vec4F const& _value)
         {
-            addKeyRGB(_time, Vec3DF{ _value.x, _value.y, _value.z });
+            addKeyRGB(_time, Vec3F{ _value.x, _value.y, _value.z });
             addKeyAlpha(_time, _value.w);
         }
 
@@ -374,13 +374,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Vec3DF evaluateRGB(F32 _time) const;
+        inline Vec3F evaluateRGB(F32 _time) const;
 
         //////////////////////////////////////////
         inline F32 evaluateAlpha(F32 _time) const;
 
         //////////////////////////////////////////
-        inline Vec4DF evaluate(F32 _time) const;
+        inline Vec4F evaluate(F32 _time) const;
 
 
         //////////////////////////////////////////
@@ -420,7 +420,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        FastVector<Pair<F32, Vec4DF>> toRawColors() const;
+        FastVector<Pair<F32, Vec4F>> toRawColors() const;
 
         //////////////////////////////////////////
         F32 getStartTime() const;
@@ -472,13 +472,13 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline Vec3DF evaluateRGBFixed(
+        inline Vec3F evaluateRGBFixed(
             KeyframeRGB const& _keyframe0,
             KeyframeRGB const& _keyframe1,
             F32 _time) const;
 
         //////////////////////////////////////////
-        inline Vec3DF evaluateRGBLinear(
+        inline Vec3F evaluateRGBLinear(
             KeyframeRGB const& _keyframe0,
             KeyframeRGB const& _keyframe1,
             F32 _time) const;

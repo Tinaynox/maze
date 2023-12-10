@@ -33,7 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/math/MazeMath.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
+#include "maze-core/math/MazeVec3.hpp"
 #include <ostream>
 
 
@@ -51,8 +51,8 @@ namespace Maze
 
         //////////////////////////////////////////
         inline MAZE_CONSTEXPR Ray()
-            : m_point(Vec3DF::c_zero)
-            , m_direction(Vec3DF::c_unitZ)
+            : m_point(Vec3F::c_zero)
+            , m_direction(Vec3F::c_unitZ)
         {
         }
 
@@ -71,26 +71,26 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline explicit Ray(Vec3DF const& _point, Vec3DF const& _direction)
+        inline explicit Ray(Vec3F const& _point, Vec3F const& _direction)
             : m_point(_point)
             , m_direction(_direction)
         {
         }
 
         //////////////////////////////////////////
-        inline void setPoint(Vec3DF const& _direction) { m_point = _direction; }
+        inline void setPoint(Vec3F const& _direction) { m_point = _direction; }
 
         //////////////////////////////////////////
-        inline Vec3DF const& getPoint() const { return m_point; }
+        inline Vec3F const& getPoint() const { return m_point; }
 
         //////////////////////////////////////////
-        inline void setDirection(Vec3DF const& _direction) { m_direction = _direction; }
+        inline void setDirection(Vec3F const& _direction) { m_direction = _direction; }
 
         //////////////////////////////////////////
-        inline Vec3DF const& getDirection() const { return m_direction; }
+        inline Vec3F const& getDirection() const { return m_direction; }
 
         //////////////////////////////////////////
-        inline Vec3DF getPoint(F32 _length) const { return m_point + m_direction * _length; }
+        inline Vec3F getPoint(F32 _length) const { return m_point + m_direction * _length; }
 
 
         //////////////////////////////////////////
@@ -130,11 +130,11 @@ namespace Maze
         {
             CString end = _string + _size;
 
-            _string = Vec3DF::ParseString(_string, _size, _result.m_point);
+            _string = Vec3F::ParseString(_string, _size, _result.m_point);
             _string = StringHelper::SkipChar(_string, end, ' ');
             _string = StringHelper::ExpectSkipChar(_string, end, _separator);
             _string = StringHelper::SkipChar(_string, end, ' ');
-            _string = Vec3DF::ParseString(_string, end - _string, _result.m_direction);
+            _string = Vec3F::ParseString(_string, end - _string, _result.m_direction);
             return _string;
         }
 
@@ -153,8 +153,8 @@ namespace Maze
         }
 
     protected:
-        Vec3DF m_point;
-        Vec3DF m_direction;
+        Vec3F m_point;
+        Vec3F m_direction;
     };
 
 

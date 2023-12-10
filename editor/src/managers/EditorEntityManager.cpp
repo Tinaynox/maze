@@ -81,7 +81,7 @@ namespace Maze
 
         InputSystem2DPtr inputSystem = InputSystem2D::Create();
         inputSystem->setCoordsConverter(
-            [](Vec2DF const& _coords)
+            [](Vec2F32 const& _coords)
             {
                 return EditorLayout::ConvertRenderWindowCoordsToWorkspaceViewport(_coords);
             });

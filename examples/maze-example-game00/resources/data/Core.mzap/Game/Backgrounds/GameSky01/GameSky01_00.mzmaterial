@@ -4,7 +4,7 @@
     <ShaderUniformVariant name="u_baseMapFar1" type="UniformTexture2D" value="BackgroundFar02.png" />
     <ShaderUniformVariant name="u_baseMapNear0" type="UniformTexture2D" value="BackgroundNear01.png" />
     <ShaderUniformVariant name="u_baseMapNear1" type="UniformTexture2D" value="BackgroundNear02.png" />
-    <ShaderUniformVariant name="u_color" type="UniformVec4DF" value="1.0;1.0;1.0;1.0" />
+    <ShaderUniformVariant name="u_color" type="UniformVec4F32" value="1.0;1.0;1.0;1.0" />
     <RenderPass 
         passType="Default"
         renderQueueIndex="2000"

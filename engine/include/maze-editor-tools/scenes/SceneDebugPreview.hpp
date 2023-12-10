@@ -143,7 +143,7 @@ namespace Maze
 
         F32 m_yawAngle;
         F32 m_pitchAngle;
-        Vec2DF m_cursorPositionLastFrame;
+        Vec2F m_cursorPositionLastFrame;
         bool m_cursorDrag;
 
         ECSWorldPtr m_previewWorld;

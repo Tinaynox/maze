@@ -38,7 +38,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     PixelSheet2D::PixelSheet2D()
-        : m_size(Vec2DU::c_zero)
+        : m_size(Vec2U::c_zero)
         , m_format(PixelFormat::None)
         , m_bytesPerPixel(0)
         , m_bytesPerRow(0)
@@ -47,7 +47,7 @@ namespace Maze
 
     //////////////////////////////////////////
     PixelSheet2D::PixelSheet2D(
-        Vec2DS const& _size,
+        Vec2S const& _size,
         PixelFormat::Enum _pixelFormat)
         : PixelSheet2D()
     {
@@ -57,7 +57,7 @@ namespace Maze
 
     //////////////////////////////////////////
     PixelSheet2D::PixelSheet2D(
-        Vec2DS const& _size,
+        Vec2S const& _size,
         ColorU32 const& _color)
         : PixelSheet2D(_size, PixelFormat::RGBA_U8)
     {
@@ -114,7 +114,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PixelSheet2D::setSize(Vec2DS const& _size)
+    void PixelSheet2D::setSize(Vec2S const& _size)
     {
         MAZE_DEBUG_ERROR_RETURN_IF(_size.x < 0 || _size.y < 0, "Invalid pixel sheet size!");
 
@@ -294,7 +294,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PixelSheet2D::copyFrom(U8 const* _data, Vec2DS const& _size, PixelFormat::Enum _pixelFormat)
+    void PixelSheet2D::copyFrom(U8 const* _data, Vec2S const& _size, PixelFormat::Enum _pixelFormat)
     {
         setFormat(_pixelFormat);
         setSize(_size);

@@ -42,7 +42,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(AwakeRandomRotation3D, Component,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DB, axes, Vec3DB::c_true, getAxes, setAxes));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3B, axes, Vec3B::c_true, getAxes, setAxes));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(AwakeRandomRotation3D);
@@ -58,7 +58,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    AwakeRandomRotation3DPtr AwakeRandomRotation3D::Create(Vec3DB const& _axes)
+    AwakeRandomRotation3DPtr AwakeRandomRotation3D::Create(Vec3B const& _axes)
     {
         AwakeRandomRotation3DPtr object;
         MAZE_CREATE_AND_INIT_SHARED_PTR(AwakeRandomRotation3D, object, init(_axes));
@@ -66,7 +66,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool AwakeRandomRotation3D::init(Vec3DB const& _axes)
+    bool AwakeRandomRotation3D::init(Vec3B const& _axes)
     {
         m_axes = _axes;
         return true;
@@ -75,16 +75,16 @@ namespace Maze
     //////////////////////////////////////////
     void AwakeRandomRotation3D::processEntityAwakened()
     {
-        if (m_axes == Vec3DB::c_true)
+        if (m_axes == Vec3B::c_true)
         {
             getEntityRaw()->ensureComponent<Transform3D>()->setLocalRotation(
                 Quaternion(
-                    Vec3DF::c_unitZ,
-                    Vec3DF::RandomDirection()));
+                    Vec3F::c_unitZ,
+                    Vec3F::RandomDirection()));
         }
         else
         {
-            Vec3DF angles = Vec3DF::c_zero;
+            Vec3F angles = Vec3F::c_zero;
             for (Size i = 0; i < 3; ++i)
                 if (m_axes[i])
                     angles[i] = Random::RangeRandom(-Math::c_pi, Math::c_pi);

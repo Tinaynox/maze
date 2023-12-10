@@ -39,11 +39,11 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/utils/MazeSharedCopyable.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
-#include "maze-core/math/MazeVec4D.hpp"
-#include "maze-core/math/MazeMat3D.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
+#include "maze-core/math/MazeVec3.hpp"
+#include "maze-core/math/MazeVec4.hpp"
+#include "maze-core/math/MazeMat3.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/hash/MazeHashSuperFast.hpp"
 #include <functional>
 
@@ -97,7 +97,7 @@ namespace Maze
 
         //////////////////////////////////////////
         RenderBufferSpecification(
-            Vec2DU const& _size,
+            Vec2U const& _size,
             TextureFormat _colorTextureFormat)
             : size(_size)
             , colorTextureFormats{_colorTextureFormat, PixelFormat::None}
@@ -107,7 +107,7 @@ namespace Maze
 
         //////////////////////////////////////////
         RenderBufferSpecification(
-            Vec2DU const& _size,
+            Vec2U const& _size,
             TextureFormat _colorTextureFormat,
             TextureFormat _depthTextureFormat)
             : size(_size)
@@ -143,7 +143,7 @@ namespace Maze
                    (stencilTextureFormat == _other.stencilTextureFormat);
         }
 
-        Vec2DU size;
+        Vec2U size;
         TextureFormat colorTextureFormats[c_renderBufferColorTexturesMax] = { {PixelFormat::None, 0} };
         TextureFormat depthTextureFormat = { PixelFormat::None, 0 };
         TextureFormat stencilTextureFormat = { PixelFormat::None, 0 };

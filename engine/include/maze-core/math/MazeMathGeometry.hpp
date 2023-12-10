@@ -33,9 +33,9 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/math/MazeMath.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
+#include "maze-core/math/MazeVec3.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/math/MazeRay.hpp"
 
 
@@ -51,13 +51,13 @@ namespace Maze
         //
         //////////////////////////////////////////
         MAZE_CORE_API inline bool IsSameSide(
-            Vec3DF _p0,
-            Vec3DF _p1,
-            Vec3DF _a,
-            Vec3DF _b)
+            Vec3F _p0,
+            Vec3F _p1,
+            Vec3F _a,
+            Vec3F _b)
         {
-            Vec3DF cp1 = (_b - _a).crossProduct(_p0 - _a);
-            Vec3DF cp2 = (_b - _a).crossProduct(_p1 - _a);
+            Vec3F cp1 = (_b - _a).crossProduct(_p0 - _a);
+            Vec3F cp2 = (_b - _a).crossProduct(_p1 - _a);
 
             if (cp1.dotProduct(cp2) >= 0)
                 return true;
@@ -67,12 +67,12 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_CORE_API inline bool IsPointInTriangle(
-            Vec2DF const& _point,
-            Vec2DF const& _a,
-            Vec2DF const& _b,
-            Vec2DF const& _c)
+            Vec2F const& _point,
+            Vec2F const& _a,
+            Vec2F const& _b,
+            Vec2F const& _c)
         {
-            Vec2DF vert[] = {_a, _b, _c};
+            Vec2F vert[] = {_a, _b, _c};
 
             S32 c = 0;
 
@@ -87,43 +87,43 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API inline Vec3DF GenTriangleNormal(
-            Vec3DF _t0,
-            Vec3DF _t1,
-            Vec3DF _t2)
+        MAZE_CORE_API inline Vec3F GenTriangleNormal(
+            Vec3F _t0,
+            Vec3F _t1,
+            Vec3F _t2)
         {
-            Vec3DF u = _t1 - _t0;
-            Vec3DF v = _t2 - _t0;
+            Vec3F u = _t1 - _t0;
+            Vec3F v = _t2 - _t0;
 
-            Vec3DF normal = u.crossProduct(v);
+            Vec3F normal = u.crossProduct(v);
 
             return normal;
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API inline Vec3DF ProjectionPointOnVector(Vec3DF const& _a, Vec3DF const& _b)
+        MAZE_CORE_API inline Vec3F ProjectionPointOnVector(Vec3F const& _a, Vec3F const& _b)
         {
-            Vec3DF bn = _b / _b.length();
+            Vec3F bn = _b / _b.length();
             return bn * _a.dotProduct(bn);
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API inline Vec3DF ProjectionPointOnPlane(
-            Vec3DF const& _point,
-            Vec3DF const& _planeOrigin,
-            Vec3DF const& _planeNormal)
+        MAZE_CORE_API inline Vec3F ProjectionPointOnPlane(
+            Vec3F const& _point,
+            Vec3F const& _planeOrigin,
+            Vec3F const& _planeNormal)
         {
-            Vec3DF v = _point - _planeOrigin;
+            Vec3F v = _point - _planeOrigin;
             F32 dist = v.dotProduct(_planeNormal);
             return _point - dist * _planeNormal;
         }
 
         //////////////////////////////////////////
         MAZE_CORE_API inline bool IsPointInTriangle(
-            Vec3DF const& _point,
-            Vec3DF const& _a,
-            Vec3DF const& _b,
-            Vec3DF const& _c)
+            Vec3F const& _point,
+            Vec3F const& _a,
+            Vec3F const& _b,
+            Vec3F const& _c)
         {
             bool withinTriPrisim = 
                 IsSameSide(_point, _a, _b, _c) && 
@@ -135,10 +135,10 @@ namespace Maze
                 return false;
 
             // Calulate Triangle's Normal
-            Vec3DF n = GenTriangleNormal(_a, _b, _c);
+            Vec3F n = GenTriangleNormal(_a, _b, _c);
 
             // Project the point onto this normal
-            Vec3DF projection = ProjectionPointOnVector(_point, n);
+            Vec3F projection = ProjectionPointOnVector(_point, n);
 
             // If the distance from the triangle to the point is 0
             //    it lies on the triangle
@@ -150,9 +150,9 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_CORE_API inline F32 DistanceFromPointToLine(
-            Vec2DF const& _point,
-            Vec2DF const& _linePoint0,
-            Vec2DF const& _linePoint1)
+            Vec2F const& _point,
+            Vec2F const& _linePoint0,
+            Vec2F const& _linePoint1)
         {
             F32 normalLength = hypotf(_linePoint1.x - _linePoint0.x, _linePoint1.y - _linePoint0.y);
             F32 d = ((_point.x - _linePoint0.x) * (_linePoint1.y - _linePoint0.y) - (_point.y - _linePoint0.y) * (_linePoint1.x - _linePoint0.x)) / normalLength;
@@ -161,17 +161,17 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_CORE_API inline bool CrossPoint(
-            Vec2DF const& _line0Point0,
-            Vec2DF const& _line0Point1,
-            Vec2DF const& _line1Point0,
-            Vec2DF const& _line1Point1,
-            Vec2DF* _result)
+            Vec2F const& _line0Point0,
+            Vec2F const& _line0Point1,
+            Vec2F const& _line1Point0,
+            Vec2F const& _line1Point1,
+            Vec2F* _result)
         {
-            Vec3DF segment0 = _line0Point1 - _line0Point0;
-            Vec3DF segment1 = _line1Point1 - _line1Point0;
+            Vec3F segment0 = _line0Point1 - _line0Point0;
+            Vec3F segment1 = _line1Point1 - _line1Point0;
 
-            Vec3DF prod0 = segment0.crossProduct(_line1Point0 - _line0Point0);
-            Vec3DF prod1 = segment0.crossProduct(_line1Point1 - _line0Point0);
+            Vec3F prod0 = segment0.crossProduct(_line1Point0 - _line0Point0);
+            Vec3F prod1 = segment0.crossProduct(_line1Point1 - _line0Point0);
 
             if (Sign(prod0.z) == Sign(prod1.z) || prod0.z == 0 || prod1.z == 0)
                 return false;
@@ -195,9 +195,9 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_CORE_API inline bool IsPointOnSegment(
-            Vec3DF const& _segmentPointA,
-            Vec3DF const& _segmentPointB,
-            Vec3DF const& _point,
+            Vec3F const& _segmentPointA,
+            Vec3F const& _segmentPointB,
+            Vec3F const& _point,
             F32 _epsilon = 0.00001f)
         {
             F32 ab = (_segmentPointB - _segmentPointA).length();
@@ -207,13 +207,13 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API inline Vec3DF ClosestPointOnLine(
-            Vec3DF const& _lineA,
-            Vec3DF const& _lineB,
-            Vec3DF const& _point)
+        MAZE_CORE_API inline Vec3F ClosestPointOnLine(
+            Vec3F const& _lineA,
+            Vec3F const& _lineB,
+            Vec3F const& _point)
         {
-            Vec3DF c = _point - _lineA;
-            Vec3DF v = _lineB - _lineA;
+            Vec3F c = _point - _lineA;
+            Vec3F v = _lineB - _lineA;
             F32 d = v.length();
             v.normalize();
             F32 t = v.dotProduct(c);
@@ -224,13 +224,13 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API inline Vec3DF ClosestPointOnSegment(
-            Vec3DF const& _segmentPointA,
-            Vec3DF const& _segmentPointB,
-            Vec3DF const& _point)
+        MAZE_CORE_API inline Vec3F ClosestPointOnSegment(
+            Vec3F const& _segmentPointA,
+            Vec3F const& _segmentPointB,
+            Vec3F const& _point)
         {
-            Vec3DF c = _point - _segmentPointA;
-            Vec3DF v = _segmentPointB - _segmentPointA;
+            Vec3F c = _point - _segmentPointA;
+            Vec3F v = _segmentPointB - _segmentPointA;
             F32 d = v.length();
             v.normalize();
             F32 t = v.dotProduct(c);
@@ -247,10 +247,10 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API inline Vec3DF Ortogonalize(Vec3DF const& _v1, Vec3DF const& _v2)
+        MAZE_CORE_API inline Vec3F Ortogonalize(Vec3F const& _v1, Vec3F const& _v2)
         {
-            Vec3DF v2ProjV1 = ClosestPointOnSegment(_v1, -_v1, _v2);
-            Vec3DF res = _v2 - v2ProjV1;
+            Vec3F v2ProjV1 = ClosestPointOnSegment(_v1, -_v1, _v2);
+            Vec3F res = _v2 - v2ProjV1;
             res.normalize();
             return res;
         }

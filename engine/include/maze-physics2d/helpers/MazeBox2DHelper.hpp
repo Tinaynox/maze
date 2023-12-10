@@ -33,7 +33,7 @@
 #include "maze-physics2d/MazePhysics2DHeader.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
 #include "maze-graphics/MazeColorF128.hpp"
 #include <box2d/box2d.h>
@@ -58,23 +58,23 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MAZE_PHYSICS2D_API inline b2Vec2 ToVec2(Vec2DF const& _vec)
+        MAZE_PHYSICS2D_API inline b2Vec2 ToVec2(Vec2F const& _vec)
         {
             return b2Vec2(_vec.x, _vec.y);
         }
 
         //////////////////////////////////////////
-        MAZE_PHYSICS2D_API inline Vec2DF ToVec2DF(b2Vec2 const& _vec)
+        MAZE_PHYSICS2D_API inline Vec2F ToVec2F32(b2Vec2 const& _vec)
         {
-            return Vec2DF(_vec.x, _vec.y);
+            return Vec2F(_vec.x, _vec.y);
         }
 
         //////////////////////////////////////////
         MAZE_PHYSICS2D_API inline AABB2D ToAABB2D(b2AABB const& _aabb)
         {
             AABB2D aabb;
-            aabb.setMin(ToVec2DF(_aabb.lowerBound));
-            aabb.setMax(ToVec2DF(_aabb.upperBound));
+            aabb.setMin(ToVec2F32(_aabb.lowerBound));
+            aabb.setMax(ToVec2F32(_aabb.upperBound));
             return aabb;
         }
 
@@ -234,14 +234,14 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_PHYSICS2D_API F32 RayCast(
             PhysicsWorld2DPtr const& _world,
-            Vec2DF const& _from,
-            Vec2DF const& _to,
+            Vec2F const& _from,
+            Vec2F const& _to,
             std::function<
             bool(
                 Rigidbody2D* _rigidbody2D,
                 Collider2D* _collider2D,
-                Vec2DF const& _point,
-                Vec2DF const& _normal)> _filter = nullptr);
+                Vec2F const& _point,
+                Vec2F const& _normal)> _filter = nullptr);
 
         //////////////////////////////////////////
         MAZE_PHYSICS2D_API b2AABB GetBodyAABB(b2Body const* _body);

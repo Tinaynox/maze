@@ -37,7 +37,7 @@
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
+#include "maze-core/math/MazeVec3.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
@@ -58,9 +58,9 @@ namespace Maze
 
         Texture2DPtr texture;
         MaterialPtr material;
-        Vec2DS charSize = Vec2DS::c_zero;
-        Vec2DS stroke = Vec2DS::c_zero;
-        Vec2DS offset = Vec2DS::c_zero;
+        Vec2S charSize = Vec2S::c_zero;
+        Vec2S stroke = Vec2S::c_zero;
+        Vec2S offset = Vec2S::c_zero;
         S32 outline = 0;
 
     public:

@@ -113,20 +113,20 @@ namespace Maze
     }
     
     ////////////////////////////////////
-    void WindowAndroid::setClientSize(Vec2DU const& _size)
+    void WindowAndroid::setClientSize(Vec2U32 const& _size)
     {
     }
 
     //////////////////////////////////////////
-    Vec2DU WindowAndroid::getClientSize()
+    Vec2U32 WindowAndroid::getClientSize()
     {
         SystemManagerAndroid* systemManager = static_cast<SystemManagerAndroid*>(SystemManager::GetInstancePtr());
         ANativeWindow* nativeWindow = systemManager->getNativeWindow();
 
         if (nativeWindow == nullptr)
-            return Vec2DU::c_zero;
+            return Vec2U32::c_zero;
 
-        Vec2DU result;
+        Vec2U32 result;
 
         result.x = (U32)ANativeWindow_getWidth(nativeWindow);
         result.y = (U32)ANativeWindow_getHeight(nativeWindow);
@@ -135,15 +135,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec2DU WindowAndroid::getFullSize()
+    Vec2U32 WindowAndroid::getFullSize()
     {
         SystemManagerAndroid* systemManager = static_cast<SystemManagerAndroid*>(SystemManager::GetInstancePtr());
         ANativeWindow* nativeWindow = systemManager->getNativeWindow();
 
         if (nativeWindow == nullptr)
-            return Vec2DU::c_zero;
+            return Vec2U32::c_zero;
 
-        Vec2DU result;
+        Vec2U32 result;
 
         result.x = (U32)ANativeWindow_getWidth(nativeWindow);
         result.y = (U32)ANativeWindow_getHeight(nativeWindow);
@@ -152,14 +152,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void WindowAndroid::setPosition(Vec2DS const& _position)
+    void WindowAndroid::setPosition(Vec2S32 const& _position)
     {
     }
 
     //////////////////////////////////////////
-    Vec2DS WindowAndroid::getPosition()
+    Vec2S32 WindowAndroid::getPosition()
     {
-        return Vec2DU::c_zero;
+        return Vec2U32::c_zero;
     }
 
     //////////////////////////////////////////

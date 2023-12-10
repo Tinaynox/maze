@@ -41,7 +41,7 @@
 #include "maze-graphics/MazeTextureCube.hpp"
 #include "maze-render-system-opengl-core/MazeConfigOpenGL.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
-#include "maze-core/math/MazeVec4D.hpp"
+#include "maze-core/math/MazeVec4.hpp"
 #include "maze-core/events/MazeEvent.hpp"
 #include <functional>
 
@@ -193,10 +193,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setClearColor(Vec4DF const& _clearColor);
+        void setClearColor(Vec4F const& _clearColor);
 
         //////////////////////////////////////////
-        inline Vec4DF const& getClearColor() const { return m_clearColor; }
+        inline Vec4F const& getClearColor() const { return m_clearColor; }
 
         //////////////////////////////////////////
         void setClearDepth(F32 _clearDepth);
@@ -264,10 +264,10 @@ namespace Maze
         void setCurrentRenderBuffer(RenderBuffer* _value);
 
         //////////////////////////////////////////
-        inline Vec2DU const& getPixelBufferSize() const { return m_pixelBufferSize; }
+        inline Vec2U const& getPixelBufferSize() const { return m_pixelBufferSize; }
 
         //////////////////////////////////////////
-        inline void setPixelBufferSize(Vec2DU const& _pixelBufferSize) { m_pixelBufferSize = _pixelBufferSize; }
+        inline void setPixelBufferSize(Vec2U const& _pixelBufferSize) { m_pixelBufferSize = _pixelBufferSize; }
 
 
         //////////////////////////////////////////
@@ -324,7 +324,7 @@ namespace Maze
         Rect2DS m_viewportRect;
         bool m_scissorTest;
         Rect2DS m_scissorRect;
-        Vec4DF m_clearColor;
+        Vec4F m_clearColor;
         F32 m_clearDepth;
 
         // BlendMode
@@ -354,7 +354,7 @@ namespace Maze
         Shader* m_currentShader;
         Texture* m_currentTextures[MAZE_GL_MAX_TEXTURES_COUNT];
         RenderBuffer* m_currentRenderBuffer;
-        Vec2DU m_pixelBufferSize;
+        Vec2U m_pixelBufferSize;
     };
 
 } // namespace Maze

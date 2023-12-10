@@ -51,7 +51,7 @@ namespace Maze
 
     //////////////////////////////////////////
     RenderBuffer::RenderBuffer()
-        : m_size(Vec2DU::c_one)
+        : m_size(Vec2U::c_one)
     {
     }
 
@@ -183,7 +183,7 @@ namespace Maze
         if (!RenderTarget::beginDraw())
             return false;
 
-        setViewport(Rect2DF(Vec2DF::c_zero, getSize()));
+        setViewport(Rect2DF(Vec2F::c_zero, getSize()));
 
         return true;
     }
@@ -201,7 +201,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool RenderBuffer::setSize(Vec2DU const& _size)
+    bool RenderBuffer::setSize(Vec2U const& _size)
     {
         MAZE_DEBUG_ERROR_RETURN_VALUE_IF(_size.x == 0 || _size.y == 0, false, "Size is zero!");
 

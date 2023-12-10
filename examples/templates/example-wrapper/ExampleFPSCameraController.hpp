@@ -123,10 +123,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setLevelSize(Vec2DF const& _value) { m_levelSize = _value; }
+        inline void setLevelSize(Vec2F32 const& _value) { m_levelSize = _value; }
 
         //////////////////////////////////////////
-        Vec2DF const& getLevelSize() const { return m_levelSize; }
+        Vec2F32 const& getLevelSize() const { return m_levelSize; }
 
     protected:
 
@@ -149,7 +149,7 @@ namespace Maze
         Transform3DPtr m_transform;
         Camera3DPtr m_camera3D;
 
-        Vec3DF m_targetPosition = Vec3DF::c_zero;
+        Vec3F32 m_targetPosition = Vec3F32::c_zero;
         F32 m_yawAngle = 0.0f;
         F32 m_pitchAngle = 0.0f;
 
@@ -161,7 +161,7 @@ namespace Maze
         bool m_right = false;
 
         F32 m_radius = 0.5f;
-        Vec2DF m_levelSize = Vec2DF(5.0f, 10.0f);
+        Vec2F32 m_levelSize = Vec2F32(5.0f, 10.0f);
     };
 
 

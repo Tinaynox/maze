@@ -125,98 +125,98 @@ namespace Maze
                 break;
             }
 
-            case ShaderUniformType::UniformVec2DF:
+            case ShaderUniformType::UniformVec2F32:
             {
-                MAZE_GL_CALL(mzglUniform2f((MZGLint)m_location, getVecF().x, getVecF().y));
+                MAZE_GL_CALL(mzglUniform2f((MZGLint)m_location, getVec4F32().x, getVec4F32().y));
                 break;
             }
 
-            case ShaderUniformType::UniformVec3DF:
+            case ShaderUniformType::UniformVec3F32:
             {
-                MAZE_GL_CALL(mzglUniform3f((MZGLint)m_location, getVecF().x, getVecF().y, getVecF().z));
+                MAZE_GL_CALL(mzglUniform3f((MZGLint)m_location, getVec4F32().x, getVec4F32().y, getVec4F32().z));
                 break;
             }
 
-            case ShaderUniformType::UniformVec4DF:
+            case ShaderUniformType::UniformVec4F32:
             {
-                MAZE_GL_CALL(mzglUniform4f((MZGLint)m_location, getVecF().x, getVecF().y, getVecF().z, getVecF().w));
+                MAZE_GL_CALL(mzglUniform4f((MZGLint)m_location, getVec4F32().x, getVec4F32().y, getVec4F32().z, getVec4F32().w));
                 break;
             }
 
 
-            case ShaderUniformType::UniformVec2DS:
+            case ShaderUniformType::UniformVec2S32:
             {
                 MAZE_GL_CALL(mzglUniform2i((MZGLint)m_location, getVecS().x, getVecS().y));
                 break;
             }
 
-            case ShaderUniformType::UniformVec3DS:
+            case ShaderUniformType::UniformVec3S32:
             {
                 MAZE_GL_CALL(mzglUniform3i((MZGLint)m_location, getVecS().x, getVecS().y, getVecS().z));
                 break;
             }
 
-            case ShaderUniformType::UniformVec4DS:
+            case ShaderUniformType::UniformVec4S32:
             {
                 MAZE_GL_CALL(mzglUniform4i((MZGLint)m_location, getVecS().x, getVecS().y, getVecS().z, getVecS().w));
                 break;
             }
 
 
-            case ShaderUniformType::UniformVec2DU:
+            case ShaderUniformType::UniformVec2U32:
             {
                 MAZE_GL_CALL(mzglUniform2ui((MZGLint)m_location, getVecU().x, getVecU().y));
                 break;
             }
 
-            case ShaderUniformType::UniformVec3DU:
+            case ShaderUniformType::UniformVec3U32:
             {
                 MAZE_GL_CALL(mzglUniform3ui((MZGLint)m_location, getVecU().x, getVecU().y, getVecU().z));
                 break;
             }
 
-            case ShaderUniformType::UniformVec4DU:
+            case ShaderUniformType::UniformVec4U32:
             {
                 MAZE_GL_CALL(mzglUniform4ui((MZGLint)m_location, getVecU().x, getVecU().y, getVecU().z, getVecU().w));
                 break;
             }
 
 
-            case ShaderUniformType::UniformVec2DB:
+            case ShaderUniformType::UniformVec2B:
             {
                 MAZE_GL_CALL(mzglUniform2i((MZGLint)m_location, (MZGLint)getVecB().x, (MZGLint)getVecB().y));
                 break;
             }
 
-            case ShaderUniformType::UniformVec3DB:
+            case ShaderUniformType::UniformVec3B:
             {
                 MAZE_GL_CALL(mzglUniform3i((MZGLint)m_location, (MZGLint)getVecB().x, (MZGLint)getVecB().y, (MZGLint)getVecB().z));
                 break;
             }
 
-            case ShaderUniformType::UniformVec4DB:
+            case ShaderUniformType::UniformVec4B:
             {
                 MAZE_GL_CALL(mzglUniform4i((MZGLint)m_location, (MZGLint)getVecB().x, (MZGLint)getVecB().y, (MZGLint)getVecB().z, (MZGLint)getVecB().w));
                 break;
             }
 
 
-            case ShaderUniformType::UniformMat3DF:
+            case ShaderUniformType::UniformMat3F32:
             {
-                MAZE_GL_CALL(mzglUniformMatrix3fv((MZGLint)m_location, 1, MAZE_GL_FALSE, getMat3DF().getPlaneMatrix()));
+                MAZE_GL_CALL(mzglUniformMatrix3fv((MZGLint)m_location, 1, MAZE_GL_FALSE, getMat3F32().getPlaneMatrix()));
                 break;
             }
 
-            case ShaderUniformType::UniformMat4DF:
+            case ShaderUniformType::UniformMat4F32:
             {
-                MAZE_GL_CALL(mzglUniformMatrix4fv((MZGLint)m_location, 1, MAZE_GL_FALSE, getMat4DF().getPlaneMatrix()));
+                MAZE_GL_CALL(mzglUniformMatrix4fv((MZGLint)m_location, 1, MAZE_GL_FALSE, getMat4F32().getPlaneMatrix()));
                 break;
             }
 
 
             case ShaderUniformType::UniformColorF128:
             {
-                MAZE_GL_CALL(mzglUniform4f((MZGLint)m_location, getVecF().x, getVecF().y, getVecF().z, getVecF().w));
+                MAZE_GL_CALL(mzglUniform4f((MZGLint)m_location, getVec4F32().x, getVec4F32().y, getVec4F32().z, getVec4F32().w));
                 break;
             }
 
@@ -271,85 +271,85 @@ namespace Maze
                 break;
             }
 
-            case ShaderUniformType::UniformVec2DF:
+            case ShaderUniformType::UniformVec2F32:
             {
                 
                 break;
             }
 
-            case ShaderUniformType::UniformVec3DF:
+            case ShaderUniformType::UniformVec3F32:
             {
                 
                 break;
             }
 
-            case ShaderUniformType::UniformVec4DF:
+            case ShaderUniformType::UniformVec4F32:
             {
                 
                 break;
             }
 
-            case ShaderUniformType::UniformVec2DS:
+            case ShaderUniformType::UniformVec2S32:
             {
                 
                 break;
             }
 
-            case ShaderUniformType::UniformVec3DS:
+            case ShaderUniformType::UniformVec3S32:
             {
                 
                 break;
             }
 
-            case ShaderUniformType::UniformVec4DS:
+            case ShaderUniformType::UniformVec4S32:
             {
                 
                 break;
             }
 
-            case ShaderUniformType::UniformVec2DU:
+            case ShaderUniformType::UniformVec2U32:
             {
                 
                 break;
             }
 
-            case ShaderUniformType::UniformVec3DU:
+            case ShaderUniformType::UniformVec3U32:
             {
                 
                 break;
             }
 
-            case ShaderUniformType::UniformVec4DU:
+            case ShaderUniformType::UniformVec4U32:
             {
                 
                 break;
             }
 
-            case ShaderUniformType::UniformVec2DB:
+            case ShaderUniformType::UniformVec2B:
             {
 
                 break;
             }
 
-            case ShaderUniformType::UniformVec3DB:
+            case ShaderUniformType::UniformVec3B:
             {
 
                 break;
             }
 
-            case ShaderUniformType::UniformVec4DB:
+            case ShaderUniformType::UniformVec4B:
             {
 
                 break;
             }
 
-            case ShaderUniformType::UniformMat3DF:
+            case ShaderUniformType::UniformMat3F32:
             {
                 
                 break;
             }
 
-            case ShaderUniformType::UniformMat4DF:
+            case ShaderUniformType::UniformMat4F32:
             {
                 
                 break;
@@ -375,31 +375,31 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ShaderUniformOpenGL::upload(Vec2DF const* _vectors, Size _count)
+    void ShaderUniformOpenGL::upload(Vec2F const* _vectors, Size _count)
     {
         MAZE_GL_CALL(mzglUniform2fv((MZGLint)m_location, (MZGLsizei)_count, (MZGLfloat const*)_vectors));
     }
 
     //////////////////////////////////////////
-    void ShaderUniformOpenGL::upload(Vec3DF const* _vectors, Size _count)
+    void ShaderUniformOpenGL::upload(Vec3F const* _vectors, Size _count)
     {
         MAZE_GL_CALL(mzglUniform3fv((MZGLint)m_location, (MZGLsizei)_count, (MZGLfloat const*)_vectors));
     }
 
     //////////////////////////////////////////
-    void ShaderUniformOpenGL::upload(Vec4DF const* _vectors, Size _count)
+    void ShaderUniformOpenGL::upload(Vec4F const* _vectors, Size _count)
     {
         MAZE_GL_CALL(mzglUniform4fv((MZGLint)m_location, (MZGLsizei)_count, (MZGLfloat const*)_vectors));
     }
 
     //////////////////////////////////////////
-    void ShaderUniformOpenGL::upload(Mat3DF const* _matrices, Size _count)
+    void ShaderUniformOpenGL::upload(Mat3F const* _matrices, Size _count)
     {
         MAZE_GL_CALL(mzglUniformMatrix3fv((MZGLint)m_location, (MZGLsizei)_count, MAZE_GL_FALSE, _matrices[0].getPlaneMatrix()));
     }
 
     //////////////////////////////////////////
-    void ShaderUniformOpenGL::upload(Mat4DF const* _matrices, Size _count)
+    void ShaderUniformOpenGL::upload(Mat4F const* _matrices, Size _count)
     {
         MAZE_GL_CALL(mzglUniformMatrix4fv((MZGLint)m_location, (MZGLsizei)_count, MAZE_GL_FALSE, _matrices[0].getPlaneMatrix()));
     }

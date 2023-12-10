@@ -145,9 +145,9 @@ namespace Maze
 
 
         m_transform = getEntityRaw()->ensureComponent<Transform2D>();
-        m_transform->setSize(Vec2DF(100, charSize));
-        m_transform->setAnchor(Vec2DF(0.0f, 1.0f));
-        m_transform->setPivot(Vec2DF(0.0f, 1.0f));
+        m_transform->setSize(Vec2F(100, charSize));
+        m_transform->setAnchor(Vec2F(0.0f, 1.0f));
+        m_transform->setPivot(Vec2F(0.0f, 1.0f));
 
         SizePolicy2DPtr sizePolicy = getEntityRaw()->ensureComponent<SizePolicy2D>();
         sizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
@@ -158,11 +158,11 @@ namespace Maze
 
         m_mainTransform = SpriteHelper::CreateTransform2D(
             m_transform->getSize(),
-            Vec2DF(10.0f, 0.0f),
+            Vec2F(10.0f, 0.0f),
             m_transform,
             getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         SizePolicy2DPtr mainLayoutSizePolicy = m_mainTransform->getEntityRaw()->ensureComponent<SizePolicy2D>();
         mainLayoutSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
         mainLayoutSizePolicy->setSizeDelta(-10.0f, 0.0f);
@@ -171,13 +171,13 @@ namespace Maze
 
         m_dropDownRenderer = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::DropDownButtonExpanded),
-            Vec2DF(charSize, charSize) * 1.5f,
-            Vec2DF(x, 0) + Vec2DF(charSize * 0.5f, -charSize * 0.5f + 0.5f),
+            Vec2F(charSize, charSize) * 1.5f,
+            Vec2F(x, 0) + Vec2F(charSize * 0.5f, -charSize * 0.5f + 0.5f),
             materialManager->getColorTextureMaterial(),
             m_mainTransform,
             getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.5f, 0.5f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.5f, 0.5f));
         m_dropDownRenderer->setColor(ColorU32::c_black);
         ClickButton2DPtr dropDownButton = m_dropDownRenderer->getEntityRaw()->ensureComponent<ClickButton2D>();
         dropDownButton->eventClick.subscribe(this, &AssetLine::notifyDropDownClick);
@@ -186,13 +186,13 @@ namespace Maze
 
         m_iconRenderer = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::TextFile),
-            Vec2DF(charSize, charSize) * 1.5f,
-            Vec2DF(x, 0) + Vec2DF(charSize, -charSize) * 0.5f,
+            Vec2F(charSize, charSize) * 1.5f,
+            Vec2F(x, 0) + Vec2F(charSize, -charSize) * 0.5f,
             materialManager->getColorTextureMaterial(),
             m_mainTransform,
             getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.5f, 0.5f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.5f, 0.5f));
         x += (F32)charSize + 4;
 
         String label = FileHelper::GetFileNameWithoutExtension(m_assetFile->getFileName());
@@ -201,22 +201,22 @@ namespace Maze
             charSize,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(100, charSize + 6),
-            Vec2DF(x, 0),
+            Vec2F(100, charSize + 6),
+            Vec2F(x, 0),
             m_mainTransform,
             getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF(0.0f, 0.5f));
+            Vec2F(0.0f, 0.5f),
+            Vec2F(0.0f, 0.5f));
         m_textRenderer->setColor(ColorU32::c_black);
 
         m_textEdit = SystemUIHelper::CreateDefaultEditBox(
             label.c_str(),
-            Vec2DF(200, (F32)charSize + 4.0f),
-            Vec2DF(x, 0),
+            Vec2F(200, (F32)charSize + 4.0f),
+            Vec2F(x, 0),
             m_mainTransform,
             getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF(0.0f, 0.5f));
+            Vec2F(0.0f, 0.5f),
+            Vec2F(0.0f, 0.5f));
         m_textEdit->eventSelectedChanged.subscribe(this, &AssetLine::notifyTextEditSelectedChanged);
         m_textEdit->eventTextInput.subscribe(this, &AssetLine::notifyTextEditInput);
         m_textEdit->getEntityRaw()->setActiveSelf(false);
@@ -230,12 +230,12 @@ namespace Maze
         m_childrenLayout = UIHelper::CreateVerticalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Top,
-            Vec2DF::c_zero,
-            Vec2DF(10.0f, 0.0f),
+            Vec2F::c_zero,
+            Vec2F(10.0f, 0.0f),
             m_transform,
             getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         m_childrenLayout->setSpacing(5.0f);
         m_childrenTransform = m_childrenLayout->getTransform();
 

@@ -101,7 +101,7 @@ namespace Maze
 
         if (childrenCount == 0)
         {
-            Vec2DF targetLayoutSize = m_transform->getSize();
+            Vec2F targetLayoutSize = m_transform->getSize();
 
             if (m_autoWidth)
                 targetLayoutSize.x = m_paddingLeft + m_paddingRight;
@@ -118,14 +118,14 @@ namespace Maze
 
         if (m_autoWidth || m_autoHeight)
         {
-            Vec2DF targetLayoutSize = m_transform->getSize();
+            Vec2F targetLayoutSize = m_transform->getSize();
 
             F32 totalWidth = 0.0f;
             F32 maxHeight = 0.0f;
             processChildren(
                 [&](Transform2D* _childTransform)
                 {
-                    Vec2DF const& childSize = _childTransform->getSize();
+                    Vec2F const& childSize = _childTransform->getSize();
                     totalWidth += childSize.x;
                     maxHeight = Math::Max(childSize.y, maxHeight);
                 });
@@ -141,7 +141,7 @@ namespace Maze
             m_transform->setSize(targetLayoutSize);
         }
 
-        Vec2DF const& layoutSize = m_transform->getSize();
+        Vec2F const& layoutSize = m_transform->getSize();
         F32 paddedWidth = layoutSize.x - m_paddingLeft - m_paddingRight;
         F32 paddedHeight = layoutSize.y - m_paddingBottom - m_paddingTop;
 
@@ -153,7 +153,7 @@ namespace Maze
         processChildren(
             [&](Transform2D* _childTransform)
             {
-                Vec2DF targetChildSize = _childTransform->getSize();
+                Vec2F targetChildSize = _childTransform->getSize();
 
                 if (m_controlChildWidth)
                     targetChildSize.x = (paddedWidth - spacing * (childrenCount - 1)) / childrenCount;
@@ -200,7 +200,7 @@ namespace Maze
                 _childTransform->setPivot(0.0f, 0.0f);
                 _childTransform->setAnchor(0.0f, 0.0f);
 
-                Vec2DF localPosition;
+                Vec2F localPosition;
 
                 localPosition.x = x;
                 x += _childTransform->getWidth() + spacing;
@@ -232,7 +232,7 @@ namespace Maze
                     }
                 }
 
-                _childTransform->setLocalPosition(Vec2DF(m_paddingLeft, m_paddingBottom) + localPosition);
+                _childTransform->setLocalPosition(Vec2F(m_paddingLeft, m_paddingBottom) + localPosition);
             });
 
         m_dirty = false;

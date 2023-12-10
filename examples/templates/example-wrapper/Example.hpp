@@ -87,9 +87,9 @@ namespace Maze
         Rect2DF const& getMainRenderWindowViewport() const { return m_mainRenderWindowViewport; }
 
         //////////////////////////////////////////
-        inline Vec2DU getMainRenderWindowAbsoluteSize()
+        inline Vec2U32 getMainRenderWindowAbsoluteSize()
         {
-            return Vec2DU(Vec2DF(getMainRenderWindow()->getRenderTargetSize()) * getMainRenderWindowViewport().size);
+            return Vec2U32(Vec2F32(getMainRenderWindow()->getRenderTargetSize()) * getMainRenderWindowViewport().size);
         }
 
 

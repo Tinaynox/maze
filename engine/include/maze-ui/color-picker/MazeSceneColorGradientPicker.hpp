@@ -145,7 +145,7 @@ namespace Maze
         void notifyColorSliderTagPressedChanged(Button2D* _button, bool _pressed);
 
         //////////////////////////////////////////
-        void notifyColorSliderTagCursorPressIn(Button2D* _button, Vec2DF const& _positionOS, CursorInputEvent const& _event);
+        void notifyColorSliderTagCursorPressIn(Button2D* _button, Vec2F const& _positionOS, CursorInputEvent const& _event);
 
         //////////////////////////////////////////
         void processAlphaColorSliderTagClick(Size _index, S32 _buttonId);
@@ -191,7 +191,7 @@ namespace Maze
         void notifyGradientClickButtonClick(Button2D* _button, CursorInputEvent const& _event);
 
         //////////////////////////////////////////
-        void notifyGradientClickButtonCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _event);
+        void notifyGradientClickButtonCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _event);
 
     protected:
         CanvasPtr m_canvas;
@@ -206,7 +206,7 @@ namespace Maze
         SpriteRenderer2DPtr m_gradientRendererHolder;
         SpriteRenderer2DPtr m_gradientRenderer;
         ClickButton2DPtr m_gradientClickButton;
-        Vec2DF m_gradientClickPosition = Vec2DF::c_zero;
+        Vec2F m_gradientClickPosition = Vec2F::c_zero;
 
         EntityPtr m_alphaHolder;
         Slider2DPtr m_alphaSlider;
@@ -225,7 +225,7 @@ namespace Maze
         Size m_colorTagIndex = -1;
         bool m_draggingTag = false;
 
-        Vec2DF m_draggingTagPrevCursorPositionGradientSpace = Vec2DF::c_zero;
+        Vec2F m_draggingTagPrevCursorPositionGradientSpace = Vec2F::c_zero;
         F32 m_draggingTagDistance = 0.0f;
     };
 

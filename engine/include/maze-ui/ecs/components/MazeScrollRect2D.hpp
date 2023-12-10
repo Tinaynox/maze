@@ -183,10 +183,10 @@ namespace Maze
         F32 getVerticalNormalizedPosition();
 
         //////////////////////////////////////////
-        void setNormalizedPosition(Vec2DF const& _value);
+        void setNormalizedPosition(Vec2F const& _value);
 
         //////////////////////////////////////////
-        Vec2DF getNormalizedPosition();
+        Vec2F getNormalizedPosition();
 
         //////////////////////////////////////////
         F32 getNormalizedPosition(Size _axis);
@@ -260,26 +260,26 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        inline Vec2DF const& getVelocity() const { return m_velocity; }
+        inline Vec2F const& getVelocity() const { return m_velocity; }
 
         //////////////////////////////////////////
-        inline void setVelocity(Vec2DF const& _value) { m_velocity = _value; }
+        inline void setVelocity(Vec2F const& _value) { m_velocity = _value; }
 
     public:
 
         //////////////////////////////////////////
-        MultiDelegate<ScrollRect2D*, Vec2DF> eventValueChanged;
+        MultiDelegate<ScrollRect2D*, Vec2F> eventValueChanged;
 
     public:
 
         //////////////////////////////////////////
-        static Vec2DF CalculateOffset(
+        static Vec2F CalculateOffset(
             AABB2D const& _boundsViewSpace,
             AABB2D const& _contentBoundsViewSpace,
             bool _horizontalScroll,
             bool _verticalScroll,
             ScrollRect2DMovementType _movementType,
-            Vec2DF const& _delta);
+            Vec2F const& _delta);
 
         //////////////////////////////////////////
         static bool UpdateOneScrollbarVisibility(
@@ -322,13 +322,13 @@ namespace Maze
         AABB2D calculateContentBounds();
 
         //////////////////////////////////////////
-        Vec2DF calculateOffset(Vec2DF const& _delta);
+        Vec2F calculateOffset(Vec2F const& _delta);
 
         //////////////////////////////////////////
         void updatePrevData();
 
         //////////////////////////////////////////
-        void updateScrollbars(Vec2DF const& _offset);
+        void updateScrollbars(Vec2F const& _offset);
 
         //////////////////////////////////////////
         bool updateScrollbarVisibility();
@@ -362,13 +362,13 @@ namespace Maze
         Scrollbar2DPtr m_verticalScrollbar;
 
     protected:
-        Vec2DF m_velocity;
+        Vec2F m_velocity;
 
         Transform2DPtr m_viewRectTransform;
         AABB2D m_boundsViewSpace;
         AABB2D m_contentBoundsViewSpace;
 
-        Vec2DF m_prevPosition;
+        Vec2F m_prevPosition;
         AABB2D m_prevBoundsViewSpace;
         AABB2D m_prevContentBoundsViewSpace;
 

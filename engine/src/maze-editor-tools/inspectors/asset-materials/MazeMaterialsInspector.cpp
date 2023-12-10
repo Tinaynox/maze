@@ -54,15 +54,15 @@
 #include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerS32.hpp"
 #include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerF32.hpp"
 #include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerF64.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec2DF.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec3DF.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec4DF.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec2DS.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec3DS.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec4DS.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec2DU.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec3DU.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec4DU.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec2F32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec3F32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec4F32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec2S32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec3S32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec4S32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec2U32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec3U32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec4U32.hpp"
 #include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerColorF128.hpp"
 #include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerTexture2D.hpp"
 
@@ -322,15 +322,15 @@ namespace Maze
                     case ShaderUniformType::UniformS32:          shaderUniformVariantDrawer = ShaderUniformVariantDrawerS32::Create(uniformName, shaderUniformType); break;
                     case ShaderUniformType::UniformF32:          shaderUniformVariantDrawer = ShaderUniformVariantDrawerF32::Create(uniformName, shaderUniformType); break;
                     case ShaderUniformType::UniformF64:          shaderUniformVariantDrawer = ShaderUniformVariantDrawerF64::Create(uniformName, shaderUniformType); break;
-                    case ShaderUniformType::UniformVec2DF:       shaderUniformVariantDrawer = ShaderUniformVariantDrawerVec2DF::Create(uniformName, shaderUniformType); break;
-                    case ShaderUniformType::UniformVec3DF:       shaderUniformVariantDrawer = ShaderUniformVariantDrawerVec3DF::Create(uniformName, shaderUniformType); break;
-                    case ShaderUniformType::UniformVec4DF:       shaderUniformVariantDrawer = ShaderUniformVariantDrawerVec4DF::Create(uniformName, shaderUniformType); break;
-                    case ShaderUniformType::UniformVec2DS:       shaderUniformVariantDrawer = ShaderUniformVariantDrawerVec2DS::Create(uniformName, shaderUniformType); break;
-                    case ShaderUniformType::UniformVec3DS:       shaderUniformVariantDrawer = ShaderUniformVariantDrawerVec3DS::Create(uniformName, shaderUniformType); break;
-                    case ShaderUniformType::UniformVec4DS:       shaderUniformVariantDrawer = ShaderUniformVariantDrawerVec4DS::Create(uniformName, shaderUniformType); break;
-                    case ShaderUniformType::UniformVec2DU:       shaderUniformVariantDrawer = ShaderUniformVariantDrawerVec2DU::Create(uniformName, shaderUniformType); break;
-                    case ShaderUniformType::UniformVec3DU:       shaderUniformVariantDrawer = ShaderUniformVariantDrawerVec3DU::Create(uniformName, shaderUniformType); break;
-                    case ShaderUniformType::UniformVec4DU:       shaderUniformVariantDrawer = ShaderUniformVariantDrawerVec4DU::Create(uniformName, shaderUniformType); break;
+                    case ShaderUniformType::UniformVec2F32:       shaderUniformVariantDrawer = ShaderUniformVariantDrawerVec2F32::Create(uniformName, shaderUniformType); break;
+                    case ShaderUniformType::UniformVec3F32:       shaderUniformVariantDrawer = ShaderUniformVariantDrawerVec3F32::Create(uniformName, shaderUniformType); break;
+                    case ShaderUniformType::UniformVec4F32:       shaderUniformVariantDrawer = ShaderUniformVariantDrawerVec4F32::Create(uniformName, shaderUniformType); break;
+                    case ShaderUniformType::UniformVec2S32:       shaderUniformVariantDrawer = ShaderUniformVariantDrawerVec2S32::Create(uniformName, shaderUniformType); break;
+                    case ShaderUniformType::UniformVec3S32:       shaderUniformVariantDrawer = ShaderUniformVariantDrawerVec3S32::Create(uniformName, shaderUniformType); break;
+                    case ShaderUniformType::UniformVec4S32:       shaderUniformVariantDrawer = ShaderUniformVariantDrawerVec4S32::Create(uniformName, shaderUniformType); break;
+                    case ShaderUniformType::UniformVec2U32:       shaderUniformVariantDrawer = ShaderUniformVariantDrawerVec2U32::Create(uniformName, shaderUniformType); break;
+                    case ShaderUniformType::UniformVec3U32:       shaderUniformVariantDrawer = ShaderUniformVariantDrawerVec3U32::Create(uniformName, shaderUniformType); break;
+                    case ShaderUniformType::UniformVec4U32:       shaderUniformVariantDrawer = ShaderUniformVariantDrawerVec4U32::Create(uniformName, shaderUniformType); break;
                     case ShaderUniformType::UniformColorF128:    shaderUniformVariantDrawer = ShaderUniformVariantDrawerColorF128::Create(uniformName, shaderUniformType); break;
                     case ShaderUniformType::UniformTexture2D:    shaderUniformVariantDrawer = ShaderUniformVariantDrawerTexture2D::Create(uniformName, shaderUniformType); break;
                     default: continue;
@@ -347,12 +347,12 @@ namespace Maze
         if (!m_shaderUniformVariantsDrawers.empty())
         {
             m_shaderUniformVariantsRoot = SpriteHelper::CreateTransform2D(
-                Vec2DF(m_parent->getWidth(), 0.0f),
-                Vec2DF::c_zero,
+                Vec2F(m_parent->getWidth(), 0.0f),
+                Vec2F::c_zero,
                 m_parent,
                 m_parent->getEntityRaw()->getECSScene(),
-                Vec2DF(0.0f, 1.0f),
-                Vec2DF(0.0f, 1.0f));
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 1.0f));
             SizePolicy2DPtr sizePolicy = m_shaderUniformVariantsRoot->getEntityRaw()->ensureComponent<SizePolicy2D>();
             sizePolicy->setFlag(SizePolicy2D::Height, false);
 
@@ -362,18 +362,18 @@ namespace Maze
 
             SpriteRenderer2DPtr lineRenderer = SpriteHelper::CreateSprite(
                 ColorU32(127, 127, 127),
-                Vec2DF(m_parent->getWidth(), 1),
-                Vec2DF(0, 0),
+                Vec2F(m_parent->getWidth(), 1),
+                Vec2F(0, 0),
                 renderSystem->getMaterialManager()->getColorMaterial(),
                 m_shaderUniformVariantsRoot,
                 m_shaderUniformVariantsRoot->getEntityRaw()->getECSScene(),
-                Vec2DF(0.0f, 1.0f),
-                Vec2DF(0.0f, 1.0f));
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 1.0f));
             lineRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
 
             m_shaderUniformVariantsLayout = SpriteHelper::CreateTransform2D(
-                Vec2DF(m_parent->getWidth() - 16.0f, 50.0f),
-                Vec2DF(8.0f, 0.0f),
+                Vec2F(m_parent->getWidth() - 16.0f, 50.0f),
+                Vec2F(8.0f, 0.0f),
                 m_shaderUniformVariantsRoot,
                 m_shaderUniformVariantsRoot->getEntityRaw()->getECSScene());
             SizePolicy2DPtr topBlockSizePolicy = m_shaderUniformVariantsLayout->getEntityRaw()->ensureComponent<SizePolicy2D>();
@@ -391,8 +391,8 @@ namespace Maze
                 8,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
-                Vec2DF(50.0f, 8.0f),
-                Vec2DF::c_zero,
+                Vec2F(50.0f, 8.0f),
+                Vec2F::c_zero,
                 m_shaderUniformVariantsLayout,
                 m_parent->getEntityRaw()->getECSScene())->setColor(ColorU32::c_black);
 
@@ -433,19 +433,19 @@ namespace Maze
                 String assetFileFullPath = assetFile->getFullPath();
 
                 m_saveMaterialButtonRoot = SpriteHelper::CreateTransform2D(
-                    Vec2DF(m_parent->getWidth(), 22.0f),
-                    Vec2DF::c_zero,
+                    Vec2F(m_parent->getWidth(), 22.0f),
+                    Vec2F::c_zero,
                     m_parent,
                     m_parent->getEntityRaw()->getECSScene(),
-                    Vec2DF(0.0f, 1.0f),
-                    Vec2DF(0.0f, 1.0f));
+                    Vec2F(0.0f, 1.0f),
+                    Vec2F(0.0f, 1.0f));
                 SizePolicy2DPtr sizePolicy = m_saveMaterialButtonRoot->getEntityRaw()->ensureComponent<SizePolicy2D>();
                 sizePolicy->setFlag(SizePolicy2D::Height, false);
 
                 ClickButton2DPtr button = UIHelper::CreateDefaultClickButton(
                     String("Save Asset File").c_str(),
-                    Vec2DF(250, 18),
-                    Vec2DF::c_zero,
+                    Vec2F(250, 18),
+                    Vec2F::c_zero,
                     m_saveMaterialButtonRoot,
                     m_parent->getEntityRaw()->getECSScene());
 

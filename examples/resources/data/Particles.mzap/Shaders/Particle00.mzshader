@@ -3,7 +3,7 @@
     <Feature name="MAZE_COLOR_STREAM" />
     <Feature name="MAZE_UV0_STREAM" />
     
-    <Uniform name="u_baseMapST" type="UniformVec4DF" value="1.0;1.0;0.0;0.0" />
+    <Uniform name="u_baseMapST" type="UniformVec4F32" value="1.0;1.0;0.0;0.0" />
     
     <GLSL shader="Particle00.mzglsl" />
 </Shader>

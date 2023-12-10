@@ -115,23 +115,23 @@ namespace Maze
         VerticalLayout2DPtr layout = UIHelper::CreateVerticalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(_parent->getWidth(), 18),
-            Vec2DF(0, 0),
+            Vec2F(_parent->getWidth(), 18),
+            Vec2F(0, 0),
             _parent,
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         layout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
 
         HorizontalLayout2DPtr titleLayout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(_parent->getWidth(), 18),
-            Vec2DF(0, 0),
+            Vec2F(_parent->getWidth(), 18),
+            Vec2F(0, 0),
             layout->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         titleLayout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
         titleLayout->setAutoWidth(false);
         titleLayout->setSpacing(4.0f);
@@ -140,13 +140,13 @@ namespace Maze
 
         m_expandButtonSprite = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::DropDownButtonExpanded),
-            Vec2DF(8, 8) * 1.75f,
-            Vec2DF(10, 1),
+            Vec2F(8, 8) * 1.75f,
+            Vec2F(10, 1),
             materialManager->getColorTextureMaterial(),
             titleLayout->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF(0.5f, 0.5f));
+            Vec2F(0.0f, 0.5f),
+            Vec2F(0.5f, 0.5f));
         m_expandButtonSprite->setColor(ColorU32::c_black);
         m_expandButton = m_expandButtonSprite->getEntityRaw()->ensureComponent<ClickButton2D>();
         m_expandButton->eventClick.subscribe(this, &MetaPropertyDrawerVector::notifyExpandButtonClick);
@@ -156,24 +156,24 @@ namespace Maze
             EditorToolsLayout::c_inspectorPropertyFontSize,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(8, 18),
-            Vec2DF(0, 0),
+            Vec2F(8, 18),
+            Vec2F(0, 0),
             titleLayout->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF::c_zero);
+            Vec2F(0.0f, 0.5f),
+            Vec2F::c_zero);
         systemText->setColor(EditorToolsLayout::c_inspectorPropertyColor);
 
 
         m_bodyLayout = UIHelper::CreateVerticalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(_parent->getWidth() - 20, 18),
-            Vec2DF(0, 0),
+            Vec2F(_parent->getWidth() - 20, 18),
+            Vec2F(0, 0),
             layout->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         m_bodyLayout->setPaddingLeft(20.0f);
         m_bodyLayout->setPaddingBottom(2.0f);
         m_bodyLayout->setAutoHeight(true);
@@ -188,12 +188,12 @@ namespace Maze
         m_itemsLayout = UIHelper::CreateVerticalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(m_bodyLayout->getTransform()->getWidth(), 18),
-            Vec2DF(0, 0),
+            Vec2F(m_bodyLayout->getTransform()->getWidth(), 18),
+            Vec2F(0, 0),
             m_bodyLayout->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         m_itemsLayout->setSpacing(2.0f);
         m_itemsLayout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
         

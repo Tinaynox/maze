@@ -190,7 +190,7 @@ namespace Maze
         // Camera
         EntityPtr cameraEntity = createEntity();
         m_camera3D = cameraEntity->createComponent<Camera3D>();
-        m_camera3D->getTransform()->setLocalPosition(Vec3DF(0.0f, 0.5f, -18.0f));
+        m_camera3D->getTransform()->setLocalPosition(Vec3F32(0.0f, 0.5f, -18.0f));
         m_camera3D->setFOV(Math::DegreesToRadians(30));
         
         m_camera3D->setRenderTarget(renderTarget);
@@ -221,8 +221,8 @@ namespace Maze
 
         SpriteRenderer2DPtr square = SpriteHelper::CreateSprite(
             ColorU32::c_gray,
-            Vec2DF(200.0f, 200.0f),
-            Vec2DF::c_zero,
+            Vec2F32(200.0f, 200.0f),
+            Vec2F32::c_zero,
             nullptr,
             m_canvas->getTransform(),
             this);
@@ -233,118 +233,118 @@ namespace Maze
             HorizontalAlignment2D::Center,
             VerticalAlignment2D::Middle,
             square->getTransform()->getSize(),
-            Vec2DF::c_zero,
+            Vec2F32::c_zero,
             square->getTransform(),
             this);
 
         m_lb = UIHelper::CreateDefaultClickButton(
             "",
-            Vec2DF(20.0f, 20.0f),
-            Vec2DF::c_zero,
+            Vec2F32(20.0f, 20.0f),
+            Vec2F32::c_zero,
             square->getTransform(),
             this,
-            Vec2DF(0.0f, 0.0f),
-            Vec2DF(1.0f, 1.0f));
+            Vec2F32(0.0f, 0.0f),
+            Vec2F32(1.0f, 1.0f));
         m_lb->eventClick.subscribe(this, &SceneSystemTextTest::notifyButtonClick);
 
         m_l = UIHelper::CreateDefaultClickButton(
             "",
-            Vec2DF(20.0f, 20.0f),
-            Vec2DF::c_zero,
+            Vec2F32(20.0f, 20.0f),
+            Vec2F32::c_zero,
             square->getTransform(),
             this,
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF(1.0f, 0.5f));
+            Vec2F32(0.0f, 0.5f),
+            Vec2F32(1.0f, 0.5f));
         m_l->eventClick.subscribe(this, &SceneSystemTextTest::notifyButtonClick);
 
         m_lt = UIHelper::CreateDefaultClickButton(
             "",
-            Vec2DF(20.0f, 20.0f),
-            Vec2DF::c_zero,
+            Vec2F32(20.0f, 20.0f),
+            Vec2F32::c_zero,
             square->getTransform(),
             this,
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(1.0f, 0.0f));
+            Vec2F32(0.0f, 1.0f),
+            Vec2F32(1.0f, 0.0f));
         m_lt->eventClick.subscribe(this, &SceneSystemTextTest::notifyButtonClick);
 
         m_t = UIHelper::CreateDefaultClickButton(
             "",
-            Vec2DF(20.0f, 20.0f),
-            Vec2DF::c_zero,
+            Vec2F32(20.0f, 20.0f),
+            Vec2F32::c_zero,
             square->getTransform(),
             this,
-            Vec2DF(0.5f, 1.0f),
-            Vec2DF(0.5f, 0.0f));
+            Vec2F32(0.5f, 1.0f),
+            Vec2F32(0.5f, 0.0f));
         m_t->eventClick.subscribe(this, &SceneSystemTextTest::notifyButtonClick);
 
         m_rt = UIHelper::CreateDefaultClickButton(
             "",
-            Vec2DF(20.0f, 20.0f),
-            Vec2DF::c_zero,
+            Vec2F32(20.0f, 20.0f),
+            Vec2F32::c_zero,
             square->getTransform(),
             this,
-            Vec2DF(1.0f, 1.0f),
-            Vec2DF(0.0f, 0.0f));
+            Vec2F32(1.0f, 1.0f),
+            Vec2F32(0.0f, 0.0f));
         m_rt->eventClick.subscribe(this, &SceneSystemTextTest::notifyButtonClick);
 
         m_r = UIHelper::CreateDefaultClickButton(
             "",
-            Vec2DF(20.0f, 20.0f),
-            Vec2DF::c_zero,
+            Vec2F32(20.0f, 20.0f),
+            Vec2F32::c_zero,
             square->getTransform(),
             this,
-            Vec2DF(1.0f, 0.5f),
-            Vec2DF(0.0f, 0.5f));
+            Vec2F32(1.0f, 0.5f),
+            Vec2F32(0.0f, 0.5f));
         m_r->eventClick.subscribe(this, &SceneSystemTextTest::notifyButtonClick);
 
         m_rb = UIHelper::CreateDefaultClickButton(
             "",
-            Vec2DF(20.0f, 20.0f),
-            Vec2DF::c_zero,
+            Vec2F32(20.0f, 20.0f),
+            Vec2F32::c_zero,
             square->getTransform(),
             this,
-            Vec2DF(1.0f, 0.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F32(1.0f, 0.0f),
+            Vec2F32(0.0f, 1.0f));
         m_rb->eventClick.subscribe(this, &SceneSystemTextTest::notifyButtonClick);
 
         m_b = UIHelper::CreateDefaultClickButton(
             "",
-            Vec2DF(20.0f, 20.0f),
-            Vec2DF::c_zero,
+            Vec2F32(20.0f, 20.0f),
+            Vec2F32::c_zero,
             square->getTransform(),
             this,
-            Vec2DF(0.5f, 0.0f),
-            Vec2DF(0.5f, 1.0f));
+            Vec2F32(0.5f, 0.0f),
+            Vec2F32(0.5f, 1.0f));
         m_b->eventClick.subscribe(this, &SceneSystemTextTest::notifyButtonClick);
 
         m_decreaseFont = UIHelper::CreateDefaultClickButton(
             "-",
-            Vec2DF(20.0f, 20.0f),
-            Vec2DF(-12.0f, -50.0f),
+            Vec2F32(20.0f, 20.0f),
+            Vec2F32(-12.0f, -50.0f),
             square->getTransform(),
             this,
-            Vec2DF(0.5f, 0.0f),
-            Vec2DF(0.5f, 1.0f));
+            Vec2F32(0.5f, 0.0f),
+            Vec2F32(0.5f, 1.0f));
         m_decreaseFont->eventClick.subscribe(this, &SceneSystemTextTest::notifyButtonClick);
 
         m_increaseFont = UIHelper::CreateDefaultClickButton(
             "+",
-            Vec2DF(20.0f, 20.0f),
-            Vec2DF(12.0f, -50.0f),
+            Vec2F32(20.0f, 20.0f),
+            Vec2F32(12.0f, -50.0f),
             square->getTransform(),
             this,
-            Vec2DF(0.5f, 0.0f),
-            Vec2DF(0.5f, 1.0f));
+            Vec2F32(0.5f, 0.0f),
+            Vec2F32(0.5f, 1.0f));
         m_increaseFont->eventClick.subscribe(this, &SceneSystemTextTest::notifyButtonClick);
 
         m_changeFont = UIHelper::CreateDefaultClickButton(
             "F",
-            Vec2DF(20.0f, 20.0f),
-            Vec2DF(40.0f, -50.0f),
+            Vec2F32(20.0f, 20.0f),
+            Vec2F32(40.0f, -50.0f),
             square->getTransform(),
             this,
-            Vec2DF(0.5f, 0.0f),
-            Vec2DF(0.5f, 1.0f));
+            Vec2F32(0.5f, 0.0f),
+            Vec2F32(0.5f, 1.0f));
         m_changeFont->eventClick.subscribe(this, &SceneSystemTextTest::notifyButtonClick);
     }
 

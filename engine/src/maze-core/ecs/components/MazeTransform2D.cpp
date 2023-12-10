@@ -40,12 +40,12 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Transform2D, Component,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2DF, localPosition, Vec2DF::c_zero, getLocalPosition, setLocalPosition),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F, localPosition, Vec2F::c_zero, getLocalPosition, setLocalPosition),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Rotation2D, localRotation, Rotation2D(), getLocalRotation, setLocalRotation),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2DF, localScale, Vec2DF::c_one, getLocalScale, setLocalScale),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2DF, pivot, Vec2DF(0.5f, 0.5f), getPivot, setPivot),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2DF, size, Vec2DF(100.0f, 100.0f), getSize, setSize),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2DF, anchor, Vec2DF(0.5f, 0.5f), getAnchor, setAnchor),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F, localScale, Vec2F::c_one, getLocalScale, setLocalScale),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F, pivot, Vec2F(0.5f, 0.5f), getPivot, setPivot),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F, size, Vec2F(100.0f, 100.0f), getSize, setSize),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F, anchor, Vec2F(0.5f, 0.5f), getAnchor, setAnchor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, z, 0, getZ, setZ),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, parent, ComponentPtr(), getParentComponent, setParent));
 
@@ -57,14 +57,14 @@ namespace Maze
 
     //////////////////////////////////////////
     Transform2D::Transform2D()
-        : m_localPosition(Vec2DF::c_zero)
-        , m_localScale(Vec2DF::c_one)
-        , m_pivot(Vec2DF(0.5f, 0.5f))
-        , m_size(Vec2DF(100.0f, 100.0f))
-        , m_anchor(Vec2DF(0.5f, 0.5f))
+        : m_localPosition(Vec2F::c_zero)
+        , m_localScale(Vec2F::c_one)
+        , m_pivot(Vec2F(0.5f, 0.5f))
+        , m_size(Vec2F(100.0f, 100.0f))
+        , m_anchor(Vec2F(0.5f, 0.5f))
         , m_flags(0)
-        , m_localTransform(Mat4DF::c_identity)
-        , m_worldTransform(Mat4DF::c_identity)
+        , m_localTransform(Mat4F::c_identity)
+        , m_worldTransform(Mat4F::c_identity)
         , m_z(0)
         , m_orderOfArrival(0)
     {
@@ -119,7 +119,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Transform2D::setLocalPosition(Vec2DF const& _localPosition)
+    void Transform2D::setLocalPosition(Vec2F const& _localPosition)
     {
         if (m_localPosition == _localPosition)
             return;
@@ -130,20 +130,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Transform2D::translate(Vec2DF const& _offset)
+    void Transform2D::translate(Vec2F const& _offset)
     {
         setLocalPosition(m_localPosition + _offset);
     }
 
     //////////////////////////////////////////
-    void Transform2D::calculateLocalCorners(Vec2DF _corners[4])
+    void Transform2D::calculateLocalCorners(Vec2F _corners[4])
     {
-        Vec2DF const& size = getSize();
-        Mat4DF const& localTransform = getLocalTransform();
-        Vec2DF lb = localTransform.transformAffine(Vec2DF::c_zero);
-        Vec2DF rb = localTransform.transformAffine(Vec2DF(size.x, 0.0f));
-        Vec2DF rt = localTransform.transformAffine(Vec2DF(size.x, size.y));
-        Vec2DF lt = localTransform.transformAffine(Vec2DF(0.0f, size.y));
+        Vec2F const& size = getSize();
+        Mat4F const& localTransform = getLocalTransform();
+        Vec2F lb = localTransform.transformAffine(Vec2F::c_zero);
+        Vec2F rb = localTransform.transformAffine(Vec2F(size.x, 0.0f));
+        Vec2F rt = localTransform.transformAffine(Vec2F(size.x, size.y));
+        Vec2F lt = localTransform.transformAffine(Vec2F(0.0f, size.y));
 
         _corners[0] = lb;
         _corners[1] = rb;
@@ -154,13 +154,13 @@ namespace Maze
     //////////////////////////////////////////
     AABB2D Transform2D::calculateLocalAABB()
     {
-        Vec2DF corners[4];
+        Vec2F corners[4];
         calculateLocalCorners(corners);
 
-        Vec2DF lb = corners[0];
-        Vec2DF rb = corners[1];
-        Vec2DF rt = corners[2];
-        Vec2DF lt = corners[3];
+        Vec2F lb = corners[0];
+        Vec2F rb = corners[1];
+        Vec2F rt = corners[2];
+        Vec2F lt = corners[3];
 
         F32 minX = Math::Min(lb.x, rb.x, rt.x, lt.x);
         F32 maxX = Math::Max(lb.x, rb.x, rt.x, lt.x);
@@ -171,14 +171,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Transform2D::calculateWorldCorners(Vec2DF _corners[4])
+    void Transform2D::calculateWorldCorners(Vec2F _corners[4])
     {
-        Vec2DF const& size = getSize();
-        Mat4DF const& worldTransform = getWorldTransform();
-        Vec2DF lb = worldTransform.transformAffine(Vec2DF::c_zero);
-        Vec2DF rb = worldTransform.transformAffine(Vec2DF(size.x, 0.0f));
-        Vec2DF rt = worldTransform.transformAffine(Vec2DF(size.x, size.y));
-        Vec2DF lt = worldTransform.transformAffine(Vec2DF(0.0f, size.y));
+        Vec2F const& size = getSize();
+        Mat4F const& worldTransform = getWorldTransform();
+        Vec2F lb = worldTransform.transformAffine(Vec2F::c_zero);
+        Vec2F rb = worldTransform.transformAffine(Vec2F(size.x, 0.0f));
+        Vec2F rt = worldTransform.transformAffine(Vec2F(size.x, size.y));
+        Vec2F lt = worldTransform.transformAffine(Vec2F(0.0f, size.y));
 
         _corners[0] = lb;
         _corners[1] = rb;
@@ -189,13 +189,13 @@ namespace Maze
     //////////////////////////////////////////
     AABB2D Transform2D::calculateWorldAABB()
     {
-        Vec2DF corners[4];
+        Vec2F corners[4];
         calculateWorldCorners(corners);
 
-        Vec2DF lb = corners[0];
-        Vec2DF rb = corners[1];
-        Vec2DF rt = corners[2];
-        Vec2DF lt = corners[3];
+        Vec2F lb = corners[0];
+        Vec2F rb = corners[1];
+        Vec2F rt = corners[2];
+        Vec2F lt = corners[3];
 
         F32 minX = Math::Min(lb.x, rb.x, rt.x, lt.x);
         F32 maxX = Math::Max(lb.x, rb.x, rt.x, lt.x);
@@ -206,7 +206,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Transform2D::setPivot(Vec2DF const& _pivot)
+    void Transform2D::setPivot(Vec2F const& _pivot)
     {
         if (m_pivot == _pivot)
             return;
@@ -217,7 +217,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Transform2D::setSize(Vec2DF const& _size)
+    void Transform2D::setSize(Vec2F const& _size)
     {
         if (m_size == _size)
             return;
@@ -230,7 +230,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Transform2D::setAnchor(Vec2DF const& _anchor)
+    void Transform2D::setAnchor(Vec2F const& _anchor)
     {
         if (m_anchor == _anchor)
             return;
@@ -252,7 +252,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Transform2D::setLocalScale(Vec2DF const& _localScale)
+    void Transform2D::setLocalScale(Vec2F const& _localScale)
     {
         if (m_localScale == _localScale)
             return;
@@ -263,7 +263,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Transform2D::setLocalTransform(Mat4DF const& _localTransform)
+    void Transform2D::setLocalTransform(Mat4F const& _localTransform)
     {
         if (m_localTransform == _localTransform)
             return;
@@ -279,7 +279,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Mat4DF const& Transform2D::getLocalTransform()
+    Mat4F const& Transform2D::getLocalTransform()
     {
         if (m_flags & Flags::LocalTransformDirty)
             return calculateLocalTransform();
@@ -288,9 +288,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Mat4DF const& Transform2D::calculateLocalTransform()
+    Mat4F const& Transform2D::calculateLocalTransform()
     {
-        m_localTransform = Mat4DF::CreateAffineTransformMatrix(
+        m_localTransform = Mat4F::CreateAffineTransformMatrix(
             m_localPosition,
             m_localRotation,
             m_localScale,
@@ -304,7 +304,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Mat4DF const& Transform2D::getWorldTransform()
+    Mat4F const& Transform2D::getWorldTransform()
     {
         if (m_flags & Flags::WorldTransformDirty)
             return calculateWorldTransform();
@@ -313,11 +313,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Mat4DF const& Transform2D::calculateWorldTransform()
+    Mat4F const& Transform2D::calculateWorldTransform()
     {
         if (m_parent)
         {
-            Mat4DF anchorMatrix = Mat4DF::CreateTranslationMatrix(m_parent->getSize() * getAnchor());
+            Mat4F anchorMatrix = Mat4F::CreateTranslationMatrix(m_parent->getSize() * getAnchor());
 
             m_parent->getWorldTransform().concatenateAffine(
                 anchorMatrix * getLocalTransform(),

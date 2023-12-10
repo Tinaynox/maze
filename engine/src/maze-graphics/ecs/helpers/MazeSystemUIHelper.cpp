@@ -57,12 +57,12 @@ namespace Maze
             U32 _fontSize,
             HorizontalAlignment2D _horizontalAlignment,
             VerticalAlignment2D _verticalAlignment,
-            Vec2DF const& _size, 
-            Vec2DF const& _position,
+            Vec2F const& _size, 
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor,
-            Vec2DF const& _pivot)
+            Vec2F const& _anchor,
+            Vec2F const& _pivot)
         {
             Maze::EntityPtr textRendererEntity = _ecsScene->createEntity();
             textRendererEntity->ensureComponent<Name>("Text");

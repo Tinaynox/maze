@@ -68,15 +68,15 @@ namespace Maze
         //////////////////////////////////////////
         EntityPtr CreateBox(
             ECSRenderScene* _scene,
-            Vec3DF const& _position,
-            Vec3DF const& _scale,
+            Vec3F32 const& _position,
+            Vec3F32 const& _scale,
             MaterialPtr const& _material = nullptr,
-            Vec2DF textureScale = Vec2DF::c_one);
+            Vec2F32 textureScale = Vec2F32::c_one);
 
         //////////////////////////////////////////
         void BuildSimpleLevel(
             ECSRenderScene* _scene,
-            Vec2DF const& _levelSize = Vec2DF(50.0f, 50.0f),
+            Vec2F32 const& _levelSize = Vec2F32(50.0f, 50.0f),
             SimpleLevelConfig config = SimpleLevelConfig());
 
     } // namespace ExampleHelper

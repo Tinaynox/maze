@@ -173,10 +173,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec2DU EditorWorkspaceManager::calculateWorkspaceRenderBuffer()
+    Vec2U32 EditorWorkspaceManager::calculateWorkspaceRenderBuffer()
     {
         Rect2DF mainCanvasViewport = EditorLayout::CalculateWorkViewport(EditorLayout::c_sceneViewport);
-        return Vec2DU(mainCanvasViewport.size * (Vec2DF)Editor::GetInstancePtr()->getMainRenderWindow()->getRenderTargetSize());
+        return Vec2U32(mainCanvasViewport.size * (Vec2F32)Editor::GetInstancePtr()->getMainRenderWindow()->getRenderTargetSize());
     }
 
     //////////////////////////////////////////

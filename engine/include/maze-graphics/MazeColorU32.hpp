@@ -37,8 +37,8 @@
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
-#include "maze-core/math/MazeVec4D.hpp"
+#include "maze-core/math/MazeVec3.hpp"
+#include "maze-core/math/MazeVec4.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
 
 
@@ -99,7 +99,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline ColorU32(Vec3DF const& _colorF32)
+        inline ColorU32(Vec3F const& _colorF32)
             : r(U8(_colorF32.x * 255.0f))
             , g(U8(_colorF32.y * 255.0f))
             , b(U8(_colorF32.z * 255.0f))
@@ -218,30 +218,30 @@ namespace Maze
         void setRGBA_U8(U32 _value);
 
         //////////////////////////////////////////
-        Vec3DF toVec3DF() const;
+        Vec3F toVec3F32() const;
 
         //////////////////////////////////////////
-        void setVec3DF(Vec3DF const& _vec);
+        void setVec3F32(Vec3F const& _vec);
 
         //////////////////////////////////////////
-        inline static ColorU32 FromVec3DF(Vec3DF const& _vec)
+        inline static ColorU32 FromVec3F32(Vec3F const& _vec)
         {
             ColorU32 color;
-            color.setVec3DF(_vec);
+            color.setVec3F32(_vec);
             return color;
         }
 
         //////////////////////////////////////////
-        Vec4DF toVec4DF() const;
+        Vec4F toVec4F32() const;
 
         //////////////////////////////////////////
-        void setVec4DF(Vec4DF const& _vec);
+        void setVec4F32(Vec4F const& _vec);
 
         //////////////////////////////////////////
-        inline static ColorU32 FromVec4DF(Vec4DF const& _vec)
+        inline static ColorU32 FromVec4F32(Vec4F const& _vec)
         {
             ColorU32 color;
-            color.setVec4DF(_vec);
+            color.setVec4F32(_vec);
             return color;
         }
 

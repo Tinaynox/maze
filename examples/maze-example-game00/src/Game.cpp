@@ -243,7 +243,7 @@ namespace Maze
         if (!m_playerManager)
             return false;
 
-        m_physics2DManager->getWorld()->setGravity(Vec2DF::c_zero);
+        m_physics2DManager->getWorld()->setGravity(Vec2F32::c_zero);
 
         processReadyToCreateWindowAndGoToSplash();
 
@@ -309,7 +309,7 @@ namespace Maze
     {
         RenderWindowParams params;
         params.windowParams = WindowParams::Create();
-        params.windowParams->clientSize = Vec2DU(1280, 800);
+        params.windowParams->clientSize = Vec2U32(1280, 800);
         params.windowParams->title = "Space Pressure 3D";
         params.windowParams->flags |= WindowStyleFlags::MinimizeButton;
         params.windowParams->flags |= WindowStyleFlags::MaximizeButton;

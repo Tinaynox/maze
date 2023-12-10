@@ -56,8 +56,8 @@ namespace Maze
         ClickButton2DPtr CreateDefaultGameClickButton(
             ECSRenderScene* _scene,
             Transform2DPtr const& _parent,
-            Vec2DF _position,
-            Vec2DF _size,
+            Vec2F32 _position,
+            Vec2F32 _size,
             String const& _label,
             Delegate<void, Button2D*, CursorInputEvent const&> _onClickDelegate);
 
@@ -65,8 +65,8 @@ namespace Maze
         ToggleButton2DPtr CreateDefaultGameToggleButton(
             ECSRenderScene* _scene,
             Transform2DPtr const& _parent,
-            Vec2DF _position,
-            Vec2DF _size,
+            Vec2F32 _position,
+            Vec2F32 _size,
             String const& _label,
             Delegate<void, Button2D*, CursorInputEvent const&> _onClickDelegate);
 

@@ -49,88 +49,88 @@ namespace Maze
     {
         //////////////////////////////////////////
         SubMeshPtr MAZE_GRAPHICS_API CreateQuadSubMesh(
-            Vec2DF const& _size = Vec2DF::c_one,
-            Vec2DF const& _positionShift = Vec2DF::c_zero,
+            Vec2F const& _size = Vec2F::c_one,
+            Vec2F const& _positionShift = Vec2F::c_zero,
             bool _frontFaceToForward = false,
-            Vec4DF const& _uv = Vec4DF(0.0f, 0.0f, 1.0f, 1.0f),
-            Vec4DF const& _color = Vec4DF::c_one);
+            Vec4F const& _uv = Vec4F(0.0f, 0.0f, 1.0f, 1.0f),
+            Vec4F const& _color = Vec4F::c_one);
 
         //////////////////////////////////////////
         MeshPtr MAZE_GRAPHICS_API CreateQuadMesh(
-            Vec2DF const& _size = Vec2DF::c_one,
-            Vec2DF const& _positionShift = Vec2DF::c_zero,
+            Vec2F const& _size = Vec2F::c_one,
+            Vec2F const& _positionShift = Vec2F::c_zero,
             bool _frontFaceToForward = false,
-            Vec4DF const& _uv = Vec4DF(0.0f, 0.0f, 1.0f, 1.0f),
-            Vec4DF const& _color = Vec4DF::c_one);
+            Vec4F const& _uv = Vec4F(0.0f, 0.0f, 1.0f, 1.0f),
+            Vec4F const& _color = Vec4F::c_one);
 
 
         //////////////////////////////////////////
         SubMeshPtr MAZE_GRAPHICS_API CreateSlicedPanelSubMesh(
-            Vec2DF const& _size = Vec2DF::c_one,
-            Vec2DF const& _positionShift = Vec2DF::c_zero,
+            Vec2F const& _size = Vec2F::c_one,
+            Vec2F const& _positionShift = Vec2F::c_zero,
             SpriteSliceBorder const& _sliceBorder = SpriteSliceBorder(),
-            Vec2DF const& _originalSize = Vec2DF::c_one,
-            Vec4DF const& _uv = Vec4DF(0.0f, 0.0f, 1.0f, 1.0f),
-            Vec4DF const& _color = Vec4DF::c_one);
+            Vec2F const& _originalSize = Vec2F::c_one,
+            Vec4F const& _uv = Vec4F(0.0f, 0.0f, 1.0f, 1.0f),
+            Vec4F const& _color = Vec4F::c_one);
 
         //////////////////////////////////////////
         MeshPtr MAZE_GRAPHICS_API CreateSlicedPanelMesh(
-            Vec2DF const& _size = Vec2DF::c_one,
-            Vec2DF const& _positionShift = Vec2DF::c_zero,
+            Vec2F const& _size = Vec2F::c_one,
+            Vec2F const& _positionShift = Vec2F::c_zero,
             SpriteSliceBorder const& _sliceBorder = SpriteSliceBorder(),
-            Vec2DF const& _originalSize = Vec2DF::c_one,
-            Vec4DF const& _uv = Vec4DF(0.0f, 0.0f, 1.0f, 1.0f),
-            Vec4DF const& _color = Vec4DF::c_one);
+            Vec2F const& _originalSize = Vec2F::c_one,
+            Vec4F const& _uv = Vec4F(0.0f, 0.0f, 1.0f, 1.0f),
+            Vec4F const& _color = Vec4F::c_one);
 
 
         //////////////////////////////////////////
         SubMeshPtr MAZE_GRAPHICS_API CreateCubeSubMesh(
-            Vec3DF const& _size = Vec3DF::c_one,
-            Vec4DF const& _color = Vec4DF::c_one);
+            Vec3F const& _size = Vec3F::c_one,
+            Vec4F const& _color = Vec4F::c_one);
 
         //////////////////////////////////////////
         MeshPtr MAZE_GRAPHICS_API CreateCubeMesh(
-            Vec3DF const& _size = Vec3DF::c_one,
-            Vec4DF const& _color = Vec4DF::c_one);
+            Vec3F const& _size = Vec3F::c_one,
+            Vec4F const& _color = Vec4F::c_one);
 
 
         //////////////////////////////////////////
         SubMeshPtr MAZE_GRAPHICS_API CreateSpherifiedCubeSubMesh(
             F32 _radius = 0.5f,
             U32 _quality = 3,
-            Vec4DF const& _color = Vec4DF::c_one);
+            Vec4F const& _color = Vec4F::c_one);
 
         //////////////////////////////////////////
         MeshPtr MAZE_GRAPHICS_API CreateSpherifiedCubeMesh(
             F32 _radius = 0.5f,
             U32 _quality = 3,
-            Vec4DF const& _color = Vec4DF::c_one);
+            Vec4F const& _color = Vec4F::c_one);
 
 
         //////////////////////////////////////////
         SubMeshPtr MAZE_GRAPHICS_API CreateConeSubMesh(
             F32 _radius = 0.5f,
             F32 _height = 1.0f,
-            Vec4DF const& _color = Vec4DF::c_one);
+            Vec4F const& _color = Vec4F::c_one);
 
         //////////////////////////////////////////
         MeshPtr MAZE_GRAPHICS_API CreateConeMesh(
             F32 _radius = 0.5f,
             F32 _height = 1.0f,
-            Vec4DF const& _color = Vec4DF::c_one);
+            Vec4F const& _color = Vec4F::c_one);
 
 
         //////////////////////////////////////////
         SubMeshPtr MAZE_GRAPHICS_API CreateCylinderSubMesh(
             F32 _radius = 0.5f,
             F32 _height = 1.0f,
-            Vec4DF const& _color = Vec4DF::c_one);
+            Vec4F const& _color = Vec4F::c_one);
 
         //////////////////////////////////////////
         MeshPtr MAZE_GRAPHICS_API CreateCylinderMesh(
             F32 _radius = 0.5f,
             F32 _height = 1.0f,
-            Vec4DF const& _color = Vec4DF::c_one);
+            Vec4F const& _color = Vec4F::c_one);
 
 
         //////////////////////////////////////////
@@ -139,7 +139,7 @@ namespace Maze
             F32 _csRadius = 0.1f,
             S32 _sides = 20,
             S32 _csSides = 20,
-            Vec4DF const& _color = Vec4DF::c_one);
+            Vec4F const& _color = Vec4F::c_one);
 
         //////////////////////////////////////////
         MeshPtr MAZE_GRAPHICS_API CreateTorusMesh(
@@ -147,7 +147,7 @@ namespace Maze
             F32 _csRadius = 0.1f,
             S32 _sides = 20,
             S32 _csSides = 20,
-            Vec4DF const& _color = Vec4DF::c_one);
+            Vec4F const& _color = Vec4F::c_one);
 
 
 

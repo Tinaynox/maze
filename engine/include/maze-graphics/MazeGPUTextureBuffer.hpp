@@ -61,7 +61,7 @@ namespace Maze
 
         //////////////////////////////////////////
         GPUTextureBuffer(
-            const Vec2DU& _size,
+            const Vec2U& _size,
             PixelFormat::Enum _pixelFormat,
             GPUByteBufferGateway* _gpuByteBufferGateway,
             Size _blockOffsetBytes,
@@ -80,7 +80,7 @@ namespace Maze
         Texture2DPtr const& getTexture() const { return m_texture; }
 
     protected:
-        Vec2DU m_size;
+        Vec2U m_size;
         PixelFormat::Enum m_pixelFormat;
 
         Texture2DPtr m_texture;

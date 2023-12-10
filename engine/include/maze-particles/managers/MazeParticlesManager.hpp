@@ -32,7 +32,7 @@
 //////////////////////////////////////////
 #include "maze-particles/MazeParticlesHeader.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 

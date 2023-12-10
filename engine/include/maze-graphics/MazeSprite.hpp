@@ -102,16 +102,16 @@ namespace Maze
         //////////////////////////////////////////
         static SpritePtr Create(
             Texture2DPtr const& _texture,
-            Vec2DF const& _colorPosition,
-            Vec2DF const& _colorSize,
-            Vec2DF const& _colorOffset,
-            Vec2DF const& _nativeSize = Vec2DF::c_zero);
+            Vec2F const& _colorPosition,
+            Vec2F const& _colorSize,
+            Vec2F const& _colorOffset,
+            Vec2F const& _nativeSize = Vec2F::c_zero);
 
         //////////////////////////////////////////
         static SpritePtr Create(
             Texture2DPtr const& _texture,
-            Vec2DF const& _nativePosition = Vec2DF::c_zero,
-            Vec2DF const& _nativeSize = Vec2DF::c_zero);
+            Vec2F const& _nativePosition = Vec2F::c_zero,
+            Vec2F const& _nativeSize = Vec2F::c_zero);
 
         //////////////////////////////////////////
         void set(Texture2DPtr const& _texture);
@@ -119,10 +119,10 @@ namespace Maze
         //////////////////////////////////////////
         void set(
             Texture2DPtr const& _texture,
-            Vec2DF const& _colorPosition,
-            Vec2DF const& _colorSize,
-            Vec2DF const& _colorOffset,
-            Vec2DF const& _nativeSize);
+            Vec2F const& _colorPosition,
+            Vec2F const& _colorSize,
+            Vec2F const& _colorOffset,
+            Vec2F const& _nativeSize);
 
 
         //////////////////////////////////////////
@@ -141,37 +141,37 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Vec2DF const& getColorOffset() const { return m_colorOffset; }
+        inline Vec2F const& getColorOffset() const { return m_colorOffset; }
 
 
         //////////////////////////////////////////
-        void setColorPosition(Vec2DF const& _colorPosition);
+        void setColorPosition(Vec2F const& _colorPosition);
 
         //////////////////////////////////////////
-        inline Vec2DF const& getColorPosition() const { return m_colorPosition; }
+        inline Vec2F const& getColorPosition() const { return m_colorPosition; }
 
         //////////////////////////////////////////
-        void setColorSize(Vec2DF const& _colorSize);
+        void setColorSize(Vec2F const& _colorSize);
 
         //////////////////////////////////////////
-        inline Vec2DF const& getColorSize() const { return m_colorSize; }
-
-
-        //////////////////////////////////////////
-        void setNativeSize(Vec2DF const& _nativeSize);
-
-        //////////////////////////////////////////
-        inline Vec2DF const& getNativeSize() const { return m_nativeSize; }
+        inline Vec2F const& getColorSize() const { return m_colorSize; }
 
 
         //////////////////////////////////////////
-        inline Vec2DF const& getTextureCoordLB() const { return m_textureCoordLB; }
+        void setNativeSize(Vec2F const& _nativeSize);
 
         //////////////////////////////////////////
-        inline Vec2DF const& getTextureCoordRT() const { return m_textureCoordRT; }
+        inline Vec2F const& getNativeSize() const { return m_nativeSize; }
+
 
         //////////////////////////////////////////
-        inline Vec2DF getTextureCoordSize() const { return m_textureCoordRT - m_textureCoordLB; }
+        inline Vec2F const& getTextureCoordLB() const { return m_textureCoordLB; }
+
+        //////////////////////////////////////////
+        inline Vec2F const& getTextureCoordRT() const { return m_textureCoordRT; }
+
+        //////////////////////////////////////////
+        inline Vec2F getTextureCoordSize() const { return m_textureCoordRT - m_textureCoordLB; }
 
 
         //////////////////////////////////////////
@@ -222,22 +222,22 @@ namespace Maze
         //////////////////////////////////////////
         bool init(
             Texture2DPtr const& _texture,
-            Vec2DF const& _colorPosition,
-            Vec2DF const& _colorSize,
-            Vec2DF const& _colorOffset,
-            Vec2DF const& _nativeSize);
+            Vec2F const& _colorPosition,
+            Vec2F const& _colorSize,
+            Vec2F const& _colorOffset,
+            Vec2F const& _nativeSize);
     
     protected:
         String m_name;
         Texture2DPtr m_texture;
 
-        Vec2DF m_colorOffset;
-        Vec2DF m_colorPosition;
-        Vec2DF m_colorSize;
-        Vec2DF m_nativeSize;
+        Vec2F m_colorOffset;
+        Vec2F m_colorPosition;
+        Vec2F m_colorSize;
+        Vec2F m_nativeSize;
 
-        Vec2DF m_textureCoordLB;
-        Vec2DF m_textureCoordRT;
+        Vec2F m_textureCoordLB;
+        Vec2F m_textureCoordRT;
 
         SpriteSliceBorder m_sliceBorder;
 

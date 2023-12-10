@@ -34,7 +34,7 @@
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
 
 
@@ -117,10 +117,10 @@ namespace Maze
         virtual void hideSystemCursor() {}
 
         //////////////////////////////////////////
-        virtual void setSystemCursorPosition(Vec2DF _posSystemScreen) {}
+        virtual void setSystemCursorPosition(Vec2F _posSystemScreen) {}
 
         //////////////////////////////////////////
-        virtual Vec2DF getSystemCursorPosition() { return Vec2DF::c_zero; }
+        virtual Vec2F getSystemCursorPosition() { return Vec2F::c_zero; }
 
 
         //////////////////////////////////////////

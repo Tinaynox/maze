@@ -104,7 +104,7 @@ namespace Maze
         //////////////////////////////////////////
         inline void setColor(ColorF128 const& _color)
         {
-            setColor(ColorGradient(0.0f, _color.toVec3DF()));
+            setColor(ColorGradient(0.0f, _color.toVec3F32()));
         }
 
         //////////////////////////////////////////
@@ -115,10 +115,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setPositions(Vector<Vec3DF> const& _positions) { m_positions = _positions; rebuildMesh(); }
+        inline void setPositions(Vector<Vec3F> const& _positions) { m_positions = _positions; rebuildMesh(); }
 
         //////////////////////////////////////////
-        inline Vector<Vec3DF> const& getPositions() const { return m_positions; }
+        inline Vector<Vec3F> const& getPositions() const { return m_positions; }
 
 
         //////////////////////////////////////////
@@ -178,11 +178,11 @@ namespace Maze
         VertexArrayObjectPtr m_vao;
         RenderMeshPtr m_renderMesh;
 
-        Vector<Vec3DF> m_positions;
+        Vector<Vec3F> m_positions;
 
-        FastVector<Vec3DF> m_vertices;
-        FastVector<Vec2DF> m_uvs;
-        FastVector<Vec4DF> m_colors;
+        FastVector<Vec3F> m_vertices;
+        FastVector<Vec2F> m_uvs;
+        FastVector<Vec4F> m_colors;
         FastVector<U32> m_indices;
     };
 

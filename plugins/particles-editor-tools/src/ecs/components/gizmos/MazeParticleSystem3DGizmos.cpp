@@ -114,13 +114,13 @@ namespace Maze
                 case ParticleSystemSimulationSpace::World:
                 {
                     _drawer->pushTransform(
-                        Mat4DF::CreateTranslationMatrix(transform3D->getWorldPosition()));
+                        Mat4F::CreateTranslationMatrix(transform3D->getWorldPosition()));
                     break;
                 }
                 default:
                 {
                     MAZE_NOT_IMPLEMENTED;
-                    _drawer->pushTransform(Mat4DF::c_identity);
+                    _drawer->pushTransform(Mat4F::c_identity);
                     break;
                 }
             }
@@ -135,10 +135,10 @@ namespace Maze
                 case ParticleSystem3DZoneType::Sphere:
                 {
                     _drawer->pushTransform(
-                        Mat4DF::CreateTranslationMatrix(zoneData.sphere.position) *
-                        Mat4DF::CreateScaleMatrix(zoneData.sphere.scale));
+                        Mat4F::CreateTranslationMatrix(zoneData.sphere.position) *
+                        Mat4F::CreateScaleMatrix(zoneData.sphere.scale));
                     _drawer->drawWireSphere(
-                        Vec3DF::c_zero,
+                        Vec3F::c_zero,
                         zoneData.sphere.radius,
                         color);
                     _drawer->popTransform();
@@ -147,11 +147,11 @@ namespace Maze
                 case ParticleSystem3DZoneType::Hemisphere:
                 {
                     _drawer->pushTransform(
-                        Mat4DF::CreateTranslationMatrix(zoneData.hemisphere.position) *
-                        Mat4DF::CreateScaleMatrix(zoneData.hemisphere.scale));
+                        Mat4F::CreateTranslationMatrix(zoneData.hemisphere.position) *
+                        Mat4F::CreateScaleMatrix(zoneData.hemisphere.scale));
                     _drawer->drawWireHemisphere(
-                        Vec3DF::c_zero,
-                        Vec3DF::c_unitZ,
+                        Vec3F::c_zero,
+                        Vec3F::c_unitZ,
                         zoneData.hemisphere.radius,
                         color);
                     _drawer->popTransform();
@@ -160,11 +160,11 @@ namespace Maze
                 case ParticleSystem3DZoneType::Cone:
                 {
                     _drawer->pushTransform(
-                        Mat4DF::CreateTranslationMatrix(zoneData.cone.position) *
-                        Mat4DF::CreateScaleMatrix(zoneData.cone.scale));
+                        Mat4F::CreateTranslationMatrix(zoneData.cone.position) *
+                        Mat4F::CreateScaleMatrix(zoneData.cone.scale));
                     _drawer->drawWireTruncatedCone(
-                        Vec3DF::c_zero,
-                        Vec3DF::c_unitZ * zoneData.cone.length,
+                        Vec3F::c_zero,
+                        Vec3F::c_unitZ * zoneData.cone.length,
                         zoneData.cone.radius,
                         zoneData.cone.angle,
                         color);
@@ -174,11 +174,11 @@ namespace Maze
                 case ParticleSystem3DZoneType::Torus:
                 {
                     _drawer->pushTransform(
-                        Mat4DF::CreateTranslationMatrix(zoneData.torus.position) *
-                        Mat4DF::CreateScaleMatrix(zoneData.torus.scale));
+                        Mat4F::CreateTranslationMatrix(zoneData.torus.position) *
+                        Mat4F::CreateScaleMatrix(zoneData.torus.scale));
                     _drawer->drawWireTorus(
-                        Vec3DF::c_zero,
-                        Vec3DF::c_unitZ,
+                        Vec3F::c_zero,
+                        Vec3F::c_unitZ,
                         zoneData.torus.radius,
                         zoneData.torus.torusRadius,
                         color,
@@ -186,9 +186,9 @@ namespace Maze
 
                     if (zoneData.torus.radiusThickness > 0.0f && zoneData.torus.radiusThickness < 1.0f)
                     {
-                        Vec3DF forward = Vec3DF::c_unitZ;
-                        Vec3DF up = forward.perpendicular();
-                        Vec3DF right = up.crossProduct(forward).normalizedCopy();
+                        Vec3F forward = Vec3F::c_unitZ;
+                        Vec3F up = forward.perpendicular();
+                        Vec3F right = up.crossProduct(forward).normalizedCopy();
 
                         F32 radiusThickness = zoneData.torus.torusRadius * (1.0f - zoneData.torus.radiusThickness);
 
@@ -214,8 +214,8 @@ namespace Maze
                 {
                     _drawer->drawWireCube(
                         zoneData.box.position,
-                        Vec3DF::c_unitZ,
-                        Vec3DF::c_unitY,
+                        Vec3F::c_unitZ,
+                        Vec3F::c_unitY,
                         zoneData.box.scale,
                         color);
 
@@ -224,12 +224,12 @@ namespace Maze
                 case ParticleSystem3DZoneType::Circle:
                 {
                     _drawer->pushTransform(
-                        Mat4DF::CreateTranslationMatrix(zoneData.circle.position) *
-                        Mat4DF::CreateScaleMatrix(zoneData.circle.scale));
+                        Mat4F::CreateTranslationMatrix(zoneData.circle.position) *
+                        Mat4F::CreateScaleMatrix(zoneData.circle.scale));
                     _drawer->setColor(color);
                     _drawer->drawWireCircle(
-                        Vec3DF::c_zero,
-                        Vec3DF::c_unitZ,
+                        Vec3F::c_zero,
+                        Vec3F::c_unitZ,
                         zoneData.circle.radius,
                         GizmosDrawer::MeshRenderMode::Opaque);
                     _drawer->popTransform();

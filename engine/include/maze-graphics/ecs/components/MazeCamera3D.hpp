@@ -173,16 +173,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        Vec2DF convertWorldCoordsToViewportCoords(Vec3DF const& _positionWS) const;
+        Vec2F convertWorldCoordsToViewportCoords(Vec3F const& _positionWS) const;
 
         //////////////////////////////////////////
-        Vec3DF convertViewportCoordsToWorldCoords(Vec2DF const& _positionV) const;
+        Vec3F convertViewportCoordsToWorldCoords(Vec2F const& _positionV) const;
 
         //////////////////////////////////////////
-        Ray convertViewportCoordsToRay(Vec2DF const& _positionV) const;
+        Ray convertViewportCoordsToRay(Vec2F const& _positionV) const;
 
         //////////////////////////////////////////
-        Mat4DF calculateProjectionMatrix(RenderTargetPtr const& _renderTarget) const;
+        Mat4F calculateProjectionMatrix(RenderTargetPtr const& _renderTarget) const;
 
     protected:
 

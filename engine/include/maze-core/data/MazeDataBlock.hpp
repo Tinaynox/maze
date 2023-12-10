@@ -48,14 +48,14 @@
 #include "maze-core/utils/MazeSharedCopyable.hpp"
 #include "maze-core/data/MazeByteBuffer.hpp"
 #include "maze-core/memory/MazeBlockMemoryAllocator.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
-#include "maze-core/math/MazeVec4D.hpp"
-#include "maze-core/math/MazeVec2DB.hpp"
-#include "maze-core/math/MazeVec3DB.hpp"
-#include "maze-core/math/MazeVec4DB.hpp"
-#include "maze-core/math/MazeMat3D.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
+#include "maze-core/math/MazeVec3.hpp"
+#include "maze-core/math/MazeVec4.hpp"
+#include "maze-core/math/MazeVec2B.hpp"
+#include "maze-core/math/MazeVec3B.hpp"
+#include "maze-core/math/MazeVec4B.hpp"
+#include "maze-core/math/MazeMat3.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/data/MazeHashedCString.hpp"
 #include "maze-core/utils/MazeClassInfo.hpp"
 
@@ -93,20 +93,20 @@ namespace Maze
         ParamF32,
         ParamF64,
         ParamBool,
-        ParamVec2DS,
-        ParamVec3DS,
-        ParamVec4DS,
-        ParamVec2DU,
-        ParamVec3DU,
-        ParamVec4DU,
-        ParamVec2DF,
-        ParamVec3DF,
-        ParamVec4DF,
-        ParamVec2DB,
-        ParamVec3DB,
-        ParamVec4DB,
-        ParamMat3DF,
-        ParamMat4DF,
+        ParamVec2S32,
+        ParamVec3S32,
+        ParamVec4S32,
+        ParamVec2U32,
+        ParamVec3U32,
+        ParamVec4U32,
+        ParamVec2F32,
+        ParamVec3F32,
+        ParamVec4F32,
+        ParamVec2B,
+        ParamVec3B,
+        ParamVec4B,
+        ParamMat3F32,
+        ParamMat4F32,
         ParamString,
         
         MAX
@@ -140,20 +140,20 @@ namespace Maze
         DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("F32"), sizeof(F32)),
         DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("F64"), sizeof(F64)),
         DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Bool"), sizeof(Bool)),
-        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec2DS"), sizeof(Vec2DS)),
-        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec3DS"), sizeof(Vec3DS)),
-        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec4DS"), sizeof(Vec4DS)),
-        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec2DU"), sizeof(Vec2DU)),
-        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec3DU"), sizeof(Vec3DU)),
-        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec4DU"), sizeof(Vec4DU)),
-        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec2DF"), sizeof(Vec2DF)),
-        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec3DF"), sizeof(Vec3DF)),
-        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec4DF"), sizeof(Vec4DF)),
-        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec2DB"), sizeof(Vec2DB)),
-        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec3DB"), sizeof(Vec3DB)),
-        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec4DB"), sizeof(Vec4DB)),
-        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Mat3DF"), sizeof(Mat3DF)),
-        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Mat4DF"), sizeof(Mat4DF)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec2S"), sizeof(Vec2S)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec3S"), sizeof(Vec3S)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec4S"), sizeof(Vec4S)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec2U"), sizeof(Vec2U)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec3U"), sizeof(Vec3U)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec4U"), sizeof(Vec4U)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec2F"), sizeof(Vec2F)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec3F"), sizeof(Vec3F)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec4F"), sizeof(Vec4F)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec2B"), sizeof(Vec2B)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec3B"), sizeof(Vec3B)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec4B"), sizeof(Vec4B)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Mat3F"), sizeof(Mat3F)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Mat4F"), sizeof(Mat4F)),
         DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("String"), 0u)
     };
 
@@ -404,20 +404,31 @@ namespace Maze
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(F32, F32);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(F64, F64);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(Bool, Bool);
-        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec2DS, Vec2DS);
-        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec3DS, Vec3DS);
-        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec4DS, Vec4DS);
-        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec2DU, Vec2DU);
-        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec3DU, Vec3DU);
-        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec4DU, Vec4DU);
-        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec2DF, Vec2DF);
-        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec3DF, Vec3DF);
-        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec4DF, Vec4DF);
-        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec2DB, Vec2DB);
-        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec3DB, Vec3DB);
-        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec4DB, Vec4DB);
-        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Mat3DF, Mat3DF);
-        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Mat4DF, Mat4DF);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec2S32, Vec2S32);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec2S, Vec2S);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec3S32, Vec3S32);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec3S, Vec3S);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec4S32, Vec4S32);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec4S, Vec4S);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec2U32, Vec2U32);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec2U, Vec2U);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec3U32, Vec3U32);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec3U, Vec3U);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec4U32, Vec4U32);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec4U, Vec4U);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec2F32, Vec2F32);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec2F, Vec2F);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec3F32, Vec3F32);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec3F, Vec3F);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec4F32, Vec4F32);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec4F, Vec4F);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec2B, Vec2B);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec3B, Vec3B);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec4B, Vec4B);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Mat3F32, Mat3F32);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Mat3F, Mat3F);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Mat4F32, Mat4F32);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Mat4F, Mat4F);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(CString, CString);
 
 #undef MAZE_DECLARE_DATA_BLOCK_GET_SET_API_BASE

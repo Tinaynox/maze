@@ -113,26 +113,26 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Vec2DF const& getEngineForce() const { return m_engineForce; }
+        inline Vec2F32 const& getEngineForce() const { return m_engineForce; }
 
         //////////////////////////////////////////
-        inline void setEngineForce(Vec2DF const& _engineForce) { m_engineForce = _engineForce; }
+        inline void setEngineForce(Vec2F32 const& _engineForce) { m_engineForce = _engineForce; }
 
         //////////////////////////////////////////
-        inline Vec2DF const& getThrottle() const { return m_throttle; }
+        inline Vec2F32 const& getThrottle() const { return m_throttle; }
 
         //////////////////////////////////////////
-        void setThrottle(Vec2DF const& _throttle) { m_throttle = _throttle; }
+        void setThrottle(Vec2F32 const& _throttle) { m_throttle = _throttle; }
 
 
         //////////////////////////////////////////
-        inline Vec2DF const& getWeaponPoint() const { return m_weaponPoint; }
+        inline Vec2F32 const& getWeaponPoint() const { return m_weaponPoint; }
 
         //////////////////////////////////////////
-        void setWeaponPoint(Vec2DF const& _weaponPoint) { m_weaponPoint = _weaponPoint; }
+        void setWeaponPoint(Vec2F32 const& _weaponPoint) { m_weaponPoint = _weaponPoint; }
 
         //////////////////////////////////////////
-        inline Vec2DF getWeaponPointDirected()
+        inline Vec2F32 getWeaponPointDirected()
         {
             switch (m_direction)
             {
@@ -143,11 +143,11 @@ namespace Maze
 
                 case SpaceObjectAvatarDirection::Left:
                 {
-                    return Vec2DF(-m_weaponPoint.x, m_weaponPoint.y);
+                    return Vec2F32(-m_weaponPoint.x, m_weaponPoint.y);
                 }
 
                 default:
-                    return Vec2DF::c_zero;
+                    return Vec2F32::c_zero;
             }
         }
 
@@ -295,10 +295,10 @@ namespace Maze
 
         F32 m_damage;
 
-        Vec2DF m_engineForce;
-        Vec2DF m_throttle;
+        Vec2F32 m_engineForce;
+        Vec2F32 m_throttle;
 
-        Vec2DF m_weaponPoint;
+        Vec2F32 m_weaponPoint;
 
         bool m_fire;
         F32 m_fireTimer;

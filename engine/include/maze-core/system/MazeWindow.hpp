@@ -33,7 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/system/MazeWindowVideoMode.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
 
 
@@ -96,7 +96,7 @@ namespace Maze
 
         //////////////////////////////////////////
         static WindowParamsPtr Create(
-            Vec2DU _clientSize = Vec2DU(640, 480),
+            Vec2U _clientSize = Vec2U(640, 480),
             U32 _bpp = 32,
             CString _windowTitle = "Window",
             WindowMode _windowMode = WindowMode::Windowed,
@@ -111,7 +111,7 @@ namespace Maze
 
     public:
 
-        Vec2DU clientSize;
+        Vec2U clientSize;
         U32 bpp;
         WindowMode windowMode;
 
@@ -129,7 +129,7 @@ namespace Maze
 
         //////////////////////////////////////////
         bool init(
-            Vec2DU _clientSize = Vec2DU(640, 480),
+            Vec2U _clientSize = Vec2U(640, 480),
             U32 _bpp = 32,
             CString _windowTitle = "Window",
             WindowMode _windowMode = WindowMode::Windowed,
@@ -196,19 +196,19 @@ namespace Maze
         virtual void maximizeFullscreen();
 
         //////////////////////////////////////////
-        virtual void setClientSize(Vec2DU const& _size) MAZE_ABSTRACT;
+        virtual void setClientSize(Vec2U const& _size) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual Vec2DU getClientSize() MAZE_ABSTRACT;
+        virtual Vec2U getClientSize() MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual Vec2DU getFullSize() MAZE_ABSTRACT;
+        virtual Vec2U getFullSize() MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual void setPosition(Vec2DS const& _position) MAZE_ABSTRACT;
+        virtual void setPosition(Vec2S const& _position) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual Vec2DS getPosition() MAZE_ABSTRACT;
+        virtual Vec2S getPosition() MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual void close() MAZE_ABSTRACT;
@@ -223,10 +223,10 @@ namespace Maze
         virtual DisplayPtr const& getRelatedDisplay() MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual Vec2DF convertSystemScreenCoordsToWindowCoords(Vec2DF const& _posDS) { return _posDS; }
+        virtual Vec2F convertSystemScreenCoordsToWindowCoords(Vec2F const& _posDS) { return _posDS; }
 
         //////////////////////////////////////////
-        virtual Vec2DF convertWindowCoordsToSystemScreenCoords(Vec2DF const& _posWS) { return _posWS; }
+        virtual Vec2F convertWindowCoordsToSystemScreenCoords(Vec2F const& _posWS) { return _posWS; }
 
     public:
 

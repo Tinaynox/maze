@@ -108,12 +108,12 @@ namespace Maze
         HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(_parent->getWidth(), 18),
-            Vec2DF(0, 0),
+            Vec2F(_parent->getWidth(), 18),
+            Vec2F(0, 0),
             _parent,
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         layout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
         layout->setAutoWidth(false);
         layout->setExpand(true);
@@ -123,32 +123,32 @@ namespace Maze
             EditorToolsLayout::c_inspectorPropertyFontSize,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(8, 18),
-            Vec2DF(0, 0),
+            Vec2F(8, 18),
+            Vec2F(0, 0),
             layout->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF::c_zero);
+            Vec2F(0.0f, 0.5f),
+            Vec2F::c_zero);
         systemText->setColor(EditorToolsLayout::c_inspectorPropertyColor);
 
 
         m_renderMeshButton = UIHelper::CreateClickButton(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Focused),
-            Vec2DF(180, 18),
-            Vec2DF::c_zero,
+            Vec2F(180, 18),
+            Vec2F::c_zero,
             layout->getTransform(),
             _parent->getEntityRaw()->getECSScene());
         m_renderMeshButton->eventClick.subscribe(this, &PropertyDrawerRenderMesh::notifyRenderMeshButtonClick);
 
         m_selectAssetButton = UIHelper::CreateClickButton(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::SelectAsset),
-            Vec2DF(18, 18),
-            Vec2DF(-9.0f, 0.0f),
+            Vec2F(18, 18),
+            Vec2F(-9.0f, 0.0f),
             m_renderMeshButton->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(1.0f, 0.5f),
-            Vec2DF(0.5f, 0.5f));
+            Vec2F(1.0f, 0.5f),
+            Vec2F(0.5f, 0.5f));
         m_selectAssetButton->setNormalColor({ 50, 50, 50 });
         m_selectAssetButton->setFocusedColor({ 100, 100, 100 });
         m_selectAssetButton->setSelectedColor({ 150, 150, 150 });
@@ -157,25 +157,25 @@ namespace Maze
 
         m_renderMeshIcon = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Mesh),
-            Vec2DF(12, 12),
-            Vec2DF(9.0f, 0.0f),
+            Vec2F(12, 12),
+            Vec2F(9.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_renderMeshButton->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF(0.5f, 0.5f));
+            Vec2F(0.0f, 0.5f),
+            Vec2F(0.5f, 0.5f));
 
         m_renderMeshNameDrawer = SystemUIHelper::CreateSystemText(
             "",
             8,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(160.0f, 0.0f),
-            Vec2DF(18.0f, 0.0f),
+            Vec2F(160.0f, 0.0f),
+            Vec2F(18.0f, 0.0f),
             m_renderMeshButton->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF(0.0f, 0.5f));
+            Vec2F(0.0f, 0.5f),
+            Vec2F(0.0f, 0.5f));
         m_renderMeshNameDrawer->setColor(ColorU32::c_black);
     }
 

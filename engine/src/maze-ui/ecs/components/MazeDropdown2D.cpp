@@ -124,7 +124,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Dropdown2D::notifyCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void Dropdown2D::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
     {
             
     }
@@ -162,7 +162,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Dropdown2D::notifyClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void Dropdown2D::notifyClick(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         eventClick(this, _inputEvent);
     }

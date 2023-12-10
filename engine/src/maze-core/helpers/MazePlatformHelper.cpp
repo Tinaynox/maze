@@ -29,9 +29,9 @@
 #include "maze-core/data/MazeByteBuffer.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-core/utils/MazeClassInfo.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
-#include "maze-core/math/MazeVec4D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
+#include "maze-core/math/MazeVec3.hpp"
+#include "maze-core/math/MazeVec4.hpp"
 #include "maze-core/math/MazeRotation2D.hpp"
 
 
@@ -120,18 +120,18 @@ namespace Maze
             MAZE_TEST_TYPE_SIZE(F64, 8);
 
         
-            MAZE_TEST_TYPE_SIZE(Vec2DF, 2 * 4);
-            MAZE_TEST_TYPE_SIZE(Vec2DS, 2 * 4);
-            MAZE_TEST_TYPE_SIZE(Vec2DU, 2 * 4);
+            MAZE_TEST_TYPE_SIZE(Vec2F, 2 * 4);
+            MAZE_TEST_TYPE_SIZE(Vec2S, 2 * 4);
+            MAZE_TEST_TYPE_SIZE(Vec2U, 2 * 4);
         
-            MAZE_TEST_TYPE_SIZE(Vec3DF, 3 * 4);
-            MAZE_TEST_TYPE_SIZE(Vec3DS, 3 * 4);
-            MAZE_TEST_TYPE_SIZE(Vec3DU, 3 * 4);
+            MAZE_TEST_TYPE_SIZE(Vec3F, 3 * 4);
+            MAZE_TEST_TYPE_SIZE(Vec3S, 3 * 4);
+            MAZE_TEST_TYPE_SIZE(Vec3U, 3 * 4);
         
         
-            MAZE_TEST_TYPE_SIZE(Vec4DF, 4 * 4);
-            MAZE_TEST_TYPE_SIZE(Vec4DS, 4 * 4);
-            MAZE_TEST_TYPE_SIZE(Vec4DU, 4 * 4);
+            MAZE_TEST_TYPE_SIZE(Vec4F, 4 * 4);
+            MAZE_TEST_TYPE_SIZE(Vec4S, 4 * 4);
+            MAZE_TEST_TYPE_SIZE(Vec4U, 4 * 4);
         
             return true;
         }

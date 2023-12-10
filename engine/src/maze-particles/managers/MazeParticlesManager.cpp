@@ -86,7 +86,7 @@ namespace Maze
 
         S32 const chunkSize = 32;
 
-        PixelSheet2D defaultParticleSheet(Vec2DS(1, 1) * chunkSize, PixelFormat::RGBA_U8);
+        PixelSheet2D defaultParticleSheet(Vec2S(1, 1) * chunkSize, PixelFormat::RGBA_U8);
         defaultParticleSheet.fill(ColorU32(255, 255, 255, 255));
 
         m_defaultParticleTexture = Texture2D::Create();
@@ -96,29 +96,29 @@ namespace Maze
 
         // Drop down button collapsed
         {
-            Vec2DS sheetPos(0, 0);
-            Vec2DS startPos = chunkSize * sheetPos;
+            Vec2S sheetPos(0, 0);
+            Vec2S startPos = chunkSize * sheetPos;
 
             for (S32 r = 0; r < chunkSize; ++r)
             {
                 for (S32 c = 0; c < chunkSize; ++c)
                 {
-                    Vec2DF toCenter(
+                    Vec2F toCenter(
                         chunkSize * 0.5f - (F32)c,
                         chunkSize * 0.5f - (F32)r);
 
                     F32 p = 1.0f - Math::Clamp01(toCenter.length() / (chunkSize * 0.5f));
 
                     defaultParticleSheet.setPixel(
-                        startPos + Vec2DS(c, r),
+                        startPos + Vec2S(c, r),
                         ColorU32(255, 255, 255, U8(255 * p)));
                 }
             }
             
             m_defaultParticleSprite = Sprite::Create(
                 m_defaultParticleTexture,
-                Vec2DF(startPos),
-                Vec2DF(chunkSize, chunkSize));
+                Vec2F(startPos),
+                Vec2F(chunkSize, chunkSize));
         }
 
         m_defaultParticleTexture->loadTexture(defaultParticleSheet);

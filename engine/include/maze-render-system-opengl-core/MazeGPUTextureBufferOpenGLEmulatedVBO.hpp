@@ -55,7 +55,7 @@ namespace Maze
 
         //////////////////////////////////////////
         GPUTextureBufferOpenGLEmulatedVBO(
-            Vec2DU const& _size,
+            Vec2U const& _size,
             PixelFormat::Enum _pixelFormat,
             GPUByteBufferGateway* _gpuByteBufferGateway,
             Size _blockOffsetBytes,

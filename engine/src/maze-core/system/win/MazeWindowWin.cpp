@@ -33,7 +33,7 @@
 #include "maze-core/managers/MazeWindowManager.hpp"
 #include "maze-core/helpers/win/MazeInputHelperWin.hpp"
 #include "maze-core/helpers/MazeWindowHelper.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 #include "maze-core/system/win/MazeSystemCursorWin.hpp"
 #include "maze-core/system/MazeDisplay.hpp"
 #include "maze-core/events/MazeSystemEvents.hpp"
@@ -707,7 +707,7 @@ namespace Maze
                     S32 width = GET_X_LPARAM(_lParam);
                     S32 height = GET_Y_LPARAM(_lParam);
 
-                    m_params->clientSize = Vec2DU(width, height);
+                    m_params->clientSize = Vec2U(width, height);
                 }
 
                 updateClientSize();
@@ -840,7 +840,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void WindowWin::setClientSize(Vec2DU const& _size)
+    void WindowWin::setClientSize(Vec2U const& _size)
     {
         m_params->clientSize = _size;
 
@@ -856,38 +856,38 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec2DU WindowWin::getClientSize()
+    Vec2U WindowWin::getClientSize()
     {
         RECT clientRC;
         ::GetClientRect((HWND)m_handle, &clientRC);    
-        Vec2DU size(clientRC.right - clientRC.left, clientRC.bottom - clientRC.top);
+        Vec2U size(clientRC.right - clientRC.left, clientRC.bottom - clientRC.top);
 
         return size;
     }
 
     //////////////////////////////////////////
-    Vec2DU WindowWin::getFullSize()
+    Vec2U WindowWin::getFullSize()
     {
         RECT clientRC;
         ::GetWindowRect((HWND)m_handle, &clientRC);    
-        Vec2DU size(clientRC.right - clientRC.left, clientRC.bottom - clientRC.top);
+        Vec2U size(clientRC.right - clientRC.left, clientRC.bottom - clientRC.top);
 
         return size;
     }
 
     //////////////////////////////////////////
-    void WindowWin::setPosition(Vec2DS const& _position)
+    void WindowWin::setPosition(Vec2S const& _position)
     {
         SetWindowPos((HWND)m_handle, 0, _position.x, _position.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
     }
 
     //////////////////////////////////////////
-    Vec2DS WindowWin::getPosition()
+    Vec2S WindowWin::getPosition()
     {
         RECT rc;
         GetWindowRect ((HWND)m_handle, &rc) ;
 
-        return Vec2DS(rc.left, rc.top);
+        return Vec2S(rc.left, rc.top);
     }
 
     //////////////////////////////////////////
@@ -1295,7 +1295,7 @@ namespace Maze
 
             // Get the current client rect
             ::GetClientRect((HWND)m_handle, &prevClientRC);
-            Vec2DU prevSize(prevClientRC.right - prevClientRC.left, prevClientRC.bottom - prevClientRC.top);
+            Vec2U prevSize(prevClientRC.right - prevClientRC.left, prevClientRC.bottom - prevClientRC.top);
             
             // Calculate difference between current client width
             int dx = (prevClientRC.right - prevClientRC.left) - m_params->clientSize.x; 
@@ -1312,7 +1312,7 @@ namespace Maze
             RECT clientRC;
             ::GetClientRect((HWND)m_handle, &clientRC);
             
-            Vec2DU newSize(clientRC.right - clientRC.left, clientRC.bottom - clientRC.top);
+            Vec2U newSize(clientRC.right - clientRC.left, clientRC.bottom - clientRC.top);
 
         }
     }
@@ -1345,7 +1345,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec2DF WindowWin::convertSystemScreenCoordsToWindowCoords(Vec2DF const& _posDS)
+    Vec2F WindowWin::convertSystemScreenCoordsToWindowCoords(Vec2F const& _posDS)
     {
         POINT pos = { (LONG)_posDS.x, (LONG)_posDS.y };
         ScreenToClient((HWND)m_handle, &pos);
@@ -1353,11 +1353,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec2DF WindowWin::convertWindowCoordsToSystemScreenCoords(Vec2DF const& _posWS)
+    Vec2F WindowWin::convertWindowCoordsToSystemScreenCoords(Vec2F const& _posWS)
     {
         POINT pos = { (LONG)_posWS.x, (LONG)getClientSize().y - (LONG)_posWS.y };
         ClientToScreen((HWND)m_handle, &pos);
-        return Vec2DF((F32)pos.x, (F32)pos.y);
+        return Vec2F((F32)pos.x, (F32)pos.y);
     }
 
 } // namespace Maze

@@ -38,9 +38,9 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Transform3D, Component,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, localPosition, Vec3DF::c_zero, getLocalPosition, setLocalPosition),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3F, localPosition, Vec3F::c_zero, getLocalPosition, setLocalPosition),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Quaternion, localRotation, Quaternion(), getLocalRotation, setLocalRotation),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, localScale, Vec3DF::c_one, getLocalScale, setLocalScale),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3F, localScale, Vec3F::c_one, getLocalScale, setLocalScale),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ComponentPtr, parent, ComponentPtr(), getParentComponent, setParent));
 
     //////////////////////////////////////////
@@ -48,12 +48,12 @@ namespace Maze
 
     //////////////////////////////////////////
     Transform3D::Transform3D()
-        : m_localPosition(Vec3DF::c_zero)
+        : m_localPosition(Vec3F::c_zero)
         , m_localRotation(Quaternion::c_identity)
-        , m_localScale(Vec3DF::c_one)
+        , m_localScale(Vec3F::c_one)
         , m_flags(0)
-        , m_localTransform(Mat4DF::c_identity)
-        , m_worldTransform(Mat4DF::c_identity)
+        , m_localTransform(Mat4F::c_identity)
+        , m_worldTransform(Mat4F::c_identity)
     {
     }
 
@@ -103,7 +103,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Transform3D::setLocalPosition(Vec3DF const& _localPosition)
+    void Transform3D::setLocalPosition(Vec3F const& _localPosition)
     {
         if (m_localPosition == _localPosition)
             return;
@@ -114,13 +114,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Transform3D::translate(Vec3DF const& _offset)
+    void Transform3D::translate(Vec3F const& _offset)
     {
         setLocalPosition(m_localPosition + _offset);
     }
 
     //////////////////////////////////////////
-    void Transform3D::translate(Vec2DF const& _offset)
+    void Transform3D::translate(Vec2F const& _offset)
     {
         setLocalPosition(m_localPosition + _offset);
     }
@@ -137,13 +137,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Transform3D::setLocalDirection(Vec3DF const& _localDirection)
+    void Transform3D::setLocalDirection(Vec3F const& _localDirection)
     {
-        setLocalRotation(Quaternion(Vec3DF::c_unitZ, _localDirection));
+        setLocalRotation(Quaternion(Vec3F::c_unitZ, _localDirection));
     }
 
     //////////////////////////////////////////
-    void Transform3D::setLocalScale(Vec3DF const& _localScale)
+    void Transform3D::setLocalScale(Vec3F const& _localScale)
     {
         if (m_localScale == _localScale)
             return;
@@ -154,13 +154,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Transform3D::rotate(Vec3DF const& _axis, F32 _angle)
+    void Transform3D::rotate(Vec3F const& _axis, F32 _angle)
     {
         setLocalRotation(getLocalRotation() * Quaternion(_angle, _axis));
     }
 
     //////////////////////////////////////////
-    void Transform3D::setLocalTransform(Mat4DF const& _localTransform)
+    void Transform3D::setLocalTransform(Mat4F const& _localTransform)
     {
         if (m_localTransform == _localTransform)
             return;
@@ -168,8 +168,8 @@ namespace Maze
         m_localTransform = _localTransform;
 
         m_localPosition = m_localTransform.getAffineTranslation();
-        //Vec3DF eulerAngles = m_localTransform.getAffineRotationEulerAngles();
-        Vec3DF eulerAngles = Quaternion::GetEuler(m_localTransform);
+        //Vec3F eulerAngles = m_localTransform.getAffineRotationEulerAngles();
+        Vec3F eulerAngles = Quaternion::GetEuler(m_localTransform);
         m_localRotation.setEulerAngles(eulerAngles);
         m_localScale = m_localTransform.getAffineScaleSignless();  // #TODO: Signed scale
 
@@ -178,7 +178,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Mat4DF const& Transform3D::getLocalTransform()
+    Mat4F const& Transform3D::getLocalTransform()
     {
         if (m_flags & Flags::LocalTransformDirty)
             return calculateLocalTransform();
@@ -187,15 +187,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Mat4DF const& Transform3D::calculateLocalTransform()
+    Mat4F const& Transform3D::calculateLocalTransform()
     {
-        Mat4DF rotationMatrix;
+        Mat4F rotationMatrix;
         m_localRotation.toRotationMatrix(rotationMatrix);
 
         m_localTransform = 
-            Mat4DF::CreateTranslationMatrix(m_localPosition) *
+            Mat4F::CreateTranslationMatrix(m_localPosition) *
             rotationMatrix *
-            Mat4DF::CreateScaleMatrix(m_localScale);
+            Mat4F::CreateScaleMatrix(m_localScale);
 
         m_flags &= ~Flags::LocalTransformDirty;
         m_flags |= Flags::WorldTransformDirty;
@@ -204,7 +204,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Mat4DF const& Transform3D::getWorldTransform()
+    Mat4F const& Transform3D::getWorldTransform()
     {
         if (m_flags & Flags::WorldTransformDirty)
             return calculateWorldTransform();
@@ -213,11 +213,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Transform3D::setWorldTransform(Mat4DF const& _transform)
+    void Transform3D::setWorldTransform(Mat4F const& _transform)
     {
         if (m_parent)
         {
-            Mat4DF localTransform = m_parent->getWorldTransform().inversedAffineCopy() * _transform;
+            Mat4F localTransform = m_parent->getWorldTransform().inversedAffineCopy() * _transform;
             setLocalTransform(localTransform);
         }
         else
@@ -227,7 +227,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Mat4DF const& Transform3D::calculateWorldTransform()
+    Mat4F const& Transform3D::calculateWorldTransform()
     {
         if (m_parent)
             m_parent->getWorldTransform().concatenateAffine(getLocalTransform(), m_worldTransform);
@@ -249,7 +249,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec3DF Transform3D::getWorldScale() const
+    Vec3F Transform3D::getWorldScale() const
     {
         if (m_parent)
             return m_localScale * m_parent->getWorldScale();
@@ -414,7 +414,7 @@ namespace Maze
     //////////////////////////////////////////
     void Transform3D::resetTransform()
     {
-        setLocalTransform(Mat4DF::c_identity);
+        setLocalTransform(Mat4F::c_identity);
     }
     
     

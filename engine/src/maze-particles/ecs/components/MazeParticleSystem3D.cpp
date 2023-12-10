@@ -135,12 +135,12 @@ namespace Maze
         {
             aliveCount = updateEmitter(
                 _dt,
-                Vec3DF::c_zero);
+                Vec3F::c_zero);
         }
     }
 
     //////////////////////////////////////////
-    S32 ParticleSystem3D::updateEmitter(F32 _dt, const Vec3DF& _position)
+    S32 ParticleSystem3D::updateEmitter(F32 _dt, const Vec3F& _position)
     {
         bool iterationFinished;
         updateTime(_dt, iterationFinished);
@@ -175,7 +175,7 @@ namespace Maze
                     maxCountToEmit -= _emissionCount;
                 };
 
-                auto emit = [&](S32 _emissionCount, Vec3DF _spawnPosition)
+                auto emit = [&](S32 _emissionCount, Vec3F _spawnPosition)
                 {
                     m_particles.addAliveCount(_emissionCount);
 
@@ -192,7 +192,7 @@ namespace Maze
                 m_mainModule.getEmission().emissionPerDistance.sample(particleSeed, iterationProgress, emissionPerLength);
                 if (emissionPerLength > 0.0f)
                 {
-                    Vec3DF posWS = m_transform->getWorldPosition();
+                    Vec3F posWS = m_transform->getWorldPosition();
                     if (m_emissionPerDistancePreviousPositionWSDirty)
                     {
                         m_emissionPerDistancePreviousPositionWSDirty = false;
@@ -200,18 +200,18 @@ namespace Maze
                     }
                     else
                     {
-                        Vec3DF toPosWS = posWS - m_emissionPerDistancePreviousPositionWS;
+                        Vec3F toPosWS = posWS - m_emissionPerDistancePreviousPositionWS;
                         F32 distanceOffsetSq = toPosWS.squaredLength();
                         if (distanceOffsetSq > 0.0f)
                         {
                             F32 distanceOffset = Math::Sqrt(distanceOffsetSq);
-                            Vec3DF toPosWSDir = toPosWS / distanceOffset;
+                            Vec3F toPosWSDir = toPosWS / distanceOffset;
                             if (distanceOffset > emissionPerLength)
                             {
                                 emissionCount = Math::Min(S32(distanceOffset / emissionPerLength), maxCountToEmit);
                                 if (emissionCount > 0)
                                 {
-                                    Vec3DF offsetPerEmission = emissionPerLength * toPosWSDir;
+                                    Vec3F offsetPerEmission = emissionPerLength * toPosWSDir;
 
                                     if (ParticleSystemSimulationSpace::World == m_mainModule.getTransformPolicy())
                                     {
@@ -315,7 +315,7 @@ namespace Maze
     void ParticleSystem3D::emitParticles(
         S32 _first,
         S32 _last,
-        Vec3DF const& _emitterPosition,
+        Vec3F const& _emitterPosition,
         F32 _emitterTimePercent)
     {
         m_particles.clearData(_first, _last);
@@ -372,9 +372,9 @@ namespace Maze
 
     //////////////////////////////////////////
     void ParticleSystem3D::prepareToRender(
-        Vec3DF const& _cameraPosition,
-        Vec3DF const& _cameraForward,
-        Vec3DF const& _cameraUp)
+        Vec3F const& _cameraPosition,
+        Vec3F const& _cameraForward,
+        Vec3F const& _cameraUp)
     {
         m_rendererModule.prepareToRender(
             m_particles,

@@ -37,7 +37,7 @@
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-editor-tools/gizmo-tools/MazeGizmoTool.hpp"
 
 
@@ -64,10 +64,10 @@ namespace Maze
         static GizmoToolScalePtr Create();
 
         //////////////////////////////////////////
-        virtual void manipulate(Set<EntityPtr> const& _entities, Vec2DF const& _cursorPos) MAZE_OVERRIDE;
+        virtual void manipulate(Set<EntityPtr> const& _entities, Vec2F const& _cursorPos) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void processCursorPress(Vec2DF const& _cursorPos) MAZE_OVERRIDE;
+        virtual void processCursorPress(Vec2F const& _cursorPos) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual void processCursorRelease() MAZE_OVERRIDE;
@@ -81,16 +81,16 @@ namespace Maze
         GizmoToolScale() = default;
 
         //////////////////////////////////////////
-        Vec3DF getWorldAxis(S32 _axis);
+        Vec3F getWorldAxis(S32 _axis);
 
     protected:
         S32 m_selectedAxis = -1;
         S32 m_usingAxis = -1;
 
         bool m_useRequest = false;
-        Vec3DF m_startScale = Vec3DF::c_zero;
-        Mat4DF m_startTransform = Mat4DF::c_identity;
-        Vec3DF m_startPoint = Vec3DF::c_zero;
+        Vec3F m_startScale = Vec3F::c_zero;
+        Mat4F m_startTransform = Mat4F::c_identity;
+        Vec3F m_startPoint = Vec3F::c_zero;
         F32 m_deltaLength = 0.0f;
     };
 

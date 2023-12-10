@@ -119,7 +119,7 @@ namespace Maze
         texture->setName("ttf_texture");
         texture->setMinFilter(TextureFilter::Linear);
         texture->setMagFilter(TextureFilter::Linear);
-        texture->loadFromBuffer(byteBuffer, PixelFormat::RGBA_U8, Vec2DU((U32)size, (U32)size), PixelFormat::RGBA_U8);
+        texture->loadFromBuffer(byteBuffer, PixelFormat::RGBA_U8, Vec2U((U32)size, (U32)size), PixelFormat::RGBA_U8);
         Debug::Log("TTFPage: Texture created.");
     }
 

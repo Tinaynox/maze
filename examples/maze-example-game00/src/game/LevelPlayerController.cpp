@@ -132,7 +132,7 @@ namespace Maze
     void LevelPlayerController::update(F32 _dt)
     {
         PlayerGamepadPtr const&  playerGamepad = PlayerManager::GetInstancePtr()->getPlayer(0)->getPlayerGamepad();
-        Vec2DF moveAxis = playerGamepad->getMoveAxis();
+        Vec2F32 moveAxis = playerGamepad->getMoveAxis();
 
         if (m_spaceObject)
         {
@@ -187,7 +187,7 @@ namespace Maze
     //////////////////////////////////////////
     void LevelPlayerController::notifyFixedUpdate(F32 _dt)
     {
-        Vec2DF const spaceshipBorder(1.0f, 0.5f);
+        Vec2F32 const spaceshipBorder(1.0f, 0.5f);
 
         Rect2DF const& gameplayBounds = m_sceneGame->getGameplayBounds();
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Material>
     <ShaderUniformVariant name="u_baseMap" type="UniformTexture2D" value="" />
-    <ShaderUniformVariant name="u_color" type="UniformVec4DF" value="1.0;1.0;1.0;1.0" />
+    <ShaderUniformVariant name="u_color" type="UniformVec4F32" value="1.0;1.0;1.0;1.0" />
     <RenderPass 
         passType="Default"
         renderQueueIndex="3000"

@@ -41,13 +41,13 @@ namespace Maze
     //////////////////////////////////////////
     inline ColorGradient::ColorGradient(
         F32 _time0,
-        Vec4DF const& _color0)
+        Vec4F const& _color0)
     {
         addKey(_time0, _color0);
     }
 
     //////////////////////////////////////////
-    inline ColorGradient::ColorGradient(Vec4DF const& _color0)
+    inline ColorGradient::ColorGradient(Vec4F const& _color0)
     {
         addKey(0.0f, _color0);
     }
@@ -55,19 +55,19 @@ namespace Maze
     //////////////////////////////////////////
     inline ColorGradient::ColorGradient(
         F32 _time0,
-        Vec4DF const& _color0,
+        Vec4F const& _color0,
         F32 _time1,
-        Vec4DF const& _color1)
+        Vec4F const& _color1)
     {
         addKey(_time0, _color0);
         addKey(_time1, _color1);
     }
 
     //////////////////////////////////////////
-    inline Vec3DF ColorGradient::evaluateRGB(F32 _time) const
+    inline Vec3F ColorGradient::evaluateRGB(F32 _time) const
     {
         if (m_keyframesRGB.empty())
-            return Vec3DF::c_one;
+            return Vec3F::c_one;
 
         if (_time < m_keyframesRGB.front().time)
             return m_keyframesRGB.front().value;
@@ -116,7 +116,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    inline Vec4DF ColorGradient::evaluate(F32 _time) const
+    inline Vec4F ColorGradient::evaluate(F32 _time) const
     {
         return 
             {
@@ -156,7 +156,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    inline Vec3DF ColorGradient::evaluateRGBFixed(
+    inline Vec3F ColorGradient::evaluateRGBFixed(
         ColorGradient::KeyframeRGB const& _keyframe0,
         ColorGradient::KeyframeRGB const& _keyframe1,
         F32 _time) const
@@ -165,7 +165,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    inline Vec3DF ColorGradient::evaluateRGBLinear(
+    inline Vec3F ColorGradient::evaluateRGBLinear(
         ColorGradient::KeyframeRGB const& _keyframe0,
         ColorGradient::KeyframeRGB const& _keyframe1,
         F32 _time) const

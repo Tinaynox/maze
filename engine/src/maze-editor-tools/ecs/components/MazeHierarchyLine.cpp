@@ -134,21 +134,21 @@ namespace Maze
         S32 const charSize = 8;
 
         m_transform = getEntityRaw()->ensureComponent<Transform2D>();
-        m_transform->setSize(Vec2DF(100, charSize));
-        m_transform->setAnchor(Vec2DF(0.0f, 1.0f));
-        m_transform->setPivot(Vec2DF(0.0f, 1.0f));
+        m_transform->setSize(Vec2F(100, charSize));
+        m_transform->setAnchor(Vec2F(0.0f, 1.0f));
+        m_transform->setPivot(Vec2F(0.0f, 1.0f));
 
         F32 x = 0;
 
         m_dropDownRenderer = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::DropDownButtonExpanded),
-            Vec2DF(charSize, charSize) * 1.5f,
-            Vec2DF(x, 0) + Vec2DF(charSize * 0.5f, -charSize * 0.5f + 0.5f),
+            Vec2F(charSize, charSize) * 1.5f,
+            Vec2F(x, 0) + Vec2F(charSize * 0.5f, -charSize * 0.5f + 0.5f),
             materialManager->getColorTextureMaterial(),
             m_transform,
             getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.5f, 0.5f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.5f, 0.5f));
         m_dropDownRenderer->setColor(ColorU32::c_black);
         ClickButton2DPtr dropDownButton = m_dropDownRenderer->getEntityRaw()->ensureComponent<ClickButton2D>();
         dropDownButton->eventClick.subscribe(this, &HierarchyLine::notifyDropDownClick);
@@ -159,13 +159,13 @@ namespace Maze
         {
             m_iconRenderer = SpriteHelper::CreateSprite(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::EntityObject3D),
-                Vec2DF(charSize, charSize) * 1.5f,
-                Vec2DF(x, 0) + Vec2DF(charSize, -charSize) * 0.5f,
+                Vec2F(charSize, charSize) * 1.5f,
+                Vec2F(x, 0) + Vec2F(charSize, -charSize) * 0.5f,
                 materialManager->getColorTextureMaterial(),
                 m_transform,
                 getEntityRaw()->getECSScene(),
-                Vec2DF(0.0f, 1.0f),
-                Vec2DF(0.5f, 0.5f));
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.5f, 0.5f));
             m_iconRenderer->setColor(ColorU32::c_black);
             x += (F32)charSize + 4;
         }
@@ -174,13 +174,13 @@ namespace Maze
         {
             m_iconRenderer = SpriteHelper::CreateSprite(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Scene),
-                Vec2DF(charSize, charSize) * 1.5f,
-                Vec2DF(x, 0) + Vec2DF(charSize, -charSize) * 0.5f,
+                Vec2F(charSize, charSize) * 1.5f,
+                Vec2F(x, 0) + Vec2F(charSize, -charSize) * 0.5f,
                 materialManager->getColorTextureMaterial(),
                 m_transform,
                 getEntityRaw()->getECSScene(),
-                Vec2DF(0.0f, 1.0f),
-                Vec2DF(0.5f, 0.5f));
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.5f, 0.5f));
             m_iconRenderer->setColor(ColorU32::c_black);
             x += (F32)charSize + 4;
         }
@@ -192,12 +192,12 @@ namespace Maze
             charSize,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(100, charSize + 6),
-            Vec2DF(x, 0),            
+            Vec2F(100, charSize + 6),
+            Vec2F(x, 0),            
             m_transform,
             getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF(0.0f, 0.5f));
+            Vec2F(0.0f, 0.5f),
+            Vec2F(0.0f, 0.5f));
         m_textRenderer->setColor(ColorU32::c_black);
         ClickButton2DPtr textButton = m_textRenderer->getEntityRaw()->ensureComponent<ClickButton2D>();
         textButton->eventClick.subscribe(this, &HierarchyLine::notifyLineClick);

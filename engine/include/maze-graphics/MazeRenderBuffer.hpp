@@ -41,11 +41,11 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/utils/MazeSharedCopyable.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
-#include "maze-core/math/MazeVec4D.hpp"
-#include "maze-core/math/MazeMat3D.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
+#include "maze-core/math/MazeVec3.hpp"
+#include "maze-core/math/MazeVec4.hpp"
+#include "maze-core/math/MazeMat3.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/hash/MazeHashSuperFast.hpp"
 #include <functional>
 
@@ -110,11 +110,11 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual Vec2DU getRenderTargetSize() const MAZE_OVERRIDE { return getSize(); }
+        virtual Vec2U getRenderTargetSize() const MAZE_OVERRIDE { return getSize(); }
 
 
         //////////////////////////////////////////
-        inline Vec2DU const& getSize() const { return m_size; }
+        inline Vec2U const& getSize() const { return m_size; }
 
         //////////////////////////////////////////
         inline U32 getWidth() const { return m_size.x; }
@@ -124,7 +124,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual bool setSize(Vec2DU const& _size);
+        virtual bool setSize(Vec2U const& _size);
 
         
         //////////////////////////////////////////
@@ -175,7 +175,7 @@ namespace Maze
 
     protected:
 
-        Vec2DU m_size;
+        Vec2U m_size;
         TexturePtr m_colorTextures[c_renderBufferColorTexturesMax];
         TexturePtr m_depthTexture;
         TexturePtr m_stencilTexture;

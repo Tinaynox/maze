@@ -37,7 +37,7 @@
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
 #include "maze-editor-tools/gizmo-tools/MazeGizmoTool.hpp"
 
@@ -65,10 +65,10 @@ namespace Maze
         static GizmoToolRotationPtr Create();
 
         //////////////////////////////////////////
-        virtual void manipulate(Set<EntityPtr> const& _entities, Vec2DF const& _cursorPos) MAZE_OVERRIDE;
+        virtual void manipulate(Set<EntityPtr> const& _entities, Vec2F const& _cursorPos) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void processCursorPress(Vec2DF const& _cursorPos) MAZE_OVERRIDE;
+        virtual void processCursorPress(Vec2F const& _cursorPos) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual void processCursorRelease() MAZE_OVERRIDE;
@@ -82,16 +82,16 @@ namespace Maze
         GizmoToolRotation() = default;
 
         //////////////////////////////////////////
-        Vec3DF getWorldAxis(S32 _axis);
+        Vec3F getWorldAxis(S32 _axis);
 
     protected:
         S32 m_selectedAxis = -1;
         S32 m_usingAxis = -1;
 
         bool m_useRequest = false;
-        Quaternion m_startRotation = Vec3DF::c_zero;
-        Vec3DF m_startAxis = Vec3DF::c_zero;
-        Vec3DF m_startVector = Vec3DF::c_zero;
+        Quaternion m_startRotation = Vec3F::c_zero;
+        Vec3F m_startAxis = Vec3F::c_zero;
+        Vec3F m_startVector = Vec3F::c_zero;
     };
 
 

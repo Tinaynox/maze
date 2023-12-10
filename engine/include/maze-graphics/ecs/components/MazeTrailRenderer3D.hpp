@@ -76,15 +76,15 @@ namespace Maze
             //////////////////////////////////////////
             TrailEdge(
                 F32 _time,
-                Vec3DF const& _position)
+                Vec3F const& _position)
                 : time(_time)
                 , position(_position)
 
             { }
 
             F32 time;
-            Vec3DF position;
-            Vec3DF direction = Vec3DF::c_zero;
+            Vec3F position;
+            Vec3F direction = Vec3F::c_zero;
             F32 halfWidth = 0.0f;
             F32 distanceToNextEdge = 0.0f;
         };
@@ -123,13 +123,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setColor(Vec4DF const& _color) { setColor(ColorGradient(_color)); }
+        inline void setColor(Vec4F const& _color) { setColor(ColorGradient(_color)); }
 
         //////////////////////////////////////////
-        inline void setColor(ColorU32 const& _color) { setColor(ColorGradient(_color.toVec4DF())); }
+        inline void setColor(ColorU32 const& _color) { setColor(ColorGradient(_color.toVec4F32())); }
 
         //////////////////////////////////////////
-        inline void setColor(ColorF128 const& _color) { setColor(ColorGradient(_color.toVec4DF())); }
+        inline void setColor(ColorF128 const& _color) { setColor(ColorGradient(_color.toVec4F32())); }
 
         //////////////////////////////////////////
         inline void setColor(ColorGradient const& _color) { m_color = _color; }
@@ -174,7 +174,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Vec3DF const& getWorldPosition()
+        inline Vec3F const& getWorldPosition()
         {
             return m_edges.back().position;
         }
@@ -203,7 +203,7 @@ namespace Maze
         //////////////////////////////////////////
         void addEdge(
             F32 _time,
-            Vec3DF const& _position);
+            Vec3F const& _position);
 
         //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
@@ -240,9 +240,9 @@ namespace Maze
         F32 m_timer = 0.0f;
 
         Deque<TrailEdge> m_edges;
-        FastVector<Vec3DF> m_vertices;
-        FastVector<Vec2DF> m_uvs;
-        FastVector<Vec4DF> m_colors;
+        FastVector<Vec3F> m_vertices;
+        FastVector<Vec2F> m_uvs;
+        FastVector<Vec4F> m_colors;
         FastVector<U32> m_indices;
     };
 

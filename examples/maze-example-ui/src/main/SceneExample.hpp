@@ -105,7 +105,7 @@ namespace Maze
             Transform2DPtr const& _parent);
 
         //////////////////////////////////////////
-        Transform2DPtr const& createVec3DFEdit(
+        Transform2DPtr const& createVec3F32Edit(
             CString _name,
             Transform2DPtr const& _parent);
 

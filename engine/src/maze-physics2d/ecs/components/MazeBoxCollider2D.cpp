@@ -39,8 +39,8 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(BoxCollider2D, Collider2D,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2DF, offset, Vec2DF::c_zero, getOffset, setOffset),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2DF, size, Vec2DF::c_one, getSize, setSize));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F, offset, Vec2F::c_zero, getOffset, setOffset),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F, size, Vec2F::c_one, getSize, setSize));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(BoxCollider2D);
@@ -48,8 +48,8 @@ namespace Maze
 
     //////////////////////////////////////////
     BoxCollider2D::BoxCollider2D()
-        : m_offset(Vec2DF::c_zero)
-        , m_size(Vec2DF::c_one)
+        : m_offset(Vec2F::c_zero)
+        , m_size(Vec2F::c_one)
     {
 
     }

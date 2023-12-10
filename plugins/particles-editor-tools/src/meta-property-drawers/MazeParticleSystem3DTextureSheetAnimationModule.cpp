@@ -111,7 +111,7 @@ namespace Maze
         m_enabledDrawer = PropertyDrawerBool::Create("Texture Sheet Animation");
         m_enabledDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DTextureSheetAnimationModule::processDataFromUI);
 
-        m_tilesDrawer = PropertyDrawerVec2DS::Create("Tiles");
+        m_tilesDrawer = PropertyDrawerVec2S32::Create("Tiles");
         m_tilesDrawer->eventUIData.subscribe(this, &MetaPropertyDrawerParticleSystem3DTextureSheetAnimationModule::processDataFromUI);
 
         m_startFrameDrawer = PropertyDrawerParticleSystemParameterF32Positive::Create("Start Frame");
@@ -132,8 +132,8 @@ namespace Maze
 
         SpriteRenderer2DPtr sprite = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
-            Vec2DF(_parent->getWidth(), 18),
-            Vec2DF::c_zero,
+            Vec2F(_parent->getWidth(), 18),
+            Vec2F::c_zero,
             renderSystem->getMaterialManager()->getColorTextureMaterial(),
             _parent,
             _parent->getEntity()->getECSScene());
@@ -148,12 +148,12 @@ namespace Maze
         VerticalLayout2DPtr verticalLayout = UIHelper::CreateVerticalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(sprite->getTransform()->getWidth() - 8, sprite->getTransform()->getHeight() - 8),
-            Vec2DF(4, 4),
+            Vec2F(sprite->getTransform()->getWidth() - 8, sprite->getTransform()->getHeight() - 8),
+            Vec2F(4, 4),
             sprite->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         SizePolicy2DPtr sizePolicy = verticalLayout->getEntityRaw()->ensureComponent<SizePolicy2D>();
         sizePolicy->setSizeDelta(-8, -8);
         sizePolicy->setFlag(SizePolicy2D::Flags::Height, false);

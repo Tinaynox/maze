@@ -34,7 +34,7 @@
 #include "maze-physics2d/helpers/MazeBox2DHelper.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 #include "maze-physics2d/physics/MazePhysicsWorld2D.hpp"
 #include <box2d/box2d.h>
 
@@ -270,16 +270,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Vec2DF getPosition() const
+        inline Vec2F getPosition() const
         {
             if (!m_body)
-                return Vec2DF::c_zero;
+                return Vec2F::c_zero;
 
-            return m_world->convertMetersToUnits(Box2DHelper::ToVec2DF(m_body->GetPosition()));
+            return m_world->convertMetersToUnits(Box2DHelper::ToVec2F32(m_body->GetPosition()));
         }
 
         //////////////////////////////////////////
-        inline void setPosition(Vec2DF const& _position, bool _resetStartPosition = true)
+        inline void setPosition(Vec2F const& _position, bool _resetStartPosition = true)
         {
             if (!m_body)
                 return;
@@ -322,7 +322,7 @@ namespace Maze
          
 
         //////////////////////////////////////////
-        Vec2DF const& getFixedUpdateStartPosition() const { return m_fixedUpdateStartPosition; }
+        Vec2F const& getFixedUpdateStartPosition() const { return m_fixedUpdateStartPosition; }
 
         //////////////////////////////////////////
         F32 getFixedUpdateStartAngle() const { return m_fixedUpdateStartAngle; }
@@ -339,7 +339,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void applyImpulse(Vec2DF const& _impulse, bool _multiplyMass = true)
+        void applyImpulse(Vec2F const& _impulse, bool _multiplyMass = true)
         {
             if (!m_body)
             {
@@ -359,7 +359,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        void applyForce(Vec2DF const& _force, bool _multiplyMass = true)
+        void applyForce(Vec2F const& _force, bool _multiplyMass = true)
         {
             if (!m_body)
             {
@@ -379,7 +379,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline void setVelocity(Vec2DF const& _velocity)
+        inline void setVelocity(Vec2F const& _velocity)
         {
             if (!m_body)
             {
@@ -393,13 +393,13 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline Vec2DF getVelocity()
+        inline Vec2F getVelocity()
         {
             if (!m_body)
-                return Vec2DF::c_zero;
+                return Vec2F::c_zero;
 
             return m_world->convertMetersToUnits(
-                Box2DHelper::ToVec2DF(
+                Box2DHelper::ToVec2F32(
                     m_body->GetLinearVelocity()));
         }
 
@@ -476,7 +476,7 @@ namespace Maze
         Transform2DPtr m_transform2D;
         Transform3DPtr m_transform3D;
 
-        Vec2DF m_fixedUpdateStartPosition;
+        Vec2F m_fixedUpdateStartPosition;
         F32 m_fixedUpdateStartAngle;
     };
 

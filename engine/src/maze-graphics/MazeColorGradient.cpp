@@ -75,17 +75,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    FastVector<Pair<F32, Vec4DF>> ColorGradient::toRawColors() const
+    FastVector<Pair<F32, Vec4F>> ColorGradient::toRawColors() const
     {
-        FastVector<Pair<F32, Vec4DF>> result;
+        FastVector<Pair<F32, Vec4F>> result;
 
-        std::function<FastVector<Pair<F32, Vec4DF>>::iterator(F32 _time)> findKeyframe =
+        std::function<FastVector<Pair<F32, Vec4F>>::iterator(F32 _time)> findKeyframe =
             [&](F32 _time)
             {
                 return std::find_if(
                     result.begin(),
                     result.end(),
-                    [_time](Pair<F32, Vec4DF> const& _value)
+                    [_time](Pair<F32, Vec4F> const& _value)
                     {
                         return Math::Abs(_value.first - _time) <= 0.00001f;
                     });
@@ -94,31 +94,31 @@ namespace Maze
         for (KeyframeRGB const& keyframe : m_keyframesRGB)
         {
             F32 time = keyframe.time;
-            FastVector<Pair<F32, Vec4DF>>::iterator it = findKeyframe(time);
+            FastVector<Pair<F32, Vec4F>>::iterator it = findKeyframe(time);
 
             if (it != result.end())
                 continue;
             
-            Vec4DF color = evaluate(time);
-            result.emplace_back(Pair<F32, Vec4DF>{time, color});
+            Vec4F color = evaluate(time);
+            result.emplace_back(Pair<F32, Vec4F>{time, color});
         }
 
         for (KeyframeAlpha const& keyframe : m_keyframesAlpha)
         {
             F32 time = keyframe.time;
-            FastVector<Pair<F32, Vec4DF>>::iterator it = findKeyframe(time);
+            FastVector<Pair<F32, Vec4F>>::iterator it = findKeyframe(time);
 
             if (it != result.end())
                 continue;
 
-            Vec4DF color = evaluate(time);
-            result.emplace_back(Pair<F32, Vec4DF>{time, color});
+            Vec4F color = evaluate(time);
+            result.emplace_back(Pair<F32, Vec4F>{time, color});
         }
 
         std::sort(
             result.begin(),
             result.end(),
-            [](Pair<F32, Vec4DF> const& _a, Pair<F32, Vec4DF> const& _b)
+            [](Pair<F32, Vec4F> const& _a, Pair<F32, Vec4F> const& _b)
             {
                 return _a.first < _b.first;
             });

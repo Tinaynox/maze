@@ -32,7 +32,7 @@
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/math/MazeRotation2D.hpp"
 
 
@@ -81,15 +81,15 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        Vec2DF const& getSizeDelta() const { return m_sizeDelta; }
+        Vec2F const& getSizeDelta() const { return m_sizeDelta; }
 
         //////////////////////////////////////////
-        void setSizeDelta(Vec2DF const& _sizeDelta);
+        void setSizeDelta(Vec2F const& _sizeDelta);
 
         //////////////////////////////////////////
         inline void setSizeDelta(F32 _x, F32 _y)
         {
-            setSizeDelta(Vec2DF(_x, _y));
+            setSizeDelta(Vec2F(_x, _y));
         }
 
 
@@ -133,7 +133,7 @@ namespace Maze
         Transform2DPtr m_transform;
 
         S32 m_flags;
-        Vec2DF m_sizeDelta;
+        Vec2F m_sizeDelta;
     };
 
 

@@ -67,22 +67,22 @@ namespace Maze
         MAZE_JSON_STRING_SERIALIZATION(ParticleSystem3DZoneEmissionPoint);
 
         //////////////////////////////////////////
-        inline void setPosition(Vec3DF const& _value) { position = _value; }
+        inline void setPosition(Vec3F const& _value) { position = _value; }
 
         //////////////////////////////////////////
-        inline Vec3DF const& getPosition() const { return position; }
+        inline Vec3F const& getPosition() const { return position; }
 
         //////////////////////////////////////////
-        inline void setDirection(Vec3DF const& _value) { direction = _value; }
+        inline void setDirection(Vec3F const& _value) { direction = _value; }
 
         //////////////////////////////////////////
-        inline Vec3DF const& getDirection() const { return direction; }
+        inline Vec3F const& getDirection() const { return direction; }
 
 
         //////////////////////////////////////////
         inline ParticleSystem3DZoneEmissionPoint(
-            Vec3DF const& _position = Vec3DF::c_zero,
-            Vec3DF const& _direction = Vec3DF::c_zero)
+            Vec3F const& _position = Vec3F::c_zero,
+            Vec3F const& _direction = Vec3F::c_zero)
             : position(_position)
             , direction(_direction)
         {}
@@ -102,8 +102,8 @@ namespace Maze
         }
 
     public:
-        Vec3DF position = Vec3DF::c_zero;
-        Vec3DF direction = Vec3DF::c_unitZ;
+        Vec3F position = Vec3F::c_zero;
+        Vec3F direction = Vec3F::c_unitZ;
     };
 
 
@@ -128,16 +128,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setPosition(Vec3DF const& _value) { position = _value; }
+        inline void setPosition(Vec3F const& _value) { position = _value; }
 
         //////////////////////////////////////////
-        inline Vec3DF const& getPosition() const { return position; }
+        inline Vec3F const& getPosition() const { return position; }
 
         //////////////////////////////////////////
-        inline void setScale(Vec3DF const& _value) { scale = _value; }
+        inline void setScale(Vec3F const& _value) { scale = _value; }
 
         //////////////////////////////////////////
-        inline Vec3DF const& getScale() const { return scale; }
+        inline Vec3F const& getScale() const { return scale; }
 
         //////////////////////////////////////////
         inline void setRadius(F32 _value) { radius = _value; }
@@ -176,8 +176,8 @@ namespace Maze
 
     public:
 
-        Vec3DF position = Vec3DF::c_zero;
-        Vec3DF scale = Vec3DF::c_one;
+        Vec3F position = Vec3F::c_zero;
+        Vec3F scale = Vec3F::c_one;
 
         F32 radius = 1.0f;
     };
@@ -199,16 +199,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setPosition(Vec3DF const& _value) { position = _value; }
+        inline void setPosition(Vec3F const& _value) { position = _value; }
 
         //////////////////////////////////////////
-        inline Vec3DF const& getPosition() const { return position; }
+        inline Vec3F const& getPosition() const { return position; }
 
         //////////////////////////////////////////
-        inline void setScale(Vec3DF const& _value) { scale = _value; }
+        inline void setScale(Vec3F const& _value) { scale = _value; }
 
         //////////////////////////////////////////
-        inline Vec3DF const& getScale() const { return scale; }
+        inline Vec3F const& getScale() const { return scale; }
 
         //////////////////////////////////////////
         inline void setRadius(F32 _value) { radius = _value; }
@@ -247,8 +247,8 @@ namespace Maze
 
     public:
 
-        Vec3DF position = Vec3DF::c_zero;
-        Vec3DF scale = Vec3DF::c_one;
+        Vec3F position = Vec3F::c_zero;
+        Vec3F scale = Vec3F::c_one;
 
         F32 radius = 1.0f;
     };
@@ -270,16 +270,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setPosition(Vec3DF const& _value) { position = _value; }
+        inline void setPosition(Vec3F const& _value) { position = _value; }
 
         //////////////////////////////////////////
-        inline Vec3DF const& getPosition() const { return position; }
+        inline Vec3F const& getPosition() const { return position; }
 
         //////////////////////////////////////////
-        inline void setScale(Vec3DF const& _value) { scale = _value; }
+        inline void setScale(Vec3F const& _value) { scale = _value; }
 
         //////////////////////////////////////////
-        inline Vec3DF const& getScale() const { return scale; }
+        inline Vec3F const& getScale() const { return scale; }
 
         //////////////////////////////////////////
         inline void setRadius(F32 _value) { radius = _value; }
@@ -331,8 +331,8 @@ namespace Maze
 
     public:
 
-        Vec3DF position = Vec3DF::c_zero;
-        Vec3DF scale = Vec3DF::c_one;
+        Vec3F position = Vec3F::c_zero;
+        Vec3F scale = Vec3F::c_one;
 
         F32 radius = 0.5f;
         F32 torusRadius = 0.1f;
@@ -357,16 +357,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setPosition(Vec3DF const& _value) { position = _value; }
+        inline void setPosition(Vec3F const& _value) { position = _value; }
 
         //////////////////////////////////////////
-        inline Vec3DF const& getPosition() const { return position; }
+        inline Vec3F const& getPosition() const { return position; }
 
         //////////////////////////////////////////
-        inline void setScale(Vec3DF const& _value) { scale = _value; }
+        inline void setScale(Vec3F const& _value) { scale = _value; }
 
         //////////////////////////////////////////
-        inline Vec3DF const& getScale() const { return scale; }
+        inline Vec3F const& getScale() const { return scale; }
 
         //////////////////////////////////////////
         inline void setRadius(F32 _value) { radius = _value; }
@@ -418,8 +418,8 @@ namespace Maze
 
     public:
 
-        Vec3DF position = Vec3DF::c_zero;
-        Vec3DF scale = Vec3DF::c_one;
+        Vec3F position = Vec3F::c_zero;
+        Vec3F scale = Vec3F::c_one;
 
         F32 radius = 0.5f;
         F32 angle = 0.0f;
@@ -444,16 +444,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setPosition(Vec3DF const& _value) { position = _value; }
+        inline void setPosition(Vec3F const& _value) { position = _value; }
 
         //////////////////////////////////////////
-        inline Vec3DF const& getPosition() const { return position; }
+        inline Vec3F const& getPosition() const { return position; }
 
         //////////////////////////////////////////
-        inline void setScale(Vec3DF const& _value) { scale = _value; }
+        inline void setScale(Vec3F const& _value) { scale = _value; }
 
         //////////////////////////////////////////
-        inline Vec3DF const& getScale() const { return scale; }
+        inline Vec3F const& getScale() const { return scale; }
 
 
         //////////////////////////////////////////
@@ -484,8 +484,8 @@ namespace Maze
 
     public:
 
-        Vec3DF position = Vec3DF::c_zero;
-        Vec3DF scale = Vec3DF::c_one;
+        Vec3F position = Vec3F::c_zero;
+        Vec3F scale = Vec3F::c_one;
     };
 
 
@@ -510,16 +510,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setPosition(Vec3DF const& _value) { position = _value; }
+        inline void setPosition(Vec3F const& _value) { position = _value; }
 
         //////////////////////////////////////////
-        inline Vec3DF const& getPosition() const { return position; }
+        inline Vec3F const& getPosition() const { return position; }
 
         //////////////////////////////////////////
-        inline void setScale(Vec3DF const& _value) { scale = _value; }
+        inline void setScale(Vec3F const& _value) { scale = _value; }
 
         //////////////////////////////////////////
-        inline Vec3DF const& getScale() const { return scale; }
+        inline Vec3F const& getScale() const { return scale; }
 
         //////////////////////////////////////////
         inline void setRadius(F32 _value) { radius = _value; }
@@ -558,8 +558,8 @@ namespace Maze
 
     public:
 
-        Vec3DF position = Vec3DF::c_zero;
-        Vec3DF scale = Vec3DF::c_one;
+        Vec3F position = Vec3F::c_zero;
+        Vec3F scale = Vec3F::c_one;
 
         F32 radius = 1.0f;
     };

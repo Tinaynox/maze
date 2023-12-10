@@ -88,7 +88,7 @@ namespace Maze
         _drawer->setColor(ColorF128::c_magenta);
         _drawer->drawWireCircle(
             spaceObject->getTransform()->getLocalPosition() + spaceObject->getWeaponPointDirected(),
-            Vec3DF::c_unitZ,
+            Vec3F32::c_unitZ,
             0.1f);
     }
 

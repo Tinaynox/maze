@@ -161,7 +161,7 @@ namespace Maze
 
     //////////////////////////////////////////
     bool Texture2DMSOpenGL::loadEmpty(
-        Vec2DU const& _size,
+        Vec2U const& _size,
         PixelFormat::Enum _internalPixelFormat,
         S32 _samples)
     {
@@ -229,7 +229,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Texture2DMSOpenGL::saveToFileAsTGA(String const& _fileName, Vec2DU _size)
+    void Texture2DMSOpenGL::saveToFileAsTGA(String const& _fileName, Vec2U _size)
     {
         MAZE_NOT_IMPLEMENTED;
     }

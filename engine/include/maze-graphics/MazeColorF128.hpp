@@ -37,8 +37,8 @@
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
-#include "maze-core/math/MazeVec4D.hpp"
+#include "maze-core/math/MazeVec3.hpp"
+#include "maze-core/math/MazeVec4.hpp"
 #include "maze-core/math/MazeRandom.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-graphics/MazeColorU32.hpp"
@@ -104,7 +104,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline ColorF128(Vec3DF const& _colorF32)
+        inline ColorF128(Vec3F const& _colorF32)
             : r(_colorF32.x)
             , g(_colorF32.y)
             , b(_colorF32.z)
@@ -123,7 +123,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline ColorF128(Vec4DF const& _value)
+        inline ColorF128(Vec4F const& _value)
             : value(_value)
         {
         }
@@ -231,7 +231,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline Vec3DF getRGB() const { return { r, g, b }; }
+        inline Vec3F getRGB() const { return { r, g, b }; }
 
         //////////////////////////////////////////
         inline void setRGBA(F32 _r, F32 _g, F32 _b, F32 _a)
@@ -280,17 +280,17 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline operator Vec3DF() const { return { value.x, value.y, value.z }; }
+        inline operator Vec3F() const { return { value.x, value.y, value.z }; }
 
         //////////////////////////////////////////
-        inline operator Vec4DF() const { return value; }
+        inline operator Vec4F() const { return value; }
 
 
         //////////////////////////////////////////
-        inline Vec3DF toVec3DF() const { return { value.x, value.y, value.z }; }
+        inline Vec3F toVec3F32() const { return { value.x, value.y, value.z }; }
 
         //////////////////////////////////////////
-        inline Vec4DF toVec4DF() const { return value; }
+        inline Vec4F toVec4F32() const { return value; }
 
 
         //////////////////////////////////////////
@@ -301,18 +301,18 @@ namespace Maze
             if (r > 1.0f || g > 1.0f || b > 1.0f)
             {
                 F32 max = Math::Max(r, g, b);
-                Vec4DF normalizedColor(
+                Vec4F normalizedColor(
                     r / max,
                     g / max,
                     b / max,
                     a);
 
-                _color = ColorU32::FromVec4DF(normalizedColor);
+                _color = ColorU32::FromVec4F32(normalizedColor);
                 _intensity = max - 1.0f;
             }
             else
             {
-                _color = ColorU32::FromVec4DF(value);
+                _color = ColorU32::FromVec4F32(value);
                 _intensity = 0.0f;
             }
         }
@@ -327,8 +327,8 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        static inline ColorF128 FromVec4DFAndIntensity(
-            Vec4DF const& _color,
+        static inline ColorF128 FromVec4F32AndIntensity(
+            Vec4F const& _color,
             F32 _intensity)
         {
             F32 multiplier = 1.0f + _intensity;
@@ -345,7 +345,7 @@ namespace Maze
             ColorU32 const& _color,
             F32 _intensity)
         {
-            Vec4DF vec4 = _color.toVec4DF();
+            Vec4F vec4 = _color.toVec4F32();
             F32 multiplier = 1.0f + _intensity;
 
             return ColorF128(
@@ -356,7 +356,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline Vec4DF const* getDataPointer() const { return &value; }
+        inline Vec4F const* getDataPointer() const { return &value; }
 
     public:
         union
@@ -368,7 +368,7 @@ namespace Maze
                 F32 b;
                 F32 a;
             };
-            Vec4DF value;
+            Vec4F value;
         };
     };
 

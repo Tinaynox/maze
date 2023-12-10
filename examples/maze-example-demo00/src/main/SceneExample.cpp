@@ -137,7 +137,7 @@ namespace Maze
         inputManager->eventMouse.subscribe(this, &SceneExample::notifyMouse);
         inputManager->eventTouch.subscribe(this, &SceneExample::notifyTouch);
 
-        Vec2DU renderBufferSize = Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize();
+        Vec2U32 renderBufferSize = Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize();
         m_renderBuffer = RenderBuffer::Create(
             {
                 renderBufferSize,
@@ -170,7 +170,7 @@ namespace Maze
         m_renderColorSprite = SpriteHelper::CreateSprite(
             Sprite::Create(m_renderBuffer->getColorTexture2D()),
             m_canvas->getTransform()->getSize(),
-            Vec2DF::c_zero,
+            Vec2F32::c_zero,
             postFXMaterial,
             m_canvas->getTransform(),
             this);
@@ -183,7 +183,7 @@ namespace Maze
         m_testSprite1 = SpriteHelper::CreateSprite(
             SpritePtr(),
             {128, 128 },
-            Vec2DF::c_zero,
+            Vec2F32::c_zero,
             GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getColorTextureMaterial(),
             m_canvas->getTransform(),
             this,
@@ -219,7 +219,7 @@ namespace Maze
         // Camera
         EntityPtr cameraEntity = createEntity("Camera");
         m_camera3D = cameraEntity->createComponent<Camera3D>();
-        m_camera3D->getTransform()->setLocalPosition(Vec3DF(8.0f, 4.0f, 8.0f));
+        m_camera3D->getTransform()->setLocalPosition(Vec3F32(8.0f, 4.0f, 8.0f));
         m_camera3D->setFOV(Math::DegreesToRadians(30));
         m_camera3D->setClearColorFlag(false);
         m_camera3D->setClearSkyBoxFlag(true);
@@ -250,7 +250,7 @@ namespace Maze
         Transform3DPtr waterTransform = waterEntity->ensureComponent<Transform3D>();
         waterTransform->setLocalScale({ 20.0f, 20.0f, 1.0f });
         waterTransform->setLocalY(0.75f);
-        waterTransform->setLocalRotation(Quaternion(Math::DegreesToRadians(90), Vec3DF::c_unitX));
+        waterTransform->setLocalRotation(Quaternion(Math::DegreesToRadians(90), Vec3F32::c_unitX));
         MeshRendererPtr waterMeshRenderer = waterEntity->ensureComponent<MeshRenderer>();
         waterMeshRenderer->setRenderMesh(renderSystem->getRenderMeshManager()->getDefaultQuadMesh());
         m_waterRenderer->setMaterial("Water00.mzmaterial");
@@ -330,7 +330,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneExample::notifyRenderTargetResized(RenderTarget* _renderTarget)
     {
-        Vec2DU size = Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize();
+        Vec2U32 size = Example::GetInstancePtr()->getMainRenderWindowAbsoluteSize();
         Debug::Log("Render target resized: %ux%u", size.x, size.y);
 
         if (!Example::GetInstancePtr()->isMainWindowReadyToRender())
@@ -392,7 +392,7 @@ namespace Maze
         EntityPtr psEntity = createEntity();
         ParticleSystem3DPtr ps = psEntity->ensureComponent<ParticleSystem3D>();
         m_particleSystem = ps;
-        ps->getTransform()->rotate(Vec3DF::c_unitX, -Math::c_halfPi);
+        ps->getTransform()->rotate(Vec3F32::c_unitX, -Math::c_halfPi);
         ps->getTransform()->setLocalY(2.0f);
 
         ps->getMainModule().setTransformPolicy(ParticleSystemSimulationSpace::World);
@@ -408,7 +408,7 @@ namespace Maze
         MaterialPtr material = GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getMaterial("Fireball00.mzmaterial");
 
         ps->getRendererModule().getTextureSheetAnimation().enabled = true;
-        ps->getRendererModule().getTextureSheetAnimation().tiles = Vec2DS(7, 7);
+        ps->getRendererModule().getTextureSheetAnimation().tiles = Vec2S32(7, 7);
         ps->getRendererModule().getTextureSheetAnimation().startFrame.setConstant(0);
 
         {
@@ -421,7 +421,7 @@ namespace Maze
 
         {
             ColorGradient gradient;
-            gradient.addKeyRGB(0.0f, Vec3DF::c_one);
+            gradient.addKeyRGB(0.0f, Vec3F32::c_one);
             gradient.addKeyAlpha(0.23f, 0.0f);
             gradient.addKeyAlpha(0.42f, 1.0f);
             gradient.addKeyAlpha(0.71f, 1.0f);
@@ -468,11 +468,11 @@ namespace Maze
         {
             case InputEventMouseType::Move:
             {
-                Vec2DF cursorPosition = Vec2DF((F32)_data.x, (F32)_data.y);
+                Vec2F32 cursorPosition = Vec2F32((F32)_data.x, (F32)_data.y);
 
                 if (m_cursorDrag)
                 {
-                    Vec2DF deltaPosition = cursorPosition - m_cursorPositionLastFrame;
+                    Vec2F32 deltaPosition = cursorPosition - m_cursorPositionLastFrame;
 
                     m_yawAngle += deltaPosition.x * 0.0075f * 0.25f;
                     m_pitchAngle -= deltaPosition.y * 0.0075f * 0.25f;
@@ -485,7 +485,7 @@ namespace Maze
             {
                 if (_data.buttonId == 1)
                 {
-                    Vec2DF cursorPosition = Vec2DF((F32)_data.x, (F32)_data.y);
+                    Vec2F32 cursorPosition = Vec2F32((F32)_data.x, (F32)_data.y);
                     Rect2DF viewportRect(
                         m_canvas->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
                         m_canvas->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,
@@ -524,11 +524,11 @@ namespace Maze
         {
             case InputEventTouchType::Move:
             {
-                Vec2DF cursorPosition = Vec2DF((F32)_data.x, (F32)_data.y);
+                Vec2F32 cursorPosition = Vec2F32((F32)_data.x, (F32)_data.y);
 
                 if (m_cursorDrag)
                 {
-                    Vec2DF deltaPosition = cursorPosition - m_cursorPositionLastFrame;
+                    Vec2F32 deltaPosition = cursorPosition - m_cursorPositionLastFrame;
 
                     m_yawAngle += deltaPosition.x * 0.0075f * 0.25f;
                     m_pitchAngle -= deltaPosition.y * 0.0075f * 0.25f;
@@ -541,7 +541,7 @@ namespace Maze
             {
                 if (_data.index == 0)
                 {
-                    Vec2DF cursorPosition = Vec2DF((F32)_data.x, (F32)_data.y);
+                    Vec2F32 cursorPosition = Vec2F32((F32)_data.x, (F32)_data.y);
                     Rect2DF viewportRect(
                         m_canvas->getViewport().position.x * m_renderTarget->getRenderTargetSize().x,
                         m_canvas->getViewport().position.y * m_renderTarget->getRenderTargetSize().y,

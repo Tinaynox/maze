@@ -170,7 +170,7 @@ namespace Maze
         // Camera
         EntityPtr cameraEntity = createEntity();
         m_camera3D = cameraEntity->createComponent<Camera3D>();
-        m_camera3D->getTransform()->setLocalPosition(Vec3DF(0.0f, 0.5f, -18.0f));
+        m_camera3D->getTransform()->setLocalPosition(Vec3F32(0.0f, 0.5f, -18.0f));
         m_camera3D->setFOV(Math::DegreesToRadians(30));
         
         m_camera3D->setRenderTarget(renderTarget);
@@ -204,8 +204,8 @@ namespace Maze
             8,
             HorizontalAlignment2D::Center,
             VerticalAlignment2D::Middle,
-            Vec2DF::c_zero,
-            Vec2DF::c_zero,
+            Vec2F32::c_zero,
+            Vec2F32::c_zero,
             m_canvas->getTransform(),
             this);
 
@@ -214,7 +214,7 @@ namespace Maze
             8,
             HorizontalAlignment2D::Center,
             VerticalAlignment2D::Middle,
-            Vec2DF::c_zero,
+            Vec2F32::c_zero,
             { 0.0f, -20.0f },
             m_canvas->getTransform(),
             this,
@@ -231,8 +231,8 @@ namespace Maze
         
         SpriteRenderer2DPtr panel00 = SpriteHelper::CreateSprite(
             ColorU32(203, 203, 203),
-            Vec2DF(640, 480),
-            Vec2DF(0, 0),
+            Vec2F32(640, 480),
+            Vec2F32(0, 0),
             materialManager->getColorTextureMaterial(),
             canvasTransform2D,
             this);
@@ -240,32 +240,32 @@ namespace Maze
     
         /*
         Scrollbar2DPtr scrollbarH = UIHelper::CreateDefaultScrollbarHorizontal(
-            Vec2DF(200.0f, 18.0f),
-            Vec2DF::c_zero,
+            Vec2F32(200.0f, 18.0f),
+            Vec2F32::c_zero,
             panel00->getTransform(),
             this,
-            Vec2DF(0.5f, 0.5f),
-            Vec2DF(0.5f, 0.5f));
+            Vec2F32(0.5f, 0.5f),
+            Vec2F32(0.5f, 0.5f));
         scrollbarH->setValue(1.0f);
 
         Scrollbar2DPtr scrollbarV = UIHelper::CreateDefaultScrollbarVertical(
-            Vec2DF(18.0f, 200.0f),
-            Vec2DF(200.0f, 100.0f),
+            Vec2F32(18.0f, 200.0f),
+            Vec2F32(200.0f, 100.0f),
             panel00->getTransform(),
             this,
-            Vec2DF(0.5f, 0.5f),
-            Vec2DF(0.5f, 0.5f));
+            Vec2F32(0.5f, 0.5f),
+            Vec2F32(0.5f, 0.5f));
         scrollbarV->setValue(0.5f);
         */
 
         /*
         m_scrollRect = UIHelper::CreateDefaultScrollRect(
-            Vec2DF(200.0f, 200.0f),
-            Vec2DF(0.0f, 0.0f),
+            Vec2F32(200.0f, 200.0f),
+            Vec2F32(0.0f, 0.0f),
             panel00->getTransform(),
             this,
-            Vec2DF(0.5f, 0.5f),
-            Vec2DF(0.5f, 0.5f));
+            Vec2F32(0.5f, 0.5f),
+            Vec2F32(0.5f, 0.5f));
 
         SpriteRenderer2DPtr spriteRenderer = m_scrollRect->getContentTransform()->getEntityRaw()->ensureComponent<SpriteRenderer2D>();
         spriteRenderer->setMaterial(renderSystem->getMaterialManager()->getColorTextureMaterial());
@@ -277,8 +277,8 @@ namespace Maze
         VerticalLayout2DPtr layout = UIHelper::CreateVerticalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(450, 18 * 3),
-            Vec2DF(0, 0),
+            Vec2F32(450, 18 * 3),
+            Vec2F32(0, 0),
             panel00->getTransform(),
             this);
         layout->setSpacing(5.0f);
@@ -289,34 +289,34 @@ namespace Maze
         
         /*
         SystemTextDropdown2DPtr dropdown = UIHelper::CreateDefaultDropdown(
-            Vec2DF(150, 18),
-            Vec2DF(270, 300),
+            Vec2F32(150, 18),
+            Vec2F32(270, 300),
             panel00->getTransform(),
             this,
-            Vec2DF(0.0f, 0.0f),
-            Vec2DF::c_zero);
+            Vec2F32(0.0f, 0.0f),
+            Vec2F32::c_zero);
         dropdown->addOptions({"Option 1", "Option 2", "Option 3", "Option 4", "Option 5" });
         */
 
         /*
         MenuListItem2DPtr menuListItem = UIHelper::CreateDefaultMenuListItem(
             "Option Test",
-            Vec2DF(170.0f, 20.0f),
-            Vec2DF(200, 100),
+            Vec2F32(170.0f, 20.0f),
+            Vec2F32(200, 100),
             panel00->getTransform(),
             this,
-            Vec2DF::c_zero,
-            Vec2DF::c_zero);
+            Vec2F32::c_zero,
+            Vec2F32::c_zero);
             */
 
         /*
         MenuList2DPtr menuList = UIHelper::CreateDefaultMenuList(
-            Vec2DF(170.0f, 140.0f),
-            Vec2DF(270, 300),
+            Vec2F32(170.0f, 140.0f),
+            Vec2F32(270, 300),
             panel00->getTransform(),
             this,
-            Vec2DF::c_zero,
-            Vec2DF::c_zero);
+            Vec2F32::c_zero,
+            Vec2F32::c_zero);
         menuList->addItem(
             "Option 1",
             [](String const& _option)
@@ -350,11 +350,11 @@ namespace Maze
         
         /*
         m_menuListTree = UIHelper::CreateDefaultMenuListTree(
-            Vec2DF(0.0f, 0.0f),
+            Vec2F32(0.0f, 0.0f),
             panel00->getTransform(),
             this,
-            Vec2DF(0.5f, 0.5f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F32(0.5f, 0.5f),
+            Vec2F32(0.0f, 1.0f));
         
         m_menuListTree->addItem("Option 1", [](String const& _option) { Log("Option 1"); });
         m_menuListTree->addItem("Option 2/Option 4", [](String const& _option) { Log("Option 4"); });
@@ -384,32 +384,32 @@ namespace Maze
         /*
         ColorEdit2DPtr colorEdit = UIHelper::CreateDefaultColorEdit(
             ColorU32::c_red,
-            Vec2DF(150, 18),
-            Vec2DF(270, 300),
+            Vec2F32(150, 18),
+            Vec2F32(270, 300),
             panel00->getTransform(),
             this,
-            Vec2DF(0.0f, 0.0f),
-            Vec2DF::c_zero);
+            Vec2F32(0.0f, 0.0f),
+            Vec2F32::c_zero);
 
         ColorHDREdit2DPtr colorHDREdit = UIHelper::CreateDefaultColorHDREdit(
             ColorF128::c_green,
-            Vec2DF(150, 18),
-            Vec2DF(270, 270),
+            Vec2F32(150, 18),
+            Vec2F32(270, 270),
             panel00->getTransform(),
             this,
-            Vec2DF(0.0f, 0.0f),
-            Vec2DF::c_zero);
+            Vec2F32(0.0f, 0.0f),
+            Vec2F32::c_zero);
         */
 
         /*
         ColorEdit2DPtr colorEdit = UIHelper::CreateDefaultColorEdit(
             ColorU32::c_red,
-            Vec2DF(150, 18),
-            Vec2DF(270, 300),
+            Vec2F32(150, 18),
+            Vec2F32(270, 300),
             panel00->getTransform(),
             this,
-            Vec2DF(0.0f, 0.0f),
-            Vec2DF::c_zero);
+            Vec2F32(0.0f, 0.0f),
+            Vec2F32::c_zero);
         ColorEdit2D* colorEditRaw = colorEdit.get();
         colorEdit->getEntityRaw()->ensureComponent<ContextMenu2D>()->setCallbackFunction(
             [colorEditRaw](MenuListTree2DPtr const& _menuListTree)
@@ -427,12 +427,12 @@ namespace Maze
 
         /*
         MenuBar2DPtr menuBar = UIHelper::CreateDefaultMenuBarList(
-            Vec2DF(500.0f, 20.0f),
-            Vec2DF::c_zero,
+            Vec2F32(500.0f, 20.0f),
+            Vec2F32::c_zero,
             panel00->getTransform(),
             this,
-            Vec2DF(0.5f, 0.5f),
-            Vec2DF(0.5f, 0.5f));
+            Vec2F32(0.5f, 0.5f),
+            Vec2F32(0.5f, 0.5f));
         menuBar->addOption("File", "Option 1", [](String const& _text) { Log("Option 1"); });
         menuBar->addOption("File", "Option 2", [](String const& _text) { Log("Option 2"); });
         menuBar->addOption("File", "Option 3", [](String const& _text) { Log("Option 3"); });
@@ -462,12 +462,12 @@ namespace Maze
         /*
         Slider2DPtr slider = UIHelper::CreateDefaultSlider(
             0.25f,
-            Vec2DF(150, 18),
-            Vec2DF(270, 200),
+            Vec2F32(150, 18),
+            Vec2F32(270, 200),
             panel00->getTransform(),
             this,
-            Vec2DF::c_zero,
-            Vec2DF::c_zero);
+            Vec2F32::c_zero,
+            Vec2F32::c_zero);
             */
         
 
@@ -480,32 +480,32 @@ namespace Maze
         
 
         /*
-        Transform2DPtr const& positionEdit = createVec3DFEdit("Position", layout->getTransform());
-        Transform2DPtr const& rotationEdit = createVec3DFEdit("Rotation", layout->getTransform());
-        Transform2DPtr const& scaleEdit = createVec3DFEdit("Scale", layout->getTransform());
+        Transform2DPtr const& positionEdit = createVec3F32Edit("Position", layout->getTransform());
+        Transform2DPtr const& rotationEdit = createVec3F32Edit("Rotation", layout->getTransform());
+        Transform2DPtr const& scaleEdit = createVec3F32Edit("Scale", layout->getTransform());
         */
 
         /*
         SpriteHelper::CreateSprite(
             ColorU32(255, 0, 0),
-            Vec2DF(160, 30),
-            Vec2DF(100, 100),
+            Vec2F32(160, 30),
+            Vec2F32(100, 100),
             materialManager->getColorTextureMaterial(),
             panel00->getTransform(),
             this);
 
         SpriteHelper::CreateSprite(
             ColorU32(0, 255, 0),
-            Vec2DF(30, 50),
-            Vec2DF(200, 200),
+            Vec2F32(30, 50),
+            Vec2F32(200, 200),
             materialManager->getColorTextureMaterial(),
             panel00->getTransform(),
             this);
 
         SpriteHelper::CreateSprite(
             ColorU32(0, 0, 255),
-            Vec2DF(160, 90),
-            Vec2DF(300, 300),
+            Vec2F32(160, 90),
+            Vec2F32(300, 300),
             materialManager->getColorTextureMaterial(),
             panel00->getTransform(),
             this);
@@ -539,21 +539,21 @@ namespace Maze
         /*
         UIHelper::CreateDefaultEditBox(
             "123456",
-            Vec2DF(182, 18),
-            Vec2DF(-90, 0),
+            Vec2F32(182, 18),
+            Vec2F32(-90, 0),
             panel00->getTransform(),
             this,
-            Vec2DF(0.5f, 0.5f),
-            Vec2DF::c_zero);
+            Vec2F32(0.5f, 0.5f),
+            Vec2F32::c_zero);
 
         SystemTextEditBox2DPtr editBox = UIHelper::CreateDefaultEditBox(
             "EditBox2",
-            Vec2DF(100, 18),
-            Vec2DF(-90, -20),
+            Vec2F32(100, 18),
+            Vec2F32(-90, -20),
             panel00->getTransform(),
             this,
-            Vec2DF(0.5f, 0.5f),
-            Vec2DF::c_zero);
+            Vec2F32(0.5f, 0.5f),
+            Vec2F32::c_zero);
         editBox->setText("Tinaynox!");
         */
     }
@@ -569,8 +569,8 @@ namespace Maze
         HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(53, 18),
-            Vec2DF(0, 0),
+            Vec2F32(53, 18),
+            Vec2F32(0, 0),
             _parent,
             this);
         layout->setSpacing(5.0f);
@@ -580,22 +580,22 @@ namespace Maze
             8,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(8, 18),
-            Vec2DF(0, 0),
+            Vec2F32(8, 18),
+            Vec2F32(0, 0),
             layout->getTransform(),
             this,
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF::c_zero);
+            Vec2F32(0.0f, 0.5f),
+            Vec2F32::c_zero);
         systemText->setColor(ColorU32::c_black);
 
         EditBox2DPtr xEditBox = SystemUIHelper::CreateDefaultEditBox(
             "0",
-            Vec2DF(85, 18),
-            Vec2DF(0, 0),
+            Vec2F32(85, 18),
+            Vec2F32(0, 0),
             layout->getTransform(),
             this,
-            Vec2DF(0.5f, 0.5f),
-            Vec2DF::c_zero);
+            Vec2F32(0.5f, 0.5f),
+            Vec2F32::c_zero);
 
         
 
@@ -603,7 +603,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Transform2DPtr const& SceneExample::createVec3DFEdit(
+    Transform2DPtr const& SceneExample::createVec3F32Edit(
         CString _name,
         Transform2DPtr const& _parent)
     {
@@ -613,8 +613,8 @@ namespace Maze
         HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(450, 18),
-            Vec2DF(0, 0),
+            Vec2F32(450, 18),
+            Vec2F32(0, 0),
             _parent,
             this);
         layout->setExpand(true);
@@ -624,20 +624,20 @@ namespace Maze
             8,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(8, 18),
-            Vec2DF(0, 0),
+            Vec2F32(8, 18),
+            Vec2F32(0, 0),
             layout->getTransform(),
             this,
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF::c_zero);
+            Vec2F32(0.0f, 0.5f),
+            Vec2F32::c_zero);
         systemText->setColor(ColorU32::c_black);
 
         {
             HorizontalLayout2DPtr layout2 = UIHelper::CreateHorizontalLayout(
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
-                Vec2DF(200, 18),
-                Vec2DF(0, 0),
+                Vec2F32(200, 18),
+                Vec2F32(0, 0),
                 layout->getTransform(),
                 this);
             layout2->setSpacing(10.0f);

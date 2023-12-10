@@ -81,7 +81,7 @@ namespace Maze
 
         m_bloomMaterial = renderSystem->getMaterialManager()->getMaterial("Bloom00.mzmaterial");
         m_bloomBaseMapUniform = m_bloomMaterial->ensureUniform("u_baseMap", ShaderUniformType::UniformTexture2D);
-        m_bloomBaseMapTexelSizeUniform = m_bloomMaterial->ensureUniform("u_baseMapTexelSize", ShaderUniformType::UniformVec2DF);
+        m_bloomBaseMapTexelSizeUniform = m_bloomMaterial->ensureUniform("u_baseMapTexelSize", ShaderUniformType::UniformVec2F32);
         m_bloomPrevBloomMapUniform = m_bloomMaterial->ensureUniform("u_prevBloomMap", ShaderUniformType::UniformTexture2D);
 
         updateBuffers();
@@ -131,7 +131,7 @@ namespace Maze
         {
             Texture2DPtr baseMap = m_sceneGame->getRenderBuffer()->getColorTexture2D();
             m_bloomBaseMapUniform->set(baseMap);
-            m_bloomBaseMapTexelSizeUniform->set(1.0f / (Vec2DF)baseMap->getSize());
+            m_bloomBaseMapTexelSizeUniform->set(1.0f / (Vec2F32)baseMap->getSize());
             currentRenderBuffer->blit(m_bloomMaterial, 0);
         }
 
@@ -143,7 +143,7 @@ namespace Maze
 
             Texture2DPtr baseMap = srcBuffer->getColorTexture2D();
             m_bloomBaseMapUniform->set(baseMap);
-            m_bloomBaseMapTexelSizeUniform->set(1.0f / (Vec2DF)baseMap->getSize());
+            m_bloomBaseMapTexelSizeUniform->set(1.0f / (Vec2F32)baseMap->getSize());
             bloomMipMapRenderBuffer->blit(m_bloomMaterial, 1);
 
             srcBuffer = bloomMipMapRenderBuffer;
@@ -159,7 +159,7 @@ namespace Maze
 
             Texture2DPtr baseMap = srcBuffer->getColorTexture2D();
             m_bloomBaseMapUniform->set(baseMap);
-            m_bloomBaseMapTexelSizeUniform->set(1.0f / (Vec2DF)baseMap->getSize());
+            m_bloomBaseMapTexelSizeUniform->set(1.0f / (Vec2F32)baseMap->getSize());
             bloomMipMapRenderBuffer->blit(m_bloomMaterial, 2);
 
             srcBuffer = bloomMipMapRenderBuffer;
@@ -173,7 +173,7 @@ namespace Maze
 
             Texture2DPtr baseMap = srcBuffer->getColorTexture2D();
             m_bloomBaseMapUniform->set(baseMap);
-            m_bloomBaseMapTexelSizeUniform->set(1.0f / (Vec2DF)baseMap->getSize());
+            m_bloomBaseMapTexelSizeUniform->set(1.0f / (Vec2F32)baseMap->getSize());
             currentRenderBuffer->blit(m_bloomMaterial, 3);
         }
 
@@ -183,7 +183,7 @@ namespace Maze
     //////////////////////////////////////////
     void LevelBloomController::updateBuffers()
     {
-        Vec2DU bloomRenderBufferSize(
+        Vec2U32 bloomRenderBufferSize(
             m_sceneGame->getRenderBuffer()->getWidth() >> 1,
             m_sceneGame->getRenderBuffer()->getHeight() >> 1);
 

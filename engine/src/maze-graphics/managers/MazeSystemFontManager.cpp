@@ -138,7 +138,7 @@ namespace Maze
                 Vector<PixelSheet2D> pixelSheets;
                 pixelSheets.emplace_back(systemFontSheet.upscaledCopy(upscale));
                 pixelSheets.emplace_back(systemFontSheet);
-                Vec2DS size = systemFontSheet.getSize();
+                Vec2S size = systemFontSheet.getSize();
                 while (size.x > 1 && size.y > 1)
                 {
                     pixelSheets.emplace_back(pixelSheets.back().downscaledCopy(2, false));
@@ -149,9 +149,9 @@ namespace Maze
                 m_renderSystemRaw->getTextureManager()->addTextureToLibrary(texture);
                 systemFont = createSystemFont(
                     texture,
-                    Vec2DS(8, 8) * upscale,
-                    (Vec2DS(8, 8) + extrude * 2) * upscale,
-                    Vec2DS(extrude, extrude) * upscale);
+                    Vec2S(8, 8) * upscale,
+                    (Vec2S(8, 8) + extrude * 2) * upscale,
+                    Vec2S(extrude, extrude) * upscale);
 
                 if (_fontType == BuiltinSystemFontType::Default3D)
                 {
@@ -212,9 +212,9 @@ namespace Maze
     //////////////////////////////////////////
     SystemFontPtr SystemFontManager::createSystemFont(
         Texture2DPtr const& _texture,
-        Vec2DS const& _charSize,
-        Vec2DS const& _stroke,
-        Vec2DS const& _offset)
+        Vec2S const& _charSize,
+        Vec2S const& _stroke,
+        Vec2S const& _offset)
     {
         SystemFontPtr systemFont = std::make_shared<SystemFont>();
 
@@ -228,7 +228,7 @@ namespace Maze
 
         systemFont->material = MaterialManager::GetCurrentInstance()->getColorTextureMaterial()->createCopy();
         systemFont->material->ensureUniform("u_baseMap")->set(systemFont->texture);
-        systemFont->material->ensureUniform("u_baseMapTexelSize")->set(1.0f / (Vec2DF)systemFont->texture->getSize());
+        systemFont->material->ensureUniform("u_baseMapTexelSize")->set(1.0f / (Vec2F)systemFont->texture->getSize());
 
         RenderPassPtr const& renderPass = systemFont->material->getFirstRenderPass();
         renderPass->setRenderQueueIndex(3000);
@@ -259,7 +259,7 @@ namespace Maze
         Vector<PixelSheet2D> pixelSheets;
         pixelSheets.emplace_back(systemFontSheet.upscaledCopy(upscale));
         pixelSheets.emplace_back(systemFontSheet);
-        Vec2DS size = systemFontSheet.getSize();
+        Vec2S size = systemFontSheet.getSize();
         while (size.x > 1 && size.y > 1)
         {
             pixelSheets.emplace_back(pixelSheets.back().downscaledCopy(2, false));
@@ -270,9 +270,9 @@ namespace Maze
         m_renderSystemRaw->getTextureManager()->addTextureToLibrary(texture);
         SystemFontPtr systemFont = createSystemFont(
             texture,
-            (Vec2DS(8, 8) + outline * 2) * upscale,
-            (Vec2DS(8, 8) + outline * 2 + extrude * 2) * upscale,
-            Vec2DS(extrude, extrude) * upscale);
+            (Vec2S(8, 8) + outline * 2) * upscale,
+            (Vec2S(8, 8) + outline * 2 + extrude * 2) * upscale,
+            Vec2S(extrude, extrude) * upscale);
         systemFont->outline = outline * upscale;
 
         systemFont->texture->setMagFilter(TextureFilter::Linear);

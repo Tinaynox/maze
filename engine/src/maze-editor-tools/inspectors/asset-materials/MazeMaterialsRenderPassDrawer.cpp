@@ -117,8 +117,8 @@ namespace Maze
 
 
         m_topBlock = SpriteHelper::CreateTransform2D(
-            Vec2DF(m_transform->getWidth() - 16.0f, 50.0f),
-            Vec2DF(8.0f, 0.0f),
+            Vec2F(m_transform->getWidth() - 16.0f, 50.0f),
+            Vec2F(8.0f, 0.0f),
             m_transform,
             m_transform->getEntityRaw()->getECSScene());
         SizePolicy2DPtr topBlockSizePolicy = m_topBlock->getEntityRaw()->ensureComponent<SizePolicy2D>();
@@ -137,8 +137,8 @@ namespace Maze
             8,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(50.0f, 8.0f),
-            Vec2DF::c_zero,
+            Vec2F(50.0f, 8.0f),
+            Vec2F::c_zero,
             m_topBlock,
             m_transform->getEntityRaw()->getECSScene())->setColor(ColorU32::c_black);
 
@@ -147,8 +147,8 @@ namespace Maze
             HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
-                Vec2DF(m_transform->getWidth(), 25.0f),
-                Vec2DF::c_zero,
+                Vec2F(m_transform->getWidth(), 25.0f),
+                Vec2F::c_zero,
                 m_topBlock,
                 m_transform->getEntityRaw()->getECSScene());
             SizePolicy2DPtr topBlockShaderSizePolicy = layout->getEntityRaw()->ensureComponent<SizePolicy2D>();
@@ -162,20 +162,20 @@ namespace Maze
                 8,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
-                Vec2DF(50.0f, 8.0f),
-                Vec2DF::c_zero,
+                Vec2F(50.0f, 8.0f),
+                Vec2F::c_zero,
                 layout->getTransform(),
                 m_transform->getEntityRaw()->getECSScene());
             topBlockShaderText->setColor(ColorU32::c_black);
 
             ClickButton2DPtr shaderClickButton = UIHelper::CreateDefaultClickButton(
                 nullptr,
-                Vec2DF(200.0f, 18.0f),
-                Vec2DF(0, 0),
+                Vec2F(200.0f, 18.0f),
+                Vec2F(0, 0),
                 layout->getTransform(),
                 m_transform->getEntityRaw()->getECSScene(),
-                Vec2DF(0.0f, 0.5f),
-                Vec2DF(0.0f, 0.5f));
+                Vec2F(0.0f, 0.5f),
+                Vec2F(0.0f, 0.5f));
 
             m_topBlockShaderNameText = SystemUIHelper::CreateSystemText(
                 "",
@@ -183,7 +183,7 @@ namespace Maze
                 HorizontalAlignment2D::Center,
                 VerticalAlignment2D::Middle,
                 shaderClickButton->getTransform()->getSize(),
-                Vec2DF::c_zero,
+                Vec2F::c_zero,
                 shaderClickButton->getTransform(),
                 m_transform->getEntityRaw()->getECSScene());
             m_topBlockShaderNameText->setColor(ColorU32::c_black);

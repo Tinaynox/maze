@@ -227,7 +227,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EditBox2D::notifyClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void EditBox2D::notifyClick(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         eventClick(this, _inputEvent);
     }
@@ -280,7 +280,7 @@ namespace Maze
         if (!m_textRenderer)
             return;
 
-        Vec2DF textShift = m_textRenderer->getTextEnd();
+        Vec2F textShift = m_textRenderer->getTextEnd();
         m_cursorRenderer->getTransform()->setLocalPosition(textShift);
     }
 

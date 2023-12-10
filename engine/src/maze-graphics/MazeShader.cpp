@@ -205,7 +205,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Shader::setUniform(HashedCString _uniformName, Vec2DF const& _vector, bool _warningIfNotExists)
+    void Shader::setUniform(HashedCString _uniformName, Vec2F const& _vector, bool _warningIfNotExists)
     {
         const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
 
@@ -219,7 +219,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Shader::setUniform(HashedCString _uniformName, Vec3DF const& _vector, bool _warningIfNotExists)
+    void Shader::setUniform(HashedCString _uniformName, Vec3F const& _vector, bool _warningIfNotExists)
     {
         const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
 
@@ -233,50 +233,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Shader::setUniform(HashedCString _uniformName, Vec4DF const& _vector, bool _warningIfNotExists)
-    {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
-
-        if (!uniform)
-        {
-            MAZE_WARNING_IF(_warningIfNotExists, "Undefined Shader Uniform with name '%s'!", _uniformName.str);
-            return;
-        }
-
-        uniform->set(_vector);
-    }
-
-
-    //////////////////////////////////////////
-    void Shader::setUniform(HashedCString _uniformName, Vec2DS const& _vector, bool _warningIfNotExists)
-    {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
-
-        if (!uniform)
-        {
-            MAZE_WARNING_IF(_warningIfNotExists, "Undefined Shader Uniform with name '%s'!", _uniformName.str);
-            return;
-        }
-
-        uniform->set(_vector);
-    }
-
-    //////////////////////////////////////////
-    void Shader::setUniform(HashedCString _uniformName, Vec3DS const& _vector, bool _warningIfNotExists)
-    {
-        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
-
-        if (!uniform)
-        {
-            MAZE_WARNING_IF(_warningIfNotExists, "Undefined Shader Uniform with name '%s'!", _uniformName.str);
-            return;
-        }
-
-        uniform->set(_vector);
-    }
-
-    //////////////////////////////////////////
-    void Shader::setUniform(HashedCString _uniformName, Vec4DS const& _vector, bool _warningIfNotExists)
+    void Shader::setUniform(HashedCString _uniformName, Vec4F const& _vector, bool _warningIfNotExists)
     {
         const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
 
@@ -291,7 +248,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    void Shader::setUniform(HashedCString _uniformName, Vec2DU const& _vector, bool _warningIfNotExists)
+    void Shader::setUniform(HashedCString _uniformName, Vec2S const& _vector, bool _warningIfNotExists)
     {
         const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
 
@@ -305,7 +262,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Shader::setUniform(HashedCString _uniformName, Vec3DU const& _vector, bool _warningIfNotExists)
+    void Shader::setUniform(HashedCString _uniformName, Vec3S const& _vector, bool _warningIfNotExists)
     {
         const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
 
@@ -319,7 +276,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Shader::setUniform(HashedCString _uniformName, Vec4DU const& _vector, bool _warningIfNotExists)
+    void Shader::setUniform(HashedCString _uniformName, Vec4S const& _vector, bool _warningIfNotExists)
+    {
+        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+
+        if (!uniform)
+        {
+            MAZE_WARNING_IF(_warningIfNotExists, "Undefined Shader Uniform with name '%s'!", _uniformName.str);
+            return;
+        }
+
+        uniform->set(_vector);
+    }
+
+
+    //////////////////////////////////////////
+    void Shader::setUniform(HashedCString _uniformName, Vec2U const& _vector, bool _warningIfNotExists)
     {
         const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
 
@@ -333,7 +305,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Shader::setUniform(HashedCString _uniformName, Vec2DB const& _vector, bool _warningIfNotExists)
+    void Shader::setUniform(HashedCString _uniformName, Vec3U const& _vector, bool _warningIfNotExists)
     {
         const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
 
@@ -347,7 +319,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Shader::setUniform(HashedCString _uniformName, Vec3DB const& _vector, bool _warningIfNotExists)
+    void Shader::setUniform(HashedCString _uniformName, Vec4U const& _vector, bool _warningIfNotExists)
     {
         const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
 
@@ -361,7 +333,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Shader::setUniform(HashedCString _uniformName, Vec4DB const& _vector, bool _warningIfNotExists)
+    void Shader::setUniform(HashedCString _uniformName, Vec2B const& _vector, bool _warningIfNotExists)
     {
         const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
 
@@ -375,7 +347,35 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Shader::setUniform(HashedCString _uniformName, Mat3DF const& _matrix, bool _warningIfNotExists)
+    void Shader::setUniform(HashedCString _uniformName, Vec3B const& _vector, bool _warningIfNotExists)
+    {
+        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+
+        if (!uniform)
+        {
+            MAZE_WARNING_IF(_warningIfNotExists, "Undefined Shader Uniform with name '%s'!", _uniformName.str);
+            return;
+        }
+
+        uniform->set(_vector);
+    }
+
+    //////////////////////////////////////////
+    void Shader::setUniform(HashedCString _uniformName, Vec4B const& _vector, bool _warningIfNotExists)
+    {
+        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+
+        if (!uniform)
+        {
+            MAZE_WARNING_IF(_warningIfNotExists, "Undefined Shader Uniform with name '%s'!", _uniformName.str);
+            return;
+        }
+
+        uniform->set(_vector);
+    }
+
+    //////////////////////////////////////////
+    void Shader::setUniform(HashedCString _uniformName, Mat3F const& _matrix, bool _warningIfNotExists)
     {
         const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
 
@@ -389,7 +389,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Shader::setUniform(HashedCString _uniformName, Mat4DF const& _matrix, bool _warningIfNotExists)
+    void Shader::setUniform(HashedCString _uniformName, Mat4F const& _matrix, bool _warningIfNotExists)
     {
         const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
 
@@ -417,7 +417,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Shader::setUniform(HashedCString _uniformName, Mat3DF* _matrices, Size _count, bool _warningIfNotExists)
+    void Shader::setUniform(HashedCString _uniformName, Mat3F* _matrices, Size _count, bool _warningIfNotExists)
     {
         const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
         
@@ -431,7 +431,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Shader::setUniform(HashedCString _uniformName, Mat4DF* _matrices, Size _count, bool _warningIfNotExists)
+    void Shader::setUniform(HashedCString _uniformName, Mat4F* _matrices, Size _count, bool _warningIfNotExists)
     {
         const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
 
@@ -639,93 +639,93 @@ namespace Maze
                     break;
                 }
 
-                case ShaderUniformType::UniformVec2DF:
+                case ShaderUniformType::UniformVec2F32:
                 {
-                    setUniform(uniformData.name.asHashedCString(), Vec2DF::FromString(uniformData.value));
+                    setUniform(uniformData.name.asHashedCString(), Vec2F::FromString(uniformData.value));
                     break;
                 }
 
-                case ShaderUniformType::UniformVec3DF:
+                case ShaderUniformType::UniformVec3F32:
                 {
-                    setUniform(uniformData.name.asHashedCString(), Vec3DF::FromString(uniformData.value));
+                    setUniform(uniformData.name.asHashedCString(), Vec3F::FromString(uniformData.value));
                     break;
                 }
 
-                case ShaderUniformType::UniformVec4DF:
+                case ShaderUniformType::UniformVec4F32:
                 {
-                    setUniform(uniformData.name.asHashedCString(), Vec4DF::FromString(uniformData.value));
+                    setUniform(uniformData.name.asHashedCString(), Vec4F::FromString(uniformData.value));
                     break;
                 }
 
-                case ShaderUniformType::UniformVec2DS:
+                case ShaderUniformType::UniformVec2S32:
                 {
-                    setUniform(uniformData.name.asHashedCString(), Vec2DS::FromString(uniformData.value));
+                    setUniform(uniformData.name.asHashedCString(), Vec2S::FromString(uniformData.value));
                     break;
                 }
 
-                case ShaderUniformType::UniformVec3DS:
+                case ShaderUniformType::UniformVec3S32:
                 {
-                    setUniform(uniformData.name.asHashedCString(), Vec3DS::FromString(uniformData.value));
+                    setUniform(uniformData.name.asHashedCString(), Vec3S::FromString(uniformData.value));
                     break;
                 }
 
-                case ShaderUniformType::UniformVec4DS:
+                case ShaderUniformType::UniformVec4S32:
                 {
-                    setUniform(uniformData.name.asHashedCString(), Vec4DS::FromString(uniformData.value));
+                    setUniform(uniformData.name.asHashedCString(), Vec4S::FromString(uniformData.value));
                     break;
                 }
 
-                case ShaderUniformType::UniformVec2DU:
+                case ShaderUniformType::UniformVec2U32:
                 {
-                    setUniform(uniformData.name.asHashedCString(), Vec2DU::FromString(uniformData.value));
+                    setUniform(uniformData.name.asHashedCString(), Vec2U::FromString(uniformData.value));
                     break;
                 }
 
-                case ShaderUniformType::UniformVec3DU:
+                case ShaderUniformType::UniformVec3U32:
                 {
-                    setUniform(uniformData.name.asHashedCString(), Vec3DU::FromString(uniformData.value));
+                    setUniform(uniformData.name.asHashedCString(), Vec3U::FromString(uniformData.value));
                     break;
                 }
 
-                case ShaderUniformType::UniformVec4DU:
+                case ShaderUniformType::UniformVec4U32:
                 {
-                    setUniform(uniformData.name.asHashedCString(), Vec4DU::FromString(uniformData.value));
+                    setUniform(uniformData.name.asHashedCString(), Vec4U::FromString(uniformData.value));
                     break;
                 }
 
-                case ShaderUniformType::UniformVec2DB:
+                case ShaderUniformType::UniformVec2B:
                 {
-                    setUniform(uniformData.name.asHashedCString(), Vec2DB::FromString(uniformData.value));
+                    setUniform(uniformData.name.asHashedCString(), Vec2B::FromString(uniformData.value));
                     break;
                 }
 
-                case ShaderUniformType::UniformVec3DB:
+                case ShaderUniformType::UniformVec3B:
                 {
-                    setUniform(uniformData.name.asHashedCString(), Vec3DB::FromString(uniformData.value));
+                    setUniform(uniformData.name.asHashedCString(), Vec3B::FromString(uniformData.value));
                     break;
                 }
 
-                case ShaderUniformType::UniformVec4DB:
+                case ShaderUniformType::UniformVec4B:
                 {
-                    setUniform(uniformData.name.asHashedCString(), Vec4DB::FromString(uniformData.value));
+                    setUniform(uniformData.name.asHashedCString(), Vec4B::FromString(uniformData.value));
                     break;
                 }
 
-                case ShaderUniformType::UniformMat3DF:
+                case ShaderUniformType::UniformMat3F32:
                 {
-                    setUniform(uniformData.name.asHashedCString(), Mat3DF::FromString(uniformData.value));
+                    setUniform(uniformData.name.asHashedCString(), Mat3F::FromString(uniformData.value));
                     break;
                 }
 
-                case ShaderUniformType::UniformMat4DF:
+                case ShaderUniformType::UniformMat4F32:
                 {
-                    setUniform(uniformData.name.asHashedCString(), Mat4DF::FromString(uniformData.value));
+                    setUniform(uniformData.name.asHashedCString(), Mat4F::FromString(uniformData.value));
                     break;
                 }
                 
                 case ShaderUniformType::UniformColorF128:
                 {
-                    setUniform(uniformData.name.asHashedCString(), Vec4DF::FromString(uniformData.value));
+                    setUniform(uniformData.name.asHashedCString(), Vec4F::FromString(uniformData.value));
                     break;
                 }
 

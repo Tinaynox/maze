@@ -197,7 +197,7 @@ namespace Maze
 
         /*
         CanvasScalerPtr canvasScaler = canvasEntity->ensureComponent<CanvasScaler>();
-        canvasScaler->setReferenceResolution(Vec2DF(1600, 800));
+        canvasScaler->setReferenceResolution(Vec2F32(1600, 800));
         canvasScaler->setScaleMode(CanvasScaler::ScaleMode::ScaleWithViewportSize);
         canvasScaler->setScreenMatchMode(CanvasScaler::ScreenMatchMode::MatchWidthOrHeight);
         canvasScaler->setMatchWidthOrHeight(1.0f);
@@ -209,12 +209,12 @@ namespace Maze
             8,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Top,
-            Vec2DF::c_zero,
-            Vec2DF(10.0f, -10.0f),
+            Vec2F32::c_zero,
+            Vec2F32(10.0f, -10.0f),
             m_canvas->getTransform(),
             this,
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F32(0.0f, 1.0f),
+            Vec2F32(0.0f, 1.0f));
         m_hintText->setColor(ColorU32(255, 255, 255, 220));
         m_hintText->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getBuiltinSystemFont(BuiltinSystemFontType::DefaultOutlined));
         updateHintText();
@@ -235,7 +235,7 @@ namespace Maze
         lightEntity->ensureComponent<Name>("Light");
 
 
-        Vec2DF levelSize(100.0f, 30.0f);
+        Vec2F32 levelSize(100.0f, 30.0f);
 
 
         // FPS Controller
@@ -342,7 +342,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneExample::processCursorPress(Vec2DF const& _positionOS, CursorInputEvent const& _event)
+    void SceneExample::processCursorPress(Vec2F32 const& _positionOS, CursorInputEvent const& _event)
     {
         if (_event.button == 1)
         {
@@ -351,9 +351,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneExample::processCursorDrag(Vec2DF const& _positionOS, CursorInputEvent const& _event)
+    void SceneExample::processCursorDrag(Vec2F32 const& _positionOS, CursorInputEvent const& _event)
     {
-        Vec2DF deltaPosition = _positionOS - m_cursorPositionLastFrame;
+        Vec2F32 deltaPosition = _positionOS - m_cursorPositionLastFrame;
 
         if (_event.button == 1)
         {
@@ -500,7 +500,7 @@ namespace Maze
         transform->setLocalRotationDegrees(0.0f, 180.0f, 0.0f);
         
         Rotor3DPtr rotor = objectEntity->ensureComponent<Rotor3D>();
-        rotor->setAxis(Vec3DF::c_unitY);
+        rotor->setAxis(Vec3F32::c_unitY);
         rotor->setSpeed(0.3f);
         rotor->setActive(m_rotorEnabled);
 

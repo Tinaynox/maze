@@ -165,7 +165,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SubMesh::setPositions(Vec3DF const* _positions, Size _count)
+    void SubMesh::setPositions(Vec3F const* _positions, Size _count)
     {
         ByteBufferPtr const& buffer = allocateVertexAttributes(
             VertexAttributeSemantic::Position,
@@ -177,7 +177,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SubMesh::setNormals(Vec3DF const* _normals, Size _count)
+    void SubMesh::setNormals(Vec3F const* _normals, Size _count)
     {
         ByteBufferPtr const& buffer = allocateVertexAttributes(
             VertexAttributeSemantic::Normal,
@@ -189,7 +189,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SubMesh::setTangents(Vec3DF const* _tangents, Size _count)
+    void SubMesh::setTangents(Vec3F const* _tangents, Size _count)
     {
         ByteBufferPtr const& buffer = allocateVertexAttributes(
             VertexAttributeSemantic::Tangent,
@@ -201,7 +201,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SubMesh::setBitangents(Vec3DF const* _bitangents, Size _count)
+    void SubMesh::setBitangents(Vec3F const* _bitangents, Size _count)
     {
         ByteBufferPtr const& buffer = allocateVertexAttributes(
             VertexAttributeSemantic::Bitangent,
@@ -213,7 +213,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SubMesh::setColors(Vec4DF const* _colors, Size _count)
+    void SubMesh::setColors(Vec4F const* _colors, Size _count)
     {
         ByteBufferPtr const& buffer = allocateVertexAttributes(
             VertexAttributeSemantic::Color,
@@ -225,7 +225,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SubMesh::setTexCoords(S32 _uvIndex, Vec2DF const* _data, Size _count)
+    void SubMesh::setTexCoords(S32 _uvIndex, Vec2F const* _data, Size _count)
     {
         VertexAttributeSemantic vertexSemantic = (VertexAttributeSemantic)((Size)VertexAttributeSemantic::TexCoords0 + _uvIndex);
         ByteBufferPtr const& buffer = allocateVertexAttributes(
@@ -238,7 +238,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SubMesh::setTexCoords(S32 _uvIndex, Vec4DF const* _data, Size _count)
+    void SubMesh::setTexCoords(S32 _uvIndex, Vec4F const* _data, Size _count)
     {
         VertexAttributeSemantic vertexSemantic = (VertexAttributeSemantic)((Size)VertexAttributeSemantic::TexCoords0 + _uvIndex);
         ByteBufferPtr const& buffer = allocateVertexAttributes(

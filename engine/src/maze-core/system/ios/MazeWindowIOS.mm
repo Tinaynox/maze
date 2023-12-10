@@ -101,42 +101,42 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    void WindowIOS::setClientSize(Vec2DU const& _size)
+    void WindowIOS::setClientSize(Vec2U32 const& _size)
     {
         m_params->clientSize = _size;
         updateIOSWindow();
     }
     
     //////////////////////////////////////////
-    Vec2DU WindowIOS::getClientSize()
+    Vec2U32 WindowIOS::getClientSize()
     {
         F32 width = [m_windowDelegateIOS frame].size.width;
         F32 height = [m_windowDelegateIOS frame].size.height;
         F32 contentScaleFactor = m_viewIOS.contentScaleFactor;
         
-        return Vec2DU(
+        return Vec2U32(
             width * contentScaleFactor,
             height * contentScaleFactor);
     }
     
     //////////////////////////////////////////
-    Vec2DU WindowIOS::getFullSize()
+    Vec2U32 WindowIOS::getFullSize()
     {
-        return Vec2DU(
+        return Vec2U32(
             [m_windowDelegateIOS frame].size.width,
             [m_windowDelegateIOS frame].size.height);
     }
     
     //////////////////////////////////////////
-    void WindowIOS::setPosition(Vec2DS const& _position )
+    void WindowIOS::setPosition(Vec2S32 const& _position )
     {
         
     }
     
     //////////////////////////////////////////
-    Vec2DS WindowIOS::getPosition()
+    Vec2S32 WindowIOS::getPosition()
     {
-        return Vec2DS(
+        return Vec2S32(
             [m_windowDelegateIOS frame].origin.x,
             [m_windowDelegateIOS frame].origin.y);
     }

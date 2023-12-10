@@ -171,7 +171,7 @@ namespace Maze
         virtual void processEntityAwakened() MAZE_OVERRIDE;
             
         //////////////////////////////////////////
-        void notifyCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
         void notifyCursorReleaseOut(CursorInputEvent const& _inputEvent);
@@ -183,7 +183,7 @@ namespace Maze
         void notifyPressedChanged(bool _pressed);
 
         //////////////////////////////////////////
-        void notifyClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyClick(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
 
 
         //////////////////////////////////////////

@@ -86,7 +86,7 @@ namespace Maze
 
         Transform3DPtr const& transform3D = light3D->getTransform();
 
-        Vec3DF const& position = transform3D->getWorldPosition();
+        Vec3F const& position = transform3D->getWorldPosition();
 
         _drawer->drawBillboard(
             position,
@@ -104,14 +104,14 @@ namespace Maze
 
         Transform3DPtr const& transform3D = light3D->getTransform();
 
-        Vec3DF const& position = transform3D->getWorldPosition();
+        Vec3F const& position = transform3D->getWorldPosition();
 
-        Mat4DF mat = transform3D->getWorldTransform();
+        Mat4F mat = transform3D->getWorldTransform();
         mat[0][3] = 0.0f;
         mat[1][3] = 0.0f;
         mat[2][3] = 0.0f;
 
-        Vec3DF directionForward = mat.transformAffine(Vec3DF::c_unitZ).normalizedCopy();
+        Vec3F directionForward = mat.transformAffine(Vec3F::c_unitZ).normalizedCopy();
 
         _drawer->setColor(light3D->getColor());
 
@@ -120,20 +120,20 @@ namespace Maze
         
         MAZE_CONSTEXPR F32 const angleDelta = Math::DegreesToRadians(30.0f);
         Size pointsCount = (Size)Math::Ceil((Math::c_twoPi / angleDelta) - angleDelta * 0.5f);
-        Vector<Vec3DF> circlePoints;
+        Vector<Vec3F> circlePoints;
         for (F32 i = 0; i < Math::c_twoPi - angleDelta * 0.5f; i += angleDelta)
         {
             F32 c = Math::Cos(i);
             F32 s = Math::Sin(i);
 
-            Vec3DF d = directionForward.crossProduct(Vec3DF(c, s, 0.0f) * radius);
+            Vec3F d = directionForward.crossProduct(Vec3F(c, s, 0.0f) * radius);
             circlePoints.emplace_back(position + d);
         }
         
         for (Size i = 0; i < pointsCount - 1; ++i)
         {
-            Vec3DF const& circlePoint0 = circlePoints[i];
-            Vec3DF const& circlePoint1 = circlePoints[i + 1];
+            Vec3F const& circlePoint0 = circlePoints[i];
+            Vec3F const& circlePoint1 = circlePoints[i + 1];
 
             _drawer->drawLine(circlePoint0, circlePoint1);
             _drawer->drawLine(circlePoint0, circlePoint0 + directionForward);

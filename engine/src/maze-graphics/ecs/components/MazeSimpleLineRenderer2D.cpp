@@ -77,7 +77,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SimpleLineRenderer2D, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorF128, color, ColorF128(), getColor, setColor),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Vec3DF>, positions, Vector<Vec3DF>(), getPositions, setPositions));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Vec3F>, positions, Vector<Vec3F>(), getPositions, setPositions));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(SimpleLineRenderer2D);
@@ -147,7 +147,7 @@ namespace Maze
 
         for (S32 i = 0, in = positionsCount; i < in; ++i)
         {
-            m_colors[i] = m_color.toVec4DF();
+            m_colors[i] = m_color.toVec4F32();
             m_indices[i] = i;
         }
 

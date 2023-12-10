@@ -105,12 +105,12 @@ namespace Maze
         HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(_parent->getWidth(), 18),
-            Vec2DF(0, 0),
+            Vec2F(_parent->getWidth(), 18),
+            Vec2F(0, 0),
             _parent,
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         layout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
         layout->setAutoWidth(false);
         layout->setExpand(true);
@@ -120,44 +120,44 @@ namespace Maze
             EditorToolsLayout::c_inspectorPropertyFontSize,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(8, 18),
-            Vec2DF(0, 0),            
+            Vec2F(8, 18),
+            Vec2F(0, 0),            
             layout->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF::c_zero);
+            Vec2F(0.0f, 0.5f),
+            Vec2F::c_zero);
         systemText->setColor(EditorToolsLayout::c_inspectorPropertyColor);
 
         {
             HorizontalLayout2DPtr sliderLayout = UIHelper::CreateHorizontalLayout(
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
-                Vec2DF(200.0f, 18.0f),
-                Vec2DF(0, 0),
+                Vec2F(200.0f, 18.0f),
+                Vec2F(0, 0),
                 layout->getTransform(),
                 _parent->getEntityRaw()->getECSScene(),
-                Vec2DF(0.0f, 1.0f),
-                Vec2DF(0.0f, 1.0f));
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 1.0f));
             sliderLayout->setAutoWidth(true);
             sliderLayout->setExpand(false);
             sliderLayout->setSpacing(10.0f);
 
             m_slider = UIHelper::CreateDefaultSlider(
                 0.0f,
-                Vec2DF(100, 18),
-                Vec2DF(0, 0),
+                Vec2F(100, 18),
+                Vec2F(0, 0),
                 sliderLayout->getTransform(),
                 _parent->getEntityRaw()->getECSScene());
             m_slider->eventValueChanged.subscribe(this, &PropertyDrawerSliderF32::notifySliderValueChanged);
 
             m_editBox = SystemUIHelper::CreateDefaultEditBox(
                 "",
-                Vec2DF(60, 18),
-                Vec2DF(0, 0),
+                Vec2F(60, 18),
+                Vec2F(0, 0),
                 sliderLayout->getTransform(),
                 _parent->getEntityRaw()->getECSScene(),
-                Vec2DF(0.5f, 0.5f),
-                Vec2DF::c_zero);
+                Vec2F(0.5f, 0.5f),
+                Vec2F::c_zero);
             m_editBox->eventTextInput.subscribe(this, &PropertyDrawerSliderF32::notifyTextInput);
             m_editBox->eventSelectedChanged.subscribe(this, &PropertyDrawerSliderF32::notifySelectedChanged);
         }

@@ -40,35 +40,35 @@ namespace Maze
     {
         //////////////////////////////////////////
         SubMeshPtr MAZE_GRAPHICS_API CreateQuadSubMesh(
-            Vec2DF const& _size,
-            Vec2DF const& _positionShift,
+            Vec2F const& _size,
+            Vec2F const& _positionShift,
             bool _frontFaceToForward,
-            Vec4DF const& _uv,
-            Vec4DF const& _color)
+            Vec4F const& _uv,
+            Vec4F const& _color)
         {
             SubMeshPtr mesh = SubMesh::Create();
             mesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
 
             if (_frontFaceToForward)
             {
-                Maze::Vec3DF positions[] = {
-                    Maze::Vec3DF(-0.5f, +0.5f, +0.0f) * _size + _positionShift,    // Top right
-                    Maze::Vec3DF(-0.5f, -0.5f, +0.0f) * _size + _positionShift,    // Bottom right
-                    Maze::Vec3DF(+0.5f, -0.5f, +0.0f) * _size + _positionShift,    // Bottom left
-                    Maze::Vec3DF(+0.5f, +0.5f, +0.0f) * _size + _positionShift     // Top left
+                Maze::Vec3F positions[] = {
+                    Maze::Vec3F(-0.5f, +0.5f, +0.0f) * _size + _positionShift,    // Top right
+                    Maze::Vec3F(-0.5f, -0.5f, +0.0f) * _size + _positionShift,    // Bottom right
+                    Maze::Vec3F(+0.5f, -0.5f, +0.0f) * _size + _positionShift,    // Bottom left
+                    Maze::Vec3F(+0.5f, +0.5f, +0.0f) * _size + _positionShift     // Top left
                 };
                 mesh->setPositions(positions, 4);
 
-                Maze::Vec3DF normals[] = {
+                Maze::Vec3F normals[] = {
                     // Front
-                    Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Top right
-                    Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Bottom right
-                    Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Bottom left
-                    Maze::Vec3DF(+0.0f, +0.0f, +1.0f)     // Top left
+                    Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Top right
+                    Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Bottom right
+                    Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Bottom left
+                    Maze::Vec3F(+0.0f, +0.0f, +1.0f)     // Top left
                 };
                 mesh->setNormals(normals, 4);
 
-                Maze::Vec4DF colors[] = {
+                Maze::Vec4F colors[] = {
                     _color,        // Top right
                     _color,        // Bottom right
                     _color,        // Bottom left
@@ -76,11 +76,11 @@ namespace Maze
                 };
                 mesh->setColors(colors, 4);
 
-                Maze::Vec2DF uvs0[] = {
-                    Maze::Vec2DF(_uv.z, _uv.w),        // Top right
-                    Maze::Vec2DF(_uv.z, _uv.y),        // Bottom right
-                    Maze::Vec2DF(_uv.x, _uv.y),        // Bottom left
-                    Maze::Vec2DF(_uv.x, _uv.w)         // Top left
+                Maze::Vec2F uvs0[] = {
+                    Maze::Vec2F(_uv.z, _uv.w),        // Top right
+                    Maze::Vec2F(_uv.z, _uv.y),        // Bottom right
+                    Maze::Vec2F(_uv.x, _uv.y),        // Bottom left
+                    Maze::Vec2F(_uv.x, _uv.w)         // Top left
                 };
                 mesh->setTexCoords(0, uvs0, 4);
 
@@ -92,8 +92,8 @@ namespace Maze
                 mesh->setIndices(indices, indicesCount);
 
                 // Generate tangents and bitangents
-                Vector<Vec3DF> tangents;
-                Vector<Vec3DF> bitangents;
+                Vector<Vec3F> tangents;
+                Vector<Vec3F> bitangents;
                 if (SubMeshHelper::GenerateTangentsAndBitangents(
                     &indices[0],
                     indicesCount,
@@ -110,24 +110,24 @@ namespace Maze
             }
             else
             {
-                Maze::Vec3DF positions[] = {
-                    Maze::Vec3DF(+0.5f, +0.5f, +0.0f) * _size + _positionShift,    // Top right
-                    Maze::Vec3DF(+0.5f, -0.5f, +0.0f) * _size + _positionShift,    // Bottom right
-                    Maze::Vec3DF(-0.5f, -0.5f, +0.0f) * _size + _positionShift,    // Bottom left
-                    Maze::Vec3DF(-0.5f, +0.5f, +0.0f) * _size + _positionShift     // Top left
+                Maze::Vec3F positions[] = {
+                    Maze::Vec3F(+0.5f, +0.5f, +0.0f) * _size + _positionShift,    // Top right
+                    Maze::Vec3F(+0.5f, -0.5f, +0.0f) * _size + _positionShift,    // Bottom right
+                    Maze::Vec3F(-0.5f, -0.5f, +0.0f) * _size + _positionShift,    // Bottom left
+                    Maze::Vec3F(-0.5f, +0.5f, +0.0f) * _size + _positionShift     // Top left
                 };
                 mesh->setPositions(positions, 4);
 
-                Maze::Vec3DF normals[] = {
+                Maze::Vec3F normals[] = {
                     // Front
-                    Maze::Vec3DF(+0.0f, +0.0f, -1.0f),    // Top right
-                    Maze::Vec3DF(+0.0f, +0.0f, -1.0f),    // Bottom right
-                    Maze::Vec3DF(+0.0f, +0.0f, -1.0f),    // Bottom left
-                    Maze::Vec3DF(+0.0f, +0.0f, -1.0f)     // Top left
+                    Maze::Vec3F(+0.0f, +0.0f, -1.0f),    // Top right
+                    Maze::Vec3F(+0.0f, +0.0f, -1.0f),    // Bottom right
+                    Maze::Vec3F(+0.0f, +0.0f, -1.0f),    // Bottom left
+                    Maze::Vec3F(+0.0f, +0.0f, -1.0f)     // Top left
                 };
                 mesh->setNormals(normals, 4);
 
-                Maze::Vec4DF colors[] = {
+                Maze::Vec4F colors[] = {
                     _color,        // Top right
                     _color,        // Bottom right
                     _color,        // Bottom left
@@ -135,11 +135,11 @@ namespace Maze
                 };
                 mesh->setColors(colors, 4);
 
-                Maze::Vec2DF uvs0[] = {
-                    Maze::Vec2DF(_uv.z, _uv.w),        // Top right
-                    Maze::Vec2DF(_uv.z, _uv.y),        // Bottom right
-                    Maze::Vec2DF(_uv.x, _uv.y),        // Bottom left
-                    Maze::Vec2DF(_uv.x, _uv.w)         // Top left
+                Maze::Vec2F uvs0[] = {
+                    Maze::Vec2F(_uv.z, _uv.w),        // Top right
+                    Maze::Vec2F(_uv.z, _uv.y),        // Bottom right
+                    Maze::Vec2F(_uv.x, _uv.y),        // Bottom left
+                    Maze::Vec2F(_uv.x, _uv.w)         // Top left
                 };
                 mesh->setTexCoords(0, uvs0, 4);
 
@@ -151,8 +151,8 @@ namespace Maze
                 mesh->setIndices(indices, indicesCount);
 
                 // Generate tangents and bitangents
-                Vector<Vec3DF> tangents;
-                Vector<Vec3DF> bitangents;
+                Vector<Vec3F> tangents;
+                Vector<Vec3F> bitangents;
                 if (SubMeshHelper::GenerateTangentsAndBitangents(
                     &indices[0],
                     indicesCount,
@@ -174,11 +174,11 @@ namespace Maze
 
         //////////////////////////////////////////
         MeshPtr MAZE_GRAPHICS_API CreateQuadMesh(
-            Vec2DF const& _size,
-            Vec2DF const& _positionShift,
+            Vec2F const& _size,
+            Vec2F const& _positionShift,
             bool _frontFaceToForward,
-            Vec4DF const& _uv,
-            Vec4DF const& _color)
+            Vec4F const& _uv,
+            Vec4F const& _color)
         {
             MeshPtr mesh = Mesh::Create();
             mesh->addSubMesh(
@@ -194,130 +194,130 @@ namespace Maze
 
         //////////////////////////////////////////
         SubMeshPtr MAZE_GRAPHICS_API CreateSlicedPanelSubMesh(
-            Vec2DF const& _size,
-            Vec2DF const& _positionShift,
+            Vec2F const& _size,
+            Vec2F const& _positionShift,
             SpriteSliceBorder const& _sliceBorder,
-            Vec2DF const& _originalSize,
-            Vec4DF const& _uv,
-            Vec4DF const& _color)
+            Vec2F const& _originalSize,
+            Vec4F const& _uv,
+            Vec4F const& _color)
         {
             SubMeshPtr mesh = SubMesh::Create();
             mesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
 
-            Vec2DF centerSize = Vec2DF(
+            Vec2F centerSize = Vec2F(
                 Math::Max(_size.x - _sliceBorder.left - _sliceBorder.right, 0.0f),
                 Math::Max(_size.y - _sliceBorder.bottom - _sliceBorder.top, 0.0f));
 
-            Vec2DF halfSize = _size/2.0f;
-            Vec2DF centerHalfSize = centerSize/2.0f;
+            Vec2F halfSize = _size/2.0f;
+            Vec2F centerHalfSize = centerSize/2.0f;
 
-            //Vec2DF centerPositionLB = -centerHalfSize;
-            Vec2DF centerPositionLB = Vec2DF(_sliceBorder.left, _sliceBorder.bottom) - halfSize;
-            Vec2DF centerPositionRT = centerPositionLB + centerSize;
+            //Vec2F centerPositionLB = -centerHalfSize;
+            Vec2F centerPositionLB = Vec2F(_sliceBorder.left, _sliceBorder.bottom) - halfSize;
+            Vec2F centerPositionRT = centerPositionLB + centerSize;
 
-            Vec2DF lbPosition = -halfSize;
-            Vec2DF rtPosition = halfSize;
+            Vec2F lbPosition = -halfSize;
+            Vec2F rtPosition = halfSize;
 
-            Vec2DF deltaUV = _uv.zw() - _uv.xy();
+            Vec2F deltaUV = _uv.zw() - _uv.xy();
 
-            Vec2DF centerUVLB = _uv.xy() + deltaUV * Vec2DF(_sliceBorder.left, _sliceBorder.bottom) / _originalSize;
-            Vec2DF ltUVRT = Vec2DF(centerUVLB.x, _uv.w);
-            Vec2DF centerUVRT = _uv.zw() - deltaUV * Vec2DF(_sliceBorder.right, _sliceBorder.top) / _originalSize;
+            Vec2F centerUVLB = _uv.xy() + deltaUV * Vec2F(_sliceBorder.left, _sliceBorder.bottom) / _originalSize;
+            Vec2F ltUVRT = Vec2F(centerUVLB.x, _uv.w);
+            Vec2F centerUVRT = _uv.zw() - deltaUV * Vec2F(_sliceBorder.right, _sliceBorder.top) / _originalSize;
 
-            Maze::Vec3DF positions[] = {
+            Maze::Vec3F positions[] = {
                 // LB
-                Maze::Vec3DF(centerPositionLB.x, centerPositionLB.y, 0.0f) + _positionShift,    // Top right
-                Maze::Vec3DF(centerPositionLB.x, lbPosition.y, 0.0f) + _positionShift,          // Bottom right
-                Maze::Vec3DF(lbPosition.x, lbPosition.y, 0.0f) + _positionShift,                // Bottom left
-                Maze::Vec3DF(lbPosition.x, centerPositionLB.y, 0.0f) + _positionShift,          // Top left
+                Maze::Vec3F(centerPositionLB.x, centerPositionLB.y, 0.0f) + _positionShift,    // Top right
+                Maze::Vec3F(centerPositionLB.x, lbPosition.y, 0.0f) + _positionShift,          // Bottom right
+                Maze::Vec3F(lbPosition.x, lbPosition.y, 0.0f) + _positionShift,                // Bottom left
+                Maze::Vec3F(lbPosition.x, centerPositionLB.y, 0.0f) + _positionShift,          // Top left
                 // LT
-                Maze::Vec3DF(centerPositionLB.x, rtPosition.y, 0.0f) + _positionShift,          // Top right
-                Maze::Vec3DF(centerPositionLB.x, centerPositionRT.y, 0.0f) + _positionShift,    // Bottom right
-                Maze::Vec3DF(lbPosition.x, centerPositionRT.y, 0.0f) + _positionShift,          // Bottom left
-                Maze::Vec3DF(lbPosition.x, rtPosition.y, 0.0f) + _positionShift,                // Top left
+                Maze::Vec3F(centerPositionLB.x, rtPosition.y, 0.0f) + _positionShift,          // Top right
+                Maze::Vec3F(centerPositionLB.x, centerPositionRT.y, 0.0f) + _positionShift,    // Bottom right
+                Maze::Vec3F(lbPosition.x, centerPositionRT.y, 0.0f) + _positionShift,          // Bottom left
+                Maze::Vec3F(lbPosition.x, rtPosition.y, 0.0f) + _positionShift,                // Top left
                 // RT
-                Maze::Vec3DF(rtPosition.x, rtPosition.y, 0.0f) + _positionShift,                // Top right
-                Maze::Vec3DF(rtPosition.x, centerPositionRT.y, 0.0f) + _positionShift,          // Bottom right
-                Maze::Vec3DF(centerPositionRT.x, centerPositionRT.y, 0.0f) + _positionShift,    // Bottom left
-                Maze::Vec3DF(centerPositionRT.x, rtPosition.y, 0.0f) + _positionShift,          // Top left
+                Maze::Vec3F(rtPosition.x, rtPosition.y, 0.0f) + _positionShift,                // Top right
+                Maze::Vec3F(rtPosition.x, centerPositionRT.y, 0.0f) + _positionShift,          // Bottom right
+                Maze::Vec3F(centerPositionRT.x, centerPositionRT.y, 0.0f) + _positionShift,    // Bottom left
+                Maze::Vec3F(centerPositionRT.x, rtPosition.y, 0.0f) + _positionShift,          // Top left
                 // RB
-                Maze::Vec3DF(rtPosition.x, centerPositionLB.y, 0.0f) + _positionShift,          // Top right
-                Maze::Vec3DF(rtPosition.x, lbPosition.y, 0.0f) + _positionShift,                // Bottom right
-                Maze::Vec3DF(centerPositionRT.x, lbPosition.y, 0.0f) + _positionShift,          // Bottom left
-                Maze::Vec3DF(centerPositionRT.x, centerPositionLB.y, 0.0f) + _positionShift,    // Top left
+                Maze::Vec3F(rtPosition.x, centerPositionLB.y, 0.0f) + _positionShift,          // Top right
+                Maze::Vec3F(rtPosition.x, lbPosition.y, 0.0f) + _positionShift,                // Bottom right
+                Maze::Vec3F(centerPositionRT.x, lbPosition.y, 0.0f) + _positionShift,          // Bottom left
+                Maze::Vec3F(centerPositionRT.x, centerPositionLB.y, 0.0f) + _positionShift,    // Top left
                 // L
-                Maze::Vec3DF(centerPositionLB.x, centerPositionRT.y, 0.0f) + _positionShift,    // Top right
-                Maze::Vec3DF(centerPositionLB.x, centerPositionLB.y, 0.0f) + _positionShift,    // Bottom right
-                Maze::Vec3DF(lbPosition.x, centerPositionLB.y, 0.0f) + _positionShift,          // Bottom left
-                Maze::Vec3DF(lbPosition.x, centerPositionRT.y, 0.0f) + _positionShift,          // Top left
+                Maze::Vec3F(centerPositionLB.x, centerPositionRT.y, 0.0f) + _positionShift,    // Top right
+                Maze::Vec3F(centerPositionLB.x, centerPositionLB.y, 0.0f) + _positionShift,    // Bottom right
+                Maze::Vec3F(lbPosition.x, centerPositionLB.y, 0.0f) + _positionShift,          // Bottom left
+                Maze::Vec3F(lbPosition.x, centerPositionRT.y, 0.0f) + _positionShift,          // Top left
                 // T
-                Maze::Vec3DF(centerPositionRT.x, rtPosition.y, 0.0f) + _positionShift,          // Top right
-                Maze::Vec3DF(centerPositionRT.x, centerPositionRT.y, 0.0f) + _positionShift,    // Bottom right
-                Maze::Vec3DF(centerPositionLB.x, centerPositionRT.y, 0.0f) + _positionShift,    // Bottom left
-                Maze::Vec3DF(centerPositionLB.x, rtPosition.y, 0.0f) + _positionShift,          // Top left
+                Maze::Vec3F(centerPositionRT.x, rtPosition.y, 0.0f) + _positionShift,          // Top right
+                Maze::Vec3F(centerPositionRT.x, centerPositionRT.y, 0.0f) + _positionShift,    // Bottom right
+                Maze::Vec3F(centerPositionLB.x, centerPositionRT.y, 0.0f) + _positionShift,    // Bottom left
+                Maze::Vec3F(centerPositionLB.x, rtPosition.y, 0.0f) + _positionShift,          // Top left
                 // R
-                Maze::Vec3DF(rtPosition.x, centerPositionRT.y, 0.0f) + _positionShift,          // Top right
-                Maze::Vec3DF(rtPosition.x, centerPositionLB.y, 0.0f) + _positionShift,          // Bottom right
-                Maze::Vec3DF(centerPositionRT.x, centerPositionLB.y, 0.0f) + _positionShift,    // Bottom left
-                Maze::Vec3DF(centerPositionRT.x, centerPositionRT.y, 0.0f) + _positionShift,    // Top left
+                Maze::Vec3F(rtPosition.x, centerPositionRT.y, 0.0f) + _positionShift,          // Top right
+                Maze::Vec3F(rtPosition.x, centerPositionLB.y, 0.0f) + _positionShift,          // Bottom right
+                Maze::Vec3F(centerPositionRT.x, centerPositionLB.y, 0.0f) + _positionShift,    // Bottom left
+                Maze::Vec3F(centerPositionRT.x, centerPositionRT.y, 0.0f) + _positionShift,    // Top left
                 // B
-                Maze::Vec3DF(centerPositionRT.x, centerPositionLB.y, 0.0f) + _positionShift,    // Top right
-                Maze::Vec3DF(centerPositionRT.x, lbPosition.y, 0.0f) + _positionShift,          // Bottom right
-                Maze::Vec3DF(centerPositionLB.x, lbPosition.y, 0.0f) + _positionShift,          // Bottom left
-                Maze::Vec3DF(centerPositionLB.x, centerPositionLB.y, 0.0f) + _positionShift,    // Top left
+                Maze::Vec3F(centerPositionRT.x, centerPositionLB.y, 0.0f) + _positionShift,    // Top right
+                Maze::Vec3F(centerPositionRT.x, lbPosition.y, 0.0f) + _positionShift,          // Bottom right
+                Maze::Vec3F(centerPositionLB.x, lbPosition.y, 0.0f) + _positionShift,          // Bottom left
+                Maze::Vec3F(centerPositionLB.x, centerPositionLB.y, 0.0f) + _positionShift,    // Top left
                 // C
-                Maze::Vec3DF(centerPositionRT.x, centerPositionRT.y, 0.0f) + _positionShift,    // Top right
-                Maze::Vec3DF(centerPositionRT.x, centerPositionLB.y, 0.0f) + _positionShift,    // Bottom right
-                Maze::Vec3DF(centerPositionLB.x, centerPositionLB.y, 0.0f) + _positionShift,    // Bottom left
-                Maze::Vec3DF(centerPositionLB.x, centerPositionRT.y, 0.0f) + _positionShift,    // Top left
+                Maze::Vec3F(centerPositionRT.x, centerPositionRT.y, 0.0f) + _positionShift,    // Top right
+                Maze::Vec3F(centerPositionRT.x, centerPositionLB.y, 0.0f) + _positionShift,    // Bottom right
+                Maze::Vec3F(centerPositionLB.x, centerPositionLB.y, 0.0f) + _positionShift,    // Bottom left
+                Maze::Vec3F(centerPositionLB.x, centerPositionRT.y, 0.0f) + _positionShift,    // Top left
             };
             mesh->setPositions(positions, sizeof(positions) / sizeof(positions[0]));
 
-            Maze::Vec3DF normals[] = {
+            Maze::Vec3F normals[] = {
                 // LB
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Top right
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Bottom right
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Bottom left
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Top left
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Top right
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Bottom right
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Bottom left
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Top left
                 // LT
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Top right
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Bottom right
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Bottom left
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Top left
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Top right
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Bottom right
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Bottom left
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Top left
                 // RT
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Top right
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Bottom right
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Bottom left
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Top left
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Top right
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Bottom right
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Bottom left
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Top left
                 // RB
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Top right
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Bottom right
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Bottom left
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Top left
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Top right
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Bottom right
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Bottom left
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Top left
                 // L
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Top right
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Bottom right
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Bottom left
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Top left
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Top right
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Bottom right
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Bottom left
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Top left
                 // T
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Top right
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Bottom right
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Bottom left
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Top left
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Top right
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Bottom right
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Bottom left
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Top left
                 // B
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Top right
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Bottom right
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Bottom left
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Top left
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Top right
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Bottom right
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Bottom left
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Top left
                 // C
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Top right
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Bottom right
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Bottom left
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),    // Top left
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Top right
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Bottom right
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Bottom left
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),    // Top left
             };
             mesh->setNormals(normals, sizeof(normals) / sizeof(normals[0]));
 
-            Maze::Vec4DF colors[] = {
+            Maze::Vec4F colors[] = {
                 // LB
                 _color,    // Top right
                 _color,    // Bottom right
@@ -366,52 +366,52 @@ namespace Maze
             };
             mesh->setColors(colors, sizeof(colors) / sizeof(colors[0]));
 
-            Maze::Vec2DF uvs0[] = {
+            Maze::Vec2F uvs0[] = {
                 // LB
-                Maze::Vec2DF(centerUVLB.x, centerUVLB.y),           // Top right
-                Maze::Vec2DF(centerUVLB.x, _uv.y),                  // Bottom right
-                Maze::Vec2DF(_uv.x, _uv.y),                         // Bottom left
-                Maze::Vec2DF(_uv.x, centerUVLB.y),                  // Top left
+                Maze::Vec2F(centerUVLB.x, centerUVLB.y),           // Top right
+                Maze::Vec2F(centerUVLB.x, _uv.y),                  // Bottom right
+                Maze::Vec2F(_uv.x, _uv.y),                         // Bottom left
+                Maze::Vec2F(_uv.x, centerUVLB.y),                  // Top left
                 // LT
-                Maze::Vec2DF(ltUVRT.x, ltUVRT.y),                   // Top right
-                Maze::Vec2DF(ltUVRT.x, centerUVRT.y),               // Bottom right
-                Maze::Vec2DF(_uv.x, centerUVRT.y),                  // Bottom left
-                Maze::Vec2DF(_uv.x, ltUVRT.y),                      // Top left
+                Maze::Vec2F(ltUVRT.x, ltUVRT.y),                   // Top right
+                Maze::Vec2F(ltUVRT.x, centerUVRT.y),               // Bottom right
+                Maze::Vec2F(_uv.x, centerUVRT.y),                  // Bottom left
+                Maze::Vec2F(_uv.x, ltUVRT.y),                      // Top left
                 // RT
-                Maze::Vec2DF(_uv.z, _uv.w),                         // Top right
-                Maze::Vec2DF(_uv.z, centerUVRT.y),                  // Bottom right
-                Maze::Vec2DF(centerUVRT.x, centerUVRT.y),           // Bottom left
-                Maze::Vec2DF(centerUVRT.x, _uv.w),                  // Top left
+                Maze::Vec2F(_uv.z, _uv.w),                         // Top right
+                Maze::Vec2F(_uv.z, centerUVRT.y),                  // Bottom right
+                Maze::Vec2F(centerUVRT.x, centerUVRT.y),           // Bottom left
+                Maze::Vec2F(centerUVRT.x, _uv.w),                  // Top left
                 // RB
-                Maze::Vec2DF(_uv.z, centerUVLB.y),                  // Top right
-                Maze::Vec2DF(_uv.z, _uv.y),                         // Bottom right
-                Maze::Vec2DF(centerUVRT.x, _uv.y),                  // Bottom left
-                Maze::Vec2DF(centerUVRT.x, centerUVLB.y),           // Top left
+                Maze::Vec2F(_uv.z, centerUVLB.y),                  // Top right
+                Maze::Vec2F(_uv.z, _uv.y),                         // Bottom right
+                Maze::Vec2F(centerUVRT.x, _uv.y),                  // Bottom left
+                Maze::Vec2F(centerUVRT.x, centerUVLB.y),           // Top left
                 // L
-                Maze::Vec2DF(centerUVLB.x, centerUVRT.y),           // Top right
-                Maze::Vec2DF(centerUVLB.x, centerUVLB.y),           // Bottom right
-                Maze::Vec2DF(_uv.x, centerUVLB.y),                  // Bottom left
-                Maze::Vec2DF(_uv.x, centerUVRT.y),                  // Top left
+                Maze::Vec2F(centerUVLB.x, centerUVRT.y),           // Top right
+                Maze::Vec2F(centerUVLB.x, centerUVLB.y),           // Bottom right
+                Maze::Vec2F(_uv.x, centerUVLB.y),                  // Bottom left
+                Maze::Vec2F(_uv.x, centerUVRT.y),                  // Top left
                 // T
-                Maze::Vec2DF(centerUVRT.x, _uv.w),                  // Top right
-                Maze::Vec2DF(centerUVRT.x, centerUVRT.y),           // Bottom right
-                Maze::Vec2DF(centerUVLB.x, centerUVRT.y),           // Bottom left
-                Maze::Vec2DF(centerUVLB.x, _uv.w),                  // Top left
+                Maze::Vec2F(centerUVRT.x, _uv.w),                  // Top right
+                Maze::Vec2F(centerUVRT.x, centerUVRT.y),           // Bottom right
+                Maze::Vec2F(centerUVLB.x, centerUVRT.y),           // Bottom left
+                Maze::Vec2F(centerUVLB.x, _uv.w),                  // Top left
                 // R
-                Maze::Vec2DF(_uv.z, centerUVRT.y),                  // Top right
-                Maze::Vec2DF(_uv.z, centerUVLB.y),                  // Bottom right
-                Maze::Vec2DF(centerUVRT.x, centerUVLB.y),           // Bottom left
-                Maze::Vec2DF(centerUVRT.x, centerUVRT.y),           // Top left
+                Maze::Vec2F(_uv.z, centerUVRT.y),                  // Top right
+                Maze::Vec2F(_uv.z, centerUVLB.y),                  // Bottom right
+                Maze::Vec2F(centerUVRT.x, centerUVLB.y),           // Bottom left
+                Maze::Vec2F(centerUVRT.x, centerUVRT.y),           // Top left
                 // B
-                Maze::Vec2DF(centerUVRT.x, centerUVLB.y),           // Top right
-                Maze::Vec2DF(centerUVRT.x, _uv.y),                  // Bottom right
-                Maze::Vec2DF(centerUVLB.x, _uv.y),                  // Bottom left
-                Maze::Vec2DF(centerUVLB.x, centerUVLB.y),           // Top left
+                Maze::Vec2F(centerUVRT.x, centerUVLB.y),           // Top right
+                Maze::Vec2F(centerUVRT.x, _uv.y),                  // Bottom right
+                Maze::Vec2F(centerUVLB.x, _uv.y),                  // Bottom left
+                Maze::Vec2F(centerUVLB.x, centerUVLB.y),           // Top left
                 // C
-                Maze::Vec2DF(centerUVRT.x, centerUVRT.y),           // Top right
-                Maze::Vec2DF(centerUVRT.x, centerUVLB.y),           // Bottom right
-                Maze::Vec2DF(centerUVLB.x, centerUVLB.y),           // Bottom left
-                Maze::Vec2DF(centerUVLB.x, centerUVRT.y),           // Top left
+                Maze::Vec2F(centerUVRT.x, centerUVRT.y),           // Top right
+                Maze::Vec2F(centerUVRT.x, centerUVLB.y),           // Bottom right
+                Maze::Vec2F(centerUVLB.x, centerUVLB.y),           // Bottom left
+                Maze::Vec2F(centerUVLB.x, centerUVRT.y),           // Top left
             };
             mesh->setTexCoords(0, uvs0, sizeof(uvs0) / sizeof(uvs0[0]));
 
@@ -448,8 +448,8 @@ namespace Maze
             mesh->setIndices(indices, indicesCount);
 
             // Generate tangents and bitangents
-            Vector<Vec3DF> tangents;
-            Vector<Vec3DF> bitangents;
+            Vector<Vec3F> tangents;
+            Vector<Vec3F> bitangents;
             if (SubMeshHelper::GenerateTangentsAndBitangents(
                 &indices[0],
                 indicesCount,
@@ -469,12 +469,12 @@ namespace Maze
 
         //////////////////////////////////////////
         MeshPtr MAZE_GRAPHICS_API CreateSlicedPanelMesh(
-            Vec2DF const& _size,
-            Vec2DF const& _positionShift,
+            Vec2F const& _size,
+            Vec2F const& _positionShift,
             SpriteSliceBorder const& _sliceBorder,
-            Vec2DF const& _originalSize,
-            Vec4DF const& _uv,
-            Vec4DF const& _color)
+            Vec2F const& _originalSize,
+            Vec4F const& _uv,
+            Vec4F const& _color)
         {
             MeshPtr mesh = Mesh::Create();
             mesh->addSubMesh(
@@ -491,81 +491,81 @@ namespace Maze
 
         //////////////////////////////////////////
         SubMeshPtr MAZE_GRAPHICS_API CreateCubeSubMesh(
-            Vec3DF const& _size,
-            Vec4DF const& _color)
+            Vec3F const& _size,
+            Vec4F const& _color)
         {
             SubMeshPtr mesh = SubMesh::Create();
             mesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
             
-            Maze::Vec3DF positions[] = {
+            Maze::Vec3F positions[] = {
                 // Front
-                Maze::Vec3DF(-0.5f, +0.5f, +0.5f) * _size,        // -X+Y+Z
-                Maze::Vec3DF(-0.5f, -0.5f, +0.5f) * _size,        // -X-Y+Z
-                Maze::Vec3DF(+0.5f, -0.5f, +0.5f) * _size,        // +X-Y+Z
-                Maze::Vec3DF(+0.5f, +0.5f, +0.5f) * _size,        // +X+Y+Z
+                Maze::Vec3F(-0.5f, +0.5f, +0.5f) * _size,        // -X+Y+Z
+                Maze::Vec3F(-0.5f, -0.5f, +0.5f) * _size,        // -X-Y+Z
+                Maze::Vec3F(+0.5f, -0.5f, +0.5f) * _size,        // +X-Y+Z
+                Maze::Vec3F(+0.5f, +0.5f, +0.5f) * _size,        // +X+Y+Z
                 // Back
-                Maze::Vec3DF(-0.5f, -0.5f, -0.5f) * _size,        // -X-Y-Z
-                Maze::Vec3DF(-0.5f, +0.5f, -0.5f) * _size,        // -X+Y-Z
-                Maze::Vec3DF(+0.5f, +0.5f, -0.5f) * _size,        // +X+Y-Z
-                Maze::Vec3DF(+0.5f, -0.5f, -0.5f) * _size,        // +X-Y-Z
+                Maze::Vec3F(-0.5f, -0.5f, -0.5f) * _size,        // -X-Y-Z
+                Maze::Vec3F(-0.5f, +0.5f, -0.5f) * _size,        // -X+Y-Z
+                Maze::Vec3F(+0.5f, +0.5f, -0.5f) * _size,        // +X+Y-Z
+                Maze::Vec3F(+0.5f, -0.5f, -0.5f) * _size,        // +X-Y-Z
                 // Right
-                Maze::Vec3DF(+0.5f, +0.5f, +0.5f) * _size,        // +X+Y+Z
-                Maze::Vec3DF(+0.5f, -0.5f, +0.5f) * _size,        // +X-Y+Z
-                Maze::Vec3DF(+0.5f, -0.5f, -0.5f) * _size,        // +X-Y-Z
-                Maze::Vec3DF(+0.5f, +0.5f, -0.5f) * _size,        // +X+Y-Z
+                Maze::Vec3F(+0.5f, +0.5f, +0.5f) * _size,        // +X+Y+Z
+                Maze::Vec3F(+0.5f, -0.5f, +0.5f) * _size,        // +X-Y+Z
+                Maze::Vec3F(+0.5f, -0.5f, -0.5f) * _size,        // +X-Y-Z
+                Maze::Vec3F(+0.5f, +0.5f, -0.5f) * _size,        // +X+Y-Z
                 // Left
-                Maze::Vec3DF(-0.5f, +0.5f, -0.5f) * _size,        // -X+Y-Z
-                Maze::Vec3DF(-0.5f, -0.5f, -0.5f) * _size,        // -X-Y-Z
-                Maze::Vec3DF(-0.5f, -0.5f, +0.5f) * _size,        // -X-Y+Z
-                Maze::Vec3DF(-0.5f, +0.5f, +0.5f) * _size,        // -X+Y+Z
+                Maze::Vec3F(-0.5f, +0.5f, -0.5f) * _size,        // -X+Y-Z
+                Maze::Vec3F(-0.5f, -0.5f, -0.5f) * _size,        // -X-Y-Z
+                Maze::Vec3F(-0.5f, -0.5f, +0.5f) * _size,        // -X-Y+Z
+                Maze::Vec3F(-0.5f, +0.5f, +0.5f) * _size,        // -X+Y+Z
                 // Top
-                Maze::Vec3DF(-0.5f, +0.5f, -0.5f) * _size,        // -X+Y-Z
-                Maze::Vec3DF(-0.5f, +0.5f, +0.5f) * _size,        // -X+Y+Z
-                Maze::Vec3DF(+0.5f, +0.5f, +0.5f) * _size,        // +X+Y+Z
-                Maze::Vec3DF(+0.5f, +0.5f, -0.5f) * _size,        // +X+Y-Z
+                Maze::Vec3F(-0.5f, +0.5f, -0.5f) * _size,        // -X+Y-Z
+                Maze::Vec3F(-0.5f, +0.5f, +0.5f) * _size,        // -X+Y+Z
+                Maze::Vec3F(+0.5f, +0.5f, +0.5f) * _size,        // +X+Y+Z
+                Maze::Vec3F(+0.5f, +0.5f, -0.5f) * _size,        // +X+Y-Z
                 // Bottom
-                Maze::Vec3DF(-0.5f, -0.5f, +0.5f) * _size,        // -X-Y+Z
-                Maze::Vec3DF(-0.5f, -0.5f, -0.5f) * _size,        // -X-Y-Z
-                Maze::Vec3DF(+0.5f, -0.5f, -0.5f) * _size,        // +X-Y-Z
-                Maze::Vec3DF(+0.5f, -0.5f, +0.5f) * _size,        // +X-Y+Z
+                Maze::Vec3F(-0.5f, -0.5f, +0.5f) * _size,        // -X-Y+Z
+                Maze::Vec3F(-0.5f, -0.5f, -0.5f) * _size,        // -X-Y-Z
+                Maze::Vec3F(+0.5f, -0.5f, -0.5f) * _size,        // +X-Y-Z
+                Maze::Vec3F(+0.5f, -0.5f, +0.5f) * _size,        // +X-Y+Z
             };
             mesh->setPositions(positions, sizeof(positions) / sizeof(positions[0]));
 
-            Maze::Vec3DF normals[] = {
+            Maze::Vec3F normals[] = {
                 // Front
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),        // -X+Y+Z
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),        // -X-Y+Z
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),        // +X-Y+Z
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),        // +X+Y+Z
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),        // -X+Y+Z
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),        // -X-Y+Z
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),        // +X-Y+Z
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),        // +X+Y+Z
                 // Back
-                Maze::Vec3DF(+0.0f, +0.0f, -1.0f),        // -X-Y-Z
-                Maze::Vec3DF(+0.0f, +0.0f, -1.0f),        // -X+Y-Z
-                Maze::Vec3DF(+0.0f, +0.0f, -1.0f),        // +X+Y-Z
-                Maze::Vec3DF(+0.0f, +0.0f, -1.0f),        // +X-Y-Z
+                Maze::Vec3F(+0.0f, +0.0f, -1.0f),        // -X-Y-Z
+                Maze::Vec3F(+0.0f, +0.0f, -1.0f),        // -X+Y-Z
+                Maze::Vec3F(+0.0f, +0.0f, -1.0f),        // +X+Y-Z
+                Maze::Vec3F(+0.0f, +0.0f, -1.0f),        // +X-Y-Z
                 // Right
-                Maze::Vec3DF(+1.0f, +0.0f, +0.0f),        // +X+Y+Z
-                Maze::Vec3DF(+1.0f, +0.0f, +0.0f),        // +X-Y+Z
-                Maze::Vec3DF(+1.0f, +0.0f, +0.0f),        // +X-Y-Z
-                Maze::Vec3DF(+1.0f, +0.0f, +0.0f),        // +X+Y-Z
+                Maze::Vec3F(+1.0f, +0.0f, +0.0f),        // +X+Y+Z
+                Maze::Vec3F(+1.0f, +0.0f, +0.0f),        // +X-Y+Z
+                Maze::Vec3F(+1.0f, +0.0f, +0.0f),        // +X-Y-Z
+                Maze::Vec3F(+1.0f, +0.0f, +0.0f),        // +X+Y-Z
                 // Left
-                Maze::Vec3DF(-1.0f, +0.0f, +0.0f),        // -X+Y-Z
-                Maze::Vec3DF(-1.0f, +0.0f, +0.0f),        // -X-Y-Z
-                Maze::Vec3DF(-1.0f, +0.0f, +0.0f),        // -X-Y+Z
-                Maze::Vec3DF(-1.0f, +0.0f, +0.0f),        // -X+Y+Z
+                Maze::Vec3F(-1.0f, +0.0f, +0.0f),        // -X+Y-Z
+                Maze::Vec3F(-1.0f, +0.0f, +0.0f),        // -X-Y-Z
+                Maze::Vec3F(-1.0f, +0.0f, +0.0f),        // -X-Y+Z
+                Maze::Vec3F(-1.0f, +0.0f, +0.0f),        // -X+Y+Z
                 // Top
-                Maze::Vec3DF(+0.0f, +1.0f, +0.0f),        // -X+Y-Z
-                Maze::Vec3DF(+0.0f, +1.0f, +0.0f),        // -X+Y+Z
-                Maze::Vec3DF(+0.0f, +1.0f, +0.0f),        // +X+Y+Z
-                Maze::Vec3DF(+0.0f, +1.0f, +0.0f),        // +X+Y-Z
+                Maze::Vec3F(+0.0f, +1.0f, +0.0f),        // -X+Y-Z
+                Maze::Vec3F(+0.0f, +1.0f, +0.0f),        // -X+Y+Z
+                Maze::Vec3F(+0.0f, +1.0f, +0.0f),        // +X+Y+Z
+                Maze::Vec3F(+0.0f, +1.0f, +0.0f),        // +X+Y-Z
                 // Bottom
-                Maze::Vec3DF(+0.0f, -1.0f, +0.0f),        // -X-Y+Z
-                Maze::Vec3DF(+0.0f, -1.0f, +0.0f),        // -X-Y-Z
-                Maze::Vec3DF(+0.0f, -1.0f, +0.0f),        // +X-Y-Z
-                Maze::Vec3DF(+0.0f, -1.0f, +0.0f),        // +X-Y+Z
+                Maze::Vec3F(+0.0f, -1.0f, +0.0f),        // -X-Y+Z
+                Maze::Vec3F(+0.0f, -1.0f, +0.0f),        // -X-Y-Z
+                Maze::Vec3F(+0.0f, -1.0f, +0.0f),        // +X-Y-Z
+                Maze::Vec3F(+0.0f, -1.0f, +0.0f),        // +X-Y+Z
             };
             mesh->setNormals(normals, sizeof(normals) / sizeof(normals[0]));
 
-            Maze::Vec4DF colors[] = {
+            Maze::Vec4F colors[] = {
                 // Front
                 _color,    // -X+Y+Z
                 _color,    // -X-Y+Z
@@ -599,37 +599,37 @@ namespace Maze
             };
             mesh->setColors(colors, sizeof(colors) / sizeof(colors[0]));
 
-            Maze::Vec2DF uvs0[] = {
+            Maze::Vec2F uvs0[] = {
                 // Front
-                Maze::Vec2DF(1.0f, 1.0f),    // +X+Y-Z
-                Maze::Vec2DF(1.0f, 0.0f),    // +X-Y-Z
-                Maze::Vec2DF(0.0f, 0.0f),    // -X-Y-Z
-                Maze::Vec2DF(0.0f, 1.0f),    // -X+Y-Z
+                Maze::Vec2F(1.0f, 1.0f),    // +X+Y-Z
+                Maze::Vec2F(1.0f, 0.0f),    // +X-Y-Z
+                Maze::Vec2F(0.0f, 0.0f),    // -X-Y-Z
+                Maze::Vec2F(0.0f, 1.0f),    // -X+Y-Z
                 // Back
-                Maze::Vec2DF(1.0f, 1.0f),    // +X+Y-Z
-                Maze::Vec2DF(1.0f, 0.0f),    // +X-Y-Z
-                Maze::Vec2DF(0.0f, 0.0f),    // -X-Y-Z
-                Maze::Vec2DF(0.0f, 1.0f),    // -X+Y-Z
+                Maze::Vec2F(1.0f, 1.0f),    // +X+Y-Z
+                Maze::Vec2F(1.0f, 0.0f),    // +X-Y-Z
+                Maze::Vec2F(0.0f, 0.0f),    // -X-Y-Z
+                Maze::Vec2F(0.0f, 1.0f),    // -X+Y-Z
                 // Right
-                Maze::Vec2DF(1.0f, 1.0f),    // +X+Y+Z
-                Maze::Vec2DF(1.0f, 0.0f),    // +X-Y+Z
-                Maze::Vec2DF(0.0f, 0.0f),    // +X-Y-Z
-                Maze::Vec2DF(0.0f, 1.0f),    // +X+Y-Z
+                Maze::Vec2F(1.0f, 1.0f),    // +X+Y+Z
+                Maze::Vec2F(1.0f, 0.0f),    // +X-Y+Z
+                Maze::Vec2F(0.0f, 0.0f),    // +X-Y-Z
+                Maze::Vec2F(0.0f, 1.0f),    // +X+Y-Z
                 // Left
-                Maze::Vec2DF(1.0f, 1.0f),    // -X+Y-Z
-                Maze::Vec2DF(1.0f, 0.0f),    // -X-Y-Z
-                Maze::Vec2DF(0.0f, 0.0f),    // -X-Y+Z
-                Maze::Vec2DF(0.0f, 1.0f),    // -X+Y+Z
+                Maze::Vec2F(1.0f, 1.0f),    // -X+Y-Z
+                Maze::Vec2F(1.0f, 0.0f),    // -X-Y-Z
+                Maze::Vec2F(0.0f, 0.0f),    // -X-Y+Z
+                Maze::Vec2F(0.0f, 1.0f),    // -X+Y+Z
                 // Top
-                Maze::Vec2DF(1.0f, 1.0f),    // -X+Y-Z
-                Maze::Vec2DF(1.0f, 0.0f),    // -X+Y+Z
-                Maze::Vec2DF(0.0f, 0.0f),    // +X+Y+Z
-                Maze::Vec2DF(0.0f, 1.0f),    // +X+Y-Z
+                Maze::Vec2F(1.0f, 1.0f),    // -X+Y-Z
+                Maze::Vec2F(1.0f, 0.0f),    // -X+Y+Z
+                Maze::Vec2F(0.0f, 0.0f),    // +X+Y+Z
+                Maze::Vec2F(0.0f, 1.0f),    // +X+Y-Z
                 // Bottom
-                Maze::Vec2DF(1.0f, 1.0f),    // -X-Y+Z
-                Maze::Vec2DF(1.0f, 0.0f),    // -X-Y-Z
-                Maze::Vec2DF(0.0f, 0.0f),    // +X-Y-Z
-                Maze::Vec2DF(0.0f, 1.0f),    // +X-Y+Z
+                Maze::Vec2F(1.0f, 1.0f),    // -X-Y+Z
+                Maze::Vec2F(1.0f, 0.0f),    // -X-Y-Z
+                Maze::Vec2F(0.0f, 0.0f),    // +X-Y-Z
+                Maze::Vec2F(0.0f, 1.0f),    // +X-Y+Z
             };
             mesh->setTexCoords(0, uvs0, sizeof(uvs0) / sizeof(uvs0[0]));
 
@@ -657,8 +657,8 @@ namespace Maze
             mesh->setIndices(indices, indicesCount);
             
             // Generate tangents and bitangents
-            Vector<Vec3DF> tangents;
-            Vector<Vec3DF> bitangents;
+            Vector<Vec3F> tangents;
+            Vector<Vec3F> bitangents;
             if (SubMeshHelper::GenerateTangentsAndBitangents(
                 &indices[0],
                 indicesCount,
@@ -678,8 +678,8 @@ namespace Maze
 
         //////////////////////////////////////////
         MeshPtr MAZE_GRAPHICS_API CreateCubeMesh(
-            Vec3DF const& _size,
-            Vec4DF const& _color)
+            Vec3F const& _size,
+            Vec4F const& _color)
         {
             MeshPtr mesh = Mesh::Create();
             mesh->addSubMesh(CreateCubeSubMesh(_size, _color));
@@ -690,51 +690,51 @@ namespace Maze
         SubMeshPtr MAZE_GRAPHICS_API CreateSpherifiedCubeSubMesh(
             F32 _radius,
             U32 _quality,
-            Vec4DF const& _color)
+            Vec4F const& _color)
         {
             SubMeshPtr mesh = SubMesh::Create();
             mesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
 
-            static const Vec3DF origins[6] =
+            static const Vec3F origins[6] =
             {
-                Vec3DF(-1.0, -1.0, -1.0),
-                Vec3DF(1.0, -1.0, -1.0),
-                Vec3DF(1.0, -1.0, 1.0),
-                Vec3DF(-1.0, -1.0, 1.0),
-                Vec3DF(-1.0, 1.0, -1.0),
-                Vec3DF(-1.0, -1.0, -1.0)
+                Vec3F(-1.0, -1.0, -1.0),
+                Vec3F(1.0, -1.0, -1.0),
+                Vec3F(1.0, -1.0, 1.0),
+                Vec3F(-1.0, -1.0, 1.0),
+                Vec3F(-1.0, 1.0, -1.0),
+                Vec3F(-1.0, -1.0, -1.0)
             };
 
-            static const Vec3DF rights[6] =
+            static const Vec3F rights[6] =
             {
-                Vec3DF(2.0, 0.0, 0.0),
-                Vec3DF(0.0, 0.0, 2.0),
-                Vec3DF(-2.0, 0.0, 0.0),
-                Vec3DF(0.0, 0.0, -2.0),
-                Vec3DF(2.0, 0.0, 0.0),
-                Vec3DF(2.0, 0.0, 0.0)
+                Vec3F(2.0, 0.0, 0.0),
+                Vec3F(0.0, 0.0, 2.0),
+                Vec3F(-2.0, 0.0, 0.0),
+                Vec3F(0.0, 0.0, -2.0),
+                Vec3F(2.0, 0.0, 0.0),
+                Vec3F(2.0, 0.0, 0.0)
             };
 
-            static const Vec3DF ups[6] =
+            static const Vec3F ups[6] =
             {
-                Vec3DF(0.0, 2.0, 0.0),
-                Vec3DF(0.0, 2.0, 0.0),
-                Vec3DF(0.0, 2.0, 0.0),
-                Vec3DF(0.0, 2.0, 0.0),
-                Vec3DF(0.0, 0.0, 2.0),
-                Vec3DF(0.0, 0.0, 2.0)
+                Vec3F(0.0, 2.0, 0.0),
+                Vec3F(0.0, 2.0, 0.0),
+                Vec3F(0.0, 2.0, 0.0),
+                Vec3F(0.0, 2.0, 0.0),
+                Vec3F(0.0, 0.0, 2.0),
+                Vec3F(0.0, 0.0, 2.0)
             };
 
             Vector<U32> indices;
-            Vector<Vec3DF> positions;
-            Vector<Vec3DF> normals;
-            Vector<Vec4DF> colors;
-            Vector<Vec2DF> uv0;
+            Vector<Vec3F> positions;
+            Vector<Vec3F> normals;
+            Vector<Vec4F> colors;
+            Vector<Vec2F> uv0;
 
             S32 divisions = ((S32)_quality + 1) * 2;
 
             F32 const step = 1.0f / F32(divisions);
-            Vec3DF const step3(step, step, step);
+            Vec3F const step3(step, step, step);
 
             F32 sphereRotSin = Math::Sin(Math::c_halfPi * 0.5f);
             F32 sphereRotCos = Math::Cos(Math::c_halfPi * 0.5f);
@@ -746,19 +746,19 @@ namespace Maze
             // Rim
             for (S32 face = 0; face < 4; ++face)
             {
-                Vec3DF const origin = origins[face];
-                Vec3DF const right = rights[face];
-                Vec3DF const up = ups[face];
+                Vec3F const origin = origins[face];
+                Vec3F const right = rights[face];
+                Vec3F const up = ups[face];
 
                 for (S32 j = 0; j < divisions + 1; ++j)
                 {
-                    Vec3DF const j3((F32)j, (F32)j, (F32)j);
+                    Vec3F const j3((F32)j, (F32)j, (F32)j);
                     for (S32 i = 0; i < divisions + 1; ++i)
                     {
-                        Vec3DF const i3((F32)i, (F32)i, (F32)i);
-                        Vec3DF const p = origin + step3 * (i3 * right + j3 * up);
-                        Vec3DF const p2 = p * p;
-                        Vec3DF n
+                        Vec3F const i3((F32)i, (F32)i, (F32)i);
+                        Vec3F const p = origin + step3 * (i3 * right + j3 * up);
+                        Vec3F const p2 = p * p;
+                        Vec3F n
                         (
                             p.x * std::sqrt(1.0f - 0.5f * (p2.y + p2.z) + p2.y * p2.z / 3.0f),
                             p.y * std::sqrt(1.0f - 0.5f * (p2.z + p2.x) + p2.z * p2.x / 3.0f),
@@ -770,9 +770,9 @@ namespace Maze
                         F32 y0 = n.y;
                         F32 z0 = -sphereRotSin * n.x + sphereRotCos * n.z;
 
-                        Vec3DF position(x0, y0, z0);
+                        Vec3F position(x0, y0, z0);
 
-                        Vec3DF normal = position.normalizedCopy();
+                        Vec3F normal = position.normalizedCopy();
 
                         F32 angle = -Math::ATan2(normal.x, normal.z);
                         F32 u = (angle / (Math::c_twoPi)) + 0.5f;
@@ -785,7 +785,7 @@ namespace Maze
                         position = normal * _radius;
 
                         positions.emplace_back(position);
-                        uv0.push_back(Vec2DF(u, v));
+                        uv0.push_back(Vec2F(u, v));
                     }
                 }
 
@@ -838,9 +838,9 @@ namespace Maze
             // Top
             for (U32 face = 4; face < 5; ++face)
             {
-                Vec3DF const origin = origins[face];
-                Vec3DF const right = rights[face];
-                Vec3DF const up = ups[face];
+                Vec3F const origin = origins[face];
+                Vec3F const right = rights[face];
+                Vec3F const up = ups[face];
 
                 U32 vertexIndex = (U32)positions.size();
 
@@ -848,13 +848,13 @@ namespace Maze
                 {
                     for (S32 j = 0; j < divisions + 1; ++j)
                     {
-                        Vec3DF const j3((F32)j, (F32)j, (F32)j);
+                        Vec3F const j3((F32)j, (F32)j, (F32)j);
                         for (S32 i = 0; i < divisions + 1 - j; ++i)
                         {
-                            Vec3DF const i3((F32)i, (F32)i, (F32)i);
-                            Vec3DF const p = origin + step3 * (i3 * right + j3 * up);
-                            Vec3DF const p2 = p * p;
-                            Vec3DF n
+                            Vec3F const i3((F32)i, (F32)i, (F32)i);
+                            Vec3F const p = origin + step3 * (i3 * right + j3 * up);
+                            Vec3F const p2 = p * p;
+                            Vec3F n
                             (
                                 p.x * std::sqrt(1.0f - 0.5f * (p2.y + p2.z) + p2.y * p2.z / 3.0f),
                                 p.y * std::sqrt(1.0f - 0.5f * (p2.z + p2.x) + p2.z * p2.x / 3.0f),
@@ -867,9 +867,9 @@ namespace Maze
                             F32 z0 = -sphereRotSin * n.x + sphereRotCos * n.z;
 
 
-                            Vec3DF position(x0, y0, z0);
+                            Vec3F position(x0, y0, z0);
 
-                            Vec3DF normal = position.normalizedCopy();
+                            Vec3F normal = position.normalizedCopy();
 
                             F32 angle = -Math::ATan2(normal.x, normal.z);
                             F32 u = (angle / (Math::c_twoPi)) + 0.5f;
@@ -882,7 +882,7 @@ namespace Maze
                             position = normal * _radius;
 
                             positions.emplace_back(position);
-                            uv0.push_back(Vec2DF(u, v));
+                            uv0.push_back(Vec2F(u, v));
                         }
                     }
 
@@ -923,13 +923,13 @@ namespace Maze
                 {
                     for (S32 j = divisions; j >= 0; --j)
                     {
-                        Vec3DF const j3((F32)j, (F32)j, (F32)j);
+                        Vec3F const j3((F32)j, (F32)j, (F32)j);
                         for (S32 i = divisions - j; i < divisions + 1; ++i)
                         {
-                            Vec3DF const i3((F32)i, (F32)i, (F32)i);
-                            Vec3DF const p = origin + step3 * (i3 * right + j3 * up);
-                            Vec3DF const p2 = p * p;
-                            Vec3DF n
+                            Vec3F const i3((F32)i, (F32)i, (F32)i);
+                            Vec3F const p = origin + step3 * (i3 * right + j3 * up);
+                            Vec3F const p2 = p * p;
+                            Vec3F n
                             (
                                 p.x * std::sqrt(1.0f - 0.5f * (p2.y + p2.z) + p2.y * p2.z / 3.0f),
                                 p.y * std::sqrt(1.0f - 0.5f * (p2.z + p2.x) + p2.z * p2.x / 3.0f),
@@ -942,9 +942,9 @@ namespace Maze
                             F32 z0 = -sphereRotSin * n.x + sphereRotCos * n.z;
 
 
-                            Vec3DF position(x0, y0, z0);
+                            Vec3F position(x0, y0, z0);
 
-                            Vec3DF normal = position.normalizedCopy();
+                            Vec3F normal = position.normalizedCopy();
 
                             F32 angle = -Math::ATan2(normal.x, normal.z);
                             F32 u = (angle / (Math::c_twoPi)) + 0.5f;
@@ -954,7 +954,7 @@ namespace Maze
                             position = normal * _radius;
 
                             positions.emplace_back(position);
-                            uv0.push_back(Vec2DF(u, v));
+                            uv0.push_back(Vec2F(u, v));
                         }
                     }
 
@@ -993,9 +993,9 @@ namespace Maze
             // Bottom
             for (U32 face = 5; face < 6; ++face)
             {
-                Vec3DF const origin = origins[face];
-                Vec3DF const right = rights[face];
-                Vec3DF const up = ups[face];
+                Vec3F const origin = origins[face];
+                Vec3F const right = rights[face];
+                Vec3F const up = ups[face];
 
                 U32 vertexIndex = (U32)positions.size();
 
@@ -1003,13 +1003,13 @@ namespace Maze
                 {
                     for (S32 j = 0; j < divisions + 1; ++j)
                     {
-                        Vec3DF const j3((F32)j, (F32)j, (F32)j);
+                        Vec3F const j3((F32)j, (F32)j, (F32)j);
                         for (S32 i = 0; i < divisions + 1 - j; ++i)
                         {
-                            Vec3DF const i3((F32)i, (F32)i, (F32)i);
-                            Vec3DF const p = origin + step3 * (i3 * right + j3 * up);
-                            Vec3DF const p2 = p * p;
-                            Vec3DF n
+                            Vec3F const i3((F32)i, (F32)i, (F32)i);
+                            Vec3F const p = origin + step3 * (i3 * right + j3 * up);
+                            Vec3F const p2 = p * p;
+                            Vec3F n
                             (
                                 p.x * std::sqrt(1.0f - 0.5f * (p2.y + p2.z) + p2.y * p2.z / 3.0f),
                                 p.y * std::sqrt(1.0f - 0.5f * (p2.z + p2.x) + p2.z * p2.x / 3.0f),
@@ -1022,9 +1022,9 @@ namespace Maze
                             F32 z0 = -sphereRotSin * n.x + sphereRotCos * n.z;
 
 
-                            Vec3DF position(x0, y0, z0);
+                            Vec3F position(x0, y0, z0);
 
-                            Vec3DF normal = position.normalizedCopy();
+                            Vec3F normal = position.normalizedCopy();
 
                             F32 angle = -Math::ATan2(normal.x, normal.z);
                             F32 u = (angle / (Math::c_twoPi)) + 0.5f;
@@ -1037,7 +1037,7 @@ namespace Maze
                             position = normal * _radius;
 
                             positions.emplace_back(position);
-                            uv0.push_back(Vec2DF(u, v));
+                            uv0.push_back(Vec2F(u, v));
                         }
                     }
 
@@ -1079,13 +1079,13 @@ namespace Maze
                 {
                     for (S32 j = divisions; j >= 0; --j)
                     {
-                        Vec3DF const j3((F32)j, (F32)j, (F32)j);
+                        Vec3F const j3((F32)j, (F32)j, (F32)j);
                         for (S32 i = divisions - j; i < divisions + 1; ++i)
                         {
-                            Vec3DF const i3((F32)i, (F32)i, (F32)i);
-                            Vec3DF const p = origin + step3 * (i3 * right + j3 * up);
-                            Vec3DF const p2 = p * p;
-                            Vec3DF n
+                            Vec3F const i3((F32)i, (F32)i, (F32)i);
+                            Vec3F const p = origin + step3 * (i3 * right + j3 * up);
+                            Vec3F const p2 = p * p;
+                            Vec3F n
                             (
                                 p.x * std::sqrt(1.0f - 0.5f * (p2.y + p2.z) + p2.y * p2.z / 3.0f),
                                 p.y * std::sqrt(1.0f - 0.5f * (p2.z + p2.x) + p2.z * p2.x / 3.0f),
@@ -1098,9 +1098,9 @@ namespace Maze
                             F32 z0 = -sphereRotSin * n.x + sphereRotCos * n.z;
 
 
-                            Vec3DF position(x0, y0, z0);
+                            Vec3F position(x0, y0, z0);
 
-                            Vec3DF normal = position.normalizedCopy();
+                            Vec3F normal = position.normalizedCopy();
 
                             F32 angle = -Math::ATan2(normal.x, normal.z);
                             F32 u = (angle / (Math::c_twoPi)) + 0.5f;
@@ -1110,7 +1110,7 @@ namespace Maze
                             position = normal * _radius;
 
                             positions.emplace_back(position);
-                            uv0.push_back(Vec2DF(u, v));
+                            uv0.push_back(Vec2F(u, v));
                         }
                     }
 
@@ -1147,7 +1147,7 @@ namespace Maze
             }
 
             colors.resize(positions.size());
-            for (Vec4DF& color : colors)
+            for (Vec4F& color : colors)
                 color = _color;
 
             mesh->setPositions(&positions[0], positions.size());
@@ -1157,8 +1157,8 @@ namespace Maze
             mesh->setIndices(&indices[0], indices.size());
 
             // Generate tangents and bitangents
-            Vector<Vec3DF> tangents;
-            Vector<Vec3DF> bitangents;
+            Vector<Vec3F> tangents;
+            Vector<Vec3F> bitangents;
             if (SubMeshHelper::GenerateTangentsAndBitangents(
                 &indices[0],
                 indices.size(),
@@ -1180,7 +1180,7 @@ namespace Maze
         MeshPtr MAZE_GRAPHICS_API CreateSpherifiedCubeMesh(
             F32 _radius,
             U32 _quality,
-            Vec4DF const& _color)
+            Vec4F const& _color)
         {
             MeshPtr mesh = Mesh::Create();
             mesh->addSubMesh(CreateSpherifiedCubeSubMesh(_radius, _quality, _color));
@@ -1192,42 +1192,42 @@ namespace Maze
         SubMeshPtr MAZE_GRAPHICS_API CreateConeSubMesh(
             F32 _radius,
             F32 _height,
-            Vec4DF const& _color)
+            Vec4F const& _color)
         {
             SubMeshPtr mesh = SubMesh::Create();
             mesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
 
             Vector<U32> indices;
-            Vector<Vec3DF> positions;
-            Vector<Vec3DF> normals;
-            Vector<Vec4DF> colors;
-            Vector<Vec2DF> uv0;
+            Vector<Vec3F> positions;
+            Vector<Vec3F> normals;
+            Vector<Vec4F> colors;
+            Vector<Vec2F> uv0;
 
-            Vec3DF topPoint = Vec3DF::c_unitY * _height;
+            Vec3F topPoint = Vec3F::c_unitY * _height;
 
-            Vec3DF prevPos = Vec3DF(Math::Cos(0.0f), 0.0f, Math::Sin(0.0f)) * _radius;
-            Vec3DF prevNormPerp = Vec3DF(-Math::Sin(0.0f), 0.0f, Math::Cos(0.0f));
+            Vec3F prevPos = Vec3F(Math::Cos(0.0f), 0.0f, Math::Sin(0.0f)) * _radius;
+            Vec3F prevNormPerp = Vec3F(-Math::Sin(0.0f), 0.0f, Math::Cos(0.0f));
             for (S32 i = 1; i <= 24; ++i)
             {
                 F32 a = (i / 24.0f) * Math::c_twoPi;
-                Vec3DF pos = Vec3DF(Math::Cos(a), 0.0f, Math::Sin(a)) * _radius;
+                Vec3F pos = Vec3F(Math::Cos(a), 0.0f, Math::Sin(a)) * _radius;
                 
                 positions.push_back(prevPos);
                 positions.push_back(pos);
-                positions.push_back(Vec3DF::c_zero);
+                positions.push_back(Vec3F::c_zero);
 
                 for (S32 j = 0; j < 3; ++j)
-                    normals.push_back(Vec3DF::c_negativeUnitY);
+                    normals.push_back(Vec3F::c_negativeUnitY);
 
                 positions.push_back(topPoint);
                 positions.push_back(pos);
                 positions.push_back(prevPos);
 
-                Vec3DF curNormPerp(-Math::Sin(a), 0.0f, Math::Cos(a));
+                Vec3F curNormPerp(-Math::Sin(a), 0.0f, Math::Cos(a));
 
-                Vec3DF prevNormal = (topPoint - prevPos).crossProduct(prevNormPerp).normalizedCopy();
-                Vec3DF curNormal = (topPoint - pos).crossProduct(curNormPerp).normalizedCopy();
-                normals.push_back(Vec3DF::c_unitY);
+                Vec3F prevNormal = (topPoint - prevPos).crossProduct(prevNormPerp).normalizedCopy();
+                Vec3F curNormal = (topPoint - pos).crossProduct(curNormPerp).normalizedCopy();
+                normals.push_back(Vec3F::c_unitY);
                 normals.push_back(curNormal);
                 normals.push_back(prevNormal);
 
@@ -1242,7 +1242,7 @@ namespace Maze
             {
                 indices[i] = (U32)i;
                 colors[i] = _color;
-                uv0[i] = (Vec2DF(positions[i].x / _radius, positions[i].y / _radius) + 1.0f) * 0.5f;
+                uv0[i] = (Vec2F(positions[i].x / _radius, positions[i].y / _radius) + 1.0f) * 0.5f;
             }
 
             mesh->setPositions(&positions[0], positions.size());
@@ -1252,8 +1252,8 @@ namespace Maze
             mesh->setIndices(&indices[0], indices.size());
 
             // Generate tangents and bitangents
-            Vector<Vec3DF> tangents;
-            Vector<Vec3DF> bitangents;
+            Vector<Vec3F> tangents;
+            Vector<Vec3F> bitangents;
             if (SubMeshHelper::GenerateTangentsAndBitangents(
                 &indices[0],
                 indices.size(),
@@ -1276,7 +1276,7 @@ namespace Maze
         MeshPtr MAZE_GRAPHICS_API CreateConeMesh(
             F32 _radius,
             F32 _height,
-            Vec4DF const& _color)
+            Vec4F const& _color)
         {
             MeshPtr mesh = Mesh::Create();
             mesh->addSubMesh(CreateConeSubMesh(_radius, _height, _color));
@@ -1288,47 +1288,47 @@ namespace Maze
         SubMeshPtr MAZE_GRAPHICS_API CreateCylinderSubMesh(
             F32 _radius,
             F32 _height,
-            Vec4DF const& _color)
+            Vec4F const& _color)
         {
             SubMeshPtr mesh = SubMesh::Create();
             mesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
 
             Vector<U32> indices;
-            Vector<Vec3DF> positions;
-            Vector<Vec3DF> normals;
-            Vector<Vec4DF> colors;
-            Vector<Vec2DF> uv0;
+            Vector<Vec3F> positions;
+            Vector<Vec3F> normals;
+            Vector<Vec4F> colors;
+            Vector<Vec2F> uv0;
 
-            Vec3DF prevVec = Vec3DF(Math::Cos(0.0f), 0.0f, Math::Sin(0.0f));
-            Vec3DF prevPos = prevVec * _radius;
+            Vec3F prevVec = Vec3F(Math::Cos(0.0f), 0.0f, Math::Sin(0.0f));
+            Vec3F prevPos = prevVec * _radius;
             for (S32 i = 1; i <= 24; ++i)
             {
                 F32 a = (i / 24.0f) * Math::c_twoPi;
-                Vec3DF vec = Vec3DF(Math::Cos(a), 0.0f, Math::Sin(a));
-                Vec3DF pos = vec * _radius;
+                Vec3F vec = Vec3F(Math::Cos(a), 0.0f, Math::Sin(a));
+                Vec3F pos = vec * _radius;
 
-                positions.push_back(prevPos - Vec3DF::c_unitY * _height * 0.5f);
-                positions.push_back(pos - Vec3DF::c_unitY * _height * 0.5f);
-                positions.push_back(Vec3DF::c_zero - Vec3DF::c_unitY * _height * 0.5f);
+                positions.push_back(prevPos - Vec3F::c_unitY * _height * 0.5f);
+                positions.push_back(pos - Vec3F::c_unitY * _height * 0.5f);
+                positions.push_back(Vec3F::c_zero - Vec3F::c_unitY * _height * 0.5f);
                 for (S32 j = 0; j < 3; ++j)
-                    normals.push_back(Vec3DF::c_negativeUnitY);
+                    normals.push_back(Vec3F::c_negativeUnitY);
 
-                positions.push_back(Vec3DF::c_unitY * _height * 0.5f);
-                positions.push_back(pos + Vec3DF::c_unitY * _height * 0.5f);
-                positions.push_back(prevPos + Vec3DF::c_unitY * _height * 0.5f);
+                positions.push_back(Vec3F::c_unitY * _height * 0.5f);
+                positions.push_back(pos + Vec3F::c_unitY * _height * 0.5f);
+                positions.push_back(prevPos + Vec3F::c_unitY * _height * 0.5f);
                 for (S32 j = 0; j < 3; ++j)
-                    normals.push_back(Vec3DF::c_unitY);
+                    normals.push_back(Vec3F::c_unitY);
 
-                positions.push_back(pos + Vec3DF::c_unitY * _height * 0.5f);
-                positions.push_back(pos - Vec3DF::c_unitY * _height * 0.5f);
-                positions.push_back(prevPos - Vec3DF::c_unitY * _height * 0.5f);
+                positions.push_back(pos + Vec3F::c_unitY * _height * 0.5f);
+                positions.push_back(pos - Vec3F::c_unitY * _height * 0.5f);
+                positions.push_back(prevPos - Vec3F::c_unitY * _height * 0.5f);
 
-                positions.push_back(prevPos - Vec3DF::c_unitY * _height * 0.5f);
-                positions.push_back(prevPos + Vec3DF::c_unitY * _height * 0.5f);
-                positions.push_back(pos + Vec3DF::c_unitY * _height * 0.5f);
+                positions.push_back(prevPos - Vec3F::c_unitY * _height * 0.5f);
+                positions.push_back(prevPos + Vec3F::c_unitY * _height * 0.5f);
+                positions.push_back(pos + Vec3F::c_unitY * _height * 0.5f);
 
-                Vec3DF prevNormal = prevVec;
-                Vec3DF curNormal = vec;
+                Vec3F prevNormal = prevVec;
+                Vec3F curNormal = vec;
                 normals.push_back(curNormal);
                 normals.push_back(curNormal);
                 normals.push_back(prevNormal);
@@ -1348,7 +1348,7 @@ namespace Maze
             {
                 indices[i] = (U32)i;
                 colors[i] = _color;
-                uv0[i] = (Vec2DF(positions[i].x / _radius, positions[i].y / _radius) + 1.0f) * 0.5f;
+                uv0[i] = (Vec2F(positions[i].x / _radius, positions[i].y / _radius) + 1.0f) * 0.5f;
             }
 
             mesh->setPositions(&positions[0], positions.size());
@@ -1358,8 +1358,8 @@ namespace Maze
             mesh->setIndices(&indices[0], indices.size());
 
             // Generate tangents and bitangents
-            Vector<Vec3DF> tangents;
-            Vector<Vec3DF> bitangents;
+            Vector<Vec3F> tangents;
+            Vector<Vec3F> bitangents;
             if (SubMeshHelper::GenerateTangentsAndBitangents(
                 &indices[0],
                 indices.size(),
@@ -1382,7 +1382,7 @@ namespace Maze
         MeshPtr MAZE_GRAPHICS_API CreateCylinderMesh(
             F32 _radius,
             F32 _height,
-            Vec4DF const& _color)
+            Vec4F const& _color)
         {
             MeshPtr mesh = Mesh::Create();
             mesh->addSubMesh(CreateCylinderSubMesh(_radius, _height, _color));
@@ -1396,16 +1396,16 @@ namespace Maze
             F32 _csRadius,
             S32 _sides,
             S32 _csSides,
-            Vec4DF const& _color)
+            Vec4F const& _color)
         {
             SubMeshPtr mesh = SubMesh::Create();
             mesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
 
             Vector<U32> indices;
-            Vector<Vec3DF> positions;
-            Vector<Vec3DF> normals;
-            Vector<Vec4DF> colors;
-            Vector<Vec2DF> uv0;
+            Vector<Vec3F> positions;
+            Vector<Vec3F> normals;
+            Vector<Vec4F> colors;
+            Vector<Vec2F> uv0;
 
             S32 verticesCount = (_sides + 1) * (_csSides + 1);
             S32 indicesCount = _sides * _csSides * 6;
@@ -1440,7 +1440,7 @@ namespace Maze
                         v = -v;
 
                     colors[vertexIndex] = _color;
-                    uv0[vertexIndex] = Vec2DF(u, v);
+                    uv0[vertexIndex] = Vec2F(u, v);
 
                     vertexIndex++;
                 }
@@ -1455,8 +1455,8 @@ namespace Maze
                     F32 xc = _radius * Math::Cos(angleI);
                     F32 yc = _radius * Math::Sin(angleI);
 
-                    Vec3DF const& pos = positions[vertexIndex];
-                    Vec3DF normal(
+                    Vec3F const& pos = positions[vertexIndex];
+                    Vec3F normal(
                         pos.x - xc,
                         pos.y,
                         pos.z - yc);
@@ -1496,8 +1496,8 @@ namespace Maze
             mesh->setIndices(&indices[0], indices.size());
 
             // Generate tangents and bitangents
-            Vector<Vec3DF> tangents;
-            Vector<Vec3DF> bitangents;
+            Vector<Vec3F> tangents;
+            Vector<Vec3F> bitangents;
             if (SubMeshHelper::GenerateTangentsAndBitangents(
                 &indices[0],
                 indices.size(),
@@ -1521,7 +1521,7 @@ namespace Maze
             F32 _csRadius,
             S32 _sides,
             S32 _csSides,
-            Vec4DF const& _color)
+            Vec4F const& _color)
         {
             MeshPtr mesh = Mesh::Create();
             mesh->addSubMesh(CreateTorusSubMesh(_radius, _csRadius, _sides, _csSides, _color));
@@ -1536,43 +1536,43 @@ namespace Maze
             MeshPtr mesh = Mesh::Create();
             mesh->setRenderDrawTopology(RenderDrawTopology::Lines);
 
-            Maze::Vec3DF positions[] = {
-                Maze::Vec3DF(+0.0f, +0.0f, +0.0f),
-                Maze::Vec3DF(+1.0f, +0.0f, +0.0f) * _length,
-                Maze::Vec3DF(+0.0f, +0.0f, +0.0f),
-                Maze::Vec3DF(+0.0f, +1.0f, +0.0f)* _length,
-                Maze::Vec3DF(+0.0f, +0.0f, +0.0f),
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f)* _length,
+            Maze::Vec3F positions[] = {
+                Maze::Vec3F(+0.0f, +0.0f, +0.0f),
+                Maze::Vec3F(+1.0f, +0.0f, +0.0f) * _length,
+                Maze::Vec3F(+0.0f, +0.0f, +0.0f),
+                Maze::Vec3F(+0.0f, +1.0f, +0.0f)* _length,
+                Maze::Vec3F(+0.0f, +0.0f, +0.0f),
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f)* _length,
             };
             mesh->setPositions(positions, sizeof(positions) / sizeof(positions[0]));
 
-            Maze::Vec3DF normals[] = {
-                Maze::Vec3DF(+1.0f, +0.0f, +0.0f),
-                Maze::Vec3DF(+1.0f, +0.0f, +0.0f),
-                Maze::Vec3DF(+0.0f, +1.0f, +0.0f),
-                Maze::Vec3DF(+0.0f, +1.0f, +0.0f),
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),
-                Maze::Vec3DF(+0.0f, +0.0f, +1.0f),
+            Maze::Vec3F normals[] = {
+                Maze::Vec3F(+1.0f, +0.0f, +0.0f),
+                Maze::Vec3F(+1.0f, +0.0f, +0.0f),
+                Maze::Vec3F(+0.0f, +1.0f, +0.0f),
+                Maze::Vec3F(+0.0f, +1.0f, +0.0f),
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),
+                Maze::Vec3F(+0.0f, +0.0f, +1.0f),
             };
             mesh->setNormals(normals, sizeof(normals) / sizeof(normals[0]));
 
-            Maze::Vec4DF colors[] = {
-                Maze::Vec4DF(+1.0f, +0.0f, +0.0f, +1.0f),
-                Maze::Vec4DF(+1.0f, +0.0f, +0.0f, +1.0f),
-                Maze::Vec4DF(+0.0f, +1.0f, +0.0f, +1.0f),
-                Maze::Vec4DF(+0.0f, +1.0f, +0.0f, +1.0f),
-                Maze::Vec4DF(+0.0f, +0.0f, +1.0f, +1.0f),
-                Maze::Vec4DF(+0.0f, +0.0f, +1.0f, +1.0f),
+            Maze::Vec4F colors[] = {
+                Maze::Vec4F(+1.0f, +0.0f, +0.0f, +1.0f),
+                Maze::Vec4F(+1.0f, +0.0f, +0.0f, +1.0f),
+                Maze::Vec4F(+0.0f, +1.0f, +0.0f, +1.0f),
+                Maze::Vec4F(+0.0f, +1.0f, +0.0f, +1.0f),
+                Maze::Vec4F(+0.0f, +0.0f, +1.0f, +1.0f),
+                Maze::Vec4F(+0.0f, +0.0f, +1.0f, +1.0f),
             };
             mesh->setColors(colors, sizeof(colors) / sizeof(colors[0]));
 
-            Maze::Vec4DF uvs0[] = {
-                Maze::Vec4DF(0.0f, 0.0f, 0.0f, 0.0f),
-                Maze::Vec4DF(0.0f, 0.0f, 0.0f, 0.0f),
-                Maze::Vec4DF(0.0f, 0.0f, 0.0f, 0.0f),
-                Maze::Vec4DF(0.0f, 0.0f, 0.0f, 0.0f),
-                Maze::Vec4DF(0.0f, 0.0f, 0.0f, 0.0f),
-                Maze::Vec4DF(0.0f, 0.0f, 0.0f, 0.0f),
+            Maze::Vec4F uvs0[] = {
+                Maze::Vec4F(0.0f, 0.0f, 0.0f, 0.0f),
+                Maze::Vec4F(0.0f, 0.0f, 0.0f, 0.0f),
+                Maze::Vec4F(0.0f, 0.0f, 0.0f, 0.0f),
+                Maze::Vec4F(0.0f, 0.0f, 0.0f, 0.0f),
+                Maze::Vec4F(0.0f, 0.0f, 0.0f, 0.0f),
+                Maze::Vec4F(0.0f, 0.0f, 0.0f, 0.0f),
             };
             mesh->setTexCoords(0, uvs0, sizeof(uvs0) / sizeof(uvs0[0]));
 

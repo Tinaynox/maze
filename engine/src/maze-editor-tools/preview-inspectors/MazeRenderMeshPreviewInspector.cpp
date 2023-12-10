@@ -56,15 +56,15 @@
 #include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerS32.hpp"
 #include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerF32.hpp"
 #include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerF64.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec2DF.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec3DF.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec4DF.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec2DS.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec3DS.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec4DS.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec2DU.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec3DU.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec4DU.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec2F32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec3F32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec4F32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec2S32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec3S32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec4S32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec2U32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec3U32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec4U32.hpp"
 #include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerColorF128.hpp"
 #include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerTexture2D.hpp"
 
@@ -131,7 +131,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderMeshPreviewInspector::processCursorPress(Vec2DF const& _positionOS, CursorInputEvent const& _event)
+    void RenderMeshPreviewInspector::processCursorPress(Vec2F const& _positionOS, CursorInputEvent const& _event)
     {
         if (_event.button == 1)
         {
@@ -140,9 +140,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderMeshPreviewInspector::processCursorDrag(Vec2DF const& _positionOS, CursorInputEvent const& _event)
+    void RenderMeshPreviewInspector::processCursorDrag(Vec2F const& _positionOS, CursorInputEvent const& _event)
     {
-        Vec2DF deltaPosition = _positionOS - m_cursorPositionLastFrame;
+        Vec2F deltaPosition = _positionOS - m_cursorPositionLastFrame;
 
         if (_event.button == 1)
         {
@@ -224,7 +224,7 @@ namespace Maze
         F32 pitchAngle = m_scene->getPitchAngle();
         Quaternion q(pitchAngle, yawAngle, 0.0f);
 
-        Vec3DF direction = q * Vec3DF::c_unitZ;
+        Vec3F direction = q * Vec3F::c_unitZ;
 
         m_scene->getCamera()->getTransform()->setLocalPosition(-direction * m_cameraDistance);
     }

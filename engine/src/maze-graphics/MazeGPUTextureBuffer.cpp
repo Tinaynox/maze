@@ -38,7 +38,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     GPUTextureBuffer::GPUTextureBuffer(
-        const Vec2DU& _size,
+        const Vec2U& _size,
         PixelFormat::Enum _pixelFormat,
         GPUByteBufferGateway* _gpuByteBufferGateway,
         Size _blockOffsetBytes,

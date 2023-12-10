@@ -77,19 +77,19 @@ namespace Maze
         void setIndices(U32* _indices, Size _count);
 
         //////////////////////////////////////////
-        void setPositions(Vec3DF* _positions, Size _count);
+        void setPositions(Vec3F* _positions, Size _count);
 
         //////////////////////////////////////////
-        void setNormals(Vec3DF* _normals, Size _count);
+        void setNormals(Vec3F* _normals, Size _count);
 
         //////////////////////////////////////////
-        void setColors(Vec4DF* _colors, Size _count);
+        void setColors(Vec4F* _colors, Size _count);
         
         //////////////////////////////////////////
-        void setTexCoords(S32 _uvIndex, Vec2DF* _data, Size _count);
+        void setTexCoords(S32 _uvIndex, Vec2F* _data, Size _count);
 
         //////////////////////////////////////////
-        void setTexCoords(S32 _uvIndex, Vec4DF* _data, Size _count);
+        void setTexCoords(S32 _uvIndex, Vec4F* _data, Size _count);
 
 
         //////////////////////////////////////////

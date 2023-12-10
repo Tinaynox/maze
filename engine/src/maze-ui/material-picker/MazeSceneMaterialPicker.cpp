@@ -172,12 +172,12 @@ namespace Maze
 
         m_filterEditBox = SystemUIHelper::CreateDefaultEditBox(
             "",
-            Vec2DF(m_canvas->getTransform()->getSize().x - 10.0f, 18),
-            Vec2DF(5, -2),
+            Vec2F(m_canvas->getTransform()->getSize().x - 10.0f, 18),
+            Vec2F(5, -2),
             m_canvas->getTransform(),
             m_canvas->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         m_filterEditBox->eventTextInput.subscribe(this, &SceneMaterialPicker::notifyFilterTextInput);
         m_filterEditBox->getTransform()->setZ(100000);
         SizePolicy2DPtr filterSizePolicy = m_filterEditBox->getEntityRaw()->ensureComponent<SizePolicy2D>();
@@ -186,12 +186,12 @@ namespace Maze
 
         F32 const topOffset = 22.0f;
         ScrollRect2DPtr scrollRect = UIHelper::CreateDefaultScrollRect(
-            m_canvas->getTransform()->getSize() - Vec2DF(0.0f, topOffset),
-            Vec2DF(0.0f, -topOffset),
+            m_canvas->getTransform()->getSize() - Vec2F(0.0f, topOffset),
+            Vec2F(0.0f, -topOffset),
             m_canvas->getTransform(),
             m_canvas->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f),
             false,
             true);
         scrollRect->getViewportTransform()->getEntityRaw()->getComponent<ScissorMask2D>()->setPadding(0, 0, 0, 0);
@@ -291,7 +291,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneMaterialPicker::notifyCanvasCursorReleaseIn(Vec2DF const& _positionOS, CursorInputEvent const& _event)
+    void SceneMaterialPicker::notifyCanvasCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent const& _event)
     {
         
     }
@@ -310,7 +310,7 @@ namespace Maze
 
         data.bodyTransform = SpriteHelper::CreateTransform2D(
             { 94.0f, 110.0f },
-            Vec2DF::c_zero,
+            Vec2F::c_zero,
             nullptr,
             m_layout->getEntityRaw()->getECSScene());
         data.bodyTransform->getEntityRaw()->ensureComponent<ScissorMask2D>();
@@ -318,7 +318,7 @@ namespace Maze
         data.button = UIHelper::CreateToggleButton(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
             { data.bodyTransform->getWidth(), data.bodyTransform->getWidth() },
-            Vec2DF::c_zero,
+            Vec2F::c_zero,
             data.bodyTransform,
             data.bodyTransform->getEntityRaw()->getECSScene(),
             { 0.0f, 1.0f },
@@ -327,8 +327,8 @@ namespace Maze
 
         SpriteRenderer2DPtr sprite = SpriteHelper::CreateSprite(
             ColorU32::c_white,
-            data.button->getTransform()->getSize() - Vec2DF(6.0f, 6.0f),
-            Vec2DF::c_zero,
+            data.button->getTransform()->getSize() - Vec2F(6.0f, 6.0f),
+            Vec2F::c_zero,
             GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
             data.button->getTransform(),
             data.bodyTransform->getEntityRaw()->getECSScene());

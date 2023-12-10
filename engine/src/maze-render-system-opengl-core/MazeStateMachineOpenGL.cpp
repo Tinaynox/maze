@@ -80,7 +80,7 @@ namespace Maze
         , m_currentShader(nullptr)
         , m_currentTextures{ nullptr }
         , m_currentRenderBuffer(nullptr)
-        , m_pixelBufferSize(Vec2DU::c_zero)
+        , m_pixelBufferSize(Vec2U::c_zero)
     {
         m_context->eventGLContextCreated.subscribe(this, &StateMachineOpenGL::notifyGLContextCreated);
         m_context->eventGLContextWillBeDestroyed.subscribe(this, &StateMachineOpenGL::notifyGLContextWillBeDestroyed);
@@ -423,7 +423,7 @@ namespace Maze
         m_viewportRect = Rect2DS(0, 0, 0, 0);
         m_scissorTest = false;
         m_scissorRect = Rect2DS(0, 0, 0, 0);
-        m_clearColor = Vec4DF(1.0f, 0.0f, 1.0f, 1.0f);
+        m_clearColor = Vec4F(1.0f, 0.0f, 1.0f, 1.0f);
         m_clearDepth = 1.0f;
         m_blendEnabled = false;
         m_blendSrcFactor = BlendFactor::One;
@@ -806,7 +806,7 @@ namespace Maze
 
     
     //////////////////////////////////////////
-    void StateMachineOpenGL::setClearColor(Vec4DF const& _clearColor)
+    void StateMachineOpenGL::setClearColor(Vec4F const& _clearColor)
     {
         if (m_clearColor == _clearColor)
             return;

@@ -177,7 +177,7 @@ namespace Maze
         // Camera
         EntityPtr cameraEntity = createEntity();
         m_camera3D = cameraEntity->createComponent<Camera3D>();
-        m_camera3D->getTransform()->setLocalPosition(Vec3DF(0.0f, 0.5f, -18.0f));
+        m_camera3D->getTransform()->setLocalPosition(Vec3F32(0.0f, 0.5f, -18.0f));
         m_camera3D->setFOV(Math::DegreesToRadians(30));
         
         m_camera3D->setRenderTarget(renderTarget);
@@ -258,7 +258,7 @@ namespace Maze
 
                 transform->setLocalPosition((F32)i - 4.0f, 2.0f + (F32)i + 20.0f);
                 transform->setLocalScale(1.0f, 0.75f);
-                transform->setLocalRotation(Quaternion(0.3f - (F32)i, Vec3DF::c_unitZ));
+                transform->setLocalRotation(Quaternion(0.3f - (F32)i, Vec3F32::c_unitZ));
 
                 BoxCollider2DPtr boxCollider = meshRendererEntity->ensureComponent<BoxCollider2D>();
                 Rigidbody2DPtr rigidbody2D = meshRendererEntity->ensureComponent<Rigidbody2D>();
@@ -276,7 +276,7 @@ namespace Maze
 
                 transform->setLocalPosition((F32)i - 4.0f, 2.0f + (F32)i + 45.0f);
                 transform->setLocalScale(1.0f, 1.0f);
-                transform->setLocalRotation(Quaternion(0.3f - (F32)i, Vec3DF::c_unitZ));
+                transform->setLocalRotation(Quaternion(0.3f - (F32)i, Vec3F32::c_unitZ));
 
                 meshRendererEntity->ensureComponent<CircleCollider2D>();
                 Rigidbody2DPtr rigidbody2D = meshRendererEntity->ensureComponent<Rigidbody2D>();
@@ -294,7 +294,7 @@ namespace Maze
 
                 transform->setLocalPosition((F32)i - 4.0f, 2.0f + (F32)i + 70.0f);
                 transform->setLocalScale(1.0f, 0.75f);
-                transform->setLocalRotation(Quaternion(0.3f - (F32)i, Vec3DF::c_unitZ));
+                transform->setLocalRotation(Quaternion(0.3f - (F32)i, Vec3F32::c_unitZ));
 
                 meshRendererEntity->ensureComponent<BoxCollider2D>();
                 Rigidbody2DPtr rigidbody2D = meshRendererEntity->ensureComponent<Rigidbody2D>();

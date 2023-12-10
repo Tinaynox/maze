@@ -121,17 +121,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SystemManagerWin::setSystemCursorPosition(Vec2DF _posSystemScreen)
+    void SystemManagerWin::setSystemCursorPosition(Vec2F _posSystemScreen)
     {
         ::SetCursorPos((S32)_posSystemScreen.x, (S32)_posSystemScreen.y);
     }
 
     //////////////////////////////////////////
-    Vec2DF SystemManagerWin::getSystemCursorPosition()
+    Vec2F SystemManagerWin::getSystemCursorPosition()
     {
         ::POINT lp;
         GetCursorPos(&lp);
-        return Vec2DF((F32)lp.x, (F32)lp.y);
+        return Vec2F((F32)lp.x, (F32)lp.y);
     }
 
 } // namespace Maze

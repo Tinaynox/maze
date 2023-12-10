@@ -44,7 +44,7 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(CanvasScaler, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ScaleMode, scaleMode, ScaleMode::ConstantPixelSize, getScaleMode, setScaleMode),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ScreenMatchMode, screenMatchMode, ScreenMatchMode::MatchWidthOrHeight, getScreenMatchMode, setScreenMatchMode),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2DF, referenceResolution, Vec2DF(800, 600), getReferenceResolution, setReferenceResolution),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F, referenceResolution, Vec2F(800, 600), getReferenceResolution, setReferenceResolution),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, matchWidthOrHeight, 0.0f, getMatchWidthOrHeight, setMatchWidthOrHeight));
 
     //////////////////////////////////////////
@@ -103,7 +103,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void CanvasScaler::setReferenceResolution(Vec2DF _referenceResolution)
+    void CanvasScaler::setReferenceResolution(Vec2F _referenceResolution)
     {
         m_referenceResolution = _referenceResolution;
 
@@ -165,7 +165,7 @@ namespace Maze
         if (!m_canvas->getRenderTarget())
             return;
 
-        Vec2DF viewportSize = (Vec2DF)m_canvas->getRenderTarget()->getRenderTargetSize() * m_canvas->getViewport().size;
+        Vec2F viewportSize = (Vec2F)m_canvas->getRenderTarget()->getRenderTargetSize() * m_canvas->getViewport().size;
 
         setCanvasScale(1.0f);
         m_canvas->getTransform()->setSize(viewportSize);
@@ -177,7 +177,7 @@ namespace Maze
         if (!m_canvas->getRenderTarget())
             return;
 
-        Vec2DF viewportSize = (Vec2DF)m_canvas->getRenderTarget()->getRenderTargetSize() * m_canvas->getViewport().size;
+        Vec2F viewportSize = (Vec2F)m_canvas->getRenderTarget()->getRenderTargetSize() * m_canvas->getViewport().size;
 
         F32 scaleFactor = 0;
         F32 width = 0;
@@ -237,7 +237,7 @@ namespace Maze
             }
         }
 
-        m_canvas->getTransform()->setSize(Vec2DF(width, height));
+        m_canvas->getTransform()->setSize(Vec2F(width, height));
         setCanvasScale(scaleFactor);
     }
     

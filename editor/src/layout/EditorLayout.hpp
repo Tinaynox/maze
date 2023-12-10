@@ -76,7 +76,7 @@ namespace Maze
         static Rect2DF CalculateWorkViewport(Rect2DF const& _viewport);
 
         //////////////////////////////////////////
-        static Vec2DF ConvertRenderWindowCoordsToWorkspaceViewport(Vec2DF const& _coord);
+        static Vec2F32 ConvertRenderWindowCoordsToWorkspaceViewport(Vec2F32 const& _coord);
     };
 
 

@@ -72,10 +72,10 @@ namespace Maze
         virtual void hideSystemCursor() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void setSystemCursorPosition(Vec2DF _posSystemScreen) MAZE_OVERRIDE;
+        virtual void setSystemCursorPosition(Vec2F _posSystemScreen) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual Vec2DF getSystemCursorPosition() MAZE_OVERRIDE;
+        virtual Vec2F getSystemCursorPosition() MAZE_OVERRIDE;
 
     protected:
 

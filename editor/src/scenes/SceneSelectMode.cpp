@@ -159,8 +159,8 @@ namespace Maze
         MaterialPtr const& material = MaterialManager::GetCurrentInstance()->ensureBuiltinMaterial(BuiltinMaterialType::Color);
         SpriteRenderer2DPtr frame = SpriteHelper::CreateSprite(
             ColorU32::c_lightGray,
-            Vec2DF(200.0f, 100.0f),
-            Vec2DF(0.0f, 0.0f),
+            Vec2F32(200.0f, 100.0f),
+            Vec2F32(0.0f, 0.0f),
             material,
             m_canvas->getTransform(),
             this);
@@ -169,7 +169,7 @@ namespace Maze
             HorizontalAlignment2D::Center,
             VerticalAlignment2D::Middle,
             frame->getTransform()->getSize(),
-            Vec2DF::c_zero,
+            Vec2F32::c_zero,
             frame->getTransform(),
             this);
         layout->setSpacing(5.0f);
@@ -179,18 +179,18 @@ namespace Maze
             8,
             HorizontalAlignment2D::Center,
             VerticalAlignment2D::Middle,
-            Vec2DF(frame->getTransform()->getWidth(), 18.0f),
-            Vec2DF::c_zero,
+            Vec2F32(frame->getTransform()->getWidth(), 18.0f),
+            Vec2F32::c_zero,
             layout->getTransform(),
             this);
         label->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefaultOutlined());
 
-        Vec2DF const c_buttonSize = Vec2DF(100.0f, 18.0f);
+        Vec2F32 const c_buttonSize = Vec2F32(100.0f, 18.0f);
         {
             ClickButton2DPtr button = UIHelper::CreateDefaultClickButton(
                 "PROJECT",
                 c_buttonSize,
-                Vec2DF::c_zero,
+                Vec2F32::c_zero,
                 layout->getTransform(),
                 this);
 
@@ -199,7 +199,7 @@ namespace Maze
             ClickButton2DPtr button = UIHelper::CreateDefaultClickButton(
                 "ASSETS",
                 c_buttonSize,
-                Vec2DF::c_zero,
+                Vec2F32::c_zero,
                 layout->getTransform(),
                 this);
             button->eventClick.subscribe(

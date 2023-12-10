@@ -121,9 +121,9 @@ namespace Maze
         //////////////////////////////////////////
         SystemFontPtr createSystemFont(
             Texture2DPtr const& _texture,
-            Vec2DS const& _charSize,
-            Vec2DS const& _stroke,
-            Vec2DS const& _offset = Vec2DS::c_zero);
+            Vec2S const& _charSize,
+            Vec2S const& _stroke,
+            Vec2S const& _offset = Vec2S::c_zero);
 
         //////////////////////////////////////////
         SystemFontPtr createSystemFontOutlined(

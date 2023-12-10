@@ -164,7 +164,7 @@ namespace Maze
 
         if (m_canvas && m_renderBuffer)
         {
-            Vec2DU size = (Vec2DU)m_bodyBackground->getTransform()->getSize();
+            Vec2U size = (Vec2U)m_bodyBackground->getTransform()->getSize();
             if (size.x != 0u && size.y != 0u)
                 m_renderBuffer->setSize(size);
         }
@@ -186,11 +186,11 @@ namespace Maze
 
         Transform2DPtr canvasTransform = SpriteHelper::CreateTransform2D(
             m_canvas->getTransform()->getSize(),
-            Vec2DF(0.0f, 0.0f),
+            Vec2F(0.0f, 0.0f),
             m_canvas->getTransform(),
             getEntityRaw()->getECSScene(),
-            Vec2DF::c_zero,
-            Vec2DF::c_zero);
+            Vec2F::c_zero,
+            Vec2F::c_zero);
         canvasTransform->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>();
 
 
@@ -208,15 +208,15 @@ namespace Maze
         
         SpriteRenderer2DPtr titleBackground = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
-            Vec2DF(
+            Vec2F(
                 m_canvas->getTransform()->getSize().x,
                 EditorToolsLayout::c_titleHeight),
-            Vec2DF(0.0f, 0.0f),
+            Vec2F(0.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             canvasTransform,
             getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         titleBackground->setColor(EditorToolsLayout::c_titleBackgroundColor);
         titleBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
 
@@ -225,12 +225,12 @@ namespace Maze
             EditorToolsLayout::c_titleFontSize,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(100, EditorToolsLayout::c_titleHeight),
-            Vec2DF(EditorToolsLayout::c_titleLabelShift, 0),
+            Vec2F(100, EditorToolsLayout::c_titleHeight),
+            Vec2F(EditorToolsLayout::c_titleLabelShift, 0),
             titleBackground->getTransform(),
             getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF(0.0f, 0.5f));
+            Vec2F(0.0f, 0.5f),
+            Vec2F(0.0f, 0.5f));
         hierarchyText->setColor(ColorU32::c_black);
 
         m_bodySprite = Sprite::Create(m_renderBuffer->getColorTexture()->cast<Texture2D>());
@@ -238,15 +238,15 @@ namespace Maze
         m_bodyBackground = SpriteHelper::CreateSprite(
             // m_bodySprite,
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
-            Vec2DF(
+            Vec2F(
                 canvasTransform->getSize().x, 
                 canvasTransform->getSize().y - EditorToolsLayout::c_titleHeight),
-            Vec2DF(0.0f, 0.0f),
+            Vec2F(0.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_canvas->getTransform(),
             getEntityRaw()->getECSScene(),
-            Vec2DF::c_zero,
-            Vec2DF::c_zero);
+            Vec2F::c_zero,
+            Vec2F::c_zero);
         m_bodyBackground->setColor(EditorToolsLayout::c_bodyBackgroundColor);
         m_bodyBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>()->setSizeDelta(0.0f, -EditorToolsLayout::c_titleHeight);
         m_bodyBackgroundElement = m_bodyBackground->getEntityRaw()->ensureComponent<UIElement2D>();
@@ -259,11 +259,11 @@ namespace Maze
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Top,
             m_bodyBackground->getTransform()->getSize(),
-            Vec2DF::c_zero,
+            Vec2F::c_zero,
             m_bodyBackground->getTransform(),
             getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         SizePolicy2DPtr layoutSizePolicy = m_layout->getEntityRaw()->ensureComponent<SizePolicy2D>();
 
     }        
@@ -444,7 +444,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void PreviewController::notifyBodyBackgroundElementCursorPress(
-        Vec2DF const& _positionOS, CursorInputEvent const& _event)
+        Vec2F const& _positionOS, CursorInputEvent const& _event)
     {
         if (m_previewInspector)
             m_previewInspector->processCursorPress(_positionOS, _event);
@@ -452,7 +452,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void PreviewController::notifyBodyBackgroundElementCursorDrag(
-        Vec2DF const& _positionOS, CursorInputEvent const& _event)
+        Vec2F const& _positionOS, CursorInputEvent const& _event)
     {
         if (m_previewInspector)
             m_previewInspector->processCursorDrag(_positionOS, _event);

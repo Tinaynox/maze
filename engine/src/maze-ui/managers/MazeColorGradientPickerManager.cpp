@@ -48,7 +48,7 @@ namespace Maze
 
     //////////////////////////////////////////
     ColorGradientPickerManager::ColorGradientPickerManager()
-        : m_gradient(ColorGradient(0.0f, Vec4DF::c_one, 1.0f, Vec4DF::c_one))
+        : m_gradient(ColorGradient(0.0f, Vec4F::c_one, 1.0f, Vec4F::c_one))
     {
         s_instance = this;
     }
@@ -137,7 +137,7 @@ namespace Maze
         RenderWindowParams params;
         params.windowParams = 
             WindowParams::Create(
-                Vec2DU(360, 160),
+                Vec2U(360, 160),
                 32,
                 "Gradient");
          

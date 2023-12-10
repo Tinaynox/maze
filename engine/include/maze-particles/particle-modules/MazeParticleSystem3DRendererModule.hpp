@@ -86,10 +86,10 @@ namespace Maze
 
 
             //////////////////////////////////////////
-            inline void setTiles(Vec2DS const& _value) { tiles = _value; }
+            inline void setTiles(Vec2S const& _value) { tiles = _value; }
 
             //////////////////////////////////////////
-            inline Vec2DS const& getTiles() const { return tiles; }
+            inline Vec2S const& getTiles() const { return tiles; }
 
 
             //////////////////////////////////////////
@@ -128,7 +128,7 @@ namespace Maze
         public:
 
             bool enabled = false;
-            Vec2DS tiles = Vec2DS(1, 1);
+            Vec2S tiles = Vec2S(1, 1);
             ParticleSystemParameterF32 startFrame = ParticleSystemParameterF32(0);
             ParticleSystemParameterF32 frameOverTime = ParticleSystemParameterF32(0);
         };
@@ -193,11 +193,11 @@ namespace Maze
             Particles3D& _particles,
             ParticleSystemSimulationSpace _transformPolicy,
             ParticleSystemScalingMode _scalingMode,
-            Mat4DF const& _particleSystemLocalTransform,
-            Mat4DF const& _particleSystemWorldTransform,
-            Vec3DF const& _cameraPosition,
-            Vec3DF const& _cameraForward,
-            Vec3DF const& _cameraUp);
+            Mat4F const& _particleSystemLocalTransform,
+            Mat4F const& _particleSystemWorldTransform,
+            Vec3F const& _cameraPosition,
+            Vec3F const& _cameraForward,
+            Vec3F const& _cameraUp);
 
 
 

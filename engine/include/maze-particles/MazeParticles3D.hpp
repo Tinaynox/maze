@@ -87,8 +87,8 @@ namespace Maze
         //////////////////////////////////////////
         struct ParticleMovement
         {
-            Vec3DF velocity;
-            Vec3DF acceleration;
+            Vec3F velocity;
+            Vec3F acceleration;
         };
 
         //////////////////////////////////////////
@@ -185,10 +185,10 @@ namespace Maze
         inline S32& accessSeed(S32 _index) { return m_seeds[_index]; }
 
         //////////////////////////////////////////
-        inline Vec3DF& accessPosition(S32 _index) { return m_positions[_index]; }
+        inline Vec3F& accessPosition(S32 _index) { return m_positions[_index]; }
 
         //////////////////////////////////////////
-        inline Vec3DF& accessDirection(S32 _index) { return m_directions[_index]; }
+        inline Vec3F& accessDirection(S32 _index) { return m_directions[_index]; }
 
         //////////////////////////////////////////
         inline ParticleLife& accessLife(S32 _index) { return m_lifes[_index]; }
@@ -200,10 +200,10 @@ namespace Maze
         inline ParticleRotation& accessRotation(S32 _index) { return m_rotations[_index]; }
 
         //////////////////////////////////////////
-        inline Vec4DF& accessColorInitial(S32 _index) { return m_colorsInitial[_index]; }
+        inline Vec4F& accessColorInitial(S32 _index) { return m_colorsInitial[_index]; }
 
         //////////////////////////////////////////
-        inline Vec4DF& accessColorCurrent(S32 _index) { return m_colorsCurrent[_index]; }
+        inline Vec4F& accessColorCurrent(S32 _index) { return m_colorsCurrent[_index]; }
 
         //////////////////////////////////////////
         inline ParticleMovement& accessMovement(S32 _index) { return m_movements[_index]; }
@@ -213,13 +213,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Mat4DF& accessRenderTransform(S32 _index) { return m_renderTransforms[_index]; }
+        inline Mat4F& accessRenderTransform(S32 _index) { return m_renderTransforms[_index]; }
 
         //////////////////////////////////////////
-        inline Vec4DF& accessRenderColor(S32 _index) { return m_renderColors[_index]; }
+        inline Vec4F& accessRenderColor(S32 _index) { return m_renderColors[_index]; }
 
         //////////////////////////////////////////
-        inline Vec4DF& accessRenderUV(S32 _index) { return m_renderUVs[_index]; }
+        inline Vec4F& accessRenderUV(S32 _index) { return m_renderUVs[_index]; }
 
 
         //////////////////////////////////////////
@@ -227,13 +227,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Mat4DF const* getRenderTransforms() const { return m_renderTransforms.begin(); }
+        inline Mat4F const* getRenderTransforms() const { return m_renderTransforms.begin(); }
 
         //////////////////////////////////////////
-        inline Vec4DF const* getRenderColors() const { return m_renderColors.begin(); }
+        inline Vec4F const* getRenderColors() const { return m_renderColors.begin(); }
 
         //////////////////////////////////////////
-        inline Vec4DF const* getRenderUVs() const { return m_renderUVs.begin(); }
+        inline Vec4F const* getRenderUVs() const { return m_renderUVs.begin(); }
 
     protected:
         S32 m_capacity;
@@ -241,21 +241,21 @@ namespace Maze
         AABB3D m_bounds;
 
         FastVector<S32> m_seeds;
-        FastVector<Vec3DF> m_positions;
-        FastVector<Vec3DF> m_directions;
+        FastVector<Vec3F> m_positions;
+        FastVector<Vec3F> m_directions;
         FastVector<ParticleLife> m_lifes;
         FastVector<ParticleSize> m_sizes;
         FastVector<ParticleRotation> m_rotations;
-        FastVector<Vec4DF> m_colorsInitial;
-        FastVector<Vec4DF> m_colorsCurrent;
+        FastVector<Vec4F> m_colorsInitial;
+        FastVector<Vec4F> m_colorsCurrent;
         FastVector<ParticleMovement> m_movements;
         FastVector<ParticleAnimationFrame> m_animationFrames;
 
         FastVector<F32> m_sqrDistanceToCamera;
 
-        FastVector<Mat4DF> m_renderTransforms;
-        FastVector<Vec4DF> m_renderColors;
-        FastVector<Vec4DF> m_renderUVs;
+        FastVector<Mat4F> m_renderTransforms;
+        FastVector<Vec4F> m_renderColors;
+        FastVector<Vec4F> m_renderUVs;
 
     };
 

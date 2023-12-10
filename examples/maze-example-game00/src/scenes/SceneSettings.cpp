@@ -188,7 +188,7 @@ namespace Maze
         SpriteRenderer2DPtr fadeSquare = SpriteHelper::CreateSprite(
             ColorU32(0, 0, 0, 100),
             m_canvas->getTransform()->getSize(),
-            Vec2DF::c_zero,
+            Vec2F32::c_zero,
             nullptr,
             m_canvas->getTransform(),
             this);
@@ -200,7 +200,7 @@ namespace Maze
         SpriteRenderer2DPtr menuBackgroundSprite = SpriteHelper::CreateSprite(
             "Button00.mztexture",
             {400.0f, 400.0f},
-            Vec2DF::c_zero,
+            Vec2F32::c_zero,
             nullptr,
             m_canvas->getTransform(),
             this);
@@ -211,12 +211,12 @@ namespace Maze
         HorizontalLayout2DPtr bottomMenuLayout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Center,
             VerticalAlignment2D::Middle,
-            Vec2DF(menuBackgroundSprite->getTransform()->getWidth(), 60.0f),
-            Vec2DF(0, 15.0f),
+            Vec2F32(menuBackgroundSprite->getTransform()->getWidth(), 60.0f),
+            Vec2F32(0, 15.0f),
             menuBackgroundSprite->getTransform(),
             this,
-            Vec2DF(0.5f, 0.0f),
-            Vec2DF(0.5f, 0.0f));
+            Vec2F32(0.5f, 0.0f),
+            Vec2F32(0.5f, 0.0f));
         bottomMenuLayout->setExpand(false);
 
         ClickButton2DPtr resetButton = UIHelper::CreateDefaultGameClickButton(
@@ -239,12 +239,12 @@ namespace Maze
         HorizontalLayout2DPtr topMenuLayout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Center,
             VerticalAlignment2D::Middle,
-            Vec2DF(menuBackgroundSprite->getTransform()->getWidth(), 60.0f),
-            Vec2DF(0, -20),
+            Vec2F32(menuBackgroundSprite->getTransform()->getWidth(), 60.0f),
+            Vec2F32(0, -20),
             menuBackgroundSprite->getTransform(),
             this,
-            Vec2DF(0.5f, 1.0f),
-            Vec2DF(0.5f, 1.0f));
+            Vec2F32(0.5f, 1.0f),
+            Vec2F32(0.5f, 1.0f));
         topMenuLayout->setExpand(false);
 
         auto createTopMenuButtonFunc = 
@@ -275,12 +275,12 @@ namespace Maze
                 VerticalLayout2DPtr menuLayout = UIHelper::CreateVerticalLayout(
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Top,
-                    Vec2DF(menuWidth, 500.0f),
-                    Vec2DF(10, -90),
+                    Vec2F32(menuWidth, 500.0f),
+                    Vec2F32(10, -90),
                     menuBackgroundSprite->getTransform(),
                     this,
-                    Vec2DF(0.5f, 1.0f),
-                    Vec2DF(0.5f, 1.0f));
+                    Vec2F32(0.5f, 1.0f),
+                    Vec2F32(0.5f, 1.0f));
                 menuLayout->setExpand(false);
 
                 menuLayout->getEntity()->setActiveSelf(m_settingsMode == _mode);
@@ -302,8 +302,8 @@ namespace Maze
                 HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
                     HorizontalAlignment2D::Center,
                     VerticalAlignment2D::Middle,
-                    Vec2DF(menuWidth, 20.0f),
-                    Vec2DF(0, 0),
+                    Vec2F32(menuWidth, 20.0f),
+                    Vec2F32(0, 0),
                     videoMenu,
                     this);
 
@@ -336,8 +336,8 @@ namespace Maze
                 HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
                     HorizontalAlignment2D::Center,
                     VerticalAlignment2D::Middle,
-                    Vec2DF(menuWidth, 20.0f),
-                    Vec2DF(0, 0),
+                    Vec2F32(menuWidth, 20.0f),
+                    Vec2F32(0, 0),
                     videoMenu,
                     this);
 
@@ -370,8 +370,8 @@ namespace Maze
                 HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
                     HorizontalAlignment2D::Center,
                     VerticalAlignment2D::Middle,
-                    Vec2DF(menuWidth, 20.0f),
-                    Vec2DF(0, 0),
+                    Vec2F32(menuWidth, 20.0f),
+                    Vec2F32(0, 0),
                     videoMenu,
                     this);
 
@@ -421,8 +421,8 @@ namespace Maze
                 HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
                     HorizontalAlignment2D::Center,
                     VerticalAlignment2D::Middle,
-                    Vec2DF(menuWidth, 20.0f),
-                    Vec2DF(0, 0),
+                    Vec2F32(menuWidth, 20.0f),
+                    Vec2F32(0, 0),
                     gameMenu,
                     this);
 
@@ -455,8 +455,8 @@ namespace Maze
                 HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
                     HorizontalAlignment2D::Center,
                     VerticalAlignment2D::Middle,
-                    Vec2DF(menuWidth, 20.0f),
-                    Vec2DF(0, 0),
+                    Vec2F32(menuWidth, 20.0f),
+                    Vec2F32(0, 0),
                     gameMenu,
                     this);
 
@@ -473,8 +473,8 @@ namespace Maze
 
                 m_forcePlayerAvatarDropdown = UIHelper::CreateDefaultDropdown(
                     10,
-                    Vec2DF(150, 18),
-                    Vec2DF(0, 0),
+                    Vec2F32(150, 18),
+                    Vec2F32(0, 0),
                     layout->getTransform(),
                     this);
                 m_forcePlayerAvatarDropdown->addOptions(SpaceObjectAvatarType::AllStringsWithNone());

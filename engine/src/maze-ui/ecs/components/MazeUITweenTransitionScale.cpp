@@ -58,8 +58,8 @@ namespace Maze
         : m_isHidden(true)
         , m_showTime(0.3f)
         , m_hideKoef(1.0f)
-        , m_hiddenScale(Vec2DF::c_zero)
-        , m_shownScale(Vec2DF::c_one)
+        , m_hiddenScale(Vec2F::c_zero)
+        , m_shownScale(Vec2F::c_one)
         , m_hidingProgress(1.0f)
         , m_showSpeed(0.0f)
         , m_hideSpeed(0.0f)
@@ -234,7 +234,7 @@ namespace Maze
         F32 showingProgress = 1.0f - m_hidingProgress;
 
         F32 progress = m_animationCurve.evaluate(showingProgress);
-        Vec2DF scale = Math::Lerp(m_hiddenScale, m_shownScale, progress);
+        Vec2F scale = Math::Lerp(m_hiddenScale, m_shownScale, progress);
 
         m_transform->setLocalScale(scale);
     }

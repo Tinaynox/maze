@@ -118,7 +118,7 @@ namespace Maze
         //////////////////////////////////////////
         MenuListTree2DPtr const& openContextMenu(
             void* _contextMenuHolder,
-            Vec2DF const& _positionWS,
+            Vec2F const& _positionWS,
             std::function<void(MenuListTree2DPtr const&)> _initMenuFunc);
 
         //////////////////////////////////////////

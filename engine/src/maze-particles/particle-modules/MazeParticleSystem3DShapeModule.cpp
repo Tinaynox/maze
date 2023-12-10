@@ -89,19 +89,19 @@ namespace Maze
 
     //////////////////////////////////////////
     void ParticleSystem3DShapeModule::updateInitial(
-        Vec3DF const& _emitterPosition,
+        Vec3F const& _emitterPosition,
         Particles3D& _particles,
         S32 _first,
         S32 _last,
         F32 _emitterTimePercent,
         ParticleSystemSimulationSpace _transformPolicy,
         ParticleSystemScalingMode _scalingMode,
-        Mat4DF const& _particleSystemLocalTransform,
-        Mat4DF const& _particleSystemWorldTransform)
+        Mat4F const& _particleSystemLocalTransform,
+        Mat4F const& _particleSystemWorldTransform)
     {
         ParticleSystem3DZoneEmissionPoint point;
 
-        Mat4DF directionTransformMat;
+        Mat4F directionTransformMat;
 
         if (_transformPolicy == ParticleSystemSimulationSpace::World)
         {
@@ -114,9 +114,9 @@ namespace Maze
             }
             else
             {
-                //Vec3DF rotation = _particleSystemWorldTransform.getAffineRotationEulerAngles();
-                Vec3DF rotation = Quaternion::GetEuler(_particleSystemWorldTransform);
-                directionTransformMat = Mat4DF::CreateRotationMatrix(rotation);
+                //Vec3F rotation = _particleSystemWorldTransform.getAffineRotationEulerAngles();
+                Vec3F rotation = Quaternion::GetEuler(_particleSystemWorldTransform);
+                directionTransformMat = Mat4F::CreateRotationMatrix(rotation);
             }
             
             
@@ -158,21 +158,21 @@ namespace Maze
     //////////////////////////////////////////
     void ParticleSystem3DShapeModule::generateRandomPointNone(
         ParticleSystem3DZoneEmissionPoint& _result,
-        Vec3DF const& _center) const
+        Vec3F const& _center) const
     {
         _result.position = _center;
-        //_result.direction = Vec3DF::RandomDirection();
-        _result.direction = Vec3DF::c_unitZ;
+        //_result.direction = Vec3F::RandomDirection();
+        _result.direction = Vec3F::c_unitZ;
     }
 
     //////////////////////////////////////////
     void ParticleSystem3DShapeModule::generateRandomPointSphereVolume(
         ParticleSystem3DZoneEmissionPoint& _result,
-        Vec3DF const& _center) const
+        Vec3F const& _center) const
     {
         ParticleSystem3DZoneSphere const& zone = m_zoneData.sphere;
 
-        Vec3DF direction = Vec3DF::RandomDirection();
+        Vec3F direction = Vec3F::RandomDirection();
         _result.direction = direction;
         F32 r = Random::UnitRandomRadius();
         _result.position = _center + zone.position + direction * r * zone.radius * zone.scale;
@@ -181,11 +181,11 @@ namespace Maze
     //////////////////////////////////////////
     void ParticleSystem3DShapeModule::generateRandomPointSphereShell (
         ParticleSystem3DZoneEmissionPoint& _result,
-        Vec3DF const& _center) const
+        Vec3F const& _center) const
     {
         ParticleSystem3DZoneSphere const& zone = m_zoneData.sphere;
 
-        Vec3DF direction = Vec3DF::RandomDirection();
+        Vec3F direction = Vec3F::RandomDirection();
         _result.direction = direction;
         _result.position = _center + zone.position + direction * zone.radius * zone.scale;
     }
@@ -193,36 +193,36 @@ namespace Maze
     //////////////////////////////////////////
     void ParticleSystem3DShapeModule::generateRandomPointCircleVolume(
         ParticleSystem3DZoneEmissionPoint& _result,
-        Vec3DF const& _center) const
+        Vec3F const& _center) const
     {
         ParticleSystem3DZoneCircle const& zone = m_zoneData.circle;
 
-        Vec2DF direction = Vec2DF::RandomDirection();
+        Vec2F direction = Vec2F::RandomDirection();
         _result.direction = direction;
         F32 r = Random::UnitRandomRadius();
-        _result.position = _center + zone.position + Vec3DF(direction) * r * zone.radius * zone.scale;
+        _result.position = _center + zone.position + Vec3F(direction) * r * zone.radius * zone.scale;
     }
 
     //////////////////////////////////////////
     void ParticleSystem3DShapeModule::generateRandomPointCircleShell(
         ParticleSystem3DZoneEmissionPoint& _result,
-        Vec3DF const& _center) const
+        Vec3F const& _center) const
     {
         ParticleSystem3DZoneCircle const& zone = m_zoneData.circle;
 
-        Vec2DF direction = Vec2DF::RandomDirection();
+        Vec2F direction = Vec2F::RandomDirection();
         _result.direction = direction;
-        _result.position = _center + zone.position + Vec3DF(direction) * zone.radius * zone.scale;
+        _result.position = _center + zone.position + Vec3F(direction) * zone.radius * zone.scale;
     }
 
     //////////////////////////////////////////
     void ParticleSystem3DShapeModule::generateRandomPointHemisphereVolume(
         ParticleSystem3DZoneEmissionPoint& _result,
-        Vec3DF const& _center) const
+        Vec3F const& _center) const
     {
         ParticleSystem3DZoneHemisphere const& zone = m_zoneData.hemisphere;
 
-        Vec3DF direction = Vec3DF::RandomHemisphereDirection(Vec3DF::c_unitZ);
+        Vec3F direction = Vec3F::RandomHemisphereDirection(Vec3F::c_unitZ);
         _result.direction = direction;
         F32 r = Random::UnitRandomRadius();
         _result.position = _center + zone.position + direction * r * zone.radius * zone.scale;
@@ -231,11 +231,11 @@ namespace Maze
     //////////////////////////////////////////
     void ParticleSystem3DShapeModule::generateRandomPointHemisphereShell(
         ParticleSystem3DZoneEmissionPoint& _result,
-        Vec3DF const& _center) const
+        Vec3F const& _center) const
     {
         ParticleSystem3DZoneHemisphere const& zone = m_zoneData.hemisphere;
 
-        Vec3DF direction = Vec3DF::RandomHemisphereDirection(Vec3DF::c_unitZ);
+        Vec3F direction = Vec3F::RandomHemisphereDirection(Vec3F::c_unitZ);
         _result.direction = direction;
         _result.position = _center + zone.position + direction * zone.radius * zone.scale;
     }
@@ -243,7 +243,7 @@ namespace Maze
     //////////////////////////////////////////
     void ParticleSystem3DShapeModule::generateRandomPointTorusVolume(
         ParticleSystem3DZoneEmissionPoint& _result,
-        Vec3DF const& _center) const
+        Vec3F const& _center) const
     {
         ParticleSystem3DZoneTorus const& zone = m_zoneData.torus;
 
@@ -255,13 +255,13 @@ namespace Maze
         F32 s1 = Math::Sin(angle1);
         F32 c1 = Math::Cos(angle1);
 
-        Vec3DF l(c0, s0, 0.0f);
+        Vec3F l(c0, s0, 0.0f);
 
-        Vec3DF shift = l * zone.radius;
+        Vec3F shift = l * zone.radius;
 
         F32 innerRadius = zone.torusRadius * Math::Lerp(Math::Clamp01(1.0f - zone.radiusThickness), 1.0f, Random::UnitRandom());
-        Vec3DF k = l.crossProduct(Vec3DF::c_unitZ);
-        Vec3DF t = (l * c1) + (k.crossProduct(l) * s1) + (k * k.dotProduct(l)) * (1 - c1);
+        Vec3F k = l.crossProduct(Vec3F::c_unitZ);
+        Vec3F t = (l * c1) + (k.crossProduct(l) * s1) + (k * k.dotProduct(l)) * (1 - c1);
         shift += t * innerRadius;
 
         _result.position = _center + zone.position + shift * zone.scale;
@@ -271,7 +271,7 @@ namespace Maze
     //////////////////////////////////////////
     void ParticleSystem3DShapeModule::generateRandomPointTorusShell(
         ParticleSystem3DZoneEmissionPoint& _result,
-        Vec3DF const& _center) const
+        Vec3F const& _center) const
     {
         ParticleSystem3DZoneTorus const& zone = m_zoneData.torus;
 
@@ -283,13 +283,13 @@ namespace Maze
         F32 s1 = Math::Sin(angle1);
         F32 c1 = Math::Cos(angle1);
 
-        Vec3DF l(c0, s0, 0.0f);
+        Vec3F l(c0, s0, 0.0f);
 
-        Vec3DF shift = l * zone.radius;
+        Vec3F shift = l * zone.radius;
 
         F32 innerRadius = zone.torusRadius * (Random::RangeRandom(0, 2) == 0 ? Math::Clamp01(1.0f - zone.radiusThickness) : 1.0f);
-        Vec3DF k = l.crossProduct(Vec3DF::c_unitZ);
-        Vec3DF t = (l * c1) + (k.crossProduct(l) * s1) + (k * k.dotProduct(l)) * (1 - c1);
+        Vec3F k = l.crossProduct(Vec3F::c_unitZ);
+        Vec3F t = (l * c1) + (k.crossProduct(l) * s1) + (k * k.dotProduct(l)) * (1 - c1);
         shift += t * innerRadius;
 
         _result.position = _center + zone.position + shift * zone.scale;
@@ -299,7 +299,7 @@ namespace Maze
     //////////////////////////////////////////
     void ParticleSystem3DShapeModule::generateRandomPointConeVolume(
         ParticleSystem3DZoneEmissionPoint& _result,
-        Vec3DF const& _center) const
+        Vec3F const& _center) const
     {
         ParticleSystem3DZoneCone const& zone = m_zoneData.cone;
 
@@ -315,14 +315,14 @@ namespace Maze
         F32 s = Math::Sin(angle);
         F32 c = Math::Cos(angle);
 
-        Vec3DF shift(
+        Vec3F shift(
             c * radius,
             s * radius,
             length);
         
         _result.position = _center + zone.position + shift * zone.scale;
         _result.direction = 
-            Vec3DF
+            Vec3F
             (
                 c * (finalRadius - zone.radius) * u,
                 s * (finalRadius - zone.radius) * u,
@@ -333,7 +333,7 @@ namespace Maze
     //////////////////////////////////////////
     void ParticleSystem3DShapeModule::generateRandomPointConeShell(
         ParticleSystem3DZoneEmissionPoint& _result,
-        Vec3DF const& _center) const
+        Vec3F const& _center) const
     {
         ParticleSystem3DZoneCone const& zone = m_zoneData.cone;
 
@@ -347,14 +347,14 @@ namespace Maze
         F32 s = Math::Sin(angle);
         F32 c = Math::Cos(angle);
 
-        Vec3DF shift(
+        Vec3F shift(
             c * radius,
             s * radius,
             length);
 
         _result.position = _center + zone.position + shift * zone.scale;
         _result.direction =
-            Vec3DF
+            Vec3F
             (
                 c * (finalRadius - zone.radius),
                 s * (finalRadius - zone.radius),
@@ -367,13 +367,13 @@ namespace Maze
     //////////////////////////////////////////
     void ParticleSystem3DShapeModule::generateRandomPointBoxVolume(
         ParticleSystem3DZoneEmissionPoint& _result,
-        Vec3DF const& _center) const
+        Vec3F const& _center) const
     {
         ParticleSystem3DZoneBox const& zone = m_zoneData.box;
 
-        Vec3DF halfScale = zone.scale * 0.5f;
+        Vec3F halfScale = zone.scale * 0.5f;
 
-        Vec3DF shift = Vec3DF(
+        Vec3F shift = Vec3F(
             Random::RangeRandom(-halfScale.x, +halfScale.x),
             Random::RangeRandom(-halfScale.y, +halfScale.y),
             Random::RangeRandom(-halfScale.z, +halfScale.z));
@@ -385,43 +385,43 @@ namespace Maze
     //////////////////////////////////////////
     void ParticleSystem3DShapeModule::generateRandomPointBoxShell(
         ParticleSystem3DZoneEmissionPoint& _result,
-        Vec3DF const& _center) const
+        Vec3F const& _center) const
     {
         ParticleSystem3DZoneBox const& zone = m_zoneData.box;
 
-        Vec3DF halfScale = zone.scale * 0.5f;
+        Vec3F halfScale = zone.scale * 0.5f;
 
-        Vec3DF shift;
+        Vec3F shift;
         switch (Random::RangeRandomMT(0, 6))
         {
             case 0:
             {
-                shift = Vec3DF(-halfScale.x, Random::RangeRandom(-halfScale.y, +halfScale.y), Random::RangeRandom(-halfScale.z, +halfScale.z));
+                shift = Vec3F(-halfScale.x, Random::RangeRandom(-halfScale.y, +halfScale.y), Random::RangeRandom(-halfScale.z, +halfScale.z));
                 break;
             }
             case 1:
             {
-                shift = Vec3DF(+halfScale.x, Random::RangeRandom(-halfScale.y, +halfScale.y), Random::RangeRandom(-halfScale.z, +halfScale.z));
+                shift = Vec3F(+halfScale.x, Random::RangeRandom(-halfScale.y, +halfScale.y), Random::RangeRandom(-halfScale.z, +halfScale.z));
                 break;
             }
             case 2:
             {
-                shift = Vec3DF(Random::RangeRandom(-halfScale.x, +halfScale.x), -halfScale.y, Random::RangeRandom(-halfScale.z, +halfScale.z));
+                shift = Vec3F(Random::RangeRandom(-halfScale.x, +halfScale.x), -halfScale.y, Random::RangeRandom(-halfScale.z, +halfScale.z));
                 break;
             }
             case 3:
             {
-                shift = Vec3DF(Random::RangeRandom(-halfScale.x, +halfScale.x), +halfScale.y, Random::RangeRandom(-halfScale.z, +halfScale.z));
+                shift = Vec3F(Random::RangeRandom(-halfScale.x, +halfScale.x), +halfScale.y, Random::RangeRandom(-halfScale.z, +halfScale.z));
                 break;
             }
             case 4:
             {
-                shift = Vec3DF(Random::RangeRandom(-halfScale.x, +halfScale.x), Random::RangeRandom(-halfScale.y, +halfScale.y), -halfScale.z);
+                shift = Vec3F(Random::RangeRandom(-halfScale.x, +halfScale.x), Random::RangeRandom(-halfScale.y, +halfScale.y), -halfScale.z);
                 break;
             }
             case 5:
             {
-                shift = Vec3DF(Random::RangeRandom(-halfScale.x, +halfScale.x), Random::RangeRandom(-halfScale.y, +halfScale.y), +halfScale.z);
+                shift = Vec3F(Random::RangeRandom(-halfScale.x, +halfScale.x), Random::RangeRandom(-halfScale.y, +halfScale.y), +halfScale.z);
                 break;
             }
             default:

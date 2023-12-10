@@ -101,7 +101,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setSize(Vec2DF const& _value)
+        inline void setSize(Vec2F const& _value)
         {
             if (m_size == _value)
                 return;
@@ -112,7 +112,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline Vec2DF const& getSize() const { return m_size; }
+        inline Vec2F const& getSize() const { return m_size; }
 
 
         //////////////////////////////////////////
@@ -186,7 +186,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual Vec2DF getTextEnd(Size _rowIndex = 0) MAZE_OVERRIDE;
+        virtual Vec2F getTextEnd(Size _rowIndex = 0) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void updateMeshRendererColors();
@@ -233,7 +233,7 @@ namespace Maze
         ShaderUniformVariantPtr m_baseMapTexelSizeUniform;
 
         ColorU32 m_color;
-        Vec2DF m_size = Vec2DF::c_zero;
+        Vec2F m_size = Vec2F::c_zero;
 
         SystemFontPtr m_systemFont;
         U32 m_fontSize;
@@ -242,7 +242,7 @@ namespace Maze
         HorizontalAlignment2D m_horizontalAlignment;
         VerticalAlignment2D m_verticalAlignment;
 
-        Vector<Mat4DF> m_localMatrices;
+        Vector<Mat4F> m_localMatrices;
     };
 
 

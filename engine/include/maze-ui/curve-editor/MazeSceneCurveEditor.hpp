@@ -139,11 +139,11 @@ namespace Maze
         void notifyCurveClickButtonClick(Button2D* _button, CursorInputEvent const& _event);
         
         //////////////////////////////////////////
-        void notifyCurveClickButtonCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _event);
+        void notifyCurveClickButtonCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _event);
 
 
         //////////////////////////////////////////
-        Vec2DF getCurveOrigin();
+        Vec2F getCurveOrigin();
 
         //////////////////////////////////////////
         F32 getCurveHeightScalar();
@@ -168,13 +168,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        Vec2DF getKeyPoint(Size _keyIndex);
+        Vec2F getKeyPoint(Size _keyIndex);
 
         //////////////////////////////////////////
-        Vec2DF getInTangentPoint(Size _keyIndex);
+        Vec2F getInTangentPoint(Size _keyIndex);
 
         //////////////////////////////////////////
-        Vec2DF getOutTangentPoint(Size _keyIndex);
+        Vec2F getOutTangentPoint(Size _keyIndex);
 
 
         //////////////////////////////////////////
@@ -211,7 +211,7 @@ namespace Maze
         SpriteRenderer2DPtr m_curveRendererHolder;
         SpriteRenderer2DPtr m_curveRenderer;
         ClickButton2DPtr m_curveClickButton;
-        Vec2DF m_curveClickPosition = Vec2DF::c_zero;
+        Vec2F m_curveClickPosition = Vec2F::c_zero;
 
         PixelSheet2D m_curvePixelSheet;
         Texture2DPtr m_curveTexture;
@@ -222,7 +222,7 @@ namespace Maze
         S32 m_keyIndex = -1;
 
         CurveElement m_draggingElement = CurveElement::None;
-        Vec2DF m_draggingPrevCursorPositionCurveSpace = Vec2DF::c_zero;
+        Vec2F m_draggingPrevCursorPositionCurveSpace = Vec2F::c_zero;
         F32 m_draggingDistance = 0.0f;
 
         EntityPtr m_keyHolder;

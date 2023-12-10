@@ -39,7 +39,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SizePolicy2D, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, flags, (Flags::Width | Flags::Height), getFlags, setFlags),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2DF, sizeDelta, Vec2DF::c_zero, getSizeDelta, setSizeDelta));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F, sizeDelta, Vec2F::c_zero, getSizeDelta, setSizeDelta));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(SizePolicy2D);
@@ -47,7 +47,7 @@ namespace Maze
     //////////////////////////////////////////
     SizePolicy2D::SizePolicy2D()
         : m_flags(Flags::Width | Flags::Height)
-        , m_sizeDelta(Vec2DF::c_zero)
+        , m_sizeDelta(Vec2F::c_zero)
     {
     }
 
@@ -99,7 +99,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SizePolicy2D::setSizeDelta(Vec2DF const& _sizeDelta)
+    void SizePolicy2D::setSizeDelta(Vec2F const& _sizeDelta)
     {
         if (m_sizeDelta == _sizeDelta)
             return;

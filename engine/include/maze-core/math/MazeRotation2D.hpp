@@ -33,7 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/math/MazeMathAngles.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 #include "maze-core/math/MazeRandom.hpp"
 #include <ostream>
 
@@ -125,13 +125,13 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline Vec2DF toVector() const
+        inline Vec2F toVector() const
         {
-            return Vec2DF::FromAngle(toRadians());
+            return Vec2F::FromAngle(toRadians());
         }
 
         //////////////////////////////////////////
-        static inline Rotation2D FromVector(Vec2DF const& _vector)
+        static inline Rotation2D FromVector(Vec2F const& _vector)
         {
             return Rotation2D(_vector.toAngle());
         }

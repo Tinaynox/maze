@@ -78,10 +78,10 @@ namespace Maze
         //////////////////////////////////////////
         EntityPtr CreateBox(
             ECSRenderScene* _scene,
-            Vec3DF const& _position,
-            Vec3DF const& _scale,
+            Vec3F32 const& _position,
+            Vec3F32 const& _scale,
             MaterialPtr const& _material,
-            Vec2DF textureScale)
+            Vec2F32 textureScale)
         {
             EntityPtr objectEntity = _scene->createEntity();
             Transform3DPtr transform = objectEntity->createComponent<Transform3D>();
@@ -91,7 +91,7 @@ namespace Maze
             if (_material)
             {
                 MaterialPtr material = _material->createCopy();
-                material->setUniform("u_baseMapST", Vec4DF(textureScale, 0.0f, 0.0f));
+                material->setUniform("u_baseMapST", Vec4F32(textureScale, 0.0f, 0.0f));
                 meshRenderer->setMaterial(material);
             }
             else
@@ -108,15 +108,15 @@ namespace Maze
         //////////////////////////////////////////
         void BuildSimpleLevel(
             ECSRenderScene* _scene,
-            Vec2DF const& _levelSize,
+            Vec2F32 const& _levelSize,
             SimpleLevelConfig config)
         {
             F32 floorThickness = 0.1f;
 
             CreateBox(
                 _scene,
-                Vec3DF(0.0f, -floorThickness * 0.5f, 0.0f),
-                Vec3DF(_levelSize.x, floorThickness, _levelSize.y),
+                Vec3F32(0.0f, -floorThickness * 0.5f, 0.0f),
+                Vec3F32(_levelSize.x, floorThickness, _levelSize.y),
                 config.floorMaterial,
                 _levelSize / config.floorTextureScale);
 
@@ -124,38 +124,38 @@ namespace Maze
             F32 wallsWidth = 0.2f;
 
             // +X Wall
-            Vec3DF const wallPositiveXSize = Vec3DF(wallsWidth, wallsHeight + floorThickness, _levelSize.y);
+            Vec3F32 const wallPositiveXSize = Vec3F32(wallsWidth, wallsHeight + floorThickness, _levelSize.y);
             CreateBox(
                 _scene,
-                Vec3DF(_levelSize.x * 0.5f + wallsWidth * 0.5f, (wallsHeight - floorThickness) * 0.5f, 0.0f),
+                Vec3F32(_levelSize.x * 0.5f + wallsWidth * 0.5f, (wallsHeight - floorThickness) * 0.5f, 0.0f),
                 wallPositiveXSize,
                 config.wallMaterial,
-                Vec2DF(wallPositiveXSize.z, wallPositiveXSize.y) / config.wallTextureScale);
+                Vec2F32(wallPositiveXSize.z, wallPositiveXSize.y) / config.wallTextureScale);
             // -X Wall
-            Vec3DF const wallNegativeXSize = Vec3DF(wallsWidth, wallsHeight + floorThickness, _levelSize.y);
+            Vec3F32 const wallNegativeXSize = Vec3F32(wallsWidth, wallsHeight + floorThickness, _levelSize.y);
             CreateBox(
                 _scene,
-                Vec3DF(-_levelSize.x * 0.5f - wallsWidth * 0.5f, (wallsHeight - floorThickness) * 0.5f, 0.0f),
+                Vec3F32(-_levelSize.x * 0.5f - wallsWidth * 0.5f, (wallsHeight - floorThickness) * 0.5f, 0.0f),
                 wallNegativeXSize,
                 config.wallMaterial,
-                Vec2DF(wallPositiveXSize.z, wallPositiveXSize.y) / config.wallTextureScale);
+                Vec2F32(wallPositiveXSize.z, wallPositiveXSize.y) / config.wallTextureScale);
 
             // +Z Wall
-            Vec3DF const wallPositiveZSize = Vec3DF(_levelSize.x + wallsWidth * 2.0f, wallsHeight + floorThickness, wallsWidth);
+            Vec3F32 const wallPositiveZSize = Vec3F32(_levelSize.x + wallsWidth * 2.0f, wallsHeight + floorThickness, wallsWidth);
             CreateBox(
                 _scene,
-                Vec3DF(0.0f, (wallsHeight - floorThickness) * 0.5f, _levelSize.y * 0.5f + wallsWidth * 0.5f),
+                Vec3F32(0.0f, (wallsHeight - floorThickness) * 0.5f, _levelSize.y * 0.5f + wallsWidth * 0.5f),
                 wallPositiveZSize,
                 config.wallMaterial,
-                Vec2DF(wallPositiveZSize.x, wallPositiveXSize.y) / config.wallTextureScale);
+                Vec2F32(wallPositiveZSize.x, wallPositiveXSize.y) / config.wallTextureScale);
             // -Z Wall
-            Vec3DF const wallNegativeZSize = Vec3DF(_levelSize.x + wallsWidth * 2.0f, wallsHeight + floorThickness, wallsWidth);
+            Vec3F32 const wallNegativeZSize = Vec3F32(_levelSize.x + wallsWidth * 2.0f, wallsHeight + floorThickness, wallsWidth);
             CreateBox(
                 _scene,
-                Vec3DF(0.0f, (wallsHeight - floorThickness) * 0.5f, -_levelSize.y * 0.5f - wallsWidth * 0.5f),
+                Vec3F32(0.0f, (wallsHeight - floorThickness) * 0.5f, -_levelSize.y * 0.5f - wallsWidth * 0.5f),
                 wallNegativeZSize,
                 config.wallMaterial,
-                Vec2DF(wallNegativeZSize.x, wallPositiveXSize.y) / config.wallTextureScale);
+                Vec2F32(wallNegativeZSize.x, wallPositiveXSize.y) / config.wallTextureScale);
         }
 
 

@@ -34,7 +34,7 @@
 #include "maze-physics2d/physics/MazePhysicsWorld2D.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 
 
 //////////////////////////////////////////

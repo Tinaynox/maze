@@ -113,7 +113,7 @@ namespace Maze
     //////////////////////////////////////////
     MenuListTree2DPtr const& ContextMenuCanvas2D::openContextMenu(
         void* _contextMenuHolder,
-        Vec2DF const& _positionWS,
+        Vec2F const& _positionWS,
         std::function<void(MenuListTree2DPtr const&)> _initMenuFunc)
     {
         closeContextMenu();
@@ -131,7 +131,7 @@ namespace Maze
 
         _initMenuFunc(m_menuListTree);
 
-        Vec2DF menuListTreeSize = m_menuListTree->getTransform()->getSize();
+        Vec2F menuListTreeSize = m_menuListTree->getTransform()->getSize();
         m_menuListTree->getTransform()->setLocalPosition(
             {
                 Math::Clamp(_positionWS.x, 0.0f, m_transform->getWidth() - menuListTreeSize.x),
@@ -164,11 +164,11 @@ namespace Maze
             contextMenuCanvas = contextMenuCanvasEntity->createComponent<ContextMenuCanvas2D>();
 
             MenuListTree2DPtr menuListTree = UIHelper::CreateDefaultMenuListTree(
-                Vec2DF(0.0f, 0.0f),
+                Vec2F(0.0f, 0.0f),
                 contextMenuCanvas->getTransform(),
                 contextMenuCanvas->getEntityRaw()->getECSScene(),
-                Vec2DF(0.0f, 0.0f),
-                Vec2DF(0.0f, 1.0f));
+                Vec2F(0.0f, 0.0f),
+                Vec2F(0.0f, 1.0f));
             menuListTree->getEntityRaw()->setActiveSelf(false);
             contextMenuCanvas->setMenuListPrefab(menuListTree);
         }

@@ -67,9 +67,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    inline Mat4DF ConvertOpenFBXMatrixToMat4DF(ofbx::Matrix const& _mat)
+    inline Mat4F ConvertOpenFBXMatrixToMat4F32(ofbx::Matrix const& _mat)
     {
-        return Mat4DF(
+        return Mat4F(
             (F32)_mat.m[0], (F32)_mat.m[4], (F32)_mat.m[8], (F32)_mat.m[12],
             (F32)_mat.m[1], (F32)_mat.m[5], (F32)_mat.m[9], (F32)_mat.m[13],
             (F32)_mat.m[2], (F32)_mat.m[6], (F32)_mat.m[10], (F32)_mat.m[14],
@@ -90,11 +90,11 @@ namespace Maze
         ofbx::GlobalSettings const* sceneGlobalSettings = _scene->getGlobalSettings();
 
         Vector<U32> indices;
-        Vector<Vec3DF> positions;
-        Vector<Vec2DF> uvs;
-        Vector<Vec4DF> colors;
-        Vector<Vec3DF> normals;
-        Vector<Vec3DF> tangents;
+        Vector<Vec3F> positions;
+        Vector<Vec2F> uvs;
+        Vector<Vec4F> colors;
+        Vector<Vec3F> normals;
+        Vector<Vec3F> tangents;
         String meshName;
 
         auto processCreateSubMesh =
@@ -108,7 +108,7 @@ namespace Maze
             subMesh->setName(meshName);
 
 
-            Vector<Vec3DF> bitangents;
+            Vector<Vec3F> bitangents;
 
             // Flip X for LHCS
             SubMeshHelper::FlipX(
@@ -119,7 +119,7 @@ namespace Maze
                 &tangents);
          
             
-            for (Vec3DF& position : positions)
+            for (Vec3F& position : positions)
                 position *= _props.scale * 0.01f;
 
             subMesh->setIndices(&indices[0], indices.size());
@@ -172,16 +172,16 @@ namespace Maze
             indices.clear();
         };
 
-        Mat4DF fixOrientationMat = Mat4DF::c_identity;
+        Mat4F fixOrientationMat = Mat4F::c_identity;
 
         // Fix orientation for LHCS
         if (sceneGlobalSettings->CoordAxis == ofbx::CoordSystem::CoordSystem_RightHanded)
         {
             if (sceneGlobalSettings->UpAxis == ofbx::UpVector::UpVector_AxisY && sceneGlobalSettings->CoordAxisSign < 0)
-                fixOrientationMat = Mat4DF::CreateRotationYMatrix(Math::c_pi);
+                fixOrientationMat = Mat4F::CreateRotationYMatrix(Math::c_pi);
             else
             if (sceneGlobalSettings->UpAxis == ofbx::UpVector::UpVector_AxisZ && sceneGlobalSettings->CoordAxisSign > 0)
-                fixOrientationMat = Mat4DF::CreateRotationXMatrix(-Math::c_halfPi);
+                fixOrientationMat = Mat4F::CreateRotationXMatrix(-Math::c_halfPi);
 
         }
 
@@ -196,10 +196,10 @@ namespace Maze
             ofbx::Matrix meshGeometricTransform = mesh.getGeometricMatrix();
             ofbx::Matrix meshGlobalTransform = mesh.getGlobalTransform();
 
-            Mat4DF meshGeometricTransformMat = ConvertOpenFBXMatrixToMat4DF(meshGeometricTransform);
-            Mat4DF meshGlobalTransformMat = ConvertOpenFBXMatrixToMat4DF(meshGlobalTransform);
+            Mat4F meshGeometricTransformMat = ConvertOpenFBXMatrixToMat4F32(meshGeometricTransform);
+            Mat4F meshGlobalTransformMat = ConvertOpenFBXMatrixToMat4F32(meshGlobalTransform);
 
-            Mat4DF transformMat = fixOrientationMat * meshGeometricTransformMat * meshGlobalTransformMat;
+            Mat4F transformMat = fixOrientationMat * meshGeometricTransformMat * meshGlobalTransformMat;
 
 
             
@@ -223,11 +223,11 @@ namespace Maze
             positions.reserve(positions.capacity() + vertexCount);
             for (S32 i = 0; i < vertexCount; ++i)
             {
-                Vec3DF pos = Vec3DF((F32)verticesPtr[i].x, (F32)verticesPtr[i].y, (F32)verticesPtr[i].z);
+                Vec3F pos = Vec3F((F32)verticesPtr[i].x, (F32)verticesPtr[i].y, (F32)verticesPtr[i].z);
                 pos = transformMat.transformAffine(pos);
                 positions.push_back(pos);
             }
-            transformMat.setTranslation(Vec3DF::c_zero);
+            transformMat.setTranslation(Vec3F::c_zero);
 
             // Normals
             bool hasNormals = geom.getNormals() != nullptr;
@@ -237,7 +237,7 @@ namespace Maze
                 normals.reserve(normals.capacity() + vertexCount);
                 for (S32 i = 0; i < vertexCount; ++i)
                 {
-                    Vec3DF normal = Vec3DF((F32)normalsPtr[i].x, (F32)normalsPtr[i].y, (F32)normalsPtr[i].z);
+                    Vec3F normal = Vec3F((F32)normalsPtr[i].x, (F32)normalsPtr[i].y, (F32)normalsPtr[i].z);
                     normal = transformMat.transformAffine(normal);
                     normals.push_back(normal.normalizedCopy());
                 }
@@ -251,7 +251,7 @@ namespace Maze
                 tangents.reserve(tangents.capacity() + vertexCount);
                 for (S32 i = 0; i < vertexCount; ++i)
                 {
-                    Vec3DF tangent = Vec3DF((F32)tangentsPtr[i].x, (F32)tangentsPtr[i].y, (F32)tangentsPtr[i].z);
+                    Vec3F tangent = Vec3F((F32)tangentsPtr[i].x, (F32)tangentsPtr[i].y, (F32)tangentsPtr[i].z);
                     tangent = transformMat.transformAffine(tangent);
                     tangents.push_back(tangent.normalizedCopy());
                 }
@@ -265,7 +265,7 @@ namespace Maze
                 uvs.reserve(uvs.capacity() + vertexCount);
                 for (S32 i = 0; i < vertexCount; ++i)
                 {
-                    Vec2DF uv = SubMeshHelper::NormalizeUV(Vec2DF((F32)uvsPtr[i].x, (F32)uvsPtr[i].y));
+                    Vec2F uv = SubMeshHelper::NormalizeUV(Vec2F((F32)uvsPtr[i].x, (F32)uvsPtr[i].y));
                     uvs.push_back(uv);
                 }
             }
@@ -277,7 +277,7 @@ namespace Maze
                 ofbx::Vec4 const* colorsPtr = geom.getColors();
                 colors.reserve(colors.capacity() + vertexCount);
                 for (S32 i = 0; i < vertexCount; ++i)
-                    colors.push_back(Vec4DF((F32)colorsPtr[i].x, (F32)colorsPtr[i].y, (F32)colorsPtr[i].z, (F32)colorsPtr[i].w));
+                    colors.push_back(Vec4F((F32)colorsPtr[i].x, (F32)colorsPtr[i].y, (F32)colorsPtr[i].z, (F32)colorsPtr[i].w));
             }
 
             if (!_props.mergeSubMeshes)

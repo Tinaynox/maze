@@ -51,7 +51,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    extern Vec2DU const c_canvasReferenceResolution;
+    extern Vec2U32 const c_canvasReferenceResolution;
 
 
 } // namespace Maze

@@ -181,20 +181,20 @@ namespace Maze
         inline S32 getAliveParticles() const { return m_particles.getAliveCount(); }
 
         //////////////////////////////////////////
-        inline Mat4DF const* getRenderTransforms() const { return m_particles.getRenderTransforms(); }
+        inline Mat4F const* getRenderTransforms() const { return m_particles.getRenderTransforms(); }
 
         //////////////////////////////////////////
-        inline Vec4DF const* getRenderColors() const { return m_particles.getRenderColors(); }
+        inline Vec4F const* getRenderColors() const { return m_particles.getRenderColors(); }
 
         //////////////////////////////////////////
-        inline Vec4DF const* getRenderUVs() const { return m_particles.getRenderUVs(); }
+        inline Vec4F const* getRenderUVs() const { return m_particles.getRenderUVs(); }
 
 
         //////////////////////////////////////////
         void prepareToRender(
-            Vec3DF const& _cameraPosition,
-            Vec3DF const& _cameraForward,
-            Vec3DF const& _cameraUp);
+            Vec3F const& _cameraPosition,
+            Vec3F const& _cameraForward,
+            Vec3F const& _cameraUp);
 
     protected:
 
@@ -230,7 +230,7 @@ namespace Maze
         
 
         //////////////////////////////////////////
-        S32 updateEmitter(F32 _dt, const Vec3DF& _position);
+        S32 updateEmitter(F32 _dt, const Vec3F& _position);
 
         //////////////////////////////////////////
         S32 calculateEmissionCount(
@@ -243,7 +243,7 @@ namespace Maze
         void emitParticles(
             S32 _first,
             S32 _last,
-            Vec3DF const& _position,
+            Vec3F const& _position,
             F32 _emitterTimePercent);
 
         //////////////////////////////////////////
@@ -264,7 +264,7 @@ namespace Maze
         F32 m_timeEmission;
         S32 m_iteration = 0;
         S32 m_currentBurstIndex = 0;
-        Vec3DF m_emissionPerDistancePreviousPositionWS = Vec3DF::c_zero;
+        Vec3F m_emissionPerDistancePreviousPositionWS = Vec3F::c_zero;
         bool m_emissionPerDistancePreviousPositionWSDirty = true;
 
         ParticleSystem3DMainModule m_mainModule;

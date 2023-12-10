@@ -45,8 +45,8 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/utils/MazeSharedCopyable.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
-#include "maze-core/math/MazeMat3D.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeMat3.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/serialization/MazeXMLSerializable.hpp"
 
 

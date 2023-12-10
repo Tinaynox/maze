@@ -37,7 +37,7 @@ namespace Maze
     namespace ColorHelper
     {
         //////////////////////////////////////////
-        MAZE_GRAPHICS_API Vec3DF ConvertRGBToHSV(F32 _r, F32 _g, F32 _b)
+        MAZE_GRAPHICS_API Vec3F ConvertRGBToHSV(F32 _r, F32 _g, F32 _b)
         {
             F32 cmax = Math::Max(_r, Math::Max(_g, _b));
             F32 cmin = Math::Min(_r, Math::Min(_g, _b));
@@ -68,7 +68,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_GRAPHICS_API Vec3DF ConvertHSVToRGB(F32 _h, F32 _s, F32 _v)
+        MAZE_GRAPHICS_API Vec3F ConvertHSVToRGB(F32 _h, F32 _s, F32 _v)
         {
             F32 hh;
             F32 p;
@@ -76,7 +76,7 @@ namespace Maze
             F32 t;
             F32 ff;
             S32 i;
-            Vec3DF rgb;
+            Vec3F rgb;
 
             if (_s <= 0.0f)
             {

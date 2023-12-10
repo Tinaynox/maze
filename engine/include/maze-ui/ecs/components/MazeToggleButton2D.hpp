@@ -104,7 +104,7 @@ namespace Maze
         virtual void processEntityAwakened() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        void notifyCursorReleaseIn(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent);
+        void notifyCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
         virtual void updateTransitionUI() MAZE_OVERRIDE;

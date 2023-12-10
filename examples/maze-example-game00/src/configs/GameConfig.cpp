@@ -33,7 +33,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    Vec2DU const c_canvasReferenceResolution = {1280u, 800u};
+    Vec2U32 const c_canvasReferenceResolution = {1280u, 800u};
 
 
 } // namespace Maze

@@ -211,7 +211,7 @@ namespace Maze
             case BuiltinTexture2DType::White:
             {
                 texture = Texture2D::Create(m_renderSystemRaw);
-                texture->loadTexture(PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white));
+                texture->loadTexture(PixelSheet2D(Vec2S(1, 1), ColorU32::c_white));
                 texture->setMagFilter(TextureFilter::Nearest);
                 texture->setMinFilter(TextureFilter::Nearest);
                 break;
@@ -219,7 +219,7 @@ namespace Maze
             case BuiltinTexture2DType::Black:
             {
                 texture = Texture2D::Create(m_renderSystemRaw);
-                texture->loadTexture(PixelSheet2D(Vec2DS(1, 1), ColorU32::c_black));
+                texture->loadTexture(PixelSheet2D(Vec2S(1, 1), ColorU32::c_black));
                 texture->setMagFilter(TextureFilter::Nearest);
                 texture->setMinFilter(TextureFilter::Nearest);
                 break;
@@ -227,7 +227,7 @@ namespace Maze
             case BuiltinTexture2DType::Normal:
             {
                 texture = Texture2D::Create(m_renderSystemRaw);
-                texture->loadTexture(PixelSheet2D(Vec2DS(1, 1), ColorU32(127, 127, 255)));
+                texture->loadTexture(PixelSheet2D(Vec2S(1, 1), ColorU32(127, 127, 255)));
                 texture->setMagFilter(TextureFilter::Nearest);
                 texture->setMinFilter(TextureFilter::Nearest);
                 break;
@@ -235,7 +235,7 @@ namespace Maze
             case BuiltinTexture2DType::Error:
             {
                 texture = Texture2D::Create(m_renderSystemRaw);
-                texture->loadTexture(PixelSheet2D(Vec2DS(1, 1), ColorU32::c_magenta));
+                texture->loadTexture(PixelSheet2D(Vec2S(1, 1), ColorU32::c_magenta));
                 texture->setMagFilter(TextureFilter::Nearest);
                 texture->setMinFilter(TextureFilter::Nearest);
                 break;
@@ -269,12 +269,12 @@ namespace Maze
                 {
                     PixelSheet2D faces[6] =
                     {
-                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
-                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
-                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
-                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
-                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
-                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_white),
+                        PixelSheet2D(Vec2S(1, 1), ColorU32::c_white),
+                        PixelSheet2D(Vec2S(1, 1), ColorU32::c_white),
+                        PixelSheet2D(Vec2S(1, 1), ColorU32::c_white),
+                        PixelSheet2D(Vec2S(1, 1), ColorU32::c_white),
+                        PixelSheet2D(Vec2S(1, 1), ColorU32::c_white),
+                        PixelSheet2D(Vec2S(1, 1), ColorU32::c_white),
                     };
 
                     texture->loadTexture(faces);
@@ -287,12 +287,12 @@ namespace Maze
                 {
                     PixelSheet2D faces[6] =
                     {
-                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_red),
-                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_green),
-                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_blue),
-                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_cyan),
-                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_magenta),
-                        PixelSheet2D(Vec2DS(1, 1), ColorU32::c_yellow),
+                        PixelSheet2D(Vec2S(1, 1), ColorU32::c_red),
+                        PixelSheet2D(Vec2S(1, 1), ColorU32::c_green),
+                        PixelSheet2D(Vec2S(1, 1), ColorU32::c_blue),
+                        PixelSheet2D(Vec2S(1, 1), ColorU32::c_cyan),
+                        PixelSheet2D(Vec2S(1, 1), ColorU32::c_magenta),
+                        PixelSheet2D(Vec2S(1, 1), ColorU32::c_yellow),
                     };
 
                     texture->loadTexture(faces);

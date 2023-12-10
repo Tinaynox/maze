@@ -88,7 +88,7 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(LineRenderer2D, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, width, 1.0f, getWidth, setWidth),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorGradient, color, ColorGradient(), getColor, setColor),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Vec2DF>, positions, Vector<Vec2DF>(), getPositions, setPositions));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Vec2F>, positions, Vector<Vec2F>(), getPositions, setPositions));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(LineRenderer2D);
@@ -157,7 +157,7 @@ namespace Maze
         struct EdgeData
         {
             F32 progress;
-            Vec2DF direction;
+            Vec2F direction;
             F32 halfWidth;
             F32 distanceToNextEdge;
         };
@@ -170,13 +170,13 @@ namespace Maze
         {
             EdgeData& edge = edges[i];
 
-            Vec2DF toNextEdge = m_positions[i + 1] - m_positions[i];
+            Vec2F toNextEdge = m_positions[i + 1] - m_positions[i];
             F32 toNextEdgeLength = toNextEdge.length();
-            edge.direction = (toNextEdgeLength != 0.0f) ? (toNextEdge / toNextEdgeLength) : Vec2DF::c_zero;
+            edge.direction = (toNextEdgeLength != 0.0f) ? (toNextEdge / toNextEdgeLength) : Vec2F::c_zero;
 
             if (i >= 1)
             {
-                Vec2DF prevDirection = (m_positions[i] - m_positions[i - 1]).normalizedCopy();
+                Vec2F prevDirection = (m_positions[i] - m_positions[i - 1]).normalizedCopy();
                 edge.direction = ((prevDirection + edge.direction) * 0.5f).normalizedCopy();
             }
 
@@ -207,16 +207,16 @@ namespace Maze
         U32 vertex = 0;
         U32 index = 0;
 
-        Vec2DF direction;
-        Vec2DF perpendicular;
-        Vec2DF vertexA;
-        Vec2DF vertexB;
+        Vec2F direction;
+        Vec2F perpendicular;
+        Vec2F vertexA;
+        Vec2F vertexB;
         F32 width;
         F32 halfWidth;
         ColorF128 color;
 
-        Vec2DF currentPosition = m_positions[0];
-        Vec2DF nextPosition;
+        Vec2F currentPosition = m_positions[0];
+        Vec2F nextPosition;
         for (S32 i = 0; i < (S32)(quadsCount); ++i)
         {
             EdgeData& edge = edges[i];
@@ -233,13 +233,13 @@ namespace Maze
             vertexB = currentPosition - perpendicular * halfWidth;
 
             m_vertices[vertex] = vertexA;
-            m_uvs[vertex] = Vec2DF(edge.progress, 0.0f);
-            m_colors[vertex] = color.toVec4DF();
+            m_uvs[vertex] = Vec2F(edge.progress, 0.0f);
+            m_colors[vertex] = color.toVec4F32();
             ++vertex;
 
             m_vertices[vertex] = vertexB;
-            m_uvs[vertex] = Vec2DF(edge.progress, 1.0f);
-            m_colors[vertex] = color.toVec4DF();
+            m_uvs[vertex] = Vec2F(edge.progress, 1.0f);
+            m_colors[vertex] = color.toVec4F32();
             ++vertex;
 
             
@@ -255,13 +255,13 @@ namespace Maze
         vertexB = currentPosition - perpendicular * halfWidth;
 
         m_vertices[vertex] = vertexA;
-        m_uvs[vertex] = Vec2DF(1.0f, 0.0f);
-        m_colors[vertex] = color.toVec4DF();
+        m_uvs[vertex] = Vec2F(1.0f, 0.0f);
+        m_colors[vertex] = color.toVec4F32();
         ++vertex;
 
         m_vertices[vertex] = vertexB;
-        m_uvs[vertex] = Vec2DF(1.0f, 1.0f);
-        m_colors[vertex] = color.toVec4DF();
+        m_uvs[vertex] = Vec2F(1.0f, 1.0f);
+        m_colors[vertex] = color.toVec4F32();
         ++vertex;
 
         m_vao->setVerticesData((U8 const*)&m_vertices[0], c_positionDescription, verticesCount);

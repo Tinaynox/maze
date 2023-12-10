@@ -121,7 +121,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual Vec2DF getTextEnd(Size _rowIndex = 0) MAZE_ABSTRACT;
+        virtual Vec2F getTextEnd(Size _rowIndex = 0) MAZE_ABSTRACT;
 
 
         //////////////////////////////////////////

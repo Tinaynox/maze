@@ -99,10 +99,10 @@ namespace Maze
         virtual bool getCanvasActive() const MAZE_OVERRIDE { return false; }
 
         //////////////////////////////////////////
-        virtual void processCursorPress(Vec2DF const& _positionOS, CursorInputEvent const& _event) MAZE_OVERRIDE;
+        virtual void processCursorPress(Vec2F const& _positionOS, CursorInputEvent const& _event) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void processCursorDrag(Vec2DF const& _positionOS, CursorInputEvent const& _event) MAZE_OVERRIDE;
+        virtual void processCursorDrag(Vec2F const& _positionOS, CursorInputEvent const& _event) MAZE_OVERRIDE;
 
 
         //////////////////////////////////////////
@@ -134,7 +134,7 @@ namespace Maze
         Set<MaterialPtr> m_materials;
 
         bool m_materialsDirty = false;
-        Vec2DF m_cursorPositionLastFrame = Vec2DF::c_zero;
+        Vec2F m_cursorPositionLastFrame = Vec2F::c_zero;
     };
 
 

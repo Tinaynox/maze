@@ -90,16 +90,16 @@ namespace Maze
         void setHeightMap(Texture2DPtr const& _value);
 
         //////////////////////////////////////////
-        inline Vec2DU const& getCellsCount() const { return m_cellsCount; }
+        inline Vec2U const& getCellsCount() const { return m_cellsCount; }
 
         //////////////////////////////////////////
-        void setCellsCount(Vec2DU const& _value);
+        void setCellsCount(Vec2U const& _value);
 
         //////////////////////////////////////////
-        inline Vec2DF const& getSize() const { return m_size; }
+        inline Vec2F const& getSize() const { return m_size; }
 
         //////////////////////////////////////////
-        void setSize(Vec2DF const& _value);
+        void setSize(Vec2F const& _value);
 
         //////////////////////////////////////////
         inline F32 getHeight() const { return m_height; }
@@ -142,8 +142,8 @@ namespace Maze
 
         Texture2DPtr m_heightMap;
 
-        Vec2DU m_cellsCount = { 100, 100 };
-        Vec2DF m_size = { 10.0f, 10.0f };
+        Vec2U m_cellsCount = { 100, 100 };
+        Vec2F m_size = { 10.0f, 10.0f };
         F32 m_height = 1.0f;
     };
 

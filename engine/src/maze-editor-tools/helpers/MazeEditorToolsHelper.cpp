@@ -216,8 +216,8 @@ namespace Maze
             MAZE_ERROR_RETURN_VALUE_IF(!mainScene, nullptr, "MainScene is null!");
 
             Transform2DPtr transform = SpriteHelper::CreateTransform2D(
-                Vec2DF(100.0f, 100.0f),
-                Vec2DF::c_zero,
+                Vec2F(100.0f, 100.0f),
+                Vec2F::c_zero,
                 nullptr,
                 mainScene);
 

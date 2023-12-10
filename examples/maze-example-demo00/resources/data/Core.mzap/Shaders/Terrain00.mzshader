@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Shader>
-    <Uniform name="u_baseMap0ST" type="UniformVec4DF" value="1.0;1.0;0.0;0.0" />
-    <Uniform name="u_baseMap1ST" type="UniformVec4DF" value="1.0;1.0;0.0;0.0" />
-    <Uniform name="u_baseMap2ST" type="UniformVec4DF" value="1.0;1.0;0.0;0.0" />
+    <Uniform name="u_baseMap0ST" type="UniformVec4F32" value="1.0;1.0;0.0;0.0" />
+    <Uniform name="u_baseMap1ST" type="UniformVec4F32" value="1.0;1.0;0.0;0.0" />
+    <Uniform name="u_baseMap2ST" type="UniformVec4F32" value="1.0;1.0;0.0;0.0" />
     <Uniform name="u_height0" type="UniformF32" value="0.75" />
     <Uniform name="u_height1" type="UniformF32" value="1.5" />
     <Uniform name="u_height2" type="UniformF32" value="2.25" />

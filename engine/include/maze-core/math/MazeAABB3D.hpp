@@ -33,8 +33,8 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/math/MazeMath.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
+#include "maze-core/math/MazeVec3.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
 #include <ostream>
 
@@ -59,8 +59,8 @@ namespace Maze
         
         //////////////////////////////////////////
         inline MAZE_CONSTEXPR AABB3D()
-            : m_min(Vec3DF::c_zero)
-            , m_max(Vec3DF::c_zero)
+            : m_min(Vec3F::c_zero)
+            , m_max(Vec3F::c_zero)
         {
         }
         
@@ -79,13 +79,13 @@ namespace Maze
         
         
         //////////////////////////////////////////
-        inline AABB3D(Vec3DF const& _point0, Vec3DF const& _point1)
+        inline AABB3D(Vec3F const& _point0, Vec3F const& _point1)
         {
             set(_point0, _point1);
         }
 
         //////////////////////////////////////////
-        inline AABB3D(Vec3DF const& _point)
+        inline AABB3D(Vec3F const& _point)
             : AABB3D(
                 _point.x,
                 _point.y,
@@ -114,7 +114,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline void setMin(Vec3DF const& _min) { m_min = _min; }
+        inline void setMin(Vec3F const& _min) { m_min = _min; }
         
         //////////////////////////////////////////
         inline void setMin(F32 _x, F32 _y, F32 _z) { m_min.x = _x; m_min.y = _y; m_min.z = _z; }
@@ -129,7 +129,7 @@ namespace Maze
         inline void setMinZ(F32 _z) { m_min.z = _z; }
         
         //////////////////////////////////////////
-        inline MAZE_CONSTEXPR Vec3DF const& getMin() const { return m_min; }
+        inline MAZE_CONSTEXPR Vec3F const& getMin() const { return m_min; }
         
         //////////////////////////////////////////
         inline MAZE_CONSTEXPR F32 const getMinX() const { return m_min.x; }
@@ -141,20 +141,20 @@ namespace Maze
         inline MAZE_CONSTEXPR F32 const getMinZ() const { return m_min.z; }
         
         //////////////////////////////////////////
-        inline MAZE_CONSTEXPR Vec3DF const& getLeftTop() const { return m_min; }
+        inline MAZE_CONSTEXPR Vec3F const& getLeftTop() const { return m_min; }
         
         //////////////////////////////////////////
-        inline MAZE_CONSTEXPR Vec3DF getRightTop() const { return Vec3DF(m_max.x, m_min.y, m_min.z); }
+        inline MAZE_CONSTEXPR Vec3F getRightTop() const { return Vec3F(m_max.x, m_min.y, m_min.z); }
         
         //////////////////////////////////////////
-        inline MAZE_CONSTEXPR Vec3DF getLeftBottom() const { return Vec3DF(m_min.x, m_max.y, m_max.z); }
+        inline MAZE_CONSTEXPR Vec3F getLeftBottom() const { return Vec3F(m_min.x, m_max.y, m_max.z); }
         
         //////////////////////////////////////////
-        inline MAZE_CONSTEXPR Vec3DF const& getRightBottom() const { return m_max; }
+        inline MAZE_CONSTEXPR Vec3F const& getRightBottom() const { return m_max; }
         
         
         //////////////////////////////////////////
-        inline void setMax(Vec3DF const& _max) { m_max = _max; }
+        inline void setMax(Vec3F const& _max) { m_max = _max; }
         
         //////////////////////////////////////////
         inline void setMax(F32 _x, F32 _y, F32 _z) { m_max.x = _x; m_max.y = _y; m_max.z = _z; }
@@ -177,7 +177,7 @@ namespace Maze
         }
         
         //////////////////////////////////////////
-        inline void set(Vec3DF const& _point0, Vec3DF const& _point1)
+        inline void set(Vec3F const& _point0, Vec3F const& _point1)
         {
             if (_point0.x < _point1.x)
             {
@@ -214,7 +214,7 @@ namespace Maze
         }
         
         //////////////////////////////////////////
-        inline MAZE_CONSTEXPR Vec3DF const& getMax() const { return m_max; }
+        inline MAZE_CONSTEXPR Vec3F const& getMax() const { return m_max; }
         
         //////////////////////////////////////////
         inline MAZE_CONSTEXPR F32 const getMaxX() const { return m_max.x; }
@@ -258,7 +258,7 @@ namespace Maze
         }
         
         //////////////////////////////////////////
-        inline bool contains(Vec3DF const& _p) const
+        inline bool contains(Vec3F const& _p) const
         {
             if (    m_min.x <= _p.x && m_max.x >= _p.x 
                 &&  m_min.y <= _p.y && m_max.y >= _p.y
@@ -320,7 +320,7 @@ namespace Maze
         }
         
         //////////////////////////////////////////
-        inline void applyUnion(Vec3DF const& _point)
+        inline void applyUnion(Vec3F const& _point)
         {
             m_min.x = Math::Min(m_min.x, _point.x);
             m_max.x = Math::Max(m_max.x, _point.x);
@@ -346,9 +346,9 @@ namespace Maze
         }
         
         //////////////////////////////////////////
-        inline MAZE_CONSTEXPR Vec3DF getSize() const
+        inline MAZE_CONSTEXPR Vec3F getSize() const
         {
-            return Vec3DF(m_max.x - m_min.x, m_max.y - m_min.y, m_max.z - m_min.z);
+            return Vec3F(m_max.x - m_min.x, m_max.y - m_min.y, m_max.z - m_min.z);
         }
         
         //////////////////////////////////////////
@@ -370,8 +370,8 @@ namespace Maze
         static AABB3D FromString(String const& _string, Char _separator = ';');
         
     protected:
-        Vec3DF m_min;
-        Vec3DF m_max;
+        Vec3F m_min;
+        Vec3F m_max;
     };
     
     

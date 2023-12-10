@@ -130,13 +130,13 @@ namespace Maze
 
         m_background = SpriteHelper::CreateSprite(
             ColorU32(0, 0, 0, 100),
-            Vec2DF(m_canvas->getTransform()->getWidth(), m_canvas->getTransform()->getHeight() * c_consoleHeightKoef),
-            Vec2DF(0.0f, 0.0f),
+            Vec2F(m_canvas->getTransform()->getWidth(), m_canvas->getTransform()->getHeight() * c_consoleHeightKoef),
+            Vec2F(0.0f, 0.0f),
             nullptr,
             m_canvas->getTransform(),
             this,
-            Vec2DF(0.5f, 1.0f),
-            Vec2DF(0.5f, 1.0f));
+            Vec2F(0.5f, 1.0f),
+            Vec2F(0.5f, 1.0f));
         m_backgroundElement = m_background->getEntityRaw()->ensureComponent<UIElement2D>();
         m_backgroundElement->setCaptureCursorHits(true);
         m_backgroundElement->eventClick.subscribe(this, &SceneConsole::notifyBackgroundClick);
@@ -146,24 +146,24 @@ namespace Maze
             8,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Bottom,
-            m_background->getTransform()->getSize() - Vec2DF(2.0f, 2.0f),
-            Vec2DF(1.0f, 19.0f),
+            m_background->getTransform()->getSize() - Vec2F(2.0f, 2.0f),
+            Vec2F(1.0f, 19.0f),
             m_background->getTransform(),
             this,
-            Vec2DF(0.0f, 0.0f),
-            Vec2DF(0.0f, 0.0f));
+            Vec2F(0.0f, 0.0f),
+            Vec2F(0.0f, 0.0f));
         m_consoleText->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
         m_consoleText->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefaultOutlined());
         updateLogText();
 
         m_edit = SystemUIHelper::CreateDefaultEditBox(
             "",
-            Vec2DF(m_canvas->getTransform()->getWidth(), 18.0f),
-            Vec2DF(0.0f, 0.0f),
+            Vec2F(m_canvas->getTransform()->getWidth(), 18.0f),
+            Vec2F(0.0f, 0.0f),
             m_background->getTransform(),
             this,
-            Vec2DF::c_zero,
-            Vec2DF::c_zero);
+            Vec2F::c_zero,
+            Vec2F::c_zero);
         m_edit->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
         m_edit->getEntityRaw()->ensureComponent<CanvasGroup>()->setLocalAlpha(0.66f);
 
@@ -176,11 +176,11 @@ namespace Maze
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Top,
             m_background->getTransform()->getSize(),
-            Vec2DF(1.0f, -1.0f),
+            Vec2F(1.0f, -1.0f),
             m_background->getTransform(),
             this,
-            Vec2DF(0.0f, 0.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 0.0f),
+            Vec2F(0.0f, 1.0f));
         m_hintText->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefaultOutlined());
         updateHintText();
     }
@@ -189,7 +189,7 @@ namespace Maze
     void SceneConsole::updateSize()
     {
         m_background->getTransform()->setSize(
-            Vec2DF(
+            Vec2F(
                 m_canvas->getTransform()->getWidth(),
                 m_canvas->getTransform()->getHeight() * c_consoleHeightKoef));
     }
@@ -234,7 +234,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneConsole::notifyBackgroundClick(Vec2DF const& _positionOS, CursorInputEvent const& _event)
+    void SceneConsole::notifyBackgroundClick(Vec2F const& _positionOS, CursorInputEvent const& _event)
     {
         m_edit->setSelected(true);
     }

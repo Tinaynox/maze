@@ -32,7 +32,7 @@
 //////////////////////////////////////////
 #include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 
 
 //////////////////////////////////////////

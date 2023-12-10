@@ -271,7 +271,7 @@ namespace Maze
             mask |= MAZE_GL_COLOR_BUFFER_BIT;
 
             ColorU32 const& clearColor = m_currentRenderTarget->getClearColor();
-            getCurrentContext()->setClearColor(clearColor.toVec4DF());
+            getCurrentContext()->setClearColor(clearColor.toVec4F32());
         }
 
         if (_depthBuffer)

@@ -162,7 +162,7 @@ namespace Maze
         F32 getBindValue(PlayerGamepadDeviceCommand _value){ return getBindValue(m_bindMap[_value]); }
 
         //////////////////////////////////////////
-        Vec2DF getMoveAxis();
+        Vec2F32 getMoveAxis();
 
         //////////////////////////////////////////
         bool getFireButton();

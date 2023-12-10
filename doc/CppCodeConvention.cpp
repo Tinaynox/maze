@@ -132,7 +132,7 @@ struct StructName
                                                                                               // | symbols by both sides. Dots should be replaced by the underline symbol also.
 
 //////////////////////////////////////////
-#include "maze-core/math/MazeVec2D.hpp"                                                       // | Files from external modules are included first (Sort by modules).
+#include "maze-core/math/MazeVec2.hpp"                                                       // | Files from external modules are included first (Sort by modules).
 #include "maze-core/math/MazeRect2D.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
 #include "maze-graphics/MazeShader.hpp"
@@ -195,7 +195,7 @@ namespace Maze
         SomeAggregatedClassPtr m_aggregatedField;
         SomeSpecialPoolPtr m_specialPool;
         Quaternion m_quaternion = Quaternion::c_identity;                                     // | The default value for fields in most cases should be
-        Vec2DF m_position = Vec2DF::c_zero;                                                   // | set immediately upon declaration.
+        Vec2F32 m_position = Vec2F32::c_zero;                                                   // | set immediately upon declaration.
         Rect2DF m_rect = Rect2DF::c_zero;
         F32 m_someFloat = 0.1f;                                                               // | Avoid using .1f or 1f
     };

@@ -49,37 +49,37 @@ namespace Maze
     namespace ColorHelper
     {
         //////////////////////////////////////////
-        MAZE_GRAPHICS_API Vec3DF ConvertRGBToHSV(F32 _r, F32 _g, F32 _b);
+        MAZE_GRAPHICS_API Vec3F ConvertRGBToHSV(F32 _r, F32 _g, F32 _b);
 
         //////////////////////////////////////////
-        MAZE_GRAPHICS_API inline Vec3DF ConvertRGBToHSV(Vec3DF const& _color)
+        MAZE_GRAPHICS_API inline Vec3F ConvertRGBToHSV(Vec3F const& _color)
         {
             return ConvertRGBToHSV(_color.x, _color.y, _color.z);
         }
 
         //////////////////////////////////////////
-        MAZE_GRAPHICS_API inline Vec3DF ConvertRGBToHSV(U8 _r, U8 _g, U8 _b)
+        MAZE_GRAPHICS_API inline Vec3F ConvertRGBToHSV(U8 _r, U8 _g, U8 _b)
         {
             return ConvertRGBToHSV((F32)_r/255.0f, (F32)_g/255.0f, (F32)_b/255.0f);
         }
 
         //////////////////////////////////////////
-        MAZE_GRAPHICS_API inline Vec3DF ConvertRGBToHSV(S32 _r, S32 _g, S32 _b)
+        MAZE_GRAPHICS_API inline Vec3F ConvertRGBToHSV(S32 _r, S32 _g, S32 _b)
         {
             return ConvertRGBToHSV((F32)_r/255.0f, (F32)_g/255.0f, (F32)_b/255.0f);
         }
 
         //////////////////////////////////////////
-        MAZE_GRAPHICS_API inline Vec3DF ConvertRGBToHSV(ColorU32 const& _color)
+        MAZE_GRAPHICS_API inline Vec3F ConvertRGBToHSV(ColorU32 const& _color)
         {
             return ConvertRGBToHSV(_color.r, _color.g, _color.b);
         }
 
         //////////////////////////////////////////
-        MAZE_GRAPHICS_API Vec3DF ConvertHSVToRGB(F32 _h, F32 _s, F32 _v);
+        MAZE_GRAPHICS_API Vec3F ConvertHSVToRGB(F32 _h, F32 _s, F32 _v);
 
         //////////////////////////////////////////
-        inline MAZE_GRAPHICS_API Vec3DF ConvertHSVToRGB(Vec3DF const& _color)
+        inline MAZE_GRAPHICS_API Vec3F ConvertHSVToRGB(Vec3F const& _color)
         {
             return ConvertHSVToRGB(_color.x, _color.y, _color.z);
         }

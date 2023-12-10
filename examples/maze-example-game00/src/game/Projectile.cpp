@@ -49,8 +49,8 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Projectile, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, speed, 15.0f, getSpeed, setSpeed),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, damage, 50.0f, getDamage, setDamage),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2DF, extraSpeed, Vec2DF::c_zero, getExtraSpeed, setExtraSpeed),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2DF, direction, Vec2DF::c_unitX, getDirection, setDirection),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F32, extraSpeed, Vec2F32::c_zero, getExtraSpeed, setExtraSpeed),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F32, direction, Vec2F32::c_unitX, getDirection, setDirection),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(SpecialEffectType, destroyEffect, SpecialEffectType::None, getDestroyEffect, setDestroyEffect));
 
     //////////////////////////////////////////
@@ -60,7 +60,7 @@ namespace Maze
     Projectile::Projectile()
         : m_speed(15.0f)
         , m_damage(50.0f)
-        , m_direction(Vec2DF::c_unitX)
+        , m_direction(Vec2F32::c_unitX)
     {
     }
 
@@ -88,8 +88,8 @@ namespace Maze
     //////////////////////////////////////////
     void Projectile::update(F32 _dt)
     {
-        Vec2DF position = { m_transform->getLocalPosition().x, m_transform->getLocalPosition().y };
-        Vec2DF translation = (m_direction * m_speed + m_extraSpeed) * _dt;
+        Vec2F32 position = { m_transform->getLocalPosition().x, m_transform->getLocalPosition().y };
+        Vec2F32 translation = (m_direction * m_speed + m_extraSpeed) * _dt;
         
         m_extraSpeed.x -= m_extraSpeed.x * Math::Min(32 * _dt, 1.0f);
         m_extraSpeed.y -= m_extraSpeed.y * Math::Min(32 * _dt, 1.0f);

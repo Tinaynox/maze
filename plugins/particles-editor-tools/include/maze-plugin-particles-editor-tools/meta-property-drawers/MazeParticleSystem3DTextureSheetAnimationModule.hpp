@@ -39,7 +39,7 @@
 #include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
 #include "maze-editor-tools/property-drawers/MazeF32.hpp"
 #include "maze-editor-tools/property-drawers/MazeBool.hpp"
-#include "maze-editor-tools/property-drawers/MazeVec2DS.hpp"
+#include "maze-editor-tools/property-drawers/MazeVec2S32.hpp"
 #include "maze-particles/particle-modules/MazeParticleSystem3DRendererModule.hpp"
 #include "maze-plugin-particles-editor-tools/meta-property-drawers/MazeParticleSystem3DModule.hpp"
 #include "maze-plugin-particles-editor-tools/property-drawers/MazeParticleSystemParameterF32.hpp"
@@ -101,7 +101,7 @@ namespace Maze
 
     protected:
         PropertyDrawerBoolPtr m_enabledDrawer;
-        PropertyDrawerVec2DSPtr m_tilesDrawer;
+        PropertyDrawerVec2S32Ptr m_tilesDrawer;
         PropertyDrawerParticleSystemParameterF32Ptr m_startFrameDrawer;
         PropertyDrawerParticleSystemParameterF32Ptr m_frameOverTimeDrawer;
 

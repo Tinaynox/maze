@@ -47,7 +47,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmoToolTranslation::manipulate(Set<EntityPtr> const& _entities, Vec2DF const& _cursorPos)
+    void GizmoToolTranslation::manipulate(Set<EntityPtr> const& _entities, Vec2F const& _cursorPos)
     {
         Camera3DPtr const& camera = GizmosManager::GetInstancePtr()->getCamera();
         if (!camera)
@@ -62,24 +62,24 @@ namespace Maze
         if (!entityTransform)
             return;
 
-        Mat4DF mat = entityTransform->getWorldTransform();
+        Mat4F mat = entityTransform->getWorldTransform();
 
-        Vec3DF const& cameraWorldPosition = camera->getTransform()->getWorldPosition();
+        Vec3F const& cameraWorldPosition = camera->getTransform()->getWorldPosition();
 
-        Vec3DF right = { mat[0][0], mat[1][0], mat[2][0] };
-        Vec3DF up = { mat[0][1], mat[1][1], mat[2][1] };
-        Vec3DF forward = { mat[0][2], mat[1][2], mat[2][2] };
-        Vec3DF pos = { mat[0][3], mat[1][3], mat[2][3] };
+        Vec3F right = { mat[0][0], mat[1][0], mat[2][0] };
+        Vec3F up = { mat[0][1], mat[1][1], mat[2][1] };
+        Vec3F forward = { mat[0][2], mat[1][2], mat[2][2] };
+        Vec3F pos = { mat[0][3], mat[1][3], mat[2][3] };
 
-        // Vec3DF affineScale = mat.getAffineScaleSignless();
-        Vec3DF affineScale = entityTransform->getWorldScale();
+        // Vec3F affineScale = mat.getAffineScaleSignless();
+        Vec3F affineScale = entityTransform->getWorldScale();
 
         F32 cameraDistance = (pos - camera->getTransform()->getLocalPosition()).length();
         F32 scale = cameraDistance * GizmoToolConfig::c_cameraScalePerDistance;
-        Mat4DF transform =
+        Mat4F transform =
             mat *
-            Mat4DF::CreateScaleMatrix(scale / affineScale);
-        Mat4DF basisTransform = transform;
+            Mat4F::CreateScaleMatrix(scale / affineScale);
+        Mat4F basisTransform = transform;
         basisTransform[0][3] = 0.0f;
         basisTransform[1][3] = 0.0f;
         basisTransform[2][3] = 0.0f;
@@ -90,7 +90,7 @@ namespace Maze
 
         auto drawAxis = [&](
             ColorF128 const& _color,
-            Vec3DF const& _axis)
+            Vec3F const& _axis)
         {
             GizmosHelper::SetColor(_color);
 
@@ -115,7 +115,7 @@ namespace Maze
         Ray ray = camera->convertViewportCoordsToRay(_cursorPos);
 
         auto checkAxis = [&](
-            Vec3DF const& _axis)
+            Vec3F const& _axis)
         {
             /*
             GizmosHelper::DrawCylinder(
@@ -159,13 +159,13 @@ namespace Maze
             return false;
         };
 
-        auto drawX = [&]() { drawAxis(m_selectedAxis == 0 ? GizmoToolConfig::c_transformGizmoToolAxisSelectedColor : GizmoToolConfig::c_transformGizmoToolAxisXColor, Vec3DF::c_unitX); };
-        auto drawY = [&]() { drawAxis(m_selectedAxis == 1 ? GizmoToolConfig::c_transformGizmoToolAxisSelectedColor : GizmoToolConfig::c_transformGizmoToolAxisYColor, Vec3DF::c_unitY); };
-        auto drawZ = [&]() { drawAxis(m_selectedAxis == 2 ? GizmoToolConfig::c_transformGizmoToolAxisSelectedColor : GizmoToolConfig::c_transformGizmoToolAxisZColor, Vec3DF::c_unitZ); };
+        auto drawX = [&]() { drawAxis(m_selectedAxis == 0 ? GizmoToolConfig::c_transformGizmoToolAxisSelectedColor : GizmoToolConfig::c_transformGizmoToolAxisXColor, Vec3F::c_unitX); };
+        auto drawY = [&]() { drawAxis(m_selectedAxis == 1 ? GizmoToolConfig::c_transformGizmoToolAxisSelectedColor : GizmoToolConfig::c_transformGizmoToolAxisYColor, Vec3F::c_unitY); };
+        auto drawZ = [&]() { drawAxis(m_selectedAxis == 2 ? GizmoToolConfig::c_transformGizmoToolAxisSelectedColor : GizmoToolConfig::c_transformGizmoToolAxisZColor, Vec3F::c_unitZ); };
 
-        auto checkX = [&]() { return checkAxis(Vec3DF::c_unitX); };
-        auto checkY = [&]() { return checkAxis(Vec3DF::c_unitY); };
-        auto checkZ = [&]() { return checkAxis(Vec3DF::c_unitZ); };
+        auto checkX = [&]() { return checkAxis(Vec3F::c_unitX); };
+        auto checkY = [&]() { return checkAxis(Vec3F::c_unitY); };
+        auto checkZ = [&]() { return checkAxis(Vec3F::c_unitZ); };
 
         struct Axis
         {
@@ -203,16 +203,16 @@ namespace Maze
 
         if (m_usingAxis >= 0)
         {
-            Vec3DF axis = basisTransform.transformAffine(getWorldAxis(m_usingAxis)).normalizedCopy();
+            Vec3F axis = basisTransform.transformAffine(getWorldAxis(m_usingAxis)).normalizedCopy();
 
-            Vec3DF norm;
+            Vec3F norm;
             F32 d = 0.0f;
             for (S32 i = 0; i < 3; ++i)
             {
                 if (m_usingAxis == i)
                     continue;
 
-                Vec3DF crossAxis = basisTransform.transformAffine(getWorldAxis(i)).normalizedCopy();
+                Vec3F crossAxis = basisTransform.transformAffine(getWorldAxis(i)).normalizedCopy();
                 F32 dot = crossAxis.dotProduct(camera->getTransform()->getWorldForwardDirection());
                 if (Math::Abs(dot) > d)
                 {
@@ -224,7 +224,7 @@ namespace Maze
             F32 dist;
             if (Math::RaycastPlane(ray.getPoint(), ray.getDirection(), pos, norm, dist))
             {
-                Vec3DF point = ray.getPoint(dist);
+                Vec3F point = ray.getPoint(dist);
                 point = Math::ClosestPointOnLine(pos, pos + axis, point);
 
                 if (m_useRequest)
@@ -235,11 +235,11 @@ namespace Maze
                 }
                 else
                 {
-                    Vec3DF delta = point - m_startPoint;
-                    Vec3DF newWorldPosition = m_startPosition + delta;
+                    Vec3F delta = point - m_startPoint;
+                    Vec3F newWorldPosition = m_startPosition + delta;
 
-                    Mat4DF parentWorldScale = entityTransform->getParent() ? entityTransform->getParent()->getWorldTransform()
-                                                                           : Mat4DF::c_identity;
+                    Mat4F parentWorldScale = entityTransform->getParent() ? entityTransform->getParent()->getWorldTransform()
+                                                                           : Mat4F::c_identity;
                     entityTransform->setLocalPosition(parentWorldScale.inversedAffineCopy().transformAffine(newWorldPosition));
                 }
             }
@@ -264,7 +264,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmoToolTranslation::processCursorPress(Vec2DF const& _cursorPos)
+    void GizmoToolTranslation::processCursorPress(Vec2F const& _cursorPos)
     {
         if (m_selectedAxis >= 0)
         {
@@ -281,16 +281,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec3DF GizmoToolTranslation::getWorldAxis(S32 _axis)
+    Vec3F GizmoToolTranslation::getWorldAxis(S32 _axis)
     {
         switch (_axis)
         {
-            case 0: return Vec3DF::c_unitX;
-            case 1: return Vec3DF::c_unitY;
-            case 2: return Vec3DF::c_unitZ;
+            case 0: return Vec3F::c_unitX;
+            case 1: return Vec3F::c_unitY;
+            case 2: return Vec3F::c_unitZ;
         }
 
-        return Vec3DF::c_zero;
+        return Vec3F::c_zero;
     }
 
 } // namespace Maze

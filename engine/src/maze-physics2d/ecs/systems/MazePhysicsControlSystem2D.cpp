@@ -150,12 +150,12 @@ namespace Maze
                                 _rigidbody->getFixedUpdateStartAngle(),
                                 _rigidbody->getAngle(),
                                 accumulatorRatio),
-                            Vec3DF::c_unitZ));
+                            Vec3F::c_unitZ));
                 }
                 else
                 {
                     _transform->setLocalPosition(_rigidbody->getFixedUpdateStartPosition());
-                    _transform->setLocalRotation(Quaternion(_rigidbody->getFixedUpdateStartAngle(), Vec3DF::c_unitZ));
+                    _transform->setLocalRotation(Quaternion(_rigidbody->getFixedUpdateStartAngle(), Vec3F::c_unitZ));
                 }
             });
     }

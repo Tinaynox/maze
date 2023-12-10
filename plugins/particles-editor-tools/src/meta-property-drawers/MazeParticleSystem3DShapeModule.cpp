@@ -111,8 +111,8 @@ namespace Maze
 
         SpriteRenderer2DPtr sprite = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
-            Vec2DF(_parent->getWidth(), 18),
-            Vec2DF::c_zero,
+            Vec2F(_parent->getWidth(), 18),
+            Vec2F::c_zero,
             renderSystem->getMaterialManager()->getColorTextureMaterial(),
             _parent,
             _parent->getEntity()->getECSScene());
@@ -127,12 +127,12 @@ namespace Maze
         VerticalLayout2DPtr verticalLayout = UIHelper::CreateVerticalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(sprite->getTransform()->getWidth() - 8, sprite->getTransform()->getHeight() - 8),
-            Vec2DF(4, 4),
+            Vec2F(sprite->getTransform()->getWidth() - 8, sprite->getTransform()->getHeight() - 8),
+            Vec2F(4, 4),
             sprite->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         SizePolicy2DPtr sizePolicy = verticalLayout->getEntityRaw()->ensureComponent<SizePolicy2D>();
         sizePolicy->setSizeDelta(-8, -8);
         sizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
@@ -144,12 +144,12 @@ namespace Maze
         VerticalLayout2DPtr verticalLayout2 = UIHelper::CreateVerticalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(sprite->getTransform()->getWidth(), sprite->getTransform()->getHeight()),
-            Vec2DF(0, 0),
+            Vec2F(sprite->getTransform()->getWidth(), sprite->getTransform()->getHeight()),
+            Vec2F(0, 0),
             verticalLayout->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         sizePolicy = verticalLayout2->getEntityRaw()->ensureComponent<SizePolicy2D>();        
         sizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
         verticalLayout2->setAutoHeight(true);

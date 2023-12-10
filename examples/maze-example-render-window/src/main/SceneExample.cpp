@@ -84,12 +84,12 @@ MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneExample, Maze::ECSRenderScene);
 //////////////////////////////////////////
 SceneExample::SceneExample()
     : m_timer(0.0f)
-    , m_modelMatrix(Maze::Mat4DF::c_identity)
-    , m_modelMatrix2(Maze::Mat4DF::c_identity)
-    , m_modelMatrix3(Maze::Mat4DF::c_identity)
+    , m_modelMatrix(Maze::Mat4F32F::c_identity)
+    , m_modelMatrix2(Maze::Mat4F32F::c_identity)
+    , m_modelMatrix3(Maze::Mat4F32F::c_identity)
     , m_yawAngle(0.0f)
     , m_pitchAngle(0.0f)
-    , m_cursorPositionLastFrame(Maze::Vec2DF::c_zero)
+    , m_cursorPositionLastFrame(Maze::Vec2F32::c_zero)
     , m_cursorDrag(false)
 {
 }
@@ -141,7 +141,7 @@ bool SceneExample::init()
     {
         Maze::EntityPtr cameraEntity = Maze::Entity::Create();
         m_cameraTransform3D = cameraEntity->createComponent<Maze::Transform3D>();
-        m_cameraTransform3D->setLocalPosition(Maze::Vec3DF(0.0f, 0.0f, -3.0f));
+        m_cameraTransform3D->setLocalPosition(Maze::Vec3F32(0.0f, 0.0f, -3.0f));
         Maze::Camera3DPtr camera3D = cameraEntity->createComponent<Maze::Camera3D>();
         camera3D->setRenderTarget(g_defaultRenderTarget);
 
@@ -193,8 +193,8 @@ bool SceneExample::init()
             Maze::EntityPtr spriteRendererEntity = createEntity();
             Maze::Transform2DPtr transform = spriteRendererEntity->createComponent<Maze::Transform2D>();
             transform->setParent(canvasTransform2D);
-            transform->setAnchor(Maze::Vec2DF(0.0f, 0.0f));
-            transform->setPivot(Maze::Vec2DF::c_zero);
+            transform->setAnchor(Maze::Vec2F32(0.0f, 0.0f));
+            transform->setPivot(Maze::Vec2F32::c_zero);
             transform->setSize(50, 50);
         
             Maze::SpriteRenderer2DPtr spriteRenderer = spriteRendererEntity->createComponent<Maze::SpriteRenderer2D>();
@@ -205,10 +205,10 @@ bool SceneExample::init()
             Maze::EntityPtr spriteRendererEntity = createEntity();
             Maze::Transform2DPtr transform = spriteRendererEntity->createComponent<Maze::Transform2D>();
             transform->setParent(canvasTransform2D);
-            transform->setAnchor(Maze::Vec2DF(1.0f, 1.0f));
-            transform->setPivot(Maze::Vec2DF(0.0f, 1.0f));
+            transform->setAnchor(Maze::Vec2F32(1.0f, 1.0f));
+            transform->setPivot(Maze::Vec2F32(0.0f, 1.0f));
             transform->setSize(50, 50);
-            transform->setLocalScale(Maze::Vec2DF(-1.0f, 1.0f));
+            transform->setLocalScale(Maze::Vec2F32(-1.0f, 1.0f));
         
             Maze::SpriteRenderer2DPtr spriteRenderer = spriteRendererEntity->createComponent<Maze::SpriteRenderer2D>();
             spriteRenderer->setSprite(sprite);
@@ -218,9 +218,9 @@ bool SceneExample::init()
             Maze::EntityPtr spriteRendererEntity = createEntity();
             Maze::Transform2DPtr transform = spriteRendererEntity->createComponent<Maze::Transform2D>();
             transform->setParent(canvasTransform2D);
-            transform->setAnchor(Maze::Vec2DF(0.0f, 1.0f));
+            transform->setAnchor(Maze::Vec2F32(0.0f, 1.0f));
             transform->setSize(50, 50);
-            transform->setPivot(Maze::Vec2DF(0.0f, 1.0f));
+            transform->setPivot(Maze::Vec2F32(0.0f, 1.0f));
         
             Maze::SpriteRenderer2DPtr spriteRenderer = spriteRendererEntity->createComponent<Maze::SpriteRenderer2D>();
             spriteRenderer->setSprite(sprite);
@@ -230,10 +230,10 @@ bool SceneExample::init()
             Maze::EntityPtr spriteRendererEntity = createEntity();
             Maze::Transform2DPtr transform = spriteRendererEntity->createComponent<Maze::Transform2D>();
             transform->setParent(canvasTransform2D);
-            transform->setAnchor(Maze::Vec2DF(1.0f, 0.0f));
-            transform->setPivot(Maze::Vec2DF(0.0f, 0.0f));
+            transform->setAnchor(Maze::Vec2F32(1.0f, 0.0f));
+            transform->setPivot(Maze::Vec2F32(0.0f, 0.0f));
             transform->setSize(50, 50);
-            transform->setLocalScale(Maze::Vec2DF(-1.0f, 1.0f));
+            transform->setLocalScale(Maze::Vec2F32(-1.0f, 1.0f));
         
             Maze::SpriteRenderer2DPtr spriteRenderer = spriteRendererEntity->createComponent<Maze::SpriteRenderer2D>();
             spriteRenderer->setSprite(sprite);
@@ -245,8 +245,8 @@ bool SceneExample::init()
     ////////////////////////////////////////////
     // 3D
 
-    m_modelMatrix2 = Maze::Mat4DF::c_identity;
-    m_modelMatrix3 = Maze::Mat4DF::c_identity;
+    m_modelMatrix2 = Maze::Mat4F32F::c_identity;
+    m_modelMatrix3 = Maze::Mat4F32F::c_identity;
     
     
     // Axes
@@ -301,12 +301,12 @@ void SceneExample::update(Maze::F32 _dt)
     {
         float f = (Maze::Math::Sin(m_timer) + 1)/2.0f;        
 
-        m_modelMatrix = Maze::Mat4DF::CreateRotationYMatrix(m_timer);
-        m_modelMatrix2 = Maze::Mat4DF::CreateTranslationMatrix(Maze::Math::Sin(m_timer), 0.0f, 0.0f) * Maze::Mat4DF::CreateRotationYMatrix(Maze::Math::c_pi);
-        m_modelMatrix3 = Maze::Mat4DF::CreateTranslationMatrix(0.0f, 1.5f, 0.0f);
+        m_modelMatrix = Maze::Mat4F32F::CreateRotationYMatrix(m_timer);
+        m_modelMatrix2 = Maze::Mat4F32F::CreateTranslationMatrix(Maze::Math::Sin(m_timer), 0.0f, 0.0f) * Maze::Mat4F32F::CreateRotationYMatrix(Maze::Math::c_pi);
+        m_modelMatrix3 = Maze::Mat4F32F::CreateTranslationMatrix(0.0f, 1.5f, 0.0f);
 
-        Maze::Vec3DF cameraForwardDirection = m_cameraTransform3D->getLocalRotation() * Maze::Vec3DF::c_unitZ;
-        Maze::Vec3DF cameraRightDirection = m_cameraTransform3D->getLocalRotation() * Maze::Vec3DF::c_unitX;
+        Maze::Vec3F32 cameraForwardDirection = m_cameraTransform3D->getLocalRotation() * Maze::Vec3F32::c_unitZ;
+        Maze::Vec3F32 cameraRightDirection = m_cameraTransform3D->getLocalRotation() * Maze::Vec3F32::c_unitX;
 
         Maze::F32 speed = 2.0f;
         
@@ -362,11 +362,11 @@ void SceneExample::notifyMouse(Maze::InputEventMouseData const& _data)
     {
         case Maze::InputEventMouseType::Move:
         {
-            Maze::Vec2DF cursorPosition = Maze::Vec2DF((Maze::F32)_data.x, (Maze::F32)_data.y);
+            Maze::Vec2F32 cursorPosition = Maze::Vec2F32((Maze::F32)_data.x, (Maze::F32)_data.y);
 
             if (m_cursorDrag)
             {
-                Maze::Vec2DF deltaPosition = cursorPosition - m_cursorPositionLastFrame;
+                Maze::Vec2F32 deltaPosition = cursorPosition - m_cursorPositionLastFrame;
 
                 m_yawAngle += deltaPosition.x * 0.0075f;
                 m_pitchAngle -= deltaPosition.y * 0.0075f;

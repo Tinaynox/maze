@@ -57,15 +57,15 @@
 #include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerS32.hpp"
 #include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerF32.hpp"
 #include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerF64.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec2DF.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec3DF.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec4DF.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec2DS.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec3DS.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec4DS.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec2DU.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec3DU.hpp"
-#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec4DU.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec2F32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec3F32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec4F32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec2S32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec3S32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec4S32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec2U32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec3U32.hpp"
+#include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerVec4U32.hpp"
 #include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerColorF128.hpp"
 #include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerTexture2D.hpp"
 
@@ -151,16 +151,16 @@ namespace Maze
         {
             SpriteRenderer2DPtr spriteHolder = SpriteHelper::CreateSprite(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::TransparentChess),
-                Vec2DF(m_scene->getCanvas()->getTransform()->getHeight()),
-                Vec2DF::c_zero,
+                Vec2F(m_scene->getCanvas()->getTransform()->getHeight()),
+                Vec2F::c_zero,
                 MaterialManager::GetCurrentInstance()->getColorTextureMaterial(),
                 m_scene->getCanvas()->getTransform(),
                 m_scene.get(),
-                Vec2DF(0.5f, 0.5f),
-                Vec2DF(1.0f, 0.5f));
+                Vec2F(0.5f, 0.5f),
+                Vec2F(1.0f, 0.5f));
             spriteHolder->getMaterial()->setUniform(
                 "u_baseMapST",
-                Vec4DF(
+                Vec4F(
                     spriteHolder->getTransform()->getWidth() / 16.0f,
                     spriteHolder->getTransform()->getHeight() / 16.0f,
                     0.0f,
@@ -169,16 +169,16 @@ namespace Maze
             Texture2DPtr texture = *m_textures.begin();
             F32 ratio = (F32)texture->getSize().x / (F32)texture->getSize().y;
 
-            Vec2DF spriteSize;
+            Vec2F spriteSize;
             if (ratio > 1.0f)
             {
-                spriteSize = Vec2DF(
+                spriteSize = Vec2F(
                     spriteHolder->getTransform()->getSize().x,
                     spriteHolder->getTransform()->getSize().y / ratio);
             }
             else
             {
-                spriteSize = Vec2DF(
+                spriteSize = Vec2F(
                     spriteHolder->getTransform()->getSize().x / ratio,
                     spriteHolder->getTransform()->getSize().y);
             }
@@ -188,7 +188,7 @@ namespace Maze
             SpriteHelper::CreateSprite(
                 sprite,
                 spriteSize,
-                Vec2DF::c_zero,
+                Vec2F::c_zero,
                 MaterialManager::GetCurrentInstance()->getColorTextureMaterial(),
                 spriteHolder->getTransform(),
                 m_scene.get());
@@ -212,12 +212,12 @@ namespace Maze
                 8,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Top,
-                Vec2DF(m_scene->getCanvas()->getTransform()->getHeight(), m_scene->getCanvas()->getTransform()->getHeight() - 4.0f),
-                Vec2DF(m_scene->getCanvas()->getTransform()->getHeight() * 0.5f + 2.0f, 0.0f),
+                Vec2F(m_scene->getCanvas()->getTransform()->getHeight(), m_scene->getCanvas()->getTransform()->getHeight() - 4.0f),
+                Vec2F(m_scene->getCanvas()->getTransform()->getHeight() * 0.5f + 2.0f, 0.0f),
                 m_scene->getCanvas()->getTransform(),
                 m_scene.get(),
-                Vec2DF(0.5f, 0.5f),
-                Vec2DF(0.5f, 0.5f));
+                Vec2F(0.5f, 0.5f),
+                Vec2F(0.5f, 0.5f));
             info->setColor(ColorU32::c_black);
         }
         

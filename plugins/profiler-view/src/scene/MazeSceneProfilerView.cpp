@@ -84,8 +84,8 @@ namespace Maze
         Vector<Profiler*> const& profilers = Profiler::GetAllProfilers();
         Size profilersCount = profilers.size();
 
-        static Vec2DF const lbOffset(10.0f, 10.0f);
-        static Vec2DF const statsSize(120.0f, 50.0f);
+        static Vec2F const lbOffset(10.0f, 10.0f);
+        static Vec2F const statsSize(120.0f, 50.0f);
 
         Size prevDataSize = m_views.size();
         if (prevDataSize < profilersCount)
@@ -102,15 +102,15 @@ namespace Maze
                     nullptr,
                     m_canvas->getTransform(),
                     this,
-                    Vec2DF::c_zero,
-                    Vec2DF::c_zero);
+                    Vec2F::c_zero,
+                    Vec2F::c_zero);
 
                 viewData.graph = SpriteHelper::CreateSimpleLineRenderer(
-                    Vec2DF(0.0f, 0.0f),
+                    Vec2F(0.0f, 0.0f),
                     viewData.background->getTransform(),
                     this,
-                    Vec2DF::c_zero,
-                    Vec2DF::c_zero);
+                    Vec2F::c_zero,
+                    Vec2F::c_zero);
                 viewData.graph->setColor(ColorF128::c_green);
                 viewData.graph->resizePositions(Profiler::c_samplesCount - 1u);
 
@@ -120,11 +120,11 @@ namespace Maze
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Top,
                     statsSize,
-                    Vec2DF(2.0f, -1.0f),
+                    Vec2F(2.0f, -1.0f),
                     viewData.background->getTransform(),
                     this,
-                    Vec2DF(0.0f, 1.0f),
-                    Vec2DF(0.0f, 1.0f));
+                    Vec2F(0.0f, 1.0f),
+                    Vec2F(0.0f, 1.0f));
                 viewData.label0->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefaultOutlined());
 
                 viewData.label1 = SystemUIHelper::CreateSystemText(
@@ -133,11 +133,11 @@ namespace Maze
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Bottom,
                     statsSize,
-                    Vec2DF(2.0f, 1.0f),
+                    Vec2F(2.0f, 1.0f),
                     viewData.background->getTransform(),
                     this,
-                    Vec2DF(0.0f, 0.0f),
-                    Vec2DF(0.0f, 0.0f));
+                    Vec2F(0.0f, 0.0f),
+                    Vec2F(0.0f, 0.0f));
                 viewData.label1->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefaultOutlined());
             }
         }
@@ -146,7 +146,7 @@ namespace Maze
         static ColorU32 const bgrColorOverload0(135, 50, 0, 100);
         static ColorU32 const bgrColorOverload1(150, 0, 0, 100);
 
-        Vec2DF viewportSize = m_canvas->getTransform()->getSize();
+        Vec2F viewportSize = m_canvas->getTransform()->getSize();
 
         U32 const statsPerRow = Math::Max(1u, U32((viewportSize.x - lbOffset.x) / (statsSize.x + lbOffset.x)));
 
@@ -158,10 +158,10 @@ namespace Maze
             Size column = i % statsPerRow;
             Size row = i / statsPerRow;
 
-            Vec2DF pos = Vec2DF(
+            Vec2F pos = Vec2F(
                 lbOffset.x,
                 lbOffset.y) +
-                Vec2DF(
+                Vec2F(
                     (F32)column * (statsSize.x + lbOffset.x),
                     (F32)row * (statsSize.y + lbOffset.y));
             viewData.background->getTransform()->setLocalPosition(pos);
@@ -223,7 +223,7 @@ namespace Maze
                         F32 val = Math::Min(1.0f, (F32)sample.durationMS / 100.0f);
                         viewData.graph->setPosition(
                             j,
-                            Vec2DF(
+                            Vec2F(
                                 ((F32)j / (F32)jn * (F32)statsSize.x),
                                 val * (F32)statsSize.y));
                     }

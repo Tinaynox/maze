@@ -94,7 +94,7 @@ namespace Maze
     protected:
         SceneGame* m_sceneGame;
 
-        Vec3DF m_hsvLight;
+        Vec3F32 m_hsvLight;
         ShaderUniformVariantPtr m_backgroundHueUniform;
         ShaderUniformVariantPtr m_sectorsCountUniform;
 

@@ -37,7 +37,7 @@
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
 #include "maze-editor-tools/gizmo-tools/MazeGizmoToolConfig.hpp"
 
@@ -103,22 +103,22 @@ namespace Maze
         void unsubscribeCanvas(CanvasPtr const& _canvas);
 
         //////////////////////////////////////////
-        void notifyCursorMoveIn(Vec2DF const& _positionOS, CursorInputEvent const& _event);
+        void notifyCursorMoveIn(Vec2F const& _positionOS, CursorInputEvent const& _event);
 
         //////////////////////////////////////////
-        void notifyCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _event);
+        void notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _event);
 
         //////////////////////////////////////////
-        void notifyCursorReleaseIn(Vec2DF const& _positionOS, CursorInputEvent const& _event);
+        void notifyCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent const& _event);
 
         //////////////////////////////////////////
         void notifyCursorReleaseOut(CursorInputEvent const& _event);
 
         //////////////////////////////////////////
-        void processCursorMove(Vec2DF const& _positionOS);
+        void processCursorMove(Vec2F const& _positionOS);
 
         //////////////////////////////////////////
-        void processCursorPressIn(Vec2DF const& _positionOS);
+        void processCursorPressIn(Vec2F const& _positionOS);
 
         //////////////////////////////////////////
         void processCursorRelease();
@@ -134,7 +134,7 @@ namespace Maze
 
         GizmoToolPtr m_gizmoTool;
 
-        Vec2DF m_cursorPos = Vec2DF::c_zero;
+        Vec2F m_cursorPos = Vec2F::c_zero;
     };
 
 } // namespace Maze

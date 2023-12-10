@@ -400,7 +400,7 @@ namespace Maze
         bool clipDistance0 = m_context->getClipDistanceEnabled(0);
 
         if (shaderOpenGL->getClipDistanceEnableUniform())
-            shaderOpenGL->getClipDistanceEnableUniform()->set(Vec4DB{ clipDistance0, false, false, false });
+            shaderOpenGL->getClipDistanceEnableUniform()->set(Vec4B{ clipDistance0, false, false, false });
 
         if (clipDistance0)
         {
@@ -415,7 +415,7 @@ namespace Maze
         if (shaderOpenGL->getProjectionParamsUniform())
         {
             shaderOpenGL->getProjectionParamsUniform()->set(
-                Vec4DF{ m_renderTarget->getNear(), m_renderTarget->getFar(), 0.0f, 0.0f });
+                Vec4F{ m_renderTarget->getNear(), m_renderTarget->getFar(), 0.0f, 0.0f });
         }
 
         // View direction

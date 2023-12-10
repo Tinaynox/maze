@@ -55,22 +55,22 @@ namespace Maze
         MAZE_EDITOR_TOOLS_API ColorF128 const& GetColor();
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void PushTransform(Mat4DF const& _mat);
+        MAZE_EDITOR_TOOLS_API void PushTransform(Mat4F const& _mat);
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void PopTransform();
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawLine(
-            Vec3DF const& _point0,
-            Vec3DF const& _point1,
+            Vec3F const& _point0,
+            Vec3F const& _point1,
             F32 _duration = 0.0f,
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
         inline void DrawLine(
-            Vec3DF const& _point0,
-            Vec3DF const& _point1,
+            Vec3F const& _point0,
+            Vec3F const& _point1,
             ColorF128 const& _color,
             F32 _duration = 0.0f,
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque)
@@ -90,8 +90,8 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawLine(
-            Vec2DF const& _point0,
-            Vec2DF const& _point1,
+            Vec2F const& _point0,
+            Vec2F const& _point1,
             F32 _duration = 0.0f,
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
@@ -108,51 +108,51 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawRay(
-            Vec3DF const& _point,
-            Vec3DF const& _delta,
+            Vec3F const& _point,
+            Vec3F const& _delta,
             F32 _duration = 0.0f,
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawWireQuad(
-            Vec3DF const& _position,
-            Vec3DF const& _forward,
-            Vec3DF const& _up,
-            Vec2DF const& _scale,
+            Vec3F const& _position,
+            Vec3F const& _forward,
+            Vec3F const& _up,
+            Vec2F const& _scale,
             ColorF128 const& _color,
             F32 _duration = 0.0f,
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawWireCircle(
-            Vec3DF const& _position,
-            Vec3DF const& _direction,
+            Vec3F const& _position,
+            Vec3F const& _direction,
             F32 _radius,
             F32 _duration = 0.0f,
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawWireHemicircle(
-            Vec3DF const& _position,
-            Vec3DF const& _forward,
-            Vec3DF const& _up,
+            Vec3F const& _position,
+            Vec3F const& _forward,
+            Vec3F const& _up,
             F32 _radius,
             F32 _duration = 0.0f,
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawWireCube(
-            Vec3DF const& _position,
-            Vec3DF const& _scale,
-            Vec3DF const& _forward,
-            Vec3DF const& _up,
+            Vec3F const& _position,
+            Vec3F const& _scale,
+            Vec3F const& _forward,
+            Vec3F const& _up,
             ColorF128 const& _color,
             F32 _duration = 0.0f,
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawWireSphere(
-            Vec3DF const& _position,
+            Vec3F const& _position,
             F32 _radius,
             ColorF128 const& _color,
             F32 _duration = 0.0f,
@@ -160,8 +160,8 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawWireHemisphere(
-            Vec3DF const& _position,
-            Vec3DF const& _direction,
+            Vec3F const& _position,
+            Vec3F const& _direction,
             F32 _radius,
             ColorF128 const& _color,
             F32 _duration = 0.0f,
@@ -169,8 +169,8 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawWireCylinder(
-            Vec3DF const& _start,
-            Vec3DF const& _end,
+            Vec3F const& _start,
+            Vec3F const& _end,
             F32 _radius,
             ColorF128 const& _color,
             F32 _duration = 0.0f,
@@ -178,8 +178,8 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawWireCone(
-            Vec3DF const& _position,
-            Vec3DF const& _direction,
+            Vec3F const& _position,
+            Vec3F const& _direction,
             F32 _angle,
             ColorF128 const& _color,
             F32 _duration = 0.0f,
@@ -187,8 +187,8 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawWireTruncatedCone(
-            Vec3DF const& _position,
-            Vec3DF const& _direction,
+            Vec3F const& _position,
+            Vec3F const& _direction,
             F32 _radius,
             F32 _angle,
             ColorF128 const& _color,
@@ -197,8 +197,8 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawWireTorus(
-            Vec3DF const& _position,
-            Vec3DF const& _direction,
+            Vec3F const& _position,
+            Vec3F const& _direction,
             F32 _radius,
             F32 _torusRadius,
             ColorF128 const& _color,
@@ -207,16 +207,16 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawWireArrow(
-            Vec3DF const& _position,
-            Vec3DF const& _direction,
+            Vec3F const& _position,
+            Vec3F const& _direction,
             ColorF128 const& _color,
             F32 _duration = 0.0f,
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawWireCapsule(
-            Vec3DF const& _start,
-            Vec3DF const& _end,
+            Vec3F const& _start,
+            Vec3F const& _end,
             F32 _radius,
             ColorF128 const& _color,
             F32 _duration = 0.0f,
@@ -236,35 +236,35 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawTriangle(
-            Vec3DF const& _point0,
-            Vec3DF const& _point1,
-            Vec3DF const& _point2,
+            Vec3F const& _point0,
+            Vec3F const& _point1,
+            Vec3F const& _point2,
             F32 _duration = 0.0f,
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawQuad(
-            Vec3DF const& _position,
-            Vec3DF const& _forward,
-            Vec3DF const& _up,
-            Vec2DF const& _scale,
+            Vec3F const& _position,
+            Vec3F const& _forward,
+            Vec3F const& _up,
+            Vec2F const& _scale,
             ColorF128 const& _color,
             F32 _duration = 0.0f,
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawCube(
-            Vec3DF const& _position,
-            Vec3DF const& _forward,
-            Vec3DF const& _up,
-            Vec3DF const& _scale,
+            Vec3F const& _position,
+            Vec3F const& _forward,
+            Vec3F const& _up,
+            Vec3F const& _scale,
             ColorF128 const& _color,
             F32 _duration = 0.0f,
             GizmosDrawer::MeshRenderMode _renderMode = GizmosDrawer::MeshRenderMode::Opaque);
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawSphere(
-            Vec3DF const& _position,
+            Vec3F const& _position,
             F32 _radius,
             ColorF128 const& _color,
             F32 _duration = 0.0f,
@@ -272,9 +272,9 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawCone(
-            Vec3DF const& _position,
-            Vec3DF const& _forward,
-            Vec3DF const& _up,
+            Vec3F const& _position,
+            Vec3F const& _forward,
+            Vec3F const& _up,
             F32 _radius,
             F32 _height,
             ColorF128 const& _color,
@@ -283,8 +283,8 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void DrawCone(
-            Vec3DF const& _position,
-            Vec3DF const& _forward,
+            Vec3F const& _position,
+            Vec3F const& _forward,
             F32 _radius,
             F32 _height,
             ColorF128 const& _color,
@@ -296,9 +296,9 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawCylinder(
-            Vec3DF const& _position,
-            Vec3DF const& _forward,
-            Vec3DF const& _up,
+            Vec3F const& _position,
+            Vec3F const& _forward,
+            Vec3F const& _up,
             F32 _radius,
             F32 _height,
             ColorF128 const& _color,
@@ -307,8 +307,8 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void DrawCylinder(
-            Vec3DF const& _position,
-            Vec3DF const& _forward,
+            Vec3F const& _position,
+            Vec3F const& _forward,
             F32 _radius,
             F32 _height,
             ColorF128 const& _color,
@@ -320,8 +320,8 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void DrawTorus(
-            Vec3DF const& _position,
-            Vec3DF const& _forward,
+            Vec3F const& _position,
+            Vec3F const& _forward,
             F32 _radius,
             ColorF128 const& _color,
             F32 _duration = 0.0f,

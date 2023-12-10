@@ -99,20 +99,20 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        Vec2DF const& getHiddenPosition() const { return m_hiddenPosition; }
+        Vec2F const& getHiddenPosition() const { return m_hiddenPosition; }
 
         //////////////////////////////////////////
-        void setHiddenPosition(Vec2DF const& _hiddenPosition)
+        void setHiddenPosition(Vec2F const& _hiddenPosition)
         {
             m_hiddenPosition = _hiddenPosition;
             updateTransform();
         }
 
         //////////////////////////////////////////
-        Vec2DF const& getShownPosition() const { return m_shownPosition; }
+        Vec2F const& getShownPosition() const { return m_shownPosition; }
 
         //////////////////////////////////////////
-        void setShownPosition(Vec2DF const& _shownPosition)
+        void setShownPosition(Vec2F const& _shownPosition)
         {
             m_shownPosition = _shownPosition;
             updateTransform();
@@ -184,8 +184,8 @@ namespace Maze
         AnimationCurve m_animationCurve = AnimationCurve::c_linear01;
         F32 m_showTime = 0.3f;
         F32 m_hideKoef = 1.0f;
-        Vec2DF m_hiddenPosition = Vec2DF::c_zero;
-        Vec2DF m_shownPosition = Vec2DF::c_zero;
+        Vec2F m_hiddenPosition = Vec2F::c_zero;
+        Vec2F m_shownPosition = Vec2F::c_zero;
 
         F32 m_hidingProgress = 1.0f;
         F32 m_showSpeed = 0.0f;

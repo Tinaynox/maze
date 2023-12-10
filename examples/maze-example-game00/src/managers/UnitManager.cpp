@@ -165,7 +165,7 @@ namespace Maze
             spaceObject->setDamage(60.0f);
             spaceObject->setWeaponPoint({ 0.95f, -0.275f });
             spaceObject->setProjectileAvatar(ProjectileAvatarType::Plasma00);
-            spaceObject->setEngineForce(Vec2DF(80.0f, 60.0f) * 2.5f);
+            spaceObject->setEngineForce(Vec2F32(80.0f, 60.0f) * 2.5f);
 
 
             // Avatar
@@ -262,7 +262,7 @@ namespace Maze
             spaceObject->setWeaponPoint({ 0.375f, -0.11f });
             spaceObject->setProjectileAvatar(ProjectileAvatarType::YellowFlare00);
             spaceObject->setFireCooldown(2.85f);
-            spaceObject->setEngineForce(Vec2DF(80.0f, 60.0f) * 0.15f);
+            spaceObject->setEngineForce(Vec2F32(80.0f, 60.0f) * 0.15f);
 
 
             // Avatar
@@ -355,7 +355,7 @@ namespace Maze
             spaceObject->setDamage(20.0f);
             spaceObject->setWeaponPoint({ 0.175f, -0.0f });
             spaceObject->setProjectileAvatar(ProjectileAvatarType::None);
-            spaceObject->setEngineForce(Vec2DF(80.0f, 60.0f) * 0.15f);
+            spaceObject->setEngineForce(Vec2F32(80.0f, 60.0f) * 0.15f);
 
 
             // Avatar
@@ -398,7 +398,7 @@ namespace Maze
                         spaceshipMaterial,
                         spaceshipDeathMaterial);
 
-                    meshEntity->ensureComponent<Rotor3D>(Vec3DF::c_unitZ, Math::c_pi * 0.75f);
+                    meshEntity->ensureComponent<Rotor3D>(Vec3F32::c_unitZ, Math::c_pi * 0.75f);
                 }
             }
 
@@ -426,7 +426,7 @@ namespace Maze
             spaceObject->setDamage(20.0f);
             spaceObject->setWeaponPoint({ 0.175f, -0.0f });
             spaceObject->setProjectileAvatar(ProjectileAvatarType::None);
-            spaceObject->setEngineForce(Vec2DF(80.0f, 60.0f) * 0.15f);
+            spaceObject->setEngineForce(Vec2F32(80.0f, 60.0f) * 0.15f);
 
 
             // Avatar
@@ -469,7 +469,7 @@ namespace Maze
                         spaceshipMaterial,
                         spaceshipDeathMaterial);
 
-                    meshEntity->ensureComponent<Rotor3D>(Vec3DF(0.0f, 1.0f, 1.0f).normalizedCopy(), Math::c_pi * 0.75f);
+                    meshEntity->ensureComponent<Rotor3D>(Vec3F32(0.0f, 1.0f, 1.0f).normalizedCopy(), Math::c_pi * 0.75f);
                 }
             }
 
@@ -497,7 +497,7 @@ namespace Maze
             spaceObject->setDamage(20.0f);
             spaceObject->setWeaponPoint({ 0.175f, -0.0f });
             spaceObject->setProjectileAvatar(ProjectileAvatarType::None);
-            spaceObject->setEngineForce(Vec2DF(80.0f, 60.0f) * 0.15f);
+            spaceObject->setEngineForce(Vec2F32(80.0f, 60.0f) * 0.15f);
 
 
             // Avatar
@@ -540,7 +540,7 @@ namespace Maze
                         spaceshipMaterial,
                         spaceshipDeathMaterial);
 
-                    meshEntity->ensureComponent<Rotor3D>(Vec3DF(0.0f, 1.0f, 1.0f).normalizedCopy(), Math::c_pi * 0.75f);
+                    meshEntity->ensureComponent<Rotor3D>(Vec3F32(0.0f, 1.0f, 1.0f).normalizedCopy(), Math::c_pi * 0.75f);
                 }
             }
 

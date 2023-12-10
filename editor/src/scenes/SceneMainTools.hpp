@@ -80,10 +80,10 @@ namespace Maze
         inline Camera3DPtr const& getCamera3D() const { return m_camera3D; }
 
         //////////////////////////////////////////
-        inline Vec3DF const& getCamera3DTargetPosition() const { return m_camera3DTargetPosition; }
+        inline Vec3F32 const& getCamera3DTargetPosition() const { return m_camera3DTargetPosition; }
 
         //////////////////////////////////////////
-        inline void setCamera3DTargetPosition(Vec3DF const& _value) { m_camera3DTargetPosition = _value; }
+        inline void setCamera3DTargetPosition(Vec3F32 const& _value) { m_camera3DTargetPosition = _value; }
 
         //////////////////////////////////////////
         inline MeshRendererPtr const& getDebugAxesRenderer() const { return m_debugAxesRenderer; }
@@ -117,13 +117,13 @@ namespace Maze
 
     protected:
         Camera3DPtr m_camera3D;
-        Vec3DF m_camera3DTargetPosition = Vec3DF::c_zero;
+        Vec3F32 m_camera3DTargetPosition = Vec3F32::c_zero;
         MeshRendererPtr m_debugAxesRenderer;
         DebugGridRendererPtr m_debugGridRenderer;
 
         F32 m_yawAngle = 0.0f;
         F32 m_pitchAngle = 0.0f;
-        Vec2DF m_cursorPositionLastFrame = Vec2DF::c_zero;
+        Vec2F32 m_cursorPositionLastFrame = Vec2F32::c_zero;
         bool m_cursorDrag = false;
 
         CanvasPtr m_mainCanvas;

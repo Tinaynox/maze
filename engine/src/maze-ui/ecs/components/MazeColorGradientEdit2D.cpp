@@ -116,7 +116,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ColorGradientEdit2D::notifyCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void ColorGradientEdit2D::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
     {
             
     }
@@ -146,7 +146,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ColorGradientEdit2D::notifyClick(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void ColorGradientEdit2D::notifyClick(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
@@ -199,10 +199,10 @@ namespace Maze
                 gradient.addKey(0.0f, gradient.evaluate(0.0f));
                 gradient.addKey(1.0f, gradient.evaluate(1.0f));
 
-                Vec2DF const& size = _spriteRenderer->getTransform()->getSize();
-                Vec4DF uv = Vec4DF(0.0f, 0.0f, 1.0f, 1.0f);
+                Vec2F const& size = _spriteRenderer->getTransform()->getSize();
+                Vec4F uv = Vec4F(0.0f, 0.0f, 1.0f, 1.0f);
                 F32 canvasRendererAlpha = _spriteRenderer->getCanvasRenderer()->getAlpha();
-                FastVector<Pair<F32, Vec4DF>> gradientColors = gradient.toRawColors();
+                FastVector<Pair<F32, Vec4F>> gradientColors = gradient.toRawColors();
                 
 
                 F32 startTime = gradientColors.front().first;
@@ -213,10 +213,10 @@ namespace Maze
                 SubMeshPtr subMesh = SubMesh::Create();
                 subMesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
 
-                Vector<Vec3DF> positions;
-                Vector<Vec3DF> normals;
-                Vector<Vec4DF> colors;
-                Vector<Vec2DF> uvs;
+                Vector<Vec3F> positions;
+                Vector<Vec3F> normals;
+                Vector<Vec4F> colors;
+                Vector<Vec2F> uvs;
 
                 Vector<U32> indices;
 
@@ -228,8 +228,8 @@ namespace Maze
                     F32 p0 = (t0 - startTime) / deltaTime;
                     F32 p1 = (t1 - startTime) / deltaTime;
 
-                    Vec4DF color0 = gradientColors[i].second;
-                    Vec4DF color1 = gradientColors[i + 1].second;
+                    Vec4F color0 = gradientColors[i].second;
+                    Vec4F color1 = gradientColors[i + 1].second;
 
                     color0.w *= canvasRendererAlpha;
                     color1.w *= canvasRendererAlpha;
@@ -237,15 +237,15 @@ namespace Maze
                     F32 x0 = p0 * size.x;
                     F32 x1 = p1 * size.x;
 
-                    positions.emplace_back(Vec3DF(x1, size.y, 0.0f));    // Top right
-                    positions.emplace_back(Vec3DF(x1, 0.0f, 0.0f));      // Bottom right
-                    positions.emplace_back(Vec3DF(x0, 0.0f, 0.0f));      // Bottom left
-                    positions.emplace_back(Vec3DF(x0, size.y, 0.0f));    // Top left
+                    positions.emplace_back(Vec3F(x1, size.y, 0.0f));    // Top right
+                    positions.emplace_back(Vec3F(x1, 0.0f, 0.0f));      // Bottom right
+                    positions.emplace_back(Vec3F(x0, 0.0f, 0.0f));      // Bottom left
+                    positions.emplace_back(Vec3F(x0, size.y, 0.0f));    // Top left
                         
-                    normals.emplace_back(Vec3DF(+0.0f, +0.0f, +1.0f));   // Top right
-                    normals.emplace_back(Vec3DF(+0.0f, +0.0f, +1.0f));   // Bottom right
-                    normals.emplace_back(Vec3DF(+0.0f, +0.0f, +1.0f));   // Bottom left
-                    normals.emplace_back(Vec3DF(+0.0f, +0.0f, +1.0f));   // Top left                    
+                    normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Top right
+                    normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Bottom right
+                    normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Bottom left
+                    normals.emplace_back(Vec3F(+0.0f, +0.0f, +1.0f));   // Top left                    
 
                     if (gradient.getMode() == ColorGradient::EvaluateMode::Fixed)
                     {
@@ -262,10 +262,10 @@ namespace Maze
                         colors.emplace_back(color0);    // Top left
                     }
                     
-                    uvs.emplace_back(Vec2DF(uv.z, uv.w));    // Top right
-                    uvs.emplace_back(Vec2DF(uv.z, uv.y));    // Bottom right
-                    uvs.emplace_back(Vec2DF(uv.x, uv.y));    // Bottom left
-                    uvs.emplace_back(Vec2DF(uv.x, uv.w));    // Top left
+                    uvs.emplace_back(Vec2F(uv.z, uv.w));    // Top right
+                    uvs.emplace_back(Vec2F(uv.z, uv.y));    // Bottom right
+                    uvs.emplace_back(Vec2F(uv.x, uv.y));    // Bottom left
+                    uvs.emplace_back(Vec2F(uv.x, uv.w));    // Top left
                     
                     U32 quadStart = (U32)i * 4;
                     indices.emplace_back(0 + quadStart);

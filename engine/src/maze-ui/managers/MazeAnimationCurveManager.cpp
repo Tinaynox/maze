@@ -123,7 +123,7 @@ namespace Maze
         RenderWindowParams params;
         params.windowParams = 
             WindowParams::Create(
-                Vec2DU(400, 340),
+                Vec2U(400, 340),
                 32,
                 "Curve");
          

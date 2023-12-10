@@ -33,7 +33,7 @@
 #include "maze-physics2d/MazePhysics2DHeader.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 #include "maze-core/events/MazeEvent.hpp"
 #include <box2d/box2d.h>
 
@@ -109,7 +109,7 @@ namespace Maze
             Rigidbody2D* _contactRigidbody2D,
             Collider2D* _myCollider2D,
             Collider2D* _contactCollider2D,
-            Vec2DF const& _contactPower = Vec2DF::c_zero)
+            Vec2F const& _contactPower = Vec2F::c_zero)
             : myRigidbody2D(_myRigidbody2D)
             , contactRigidbody2D(_contactRigidbody2D)
             , myCollider2D(_myCollider2D)
@@ -125,7 +125,7 @@ namespace Maze
         Rigidbody2D* contactRigidbody2D;
         Collider2D* myCollider2D;
         Collider2D* contactCollider2D;
-        Vec2DF contactPower;
+        Vec2F contactPower;
     };
 
 

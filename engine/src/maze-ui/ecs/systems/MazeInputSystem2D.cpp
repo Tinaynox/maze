@@ -57,7 +57,7 @@ namespace Maze
     F32 const c_doubleClickShiftThresholdSq = 5.0f * 5.0f;
     U32 const c_clickTimeMS = 170u;
     F32 const c_clickShiftThresholdSq = 5.0f * 5.0f;
-    Vec2DF const c_outCanvasCursorPosition = Vec2DF(-1e6f, -1e6f);
+    Vec2F const c_outCanvasCursorPosition = Vec2F(-1e6f, -1e6f);
 
 
     //////////////////////////////////////////
@@ -324,7 +324,7 @@ namespace Maze
     //////////////////////////////////////////
     void InputSystem2D::notifyMouse(Maze::InputEventMouseData const& _mouseData)
     {
-        Vec2DF mousePosition = m_coordsConverter(Vec2DF((F32)_mouseData.x, (F32)_mouseData.y));
+        Vec2F mousePosition = m_coordsConverter(Vec2F((F32)_mouseData.x, (F32)_mouseData.y));
 
         switch (_mouseData.type)
         {
@@ -363,7 +363,7 @@ namespace Maze
     //////////////////////////////////////////
     void InputSystem2D::notifyTouch(Maze::InputEventTouchData const& _touchData)
     {
-        Vec2DF touchPosition = m_coordsConverter(Vec2DF((F32)_touchData.x, (F32)_touchData.y));
+        Vec2F touchPosition = m_coordsConverter(Vec2F((F32)_touchData.x, (F32)_touchData.y));
 
         switch (_touchData.type)
         {
@@ -393,7 +393,7 @@ namespace Maze
     //////////////////////////////////////////
     void InputSystem2D::notifyVirtualCursor(Maze::InputEventVirtualCursorData const& _virtualCursorData)
     {
-        Vec2DF mousePosition = m_coordsConverter(Vec2DF((F32)_virtualCursorData.x, (F32)_virtualCursorData.y));
+        Vec2F mousePosition = m_coordsConverter(Vec2F((F32)_virtualCursorData.x, (F32)_virtualCursorData.y));
 
         switch (_virtualCursorData.type)
         {
@@ -428,7 +428,7 @@ namespace Maze
     void SetupCursorInputEventForCanvasData(
         CursorInputEvent& _event,
         InputSystem2D::CanvasData const& _canvasData,
-        Vec2DF const& _renderTargetCoords)
+        Vec2F const& _renderTargetCoords)
     {
         _event.canvas = _canvasData.canvas;
         _event.rootCanvas = _canvasData.rootCanvas;
@@ -453,7 +453,7 @@ namespace Maze
         Window* _window,
         S32 _cursorIndex,
         S32 _buttonIndex,
-        Vec2DF const& _renderTargetCoords,
+        Vec2F const& _renderTargetCoords,
         CursorInputSource const& _inputSource)
     {
         {
@@ -463,7 +463,7 @@ namespace Maze
             CursorInputEvent cursorInputEvent(
                 CursorInputType::Press,
                 _cursorIndex,
-                Maze::Vec2DF::c_zero,
+                Maze::Vec2F::c_zero,
                 _buttonIndex,
                 _inputSource,
                 _window);
@@ -528,7 +528,7 @@ namespace Maze
         Window* _window,
         S32 _cursorIndex,
         S32 _buttonIndex,
-        Vec2DF const& _renderTargetCoords,
+        Vec2F const& _renderTargetCoords,
         CursorInputSource const& _inputSource)
     {
         INPUT_SYSTEM2D_ELEMENTS_LOCK();
@@ -537,7 +537,7 @@ namespace Maze
         CursorInputEvent cursorInputEvent(
             CursorInputType::Click,
             _cursorIndex,
-            Maze::Vec2DF::c_zero,
+            Maze::Vec2F::c_zero,
             _buttonIndex,
             _inputSource,
             _window);
@@ -583,7 +583,7 @@ namespace Maze
         Window* _window,
         S32 _cursorIndex,
         S32 _buttonIndex,
-        Vec2DF const& _renderTargetCoords,
+        Vec2F const& _renderTargetCoords,
         CursorInputSource const& _inputSource)
     {
         INPUT_SYSTEM2D_ELEMENTS_LOCK();
@@ -592,7 +592,7 @@ namespace Maze
         CursorInputEvent cursorInputEvent(
             CursorInputType::DoubleClick,
             _cursorIndex,
-            Maze::Vec2DF::c_zero,
+            Maze::Vec2F::c_zero,
             _buttonIndex,
             _inputSource,
             _window);
@@ -638,7 +638,7 @@ namespace Maze
         Window* _window,
         S32 _cursorIndex,
         S32 _buttonIndex,
-        Vec2DF const& _renderTargetCoords,
+        Vec2F const& _renderTargetCoords,
         CursorInputSource const& _inputSource)
     {
         INPUT_SYSTEM2D_ELEMENTS_LOCK();
@@ -647,7 +647,7 @@ namespace Maze
         CursorInputEvent cursorInputEvent(
             CursorInputType::Press,
             _cursorIndex,
-            Maze::Vec2DF::c_zero,
+            Maze::Vec2F::c_zero,
             _buttonIndex,
             _inputSource,
             _window);
@@ -698,7 +698,7 @@ namespace Maze
         Window* _window,
         S32 _cursorIndex,
         S32 _buttonIndex,
-        Vec2DF const& _renderTargetCoords,
+        Vec2F const& _renderTargetCoords,
         CursorInputSource const& _inputSource)
     {
         INPUT_SYSTEM2D_ELEMENTS_LOCK();
@@ -707,7 +707,7 @@ namespace Maze
         CursorInputEvent cursorInputEvent(
             CursorInputType::Press,
             _cursorIndex,
-            Maze::Vec2DF::c_zero,
+            Maze::Vec2F::c_zero,
             _buttonIndex,
             _inputSource,
             _window);
@@ -754,7 +754,7 @@ namespace Maze
         Window* _window,
         S32 _cursorIndex,
         S32 _buttonIndex,
-        Vec2DF const& _renderTargetCoords,
+        Vec2F const& _renderTargetCoords,
         CursorInputSource const& _inputSource)
     {
         INPUT_SYSTEM2D_ELEMENTS_LOCK();
@@ -763,7 +763,7 @@ namespace Maze
         CursorInputEvent cursorInputEvent(
             CursorInputType::Drag,
             _cursorIndex,
-            Maze::Vec2DF::c_zero,
+            Maze::Vec2F::c_zero,
             _buttonIndex,
             _inputSource,
             _window);
@@ -810,7 +810,7 @@ namespace Maze
         Window* _window,
         S32 _cursorIndex,
         F32 _deltaWheel,
-        Vec2DF const& _renderTargetCoords,
+        Vec2F const& _renderTargetCoords,
         CursorInputSource const& _inputSource)
     {
         INPUT_SYSTEM2D_ELEMENTS_LOCK();

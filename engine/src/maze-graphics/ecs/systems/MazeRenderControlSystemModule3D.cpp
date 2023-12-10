@@ -106,12 +106,12 @@ namespace Maze
         std::function<void(RenderQueuePtr const&)> _endDrawCallback,
         std::function<void(RenderQueuePtr const&)> _endRenderQueueCallback)
     {
-        Vec3DF cameraPosition = _params.cameraTransform.getAffineTranslation();
+        Vec3F cameraPosition = _params.cameraTransform.getAffineTranslation();
 
         Vector<Light3D*> lights3D;
         Light3D* mainLight = nullptr;
-        Vec4DF mainLightColor = Vec4DF::c_zero;
-        Vec3DF mainLightDirection = Vec3DF::c_unitZ;
+        Vec4F mainLightColor = Vec4F::c_zero;
+        Vec3F mainLightDirection = Vec3F::c_unitZ;
         m_lights3DSample->process(
             [&](Entity* _entity, Light3D* _light3D)
             {
@@ -122,7 +122,7 @@ namespace Maze
                     if (!mainLight && _light3D->getLightType() == Light3DType::Directional)
                     {
                         mainLight = _light3D;
-                        mainLightColor = mainLight->getColor().toVec4DF();
+                        mainLightColor = mainLight->getColor().toVec4F32();
                         mainLightDirection = mainLight->getTransform()->getWorldForwardDirection();
                     }
                 }
@@ -157,7 +157,7 @@ namespace Maze
             _renderTarget->setFar(_params.farZ);
 
             // View matrix
-            Mat4DF viewMatrix = _params.cameraTransform.inversedAffineCopy();
+            Mat4F viewMatrix = _params.cameraTransform.inversedAffineCopy();
             _renderTarget->setViewMatrix(viewMatrix);
 
             // View position
@@ -180,7 +180,7 @@ namespace Maze
 
                         F32 skyboxScale = (2.0f * _params.farZ / Math::Sqrt(3.0f)) - 1.0f;
 
-                        Mat4DF skyboxTransform = Mat4DF(
+                        Mat4F skyboxTransform = Mat4F(
                             skyboxScale, 0, 0, cameraPosition.x,
                             0, skyboxScale, 0, cameraPosition.y,
                             0, 0, skyboxScale, cameraPosition.z,
@@ -272,7 +272,7 @@ namespace Maze
                             data.count,
                             data.modelMatricies,
                             data.colorStream,
-                            (Vec4DF const**)data.uvStreams);
+                            (Vec4F const**)data.uvStreams);
 
                         prevRenderQueueIndex = currentRenderQueueIndex;
                     }
@@ -467,7 +467,7 @@ namespace Maze
 
                                 MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
 
-                                Vec4DF const* uvStreams[MAZE_UV_CHANNELS_MAX];
+                                Vec4F const* uvStreams[MAZE_UV_CHANNELS_MAX];
                                 memset(uvStreams, 0, sizeof(uvStreams));
                                 uvStreams[0] = _meshRenderer->getUV0Data();
                                 uvStreams[1] = _meshRenderer->getUV1Data();
@@ -531,7 +531,7 @@ namespace Maze
                                         vao,
                                         _trailRenderer->getWorldPosition(),
                                         1,
-                                        &Mat4DF::c_identity
+                                        &Mat4F::c_identity
                                     });
 
                             }

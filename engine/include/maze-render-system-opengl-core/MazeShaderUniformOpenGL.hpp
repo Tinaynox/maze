@@ -83,19 +83,19 @@ namespace Maze
         virtual void upload(F32 const* _values, Size _count) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void upload(Vec2DF const* _vectors, Size _count) MAZE_OVERRIDE;
+        virtual void upload(Vec2F const* _vectors, Size _count) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void upload(Vec3DF const* _vectors, Size _count) MAZE_OVERRIDE;
+        virtual void upload(Vec3F const* _vectors, Size _count) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void upload(Vec4DF const* _vectors, Size _count) MAZE_OVERRIDE;
+        virtual void upload(Vec4F const* _vectors, Size _count) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void upload(Mat3DF const* _matrices, Size _count) MAZE_OVERRIDE;
+        virtual void upload(Mat3F const* _matrices, Size _count) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void upload(Mat4DF const* _matrices, Size _count) MAZE_OVERRIDE;
+        virtual void upload(Mat4F const* _matrices, Size _count) MAZE_OVERRIDE;
 
     protected:
 

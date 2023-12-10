@@ -115,12 +115,12 @@ namespace Maze
         HorizontalLayout2DPtr layout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(_parent->getWidth(), 18),
-            Vec2DF(0, 0),
+            Vec2F(_parent->getWidth(), 18),
+            Vec2F(0, 0),
             _parent,
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         layout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
         layout->setAutoWidth(false);
         layout->setExpand(true);
@@ -131,23 +131,23 @@ namespace Maze
             EditorToolsLayout::c_inspectorPropertyFontSize,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(8, 18),
-            Vec2DF(0, 0),
+            Vec2F(8, 18),
+            Vec2F(0, 0),
             layout->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF::c_zero);
+            Vec2F(0.0f, 0.5f),
+            Vec2F::c_zero);
         systemText->setColor(EditorToolsLayout::c_inspectorPropertyColor);
 
         m_layout = UIHelper::CreateHorizontalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(_parent->getWidth(), 18),
-            Vec2DF(0, 0),
+            Vec2F(_parent->getWidth(), 18),
+            Vec2F(0, 0),
             layout->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         m_layout->setAutoWidth(true);
         m_layout->setAutoHeight(false);
         m_layout->setExpand(false);
@@ -155,44 +155,44 @@ namespace Maze
         {
             m_colorFrom = UIHelper::CreateDefaultColorHDREdit(
                 ColorF128::c_white,
-                Vec2DF(60, 18),
-                Vec2DF(0, 0),
+                Vec2F(60, 18),
+                Vec2F(0, 0),
                 m_layout->getTransform(),
                 _parent->getEntityRaw()->getECSScene(),
-                Vec2DF(0.5f, 0.5f),
-                Vec2DF::c_zero);
+                Vec2F(0.5f, 0.5f),
+                Vec2F::c_zero);
             m_colorFrom->eventColorChanged.subscribe(this, &PropertyDrawerParticleSystemParameterColor::notifyColorChanged);
 
             m_colorTo = UIHelper::CreateDefaultColorHDREdit(
                 ColorF128::c_white,
-                Vec2DF(60, 18),
-                Vec2DF(0, 0),
+                Vec2F(60, 18),
+                Vec2F(0, 0),
                 m_layout->getTransform(),
                 _parent->getEntityRaw()->getECSScene(),
-                Vec2DF(0.5f, 0.5f),
-                Vec2DF::c_zero);
+                Vec2F(0.5f, 0.5f),
+                Vec2F::c_zero);
             m_colorTo->eventColorChanged.subscribe(this, &PropertyDrawerParticleSystemParameterColor::notifyColorChanged);
         }
 
         {
             m_gradientFrom = UIHelper::CreateDefaultColorGradientEdit(
                 ColorGradient(),
-                Vec2DF(60, 18),
-                Vec2DF(0, 0),
+                Vec2F(60, 18),
+                Vec2F(0, 0),
                 m_layout->getTransform(),
                 _parent->getEntityRaw()->getECSScene(),
-                Vec2DF(0.5f, 0.5f),
-                Vec2DF::c_zero);
+                Vec2F(0.5f, 0.5f),
+                Vec2F::c_zero);
             m_gradientFrom->eventGradientChanged.subscribe(this, &PropertyDrawerParticleSystemParameterColor::notifyGradientChanged);
 
             m_gradientTo = UIHelper::CreateDefaultColorGradientEdit(
                 ColorGradient(),
-                Vec2DF(60, 18),
-                Vec2DF(0, 0),
+                Vec2F(60, 18),
+                Vec2F(0, 0),
                 m_layout->getTransform(),
                 _parent->getEntityRaw()->getECSScene(),
-                Vec2DF(0.5f, 0.5f),
-                Vec2DF::c_zero);
+                Vec2F(0.5f, 0.5f),
+                Vec2F::c_zero);
             m_gradientTo->eventGradientChanged.subscribe(this, &PropertyDrawerParticleSystemParameterColor::notifyGradientChanged);
         }
 
@@ -298,8 +298,8 @@ namespace Maze
 
                 if (gradient0.empty())
                 {
-                    gradient0.addKey(0.0f, Vec4DF::c_one);
-                    gradient0.addKey(1.0f, Vec4DF::c_one);
+                    gradient0.addKey(0.0f, Vec4F::c_one);
+                    gradient0.addKey(1.0f, Vec4F::c_one);
                 }
                 
                 parameter.setGradient(gradient0);
@@ -319,13 +319,13 @@ namespace Maze
 
                 if (gradient0.empty())
                 {
-                    gradient0.addKey(0.0f, Vec4DF::c_one);
-                    gradient0.addKey(1.0f, Vec4DF::c_one);
+                    gradient0.addKey(0.0f, Vec4F::c_one);
+                    gradient0.addKey(1.0f, Vec4F::c_one);
                 }
                 if (gradient1.empty())
                 {
-                    gradient1.addKey(0.0f, Vec4DF::c_one);
-                    gradient1.addKey(1.0f, Vec4DF::c_one);
+                    gradient1.addKey(0.0f, Vec4F::c_one);
+                    gradient1.addKey(1.0f, Vec4F::c_one);
                 }
 
                 parameter.setRandomBetweenGradients(gradient0, gradient1);
@@ -430,17 +430,17 @@ namespace Maze
             if (rootCanvas)
             {
                 Transform2D* root = rootCanvas->getTransform().get();
-                Vec2DF const& rootSize = root->getSize();
+                Vec2F const& rootSize = root->getSize();
 
                 
-                Vec2DF positionOS(
+                Vec2F positionOS(
                     transform->getWidth(),
                     transform->getHeight());
 
-                Vec2DF positionWS = transform->getWorldTransform().transformAffine(positionOS);
+                Vec2F positionWS = transform->getWorldTransform().transformAffine(positionOS);
                 positionWS.y = Math::Clamp(positionWS.y, transform->getHeight(), rootSize.y);
 
-                Vec2DF menuListPositionOS = transform->getParent()->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
+                Vec2F menuListPositionOS = transform->getParent()->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
 
                 transform->setPivot(1.0f, 1.0f);
                 transform->setAnchor(0.0f, 0.0f);
@@ -469,13 +469,13 @@ namespace Maze
 
         SpriteRenderer2DPtr expandButtonSprite = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::DropDownButtonExpanded),
-            Vec2DF(8.0f, 8.0f) * 1.75f,
-            Vec2DF(0.0f, 0.0f),
+            Vec2F(8.0f, 8.0f) * 1.75f,
+            Vec2F(0.0f, 0.0f),
             renderSystem->getMaterialManager()->getColorTextureMaterial(),
             transform,
             spriteRenderer->getEntityRaw()->getECSScene(),
-            Vec2DF(0.5f, 0.5f),
-            Vec2DF(0.5f, 0.5f));
+            Vec2F(0.5f, 0.5f),
+            Vec2F(0.5f, 0.5f));
         expandButtonSprite->setColor(ColorU32::c_black);
 
         F32 width = 200.0f;
@@ -486,13 +486,13 @@ namespace Maze
 
             SpriteRenderer2DPtr listTemplateSpriteRenderer = SpriteHelper::CreateSprite(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
-                Vec2DF(width, 140.0f),
-                Vec2DF::c_zero,
+                Vec2F(width, 140.0f),
+                Vec2F::c_zero,
                 renderSystem->getMaterialManager()->getColorTextureMaterial(),
                 transform,
                 m_layout->getEntityRaw()->getECSScene(),
-                Vec2DF(1.0f, 0.0f),
-                Vec2DF(1.0f, 1.0f));
+                Vec2F(1.0f, 0.0f),
+                Vec2F(1.0f, 1.0f));
             listTemplateSpriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
 
             listEntity = listTemplateSpriteRenderer->getEntityRaw();
@@ -514,12 +514,12 @@ namespace Maze
             // Item Prefab
             {
                 Transform2DPtr itemPrefabTransform = SpriteHelper::CreateTransform2D(
-                    Vec2DF(width - 2.0f, 20.0f),
-                    Vec2DF(1.0f, 0.0f),
+                    Vec2F(width - 2.0f, 20.0f),
+                    Vec2F(1.0f, 0.0f),
                     transform,
                     m_layout->getEntityRaw()->getECSScene(),
-                    Vec2DF(0.0f, 1.0f),
-                    Vec2DF(0.0f, 1.0f));
+                    Vec2F(0.0f, 1.0f),
+                    Vec2F(0.0f, 1.0f));
 
                 itemPrefabTransform->getEntityRaw()->setActiveSelf(false);
 
@@ -529,8 +529,8 @@ namespace Maze
 
                 SpriteRenderer2DPtr backgroundSpriteRenderer = SpriteHelper::CreateSprite(
                     ColorU32::c_white,
-                    Vec2DF(width, 20.0f - 4.0f),
-                    Vec2DF(0.0f, 2.0f),
+                    Vec2F(width, 20.0f - 4.0f),
+                    Vec2F(0.0f, 2.0f),
                     renderSystem->getMaterialManager()->getColorTextureMaterial(),
                     itemPrefabTransform,
                     m_layout->getEntityRaw()->getECSScene());
@@ -539,13 +539,13 @@ namespace Maze
 
                 SpriteRenderer2DPtr checkMarkSprite = SpriteHelper::CreateSprite(
                     UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::CheckMark),
-                    Vec2DF(8.0f, 8.0f) * 1.75f,
-                    Vec2DF(10.0f, 10.0f),
+                    Vec2F(8.0f, 8.0f) * 1.75f,
+                    Vec2F(10.0f, 10.0f),
                     renderSystem->getMaterialManager()->getColorTextureMaterial(),
                     itemPrefabTransform,
                     spriteRenderer->getEntityRaw()->getECSScene(),
-                    Vec2DF(0.0f, 0.0f),
-                    Vec2DF(0.5f, 0.5f));
+                    Vec2F(0.0f, 0.0f),
+                    Vec2F(0.5f, 0.5f));
                 checkMarkSprite->getEntityRaw()->ensureComponent<Name>()->setName("CheckMark");
                 checkMarkSprite->setColor(ColorU32::c_black);
 
@@ -554,12 +554,12 @@ namespace Maze
                     8,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
-                    Vec2DF(width, 20.0f),
-                    Vec2DF(20.0f, 0.0f),
+                    Vec2F(width, 20.0f),
+                    Vec2F(20.0f, 0.0f),
                     itemPrefabTransform,
                     m_layout->getEntityRaw()->getECSScene(),
-                    Vec2DF::c_zero,
-                    Vec2DF::c_zero);
+                    Vec2F::c_zero,
+                    Vec2F::c_zero);
                 itemTextRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Label");
                 itemTextRenderer->setColor(ColorU32::c_black);
                 ScissorMask2DPtr scissorMask = itemTextRenderer->getEntityRaw()->createComponent<ScissorMask2D>();

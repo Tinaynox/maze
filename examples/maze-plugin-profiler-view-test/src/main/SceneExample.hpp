@@ -110,7 +110,7 @@ namespace Maze
 
         F32 m_yawAngle = -2.565f;
         F32 m_pitchAngle = 0.253f;
-        Vec2DF m_cursorPositionLastFrame = Vec2DF::c_zero;
+        Vec2F32 m_cursorPositionLastFrame = Vec2F32::c_zero;
         bool m_cursorDrag = false;
     };
 

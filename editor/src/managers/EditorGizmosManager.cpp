@@ -125,9 +125,9 @@ namespace Maze
         S32 const iconSize = 32;
         S32 const gap = 1;
 
-        auto startPosFunc = [&](Vec2DS const& _pos) { return (iconSize * _pos) + Vec2DS((_pos.x + 1) * gap, (_pos.y + 1) * gap); };
+        auto startPosFunc = [&](Vec2S32 const& _pos) { return (iconSize * _pos) + Vec2S32((_pos.x + 1) * gap, (_pos.y + 1) * gap); };
 
-        PixelSheet2D uiElementsSheet(Vec2DS(4, 4) * iconSize, PixelFormat::RGBA_U8);
+        PixelSheet2D uiElementsSheet(Vec2S32(4, 4) * iconSize, PixelFormat::RGBA_U8);
         uiElementsSheet.fill(ColorU32::c_transparent);
 
         m_gizmosElementsTexture = Texture2D::Create();
@@ -139,40 +139,40 @@ namespace Maze
 
         // Axes
         {
-            Vec2DS sheetPos(0, 0);
+            Vec2S32 sheetPos(0, 0);
 
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S32 startPos = startPosFunc(sheetPos);
 
             for (S32 i = 0; i < 2; ++i)
                 for (S32 j = 0; j < 2; ++j)
                 {
                     uiElementsSheet.drawLine(
-                        startPos + Vec2DS(3 + i, 3 + j),
-                        startPos + Vec2DS(28 + i, 3 + j),
+                        startPos + Vec2S32(3 + i, 3 + j),
+                        startPos + Vec2S32(28 + i, 3 + j),
                         ColorU32::c_red);
 
                     uiElementsSheet.drawLine(
-                        startPos + Vec2DS(3 + i, 4 + j),
-                        startPos + Vec2DS(3 + i, 28 + j),
+                        startPos + Vec2S32(3 + i, 4 + j),
+                        startPos + Vec2S32(3 + i, 28 + j),
                         ColorU32::c_green);
 
                     uiElementsSheet.drawLine(
-                        startPos + Vec2DS(4 + i, 4 + j),
-                        startPos + Vec2DS(24 + i, 18 + j),
+                        startPos + Vec2S32(4 + i, 4 + j),
+                        startPos + Vec2S32(24 + i, 18 + j),
                         ColorU32::c_blue);
                 }
 
             m_editorGizmosSprites[(Size)EditorGizmosSprite::Axes] = Sprite::Create(
                 m_gizmosElementsTexture,
-                Vec2DF(iconSize * sheetPos),
-                Vec2DF(iconSize, iconSize));
+                Vec2F32(iconSize * sheetPos),
+                Vec2F32(iconSize, iconSize));
         }
 
         // Grid
         {
-            Vec2DS sheetPos(1, 0);
+            Vec2S32 sheetPos(1, 0);
 
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S32 startPos = startPosFunc(sheetPos);
 
             for (S32 i = 0; i < 2; ++i)
                 for (S32 j = 0; j < 2; ++j)
@@ -180,21 +180,21 @@ namespace Maze
                     for (S32 f = 0; f < 5; ++f)
                     {
                         uiElementsSheet.drawLine(
-                            startPos + Vec2DS(2 + i + f * 5, 1 + j),
-                            startPos + Vec2DS(2 + i + f * 5, 26 + j),
+                            startPos + Vec2S32(2 + i + f * 5, 1 + j),
+                            startPos + Vec2S32(2 + i + f * 5, 26 + j),
                             ColorU32::c_lightGray);
 
                         uiElementsSheet.drawLine(
-                            startPos + Vec2DS(1 + i, 3 + j + f * 5),
-                            startPos + Vec2DS(26 + i, 3 + j + f * 5),
+                            startPos + Vec2S32(1 + i, 3 + j + f * 5),
+                            startPos + Vec2S32(26 + i, 3 + j + f * 5),
                             ColorU32::c_lightGray);
                     }
                 }
 
             m_editorGizmosSprites[(Size)EditorGizmosSprite::Grid] = Sprite::Create(
                 m_gizmosElementsTexture,
-                Vec2DF(iconSize * sheetPos),
-                Vec2DF(iconSize, iconSize));
+                Vec2F32(iconSize * sheetPos),
+                Vec2F32(iconSize, iconSize));
         }
 
         m_gizmosElementsTexture->loadTexture(uiElementsSheet);

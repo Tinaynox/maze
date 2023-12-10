@@ -98,11 +98,11 @@ namespace Maze
     //////////////////////////////////////////
     Rect2DF EditorLayout::CalculateWorkViewport(Rect2DF const& _viewport)
     {
-        Vec2DF fullRenderTargetSize = (Vec2DF)Editor::GetInstancePtr()->getMainRenderWindow()->getRenderTargetSize();
-        if (fullRenderTargetSize == Vec2DF::c_zero)
+        Vec2F32 fullRenderTargetSize = (Vec2F32)Editor::GetInstancePtr()->getMainRenderWindow()->getRenderTargetSize();
+        if (fullRenderTargetSize == Vec2F32::c_zero)
             return Rect2DF::c_zero;
 
-        Vec2DF workRenderTargetSize = Vec2DF(fullRenderTargetSize.x, fullRenderTargetSize.y - EditorLayout::c_menuBarHeight);
+        Vec2F32 workRenderTargetSize = Vec2F32(fullRenderTargetSize.x, fullRenderTargetSize.y - EditorLayout::c_menuBarHeight);
 
         Rect2DF targetViewportZone = _viewport;
         targetViewportZone.position *= workRenderTargetSize / fullRenderTargetSize;
@@ -112,12 +112,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec2DF EditorLayout::ConvertRenderWindowCoordsToWorkspaceViewport(Vec2DF const& _coord)
+    Vec2F32 EditorLayout::ConvertRenderWindowCoordsToWorkspaceViewport(Vec2F32 const& _coord)
     {
         RenderWindowPtr const& renderWindow = Editor::GetInstancePtr()->getMainRenderWindow();
         Rect2DF viewport = CalculateWorkViewport(c_sceneViewport);
 
-        Vec2DF workspaceStart = viewport.position * (Vec2DF)renderWindow->getRenderTargetSize();
+        Vec2F32 workspaceStart = viewport.position * (Vec2F32)renderWindow->getRenderTargetSize();
 
         return _coord - workspaceStart;
     }

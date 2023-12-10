@@ -161,22 +161,22 @@ namespace Maze
     {
         F32 gap = 42.0f * 1.33f;
         m_buttonStartGame = createButton(
-            Vec2DF(0.0f, -gap * 0),
+            Vec2F32(0.0f, -gap * 0),
             "START GAME",
             CreateDelegate(this, &SceneMainMenu::notifyStartGameButtonClick));
     
         m_settingsGame = createButton(
-            Vec2DF(0.0f, -gap * 1),
+            Vec2F32(0.0f, -gap * 1),
             "SETTINGS",
             CreateDelegate(this, &SceneMainMenu::notifySettingsButtonClick));
 
         m_creditsGame = createButton(
-            Vec2DF(0.0f, -gap * 2),
+            Vec2F32(0.0f, -gap * 2),
             "CREDITS",
             CreateDelegate(this, &SceneMainMenu::notifyCreditsButtonClick));
 
         m_exitGame = createButton(
-            Vec2DF(0.0f, -gap * 3),
+            Vec2F32(0.0f, -gap * 3),
             "EXIT",
             CreateDelegate(this, &SceneMainMenu::notifyExitButtonClick));
 
@@ -184,7 +184,7 @@ namespace Maze
 
     //////////////////////////////////////////
     ClickButton2DPtr SceneMainMenu::createButton(
-        Vec2DF _position,
+        Vec2F32 _position,
         String const& _label,
         Delegate<void, Button2D*, CursorInputEvent const&> _onClickDelegate)
     {
@@ -271,8 +271,8 @@ namespace Maze
 
         m_splashSprite = SpriteHelper::CreateSprite(
             "Sky.mztexture",
-            Vec2DF(1600, 800),
-            Vec2DF::c_zero,
+            Vec2F32(1600, 800),
+            Vec2F32::c_zero,
             "MenuSky00.mzmaterial",
             m_canvas->getTransform(),
             this);

@@ -32,7 +32,7 @@
 //////////////////////////////////////////
 #include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 
 
 //////////////////////////////////////////
@@ -70,7 +70,7 @@ namespace Maze
         inline CursorInputEvent(
             CursorInputType _type,
             S32 _index = 0,
-            Vec2DF const& _position = Vec2DF::c_zero,
+            Vec2F const& _position = Vec2F::c_zero,
             S32 _button = 0,
             CursorInputSource const& _inputSource = CursorInputSource::None,
             Window* _window = nullptr)
@@ -93,7 +93,7 @@ namespace Maze
 
         CursorInputType type;
         S32 index;
-        Vec2DF position;
+        Vec2F position;
         mutable S32 capturerHandle;
         S32 button;
         CursorInputSource inputSource;
@@ -115,7 +115,7 @@ namespace Maze
             F32 _deltaWheel = 0.0f,
             Window* _window = nullptr)
             : index(_index)
-            , position(Vec2DF::c_zero)
+            , position(Vec2F::c_zero)
             , deltaWheel(_deltaWheel)
             , capturerHandle(0)
             , window(_window)
@@ -130,7 +130,7 @@ namespace Maze
         inline bool isCaptured() const { return capturerHandle != 0; }
 
         S32 index;
-        Vec2DF position;
+        Vec2F position;
         F32 deltaWheel;
         mutable S32 capturerHandle;
         Window* window;

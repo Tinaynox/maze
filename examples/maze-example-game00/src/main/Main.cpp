@@ -25,11 +25,11 @@
 
 //////////////////////////////////////////
 #include "maze-core/MazeTypes.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
+#include "maze-core/math/MazeVec3.hpp"
 #include "maze-core/math/MazeMath.hpp"
-#include "maze-core/math/MazeMat3D.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeMat3F32.hpp"
+#include "maze-core/math/MazeMat4F32.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
 #include "maze-core/system/MazeThread.hpp"

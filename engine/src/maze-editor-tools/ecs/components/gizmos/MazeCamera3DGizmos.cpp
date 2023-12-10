@@ -91,7 +91,7 @@ namespace Maze
 
         Transform3DPtr const& transform3D = camera3D->getTransform();
 
-        Vec3DF const& position = transform3D->getWorldPosition();
+        Vec3F const& position = transform3D->getWorldPosition();
 
         _drawer->drawBillboard(
             position,
@@ -112,7 +112,7 @@ namespace Maze
 
         Transform3DPtr const& transform3D = camera3D->getTransform();
 
-        Mat4DF mat = transform3D->getWorldTransform();
+        Mat4F mat = transform3D->getWorldTransform();
         mat[0][3] = 0.0f;
         mat[1][3] = 0.0f;
         mat[2][3] = 0.0f;
@@ -128,17 +128,17 @@ namespace Maze
 
         F32 halfNearH = tanHalfFOVY * camera3D->getNearZ();
         F32 halfNearW = tanHalfFOVX * camera3D->getNearZ();
-        Vec3DF nearLB = transform3D->getWorldTransform().transformAffine(Vec3DF(-halfNearW, -halfNearH, camera3D->getNearZ()));
-        Vec3DF nearLT = transform3D->getWorldTransform().transformAffine(Vec3DF(-halfNearW, +halfNearH, camera3D->getNearZ()));
-        Vec3DF nearRT = transform3D->getWorldTransform().transformAffine(Vec3DF(+halfNearW, +halfNearH, camera3D->getNearZ()));
-        Vec3DF nearRB = transform3D->getWorldTransform().transformAffine(Vec3DF(+halfNearW, -halfNearH, camera3D->getNearZ()));
+        Vec3F nearLB = transform3D->getWorldTransform().transformAffine(Vec3F(-halfNearW, -halfNearH, camera3D->getNearZ()));
+        Vec3F nearLT = transform3D->getWorldTransform().transformAffine(Vec3F(-halfNearW, +halfNearH, camera3D->getNearZ()));
+        Vec3F nearRT = transform3D->getWorldTransform().transformAffine(Vec3F(+halfNearW, +halfNearH, camera3D->getNearZ()));
+        Vec3F nearRB = transform3D->getWorldTransform().transformAffine(Vec3F(+halfNearW, -halfNearH, camera3D->getNearZ()));
 
         F32 halfFarH = tanHalfFOVY * camera3D->getFarZ();
         F32 halfFarW = tanHalfFOVX * camera3D->getFarZ();
-        Vec3DF farLB = transform3D->getWorldTransform().transformAffine(Vec3DF(-halfFarW, -halfFarH, camera3D->getFarZ()));
-        Vec3DF farLT = transform3D->getWorldTransform().transformAffine(Vec3DF(-halfFarW, +halfFarH, camera3D->getFarZ()));
-        Vec3DF farRT = transform3D->getWorldTransform().transformAffine(Vec3DF(+halfFarW, +halfFarH, camera3D->getFarZ()));
-        Vec3DF farRB = transform3D->getWorldTransform().transformAffine(Vec3DF(+halfFarW, -halfFarH, camera3D->getFarZ()));
+        Vec3F farLB = transform3D->getWorldTransform().transformAffine(Vec3F(-halfFarW, -halfFarH, camera3D->getFarZ()));
+        Vec3F farLT = transform3D->getWorldTransform().transformAffine(Vec3F(-halfFarW, +halfFarH, camera3D->getFarZ()));
+        Vec3F farRT = transform3D->getWorldTransform().transformAffine(Vec3F(+halfFarW, +halfFarH, camera3D->getFarZ()));
+        Vec3F farRB = transform3D->getWorldTransform().transformAffine(Vec3F(+halfFarW, -halfFarH, camera3D->getFarZ()));
 
         _drawer->drawLine(nearLB, nearLT);
         _drawer->drawLine(nearLT, nearRT);

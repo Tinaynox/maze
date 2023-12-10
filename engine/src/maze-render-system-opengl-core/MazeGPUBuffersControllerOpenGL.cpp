@@ -129,7 +129,7 @@ namespace Maze
     //////////////////////////////////////////
     GPUTextureBufferPtr GPUBuffersControllerOpenGL::createGPUTextureBuffer(
         ContextOpenGL* _contextOpenGL,
-        Vec2DU const& _size,
+        Vec2U const& _size,
         PixelFormat::Enum _pixelFormat,
         GPUByteBufferAccessType::Enum _accessType,
         void* _initialData)

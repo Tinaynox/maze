@@ -37,8 +37,8 @@
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
+#include "maze-core/math/MazeVec3.hpp"
 #include "maze-core/data/MazeByteBuffer.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-graphics/MazePixelFormat.hpp"
@@ -61,12 +61,12 @@ namespace Maze
 
         //////////////////////////////////////////
         PixelSheet2D(
-            Vec2DS const& _size,
+            Vec2S const& _size,
             PixelFormat::Enum _pixelFormat = PixelFormat::RGBA_U8);
 
         //////////////////////////////////////////
         PixelSheet2D(
-            Vec2DS const& _size,
+            Vec2S const& _size,
             ColorU32 const& _color);
 
         //////////////////////////////////////////
@@ -79,16 +79,16 @@ namespace Maze
         ~PixelSheet2D();
 
         //////////////////////////////////////////
-        void setSize(Vec2DS const& _size);
+        void setSize(Vec2S const& _size);
 
         //////////////////////////////////////////
         inline void setSize(S32 _columnsCount, S32 _rowsCount)
         {
-            setSize(Vec2DS(_columnsCount, _rowsCount));
+            setSize(Vec2S(_columnsCount, _rowsCount));
         }
 
         //////////////////////////////////////////
-        inline Vec2DS const& getSize() const { return m_size; }
+        inline Vec2S const& getSize() const { return m_size; }
 
         //////////////////////////////////////////
         inline S32 const& getWidth() const { return m_size.x; }
@@ -157,7 +157,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline void setPixel(Vec2DS const& _pos, ColorU32 const& _color)
+        inline void setPixel(Vec2S const& _pos, ColorU32 const& _color)
         {
             setPixel(_pos.x, _pos.y, _color);
         }
@@ -169,7 +169,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        void copyFrom(U8 const* _data, Vec2DS const& _size, PixelFormat::Enum _pixelFormat);
+        void copyFrom(U8 const* _data, Vec2S const& _size, PixelFormat::Enum _pixelFormat);
 
         //////////////////////////////////////////
         void drawLine(
@@ -179,8 +179,8 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void drawLine(
-            Vec2DS const& _p0,
-            Vec2DS const& _p1,
+            Vec2S const& _p0,
+            Vec2S const& _p1,
             ColorU32 const& _color)
         {
             drawLine(_p0.x, _p0.y, _p1.x, _p1.y, _color);
@@ -194,7 +194,7 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void drawCircle(
-            Vec2DS const& _pos,
+            Vec2S const& _pos,
             S32 _radius,
             ColorU32 const& _color)
         {
@@ -209,7 +209,7 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void drawFilledCircle(
-            Vec2DS const& _point,
+            Vec2S const& _point,
             S32 _radius,
             ColorU32 const& _color)
         {
@@ -230,8 +230,8 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void drawFilledRect(
-            Vec2DS _pos,
-            Vec2DS _size,
+            Vec2S _pos,
+            Vec2S _size,
             ColorU32 const& _color)
         {
             drawFilledRect(_pos.x, _pos.y, _size.x, _size.y, _color);
@@ -253,9 +253,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void drawFilledTriangle(
-            Vec2DS const& _p0,
-            Vec2DS const& _p1,
-            Vec2DS const& _p2,
+            Vec2S const& _p0,
+            Vec2S const& _p1,
+            Vec2S const& _p2,
             ColorU32 const& _color)
         {
             drawFilledTriangle(_p0.x, _p0.y, _p1.x, _p1.y, _p2.x, _p2.y, _color);
@@ -309,7 +309,7 @@ namespace Maze
         void updateDataSize();
 
     protected:
-        Vec2DS m_size;
+        Vec2S m_size;
         ByteBuffer m_data;
         PixelFormat::Enum m_format;
         S32 m_bytesPerPixel;

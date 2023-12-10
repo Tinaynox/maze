@@ -36,46 +36,46 @@ namespace Maze
     
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS(ParticleSystem3DZoneEmissionPoint,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, position, Vec3DF::c_zero, getPosition, setPosition),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, direction, Vec3DF::c_unitZ, getDirection, setDirection));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3F, position, Vec3F::c_zero, getPosition, setPosition),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3F, direction, Vec3F::c_unitZ, getDirection, setDirection));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS(ParticleSystem3DZoneSphere,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, position, Vec3DF::c_zero, getPosition, setPosition),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, scale, Vec3DF::c_one, getScale, setScale),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3F, position, Vec3F::c_zero, getPosition, setPosition),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3F, scale, Vec3F::c_one, getScale, setScale),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, radius, 1.0f, getRadius, setRadius));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS(ParticleSystem3DZoneHemisphere,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, position, Vec3DF::c_zero, getPosition, setPosition),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, scale, Vec3DF::c_one, getScale, setScale),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3F, position, Vec3F::c_zero, getPosition, setPosition),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3F, scale, Vec3F::c_one, getScale, setScale),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, radius, 1.0f, getRadius, setRadius));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS(ParticleSystem3DZoneTorus,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, position, Vec3DF::c_zero, getPosition, setPosition),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, scale, Vec3DF::c_one, getScale, setScale),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3F, position, Vec3F::c_zero, getPosition, setPosition),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3F, scale, Vec3F::c_one, getScale, setScale),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, radius, 0.5f, getRadius, setRadius),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, torusRadius, 1.0f, getTorusRadius, setTorusRadius),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, radiusThickness, 1.0f, getRadiusThickness, setRadiusThickness));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS(ParticleSystem3DZoneCone,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, position, Vec3DF::c_zero, getPosition, setPosition),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, scale, Vec3DF::c_one, getScale, setScale),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3F, position, Vec3F::c_zero, getPosition, setPosition),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3F, scale, Vec3F::c_one, getScale, setScale),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, radius, 0.5f, getRadius, setRadius),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, angle, 0.0f, getAngle, setAngle),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, length, 0.5f, getLength, setLength));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS(ParticleSystem3DZoneBox,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, position, Vec3DF::c_zero, getPosition, setPosition),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, scale, Vec3DF::c_one, getScale, setScale));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3F, position, Vec3F::c_zero, getPosition, setPosition),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3F, scale, Vec3F::c_one, getScale, setScale));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS(ParticleSystem3DZoneCircle,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, position, Vec3DF::c_zero, getPosition, setPosition),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, scale, Vec3DF::c_one, getScale, setScale),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3F, position, Vec3F::c_zero, getPosition, setPosition),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3F, scale, Vec3F::c_one, getScale, setScale),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, radius, 1.0f, getRadius, setRadius));
 
     //////////////////////////////////////////

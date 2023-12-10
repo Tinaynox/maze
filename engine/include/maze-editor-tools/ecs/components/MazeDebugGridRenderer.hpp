@@ -114,7 +114,7 @@ namespace Maze
         Transform3DPtr m_transform;
         MeshRendererPtr m_meshRenderer;
 
-        Vec3DF m_prevMeshCameraPosition;
+        Vec3F m_prevMeshCameraPosition;
     };
 
 

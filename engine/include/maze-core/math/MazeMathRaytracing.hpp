@@ -34,7 +34,7 @@
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/math/MazeMath.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
+#include "maze-core/math/MazeVec3.hpp"
 
 
 //////////////////////////////////////////
@@ -45,56 +45,56 @@ namespace Maze
     {
         //////////////////////////////////////////
         MAZE_CORE_API bool RaycastPlane(
-            Vec3DF const& _rayPoint,
-            Vec3DF const& _rayDirection,
-            Vec3DF const& _planePoint,
-            Vec3DF const& _planeNormal,
+            Vec3F const& _rayPoint,
+            Vec3F const& _rayDirection,
+            Vec3F const& _planePoint,
+            Vec3F const& _planeNormal,
             F32& _dist);
 
         //////////////////////////////////////////
         MAZE_CORE_API bool RaycastCube(
-            Vec3DF const& _rayPoint,
-            Vec3DF const& _rayDirection,
-            Vec3DF const& _cubeCenter,
-            Vec3DF const& _cubeForward,
-            Vec3DF const& _cubeUp,
-            Vec3DF const& _cubeScale,
+            Vec3F const& _rayPoint,
+            Vec3F const& _rayDirection,
+            Vec3F const& _cubeCenter,
+            Vec3F const& _cubeForward,
+            Vec3F const& _cubeUp,
+            Vec3F const& _cubeScale,
             F32& _dist);
 
         //////////////////////////////////////////
         MAZE_CORE_API bool RaycastSphere(
-            Vec3DF const& _rayPoint,
-            Vec3DF const& _rayDirection,
-            Vec3DF const& _sphereCenter,
+            Vec3F const& _rayPoint,
+            Vec3F const& _rayDirection,
+            Vec3F const& _sphereCenter,
             F32 _sphereRadius,
             F32& _dist);
 
         //////////////////////////////////////////
         MAZE_CORE_API bool RaycastCylinder(
-            Vec3DF const& _rayPoint,
-            Vec3DF const& _rayDirection,
-            Vec3DF const& _cylinderCenter,
-            Vec3DF const& _cylinderForward,
+            Vec3F const& _rayPoint,
+            Vec3F const& _rayDirection,
+            Vec3F const& _cylinderCenter,
+            Vec3F const& _cylinderForward,
             F32 _cylinderRadius,
             F32 _cylinderHeight,
             F32& _dist);
 
         //////////////////////////////////////////
         MAZE_CORE_API bool RaycastCone(
-            Vec3DF const& _rayPoint,
-            Vec3DF const& _rayDirection,
-            Vec3DF const& _coneOrigin,
-            Vec3DF const& _coneForward,
+            Vec3F const& _rayPoint,
+            Vec3F const& _rayDirection,
+            Vec3F const& _coneOrigin,
+            Vec3F const& _coneForward,
             F32 _coneRadius,
             F32 _coneHeight,
             F32& _dist);
 
         //////////////////////////////////////////
         MAZE_CORE_API bool RaycastTorus(
-            Vec3DF const& _rayPoint,
-            Vec3DF const& _rayDirection,
-            Vec3DF const& _torusOrigin,
-            Vec3DF const& _torusForward,
+            Vec3F const& _rayPoint,
+            Vec3F const& _rayDirection,
+            Vec3F const& _torusOrigin,
+            Vec3F const& _torusForward,
             F32 _torusRadius,
             F32 _torusCsRadius,
             F32& _dist);

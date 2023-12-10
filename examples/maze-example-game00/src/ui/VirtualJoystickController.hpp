@@ -105,7 +105,7 @@ namespace Maze
 
         ClickButton2DPtr m_rightButton;
 
-        Vec2DF m_cursorPositionOS;
+        Vec2F32 m_cursorPositionOS;
 
         F32 const c_radius;
 

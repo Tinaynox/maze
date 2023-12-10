@@ -35,8 +35,8 @@
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
-#include "maze-core/math/MazeVec4D.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeVec4.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
@@ -71,8 +71,8 @@ namespace Maze
     struct MAZE_GRAPHICS_API DefaultPassParams
     {
         S32 renderMask = 0;
-        Mat4DF cameraTransform = Mat4DF::c_identity;
-        Mat4DF projectionMatrix = Mat4DF::c_identity;
+        Mat4F cameraTransform = Mat4F::c_identity;
+        Mat4F projectionMatrix = Mat4F::c_identity;
         Rect2DF viewport = Rect2DF(0.0f, 0.0f, 1.0f, 1.0f);
         F32 nearZ = 0.001f;
         F32 farZ = 100.0f;
@@ -102,11 +102,11 @@ namespace Maze
         RenderUnit(
             RenderPassPtr const& _renderPass,
             VertexArrayObjectPtr const& _vao,
-            Vec3DF const& _worldPosition,
+            Vec3F const& _worldPosition,
             S32 _count,
-            Mat4DF const* _modelMatricies,
-            Vec4DF const* _colorStream,
-            Vec4DF const* _uvs[MAZE_UV_CHANNELS_MAX])
+            Mat4F const* _modelMatricies,
+            Vec4F const* _colorStream,
+            Vec4F const* _uvs[MAZE_UV_CHANNELS_MAX])
             : renderPass(_renderPass)
             , vao(_vao)
             , worldPosition(_worldPosition)
@@ -121,11 +121,11 @@ namespace Maze
         RenderUnit(
             RenderPassPtr const& _renderPass,
             VertexArrayObjectPtr const& _vao,
-            Vec3DF const& _worldPosition,
+            Vec3F const& _worldPosition,
             S32 _count,
-            Mat4DF const* _modelMatricies,
-            Vec4DF const* _colorStream = nullptr,
-            Vec4DF const* _uv0 = nullptr)
+            Mat4F const* _modelMatricies,
+            Vec4F const* _colorStream = nullptr,
+            Vec4F const* _uv0 = nullptr)
             : renderPass(_renderPass)
             , vao(_vao)
             , worldPosition(_worldPosition)
@@ -139,11 +139,11 @@ namespace Maze
 
         RenderPassPtr renderPass;
         VertexArrayObjectPtr vao;
-        Vec3DF worldPosition;
+        Vec3F worldPosition;
         S32 count = 0;
-        Mat4DF const* modelMatricies = nullptr;
-        Vec4DF const* colorStream = nullptr;
-        Vec4DF const* uvStreams[MAZE_UV_CHANNELS_MAX] = { nullptr };
+        Mat4F const* modelMatricies = nullptr;
+        Vec4F const* colorStream = nullptr;
+        Vec4F const* uvStreams[MAZE_UV_CHANNELS_MAX] = { nullptr };
 
         F32 sqrDistanceToCamera;
     };

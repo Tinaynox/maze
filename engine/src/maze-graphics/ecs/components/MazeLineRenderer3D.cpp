@@ -89,7 +89,7 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<MaterialPtr>, materials, Vector<MaterialPtr>(), getMaterials, setMaterials),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, width, 1.0f, getWidth, setWidth),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorGradient, color, ColorGradient(), getColor, setColor),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Vec3DF>, positions, Vector<Vec3DF>(), getPositions, setPositions));
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Vec3F>, positions, Vector<Vec3F>(), getPositions, setPositions));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(LineRenderer3D);
@@ -173,7 +173,7 @@ namespace Maze
         struct EdgeData
         {
             F32 progress;
-            Vec3DF direction;
+            Vec3F direction;
             F32 halfWidth;
             F32 distanceToNextEdge;
         };
@@ -186,13 +186,13 @@ namespace Maze
         {
             EdgeData& edge = edges[i];
 
-            Vec3DF toNextEdge = m_positions[i + 1] - m_positions[i];
+            Vec3F toNextEdge = m_positions[i + 1] - m_positions[i];
             F32 toNextEdgeLength = toNextEdge.length();
-            edge.direction = (toNextEdgeLength != 0.0f) ? (toNextEdge / toNextEdgeLength) : Vec3DF::c_zero;
+            edge.direction = (toNextEdgeLength != 0.0f) ? (toNextEdge / toNextEdgeLength) : Vec3F::c_zero;
 
             if (i >= 1)
             {
-                Vec3DF prevDirection = (m_positions[i] - m_positions[i - 1]).normalizedCopy();
+                Vec3F prevDirection = (m_positions[i] - m_positions[i - 1]).normalizedCopy();
                 edge.direction = ((prevDirection + edge.direction) * 0.5f).normalizedCopy();
             }
 
@@ -223,16 +223,16 @@ namespace Maze
         U32 vertex = 0;
         U32 index = 0;
 
-        Vec3DF direction;
-        Vec3DF perpendicular;
-        Vec3DF vertexA;
-        Vec3DF vertexB;
+        Vec3F direction;
+        Vec3F perpendicular;
+        Vec3F vertexA;
+        Vec3F vertexB;
         F32 width;
         F32 halfWidth;
         ColorF128 color;
 
-        Vec3DF currentPosition = m_positions[0];
-        Vec3DF nextPosition;
+        Vec3F currentPosition = m_positions[0];
+        Vec3F nextPosition;
         for (S32 i = 0; i < (S32)(quadsCount); ++i)
         {
             EdgeData& edge = edges[i];
@@ -244,18 +244,18 @@ namespace Maze
             nextPosition = m_positions[i + 1];
             direction = edge.direction;
             
-            perpendicular = direction.crossProduct(Vec3DF::c_unitZ);
+            perpendicular = direction.crossProduct(Vec3F::c_unitZ);
             vertexA = currentPosition + perpendicular * halfWidth;
             vertexB = currentPosition - perpendicular * halfWidth;
 
             m_vertices[vertex] = vertexA;
-            m_uvs[vertex] = Vec2DF(edge.progress, 0.0f);
-            m_colors[vertex] = color.toVec4DF();
+            m_uvs[vertex] = Vec2F(edge.progress, 0.0f);
+            m_colors[vertex] = color.toVec4F32();
             ++vertex;
 
             m_vertices[vertex] = vertexB;
-            m_uvs[vertex] = Vec2DF(edge.progress, 1.0f);
-            m_colors[vertex] = color.toVec4DF();
+            m_uvs[vertex] = Vec2F(edge.progress, 1.0f);
+            m_colors[vertex] = color.toVec4F32();
             ++vertex;
 
             
@@ -266,18 +266,18 @@ namespace Maze
         color = m_color.evaluate(1.0f);
         halfWidth = width * 0.5f;
         direction = (m_positions.back() - m_positions[m_positions.size() - 2]).normalizedCopy();
-        perpendicular = direction.crossProduct(Vec3DF::c_unitZ);
+        perpendicular = direction.crossProduct(Vec3F::c_unitZ);
         vertexA = currentPosition + perpendicular * halfWidth;
         vertexB = currentPosition - perpendicular * halfWidth;
 
         m_vertices[vertex] = vertexA;
-        m_uvs[vertex] = Vec2DF(1.0f, 0.0f);
-        m_colors[vertex] = color.toVec4DF();
+        m_uvs[vertex] = Vec2F(1.0f, 0.0f);
+        m_colors[vertex] = color.toVec4F32();
         ++vertex;
 
         m_vertices[vertex] = vertexB;
-        m_uvs[vertex] = Vec2DF(1.0f, 1.0f);
-        m_colors[vertex] = color.toVec4DF();
+        m_uvs[vertex] = Vec2F(1.0f, 1.0f);
+        m_colors[vertex] = color.toVec4F32();
         ++vertex;
 
         m_vao->setVerticesData((U8 const*)&m_vertices[0], c_positionDescription, verticesCount);

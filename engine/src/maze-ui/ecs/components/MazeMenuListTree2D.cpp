@@ -370,23 +370,23 @@ namespace Maze
                     continue;
 
                 Transform2D* root = parentListItem->getTransform()->getRootTransform();
-                Vec2DF const& rootSize = root->getSize();
+                Vec2F const& rootSize = root->getSize();
 
                 AABB2D menuListAABB = menuList->getTransform()->calculateWorldAABB();
                 F32 menuListWorldWidth = menuListAABB.getWidth();
 
-                Vec2DF positionOS(
+                Vec2F positionOS(
                     parentListItem->getTransform()->getWidth(),
                     parentListItem->getTransform()->getHeight());
 
-                Vec2DF positionWS = parentListItem->getTransform()->getWorldTransform().transformAffine(positionOS);
+                Vec2F positionWS = parentListItem->getTransform()->getWorldTransform().transformAffine(positionOS);
                 if (positionWS.x + menuListWorldWidth > rootSize.x)
                     positionOS.x = 0 - menuList->getTransform()->getWidth();
 
                 positionWS = parentListItem->getTransform()->getWorldTransform().transformAffine(positionOS);
                 positionWS.y = Math::Clamp(positionWS.y, menuList->getTransform()->getHeight(), rootSize.y);
 
-                Vec2DF menuListPositionOS = m_itemsListTransform->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
+                Vec2F menuListPositionOS = m_itemsListTransform->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
 
                 menuList->getTransform()->setPivot(0.0f, 1.0f);
                 menuList->getTransform()->setAnchor(0.0f, 0.0f);
@@ -395,13 +395,13 @@ namespace Maze
             else
             {
                 menuList->getTransform()->setAnchor(0.0f, 1.0f);
-                menuList->getTransform()->setLocalPosition(Vec2DF::c_zero);
+                menuList->getTransform()->setLocalPosition(Vec2F::c_zero);
             }
         }
     }
 
     //////////////////////////////////////////
-    void MenuListTree2D::notifyCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void MenuListTree2D::notifyCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
@@ -427,7 +427,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool MenuListTree2D::isMenuContainsPoint(Vec2DF const& _positionWS)
+    bool MenuListTree2D::isMenuContainsPoint(Vec2F const& _positionWS)
     {
         for (auto listData : m_lists)
         {

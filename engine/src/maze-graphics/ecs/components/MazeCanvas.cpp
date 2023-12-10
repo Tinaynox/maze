@@ -62,7 +62,7 @@ namespace Maze
         , m_clearColor(ColorU32(99, 101, 140, 255))
         , m_clearDepthFlag(false)
         , m_sortOrder(0)
-        , m_originPosition(Vec2DF::c_zero)
+        , m_originPosition(Vec2F::c_zero)
         , m_viewportTransformPolicy(ViewportTransformPolicy::ViewportToTransform)
     {
     }
@@ -142,8 +142,8 @@ namespace Maze
     Rect2DF Canvas::getRenderTargetRect() const
     {
         Rect2DF viewportRect = getViewport();
-        viewportRect.position *= (Vec2DF)getRenderTarget()->getRenderTargetSize();
-        viewportRect.size *= (Vec2DF)getRenderTarget()->getRenderTargetSize();
+        viewportRect.position *= (Vec2F)getRenderTarget()->getRenderTargetSize();
+        viewportRect.size *= (Vec2F)getRenderTarget()->getRenderTargetSize();
         return viewportRect;
     }
 
@@ -165,12 +165,12 @@ namespace Maze
                 if (!m_renderTarget)
                     return;
 
-                m_transform->setAnchor(Vec2DF::c_zero);
-                m_transform->setPivot(Vec2DF(0.5f, 0.5f));
-                Vec2DF size = (Vec2DF)m_renderTarget->getRenderTargetSize() * m_viewport.size;
+                m_transform->setAnchor(Vec2F::c_zero);
+                m_transform->setPivot(Vec2F(0.5f, 0.5f));
+                Vec2F size = (Vec2F)m_renderTarget->getRenderTargetSize() * m_viewport.size;
                 m_transform->setLocalPosition(size * 0.5f);
 
-                m_originPosition = m_viewport.position * (Vec2DF)m_renderTarget->getRenderTargetSize();
+                m_originPosition = m_viewport.position * (Vec2F)m_renderTarget->getRenderTargetSize();
                 MAZE_DEBUG_ERROR_IF(!m_originPosition.isFinite(), "Origin position is not finite!");
 
                 auto canvasScaler = m_canvasScaler.lock();
@@ -188,13 +188,13 @@ namespace Maze
                 if (!canvas)
                     canvas = this;
 
-                Vec2DF const& size = m_transform->getSize();
+                Vec2F const& size = m_transform->getSize();
 
-                Vec2DF lbCanvasSpace = m_transform->getWorldTransform().transformAffine(Vec2DF::c_zero);
-                Vec2DF rtCanvasSpace = m_transform->getWorldTransform().transformAffine(size);
+                Vec2F lbCanvasSpace = m_transform->getWorldTransform().transformAffine(Vec2F::c_zero);
+                Vec2F rtCanvasSpace = m_transform->getWorldTransform().transformAffine(size);
 
-                Vec2DF lbRenderTargetSpace = canvas->convertViewportCoordsToRenderTargetCoords(lbCanvasSpace);
-                Vec2DF rtRenderTargetSpace = canvas->convertViewportCoordsToRenderTargetCoords(rtCanvasSpace);
+                Vec2F lbRenderTargetSpace = canvas->convertViewportCoordsToRenderTargetCoords(lbCanvasSpace);
+                Vec2F rtRenderTargetSpace = canvas->convertViewportCoordsToRenderTargetCoords(rtCanvasSpace);
 
                 F32 renderTargetWidth = (F32)canvas->getRenderTarget()->getRenderTargetWidth();
                 F32 renderTargetHeight = (F32)canvas->getRenderTarget()->getRenderTargetHeight();

@@ -141,7 +141,7 @@ namespace Maze
         RenderWindowParams params;
         params.windowParams = 
             WindowParams::Create(
-                Vec2DU(242, 480),
+                Vec2U(242, 480),
                 32,
                 "Color");
          

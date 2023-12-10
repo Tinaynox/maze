@@ -180,7 +180,7 @@ namespace Maze
             }
         }
 
-        Vec3DF worldPosition = getTransform()->getWorldPosition();
+        Vec3F worldPosition = getTransform()->getWorldPosition();
         if (m_edges.size() < 2)
         {
             addEdge(m_timer, worldPosition);
@@ -192,7 +192,7 @@ namespace Maze
             TrailEdge& lastKeyframe = m_edges[edgesCount - 1];
             TrailEdge& penultimateKeyframe = m_edges[edgesCount - 2];
             
-            Vec3DF penultimateToLast = (worldPosition - penultimateKeyframe.position);
+            Vec3F penultimateToLast = (worldPosition - penultimateKeyframe.position);
             F32 penultimateToLastLengthSq = penultimateToLast.squaredLength();
             if (penultimateToLastLengthSq <= 1e-6)
                 return;
@@ -200,14 +200,14 @@ namespace Maze
             lastKeyframe.position = worldPosition;
 
             F32 penultimateToLastLength = sqrt(penultimateToLastLengthSq);
-            Vec3DF direction = penultimateToLast / penultimateToLastLength;
+            Vec3F direction = penultimateToLast / penultimateToLastLength;
             lastKeyframe.direction = direction;
 
             if (edgesCount > 2)
             {
                 TrailEdge& beforePenultimateKeyframe = m_edges[edgesCount - 3];
 
-                Vec3DF prevDirection = (penultimateKeyframe.position - beforePenultimateKeyframe.position).normalizedCopy();
+                Vec3F prevDirection = (penultimateKeyframe.position - beforePenultimateKeyframe.position).normalizedCopy();
                 F32 dotProduct = prevDirection.dotProduct(direction);
                 F32 crossProductZ = prevDirection.crossProduct(direction).z;
 
@@ -218,9 +218,9 @@ namespace Maze
                 else
                 {
                     if (crossProductZ > 0.0)
-                        penultimateKeyframe.direction = ((prevDirection.crossProduct(Vec3DF::c_negativeUnitZ) + prevDirection) * 0.5f).normalizedCopy();
+                        penultimateKeyframe.direction = ((prevDirection.crossProduct(Vec3F::c_negativeUnitZ) + prevDirection) * 0.5f).normalizedCopy();
                     else
-                        penultimateKeyframe.direction = ((prevDirection.crossProduct(Vec3DF::c_unitZ) + prevDirection) * 0.5f).normalizedCopy();
+                        penultimateKeyframe.direction = ((prevDirection.crossProduct(Vec3F::c_unitZ) + prevDirection) * 0.5f).normalizedCopy();
                 }
             }
             else
@@ -271,16 +271,16 @@ namespace Maze
         U32 vertex = 0;
         U32 index = 0;
 
-        Vec3DF direction;
-        Vec3DF perpendicular;
-        Vec3DF vertexA;
-        Vec3DF vertexB;
+        Vec3F direction;
+        Vec3F perpendicular;
+        Vec3F vertexA;
+        Vec3F vertexB;
         F32 width;
         F32 halfWidth;
         F32 currentLength = 0.0f;
 
-        Vec3DF currentPosition = Math::Lerp(m_edges[0].position, m_edges[1].position, p);
-        Vec3DF nextPosition;
+        Vec3F currentPosition = Math::Lerp(m_edges[0].position, m_edges[1].position, p);
+        Vec3F nextPosition;
         for (S32 i = 0; i < (S32)(quadsCount); ++i)
         {
             F32 progress = currentLength / trailLength;
@@ -290,19 +290,19 @@ namespace Maze
             nextPosition = m_edges[i + 1].position;
             direction = m_edges[i].direction;
             
-            perpendicular = direction.crossProduct(Vec3DF::c_unitZ);
+            perpendicular = direction.crossProduct(Vec3F::c_unitZ);
             vertexA = currentPosition + perpendicular * halfWidth;
             vertexB = currentPosition - perpendicular * halfWidth;
 
-            Vec4DF color = m_color.evaluate(progress);
+            Vec4F color = m_color.evaluate(progress);
 
             m_vertices[vertex] = vertexA;
-            m_uvs[vertex] = Vec2DF(progress, 0.0f);
+            m_uvs[vertex] = Vec2F(progress, 0.0f);
             m_colors[vertex] = color;
             ++vertex;
 
             m_vertices[vertex] = vertexB;
-            m_uvs[vertex] = Vec2DF(progress, 1.0f);
+            m_uvs[vertex] = Vec2F(progress, 1.0f);
             m_colors[vertex] = color;
             ++vertex;
 
@@ -318,19 +318,19 @@ namespace Maze
         width = getTrailWidth(1.0f);
         halfWidth = width * 0.5f;
         direction = (m_edges.back().position - m_edges[m_edges.size() - 2].position).normalizedCopy();
-        perpendicular = direction.crossProduct(Vec3DF::c_unitZ);
+        perpendicular = direction.crossProduct(Vec3F::c_unitZ);
         vertexA = currentPosition + perpendicular * halfWidth;
         vertexB = currentPosition - perpendicular * halfWidth;
 
-        Vec4DF color = m_color.evaluate(1.0f);
+        Vec4F color = m_color.evaluate(1.0f);
 
         m_vertices[vertex] = vertexA;
-        m_uvs[vertex] = Vec2DF(1.0f, 0.0f);
+        m_uvs[vertex] = Vec2F(1.0f, 0.0f);
         m_colors[vertex] = color;
         ++vertex;
 
         m_vertices[vertex] = vertexB;
-        m_uvs[vertex] = Vec2DF(1.0f, 1.0f);
+        m_uvs[vertex] = Vec2F(1.0f, 1.0f);
         m_colors[vertex] = color;
         ++vertex;
 
@@ -387,7 +387,7 @@ namespace Maze
     //////////////////////////////////////////
     void TrailRenderer3D::addEdge(
         F32 _time,
-        Vec3DF const& _position)
+        Vec3F const& _position)
     {
         TrailEdge trailEdge(
             _time,

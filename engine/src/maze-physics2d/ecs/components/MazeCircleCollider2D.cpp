@@ -39,7 +39,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(CircleCollider2D, Collider2D,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2DF, offset, Vec2DF::c_zero, getOffset, setOffset),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F, offset, Vec2F::c_zero, getOffset, setOffset),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, radius, 0.5f, getRadius, setRadius));
 
     //////////////////////////////////////////
@@ -48,7 +48,7 @@ namespace Maze
 
     //////////////////////////////////////////
     CircleCollider2D::CircleCollider2D()
-        : m_offset(Vec2DF::c_zero)
+        : m_offset(Vec2F::c_zero)
         , m_radius(0.5f)
     {
 

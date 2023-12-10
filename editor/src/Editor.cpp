@@ -204,7 +204,7 @@ namespace Maze
         if (!m_editorConfigManager)
             return false;
 
-        m_physics2DManager->getWorld()->setGravity(Vec2DF::c_zero);
+        m_physics2DManager->getWorld()->setGravity(Vec2F32::c_zero);
 
         processReadyToCreateWindowAndGoToSplash();
 
@@ -262,7 +262,7 @@ namespace Maze
     {
         RenderWindowParams params;
         params.windowParams = WindowParams::Create();
-        params.windowParams->clientSize = Vec2DU(1280, 800);
+        params.windowParams->clientSize = Vec2U32(1280, 800);
         params.windowParams->title = "Editor";
         params.windowParams->flags |= WindowStyleFlags::MinimizeButton;
         params.windowParams->flags |= WindowStyleFlags::MaximizeButton;

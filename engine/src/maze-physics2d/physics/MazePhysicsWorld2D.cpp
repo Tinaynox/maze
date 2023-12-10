@@ -52,7 +52,7 @@ namespace Maze
         , m_worldStep(1.0f / 50.0f)
         , m_velocityIterations(6)
         , m_positionIterations(8)
-        , m_size(Vec2DF::c_zero)
+        , m_size(Vec2F::c_zero)
     {
         
     }
@@ -90,7 +90,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PhysicsWorld2D::setGravity(Vec2DF const& _gravityUnits)
+    void PhysicsWorld2D::setGravity(Vec2F const& _gravityUnits)
     {
         if (!m_world)
             return;
@@ -191,7 +191,7 @@ namespace Maze
     //////////////////////////////////////////
     void PhysicsWorld2D::clear()
     {
-        m_size = Vec2DF::c_zero;
+        m_size = Vec2F::c_zero;
 
         destroyDefaultBodies();
 
@@ -240,7 +240,7 @@ namespace Maze
         m_defaultBodies.innerWalls = m_world->CreateBody(&bd);
 
         b2EdgeShape shape;
-        Vec2DF sizeMeters = m_size / m_unitsPerMeter;
+        Vec2F sizeMeters = m_size / m_unitsPerMeter;
 
         shape.SetTwoSided(b2Vec2(0.0f, 0.0f), b2Vec2(sizeMeters.x, 0.0f));
         b2Fixture* topWall = m_defaultBodies.innerWalls->CreateFixture(&shape, 0.0f);

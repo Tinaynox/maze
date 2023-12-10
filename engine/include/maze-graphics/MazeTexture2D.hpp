@@ -99,26 +99,26 @@ namespace Maze
         void loadFromAssetFile(String const& _assetFileName);
 
         //////////////////////////////////////////
-        bool loadEmpty(Vec2DU const& _size, PixelFormat::Enum _pixelFormat);
+        bool loadEmpty(Vec2U const& _size, PixelFormat::Enum _pixelFormat);
 
         //////////////////////////////////////////
         inline bool loadEmpty(U32 _w, U32 _h, PixelFormat::Enum _pixelFormat)
         {
-            return loadEmpty(Vec2DU{_w, _h}, _pixelFormat);
+            return loadEmpty(Vec2U{_w, _h}, _pixelFormat);
         }
 
         //////////////////////////////////////////
         bool loadFromBuffer(
             ByteBufferPtr const& _buffer,
             PixelFormat::Enum _bufferPixelFormat,
-            Vec2DU const& _size,
+            Vec2U const& _size,
             PixelFormat::Enum _pixelFormat);
 
         //////////////////////////////////////////
         bool loadFromBuffers(
             Vector<ByteBufferPtr> const& _buffers,
             PixelFormat::Enum _bufferPixelFormat,
-            Vec2DU const& _size,
+            Vec2U const& _size,
             PixelFormat::Enum _pixelFormat);
 
 
@@ -186,7 +186,7 @@ namespace Maze
         
 
         //////////////////////////////////////////
-        inline Vec2DS const& getSize() const { return m_size; }
+        inline Vec2S const& getSize() const { return m_size; }
 
         //////////////////////////////////////////
         inline S32 getWidth() const { return m_size.x; }
@@ -202,7 +202,7 @@ namespace Maze
         //////////////////////////////////////////
         virtual void saveToFileAsTGA(
             String const& _fileName,
-            Vec2DU _size = Vec2DU::c_zero,
+            Vec2U _size = Vec2U::c_zero,
             bool _resetAlpha = false) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
@@ -232,7 +232,7 @@ namespace Maze
         virtual bool init(RenderSystem* _renderSystem) MAZE_OVERRIDE;
     
     protected:
-        Vec2DS m_size;
+        Vec2S m_size;
 
         TextureFilter m_magFilter;
         TextureFilter m_minFilter;

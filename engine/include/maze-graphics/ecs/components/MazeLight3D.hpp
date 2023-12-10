@@ -100,13 +100,13 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline void setColor(Vec3DF const& _value)
+        inline void setColor(Vec3F const& _value)
         {
             setColor(_value.x, _value.y, _value.z);
         }
 
         //////////////////////////////////////////
-        inline void setColor(Vec4DF const& _value)
+        inline void setColor(Vec4F const& _value)
         {
             setColor(_value.x, _value.y, _value.z, _value.w);
         }

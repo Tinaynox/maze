@@ -26,11 +26,11 @@
 //////////////////////////////////////////
 #include "SceneExample.hpp"
 #include "maze-core/MazeTypes.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
+#include "maze-core/math/MazeVec3.hpp"
 #include "maze-core/math/MazeMath.hpp"
-#include "maze-core/math/MazeMat3D.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeMat3F32.hpp"
+#include "maze-core/math/MazeMat4F32.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
 #include "maze-core/system/MazeThread.hpp"
@@ -216,7 +216,7 @@ void OnInit()
     Maze::RenderWindowParams params;
     params.windowParams = Maze::WindowParams::Create();
     params.windowParams->title = "RenderWindow0";
-    params.windowParams->clientSize = Maze::Vec2DU(640, 480);
+    params.windowParams->clientSize = Maze::Vec2U32(640, 480);
     params.windowParams->flags |= Maze::WindowStyleFlags::MinimizeButton;
     params.windowParams->flags |= Maze::WindowStyleFlags::MaximizeButton;
     params.windowParams->flags |= Maze::WindowStyleFlags::Resizable;

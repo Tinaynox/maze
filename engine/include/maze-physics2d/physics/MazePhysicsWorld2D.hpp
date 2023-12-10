@@ -33,7 +33,7 @@
 #include "maze-physics2d/MazePhysics2DHeader.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
 #include "maze-core/ecs/MazeComponentSystem.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
@@ -61,7 +61,7 @@ namespace Maze
         F32 worldStep = 1.0f / 50.0f;
         S32 velocityIterations = 12;
         S32 positionIterations = 16;
-        Vec2DF gravityUnits = Vec2DF(0.0f, -3.8f);
+        Vec2F gravityUnits = Vec2F(0.0f, -3.8f);
     };
 
 
@@ -112,7 +112,7 @@ namespace Maze
         inline b2World* getBox2DWorld() const { return m_world; }
 
         //////////////////////////////////////////
-        void setGravity(Vec2DF const& _gravityUnits);
+        void setGravity(Vec2F const& _gravityUnits);
 
 
         //////////////////////////////////////////
@@ -132,13 +132,13 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline Vec2DF convertMetersToUnits(Vec2DF const& _meters) const
+        inline Vec2F convertMetersToUnits(Vec2F const& _meters) const
         {
             return _meters * m_unitsPerMeter;
         }
 
         //////////////////////////////////////////
-        inline Vec2DF convertUnitsToMeters(Vec2DF const& _units) const
+        inline Vec2F convertUnitsToMeters(Vec2F const& _units) const
         {
             return _units / m_unitsPerMeter;
         }
@@ -160,13 +160,13 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline Vec2DF convertMetersToUnits(F32 _xWheelMeters, F32 _yWheelMeters)
+        inline Vec2F convertMetersToUnits(F32 _xWheelMeters, F32 _yWheelMeters)
         {
             return convertMetersToUnits({ _xWheelMeters, _yWheelMeters });
         }
 
         //////////////////////////////////////////
-        inline Vec2DF convertUnitsToMeters(F32 _xWheelUnits, F32 _yWheelUnits)
+        inline Vec2F convertUnitsToMeters(F32 _xWheelUnits, F32 _yWheelUnits)
         {
             return convertUnitsToMeters({ _xWheelUnits, _yWheelUnits });
         }
@@ -239,7 +239,7 @@ namespace Maze
         S32 m_velocityIterations;
         S32 m_positionIterations;
 
-        Vec2DF m_size;
+        Vec2F m_size;
 
         PhysicsWorld2DDefaultBodies m_defaultBodies;
     };

@@ -33,7 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/math/MazeMath.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
+#include "maze-core/math/MazeVec3.hpp"
 #include "maze-core/math/MazeRay.hpp"
 #include <ostream>
 
@@ -77,7 +77,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        static inline F32 Noise(Vec2DF const& _coord)
+        static inline F32 Noise(Vec2F const& _coord)
         {
             return Noise(_coord.x, _coord.y);
         }
@@ -108,7 +108,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        static inline F32 Noise(Vec3DF const& _coord)
+        static inline F32 Noise(Vec3F const& _coord)
         {
             return Noise(_coord.x, _coord.y, _coord.z);
         }
@@ -132,7 +132,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        static inline F32 Fbm(Vec2DF _coord, S32 _octave)
+        static inline F32 Fbm(Vec2F _coord, S32 _octave)
         {
             F32 f = 0.0f;
             F32 w = 0.5f;
@@ -148,11 +148,11 @@ namespace Maze
         //////////////////////////////////////////
         static inline F32 Fbm(F32 _x, F32 _y, S32 _octave)
         {
-            return Fbm(Vec2DF(_x, _y), _octave);
+            return Fbm(Vec2F(_x, _y), _octave);
         }
 
         //////////////////////////////////////////
-        static inline F32 Fbm(Vec3DF _coord, S32 _octave)
+        static inline F32 Fbm(Vec3F _coord, S32 _octave)
         {
             F32 f = 0.0f;
             F32 w = 0.5f;
@@ -168,7 +168,7 @@ namespace Maze
         //////////////////////////////////////////
         static inline F32 Fbm(F32 _x, F32 _y, F32 _z, S32 _octave)
         {
-            return Fbm(Vec3DF(_x, _y, _z), _octave);
+            return Fbm(Vec3F(_x, _y, _z), _octave);
         }
 
     private:

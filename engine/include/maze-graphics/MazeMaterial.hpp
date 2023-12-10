@@ -40,8 +40,8 @@
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
-#include "maze-core/math/MazeMat3D.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeMat3.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/serialization/MazeXMLSerializable.hpp"
 #include "maze-core/utils/MazeSharedCopyable.hpp"
 #include "maze-core/MazeObject.hpp"
@@ -159,40 +159,40 @@ namespace Maze
         void setUniform(HashedCString _uniformName, TextureCubePtr const& _textureCube);
 
         //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Vec2DF const& _vector);
+        void setUniform(HashedCString _uniformName, Vec2F const& _vector);
 
         //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Vec3DF const& _vector);
+        void setUniform(HashedCString _uniformName, Vec3F const& _vector);
 
         //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Vec4DF const& _vector);
-
-
-        //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Vec2DS const& _vector);
-
-        //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Vec3DS const& _vector);
-
-        //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Vec4DS const& _vector);
+        void setUniform(HashedCString _uniformName, Vec4F const& _vector);
 
 
         //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Vec2DU const& _vector);
+        void setUniform(HashedCString _uniformName, Vec2S const& _vector);
 
         //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Vec3DU const& _vector);
+        void setUniform(HashedCString _uniformName, Vec3S const& _vector);
 
         //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Vec4DU const& _vector);
+        void setUniform(HashedCString _uniformName, Vec4S const& _vector);
 
 
         //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Mat3DF const& _matrix);
+        void setUniform(HashedCString _uniformName, Vec2U const& _vector);
 
         //////////////////////////////////////////
-        void setUniform(HashedCString _uniformName, Mat4DF const& _matrix);
+        void setUniform(HashedCString _uniformName, Vec3U const& _vector);
+
+        //////////////////////////////////////////
+        void setUniform(HashedCString _uniformName, Vec4U const& _vector);
+
+
+        //////////////////////////////////////////
+        void setUniform(HashedCString _uniformName, Mat3F const& _matrix);
+
+        //////////////////////////////////////////
+        void setUniform(HashedCString _uniformName, Mat4F const& _matrix);
 
         //////////////////////////////////////////
         void setUniform(HashedCString _uniformName, ColorF128 const& _color);

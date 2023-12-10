@@ -274,27 +274,27 @@ namespace Maze
         {
             m_curveRendererHolder = SpriteHelper::CreateSprite(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Frame01),
-                Vec2DF(400.0f, 218.0f),
-                Vec2DF(0.0f, -50.0f),
+                Vec2F(400.0f, 218.0f),
+                Vec2F(0.0f, -50.0f),
                 GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
                 m_canvas->getTransform(),
                 this,
-                Vec2DF(0.0f, 1.0f),
-                Vec2DF(0.0f, 1.0f));
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 1.0f));
             m_curveRendererHolder->setColor(bandColor);
 
             SpriteRenderer2DPtr chessRenderer = SpriteHelper::CreateSprite(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::TransparentChess),
-                m_curveRendererHolder->getTransform()->getSize() - Vec2DF(2.0f, 2.0f),
-                Vec2DF(1.0f, 1.0f),
+                m_curveRendererHolder->getTransform()->getSize() - Vec2F(2.0f, 2.0f),
+                Vec2F(1.0f, 1.0f),
                 GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
                 m_curveRendererHolder->getTransform(),
                 this,
-                Vec2DF(0.0f, 0.0f),
-                Vec2DF(0.0f, 0.0f));
+                Vec2F(0.0f, 0.0f),
+                Vec2F(0.0f, 0.0f));
             chessRenderer->getMaterial()->setUniform(
                 "u_baseMapST",
-                Vec4DF(
+                Vec4F(
                     chessRenderer->getTransform()->getWidth() / 8.0f,
                     chessRenderer->getTransform()->getHeight() / 8.0f,
                     0.0f,
@@ -302,18 +302,18 @@ namespace Maze
 
             m_curveRenderer = SpriteHelper::CreateSprite(
                 m_curveSprite,
-                m_curveRendererHolder->getTransform()->getSize() - Vec2DF(2.0f, 2.0f),
-                Vec2DF(1.0f, 1.0f),
+                m_curveRendererHolder->getTransform()->getSize() - Vec2F(2.0f, 2.0f),
+                Vec2F(1.0f, 1.0f),
                 GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
                 m_curveRendererHolder->getTransform(),
                 this,
-                Vec2DF(0.0f, 0.0f),
-                Vec2DF(0.0f, 0.0f));
+                Vec2F(0.0f, 0.0f),
+                Vec2F(0.0f, 0.0f));
 
             m_curveClickButton = UIHelper::CreateDefaultClickButton(
                 nullptr,
-                Vec2DF(m_curveRenderer->getTransform()->getWidth() + 8, m_curveRenderer->getTransform()->getHeight() + 30),
-                Vec2DF::c_zero,
+                Vec2F(m_curveRenderer->getTransform()->getWidth() + 8, m_curveRenderer->getTransform()->getHeight() + 30),
+                Vec2F::c_zero,
                 m_curveRenderer->getTransform(),
                 this);
             m_curveClickButton->eventClick.subscribe(this, &SceneCurveEditor::notifyCurveClickButtonClick);
@@ -327,12 +327,12 @@ namespace Maze
 
             m_curveScalarEdit = SystemUIHelper::CreateDefaultEditBox(
                 StringHelper::F32ToStringFormatted(curve.getScalar(), 4).c_str(),
-                Vec2DF(30, 12),
-                Vec2DF(40 - 3, -25),
+                Vec2F(30, 12),
+                Vec2F(40 - 3, -25),
                 m_curveRenderer->getTransform(),
                 this,
-                Vec2DF(0.0f, 1.0f),
-                Vec2DF(1.0f, 0.5f));
+                Vec2F(0.0f, 1.0f),
+                Vec2F(1.0f, 0.5f));
             m_curveScalarEdit->setHorizontalAlignment(HorizontalAlignment2D::Right);
             m_curveScalarEdit->eventTextInput.subscribe(this, &SceneCurveEditor::notifyCurveScalarEditTextInput);
         }
@@ -342,12 +342,12 @@ namespace Maze
             HorizontalLayout2DPtr rowLayout = UIHelper::CreateHorizontalLayout(
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Top,
-                Vec2DF(336.0f, 18.0f),
-                Vec2DF(12.0f, -10.0f),
+                Vec2F(336.0f, 18.0f),
+                Vec2F(12.0f, -10.0f),
                 m_canvas->getTransform(),
                 this,
-                Vec2DF(0.0f, 1.0f),
-                Vec2DF(0.0f, 1.0f));
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 1.0f));
             rowLayout->setExpand(false);
             rowLayout->setAutoWidth(false);
             rowLayout->setSpacing(5.0f);
@@ -355,12 +355,12 @@ namespace Maze
             HorizontalLayout2DPtr row2Layout = UIHelper::CreateHorizontalLayout(
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Top,
-                Vec2DF(336.0f, 18.0f),
-                Vec2DF(12.0f, -28.0f),
+                Vec2F(336.0f, 18.0f),
+                Vec2F(12.0f, -28.0f),
                 m_canvas->getTransform(),
                 this,
-                Vec2DF(0.0f, 1.0f),
-                Vec2DF(0.0f, 1.0f));
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 1.0f));
             row2Layout->setExpand(false);
             row2Layout->setAutoWidth(false);
             row2Layout->setSpacing(5.0f);
@@ -371,14 +371,14 @@ namespace Maze
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 80.0f, 18.0f },
-                Vec2DF::c_zero,
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
             label->setColor(ColorU32::c_black);
 
             m_modeDropdown = SystemUIHelper::CreateDefaultDropdown(
-                Vec2DF(188.0f, 18.0f),
-                Vec2DF(0.0f, 0.0f),
+                Vec2F(188.0f, 18.0f),
+                Vec2F(0.0f, 0.0f),
                 rowLayout->getTransform(),
                 this);
             m_modeDropdown->eventValueChanged.subscribe(this, &SceneCurveEditor::notifyModeChanged);
@@ -396,14 +396,14 @@ namespace Maze
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 80.0f, 18.0f },
-                Vec2DF::c_zero,
+                Vec2F::c_zero,
                 row2Layout->getTransform(),
                 this);
             label2->setColor(ColorU32::c_black);
 
             m_minMaxModeDropdown = SystemUIHelper::CreateDefaultDropdown(
-                Vec2DF(188.0f, 18.0f),
-                Vec2DF(0.0f, 0.0f),
+                Vec2F(188.0f, 18.0f),
+                Vec2F(0.0f, 0.0f),
                 row2Layout->getTransform(),
                 this);
             m_minMaxModeDropdown->eventValueChanged.subscribe(this, &SceneCurveEditor::notifyMinMaxModeChanged);
@@ -421,8 +421,8 @@ namespace Maze
                 { -32.0f, -12.0f },
                 m_canvas->getTransform(),
                 this,
-                Vec2DF(1.0f, 1.0f),
-                Vec2DF(1.0f, 1.0f));
+                Vec2F(1.0f, 1.0f),
+                Vec2F(1.0f, 1.0f));
             m_copyButton->eventClick.subscribe(
                 [](Button2D* _button, CursorInputEvent const& _event)
             {
@@ -436,8 +436,8 @@ namespace Maze
                 { -12.0f, -12.0f },
                 m_canvas->getTransform(),
                 this,
-                Vec2DF(1.0f, 1.0f),
-                Vec2DF(1.0f, 1.0f));
+                Vec2F(1.0f, 1.0f),
+                Vec2F(1.0f, 1.0f));
             m_pasteButton->eventClick.subscribe(
                 [](Button2D* _button, CursorInputEvent const& _event)
             {
@@ -454,8 +454,8 @@ namespace Maze
                 { -72.0f, -12.0f },
                 m_canvas->getTransform(),
                 this,
-                Vec2DF(1.0f, 1.0f),
-                Vec2DF(1.0f, 1.0f));
+                Vec2F(1.0f, 1.0f),
+                Vec2F(1.0f, 1.0f));
             m_copyXMLButton->eventClick.subscribe(
                 [](Button2D* _button, CursorInputEvent const& _event)
             {
@@ -471,8 +471,8 @@ namespace Maze
                 { -52.0f, -12.0f },
                 m_canvas->getTransform(),
                 this,
-                Vec2DF(1.0f, 1.0f),
-                Vec2DF(1.0f, 1.0f));
+                Vec2F(1.0f, 1.0f),
+                Vec2F(1.0f, 1.0f));
             m_pasteXMLButton->eventClick.subscribe(
                 [](Button2D* _button, CursorInputEvent const& _event)
             {
@@ -500,12 +500,12 @@ namespace Maze
                 HorizontalLayout2DPtr rowLayout = UIHelper::CreateHorizontalLayout(
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
-                    Vec2DF(135.0f, 18.0f),
-                    Vec2DF(20.0f, -285.0f),
+                    Vec2F(135.0f, 18.0f),
+                    Vec2F(20.0f, -285.0f),
                     keyHolderTransform,
                     this,
-                    Vec2DF(0.0f, 1.0f),
-                    Vec2DF(0.0f, 1.0f));
+                    Vec2F(0.0f, 1.0f),
+                    Vec2F(0.0f, 1.0f));
                 rowLayout->setExpand(true);
                 rowLayout->setAutoWidth(false);
 
@@ -515,15 +515,15 @@ namespace Maze
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
                     { 8.0f * 8.0f, 18.0f },
-                    Vec2DF::c_zero,
+                    Vec2F::c_zero,
                     rowLayout->getTransform(),
                     this);
                 label->setColor(ColorU32::c_black);
 
                 m_valueEdit = SystemUIHelper::CreateDefaultEditBox(
                     "51.5",
-                    Vec2DF(80.0f, 18.0f),
-                    Vec2DF::c_zero,
+                    Vec2F(80.0f, 18.0f),
+                    Vec2F::c_zero,
                     rowLayout->getTransform(),
                     this);
                 m_valueEdit->eventTextInput.subscribe(this, &SceneCurveEditor::notifyValueEditTextInput);
@@ -534,12 +534,12 @@ namespace Maze
                 HorizontalLayout2DPtr rowLayout = UIHelper::CreateHorizontalLayout(
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
-                    Vec2DF(135.0f, 18.0f),
-                    Vec2DF(200.0f, -285.0f),
+                    Vec2F(135.0f, 18.0f),
+                    Vec2F(200.0f, -285.0f),
                     keyHolderTransform,
                     this,
-                    Vec2DF(0.0f, 1.0f),
-                    Vec2DF(0.0f, 1.0f));
+                    Vec2F(0.0f, 1.0f),
+                    Vec2F(0.0f, 1.0f));
                 rowLayout->setExpand(true);
                 rowLayout->setAutoWidth(false);
 
@@ -549,15 +549,15 @@ namespace Maze
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
                     { 8.0f * 8.0f, 18.0f },
-                    Vec2DF::c_zero,
+                    Vec2F::c_zero,
                     rowLayout->getTransform(),
                     this);
                 label->setColor(ColorU32::c_black);
 
                 m_locationEdit = SystemUIHelper::CreateDefaultEditBox(
                     "51.5",
-                    Vec2DF(45.0f, 18.0f),
-                    Vec2DF::c_zero,
+                    Vec2F(45.0f, 18.0f),
+                    Vec2F::c_zero,
                     rowLayout->getTransform(),
                     this);
                 m_locationEdit->eventTextInput.subscribe(this, &SceneCurveEditor::notifyLocationEditTextInput);
@@ -568,7 +568,7 @@ namespace Maze
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
                     { 8.0f, 18.0f },
-                    Vec2DF::c_zero,
+                    Vec2F::c_zero,
                     rowLayout->getTransform(),
                     this);
                 label2->setColor(ColorU32::c_black);
@@ -586,12 +586,12 @@ namespace Maze
                 HorizontalLayout2DPtr rowLayout = UIHelper::CreateHorizontalLayout(
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
-                    Vec2DF(135.0f, 18.0f),
-                    Vec2DF(20.0f, -305.0f),
+                    Vec2F(135.0f, 18.0f),
+                    Vec2F(20.0f, -305.0f),
                     tangentsHolderTransform,
                     this,
-                    Vec2DF(0.0f, 1.0f),
-                    Vec2DF(0.0f, 1.0f));
+                    Vec2F(0.0f, 1.0f),
+                    Vec2F(0.0f, 1.0f));
                 rowLayout->setExpand(true);
                 rowLayout->setAutoWidth(false);
 
@@ -601,15 +601,15 @@ namespace Maze
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
                     { 8.0f * 8.0f, 18.0f },
-                    Vec2DF::c_zero,
+                    Vec2F::c_zero,
                     rowLayout->getTransform(),
                     this);
                 label->setColor(ColorU32::c_black);
 
                 m_inTangentEdit = SystemUIHelper::CreateDefaultEditBox(
                     "51.5",
-                    Vec2DF(80.0f, 18.0f),
-                    Vec2DF::c_zero,
+                    Vec2F(80.0f, 18.0f),
+                    Vec2F::c_zero,
                     rowLayout->getTransform(),
                     this);
                 m_inTangentEdit->eventTextInput.subscribe(this, &SceneCurveEditor::notifyInTangentEditTextInput);
@@ -620,12 +620,12 @@ namespace Maze
                 HorizontalLayout2DPtr rowLayout = UIHelper::CreateHorizontalLayout(
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
-                    Vec2DF(135.0f, 18.0f),
-                    Vec2DF(200.0f, -305.0f),
+                    Vec2F(135.0f, 18.0f),
+                    Vec2F(200.0f, -305.0f),
                     tangentsHolderTransform,
                     this,
-                    Vec2DF(0.0f, 1.0f),
-                    Vec2DF(0.0f, 1.0f));
+                    Vec2F(0.0f, 1.0f),
+                    Vec2F(0.0f, 1.0f));
                 rowLayout->setExpand(true);
                 rowLayout->setAutoWidth(false);
 
@@ -635,15 +635,15 @@ namespace Maze
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
                     { 8.0f * 8.0f, 18.0f },
-                    Vec2DF::c_zero,
+                    Vec2F::c_zero,
                     rowLayout->getTransform(),
                     this);
                 label->setColor(ColorU32::c_black);
 
                 m_outTangentEdit = SystemUIHelper::CreateDefaultEditBox(
                     "51.5",
-                    Vec2DF(80.0f, 18.0f),
-                    Vec2DF::c_zero,
+                    Vec2F(80.0f, 18.0f),
+                    Vec2F::c_zero,
                     rowLayout->getTransform(),
                     this);
                 m_outTangentEdit->eventTextInput.subscribe(this, &SceneCurveEditor::notifyOutTangentEditTextInput);
@@ -697,7 +697,7 @@ namespace Maze
         F32 height = m_curveRenderer->getTransform()->getSize().y - c_bottomOffset - c_topOffset;
 
         F32 heightScalar = getCurveHeightScalar();
-        Vec2DF origin = getCurveOrigin();
+        Vec2F origin = getCurveOrigin();
 
 
         F32 cellSize = width / 20.0f;
@@ -722,7 +722,7 @@ namespace Maze
 
             // X
             m_curvePixelSheet.drawLine(
-                (Vec2DS)origin, (Vec2DS)origin + Vec2DS((S32)width, 0),
+                (Vec2S)origin, (Vec2S)origin + Vec2S((S32)width, 0),
                 mainLineColor);
 
             // Vertical grid
@@ -890,7 +890,7 @@ namespace Maze
                 F32 x = keyframe.time;
                 F32 y = keyframe.value;
 
-                Vec2DF point(
+                Vec2F point(
                     origin.x + x * width,
                     origin.y + y * heightScalar);
 
@@ -906,13 +906,13 @@ namespace Maze
                     if (i > 0)
                     {
                         /*
-                        Vec2DF inTangentDirection(
+                        Vec2F inTangentDirection(
                             (-1.0f) * width,
                             (tangentIn(x - 1.0f) - y) * heightScalar);
                         inTangentDirection.normalize();
-                        Vec2DF inTangentPoint = point + inTangentDirection * cellSize * 2;
+                        Vec2F inTangentPoint = point + inTangentDirection * cellSize * 2;
                         */
-                        Vec2DF inTangentPoint = getInTangentPoint(i);
+                        Vec2F inTangentPoint = getInTangentPoint(i);
 
                         if (!inTangentPoint.isNaN())
                         {
@@ -922,7 +922,7 @@ namespace Maze
                                 ColorU32(147, 147, 147));
 
                             m_curvePixelSheet.drawFilledCircle(
-                                (Vec2DS)inTangentPoint,
+                                (Vec2S)inTangentPoint,
                                 2,
                                 ColorU32(156, 156, 156));
 
@@ -941,7 +941,7 @@ namespace Maze
                                 circleColor = ColorU32(30, 30, 30);
                             }
                             m_curvePixelSheet.drawCircle(
-                                (Vec2DS)inTangentPoint,
+                                (Vec2S)inTangentPoint,
                                 2,
                                 circleColor);
 
@@ -955,7 +955,7 @@ namespace Maze
                                 filledCircleColor = ColorU32(50, 50, 50);
                             }
                             m_curvePixelSheet.drawFilledCircle(
-                                (Vec2DS)inTangentPoint,
+                                (Vec2S)inTangentPoint,
                                 1,
                                 filledCircleColor);
                         }
@@ -963,7 +963,7 @@ namespace Maze
 
                     if (i < (S32)curve.getKeys().size() - 1)
                     {
-                        Vec2DF outTangentPoint = getOutTangentPoint(i);
+                        Vec2F outTangentPoint = getOutTangentPoint(i);
 
                         if (!outTangentPoint.isNaN())
                         {
@@ -973,7 +973,7 @@ namespace Maze
                                 ColorU32(147, 147, 147));
 
                             m_curvePixelSheet.drawFilledCircle(
-                                (Vec2DS)outTangentPoint,
+                                (Vec2S)outTangentPoint,
                                 2,
                                 ColorU32(156, 156, 156));
 
@@ -991,7 +991,7 @@ namespace Maze
                                 circleColor = ColorU32(30, 30, 30);
                             }
                             m_curvePixelSheet.drawCircle(
-                                (Vec2DS)outTangentPoint,
+                                (Vec2S)outTangentPoint,
                                 2,
                                 circleColor);
 
@@ -1005,7 +1005,7 @@ namespace Maze
                                 filledCircleColor = ColorU32(50, 50, 50);
                             }
                             m_curvePixelSheet.drawFilledCircle(
-                                (Vec2DS)outTangentPoint,
+                                (Vec2S)outTangentPoint,
                                 1,
                                 filledCircleColor);
                         }
@@ -1014,7 +1014,7 @@ namespace Maze
 
 
                 m_curvePixelSheet.drawFilledCircle(
-                    (Vec2DS)point,
+                    (Vec2S)point,
                     3,
                     ColorU32::c_green);
 
@@ -1034,7 +1034,7 @@ namespace Maze
                 }
 
                 m_curvePixelSheet.drawCircle(
-                    (Vec2DS)point,
+                    (Vec2S)point,
                     3,
                     circleColor);
 
@@ -1054,7 +1054,7 @@ namespace Maze
                 }
 
                 m_curvePixelSheet.drawFilledCircle(
-                    (Vec2DS)point,
+                    (Vec2S)point,
                     1,
                     filledCircleColor);
             }
@@ -1085,13 +1085,13 @@ namespace Maze
                     F32 width = m_curveRenderer->getTransform()->getSize().x - c_leftOffset - c_rightOffset;
 
                     F32 heightScalar = getCurveHeightScalar();
-                    Vec2DF origin = getCurveOrigin();
+                    Vec2F origin = getCurveOrigin();
 
                     AnimationCurve curve = AnimationCurveManager::GetInstancePtr()->getCurve();
 
-                    Vec2DF const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
+                    Vec2F const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
 
-                    Vec2DF cursorPositionCurveSpace;
+                    Vec2F cursorPositionCurveSpace;
                     m_curveRenderer->getTransform()->getWorldTransform().inversedAffineCopy().transformAffine(
                         cursorPosition,
                         cursorPositionCurveSpace);
@@ -1132,7 +1132,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneCurveEditor::notifyCurveClickButtonCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _event)
+    void SceneCurveEditor::notifyCurveClickButtonCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _event)
     {
         if (_event.button == 0)
         {
@@ -1175,11 +1175,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec2DF SceneCurveEditor::getCurveOrigin()
+    Vec2F SceneCurveEditor::getCurveOrigin()
     {
         AnimationCurve const& curve = AnimationCurveManager::GetInstancePtr()->getCurve();
 
-        Vec2DF origin;
+        Vec2F origin;
 
         switch (curve.getMinMaxMode())
         {
@@ -1199,7 +1199,7 @@ namespace Maze
             }
             default:
             {
-                return Vec2DF::c_zero;
+                return Vec2F::c_zero;
             }
         }
 
@@ -1249,13 +1249,13 @@ namespace Maze
         F32 width = m_curveRenderer->getTransform()->getSize().x - c_leftOffset - c_rightOffset;
 
         F32 heightScalar = getCurveHeightScalar();
-        Vec2DF origin = getCurveOrigin();
+        Vec2F origin = getCurveOrigin();
 
         AnimationCurve const& curve = AnimationCurveManager::GetInstancePtr()->getCurve();
 
-        Vec2DF const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
+        Vec2F const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
 
-        Vec2DF cursorPositionCurveSpace;
+        Vec2F cursorPositionCurveSpace;
         m_curveRenderer->getTransform()->getWorldTransform().inversedAffineCopy().transformAffine(
             cursorPosition,
             cursorPositionCurveSpace);
@@ -1268,7 +1268,7 @@ namespace Maze
             {
                 if (m_keyIndex > 0)
                 {
-                    Vec2DF inTangentPoint = getInTangentPoint(m_keyIndex);
+                    Vec2F inTangentPoint = getInTangentPoint(m_keyIndex);
                     F32 squaredDistance = inTangentPoint.squaredDistance(cursorPositionCurveSpace);
 
                     if (squaredDistance < 3.0f * 3.0f)
@@ -1280,7 +1280,7 @@ namespace Maze
 
                 if (m_keyIndex < (S32)curve.getKeys().size() - 1)
                 {
-                    Vec2DF outTangentPoint = getOutTangentPoint(m_keyIndex);
+                    Vec2F outTangentPoint = getOutTangentPoint(m_keyIndex);
                     F32 squaredDistance = outTangentPoint.squaredDistance(cursorPositionCurveSpace);
 
                     if (squaredDistance < 3.0f * 3.0f)
@@ -1300,7 +1300,7 @@ namespace Maze
             F32 x = keyframe.time;
             F32 y = keyframe.value;
 
-            Vec2DF point(
+            Vec2F point(
                 origin.x + x * width,
                 origin.y + y * heightScalar);
 
@@ -1381,14 +1381,14 @@ namespace Maze
         F32 width = m_curveRenderer->getTransform()->getSize().x - c_leftOffset - c_rightOffset;
 
         F32 heightScalar = getCurveHeightScalar();
-        Vec2DF origin = getCurveOrigin();
+        Vec2F origin = getCurveOrigin();
 
         AnimationCurve curve = AnimationCurveManager::GetInstancePtr()->getCurve();
 
-        Vec2DF const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
+        Vec2F const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
         
 
-        Vec2DF cursorPositionCurveSpace;
+        Vec2F cursorPositionCurveSpace;
         m_curveRenderer->getTransform()->getWorldTransform().inversedAffineCopy().transformAffine(
             cursorPosition,
             cursorPositionCurveSpace);
@@ -1433,8 +1433,8 @@ namespace Maze
         else
         if (m_draggingElement == CurveElement::InTangent)
         {
-            Vec2DF point = getKeyPoint(m_keyIndex);
-            Vec2DF toPoint = cursorPositionCurveSpace - point;
+            Vec2F point = getKeyPoint(m_keyIndex);
+            Vec2F toPoint = cursorPositionCurveSpace - point;
             
             if (toPoint.x > -c_tangentEpsilon)
                 toPoint.x = -c_tangentEpsilon;
@@ -1451,8 +1451,8 @@ namespace Maze
         else
         if (m_draggingElement == CurveElement::OutTangent)
         {
-            Vec2DF point = getKeyPoint(m_keyIndex);
-            Vec2DF toPoint = cursorPositionCurveSpace - point;
+            Vec2F point = getKeyPoint(m_keyIndex);
+            Vec2F toPoint = cursorPositionCurveSpace - point;
 
             if (toPoint.x < c_tangentEpsilon)
                 toPoint.x = c_tangentEpsilon;
@@ -1473,7 +1473,7 @@ namespace Maze
         m_draggingElement = _element;
         m_draggingDistance = 0.0f;
 
-        Vec2DF const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
+        Vec2F const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
 
         m_curveRenderer->getTransform()->getWorldTransform().inversedAffineCopy().transformAffine(
             cursorPosition,
@@ -1481,7 +1481,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec2DF SceneCurveEditor::getKeyPoint(Size _keyIndex)
+    Vec2F SceneCurveEditor::getKeyPoint(Size _keyIndex)
     {
         AnimationCurve const& curve = AnimationCurveManager::GetInstancePtr()->getCurve();
 
@@ -1494,9 +1494,9 @@ namespace Maze
 
         F32 width = m_curveRenderer->getTransform()->getSize().x - c_leftOffset - c_rightOffset;
         F32 heightScalar = getCurveHeightScalar();
-        Vec2DF origin = getCurveOrigin();
+        Vec2F origin = getCurveOrigin();
 
-        Vec2DF point(
+        Vec2F point(
             origin.x + x * width,
             origin.y + y * heightScalar);
 
@@ -1504,7 +1504,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec2DF SceneCurveEditor::getInTangentPoint(Size _keyIndex)
+    Vec2F SceneCurveEditor::getInTangentPoint(Size _keyIndex)
     {
         AnimationCurve const& curve = AnimationCurveManager::GetInstancePtr()->getCurve();
 
@@ -1517,25 +1517,25 @@ namespace Maze
 
         F32 width = m_curveRenderer->getTransform()->getSize().x - c_leftOffset - c_rightOffset;
         F32 heightScalar = getCurveHeightScalar();
-        Vec2DF origin = getCurveOrigin();
+        Vec2F origin = getCurveOrigin();
 
         F32 cellSize = width / 20.0f;
 
-        Vec2DF point(
+        Vec2F point(
             origin.x + x * width,
             origin.y + y * heightScalar);
 
-        Vec2DF inTangentDirection(
+        Vec2F inTangentDirection(
             (-1.0f) * width,
             (tangentIn(x - 1.0f) - y) * heightScalar);
         inTangentDirection.normalize();
-        Vec2DF inTangentPoint = point + inTangentDirection * cellSize * 2;
+        Vec2F inTangentPoint = point + inTangentDirection * cellSize * 2;
 
         return inTangentPoint;
     }
 
     //////////////////////////////////////////
-    Vec2DF SceneCurveEditor::getOutTangentPoint(Size _keyIndex)
+    Vec2F SceneCurveEditor::getOutTangentPoint(Size _keyIndex)
     {
         AnimationCurve const& curve = AnimationCurveManager::GetInstancePtr()->getCurve();
 
@@ -1548,19 +1548,19 @@ namespace Maze
 
         F32 width = m_curveRenderer->getTransform()->getSize().x - c_leftOffset - c_rightOffset;
         F32 heightScalar = getCurveHeightScalar();
-        Vec2DF origin = getCurveOrigin();
+        Vec2F origin = getCurveOrigin();
 
         F32 cellSize = width / 20.0f;
 
-        Vec2DF point(
+        Vec2F point(
             origin.x + x * width,
             origin.y + y * heightScalar);
 
-        Vec2DF outTangentDirection(
+        Vec2F outTangentDirection(
             (+1.0f) * width,
             (tangentOut(x + 1.0f) - y) * heightScalar);
         outTangentDirection.normalize();
-        Vec2DF outTangentPoint = point + outTangentDirection * cellSize * 2;
+        Vec2F outTangentPoint = point + outTangentDirection * cellSize * 2;
 
         return outTangentPoint;
     }
@@ -1568,7 +1568,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneCurveEditor::notifyCurveScalarEditTextInput(EditBox2D* _edit)
     {
-        if (StringHelper::IsF32Number(_edit->getText()))
+        if (StringHelper::IsFloatNumber(_edit->getText()))
             _edit->setText(StringHelper::F32ToStringFormatted(StringHelper::StringToF32(_edit->getText()), 4));
         else
             _edit->setText("0");
@@ -1620,7 +1620,7 @@ namespace Maze
         if (m_keyIndex < 0 && m_keyIndex >= (S32)curve.getKeys().size())
             return;
 
-        if (StringHelper::IsF32Number(_edit->getText()))
+        if (StringHelper::IsFloatNumber(_edit->getText()))
             _edit->setText(StringHelper::F32ToStringFormatted(Math::Clamp(StringHelper::StringToF32(_edit->getText()), 0.0f, 100.0f), 1));
         else
             _edit->setText("0");
@@ -1638,7 +1638,7 @@ namespace Maze
         if (m_keyIndex < 0 && m_keyIndex >= (S32)curve.getKeys().size())
             return;
 
-        if (!StringHelper::IsF32Number(_edit->getText()))
+        if (!StringHelper::IsFloatNumber(_edit->getText()))
             _edit->setText("0");
 
         F32 newTangent = StringHelper::StringToF32(_edit->getText());
@@ -1656,7 +1656,7 @@ namespace Maze
         if (m_keyIndex < 0 && m_keyIndex >= (S32)curve.getKeys().size())
             return;
 
-        if (!StringHelper::IsF32Number(_edit->getText()))
+        if (!StringHelper::IsFloatNumber(_edit->getText()))
             _edit->setText("0");
 
         F32 newTangent = StringHelper::StringToF32(_edit->getText());

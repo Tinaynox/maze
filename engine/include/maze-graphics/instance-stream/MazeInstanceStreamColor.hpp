@@ -37,9 +37,9 @@
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
-#include "maze-core/math/MazeVec4D.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeVec3.hpp"
+#include "maze-core/math/MazeVec4.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-graphics/instance-stream/MazeInstanceStream.hpp"
 #include "maze-graphics/MazeColorU32.hpp"
@@ -75,18 +75,18 @@ namespace Maze
         inline Size getDataSize() const { return m_data.size(); }
 
         //////////////////////////////////////////
-        inline void setData(Size _index, Vec4DF const& _value) { m_data[_index] = _value; }
+        inline void setData(Size _index, Vec4F const& _value) { m_data[_index] = _value; }
 
         //////////////////////////////////////////
         inline void setData(
             Size _index,
-            Vec4DF const* _value,
+            Vec4F const* _value,
             S32 _count)
         {
             memcpy(
                 m_data.begin() + _index,
                 _value,
-                sizeof(Vec4DF) * _count);
+                sizeof(Vec4F) * _count);
         }
 
     protected:
@@ -98,7 +98,7 @@ namespace Maze
         bool init();
 
     protected:
-        FastVector<Vec4DF> m_data;
+        FastVector<Vec4F> m_data;
         S32 m_dataOffset = 0;
     };
 

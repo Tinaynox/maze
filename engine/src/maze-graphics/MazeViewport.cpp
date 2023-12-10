@@ -39,8 +39,8 @@ namespace Maze
     //
     //////////////////////////////////////////
     Viewport::Viewport()
-        : m_transform(Mat3DF::c_identity)
-        , m_externalTransform(Mat3DF::c_identity)
+        : m_transform(Mat3F::c_identity)
+        , m_externalTransform(Mat3F::c_identity)
         , m_z(0)
         , m_orderOfArrival(0)
     {
@@ -100,17 +100,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Viewport::setExternalTransform(Mat3DF const& matrix)
+    void Viewport::setExternalTransform(Mat3F const& matrix)
     {
         m_externalTransform = matrix;
         updateAbsoluteRect();
     }
 
     //////////////////////////////////////////
-    Vec2DF Viewport::convertRenderTargetCoordsToViewportCoords(Vec2DF const& renderTargetCoords)
+    Vec2F Viewport::convertRenderTargetCoordsToViewportCoords(Vec2F const& renderTargetCoords)
     {
-        Vec2DF result = getTransform().inverseAffine().transformAffine(Vec2DF(renderTargetCoords.x, renderTargetCoords.y));
-        return Vec2DF(result.x, result.y);
+        Vec2F result = getTransform().inverseAffine().transformAffine(Vec2F(renderTargetCoords.x, renderTargetCoords.y));
+        return Vec2F(result.x, result.y);
     }
 
 
@@ -134,17 +134,17 @@ namespace Maze
         if (!renderTarget)
             return;
 
-        const Vec2DU& renderTargetSize = renderTarget->getRenderTargetSize();
+        const Vec2U& renderTargetSize = renderTarget->getRenderTargetSize();
 
-        m_absoluteRect.position = Vec2DU(
+        m_absoluteRect.position = Vec2U(
             (U32)Math::Floor(m_relativeRect.position.x * renderTargetSize.x),
             (U32)Math::Floor(m_relativeRect.position.y * renderTargetSize.y));
 
-        m_absoluteRect.size = Vec2DU(
+        m_absoluteRect.size = Vec2U(
             (U32)Math::Floor(m_relativeRect.size.x * renderTargetSize.x),
             (U32)Math::Floor(m_relativeRect.size.y * renderTargetSize.y));
 
-        m_transform = Mat3DF::CreateTranslationMatrix((Vec2DF)m_absoluteRect.position);
+        m_transform = Mat3F::CreateTranslationMatrix((Vec2F)m_absoluteRect.position);
         m_transform = m_transform.concatenatedAffineCopy(m_externalTransform);
 
         eventViewportRectChanged(getSharedPtr());

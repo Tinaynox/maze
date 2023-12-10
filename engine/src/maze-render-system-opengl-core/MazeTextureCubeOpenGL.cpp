@@ -221,7 +221,7 @@ namespace Maze
 
         for (Size side = 0; side < 6; ++side)
         {
-            Vec2DU size = m_size;
+            Vec2U size = m_size;
             for (Size mipmapLevel = 0, in = _pixelSheets[side].size(); mipmapLevel < in; ++mipmapLevel)
             {
                 PixelSheet2D pixelSheet = _pixelSheets[side][mipmapLevel];

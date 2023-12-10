@@ -100,7 +100,7 @@ namespace Maze
         : m_hdr(false)
         , m_prevColor(ColorU32::c_black)
         , m_prevColorIntensity(0.0f)
-        , m_hsv(Vec3DF::c_zero)
+        , m_hsv(Vec3F::c_zero)
         , m_alpha(255)
         , m_intensity(0.0f)
     {
@@ -219,8 +219,8 @@ namespace Maze
             { 12.0f, -15.0f },
             m_canvas->getTransform(),
             this,
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         m_copyButton->eventClick.subscribe(
             [this](Button2D* _button, CursorInputEvent const& _event)
             {
@@ -242,8 +242,8 @@ namespace Maze
             { 32.0f, -15.0f },
             m_canvas->getTransform(),
             this,
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         m_pasteButton->eventClick.subscribe(
             [this](Button2D* _button, CursorInputEvent const& _event)
             {
@@ -263,16 +263,16 @@ namespace Maze
 
         SpriteRenderer2DPtr transparentChessPrevNextRenderer = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::TransparentChess),
-            Vec2DF(76.0f, 24.0f),
-            Vec2DF(-10.0f, -15.0f),
+            Vec2F(76.0f, 24.0f),
+            Vec2F(-10.0f, -15.0f),
             GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
             m_canvas->getTransform(),
             this,
-            Vec2DF(1.0f, 1.0f),
-            Vec2DF(1.0f, 1.0f));
+            Vec2F(1.0f, 1.0f),
+            Vec2F(1.0f, 1.0f));
         transparentChessPrevNextRenderer->getMaterial()->setUniform(
             "u_baseMapST",
-            Vec4DF(
+            Vec4F(
                 transparentChessPrevNextRenderer->getTransform()->getWidth() / 8.0f,
                 transparentChessPrevNextRenderer->getTransform()->getHeight() / 8.0f,
                 0.0f,
@@ -280,33 +280,33 @@ namespace Maze
 
         m_finalColorRenderer = SpriteHelper::CreateSprite(
             ColorU32::c_white,
-            Vec2DF(76.0f / 2.0f, 24.0f),
-            Vec2DF(0.0f, 0.0f),
+            Vec2F(76.0f / 2.0f, 24.0f),
+            Vec2F(0.0f, 0.0f),
             GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::ColorHDR),
             transparentChessPrevNextRenderer->getTransform(),
             this,
-            Vec2DF(1.0f, 1.0f),
-            Vec2DF(1.0f, 1.0f));
+            Vec2F(1.0f, 1.0f),
+            Vec2F(1.0f, 1.0f));
 
         m_prevColorRenderer = SpriteHelper::CreateSprite(
             ColorU32::c_white,
-            Vec2DF(76.0f / 2.0f, 24.0f),
-            Vec2DF(0.0f, 0.0f),
+            Vec2F(76.0f / 2.0f, 24.0f),
+            Vec2F(0.0f, 0.0f),
             GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::ColorHDR),
             m_finalColorRenderer->getTransform(),
             this,
-            Vec2DF(0.0f, 0.0f),
-            Vec2DF(1.0f, 0.0f));
+            Vec2F(0.0f, 0.0f),
+            Vec2F(1.0f, 0.0f));
 
         SpriteRenderer2DPtr hsvRectBorder = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Frame01),
-            Vec2DF(185.0f, 185.0f),
-            Vec2DF(10.0f, 212.0f),
+            Vec2F(185.0f, 185.0f),
+            Vec2F(10.0f, 212.0f),
             GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
             m_canvas->getTransform(),
             this,
-            Vec2DF(0.0f, 0.0f),
-            Vec2DF(0.0f, 0.0f));
+            Vec2F(0.0f, 0.0f),
+            Vec2F(0.0f, 0.0f));
         hsvRectBorder->setColor(bandColor);
         hsvRectBorder->setRenderMode(SpriteRenderMode::Sliced);
         hsvRectBorder->getTransform()->setZ(100);
@@ -314,12 +314,12 @@ namespace Maze
         m_hsvRectRenderer = SpriteHelper::CreateSprite(
             ColorU32::c_white,
             hsvRectBorder->getTransform()->getSize() - 4.0f,
-            Vec2DF(2.0f, 2.0f),
+            Vec2F(2.0f, 2.0f),
             GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::HSVRect),
             hsvRectBorder->getTransform(),
             this,
-            Vec2DF(0.0f, 0.0f),
-            Vec2DF(0.0f, 0.0f));
+            Vec2F(0.0f, 0.0f),
+            Vec2F(0.0f, 0.0f));
 
         m_hsvRectButton = m_hsvRectRenderer->getEntityRaw()->ensureComponent<UIElement2D>();
         m_hsvRectButton->setUnpressOnUnfocus(false);
@@ -329,37 +329,37 @@ namespace Maze
 
         m_hsvRectCircleRenderer = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::ColorPickerCircle),
-            Vec2DF(13.01f, 13.01f),
-            Vec2DF(0.0f, 0.0f),
+            Vec2F(13.01f, 13.01f),
+            Vec2F(0.0f, 0.0f),
             GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
             m_hsvRectRenderer->getTransform(),
             this,
-            Vec2DF(0.0f, 0.0f),
-            Vec2DF(0.5f, 0.5f));
+            Vec2F(0.0f, 0.0f),
+            Vec2F(0.5f, 0.5f));
 
         
 
         SpriteRenderer2DPtr hsvBandBorder = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Frame01),
-            Vec2DF(23.0f, 185.0f),
-            Vec2DF(-10.0f, 212.0f),
+            Vec2F(23.0f, 185.0f),
+            Vec2F(-10.0f, 212.0f),
             GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
             m_canvas->getTransform(),
             this,
-            Vec2DF(1.0f, 0.0f),
-            Vec2DF(1.0f, 0.0f));
+            Vec2F(1.0f, 0.0f),
+            Vec2F(1.0f, 0.0f));
         hsvBandBorder->setColor(bandColor);
         hsvBandBorder->setRenderMode(SpriteRenderMode::Sliced);
 
         m_hsvBandRenderer = SpriteHelper::CreateSprite(
             ColorU32::c_white,
             hsvBandBorder->getTransform()->getSize() - 4.0f,
-            Vec2DF(2.0f, 2.0f),
+            Vec2F(2.0f, 2.0f),
             GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::HSVBand),
             hsvBandBorder->getTransform(),
             this,
-            Vec2DF(0.0f, 0.0f),
-            Vec2DF(0.0f, 0.0f));
+            Vec2F(0.0f, 0.0f),
+            Vec2F(0.0f, 0.0f));
 
         m_hsvBandButton = m_hsvBandRenderer->getEntityRaw()->ensureComponent<UIElement2D>();
         m_hsvBandButton->setUnpressOnUnfocus(false);
@@ -368,32 +368,32 @@ namespace Maze
         m_hsvBandButton->eventCursorMoveOut.subscribe(this, &SceneColorPicker::notifyHSVBandCursorMoveOut);
         
         m_hsvBandScale = SpriteHelper::CreateTransform2D(
-            Vec2DF(m_hsvBandRenderer->getTransform()->getWidth(), 1.0f),
-            Vec2DF::c_zero,
+            Vec2F(m_hsvBandRenderer->getTransform()->getWidth(), 1.0f),
+            Vec2F::c_zero,
             m_hsvBandRenderer->getTransform(),
             this,
-            Vec2DF(0.0f, 0.0f),
-            Vec2DF(0.0f, 0.0f));
+            Vec2F(0.0f, 0.0f),
+            Vec2F(0.0f, 0.0f));
 
         SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::ScaleMark),
-            Vec2DF(8, 9),
-            Vec2DF(-2.0f, 0.0f),
+            Vec2F(8, 9),
+            Vec2F(-2.0f, 0.0f),
             GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
             m_hsvBandScale,
             this,
-            Vec2DF::c_zero,
-            Vec2DF(1.0f, 0.5f));
+            Vec2F::c_zero,
+            Vec2F(1.0f, 0.5f));
 
         SpriteRenderer2DPtr rightScaleMarkRenderer = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::ScaleMark),
-            Vec2DF(8, 9),
-            Vec2DF(m_hsvBandScale->getWidth() + 2.0f, 0.0f),
+            Vec2F(8, 9),
+            Vec2F(m_hsvBandScale->getWidth() + 2.0f, 0.0f),
             GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
             m_hsvBandScale,
             this,
-            Vec2DF::c_zero,
-            Vec2DF(1.0f, 0.5f));
+            Vec2F::c_zero,
+            Vec2F(1.0f, 0.5f));
         rightScaleMarkRenderer->getTransform()->setLocalScale(-1.0f, 1.0f);
 
 
@@ -406,20 +406,20 @@ namespace Maze
             { 10.0f, 200.0f },
             m_canvas->getTransform(),
             this,
-            Vec2DF::c_zero,
-            Vec2DF(0.0f, 1.0f));
+            Vec2F::c_zero,
+            Vec2F(0.0f, 1.0f));
         m_floatLabel->setColor(ColorU32::c_black);
 
         
         VerticalLayout2DPtr layout = UIHelper::CreateVerticalLayout(
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Top,
-            Vec2DF(300.0f, 300.0f),
-            Vec2DF(10.0f, 176.0f),
+            Vec2F(300.0f, 300.0f),
+            Vec2F(10.0f, 176.0f),
             m_canvas->getTransform(),
             this,
-            Vec2DF::c_zero,
-            Vec2DF(0.0f, 1.0f));
+            Vec2F::c_zero,
+            Vec2F(0.0f, 1.0f));
         layout->setSpacing(8.0f);
         
         // R
@@ -427,12 +427,12 @@ namespace Maze
             HorizontalLayout2DPtr rowLayout = UIHelper::CreateHorizontalLayout(
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Top,
-                Vec2DF(211.0f, 18.0f),
-                Vec2DF(0.0f, 0.0f),
+                Vec2F(211.0f, 18.0f),
+                Vec2F(0.0f, 0.0f),
                 layout->getTransform(),
                 this,
-                Vec2DF(0.0f, 1.0f),
-                Vec2DF(0.0f, 1.0f));
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 1.0f));
             rowLayout->setExpand(true);
             rowLayout->setAutoWidth(false);
 
@@ -443,38 +443,38 @@ namespace Maze
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 8.0f, 18.0f },
-                Vec2DF::c_zero,
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
             label->setColor(ColorU32::c_black);
 
             SpriteRenderer2DPtr border = SpriteHelper::CreateSprite(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Frame01),
-                Vec2DF(148.0f, 18.0f),
-                Vec2DF(0.0f, 0.0f),
+                Vec2F(148.0f, 18.0f),
+                Vec2F(0.0f, 0.0f),
                 GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
                 rowLayout->getTransform(),
                 this,
-                Vec2DF(0.0f, 0.0f),
-                Vec2DF(0.0f, 0.0f));
+                Vec2F(0.0f, 0.0f),
+                Vec2F(0.0f, 0.0f));
             border->setColor(bandColor);
             border->setRenderMode(SpriteRenderMode::Sliced);
 
             m_rgbaRenderers[0] = SpriteHelper::CreateSprite(
                 ColorU32::c_white,
                 border->getTransform()->getSize() - 4.0f,
-                Vec2DF(2.0f, 2.0f),
+                Vec2F(2.0f, 2.0f),
                 GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::ColorPickerChannel),
                 border->getTransform(),
                 this,
-                Vec2DF(0.0f, 0.0f),
-                Vec2DF(0.0f, 0.0f));
+                Vec2F(0.0f, 0.0f),
+                Vec2F(0.0f, 0.0f));
             m_rgbaRenderers[0]->getMaterial()->setUniform("u_channel", 0);
 
             m_rgbaTextEdits[0] = SystemUIHelper::CreateDefaultEditBox(
                 "255",
-                Vec2DF(45.0f, 18.0f),
-                Vec2DF::c_zero,
+                Vec2F(45.0f, 18.0f),
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
         }
@@ -484,12 +484,12 @@ namespace Maze
             HorizontalLayout2DPtr rowLayout = UIHelper::CreateHorizontalLayout(
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Top,
-                Vec2DF(211.0f, 18.0f),
-                Vec2DF(0.0f, 0.0f),
+                Vec2F(211.0f, 18.0f),
+                Vec2F(0.0f, 0.0f),
                 layout->getTransform(),
                 this,
-                Vec2DF(0.0f, 1.0f),
-                Vec2DF(0.0f, 1.0f));
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 1.0f));
             rowLayout->setExpand(true);
             rowLayout->setAutoWidth(false);
 
@@ -499,38 +499,38 @@ namespace Maze
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 8.0f, 18.0f },
-                Vec2DF::c_zero,
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
             label->setColor(ColorU32::c_black);
 
             SpriteRenderer2DPtr border = SpriteHelper::CreateSprite(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Frame01),
-                Vec2DF(148.0f, 18.0f),
-                Vec2DF(0.0f, 0.0f),
+                Vec2F(148.0f, 18.0f),
+                Vec2F(0.0f, 0.0f),
                 GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
                 rowLayout->getTransform(),
                 this,
-                Vec2DF(0.0f, 0.0f),
-                Vec2DF(0.0f, 0.0f));
+                Vec2F(0.0f, 0.0f),
+                Vec2F(0.0f, 0.0f));
             border->setColor(bandColor);
             border->setRenderMode(SpriteRenderMode::Sliced);
 
             m_rgbaRenderers[1] = SpriteHelper::CreateSprite(
                 ColorU32::c_white,
                 border->getTransform()->getSize() - 4.0f,
-                Vec2DF(2.0f, 2.0f),
+                Vec2F(2.0f, 2.0f),
                 GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::ColorPickerChannel),
                 border->getTransform(),
                 this,
-                Vec2DF(0.0f, 0.0f),
-                Vec2DF(0.0f, 0.0f));
+                Vec2F(0.0f, 0.0f),
+                Vec2F(0.0f, 0.0f));
             m_rgbaRenderers[1]->getMaterial()->setUniform("u_channel", 1);
 
             m_rgbaTextEdits[1] = SystemUIHelper::CreateDefaultEditBox(
                 "0",
-                Vec2DF(45.0f, 18.0f),
-                Vec2DF::c_zero,
+                Vec2F(45.0f, 18.0f),
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
         }
@@ -540,12 +540,12 @@ namespace Maze
             HorizontalLayout2DPtr rowLayout = UIHelper::CreateHorizontalLayout(
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Top,
-                Vec2DF(211.0f, 18.0f),
-                Vec2DF(0.0f, 0.0f),
+                Vec2F(211.0f, 18.0f),
+                Vec2F(0.0f, 0.0f),
                 layout->getTransform(),
                 this,
-                Vec2DF(0.0f, 1.0f),
-                Vec2DF(0.0f, 1.0f));
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 1.0f));
             rowLayout->setExpand(true);
             rowLayout->setAutoWidth(false);
 
@@ -555,38 +555,38 @@ namespace Maze
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 8.0f, 18.0f },
-                Vec2DF::c_zero,
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
             label->setColor(ColorU32::c_black);
 
             SpriteRenderer2DPtr border = SpriteHelper::CreateSprite(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Frame01),
-                Vec2DF(148.0f, 18.0f),
-                Vec2DF(0.0f, 0.0f),
+                Vec2F(148.0f, 18.0f),
+                Vec2F(0.0f, 0.0f),
                 GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
                 rowLayout->getTransform(),
                 this,
-                Vec2DF(0.0f, 0.0f),
-                Vec2DF(0.0f, 0.0f));
+                Vec2F(0.0f, 0.0f),
+                Vec2F(0.0f, 0.0f));
             border->setColor(bandColor);
             border->setRenderMode(SpriteRenderMode::Sliced);
 
             m_rgbaRenderers[2] = SpriteHelper::CreateSprite(
                 ColorU32::c_white,
                 border->getTransform()->getSize() - 4.0f,
-                Vec2DF(2.0f, 2.0f),
+                Vec2F(2.0f, 2.0f),
                 GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::ColorPickerChannel),
                 border->getTransform(),
                 this,
-                Vec2DF(0.0f, 0.0f),
-                Vec2DF(0.0f, 0.0f));
+                Vec2F(0.0f, 0.0f),
+                Vec2F(0.0f, 0.0f));
             m_rgbaRenderers[2]->getMaterial()->setUniform("u_channel", 2);
 
             m_rgbaTextEdits[2] = SystemUIHelper::CreateDefaultEditBox(
                 "0",
-                Vec2DF(45.0f, 18.0f),
-                Vec2DF::c_zero,
+                Vec2F(45.0f, 18.0f),
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
         }
@@ -596,12 +596,12 @@ namespace Maze
             HorizontalLayout2DPtr rowLayout = UIHelper::CreateHorizontalLayout(
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Top,
-                Vec2DF(211.0f, 18.0f),
-                Vec2DF(0.0f, 0.0f),
+                Vec2F(211.0f, 18.0f),
+                Vec2F(0.0f, 0.0f),
                 layout->getTransform(),
                 this,
-                Vec2DF(0.0f, 1.0f),
-                Vec2DF(0.0f, 1.0f));
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 1.0f));
             rowLayout->setExpand(true);
             rowLayout->setAutoWidth(false);
 
@@ -611,35 +611,35 @@ namespace Maze
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 8.0f, 18.0f },
-                Vec2DF::c_zero,
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
             label->setColor(ColorU32::c_black);
 
             SpriteRenderer2DPtr border = SpriteHelper::CreateSprite(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Frame01),
-                Vec2DF(148.0f, 18.0f),
-                Vec2DF(0.0f, 0.0f),
+                Vec2F(148.0f, 18.0f),
+                Vec2F(0.0f, 0.0f),
                 GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
                 rowLayout->getTransform(),
                 this,
-                Vec2DF(0.0f, 0.0f),
-                Vec2DF(0.0f, 0.0f));
+                Vec2F(0.0f, 0.0f),
+                Vec2F(0.0f, 0.0f));
             border->setColor(bandColor);
             border->setRenderMode(SpriteRenderMode::Sliced);
 
             SpriteRenderer2DPtr transparentChessRenderer = SpriteHelper::CreateSprite(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::TransparentChess),
                 border->getTransform()->getSize() - 4.0f,
-                Vec2DF(2.0f, 2.0f),
+                Vec2F(2.0f, 2.0f),
                 GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
                 border->getTransform(),
                 this,
-                Vec2DF(0.0f, 0.0f),
-                Vec2DF(0.0f, 0.0f));
+                Vec2F(0.0f, 0.0f),
+                Vec2F(0.0f, 0.0f));
             transparentChessRenderer->getMaterial()->setUniform(
                 "u_baseMapST",
-                Vec4DF(
+                Vec4F(
                     transparentChessRenderer->getTransform()->getWidth() / 8.0f,
                     transparentChessRenderer->getTransform()->getHeight() / 8.0f,
                     0.0f,
@@ -648,18 +648,18 @@ namespace Maze
             m_rgbaRenderers[3] = SpriteHelper::CreateSprite(
                 ColorU32::c_white,
                 border->getTransform()->getSize() - 3.0f,
-                Vec2DF(2.0f, 2.0f),
+                Vec2F(2.0f, 2.0f),
                 GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::ColorPickerChannel),
                 border->getTransform(),
                 this,
-                Vec2DF(0.0f, 0.0f),
-                Vec2DF(0.0f, 0.0f));
+                Vec2F(0.0f, 0.0f),
+                Vec2F(0.0f, 0.0f));
             m_rgbaRenderers[3]->getMaterial()->setUniform("u_channel", 3);
 
             m_rgbaTextEdits[3] = SystemUIHelper::CreateDefaultEditBox(
                 "255",
-                Vec2DF(45.0f, 18.0f),
-                Vec2DF::c_zero,
+                Vec2F(45.0f, 18.0f),
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
         }
@@ -669,12 +669,12 @@ namespace Maze
             HorizontalLayout2DPtr rowLayout = UIHelper::CreateHorizontalLayout(
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Top,
-                Vec2DF(211.0f, 18.0f),
-                Vec2DF(0.0f, 0.0f),
+                Vec2F(211.0f, 18.0f),
+                Vec2F(0.0f, 0.0f),
                 layout->getTransform(),
                 this,
-                Vec2DF(0.0f, 1.0f),
-                Vec2DF(0.0f, 1.0f));
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 1.0f));
             rowLayout->setExpand(true);
             rowLayout->setAutoWidth(false);
 
@@ -684,15 +684,15 @@ namespace Maze
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 100.0f, 18.0f },
-                Vec2DF::c_zero,
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
             label->setColor(ColorU32::c_black);
 
             m_hexadecimalTextEdit = SystemUIHelper::CreateDefaultEditBox(
                 "#FFFFFF",
-                Vec2DF(80.0f, 18.0f),
-                Vec2DF::c_zero,
+                Vec2F(80.0f, 18.0f),
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
             m_hexadecimalTextEdit->eventTextInput.subscribe(this, &SceneColorPicker::notifyRGBATextInput);
@@ -711,13 +711,13 @@ namespace Maze
 
             m_rgbaCarriages[i] = SpriteHelper::CreateSprite(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
-                Vec2DF(4.0f, spriteRenderer->getTransform()->getHeight()),
-                Vec2DF(0.0f, 0.0f),
+                Vec2F(4.0f, spriteRenderer->getTransform()->getHeight()),
+                Vec2F(0.0f, 0.0f),
                 GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
                 spriteRenderer->getTransform(),
                 this,
-                Vec2DF(0.0f, 0.0f),
-                Vec2DF(0.5f, 0.0f));
+                Vec2F(0.0f, 0.0f),
+                Vec2F(0.5f, 0.0f));
             m_rgbaCarriages[i]->setRenderMode(SpriteRenderMode::Sliced);
             m_rgbaCarriages[i]->setColor(ColorU32(241, 241, 241));
 
@@ -729,12 +729,12 @@ namespace Maze
             HorizontalLayout2DPtr rowLayout = UIHelper::CreateHorizontalLayout(
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Top,
-                Vec2DF(211.0f, 18.0f),
-                Vec2DF(0.0f, 0.0f),
+                Vec2F(211.0f, 18.0f),
+                Vec2F(0.0f, 0.0f),
                 layout->getTransform(),
                 this,
-                Vec2DF(0.0f, 1.0f),
-                Vec2DF(0.0f, 1.0f));
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 1.0f));
             rowLayout->setExpand(true);
             rowLayout->setAutoWidth(false);
 
@@ -746,23 +746,23 @@ namespace Maze
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 8.0f, 18.0f },
-                Vec2DF::c_zero,
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
             label->setColor(ColorU32::c_black);
 
             m_intensitySlider = UIHelper::CreateDefaultSlider(
                 0.5f,
-                Vec2DF(138.0f, 18.0f),
-                Vec2DF::c_zero,
+                Vec2F(138.0f, 18.0f),
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
             m_intensitySlider->eventValueChanged.subscribe(this, &SceneColorPicker::notifyIntensitySliderValueChanged);
 
             m_intensityTextEdit = SystemUIHelper::CreateDefaultEditBox(
                 "0",
-                Vec2DF(45.0f, 18.0f),
-                Vec2DF::c_zero,
+                Vec2F(45.0f, 18.0f),
+                Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
             m_intensityTextEdit->eventTextInput.subscribe(this, &SceneColorPicker::notifyIntensityTextInput);
@@ -818,12 +818,12 @@ namespace Maze
         m_hsvRectRenderer->getMaterial()->setUniform("u_intensity", m_intensity);
 
         m_hsvRectCircleRenderer->getTransform()->setLocalPosition(
-            m_hsvRectRenderer->getTransform()->getSize() * Vec2DF(m_hsv.y, m_hsv.z));
+            m_hsvRectRenderer->getTransform()->getSize() * Vec2F(m_hsv.y, m_hsv.z));
 
         m_hsvBandScale->setLocalY(m_hsvBandRenderer->getTransform()->getHeight() * Math::Clamp01(m_hsv.x / 360.0f));
 
-        Vec3DF const luminosityK(0.2125f, 0.7154f, 0.0721f);
-        F32 luminosity = (color.toVec3DF() * (m_intensity + 1.0f)).dotProduct(luminosityK);
+        Vec3F const luminosityK(0.2125f, 0.7154f, 0.0721f);
+        F32 luminosity = (color.toVec3F32() * (m_intensity + 1.0f)).dotProduct(luminosityK);
         if (luminosity > 0.5f)
             m_hsvRectCircleRenderer->setColor(ColorU32::c_black);
         else
@@ -853,7 +853,7 @@ namespace Maze
         for (Size i = 0; i < 4; ++i)
         {
             m_rgbaTextEdits[i]->setText(StringHelper::ToString(colorPickerColor[i]));
-            m_rgbaRenderers[i]->getMaterial()->setUniform("u_color", colorPickerColor.toVec4DF());
+            m_rgbaRenderers[i]->getMaterial()->setUniform("u_color", colorPickerColor.toVec4F32());
         }
 
         m_hexadecimalTextEdit->setText(StringHelper::ToUpper(colorPickerColor.toStringHex()));
@@ -872,13 +872,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::notifyHSVRectCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void SceneColorPicker::notifyHSVRectCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         processHSVRectPick(_positionOS);
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::notifyHSVRectCursorDrag(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void SceneColorPicker::notifyHSVRectCursorDrag(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         if (m_hsvRectButton->getPressed())
             processHSVRectPick(_positionOS);
@@ -889,18 +889,18 @@ namespace Maze
     {
         if (m_hsvRectButton->getPressed())
         {
-            Vec2DF positionOS = m_hsvRectButton->getTransform()->getWorldTransform().inversedAffineCopy().transformAffine(_inputEvent.position);
+            Vec2F positionOS = m_hsvRectButton->getTransform()->getWorldTransform().inversedAffineCopy().transformAffine(_inputEvent.position);
             processHSVRectPick(positionOS);
         }
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::processHSVRectPick(Vec2DF const& _positionOS)
+    void SceneColorPicker::processHSVRectPick(Vec2F const& _positionOS)
     {
         F32 s = Math::Clamp01(_positionOS.x / m_hsvRectRenderer->getTransform()->getWidth());
         F32 v = Math::Clamp01(_positionOS.y / m_hsvRectRenderer->getTransform()->getHeight());
 
-        Vec3DF newHSV(
+        Vec3F newHSV(
             m_hsv.x,
             s,
             v);
@@ -908,13 +908,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::notifyHSVBandCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void SceneColorPicker::notifyHSVBandCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         processHSVBandPick(_positionOS);
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::notifyHSVBandCursorDrag(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void SceneColorPicker::notifyHSVBandCursorDrag(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         if (m_hsvBandButton->getPressed())
             processHSVBandPick(_positionOS);
@@ -925,17 +925,17 @@ namespace Maze
     {
         if (m_hsvBandButton->getPressed())
         {
-            Vec2DF positionOS = m_hsvBandButton->getTransform()->getWorldTransform().inversedAffineCopy().transformAffine(_inputEvent.position);
+            Vec2F positionOS = m_hsvBandButton->getTransform()->getWorldTransform().inversedAffineCopy().transformAffine(_inputEvent.position);
             processHSVBandPick(positionOS);
         }
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::processHSVBandPick(Vec2DF const& _positionOS)
+    void SceneColorPicker::processHSVBandPick(Vec2F const& _positionOS)
     {
         F32 hue = Math::Clamp(360.0f * _positionOS.y / m_hsvBandRenderer->getTransform()->getHeight(), 0.0f, 360.0f);
 
-        Vec3DF newHSV(
+        Vec3F newHSV(
             hue,
             m_hsv.y,
             m_hsv.z);
@@ -943,7 +943,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::notifyRGBBandCursorPressIn(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void SceneColorPicker::notifyRGBBandCursorPressIn(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         S32 channel = -1;
         for (Size i = 0; i < 4; ++i)
@@ -958,7 +958,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::notifyRGBBandCursorDrag(Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+    void SceneColorPicker::notifyRGBBandCursorDrag(Vec2F const& _positionOS, CursorInputEvent const& _inputEvent)
     {
         S32 channel = -1;
         for (Size i = 0; i < 4; ++i)
@@ -986,13 +986,13 @@ namespace Maze
         if (channel != -1)
         {
             SpriteRenderer2DPtr rgbBandRenderer = m_rgbaRenderers[channel];
-            Vec2DF positionOS = rgbBandRenderer->getTransform()->getWorldTransform().inversedAffineCopy().transformAffine(_inputEvent.position);
+            Vec2F positionOS = rgbBandRenderer->getTransform()->getWorldTransform().inversedAffineCopy().transformAffine(_inputEvent.position);
             processRGBBandPick(channel, positionOS);
         }
     }
 
     //////////////////////////////////////////
-    void SceneColorPicker::processRGBBandPick(S32 _channel, Vec2DF const& _positionOS)
+    void SceneColorPicker::processRGBBandPick(S32 _channel, Vec2F const& _positionOS)
     {
         SpriteRenderer2DPtr rgbBandRenderer = m_rgbaRenderers[_channel];
 
@@ -1152,7 +1152,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void SceneColorPicker::setHSV(
-        Vec3DF const& _hsv,
+        Vec3F const& _hsv,
         U8 _alpha,
         F32 _intensity)
     {
@@ -1175,7 +1175,7 @@ namespace Maze
         else
             color = ColorPickerManager::GetInstancePtr()->getColor();
 
-        Vec3DF hsv = ColorHelper::ConvertRGBToHSV(color);
+        Vec3F hsv = ColorHelper::ConvertRGBToHSV(color);
         setHSV(hsv, color.a, intensity);
     }
 
@@ -1186,8 +1186,8 @@ namespace Maze
         {
             auto rgb = ColorHelper::ConvertHSVToRGB(m_hsv);
 
-            ColorF128 color = ColorF128::FromVec4DFAndIntensity(
-                Vec4DF(rgb, (F32)m_alpha / 255.0f),
+            ColorF128 color = ColorF128::FromVec4F32AndIntensity(
+                Vec4F(rgb, (F32)m_alpha / 255.0f),
                 m_intensity);
 
             if (color != ColorPickerManager::GetInstancePtr()->getColorHDR())

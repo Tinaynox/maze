@@ -37,7 +37,7 @@ namespace Maze
     namespace GraphicsUtilsHelper
     {
         //////////////////////////////////////////
-        MAZE_GRAPHICS_API PixelSheet2D g_asciiSymbolsSheet8x8(Vec2DS(128, 48), PixelFormat::RGBA_U8);
+        MAZE_GRAPHICS_API PixelSheet2D g_asciiSymbolsSheet8x8(Vec2S(128, 48), PixelFormat::RGBA_U8);
 
         //////////////////////////////////////////
         MAZE_GRAPHICS_API PixelSheet2D const& GetAsciiSymbolsSheet8x8() { return g_asciiSymbolsSheet8x8;  }

@@ -92,7 +92,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void resizeBuffers(Vec2DU const& _size);
+        void resizeBuffers(Vec2U32 const& _size);
 
     protected:
 
@@ -119,7 +119,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void createBuffers(Vec2DU const& _size);
+        void createBuffers(Vec2U32 const& _size);
 
 
         //////////////////////////////////////////

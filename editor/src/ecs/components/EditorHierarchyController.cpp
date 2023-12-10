@@ -159,24 +159,24 @@ namespace Maze
 
         m_titleTransform = SpriteHelper::CreateTransform2D(
             m_canvas->getTransform()->getSize(),
-            Vec2DF(0.0f, 0.0f),
+            Vec2F32(0.0f, 0.0f),
             m_canvas->getTransform(),
             getEntityRaw()->getECSScene(),
-            Vec2DF::c_zero,
-            Vec2DF::c_zero);
+            Vec2F32::c_zero,
+            Vec2F32::c_zero);
         m_titleTransform->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>();
 
         m_titleBackground = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
-            Vec2DF(
+            Vec2F32(
                 m_canvas->getTransform()->getSize().x,
                 EditorToolsLayout::c_titleHeight),
-            Vec2DF(0.0f, 0.0f),
+            Vec2F32(0.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_titleTransform,
             getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F32(0.0f, 1.0f),
+            Vec2F32(0.0f, 1.0f));
         m_titleBackground->setColor(EditorToolsLayout::c_titleBackgroundColor);
         m_titleBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
 
@@ -185,35 +185,35 @@ namespace Maze
             EditorToolsLayout::c_titleFontSize,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(100, EditorToolsLayout::c_titleHeight),
-            Vec2DF(EditorToolsLayout::c_titleLabelShift, 0),
+            Vec2F32(100, EditorToolsLayout::c_titleHeight),
+            Vec2F32(EditorToolsLayout::c_titleLabelShift, 0),
             m_titleBackground->getTransform(),
             getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF(0.0f, 0.5f));
+            Vec2F32(0.0f, 0.5f),
+            Vec2F32(0.0f, 0.5f));
         hierarchyText->setColor(ColorU32::c_black);
         
         m_bodyBackground = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
-            Vec2DF(
+            Vec2F32(
                 m_titleTransform->getSize().x, 
                 m_titleTransform->getSize().y - EditorToolsLayout::c_titleHeight),
-            Vec2DF(0.0f, 0.0f),
+            Vec2F32(0.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_canvas->getTransform(),
             getEntityRaw()->getECSScene(),
-            Vec2DF::c_zero,
-            Vec2DF::c_zero);
+            Vec2F32::c_zero,
+            Vec2F32::c_zero);
         m_bodyBackground->setColor(EditorToolsLayout::c_bodyBackgroundColor);
         m_bodyBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>()->setSizeDelta(0.0f, -EditorToolsLayout::c_titleHeight);
 
         ScrollRect2DPtr scrollRect = UIHelper::CreateDefaultScrollRect(
             m_bodyBackground->getTransform()->getSize(),
-            Vec2DF::c_zero,
+            Vec2F32::c_zero,
             m_bodyBackground->getTransform(),
             getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f),
+            Vec2F32(0.0f, 1.0f),
+            Vec2F32(0.0f, 1.0f),
             false,
             true);
         scrollRect->getViewportTransform()->getEntityRaw()->getComponent<ScissorMask2D>()->setPadding(0, 0, 0, 0);
@@ -274,7 +274,7 @@ namespace Maze
             HierarchyLinePtr hierarchyLine = createHierarchyLine(scene);
             hierarchyLine->setLabel(scene->getClassName());
             hierarchyLine->getTransform()->setParent(m_layoutTransform);
-            hierarchyLine->getTransform()->setLocalPosition(Vec2DF(10 + x * 10, -6 - y * 12));
+            hierarchyLine->getTransform()->setLocalPosition(Vec2F32(10 + x * 10, -6 - y * 12));
             hierarchyLine->setColor(ColorU32(30, 125, 0));
 
             if (scene->getEntities().empty())
@@ -321,7 +321,7 @@ namespace Maze
                             HierarchyLinePtr hierarchyLine = createHierarchyElement(
                                 entity,
                                 name.c_str(),
-                                Vec2DF(10 + (x + 1) * 10, -6 - y * 12));
+                                Vec2F32(10 + (x + 1) * 10, -6 - y * 12));
 
                             ++y;
                         }
@@ -369,7 +369,7 @@ namespace Maze
                 HierarchyLinePtr hierarchyLine = createHierarchyElement(
                     prefabEntity.get(),
                     name.c_str(),
-                    Vec2DF(10 + (x + 1) * 10, -6 - y * 12));
+                    Vec2F32(10 + (x + 1) * 10, -6 - y * 12));
 
                 ++y;
             }
@@ -391,7 +391,7 @@ namespace Maze
         HierarchyLinePtr hierarchyLine = createHierarchyElement(
             _transform2D,
             name.c_str(),
-            Vec2DF(10 + _x * 10, -6 - _y * 12));
+            Vec2F32(10 + _x * 10, -6 - _y * 12));
 
         if (_transform2D->getChildren().empty())
         {
@@ -429,7 +429,7 @@ namespace Maze
         HierarchyLinePtr hierarchyLine = createHierarchyElement(
             _transform3D,
             name.c_str(),
-            Vec2DF(10 + _x * 10, -6 - _y * 12));
+            Vec2F32(10 + _x * 10, -6 - _y * 12));
 
         if (_transform3D->getChildren().empty())
         {
@@ -458,7 +458,7 @@ namespace Maze
     HierarchyLinePtr EditorHierarchyController::createHierarchyElement(
         Transform2D* _transform,
         CString _name,
-        Vec2DF const& _position)
+        Vec2F32 const& _position)
     {
         HierarchyLinePtr hierarchyLine = createHierarchyLine(_transform->getEntityId());        
         hierarchyLine->setLabel(_name);
@@ -491,7 +491,7 @@ namespace Maze
     HierarchyLinePtr EditorHierarchyController::createHierarchyElement(
         Transform3D* _transform,
         CString _name,
-        Vec2DF const& _position)
+        Vec2F32 const& _position)
     {
         
         HierarchyLinePtr hierarchyLine = createHierarchyLine(_transform->getEntityId());
@@ -524,7 +524,7 @@ namespace Maze
     HierarchyLinePtr EditorHierarchyController::createHierarchyElement(
         Entity* _entity,
         CString _name,
-        Vec2DF const& _position)
+        Vec2F32 const& _position)
     {
 
         HierarchyLinePtr hierarchyLine = createHierarchyLine(_entity->getId());

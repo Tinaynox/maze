@@ -552,7 +552,7 @@ namespace Maze
         , m_windowMapped(false)
         , m_lastInputTime(0)
         , m_keyRepeat(true)
-        , m_previousSize(Vec2DU::c_zero)
+        , m_previousSize(Vec2U32::c_zero)
     {
         m_xDisplay = RetainSharedXDisplay();
 
@@ -592,7 +592,7 @@ namespace Maze
 
         bool isFullscreen = (paramsLinux->windowMode == WindowMode::Fullscreen);
 
-        Vec2DS windowPosition;
+        Vec2S32 windowPosition;
         if (isFullscreen)
         {
             windowPosition = getPrimaryMonitorPosition();
@@ -793,7 +793,7 @@ namespace Maze
     }
 
     ////////////////////////////////////
-    void WindowLinux::setClientSize(Vec2DU const& _size)
+    void WindowLinux::setClientSize(Vec2U32 const& _size)
     {
         if (m_useSizeHints)
         {
@@ -810,29 +810,29 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec2DU WindowLinux::getClientSize()
+    Vec2U32 WindowLinux::getClientSize()
     {
         XWindowAttributes attributes;
         XGetWindowAttributes(m_xDisplay, m_xWindow, &attributes);
-        return Vec2DU(attributes.width, attributes.height);
+        return Vec2U32(attributes.width, attributes.height);
     }
 
     //////////////////////////////////////////
-    Vec2DU WindowLinux::getFullSize()
+    Vec2U32 WindowLinux::getFullSize()
     {
         MAZE_TODO;
-        return Vec2DU::c_zero;
+        return Vec2U32::c_zero;
     }
 
     //////////////////////////////////////////
-    void WindowLinux::setPosition(Vec2DS const& _position)
+    void WindowLinux::setPosition(Vec2S32 const& _position)
     {
         XMoveWindow(m_xDisplay, m_xWindow, _position.x, _position.y);
         XFlush(m_xDisplay);
     }
 
     //////////////////////////////////////////
-    Vec2DS WindowLinux::getPosition()
+    Vec2S32 WindowLinux::getPosition()
     {
         ::Window child;
         S32 xAbsRelToRoot, yAbsRelToRoot;
@@ -848,13 +848,13 @@ namespace Maze
             &child );
 
         if (IsWMAbsolutePositionGood())
-            return Vec2DS(xAbsRelToRoot, yAbsRelToRoot);
+            return Vec2S32(xAbsRelToRoot, yAbsRelToRoot);
 
         long xFrameExtent, yFrameExtent;
 
         if (GetEWMHFrameExtents(m_xDisplay, m_xWindow, xFrameExtent, yFrameExtent))
         {
-            return Vec2DS((xAbsRelToRoot - xFrameExtent), (yAbsRelToRoot - yFrameExtent));
+            return Vec2S32((xAbsRelToRoot - xFrameExtent), (yAbsRelToRoot - yFrameExtent));
         }
 
         ::Window ancestor = m_xWindow;
@@ -879,7 +879,7 @@ namespace Maze
             &borderWidth,
             &depth);
 
-        return Vec2DS(xRelToRoot, yRelToRoot);
+        return Vec2S32(xRelToRoot, yRelToRoot);
     }
 
     //////////////////////////////////////////
@@ -1012,9 +1012,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec2DS WindowLinux::getPrimaryMonitorPosition()
+    Vec2S32 WindowLinux::getPrimaryMonitorPosition()
     {
-        Vec2DS monitorPosition;
+        Vec2S32 monitorPosition;
         
         ::Window rootWindow = RootWindow(m_xDisplay, m_xScreen);
 

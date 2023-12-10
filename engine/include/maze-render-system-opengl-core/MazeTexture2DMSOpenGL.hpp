@@ -115,13 +115,13 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool loadEmpty(
-            Vec2DU const& _size,
+            Vec2U const& _size,
             PixelFormat::Enum _internalPixelFormat = PixelFormat::None,
             S32 _samples = 0) MAZE_OVERRIDE;
 
         
         //////////////////////////////////////////
-        virtual void saveToFileAsTGA(String const& _fileName, Vec2DU _size = Vec2DU::c_zero) MAZE_OVERRIDE;
+        virtual void saveToFileAsTGA(String const& _fileName, Vec2U _size = Vec2U::c_zero) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual PixelSheet2D readAsPixelSheet(PixelFormat::Enum _outputFormat = PixelFormat::None) MAZE_OVERRIDE;

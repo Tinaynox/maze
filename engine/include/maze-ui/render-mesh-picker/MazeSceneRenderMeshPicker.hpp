@@ -133,7 +133,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void notifyCanvasCursorReleaseIn(Vec2DF const& _positionOS, CursorInputEvent const& _event);
+        void notifyCanvasCursorReleaseIn(Vec2F const& _positionOS, CursorInputEvent const& _event);
 
         //////////////////////////////////////////
         void notifyCanvasCursorReleaseOut(CursorInputEvent const& _event);

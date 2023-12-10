@@ -99,20 +99,20 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        Vec2DF const& getHiddenScale() const { return m_hiddenScale; }
+        Vec2F const& getHiddenScale() const { return m_hiddenScale; }
 
         //////////////////////////////////////////
-        void setHiddenScale(Vec2DF const& _hiddenScale)
+        void setHiddenScale(Vec2F const& _hiddenScale)
         {
             m_hiddenScale = _hiddenScale;
             updateTransform();
         }
 
         //////////////////////////////////////////
-        Vec2DF const& getShownScale() const { return m_shownScale; }
+        Vec2F const& getShownScale() const { return m_shownScale; }
 
         //////////////////////////////////////////
-        void setShownScale(Vec2DF const& _shownScale)
+        void setShownScale(Vec2F const& _shownScale)
         {
             m_shownScale = _shownScale;
             updateTransform();
@@ -184,8 +184,8 @@ namespace Maze
         AnimationCurve m_animationCurve = AnimationCurve::c_linear01;
         F32 m_showTime;
         F32 m_hideKoef;
-        Vec2DF m_hiddenScale;
-        Vec2DF m_shownScale;
+        Vec2F m_hiddenScale;
+        Vec2F m_shownScale;
 
         F32 m_hidingProgress;
         F32 m_showSpeed;

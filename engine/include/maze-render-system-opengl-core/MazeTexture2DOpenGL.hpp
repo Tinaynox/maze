@@ -134,7 +134,7 @@ namespace Maze
         //////////////////////////////////////////
         virtual void saveToFileAsTGA(
             String const& _fileName,
-            Vec2DU _size = Vec2DU::c_zero,
+            Vec2U _size = Vec2U::c_zero,
             bool _resetAlpha = false) MAZE_OVERRIDE;
 
         //////////////////////////////////////////

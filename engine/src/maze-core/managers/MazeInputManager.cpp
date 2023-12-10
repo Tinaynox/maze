@@ -48,7 +48,7 @@ namespace Maze
         : m_inputEventsIndex(0)
         , m_cachedKeyStates{ false }
         , m_cursorStates{ {false} }
-        , m_cursorPositions{ Vec2DF::c_zero }
+        , m_cursorPositions{ Vec2F::c_zero }
     {
         s_instance = this;        
     }
@@ -108,7 +108,7 @@ namespace Maze
                         }
                         case InputEventMouseType::Move:
                         {
-                            m_cursorPositions[0] = Vec2DF((F32)event.mouse.x, (F32)event.mouse.y);
+                            m_cursorPositions[0] = Vec2F((F32)event.mouse.x, (F32)event.mouse.y);
                             break;
                         }
                         default:
@@ -157,7 +157,7 @@ namespace Maze
                         }
                         case InputEventTouchType::Move:
                         {
-                            m_cursorPositions[event.touch.index] = Vec2DF((F32)event.touch.x, (F32)event.touch.y);
+                            m_cursorPositions[event.touch.index] = Vec2F((F32)event.touch.x, (F32)event.touch.y);
                             break;
                         }
                         default:
@@ -183,7 +183,7 @@ namespace Maze
                         }
                         case InputEventVirtualCursorType::Move:
                         {
-                            m_cursorPositions[0] = Vec2DF((F32)event.mouse.x, (F32)event.mouse.y);
+                            m_cursorPositions[0] = Vec2F((F32)event.mouse.x, (F32)event.mouse.y);
                             break;
                         }
                         default:

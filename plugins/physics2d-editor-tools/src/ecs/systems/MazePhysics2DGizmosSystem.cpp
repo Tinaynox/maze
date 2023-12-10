@@ -118,13 +118,13 @@ namespace Maze
         m_drawer->setColor(color);
         for (S32 i = 0; i < _vertexCount - 1; ++i)
         {
-            Vec2DF p0 = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2DF(_vertices[i]));
-            Vec2DF p1 = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2DF(_vertices[i + 1]));
+            Vec2F p0 = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2F32(_vertices[i]));
+            Vec2F p1 = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2F32(_vertices[i + 1]));
             m_drawer->drawLine(p0, p1);
         }
 
-        Vec2DF p0 = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2DF(_vertices[_vertexCount - 1]));
-        Vec2DF p1 = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2DF(_vertices[0]));
+        Vec2F p0 = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2F32(_vertices[_vertexCount - 1]));
+        Vec2F p1 = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2F32(_vertices[0]));
         m_drawer->drawLine(p0, p1);
     }
 
@@ -136,13 +136,13 @@ namespace Maze
         m_drawer->setColor(color);
         for (S32 i = 0; i < _vertexCount - 1; ++i)
         {
-            Vec2DF p0 = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2DF(_vertices[i]));
-            Vec2DF p1 = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2DF(_vertices[i + 1]));
+            Vec2F p0 = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2F32(_vertices[i]));
+            Vec2F p1 = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2F32(_vertices[i + 1]));
             m_drawer->drawLine(p0, p1);
         }
 
-        Vec2DF p0 = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2DF(_vertices[_vertexCount - 1]));
-        Vec2DF p1 = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2DF(_vertices[0]));
+        Vec2F p0 = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2F32(_vertices[_vertexCount - 1]));
+        Vec2F p1 = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2F32(_vertices[0]));
         m_drawer->drawLine(p0, p1);
     }
 
@@ -150,30 +150,30 @@ namespace Maze
     void Physics2DGizmosSystem::DrawCircle(b2Vec2 const& _center, F32 _radius, b2Color const& _color)
     {
         ColorF128 color = Box2DHelper::ToColor128F(_color);
-        Vec2DF p = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2DF(_center));
+        Vec2F p = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2F32(_center));
         F32 r = m_physicsWorld->convertMetersToUnits(_radius);
 
         m_drawer->setColor(color);
-        m_drawer->drawWireCircle(p, Vec3DF::c_negativeUnitZ, r);
+        m_drawer->drawWireCircle(p, Vec3F::c_negativeUnitZ, r);
     }
 
     //////////////////////////////////////////
     void Physics2DGizmosSystem::DrawSolidCircle(b2Vec2 const& _center, F32 _radius, b2Vec2 const& _axis, b2Color const& _color)
     {
         ColorF128 color = Box2DHelper::ToColor128F(_color);
-        Vec2DF p = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2DF(_center));
+        Vec2F p = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2F32(_center));
         F32 r = m_physicsWorld->convertMetersToUnits(_radius);
 
         m_drawer->setColor(color);
-        m_drawer->drawWireCircle(p, Vec3DF::c_negativeUnitZ, r);
+        m_drawer->drawWireCircle(p, Vec3F::c_negativeUnitZ, r);
     }
 
     //////////////////////////////////////////
     void Physics2DGizmosSystem::DrawSegment(b2Vec2 const& _p1, b2Vec2 const& _p2, b2Color const& _color)
     {
         ColorF128 color = Box2DHelper::ToColor128F(_color);
-        Vec2DF p1 = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2DF(_p1));
-        Vec2DF p2 = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2DF(_p2));
+        Vec2F p1 = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2F32(_p1));
+        Vec2F p2 = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2F32(_p2));
 
         m_drawer->setColor(color);
         m_drawer->drawLine(p1, p2);
@@ -189,11 +189,11 @@ namespace Maze
     void Physics2DGizmosSystem::DrawPoint(b2Vec2 const& _p, F32 _size, b2Color const& _color)
     {
         ColorF128 color = Box2DHelper::ToColor128F(_color);
-        Vec2DF p = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2DF(_p));
+        Vec2F p = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2F32(_p));
         F32 r = 0.1f;
 
         m_drawer->setColor(color);
-        m_drawer->drawWireCircle(p, Vec3DF::c_negativeUnitZ, r);
+        m_drawer->drawWireCircle(p, Vec3F::c_negativeUnitZ, r);
     }
 
     

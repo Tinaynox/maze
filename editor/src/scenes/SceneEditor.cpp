@@ -211,12 +211,12 @@ namespace Maze
 
             // Menu Bar
             MenuBar2DPtr menuBar = UIHelper::CreateDefaultMenuBarList(
-                Vec2DF((F32)renderWindow->getRenderTargetWidth(), EditorLayout::c_menuBarHeight + 1),
-                Vec2DF::c_zero,
+                Vec2F32((F32)renderWindow->getRenderTargetWidth(), EditorLayout::c_menuBarHeight + 1),
+                Vec2F32::c_zero,
                 m_topMenuBarCanvas->getTransform(),
                 this,
-                Vec2DF::c_zero,
-                Vec2DF::c_zero);
+                Vec2F32::c_zero,
+                Vec2F32::c_zero);
             menuBar->getEntityRaw()->ensureComponent<SizePolicy2D>();
             
             menuBar->addOption(
@@ -394,12 +394,12 @@ namespace Maze
             m_workspaceSpriteRenderer = SpriteHelper::CreateSprite(
                 m_workspaceSprite,
                 m_workspaceCanvas->getTransform()->getSize(),
-                Vec2DF(0.0f, 0.0f),
+                Vec2F32(0.0f, 0.0f),
                 workspaceSpriteMaterial,
                 m_workspaceCanvas->getTransform(),
                 this,
-                Vec2DF::c_zero,
-                Vec2DF::c_zero);
+                Vec2F32::c_zero,
+                Vec2F32::c_zero);
             m_workspaceSpriteRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
             m_workspaceSpriteRenderer->getEntityRaw()->setActiveSelf(true);
         }

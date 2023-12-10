@@ -105,10 +105,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Vec2DF getReferenceResolution() const { return m_referenceResolution; }
+        inline Vec2F getReferenceResolution() const { return m_referenceResolution; }
 
         //////////////////////////////////////////
-        void setReferenceResolution(Vec2DF _referenceResolution);
+        void setReferenceResolution(Vec2F _referenceResolution);
 
 
         //////////////////////////////////////////
@@ -145,7 +145,7 @@ namespace Maze
     protected:
         ScaleMode m_scaleMode;
         ScreenMatchMode m_screenMatchMode;
-        Vec2DF m_referenceResolution;
+        Vec2F m_referenceResolution;
         F32 m_matchWidthOrHeight;
 
         CanvasPtr m_canvas;

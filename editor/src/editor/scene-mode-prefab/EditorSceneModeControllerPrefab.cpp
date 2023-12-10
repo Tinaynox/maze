@@ -139,11 +139,11 @@ namespace Maze
 
         m_canvasNode = SpriteHelper::CreateTransform2D(
             scene->getMainCanvas()->getTransform()->getSize(),
-            Vec2DF::c_zero,
+            Vec2F32::c_zero,
             scene->getMainCanvas()->getTransform(),
             scene.get(),
-            Vec2DF::c_zero,
-            Vec2DF::c_zero);
+            Vec2F32::c_zero,
+            Vec2F32::c_zero);
         m_canvasNode->getEntityRaw()->ensureComponent<SizePolicy2D>();
 
         EntityPtr mainNodeEntity = scene->createEntity("Main Node");
@@ -160,15 +160,15 @@ namespace Maze
 
         m_topBarBackground = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
-            Vec2DF(
+            Vec2F32(
                 m_canvasNode->getSize().x,
                 20.0f),
-            Vec2DF(0.0f, 0.0f),
+            Vec2F32(0.0f, 0.0f),
             MaterialManager::GetCurrentInstance()->getColorTextureMaterial(),
             m_canvasNode,
             scene.get(),
-            Vec2DF(0.0f, 1.0f),
-            Vec2DF(0.0f, 1.0f));
+            Vec2F32(0.0f, 1.0f),
+            Vec2F32(0.0f, 1.0f));
         m_topBarBackground->setColor(EditorToolsLayout::c_bodySubBackgroundColor);
         m_topBarBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
 
@@ -177,11 +177,11 @@ namespace Maze
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
             m_topBarBackground->getTransform()->getSize(),
-            Vec2DF::c_zero,
+            Vec2F32::c_zero,
             m_topBarBackground->getTransform(),
             scene.get(),
-            Vec2DF::c_zero,
-            Vec2DF::c_zero);
+            Vec2F32::c_zero,
+            Vec2F32::c_zero);
         m_topBarLeftLayout->setAutoWidth(false);
         m_topBarLeftLayout->setAutoHeight(false);
         m_topBarLeftLayout->getEntityRaw()->ensureComponent<SizePolicy2D>();
@@ -237,11 +237,11 @@ namespace Maze
             HorizontalAlignment2D::Right,
             VerticalAlignment2D::Middle,
             m_topBarBackground->getTransform()->getSize(),
-            Vec2DF::c_zero,
+            Vec2F32::c_zero,
             m_topBarBackground->getTransform(),
             scene.get(),
-            Vec2DF::c_zero,
-            Vec2DF::c_zero);
+            Vec2F32::c_zero,
+            Vec2F32::c_zero);
         m_topBarRightLayout->setAutoWidth(false);
         m_topBarRightLayout->setAutoHeight(false);
         m_topBarRightLayout->getEntityRaw()->ensureComponent<SizePolicy2D>();
@@ -253,12 +253,12 @@ namespace Maze
         {
             ClickButton2DPtr saveButton = UIHelper::CreateDefaultClickButton(
                 "Save",
-                Vec2DF(42.0f, 18.0f),
-                Vec2DF(-2.0f, -2.0f),
+                Vec2F32(42.0f, 18.0f),
+                Vec2F32(-2.0f, -2.0f),
                 m_topBarRightLayout->getTransform(),
                 scene.get(),
-                Vec2DF(1.0f, 1.0f),
-                Vec2DF(1.0f, 1.0f));
+                Vec2F32(1.0f, 1.0f),
+                Vec2F32(1.0f, 1.0f));
             saveButton->eventClick.subscribe(
                 [](Button2D* _button, CursorInputEvent const& _event)
                 {
@@ -268,12 +268,12 @@ namespace Maze
 
         ClickButton2DPtr closeButton = UIHelper::CreateDefaultClickButton(
             "X",
-            Vec2DF(18.0f, 18.0f),
-            Vec2DF(-2.0f, -2.0f),
+            Vec2F32(18.0f, 18.0f),
+            Vec2F32(-2.0f, -2.0f),
             m_topBarRightLayout->getTransform(),
             scene.get(),
-            Vec2DF(1.0f, 1.0f),
-            Vec2DF(1.0f, 1.0f));
+            Vec2F32(1.0f, 1.0f),
+            Vec2F32(1.0f, 1.0f));
         closeButton->eventClick.subscribe(
             [](Button2D* _button, CursorInputEvent const& _event)
             {

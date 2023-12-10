@@ -145,20 +145,20 @@ namespace Maze
     public:
 
         // positionOS, CursorInputEvent
-        MultiDelegate<Vec2DF const&, CursorInputEvent const&> eventCursorPressIn;
+        MultiDelegate<Vec2F const&, CursorInputEvent const&> eventCursorPressIn;
         MultiDelegate<CursorInputEvent const&> eventCursorPressOut;
-        MultiDelegate<Vec2DF const&, CursorInputEvent const&> eventCursorMoveIn;
+        MultiDelegate<Vec2F const&, CursorInputEvent const&> eventCursorMoveIn;
         MultiDelegate<CursorInputEvent const&> eventCursorMoveOut;
-        MultiDelegate<Vec2DF const&, CursorInputEvent const&> eventCursorDrag;
-        MultiDelegate<Vec2DF const&, CursorInputEvent const&> eventCursorReleaseIn;
+        MultiDelegate<Vec2F const&, CursorInputEvent const&> eventCursorDrag;
+        MultiDelegate<Vec2F const&, CursorInputEvent const&> eventCursorReleaseIn;
         MultiDelegate<CursorInputEvent const&> eventCursorReleaseOut;
         MultiDelegate<CursorInputEvent const&> eventCursorRelease;
 
         MultiDelegate<bool> eventFocusChanged;
         MultiDelegate<bool> eventPressedChanged;
-        MultiDelegate<Vec2DF const&, CursorInputEvent const&> eventClick;
-        MultiDelegate<Vec2DF const&, CursorInputEvent const&> eventSingleClick;
-        MultiDelegate<Vec2DF const&, CursorInputEvent const&> eventDoubleClick;
+        MultiDelegate<Vec2F const&, CursorInputEvent const&> eventClick;
+        MultiDelegate<Vec2F const&, CursorInputEvent const&> eventSingleClick;
+        MultiDelegate<Vec2F const&, CursorInputEvent const&> eventDoubleClick;
 
         MultiDelegate<CursorWheelInputEvent const&> eventCursorWheel;
 

@@ -32,7 +32,7 @@
 //////////////////////////////////////////
 #include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
 
 
@@ -141,8 +141,8 @@ namespace Maze
         //////////////////////////////////////////
         void buildPanel(
             PixelSheet2D& _uiElementsSheet,
-            Vec2DS const& _startPos,
-            Vec2DS const& _size,
+            Vec2S const& _startPos,
+            Vec2S const& _size,
             ColorU32 const& _backgroundColor,
             ColorU32 const& _sideBordersColor,
             ColorU32 const& _topBorderColor);

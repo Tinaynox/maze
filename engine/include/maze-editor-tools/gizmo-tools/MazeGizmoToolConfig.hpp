@@ -37,8 +37,8 @@
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeMat4.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 #include "maze-graphics/MazeColorF128.hpp"
 
 

@@ -96,18 +96,18 @@ namespace Maze
             return false;
 
         m_topBlock = SpriteHelper::CreateTransform2D(
-            Vec2DF(_parent->getWidth(), 50.0f),
-            Vec2DF::c_zero,
+            Vec2F(_parent->getWidth(), 50.0f),
+            Vec2F::c_zero,
             _parent,
             _parent->getEntityRaw()->getECSScene());
         m_topBlock->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Flags::Height, false);
 
         m_entitiesEnabledToggleButton = UIHelper::CreateDefaultToggleButton(
-            Vec2DF(5, 0),
+            Vec2F(5, 0),
             m_topBlock,
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF(0.0f, 0.5f));
+            Vec2F(0.0f, 0.5f),
+            Vec2F(0.0f, 0.5f));
         m_entitiesEnabledToggleButton->eventCheckedChanged.subscribe(this, &EntitiesInspector::notifyEntitiesEnabledToggleCheckedChanged);
 
         m_entityIdText = SystemUIHelper::CreateSystemText(
@@ -115,22 +115,22 @@ namespace Maze
             8,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2DF(16.0f, 10.0f),
-            Vec2DF(35.0f, 0.0f),
+            Vec2F(16.0f, 10.0f),
+            Vec2F(35.0f, 0.0f),
             m_topBlock,
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(0.0f, 0.5f),
-            Vec2DF(0.0f, 0.5f));
+            Vec2F(0.0f, 0.5f),
+            Vec2F(0.0f, 0.5f));
         m_entityIdText->setColor(ColorU32::c_black);
 
         m_addComponentButton = UIHelper::CreateDefaultClickButton(
             "Add Component",
-            Vec2DF(120.0f, 18.0f),
-            Vec2DF(-20.0f, 0.0f),
+            Vec2F(120.0f, 18.0f),
+            Vec2F(-20.0f, 0.0f),
             m_topBlock,
             _parent->getEntityRaw()->getECSScene(),
-            Vec2DF(1.0f, 0.5f),
-            Vec2DF(1.0f, 0.5f));
+            Vec2F(1.0f, 0.5f),
+            Vec2F(1.0f, 0.5f));
         m_addComponentButton->eventClick.subscribe(this, &EntitiesInspector::notifyAddComponentButton);
 
         return true;
@@ -278,7 +278,7 @@ namespace Maze
         ContextMenuCanvas2DPtr contextMenuCanvas = ContextMenuCanvas2D::EnsureContextMenuCanvas(_button->getEntityRaw()->getECSScene());
 
         Canvas* canvas = _button->getTransform()->getFirstTrunkComponent<Canvas>();
-        Vec2DF positionRTS = canvas->convertViewportCoordsToRenderTargetCoords(_inputEvent.position);
+        Vec2F positionRTS = canvas->convertViewportCoordsToRenderTargetCoords(_inputEvent.position);
 
         MenuListTree2DPtr const& menuListTree = contextMenuCanvas->openContextMenu(
             this,

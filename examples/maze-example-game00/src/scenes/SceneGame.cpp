@@ -292,7 +292,7 @@ namespace Maze
     {
         EntityPtr cameraEntity = createEntity("Camera");
         m_camera3D = cameraEntity->createComponent<Camera3D>();
-        m_camera3D->getTransform()->setLocalPosition(Vec3DF(0.0f, 0.5f, -18.0f));
+        m_camera3D->getTransform()->setLocalPosition(Vec3F32(0.0f, 0.5f, -18.0f));
         m_camera3D->setFOV(Math::DegreesToRadians(30));
         m_camera3D->setClearColor(ColorU32::c_red);
         m_camera3D->setClearColorFlag(true);
@@ -345,7 +345,7 @@ namespace Maze
             m_renderColorSprite = SpriteHelper::CreateSprite(
                 Sprite::Create(m_renderBuffer->getColorTexture2D()),
                 m_canvas->getTransform()->getSize(),
-                Vec2DF::c_zero,
+                Vec2F32::c_zero,
                 GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getMaterial("PostFX00.mzmaterial"),
                 m_canvas->getTransform(),
                 this);
@@ -356,7 +356,7 @@ namespace Maze
             m_renderDepthSprite = SpriteHelper::CreateSprite(
                 Sprite::Create(m_renderBuffer->getDepthTexture()->cast<Texture2D>()),
                 m_canvas->getTransform()->getSize(),
-                Vec2DF::c_zero,
+                Vec2F32::c_zero,
                 GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getMaterial("DepthBuffer00.mzmaterial"),
                 m_canvas->getTransform(),
                 this);
@@ -409,9 +409,9 @@ namespace Maze
         F32 y = tanf(halfFOVY) * z;
         F32 x = tanf(halfFOVX) * z;
 
-        Vec2DF halfSize(x, y);
+        Vec2F32 halfSize(x, y);
 
-        Vec2DF cameraPosition(
+        Vec2F32 cameraPosition(
             m_camera3D->getTransform()->getLocalPosition().x,
             m_camera3D->getTransform()->getLocalPosition().y);
 
@@ -461,11 +461,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ProjectilePtr SceneGame::createProjectile(Vec2DF const& _position)
+    ProjectilePtr SceneGame::createProjectile(Vec2F32 const& _position)
     {
         EntityPtr entity = Entity::Create();
         ProjectilePtr projectile = entity->ensureComponent<Projectile>();
-        projectile->getTransform()->setLocalPosition(Vec3DF(_position));
+        projectile->getTransform()->setLocalPosition(Vec3F32(_position));
 
         return projectile;
     }

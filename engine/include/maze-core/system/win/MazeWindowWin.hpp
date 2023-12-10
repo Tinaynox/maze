@@ -97,19 +97,19 @@ namespace Maze
         virtual bool isOpened() MAZE_OVERRIDE;
         
         //////////////////////////////////////////
-        virtual void setClientSize(Vec2DU const& _size) MAZE_OVERRIDE;
+        virtual void setClientSize(Vec2U const& _size) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual Vec2DU getClientSize() MAZE_OVERRIDE;
+        virtual Vec2U getClientSize() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual Vec2DU getFullSize() MAZE_OVERRIDE;
+        virtual Vec2U getFullSize() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void setPosition(Vec2DS const& _position) MAZE_OVERRIDE;
+        virtual void setPosition(Vec2S const& _position) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual Vec2DS getPosition() MAZE_OVERRIDE;
+        virtual Vec2S getPosition() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual void close() MAZE_OVERRIDE;
@@ -130,10 +130,10 @@ namespace Maze
         virtual DisplayPtr const& getRelatedDisplay() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual Vec2DF convertSystemScreenCoordsToWindowCoords(Vec2DF const& _posDS) MAZE_OVERRIDE;
+        virtual Vec2F convertSystemScreenCoordsToWindowCoords(Vec2F const& _posDS) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual Vec2DF convertWindowCoordsToSystemScreenCoords(Vec2DF const& _posWS) MAZE_OVERRIDE;
+        virtual Vec2F convertWindowCoordsToSystemScreenCoords(Vec2F const& _posWS) MAZE_OVERRIDE;
 
     protected:
 

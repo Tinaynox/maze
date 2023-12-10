@@ -101,7 +101,7 @@ namespace Maze
         
 
         //////////////////////////////////////////
-        virtual bool setSize(Vec2DU const& _size) MAZE_OVERRIDE;
+        virtual bool setSize(Vec2U const& _size) MAZE_OVERRIDE;
 
 
         //////////////////////////////////////////
@@ -187,7 +187,7 @@ namespace Maze
         void reloadTexture(TexturePtr const& _texture);
 
         //////////////////////////////////////////
-        void resizeTexture(TexturePtr const& _texture, Vec2DU const& _size);
+        void resizeTexture(TexturePtr const& _texture, Vec2U const& _size);
 
     protected:
         ContextOpenGL* m_context;

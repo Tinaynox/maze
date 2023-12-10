@@ -226,7 +226,7 @@ namespace Maze
         F32 showingProgress = 1.0f - m_hidingProgress;
 
         F32 progress = m_animationCurve.evaluate(showingProgress);
-        Vec2DF position = Math::Lerp(m_hiddenPosition, m_shownPosition, progress);
+        Vec2F position = Math::Lerp(m_hiddenPosition, m_shownPosition, progress);
 
         m_transform->setLocalPosition(position);
     }

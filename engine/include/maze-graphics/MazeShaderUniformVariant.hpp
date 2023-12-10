@@ -41,14 +41,14 @@
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
-#include "maze-core/math/MazeVec4D.hpp"
-#include "maze-core/math/MazeVec2DB.hpp"
-#include "maze-core/math/MazeVec3DB.hpp"
-#include "maze-core/math/MazeVec4DB.hpp"
-#include "maze-core/math/MazeMat3D.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
+#include "maze-core/math/MazeVec3.hpp"
+#include "maze-core/math/MazeVec4.hpp"
+#include "maze-core/math/MazeVec2B.hpp"
+#include "maze-core/math/MazeVec3B.hpp"
+#include "maze-core/math/MazeVec4B.hpp"
+#include "maze-core/math/MazeMat3.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/serialization/MazeXMLSerializable.hpp"
 #include "maze-core/data//MazeHashedCString.hpp"
 
@@ -74,20 +74,20 @@ namespace Maze
         UniformTexture2D,
         UniformTextureCube,
         UniformTexture2DArray,
-        UniformVec2DS,
-        UniformVec3DS,
-        UniformVec4DS,
-        UniformVec2DU,
-        UniformVec3DU,
-        UniformVec4DU,
-        UniformVec2DF,
-        UniformVec3DF,
-        UniformVec4DF,
-        UniformVec2DB,
-        UniformVec3DB,
-        UniformVec4DB,
-        UniformMat3DF,
-        UniformMat4DF,
+        UniformVec2S32,
+        UniformVec3S32,
+        UniformVec4S32,
+        UniformVec2U32,
+        UniformVec3U32,
+        UniformVec4U32,
+        UniformVec2F32,
+        UniformVec3F32,
+        UniformVec4F32,
+        UniformVec2B,
+        UniformVec3B,
+        UniformVec4B,
+        UniformMat3F32,
+        UniformMat4F32,
         UniformColorF128);
 
 
@@ -140,50 +140,50 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        ShaderUniformVariant(RenderSystem* _renderSystem, Vec2DF const& _value);
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec2F const& _value);
 
         //////////////////////////////////////////
-        ShaderUniformVariant(RenderSystem* _renderSystem, Vec3DF const& _value);
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec3F const& _value);
 
         //////////////////////////////////////////
-        ShaderUniformVariant(RenderSystem* _renderSystem, Vec4DF const& _value);
-
-
-        //////////////////////////////////////////
-        ShaderUniformVariant(RenderSystem* _renderSystem, Vec2DS const& _value);
-
-        //////////////////////////////////////////
-        ShaderUniformVariant(RenderSystem* _renderSystem, Vec3DS const& _value);
-
-        //////////////////////////////////////////
-        ShaderUniformVariant(RenderSystem* _renderSystem, Vec4DS const& _value);
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec4F const& _value);
 
 
         //////////////////////////////////////////
-        ShaderUniformVariant(RenderSystem* _renderSystem, Vec2DU const& _value);
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec2S const& _value);
 
         //////////////////////////////////////////
-        ShaderUniformVariant(RenderSystem* _renderSystem, Vec3DU const& _value);
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec3S const& _value);
 
         //////////////////////////////////////////
-        ShaderUniformVariant(RenderSystem* _renderSystem, Vec4DU const& _value);
-
-
-        //////////////////////////////////////////
-        ShaderUniformVariant(RenderSystem* _renderSystem, Vec2DB const& _value);
-
-        //////////////////////////////////////////
-        ShaderUniformVariant(RenderSystem* _renderSystem, Vec3DB const& _value);
-
-        //////////////////////////////////////////
-        ShaderUniformVariant(RenderSystem* _renderSystem, Vec4DB const& _value);
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec4S const& _value);
 
 
         //////////////////////////////////////////
-        ShaderUniformVariant(RenderSystem* _renderSystem, Mat3DF const& _value);
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec2U const& _value);
 
         //////////////////////////////////////////
-        ShaderUniformVariant(RenderSystem* _renderSystem, Mat4DF const& _value);
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec3U const& _value);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec4U const& _value);
+
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec2B const& _value);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec3B const& _value);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Vec4B const& _value);
+
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Mat3F const& _value);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, Mat4F const& _value);
 
 
         //////////////////////////////////////////
@@ -236,62 +236,62 @@ namespace Maze
         inline TextureCubePtr getTextureCube() const { return std::static_pointer_cast<TextureCube>(m_texture); }
 
         //////////////////////////////////////////
-        inline Vec4DF const& getVecF() const { return m_vectorF; }
+        inline Vec4F const& getVecF() const { return m_vectorF; }
 
         //////////////////////////////////////////
-        inline Vec2DF getVec2DF() const { return { m_vectorF.x, m_vectorF.y }; }
+        inline Vec2F getVec2F32() const { return { m_vectorF.x, m_vectorF.y }; }
 
         //////////////////////////////////////////
-        inline Vec3DF getVec3DF() const { return { m_vectorF.x, m_vectorF.y, m_vectorF.z }; }
+        inline Vec3F getVec3F32() const { return { m_vectorF.x, m_vectorF.y, m_vectorF.z }; }
 
         //////////////////////////////////////////
-        inline Vec4DF getVec4DF() const { return m_vectorF; }
-
-
-        //////////////////////////////////////////
-        inline Vec4DS const& getVecS() const { return m_vectorS; }
-
-        //////////////////////////////////////////
-        inline Vec2DS getVec2DS() const { return { m_vectorS.x, m_vectorS.y }; }
-
-        //////////////////////////////////////////
-        inline Vec3DS getVec3DS() const { return { m_vectorS.x, m_vectorS.y, m_vectorS.z }; }
-
-        //////////////////////////////////////////
-        inline Vec4DS getVec4DS() const { return m_vectorS; }
+        inline Vec4F getVec4F32() const { return m_vectorF; }
 
 
         //////////////////////////////////////////
-        inline Vec4DU const& getVecU() const { return m_vectorU; }
+        inline Vec4S const& getVecS() const { return m_vectorS; }
 
         //////////////////////////////////////////
-        inline Vec2DU getVec2DU() const { return { m_vectorU.x, m_vectorU.y }; }
+        inline Vec2S getVec2S32() const { return { m_vectorS.x, m_vectorS.y }; }
 
         //////////////////////////////////////////
-        inline Vec3DU getVec3DU() const { return { m_vectorU.x, m_vectorU.y, m_vectorU.z }; }
+        inline Vec3S getVec3S32() const { return { m_vectorS.x, m_vectorS.y, m_vectorS.z }; }
 
         //////////////////////////////////////////
-        inline Vec4DU getVec4DU() const { return m_vectorU; }
+        inline Vec4S getVec4S32() const { return m_vectorS; }
 
 
         //////////////////////////////////////////
-        inline Vec4DB const& getVecB() const { return m_vectorB; }
+        inline Vec4U const& getVecU() const { return m_vectorU; }
 
         //////////////////////////////////////////
-        inline Vec2DB getVec2DB() const { return { m_vectorB.x, m_vectorB.y }; }
+        inline Vec2U getVec2U32() const { return { m_vectorU.x, m_vectorU.y }; }
 
         //////////////////////////////////////////
-        inline Vec3DB getVec3DB() const { return { m_vectorB.x, m_vectorB.y, m_vectorB.z }; }
+        inline Vec3U getVec3U32() const { return { m_vectorU.x, m_vectorU.y, m_vectorU.z }; }
 
         //////////////////////////////////////////
-        inline Vec4DB getVec4DB() const { return m_vectorB; }
+        inline Vec4U getVec4U32() const { return m_vectorU; }
+
+
+        //////////////////////////////////////////
+        inline Vec4B const& getVecB() const { return m_vectorB; }
+
+        //////////////////////////////////////////
+        inline Vec2B getVec2B() const { return { m_vectorB.x, m_vectorB.y }; }
+
+        //////////////////////////////////////////
+        inline Vec3B getVec3B() const { return { m_vectorB.x, m_vectorB.y, m_vectorB.z }; }
+
+        //////////////////////////////////////////
+        inline Vec4B getVec4B() const { return m_vectorB; }
 
         
         //////////////////////////////////////////
-        inline Mat3DF const& getMat3DF() const { return m_matrix3DF; }
+        inline Mat3F const& getMat3F32() const { return m_matrix3DF; }
         
         //////////////////////////////////////////
-        inline Mat4DF const& getMat4DF() const { return m_matrix4DF; }
+        inline Mat4F const& getMat4F32() const { return m_matrix4DF; }
 
 
         //////////////////////////////////////////
@@ -329,57 +329,57 @@ namespace Maze
         inline void set(TextureCube* _textureCube) { return set(_textureCube ? _textureCube->cast<TextureCube>() : nullptr); }
         
         //////////////////////////////////////////
-        inline void set(Vec2DF const& _vector) { m_vectorF = _vector; m_type = ShaderUniformType::UniformVec2DF; }
+        inline void set(Vec2F const& _vector) { m_vectorF = _vector; m_type = ShaderUniformType::UniformVec2F32; }
         
         //////////////////////////////////////////
-        inline void set(Vec3DF const& _vector) { m_vectorF = _vector; m_type = ShaderUniformType::UniformVec3DF; }
+        inline void set(Vec3F const& _vector) { m_vectorF = _vector; m_type = ShaderUniformType::UniformVec3F32; }
         
         //////////////////////////////////////////
-        inline void set(Vec4DF const& _vector) { m_vectorF = _vector; m_type = ShaderUniformType::UniformVec4DF; }
+        inline void set(Vec4F const& _vector) { m_vectorF = _vector; m_type = ShaderUniformType::UniformVec4F32; }
 
 
         //////////////////////////////////////////
-        inline void set(Vec2DS const& _vector) { m_vectorS = _vector; m_type = ShaderUniformType::UniformVec2DS; }
+        inline void set(Vec2S const& _vector) { m_vectorS = _vector; m_type = ShaderUniformType::UniformVec2S32; }
         
         //////////////////////////////////////////
-        inline void set(Vec3DS const& _vector) { m_vectorS = _vector; m_type = ShaderUniformType::UniformVec3DS; }
+        inline void set(Vec3S const& _vector) { m_vectorS = _vector; m_type = ShaderUniformType::UniformVec3S32; }
         
         //////////////////////////////////////////
-        inline void set(Vec4DS const& _vector) { m_vectorS = _vector; m_type = ShaderUniformType::UniformVec4DS; }
+        inline void set(Vec4S const& _vector) { m_vectorS = _vector; m_type = ShaderUniformType::UniformVec4S32; }
 
 
         //////////////////////////////////////////
-        inline void set(Vec2DU const& _vector) { m_vectorU = _vector; m_type = ShaderUniformType::UniformVec2DU; }
+        inline void set(Vec2U const& _vector) { m_vectorU = _vector; m_type = ShaderUniformType::UniformVec2U32; }
         
         //////////////////////////////////////////
-        inline void set(Vec3DU const& _vector) { m_vectorU = _vector; m_type = ShaderUniformType::UniformVec3DU; }
+        inline void set(Vec3U const& _vector) { m_vectorU = _vector; m_type = ShaderUniformType::UniformVec3U32; }
         
         //////////////////////////////////////////
-        inline void set(Vec4DU const& _vector) { m_vectorU = _vector; m_type = ShaderUniformType::UniformVec4DU; }
+        inline void set(Vec4U const& _vector) { m_vectorU = _vector; m_type = ShaderUniformType::UniformVec4U32; }
 
 
         //////////////////////////////////////////
-        inline void set(Vec2DB const& _vector) { m_vectorB = _vector; m_type = ShaderUniformType::UniformVec2DB; }
+        inline void set(Vec2B const& _vector) { m_vectorB = _vector; m_type = ShaderUniformType::UniformVec2B; }
 
         //////////////////////////////////////////
-        inline void set(Vec3DB const& _vector) { m_vectorB = _vector; m_type = ShaderUniformType::UniformVec3DB; }
+        inline void set(Vec3B const& _vector) { m_vectorB = _vector; m_type = ShaderUniformType::UniformVec3B; }
 
         //////////////////////////////////////////
-        inline void set(Vec4DB const& _vector) { m_vectorB = _vector; m_type = ShaderUniformType::UniformVec4DB; }
+        inline void set(Vec4B const& _vector) { m_vectorB = _vector; m_type = ShaderUniformType::UniformVec4B; }
         
         
         //////////////////////////////////////////
-        inline void set(Mat3DF const& _matrix) { m_matrix3DF = _matrix; m_type = ShaderUniformType::UniformMat3DF; }
+        inline void set(Mat3F const& _matrix) { m_matrix3DF = _matrix; m_type = ShaderUniformType::UniformMat3F32; }
                 
         //////////////////////////////////////////
-        inline void set(Mat4DF const& _matrix) { m_matrix4DF = _matrix; m_type = ShaderUniformType::UniformMat4DF; }
+        inline void set(Mat4F const& _matrix) { m_matrix4DF = _matrix; m_type = ShaderUniformType::UniformMat4F32; }
         
 
         //////////////////////////////////////////
-        inline void set(ColorF128 const& _color) { m_vectorF = _color.toVec4DF(); m_type = ShaderUniformType::UniformColorF128; }
+        inline void set(ColorF128 const& _color) { m_vectorF = _color.toVec4F32(); m_type = ShaderUniformType::UniformColorF128; }
 
         //////////////////////////////////////////
-        inline void setColor(Vec4DF const& _vector) { m_vectorF = _vector; m_type = ShaderUniformType::UniformColorF128; }
+        inline void setColor(Vec4F const& _vector) { m_vectorF = _vector; m_type = ShaderUniformType::UniformColorF128; }
 
 
         //////////////////////////////////////////
@@ -461,12 +461,12 @@ namespace Maze
             F64 m_F64;
             bool m_bool;
         
-            Vec4DF m_vectorF;
-            Vec4DS m_vectorS;
-            Vec4DU m_vectorU;
-            Vec4DB m_vectorB;
-            Mat3DF m_matrix3DF;
-            Mat4DF m_matrix4DF;
+            Vec4F m_vectorF;
+            Vec4S m_vectorS;
+            Vec4U m_vectorU;
+            Vec4B m_vectorB;
+            Mat3F m_matrix3DF;
+            Mat4F m_matrix4DF;
         };
         
         HashedString m_name;

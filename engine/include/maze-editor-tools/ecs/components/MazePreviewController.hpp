@@ -200,11 +200,11 @@ namespace Maze
 
         //////////////////////////////////////////
         void notifyBodyBackgroundElementCursorPress(
-            Vec2DF const& _positionOS, CursorInputEvent const& _event);
+            Vec2F const& _positionOS, CursorInputEvent const& _event);
 
         //////////////////////////////////////////
         void notifyBodyBackgroundElementCursorDrag(
-            Vec2DF const& _positionOS, CursorInputEvent const& _event);
+            Vec2F const& _positionOS, CursorInputEvent const& _event);
 
         //////////////////////////////////////////
         void notifyBodyBackgroundElementCursorWheel(

@@ -67,76 +67,76 @@ namespace Maze
         MAZE_UI_API EditBox2DPtr CreateDefaultEditBox(
             CString _text,
             U32 _fontSize,
-            Vec2DF const& _size,
-            Vec2DF const& _position,
+            Vec2F const& _size,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f),
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f),
             HorizontalAlignment2D _horizontalAlignment = HorizontalAlignment2D::Left,
             VerticalAlignment2D _verticalAlignment = VerticalAlignment2D::Middle);
 
         //////////////////////////////////////////
         MAZE_UI_API Dropdown2DPtr CreateDefaultDropdown(
             U32 _fontSize,
-            Vec2DF const& _size,
-            Vec2DF const& _position,
+            Vec2F const& _size,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 
         //////////////////////////////////////////
         MAZE_UI_API HorizontalLayout2DPtr CreateHorizontalLayout(
             HorizontalAlignment2D _horizontalAlignment,
             VerticalAlignment2D _verticalAlignment,
-            Vec2DF const& _size,
-            Vec2DF const& _position,
+            Vec2F const& _size,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 
         //////////////////////////////////////////
         MAZE_UI_API VerticalLayout2DPtr CreateVerticalLayout(
             HorizontalAlignment2D _horizontalAlignment,
             VerticalAlignment2D _verticalAlignment,
-            Vec2DF const& _size,
-            Vec2DF const& _position,
+            Vec2F const& _size,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 
         //////////////////////////////////////////
         MAZE_UI_API ClickButton2DPtr CreateDefaultClickButton(
             CString _text,
-            Vec2DF const& _size,
-            Vec2DF const& _position,
+            Vec2F const& _size,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 
         //////////////////////////////////////////
         MAZE_UI_API ClickButton2DPtr CreateClickButton(
             SpritePtr const& _default,
-            Vec2DF const& _size,
-            Vec2DF const& _position,
+            Vec2F const& _size,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 
         //////////////////////////////////////////
         MAZE_UI_API ToggleButton2DPtr CreateToggleButton(
             SpritePtr const& _default,
-            Vec2DF const& _size,
-            Vec2DF const& _position,
+            Vec2F const& _size,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f),
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f),
             ColorU32 _normalColor = { 245, 245, 245 },
             ColorU32 _focusedColor = { 213, 231, 248 },
             ColorU32 _checkedColor = { 200, 220, 240 },
@@ -147,135 +147,135 @@ namespace Maze
         MAZE_UI_API ClickButton2DPtr CreateClickButton(
             SpritePtr const& _default,
             SpritePtr const& _focused,
-            Vec2DF const& _size,
-            Vec2DF const& _position,
+            Vec2F const& _size,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 
         //////////////////////////////////////////
         MAZE_UI_API ToggleButton2DPtr CreateDefaultToggleButton(
-            Vec2DF const& _position,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 
         //////////////////////////////////////////
         MAZE_UI_API ColorEdit2DPtr CreateDefaultColorEdit(
             ColorU32 _color,
-            Vec2DF const& _size,
-            Vec2DF const& _position,
+            Vec2F const& _size,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 
         //////////////////////////////////////////
         MAZE_UI_API ColorHDREdit2DPtr CreateDefaultColorHDREdit(
             ColorF128 _color,
-            Vec2DF const& _size,
-            Vec2DF const& _position,
+            Vec2F const& _size,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f),
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f),
             bool _hdrLabel = true,
             bool _alphaBand = true);
 
         //////////////////////////////////////////
         MAZE_UI_API ColorGradientEdit2DPtr CreateDefaultColorGradientEdit(
             ColorGradient const& _gradient,
-            Vec2DF const& _size,
-            Vec2DF const& _position,
+            Vec2F const& _size,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 
         //////////////////////////////////////////
         MAZE_UI_API AnimationCurveEdit2DPtr CreateDefaultAnimationCurveEdit(
             AnimationCurve const& _curve,
-            Vec2DF const& _size,
-            Vec2DF const& _position,
+            Vec2F const& _size,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 
         //////////////////////////////////////////
         MAZE_UI_API Slider2DPtr CreateDefaultSlider(
             F32 _value,
-            Vec2DF const& _size,
-            Vec2DF const& _position,
+            Vec2F const& _size,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 
         //////////////////////////////////////////
         MAZE_UI_API MenuListItem2DPtr CreateDefaultMenuListItem(
             String const& _name,
-            Vec2DF const& _size,
-            Vec2DF const& _position,
+            Vec2F const& _size,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 
         //////////////////////////////////////////
         MAZE_UI_API MenuList2DPtr CreateDefaultMenuList(
-            Vec2DF const& _size,
-            Vec2DF const& _position,
+            Vec2F const& _size,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 
         //////////////////////////////////////////
         MAZE_UI_API MenuListTree2DPtr CreateDefaultMenuListTree(
-            Vec2DF const& _position,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.0f, 1.0f));
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.0f, 1.0f));
 
         //////////////////////////////////////////
         MAZE_UI_API MenuBar2DPtr CreateDefaultMenuBarList(
-            Vec2DF const& _size,
-            Vec2DF const& _position,
+            Vec2F const& _size,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.0f, 1.0f),
-            Vec2DF const& _pivot = Vec2DF(0.0f, 1.0f));
+            Vec2F const& _anchor = Vec2F(0.0f, 1.0f),
+            Vec2F const& _pivot = Vec2F(0.0f, 1.0f));
 
         //////////////////////////////////////////
         MAZE_UI_API Scrollbar2DPtr CreateDefaultScrollbarHorizontal(
-            Vec2DF const& _size,
-            Vec2DF const& _position,
+            Vec2F const& _size,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.0f, 1.0f),
-            Vec2DF const& _pivot = Vec2DF(0.0f, 1.0f));
+            Vec2F const& _anchor = Vec2F(0.0f, 1.0f),
+            Vec2F const& _pivot = Vec2F(0.0f, 1.0f));
 
         //////////////////////////////////////////
         MAZE_UI_API Scrollbar2DPtr CreateDefaultScrollbarVertical(
-            Vec2DF const& _size,
-            Vec2DF const& _position,
+            Vec2F const& _size,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.0f, 1.0f),
-            Vec2DF const& _pivot = Vec2DF(0.0f, 1.0f));
+            Vec2F const& _anchor = Vec2F(0.0f, 1.0f),
+            Vec2F const& _pivot = Vec2F(0.0f, 1.0f));
 
         //////////////////////////////////////////
         MAZE_UI_API ScrollRect2DPtr CreateDefaultScrollRect(
-            Vec2DF const& _size,
-            Vec2DF const& _position,
+            Vec2F const& _size,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.0f, 1.0f),
-            Vec2DF const& _pivot = Vec2DF(0.0f, 1.0f),
+            Vec2F const& _anchor = Vec2F(0.0f, 1.0f),
+            Vec2F const& _pivot = Vec2F(0.0f, 1.0f),
             bool _horizontalScrollbar = true,
             bool _verticalScrollbar = true);
 
@@ -285,12 +285,12 @@ namespace Maze
             U32 _fontSize,
             HorizontalAlignment2D _horizontalAlignment,
             VerticalAlignment2D _verticalAlignment,
-            Vec2DF const& _size,
-            Vec2DF const& _position,
+            Vec2F const& _size,
+            Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
-            Vec2DF const& _anchor = Vec2DF(0.5f, 0.5f),
-            Vec2DF const& _pivot = Vec2DF(0.5f, 0.5f));
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 
     } // namespace UIHelper
     //////////////////////////////////////////

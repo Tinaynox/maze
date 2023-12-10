@@ -491,7 +491,7 @@ namespace Maze
 
     //////////////////////////////////////////
     GPUTextureBufferPtr RenderSystemOpenGL::createGPUTextureBuffer(
-        Vec2DU const& _size,
+        Vec2U const& _size,
         PixelFormat::Enum _pixelFormat,
         GPUByteBufferAccessType::Enum _accessType,
         void* _initialData)
@@ -516,7 +516,7 @@ namespace Maze
     //////////////////////////////////////////
     GPUTextureBufferPtr RenderSystemOpenGL::createGPUTextureBuffer(
         ContextOpenGL* _context,
-        Vec2DU const& _size,
+        Vec2U const& _size,
         PixelFormat::Enum _pixelFormat,
         GPUByteBufferAccessType::Enum _accessType,
         void* _initialData)

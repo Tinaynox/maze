@@ -93,35 +93,35 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Mesh::setPositions(Vec3DF* _positions, Size _count)
+    void Mesh::setPositions(Vec3F* _positions, Size _count)
     {
         SubMeshPtr subMesh = ensureSubMesh();
         subMesh->setPositions(_positions, _count);
     }
 
     //////////////////////////////////////////
-    void Mesh::setNormals(Vec3DF* _normals, Size _count)
+    void Mesh::setNormals(Vec3F* _normals, Size _count)
     {
         SubMeshPtr subMesh = ensureSubMesh();
         subMesh->setNormals(_normals, _count);
     }
 
     //////////////////////////////////////////
-    void Mesh::setColors(Vec4DF* _colors, Size _count)
+    void Mesh::setColors(Vec4F* _colors, Size _count)
     {
         SubMeshPtr subMesh = ensureSubMesh();
         subMesh->setColors(_colors, _count);
     }
 
     //////////////////////////////////////////
-    void Mesh::setTexCoords(S32 _uvIndex, Vec2DF* _data, Size _count)
+    void Mesh::setTexCoords(S32 _uvIndex, Vec2F* _data, Size _count)
     {
         SubMeshPtr subMesh = ensureSubMesh();
         subMesh->setTexCoords(_uvIndex, _data, _count);
     }
 
     //////////////////////////////////////////
-    void Mesh::setTexCoords(S32 _uvIndex, Vec4DF* _data, Size _count)
+    void Mesh::setTexCoords(S32 _uvIndex, Vec4F* _data, Size _count)
     {
         SubMeshPtr subMesh = ensureSubMesh();
         subMesh->setTexCoords(_uvIndex, _data, _count);

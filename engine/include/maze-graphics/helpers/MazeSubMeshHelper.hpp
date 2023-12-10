@@ -51,23 +51,23 @@ namespace Maze
         MAZE_GRAPHICS_API bool GenerateTangentsAndBitangents(
             U32 const* _indices,
             Size _indicesCount,
-            Vec3DF const* _positions,
-            Vec2DF const* _uvs,
-            Vec3DF const* _normals,
+            Vec3F const* _positions,
+            Vec2F const* _uvs,
+            Vec3F const* _normals,
             Size _verticesCount,
-            Vector<Vec3DF>& _outTangents,
-            Vector<Vec3DF>& _outBitangents);
+            Vector<Vec3F>& _outTangents,
+            Vector<Vec3F>& _outBitangents);
 
         //////////////////////////////////////////
         MAZE_GRAPHICS_API void FlipX(
             RenderDrawTopology _drawTopology,
             Vector<U32>& _indices,
-            Vector<Vec3DF>* _positions,
-            Vector<Vec3DF>* _normals,
-            Vector<Vec3DF>* _tangents);
+            Vector<Vec3F>* _positions,
+            Vector<Vec3F>* _normals,
+            Vector<Vec3F>* _tangents);
 
         //////////////////////////////////////////
-        MAZE_GRAPHICS_API Vec2DF NormalizeUV(Vec2DF const& _uv);
+        MAZE_GRAPHICS_API Vec2F NormalizeUV(Vec2F const& _uv);
 
     } // namespace SubMeshHelper
     //////////////////////////////////////////

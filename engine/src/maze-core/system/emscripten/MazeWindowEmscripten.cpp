@@ -62,8 +62,8 @@ namespace Maze
     //
     //////////////////////////////////////////
     WindowEmscripten::WindowEmscripten()
-        : m_clientSize(Vec2DU::c_zero)
-        , m_clientSizeBeforeFullscreen(Vec2DU::c_zero)
+        : m_clientSize(Vec2U32::c_zero)
+        , m_clientSizeBeforeFullscreen(Vec2U32::c_zero)
     {
         emscripten_set_fullscreenchange_callback(NULL, (void*)this, 1, &WindowEmscripten::ProcessFullscreenChangeCallback);
         emscripten_set_webglcontextlost_callback(NULL, (void*)this, 1, &WindowEmscripten::ProcessContextLostCallback);
@@ -123,32 +123,32 @@ namespace Maze
     }
     
     ////////////////////////////////////
-    void WindowEmscripten::setClientSize(Vec2DU const& _size)
+    void WindowEmscripten::setClientSize(Vec2U32 const& _size)
     {
         resize(_size.x, _size.y);
     }
 
     //////////////////////////////////////////
-    Vec2DU WindowEmscripten::getClientSize()
+    Vec2U32 WindowEmscripten::getClientSize()
     {
         return m_clientSize;
     }
 
     //////////////////////////////////////////
-    Vec2DU WindowEmscripten::getFullSize()
+    Vec2U32 WindowEmscripten::getFullSize()
     {
         return getClientSize();
     }
 
     //////////////////////////////////////////
-    void WindowEmscripten::setPosition(Vec2DS const& _position)
+    void WindowEmscripten::setPosition(Vec2S32 const& _position)
     {
     }
 
     //////////////////////////////////////////
-    Vec2DS WindowEmscripten::getPosition()
+    Vec2S32 WindowEmscripten::getPosition()
     {
-        return Vec2DU::c_zero;
+        return Vec2U32::c_zero;
     }
 
     //////////////////////////////////////////

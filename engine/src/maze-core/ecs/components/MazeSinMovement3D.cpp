@@ -41,7 +41,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SinMovement3D, Component,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, axis, Vec3DF::c_unitY, getAxis, setAxis),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3F, axis, Vec3F::c_unitY, getAxis, setAxis),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, frequency, 2.0f, getFrequency, setFrequency),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, amplitude, 1.0f, getAmplitude, setAmplitude));
 
@@ -50,10 +50,10 @@ namespace Maze
 
     //////////////////////////////////////////
     SinMovement3D::SinMovement3D()
-        : m_axis(Vec3DF::c_unitY)
+        : m_axis(Vec3F::c_unitY)
         , m_frequency(2.0f)
         , m_amplitude(1.0f)
-        , m_startPosition(Vec3DF::c_zero)
+        , m_startPosition(Vec3F::c_zero)
         , m_timer(0.0f)
     {
     }
@@ -65,7 +65,7 @@ namespace Maze
 
     //////////////////////////////////////////
     SinMovement3DPtr SinMovement3D::Create(
-        Vec3DF const& _axis,
+        Vec3F const& _axis,
         F32 _frequency,
         F32 _amplitude)
     {
@@ -76,7 +76,7 @@ namespace Maze
 
     //////////////////////////////////////////
     bool SinMovement3D::init(
-        Vec3DF const& _axis,
+        Vec3F const& _axis,
         F32 _frequency,
         F32 _amplitude)
     {

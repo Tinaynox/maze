@@ -25,11 +25,11 @@
 
 //////////////////////////////////////////
 #include "maze-core/MazeTypes.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
+#include "maze-core/math/MazeVec3.hpp"
 #include "maze-core/math/MazeMath.hpp"
-#include "maze-core/math/MazeMat3D.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeMat3F32.hpp"
+#include "maze-core/math/MazeMat4F32.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
 #include "maze-core/system/MazeThread.hpp"
@@ -73,16 +73,16 @@ S32 main(S32 _argc, S8 const* _argv[])
     LogService::GetInstancePtr()->setLogFile("log.log");
     Debug::log << "123" << endl;
 
-    Vec2DS a(42, 228);
-    a = Vec2DS::c_zero;
+    Vec2S32 a(42, 228);
+    a = Vec2S32::c_zero;
     a += 55;
     a.y = 0;
     auto aa = a.squaredLength();
     Debug::log << aa << endl;
 
 
-    Vec2DF b(42, 228);
-    b = Vec2DF::c_zero;
+    Vec2F32 b(42, 228);
+    b = Vec2F32::c_zero;
     b += 33.5f;
     b.x = 0;
     auto bb = b.squaredLength();
@@ -90,11 +90,11 @@ S32 main(S32 _argc, S8 const* _argv[])
 
 
 
-    Vec3DF c(a);
+    Vec3F32 c(a);
 
 
-    Mat3DF mm(Mat3DF::c_identity);
-    Mat4DF mmm(Mat4DF::c_identity);
+    Mat3F32F mm(Mat3F32F::c_identity);
+    Mat4F32F mmm(Mat4F32F::c_identity);
 
     Debug::log << a << endl;
     Debug::log << b << endl;

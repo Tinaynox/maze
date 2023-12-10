@@ -33,7 +33,7 @@
 #include "maze-physics2d/MazePhysics2DHeader.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 #include "maze-core/serialization/MazeXMLSerializable.hpp"
 #include "maze-core/utils/MazeSharedCopyable.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"

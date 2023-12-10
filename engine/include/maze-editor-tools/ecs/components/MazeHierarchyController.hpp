@@ -152,19 +152,19 @@ namespace Maze
         HierarchyLinePtr createHierarchyElement(
             Transform2D* _transform,
             CString _name,
-            Vec2DF const& _position);
+            Vec2F const& _position);
 
         //////////////////////////////////////////
         HierarchyLinePtr createHierarchyElement(
             Transform3D* _transform,
             CString _name,
-            Vec2DF const& _position);
+            Vec2F const& _position);
 
         //////////////////////////////////////////
         HierarchyLinePtr createHierarchyElement(
             Entity* _entity,
             CString _name,
-            Vec2DF const& _position);
+            Vec2F const& _position);
 
         //////////////////////////////////////////
         HierarchyLinePtr createHierarchyLine(EntityId _entityId);

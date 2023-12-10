@@ -92,10 +92,10 @@ namespace Maze
         , m_scrollSensitivity(1.0f)
         , m_horizontalScrollbarVisibility(ScrollRect2DScrollbarVisibility::AutoHideAndExpandViewport)
         , m_verticalScrollbarVisibility(ScrollRect2DScrollbarVisibility::AutoHideAndExpandViewport)
-        , m_velocity(Vec2DF::c_zero)
+        , m_velocity(Vec2F::c_zero)
         , m_boundsViewSpace(AABB2D::c_zero)
         , m_contentBoundsViewSpace(AABB2D::c_zero)
-        , m_prevPosition(Vec2DF::c_zero)
+        , m_prevPosition(Vec2F::c_zero)
         , m_prevBoundsViewSpace(AABB2D::c_zero)
         , m_prevContentBoundsViewSpace(AABB2D::c_zero)
         , m_horizontalScrollbarExpand(false)
@@ -159,7 +159,7 @@ namespace Maze
 
         updateBounds();
 
-        Vec2DF offset = calculateOffset(Vec2DF::c_zero);
+        Vec2F offset = calculateOffset(Vec2F::c_zero);
 
         if (m_boundsViewSpace != m_prevBoundsViewSpace ||
             m_contentBoundsViewSpace != m_prevContentBoundsViewSpace ||
@@ -219,14 +219,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ScrollRect2D::setNormalizedPosition(Vec2DF const& _value)
+    void ScrollRect2D::setNormalizedPosition(Vec2F const& _value)
     {
         setNormalizedPosition(_value.x, 0);
         setNormalizedPosition(_value.y, 1);
     }
 
     //////////////////////////////////////////
-    Vec2DF ScrollRect2D::getNormalizedPosition()
+    Vec2F ScrollRect2D::getNormalizedPosition()
     {
         return {
             getHorizontalNormalizedPosition(),
@@ -267,7 +267,7 @@ namespace Maze
 
         F32 newLocalPosition = m_contentTransform->getLocalPosition()[_axis] + contentBoundsMinPosition - m_contentBoundsViewSpace.getMin()[_axis];
 
-        Vec2DF localPosition = m_contentTransform->getLocalPosition();
+        Vec2F localPosition = m_contentTransform->getLocalPosition();
         if (Math::Abs(localPosition[_axis] - newLocalPosition) > 0.01f)
         {
             localPosition[_axis] = newLocalPosition;
@@ -344,16 +344,16 @@ namespace Maze
         if (!m_contentTransform)
             return AABB2D();
 
-        Vec2DF corners[4];
+        Vec2F corners[4];
         m_contentTransform->calculateWorldCorners(corners);
 
         Transform2DPtr const& viewTransform = ensureViewTransform();
         if (!viewTransform)
             return AABB2D::c_zero;
 
-        Mat4DF worldToViewMatrix = viewTransform->getWorldTransform().inversedAffineCopy();
+        Mat4F worldToViewMatrix = viewTransform->getWorldTransform().inversedAffineCopy();
 
-        Vec2DF p = worldToViewMatrix.transformAffine(corners[0]);
+        Vec2F p = worldToViewMatrix.transformAffine(corners[0]);
         AABB2D bounds(p);
 
         for (Size i = 1; i < 4; ++i)
@@ -380,7 +380,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec2DF ScrollRect2D::calculateOffset(Vec2DF const& _delta)
+    Vec2F ScrollRect2D::calculateOffset(Vec2F const& _delta)
     {
         return CalculateOffset(
             m_boundsViewSpace,
@@ -395,7 +395,7 @@ namespace Maze
     void ScrollRect2D::updatePrevData()
     {
         if (m_contentTransform == nullptr)
-            m_prevPosition = Vec2DF::c_zero;
+            m_prevPosition = Vec2F::c_zero;
         else
             m_prevPosition = m_contentTransform->getLocalPosition();
 
@@ -404,20 +404,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec2DF ScrollRect2D::CalculateOffset(
+    Vec2F ScrollRect2D::CalculateOffset(
         AABB2D const& _boundsViewSpace,
         AABB2D const& _contentBoundsViewSpace,
         bool _horizontalScroll,
         bool _verticalScroll,
         ScrollRect2DMovementType _movementType,
-        Vec2DF const& _delta)
+        Vec2F const& _delta)
     {
-        Vec2DF offset = Vec2DF::c_zero;
+        Vec2F offset = Vec2F::c_zero;
         if (_movementType == ScrollRect2DMovementType::Unrestricted)
             return offset;
 
-        Vec2DF min = _contentBoundsViewSpace.getMin();
-        Vec2DF max = _contentBoundsViewSpace.getMax();
+        Vec2F min = _contentBoundsViewSpace.getMin();
+        Vec2F max = _contentBoundsViewSpace.getMax();
 
         if (_horizontalScroll)
         {
@@ -483,7 +483,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ScrollRect2D::updateScrollbars(Vec2DF const& _offset)
+    void ScrollRect2D::updateScrollbars(Vec2F const& _offset)
     {
         if (m_horizontalScrollbar)
         {

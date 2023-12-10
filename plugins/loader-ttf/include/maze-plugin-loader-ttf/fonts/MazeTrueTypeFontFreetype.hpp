@@ -247,8 +247,8 @@ namespace Maze
             glyph.textureRect.size.x -= 2 * padding;
             glyph.textureRect.size.y -= 2 * padding;
 
-            glyph.textureCoords.position = (Vec2DF)glyph.textureRect.position / glyph.texture->getSize();
-            glyph.textureCoords.size = (Vec2DF)glyph.textureRect.size / glyph.texture->getSize();
+            glyph.textureCoords.position = (Vec2F)glyph.textureRect.position / glyph.texture->getSize();
+            glyph.textureCoords.size = (Vec2F)glyph.textureRect.size / glyph.texture->getSize();
 
             // Compute the glyph's bounding box
             // The metrics found in face->glyph->metrics are normally expressed in 26.6 pixel format (i.e., 1/64th of pixels),
@@ -374,8 +374,8 @@ namespace Maze
 
                     for (auto glyph : _page->glyphs)
                     {
-                        glyph.second.textureCoords.position = (Vec2DF)glyph.second.textureRect.position / _page->texture->getSize();
-                        glyph.second.textureCoords.size = (Vec2DF)glyph.second.textureRect.size / _page->texture->getSize();
+                        glyph.second.textureCoords.position = (Vec2F)glyph.second.textureRect.position / _page->texture->getSize();
+                        glyph.second.textureCoords.size = (Vec2F)glyph.second.textureRect.size / _page->texture->getSize();
                     }
 
                     texturesChanged = true;

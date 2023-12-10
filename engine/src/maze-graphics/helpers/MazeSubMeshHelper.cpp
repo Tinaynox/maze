@@ -39,17 +39,17 @@ namespace Maze
     {
         //////////////////////////////////////////
         MAZE_GRAPHICS_API void CalculateTriangleBasis(
-            Vec3DF const& _point0,
-            Vec3DF const& _point1,
-            Vec3DF const& _point2,
-            Vec2DF const& _uv0,
-            Vec2DF const& _uv1,
-            Vec2DF const& _uv2,
-            Vec3DF& _tangentX,
-            Vec3DF& _tangentY)
+            Vec3F const& _point0,
+            Vec3F const& _point1,
+            Vec3F const& _point2,
+            Vec2F const& _uv0,
+            Vec2F const& _uv1,
+            Vec2F const& _uv2,
+            Vec3F& _tangentX,
+            Vec3F& _tangentY)
         {
-            Vec3DF p = _point1 - _point0;
-            Vec3DF q = _point2 - _point0;
+            Vec3F p = _point1 - _point0;
+            Vec3F q = _point2 - _point0;
             F32 s1 = _uv1.x - _uv0.x;
             F32 t1 = _uv1.y - _uv0.y;
             F32 s2 = _uv2.x - _uv0.x;
@@ -89,17 +89,17 @@ namespace Maze
         MAZE_GRAPHICS_API bool GenerateTangentsAndBitangents(
             U32 const* _indices,
             Size _indicesCount,
-            Vec3DF const* _positions,
-            Vec2DF const* _uvs,
-            Vec3DF const* _normals,
+            Vec3F const* _positions,
+            Vec2F const* _uvs,
+            Vec3F const* _normals,
             Size _verticesCount,
-            Vector<Vec3DF>& _outTangents,
-            Vector<Vec3DF>& _outBitangents)
+            Vector<Vec3F>& _outTangents,
+            Vector<Vec3F>& _outBitangents)
         {
             MAZE_PROFILE_EVENT("GenerateTangentsAndBitangents");
 
-            Vector<Vec3DF> tangents;
-            Vector<Vec3DF> bitangents;
+            Vector<Vec3F> tangents;
+            Vector<Vec3F> bitangents;
 
 
             MAZE_ERROR_RETURN_VALUE_IF(_indicesCount % 3 != 0, false, "Indices is not a multiple of three!");
@@ -118,16 +118,16 @@ namespace Maze
                 Size index1 = _indices[i1];
                 Size index2 = _indices[i2];
 
-                Vec3DF const& p0 = _positions[index0];
-                Vec3DF const& p1 = _positions[index1];
-                Vec3DF const& p2 = _positions[index2];
+                Vec3F const& p0 = _positions[index0];
+                Vec3F const& p1 = _positions[index1];
+                Vec3F const& p2 = _positions[index2];
 
-                Vec2DF const& uv0 = _uvs[index0];
-                Vec2DF const& uv1 = _uvs[index1];
-                Vec2DF const& uv2 = _uvs[index2];
+                Vec2F const& uv0 = _uvs[index0];
+                Vec2F const& uv1 = _uvs[index1];
+                Vec2F const& uv2 = _uvs[index2];
 
-                Vec3DF tangent;
-                Vec3DF bitangent;
+                Vec3F tangent;
+                Vec3F bitangent;
 
                 CalculateTriangleBasis(
                     p0, p1, p2,
@@ -138,8 +138,8 @@ namespace Maze
                 bitangents.emplace_back(bitangent);
             }
 
-            Vector<Vec3DF> rt;
-            Vector<Vec3DF> rb;
+            Vector<Vec3F> rt;
+            Vector<Vec3F> rb;
             rt.reserve(_verticesCount);
             rb.reserve(_verticesCount);
 
@@ -165,8 +165,8 @@ namespace Maze
                     }
                 }
 
-                Vec3DF tangentRes(0.0f, 0.0f, 0.0f);
-                Vec3DF bitangentRes(0.0f, 0.0f, 0.0f);
+                Vec3F tangentRes(0.0f, 0.0f, 0.0f);
+                Vec3F bitangentRes(0.0f, 0.0f, 0.0f);
                 for (Size j = 0, jn = rt.size(); j < jn; ++j)
                 {
                     tangentRes += rt[j];
@@ -189,9 +189,9 @@ namespace Maze
         MAZE_GRAPHICS_API void FlipX(
             RenderDrawTopology _drawTopology,
             Vector<U32>& _indices,
-            Vector<Vec3DF>* _positions,
-            Vector<Vec3DF>* _normals,
-            Vector<Vec3DF>* _tangents)
+            Vector<Vec3F>* _positions,
+            Vector<Vec3F>* _normals,
+            Vector<Vec3F>* _tangents)
         {
             switch (_drawTopology)
             {
@@ -216,11 +216,11 @@ namespace Maze
             }
 
             auto flipX =
-                [](Vector<Vec3DF>* _array)
+                [](Vector<Vec3F>* _array)
                 {
                     if (_array)
                     {
-                        for (Vec3DF& value : *_array)
+                        for (Vec3F& value : *_array)
                             value.x = -value.x;
                     }
                 };
@@ -230,9 +230,9 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_GRAPHICS_API Vec2DF NormalizeUV(Vec2DF const& _uv)
+        MAZE_GRAPHICS_API Vec2F NormalizeUV(Vec2F const& _uv)
         {
-            Vec2DF uv = _uv;
+            Vec2F uv = _uv;
             while (uv.x > 1.0f) uv.x -= 1.0f;
             while (uv.x < 0.0f) uv.x += 1.0f;
             while (uv.y > 1.0f) uv.y -= 1.0f;

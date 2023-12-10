@@ -41,8 +41,8 @@ namespace Maze
     {
         //////////////////////////////////////////
         MAZE_PHYSICS2D_API Size Raycast(
-            Vec2DF const& _srcPosition,
-            Vec2DF const& _destPosition,
+            Vec2F const& _srcPosition,
+            Vec2F const& _destPosition,
             Vector<RaycastHit2D>& _result)
         {
             _result.clear();
@@ -56,8 +56,8 @@ namespace Maze
                 [&](
                     Rigidbody2D* _rigidbody2D,
                     Collider2D* _collider2D,
-                    Vec2DF const& _point,
-                    Vec2DF const& _normal) -> bool
+                    Vec2F const& _point,
+                    Vec2F const& _normal) -> bool
                 {
                     _result.emplace_back(
                         RaycastHit2D
@@ -76,8 +76,8 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_PHYSICS2D_API Size Raycast(
-            Vec2DF const& _origin,
-            Vec2DF const& _direction,
+            Vec2F const& _origin,
+            Vec2F const& _direction,
             F32 _distance,
             Vector<RaycastHit2D>& _result)
         {
@@ -86,8 +86,8 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_PHYSICS2D_API RaycastHit2DPtr Raycast(
-            Vec2DF const& _srcPosition,
-            Vec2DF const& _destPosition)
+            Vec2F const& _srcPosition,
+            Vec2F const& _destPosition)
         {
             PhysicsWorld2DPtr const& world = Physics2DManager::GetInstancePtr()->getWorld();
 
@@ -100,8 +100,8 @@ namespace Maze
                 [&](
                     Rigidbody2D* _rigidbody2D,
                     Collider2D* _collider2D,
-                    Vec2DF const& _point,
-                    Vec2DF const& _normal) -> bool
+                    Vec2F const& _point,
+                    Vec2F const& _normal) -> bool
                 {
                     result = std::make_shared<RaycastHit2D>(
                         _point,
@@ -117,8 +117,8 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_PHYSICS2D_API RaycastHit2DPtr Raycast(
-            Vec2DF const& _origin,
-            Vec2DF const& _direction,
+            Vec2F const& _origin,
+            Vec2F const& _direction,
             F32 _distance)
         {
             return Raycast(
@@ -128,8 +128,8 @@ namespace Maze
         
         //////////////////////////////////////////
         MAZE_PHYSICS2D_API Vector<RaycastHit2D> RaycastAll(
-            Vec2DF const& _origin,
-            Vec2DF const& _direction,
+            Vec2F const& _origin,
+            Vec2F const& _direction,
             F32 _distance)
         {
             Vector<RaycastHit2D> result;
@@ -140,8 +140,8 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_PHYSICS2D_API Vector<RaycastHit2D> RaycastAll(
-            Vec2DF const& _srcPosition,
-            Vec2DF const& _destPosition)
+            Vec2F const& _srcPosition,
+            Vec2F const& _destPosition)
         {
             Vector<RaycastHit2D> result;
             Raycast(_srcPosition, _destPosition, result);
@@ -152,8 +152,8 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_PHYSICS2D_API OverlapHit2DPtr OverlapZone(
-            Vec2DF const& _from,
-            Vec2DF const& _to)
+            Vec2F const& _from,
+            Vec2F const& _to)
         {
             PhysicsWorld2DPtr const& world = Physics2DManager::GetInstancePtr()->getWorld();
 
@@ -188,18 +188,18 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_PHYSICS2D_API OverlapHit2DPtr OverlapRect(
-            Vec2DF const& _position,
-            Vec2DF const& _size)
+            Vec2F const& _position,
+            Vec2F const& _size)
         {
-            Vec2DF const halfSize = _size * 0.5f;
+            Vec2F const halfSize = _size * 0.5f;
 
             return OverlapZone(_position - halfSize, _position + halfSize);
         }
 
         //////////////////////////////////////////
         MAZE_PHYSICS2D_API Vector<OverlapHit2DPtr> OverlapZoneAll(
-            Vec2DF const& _from,
-            Vec2DF const& _to,
+            Vec2F const& _from,
+            Vec2F const& _to,
             std::function<bool(b2Fixture* _fixture)> const& _predicate)
         {
             PhysicsWorld2DPtr const& world = Physics2DManager::GetInstancePtr()->getWorld();
@@ -239,26 +239,26 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_PHYSICS2D_API Vector<OverlapHit2DPtr> OverlapZoneAll(
-            Vec2DF const& _from,
-            Vec2DF const& _to)
+            Vec2F const& _from,
+            Vec2F const& _to)
         {
             return OverlapZoneAll(_from, _to, nullptr);
         }
 
         //////////////////////////////////////////
         MAZE_PHYSICS2D_API Vector<OverlapHit2DPtr> OverlapSegmentAll(
-            Vec2DF const& _position,
-            Vec2DF const& _direction,
+            Vec2F const& _position,
+            Vec2F const& _direction,
             F32 _distance,
             F32 _width)
         {
             Vector<OverlapHit2DPtr> result;
-            Vec2DF pos0 = _position;
-            Vec2DF pos1 = _position + _direction * _distance;
-            Vec2DF min = { Math::Min(pos0.x, pos1.x) - _width * 0.5f, Math::Min(pos0.y, pos1.y) - _width * 0.5f };
-            Vec2DF max = { Math::Max(pos0.x, pos1.x) + _width * 0.5f, Math::Max(pos0.y, pos1.y) + _width * 0.5f };
+            Vec2F pos0 = _position;
+            Vec2F pos1 = _position + _direction * _distance;
+            Vec2F min = { Math::Min(pos0.x, pos1.x) - _width * 0.5f, Math::Min(pos0.y, pos1.y) - _width * 0.5f };
+            Vec2F max = { Math::Max(pos0.x, pos1.x) + _width * 0.5f, Math::Max(pos0.y, pos1.y) + _width * 0.5f };
 
-            Vec2DF p = _direction.perpendicular();
+            Vec2F p = _direction.perpendicular();
 
             PhysicsWorld2DPtr const& world = Physics2DManager::GetInstancePtr()->getWorld();
 
@@ -296,16 +296,16 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_PHYSICS2D_API Vector<OverlapHit2DPtr> OverlapRectAll(
-            Vec2DF const& _position,
-            Vec2DF const& _size)
+            Vec2F const& _position,
+            Vec2F const& _size)
         {
-            Vec2DF const halfSize = _size * 0.5f;
+            Vec2F const halfSize = _size * 0.5f;
             return OverlapZoneAll(_position - halfSize, _position + halfSize);
         }
 
         //////////////////////////////////////////
         MAZE_PHYSICS2D_API OverlapHit2DPtr OverlapPoint(
-            Vec2DF const& _position)
+            Vec2F const& _position)
         {
             PhysicsWorld2DPtr const& world = Physics2DManager::GetInstancePtr()->getWorld();
 
@@ -314,7 +314,7 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_PHYSICS2D_API Vector<OverlapHit2DPtr> OverlapPointAll(
-            Vec2DF const& _position)
+            Vec2F const& _position)
         {
             PhysicsWorld2DPtr const& world = Physics2DManager::GetInstancePtr()->getWorld();
 
@@ -323,7 +323,7 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_PHYSICS2D_API Vector<OverlapHit2DPtr> OverlapCircleAll(
-            Vec2DF const& _position,
+            Vec2F const& _position,
             F32 _radius)
         {
             PhysicsWorld2DPtr const& world = Physics2DManager::GetInstancePtr()->getWorld();

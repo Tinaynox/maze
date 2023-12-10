@@ -122,13 +122,13 @@ namespace Maze
     {
         MAZE_PROFILE_EVENT("ParticlesDrawerSystem::notifyGatherRenderUnits");
 
-        Vec3DF cameraPosition = _params.cameraTransform.getAffineTranslation();
-        Mat4DF cameraTransform = _params.cameraTransform;
+        Vec3F cameraPosition = _params.cameraTransform.getAffineTranslation();
+        Mat4F cameraTransform = _params.cameraTransform;
         cameraTransform[0][3] = 0.0f;
         cameraTransform[1][3] = 0.0f;
         cameraTransform[2][3] = 0.0f;
-        Vec3DF cameraForward = (cameraTransform.transformAffine(Vec3DF::c_unitZ)).normalizedCopy();
-        Vec3DF cameraUp = (cameraTransform.transformAffine(Vec3DF::c_unitY)).normalizedCopy();
+        Vec3F cameraForward = (cameraTransform.transformAffine(Vec3F::c_unitZ)).normalizedCopy();
+        Vec3F cameraUp = (cameraTransform.transformAffine(Vec3F::c_unitY)).normalizedCopy();
 
         m_particleSystem3DSample->process(
             [_renderTarget, &_renderData, &cameraPosition, &cameraForward, &cameraUp, &_params](Entity* _entity, ParticleSystem3D* _particleSystem)

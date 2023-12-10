@@ -33,7 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
@@ -88,37 +88,37 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Vec3DF const& getLocalPosition() const { return m_localPosition; }
+        inline Vec3F const& getLocalPosition() const { return m_localPosition; }
 
         //////////////////////////////////////////
-        inline Vec2DF getLocalPositionXY() const { return { m_localPosition.x, m_localPosition.y }; }
+        inline Vec2F getLocalPositionXY() const { return { m_localPosition.x, m_localPosition.y }; }
 
         //////////////////////////////////////////
-        void setLocalPosition(Vec3DF const& _localPosition);
+        void setLocalPosition(Vec3F const& _localPosition);
 
         //////////////////////////////////////////
-        inline void setLocalPosition(F32 _x, F32 _y, F32 _z = 0.0f) { setLocalPosition(Vec3DF(_x, _y, _z)); }
+        inline void setLocalPosition(F32 _x, F32 _y, F32 _z = 0.0f) { setLocalPosition(Vec3F(_x, _y, _z)); }
 
         //////////////////////////////////////////
-        inline void setLocalX(F32 _x) { setLocalPosition(Vec3DF(_x, m_localPosition.y, m_localPosition.z)); }
+        inline void setLocalX(F32 _x) { setLocalPosition(Vec3F(_x, m_localPosition.y, m_localPosition.z)); }
 
         //////////////////////////////////////////
-        inline void setLocalY(F32 _y) { setLocalPosition(Vec3DF(m_localPosition.x, _y, m_localPosition.z)); }
+        inline void setLocalY(F32 _y) { setLocalPosition(Vec3F(m_localPosition.x, _y, m_localPosition.z)); }
 
         //////////////////////////////////////////
-        inline void setLocalZ(F32 _z) { setLocalPosition(Vec3DF(m_localPosition.x, m_localPosition.y, _z)); }
+        inline void setLocalZ(F32 _z) { setLocalPosition(Vec3F(m_localPosition.x, m_localPosition.y, _z)); }
 
         //////////////////////////////////////////
-        void translate(Vec3DF const& _offset);
+        void translate(Vec3F const& _offset);
 
         //////////////////////////////////////////
-        void translate(Vec2DF const& _offset);
+        void translate(Vec2F const& _offset);
 
         //////////////////////////////////////////
-        inline Vec3DF getWorldPosition() { return getWorldTransform().getAffineTranslation(); }
+        inline Vec3F getWorldPosition() { return getWorldTransform().getAffineTranslation(); }
 
         //////////////////////////////////////////
-        inline Vec3DF getWorldPosition(Vec3DF const& _localPoint) { return getWorldTransform().transformAffine(_localPoint); }
+        inline Vec3F getWorldPosition(Vec3F const& _localPoint) { return getWorldTransform().transformAffine(_localPoint); }
 
 
         //////////////////////////////////////////
@@ -134,7 +134,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline void setLocalRotation(Vec3DF const& _euler)
+        inline void setLocalRotation(Vec3F const& _euler)
         {
             setLocalRotation(_euler.x, _euler.y, _euler.z);
         }
@@ -149,26 +149,26 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        void setLocalDirection(Vec3DF const& _localDirection);
+        void setLocalDirection(Vec3F const& _localDirection);
 
         //////////////////////////////////////////
         inline void setLocalDirection(F32 _x, F32 _y, F32 _z) { setLocalDirection({ _x, _y, _z }); }
 
 
         //////////////////////////////////////////
-        Vec3DF const& getLocalScale() const { return m_localScale; }
+        Vec3F const& getLocalScale() const { return m_localScale; }
 
         //////////////////////////////////////////
-        void setLocalScale(Vec3DF const& _localScale);
+        void setLocalScale(Vec3F const& _localScale);
 
         //////////////////////////////////////////
-        inline void setLocalScale(F32 _scale) { setLocalScale(Vec3DF(_scale, _scale, _scale)); }
+        inline void setLocalScale(F32 _scale) { setLocalScale(Vec3F(_scale, _scale, _scale)); }
 
         //////////////////////////////////////////
-        inline void setLocalScale(F32 _scaleX, F32 _scaleY) { setLocalScale(Vec3DF(_scaleX, _scaleY, 1.0f)); }
+        inline void setLocalScale(F32 _scaleX, F32 _scaleY) { setLocalScale(Vec3F(_scaleX, _scaleY, 1.0f)); }
 
         //////////////////////////////////////////
-        inline void setLocalScale(F32 _scaleX, F32 _scaleY, F32 _scaleZ) { setLocalScale(Vec3DF(_scaleX, _scaleY, _scaleZ)); }
+        inline void setLocalScale(F32 _scaleX, F32 _scaleY, F32 _scaleZ) { setLocalScale(Vec3F(_scaleX, _scaleY, _scaleZ)); }
 
         //////////////////////////////////////////
         inline void setLocalScaleX(F32 _scale) { setLocalScale(_scale, m_localScale.y, m_localScale.z); }
@@ -181,11 +181,11 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void rotate(Vec3DF const& _axis, F32 _angle);
+        void rotate(Vec3F const& _axis, F32 _angle);
 
 
         //////////////////////////////////////////
-        Mat4DF const& getLocalTransform();
+        Mat4F const& getLocalTransform();
 
         //////////////////////////////////////////
         inline bool isLocalTransformDirty() { return m_flags & Flags::LocalTransformDirty; }
@@ -200,17 +200,17 @@ namespace Maze
         inline bool isLocalTransformChanged() { return isLocalTransformChangedCurrentFrame() || isLocalTransformChangedPreviousFrame(); }
 
         //////////////////////////////////////////
-        Mat4DF const& calculateLocalTransform();
+        Mat4F const& calculateLocalTransform();
 
         //////////////////////////////////////////
-        void setLocalTransform(Mat4DF const& _localTransform);
+        void setLocalTransform(Mat4F const& _localTransform);
 
 
         //////////////////////////////////////////
-        Mat4DF const& getWorldTransform();
+        Mat4F const& getWorldTransform();
 
         //////////////////////////////////////////
-        void setWorldTransform(Mat4DF const& _worldTransform);
+        void setWorldTransform(Mat4F const& _worldTransform);
 
         //////////////////////////////////////////
         inline bool isWorldTransformDirty() { return m_flags & Flags::WorldTransformDirty; }
@@ -225,43 +225,43 @@ namespace Maze
         inline bool isWorldTransformChanged() { return isWorldTransformChangedCurrentFrame() || isWorldTransformChangedPreviousFrame(); }
 
         //////////////////////////////////////////
-        Mat4DF const& calculateWorldTransform();
+        Mat4F const& calculateWorldTransform();
 
         //////////////////////////////////////////
         Quaternion getWorldRotation() const;
 
         //////////////////////////////////////////
-        Vec3DF getWorldScale() const;
+        Vec3F getWorldScale() const;
 
 
         //////////////////////////////////////////
-        inline Vec3DF getWorldForwardDirection()
+        inline Vec3F getWorldForwardDirection()
         {
-            Mat4DF mat = getWorldTransform();
+            Mat4F mat = getWorldTransform();
             mat[0][3] = 0.0f;
             mat[1][3] = 0.0f;
             mat[2][3] = 0.0f;
-            return (mat.transformAffine(Vec3DF::c_unitZ)).normalizedCopy();
+            return (mat.transformAffine(Vec3F::c_unitZ)).normalizedCopy();
         } 
 
         //////////////////////////////////////////
-        inline Vec3DF getWorldUpDirection()
+        inline Vec3F getWorldUpDirection()
         {
-            Mat4DF mat = getWorldTransform();
+            Mat4F mat = getWorldTransform();
             mat[0][3] = 0.0f;
             mat[1][3] = 0.0f;
             mat[2][3] = 0.0f;
-            return (mat.transformAffine(Vec3DF::c_unitY)).normalizedCopy();
+            return (mat.transformAffine(Vec3F::c_unitY)).normalizedCopy();
         }
 
         //////////////////////////////////////////
-        inline Vec3DF getWorldRightDirection()
+        inline Vec3F getWorldRightDirection()
         {
-            Mat4DF mat = getWorldTransform();
+            Mat4F mat = getWorldTransform();
             mat[0][3] = 0.0f;
             mat[1][3] = 0.0f;
             mat[2][3] = 0.0f;
-            return (mat.transformAffine(Vec3DF::c_unitX)).normalizedCopy();
+            return (mat.transformAffine(Vec3F::c_unitX)).normalizedCopy();
         }
 
 
@@ -484,13 +484,13 @@ namespace Maze
         static MetaProperty* GetParentProperty();
 
     protected:
-        Vec3DF m_localPosition;
+        Vec3F m_localPosition;
         Quaternion m_localRotation;
-        Vec3DF m_localScale;
+        Vec3F m_localScale;
 
         S32 m_flags;
-        Mat4DF m_localTransform;
-        Mat4DF m_worldTransform;
+        Mat4F m_localTransform;
+        Mat4F m_worldTransform;
 
         Transform3DPtr m_parent;
         Vector<Transform3D*> m_children;

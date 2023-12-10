@@ -187,7 +187,7 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual GPUTextureBufferPtr createGPUTextureBuffer(
-            Vec2DU const& _size,
+            Vec2U const& _size,
             PixelFormat::Enum _pixelFormat,
             GPUByteBufferAccessType::Enum _accessType,
             void* _initialData = nullptr) MAZE_OVERRIDE;
@@ -195,7 +195,7 @@ namespace Maze
         //////////////////////////////////////////
         GPUTextureBufferPtr createGPUTextureBuffer(
             ContextOpenGL* _context,
-            Vec2DU const& _size,
+            Vec2U const& _size,
             PixelFormat::Enum _pixelFormat,
             GPUByteBufferAccessType::Enum _accessType,
             void* _initialData = nullptr);

@@ -59,7 +59,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        using SampleRefFunc = void (ParticleSystemParameterColor::*)(S32 _particleSeed, F32 _scalar, Vec4DF& _result) const;
+        using SampleRefFunc = void (ParticleSystemParameterColor::*)(S32 _particleSeed, F32 _scalar, Vec4F& _result) const;
 
     public:
 
@@ -70,13 +70,13 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        ParticleSystemParameterColor(Vec4DF const& _value)
+        ParticleSystemParameterColor(Vec4F const& _value)
         {
             setColor(_value);
         }
 
         //////////////////////////////////////////
-        ParticleSystemParameterColor(Vec4DF const& _value0, Vec4DF const& _value1)
+        ParticleSystemParameterColor(Vec4F const& _value0, Vec4F const& _value1)
         {
             setRandomBetweenColors(_value0, _value1);
         }
@@ -112,14 +112,14 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setColor(Vec4DF const& _value)
+        void setColor(Vec4F const& _value)
         {
             m_color0 = _value;
             setSamplingMode(ParticleSystemParameterColorSamplingMode::Color);
         }
 
         //////////////////////////////////////////
-        void setRandomBetweenColors(Vec4DF const& _value0, Vec4DF const& _value1)
+        void setRandomBetweenColors(Vec4F const& _value0, Vec4F const& _value1)
         {
             m_color0 = _value0;
             m_color1 = _value1;
@@ -142,10 +142,10 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        Vec4DF const& getColor0() const { return m_color0; }
+        Vec4F const& getColor0() const { return m_color0; }
 
         //////////////////////////////////////////
-        Vec4DF const& getColor1() const { return m_color1; }
+        Vec4F const& getColor1() const { return m_color1; }
 
         //////////////////////////////////////////
         ColorGradient const& getGradient0() const { return m_gradient0; }
@@ -155,7 +155,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void sample(S32 _particleSeed, F32 _scalar, Vec4DF& _result) const;
+        inline void sample(S32 _particleSeed, F32 _scalar, Vec4F& _result) const;
 
 
         //////////////////////////////////////////
@@ -244,26 +244,26 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void sampleRefNone(S32 _particleSeed, F32 _scalar, Vec4DF& _result) const;
+        inline void sampleRefNone(S32 _particleSeed, F32 _scalar, Vec4F& _result) const;
 
         //////////////////////////////////////////
-        inline void sampleRefConstant(S32 _particleSeed, F32 _scalar, Vec4DF& _result) const;
+        inline void sampleRefConstant(S32 _particleSeed, F32 _scalar, Vec4F& _result) const;
 
         //////////////////////////////////////////
-        inline void sampleRefGradient(S32 _particleSeed, F32 _scalar, Vec4DF& _result) const;
+        inline void sampleRefGradient(S32 _particleSeed, F32 _scalar, Vec4F& _result) const;
 
         //////////////////////////////////////////
-        inline void sampleRefRandomBetweenColors(S32 _particleSeed, F32 _scalar, Vec4DF& _result) const;
+        inline void sampleRefRandomBetweenColors(S32 _particleSeed, F32 _scalar, Vec4F& _result) const;
 
         //////////////////////////////////////////
-        inline void sampleRefRandomBetweenGradients(S32 _particleSeed, F32 _scalar, Vec4DF& _result) const;
+        inline void sampleRefRandomBetweenGradients(S32 _particleSeed, F32 _scalar, Vec4F& _result) const;
 
     protected:
         ParticleSystemParameterColorSamplingMode m_mode;
         SampleRefFunc m_samplingRefFunc = &ParticleSystemParameterColor::sampleRefNone;
 
-        Vec4DF m_color0;
-        Vec4DF m_color1;
+        Vec4F m_color0;
+        Vec4F m_color1;
 
         ColorGradient m_gradient0;
         ColorGradient m_gradient1;

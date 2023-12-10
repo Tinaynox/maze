@@ -90,19 +90,19 @@ namespace Maze
         virtual bool isOpened() MAZE_OVERRIDE;
         
         ////////////////////////////////////
-        virtual void setClientSize(Vec2DU const& _size) MAZE_OVERRIDE;
+        virtual void setClientSize(Vec2U32 const& _size) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual Vec2DU getClientSize() MAZE_OVERRIDE;
+        virtual Vec2U32 getClientSize() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual Vec2DU getFullSize() MAZE_OVERRIDE;
+        virtual Vec2U32 getFullSize() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void setPosition(Vec2DS const& _position) MAZE_OVERRIDE;
+        virtual void setPosition(Vec2S32 const& _position) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual Vec2DS getPosition() MAZE_OVERRIDE;
+        virtual Vec2S32 getPosition() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual void close() MAZE_OVERRIDE;

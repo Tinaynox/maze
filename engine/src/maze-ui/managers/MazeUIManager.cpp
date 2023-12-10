@@ -208,9 +208,9 @@ namespace Maze
         S32 const chunkSize = 32;
         S32 const gap = 1;
 
-        auto startPosFunc = [&](Vec2DS const& _pos) { return (chunkSize * _pos) + Vec2DS((_pos.x + 1) * gap, (_pos.y + 1) * gap); };
+        auto startPosFunc = [&](Vec2S const& _pos) { return (chunkSize * _pos) + Vec2S((_pos.x + 1) * gap, (_pos.y + 1) * gap); };
 
-        PixelSheet2D uiElementsSheet(Vec2DS(8, 8) * chunkSize, PixelFormat::RGBA_U8);
+        PixelSheet2D uiElementsSheet(Vec2S(8, 8) * chunkSize, PixelFormat::RGBA_U8);
         uiElementsSheet.fill(ColorU32::c_transparent);
 
         m_uiElementsTexture = Texture2D::Create();
@@ -219,49 +219,49 @@ namespace Maze
 
         // Drop down button collapsed
         {
-            Vec2DS sheetPos(0, 0);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(0, 0);
+            Vec2S startPos = startPosFunc(sheetPos);
 
             uiElementsSheet.drawFilledTriangle(
-                Vec2DS(10, 6) + startPos,
-                Vec2DS(22, 14) + startPos,
-                Vec2DS(10, 22) + startPos,
+                Vec2S(10, 6) + startPos,
+                Vec2S(22, 14) + startPos,
+                Vec2S(10, 22) + startPos,
                 ColorU32::c_white);
             
             m_defaultUISprites[(Size)DefaultUISprite::DropDownButtonCollapsed] = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(chunkSize, chunkSize));
+                Vec2F(startPos),
+                Vec2F(chunkSize, chunkSize));
         }
 
         // Drop down button expanded
         {
-            Vec2DS sheetPos(1, 0);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(1, 0);
+            Vec2S startPos = startPosFunc(sheetPos);
 
             uiElementsSheet.drawFilledTriangle(
-                Vec2DS(8, 20) + startPos,
-                Vec2DS(16, 6) + startPos,
-                Vec2DS(24, 20) + startPos,
+                Vec2S(8, 20) + startPos,
+                Vec2S(16, 6) + startPos,
+                Vec2S(24, 20) + startPos,
                 ColorU32::c_white);
 
             m_defaultUISprites[(Size)DefaultUISprite::DropDownButtonExpanded] = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(chunkSize, chunkSize));
+                Vec2F(startPos),
+                Vec2F(chunkSize, chunkSize));
         }
 
         // Entity Object
         {
-            Vec2DS sheetPos(2, 0);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(2, 0);
+            Vec2S startPos = startPosFunc(sheetPos);
 
-            Vec2DS outerBottom(14, 2);
-            Vec2DS outerTop(14, 29);
-            Vec2DS outerBottomLeft(2, 7);
-            Vec2DS outerTopLeft(2, 24);
-            Vec2DS outerBottomRight(26, 7);
-            Vec2DS outerTopRight(26, 24);
+            Vec2S outerBottom(14, 2);
+            Vec2S outerTop(14, 29);
+            Vec2S outerBottomLeft(2, 7);
+            Vec2S outerTopLeft(2, 24);
+            Vec2S outerBottomRight(26, 7);
+            Vec2S outerTopRight(26, 24);
 
             uiElementsSheet.drawFilledTriangle(
                 outerTopLeft + startPos,
@@ -285,80 +285,80 @@ namespace Maze
                 ColorU32::c_white);
             
             uiElementsSheet.drawFilledTriangle(
-                outerTopLeft + Vec2DS(2 + 1, - 2) + startPos,
-                outerTopRight + Vec2DS(-2 - 1, - 2) + startPos,
-                outerTop  + Vec2DS(0, -2 - 1) + startPos,
+                outerTopLeft + Vec2S(2 + 1, - 2) + startPos,
+                outerTopRight + Vec2S(-2 - 1, - 2) + startPos,
+                outerTop  + Vec2S(0, -2 - 1) + startPos,
                 ColorU32::c_transparent);
             uiElementsSheet.drawFilledTriangle(
-                outerTopLeft + Vec2DS(2 + 1, - 2) + startPos,
-                outerTopRight + Vec2DS(-2 - 1, - 2) + startPos,
-                outerTop + Vec2DS(0, -(outerTop.y - outerTopLeft.y) * 2)  + Vec2DS(0, +2 - 3) + startPos,
-                ColorU32::c_transparent);
-
-            uiElementsSheet.drawFilledTriangle(
-                Vec2DS(4, 9) + startPos,
-                Vec2DS(4, 21 - 2) + startPos,
-                Vec2DS(12, 18 - 2) + startPos,
-                ColorU32::c_transparent);
-            uiElementsSheet.drawFilledTriangle(
-                Vec2DS(4, 9) + startPos,
-                Vec2DS(12, 6) + startPos,
-                Vec2DS(12, 18 - 2) + startPos,
+                outerTopLeft + Vec2S(2 + 1, - 2) + startPos,
+                outerTopRight + Vec2S(-2 - 1, - 2) + startPos,
+                outerTop + Vec2S(0, -(outerTop.y - outerTopLeft.y) * 2)  + Vec2S(0, +2 - 3) + startPos,
                 ColorU32::c_transparent);
 
             uiElementsSheet.drawFilledTriangle(
-                Vec2DS(4 + 12, 6) + startPos,
-                Vec2DS(4 + 12, 18 - 2) + startPos,
-                Vec2DS(12 + 12, 21 - 2) + startPos,
+                Vec2S(4, 9) + startPos,
+                Vec2S(4, 21 - 2) + startPos,
+                Vec2S(12, 18 - 2) + startPos,
                 ColorU32::c_transparent);
             uiElementsSheet.drawFilledTriangle(
-                Vec2DS(4 + 12, 6) + startPos,
-                Vec2DS(12 + 12, 9) + startPos,
-                Vec2DS(12 + 12, 21 - 2) + startPos,
+                Vec2S(4, 9) + startPos,
+                Vec2S(12, 6) + startPos,
+                Vec2S(12, 18 - 2) + startPos,
+                ColorU32::c_transparent);
+
+            uiElementsSheet.drawFilledTriangle(
+                Vec2S(4 + 12, 6) + startPos,
+                Vec2S(4 + 12, 18 - 2) + startPos,
+                Vec2S(12 + 12, 21 - 2) + startPos,
+                ColorU32::c_transparent);
+            uiElementsSheet.drawFilledTriangle(
+                Vec2S(4 + 12, 6) + startPos,
+                Vec2S(12 + 12, 9) + startPos,
+                Vec2S(12 + 12, 21 - 2) + startPos,
                 ColorU32::c_transparent);
 
             m_defaultUISprites[(Size)DefaultUISprite::EntityObject3D] = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(chunkSize, chunkSize));
+                Vec2F(startPos),
+                Vec2F(chunkSize, chunkSize));
         }
 
         // Scene
         {
-            Vec2DS sheetPos(3, 0);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(3, 0);
+            Vec2S startPos = startPosFunc(sheetPos);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(2, 2) + startPos,
-                Vec2DS(28, 28),
+                Vec2S(2, 2) + startPos,
+                Vec2S(28, 28),
                 ColorU32::c_white);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(2 + 3, 2 + 3) + startPos,
-                Vec2DS(28 - 6, 28 - 6),
+                Vec2S(2 + 3, 2 + 3) + startPos,
+                Vec2S(28 - 6, 28 - 6),
                 ColorU32::c_transparent);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(2 + 6, 2 + 6) + startPos,
-                Vec2DS(28 - 12, 28 - 12),
+                Vec2S(2 + 6, 2 + 6) + startPos,
+                Vec2S(28 - 12, 28 - 12),
                 ColorU32::c_white);
 
             m_defaultUISprites[(Size)DefaultUISprite::Scene] = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(chunkSize, chunkSize));
+                Vec2F(startPos),
+                Vec2F(chunkSize, chunkSize));
         }
 
         // Panel00
         {
-            Vec2DS sheetPos(0, 1);
-            Vec2DS startPos = startPosFunc(sheetPos);
-            Vec2DS size(7, 7);
+            Vec2S sheetPos(0, 1);
+            Vec2S startPos = startPosFunc(sheetPos);
+            Vec2S size(7, 7);
             SpriteSliceBorder sliceBorder(3, 3, 3, 3);
 
             // Default
             {
-                Vec2DS pos = startPos + Vec2DS(0, 0);
+                Vec2S pos = startPos + Vec2S(0, 0);
                 static ColorU32 const backgroundColor = ColorU32(240, 240, 240);
                 static ColorU32 const sideBordersColor = ColorU32(184, 184, 184);
                 static ColorU32 const topBorderColor = ColorU32(161, 161, 161);
@@ -381,7 +381,7 @@ namespace Maze
 
             // Focused
             {
-                Vec2DS pos = startPos + Vec2DS(8, 0);
+                Vec2S pos = startPos + Vec2S(8, 0);
                 static ColorU32 const backgroundColor = ColorU32(240, 240, 240);
                 static ColorU32 const sideBordersColor = ColorU32(108, 108, 108);
                 static ColorU32 const topBorderColor = ColorU32(108, 108, 108);
@@ -404,7 +404,7 @@ namespace Maze
 
             // Selected
             {
-                Vec2DS pos = startPos + Vec2DS(16, 0);
+                Vec2S pos = startPos + Vec2S(16, 0);
                 static ColorU32 const backgroundColor = ColorU32(237, 237, 237);
                 static ColorU32 const sideBordersColor = ColorU32(76, 76, 76);
                 static ColorU32 const topBorderColor = ColorU32(76, 76, 76);
@@ -427,7 +427,7 @@ namespace Maze
 
             // Flat
             {
-                Vec2DS pos = startPos + Vec2DS(0, 8);
+                Vec2S pos = startPos + Vec2S(0, 8);
                 static ColorU32 const backgroundColor = ColorU32(255, 255, 255);
                 static ColorU32 const sideBordersColor = ColorU32(255, 255, 255);
                 static ColorU32 const topBorderColor = ColorU32(255, 255, 255);
@@ -451,14 +451,14 @@ namespace Maze
 
         // Panel01
         {
-            Vec2DS sheetPos(1, 1);
-            Vec2DS startPos = startPosFunc(sheetPos);
-            Vec2DS size(7, 7);
+            Vec2S sheetPos(1, 1);
+            Vec2S startPos = startPosFunc(sheetPos);
+            Vec2S size(7, 7);
             SpriteSliceBorder sliceBorder(3, 3, 3, 3);
 
             // Default
             {
-                Vec2DS pos = startPos + Vec2DS(0, 0);
+                Vec2S pos = startPos + Vec2S(0, 0);
                 static ColorU32 const backgroundColor = ColorU32::c_transparent;
                 static ColorU32 const sideBordersColor = ColorU32(184, 184, 184);
                 static ColorU32 const topBorderColor = ColorU32(161, 161, 161);
@@ -481,7 +481,7 @@ namespace Maze
 
             // Focused
             {
-                Vec2DS pos = startPos + Vec2DS(8, 0);
+                Vec2S pos = startPos + Vec2S(8, 0);
                 static ColorU32 const backgroundColor = ColorU32::c_transparent;
                 static ColorU32 const sideBordersColor = ColorU32(108, 108, 108);
                 static ColorU32 const topBorderColor = ColorU32(108, 108, 108);
@@ -504,7 +504,7 @@ namespace Maze
 
             // Selected
             {
-                Vec2DS pos = startPos + Vec2DS(16, 0);
+                Vec2S pos = startPos + Vec2S(16, 0);
                 static ColorU32 const backgroundColor = ColorU32::c_transparent;
                 static ColorU32 const sideBordersColor = ColorU32(76, 76, 76);
                 static ColorU32 const topBorderColor = ColorU32(76, 76, 76);
@@ -528,244 +528,244 @@ namespace Maze
 
         // Check Mark
         {
-            Vec2DS sheetPos(0, 1);
-            Vec2DS startPos = startPosFunc(sheetPos) + Vec2DS(0, 16);
+            Vec2S sheetPos(0, 1);
+            Vec2S startPos = startPosFunc(sheetPos) + Vec2S(0, 16);
 
             uiElementsSheet.drawLine(
-                Vec2DS(4, 6) + startPos,
-                Vec2DS(6, 4) + startPos,
+                Vec2S(4, 6) + startPos,
+                Vec2S(6, 4) + startPos,
                 ColorU32(255, 255, 255, 100));
 
             uiElementsSheet.drawLine(
-                Vec2DS(7, 5) + startPos,
-                Vec2DS(11, 9) + startPos,
+                Vec2S(7, 5) + startPos,
+                Vec2S(11, 9) + startPos,
                 ColorU32(255, 255, 255, 100));
 
             uiElementsSheet.drawLine(
-                Vec2DS(5, 7) + startPos,
-                Vec2DS(6, 6) + startPos,
+                Vec2S(5, 7) + startPos,
+                Vec2S(6, 6) + startPos,
                 ColorU32(255, 255, 255, 100));
 
             uiElementsSheet.drawLine(
-                Vec2DS(7, 7) + startPos,
-                Vec2DS(10, 10) + startPos,
+                Vec2S(7, 7) + startPos,
+                Vec2S(10, 10) + startPos,
                 ColorU32(255, 255, 255, 100));
 
             uiElementsSheet.drawLine(
-                Vec2DS(6, 5) + startPos,
-                Vec2DS(11, 10) + startPos,
+                Vec2S(6, 5) + startPos,
+                Vec2S(11, 10) + startPos,
                 ColorU32::c_white);
 
             uiElementsSheet.drawLine(
-                Vec2DS(4, 7) + startPos,
-                Vec2DS(6, 5) + startPos,
+                Vec2S(4, 7) + startPos,
+                Vec2S(6, 5) + startPos,
                 ColorU32::c_white);
 
 
             m_defaultUISprites[(Size)DefaultUISprite::CheckMark] = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(16.0f, 16.0f));
+                Vec2F(startPos),
+                Vec2F(16.0f, 16.0f));
         }
 
         // Slider Handle
         {
-            Vec2DS sheetPos(1, 1);
-            Vec2DS startPos = startPosFunc(sheetPos) + Vec2DS(0, 16);
+            Vec2S sheetPos(1, 1);
+            Vec2S startPos = startPosFunc(sheetPos) + Vec2S(0, 16);
 
             uiElementsSheet.drawFilledCircle(
-                Vec2DS(8, 8) + startPos,
+                Vec2S(8, 8) + startPos,
                 8,
                 ColorU32::c_white);
 
             uiElementsSheet.drawCircle(
-                Vec2DS(8, 8) + startPos,
+                Vec2S(8, 8) + startPos,
                 8,
                 ColorU32(100, 100, 100));
 
             m_defaultUISprites[(Size)DefaultUISprite::SliderHandle] = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(17.0f, 17.0f));
+                Vec2F(startPos),
+                Vec2F(17.0f, 17.0f));
         }
 
         // ScaleMark
         {
-            Vec2DS sheetPos(0, 2);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(0, 2);
+            Vec2S startPos = startPosFunc(sheetPos);
 
             ColorU32 borderColor(116, 116, 116);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(1, 1) + startPos,
-                Vec2DS(3, 7),
+                Vec2S(1, 1) + startPos,
+                Vec2S(3, 7),
                 ColorU32::c_white);
 
             uiElementsSheet.drawFilledTriangle(
-                Vec2DS(3, 1) + startPos,
-                Vec2DS(6, 4) + startPos,
-                Vec2DS(3, 7) + startPos,
+                Vec2S(3, 1) + startPos,
+                Vec2S(6, 4) + startPos,
+                Vec2S(3, 7) + startPos,
                 ColorU32::c_white);
 
             uiElementsSheet.drawLine(
-                Vec2DS(0, 1) + startPos,
-                Vec2DS(0, 7) + startPos,
+                Vec2S(0, 1) + startPos,
+                Vec2S(0, 7) + startPos,
                 borderColor);
 
             uiElementsSheet.drawLine(
-                Vec2DS(1, 0) + startPos,
-                Vec2DS(3, 0) + startPos,
+                Vec2S(1, 0) + startPos,
+                Vec2S(3, 0) + startPos,
                 borderColor);
 
             uiElementsSheet.drawLine(
-                Vec2DS(1, 0) + startPos,
-                Vec2DS(3, 0) + startPos,
+                Vec2S(1, 0) + startPos,
+                Vec2S(3, 0) + startPos,
                 borderColor);
 
             uiElementsSheet.drawLine(
-                Vec2DS(1, 8) + startPos,
-                Vec2DS(3, 8) + startPos,
+                Vec2S(1, 8) + startPos,
+                Vec2S(3, 8) + startPos,
                 borderColor);
 
             uiElementsSheet.drawLine(
-                Vec2DS(4, 1) + startPos,
-                Vec2DS(7, 4) + startPos,
+                Vec2S(4, 1) + startPos,
+                Vec2S(7, 4) + startPos,
                 borderColor);
 
             uiElementsSheet.drawLine(
-                Vec2DS(4, 7) + startPos,
-                Vec2DS(6, 5) + startPos,
+                Vec2S(4, 7) + startPos,
+                Vec2S(6, 5) + startPos,
                 borderColor);
 
             SpritePtr sprite = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(8, 9));
+                Vec2F(startPos),
+                Vec2F(8, 9));
 
             m_defaultUISprites[(Size)DefaultUISprite::ScaleMark] = sprite;
         }
 
         // ColorSliderTagFrame
         {
-            Vec2DS sheetPos(0, 2);
-            Vec2DS startPos = startPosFunc(sheetPos) + Vec2DS(0, 10);
+            Vec2S sheetPos(0, 2);
+            Vec2S startPos = startPosFunc(sheetPos) + Vec2S(0, 10);
 
             ColorU32 borderColor(255, 255, 255);
 
             uiElementsSheet.drawLine(
-                Vec2DS(4, 0) + startPos,
-                Vec2DS(0, 4) + startPos,
+                Vec2S(4, 0) + startPos,
+                Vec2S(0, 4) + startPos,
                 borderColor);
 
             uiElementsSheet.drawLine(
-                Vec2DS(0, 4) + startPos,
-                Vec2DS(0, 13) + startPos,
+                Vec2S(0, 4) + startPos,
+                Vec2S(0, 13) + startPos,
                 borderColor);
 
             uiElementsSheet.drawLine(
-                Vec2DS(0, 13) + startPos,
-                Vec2DS(8, 13) + startPos,
+                Vec2S(0, 13) + startPos,
+                Vec2S(8, 13) + startPos,
                 borderColor);
 
             uiElementsSheet.drawLine(
-                Vec2DS(8, 13) + startPos,
-                Vec2DS(8, 4) + startPos,
+                Vec2S(8, 13) + startPos,
+                Vec2S(8, 4) + startPos,
                 borderColor);
 
             uiElementsSheet.drawLine(
-                Vec2DS(8, 4) + startPos,
-                Vec2DS(4, 0) + startPos,
+                Vec2S(8, 4) + startPos,
+                Vec2S(4, 0) + startPos,
                 borderColor);
 
             SpritePtr sprite = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(9, 14));
+                Vec2F(startPos),
+                Vec2F(9, 14));
 
             m_defaultUISprites[(Size)DefaultUISprite::ColorSliderTagFrame] = sprite;
         }
 
         // ColorSliderTagBody
         {
-            Vec2DS sheetPos(0, 2);
-            Vec2DS startPos = startPosFunc(sheetPos) + Vec2DS(16, 10);
+            Vec2S sheetPos(0, 2);
+            Vec2S startPos = startPosFunc(sheetPos) + Vec2S(16, 10);
 
             ColorU32 color(255, 255, 255);
 
             uiElementsSheet.drawFilledTriangle(
-                Vec2DS(4, 0) + startPos,
-                Vec2DS(0, 4) + startPos,
-                Vec2DS(8, 4) + startPos,
+                Vec2S(4, 0) + startPos,
+                Vec2S(0, 4) + startPos,
+                Vec2S(8, 4) + startPos,
                 color);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(0, 4) + startPos,
-                Vec2DS(9, 10),
+                Vec2S(0, 4) + startPos,
+                Vec2S(9, 10),
                 color);
 
             SpritePtr sprite = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(9, 14));
+                Vec2F(startPos),
+                Vec2F(9, 14));
 
             m_defaultUISprites[(Size)DefaultUISprite::ColorSliderTagBody] = sprite;
         }
 
         // SubMenuMark
         {
-            Vec2DS sheetPos(0, 2);
-            Vec2DS startPos = startPosFunc(sheetPos) + Vec2DS(16, 0);
+            Vec2S sheetPos(0, 2);
+            Vec2S startPos = startPosFunc(sheetPos) + Vec2S(16, 0);
 
             uiElementsSheet.drawFilledTriangle(
-                Vec2DS(0, 0) + startPos,
-                Vec2DS(3, 3) + startPos,
-                Vec2DS(0, 6) + startPos,
+                Vec2S(0, 0) + startPos,
+                Vec2S(3, 3) + startPos,
+                Vec2S(0, 6) + startPos,
                 ColorU32::c_white);
 
             SpritePtr sprite = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(4, 7));
+                Vec2F(startPos),
+                Vec2F(4, 7));
 
             m_defaultUISprites[(Size)DefaultUISprite::SubMenuMark] = sprite;
         }
 
         // Panel02
         {
-            Vec2DS sheetPos(2, 1);
-            Vec2DS startPos = startPosFunc(sheetPos) + Vec2DS(0, 16);
+            Vec2S sheetPos(2, 1);
+            Vec2S startPos = startPosFunc(sheetPos) + Vec2S(0, 16);
             SpriteSliceBorder sliceBorder(3, 3, 3, 3);
 
             ColorU32 const borderColor(230, 230, 230);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(0, 0) + startPos,
-                Vec2DS(7, 7),
+                Vec2S(0, 0) + startPos,
+                Vec2S(7, 7),
                 ColorU32::c_white);
 
             uiElementsSheet.drawLine(
-                Vec2DS(0, 0) + startPos,
-                Vec2DS(0, 6) + startPos,
+                Vec2S(0, 0) + startPos,
+                Vec2S(0, 6) + startPos,
                 borderColor);
 
             uiElementsSheet.drawLine(
-                Vec2DS(6, 0) + startPos,
-                Vec2DS(6, 6) + startPos,
+                Vec2S(6, 0) + startPos,
+                Vec2S(6, 6) + startPos,
                 borderColor);
 
             uiElementsSheet.drawLine(
-                Vec2DS(0, 0) + startPos,
-                Vec2DS(6, 0) + startPos,
+                Vec2S(0, 0) + startPos,
+                Vec2S(6, 0) + startPos,
                 borderColor);
             uiElementsSheet.drawLine(
-                Vec2DS(0, 6) + startPos,
-                Vec2DS(6, 6) + startPos,
+                Vec2S(0, 6) + startPos,
+                Vec2S(6, 6) + startPos,
                 borderColor);
 
             SpritePtr sprite = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(7, 7));
+                Vec2F(startPos),
+                Vec2F(7, 7));
             sprite->setSliceBorder(sliceBorder);
 
             m_defaultUISprites[(Size)DefaultUISprite::Panel02] = sprite;
@@ -773,40 +773,40 @@ namespace Maze
 
         // Panel02
         {
-            Vec2DS sheetPos(2, 1);
-            Vec2DS startPos = startPosFunc(sheetPos) + Vec2DS(16, 16);
+            Vec2S sheetPos(2, 1);
+            Vec2S startPos = startPosFunc(sheetPos) + Vec2S(16, 16);
             SpriteSliceBorder sliceBorder(3, 3, 3, 3);
 
             ColorU32 const borderColor(160, 160, 160);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(0, 0) + startPos,
-                Vec2DS(7, 7),
+                Vec2S(0, 0) + startPos,
+                Vec2S(7, 7),
                 ColorU32::c_white);
 
             uiElementsSheet.drawLine(
-                Vec2DS(0, 0) + startPos,
-                Vec2DS(0, 6) + startPos,
+                Vec2S(0, 0) + startPos,
+                Vec2S(0, 6) + startPos,
                 borderColor);
 
             uiElementsSheet.drawLine(
-                Vec2DS(6, 0) + startPos,
-                Vec2DS(6, 6) + startPos,
+                Vec2S(6, 0) + startPos,
+                Vec2S(6, 6) + startPos,
                 borderColor);
 
             uiElementsSheet.drawLine(
-                Vec2DS(0, 0) + startPos,
-                Vec2DS(6, 0) + startPos,
+                Vec2S(0, 0) + startPos,
+                Vec2S(6, 0) + startPos,
                 borderColor);
             uiElementsSheet.drawLine(
-                Vec2DS(0, 6) + startPos,
-                Vec2DS(6, 6) + startPos,
+                Vec2S(0, 6) + startPos,
+                Vec2S(6, 6) + startPos,
                 borderColor);
 
             SpritePtr sprite = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(7, 7));
+                Vec2F(startPos),
+                Vec2F(7, 7));
             sprite->setSliceBorder(sliceBorder);
 
             m_defaultUISprites[(Size)DefaultUISprite::Panel03] = sprite;
@@ -814,51 +814,51 @@ namespace Maze
 
         // Frame01
         {
-            Vec2DS sheetPos(2, 1);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(2, 1);
+            Vec2S startPos = startPosFunc(sheetPos);
             SpriteSliceBorder sliceBorder(3, 3, 3, 3);
 
             uiElementsSheet.drawLine(
-                Vec2DS(0, 0) + startPos,
-                Vec2DS(0, 6) + startPos,
+                Vec2S(0, 0) + startPos,
+                Vec2S(0, 6) + startPos,
                 ColorU32::c_white);
             uiElementsSheet.drawLine(
-                Vec2DS(1, 0) + startPos,
-                Vec2DS(1, 6) + startPos,
-                ColorU32::c_white);
-
-            uiElementsSheet.drawLine(
-                Vec2DS(5, 0) + startPos,
-                Vec2DS(5, 6) + startPos,
-                ColorU32::c_white);
-            uiElementsSheet.drawLine(
-                Vec2DS(6, 0) + startPos,
-                Vec2DS(6, 6) + startPos,
-                ColorU32::c_white);
-
-
-            uiElementsSheet.drawLine(
-                Vec2DS(0, 0) + startPos,
-                Vec2DS(6, 0) + startPos,
-                ColorU32::c_white);
-            uiElementsSheet.drawLine(
-                Vec2DS(0, 1) + startPos,
-                Vec2DS(6, 1) + startPos,
+                Vec2S(1, 0) + startPos,
+                Vec2S(1, 6) + startPos,
                 ColorU32::c_white);
 
             uiElementsSheet.drawLine(
-                Vec2DS(0, 5) + startPos,
-                Vec2DS(6, 5) + startPos,
+                Vec2S(5, 0) + startPos,
+                Vec2S(5, 6) + startPos,
                 ColorU32::c_white);
             uiElementsSheet.drawLine(
-                Vec2DS(0, 6) + startPos,
-                Vec2DS(6, 6) + startPos,
+                Vec2S(6, 0) + startPos,
+                Vec2S(6, 6) + startPos,
+                ColorU32::c_white);
+
+
+            uiElementsSheet.drawLine(
+                Vec2S(0, 0) + startPos,
+                Vec2S(6, 0) + startPos,
+                ColorU32::c_white);
+            uiElementsSheet.drawLine(
+                Vec2S(0, 1) + startPos,
+                Vec2S(6, 1) + startPos,
+                ColorU32::c_white);
+
+            uiElementsSheet.drawLine(
+                Vec2S(0, 5) + startPos,
+                Vec2S(6, 5) + startPos,
+                ColorU32::c_white);
+            uiElementsSheet.drawLine(
+                Vec2S(0, 6) + startPos,
+                Vec2S(6, 6) + startPos,
                 ColorU32::c_white);
 
             SpritePtr sprite = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(7, 7));
+                Vec2F(startPos),
+                Vec2F(7, 7));
             sprite->setSliceBorder(sliceBorder);
 
             m_defaultUISprites[(Size)DefaultUISprite::Frame01] = sprite;
@@ -866,8 +866,8 @@ namespace Maze
 
         // ColorPickerCircle
         {
-            Vec2DS sheetPos(3, 1);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(3, 1);
+            Vec2S startPos = startPosFunc(sheetPos);
 
 
             uiElementsSheet.drawCircle(
@@ -878,381 +878,381 @@ namespace Maze
 
             SpritePtr sprite = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(13, 13));
+                Vec2F(startPos),
+                Vec2F(13, 13));
 
             m_defaultUISprites[(Size)DefaultUISprite::ColorPickerCircle] = sprite;
         }
 
         // MainScene
         {
-            Vec2DS sheetPos(0, 3);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(0, 3);
+            Vec2S startPos = startPosFunc(sheetPos);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(2, 2) + startPos,
-                Vec2DS(28, 28),
+                Vec2S(2, 2) + startPos,
+                Vec2S(28, 28),
                 ColorU32::c_white);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(2 + 3, 2 + 3) + startPos,
-                Vec2DS(28 - 6, 28 - 6),
+                Vec2S(2 + 3, 2 + 3) + startPos,
+                Vec2S(28 - 6, 28 - 6),
                 ColorU32::c_transparent);
 
-            Vec2DS starStartPos = Vec2DS(2 + 6, 2 + 6) + startPos;
+            Vec2S starStartPos = Vec2S(2 + 6, 2 + 6) + startPos;
             
             uiElementsSheet.drawFilledTriangle(
-                starStartPos + Vec2DS(3, 0),
-                starStartPos + Vec2DS(8, 15),
-                starStartPos + Vec2DS(10, 6),
+                starStartPos + Vec2S(3, 0),
+                starStartPos + Vec2S(8, 15),
+                starStartPos + Vec2S(10, 6),
                 ColorU32::c_white);
 
             uiElementsSheet.drawFilledTriangle(
-                starStartPos + Vec2DS(12, 0),
-                starStartPos + Vec2DS(8, 15),
-                starStartPos + Vec2DS(5, 6),
+                starStartPos + Vec2S(12, 0),
+                starStartPos + Vec2S(8, 15),
+                starStartPos + Vec2S(5, 6),
                 ColorU32::c_white);
 
             uiElementsSheet.drawFilledTriangle(
-                starStartPos + Vec2DS(0, 9),
-                starStartPos + Vec2DS(15, 9),
-                starStartPos + Vec2DS(7, 4),
+                starStartPos + Vec2S(0, 9),
+                starStartPos + Vec2S(15, 9),
+                starStartPos + Vec2S(7, 4),
                 ColorU32::c_white);
 
             uiElementsSheet.setPixel(
-                starStartPos + Vec2DS(11, 6),
+                starStartPos + Vec2S(11, 6),
                 ColorU32::c_white);
 
             m_defaultUISprites[(Size)DefaultUISprite::MainScene] = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(chunkSize, chunkSize));
+                Vec2F(startPos),
+                Vec2F(chunkSize, chunkSize));
         }
 
         // EntityObject2D
         {
-            Vec2DS sheetPos(1, 3);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(1, 3);
+            Vec2S startPos = startPosFunc(sheetPos);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(2, 2) + startPos,
-                Vec2DS(28, 28),
+                Vec2S(2, 2) + startPos,
+                Vec2S(28, 28),
                 ColorU32::c_white);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(2 + 3, 2 + 3) + startPos,
-                Vec2DS(28 - 6, 28 - 6),
+                Vec2S(2 + 3, 2 + 3) + startPos,
+                Vec2S(28 - 6, 28 - 6),
                 ColorU32::c_transparent);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(2 + 6, 2 + 6) + startPos,
-                Vec2DS(28 - 12, 28 - 12),
+                Vec2S(2 + 6, 2 + 6) + startPos,
+                Vec2S(28 - 12, 28 - 12),
                 ColorU32::c_white);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(2 + 9, 2 + 9) + startPos,
-                Vec2DS(28 - 18, 28 - 18),
+                Vec2S(2 + 9, 2 + 9) + startPos,
+                Vec2S(28 - 18, 28 - 18),
                 ColorU32::c_transparent);
 
             m_defaultUISprites[(Size)DefaultUISprite::EntityObject2D] = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(chunkSize, chunkSize));
+                Vec2F(startPos),
+                Vec2F(chunkSize, chunkSize));
         }
 
         // EntityObject
         {
-            Vec2DS sheetPos(2, 3);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(2, 3);
+            Vec2S startPos = startPosFunc(sheetPos);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(2, 2) + startPos,
-                Vec2DS(28, 28),
+                Vec2S(2, 2) + startPos,
+                Vec2S(28, 28),
                 ColorU32::c_white);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(2 + 3, 2 + 3) + startPos,
-                Vec2DS(28 - 6, 28 - 6),
+                Vec2S(2 + 3, 2 + 3) + startPos,
+                Vec2S(28 - 6, 28 - 6),
                 ColorU32::c_transparent);
 
             m_defaultUISprites[(Size)DefaultUISprite::EntityObject] = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(chunkSize, chunkSize));
+                Vec2F(startPos),
+                Vec2F(chunkSize, chunkSize));
         }
 
         // FolderClosed
         {
-            Vec2DS sheetPos(3, 3);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(3, 3);
+            Vec2S startPos = startPosFunc(sheetPos);
             ColorU32 mainColor(112, 112, 112);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(3, 6) + startPos,
-                Vec2DS(24, 16),
+                Vec2S(3, 6) + startPos,
+                Vec2S(24, 16),
                 mainColor);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(3, 22) + startPos,
-                Vec2DS(10, 4),
+                Vec2S(3, 22) + startPos,
+                Vec2S(10, 4),
                 mainColor);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(13, 22) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(13, 22) + startPos,
+                Vec2S(2, 2),
                 mainColor);
 
             m_defaultUISprites[(Size)DefaultUISprite::FolderClosed] = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(chunkSize, chunkSize));
+                Vec2F(startPos),
+                Vec2F(chunkSize, chunkSize));
         }
 
         // FolderOpened
         {
-            Vec2DS sheetPos(3, 2);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(3, 2);
+            Vec2S startPos = startPosFunc(sheetPos);
             ColorU32 mainColor(112, 112, 112);
             ColorU32 innerColor(255, 255, 255);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(3, 6) + startPos,
-                Vec2DS(24, 16),
+                Vec2S(3, 6) + startPos,
+                Vec2S(24, 16),
                 mainColor);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(3, 22) + startPos,
-                Vec2DS(10, 4),
+                Vec2S(3, 22) + startPos,
+                Vec2S(10, 4),
                 mainColor);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(13, 22) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(13, 22) + startPos,
+                Vec2S(2, 2),
                 mainColor);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(5, 8) + startPos,
-                Vec2DS(8, 16),
+                Vec2S(5, 8) + startPos,
+                Vec2S(8, 16),
                 innerColor);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(13, 8) + startPos,
-                Vec2DS(12, 12),
+                Vec2S(13, 8) + startPos,
+                Vec2S(12, 12),
                 innerColor);
 
             uiElementsSheet.drawFilledTriangle(
-                Vec2DS(5, 7) + startPos,
-                Vec2DS(9, 17) + startPos,
-                Vec2DS(30, 17) + startPos,
+                Vec2S(5, 7) + startPos,
+                Vec2S(9, 17) + startPos,
+                Vec2S(30, 17) + startPos,
                 mainColor);
 
             uiElementsSheet.drawFilledTriangle(
-                Vec2DS(30, 17) + startPos,
-                Vec2DS(26, 7) + startPos,
-                Vec2DS(5, 7) + startPos,
+                Vec2S(30, 17) + startPos,
+                Vec2S(26, 7) + startPos,
+                Vec2S(5, 7) + startPos,
                 mainColor);
 
             m_defaultUISprites[(Size)DefaultUISprite::FolderOpened] = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(chunkSize, chunkSize));
+                Vec2F(startPos),
+                Vec2F(chunkSize, chunkSize));
         }
 
         // File
         {
-            Vec2DS sheetPos(4, 0);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(4, 0);
+            Vec2S startPos = startPosFunc(sheetPos);
             ColorU32 mainColor(173, 173, 173);
             ColorU32 innerColor(216, 216, 216);
             ColorU32 fillColor(255, 255, 255);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(4, 2) + startPos,
-                Vec2DS(18, 28),
+                Vec2S(4, 2) + startPos,
+                Vec2S(18, 28),
                 mainColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(22, 2) + startPos,
-                Vec2DS(6, 22),
+                Vec2S(22, 2) + startPos,
+                Vec2S(6, 22),
                 mainColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(22, 26) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(22, 26) + startPos,
+                Vec2S(2, 2),
                 mainColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(24, 24) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(24, 24) + startPos,
+                Vec2S(2, 2),
                 mainColor);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(6, 4) + startPos,
-                Vec2DS(16, 24),
+                Vec2S(6, 4) + startPos,
+                Vec2S(16, 24),
                 fillColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(22, 4) + startPos,
-                Vec2DS(4, 20),
+                Vec2S(22, 4) + startPos,
+                Vec2S(4, 20),
                 fillColor);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(6, 4) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(6, 4) + startPos,
+                Vec2S(2, 2),
                 innerColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(6, 26) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(6, 26) + startPos,
+                Vec2S(2, 2),
                 innerColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(24, 4) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(24, 4) + startPos,
+                Vec2S(2, 2),
                 innerColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(24, 22) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(24, 22) + startPos,
+                Vec2S(2, 2),
                 innerColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(22, 24) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(22, 24) + startPos,
+                Vec2S(2, 2),
                 innerColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(20, 26) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(20, 26) + startPos,
+                Vec2S(2, 2),
                 innerColor);
 
             m_defaultUISprites[(Size)DefaultUISprite::File] = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(chunkSize, chunkSize));
+                Vec2F(startPos),
+                Vec2F(chunkSize, chunkSize));
         }
 
         // TextFile
         {
-            Vec2DS sheetPos(4, 1);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(4, 1);
+            Vec2S startPos = startPosFunc(sheetPos);
             ColorU32 mainColor(173, 173, 173);
             ColorU32 innerColor(216, 216, 216);
             ColorU32 fillColor(255, 255, 255);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(4, 2) + startPos,
-                Vec2DS(18, 28),
+                Vec2S(4, 2) + startPos,
+                Vec2S(18, 28),
                 mainColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(22, 2) + startPos,
-                Vec2DS(6, 22),
+                Vec2S(22, 2) + startPos,
+                Vec2S(6, 22),
                 mainColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(22, 26) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(22, 26) + startPos,
+                Vec2S(2, 2),
                 mainColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(24, 24) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(24, 24) + startPos,
+                Vec2S(2, 2),
                 mainColor);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(6, 4) + startPos,
-                Vec2DS(16, 24),
+                Vec2S(6, 4) + startPos,
+                Vec2S(16, 24),
                 fillColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(22, 4) + startPos,
-                Vec2DS(4, 20),
+                Vec2S(22, 4) + startPos,
+                Vec2S(4, 20),
                 fillColor);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(6, 4) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(6, 4) + startPos,
+                Vec2S(2, 2),
                 innerColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(6, 26) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(6, 26) + startPos,
+                Vec2S(2, 2),
                 innerColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(24, 4) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(24, 4) + startPos,
+                Vec2S(2, 2),
                 innerColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(24, 22) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(24, 22) + startPos,
+                Vec2S(2, 2),
                 innerColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(22, 24) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(22, 24) + startPos,
+                Vec2S(2, 2),
                 innerColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(20, 26) + startPos,
-                Vec2DS(2, 2),
-                innerColor);
-
-            uiElementsSheet.drawFilledRect(
-                Vec2DS(12, 10) + startPos,
-                Vec2DS(4, 2),
-                mainColor);
-            uiElementsSheet.drawFilledRect(
-                Vec2DS(10, 10) + startPos,
-                Vec2DS(2, 2),
-                innerColor);
-            uiElementsSheet.drawFilledRect(
-                Vec2DS(16, 10) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(20, 26) + startPos,
+                Vec2S(2, 2),
                 innerColor);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(12, 14) + startPos,
-                Vec2DS(8, 2),
+                Vec2S(12, 10) + startPos,
+                Vec2S(4, 2),
                 mainColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(10, 14) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(10, 10) + startPos,
+                Vec2S(2, 2),
                 innerColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(20, 14) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(16, 10) + startPos,
+                Vec2S(2, 2),
                 innerColor);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(12, 18) + startPos,
-                Vec2DS(8, 2),
+                Vec2S(12, 14) + startPos,
+                Vec2S(8, 2),
                 mainColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(10, 18) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(10, 14) + startPos,
+                Vec2S(2, 2),
                 innerColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(20, 18) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(20, 14) + startPos,
+                Vec2S(2, 2),
+                innerColor);
+
+            uiElementsSheet.drawFilledRect(
+                Vec2S(12, 18) + startPos,
+                Vec2S(8, 2),
+                mainColor);
+            uiElementsSheet.drawFilledRect(
+                Vec2S(10, 18) + startPos,
+                Vec2S(2, 2),
+                innerColor);
+            uiElementsSheet.drawFilledRect(
+                Vec2S(20, 18) + startPos,
+                Vec2S(2, 2),
                 innerColor);
 
             m_defaultUISprites[(Size)DefaultUISprite::TextFile] = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(chunkSize, chunkSize));
+                Vec2F(startPos),
+                Vec2F(chunkSize, chunkSize));
         }
 
         // Material
         {
-            Vec2DS sheetPos(4, 2);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(4, 2);
+            Vec2S startPos = startPosFunc(sheetPos);
             ColorU32 mainColor(14, 109, 203);
 
             uiElementsSheet.drawFilledCircle(
-                Vec2DS(16, 16) + startPos,
+                Vec2S(16, 16) + startPos,
                 12,
                 mainColor);
 
             uiElementsSheet.drawFilledCircle(
-                Vec2DS(13, 19) + startPos,
+                Vec2S(13, 19) + startPos,
                 6,
                 ColorU32::c_transparent);
 
             m_defaultUISprites[(Size)DefaultUISprite::Material] = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(chunkSize, chunkSize));
+                Vec2F(startPos),
+                Vec2F(chunkSize, chunkSize));
         }
 
         // Mesh
         {
-            Vec2DS sheetPos(4, 3);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(4, 3);
+            Vec2S startPos = startPosFunc(sheetPos);
             ColorU32 color0(14, 109, 203);
             ColorU32 color1(97, 174, 254);
             ColorU32 color2(62, 143, 225);
@@ -1314,129 +1314,129 @@ namespace Maze
 
             m_defaultUISprites[(Size)DefaultUISprite::Mesh] = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(chunkSize, chunkSize));
+                Vec2F(startPos),
+                Vec2F(chunkSize, chunkSize));
         }
 
         // PhysicsMaterial2D
         {
-            Vec2DS sheetPos(5, 3);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(5, 3);
+            Vec2S startPos = startPosFunc(sheetPos);
 
             ColorU32 color0(48, 126, 52);
 
             uiElementsSheet.drawFilledCircle(
-                Vec2DS(20, 24) + startPos,
+                Vec2S(20, 24) + startPos,
                 9,
                 color0);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(3, 3) + startPos,
-                Vec2DS(28, 4),
+                Vec2S(3, 3) + startPos,
+                Vec2S(28, 4),
                 color0);
 
             m_defaultUISprites[(Size)DefaultUISprite::PhysicsMaterial2D] = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(chunkSize, chunkSize));
+                Vec2F(startPos),
+                Vec2F(chunkSize, chunkSize));
         }
         
         // Shader
         {
-            Vec2DS sheetPos(5, 2);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(5, 2);
+            Vec2S startPos = startPosFunc(sheetPos);
             ColorU32 mainColor(173, 173, 173);
             ColorU32 innerColor(216, 216, 216);
             ColorU32 fillColor(255, 255, 255);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(4, 2) + startPos,
-                Vec2DS(18, 28),
+                Vec2S(4, 2) + startPos,
+                Vec2S(18, 28),
                 mainColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(22, 2) + startPos,
-                Vec2DS(6, 22),
+                Vec2S(22, 2) + startPos,
+                Vec2S(6, 22),
                 mainColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(22, 26) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(22, 26) + startPos,
+                Vec2S(2, 2),
                 mainColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(24, 24) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(24, 24) + startPos,
+                Vec2S(2, 2),
                 mainColor);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(6, 4) + startPos,
-                Vec2DS(16, 24),
+                Vec2S(6, 4) + startPos,
+                Vec2S(16, 24),
                 fillColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(22, 4) + startPos,
-                Vec2DS(4, 20),
+                Vec2S(22, 4) + startPos,
+                Vec2S(4, 20),
                 fillColor);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(6, 4) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(6, 4) + startPos,
+                Vec2S(2, 2),
                 innerColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(6, 26) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(6, 26) + startPos,
+                Vec2S(2, 2),
                 innerColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(24, 4) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(24, 4) + startPos,
+                Vec2S(2, 2),
                 innerColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(24, 22) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(24, 22) + startPos,
+                Vec2S(2, 2),
                 innerColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(22, 24) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(22, 24) + startPos,
+                Vec2S(2, 2),
                 innerColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(20, 26) + startPos,
-                Vec2DS(2, 2),
-                innerColor);
-
-            uiElementsSheet.drawFilledRect(
-                Vec2DS(12, 10) + startPos,
-                Vec2DS(4, 2),
-                mainColor);
-            uiElementsSheet.drawFilledRect(
-                Vec2DS(10, 10) + startPos,
-                Vec2DS(2, 2),
-                innerColor);
-            uiElementsSheet.drawFilledRect(
-                Vec2DS(16, 10) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(20, 26) + startPos,
+                Vec2S(2, 2),
                 innerColor);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(12, 14) + startPos,
-                Vec2DS(8, 2),
+                Vec2S(12, 10) + startPos,
+                Vec2S(4, 2),
                 mainColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(10, 14) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(10, 10) + startPos,
+                Vec2S(2, 2),
                 innerColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(20, 14) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(16, 10) + startPos,
+                Vec2S(2, 2),
                 innerColor);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(12, 18) + startPos,
-                Vec2DS(8, 2),
+                Vec2S(12, 14) + startPos,
+                Vec2S(8, 2),
                 mainColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(10, 18) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(10, 14) + startPos,
+                Vec2S(2, 2),
                 innerColor);
             uiElementsSheet.drawFilledRect(
-                Vec2DS(20, 18) + startPos,
-                Vec2DS(2, 2),
+                Vec2S(20, 14) + startPos,
+                Vec2S(2, 2),
+                innerColor);
+
+            uiElementsSheet.drawFilledRect(
+                Vec2S(12, 18) + startPos,
+                Vec2S(8, 2),
+                mainColor);
+            uiElementsSheet.drawFilledRect(
+                Vec2S(10, 18) + startPos,
+                Vec2S(2, 2),
+                innerColor);
+            uiElementsSheet.drawFilledRect(
+                Vec2S(20, 18) + startPos,
+                Vec2S(2, 2),
                 innerColor);
 
             for (S32 r = 0; r < 32; ++r)
@@ -1463,108 +1463,108 @@ namespace Maze
 
             m_defaultUISprites[(Size)DefaultUISprite::Shader] = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(chunkSize, chunkSize));
+                Vec2F(startPos),
+                Vec2F(chunkSize, chunkSize));
         }
 
         // SelectAsset
         {
 
-            Vec2DS sheetPos(5, 1);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(5, 1);
+            Vec2S startPos = startPosFunc(sheetPos);
             ColorU32 mainColor(255, 255, 255);
 
             uiElementsSheet.drawFilledCircle(
-                Vec2DS(16, 16) + startPos,
+                Vec2S(16, 16) + startPos,
                 7,
                 mainColor);
 
             uiElementsSheet.drawFilledCircle(
-                Vec2DS(16, 16) + startPos,
+                Vec2S(16, 16) + startPos,
                 5,
                 ColorU32::c_transparent);
 
             uiElementsSheet.drawFilledCircle(
-                Vec2DS(16, 16) + startPos,
+                Vec2S(16, 16) + startPos,
                 1,
                 mainColor);
 
             m_defaultUISprites[(Size)DefaultUISprite::SelectAsset] = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(chunkSize, chunkSize));
+                Vec2F(startPos),
+                Vec2F(chunkSize, chunkSize));
         }
 
         // Play
         {
 
-            Vec2DS sheetPos(7, 0);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(7, 0);
+            Vec2S startPos = startPosFunc(sheetPos);
             ColorU32 mainColor(255, 255, 255);
 
             uiElementsSheet.drawFilledTriangle(
-                Vec2DS(13, 9) + startPos,
-                Vec2DS(22, 15) + startPos,
-                Vec2DS(13, 22) + startPos,
+                Vec2S(13, 9) + startPos,
+                Vec2S(22, 15) + startPos,
+                Vec2S(13, 22) + startPos,
                 mainColor);
 
             m_defaultUISprites[(Size)DefaultUISprite::Play] = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(chunkSize, chunkSize));
+                Vec2F(startPos),
+                Vec2F(chunkSize, chunkSize));
         }
 
         // Pause
         {
 
-            Vec2DS sheetPos(5, 0);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(5, 0);
+            Vec2S startPos = startPosFunc(sheetPos);
             ColorU32 mainColor(255, 255, 255);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(11, 9) + startPos,
-                Vec2DS(3, 14),
+                Vec2S(11, 9) + startPos,
+                Vec2S(3, 14),
                 mainColor);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(18, 9) + startPos,
-                Vec2DS(3, 14),
+                Vec2S(18, 9) + startPos,
+                Vec2S(3, 14),
                 mainColor);
 
             m_defaultUISprites[(Size)DefaultUISprite::Pause] = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(chunkSize, chunkSize));
+                Vec2F(startPos),
+                Vec2F(chunkSize, chunkSize));
         }
 
         // StepUpdate
         {
 
-            Vec2DS sheetPos(6, 0);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(6, 0);
+            Vec2S startPos = startPosFunc(sheetPos);
             ColorU32 mainColor(255, 255, 255);
 
             uiElementsSheet.drawFilledTriangle(
-                Vec2DS(10, 9) + startPos,
-                Vec2DS(19, 15) + startPos,
-                Vec2DS(10, 22) + startPos,
+                Vec2S(10, 9) + startPos,
+                Vec2S(19, 15) + startPos,
+                Vec2S(10, 22) + startPos,
                 mainColor);
 
             uiElementsSheet.drawFilledRect(
-                Vec2DS(20, 9) + startPos,
-                Vec2DS(2, 14),
+                Vec2S(20, 9) + startPos,
+                Vec2S(2, 14),
                 mainColor);
 
             m_defaultUISprites[(Size)DefaultUISprite::StepUpdate] = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(chunkSize, chunkSize));
+                Vec2F(startPos),
+                Vec2F(chunkSize, chunkSize));
         }
 
         // Prefab
         {
-            Vec2DS sheetPos(4, 3);
-            Vec2DS startPos = startPosFunc(sheetPos);
+            Vec2S sheetPos(4, 3);
+            Vec2S startPos = startPosFunc(sheetPos);
             ColorU32 color0(14, 109, 203);
             ColorU32 color1(97, 174, 254);
             ColorU32 color2(62, 143, 225);
@@ -1626,8 +1626,8 @@ namespace Maze
 
             m_defaultUISprites[(Size)DefaultUISprite::Prefab] = Sprite::Create(
                 m_uiElementsTexture,
-                Vec2DF(startPos),
-                Vec2DF(chunkSize, chunkSize));
+                Vec2F(startPos),
+                Vec2F(chunkSize, chunkSize));
         }
 
         m_uiElementsTexture->loadTexture(uiElementsSheet);
@@ -1638,7 +1638,7 @@ namespace Maze
 
 
 
-        PixelSheet2D transparentChessSheet(Vec2DS(8, 8), PixelFormat::RGBA_U8);
+        PixelSheet2D transparentChessSheet(Vec2S(8, 8), PixelFormat::RGBA_U8);
         transparentChessSheet.fill(ColorU32::c_transparent);
 
         m_transparentChessTexture = Texture2D::Create();
@@ -1650,29 +1650,29 @@ namespace Maze
         // TransparentChess
         {
             transparentChessSheet.drawFilledRect(
-                Vec2DS(0, 0),
-                Vec2DS(4, 4),
+                Vec2S(0, 0),
+                Vec2S(4, 4),
                 ColorU32::c_white);
 
             transparentChessSheet.drawFilledRect(
-                Vec2DS(4, 4),
-                Vec2DS(4, 4),
+                Vec2S(4, 4),
+                Vec2S(4, 4),
                 ColorU32::c_white);
 
             transparentChessSheet.drawFilledRect(
-                Vec2DS(0, 4),
-                Vec2DS(4, 4),
+                Vec2S(0, 4),
+                Vec2S(4, 4),
                 ColorU32(214, 214, 214));
 
             transparentChessSheet.drawFilledRect(
-                Vec2DS(4, 0),
-                Vec2DS(4, 4),
+                Vec2S(4, 0),
+                Vec2S(4, 4),
                 ColorU32(214, 214, 214));
 
             SpritePtr sprite = Sprite::Create(
                 m_transparentChessTexture,
-                Vec2DS(0, 0),
-                Vec2DF(8, 8));
+                Vec2S(0, 0),
+                Vec2F(8, 8));
 
             m_defaultUISprites[(Size)DefaultUISprite::TransparentChess] = sprite;
         }
@@ -1694,54 +1694,54 @@ namespace Maze
     //////////////////////////////////////////
     void UIManager::buildPanel(
         PixelSheet2D& _uiElementsSheet,
-        Vec2DS const& _startPos,
-        Vec2DS const& _size,
+        Vec2S const& _startPos,
+        Vec2S const& _size,
         ColorU32 const& _backgroundColor,
         ColorU32 const& _sideBordersColor,
         ColorU32 const& _topBorderColor)
     {
         _uiElementsSheet.drawFilledRect(
-            Vec2DS(1, 1) + _startPos,
-            Vec2DS(_size.x - 2, _size.y - 2),
+            Vec2S(1, 1) + _startPos,
+            Vec2S(_size.x - 2, _size.y - 2),
             _backgroundColor);
 
         _uiElementsSheet.drawLine(
-            Vec2DS(0, 1) + _startPos,
-            Vec2DS(0, _size.y - 2) + _startPos,
+            Vec2S(0, 1) + _startPos,
+            Vec2S(0, _size.y - 2) + _startPos,
             _sideBordersColor);
 
         _uiElementsSheet.drawLine(
-            Vec2DS(_size.x - 1, 1) + _startPos,
-            Vec2DS(_size.x - 1, _size.y - 2) + _startPos,
+            Vec2S(_size.x - 1, 1) + _startPos,
+            Vec2S(_size.x - 1, _size.y - 2) + _startPos,
             _sideBordersColor);
 
         _uiElementsSheet.drawLine(
-            Vec2DS(1, 0) + _startPos,
-            Vec2DS(_size.x - 2, 0) + _startPos,
+            Vec2S(1, 0) + _startPos,
+            Vec2S(_size.x - 2, 0) + _startPos,
             _sideBordersColor);
 
 
         _uiElementsSheet.drawLine(
-            Vec2DS(1, _size.y - 1) + _startPos,
-            Vec2DS(_size.x - 2, _size.y - 1) + _startPos,
+            Vec2S(1, _size.y - 1) + _startPos,
+            Vec2S(_size.x - 2, _size.y - 1) + _startPos,
             _topBorderColor);
 
         _uiElementsSheet.drawLine(
-            Vec2DS(1, _size.y - 2) + _startPos,
-            Vec2DS(1, _size.y - 1) + _startPos,
+            Vec2S(1, _size.y - 2) + _startPos,
+            Vec2S(1, _size.y - 1) + _startPos,
             _sideBordersColor);
 
         _uiElementsSheet.drawLine(
-            Vec2DS(_size.x - 2, _size.y - 2) + _startPos,
-            Vec2DS(_size.x - 2, _size.y - 1) + _startPos,
+            Vec2S(_size.x - 2, _size.y - 2) + _startPos,
+            Vec2S(_size.x - 2, _size.y - 1) + _startPos,
             _sideBordersColor);
 
         _uiElementsSheet.setPixel(
-            Vec2DS(1, 1) + _startPos,
+            Vec2S(1, 1) + _startPos,
             _sideBordersColor);
 
         _uiElementsSheet.setPixel(
-            Vec2DS(_size.x - 2, 1) + _startPos,
+            Vec2S(_size.x - 2, 1) + _startPos,
             _sideBordersColor);
     }
     

@@ -25,11 +25,11 @@
 
 //////////////////////////////////////////
 #include "maze-core/MazeTypes.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
+#include "maze-core/math/MazeVec3.hpp"
 #include "maze-core/math/MazeMath.hpp"
-#include "maze-core/math/MazeMat3D.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeMat3F32.hpp"
+#include "maze-core/math/MazeMat4F32.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
 #include "maze-core/system/MazeThread.hpp"
@@ -85,7 +85,7 @@ void OnInit()
     if (g_window0)
     {
         Maze::Debug::log << "Window0 created!" << Maze::endl;
-        g_window0->setPosition(Maze::Vec2DU(0, 0));
+        g_window0->setPosition(Maze::Vec2U32(0, 0));
     }
     else
     {
@@ -102,14 +102,14 @@ void OnInit()
     {
         Maze::Debug::log << "Window1 created!" << Maze::endl;
 
-        Maze::Vec2DU const& fullSize = g_window1->getFullSize();
+        Maze::Vec2U32 const& fullSize = g_window1->getFullSize();
 
         Maze::DisplayPtr const& display = g_window1->getRelatedDisplay();
         if (display)
         {
             Maze::WindowVideoMode videoMode = display->getCurrentMode();
 
-            g_window1->setPosition(Maze::Vec2DS((Maze::S32)videoMode.width - (Maze::S32)fullSize.x, (Maze::S32)videoMode.height - (Maze::S32)fullSize.y));
+            g_window1->setPosition(Maze::Vec2S32((Maze::S32)videoMode.width - (Maze::S32)fullSize.x, (Maze::S32)videoMode.height - (Maze::S32)fullSize.y));
         }
     }
     else

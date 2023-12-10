@@ -28,7 +28,7 @@
 #include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/managers/MazeWindowManager.hpp"
 #include "maze-core/helpers/MazeWindowHelper.hpp"
-#include "maze-core/math/MazeVec2D.hpp"
+#include "maze-core/math/MazeVec2.hpp"
 #include MAZE_INCLUDE_OS_FILE(maze-core/system, MazeWindow)
 
 
@@ -40,7 +40,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     WindowParamsPtr WindowParams::Create(
-        Vec2DU _clientSize,
+        Vec2U _clientSize,
         U32 _bpp,
         CString _windowTitle,
         WindowMode _windowMode,
@@ -78,7 +78,7 @@ namespace Maze
 
     //////////////////////////////////////////
     bool WindowParams::init(
-        Vec2DU _clientSize,
+        Vec2U _clientSize,
         U32 _bpp,
         CString _windowTitle,
         WindowMode _windowMode,
@@ -222,7 +222,7 @@ namespace Maze
 
 
         WindowVideoMode windowVideoMode = WindowHelper::GetDisplayCurrentMode(primaryDisplay);
-        setClientSize(Vec2DU(windowVideoMode.width, windowVideoMode.height));
+        setClientSize(Vec2U(windowVideoMode.width, windowVideoMode.height));
 
         setFullscreen(true);
     }

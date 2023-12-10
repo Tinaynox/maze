@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Shader>
-    <Uniform name="u_baseMapST" type="UniformVec4DF" value="1.0;1.0;0.0;0.0" />
+    <Uniform name="u_baseMapST" type="UniformVec4F32" value="1.0;1.0;0.0;0.0" />
     
-    <Uniform name="u_mainLightColor" type="UniformVec4DF" value="1.0;0.957;0.84;1.0" />
-    <Uniform name="u_mainLightDirection" type="UniformVec3DF" value="0.577;-0.577;0.577" />
-    <Uniform name="u_color" type="UniformVec4DF" value="1.0;1.0;1.0;1.0" />
-    <Uniform name="u_ambientLightColor" type="UniformVec4DF" value="0.1;0.1;0.1;1.0" />
+    <Uniform name="u_mainLightColor" type="UniformVec4F32" value="1.0;0.957;0.84;1.0" />
+    <Uniform name="u_mainLightDirection" type="UniformVec3F32" value="0.577;-0.577;0.577" />
+    <Uniform name="u_color" type="UniformVec4F32" value="1.0;1.0;1.0;1.0" />
+    <Uniform name="u_ambientLightColor" type="UniformVec4F32" value="0.1;0.1;0.1;1.0" />
     <Uniform name="u_shininess" type="UniformF32" value="1.0" />
     
     <Feature name="SPECULAR_MAP" />
-    <Uniform name="u_specularColor" type="UniformVec4DF" value="1.0;1.0;1.0;1.0" />
+    <Uniform name="u_specularColor" type="UniformVec4F32" value="1.0;1.0;1.0;1.0" />
     <Uniform name="u_specularMap" type="UniformTexture2D" value="White" />
     
     <Feature name="NORMAL_MAP" />
@@ -17,7 +17,7 @@
     <Uniform name="u_normalScale" type="UniformF32" value="1.0" />
     
     <Feature name="EMISSION_MAP" />
-    <Uniform name="u_emissionColor" type="UniformVec4DF" value="1.0;1.0;1.0;1.0" />
+    <Uniform name="u_emissionColor" type="UniformVec4F32" value="1.0;1.0;1.0;1.0" />
     <Uniform name="u_emissionMap" type="UniformTexture2D" value="Black" />
     
     <GLSL shader="Universal00.mzglsl" />

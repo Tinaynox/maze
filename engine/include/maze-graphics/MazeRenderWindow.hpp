@@ -76,7 +76,7 @@ namespace Maze
         inline Window* getWindowRaw() const { return m_window.get(); }
 
         //////////////////////////////////////////
-        virtual Vec2DU getRenderTargetSize() const MAZE_OVERRIDE;
+        virtual Vec2U getRenderTargetSize() const MAZE_OVERRIDE;
 
 
         //////////////////////////////////////////

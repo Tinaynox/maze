@@ -428,7 +428,7 @@ namespace Maze
         public:
 
             bool enabled = false;
-            ParticleSystemParameterColor parameter = ParticleSystemParameterColor(Vec4DF::c_one);
+            ParticleSystemParameterColor parameter = ParticleSystemParameterColor(Vec4F::c_one);
         };
     
 
@@ -613,7 +613,7 @@ namespace Maze
             S32 _first,
             S32 _last,
             F32 _emitterTimePercent,
-            Mat4DF const& _particleSystemWorldTransform);
+            Mat4F const& _particleSystemWorldTransform);
 
         //////////////////////////////////////////
         void updateLifetime(
@@ -652,7 +652,7 @@ namespace Maze
 
         ParticleSystemParameterF32 m_lifetime = ParticleSystemParameterF32(1.0f);
         ParticleSystemParameterF32 m_size = ParticleSystemParameterF32(1.0f);
-        ParticleSystemParameterColor m_color = ParticleSystemParameterColor(Vec4DF::c_one);
+        ParticleSystemParameterColor m_color = ParticleSystemParameterColor(Vec4F::c_one);
         ParticleSystemParameterF32 m_speed = ParticleSystemParameterF32(0.0f);
         ParticleSystemParameterF32 m_gravity = ParticleSystemParameterF32(-9.8f);
         ParticleSystemParameterF32 m_rotation = ParticleSystemParameterF32(0.0f);

@@ -269,19 +269,19 @@ _stream.write((U8 const*)(quote + quoteLen - 1), quoteLen);
                         case DataBlockParamType::ParamF32: snprintf(buff, sizeof(buff), "%g", paramDataF32[0]); break;
                         case DataBlockParamType::ParamF64: snprintf(buff, sizeof(buff), "%lg", paramDataF64[0]); break;
                         case DataBlockParamType::ParamBool: snprintf(buff, sizeof(buff), paramBool(paramDataBool[0])); break;
-                        case DataBlockParamType::ParamVec2DS: snprintf(buff, sizeof(buff), "%d, %d", paramDataS32[0], paramDataS32[1]); break;
-                        case DataBlockParamType::ParamVec3DS: snprintf(buff, sizeof(buff), "%d, %d, %d", paramDataS32[0], paramDataS32[1], paramDataS32[2]); break;
-                        case DataBlockParamType::ParamVec4DS: snprintf(buff, sizeof(buff), "%d, %d, %d, %d", paramDataS32[0], paramDataS32[1], paramDataS32[2], paramDataS32[3]); break;
-                        case DataBlockParamType::ParamVec2DU: snprintf(buff, sizeof(buff), "%u, %u", paramDataU32[0], paramDataU32[1]); break;
-                        case DataBlockParamType::ParamVec3DU: snprintf(buff, sizeof(buff), "%u, %u, %u", paramDataU32[0], paramDataU32[1], paramDataU32[2]); break;
-                        case DataBlockParamType::ParamVec4DU: snprintf(buff, sizeof(buff), "%u, %u, %u, %u", paramDataU32[0], paramDataU32[1], paramDataU32[2], paramDataU32[3]); break;
-                        case DataBlockParamType::ParamVec2DF: snprintf(buff, sizeof(buff), "%g, %g", paramDataF32[0], paramDataF32[1]); break;
-                        case DataBlockParamType::ParamVec3DF: snprintf(buff, sizeof(buff), "%g, %g, %g", paramDataF32[0], paramDataF32[1], paramDataF32[2]); break;
-                        case DataBlockParamType::ParamVec4DF: snprintf(buff, sizeof(buff), "%g, %g, %g, %g", paramDataF32[0], paramDataF32[1], paramDataF32[2], paramDataF32[3]); break;
-                        case DataBlockParamType::ParamVec2DB: snprintf(buff, sizeof(buff), "%s, %s", paramBool(paramDataBool[0]), paramBool(paramDataBool[1])); break;
-                        case DataBlockParamType::ParamVec3DB: snprintf(buff, sizeof(buff), "%s, %s, %s", paramBool(paramDataBool[0]), paramBool(paramDataBool[1]), paramBool(paramDataBool[2])); break;
-                        case DataBlockParamType::ParamVec4DB: snprintf(buff, sizeof(buff), "%s, %s, %s, %s", paramBool(paramDataBool[0]), paramBool(paramDataBool[1]), paramBool(paramDataBool[2]), paramBool(paramDataBool[3])); break;
-                        case DataBlockParamType::ParamMat3DF: 
+                        case DataBlockParamType::ParamVec2S32: snprintf(buff, sizeof(buff), "%d, %d", paramDataS32[0], paramDataS32[1]); break;
+                        case DataBlockParamType::ParamVec3S32: snprintf(buff, sizeof(buff), "%d, %d, %d", paramDataS32[0], paramDataS32[1], paramDataS32[2]); break;
+                        case DataBlockParamType::ParamVec4S32: snprintf(buff, sizeof(buff), "%d, %d, %d, %d", paramDataS32[0], paramDataS32[1], paramDataS32[2], paramDataS32[3]); break;
+                        case DataBlockParamType::ParamVec2U32: snprintf(buff, sizeof(buff), "%u, %u", paramDataU32[0], paramDataU32[1]); break;
+                        case DataBlockParamType::ParamVec3U32: snprintf(buff, sizeof(buff), "%u, %u, %u", paramDataU32[0], paramDataU32[1], paramDataU32[2]); break;
+                        case DataBlockParamType::ParamVec4U32: snprintf(buff, sizeof(buff), "%u, %u, %u, %u", paramDataU32[0], paramDataU32[1], paramDataU32[2], paramDataU32[3]); break;
+                        case DataBlockParamType::ParamVec2F32: snprintf(buff, sizeof(buff), "%g, %g", paramDataF32[0], paramDataF32[1]); break;
+                        case DataBlockParamType::ParamVec3F32: snprintf(buff, sizeof(buff), "%g, %g, %g", paramDataF32[0], paramDataF32[1], paramDataF32[2]); break;
+                        case DataBlockParamType::ParamVec4F32: snprintf(buff, sizeof(buff), "%g, %g, %g, %g", paramDataF32[0], paramDataF32[1], paramDataF32[2], paramDataF32[3]); break;
+                        case DataBlockParamType::ParamVec2B: snprintf(buff, sizeof(buff), "%s, %s", paramBool(paramDataBool[0]), paramBool(paramDataBool[1])); break;
+                        case DataBlockParamType::ParamVec3B: snprintf(buff, sizeof(buff), "%s, %s, %s", paramBool(paramDataBool[0]), paramBool(paramDataBool[1]), paramBool(paramDataBool[2])); break;
+                        case DataBlockParamType::ParamVec4B: snprintf(buff, sizeof(buff), "%s, %s, %s, %s", paramBool(paramDataBool[0]), paramBool(paramDataBool[1]), paramBool(paramDataBool[2]), paramBool(paramDataBool[3])); break;
+                        case DataBlockParamType::ParamMat3F32: 
                             snprintf(
                                 buff,
                                 sizeof(buff),
@@ -290,7 +290,7 @@ _stream.write((U8 const*)(quote + quoteLen - 1), quoteLen);
                                 paramDataF32[3], paramDataF32[4], paramDataF32[5],
                                 paramDataF32[6], paramDataF32[7], paramDataF32[8]);
                             break;
-                        case DataBlockParamType::ParamMat4DF:
+                        case DataBlockParamType::ParamMat4F32:
                             snprintf(
                                 buff,
                                 sizeof(buff),
@@ -1227,158 +1227,158 @@ _stream.write((U8 const*)(quote + quoteLen - 1), quoteLen);
                     _dataBlock.addBool(_name, value);
                     break;
                 }
-                case DataBlockParamType::ParamVec2DS:
+                case DataBlockParamType::ParamVec2S32:
                 {
-                    Vec2DS value = Vec2DS::c_zero;
-                    if (!Vec2DS::ParseString(_value, _size, value, ','))
+                    Vec2S value = Vec2S::c_zero;
+                    if (!Vec2S::ParseString(_value, _size, value, ','))
                     {
                         processSyntaxError("Syntax error");
                         return false;
                     }
-                    _dataBlock.addVec2DS(_name, value);
+                    _dataBlock.addVec2S32(_name, value);
                     break;
                 }
-                case DataBlockParamType::ParamVec3DS:
+                case DataBlockParamType::ParamVec3S32:
                 {
-                    Vec3DS value = Vec3DS::c_zero;
-                    if (!Vec3DS::ParseString(_value, _size, value, ','))
+                    Vec3S value = Vec3S::c_zero;
+                    if (!Vec3S::ParseString(_value, _size, value, ','))
                     {
                         processSyntaxError("Syntax error");
                         return false;
                     }
-                    _dataBlock.addVec3DS(_name, value);
+                    _dataBlock.addVec3S32(_name, value);
                     break;
                 }
-                case DataBlockParamType::ParamVec4DS:
+                case DataBlockParamType::ParamVec4S32:
                 {
-                    Vec4DS value = Vec4DS::c_zero;
-                    if (!Vec4DS::ParseString(_value, _size, value, ','))
+                    Vec4S value = Vec4S::c_zero;
+                    if (!Vec4S::ParseString(_value, _size, value, ','))
                     {
                         processSyntaxError("Syntax error");
                         return false;
                     }
-                    _dataBlock.addVec4DS(_name, value);
+                    _dataBlock.addVec4S32(_name, value);
                     break;
                 }
-                case DataBlockParamType::ParamVec2DU:
+                case DataBlockParamType::ParamVec2U32:
                 {
-                    Vec2DU value = Vec2DU::c_zero;
-                    if (!Vec2DU::ParseString(_value, _size, value, ','))
+                    Vec2U value = Vec2U::c_zero;
+                    if (!Vec2U::ParseString(_value, _size, value, ','))
                     {
                         processSyntaxError("Syntax error");
                         return false;
                     }
-                    _dataBlock.addVec2DU(_name, value);
+                    _dataBlock.addVec2U32(_name, value);
                     break;
                 }
-                case DataBlockParamType::ParamVec3DU:
+                case DataBlockParamType::ParamVec3U32:
                 {
-                    Vec3DU value = Vec3DU::c_zero;
-                    if (!Vec3DU::ParseString(_value, _size, value, ','))
+                    Vec3U value = Vec3U::c_zero;
+                    if (!Vec3U::ParseString(_value, _size, value, ','))
                     {
                         processSyntaxError("Syntax error");
                         return false;
                     }
-                    _dataBlock.addVec3DU(_name, value);
+                    _dataBlock.addVec3U32(_name, value);
                     break;
                 }
-                case DataBlockParamType::ParamVec4DU:
+                case DataBlockParamType::ParamVec4U32:
                 {
-                    Vec4DU value = Vec4DU::c_zero;
-                    if (!Vec4DU::ParseString(_value, _size, value, ','))
+                    Vec4U value = Vec4U::c_zero;
+                    if (!Vec4U::ParseString(_value, _size, value, ','))
                     {
                         processSyntaxError("Syntax error");
                         return false;
                     }
-                    _dataBlock.addVec4DU(_name, value);
+                    _dataBlock.addVec4U32(_name, value);
                     break;
                 }
-                case DataBlockParamType::ParamVec2DF:
+                case DataBlockParamType::ParamVec2F32:
                 {
-                    Vec2DF value = Vec2DF::c_zero;
-                    if (!Vec2DF::ParseString(_value, _size, value, ','))
+                    Vec2F value = Vec2F::c_zero;
+                    if (!Vec2F::ParseString(_value, _size, value, ','))
                     {
                         processSyntaxError("Syntax error");
                         return false;
                     }
-                    _dataBlock.addVec2DF(_name, value);
+                    _dataBlock.addVec2F32(_name, value);
                     break;
                 }
-                case DataBlockParamType::ParamVec3DF:
+                case DataBlockParamType::ParamVec3F32:
                 {
-                    Vec3DF value = Vec3DF::c_zero;
-                    if (!Vec3DF::ParseString(_value, _size, value, ','))
+                    Vec3F value = Vec3F::c_zero;
+                    if (!Vec3F::ParseString(_value, _size, value, ','))
                     {
                         processSyntaxError("Syntax error");
                         return false;
                     }
-                    _dataBlock.addVec3DF(_name, value);
+                    _dataBlock.addVec3F32(_name, value);
                     break;
                 }
-                case DataBlockParamType::ParamVec4DF:
+                case DataBlockParamType::ParamVec4F32:
                 {
-                    Vec4DF value = Vec4DF::c_zero;
-                    if (!Vec4DF::ParseString(_value, _size, value, ','))
+                    Vec4F value = Vec4F::c_zero;
+                    if (!Vec4F::ParseString(_value, _size, value, ','))
                     {
                         processSyntaxError("Syntax error");
                         return false;
                     }
-                    _dataBlock.addVec4DF(_name, value);
+                    _dataBlock.addVec4F32(_name, value);
                     break;
                 }
-                case DataBlockParamType::ParamVec2DB:
+                case DataBlockParamType::ParamVec2B:
                 {
-                    Vec2DB value = Vec2DB(false);
-                    if (!Vec2DB::ParseStringPretty(_value, _size, value, ','))
+                    Vec2B value = Vec2B(false);
+                    if (!Vec2B::ParseStringPretty(_value, _size, value, ','))
                     {
                         processSyntaxError("Syntax error");
                         return false;
                     }
-                    _dataBlock.addVec2DB(_name, value);
+                    _dataBlock.addVec2B(_name, value);
                     break;
                 }
-                case DataBlockParamType::ParamVec3DB:
+                case DataBlockParamType::ParamVec3B:
                 {
-                    Vec3DB value = Vec3DB(false);
-                    if (!Vec3DB::ParseStringPretty(_value, _size, value, ','))
+                    Vec3B value = Vec3B(false);
+                    if (!Vec3B::ParseStringPretty(_value, _size, value, ','))
                     {
                         processSyntaxError("Syntax error");
                         return false;
                     }
-                    _dataBlock.addVec3DB(_name, value);
+                    _dataBlock.addVec3B(_name, value);
                     break;
                 }
-                case DataBlockParamType::ParamVec4DB:
+                case DataBlockParamType::ParamVec4B:
                 {
-                    Vec4DB value = Vec4DB(false);
-                    if (!Vec4DB::ParseStringPretty(_value, _size, value, ','))
+                    Vec4B value = Vec4B(false);
+                    if (!Vec4B::ParseStringPretty(_value, _size, value, ','))
                     {
                         processSyntaxError("Syntax error");
                         return false;
                     }
-                    _dataBlock.addVec4DB(_name, value);
+                    _dataBlock.addVec4B(_name, value);
                     break;
                 }
-                case DataBlockParamType::ParamMat3DF:
+                case DataBlockParamType::ParamMat3F32:
                 {
-                    Mat3DF value = Mat3DF::c_zero;
-                    if (!Mat3DF::ParseStringPretty(_value, _size, value, ','))
+                    Mat3F value = Mat3F::c_zero;
+                    if (!Mat3F::ParseStringPretty(_value, _size, value, ','))
                     {
                         processSyntaxError("Syntax error");
                         return false;
                     }
-                    _dataBlock.addMat3DF(_name, value);
+                    _dataBlock.addMat3F32(_name, value);
                     break;
                 }
-                case DataBlockParamType::ParamMat4DF:
+                case DataBlockParamType::ParamMat4F32:
                 {
-                    Mat4DF value = Mat4DF::c_zero;
-                    if (!Mat4DF::ParseStringPretty(_value, _size, value, ','))
+                    Mat4F value = Mat4F::c_zero;
+                    if (!Mat4F::ParseStringPretty(_value, _size, value, ','))
                     {
                         processSyntaxError("Syntax error");
                         return false;
                     }
-                    _dataBlock.addMat4DF(_name, value);
+                    _dataBlock.addMat4F32(_name, value);
                     break;
                 }
                 default:

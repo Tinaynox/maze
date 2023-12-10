@@ -38,8 +38,8 @@ namespace Maze
     //////////////////////////////////////////
     template <class TValue>
     inline MAZE_CONSTEXPR Rect2D<TValue>::Rect2D()
-        : position(Vec2D<TValue>::c_zero)
-        , size(Vec2D<TValue>::c_zero)
+        : position(Vec2<TValue>::c_zero)
+        , size(Vec2<TValue>::c_zero)
     {
     
     }
@@ -65,8 +65,8 @@ namespace Maze
     //////////////////////////////////////////
     template <class TValue>
     inline MAZE_CONSTEXPR Rect2D<TValue>::Rect2D(
-        Vec2D<TValue> const& _p,
-        Vec2D<TValue> const& _s)
+        Vec2<TValue> const& _p,
+        Vec2<TValue> const& _s)
         : position(_p)
         , size(_s)
     {
@@ -80,8 +80,8 @@ namespace Maze
         TValue _y,
         TValue _w,
         TValue _h)
-        : position(Vec2D<TValue>(_x, _y))
-        , size(Vec2D<TValue>(_w, _h))
+        : position(Vec2<TValue>(_x, _y))
+        , size(Vec2<TValue>(_w, _h))
     { 
     }
 
@@ -158,7 +158,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    inline bool Rect2D<TValue>::contains(Vec2D<TValue> const& _p)
+    inline bool Rect2D<TValue>::contains(Vec2<TValue> const& _p)
     {
         if ((_p.x < position.x) ||
             (_p.y < position.y) ||
@@ -171,7 +171,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    inline bool Rect2D<TValue>::hasCircleIntersection(Vec2D<TValue> const& _pos, TValue _radius)
+    inline bool Rect2D<TValue>::hasCircleIntersection(Vec2<TValue> const& _pos, TValue _radius)
     {
         TValue closestX = Math::Max(getLeft(), Math::Min(_pos.x, getRight()));
         TValue closestY = Math::Max(getTop(), Math::Min(_pos.y, getBottom()));

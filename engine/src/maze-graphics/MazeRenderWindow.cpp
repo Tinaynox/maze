@@ -91,10 +91,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec2DU RenderWindow::getRenderTargetSize() const
+    Vec2U RenderWindow::getRenderTargetSize() const
     {
         if (!m_window)
-            return Vec2DU::c_zero;
+            return Vec2U::c_zero;
 
         return m_window->getClientSize();
     }

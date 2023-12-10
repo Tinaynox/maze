@@ -42,7 +42,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(LinearMovement3D, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, active, true, getActive, setActive),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3DF, axis, Vec3DF::c_unitY, getAxis, setAxis),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec3F, axis, Vec3F::c_unitY, getAxis, setAxis),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, speed, 5.0f, getSpeed, setSpeed));
 
     //////////////////////////////////////////
@@ -59,7 +59,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    LinearMovement3DPtr LinearMovement3D::Create(Vec3DF const& _axis, F32 _speed)
+    LinearMovement3DPtr LinearMovement3D::Create(Vec3F const& _axis, F32 _speed)
     {
         LinearMovement3DPtr object;
         MAZE_CREATE_AND_INIT_SHARED_PTR(LinearMovement3D, object, init(_axis, _speed));
@@ -67,7 +67,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool LinearMovement3D::init(Vec3DF const& _axis, F32 _speed)
+    bool LinearMovement3D::init(Vec3F const& _axis, F32 _speed)
     {
         setAxis(_axis);
         setSpeed(_speed);

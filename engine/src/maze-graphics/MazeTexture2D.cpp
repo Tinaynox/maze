@@ -50,7 +50,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     Texture2D::Texture2D()
-        : m_size(Vec2DS::c_zero)
+        : m_size(Vec2S::c_zero)
         , m_magFilter(TextureFilter::Linear)
         , m_minFilter(TextureFilter::Linear)
         , m_wrapS(TextureWrap::ClampToEdge)
@@ -150,7 +150,7 @@ namespace Maze
 
     //////////////////////////////////////////
     bool Texture2D::loadEmpty(
-        Vec2DU const& _size,
+        Vec2U const& _size,
         PixelFormat::Enum _pixelFormat)
     {
         MAZE_PROFILE_EVENT("Texture2D::loadEmpty");
@@ -164,7 +164,7 @@ namespace Maze
     bool Texture2D::loadFromBuffer(
         ByteBufferPtr const& _buffer,
         PixelFormat::Enum _bufferPixelFormat,
-        Vec2DU const& _size,
+        Vec2U const& _size,
         PixelFormat::Enum _pixelFormat)
     {
         MAZE_PROFILE_EVENT("Texture2D::loadFromBuffer");
@@ -177,7 +177,7 @@ namespace Maze
     bool Texture2D::loadFromBuffers(
         Vector<ByteBufferPtr> const& _buffers,
         PixelFormat::Enum _bufferPixelFormat,
-        Vec2DU const& _size,
+        Vec2U const& _size,
         PixelFormat::Enum _pixelFormat)
     {
         MAZE_PROFILE_EVENT("Texture2D::loadFromBuffers");
@@ -188,7 +188,7 @@ namespace Maze
         {
             ByteBufferPtr const& byteBuffer = _buffers[i];
             PixelSheet2D& pixelSheet = pixelSheets[i];
-            pixelSheet.copyFrom(byteBuffer->getDataPointer(), (Vec2DS)_size, _bufferPixelFormat);
+            pixelSheet.copyFrom(byteBuffer->getDataPointer(), (Vec2S)_size, _bufferPixelFormat);
         }
 
         return loadTexture(pixelSheets, _pixelFormat);

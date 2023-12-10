@@ -193,8 +193,8 @@ namespace Maze
         
         SpriteRenderer2DPtr panel00 = SpriteHelper::CreateSprite(
             ColorU32(203, 203, 203),
-            Vec2DF(640, 480),
-            Vec2DF(0, 0),
+            Vec2F32(640, 480),
+            Vec2F32(0, 0),
             materialManager->getColorTextureMaterial(),
             canvasTransform2D,
             this);

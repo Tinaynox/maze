@@ -100,7 +100,7 @@ namespace Maze
                 Window* _window = nullptr,
                 S32 _cursorIndex = 0,
                 S32 _buttonIndex = 0,
-                Vec2DF _renderTargetCoords = Vec2DF::c_zero,
+                Vec2F _renderTargetCoords = Vec2F::c_zero,
                 CursorInputSource _inputSource = CursorInputSource())
                 : window(_window)
                 , cursorIndex(_cursorIndex)
@@ -112,12 +112,12 @@ namespace Maze
             Window* window = nullptr;
             S32 cursorIndex = 0;
             S32 buttonIndex = 0;
-            Vec2DF renderTargetCoords = Vec2DF::c_zero;
+            Vec2F renderTargetCoords = Vec2F::c_zero;
             CursorInputSource inputSource;
         };
 
         //////////////////////////////////////////
-        static inline Vec2DF DefaultCoordsConverter(Vec2DF const& _coords) { return _coords; }
+        static inline Vec2F DefaultCoordsConverter(Vec2F const& _coords) { return _coords; }
 
     public:
 
@@ -133,7 +133,7 @@ namespace Maze
         virtual S32 getOrder() const MAZE_OVERRIDE { return 20000; }
 
         //////////////////////////////////////////
-        inline void setCoordsConverter(std::function<Vec2DF(Vec2DF const&)> const& _coordsConverter) { m_coordsConverter = _coordsConverter; }
+        inline void setCoordsConverter(std::function<Vec2F(Vec2F const&)> const& _coordsConverter) { m_coordsConverter = _coordsConverter; }
 
     protected:
 
@@ -181,7 +181,7 @@ namespace Maze
             Window* _window,
             S32 _cursorIndex,
             S32 _buttonIndex,
-            Vec2DF const& _renderTargetCoords,
+            Vec2F const& _renderTargetCoords,
             CursorInputSource const& _inputSource);
 
         //////////////////////////////////////////
@@ -189,7 +189,7 @@ namespace Maze
             Window* _window,
             S32 _cursorIndex,
             S32 _buttonIndex,
-            Vec2DF const& _renderTargetCoords,
+            Vec2F const& _renderTargetCoords,
             CursorInputSource const& _inputSource);
 
         //////////////////////////////////////////
@@ -197,7 +197,7 @@ namespace Maze
             Window* _window,
             S32 _cursorIndex,
             S32 _buttonIndex,
-            Vec2DF const& _renderTargetCoords,
+            Vec2F const& _renderTargetCoords,
             CursorInputSource const& _inputSource);
 
         //////////////////////////////////////////
@@ -205,7 +205,7 @@ namespace Maze
             Window* _window,
             S32 _cursorIndex,
             S32 _buttonIndex,
-            Vec2DF const& _renderTargetCoords,
+            Vec2F const& _renderTargetCoords,
             CursorInputSource const& _inputSource);
 
         //////////////////////////////////////////
@@ -213,7 +213,7 @@ namespace Maze
             Window* _window,
             S32 _cursorIndex,
             S32 _buttonIndex,
-            Vec2DF const& _renderTargetCoords,
+            Vec2F const& _renderTargetCoords,
             CursorInputSource const& _inputSource);
 
         //////////////////////////////////////////
@@ -221,7 +221,7 @@ namespace Maze
             Window* _window,
             S32 _cursorIndex,
             S32 _buttonIndex,
-            Vec2DF const& _renderTargetCoords,
+            Vec2F const& _renderTargetCoords,
             CursorInputSource const& _inputSource);
 
         //////////////////////////////////////////
@@ -229,7 +229,7 @@ namespace Maze
             Window* _window,
             S32 _cursorIndex,
             F32 _deltaWheel,
-            Vec2DF const& _renderTargetCoords,
+            Vec2F const& _renderTargetCoords,
             CursorInputSource const& _inputSource);
 
     protected:
@@ -248,9 +248,9 @@ namespace Maze
         bool m_sortedUIElements2DDirty;
         Vector<CanvasData> m_sortedUIElements2D;
 
-        std::function<Vec2DF(Vec2DF const&)> m_coordsConverter = DefaultCoordsConverter;
+        std::function<Vec2F(Vec2F const&)> m_coordsConverter = DefaultCoordsConverter;
 
-        Vec2DF m_firstCursorPressRenderTargetCoords = Vec2DF::c_zero;
+        Vec2F m_firstCursorPressRenderTargetCoords = Vec2F::c_zero;
         U32 m_firstCursorPressTime = 0u;
         U32 m_firstCursorReleaseTime = 0u;
         ClickData m_clickData;

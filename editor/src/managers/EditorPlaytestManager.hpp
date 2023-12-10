@@ -103,7 +103,7 @@ namespace Maze
         void clearWorkspace();
 
         //////////////////////////////////////////
-        Vec2DU calculatePlaytestRenderBuffer();
+        Vec2U32 calculatePlaytestRenderBuffer();
 
     protected:
 

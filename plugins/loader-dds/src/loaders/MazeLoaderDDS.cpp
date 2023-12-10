@@ -316,7 +316,7 @@ namespace Maze
             bufferShift += sizeof(D3D_SurfaceDesc2);
 
             // Remember info for users of this object
-            Vec2DS size(header.dwWidth, header.dwHeight);
+            Vec2S size(header.dwWidth, header.dwHeight);
 
             S32 mipMapCount = Math::Max(header.dwMipMapCount, 1);
             _pixelSheets.resize(mipMapCount);

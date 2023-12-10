@@ -187,8 +187,8 @@ namespace Maze
 
         SpriteRenderer2DPtr square = SpriteHelper::CreateSprite(
             ColorU32::c_gray,
-            Vec2DF(800.0f, 600.0f),
-            Vec2DF::c_zero,
+            Vec2F32(800.0f, 600.0f),
+            Vec2F32::c_zero,
             nullptr,
             m_canvas->getTransform(),
             this);
@@ -199,8 +199,8 @@ namespace Maze
         {
             SpriteRenderer2DPtr textSquare = SpriteHelper::CreateSprite(
                 ColorU32::c_blackSoft,
-                Vec2DF(200.0f, 150.0f),
-                Vec2DF(-150.0f, 0.0f),
+                Vec2F32(200.0f, 150.0f),
+                Vec2F32(-150.0f, 0.0f),
                 nullptr,
                 square->getTransform(),
                 this);
@@ -211,7 +211,7 @@ namespace Maze
                 HorizontalAlignment2D::Center,
                 VerticalAlignment2D::Middle,
                 textSquare->getTransform()->getSize(),
-                Vec2DF::c_zero,
+                Vec2F32::c_zero,
                 textSquare->getTransform(),
                 this);
         }
@@ -219,8 +219,8 @@ namespace Maze
         {
             SpriteRenderer2DPtr textSquare = SpriteHelper::CreateSprite(
                 ColorU32::c_blackSoft,
-                Vec2DF(200.0f, 150.0f),
-                Vec2DF(150.0f, 0.0f),
+                Vec2F32(200.0f, 150.0f),
+                Vec2F32(150.0f, 0.0f),
                 nullptr,
                 square->getTransform(),
                 this);
@@ -234,7 +234,7 @@ namespace Maze
                 HorizontalAlignment2D::Center,
                 VerticalAlignment2D::Middle,
                 textSquare->getTransform()->getSize(),
-                Vec2DF::c_zero,
+                Vec2F32::c_zero,
                 textSquare->getTransform(),
                 this);
             //m_text->setOutlineThickness(3.0f);

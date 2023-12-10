@@ -56,7 +56,7 @@ namespace Maze
 
     //////////////////////////////////////////
     VirtualJoystickController::VirtualJoystickController()
-        : m_cursorPositionOS(Vec2DF::c_zero)
+        : m_cursorPositionOS(Vec2F32::c_zero)
         , c_radius(160 * 0.5f)
     {
     }
@@ -90,8 +90,8 @@ namespace Maze
     {
         if (m_leftButton->getUIElement()->getPressed())
         {
-            Vec2DF pos = m_cursorPositionOS - m_leftStickSprite->getTransform()->getSize() * m_leftStickPadSprite->getTransform()->getPivot();
-            Vec2DF shift = pos / c_radius;
+            Vec2F32 pos = m_cursorPositionOS - m_leftStickSprite->getTransform()->getSize() * m_leftStickPadSprite->getTransform()->getPivot();
+            Vec2F32 shift = pos / c_radius;
             if (shift.squaredLength() >= 1.0f)
                 shift.normalize();
 
@@ -110,7 +110,7 @@ namespace Maze
             m_leftStickPadSprite->getTransform()->setLocalPosition(
                 Math::Lerp(
                     m_leftStickPadSprite->getTransform()->getLocalPosition(),
-                    Vec2DF::c_zero,
+                    Vec2F32::c_zero,
                     8.0f * _dt));
         }
     }
@@ -128,9 +128,9 @@ namespace Maze
         {
             EntityPtr leftButtonEntity = getEntityRaw()->getECSScene()->createEntity();
             Transform2DPtr buttonEntityTransform = leftButtonEntity->ensureComponent<Transform2D>();
-            buttonEntityTransform->setSize(Vec2DF(200, 200));
+            buttonEntityTransform->setSize(Vec2F32(200, 200));
             buttonEntityTransform->setParent(getTransform());
-            buttonEntityTransform->setLocalPosition(Vec2DF(150, 150));
+            buttonEntityTransform->setLocalPosition(Vec2F32(150, 150));
             buttonEntityTransform->setAnchor(0.0f, 0.0f);
             m_leftButton = leftButtonEntity->ensureComponent<ClickButton2D>();
             m_leftButton->getUIElement()->setUnpressOnUnfocus(false);
@@ -139,7 +139,7 @@ namespace Maze
             m_leftStickSprite = SpriteHelper::CreateSprite(
                 "KnobBackground.mztexture",
                 buttonEntityTransform->getSize(),
-                Vec2DF::c_zero,
+                Vec2F32::c_zero,
                 spriteMaterial,
                 buttonEntityTransform,
                 getEntityRaw()->getECSScene());
@@ -147,8 +147,8 @@ namespace Maze
             
             m_leftStickPadSprite = SpriteHelper::CreateSprite(
                 "KnobCenter.mztexture",
-                Vec2DF(120, 120),
-                Vec2DF(0, 0),
+                Vec2F32(120, 120),
+                Vec2F32(0, 0),
                 spriteMaterial,
                 m_leftStickSprite->getTransform(),
                 getEntityRaw()->getECSScene());
@@ -158,8 +158,8 @@ namespace Maze
                 
 
                 UITweenTransitionScalePtr const& pressedTransition = m_leftStickSprite->getEntityRaw()->ensureComponent<UITweenTransitionScale>();
-                pressedTransition->setHiddenScale(Vec2DF(1.0f, 1.0f));
-                pressedTransition->setShownScale(Vec2DF(0.95f, 0.95f));
+                pressedTransition->setHiddenScale(Vec2F32(1.0f, 1.0f));
+                pressedTransition->setShownScale(Vec2F32(0.95f, 0.95f));
                 pressedTransition->setShowTime(0.2f);
                 pressedTransition->hideInstantly();
 
@@ -171,13 +171,13 @@ namespace Maze
 
 
                 m_leftButton->getUIElement()->eventCursorPressIn.subscribe(
-                    [&](Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+                    [&](Vec2F32 const& _positionOS, CursorInputEvent const& _inputEvent)
                     {
                         m_cursorPositionOS = _positionOS;
                     });
 
                 m_leftButton->getUIElement()->eventCursorMoveIn.subscribe(
-                    [&](Vec2DF const& _positionOS, CursorInputEvent const& _inputEvent)
+                    [&](Vec2F32 const& _positionOS, CursorInputEvent const& _inputEvent)
                     {
                         m_cursorPositionOS = _positionOS;
                     });
@@ -196,9 +196,9 @@ namespace Maze
         {
             EntityPtr rightButtonEntity = getEntityRaw()->getECSScene()->createEntity();
             Transform2DPtr buttonEntityTransform = rightButtonEntity->ensureComponent<Transform2D>();
-            buttonEntityTransform->setSize(Vec2DF(120, 120));
+            buttonEntityTransform->setSize(Vec2F32(120, 120));
             buttonEntityTransform->setParent(getTransform());
-            buttonEntityTransform->setLocalPosition(Vec2DF(-120, 120));
+            buttonEntityTransform->setLocalPosition(Vec2F32(-120, 120));
             buttonEntityTransform->setAnchor(1.0f, 0.0f);
             m_rightButton = rightButtonEntity->ensureComponent<ClickButton2D>();
             m_rightButton->getUIElement()->setUnpressOnUnfocus(false);
@@ -208,7 +208,7 @@ namespace Maze
             SpriteRenderer2DPtr rightStickSprite = SpriteHelper::CreateSprite(
                 "Knob02.mztexture",
                 buttonEntityTransform->getSize(),
-                Vec2DF::c_zero,
+                Vec2F32::c_zero,
                 spriteMaterial,
                 buttonEntityTransform,
                 getEntityRaw()->getECSScene());
@@ -216,8 +216,8 @@ namespace Maze
 
             {
                 UITweenTransitionScalePtr const& pressedTransition = rightStickSprite->getEntityRaw()->ensureComponent<UITweenTransitionScale>();
-                pressedTransition->setHiddenScale(Vec2DF(1.0f, 1.0f));
-                pressedTransition->setShownScale(Vec2DF(0.9f, 0.9f));
+                pressedTransition->setHiddenScale(Vec2F32(1.0f, 1.0f));
+                pressedTransition->setShownScale(Vec2F32(0.9f, 0.9f));
                 pressedTransition->setShowTime(0.2f);
                 pressedTransition->hideInstantly();
 

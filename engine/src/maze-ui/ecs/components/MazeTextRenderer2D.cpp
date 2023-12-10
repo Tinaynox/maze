@@ -228,17 +228,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Vec2DF TextRenderer2D::getTextEnd(Size _rowIndex)
+    Vec2F TextRenderer2D::getTextEnd(Size _rowIndex)
     {
         if (!m_fontMaterial)
-            m_lastGlyphOffset = Vec2DF(0.0f, 0.0f);
+            m_lastGlyphOffset = Vec2F(0.0f, 0.0f);
 
         if (m_text.empty())
         {
             F32 linespace = m_fontMaterial->getFont()->getLineSpacing(m_fontSize) * getLineSpacingScale();
 
             F32 y = calculateY(linespace, 1);
-            m_lastGlyphOffset = Vec2DF(0.0f, y);
+            m_lastGlyphOffset = Vec2F(0.0f, y);
         }
 
         return m_lastGlyphOffset;
@@ -254,7 +254,7 @@ namespace Maze
         if (!m_transform || !m_fontMaterial)
             return y;
 
-        Vec2DF const& size = m_transform->getSize();
+        Vec2F const& size = m_transform->getSize();
 
         F32 ascent = m_fontMaterial->getFont()->getDefaultFont()->getAscender(m_fontSize);
         F32 descent = m_fontMaterial->getFont()->getDefaultFont()->getDescender(m_fontSize);
@@ -353,7 +353,7 @@ namespace Maze
         if (!m_meshRenderer)
             return;
 
-        Vec2DF const& size = m_transform->getSize();
+        Vec2F const& size = m_transform->getSize();
 
         if (!m_fontMaterial || m_text.empty())
         {
@@ -586,7 +586,7 @@ namespace Maze
         String::iterator it = finalText.begin();
         String::iterator end = finalText.end();
 
-        ColorF128 currentGlyphColor = m_color.toVec4DF();
+        ColorF128 currentGlyphColor = m_color.toVec4F32();
 
         Size curCharOffset = 0;
         F32 xAlignOffset = calculateXAlignOffset(rowLengths, currentRow);
@@ -673,12 +673,12 @@ namespace Maze
                 {
                     if (!glyphData.glyphStorageData || glyphData.glyphStorageData->type == FontGlyphStorageType::TrueTypeFont)
                     {
-                        setGlyphQuad(curOutlineQuadIndex, Vec2DF(glyphX, glyphY), m_outlineColor, (*glyphData.outlineThicknessGlyph));
+                        setGlyphQuad(curOutlineQuadIndex, Vec2F(glyphX, glyphY), m_outlineColor, (*glyphData.outlineThicknessGlyph));
                         ++curOutlineQuadIndex;
                     }
                 }
 
-                setGlyphQuad(outlineQuadsCount + curQuadIndex, Vec2DF(glyphX, glyphY), currentGlyphColor, (*glyphData.glyph));
+                setGlyphQuad(outlineQuadsCount + curQuadIndex, Vec2F(glyphX, glyphY), currentGlyphColor, (*glyphData.glyph));
                 ++curQuadIndex;
             }
 
@@ -728,7 +728,7 @@ namespace Maze
         if (!m_meshRenderer)
             return;
 
-        Vec4DF const vertexColor = Vec4DF(1.0f, 1.0f, 1.0f, m_canvasRenderer ? m_canvasRenderer->getAlpha() : 1.0f);
+        Vec4F const vertexColor = Vec4F(1.0f, 1.0f, 1.0f, m_canvasRenderer ? m_canvasRenderer->getAlpha() : 1.0f);
 
         Size colorsCount = m_meshRenderer->getColors().size();
         for (Size i = 0; i < colorsCount; ++i)
@@ -752,7 +752,7 @@ namespace Maze
     //////////////////////////////////////////
     F32 TextRenderer2D::calculateXAlignOffset(FastVector<F32> const& _rowLengths, U32 _currentRow)
     {
-        Vec2DF const& size = m_transform->getSize();
+        Vec2F const& size = m_transform->getSize();
 
         if (m_widthPolicy == TextRenderer2DWidthPolicy::Abut)
         {
@@ -785,7 +785,7 @@ namespace Maze
     //////////////////////////////////////////
     void TextRenderer2D::setGlyphQuad(
         Size _quadIndex,
-        Vec2DF const& _position,
+        Vec2F const& _position,
         ColorF128 const& _color,
         FontGlyph const& _glyph)
     {
@@ -799,19 +799,19 @@ namespace Maze
         MAZE_ERROR_RETURN_IF(_quadIndex >= m_localMatrices.size(), "Out of bounds!");
         MAZE_ERROR_RETURN_IF(_quadIndex >= m_localColors.size(), "Out of bounds!");
         
-        Vec2DF sizeV = (Vec2DF)_glyph.bounds.size;
-        Vec2DF positionShiftV = _position + _glyph.bounds.size * 0.5f + _glyph.bounds.position;
+        Vec2F sizeV = (Vec2F)_glyph.bounds.size;
+        Vec2F positionShiftV = _position + _glyph.bounds.size * 0.5f + _glyph.bounds.position;
 
-        Mat4DF localTransform = Mat4DF::CreateTranslationMatrix(positionShiftV) * Mat4DF::CreateScaleMatrix(sizeV);
+        Mat4F localTransform = Mat4F::CreateTranslationMatrix(positionShiftV) * Mat4F::CreateScaleMatrix(sizeV);
         m_localMatrices[_quadIndex] = localTransform;
-        m_localColors[_quadIndex] = _color.toVec4DF();
+        m_localColors[_quadIndex] = _color.toVec4F32();
 
-        Vec4DF const vertexColor = Vec4DF(1.0f, 1.0f, 1.0f, m_canvasRenderer ? m_canvasRenderer->getAlpha() : 1.0f);
+        Vec4F const vertexColor = Vec4F(1.0f, 1.0f, 1.0f, m_canvasRenderer ? m_canvasRenderer->getAlpha() : 1.0f);
 
         m_meshRenderer->setColor(_quadIndex, _color * vertexColor);
         m_meshRenderer->setUV0(
             _quadIndex,
-            Vec4DF(
+            Vec4F(
                 _glyph.textureCoords.position.x,
                 _glyph.textureCoords.position.x + _glyph.textureCoords.size.x,
                 _glyph.textureCoords.position.y,
@@ -819,7 +819,7 @@ namespace Maze
 
         m_meshRenderer->setUV1(
             _quadIndex,
-            Vec4DF((F32)textureIndex, 0.0f, 0.0f, 0.0f));
+            Vec4F((F32)textureIndex, 0.0f, 0.0f, 0.0f));
     }
 
     //////////////////////////////////////////

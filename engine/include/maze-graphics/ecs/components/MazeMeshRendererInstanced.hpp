@@ -112,54 +112,54 @@ namespace Maze
         void resize(S32 _count);
 
         //////////////////////////////////////////
-        inline Mat4DF const* getModelMatricesData() const { return &m_modelMatricies[0]; }
+        inline Mat4F const* getModelMatricesData() const { return &m_modelMatricies[0]; }
 
         //////////////////////////////////////////
-        inline Vector<Mat4DF> const& getModelMatrices() const { return m_modelMatricies; }
+        inline Vector<Mat4F> const& getModelMatrices() const { return m_modelMatricies; }
 
         //////////////////////////////////////////
-        inline void setModelMatrices(Vector<Mat4DF> const& _value) { m_modelMatricies = _value; }
+        inline void setModelMatrices(Vector<Mat4F> const& _value) { m_modelMatricies = _value; }
 
         //////////////////////////////////////////
-        inline void setModelMatrix(Size _index, Mat4DF const& _value) { m_modelMatricies[_index] = _value; }
+        inline void setModelMatrix(Size _index, Mat4F const& _value) { m_modelMatricies[_index] = _value; }
 
         //////////////////////////////////////////
-        inline Vec4DF const* getColorsData() const { return &m_colors[0]; }
+        inline Vec4F const* getColorsData() const { return &m_colors[0]; }
 
         //////////////////////////////////////////
-        inline Vector<Vec4DF> const& getColors() const { return m_colors; }
+        inline Vector<Vec4F> const& getColors() const { return m_colors; }
 
         //////////////////////////////////////////
-        inline void setColors(Vector<Vec4DF> const& _value) { m_colors = _value; }
+        inline void setColors(Vector<Vec4F> const& _value) { m_colors = _value; }
 
         //////////////////////////////////////////
-        inline void setColor(Size _index, Vec4DF const& _value) { m_colors[_index] = _value; }
-
-
-        //////////////////////////////////////////
-        inline Vec4DF const* getUV0Data() const { return &m_uv0[0]; }
-
-        //////////////////////////////////////////
-        inline Vector<Vec4DF> const& getUV0() const { return m_uv0; }
-
-        //////////////////////////////////////////
-        inline void setUV0(Vector<Vec4DF> const& _value) { m_uv0 = _value; }
-
-        //////////////////////////////////////////
-        inline void setUV0(Size _index, Vec4DF const& _value) { m_uv0[_index] = _value; }
+        inline void setColor(Size _index, Vec4F const& _value) { m_colors[_index] = _value; }
 
 
         //////////////////////////////////////////
-        inline Vec4DF const* getUV1Data() const { return &m_uv1[0]; }
+        inline Vec4F const* getUV0Data() const { return &m_uv0[0]; }
 
         //////////////////////////////////////////
-        inline Vector<Vec4DF> const& getUV1() const { return m_uv1; }
+        inline Vector<Vec4F> const& getUV0() const { return m_uv0; }
 
         //////////////////////////////////////////
-        inline void setUV1(Vector<Vec4DF> const& _value) { m_uv1 = _value; }
+        inline void setUV0(Vector<Vec4F> const& _value) { m_uv0 = _value; }
 
         //////////////////////////////////////////
-        inline void setUV1(Size _index, Vec4DF const& _value) { m_uv1[_index] = _value; }
+        inline void setUV0(Size _index, Vec4F const& _value) { m_uv0[_index] = _value; }
+
+
+        //////////////////////////////////////////
+        inline Vec4F const* getUV1Data() const { return &m_uv1[0]; }
+
+        //////////////////////////////////////////
+        inline Vector<Vec4F> const& getUV1() const { return m_uv1; }
+
+        //////////////////////////////////////////
+        inline void setUV1(Vector<Vec4F> const& _value) { m_uv1 = _value; }
+
+        //////////////////////////////////////////
+        inline void setUV1(Size _index, Vec4F const& _value) { m_uv1[_index] = _value; }
 
     protected:
 
@@ -193,10 +193,10 @@ namespace Maze
         
         RenderMaskPtr m_renderMask;
 
-        Vector<Mat4DF> m_modelMatricies;
-        Vector<Vec4DF> m_colors;
-        Vector<Vec4DF> m_uv0;
-        Vector<Vec4DF> m_uv1;
+        Vector<Mat4F> m_modelMatricies;
+        Vector<Vec4F> m_colors;
+        Vector<Vec4F> m_uv0;
+        Vector<Vec4F> m_uv1;
 
         bool m_enabled;
     };

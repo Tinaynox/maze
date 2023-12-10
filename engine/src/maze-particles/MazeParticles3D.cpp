@@ -73,7 +73,7 @@ namespace Maze
         if (aliveCount == 0)
             return;
 
-        Vec3DF pos = m_positions[0];
+        Vec3F pos = m_positions[0];
         F32 size = m_sizes[0].current;
         F32 halfSize = size * 0.5f;
 

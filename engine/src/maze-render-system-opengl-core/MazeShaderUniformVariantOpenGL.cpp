@@ -46,20 +46,20 @@ namespace Maze
             case MAZE_GL_BOOL:              return ShaderUniformType::UniformBool;
             case MAZE_GL_SAMPLER_2D:        return ShaderUniformType::UniformTexture2D;
             case MAZE_GL_SAMPLER_CUBE:      return ShaderUniformType::UniformTextureCube;
-            case MAZE_GL_INT_VEC2:          return ShaderUniformType::UniformVec2DS;
-            case MAZE_GL_INT_VEC3:          return ShaderUniformType::UniformVec3DS;
-            case MAZE_GL_INT_VEC4:          return ShaderUniformType::UniformVec4DS;
-            case MAZE_GL_UNSIGNED_INT_VEC2: return ShaderUniformType::UniformVec2DU;
-            case MAZE_GL_UNSIGNED_INT_VEC3: return ShaderUniformType::UniformVec3DU;
-            case MAZE_GL_UNSIGNED_INT_VEC4: return ShaderUniformType::UniformVec4DU;
-            case MAZE_GL_FLOAT_VEC2:        return ShaderUniformType::UniformVec2DF;
-            case MAZE_GL_FLOAT_VEC3:        return ShaderUniformType::UniformVec3DF;
-            case MAZE_GL_FLOAT_VEC4:        return ShaderUniformType::UniformVec4DF;
-            case MAZE_GL_BOOL_VEC2:         return ShaderUniformType::UniformVec2DB;
-            case MAZE_GL_BOOL_VEC3:         return ShaderUniformType::UniformVec3DB;
-            case MAZE_GL_BOOL_VEC4:         return ShaderUniformType::UniformVec4DB;
-            case MAZE_GL_FLOAT_MAT3:        return ShaderUniformType::UniformMat3DF;
-            case MAZE_GL_FLOAT_MAT4:        return ShaderUniformType::UniformMat4DF;
+            case MAZE_GL_INT_VEC2:          return ShaderUniformType::UniformVec2S32;
+            case MAZE_GL_INT_VEC3:          return ShaderUniformType::UniformVec3S32;
+            case MAZE_GL_INT_VEC4:          return ShaderUniformType::UniformVec4S32;
+            case MAZE_GL_UNSIGNED_INT_VEC2: return ShaderUniformType::UniformVec2U32;
+            case MAZE_GL_UNSIGNED_INT_VEC3: return ShaderUniformType::UniformVec3U32;
+            case MAZE_GL_UNSIGNED_INT_VEC4: return ShaderUniformType::UniformVec4U32;
+            case MAZE_GL_FLOAT_VEC2:        return ShaderUniformType::UniformVec2F32;
+            case MAZE_GL_FLOAT_VEC3:        return ShaderUniformType::UniformVec3F32;
+            case MAZE_GL_FLOAT_VEC4:        return ShaderUniformType::UniformVec4F32;
+            case MAZE_GL_BOOL_VEC2:         return ShaderUniformType::UniformVec2B;
+            case MAZE_GL_BOOL_VEC3:         return ShaderUniformType::UniformVec3B;
+            case MAZE_GL_BOOL_VEC4:         return ShaderUniformType::UniformVec4B;
+            case MAZE_GL_FLOAT_MAT3:        return ShaderUniformType::UniformMat3F32;
+            case MAZE_GL_FLOAT_MAT4:        return ShaderUniformType::UniformMat4F32;
             default:
             {
                 MAZE_ERROR_RETURN_VALUE(ShaderUniformType::None, "Undefined ShaderUniformType: %d!", (S32)_uniformType);

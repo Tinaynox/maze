@@ -41,8 +41,8 @@ namespace Maze
         ClickButton2DPtr CreateDefaultGameClickButton(
             ECSRenderScene* _scene,
             Transform2DPtr const& _parent,
-            Vec2DF _position,
-            Vec2DF _size,
+            Vec2F32 _position,
+            Vec2F32 _size,
             String const& _label,
             Delegate<void, Button2D*, CursorInputEvent const&> _onClickDelegate)
         {
@@ -62,21 +62,21 @@ namespace Maze
             SpriteRenderer2DPtr buttonSprite = SpriteHelper::CreateSprite(
                 "Button00.mztexture",
                 buttonEntityTransform->getSize(),
-                Vec2DF::c_zero,
+                Vec2F32::c_zero,
                 spriteManager->getDefaultSpriteMaterial(),
                 buttonEntityTransform,
                 _scene);
             buttonSprite->getEntityRaw()->ensureComponent<Name>("ButtonSpriteDefault");
             UITweenTransitionScalePtr pressedTransition = buttonSprite->getEntityRaw()->ensureComponent<UITweenTransitionScale>();
-            pressedTransition->setHiddenScale(Vec2DF(1.0f, 1.0f));
-            pressedTransition->setShownScale(Vec2DF(0.95f, 0.9f));
+            pressedTransition->setHiddenScale(Vec2F32(1.0f, 1.0f));
+            pressedTransition->setShownScale(Vec2F32(0.95f, 0.9f));
             pressedTransition->setShowTime(0.2f);
             pressedTransition->hideInstantly();
 
             SpriteRenderer2DPtr buttonFocusedSprite = SpriteHelper::CreateSprite(
                 "Button00Focused.mztexture",
                 buttonEntityTransform->getSize(),
-                Vec2DF::c_zero,
+                Vec2F32::c_zero,
                 spriteManager->getDefaultSpriteMaterial(),
                 buttonSprite->getTransform(),
                 _scene);
@@ -103,23 +103,23 @@ namespace Maze
             Transform2DPtr labelEntityTransform = labelEntity->ensureComponent<Transform2D>();
             labelEntityTransform->setSize(buttonSprite->getTransform()->getSize());
             labelEntityTransform->setParent(buttonSprite->getTransform());
-            labelEntityTransform->setLocalScale(Vec2DF(0.85f, 1.0f) * 0.75f);
+            labelEntityTransform->setLocalScale(Vec2F32(0.85f, 1.0f) * 0.75f);
             labelEntity->ensureComponent<Name>("LabelEntity");
 
             for (S32 i = 0; i < 8; ++i)
             {
                 F32 outlineOffset = 1.75f;
-                Vec2DF offset;
+                Vec2F32 offset;
                 switch (i)
                 {
-                    case 0: offset = Vec2DF(-outlineOffset, 0.0f); break;
-                    case 1: offset = Vec2DF(+outlineOffset, 0.0f); break;
-                    case 2: offset = Vec2DF(0.0f, -outlineOffset); break;
-                    case 3: offset = Vec2DF(0.0f, +outlineOffset); break;
-                    case 4: offset = Vec2DF(-outlineOffset, +outlineOffset); break;
-                    case 5: offset = Vec2DF(+outlineOffset, +outlineOffset); break;
-                    case 6: offset = Vec2DF(-outlineOffset, -outlineOffset); break;
-                    case 7: offset = Vec2DF(+outlineOffset, -outlineOffset); break;
+                    case 0: offset = Vec2F32(-outlineOffset, 0.0f); break;
+                    case 1: offset = Vec2F32(+outlineOffset, 0.0f); break;
+                    case 2: offset = Vec2F32(0.0f, -outlineOffset); break;
+                    case 3: offset = Vec2F32(0.0f, +outlineOffset); break;
+                    case 4: offset = Vec2F32(-outlineOffset, +outlineOffset); break;
+                    case 5: offset = Vec2F32(+outlineOffset, +outlineOffset); break;
+                    case 6: offset = Vec2F32(-outlineOffset, -outlineOffset); break;
+                    case 7: offset = Vec2F32(+outlineOffset, -outlineOffset); break;
                 }
 
                 SystemTextRenderer2DPtr systemText = SystemUIHelper::CreateSystemText(
@@ -128,7 +128,7 @@ namespace Maze
                     HorizontalAlignment2D::Center,
                     VerticalAlignment2D::Middle,
                     buttonSprite->getTransform()->getSize(),
-                    Vec2DF(0.0f, 2.0f) + offset,
+                    Vec2F32(0.0f, 2.0f) + offset,
                     labelEntityTransform,
                     _scene);
                 systemText->setColor(ColorU32(38, 32, 27, 255));
@@ -141,7 +141,7 @@ namespace Maze
                 HorizontalAlignment2D::Center,
                 VerticalAlignment2D::Middle,
                 buttonSprite->getTransform()->getSize(),
-                Vec2DF(0.0f, 2.0f),
+                Vec2F32(0.0f, 2.0f),
                 labelEntityTransform,
                 _scene);
             systemText->setColor(ColorU32(255, 160, 0, 255));
@@ -155,8 +155,8 @@ namespace Maze
         ToggleButton2DPtr CreateDefaultGameToggleButton(
             ECSRenderScene* _scene,
             Transform2DPtr const& _parent,
-            Vec2DF _position,
-            Vec2DF _size,
+            Vec2F32 _position,
+            Vec2F32 _size,
             String const& _label,
             Delegate<void, Button2D*, CursorInputEvent const&> _onClickDelegate)
         {
@@ -176,22 +176,22 @@ namespace Maze
             SpriteRenderer2DPtr buttonSprite = SpriteHelper::CreateSprite(
                 "Button00.mztexture",
                 buttonEntityTransform->getSize(),
-                Vec2DF::c_zero,
+                Vec2F32::c_zero,
                 spriteManager->getDefaultSpriteMaterial(),
                 buttonEntityTransform,
                 _scene);
             buttonSprite->getEntityRaw()->ensureComponent<Name>("ButtonSpriteDefault");
             UITweenTransitionScalePtr pressedTransition = buttonSprite->getEntityRaw()->ensureComponent<UITweenTransitionScale>();
             UITweenTransitionScale* pressedTransitionRaw = pressedTransition.get();
-            pressedTransition->setHiddenScale(Vec2DF(1.0f, 1.0f));
-            pressedTransition->setShownScale(Vec2DF(0.95f, 0.9f));
+            pressedTransition->setHiddenScale(Vec2F32(1.0f, 1.0f));
+            pressedTransition->setShownScale(Vec2F32(0.95f, 0.9f));
             pressedTransition->setShowTime(0.2f);
             pressedTransition->hideInstantly();
 
             SpriteRenderer2DPtr buttonFocusedSprite = SpriteHelper::CreateSprite(
                 "Button00Focused.mztexture",
                 buttonEntityTransform->getSize(),
-                Vec2DF::c_zero,
+                Vec2F32::c_zero,
                 spriteManager->getDefaultSpriteMaterial(),
                 buttonSprite->getTransform(),
                 _scene);
@@ -237,23 +237,23 @@ namespace Maze
             Transform2DPtr labelEntityTransform = labelEntity->ensureComponent<Transform2D>();
             labelEntityTransform->setSize(buttonSprite->getTransform()->getSize());
             labelEntityTransform->setParent(buttonSprite->getTransform());
-            labelEntityTransform->setLocalScale(Vec2DF(0.85f, 1.0f) * 0.75f);
+            labelEntityTransform->setLocalScale(Vec2F32(0.85f, 1.0f) * 0.75f);
             labelEntity->ensureComponent<Name>("LabelEntity");
 
             for (S32 i = 0; i < 8; ++i)
             {
                 F32 outlineOffset = 1.75f;
-                Vec2DF offset;
+                Vec2F32 offset;
                 switch (i)
                 {
-                    case 0: offset = Vec2DF(-outlineOffset, 0.0f); break;
-                    case 1: offset = Vec2DF(+outlineOffset, 0.0f); break;
-                    case 2: offset = Vec2DF(0.0f, -outlineOffset); break;
-                    case 3: offset = Vec2DF(0.0f, +outlineOffset); break;
-                    case 4: offset = Vec2DF(-outlineOffset, +outlineOffset); break;
-                    case 5: offset = Vec2DF(+outlineOffset, +outlineOffset); break;
-                    case 6: offset = Vec2DF(-outlineOffset, -outlineOffset); break;
-                    case 7: offset = Vec2DF(+outlineOffset, -outlineOffset); break;
+                    case 0: offset = Vec2F32(-outlineOffset, 0.0f); break;
+                    case 1: offset = Vec2F32(+outlineOffset, 0.0f); break;
+                    case 2: offset = Vec2F32(0.0f, -outlineOffset); break;
+                    case 3: offset = Vec2F32(0.0f, +outlineOffset); break;
+                    case 4: offset = Vec2F32(-outlineOffset, +outlineOffset); break;
+                    case 5: offset = Vec2F32(+outlineOffset, +outlineOffset); break;
+                    case 6: offset = Vec2F32(-outlineOffset, -outlineOffset); break;
+                    case 7: offset = Vec2F32(+outlineOffset, -outlineOffset); break;
                 }
 
                 SystemTextRenderer2DPtr systemText = SystemUIHelper::CreateSystemText(
@@ -262,7 +262,7 @@ namespace Maze
                     HorizontalAlignment2D::Center,
                     VerticalAlignment2D::Middle,
                     buttonSprite->getTransform()->getSize(),
-                    Vec2DF(0.0f, 2.0f) + offset,
+                    Vec2F32(0.0f, 2.0f) + offset,
                     labelEntityTransform,
                     _scene);
                 systemText->setColor(ColorU32(38, 32, 27, 255));
@@ -275,7 +275,7 @@ namespace Maze
                 HorizontalAlignment2D::Center,
                 VerticalAlignment2D::Middle,
                 buttonSprite->getTransform()->getSize(),
-                Vec2DF(0.0f, 2.0f),
+                Vec2F32(0.0f, 2.0f),
                 labelEntityTransform,
                 _scene);
             systemText->setColor(ColorU32(255, 160, 0, 255));

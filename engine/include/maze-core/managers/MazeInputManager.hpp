@@ -129,10 +129,10 @@ namespace Maze
         inline bool getCursorButtonState(S32 _cursorId, S32 _buttonIndex) { return m_cursorStates[_cursorId][_buttonIndex]; }
 
         //////////////////////////////////////////
-        inline void setCursorPosition(S32 _cursorId, Vec2DF const& _value) { m_cursorPositions[_cursorId] = _value; }
+        inline void setCursorPosition(S32 _cursorId, Vec2F const& _value) { m_cursorPositions[_cursorId] = _value; }
 
         //////////////////////////////////////////
-        inline Vec2DF const& getCursorPosition(S32 _cursorId) const { return m_cursorPositions[_cursorId]; }
+        inline Vec2F const& getCursorPosition(S32 _cursorId) const { return m_cursorPositions[_cursorId]; }
 
         //////////////////////////////////////////
         static inline InputManager* GetInstancePtr() { return s_instance; }
@@ -171,7 +171,7 @@ namespace Maze
 
         bool m_cachedKeyStates[(Size)KeyCode::MAX];
         bool m_cursorStates[c_cursorsCountMax][c_cursorButtonsCountMax];
-        Vec2DF m_cursorPositions[c_cursorsCountMax];
+        Vec2F m_cursorPositions[c_cursorsCountMax];
     };
 
 

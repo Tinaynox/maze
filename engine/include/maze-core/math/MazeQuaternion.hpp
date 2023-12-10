@@ -33,10 +33,10 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/math/MazeMath.hpp"
-#include "maze-core/math/MazeVec3D.hpp"
-#include "maze-core/math/MazeVec4D.hpp"
-#include "maze-core/math/MazeMat3D.hpp"
-#include "maze-core/math/MazeMat4D.hpp"
+#include "maze-core/math/MazeVec3.hpp"
+#include "maze-core/math/MazeVec4.hpp"
+#include "maze-core/math/MazeMat3.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/math/MazeRotation2D.hpp"
 #include <ostream>
 
@@ -71,22 +71,22 @@ namespace Maze
         inline Quaternion(F32 _w, F32 _x, F32 _y, F32 _z);
         
         //////////////////////////////////////////
-        inline Quaternion(Mat3DF const& _rotationMatrix);
+        inline Quaternion(Mat3F const& _rotationMatrix);
 
         //////////////////////////////////////////
-        inline Quaternion(Mat4DF const& _rotationMatrix);
+        inline Quaternion(Mat4F const& _rotationMatrix);
 
         //////////////////////////////////////////
-        inline Quaternion(F32 const& _angle, Vec3DF const& _axis);
+        inline Quaternion(F32 const& _angle, Vec3F const& _axis);
 
         //////////////////////////////////////////
         inline Quaternion(
-            Vec3DF const& _xAxis,
-            Vec3DF const& _yAxis,
-            Vec3DF const& _zAxis);
+            Vec3F const& _xAxis,
+            Vec3F const& _yAxis,
+            Vec3F const& _zAxis);
 
         //////////////////////////////////////////
-        inline Quaternion(Vec3DF const* _axes);
+        inline Quaternion(Vec3F const* _axes);
 
         //////////////////////////////////////////
         inline Quaternion(F32* _value);
@@ -95,17 +95,17 @@ namespace Maze
         inline Quaternion(F32 _xAngle, F32 _yAngle, F32 _zAngle);
 
         //////////////////////////////////////////
-        inline Quaternion(Vec3DF const& _eulerAngles);
+        inline Quaternion(Vec3F const& _eulerAngles);
 
         //////////////////////////////////////////
-        inline Quaternion(Vec3DF const& _fromVector, Vec3DF const& _toVector);
+        inline Quaternion(Vec3F const& _fromVector, Vec3F const& _toVector);
 
 
         //////////////////////////////////////////
-        static inline Vec3DF GetEuler(Mat3DF const& _rotationMatrix) { return Quaternion(_rotationMatrix).getEuler(); }
+        static inline Vec3F GetEuler(Mat3F const& _rotationMatrix) { return Quaternion(_rotationMatrix).getEuler(); }
 
         //////////////////////////////////////////
-        static inline Vec3DF GetEuler(Mat4DF const& _rotationMatrix) { return Quaternion(_rotationMatrix).getEuler(); }
+        static inline Vec3F GetEuler(Mat4F const& _rotationMatrix) { return Quaternion(_rotationMatrix).getEuler(); }
 
 
         //////////////////////////////////////////
@@ -126,47 +126,47 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setRotationMatrix(Mat3DF const& _rotationMatrix);
+        void setRotationMatrix(Mat3F const& _rotationMatrix);
 
         //////////////////////////////////////////
-        void setRotationMatrix(Mat3DF const& _rotationMatrix, bool _multInvScale);
+        void setRotationMatrix(Mat3F const& _rotationMatrix, bool _multInvScale);
 
         //////////////////////////////////////////
-        inline void setRotationMatrix(Mat4DF const& _rotationMatrix, bool _multInvScale = true)
+        inline void setRotationMatrix(Mat4F const& _rotationMatrix, bool _multInvScale = true)
         {
-            Mat3DF mat;
-            _rotationMatrix.getMat3D(mat);
+            Mat3F mat;
+            _rotationMatrix.getMat3(mat);
             setRotationMatrix(mat, _multInvScale);
         }
 
         //////////////////////////////////////////
-        void toRotationMatrix(Mat3DF& _rotationMatrix) const;
+        void toRotationMatrix(Mat3F& _rotationMatrix) const;
 
         //////////////////////////////////////////
-        void toRotationMatrix(Mat4DF& _rotationMatrix) const;
+        void toRotationMatrix(Mat4F& _rotationMatrix) const;
 
         //////////////////////////////////////////
-        inline Mat4DF toRotationMatrix() const
+        inline Mat4F toRotationMatrix() const
         {
-            Mat4DF result;
+            Mat4F result;
             toRotationMatrix(result);
             return result;
         }
 
         //////////////////////////////////////////
-        void setAngleAxis(F32 const& _angle, Vec3DF const& _axis);
+        void setAngleAxis(F32 const& _angle, Vec3F const& _axis);
 
         //////////////////////////////////////////
-        void toAngleAxis(F32& _angle, Vec3DF& _axis) const;
+        void toAngleAxis(F32& _angle, Vec3F& _axis) const;
 
         //////////////////////////////////////////
-        void setAxes(Vec3DF const* _axis);
+        void setAxes(Vec3F const* _axis);
 
         //////////////////////////////////////////
         void setAxes(
-            Vec3DF const& _xAxis,
-            Vec3DF const& _yAxis,
-            Vec3DF const& _zAxis);
+            Vec3F const& _xAxis,
+            Vec3F const& _yAxis,
+            Vec3F const& _zAxis);
 
         //////////////////////////////////////////
         void setEulerAngles(
@@ -176,7 +176,7 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void setEulerAngles(
-            Vec3DF const& _eulerAngles)
+            Vec3F const& _eulerAngles)
         {
             setEulerAngles(
                 _eulerAngles.x,
@@ -185,22 +185,22 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        void toAxes(Vec3DF* _axes) const;
+        void toAxes(Vec3F* _axes) const;
 
         //////////////////////////////////////////
-        Vec3DF getXAxis() const;
+        Vec3F getXAxis() const;
 
         //////////////////////////////////////////
-        Vec3DF getYAxis() const;
+        Vec3F getYAxis() const;
 
         //////////////////////////////////////////
-        Vec3DF getZAxis() const;
+        Vec3F getZAxis() const;
 
         //////////////////////////////////////////
         void toAxes(
-            Vec3DF& _xAxis,
-            Vec3DF& _yAxis,
-            Vec3DF& _zAxis) const;
+            Vec3F& _xAxis,
+            Vec3F& _yAxis,
+            Vec3F& _zAxis) const;
 
         //////////////////////////////////////////
         inline Quaternion& operator=(Quaternion const& _q);
@@ -227,7 +227,7 @@ namespace Maze
         Quaternion log() const;
 
         //////////////////////////////////////////
-        Vec3DF operator*(Vec3DF const& _v) const;
+        Vec3F operator*(Vec3F const& _v) const;
 
         //////////////////////////////////////////
         inline Quaternion operator*(F32 _s) const;
@@ -302,13 +302,13 @@ namespace Maze
             bool _shortestPath = true);
 
         //////////////////////////////////////////
-        static Quaternion LookRotation(Vec3DF const& _forward, Vec3DF const& _up);
+        static Quaternion LookRotation(Vec3F const& _forward, Vec3F const& _up);
 
         //////////////////////////////////////////
         static inline Quaternion FromEuler(F32 _x, F32 _y, F32 _z);
 
         //////////////////////////////////////////
-        static inline Quaternion FromEuler(Vec3DF const& _value)
+        static inline Quaternion FromEuler(Vec3F const& _value)
         {
             return Quaternion::FromEuler(_value.x, _value.y, _value.z);
         }
@@ -323,7 +323,7 @@ namespace Maze
         inline F32 getYaw() const { return getEuler().y; }
 
         //////////////////////////////////////////
-        Vec3DF getEuler() const;
+        Vec3F getEuler() const;
 
         //////////////////////////////////////////
         inline bool isNaN() const
@@ -339,6 +339,10 @@ namespace Maze
         {
             CString end = _string + _size;
 
+            _string = StringHelper::ParseF32(_string, end, _result.w);
+            _string = StringHelper::SkipChar(_string, end, ' ');
+            _string = StringHelper::ExpectSkipChar(_string, end, _separator);
+            _string = StringHelper::SkipChar(_string, end, ' ');
             _string = StringHelper::ParseF32(_string, end, _result.x);
             _string = StringHelper::SkipChar(_string, end, ' ');
             _string = StringHelper::ExpectSkipChar(_string, end, _separator);
@@ -348,10 +352,6 @@ namespace Maze
             _string = StringHelper::ExpectSkipChar(_string, end, _separator);
             _string = StringHelper::SkipChar(_string, end, ' ');
             _string = StringHelper::ParseF32(_string, end, _result.z);
-            _string = StringHelper::SkipChar(_string, end, ' ');
-            _string = StringHelper::ExpectSkipChar(_string, end, _separator);
-            _string = StringHelper::SkipChar(_string, end, ' ');
-            _string = StringHelper::ParseF32(_string, end, _result.w);
             return _string;
         }
 

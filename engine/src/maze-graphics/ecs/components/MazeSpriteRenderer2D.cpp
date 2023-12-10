@@ -222,7 +222,7 @@ namespace Maze
 
         if (m_material)
         {
-            m_material->setUniform("u_color", m_color.toVec4DF());
+            m_material->setUniform("u_color", m_color.toVec4F32());
 
             Texture2DPtr texture;
 
@@ -241,7 +241,7 @@ namespace Maze
             if (texture)
             {
                 m_material->setUniform("u_baseMap", texture);
-                m_material->setUniform("u_baseMapTexelSize", 1.0f / (Vec2DF)texture->getSize());
+                m_material->setUniform("u_baseMapTexelSize", 1.0f / (Vec2F)texture->getSize());
             }
         }
     }
@@ -255,19 +255,19 @@ namespace Maze
         if (!getEntityRaw() || !getEntityRaw()->getECSScene())
             return;
 
-        Vec2DF const& size = m_transform->getSize();
+        Vec2F const& size = m_transform->getSize();
 
-        Vec4DF uv;
+        Vec4F uv;
 
         if (m_sprite)
         {
-            uv = Vec4DF(
+            uv = Vec4F(
                 m_sprite->getTextureCoordLB(),
                 m_sprite->getTextureCoordRT());
         }
         else
         {
-            uv = Vec4DF(0.0f, 0.0f, 1.0f, 1.0f);
+            uv = Vec4F(0.0f, 0.0f, 1.0f, 1.0f);
         }
 
         MeshPtr mesh;
@@ -281,7 +281,7 @@ namespace Maze
                     size * 0.5f,
                     false,
                     uv,
-                    Vec4DF(1.0f, 1.0f, 1.0f, m_canvasRenderer->getAlpha()));
+                    Vec4F(1.0f, 1.0f, 1.0f, m_canvasRenderer->getAlpha()));
 
                 break;
             }
@@ -295,7 +295,7 @@ namespace Maze
                         m_sprite->getSliceBorder(),
                         m_sprite->getNativeSize(),
                         uv,
-                        Vec4DF(1.0f, 1.0f, 1.0f, m_canvasRenderer->getAlpha()));
+                        Vec4F(1.0f, 1.0f, 1.0f, m_canvasRenderer->getAlpha()));
                 }
                 else
                 {
@@ -304,7 +304,7 @@ namespace Maze
                         size * 0.5f,
                         false,
                         uv,
-                        Vec4DF(1.0f, 1.0f, 1.0f, m_canvasRenderer->getAlpha()));
+                        Vec4F(1.0f, 1.0f, 1.0f, m_canvasRenderer->getAlpha()));
                 }
                 break;
             }

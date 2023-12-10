@@ -141,10 +141,10 @@ namespace Maze
         void notifyRenderTargetResized(RenderTarget* _renderTarget);
 
         //////////////////////////////////////////
-        void processCursorPress(Vec2DF const& _positionOS, CursorInputEvent const& _event);
+        void processCursorPress(Vec2F32 const& _positionOS, CursorInputEvent const& _event);
 
         //////////////////////////////////////////
-        void processCursorDrag(Vec2DF const& _positionOS, CursorInputEvent const& _event);
+        void processCursorDrag(Vec2F32 const& _positionOS, CursorInputEvent const& _event);
 
 
         //////////////////////////////////////////
@@ -199,7 +199,7 @@ namespace Maze
         
         ExampleFPSCameraControllerPtr m_fpsController;
 
-        Vec2DF m_cursorPositionLastFrame = Vec2DF::c_zero;
+        Vec2F32 m_cursorPositionLastFrame = Vec2F32::c_zero;
 
         bool m_textureMipmapsEnabled = false;
         Vector<ExampleTextureData> m_textureData;
