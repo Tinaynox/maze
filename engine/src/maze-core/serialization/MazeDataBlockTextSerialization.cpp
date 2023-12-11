@@ -241,7 +241,7 @@ _stream.write((U8 const*)(quote + quoteLen - 1), quoteLen);
                 
                 _stream << ":";
                 _stream << c_dataBlockParamTypeInfo[param.type].name.str;
-                _stream << "=";
+                _stream << (_compact ? "=" : " = ");
                 if (param.type == U32(DataBlockParamType::ParamString))
                 {
                     WriteComplexString(_stream, _dataBlock.getCString(i));

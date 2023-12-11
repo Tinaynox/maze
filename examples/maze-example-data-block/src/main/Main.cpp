@@ -28,8 +28,8 @@
 #include "maze-core/math/MazeVec2.hpp"
 #include "maze-core/math/MazeVec3.hpp"
 #include "maze-core/math/MazeMath.hpp"
-#include "maze-core/math/MazeMat3F32.hpp"
-#include "maze-core/math/MazeMat4F32.hpp"
+#include "maze-core/math/MazeMat3.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
 #include "maze-core/system/MazeThread.hpp"
@@ -62,8 +62,8 @@ S32 main(S32 _argc, S8 const* _argv[])
     F32 const f32Value = F32_VERY_BIG_NUMBER;
     F64 const f64Value = F64_VERY_BIG_NUMBER;
     Vec2B const vec2dbValue = { boolValue, boolValue };
-    Ve32B const vec3dbValue = { boolValue, boolValue, boolValue };
-    Ve42B const vec4dbValue = { boolValue, boolValue, boolValue, boolValue };
+    Vec3B const vec3dbValue = { boolValue, boolValue, boolValue };
+    Vec4B const vec4dbValue = { boolValue, boolValue, boolValue, boolValue };
     Vec2S32 const vec2dsValue = { s32Value, s32Value };
     Vec3S32 const vec3dsValue = { s32Value, s32Value, s32Value };
     Vec4S32 const vec4dsValue = { s32Value, s32Value, s32Value, s32Value };
@@ -90,18 +90,18 @@ S32 main(S32 _argc, S8 const* _argv[])
 
     DataBlock* vectorsBlock = subBlock->addNewDataBlock(MAZE_HASHED_CSTRING("vectors"));
     vectorsBlock->addCString(MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_C), " Vectors ");
-    vectorsBlock->addVec2B(MAZE_HASHED_CSTRING("vec2dbValue"), vec2dbValue);
-    vectorsBlock->addVe32B(MAZE_HASHED_CSTRING("vec3dbValue"), vec3dbValue);
-    vectorsBlock->addVe42B(MAZE_HASHED_CSTRING("vec4dbValue"), vec4dbValue);
-    vectorsBlock->addVec2S32(MAZE_HASHED_CSTRING("vec2dsValue"), vec2dsValue);
-    vectorsBlock->addVec3S32(MAZE_HASHED_CSTRING("vec3dsValue"), vec3dsValue);
-    vectorsBlock->addVec4S32(MAZE_HASHED_CSTRING("vec4dsValue"), vec4dsValue);
-    vectorsBlock->addVec2U32(MAZE_HASHED_CSTRING("vec2duValue"), vec2duValue);
-    vectorsBlock->addVec3U32(MAZE_HASHED_CSTRING("vec3duValue"), vec3duValue);
-    vectorsBlock->addVec4U32(MAZE_HASHED_CSTRING("vec4duValue"), vec4duValue);
-    vectorsBlock->addVec2F32(MAZE_HASHED_CSTRING("vec2dfValue"), vec2dfValue);
-    vectorsBlock->addVec3F32(MAZE_HASHED_CSTRING("vec3dfValue"), vec3dfValue);
-    vectorsBlock->addVec4F32(MAZE_HASHED_CSTRING("vec4dfValue"), vec4dfValue);
+    vectorsBlock->addVec2B(MAZE_HASHED_CSTRING("vec2bValue"), vec2dbValue);
+    vectorsBlock->addVec3B(MAZE_HASHED_CSTRING("vec3bValue"), vec3dbValue);
+    vectorsBlock->addVec4B(MAZE_HASHED_CSTRING("vec4bValue"), vec4dbValue);
+    vectorsBlock->addVec2S32(MAZE_HASHED_CSTRING("vec2sValue"), vec2dsValue);
+    vectorsBlock->addVec3S32(MAZE_HASHED_CSTRING("vec3sValue"), vec3dsValue);
+    vectorsBlock->addVec4S32(MAZE_HASHED_CSTRING("vec4sValue"), vec4dsValue);
+    vectorsBlock->addVec2U32(MAZE_HASHED_CSTRING("vec2uValue"), vec2duValue);
+    vectorsBlock->addVec3U32(MAZE_HASHED_CSTRING("vec3uValue"), vec3duValue);
+    vectorsBlock->addVec4U32(MAZE_HASHED_CSTRING("vec4uValue"), vec4duValue);
+    vectorsBlock->addVec2F32(MAZE_HASHED_CSTRING("vec2fValue"), vec2dfValue);
+    vectorsBlock->addVec3F32(MAZE_HASHED_CSTRING("vec3fValue"), vec3dfValue);
+    vectorsBlock->addVec4F32(MAZE_HASHED_CSTRING("vec4fValue"), vec4dfValue);
 
     DataBlock* stringsBlock = subBlock->addNewDataBlock(MAZE_HASHED_CSTRING("strings"));
     stringsBlock->addCString(MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_C), " Strings ");
@@ -129,18 +129,18 @@ S32 main(S32 _argc, S8 const* _argv[])
             auto v05 = _dataBlock.getF32("f32Value"); MAZE_ASSERT(Math::IsNear(v05, f32Value, FLT_EPSILON));
             auto v06 = _dataBlock.getF64("f64Value"); MAZE_ASSERT(Math::IsNear(v06, f64Value, DBL_EPSILON));
 
-            auto v07 = _dataBlock["subBlock"]["vectors"].getVec2B("vec2dbValue"); MAZE_ASSERT(v07 == vec2dbValue);
-            auto v08 = _dataBlock["subBlock"]["vectors"].getVe32B("vec3dbValue"); MAZE_ASSERT(v08 == vec3dbValue);
-            auto v09 = _dataBlock["subBlock"]["vectors"].getVe42B("vec4dbValue"); MAZE_ASSERT(v09 == vec4dbValue);
-            auto v10 = _dataBlock["subBlock"]["vectors"].getVec2S32("vec2dsValue"); MAZE_ASSERT(v10 == vec2dsValue);
-            auto v11 = _dataBlock["subBlock"]["vectors"].getVec3S32("vec3dsValue"); MAZE_ASSERT(v11 == vec3dsValue);
-            auto v12 = _dataBlock["subBlock"]["vectors"].getVec4S32("vec4dsValue"); MAZE_ASSERT(v12 == vec4dsValue);
-            auto v13 = _dataBlock["subBlock"]["vectors"].getVec2U32("vec2duValue"); MAZE_ASSERT(v13 == vec2duValue);
-            auto v14 = _dataBlock["subBlock"]["vectors"].getVec3U32("vec3duValue"); MAZE_ASSERT(v14 == vec3duValue);
-            auto v15 = _dataBlock["subBlock"]["vectors"].getVec4U32("vec4duValue"); MAZE_ASSERT(v15 == vec4duValue);
-            auto v16 = _dataBlock["subBlock"]["vectors"].getVec2F32("vec2dfValue"); MAZE_ASSERT(v16 == vec2dfValue);
-            auto v17 = _dataBlock["subBlock"]["vectors"].getVec3F32("vec3dfValue"); MAZE_ASSERT(v17 == vec3dfValue);
-            auto v18 = _dataBlock["subBlock"]["vectors"].getVec4F32("vec4dfValue"); MAZE_ASSERT(v18 == vec4dfValue);
+            auto v07 = _dataBlock["subBlock"]["vectors"].getVec2B("vec2bValue"); MAZE_ASSERT(v07 == vec2dbValue);
+            auto v08 = _dataBlock["subBlock"]["vectors"].getVec3B("vec3bValue"); MAZE_ASSERT(v08 == vec3dbValue);
+            auto v09 = _dataBlock["subBlock"]["vectors"].getVec4B("vec4bValue"); MAZE_ASSERT(v09 == vec4dbValue);
+            auto v10 = _dataBlock["subBlock"]["vectors"].getVec2S32("vec2sValue"); MAZE_ASSERT(v10 == vec2dsValue);
+            auto v11 = _dataBlock["subBlock"]["vectors"].getVec3S32("vec3sValue"); MAZE_ASSERT(v11 == vec3dsValue);
+            auto v12 = _dataBlock["subBlock"]["vectors"].getVec4S32("vec4sValue"); MAZE_ASSERT(v12 == vec4dsValue);
+            auto v13 = _dataBlock["subBlock"]["vectors"].getVec2U32("vec2uValue"); MAZE_ASSERT(v13 == vec2duValue);
+            auto v14 = _dataBlock["subBlock"]["vectors"].getVec3U32("vec3uValue"); MAZE_ASSERT(v14 == vec3duValue);
+            auto v15 = _dataBlock["subBlock"]["vectors"].getVec4U32("vec4uValue"); MAZE_ASSERT(v15 == vec4duValue);
+            auto v16 = _dataBlock["subBlock"]["vectors"].getVec2F32("vec2fValue"); MAZE_ASSERT(v16 == vec2dfValue);
+            auto v17 = _dataBlock["subBlock"]["vectors"].getVec3F32("vec3fValue"); MAZE_ASSERT(v17 == vec3dfValue);
+            auto v18 = _dataBlock["subBlock"]["vectors"].getVec4F32("vec4fValue"); MAZE_ASSERT(v18 == vec4dfValue);
 
             auto v19 = _dataBlock["subBlock"]["strings"].getString("stringValue"); MAZE_ASSERT(v19 == stringValue);
             auto v20 = _dataBlock["subBlock"]["strings"].getString("stringValue2"); MAZE_ASSERT(v20 == stringValue2);
