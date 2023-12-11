@@ -249,7 +249,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void DataBlock::clear()
+    void DataBlock::clearData()
     {
         for (DataBlockIndex i = 0, e = (DataBlockIndex)getDataBlocksCount(); i < e; ++i)
         {
@@ -258,13 +258,21 @@ namespace Maze
             m_shared->freeDataBlock(dataBlock);
         }
 
-        m_shared->clear();
 
         if (m_dataBuffer)
             m_dataBuffer->clear();
 
         m_paramsCount = 0;
         m_dataBlocksCount = 0;
+    }
+
+    //////////////////////////////////////////
+    void DataBlock::clear()
+    {
+        MAZE_ERROR_RETURN_IF(!isTopmost(), "Clear is cannot be called for the not topmost block");
+
+        clearData();
+        m_shared->clear();
     }
 
     //////////////////////////////////////////

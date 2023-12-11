@@ -35,6 +35,7 @@
 #include "maze-core/system/MazeWindowVideoMode.hpp"
 #include "maze-core/system/MazeDisplay.hpp"
 #include "maze-core/serialization/MazeXMLSerializable.hpp"
+#include "maze-core/data/MazeDataBlock.hpp"
 #include <tinyxml2.h>
 
 
@@ -46,18 +47,22 @@ namespace Maze
     namespace XMLHelper
     {
         //////////////////////////////////////////
-        MAZE_CORE_API extern bool SaveXMLFile(Path const& _fileFullPath, tinyxml2::XMLNode* _rootNode);
+        MAZE_CORE_API bool SaveXMLFile(Path const& _fileFullPath, tinyxml2::XMLNode* _rootNode);
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern bool SaveXMLFile(Path const& _fileFullPath, IXMLElementSerializable* _serializable);
+        MAZE_CORE_API bool SaveXMLFile(Path const& _fileFullPath, IXMLElementSerializable* _serializable);
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern tinyxml2::XMLError LoadXMLFile(Path const& _fileFullPath, tinyxml2::XMLDocument& _doc);
+        MAZE_CORE_API tinyxml2::XMLError LoadXMLFile(Path const& _fileFullPath, tinyxml2::XMLDocument& _doc);
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern tinyxml2::XMLError SaveXMLFile(Path const& _fileFullPath, tinyxml2::XMLDocument& _doc);
+        MAZE_CORE_API tinyxml2::XMLError SaveXMLFile(Path const& _fileFullPath, tinyxml2::XMLDocument& _doc);
 
+        //////////////////////////////////////////
+        MAZE_CORE_API bool ConvertXMLDocumentToDataBlock(tinyxml2::XMLDocument const* _doc, DataBlock& _dataBlock);
 
+        //////////////////////////////////////////
+        MAZE_CORE_API bool ConvertXMLElementToDataBlock(tinyxml2::XMLElement const* _element, DataBlock& _dataBlock);
 
     } // namespace XMLHelper
     //////////////////////////////////////////

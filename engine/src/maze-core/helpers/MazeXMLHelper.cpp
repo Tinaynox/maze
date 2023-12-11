@@ -27,6 +27,7 @@
 #include "MazeCoreHeader.hpp"
 #include "maze-core/helpers/MazeXMLHelper.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
+#include "maze-core/serialization/MazeDataBlockSerializationUtils.hpp"
 
 
 //////////////////////////////////////////
@@ -36,7 +37,7 @@ namespace Maze
     namespace XMLHelper
     {
         //////////////////////////////////////////
-        MAZE_CORE_API extern bool SaveXMLFile(Path const& _fileFullPath, tinyxml2::XMLNode* _rootNode)
+        MAZE_CORE_API bool SaveXMLFile(Path const& _fileFullPath, tinyxml2::XMLNode* _rootNode)
         {
             if (!_rootNode)
                 return false;
@@ -66,7 +67,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern bool SaveXMLFile(Path const& _fileFullPath, IXMLElementSerializable* _serializable)
+        MAZE_CORE_API bool SaveXMLFile(Path const& _fileFullPath, IXMLElementSerializable* _serializable)
         {
             if (!_serializable)
                 return false;
@@ -97,7 +98,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern tinyxml2::XMLError LoadXMLFile(Path const& _fileFullPath, tinyxml2::XMLDocument& _doc)
+        MAZE_CORE_API tinyxml2::XMLError LoadXMLFile(Path const& _fileFullPath, tinyxml2::XMLDocument& _doc)
         {
             FILE* file = StdHelper::OpenFile(_fileFullPath, "rb");
             if (!file)
@@ -108,7 +109,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API extern tinyxml2::XMLError SaveXMLFile(Path const& _fileFullPath, tinyxml2::XMLDocument& _doc)
+        MAZE_CORE_API tinyxml2::XMLError SaveXMLFile(Path const& _fileFullPath, tinyxml2::XMLDocument& _doc)
         {
             FILE* file = StdHelper::OpenFile(_fileFullPath, "wb");
             if (!file)
@@ -116,6 +117,69 @@ namespace Maze
             tinyxml2::XMLError saveError = _doc.SaveFile(file);
             fclose(file);
             return saveError;
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API bool ConvertXMLDocumentToDataBlock(tinyxml2::XMLDocument const* _doc, DataBlock& _dataBlock)
+        {
+            _dataBlock.clear();
+
+            tinyxml2::XMLNode const* subNode = _doc->FirstChild();
+            while (subNode)
+            {
+                tinyxml2::XMLElement const* subElement = subNode->ToElement();
+                if (subElement)
+                {
+                    ConvertXMLElementToDataBlock(subElement, *_dataBlock.addNewDataBlock(subElement->Name()));
+                    break;
+                }
+
+                subNode = subNode->NextSibling();
+            }
+
+            return true;
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API bool ConvertXMLElementToDataBlock(tinyxml2::XMLElement const* _element, DataBlock& _dataBlock)
+        {
+            _dataBlock.clearData();
+
+            if (_element)
+            {
+                tinyxml2::XMLAttribute const* attribute = _element->FirstAttribute();
+                while (attribute)
+                {
+                    _dataBlock.addCString(attribute->Name(), attribute->Value());
+                    attribute = attribute->Next();
+                }
+            }
+
+            tinyxml2::XMLNode const* subNode = _element->FirstChild();
+            while (subNode)
+            {
+                tinyxml2::XMLComment const* subComment = subNode->ToComment();
+                if (subComment)
+                {
+                    HashedCString const commentKey = MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_CPP);
+                    _dataBlock.addNewDataBlock(commentKey)->addCString(
+                        commentKey,
+                        subComment->Value());
+                    subNode = subNode->NextSibling();
+                    continue;
+                }
+
+                tinyxml2::XMLElement const* subElement = subNode->ToElement();
+                if (subElement)
+                {
+                    if (!ConvertXMLElementToDataBlock(subElement, *_dataBlock.addNewDataBlock(subElement->Name())))
+                        return false;
+                }
+
+                subNode = subNode->NextSibling();
+            }
+
+            return true;
         }
 
     } // namespace XMLHelper

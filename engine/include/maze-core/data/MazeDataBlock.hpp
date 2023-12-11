@@ -312,6 +312,9 @@ namespace Maze
         void clearParams();
 
         //////////////////////////////////////////
+        void clearData();
+
+        //////////////////////////////////////////
         void clear();
 
 
