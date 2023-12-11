@@ -188,11 +188,11 @@ namespace Maze
 
                 cameraRotation.x = -cameraRotation.x;
                                 
-                params.cameraTransform = Mat4F32F::CreateTranslationMatrix(cameraPosition);
+                params.cameraTransform = Mat4F32::CreateTranslationMatrix(cameraPosition);
                 params.cameraTransform = params.cameraTransform *
                     //Quaternion(cameraRotation).toRotationMatrix();
-                    Mat4F32F::CreateRotationMatrix(cameraRotation);
-                params.cameraTransform = params.cameraTransform * Mat4F32F::CreateScaleMatrix(cameraScale);
+                    Mat4F32::CreateRotationMatrix(cameraRotation);
+                params.cameraTransform = params.cameraTransform * Mat4F32::CreateScaleMatrix(cameraScale);
                 
                 // Reflection buffer (Above the water level)
                 m_renderControlSystem->getModule3D()->drawDefaultPass(

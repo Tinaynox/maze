@@ -56,7 +56,7 @@ namespace Maze
         for (DataBlock::Param const* __restrict it = _start; it != _end; ++it)
         {
             if (it->nameId == _nameId)
-                return it - _start;
+                return (DataBlock::ParamIndex)(it - _start);
         }
 
         return -1;
@@ -231,7 +231,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Size DataBlock::getComplexParamsUsedSize() const
+    U32 DataBlock::getComplexParamsUsedSize() const
     {
         if (!m_dataBuffer)
             return 0;
@@ -468,7 +468,7 @@ namespace Maze
 
         for (; it != end; --it)
             if (it->nameId == _nameId)
-                return it - ptr;
+                return (DataBlock::ParamIndex)(it - ptr);
         return -1;
     }
 
@@ -845,7 +845,7 @@ namespace Maze
 
         for (; it != end; --it)
             if ((*it)->getNameId() == _nameId)
-                return it - getDataBlocksPtr();
+                return (DataBlock::DataBlockIndex)(it - getDataBlocksPtr());
 
         return -1;
     }

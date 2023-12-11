@@ -96,7 +96,7 @@ namespace Maze
         if (m_byteBuffer->getSize() < requiredSize)
         {
             if (requiredSize > m_byteBuffer->getCapacity())
-                reserve(Math::Max(requiredSize, m_byteBuffer->getCapacity() + (m_byteBuffer->getCapacity() >> 1) + 1));
+                reserve(Math::Max((U32)requiredSize, m_byteBuffer->getCapacity() + (m_byteBuffer->getCapacity() >> 1) + 1));
 
             m_byteBuffer->resize(requiredSize);
         }

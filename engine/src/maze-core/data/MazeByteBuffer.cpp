@@ -186,7 +186,7 @@ namespace Maze
         if (_size > m_capacity)
             reserve(_size);
 
-        m_size = _size;
+        m_size = (U32)_size;
     }
 
     //////////////////////////////////////////
@@ -194,7 +194,7 @@ namespace Maze
     {
         MAZE_ASSERT(_at <= m_size);
 
-        U32 requiredSize = m_size + _size;
+        U32 requiredSize = m_size + (U32)_size;
 
         if (requiredSize <= m_capacity)
         {
@@ -216,7 +216,7 @@ namespace Maze
             }
         }
 
-        m_size += _size;
+        m_size += (U32)_size;
 
         return m_data + _at;
     }
@@ -230,19 +230,19 @@ namespace Maze
         MAZE_ASSERT(_at < m_size && _at + _size <= m_size);
 
         memmove(m_data + _at, m_data + _at + _size, m_size - (_at +_size));
-        m_size -= _size;
+        m_size -= (U32)_size;
     }
 
     //////////////////////////////////////////
     void ByteBuffer::append(U8 const* _data, Size _size)
     {
-        U32 requiredSize = m_size + _size;
+        U32 requiredSize = m_size + (U32)_size;
 
         if (requiredSize > m_capacity)
             reserve(Math::Max(requiredSize, m_capacity + (m_capacity >> 1) + 1));
 
         std::memcpy(m_data + m_size, _data, _size);
-        m_size += _size;
+        m_size += (U32)_size;
     }
 
     //////////////////////////////////////////

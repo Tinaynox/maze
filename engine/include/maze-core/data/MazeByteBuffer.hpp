@@ -104,10 +104,10 @@ namespace Maze
         void setData(U8 const* _data, Size _size);
 
         //////////////////////////////////////////
-        inline Size getSize() const { return m_size; }
+        inline U32 getSize() const { return m_size; }
 
         //////////////////////////////////////////
-        inline Size getCapacity() const { return m_capacity; }
+        inline U32 getCapacity() const { return m_capacity; }
 
         //////////////////////////////////////////
         void clear();

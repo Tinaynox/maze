@@ -504,7 +504,7 @@ namespace Maze
         //////////////////////////////////////////
         inline CString ParseS8(Char const* _str, Size _size, S8& _value)
         {
-            return ParseInteger<S8>(_str, std::min(_size, 4u), _value);
+            return ParseInteger<S8>(_str, std::min(_size, (Size)4u), _value);
         }
 
         //////////////////////////////////////////
@@ -532,7 +532,7 @@ namespace Maze
         //////////////////////////////////////////
         inline CString ParseU8(Char const* _str, Size _size, U8& _value)
         {
-            return ParseInteger<U8>(_str, std::min(_size, 3u), _value);
+            return ParseInteger<U8>(_str, std::min(_size, (Size)4u), _value);
         }
 
         //////////////////////////////////////////
@@ -560,7 +560,7 @@ namespace Maze
         //////////////////////////////////////////
         inline CString ParseS16(Char const* _str, Size _size, S16& _value)
         {
-            return ParseInteger<S16>(_str, std::min(_size, 6u), _value);
+            return ParseInteger<S16>(_str, std::min(_size, (Size)6u), _value);
         }
 
         //////////////////////////////////////////
@@ -588,7 +588,7 @@ namespace Maze
         //////////////////////////////////////////
         inline CString ParseU16(Char const* _str, Size _size, U16& _value)
         {
-            return ParseInteger<U16>(_str, std::min(_size, 5u), _value);
+            return ParseInteger<U16>(_str, std::min(_size, (Size)6u), _value);
         }
 
         //////////////////////////////////////////
@@ -616,7 +616,7 @@ namespace Maze
         //////////////////////////////////////////
         inline CString ParseS32(Char const* _str, Size _size, S32& _value)
         {
-            return ParseInteger<S32>(_str, std::min(_size, 11u), _value);
+            return ParseInteger<S32>(_str, std::min(_size, (Size)11u), _value);
         }
 
         //////////////////////////////////////////
@@ -644,7 +644,7 @@ namespace Maze
         //////////////////////////////////////////
         inline CString ParseU32(Char const* _str, Size _size, U32& _value)
         {
-            return ParseInteger<U32>(_str, std::min(_size, 10u), _value);
+            return ParseInteger<U32>(_str, std::min(_size, (Size)11u), _value);
         }
 
         //////////////////////////////////////////
@@ -672,7 +672,7 @@ namespace Maze
         //////////////////////////////////////////
         inline CString ParseS64(Char const* _str, Size _size, S64& _value)
         {
-            return ParseInteger<S64>(_str, std::min(_size, 20u), _value);
+            return ParseInteger<S64>(_str, std::min(_size, (Size)20u), _value);
         }
 
         //////////////////////////////////////////
@@ -688,7 +688,7 @@ namespace Maze
         //////////////////////////////////////////
         inline CString ParseU64(Char const* _str, Size _size, U64& _value)
         {
-            return ParseInteger<U64>(_str, std::min(_size, 19u), _value);
+            return ParseInteger<U64>(_str, std::min(_size, (Size)20u), _value);
         }
 
         //////////////////////////////////////////

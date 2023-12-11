@@ -187,7 +187,7 @@ namespace Maze
         ~DataBlockDataBuffer() = default;
 
         //////////////////////////////////////////
-        inline Size getDataSize() const { return m_buffer.getSize(); }
+        inline U32 getDataSize() const { return m_buffer.getSize(); }
 
         //////////////////////////////////////////
         inline U8* getDataUnsafe(Size _offs = 0u) { return m_buffer.getDataPointer() + _offs; }
@@ -300,13 +300,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Size getParamsUsedSize() const { return (Size)getParamsCount() * sizeof(Param); }
+        inline U32 getParamsUsedSize() const { return (U32)getParamsCount() * sizeof(Param); }
 
         //////////////////////////////////////////
-        inline Size getBlocksUsedSize() const { return (Size)getDataBlocksCount() * sizeof(DataBlock*); }
+        inline U32 getBlocksUsedSize() const { return (U32)getDataBlocksCount() * sizeof(DataBlock*); }
 
         //////////////////////////////////////////
-        Size getComplexParamsUsedSize() const;
+        U32 getComplexParamsUsedSize() const;
 
         //////////////////////////////////////////
         void clearParams();
