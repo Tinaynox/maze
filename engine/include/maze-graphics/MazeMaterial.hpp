@@ -45,6 +45,7 @@
 #include "maze-core/serialization/MazeXMLSerializable.hpp"
 #include "maze-core/utils/MazeSharedCopyable.hpp"
 #include "maze-core/MazeObject.hpp"
+#include "maze-core/data/MazeDataBlock.hpp"
 
 
 //////////////////////////////////////////
@@ -66,6 +67,7 @@ namespace Maze
     class MAZE_GRAPHICS_API Material
         : public SharedObject<Material>
         , public IXMLElementSerializable
+        , public IDataBlockSerializable
         , public MultiDelegateCallbackReceiver
         , public ISharedCopyable<Material>
         , public Object
@@ -235,6 +237,9 @@ namespace Maze
         //////////////////////////////////////////
         bool hasUniform(HashedCString _uniformName);
 
+        //////////////////////////////////////////
+        bool saveToFile(String const& _fullpath);
+
     public:
 
         //////////////////////////////////////////
@@ -243,8 +248,13 @@ namespace Maze
         //////////////////////////////////////////
         virtual tinyxml2::XMLElement* toXMLElement(tinyxml2::XMLDocument& _doc) const MAZE_OVERRIDE;
 
+    public:
+
         //////////////////////////////////////////
-        bool saveToFile(String const& _fullpath);
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
 
     public:
 

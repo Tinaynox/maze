@@ -1,19 +1,54 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Material>
-    <ShaderUniformVariant name="u_baseMap" type="UniformTexture2D" value="Terrain02.png" />
-    <ShaderUniformVariant name="u_baseMapST" type="UniformVec4F32" value="0.1;0.1;0.0;0.0" />
-    <ShaderUniformVariant name="u_color" type="UniformColorF128" value="0.76;0.717;0.717;1.0" />
-    <ShaderUniformVariant name="u_ambientLightColor" type="UniformColorF128" value="0.45;0.45;0.45;1.0" />
-    <ShaderUniformVariant name="u_shininess" type="UniformF32" value="0.1" />
-    <ShaderUniformVariant name="u_specularColor" type="UniformColorF128" value="0.05;0.05;0.05;1.0" />
-    <RenderPass 
-        passType="Default"
-        renderQueueIndex="2000"
-        shader="Default.mzshader"
-        blendOperation="Add"
-        blendSrcFactor="One"
-        blendDestFactor="Zero"
-        depthTestCompareFunction="LessEqual"
-        depthWriteEnabled="1"
-        cullMode="Off"/>
-</Material>
+shaderUniformVariant
+{
+  name:String = "u_baseMap"
+  type:String = "UniformTexture2D"
+  value:String = "Terrain02.png"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_baseMapST"
+  type:String = "UniformVec4F32"
+  value:String = "0.1;0.1;0.0;0.0"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_color"
+  type:String = "UniformColorF128"
+  value:String = "0.76;0.717;0.717;1.0"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_ambientLightColor"
+  type:String = "UniformColorF128"
+  value:String = "0.45;0.45;0.45;1.0"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_shininess"
+  type:String = "UniformF32"
+  value:String = "0.1"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_specularColor"
+  type:String = "UniformColorF128"
+  value:String = "0.05;0.05;0.05;1.0"
+}
+
+renderPass
+{
+  passType:String = "Default"
+  renderQueueIndex:String = "2000"
+  shader:String = "Default.mzshader"
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "One"
+  blendDestFactor:String = "Zero"
+  depthTestCompareFunction:String = "LessEqual"
+  depthWriteEnabled:String = "1"
+  cullMode:String = "Off"
+}

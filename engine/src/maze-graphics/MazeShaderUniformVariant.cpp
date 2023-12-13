@@ -956,6 +956,35 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool ShaderUniformVariant::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        // #TODO: Rework via different types
+        CString name = _dataBlock.getCString("name");
+        CString type = _dataBlock.getCString("type");
+        String const& value = _dataBlock.getString("value");
+
+        ShaderUniformType shaderUniformType = ShaderUniformType::FromString(type);
+
+        setString(shaderUniformType, value.c_str(), value.size());
+        setName(name ? name : "");
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void ShaderUniformVariant::toDataBlock(DataBlock& _dataBlock) const
+    {
+        CString className = ClassInfo<ShaderUniformVariant>::Name();
+
+        String value = toStringValue();
+
+        // #TODO: Rework via different types
+        _dataBlock.setCString("name", m_name.c_str());
+        _dataBlock.setCString("type", m_type.toCString());
+        _dataBlock.setString("value", value);
+    }
+
+    //////////////////////////////////////////
     std::ostream& operator<<(
         std::ostream& _o,
         ShaderUniformVariant const& _variant)

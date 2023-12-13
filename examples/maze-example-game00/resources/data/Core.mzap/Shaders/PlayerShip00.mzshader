@@ -1,31 +1,134 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Shader>
-    <Uniform name="u_mainLightColor" type="UniformVec4F32" value="0.0;0.0;0.0;1.0" />
-    <Uniform name="u_mainLightDirection" type="UniformVec3F32" value="0.577;-0.577;0.577" />
-    <Uniform name="u_color" type="UniformVec4F32" value="1.0;1.0;1.0;1.0" />
-    <Uniform name="u_ambientLightColor" type="UniformVec4F32" value="0.0;0.0;0.0;1.0" />
-    <Uniform name="u_shininess" type="UniformF32" value="1.0" />
-        
-    <Feature name="SPECULAR_MAP" />
-    <Uniform name="u_specularColor" type="UniformVec4F32" value="1.0;1.0;1.0;1.0" />
-    <Uniform name="u_specularMap" type="UniformTexture2D" value="White" />
-    
-    <Feature name="NORMAL_MAP" />
-    <Uniform name="u_normalScale" type="UniformF32" value="1.0" />
-    
-    <Feature name="EMISSION_MAP" />
-    <Uniform name="u_emissionColor" type="UniformVec4F32" value="1.0;1.0;1.0;1.0" />
-    
-    <Feature name="BACK_LIGHT" />
-    <Uniform name="u_backLightColor" type="UniformVec4F32" value="0.65;0.70;0.75;1.0" />
-    <Uniform name="u_backLightDirection" type="UniformVec3F32" value="1.0;-0.5;-1.0" />
-    <Uniform name="u_backLightBend" type="UniformF32" value="0.45" />
-    
-    <Feature name="LAMBERT_THRESHOLD" />
-    <Uniform name="u_lambertThreshold" type="UniformF32" value="0.05" />
-    
-    <Uniform name="u_shotMap" type="UniformTexture2D" value="White" />
-    <Uniform name="u_shotValue" type="UniformF32" value="0.0" />
-    
-    <GLSL shader="PlayerShip00.mzglsl" />
-</Shader>
+uniform
+{
+  name:String = "u_mainLightColor"
+  type:String = "UniformVec4F32"
+  value:String = "0.0;0.0;0.0;1.0"
+}
+
+uniform
+{
+  name:String = "u_mainLightDirection"
+  type:String = "UniformVec3F32"
+  value:String = "0.577;-0.577;0.577"
+}
+
+uniform
+{
+  name:String = "u_color"
+  type:String = "UniformVec4F32"
+  value:String = "1.0;1.0;1.0;1.0"
+}
+
+uniform
+{
+  name:String = "u_ambientLightColor"
+  type:String = "UniformVec4F32"
+  value:String = "0.0;0.0;0.0;1.0"
+}
+
+uniform
+{
+  name:String = "u_shininess"
+  type:String = "UniformF32"
+  value:String = "1.0"
+}
+
+feature
+{
+  name:String = "SPECULAR_MAP"
+}
+
+uniform
+{
+  name:String = "u_specularColor"
+  type:String = "UniformVec4F32"
+  value:String = "1.0;1.0;1.0;1.0"
+}
+
+uniform
+{
+  name:String = "u_specularMap"
+  type:String = "UniformTexture2D"
+  value:String = "White"
+}
+
+feature
+{
+  name:String = "NORMAL_MAP"
+}
+
+uniform
+{
+  name:String = "u_normalScale"
+  type:String = "UniformF32"
+  value:String = "1.0"
+}
+
+feature
+{
+  name:String = "EMISSION_MAP"
+}
+
+uniform
+{
+  name:String = "u_emissionColor"
+  type:String = "UniformVec4F32"
+  value:String = "1.0;1.0;1.0;1.0"
+}
+
+feature
+{
+  name:String = "BACK_LIGHT"
+}
+
+uniform
+{
+  name:String = "u_backLightColor"
+  type:String = "UniformVec4F32"
+  value:String = "0.65;0.70;0.75;1.0"
+}
+
+uniform
+{
+  name:String = "u_backLightDirection"
+  type:String = "UniformVec3F32"
+  value:String = "1.0;-0.5;-1.0"
+}
+
+uniform
+{
+  name:String = "u_backLightBend"
+  type:String = "UniformF32"
+  value:String = "0.45"
+}
+
+feature
+{
+  name:String = "LAMBERT_THRESHOLD"
+}
+
+uniform
+{
+  name:String = "u_lambertThreshold"
+  type:String = "UniformF32"
+  value:String = "0.05"
+}
+
+uniform
+{
+  name:String = "u_shotMap"
+  type:String = "UniformTexture2D"
+  value:String = "White"
+}
+
+uniform
+{
+  name:String = "u_shotValue"
+  type:String = "UniformF32"
+  value:String = "0.0"
+}
+
+GLSL
+{
+  shader:String = "PlayerShip00.mzglsl"
+}

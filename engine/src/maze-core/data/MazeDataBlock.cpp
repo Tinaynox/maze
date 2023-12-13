@@ -41,6 +41,7 @@
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/serialization/MazeDataBlockBinarySerialization.hpp"
 #include "maze-core/serialization/MazeDataBlockTextSerialization.hpp"
+#include "maze-core/helpers/MazeStdHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -415,6 +416,34 @@ namespace Maze
     bool DataBlock::loadTextFile(Path const& _path)
     {
         return DataBlockTextSerialization::LoadTextFile(*this, _path);
+    }
+
+    //////////////////////////////////////////
+    bool DataBlock::loadFile(Path const& _path)
+    {
+        FILE* file = StdHelper::OpenFile(_path, "rb");
+        U8 buff[sizeof(c_mzDataBlockBinaryHeaderMagic)];
+        fread(buff, sizeof(c_mzDataBlockBinaryHeaderMagic), 1, file);
+        fclose(file);
+
+        if (memcmp(buff, &c_mzDataBlockBinaryHeaderMagic, sizeof(c_mzDataBlockBinaryHeaderMagic)) == 0)
+            return loadBinaryFile(_path);
+        else
+            return loadTextFile(_path);
+    }
+
+    //////////////////////////////////////////
+    bool DataBlock::loadFromByteBuffer(ByteBuffer const& _byteBuffer)
+    {
+        if (_byteBuffer.getSize() >= sizeof(c_mzDataBlockBinaryHeaderMagic) &&
+            memcmp((void*)_byteBuffer.getData(), &c_mzDataBlockBinaryHeaderMagic, sizeof(c_mzDataBlockBinaryHeaderMagic)) == 0)
+        {
+            return loadBinary(_byteBuffer);
+        }
+        else
+        {
+            return loadText(_byteBuffer);
+        }
     }
 
 

@@ -52,10 +52,10 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(CompareFunction, depthTestCompareFunction, CompareFunction::Disabled, getDepthTestCompareFunction, setDepthTestCompareFunction),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, depthWriteEnabled, true, getDepthWriteEnabled, setDepthWriteEnabled),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(CullMode, cullMode, CullMode::Off, getCullMode, setCullMode)
-        )
+    )
 
-    //////////////////////////////////////////
-    RenderPass::RenderPass()
+        //////////////////////////////////////////
+        RenderPass::RenderPass()
         : m_renderSystem(nullptr)
         , m_material(nullptr)
         , m_passType(RenderPassType::None)
@@ -124,7 +124,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void RenderPass::setShader(ShaderPtr const& _shader)
-    { 
+    {
         if (m_shader == _shader)
             return;
 
@@ -171,6 +171,19 @@ namespace Maze
     tinyxml2::XMLElement* RenderPass::toXMLElement(tinyxml2::XMLDocument& _doc) const
     {
         return SerializeMetaInstanceToXMLElement(getMetaClass(), getMetaInstance(), _doc);
+    }
+
+    //////////////////////////////////////////
+    bool RenderPass::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void RenderPass::toDataBlock(DataBlock& _dataBlock) const
+    {
+        SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
     }
 
     //////////////////////////////////////////

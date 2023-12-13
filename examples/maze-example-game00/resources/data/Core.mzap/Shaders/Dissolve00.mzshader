@@ -1,8 +1,32 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Shader>
-    <Uniform name="u_mainLightColor" type="UniformVec4F32" value="1.0;0.957;0.84;1.0" />
-    <Uniform name="u_mainLightDirection" type="UniformVec3F32" value="0.577;-0.577;0.577" />
-    <Uniform name="u_shininess" type="UniformF32" value="0.03" />
-    <Uniform name="u_specularColor" type="UniformVec4F32" value="0.8;0.8;0.8;1.0" />
-    <GLSL shader="Dissolve00.mzglsl" />
-</Shader>
+uniform
+{
+  name:String = "u_mainLightColor"
+  type:String = "UniformVec4F32"
+  value:String = "1.0;0.957;0.84;1.0"
+}
+
+uniform
+{
+  name:String = "u_mainLightDirection"
+  type:String = "UniformVec3F32"
+  value:String = "0.577;-0.577;0.577"
+}
+
+uniform
+{
+  name:String = "u_shininess"
+  type:String = "UniformF32"
+  value:String = "0.03"
+}
+
+uniform
+{
+  name:String = "u_specularColor"
+  type:String = "UniformVec4F32"
+  value:String = "0.8;0.8;0.8;1.0"
+}
+
+GLSL
+{
+  shader:String = "Dissolve00.mzglsl"
+}

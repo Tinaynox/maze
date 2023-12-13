@@ -1,5 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Shader>
-    <Uniform name="u_hue" type="UniformF32" value="0.0" />
-    <GLSL shader="GameSky00.mzglsl" />
-</Shader>
+uniform
+{
+  name:String = "u_hue"
+  type:String = "UniformF32"
+  value:String = "0.0"
+}
+
+GLSL
+{
+  shader:String = "GameSky00.mzglsl"
+}

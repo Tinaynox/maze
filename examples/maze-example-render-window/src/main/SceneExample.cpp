@@ -84,9 +84,9 @@ MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneExample, Maze::ECSRenderScene);
 //////////////////////////////////////////
 SceneExample::SceneExample()
     : m_timer(0.0f)
-    , m_modelMatrix(Maze::Mat4F32F::c_identity)
-    , m_modelMatrix2(Maze::Mat4F32F::c_identity)
-    , m_modelMatrix3(Maze::Mat4F32F::c_identity)
+    , m_modelMatrix(Maze::Mat4F32::c_identity)
+    , m_modelMatrix2(Maze::Mat4F32::c_identity)
+    , m_modelMatrix3(Maze::Mat4F32::c_identity)
     , m_yawAngle(0.0f)
     , m_pitchAngle(0.0f)
     , m_cursorPositionLastFrame(Maze::Vec2F32::c_zero)
@@ -245,8 +245,8 @@ bool SceneExample::init()
     ////////////////////////////////////////////
     // 3D
 
-    m_modelMatrix2 = Maze::Mat4F32F::c_identity;
-    m_modelMatrix3 = Maze::Mat4F32F::c_identity;
+    m_modelMatrix2 = Maze::Mat4F32::c_identity;
+    m_modelMatrix3 = Maze::Mat4F32::c_identity;
     
     
     // Axes
@@ -301,9 +301,9 @@ void SceneExample::update(Maze::F32 _dt)
     {
         float f = (Maze::Math::Sin(m_timer) + 1)/2.0f;        
 
-        m_modelMatrix = Maze::Mat4F32F::CreateRotationYMatrix(m_timer);
-        m_modelMatrix2 = Maze::Mat4F32F::CreateTranslationMatrix(Maze::Math::Sin(m_timer), 0.0f, 0.0f) * Maze::Mat4F32F::CreateRotationYMatrix(Maze::Math::c_pi);
-        m_modelMatrix3 = Maze::Mat4F32F::CreateTranslationMatrix(0.0f, 1.5f, 0.0f);
+        m_modelMatrix = Maze::Mat4F32::CreateRotationYMatrix(m_timer);
+        m_modelMatrix2 = Maze::Mat4F32::CreateTranslationMatrix(Maze::Math::Sin(m_timer), 0.0f, 0.0f) * Maze::Mat4F32::CreateRotationYMatrix(Maze::Math::c_pi);
+        m_modelMatrix3 = Maze::Mat4F32::CreateTranslationMatrix(0.0f, 1.5f, 0.0f);
 
         Maze::Vec3F32 cameraForwardDirection = m_cameraTransform3D->getLocalRotation() * Maze::Vec3F32::c_unitZ;
         Maze::Vec3F32 cameraRightDirection = m_cameraTransform3D->getLocalRotation() * Maze::Vec3F32::c_unitX;

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Shader>
-    <GLSL shader="BloomFinalPass00.mzglsl" />
-</Shader>
+GLSL
+{
+  shader:String = "BloomFinalPass00.mzglsl"
+}

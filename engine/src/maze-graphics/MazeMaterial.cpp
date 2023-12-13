@@ -35,6 +35,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/helpers/MazeXMLHelper.hpp"
+#include "maze-core/serialization/MazeDataBlockSerializable.hpp"
 
 
 //////////////////////////////////////////
@@ -287,10 +288,25 @@ namespace Maze
 
         MAZE_ERROR_RETURN_VALUE_IF(!_assetFile, false, "Asset File is null!");
 
-        tinyxml2::XMLDocument doc;
         MAZE_LOG("Loading Material: %s...", _assetFile->getFileName().toUTF8().c_str());
-        _assetFile->readToXMLDocument(doc);
-        loadFromXMLDocument(doc);
+
+        ByteBufferPtr assetFileHeader = _assetFile->readHeaderAsByteBuffer(6);
+        assetFileHeader->setByte(5, 0);
+
+        if (strstr((CString)assetFileHeader->getData(), "xml") != nullptr)
+        {
+            Debug::LogWarning("Obsolete Material format - %s", _assetFile->getFileName().toUTF8().c_str());
+            tinyxml2::XMLDocument doc;
+            _assetFile->readToXMLDocument(doc);
+            loadFromXMLDocument(doc);
+        }
+        else
+        {
+            DataBlock dataBlock;
+            ByteBufferPtr byteBuffer = _assetFile->readAsByteBuffer();
+            dataBlock.loadFromByteBuffer(*byteBuffer.get());
+            loadFromDataBlock(dataBlock);
+        }
 
         return true;
     }
@@ -580,8 +596,56 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool Material::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        clear();
+
+        DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+
+        for (DataBlock::DataBlockIndex i = 0; i < _dataBlock.getDataBlocksCount(); ++i)
+        {
+            DataBlock const* subBlock = _dataBlock.getDataBlock(i);
+
+            if (subBlock->getName() == MAZE_HASHED_CSTRING("renderPass"))
+            {
+                RenderPassType renderPassType = RenderPassType::FromString(subBlock->getCString("passType"));
+                RenderPassPtr renderPass = createRenderPass(renderPassType);
+                renderPass->loadFromDataBlock(*subBlock);
+            }
+            else
+            if (subBlock->getName() == MAZE_HASHED_CSTRING("shaderUniformVariant"))
+            {
+                ShaderUniformVariant shaderUniformVariant(m_renderSystem);
+                shaderUniformVariant.loadFromDataBlock(*subBlock);
+
+                setUniform(shaderUniformVariant);
+            }
+        }
+        
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void Material::toDataBlock(DataBlock& _dataBlock) const
+    {
+        for (ShaderUniformVariantPtr const& uniformVariant : m_uniforms)
+        {
+            uniformVariant->toDataBlock(*_dataBlock.addNewDataBlock(MAZE_HASHED_CSTRING("shaderUniformVariant")));
+        }
+
+        for (RenderPassType passType = RenderPassType(1); passType < RenderPassType::MAX; ++passType)
+        {
+            for (RenderPassPtr const& renderPass : m_passes[passType])
+            {
+                renderPass->toDataBlock(*_dataBlock.addNewDataBlock(MAZE_HASHED_CSTRING("renderPass")));
+            }
+        }
+    }
+
+    //////////////////////////////////////////
     bool Material::saveToFile(String const& _fullpath)
     {
+        MAZE_WARNING("Save to XML is obsolete");
         return XMLHelper::SaveXMLFile(_fullpath, this);
     }
 

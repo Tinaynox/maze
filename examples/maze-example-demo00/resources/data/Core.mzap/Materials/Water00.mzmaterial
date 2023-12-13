@@ -1,25 +1,89 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Material>
-    <ShaderUniformVariant name="u_tiling" type="UniformF32" value="3.0" />
-    <ShaderUniformVariant name="u_waveStrength" type="UniformF32" value="0.05" />
-    <ShaderUniformVariant name="u_waveSpeed" type="UniformF32" value="0.03" />
-    <ShaderUniformVariant name="u_refractiveFactor" type="UniformF32" value="0.5" />
-    <ShaderUniformVariant name="u_color" type="UniformColorF128" value="0.45;1.0;0.45;0.45" />
-    <ShaderUniformVariant name="u_depthDistortionFactor" type="UniformF32" value="5.0" />
-    <ShaderUniformVariant name="u_depthSpecularFactor" type="UniformF32" value="3.0" />
-    <ShaderUniformVariant name="u_depthTransparencyFactor" type="UniformF32" value="1.5" />
-    <ShaderUniformVariant name="u_shininess" type="UniformF32" value="20.0" />
-    <ShaderUniformVariant name="u_specularColor" type="UniformColorF128" value="0.5;0.5;0.5;1.0" />
-    <ShaderUniformVariant name="u_normalYFactor" type="UniformF32" value="15.0" />
-    
-    <RenderPass 
-        passType="Default"
-        renderQueueIndex="3000"
-        shader="Water00.mzshader"
-        blendOperation="Add"
-        blendSrcFactor="SrcAlpha"
-        blendDestFactor="OneMinusSrcAlpha"
-        depthTestCompareFunction="LessEqual"
-        depthWriteEnabled="0"
-        cullMode="Back"/>
-</Material>
+shaderUniformVariant
+{
+  name:String = "u_tiling"
+  type:String = "UniformF32"
+  value:String = "3.0"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_waveStrength"
+  type:String = "UniformF32"
+  value:String = "0.05"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_waveSpeed"
+  type:String = "UniformF32"
+  value:String = "0.03"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_refractiveFactor"
+  type:String = "UniformF32"
+  value:String = "0.5"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_color"
+  type:String = "UniformColorF128"
+  value:String = "0.45;1.0;0.45;0.45"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_depthDistortionFactor"
+  type:String = "UniformF32"
+  value:String = "5.0"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_depthSpecularFactor"
+  type:String = "UniformF32"
+  value:String = "3.0"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_depthTransparencyFactor"
+  type:String = "UniformF32"
+  value:String = "1.5"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_shininess"
+  type:String = "UniformF32"
+  value:String = "20.0"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_specularColor"
+  type:String = "UniformColorF128"
+  value:String = "0.5;0.5;0.5;1.0"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_normalYFactor"
+  type:String = "UniformF32"
+  value:String = "15.0"
+}
+
+renderPass
+{
+  passType:String = "Default"
+  renderQueueIndex:String = "3000"
+  shader:String = "Water00.mzshader"
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "SrcAlpha"
+  blendDestFactor:String = "OneMinusSrcAlpha"
+  depthTestCompareFunction:String = "LessEqual"
+  depthWriteEnabled:String = "0"
+  cullMode:String = "Back"
+}

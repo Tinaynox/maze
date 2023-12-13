@@ -1,26 +1,103 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Material>
-    <ShaderUniformVariant name="u_baseMap0" type="UniformTexture2D" value="Terrain02.png" />
-    <ShaderUniformVariant name="u_baseMap0ST" type="UniformVec4F32" value="5.0;5.0;0.0;0.0" />
-    <ShaderUniformVariant name="u_baseMap1" type="UniformTexture2D" value="Terrain01.png" />
-    <ShaderUniformVariant name="u_baseMap1ST" type="UniformVec4F32" value="5.0;5.0;0.0;0.0" />
-    <ShaderUniformVariant name="u_baseMap2" type="UniformTexture2D" value="Terrain00.png" />
-    <ShaderUniformVariant name="u_baseMap2ST" type="UniformVec4F32" value="8.0;8.0;0.0;0.0" />
-    <ShaderUniformVariant name="u_height0" type="UniformF32" value="0.4" />
-    <ShaderUniformVariant name="u_height1" type="UniformF32" value="1.0" />
-    <ShaderUniformVariant name="u_height2" type="UniformF32" value="2.0" />
-    <ShaderUniformVariant name="u_color" type="UniformColorF128" value="0.76;0.717;0.717;1.0" />
-    <ShaderUniformVariant name="u_ambientLightColor" type="UniformColorF128" value="0.45;0.45;0.45;1.0" />
-    <ShaderUniformVariant name="u_shininess" type="UniformF32" value="0.1" />
-    <ShaderUniformVariant name="u_specularColor" type="UniformColorF128" value="0.05;0.05;0.05;1.0" />
-    <RenderPass 
-        passType="Default"
-        renderQueueIndex="2000"
-        shader="Terrain00.mzshader"
-        blendOperation="Add"
-        blendSrcFactor="One"
-        blendDestFactor="Zero"
-        depthTestCompareFunction="LessEqual"
-        depthWriteEnabled="1"
-        cullMode="Off"/>
-</Material>
+shaderUniformVariant
+{
+  name:String = "u_baseMap0"
+  type:String = "UniformTexture2D"
+  value:String = "Terrain02.png"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_baseMap0ST"
+  type:String = "UniformVec4F32"
+  value:String = "5.0;5.0;0.0;0.0"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_baseMap1"
+  type:String = "UniformTexture2D"
+  value:String = "Terrain01.png"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_baseMap1ST"
+  type:String = "UniformVec4F32"
+  value:String = "5.0;5.0;0.0;0.0"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_baseMap2"
+  type:String = "UniformTexture2D"
+  value:String = "Terrain00.png"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_baseMap2ST"
+  type:String = "UniformVec4F32"
+  value:String = "8.0;8.0;0.0;0.0"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_height0"
+  type:String = "UniformF32"
+  value:String = "0.4"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_height1"
+  type:String = "UniformF32"
+  value:String = "1.0"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_height2"
+  type:String = "UniformF32"
+  value:String = "2.0"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_color"
+  type:String = "UniformColorF128"
+  value:String = "0.76;0.717;0.717;1.0"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_ambientLightColor"
+  type:String = "UniformColorF128"
+  value:String = "0.45;0.45;0.45;1.0"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_shininess"
+  type:String = "UniformF32"
+  value:String = "0.1"
+}
+
+shaderUniformVariant
+{
+  name:String = "u_specularColor"
+  type:String = "UniformColorF128"
+  value:String = "0.05;0.05;0.05;1.0"
+}
+
+renderPass
+{
+  passType:String = "Default"
+  renderQueueIndex:String = "2000"
+  shader:String = "Terrain00.mzshader"
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "One"
+  blendDestFactor:String = "Zero"
+  depthTestCompareFunction:String = "LessEqual"
+  depthWriteEnabled:String = "1"
+  cullMode:String = "Off"
+}

@@ -1,15 +1,74 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Shader>
-    <Uniform name="u_baseMap0ST" type="UniformVec4F32" value="1.0;1.0;0.0;0.0" />
-    <Uniform name="u_baseMap1ST" type="UniformVec4F32" value="1.0;1.0;0.0;0.0" />
-    <Uniform name="u_baseMap2ST" type="UniformVec4F32" value="1.0;1.0;0.0;0.0" />
-    <Uniform name="u_height0" type="UniformF32" value="0.75" />
-    <Uniform name="u_height1" type="UniformF32" value="1.5" />
-    <Uniform name="u_height2" type="UniformF32" value="2.25" />
-    <Uniform name="u_color" type="UniformColorF128" value="1.0;1.0;1.0;1.0" />
-    <Uniform name="u_ambientLightColor" type="UniformColorF128" value="0.45;0.45;0.45;1.0" />
-    <Uniform name="u_shininess" type="UniformF32" value="0.1" />
-    <Uniform name="u_specularColor" type="UniformColorF128" value="0.6;0.6;0.6;1.0" />
-        
-    <GLSL shader="Terrain00.mzglsl" />
-</Shader>
+uniform
+{
+  name:String = "u_baseMap0ST"
+  type:String = "UniformVec4F32"
+  value:String = "1.0;1.0;0.0;0.0"
+}
+
+uniform
+{
+  name:String = "u_baseMap1ST"
+  type:String = "UniformVec4F32"
+  value:String = "1.0;1.0;0.0;0.0"
+}
+
+uniform
+{
+  name:String = "u_baseMap2ST"
+  type:String = "UniformVec4F32"
+  value:String = "1.0;1.0;0.0;0.0"
+}
+
+uniform
+{
+  name:String = "u_height0"
+  type:String = "UniformF32"
+  value:String = "0.75"
+}
+
+uniform
+{
+  name:String = "u_height1"
+  type:String = "UniformF32"
+  value:String = "1.5"
+}
+
+uniform
+{
+  name:String = "u_height2"
+  type:String = "UniformF32"
+  value:String = "2.25"
+}
+
+uniform
+{
+  name:String = "u_color"
+  type:String = "UniformColorF128"
+  value:String = "1.0;1.0;1.0;1.0"
+}
+
+uniform
+{
+  name:String = "u_ambientLightColor"
+  type:String = "UniformColorF128"
+  value:String = "0.45;0.45;0.45;1.0"
+}
+
+uniform
+{
+  name:String = "u_shininess"
+  type:String = "UniformF32"
+  value:String = "0.1"
+}
+
+uniform
+{
+  name:String = "u_specularColor"
+  type:String = "UniformColorF128"
+  value:String = "0.6;0.6;0.6;1.0"
+}
+
+GLSL
+{
+  shader:String = "Terrain00.mzglsl"
+}

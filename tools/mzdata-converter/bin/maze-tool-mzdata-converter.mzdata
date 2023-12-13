@@ -1,0 +1,7 @@
+keepOriginExtension:Bool = true
+
+xml
+{
+    collapseRootBlock:Bool = true
+    lowerCaseBlockNameCapitalButton:Bool = true
+}

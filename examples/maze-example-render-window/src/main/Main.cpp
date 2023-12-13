@@ -58,6 +58,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/utils/MazeProfiler.hpp"
+#include "maze-core/services/MazeLogService.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeRenderWindow.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
@@ -82,13 +83,11 @@
 
 
 //////////////////////////////////////////
-namespace Maze
-{
-    //////////////////////////////////////////
-    extern Maze::RenderSystemOpenGL3PluginPtr s_plugin;
+using namespace Maze;
 
-} // namespace Maze
+
 //////////////////////////////////////////
+extern RenderSystemOpenGL3PluginPtr s_plugin;
 
 
 //////////////////////////////////////////
@@ -120,74 +119,74 @@ public:
     }
     
 public:
-    Maze::SystemManagerPtr        systemManager;
-    Maze::InputManagerPtr        inputManager;
-    Maze::WindowManagerPtr        windowManager;
-    Maze::DynLibManagerPtr        dynLibManager;
-    Maze::PluginManagerPtr        pluginManager;
-    Maze::GraphicsManagerPtr    graphicsManager;
-    Maze::SceneManagerPtr        sceneManager;
-    Maze::AssetManagerPtr        assetManager;
-    Maze::EntityManagerPtr        entityManager;
+    SystemManagerPtr        systemManager;
+    InputManagerPtr        inputManager;
+    WindowManagerPtr        windowManager;
+    DynLibManagerPtr        dynLibManager;
+    PluginManagerPtr        pluginManager;
+    GraphicsManagerPtr    graphicsManager;
+    SceneManagerPtr        sceneManager;
+    AssetManagerPtr        assetManager;
+    EntityManagerPtr        entityManager;
 
-    Maze::ColorU32 renderWindow00ClearColor;
-    Maze::ColorU32 renderWindow01ClearColor;
-    Maze::ColorU32 renderWindow10ClearColor;
-    Maze::ColorU32 renderWindow11ClearColor;
+    ColorU32 renderWindow00ClearColor;
+    ColorU32 renderWindow01ClearColor;
+    ColorU32 renderWindow10ClearColor;
+    ColorU32 renderWindow11ClearColor;
 
-    Maze::RenderWindowPtr renderWindow0;
-    Maze::RenderWindowPtr renderWindow1;
+    RenderWindowPtr renderWindow0;
+    RenderWindowPtr renderWindow1;
 
     SceneExamplePtr scene;
 };
 std::unique_ptr<MainContainer> g_main;
-Maze::RenderTargetPtr g_defaultRenderTarget;
+RenderTargetPtr g_defaultRenderTarget;
 
 
-Maze::F32 g_colorTimer = 0.0f;
-Maze::F32 g_colorTime = 1.0f;
+F32 g_colorTimer = 0.0f;
+F32 g_colorTime = 1.0f;
 bool g_colorDirection = true;
 
-Maze::F32 g_contextDestroyTimer = 0.0f;
-Maze::F32 g_contextDestroyTime = 3.0f;
+F32 g_contextDestroyTimer = 0.0f;
+F32 g_contextDestroyTime = 3.0f;
 
 
 
 //////////////////////////////////////////
-void OnUpdate(Maze::F32 _dt);
+void OnUpdate(F32 _dt);
 
 
 //////////////////////////////////////////
 void OnInit()
 {
-    Maze::Profiler::SetProfiling(true);
+    Profiler::SetProfiling(true);
 
-    g_main->renderWindow00ClearColor = Maze::ColorU32::c_cyan;
-    g_main->renderWindow01ClearColor = Maze::ColorU32::c_magenta;
-    g_main->renderWindow10ClearColor = Maze::ColorU32::c_red;
-    g_main->renderWindow11ClearColor = Maze::ColorU32::c_yellow;
+    g_main->renderWindow00ClearColor = ColorU32::c_cyan;
+    g_main->renderWindow01ClearColor = ColorU32::c_magenta;
+    g_main->renderWindow10ClearColor = ColorU32::c_red;
+    g_main->renderWindow11ClearColor = ColorU32::c_yellow;
 
-    Maze::LogService::GetInstancePtr()->setLogFile((Maze::FileHelper::GetDefaultLogDirectory() + "/log.log").c_str());
+    LogService::GetInstancePtr()->setLogFile((FileHelper::GetDefaultLogDirectory() + "/log.log").c_str());
 
-    Maze::UpdateManager::GetInstancePtr()->eventUpdate.subscribe(OnUpdate);
+    UpdateManager::GetInstancePtr()->eventUpdate.subscribe(OnUpdate);
 
-    Maze::InputManager::Initialize(g_main->inputManager);
-    Maze::WindowManager::Initialize(g_main->windowManager);
-    Maze::DynLibManager::Initialize(g_main->dynLibManager);
-    Maze::PluginManager::Initialize(g_main->pluginManager);
-    Maze::EntityManager::Initialize(g_main->entityManager);
-    Maze::GraphicsManager::Initialize(g_main->graphicsManager);
-    Maze::SceneManager::Initialize(g_main->sceneManager);
-    Maze::AssetManager::Initialize(g_main->assetManager);
+    InputManager::Initialize(g_main->inputManager);
+    WindowManager::Initialize(g_main->windowManager);
+    DynLibManager::Initialize(g_main->dynLibManager);
+    PluginManager::Initialize(g_main->pluginManager);
+    EntityManager::Initialize(g_main->entityManager);
+    GraphicsManager::Initialize(g_main->graphicsManager);
+    SceneManager::Initialize(g_main->sceneManager);
+    AssetManager::Initialize(g_main->assetManager);
     
 
-    Maze::String workingDir = Maze::FileHelper::GetWorkingDirectory();
-    Maze::Debug::log << "Binary: " << Maze::FileHelper::GetBinaryFullPath() << Maze::endl;
-    Maze::Debug::log << "Working Directory: " << workingDir.c_str() << Maze::endl;
+    String workingDir = FileHelper::GetWorkingDirectory();
+    Debug::log << "Binary: " << FileHelper::GetBinaryFullPath() << endl;
+    Debug::log << "Working Directory: " << workingDir.c_str() << endl;
 
 
 #if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
-    Maze::String applicationId = Maze::FileHelper::GetPackageName();
+    String applicationId = FileHelper::GetPackageName();
     MAZE_LOG("Package Name: %s\n", applicationId.c_str());
 #endif
 
@@ -195,37 +194,37 @@ void OnInit()
     MAZE_LOAD_PLATFORM_PLUGIN(LoaderPNG);
 
 
-    Maze::Debug::log << "Available Render Systems: " << Maze::endl;
+    Debug::log << "Available Render Systems: " << endl;
     for (auto const& renderSystemData : g_main->graphicsManager->getRenderSystems())
     {
-        Maze::Debug::log << "\t" << renderSystemData.first;
+        Debug::log << "\t" << renderSystemData.first;
 
         if (renderSystemData.second == g_main->graphicsManager->getDefaultRenderSystem())
-            Maze::Debug::log << " [Default]";
+            Debug::log << " [Default]";
 
-        Maze::Debug::log << Maze::endl;
+        Debug::log << endl;
     }
 
 
-    LogService::GetInstancePtr()->splitAndLog(Maze::PlatformHelper::ConstructApplicationInfo());
-    LogService::GetInstancePtr()->splitAndLog(Maze::PlatformHelper::ConstructEngineInfo());
-    LogService::GetInstancePtr()->splitAndLog(Maze::SystemHelper::ConstructSystemInfo());
+    LogService::GetInstancePtr()->splitAndLog(PlatformHelper::ConstructApplicationInfo());
+    LogService::GetInstancePtr()->splitAndLog(PlatformHelper::ConstructEngineInfo());
+    LogService::GetInstancePtr()->splitAndLog(SystemHelper::ConstructSystemInfo());
     LogService::GetInstancePtr()->splitAndLog(g_main->windowManager->constructDisplaysInfo());    
     
 
-    Maze::RenderWindowParams params;
-    params.windowParams = Maze::WindowParams::Create();
+    RenderWindowParams params;
+    params.windowParams = WindowParams::Create();
     params.windowParams->title = "RenderWindow0";
-    params.windowParams->clientSize = Maze::Vec2U32(640, 480);
-    params.windowParams->flags |= Maze::WindowStyleFlags::MinimizeButton;
-    params.windowParams->flags |= Maze::WindowStyleFlags::MaximizeButton;
-    params.windowParams->flags |= Maze::WindowStyleFlags::Resizable;
-    g_main->renderWindow0 = Maze::RenderWindow::Create(params);
+    params.windowParams->clientSize = Vec2U32(640, 480);
+    params.windowParams->flags |= WindowStyleFlags::MinimizeButton;
+    params.windowParams->flags |= WindowStyleFlags::MaximizeButton;
+    params.windowParams->flags |= WindowStyleFlags::Resizable;
+    g_main->renderWindow0 = RenderWindow::Create(params);
     if (g_main->renderWindow0)
     {
         g_main->renderWindow0->setVSync(false);
 
-        Maze::Debug::log << "RenderWindow0 created!" << Maze::endl;
+        Debug::log << "RenderWindow0 created!" << endl;
         g_main->renderWindow0->setClearColor(g_main->renderWindow00ClearColor);
 
         g_defaultRenderTarget = g_main->renderWindow0;
@@ -239,15 +238,15 @@ void OnInit()
     || (MAZE_PLATFORM == MAZE_PLATFORM_OSX)            \
     || (MAZE_PLATFORM == MAZE_PLATFORM_LINUX)) && 0
 
-    params.windowParams = Maze::WindowParams::Create();
+    params.windowParams = WindowParams::Create();
     params.windowParams->title = "RenderWindow1";
-    g_main->renderWindow1 = Maze::RenderWindow::Create(params);
+    g_main->renderWindow1 = RenderWindow::Create(params);
 
     if (g_main->renderWindow1)
     {
         g_main->renderWindow1->setVSync(false);
 
-        Maze::log << "RenderWindow1 created!" << Maze::endl;
+        log << "RenderWindow1 created!" << endl;
         g_main->renderWindow1->setClearColor(g_main->renderWindow01ClearColor);
     }
     else
@@ -257,15 +256,15 @@ void OnInit()
 
 #endif
 
-    Maze::Debug::log << g_main->windowManager->constructWindowsInfo();
+    Debug::log << g_main->windowManager->constructWindowsInfo();
 
 
-    Maze::AssetManager::GetInstancePtr()->addAssetsDirectoryPath(Maze::AssetManager::GetInstancePtr()->getDefaultAssetsDirectory());
+    AssetManager::GetInstancePtr()->addAssetsDirectoryPath(AssetManager::GetInstancePtr()->getDefaultAssetsDirectory());
 
-    Maze::RenderSystemPtr const& renderSystem = g_main->graphicsManager->getDefaultRenderSystem();
-    Maze::ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
+    RenderSystemPtr const& renderSystem = g_main->graphicsManager->getDefaultRenderSystem();
+    ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
 
-    shaderSystem->findAssetShadersAndAddToCache();
+    shaderSystem->findAssetShadersAndAddToLibrary();
 
     g_main->scene = g_main->sceneManager->loadScene<SceneExample>();
 }
@@ -276,8 +275,8 @@ void OnShutdown();
 //////////////////////////////////////////
 void OnFrame()
 {
-    if (Maze::UpdateManager::GetInstancePtr())
-        Maze::UpdateManager::GetInstancePtr()->processUpdate();
+    if (UpdateManager::GetInstancePtr())
+        UpdateManager::GetInstancePtr()->processUpdate();
 
     bool renderWindow0Active = (g_main->renderWindow0 && g_main->renderWindow0->getWindow() && g_main->renderWindow0->getWindow()->isOpened());
     bool renderWindow1Active = (g_main->renderWindow1 && g_main->renderWindow1->getWindow() && g_main->renderWindow1->getWindow()->isOpened());
@@ -291,7 +290,7 @@ void OnFrame()
             OnShutdown();
             g_applicationActive = false;
 #elif (MAZE_PLATFORM != MAZE_PLATFORM_ANDROID)
-            Maze::Debug::log << "There is no render windows left - Shutdown..." << Maze::endl;
+            Debug::log << "There is no render windows left - Shutdown..." << endl;
             g_applicationActive = false;
 #endif
         }
@@ -314,33 +313,33 @@ void OnUpdate(float _dt)
 
     g_contextDestroyTimer += _dt;
 
-    Maze::Profiler::FinishSample();
+    Profiler::FinishSample();
 }
 
 //////////////////////////////////////////
 void OnShutdown()
 {
-    Maze::Debug::Log("Shutdown!");
+    Debug::Log("Shutdown!");
     
     g_defaultRenderTarget.reset();
     g_main.reset();
 }
 
 //////////////////////////////////////////
-Maze::S32 main(Maze::S32 argc, Maze::S8 const* argv[])
+S32 main(S32 argc, S8 const* argv[])
 {
-    for (Maze::S32 i = 0; i < argc; ++i)
+    for (S32 i = 0; i < argc; ++i)
     {
-        Maze::Debug::log << i << " -> " << argv[i] << Maze::endl;
+        Debug::log << i << " -> " << argv[i] << endl;
     }
 
-    Maze::Vector<Maze::S8 const*> commandLineArguments;
-    for (Maze::S32 i = 0; i < argc; ++i)
+    Vector<S8 const*> commandLineArguments;
+    for (S32 i = 0; i < argc; ++i)
         commandLineArguments.emplace_back(argv[i]);
 
     g_main = std::unique_ptr<MainContainer>(new MainContainer());
 
-    Maze::SystemManager::Initialize(g_main->systemManager, commandLineArguments);
+    SystemManager::Initialize(g_main->systemManager, commandLineArguments);
 
     g_main->systemManager->eventApplicationInit.subscribe(&OnInit);
     g_main->systemManager->eventApplicationFrame.subscribe(&OnFrame);

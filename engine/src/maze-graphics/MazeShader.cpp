@@ -456,50 +456,58 @@ namespace Maze
     }
 
 
-    //////////////////////////////////////////
-    // Struct ShaderXMLUniformData
-    //
-    //////////////////////////////////////////
-    struct ShaderXMLUniformData
-    {
-        HashedString name;
-        String type;
-        String value;
-    };
-
 
     //////////////////////////////////////////
-    bool Shader::loadFromAssetFile(AssetFilePtr const& _shaderFile)
+    bool Shader::loadFromAssetFile(AssetFilePtr const& _assetFile)
     {
         MAZE_PROFILE_EVENT("Shader::loadFromAssetFile");
 
-        if (!_shaderFile)
+        if (!_assetFile)
             return false;
 
-        m_assetFile = _shaderFile;
+        m_assetFile = _assetFile;
+        setName(_assetFile->getFileName());
 
-        setName(_shaderFile->getFileName());
+        ByteBufferPtr assetFileHeader = _assetFile->readHeaderAsByteBuffer(6);
+        assetFileHeader->setByte(5, 0);
 
-        tinyxml2::XMLDocument doc;
-        if (!_shaderFile->readToXMLDocument(doc))
-            return false;
+        if (strstr((CString)assetFileHeader->getData(), "xml") != nullptr)
+        {
+            Debug::LogWarning("Obsolete Shader format - %s", _assetFile->getFileName().toUTF8().c_str());
+            tinyxml2::XMLDocument doc;
+            _assetFile->readToXMLDocument(doc);
+            loadFromXMLDocument(doc);
+        }
+        else
+        {
+            DataBlock dataBlock;
+            ByteBufferPtr byteBuffer = _assetFile->readAsByteBuffer();
+            dataBlock.loadFromByteBuffer(*byteBuffer.get());
+            loadFromDataBlock(dataBlock);
+        }
+        
 
+        return true;
+    }
 
-        tinyxml2::XMLNode* rootNode = doc.FirstChild();
+    //////////////////////////////////////////
+    bool Shader::loadFromXMLDocument(tinyxml2::XMLDocument& _doc)
+    {
+        tinyxml2::XMLNode* rootNode = _doc.FirstChild();
         if (!rootNode)
         {
-            MAZE_ERROR("File '%s' loading error - empty root node!", _shaderFile->getFileName().toUTF8().c_str());
+            MAZE_ERROR("File '%s' loading error - empty root node!", getName().c_str());
             return false;
         }
 
-        
+
         rootNode = rootNode->NextSibling();
         if (!rootNode)
         {
-            MAZE_ERROR("File '%s' loading error - empty root node children!", _shaderFile->getFileName().toUTF8().c_str());
+            MAZE_ERROR("File '%s' loading error - empty root node children!", getName().c_str());
             return false;
         }
-        
+
 
         AssetFilePtr shaderFile;
         AssetFilePtr vertexShaderFile;
@@ -507,7 +515,6 @@ namespace Maze
         Vector<ShaderXMLUniformData> uniformsData;
 
         AssetManager* assetManager = AssetManager::GetInstancePtr();
-        TextureManagerPtr const& textureManager = getRenderSystemRaw()->getTextureManager();
 
         tinyxml2::XMLNode* shaderNode = rootNode;
         while (shaderNode)
@@ -519,7 +526,7 @@ namespace Maze
                 continue;
             }
 
-            
+
 
             tinyxml2::XMLNode* shaderChildNode = shaderNode->FirstChild();
             while (shaderChildNode)
@@ -582,16 +589,90 @@ namespace Maze
             shaderNode = shaderNode->NextSibling();
         }
 
+        return processLoadShader(
+            shaderFile,
+            vertexShaderFile,
+            fragmentShaderFile,
+            uniformsData);
 
-        if (shaderFile)
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool Shader::loadFromSourceFile(AssetFilePtr const& _sourceFile)
+    {
+        if (!_sourceFile)
+            return false;
+
+        String shaderSource;
+        _sourceFile->readToString(shaderSource);
+
+        return loadFromSource(shaderSource);
+    }
+
+    //////////////////////////////////////////
+    bool Shader::loadFromSourceFiles(AssetFilePtr const& _vertexShaderFile, AssetFilePtr const& _fragmentShaderFile)
+    {
+        if (!_vertexShaderFile || !_fragmentShaderFile)
+            return false;
+
+        String vertexShaderSource;
+        String fragmentShaderSource;
+        _vertexShaderFile->readToString(vertexShaderSource);
+        _fragmentShaderFile->readToString(fragmentShaderSource);
+
+        return loadFromSources(vertexShaderSource, fragmentShaderSource);
+    }
+
+    //////////////////////////////////////////
+    void Shader::assignDefaultUniforms()
+    {
+        m_clipDistance0Uniform = ensureUniform("u_clipDistance0");
+        m_clipDistanceEnableUniform = ensureUniform("u_clipDistanceEnable");
+        m_projectionMatrixUniform = ensureUniform("u_projectionMatrix");
+        m_projectionParamsUniform = ensureUniform("u_projectionParams");
+        m_viewMatrixUniform = ensureUniform("u_viewMatrix");
+        m_modelMatricesUniform = ensureUniform("u_modelMatrices");
+        m_modelMatricesTextureUniform = ensureUniform("u_modelMatricesTexture");
+        m_modelMatricesTextureSizeUniform = ensureUniform("u_modelMatricesTextureSize");
+        m_modelMatriciesOffsetUniform = ensureUniform("u_modelMatriciesOffset");
+        m_viewPositionUniform = ensureUniform("u_viewPosition");
+        m_timeUniform = ensureUniform("u_time");
+        m_mainLightColorUniform = ensureUniform("u_mainLightColor");
+        m_mainLightDirectionUniform = ensureUniform("u_mainLightDirection");
+    }
+
+    //////////////////////////////////////////
+    void Shader::resetDefaultUniforms()
+    {
+        m_projectionMatrixUniform.reset();
+        m_viewMatrixUniform.reset();
+        m_modelMatricesUniform.reset();
+        m_modelMatricesTextureUniform.reset();
+        m_modelMatricesTextureSizeUniform.reset();
+        m_modelMatriciesOffsetUniform.reset();
+        m_viewPositionUniform.reset();
+        m_timeUniform.reset();
+        m_mainLightColorUniform.reset();
+        m_mainLightDirectionUniform.reset();
+    }
+
+    //////////////////////////////////////////
+    bool Shader::processLoadShader(
+        AssetFilePtr const& _shaderFile,
+        AssetFilePtr const& _vertexShaderFile,
+        AssetFilePtr const& _fragmentShaderFile,
+        Vector<ShaderXMLUniformData> const& _uniformsData)
+    {
+        if (_shaderFile)
         {
-            if (!loadFromSourceFile(shaderFile))
+            if (!loadFromSourceFile(_shaderFile))
                 return false;
         }
         else
-        if (vertexShaderFile && fragmentShaderFile)
+        if (_vertexShaderFile && _fragmentShaderFile)
         {
-            if (!loadFromSourceFiles(vertexShaderFile, fragmentShaderFile))
+            if (!loadFromSourceFiles(_vertexShaderFile, _fragmentShaderFile))
                 return false;
         }
         else
@@ -599,7 +680,9 @@ namespace Maze
             MAZE_ERROR("%s: Invalid shader file syntax!", m_assetFile->getFileName().toUTF8().c_str());
         }
 
-        for (ShaderXMLUniformData const& uniformData : uniformsData)
+        TextureManagerPtr const& textureManager = getRenderSystemRaw()->getTextureManager();
+
+        for (ShaderXMLUniformData const& uniformData : _uniformsData)
         {
             ShaderUniformType::Enum uniformType = ShaderUniformType::FromString(uniformData.type);
 
@@ -722,7 +805,7 @@ namespace Maze
                     setUniform(uniformData.name.asHashedCString(), Mat4F::FromString(uniformData.value));
                     break;
                 }
-                
+
                 case ShaderUniformType::UniformColorF128:
                 {
                     setUniform(uniformData.name.asHashedCString(), Vec4F::FromString(uniformData.value));
@@ -738,65 +821,6 @@ namespace Maze
         }
 
         return true;
-    }
-
-    //////////////////////////////////////////
-    bool Shader::loadFromSourceFile(AssetFilePtr const& _sourceFile)
-    {
-        if (!_sourceFile)
-            return false;
-
-        String shaderSource;
-        _sourceFile->readToString(shaderSource);
-
-        return loadFromSource(shaderSource);
-    }
-
-    //////////////////////////////////////////
-    bool Shader::loadFromSourceFiles(AssetFilePtr const& _vertexShaderFile, AssetFilePtr const& _fragmentShaderFile)
-    {
-        if (!_vertexShaderFile || !_fragmentShaderFile)
-            return false;
-
-        String vertexShaderSource;
-        String fragmentShaderSource;
-        _vertexShaderFile->readToString(vertexShaderSource);
-        _fragmentShaderFile->readToString(fragmentShaderSource);
-
-        return loadFromSources(vertexShaderSource, fragmentShaderSource);
-    }
-
-    //////////////////////////////////////////
-    void Shader::assignDefaultUniforms()
-    {
-        m_clipDistance0Uniform = ensureUniform("u_clipDistance0");
-        m_clipDistanceEnableUniform = ensureUniform("u_clipDistanceEnable");
-        m_projectionMatrixUniform = ensureUniform("u_projectionMatrix");
-        m_projectionParamsUniform = ensureUniform("u_projectionParams");
-        m_viewMatrixUniform = ensureUniform("u_viewMatrix");
-        m_modelMatricesUniform = ensureUniform("u_modelMatrices");
-        m_modelMatricesTextureUniform = ensureUniform("u_modelMatricesTexture");
-        m_modelMatricesTextureSizeUniform = ensureUniform("u_modelMatricesTextureSize");
-        m_modelMatriciesOffsetUniform = ensureUniform("u_modelMatriciesOffset");
-        m_viewPositionUniform = ensureUniform("u_viewPosition");
-        m_timeUniform = ensureUniform("u_time");
-        m_mainLightColorUniform = ensureUniform("u_mainLightColor");
-        m_mainLightDirectionUniform = ensureUniform("u_mainLightDirection");
-    }
-
-    //////////////////////////////////////////
-    void Shader::resetDefaultUniforms()
-    {
-        m_projectionMatrixUniform.reset();
-        m_viewMatrixUniform.reset();
-        m_modelMatricesUniform.reset();
-        m_modelMatricesTextureUniform.reset();
-        m_modelMatricesTextureSizeUniform.reset();
-        m_modelMatriciesOffsetUniform.reset();
-        m_viewPositionUniform.reset();
-        m_timeUniform.reset();
-        m_mainLightColorUniform.reset();
-        m_mainLightDirectionUniform.reset();
     }
 
     //////////////////////////////////////////
@@ -830,6 +854,78 @@ namespace Maze
         }
     }
 
+    //////////////////////////////////////////
+    bool Shader::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        AssetFilePtr shaderFile;
+        AssetFilePtr vertexShaderFile;
+        AssetFilePtr fragmentShaderFile;
+        Vector<ShaderXMLUniformData> uniformsData;
+
+        AssetManager* assetManager = AssetManager::GetInstancePtr();
+        TextureManagerPtr const& textureManager = getRenderSystemRaw()->getTextureManager();
+
+        for (DataBlock::DataBlockIndex i = 0; i < _dataBlock.getDataBlocksCount(); ++i)
+        {
+            DataBlock const* subBlock = _dataBlock.getDataBlock(i);
+
+            if (subBlock->getName() == MAZE_HASHED_CSTRING("feature"))
+            {
+                CString name = subBlock->getCString("name");
+
+                if (name)
+                {
+                    CString value = subBlock->getCString("value");
+                    addLocalFeature(name, value ? value : "(1)");
+                }
+            }
+            else
+            if (subBlock->getName() == getLanguage())
+            {
+                CString shaderFileName = subBlock->getCString("shader");
+                if (shaderFileName)
+                {
+                    shaderFile = assetManager->getAssetFileByFileName(Path(shaderFileName));
+                }
+                else
+                {
+                    CString vertexShaderFileName = subBlock->getCString("vertex");
+                    CString fragmentShaderFileName = subBlock->getCString("fragment");
+
+                    vertexShaderFile = vertexShaderFileName ? assetManager->getAssetFileByFileName(Path(vertexShaderFileName)) : AssetFilePtr();
+                    fragmentShaderFile = fragmentShaderFileName ? assetManager->getAssetFileByFileName(Path(fragmentShaderFileName)) : AssetFilePtr();
+
+                    MAZE_ERROR_IF(vertexShaderFileName && !vertexShaderFile, "Undefined vertex shader: %s", vertexShaderFileName);
+                    MAZE_ERROR_IF(fragmentShaderFileName && !fragmentShaderFile, "Undefined vertex shader: %s", fragmentShaderFileName);
+                }
+            }
+            else
+            if (subBlock->getName() == MAZE_HASHED_CSTRING("uniform"))
+            {
+                CString name = subBlock->getCString("name");
+                String const type = subBlock->getString("type");
+                String const value = subBlock->getString("value");
+
+                ShaderXMLUniformData uniformData;
+                uniformData.name = name ? name : "";
+                uniformData.type = type;
+                uniformData.value = value;
+                uniformsData.push_back(uniformData);
+            }
+        }
+
+        return processLoadShader(
+            shaderFile,
+            vertexShaderFile,
+            fragmentShaderFile,
+            uniformsData);
+    }
+
+    //////////////////////////////////////////
+    void Shader::toDataBlock(DataBlock& _dataBlock) const
+    {
+        MAZE_TODO;
+    }
 
     //////////////////////////////////////////
     void Shader::FromString(ShaderPtr& _value, CString _shaderName, Size _count)

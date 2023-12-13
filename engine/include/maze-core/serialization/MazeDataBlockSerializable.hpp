@@ -25,68 +25,55 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeXMLHelper_hpp_))
-#define _MazeXMLHelper_hpp_
+#if (!defined(_MazeDataBlockSerializable_hpp_))
+#define _MazeDataBlockSerializable_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
+#include "maze-core/hash/MazeHashCRC.hpp"
+#include "maze-core/MazeStdTypes.hpp"
+#include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/MazeTypes.hpp"
-#include "maze-core/system/MazeWindowVideoMode.hpp"
-#include "maze-core/system/MazeDisplay.hpp"
-#include "maze-core/serialization/MazeXMLSerializable.hpp"
+#include "maze-core/utils/MazeClassInfo.hpp"
+#include "maze-core/helpers/MazeStringHelper.hpp"
+#include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/data/MazeDataBlock.hpp"
-#include <tinyxml2.h>
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    struct MAZE_CORE_API XMLToDataBlockConfig
+    // Class IDataBlockSerializable
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API IDataBlockSerializable
     {
-        Bool collapseRootBlock = false;
-        Bool lowerCaseBlockNameCapitalButton = false;
+    public:
+
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_ABSTRACT;
     };
 
+    //////////////////////////////////////////
+    MAZE_CORE_API void SerializeMetaInstanceToDataBlock(
+        MetaClass const* _metaClass,
+        ConstMetaInstance _metaInstance,
+        DataBlock& _dataBlock);
 
     //////////////////////////////////////////
-    namespace XMLHelper
-    {
-        //////////////////////////////////////////
-        MAZE_CORE_API bool SaveXMLFile(Path const& _fileFullPath, tinyxml2::XMLNode* _rootNode);
-
-        //////////////////////////////////////////
-        MAZE_CORE_API bool SaveXMLFile(Path const& _fileFullPath, IXMLElementSerializable* _serializable);
-
-        //////////////////////////////////////////
-        MAZE_CORE_API tinyxml2::XMLError LoadXMLFile(Path const& _fileFullPath, tinyxml2::XMLDocument& _doc);
-
-        //////////////////////////////////////////
-        MAZE_CORE_API tinyxml2::XMLError SaveXMLFile(Path const& _fileFullPath, tinyxml2::XMLDocument& _doc);
-
-
-
-
-        //////////////////////////////////////////
-        MAZE_CORE_API bool ConvertXMLDocumentToDataBlock(
-            tinyxml2::XMLDocument const* _doc,
-            DataBlock& _dataBlock,
-            XMLToDataBlockConfig const& _config = XMLToDataBlockConfig());
-
-        //////////////////////////////////////////
-        MAZE_CORE_API bool ConvertXMLElementToDataBlock(
-            tinyxml2::XMLElement const* _element,
-            DataBlock& _dataBlock,
-            XMLToDataBlockConfig const& _config = XMLToDataBlockConfig());
-
-    } // namespace XMLHelper
-    //////////////////////////////////////////
-    
+    MAZE_CORE_API void DeserializeMetaInstanceFromDataBlock(
+        MetaClass const* _metaClass,
+        MetaInstance _metaInstance,
+        DataBlock const& _dataBlock);
     
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeXMLHelper_hpp_
 //////////////////////////////////////////
+#endif // _MazeDataBlockSerializable_hpp_

@@ -1,9 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Shader>
-    <Feature name="MAZE_COLOR_STREAM" />
-    <Feature name="MAZE_UV0_STREAM" />
-    
-    <Uniform name="u_baseMapST" type="UniformVec4F32" value="1.0;1.0;0.0;0.0" />
-    
-    <GLSL shader="Particle00.mzglsl" />
-</Shader>
+feature
+{
+  name:String = "MAZE_COLOR_STREAM"
+}
+
+feature
+{
+  name:String = "MAZE_UV0_STREAM"
+}
+
+uniform
+{
+  name:String = "u_baseMapST"
+  type:String = "UniformVec4F32"
+  value:String = "1.0;1.0;0.0;0.0"
+}
+
+GLSL
+{
+  shader:String = "Particle00.mzglsl"
+}

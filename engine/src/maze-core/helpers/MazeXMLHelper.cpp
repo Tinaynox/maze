@@ -120,17 +120,41 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API bool ConvertXMLDocumentToDataBlock(tinyxml2::XMLDocument const* _doc, DataBlock& _dataBlock)
+        MAZE_CORE_API bool ConvertXMLDocumentToDataBlock(
+            tinyxml2::XMLDocument const* _doc,
+            DataBlock& _dataBlock,
+            XMLToDataBlockConfig const& _config)
         {
             _dataBlock.clear();
 
             tinyxml2::XMLNode const* subNode = _doc->FirstChild();
+
+            Size rootElementsCount = 0;
+            while (subNode)
+            {
+                if (subNode->ToElement())
+                    ++rootElementsCount;
+
+                subNode = subNode->NextSibling();
+            }
+            bool singleRootElement = (rootElementsCount == 1);
+
+            subNode = _doc->FirstChild();
             while (subNode)
             {
                 tinyxml2::XMLElement const* subElement = subNode->ToElement();
                 if (subElement)
                 {
-                    ConvertXMLElementToDataBlock(subElement, *_dataBlock.addNewDataBlock(subElement->Name()));
+                    Bool collapseRootBlock = (_config.collapseRootBlock && singleRootElement);
+
+                    String name = subElement->Name();
+                    if (_config.lowerCaseBlockNameCapitalButton)
+                        name[0] = tolower(name[0]);
+
+                    ConvertXMLElementToDataBlock(
+                        subElement,
+                        collapseRootBlock ? _dataBlock : *_dataBlock.addNewDataBlock(name.c_str()),
+                        _config);
                     break;
                 }
 
@@ -141,7 +165,10 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_CORE_API bool ConvertXMLElementToDataBlock(tinyxml2::XMLElement const* _element, DataBlock& _dataBlock)
+        MAZE_CORE_API bool ConvertXMLElementToDataBlock(
+            tinyxml2::XMLElement const* _element,
+            DataBlock& _dataBlock,
+            XMLToDataBlockConfig const& _config)
         {
             _dataBlock.clearData();
 
@@ -172,7 +199,11 @@ namespace Maze
                 tinyxml2::XMLElement const* subElement = subNode->ToElement();
                 if (subElement)
                 {
-                    if (!ConvertXMLElementToDataBlock(subElement, *_dataBlock.addNewDataBlock(subElement->Name())))
+                    String name = subElement->Name();
+                    if (_config.lowerCaseBlockNameCapitalButton)
+                        name[0] = tolower(name[0]);
+
+                    if (!ConvertXMLElementToDataBlock(subElement, *_dataBlock.addNewDataBlock(name.c_str())))
                         return false;
                 }
 

@@ -1,21 +1,107 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Shader>
-    <Uniform name="u_dudvMap" type="UniformTexture2D" value="WaterDUDV.png" />
-    <Uniform name="u_normalMap" type="UniformTexture2D" value="WaterNormal.png" />
-    <Uniform name="u_normalScale" type="UniformF32" value="1.0" />
-    <Uniform name="u_tiling" type="UniformF32" value="3.0" />
-    <Uniform name="u_waveStrength" type="UniformF32" value="0.02" />
-    <Uniform name="u_waveSpeed" type="UniformF32" value="0.015" />
-    <Uniform name="u_refractiveFactor" type="UniformF32" value="0.5" />
-    <Uniform name="u_color" type="UniformColorF128" value="0.2;0.3;0.4;0.2" />
-    <Uniform name="u_depthDistortionFactor" type="UniformF32" value="20.0" />
-    <Uniform name="u_depthSpecularFactor" type="UniformF32" value="2.5" />
-    <Uniform name="u_depthTransparencyFactor" type="UniformF32" value="2.5" />
-    <Uniform name="u_shininess" type="UniformF32" value="20.0" />    
-    <Uniform name="u_specularColor" type="UniformColorF128" value="0.5;0.5;0.5;1.0" />
-    <Uniform name="u_normalYFactor" type="UniformF32" value="6.0" />
-    
-    <Feature name="NORMAL_MAP" />
-    
-    <GLSL shader="Water00.mzglsl" />
-</Shader>
+uniform
+{
+  name:String = "u_dudvMap"
+  type:String = "UniformTexture2D"
+  value:String = "WaterDUDV.png"
+}
+
+uniform
+{
+  name:String = "u_normalMap"
+  type:String = "UniformTexture2D"
+  value:String = "WaterNormal.png"
+}
+
+uniform
+{
+  name:String = "u_normalScale"
+  type:String = "UniformF32"
+  value:String = "1.0"
+}
+
+uniform
+{
+  name:String = "u_tiling"
+  type:String = "UniformF32"
+  value:String = "3.0"
+}
+
+uniform
+{
+  name:String = "u_waveStrength"
+  type:String = "UniformF32"
+  value:String = "0.02"
+}
+
+uniform
+{
+  name:String = "u_waveSpeed"
+  type:String = "UniformF32"
+  value:String = "0.015"
+}
+
+uniform
+{
+  name:String = "u_refractiveFactor"
+  type:String = "UniformF32"
+  value:String = "0.5"
+}
+
+uniform
+{
+  name:String = "u_color"
+  type:String = "UniformColorF128"
+  value:String = "0.2;0.3;0.4;0.2"
+}
+
+uniform
+{
+  name:String = "u_depthDistortionFactor"
+  type:String = "UniformF32"
+  value:String = "20.0"
+}
+
+uniform
+{
+  name:String = "u_depthSpecularFactor"
+  type:String = "UniformF32"
+  value:String = "2.5"
+}
+
+uniform
+{
+  name:String = "u_depthTransparencyFactor"
+  type:String = "UniformF32"
+  value:String = "2.5"
+}
+
+uniform
+{
+  name:String = "u_shininess"
+  type:String = "UniformF32"
+  value:String = "20.0"
+}
+
+uniform
+{
+  name:String = "u_specularColor"
+  type:String = "UniformColorF128"
+  value:String = "0.5;0.5;0.5;1.0"
+}
+
+uniform
+{
+  name:String = "u_normalYFactor"
+  type:String = "UniformF32"
+  value:String = "6.0"
+}
+
+feature
+{
+  name:String = "NORMAL_MAP"
+}
+
+GLSL
+{
+  shader:String = "Water00.mzglsl"
+}

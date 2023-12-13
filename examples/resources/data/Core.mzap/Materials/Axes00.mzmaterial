@@ -1,13 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Material>
-    <RenderPass 
-        passType="Default"
-        renderQueueIndex="2000"
-        shader="UnlitColor00.mzshader"
-        blendOperation="Add"
-        blendSrcFactor="One"
-        blendDestFactor="Zero"
-        depthTestCompareFunction="LessEqual"
-        depthWriteEnabled="1"
-        cullMode="Back"/>
-</Material>
+renderPass
+{
+  passType:String = "Default"
+  renderQueueIndex:String = "2000"
+  shader:String = "UnlitColor00.mzshader"
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "One"
+  blendDestFactor:String = "Zero"
+  depthTestCompareFunction:String = "LessEqual"
+  depthWriteEnabled:String = "1"
+  cullMode:String = "Back"
+}

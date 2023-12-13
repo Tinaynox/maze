@@ -42,33 +42,58 @@ S32 main(S32 _argc, S8 const* _argv[])
 {
     MAZE_ERROR_RETURN_VALUE_IF(_argc < 2, 1, "Incorrect count of params");
 
-    Path srcPath = FileHelper::ConvertLocalPathToFullPath(_argv[1]);
-    Path destPath = _argc >= 3 ? FileHelper::ConvertLocalPathToFullPath(_argv[2]) : ".";
 
     LogService::GetInstancePtr()->setLogFile("maze-tool-mzdata-converter.log");
 
-    Debug::Log("srcData=%s", srcPath.toUTF8().c_str());
+    Path destPath = ".";
+   
+
+    Bool keepOriginExtension = false;
+
+    XMLToDataBlockConfig xmlConfig;
+    DataBlock config;
+    if (config.loadTextFile("maze-tool-mzdata-converter.mzdata"))
+    {
+        keepOriginExtension = config.getBool("keepOriginExtension", false);
+        destPath = config.getString("destPath", ".");
+
+        xmlConfig.collapseRootBlock = config["xml"].getBool("collapseRootBlock", false);
+        xmlConfig.lowerCaseBlockNameCapitalButton = config["xml"].getBool("lowerCaseBlockNameCapitalButton", false);
+    }
+
     Debug::Log("destFolder=%s", destPath.toUTF8().c_str());
 
-    if (FileHelper::IsDirectory(srcPath))
+    for (S32 i = 1; i < _argc; ++i)
     {
-        MAZE_ERROR_RETURN_VALUE(100, "%s is not a data file!", FileHelper::GetFileNameInPath(srcPath).toUTF8().c_str());
-    }
+        Path srcPath = FileHelper::ConvertLocalPathToFullPath(_argv[i]);
+        Debug::Log("srcData=%s", srcPath.toUTF8().c_str());
 
-    Timer timer;
-    U32 usStart = timer.getMicroseconds();
-    tinyxml2::XMLDocument doc;
-    if (XMLHelper::LoadXMLFile(srcPath, doc) == tinyxml2::XMLError::XML_SUCCESS)
-    {
-        DataBlock dataBlock;
-        XMLHelper::ConvertXMLDocumentToDataBlock(&doc, dataBlock);
-        dataBlock.saveTextFile(destPath + "/" + FileHelper::GetFileNameWithoutExtension(srcPath) + ".mzdata");
-        U32 usTime = timer.getMicroseconds() - usStart;
-        Debug::Log("XML data successfully converted for %.1fms", (F32)(usTime)/1000.0f);
-    }
-    else
-    {
-        MAZE_ERROR_RETURN_VALUE(200, "Unsupported data format - %s", FileHelper::GetFileNameInPath(srcPath).toUTF8().c_str());
+        if (FileHelper::IsDirectory(srcPath))
+        {
+            MAZE_ERROR_CONTINUE("%s is not a data file!", FileHelper::GetFileNameInPath(srcPath).toUTF8().c_str());
+        }
+
+        Timer timer;
+        U32 usStart = timer.getMicroseconds();
+        tinyxml2::XMLDocument doc;
+        if (XMLHelper::LoadXMLFile(srcPath, doc) == tinyxml2::XMLError::XML_SUCCESS)
+        {
+            Debug::Log("XML Data");
+            Debug::Log("collapseRootBlock=%d", (S32)xmlConfig.collapseRootBlock);
+            Debug::Log("lowerCaseBlockNameCapitalButton=%d", (S32)xmlConfig.lowerCaseBlockNameCapitalButton);
+
+            DataBlock dataBlock;
+            XMLHelper::ConvertXMLDocumentToDataBlock(&doc, dataBlock, xmlConfig);
+            dataBlock.saveTextFile(
+                destPath + "/" +
+                (keepOriginExtension ? FileHelper::GetFileNameInPath(srcPath) : (FileHelper::GetFileNameWithoutExtension(srcPath) + ".mzdata")));
+            U32 usTime = timer.getMicroseconds() - usStart;
+            Debug::Log("XML data successfully converted for %.1fms", (F32)(usTime) / 1000.0f);
+        }
+        else
+        {
+            MAZE_ERROR_CONTINUE("Unsupported data format for convert - %s", FileHelper::GetFileNameInPath(srcPath).toUTF8().c_str());
+        }
     }
 
     return 0;

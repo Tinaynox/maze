@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Shader>
-    <GLSL shader="SpriteOutline00.mzglsl" />
-</Shader>
+GLSL
+{
+  shader:String = "SpriteOutline00.mzglsl"
+}

@@ -47,6 +47,7 @@
 #include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
+#include "maze-core/serialization/MazeDataBlockSerializable.hpp"
 
 
 //////////////////////////////////////////
@@ -66,6 +67,7 @@ namespace Maze
     class MAZE_GRAPHICS_API Shader
         : public SharedObject<Shader>
         , public ISharedCopyable<Shader>
+        , public IDataBlockSerializable
     {
     public:
 
@@ -210,6 +212,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool loadFromSources(String const& _vertexShaderSource, String const& _fragmentShaderSource) MAZE_ABSTRACT;
 
+        //////////////////////////////////////////
+        bool loadFromXMLDocument(tinyxml2::XMLDocument& _doc);
+
 
         //////////////////////////////////////////
         ShaderUniformPtr const& getClipDistance0Uniform() const { return m_clipDistance0Uniform; }
@@ -279,10 +284,32 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
+
+    public:
+
+        //////////////////////////////////////////
         static void FromString(ShaderPtr& _value, CString _data, Size _count);
 
         //////////////////////////////////////////
         static void IterateShaders(std::function<bool(Shader*)> _cb);
+
+    protected:
+
+        //////////////////////////////////////////
+        // Struct ShaderXMLUniformData
+        //
+        //////////////////////////////////////////
+        struct ShaderXMLUniformData
+        {
+            HashedString name;
+            String type;
+            String value;
+        };
+
 
     protected:
 
@@ -310,10 +337,17 @@ namespace Maze
         //////////////////////////////////////////
         void setAssetFile(AssetFilePtr const& _assetFile) { m_assetFile = _assetFile; }
 
+        //////////////////////////////////////////
+        bool processLoadShader(
+            AssetFilePtr const& _shaderFile,
+            AssetFilePtr const& _vertexShaderFile,
+            AssetFilePtr const& _fragmentShaderFile,
+            Vector<ShaderXMLUniformData> const& _uniformsData);
+
     protected:
         String m_name;
 
-        AssetFilePtr m_assetFile;
+        AssetFilePtr m_assetFile; // #TODO: Remove
 
         UnorderedMap<U32, ShaderUniformPtr> m_uniformsCache;
 

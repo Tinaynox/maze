@@ -43,7 +43,7 @@ namespace Maze
     //////////////////////////////////////////
     #pragma warning(push)
     #pragma warning(disable:4307)
-    MAZE_CONSTEXPR U32 const c_mzDataBlockBinaryHeaderMagic = Hash::CalculateFNV1("MZDATA");
+    U32 const c_mzDataBlockBinaryHeaderMagic = Hash::CalculateFNV1("MZDATA");
     #pragma warning(pop)
 
 

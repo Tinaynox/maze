@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Shader>
-    <GLSL shader="MenuSky00.mzglsl" />
-</Shader>
+GLSL
+{
+  shader:String = "MenuSky00.mzglsl"
+}

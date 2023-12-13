@@ -50,7 +50,9 @@
 #include "maze-core/math/MazeMat3.hpp"
 #include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/serialization/MazeXMLSerializable.hpp"
-#include "maze-core/data//MazeHashedCString.hpp"
+#include "maze-core/serialization/MazeDataBlockSerializable.hpp"
+#include "maze-core/data/MazeHashedCString.hpp"
+#include "maze-core/data/MazeDataBlock.hpp"
 
 
 //////////////////////////////////////////
@@ -97,6 +99,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API ShaderUniformVariant
         : public IXMLElementSerializable
+        , public IDataBlockSerializable
     {
     public:
 
@@ -435,6 +438,14 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual tinyxml2::XMLElement* toXMLElement(tinyxml2::XMLDocument& _doc) const MAZE_OVERRIDE;
+
+    public:
+
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
 
     protected:
 

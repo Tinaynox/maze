@@ -1,14 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Material>
-    <ShaderUniformVariant name="u_color" type="UniformVec4F32" value="1.0;1.0;1.0;1.0" />
-    <RenderPass 
-        passType="Default"
-        renderQueueIndex="3000"
-        shader="Simple00.mzshader"
-        blendOperation="Add"
-        blendSrcFactor="One"
-        blendDestFactor="One"
-        depthTestCompareFunction="Always"
-        depthWriteEnabled="0"
-        cullMode="Off"/>
-</Material>
+shaderUniformVariant
+{
+  name:String = "u_color"
+  type:String = "UniformVec4F32"
+  value:String = "1.0;1.0;1.0;1.0"
+}
+
+renderPass
+{
+  passType:String = "Default"
+  renderQueueIndex:String = "3000"
+  shader:String = "Simple00.mzshader"
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "One"
+  blendDestFactor:String = "One"
+  depthTestCompareFunction:String = "Always"
+  depthWriteEnabled:String = "0"
+  cullMode:String = "Off"
+}
