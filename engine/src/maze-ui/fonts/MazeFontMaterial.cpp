@@ -109,15 +109,35 @@ namespace Maze
 
         setName(_assetFile->getFileName());
 
-        tinyxml2::XMLDocument doc;
-        if (!_assetFile->readToXMLDocument(doc))
-            return false;
+        ByteBufferPtr assetFileHeader = _assetFile->readHeaderAsByteBuffer(6);
+        assetFileHeader->setByte(5, 0);
 
-        tinyxml2::XMLNode* rootNode = doc.FirstChild();
-        MAZE_ERROR_RETURN_VALUE_IF(!rootNode, false, "File '%s' loading error - empty root node!", _assetFile->getFileName().toUTF8().c_str());
+        if (strstr((CString)assetFileHeader->getData(), "xml") != nullptr)
+        {
+            Debug::LogWarning("Obsolete Font Material format - %s", _assetFile->getFileName().toUTF8().c_str());
+            tinyxml2::XMLDocument doc;
+            _assetFile->readToXMLDocument(doc);
+            loadFromXMLDocument(doc);
+        }
+        else
+        {
+            DataBlock dataBlock;
+            ByteBufferPtr byteBuffer = _assetFile->readAsByteBuffer();
+            dataBlock.loadFromByteBuffer(*byteBuffer.get());
+            loadFromDataBlock(dataBlock);
+        }
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool FontMaterial::loadFromXMLDocument(tinyxml2::XMLDocument& _doc)
+    {
+        tinyxml2::XMLNode* rootNode = _doc.FirstChild();
+        MAZE_ERROR_RETURN_VALUE_IF(!rootNode, false, "File '%s' loading error - empty root node!", m_name.c_str());
 
         rootNode = rootNode->NextSibling();
-        MAZE_ERROR_RETURN_VALUE_IF(!rootNode, false, "File '%s' loading error - empty root node children!", _assetFile->getFileName().toUTF8().c_str());
+        MAZE_ERROR_RETURN_VALUE_IF(!rootNode, false, "File '%s' loading error - empty root node children!", m_name.c_str());
 
         tinyxml2::XMLElement* element = rootNode->ToElement();
         if (!element)
@@ -130,6 +150,24 @@ namespace Maze
         setAssetMaterial(assetMaterial ? MaterialManager::GetCurrentInstance()->getMaterial(assetMaterial) : MaterialPtr());
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    bool FontMaterial::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        CString font = _dataBlock.getCString("font");
+        CString assetMaterial = _dataBlock.getCString("assetMaterial");
+
+        setFont(font ? FontManager::GetInstancePtr()->getFont(font) : FontPtr());
+        setAssetMaterial(assetMaterial ? MaterialManager::GetCurrentInstance()->getMaterial(assetMaterial) : MaterialPtr());
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void FontMaterial::toDataBlock(DataBlock& _dataBlock) const
+    {
+        MAZE_TODO;
     }
 
     //////////////////////////////////////////

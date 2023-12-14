@@ -35,6 +35,9 @@
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/data/MazeByteBuffer.hpp"
 #include "maze-ui/fonts/MazeFontGlyph.hpp"
+#include "maze-core/serialization/MazeXMLSerializable.hpp"
+#include "maze-core/serialization/MazeDataBlockSerializable.hpp"
+#include "maze-core/data/MazeDataBlock.hpp"
 
 
 //////////////////////////////////////////
@@ -75,6 +78,7 @@ namespace Maze
     class MAZE_UI_API FontMaterial
         : public SharedObject<FontMaterial>
         , public MultiDelegateCallbackReceiver
+        , public IDataBlockSerializable
     {
     public:
 
@@ -119,9 +123,20 @@ namespace Maze
         virtual bool loadFromAssetFile(
             AssetFilePtr const& _assetFile);
 
+        //////////////////////////////////////////
+        bool loadFromXMLDocument(tinyxml2::XMLDocument& _doc);
+
 
         //////////////////////////////////////////
         S32 getTextureIndex(U32 _fontSize, Texture2D* _texture);
+
+    public:
+
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
 
     public:
 

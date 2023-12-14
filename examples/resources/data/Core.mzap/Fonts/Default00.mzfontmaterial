@@ -1,2 +1,2 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<FontMaterial font="Default00.mzfont" assetMaterial="Font" />
+font:String = "Default00.mzfont"
+assetMaterial:String = "Font"

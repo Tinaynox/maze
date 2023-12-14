@@ -43,6 +43,7 @@
 #include "maze-core/math/MazeMat3.hpp"
 #include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/serialization/MazeXMLSerializable.hpp"
+#include "maze-core/serialization/MazeDataBlockSerializable.hpp"
 #include "maze-core/utils/MazeSharedCopyable.hpp"
 #include "maze-core/MazeObject.hpp"
 #include "maze-core/data/MazeDataBlock.hpp"

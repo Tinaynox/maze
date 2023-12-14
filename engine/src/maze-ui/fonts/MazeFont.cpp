@@ -89,17 +89,36 @@ namespace Maze
 
         setName(_assetFile->getFileName());
 
-        tinyxml2::XMLDocument doc;
-        if (!_assetFile->readToXMLDocument(doc))
-            return false;
+        ByteBufferPtr assetFileHeader = _assetFile->readHeaderAsByteBuffer(6);
+        assetFileHeader->setByte(5, 0);
+
+        if (strstr((CString)assetFileHeader->getData(), "xml") != nullptr)
+        {
+            Debug::LogWarning("Obsolete Material format - %s", _assetFile->getFileName().toUTF8().c_str());
+            tinyxml2::XMLDocument doc;
+            _assetFile->readToXMLDocument(doc);
+            loadFromXMLDocument(doc);
+        }
+        else
+        {
+            DataBlock dataBlock;
+            ByteBufferPtr byteBuffer = _assetFile->readAsByteBuffer();
+            dataBlock.loadFromByteBuffer(*byteBuffer.get());
+            loadFromDataBlock(dataBlock);
+        }
+        
+    }
+
+    //////////////////////////////////////////
+    bool Font::loadFromXMLDocument(tinyxml2::XMLDocument& _doc)
+    {
+        tinyxml2::XMLNode* rootNode = _doc.FirstChild();
+        MAZE_ERROR_RETURN_VALUE_IF(!rootNode, false, "File '%s' loading error - empty root node!", m_name.c_str());
+
+        rootNode = rootNode->NextSibling();
+        MAZE_ERROR_RETURN_VALUE_IF(!rootNode, false, "File '%s' loading error - empty root node children!", m_name.c_str());
 
         unsubscribeGlyphsData();
-
-        tinyxml2::XMLNode* rootNode = doc.FirstChild();
-        MAZE_ERROR_RETURN_VALUE_IF(!rootNode, false, "File '%s' loading error - empty root node!", _assetFile->getFileName().toUTF8().c_str());
-        
-        rootNode = rootNode->NextSibling();
-        MAZE_ERROR_RETURN_VALUE_IF(!rootNode, false, "File '%s' loading error - empty root node children!", _assetFile->getFileName().toUTF8().c_str());
 
         m_glyphsData.clear();
         m_glyphsMap.clear();
@@ -236,13 +255,148 @@ namespace Maze
                 }
             }
 
-
             childNode = childNode->NextSibling();
         }
 
         subscribeGlyphsData();
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    bool Font::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        unsubscribeGlyphsData();
+
+        m_glyphsData.clear();
+        m_glyphsMap.clear();
+
+        for (DataBlock::DataBlockIndex i = 0; i < _dataBlock.getDataBlocksCount(); ++i)
+        {
+            DataBlock const* subBlock = _dataBlock.getDataBlock(i);
+            if (subBlock->getName() == MAZE_HASHED_CSTRING("main"))
+            {
+                CString fileStr = subBlock->getCString("file");
+                if (fileStr)
+                {
+                    m_defaultGlyphsData.type = FontGlyphStorageType::TrueTypeFont;
+                    m_defaultGlyphsData.setTrueTypeFont(TrueTypeFontManager::GetInstancePtr()->getTrueTypeFont(fileStr));
+                }
+            }
+            else
+            if (subBlock->getName() == MAZE_HASHED_CSTRING("trueType"))
+            {
+                CString fileStr = subBlock->getCString("file");
+                if (fileStr)
+                {
+                    const TrueTypeFontPtr& trueTypeFont = TrueTypeFontManager::GetInstancePtr()->getTrueTypeFont(fileStr);
+                    if (trueTypeFont)
+                    {
+                        for (DataBlock::DataBlockIndex j = 0; j < subBlock->getDataBlocksCount(); ++j)
+                        {
+                            DataBlock const* symbolsBlock = subBlock->getDataBlock(j);
+
+                            CString fromStr = symbolsBlock->getCString("from");
+                            CString toStr = symbolsBlock->getCString("to");
+                            if (fromStr && toStr)
+                            {
+                                U32 from = 0;
+                                U32 to = 0;
+                                {
+                                    StringStream ss;
+                                    ss << std::hex << fromStr;
+                                    ss >> from;
+                                }
+                                {
+                                    StringStream ss;
+                                    ss << std::hex << toStr;
+                                    ss >> to;
+                                }
+
+                                FontGlyphStorageData glyphsData;
+                                glyphsData.fromCodePoints = from;
+                                glyphsData.toCodePoints = to;
+                                glyphsData.type = FontGlyphStorageType::TrueTypeFont;
+                                glyphsData.setTrueTypeFont(trueTypeFont);
+                                m_glyphsData.push_back(glyphsData);
+                                m_glyphsMap.clear();
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            if (subBlock->getName() == MAZE_HASHED_CSTRING("sprite"))
+            {
+                CString symbolStr = subBlock->getCString("symbol");
+                CString spriteStr = subBlock->getCString("sprite");
+
+                if (symbolStr && spriteStr)
+                {
+                    SpritePtr const& sprite = SpriteManager::GetCurrentInstance()->getSprite(spriteStr);
+                    if (sprite)
+                    {
+                        U32 symbol = 0;
+                        StringStream ss;
+                        ss << std::hex << symbolStr;
+                        ss >> symbol;
+
+                        FontGlyphStorageData glyphsData;
+                        glyphsData.fromCodePoints = symbol;
+                        glyphsData.toCodePoints = symbol;
+                        glyphsData.type = FontGlyphStorageType::Sprite;
+                        glyphsData.spriteData.spriteGlyphFontSize = StringHelper::StringToU32(subBlock->getCString("fontSize"));
+                        glyphsData.spriteData.spriteGlyph.advance = StringHelper::StringToF32(subBlock->getCString("advance"));
+
+                        glyphsData.spriteData.spriteGlyph.bounds.position = sprite->getColorOffset() + Vec2F::FromString(subBlock->getCString("boundsPosition"));
+                        glyphsData.spriteData.spriteGlyph.bounds.size = sprite->getColorSize();
+                        glyphsData.spriteData.spriteGlyph.texture = sprite->getTexture();
+
+                        glyphsData.spriteData.spriteGlyph.textureCoords.position = sprite->getTextureCoordLB();
+                        glyphsData.spriteData.spriteGlyph.textureCoords.size = sprite->getTextureCoordSize();
+                        m_glyphsData.push_back(glyphsData);
+                        m_glyphsMap.clear();
+                    }
+                }
+            }
+            else
+            if (subBlock->getName() == MAZE_HASHED_CSTRING("entity"))
+            {
+                CString symbolStr = subBlock->getCString("symbol");
+                CString prefabStr = subBlock->getCString("prefab");
+
+                if (symbolStr && prefabStr)
+                {
+                    U32 symbol = 0;
+                    StringStream ss;
+                    ss << std::hex << symbolStr;
+                    ss >> symbol;
+
+                    FontGlyphStorageData glyphsData;
+                    glyphsData.fromCodePoints = symbol;
+                    glyphsData.toCodePoints = symbol;
+                    glyphsData.type = FontGlyphStorageType::Entity;
+                    glyphsData.entityData.prefabName = prefabStr;
+                    glyphsData.entityData.prefab = nullptr; // prefabStr
+                    glyphsData.entityData.prefabGlyphFontSize = StringHelper::StringToU32(subBlock->getCString("fontSize"));
+                    glyphsData.entityData.prefabGlyph.advance = StringHelper::StringToF32(subBlock->getCString("advance"));
+                    glyphsData.entityData.prefabGlyph.bounds.position = Vec2F::FromString(subBlock->getCString("boundsPosition"));
+                    glyphsData.entityData.prefabGlyph.bounds.size = Vec2F::FromString(subBlock->getCString("boundsSize"));
+                    m_glyphsData.push_back(glyphsData);
+                    m_glyphsMap.clear();
+                }
+            }
+        }
+
+        subscribeGlyphsData();
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void Font::toDataBlock(DataBlock& _dataBlock) const
+    {
+        MAZE_TODO;
     }
 
     //////////////////////////////////////////
