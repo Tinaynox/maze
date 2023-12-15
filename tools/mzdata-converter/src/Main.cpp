@@ -43,7 +43,7 @@ S32 main(S32 _argc, S8 const* _argv[])
     MAZE_ERROR_RETURN_VALUE_IF(_argc < 2, 1, "Incorrect count of params");
 
 
-    LogService::GetInstancePtr()->setLogFile("maze-tool-mzdata-converter.log");
+    LogService::GetInstancePtr()->setLogFile(FileHelper::GetBinaryDirectory() + "/maze-tool-mzdata-converter.log");
 
     Path destPath = ".";
    
@@ -52,7 +52,7 @@ S32 main(S32 _argc, S8 const* _argv[])
 
     XMLToDataBlockConfig xmlConfig;
     DataBlock config;
-    if (config.loadTextFile("maze-tool-mzdata-converter.mzdata"))
+    if (config.loadTextFile(FileHelper::GetBinaryDirectory() + "/maze-tool-mzdata-converter.mzdata"))
     {
         keepOriginExtension = config.getBool("keepOriginExtension", false);
         destPath = config.getString("destPath", ".");
