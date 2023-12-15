@@ -188,7 +188,9 @@ namespace Maze
                 tinyxml2::XMLComment const* subComment = subNode->ToComment();
                 if (subComment)
                 {
-                    HashedCString const commentKey = MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_CPP);
+                    bool isMultiline = strchr(subComment->Value(), '\n') != nullptr;
+                    HashedCString const commentKey = isMultiline ? MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_C)
+                                                                 : MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_CPP);
                     _dataBlock.addNewDataBlock(commentKey)->addCString(
                         commentKey,
                         subComment->Value());
@@ -203,7 +205,10 @@ namespace Maze
                     if (_config.lowerCaseBlockNameCapitalButton)
                         name[0] = tolower(name[0]);
 
-                    if (!ConvertXMLElementToDataBlock(subElement, *_dataBlock.addNewDataBlock(name.c_str())))
+                    if (!ConvertXMLElementToDataBlock(
+                        subElement,
+                        *_dataBlock.addNewDataBlock(name.c_str()),
+                        _config))
                         return false;
                 }
 
