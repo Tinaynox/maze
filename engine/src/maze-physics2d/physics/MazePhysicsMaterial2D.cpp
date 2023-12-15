@@ -128,39 +128,72 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PhysicsMaterial2D::loadFromXMLDocument(tinyxml2::XMLDocument& _doc)
+    bool PhysicsMaterial2D::loadFromXMLDocument(tinyxml2::XMLDocument& _doc)
     {
         tinyxml2::XMLNode* rootNode = _doc.FirstChild();
 
-        MAZE_ERROR_RETURN_IF(!rootNode, "File loading error - empty root node!");
+        MAZE_ERROR_RETURN_VALUE_IF(!rootNode, false, "File loading error - empty root node!");
 
         rootNode = rootNode->NextSibling();
-        MAZE_ERROR_RETURN_IF(!rootNode, "File loading error - empty root node children!");
+        MAZE_ERROR_RETURN_VALUE_IF(!rootNode, false, "File loading error - empty root node children!");
 
         tinyxml2::XMLElement const* rootElement = rootNode->ToElement();
-        MAZE_ERROR_RETURN_IF(!rootElement, "File loading error - root node is not XML element!");
+        MAZE_ERROR_RETURN_VALUE_IF(!rootElement, false, "File loading error - root node is not XML element!");
 
         loadFromXMLElement(rootElement);
+        return true;
     }
 
     //////////////////////////////////////////
-    void PhysicsMaterial2D::loadFromAssetFile(AssetFilePtr const& _assetFile)
+    bool PhysicsMaterial2D::loadFromAssetFile(AssetFilePtr const& _assetFile)
     {
         MAZE_PROFILE_EVENT("PhysicsMaterial2D::loadFromAssetFile");
 
         tinyxml2::XMLDocument doc;
         MAZE_LOG("Loading PhysicsMaterial2D: %s...", _assetFile->getFileName().toUTF8().c_str());
-        _assetFile->readToXMLDocument(doc);
-        loadFromXMLDocument(doc);
+
+        ByteBufferPtr assetFileHeader = _assetFile->readHeaderAsByteBuffer(6);
+        assetFileHeader->setByte(5, 0);
+
+        if (strstr((CString)assetFileHeader->getData(), "xml") != nullptr)
+        {
+            Debug::LogWarning("Obsolete Material format - %s", _assetFile->getFileName().toUTF8().c_str());
+            tinyxml2::XMLDocument doc;
+            _assetFile->readToXMLDocument(doc);
+            return loadFromXMLDocument(doc);
+        }
+        else
+        {
+            DataBlock dataBlock;
+            ByteBufferPtr byteBuffer = _assetFile->readAsByteBuffer();
+            dataBlock.loadFromByteBuffer(*byteBuffer.get());
+            return loadFromDataBlock(dataBlock);
+        }
+
+        //_assetFile->readToXMLDocument(doc);
+        //loadFromXMLDocument(doc);
     }
 
     //////////////////////////////////////////
-    void PhysicsMaterial2D::loadFromAssetFile(String const& _assetFileName)
+    bool PhysicsMaterial2D::loadFromAssetFile(String const& _assetFileName)
     {
         MAZE_PROFILE_EVENT("PhysicsMaterial2D::loadFromAssetFile");
 
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_assetFileName);
-        loadFromAssetFile(assetFile);
+        return loadFromAssetFile(assetFile);
+    }
+
+    //////////////////////////////////////////
+    bool PhysicsMaterial2D::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void PhysicsMaterial2D::toDataBlock(DataBlock& _dataBlock) const
+    {
+        SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
     }
 
     //////////////////////////////////////////

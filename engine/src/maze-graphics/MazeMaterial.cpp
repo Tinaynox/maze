@@ -264,21 +264,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Material::loadFromXMLDocument(tinyxml2::XMLDocument& _doc)
+    bool Material::loadFromXMLDocument(tinyxml2::XMLDocument& _doc)
     {
         MAZE_PROFILE_EVENT("Material::loadFromXMLDocument");
 
         tinyxml2::XMLNode* rootNode = _doc.FirstChild();
 
-        MAZE_ERROR_RETURN_IF(!rootNode, "File loading error - empty root node!");
+        MAZE_ERROR_RETURN_VALUE_IF(!rootNode, false, "File loading error - empty root node!");
 
         rootNode = rootNode->NextSibling();
-        MAZE_ERROR_RETURN_IF(!rootNode, "File loading error - empty root node children!");
+        MAZE_ERROR_RETURN_VALUE_IF(!rootNode, false, "File loading error - empty root node children!");
 
         tinyxml2::XMLElement const* rootElement = rootNode->ToElement();
-        MAZE_ERROR_RETURN_IF(!rootElement, "File loading error - root node is not XML element!");
+        MAZE_ERROR_RETURN_VALUE_IF(!rootElement, false, "File loading error - root node is not XML element!");
 
         loadFromXMLElement(rootElement);
+        return true;
     }
 
     //////////////////////////////////////////
@@ -298,17 +299,15 @@ namespace Maze
             Debug::LogWarning("Obsolete Material format - %s", _assetFile->getFileName().toUTF8().c_str());
             tinyxml2::XMLDocument doc;
             _assetFile->readToXMLDocument(doc);
-            loadFromXMLDocument(doc);
+            return loadFromXMLDocument(doc);
         }
         else
         {
             DataBlock dataBlock;
             ByteBufferPtr byteBuffer = _assetFile->readAsByteBuffer();
             dataBlock.loadFromByteBuffer(*byteBuffer.get());
-            loadFromDataBlock(dataBlock);
+            return loadFromDataBlock(dataBlock);
         }
-
-        return true;
     }
 
     //////////////////////////////////////////

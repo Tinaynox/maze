@@ -37,6 +37,8 @@
 #include "maze-core/serialization/MazeXMLSerializable.hpp"
 #include "maze-core/utils/MazeSharedCopyable.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
+#include "maze-core/serialization/MazeDataBlockSerializable.hpp"
+#include "maze-core/data/MazeDataBlock.hpp"
 #include <box2d/box2d.h>
 
 
@@ -55,6 +57,7 @@ namespace Maze
     class MAZE_PHYSICS2D_API PhysicsMaterial2D
         : public SharedObject<PhysicsMaterial2D>
         , public IXMLElementSerializable
+        , public IDataBlockSerializable
         , public MultiDelegateCallbackReceiver
         , public ISharedCopyable<PhysicsMaterial2D>
     {
@@ -92,13 +95,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void loadFromXMLDocument(tinyxml2::XMLDocument& _doc);
+        bool loadFromXMLDocument(tinyxml2::XMLDocument& _doc);
 
         //////////////////////////////////////////
-        void loadFromAssetFile(AssetFilePtr const& _assetFile);
+        bool loadFromAssetFile(AssetFilePtr const& _assetFile);
 
         //////////////////////////////////////////
-        void loadFromAssetFile(String const& _assetFileName);
+        bool loadFromAssetFile(String const& _assetFileName);
 
 
         //////////////////////////////////////////
@@ -120,6 +123,14 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void setRestitution(F32 _restitution) { m_restitution = _restitution; }
+
+    public:
+
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
 
     public:
 

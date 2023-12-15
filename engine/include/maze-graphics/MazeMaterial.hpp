@@ -133,7 +133,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void loadFromXMLDocument(tinyxml2::XMLDocument& _doc);
+        bool loadFromXMLDocument(tinyxml2::XMLDocument& _doc);
 
         //////////////////////////////////////////
         bool loadFromAssetFile(AssetFilePtr const& _assetFile);

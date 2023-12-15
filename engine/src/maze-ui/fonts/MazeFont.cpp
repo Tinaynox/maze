@@ -97,14 +97,14 @@ namespace Maze
             Debug::LogWarning("Obsolete Material format - %s", _assetFile->getFileName().toUTF8().c_str());
             tinyxml2::XMLDocument doc;
             _assetFile->readToXMLDocument(doc);
-            loadFromXMLDocument(doc);
+            return loadFromXMLDocument(doc);
         }
         else
         {
             DataBlock dataBlock;
             ByteBufferPtr byteBuffer = _assetFile->readAsByteBuffer();
             dataBlock.loadFromByteBuffer(*byteBuffer.get());
-            loadFromDataBlock(dataBlock);
+            return loadFromDataBlock(dataBlock);
         }
         
     }
