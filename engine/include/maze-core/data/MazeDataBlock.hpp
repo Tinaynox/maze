@@ -252,6 +252,51 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        template <typename TValue = DataBlock>
+        class iterator_base
+        {
+        public:
+
+            //////////////////////////////////////////
+            inline iterator_base(TValue* _dataBlock, DataBlock::DataBlockIndex _index)
+                : m_dataBlock(_dataBlock)
+                , m_index(_index)
+            {}
+
+            //////////////////////////////////////////
+            inline TValue* operator*() { return m_dataBlock->getDataBlock(m_index); }
+
+            //////////////////////////////////////////
+            inline iterator_base& operator++() { ++m_index; return *this; }
+
+            //////////////////////////////////////////
+            inline bool operator!=(iterator_base const& _other) const { return m_index != _other.m_index; }
+
+        private:
+            TValue* m_dataBlock = nullptr;
+            DataBlock::DataBlockIndex m_index = 0;
+        };
+
+        //////////////////////////////////////////
+        using iterator = iterator_base<DataBlock>;
+        using const_iterator = iterator_base<DataBlock const>;
+
+
+        //////////////////////////////////////////
+        inline iterator begin() { return iterator(this, 0); }
+
+        //////////////////////////////////////////
+        inline iterator end() { return iterator(this, static_cast<DataBlockIndex>(m_dataBlocksCount)); }
+
+        //////////////////////////////////////////
+        inline const_iterator begin() const { return const_iterator(this, 0); }
+
+        //////////////////////////////////////////
+        inline const_iterator end() const { return const_iterator(this, static_cast<DataBlockIndex>(m_dataBlocksCount)); }
+
+    public:
+
+        //////////////////////////////////////////
         static DataBlock* Create();
 
         //////////////////////////////////////////
