@@ -39,6 +39,7 @@
 #include "maze-core/helpers/MazeLogHelper.hpp"
 #include "maze-core/serialization/MazeValueSerialization.hpp"
 #include "maze-core/helpers/MazeStdHelper.hpp"
+#include "maze-core/data/MazeHashedCString.hpp"
 #include <algorithm>
 #include <type_traits>
 
@@ -102,7 +103,7 @@ namespace Maze
         MetaProperty(CString _name);
 
         //////////////////////////////////////////
-        inline CString getName() const { return m_name; }
+        inline HashedCString getName() const { return m_name; }
 
         //////////////////////////////////////////
         virtual ClassUID getValueClassUID() const MAZE_ABSTRACT;
@@ -200,7 +201,7 @@ namespace Maze
         virtual void deserializeFrom(MetaInstance const& _instance, U8 const* _data) MAZE_ABSTRACT;
 
     private:
-        CString m_name;
+        HashedCString m_name;
     };
 
 
@@ -277,7 +278,7 @@ namespace Maze
         virtual ClassUID getClassUID() const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        inline CString getName() const { return m_name; }
+        inline HashedCString getName() const { return m_name; }
 
         //////////////////////////////////////////
         inline Vector<SuperMetaClassData> const& getSuperMetaClassesData() const { return m_superMetaClassesData; }
@@ -405,7 +406,7 @@ namespace Maze
         static Map<ClassUID, MetaClass*> s_metaClassByUID;
 
     private:
-        CString m_name;
+        HashedCString m_name;
         Vector<SuperMetaClassData> m_superMetaClassesData;
         MetaProperty** m_properties;
         S32 m_propertiesCount;

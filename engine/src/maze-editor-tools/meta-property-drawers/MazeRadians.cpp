@@ -85,7 +85,7 @@ namespace Maze
         if (!MetaPropertyDrawer::init(_metaProperty))
             return false;
 
-        m_drawer = PropertyDrawerRadians::Create(_metaProperty->getName());
+        m_drawer = PropertyDrawerRadians::Create(static_cast<CString>(_metaProperty->getName()));
         m_drawer->eventUIData.subscribe(this, &MetaPropertyDrawerRadians::processDataFromUI);
 
         return true;

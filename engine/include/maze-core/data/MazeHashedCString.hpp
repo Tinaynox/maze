@@ -33,11 +33,8 @@
 // Include
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
+#include "maze-core/MazeTypes.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_CPlusPlus.hpp"
-#include "maze-core/helpers/MazeLogHelper.hpp"
-#include "maze-core/serialization/MazeBinarySerializable.hpp"
-#include "maze-core/serialization/MazeStringSerializable.hpp"
-#include "maze-core/utils/MazeSharedCopyable.hpp"
 #include "maze-core/hash/MazeHashFNV1.hpp"
 #include <cstring>
 
@@ -97,15 +94,35 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline bool operator==(String const& _value) const { return _value == str; }
+
+        //////////////////////////////////////////
+        inline bool operator!=(String const& _value) const { return _value != str; }
+
+        //////////////////////////////////////////
+        friend inline bool operator==(String const& _value0, HashedCString const& _value1) noexcept;
+
+        //////////////////////////////////////////
+        friend inline bool operator!=(String const& _value0, HashedCString const& _value1) noexcept;
+
+        //////////////////////////////////////////
         inline bool empty() const
         {
             return (str == nullptr || strcmp(str, "") == 0);
         }
 
+        //////////////////////////////////////////
+        inline operator CString() const { return str; }
+
         template <U32 THashValue>
         struct HashCalculator { static MAZE_CONSTEXPR U32 const hash = THashValue; };
     };
 
+    //////////////////////////////////////////
+    inline bool operator==(String const& _value0, HashedCString const& _value1) noexcept { return _value0 == _value1.str; }
+
+    //////////////////////////////////////////
+    inline bool operator!=(String const& _value0, HashedCString const& _value1) noexcept { return _value0 != _value1.str; }
 
     //////////////////////////////////////////
     inline std::ostream& operator<<(std::ostream& _o, HashedCString const& _v)
@@ -132,6 +149,9 @@ namespace Maze
                                               Maze::HashedCString::HashCalculator<Maze::Hash::CalculateFNV1(DText)>::hash   \
                                               MAZE_PRAGMA(warning(pop))                                                     \
                                           }
+
+    //////////////////////////////////////////
+    #define MAZE_HS(DText) MAZE_HASHED_CSTRING(DText)
 
 
     //////////////////////////////////////////
@@ -167,10 +187,27 @@ namespace Maze
             return !this->operator==(_value);
         }
 
+        //////////////////////////////////////////
+        inline bool operator==(WString const& _value) const { return _value == str; }
+
+        //////////////////////////////////////////
+        inline bool operator!=(WString const& _value) const { return _value != str; }
+
+        //////////////////////////////////////////
+        friend inline bool operator==(WString const& _value0, HashedCWString const& _value1) noexcept;
+
+        //////////////////////////////////////////
+        friend inline bool operator!=(WString const& _value0, HashedCWString const& _value1) noexcept;
+
         template <U32 THashValue>
         struct HashCalculator { static MAZE_CONSTEXPR U32 const hash = THashValue; };
     };
 
+    //////////////////////////////////////////
+    inline bool operator==(WString const& _value0, HashedCWString const& _value1) noexcept { return _value0 == _value1.str; }
+
+    //////////////////////////////////////////
+    inline bool operator!=(WString const& _value0, HashedCWString const& _value1) noexcept { return _value0 != _value1.str; }
 
     //////////////////////////////////////////
     inline std::wostream& operator<<(std::wostream& _o, HashedCWString const& _v)

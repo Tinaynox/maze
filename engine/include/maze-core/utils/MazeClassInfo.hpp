@@ -34,6 +34,7 @@
 #include "maze-core/hash/MazeHashCRC.hpp"
 #include "maze-core/MazeStdTypes.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
+#include "maze-core/data/MazeHashedCString.hpp"
 #include <cstring>
 
 
@@ -138,17 +139,19 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        static inline CString QualifiedName()
+        static inline HashedCString QualifiedName()
         {
-            static StdString value = ClassInfoParser::QualifiedName(MAZE_PRETTY_FUNCTION);
-            return value.c_str();
+            static StdString str = ClassInfoParser::QualifiedName(MAZE_PRETTY_FUNCTION);
+            static HashedCString value = HashedCString(str.c_str());
+            return value;
         }
 
         //////////////////////////////////////////
-        static inline CString Name()
+        static inline HashedCString Name()
         {
-            static StdString value = ClassInfoParser::Name(MAZE_PRETTY_FUNCTION);
-            return value.c_str();
+            static StdString str = ClassInfoParser::Name(MAZE_PRETTY_FUNCTION);
+            static HashedCString value = HashedCString(str.c_str());
+            return value;
         }
 
         //////////////////////////////////////////

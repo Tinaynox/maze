@@ -86,7 +86,7 @@ namespace Maze
         if (!MetaPropertyDrawer::init(_metaProperty))
             return false;
 
-        m_drawer = PropertyDrawerFOV::Create(_metaProperty->getName());
+        m_drawer = PropertyDrawerFOV::Create(static_cast<CString>(_metaProperty->getName()));
         m_drawer->eventUIData.subscribe(this, &MetaPropertyDrawerFOV::processDataFromUI);
 
         return true;

@@ -241,6 +241,12 @@ namespace Maze
         //////////////////////////////////////////
         inline TValue* insert(CString _key, TValue const& _value) { return insert(HashedString(_key), _value); }
 
+        //////////////////////////////////////////
+        inline TValue* insert(HashedCString _key, TValue&& _value) { return insert(HashedString(_key), std::move(_value)); }
+
+        //////////////////////////////////////////
+        inline TValue* insert(HashedCString _key, TValue const& _value) { return insert(HashedString(_key), _value); }
+
 
         //////////////////////////////////////////
         template <typename UValue>

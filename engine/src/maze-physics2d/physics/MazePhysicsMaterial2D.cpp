@@ -157,7 +157,7 @@ namespace Maze
 
         if (strstr((CString)assetFileHeader->getData(), "xml") != nullptr)
         {
-            Debug::LogWarning("Obsolete Material format - %s", _assetFile->getFileName().toUTF8().c_str());
+            Debug::LogWarning("Obsolete Physics Material 2D format - %s", _assetFile->getFileName().toUTF8().c_str());
             tinyxml2::XMLDocument doc;
             _assetFile->readToXMLDocument(doc);
             return loadFromXMLDocument(doc);

@@ -880,7 +880,7 @@ namespace Maze
                 }
             }
             else
-            if (subBlock->getName() == getLanguage())
+            if (strcmp(subBlock->getName(), getLanguage()) == 0)
             {
                 CString shaderFileName = subBlock->getCString("shader");
                 if (shaderFileName)

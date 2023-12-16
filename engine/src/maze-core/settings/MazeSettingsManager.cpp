@@ -30,6 +30,7 @@
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/helpers/MazeXMLHelper.hpp"
+#include "maze-core/helpers/MazeByteBufferHelper.hpp"
 #include <tinyxml2.h>
 
 #if (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN)
@@ -69,6 +70,8 @@ namespace Maze
     //////////////////////////////////////////
     bool SettingsManager::init(String const& _projectName)
     {
+        m_projectName = _projectName;
+
         m_settingsFileFullPath = FileHelper::GetDocumentsDirectory() + "/" + _projectName;
 
 #if !(MAZE_PRODUCTION)
@@ -78,12 +81,18 @@ namespace Maze
         m_settingsFileFullPath += "/.debug";
 #endif
 
-        m_settingsFileFullPath += "/settings.xml";
+        m_settingsFileFullPath += "/settings.mzdata";
         return true;
     }
 
     //////////////////////////////////////////
     Pair<MetaClass* const, SettingsPtr>* SettingsManager::getSettings(String const& _settingsClassName)
+    {
+        return getSettings(HashedCString(_settingsClassName.c_str()));
+    }
+
+    //////////////////////////////////////////
+    Pair<MetaClass* const, SettingsPtr>* SettingsManager::getSettings(HashedCString const& _settingsClassName)
     {
         for (auto& settings : m_settings)
         {
@@ -101,25 +110,53 @@ namespace Maze
     //////////////////////////////////////////
     bool SettingsManager::loadSettings()
     {
+        processBackCompatibility();
+
+        return loadSettings(m_settingsFileFullPath);
+    }
+
+    //////////////////////////////////////////
+    bool SettingsManager::loadSettings(Path const& _path)
+    {
         MAZE_PROFILE_EVENT("SettingsManager::loadSettings");
 
-        if (m_settingsFileFullPath.empty())
+        if (_path.empty())
             return false;
         
-        Debug::Log("Loading settings file %s'...", m_settingsFileFullPath.toUTF8().c_str());
+        Debug::Log("Loading settings file %s'...", _path.toUTF8().c_str());
 
-        tinyxml2::XMLDocument doc;
-        tinyxml2::XMLError loadError = XMLHelper::LoadXMLFile(m_settingsFileFullPath, doc);
-        if (tinyxml2::XML_SUCCESS != loadError)
-        {
-            if (tinyxml2::XML_ERROR_FILE_NOT_FOUND == loadError)
-                return false;
-
-            MAZE_ERROR("File '%s' loading error - XMLError: %d!", m_settingsFileFullPath.toUTF8().c_str(), (S32)loadError);
+        ByteBuffer fileBuffer;
+        if (!ByteBufferHelper::LoadBinaryFile(fileBuffer, _path))
             return false;
-        }
+        Char header[5];
+        fileBuffer.read(0, header, sizeof(header));
 
-        tinyxml2::XMLNode* rootNode = doc.FirstChild();
+        if (strstr(header, "xml") != nullptr)
+        {
+            Debug::LogWarning("Obsolete settings file format - %s", _path.toUTF8().c_str());
+
+            tinyxml2::XMLDocument doc;
+            tinyxml2::XMLError loadError = doc.Parse((CString)fileBuffer.getDataPointer(), fileBuffer.getSize());
+
+            MAZE_ERROR_RETURN_VALUE_IF(
+                tinyxml2::XML_SUCCESS != loadError,
+                false,
+                "File '%s' loading error - XMLError: %d!", _path.toUTF8().c_str(), (S32)loadError);
+
+            return loadSettingsFromXMLDocument(doc);
+        }
+        else
+        {
+            DataBlock dataBlock;
+            dataBlock.loadFromByteBuffer(fileBuffer);
+            return loadSettingsFromDataBlock(dataBlock);
+        }
+    }
+
+    //////////////////////////////////////////
+    bool SettingsManager::loadSettingsFromXMLDocument(tinyxml2::XMLDocument& _doc)
+    {
+        tinyxml2::XMLNode* rootNode = _doc.FirstChild();
         if (!rootNode)
         {
             MAZE_ERROR("File '%s' loading error - empty root node!", m_settingsFileFullPath.toUTF8().c_str());
@@ -145,8 +182,8 @@ namespace Maze
             }
 
             CString const settingsName = settingsMetaClassElement->Name();
-            auto* settings = getSettings(settingsName);
-            
+            auto* settings = getSettings(MAZE_HASHED_CSTRING(settingsName));
+
             tinyxml2::XMLNode* settingsElementNode = settingsNode->FirstChild();
             while (settingsElementNode)
             {
@@ -160,7 +197,7 @@ namespace Maze
 
                 String key = settingsElement->Attribute("key");
                 String value = settingsElement->Attribute("value");
-            
+
                 if (settings)
                 {
                     MetaClass* const settingsMetaClass = settings->first;
@@ -177,7 +214,7 @@ namespace Maze
 
                 settingsElementNode = settingsElementNode->NextSibling();
             }
-  
+
             settingsNode = settingsNode->NextSibling();
         }
 
@@ -187,10 +224,53 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool SettingsManager::loadSettingsFromDataBlock(DataBlock const& _dataBlock)
+    {
+        for (DataBlock::DataBlockIndex i = 0; i < _dataBlock.getDataBlocksCount(); ++i)
+        {
+            DataBlock const* settingsMetaClassBlock = _dataBlock.getDataBlock(i);
+
+            HashedCString const& settingsName = settingsMetaClassBlock->getName();
+            auto* settings = getSettings(settingsName);
+
+
+            for (DataBlock::DataBlockIndex j = 0; j < settingsMetaClassBlock->getDataBlocksCount(); ++j)
+            {
+                DataBlock const* propertyBlock = settingsMetaClassBlock->getDataBlock(j);
+
+                String const& key = propertyBlock->getString("key");
+                String const& value = propertyBlock->getString("value");
+
+                if (settings)
+                {
+                    MetaClass* const settingsMetaClass = settings->first;
+                    MetaInstance settingsMetaInstance = settings->second->getMetaInstance();
+                    MetaProperty* metaProperty = settingsMetaClass->getProperty(key.c_str());
+                    if (metaProperty)
+                        metaProperty->setString(settingsMetaInstance, value);
+                }
+                else
+                {
+                    m_unregisteredSettings[settingsName].emplace_back(
+                        Pair<String, String>(key, value));
+                }
+            }
+        }
+
+        return true;
+    }
+
+    //////////////////////////////////////////
     bool SettingsManager::saveSettings()
     {
         MAZE_PROFILE_EVENT("SettingsManager::saveSettings");
 
+        return saveSettingsAsDataBlock();
+    }
+
+    //////////////////////////////////////////
+    bool SettingsManager::saveSettingsAsXML()
+    {
         if (m_settingsFileFullPath.empty())
             return false;
 
@@ -223,7 +303,7 @@ namespace Maze
                 settingsElement->SetAttribute("key", propertyName);
                 settingsElement->SetAttribute("value", propertyValue.c_str());
                 settingsMetaClassElement->InsertEndChild(settingsElement);
-            }            
+            }
 
             root->InsertEndChild(settingsMetaClassElement);
         }
@@ -231,7 +311,7 @@ namespace Maze
         for (auto const& unregisteredSettings : m_unregisteredSettings)
         {
             tinyxml2::XMLElement* settingsMetaClassElement = doc.NewElement(unregisteredSettings.first.c_str());
-            
+
             for (auto const& property : unregisteredSettings.second)
             {
                 tinyxml2::XMLElement* settingsElement = doc.NewElement("Property");
@@ -245,6 +325,66 @@ namespace Maze
         if (tinyxml2::XML_SUCCESS != loadError)
         {
             MAZE_ERROR("Saving settings file '%s' error - %d!", m_settingsFileFullPath.toUTF8().c_str(), loadError);
+            return false;
+        }
+
+        Debug::Log("Settings file '%s' saved.", m_settingsFileFullPath.toUTF8().c_str());
+
+#if (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN)
+        Maze::FileHelper::TrySyncEmscriptenLocalStorage();
+#endif
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool SettingsManager::saveSettingsAsDataBlock()
+    {
+        if (m_settingsFileFullPath.empty())
+            return false;
+
+        String settingsFileDirectoryFullPath = FileHelper::GetDirectoryInPath(m_settingsFileFullPath);
+        FileHelper::CreateDirectoryRecursive(settingsFileDirectoryFullPath);
+
+        DataBlock dataBlock;
+
+        for (auto const& settings : m_settings)
+        {
+            MetaClass* settingsMetaClass = settings.first;
+            MetaInstance settingsMetainstance = settings.second->getMetaInstance();
+
+            DataBlock* settingsMetaClassBlock = dataBlock.addNewDataBlock(settingsMetaClass->getName());
+
+            for (S32 i = 0; i < settingsMetaClass->getPropertiesCount(); ++i)
+            {
+                Maze::MetaProperty* metaProperty = settingsMetaClass->getProperty(i);
+
+                Maze::CString propertyName = metaProperty->getName();
+                String propertyValue = metaProperty->toString(settingsMetainstance);
+
+                DataBlock* propertyBlock = settingsMetaClassBlock->addNewDataBlock(MAZE_HS("property"));
+                propertyBlock->setCString("key", propertyName);
+                propertyBlock->setString("value", propertyValue);
+                
+            }
+        }
+
+        for (auto const& unregisteredSettings : m_unregisteredSettings)
+        {
+            DataBlock* settingsMetaClassBlock = dataBlock.addNewDataBlock(unregisteredSettings.first.c_str());
+
+
+            for (auto const& property : unregisteredSettings.second)
+            {
+                DataBlock* propertyBlock = settingsMetaClassBlock->addNewDataBlock(MAZE_HS("property"));
+                propertyBlock->setCString("key", property.first.c_str());
+                propertyBlock->setString("value", property.second.c_str());
+            }
+        }
+
+        if (!dataBlock.saveTextFile(m_settingsFileFullPath))
+        {
+            MAZE_ERROR("Saving settings file '%s' failed!", m_settingsFileFullPath.toUTF8().c_str());
             return false;
         }
 
@@ -275,6 +415,29 @@ namespace Maze
         }
 
         m_unregisteredSettings.erase(it);
+    }
+
+    //////////////////////////////////////////
+    void SettingsManager::processBackCompatibility()
+    {
+        Path settingsFileFullPath = FileHelper::GetDocumentsDirectory() + "/" + m_projectName;
+
+#if !(MAZE_PRODUCTION)
+        settingsFileFullPath += "/.dev";
+#endif
+#if (MAZE_DEBUG)
+        settingsFileFullPath += "/.debug";
+#endif
+
+        settingsFileFullPath += "/settings.xml";
+
+        if (FileHelper::IsFileExists(settingsFileFullPath))
+        {
+            // XML to DataBlock
+            loadSettings(settingsFileFullPath);
+            saveSettingsAsDataBlock();
+            FileHelper::DeleteRegularFile(settingsFileFullPath);
+        }
     }
 
 } // namespace Maze

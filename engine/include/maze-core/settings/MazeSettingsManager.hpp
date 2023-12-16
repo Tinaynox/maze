@@ -36,6 +36,9 @@
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/settings/MazeSettings.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
+#include "maze-core/serialization/MazeXMLSerializable.hpp"
+#include "maze-core/serialization/MazeDataBlockSerializable.hpp"
+#include "maze-core/data/MazeHashedCString.hpp"
 
 
 //////////////////////////////////////////
@@ -118,7 +121,22 @@ namespace Maze
         bool loadSettings();
 
         //////////////////////////////////////////
+        bool loadSettings(Path const& _path);
+
+        //////////////////////////////////////////
+        bool loadSettingsFromXMLDocument(tinyxml2::XMLDocument& _doc);
+
+        //////////////////////////////////////////
+        bool loadSettingsFromDataBlock(DataBlock const& _dataBlock);
+
+        //////////////////////////////////////////
         bool saveSettings();
+
+        //////////////////////////////////////////
+        bool saveSettingsAsXML();
+
+        //////////////////////////////////////////
+        bool saveSettingsAsDataBlock();
 
     protected:
 
@@ -131,13 +149,20 @@ namespace Maze
         //////////////////////////////////////////
         Pair<MetaClass* const, SettingsPtr>* getSettings(String const& _settingsClassName);
 
+        //////////////////////////////////////////
+        Pair<MetaClass* const, SettingsPtr>* getSettings(HashedCString const& _settingsClassName);
+
 
         //////////////////////////////////////////
         void indentifyUnregisteredSetting(Settings* _settings);
 
+        //////////////////////////////////////////
+        void processBackCompatibility();
+
     private:
         static SettingsManager* s_instance;
 
+        String m_projectName;
         Path m_settingsFileFullPath;
 
         Map<MetaClass*, SettingsPtr> m_settings;
