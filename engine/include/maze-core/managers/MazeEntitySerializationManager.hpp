@@ -34,6 +34,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
+#include "maze-core/data/MazeDataBlock.hpp"
 #include <tinyxml2/tinyxml2.h>
 
 
@@ -67,12 +68,15 @@ namespace Maze
         //////////////////////////////////////////
         static inline EntitySerializationManager& GetInstance() { return *s_instance; }
 
-
+        //////////////////////////////////////////
+        bool savePrefabToDataBlockFile(EntityPtr const& _entity, Path const& _fileFullPath) const;
+#if 0
         //////////////////////////////////////////
         bool savePrefabToXMLFile(EntityPtr const& _entity, Path const& _fileFullPath) const;
 
         //////////////////////////////////////////
         tinyxml2::XMLElement* savePrefabToXMLElement(EntityPtr const& _entity, tinyxml2::XMLDocument& _doc) const;
+
 
         //////////////////////////////////////////
         EntityPtr loadPrefabFromXMLFile(
@@ -91,6 +95,7 @@ namespace Maze
             tinyxml2::XMLDocument& _doc,
             ECSWorld* _world = nullptr,
             ECSScene* _scene = nullptr) const;
+#endif
 
         //////////////////////////////////////////
         EntityPtr loadPrefab(
@@ -101,6 +106,12 @@ namespace Maze
         //////////////////////////////////////////
         EntityPtr loadPrefab(
             Path const& _assetFileName,
+            ECSWorld* _world = nullptr,
+            ECSScene* _scene = nullptr) const;
+
+        //////////////////////////////////////////
+        EntityPtr loadPrefab(
+            DataBlock const& _dataBlock,
             ECSWorld* _world = nullptr,
             ECSScene* _scene = nullptr) const;
 

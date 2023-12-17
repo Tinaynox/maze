@@ -510,7 +510,7 @@ namespace Maze
         //////////////////////////////////////////
         inline S8 StringToS8(CString _str) noexcept
         {
-            return static_cast<S8>(std::atoi(_str));
+            return _str ? static_cast<S8>(std::atoi(_str)) : static_cast<S8>(0);
         }
 
         //////////////////////////////////////////
@@ -538,7 +538,7 @@ namespace Maze
         //////////////////////////////////////////
         inline U8 StringToU8(CString _str) noexcept
         {
-            return static_cast<U8>(std::atoi(_str));
+            return _str ? static_cast<U8>(std::atoi(_str)) : static_cast<U8>(0);
         }
 
         //////////////////////////////////////////
@@ -566,7 +566,7 @@ namespace Maze
         //////////////////////////////////////////
         inline S16 StringToS16(CString _str) noexcept
         {
-            return static_cast<S16>(std::atoi(_str));
+            return _str ? static_cast<S16>(std::atoi(_str)) : static_cast<S16>(0);
         }
 
         //////////////////////////////////////////
@@ -594,7 +594,7 @@ namespace Maze
         //////////////////////////////////////////
         inline U16 StringToU16(CString _str) noexcept
         {
-            return static_cast<U16>(std::atoi(_str));
+            return _str ? static_cast<U16>(std::atoi(_str)) : static_cast<U16>(0);
         }
 
         //////////////////////////////////////////
@@ -622,7 +622,7 @@ namespace Maze
         //////////////////////////////////////////
         inline S32 StringToS32(CString _str) noexcept
         {
-            return std::atoi(_str);
+            return _str ? std::atoi(_str) : 0;
         }
 
         //////////////////////////////////////////
@@ -650,7 +650,7 @@ namespace Maze
         //////////////////////////////////////////
         inline U32 StringToU32(CString _str) noexcept
         {
-            return static_cast<U32>(std::atoll(_str));
+            return _str ? static_cast<U32>(std::atoll(_str)) : 0u;
         }
 
         //////////////////////////////////////////
@@ -694,7 +694,7 @@ namespace Maze
         //////////////////////////////////////////
         inline U64 StringToU64(CString _str) noexcept
         {
-            return static_cast<U64>(std::strtoull(_str, nullptr, 10));
+            return _str ? static_cast<U64>(std::strtoull(_str, nullptr, 10)) : 0u;
         }
 
         //////////////////////////////////////////

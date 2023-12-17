@@ -85,6 +85,101 @@ namespace Maze
         return true;
     }
 
+
+    //////////////////////////////////////////
+    bool EntitySerializationManager::savePrefabToDataBlockFile(EntityPtr const& _entity, Path const& _fileFullPath) const
+    {
+        MAZE_PROFILE_EVENT("EntitySerializationManager::savePrefabToDataBlockFile");
+
+        if (!_entity)
+            return false;
+
+        if (_fileFullPath.empty())
+            return false;
+
+        Path directoryFullPath = FileHelper::GetDirectoryInPath(_fileFullPath);
+        FileHelper::CreateDirectoryRecursive(directoryFullPath);
+
+        DataBlock dataBlock;
+
+        Map<EntityPtr, Vector<ComponentPtr>> entityComponents = collectEntityComponentsMap(_entity);
+
+        S32 indexCounter = 0;
+        Map<void*, S32> pointerIndices;
+
+        for (auto const& entityComponentsData : entityComponents)
+        {
+            EntityPtr const& entity = entityComponentsData.first;
+            pointerIndices[entity.get()] = ++indexCounter;
+
+            Vector<ComponentPtr> const& components = entityComponentsData.second;
+            for (ComponentPtr const& component : components)
+                pointerIndices[component.get()] = ++indexCounter;
+        }
+
+        dataBlock.setString("_rootIndex", StringHelper::ToString(pointerIndices[_entity.get()]));
+
+        for (auto const& entityComponentsData : entityComponents)
+        {
+            EntityPtr const& entity = entityComponentsData.first;
+            Vector<ComponentPtr> const& components = entityComponentsData.second;
+
+            DataBlock* entityBlock = dataBlock.addNewDataBlock("entity");
+            entityBlock->setString("_i", StringHelper::ToString(pointerIndices[entity.get()]));
+
+            if (!entity->getActiveSelf())
+                entityBlock->setString("active", StringHelper::ToString(entity->getActiveSelf()));
+
+            for (ComponentPtr const& component : components)
+            {
+                DataBlock* componentBlock = entityBlock->addNewDataBlock("component");
+                componentBlock->setString("_i", StringHelper::ToString(pointerIndices[component.get()]));
+                componentBlock->setCString("_t", component->getMetaClass()->getName());
+
+                MetaClass const* metaClass = component->getMetaClass();
+                MetaInstance metaInstance = component->getMetaInstance();
+
+                for (MetaClass* metaClass : metaClass->getAllSuperMetaClasses())
+                {
+                    for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
+                    {
+                        MetaProperty* metaProperty = metaClass->getProperty(i);
+
+                        CString propertyName = metaProperty->getName();
+
+                        MetaClass const* metaPropertyMetaClass = metaProperty->getMetaClass();
+                        if (metaPropertyMetaClass)
+                        {
+                            if (metaPropertyMetaClass->isInheritedFrom<Component>() || metaPropertyMetaClass->isInheritedFrom<Entity>())
+                            {
+                                void* propertyValuePointer = metaProperty->getSharedPtrPointer(metaInstance);
+                                if (propertyValuePointer)
+                                {
+                                    S32 propertyValueIndex = pointerIndices[propertyValuePointer];
+                                    componentBlock->setString(propertyName, StringHelper::ToString(propertyValueIndex).c_str());
+                                }
+
+                                continue;
+                            }
+                        }
+
+                        String properyStringValue = metaProperty->toString(metaInstance);
+
+                        MAZE_ERROR_IF(StringHelper::IsStartsWith(properyStringValue.c_str(), "ptr:"), "Trying to save property '%s' as pointer!", propertyName);
+
+                        componentBlock->setString(propertyName, properyStringValue.c_str());
+
+                    }
+                }
+            }
+        }
+
+        dataBlock.saveTextFile(_fileFullPath);
+
+        return true;
+    }
+
+#if 0
     //////////////////////////////////////////
     bool EntitySerializationManager::savePrefabToXMLFile(EntityPtr const& _entity, Path const& _fileFullPath) const
     {
@@ -258,6 +353,7 @@ namespace Maze
 
         return loadPrefabFromXMLElement(rootNode->NextSibling()->ToElement(), _world, _scene);
     }
+#endif
 
     //////////////////////////////////////////
     EntityPtr EntitySerializationManager::loadPrefab(
@@ -265,11 +361,19 @@ namespace Maze
         ECSWorld* _world,
         ECSScene* _scene) const
     {
+#if 1
+        DataBlock dataBlock;
+        ByteBufferPtr byteBuffer = _assetFile->readAsByteBuffer();
+        dataBlock.loadFromByteBuffer(*byteBuffer.get());
+
+        return loadPrefab(dataBlock, _world, _scene);
+#else
         tinyxml2::XMLDocument doc;
         if (!_assetFile->readToXMLDocument(doc))
             return nullptr;
 
         return loadPrefab(doc, _world, _scene);
+#endif
     }
 
     //////////////////////////////////////////
@@ -278,13 +382,343 @@ namespace Maze
         ECSWorld* _world,
         ECSScene* _scene) const
     {
+#if 1
+        AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_assetFileName);
+        if (!assetFile)
+            return EntityPtr();
+
+        return loadPrefab(assetFile, _world, _scene);
+#else
         tinyxml2::XMLDocument doc;
         if (!AssetManager::GetInstancePtr()->openXMLDocumentAssetFile(doc, _assetFileName, true))
             return nullptr;
 
         return loadPrefab(doc, _world, _scene);
+#endif
     }
 
+    //////////////////////////////////////////
+    EntityPtr EntitySerializationManager::loadPrefab(
+        DataBlock const& _dataBlock,
+        ECSWorld* _world,
+        ECSScene* _scene) const
+    {
+        MAZE_PROFILE_EVENT("EntitySerializationManager::loadPrefabFromXMLElement");
+
+        static EntityPtr const nullPointer;
+
+        if (_dataBlock.getName() == MAZE_HS("Prefab"))
+            return nullPointer;
+
+        CString rootIndexAttribute = _dataBlock.getCString("_rootIndex");
+        if (rootIndexAttribute == nullptr)
+            return nullPointer;
+
+        ECSScene* scene = _scene ? _scene
+            : (_world ? nullptr : SceneManager::GetInstancePtr()->getMainScene().get());
+
+        ECSWorld* world = _world ? _world
+            : (scene ? scene->getWorld() : nullptr);
+
+        Map<S32, EntityPtr> entities;
+        Map<S32, ComponentPtr> components;
+
+        S32 rootIndex = StringHelper::StringToS32(rootIndexAttribute);
+        S32 autoEntityIndexCounter = 0;
+        S32 autoComponentIndexCounter = 0;
+
+        // Prepare
+        {
+            for (DataBlock const* subBlock : _dataBlock)
+            {
+                if (subBlock->isComment())
+                    continue;
+
+                if (subBlock->getName() == MAZE_HS("entity"))
+                {
+                    S32 entityIndex = StringHelper::StringToS32(subBlock->getCString("_i"));
+                    if (entityIndex == 0)
+                        entityIndex = --autoEntityIndexCounter;
+
+                    EntityPtr entity = Entity::Create();
+                    entity->setAwakeForbidden(true);
+                    world->addEntity(entity);
+
+                    entities[entityIndex] = entity;
+
+                    for (DataBlock const* componentBlock : *subBlock)
+                    {
+                        if (componentBlock->isComment())
+                            continue;
+
+                        if (componentBlock->getName() != MAZE_HS("component"))
+                            continue;
+
+                        S32 componentIndex = StringHelper::StringToS32(componentBlock->getCString("_i"));
+                        if (componentIndex == 0)
+                            componentIndex = --autoComponentIndexCounter;
+
+                        CString componentClassName = componentBlock->getCString("_t");
+                        ComponentPtr component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentClassName);
+
+                        if (!component)
+                        {
+                            MAZE_ERROR("Component %s cannot be created!", componentClassName);
+                            continue;
+                        }
+
+                        components[componentIndex] = component;
+
+                        entity->addComponent(component);
+                    }
+                }
+                else
+                if (subBlock->getName() == MAZE_HS("prefabInstance"))
+                {
+                    S32 entityIndex = StringHelper::StringToS32(subBlock->getCString("_i"));
+                    if (entityIndex == 0)
+                        entityIndex = --autoEntityIndexCounter;
+
+                    CString prefabName = subBlock->getCString("source");
+
+                    if (prefabName)
+                    {
+                        EntityPtr entity = loadPrefab(prefabName, world, scene);
+                        if (entity == nullptr)
+                        {
+                            MAZE_ERROR("Entity is nullptr!");
+                            continue;
+                        }
+                        entities[entityIndex] = entity;
+
+                        for (DataBlock const* prefabChildBlock : *subBlock)
+                        {
+                            if (prefabChildBlock->isComment())
+                                continue;
+
+                            if (prefabChildBlock->getName() == MAZE_HS("modification"))
+                            {
+                                CString componentClassName = prefabChildBlock->getCString("component");
+                                CString componentPropertyName = prefabChildBlock->getCString("property");
+                                CString componentPropertyValue = prefabChildBlock->getCString("value");
+
+                                if (componentClassName && componentPropertyName && componentPropertyValue)
+                                {
+                                    ClassUID componentUID = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentUID(componentClassName);
+                                    ComponentPtr const& component = entity->getComponentByUID(componentUID);
+                                    MetaProperty* metaProperty = component->getMetaClass()->getProperty(componentPropertyName);
+                                    if (metaProperty)
+                                    {
+                                        ClassUID metaPropertyUID = metaProperty->getValueClassUID();
+                                        if (metaPropertyUID != 0)
+                                        {
+                                            if (metaPropertyUID == ClassInfo<ComponentPtr>::UID())
+                                            {
+                                                S32 valueIndex = StringHelper::StringToS32(componentPropertyValue);
+                                                metaProperty->setValue(component->getMetaInstance(), &components[valueIndex]);
+
+                                                continue;
+                                            }
+                                            else
+                                            if (metaPropertyUID == ClassInfo<EntityPtr>::UID())
+                                            {
+                                                S32 valueIndex = StringHelper::StringToS32(componentPropertyValue);
+                                                metaProperty->setValue(component->getMetaInstance(), &entities[valueIndex]);
+
+                                                continue;
+                                            }
+                                            else
+                                            if (metaPropertyUID == ClassInfo<Vector<ComponentPtr>>::UID())
+                                            {
+                                                MAZE_NOT_IMPLEMENTED;
+                                                continue;
+                                            }
+                                            else
+                                            if (metaPropertyUID == ClassInfo<Vector<EntityPtr>>::UID())
+                                            {
+                                                MAZE_NOT_IMPLEMENTED;
+                                                continue;
+                                            }
+                                        }
+
+                                        metaProperty->setString(component->getMetaInstance(), componentPropertyValue);
+                                    }
+                                }
+                            }
+                            else
+                            if (prefabChildBlock->getName() == MAZE_HS("component"))
+                            {
+                                S32 componentIndex = StringHelper::StringToS32(prefabChildBlock->getCString("_i"));
+                                if (componentIndex == 0)
+                                    componentIndex = --autoComponentIndexCounter;
+
+                                CString componentClassName = prefabChildBlock->getCString("_t");
+                                ComponentPtr component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentClassName);
+
+                                if (component)
+                                {
+                                    components[componentIndex] = component;
+                                    entity->addComponent(component);
+                                }
+                                else
+                                {
+                                    MAZE_ERROR("Component %s cannot be created!", componentClassName);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        MAZE_ERROR("PrefabInstance without source!");
+                    }
+                }
+
+            }
+        }
+
+        autoComponentIndexCounter = 0;
+
+        // Load
+        {
+            for (DataBlock const* subBlock : _dataBlock)
+            {
+                if (subBlock->isComment())
+                    continue;
+
+                if (subBlock->getName() == MAZE_HS("entity") || subBlock->getName() == MAZE_HS("prefabInstance"))
+                {
+                    S32 entityIndex = StringHelper::StringToS32(subBlock->getCString("_i"));
+                    EntityPtr const& entity = entities[entityIndex];
+                    if (entity == nullptr)
+                    {
+                        MAZE_ERROR("Entity is nullptr!");
+                        continue;
+                    }
+
+                    CString entityActiveAttribute = subBlock->getCString("active");
+                    if (entityActiveAttribute)
+                        entity->setActiveSelf(StringHelper::StringToBool(entityActiveAttribute));
+
+                    for (DataBlock const* componentBlock : *subBlock)
+                    {
+                        if (componentBlock->isComment())
+                            continue;
+
+                        if (componentBlock->getName() == MAZE_HS("component"))
+                        {
+                            S32 componentIndex = StringHelper::StringToS32(componentBlock->getCString("_i"));
+                            if (componentIndex == 0)
+                                componentIndex = --autoComponentIndexCounter;
+
+                            ComponentPtr const& component = components[componentIndex];
+                            if (!component)
+                            {
+                                continue;
+                            }
+
+                            MetaClass const* componentMetaClass = component->getMetaClass();
+                            MetaInstance componentMetaInstance = component->getMetaInstance();
+
+                            for (Maze::MetaClass* metaClass : componentMetaClass->getAllSuperMetaClasses())
+                            {
+                                for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
+                                {
+                                    Maze::MetaProperty* metaProperty = metaClass->getProperty(i);
+
+                                    Maze::CString propertyName = metaProperty->getName();
+
+                                    CString attributeValue = componentBlock->getCString(propertyName);
+                                    if (attributeValue)
+                                    {
+                                        MAZE_ERROR_CONTINUE_IF(StringHelper::IsStartsWith(attributeValue, "ptr:"), "Pointer value in '%s' property!", propertyName);
+
+                                        ClassUID metaPropertyUID = metaProperty->getValueClassUID();
+                                        if (metaPropertyUID != 0)
+                                        {
+                                            if (metaPropertyUID == ClassInfo<ComponentPtr>::UID())
+                                            {
+                                                S32 valueIndex = StringHelper::StringToS32(attributeValue);
+                                                metaProperty->setValue(componentMetaInstance, &components[valueIndex]);
+                                                continue;
+                                            }
+                                            else
+                                            if (metaPropertyUID == ClassInfo<EntityPtr>::UID())
+                                            {
+                                                S32 valueIndex = StringHelper::StringToS32(attributeValue);
+                                                metaProperty->setValue(componentMetaInstance, &entities[valueIndex]);
+                                                continue;
+                                            }
+                                            else
+                                            if (metaPropertyUID == ClassInfo<Vector<ComponentPtr>>::UID())
+                                            {
+                                                Vector<String> componentsStr;
+                                                ValueFromString(componentsStr, attributeValue, strlen(attributeValue));
+
+                                                Vector<ComponentPtr> componentsValue;
+                                                componentsValue.resize(componentsStr.size());
+                                                for (Size i = 0, in = componentsStr.size(); i < in; ++i)
+                                                {
+                                                    String const& str = componentsStr[i];
+                                                    S32 valueIndex = StringHelper::StringToS32(str);
+                                                    componentsValue[i] = components[valueIndex];
+                                                }
+                                                metaProperty->setValue(componentMetaInstance, &componentsValue);
+                                                continue;
+                                            }
+                                            else
+                                            if (metaPropertyUID == ClassInfo<Vector<EntityPtr>>::UID())
+                                            {
+                                                Vector<String> entitiesStr;
+                                                ValueFromString(entitiesStr, attributeValue, strlen(attributeValue));
+
+                                                Vector<EntityPtr> entitiesValue;
+                                                entitiesValue.resize(entitiesStr.size());
+                                                for (Size i = 0, in = entitiesStr.size(); i < in; ++i)
+                                                {
+                                                    String const& str = entitiesStr[i];
+                                                    S32 valueIndex = StringHelper::StringToS32(str);
+                                                    entitiesValue[i] = entities[valueIndex];
+                                                }
+                                                metaProperty->setValue(componentMetaInstance, &entitiesValue);
+                                                continue;
+                                            }
+                                        }
+
+                                        metaProperty->setString(componentMetaInstance, attributeValue);
+                                    }
+
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Add to ECS scene
+        for (auto entityData : entities)
+        {
+            if (!entityData.second)
+                continue;
+
+            entityData.second->setECSScene(scene);
+        }
+
+        // Awake
+        for (auto entityData : entities)
+        {
+            if (!entityData.second)
+                continue;
+
+            entityData.second->setAwakeForbidden(false);
+            entityData.second->tryAwake();
+        }
+
+        return entities[rootIndex];
+    }
+
+#if 0
     //////////////////////////////////////////
     EntityPtr EntitySerializationManager::loadPrefabFromXMLElement(
         tinyxml2::XMLElement* _element,
@@ -655,6 +1089,7 @@ namespace Maze
         
         return entities[rootIndex];
     }
+#endif
 
     //////////////////////////////////////////
     void EntitySerializationManager::collectAllChildrenEntity(EntityPtr const& _entity, Vector<EntityPtr>& _result) const

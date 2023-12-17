@@ -241,7 +241,7 @@ namespace Maze
                             {
                                 Name* name = entity->getComponentRaw<Name>();
                                 String filename = name ? name->getName() : "Unnamed";
-                                EntitySerializationManager::GetInstancePtr()->savePrefabToXMLFile(entity, filename + ".xml");
+                                EntitySerializationManager::GetInstancePtr()->savePrefabToDataBlockFile(entity, filename + ".mzdata");
                             }
                         });
 
