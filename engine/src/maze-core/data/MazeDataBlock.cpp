@@ -41,6 +41,7 @@
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/serialization/MazeDataBlockBinarySerialization.hpp"
 #include "maze-core/serialization/MazeDataBlockTextSerialization.hpp"
+#include "maze-core/serialization/MazeDataBlockSerializationUtils.hpp"
 #include "maze-core/helpers/MazeStdHelper.hpp"
 
 
@@ -219,6 +220,16 @@ namespace Maze
         }
 
         deleteBuffers();
+    }
+
+    //////////////////////////////////////////
+    bool DataBlock::isComment() const
+    {
+        HashedCString name = getName();
+        if (name.empty())
+            return false;
+
+        return name[0u] == MAZE_DATA_BLOCK_COMMENT_PREFIX[0] && name[1u] == MAZE_DATA_BLOCK_COMMENT_PREFIX[1];
     }
 
     //////////////////////////////////////////

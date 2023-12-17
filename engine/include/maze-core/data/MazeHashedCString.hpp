@@ -106,9 +106,12 @@ namespace Maze
         friend inline bool operator!=(String const& _value0, HashedCString const& _value1) noexcept;
 
         //////////////////////////////////////////
+        inline Char operator[](Size _index) const { return str[_index]; }
+
+        //////////////////////////////////////////
         inline bool empty() const
         {
-            return (str == nullptr || strcmp(str, "") == 0);
+            return (str == nullptr || *str == 0);
         }
 
         //////////////////////////////////////////
@@ -198,6 +201,9 @@ namespace Maze
 
         //////////////////////////////////////////
         friend inline bool operator!=(WString const& _value0, HashedCWString const& _value1) noexcept;
+
+        //////////////////////////////////////////
+        inline WChar operator[](Size _index) const { return str[_index]; }
 
         template <U32 THashValue>
         struct HashCalculator { static MAZE_CONSTEXPR U32 const hash = THashValue; };

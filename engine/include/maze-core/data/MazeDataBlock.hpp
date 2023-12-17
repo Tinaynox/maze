@@ -325,6 +325,9 @@ namespace Maze
         inline bool isEmpty() const { return getParamsCount() == 0 && getDataBlocksCount() == 0; }
 
         //////////////////////////////////////////
+        bool isComment() const;
+
+        //////////////////////////////////////////
         inline SharedStringId getNameId() const { return m_nameIdAndFlags & 0xFFFFFF; }
 
         //////////////////////////////////////////
