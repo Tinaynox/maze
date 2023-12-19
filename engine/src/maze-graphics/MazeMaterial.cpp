@@ -612,11 +612,10 @@ namespace Maze
                 renderPass->loadFromDataBlock(*subBlock);
             }
             else
-            if (subBlock->getName() == MAZE_HASHED_CSTRING("shaderUniformVariant"))
+            if (subBlock->getName() == MAZE_HASHED_CSTRING("uniform"))
             {
                 ShaderUniformVariant shaderUniformVariant(m_renderSystem);
                 shaderUniformVariant.loadFromDataBlock(*subBlock);
-
                 setUniform(shaderUniformVariant);
             }
         }

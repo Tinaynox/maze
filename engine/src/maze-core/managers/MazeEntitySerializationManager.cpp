@@ -134,7 +134,7 @@ namespace Maze
             {
                 DataBlock* componentBlock = entityBlock->addNewDataBlock("component");
                 componentBlock->setString("_i", StringHelper::ToString(pointerIndices[component.get()]));
-                componentBlock->setCString("_t", component->getMetaClass()->getName());
+                componentBlock->setCString("_t", static_cast<CString>(component->getMetaClass()->getName()));
 
                 MetaClass const* metaClass = component->getMetaClass();
                 MetaInstance metaInstance = component->getMetaInstance();
@@ -145,7 +145,7 @@ namespace Maze
                     {
                         MetaProperty* metaProperty = metaClass->getProperty(i);
 
-                        CString propertyName = metaProperty->getName();
+                        HashedCString propertyName = metaProperty->getName();
 
                         MetaClass const* metaPropertyMetaClass = metaProperty->getMetaClass();
                         if (metaPropertyMetaClass)
@@ -253,7 +253,7 @@ namespace Maze
             {
                 tinyxml2::XMLElement* componentElement = _doc.NewElement("Component");
                 componentElement->SetAttribute("_i", pointerIndices[component.get()]);
-                componentElement->SetAttribute("_t", component->getMetaClass()->getName());
+                componentElement->SetAttribute("_t", static_cast<CString>(component->getMetaClass()->getName()));
 
                 MetaClass const* metaClass = component->getMetaClass();
                 MetaInstance metaInstance = component->getMetaInstance();

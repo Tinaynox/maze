@@ -108,7 +108,7 @@ namespace Maze
         for (S32 i = 0; i < m_propertiesCount; i++)
         {
             MetaProperty* m = m_properties[i];
-            if (strcmp(m->getName(), _name) == 0)
+            if (strcmp(static_cast<CString>(m->getName()), _name) == 0)
                 return i;
         }
 
@@ -121,7 +121,7 @@ namespace Maze
         for (S32 i = 0; i < m_propertiesCount; i++) 
         {
             MetaProperty* m = m_properties[i];
-            if (strcmp(m->getName(), _name) == 0)
+            if (strcmp(static_cast<CString>(m->getName()), _name) == 0)
                 return m;
         }
 
@@ -142,7 +142,7 @@ namespace Maze
         for (S32 i = 0; i < m_propertiesCount; i++) 
         {
             MetaProperty* m = m_properties[i];
-            if (strcmp(m->getName(), _name) == 0)
+            if (strcmp(static_cast<CString>(m->getName()), _name) == 0)
                 return m;
         }
 

@@ -76,7 +76,7 @@ namespace Maze
         if (_scene->getState() == ECSSceneState::Destroy)
             return;
 
-        Debug::log << "Destroying Scene '" << _scene->getMetaClass()->getName() << "'..." << endl;
+        Debug::log << "Destroying Scene '" << static_cast<CString>(_scene->getMetaClass()->getName()) << "'..." << endl;
         _scene->setState(ECSSceneState::Destroy);        
     }
 

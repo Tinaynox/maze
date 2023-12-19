@@ -1,89 +1,89 @@
-shaderUniformVariant
+uniform
 {
   name:String = "u_tiling"
   type:String = "UniformF32"
-  value:String = "3.0"
+  value:F32 = 3.0
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_waveStrength"
   type:String = "UniformF32"
-  value:String = "0.05"
+  value:F32 = 0.05
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_waveSpeed"
   type:String = "UniformF32"
-  value:String = "0.03"
+  value:F32 = 0.03
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_refractiveFactor"
   type:String = "UniformF32"
-  value:String = "0.5"
+  value:F32 = 0.5
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_color"
   type:String = "UniformColorF128"
-  value:String = "0.45;1.0;0.45;0.45"
+  value:Vec4F = 0.45, 1.0, 0.45, 0.45
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_depthDistortionFactor"
   type:String = "UniformF32"
-  value:String = "5.0"
+  value:F32 = 5.0
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_depthSpecularFactor"
   type:String = "UniformF32"
-  value:String = "3.0"
+  value:F32 = 3.0
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_depthTransparencyFactor"
   type:String = "UniformF32"
-  value:String = "1.5"
+  value:F32 = 1.5
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_shininess"
   type:String = "UniformF32"
-  value:String = "20.0"
+  value:F32 = 20.0
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_specularColor"
   type:String = "UniformColorF128"
-  value:String = "0.5;0.5;0.5;1.0"
+  value:Vec4F = 0.5, 0.5, 0.5, 1.0
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_normalYFactor"
   type:String = "UniformF32"
-  value:String = "15.0"
+  value:F32 = 15.0
 }
 
 renderPass
 {
   passType:String = "Default"
-  renderQueueIndex:String = "3000"
+  renderQueueIndex:S32 = 3000
   shader:String = "Water00.mzshader"
   blendOperation:String = "Add"
   blendSrcFactor:String = "SrcAlpha"
   blendDestFactor:String = "OneMinusSrcAlpha"
   depthTestCompareFunction:String = "LessEqual"
-  depthWriteEnabled:String = "0"
+  depthWriteEnabled:Bool = false
   cullMode:String = "Back"
 }

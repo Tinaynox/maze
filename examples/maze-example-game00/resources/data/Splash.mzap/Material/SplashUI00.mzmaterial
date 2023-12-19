@@ -1,14 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Material>
-    <ShaderUniformVariant name="u_baseMap" type="UniformTexture2D" value="UI000.png" />
-    <RenderPass 
-        passType="Default"
-        renderQueueIndex="3000"
-        shader="SplashUnlit00.mzshader"
-        blendOperation="Add"
-        blendSrcFactor="SrcAlpha"
-        blendDestFactor="OneMinusSrcAlpha"
-        depthTestCompareFunction="Always"
-        depthWriteEnabled="0"
-        cullMode="Off"/>
-</Material>
+uniform
+{
+  name:String = "u_baseMap"
+  type:String = "UniformTexture2D"
+  value:String = "UI000.png"
+}
+
+renderPass
+{
+  passType:String = "Default"
+  renderQueueIndex:S32 = 3000
+  shader:String = "SplashUnlit00.mzshader"
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "SrcAlpha"
+  blendDestFactor:String = "OneMinusSrcAlpha"
+  depthTestCompareFunction:String = "Always"
+  depthWriteEnabled:String = "0"
+  cullMode:String = "Off"
+}

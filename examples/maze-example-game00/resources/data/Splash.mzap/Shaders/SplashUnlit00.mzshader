@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Shader>
-    <GLSL vertex="SplashUnlit00V.mzglsl" fragment="SplashUnlit00F.mzglsl" />
-</Shader>
+gLSL
+{
+  vertex:String = "SplashUnlit00V.mzglsl"
+  fragment:String = "SplashUnlit00F.mzglsl"
+}

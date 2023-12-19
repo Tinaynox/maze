@@ -296,7 +296,7 @@ namespace Maze
             {
                 Maze::MetaProperty* metaProperty = settingsMetaClass->getProperty(i);
 
-                Maze::CString propertyName = metaProperty->getName();
+                HashedCString propertyName = metaProperty->getName();
                 String propertyValue = metaProperty->toString(settingsMetainstance);
 
                 tinyxml2::XMLElement* settingsElement = doc.NewElement("Property");
@@ -359,7 +359,7 @@ namespace Maze
             {
                 Maze::MetaProperty* metaProperty = settingsMetaClass->getProperty(i);
 
-                Maze::CString propertyName = metaProperty->getName();
+                HashedCString propertyName = metaProperty->getName();
                 String propertyValue = metaProperty->toString(settingsMetainstance);
 
                 DataBlock* propertyBlock = settingsMetaClassBlock->addNewDataBlock(MAZE_HS("property"));

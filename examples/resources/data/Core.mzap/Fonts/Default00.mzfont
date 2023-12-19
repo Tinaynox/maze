@@ -9,8 +9,8 @@ trueType
 
   Symbols
   {
-    from:String = "0x0030"
-    to:String = "0x0039"
+    from:U32 = 0x0030
+    to:U32 = 0x0039
   }
 }
 

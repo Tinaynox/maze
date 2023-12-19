@@ -2,42 +2,42 @@ uniform
 {
   name:String = "u_mainLightColor"
   type:String = "UniformVec4F32"
-  value:String = "1.0;0.957;0.84;1.0"
+  value:Vec4F = 1.0, 0.957, 0.84, 1.0
 }
 
 uniform
 {
   name:String = "u_mainLightDirection"
   type:String = "UniformVec3F32"
-  value:String = "0.577;-0.577;0.577"
+  value:Vec3 = 0.577, -0.577, 0.577
 }
 
 uniform
 {
   name:String = "u_color"
   type:String = "UniformVec4F32"
-  value:String = "1.0;1.0;1.0;1.0"
+  value:Vec4F = 1.0, 1.0, 1.0, 1.0
 }
 
 uniform
 {
   name:String = "u_ambientLightColor"
   type:String = "UniformVec4F32"
-  value:String = "0.1;0.1;0.1;1.0"
+  value:Vec4F = 0.1, 0.1, 0.1, 1.0
 }
 
 uniform
 {
   name:String = "u_shininess"
   type:String = "UniformF32"
-  value:String = "0.03"
+  value:F32 = 0.03
 }
 
 uniform
 {
   name:String = "u_specularColor"
   type:String = "UniformVec4F32"
-  value:String = "0.8;0.8;0.8;1.0"
+  value:Vec4F = 0.8, 0.8, 0.8, 1.0
 }
 
 feature
@@ -49,21 +49,21 @@ uniform
 {
   name:String = "u_backLightColor"
   type:String = "UniformVec4F32"
-  value:String = "0.65;0.70;0.75;1.0"
+  value:Vec4F = 0.65, 0.70, 0.75, 1.0
 }
 
 uniform
 {
   name:String = "u_backLightDirection"
   type:String = "UniformVec3F32"
-  value:String = "0.0;0.0;-1.0"
+  value:Vec3 = 0.0, 0.0, -1.0
 }
 
 uniform
 {
   name:String = "u_backLightBend"
   type:String = "UniformF32"
-  value:String = "0.75"
+  value:F32 = 0.75
 }
 
 GLSL

@@ -2,7 +2,7 @@ uniform
 {
   name:String = "u_hue"
   type:String = "UniformF32"
-  value:String = "0.0"
+  value:F32 = 0.0
 }
 
 GLSL

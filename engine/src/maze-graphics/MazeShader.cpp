@@ -512,7 +512,7 @@ namespace Maze
         AssetFilePtr shaderFile;
         AssetFilePtr vertexShaderFile;
         AssetFilePtr fragmentShaderFile;
-        Vector<ShaderXMLUniformData> uniformsData;
+        Vector<ShaderUniformVariant> uniformsData;
 
         AssetManager* assetManager = AssetManager::GetInstancePtr();
 
@@ -571,14 +571,8 @@ namespace Maze
                 else
                 if (strcmp(shaderChildElement->Name(), "Uniform") == 0)
                 {
-                    CString name = shaderChildElement->Attribute("name");
-                    CString type = shaderChildElement->Attribute("type");
-                    CString value = shaderChildElement->Attribute("value");
-
-                    ShaderXMLUniformData uniformData;
-                    uniformData.name = name ? name : "";
-                    uniformData.type = type ? type : "";
-                    uniformData.value = value ? value : "";
+                    ShaderUniformVariant uniformData(m_renderSystemRaw);
+                    uniformData.loadFromXMLElement(shaderChildElement);
                     uniformsData.push_back(uniformData);
                 }
 
@@ -662,7 +656,7 @@ namespace Maze
         AssetFilePtr const& _shaderFile,
         AssetFilePtr const& _vertexShaderFile,
         AssetFilePtr const& _fragmentShaderFile,
-        Vector<ShaderXMLUniformData> const& _uniformsData)
+        Vector<ShaderUniformVariant> const& _uniformsData)
     {
         if (_shaderFile)
         {
@@ -680,145 +674,10 @@ namespace Maze
             MAZE_ERROR("%s: Invalid shader file syntax!", m_assetFile->getFileName().toUTF8().c_str());
         }
 
-        TextureManagerPtr const& textureManager = getRenderSystemRaw()->getTextureManager();
 
-        for (ShaderXMLUniformData const& uniformData : _uniformsData)
-        {
-            ShaderUniformType::Enum uniformType = ShaderUniformType::FromString(uniformData.type);
-
-            switch (uniformType)
-            {
-                case ShaderUniformType::UniformS32:
-                {
-                    setUniform(uniformData.name.asHashedCString(), StringHelper::StringToS32(uniformData.value));
-                    break;
-                }
-
-                case ShaderUniformType::UniformF32:
-                {
-                    setUniform(uniformData.name.asHashedCString(), StringHelper::StringToF32(uniformData.value));
-                    break;
-                }
-
-                case ShaderUniformType::UniformBool:
-                {
-                    setUniform(uniformData.name.asHashedCString(), StringHelper::StringToBool(uniformData.value));
-                    break;
-                }
-
-                case ShaderUniformType::UniformTexture2D:
-                {
-                    Texture2DPtr const& texture2D = textureManager->getTexture2D(uniformData.value);
-
-                    if (texture2D)
-                    {
-                        setUniform(uniformData.name.asHashedCString(), texture2D);
-                    }
-                    else
-                    {
-                        MAZE_ERROR("Shader: '%s'. Undefined texture for uniform '%s': '%s'", getName().c_str(), uniformData.name.c_str(), uniformData.value.c_str());
-                        setUniform(uniformData.name.asHashedCString(), textureManager->getErrorTexture());
-                    }
-                    break;
-                }
-
-                case ShaderUniformType::UniformVec2F32:
-                {
-                    setUniform(uniformData.name.asHashedCString(), Vec2F::FromString(uniformData.value));
-                    break;
-                }
-
-                case ShaderUniformType::UniformVec3F32:
-                {
-                    setUniform(uniformData.name.asHashedCString(), Vec3F::FromString(uniformData.value));
-                    break;
-                }
-
-                case ShaderUniformType::UniformVec4F32:
-                {
-                    setUniform(uniformData.name.asHashedCString(), Vec4F::FromString(uniformData.value));
-                    break;
-                }
-
-                case ShaderUniformType::UniformVec2S32:
-                {
-                    setUniform(uniformData.name.asHashedCString(), Vec2S::FromString(uniformData.value));
-                    break;
-                }
-
-                case ShaderUniformType::UniformVec3S32:
-                {
-                    setUniform(uniformData.name.asHashedCString(), Vec3S::FromString(uniformData.value));
-                    break;
-                }
-
-                case ShaderUniformType::UniformVec4S32:
-                {
-                    setUniform(uniformData.name.asHashedCString(), Vec4S::FromString(uniformData.value));
-                    break;
-                }
-
-                case ShaderUniformType::UniformVec2U32:
-                {
-                    setUniform(uniformData.name.asHashedCString(), Vec2U::FromString(uniformData.value));
-                    break;
-                }
-
-                case ShaderUniformType::UniformVec3U32:
-                {
-                    setUniform(uniformData.name.asHashedCString(), Vec3U::FromString(uniformData.value));
-                    break;
-                }
-
-                case ShaderUniformType::UniformVec4U32:
-                {
-                    setUniform(uniformData.name.asHashedCString(), Vec4U::FromString(uniformData.value));
-                    break;
-                }
-
-                case ShaderUniformType::UniformVec2B:
-                {
-                    setUniform(uniformData.name.asHashedCString(), Vec2B::FromString(uniformData.value));
-                    break;
-                }
-
-                case ShaderUniformType::UniformVec3B:
-                {
-                    setUniform(uniformData.name.asHashedCString(), Vec3B::FromString(uniformData.value));
-                    break;
-                }
-
-                case ShaderUniformType::UniformVec4B:
-                {
-                    setUniform(uniformData.name.asHashedCString(), Vec4B::FromString(uniformData.value));
-                    break;
-                }
-
-                case ShaderUniformType::UniformMat3F32:
-                {
-                    setUniform(uniformData.name.asHashedCString(), Mat3F::FromString(uniformData.value));
-                    break;
-                }
-
-                case ShaderUniformType::UniformMat4F32:
-                {
-                    setUniform(uniformData.name.asHashedCString(), Mat4F::FromString(uniformData.value));
-                    break;
-                }
-
-                case ShaderUniformType::UniformColorF128:
-                {
-                    setUniform(uniformData.name.asHashedCString(), Vec4F::FromString(uniformData.value));
-                    break;
-                }
-
-                default:
-                {
-                    MAZE_ERROR("Undefined uniform type - %s!", uniformData.type.c_str());
-                    break;
-                }
-            }
-        }
+        for (ShaderUniformVariant const& uniformData : _uniformsData)
+            setUniform(uniformData);
+        
 
         return true;
     }
@@ -860,7 +719,7 @@ namespace Maze
         AssetFilePtr shaderFile;
         AssetFilePtr vertexShaderFile;
         AssetFilePtr fragmentShaderFile;
-        Vector<ShaderXMLUniformData> uniformsData;
+        Vector<ShaderUniformVariant> uniformsData;
 
         AssetManager* assetManager = AssetManager::GetInstancePtr();
         TextureManagerPtr const& textureManager = getRenderSystemRaw()->getTextureManager();
@@ -902,14 +761,8 @@ namespace Maze
             else
             if (subBlock->getName() == MAZE_HASHED_CSTRING("uniform"))
             {
-                CString name = subBlock->getCString("name");
-                String const type = subBlock->getString("type");
-                String const value = subBlock->getString("value");
-
-                ShaderXMLUniformData uniformData;
-                uniformData.name = name ? name : "";
-                uniformData.type = type;
-                uniformData.value = value;
+                ShaderUniformVariant uniformData(m_renderSystemRaw);
+                uniformData.loadFromDataBlock(*subBlock);
                 uniformsData.push_back(uniformData);
             }
         }

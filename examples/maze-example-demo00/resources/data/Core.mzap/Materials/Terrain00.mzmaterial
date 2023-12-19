@@ -1,103 +1,103 @@
-shaderUniformVariant
+uniform
 {
   name:String = "u_baseMap0"
   type:String = "UniformTexture2D"
   value:String = "Terrain02.png"
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_baseMap0ST"
   type:String = "UniformVec4F32"
-  value:String = "5.0;5.0;0.0;0.0"
+  value:Vec4F = 5.0, 5.0, 0.0, 0.0
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_baseMap1"
   type:String = "UniformTexture2D"
   value:String = "Terrain01.png"
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_baseMap1ST"
   type:String = "UniformVec4F32"
-  value:String = "5.0;5.0;0.0;0.0"
+  value:Vec4F = 5.0, 5.0, 0.0, 0.0
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_baseMap2"
   type:String = "UniformTexture2D"
   value:String = "Terrain00.png"
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_baseMap2ST"
   type:String = "UniformVec4F32"
-  value:String = "8.0;8.0;0.0;0.0"
+  value:Vec4F = 8.0, 8.0, 0.0, 0.0
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_height0"
   type:String = "UniformF32"
-  value:String = "0.4"
+  value:F32 = 0.4
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_height1"
   type:String = "UniformF32"
-  value:String = "1.0"
+  value:F32 = 1.0
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_height2"
   type:String = "UniformF32"
-  value:String = "2.0"
+  value:F32 = 2.0
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_color"
   type:String = "UniformColorF128"
-  value:String = "0.76;0.717;0.717;1.0"
+  value:Vec4F = 0.76, 0.717, 0.717, 1.0
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_ambientLightColor"
   type:String = "UniformColorF128"
-  value:String = "0.45;0.45;0.45;1.0"
+  value:Vec4F = 0.45, 0.45, 0.45, 1.0
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_shininess"
   type:String = "UniformF32"
-  value:String = "0.1"
+  value:F32 = 0.1
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_specularColor"
   type:String = "UniformColorF128"
-  value:String = "0.05;0.05;0.05;1.0"
+  value:Vec4F = 0.05, 0.05, 0.05, 1.0
 }
 
 renderPass
 {
   passType:String = "Default"
-  renderQueueIndex:String = "2000"
+  renderQueueIndex:S32 = 2000
   shader:String = "Terrain00.mzshader"
   blendOperation:String = "Add"
   blendSrcFactor:String = "One"
   blendDestFactor:String = "Zero"
   depthTestCompareFunction:String = "LessEqual"
-  depthWriteEnabled:String = "1"
+  depthWriteEnabled:Bool = true
   cullMode:String = "Off"
 }

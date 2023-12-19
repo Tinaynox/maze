@@ -1,40 +1,40 @@
-shaderUniformVariant
+uniform
 {
   name:String = "u_baseMap"
   type:String = "UniformTexture2D"
   value:String = "Fireball.bmp"
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_emissionMap"
   type:String = "UniformTexture2D"
   value:String = "FireBallEmission.bmp"
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_color"
   type:String = "UniformVec4F32"
-  value:String = "1.4;1.2;1.2;1.0"
+  value:Vec4F = 1.4, 1.2, 1.2, 1.0
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_emissionColor"
   type:String = "UniformVec4F32"
-  value:String = "1.6;0.9;1.35;1.0"
+  value:Vec4F = 1.6, 0.9, 1.35, 1.0
 }
 
 renderPass
 {
   passType:String = "Default"
-  renderQueueIndex:String = "3000"
+  renderQueueIndex:S32 = 3000
   shader:String = "Particle00.mzshader"
   blendOperation:String = "Add"
   blendSrcFactor:String = "SrcAlpha"
   blendDestFactor:String = "OneMinusSrcAlpha"
   depthTestCompareFunction:String = "LessEqual"
-  depthWriteEnabled:String = "0"
+  depthWriteEnabled:Bool = false
   cullMode:String = "Off"
 }

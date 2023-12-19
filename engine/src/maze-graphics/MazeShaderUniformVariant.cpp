@@ -958,15 +958,39 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniformVariant::loadFromDataBlock(DataBlock const& _dataBlock)
     {
-        // #TODO: Rework via different types
-        CString name = _dataBlock.getCString("name");
-        CString type = _dataBlock.getCString("type");
-        String const& value = _dataBlock.getString("value");
+        CString name = _dataBlock.getCString(MAZE_HS("name"));
+        setName(name ? name : "");
 
+        CString type = _dataBlock.getCString(MAZE_HS("type"));
         ShaderUniformType shaderUniformType = ShaderUniformType::FromString(type);
 
-        setString(shaderUniformType, value.c_str(), value.size());
-        setName(name ? name : "");
+        switch (shaderUniformType)
+        {
+            case ShaderUniformType::UniformS32:                 set(_dataBlock.getS32(MAZE_HS("value"))); break;
+            case ShaderUniformType::UniformF32:                 set(_dataBlock.getF32(MAZE_HS("value"))); break;
+            case ShaderUniformType::UniformF64:                 set(_dataBlock.getF64(MAZE_HS("value"))); break;
+            case ShaderUniformType::UniformBool:                set(_dataBlock.getBool(MAZE_HS("value"))); break;
+            case ShaderUniformType::UniformTexture2D:           setTexture2D(_dataBlock.getString(MAZE_HS("value"))); break;
+            case ShaderUniformType::UniformTextureCube:         setTextureCube(_dataBlock.getString(MAZE_HS("value"))); break;
+            case ShaderUniformType::UniformVec2S32:             set(_dataBlock.getVec2S32(MAZE_HS("value"))); break;
+            case ShaderUniformType::UniformVec3S32:             set(_dataBlock.getVec3S32(MAZE_HS("value"))); break;
+            case ShaderUniformType::UniformVec4S32:             set(_dataBlock.getVec4S32(MAZE_HS("value"))); break;
+            case ShaderUniformType::UniformVec2U32:             set(_dataBlock.getVec2U32(MAZE_HS("value"))); break;
+            case ShaderUniformType::UniformVec3U32:             set(_dataBlock.getVec3U32(MAZE_HS("value"))); break;
+            case ShaderUniformType::UniformVec4U32:             set(_dataBlock.getVec4U32(MAZE_HS("value"))); break;
+            case ShaderUniformType::UniformVec2F32:             set(_dataBlock.getVec2F32(MAZE_HS("value"))); break;
+            case ShaderUniformType::UniformVec3F32:             set(_dataBlock.getVec3F32(MAZE_HS("value"))); break;
+            case ShaderUniformType::UniformVec4F32:             set(_dataBlock.getVec4F32(MAZE_HS("value"))); break;
+            case ShaderUniformType::UniformVec2B:               set(_dataBlock.getVec2B(MAZE_HS("value"))); break;
+            case ShaderUniformType::UniformVec3B:               set(_dataBlock.getVec3B(MAZE_HS("value"))); break;
+            case ShaderUniformType::UniformVec4B:               set(_dataBlock.getVec4B(MAZE_HS("value"))); break;
+            case ShaderUniformType::UniformMat3F32:             set(_dataBlock.getMat3F32(MAZE_HS("value"))); break;
+            case ShaderUniformType::UniformMat4F32:             set(_dataBlock.getMat4F32(MAZE_HS("value"))); break;
+            case ShaderUniformType::UniformColorF128:           setColor(_dataBlock.getVec4F32(MAZE_HS("value"))); break;
+            default:
+                Debug::LogError("Unsupported ShaderUniformType - %s", shaderUniformType.toCString());
+                return false;
+        }
 
         return true;
     }
@@ -976,12 +1000,35 @@ namespace Maze
     {
         CString className = ClassInfo<ShaderUniformVariant>::Name();
 
-        String value = toStringValue();
-
-        // #TODO: Rework via different types
-        _dataBlock.setCString("name", m_name.c_str());
+        _dataBlock.setString("name", m_name);
         _dataBlock.setCString("type", m_type.toCString());
-        _dataBlock.setString("value", value);
+
+        switch (m_type)
+        {
+            case ShaderUniformType::UniformS32:                 _dataBlock.setS32(MAZE_HS("value"), getS32()); break;
+            case ShaderUniformType::UniformF32:                 _dataBlock.setF32(MAZE_HS("value"), getF32()); break;
+            case ShaderUniformType::UniformF64:                 _dataBlock.setF64(MAZE_HS("value"), getF64()); break;
+            case ShaderUniformType::UniformBool:                _dataBlock.setBool(MAZE_HS("value"), getBool()); break;
+            case ShaderUniformType::UniformTexture2D:           _dataBlock.setString(MAZE_HS("value"), toStringValue()); break;
+            case ShaderUniformType::UniformTextureCube:         _dataBlock.setString(MAZE_HS("value"), toStringValue()); break;
+            case ShaderUniformType::UniformVec2S32:             _dataBlock.setVec2S32(MAZE_HS("value"), getVec2S32()); break;
+            case ShaderUniformType::UniformVec3S32:             _dataBlock.setVec3S32(MAZE_HS("value"), getVec3S32()); break;
+            case ShaderUniformType::UniformVec4S32:             _dataBlock.setVec4S32(MAZE_HS("value"), getVec4S32()); break;
+            case ShaderUniformType::UniformVec2U32:             _dataBlock.setVec2U32(MAZE_HS("value"), getVec2U32()); break;
+            case ShaderUniformType::UniformVec3U32:             _dataBlock.setVec3U32(MAZE_HS("value"), getVec3U32()); break;
+            case ShaderUniformType::UniformVec4U32:             _dataBlock.setVec4U32(MAZE_HS("value"), getVec4U32()); break;
+            case ShaderUniformType::UniformVec2F32:             _dataBlock.setVec2F32(MAZE_HS("value"), getVec2F32()); break;
+            case ShaderUniformType::UniformVec3F32:             _dataBlock.setVec3F32(MAZE_HS("value"), getVec3F32()); break;
+            case ShaderUniformType::UniformVec4F32:             _dataBlock.setVec4F32(MAZE_HS("value"), getVec4F32()); break;
+            case ShaderUniformType::UniformVec2B:               _dataBlock.setVec2B(MAZE_HS("value"), getVec2B()); break;
+            case ShaderUniformType::UniformVec3B:               _dataBlock.setVec3B(MAZE_HS("value"), getVec3B()); break;
+            case ShaderUniformType::UniformVec4B:               _dataBlock.setVec4B(MAZE_HS("value"), getVec4B()); break;
+            case ShaderUniformType::UniformMat3F32:             _dataBlock.setMat3F32(MAZE_HS("value"), getMat3F32()); break;
+            case ShaderUniformType::UniformMat4F32:             _dataBlock.setMat4F32(MAZE_HS("value"), getMat4F32()); break;
+            case ShaderUniformType::UniformColorF128:           _dataBlock.setVec4F32(MAZE_HS("value"), getVec4F32()); break;
+            default:
+                Debug::LogError("Unsupported ShaderUniformType - %s", m_type.toCString());
+        }
     }
 
     //////////////////////////////////////////

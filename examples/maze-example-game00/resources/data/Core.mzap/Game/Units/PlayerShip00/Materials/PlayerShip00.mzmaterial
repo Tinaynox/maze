@@ -1,29 +1,86 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Material>
-    <ShaderUniformVariant name="u_baseMap" type="UniformTexture2D" value="PlayerShip00_Diffuse.png" />
-    <ShaderUniformVariant name="u_normalMap" type="UniformTexture2D" value="PlayerShip00_Normal.png" />
-    <ShaderUniformVariant name="u_specularMap" type="UniformTexture2D" value="PlayerShip00_Specular.bmp" />
-    <ShaderUniformVariant name="u_emissionMap" type="UniformTexture2D" value="PlayerShip00_Emission.png" />
-    <ShaderUniformVariant name="u_shotMap" type="UniformTexture2D" value="PlayerShip00_Shot.png" />
-    <ShaderUniformVariant name="u_emissionColor" type="UniformColorF128" value="2.0;2.0;2.0;1.0" />
-    <ShaderUniformVariant name="u_color" type="UniformColorF128" value="1.0;1.0;1.0;1.0" />
-    <!--ShaderUniformVariant name="u_ambientLightColor" type="UniformColorF128" value="0.47;0.47;0.47;1.0" /-->
-    <!--ShaderUniformVariant name="u_ambientLightColor" type="UniformColorF128" value="0.1;0.066;0.0;1.0" /-->
-    <!--ShaderUniformVariant name="u_ambientLightColor" type="UniformColorF128" value="0.0;0.0;0.0;1.0" /-->
-    <ShaderUniformVariant name="u_ambientLightColor" type="UniformColorF128" value="0.1;0.1;0.1;1.0" />
-    <ShaderUniformVariant name="u_shininess" type="UniformF32" value="1.0" />
-    <ShaderUniformVariant name="u_specularColor" type="UniformColorF128" value="0.27;0.27;0.27;1.0" />
-    
-    <!--ShaderUniformVariant name="u_mainLightColor" type="UniformColorF128" value="0.445;0.633;1.0;1.0" /-->
-    
-    <RenderPass 
-        passType="Default"
-        renderQueueIndex="2000"
-        shader="PlayerShip00.mzshader"
-        blendOperation="Add"
-        blendSrcFactor="One"
-        blendDestFactor="Zero"
-        depthTestCompareFunction="Less"
-        depthWriteEnabled="1"
-        cullMode="Back"/>
-</Material>
+uniform
+{
+  name:String = "u_baseMap"
+  type:String = "UniformTexture2D"
+  value:String = "PlayerShip00_Diffuse.png"
+}
+
+uniform
+{
+  name:String = "u_normalMap"
+  type:String = "UniformTexture2D"
+  value:String = "PlayerShip00_Normal.png"
+}
+
+uniform
+{
+  name:String = "u_specularMap"
+  type:String = "UniformTexture2D"
+  value:String = "PlayerShip00_Specular.bmp"
+}
+
+uniform
+{
+  name:String = "u_emissionMap"
+  type:String = "UniformTexture2D"
+  value:String = "PlayerShip00_Emission.png"
+}
+
+uniform
+{
+  name:String = "u_shotMap"
+  type:String = "UniformTexture2D"
+  value:String = "PlayerShip00_Shot.png"
+}
+
+uniform
+{
+  name:String = "u_emissionColor"
+  type:String = "UniformColorF128"
+  value:String = "2.0;2.0;2.0;1.0"
+}
+
+uniform
+{
+  name:String = "u_color"
+  type:String = "UniformColorF128"
+  value:String = "1.0;1.0;1.0;1.0"
+}
+
+//ShaderUniformVariant name="u_ambientLightColor" type="UniformColorF128" value="0.47;0.47;0.47;1.0" /
+//ShaderUniformVariant name="u_ambientLightColor" type="UniformColorF128" value="0.1;0.066;0.0;1.0" /
+//ShaderUniformVariant name="u_ambientLightColor" type="UniformColorF128" value="0.0;0.0;0.0;1.0" /
+uniform
+{
+  name:String = "u_ambientLightColor"
+  type:String = "UniformColorF128"
+  value:String = "0.1;0.1;0.1;1.0"
+}
+
+uniform
+{
+  name:String = "u_shininess"
+  type:String = "UniformF32"
+  value:String = "1.0"
+}
+
+uniform
+{
+  name:String = "u_specularColor"
+  type:String = "UniformColorF128"
+  value:String = "0.27;0.27;0.27;1.0"
+}
+
+//ShaderUniformVariant name="u_mainLightColor" type="UniformColorF128" value="0.445;0.633;1.0;1.0" /
+renderPass
+{
+  passType:String = "Default"
+  renderQueueIndex:String = "2000"
+  shader:String = "PlayerShip00.mzshader"
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "One"
+  blendDestFactor:String = "Zero"
+  depthTestCompareFunction:String = "Less"
+  depthWriteEnabled:String = "1"
+  cullMode:String = "Back"
+}

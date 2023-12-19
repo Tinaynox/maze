@@ -16,84 +16,84 @@ uniform
 {
   name:String = "u_normalScale"
   type:String = "UniformF32"
-  value:String = "1.0"
+  value:F32 = 1.0
 }
 
 uniform
 {
   name:String = "u_tiling"
   type:String = "UniformF32"
-  value:String = "3.0"
+  value:F32 = 3.0
 }
 
 uniform
 {
   name:String = "u_waveStrength"
   type:String = "UniformF32"
-  value:String = "0.02"
+  value:F32 = 0.02
 }
 
 uniform
 {
   name:String = "u_waveSpeed"
   type:String = "UniformF32"
-  value:String = "0.015"
+  value:F32 = 0.015
 }
 
 uniform
 {
   name:String = "u_refractiveFactor"
   type:String = "UniformF32"
-  value:String = "0.5"
+  value:F32 = 0.5
 }
 
 uniform
 {
   name:String = "u_color"
   type:String = "UniformColorF128"
-  value:String = "0.2;0.3;0.4;0.2"
+  value:Vec4F = 0.2, 0.3, 0.4, 0.2
 }
 
 uniform
 {
   name:String = "u_depthDistortionFactor"
   type:String = "UniformF32"
-  value:String = "20.0"
+  value:F32 = 20.0
 }
 
 uniform
 {
   name:String = "u_depthSpecularFactor"
   type:String = "UniformF32"
-  value:String = "2.5"
+  value:F32 = 2.5
 }
 
 uniform
 {
   name:String = "u_depthTransparencyFactor"
   type:String = "UniformF32"
-  value:String = "2.5"
+  value:F32 = 2.5
 }
 
 uniform
 {
   name:String = "u_shininess"
   type:String = "UniformF32"
-  value:String = "20.0"
+  value:F32 = 20.0
 }
 
 uniform
 {
   name:String = "u_specularColor"
   type:String = "UniformColorF128"
-  value:String = "0.5;0.5;0.5;1.0"
+  value:Vec4F = 0.5, 0.5, 0.5, 1.0
 }
 
 uniform
 {
   name:String = "u_normalYFactor"
   type:String = "UniformF32"
-  value:String = "6.0"
+  value:F32 = 6.0
 }
 
 feature

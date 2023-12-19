@@ -1,47 +1,47 @@
-shaderUniformVariant
+uniform
 {
   name:String = "u_baseMap"
   type:String = "UniformTexture2D"
   value:String = "Barrel00.png"
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_color"
   type:String = "UniformColorF128"
-  value:String = "0.91;1.0;0.91;1.0"
+  value:Vec4F = 0.91, 1.0, 0.91, 1.0
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_ambientLightColor"
   type:String = "UniformColorF128"
-  value:String = "0.74;0.73;0.556;1.0"
+  value:Vec4F = 0.74, 0.73, 0.556, 1.0
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_shininess"
   type:String = "UniformF32"
-  value:String = "0.1"
+  value:F32 = 0.1
 }
 
-shaderUniformVariant
+uniform
 {
   name:String = "u_specularColor"
   type:String = "UniformColorF128"
-  value:String = "0.6;0.6;0.6;1.0"
+  value:Vec4F = 0.6, 0.6, 0.6, 1.0
 }
 
 renderPass
 {
   passType:String = "Default"
-  renderQueueIndex:String = "2000"
+  renderQueueIndex:S32 = 2000
   shader:String = "Default.mzshader"
   blendOperation:String = "Add"
   blendSrcFactor:String = "One"
   blendDestFactor:String = "Zero"
   depthTestCompareFunction:String = "LessEqual"
-  depthWriteEnabled:String = "1"
+  depthWriteEnabled:Bool = true
   cullMode:String = "Off"
 }

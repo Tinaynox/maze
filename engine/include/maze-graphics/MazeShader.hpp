@@ -300,20 +300,6 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        // Struct ShaderXMLUniformData
-        //
-        //////////////////////////////////////////
-        struct ShaderXMLUniformData
-        {
-            HashedString name;
-            String type;
-            String value;
-        };
-
-
-    protected:
-
-        //////////////////////////////////////////
         Shader();
 
         //////////////////////////////////////////
@@ -342,7 +328,7 @@ namespace Maze
             AssetFilePtr const& _shaderFile,
             AssetFilePtr const& _vertexShaderFile,
             AssetFilePtr const& _fragmentShaderFile,
-            Vector<ShaderXMLUniformData> const& _uniformsData);
+            Vector<ShaderUniformVariant> const& _uniformsData);
 
     protected:
         String m_name;

@@ -461,14 +461,14 @@ namespace Maze
     //////////////////////////////////////////
     DataBlock::Param& DataBlock::getParam(ParamIndex _index)
     {
-        MAZE_ASSERT(_index < (ParamIndex)getParamsCount());
+        MAZE_ASSERT(_index >= 0 && _index < (ParamIndex)getParamsCount());
         return getParamsPtr()[_index];
     }
 
     //////////////////////////////////////////
     DataBlock::Param const& DataBlock::getParam(ParamIndex _index) const
     {
-        MAZE_ASSERT(_index < (ParamIndex)getParamsCount());
+        MAZE_ASSERT(_index >= 0 && _index < (ParamIndex)getParamsCount());
         return getParamsPtr()[_index];
     }
 
@@ -489,7 +489,7 @@ namespace Maze
     //////////////////////////////////////////
     DataBlockParamType DataBlock::getParamType(ParamIndex _index) const
     {
-        return _index < (ParamIndex)getParamsCount() ? (DataBlockParamType)getParam(_index).type : DataBlockParamType::None;
+        return (_index >= 0 && _index < (ParamIndex)getParamsCount()) ? (DataBlockParamType)getParam(_index).type : DataBlockParamType::None;
     }
 
     //////////////////////////////////////////
@@ -798,7 +798,7 @@ namespace Maze
     //////////////////////////////////////////
     DataBlock* DataBlock::getDataBlock(DataBlockIndex _index)
     {
-        if ((DataBlockIndex)_index < getDataBlocksCount())
+        if (_index >= 0 && _index < getDataBlocksCount())
             return *(getDataBlocksPtr() + _index);
         return nullptr;
     }
@@ -806,7 +806,7 @@ namespace Maze
     //////////////////////////////////////////
     DataBlock const* DataBlock::getDataBlock(DataBlockIndex _index) const
     {
-        if ((DataBlockIndex)_index < getDataBlocksCount())
+        if (_index >= 0 && _index < getDataBlocksCount())
             return *(getDataBlocksPtr() + _index);
         return nullptr;
     }

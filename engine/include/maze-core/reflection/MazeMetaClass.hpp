@@ -150,11 +150,11 @@ namespace Maze
         
 
         //////////////////////////////////////////
-        virtual void getValue(MetaInstance const& _instance, void* _buffer) const MAZE_ABSTRACT;
+        virtual void getValue(ConstMetaInstance const& _instance, void* _buffer) const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         template <typename TClass>
-        inline void getValue(MetaInstance const& _instance, TClass& _value)
+        inline void getValue(ConstMetaInstance const& _instance, TClass& _value) const
         {
             getValue(_instance, &_value);
         }
@@ -761,9 +761,9 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        virtual void getValue(MetaInstance const& _instance, void* _buffer) const MAZE_OVERRIDE
+        virtual void getValue(ConstMetaInstance const& _instance, void* _buffer) const MAZE_OVERRIDE
         {
-            TObject* obj = castMetaInstanceObject(_instance);
+            TObject const* obj = castMetaInstanceObject(_instance);
 
             *((TValue*)_buffer) = (obj->*m_getter)();
         }

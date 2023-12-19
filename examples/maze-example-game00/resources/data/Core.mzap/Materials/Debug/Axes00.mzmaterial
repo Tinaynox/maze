@@ -1,12 +1,12 @@
 renderPass
 {
   passType:String = "Default"
-  renderQueueIndex:String = "2000"
+  renderQueueIndex:S32 = 2000
   shader:String = "UnlitColor00.mzshader"
   blendOperation:String = "Add"
   blendSrcFactor:String = "One"
   blendDestFactor:String = "Zero"
   depthTestCompareFunction:String = "LessEqual"
-  depthWriteEnabled:String = "1"
+  depthWriteEnabled:Bool = true
   cullMode:String = "Back"
 }

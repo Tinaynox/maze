@@ -296,22 +296,10 @@ namespace Maze
                         {
                             DataBlock const* symbolsBlock = subBlock->getDataBlock(j);
 
-                            CString fromStr = symbolsBlock->getCString("from");
-                            CString toStr = symbolsBlock->getCString("to");
-                            if (fromStr && toStr)
+                            if (symbolsBlock->isParamExists("from") && symbolsBlock->isParamExists("to"))
                             {
-                                U32 from = 0;
-                                U32 to = 0;
-                                {
-                                    StringStream ss;
-                                    ss << std::hex << fromStr;
-                                    ss >> from;
-                                }
-                                {
-                                    StringStream ss;
-                                    ss << std::hex << toStr;
-                                    ss >> to;
-                                }
+                                U32 from = symbolsBlock->getU32("from");
+                                U32 to = symbolsBlock->getU32("to");
 
                                 FontGlyphStorageData glyphsData;
                                 glyphsData.fromCodePoints = from;
@@ -328,27 +316,22 @@ namespace Maze
             else
             if (subBlock->getName() == MAZE_HASHED_CSTRING("sprite"))
             {
-                CString symbolStr = subBlock->getCString("symbol");
-                CString spriteStr = subBlock->getCString("sprite");
-
-                if (symbolStr && spriteStr)
+                if (subBlock->isParamExists("symbol") && subBlock->isParamExists("sprite"))
                 {
+                    U32 symbol = subBlock->getU32("symbol");
+                    CString spriteStr = subBlock->getCString("sprite");
+
                     SpritePtr const& sprite = SpriteManager::GetCurrentInstance()->getSprite(spriteStr);
                     if (sprite)
                     {
-                        U32 symbol = 0;
-                        StringStream ss;
-                        ss << std::hex << symbolStr;
-                        ss >> symbol;
-
                         FontGlyphStorageData glyphsData;
                         glyphsData.fromCodePoints = symbol;
                         glyphsData.toCodePoints = symbol;
                         glyphsData.type = FontGlyphStorageType::Sprite;
-                        glyphsData.spriteData.spriteGlyphFontSize = StringHelper::StringToU32(subBlock->getCString("fontSize"));
-                        glyphsData.spriteData.spriteGlyph.advance = StringHelper::StringToF32(subBlock->getCString("advance"));
+                        glyphsData.spriteData.spriteGlyphFontSize = subBlock->getU32("fontSize");
+                        glyphsData.spriteData.spriteGlyph.advance = subBlock->getF32("advance");
 
-                        glyphsData.spriteData.spriteGlyph.bounds.position = sprite->getColorOffset() + Vec2F::FromString(subBlock->getCString("boundsPosition"));
+                        glyphsData.spriteData.spriteGlyph.bounds.position = sprite->getColorOffset() + subBlock->getVec2F("boundsPosition");
                         glyphsData.spriteData.spriteGlyph.bounds.size = sprite->getColorSize();
                         glyphsData.spriteData.spriteGlyph.texture = sprite->getTexture();
 
@@ -362,15 +345,10 @@ namespace Maze
             else
             if (subBlock->getName() == MAZE_HASHED_CSTRING("entity"))
             {
-                CString symbolStr = subBlock->getCString("symbol");
-                CString prefabStr = subBlock->getCString("prefab");
-
-                if (symbolStr && prefabStr)
+                if (subBlock->isParamExists("symbol") && subBlock->isParamExists("prefab"))
                 {
-                    U32 symbol = 0;
-                    StringStream ss;
-                    ss << std::hex << symbolStr;
-                    ss >> symbol;
+                    U32 symbol = subBlock->getU32("symbol");
+                    CString prefabStr = subBlock->getCString("prefab");
 
                     FontGlyphStorageData glyphsData;
                     glyphsData.fromCodePoints = symbol;
@@ -378,10 +356,10 @@ namespace Maze
                     glyphsData.type = FontGlyphStorageType::Entity;
                     glyphsData.entityData.prefabName = prefabStr;
                     glyphsData.entityData.prefab = nullptr; // prefabStr
-                    glyphsData.entityData.prefabGlyphFontSize = StringHelper::StringToU32(subBlock->getCString("fontSize"));
-                    glyphsData.entityData.prefabGlyph.advance = StringHelper::StringToF32(subBlock->getCString("advance"));
-                    glyphsData.entityData.prefabGlyph.bounds.position = Vec2F::FromString(subBlock->getCString("boundsPosition"));
-                    glyphsData.entityData.prefabGlyph.bounds.size = Vec2F::FromString(subBlock->getCString("boundsSize"));
+                    glyphsData.entityData.prefabGlyphFontSize = subBlock->getU32("fontSize");
+                    glyphsData.entityData.prefabGlyph.advance = subBlock->getF32("advance");
+                    glyphsData.entityData.prefabGlyph.bounds.position = subBlock->getVec2F("boundsPosition");
+                    glyphsData.entityData.prefabGlyph.bounds.size = subBlock->getVec2F("boundsSize");
                     m_glyphsData.push_back(glyphsData);
                     m_glyphsMap.clear();
                 }

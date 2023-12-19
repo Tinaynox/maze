@@ -84,7 +84,7 @@ namespace Maze
         template <class T>
         void registerComponent(CString _group = nullptr)
         {
-            MAZE_ERROR_IF(strcmp(T::GetMetaClass()->getName(), ClassInfo<T>::Name()) != 0, "Class %s should have his own MetaClass! Current MetaClass is %s", ClassInfo<T>::Name(), T::GetMetaClass()->getName());
+            MAZE_ERROR_IF(strcmp(T::GetMetaClass()->getName(), static_cast<CString>(ClassInfo<T>::Name())) != 0, "Class %s should have his own MetaClass! Current MetaClass is %s", ClassInfo<T>::Name(), T::GetMetaClass()->getName());
 
             ComponentIndex uid = ClassInfo<T>::UID();
 

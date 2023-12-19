@@ -1,2 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-<PhysicsMaterial2D density="0.75" friction="0.25" restitution="1.0" />
+density:F32 = 0.75
+friction:F32 = 0.25
+restitution:F32 = 1.0

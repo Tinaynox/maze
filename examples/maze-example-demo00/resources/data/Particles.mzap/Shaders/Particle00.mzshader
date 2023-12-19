@@ -12,7 +12,7 @@ uniform
 {
   name:String = "u_baseMapST"
   type:String = "UniformVec4F32"
-  value:String = "1.0;1.0;0.0;0.0"
+  value:Vec4F = 1.0, 1.0, 0.0, 0.0
 }
 
 GLSL

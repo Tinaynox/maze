@@ -1,20 +1,61 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Material>
-    <ShaderUniformVariant name="u_baseMap" type="UniformTexture2D" value="Mine000_Diffuse.png" />
-    <ShaderUniformVariant name="u_emissionMap" type="UniformTexture2D" value="Mine000_Emission.png" />
-    <ShaderUniformVariant name="u_color" type="UniformColorF128" value="1.0;1.0;1.0;1.0" />
-    <ShaderUniformVariant name="u_ambientLightColor" type="UniformColorF128" value="0.0;0.0;0.0;1.0" />
-    <ShaderUniformVariant name="u_shininess" type="UniformF32" value="0.03" />
-    <ShaderUniformVariant name="u_specularColor" type="UniformColorF128" value="0.47;0.47;0.47;1.0" />
-    <ShaderUniformVariant name="u_emissionColor" type="UniformColorF128" value="12.0;8.0;8.0;1.0" />
-    <RenderPass 
-        passType="Default"
-        renderQueueIndex="2000"
-        shader="GameObject00_Emission.mzshader"
-        blendOperation="Add"
-        blendSrcFactor="One"
-        blendDestFactor="Zero"
-        depthTestCompareFunction="Less"
-        depthWriteEnabled="1"
-        cullMode="Off"/>
-</Material>
+uniform
+{
+  name:String = "u_baseMap"
+  type:String = "UniformTexture2D"
+  value:String = "Mine000_Diffuse.png"
+}
+
+uniform
+{
+  name:String = "u_emissionMap"
+  type:String = "UniformTexture2D"
+  value:String = "Mine000_Emission.png"
+}
+
+uniform
+{
+  name:String = "u_color"
+  type:String = "UniformColorF128"
+  value:String = "1.0;1.0;1.0;1.0"
+}
+
+uniform
+{
+  name:String = "u_ambientLightColor"
+  type:String = "UniformColorF128"
+  value:String = "0.0;0.0;0.0;1.0"
+}
+
+uniform
+{
+  name:String = "u_shininess"
+  type:String = "UniformF32"
+  value:String = "0.03"
+}
+
+uniform
+{
+  name:String = "u_specularColor"
+  type:String = "UniformColorF128"
+  value:String = "0.47;0.47;0.47;1.0"
+}
+
+uniform
+{
+  name:String = "u_emissionColor"
+  type:String = "UniformColorF128"
+  value:String = "12.0;8.0;8.0;1.0"
+}
+
+renderPass
+{
+  passType:String = "Default"
+  renderQueueIndex:String = "2000"
+  shader:String = "GameObject00_Emission.mzshader"
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "One"
+  blendDestFactor:String = "Zero"
+  depthTestCompareFunction:String = "Less"
+  depthWriteEnabled:String = "1"
+  cullMode:String = "Off"
+}

@@ -121,7 +121,7 @@ namespace Maze
     //////////////////////////////////////////
     void ECSScene::processSceneWillBeDestroyed()
     {
-        Debug::Log("%s::processSceneWillBeDestroyed started...", getMetaClass()->getName());
+        Debug::Log("%s::processSceneWillBeDestroyed started...", static_cast<CString>(getMetaClass()->getName()));
 
         destroyAllEntities();
         removeAllSystems();
@@ -129,11 +129,11 @@ namespace Maze
         ECSWorld* world = m_world;
         if (world)
         {
-            Debug::Log("%s::processSceneWillBeDestroyed world update started", getMetaClass()->getName());
+            Debug::Log("%s::processSceneWillBeDestroyed world update started", static_cast<CString>(getMetaClass()->getName()));
             world->update(0.0f);
         }
 
-        Debug::Log("%s::processSceneWillBeDestroyed finished.", getMetaClass()->getName());
+        Debug::Log("%s::processSceneWillBeDestroyed finished.", static_cast<CString>(getMetaClass()->getName()));
     }
 
     //////////////////////////////////////////

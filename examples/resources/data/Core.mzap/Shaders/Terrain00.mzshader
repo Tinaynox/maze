@@ -2,70 +2,70 @@ uniform
 {
   name:String = "u_baseMap0ST"
   type:String = "UniformVec4F32"
-  value:String = "1.0;1.0;0.0;0.0"
+  value:Vec4F = 1.0, 1.0, 0.0, 0.0
 }
 
 uniform
 {
   name:String = "u_baseMap1ST"
   type:String = "UniformVec4F32"
-  value:String = "1.0;1.0;0.0;0.0"
+  value:Vec4F = 1.0, 1.0, 0.0, 0.0
 }
 
 uniform
 {
   name:String = "u_baseMap2ST"
   type:String = "UniformVec4F32"
-  value:String = "1.0;1.0;0.0;0.0"
+  value:Vec4F = 1.0, 1.0, 0.0, 0.0
 }
 
 uniform
 {
   name:String = "u_height0"
   type:String = "UniformF32"
-  value:String = "0.75"
+  value:F32 = 0.75
 }
 
 uniform
 {
   name:String = "u_height1"
   type:String = "UniformF32"
-  value:String = "1.5"
+  value:F32 = 1.5
 }
 
 uniform
 {
   name:String = "u_height2"
   type:String = "UniformF32"
-  value:String = "2.25"
+  value:F32 = 2.25
 }
 
 uniform
 {
   name:String = "u_color"
   type:String = "UniformColorF128"
-  value:String = "1.0;1.0;1.0;1.0"
+  value:Vec4F = 1.0, 1.0, 1.0, 1.0
 }
 
 uniform
 {
   name:String = "u_ambientLightColor"
   type:String = "UniformColorF128"
-  value:String = "0.45;0.45;0.45;1.0"
+  value:Vec4F = 0.45, 0.45, 0.45, 1.0
 }
 
 uniform
 {
   name:String = "u_shininess"
   type:String = "UniformF32"
-  value:String = "0.1"
+  value:F32 = 0.1
 }
 
 uniform
 {
   name:String = "u_specularColor"
   type:String = "UniformColorF128"
-  value:String = "0.6;0.6;0.6;1.0"
+  value:Vec4F = 0.6, 0.6, 0.6, 1.0
 }
 
 GLSL

@@ -1,15 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Material>
-    <ShaderUniformVariant name="u_baseMapFar0" type="UniformTexture2D" value="BackgroundFar_02.png" />
-    <ShaderUniformVariant name="u_color" type="UniformVec4F32" value="1.0;1.0;1.0;1.0" />
-    <RenderPass 
-        passType="Default"
-        renderQueueIndex="2000"
-        shader="GameSky00.mzshader"
-        blendOperation="Add"
-        blendSrcFactor="SrcAlpha"
-        blendDestFactor="OneMinusSrcAlpha"
-        depthTestCompareFunction="LessEqual"
-        depthWriteEnabled="1"
-        cullMode="Back"/>
-</Material>
+uniform
+{
+  name:String = "u_baseMapFar0"
+  type:String = "UniformTexture2D"
+  value:String = "BackgroundFar_02.png"
+}
+
+uniform
+{
+  name:String = "u_color"
+  type:String = "UniformVec4F32"
+  value:String = "1.0;1.0;1.0;1.0"
+}
+
+renderPass
+{
+  passType:String = "Default"
+  renderQueueIndex:String = "2000"
+  shader:String = "GameSky00.mzshader"
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "SrcAlpha"
+  blendDestFactor:String = "OneMinusSrcAlpha"
+  depthTestCompareFunction:String = "LessEqual"
+  depthWriteEnabled:String = "1"
+  cullMode:String = "Back"
+}
