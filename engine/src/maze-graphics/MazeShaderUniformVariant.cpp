@@ -961,35 +961,47 @@ namespace Maze
         CString name = _dataBlock.getCString(MAZE_HS("name"));
         setName(name ? name : "");
 
-        CString type = _dataBlock.getCString(MAZE_HS("type"));
-        ShaderUniformType shaderUniformType = ShaderUniformType::FromString(type);
+        DataBlock::ParamIndex valueParamIndex = _dataBlock.findParamIndex(MAZE_HS("value"));
+        MAZE_ERROR_RETURN_VALUE_IF(valueParamIndex < 0, false, "Value param missed!");
 
-        switch (shaderUniformType)
+        DataBlockParamType valueParamType = _dataBlock.getParamType(valueParamIndex);
+        switch (valueParamType)
         {
-            case ShaderUniformType::UniformS32:                 set(_dataBlock.getS32(MAZE_HS("value"))); break;
-            case ShaderUniformType::UniformF32:                 set(_dataBlock.getF32(MAZE_HS("value"))); break;
-            case ShaderUniformType::UniformF64:                 set(_dataBlock.getF64(MAZE_HS("value"))); break;
-            case ShaderUniformType::UniformBool:                set(_dataBlock.getBool(MAZE_HS("value"))); break;
-            case ShaderUniformType::UniformTexture2D:           setTexture2D(_dataBlock.getString(MAZE_HS("value"))); break;
-            case ShaderUniformType::UniformTextureCube:         setTextureCube(_dataBlock.getString(MAZE_HS("value"))); break;
-            case ShaderUniformType::UniformVec2S32:             set(_dataBlock.getVec2S32(MAZE_HS("value"))); break;
-            case ShaderUniformType::UniformVec3S32:             set(_dataBlock.getVec3S32(MAZE_HS("value"))); break;
-            case ShaderUniformType::UniformVec4S32:             set(_dataBlock.getVec4S32(MAZE_HS("value"))); break;
-            case ShaderUniformType::UniformVec2U32:             set(_dataBlock.getVec2U32(MAZE_HS("value"))); break;
-            case ShaderUniformType::UniformVec3U32:             set(_dataBlock.getVec3U32(MAZE_HS("value"))); break;
-            case ShaderUniformType::UniformVec4U32:             set(_dataBlock.getVec4U32(MAZE_HS("value"))); break;
-            case ShaderUniformType::UniformVec2F32:             set(_dataBlock.getVec2F32(MAZE_HS("value"))); break;
-            case ShaderUniformType::UniformVec3F32:             set(_dataBlock.getVec3F32(MAZE_HS("value"))); break;
-            case ShaderUniformType::UniformVec4F32:             set(_dataBlock.getVec4F32(MAZE_HS("value"))); break;
-            case ShaderUniformType::UniformVec2B:               set(_dataBlock.getVec2B(MAZE_HS("value"))); break;
-            case ShaderUniformType::UniformVec3B:               set(_dataBlock.getVec3B(MAZE_HS("value"))); break;
-            case ShaderUniformType::UniformVec4B:               set(_dataBlock.getVec4B(MAZE_HS("value"))); break;
-            case ShaderUniformType::UniformMat3F32:             set(_dataBlock.getMat3F32(MAZE_HS("value"))); break;
-            case ShaderUniformType::UniformMat4F32:             set(_dataBlock.getMat4F32(MAZE_HS("value"))); break;
-            case ShaderUniformType::UniformColorF128:           setColor(_dataBlock.getVec4F32(MAZE_HS("value"))); break;
+            case DataBlockParamType::ParamS32:          set(_dataBlock.getS32(valueParamIndex)); break;
+            case DataBlockParamType::ParamF32:          set(_dataBlock.getF32(valueParamIndex)); break;
+            case DataBlockParamType::ParamF64:          set(_dataBlock.getF64(valueParamIndex)); break;
+            case DataBlockParamType::ParamBool:         set(_dataBlock.getBool(valueParamIndex)); break;
+            case DataBlockParamType::ParamVec2S32:      set(_dataBlock.getVec2S32(valueParamIndex)); break;
+            case DataBlockParamType::ParamVec3S32:      set(_dataBlock.getVec3S32(valueParamIndex)); break;
+            case DataBlockParamType::ParamVec4S32:      set(_dataBlock.getVec4S32(valueParamIndex)); break;
+            case DataBlockParamType::ParamVec2U32:      set(_dataBlock.getVec2U32(valueParamIndex)); break;
+            case DataBlockParamType::ParamVec3U32:      set(_dataBlock.getVec3U32(valueParamIndex)); break;
+            case DataBlockParamType::ParamVec4U32:      set(_dataBlock.getVec4U32(valueParamIndex)); break;
+            case DataBlockParamType::ParamVec2F32:      set(_dataBlock.getVec2F32(valueParamIndex)); break;
+            case DataBlockParamType::ParamVec3F32:      set(_dataBlock.getVec3F32(valueParamIndex)); break;
+            case DataBlockParamType::ParamVec2B:        set(_dataBlock.getVec2B(valueParamIndex)); break;
+            case DataBlockParamType::ParamVec3B:        set(_dataBlock.getVec3B(valueParamIndex)); break;
+            case DataBlockParamType::ParamVec4B:        set(_dataBlock.getVec4B(valueParamIndex)); break;
+            case DataBlockParamType::ParamMat3F32:      set(_dataBlock.getMat3F32(valueParamIndex)); break;
+            case DataBlockParamType::ParamMat4F32:      set(_dataBlock.getMat4F32(valueParamIndex)); break;
             default:
-                Debug::LogError("Unsupported ShaderUniformType - %s", shaderUniformType.toCString());
-                return false;
+            {
+                CString type = _dataBlock.getCString(MAZE_HS("type"));
+                ShaderUniformType shaderUniformType = ShaderUniformType::FromString(type);
+
+                switch (shaderUniformType)
+                {
+                    case ShaderUniformType::UniformTexture2D:           setTexture2D(_dataBlock.getString(MAZE_HS("value"))); break;
+                    case ShaderUniformType::UniformTextureCube:         setTextureCube(_dataBlock.getString(MAZE_HS("value"))); break;
+                    case ShaderUniformType::UniformVec4F32:             set(_dataBlock.getVec4F32(MAZE_HS("value"))); break;
+                    case ShaderUniformType::UniformColorF128:           setColor(_dataBlock.getVec4F32(MAZE_HS("value"))); break;
+                    default:
+                        Debug::LogError("Unsupported ShaderUniformType - %s", shaderUniformType.toCString());
+                        return false;
+                }
+
+                break;
+            }
         }
 
         return true;
