@@ -16,7 +16,7 @@ uniform
 {
   name:String = "u_mainLightDirection"
   type:String = "UniformVec3F32"
-  value:Vec3 = 0.577, -0.577, 0.577
+  value:Vec3F = 0.577, -0.577, 0.577
 }
 
 uniform

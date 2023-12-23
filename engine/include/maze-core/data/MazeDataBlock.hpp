@@ -524,6 +524,9 @@ namespace Maze
         ParamIndex findParamIndex(SharedStringId _nameId) const;
 
         //////////////////////////////////////////
+        ParamIndex findParamIndex(HashedCString _name) const;
+
+        //////////////////////////////////////////
         ParamIndex findParamIndexReverse(SharedStringId _nameId, ParamIndex _startBefore) const;
 
         //////////////////////////////////////////
@@ -589,6 +592,25 @@ namespace Maze
         //////////////////////////////////////////
         bool removeDataBlock(DataBlockIndex _index);
 
+
+
+        //////////////////////////////////////////
+        // Shared API
+
+        //////////////////////////////////////////
+        SharedStringId getSharedStringId(HashedCString _name) const;
+
+        //////////////////////////////////////////
+        SharedStringId getSharedStringId(CString _str, Size _length) const;
+
+        //////////////////////////////////////////
+        CString getSharedCString(SharedStringId _nameId) const;
+
+        //////////////////////////////////////////
+        String const& getSharedString(SharedStringId _nameId) const;
+
+        //////////////////////////////////////////
+        HashedCString getSharedHashedCString(SharedStringId _nameId) const;
 
     private:
 
@@ -739,22 +761,8 @@ namespace Maze
         SharedStringId addSharedString(HashedCString _name);
 
         //////////////////////////////////////////
-        SharedStringId getSharedStringId(HashedCString _name) const;
-
-        //////////////////////////////////////////
         SharedStringId addSharedString(CString _str, Size _length);
 
-        //////////////////////////////////////////
-        SharedStringId getSharedStringId(CString _str, Size _length) const;
-
-        //////////////////////////////////////////
-        CString getSharedCString(SharedStringId _nameId) const;
-
-        //////////////////////////////////////////
-        String const& getSharedString(SharedStringId _nameId) const;
-
-        //////////////////////////////////////////
-        HashedCString getSharedHashedCString(SharedStringId _nameId) const;
 
     protected:
         DataBlockShared* m_shared = nullptr;

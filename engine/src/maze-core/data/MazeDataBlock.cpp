@@ -502,6 +502,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    DataBlock::ParamIndex DataBlock::findParamIndex(HashedCString _name) const
+    {
+        return findParamIndex(getSharedStringId(_name));
+    }
+
+    //////////////////////////////////////////
     DataBlock::ParamIndex DataBlock::findParamIndexReverse(SharedStringId _nameId, ParamIndex _startBefore) const
     {
         if (_startBefore <= 0 || m_paramsCount == 0)

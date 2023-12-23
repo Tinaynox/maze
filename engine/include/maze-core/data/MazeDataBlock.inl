@@ -99,7 +99,10 @@ namespace Maze
 
         if ((U8)param.type != (U8)TypeOf<TValue>::type)
         {
-            MAZE_ERROR("Param type mismatch. Inner type: %d. Requested type: %d", (S32)param.type, TypeOf<TValue>::type);
+            MAZE_ERROR(
+                "Param type mismatch. Inner type: '%s'(%d). Requested type: '%s'(%d)",
+                static_cast<CString>(c_dataBlockParamTypeInfo[(S32)param.type].name), (S32)param.type,
+                static_cast<CString>(c_dataBlockParamTypeInfo[(S32)TypeOf<TValue>::type].name), (S32)TypeOf<TValue>::type);
             return _defaultValue;
         }
 
@@ -118,7 +121,10 @@ namespace Maze
 
         if ((U8)param.type != (U8)TypeOf<CString>::type)
         {
-            MAZE_ERROR("Param type mismatch. Inner type: %d. Requested type: %d", (S32)param.type, TypeOf<CString>::type);
+            MAZE_ERROR(
+                "Param type mismatch. Inner type: '%s'(%d). Requested type: '%s'(%d)",
+                static_cast<CString>(c_dataBlockParamTypeInfo[(S32)param.type].name), (S32)param.type,
+                static_cast<CString>(c_dataBlockParamTypeInfo[(S32)TypeOf<CString>::type].name), (S32)TypeOf<CString>::type);
             return _defaultValue;
         }
 
@@ -133,7 +139,10 @@ namespace Maze
 
         if ((U8)param.type != (U8)TypeOf<CString>::type)
         {
-            MAZE_ERROR("Param type mismatch. Inner type: %d. Requested type: %d", (S32)param.type, TypeOf<CString>::type);
+            MAZE_ERROR(
+                "Param type mismatch. Inner type: '%s'(%d). Requested type: '%s'(%d)",
+                static_cast<CString>(c_dataBlockParamTypeInfo[(S32)param.type].name), (S32)param.type,
+                static_cast<CString>(c_dataBlockParamTypeInfo[(S32)TypeOf<CString>::type].name), (S32)TypeOf<CString>::type);
             return _defaultValue;
         }
 
@@ -175,7 +184,10 @@ namespace Maze
         Param& param = getParam(_index);
         if ((U8)param.type != (U8)TypeOf<TValue>::type)
         {
-            MAZE_ERROR("Param type mismatch. Prev type: %d. New type: %d", (S32)param.type, TypeOf<TValue>::type);
+            MAZE_ERROR(
+                "Param type mismatch. Inner type: '%s'(%d). Requested type: '%s'(%d)",
+                static_cast<CString>(c_dataBlockParamTypeInfo[(S32)param.type].name), (S32)param.type,
+                static_cast<CString>(c_dataBlockParamTypeInfo[(S32)TypeOf<TValue>::type].name), (S32)TypeOf<TValue>::type);
             return false;
         }
 
@@ -195,7 +207,10 @@ namespace Maze
         Param& param = getParam(_index);
         if ((U8)param.type != (U8)TypeOf<CString>::type)
         {
-            MAZE_ERROR("Param type mismatch. Prev type: %d. New type: %d", (S32)param.type, TypeOf<CString>::type);
+            MAZE_ERROR(
+                "Param type mismatch. Inner type: '%s'(%d). Requested type: '%s'(%d)",
+                static_cast<CString>(c_dataBlockParamTypeInfo[(S32)param.type].name), (S32)param.type,
+                static_cast<CString>(c_dataBlockParamTypeInfo[(S32)TypeOf<CString>::type].name), (S32)TypeOf<CString>::type);
             return false;
         }
 
@@ -213,7 +228,10 @@ namespace Maze
         Param& param = getParam(_index);
         if ((U8)param.type != (U8)TypeOf<CString>::type)
         {
-            MAZE_ERROR("Param type mismatch. Prev type: %d. New type: %d", (S32)param.type, TypeOf<CString>::type);
+            MAZE_ERROR(
+                "Param type mismatch. Inner type: '%s'(%d). Requested type: '%s'(%d)",
+                static_cast<CString>(c_dataBlockParamTypeInfo[(S32)param.type].name), (S32)param.type,
+                static_cast<CString>(c_dataBlockParamTypeInfo[(S32)TypeOf<CString>::type].name), (S32)TypeOf<CString>::type);
             return false;
         }
 
