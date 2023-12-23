@@ -36,6 +36,7 @@
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/helpers/MazeXMLHelper.hpp"
 #include "maze-core/serialization/MazeDataBlockSerializable.hpp"
+#include "maze-core/system/MazeTimer.hpp"
 
 
 //////////////////////////////////////////
@@ -290,24 +291,31 @@ namespace Maze
         MAZE_ERROR_RETURN_VALUE_IF(!_assetFile, false, "Asset File is null!");
 
         MAZE_LOG("Loading Material: %s...", _assetFile->getFileName().toUTF8().c_str());
+        Timer timer;
 
         ByteBufferPtr assetFileHeader = _assetFile->readHeaderAsByteBuffer(6);
         assetFileHeader->setByte(5, 0);
 
+        bool result = false;
         if (strstr((CString)assetFileHeader->getData(), "xml") != nullptr)
         {
             Debug::LogWarning("Obsolete Material format - %s", _assetFile->getFileName().toUTF8().c_str());
             tinyxml2::XMLDocument doc;
             _assetFile->readToXMLDocument(doc);
-            return loadFromXMLDocument(doc);
+            result = loadFromXMLDocument(doc);
         }
         else
         {
             DataBlock dataBlock;
             ByteBufferPtr byteBuffer = _assetFile->readAsByteBuffer();
             dataBlock.loadFromByteBuffer(*byteBuffer.get());
-            return loadFromDataBlock(dataBlock);
+            result = loadFromDataBlock(dataBlock);
         }
+        
+        F32 msTime = F32(timer.getMicroseconds()) / 1000.0f;
+        MAZE_LOG(result ? "Material %s loaded for %.1fms." : "%s material failed to load for %.1fms.", _assetFile->getFileName().toUTF8().c_str(), msTime);
+
+        return result;
     }
 
     //////////////////////////////////////////

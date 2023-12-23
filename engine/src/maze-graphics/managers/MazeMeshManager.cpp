@@ -33,6 +33,7 @@
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/helpers/MazeWindowHelper.hpp"
+#include "maze-core/system/MazeTimer.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
@@ -184,6 +185,7 @@ namespace Maze
         mesh = Mesh::Create();
 
         Debug::Log("Loading render mesh: %s...", _assetFile->getFileName().toUTF8().c_str());
+        Timer timer;
 
         StringKeyMap<String> metaData;
         if (AssetManager::GetInstancePtr())
@@ -242,7 +244,8 @@ namespace Maze
             }
         }
 
-        Debug::Log("Loaded.", _assetFile->getFileName().toUTF8().c_str());
+        F32 msTime = F32(timer.getMicroseconds()) / 1000.0f;
+        Debug::Log("Render mesh %s loaded for %.1fms.", _assetFile->getFileName().toUTF8().c_str(), msTime);
 
         return mesh;
     }

@@ -33,6 +33,7 @@
 #include "maze-core/data/MazeByteBuffer.hpp"
 #include "maze-sound/MazeSound.hpp"
 #include "maze-sound/loaders/MazeLoaderWAV.hpp"
+#include "maze-core/system/MazeTimer.hpp"
 
 
 //////////////////////////////////////////
@@ -213,6 +214,7 @@ namespace Maze
             return soundData;
 
         Debug::Log("Loading sound data: %s...", _assetFile->getFileName().toUTF8().c_str());
+        Timer timer;
 
         StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
 
@@ -248,7 +250,8 @@ namespace Maze
             }
         }
 
-        Debug::Log("Loaded.", _assetFile->getFileName().toUTF8().c_str());
+        F32 msTime = F32(timer.getMicroseconds()) / 1000.0f;
+        MAZE_LOG("Sound data %s loaded for %.1fms.", _assetFile->getFileName().toUTF8().c_str(), msTime);
 
         return soundData;
     }

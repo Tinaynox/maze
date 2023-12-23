@@ -383,6 +383,7 @@ namespace Maze
             return pixelSheets;
 
         Debug::Log("Loading texture pixel sheet: %s...", _assetFile->getFileName().toUTF8().c_str());
+        Timer timer;
 
         StringKeyMap<String> metaData = AssetManager::GetInstancePtr()->getMetaData(_assetFile);
 
@@ -432,7 +433,8 @@ namespace Maze
             }
         }
 
-        Debug::Log("Loaded.", _assetFile->getFileName().toUTF8().c_str());
+        F32 msTime = F32(timer.getMicroseconds()) / 1000.0f;
+        Debug::Log("Texture pixel sheet %s loaded for %.1fms.", _assetFile->getFileName().toUTF8().c_str(), msTime);
 
         return pixelSheets;
     }
