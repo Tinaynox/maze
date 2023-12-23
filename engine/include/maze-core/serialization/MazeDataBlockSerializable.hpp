@@ -31,13 +31,9 @@
 
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
-#include "maze-core/hash/MazeHashCRC.hpp"
 #include "maze-core/MazeStdTypes.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/MazeTypes.hpp"
-#include "maze-core/utils/MazeClassInfo.hpp"
-#include "maze-core/helpers/MazeStringHelper.hpp"
-#include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/data/MazeDataBlock.hpp"
 
 
@@ -59,17 +55,6 @@ namespace Maze
         virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_ABSTRACT;
     };
 
-    //////////////////////////////////////////
-    MAZE_CORE_API void SerializeMetaInstanceToDataBlock(
-        MetaClass const* _metaClass,
-        ConstMetaInstance _metaInstance,
-        DataBlock& _dataBlock);
-
-    //////////////////////////////////////////
-    MAZE_CORE_API void DeserializeMetaInstanceFromDataBlock(
-        MetaClass const* _metaClass,
-        MetaInstance _metaInstance,
-        DataBlock const& _dataBlock);
     
 } // namespace Maze
 //////////////////////////////////////////

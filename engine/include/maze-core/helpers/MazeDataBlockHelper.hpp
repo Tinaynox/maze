@@ -24,15 +24,43 @@
 
 
 //////////////////////////////////////////
-#include "MazeCoreHeader.hpp"
+#pragma once
+#if (!defined(_MazeDataBlockHelper_hpp_))
+#define _MazeDataBlockHelper_hpp_
+
+
+//////////////////////////////////////////
+#include "maze-core/MazeCoreHeader.hpp"
+#include "maze-core/MazeTypes.hpp"
+#include "maze-core/data/MazeDataBlock.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
-#include "maze-core/helpers/MazeStringHelper.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    namespace DataBlockHelper
+    {
+        //////////////////////////////////////////
+        MAZE_CORE_API void SerializeMetaInstanceToDataBlock(
+            MetaClass const* _metaClass,
+            ConstMetaInstance _metaInstance,
+            DataBlock& _dataBlock);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API void DeserializeMetaInstanceFromDataBlock(
+            MetaClass const* _metaClass,
+            MetaInstance _metaInstance,
+            DataBlock const& _dataBlock);
+
+    } // namespace DataBlockHelper
+    //////////////////////////////////////////
     
     
 } // namespace Maze
+//////////////////////////////////////////
+
+
+#endif // _MazeDataBlockHelper_hpp_
 //////////////////////////////////////////

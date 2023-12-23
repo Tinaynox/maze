@@ -538,6 +538,14 @@ namespace Maze
         //////////////////////////////////////////
         bool removeParam(ParamIndex _index);
 
+        //////////////////////////////////////////
+        template <class TValue>
+        inline TValue getParamValue(ParamIndex _index) const;
+
+        //////////////////////////////////////////
+        template <class TValue>
+        inline TValue getParamValue(ParamIndex _index, TValue const& _defaultValue) const;
+
 
         //////////////////////////////////////////
         // DataBlocks API
@@ -616,14 +624,6 @@ namespace Maze
 
         //////////////////////////////////////////
         // Params private
-
-        //////////////////////////////////////////
-        template <class TValue>
-        inline TValue getParamValue(ParamIndex _index) const;
-
-        //////////////////////////////////////////
-        template <class TValue>
-        inline TValue getParamValue(ParamIndex _index, TValue const& _defaultValue) const;
 
         //////////////////////////////////////////        
         inline String const& getParamValue(ParamIndex _index, String const& _defaultValue) const;

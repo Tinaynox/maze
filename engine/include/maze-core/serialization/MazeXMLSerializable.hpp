@@ -31,13 +31,9 @@
 
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
-#include "maze-core/hash/MazeHashCRC.hpp"
 #include "maze-core/MazeStdTypes.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/MazeTypes.hpp"
-#include "maze-core/utils/MazeClassInfo.hpp"
-#include "maze-core/helpers/MazeStringHelper.hpp"
-#include "maze-core/reflection/MazeMetaClass.hpp"
 #include <tinyxml2.h>
 
 //////////////////////////////////////////
@@ -57,18 +53,6 @@ namespace Maze
         //////////////////////////////////////////
         virtual tinyxml2::XMLElement* toXMLElement(tinyxml2::XMLDocument& _doc) const MAZE_ABSTRACT;
     };
-
-    //////////////////////////////////////////
-    MAZE_CORE_API tinyxml2::XMLElement* SerializeMetaInstanceToXMLElement(
-        Maze::MetaClass const* _metaClass,
-        Maze::ConstMetaInstance _metaInstance,
-        tinyxml2::XMLDocument& _doc);
-
-    //////////////////////////////////////////
-    MAZE_CORE_API void DeserializeMetaInstanceFromXMLElement(
-        Maze::MetaClass const* _metaClass,
-        Maze::MetaInstance _metaInstance,
-        tinyxml2::XMLElement const* _element);
     
 } // namespace Maze
 //////////////////////////////////////////

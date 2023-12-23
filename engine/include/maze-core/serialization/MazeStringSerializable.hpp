@@ -31,12 +31,10 @@
 
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
-#include "maze-core/hash/MazeHashCRC.hpp"
 #include "maze-core/MazeStdTypes.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/MazeTypes.hpp"
-#include "maze-core/utils/MazeClassInfo.hpp"
-#include "maze-core/helpers/MazeStringHelper.hpp"
+#include <type_traits>
 
 
 //////////////////////////////////////////
@@ -63,6 +61,7 @@ namespace Maze
         virtual void setString(String const& _data) { setString(&_data[0], _data.size()); };
     };
     
+
 } // namespace Maze
 //////////////////////////////////////////
 

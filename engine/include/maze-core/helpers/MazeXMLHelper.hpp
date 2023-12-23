@@ -36,6 +36,7 @@
 #include "maze-core/system/MazeDisplay.hpp"
 #include "maze-core/serialization/MazeXMLSerializable.hpp"
 #include "maze-core/data/MazeDataBlock.hpp"
+#include "maze-core/reflection/MazeMetaClass.hpp"
 #include <tinyxml2.h>
 
 
@@ -66,6 +67,18 @@ namespace Maze
         MAZE_CORE_API tinyxml2::XMLError SaveXMLFile(Path const& _fileFullPath, tinyxml2::XMLDocument& _doc);
 
 
+
+        //////////////////////////////////////////
+        MAZE_CORE_API tinyxml2::XMLElement* SerializeMetaInstanceToXMLElement(
+            Maze::MetaClass const* _metaClass,
+            Maze::ConstMetaInstance _metaInstance,
+            tinyxml2::XMLDocument& _doc);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API void DeserializeMetaInstanceFromXMLElement(
+            Maze::MetaClass const* _metaClass,
+            Maze::MetaInstance _metaInstance,
+            tinyxml2::XMLElement const* _element);
 
 
         //////////////////////////////////////////

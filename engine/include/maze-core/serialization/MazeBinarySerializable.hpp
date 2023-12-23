@@ -31,11 +31,10 @@
 
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
-#include "maze-core/hash/MazeHashCRC.hpp"
+#include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeStdTypes.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/MazeTypes.hpp"
-#include "maze-core/utils/MazeClassInfo.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
 
 

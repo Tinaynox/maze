@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeValueSerialization_hpp_))
-#define _MazeValueSerialization_hpp_
+#if (!defined(_MazeBinarySerialization_hpp_))
+#define _MazeBinarySerialization_hpp_
 
 
 //////////////////////////////////////////
@@ -38,8 +38,6 @@
 #include "maze-core/utils/MazeClassInfo.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-core/serialization/MazeBinarySerializable.hpp"
-#include "maze-core/serialization/MazeStringSerializable.hpp"
-#include "maze-core/helpers/MazeJSONHelper.hpp"
 #include "maze-core/data/MazeHashedString.hpp"
 
 
@@ -49,16 +47,6 @@ namespace Maze
     //////////////////////////////////////////
     // Type: Any base type (non-class)
     //
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(!std::is_class<TValue>::value), void>::type
-        ValueToString(TValue const& _value, String& _data);
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(!std::is_class<TValue>::value), void>::type
-        ValueFromString(TValue& _value, CString _data, Size _count);
-
     //////////////////////////////////////////
     template <typename TValue>
     inline typename ::std::enable_if<(!std::is_class<TValue>::value), U32>::type
@@ -85,20 +73,8 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Type: IStringSerializable / IBinarySerializable
+    // Type: IBinarySerializable
     //
-    //////////////////////////////////////////
-    inline void ValueToString(IStringSerializable const& _value, String& _data)
-    {
-        _data = _value.toString();
-    }
-
-    //////////////////////////////////////////
-    inline void ValueFromString(IStringSerializable& _value, CString _data, Size _count)
-    {
-        _value.setString(_data, _count);
-    }
-
     //////////////////////////////////////////
     inline U32 GetValueSerializationSize(IBinarySerializable const& _value)
     {
@@ -122,19 +98,10 @@ namespace Maze
     // Type: SharedPtr
     //
     //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(IsSharedPtr<TValue>::value), void>::type
-        ValueToString(TValue const& _value, String& _data)
+    template <typename UValue>
+    inline U32 GetValueSerializationSize(SharedPtr<UValue> const& _value)
     {
-        ValueToString(*_value.get(), _data);
-    }
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(IsSharedPtr<TValue>::value), void>::type
-        ValueFromString(TValue& _value, CString _data, Size _count)
-    {
-        ValueFromString(*_value.get(), _data, _count);
+        return TryGetValueSerializationSize<UValue>(*_value.get());
     }
 
     //////////////////////////////////////////
@@ -142,7 +109,14 @@ namespace Maze
     inline typename ::std::enable_if<(IsSharedPtr<TValue>::value), U32>::type
         GetValueSerializationSize(TValue const& _value)
     {
-        return GetValueSerializationSize(*_value.get());
+        return GetValueSerializationSize(_value);
+    }
+
+    //////////////////////////////////////////
+    template <typename UValue>
+    inline void SerializeValue(SharedPtr<UValue> const& _value, U8* _data)
+    {
+        TrySerializeValue<UValue>(*_value.get(), _data);
     }
 
     //////////////////////////////////////////
@@ -150,7 +124,14 @@ namespace Maze
     inline typename ::std::enable_if<(IsSharedPtr<TValue>::value), void>::type
         SerializeValue(TValue const& _value, U8* _data)
     {
-        SerializeValue(*_value.get(), _data);
+        SerializeValue(_value, _data);
+    }
+
+    //////////////////////////////////////////
+    template <typename UValue>
+    inline void DeserializeValue(SharedPtr<UValue>& _value, U8 const* _data)
+    {
+        TryDeserializeValue<UValue>(*_value.get(), _data);
     }
 
     //////////////////////////////////////////
@@ -158,7 +139,7 @@ namespace Maze
     inline typename ::std::enable_if<(IsSharedPtr<TValue>::value), void>::type
         DeserializeValue(TValue& _value, U8 const* _data)
     {
-        DeserializeValue(*_value.get(), _data);
+        DeserializeValue(_value, _data);
     }
 
 
@@ -166,57 +147,29 @@ namespace Maze
     // Type: std::function
     //
     //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(IsStdFunction<TValue>::value), void>::type
-        ValueToString(TValue const& _value, String& _data)
-    {}
+    //template <typename TValue>
+    //inline typename ::std::enable_if<(IsStdFunction<TValue>::value), U32>::type
+    //    GetValueSerializationSize(TValue const& _value)
+    //{
+    //    return 0;
+    //}
 
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(IsStdFunction<TValue>::value), void>::type
-        ValueFromString(TValue& _value, CString _data, Size _count)
-    {}
+    ////////////////////////////////////////////
+    //template <typename TValue>
+    //inline typename ::std::enable_if<(IsStdFunction<TValue>::value), void>::type
+    //    SerializeValue(TValue const& _value, U8* _data)
+    //{}
 
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(IsStdFunction<TValue>::value), U32>::type
-        GetValueSerializationSize(TValue const& _value)
-    {
-        return 0;
-    }
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(IsStdFunction<TValue>::value), void>::type
-        SerializeValue(TValue const& _value, U8* _data)
-    {}
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(IsStdFunction<TValue>::value), void>::type
-        DeserializeValue(TValue& _value, U8 const* _data)
-    {}
+    ////////////////////////////////////////////
+    //template <typename TValue>
+    //inline typename ::std::enable_if<(IsStdFunction<TValue>::value), void>::type
+    //    DeserializeValue(TValue& _value, U8 const* _data)
+    //{}
 
 
     //////////////////////////////////////////
     // Type: String
     //
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(IsString<TValue>::value), void>::type
-        ValueToString(TValue const& _value, String& _data)
-    {
-        _data = _value;
-    }
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(IsString<TValue>::value), void>::type
-        ValueFromString(TValue& _value, CString _data, Size _count)
-    {
-        _value = String(_data, _count);
-    }
-
     //////////////////////////////////////////
     template <typename TValue>
     inline typename ::std::enable_if<(IsString<TValue>::value), U32>::type
@@ -258,18 +211,6 @@ namespace Maze
     // Type: HashedString
     //
     //////////////////////////////////////////
-    inline void ValueToString(HashedString const& _value, String& _data)
-    {
-        _data = _value.getString();
-    }
-
-    //////////////////////////////////////////
-    inline void ValueFromString(HashedString& _value, CString _data, Size _count)
-    {
-        _value = HashedString(_data, _count);
-    }
-
-    //////////////////////////////////////////
     inline U32 GetValueSerializationSize(HashedString const& _value)
     {
         return GetValueSerializationSize(_value.getString());
@@ -293,50 +234,6 @@ namespace Maze
     //////////////////////////////////////////
     // Type: Container
     //
-    //////////////////////////////////////////
-    template <typename TIterator, typename TValue>
-    inline void ContainerMetaPropertyToString(
-        TIterator _first,
-        TIterator const _last,
-        String& _data)
-    {
-        _data.clear();
-
-        Json::Value json;
-        
-        for (TIterator it = _first; it != _last; ++it)
-        {
-            TValue const& childValue = (*it);
-
-            String childValueString;
-            ValueToString(childValue, childValueString);
-            json.append(childValueString.c_str());
-        }
-
-        _data = JSONHelper::ToString(json);
-    }
-
-    //////////////////////////////////////////
-    template <typename TIterator, typename TValue>
-    inline void ContainerMetaPropertyFromString(
-        TIterator _it,
-        String const& _data)
-    {
-        Json::Value value = JSONHelper::FromString(_data);
-
-        if (value.isNull())
-            return;
-
-        for (Json::Value const& child : value)
-        {
-            TValue value;
-            Json::String str = child.asString();
-            ValueFromString(value, str.c_str(), str.size());
-
-            *_it++ = value;
-        }
-    }
-
     //////////////////////////////////////////
     template <typename TIterator, typename TValue>
     inline U32 GetContainerMetaPropertySerializationSize(
@@ -415,45 +312,6 @@ namespace Maze
     //
     //////////////////////////////////////////
     template <typename UValue>
-    inline void ValueToString(Vector<UValue> const& _value, String& _data)
-    {
-        ContainerMetaPropertyToString<
-            typename Vector<UValue>::const_iterator,
-            UValue>(
-                _value.begin(),
-                _value.end(),
-                _data);
-    }
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(IsVector<TValue>::value), void>::type
-        ValueToString(TValue const& _value, String& _data)
-    {
-        ValueToString(_value, _data);
-    }
-
-    //////////////////////////////////////////
-    template <typename UValue>
-    inline void ValueFromString(Vector<UValue>& _value, CString _data, Size _count)
-    {
-        ContainerMetaPropertyFromString<
-            std::back_insert_iterator<Vector<UValue>>,
-            UValue>(
-                std::back_inserter(_value),
-                String(_data, _count));
-    }
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(IsVector<TValue>::value), void>::type
-        ValueFromString(TValue& _value, CString _data, Size _count)
-    {
-        ValueFromString(_value, _data, _count);
-    }
-
-    //////////////////////////////////////////
-    template <typename UValue>
     inline U32 GetValueSerializationSize(Vector<UValue> const& _value)
     {
         return GetContainerMetaPropertySerializationSize<
@@ -515,18 +373,122 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Utils
+    //
+    //////////////////////////////////////////
+    template <typename T, typename = int>
+    struct HasGetValueSerializationSize : std::false_type { };
+
+    template <typename T>
+    using GetValueSerializationSizeType = U32(&)(T const&);
+    template <typename T>
+    struct HasGetValueSerializationSize <T, decltype((GetValueSerializationSizeType<T>)&GetValueSerializationSize, 0)> : std::true_type { };
+
+
+    //////////////////////////////////////////
+    template <typename T, typename = int>
+    struct HasSerializeValue : std::false_type { };
+
+    template <typename T>
+    using SerializeValueType = void(&)(T const&, U8*);
+    template <typename T>
+    struct HasSerializeValue <T, decltype((SerializeValueType<T>)&SerializeValue, 0)> : std::true_type { };
+
+
+    //////////////////////////////////////////
+    template <typename T, typename = int>
+    struct HasDeserializeValue : std::false_type { };
+
+    template <typename T>
+    using DeserializeValueType = void(&)(T&, U8 const*);
+    template <typename T>
+    struct HasDeserializeValue <T, decltype((DeserializeValueType<T>)&DeserializeValue, 0)> : std::true_type { };
+
+
+    //////////////////////////////////////////
+    // Try functions
+    //
+    //////////////////////////////////////////
+    template <typename TValue>
+    inline U32 TryGetValueSerializationSize(typename ::std::enable_if<(HasGetValueSerializationSize<TValue>::value), TValue>::type const& _value)
+    {
+        return GetValueSerializationSize(_value);
+    }
+
+    //////////////////////////////////////////
+    template <typename TValue>
+    inline U32 TryGetValueSerializationSize(typename ::std::enable_if<(std::is_base_of<IBinarySerializable, TValue>::value), TValue>::type const& _value)
+    {
+        return _value.getValueSerializationSize();
+    }
+
+    //////////////////////////////////////////
+    template <typename TValue>
+    inline U32 TryGetValueSerializationSize(typename ::std::enable_if<(
+        !HasGetValueSerializationSize<TValue>::value &&
+        !std::is_base_of<IBinarySerializable, TValue>::value), TValue>::type const& _value)
+    {
+        return 0u;
+    }
+
+
+    //////////////////////////////////////////
+    template <typename TValue>
+    inline U32 TrySerializeValue(typename ::std::enable_if<(HasSerializeValue<TValue>::value), TValue>::type const& _value, U8* _data)
+    {
+        SerializeValue(_value, _data);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    template <typename TValue>
+    inline U32 TrySerializeValue(typename ::std::enable_if<(std::is_base_of<IBinarySerializable, TValue>::value), TValue>::type const& _value, U8* _data)
+    {
+        _value.serialize(_data);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    template <typename TValue>
+    inline U32 TrySerializeValue(typename ::std::enable_if<(
+        !HasSerializeValue<TValue>::value &&
+        !std::is_base_of<IBinarySerializable, TValue>::value), TValue>::type const& _value, U8* _data)
+    {
+        return false;
+    }
+
+
+    //////////////////////////////////////////
+    template <typename TValue>
+    inline U32 TryDeserializeValue(typename ::std::enable_if<(HasDeserializeValue<TValue>::value), TValue>::type& _value, U8 const* _data)
+    {
+        DeserializeValue(_value, _data);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    template <typename TValue>
+    inline U32 TryDeserializeValue(typename ::std::enable_if<(std::is_base_of<IBinarySerializable, TValue>::value), TValue>::type& _value, U8 const* _data)
+    {
+        _value.deserialize(_data);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    template <typename TValue>
+    inline U32 TryDeserializeValue(typename ::std::enable_if<(
+        !HasDeserializeValue<TValue>::value &&
+        !std::is_base_of<IBinarySerializable, TValue>::value), TValue>::type& _value, U8 const* _data)
+    {
+        return false;
+    }
+
+
+    //////////////////////////////////////////
     // Enum class
     //
     //////////////////////////////////////////
-    #define MAZE_IMPLEMENT_CPP_ENUMCLASS_SERIALIZATION(DEnumClass) \
-        inline void ValueToString(DEnumClass const& _value, String& _data) \
-        { \
-            _data = StringHelper::ToString((S32)_value); \
-        } \
-        inline void ValueFromString(DEnumClass& _value, CString _data, Size _count) \
-        { \
-            _value = (DEnumClass)StringHelper::StringToS32(String(_data, _count)); \
-        } \
+    #define MAZE_IMPLEMENT_CPP_ENUMCLASS_BINARY_SERIALIZATION(DEnumClass) \
         inline U32 GetValueSerializationSize(DEnumClass const& _value) \
         { \
             return sizeof(DEnumClass); \
@@ -545,15 +507,7 @@ namespace Maze
     // Dummy
     //
     //////////////////////////////////////////
-    #define MAZE_NOT_IMPLEMENTED_SERIALIZATION(DClass) \
-        inline void ValueToString(DClass const& _value, String& _data) \
-        { \
-            MAZE_TODO; \
-        } \
-        inline void ValueFromString(DClass & _value, CString _data, Size _count) \
-        { \
-            MAZE_TODO; \
-        } \
+    #define MAZE_NOT_IMPLEMENTED_BINARY_SERIALIZATION(DClass) \
         inline U32 GetValueSerializationSize(DClass const& _value) \
         { \
             MAZE_TODO; \
@@ -567,30 +521,6 @@ namespace Maze
         { \
             MAZE_TODO; \
         }
-
-    //////////////////////////////////////////
-    #define MAZE_STRING_ONLY_SERIALIZATION(DClass) \
-        inline void ValueToString(DClass const& _value, String& _data) \
-        { \
-            _data = _value.toString(); \
-        } \
-        inline void ValueFromString(DClass& _value, CString _data, Size _count) \
-        { \
-            _value = DClass::FromString(String(_data, _count)); \
-        } \
-        inline U32 GetValueSerializationSize(DClass const& _value) \
-        { \
-            MAZE_TODO; \
-            return 0; \
-        } \
-        inline void SerializeValue(DClass const& _value, U8* _data) \
-        { \
-            MAZE_TODO; \
-        } \
-        inline void DeserializeValue(DClass & _value, U8 const* _data) \
-        { \
-            MAZE_TODO; \
-        }
     
     
 } // namespace Maze
@@ -598,8 +528,4 @@ namespace Maze
 
 
 //////////////////////////////////////////
-#include "MazeValueSerialization.inl"
-
-
-//////////////////////////////////////////
-#endif // _MazeValueSerialization_hpp_
+#endif // _MazeBinarySerialization_hpp_

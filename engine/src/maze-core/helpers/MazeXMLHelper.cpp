@@ -119,6 +119,56 @@ namespace Maze
             return saveError;
         }
 
+
+
+        //////////////////////////////////////////
+        MAZE_CORE_API tinyxml2::XMLElement* SerializeMetaInstanceToXMLElement(
+            Maze::MetaClass const* _metaClass,
+            Maze::ConstMetaInstance _metaInstance,
+            tinyxml2::XMLDocument& _doc)
+        {
+            Maze::CString className = _metaClass->getName();
+            tinyxml2::XMLElement* element = _doc.NewElement(className);
+
+            for (Maze::MetaClass* metaClass : _metaClass->getAllSuperMetaClasses())
+            {
+                for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
+                {
+                    Maze::MetaProperty* metaProperty = metaClass->getProperty(i);
+
+                    Maze::CString propertyName = metaProperty->getName();
+                    String properyStringValue = metaProperty->toString(_metaInstance);
+
+                    element->SetAttribute(propertyName, properyStringValue.c_str());
+                }
+            }
+
+            return element;
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API void DeserializeMetaInstanceFromXMLElement(
+            Maze::MetaClass const* _metaClass,
+            Maze::MetaInstance _metaInstance,
+            tinyxml2::XMLElement const* _element)
+        {
+            for (Maze::MetaClass* metaClass : _metaClass->getAllSuperMetaClasses())
+            {
+                for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
+                {
+                    Maze::MetaProperty* metaProperty = metaClass->getProperty(i);
+
+                    Maze::CString propertyName = metaProperty->getName();
+
+                    CString attributeValue = _element->Attribute(propertyName);
+                    if (attributeValue)
+                        metaProperty->setString(_metaInstance, attributeValue);
+                }
+            }
+        }
+
+
+
         //////////////////////////////////////////
         MAZE_CORE_API bool ConvertXMLDocumentToDataBlock(
             tinyxml2::XMLDocument const* _doc,

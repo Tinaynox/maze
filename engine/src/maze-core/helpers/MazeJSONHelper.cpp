@@ -65,6 +65,57 @@ namespace Maze
             return value;
         }
 
+
+        //////////////////////////////////////////
+        MAZE_CORE_API Json::Value SerializeMetaInstanceToJSONValue(
+            Maze::MetaClass const* _metaClass,
+            Maze::ConstMetaInstance _metaInstance)
+        {
+            Json::Value value;
+
+            for (Maze::MetaClass* metaClass : _metaClass->getAllSuperMetaClasses())
+            {
+                for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
+                {
+                    Maze::MetaProperty* metaProperty = metaClass->getProperty(i);
+
+                    Maze::CString propertyName = metaProperty->getName();
+                    String properyStringValue = metaProperty->toString(_metaInstance);
+
+                    value[propertyName] = properyStringValue.c_str();
+                }
+            }
+
+            return value;
+        }
+
+        //////////////////////////////////////////
+        MAZE_CORE_API void DeserializeMetaInstanceFromJSONValue(
+            Maze::MetaClass const* _metaClass,
+            Maze::MetaInstance _metaInstance,
+            Json::Value const& _value)
+        {
+            if (_value.isNull() || !_value.isObject())
+                return;
+
+            for (Maze::MetaClass* metaClass : _metaClass->getAllSuperMetaClasses())
+            {
+                for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
+                {
+                    Maze::MetaProperty* metaProperty = metaClass->getProperty(i);
+
+                    Maze::CString propertyName = metaProperty->getName();
+
+                    if (!_value[propertyName])
+                        continue;
+
+                    Json::String attributeValue = _value[propertyName].asString();
+                    if (!attributeValue.empty())
+                        metaProperty->setString(_metaInstance, attributeValue.c_str(), attributeValue.size());
+                }
+            }
+        }
+
     } // namespace JSONHelper
     //////////////////////////////////////////
     

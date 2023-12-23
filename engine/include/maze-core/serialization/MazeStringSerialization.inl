@@ -24,7 +24,7 @@
 
 
 //////////////////////////////////////////
-#include "MazeValueSerialization.hpp"
+#include "MazeStringSerialization.hpp"
 
 
 //////////////////////////////////////////
@@ -46,7 +46,7 @@ namespace Maze
     inline typename ::std::enable_if<(!std::is_class<bool>::value), void>::type
         ValueFromString(bool& _value, CString _data, Size _count)
     {
-        _value = StringHelper::StringToBool(String(_data, _count));
+        StringHelper::ParseBool(_data, _data + _count, _value);
     }
 
 
@@ -66,7 +66,7 @@ namespace Maze
     inline typename ::std::enable_if<(!std::is_class<S8>::value), void>::type
         ValueFromString(S8& _value, CString _data, Size _count)
     {
-        _value = StringHelper::StringToS8(String(_data, _count));
+        StringHelper::ParseS8(_data, _count, _value);
     }
 
 
@@ -86,7 +86,7 @@ namespace Maze
     inline typename ::std::enable_if<(!std::is_class<U8>::value), void>::type
         ValueFromString(U8& _value, CString _data, Size _count)
     {
-        _value = StringHelper::StringToU8(String(_data, _count));
+        StringHelper::ParseU8(_data, _count, _value);
     }
 
 
@@ -106,7 +106,7 @@ namespace Maze
     inline typename ::std::enable_if<(!std::is_class<S16>::value), void>::type
         ValueFromString(S16& _value, CString _data, Size _count)
     {
-        _value = StringHelper::StringToS16(String(_data, _count));
+        StringHelper::ParseS16(_data, _count, _value);
     }
 
 
@@ -126,7 +126,7 @@ namespace Maze
     inline typename ::std::enable_if<(!std::is_class<U16>::value), void>::type
         ValueFromString(U16& _value, CString _data, Size _count)
     {
-        _value = StringHelper::StringToU16(String(_data, _count));
+        StringHelper::ParseU16(_data, _count, _value);
     }
 
 
@@ -146,7 +146,7 @@ namespace Maze
     inline typename ::std::enable_if<(!std::is_class<S32>::value), void>::type
         ValueFromString(S32& _value, CString _data, Size _count)
     {
-        _value = StringHelper::StringToS32(String(_data, _count));
+        StringHelper::ParseS32(_data, _count, _value);
     }
 
 
@@ -166,7 +166,7 @@ namespace Maze
     inline typename ::std::enable_if<(!std::is_class<U32>::value), void>::type
         ValueFromString(U32& _value, CString _data, Size _count)
     {
-        _value = StringHelper::StringToU32(String(_data, _count));
+        StringHelper::ParseU32(_data, _count, _value);
     }
 
     
@@ -186,7 +186,7 @@ namespace Maze
     inline typename ::std::enable_if<(!std::is_class<S64>::value), void>::type
         ValueFromString(S64& _value, CString _data, Size _count)
     {
-        _value = StringHelper::StringToS64(String(_data, _count));
+        StringHelper::ParseS64(_data, _count, _value);
     }
 
 
@@ -206,7 +206,7 @@ namespace Maze
     inline typename ::std::enable_if<(!std::is_class<U64>::value), void>::type
         ValueFromString(U64& _value, CString _data, Size _count)
     {
-        _value = StringHelper::StringToU64(String(_data, _count));
+        StringHelper::ParseU64(_data, _count, _value);
     }
 
 
@@ -226,12 +226,7 @@ namespace Maze
     inline typename ::std::enable_if<(!std::is_class<F32>::value), void>::type
         ValueFromString(F32& _value, CString _data, Size _count)
     {
-        // #TODO Don't copy string, use StringView or CString
-        String s(_data, _count);
-        if (StringHelper::IsFloatNumber(s))
-            _value = StringHelper::StringToF32(s);
-        else
-            _value = 0.0f;
+        StringHelper::ParseF32(_data, _count, _value);
     }
 
 
@@ -251,7 +246,7 @@ namespace Maze
     inline typename ::std::enable_if<(!std::is_class<F64>::value), void>::type
         ValueFromString(F64& _value, CString _data, Size _count)
     {
-        _value = StringHelper::StringToF64(String(_data, _count));
+        StringHelper::ParseF64(_data, _count, _value);
     }
     
 } // namespace Maze

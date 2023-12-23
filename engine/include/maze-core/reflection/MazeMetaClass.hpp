@@ -37,7 +37,9 @@
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/utils/MazeClassInfo.hpp"
 #include "maze-core/helpers/MazeLogHelper.hpp"
-#include "maze-core/serialization/MazeValueSerialization.hpp"
+#include "maze-core/serialization/MazeStringSerialization.hpp"
+#include "maze-core/serialization/MazeBinarySerialization.hpp"
+#include "maze-core/serialization/MazeDataBlockSerialization.hpp"
 #include "maze-core/helpers/MazeStdHelper.hpp"
 #include "maze-core/data/MazeHashedCString.hpp"
 #include <algorithm>
@@ -199,6 +201,12 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual void deserializeFrom(MetaInstance const& _instance, U8 const* _data) MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual void setDataBlock(MetaInstance const& _instance, DataBlock const& _data) MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(ConstMetaInstance const& _instance, DataBlock& _data) const MAZE_ABSTRACT;
 
     private:
         HashedCString m_name;
@@ -802,8 +810,8 @@ namespace Maze
             TObject* obj = castMetaInstanceObject(_instance);
                         
             TValue value;
-            ValueFromString(value, _data, _count);
-            (obj->*m_setter)(value);
+            if (TryValueFromString<TValue>(value, _data, _count))
+                (obj->*m_setter)(value);
         }
 
         //////////////////////////////////////////
@@ -812,7 +820,7 @@ namespace Maze
             TObject* obj = castMetaInstanceObject(_instance);
 
             String data;
-            ValueToString((obj->*m_getter)(), data);
+            TryValueToString<TValue>((obj->*m_getter)(), data);
             return data;
         }
 
@@ -822,7 +830,7 @@ namespace Maze
             TObject const* obj = castMetaInstanceObject(_instance);
 
             String data;
-            ValueToString((obj->*m_getter)(), data);
+            TryValueToString<TValue>((obj->*m_getter)(), data);
             return data;
         }
 
@@ -832,7 +840,7 @@ namespace Maze
             TObject* obj = castMetaInstanceObject(_instance);
 
             TValue value = (obj->*m_getter)();
-            U32 serializationSize = GetValueSerializationSize(value);
+            U32 serializationSize = TryGetValueSerializationSize<TValue>(value);
             return serializationSize;
         }
 
@@ -842,7 +850,7 @@ namespace Maze
             TObject const* obj = castMetaInstanceObject(_instance);
 
             TValue value = (obj->*m_getter)();
-            U32 serializationSize = GetValueSerializationSize(value);
+            U32 serializationSize = TryGetValueSerializationSize<TValue>(value);
             return serializationSize;
         }
 
@@ -851,8 +859,7 @@ namespace Maze
         {
             TObject* obj = castMetaInstanceObject(_instance);
 
-            TValue value = (obj->*m_getter)();
-            SerializeValue(value, _data);
+            TrySerializeValue<TValue>((obj->*m_getter)(), _data);
         }
 
         //////////////////////////////////////////
@@ -860,8 +867,7 @@ namespace Maze
         {
             TObject const* obj = castMetaInstanceObject(_instance);
 
-            TValue value = (obj->*m_getter)();
-            SerializeValue(value, _data);
+            TrySerializeValue<TValue>((obj->*m_getter)(), _data);
         }
 
         //////////////////////////////////////////
@@ -870,8 +876,26 @@ namespace Maze
             TObject* obj = castMetaInstanceObject(_instance);
 
             TValue value;
-            DeserializeValue(value, _data);
-            (obj->*m_setter)(value);
+            if (TryDeserializeValue<TValue>(value, _data))
+                (obj->*m_setter)(value);
+        }
+
+        //////////////////////////////////////////
+        virtual void setDataBlock(MetaInstance const& _instance, DataBlock const& _data) MAZE_OVERRIDE
+        {
+            TObject* obj = castMetaInstanceObject(_instance);
+
+            TValue value;
+            if (TryValueFromDataBlock<TValue>(value, _data))
+                (obj->*m_setter)(value);
+        }
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(ConstMetaInstance const& _instance, DataBlock& _data) const MAZE_OVERRIDE
+        {
+            TObject const* obj = castMetaInstanceObject(_instance);
+
+            TryValueToDataBlock<TValue>((obj->*m_getter)(), _data);
         }
 
 

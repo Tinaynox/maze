@@ -34,6 +34,7 @@
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/system/MazeWindowVideoMode.hpp"
 #include "maze-core/system/MazeDisplay.hpp"
+#include "maze-core/reflection/MazeMetaClass.hpp"
 #include <json/json.h>
 
 
@@ -49,6 +50,18 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_CORE_API extern Json::Value FromString(String const& _value);
+
+
+        //////////////////////////////////////////
+        MAZE_CORE_API Json::Value SerializeMetaInstanceToJSONValue(
+            Maze::MetaClass const* _metaClass,
+            Maze::ConstMetaInstance _metaInstance);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API void DeserializeMetaInstanceFromJSONValue(
+            Maze::MetaClass const* _metaClass,
+            Maze::MetaInstance _metaInstance,
+            Json::Value const& _value);
 
 
         //////////////////////////////////////////

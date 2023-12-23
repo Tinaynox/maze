@@ -31,13 +31,10 @@
 
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
-#include "maze-core/hash/MazeHashCRC.hpp"
+#include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeStdTypes.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/MazeTypes.hpp"
-#include "maze-core/utils/MazeClassInfo.hpp"
-#include "maze-core/helpers/MazeStringHelper.hpp"
-#include "maze-core/reflection/MazeMetaClass.hpp"
 #include <json/json.h>
 
 //////////////////////////////////////////
@@ -61,17 +58,6 @@ namespace Maze
         virtual ~IJSONValueSerializable() = default;
     };
 
-    //////////////////////////////////////////
-    MAZE_CORE_API Json::Value SerializeMetaInstanceToJSONValue(
-        Maze::MetaClass const* _metaClass,
-        Maze::ConstMetaInstance _metaInstance);
-
-    //////////////////////////////////////////
-    MAZE_CORE_API void DeserializeMetaInstanceFromJSONValue(
-        Maze::MetaClass const* _metaClass,
-        Maze::MetaInstance _metaInstance,
-        Json::Value const& _value);
-    
     
 } // namespace Maze
 //////////////////////////////////////////
