@@ -242,9 +242,6 @@ namespace Maze
         PixelFormat::Enum m_internalPixelFormat;
     };
 
-    //////////////////////////////////////////
-    MAZE_NOT_IMPLEMENTED_SERIALIZATION(Texture2D);
-
 
     //////////////////////////////////////////
     template <>
@@ -268,29 +265,6 @@ namespace Maze
          Texture2D::FromString(_value, _data, _count);
     }
 
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<Texture2DPtr>::value), U32>::type
-        GetValueSerializationSize(Texture2DPtr const& _value)
-    {
-        MAZE_NOT_IMPLEMENTED_RETURN_VALUE(0);
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<Texture2DPtr>::value), void>::type
-        SerializeValue(Texture2DPtr const& _value, U8* _data)
-    {
-        MAZE_NOT_IMPLEMENTED;
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<Texture2DPtr>::value), void>::type
-        DeserializeValue(Texture2DPtr& _value, U8 const* _data)
-    {
-        MAZE_NOT_IMPLEMENTED;
-    }
 
 } // namespace Maze
 //////////////////////////////////////////

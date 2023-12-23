@@ -35,6 +35,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/helpers/MazeXMLHelper.hpp"
+#include "maze-core/helpers/MazeDataBlockHelper.hpp"
 #include "maze-core/serialization/MazeDataBlockSerializable.hpp"
 #include "maze-core/system/MazeTimer.hpp"
 
@@ -554,7 +555,7 @@ namespace Maze
     {
         clear();
 
-        DeserializeMetaInstanceFromXMLElement(getMetaClass(), getMetaInstance(), _element);
+        XMLHelper::DeserializeMetaInstanceFromXMLElement(getMetaClass(), getMetaInstance(), _element);
 
         tinyxml2::XMLNode const* node = _element->FirstChild();
         while (node)
@@ -588,7 +589,7 @@ namespace Maze
     //////////////////////////////////////////
     tinyxml2::XMLElement* Material::toXMLElement(tinyxml2::XMLDocument& _doc) const
     {
-        tinyxml2::XMLElement* element = SerializeMetaInstanceToXMLElement(getMetaClass(), getMetaInstance(), _doc);
+        tinyxml2::XMLElement* element = XMLHelper::SerializeMetaInstanceToXMLElement(getMetaClass(), getMetaInstance(), _doc);
 
         for (ShaderUniformVariantPtr const& uniformVariant : m_uniforms)
             element->InsertEndChild(uniformVariant->toXMLElement(_doc));
@@ -607,7 +608,7 @@ namespace Maze
     {
         clear();
 
-        DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+        DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
 
         for (DataBlock::DataBlockIndex i = 0; i < _dataBlock.getDataBlocksCount(); ++i)
         {

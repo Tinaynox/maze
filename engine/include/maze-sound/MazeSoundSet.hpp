@@ -34,6 +34,7 @@
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/serialization/MazeStringSerializable.hpp"
 #include "maze-core/serialization/MazeJSONSerializable.hpp"
+#include "maze-core/helpers/MazeJSONHelper.hpp"
 #include "maze-sound/MazeSound.hpp"
 
 
@@ -127,13 +128,13 @@ namespace Maze
         //////////////////////////////////////////
         virtual void loadFromJSONValue(Json::Value const& _value) MAZE_OVERRIDE
         {
-            DeserializeMetaInstanceFromJSONValue(getMetaClass(), getMetaInstance(), _value);
+            JSONHelper::DeserializeMetaInstanceFromJSONValue(getMetaClass(), getMetaInstance(), _value);
         }
 
         //////////////////////////////////////////
         virtual Json::Value toJSONValue() const MAZE_OVERRIDE
         {
-            return SerializeMetaInstanceToJSONValue(getMetaClass(), getMetaInstance());
+            return JSONHelper::SerializeMetaInstanceToJSONValue(getMetaClass(), getMetaInstance());
         }
 
     public:
@@ -169,10 +170,6 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    MAZE_NOT_IMPLEMENTED_SERIALIZATION(SoundSet);
-
-
-    //////////////////////////////////////////
     template <>
     inline typename ::std::enable_if<(IsSharedPtr<SoundSetPtr>::value), void>::type
         ValueToString(SoundSetPtr const& _value, String& _data)
@@ -188,30 +185,6 @@ namespace Maze
         SoundSet::FromString(_value, _data, _count);
     }
 
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<SoundSetPtr>::value), U32>::type
-        GetValueSerializationSize(SoundSetPtr const& _value)
-    {
-        MAZE_NOT_IMPLEMENTED_RETURN_VALUE(0);
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<SoundSetPtr>::value), void>::type
-        SerializeValue(SoundSetPtr const& _value, U8* _data)
-    {
-        MAZE_NOT_IMPLEMENTED;
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<SoundSetPtr>::value), void>::type
-        DeserializeValue(SoundSetPtr& _value, U8 const* _data)
-    {
-        MAZE_NOT_IMPLEMENTED;
-    }
-    
 
 } // namespace Maze
 //////////////////////////////////////////

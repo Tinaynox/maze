@@ -305,29 +305,6 @@ namespace Maze
         _value = (DEnumClassName)valueU16;\
     }
 
-    //////////////////////////////////////////
-    #define MAZE_IMPLEMENT_ENUMCLASS_SERIALIZATION(DEnumClass) \
-        inline void ValueToString(DEnumClass const& _value, String& _data) \
-        { \
-            _data = DEnumClass::ToString(_value); \
-        } \
-        inline void ValueFromString(DEnumClass& _value, CString _data, Size _count) \
-        { \
-            _value = DEnumClass::FromString(String(_data, _count)); \
-        } \
-        inline U32 GetValueSerializationSize(DEnumClass const& _value) \
-        { \
-            return sizeof(DEnumClass); \
-        } \
-        inline void SerializeValue(DEnumClass const& _value, U8* _data) \
-        { \
-            memcpy(_data, (U8 const*)(&_value), sizeof(DEnumClass)); \
-        } \
-        inline void DeserializeValue(DEnumClass& _value, U8 const* _data) \
-        { \
-            memcpy((U8*)&_value, _data, sizeof(DEnumClass)); \
-        }
-
 
     //////////////////////////////////////////
     #define MAZE_DECLARE_ENUMCLASS_1_BlOCK1(e1) e1,

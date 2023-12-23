@@ -185,30 +185,15 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    MAZE_NOT_IMPLEMENTED_SERIALIZATION(RenderMesh);
-
-
-    //////////////////////////////////////////
     inline void ValueToString(RenderMeshPtr const& _value, String& _data)
     {
         _data = _value ? _value->toString() : String();
     }
+
+    //////////////////////////////////////////
     inline void ValueFromString(RenderMeshPtr& _value, CString _data, Size _count)
     {
         _value = RenderMesh::FromString(String(_data, _count));
-    }
-    inline U32 GetValueSerializationSize(RenderMeshPtr const& _value)
-    {
-        MAZE_TODO;
-        return 0;
-    }
-        inline void SerializeValue(RenderMeshPtr const& _value, U8* _data)
-    {
-        MAZE_TODO;
-    }
-    inline void DeserializeValue(RenderMeshPtr& _value, U8 const* _data)
-    {
-        MAZE_TODO;
     }
 
 

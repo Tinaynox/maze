@@ -156,8 +156,8 @@ namespace Maze
     // Serialization
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_CPP_ENUMCLASS_SERIALIZATION(CanvasScaler::ScaleMode);
-    MAZE_IMPLEMENT_CPP_ENUMCLASS_SERIALIZATION(CanvasScaler::ScreenMatchMode);
+    MAZE_IMPLEMENT_CPP_ENUMCLASS_STRING_SERIALIZATION(CanvasScaler::ScaleMode);
+    MAZE_IMPLEMENT_CPP_ENUMCLASS_STRING_SERIALIZATION(CanvasScaler::ScreenMatchMode);
 
 } // namespace Maze
 //////////////////////////////////////////

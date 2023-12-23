@@ -180,10 +180,6 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    MAZE_NOT_IMPLEMENTED_SERIALIZATION(FontMaterial);
-
-
-    //////////////////////////////////////////
     template <>
     inline typename ::std::enable_if<(IsSharedPtr<FontMaterialPtr>::value), void>::type
         ValueToString(FontMaterialPtr const& _value, String& _data)
@@ -197,30 +193,6 @@ namespace Maze
         ValueFromString(FontMaterialPtr& _value, CString _data, Size _count)
     {
         FontMaterial::FromString(_value, _data, _count);
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<FontMaterialPtr>::value), U32>::type
-        GetValueSerializationSize(FontMaterialPtr const& _value)
-    {
-        MAZE_NOT_IMPLEMENTED_RETURN_VALUE(0);
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<FontMaterialPtr>::value), void>::type
-        SerializeValue(FontMaterialPtr const& _value, U8* _data)
-    {
-        MAZE_NOT_IMPLEMENTED;
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<FontMaterialPtr>::value), void>::type
-        DeserializeValue(FontMaterialPtr& _value, U8 const* _data)
-    {
-        MAZE_NOT_IMPLEMENTED;
     }
     
 

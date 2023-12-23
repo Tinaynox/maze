@@ -201,16 +201,15 @@ namespace Maze
                         _dataBlock.setMat4F32(propertyName, value);
                     }
                     else
-                    if (valueClassUID == ClassInfo<String>::UID() || valueClassUID == ClassInfo<CString>::UID() ||
-                        valueClassUID == ClassInfo<HashedCString>::UID() || valueClassUID == ClassInfo<HashedString>::UID())
-                    {
-                        String properyStringValue = metaProperty->toString(_metaInstance);
-                        _dataBlock.setString(propertyName, std::move(properyStringValue));
-                    }
-                    else
+                    if (metaProperty->isDataBlockSerializable(_metaInstance))
                     {
                         DataBlock& childBlock = _dataBlock[propertyName];
                         metaProperty->toDataBlock(_metaInstance, childBlock);
+                    }
+                    else
+                    {
+                        String properyStringValue = metaProperty->toString(_metaInstance);
+                        _dataBlock.setString(propertyName, std::move(properyStringValue));
                     }
                 }
             }
@@ -359,15 +358,9 @@ namespace Maze
                             metaProperty->setValue(_metaInstance, &value);
                         }
                         else
-                        if (valueClassUID == ClassInfo<String>::UID() || valueClassUID == ClassInfo<CString>::UID() ||
-                            valueClassUID == ClassInfo<HashedCString>::UID() || valueClassUID == ClassInfo<HashedString>::UID())
                         {
                             String const& attributeValue = _dataBlock.getString(propertyName);
                             metaProperty->setString(_metaInstance, attributeValue);
-                        }
-                        else
-                        {
-                            MAZE_ERROR("Unknown class %s", static_cast<CString>(ClassInfo<String>::Name()));
                         }
                     }
                     else

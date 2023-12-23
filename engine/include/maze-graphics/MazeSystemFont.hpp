@@ -72,9 +72,6 @@ namespace Maze
         static void ToString(SystemFont const* _value, String& _data);
     };
 
-    //////////////////////////////////////////
-    MAZE_NOT_IMPLEMENTED_SERIALIZATION(SystemFont);
-
 
     //////////////////////////////////////////
     template <>
@@ -92,29 +89,6 @@ namespace Maze
         SystemFont::FromString(_value, _data, _count);
     }
 
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<SystemFontPtr>::value), U32>::type
-        GetValueSerializationSize(SystemFontPtr const& _value)
-    {
-        MAZE_NOT_IMPLEMENTED_RETURN_VALUE(0);
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<SystemFontPtr>::value), void>::type
-        SerializeValue(SystemFontPtr const& _value, U8* _data)
-    {
-        MAZE_NOT_IMPLEMENTED;
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<SystemFontPtr>::value), void>::type
-        DeserializeValue(SystemFontPtr& _value, U8 const* _data)
-    {
-        MAZE_NOT_IMPLEMENTED;
-    }
 
 } // namespace Maze
 //////////////////////////////////////////

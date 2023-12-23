@@ -301,10 +301,6 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    MAZE_NOT_IMPLEMENTED_SERIALIZATION(Material);
-
-
-    //////////////////////////////////////////
     template <>
     inline typename ::std::enable_if<(IsSharedPtr<MaterialPtr>::value), void>::type
         ValueToString(MaterialPtr const& _value, String& _data)
@@ -318,30 +314,6 @@ namespace Maze
         ValueFromString(MaterialPtr& _value, CString _data, Size _count)
     {
         Material::FromString(_value, _data, _count);
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<MaterialPtr>::value), U32>::type
-        GetValueSerializationSize(MaterialPtr const& _value)
-    {
-        MAZE_NOT_IMPLEMENTED_RETURN_VALUE(0);
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<MaterialPtr>::value), void>::type
-        SerializeValue(MaterialPtr const& _value, U8* _data)
-    {
-        MAZE_NOT_IMPLEMENTED;
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<MaterialPtr>::value), void>::type
-        DeserializeValue(MaterialPtr& _value, U8 const* _data)
-    {
-        MAZE_NOT_IMPLEMENTED;
     }
 
 } // namespace Maze

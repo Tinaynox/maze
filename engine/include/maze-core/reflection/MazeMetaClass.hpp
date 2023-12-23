@@ -187,6 +187,7 @@ namespace Maze
         //////////////////////////////////////////
         virtual String toString(ConstMetaInstance const& _instance) const MAZE_ABSTRACT;
 
+
         //////////////////////////////////////////
         virtual U32 getSerializationSize(MetaInstance const& _instance) const MAZE_ABSTRACT;
 
@@ -201,6 +202,10 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual void deserializeFrom(MetaInstance const& _instance, U8 const* _data) MAZE_ABSTRACT;
+
+
+        //////////////////////////////////////////
+        virtual bool isDataBlockSerializable(ConstMetaInstance const& _instance) const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual void setDataBlock(MetaInstance const& _instance, DataBlock const& _data) MAZE_ABSTRACT;
@@ -878,6 +883,13 @@ namespace Maze
             TValue value;
             if (TryDeserializeValue<TValue>(value, _data))
                 (obj->*m_setter)(value);
+        }
+
+
+        //////////////////////////////////////////
+        virtual bool isDataBlockSerializable(ConstMetaInstance const& _instance) const MAZE_OVERRIDE
+        {
+            return HasValueToDataBlock<TValue>::value || std::is_base_of<IDataBlockSerializable, TValue>::value;
         }
 
         //////////////////////////////////////////

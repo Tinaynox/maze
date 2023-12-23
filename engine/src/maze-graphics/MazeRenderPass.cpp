@@ -33,6 +33,8 @@
 #include "maze-graphics/MazeRenderQueue.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/helpers/MazeMetaClassHelper.hpp"
+#include "maze-core/helpers/MazeDataBlockHelper.hpp"
+#include "maze-core/helpers/MazeXMLHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -164,26 +166,26 @@ namespace Maze
     //////////////////////////////////////////
     void RenderPass::loadFromXMLElement(tinyxml2::XMLElement const* _element)
     {
-        DeserializeMetaInstanceFromXMLElement(getMetaClass(), getMetaInstance(), _element);
+        XMLHelper::DeserializeMetaInstanceFromXMLElement(getMetaClass(), getMetaInstance(), _element);
     }
 
     //////////////////////////////////////////
     tinyxml2::XMLElement* RenderPass::toXMLElement(tinyxml2::XMLDocument& _doc) const
     {
-        return SerializeMetaInstanceToXMLElement(getMetaClass(), getMetaInstance(), _doc);
+        return XMLHelper::SerializeMetaInstanceToXMLElement(getMetaClass(), getMetaInstance(), _doc);
     }
 
     //////////////////////////////////////////
     bool RenderPass::loadFromDataBlock(DataBlock const& _dataBlock)
     {
-        DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+        DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
         return true;
     }
 
     //////////////////////////////////////////
     void RenderPass::toDataBlock(DataBlock& _dataBlock) const
     {
-        SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+        DataBlockHelper::SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
     }
 
     //////////////////////////////////////////

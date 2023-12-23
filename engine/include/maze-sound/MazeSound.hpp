@@ -172,10 +172,6 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    MAZE_NOT_IMPLEMENTED_SERIALIZATION(Sound);
-
-
-    //////////////////////////////////////////
     template <>
     inline typename ::std::enable_if<(IsSharedPtr<SoundPtr>::value), void>::type
         ValueToString(SoundPtr const& _value, String& _data)
@@ -191,30 +187,6 @@ namespace Maze
         Sound::FromString(_value, _data, _count);
     }
 
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<SoundPtr>::value), U32>::type
-        GetValueSerializationSize(SoundPtr const& _value)
-    {
-        MAZE_NOT_IMPLEMENTED_RETURN_VALUE(0);
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<SoundPtr>::value), void>::type
-        SerializeValue(SoundPtr const& _value, U8* _data)
-    {
-        MAZE_NOT_IMPLEMENTED;
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<SoundPtr>::value), void>::type
-        DeserializeValue(SoundPtr& _value, U8 const* _data)
-    {
-        MAZE_NOT_IMPLEMENTED;
-    }
-    
 
 } // namespace Maze
 //////////////////////////////////////////
