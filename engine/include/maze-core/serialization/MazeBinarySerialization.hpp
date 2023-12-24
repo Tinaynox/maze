@@ -266,7 +266,7 @@ namespace Maze
 
             // Element
             TValue const& childValue = (*it);
-            result += GetValueSerializationSize(childValue);
+            result += TryGetValueSerializationSize<TValue>(childValue);
         }
 
         return result;
@@ -287,11 +287,11 @@ namespace Maze
         {
             TValue const& childValue = (*it);
 
-            U32 sizeBytes = GetValueSerializationSize(childValue);
+            U32 sizeBytes = TryGetValueSerializationSize<TValue>(childValue);
             SerializeValue(sizeBytes, _data);
             _data += sizeof(sizeBytes);
 
-            SerializeValue(childValue, _data);
+            TrySerializeValue<TValue>(childValue, _data);
             _data += sizeBytes;
         }
     }
@@ -314,7 +314,7 @@ namespace Maze
             _data += sizeof(sizeBytes);
 
             TValue value;
-            DeserializeValue(value, _data);
+            TryDeserializeValue<TValue>(value, _data);
             _data += sizeBytes;
 
             *_it++ = value;

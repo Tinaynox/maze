@@ -41,11 +41,22 @@
 // #include "maze-core/helpers/MazeJSONHelper.hpp"
 #include "maze-core/data/MazeHashedString.hpp"
 #include "maze-core/helpers/MazeStdHelper.hpp"
+#include <json/json.h>
 
 
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    namespace JSONHelper
+    {
+        //////////////////////////////////////////
+        MAZE_CORE_API extern String ToString(Json::Value const& _value);
+
+        //////////////////////////////////////////
+        MAZE_CORE_API extern Json::Value FromString(String const& _value);
+    }
+
     //////////////////////////////////////////
     // Type: Any base type (non-class)
     //
@@ -189,19 +200,18 @@ namespace Maze
     {
         _data.clear();
 
-        MAZE_NOT_IMPLEMENTED;
-        /*Json::Value json;
+        Json::Value json;
         
         for (TIterator it = _first; it != _last; ++it)
         {
             TValue const& childValue = (*it);
 
             String childValueString;
-            ValueToString(childValue, childValueString);
+            TryValueToString<TValue>(childValue, childValueString);
             json.append(childValueString.c_str());
         }
 
-        _data = JSONHelper::ToString(json);*/
+        _data = JSONHelper::ToString(json);
     }
 
     //////////////////////////////////////////
@@ -210,8 +220,7 @@ namespace Maze
         TIterator _it,
         String const& _data)
     {
-        MAZE_NOT_IMPLEMENTED;
-        /*Json::Value value = JSONHelper::FromString(_data);
+        Json::Value value = JSONHelper::FromString(_data);
 
         if (value.isNull())
             return;
@@ -220,10 +229,10 @@ namespace Maze
         {
             TValue value;
             Json::String str = child.asString();
-            ValueFromString(value, str.c_str(), str.size());
+            TryValueFromString<TValue>(value, str.c_str(), str.size());
 
             *_it++ = value;
-        }*/
+        }
     }
 
 
