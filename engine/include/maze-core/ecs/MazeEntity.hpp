@@ -437,34 +437,6 @@ namespace Maze
     // Serialization
     //
     //////////////////////////////////////////
-    inline void ValueToString(Entity const& _value, String& _data)
-    {
-        MAZE_TODO;
-    }
-
-    inline void ValueFromString(Entity& _value, CString _data, Size _count)
-    {
-        MAZE_TODO;
-    }
-
-    inline U32 GetValueSerializationSize(Entity const& _value)
-    {
-        MAZE_TODO;
-        return 0;
-    }
-
-    inline void SerializeValue(Entity const& _value, U8* _data)
-    {
-        MAZE_TODO;
-    }
-
-    inline void DeserializeValue(Entity& _value, U8 const* _data)
-    {
-        MAZE_TODO;        
-    }
-
-
-    //////////////////////////////////////////
     template <>
     inline typename ::std::enable_if<(IsSharedPtr<EntityPtr>::value), void>::type
         ValueToString(EntityPtr const& _value, String& _data)
@@ -479,30 +451,6 @@ namespace Maze
     {
         EntityId eid = StringHelper::StringToU32(_data);
         _value = Entity::GetEntity(eid);
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<EntityPtr>::value), U32>::type
-        GetValueSerializationSize(EntityPtr const& _value)
-    {
-        MAZE_NOT_IMPLEMENTED_RETURN_VALUE(0);
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<EntityPtr>::value), void>::type
-        SerializeValue(EntityPtr const& _value, U8* _data)
-    {
-        MAZE_NOT_IMPLEMENTED;
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<EntityPtr>::value), void>::type
-        DeserializeValue(EntityPtr& _value, U8 const* _data)
-    {
-        MAZE_NOT_IMPLEMENTED;
     }
 
 

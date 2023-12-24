@@ -39,6 +39,7 @@
 #include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-core/serialization/MazeBinarySerializable.hpp"
 #include "maze-core/data/MazeHashedString.hpp"
+#include "maze-core/helpers/MazeStdHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -129,8 +130,21 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename UValue>
-    inline void DeserializeValue(SharedPtr<UValue>& _value, U8 const* _data)
+    inline typename ::std::enable_if<(StdHelper::HasDefaultConstructor<UValue>::value), void>::type
+        DeserializeValue(SharedPtr<UValue>& _value, U8 const* _data)
     {
+        if (!_value)
+            _value = std::make_shared<UValue>();
+
+        TryDeserializeValue<UValue>(*_value.get(), _data);
+    }
+
+    //////////////////////////////////////////
+    template <typename UValue>
+    inline typename ::std::enable_if<(!StdHelper::HasDefaultConstructor<UValue>::value), void>::type
+        DeserializeValue(SharedPtr<UValue>& _value, U8 const* _data)
+    {
+        MAZE_ERROR_RETURN_IF(!_value, "%s class has no default constructor to make shared ptr", static_cast<CString>(ClassInfo<UValue>::Name()));
         TryDeserializeValue<UValue>(*_value.get(), _data);
     }
 
@@ -321,13 +335,7 @@ namespace Maze
                 _value.end());
     }
 
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(IsVector<TValue>::value), U32>::type
-        GetValueSerializationSize(TValue const& _value)
-    {
-        return GetValueSerializationSize(_value);
-    }
+    
 
     //////////////////////////////////////////
     template <typename UValue>
@@ -345,14 +353,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(IsVector<TValue>::value), void>::type
-        SerializeValue(TValue const& _value, U8* _data)
-    {
-        SerializeValue(_value, _data);
-    }
-
-    //////////////////////////////////////////
     template <typename UValue>
     inline void DeserializeValue(Vector<UValue>& _value, U8 const* _data)
     {
@@ -361,6 +361,69 @@ namespace Maze
             UValue>(
                 std::back_inserter(_value),
                 _data);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: FastVector
+    //
+    //////////////////////////////////////////
+    template <typename UValue>
+    inline U32 GetValueSerializationSize(FastVector<UValue> const& _value)
+    {
+        return GetContainerMetaPropertySerializationSize<
+            typename FastVector<UValue>::const_iterator,
+            UValue>(
+                _value.begin(),
+                _value.end());
+    }
+
+
+
+    //////////////////////////////////////////
+    template <typename UValue>
+    inline void SerializeValue(
+        FastVector<UValue> const& _value,
+        U8* _data)
+    {
+        return SerializeContainerMetaProperty<
+            typename FastVector<UValue>::const_iterator,
+            UValue>(
+                _value.begin(),
+                _value.end(),
+                (U32)_value.size(),
+                _data);
+    }
+
+    //////////////////////////////////////////
+    template <typename UValue>
+    inline void DeserializeValue(FastVector<UValue>& _value, U8 const* _data)
+    {
+        DeserializeContainerMetaProperty<
+            std::back_insert_iterator<FastVector<UValue>>,
+            UValue>(
+                std::back_inserter(_value),
+                _data);
+    }
+
+
+    //////////////////////////////////////////
+    // Vector redirect functions
+    //
+    //////////////////////////////////////////
+    template <typename TValue>
+    inline typename ::std::enable_if<(IsVector<TValue>::value), U32>::type
+        GetValueSerializationSize(TValue const& _value)
+    {
+        return GetValueSerializationSize(_value);
+    }
+
+    //////////////////////////////////////////
+    template <typename TValue>
+    inline typename ::std::enable_if<(IsVector<TValue>::value), void>::type
+        SerializeValue(TValue const& _value, U8* _data)
+    {
+        SerializeValue(_value, _data);
     }
 
     //////////////////////////////////////////

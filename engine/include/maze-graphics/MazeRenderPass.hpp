@@ -61,6 +61,33 @@ namespace Maze
     
 
     //////////////////////////////////////////
+    // Class RenderPassShaderRef
+    //
+    //////////////////////////////////////////
+    class MAZE_GRAPHICS_API RenderPassShaderRef
+        : IStringSerializable
+    {
+    public:
+
+
+        //////////////////////////////////////////
+        void setShader(ShaderPtr const& _shader) { m_shader = _shader; }
+
+        //////////////////////////////////////////
+        inline ShaderPtr const& getShader() const { return m_shader; }
+
+        //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
+
+    private:
+        ShaderPtr m_shader;
+    };
+
+
+    //////////////////////////////////////////
     // Class RenderPass
     //
     //////////////////////////////////////////
@@ -86,6 +113,10 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual ~RenderPass();
+
+
+        //////////////////////////////////////////
+        inline RenderSystem* getRenderSystem() const { return m_renderSystem; }
 
 
         //////////////////////////////////////////
@@ -115,13 +146,20 @@ namespace Maze
         void setShader(ShaderPtr const& _shader);
 
         //////////////////////////////////////////
-        inline ShaderPtr const& getShader() const { return m_shader; }
+        inline ShaderPtr const& getShader() const { return m_shaderRef.getShader(); }
 
         //////////////////////////////////////////
-        void setShader(String const& _shaderResourceName);
+        void setShader(Path const& _shaderResourceName);
 
         //////////////////////////////////////////
         Path const& getShaderAssetFileName() const;
+
+
+        //////////////////////////////////////////
+        inline RenderPassShaderRef const& getShaderRef() const { return m_shaderRef; }
+
+        //////////////////////////////////////////
+        inline void setShaderRef(RenderPassShaderRef const& _value) { m_shaderRef.setShader(_value.getShader()); }
 
 
         //////////////////////////////////////////
@@ -229,7 +267,7 @@ namespace Maze
 
         S32 m_renderQueueIndex;
 
-        ShaderPtr m_shader;
+        RenderPassShaderRef m_shaderRef;
 
         BlendOperation m_blendOperation;
         BlendFactor m_blendSrcFactor;

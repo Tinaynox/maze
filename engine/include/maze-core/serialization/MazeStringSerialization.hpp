@@ -40,6 +40,7 @@
 #include "maze-core/serialization/MazeStringSerializable.hpp"
 // #include "maze-core/helpers/MazeJSONHelper.hpp"
 #include "maze-core/data/MazeHashedString.hpp"
+#include "maze-core/helpers/MazeStdHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -96,8 +97,21 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename UValue>
-    inline void ValueFromString(SharedPtr<UValue>& _value, CString _data, Size _count)
+    inline typename ::std::enable_if<(StdHelper::HasDefaultConstructor<UValue>::value), void>::type
+        ValueFromString(SharedPtr<UValue>& _value, CString _data, Size _count)
     {
+        if (!_value)
+            _value = std::make_shared<UValue>();
+
+        TryValueFromString<UValue>(*_value.get(), _data, _count);
+    }
+
+    //////////////////////////////////////////
+    template <typename UValue>
+    inline typename ::std::enable_if<(!StdHelper::HasDefaultConstructor<UValue>::value), void>::type
+        ValueFromString(SharedPtr<UValue>& _value, CString _data, Size _count)
+    {
+        MAZE_ERROR_RETURN_IF(!_value, "%s class has no default constructor to make shared ptr", static_cast<CString>(ClassInfo<UValue>::Name()));
         TryValueFromString<UValue>(*_value.get(), _data, _count);
     }
 
@@ -229,14 +243,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(IsVector<TValue>::value), void>::type
-        ValueToString(TValue const& _value, String& _data)
-    {
-        ValueToString(_value, _data);
-    }
-
-    //////////////////////////////////////////
     template <typename UValue>
     inline void ValueFromString(Vector<UValue>& _value, CString _data, Size _count)
     {
@@ -245,6 +251,45 @@ namespace Maze
             UValue>(
                 std::back_inserter(_value),
                 String(_data, _count));
+    }
+
+
+    //////////////////////////////////////////
+    // Type: FastVector
+    //
+    //////////////////////////////////////////
+    template <typename UValue>
+    inline void ValueToString(FastVector<UValue> const& _value, String& _data)
+    {
+        ContainerMetaPropertyToString<
+            typename FastVector<UValue>::const_iterator,
+            UValue>(
+                _value.begin(),
+                _value.end(),
+                _data);
+    }
+
+    //////////////////////////////////////////
+    template <typename UValue>
+    inline void ValueFromString(FastVector<UValue>& _value, CString _data, Size _count)
+    {
+        ContainerMetaPropertyFromString<
+            std::back_insert_iterator<FastVector<UValue>>,
+            UValue>(
+                std::back_inserter(_value),
+                String(_data, _count));
+    }
+
+
+    //////////////////////////////////////////
+    // Vector redirect functions
+    //
+    //////////////////////////////////////////
+    template <typename TValue>
+    inline typename ::std::enable_if<(IsVector<TValue>::value), void>::type
+        ValueToString(TValue const& _value, String& _data)
+    {
+        ValueToString(_value, _data);
     }
 
     //////////////////////////////////////////

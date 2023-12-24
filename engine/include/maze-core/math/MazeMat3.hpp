@@ -344,7 +344,7 @@ namespace Maze
     inline typename ::std::enable_if<(IsMat3<TValue>::value), void>::type
         ValueFromString(TValue& _value, CString _data, Size _count)
     {
-        _value = TValue::FromString(String(_data, _count));
+        _value = TValue::FromString(_data, _count);
     }
 
     //////////////////////////////////////////

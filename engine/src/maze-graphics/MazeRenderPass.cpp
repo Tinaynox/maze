@@ -41,13 +41,33 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    // Class RenderPassShaderRef
+    //
+    //////////////////////////////////////////
+    String RenderPassShaderRef::toString() const
+    {
+        if (!m_shader)
+            return String();
+
+        return m_shader->getAssetFile() ? m_shader->getAssetFileName() : m_shader->getName();
+    }
+
+    //////////////////////////////////////////
+    void RenderPassShaderRef::setString(CString _data, Size _count)
+    {
+        ShaderPtr const& shader = RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->getShader(_data);
+        setShader(shader);
+    }
+
+
+    //////////////////////////////////////////
     // Class RenderPass
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS(RenderPass,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(RenderPassType, passType, RenderPassType::None, getPassType, setPassType),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, renderQueueIndex, (S32)RenderQueueIndex::Opaque, getRenderQueueIndex, setRenderQueueIndex),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ShaderPtr, shader, ShaderPtr(), getShader, setShader),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(RenderPassShaderRef, shader, RenderPassShaderRef(), getShaderRef, setShaderRef),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(BlendOperation, blendOperation, BlendOperation::Add, getBlendOperation, setBlendOperation),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(BlendFactor, blendSrcFactor, BlendFactor::One, getBlendSrcFactor, setBlendSrcFactor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(BlendFactor, blendDestFactor, BlendFactor::Zero, getBlendDestFactor, setBlendDestFactor),
@@ -107,7 +127,7 @@ namespace Maze
         m_renderSystem = _renderPass.m_renderSystem;
         m_passType = _renderPass.m_passType;
         m_renderQueueIndex = _renderPass.m_renderQueueIndex;
-        m_shader = _renderPass.m_shader;
+        m_shaderRef = _renderPass.m_shaderRef;
         m_blendOperation = _renderPass.m_blendOperation;
         m_blendSrcFactor = _renderPass.m_blendSrcFactor;
         m_blendDestFactor = _renderPass.m_blendDestFactor;
@@ -127,19 +147,17 @@ namespace Maze
     //////////////////////////////////////////
     void RenderPass::setShader(ShaderPtr const& _shader)
     {
-        if (m_shader == _shader)
+        if (m_shaderRef.getShader() == _shader)
             return;
 
-        m_shader = _shader;
+        m_shaderRef.setShader(_shader);
     }
 
     //////////////////////////////////////////
-    void RenderPass::setShader(String const& _shaderResourceName)
+    void RenderPass::setShader(Path const& _shaderResourceName)
     {
         ShaderPtr const& shader = m_renderSystem->getShaderSystem()->getShader(_shaderResourceName);
-
-        m_shader = shader;
-
+        setShader(shader);
     }
 
     //////////////////////////////////////////
@@ -156,10 +174,10 @@ namespace Maze
     {
         static Path nullValue;
 
-        if (!m_shader)
+        if (!m_shaderRef.getShader())
             return nullValue;
 
-        return m_shader->getAssetFileName();
+        return m_shaderRef.getShader()->getAssetFileName();
 
     }
 
@@ -202,7 +220,7 @@ namespace Maze
         crc32 = Hash::CalculateCRC32((Char const*)&m_passType, sizeof(m_passType), crc32);
         crc32 = Hash::CalculateCRC32((Char const*)&m_renderQueueIndex, sizeof(m_renderQueueIndex), crc32);
 
-        Shader* const shaderRaw = m_shader.get();
+        Shader* const shaderRaw = m_shaderRef.getShader().get();
         crc32 = Hash::CalculateCRC32((Char const*)&shaderRaw, sizeof(Shader*), crc32);
 
         crc32 = Hash::CalculateCRC32((Char const*)&m_blendOperation, sizeof(m_blendOperation), crc32);
@@ -218,10 +236,10 @@ namespace Maze
     //////////////////////////////////////////
     bool RenderPass::hasUniform(HashedCString _uniformName)
     {
-        if (!m_shader)
+        if (!m_shaderRef.getShader())
             return false;
 
-        return m_shader->hasUniform(_uniformName);
+        return m_shaderRef.getShader()->hasUniform(_uniformName);
     }
 
 } // namespace Maze

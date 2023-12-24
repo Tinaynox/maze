@@ -551,6 +551,11 @@ namespace Maze
         Size m_capacity;
     };
 
+
+    //////////////////////////////////////////
+    template <class _Ty>
+    struct IsVector<Maze::FastVector<_Ty>> : std::true_type {};
+
     
 } // namespace Maze
 //////////////////////////////////////////

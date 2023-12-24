@@ -284,19 +284,6 @@ namespace Maze
     //
     //////////////////////////////////////////
     #define MAZE_IMPLEMENT_COMPONENT_SERIALIZATION(DComponent) \
-        inline void ValueToString(DComponent const& _value, String& _data) \
-        { \
-            MAZE_TODO; \
-        } \
-        inline void ValueFromString(DComponent& _value, CString _data, Size _count) \
-        { \
-            MAZE_TODO; \
-        } \
-        inline U32 GetValueSerializationSize(DComponent const& _value) \
-        { \
-            MAZE_TODO; \
-            return 0; \
-        } \
         inline void SerializeValue(DComponent const& _value, U8* _data) \
         { \
             memcpy(_data, (U8 const*)(&_value), sizeof(DComponent)); \

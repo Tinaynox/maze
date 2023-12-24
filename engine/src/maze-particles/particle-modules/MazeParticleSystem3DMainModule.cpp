@@ -345,13 +345,13 @@ namespace Maze
     //////////////////////////////////////////
     void ParticleSystem3DMainModule::loadFromJSONValue(Json::Value const& _value)
     {
-        DeserializeMetaInstanceFromJSONValue(getMetaClass(), getMetaInstance(), _value);
+        JSONHelper::DeserializeMetaInstanceFromJSONValue(getMetaClass(), getMetaInstance(), _value);
     }
 
     //////////////////////////////////////////
     Json::Value ParticleSystem3DMainModule::toJSONValue() const
     {
-        return SerializeMetaInstanceToJSONValue(getMetaClass(), getMetaInstance());
+        return JSONHelper::SerializeMetaInstanceToJSONValue(getMetaClass(), getMetaInstance());
     }
 
     //////////////////////////////////////////

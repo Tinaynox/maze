@@ -38,6 +38,7 @@
 #include "maze-core/utils/MazeClassInfo.hpp"
 #include "maze-core/serialization/MazeDataBlockSerializable.hpp"
 #include "maze-core/data/MazeDataBlock.hpp"
+#include "maze-core/helpers/MazeStdHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -136,11 +137,24 @@ namespace Maze
     {
         ValueToDataBlock(_value, _data);
     }
+    
+    //////////////////////////////////////////
+    template <typename UValue>
+    inline typename ::std::enable_if<(StdHelper::HasDefaultConstructor<UValue>::value), void>::type
+        ValueFromDataBlock(SharedPtr<UValue>& _value, DataBlock const& _data)
+    {
+        if (!_value)
+            _value = std::make_shared<UValue>();
+
+        TryValueFromDataBlock<UValue>(*_value.get(), _data);
+    }
 
     //////////////////////////////////////////
     template <typename UValue>
-    inline void ValueFromDataBlock(SharedPtr<UValue>& _value, DataBlock const& _data)
+    inline typename ::std::enable_if<(!StdHelper::HasDefaultConstructor<UValue>::value), void>::type
+        ValueFromDataBlock(SharedPtr<UValue>& _value, DataBlock const& _data)
     {
+        MAZE_ERROR_RETURN_IF(!_value, "%s class has no default constructor to make shared ptr", static_cast<CString>(ClassInfo<UValue>::Name()));
         TryValueFromDataBlock<UValue>(*_value.get(), _data);
     }
 
@@ -199,7 +213,7 @@ namespace Maze
     {
         for (TIterator it = _first; it != _last; ++it)
         {
-            AddDataToDataBlock(_data, MAZE_HS("i"), (*it));
+            AddDataToDataBlock(_data, MAZE_HS("item"), (*it));
         }
     }
 
@@ -245,14 +259,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(IsVector<TValue>::value), void>::type
-        ValueToDataBlock(TValue const& _value, DataBlock& _data)
-    {
-        ValueToDataBlock(_value, _data);
-    }
-
-    //////////////////////////////////////////
     template <typename UValue>
     inline void ValueFromDataBlock(Vector<UValue>& _value, DataBlock const& _data)
     {
@@ -261,6 +267,45 @@ namespace Maze
             UValue>(
                 std::back_inserter(_value),
                 _data);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: FastVector
+    //
+    //////////////////////////////////////////
+    template <typename UValue>
+    inline void ValueToDataBlock(FastVector<UValue> const& _value, DataBlock& _data)
+    {
+        ContainerMetaPropertyToDataBlock<
+            typename FastVector<UValue>::const_iterator,
+            UValue>(
+                _value.begin(),
+                _value.end(),
+                _data);
+    }
+
+    //////////////////////////////////////////
+    template <typename UValue>
+    inline void ValueFromDataBlock(FastVector<UValue>& _value, DataBlock const& _data)
+    {
+        ContainerMetaPropertyFromDataBlock<
+            std::back_insert_iterator<FastVector<UValue>>,
+            UValue>(
+                std::back_inserter(_value),
+                _data);
+    }
+
+
+    //////////////////////////////////////////
+    // Vector redirect functions
+    //
+    //////////////////////////////////////////
+    template <typename TValue>
+    inline typename ::std::enable_if<(IsVector<TValue>::value), void>::type
+        ValueToDataBlock(TValue const& _value, DataBlock& _data)
+    {
+        ValueToDataBlock(_value, _data);
     }
 
     //////////////////////////////////////////

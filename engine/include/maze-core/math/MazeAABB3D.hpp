@@ -395,7 +395,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void ValueFromString(AABB3D& _value, CString _data, Size _count)
     {
-        _value = AABB3D::FromString(String(_data, _count));
+        _value = AABB3D::FromString(_data, _count);
     }
 
     //////////////////////////////////////////

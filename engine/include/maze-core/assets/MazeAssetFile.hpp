@@ -195,47 +195,6 @@ namespace Maze
     };
 
 
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<AssetFilePtr>::value), void>::type
-        ValueToString(AssetFilePtr const& _value, String& _data)
-    {
-        MAZE_NOT_IMPLEMENTED;
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<AssetFilePtr>::value), void>::type
-        ValueFromString(AssetFilePtr& _value, CString _data, Size _count)
-    {
-        MAZE_NOT_IMPLEMENTED;
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<AssetFilePtr>::value), U32>::type
-        GetValueSerializationSize(AssetFilePtr const& _value)
-    {
-        MAZE_NOT_IMPLEMENTED_RETURN_VALUE(0);
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<AssetFilePtr>::value), void>::type
-        SerializeValue(AssetFilePtr const& _value, U8* _data)
-    {
-        MAZE_NOT_IMPLEMENTED;
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<AssetFilePtr>::value), void>::type
-        DeserializeValue(AssetFilePtr& _value, U8 const* _data)
-    {
-        MAZE_NOT_IMPLEMENTED;
-    }
-
-
 } // namespace Maze
 //////////////////////////////////////////
 

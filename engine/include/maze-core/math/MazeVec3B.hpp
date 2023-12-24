@@ -296,7 +296,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void ValueFromString(Vec3B& _value, CString _data, Size _count)
     {
-        _value = Vec3B::FromString(String(_data, _count));
+        _value = Vec3B::FromString(_data, _count);
     }
 
     //////////////////////////////////////////

@@ -172,7 +172,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void ValueFromString(Plane& _value, CString _data, Size _count)
     {
-        _value = Plane::FromString(String(_data, _count));
+        _value = Plane::FromString(_data, _count);
     }
 
     //////////////////////////////////////////

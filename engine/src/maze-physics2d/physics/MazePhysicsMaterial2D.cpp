@@ -28,6 +28,8 @@
 #include "maze-physics2d/physics/MazePhysicsMaterial2D.hpp"
 #include "maze-core/helpers/MazeTextHelper.hpp"
 #include "maze-core/helpers/MazeMetaClassHelper.hpp"
+#include "maze-core/helpers/MazeDataBlockHelper.hpp"
+#include "maze-core/helpers/MazeXMLHelper.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
@@ -186,14 +188,14 @@ namespace Maze
     //////////////////////////////////////////
     bool PhysicsMaterial2D::loadFromDataBlock(DataBlock const& _dataBlock)
     {
-        DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+        DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
         return true;
     }
 
     //////////////////////////////////////////
     void PhysicsMaterial2D::toDataBlock(DataBlock& _dataBlock) const
     {
-        SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+        DataBlockHelper::SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
     }
 
     //////////////////////////////////////////
@@ -201,7 +203,7 @@ namespace Maze
     {
         MAZE_PROFILE_EVENT("PhysicsMaterial2D::loadFromXMLElement");
 
-        DeserializeMetaInstanceFromXMLElement(getMetaClass(), getMetaInstance(), _element);
+        XMLHelper::DeserializeMetaInstanceFromXMLElement(getMetaClass(), getMetaInstance(), _element);
     }
 
     //////////////////////////////////////////
@@ -209,7 +211,7 @@ namespace Maze
     {
         MAZE_PROFILE_EVENT("PhysicsMaterial2D::toXMLElement");
 
-        tinyxml2::XMLElement* element = SerializeMetaInstanceToXMLElement(getMetaClass(), getMetaInstance(), _doc);
+        tinyxml2::XMLElement* element = XMLHelper::SerializeMetaInstanceToXMLElement(getMetaClass(), getMetaInstance(), _doc);
 
         return element;
     }

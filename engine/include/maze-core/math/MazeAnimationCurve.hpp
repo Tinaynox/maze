@@ -460,6 +460,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void ValueFromString(AnimationCurve& _value, CString _data, Size _count)
     {
+        // TODO:
         _value = AnimationCurve::FromString(String(_data, _count));
     }
 

@@ -84,6 +84,23 @@ namespace Maze
         //////////////////////////////////////////
         virtual String toUTF8() const MAZE_OVERRIDE;
     };
+
+
+    //////////////////////////////////////////
+    // Serialization
+    //
+    //////////////////////////////////////////
+    inline void ValueToString(PathUnix const& _value, String& _data)
+    {
+        _data = _value.getPath();
+    }
+
+    //////////////////////////////////////////
+    inline void ValueFromString(PathUnix& _value, CString _data, Size _count)
+    {
+        // TODO: optimize?
+        _value = String(_data, _count);
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

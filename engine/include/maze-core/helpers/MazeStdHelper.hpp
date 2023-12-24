@@ -64,6 +64,14 @@ namespace Maze
             return ClassInfo<UValue>::UID();
         }
 
+        //////////////////////////////////////////
+        template <typename TValue, typename = void>
+        struct HasDefaultConstructor : std::false_type {};
+
+        //////////////////////////////////////////
+        template <typename TValue>
+        struct HasDefaultConstructor<TValue, std::void_t<decltype(TValue())>> : std::true_type {};
+
     } // namespace StdHelper
     //////////////////////////////////////////
     

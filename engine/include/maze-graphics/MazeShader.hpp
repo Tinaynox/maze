@@ -384,29 +384,6 @@ namespace Maze
         Shader::FromString(_value, _data, _count);
     }
 
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<ShaderPtr>::value), U32>::type
-        GetValueSerializationSize(ShaderPtr const& _value)
-    {
-        MAZE_NOT_IMPLEMENTED_RETURN_VALUE(0);
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<ShaderPtr>::value), void>::type
-        SerializeValue(ShaderPtr const& _value, U8* _data)
-    {
-        MAZE_NOT_IMPLEMENTED;
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<ShaderPtr>::value), void>::type
-        DeserializeValue(ShaderPtr& _value, U8 const* _data)
-    {
-        MAZE_NOT_IMPLEMENTED;
-    }
 
 } // namespace Maze
 //////////////////////////////////////////

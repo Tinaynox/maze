@@ -36,6 +36,7 @@
 #include "maze-core/utils/MazeSharedObject.hpp"
 #include "maze-core/serialization/MazeStringSerializable.hpp"
 #include "maze-core/serialization/MazeJSONSerializable.hpp"
+#include "maze-core/helpers/MazeJSONHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -123,13 +124,13 @@ namespace Maze
         //////////////////////////////////////////
         virtual void loadFromJSONValue(Json::Value const& _value) MAZE_OVERRIDE
         {
-            DeserializeMetaInstanceFromJSONValue(getMetaClass(), getMetaInstance(), _value);
+            JSONHelper::DeserializeMetaInstanceFromJSONValue(getMetaClass(), getMetaInstance(), _value);
         }
 
         //////////////////////////////////////////
         virtual Json::Value toJSONValue() const MAZE_OVERRIDE
         {
-            return SerializeMetaInstanceToJSONValue(getMetaClass(), getMetaInstance());
+            return JSONHelper::SerializeMetaInstanceToJSONValue(getMetaClass(), getMetaInstance());
         }
 
     public:

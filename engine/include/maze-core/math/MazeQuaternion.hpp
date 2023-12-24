@@ -398,7 +398,7 @@ namespace Maze
     //////////////////////////////////////////
     inline void ValueFromString(Quaternion& _value, CString _data, Size _count)
     {
-        _value = Quaternion::FromString(String(_data, _count));
+        _value = Quaternion::FromString(_data, _count);
     }
 
     //////////////////////////////////////////
