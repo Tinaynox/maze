@@ -108,7 +108,7 @@ namespace Maze
         inline TextureCubePtr getTextureCube() const { return std::static_pointer_cast<TextureCube>(m_value.getTexture()); }
 
         //////////////////////////////////////////
-        inline Vec4F const& getVecF() const { return m_value.getVec4F32(); }
+        inline Vec4F const& getVecF() const { return m_value.getVecF(); }
 
         //////////////////////////////////////////
         inline Vec2F getVec2F32() const { return m_value.getVec2F32(); }

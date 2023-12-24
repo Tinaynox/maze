@@ -348,7 +348,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue, class TFrom>
-    MAZE_FORCEINLINE static TValue DataBlock::castParamValue(TFrom const& _value)
+    MAZE_FORCEINLINE TValue DataBlock::castParamValue(TFrom const& _value)
     {
         TValue result;
         memcpy(&result, &_value, sizeof(TValue));
@@ -357,7 +357,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    MAZE_FORCEINLINE static TValue DataBlock::castParamValue(U8 const* _value)
+    MAZE_FORCEINLINE TValue DataBlock::castParamValue(U8 const* _value)
     {
         TValue result;
         memcpy(&result, _value, sizeof(TValue));

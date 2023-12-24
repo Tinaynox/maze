@@ -263,12 +263,12 @@ _stream.write((U8 const*)(quote + quoteLen - 1), quoteLen);
                     switch (DataBlockParamType(param.type))
                     {
                         case DataBlockParamType::ParamS32: snprintf(buff, sizeof(buff), "%d", paramDataS32[0]); break;
-                        case DataBlockParamType::ParamS64: snprintf(buff, sizeof(buff), "%I64d", paramDataS64[0]); break;
+                        case DataBlockParamType::ParamS64: snprintf(buff, sizeof(buff), "%lld", paramDataS64[0]); break;
                         case DataBlockParamType::ParamU32: snprintf(buff, sizeof(buff), "%u", paramDataU32[0]); break;
                         case DataBlockParamType::ParamU64: snprintf(buff, sizeof(buff), "%llu", paramDataU64[0]); break;
                         case DataBlockParamType::ParamF32: snprintf(buff, sizeof(buff), "%g", paramDataF32[0]); break;
                         case DataBlockParamType::ParamF64: snprintf(buff, sizeof(buff), "%lg", paramDataF64[0]); break;
-                        case DataBlockParamType::ParamBool: snprintf(buff, sizeof(buff), paramBool(paramDataBool[0])); break;
+                        case DataBlockParamType::ParamBool: snprintf(buff, sizeof(buff), "%s", paramBool(paramDataBool[0])); break;
                         case DataBlockParamType::ParamVec2S32: snprintf(buff, sizeof(buff), "%d, %d", paramDataS32[0], paramDataS32[1]); break;
                         case DataBlockParamType::ParamVec3S32: snprintf(buff, sizeof(buff), "%d, %d, %d", paramDataS32[0], paramDataS32[1], paramDataS32[2]); break;
                         case DataBlockParamType::ParamVec4S32: snprintf(buff, sizeof(buff), "%d, %d, %d, %d", paramDataS32[0], paramDataS32[1], paramDataS32[2], paramDataS32[3]); break;

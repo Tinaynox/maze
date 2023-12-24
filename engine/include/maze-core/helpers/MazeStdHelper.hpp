@@ -65,12 +65,12 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        template <typename TValue, typename = void>
+        template <typename TValue, typename = int>
         struct HasDefaultConstructor : std::false_type {};
 
         //////////////////////////////////////////
         template <typename TValue>
-        struct HasDefaultConstructor<TValue, std::void_t<decltype(TValue())>> : std::true_type {};
+        struct HasDefaultConstructor<TValue, decltype(TValue(), 0)> : std::true_type {};
 
     } // namespace StdHelper
     //////////////////////////////////////////

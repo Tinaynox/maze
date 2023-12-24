@@ -93,8 +93,8 @@ S32 main(S32 _argc, S8 const* _argv[])
     Vec3F32 c(a);
 
 
-    Mat3F32F mm(Mat3F32F::c_identity);
-    Mat4F32F mmm(Mat4F32F::c_identity);
+    Mat3F32 mm(Mat3F32::c_identity);
+    Mat4F32 mmm(Mat4F32::c_identity);
 
     Debug::log << a << endl;
     Debug::log << b << endl;

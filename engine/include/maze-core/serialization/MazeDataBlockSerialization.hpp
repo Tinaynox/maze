@@ -39,11 +39,62 @@
 #include "maze-core/serialization/MazeDataBlockSerializable.hpp"
 #include "maze-core/data/MazeDataBlock.hpp"
 #include "maze-core/helpers/MazeStdHelper.hpp"
+#include <utility>
 
 
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    // Utils
+    //
+    //////////////////////////////////////////
+    template <typename T, typename = int>
+    struct HasValueFromDataBlock : std::false_type { };
+    template <typename T>
+    struct HasValueFromDataBlock <T, decltype(ValueFromDataBlock(std::declval<T>(), std::declval<DataBlock>()), 0)> : std::true_type { };
+
+
+    //////////////////////////////////////////
+    template <typename T, typename = int>
+    struct HasValueToDataBlock : std::false_type { };
+    template <typename T>
+    struct HasValueToDataBlock <T, decltype(ValueToDataBlock(std::declval<T>(), std::declval<DataBlock>()), 0)> : std::true_type { };
+
+
+    //////////////////////////////////////////
+    // Try functions (Forward declaration)
+    //
+    //////////////////////////////////////////
+    template <typename TValue>
+    inline bool TryValueFromDataBlock(typename ::std::enable_if<(HasValueFromDataBlock<TValue>::value), TValue>::type& _value, DataBlock const& _data);
+
+    //////////////////////////////////////////
+    template <typename TValue>
+    inline  bool TryValueFromDataBlock(typename ::std::enable_if<(std::is_base_of<IDataBlockSerializable, TValue>::value), TValue>::type& _value, DataBlock const& _data);
+
+    //////////////////////////////////////////
+    template <typename TValue>
+    inline  bool TryValueFromDataBlock(typename ::std::enable_if<(
+        !HasValueFromDataBlock<TValue>::value &&
+        !std::is_base_of<IDataBlockSerializable, TValue>::value), TValue>::type& _value, DataBlock const& _data);
+
+
+    //////////////////////////////////////////
+    template <typename TValue>
+    inline bool TryValueToDataBlock(typename ::std::enable_if<(HasValueToDataBlock<TValue>::value), TValue>::type const& _value, DataBlock& _data);
+
+    //////////////////////////////////////////
+    template <typename TValue>
+    inline bool TryValueToDataBlock(typename ::std::enable_if<(std::is_base_of<IDataBlockSerializable, TValue>::value), TValue>::type const& _value, DataBlock& _data);
+
+    //////////////////////////////////////////
+    template <typename TValue>
+    inline bool TryValueToDataBlock(typename ::std::enable_if<(
+        !HasValueToDataBlock<TValue>::value &&
+        !std::is_base_of<IDataBlockSerializable, TValue>::value), TValue>::type const& _value, DataBlock& _data);
+
+
     //////////////////////////////////////////
     template <typename TValue>
     inline bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, TValue const& _value)
@@ -197,7 +248,7 @@ namespace Maze
     template <typename TValue>
     inline void ValueFromDataBlock(DataBlock& _value, DataBlock const& _data)
     {
-        _value.copyFrom(_data);
+        _value.copyFrom(&_data);
     }
 
 
@@ -313,31 +364,8 @@ namespace Maze
     inline typename ::std::enable_if<(IsVector<TValue>::value), void>::type
         ValueFromDataBlock(TValue& _value, DataBlock const& _data)
     {
-        ValueFromDataBlock(_value, _data, _count);
+        ValueFromDataBlock(_value, _data);
     }
-
-
-    //////////////////////////////////////////
-    // Utils
-    //
-    //////////////////////////////////////////
-    template <typename T, typename = int>
-    struct HasValueFromDataBlock : std::false_type { };
-
-    template <typename T>
-    using ValueFromDataBlockType = void(&)(T&, DataBlock const&);
-    template <typename T>
-    struct HasValueFromDataBlock <T, decltype((ValueFromDataBlockType<T>)&ValueFromDataBlock, 0)> : std::true_type { };
-
-
-    //////////////////////////////////////////
-    template <typename T, typename = int>
-    struct HasValueToDataBlock : std::false_type { };
-
-    template <typename T>
-    using ValueToDataBlockType = void(&)(T const&, DataBlock&);
-    template <typename T>
-    struct HasValueToDataBlock <T, decltype((ValueToDataBlockType<T>)&ValueToDataBlock, 0)> : std::true_type { };
 
 
     //////////////////////////////////////////
@@ -371,7 +399,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename TValue>
-    inline bool TryValueToDataBlock(typename ::std::enable_if<(HasValueFromDataBlock<TValue>::value), TValue>::type const& _value, DataBlock& _data)
+    inline bool TryValueToDataBlock(typename ::std::enable_if<(HasValueToDataBlock<TValue>::value), TValue>::type const& _value, DataBlock& _data)
     {
         ValueToDataBlock(_value, _data);
         return true;

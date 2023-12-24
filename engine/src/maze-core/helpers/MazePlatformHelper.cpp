@@ -76,8 +76,8 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API bool TestClassInfo()
         {
-            String typeInfoQualifiedName = ClassInfo<Rotation2D>::QualifiedName();
-            String typeInfoName = ClassInfo<Rotation2D>::Name();
+            String typeInfoQualifiedName = ClassInfo<Rotation2D>::QualifiedName().str;
+            String typeInfoName = ClassInfo<Rotation2D>::Name().str;
         
             if (typeInfoQualifiedName != "Maze::Rotation2D")
             {
