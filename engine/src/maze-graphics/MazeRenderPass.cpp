@@ -49,7 +49,7 @@ namespace Maze
         if (!m_shader)
             return String();
 
-        return m_shader->getAssetFile() ? m_shader->getAssetFileName() : m_shader->getName();
+        return m_shader->getAssetFile() ? static_cast<String>(m_shader->getAssetFileName()) : m_shader->getName();
     }
 
     //////////////////////////////////////////

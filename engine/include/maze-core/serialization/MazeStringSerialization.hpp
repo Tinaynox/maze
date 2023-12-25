@@ -79,11 +79,14 @@ namespace Maze
     //
     //////////////////////////////////////////
     template <typename TValue>
-    inline bool TryValueFromString(typename ::std::enable_if<(HasValueFromString<TValue>::value), TValue>::type& _value, CString _data, Size _count);
+    inline  bool TryValueFromString(typename ::std::enable_if<(
+        std::is_base_of<IStringSerializable, TValue>::value), TValue>::type& _value, CString _data, Size _count);
 
     //////////////////////////////////////////
     template <typename TValue>
-    inline  bool TryValueFromString(typename ::std::enable_if<(std::is_base_of<IStringSerializable, TValue>::value), TValue>::type& _value, CString _data, Size _count);
+    inline bool TryValueFromString(typename ::std::enable_if<(
+        HasValueFromString<TValue>::value &&
+        !std::is_base_of<IStringSerializable, TValue>::value), TValue>::type& _value, CString _data, Size _count);
 
     //////////////////////////////////////////
     template <typename TValue>
@@ -93,11 +96,14 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename TValue>
-    inline bool TryValueToString(typename ::std::enable_if<(HasValueToString<TValue>::value), TValue>::type const& _value, String& _data);
+    inline bool TryValueToString(typename ::std::enable_if<(
+        std::is_base_of<IStringSerializable, TValue>::value), TValue>::type const& _value, String& _data);
 
     //////////////////////////////////////////
     template <typename TValue>
-    inline bool TryValueToString(typename ::std::enable_if<(std::is_base_of<IStringSerializable, TValue>::value), TValue>::type const& _value, String& _data);
+    inline bool TryValueToString(typename ::std::enable_if<(
+        HasValueToString<TValue>::value &&
+        !std::is_base_of<IStringSerializable, TValue>::value), TValue>::type const& _value, String& _data);
 
     //////////////////////////////////////////
     template <typename TValue>
@@ -367,17 +373,20 @@ namespace Maze
     //
     //////////////////////////////////////////
     template <typename TValue>
-    inline bool TryValueFromString(typename ::std::enable_if<(HasValueFromString<TValue>::value), TValue>::type& _value, CString _data, Size _count)
+    inline  bool TryValueFromString(typename ::std::enable_if<(
+        std::is_base_of<IStringSerializable, TValue>::value), TValue>::type& _value, CString _data, Size _count)
     {
-        ValueFromString(_value, _data, _count);
+        _value.setString(_data, _count);
         return true;
     }
 
     //////////////////////////////////////////
     template <typename TValue>
-    inline  bool TryValueFromString(typename ::std::enable_if<(std::is_base_of<IStringSerializable, TValue>::value), TValue>::type& _value, CString _data, Size _count)
+    inline bool TryValueFromString(typename ::std::enable_if<(
+        HasValueFromString<TValue>::value &&
+        !std::is_base_of<IStringSerializable, TValue>::value), TValue>::type& _value, CString _data, Size _count)
     {
-        _value.setString(_data, _count);
+        ValueFromString(_value, _data, _count);
         return true;
     }
 
@@ -393,17 +402,20 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename TValue>
-    inline bool TryValueToString(typename ::std::enable_if<(HasValueToString<TValue>::value), TValue>::type const& _value, String& _data)
+    inline bool TryValueToString(typename ::std::enable_if<(
+        std::is_base_of<IStringSerializable, TValue>::value), TValue>::type const& _value, String& _data)
     {
-        ValueToString(_value, _data);
+        _data = _value.toString();
         return true;
     }
 
     //////////////////////////////////////////
     template <typename TValue>
-    inline bool TryValueToString(typename ::std::enable_if<(std::is_base_of<IStringSerializable, TValue>::value), TValue>::type const& _value, String& _data)
+    inline bool TryValueToString(typename ::std::enable_if<(
+        HasValueToString<TValue>::value &&
+        !std::is_base_of<IStringSerializable, TValue>::value), TValue>::type const& _value, String& _data)
     {
-        _data = _value.toString();
+        ValueToString(_value, _data);
         return true;
     }
 
