@@ -39,6 +39,7 @@
 #include "maze-core/serialization/MazeXMLSerializable.hpp"
 #include "maze-core/serialization/MazeDataBlockSerializable.hpp"
 #include "maze-core/data/MazeHashedCString.hpp"
+#include "maze-core/data/MazeDataBlock.hpp"
 
 
 //////////////////////////////////////////
@@ -76,7 +77,7 @@ namespace Maze
         {
             MetaClass* metaClass = TSettings::GetMetaClass();
 
-            m_settings[metaClass] = SharedPtr<TSettings>(new TSettings());
+            m_settings[metaClass] = SharedPtr<TSettings>(MAZE_NEW(TSettings));
 
             indentifyUnregisteredSetting(m_settings[metaClass].get());
         }
@@ -131,10 +132,7 @@ namespace Maze
 
         //////////////////////////////////////////
         bool saveSettings();
-
-        //////////////////////////////////////////
-        bool saveSettingsAsXML();
-
+        
         //////////////////////////////////////////
         bool saveSettingsAsDataBlock();
 
@@ -166,7 +164,7 @@ namespace Maze
         Path m_settingsFileFullPath;
 
         Map<MetaClass*, SettingsPtr> m_settings;
-        StringKeyMap<Vector<Pair<String, String>>> m_unregisteredSettings;
+        StringKeyMap<DataBlock> m_unregisteredSettings;
     };
 
 

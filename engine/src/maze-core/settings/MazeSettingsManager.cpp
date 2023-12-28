@@ -30,6 +30,7 @@
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/helpers/MazeXMLHelper.hpp"
+#include "maze-core/helpers/MazeDataBlockHelper.hpp"
 #include "maze-core/helpers/MazeByteBufferHelper.hpp"
 #include <tinyxml2.h>
 
@@ -208,8 +209,8 @@ namespace Maze
                 }
                 else
                 {
-                    m_unregisteredSettings[settingsName].emplace_back(
-                        Pair<String, String>(key, value));
+                    //m_unregisteredSettings[settingsName].emplace_back(
+                    //    Pair<String, String>(key, value));
                 }
 
                 settingsElementNode = settingsElementNode->NextSibling();
@@ -226,34 +227,19 @@ namespace Maze
     //////////////////////////////////////////
     bool SettingsManager::loadSettingsFromDataBlock(DataBlock const& _dataBlock)
     {
-        for (DataBlock::DataBlockIndex i = 0; i < _dataBlock.getDataBlocksCount(); ++i)
+        for (DataBlock const* settingsMetaClassBlock : _dataBlock)
         {
-            DataBlock const* settingsMetaClassBlock = _dataBlock.getDataBlock(i);
-
             HashedCString const& settingsName = settingsMetaClassBlock->getName();
             auto* settings = getSettings(settingsName);
 
-
-            for (DataBlock::DataBlockIndex j = 0; j < settingsMetaClassBlock->getDataBlocksCount(); ++j)
+            if (settings)
             {
-                DataBlock const* propertyBlock = settingsMetaClassBlock->getDataBlock(j);
-
-                String const& key = propertyBlock->getString("key");
-                String const& value = propertyBlock->getString("value");
-
-                if (settings)
-                {
-                    MetaClass* const settingsMetaClass = settings->first;
-                    MetaInstance settingsMetaInstance = settings->second->getMetaInstance();
-                    MetaProperty* metaProperty = settingsMetaClass->getProperty(key.c_str());
-                    if (metaProperty)
-                        metaProperty->setString(settingsMetaInstance, value);
-                }
-                else
-                {
-                    m_unregisteredSettings[settingsName].emplace_back(
-                        Pair<String, String>(key, value));
-                }
+                //DataBlockHelper::DeserializeMetaInstanceFromDataBlock(settings->second->getMetaClass(), settings->second->getMetaInstance(), *settingsMetaClassBlock);
+                settings->second->loadFromDataBlock(*settingsMetaClassBlock);
+            }
+            else
+            {
+                m_unregisteredSettings[settingsName] = *settingsMetaClassBlock;
             }
         }
 
@@ -269,75 +255,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool SettingsManager::saveSettingsAsXML()
-    {
-        if (m_settingsFileFullPath.empty())
-            return false;
-
-        String settingsFileDirectoryFullPath = FileHelper::GetDirectoryInPath(m_settingsFileFullPath);
-        FileHelper::CreateDirectoryRecursive(settingsFileDirectoryFullPath);
-
-        tinyxml2::XMLDocument doc;
-
-        tinyxml2::XMLDeclaration* decl = doc.NewDeclaration();
-        doc.LinkEndChild(decl);
-
-        tinyxml2::XMLNode* root = doc.NewElement("Settings");
-        doc.InsertEndChild(root);
-
-        for (auto const& settings : m_settings)
-        {
-            MetaClass* settingsMetaClass = settings.first;
-            MetaInstance settingsMetainstance = settings.second->getMetaInstance();
-
-            tinyxml2::XMLElement* settingsMetaClassElement = doc.NewElement(settingsMetaClass->getName());
-
-            for (S32 i = 0; i < settingsMetaClass->getPropertiesCount(); ++i)
-            {
-                Maze::MetaProperty* metaProperty = settingsMetaClass->getProperty(i);
-
-                HashedCString propertyName = metaProperty->getName();
-                String propertyValue = metaProperty->toString(settingsMetainstance);
-
-                tinyxml2::XMLElement* settingsElement = doc.NewElement("Property");
-                settingsElement->SetAttribute("key", propertyName);
-                settingsElement->SetAttribute("value", propertyValue.c_str());
-                settingsMetaClassElement->InsertEndChild(settingsElement);
-            }
-
-            root->InsertEndChild(settingsMetaClassElement);
-        }
-
-        for (auto const& unregisteredSettings : m_unregisteredSettings)
-        {
-            tinyxml2::XMLElement* settingsMetaClassElement = doc.NewElement(unregisteredSettings.first.c_str());
-
-            for (auto const& property : unregisteredSettings.second)
-            {
-                tinyxml2::XMLElement* settingsElement = doc.NewElement("Property");
-                settingsElement->SetAttribute("key", property.first.c_str());
-                settingsElement->SetAttribute("value", property.second.c_str());
-                settingsMetaClassElement->InsertEndChild(settingsElement);
-            }
-        }
-
-        tinyxml2::XMLError loadError = XMLHelper::SaveXMLFile(m_settingsFileFullPath, doc);
-        if (tinyxml2::XML_SUCCESS != loadError)
-        {
-            MAZE_ERROR("Saving settings file '%s' error - %d!", m_settingsFileFullPath.toUTF8().c_str(), loadError);
-            return false;
-        }
-
-        Debug::Log("Settings file '%s' saved.", m_settingsFileFullPath.toUTF8().c_str());
-
-#if (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN)
-        Maze::FileHelper::TrySyncEmscriptenLocalStorage();
-#endif
-
-        return true;
-    }
-
-    //////////////////////////////////////////
     bool SettingsManager::saveSettingsAsDataBlock()
     {
         if (m_settingsFileFullPath.empty())
@@ -350,36 +267,17 @@ namespace Maze
 
         for (auto const& settings : m_settings)
         {
-            MetaClass* settingsMetaClass = settings.first;
-            MetaInstance settingsMetainstance = settings.second->getMetaInstance();
+            MetaClass const* settingsMetaClass = settings.first;
+            //ConstMetaInstance settingsMetainstance = settings.second->getMetaInstance();
 
             DataBlock* settingsMetaClassBlock = dataBlock.addNewDataBlock(settingsMetaClass->getName());
-
-            for (S32 i = 0; i < settingsMetaClass->getPropertiesCount(); ++i)
-            {
-                Maze::MetaProperty* metaProperty = settingsMetaClass->getProperty(i);
-
-                HashedCString propertyName = metaProperty->getName();
-                String propertyValue = metaProperty->toString(settingsMetainstance);
-
-                DataBlock* propertyBlock = settingsMetaClassBlock->addNewDataBlock(MAZE_HS("property"));
-                propertyBlock->setCString("key", propertyName);
-                propertyBlock->setString("value", propertyValue);
-                
-            }
+            settings.second->toDataBlock(*settingsMetaClassBlock);
+            //DataBlockHelper::SerializeMetaInstanceToDataBlock(settingsMetaClass, settingsMetainstance, *settingsMetaClassBlock);
         }
 
         for (auto const& unregisteredSettings : m_unregisteredSettings)
         {
-            DataBlock* settingsMetaClassBlock = dataBlock.addNewDataBlock(unregisteredSettings.first.c_str());
-
-
-            for (auto const& property : unregisteredSettings.second)
-            {
-                DataBlock* propertyBlock = settingsMetaClassBlock->addNewDataBlock(MAZE_HS("property"));
-                propertyBlock->setCString("key", property.first.c_str());
-                propertyBlock->setString("value", property.second.c_str());
-            }
+            dataBlock.addDataBlock(unregisteredSettings.first.c_str())->copyFrom(&unregisteredSettings.second);
         }
 
         if (!dataBlock.saveTextFile(m_settingsFileFullPath))
@@ -400,20 +298,16 @@ namespace Maze
     //////////////////////////////////////////
     void SettingsManager::indentifyUnregisteredSetting(Settings* _settings)
     {
-        CString settingsName = _settings->getClassName();
+        HashedCString settingsName = _settings->getClassName();
         auto it = m_unregisteredSettings.find(settingsName);
         if (it == m_unregisteredSettings.end())
             return;
 
-        for (auto& property : it->second)
-        {
-            MetaClass* const settingsMetaClass = _settings->getMetaClass();
-            MetaInstance settingsMetaInstance = _settings->getMetaInstance();
-            MetaProperty* metaProperty = settingsMetaClass->getProperty(property.first.c_str());
-            if (metaProperty)
-                metaProperty->setString(settingsMetaInstance, property.second);
-        }
-
+        MetaClass* const settingsMetaClass = _settings->getMetaClass();
+        _settings->loadFromDataBlock(it->second);
+        //MetaInstance settingsMetaInstance = _settings->getMetaInstance();
+        //DataBlockHelper::DeserializeMetaInstanceFromDataBlock(settingsMetaClass, settingsMetaInstance, it->second);
+      
         m_unregisteredSettings.erase(it);
     }
 

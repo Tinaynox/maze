@@ -78,6 +78,25 @@ namespace Maze
         return json;
     }
 
+    //////////////////////////////////////////
+    bool AnimationCurve::Keyframe::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        time = _dataBlock.getF32(MAZE_HS("time"));
+        value = _dataBlock.getF32(MAZE_HS("value"));
+        inTangent = _dataBlock.getF32(MAZE_HS("inTangent"));
+        outTangent = _dataBlock.getF32(MAZE_HS("outTangent"));
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void AnimationCurve::Keyframe::toDataBlock(DataBlock& _dataBlock) const
+    {
+        _dataBlock.setF32(MAZE_HS("time"), time);
+        _dataBlock.setF32(MAZE_HS("value"), value);
+        _dataBlock.setF32(MAZE_HS("inTangent"), inTangent);
+        _dataBlock.setF32(MAZE_HS("outTangent"), outTangent);
+    }
+
 
     //////////////////////////////////////////
     void AnimationCurve::normalize()
@@ -163,6 +182,35 @@ namespace Maze
         value["mm"] = (S32)m_minMaxMode;
         
         return value;
+    }
+
+    //////////////////////////////////////////
+    bool AnimationCurve::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        m_keyframes.clear();
+        DataBlock const* keyframesDataBlock = _dataBlock.getDataBlock(MAZE_HS("keyframes"));
+        if (keyframesDataBlock)
+        {
+            ValueFromDataBlock(m_keyframes, *keyframesDataBlock);
+            sortKeyframes();
+        }
+            
+        m_scalar = _dataBlock.getF32(MAZE_HS("scalar"));
+        setMode(EvaluateMode(_dataBlock.getS32(MAZE_HS("mode"))));
+        setMinMaxMode(AnimationCurveMinMaxMode(_dataBlock.getS32(MAZE_HS("minMaxMode"))));
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void AnimationCurve::toDataBlock(DataBlock& _dataBlock) const
+    {
+        DataBlock& keyframesDataBlock = _dataBlock[MAZE_HS("keyframes")];
+        ValueToDataBlock(m_keyframes, keyframesDataBlock);
+
+        _dataBlock.setF32(MAZE_HS("scalar"), m_scalar);
+        _dataBlock.setS32(MAZE_HS("mode"), (S32)m_mode);
+        _dataBlock.setS32(MAZE_HS("minMaxMode"), (S32)m_minMaxMode);
     }
 
 

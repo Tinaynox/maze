@@ -66,7 +66,7 @@ namespace Maze
     template <typename T, typename = int>
     struct HasDeserializeValue : std::false_type { };
     template <typename T>
-    struct HasDeserializeValue <T, decltype(DeserializeValue(std::declval<T>(), std::declval<U8 const*>()), 0)> : std::true_type { };
+    struct HasDeserializeValue <T, decltype(DeserializeValue(std::declval<T&>(), std::declval<U8 const*>()), 0)> : std::true_type { };
 
 
     //////////////////////////////////////////

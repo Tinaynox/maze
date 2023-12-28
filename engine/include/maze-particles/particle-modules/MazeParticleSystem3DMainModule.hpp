@@ -40,6 +40,8 @@
 #include "maze-particles/MazeParticleSystemBurst.hpp"
 #include "maze-core/serialization/MazeJSONSerializable.hpp"
 #include "maze-core/helpers/MazeJSONHelper.hpp"
+#include "maze-core/serialization/MazeDataBlockSerializable.hpp"
+#include "maze-core/helpers/MazeDataBlockHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -57,6 +59,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PARTICLES_API ParticleSystem3DMainModule
         : public IJSONValueSerializable
+        , public IDataBlockSerializable
     {
     public:
 
@@ -72,6 +75,7 @@ namespace Maze
         //////////////////////////////////////////
         class MAZE_PARTICLES_API EmissionModule
             : public IJSONValueSerializable
+            , public IDataBlockSerializable
         {
         public:
 
@@ -152,6 +156,20 @@ namespace Maze
             }
 
         public:
+            //////////////////////////////////////////
+            virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE
+            {
+                DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+                return true;
+            }
+
+            //////////////////////////////////////////
+            virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE
+            {
+                DataBlockHelper::SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+            }
+
+        public:
 
             bool enabled = true;
             ParticleSystemParameterF32 emissionPerSecond = ParticleSystemParameterF32(1.0f);
@@ -162,6 +180,7 @@ namespace Maze
         //////////////////////////////////////////
         class MAZE_PARTICLES_API SizeOverLifetimeModule
             : public IJSONValueSerializable
+            , public IDataBlockSerializable
         {
         public:
 
@@ -205,6 +224,20 @@ namespace Maze
             }
 
         public:
+            //////////////////////////////////////////
+            virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE
+            {
+                DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+                return true;
+            }
+
+            //////////////////////////////////////////
+            virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE
+            {
+                DataBlockHelper::SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+            }
+
+        public:
 
             bool enabled = false;
             ParticleSystemParameterF32 parameter = ParticleSystemParameterF32(1.0f);
@@ -213,6 +246,7 @@ namespace Maze
         //////////////////////////////////////////
         class MAZE_PARTICLES_API VelocityOverLifetimeModule
             : public IJSONValueSerializable
+            , public IDataBlockSerializable
         {
         public:
 
@@ -273,6 +307,20 @@ namespace Maze
             }
 
         public:
+            //////////////////////////////////////////
+            virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE
+            {
+                DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+                return true;
+            }
+
+            //////////////////////////////////////////
+            virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE
+            {
+                DataBlockHelper::SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+            }
+
+        public:
 
             bool enabled = false;
             ParticleSystemParameterF32 linearXParameter = ParticleSystemParameterF32(0.0f);
@@ -283,6 +331,7 @@ namespace Maze
         //////////////////////////////////////////
         class MAZE_PARTICLES_API VelocityLimitOverLifetimeModule
             : public IJSONValueSerializable
+            , public IDataBlockSerializable
         {
         public:
 
@@ -326,6 +375,20 @@ namespace Maze
             }
 
         public:
+            //////////////////////////////////////////
+            virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE
+            {
+                DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+                return true;
+            }
+
+            //////////////////////////////////////////
+            virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE
+            {
+                DataBlockHelper::SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+            }
+
+        public:
 
             bool enabled = false;
             ParticleSystemParameterF32 parameter = ParticleSystemParameterF32(0.0f);
@@ -334,6 +397,7 @@ namespace Maze
         //////////////////////////////////////////
         class MAZE_PARTICLES_API RotationOverLifetimeModule
             : public IJSONValueSerializable
+            , public IDataBlockSerializable
         {
         public:
 
@@ -376,6 +440,20 @@ namespace Maze
             }
 
         public:
+            //////////////////////////////////////////
+            virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE
+            {
+                DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+                return true;
+            }
+
+            //////////////////////////////////////////
+            virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE
+            {
+                DataBlockHelper::SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+            }
+
+        public:
 
             bool enabled = false;
             ParticleSystemParameterF32 parameter = ParticleSystemParameterF32(0.0f);
@@ -384,6 +462,7 @@ namespace Maze
         //////////////////////////////////////////
         class MAZE_PARTICLES_API ColorOverLifetimeModule
             : public IJSONValueSerializable
+            , public IDataBlockSerializable
         {
         public:
 
@@ -423,6 +502,20 @@ namespace Maze
             virtual Json::Value toJSONValue() const MAZE_OVERRIDE
             {
                 return JSONHelper::SerializeMetaInstanceToJSONValue(getMetaClass(), getMetaInstance());
+            }
+
+        public:
+            //////////////////////////////////////////
+            virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE
+            {
+                DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+                return true;
+            }
+
+            //////////////////////////////////////////
+            virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE
+            {
+                DataBlockHelper::SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
             }
 
         public:
@@ -639,6 +732,13 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual Json::Value toJSONValue() const MAZE_OVERRIDE;
+
+    public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
 
     protected:
         F32 m_currentDuration = 5.0f;

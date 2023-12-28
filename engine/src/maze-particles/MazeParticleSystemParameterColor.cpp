@@ -118,6 +118,40 @@ namespace Maze
 
         return value;
     }
+
+    //////////////////////////////////////////
+    bool ParticleSystemParameterColor::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        m_color0 = _dataBlock.getVec4F(MAZE_HS("color0"));
+        m_color1 = _dataBlock.getVec4F(MAZE_HS("color1"));
+
+        DataBlock const* gradient0Block = _dataBlock.getDataBlock(MAZE_HS("gradient0"));
+        if (gradient0Block)
+            ValueFromDataBlock(m_gradient0, *gradient0Block);
+
+        DataBlock const* gradient1Block = _dataBlock.getDataBlock(MAZE_HS("gradient1"));
+        if (gradient1Block)
+            ValueFromDataBlock(m_gradient1, *gradient1Block);
+
+        setSamplingMode(ParticleSystemParameterColorSamplingMode(_dataBlock.getS32(MAZE_HS("mode"))));
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void ParticleSystemParameterColor::toDataBlock(DataBlock& _dataBlock) const
+    {
+        _dataBlock.setVec4F(MAZE_HS("color0"), m_color0);
+        _dataBlock.setVec4F(MAZE_HS("color1"), m_color1);
+
+        DataBlock& gradient0Block = _dataBlock[MAZE_HS("gradient0")];
+        ValueToDataBlock(m_gradient0, gradient0Block);
+
+        DataBlock& gradient1Block = _dataBlock[MAZE_HS("gradient1")];
+        ValueToDataBlock(m_gradient1, gradient1Block);
+        
+        _dataBlock.setS32(MAZE_HS("mode"), (S32)m_mode);
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

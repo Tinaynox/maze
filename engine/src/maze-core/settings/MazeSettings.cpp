@@ -28,6 +28,7 @@
 #include "maze-core/settings/MazeSettings.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
+#include "maze-core/helpers/MazeDataBlockHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -53,6 +54,19 @@ namespace Maze
     //////////////////////////////////////////
     Settings::~Settings()
     {
+    }
+
+    //////////////////////////////////////////
+    bool Settings::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void Settings::toDataBlock(DataBlock& _dataBlock) const
+    {
+        DataBlockHelper::SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
     }
 
 

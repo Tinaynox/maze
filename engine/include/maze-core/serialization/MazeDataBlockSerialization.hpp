@@ -52,7 +52,7 @@ namespace Maze
     template <typename T, typename = int>
     struct HasValueFromDataBlock : std::false_type { };
     template <typename T>
-    struct HasValueFromDataBlock <T, decltype(ValueFromDataBlock(std::declval<T>(), std::declval<DataBlock>()), 0)> : std::true_type { };
+    struct HasValueFromDataBlock <T, decltype(ValueFromDataBlock(std::declval<T&>(), std::declval<DataBlock>()), 0)> : std::true_type { };
 
 
     //////////////////////////////////////////
@@ -156,6 +156,10 @@ namespace Maze
     inline bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, String const& _value) { _dataBlock.addString(_name, _value); return true; }
     template <>
     inline bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, CString const& _value) { _dataBlock.addCString(_name, _value); return true; }
+    template <>
+    inline bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, HashedCString const& _value) { _dataBlock.addCString(_name, _value.str); return true; }
+    template <>
+    inline bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, HashedString const& _value) { _dataBlock.addString(_name, _value.getString()); return true; }
 
 
 
@@ -274,18 +278,40 @@ namespace Maze
         }
     }
 
+
+    //////////////////////////////////////////
+    template <typename TValue>
+    MAZE_FORCEINLINE TValue ContainerMetaPropertyFromDataBlockGetParamHelper(DataBlock const& _data, DataBlock::ParamIndex _i) { return _data.getParamValue<TValue>(_i); }
+
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE CString ContainerMetaPropertyFromDataBlockGetParamHelper(DataBlock const& _data, DataBlock::ParamIndex _i) { return _data.getCString(_i); }
+
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE String ContainerMetaPropertyFromDataBlockGetParamHelper(DataBlock const& _data, DataBlock::ParamIndex _i) { return _data.getString(_i); }
+
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE HashedCString ContainerMetaPropertyFromDataBlockGetParamHelper(DataBlock const& _data, DataBlock::ParamIndex _i) { return _data.getCString(_i); }
+
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE HashedString ContainerMetaPropertyFromDataBlockGetParamHelper(DataBlock const& _data, DataBlock::ParamIndex _i) { return _data.getString(_i); }
+
+
     //////////////////////////////////////////
     template <typename TIterator, typename TValue>
     inline void ContainerMetaPropertyFromDataBlock(
         TIterator _it,
         DataBlock const& _data)
     {
-        DataBlockParamType dataBlockParamType = DataBlock::TypeOf<TValue>::type;
-        if (dataBlockParamType != DataBlockParamType::None)
+        MAZE_CONSTEXPR DataBlockParamType dataBlockParamType = DataBlock::TypeOf<TValue>::type;
+        if MAZE_CONSTEXPR14 (dataBlockParamType != DataBlockParamType::None)
         {
             for (DataBlock::ParamIndex i = 0; i < _data.getParamsCount(); ++i)
             {
-                *_it++ = _data.getParamValue<TValue>(i);
+                *_it++ = ContainerMetaPropertyFromDataBlockGetParamHelper<TValue>(_data, i);
             }
         }
         else

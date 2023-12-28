@@ -496,6 +496,12 @@ namespace Maze
         String const& getString(ParamIndex _index) const;
 
         //////////////////////////////////////////
+        inline String const& getString(ParamIndex _index, String const& _defaultValue) const
+        {
+            return getParamValue(_index, _defaultValue);
+        }
+
+        //////////////////////////////////////////
         String const& getString(HashedCString _name, String const& _defaultValue) const;
 
         //////////////////////////////////////////
@@ -518,6 +524,7 @@ namespace Maze
 
         //////////////////////////////////////////
         ParamIndex addNewStringByNameId(SharedStringId _nameId, String const& _value);
+
     
 
         //////////////////////////////////////////
@@ -578,6 +585,12 @@ namespace Maze
         //////////////////////////////////////////
         DataBlock& operator[](HashedCString _name);
 
+        //////////////////////////////////////////
+        DataBlock& operator=(DataBlock const& _value);
+
+        //////////////////////////////////////////
+        DataBlock& operator=(DataBlock&& _value);
+
 
         //////////////////////////////////////////
         DataBlock const* getDataBlockByNameId(SharedStringId _nameId, DataBlockIndex _startAfter = 0) const;
@@ -618,7 +631,7 @@ namespace Maze
         String const& getSharedString(SharedStringId _nameId) const;
 
         //////////////////////////////////////////
-        HashedCString getSharedHashedCString(SharedStringId _nameId) const;
+        HashedCString getNameHashedCString(SharedStringId _nameId) const;
 
     private:
 

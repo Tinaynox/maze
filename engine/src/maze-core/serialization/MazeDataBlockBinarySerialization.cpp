@@ -101,7 +101,7 @@ namespace Maze
                 DataBlock::SharedStringId nameId;
                 _stream >> nameId;
 
-                HashedCString blockName = _dataBlock.getShared()->getHashedCString(nameId);
+                HashedCString blockName = _dataBlock.getShared()->getNameHashedCString(nameId);
                 DataBlock* subBlock = _dataBlock.addNewDataBlock(blockName);
                 if (!ReadDataBlockBinary(_stream, *subBlock))
                     return false;

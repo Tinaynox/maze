@@ -103,10 +103,10 @@ namespace Maze
         CString getCString(DataBlock::SharedStringId _index) const;
 
         //////////////////////////////////////////
-        HashedCString getHashedCString(DataBlock::SharedStringId _index) const;
+        String const& getString(DataBlock::SharedStringId _index) const;
 
         //////////////////////////////////////////
-        String const& getString(DataBlock::SharedStringId _index) const;
+        HashedCString getNameHashedCString(DataBlock::SharedStringId _index) const;
 
 
         //////////////////////////////////////////

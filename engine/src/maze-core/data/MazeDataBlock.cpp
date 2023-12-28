@@ -239,7 +239,7 @@ namespace Maze
         if (nameId == 0)
             return HashedCString();
 
-        return getSharedHashedCString(nameId);
+        return getNameHashedCString(nameId);
     }
 
     //////////////////////////////////////////
@@ -283,6 +283,8 @@ namespace Maze
     {
         MAZE_ERROR_RETURN_IF(!isTopmost(), "Clear is cannot be called for the not topmost block");
 
+        m_nameIdAndFlags &= ~(0xFFFFFF);
+
         clearData();
         m_shared->clear();
     }
@@ -298,7 +300,7 @@ namespace Maze
         for (ParamIndex i = 0, e = (ParamIndex)_from->getParamsCount(); i < e; ++i, ++paramPtr)
         {
             Param const& param = *paramPtr;
-            SharedStringId paramNameId = addSharedString(_from->getSharedHashedCString(param.nameId));
+            SharedStringId paramNameId = addSharedString(_from->getNameHashedCString(param.nameId));
             
             if (param.type == U32(DataBlockParamType::ParamString))
             {
@@ -344,7 +346,7 @@ namespace Maze
         if (_from == this)
             return;
 
-        clear();
+        clearData();
         if (_from == nullptr)
             return;
 
@@ -594,9 +596,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    HashedCString DataBlock::getSharedHashedCString(SharedStringId _nameId) const
+    HashedCString DataBlock::getNameHashedCString(SharedStringId _nameId) const
     {
-        return m_shared->getHashedCString(_nameId);
+        return m_shared->getNameHashedCString(_nameId);
     }
 
     //////////////////////////////////////////
@@ -685,7 +687,7 @@ namespace Maze
     String const& DataBlock::getString(ParamIndex _index) const
     {
         String const nullValue;
-        return getParamValue(_index, nullValue);
+        return getString(_index, nullValue);
     }
 
     //////////////////////////////////////////
@@ -824,6 +826,33 @@ namespace Maze
         if (result != nullptr)
             return *result;
         return *addNewDataBlock(_name);
+    }
+
+    //////////////////////////////////////////
+    DataBlock& DataBlock::operator=(DataBlock const& _value)
+    {
+        copyFrom(&_value);
+        return *this;
+    }
+
+    //////////////////////////////////////////
+    DataBlock& DataBlock::operator=(DataBlock&& _value)
+    {
+        if (_value.isTopmost())
+        {
+            std::swap(m_shared, _value.m_shared);
+            std::swap(m_dataBuffer, _value.m_dataBuffer);
+            std::swap(m_nameIdAndFlags, _value.m_nameIdAndFlags);
+            std::swap(m_paramsCount, _value.m_paramsCount);
+            std::swap(m_dataBlocksCount, _value.m_dataBlocksCount);
+        }
+        else
+        {
+            clear();
+            copyFrom(&_value);
+        }
+
+        return *this;
     }
 
     //////////////////////////////////////////

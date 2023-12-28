@@ -42,6 +42,8 @@
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/serialization/MazeJSONSerializable.hpp"
 #include "maze-core/helpers/MazeJSONHelper.hpp"
+#include "maze-core/serialization/MazeDataBlockSerializable.hpp"
+#include "maze-core/helpers/MazeDataBlockHelper.hpp"
 #include <ostream>
 
 
@@ -61,6 +63,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_CORE_API AnimationCurve
         : public IJSONValueSerializable
+        , public IDataBlockSerializable
     {
     public:
 
@@ -80,6 +83,7 @@ namespace Maze
         //////////////////////////////////////////
         struct MAZE_CORE_API Keyframe
             : public IJSONValueSerializable
+            , public IDataBlockSerializable
         {
         public:
 
@@ -139,12 +143,21 @@ namespace Maze
                 return !this->operator==(_rhs);
             }
 
+        public:
             //////////////////////////////////////////
             virtual void loadFromJSONValue(Json::Value const& _value) MAZE_OVERRIDE;
 
             //////////////////////////////////////////
             virtual Json::Value toJSONValue() const MAZE_OVERRIDE;
 
+        public:
+            //////////////////////////////////////////
+            virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
+
+            //////////////////////////////////////////
+            virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
+
+        public:
             F32 time = 0.0f;
             F32 value = 0.0f;
             F32 inTangent = 0.0f;
@@ -410,6 +423,13 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual Json::Value toJSONValue() const MAZE_OVERRIDE;
+
+    public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
 
     protected:
 

@@ -39,6 +39,8 @@
 #include "maze-particles/MazeParticleSystem3DZone.hpp"
 #include "maze-core/serialization/MazeJSONSerializable.hpp"
 #include "maze-core/helpers/MazeJSONHelper.hpp"
+#include "maze-core/serialization/MazeDataBlockSerializable.hpp"
+#include "maze-core/helpers/MazeDataBlockHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -56,6 +58,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PARTICLES_API ParticleSystem3DShapeModule
         : public IJSONValueSerializable
+        , public IDataBlockSerializable
     {
     public:
 
@@ -147,6 +150,20 @@ namespace Maze
         virtual Json::Value toJSONValue() const MAZE_OVERRIDE
         {
             return JSONHelper::SerializeMetaInstanceToJSONValue(getMetaClass(), getMetaInstance());
+        }
+
+    public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE
+        {
+            DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+            return true;
+        }
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE
+        {
+            DataBlockHelper::SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
         }
 
     protected:

@@ -39,6 +39,8 @@
 #include "maze-particles/MazeParticleSystemParameter.hpp"
 #include "maze-core/helpers/MazeJSONHelper.hpp"
 #include "maze-core/serialization/MazeJSONSerializable.hpp"
+#include "maze-core/serialization/MazeDataBlockSerializable.hpp"
+#include "maze-core/helpers/MazeDataBlockHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -55,6 +57,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PARTICLES_API ParticleSystemParameterColor
         : public IJSONValueSerializable
+        , public IDataBlockSerializable
     {
     public:
 
@@ -236,6 +239,13 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual Json::Value toJSONValue() const MAZE_OVERRIDE;
+
+    public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
 
     protected:
 

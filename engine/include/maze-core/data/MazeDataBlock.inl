@@ -79,6 +79,8 @@ namespace Maze
     struct DataBlock::TypeOf<Mat4F> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamMat4F32; };
     template <>
     struct DataBlock::TypeOf<CString> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamString; };
+    template <>
+    struct DataBlock::TypeOf<String> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamString; };
 
 
 
@@ -131,6 +133,13 @@ namespace Maze
         return getParamValueCString(value);
     }
 
+    //////////////////////////////////////////
+    template <>
+    inline String DataBlock::getParamValue(DataBlock::ParamIndex _index, String const& _defaultValue) const
+    {
+        return getString(_index, _defaultValue);
+    }
+
     //////////////////////////////////////////        
     inline String const& DataBlock::getParamValue(ParamIndex _index, String const& _defaultValue) const
     {
@@ -176,7 +185,7 @@ namespace Maze
     {
         return getSharedString(_value);
     }
-
+    
     //////////////////////////////////////////
     template <class TValue>
     inline bool DataBlock::setParam(DataBlock::ParamIndex _index, TValue const& _value)

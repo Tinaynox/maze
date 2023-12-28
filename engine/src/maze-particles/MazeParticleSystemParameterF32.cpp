@@ -108,6 +108,40 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool ParticleSystemParameterF32::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        m_const0 = _dataBlock.getF32(MAZE_HS("const0"));
+        m_const1 = _dataBlock.getF32(MAZE_HS("const1"));
+
+        DataBlock const* curve0Block = _dataBlock.getDataBlock(MAZE_HS("curve0"));
+        if (curve0Block)
+            ValueFromDataBlock(m_curve0, *curve0Block);
+
+        DataBlock const* curve1Block = _dataBlock.getDataBlock(MAZE_HS("curve1"));
+        if (curve1Block)
+            ValueFromDataBlock(m_curve1, *curve1Block);
+
+        setSamplingMode(ParticleSystemParameterF32SamplingMode(_dataBlock.getS32(MAZE_HS("mode"))));
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void ParticleSystemParameterF32::toDataBlock(DataBlock& _dataBlock) const
+    {
+        _dataBlock.setF32(MAZE_HS("const0"), m_const0);
+        _dataBlock.setF32(MAZE_HS("const1"), m_const1);
+
+        DataBlock& curve0Block = _dataBlock[MAZE_HS("curve0")];
+        ValueToDataBlock(m_curve0, curve0Block);
+
+        DataBlock& curve1Block = _dataBlock[MAZE_HS("curve1")];
+        ValueToDataBlock(m_curve1, curve1Block);
+
+        _dataBlock.setS32(MAZE_HS("mode"), (S32)m_mode);
+    }
+
+    //////////////////////////////////////////
     void ParticleSystemParameterF32::multiplyValues(F32 _value)
     {
         m_const0 *= _value;

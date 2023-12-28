@@ -355,6 +355,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    bool ParticleSystem3DMainModule::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void ParticleSystem3DMainModule::toDataBlock(DataBlock& _dataBlock) const
+    {
+        DataBlockHelper::SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+    }
+
+    //////////////////////////////////////////
     void ParticleSystem3DMainModule::generateDuration()
     {
         m_duration.sample(rand() % c_particleSystemParametersCount, 0.0f, m_currentDuration);

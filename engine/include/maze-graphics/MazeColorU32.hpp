@@ -245,6 +245,22 @@ namespace Maze
             return color;
         }
 
+
+        //////////////////////////////////////////
+        Vec4U toVec4U32() const;
+
+        //////////////////////////////////////////
+        void setVec4U32(Vec4U const& _vec);
+
+        //////////////////////////////////////////
+        inline static ColorU32 FromVec4U32(Vec4U const& _vec)
+        {
+            ColorU32 color;
+            color.setVec4U32(_vec);
+            return color;
+        }
+        
+
         //////////////////////////////////////////
         inline String toString(S8 _separator = ';') const
         {

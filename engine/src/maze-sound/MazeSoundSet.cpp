@@ -38,7 +38,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS(SoundSet,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<SoundPtr>, sounds, Vector<SoundPtr>(), getSounds, setSounds),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<String>, sounds, Vector<String>(), getSoundNames, setSounds),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, volume, 1.0f, getVolume, setVolume),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, prevFetchIndex, -1, getPrevFetchIndex, setPrevFetchIndex),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, noRepeats, false, getNoRepeats, setNoRepeats),
@@ -93,6 +93,31 @@ namespace Maze
     {
         if (_sound)
             m_sounds.push_back(_sound);
+    }
+
+    //////////////////////////////////////////
+    void SoundSet::setSounds(Vector<String> _value)
+    {
+        Vector<SoundPtr> sounds;
+        sounds.resize(_value.size());
+        for (Size i = 0, in = _value.size(); i != in; ++i)
+        {
+            sounds[i] = SoundManager::GetInstancePtr()->getSound(_value[i]);
+        }
+        setSounds(sounds);
+    }
+
+    //////////////////////////////////////////
+    Vector<String> SoundSet::getSoundNames() const
+    {
+        Vector<String> soundNames;
+        soundNames.resize(m_sounds.size());
+        for (Size i = 0, in = m_sounds.size(); i != in; ++i)
+        {
+            soundNames[i] = m_sounds[i]->getName();
+        }
+
+        return soundNames;
     }
 
     //////////////////////////////////////////

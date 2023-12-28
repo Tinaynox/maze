@@ -36,6 +36,8 @@
 #include "maze-particles/MazeParticles3D.hpp"
 #include "maze-core/serialization/MazeJSONSerializable.hpp"
 #include "maze-core/helpers/MazeJSONHelper.hpp"
+#include "maze-core/serialization/MazeDataBlockSerializable.hpp"
+#include "maze-core/helpers/MazeDataBlockHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -57,6 +59,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PARTICLES_API ParticleSystem3DZoneEmissionPoint
         : public IJSONValueSerializable
+        , public IDataBlockSerializable
     {
     public:
 
@@ -102,6 +105,20 @@ namespace Maze
         }
 
     public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE
+        {
+            DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+            return true;
+        }
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE
+        {
+            DataBlockHelper::SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+        }
+
+    public:
         Vec3F position = Vec3F::c_zero;
         Vec3F direction = Vec3F::c_unitZ;
     };
@@ -113,6 +130,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PARTICLES_API ParticleSystem3DZoneSphere
         : public IJSONValueSerializable
+        , public IDataBlockSerializable
     {
     public:
 
@@ -175,6 +193,20 @@ namespace Maze
         }
 
     public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE
+        {
+            DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+            return true;
+        }
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE
+        {
+            DataBlockHelper::SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+        }
+
+    public:
 
         Vec3F position = Vec3F::c_zero;
         Vec3F scale = Vec3F::c_one;
@@ -188,6 +220,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PARTICLES_API ParticleSystem3DZoneHemisphere
         : public IJSONValueSerializable
+        , public IDataBlockSerializable
     {
     public:
 
@@ -246,6 +279,20 @@ namespace Maze
         }
 
     public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE
+        {
+            DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+            return true;
+        }
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE
+        {
+            DataBlockHelper::SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+        }
+
+    public:
 
         Vec3F position = Vec3F::c_zero;
         Vec3F scale = Vec3F::c_one;
@@ -259,6 +306,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PARTICLES_API ParticleSystem3DZoneTorus
         : public IJSONValueSerializable
+        , public IDataBlockSerializable
     {
     public:
 
@@ -330,6 +378,20 @@ namespace Maze
         }
 
     public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE
+        {
+            DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+            return true;
+        }
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE
+        {
+            DataBlockHelper::SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+        }
+
+    public:
 
         Vec3F position = Vec3F::c_zero;
         Vec3F scale = Vec3F::c_one;
@@ -346,6 +408,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PARTICLES_API ParticleSystem3DZoneCone
         : public IJSONValueSerializable
+        , public IDataBlockSerializable
     {
     public:
 
@@ -417,6 +480,20 @@ namespace Maze
         }
 
     public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE
+        {
+            DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+            return true;
+        }
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE
+        {
+            DataBlockHelper::SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+        }
+
+    public:
 
         Vec3F position = Vec3F::c_zero;
         Vec3F scale = Vec3F::c_one;
@@ -433,6 +510,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PARTICLES_API ParticleSystem3DZoneBox
         : public IJSONValueSerializable
+        , public IDataBlockSerializable
     {
     public:
 
@@ -483,6 +561,20 @@ namespace Maze
         }
 
     public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE
+        {
+            DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+            return true;
+        }
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE
+        {
+            DataBlockHelper::SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+        }
+
+    public:
 
         Vec3F position = Vec3F::c_zero;
         Vec3F scale = Vec3F::c_one;
@@ -495,6 +587,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PARTICLES_API ParticleSystem3DZoneCircle
         : public IJSONValueSerializable
+        , public IDataBlockSerializable
     {
     public:
 
@@ -557,6 +650,20 @@ namespace Maze
         }
 
     public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE
+        {
+            DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+            return true;
+        }
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE
+        {
+            DataBlockHelper::SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+        }
+
+    public:
 
         Vec3F position = Vec3F::c_zero;
         Vec3F scale = Vec3F::c_one;
@@ -571,6 +678,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PARTICLES_API ParticleSystem3DZoneData
         : public IJSONValueSerializable
+        , public IDataBlockSerializable
     {
     public:
 
@@ -650,6 +758,20 @@ namespace Maze
         virtual Json::Value toJSONValue() const MAZE_OVERRIDE
         {
             return JSONHelper::SerializeMetaInstanceToJSONValue(getMetaClass(), getMetaInstance());
+        }
+
+    public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE
+        {
+            DataBlockHelper::DeserializeMetaInstanceFromDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
+            return true;
+        }
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE
+        {
+            DataBlockHelper::SerializeMetaInstanceToDataBlock(getMetaClass(), getMetaInstance(), _dataBlock);
         }
 
     public:

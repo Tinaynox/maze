@@ -35,6 +35,7 @@
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/system/MazeTimer.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
+#include "maze-core/serialization/MazeDataBlockSerializable.hpp"
 
 
 //////////////////////////////////////////
@@ -48,6 +49,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_CORE_API Settings
+        : public IDataBlockSerializable
     {
     public:
 
@@ -64,6 +66,14 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual ~Settings();
+
+
+    public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
     };
 
 

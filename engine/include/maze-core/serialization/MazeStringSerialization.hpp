@@ -65,7 +65,7 @@ namespace Maze
     template <typename T, typename = int>
     struct HasValueFromString : std::false_type { };
     template <typename T>
-    struct HasValueFromString <T, decltype(ValueFromString(std::declval<T>(), std::declval<CString>(), std::declval<Size>()), 0)> : std::true_type { };
+    struct HasValueFromString <T, decltype(ValueFromString(std::declval<T&>(), std::declval<CString>(), std::declval<Size>()), 0)> : std::true_type { };
 
     //////////////////////////////////////////
     template <typename T, typename = int>
