@@ -228,6 +228,22 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Type: HashedCString
+    //
+    //////////////////////////////////////////
+    inline void ValueToString(HashedCString const& _value, String& _data)
+    {
+        _data = !_value.empty() ? _value.str : String();
+    }
+
+    //////////////////////////////////////////
+    inline void ValueFromString(HashedCString& _value, CString _data, Size _count)
+    {
+        _value = HashedCString(_data);
+    }
+
+
+    //////////////////////////////////////////
     // Type: HashedString
     //
     //////////////////////////////////////////

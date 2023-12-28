@@ -81,6 +81,10 @@ namespace Maze
     struct DataBlock::TypeOf<CString> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamString; };
     template <>
     struct DataBlock::TypeOf<String> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamString; };
+    template <>
+    struct DataBlock::TypeOf<HashedCString> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamString; };
+    template <>
+    struct DataBlock::TypeOf<HashedString> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamString; };
 
 
 
@@ -138,6 +142,20 @@ namespace Maze
     inline String DataBlock::getParamValue(DataBlock::ParamIndex _index, String const& _defaultValue) const
     {
         return getString(_index, _defaultValue);
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline HashedCString DataBlock::getParamValue(DataBlock::ParamIndex _index, HashedCString const& _defaultValue) const
+    {
+        return HashedCString(getParamValue(_index, _defaultValue.str));
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline HashedString DataBlock::getParamValue(DataBlock::ParamIndex _index, HashedString const& _defaultValue) const
+    {
+        return HashedString(getString(_index, _defaultValue.getString()));
     }
 
     //////////////////////////////////////////        
@@ -247,6 +265,20 @@ namespace Maze
         ParamValue& value = param.value;
         value = addSharedString(_value.c_str(), _value.size());
         return true;
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline bool DataBlock::setParam(DataBlock::ParamIndex _index, const HashedCString& _value)
+    {
+        return setParam(_index, _value.str);
+    }
+
+    //////////////////////////////////////////
+    template <>
+    inline bool DataBlock::setParam(DataBlock::ParamIndex _index, const HashedString& _value)
+    {
+        return setParam(_index, _value.getString());
     }
 
     //////////////////////////////////////////

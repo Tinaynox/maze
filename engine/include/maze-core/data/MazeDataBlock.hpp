@@ -57,6 +57,7 @@
 #include "maze-core/math/MazeMat3.hpp"
 #include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/data/MazeHashedCString.hpp"
+#include "maze-core/data/MazeHashedString.hpp"
 #include "maze-core/utils/MazeClassInfo.hpp"
 
 
