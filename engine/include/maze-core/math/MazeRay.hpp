@@ -34,6 +34,7 @@
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeVec3.hpp"
+#include "maze-core/data/MazeDataBlock.hpp"
 #include <ostream>
 
 
@@ -189,6 +190,20 @@ namespace Maze
     inline void DeserializeValue(Ray& _value, U8 const* _data)
     {
         memcpy((U8*)&_value, _data, sizeof(Ray));
+    }
+
+    //////////////////////////////////////////
+    inline void ValueToDataBlock(Ray const& _value, DataBlock& _data)
+    {
+        _data.setVec3F(MAZE_HS("point"), _value.getPoint());
+        _data.setVec3F(MAZE_HS("direction"), _value.getDirection());
+    }
+
+    //////////////////////////////////////////
+    inline void ValueFromDataBlock(Ray& _value, DataBlock const& _data)
+    {
+        _value.setPoint(_data.getVec3F(MAZE_HS("point")));
+        _value.setDirection(_data.getVec3F(MAZE_HS("direction")));
     }
 
 

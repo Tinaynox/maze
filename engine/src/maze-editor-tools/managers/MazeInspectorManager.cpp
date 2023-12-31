@@ -87,11 +87,26 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    using MetaPropertyDrawerMaterialAssetRef =
+        MetaPropertyDrawerDefault<
+        MaterialAssetRef,
+        PropertyDrawerMaterialAssetRef>;
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerMaterialAssetRef, MetaPropertyDrawer);
+
+
+    //////////////////////////////////////////
     using MetaPropertyDrawerRenderMesh =
         MetaPropertyDrawerDefault<
             RenderMeshPtr,
             PropertyDrawerRenderMesh>;
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerRenderMesh, MetaPropertyDrawer);
+
+    //////////////////////////////////////////
+    using MetaPropertyDrawerRenderMeshAssetRef =
+        MetaPropertyDrawerDefault<
+        RenderMeshAssetRef,
+        PropertyDrawerRenderMeshAssetRef>;
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT_TEMPLATE(MetaPropertyDrawerRenderMeshAssetRef, MetaPropertyDrawer);
 
 
     //////////////////////////////////////////
@@ -170,7 +185,9 @@ namespace Maze
         registerPropertyDrawer<ColorGradient, PropertyDrawerColorGradient>();
         registerPropertyDrawer<AnimationCurve, PropertyDrawerAnimationCurve>();
         registerPropertyDrawer<MaterialPtr, PropertyDrawerMaterial>();
+        registerPropertyDrawer<MaterialAssetRef, PropertyDrawerMaterialAssetRef>();
         registerPropertyDrawer<RenderMeshPtr, PropertyDrawerRenderMesh>();
+        registerPropertyDrawer<RenderMeshAssetRef, PropertyDrawerRenderMeshAssetRef>();
         registerPropertyDrawer<Texture2DPtr, PropertyDrawerTexture2D>();
 
         registerMetaPropertyDrawer<bool, MetaPropertyDrawerBool>();
@@ -189,7 +206,9 @@ namespace Maze
         registerMetaPropertyDrawer<ColorGradient, MetaPropertyDrawerColorGradient>();
         registerMetaPropertyDrawer<AnimationCurve, MetaPropertyDrawerAnimationCurve>();
         registerMetaPropertyDrawer<MaterialPtr, MetaPropertyDrawerMaterial>();
+        registerMetaPropertyDrawer<MaterialAssetRef, MetaPropertyDrawerMaterial>();
         registerMetaPropertyDrawer<RenderMeshPtr, MetaPropertyDrawerRenderMesh>();
+        registerMetaPropertyDrawer<RenderMeshAssetRef, MetaPropertyDrawerRenderMeshAssetRef>();
         registerMetaPropertyDrawer<Texture2DPtr, MetaPropertyDrawerTexture2D>();
 
         registerComponentEditor<Transform3D, ComponentEditorTransform3D>();

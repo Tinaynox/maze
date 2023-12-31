@@ -168,17 +168,18 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    String const& MaterialManager::getMaterialName(Material const* _material)
+    HashedCString MaterialManager::getMaterialName(Material const* _material)
     {
-        static String nullPointer;
-
-        for (auto const& materialData : m_materialsLibrary)
+        for (StringKeyMap<MaterialLibraryData>::iterator it = m_materialsLibrary.begin(),
+                                                         end = m_materialsLibrary.end();
+                                                         it != end;
+                                                         ++it)
         {
-            if (materialData.second.material.get() == _material)
-                return materialData.first;
+            if (it->second.material.get() == _material)
+                return it.key();
         }
 
-        return nullPointer;
+        return HashedCString();
     }
 
     //////////////////////////////////////////

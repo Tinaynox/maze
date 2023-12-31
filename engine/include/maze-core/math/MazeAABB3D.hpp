@@ -36,6 +36,7 @@
 #include "maze-core/math/MazeVec2.hpp"
 #include "maze-core/math/MazeVec3.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
+#include "maze-core/data/MazeDataBlock.hpp"
 #include <ostream>
 
 
@@ -414,6 +415,20 @@ namespace Maze
     inline void DeserializeValue(AABB3D& _value, U8 const* _data)
     {
         memcpy((U8*)&_value, _data, sizeof(AABB3D));
+    }
+
+    //////////////////////////////////////////
+    inline void ValueToDataBlock(AABB3D const& _value, DataBlock& _data)
+    {
+        _data.setVec3F(MAZE_HS("min"), _value.getMin());
+        _data.setVec3F(MAZE_HS("max"), _value.getMax());
+    }
+
+    //////////////////////////////////////////
+    inline void ValueFromDataBlock(AABB3D& _value, DataBlock const& _data)
+    {
+        _value.setMin(_data.getVec3F(MAZE_HS("min")));
+        _value.setMax(_data.getVec3F(MAZE_HS("max")));
     }
 
 

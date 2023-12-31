@@ -207,7 +207,8 @@ namespace Maze
 
                     menuList->addItem(
                         words[w],
-                        isSubMenu ? nullptr : func);
+                        isSubMenu ? nullptr : func,
+                        true);
                 }
 
                 MenuListItem2D* listItem = menuList->getListItemRaw(words[w]);

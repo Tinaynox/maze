@@ -147,6 +147,12 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        virtual bool isHasOperatorEquals() const MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual bool isEqual(ConstMetaInstance const& _instance0, ConstMetaInstance const& _instance1) const MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
         virtual Size getValueSize() const MAZE_ABSTRACT;
 
         
@@ -768,6 +774,18 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        virtual bool isHasOperatorEquals() const MAZE_OVERRIDE
+        {
+            return StdHelper::HasOperatorEquals<TValue>::value;
+        }
+
+        //////////////////////////////////////////
+        virtual bool isEqual(ConstMetaInstance const& _instance0, ConstMetaInstance const& _instance1) const MAZE_OVERRIDE
+        {
+            return isEqualImpl<TValue>(_instance0, _instance1);
+        }
+
+        //////////////////////////////////////////
         virtual Size getValueSize() const MAZE_OVERRIDE
         {
             return sizeof(TValue);
@@ -915,14 +933,14 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TEnumValue>
-        static typename ::std::enable_if<(std::is_base_of<EnumClass, TEnumValue>::value), Vector<String>>::type GetEnumClassValues()
+        inline static typename ::std::enable_if<(std::is_base_of<EnumClass, TEnumValue>::value), Vector<String>>::type GetEnumClassValues()
         {
             return TEnumValue::AllStrings();
         }
 
         //////////////////////////////////////////
         template <typename TEnumValue>
-        static typename ::std::enable_if<(!std::is_base_of<EnumClass, TEnumValue>::value), Vector<String>>::type GetEnumClassValues()
+        inline static typename ::std::enable_if<(!std::is_base_of<EnumClass, TEnumValue>::value), Vector<String>>::type GetEnumClassValues()
         {
             return Vector<String>();
         }
@@ -930,14 +948,14 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TProperty>
-        typename ::std::enable_if<(HasMetaClass<TProperty>::value), MetaClass const*>::type getMetaClassImpl() const
+        inline typename ::std::enable_if<(HasMetaClass<TProperty>::value), MetaClass const*>::type getMetaClassImpl() const
         {
             return TProperty::GetMetaClass();
         }
 
         //////////////////////////////////////////
         template <typename TProperty>
-        typename ::std::enable_if<(!HasMetaClass<TProperty>::value&& IsSharedPtr<TProperty>::value), MetaClass const*>::type getMetaClassImpl() const
+        inline typename ::std::enable_if<(!HasMetaClass<TProperty>::value&& IsSharedPtr<TProperty>::value), MetaClass const*>::type getMetaClassImpl() const
         {
 
             return GetMetaClass<typename TProperty::element_type>();
@@ -945,7 +963,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TProperty>
-        typename ::std::enable_if<(!HasMetaClass<TProperty>::value && !IsSharedPtr<TProperty>::value), MetaClass const*>::type getMetaClassImpl() const
+        inline typename ::std::enable_if<(!HasMetaClass<TProperty>::value && !IsSharedPtr<TProperty>::value), MetaClass const*>::type getMetaClassImpl() const
         {
             return nullptr;
         }
@@ -953,7 +971,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TProperty>
-        typename ::std::enable_if<(HasMetaClass<TProperty>::value), MetaClass const*>::type getMetaClassImpl(MetaInstance const& _instance) const
+        inline typename ::std::enable_if<(HasMetaClass<TProperty>::value), MetaClass const*>::type getMetaClassImpl(MetaInstance const& _instance) const
         {
             TObject* obj = castMetaInstanceObject(_instance);
             TValue value = (obj->*m_getter)();
@@ -962,7 +980,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TProperty>
-        typename ::std::enable_if<(!HasMetaClass<TProperty>::value && IsSharedPtr<TProperty>::value), MetaClass const*>::type getMetaClassImpl(MetaInstance const& _instance) const
+        inline typename ::std::enable_if<(!HasMetaClass<TProperty>::value && IsSharedPtr<TProperty>::value), MetaClass const*>::type getMetaClassImpl(MetaInstance const& _instance) const
         {
             TObject* obj = castMetaInstanceObject(_instance);
             auto ptr = (obj->*m_getter)();
@@ -974,7 +992,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TProperty>
-        typename ::std::enable_if<(!HasMetaClass<TProperty>::value && !IsSharedPtr<TProperty>::value), MetaClass const*>::type getMetaClassImpl(MetaInstance const& _instance) const
+        inline typename ::std::enable_if<(!HasMetaClass<TProperty>::value && !IsSharedPtr<TProperty>::value), MetaClass const*>::type getMetaClassImpl(MetaInstance const& _instance) const
         {
             return nullptr;
         }
@@ -982,7 +1000,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TProperty>
-        typename ::std::enable_if<(IsSharedPtr<TProperty>::value), void*>::type getSharedPtrPointerImpl(MetaInstance const& _instance) const
+        inline typename ::std::enable_if<(IsSharedPtr<TProperty>::value), void*>::type getSharedPtrPointerImpl(MetaInstance const& _instance) const
         {
             TObject* obj = castMetaInstanceObject(_instance);
             return (obj->*m_getter)().get();
@@ -990,7 +1008,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TProperty>
-        typename ::std::enable_if<(!IsSharedPtr<TProperty>::value), void*>::type getSharedPtrPointerImpl(MetaInstance const& _instance) const
+        inline typename ::std::enable_if<(!IsSharedPtr<TProperty>::value), void*>::type getSharedPtrPointerImpl(MetaInstance const& _instance) const
         {
             return nullptr;
         }
@@ -998,7 +1016,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TVector>
-        typename ::std::enable_if<(IsVector<TVector>::value), Size>::type getVectorSizeImpl(MetaInstance const& _instance) const
+        inline typename ::std::enable_if<(IsVector<TVector>::value), Size>::type getVectorSizeImpl(MetaInstance const& _instance) const
         {
             TObject* obj = castMetaInstanceObject(_instance);
             TValue value = (obj->*m_getter)();
@@ -1007,14 +1025,14 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TVector>
-        typename ::std::enable_if<(!IsVector<TVector>::value), Size>::type getVectorSizeImpl(MetaInstance const& _instance) const
+        inline typename ::std::enable_if<(!IsVector<TVector>::value), Size>::type getVectorSizeImpl(MetaInstance const& _instance) const
         {
             return 0;
         }
 
         //////////////////////////////////////////
         template <typename TVector>
-        typename ::std::enable_if<(IsVector<TVector>::value), void>::type setVectorSizeImpl(MetaInstance const& _instance, Size _size)
+        inline typename ::std::enable_if<(IsVector<TVector>::value), void>::type setVectorSizeImpl(MetaInstance const& _instance, Size _size)
         {
             TObject* obj = castMetaInstanceObject(_instance);
             TValue value = (obj->*m_getter)();
@@ -1024,12 +1042,12 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TVector>
-        typename ::std::enable_if<(!IsVector<TVector>::value), void>::type setVectorSizeImpl(MetaInstance const& _instance, Size _size)
+        inline typename ::std::enable_if<(!IsVector<TVector>::value), void>::type setVectorSizeImpl(MetaInstance const& _instance, Size _size)
         { }
 
         //////////////////////////////////////////
         template <typename TVector>
-        typename ::std::enable_if<(IsVector<TVector>::value), ClassUID>::type getVectorElementClassUIDImpl(MetaInstance const& _instance) const
+        inline typename ::std::enable_if<(IsVector<TVector>::value), ClassUID>::type getVectorElementClassUIDImpl(MetaInstance const& _instance) const
         {
             TObject* obj = castMetaInstanceObject(_instance);
             TValue value = (obj->*m_getter)();
@@ -1040,9 +1058,27 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TVector>
-        typename ::std::enable_if<(!IsVector<TVector>::value), ClassUID>::type getVectorElementClassUIDImpl(MetaInstance const& _instance) const
+        inline typename ::std::enable_if<(!IsVector<TVector>::value), ClassUID>::type getVectorElementClassUIDImpl(MetaInstance const& _instance) const
         {
             return 0;
+        }
+
+
+        //////////////////////////////////////////
+        template <typename TProperty>
+        inline typename ::std::enable_if<(StdHelper::HasOperatorEquals<TProperty>::value), bool>::type isEqualImpl(ConstMetaInstance const& _instance0, ConstMetaInstance const& _instance1) const
+        {
+            TObject const* obj0 = castMetaInstanceObject(_instance0);
+            TObject const* obj1 = castMetaInstanceObject(_instance1);
+
+            return (obj0->*m_getter)() == (obj1->*m_getter)();
+        }
+
+        //////////////////////////////////////////
+        template <typename TProperty>
+        inline typename ::std::enable_if<(!StdHelper::HasOperatorEquals<TProperty>::value), bool>::type isEqualImpl(ConstMetaInstance const& _instance0, ConstMetaInstance const& _instance1) const
+        {
+            return false;
         }
  
     private:

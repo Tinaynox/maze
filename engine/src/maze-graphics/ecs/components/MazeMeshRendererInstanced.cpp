@@ -52,8 +52,8 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(MeshRendererInstanced, Component,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(RenderMeshPtr, renderMesh, RenderMeshPtr(), getRenderMesh, setRenderMesh),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(MaterialPtr, material, MaterialPtr(), getMaterial, setMaterial),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(RenderMeshAssetRef, renderMesh, RenderMeshAssetRef(), getRenderMeshRef, setRenderMeshRef),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(MaterialAssetRef, material, MaterialAssetRef(), getMaterialRef, setMaterialRef),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, enabled, true, getEnabled, setEnabled),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Mat4F>, modelMatricies, Vector<Mat4F>(), getModelMatrices, setModelMatrices),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Vec4F>, colors, Vector<Vec4F>(), getColors, setColors),
@@ -145,12 +145,10 @@ namespace Maze
 
         RenderTargetPtr const& renderTarget = getEntityRaw()->getECSScene()->castRaw<ECSRenderScene>()->getRenderTarget();
 
-        if (!m_renderMesh)
-        {
-            m_renderMesh = renderTarget->createRenderMeshFromPool((S32)_mesh->getSubMeshesCount());
-        }
+        if (!getRenderMesh())
+            setRenderMesh(renderTarget->createRenderMeshFromPool((S32)_mesh->getSubMeshesCount()));
 
-        m_renderMesh->loadFromMesh(
+        getRenderMesh()->loadFromMesh(
             _mesh,
             renderTarget.get());
     }
@@ -164,10 +162,10 @@ namespace Maze
     //////////////////////////////////////////
     void MeshRendererInstanced::clearMesh()
     {
-        if (!m_renderMesh)
+        if (!getRenderMesh())
             return;
 
-        m_renderMesh->clear();
+        getRenderMesh()->clear();
     }
 
     //////////////////////////////////////////
@@ -179,7 +177,7 @@ namespace Maze
     //////////////////////////////////////////
     void MeshRendererInstanced::processEntityRemoved()
     {
-        m_renderMesh.reset();
+        setRenderMesh(RenderMeshPtr());
     }
 
     //////////////////////////////////////////

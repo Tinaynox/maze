@@ -399,7 +399,7 @@ namespace Maze
                     {
                         if (_meshRenderer->getRenderMesh())
                         {
-                            Vector<MaterialPtr> const& materials = _meshRenderer->getMaterials();
+                            Vector<MaterialAssetRef> const& materials = _meshRenderer->getMaterialRefs();
                             Vector<VertexArrayObjectPtr> const& vaos = _meshRenderer->getRenderMesh()->getVertexArrayObjects();
 
                             if (vaos.empty())
@@ -415,7 +415,7 @@ namespace Maze
 
                                 MaterialPtr const* material = nullptr;
                                 if (!materials.empty())
-                                    material = &materials[i % materials.size()];
+                                    material = &materials[i % materials.size()].getMaterial();
 
                                 if (!material || !*material)
                                     material = &m_renderSystem->getMaterialManager()->getErrorMaterial();

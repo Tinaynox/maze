@@ -194,6 +194,44 @@ namespace Maze
     {
         FontMaterial::FromString(_value, _data, _count);
     }
+
+
+    //////////////////////////////////////////
+    // Class FontMaterialAssetRef
+    //
+    //////////////////////////////////////////
+    class MAZE_UI_API FontMaterialAssetRef
+        : public IStringSerializable
+    {
+    public:
+
+        //////////////////////////////////////////
+        FontMaterialAssetRef(FontMaterialPtr const& _value = nullptr)
+            : m_fontMaterial(_value)
+        {}
+
+        //////////////////////////////////////////
+        void setFontMaterial(FontMaterialPtr const& _value) { m_fontMaterial = _value; }
+
+        //////////////////////////////////////////
+        inline FontMaterialPtr const& getFontMaterial() const { return m_fontMaterial; }
+
+        //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
+        inline bool operator==(FontMaterialAssetRef const& _value) const { return m_fontMaterial == _value.getFontMaterial(); }
+
+        //////////////////////////////////////////
+        inline bool operator!=(FontMaterialAssetRef const& _value) const { return m_fontMaterial != _value.getFontMaterial(); }
+
+    private:
+        FontMaterialPtr m_fontMaterial;
+    };
     
 
 } // namespace Maze

@@ -237,6 +237,27 @@ namespace Maze
 
         return GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getRenderMeshManager()->getRenderMesh(_string);
     }
+
+
+    //////////////////////////////////////////
+    // Class RenderMeshAssetRef
+    //
+    //////////////////////////////////////////
+    String RenderMeshAssetRef::toString() const
+    {
+        if (!m_renderMesh)
+            return String();
+
+        HashedCString name = RenderSystem::GetCurrentInstancePtr()->getRenderMeshManager()->getRenderMeshName(m_renderMesh.get());
+        return !name.empty() ? name.str : String();
+    }
+
+    //////////////////////////////////////////
+    void RenderMeshAssetRef::setString(CString _data, Size _count)
+    {
+        RenderMeshPtr const& material = RenderSystem::GetCurrentInstancePtr()->getRenderMeshManager()->getRenderMesh(_data);
+        setRenderMesh(material);
+    }
     
 
 } // namespace Maze

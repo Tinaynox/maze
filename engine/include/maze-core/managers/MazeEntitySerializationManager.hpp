@@ -44,6 +44,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(EntitySerializationManager);
     MAZE_USING_SHARED_PTR(AssetFile);
+    MAZE_USING_SHARED_PTR(PrefabInstance);
     
 
     //////////////////////////////////////////
@@ -69,33 +70,11 @@ namespace Maze
         static inline EntitySerializationManager& GetInstance() { return *s_instance; }
 
         //////////////////////////////////////////
+        // bool savePrefabToDataBlockFileOBSOLETE(EntityPtr const& _entity, Path const& _fileFullPath) const;
+
+        //////////////////////////////////////////
         bool savePrefabToDataBlockFile(EntityPtr const& _entity, Path const& _fileFullPath) const;
-#if 0
-        //////////////////////////////////////////
-        bool savePrefabToXMLFile(EntityPtr const& _entity, Path const& _fileFullPath) const;
 
-        //////////////////////////////////////////
-        tinyxml2::XMLElement* savePrefabToXMLElement(EntityPtr const& _entity, tinyxml2::XMLDocument& _doc) const;
-
-
-        //////////////////////////////////////////
-        EntityPtr loadPrefabFromXMLFile(
-            Path const& _fileFullPath,
-            ECSWorld* _world = nullptr,
-            ECSScene* _scene = nullptr) const;
-
-        //////////////////////////////////////////
-        EntityPtr loadPrefabFromXMLElement(
-            tinyxml2::XMLElement* _element,
-            ECSWorld* _world = nullptr,
-            ECSScene* _scene = nullptr) const;
-
-        //////////////////////////////////////////
-        EntityPtr loadPrefab(
-            tinyxml2::XMLDocument& _doc,
-            ECSWorld* _world = nullptr,
-            ECSScene* _scene = nullptr) const;
-#endif
 
         //////////////////////////////////////////
         EntityPtr loadPrefab(
@@ -110,19 +89,30 @@ namespace Maze
             ECSScene* _scene = nullptr) const;
 
         //////////////////////////////////////////
+        EntityPtr loadPrefabOBSOLETE(
+            DataBlock const& _dataBlock,
+            ECSWorld* _world = nullptr,
+            ECSScene* _scene = nullptr) const;
+
+
+        //////////////////////////////////////////
         EntityPtr loadPrefab(
             DataBlock const& _dataBlock,
             ECSWorld* _world = nullptr,
             ECSScene* _scene = nullptr) const;
 
-        //////////////////////////////////////////
-        void collectAllChildrenEntity(EntityPtr const& _entity, Vector<EntityPtr>& _result) const;
 
         //////////////////////////////////////////
-        Vector<EntityPtr> collectAllChildrenEntity(EntityPtr const& _entity) const;
+        void collectAllChildrenEntity(
+            EntityPtr const& _entity,
+            Vector<EntityPtr>& _entities,
+            Vector<PrefabInstance*>& _prefabInstances) const;
 
         //////////////////////////////////////////
-        Map<EntityPtr, Vector<ComponentPtr>> collectEntityComponentsMap(EntityPtr const& _entity) const;
+        void collectEntityComponentsMap(
+            EntityPtr const& _entity,
+            Map<EntityPtr, Vector<ComponentPtr>>& _entities,
+            Vector<PrefabInstance*>& _prefabs) const;
 
     protected:
 

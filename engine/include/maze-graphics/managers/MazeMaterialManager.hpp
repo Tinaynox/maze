@@ -140,7 +140,7 @@ namespace Maze
         MaterialPtr const& getMaterial(AssetFilePtr const& _assetFile);
 
         //////////////////////////////////////////
-        String const& getMaterialName(Material const* _material);
+        HashedCString getMaterialName(Material const* _material);
 
 
         //////////////////////////////////////////

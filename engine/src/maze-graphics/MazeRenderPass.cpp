@@ -41,33 +41,13 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class RenderPassShaderRef
-    //
-    //////////////////////////////////////////
-    String RenderPassShaderRef::toString() const
-    {
-        if (!m_shader)
-            return String();
-
-        return m_shader->getAssetFile() ? static_cast<String>(m_shader->getAssetFileName()) : m_shader->getName();
-    }
-
-    //////////////////////////////////////////
-    void RenderPassShaderRef::setString(CString _data, Size _count)
-    {
-        ShaderPtr const& shader = RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->getShader(_data);
-        setShader(shader);
-    }
-
-
-    //////////////////////////////////////////
     // Class RenderPass
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS(RenderPass,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(RenderPassType, passType, RenderPassType::None, getPassType, setPassType),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, renderQueueIndex, (S32)RenderQueueIndex::Opaque, getRenderQueueIndex, setRenderQueueIndex),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(RenderPassShaderRef, shader, RenderPassShaderRef(), getShaderRef, setShaderRef),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(ShaderAssetRef, shader, ShaderAssetRef(), getShaderRef, setShaderRef),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(BlendOperation, blendOperation, BlendOperation::Add, getBlendOperation, setBlendOperation),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(BlendFactor, blendSrcFactor, BlendFactor::One, getBlendSrcFactor, setBlendSrcFactor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(BlendFactor, blendDestFactor, BlendFactor::Zero, getBlendDestFactor, setBlendDestFactor),

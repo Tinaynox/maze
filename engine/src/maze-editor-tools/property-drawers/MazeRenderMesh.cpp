@@ -231,5 +231,78 @@ namespace Maze
             m_renderMesh);
     }
 
+
+    //////////////////////////////////////////
+    // Class PropertyDrawerRenderMeshAssetRef
+    //
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PropertyDrawerRenderMeshAssetRef, PropertyDrawer);
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(PropertyDrawerRenderMeshAssetRef);
+
+    //////////////////////////////////////////
+    PropertyDrawerRenderMeshAssetRef::PropertyDrawerRenderMeshAssetRef()
+    {
+
+    }
+
+    //////////////////////////////////////////
+    PropertyDrawerRenderMeshAssetRef::~PropertyDrawerRenderMeshAssetRef()
+    {
+        m_drawer.reset();
+    }
+
+    //////////////////////////////////////////
+    PropertyDrawerRenderMeshAssetRefPtr PropertyDrawerRenderMeshAssetRef::Create(String const& _label)
+    {
+        PropertyDrawerRenderMeshAssetRefPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerRenderMeshAssetRef, object, init(_label));
+        return object;
+    }
+
+    //////////////////////////////////////////
+    bool PropertyDrawerRenderMeshAssetRef::init(String const& _label)
+    {
+        if (!PropertyDrawer::init(_label))
+            return false;
+
+        m_drawer = PropertyDrawerRenderMesh::Create(_label);
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void PropertyDrawerRenderMeshAssetRef::buildUI(
+        Transform2DPtr const& _parent,
+        CString _label)
+    {
+        m_drawer->buildUI(_parent, _label);
+    }
+
+    //////////////////////////////////////////
+    void PropertyDrawerRenderMeshAssetRef::setString(String const& _value)
+    {
+        m_drawer->setString(_value);
+    }
+
+    //////////////////////////////////////////
+    String PropertyDrawerRenderMeshAssetRef::getString()
+    {
+        return m_drawer->getString();
+    }
+
+    //////////////////////////////////////////
+    void PropertyDrawerRenderMeshAssetRef::setValue(RenderMeshAssetRef const& _value)
+    {
+        m_drawer->setValue(_value.getRenderMesh());
+    }
+
+    //////////////////////////////////////////
+    RenderMeshAssetRef PropertyDrawerRenderMeshAssetRef::getValue() const
+    {
+        return RenderMeshAssetRef(m_drawer->getValue());
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

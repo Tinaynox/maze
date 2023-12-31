@@ -64,7 +64,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SpriteRenderer2D, Component,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(SpritePtr, sprite, SpritePtr(), getSprite, setSprite),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(MaterialPtr, material, MaterialPtr(), getMaterial, setMaterialCopy),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(MaterialAssetRef, material, MaterialAssetRef(), getMaterialRef, setMaterialRefCopy),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, color, ColorU32::c_white, getColor, setColor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(SpriteRenderMode, renderMode, SpriteRenderMode::Simple, getRenderMode, setRenderMode));
 
@@ -152,12 +152,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SpriteRenderer2D::setMaterial(MaterialPtr const& _material)
+    void SpriteRenderer2D::setMaterialRef(MaterialAssetRef const& _material)
     {
-        if (m_material == _material)
+        if (m_materialRef.getMaterial() == _material.getMaterial())
             return;
 
-        m_material = _material;
+        m_materialRef.setMaterial(_material.getMaterial());
 
         updateMaterial();
     }
@@ -170,9 +170,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void SpriteRenderer2D::setMaterialRefCopy(MaterialAssetRef const& _material)
+    {
+        setMaterial(_material.getMaterial() ? _material.getMaterial()->createCopy() : MaterialPtr());
+        updateMaterial();
+    }
+
+    //////////////////////////////////////////
     void SpriteRenderer2D::setMaterialCopy(MaterialPtr const& _material)
     {
-        m_material = _material ? _material->createCopy() : MaterialPtr();
+        setMaterial(_material ? _material->createCopy() : MaterialPtr());
         updateMaterial();
     }
 
@@ -218,11 +225,11 @@ namespace Maze
     void SpriteRenderer2D::updateMaterial()
     {
         if (m_meshRenderer)
-            m_meshRenderer->setMaterial(m_material);
+            m_meshRenderer->setMaterial(getMaterial());
 
-        if (m_material)
+        if (getMaterial())
         {
-            m_material->setUniform("u_color", m_color.toVec4F32());
+            getMaterial()->setUniform(MAZE_HS("u_color"), m_color.toVec4F32());
 
             Texture2DPtr texture;
 
@@ -231,17 +238,17 @@ namespace Maze
                 texture = m_sprite->getTexture();
 
                 if (!texture)
-                    texture = m_material->getRenderSystem()->getTextureManager()->getErrorTexture();
+                    texture = getMaterial()->getRenderSystem()->getTextureManager()->getErrorTexture();
             }
             else
             {
-                texture = m_material->getRenderSystem()->getTextureManager()->getWhiteTexture();
+                texture = getMaterial()->getRenderSystem()->getTextureManager()->getWhiteTexture();
             }
 
             if (texture)
             {
-                m_material->setUniform("u_baseMap", texture);
-                m_material->setUniform("u_baseMapTexelSize", 1.0f / (Vec2F)texture->getSize());
+                getMaterial()->setUniform(MAZE_HS("u_baseMap"), texture);
+                getMaterial()->setUniform(MAZE_HS("u_baseMapTexelSize"), 1.0f / (Vec2F)texture->getSize());
             }
         }
     }

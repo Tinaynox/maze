@@ -33,6 +33,8 @@
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
+#include "maze-graphics/MazeMaterial.hpp"
+#include "maze-graphics/MazeRenderMesh.hpp"
 
 
 //////////////////////////////////////////
@@ -70,12 +72,18 @@ namespace Maze
         //////////////////////////////////////////
         static MeshRendererInstancedPtr Create(RenderSystem* _renderSystem = nullptr);
 
-            
+        
         //////////////////////////////////////////
-        inline RenderMeshPtr const& getRenderMesh() const { return m_renderMesh; }
+        inline RenderMeshAssetRef const& getRenderMeshRef() const { return m_renderMeshRef; }
 
         //////////////////////////////////////////
-        inline void setRenderMesh(RenderMeshPtr const& _renderMesh) { m_renderMesh = _renderMesh; }
+        inline void setRenderMeshRef(RenderMeshAssetRef const& _renderMesh) { m_renderMeshRef.setRenderMesh(_renderMesh.getRenderMesh()); }
+
+        //////////////////////////////////////////
+        inline RenderMeshPtr const& getRenderMesh() const { return m_renderMeshRef.getRenderMesh(); }
+
+        //////////////////////////////////////////
+        inline void setRenderMesh(RenderMeshPtr const& _renderMesh) { m_renderMeshRef.setRenderMesh(_renderMesh); }
 
         //////////////////////////////////////////
         void setRenderMesh(String const& _renderMeshName);
@@ -88,10 +96,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void setMaterial(MaterialPtr const& _material) { m_material = _material; }
+        inline void setMaterialRef(MaterialAssetRef const& _material) { m_materialRef.setMaterial(_material.getMaterial()); }
 
         //////////////////////////////////////////
-        inline MaterialPtr const& getMaterial() const { return m_material; }
+        inline MaterialAssetRef const& getMaterialRef() const { return m_materialRef; }
+
+        //////////////////////////////////////////
+        inline void setMaterial(MaterialPtr const& _material) { m_materialRef.setMaterial(_material); }
+
+        //////////////////////////////////////////
+        inline MaterialPtr const& getMaterial() const { return m_materialRef.getMaterial(); }
 
         //////////////////////////////////////////
         void setMaterial(String const& _materialName);
@@ -188,8 +202,8 @@ namespace Maze
     protected:
         RenderSystem* m_renderSystem;
 
-        RenderMeshPtr m_renderMesh;
-        MaterialPtr m_material;
+        RenderMeshAssetRef m_renderMeshRef;
+        MaterialAssetRef m_materialRef;
         
         RenderMaskPtr m_renderMask;
 

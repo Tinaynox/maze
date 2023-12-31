@@ -101,11 +101,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void MenuList2D::addItem(String const& _itemData, ItemCallback const& _callback)
+    void MenuList2D::addItem(
+        String const& _itemData,
+        ItemCallback const& _callback,
+        bool _rebuildItems)
     {
         m_items.push_back({ _itemData, _callback });
 
-        rebuildItems();
+        if (_rebuildItems)
+            rebuildItems();
     }
 
     //////////////////////////////////////////

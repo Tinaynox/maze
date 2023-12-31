@@ -37,6 +37,7 @@
 #include "maze-graphics/MazeCompareFunction.hpp"
 #include "maze-graphics/MazeRenderPassType.hpp"
 #include "maze-graphics/MazeShaderUniformVariant.hpp"
+#include "maze-graphics/MazeShader.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
@@ -59,33 +60,6 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Shader);
     MAZE_USING_SHARED_PTR(Texture2D);
     
-
-    //////////////////////////////////////////
-    // Class RenderPassShaderRef
-    //
-    //////////////////////////////////////////
-    class MAZE_GRAPHICS_API RenderPassShaderRef
-        : IStringSerializable
-    {
-    public:
-
-
-        //////////////////////////////////////////
-        void setShader(ShaderPtr const& _shader) { m_shader = _shader; }
-
-        //////////////////////////////////////////
-        inline ShaderPtr const& getShader() const { return m_shader; }
-
-        //////////////////////////////////////////
-        virtual String toString() const MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
-
-    private:
-        ShaderPtr m_shader;
-    };
-
 
     //////////////////////////////////////////
     // Class RenderPass
@@ -156,10 +130,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline RenderPassShaderRef const& getShaderRef() const { return m_shaderRef; }
+        inline ShaderAssetRef const& getShaderRef() const { return m_shaderRef; }
 
         //////////////////////////////////////////
-        inline void setShaderRef(RenderPassShaderRef const& _value) { m_shaderRef.setShader(_value.getShader()); }
+        inline void setShaderRef(ShaderAssetRef const& _value) { m_shaderRef.setShader(_value.getShader()); }
 
 
         //////////////////////////////////////////
@@ -267,7 +241,7 @@ namespace Maze
 
         S32 m_renderQueueIndex;
 
-        RenderPassShaderRef m_shaderRef;
+        ShaderAssetRef m_shaderRef;
 
         BlendOperation m_blendOperation;
         BlendFactor m_blendSrcFactor;

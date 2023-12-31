@@ -233,7 +233,7 @@ namespace Maze
                         });
 
                     _menuListTree->addItem(
-                        "Save To XML",
+                        "Save To DataBlock",
                         [entityWeak](String const& _text)
                         {
                             EntityPtr entity = entityWeak.lock();

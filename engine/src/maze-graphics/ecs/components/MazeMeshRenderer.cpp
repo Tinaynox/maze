@@ -52,8 +52,8 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(MeshRenderer, Component,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(RenderMeshPtr, renderMesh, RenderMeshPtr(), getRenderMesh, setRenderMesh),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<MaterialPtr>, materials, Vector<MaterialPtr>(), getMaterials, setMaterials),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(RenderMeshAssetRef, renderMesh, RenderMeshAssetRef(), getRenderMeshRef, setRenderMeshRef),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<MaterialAssetRef>, materials, Vector<MaterialAssetRef>(), getMaterialRefs, setMaterialRefs),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, enabled, true, getEnabled, setEnabled));
 
     //////////////////////////////////////////
@@ -116,8 +116,8 @@ namespace Maze
     //////////////////////////////////////////
     void MeshRenderer::setMaterial(MaterialPtr const& _material)
     {
-        Vector<MaterialPtr> materials = { _material };
-        setMaterials(materials);
+        Vector<MaterialAssetRef> materials = { MaterialAssetRef(_material) };
+        setMaterialRefs(materials);
     }
 
     //////////////////////////////////////////
@@ -148,12 +148,10 @@ namespace Maze
 
         RenderTargetPtr const& renderTarget = getEntityRaw()->getECSScene()->castRaw<ECSRenderScene>()->getRenderTarget();
 
-        if (!m_renderMesh)
-        {
-            m_renderMesh = renderTarget->createRenderMeshFromPool((S32)_mesh->getSubMeshesCount());
-        }
+        if (!m_renderMeshRef.getRenderMesh())
+            m_renderMeshRef.setRenderMesh(renderTarget->createRenderMeshFromPool((S32)_mesh->getSubMeshesCount()));
 
-        m_renderMesh->loadFromMesh(
+        m_renderMeshRef.getRenderMesh()->loadFromMesh(
             _mesh,
             renderTarget.get());
     }
@@ -167,10 +165,10 @@ namespace Maze
     //////////////////////////////////////////
     void MeshRenderer::clearMesh()
     {
-        if (!m_renderMesh)
+        if (!getRenderMesh())
             return;
 
-        m_renderMesh->clear();
+        getRenderMesh()->clear();
     }
 
     //////////////////////////////////////////
@@ -182,7 +180,7 @@ namespace Maze
     //////////////////////////////////////////
     void MeshRenderer::processEntityRemoved()
     {
-        m_renderMesh.reset();
+        m_renderMeshRef.setRenderMesh(nullptr);
     }
     
     

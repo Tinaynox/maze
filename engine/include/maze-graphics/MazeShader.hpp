@@ -385,6 +385,39 @@ namespace Maze
     }
 
 
+    //////////////////////////////////////////
+    // Class ShaderAssetRef
+    //
+    //////////////////////////////////////////
+    class MAZE_GRAPHICS_API ShaderAssetRef
+        : public IStringSerializable
+    {
+    public:
+
+        //////////////////////////////////////////
+        void setShader(ShaderPtr const& _shader) { m_shader = _shader; }
+
+        //////////////////////////////////////////
+        inline ShaderPtr const& getShader() const { return m_shader; }
+
+        //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
+        inline bool operator==(ShaderAssetRef const& _value) const { return m_shader == _value.getShader(); }
+
+        //////////////////////////////////////////
+        inline bool operator!=(ShaderAssetRef const& _value) const { return m_shader != _value.getShader(); }
+
+    private:
+        ShaderPtr m_shader;
+    };
+
+
 } // namespace Maze
 //////////////////////////////////////////
 

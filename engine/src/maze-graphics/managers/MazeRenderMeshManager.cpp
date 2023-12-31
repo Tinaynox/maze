@@ -193,6 +193,9 @@ namespace Maze
     {
         static RenderMeshPtr const nullPointer;
 
+        if (_renderMeshName.empty())
+            return nullPointer;
+
         RenderMeshLibraryData const* libraryData = getRenderMeshLibraryData(_renderMeshName);
         if (libraryData != nullptr)
             return libraryData->renderMesh;
@@ -233,6 +236,21 @@ namespace Maze
         }
 
         return nullPointer;
+    }
+
+    //////////////////////////////////////////
+    HashedCString RenderMeshManager::getRenderMeshName(RenderMesh const* _renderMesh)
+    {
+        for (StringKeyMap<RenderMeshLibraryData>::iterator it = m_renderMeshesLibrary.begin(),
+                                                           end = m_renderMeshesLibrary.end();
+                                                           it != end;
+                                                           ++it)
+        {
+            if (it->second.renderMesh.get() == _renderMesh)
+                return it.key();
+        }
+
+        return HashedCString();
     }
 
     //////////////////////////////////////////

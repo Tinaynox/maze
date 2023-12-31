@@ -333,5 +333,25 @@ namespace Maze
     }
 
 
+    //////////////////////////////////////////
+    // Class FontMaterialAssetRef
+    //
+    //////////////////////////////////////////
+    String FontMaterialAssetRef::toString() const
+    {
+        if (!m_fontMaterial)
+            return String();
+
+        return FontMaterialManager::GetInstancePtr()->getFontMaterialName(m_fontMaterial.get());
+    }
+
+    //////////////////////////////////////////
+    void FontMaterialAssetRef::setString(CString _data, Size _count)
+    {
+        FontMaterialPtr const& fontMaterial = FontMaterialManager::GetInstancePtr()->getFontMaterial(_data);
+        setFontMaterial(fontMaterial);
+    }
+
+
 } // namespace Maze
 //////////////////////////////////////////

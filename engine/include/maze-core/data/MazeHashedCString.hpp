@@ -100,10 +100,10 @@ namespace Maze
         inline bool operator!=(String const& _value) const { return _value != str; }
 
         //////////////////////////////////////////
-        friend inline bool operator==(String const& _value0, HashedCString const& _value1) noexcept;
+        friend inline bool operator==(String const& _value0, HashedCString const& _value1);
 
         //////////////////////////////////////////
-        friend inline bool operator!=(String const& _value0, HashedCString const& _value1) noexcept;
+        friend inline bool operator!=(String const& _value0, HashedCString const& _value1);
 
         //////////////////////////////////////////
         inline Char operator[](Size _index) const { return str[_index]; }
@@ -122,10 +122,10 @@ namespace Maze
     };
 
     //////////////////////////////////////////
-    inline bool operator==(String const& _value0, HashedCString const& _value1) noexcept { return _value0 == _value1.str; }
+    inline bool operator==(String const& _value0, HashedCString const& _value1) { return _value0 == _value1.str; }
 
     //////////////////////////////////////////
-    inline bool operator!=(String const& _value0, HashedCString const& _value1) noexcept { return _value0 != _value1.str; }
+    inline bool operator!=(String const& _value0, HashedCString const& _value1) { return _value0 != _value1.str; }
 
     //////////////////////////////////////////
     inline std::ostream& operator<<(std::ostream& _o, HashedCString const& _v)
@@ -197,10 +197,10 @@ namespace Maze
         inline bool operator!=(WString const& _value) const { return _value != str; }
 
         //////////////////////////////////////////
-        friend inline bool operator==(WString const& _value0, HashedCWString const& _value1) noexcept;
+        friend inline bool operator==(WString const& _value0, HashedCWString const& _value1);
 
         //////////////////////////////////////////
-        friend inline bool operator!=(WString const& _value0, HashedCWString const& _value1) noexcept;
+        friend inline bool operator!=(WString const& _value0, HashedCWString const& _value1);
 
         //////////////////////////////////////////
         inline WChar operator[](Size _index) const { return str[_index]; }
@@ -210,10 +210,10 @@ namespace Maze
     };
 
     //////////////////////////////////////////
-    inline bool operator==(WString const& _value0, HashedCWString const& _value1) noexcept { return _value0 == _value1.str; }
+    inline bool operator==(WString const& _value0, HashedCWString const& _value1) { return _value0 == _value1.str; }
 
     //////////////////////////////////////////
-    inline bool operator!=(WString const& _value0, HashedCWString const& _value1) noexcept { return _value0 != _value1.str; }
+    inline bool operator!=(WString const& _value0, HashedCWString const& _value1) { return _value0 != _value1.str; }
 
     //////////////////////////////////////////
     inline std::wostream& operator<<(std::wostream& _o, HashedCWString const& _v)

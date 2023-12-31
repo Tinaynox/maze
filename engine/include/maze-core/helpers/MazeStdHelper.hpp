@@ -34,6 +34,7 @@
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/utils/MazeClassInfo.hpp"
 #include "maze-core/system/MazePath.hpp"
+#include <utility>
 
 
 //////////////////////////////////////////
@@ -63,6 +64,7 @@ namespace Maze
         {
             return ClassInfo<UValue>::UID();
         }
+        
 
         //////////////////////////////////////////
         template <typename TValue, typename = int>
@@ -71,6 +73,20 @@ namespace Maze
         //////////////////////////////////////////
         template <typename TValue>
         struct HasDefaultConstructor<TValue, decltype(TValue(), 0)> : std::true_type {};
+
+
+        //////////////////////////////////////////
+        template <typename TValue>
+        struct HasOperatorEquals
+        {
+            template <typename UValue>
+            static auto test(UValue const* _p) -> decltype(*_p == *_p, std::true_type());
+
+            template <typename>
+            static auto test(...) -> std::false_type;
+
+            static MAZE_CONSTEXPR bool value = decltype(test<TValue>(nullptr))::value;
+        };
 
     } // namespace StdHelper
     //////////////////////////////////////////

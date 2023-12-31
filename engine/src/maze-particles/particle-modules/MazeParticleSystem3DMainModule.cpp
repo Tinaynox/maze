@@ -31,6 +31,7 @@
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSScene.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
+#include "maze-core/helpers/MazeMetaClassHelper.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -371,6 +372,12 @@ namespace Maze
     void ParticleSystem3DMainModule::generateDuration()
     {
         m_duration.sample(rand() % c_particleSystemParametersCount, 0.0f, m_currentDuration);
+    }
+
+    //////////////////////////////////////////
+    bool ParticleSystem3DMainModule::operator==(ParticleSystem3DMainModule const& _module) const
+    {
+        return MetaClassHelper::IsEqual(getMetaInstance(), _module.getMetaInstance());
     }
 
 } // namespace Maze

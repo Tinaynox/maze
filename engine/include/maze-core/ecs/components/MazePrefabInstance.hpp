@@ -25,69 +25,76 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeDataBlockHelper_hpp_))
-#define _MazeDataBlockHelper_hpp_
+#if (!defined(_MazePrefabInstance_hpp_))
+#define _MazePrefabInstance_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
-#include "maze-core/MazeTypes.hpp"
-#include "maze-core/data/MazeDataBlock.hpp"
-#include "maze-core/reflection/MazeMetaClass.hpp"
+#include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-core/math/MazeMat4.hpp"
+#include "maze-core/math/MazeRotation2D.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    namespace DataBlockHelper
-    {
-        //////////////////////////////////////////
-        MAZE_CORE_API void SerializeMetaPropertyToDataBlock(
-            ConstMetaInstance _metaInstance,
-            MetaProperty* _metaProperty,
-            HashedCString _propertyName,
-            DataBlock& _dataBlock);
-
-        //////////////////////////////////////////
-        MAZE_CORE_API void SerializeMetaPropertyToDataBlock(
-            ConstMetaInstance _metaInstance,
-            MetaProperty* _metaProperty,
-            DataBlock& _dataBlock);
-
-        //////////////////////////////////////////
-        MAZE_CORE_API void SerializeMetaInstanceToDataBlock(
-            MetaClass const* _metaClass,
-            ConstMetaInstance _metaInstance,
-            DataBlock& _dataBlock);
+    MAZE_USING_SHARED_PTR(PrefabInstance);
 
 
-        //////////////////////////////////////////
-        MAZE_CORE_API void DeserializeMetaPropertyFromDataBlock(
-            MetaInstance _metaInstance,
-            MetaProperty* _metaProperty,
-            HashedCString _propertyName,
-            DataBlock const& _dataBlock);
-
-        //////////////////////////////////////////
-        MAZE_CORE_API void DeserializeMetaPropertyFromDataBlock(
-            MetaInstance _metaInstance,
-            MetaProperty* _metaProperty,
-            DataBlock const& _dataBlock);
-
-        //////////////////////////////////////////
-        MAZE_CORE_API void DeserializeMetaInstanceFromDataBlock(
-            MetaClass const* _metaClass,
-            MetaInstance _metaInstance,
-            DataBlock const& _dataBlock);
-
-    } // namespace DataBlockHelper
     //////////////////////////////////////////
-    
-    
+    // Class PrefabInstance
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API PrefabInstance
+        : public Component
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(PrefabInstance, Component);
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_MEMORY_ALLOCATION(PrefabInstance);
+
+        //////////////////////////////////////////
+        friend class Entity;
+
+    public:
+
+        //////////////////////////////////////////
+        virtual ~PrefabInstance();
+
+        //////////////////////////////////////////
+        static PrefabInstancePtr Create(String const& _prefab = String());
+
+
+        //////////////////////////////////////////
+        inline String const& getPrefabName() const { return m_prefabName; }
+
+        //////////////////////////////////////////
+        inline void setPrefabName(String const& _prefabName) { m_prefabName = _prefabName; }
+
+    protected:
+
+        //////////////////////////////////////////
+        PrefabInstance();
+
+        //////////////////////////////////////////
+        using Component::init;
+        
+        //////////////////////////////////////////
+        bool init(String const& _name);
+
+    protected:
+        String m_prefabName;
+    };
+
+
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeDataBlockHelper_hpp_
+#endif // _MazePrefabInstance_hpp_
 //////////////////////////////////////////

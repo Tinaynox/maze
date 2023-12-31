@@ -736,7 +736,7 @@ namespace Maze
         RenderSystemPtr const& renderSystem = Maze::GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
         MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
 
-        String const& materialName = materialManager->getMaterialName(_value);
+        HashedCString materialName = materialManager->getMaterialName(_value);
         if (!materialName.empty())
         {
             _data = materialName;
@@ -758,6 +758,27 @@ namespace Maze
 
             instance = instance->m_instancesListPrev;
         }
+    }
+
+
+    //////////////////////////////////////////
+    // Class MaterialAssetRef
+    //
+    //////////////////////////////////////////
+    String MaterialAssetRef::toString() const
+    {
+        if (!m_material)
+            return String();
+
+        HashedCString name = RenderSystem::GetCurrentInstancePtr()->getMaterialManager()->getMaterialName(m_material.get());
+        return !name.empty() ? name.str : String();
+    }
+
+    //////////////////////////////////////////
+    void MaterialAssetRef::setString(CString _data, Size _count)
+    {
+        MaterialPtr const& material = RenderSystem::GetCurrentInstancePtr()->getMaterialManager()->getMaterial(_data);
+        setMaterial(material);
     }
 
 } // namespace Maze

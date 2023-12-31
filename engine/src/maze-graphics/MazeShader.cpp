@@ -836,5 +836,25 @@ namespace Maze
         }
     }
 
+
+    //////////////////////////////////////////
+    // Class ShaderAssetRef
+    //
+    //////////////////////////////////////////
+    String ShaderAssetRef::toString() const
+    {
+        if (!m_shader)
+            return String();
+
+        return m_shader->getAssetFile() ? static_cast<String>(m_shader->getAssetFileName()) : m_shader->getName();
+    }
+
+    //////////////////////////////////////////
+    void ShaderAssetRef::setString(CString _data, Size _count)
+    {
+        ShaderPtr const& shader = RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->getShader(_data);
+        setShader(shader);
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

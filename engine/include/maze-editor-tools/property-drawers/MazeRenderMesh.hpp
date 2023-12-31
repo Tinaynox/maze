@@ -47,6 +47,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(PropertyDrawerRenderMesh);
+    MAZE_USING_SHARED_PTR(PropertyDrawerRenderMeshAssetRef);
     MAZE_USING_SHARED_PTR(EditBox2D);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
 
@@ -117,6 +118,62 @@ namespace Maze
         ClickButton2DPtr m_selectAssetButton;
     };
 
+
+    //////////////////////////////////////////
+    // Class PropertyDrawerRenderMeshAssetRef
+    //
+    //////////////////////////////////////////
+    class MAZE_EDITOR_TOOLS_API PropertyDrawerRenderMeshAssetRef
+        : public GenericPropertyDrawer<RenderMeshAssetRef>
+        , public MultiDelegateCallbackReceiver
+    {
+    public:
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(PropertyDrawerRenderMeshAssetRef, PropertyDrawer);
+
+        //////////////////////////////////////////
+        MAZE_DECLARE_MEMORY_ALLOCATION(PropertyDrawerRenderMeshAssetRef);
+
+    public:
+
+        //////////////////////////////////////////
+        virtual ~PropertyDrawerRenderMeshAssetRef();
+
+        //////////////////////////////////////////
+        static PropertyDrawerRenderMeshAssetRefPtr Create(String const& _label);
+
+
+        //////////////////////////////////////////
+        virtual void setValue(RenderMeshAssetRef const& _value) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual RenderMeshAssetRef getValue() const MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
+        virtual void buildUI(
+            Transform2DPtr const& _parent,
+            CString _label = nullptr) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(String const& _value) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual String getString() MAZE_OVERRIDE;
+
+    protected:
+
+        //////////////////////////////////////////
+        PropertyDrawerRenderMeshAssetRef();
+
+        //////////////////////////////////////////
+        virtual bool init(String const& _label) MAZE_OVERRIDE;
+
+
+    protected:
+        PropertyDrawerRenderMeshPtr m_drawer;
+    };
 
 } // namespace Maze
 //////////////////////////////////////////

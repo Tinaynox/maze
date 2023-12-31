@@ -316,6 +316,44 @@ namespace Maze
         Material::FromString(_value, _data, _count);
     }
 
+
+    //////////////////////////////////////////
+    // Class MaterialAssetRef
+    //
+    //////////////////////////////////////////
+    class MAZE_GRAPHICS_API MaterialAssetRef
+        : public IStringSerializable
+    {
+    public:
+
+        //////////////////////////////////////////
+        MaterialAssetRef(MaterialPtr const& _value = nullptr)
+            : m_material(_value)
+        {}
+
+        //////////////////////////////////////////
+        void setMaterial(MaterialPtr const& _value) { m_material = _value; }
+
+        //////////////////////////////////////////
+        inline MaterialPtr const& getMaterial() const { return m_material; }
+
+        //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
+        inline bool operator==(MaterialAssetRef const& _value) const { return m_material == _value.getMaterial(); }
+
+        //////////////////////////////////////////
+        inline bool operator!=(MaterialAssetRef const& _value) const { return m_material != _value.getMaterial(); }
+
+    private:
+        MaterialPtr m_material;
+    };
+
 } // namespace Maze
 //////////////////////////////////////////
 

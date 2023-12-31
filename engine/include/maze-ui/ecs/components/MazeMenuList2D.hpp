@@ -152,7 +152,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void addItem(String const& _itemData, ItemCallback const& _callback);
+        void addItem(
+            String const& _itemData,
+            ItemCallback const& _callback,
+            bool _rebuildItems = true);
 
         //////////////////////////////////////////
         void addItems(Vector<ItemData> const& _items);
@@ -186,6 +189,9 @@ namespace Maze
         //////////////////////////////////////////
         void updateListSize();
 
+        //////////////////////////////////////////
+        void rebuildItems();
+
     public:
         //////////////////////////////////////////
         MultiDelegate<MenuList2D*, Size> eventListItemFocused;
@@ -204,9 +210,6 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
-            
-        //////////////////////////////////////////
-        void rebuildItems();
 
     protected:
         Transform2DPtr m_transform;

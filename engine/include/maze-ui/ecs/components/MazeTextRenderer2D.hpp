@@ -146,10 +146,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline FontMaterialPtr const& getFontMaterial() const { return m_fontMaterial; }
+        inline FontMaterialAssetRef const& getFontMaterialRef() const { return m_fontMaterialRef; }
 
         //////////////////////////////////////////
-        void setFontMaterial(FontMaterialPtr const& _fontMaterial);
+        void setFontMaterialRef(FontMaterialAssetRef const& _fontMaterial);
+        
+        //////////////////////////////////////////
+        inline FontMaterialPtr const& getFontMaterial() const { return m_fontMaterialRef.getFontMaterial(); }
+
+        //////////////////////////////////////////
+        inline void setFontMaterial(FontMaterialPtr const& _fontMaterial) { setFontMaterialRef(FontMaterialAssetRef(_fontMaterial)); }
 
 
         //////////////////////////////////////////
@@ -408,7 +414,7 @@ namespace Maze
 
         ColorU32 m_color = ColorU32::c_white;
 
-        FontMaterialPtr m_fontMaterial;
+        FontMaterialAssetRef m_fontMaterialRef;
         U32 m_fontSize = 18u;
         F32 m_lineSpacingScale = 1.0f;
 

@@ -38,6 +38,7 @@
 #include "maze-core/math/MazeMat3.hpp"
 #include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/math/MazeRotation2D.hpp"
+#include "maze-core/data/MazeDataBlock.hpp"
 #include <ostream>
 
 
@@ -106,6 +107,19 @@ namespace Maze
 
         //////////////////////////////////////////
         static inline Vec3F GetEuler(Mat4F const& _rotationMatrix) { return Quaternion(_rotationMatrix).getEuler(); }
+
+
+        //////////////////////////////////////////
+        inline void setVec4F(Vec4F const& _value)
+        {
+            w = _value.w;
+            x = _value.x;
+            y = _value.y;
+            z = _value.z;
+        }
+
+        //////////////////////////////////////////
+        inline Vec4F toVec4F() const { return Vec4F(x, y, z, w); }
 
 
         //////////////////////////////////////////
@@ -417,6 +431,18 @@ namespace Maze
     inline void DeserializeValue(Quaternion& _value, U8 const* _data)
     {
         memcpy((U8*)&_value, _data, sizeof(Quaternion));
+    }
+
+    //////////////////////////////////////////
+    inline void ValueToDataBlock(Quaternion const& _value, DataBlock& _data)
+    {
+        _data.setVec4F(MAZE_HS("value"), _value.toVec4F());
+    }
+
+    //////////////////////////////////////////
+    inline void ValueFromDataBlock(Quaternion& _value, DataBlock const& _data)
+    {
+        _value.setVec4F(_data.getVec4F(MAZE_HS("value")));
     }
 
 } // namespace Maze

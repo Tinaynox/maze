@@ -34,6 +34,7 @@
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeVec2.hpp"
+#include "maze-core/data/MazeDataBlock.hpp"
 #include <ostream>
 
 
@@ -163,6 +164,19 @@ namespace Maze
         //////////////////////////////////////////
         inline Vec2<TValue> getCenter() const { return position + size * 0.5f; }
         
+
+        //////////////////////////////////////////
+        inline Vec2<TValue> const& getPosition() const { return position; }
+
+        //////////////////////////////////////////
+        inline void setPosition(Vec2<TValue> const& _value) { position = _value; }
+
+        //////////////////////////////////////////
+        inline Vec2<TValue> const& getSize() const { return size; }
+
+        //////////////////////////////////////////
+        inline void setSize(Vec2<TValue> const& _value) { size = _value; }
+
     public:
         Vec2<TValue> position;
         Vec2<TValue> size;
@@ -232,6 +246,48 @@ namespace Maze
         DeserializeValue(TValue& _value, U8 const* _data)
     {
         memcpy((U8*)&_value, _data, sizeof(TValue));
+    }
+
+    //////////////////////////////////////////
+    inline void ValueToDataBlock(Rect2DS const& _value, DataBlock& _data)
+    {
+        _data.setVec2S(MAZE_HS("point"), _value.getPosition());
+        _data.setVec2S(MAZE_HS("direction"), _value.getSize());
+    }
+
+    //////////////////////////////////////////
+    inline void ValueFromDataBlock(Rect2DS& _value, DataBlock const& _data)
+    {
+        _value.setPosition(_data.getVec2S(MAZE_HS("point")));
+        _value.setSize(_data.getVec2S(MAZE_HS("direction")));
+    }
+
+    //////////////////////////////////////////
+    inline void ValueToDataBlock(Rect2DU const& _value, DataBlock& _data)
+    {
+        _data.setVec2U(MAZE_HS("point"), _value.getPosition());
+        _data.setVec2U(MAZE_HS("direction"), _value.getSize());
+    }
+
+    //////////////////////////////////////////
+    inline void ValueFromDataBlock(Rect2DU& _value, DataBlock const& _data)
+    {
+        _value.setPosition(_data.getVec2U(MAZE_HS("point")));
+        _value.setSize(_data.getVec2U(MAZE_HS("direction")));
+    }
+
+    //////////////////////////////////////////
+    inline void ValueToDataBlock(Rect2DF const& _value, DataBlock& _data)
+    {
+        _data.setVec2F(MAZE_HS("point"), _value.getPosition());
+        _data.setVec2F(MAZE_HS("direction"), _value.getSize());
+    }
+
+    //////////////////////////////////////////
+    inline void ValueFromDataBlock(Rect2DF& _value, DataBlock const& _data)
+    {
+        _value.setPosition(_data.getVec2F(MAZE_HS("point")));
+        _value.setSize(_data.getVec2F(MAZE_HS("direction")));
     }
 
 

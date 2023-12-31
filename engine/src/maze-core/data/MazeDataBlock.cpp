@@ -65,7 +65,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MAZE_CORE_API static inline StringKeyMap<DataBlockParamType> ConstructDataBlockParamTypeByName()
+    static inline StringKeyMap<DataBlockParamType> ConstructDataBlockParamTypeByName()
     {
         StringKeyMap<DataBlockParamType> result;
 
@@ -181,6 +181,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    DataBlock::DataBlock(DataBlock const& _value)
+        : DataBlock()
+    {
+        if (_value.getNameId() != 0)
+            setName(_value.getName());
+
+        copyFrom(&_value);
+    }
+
+    //////////////////////////////////////////
     DataBlock::DataBlock(DataBlock&& _value)
     {
         if (isTopmost())
@@ -240,6 +250,14 @@ namespace Maze
             return HashedCString();
 
         return getNameHashedCString(nameId);
+    }
+
+    //////////////////////////////////////////
+    void DataBlock::setName(HashedCString _name)
+    {
+        MAZE_ASSERT(!_name.empty());
+        if (!_name.empty())
+            m_nameIdAndFlags = addSharedString(_name) | (m_nameIdAndFlags & U32(DataBlockFlags::TopmostBlock));
     }
 
     //////////////////////////////////////////
@@ -907,6 +925,9 @@ namespace Maze
     //////////////////////////////////////////
     DataBlock::DataBlockIndex DataBlock::findDataBlockIndex(SharedStringId _nameId, DataBlockIndex _startAfter) const
     {
+        if (m_dataBlocksCount == 0)
+            return -1;
+
         DataBlock const** blockPtr = getDataBlocksPtr() + _startAfter;
         for (DataBlockIndex i = _startAfter, e = (DataBlockIndex)getDataBlocksCount(); i < e; ++i, ++blockPtr)
             if ((*blockPtr)->getNameId() == _nameId)

@@ -131,7 +131,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    DataBlockParamTypeInfo const MAZE_CORE_API c_dataBlockParamTypeInfo[(Size)DataBlockParamType::MAX] =
+    DataBlockParamTypeInfo const c_dataBlockParamTypeInfo[(Size)DataBlockParamType::MAX] =
     {
         DataBlockParamTypeInfo(MAZE_HASHED_CSTRING(""), 0u),
         DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("S32"), sizeof(S32)),
@@ -313,6 +313,9 @@ namespace Maze
         DataBlock(DataBlockShared* _shared, HashedCString _name);
 
         //////////////////////////////////////////
+        DataBlock(DataBlock const& _value);
+
+        //////////////////////////////////////////
         DataBlock(DataBlock&& _value);
 
         //////////////////////////////////////////
@@ -336,6 +339,9 @@ namespace Maze
 
         //////////////////////////////////////////
         HashedCString getName() const;
+
+        //////////////////////////////////////////
+        void setName(HashedCString _name);
 
         //////////////////////////////////////////
         inline DataBlockShared const* getShared() const { return m_shared; }

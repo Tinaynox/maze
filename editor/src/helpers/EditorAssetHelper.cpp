@@ -142,7 +142,7 @@ namespace Maze
 
             Path name = FileHelper::GetFileNameWithoutExtension(newPrefabFullPath);
             EntityPtr entity = EditorManager::GetInstancePtr()->getSceneMain()->createEntity(name);
-            EntitySerializationManager::GetInstancePtr()->savePrefabToXMLFile(entity, newPrefabFullPath);
+            EntitySerializationManager::GetInstancePtr()->savePrefabToDataBlockFile(entity, newPrefabFullPath);
             AssetManager::GetInstancePtr()->updateAssets();
 
             entity->removeFromECSWorld();

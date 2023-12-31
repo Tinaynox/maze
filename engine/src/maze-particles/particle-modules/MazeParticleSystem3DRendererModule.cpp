@@ -55,14 +55,15 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystemParameterF32, frameOverTime, ParticleSystemParameterF32(), getFrameOverTime, setFrameOverTime));
 
 
+
     //////////////////////////////////////////
     // Class ParticleSystem3DRendererModule
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS(ParticleSystem3DRendererModule,
         MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, particlesMaxCount, 1000, getParticlesMaxCount, setParticlesMaxCount),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(RenderMeshPtr, renderMesh, RenderMeshPtr(), getRenderMesh, setRenderMesh),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(MaterialPtr, material, MaterialPtr(), getMaterial, setMaterial),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(RenderMeshAssetRef, renderMesh, RenderMeshAssetRef(), getRenderMeshRef, setRenderMeshRef),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(MaterialAssetRef, material, MaterialAssetRef(), getMaterialRef, setMaterialRef),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ParticleSystemRenderAlignment, renderAlignment, ParticleSystemRenderAlignment::View, getRenderAlignment, setRenderAlignment),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(TextureSheetAnimation, textureSheetAnimation, TextureSheetAnimation(), getTextureSheetAnimation, setTextureSheetAnimation));
 

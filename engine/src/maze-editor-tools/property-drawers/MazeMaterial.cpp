@@ -219,7 +219,7 @@ namespace Maze
         {
             RenderSystemPtr const& renderSystem = Maze::GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
             MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
-            String const& materialName = materialManager->getMaterialName(m_material.get());
+            HashedCString materialName = materialManager->getMaterialName(m_material.get());
             if (!materialName.empty())
             {
                 AssetFilePtr const& materialAsset = AssetManager::GetInstancePtr()->getAssetFileByFileName(materialName);
@@ -249,6 +249,80 @@ namespace Maze
                 eventUIData();
             },
             m_material);
+    }
+
+
+
+    //////////////////////////////////////////
+    // Class PropertyDrawerMaterialAssetRef
+    //
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PropertyDrawerMaterialAssetRef, PropertyDrawer);
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(PropertyDrawerMaterialAssetRef);
+
+    //////////////////////////////////////////
+    PropertyDrawerMaterialAssetRef::PropertyDrawerMaterialAssetRef()
+    {
+
+    }
+
+    //////////////////////////////////////////
+    PropertyDrawerMaterialAssetRef::~PropertyDrawerMaterialAssetRef()
+    {
+        m_drawer.reset();
+    }
+
+    //////////////////////////////////////////
+    PropertyDrawerMaterialAssetRefPtr PropertyDrawerMaterialAssetRef::Create(String const& _label)
+    {
+        PropertyDrawerMaterialAssetRefPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(PropertyDrawerMaterialAssetRef, object, init(_label));
+        return object;
+    }
+
+    //////////////////////////////////////////
+    bool PropertyDrawerMaterialAssetRef::init(String const& _label)
+    {
+        if (!PropertyDrawer::init(_label))
+            return false;
+
+        m_drawer = PropertyDrawerMaterial::Create(_label);
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void PropertyDrawerMaterialAssetRef::buildUI(
+        Transform2DPtr const& _parent,
+        CString _label)
+    {
+        m_drawer->buildUI(_parent, _label);
+    }
+
+    //////////////////////////////////////////
+    void PropertyDrawerMaterialAssetRef::setString(String const& _value)
+    {
+        m_drawer->setString(_value);
+    }
+
+    //////////////////////////////////////////
+    String PropertyDrawerMaterialAssetRef::getString()
+    {
+        return m_drawer->getString();
+    }
+
+    //////////////////////////////////////////
+    void PropertyDrawerMaterialAssetRef::setValue(MaterialAssetRef const& _value)
+    {
+        m_drawer->setValue(_value.getMaterial());
+    }
+
+    //////////////////////////////////////////
+    MaterialAssetRef PropertyDrawerMaterialAssetRef::getValue() const
+    {
+        return MaterialAssetRef(m_drawer->getValue());
     }
 
 } // namespace Maze

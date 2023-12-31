@@ -149,6 +149,11 @@ namespace Maze
         //////////////////////////////////////////
         RenderMeshPtr const& getRenderMesh(AssetFilePtr const& _assetFile);
 
+        //////////////////////////////////////////
+        HashedCString getRenderMeshName(RenderMesh const* _renderMesh);
+
+
+
 
         //////////////////////////////////////////
         RenderMeshLibraryData* addRenderMeshToLibrary(RenderMeshPtr const& _renderMesh);

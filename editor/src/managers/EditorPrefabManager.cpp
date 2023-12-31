@@ -169,14 +169,14 @@ namespace Maze
             setPrefabEntity(nullptr);
         }
     }
-
+    
     //////////////////////////////////////////
     void EditorPrefabManager::saveAssetFile()
     {
         if (!m_prefabAssetFile || !m_prefabEntity)
             return;
 
-        EntitySerializationManager::GetInstancePtr()->savePrefabToXMLFile(
+        EntitySerializationManager::GetInstancePtr()->savePrefabToDataBlockFile(
             m_prefabEntity, m_prefabAssetFile->getFullPath());
     }
 

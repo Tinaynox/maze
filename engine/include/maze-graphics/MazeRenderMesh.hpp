@@ -197,6 +197,45 @@ namespace Maze
     }
 
 
+    //////////////////////////////////////////
+    // Class RenderMeshAssetRef
+    //
+    //////////////////////////////////////////
+    class MAZE_GRAPHICS_API RenderMeshAssetRef
+        : public IStringSerializable
+    {
+    public:
+
+        //////////////////////////////////////////
+        RenderMeshAssetRef(RenderMeshPtr const& _renderMesh = nullptr)
+            : m_renderMesh(_renderMesh)
+        {}
+
+
+        //////////////////////////////////////////
+        void setRenderMesh(RenderMeshPtr const& _renderMesh) { m_renderMesh = _renderMesh; }
+
+        //////////////////////////////////////////
+        inline RenderMeshPtr const& getRenderMesh() const { return m_renderMesh; }
+
+        //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
+        inline bool operator==(RenderMeshAssetRef const& _value) const { return m_renderMesh == _value.getRenderMesh(); }
+
+        //////////////////////////////////////////
+        inline bool operator!=(RenderMeshAssetRef const& _value) const { return m_renderMesh != _value.getRenderMesh(); }
+
+    private:
+        RenderMeshPtr m_renderMesh;
+    };
+
+
 } // namespace Maze
 //////////////////////////////////////////
 

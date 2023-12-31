@@ -43,6 +43,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeAwakeRandomRotation3D.hpp"
+#include "maze-core/ecs/components/MazePrefabInstance.hpp"
 
 
 //////////////////////////////////////////

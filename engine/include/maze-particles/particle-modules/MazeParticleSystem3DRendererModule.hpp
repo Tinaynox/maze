@@ -33,6 +33,8 @@
 #include "maze-particles/MazeParticlesHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
+#include "maze-graphics/MazeMaterial.hpp"
+#include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-particles/MazeParticles3D.hpp"
 #include "maze-particles/MazeParticleSystemState.hpp"
 #include "maze-particles/MazeParticleSystemParameterF32.hpp"
@@ -162,17 +164,28 @@ namespace Maze
 
         
         //////////////////////////////////////////
-        inline RenderMeshPtr const& getRenderMesh() const { return m_renderMesh; }
+        inline RenderMeshAssetRef const& getRenderMeshRef() const { return m_renderMeshRef; }
 
         //////////////////////////////////////////
-        inline void setRenderMesh(RenderMeshPtr const& _renderMesh) { m_renderMesh = _renderMesh; }
-
-
-        //////////////////////////////////////////
-        inline MaterialPtr const& getMaterial() const { return m_material; }
+        inline void setRenderMeshRef(RenderMeshAssetRef const& _renderMesh) { m_renderMeshRef.setRenderMesh(_renderMesh.getRenderMesh()); }
 
         //////////////////////////////////////////
-        inline void setMaterial(MaterialPtr const& _material) { m_material = _material; }
+        inline RenderMeshPtr const& getRenderMesh() const { return m_renderMeshRef.getRenderMesh(); }
+
+        //////////////////////////////////////////
+        inline void setRenderMesh(RenderMeshPtr const& _renderMesh) { m_renderMeshRef.setRenderMesh(_renderMesh); }
+
+        //////////////////////////////////////////
+        inline MaterialAssetRef const& getMaterialRef() const { return m_materialRef; }
+
+        //////////////////////////////////////////
+        inline void setMaterialRef(MaterialAssetRef const& _value) { m_materialRef.setMaterial(_value.getMaterial()); }
+
+        //////////////////////////////////////////
+        inline MaterialPtr const& getMaterial() const { return m_materialRef.getMaterial(); }
+
+        //////////////////////////////////////////
+        inline void setMaterial(MaterialPtr const& _material) { m_materialRef.setMaterial(_material); }
 
 
         //////////////////////////////////////////
@@ -224,8 +237,8 @@ namespace Maze
         {
             return 
                 m_particlesMaxCount == _value.m_particlesMaxCount &&
-                m_renderMesh == _value.m_renderMesh &&
-                m_material == _value.m_material &&
+                m_renderMeshRef.getRenderMesh() == _value.m_renderMeshRef.getRenderMesh() &&
+                m_materialRef.getMaterial() == _value.m_materialRef.getMaterial() &&
                 m_renderAlignment == _value.m_renderAlignment &&
                 m_textureSheetAnimation == _value.m_textureSheetAnimation;
         }
@@ -263,8 +276,8 @@ namespace Maze
 
     protected:
         S32 m_particlesMaxCount = 1000;
-        RenderMeshPtr m_renderMesh;
-        MaterialPtr m_material;
+        RenderMeshAssetRef m_renderMeshRef;
+        MaterialAssetRef m_materialRef;
 
         ParticleSystemRenderAlignment m_renderAlignment = ParticleSystemRenderAlignment::View;
 

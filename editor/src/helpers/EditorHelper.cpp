@@ -289,7 +289,7 @@ namespace Maze
                     if (!fullPath.empty())
                     {
                         EntityPtr const& prefabEntity = EditorPrefabManager::GetInstancePtr()->getPrefabEntity();
-                        EntitySerializationManager::GetInstancePtr()->savePrefabToXMLFile(prefabEntity, fullPath);
+                        EntitySerializationManager::GetInstancePtr()->savePrefabToDataBlockFile(prefabEntity, fullPath);
 
                         EditorManager::GetInstancePtr()->setCurrentEditFileFullPath(fullPath);
                     }
@@ -331,7 +331,7 @@ namespace Maze
                     if (!fullPath.empty())
                     {
                         EntityPtr const& prefabEntity = EditorPrefabManager::GetInstancePtr()->getPrefabEntity();
-                        EntitySerializationManager::GetInstancePtr()->savePrefabToXMLFile(prefabEntity, fullPath);
+                        EntitySerializationManager::GetInstancePtr()->savePrefabToDataBlockFile(prefabEntity, fullPath);
 
                         EditorManager::GetInstancePtr()->setCurrentEditFileFullPath(fullPath);
                     }
@@ -365,7 +365,7 @@ namespace Maze
 
             if (!fullPath.empty())
             {
-                EntityPtr prefab = EntitySerializationManager::GetInstancePtr()->loadPrefabFromXMLFile(fullPath);
+                EntityPtr prefab = EntitySerializationManager::GetInstancePtr()->loadPrefab(fullPath);
                 EditorPrefabManager::GetInstancePtr()->setPrefabEntity(prefab);
                 EditorManager::GetInstancePtr()->setSceneMode(EditorSceneMode::Prefab);
 

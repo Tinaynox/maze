@@ -277,7 +277,7 @@ namespace Maze
             EditorPrefabManager::GetInstancePtr()->saveAssetFile();
         }
 
-        Mat4F32F prevCameraTransform = getSceneMainTools()->getCamera3D()->getTransform()->getLocalTransform();
+        Mat4F32 prevCameraTransform = getSceneMainTools()->getCamera3D()->getTransform()->getLocalTransform();
         Vec3F32 cameraTargetPosition = getSceneMainTools()->getCamera3DTargetPosition();
         F32 yawAngle = getSceneMainTools()->getYawAngle();
         F32 pitchAngle = getSceneMainTools()->getPitchAngle();

@@ -251,19 +251,21 @@ namespace Maze
 
         if (!playtestModeEnabled)
         {
-            ClickButton2DPtr saveButton = UIHelper::CreateDefaultClickButton(
-                "Save",
-                Vec2F32(42.0f, 18.0f),
-                Vec2F32(-2.0f, -2.0f),
-                m_topBarRightLayout->getTransform(),
-                scene.get(),
-                Vec2F32(1.0f, 1.0f),
-                Vec2F32(1.0f, 1.0f));
-            saveButton->eventClick.subscribe(
-                [](Button2D* _button, CursorInputEvent const& _event)
-                {
-                    EditorPrefabManager::GetInstancePtr()->saveAssetFile();
-                });
+            {
+                ClickButton2DPtr saveButton = UIHelper::CreateDefaultClickButton(
+                    "Save",
+                    Vec2F32(42.0f, 18.0f),
+                    Vec2F32(-2.0f, -2.0f),
+                    m_topBarRightLayout->getTransform(),
+                    scene.get(),
+                    Vec2F32(1.0f, 1.0f),
+                    Vec2F32(1.0f, 1.0f));
+                saveButton->eventClick.subscribe(
+                    [](Button2D* _button, CursorInputEvent const& _event)
+                    {
+                        EditorPrefabManager::GetInstancePtr()->saveAssetFile();
+                    });
+            }
         }
 
         ClickButton2DPtr closeButton = UIHelper::CreateDefaultClickButton(

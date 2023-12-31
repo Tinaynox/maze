@@ -205,8 +205,11 @@ namespace Maze
     //////////////////////////////////////////
     void AnimationCurve::toDataBlock(DataBlock& _dataBlock) const
     {
-        DataBlock& keyframesDataBlock = _dataBlock[MAZE_HS("keyframes")];
-        ValueToDataBlock(m_keyframes, keyframesDataBlock);
+        if (!m_keyframes.empty())
+        {
+            DataBlock& keyframesDataBlock = _dataBlock[MAZE_HS("keyframes")];
+            ValueToDataBlock(m_keyframes, keyframesDataBlock);
+        }
 
         _dataBlock.setF32(MAZE_HS("scalar"), m_scalar);
         _dataBlock.setS32(MAZE_HS("mode"), (S32)m_mode);

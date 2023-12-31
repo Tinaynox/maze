@@ -125,7 +125,7 @@ namespace Maze
 
 
             //////////////////////////////////////////
-            inline bool operator==(EmissionModule const& _value)
+            inline bool operator==(EmissionModule const& _value) const
             {
                 if (bursts != _value.bursts)
                     return false;
@@ -203,10 +203,10 @@ namespace Maze
             inline ParticleSystemParameterF32 const& getParameter() const { return parameter; }
 
             //////////////////////////////////////////
-            inline bool operator==(SizeOverLifetimeModule const& _value) { return enabled == _value.enabled && parameter == _value.parameter; }
+            inline bool operator==(SizeOverLifetimeModule const& _value) const { return enabled == _value.enabled && parameter == _value.parameter; }
 
             //////////////////////////////////////////
-            inline bool operator!=(SizeOverLifetimeModule const& _value) { return !this->operator==(_value); }
+            inline bool operator!=(SizeOverLifetimeModule const& _value) const { return !this->operator==(_value); }
 
 
         public:
@@ -281,7 +281,7 @@ namespace Maze
             inline ParticleSystemParameterF32 const& getLinearZParameter() const { return linearZParameter; }
 
             //////////////////////////////////////////
-            inline bool operator==(VelocityOverLifetimeModule const& _value)
+            inline bool operator==(VelocityOverLifetimeModule const& _value) const
             {
                 return enabled == _value.enabled &&
                     linearXParameter == _value.linearXParameter &&
@@ -354,10 +354,10 @@ namespace Maze
             inline ParticleSystemParameterF32 const& getParameter() const { return parameter; }
 
             //////////////////////////////////////////
-            inline bool operator==(VelocityLimitOverLifetimeModule const& _value) { return enabled == _value.enabled && parameter == _value.parameter; }
+            inline bool operator==(VelocityLimitOverLifetimeModule const& _value) const { return enabled == _value.enabled && parameter == _value.parameter; }
 
             //////////////////////////////////////////
-            inline bool operator!=(VelocityLimitOverLifetimeModule const& _value) { return !this->operator==(_value); }
+            inline bool operator!=(VelocityLimitOverLifetimeModule const& _value) const { return !this->operator==(_value); }
 
 
         public:
@@ -420,10 +420,10 @@ namespace Maze
             inline ParticleSystemParameterF32 const& getParameter() const { return parameter; }
 
             //////////////////////////////////////////
-            inline bool operator==(RotationOverLifetimeModule const& _value) { return enabled == _value.enabled && parameter == _value.parameter; }
+            inline bool operator==(RotationOverLifetimeModule const& _value) const { return enabled == _value.enabled && parameter == _value.parameter; }
 
             //////////////////////////////////////////
-            inline bool operator!=(RotationOverLifetimeModule const& _value) { return !this->operator==(_value); }
+            inline bool operator!=(RotationOverLifetimeModule const& _value) const { return !this->operator==(_value); }
 
         public:
 
@@ -485,10 +485,10 @@ namespace Maze
             inline ParticleSystemParameterColor const& getParameter() const { return parameter; }
 
             //////////////////////////////////////////
-            inline bool operator==(ColorOverLifetimeModule const& _value) { return enabled == _value.enabled && parameter == _value.parameter; }
+            inline bool operator==(ColorOverLifetimeModule const& _value) const { return enabled == _value.enabled && parameter == _value.parameter; }
 
             //////////////////////////////////////////
-            inline bool operator!=(ColorOverLifetimeModule const& _value) { return !this->operator==(_value); }
+            inline bool operator!=(ColorOverLifetimeModule const& _value) const { return !this->operator==(_value); }
 
         public:
 
@@ -717,10 +717,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        bool operator==(ParticleSystem3DMainModule const& _module) { return false; }
+        bool operator==(ParticleSystem3DMainModule const& _module) const;
 
         //////////////////////////////////////////
-        bool operator!=(ParticleSystem3DMainModule const& _module) { return false; }
+        inline bool operator!=(ParticleSystem3DMainModule const& _module) const { return !this->operator==(_module); }
 
         //////////////////////////////////////////
         void generateDuration();
