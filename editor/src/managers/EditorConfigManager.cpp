@@ -129,55 +129,19 @@ namespace Maze
     {
         m_configs.clear();
 
-        String editorConfigFullPath = FileHelper::GetWorkingDirectory() + "/config.xml";
+        String editorConfigFullPath = FileHelper::GetWorkingDirectory() + "/config.mzdata";
 
-        Debug::Log("Loading editor config %s'...", editorConfigFullPath.c_str());
-
-        tinyxml2::XMLDocument doc;
-        tinyxml2::XMLError loadError = doc.LoadFile(editorConfigFullPath.c_str());
-        if (tinyxml2::XML_SUCCESS != loadError)
-        {
-            if (tinyxml2::XML_ERROR_FILE_NOT_FOUND == loadError)
-                return false;
-
-            MAZE_ERROR("File '%s' loading error - XMLError: %d!", editorConfigFullPath.c_str(), (S32)loadError);
+        DataBlock dataBlock;
+        if (!dataBlock.loadFile(editorConfigFullPath))
             return false;
-        }
 
-        tinyxml2::XMLNode* rootNode = doc.FirstChild();
-        if (!rootNode)
+        for (DataBlock const* subBlock : dataBlock)
         {
-            MAZE_ERROR("File '%s' loading error - empty root node!", editorConfigFullPath.c_str());
-            return false;
-        }
-
-        rootNode = rootNode->NextSibling();
-        if (!rootNode)
-        {
-            MAZE_ERROR("File '%s' loading error - empty root node children!", editorConfigFullPath.c_str());
-            return false;
-        }
-
-        tinyxml2::XMLNode* settingsNode = rootNode->FirstChild();
-        while (settingsNode)
-        {
-            tinyxml2::XMLElement* settingsMetaClassElement = settingsNode->ToElement();
-
-            if (!settingsMetaClassElement)
-            {
-                settingsNode = settingsNode->NextSibling();
-                continue;
-            }
-
-            String key = settingsMetaClassElement->Attribute("key");
-            String value = settingsMetaClassElement->Attribute("value");
+            String key = subBlock->getString(MAZE_HS("key"));
+            String value = subBlock->getString(MAZE_HS("value"));
 
             m_configs[key] = value;
-
-            settingsNode = settingsNode->NextSibling();
         }
-
-        Debug::Log("Editor config '%s' loaded", editorConfigFullPath.c_str());
 
         applyConfigs();
 

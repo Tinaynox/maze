@@ -856,7 +856,7 @@ namespace Maze
     //////////////////////////////////////////
     DataBlock& DataBlock::operator=(DataBlock&& _value)
     {
-        if (_value.isTopmost())
+        if (isTopmost() && _value.isTopmost())
         {
             std::swap(m_shared, _value.m_shared);
             std::swap(m_dataBuffer, _value.m_dataBuffer);
@@ -866,7 +866,14 @@ namespace Maze
         }
         else
         {
-            clear();
+            if (isTopmost())
+            {
+                clear();
+
+                if (_value.getNameId() != 0)
+                    setName(_value.getName());
+            }
+
             copyFrom(&_value);
         }
 
