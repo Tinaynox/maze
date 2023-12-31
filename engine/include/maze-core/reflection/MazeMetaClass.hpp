@@ -147,7 +147,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual bool isHasOperatorEquals() const MAZE_ABSTRACT;
+        virtual bool hasOperatorEquals() const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual bool isEqual(ConstMetaInstance const& _instance0, ConstMetaInstance const& _instance1) const MAZE_ABSTRACT;
@@ -774,7 +774,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual bool isHasOperatorEquals() const MAZE_OVERRIDE
+        virtual bool hasOperatorEquals() const MAZE_OVERRIDE
         {
             return StdHelper::HasOperatorEquals<TValue>::value;
         }

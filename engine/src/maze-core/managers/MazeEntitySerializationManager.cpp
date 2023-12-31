@@ -344,6 +344,9 @@ namespace Maze
 
                             HashedCString propertyName = metaProperty->getName();
 
+                            if (!metaProperty->hasOperatorEquals())
+                                continue;
+
                             if (!metaProperty->isEqual(metaInstance, identityComponentMetaInstance))
                             {
                                 MetaClass const* metaPropertyMetaClass = metaProperty->getMetaClass();
