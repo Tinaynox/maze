@@ -91,109 +91,6 @@ namespace Maze
         return true;
     }
 
-
-    //////////////////////////////////////////
-    /*
-    bool EntitySerializationManager::savePrefabToDataBlockFileOBSOLETE(EntityPtr const& _entity, Path const& _fileFullPath) const
-    {
-        MAZE_PROFILE_EVENT("EntitySerializationManager::savePrefabToDataBlockFile");
-
-        if (!_entity)
-            return false;
-
-        if (_fileFullPath.empty())
-            return false;
-
-        Path directoryFullPath = FileHelper::GetDirectoryInPath(_fileFullPath);
-        FileHelper::CreateDirectoryRecursive(directoryFullPath);
-
-        DataBlock dataBlock;
-
-        Map<EntityPtr, Vector<ComponentPtr>> entityComponents;
-        Vector<EntityPtr> prefabs;
-        collectEntityComponentsMap(_entity, entityComponents, prefabs);
-
-        S32 indexCounter = 0;
-        Map<void*, S32> pointerIndices;
-
-        for (auto const& entityComponentsData : entityComponents)
-        {
-            EntityPtr const& entity = entityComponentsData.first;
-            pointerIndices[entity.get()] = ++indexCounter;
-
-            Vector<ComponentPtr> const& components = entityComponentsData.second;
-            for (ComponentPtr const& component : components)
-                pointerIndices[component.get()] = ++indexCounter;
-        }
-
-        for (EntityPtr const& prefabEntity : prefabs)
-            pointerIndices[prefabEntity.get()] = ++indexCounter;
-
-
-        dataBlock.setString("_rootIndex", StringHelper::ToString(pointerIndices[_entity.get()]));
-
-        for (auto const& entityComponentsData : entityComponents)
-        {
-            EntityPtr const& entity = entityComponentsData.first;
-            Vector<ComponentPtr> const& components = entityComponentsData.second;
-
-            DataBlock* entityBlock = dataBlock.addNewDataBlock("entity");
-            entityBlock->setString("_i", StringHelper::ToString(pointerIndices[entity.get()]));
-
-            if (!entity->getActiveSelf())
-                entityBlock->setString("active", StringHelper::ToString(entity->getActiveSelf()));
-
-            for (ComponentPtr const& component : components)
-            {
-                DataBlock* componentBlock = entityBlock->addNewDataBlock("component");
-                componentBlock->setString("_i", StringHelper::ToString(pointerIndices[component.get()]));
-                componentBlock->setCString("_t", static_cast<CString>(component->getMetaClass()->getName()));
-
-                MetaClass const* metaClass = component->getMetaClass();
-                MetaInstance metaInstance = component->getMetaInstance();
-
-                for (MetaClass* metaClass : metaClass->getAllSuperMetaClasses())
-                {
-                    for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
-                    {
-                        MetaProperty* metaProperty = metaClass->getProperty(i);
-
-                        HashedCString propertyName = metaProperty->getName();
-
-                        MetaClass const* metaPropertyMetaClass = metaProperty->getMetaClass();
-                        if (metaPropertyMetaClass)
-                        {
-                            if (metaPropertyMetaClass->isInheritedFrom<Component>() || metaPropertyMetaClass->isInheritedFrom<Entity>())
-                            {
-                                void* propertyValuePointer = metaProperty->getSharedPtrPointer(metaInstance);
-                                if (propertyValuePointer)
-                                {
-                                    S32 propertyValueIndex = pointerIndices[propertyValuePointer];
-                                    componentBlock->setString(propertyName, StringHelper::ToString(propertyValueIndex).c_str());
-                                }
-
-                                continue;
-                            }
-                        }
-
-                        String properyStringValue = metaProperty->toString(metaInstance);
-
-                        MAZE_ERROR_IF(StringHelper::IsStartsWith(properyStringValue.c_str(), "ptr:"), "Trying to save property '%s' as pointer!", propertyName);
-
-                        componentBlock->setString(propertyName, properyStringValue.c_str());
-
-                    }
-                }
-            }
-        }
-
- 
-        dataBlock.saveTextFile(_fileFullPath);
-
-        return true;
-    }
-    */
-
     //////////////////////////////////////////
     bool EntitySerializationManager::savePrefabToDataBlockFile(EntityPtr const& _entity, Path const& _fileFullPath) const
     {
@@ -274,17 +171,56 @@ namespace Maze
                         MetaClass const* metaPropertyMetaClass = metaProperty->getMetaClass();
                         if (metaPropertyMetaClass)
                         {
-                            if (metaPropertyMetaClass->isInheritedFrom<Component>() || metaPropertyMetaClass->isInheritedFrom<Entity>())
+                            ClassUID metaPropertyUID = metaProperty->getValueClassUID();
+                            if (metaPropertyUID != 0)
                             {
-                                void* propertyValuePointer = metaProperty->getSharedPtrPointer(metaInstance);
-                                if (propertyValuePointer)
+                                if (metaPropertyMetaClass->isInheritedFrom<Component>() || metaPropertyMetaClass->isInheritedFrom<Entity>())
                                 {
-                                    S32 propertyValueIndex = pointerIndices[propertyValuePointer];
-                                    componentBlock->setS32(propertyName, propertyValueIndex);
-                                }
+                                    void* propertyValuePointer = metaProperty->getSharedPtrPointer(metaInstance);
+                                    if (propertyValuePointer)
+                                    {
+                                        S32 propertyValueIndex = pointerIndices[propertyValuePointer];
+                                        componentBlock->setS32(propertyName, propertyValueIndex);
+                                    }
 
-                                continue;
+                                    continue;
+                                }
+                                else
+                                if (metaPropertyUID == ClassInfo<Vector<ComponentPtr>>::UID())
+                                {
+                                    Vector<ComponentPtr> comps;
+                                    metaProperty->getValue<Vector<ComponentPtr>>(metaInstance, comps);
+
+                                    if (!comps.empty())
+                                    {
+                                        Vector<S32> compIndices;
+                                        compIndices.resize(comps.size());
+                                        for (S32 i = 0, in = S32(comps.size()); i < in; ++i)
+                                            compIndices[i] = pointerIndices[comps[i].get()];
+                                        AddDataToDataBlock(*componentBlock, propertyName, compIndices);
+                                    }
+
+                                    continue;
+                                }
+                                else
+                                if (metaPropertyUID == ClassInfo<Vector<EntityPtr>>::UID())
+                                {
+                                    Vector<EntityPtr> ents;
+                                    metaProperty->getValue<Vector<EntityPtr>>(metaInstance, ents);
+
+                                    if (!ents.empty())
+                                    {
+                                        Vector<S32> entIndices;
+                                        entIndices.resize(ents.size());
+                                        for (S32 i = 0, in = S32(ents.size()); i < in; ++i)
+                                            entIndices[i] = pointerIndices[ents[i].get()];
+                                        AddDataToDataBlock(*componentBlock, propertyName, entIndices);
+                                    }
+
+                                    continue;
+                                }
                             }
+                            
                         }
 
                         DataBlockHelper::SerializeMetaPropertyToDataBlock(metaInstance, metaProperty, *componentBlock);
@@ -941,13 +877,43 @@ namespace Maze
                                         else
                                         if (metaPropertyUID == ClassInfo<Vector<ComponentPtr>>::UID())
                                         {
-                                            MAZE_NOT_IMPLEMENTED;
+                                            DataBlock const* propertyBlock = componentBlock->getDataBlock(MAZE_HS("value"));
+                                            if (propertyBlock)
+                                            {
+                                                Vector<S32> componentsIndices;
+                                                ValueFromDataBlock(componentsIndices, *propertyBlock);
+
+                                                Vector<ComponentPtr> componentsValue;
+                                                componentsValue.resize(componentsIndices.size());
+                                                for (Size i = 0, in = componentsIndices.size(); i < in; ++i)
+                                                    componentsValue[i] = components[componentsIndices[i]];
+                                                metaProperty->setValue(component->getMetaInstance(), &componentsValue);
+                                            }
+                                            else
+                                            {
+                                                MAZE_ERROR("Invalid property 'value'!");
+                                            }
                                             continue;
                                         }
                                         else
                                         if (metaPropertyUID == ClassInfo<Vector<EntityPtr>>::UID())
                                         {
-                                            MAZE_NOT_IMPLEMENTED;
+                                            DataBlock const* propertyBlock = componentBlock->getDataBlock(MAZE_HS("value"));
+                                            if (propertyBlock)
+                                            {
+                                                Vector<S32> entitiesIndices;
+                                                ValueFromDataBlock(entitiesIndices, *propertyBlock);
+
+                                                Vector<EntityPtr> entitiesValue;
+                                                entitiesValue.resize(entitiesIndices.size());
+                                                for (Size i = 0, in = entitiesIndices.size(); i < in; ++i)
+                                                    entitiesValue[i] = entities[entitiesIndices[i]];
+                                                metaProperty->setValue(component->getMetaInstance(), &entitiesValue);
+                                            }
+                                            else
+                                            {
+                                                MAZE_ERROR("Invalid property 'value'");
+                                            }
                                             continue;
                                         }
                                     }
