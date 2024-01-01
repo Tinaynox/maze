@@ -253,7 +253,8 @@ namespace Maze
     template <typename UValue>
     inline void ValueToDataBlock(SharedPtr<UValue> const& _value, DataBlock& _data)
     {
-        TryValueToDataBlock<UValue>(*_value.get(), _data);
+        if (_value)
+            TryValueToDataBlock<UValue>(*_value.get(), _data);
     }
 
     //////////////////////////////////////////
