@@ -514,6 +514,8 @@ namespace Maze
                             MAZE_ERROR("Entity is nullptr!");
                             continue;
                         }
+                        entity->createComponent<PrefabInstance>(prefabName);
+
                         entities[entityIndex] = entity;
 
                         for (DataBlock const* prefabChildBlock : *subBlock)
