@@ -100,11 +100,11 @@ namespace Maze
                 _ecsScene,
                 Vec2F(0.5f, 0.5f),
                 Vec2F(0.5f, 0.5f),
-                { 200, 200, 200 },
-                { 187, 187, 187 },
-                { 161, 161, 161 },
-                { 171, 171, 171 },
-                { 151, 151, 151 });
+                ColorU32{ 200, 200, 200 },
+                ColorU32{ 187, 187, 187 },
+                ColorU32{ 161, 161, 161 },
+                ColorU32{ 171, 171, 171 },
+                ColorU32{ 151, 151, 151 });
 
             return button;
         }
@@ -144,10 +144,10 @@ namespace Maze
                 _ecsScene,
                 Vec2F(0.5f, 0.5f),
                 Vec2F(0.5f, 0.5f));
-            button->setNormalColor({ 200, 200, 200 });
-            button->setFocusedColor({ 187, 187, 187 });
-            button->setSelectedColor({ 161, 161, 161 });
-            button->setPressedColor({ 171, 171, 171 });
+            button->setNormalColor(ColorU32{ 200, 200, 200 });
+            button->setFocusedColor(ColorU32{ 187, 187, 187 });
+            button->setSelectedColor(ColorU32{ 161, 161, 161 });
+            button->setPressedColor(ColorU32{ 171, 171, 171 });
 
             return button;
         }

@@ -137,11 +137,11 @@ namespace Maze
             ECSScene* _ecsScene,
             Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
             Vec2F const& _pivot = Vec2F(0.5f, 0.5f),
-            ColorU32 _normalColor = { 245, 245, 245 },
-            ColorU32 _focusedColor = { 213, 231, 248 },
-            ColorU32 _checkedColor = { 200, 220, 240 },
-            ColorU32 _pressedColor = { 213, 231, 248 },
-            ColorU32 _focusedPressedColor = { 213, 231, 248 });
+            ColorU32 _normalColor = ColorU32{ 245, 245, 245 },
+            ColorU32 _focusedColor = ColorU32{ 213, 231, 248 },
+            ColorU32 _checkedColor = ColorU32{ 200, 220, 240 },
+            ColorU32 _pressedColor = ColorU32{ 213, 231, 248 },
+            ColorU32 _focusedPressedColor = ColorU32{ 213, 231, 248 });
 
         //////////////////////////////////////////
         MAZE_UI_API ClickButton2DPtr CreateClickButton(

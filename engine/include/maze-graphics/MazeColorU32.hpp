@@ -73,7 +73,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        inline ColorU32(U8 _r = 255, U8 _g = 255, U8 _b = 255, U8 _a = 255)
+        explicit inline ColorU32(U8 _r = 255, U8 _g = 255, U8 _b = 255, U8 _a = 255)
             : r(_r)
             , g(_g)
             , b(_b)

@@ -477,10 +477,10 @@ namespace Maze
             entity->ensureComponent<Name>("ClickButton");
 
             ClickButton2DPtr clickButton = entity->createComponent<ClickButton2D>();
-            clickButton->setNormalColor({ 245, 245, 245 });
-            clickButton->setFocusedColor({ 213, 231, 248 });
-            clickButton->setSelectedColor({ 200, 220, 240 });
-            clickButton->setPressedColor({ 213, 231, 248 });
+            clickButton->setNormalColor(ColorU32{ 245, 245, 245 });
+            clickButton->setFocusedColor(ColorU32{ 213, 231, 248 });
+            clickButton->setSelectedColor(ColorU32{ 200, 220, 240 });
+            clickButton->setPressedColor(ColorU32{ 213, 231, 248 });
 
             Transform2DPtr const& transform = clickButton->getTransform();
             transform->setParent(_parent);
@@ -620,10 +620,10 @@ namespace Maze
             entity->ensureComponent<Name>("ClickButton");
 
             ClickButton2DPtr clickButton = entity->createComponent<ClickButton2D>();
-            clickButton->setNormalColor({ 245, 245, 245 });
-            clickButton->setFocusedColor({ 213, 231, 248 });
-            clickButton->setSelectedColor({ 200, 220, 240 });
-            clickButton->setPressedColor({ 213, 231, 248 });
+            clickButton->setNormalColor(ColorU32{ 245, 245, 245 });
+            clickButton->setFocusedColor(ColorU32{ 213, 231, 248 });
+            clickButton->setSelectedColor(ColorU32{ 200, 220, 240 });
+            clickButton->setPressedColor(ColorU32{ 213, 231, 248 });
 
             Transform2DPtr const& transform = clickButton->getTransform();
             transform->setParent(_parent);
@@ -1674,10 +1674,10 @@ namespace Maze
 
                 ToggleButton2DPtr toggleButton = buttonEntity->createComponent<ToggleButton2D>();
                 toggleButton->setCheckByClick(false);
-                toggleButton->setNormalColor({ 245, 245, 245 });
-                toggleButton->setFocusedColor({ 213, 231, 248 });
-                toggleButton->setSelectedColor({ 200, 220, 240 } );
-                toggleButton->setPressedColor({ 213, 231, 248 });
+                toggleButton->setNormalColor(ColorU32{ 245, 245, 245 });
+                toggleButton->setFocusedColor(ColorU32{ 213, 231, 248 });
+                toggleButton->setSelectedColor(ColorU32{ 200, 220, 240 } );
+                toggleButton->setPressedColor(ColorU32{ 213, 231, 248 });
 
                 Transform2DPtr const& toggleTransform = toggleButton->getTransform();
                 toggleTransform->setParent(transform);

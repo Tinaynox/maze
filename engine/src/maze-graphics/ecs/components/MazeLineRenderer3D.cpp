@@ -238,7 +238,7 @@ namespace Maze
             EdgeData& edge = edges[i];
 
             width = getTrailWidth(edge.progress);
-            color = m_color.evaluate(edge.progress);
+            color = ColorF128(m_color.evaluate(edge.progress));
             halfWidth = width * 0.5f;
 
             nextPosition = m_positions[i + 1];
@@ -263,7 +263,7 @@ namespace Maze
         }
         
         width = getTrailWidth(1.0f);
-        color = m_color.evaluate(1.0f);
+        color = ColorF128(m_color.evaluate(1.0f));
         halfWidth = width * 0.5f;
         direction = (m_positions.back() - m_positions[m_positions.size() - 2]).normalizedCopy();
         perpendicular = direction.crossProduct(Vec3F::c_unitZ);

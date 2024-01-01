@@ -137,13 +137,13 @@ namespace Maze
         void setColor(ColorU32 _color);
 
         //////////////////////////////////////////
-        inline void setColor(U8 _r, U8 _g, U8 _b) { setColor({_r, _g, _b}); }
+        inline void setColor(U8 _r, U8 _g, U8 _b) { setColor(ColorU32{_r, _g, _b}); }
 
         //////////////////////////////////////////
-        inline void setColor(U8 _r, U8 _g, U8 _b, U8 _a) { setColor({ _r, _g, _b, _a }); }
+        inline void setColor(U8 _r, U8 _g, U8 _b, U8 _a) { setColor(ColorU32{ _r, _g, _b, _a }); }
 
         //////////////////////////////////////////
-        inline void setColorAlpha(U8 _a) { setColor({ m_color.r, m_color.g, m_color.b, _a }); }
+        inline void setColorAlpha(U8 _a) { setColor(ColorU32{ m_color.r, m_color.g, m_color.b, _a }); }
 
         //////////////////////////////////////////
         ColorU32 getColor() const { return m_color; }            

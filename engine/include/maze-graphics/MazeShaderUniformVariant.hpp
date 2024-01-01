@@ -298,7 +298,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline ColorF128 getColorF128() const { return m_vectorF; }
+        inline ColorF128 getColorF128() const { return ColorF128(m_vectorF); }
 
 
         //////////////////////////////////////////

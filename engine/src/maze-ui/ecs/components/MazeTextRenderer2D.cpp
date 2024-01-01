@@ -586,7 +586,7 @@ namespace Maze
         String::iterator it = finalText.begin();
         String::iterator end = finalText.end();
 
-        ColorF128 currentGlyphColor = m_color.toVec4F32();
+        ColorF128 currentGlyphColor = ColorF128(m_color.toVec4F32());
 
         Size curCharOffset = 0;
         F32 xAlignOffset = calculateXAlignOffset(rowLengths, currentRow);

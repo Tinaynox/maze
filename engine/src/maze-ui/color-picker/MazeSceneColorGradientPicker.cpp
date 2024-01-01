@@ -723,10 +723,10 @@ namespace Maze
             this,
             Vec2F(0.5f, 0.5f),
             Vec2F(0.5f, 0.5f),
-            { 100, 100, 100 },
-            { 30, 175, 255 },
-            { 0, 145, 255 },
-            { 30, 175, 255 });
+            ColorU32{ 100, 100, 100 },
+            ColorU32{ 30, 175, 255 },
+            ColorU32{ 0, 145, 255 },
+            ColorU32{ 30, 175, 255 });
         button->setCheckByClick(false);
         colorSliderTag->setToggleButton(button);
 
@@ -1046,7 +1046,7 @@ namespace Maze
             {
                 ColorGradient::KeyframeRGB const& keyframe = gradient.getKeysRGB()[m_colorTagIndex];
 
-                m_colorEdit->setColor(keyframe.value);
+                m_colorEdit->setColor(ColorF128(keyframe.value));
 
                 if (!m_locationEdit->getSelected())
                     m_locationEdit->setText(StringHelper::F32ToStringFormatted(keyframe.time * 100.0f, 1));

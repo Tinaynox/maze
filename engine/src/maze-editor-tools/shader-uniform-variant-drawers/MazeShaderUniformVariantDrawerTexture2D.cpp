@@ -147,10 +147,10 @@ namespace Maze
             Vec2F::c_zero,
             textureBlockLayout->getTransform(),
             _parent->getEntityRaw()->getECSScene());
-        m_selectAssetButton->setNormalColor({ 50, 50, 50 });
-        m_selectAssetButton->setFocusedColor({ 100, 100, 100 });
-        m_selectAssetButton->setSelectedColor({ 150, 150, 150 });
-        m_selectAssetButton->setPressedColor({ 100, 150, 100 });
+        m_selectAssetButton->setNormalColor(ColorU32{ 50, 50, 50 });
+        m_selectAssetButton->setFocusedColor(ColorU32{ 100, 100, 100 });
+        m_selectAssetButton->setSelectedColor(ColorU32{ 150, 150, 150 });
+        m_selectAssetButton->setPressedColor(ColorU32{ 100, 150, 100 });
         m_selectAssetButton->eventClick.subscribe(this, &ShaderUniformVariantDrawerTexture2D::notifySelectAssetClick);
 
         SpriteRenderer2DPtr textureHolder = SpriteHelper::CreateSprite(

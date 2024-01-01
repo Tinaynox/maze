@@ -93,13 +93,13 @@ namespace Maze
         //////////////////////////////////////////
         inline void setColor(U8 _r, U8 _g, U8 _b)
         {
-            setColor({ _r, _g, _b });
+            setColor(ColorU32{ _r, _g, _b });
         }
 
         //////////////////////////////////////////
         inline void setColor(U8 _r, U8 _g, U8 _b, U8 _a)
         {
-            setColor({ _r, _g, _b, _a });
+            setColor(ColorU32{ _r, _g, _b, _a });
         }
 
         //////////////////////////////////////////

@@ -74,7 +74,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        inline ColorF128(
+        explicit inline ColorF128(
             F32 _r = 1.0f,
             F32 _g = 1.0f,
             F32 _b = 1.0f,
@@ -104,7 +104,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline ColorF128(Vec3F const& _colorF32)
+        explicit inline ColorF128(Vec3F const& _colorF32)
             : r(_colorF32.x)
             , g(_colorF32.y)
             , b(_colorF32.z)
@@ -123,7 +123,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline ColorF128(Vec4F const& _value)
+        explicit inline ColorF128(Vec4F const& _value)
             : value(_value)
         {
         }
