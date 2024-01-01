@@ -86,7 +86,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(TrailRenderer3D, Component,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<MaterialPtr>, materials, Vector<MaterialPtr>(), getMaterials, setMaterials),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<MaterialAssetRef>, materials, Vector<MaterialAssetRef>(), getMaterialRefs, setMaterialRefs),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, time, 2.0f, getTime, setTime),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, minVertexDistance, 0.35f, getMinVertexDistance, setMinVertexDistance),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, width, 1.0f, getWidth, setWidth),
@@ -148,8 +148,8 @@ namespace Maze
     //////////////////////////////////////////
     void TrailRenderer3D::setMaterial(MaterialPtr const& _material)
     {
-        Vector<MaterialPtr> materials = { _material };
-        setMaterials(materials);
+        Vector<MaterialAssetRef> materials = { MaterialAssetRef(_material) };
+        setMaterialRefs(materials);
     }
 
     //////////////////////////////////////////

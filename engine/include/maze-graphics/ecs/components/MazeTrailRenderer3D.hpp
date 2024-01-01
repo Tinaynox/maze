@@ -103,10 +103,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Vector<MaterialPtr> const& getMaterials() const { return m_materials; }
+        inline Vector<MaterialAssetRef> const& getMaterialRefs() const { return m_materialRefs; }
 
         //////////////////////////////////////////
-        inline void setMaterials(Vector<MaterialPtr> const& _materials) { m_materials = _materials; }
+        inline void setMaterialRefs(Vector<MaterialAssetRef> const& _materials) { m_materialRefs = _materials; }
 
         //////////////////////////////////////////
         void setMaterial(MaterialPtr const& _material);
@@ -226,7 +226,7 @@ namespace Maze
         RenderMaskPtr m_renderMask;
         Transform3DPtr m_transform;
 
-        Vector<MaterialPtr> m_materials;
+        Vector<MaterialAssetRef> m_materialRefs;
 
         F32 m_time;
         F32 m_minVertexDistance;

@@ -86,7 +86,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(LineRenderer3D, Component,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<MaterialPtr>, materials, Vector<MaterialPtr>(), getMaterials, setMaterials),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<MaterialAssetRef>, materials, Vector<MaterialAssetRef>(), getMaterialRefs, setMaterialRefs),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, width, 1.0f, getWidth, setWidth),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorGradient, color, ColorGradient(), getColor, setColor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Vec3F>, positions, Vector<Vec3F>(), getPositions, setPositions));
@@ -145,8 +145,8 @@ namespace Maze
     //////////////////////////////////////////
     void LineRenderer3D::setMaterial(MaterialPtr const& _material)
     {
-        Vector<MaterialPtr> materials = { _material };
-        setMaterials(materials);
+        Vector<MaterialAssetRef> materials = { MaterialAssetRef(_material) };
+        setMaterialRefs(materials);
     }
 
     //////////////////////////////////////////

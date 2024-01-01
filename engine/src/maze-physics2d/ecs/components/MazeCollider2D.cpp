@@ -84,7 +84,7 @@ namespace Maze
     //////////////////////////////////////////
     void Collider2D::setPhysicsMaterial(String const& _physicsMaterial)
     {
-        setPhysicsMaterial(PhysicsMaterial2DManager::GetInstancePtr()->getMaterial(_physicsMaterial));
+        setPhysicsMaterialRef(PhysicsMaterial2DManager::GetInstancePtr()->getMaterial(_physicsMaterial));
     }
     
     

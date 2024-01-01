@@ -504,7 +504,7 @@ namespace Maze
                     {
                         if (_trailRenderer->getRenderMesh())
                         {
-                            Vector<MaterialPtr> const& materials = _trailRenderer->getMaterials();
+                            Vector<MaterialAssetRef> const& materials = _trailRenderer->getMaterialRefs();
                             Vector<VertexArrayObjectPtr> const& vaos = _trailRenderer->getRenderMesh()->getVertexArrayObjects();
 
                             if (vaos.empty())
@@ -519,10 +519,10 @@ namespace Maze
                                 MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
 
                                 MaterialPtr const* material = nullptr;
-                                if (materials.empty() || !materials[i % materials.size()])
+                                if (materials.empty() || !materials[i % materials.size()].getMaterial())
                                     material = &m_renderSystem->getMaterialManager()->getErrorMaterial();
                                 else
-                                    material = &materials[i % materials.size()];
+                                    material = &materials[i % materials.size()].getMaterial();
 
                                 _renderData.emplace_back(
                                     RenderUnit
@@ -550,7 +550,7 @@ namespace Maze
                 {
                     if (_lineRenderer->getRenderMesh())
                     {
-                        Vector<MaterialPtr> const& materials = _lineRenderer->getMaterials();
+                        Vector<MaterialAssetRef> const& materials = _lineRenderer->getMaterialRefs();
                         Vector<VertexArrayObjectPtr> const& vaos = _lineRenderer->getRenderMesh()->getVertexArrayObjects();
 
                         if (vaos.empty())
@@ -565,10 +565,10 @@ namespace Maze
                             MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
 
                             MaterialPtr const* material = nullptr;
-                            if (materials.empty())
+                            if (materials.empty() || !materials[i % materials.size()].getMaterial())
                                 material = &m_renderSystem->getMaterialManager()->getErrorMaterial();
                             else
-                                material = &materials[i % materials.size()];
+                                material = &materials[i % materials.size()].getMaterial();
 
                             _renderData.emplace_back(
                                 RenderUnit
