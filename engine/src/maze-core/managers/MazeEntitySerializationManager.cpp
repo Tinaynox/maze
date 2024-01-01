@@ -168,59 +168,56 @@ namespace Maze
 
                         HashedCString propertyName = metaProperty->getName();
 
-                        MetaClass const* metaPropertyMetaClass = metaProperty->getMetaClass();
-                        if (metaPropertyMetaClass)
+                        
+                        ClassUID metaPropertyUID = metaProperty->getValueClassUID();
+                        if (metaPropertyUID != 0)
                         {
-                            ClassUID metaPropertyUID = metaProperty->getValueClassUID();
-                            if (metaPropertyUID != 0)
+                            MetaClass const* metaPropertyMetaClass = metaProperty->getMetaClass();
+                            if (metaPropertyMetaClass && (metaPropertyMetaClass->isInheritedFrom<Component>() || metaPropertyMetaClass->isInheritedFrom<Entity>()))
                             {
-                                if (metaPropertyMetaClass->isInheritedFrom<Component>() || metaPropertyMetaClass->isInheritedFrom<Entity>())
+                                void* propertyValuePointer = metaProperty->getSharedPtrPointer(metaInstance);
+                                if (propertyValuePointer)
                                 {
-                                    void* propertyValuePointer = metaProperty->getSharedPtrPointer(metaInstance);
-                                    if (propertyValuePointer)
-                                    {
-                                        S32 propertyValueIndex = pointerIndices[propertyValuePointer];
-                                        componentBlock->setS32(propertyName, propertyValueIndex);
-                                    }
-
-                                    continue;
+                                    S32 propertyValueIndex = pointerIndices[propertyValuePointer];
+                                    componentBlock->setS32(propertyName, propertyValueIndex);
                                 }
-                                else
-                                if (metaPropertyUID == ClassInfo<Vector<ComponentPtr>>::UID())
-                                {
-                                    Vector<ComponentPtr> comps;
-                                    metaProperty->getValue<Vector<ComponentPtr>>(metaInstance, comps);
 
-                                    if (!comps.empty())
-                                    {
-                                        Vector<S32> compIndices;
-                                        compIndices.resize(comps.size());
-                                        for (S32 i = 0, in = S32(comps.size()); i < in; ++i)
-                                            compIndices[i] = pointerIndices[comps[i].get()];
-                                        AddDataToDataBlock(*componentBlock, propertyName, compIndices);
-                                    }
-
-                                    continue;
-                                }
-                                else
-                                if (metaPropertyUID == ClassInfo<Vector<EntityPtr>>::UID())
-                                {
-                                    Vector<EntityPtr> ents;
-                                    metaProperty->getValue<Vector<EntityPtr>>(metaInstance, ents);
-
-                                    if (!ents.empty())
-                                    {
-                                        Vector<S32> entIndices;
-                                        entIndices.resize(ents.size());
-                                        for (S32 i = 0, in = S32(ents.size()); i < in; ++i)
-                                            entIndices[i] = pointerIndices[ents[i].get()];
-                                        AddDataToDataBlock(*componentBlock, propertyName, entIndices);
-                                    }
-
-                                    continue;
-                                }
+                                continue;
                             }
-                            
+                            else
+                            if (metaPropertyUID == ClassInfo<Vector<ComponentPtr>>::UID())
+                            {
+                                Vector<ComponentPtr> comps;
+                                metaProperty->getValue<Vector<ComponentPtr>>(metaInstance, comps);
+
+                                if (!comps.empty())
+                                {
+                                    Vector<S32> compIndices;
+                                    compIndices.resize(comps.size());
+                                    for (S32 i = 0, in = S32(comps.size()); i < in; ++i)
+                                        compIndices[i] = pointerIndices[comps[i].get()];
+                                    AddDataToDataBlock(*componentBlock, propertyName, compIndices);
+                                }
+
+                                continue;
+                            }
+                            else
+                            if (metaPropertyUID == ClassInfo<Vector<EntityPtr>>::UID())
+                            {
+                                Vector<EntityPtr> ents;
+                                metaProperty->getValue<Vector<EntityPtr>>(metaInstance, ents);
+
+                                if (!ents.empty())
+                                {
+                                    Vector<S32> entIndices;
+                                    entIndices.resize(ents.size());
+                                    for (S32 i = 0, in = S32(ents.size()); i < in; ++i)
+                                        entIndices[i] = pointerIndices[ents[i].get()];
+                                    AddDataToDataBlock(*componentBlock, propertyName, entIndices);
+                                }
+
+                                continue;
+                            }
                         }
 
                         DataBlockHelper::SerializeMetaPropertyToDataBlock(metaInstance, metaProperty, *componentBlock);
