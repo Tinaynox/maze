@@ -122,6 +122,9 @@ namespace Maze
     {
         static MaterialPtr const nullPointer;
 
+        if (_materialName.empty())
+            return nullPointer;
+
         MaterialLibraryData const* libraryData = getMaterialLibraryData(_materialName);
         if (libraryData != nullptr)
             return libraryData->material;
