@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "maze-physics2d/MazePhysics2DHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-physics2d/physics/MazePhysicsMaterial2D.hpp"
 
 
 //////////////////////////////////////////
@@ -70,10 +71,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline PhysicsMaterial2DPtr const& getPhysicsMaterial() const { return m_physicsMaterial; }
+        inline PhysicsMaterial2DPtr const& getPhysicsMaterial() const { return m_physicsMaterialRef.getMaterial(); }
 
         //////////////////////////////////////////
-        inline void setPhysicsMaterial(PhysicsMaterial2DPtr const& _physicsMaterial) { m_physicsMaterial = _physicsMaterial; }
+        inline PhysicsMaterial2DAssetRef const& getPhysicsMaterialRef() const { return m_physicsMaterialRef; }
+
+        //////////////////////////////////////////
+        inline void setPhysicsMaterialRef(PhysicsMaterial2DAssetRef const& _physicsMaterial) { m_physicsMaterialRef.setMaterial(_physicsMaterial.getMaterial()); }
 
         //////////////////////////////////////////
         void setPhysicsMaterial(String const& _physicsMaterial);
@@ -101,7 +105,7 @@ namespace Maze
 
     protected:
         bool m_isSensor = false;
-        PhysicsMaterial2DPtr m_physicsMaterial;
+        PhysicsMaterial2DAssetRef m_physicsMaterialRef;
     };
 
 

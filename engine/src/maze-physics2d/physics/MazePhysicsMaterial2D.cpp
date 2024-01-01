@@ -263,5 +263,26 @@ namespace Maze
         }
     }
 
+
+    //////////////////////////////////////////
+    // Class PhysicsMaterial2DAssetRef
+    //
+    //////////////////////////////////////////
+    String PhysicsMaterial2DAssetRef::toString() const
+    {
+        if (!m_material)
+            return String();
+
+        String const& name = PhysicsMaterial2DManager::GetInstancePtr()->getMaterialName(m_material.get());
+        return !name.empty() ? name : String();
+    }
+
+    //////////////////////////////////////////
+    void PhysicsMaterial2DAssetRef::setString(CString _data, Size _count)
+    {
+        PhysicsMaterial2DPtr const& material = PhysicsMaterial2DManager::GetInstancePtr()->getMaterial(_data);
+        setMaterial(material);
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

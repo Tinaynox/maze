@@ -41,7 +41,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Collider2D, Component,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(PhysicsMaterial2DPtr, physicsMaterial, PhysicsMaterial2DPtr(), getPhysicsMaterial, setPhysicsMaterial),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(PhysicsMaterial2DAssetRef, physicsMaterial, PhysicsMaterial2DAssetRef(), getPhysicsMaterialRef, setPhysicsMaterialRef),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, isSensor, false, getIsSensor, setIsSensor));
 
     //////////////////////////////////////////

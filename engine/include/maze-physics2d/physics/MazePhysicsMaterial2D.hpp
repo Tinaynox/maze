@@ -185,6 +185,44 @@ namespace Maze
         PhysicsMaterial2D::FromString(_value, _data, _count);
     }
 
+
+    //////////////////////////////////////////
+    // Class MaterialAssetRef
+    //
+    //////////////////////////////////////////
+    class MAZE_PHYSICS2D_API PhysicsMaterial2DAssetRef
+        : public IStringSerializable
+    {
+    public:
+
+        //////////////////////////////////////////
+        PhysicsMaterial2DAssetRef(PhysicsMaterial2DPtr const& _value = nullptr)
+            : m_material(_value)
+        {}
+
+        //////////////////////////////////////////
+        void setMaterial(PhysicsMaterial2DPtr const& _value) { m_material = _value; }
+
+        //////////////////////////////////////////
+        inline PhysicsMaterial2DPtr const& getMaterial() const { return m_material; }
+
+        //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
+        inline bool operator==(PhysicsMaterial2DAssetRef const& _value) const { return m_material == _value.getMaterial(); }
+
+        //////////////////////////////////////////
+        inline bool operator!=(PhysicsMaterial2DAssetRef const& _value) const { return m_material != _value.getMaterial(); }
+
+    private:
+        PhysicsMaterial2DPtr m_material;
+    };
+
 } // namespace Maze
 //////////////////////////////////////////
 
