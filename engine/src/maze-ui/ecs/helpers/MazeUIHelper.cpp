@@ -972,7 +972,7 @@ namespace Maze
             transform->setPivot(_pivot);
 
             SpriteRenderer2DPtr colorSpriteRenderer = SpriteHelper::CreateSprite(
-                ColorU32::FromVec4F32(_color),
+                ColorU32::FromVec4F32((Vec4F)_color),
                 _size - 2.0f,
                 Vec2F::c_zero,
                 renderSystem->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::ColorHDR),
@@ -1066,7 +1066,7 @@ namespace Maze
                 [](ColorHDREdit2D* _colorEdit, SystemTextRenderer2D* _hdrTextRenderer)
                 {
                     Vec3F const luminosityCoeff(0.2125f, 0.7154f, 0.0721f);
-                    F32 l = Math::Clamp(luminosityCoeff.dotProduct(_colorEdit->getColor()), 0.0f, 1.0f);
+                    F32 l = Math::Clamp(luminosityCoeff.dotProduct((Vec3F)_colorEdit->getColor()), 0.0f, 1.0f);
                     F32 invL = 1.0f - l;
                     _hdrTextRenderer->setColor(
                         ColorU32::FromVec3F32({ invL, invL, invL }));

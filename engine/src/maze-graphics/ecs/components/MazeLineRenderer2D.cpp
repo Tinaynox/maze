@@ -98,7 +98,7 @@ namespace Maze
     LineRenderer2D::LineRenderer2D()
         : m_renderSystem(nullptr)
         , m_width(1.0f)
-        , m_color(ColorF128::c_white)
+        , m_color((Vec4F)ColorF128::c_white)
     {
     }
 

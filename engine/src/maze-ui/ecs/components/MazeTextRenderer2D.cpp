@@ -808,7 +808,7 @@ namespace Maze
 
         Vec4F const vertexColor = Vec4F(1.0f, 1.0f, 1.0f, m_canvasRenderer ? m_canvasRenderer->getAlpha() : 1.0f);
 
-        m_meshRenderer->setColor(_quadIndex, _color * vertexColor);
+        m_meshRenderer->setColor(_quadIndex, (Vec4F)_color * vertexColor);
         m_meshRenderer->setUV0(
             _quadIndex,
             Vec4F(

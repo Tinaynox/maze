@@ -280,10 +280,10 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline operator Vec3F() const { return { value.x, value.y, value.z }; }
+        explicit inline operator Vec3F() const { return { value.x, value.y, value.z }; }
 
         //////////////////////////////////////////
-        inline operator Vec4F() const { return value; }
+        explicit inline operator Vec4F() const { return value; }
 
 
         //////////////////////////////////////////
@@ -412,6 +412,18 @@ namespace Maze
     inline void DeserializeValue(ColorF128& _value, U8 const* _data)
     {
         memcpy((U8*)&_value, _data, sizeof(ColorF128));
+    }
+
+    //////////////////////////////////////////
+    inline void ValueToDataBlock(ColorF128 const& _value, DataBlock& _data)
+    {
+        _data.setVec4F32(MAZE_HS("value"), _value.toVec4F32());
+    }
+
+    //////////////////////////////////////////
+    inline void ValueFromDataBlock(ColorF128& _value, DataBlock const& _data)
+    {
+        _value = ColorF128(_data.getVec4F32(MAZE_HS("value")));
     }
 
 } // namespace Maze

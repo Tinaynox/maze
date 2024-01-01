@@ -40,6 +40,7 @@
 #include "maze-core/math/MazeVec3.hpp"
 #include "maze-core/math/MazeVec4.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
+#include "maze-core/data/MazeDataBlock.hpp"
 
 
 //////////////////////////////////////////
@@ -322,6 +323,18 @@ namespace Maze
     inline void DeserializeValue(ColorU32& _value, U8 const* _data)
     {
         memcpy((U8*)&_value, _data, sizeof(ColorU32));
+    }
+
+    //////////////////////////////////////////
+    inline void ValueToDataBlock(ColorU32 const& _value, DataBlock& _data)
+    {
+        _data.setU32(MAZE_HS("value"), _value.toRGBA_U8());
+    }
+
+    //////////////////////////////////////////
+    inline void ValueFromDataBlock(ColorU32& _value, DataBlock const& _data)
+    {
+        _value.setRGBA_U8(_data.getU32(MAZE_HS("value")));
     }
 
 } // namespace Maze

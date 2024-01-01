@@ -289,7 +289,7 @@ namespace Maze
             case ParticleSystemParameterColorSamplingMode::Color:
             {
                 ColorF128 color0 = m_colorTo->getColor();
-                parameter.setColor(color0);
+                parameter.setColor((Vec4F)color0);
                 break;
             }
             case ParticleSystemParameterColorSamplingMode::Gradient:
@@ -309,7 +309,7 @@ namespace Maze
             {
                 ColorF128 color0 = m_colorFrom->getColor();
                 ColorF128 color1 = m_colorTo->getColor();
-                parameter.setRandomBetweenColors(color0, color1);
+                parameter.setRandomBetweenColors((Vec4F)color0, (Vec4F)color1);
                 break;
             }
             case ParticleSystemParameterColorSamplingMode::RandomBetweenGradients:

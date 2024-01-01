@@ -482,7 +482,7 @@ namespace Maze
     //////////////////////////////////////////
     bool ShaderUniform::set(ColorF128 const& _value)
     {
-        if (   getVec4F32() == _value
+        if (   getVec4F32() == (Vec4F)_value
             && getType() == ShaderUniformType::UniformColorF128)
             return false;
 

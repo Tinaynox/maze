@@ -101,7 +101,7 @@ namespace Maze
         : m_renderSystem(nullptr)
         , m_time(2.0f)
         , m_width(1.0f)
-        , m_color(ColorF128::c_white)
+        , m_color((Vec4F)ColorF128::c_white)
     {
         setMinVertexDistance(0.35f);
     }
