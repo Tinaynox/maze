@@ -143,6 +143,9 @@ namespace Maze
     {
         static SoundPtr const nullPointer;
 
+        if (_assetFileName.empty())
+            return nullPointer;
+
         SoundLibraryData const* libraryData = getSoundLibraryData(_assetFileName);
         if (libraryData)
             return libraryData->sound;
