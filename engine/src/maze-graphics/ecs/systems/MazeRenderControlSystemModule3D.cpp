@@ -395,7 +395,7 @@ namespace Maze
                     if (!_meshRenderer->getEnabled())
                         return;
 
-                    if (_meshRenderer->getRenderMask()->getMask() & _params.renderMask)
+                    if (_meshRenderer->getRenderMask() && _meshRenderer->getRenderMask()->getMask() & _params.renderMask)
                     {
                         if (_meshRenderer->getRenderMesh())
                         {
@@ -445,7 +445,7 @@ namespace Maze
                 if (!_meshRenderer->getEnabled())
                     return;
 
-                if (_meshRenderer->getRenderMask()->getMask() & _params.renderMask)
+                if (_meshRenderer->getRenderMask() && _meshRenderer->getRenderMask()->getMask() & _params.renderMask)
                 {
                     if (_meshRenderer->getRenderMesh())
                     {
