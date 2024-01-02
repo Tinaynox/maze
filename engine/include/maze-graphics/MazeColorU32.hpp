@@ -348,7 +348,6 @@ namespace Maze
             {
                 case DataBlockParamType::ParamU32:
                 {
-                    MAZE_WARNING("Obsolete ColorU32 format - %d", (S32)paramType);
                     _value.setRGBA_U8(_data.getU32(MAZE_HS("value")));
                     break;
                 }
