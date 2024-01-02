@@ -132,6 +132,10 @@ namespace Maze
         //////////////////////////////////////////
         void unloadAssetSprites(Set<String> const& _tags);
 
+
+        //////////////////////////////////////////
+        HashedCString getSpriteName(Sprite const* _sprite);
+
     protected:
 
         //////////////////////////////////////////

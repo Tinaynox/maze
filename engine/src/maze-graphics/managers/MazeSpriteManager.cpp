@@ -171,5 +171,20 @@ namespace Maze
         }
     }
 
+    //////////////////////////////////////////
+    HashedCString SpriteManager::getSpriteName(Sprite const* _sprite)
+    {
+        for (StringKeyMap<SpriteLibraryData>::iterator it = m_spritesLibrary.begin(),
+                                                       end = m_spritesLibrary.end();
+                                                       it != end;
+                                                       ++it)
+        {
+            if (it->second.sprite.get() == _sprite)
+                return it.key();
+        }
+
+        return HashedCString();
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

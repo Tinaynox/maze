@@ -35,6 +35,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeColorU32.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
+#include "maze-graphics/MazeSprite.hpp"
 
 
 //////////////////////////////////////////
@@ -96,10 +97,16 @@ namespace Maze
 
             
         //////////////////////////////////////////
-        inline SpritePtr const& getSprite() const { return m_sprite; }
+        inline SpriteAssetRef const& getSpriteRef() const { return m_spriteRef; }
 
         //////////////////////////////////////////
-        void setSprite(SpritePtr const& _sprite);
+        void setSpriteRef(SpriteAssetRef const& _sprite);
+
+        //////////////////////////////////////////
+        inline SpritePtr const& getSprite() const { return m_spriteRef.getSprite(); }
+
+        //////////////////////////////////////////
+        void setSprite(SpritePtr const& _sprite) { setSpriteRef(SpriteAssetRef(_sprite)); }
 
         //////////////////////////////////////////
         void setSprite(HashedString const& _spriteName);
@@ -203,7 +210,7 @@ namespace Maze
         MeshRendererPtr m_meshRenderer;
         CanvasRendererPtr m_canvasRenderer;
 
-        SpritePtr m_sprite;
+        SpriteAssetRef m_spriteRef;
         MaterialAssetRef m_materialRef;
         ColorU32 m_color;
 

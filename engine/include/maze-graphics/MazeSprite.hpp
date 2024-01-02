@@ -265,6 +265,43 @@ namespace Maze
     }
     
 
+    //////////////////////////////////////////
+    // Class SpriteAssetRef
+    //
+    //////////////////////////////////////////
+    class MAZE_GRAPHICS_API SpriteAssetRef
+        : public IStringSerializable
+    {
+    public:
+
+        //////////////////////////////////////////
+        SpriteAssetRef(SpritePtr const& _value = nullptr)
+            : m_sprite(_value)
+        {}
+
+        //////////////////////////////////////////
+        void setSprite(SpritePtr const& _value) { m_sprite = _value; }
+
+        //////////////////////////////////////////
+        inline SpritePtr const& getSprite() const { return m_sprite; }
+
+        //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
+
+
+        //////////////////////////////////////////
+        inline bool operator==(SpriteAssetRef const& _value) const { return m_sprite == _value.getSprite(); }
+
+        //////////////////////////////////////////
+        inline bool operator!=(SpriteAssetRef const& _value) const { return m_sprite != _value.getSprite(); }
+
+    private:
+        SpritePtr m_sprite;
+    };
+
 } // namespace Maze
 //////////////////////////////////////////
 

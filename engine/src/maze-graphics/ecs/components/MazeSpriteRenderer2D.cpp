@@ -63,7 +63,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SpriteRenderer2D, Component,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(SpritePtr, sprite, SpritePtr(), getSprite, setSprite),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(SpriteAssetRef, sprite, SpriteAssetRef(), getSpriteRef, setSpriteRef),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(MaterialAssetRef, material, MaterialAssetRef(), getMaterialRef, setMaterialRefCopy),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, color, ColorU32::c_white, getColor, setColor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(SpriteRenderMode, renderMode, SpriteRenderMode::Simple, getRenderMode, setRenderMode));
@@ -121,21 +121,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SpriteRenderer2D::setSprite(SpritePtr const& _image)
+    void SpriteRenderer2D::setSpriteRef(SpriteAssetRef const& _sprite)
     {
-        if (m_sprite == _image)
+        if (m_spriteRef.getSprite() == _sprite.getSprite())
             return;
 
-        if (m_sprite)
+        if (m_spriteRef.getSprite())
         {
-            m_sprite->eventDataChanged.unsubscribe(this);
+            m_spriteRef.getSprite()->eventDataChanged.unsubscribe(this);
         }
 
-        m_sprite = _image;
+        m_spriteRef.setSprite(_sprite.getSprite());
 
-        if (m_sprite)
+        if (m_spriteRef.getSprite())
         {
-            m_sprite->eventDataChanged.subscribe(this, &SpriteRenderer2D::notifySpriteDataChanged);
+            m_spriteRef.getSprite()->eventDataChanged.subscribe(this, &SpriteRenderer2D::notifySpriteDataChanged);
 
             updateMesh();
             updateMaterial();
@@ -233,9 +233,9 @@ namespace Maze
 
             Texture2DPtr texture;
 
-            if (m_sprite)
+            if (getSprite())
             {
-                texture = m_sprite->getTexture();
+                texture = getSprite()->getTexture();
 
                 if (!texture)
                     texture = getMaterial()->getRenderSystem()->getTextureManager()->getErrorTexture();
@@ -266,11 +266,11 @@ namespace Maze
 
         Vec4F uv;
 
-        if (m_sprite)
+        if (getSprite())
         {
             uv = Vec4F(
-                m_sprite->getTextureCoordLB(),
-                m_sprite->getTextureCoordRT());
+                getSprite()->getTextureCoordLB(),
+                getSprite()->getTextureCoordRT());
         }
         else
         {
@@ -294,13 +294,13 @@ namespace Maze
             }
             case SpriteRenderMode::Sliced:
             {
-                if (m_sprite)
+                if (getSprite())
                 {
                     mesh = MeshHelper::CreateSlicedPanelMesh(
                         size,
                         size * 0.5f,
-                        m_sprite->getSliceBorder(),
-                        m_sprite->getNativeSize(),
+                        getSprite()->getSliceBorder(),
+                        getSprite()->getNativeSize(),
                         uv,
                         Vec4F(1.0f, 1.0f, 1.0f, m_canvasRenderer->getAlpha()));
                 }

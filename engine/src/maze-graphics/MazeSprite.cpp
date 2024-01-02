@@ -313,5 +313,26 @@ namespace Maze
     }
 
 
+    //////////////////////////////////////////
+    // Class SpriteAssetRef
+    //
+    //////////////////////////////////////////
+    String SpriteAssetRef::toString() const
+    {
+        if (!m_sprite)
+            return String();
+
+        HashedCString name = RenderSystem::GetCurrentInstancePtr()->getSpriteManager()->getSpriteName(m_sprite.get());
+        return !name.empty() ? name.str : m_sprite->getName();
+    }
+
+    //////////////////////////////////////////
+    void SpriteAssetRef::setString(CString _data, Size _count)
+    {
+        SpritePtr const& sprite = RenderSystem::GetCurrentInstancePtr()->getSpriteManager()->getSprite(_data);
+        setSprite(sprite);
+    }
+
+
 } // namespace Maze
 //////////////////////////////////////////
