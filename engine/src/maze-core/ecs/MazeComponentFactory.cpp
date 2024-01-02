@@ -90,6 +90,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    ComponentPtr ComponentFactory::createComponent(ClassUID _componentUID)
+    {
+        for (Size i = 0; i < m_sceneObjectCreationData.size(); ++i)
+        {
+            for (auto const& sceneObjectCreationData : m_sceneObjectCreationData)
+                if (sceneObjectCreationData.second.uid == _componentUID)
+                    return (this->*sceneObjectCreationData.second.createComponentMethod)();
+        }
+
+        MAZE_ERROR("Undefined component: %d", (S32)_componentUID);
+        return ComponentPtr();
+    }
+
+    //////////////////////////////////////////
     ComponentPtr ComponentFactory::createComponentByIndex(ComponentIndex _index)
     {
         Map<ClassUID, ComponentCreationData>::const_iterator it = m_sceneObjectCreationData.find(_index);

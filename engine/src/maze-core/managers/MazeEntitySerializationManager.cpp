@@ -417,17 +417,22 @@ namespace Maze
                             componentIndex = --autoComponentIndexCounter;
 
                         CString componentClassName = componentBlock->getCString(MAZE_HS("_t"));
-                        ComponentPtr component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentClassName);
-
+                        ClassUID componentUID = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentUID(componentClassName);
+                        ComponentPtr component = entity->getComponentByUID(componentUID);
                         if (!component)
                         {
-                            MAZE_ERROR("Component %s cannot be created!", componentClassName);
-                            continue;
+                            component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentUID);
+
+                            if (!component)
+                            {
+                                MAZE_ERROR("Component %s cannot be created!", componentClassName);
+                                continue;
+                            }
+
+                            entity->addComponent(component);
                         }
 
                         components[componentIndex] = component;
-
-                        entity->addComponent(component);
                     }
                 }
                 else
@@ -513,17 +518,22 @@ namespace Maze
                                     componentIndex = --autoComponentIndexCounter;
 
                                 CString componentClassName = prefabChildBlock->getCString(MAZE_HS("_t"));
-                                ComponentPtr component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentClassName);
-
-                                if (component)
+                                ClassUID componentUID = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentUID(componentClassName);
+                                ComponentPtr component = entity->getComponentByUID(componentUID);
+                                if (!component)
                                 {
-                                    components[componentIndex] = component;
+                                    component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentUID);
+
+                                    if (!component)
+                                    {
+                                        MAZE_ERROR("Component %s cannot be created!", componentClassName);
+                                        continue;
+                                    }
+
                                     entity->addComponent(component);
                                 }
-                                else
-                                {
-                                    MAZE_ERROR("Component %s cannot be created!", componentClassName);
-                                }
+
+                                components[componentIndex] = component;
                             }
                         }
                     }
@@ -737,17 +747,21 @@ namespace Maze
                             componentIndex = --autoComponentIndexCounter;
 
                         CString componentClassName = componentBlock->getCString(MAZE_HS("_t"));
-                        ComponentPtr component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentClassName);
-
+                        ClassUID componentUID = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentUID(componentClassName);
+                        ComponentPtr component = entity->getComponentByUID(componentUID);
                         if (!component)
                         {
-                            MAZE_ERROR("Component %s cannot be created!", componentClassName);
-                            continue;
+                            component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentUID);
+
+                            if (!component)
+                            {
+                                MAZE_ERROR("Component %s cannot be created!", componentClassName);
+                                continue;
+                            }
+                            entity->addComponent(component);
                         }
 
                         components[componentIndex] = component;
-
-                        entity->addComponent(component);
                     }
                 }
                 else
@@ -794,17 +808,22 @@ namespace Maze
                                     componentIndex = --autoComponentIndexCounter;
 
                                 CString componentClassName = prefabChildBlock->getCString(MAZE_HS("_t"));
-                                ComponentPtr component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentClassName);
-
-                                if (component)
+                                ClassUID componentUID = EntityManager::GetInstancePtr()->getComponentFactory()->getComponentUID(componentClassName);
+                                ComponentPtr component = entity->getComponentByUID(componentUID);
+                                if (!component)
                                 {
-                                    components[componentIndex] = component;
+                                    component = EntityManager::GetInstancePtr()->getComponentFactory()->createComponent(componentUID);
+
+                                    if (!component)
+                                    {
+                                        MAZE_ERROR("Component %s cannot be created!", componentClassName);
+                                        continue;
+                                    }
+
                                     entity->addComponent(component);
                                 }
-                                else
-                                {
-                                    MAZE_ERROR("Component %s cannot be created!", componentClassName);
-                                }
+                                
+                                components[componentIndex] = component;
                             }
                         }
                     }

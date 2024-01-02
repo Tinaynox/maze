@@ -115,6 +115,9 @@ namespace Maze
         inline ComponentPtr createComponent(String const& _className) { return createComponent(_className.c_str()); }
 
         //////////////////////////////////////////
+        ComponentPtr createComponent(ClassUID _componentUID);
+
+        //////////////////////////////////////////
         ComponentPtr createComponentByIndex(ComponentIndex _index);
 
         //////////////////////////////////////////
