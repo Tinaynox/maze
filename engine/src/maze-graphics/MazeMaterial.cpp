@@ -771,7 +771,7 @@ namespace Maze
             return String();
 
         HashedCString name = RenderSystem::GetCurrentInstancePtr()->getMaterialManager()->getMaterialName(m_material.get());
-        return !name.empty() ? name.str : String();
+        return !name.empty() ? name.str : m_material->getName();
     }
 
     //////////////////////////////////////////
