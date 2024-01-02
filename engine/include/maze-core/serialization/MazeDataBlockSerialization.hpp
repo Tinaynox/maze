@@ -136,6 +136,10 @@ namespace Maze
     template <>
     MAZE_FORCEINLINE bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, Bool const& _value) { _dataBlock.addBool(_name, _value); return true; }
     template <>
+    MAZE_FORCEINLINE bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, Vec4S8 const& _value) { _dataBlock.addVec4S8(_name, _value); return true; }
+    template <>
+    MAZE_FORCEINLINE bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, Vec4U8 const& _value) { _dataBlock.addVec4U8(_name, _value); return true; }
+    template <>
     MAZE_FORCEINLINE bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, Vec2S32 const& _value) { _dataBlock.addVec2S32(_name, _value); return true; }
     template <>
     MAZE_FORCEINLINE bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, Vec3S32 const& _value) { _dataBlock.addVec3S32(_name, _value); return true; }
@@ -190,6 +194,10 @@ namespace Maze
     MAZE_FORCEINLINE F64 GetDataBlockParam(DataBlock const& _data, DataBlock::ParamIndex _i) { return _data.getF64(_i); }
     template <>
     MAZE_FORCEINLINE Bool GetDataBlockParam(DataBlock const& _data, DataBlock::ParamIndex _i) { return _data.getBool(_i); }
+    template <>
+    MAZE_FORCEINLINE Vec4S8 GetDataBlockParam(DataBlock const& _data, DataBlock::ParamIndex _i) { return _data.getVec4S8(_i); }
+    template <>
+    MAZE_FORCEINLINE Vec4U8 GetDataBlockParam(DataBlock const& _data, DataBlock::ParamIndex _i) { return _data.getVec4U8(_i); }
     template <>
     MAZE_FORCEINLINE Vec2S32 GetDataBlockParam(DataBlock const& _data, DataBlock::ParamIndex _i) { return _data.getVec2S32(_i); }
     template <>
@@ -292,22 +300,6 @@ namespace Maze
     {
         ValueFromDataBlock(_value, _data);
     }
-
-
-    //////////////////////////////////////////
-    // Type: std::function
-    //
-    //////////////////////////////////////////
-    //template <typename TValue>
-    //inline typename ::std::enable_if<(IsStdFunction<TValue>::value), void>::type
-    //    ValueToDataBlock(TValue const& _value, DataBlock& _data)
-    //{}
-
-    ////////////////////////////////////////////
-    //template <typename TValue>
-    //inline typename ::std::enable_if<(IsStdFunction<TValue>::value), void>::type
-    //    ValueFromDataBlock(TValue& _value, DataBlock const& _data)
-    //{}
 
 
     //////////////////////////////////////////

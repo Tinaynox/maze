@@ -254,6 +254,12 @@ namespace Maze
         void setVec4U32(Vec4U const& _vec);
 
         //////////////////////////////////////////
+        Vec4U8 toVec4U8() const;
+
+        //////////////////////////////////////////
+        void setVec4U8(Vec4U8 const& _vec);
+
+        //////////////////////////////////////////
         inline static ColorU32 FromVec4U32(Vec4U const& _vec)
         {
             ColorU32 color;
@@ -328,13 +334,37 @@ namespace Maze
     //////////////////////////////////////////
     inline void ValueToDataBlock(ColorU32 const& _value, DataBlock& _data)
     {
-        _data.setU32(MAZE_HS("value"), _value.toRGBA_U8());
+        _data.setVec4U8(MAZE_HS("value"), _value.toVec4U8());
     }
 
     //////////////////////////////////////////
     inline void ValueFromDataBlock(ColorU32& _value, DataBlock const& _data)
     {
-        _value.setRGBA_U8(_data.getU32(MAZE_HS("value")));
+        DataBlock::ParamIndex paramIndex = _data.findParamIndex(MAZE_HS("value"));
+        if (paramIndex >= 0)
+        {
+            DataBlockParamType paramType = _data.getParamType(paramIndex);
+            switch (paramType)
+            {
+                case DataBlockParamType::ParamU32:
+                {
+                    MAZE_WARNING("Obsolete ColorU32 format - %d", (S32)paramType);
+                    _value.setRGBA_U8(_data.getU32(MAZE_HS("value")));
+                    break;
+                }
+                case DataBlockParamType::ParamVec4U8:
+                {
+                    _value.setVec4U8(_data.getVec4U8(MAZE_HS("value")));
+                    break;
+                }
+                default:
+                {
+                    MAZE_ERROR("Unsupported color value type - %d", (S32)paramType);
+                    break;
+                }
+            }
+            
+        }
     }
 
 } // namespace Maze

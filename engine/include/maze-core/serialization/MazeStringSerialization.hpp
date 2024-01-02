@@ -191,22 +191,6 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Type: std::function
-    //
-    //////////////////////////////////////////
-    //template <typename TValue>
-    //inline typename ::std::enable_if<(IsStdFunction<TValue>::value), void>::type
-    //    ValueToString(TValue const& _value, String& _data)
-    //{}
-
-    ////////////////////////////////////////////
-    //template <typename TValue>
-    //inline typename ::std::enable_if<(IsStdFunction<TValue>::value), void>::type
-    //    ValueFromString(TValue& _value, CString _data, Size _count)
-    //{}
-
-
-    //////////////////////////////////////////
     // Type: String
     //
     //////////////////////////////////////////

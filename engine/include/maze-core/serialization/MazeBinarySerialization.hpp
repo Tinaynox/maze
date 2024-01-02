@@ -240,30 +240,6 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Type: std::function
-    //
-    //////////////////////////////////////////
-    //template <typename TValue>
-    //inline typename ::std::enable_if<(IsStdFunction<TValue>::value), U32>::type
-    //    GetValueSerializationSize(TValue const& _value)
-    //{
-    //    return 0;
-    //}
-
-    ////////////////////////////////////////////
-    //template <typename TValue>
-    //inline typename ::std::enable_if<(IsStdFunction<TValue>::value), void>::type
-    //    SerializeValue(TValue const& _value, U8* _data)
-    //{}
-
-    ////////////////////////////////////////////
-    //template <typename TValue>
-    //inline typename ::std::enable_if<(IsStdFunction<TValue>::value), void>::type
-    //    DeserializeValue(TValue& _value, U8 const* _data)
-    //{}
-
-
-    //////////////////////////////////////////
     // Type: String
     //
     //////////////////////////////////////////

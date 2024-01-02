@@ -565,6 +565,8 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    using Vec4S8 = Vec4<S8>;
+    using Vec4U8 = Vec4<U8>;
     using Vec4S32 = Vec4<S32>;
     using Vec4U32 = Vec4<U32>;
     using Vec4F32 = Vec4<F32>;

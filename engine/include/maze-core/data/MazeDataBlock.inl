@@ -50,6 +50,10 @@ namespace Maze
     template <>
     struct DataBlock::TypeOf<bool> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamBool; };
     template <>
+    struct DataBlock::TypeOf<Vec4S8> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec4S8; };
+    template <>
+    struct DataBlock::TypeOf<Vec4U8> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec4U8; };
+    template <>
     struct DataBlock::TypeOf<Vec2S> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec2S32; };
     template <>
     struct DataBlock::TypeOf<Vec3S> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamVec3S32; };

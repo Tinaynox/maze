@@ -249,6 +249,7 @@ _stream.write((U8 const*)(quote + quoteLen - 1), quoteLen);
                 else
                 {
                     U8 const* paramData = _dataBlock.getParamData(i);
+                    S8 const* paramDataS8 = (S8 const*)paramData;
                     Bool const* paramDataBool = (Bool const*)paramData;
                     S32 const* paramDataS32 = (S32 const*)paramData;
                     S64 const* paramDataS64 = (S64 const*)paramData;
@@ -269,6 +270,8 @@ _stream.write((U8 const*)(quote + quoteLen - 1), quoteLen);
                         case DataBlockParamType::ParamF32: snprintf(buff, sizeof(buff), "%g", paramDataF32[0]); break;
                         case DataBlockParamType::ParamF64: snprintf(buff, sizeof(buff), "%lg", paramDataF64[0]); break;
                         case DataBlockParamType::ParamBool: snprintf(buff, sizeof(buff), "%s", paramBool(paramDataBool[0])); break;
+                        case DataBlockParamType::ParamVec4S8: snprintf(buff, sizeof(buff), "%d, %d, %d, %d", (S32)paramDataS8[0], (S32)paramDataS8[1], (S32)paramDataS8[2], (S32)paramDataS8[3]); break;
+                        case DataBlockParamType::ParamVec4U8: snprintf(buff, sizeof(buff), "%u, %u, %u, %u", (U32)paramData[0], (U32)paramData[1], (U32)paramData[2], (U32)paramData[3]); break;
                         case DataBlockParamType::ParamVec2S32: snprintf(buff, sizeof(buff), "%d, %d", paramDataS32[0], paramDataS32[1]); break;
                         case DataBlockParamType::ParamVec3S32: snprintf(buff, sizeof(buff), "%d, %d, %d", paramDataS32[0], paramDataS32[1], paramDataS32[2]); break;
                         case DataBlockParamType::ParamVec4S32: snprintf(buff, sizeof(buff), "%d, %d, %d, %d", paramDataS32[0], paramDataS32[1], paramDataS32[2], paramDataS32[3]); break;
@@ -1225,6 +1228,28 @@ _stream.write((U8 const*)(quote + quoteLen - 1), quoteLen);
                     }
 
                     _dataBlock.addBool(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec4S8:
+                {
+                    Vec4S8 value = Vec4S8::c_zero;
+                    if (!Vec4S8::ParseString(_value, _size, value, ','))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addVec4S8(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamVec4U8:
+                {
+                    Vec4U8 value = Vec4U8::c_zero;
+                    if (!Vec4U8::ParseString(_value, _size, value, ','))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addVec4U8(_name, value);
                     break;
                 }
                 case DataBlockParamType::ParamVec2S32:

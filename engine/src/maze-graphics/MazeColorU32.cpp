@@ -209,6 +209,21 @@ namespace Maze
         a = static_cast<U8>(_vec.w);
     }
 
+    //////////////////////////////////////////
+    Vec4U8 ColorU32::toVec4U8() const
+    {
+        return { r, g, b, a };
+    }
+
+    //////////////////////////////////////////
+    void ColorU32::setVec4U8(Vec4U8 const& _vec)
+    {
+        r = _vec.x;
+        g = _vec.y;
+        b = _vec.z;
+        a = _vec.w;
+    }
+
 
 } // namespace Maze
 //////////////////////////////////////////

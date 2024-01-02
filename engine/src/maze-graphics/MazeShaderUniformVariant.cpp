@@ -971,6 +971,8 @@ namespace Maze
             case DataBlockParamType::ParamF32:          set(_dataBlock.getF32(valueParamIndex)); break;
             case DataBlockParamType::ParamF64:          set(_dataBlock.getF64(valueParamIndex)); break;
             case DataBlockParamType::ParamBool:         set(_dataBlock.getBool(valueParamIndex)); break;
+            case DataBlockParamType::ParamVec4S8:       set((Vec4S32)_dataBlock.getVec4S8(valueParamIndex)); break;
+            case DataBlockParamType::ParamVec4U8:       set((Vec4U32)_dataBlock.getVec4U8(valueParamIndex)); break;
             case DataBlockParamType::ParamVec2S32:      set(_dataBlock.getVec2S32(valueParamIndex)); break;
             case DataBlockParamType::ParamVec3S32:      set(_dataBlock.getVec3S32(valueParamIndex)); break;
             case DataBlockParamType::ParamVec4S32:      set(_dataBlock.getVec4S32(valueParamIndex)); break;

@@ -94,6 +94,8 @@ namespace Maze
         ParamF32,
         ParamF64,
         ParamBool,
+        ParamVec4S8,
+        ParamVec4U8,
         ParamVec2S32,
         ParamVec3S32,
         ParamVec4S32,
@@ -141,6 +143,8 @@ namespace Maze
         DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("F32"), sizeof(F32)),
         DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("F64"), sizeof(F64)),
         DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Bool"), sizeof(Bool)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec4S8"), sizeof(Vec4S8)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec4U8"), sizeof(Vec4U8)),
         DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec2S"), sizeof(Vec2S)),
         DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec3S"), sizeof(Vec3S)),
         DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec4S"), sizeof(Vec4S)),
@@ -468,6 +472,8 @@ namespace Maze
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(F32, F32);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(F64, F64);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_VAL(Bool, Bool);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec4S8, Vec4S8);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec4U8, Vec4U8);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec2S32, Vec2S32);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec2S, Vec2S);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Vec3S32, Vec3S32);
