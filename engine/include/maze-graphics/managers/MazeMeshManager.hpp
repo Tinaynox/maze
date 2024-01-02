@@ -107,10 +107,10 @@ namespace Maze
             , isMeshByteBufferFunc(_isMeshByteBufferFunc)
         {}
 
-        LoadMeshAssetFileFunction loadMeshAssetFileFunc;
-        LoadMeshByteBufferFunction loadMeshByteBufferFunc;
-        IsMeshAssetFileFunction isMeshAssetFileFunc;
-        IsMeshByteBufferFunction isMeshByteBufferFunc;
+        LoadMeshAssetFileFunction loadMeshAssetFileFunc = nullptr;
+        LoadMeshByteBufferFunction loadMeshByteBufferFunc = nullptr;
+        IsMeshAssetFileFunction isMeshAssetFileFunc = nullptr;
+        IsMeshByteBufferFunction isMeshByteBufferFunc = nullptr;
     };
 
 

@@ -95,10 +95,10 @@ namespace Maze
             , isTrueTypeFontByteBufferFunc(_isTrueTypeFontByteBufferFunc)
         {}
 
-        LoadTrueTypeFontAssetFileFunction loadTrueTypeFontAssetFileFunc;
-        LoadTrueTypeFontByteBufferFunction loadTrueTypeFontByteBufferFunc;
-        IsTrueTypeFontAssetFileFunction isTrueTypeFontAssetFileFunc;
-        IsTrueTypeFontByteBufferFunction isTrueTypeFontByteBufferFunc;
+        LoadTrueTypeFontAssetFileFunction loadTrueTypeFontAssetFileFunc = nullptr;
+        LoadTrueTypeFontByteBufferFunction loadTrueTypeFontByteBufferFunc = nullptr;
+        IsTrueTypeFontAssetFileFunction isTrueTypeFontAssetFileFunc = nullptr;
+        IsTrueTypeFontByteBufferFunction isTrueTypeFontByteBufferFunc = nullptr;
     };
 
 

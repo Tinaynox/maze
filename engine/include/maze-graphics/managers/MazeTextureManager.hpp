@@ -102,10 +102,10 @@ namespace Maze
             , isTextureByteBufferFunc(_isTextureByteBufferFunc)
         {}
 
-        LoadTextureAssetFileFunction loadTextureAssetFileFunc;
-        LoadTextureByteBufferFunction loadTextureByteBufferFunc;
-        IsTextureAssetFileFunction isTextureAssetFileFunc;
-        IsTextureByteBufferFunction isTextureByteBufferFunc;
+        LoadTextureAssetFileFunction loadTextureAssetFileFunc = nullptr;
+        LoadTextureByteBufferFunction loadTextureByteBufferFunc = nullptr;
+        IsTextureAssetFileFunction isTextureAssetFileFunc = nullptr;
+        IsTextureByteBufferFunction isTextureByteBufferFunc = nullptr;
     };
 
 

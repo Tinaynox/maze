@@ -76,10 +76,10 @@ namespace Maze
             , isSoundByteBufferFunc(_isSoundByteBufferFunc)
         {}
 
-        LoadSoundAssetFileFunction loadSoundAssetFileFunc;
-        LoadSoundByteBufferFunction loadSoundByteBufferFunc;
-        IsSoundAssetFileFunction isSoundAssetFileFunc;
-        IsSoundByteBufferFunction isSoundByteBufferFunc;
+        LoadSoundAssetFileFunction loadSoundAssetFileFunc = nullptr;
+        LoadSoundByteBufferFunction loadSoundByteBufferFunc = nullptr;
+        IsSoundAssetFileFunction isSoundAssetFileFunc = nullptr;
+        IsSoundByteBufferFunction isSoundByteBufferFunc = nullptr;
     };
 
 
