@@ -114,7 +114,7 @@ namespace Maze
         soundNames.resize(m_sounds.size());
         for (Size i = 0, in = m_sounds.size(); i != in; ++i)
         {
-            soundNames[i] = m_sounds[i] ? m_sounds[i]->getName() : String();
+            soundNames[i] = m_sounds[i] ? m_sounds[i]->getName().getString() : String();
         }
 
         return soundNames;
