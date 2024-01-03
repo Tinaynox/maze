@@ -46,27 +46,33 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    void GetValueSerializationSize();
+    void SerializeValue();
+    void DeserializeValue();
+
+
+    //////////////////////////////////////////
     // Utils
     //
     //////////////////////////////////////////
     template <typename T, typename = int>
     struct HasGetValueSerializationSize : std::false_type { };
     template <typename T>
-    struct HasGetValueSerializationSize <T, decltype(GetValueSerializationSize(std::declval<T>()), 0)> : std::true_type { };
+    struct HasGetValueSerializationSize <T, decltype(Maze::GetValueSerializationSize(std::declval<T>()), 0)> : std::true_type { };
 
 
     //////////////////////////////////////////
     template <typename T, typename = int>
     struct HasSerializeValue : std::false_type { };
     template <typename T>
-    struct HasSerializeValue <T, decltype(SerializeValue(std::declval<T>(), std::declval<U8*>()), 0)> : std::true_type { };
+    struct HasSerializeValue <T, decltype(Maze::SerializeValue(std::declval<T>(), std::declval<U8*>()), 0)> : std::true_type { };
 
 
     //////////////////////////////////////////
     template <typename T, typename = int>
     struct HasDeserializeValue : std::false_type { };
     template <typename T>
-    struct HasDeserializeValue <T, decltype(DeserializeValue(std::declval<T&>(), std::declval<U8 const*>()), 0)> : std::true_type { };
+    struct HasDeserializeValue <T, decltype(Maze::DeserializeValue(std::declval<T&>(), std::declval<U8 const*>()), 0)> : std::true_type { };
 
 
     //////////////////////////////////////////
@@ -75,55 +81,55 @@ namespace Maze
     //////////////////////////////////////////
     template <typename TValue>
     inline U32 TryGetValueSerializationSize(typename ::std::enable_if<(
-        std::is_base_of<IBinarySerializable, TValue>::value), TValue>::type const& _value);
+        std::is_base_of<Maze::IBinarySerializable, TValue>::value), TValue>::type const& _value);
 
     //////////////////////////////////////////
     template <typename TValue>
     inline U32 TryGetValueSerializationSize(typename ::std::enable_if<(
         HasGetValueSerializationSize<TValue>::value &&
-        !std::is_base_of<IBinarySerializable, TValue>::value), TValue>::type const& _value);
+        !std::is_base_of<Maze::IBinarySerializable, TValue>::value), TValue>::type const& _value);
 
     //////////////////////////////////////////
     template <typename TValue>
     inline U32 TryGetValueSerializationSize(typename ::std::enable_if<(
         !HasGetValueSerializationSize<TValue>::value &&
-        !std::is_base_of<IBinarySerializable, TValue>::value), TValue>::type const& _value);
+        !std::is_base_of<Maze::IBinarySerializable, TValue>::value), TValue>::type const& _value);
 
 
     //////////////////////////////////////////
     template <typename TValue>
     inline U32 TrySerializeValue(typename ::std::enable_if<(
-        std::is_base_of<IBinarySerializable, TValue>::value), TValue>::type const& _value, U8* _data);
+        std::is_base_of<Maze::IBinarySerializable, TValue>::value), TValue>::type const& _value, U8* _data);
 
     //////////////////////////////////////////
     template <typename TValue>
     inline U32 TrySerializeValue(typename ::std::enable_if<(
         HasSerializeValue<TValue>::value &&
-        !std::is_base_of<IBinarySerializable, TValue>::value), TValue>::type const& _value, U8* _data);
+        !std::is_base_of<Maze::IBinarySerializable, TValue>::value), TValue>::type const& _value, U8* _data);
 
     //////////////////////////////////////////
     template <typename TValue>
     inline U32 TrySerializeValue(typename ::std::enable_if<(
         !HasSerializeValue<TValue>::value &&
-        !std::is_base_of<IBinarySerializable, TValue>::value), TValue>::type const& _value, U8* _data);
+        !std::is_base_of<Maze::IBinarySerializable, TValue>::value), TValue>::type const& _value, U8* _data);
 
 
     //////////////////////////////////////////
     template <typename TValue>
     inline U32 TryDeserializeValue(typename ::std::enable_if<(
-        std::is_base_of<IBinarySerializable, TValue>::value), TValue>::type& _value, U8 const* _data);
+        std::is_base_of<Maze::IBinarySerializable, TValue>::value), TValue>::type& _value, U8 const* _data);
 
     //////////////////////////////////////////
     template <typename TValue>
     inline U32 TryDeserializeValue(typename ::std::enable_if<(
         HasDeserializeValue<TValue>::value &&
-        !std::is_base_of<IBinarySerializable, TValue>::value), TValue>::type& _value, U8 const* _data);
+        !std::is_base_of<Maze::IBinarySerializable, TValue>::value), TValue>::type& _value, U8 const* _data);
 
     //////////////////////////////////////////
     template <typename TValue>
     inline U32 TryDeserializeValue(typename ::std::enable_if<(
         !HasDeserializeValue<TValue>::value &&
-        !std::is_base_of<IBinarySerializable, TValue>::value), TValue>::type& _value, U8 const* _data);
+        !std::is_base_of<Maze::IBinarySerializable, TValue>::value), TValue>::type& _value, U8 const* _data);
 
 
 

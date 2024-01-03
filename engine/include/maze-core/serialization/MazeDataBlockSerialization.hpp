@@ -47,20 +47,25 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    void ValueFromDataBlock();
+    void ValueToDataBlock();
+
+
+    //////////////////////////////////////////
     // Utils
     //
     //////////////////////////////////////////
     template <typename T, typename = int>
     struct HasValueFromDataBlock : std::false_type { };
     template <typename T>
-    struct HasValueFromDataBlock <T, decltype(ValueFromDataBlock(std::declval<T&>(), std::declval<DataBlock>()), 0)> : std::true_type { };
+    struct HasValueFromDataBlock <T, decltype(Maze::ValueFromDataBlock(std::declval<T&>(), std::declval<DataBlock>()), 0)> : std::true_type { };
 
 
     //////////////////////////////////////////
     template <typename T, typename = int>
     struct HasValueToDataBlock : std::false_type { };
     template <typename T>
-    struct HasValueToDataBlock <T, decltype(ValueToDataBlock(std::declval<T>(), std::declval<DataBlock>()), 0)> : std::true_type { };
+    struct HasValueToDataBlock <T, decltype(Maze::ValueToDataBlock(std::declval<T>(), std::declval<DataBlock>()), 0)> : std::true_type { };
 
 
     //////////////////////////////////////////
@@ -69,37 +74,37 @@ namespace Maze
     //////////////////////////////////////////
     template <typename TValue>
     inline  bool TryValueFromDataBlock(typename ::std::enable_if<(
-        std::is_base_of<IDataBlockSerializable, TValue>::value), TValue>::type& _value, DataBlock const& _data);
+        std::is_base_of<Maze::IDataBlockSerializable, TValue>::value), TValue>::type& _value, DataBlock const& _data);
 
     //////////////////////////////////////////
     template <typename TValue>
     inline bool TryValueFromDataBlock(typename ::std::enable_if<(
         HasValueFromDataBlock<TValue>::value &&
-        !std::is_base_of<IDataBlockSerializable, TValue>::value), TValue>::type& _value, DataBlock const& _data);
+        !std::is_base_of<Maze::IDataBlockSerializable, TValue>::value), TValue>::type& _value, DataBlock const& _data);
 
     //////////////////////////////////////////
     template <typename TValue>
     inline  bool TryValueFromDataBlock(typename ::std::enable_if<(
         !HasValueFromDataBlock<TValue>::value &&
-        !std::is_base_of<IDataBlockSerializable, TValue>::value), TValue>::type& _value, DataBlock const& _data);
+        !std::is_base_of<Maze::IDataBlockSerializable, TValue>::value), TValue>::type& _value, DataBlock const& _data);
 
 
     //////////////////////////////////////////
     template <typename TValue>
     inline bool TryValueToDataBlock(typename ::std::enable_if<(
-        std::is_base_of<IDataBlockSerializable, TValue>::value), TValue>::type const& _value, DataBlock& _data);
+        std::is_base_of<Maze::IDataBlockSerializable, TValue>::value), TValue>::type const& _value, DataBlock& _data);
 
     //////////////////////////////////////////
     template <typename TValue>
     inline bool TryValueToDataBlock(typename ::std::enable_if<(
         HasValueToDataBlock<TValue>::value &&
-        !std::is_base_of<IDataBlockSerializable, TValue>::value), TValue>::type const& _value, DataBlock& _data);
+        !std::is_base_of<Maze::IDataBlockSerializable, TValue>::value), TValue>::type const& _value, DataBlock& _data);
 
     //////////////////////////////////////////
     template <typename TValue>
     inline bool TryValueToDataBlock(typename ::std::enable_if<(
         !HasValueToDataBlock<TValue>::value &&
-        !std::is_base_of<IDataBlockSerializable, TValue>::value), TValue>::type const& _value, DataBlock& _data);
+        !std::is_base_of<Maze::IDataBlockSerializable, TValue>::value), TValue>::type const& _value, DataBlock& _data);
 
 
     //////////////////////////////////////////

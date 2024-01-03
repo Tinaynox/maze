@@ -48,6 +48,11 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    void ValueFromString();
+    void ValueToString();
+
+
+    //////////////////////////////////////////
     namespace JSONHelper
     {
         //////////////////////////////////////////
@@ -65,13 +70,13 @@ namespace Maze
     template <typename T, typename = int>
     struct HasValueFromString : std::false_type { };
     template <typename T>
-    struct HasValueFromString <T, decltype(ValueFromString(std::declval<T&>(), std::declval<CString>(), std::declval<Size>()), 0)> : std::true_type { };
+    struct HasValueFromString <T, decltype(Maze::ValueFromString(std::declval<T&>(), std::declval<CString>(), std::declval<Size>()), 0)> : std::true_type { };
 
     //////////////////////////////////////////
     template <typename T, typename = int>
     struct HasValueToString : std::false_type { };
     template <typename T>
-    struct HasValueToString <T, decltype(ValueToString(std::declval<T>(), std::declval<String>()), 0)> : std::true_type { };
+    struct HasValueToString <T, decltype(Maze::ValueToString(std::declval<T>(), std::declval<String>()), 0)> : std::true_type { };
 
 
     //////////////////////////////////////////
@@ -80,36 +85,36 @@ namespace Maze
     //////////////////////////////////////////
     template <typename TValue>
     inline  bool TryValueFromString(typename ::std::enable_if<(
-        std::is_base_of<IStringSerializable, TValue>::value), TValue>::type& _value, CString _data, Size _count);
+        std::is_base_of<Maze::IStringSerializable, TValue>::value), TValue>::type& _value, CString _data, Size _count);
 
     //////////////////////////////////////////
     template <typename TValue>
     inline bool TryValueFromString(typename ::std::enable_if<(
         HasValueFromString<TValue>::value &&
-        !std::is_base_of<IStringSerializable, TValue>::value), TValue>::type& _value, CString _data, Size _count);
+        !std::is_base_of<Maze::IStringSerializable, TValue>::value), TValue>::type& _value, CString _data, Size _count);
 
     //////////////////////////////////////////
     template <typename TValue>
     inline  bool TryValueFromString(typename ::std::enable_if<(
         !HasValueFromString<TValue>::value &&
-        !std::is_base_of<IStringSerializable, TValue>::value), TValue>::type& _value, CString _data, Size _count);
+        !std::is_base_of<Maze::IStringSerializable, TValue>::value), TValue>::type& _value, CString _data, Size _count);
 
     //////////////////////////////////////////
     template <typename TValue>
     inline bool TryValueToString(typename ::std::enable_if<(
-        std::is_base_of<IStringSerializable, TValue>::value), TValue>::type const& _value, String& _data);
+        std::is_base_of<Maze::IStringSerializable, TValue>::value), TValue>::type const& _value, String& _data);
 
     //////////////////////////////////////////
     template <typename TValue>
     inline bool TryValueToString(typename ::std::enable_if<(
         HasValueToString<TValue>::value &&
-        !std::is_base_of<IStringSerializable, TValue>::value), TValue>::type const& _value, String& _data);
+        !std::is_base_of<Maze::IStringSerializable, TValue>::value), TValue>::type const& _value, String& _data);
 
     //////////////////////////////////////////
     template <typename TValue>
     inline bool TryValueToString(typename ::std::enable_if<(
         !HasValueToString<TValue>::value &&
-        !std::is_base_of<IStringSerializable, TValue>::value), TValue>::type const& _value, String& _data);
+        !std::is_base_of<Maze::IStringSerializable, TValue>::value), TValue>::type const& _value, String& _data);
 
 
     //////////////////////////////////////////
