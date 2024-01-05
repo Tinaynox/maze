@@ -33,6 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/MazeTypes.hpp"
+#include "maze-core/serialization/MazeStringSerializable.hpp"
 
 
 //////////////////////////////////////////
@@ -196,6 +197,52 @@ namespace Maze
 
     //////////////////////////////////////////
     MAZE_CORE_API GeoLanguage LocaleCodeToGeoLanguage(S32 _value);
+
+
+    //////////////////////////////////////////
+    // Class SerializableGeoLanguage
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API SerializableGeoLanguage
+        : public IStringSerializable
+    {
+    public:
+
+        //////////////////////////////////////////
+        inline SerializableGeoLanguage(GeoLanguage _value = GeoLanguage::Unknown)
+            : m_value(_value)
+        {}
+
+        //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        inline operator GeoLanguage() const { return m_value; }
+
+        //////////////////////////////////////////
+        inline SerializableGeoLanguage& operator=(GeoLanguage _value) { m_value = _value; return *this; }
+
+        //////////////////////////////////////////
+        inline SerializableGeoLanguage& operator=(SerializableGeoLanguage _value) { m_value = _value.m_value; return *this; }
+
+        //////////////////////////////////////////
+        inline bool operator==(GeoLanguage _value) const { return m_value == _value; }
+
+        //////////////////////////////////////////
+        inline bool operator!=(GeoLanguage _value) const { return m_value != _value; }
+
+        //////////////////////////////////////////
+        inline bool operator==(SerializableGeoLanguage _value) const { return m_value == _value.m_value; }
+
+        //////////////////////////////////////////
+        inline bool operator!=(SerializableGeoLanguage _value) const { return m_value != _value.m_value; }
+
+    private:
+        GeoLanguage m_value = GeoLanguage::Unknown;
+    };
 
     
 } // namespace Maze

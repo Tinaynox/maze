@@ -443,5 +443,27 @@ namespace Maze
         return GeoLocation::Unknown;
     }
 
+
+    //////////////////////////////////////////
+    // Class SerializableGeoLocation
+    //
+    //////////////////////////////////////////
+    String SerializableGeoLocation::toString() const
+    {
+        return GeoLocationToString(m_value);
+    }
+
+    //////////////////////////////////////////
+    void SerializableGeoLocation::setString(CString _data, Size _count)
+    {
+        if (!_data)
+        {
+            m_value = GeoLocation::Unknown;
+            return;
+        }
+
+        m_value = StringToGeoLocation(String(_data, _data + _count));
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

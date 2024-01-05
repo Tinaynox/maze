@@ -245,10 +245,6 @@ namespace Maze
     };
 
 
-    //////////////////////////////////////////
-    // MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DShapeModule);
-
-
 } // namespace Maze
 //////////////////////////////////////////
 

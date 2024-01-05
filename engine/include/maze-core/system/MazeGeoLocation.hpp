@@ -33,6 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/MazeTypes.hpp"
+#include "maze-core/serialization/MazeStringSerializable.hpp"
 
 
 //////////////////////////////////////////
@@ -376,6 +377,52 @@ namespace Maze
 
     //////////////////////////////////////////
     MAZE_CORE_API GeoLocation ISO3ToGeoLocation(String const& _code);
+
+
+    //////////////////////////////////////////
+    // Class SerializableGeoLocation
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API SerializableGeoLocation
+        : public IStringSerializable
+    {
+    public:
+
+        //////////////////////////////////////////
+        inline SerializableGeoLocation(GeoLocation _value = GeoLocation::Unknown)
+            : m_value(_value)
+        {}
+
+        //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        inline operator GeoLocation() const { return m_value; }
+
+        //////////////////////////////////////////
+        inline SerializableGeoLocation& operator=(GeoLocation _value) { m_value = _value; return *this; }
+
+        //////////////////////////////////////////
+        inline SerializableGeoLocation& operator=(SerializableGeoLocation _value) { m_value = _value.m_value; return *this; }
+
+        //////////////////////////////////////////
+        inline bool operator==(GeoLocation _value) const { return m_value == _value; }
+
+        //////////////////////////////////////////
+        inline bool operator!=(GeoLocation _value) const { return m_value != _value; }
+
+        //////////////////////////////////////////
+        inline bool operator==(SerializableGeoLocation _value) const { return m_value == _value.m_value; }
+
+        //////////////////////////////////////////
+        inline bool operator!=(SerializableGeoLocation _value) const { return m_value != _value.m_value; }
+
+    private:
+        GeoLocation m_value = GeoLocation::Unknown;
+    };
 
     
 } // namespace Maze

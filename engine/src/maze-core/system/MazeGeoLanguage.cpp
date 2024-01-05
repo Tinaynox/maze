@@ -230,5 +230,27 @@ namespace Maze
         return GeoLanguage::Unknown;
     }
 
+
+    //////////////////////////////////////////
+    // Class SerializableGeoLanguage
+    //
+    //////////////////////////////////////////
+    String SerializableGeoLanguage::toString() const
+    {
+        return GeoLanguageToString(m_value);
+    }
+
+    //////////////////////////////////////////
+    void SerializableGeoLanguage::setString(CString _data, Size _count)
+    {
+        if (!_data)
+        {
+            m_value = GeoLanguage::Unknown;
+            return;
+        }
+
+        m_value = StringToGeoLanguage(String(_data, _data + _count));
+    }
+
 } // namespace Maze
 //////////////////////////////////////////
