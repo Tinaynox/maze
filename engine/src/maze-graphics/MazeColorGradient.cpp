@@ -312,6 +312,19 @@ namespace Maze
         _dataBlock.setS32(MAZE_HS("mode"), (S32)m_mode);
     }
 
+    
+    //////////////////////////////////////////
+    String ColorGradient::toString() const
+    {
+        return JSONHelper::ToString(toJSONValue());
+    }
+
+    //////////////////////////////////////////
+    void ColorGradient::setString(CString _data, Size _count)
+    {
+        (*this) = ColorGradient::FromString(String(_data, _count));
+    }
+
 
 } // namespace Maze
 //////////////////////////////////////////

@@ -57,6 +57,7 @@ namespace Maze
     class MAZE_GRAPHICS_API ColorGradient
         : public IJSONValueSerializable
         , public IDataBlockSerializable
+        , public IStringSerializable
     {
     public:
 
@@ -459,12 +460,6 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline String toString() const
-        {
-            return JSONHelper::ToString(toJSONValue());
-        }
-
-        //////////////////////////////////////////
         inline static ColorGradient FromString(String const& _string)
         {
             ColorGradient gradient;
@@ -486,6 +481,14 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
+
+    public:
+
+        //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
 
     protected:
 
@@ -535,39 +538,6 @@ namespace Maze
         EvaluteAlphaCallback m_evaluateAlphaCallback = &ColorGradient::evaluateAlphaLinear;
     }; 
 
-
-    //////////////////////////////////////////
-    // Serialization
-    //
-    //////////////////////////////////////////
-    inline void ValueToString(ColorGradient const& _value, String& _data)
-    {
-        _data = _value.toString();
-    }
-
-    //////////////////////////////////////////
-    inline void ValueFromString(ColorGradient& _value, CString _data, Size _count)
-    {
-        _value = ColorGradient::FromString(String(_data, _count));
-    }
-
-    //////////////////////////////////////////
-    inline U32 GetValueSerializationSize(ColorGradient const& _value)
-    {
-        return sizeof(ColorGradient);
-    }
-
-    //////////////////////////////////////////
-    inline void SerializeValue(ColorGradient const& _value, U8* _data)
-    {
-        memcpy(_data, (U8 const*)(&_value), sizeof(ColorGradient));
-    }
-
-    //////////////////////////////////////////
-    inline void DeserializeValue(ColorGradient& _value, U8 const* _data)
-    {
-        memcpy((U8*)&_value, _data, sizeof(ColorGradient));
-    }
 
 } // namespace Maze
 //////////////////////////////////////////

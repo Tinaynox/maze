@@ -614,14 +614,14 @@ namespace Maze
         {
             DataBlock const* subBlock = _dataBlock.getDataBlock(i);
 
-            if (subBlock->getName() == MAZE_HASHED_CSTRING("renderPass"))
+            if (subBlock->getName() == MAZE_HS("renderPass"))
             {
-                RenderPassType renderPassType = RenderPassType::FromString(subBlock->getCString("passType"));
+                RenderPassType renderPassType = RenderPassType::FromString(subBlock->getCString(MAZE_HS("passType")));
                 RenderPassPtr renderPass = createRenderPass(renderPassType);
                 renderPass->loadFromDataBlock(*subBlock);
             }
             else
-            if (subBlock->getName() == MAZE_HASHED_CSTRING("uniform"))
+            if (subBlock->getName() == MAZE_HS("uniform"))
             {
                 ShaderUniformVariant shaderUniformVariant(m_renderSystem);
                 shaderUniformVariant.loadFromDataBlock(*subBlock);
@@ -637,17 +637,32 @@ namespace Maze
     {
         for (ShaderUniformVariantPtr const& uniformVariant : m_uniforms)
         {
-            uniformVariant->toDataBlock(*_dataBlock.addNewDataBlock(MAZE_HASHED_CSTRING("shaderUniformVariant")));
+            uniformVariant->toDataBlock(*_dataBlock.addNewDataBlock(MAZE_HS("shaderUniformVariant")));
         }
 
         for (RenderPassType passType = RenderPassType(1); passType < RenderPassType::MAX; ++passType)
         {
             for (RenderPassPtr const& renderPass : m_passes[passType])
             {
-                renderPass->toDataBlock(*_dataBlock.addNewDataBlock(MAZE_HASHED_CSTRING("renderPass")));
+                renderPass->toDataBlock(*_dataBlock.addNewDataBlock(MAZE_HS("renderPass")));
             }
         }
     }
+
+    //////////////////////////////////////////
+    String Material::toString() const
+    {
+        String result;
+        ToString(this, result);
+        return result;
+    }
+
+    //////////////////////////////////////////
+    void Material::setString(CString _data, Size _count)
+    {
+        MAZE_TODO;
+    }
+
 
     //////////////////////////////////////////
     bool Material::saveToFile(String const& _fullpath)
@@ -718,7 +733,7 @@ namespace Maze
         }
         else
         {
-            _value = materialManager->getMaterial(MAZE_HASHED_CSTRING(_data));
+            _value = materialManager->getMaterial(MAZE_HS(_data));
         }
     }
 

@@ -213,16 +213,16 @@ namespace Maze
         StringHelper::SplitWords(command, words, ' ');
         String const commandName = words[0];
 
-        if (!ConsoleService::GetInstancePtr()->hasCommand(commandName.c_str()))
+        if (!ConsoleService::GetInstancePtr()->hasCommand(HashedCString(commandName.c_str())))
         {
             MAZE_WARNING("Undefined command: %s", commandName.c_str());
             return;
         }
         
         if (words.size() > 1)
-            ConsoleService::GetInstancePtr()->executeCommand(commandName.c_str(), &words[1], (S32)words.size() - 1);
+            ConsoleService::GetInstancePtr()->executeCommand(HashedCString(commandName.c_str()), &words[1], (S32)words.size() - 1);
         else
-            ConsoleService::GetInstancePtr()->executeCommand(commandName.c_str(), nullptr, 0);
+            ConsoleService::GetInstancePtr()->executeCommand(HashedCString(commandName.c_str()), nullptr, 0);
 
         m_lastCommandIndex = -1;
     }

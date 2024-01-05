@@ -470,10 +470,10 @@ namespace Maze
                 StringHelper::SplitWords(metaDataLines[i], metaDataValues, '=');
 
                 if (metaDataValues.size() == 1)
-                    metaData.emplace(std::move(metaDataValues[0]), String());
+                    metaData.emplace(HashedString(std::move(metaDataValues[0])), String());
                 else
                 if (metaDataValues.size() == 2)
-                    metaData.emplace(std::move(metaDataValues[0]), std::move(metaDataValues[1]));
+                    metaData.emplace(HashedString(std::move(metaDataValues[0])), std::move(metaDataValues[1]));
             }
         }
 

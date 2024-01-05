@@ -55,6 +55,7 @@ namespace Maze
         : public SharedObject<Font>
         , public MultiDelegateCallbackReceiver
         , public IDataBlockSerializable
+        , public IStringSerializable
     {
     public:
 
@@ -142,6 +143,14 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
+
+    public:
+
+        //////////////////////////////////////////
         static void FromString(FontPtr& _value, CString _data, Size _count);
 
         //////////////////////////////////////////
@@ -174,23 +183,6 @@ namespace Maze
         FontGlyphStorageData m_defaultGlyphsData;
         Map<U32, FontGlyphStorageData*> m_glyphsMap;
     };
-
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<FontPtr>::value), void>::type
-        ValueToString(FontPtr const& _value, String& _data)
-    {
-        Font::ToString(_value.get(), _data);
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<FontPtr>::value), void>::type
-        ValueFromString(FontPtr& _value, CString _data, Size _count)
-    {
-        Font::FromString(_value, _data, _count);
-    }
     
 
 } // namespace Maze

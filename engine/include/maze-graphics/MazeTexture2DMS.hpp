@@ -57,6 +57,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API Texture2DMS
         : public Texture
+        , public IStringSerializable
     {
     public:
 
@@ -137,13 +138,15 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual String toString() const;
-
-        //////////////////////////////////////////
-        virtual void setString(CString _data, Size _count);
-
-        //////////////////////////////////////////
         static Texture2DMSPtr const& FromString(CString _data, Size _count);
+
+    public:
+
+        //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
 
     protected:
 
@@ -162,22 +165,6 @@ namespace Maze
         AssetFilePtr m_assetFile;
     };
 
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<Texture2DMSPtr>::value), void>::type
-        ValueToString(Texture2DMSPtr const& _value, String& _data)
-    {
-        _data = _value->toString();
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<Texture2DMSPtr>::value), void>::type
-        ValueFromString(Texture2DMSPtr& _value, CString _data, Size _count)
-    {
-        _value = Texture2DMS::FromString(_data, _count);
-    }
 
 
 } // namespace Maze

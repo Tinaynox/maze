@@ -222,12 +222,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    String RenderMesh::toString() const
-    {
-        return getName();
-    }
-
-    //////////////////////////////////////////
     RenderMeshPtr RenderMesh::FromString(String const& _string)
     {
         // #TODO: REWORK this function!
@@ -236,6 +230,18 @@ namespace Maze
             return nullptr;
 
         return GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getRenderMeshManager()->getRenderMesh(_string);
+    }
+
+    //////////////////////////////////////////
+    String RenderMesh::toString() const
+    {
+        return getName();
+    }
+
+    //////////////////////////////////////////
+    void RenderMesh::setString(CString _data, Size _count)
+    {
+        MAZE_TODO;
     }
 
 

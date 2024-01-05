@@ -124,10 +124,10 @@ namespace Maze
         UpdateManager::GetInstancePtr()->addUpdatable(this);
 
         
-        registerInspectorByExtension<MaterialsInspector>("mzmaterial");
+        registerInspectorByExtension<MaterialsInspector>(MAZE_HS("mzmaterial"));
         registerInspectorByClassUID<MaterialsInspector, Material>();
 
-        registerInspectorByExtension<Texture2DsInspector>("mztexture");
+        registerInspectorByExtension<Texture2DsInspector>(MAZE_HS("mztexture"));
         registerInspectorByClassUID<Texture2DsInspector, Texture2D>();
         
         TextureManager::GetCurrentInstancePtr()->eventTextureLoaderAdded.subscribe(
@@ -135,7 +135,7 @@ namespace Maze
 
         Vector<String> textureExtensions = TextureManager::GetCurrentInstancePtr()->getTextureLoaderExtensions();
         for (String const& textureExtension : textureExtensions)
-            registerInspectorByExtension<Texture2DsInspector>(textureExtension.c_str());
+            registerInspectorByExtension<Texture2DsInspector>(MAZE_HS(textureExtension.c_str()));
 
         AssetManager::GetInstancePtr()->eventAssetFileRemoved.subscribe(this, &InspectorController::notifyAssetFileRemoved);
 

@@ -69,6 +69,7 @@ namespace Maze
         : public SharedObject<Material>
         , public IXMLElementSerializable
         , public IDataBlockSerializable
+        , public IStringSerializable
         , public MultiDelegateCallbackReceiver
         , public ISharedCopyable<Material>
         , public Object
@@ -260,6 +261,14 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
+
+    public:
+
+        //////////////////////////////////////////
         static void FromString(MaterialPtr& _value, CString _data, Size _count);
 
         //////////////////////////////////////////
@@ -298,23 +307,6 @@ namespace Maze
         Material* m_instancesListNext = nullptr;
         Material* m_instancesListPrev = nullptr;
     };
-
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<MaterialPtr>::value), void>::type
-        ValueToString(MaterialPtr const& _value, String& _data)
-    {
-        Material::ToString(_value.get(), _data);
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<MaterialPtr>::value), void>::type
-        ValueFromString(MaterialPtr& _value, CString _data, Size _count)
-    {
-        Material::FromString(_value, _data, _count);
-    }
 
 
     //////////////////////////////////////////

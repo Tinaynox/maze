@@ -141,13 +141,14 @@ namespace Maze
 
         if (!m_metaInstances.empty())
         {
-            _value = m_metaProperty->toString(*m_metaInstances.begin());
+            m_metaProperty->toString(*m_metaInstances.begin(), _value);
             for (Set<MetaInstance>::const_iterator    it = ++m_metaInstances.begin(),
                 end = m_metaInstances.end();
                 it != end;
                 ++it)
             {
-                String value = m_metaProperty->toString(*it);
+                String value;
+                m_metaProperty->toString(*it, value);
                 if (value != _value)
                 {
                     _isMultiValue = true;

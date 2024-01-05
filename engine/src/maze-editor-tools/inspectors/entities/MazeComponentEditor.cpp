@@ -237,7 +237,8 @@ namespace Maze
                                                     continue;
                                             }
 
-                                            String properyStringValue = metaProperty->toString(metaInstance);
+                                            String properyStringValue;
+                                            metaProperty->toString(metaInstance, properyStringValue);
 
                                             if (!result.empty())
                                                 result += " ";

@@ -472,32 +472,32 @@ namespace Maze
     // Serialization
     //
     //////////////////////////////////////////
-    inline void ValueToString(AnimationCurve const& _value, String& _data)
+    MAZE_FORCEINLINE void ValueToString(AnimationCurve const& _value, String& _data)
     {
         _data = _value.toString();
     }
 
     //////////////////////////////////////////
-    inline void ValueFromString(AnimationCurve& _value, CString _data, Size _count)
+    MAZE_FORCEINLINE void ValueFromString(AnimationCurve& _value, CString _data, Size _count)
     {
         // TODO:
         _value = AnimationCurve::FromString(String(_data, _count));
     }
 
     //////////////////////////////////////////
-    inline U32 GetValueSerializationSize(AnimationCurve const& _value)
+    MAZE_FORCEINLINE void GetValueSerializationSize(AnimationCurve const& _value, U32& _outSize)
     {
-        return sizeof(AnimationCurve);
+        _outSize = sizeof(AnimationCurve);
     }
 
     //////////////////////////////////////////
-    inline void SerializeValue(AnimationCurve const& _value, U8* _data)
+    MAZE_FORCEINLINE void SerializeValue(AnimationCurve const& _value, U8* _data)
     {
         memcpy(_data, (U8 const*)(&_value), sizeof(AnimationCurve));
     }
 
     //////////////////////////////////////////
-    inline void DeserializeValue(AnimationCurve& _value, U8 const* _data)
+    MAZE_FORCEINLINE void DeserializeValue(AnimationCurve& _value, U8 const* _data)
     {
         memcpy((U8*)&_value, _data, sizeof(AnimationCurve));
     }

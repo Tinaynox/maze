@@ -113,7 +113,7 @@ namespace Maze
 
         PhysicsMaterial2DPtr material = PhysicsMaterial2D::Create(_assetFile);
         PhysicsMaterial2DLibraryData* data = addFontToLibrary(
-            _assetFile->getFileName().toUTF8().c_str(),
+            HashedCString(_assetFile->getFileName().toUTF8().c_str()),
             material);
 
         if (data)

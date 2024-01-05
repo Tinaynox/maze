@@ -288,31 +288,31 @@ namespace Maze
     // Serialization
     //
     //////////////////////////////////////////
-    inline void ValueToString(Vec3B const& _value, String& _data)
+    MAZE_FORCEINLINE void ValueToString(Vec3B const& _value, String& _data)
     {
         _data = _value.toString();
     }
 
     //////////////////////////////////////////
-    inline void ValueFromString(Vec3B& _value, CString _data, Size _count)
+    MAZE_FORCEINLINE void ValueFromString(Vec3B& _value, CString _data, Size _count)
     {
         _value = Vec3B::FromString(_data, _count);
     }
 
     //////////////////////////////////////////
-    inline U32 GetValueSerializationSize(Vec3B const& _value)
+    MAZE_FORCEINLINE void GetValueSerializationSize(Vec3B const& _value, U32& _outSize)
     {
-        return sizeof(Vec3B);
+        _outSize = sizeof(Vec3B);
     }
 
     //////////////////////////////////////////
-    inline void SerializeValue(Vec3B const& _value, U8* _data)
+    MAZE_FORCEINLINE void SerializeValue(Vec3B const& _value, U8* _data)
     {
         memcpy(_data, (U8 const*)(&_value), sizeof(Vec3B));
     }
 
     //////////////////////////////////////////
-    inline void DeserializeValue(Vec3B& _value, U8 const* _data)
+    MAZE_FORCEINLINE void DeserializeValue(Vec3B& _value, U8 const* _data)
     {
         memcpy((U8*)&_value, _data, sizeof(Vec3B));
     }

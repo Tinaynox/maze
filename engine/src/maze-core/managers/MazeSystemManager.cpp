@@ -156,9 +156,9 @@ namespace Maze
                 if (*currentKey != '\0')
                 {
                     if (currentValues.empty())
-                        m_commandLineArgumentFlags.insert(currentKey);
+                        m_commandLineArgumentFlags.insert(HashedCString(currentKey));
                     else
-                        m_commandLineArgumentValues.insert(currentKey, std::move(currentValues));
+                        m_commandLineArgumentValues.insert(HashedCString(currentKey), std::move(currentValues));
                 }
 
                 currentKey = nullptr;

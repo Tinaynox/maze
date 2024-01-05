@@ -312,7 +312,7 @@ namespace Maze
         virtual bool init(ShaderPtr const& _shader, ShaderUniformType _type = ShaderUniformType::None);
 
         //////////////////////////////////////////
-        void setName(HashedCString _name) { m_value.setName(_name); }
+        void setName(HashedCString _name) { m_value.setName(HashedString(_name)); }
 
         
         //////////////////////////////////////////

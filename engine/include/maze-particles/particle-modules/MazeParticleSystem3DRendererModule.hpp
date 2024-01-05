@@ -286,8 +286,8 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DRendererModule);
-    MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DRendererModule::TextureSheetAnimation);
+    /*MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DRendererModule);
+    MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DRendererModule::TextureSheetAnimation);*/
 
 
 } // namespace Maze

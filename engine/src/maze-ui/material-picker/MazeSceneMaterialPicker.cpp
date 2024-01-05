@@ -351,11 +351,11 @@ namespace Maze
 
 
                 // #TODO: REWORK
-                if (materialCopy->getUniform("u_baseMap"))
+                if (materialCopy->getUniform(MAZE_HS("u_baseMap")))
                 {
-                    renderPass->getShader()->ensureUniform("u_baseMapST");
+                    renderPass->getShader()->ensureUniform(MAZE_HS("u_baseMapST"));
 
-                    TexturePtr const& texture = materialCopy->getUniform("u_baseMap")->getTexture();
+                    TexturePtr const& texture = materialCopy->getUniform(MAZE_HS("u_baseMap"))->getTexture();
 
                     if (texture)
                     {

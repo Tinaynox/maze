@@ -241,31 +241,31 @@ namespace Maze
     // Serialization
     //
     //////////////////////////////////////////
-    inline void ValueToString(Rotation2D const& _value, String& _data)
+    MAZE_FORCEINLINE void ValueToString(Rotation2D const& _value, String& _data)
     {
         _data = _value.toString();
     }
 
     //////////////////////////////////////////
-    inline void ValueFromString(Rotation2D& _value, CString _data, Size _count)
+    MAZE_FORCEINLINE void ValueFromString(Rotation2D& _value, CString _data, Size _count)
     {
         _value = Rotation2D::FromString(String(_data, _count));
     }
 
     //////////////////////////////////////////
-    inline U32 GetValueSerializationSize(Rotation2D const& _value)
+    MAZE_FORCEINLINE void GetValueSerializationSize(Rotation2D const& _value, U32& _outSize)
     {
-        return sizeof(Rotation2D);
+        _outSize = sizeof(Rotation2D);
     }
 
     //////////////////////////////////////////
-    inline void SerializeValue(Rotation2D const& _value, U8* _data)
+    MAZE_FORCEINLINE void SerializeValue(Rotation2D const& _value, U8* _data)
     {
         memcpy(_data, (U8 const*)(&_value), sizeof(Rotation2D));
     }
 
     //////////////////////////////////////////
-    inline void DeserializeValue(Rotation2D& _value, U8 const* _data)
+    MAZE_FORCEINLINE void DeserializeValue(Rotation2D& _value, U8 const* _data)
     {
         memcpy((U8*)&_value, _data, sizeof(Rotation2D));
     }

@@ -91,7 +91,7 @@ namespace Maze
             if (_material)
             {
                 MaterialPtr material = _material->createCopy();
-                material->setUniform("u_baseMapST", Vec4F32(textureScale, 0.0f, 0.0f));
+                material->setUniform(MAZE_HS("u_baseMapST"), Vec4F32(textureScale, 0.0f, 0.0f));
                 meshRenderer->setMaterial(material);
             }
             else

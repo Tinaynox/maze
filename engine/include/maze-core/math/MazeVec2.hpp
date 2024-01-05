@@ -417,7 +417,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     template <typename TValue>
-    inline typename ::std::enable_if<(IsVec2<TValue>::value), void>::type
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsVec2<TValue>::value), void>::type
         ValueToString(TValue const& _value, String& _data)
     {
         _data = _value.toString();
@@ -425,7 +425,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename TValue>
-    inline typename ::std::enable_if<(IsVec2<TValue>::value), void>::type
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsVec2<TValue>::value), void>::type
         ValueFromString(TValue& _value, CString _data, Size _count)
     {
         _value = TValue::FromString(_data, _count);
@@ -433,15 +433,15 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename TValue>
-    inline typename ::std::enable_if<(IsVec2<TValue>::value), U32>::type
-        GetValueSerializationSize(TValue const& _value)
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsVec2<TValue>::value), void>::type
+        GetValueSerializationSize(TValue const& _value, U32& _outSize)
     {
-        return sizeof(TValue);
+        _outSize = sizeof(TValue);
     }
 
     //////////////////////////////////////////
     template <typename TValue>
-    inline typename ::std::enable_if<(IsVec2<TValue>::value), void>::type
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsVec2<TValue>::value), void>::type
         SerializeValue(TValue const& _value, U8* _data)
     {
         memcpy(_data, (U8 const*)(&_value), sizeof(TValue));
@@ -449,7 +449,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename TValue>
-    inline typename ::std::enable_if<(IsVec2<TValue>::value), void>::type
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsVec2<TValue>::value), void>::type
         DeserializeValue(TValue& _value, U8 const* _data)
     {
         memcpy((U8*)&_value, _data, sizeof(TValue));

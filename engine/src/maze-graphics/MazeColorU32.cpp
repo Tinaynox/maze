@@ -224,6 +224,54 @@ namespace Maze
         a = _vec.w;
     }
 
+    //////////////////////////////////////////
+    String ColorU32::toString() const
+    {
+        return toString(';');
+    }
+
+    //////////////////////////////////////////
+    void ColorU32::setString(CString _data, Size _count)
+    {
+        (*this) = ColorU32::FromString(String(_data, _count), ';');
+    }
+
+    //////////////////////////////////////////
+    bool ColorU32::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        DataBlock::ParamIndex paramIndex = _dataBlock.findParamIndex(MAZE_HS("value"));
+        if (paramIndex >= 0)
+        {
+            DataBlockParamType paramType = _dataBlock.getParamType(paramIndex);
+            switch (paramType)
+            {
+                case DataBlockParamType::ParamU32:
+                {
+                    setRGBA_U8(_dataBlock.getU32(MAZE_HS("value")));
+                    break;
+                }
+                case DataBlockParamType::ParamVec4U8:
+                {
+                    setVec4U8(_dataBlock.getVec4U8(MAZE_HS("value")));
+                    break;
+                }
+                default:
+                {
+                    MAZE_ERROR("Unsupported color value type - %d", (S32)paramType);
+                    break;
+                }
+            }
+
+        }
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void ColorU32::toDataBlock(DataBlock& _dataBlock) const
+    {
+        _dataBlock.setVec4U8(MAZE_HS("value"), toVec4U8());
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

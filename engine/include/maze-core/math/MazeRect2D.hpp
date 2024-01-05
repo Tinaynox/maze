@@ -210,7 +210,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     template <typename TValue>
-    inline typename ::std::enable_if<(IsRect2D<TValue>::value), void>::type
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsRect2D<TValue>::value), void>::type
         ValueToString(TValue const& _value, String& _data)
     {
         _data = _value.toString();
@@ -218,7 +218,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename TValue>
-    inline typename ::std::enable_if<(IsRect2D<TValue>::value), void>::type
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsRect2D<TValue>::value), void>::type
         ValueFromString(TValue& _value, CString _data, Size _count)
     {
         _value = TValue::FromString(String(_data, _count));
@@ -226,15 +226,15 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename TValue>
-    inline typename ::std::enable_if<(IsRect2D<TValue>::value), U32>::type
-        GetValueSerializationSize(TValue const& _value)
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsRect2D<TValue>::value), void>::type
+        GetValueSerializationSize(TValue const& _value, U32& _outSize)
     {
-        return sizeof(TValue);
+        _outSize = sizeof(TValue);
     }
 
     //////////////////////////////////////////
     template <typename TValue>
-    inline typename ::std::enable_if<(IsRect2D<TValue>::value), void>::type
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsRect2D<TValue>::value), void>::type
         SerializeValue(TValue const& _value, U8* _data)
     {
         memcpy(_data, (U8 const*)(&_value), sizeof(TValue));
@@ -242,49 +242,49 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename TValue>
-    inline typename ::std::enable_if<(IsRect2D<TValue>::value), void>::type
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsRect2D<TValue>::value), void>::type
         DeserializeValue(TValue& _value, U8 const* _data)
     {
         memcpy((U8*)&_value, _data, sizeof(TValue));
     }
 
     //////////////////////////////////////////
-    inline void ValueToDataBlock(Rect2DS const& _value, DataBlock& _data)
+    MAZE_FORCEINLINE void ValueToDataBlock(Rect2DS const& _value, DataBlock& _data)
     {
         _data.setVec2S(MAZE_HS("point"), _value.getPosition());
         _data.setVec2S(MAZE_HS("direction"), _value.getSize());
     }
 
     //////////////////////////////////////////
-    inline void ValueFromDataBlock(Rect2DS& _value, DataBlock const& _data)
+    MAZE_FORCEINLINE void ValueFromDataBlock(Rect2DS& _value, DataBlock const& _data)
     {
         _value.setPosition(_data.getVec2S(MAZE_HS("point")));
         _value.setSize(_data.getVec2S(MAZE_HS("direction")));
     }
 
     //////////////////////////////////////////
-    inline void ValueToDataBlock(Rect2DU const& _value, DataBlock& _data)
+    MAZE_FORCEINLINE void ValueToDataBlock(Rect2DU const& _value, DataBlock& _data)
     {
         _data.setVec2U(MAZE_HS("point"), _value.getPosition());
         _data.setVec2U(MAZE_HS("direction"), _value.getSize());
     }
 
     //////////////////////////////////////////
-    inline void ValueFromDataBlock(Rect2DU& _value, DataBlock const& _data)
+    MAZE_FORCEINLINE void ValueFromDataBlock(Rect2DU& _value, DataBlock const& _data)
     {
         _value.setPosition(_data.getVec2U(MAZE_HS("point")));
         _value.setSize(_data.getVec2U(MAZE_HS("direction")));
     }
 
     //////////////////////////////////////////
-    inline void ValueToDataBlock(Rect2DF const& _value, DataBlock& _data)
+    MAZE_FORCEINLINE void ValueToDataBlock(Rect2DF const& _value, DataBlock& _data)
     {
         _data.setVec2F(MAZE_HS("point"), _value.getPosition());
         _data.setVec2F(MAZE_HS("direction"), _value.getSize());
     }
 
     //////////////////////////////////////////
-    inline void ValueFromDataBlock(Rect2DF& _value, DataBlock const& _data)
+    MAZE_FORCEINLINE void ValueFromDataBlock(Rect2DF& _value, DataBlock const& _data)
     {
         _value.setPosition(_data.getVec2F(MAZE_HS("point")));
         _value.setSize(_data.getVec2F(MAZE_HS("direction")));

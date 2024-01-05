@@ -33,6 +33,7 @@
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
+#include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-graphics/MazeColorU32.hpp"
 
 
@@ -43,6 +44,18 @@ namespace Maze
     MAZE_USING_SHARED_PTR(RenderTarget);
     MAZE_USING_SHARED_PTR(CanvasScaler);
     MAZE_USING_SHARED_PTR(Canvas);
+
+
+    //////////////////////////////////////////
+    MAZE_DECLARE_ENUMCLASS_2_API(MAZE_GRAPHICS_API, CanvasScalerScaleMode,
+        ConstantPixelSize,
+        ScaleWithViewportSize)
+
+    //////////////////////////////////////////
+    MAZE_DECLARE_ENUMCLASS_3_API(MAZE_GRAPHICS_API, CanvasScalerScreenMatchMode,
+        MatchWidthOrHeight,
+        Expand,
+        Shrink)
 
 
     //////////////////////////////////////////
@@ -61,22 +74,6 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_DECLARE_MEMORY_ALLOCATION(CanvasScaler);
 
-        //////////////////////////////////////////
-        enum class ScaleMode
-        {
-            None = 0,
-            ConstantPixelSize,
-            ScaleWithViewportSize
-        };
-
-        //////////////////////////////////////////
-        enum class ScreenMatchMode
-        {
-            MatchWidthOrHeight = 0,
-            Expand = 1,
-            Shrink = 2,
-        };
-
     public:
 
         //////////////////////////////////////////
@@ -91,17 +88,17 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline ScaleMode getScaleMode() const { return m_scaleMode; }
+        inline CanvasScalerScaleMode getScaleMode() const { return m_scaleMode; }
 
         //////////////////////////////////////////
-        void setScaleMode(ScaleMode _scaleMode);
+        void setScaleMode(CanvasScalerScaleMode _scaleMode);
 
 
         //////////////////////////////////////////
-        inline ScreenMatchMode getScreenMatchMode() const { return m_screenMatchMode; }
+        inline CanvasScalerScreenMatchMode getScreenMatchMode() const { return m_screenMatchMode; }
 
         //////////////////////////////////////////
-        void setScreenMatchMode(ScreenMatchMode _screenMatchMode);
+        void setScreenMatchMode(CanvasScalerScreenMatchMode _screenMatchMode);
 
 
         //////////////////////////////////////////
@@ -143,21 +140,14 @@ namespace Maze
         void handleScaleWithViewportSize();
 
     protected:
-        ScaleMode m_scaleMode;
-        ScreenMatchMode m_screenMatchMode;
+        CanvasScalerScaleMode m_scaleMode;
+        CanvasScalerScreenMatchMode m_screenMatchMode;
         Vec2F m_referenceResolution;
         F32 m_matchWidthOrHeight;
 
         CanvasPtr m_canvas;
     };
 
-
-    //////////////////////////////////////////
-    // Serialization
-    //
-    //////////////////////////////////////////
-    MAZE_IMPLEMENT_CPP_ENUMCLASS_STRING_SERIALIZATION(CanvasScaler::ScaleMode);
-    MAZE_IMPLEMENT_CPP_ENUMCLASS_STRING_SERIALIZATION(CanvasScaler::ScreenMatchMode);
 
 } // namespace Maze
 //////////////////////////////////////////

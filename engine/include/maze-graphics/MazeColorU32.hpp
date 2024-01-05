@@ -51,7 +51,9 @@ namespace Maze
     // Class ColorU32
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API ColorU32 
+    class MAZE_GRAPHICS_API ColorU32
+        : public IStringSerializable
+        , public IDataBlockSerializable
     {
     public:
         static const ColorU32 c_zero;
@@ -269,7 +271,7 @@ namespace Maze
         
 
         //////////////////////////////////////////
-        inline String toString(S8 _separator = ';') const
+        inline String toString(S8 _separator) const
         {
             String result = StringHelper::S32ToString(r) + _separator + StringHelper::S32ToString(g) + _separator + StringHelper::S32ToString(b);
             if (a != 255)
@@ -291,80 +293,28 @@ namespace Maze
         }
 
     public:
+
+        //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
+
+    public:
+
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
+
+    public:
         U8 r;
         U8 g;
         U8 b;
         U8 a;
     };
 
-
-    //////////////////////////////////////////
-    // Serialization
-    //
-    //////////////////////////////////////////
-    inline void ValueToString(ColorU32 const& _value, String& _data)
-    {
-        _data = _value.toString(';');
-    }
-
-    //////////////////////////////////////////
-    inline void ValueFromString(ColorU32& _value, CString _data, Size _count)
-    {
-        _value = ColorU32::FromString(String(_data, _count), ';');
-    }
-
-    //////////////////////////////////////////
-    inline U32 GetValueSerializationSize(ColorU32 const& _value)
-    {
-        return sizeof(ColorU32);
-    }
-
-    //////////////////////////////////////////
-    inline void SerializeValue(ColorU32 const& _value, U8* _data)
-    {
-        memcpy(_data, (U8 const*)(&_value), sizeof(ColorU32));
-    }
-
-    //////////////////////////////////////////
-    inline void DeserializeValue(ColorU32& _value, U8 const* _data)
-    {
-        memcpy((U8*)&_value, _data, sizeof(ColorU32));
-    }
-
-    //////////////////////////////////////////
-    inline void ValueToDataBlock(ColorU32 const& _value, DataBlock& _data)
-    {
-        _data.setVec4U8(MAZE_HS("value"), _value.toVec4U8());
-    }
-
-    //////////////////////////////////////////
-    inline void ValueFromDataBlock(ColorU32& _value, DataBlock const& _data)
-    {
-        DataBlock::ParamIndex paramIndex = _data.findParamIndex(MAZE_HS("value"));
-        if (paramIndex >= 0)
-        {
-            DataBlockParamType paramType = _data.getParamType(paramIndex);
-            switch (paramType)
-            {
-                case DataBlockParamType::ParamU32:
-                {
-                    _value.setRGBA_U8(_data.getU32(MAZE_HS("value")));
-                    break;
-                }
-                case DataBlockParamType::ParamVec4U8:
-                {
-                    _value.setVec4U8(_data.getVec4U8(MAZE_HS("value")));
-                    break;
-                }
-                default:
-                {
-                    MAZE_ERROR("Unsupported color value type - %d", (S32)paramType);
-                    break;
-                }
-            }
-            
-        }
-    }
 
 } // namespace Maze
 //////////////////////////////////////////

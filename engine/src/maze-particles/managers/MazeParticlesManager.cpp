@@ -139,7 +139,7 @@ namespace Maze
         renderPass->setShader(shader);
         RenderSystem::GetCurrentInstancePtr()->getShaderSystem()->addShaderToLibrary(shader);
 
-        m_defaultParticleMaterial->setUniform("u_baseMap", m_defaultParticleTexture);
+        m_defaultParticleMaterial->setUniform(MAZE_HS("u_baseMap"), m_defaultParticleTexture);
         renderSystem->getMaterialManager()->addMaterialToLibrary(m_defaultParticleMaterial);
 
 

@@ -314,7 +314,7 @@ namespace Maze
                 canvas->setClearColor(ColorU32::c_red);
                 canvas->setClearColorFlag(false);
                 canvas->setSortOrder(300000);
-                canvas->getCanvasScaler()->setScaleMode(CanvasScaler::ScaleMode::None);
+                canvas->getCanvasScaler()->setScaleMode(CanvasScalerScaleMode::None);
                 canvas->setViewportTransformPolicy(ViewportTransformPolicy::TransformToViewport);
 
 
@@ -1136,7 +1136,7 @@ namespace Maze
                 transform,
                 _ecsScene);
             transparentBackSpriteRenderer->getMaterial()->setUniform(
-                "u_baseMapST",
+                MAZE_HS("u_baseMapST"),
                 Vec4F(
                     transparentBackSpriteRenderer->getTransform()->getWidth() / 8.0f,
                     transparentBackSpriteRenderer->getTransform()->getHeight() / 8.0f,
@@ -1549,7 +1549,7 @@ namespace Maze
             canvas->setClearColor(ColorU32::c_red);
             canvas->setClearColorFlag(false);
             canvas->setSortOrder(3000000);
-            canvas->getCanvasScaler()->setScaleMode(CanvasScaler::ScaleMode::None);
+            canvas->getCanvasScaler()->setScaleMode(CanvasScalerScaleMode::None);
             canvas->setViewportTransformPolicy(ViewportTransformPolicy::TransformToViewport);
             canvas->setRenderTarget(_ecsScene->castRaw<ECSRenderScene>()->getRenderTarget());
 

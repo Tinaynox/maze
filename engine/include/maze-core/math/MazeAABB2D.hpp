@@ -378,44 +378,44 @@ namespace Maze
     // Serialization
     //
     //////////////////////////////////////////
-    inline void ValueToString(AABB2D const& _value, String& _data)
+    MAZE_FORCEINLINE void ValueToString(AABB2D const& _value, String& _data)
     {
         _data = _value.toString();
     }
 
     //////////////////////////////////////////
-    inline void ValueFromString(AABB2D& _value, CString _data, Size _count)
+    MAZE_FORCEINLINE void ValueFromString(AABB2D& _value, CString _data, Size _count)
     {
         _value = AABB2D::FromString(_data, _count);
     }
 
     //////////////////////////////////////////
-    inline U32 GetValueSerializationSize(AABB2D const& _value)
+    MAZE_FORCEINLINE void GetValueSerializationSize(AABB2D const& _value, U32& _outSize)
     {
-        return sizeof(AABB2D);
+        _outSize = sizeof(AABB2D);
     }
 
     //////////////////////////////////////////
-    inline void SerializeValue(AABB2D const& _value, U8* _data)
+    MAZE_FORCEINLINE void SerializeValue(AABB2D const& _value, U8* _data)
     {
         memcpy(_data, (U8 const*)(&_value), sizeof(AABB2D));
     }
 
     //////////////////////////////////////////
-    inline void DeserializeValue(AABB2D& _value, U8 const* _data)
+    MAZE_FORCEINLINE void DeserializeValue(AABB2D& _value, U8 const* _data)
     {
         memcpy((U8*)&_value, _data, sizeof(AABB2D));
     }
 
     //////////////////////////////////////////
-    inline void ValueToDataBlock(AABB2D const& _value, DataBlock& _data)
+    MAZE_FORCEINLINE void ValueToDataBlock(AABB2D const& _value, DataBlock& _data)
     {
         _data.setVec2F(MAZE_HS("min"), _value.getMin());
         _data.setVec2F(MAZE_HS("max"), _value.getMax());
     }
 
     //////////////////////////////////////////
-    inline void ValueFromDataBlock(AABB2D& _value, DataBlock const& _data)
+    MAZE_FORCEINLINE void ValueFromDataBlock(AABB2D& _value, DataBlock const& _data)
     {
         _value.setMin(_data.getVec2F(MAZE_HS("min")));
         _value.setMax(_data.getVec2F(MAZE_HS("max")));

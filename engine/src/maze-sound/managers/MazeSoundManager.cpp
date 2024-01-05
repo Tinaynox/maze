@@ -239,7 +239,7 @@ namespace Maze
         }
         else
         {
-            HashedString fileExtension = StringHelper::ToLower(metaData["ext"]);
+            HashedString fileExtension = HashedString(StringHelper::ToLower(metaData["ext"]));
 
             auto it = m_soundLoaders.find(fileExtension);
             if (it != m_soundLoaders.end())

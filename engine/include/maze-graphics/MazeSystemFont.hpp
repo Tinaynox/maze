@@ -53,6 +53,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API SystemFont
         : public SharedObject<SystemFont>
+        , public IStringSerializable
     {
     public:
 
@@ -66,28 +67,19 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
+
+    public:
+
+        //////////////////////////////////////////
         static void FromString(SystemFontPtr& _value, CString _data, Size _count);
 
         //////////////////////////////////////////
         static void ToString(SystemFont const* _value, String& _data);
     };
-
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<SystemFontPtr>::value), void>::type
-        ValueToString(SystemFontPtr const& _value, String& _data)
-    {
-        SystemFont::ToString(_value.get(), _data);
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<SystemFontPtr>::value), void>::type
-        ValueFromString(SystemFontPtr& _value, CString _data, Size _count)
-    {
-        SystemFont::FromString(_value, _data, _count);
-    }
 
 
 } // namespace Maze

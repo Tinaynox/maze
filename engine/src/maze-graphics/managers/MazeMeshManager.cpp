@@ -230,7 +230,7 @@ namespace Maze
         }
         else
         {
-            HashedString fileExtension = StringHelper::ToLower(metaData["ext"]);
+            HashedString fileExtension = HashedString(StringHelper::ToLower(metaData["ext"]));
 
             auto it = m_meshLoaders.find(fileExtension);
             if (it != m_meshLoaders.end())

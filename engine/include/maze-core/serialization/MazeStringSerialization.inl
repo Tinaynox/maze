@@ -24,12 +24,255 @@
 
 
 //////////////////////////////////////////
-#include "MazeStringSerialization.hpp"
-
-
-//////////////////////////////////////////
 namespace Maze
 {
+    /*
+    //////////////////////////////////////////
+    // Type: bool
+    //
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<bool>::value), bool>::type
+        ValueToString(bool const& _value, String& _data)
+    {
+        _data = StringHelper::ToString(_value);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<bool>::value), bool>::type
+        ValueFromString(bool& _value, CString _data, Size _count)
+    {
+        StringHelper::ParseBool(_data, _data + _count, _value);
+        return true;
+    }
+
+
+    //////////////////////////////////////////
+    // Type: S8
+    //
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<S8>::value), bool>::type
+        ValueToString(S8 const& _value, String& _data)
+    {
+        _data = StringHelper::ToString(_value);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<S8>::value), bool>::type
+        ValueFromString(S8& _value, CString _data, Size _count)
+    {
+        StringHelper::ParseS8(_data, _count, _value);
+        return true;
+    }
+
+
+    //////////////////////////////////////////
+    // Type: U8
+    //
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<U8>::value), bool>::type
+        ValueToString(U8 const& _value, String& _data)
+    {
+        _data = StringHelper::ToString(_value);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<U8>::value), bool>::type
+        ValueFromString(U8& _value, CString _data, Size _count)
+    {
+        StringHelper::ParseU8(_data, _count, _value);
+        return true;
+    }
+
+
+    //////////////////////////////////////////
+    // Type: S16
+    //
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<S16>::value), bool>::type
+        ValueToString(S16 const& _value, String& _data)
+    {
+        _data = StringHelper::ToString(_value);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<S16>::value), bool>::type
+        ValueFromString(S16& _value, CString _data, Size _count)
+    {
+        StringHelper::ParseS16(_data, _count, _value);
+        return true;
+    }
+
+
+    //////////////////////////////////////////
+    // Type: U16
+    //
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<U16>::value), bool>::type
+        ValueToString(U16 const& _value, String& _data)
+    {
+        _data = StringHelper::ToString(_value);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<U16>::value), bool>::type
+        ValueFromString(U16& _value, CString _data, Size _count)
+    {
+        StringHelper::ParseU16(_data, _count, _value);
+        return true;
+    }
+
+
+    //////////////////////////////////////////
+    // Type: S32
+    //
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<S32>::value), bool>::type
+        ValueToString(S32 const& _value, String& _data)
+    {
+        _data = StringHelper::ToString(_value);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<S32>::value), bool>::type
+        ValueFromString(S32& _value, CString _data, Size _count)
+    {
+        StringHelper::ParseS32(_data, _count, _value);
+        return true;
+    }
+
+
+    //////////////////////////////////////////
+    // Type: U32
+    //
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<U32>::value), bool>::type
+        ValueToString(U32 const& _value, String& _data)
+    {
+        _data = StringHelper::ToString(_value);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<U32>::value), bool>::type
+        ValueFromString(U32& _value, CString _data, Size _count)
+    {
+        StringHelper::ParseU32(_data, _count, _value);
+        return true;
+    }
+
+
+    //////////////////////////////////////////
+    // Type: S64
+    //
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<S64>::value), bool>::type
+        ValueToString(S64 const& _value, String& _data)
+    {
+        _data = StringHelper::ToString(_value);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<S64>::value), bool>::type
+        ValueFromString(S64& _value, CString _data, Size _count)
+    {
+        StringHelper::ParseS64(_data, _count, _value);
+        return true;
+    }
+
+
+    //////////////////////////////////////////
+    // Type: U64
+    //
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<U64>::value), bool>::type
+        ValueToString(U64 const& _value, String& _data)
+    {
+        _data = StringHelper::ToString(_value);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<U64>::value), bool>::type
+        ValueFromString(U64& _value, CString _data, Size _count)
+    {
+        StringHelper::ParseU64(_data, _count, _value);
+        return true;
+    }
+
+
+    //////////////////////////////////////////
+    // Type: F32
+    //
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<F32>::value), bool>::type
+        ValueToString(F32 const& _value, String& _data)
+    {
+        _data = StringHelper::ToString(_value);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<F32>::value), bool>::type
+        ValueFromString(F32& _value, CString _data, Size _count)
+    {
+        StringHelper::ParseF32(_data, _count, _value);
+        return true;
+    }
+
+
+    //////////////////////////////////////////
+    // Type: F64
+    //
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<F64>::value), bool>::type
+        ValueToString(F64 const& _value, String& _data)
+    {
+        _data = StringHelper::ToString(_value);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    template <>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<F64>::value), bool>::type
+        ValueFromString(F64& _value, CString _data, Size _count)
+    {
+        StringHelper::ParseF64(_data, _count, _value);
+        return true;
+    }
+    */
+
+    ///////////////////////////////////////////////////////////////////////////////
+
+
+    /*
     //////////////////////////////////////////
     // Type: bool
     //
@@ -248,6 +491,7 @@ namespace Maze
     {
         StringHelper::ParseF64(_data, _count, _value);
     }
+    */
     
 } // namespace Maze
 //////////////////////////////////////////

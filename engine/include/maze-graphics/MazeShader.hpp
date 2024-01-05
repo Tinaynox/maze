@@ -68,6 +68,7 @@ namespace Maze
         : public SharedObject<Shader>
         , public ISharedCopyable<Shader>
         , public IDataBlockSerializable
+        , public IStringSerializable
     {
     public:
 
@@ -292,6 +293,14 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
+
+    public:
+
+        //////////////////////////////////////////
         static void FromString(ShaderPtr& _value, CString _data, Size _count);
 
         //////////////////////////////////////////
@@ -363,26 +372,6 @@ namespace Maze
         Shader* m_instancesListNext = nullptr;
         Shader* m_instancesListPrev = nullptr;
     };
-
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<ShaderPtr>::value), void>::type
-        ValueToString(ShaderPtr const& _value, String& _data)
-    {
-        if (_value->getAssetFile())
-            _data = _value->getAssetFile()->getFileName();
-        else
-            _data = _value->getName();
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<ShaderPtr>::value), void>::type
-        ValueFromString(ShaderPtr& _value, CString _data, Size _count)
-    {
-        Shader::FromString(_value, _data, _count);
-    }
 
 
     //////////////////////////////////////////

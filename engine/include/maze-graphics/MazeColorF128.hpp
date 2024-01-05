@@ -52,7 +52,10 @@ namespace Maze
     // Class ColorF128
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API ColorF128 
+    class MAZE_GRAPHICS_API ColorF128
+        : public IStringSerializable
+        , public IBinarySerializable
+        , public IDataBlockSerializable
     {
     public:
         static const ColorF128 c_zero;
@@ -256,7 +259,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline String toString(S8 separator = ';') const
+        inline String toString(S8 separator) const
         {
             String result;
             result += StringHelper::F32ToString(r);
@@ -359,6 +362,33 @@ namespace Maze
         inline Vec4F const* getDataPointer() const { return &value; }
 
     public:
+
+        //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
+
+    public:
+
+        //////////////////////////////////////////
+        virtual U32 getValueSerializationSize() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void serialize(U8* _data) const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void deserialize(U8 const* _data) MAZE_OVERRIDE;
+
+    public:
+
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
+
+    public:
         union
         {
             struct
@@ -380,51 +410,6 @@ namespace Maze
         return ColorF128::Lerp(_low, _high, UnitRandom());
     }
 
-
-    //////////////////////////////////////////
-    // Serialization
-    //
-    //////////////////////////////////////////
-    inline void ValueToString(ColorF128 const& _value, String& _data)
-    {
-        _data = _value.toString(';');
-    }
-
-    //////////////////////////////////////////
-    inline void ValueFromString(ColorF128& _value, CString _data, Size _count)
-    {
-        _value = ColorF128::FromString(String(_data, _count), ';');
-    }
-
-    //////////////////////////////////////////
-    inline U32 GetValueSerializationSize(ColorF128 const& _value)
-    {
-        return sizeof(ColorF128);
-    }
-
-    //////////////////////////////////////////
-    inline void SerializeValue(ColorF128 const& _value, U8* _data)
-    {
-        memcpy(_data, (U8 const*)(&_value), sizeof(ColorF128));
-    }
-
-    //////////////////////////////////////////
-    inline void DeserializeValue(ColorF128& _value, U8 const* _data)
-    {
-        memcpy((U8*)&_value, _data, sizeof(ColorF128));
-    }
-
-    //////////////////////////////////////////
-    inline void ValueToDataBlock(ColorF128 const& _value, DataBlock& _data)
-    {
-        _data.setVec4F32(MAZE_HS("value"), _value.toVec4F32());
-    }
-
-    //////////////////////////////////////////
-    inline void ValueFromDataBlock(ColorF128& _value, DataBlock const& _data)
-    {
-        _value = ColorF128(_data.getVec4F32(MAZE_HS("value")));
-    }
 
 } // namespace Maze
 //////////////////////////////////////////

@@ -62,7 +62,7 @@ namespace Maze
             return it->second;
 
         DataBlock::SharedStringId id = DataBlock::SharedStringId(++m_stringsIndexCounter);
-        m_strings.emplace(_name, id);
+        m_strings.emplace(HashedString(_name), id);
         return id;
     }
 

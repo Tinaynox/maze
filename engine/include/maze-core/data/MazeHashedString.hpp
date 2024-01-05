@@ -61,7 +61,7 @@ namespace Maze
         {}
 
         //////////////////////////////////////////
-        inline HashedString(CString _string)
+        explicit inline HashedString(CString _string)
             : m_string(_string ? _string : "")
             , m_hash(MAZE_HASHED_CSTRING(_string ? _string : "").hash)
         {}
@@ -73,13 +73,13 @@ namespace Maze
         {}
 
         //////////////////////////////////////////
-        inline HashedString(String const& _string)
+        explicit inline HashedString(String const& _string)
             : m_string(_string)
             , m_hash(MAZE_HASHED_CSTRING(_string.c_str()).hash)
         {}
 
         //////////////////////////////////////////
-        inline HashedString(HashedCString _other)
+        explicit inline HashedString(HashedCString _other)
             : m_string(_other.str ? _other.str : "")
             , m_hash(_other.str ? _other.hash : MAZE_HASHED_CSTRING_CT("").hash)
         {}

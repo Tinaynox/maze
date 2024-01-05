@@ -80,7 +80,8 @@ namespace Maze
                     Maze::MetaProperty* metaProperty = metaClass->getProperty(i);
 
                     Maze::CString propertyName = metaProperty->getName();
-                    String properyStringValue = metaProperty->toString(_metaInstance);
+                    String properyStringValue;
+                    metaProperty->toString(_metaInstance, properyStringValue);
 
                     value[propertyName] = properyStringValue.c_str();
                 }

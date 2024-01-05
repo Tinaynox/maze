@@ -62,6 +62,7 @@ namespace Maze
     class MAZE_GRAPHICS_API RenderMesh
         : public SharedObject<RenderMesh>
         , public Object
+        , public IStringSerializable
     {
     public:
 
@@ -151,8 +152,6 @@ namespace Maze
         void clear();
 
 
-        //////////////////////////////////////////
-        String toString() const;
 
         //////////////////////////////////////////
         static RenderMeshPtr FromString(String const& _string);
@@ -161,6 +160,14 @@ namespace Maze
         //////////////////////////////////////////
         void updateVAODebugInfo();
 #endif
+
+    public:
+
+        //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
 
     protected:
 
@@ -182,19 +189,6 @@ namespace Maze
 
         Vector<VertexArrayObjectPtr> m_vertexArrayObjects;
     };
-
-
-    //////////////////////////////////////////
-    inline void ValueToString(RenderMeshPtr const& _value, String& _data)
-    {
-        _data = _value ? _value->toString() : String();
-    }
-
-    //////////////////////////////////////////
-    inline void ValueFromString(RenderMeshPtr& _value, CString _data, Size _count)
-    {
-        _value = RenderMesh::FromString(String(_data, _count));
-    }
 
 
     //////////////////////////////////////////

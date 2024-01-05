@@ -58,7 +58,7 @@ namespace Maze
         MAZE_FORCEINLINE HashedCString(CString _str, U32 _hash) : str(_str), hash(_hash) {}
 
         //////////////////////////////////////////
-        MAZE_FORCEINLINE HashedCString(CString _str) : str(_str), hash(Hash::CalculateFNV1(_str)) {}
+        explicit MAZE_FORCEINLINE HashedCString(CString _str) : str(_str), hash(Hash::CalculateFNV1(_str)) {}
 
         //////////////////////////////////////////
         inline HashedCString(HashedCString const& _other) = default;
@@ -167,13 +167,13 @@ namespace Maze
         U32 hash = 0u;
 
         //////////////////////////////////////////
-        inline HashedCWString() : str(L""), hash(Hash::CalculateFNV1(L"")) {}
+        MAZE_FORCEINLINE HashedCWString() : str(L""), hash(Hash::CalculateFNV1(L"")) {}
 
         //////////////////////////////////////////
-        inline HashedCWString(CWString _str, U32 _hash) : str(_str), hash(_hash) {}
+        MAZE_FORCEINLINE HashedCWString(CWString _str, U32 _hash) : str(_str), hash(_hash) {}
 
         //////////////////////////////////////////
-        inline HashedCWString(CWString _str) : str(_str), hash(Hash::CalculateFNV1(_str)) {}
+        explicit MAZE_FORCEINLINE HashedCWString(CWString _str) : str(_str), hash(Hash::CalculateFNV1(_str)) {}
 
         //////////////////////////////////////////
         inline bool operator==(HashedCWString const& _value) const

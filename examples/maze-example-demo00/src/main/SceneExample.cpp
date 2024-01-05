@@ -160,8 +160,8 @@ namespace Maze
         m_canvas->setClearColor(ColorU32::c_blackSoft);
 
         CanvasScalerPtr canvasScaler = canvasEntity->ensureComponent<CanvasScaler>();
-        canvasScaler->setScaleMode(CanvasScaler::ScaleMode::ScaleWithViewportSize);
-        canvasScaler->setScreenMatchMode(CanvasScaler::ScreenMatchMode::MatchWidthOrHeight);
+        canvasScaler->setScaleMode(CanvasScalerScaleMode::ScaleWithViewportSize);
+        canvasScaler->setScreenMatchMode(CanvasScalerScreenMatchMode::MatchWidthOrHeight);
         canvasScaler->setMatchWidthOrHeight(1.0f);
         canvasScaler->updateCanvasScale();
 
@@ -257,7 +257,7 @@ namespace Maze
         m_waterRenderer->getMeshRenderer()->getMaterial()->getFirstRenderPass()->setRenderQueueIndex(2500);
         
         ConsoleService::GetInstancePtr()->registerCommand(
-            "water",
+            MAZE_HS("water"),
             [this](String* _argv, S32 _argc)
             {
                 if (_argc > 1)
@@ -346,7 +346,7 @@ namespace Maze
 
         m_bloomController->update(_dt);
         m_renderColorSprite->getMaterial()->ensureUniform(
-            "u_bloomMap",
+            MAZE_HS("u_bloomMap"),
             ShaderUniformType::UniformTexture2D)->set(
                 m_bloomController->getBloomRenderBuffer()->getColorTexture2D());
 
@@ -445,7 +445,7 @@ namespace Maze
 
 
         ConsoleService::GetInstancePtr()->registerCommand(
-            "ps",
+            MAZE_HS("ps"),
             [this](String* _argv, S32 _argc)
             {
                 if (_argc > 1)

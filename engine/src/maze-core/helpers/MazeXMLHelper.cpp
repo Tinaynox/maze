@@ -137,8 +137,8 @@ namespace Maze
                     Maze::MetaProperty* metaProperty = metaClass->getProperty(i);
 
                     Maze::CString propertyName = metaProperty->getName();
-                    String properyStringValue = metaProperty->toString(_metaInstance);
-
+                    String properyStringValue;
+                    metaProperty->toString(_metaInstance, properyStringValue);
                     element->SetAttribute(propertyName, properyStringValue.c_str());
                 }
             }
@@ -203,7 +203,7 @@ namespace Maze
 
                     ConvertXMLElementToDataBlock(
                         subElement,
-                        collapseRootBlock ? _dataBlock : *_dataBlock.addNewDataBlock(name.c_str()),
+                        collapseRootBlock ? _dataBlock : *_dataBlock.addNewDataBlock(HashedCString(name.c_str())),
                         _config);
                     break;
                 }
@@ -227,7 +227,7 @@ namespace Maze
                 tinyxml2::XMLAttribute const* attribute = _element->FirstAttribute();
                 while (attribute)
                 {
-                    _dataBlock.addCString(attribute->Name(), attribute->Value());
+                    _dataBlock.addCString(HashedCString(attribute->Name()), attribute->Value());
                     attribute = attribute->Next();
                 }
             }
@@ -257,7 +257,7 @@ namespace Maze
 
                     if (!ConvertXMLElementToDataBlock(
                         subElement,
-                        *_dataBlock.addNewDataBlock(name.c_str()),
+                        *_dataBlock.addNewDataBlock(HashedCString(name.c_str())),
                         _config))
                         return false;
                 }

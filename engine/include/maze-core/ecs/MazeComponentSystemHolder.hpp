@@ -185,14 +185,14 @@ namespace Maze
     //////////////////////////////////////////
     #define SIMPLE_COMPONENT_SYSTEM(TName, TOrder, ...) \
         void TName(__VA_ARGS__); \
-        static SimpleComponentSystemHolder TName##_holder(#TName, TName, TOrder); \
+        static SimpleComponentSystemHolder TName##_holder(MAZE_HS(#TName), TName, TOrder); \
         void TName(__VA_ARGS__)
 
 
     //////////////////////////////////////////
     #define SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(TName, TOrder, ...) \
         void TName(__VA_ARGS__); \
-        static SimpleComponentSystemEventHandlerHolder TName##_holder(#TName, TName, TOrder); \
+        static SimpleComponentSystemEventHandlerHolder TName##_holder(MAZE_HS(#TName), TName, TOrder); \
         void TName(__VA_ARGS__)
         
 

@@ -153,8 +153,8 @@ namespace Maze
     //////////////////////////////////////////
     bool FontMaterial::loadFromDataBlock(DataBlock const& _dataBlock)
     {
-        CString font = _dataBlock.getCString("font");
-        CString assetMaterial = _dataBlock.getCString("assetMaterial");
+        CString font = _dataBlock.getCString(MAZE_HS("font"));
+        CString assetMaterial = _dataBlock.getCString(MAZE_HS("assetMaterial"));
 
         setFont(font ? FontManager::GetInstancePtr()->getFont(font) : FontPtr());
         setAssetMaterial(assetMaterial ? MaterialManager::GetCurrentInstance()->getMaterial(assetMaterial) : MaterialPtr());
@@ -164,6 +164,20 @@ namespace Maze
 
     //////////////////////////////////////////
     void FontMaterial::toDataBlock(DataBlock& _dataBlock) const
+    {
+        MAZE_TODO;
+    }
+
+    //////////////////////////////////////////
+    String FontMaterial::toString() const
+    {
+        String value;
+        FontMaterial::ToString(this, value);
+        return value;
+    }
+
+    //////////////////////////////////////////
+    void FontMaterial::setString(CString _data, Size _count)
     {
         MAZE_TODO;
     }

@@ -144,18 +144,18 @@ namespace Maze
             }
         }
 
-        dataBlock.setS32("_rootIndex", pointerIndices[_entity.get()]);
-        dataBlock.setS32("_version", c_prefabSerializationVersion);
+        dataBlock.setS32(MAZE_HS("_rootIndex"), pointerIndices[_entity.get()]);
+        dataBlock.setS32(MAZE_HS("_version"), c_prefabSerializationVersion);
 
         auto saveComponentFunc =
             [&](ComponentPtr const& _component, DataBlock& _parentBlock)
             {
-                DataBlock* componentBlock = _parentBlock.addNewDataBlock("component");
+                DataBlock* componentBlock = _parentBlock.addNewDataBlock(MAZE_HS("component"));
 
                 auto propertyValueIndexIt = pointerIndices.find(_component.get());
                 if (propertyValueIndexIt != pointerIndices.end())
-                    componentBlock->setS32("_i", propertyValueIndexIt->second);
-                componentBlock->setCString("_t", static_cast<CString>(_component->getMetaClass()->getName()));
+                    componentBlock->setS32(MAZE_HS("_i"), propertyValueIndexIt->second);
+                componentBlock->setCString(MAZE_HS("_t"), static_cast<CString>(_component->getMetaClass()->getName()));
 
                 MetaClass const* metaClass = _component->getMetaClass();
                 MetaInstance metaInstance = _component->getMetaInstance();
@@ -232,11 +232,11 @@ namespace Maze
             EntityPtr const& entity = entityComponentsData.first;
             Vector<ComponentPtr> const& components = entityComponentsData.second;
 
-            DataBlock* entityBlock = dataBlock.addNewDataBlock("entity");
-            entityBlock->setS32("_i", pointerIndices[entity.get()]);
+            DataBlock* entityBlock = dataBlock.addNewDataBlock(MAZE_HS("entity"));
+            entityBlock->setS32(MAZE_HS("_i"), pointerIndices[entity.get()]);
 
             if (!entity->getActiveSelf())
-                entityBlock->setBool("active", entity->getActiveSelf());
+                entityBlock->setBool(MAZE_HS("active"), entity->getActiveSelf());
 
             for (ComponentPtr const& component : components)
             {
@@ -250,7 +250,7 @@ namespace Maze
             EntityPtr const& prefabEntity = prefabInstance->getEntity();
             EntityPtr const& identityPrefabEntity = identityPrefabs[prefabInstance->getPrefabName()];
 
-            DataBlock* entityBlock = dataBlock.addNewDataBlock("prefabInstance");
+            DataBlock* entityBlock = dataBlock.addNewDataBlock(MAZE_HS("prefabInstance"));
             entityBlock->setS32(MAZE_HS("_i"), pointerIndices[prefabEntity.get()]);
             entityBlock->setString(MAZE_HS("source"), prefabInstance->getPrefabName());
 
@@ -293,7 +293,7 @@ namespace Maze
                                         {
                                             S32 propertyValueIndex = propertyValueIndexIt->second;
 
-                                            DataBlock* modificationBlock = entityBlock->addNewDataBlock("modification");
+                                            DataBlock* modificationBlock = entityBlock->addNewDataBlock(MAZE_HS("modification"));
                                             modificationBlock->setCString(MAZE_HS("component"), metaClass->getName());
                                             modificationBlock->setCString(MAZE_HS("property"), propertyName);
                                             modificationBlock->setS32(MAZE_HS("value"), propertyValueIndex);
@@ -304,7 +304,7 @@ namespace Maze
                                 }
                                 else
                                 {
-                                    DataBlock* modificationBlock = entityBlock->addNewDataBlock("modification");
+                                    DataBlock* modificationBlock = entityBlock->addNewDataBlock(MAZE_HS("modification"));
                                     modificationBlock->setCString(MAZE_HS("component"), metaClass->getName());
                                     modificationBlock->setCString(MAZE_HS("property"), propertyName);
                                     DataBlockHelper::SerializeMetaPropertyToDataBlock(metaInstance, metaProperty, MAZE_HS("value"), *modificationBlock);
@@ -368,7 +368,7 @@ namespace Maze
         if (_dataBlock.getName() == MAZE_HS("Prefab"))
             return nullPointer;
 
-        CString rootIndexAttribute = _dataBlock.getCString("_rootIndex");
+        CString rootIndexAttribute = _dataBlock.getCString(MAZE_HS("_rootIndex"));
         if (rootIndexAttribute == nullptr)
             return nullPointer;
 
@@ -394,7 +394,7 @@ namespace Maze
 
                 if (subBlock->getName() == MAZE_HS("entity"))
                 {
-                    S32 entityIndex = StringHelper::StringToS32(subBlock->getCString("_i"));
+                    S32 entityIndex = StringHelper::StringToS32(subBlock->getCString(MAZE_HS("_i")));
                     if (entityIndex == 0)
                         entityIndex = --autoEntityIndexCounter;
 
@@ -412,7 +412,7 @@ namespace Maze
                         if (componentBlock->getName() != MAZE_HS("component"))
                             continue;
 
-                        S32 componentIndex = StringHelper::StringToS32(componentBlock->getCString("_i"));
+                        S32 componentIndex = StringHelper::StringToS32(componentBlock->getCString(MAZE_HS("_i")));
                         if (componentIndex == 0)
                             componentIndex = --autoComponentIndexCounter;
 
@@ -438,11 +438,11 @@ namespace Maze
                 else
                 if (subBlock->getName() == MAZE_HS("prefabInstance"))
                 {
-                    S32 entityIndex = StringHelper::StringToS32(subBlock->getCString("_i"));
+                    S32 entityIndex = StringHelper::StringToS32(subBlock->getCString(MAZE_HS("_i")));
                     if (entityIndex == 0)
                         entityIndex = --autoEntityIndexCounter;
 
-                    CString prefabName = subBlock->getCString("source");
+                    CString prefabName = subBlock->getCString(MAZE_HS("source"));
 
                     if (prefabName)
                     {
@@ -463,9 +463,9 @@ namespace Maze
 
                             if (prefabChildBlock->getName() == MAZE_HS("modification"))
                             {
-                                CString componentClassName = prefabChildBlock->getCString("component");
-                                CString componentPropertyName = prefabChildBlock->getCString("property");
-                                CString componentPropertyValue = prefabChildBlock->getCString("value");
+                                CString componentClassName = prefabChildBlock->getCString(MAZE_HS("component"));
+                                CString componentPropertyName = prefabChildBlock->getCString(MAZE_HS("property"));
+                                CString componentPropertyValue = prefabChildBlock->getCString(MAZE_HS("value"));
 
                                 if (componentClassName && componentPropertyName && componentPropertyValue)
                                 {
@@ -513,7 +513,7 @@ namespace Maze
                             else
                             if (prefabChildBlock->getName() == MAZE_HS("component"))
                             {
-                                S32 componentIndex = StringHelper::StringToS32(prefabChildBlock->getCString("_i"));
+                                S32 componentIndex = StringHelper::StringToS32(prefabChildBlock->getCString(MAZE_HS("_i")));
                                 if (componentIndex == 0)
                                     componentIndex = --autoComponentIndexCounter;
 
@@ -557,7 +557,7 @@ namespace Maze
 
                 if (subBlock->getName() == MAZE_HS("entity") || subBlock->getName() == MAZE_HS("prefabInstance"))
                 {
-                    S32 entityIndex = StringHelper::StringToS32(subBlock->getCString("_i"));
+                    S32 entityIndex = StringHelper::StringToS32(subBlock->getCString(MAZE_HS("_i")));
                     EntityPtr const& entity = entities[entityIndex];
                     if (entity == nullptr)
                     {
@@ -565,7 +565,7 @@ namespace Maze
                         continue;
                     }
 
-                    CString entityActiveAttribute = subBlock->getCString("active");
+                    CString entityActiveAttribute = subBlock->getCString(MAZE_HS("active"));
                     if (entityActiveAttribute)
                         entity->setActiveSelf(StringHelper::StringToBool(entityActiveAttribute));
 
@@ -576,7 +576,7 @@ namespace Maze
 
                         if (componentBlock->getName() == MAZE_HS("component"))
                         {
-                            S32 componentIndex = StringHelper::StringToS32(componentBlock->getCString("_i"));
+                            S32 componentIndex = StringHelper::StringToS32(componentBlock->getCString(MAZE_HS("_i")));
                             if (componentIndex == 0)
                                 componentIndex = --autoComponentIndexCounter;
 
@@ -597,7 +597,7 @@ namespace Maze
 
                                     Maze::CString propertyName = metaProperty->getName();
 
-                                    CString attributeValue = componentBlock->getCString(propertyName);
+                                    CString attributeValue = componentBlock->getCString(HashedCString(propertyName));
                                     if (attributeValue)
                                     {
                                         MAZE_ERROR_CONTINUE_IF(StringHelper::IsStartsWith(attributeValue, "ptr:"), "Pointer value in '%s' property!", propertyName);
@@ -847,7 +847,7 @@ namespace Maze
 
                 if (subBlock->getName() == MAZE_HS("entity") || subBlock->getName() == MAZE_HS("prefabInstance"))
                 {
-                    S32 entityIndex = subBlock->getS32("_i");
+                    S32 entityIndex = subBlock->getS32(MAZE_HS("_i"));
                     EntityPtr const& entity = entities[entityIndex];
                     if (entity == nullptr)
                     {
@@ -855,7 +855,7 @@ namespace Maze
                         continue;
                     }
 
-                    entity->setActiveSelf(subBlock->getBool("active", true));
+                    entity->setActiveSelf(subBlock->getBool(MAZE_HS("active"), true));
 
                     for (DataBlock const* componentBlock : *subBlock)
                     {
@@ -942,7 +942,7 @@ namespace Maze
                         }
                         if (componentBlock->getName() == MAZE_HS("component"))
                         {
-                            S32 componentIndex = componentBlock->getS32("_i");
+                            S32 componentIndex = componentBlock->getS32(MAZE_HS("_i"));
                             if (componentIndex == 0)
                                 componentIndex = --autoComponentIndexCounter;
 

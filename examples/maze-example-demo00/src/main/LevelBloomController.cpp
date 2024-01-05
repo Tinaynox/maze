@@ -80,9 +80,9 @@ namespace Maze
         _sceneGame->getRenderBuffer()->eventRenderBufferEndDraw.subscribe(this, &LevelBloomController::notifyRenderBufferEndDraw);
 
         m_bloomMaterial = renderSystem->getMaterialManager()->getMaterial("Bloom00.mzmaterial");
-        m_bloomBaseMapUniform = m_bloomMaterial->ensureUniform("u_baseMap", ShaderUniformType::UniformTexture2D);
-        m_bloomBaseMapTexelSizeUniform = m_bloomMaterial->ensureUniform("u_baseMapTexelSize", ShaderUniformType::UniformVec2F32);
-        m_bloomPrevBloomMapUniform = m_bloomMaterial->ensureUniform("u_prevBloomMap", ShaderUniformType::UniformTexture2D);
+        m_bloomBaseMapUniform = m_bloomMaterial->ensureUniform(MAZE_HS("u_baseMap"), ShaderUniformType::UniformTexture2D);
+        m_bloomBaseMapTexelSizeUniform = m_bloomMaterial->ensureUniform(MAZE_HS("u_baseMapTexelSize"), ShaderUniformType::UniformVec2F32);
+        m_bloomPrevBloomMapUniform = m_bloomMaterial->ensureUniform(MAZE_HS("u_prevBloomMap"), ShaderUniformType::UniformTexture2D);
 
         updateBuffers();
 

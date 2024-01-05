@@ -993,7 +993,7 @@ namespace Maze
         {
             mzglGetActiveUniform(m_programId, (MZGLuint)i, bufSize, &length, &size, &type, name);
             ShaderUniformType uniformType = GetShaderUniformTypeFromOpenGL(type);
-            ensureUniform(name, uniformType);
+            ensureUniform(HashedCString(name), uniformType);
         }
     }
 

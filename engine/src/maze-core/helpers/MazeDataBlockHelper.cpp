@@ -199,7 +199,8 @@ namespace Maze
             }
             else
             {
-                String properyStringValue = _metaProperty->toString(_metaInstance);
+                String properyStringValue;
+                _metaProperty->toString(_metaInstance, properyStringValue);
                 _dataBlock.setString(_propertyName, std::move(properyStringValue));
             }
         }

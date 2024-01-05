@@ -344,7 +344,7 @@ namespace Maze
             
         }
 
-        String textureName = _texture ? _texture->getName() : "None";
+        String textureName = _texture ? _texture->getName().getString() : "None";
 
         textureName = FileHelper::GetFileNameWithoutExtension(textureName);
 

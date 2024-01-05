@@ -550,7 +550,7 @@ namespace Maze
             canvas->setClearColor(ColorU32::c_red);
             canvas->setClearColorFlag(false);
             canvas->setSortOrder(300000);
-            canvas->getCanvasScaler()->setScaleMode(CanvasScaler::ScaleMode::None);
+            canvas->getCanvasScaler()->setScaleMode(CanvasScalerScaleMode::None);
             canvas->setViewportTransformPolicy(ViewportTransformPolicy::TransformToViewport);
 
 

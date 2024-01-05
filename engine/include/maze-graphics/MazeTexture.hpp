@@ -101,7 +101,7 @@ namespace Maze
         inline void setName(CString _name) { m_name = _name; }
 
         //////////////////////////////////////////
-        inline void setName(String const& _name) { m_name = _name; }
+        inline void setName(String const& _name) { m_name = HashedString(_name); }
 
         //////////////////////////////////////////
         inline TextureType getType() const { return m_type; }

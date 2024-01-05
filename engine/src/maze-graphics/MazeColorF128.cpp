@@ -131,6 +131,48 @@ namespace Maze
         (*this) = ColorF128::FromString(_colorString, _separator);
     }
 
+    //////////////////////////////////////////
+    String ColorF128::toString() const
+    {
+        return toString(';');
+    }
+
+    //////////////////////////////////////////
+    void ColorF128::setString(CString _data, Size _count)
+    {
+        (*this) = ColorF128::FromString(String(_data, _count), ';');
+    }
+
+    //////////////////////////////////////////
+    U32 ColorF128::getValueSerializationSize() const
+    {
+        return sizeof(ColorF128);
+    }
+
+    //////////////////////////////////////////
+    void ColorF128::serialize(U8* _data) const
+    {
+        memcpy(_data, (U8 const*)(this), sizeof(ColorF128));
+    }
+
+    //////////////////////////////////////////
+    void ColorF128::deserialize(U8 const* _data)
+    {
+        memcpy((U8*)this, _data, sizeof(ColorF128));
+    }
+
+    //////////////////////////////////////////
+    bool ColorF128::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        value = _dataBlock.getVec4F32(MAZE_HS("value"));
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void ColorF128::toDataBlock(DataBlock& _dataBlock) const
+    {
+        _dataBlock.setVec4F32(MAZE_HS("value"), toVec4F32());
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

@@ -268,7 +268,8 @@ namespace Maze
         if (!m_metaInstances.empty())
         {
             
-            String serializedList = m_metaProperty->toString(*m_metaInstances.begin());
+            String serializedList;
+            m_metaProperty->toString(*m_metaInstances.begin(), serializedList);
             Vector<String> elements;
             ValueFromString(elements, serializedList.c_str(), serializedList.size());
             _value = _index < elements.size() ? elements[_index] : "";
@@ -278,7 +279,8 @@ namespace Maze
                 it != end;
                 ++it)
             {
-                String serializedList = m_metaProperty->toString(*it);
+                String serializedList;
+                m_metaProperty->toString(*it, serializedList);
                 ValueFromString(elements, serializedList.c_str(), serializedList.size());
                 String value = _index < elements.size() ? elements[_index] : "";
 

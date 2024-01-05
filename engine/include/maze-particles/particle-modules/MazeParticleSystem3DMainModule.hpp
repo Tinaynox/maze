@@ -769,13 +769,13 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DMainModule);
+    /*MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DMainModule);
     MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DMainModule::EmissionModule);
     MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DMainModule::SizeOverLifetimeModule);
     MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DMainModule::VelocityOverLifetimeModule);
     MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DMainModule::VelocityLimitOverLifetimeModule);
     MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DMainModule::RotationOverLifetimeModule);
-    MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DMainModule::ColorOverLifetimeModule);
+    MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DMainModule::ColorOverLifetimeModule);*/
 
 
 } // namespace Maze

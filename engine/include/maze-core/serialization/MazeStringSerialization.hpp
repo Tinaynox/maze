@@ -38,7 +38,6 @@
 #include "maze-core/utils/MazeClassInfo.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-core/serialization/MazeStringSerializable.hpp"
-// #include "maze-core/helpers/MazeJSONHelper.hpp"
 #include "maze-core/data/MazeHashedString.hpp"
 #include "maze-core/helpers/MazeStdHelper.hpp"
 #include <json/json.h>
@@ -48,9 +47,30 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    void ValueFromString();
-    void ValueToString();
+    // Forward declaration
+    //
+    //////////////////////////////////////////
+    template <typename TValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsVector<TValue>::value), void>::type
+        ValueToString(TValue const& _value, String& _data);
 
+    //////////////////////////////////////////
+    template <typename TValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsVector<TValue>::value), void>::type
+        ValueFromString(TValue& _value, CString _data, Size _count);
+
+    //////////////////////////////////////////
+    template <typename UValue>
+    MAZE_FORCEINLINE void ValueToString(SharedPtr<UValue> const& _value, String& _data);
+    
+    //////////////////////////////////////////
+    template <typename UValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(StdHelper::HasDefaultConstructor<UValue>::value), void>::type
+        ValueFromString(SharedPtr<UValue>& _value, CString _data, Size _count);
+    //////////////////////////////////////////
+    template <typename UValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(!StdHelper::HasDefaultConstructor<UValue>::value), void>::type
+        ValueFromString(SharedPtr<UValue>& _value, CString _data, Size _count);
 
     //////////////////////////////////////////
     namespace JSONHelper
@@ -61,6 +81,317 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API extern Json::Value FromString(String const& _value);
     }
+
+
+    //////////////////////////////////////////
+    // Type: Bool
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueToString(Bool const& _value, String& _data)
+    {
+        _data = StringHelper::ToString(_value);
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueFromString(Bool& _value, CString _data, Size _count)
+    {
+        StringHelper::ParseBool(_data, _data + _count, _value);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: S8
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueToString(S8 const& _value, String& _data)
+    {
+        _data = StringHelper::ToString(_value);
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueFromString(S8& _value, CString _data, Size _count)
+    {
+        StringHelper::ParseS8(_data, _count, _value);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: U8
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueToString(U8 const& _value, String& _data)
+    {
+        _data = StringHelper::ToString(_value);
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueFromString(U8& _value, CString _data, Size _count)
+    {
+        StringHelper::ParseU8(_data, _count, _value);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: S16
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueToString(S16 const& _value, String& _data)
+    {
+        _data = StringHelper::ToString(_value);
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueFromString(S16& _value, CString _data, Size _count)
+    {
+        StringHelper::ParseS16(_data, _count, _value);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: U16
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueToString(U16 const& _value, String& _data)
+    {
+        _data = StringHelper::ToString(_value);    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueFromString(U16& _value, CString _data, Size _count)
+    {
+        StringHelper::ParseU16(_data, _count, _value);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: S32
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueToString(S32 const& _value, String& _data)
+    {
+        _data = StringHelper::ToString(_value);
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueFromString(S32& _value, CString _data, Size _count)
+    {
+        StringHelper::ParseS32(_data, _count, _value);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: U32
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueToString(U32 const& _value, String& _data)
+    {
+        _data = StringHelper::ToString(_value);
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueFromString(U32& _value, CString _data, Size _count)
+    {
+        StringHelper::ParseU32(_data, _count, _value);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: S64
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueToString(S64 const& _value, String& _data)
+    {
+        _data = StringHelper::ToString(_value);
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueFromString(S64& _value, CString _data, Size _count)
+    {
+        StringHelper::ParseS64(_data, _count, _value);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: U64
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueToString(U64 const& _value, String& _data)
+    {
+        _data = StringHelper::ToString(_value);
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueFromString(U64& _value, CString _data, Size _count)
+    {
+        StringHelper::ParseU64(_data, _count, _value);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: F32
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueToString(F32 const& _value, String& _data)
+    {
+        _data = StringHelper::ToString(_value);
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueFromString(F32& _value, CString _data, Size _count)
+    {
+        StringHelper::ParseF32(_data, _count, _value);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: F64
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueToString(F64 const& _value, String& _data)
+    {
+        _data = StringHelper::ToString(_value);
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueFromString(F64& _value, CString _data, Size _count)
+    {
+        StringHelper::ParseF64(_data, _count, _value);
+    }
+
+
+
+    //////////////////////////////////////////
+    // Type: IStringSerializable
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueToString(IStringSerializable const& _value, String& _data)
+    {
+        _data = _value.toString();
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueFromString(IStringSerializable& _value, CString _data, Size _count)
+    {
+        _value.setString(_data, _count);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: String
+    //
+    //////////////////////////////////////////
+    template <typename TValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsString<TValue>::value), void>::type
+        ValueToString(TValue const& _value, String& _data)
+    {
+        _data = _value;
+    }
+
+    //////////////////////////////////////////
+    template <typename TValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsString<TValue>::value), void>::type
+        ValueFromString(TValue& _value, CString _data, Size _count)
+    {
+        _value = String(_data, _count);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: HashedCString
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueToString(HashedCString const& _value, String& _data)
+    {
+        _data = !_value.empty() ? _value.str : String();
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueFromString(HashedCString& _value, CString _data, Size _count)
+    {
+        _value = HashedCString(_data);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: HashedString
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueToString(HashedString const& _value, String& _data)
+    {
+        _data = _value.getString();
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueFromString(HashedString& _value, CString _data, Size _count)
+    {
+        _value = HashedString(_data, _count);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: SharedPtr
+    //
+    //////////////////////////////////////////
+    template <typename TValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsSharedPtr<TValue>::value), void>::type
+        ValueToString(TValue const& _value, String& _data)
+    {
+        ValueToString(_value, _data);
+    }
+
+    //////////////////////////////////////////
+    template <typename TValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsSharedPtr<TValue>::value), void>::type
+        ValueFromString(TValue& _value, CString _data, Size _count)
+    {
+        ValueFromString(_value, _data, _count);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: Container
+    //
+    //////////////////////////////////////////
+    template <typename TIterator, typename TValue>
+    MAZE_FORCEINLINE void ContainerMetaPropertyToString(
+        TIterator _first,
+        TIterator const _last,
+        String& _data);
+
+    //////////////////////////////////////////
+    template <typename TIterator, typename TValue>
+    MAZE_FORCEINLINE void ContainerMetaPropertyFromString(
+        TIterator _it,
+        String const& _data);
+
+
+    //////////////////////////////////////////
+    // Vector redirect functions
+    //
+    //////////////////////////////////////////
+    template <typename TValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsVector<TValue>::value), void>::type
+        ValueToString(TValue const& _value, String& _data)
+    {
+        ContainerMetaPropertyToString<
+            typename TValue::const_iterator,
+            typename TValue::value_type>(
+                _value.begin(),
+                _value.end(),
+                _data);
+    }
+
+    //////////////////////////////////////////
+    template <typename TValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsVector<TValue>::value), void>::type
+        ValueFromString(TValue& _value, CString _data, Size _count)
+    {
+        ContainerMetaPropertyFromString<
+            std::back_insert_iterator<TValue>,
+            typename TValue::value_type>(
+                std::back_inserter(_value),
+                String(_data, _count));
+    }
+
 
 
     //////////////////////////////////////////
@@ -76,75 +407,45 @@ namespace Maze
     template <typename T, typename = int>
     struct HasValueToString : std::false_type { };
     template <typename T>
-    struct HasValueToString <T, decltype(Maze::ValueToString(std::declval<T>(), std::declval<String>()), 0)> : std::true_type { };
+    struct HasValueToString <T, decltype(Maze::ValueToString(std::declval<T>(), std::declval<String&>()), 0)> : std::true_type { };
 
 
     //////////////////////////////////////////
-    // Try functions (Forward declaration)
+    // Try functions
     //
     //////////////////////////////////////////
     template <typename TValue>
-    inline  bool TryValueFromString(typename ::std::enable_if<(
-        std::is_base_of<Maze::IStringSerializable, TValue>::value), TValue>::type& _value, CString _data, Size _count);
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline bool TryValueFromString(typename ::std::enable_if<(
-        HasValueFromString<TValue>::value &&
-        !std::is_base_of<Maze::IStringSerializable, TValue>::value), TValue>::type& _value, CString _data, Size _count);
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline  bool TryValueFromString(typename ::std::enable_if<(
-        !HasValueFromString<TValue>::value &&
-        !std::is_base_of<Maze::IStringSerializable, TValue>::value), TValue>::type& _value, CString _data, Size _count);
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline bool TryValueToString(typename ::std::enable_if<(
-        std::is_base_of<Maze::IStringSerializable, TValue>::value), TValue>::type const& _value, String& _data);
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline bool TryValueToString(typename ::std::enable_if<(
-        HasValueToString<TValue>::value &&
-        !std::is_base_of<Maze::IStringSerializable, TValue>::value), TValue>::type const& _value, String& _data);
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline bool TryValueToString(typename ::std::enable_if<(
-        !HasValueToString<TValue>::value &&
-        !std::is_base_of<Maze::IStringSerializable, TValue>::value), TValue>::type const& _value, String& _data);
-
-
-    //////////////////////////////////////////
-    // Type: Any base type (non-class)
-    //
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(!std::is_class<TValue>::value), void>::type
-        ValueToString(TValue const& _value, String& _data);
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(!std::is_class<TValue>::value), void>::type
-        ValueFromString(TValue& _value, CString _data, Size _count);
-
-
-
-    //////////////////////////////////////////
-    // Type: IStringSerializable
-    //
-    //////////////////////////////////////////
-    inline void ValueToString(IStringSerializable const& _value, String& _data)
+    MAZE_FORCEINLINE bool TryValueFromString(typename ::std::enable_if<(
+        HasValueFromString<TValue>::value), TValue>::type& _value, CString _data, Size _count)
     {
-        _data = _value.toString();
+        ValueFromString(_value, _data, _count);
+        return true;
     }
 
     //////////////////////////////////////////
-    inline void ValueFromString(IStringSerializable& _value, CString _data, Size _count)
+    template <typename TValue>
+    MAZE_FORCEINLINE  bool TryValueFromString(typename ::std::enable_if<(
+        !HasValueFromString<TValue>::value), TValue>::type& _value, CString _data, Size _count)
     {
-        _value.setString(_data, _count);
+        return false;
+    }
+
+
+    //////////////////////////////////////////
+    template <typename TValue>
+    MAZE_FORCEINLINE bool TryValueToString(typename ::std::enable_if<(
+        HasValueToString<TValue>::value), TValue>::type const& _value, String& _data)
+    {
+        ValueToString(_value, _data);
+        return true;
+    }
+
+    //////////////////////////////////////////
+    template <typename TValue>
+    MAZE_FORCEINLINE bool TryValueToString(typename ::std::enable_if<(
+        !HasValueToString<TValue>::value), TValue>::type const& _value, String& _data)
+    {
+        return false;
     }
 
 
@@ -153,22 +454,14 @@ namespace Maze
     //
     //////////////////////////////////////////
     template <typename UValue>
-    inline void ValueToString(SharedPtr<UValue> const& _value, String& _data)
+    MAZE_FORCEINLINE void ValueToString(SharedPtr<UValue> const& _value, String& _data)
     {
         TryValueToString<UValue>(*_value.get(), _data);
     }
 
     //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(IsSharedPtr<TValue>::value), void>::type
-        ValueToString(TValue const& _value, String& _data)
-    {
-        ValueToString(_value, _data);
-    }
-
-    //////////////////////////////////////////
     template <typename UValue>
-    inline typename ::std::enable_if<(StdHelper::HasDefaultConstructor<UValue>::value), void>::type
+    MAZE_FORCEINLINE typename ::std::enable_if<(StdHelper::HasDefaultConstructor<UValue>::value), void>::type
         ValueFromString(SharedPtr<UValue>& _value, CString _data, Size _count)
     {
         if (!_value)
@@ -179,80 +472,17 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename UValue>
-    inline typename ::std::enable_if<(!StdHelper::HasDefaultConstructor<UValue>::value), void>::type
+    MAZE_FORCEINLINE typename ::std::enable_if<(!StdHelper::HasDefaultConstructor<UValue>::value), void>::type
         ValueFromString(SharedPtr<UValue>& _value, CString _data, Size _count)
     {
         MAZE_ERROR_RETURN_IF(!_value, "%s class has no default constructor to make shared ptr", static_cast<CString>(ClassInfo<UValue>::Name()));
         TryValueFromString<UValue>(*_value.get(), _data, _count);
     }
 
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(IsSharedPtr<TValue>::value), void>::type
-        ValueFromString(TValue& _value, CString _data, Size _count)
-    {
-        ValueFromString(_value, _data, _count);
-    }
 
-
-    //////////////////////////////////////////
-    // Type: String
-    //
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(IsString<TValue>::value), void>::type
-        ValueToString(TValue const& _value, String& _data)
-    {
-        _data = _value;
-    }
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(IsString<TValue>::value), void>::type
-        ValueFromString(TValue& _value, CString _data, Size _count)
-    {
-        _value = String(_data, _count);
-    }
-
-
-    //////////////////////////////////////////
-    // Type: HashedCString
-    //
-    //////////////////////////////////////////
-    inline void ValueToString(HashedCString const& _value, String& _data)
-    {
-        _data = !_value.empty() ? _value.str : String();
-    }
-
-    //////////////////////////////////////////
-    inline void ValueFromString(HashedCString& _value, CString _data, Size _count)
-    {
-        _value = HashedCString(_data);
-    }
-
-
-    //////////////////////////////////////////
-    // Type: HashedString
-    //
-    //////////////////////////////////////////
-    inline void ValueToString(HashedString const& _value, String& _data)
-    {
-        _data = _value.getString();
-    }
-
-    //////////////////////////////////////////
-    inline void ValueFromString(HashedString& _value, CString _data, Size _count)
-    {
-        _value = HashedString(_data, _count);
-    }
-    
-
-    //////////////////////////////////////////
-    // Type: Container
-    //
     //////////////////////////////////////////
     template <typename TIterator, typename TValue>
-    inline void ContainerMetaPropertyToString(
+    MAZE_FORCEINLINE void ContainerMetaPropertyToString(
         TIterator _first,
         TIterator const _last,
         String& _data)
@@ -260,7 +490,7 @@ namespace Maze
         _data.clear();
 
         Json::Value json;
-        
+
         for (TIterator it = _first; it != _last; ++it)
         {
             TValue const& childValue = (*it);
@@ -275,7 +505,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <typename TIterator, typename TValue>
-    inline void ContainerMetaPropertyFromString(
+    MAZE_FORCEINLINE void ContainerMetaPropertyFromString(
         TIterator _it,
         String const& _data)
     {
@@ -294,187 +524,6 @@ namespace Maze
         }
     }
 
-
-    //////////////////////////////////////////
-    // Type: Vector
-    //
-    //////////////////////////////////////////
-    template <typename UValue>
-    inline void ValueToString(Vector<UValue> const& _value, String& _data)
-    {
-        ContainerMetaPropertyToString<
-            typename Vector<UValue>::const_iterator,
-            UValue>(
-                _value.begin(),
-                _value.end(),
-                _data);
-    }
-
-    //////////////////////////////////////////
-    template <typename UValue>
-    inline void ValueFromString(Vector<UValue>& _value, CString _data, Size _count)
-    {
-        ContainerMetaPropertyFromString<
-            std::back_insert_iterator<Vector<UValue>>,
-            UValue>(
-                std::back_inserter(_value),
-                String(_data, _count));
-    }
-
-
-    //////////////////////////////////////////
-    // Type: FastVector
-    //
-    //////////////////////////////////////////
-    template <typename UValue>
-    inline void ValueToString(FastVector<UValue> const& _value, String& _data)
-    {
-        ContainerMetaPropertyToString<
-            typename FastVector<UValue>::const_iterator,
-            UValue>(
-                _value.begin(),
-                _value.end(),
-                _data);
-    }
-
-    //////////////////////////////////////////
-    template <typename UValue>
-    inline void ValueFromString(FastVector<UValue>& _value, CString _data, Size _count)
-    {
-        ContainerMetaPropertyFromString<
-            std::back_insert_iterator<FastVector<UValue>>,
-            UValue>(
-                std::back_inserter(_value),
-                String(_data, _count));
-    }
-
-
-    //////////////////////////////////////////
-    // Vector redirect functions
-    //
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(IsVector<TValue>::value), void>::type
-        ValueToString(TValue const& _value, String& _data)
-    {
-        ValueToString(_value, _data);
-    }
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline typename ::std::enable_if<(IsVector<TValue>::value), void>::type
-        ValueFromString(TValue& _value, CString _data, Size _count)
-    {
-        ValueFromString(_value, _data, _count);
-    }
-   
-
-   
-
-
-    //////////////////////////////////////////
-    // Try functions
-    //
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline  bool TryValueFromString(typename ::std::enable_if<(
-        std::is_base_of<IStringSerializable, TValue>::value), TValue>::type& _value, CString _data, Size _count)
-    {
-        _value.setString(_data, _count);
-        return true;
-    }
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline bool TryValueFromString(typename ::std::enable_if<(
-        HasValueFromString<TValue>::value &&
-        !std::is_base_of<IStringSerializable, TValue>::value), TValue>::type& _value, CString _data, Size _count)
-    {
-        ValueFromString(_value, _data, _count);
-        return true;
-    }
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline  bool TryValueFromString(typename ::std::enable_if<(
-        !HasValueFromString<TValue>::value &&
-        !std::is_base_of<IStringSerializable, TValue>::value), TValue>::type& _value, CString _data, Size _count)
-    {
-        return false;
-    }
-
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline bool TryValueToString(typename ::std::enable_if<(
-        std::is_base_of<IStringSerializable, TValue>::value), TValue>::type const& _value, String& _data)
-    {
-        _data = _value.toString();
-        return true;
-    }
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline bool TryValueToString(typename ::std::enable_if<(
-        HasValueToString<TValue>::value &&
-        !std::is_base_of<IStringSerializable, TValue>::value), TValue>::type const& _value, String& _data)
-    {
-        ValueToString(_value, _data);
-        return true;
-    }
-
-    //////////////////////////////////////////
-    template <typename TValue>
-    inline bool TryValueToString(typename ::std::enable_if<(
-        !HasValueToString<TValue>::value &&
-        !std::is_base_of<IStringSerializable, TValue>::value), TValue>::type const& _value, String& _data)
-    {
-        return false;
-    }
-
-
-    //////////////////////////////////////////
-    // Enum class
-    //
-    //////////////////////////////////////////
-    #define MAZE_IMPLEMENT_CPP_ENUMCLASS_STRING_SERIALIZATION(DEnumClass) \
-        inline void ValueToString(DEnumClass const& _value, String& _data) \
-        { \
-            _data = StringHelper::ToString((S32)_value); \
-        } \
-        inline void ValueFromString(DEnumClass& _value, CString _data, Size _count) \
-        { \
-            S32 value = 0; \
-            StringHelper::ParseS32(_data, _count, value); \
-            _value = (DEnumClass)value; \
-        }
-
-
-    //////////////////////////////////////////
-    // Dummy
-    //
-    //////////////////////////////////////////
-    #define MAZE_NOT_IMPLEMENTED_STRING_SERIALIZATION(DClass) \
-        inline void ValueToString(DClass const& _value, String& _data) \
-        { \
-            MAZE_TODO; \
-        } \
-        inline void ValueFromString(DClass & _value, CString _data, Size _count) \
-        { \
-            MAZE_TODO; \
-        }
-
-    //////////////////////////////////////////
-    #define MAZE_IMPLEMENT_STRING_SERIALIZATION(DClass) \
-        inline void ValueToString(DClass const& _value, String& _data) \
-        { \
-            _data = _value.toString(); \
-        } \
-        inline void ValueFromString(DClass& _value, CString _data, Size _count) \
-        { \
-            _value = DClass::FromString(String(_data, _count)); \
-        }
-    
     
 } // namespace Maze
 //////////////////////////////////////////

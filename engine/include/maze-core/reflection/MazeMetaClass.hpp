@@ -179,45 +179,45 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual void setString(MetaInstance const& _instance, CString _value, Size _count) MAZE_ABSTRACT;
+        virtual bool setString(MetaInstance const& _instance, CString _value, Size _count) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        inline void setString(MetaInstance const& _instance, String const& _value)
+        inline bool setString(MetaInstance const& _instance, String const& _value)
         {
-            setString(_instance, _value.c_str(), _value.size());
+            return setString(_instance, _value.c_str(), _value.size());
         }
 
         //////////////////////////////////////////
-        virtual String toString(MetaInstance const& _instance) const MAZE_ABSTRACT;
+        virtual bool toString(MetaInstance const& _instance, String& _outString) const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual String toString(ConstMetaInstance const& _instance) const MAZE_ABSTRACT;
+        virtual bool toString(ConstMetaInstance const& _instance, String& _outString) const MAZE_ABSTRACT;
 
 
         //////////////////////////////////////////
-        virtual U32 getSerializationSize(MetaInstance const& _instance) const MAZE_ABSTRACT;
+        virtual bool getSerializationSize(MetaInstance const& _instance, U32& _outSize) const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual U32 getSerializationSize(ConstMetaInstance const& _instance) const MAZE_ABSTRACT;
+        virtual bool getSerializationSize(ConstMetaInstance const& _instance, U32& _outSize) const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual void serializeTo(MetaInstance const& _instance, U8* _data) const MAZE_ABSTRACT;
+        virtual bool serializeTo(MetaInstance const& _instance, U8* _data) const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual void serializeTo(ConstMetaInstance const& _instance, U8* _data) const MAZE_ABSTRACT;
+        virtual bool serializeTo(ConstMetaInstance const& _instance, U8* _data) const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual void deserializeFrom(MetaInstance const& _instance, U8 const* _data) MAZE_ABSTRACT;
+        virtual bool deserializeFrom(MetaInstance const& _instance, U8 const* _data) MAZE_ABSTRACT;
 
 
         //////////////////////////////////////////
         virtual bool isDataBlockSerializable(ConstMetaInstance const& _instance) const MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual void setDataBlock(MetaInstance const& _instance, DataBlock const& _data) MAZE_ABSTRACT;
+        virtual bool setDataBlock(MetaInstance const& _instance, DataBlock const& _data) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual void toDataBlock(ConstMetaInstance const& _instance, DataBlock& _data) const MAZE_ABSTRACT;
+        virtual bool toDataBlock(ConstMetaInstance const& _instance, DataBlock& _data) const MAZE_ABSTRACT;
 
     private:
         HashedCString m_name;
@@ -828,79 +828,81 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        virtual void setString(MetaInstance const& _instance, CString _data, Size _count) MAZE_OVERRIDE
+        virtual bool setString(MetaInstance const& _instance, CString _data, Size _count) MAZE_OVERRIDE
         {
             TObject* obj = castMetaInstanceObject(_instance);
                         
             TValue value;
             if (TryValueFromString<TValue>(value, _data, _count))
-                (obj->*m_setter)(value);
+            {
+               (obj->*m_setter)(value);
+               return true;
+            }
+
+            return false;
         }
 
         //////////////////////////////////////////
-        virtual String toString(MetaInstance const& _instance) const MAZE_OVERRIDE
+        virtual bool toString(MetaInstance const& _instance, String& _outString) const MAZE_OVERRIDE
         {
             TObject* obj = castMetaInstanceObject(_instance);
 
-            String data;
-            TryValueToString<TValue>((obj->*m_getter)(), data);
-            return data;
+            return TryValueToString<TValue>((obj->*m_getter)(), _outString);
         }
 
         //////////////////////////////////////////
-        virtual String toString(ConstMetaInstance const& _instance) const MAZE_OVERRIDE
+        virtual bool toString(ConstMetaInstance const& _instance, String& _outString) const MAZE_OVERRIDE
         {
             TObject const* obj = castMetaInstanceObject(_instance);
 
-            String data;
-            TryValueToString<TValue>((obj->*m_getter)(), data);
-            return data;
+            return TryValueToString<TValue>((obj->*m_getter)(), _outString);
         }
 
         //////////////////////////////////////////
-        virtual U32 getSerializationSize(MetaInstance const& _instance) const MAZE_OVERRIDE
+        virtual bool getSerializationSize(MetaInstance const& _instance, U32& _outSize) const MAZE_OVERRIDE
         {
             TObject* obj = castMetaInstanceObject(_instance);
 
-            TValue value = (obj->*m_getter)();
-            U32 serializationSize = TryGetValueSerializationSize<TValue>(value);
-            return serializationSize;
+            return TryGetValueSerializationSize<TValue>((obj->*m_getter)(), _outSize);
         }
 
         //////////////////////////////////////////
-        virtual U32 getSerializationSize(ConstMetaInstance const& _instance) const MAZE_OVERRIDE
+        virtual bool getSerializationSize(ConstMetaInstance const& _instance, U32& _outSize) const MAZE_OVERRIDE
         {
             TObject const* obj = castMetaInstanceObject(_instance);
 
-            TValue value = (obj->*m_getter)();
-            U32 serializationSize = TryGetValueSerializationSize<TValue>(value);
-            return serializationSize;
+            return TryGetValueSerializationSize<TValue>((obj->*m_getter)(), _outSize);
         }
 
         //////////////////////////////////////////
-        virtual void serializeTo(MetaInstance const& _instance, U8* _data) const MAZE_OVERRIDE
+        virtual bool serializeTo(MetaInstance const& _instance, U8* _data) const MAZE_OVERRIDE
         {
             TObject* obj = castMetaInstanceObject(_instance);
 
-            TrySerializeValue<TValue>((obj->*m_getter)(), _data);
+            return TrySerializeValue<TValue>((obj->*m_getter)(), _data);
         }
 
         //////////////////////////////////////////
-        virtual void serializeTo(ConstMetaInstance const& _instance, U8* _data) const MAZE_OVERRIDE
+        virtual bool serializeTo(ConstMetaInstance const& _instance, U8* _data) const MAZE_OVERRIDE
         {
             TObject const* obj = castMetaInstanceObject(_instance);
 
-            TrySerializeValue<TValue>((obj->*m_getter)(), _data);
+            return TrySerializeValue<TValue>((obj->*m_getter)(), _data);
         }
 
         //////////////////////////////////////////
-        virtual void deserializeFrom(MetaInstance const& _instance, U8 const* _data) MAZE_OVERRIDE
+        virtual bool deserializeFrom(MetaInstance const& _instance, U8 const* _data) MAZE_OVERRIDE
         {
             TObject* obj = castMetaInstanceObject(_instance);
 
             TValue value;
             if (TryDeserializeValue<TValue>(value, _data))
+            {
                 (obj->*m_setter)(value);
+                return true;
+            }
+
+            return false;
         }
 
 
@@ -911,21 +913,26 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        virtual void setDataBlock(MetaInstance const& _instance, DataBlock const& _data) MAZE_OVERRIDE
+        virtual bool setDataBlock(MetaInstance const& _instance, DataBlock const& _data) MAZE_OVERRIDE
         {
             TObject* obj = castMetaInstanceObject(_instance);
 
             TValue value;
             if (TryValueFromDataBlock<TValue>(value, _data))
+            {
                 (obj->*m_setter)(value);
+                return true;
+            }
+
+            return false;
         }
 
         //////////////////////////////////////////
-        virtual void toDataBlock(ConstMetaInstance const& _instance, DataBlock& _data) const MAZE_OVERRIDE
+        virtual bool toDataBlock(ConstMetaInstance const& _instance, DataBlock& _data) const MAZE_OVERRIDE
         {
             TObject const* obj = castMetaInstanceObject(_instance);
 
-            TryValueToDataBlock<TValue>((obj->*m_getter)(), _data);
+            return TryValueToDataBlock<TValue>((obj->*m_getter)(), _data);
         }
 
 

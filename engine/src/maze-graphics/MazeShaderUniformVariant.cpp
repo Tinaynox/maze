@@ -936,7 +936,7 @@ namespace Maze
         ShaderUniformType shaderUniformType = ShaderUniformType::FromString(type);
 
         setString(shaderUniformType, value, strlen(value));
-        setName(name ? name : "");
+        setName(HashedString(name ? name : ""));
     }
 
     //////////////////////////////////////////
@@ -959,7 +959,7 @@ namespace Maze
     bool ShaderUniformVariant::loadFromDataBlock(DataBlock const& _dataBlock)
     {
         CString name = _dataBlock.getCString(MAZE_HS("name"));
-        setName(name ? name : "");
+        setName(HashedString(name ? name : ""));
 
         DataBlock::ParamIndex valueParamIndex = _dataBlock.findParamIndex(MAZE_HS("value"));
         MAZE_ERROR_RETURN_VALUE_IF(valueParamIndex < 0, false, "Value param missed!");
@@ -1014,8 +1014,8 @@ namespace Maze
     {
         CString className = ClassInfo<ShaderUniformVariant>::Name();
 
-        _dataBlock.setString("name", m_name);
-        _dataBlock.setCString("type", m_type.toCString());
+        _dataBlock.setString(MAZE_HS("name"), m_name);
+        _dataBlock.setCString(MAZE_HS("type"), m_type.toCString());
 
         switch (m_type)
         {

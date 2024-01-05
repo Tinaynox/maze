@@ -86,5 +86,19 @@ namespace Maze
         }
     }
 
+    //////////////////////////////////////////
+    String SystemFont::toString() const
+    {
+        String value;
+        SystemFont::ToString(this, value);
+        return value;
+    }
+
+    //////////////////////////////////////////
+    void SystemFont::setString(CString _data, Size _count)
+    {
+        MAZE_TODO;
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

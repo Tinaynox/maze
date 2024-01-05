@@ -271,7 +271,7 @@ namespace Maze
             Vec2F(1.0f, 1.0f),
             Vec2F(1.0f, 1.0f));
         transparentChessPrevNextRenderer->getMaterial()->setUniform(
-            "u_baseMapST",
+            MAZE_HS("u_baseMapST"),
             Vec4F(
                 transparentChessPrevNextRenderer->getTransform()->getWidth() / 8.0f,
                 transparentChessPrevNextRenderer->getTransform()->getHeight() / 8.0f,
@@ -469,7 +469,7 @@ namespace Maze
                 this,
                 Vec2F(0.0f, 0.0f),
                 Vec2F(0.0f, 0.0f));
-            m_rgbaRenderers[0]->getMaterial()->setUniform("u_channel", 0);
+            m_rgbaRenderers[0]->getMaterial()->setUniform(MAZE_HS("u_channel"), 0);
 
             m_rgbaTextEdits[0] = SystemUIHelper::CreateDefaultEditBox(
                 "255",
@@ -525,7 +525,7 @@ namespace Maze
                 this,
                 Vec2F(0.0f, 0.0f),
                 Vec2F(0.0f, 0.0f));
-            m_rgbaRenderers[1]->getMaterial()->setUniform("u_channel", 1);
+            m_rgbaRenderers[1]->getMaterial()->setUniform(MAZE_HS("u_channel"), 1);
 
             m_rgbaTextEdits[1] = SystemUIHelper::CreateDefaultEditBox(
                 "0",
@@ -581,7 +581,7 @@ namespace Maze
                 this,
                 Vec2F(0.0f, 0.0f),
                 Vec2F(0.0f, 0.0f));
-            m_rgbaRenderers[2]->getMaterial()->setUniform("u_channel", 2);
+            m_rgbaRenderers[2]->getMaterial()->setUniform(MAZE_HS("u_channel"), 2);
 
             m_rgbaTextEdits[2] = SystemUIHelper::CreateDefaultEditBox(
                 "0",
@@ -638,7 +638,7 @@ namespace Maze
                 Vec2F(0.0f, 0.0f),
                 Vec2F(0.0f, 0.0f));
             transparentChessRenderer->getMaterial()->setUniform(
-                "u_baseMapST",
+                MAZE_HS("u_baseMapST"),
                 Vec4F(
                     transparentChessRenderer->getTransform()->getWidth() / 8.0f,
                     transparentChessRenderer->getTransform()->getHeight() / 8.0f,
@@ -654,7 +654,7 @@ namespace Maze
                 this,
                 Vec2F(0.0f, 0.0f),
                 Vec2F(0.0f, 0.0f));
-            m_rgbaRenderers[3]->getMaterial()->setUniform("u_channel", 3);
+            m_rgbaRenderers[3]->getMaterial()->setUniform(MAZE_HS("u_channel"), 3);
 
             m_rgbaTextEdits[3] = SystemUIHelper::CreateDefaultEditBox(
                 "255",
@@ -810,12 +810,12 @@ namespace Maze
         color.a = m_alpha;
 
         m_prevColorRenderer->setColor(m_prevColor);
-        m_prevColorRenderer->getMaterial()->setUniform("u_intensity", m_prevColorIntensity);
+        m_prevColorRenderer->getMaterial()->setUniform(MAZE_HS("u_intensity"), m_prevColorIntensity);
         m_finalColorRenderer->setColor(color);
-        m_finalColorRenderer->getMaterial()->setUniform("u_intensity", m_intensity);
+        m_finalColorRenderer->getMaterial()->setUniform(MAZE_HS("u_intensity"), m_intensity);
 
-        m_hsvRectRenderer->getMaterial()->setUniform("u_hue", m_hsv.x);
-        m_hsvRectRenderer->getMaterial()->setUniform("u_intensity", m_intensity);
+        m_hsvRectRenderer->getMaterial()->setUniform(MAZE_HS("u_hue"), m_hsv.x);
+        m_hsvRectRenderer->getMaterial()->setUniform(MAZE_HS("u_intensity"), m_intensity);
 
         m_hsvRectCircleRenderer->getTransform()->setLocalPosition(
             m_hsvRectRenderer->getTransform()->getSize() * Vec2F(m_hsv.y, m_hsv.z));
@@ -853,7 +853,7 @@ namespace Maze
         for (Size i = 0; i < 4; ++i)
         {
             m_rgbaTextEdits[i]->setText(StringHelper::ToString(colorPickerColor[i]));
-            m_rgbaRenderers[i]->getMaterial()->setUniform("u_color", colorPickerColor.toVec4F32());
+            m_rgbaRenderers[i]->getMaterial()->setUniform(MAZE_HS("u_color"), colorPickerColor.toVec4F32());
         }
 
         m_hexadecimalTextEdit->setText(StringHelper::ToUpper(colorPickerColor.toStringHex()));

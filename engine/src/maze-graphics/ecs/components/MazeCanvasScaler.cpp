@@ -38,12 +38,19 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    MAZE_IMPLEMENT_ENUMCLASS(CanvasScalerScaleMode)
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_ENUMCLASS(CanvasScalerScreenMatchMode)
+
+
+    //////////////////////////////////////////
     // Class CanvasScaler
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(CanvasScaler, Component,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ScaleMode, scaleMode, ScaleMode::ConstantPixelSize, getScaleMode, setScaleMode),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(ScreenMatchMode, screenMatchMode, ScreenMatchMode::MatchWidthOrHeight, getScreenMatchMode, setScreenMatchMode),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(CanvasScalerScaleMode, scaleMode, CanvasScalerScaleMode::ConstantPixelSize, getScaleMode, setScaleMode),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(CanvasScalerScreenMatchMode, screenMatchMode, CanvasScalerScreenMatchMode::MatchWidthOrHeight, getScreenMatchMode, setScreenMatchMode),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vec2F, referenceResolution, Vec2F(800, 600), getReferenceResolution, setReferenceResolution),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(F32, matchWidthOrHeight, 0.0f, getMatchWidthOrHeight, setMatchWidthOrHeight));
 
@@ -52,8 +59,8 @@ namespace Maze
 
     //////////////////////////////////////////
     CanvasScaler::CanvasScaler()
-        : m_scaleMode(ScaleMode::ConstantPixelSize)
-        , m_screenMatchMode(ScreenMatchMode::MatchWidthOrHeight)
+        : m_scaleMode(CanvasScalerScaleMode::ConstantPixelSize)
+        , m_screenMatchMode(CanvasScalerScreenMatchMode::MatchWidthOrHeight)
         , m_referenceResolution(800, 600)
         , m_matchWidthOrHeight(0.0f)
     {
@@ -81,7 +88,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void CanvasScaler::setScaleMode(ScaleMode _scaleMode)
+    void CanvasScaler::setScaleMode(CanvasScalerScaleMode _scaleMode)
     {
         if (m_scaleMode == _scaleMode)
             return;
@@ -92,7 +99,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void CanvasScaler::setScreenMatchMode(ScreenMatchMode _screenMatchMode)
+    void CanvasScaler::setScreenMatchMode(CanvasScalerScreenMatchMode _screenMatchMode)
     {
         if (m_screenMatchMode == _screenMatchMode)
             return;
@@ -153,8 +160,8 @@ namespace Maze
 
         switch (m_scaleMode)
         {
-            case ScaleMode::ConstantPixelSize: handleConstantPixelSize(); break;
-            case ScaleMode::ScaleWithViewportSize: handleScaleWithViewportSize(); break;
+            case CanvasScalerScaleMode::ConstantPixelSize: handleConstantPixelSize(); break;
+            case CanvasScalerScaleMode::ScaleWithViewportSize: handleScaleWithViewportSize(); break;
             default: break;
         }
     }
@@ -189,7 +196,7 @@ namespace Maze
 
         switch (m_screenMatchMode)
         {
-            case ScreenMatchMode::MatchWidthOrHeight:
+            case CanvasScalerScreenMatchMode::MatchWidthOrHeight:
             {
                 F32 logWidth = log2(x);
                 F32 logHeight = log2(y);
@@ -201,7 +208,7 @@ namespace Maze
                     
                 break;
             }
-            case ScreenMatchMode::Expand:
+            case CanvasScalerScreenMatchMode::Expand:
             {
                 scaleFactor = Math::Min(x, y);
 
@@ -218,7 +225,7 @@ namespace Maze
 
                 break;
             }
-            case ScreenMatchMode::Shrink:
+            case CanvasScalerScreenMatchMode::Shrink:
             {
                 scaleFactor = Math::Max(x, y);
 
@@ -235,6 +242,8 @@ namespace Maze
 
                 break;
             }
+            default:
+                break;
         }
 
         m_canvas->getTransform()->setSize(Vec2F(width, height));

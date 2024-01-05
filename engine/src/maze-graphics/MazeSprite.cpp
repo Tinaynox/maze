@@ -250,6 +250,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    String Sprite::toString() const
+    {
+        String result;
+        Sprite::ToString(this, result);
+        return result;
+    }
+
+    //////////////////////////////////////////
+    void Sprite::setString(CString _data, Size _count)
+    {
+        MAZE_TODO;
+    }
+
+    //////////////////////////////////////////
     void Sprite::FromString(SpritePtr& _value, CString _data, Size _count)
     {
         MAZE_PROFILE_EVENT("Sprite::FromString");

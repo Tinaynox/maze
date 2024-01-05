@@ -57,6 +57,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API Texture2D
         : public Texture
+        , public IStringSerializable
     {
     public:
 
@@ -215,13 +216,18 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual String toString() const;
-
-        //////////////////////////////////////////
         static void FromString(Texture2DPtr& _value, CString _data, Size _count);
 
         //////////////////////////////////////////
         static void ToString(Texture2D const* _value, String& _data);
+
+    public:
+
+        //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
 
     protected:
 
@@ -241,29 +247,6 @@ namespace Maze
 
         PixelFormat::Enum m_internalPixelFormat;
     };
-
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<Texture2DPtr>::value), void>::type
-        ValueToString(Texture2DPtr const& _value, String& _data)
-    {
-        if (!_value)
-        {
-            _data.clear();
-            return;
-        }
-
-        Texture2D::ToString(_value.get(), _data);
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<Texture2DPtr>::value), void>::type
-        ValueFromString(Texture2DPtr& _value, CString _data, Size _count)
-    {
-         Texture2D::FromString(_value, _data, _count);
-    }
 
 
 } // namespace Maze

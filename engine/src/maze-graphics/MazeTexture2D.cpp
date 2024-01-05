@@ -218,14 +218,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    String Texture2D::toString() const
-    {
-        String str;
-        ToString(this, str);
-        return str;
-    }
-
-    //////////////////////////////////////////
     void Texture2D::FromString(Texture2DPtr& _value, CString _data, Size _count)
     {
         MAZE_PROFILE_EVENT("Texture2D::FromString");
@@ -278,6 +270,19 @@ namespace Maze
         }
     }
 
+    //////////////////////////////////////////
+    String Texture2D::toString() const
+    {
+        String result;
+        Texture2D::ToString(this, result);
+        return result;
+    }
+
+    //////////////////////////////////////////
+    void Texture2D::setString(CString _data, Size _count)
+    {
+        MAZE_TODO;
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

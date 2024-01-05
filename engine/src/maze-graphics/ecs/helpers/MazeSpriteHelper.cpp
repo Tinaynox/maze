@@ -119,7 +119,7 @@ namespace Maze
             spriteRendererEntity->ensureComponent<Name>("Sprite");
         
             Maze::SpriteRenderer2DPtr spriteRenderer = spriteRendererEntity->createComponent<Maze::SpriteRenderer2D>();
-            spriteRenderer->setSprite(_spriteName);
+            spriteRenderer->setSprite(HashedString(_spriteName));
             spriteRenderer->setMaterialCopy(_material ? _material : SpriteManager::GetCurrentInstance()->getDefaultSpriteMaterial());
 
             if (spriteRenderer->getSprite())

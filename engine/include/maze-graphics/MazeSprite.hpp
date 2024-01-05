@@ -90,6 +90,7 @@ namespace Maze
     class MAZE_GRAPHICS_API Sprite
         : public SharedObject<Sprite>
         , public MultiDelegateCallbackReceiver
+        , public IStringSerializable
     {
     public:
 
@@ -201,6 +202,14 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
+
+    public:
+
+        //////////////////////////////////////////
         static void FromString(SpritePtr& _value, CString _data, Size _count);
 
         //////////////////////////////////////////
@@ -246,24 +255,7 @@ namespace Maze
         Sprite* m_instancesListNext = nullptr;
         Sprite* m_instancesListPrev = nullptr;
     };
-
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<SpritePtr>::value), void>::type
-        ValueToString(SpritePtr const& _value, String& _data)
-    {
-        Sprite::ToString(_value.get(), _data);
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<SpritePtr>::value), void>::type
-        ValueFromString(SpritePtr& _value, CString _data, Size _count)
-    {
-        Sprite::FromString(_value, _data, _count);
-    }
-    
+        
 
     //////////////////////////////////////////
     // Class SpriteAssetRef

@@ -404,43 +404,43 @@ namespace Maze
     // Serialization
     //
     //////////////////////////////////////////
-    inline void ValueToString(Quaternion const& _value, String& _data)
+    MAZE_FORCEINLINE void ValueToString(Quaternion const& _value, String& _data)
     {
         _data = _value.toString();
     }
 
     //////////////////////////////////////////
-    inline void ValueFromString(Quaternion& _value, CString _data, Size _count)
+    MAZE_FORCEINLINE void ValueFromString(Quaternion& _value, CString _data, Size _count)
     {
         _value = Quaternion::FromString(_data, _count);
     }
 
     //////////////////////////////////////////
-    inline U32 GetValueSerializationSize(Quaternion const& _value)
+    MAZE_FORCEINLINE void GetValueSerializationSize(Quaternion const& _value, U32& _outSize)
     {
-        return sizeof(Quaternion);
+        _outSize = sizeof(Quaternion);
     }
 
     //////////////////////////////////////////
-    inline void SerializeValue(Quaternion const& _value, U8* _data)
+    MAZE_FORCEINLINE void SerializeValue(Quaternion const& _value, U8* _data)
     {
         memcpy(_data, (U8 const*)(&_value), sizeof(Quaternion));
     }
 
     //////////////////////////////////////////
-    inline void DeserializeValue(Quaternion& _value, U8 const* _data)
+    MAZE_FORCEINLINE void DeserializeValue(Quaternion& _value, U8 const* _data)
     {
         memcpy((U8*)&_value, _data, sizeof(Quaternion));
     }
 
     //////////////////////////////////////////
-    inline void ValueToDataBlock(Quaternion const& _value, DataBlock& _data)
+    MAZE_FORCEINLINE void ValueToDataBlock(Quaternion const& _value, DataBlock& _data)
     {
         _data.setVec4F(MAZE_HS("value"), _value.toVec4F());
     }
 
     //////////////////////////////////////////
-    inline void ValueFromDataBlock(Quaternion& _value, DataBlock const& _data)
+    MAZE_FORCEINLINE void ValueFromDataBlock(Quaternion& _value, DataBlock const& _data)
     {
         _value.setVec4F(_data.getVec4F(MAZE_HS("value")));
     }

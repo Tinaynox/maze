@@ -277,7 +277,7 @@ namespace Maze
 
         for (auto const& unregisteredSettings : m_unregisteredSettings)
         {
-            dataBlock.addDataBlock(unregisteredSettings.first.c_str())->copyFrom(&unregisteredSettings.second);
+            dataBlock.addDataBlock(HashedCString(unregisteredSettings.first.c_str()))->copyFrom(&unregisteredSettings.second);
         }
 
         if (!dataBlock.saveTextFile(m_settingsFileFullPath))
@@ -298,7 +298,7 @@ namespace Maze
     //////////////////////////////////////////
     void SettingsManager::indentifyUnregisteredSetting(Settings* _settings)
     {
-        HashedCString settingsName = _settings->getClassName();
+        HashedCString settingsName = HashedCString(_settings->getClassName());
         auto it = m_unregisteredSettings.find(settingsName);
         if (it == m_unregisteredSettings.end())
             return;

@@ -79,6 +79,7 @@ namespace Maze
         : public SharedObject<FontMaterial>
         , public MultiDelegateCallbackReceiver
         , public IDataBlockSerializable
+        , public IStringSerializable
     {
     public:
 
@@ -141,6 +142,14 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
+
+    public:
+
+        //////////////////////////////////////////
         static void FromString(FontMaterialPtr& _value, CString _data, Size _count);
 
         //////////////////////////////////////////
@@ -177,23 +186,6 @@ namespace Maze
 
         Map<U32, FontMaterialRenderDataPtr> m_renderData;
     };
-
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<FontMaterialPtr>::value), void>::type
-        ValueToString(FontMaterialPtr const& _value, String& _data)
-    {
-        FontMaterial::ToString(_value.get(), _data);
-    }
-
-    //////////////////////////////////////////
-    template <>
-    inline typename ::std::enable_if<(IsSharedPtr<FontMaterialPtr>::value), void>::type
-        ValueFromString(FontMaterialPtr& _value, CString _data, Size _count)
-    {
-        FontMaterial::FromString(_value, _data, _count);
-    }
 
 
     //////////////////////////////////////////

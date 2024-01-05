@@ -786,13 +786,13 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DZoneSphere);
+    /*MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DZoneSphere);
     MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DZoneHemisphere);
     MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DZoneTorus);
     MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DZoneCone);
     MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DZoneBox);
     MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DZoneCircle);
-    MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DZoneData);
+    MAZE_IMPLEMENT_STRING_SERIALIZATION(ParticleSystem3DZoneData);*/
 
 } // namespace Maze
 //////////////////////////////////////////
