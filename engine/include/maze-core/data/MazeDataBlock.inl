@@ -267,7 +267,7 @@ namespace Maze
         }
 
         ParamValue& value = param.value;
-        value = addSharedString(_value.c_str(), _value.size() - 1);
+        value = !_value.empty() ? addSharedString(_value.c_str(), _value.size() - 1) : addSharedString("", 0u);
         return true;
     }
 
@@ -372,7 +372,7 @@ namespace Maze
         Param param;
         param.nameId = (U32)_nameId;
         param.type = (U32)TypeOf<CString>::type;
-        param.value = addSharedString(_value.c_str(), _value.size() - 1);
+        param.value = !_value.empty() ? addSharedString(_value.c_str(), _value.size() - 1) : addSharedString("", 0u);
         insertDataAt(_at * sizeof(Param), sizeof(Param), (U8 const*)&param);
         ++m_paramsCount;
         return _at;
