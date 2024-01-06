@@ -38,6 +38,17 @@ using namespace Maze;
 
 
 //////////////////////////////////////////
+#define CONVERTER_MODE_DEFAULT (1)
+#define CONVERTER_MODE_BINALIZER (2)
+
+//////////////////////////////////////////
+#define CONVERTER_MODE CONVERTER_MODE_BINALIZER
+
+
+//////////////////////////////////////////
+#if (CONVERTER_MODE == CONVERTER_MODE_DEFAULT)
+
+//////////////////////////////////////////
 S32 main(S32 _argc, S8 const* _argv[])
 {
     MAZE_ERROR_RETURN_VALUE_IF(_argc < 2, 1, "Incorrect count of params");
@@ -54,11 +65,11 @@ S32 main(S32 _argc, S8 const* _argv[])
     DataBlock config;
     if (config.loadTextFile(FileHelper::GetBinaryDirectory() + "/maze-tool-mzdata-converter.mzdata"))
     {
-        keepOriginExtension = config.getBool("keepOriginExtension", false);
-        destPath = config.getString("destPath", ".");
+        keepOriginExtension = config.getBool(MAZE_HS("keepOriginExtension"), false);
+        destPath = config.getString(MAZE_HS("destPath"), ".");
 
-        xmlConfig.collapseRootBlock = config["xml"].getBool("collapseRootBlock", false);
-        xmlConfig.lowerCaseBlockNameCapitalButton = config["xml"].getBool("lowerCaseBlockNameCapitalButton", false);
+        xmlConfig.collapseRootBlock = config[MAZE_HS("xml")].getBool(MAZE_HS("collapseRootBlock"), false);
+        xmlConfig.lowerCaseBlockNameCapitalButton = config[MAZE_HS("xml")].getBool(MAZE_HS("lowerCaseBlockNameCapitalButton"), false);
     }
 
     Debug::Log("destFolder=%s", destPath.toUTF8().c_str());
@@ -98,3 +109,27 @@ S32 main(S32 _argc, S8 const* _argv[])
 
     return 0;
 }
+
+#elif (CONVERTER_MODE == CONVERTER_MODE_BINALIZER)
+
+//////////////////////////////////////////
+S32 main(S32 _argc, S8 const* _argv[])
+{
+    MAZE_ERROR_RETURN_VALUE_IF(_argc < 3, 1, "Incorrect count of params");
+
+    Path srcPath = FileHelper::ConvertLocalPathToFullPath(_argv[1]);
+    Debug::Log("srcData=%s", srcPath.toUTF8().c_str());
+
+    Path destPath = FileHelper::ConvertLocalPathToFullPath(_argv[2]);
+    Debug::Log("destPath=%s", destPath.toUTF8().c_str());
+
+    DataBlock dataBlock;
+    MAZE_ERROR_RETURN_VALUE_IF(!dataBlock.loadTextFile(srcPath), 1, "Failed to load src file!");
+
+    FileHelper::CreateDirectoryRecursive(FileHelper::GetDirectoryInPath(destPath));
+    MAZE_ERROR_RETURN_VALUE_IF(!dataBlock.saveBinaryFile(destPath), 2, "Failed to save file!");
+
+    return 0;
+}
+
+#endif
