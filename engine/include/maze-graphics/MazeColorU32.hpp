@@ -256,18 +256,28 @@ namespace Maze
         void setVec4U32(Vec4U const& _vec);
 
         //////////////////////////////////////////
-        Vec4U8 toVec4U8() const;
-
-        //////////////////////////////////////////
-        void setVec4U8(Vec4U8 const& _vec);
-
-        //////////////////////////////////////////
         inline static ColorU32 FromVec4U32(Vec4U const& _vec)
         {
             ColorU32 color;
             color.setVec4U32(_vec);
             return color;
         }
+
+        //////////////////////////////////////////
+        Vec4U8 toVec4U8() const;
+
+        //////////////////////////////////////////
+        void setVec4U8(Vec4U8 const& _vec);
+
+        //////////////////////////////////////////
+        inline static ColorU32 FromVec4U8(Vec4U8 const& _vec)
+        {
+            ColorU32 color;
+            color.setVec4U8(_vec);
+            return color;
+        }
+
+        
         
 
         //////////////////////////////////////////

@@ -1084,7 +1084,7 @@ _stream.write((U8 const*)(quote + quoteLen - 1), quoteLen);
     //////////////////////////////////////////
     void DataBlockTextParser::processSyntaxError(CString _message)
     {
-        MAZE_ERROR("%s", _message);
+        MAZE_ERROR("%s (Line: %d)", _message, m_currentLine);
     }
 
     //////////////////////////////////////////

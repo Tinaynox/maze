@@ -84,11 +84,12 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Type: Any base type (non-class)
+    // Type: Any base type (non-class, non-enum)
     //
     //////////////////////////////////////////
     template <typename TValue>
-    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<TValue>::value), void>::type
+    MAZE_FORCEINLINE typename ::std::enable_if<(
+        !std::is_class<TValue>::value && !std::is_enum<TValue>::value), void>::type
         ValueToDataBlock(TValue const& _value, DataBlock& _data)
     {
         AddDataToDataBlock<TValue>(_data, MAZE_HS("value"), _value);
@@ -96,12 +97,37 @@ namespace Maze
 
     ////////////////////////////////////////////
     template <typename TValue>
-    MAZE_FORCEINLINE typename ::std::enable_if<(!std::is_class<TValue>::value), void>::type
+    MAZE_FORCEINLINE typename ::std::enable_if<(
+        !std::is_class<TValue>::value && !std::is_enum<TValue>::value), void>::type
         ValueFromDataBlock(TValue& _value, DataBlock const& _data)
     {
         DataBlock::ParamIndex paramIndex = _data.findParamIndex(MAZE_HS("value"));
         if (paramIndex >= 0)
             _value = GetDataBlockParam<TValue>(_data, paramIndex);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: C++ enum
+    //
+    //////////////////////////////////////////
+    template <typename TValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(
+        !std::is_class<TValue>::value && std::is_enum<TValue>::value), void>::type
+        ValueToDataBlock(TValue const& _value, DataBlock& _data)
+    {
+        AddDataToDataBlock<S32>(_data, MAZE_HS("value"), static_cast<S32>(_value));
+    }
+
+    ////////////////////////////////////////////
+    template <typename TValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(
+        !std::is_class<TValue>::value && std::is_enum<TValue>::value), void>::type
+        ValueFromDataBlock(TValue& _value, DataBlock const& _data)
+    {
+        DataBlock::ParamIndex paramIndex = _data.findParamIndex(MAZE_HS("value"));
+        if (paramIndex >= 0)
+            _value = static_cast<TValue>(GetDataBlockParam<S32>(_data, paramIndex));
     }
 
 
