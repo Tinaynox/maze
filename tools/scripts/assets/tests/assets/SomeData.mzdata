@@ -1,0 +1,33 @@
+playerShipAttackLevels:S32 = 5
+playerShipDronesLevels:S32 = 3
+
+playerAttackData
+{
+  playerAttackType:String = "Default"
+  title:String = "${BLASTERGUN}"
+  colorUI:Vec4U = 255, 48, 83, 255
+
+  playerShipAttackData
+  {
+    attackType:String = "Projectile"
+    damage
+    {
+        from:F32 = 40.0
+        to:F32 = 55.0
+    }
+    fireCooldown:F32 = 0.135
+    projectileAvatar:String = "Plasma00"
+    projectilesCount:S32 = 1
+    attackSector:F32 = 0.61
+    fireSound
+    {
+        sounds
+        {
+            item:String = "BlasterLevel1.wav"
+        }
+        volume:F32 = 0.2
+        minPitch:F32 = 0.78
+        maxPitch:F32 = 0.81
+    }
+  }
+}

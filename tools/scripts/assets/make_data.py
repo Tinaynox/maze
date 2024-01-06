@@ -25,7 +25,8 @@ class MakeData:
         self.cache = None
         self.input = os.path.abspath(args.src)
         self.output = os.path.abspath(args.dst)
-        self.tools = os.path.abspath(args.tools)
+        self.first_party_tools = os.path.abspath(args.first_party_tools)
+        self.third_party_tools = os.path.abspath(args.third_party_tools)
         self.temp = os.path.abspath(args.temp)
 
         self.texture_compression = args.tcompression
@@ -46,10 +47,15 @@ class MakeData:
         else:
             self.build_tags = []
 
+        self.mzdata_extensions = []
+        for ext in args.mzdata_extensions:
+            self.mzdata_extensions.append('.{0}'.format(ext))
+
         self.texture_compressor = None
         self.resource_encryptor = None
 
         self.tags_by_folder = {}
+
 
     def prepare(self):
         cache_dir = os.path.dirname(self.cache_name)
@@ -69,7 +75,7 @@ class MakeData:
         self.texture_compressor = texture_compressor.TextureCompressor(
             self.texture_compression,
             self.mode,
-            self.tools,
+            self.third_party_tools,
             self.temp)
         self.resource_encryptor = resource_encryptor.ResourceEncryptor()
 
@@ -94,6 +100,7 @@ class MakeData:
             name, ext = os.path.splitext(file_name)
             copy_from = '{0}/{1}'.format(self.input, full_path)
             copy_to = '{0}/{1}'.format(self.output, full_path)
+            is_mzdata = ext in self.mzdata_extensions
             is_texture = ext in maze_config.textures_extensions
             is_sound = ext in maze_config.sounds_extensions
 
@@ -176,6 +183,17 @@ class MakeData:
                         shutil.copyfile(copy_from, copy_to)
                 else:
                     shutil.copyfile(copy_from, copy_to)
+
+                if is_mzdata:
+                    mzdata_binalizer = '{0}/{1}'.format(
+                        self.first_party_tools,
+                        'mzdata-converter/bin/maze-tool-mzdata-binalizer.exe')
+                    system_command = '{0} {1} {2}'.format(
+                        mzdata_binalizer,
+                        copy_to,
+                        copy_to)
+                    print(system_command)
+                    os.system(system_command)
 
                 if is_texture:
 
@@ -357,7 +375,7 @@ class MakeData:
                     atlas.pack(
                         input_folder,
                         output_folder,
-                        self.tools,
+                        self.third_party_tools,
                         name,
                         extrude,
                         additional_params)
@@ -443,7 +461,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Make data tool')
     parser.add_argument('--src', type=str, help='Source folder')
     parser.add_argument('--dst', type=str, help='Output folder')
-    parser.add_argument('--tools', type=str, help='Tools folder')
+    parser.add_argument('--first-party-tools', type=str, help='First party tools folder')
+    parser.add_argument('--third-party-tools', type=str, help='Third party tools folder')
     parser.add_argument('--temp', type=str, help='Temp folder')
     parser.add_argument('--tcompression', type=str, help='Texture compression')
     parser.add_argument('--tcompression-ext-policy', type=int, help='Texture compression extension policy')
@@ -452,6 +471,7 @@ if __name__ == '__main__':
     parser.add_argument('--mode', type=str, help='Production mode')
     parser.add_argument('--tags', type=str, help='Build tags')
     parser.add_argument('--max-atlas-size', type=str, help='Max atlas size')
+    parser.add_argument('--mzdata-extensions', nargs='+', help='MZData asset extensions')
     parsedArgs = parser.parse_args()
     try:
         make = MakeData(parsedArgs)
