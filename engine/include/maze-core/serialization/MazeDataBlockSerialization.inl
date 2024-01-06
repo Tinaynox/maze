@@ -52,9 +52,17 @@ namespace Maze
 
     //////////////////////////////////////////
     template <>
+    MAZE_FORCEINLINE bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, S8 const& _value) { _dataBlock.addS32(_name, _value); return true; }
+    template <>
+    MAZE_FORCEINLINE bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, S16 const& _value) { _dataBlock.addS32(_name, _value); return true; }
+    template <>
     MAZE_FORCEINLINE bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, S32 const& _value) { _dataBlock.addS32(_name, _value); return true; }
     template <>
     MAZE_FORCEINLINE bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, S64 const& _value) { _dataBlock.addS64(_name, _value); return true; }
+    template <>
+    MAZE_FORCEINLINE bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, U8 const& _value) { _dataBlock.addU32(_name, _value); return true; }
+    template <>
+    MAZE_FORCEINLINE bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, U16 const& _value) { _dataBlock.addU32(_name, _value); return true; }
     template <>
     MAZE_FORCEINLINE bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, U32 const& _value) { _dataBlock.addU32(_name, _value); return true; }
     template <>
@@ -109,9 +117,17 @@ namespace Maze
 
     //////////////////////////////////////////
     template <>
+    MAZE_FORCEINLINE S8 GetDataBlockParam(DataBlock const& _data, DataBlock::ParamIndex _i) { return (S8)_data.getS32(_i); }
+    template <>
+    MAZE_FORCEINLINE S16 GetDataBlockParam(DataBlock const& _data, DataBlock::ParamIndex _i) { return (S16)_data.getS32(_i); }
+    template <>
     MAZE_FORCEINLINE S32 GetDataBlockParam(DataBlock const& _data, DataBlock::ParamIndex _i) { return _data.getS32(_i); }
     template <>
     MAZE_FORCEINLINE S64 GetDataBlockParam(DataBlock const& _data, DataBlock::ParamIndex _i) { return _data.getS64(_i); }
+    template <>
+    MAZE_FORCEINLINE U8 GetDataBlockParam(DataBlock const& _data, DataBlock::ParamIndex _i) { return (U8)_data.getU32(_i); }
+    template <>
+    MAZE_FORCEINLINE U16 GetDataBlockParam(DataBlock const& _data, DataBlock::ParamIndex _i) { return (U16)_data.getU32(_i); }
     template <>
     MAZE_FORCEINLINE U32 GetDataBlockParam(DataBlock const& _data, DataBlock::ParamIndex _i) { return _data.getU32(_i); }
     template <>
