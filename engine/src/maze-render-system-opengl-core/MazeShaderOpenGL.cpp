@@ -37,6 +37,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/helpers/MazeMetaClassHelper.hpp"
+#include "maze-core/system/MazeTimer.hpp"
 #include "maze-graphics/MazeVertex.hpp"
 #include "maze-render-system-opengl-core/MazeShaderUniformVariantOpenGL.hpp"
 
@@ -325,6 +326,7 @@ namespace Maze
         ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
 
         Debug::Log("Shader %s loading...", getName().c_str());
+        Timer timer;
 
         ContextOpenGL* currentContext = renderSystem->ensureCurrentContext();
         MAZE_ERROR_RETURN_VALUE_IF(!currentContext, false, "Context is not valid!");
@@ -589,7 +591,8 @@ namespace Maze
         assignUniforms();
         assignDefaultUniforms();
 
-        Debug::Log("Shader %s loaded.", getName().c_str());
+        F32 msTime = F32(timer.getMicroseconds()) / 1000.0f;
+        Debug::Log("Shader %s loaded for %.1fms.", getName().c_str(), msTime);
 
         return true;
     }
