@@ -35,7 +35,6 @@
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeVec3.hpp"
 #include "maze-core/math/MazeRay.hpp"
-#include "maze-core/data/MazeDataBlock.hpp"
 #include <ostream>
 
 
@@ -160,53 +159,6 @@ namespace Maze
         Vec3F m_normal;
     };
 
-    
-    //////////////////////////////////////////
-    // Serialization
-    //
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void ValueToString(Plane const& _value, String& _data)
-    {
-        _data = _value.toString();
-    }
-
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void ValueFromString(Plane& _value, CString _data, Size _count)
-    {
-        _value = Plane::FromString(_data, _count);
-    }
-
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void GetValueSerializationSize(Plane const& _value, U32& _outSize)
-    {
-        _outSize = sizeof(Plane);
-    }
-
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void SerializeValue(Plane const& _value, U8* _data)
-    {
-        memcpy(_data, (U8 const*)(&_value), sizeof(Plane));
-    }
-
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void DeserializeValue(Plane& _value, U8 const* _data)
-    {
-        memcpy((U8*)&_value, _data, sizeof(Plane));
-    }
-
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void ValueToDataBlock(Plane const& _value, DataBlock& _data)
-    {
-        _data.setVec3F(MAZE_HS("point"), _value.getPoint());
-        _data.setVec3F(MAZE_HS("normal"), _value.getNormal());
-    }
-
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void ValueFromDataBlock(Plane& _value, DataBlock const& _data)
-    {
-        _value.setPoint(_data.getVec3F(MAZE_HS("point")));
-        _value.setNormal(_data.getVec3F(MAZE_HS("normal")));
-    }
 
 
 } // namespace Maze

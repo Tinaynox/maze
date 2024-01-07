@@ -38,7 +38,6 @@
 #include "maze-core/math/MazeMat3.hpp"
 #include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/math/MazeRotation2D.hpp"
-#include "maze-core/data/MazeDataBlock.hpp"
 #include <ostream>
 
 
@@ -72,10 +71,10 @@ namespace Maze
         inline Quaternion(F32 _w, F32 _x, F32 _y, F32 _z);
         
         //////////////////////////////////////////
-        inline Quaternion(Mat3F const& _rotationMatrix);
+        explicit inline Quaternion(Mat3F const& _rotationMatrix);
 
         //////////////////////////////////////////
-        inline Quaternion(Mat4F const& _rotationMatrix);
+        explicit inline Quaternion(Mat4F const& _rotationMatrix);
 
         //////////////////////////////////////////
         inline Quaternion(F32 const& _angle, Vec3F const& _axis);
@@ -96,7 +95,7 @@ namespace Maze
         inline Quaternion(F32 _xAngle, F32 _yAngle, F32 _zAngle);
 
         //////////////////////////////////////////
-        inline Quaternion(Vec3F const& _eulerAngles);
+        explicit inline Quaternion(Vec3F const& _eulerAngles);
 
         //////////////////////////////////////////
         inline Quaternion(Vec3F const& _fromVector, Vec3F const& _toVector);
@@ -399,51 +398,6 @@ namespace Maze
         return _o;
     }
 
-
-    //////////////////////////////////////////
-    // Serialization
-    //
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void ValueToString(Quaternion const& _value, String& _data)
-    {
-        _data = _value.toString();
-    }
-
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void ValueFromString(Quaternion& _value, CString _data, Size _count)
-    {
-        _value = Quaternion::FromString(_data, _count);
-    }
-
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void GetValueSerializationSize(Quaternion const& _value, U32& _outSize)
-    {
-        _outSize = sizeof(Quaternion);
-    }
-
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void SerializeValue(Quaternion const& _value, U8* _data)
-    {
-        memcpy(_data, (U8 const*)(&_value), sizeof(Quaternion));
-    }
-
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void DeserializeValue(Quaternion& _value, U8 const* _data)
-    {
-        memcpy((U8*)&_value, _data, sizeof(Quaternion));
-    }
-
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void ValueToDataBlock(Quaternion const& _value, DataBlock& _data)
-    {
-        _data.setVec4F(MAZE_HS("value"), _value.toVec4F());
-    }
-
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void ValueFromDataBlock(Quaternion& _value, DataBlock const& _data)
-    {
-        _value.setVec4F(_data.getVec4F(MAZE_HS("value")));
-    }
 
 } // namespace Maze
 //////////////////////////////////////////

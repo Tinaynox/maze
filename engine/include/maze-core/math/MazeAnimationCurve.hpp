@@ -43,6 +43,7 @@
 #include "maze-core/serialization/MazeJSONSerializable.hpp"
 #include "maze-core/helpers/MazeJSONHelper.hpp"
 #include "maze-core/serialization/MazeDataBlockSerializable.hpp"
+#include "maze-core/serialization/MazeStringSerialization.hpp"
 #include "maze-core/helpers/MazeDataBlockHelper.hpp"
 #include <ostream>
 
@@ -64,6 +65,7 @@ namespace Maze
     class MAZE_CORE_API AnimationCurve
         : public IJSONValueSerializable
         , public IDataBlockSerializable
+        , public IStringSerializable
     {
     public:
 
@@ -402,11 +404,6 @@ namespace Maze
         F32 getTime() const;
 
 
-        //////////////////////////////////////////
-        inline String toString() const
-        {
-            return JSONHelper::ToString(toJSONValue());
-        }
 
         //////////////////////////////////////////
         inline static AnimationCurve FromString(String const& _string)
@@ -430,6 +427,13 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
+
+    public:
+        //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE;
 
     protected:
 
@@ -466,42 +470,7 @@ namespace Maze
 
         AnimationCurveMinMaxMode m_minMaxMode = AnimationCurveMinMaxMode::NormalizedPositive;
     }; 
-
-
-    //////////////////////////////////////////
-    // Serialization
-    //
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void ValueToString(AnimationCurve const& _value, String& _data)
-    {
-        _data = _value.toString();
-    }
-
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void ValueFromString(AnimationCurve& _value, CString _data, Size _count)
-    {
-        // TODO:
-        _value = AnimationCurve::FromString(String(_data, _count));
-    }
-
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void GetValueSerializationSize(AnimationCurve const& _value, U32& _outSize)
-    {
-        _outSize = sizeof(AnimationCurve);
-    }
-
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void SerializeValue(AnimationCurve const& _value, U8* _data)
-    {
-        memcpy(_data, (U8 const*)(&_value), sizeof(AnimationCurve));
-    }
-
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void DeserializeValue(AnimationCurve& _value, U8 const* _data)
-    {
-        memcpy((U8*)&_value, _data, sizeof(AnimationCurve));
-    }
-
+    
 
 } // namespace Maze
 //////////////////////////////////////////

@@ -35,6 +35,10 @@
 #include "maze-core/MazeStdTypes.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/MazeTypes.hpp"
+#include "maze-core/math/MazeRotation2D.hpp"
+#include "maze-core/math/MazePlane.hpp"
+#include "maze-core/math/MazeQuaternion.hpp"
+#include "maze-core/math/MazeRay.hpp"
 #include "maze-core/utils/MazeClassInfo.hpp"
 #include "maze-core/serialization/MazeDataBlockSerializable.hpp"
 #include "maze-core/serialization/MazeStringSerialization.hpp"
@@ -161,6 +165,58 @@ namespace Maze
     inline void ValueFromDataBlock(Rotation2D& _value, DataBlock const& _data)
     {
         _value = Rotation2D(_data.getF32(MAZE_HS("s")), _data.getF32(MAZE_HS("c")));
+    }
+
+
+    //////////////////////////////////////////
+    // Type: Plane
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueToDataBlock(Plane const& _value, DataBlock& _data)
+    {
+        _data.setVec3F(MAZE_HS("point"), _value.getPoint());
+        _data.setVec3F(MAZE_HS("normal"), _value.getNormal());
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueFromDataBlock(Plane& _value, DataBlock const& _data)
+    {
+        _value.setPoint(_data.getVec3F(MAZE_HS("point")));
+        _value.setNormal(_data.getVec3F(MAZE_HS("normal")));
+    }
+
+
+    //////////////////////////////////////////
+    // Type: Quaternion
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueToDataBlock(Quaternion const& _value, DataBlock& _data)
+    {
+        _data.setVec4F(MAZE_HS("value"), _value.toVec4F());
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueFromDataBlock(Quaternion& _value, DataBlock const& _data)
+    {
+        _value.setVec4F(_data.getVec4F(MAZE_HS("value")));
+    }
+
+
+    //////////////////////////////////////////
+    // Type: Ray
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueToDataBlock(Ray const& _value, DataBlock& _data)
+    {
+        _data.setVec3F(MAZE_HS("point"), _value.getPoint());
+        _data.setVec3F(MAZE_HS("direction"), _value.getDirection());
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueFromDataBlock(Ray& _value, DataBlock const& _data)
+    {
+        _value.setPoint(_data.getVec3F(MAZE_HS("point")));
+        _value.setDirection(_data.getVec3F(MAZE_HS("direction")));
     }
 
 

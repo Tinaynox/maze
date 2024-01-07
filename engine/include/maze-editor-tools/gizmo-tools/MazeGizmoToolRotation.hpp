@@ -89,7 +89,7 @@ namespace Maze
         S32 m_usingAxis = -1;
 
         bool m_useRequest = false;
-        Quaternion m_startRotation = Vec3F::c_zero;
+        Quaternion m_startRotation = Quaternion::c_identity;
         Vec3F m_startAxis = Vec3F::c_zero;
         Vec3F m_startVector = Vec3F::c_zero;
     };

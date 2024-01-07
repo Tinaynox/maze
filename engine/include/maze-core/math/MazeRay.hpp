@@ -34,7 +34,6 @@
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeVec3.hpp"
-#include "maze-core/data/MazeDataBlock.hpp"
 #include <ostream>
 
 
@@ -157,55 +156,7 @@ namespace Maze
         Vec3F m_point;
         Vec3F m_direction;
     };
-
-
-    //////////////////////////////////////////
-    // Serialization
-    //
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void ValueToString(Ray const& _value, String& _data)
-    {
-        _data = _value.toString();
-    }
-
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void ValueFromString(Ray& _value, CString _data, Size _count)
-    {
-        _value = Ray::FromString(String(_data, _count));
-    }
-
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void GetValueSerializationSize(Ray const& _value, U32& _outSize)
-    {
-        _outSize = sizeof(Ray);
-    }
-
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void SerializeValue(Ray const& _value, U8* _data)
-    {
-        memcpy(_data, (U8 const*)(&_value), sizeof(Ray));
-    }
-
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void DeserializeValue(Ray& _value, U8 const* _data)
-    {
-        memcpy((U8*)&_value, _data, sizeof(Ray));
-    }
-
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void ValueToDataBlock(Ray const& _value, DataBlock& _data)
-    {
-        _data.setVec3F(MAZE_HS("point"), _value.getPoint());
-        _data.setVec3F(MAZE_HS("direction"), _value.getDirection());
-    }
-
-    //////////////////////////////////////////
-    MAZE_FORCEINLINE void ValueFromDataBlock(Ray& _value, DataBlock const& _data)
-    {
-        _value.setPoint(_data.getVec3F(MAZE_HS("point")));
-        _value.setDirection(_data.getVec3F(MAZE_HS("direction")));
-    }
-
+    
 
 } // namespace Maze
 //////////////////////////////////////////

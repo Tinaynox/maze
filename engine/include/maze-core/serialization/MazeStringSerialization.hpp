@@ -35,6 +35,10 @@
 #include "maze-core/MazeStdTypes.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/MazeTypes.hpp"
+#include "maze-core/math/MazeRotation2D.hpp"
+#include "maze-core/math/MazePlane.hpp"
+#include "maze-core/math/MazeQuaternion.hpp"
+#include "maze-core/math/MazeRay.hpp"
 #include "maze-core/utils/MazeClassInfo.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-core/serialization/MazeStringSerializable.hpp"
@@ -257,6 +261,69 @@ namespace Maze
         StringHelper::ParseF64(_data, _count, _value);
     }
 
+
+    //////////////////////////////////////////
+    // Type: Rotation2D
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueToString(Rotation2D const& _value, String& _data)
+    {
+        _data = _value.toString();
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueFromString(Rotation2D& _value, CString _data, Size _count)
+    {
+        _value = Rotation2D::FromString(String(_data, _count));
+    }
+
+
+    //////////////////////////////////////////
+    // Type: Plane
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueToString(Plane const& _value, String& _data)
+    {
+        _data = _value.toString();
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueFromString(Plane& _value, CString _data, Size _count)
+    {
+        _value = Plane::FromString(_data, _count);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: Quaternion
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueToString(Quaternion const& _value, String& _data)
+    {
+        _data = _value.toString();
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueFromString(Quaternion& _value, CString _data, Size _count)
+    {
+        _value = Quaternion::FromString(_data, _count);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: Ray
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueToString(Ray const& _value, String& _data)
+    {
+        _data = _value.toString();
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void ValueFromString(Ray& _value, CString _data, Size _count)
+    {
+        _value = Ray::FromString(String(_data, _count));
+    }
 
 
     //////////////////////////////////////////

@@ -216,6 +216,17 @@ namespace Maze
         _dataBlock.setS32(MAZE_HS("minMaxMode"), (S32)m_minMaxMode);
     }
 
+    //////////////////////////////////////////
+    String AnimationCurve::toString() const
+    {
+        return JSONHelper::ToString(toJSONValue());
+    }
+
+    //////////////////////////////////////////
+    void AnimationCurve::setString(CString _data, Size _count)
+    {
+        (*this) = AnimationCurve::FromString(String(_data, _count));
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

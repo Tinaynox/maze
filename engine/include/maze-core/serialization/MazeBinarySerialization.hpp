@@ -35,6 +35,10 @@
 #include "maze-core/MazeStdTypes.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/MazeTypes.hpp"
+#include "maze-core/math/MazeRotation2D.hpp"
+#include "maze-core/math/MazePlane.hpp"
+#include "maze-core/math/MazeQuaternion.hpp"
+#include "maze-core/math/MazeRay.hpp"
 #include "maze-core/utils/MazeClassInfo.hpp"
 #include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-core/serialization/MazeBinarySerializable.hpp"
@@ -107,6 +111,94 @@ namespace Maze
         DeserializeValue(TValue& _value, U8 const* _data)
     {
         memcpy((U8*)&_value, _data, sizeof(_value));
+    }
+
+
+    //////////////////////////////////////////
+    // Type: Rotation2D
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void GetValueSerializationSize(Rotation2D const& _value, U32& _outSize)
+    {
+        _outSize = sizeof(Rotation2D);
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void SerializeValue(Rotation2D const& _value, U8* _data)
+    {
+        memcpy(_data, (U8 const*)(&_value), sizeof(Rotation2D));
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void DeserializeValue(Rotation2D& _value, U8 const* _data)
+    {
+        memcpy((U8*)&_value, _data, sizeof(Rotation2D));
+    }
+
+
+    //////////////////////////////////////////
+    // Type: Plane
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void GetValueSerializationSize(Plane const& _value, U32& _outSize)
+    {
+        _outSize = sizeof(Plane);
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void SerializeValue(Plane const& _value, U8* _data)
+    {
+        memcpy(_data, (U8 const*)(&_value), sizeof(Plane));
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void DeserializeValue(Plane& _value, U8 const* _data)
+    {
+        memcpy((U8*)&_value, _data, sizeof(Plane));
+    }
+
+
+    //////////////////////////////////////////
+    // Type: Quaternion
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void GetValueSerializationSize(Quaternion const& _value, U32& _outSize)
+    {
+        _outSize = sizeof(Quaternion);
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void SerializeValue(Quaternion const& _value, U8* _data)
+    {
+        memcpy(_data, (U8 const*)(&_value), sizeof(Quaternion));
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void DeserializeValue(Quaternion& _value, U8 const* _data)
+    {
+        memcpy((U8*)&_value, _data, sizeof(Quaternion));
+    }
+
+
+    //////////////////////////////////////////
+    // Type: Ray
+    //
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void GetValueSerializationSize(Ray const& _value, U32& _outSize)
+    {
+        _outSize = sizeof(Ray);
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void SerializeValue(Ray const& _value, U8* _data)
+    {
+        memcpy(_data, (U8 const*)(&_value), sizeof(Ray));
+    }
+
+    //////////////////////////////////////////
+    MAZE_FORCEINLINE void DeserializeValue(Ray& _value, U8 const* _data)
+    {
+        memcpy((U8*)&_value, _data, sizeof(Ray));
     }
 
 
