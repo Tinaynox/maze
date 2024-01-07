@@ -379,7 +379,7 @@ namespace Maze
                 if (colorString == "-")
                     color = getColor();
                 else
-                    color = ColorU32::FromString(colorString);
+                    color = ColorU32::FromString(colorString, ',');
 
                 finalText.erase(startTagPosition, endTagPosition - startTagPosition + 1);
                 colorTags.push_back(std::make_pair(startTagPosition, color));

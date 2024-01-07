@@ -205,8 +205,8 @@ namespace Maze
         Dropdown2DPtr m_minMaxModeDropdown;
         ClickButton2DPtr m_copyButton;
         ClickButton2DPtr m_pasteButton;
-        ClickButton2DPtr m_copyXMLButton;
-        ClickButton2DPtr m_pasteXMLButton;
+        ClickButton2DPtr m_copyDataBlockButton;
+        ClickButton2DPtr m_pasteDataBlockButton;
 
         SpriteRenderer2DPtr m_curveRendererHolder;
         SpriteRenderer2DPtr m_curveRenderer;

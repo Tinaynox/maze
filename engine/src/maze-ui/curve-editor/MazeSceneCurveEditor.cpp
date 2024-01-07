@@ -448,39 +448,46 @@ namespace Maze
             });
 
 
-            m_copyXMLButton = UIHelper::CreateDefaultClickButton(
-                "CX",
+            m_copyDataBlockButton = UIHelper::CreateDefaultClickButton(
+                "CD",
                 { 18.0f, 18.0f },
                 { -72.0f, -12.0f },
                 m_canvas->getTransform(),
                 this,
                 Vec2F(1.0f, 1.0f),
                 Vec2F(1.0f, 1.0f));
-            m_copyXMLButton->eventClick.subscribe(
+            m_copyDataBlockButton->eventClick.subscribe(
                 [](Button2D* _button, CursorInputEvent const& _event)
             {
                 AnimationCurve curve = AnimationCurveManager::GetInstancePtr()->getCurve();
-                String text = curve.toString();
-                StringHelper::ReplaceSubstring(text, "\"", "&quot;");
+                DataBlock data;
+                curve.toDataBlock(data);
+                ByteBufferPtr buffer = data.saveText();
+                String text(buffer->getData(), buffer->getData() + buffer->getSize());
+
                 SystemManager::GetInstancePtr()->setClipboardString(text);
             });
 
-            m_pasteXMLButton = UIHelper::CreateDefaultClickButton(
-                "PX",
+            m_pasteDataBlockButton = UIHelper::CreateDefaultClickButton(
+                "PD",
                 { 18.0f, 18.0f },
                 { -52.0f, -12.0f },
                 m_canvas->getTransform(),
                 this,
                 Vec2F(1.0f, 1.0f),
                 Vec2F(1.0f, 1.0f));
-            m_pasteXMLButton->eventClick.subscribe(
+            m_pasteDataBlockButton->eventClick.subscribe(
                 [](Button2D* _button, CursorInputEvent const& _event)
             {
                 String text = SystemManager::GetInstancePtr()->getClipboardAsString();
-                StringHelper::ReplaceSubstring(text, "&quot;", "\"");
-                AnimationCurve curve = AnimationCurve::FromString(text);
-                AnimationCurveManager::GetInstancePtr()->setCurve(curve);
-
+                ByteBuffer buffer((U8 const*)&text[0], text.size());
+                DataBlock data;
+                if (data.loadText(buffer))
+                {
+                    AnimationCurve curve;
+                    curve.loadFromDataBlock(data);
+                    AnimationCurveManager::GetInstancePtr()->setCurve(curve);
+                }
             });
 
 
