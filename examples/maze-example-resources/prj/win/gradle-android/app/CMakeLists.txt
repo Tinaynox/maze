@@ -35,7 +35,7 @@ set(EXAMPLE_LIB "${EXAMPLE_NAME}")
 
 ##########################################
 get_filename_component(BUILD_ARCH_FOLDER ${CMAKE_CURRENT_BINARY_DIR} NAME)
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../../../../examples/${EXAMPLE_NAME}" "${CMAKE_CURRENT_BINARY_DIR}/../../../../../cmake/${BUILD_ARCH_FOLDER}")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../../../../../examples/${EXAMPLE_NAME}" "${CMAKE_CURRENT_BINARY_DIR}/../../../../../cmake/${BUILD_ARCH_FOLDER}")
 
 set(CMAKE_SHARED_LINKER_FLAGS
     "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_onCreate")

@@ -51,7 +51,7 @@ namespace Maze
     LogService::LogService()
         : m_prevLogPriority(-1)
     {
-        m_eventLog.subscribe(this, &LogService::notifyLog);
+        eventLog.subscribe(this, &LogService::notifyLog);
     }
 
     //////////////////////////////////////////

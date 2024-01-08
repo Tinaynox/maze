@@ -120,7 +120,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API Path GetLibDirectory()
         {
-            return "/data/data/" + GetPackageName() + "/lib";
+            return Path("/data/data/") + GetPackageName() + Path("/lib");
         }
 
         //////////////////////////////////////////

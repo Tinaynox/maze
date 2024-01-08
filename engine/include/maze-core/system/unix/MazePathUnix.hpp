@@ -34,6 +34,7 @@
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/system/MazeGenericPath.hpp"
+#include "maze-core/serialization/MazeStringSerializable.hpp"
 
 
 //////////////////////////////////////////
@@ -43,7 +44,9 @@ namespace Maze
     // Class PathUnix
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API PathUnix : public GenericPath<PathUnix, String>
+    class MAZE_CORE_API PathUnix
+        : public GenericPath<PathUnix, String>
+        , public IStringSerializable
     {
     public:
 
@@ -83,24 +86,15 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual String toUTF8() const MAZE_OVERRIDE;
+       
+    public:
+
+        //////////////////////////////////////////
+        virtual String toString() const MAZE_OVERRIDE { return toUTF8(); }
+
+        //////////////////////////////////////////
+        virtual void setString(CString _data, Size _count) MAZE_OVERRIDE { (*this) = PathUnix(String(_data, _count)); }
     };
-
-
-    //////////////////////////////////////////
-    // Serialization
-    //
-    //////////////////////////////////////////
-    inline void ValueToString(PathUnix const& _value, String& _data)
-    {
-        _data = _value.getPath();
-    }
-
-    //////////////////////////////////////////
-    inline void ValueFromString(PathUnix& _value, CString _data, Size _count)
-    {
-        // TODO: optimize?
-        _value = String(_data, _count);
-    }
     
 } // namespace Maze
 //////////////////////////////////////////

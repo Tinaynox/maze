@@ -62,13 +62,12 @@ namespace Maze
     {
         for (Maze::S8 const* commandLineArgument : m_commandLineArguments)
         {
-            String commandLineArgumentStr = commandLineArgument;
-            if (StringHelper::IsStartsWith(commandLineArgumentStr, "--android_app"))
+            if (StringHelper::IsStartsWith(commandLineArgument, "--android_app"))
             {
-                Vector<String> words;
-                StringHelper::SplitWords(commandLineArgumentStr, words, '=');
+                Vector<ConstSpan<Char>> words;
+                StringHelper::SplitWords(commandLineArgument, words, '=');
 
-                m_androidApp = reinterpret_cast<android_app*>(StringHelper::StringToU64(words[1]));
+                m_androidApp = reinterpret_cast<android_app*>(StringHelper::StringToU64(words[1].getPtr()));
 
                 break;
             }

@@ -320,7 +320,7 @@ _stream.write((U8 const*)(quote + quoteLen - 1), quoteLen);
 
                         if (nextParamName.size() >= 3 &&
                             MAZE_STRNICMP(nextParamName.c_str(), MAZE_DATA_BLOCK_COMMENT_PREFIX, MAZE_DATA_BLOCK_COMMENT_PREFIX_LEN) == 0 &&
-                            (nextParamName.c_str()[2] == *MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_C) || (nextParamName.c_str()[2] == *MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_CPP))
+                            ((nextParamName.c_str()[2] == *MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_C) || (nextParamName.c_str()[2] == *MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_CPP)))
                         {
                             _stream << " ";
                             skipNextIndent = true;
