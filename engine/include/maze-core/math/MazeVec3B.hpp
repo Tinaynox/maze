@@ -249,19 +249,19 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        String toString(Char _separator = ';') const;
+        String toString(Char _separator = ',') const;
 
         //////////////////////////////////////////
-        static CString ParseString(CString _string, Size _size, Vec3B& _result, Char _separator = ';');
+        static CString ParseString(CString _string, Size _size, Vec3B& _result, Char _separator = ',');
 
         //////////////////////////////////////////
-        static CString ParseStringPretty(CString _string, Size _size, Vec3B& _result, Char _separator = ';');
+        static CString ParseStringPretty(CString _string, Size _size, Vec3B& _result, Char _separator = ',');
 
         //////////////////////////////////////////
-        static Vec3B FromString(CString _string, Size _size, Char _separator = ';');
+        static Vec3B FromString(CString _string, Size _size, Char _separator = ',');
 
         //////////////////////////////////////////
-        static Vec3B FromString(String const& _string, Char _separator = ';');
+        static Vec3B FromString(String const& _string, Char _separator = ',');
 
     public:
         bool x = false;

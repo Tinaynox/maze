@@ -345,10 +345,10 @@ namespace Maze
         }
         
         //////////////////////////////////////////
-        inline String toString(Char _separator = ';') const { return StringHelper::ToString(w) + _separator + StringHelper::ToString(x) + _separator + StringHelper::ToString(y) + _separator + StringHelper::ToString(z); }
+        inline String toString(Char _separator = ',') const { return StringHelper::ToString(w) + _separator + StringHelper::ToString(x) + _separator + StringHelper::ToString(y) + _separator + StringHelper::ToString(z); }
 
         //////////////////////////////////////////
-        static CString ParseString(CString _string, Size _size, Quaternion& _result, Char _separator = ';')
+        static CString ParseString(CString _string, Size _size, Quaternion& _result, Char _separator = ',')
         {
             CString end = _string + _size;
 
@@ -369,7 +369,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline static Quaternion FromString(CString _string, Size _size, Char _separator = ';')
+        inline static Quaternion FromString(CString _string, Size _size, Char _separator = ',')
         {
             Quaternion result = c_identity;
             ParseString(_string, _size, result, _separator);
@@ -377,7 +377,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline static Quaternion FromString(String const& _string, Char _separator = ';')
+        inline static Quaternion FromString(String const& _string, Char _separator = ',')
         {
             return FromString(&_string[0], _string.size(), _separator);
         }

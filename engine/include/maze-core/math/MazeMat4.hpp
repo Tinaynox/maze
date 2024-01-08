@@ -326,19 +326,19 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline String toString(Char _separator = ';') const;
+        inline String toString(Char _separator = ',') const;
 
         //////////////////////////////////////////
-        static inline CString ParseString(CString _string, Size _size, Mat4& _result, Char _separator = ';');
+        static inline CString ParseString(CString _string, Size _size, Mat4& _result, Char _separator = ',');
 
         //////////////////////////////////////////
         static inline CString ParseStringPretty(CString _string, Size _size, Mat4& _result, Char _separator = ',');
 
         //////////////////////////////////////////
-        static inline Mat4 FromString(CString _string, Size _size, Char _separator = ';');
+        static inline Mat4 FromString(CString _string, Size _size, Char _separator = ',');
 
         //////////////////////////////////////////
-        static Mat4 FromString(String const& _string, Char _separator = ';');
+        static Mat4 FromString(String const& _string, Char _separator = ',');
 
     protected:
         union 

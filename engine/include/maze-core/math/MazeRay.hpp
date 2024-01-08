@@ -123,10 +123,10 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline String toString(Char _separator = ':') const { return m_point.toString() + _separator + m_direction.toString(); }
+        inline String toString(Char _separator = ';') const { return m_point.toString() + _separator + m_direction.toString(); }
 
         //////////////////////////////////////////
-        static inline CString ParseString(CString _string, Size _size, Ray& _result, Char _separator = ':')
+        static inline CString ParseString(CString _string, Size _size, Ray& _result, Char _separator = ';')
         {
             CString end = _string + _size;
 
@@ -139,7 +139,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        static inline Ray FromString(CString _string, Size _size, Char _separator = ':')
+        static inline Ray FromString(CString _string, Size _size, Char _separator = ';')
         {
             Ray result;
             ParseString(_string, _size, result, _separator);
@@ -147,7 +147,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        static inline Ray FromString(String const& _string, Char _separator = ':')
+        static inline Ray FromString(String const& _string, Char _separator = ';')
         {
             return FromString(&_string[0], _string.size(), _separator);
         }

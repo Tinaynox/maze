@@ -349,16 +349,16 @@ namespace Maze
         }
         
         //////////////////////////////////////////
-        String toString(Char _separator = ';') const;
+        String toString(Char _separator = ',') const;
 
         //////////////////////////////////////////
-        static CString ParseString(CString _string, Size _size, AABB2D& _result, Char _separator = ';');
+        static CString ParseString(CString _string, Size _size, AABB2D& _result, Char _separator = ',');
 
         //////////////////////////////////////////
-        static AABB2D FromString(CString _string, Size _size, Char _separator = ';');
+        static AABB2D FromString(CString _string, Size _size, Char _separator = ',');
 
         //////////////////////////////////////////
-        static AABB2D FromString(String const& _string, Char _separator = ';');
+        static AABB2D FromString(String const& _string, Char _separator = ',');
         
     protected:
         Vec2F m_min;

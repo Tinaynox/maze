@@ -292,16 +292,16 @@ namespace Maze
         inline F32 toAngle() const;
 
         //////////////////////////////////////////
-        inline String toString(Char _separator = ';') const;
+        inline String toString(Char _separator = ',') const;
 
         //////////////////////////////////////////
-        static CString ParseString(CString _string, Size _size, Vec2& _result, Char _separator = ';');
+        static CString ParseString(CString _string, Size _size, Vec2& _result, Char _separator = ',');
 
         //////////////////////////////////////////
-        static Vec2 FromString(CString _string, Size _size, Char _separator = ';');
+        static Vec2 FromString(CString _string, Size _size, Char _separator = ',');
 
         //////////////////////////////////////////
-        static inline Vec2 FromString(String const& _string, Char _separator = ';');
+        static inline Vec2 FromString(String const& _string, Char _separator = ',');
 
 
         //////////////////////////////////////////

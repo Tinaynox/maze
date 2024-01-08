@@ -125,10 +125,10 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline String toString(Char _separator = ':') const { return m_point.toString() + _separator + m_normal.toString(); }
+        inline String toString(Char _separator = ';') const { return m_point.toString() + _separator + m_normal.toString(); }
 
         //////////////////////////////////////////
-        static inline CString ParseString(CString _string, Size _size, Plane& _result, Char _separator = ':')
+        static inline CString ParseString(CString _string, Size _size, Plane& _result, Char _separator = ';')
         {
             CString end = _string + _size;
 
@@ -141,7 +141,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        static inline Plane FromString(CString _string, Size _size, Char _separator = ':')
+        static inline Plane FromString(CString _string, Size _size, Char _separator = ';')
         {
             Plane result;
             ParseString(_string, _size, result, _separator);
@@ -149,7 +149,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline static Plane FromString(String const& _string, Char _separator = ':')
+        inline static Plane FromString(String const& _string, Char _separator = ';')
         {
             return FromString(&_string[0], _string.size(), _separator);
         }

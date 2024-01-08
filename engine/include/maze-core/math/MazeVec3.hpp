@@ -369,16 +369,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline String toString(Char _separator = ';') const;
+        inline String toString(Char _separator = ',') const;
 
         //////////////////////////////////////////
-        static CString ParseString(CString _string, Size _size, Vec3& _result, Char _separator = ';');
+        static CString ParseString(CString _string, Size _size, Vec3& _result, Char _separator = ',');
 
         //////////////////////////////////////////
-        static Vec3 FromString(CString _string, Size _size, Char _separator = ';');
+        static Vec3 FromString(CString _string, Size _size, Char _separator = ',');
 
         //////////////////////////////////////////
-        static Vec3 FromString(String const& _string, Char _separator = ';');
+        static Vec3 FromString(String const& _string, Char _separator = ',');
 
         //////////////////////////////////////////
         static inline Vec3 SLerp(Vec3 const& _start, Vec3 const& _end, F32 _percent)

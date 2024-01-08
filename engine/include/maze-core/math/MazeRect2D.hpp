@@ -111,11 +111,11 @@ namespace Maze
         inline bool hasCircleIntersection(Vec2<TValue> const& _pos, TValue _radius);
 
         //////////////////////////////////////////
-        inline String toString(Char _separator = ';') const { return StringHelper::ToString(position.x) + _separator + StringHelper::ToString(position.y) + _separator + StringHelper::ToString(size.x) + _separator + StringHelper::ToString(size.y); }
+        inline String toString(Char _separator = ',') const { return StringHelper::ToString(position.x) + _separator + StringHelper::ToString(position.y) + _separator + StringHelper::ToString(size.x) + _separator + StringHelper::ToString(size.y); }
 
 
         //////////////////////////////////////////
-        static inline CString ParseString(CString _string, Size _size, Rect2D& _result, Char _separator = ';')
+        static inline CString ParseString(CString _string, Size _size, Rect2D& _result, Char _separator = ',')
         {
             CString end = _string + _size;
 
@@ -136,7 +136,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        static inline Rect2D FromString(CString _string, Size _size, Char _separator = ';')
+        static inline Rect2D FromString(CString _string, Size _size, Char _separator = ',')
         {
             Rect2D result = Rect2D::c_zero;
             ParseString(_string, _size, result, _separator);
@@ -144,7 +144,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        static inline Rect2D FromString(String const& _string, Char _separator = ';')
+        static inline Rect2D FromString(String const& _string, Char _separator = ',')
         {
             return FromString(&_string[0], _string.size(), _separator);
         }

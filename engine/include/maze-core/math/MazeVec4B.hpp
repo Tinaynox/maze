@@ -347,19 +347,19 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        String toString(Char _separator = ';') const;
+        String toString(Char _separator = ',') const;
 
         //////////////////////////////////////////
-        static CString ParseString(CString _string, Size _size, Vec4B& _result, Char _separator = ';');
+        static CString ParseString(CString _string, Size _size, Vec4B& _result, Char _separator = ',');
 
         //////////////////////////////////////////
-        static CString ParseStringPretty(CString _string, Size _size, Vec4B& _result, Char _separator = ';');
+        static CString ParseStringPretty(CString _string, Size _size, Vec4B& _result, Char _separator = ',');
 
         //////////////////////////////////////////
-        static Vec4B FromString(CString _string, Size _size, Char _separator = ';');
+        static Vec4B FromString(CString _string, Size _size, Char _separator = ',');
 
         //////////////////////////////////////////
-        static Vec4B FromString(String const& _string, Char _separator = ';');
+        static Vec4B FromString(String const& _string, Char _separator = ',');
 
 
     public:

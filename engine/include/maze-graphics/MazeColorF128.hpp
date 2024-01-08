@@ -246,7 +246,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        static ColorF128 FromString(String const& _colorString, S8 _separator = ';');
+        static ColorF128 FromString(String const& _colorString, S8 _separator = ',');
 
         //////////////////////////////////////////
         static ColorF128 FromStringHex(String const& _colorString);
@@ -255,7 +255,7 @@ namespace Maze
         String toStringHex() const;
 
         //////////////////////////////////////////
-        void setString(String const& _colorString, S8 _separator = ';');
+        void setString(String const& _colorString, S8 _separator = ',');
 
 
         //////////////////////////////////////////
@@ -270,7 +270,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline String toStringTag(S8 separator = ';') const
+        inline String toStringTag(S8 separator = ',') const
         {
             String result = "#{";
             result += StringHelper::F32ToString(r);

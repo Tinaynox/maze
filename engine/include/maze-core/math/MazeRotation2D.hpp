@@ -191,10 +191,10 @@ namespace Maze
         }
         
         //////////////////////////////////////////
-        inline String toString(Char _separator = ';') const { return StringHelper::ToString(m_s) + _separator + StringHelper::ToString(m_c); }
+        inline String toString(Char _separator = ',') const { return StringHelper::ToString(m_s) + _separator + StringHelper::ToString(m_c); }
 
         //////////////////////////////////////////
-        static inline CString ParseString(CString _string, Size _size, Rotation2D& _result, Char _separator = ';')
+        static inline CString ParseString(CString _string, Size _size, Rotation2D& _result, Char _separator = ',')
         {
             CString end = _string + _size;
 
@@ -207,7 +207,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        static inline Rotation2D FromString(CString _string, Size _size, Char _separator = ';')
+        static inline Rotation2D FromString(CString _string, Size _size, Char _separator = ',')
         {
             Rotation2D result;
             ParseString(_string, _size, result, _separator);
@@ -215,7 +215,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        static inline Rotation2D FromString(String const& _string, Char _separator = ';')
+        static inline Rotation2D FromString(String const& _string, Char _separator = ',')
         {
             return FromString(&_string[0], _string.size(), _separator);
         }
