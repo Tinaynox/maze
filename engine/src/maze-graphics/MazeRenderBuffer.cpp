@@ -82,6 +82,9 @@ namespace Maze
         MAZE_DEBUG_ERROR_RETURN_VALUE_IF(_specification.size.x == 0 || _specification.size.y == 0, RenderBufferPtr(), "Size is zero!");
 
         RenderBufferPtr renderBuffer = RenderBuffer::Create(_renderSystem, _deleter);
+        if (!renderBuffer)
+            return nullptr;
+
         renderBuffer->setSize(_specification.size);
 
         for (Size i = 0; i < c_renderBufferColorTexturesMax; ++i)

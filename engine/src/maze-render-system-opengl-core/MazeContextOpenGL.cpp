@@ -283,7 +283,9 @@ namespace Maze
     //////////////////////////////////////////
     void ContextOpenGL::notifyWindowWillClose(Window* _window)
     {
+        MAZE_LOG("ContextOpenGL::notifyWindowWillClose: destroying context %x...", this);
         destroyGLContext();
+        MAZE_LOG("ContextOpenGL::notifyWindowWillClose: context %x destroyed.", this);
     }
 
     //////////////////////////////////////////
