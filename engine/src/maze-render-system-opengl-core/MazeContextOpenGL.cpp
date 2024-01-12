@@ -283,9 +283,8 @@ namespace Maze
     //////////////////////////////////////////
     void ContextOpenGL::notifyWindowWillClose(Window* _window)
     {
-        MAZE_LOG("ContextOpenGL::notifyWindowWillClose: destroying context %x...", this);
+        MAZE_LOG("ContextOpenGL<%x>::notifyWindowWillClose: closing window %x...", this, _window);
         destroyGLContext();
-        MAZE_LOG("ContextOpenGL::notifyWindowWillClose: context %x destroyed.", this);
     }
 
     //////////////////////////////////////////
@@ -395,6 +394,8 @@ namespace Maze
     {
         MAZE_PROFILE_EVENT("ContextOpenGL::setupDefaultStates");
 
+        Debug::Log("ContextOpenGL<%x>::setupDefaultStates started...", this);
+
 #if (MAZE_DEBUG_GL)
         
         if (getExtensionsRaw()->hasGLExtension("GL_KHR_debug"))
@@ -434,6 +435,8 @@ namespace Maze
         m_stateMachine->setup();
 
         eventGLContextSetup(this);
+
+        Debug::Log("ContextOpenGL<%x>::setupDefaultStates finished.", this);
     }
 
     //////////////////////////////////////////

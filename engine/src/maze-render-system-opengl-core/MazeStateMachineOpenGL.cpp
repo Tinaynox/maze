@@ -404,17 +404,20 @@ namespace Maze
     {
         MAZE_PROFILE_EVENT("StateMachineOpenGL::notifyGLContextWillBeDestroyed");
 
+        Debug::Log("StateMachineOpenGL::notifyGLContextWillBeDestroyed: %x", m_context);
+
         m_activeTexture = MAZE_GL_TEXTURE0;
 
         for (S32 i = 0; i < MAZE_GL_MAX_TEXTURES_COUNT; ++i)
         {
             m_bindTextureTargets[i] = 0;
             m_bindTextureIds[i] = 0;
+            m_currentTextures[i] = nullptr;
         }
 
         for (S32 i = 0; i < MAZE_GL_MAX_CLIP_DISTANCES_COUNT; ++i)
         {
-            m_clipDistances[i] = 0;
+            m_clipDistances[i] = false;
         }
             
         m_program = 0;
@@ -434,6 +437,13 @@ namespace Maze
         m_cullEnabled = false;
         m_cullMode = CullMode::None;
         m_multiSampleEnabled = false;
+        m_wireframeRender = false;
+
+        m_antialiasingLevelSupport = 0;
+        m_sRgbSupport = false;
+        m_currentShader = nullptr;
+        m_currentRenderBuffer = nullptr;
+        m_pixelBufferSize = Vec2U::c_zero;
     }
 
     //////////////////////////////////////////
@@ -1041,11 +1051,7 @@ namespace Maze
     //////////////////////////////////////////
     void StateMachineOpenGL::processContextWillBeDestroyed()
     {
-        m_antialiasingLevelSupport = 0;
-        m_sRgbSupport = false;
-        m_currentShader = nullptr;
-        for (Size i = 0; i < MAZE_GL_MAX_TEXTURES_COUNT; ++i)
-            m_currentTextures[i] = nullptr;
+        // #TODO: Remove
     }
 
     //////////////////////////////////////////

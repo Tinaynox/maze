@@ -52,6 +52,7 @@ namespace Maze
     {
         if (m_contextOpenGL)
         {
+            m_contextOpenGL->eventGLContextWillBeDestroyed.unsubscribe(this);
             m_contextOpenGL->eventGLContextSetup.unsubscribe(this);
             m_contextOpenGL.reset();
         }
@@ -108,9 +109,16 @@ namespace Maze
         MAZE_ERROR_RETURN_VALUE_IF(!context, false, "Context is null");
 
         m_contextOpenGL = context->getSharedPtr();
+        m_contextOpenGL->eventGLContextWillBeDestroyed.subscribe(this, &ShaderSystemOpenGL::notifyGLContextWillBeDestroyed);
         m_contextOpenGL->eventGLContextSetup.subscribe(this, &ShaderSystemOpenGL::notifyGLContextSetup);
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    void ShaderSystemOpenGL::notifyGLContextWillBeDestroyed(ContextOpenGL* _contextOpenGL)
+    {
+        m_systemInited = false;
     }
 
     //////////////////////////////////////////

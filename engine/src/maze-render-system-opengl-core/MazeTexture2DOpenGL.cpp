@@ -309,7 +309,13 @@ namespace Maze
                 {
                     MZGLint param = 0;
                     MAZE_GL_CALL(mzglGetTexLevelParameteriv(MAZE_GL_TEXTURE_2D, (MZGLint)mipmapLevel, MAZE_GL_TEXTURE_COMPRESSED_ARB, &param));
-                    MAZE_ERROR_IF(param == 0, "Texture compression failed");
+                    MAZE_ERROR_IF(param == 0, "Texture2DOpenGL<%s>: Texture compressed format loading failed! mipmapLevel=%d (%ux%u) mipmapPixelFormat=%s, _internalPixelFormat=%s",
+                        getName().c_str(),
+                        (S32)mipmapLevel,
+                        size.x,
+                        size.y,
+                        PixelFormat::ToString(mipmapPixelFormat).c_str(),
+                        PixelFormat::ToString(_internalPixelFormat).c_str());
                 }
             }
             else
@@ -832,9 +838,9 @@ namespace Maze
             {
                 MAZE_PROFILE_EVENT("mzglGenerateMipmap");
 
-                Debug::log << getName() << ": mzglGenerateMipmap started..." << endl;
+                Debug::log << "Texture2DOpenGL<" << getName() << ">: mzglGenerateMipmap started..." << endl;
                 MAZE_GL_CALL(mzglGenerateMipmap(MAZE_GL_TEXTURE_2D));
-                Debug::log << getName() << ": mzglGenerateMipmap finished." << endl;
+                Debug::log << "Texture2DOpenGL<" << getName() << ">: mzglGenerateMipmap finished." << endl;
             }
             else
             {
@@ -849,12 +855,16 @@ namespace Maze
         Texture2DLibraryData const* libraryData = m_renderSystem->getTextureManager()->getTexture2DLibraryData(getName().asHashedCString());
         if (libraryData && libraryData->assetFile)
         {
+            Debug::log << "Texture2DOpenGL<" << getName() << ">: reloading from asset file..." << endl;
             loadFromAssetFile(libraryData->assetFile);
+            Debug::log << "Texture2DOpenGL<" << getName() << ">: reloaded with id=" << m_glTexture << "." << endl;
         }
         else
         if (!m_pixelSheetsTEMP.empty())
         {
+            Debug::log << "Texture2DOpenGL<" << getName() << ">: reloading from pixel sheet..." << endl;
             loadTexture(m_pixelSheetsTEMP, m_internalPixelFormat);
+            Debug::log << "Texture2DOpenGL<" << getName() << ">: reloaded with id=" << m_glTexture << "." << endl;
         }
     }
 

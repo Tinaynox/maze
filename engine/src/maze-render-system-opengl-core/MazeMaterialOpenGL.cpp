@@ -135,18 +135,7 @@ namespace Maze
     //////////////////////////////////////////
     void MaterialOpenGL::notifyContextOpenGLContextSetup(ContextOpenGL* _contextOpenGL)
     {
-        for (RenderPassType passType = RenderPassType(1); passType < RenderPassType::MAX; ++passType)
-        {
-            for (RenderPassPtr const& renderPass : m_passes[passType])
-            {
-                if (!renderPass->getShader())
-                    continue;
 
-                if (!renderPass->getShader()->isValid())
-                    renderPass->getShader()->recompile();
-
-            }
-        }
     }
 
     //////////////////////////////////////////

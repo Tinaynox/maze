@@ -381,6 +381,7 @@ namespace Maze
             case InputEventTouchType::Move:
             {
                 processCursorMove(_touchData.window, _touchData.index, 0, touchPosition, CursorInputSource::Touch);
+                processCursorDrag(_touchData.window, _touchData.index, 0, touchPosition, CursorInputSource::Touch);
                 break;
             }
             default:

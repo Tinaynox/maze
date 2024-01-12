@@ -1,10 +1,57 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Material name="drone0.mzmaterial">
-    <ShaderUniformVariant name="u_baseMap" type="UniformTexture2D" value="TestBox_Diffuse.png"/>
-    <ShaderUniformVariant name="u_normalMap" type="UniformTexture2D" value="TestBox_Normal.png"/>
-    <ShaderUniformVariant name="u_color" type="UniformColorF128" value="0.612276;1.642563;1.927536;1.000000"/>
-    <ShaderUniformVariant name="u_ambientLightColor" type="UniformColorF128" value="0.278431;0.227451;0.200000;1.000000"/>
-    <ShaderUniformVariant name="u_shininess" type="UniformF32" value="0.10000"/>
-    <ShaderUniformVariant name="u_specularColor" type="UniformColorF128" value="1.500000;1.500000;1.500000;1.000000"/>
-    <RenderPass passType="Default" renderQueueIndex="2000" shader="GameObject00_Normal.mzshader" blendOperation="Add" blendSrcFactor="One" blendDestFactor="Zero" depthTestCompareFunction="Less" depthWriteEnabled="1" cullMode="Back"/>
-</Material>
+name:String = "Drone0.mzmaterial"
+
+uniform
+{
+  name:String = "u_baseMap"
+  type:String = "UniformTexture2D"
+  value:String = "TestBox_Diffuse.png"
+}
+
+uniform
+{
+  name:String = "u_normalMap"
+  type:String = "UniformTexture2D"
+  value:String = "TestBox_Normal.png"
+}
+
+uniform
+{
+  name:String = "u_color"
+  type:String = "UniformColorF128"
+  value:Vec4F = 0.612276, 1.642563, 1.927536, 1.000000
+}
+
+uniform
+{
+  name:String = "u_ambientLightColor"
+  type:String = "UniformColorF128"
+  value:Vec4F = 0.278431, 0.227451, 0.200000, 1.000000
+}
+
+uniform
+{
+  name:String = "u_shininess"
+  type:String = "UniformF32"
+  value:F32 = 0.1
+}
+
+uniform
+{
+  name:String = "u_specularColor"
+  type:String = "UniformColorF128"
+  value:Vec4F = 1.500000, 1.500000, 1.500000, 1.000000
+}
+
+
+renderPass
+{
+  passType:String = "Default"
+  renderQueueIndex:S32 = 2000
+  shader:String = "GameObject00_Normal.mzshader"
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "One"
+  blendDestFactor:String = "Zero"
+  depthTestCompareFunction:String = "Less"
+  depthWriteEnabled:Bool = true
+  cullMode:String = "Back"
+}

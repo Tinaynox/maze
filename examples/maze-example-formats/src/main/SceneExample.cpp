@@ -308,6 +308,7 @@ namespace Maze
         addMeshPreview("TestBox.fbx", "TestBox.mzmaterial", testBoxScale);
         addMeshPreview("TestBox.mzmesh", "TestBox.mzmaterial", testBoxScale);
 
+
         return true;
     }
 
@@ -344,7 +345,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneExample::processCursorPress(Vec2F32 const& _positionOS, CursorInputEvent const& _event)
     {
-        if (_event.button == 1)
+        if (_event.button == 0 || _event.button == 1)
         {
             m_cursorPositionLastFrame = _positionOS;
         }
@@ -355,7 +356,7 @@ namespace Maze
     {
         Vec2F32 deltaPosition = _positionOS - m_cursorPositionLastFrame;
 
-        if (_event.button == 1)
+        if (_event.button == 0 || _event.button == 1)
         {
             F32 yawAngle = m_fpsController->getYawAngle();
             F32 pitchAngle = m_fpsController->getPitchAngle();
@@ -386,7 +387,7 @@ namespace Maze
         Texture2DPtr const& texture2D = TextureManager::GetCurrentInstancePtr()->getTexture2D(_textureName);
         U32 loadTime = timer.getMilliseconds() - timerStart;
 
-        material->setUniform("u_baseMap", texture2D);
+        material->setUniform(MAZE_HS("u_baseMap"), texture2D);
         meshRenderer->setMaterial(material);
         
         AssetFilePtr const& textureAssetFile = AssetManager::GetInstancePtr()->getAssetFileByFileName(_textureName);

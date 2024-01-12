@@ -262,7 +262,13 @@ namespace Maze
                     {
                         MZGLint param = 0;
                         MAZE_GL_CALL(mzglGetTexLevelParameteriv(target, (MZGLint)mipmapLevel, MAZE_GL_TEXTURE_COMPRESSED_ARB, &param));
-                        MAZE_ERROR_IF(param == 0, "Texture compression failed");
+                        MAZE_ERROR_IF(param == 0, "TextureCubeOpenGL<%s>: Texture compressed format loading failed! mipmapLevel=%d (%ux%u) mipmapPixelFormat=%s, _internalPixelFormat=%s",
+                            getName().c_str(),
+                            (S32)mipmapLevel,
+                            size.x,
+                            size.y,
+                            PixelFormat::ToString(mipmapPixelFormat).c_str(),
+                            PixelFormat::ToString(_internalPixelFormat).c_str());
                     }
                 }
                 else
@@ -475,9 +481,9 @@ namespace Maze
 
             if (mzglGenerateMipmap)
             {
-                Debug::log << getName() << ": mzglGenerateMipmap started..." << endl;
+                Debug::log << "TextureCubeOpenGL<" << getName() << ">: mzglGenerateMipmap started..." << endl;
                 MAZE_GL_CALL(mzglGenerateMipmap(MAZE_GL_TEXTURE_CUBE_MAP));
-                Debug::log << getName() << ": mzglGenerateMipmap finished." << endl;
+                Debug::log << "TextureCubeOpenGL<" << getName() << ">: mzglGenerateMipmap finished." << endl;
             }
             else
             {
@@ -491,7 +497,9 @@ namespace Maze
     {
         if (m_assetFile)
         {
+            Debug::log << "TextureCubeOpenGL<" << getName() << ">: reloading from asset file..." << endl;
             loadFromAssetFile(m_assetFile);
+            Debug::log << "TextureCubeOpenGL<" << getName() << ">: reloaded with id=" << m_glTexture << "." << endl;
         }
         else
         if (    !m_pixelSheetsTEMP[0].empty()
@@ -501,7 +509,9 @@ namespace Maze
             &&  !m_pixelSheetsTEMP[4].empty()
             &&  !m_pixelSheetsTEMP[5].empty())
         {
+            Debug::log << "TextureCubeOpenGL<" << getName() << ">: reloading from pixel sheet..." << endl;
             loadTexture(m_pixelSheetsTEMP, m_internalPixelFormat);
+            Debug::log << "TextureCubeOpenGL<" << getName() << ">: reloaded with id=" << m_glTexture << "." << endl;
         }
     }
 

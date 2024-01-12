@@ -38,6 +38,7 @@
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-core/helpers/MazeMetaClassHelper.hpp"
 #include "maze-core/system/MazeTimer.hpp"
+#include "maze-core/services/MazeLogStream.hpp"
 #include "maze-graphics/MazeVertex.hpp"
 #include "maze-render-system-opengl-core/MazeShaderUniformVariantOpenGL.hpp"
 
@@ -877,19 +878,42 @@ namespace Maze
         {
             if (m_assetFile)
             {
+                Debug::log << "ShaderOpenGL<" << getName() << ">: reloading from asset file..." << endl;
                 loadFromAssetFile(m_assetFile);
                 applyCachedUniformVariants();
+                Debug::log << "ShaderOpenGL<" << getName() << ">: reloaded with id=" << m_programId << "." << endl;
             }
             else
-            if (   !m_vertexShaderSource.empty()
-                && !m_fragmentShaderSource.empty())
+            if (!m_vertexShaderSource.empty() && !m_fragmentShaderSource.empty())
             {
+                Debug::log << "ShaderOpenGL<" << getName() << ">: reloading from sources..." << endl;
                 loadGLShader(
                     m_vertexShaderSource,
                     m_fragmentShaderSource);
                 applyCachedUniformVariants();
+                Debug::log << "ShaderOpenGL<" << getName() << ">: reloaded with id=" << m_programId << "." << endl;
             }
         }
+
+        //for (auto& uniformCache : m_uniformsCache)
+        //{
+        //    ShaderUniformPtr const& uniform = uniformCache.second;
+
+        //    if (!uniform)
+        //        continue;
+
+        //    MZGLint uniformLocation = 0;
+        //    MAZE_GL_CALL(uniformLocation = mzglGetUniformLocation(m_programId, uniform->getName().c_str()));
+        //    uniform->castRaw<ShaderUniformOpenGL>()->setLocation(uniformLocation);
+
+        //    if (uniform->getType() == ShaderUniformType::UniformTexture2D ||
+        //        uniform->getType() == ShaderUniformType::UniformTextureCube)
+        //    {
+        //        uniform->castRaw<ShaderUniformOpenGL>()->setTextureIndex(-1);
+        //    }
+        //}
+
+        //assignUniformTextureIndexes();
     }
 
     //////////////////////////////////////////
@@ -942,12 +966,14 @@ namespace Maze
             pos += definedPattern.length();
 
             Size endPos = _shaderText.find(")", pos);
-            if (endPos != String::npos) {
+            if (endPos != String::npos)
+            {
                 String definedValue = _shaderText.substr(pos, endPos - pos);
                 foundDefines.insert(definedValue);
                 pos = endPos + 1;
             }
-            else {
+            else
+            {
                 break;
             }
         }
@@ -969,6 +995,8 @@ namespace Maze
     //////////////////////////////////////////
     void ShaderOpenGL::recompile()
     {
+        Debug::log << "ShaderOpenGL<" << getName() << ">: recompile started..." << endl;
+
         cacheUniformVariants();
 
         loadGLShader(
@@ -976,6 +1004,8 @@ namespace Maze
             m_fragmentShaderSource);
 
         applyCachedUniformVariants();
+
+        Debug::log << "ShaderOpenGL<" << getName() << ">: recompiled." << endl;
     }
 
     //////////////////////////////////////////

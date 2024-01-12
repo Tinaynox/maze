@@ -139,7 +139,7 @@ namespace Maze
                 &contextConfig);
             String contextName = "RenderWindow_" + StringHelper::ToString(s_contextCounter++);
             m_context->setName(contextName);
-            Debug::Log("RenderWindowOpenGL: Context created.");
+            Debug::Log("RenderWindowOpenGL: Context created (%x).", m_context.get());
 
             Debug::Log("RenderWindowOpenGL: Creating render queue...");
             m_renderQueue = RenderQueueOpenGL::Create(this, m_context.get());
@@ -148,7 +148,9 @@ namespace Maze
         else
         if (!m_context->isValid())
         {
+            Debug::Log("RenderWindowOpenGL: Context recreating (%x)...", m_context.get());
             m_context->createGLContext(m_window);
+            Debug::Log("RenderWindowOpenGL: Context recreated (%x).", m_context.get());
         }
         else
         {
@@ -163,7 +165,6 @@ namespace Maze
         if (!m_context)
             return;
 
-        Debug::Log("DESTROYING GL CONTEXT!");
         m_context->destroyGLContext();
     }
 

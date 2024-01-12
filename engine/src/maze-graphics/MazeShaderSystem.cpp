@@ -223,7 +223,7 @@ namespace Maze
     //////////////////////////////////////////
     void ShaderSystem::processSystemInited()
     {
-        MAZE_ERROR_RETURN_IF(m_systemInited, "Double initialization detected!");
+        MAZE_ERROR_RETURN_IF(m_systemInited, "ShaderSystem: Double initialization detected!");
 
         m_systemInited = true;
 

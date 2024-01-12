@@ -80,6 +80,9 @@ namespace Maze
         RenderSystemOpenGL* getRenderSystemOpenGL();
 
         //////////////////////////////////////////
+        void notifyGLContextWillBeDestroyed(ContextOpenGL* _contextOpenGL);
+
+        //////////////////////////////////////////
         void notifyGLContextSetup(ContextOpenGL* _contextOpenGL);
     
     protected:

@@ -413,14 +413,18 @@ namespace Maze
 
         m_textureIndex = _textureIndex;
 
-        if (getType() == ShaderUniformType::UniformTexture2D ||
-            getType() == ShaderUniformType::UniformTextureCube)
+        if (m_textureIndex != -1)
         {
-            ShaderOpenGLScopeBind scopeBind(m_shaderRaw);
 
-            MAZE_GL_MUTEX_SCOPED_LOCK(getRenderSystemOpenGLRaw());
+            if (getType() == ShaderUniformType::UniformTexture2D ||
+                getType() == ShaderUniformType::UniformTextureCube)
+            {
+                ShaderOpenGLScopeBind scopeBind(m_shaderRaw);
 
-            MAZE_GL_CALL(mzglUniform1i((MZGLint)m_location, m_textureIndex));
+                MAZE_GL_MUTEX_SCOPED_LOCK(getRenderSystemOpenGLRaw());
+
+                MAZE_GL_CALL(mzglUniform1i((MZGLint)m_location, m_textureIndex));
+            }
         }
     }
 

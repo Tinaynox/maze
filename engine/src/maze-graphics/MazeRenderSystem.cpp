@@ -108,7 +108,7 @@ namespace Maze
     //////////////////////////////////////////
     void RenderSystem::processSystemInited()
     {
-        MAZE_ERROR_RETURN_IF(m_systemInited, "Double initialization detected!");
+        MAZE_ERROR_RETURN_IF(m_systemInited, "RenderSystem: Double initialization detected!");
 
         m_systemInited = true;
 

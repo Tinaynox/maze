@@ -1,13 +1,78 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Material name="drone0.mzmaterial">
-    <ShaderUniformVariant name="u_baseMap" type="UniformTexture2D" value="Drone0_Diffuse.png"/>
-    <ShaderUniformVariant name="u_normalMap" type="UniformTexture2D" value="Drone0_Normal.png"/>
-    <ShaderUniformVariant name="u_specularMap" type="UniformTexture2D" value="Drone0_Specular.png"/>
-    <ShaderUniformVariant name="u_emissionMap" type="UniformTexture2D" value="Drone0_Emission.png"/>
-    <ShaderUniformVariant name="u_color" type="UniformColorF128" value="1.100000;1.100000;1.100000;1.000000"/>
-    <ShaderUniformVariant name="u_ambientLightColor" type="UniformColorF128" value="0.278431;0.227451;0.200000;1.000000"/>
-    <ShaderUniformVariant name="u_shininess" type="UniformF32" value="0.10000"/>
-    <ShaderUniformVariant name="u_specularColor" type="UniformColorF128" value="1.500000;1.500000;1.500000;1.000000"/>
-    <ShaderUniformVariant name="u_emissionColor" type="UniformColorF128" value="2.625102;2.416638;2.347150;1.000000"/>
-    <RenderPass passType="Default" renderQueueIndex="2000" shader="GameObject00_InvNormal_Emission_Specular.mzshader" blendOperation="Add" blendSrcFactor="One" blendDestFactor="Zero" depthTestCompareFunction="Less" depthWriteEnabled="1" cullMode="Back"/>
-</Material>
+name:String = "Drone0.mzmaterial"
+
+uniform
+{
+  name:String = "u_baseMap"
+  type:String = "UniformTexture2D"
+  value:String = "Drone0_Diffuse.png"
+}
+
+uniform
+{
+  name:String = "u_normalMap"
+  type:String = "UniformTexture2D"
+  value:String = "Drone0_Normal.png"
+}
+
+uniform
+{
+  name:String = "u_specularMap"
+  type:String = "UniformTexture2D"
+  value:String = "Drone0_Specular.png"
+}
+
+uniform
+{
+  name:String = "u_emissionMap"
+  type:String = "UniformTexture2D"
+  value:String = "Drone0_Emission.png"
+}
+
+uniform
+{
+  name:String = "u_color"
+  type:String = "UniformColorF128"
+  value:Vec4F = 1.1, 1.1, 1.1, 1.0
+}
+
+uniform
+{
+  name:String = "u_ambientLightColor"
+  type:String = "UniformColorF128"
+  value:Vec4F = 0.278431, 0.227451, 0.200000, 1.000000
+}
+
+uniform
+{
+  name:String = "u_shininess"
+  type:String = "UniformF32"
+  value:F32 = 0.1
+}
+
+uniform
+{
+  name:String = "u_specularColor"
+  type:String = "UniformColorF128"
+  value:Vec4F = 1.500000, 1.500000, 1.500000, 1.000000
+}
+
+uniform
+{
+  name:String = "u_emissionColor"
+  type:String = "UniformColorF128"
+  value:Vec4F = 2.625102, 2.416638, 2.347150, 1.000000
+}
+
+
+renderPass
+{
+  passType:String = "Default"
+  renderQueueIndex:S32 = 2000
+  shader:String = "GameObject00_InvNormal_Emission_Specular.mzshader"
+  blendOperation:String = "Add"
+  blendSrcFactor:String = "One"
+  blendDestFactor:String = "Zero"
+  depthTestCompareFunction:String = "Less"
+  depthWriteEnabled:Bool = true
+  cullMode:String = "Back"
+}

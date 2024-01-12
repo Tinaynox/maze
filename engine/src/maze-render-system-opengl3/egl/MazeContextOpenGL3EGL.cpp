@@ -452,7 +452,11 @@ namespace Maze
     //////////////////////////////////////////
     void ContextOpenGL3EGL::destroyGLContext()
     {
+        if (m_eglContext == EGL_NO_CONTEXT && m_eglSurface == EGL_NO_SURFACE && m_eglDisplay == EGL_NO_DISPLAY)
+            return;
+
         MAZE_PROFILE_EVENT("ContextOpenGL3EGL::destroyGLContext");
+        Debug::Log("ContextOpenGL3EGL::destroyGLContext %x started...", this);
 
         RenderTarget* prevRenderTarget = getRenderSystemRaw()->getCurrentRenderTarget();
         ContextOpenGL* prevRenderContext = getRenderSystemRaw()->getCurrentContext();
@@ -485,6 +489,8 @@ namespace Maze
         }
 
         processContextDestroyed();
+
+        Debug::Log("ContextOpenGL3EGL::destroyGLContext %x destroyed.", this);
     }
 
     //////////////////////////////////////////

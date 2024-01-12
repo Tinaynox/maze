@@ -28,6 +28,7 @@
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
+#include "maze-core/system/MazeWindow.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
@@ -96,6 +97,9 @@ namespace Maze
     //////////////////////////////////////////
     void ExampleFPSCameraController::update(F32 _dt)
     {
+        if (!Example::GetInstancePtr() || !Example::GetInstancePtr()->isWindowFocused())
+            return;
+
         Rect2DF viewportRect = m_camera3D->getViewport();
         viewportRect.position *= (Vec2F32)m_camera3D->getRenderTarget()->getRenderTargetSize();
         viewportRect.size *= (Vec2F32)m_camera3D->getRenderTarget()->getRenderTargetSize();

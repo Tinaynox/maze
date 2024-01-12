@@ -511,5 +511,17 @@ namespace Maze
         eventCoreGameResourcesLoaded();
     }
 
+    //////////////////////////////////////////
+    bool Example::isWindowFocused() const
+    {
+        if (!m_mainRenderWindow)
+            return false;
+
+        if (!m_mainRenderWindow->getWindow())
+            return false;
+
+        return m_mainRenderWindow->getWindow()->getFocused();
+    }
+
 } // namespace Maze
 //////////////////////////////////////////
