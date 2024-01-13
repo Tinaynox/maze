@@ -98,7 +98,8 @@ Maze::S32 main(Maze::S32 argc, Maze::S8 const* argv[])
 
     {
         Maze::ExamplePtr example = Maze::Example::Create(engineConfig);
-        example->run();
+        if (example)
+            example->run();
     }
 
 #if (MAZE_DEBUG_MEMORY)

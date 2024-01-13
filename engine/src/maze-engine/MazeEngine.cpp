@@ -155,7 +155,8 @@ namespace Maze
         m_systemManager->eventApplicationFrame.subscribe(this, &Engine::notifyApplicationFrame);
 
         Debug::log << "SystemManager initApplication started..." << endl;
-        m_systemManager->initApplication();
+        if (!m_systemManager->initApplication())
+            return false;
 
         return true;
     }
