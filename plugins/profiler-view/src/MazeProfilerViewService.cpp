@@ -134,7 +134,7 @@ namespace Maze
         if (m_renderWindow)
         {
             if (m_renderWindow->getWindow())
-                m_renderWindow->getWindow()->eventWindowWillClose.unsubscribe(this);
+                m_renderWindow->getWindow()->eventDestroyed.unsubscribe(this);
 
             unloadScene();
         }
@@ -144,7 +144,7 @@ namespace Maze
         if (m_renderWindow)
         {
             if (m_renderWindow->getWindow())
-                m_renderWindow->getWindow()->eventWindowWillClose.subscribe(this, &ProfilerViewService::notifyRenderWindowWillClose);
+                m_renderWindow->getWindow()->eventDestroyed.subscribe(this, &ProfilerViewService::notifyRenderWindowDestroyed);
         }
 
         updateActive();
@@ -183,7 +183,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ProfilerViewService::notifyRenderWindowWillClose(Window* _window)
+    void ProfilerViewService::notifyRenderWindowDestroyed(Window* _window)
     {
         setRenderWindow(nullptr);
     }

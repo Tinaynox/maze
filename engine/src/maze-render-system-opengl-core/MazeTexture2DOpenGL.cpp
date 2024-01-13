@@ -783,12 +783,12 @@ namespace Maze
     //////////////////////////////////////////
     void Texture2DOpenGL::notifyContextOpenGLContextSetup(ContextOpenGL* _contextOpenGL)
     {
-        if (m_glTexture == 0)
-        {
-            generateGLObjects();
+        Debug::log << "Texture2DOpenGL<" << getName() << ">: notifyContextOpenGLContextSetup started..." << endl;
 
+        if (m_glTexture == 0)
             reload();
-        }
+
+        Debug::log << "Texture2DOpenGL<" << getName() << ">: notifyContextOpenGLContextSetup finished." << endl;
     }
 
     //////////////////////////////////////////
@@ -852,6 +852,9 @@ namespace Maze
     //////////////////////////////////////////
     void Texture2DOpenGL::reload()
     {
+        if (m_glTexture == 0)
+            generateGLObjects();
+
         Texture2DLibraryData const* libraryData = m_renderSystem->getTextureManager()->getTexture2DLibraryData(getName().asHashedCString());
         if (libraryData && libraryData->assetFile)
         {
@@ -864,6 +867,12 @@ namespace Maze
         {
             Debug::log << "Texture2DOpenGL<" << getName() << ">: reloading from pixel sheet..." << endl;
             loadTexture(m_pixelSheetsTEMP, m_internalPixelFormat);
+            Debug::log << "Texture2DOpenGL<" << getName() << ">: reloaded with id=" << m_glTexture << "." << endl;
+        }
+        else
+        {
+            Debug::log << "Texture2DOpenGL<" << getName() << ">: reloading empty..." << endl;
+            loadEmpty(m_size, m_internalPixelFormat);
             Debug::log << "Texture2DOpenGL<" << getName() << ">: reloaded with id=" << m_glTexture << "." << endl;
         }
     }

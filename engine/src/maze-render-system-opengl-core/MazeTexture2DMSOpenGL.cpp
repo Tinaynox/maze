@@ -385,12 +385,12 @@ namespace Maze
     //////////////////////////////////////////
     void Texture2DMSOpenGL::notifyContextOpenGLContextSetup(ContextOpenGL* _contextOpenGL)
     {
-        if (m_glTexture == 0)
-        {
-            generateGLObjects();
+        Debug::log << "Texture2DMSOpenGL<" << getName() << ">: notifyContextOpenGLContextSetup started..." << endl;
 
+        if (m_glTexture == 0)
             reload();
-        }
+
+        Debug::log << "Texture2DMSOpenGL<" << getName() << ">: notifyContextOpenGLContextSetup finished." << endl;
     }
 
     //////////////////////////////////////////
@@ -416,6 +416,17 @@ namespace Maze
             m_context->eventGLContextWillBeDestroyed.subscribe(this, &Texture2DMSOpenGL::notifyContextOpenGLContextWillBeDestroyed);
             m_context->eventGLContextSetup.subscribe(this, &Texture2DMSOpenGL::notifyContextOpenGLContextSetup);
         }
+    }
+
+    //////////////////////////////////////////
+    void Texture2DMSOpenGL::reload()
+    {
+        if (m_glTexture == 0)
+            generateGLObjects();
+
+        Debug::log << "Texture2DMSOpenGL<" << getName() << ">: reloading empty..." << endl;
+        loadEmpty(m_size, m_internalPixelFormat);
+        Debug::log << "Texture2DMSOpenGL<" << getName() << ">: reloaded with id=" << m_glTexture << "." << endl;
     }
     
 } // namespace Maze

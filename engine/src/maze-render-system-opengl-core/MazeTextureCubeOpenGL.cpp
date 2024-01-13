@@ -431,12 +431,12 @@ namespace Maze
     //////////////////////////////////////////
     void TextureCubeOpenGL::notifyContextOpenGLContextSetup(ContextOpenGL* _contextOpenGL)
     {
-        if (m_glTexture == 0)
-        {
-            generateGLObjects();
+        Debug::log << "TextureCubeOpenGL<" << getName() << ">: notifyContextOpenGLContextSetup started..." << endl;
 
+        if (m_glTexture == 0)
             reload();
-        }
+
+        Debug::log << "TextureCubeOpenGL<" << getName() << ">: notifyContextOpenGLContextSetup finished." << endl;
     }
 
     //////////////////////////////////////////
@@ -495,6 +495,9 @@ namespace Maze
     //////////////////////////////////////////
     void TextureCubeOpenGL::reload()
     {
+        if (m_glTexture == 0)
+            generateGLObjects();
+
         if (m_assetFile)
         {
             Debug::log << "TextureCubeOpenGL<" << getName() << ">: reloading from asset file..." << endl;
@@ -512,6 +515,13 @@ namespace Maze
             Debug::log << "TextureCubeOpenGL<" << getName() << ">: reloading from pixel sheet..." << endl;
             loadTexture(m_pixelSheetsTEMP, m_internalPixelFormat);
             Debug::log << "TextureCubeOpenGL<" << getName() << ">: reloaded with id=" << m_glTexture << "." << endl;
+        }
+        else
+        {
+            // #TODO: empty
+            // Debug::log << "TextureCubeOpenGL<" << getName() << ">: reloading empty..." << endl;
+            // loadEmpty(m_size, m_internalPixelFormat);
+            // Debug::log << "TextureCubeOpenGL<" << getName() << ">: reloaded with id=" << m_glTexture << "." << endl;
         }
     }
 

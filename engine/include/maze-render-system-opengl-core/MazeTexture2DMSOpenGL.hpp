@@ -141,6 +141,10 @@ namespace Maze
             U32 _x,
             U32 _y) MAZE_OVERRIDE;
 
+
+        //////////////////////////////////////////
+        virtual void reload() MAZE_OVERRIDE;
+
     protected:
 
         //////////////////////////////////////////

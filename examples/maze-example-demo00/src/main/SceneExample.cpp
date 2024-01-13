@@ -144,6 +144,7 @@ namespace Maze
                 PixelFormat::RGBA_F16,
                 PixelFormat::DEPTH_U24
             });
+        m_renderBuffer->setName("RenderBuffer");
         m_renderBuffer->getColorTexture2D()->setMinFilter(TextureFilter::Linear);
         m_renderBuffer->getColorTexture2D()->setMagFilter(TextureFilter::Linear);
 

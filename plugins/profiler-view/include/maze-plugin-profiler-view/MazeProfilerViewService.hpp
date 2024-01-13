@@ -92,7 +92,7 @@ namespace Maze
         void notifyRenderSystemRenderWindowsChanged();
 
         //////////////////////////////////////////
-        void notifyRenderWindowWillClose(Window* _window);
+        void notifyRenderWindowDestroyed(Window* _window);
 
         //////////////////////////////////////////
         void notifyProfilerViewActiveChanged(bool const& _active);

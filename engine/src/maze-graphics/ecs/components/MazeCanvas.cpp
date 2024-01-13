@@ -141,6 +141,9 @@ namespace Maze
     //////////////////////////////////////////
     Rect2DF Canvas::getRenderTargetRect() const
     {
+        if (!getRenderTarget())
+            return Rect2DF::c_zero;
+
         Rect2DF viewportRect = getViewport();
         viewportRect.position *= (Vec2F)getRenderTarget()->getRenderTargetSize();
         viewportRect.size *= (Vec2F)getRenderTarget()->getRenderTargetSize();

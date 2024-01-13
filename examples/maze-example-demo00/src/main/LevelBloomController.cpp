@@ -194,6 +194,7 @@ namespace Maze
                     bloomRenderBufferSize,
                     PixelFormat::RGBA_U8
                 });
+            m_bloomRenderBuffer[i]->setName("Bloom_" + StringHelper::ToString((S32)i));
             m_bloomRenderBuffer[i]->getColorTexture2D()->setMinFilter(TextureFilter::Linear);
             m_bloomRenderBuffer[i]->getColorTexture2D()->setMagFilter(TextureFilter::Linear);
         }
@@ -209,6 +210,7 @@ namespace Maze
                 },
                 PixelFormat::RGBA_U8
             });
+            renderBuffer->setName("BloomMipMap_" + StringHelper::ToString((S32)i));
             renderBuffer->getColorTexture2D()->setMinFilter(TextureFilter::Linear);
             renderBuffer->getColorTexture2D()->setMagFilter(TextureFilter::Linear);
             m_bloomMipMapRenderBuffers.push_back(renderBuffer);

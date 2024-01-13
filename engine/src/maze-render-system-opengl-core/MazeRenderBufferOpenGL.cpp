@@ -209,6 +209,8 @@ namespace Maze
     //////////////////////////////////////////
     void RenderBufferOpenGL::notifyContextOpenGLContextSetup(ContextOpenGL* _contextOpenGL)
     {
+        Debug::log << "RenderBufferOpenGL<" << getName() << ">: notifyContextOpenGLContextSetup started..." << endl;
+
         generateGLObjects();
 
         for (Size i = 0; i < c_renderBufferColorTexturesMax; ++i)
@@ -222,6 +224,8 @@ namespace Maze
 
         reloadTexture(m_stencilTexture);
         setStencilTexture(m_stencilTexture);
+
+        Debug::log << "RenderBufferOpenGL<" << getName() << ">: notifyContextOpenGLContextSetup finished." << endl;
     }
 
     //////////////////////////////////////////
@@ -421,12 +425,14 @@ namespace Maze
                     case TextureType::TwoDimensional:
                     {
                         textureId = _texture->castRaw<Texture2DOpenGL>()->getGLTexture();
+                        MAZE_ERROR_IF(textureId == 0, "Texture2D<%s> has zero id!", _texture->getName().c_str());
                         textureTarget = MAZE_GL_TEXTURE_2D;
                         break;
                     }
                     case TextureType::TwoDimensionalMultisample:
                     {
                         textureId = _texture->castRaw<Texture2DMSOpenGL>()->getGLTexture();
+                        MAZE_ERROR_IF(textureId == 0, "Texture2DMSOpenGL<%s> has zero id!", _texture->getName().c_str());
                         textureTarget = MAZE_GL_TEXTURE_2D_MULTISAMPLE;
                         break;
                     }
@@ -614,15 +620,13 @@ namespace Maze
             case TextureType::TwoDimensional:
             {
                 Texture2D* texture2D = _texture->castRaw<Texture2D>();
-                if (texture2D->isValid())
-                    texture2D->reload();
+                texture2D->reload();
                 break;
             }
             case TextureType::TwoDimensionalMultisample:
             {
                 Texture2DMS* texture2D = _texture->castRaw<Texture2DMS>();
-                if (texture2D->isValid())
-                    texture2D->reload();
+                texture2D->reload();
                 break;
             }
             default:
