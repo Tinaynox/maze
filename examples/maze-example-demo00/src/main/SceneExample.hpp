@@ -43,13 +43,12 @@
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "ExampleSettings.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
-
-
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(SceneExample);
     MAZE_USING_SHARED_PTR(Camera3D);
@@ -58,6 +57,10 @@ namespace Maze
     MAZE_USING_SHARED_PTR(LevelBloomController);
     MAZE_USING_SHARED_PTR(ParticleSystem3D);
     MAZE_USING_SHARED_PTR(WaterRenderer3D);
+    MAZE_USING_SHARED_PTR(ToggleButton2D);
+    MAZE_USING_SHARED_PTR(SpriteRenderer2D);
+    MAZE_USING_SHARED_PTR(CanvasGroup);
+    MAZE_USING_SHARED_PTR(TerrainMesh3D);
 
 
     //////////////////////////////////////////
@@ -111,6 +114,29 @@ namespace Maze
         //////////////////////////////////////////
         void notifyTouch(InputEventTouchData const& _data);
 
+        //////////////////////////////////////////
+        void notifyExampleSettingsChanged(bool const& _value);
+
+        //////////////////////////////////////////
+        void notifyExampleSettingsChanged(ExampleWaterRenderMode const& _value);
+
+        //////////////////////////////////////////
+        void updateDebugMenu();
+
+        //////////////////////////////////////////
+        ToggleButton2DPtr createDebugMenuToggleButton(
+            CString _title,
+            Transform2DPtr const& _parent);
+
+        //////////////////////////////////////////
+        void updateParticleSystem();
+
+        //////////////////////////////////////////
+        void updateWater();
+
+        //////////////////////////////////////////
+        void updateBloom();
+
     protected:
         CanvasPtr m_canvas;
         Camera3DPtr m_camera3D;
@@ -123,6 +149,8 @@ namespace Maze
 
         RenderBufferPtr m_renderBuffer;
 
+        TerrainMesh3DPtr m_terrainMesh;
+
         WaterRenderer3DPtr m_waterRenderer;
 
         LevelBloomControllerPtr m_bloomController;
@@ -133,6 +161,17 @@ namespace Maze
         F32 m_pitchAngle = 0.253f;
         Vec2F32 m_cursorPositionLastFrame = Vec2F32::c_zero;
         bool m_cursorDrag = false;
+
+
+        CanvasGroupPtr m_debugMenuCanvasGroup;
+        ToggleButton2DPtr m_debugMenuButton;
+        SpriteRenderer2DPtr m_debugMenuBackground;
+        SpriteRenderer2DPtr m_debugMenuBackgroundCollapsed;
+
+        ToggleButton2DPtr m_debugMenuBloomButton;
+        ToggleButton2DPtr m_debugMenuParticlesButton;
+        ToggleButton2DPtr m_debugMenuWaterButton;
+        ToggleButton2DPtr m_debugMenuExampleWaterRenderModeButtons[(Size)ExampleWaterRenderMode::MAX];
     };
 
 

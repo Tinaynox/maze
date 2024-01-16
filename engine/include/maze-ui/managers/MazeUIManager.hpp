@@ -93,6 +93,7 @@ namespace Maze
         Pause,
         StepUpdate,
         Prefab,
+        Hamburger,
         
         MAX
     };

@@ -64,15 +64,23 @@
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
+#include "maze-graphics/managers/MazeSystemFontManager.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeWaterRenderer3D.hpp"
+#include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
 #include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
 #include "maze-particles/MazeParticleSystemParameterF32.hpp"
 #include "maze-particles/MazeParticleSystemParameterColor.hpp"
 #include "maze-particles/managers/MazeParticlesManager.hpp"
+#include "maze-ui/managers/MazeUIManager.hpp"
+#include "maze-ui/ecs/components/MazeToggleButton2D.hpp"
+#include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
+#include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
@@ -88,6 +96,7 @@
 #include "maze-plugin-water/ecs/systems/MazeRenderWaterSystem.hpp"
 #include "main/LevelBloomController.hpp"
 #include "maze-plugin-console/MazeConsoleService.hpp"
+#include "ExampleSettings.hpp"
 #include "Example.hpp"
 
 
@@ -115,6 +124,16 @@ namespace Maze
             inputManager->eventTouch.unsubscribe(this);
         }
 
+        if (SettingsManager::GetInstancePtr())
+        {
+            ExampleSettings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>();
+            exampleSettings->getDebugMenuChangedEvent().unsubscribe(this);
+            exampleSettings->getParticlesEnabledChangedEvent().unsubscribe(this);
+            exampleSettings->getWaterEnabledChangedEvent().unsubscribe(this);
+            exampleSettings->getBloomEnabledChangedEvent().unsubscribe(this);
+            exampleSettings->getExampleWaterRenderModeChangedEvent().unsubscribe(this);
+        }
+
         Example::GetInstancePtr()->eventMainRenderWindowViewportChanged.unsubscribe(this);
         Example::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.unsubscribe(this);
     }
@@ -132,6 +151,14 @@ namespace Maze
     {
         if (!ECSRenderScene::init(Example::GetInstancePtr()->getMainRenderWindow()))
             return false;
+
+        ExampleSettings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>();
+        exampleSettings->getDebugMenuChangedEvent().subscribe(this, &SceneExample::notifyExampleSettingsChanged);
+        exampleSettings->getParticlesEnabledChangedEvent().subscribe(this, &SceneExample::notifyExampleSettingsChanged);
+        exampleSettings->getWaterEnabledChangedEvent().subscribe(this, &SceneExample::notifyExampleSettingsChanged);
+        exampleSettings->getBloomEnabledChangedEvent().subscribe(this, &SceneExample::notifyExampleSettingsChanged);
+        exampleSettings->getExampleWaterRenderModeChangedEvent().subscribe(this, &SceneExample::notifyExampleSettingsChanged);
+
 
         InputManager* inputManager = InputManager::GetInstancePtr();
         inputManager->eventMouse.subscribe(this, &SceneExample::notifyMouse);
@@ -230,17 +257,18 @@ namespace Maze
         m_camera3D->setFarZ(100.0f);
 
         m_bloomController = LevelBloomController::Create(this);
+        updateBloom();
 
         getLightingSettings()->setSkyBoxMaterial("Skybox00.mzmaterial");
 
 
         // Terrain
         EntityPtr terrainEntity = createEntity("Terrain");
-        TerrainMesh3DPtr terrainMesh = terrainEntity->ensureComponent<TerrainMesh3D>();
-        terrainMesh->setCellsCount({ 50, 50 });
-        terrainMesh->setSize({ 20, 20 });
-        terrainMesh->setHeight(2.25f);
-        terrainMesh->setHeightMap(renderSystem->getTextureManager()->getTexture2D("Heightmap02.png"));
+        m_terrainMesh = terrainEntity->ensureComponent<TerrainMesh3D>();
+        m_terrainMesh->setCellsCount({ 50, 50 });
+        m_terrainMesh->setSize({ 20, 20 });
+        m_terrainMesh->setHeight(2.25f);
+        m_terrainMesh->setHeightMap(renderSystem->getTextureManager()->getTexture2D("Heightmap02.png"));
         MeshRendererPtr terrainMeshRenderer = terrainEntity->ensureComponent<MeshRenderer>();
         terrainMeshRenderer->setMaterial("Terrain00.mzmaterial");
 
@@ -255,7 +283,7 @@ namespace Maze
         MeshRendererPtr waterMeshRenderer = waterEntity->ensureComponent<MeshRenderer>();
         waterMeshRenderer->setRenderMesh(renderSystem->getRenderMeshManager()->getDefaultQuadMesh());
         m_waterRenderer->setMaterial("Water00.mzmaterial");
-        m_waterRenderer->getMeshRenderer()->getMaterial()->getFirstRenderPass()->setRenderQueueIndex(2500);
+        // m_waterRenderer->getMeshRenderer()->getMaterial()->getFirstRenderPass()->setRenderQueueIndex(2500);
         
         ConsoleService::GetInstancePtr()->registerCommand(
             MAZE_HS("water"),
@@ -265,12 +293,14 @@ namespace Maze
                     return false;
 
                 if (_argc == 0)
-                    m_waterRenderer->getEntityRaw()->setActiveSelf(!m_waterRenderer->getEntityRaw()->getActiveSelf());
+                    SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->setWaterEnabled(
+                        !SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->getWaterEnabled());
                 else
-                    m_waterRenderer->getEntityRaw()->setActiveSelf(StringHelper::StringToBool(_argv[0]));
+                    SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->setWaterEnabled(StringHelper::StringToBool(_argv[0]));
 
                 return true;
             }, 1);
+        updateWater();
 
 
         // Barrel
@@ -313,6 +343,185 @@ namespace Maze
 
         createParticleSystem();
 
+
+        // Debug menu
+        {
+            Transform2DPtr debugMenuTransform = SpriteHelper::CreateTransform2D(
+                Vec2F(200.0f, 280.0f),
+                Vec2F(-10.0f, -10.0f),
+                m_canvas->getTransform(),
+                this,
+                { 1.0f, 1.0f },
+                { 1.0f, 1.0f });            
+            debugMenuTransform->setZ(2000);
+            m_debugMenuCanvasGroup = debugMenuTransform->getEntityRaw()->ensureComponent<CanvasGroup>();
+
+            m_debugMenuButton = UIHelper::CreateToggleButton(
+                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
+                Vec2F(24.0f, 24.0f),
+                Vec2F(-5.0f, -5.0f),
+                debugMenuTransform,
+                this,
+                Vec2F(1.0f, 1.0f),
+                Vec2F(1.0f, 1.0f),
+                ColorU32{ 200, 200, 200, 160 },
+                ColorU32{ 187, 187, 187, 160 },
+                ColorU32{ 161, 161, 161, 160 },
+                ColorU32{ 171, 171, 171, 160 },
+                ColorU32{ 151, 151, 151, 160 });
+            m_debugMenuButton->setCheckByClick(false);
+            m_debugMenuButton->eventClick.subscribe(
+                [](Button2D* _button, CursorInputEvent const& _event)
+                {
+                    if (_event.button != 0)
+                        return;
+
+                    SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->setDebugMenu(
+                        !SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->getDebugMenu());
+                    SettingsManager::GetInstancePtr()->saveSettings();
+                });
+            SpriteHelper::CreateSprite(
+                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Hamburger),
+                Vec2F32(24.0f, 24.0f),
+                Vec2F32::c_zero,
+                MaterialManager::GetCurrentInstance()->getColorTextureMaterial(),
+                m_debugMenuButton->getTransform(),
+                this)->setColor(85, 85, 85);
+
+            SystemTextRenderer2DPtr textRenderer = SystemUIHelper::CreateSystemText(
+                "Menu",
+                8u,
+                HorizontalAlignment2D::Center,
+                VerticalAlignment2D::Middle,
+                Vec2F::c_zero,
+                Vec2F(95.0f, -5.0f - 12.0f),
+                debugMenuTransform,
+                this,
+                Vec2F(0.0f, 1.0f),
+                Vec2F(0.5f, 0.5f));
+            textRenderer->setColor(0, 0, 0, 160);
+
+
+            m_debugMenuBackground = SpriteHelper::CreateSprite(
+                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
+                debugMenuTransform->getSize(),
+                Vec2F::c_zero,
+                GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getColorTextureMaterial(),
+                debugMenuTransform,
+                this,
+                { 1.0f, 1.0f },
+                { 1.0f, 1.0f });
+            m_debugMenuBackground->setColor(255, 255, 255, 140);
+            m_debugMenuBackground->getTransform()->setZ(-100);
+
+            m_debugMenuBackgroundCollapsed = SpriteHelper::CreateSprite(
+                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
+                Vec2F(debugMenuTransform->getWidth(), 34.0f),
+                Vec2F::c_zero,
+                GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getColorTextureMaterial(),
+                debugMenuTransform,
+                this,
+                { 1.0f, 1.0f },
+                { 1.0f, 1.0f });
+            m_debugMenuBackgroundCollapsed->setColor(255, 255, 255, 140);
+            m_debugMenuBackgroundCollapsed->getTransform()->setZ(-100);
+
+
+            SpriteRenderer2DPtr debugMenuInnerBackground = SpriteHelper::CreateSprite(
+                UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
+                m_debugMenuBackground->getTransform()->getSize() - Vec2F(10.0f, 39.0f),
+                Vec2F(0.5f, 5.0f),
+                GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getColorTextureMaterial(),
+                m_debugMenuBackground->getTransform(),
+                this,
+                { 0.5f, 0.0f },
+                { 0.5f, 0.0f });
+            debugMenuInnerBackground->setColor(55, 55, 55, 100);
+
+            VerticalLayout2DPtr listLayout = UIHelper::CreateVerticalLayout(
+                HorizontalAlignment2D::Left,
+                VerticalAlignment2D::Top,
+                debugMenuInnerBackground->getTransform()->getSize(),
+                Vec2F::c_zero,
+                debugMenuInnerBackground->getTransform(),
+                this);
+            listLayout->setPadding(5.0f, 5.0f, 5.0f, 5.0f);
+            listLayout->setSpacing(2.0f);
+            listLayout->setAutoHeight(false);
+
+            // Bloom
+            m_debugMenuBloomButton = createDebugMenuToggleButton("Bloom", listLayout->getTransform());
+            m_debugMenuBloomButton->eventClick.subscribe(
+                [](Button2D* _button, CursorInputEvent const& _event)
+            {
+                if (_event.button != 0)
+                    return;
+
+                SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->setBloomEnabled(
+                    !SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->getBloomEnabled());
+                SettingsManager::GetInstancePtr()->saveSettings();
+            });
+
+            // Particles
+            m_debugMenuParticlesButton = createDebugMenuToggleButton("Particles", listLayout->getTransform());
+            m_debugMenuParticlesButton->eventClick.subscribe(
+                [](Button2D* _button, CursorInputEvent const& _event)
+                {
+                    if (_event.button != 0)
+                        return;
+
+                    SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->setParticlesEnabled(
+                        !SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->getParticlesEnabled());
+                    SettingsManager::GetInstancePtr()->saveSettings();
+                });
+
+            // Water
+            m_debugMenuWaterButton = createDebugMenuToggleButton("Water", listLayout->getTransform());
+            m_debugMenuWaterButton->eventClick.subscribe(
+                [](Button2D* _button, CursorInputEvent const& _event)
+                {
+                    if (_event.button != 0)
+                        return;
+
+                    SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->setWaterEnabled(
+                        !SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->getWaterEnabled());
+                    SettingsManager::GetInstancePtr()->saveSettings();
+                });
+
+            // Water render mode
+            {
+                SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
+                    "Water Render Mode",
+                    8u,
+                    HorizontalAlignment2D::Center,
+                    VerticalAlignment2D::Middle,
+                    Vec2F(180.0f, 24.0f),
+                    Vec2F::c_zero,
+                    listLayout->getTransform(),
+                    this,
+                    Vec2F(0.5f, 0.5f),
+                    Vec2F(0.5f, 0.5f));
+                text->setColor(30, 30, 30, 255);
+            }
+
+            for (ExampleWaterRenderMode mode = ExampleWaterRenderMode::Default; mode < ExampleWaterRenderMode::MAX; ++mode)
+            {
+                m_debugMenuExampleWaterRenderModeButtons[(Size)mode] = createDebugMenuToggleButton(mode.toCString(), listLayout->getTransform());
+                m_debugMenuExampleWaterRenderModeButtons[(Size)mode]->eventClick.subscribe(
+                    [mode](Button2D* _button, CursorInputEvent const& _event)
+                    {
+                        if (_event.button != 0)
+                            return;
+
+                        SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->setExampleWaterRenderMode(mode);
+                        SettingsManager::GetInstancePtr()->saveSettings();
+                    });
+            }
+
+            updateDebugMenu();
+        }
+
+
         return true;
     }
 
@@ -345,11 +554,16 @@ namespace Maze
     {
         ECSRenderScene::update(_dt);
 
-        m_bloomController->update(_dt);
-        m_renderColorSprite->getMaterial()->ensureUniform(
-            MAZE_HS("u_bloomMap"),
-            ShaderUniformType::UniformTexture2D)->set(
-                m_bloomController->getBloomRenderBuffer()->getColorTexture2D());
+        ExampleSettings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>();
+
+        if (exampleSettings->getBloomEnabled())
+        {
+            m_bloomController->update(_dt);
+            m_renderColorSprite->getMaterial()->ensureUniform(
+                MAZE_HS("u_bloomMap"),
+                ShaderUniformType::UniformTexture2D)->set(
+                    m_bloomController->getBloomRenderBuffer()->getColorTexture2D());
+        }
 
 
         Quaternion q = Quaternion::Slerp(
@@ -396,6 +610,7 @@ namespace Maze
         ps->getTransform()->rotate(Vec3F32::c_unitX, -Math::c_halfPi);
         ps->getTransform()->setLocalY(2.0f);
 
+        ps->getMainModule().setPrewarm(true);
         ps->getMainModule().setTransformPolicy(ParticleSystemSimulationSpace::World);
         ps->getMainModule().getLifetime().setConstant(1.0f);
         ps->getMainModule().getSpeed().setConstant(1.0f);
@@ -454,12 +669,15 @@ namespace Maze
 
                 m_particleSystem->restart();
                 if (_argc == 0)
-                    m_particleSystem->getEntityRaw()->setActiveSelf(!m_particleSystem->getEntityRaw()->getActiveSelf());
+                    SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->setParticlesEnabled(
+                        !SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->getParticlesEnabled());
                 else
-                    m_particleSystem->getEntityRaw()->setActiveSelf(StringHelper::StringToBool(_argv[0]));
+                    SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>()->setParticlesEnabled(StringHelper::StringToBool(_argv[0]));
 
                 return true;
             }, 1);
+
+        updateParticleSystem();
     }
 
     //////////////////////////////////////////
@@ -495,7 +713,9 @@ namespace Maze
 
                     m_cursorPositionLastFrame = cursorPosition;
 
-                    if (viewportRect.contains(cursorPosition))
+                    if (viewportRect.contains(cursorPosition) &&
+                        (!m_debugMenuBackground->getEntityRaw()->getActiveSelf() || !m_debugMenuBackground->getTransform()->calculateWorldAABB().toRect().contains(
+                            m_canvas->convertRenderTargetCoordsToViewportCoords(cursorPosition))))
                     {
                         m_cursorDrag = true;
                         m_cursorPositionLastFrame = cursorPosition;
@@ -571,6 +791,140 @@ namespace Maze
             {
                 break;
             }
+        }
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::notifyExampleSettingsChanged(bool const& _value)
+    {
+        updateDebugMenu();
+        updateParticleSystem();
+        updateWater();
+        updateBloom();
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::notifyExampleSettingsChanged(ExampleWaterRenderMode const& _value)
+    {
+        updateDebugMenu();
+        updateWater();
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::updateDebugMenu()
+    {
+        ExampleSettings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>();
+
+        bool debugMenuActive = exampleSettings->getDebugMenu();
+        
+        m_debugMenuCanvasGroup->setLocalAlpha(debugMenuActive ? 1.0f : 0.75f);
+        m_debugMenuButton->setChecked(debugMenuActive);
+        m_debugMenuBackground->getEntityRaw()->setActiveSelf(debugMenuActive);
+        m_debugMenuBackgroundCollapsed->getEntityRaw()->setActiveSelf(!debugMenuActive);
+
+        m_debugMenuBloomButton->setChecked(exampleSettings->getBloomEnabled());
+        m_debugMenuParticlesButton->setChecked(exampleSettings->getParticlesEnabled());
+        m_debugMenuWaterButton->setChecked(exampleSettings->getWaterEnabled());
+
+
+        for (ExampleWaterRenderMode mode = ExampleWaterRenderMode::Default; mode < ExampleWaterRenderMode::MAX; ++mode)
+            m_debugMenuExampleWaterRenderModeButtons[(Size)mode]->setChecked(exampleSettings->getExampleWaterRenderMode() == mode);
+    }
+
+    //////////////////////////////////////////
+    ToggleButton2DPtr SceneExample::createDebugMenuToggleButton(
+        CString _title,
+        Transform2DPtr const& _parent)
+    {
+        ToggleButton2DPtr button = UIHelper::CreateToggleButton(
+            UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
+            Vec2F(180.0f, 24.0f),
+            Vec2F::c_zero,
+            _parent,
+            this,
+            Vec2F(1.0f, 1.0f),
+            Vec2F(1.0f, 1.0f),
+            ColorU32{ 200, 200, 200, 255 },
+            ColorU32{ 255, 200, 50, 255 },
+            ColorU32{ 255, 160, 20, 255 },
+            ColorU32{ 255, 160, 20, 255 },
+            ColorU32{ 255, 200, 50, 255 });
+        button->setCheckByClick(false);
+
+        SystemTextRenderer2DPtr textRenderer = SystemUIHelper::CreateSystemText(
+            _title,
+            8u,
+            HorizontalAlignment2D::Center,
+            VerticalAlignment2D::Middle,
+            Vec2F::c_zero,
+            Vec2F::c_zero,
+            button->getTransform(),
+            this,
+            Vec2F(0.5f, 0.5f),
+            Vec2F(0.5f, 0.5f));
+        textRenderer->setColor(30, 30, 30, 255);
+
+        return button;
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::updateParticleSystem()
+    {
+        ExampleSettings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>();
+        if (exampleSettings->getParticlesEnabled() != m_particleSystem->getEntityRaw()->getActiveSelf())
+        {
+            m_particleSystem->restart();
+            m_particleSystem->getEntityRaw()->setActiveSelf(exampleSettings->getParticlesEnabled());
+        }
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::updateWater()
+    {
+        ExampleSettings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>();
+
+        m_waterRenderer->getEntityRaw()->setActiveSelf(exampleSettings->getWaterEnabled());
+
+        MaterialPtr const& waterMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Water00.mzmaterial");
+        if (exampleSettings->getExampleWaterRenderMode() == ExampleWaterRenderMode::Default)
+        {
+            m_waterRenderer->setMaterial(waterMaterial);
+        }
+        else
+        {
+            MaterialPtr newMaterial = waterMaterial->createCopy();
+
+            ShaderPtr shader = newMaterial->getFirstRenderPass()->getShader()->createCopy();
+            shader->addLocalFeature("DEBUG_MATERIAL", "(1)");
+            shader->recompile();
+
+            S32 debugMaterial = (S32)exampleSettings->getExampleWaterRenderMode() - 2;
+            Debug::log << "u_debugMaterial=" << debugMaterial << endl;
+            newMaterial->getFirstRenderPass()->setShader(shader);
+            newMaterial->setUniform(MAZE_HASHED_CSTRING("u_debugMaterial"), debugMaterial);
+            
+            m_waterRenderer->setMaterial(newMaterial);
+        }
+    }
+
+    //////////////////////////////////////////
+    void SceneExample::updateBloom()
+    {
+        ExampleSettings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>();
+
+        if (exampleSettings->getBloomEnabled())
+        {
+            m_renderColorSprite->getEntityRaw()->setActiveSelf(true);
+            m_camera3D->setRenderTarget(m_renderBuffer);
+        }
+        else
+        {
+            m_renderColorSprite->getEntityRaw()->setActiveSelf(false);
+            m_renderColorSprite->getMaterial()->ensureUniform(
+                MAZE_HS("u_bloomMap"),
+                ShaderUniformType::UniformTexture2D)->set(
+                    m_renderBuffer->getColorTexture2D());
+            m_camera3D->setRenderTarget(Example::GetInstancePtr()->getMainRenderWindow());
         }
     }
 

@@ -40,3 +40,6 @@
 [submodule "third-party/fast_float"]
 	path = third-party/fast_float
 	url = git@github.com:Tinaynox/fast_float.git
+[submodule "third-party/openal-soft"]
+	path = third-party/openal-soft
+	url = git@github.com:Tinaynox/openal-soft.git

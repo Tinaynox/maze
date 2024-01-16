@@ -41,6 +41,8 @@
 #   include "maze-sound-system-openal/osx/MazeContextOpenALOSX.hpp"
 #elif MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN
 #   include "maze-sound-system-openal/emscripten/MazeContextOpenALEmscripten.hpp"
+#elif MAZE_PLATFORM == MAZE_PLATFORM_ANDROID
+#   include "maze-sound-system-openal/android/MazeContextOpenALAndroid.hpp"
 #endif
 
 
@@ -116,12 +118,14 @@ namespace Maze
     //////////////////////////////////////////
     ContextOpenALPtr SoundSystemOpenAL::createContext(S32 _deviceIndex)
     {
-#if MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS
+#if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
         return ContextOpenALWin::Create(cast<SoundSystemOpenAL>(), _deviceIndex);
-#elif MAZE_PLATFORM == MAZE_PLATFORM_OSX
+#elif (MAZE_PLATFORM == MAZE_PLATFORM_OSX)
         return ContextOpenALOSX::Create(cast<SoundSystemOpenAL>(), _deviceIndex);
-#elif MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN
+#elif (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN)
         return ContextOpenALEmscripten::Create(cast<SoundSystemOpenAL>(), _deviceIndex);
+#elif (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
+        return ContextOpenALAndroid::Create(cast<SoundSystemOpenAL>(), _deviceIndex);
 #else
         MAZE_NOT_IMPLEMENTED;
         return ContextOpenALPtr();

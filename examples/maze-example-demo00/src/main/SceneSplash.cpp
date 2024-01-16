@@ -97,6 +97,7 @@
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "main/SceneExample.hpp"
 #include "main/LevelBloomController.hpp"
+#include "ExampleSettings.hpp"
 #include "Example.hpp"
 
 
@@ -196,6 +197,8 @@ namespace Maze
             Vec2F32::c_zero,
             m_canvas->getTransform(),
             this);
+
+        SettingsManager::GetInstancePtr()->registerSettings<ExampleSettings>();
 
         nextLoadingStep(1);
 

@@ -60,6 +60,7 @@ elseif(MAZE_TARGET_PLATFORM_IS_EMSCRIPTEN)
     
 elseif((MAZE_TARGET_PLATFORM_IS_ANDROID))
 
+    include("${MAZE_DIR}/third-party/openal-soft.cmake")
     target_link_libraries(
             maze-sound-system-openal
             PUBLIC OpenAL)
@@ -71,7 +72,7 @@ elseif((MAZE_TARGET_PLATFORM_IS_OSX))
             PUBLIC ${OPENAL_LIBRARY})
 
 endif()
-    
+
 
 if(MAZE_TARGET_PLATFORM_IS_LINUX)
 

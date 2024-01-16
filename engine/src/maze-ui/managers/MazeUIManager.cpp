@@ -110,6 +110,7 @@ namespace Maze
             case DefaultUISprite::Pause: return "Pause";
             case DefaultUISprite::StepUpdate: return "StepUpdate";
             case DefaultUISprite::Prefab: return "Prefab";
+            case DefaultUISprite::Hamburger: return "Hamburger";
             default:
                 break;
         }
@@ -1625,6 +1626,33 @@ namespace Maze
             }
 
             m_defaultUISprites[(Size)DefaultUISprite::Prefab] = Sprite::Create(
+                m_uiElementsTexture,
+                Vec2F(startPos),
+                Vec2F(chunkSize, chunkSize));
+        }
+        // Hamburger
+        {
+
+            Vec2S sheetPos(4, 4);
+            Vec2S startPos = startPosFunc(sheetPos);
+            ColorU32 mainColor(255, 255, 255);
+
+            uiElementsSheet.drawFilledRect(
+                Vec2S(8, 8) + startPos,
+                Vec2S(16, 3),
+                mainColor);
+
+            uiElementsSheet.drawFilledRect(
+                Vec2S(8, 14) + startPos,
+                Vec2S(16, 3),
+                mainColor);
+
+            uiElementsSheet.drawFilledRect(
+                Vec2S(8, 20) + startPos,
+                Vec2S(16, 3),
+                mainColor);
+
+            m_defaultUISprites[(Size)DefaultUISprite::Hamburger] = Sprite::Create(
                 m_uiElementsTexture,
                 Vec2F(startPos),
                 Vec2F(chunkSize, chunkSize));

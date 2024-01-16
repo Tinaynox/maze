@@ -1969,7 +1969,6 @@ namespace Maze
             textRenderer->setFontSize(_fontSize);
             textRenderer->setHorizontalAlignment(_horizontalAlignment);
             textRenderer->setVerticalAlignment(_verticalAlignment);
-            textRenderer->setFontMaterial(FontMaterialManager::GetInstancePtr()->getDefaultFontMaterial());
 
             Transform2DPtr transform = textRendererEntity->ensureComponent<Transform2D>();
             transform->setParent(_parent);

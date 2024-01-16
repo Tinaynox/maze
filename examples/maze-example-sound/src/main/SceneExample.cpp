@@ -198,6 +198,9 @@ namespace Maze
             materialManager->getColorTextureMaterial(),
             canvasTransform2D,
             this);
+#if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
+        panel00->getTransform()->setLocalScale(1.5f);
+#endif
 
         m_playSoundButton = UIHelper::CreateDefaultClickButton(
             "Sound WAV",

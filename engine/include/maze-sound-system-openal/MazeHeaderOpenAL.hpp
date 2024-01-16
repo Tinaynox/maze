@@ -35,7 +35,7 @@
 #if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
 #   include <al.h>
 #   include <alc.h>
-#elif (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN)
+#elif (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN || MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
 #   include <AL/al.h>
 #   include <AL/alc.h>
 #else
