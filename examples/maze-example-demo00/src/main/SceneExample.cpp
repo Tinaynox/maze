@@ -348,7 +348,7 @@ namespace Maze
         {
             Transform2DPtr debugMenuTransform = SpriteHelper::CreateTransform2D(
                 Vec2F(200.0f, 358.0f),
-                Vec2F(-10.0f, -10.0f),
+                Vec2F(-20.0f, -20.0f),
                 m_canvas->getTransform(),
                 this,
                 { 1.0f, 1.0f },
