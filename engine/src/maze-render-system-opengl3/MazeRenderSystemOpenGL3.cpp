@@ -217,6 +217,13 @@ namespace Maze
         Debug::log << "GL_MAX_TEXTURE_SIZE: " << m_textureMaxSize << endl;
         Debug::log << "GL_MAX_TEXTURE_IMAGE_UNITS: " << m_textureUniformsMaxCount << endl;
 
+        if (mzglGetFloatv != nullptr)
+        {
+            MZGLfloat depthRange[2];
+            mzglGetFloatv(MAZE_GL_DEPTH_RANGE, depthRange);
+            Debug::log << "GL_DEPTH_RANGE: " << depthRange[0] << ", " << depthRange[1] << endl;
+        }
+
         ShaderSystemOpenGL::Initialize(m_shaderSystem, getSharedPtr());
 
         processSystemInited();

@@ -163,6 +163,11 @@ namespace Maze
             return _viewportPosition + m_originPosition;
         }
 
+    public:
+
+        //////////////////////////////////////////
+        MultiDelegate<Canvas*, RenderTargetPtr const&> eventRenderTargetChanged;
+
     protected:
 
         //////////////////////////////////////////

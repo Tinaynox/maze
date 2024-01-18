@@ -116,6 +116,8 @@ namespace Maze
             if (m_viewportTransformPolicy == ViewportTransformPolicy::ViewportToTransform)
                 updateCanvasTransform();
         }
+
+        eventRenderTargetChanged(this, m_renderTarget);
     }
 
     //////////////////////////////////////////

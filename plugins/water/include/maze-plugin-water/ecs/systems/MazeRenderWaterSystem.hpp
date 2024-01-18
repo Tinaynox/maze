@@ -85,6 +85,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline void setEnabled(bool _value) { m_enabled = _value; }
+
+        //////////////////////////////////////////
+        inline bool getEnabled() const { return m_enabled; }
+
+
+        //////////////////////////////////////////
         inline RenderBufferPtr const& getReflectionBuffer() const { return m_reflectionBuffer; }
 
         //////////////////////////////////////////
@@ -130,6 +137,7 @@ namespace Maze
 
         RenderControlSystemPtr m_renderControlSystem;
 
+        bool m_enabled = true;
         RenderBufferPtr m_reflectionBuffer;
         RenderBufferPtr m_refractionBuffer;
     };

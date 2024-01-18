@@ -127,10 +127,16 @@ namespace Maze
         void processCanvasEntityRemoved(Entity* _entity, Canvas* _canvas);
 
         //////////////////////////////////////////
+        void processCanvasRenderTargetChanged(Canvas* _canvas, RenderTargetPtr const& _renderTarget);
+
+        //////////////////////////////////////////
         void processCameraEntityAdded(Entity* _entity, Camera3D* _camera);
 
         //////////////////////////////////////////
         void processCameraEntityRemoved(Entity* _entity, Camera3D* _camera);
+
+        //////////////////////////////////////////
+        void processCameraRenderTargetChanged(Camera3D* _camera3D, RenderTargetPtr const& _renderTarget);
 
 
         //////////////////////////////////////////
@@ -159,7 +165,9 @@ namespace Maze
         RenderControlSystemModule2DPtr m_module2D;
 
         SharedPtr<GenericInclusiveEntitiesSample<Canvas>> m_canvasesSample;
+        Set<Canvas*> m_canvases;
         SharedPtr<GenericInclusiveEntitiesSample<Camera3D>> m_cameras3DSample;
+        Set<Camera3D*> m_cameras3D;
 
         bool m_renderTargetsDirty;
         Vector<RenderTarget*> m_renderTargets;

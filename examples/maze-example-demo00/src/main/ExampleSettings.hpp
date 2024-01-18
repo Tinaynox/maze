@@ -42,12 +42,15 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_5(ExampleWaterRenderMode,
+    MAZE_DECLARE_ENUMCLASS_8(ExampleWaterRenderMode,
         Default,
         Reflection,
         Refraction,
         FloorDepth,
-        WaterDepth);
+        WaterDepth,
+        Depth,
+        ScreenUV,
+        Test0);
 
 
     //////////////////////////////////////////

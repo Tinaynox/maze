@@ -679,6 +679,12 @@ namespace Maze
                 UIElement2D* element = *it2;
 
                 element->processCursorRelease(cursorInputEvent);
+
+                if (_inputSource == CursorInputSource::Touch)
+                {
+                    if (element->getFocused() && (element->getCursorIndex() == _cursorIndex || element->getCursorIndex() == -1))
+                        element->setFocused(false);
+                }
             }
         }
 

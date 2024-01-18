@@ -147,6 +147,9 @@ namespace Maze
         RenderTarget* _renderTarget,
         DefaultPassParams const& _params)
     {
+        if (!m_enabled)
+            return;
+
         if (!m_reflectionBuffer || !m_refractionBuffer)
         {
             createBuffers(_renderTarget->getRenderTargetSize());
@@ -210,7 +213,6 @@ namespace Maze
                         _renderQueue->addDisableClipPlaneCommand(0);
                     },
                     nullptr);
-
 
                 _waterRenderer->prepare(
                     m_reflectionBuffer.get(),

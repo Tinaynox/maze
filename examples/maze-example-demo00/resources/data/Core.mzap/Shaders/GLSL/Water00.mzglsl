@@ -229,5 +229,29 @@ void main()
     else
     if (u_debugMaterial == 3)
         out_color = vec4(vec3(waterDistance, waterDistance, waterDistance) / 20.0, 1.0);
+    else
+    if (u_debugMaterial == 4)
+    {
+        float depthNDC = depth0 * 2.0 - 1.0;
+        float depthColor = (depthNDC * 1000.0 - 996.0) / 4.0;
+        out_color = vec4(vec3(depthColor, depthColor, depthColor), 1.0);
+    }
+    else
+    if (u_debugMaterial == 5)
+        out_color = vec4(screenUV, 0.0, 1.0);
+    else
+    if (u_debugMaterial == 6)
+    {
+        out_color = vec4(1.0, 0.0, 1.0, 1.0);
+#if (defined(GL_ES))
+    #if (MAZE_GLSL_VERSION > 100)
+        if (depth0 < 0.0)
+            out_color = vec4(1.0, 0.0, 0.0, 1.0);
+        else
+            out_color = vec4(0.0, 1.0, 0.0, 1.0);
+    #endif
+#endif
+        
+    }
 #endif
 }

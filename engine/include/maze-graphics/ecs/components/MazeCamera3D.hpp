@@ -80,7 +80,15 @@ namespace Maze
         inline Transform3DPtr const& getTransform() const { return m_transform; }
 
         //////////////////////////////////////////
-        inline void setRenderTarget(RenderTargetPtr const& _renderTarget) { m_renderTarget = _renderTarget; }
+        inline void setRenderTarget(RenderTargetPtr const& _renderTarget)
+        {
+            if (m_renderTarget == _renderTarget)
+                return;
+
+            m_renderTarget = _renderTarget;
+
+            eventRenderTargetChanged(this, m_renderTarget);
+        }
 
         //////////////////////////////////////////
         inline RenderTargetPtr const& getRenderTarget() const { return m_renderTarget; }
@@ -183,6 +191,11 @@ namespace Maze
 
         //////////////////////////////////////////
         Mat4F calculateProjectionMatrix(RenderTargetPtr const& _renderTarget) const;
+
+    public:
+
+        //////////////////////////////////////////
+        MultiDelegate<Camera3D*, RenderTargetPtr const&> eventRenderTargetChanged;
 
     protected:
 

@@ -65,6 +65,14 @@ namespace Maze
     //////////////////////////////////////////
     RenderControlSystem::~RenderControlSystem()
     {
+        for (Camera3D* camera : m_cameras3D)
+            camera->eventRenderTargetChanged.unsubscribe(this);
+        m_cameras3D.clear();
+
+        for (Canvas* canvas : m_canvases)
+            canvas->eventRenderTargetChanged.unsubscribe(this);
+        m_canvases.clear();
+        
         if (m_canvasesSample)
         {
             m_canvasesSample->eventEntityAdded.unsubscribe(this, &RenderControlSystem::processCanvasEntityAdded);
@@ -141,10 +149,20 @@ namespace Maze
     void RenderControlSystem::processCanvasEntityAdded(Entity* _entity, Canvas* _canvas)
     {
         m_renderTargetsDirty = true;
+        m_canvases.insert(_canvas);
+        _canvas->eventRenderTargetChanged.subscribe(this, &RenderControlSystem::processCanvasRenderTargetChanged);
     }
 
     //////////////////////////////////////////
     void RenderControlSystem::processCanvasEntityRemoved(Entity* _entity, Canvas* _canvas)
+    {
+        m_renderTargetsDirty = true;
+        _canvas->eventRenderTargetChanged.unsubscribe(this);
+        m_canvases.erase(_canvas);
+    }
+
+    //////////////////////////////////////////
+    void RenderControlSystem::processCanvasRenderTargetChanged(Canvas* _canvas, RenderTargetPtr const& _renderTarget)
     {
         m_renderTargetsDirty = true;
     }
@@ -153,10 +171,20 @@ namespace Maze
     void RenderControlSystem::processCameraEntityAdded(Entity* _entity, Camera3D* _camera3D)
     {
         m_renderTargetsDirty = true;
+        m_cameras3D.insert(_camera3D);
+        _camera3D->eventRenderTargetChanged.subscribe(this, &RenderControlSystem::processCameraRenderTargetChanged);
     }
 
     //////////////////////////////////////////
     void RenderControlSystem::processCameraEntityRemoved(Entity* _entity, Camera3D* _camera3D)
+    {
+        m_renderTargetsDirty = true;
+        _camera3D->eventRenderTargetChanged.unsubscribe(this);
+        m_cameras3D.erase(_camera3D);
+    }
+
+    //////////////////////////////////////////
+    void RenderControlSystem::processCameraRenderTargetChanged(Camera3D* _camera3D, RenderTargetPtr const& _renderTarget)
     {
         m_renderTargetsDirty = true;
     }

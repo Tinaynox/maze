@@ -347,7 +347,7 @@ namespace Maze
         // Debug menu
         {
             Transform2DPtr debugMenuTransform = SpriteHelper::CreateTransform2D(
-                Vec2F(200.0f, 280.0f),
+                Vec2F(200.0f, 358.0f),
                 Vec2F(-10.0f, -10.0f),
                 m_canvas->getTransform(),
                 this,
@@ -883,6 +883,9 @@ namespace Maze
     {
         ExampleSettings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>();
 
+        RenderWaterSystemPtr waterSystem = m_world->getSystem<RenderWaterSystem>();
+        waterSystem->setEnabled(exampleSettings->getWaterEnabled());
+
         m_waterRenderer->getEntityRaw()->setActiveSelf(exampleSettings->getWaterEnabled());
 
         MaterialPtr const& waterMaterial = MaterialManager::GetCurrentInstance()->getMaterial("Water00.mzmaterial");
@@ -916,14 +919,15 @@ namespace Maze
         {
             m_renderColorSprite->getEntityRaw()->setActiveSelf(true);
             m_camera3D->setRenderTarget(m_renderBuffer);
-        }
-        else
-        {
-            m_renderColorSprite->getEntityRaw()->setActiveSelf(false);
+
             m_renderColorSprite->getMaterial()->ensureUniform(
                 MAZE_HS("u_bloomMap"),
                 ShaderUniformType::UniformTexture2D)->set(
                     m_renderBuffer->getColorTexture2D());
+        }
+        else
+        {
+            m_renderColorSprite->getEntityRaw()->setActiveSelf(false);
             m_camera3D->setRenderTarget(Example::GetInstancePtr()->getMainRenderWindow());
         }
     }
