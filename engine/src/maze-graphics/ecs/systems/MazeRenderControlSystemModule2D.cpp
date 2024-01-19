@@ -256,7 +256,11 @@ namespace Maze
 
                             Material const* material = meshRenderer->getMaterial().get();
                             if (!material)
+                            {
                                 material = renderTarget->getRenderSystem()->getMaterialManager()->getErrorMaterial().get();
+                                if (!material)
+                                    continue;
+                            }
 
                             renderQueue->addSelectRenderPassCommand(material->getFirstRenderPass());
 

@@ -237,9 +237,11 @@
 #define MAZE_ARCH_ARMV5          (4)
 #define MAZE_ARCH_ARMV6          (5)
 #define MAZE_ARCH_ARMV7          (6)
-#define MAZE_ARCH_ARM64          (7)
-#define MAZE_ARCH_MIPS           (8)
-#define MAZE_ARCH_EMSCRIPTEN     (9)
+#define MAZE_ARCH_ARMV8          (7)
+#define MAZE_ARCH_ARMV9          (8)
+#define MAZE_ARCH_ARM64          (9)
+#define MAZE_ARCH_MIPS           (10)
+#define MAZE_ARCH_EMSCRIPTEN     (11)
 
 
 //////////////////////////////////////////
@@ -272,6 +274,15 @@
 #   if (defined(__arm64__) || defined(__aarch64__) || defined(_M_ARM64))
 #       define MAZE_ARCH                    MAZE_ARCH_ARM64
 #       define MAZE_ARCH_SUFFIX             arm64
+#   elif (     defined(__ARM_ARCH_9__) \
+#        define MAZE_ARCH                    MAZE_ARCH_ARMV9
+#        define MAZE_ARCH_SUFFIX             armv9
+#   elif (     defined(__ARM_ARCH_8__) \
+        ||     defined(__ARM_ARCH_8A) \
+        ||     defined(__ARM_ARCH_8A__) \
+        || (_M_ARM >= 8)
+#        define MAZE_ARCH                    MAZE_ARCH_ARMV8
+#        define MAZE_ARCH_SUFFIX             armv8
 #   elif (     defined(__ARM_ARCH_7__) \
         ||     defined(__ARM_ARCH_7A__) \
         ||     defined(__ARM_ARCH_7R__) \
