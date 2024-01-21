@@ -274,12 +274,13 @@
 #   if (defined(__arm64__) || defined(__aarch64__) || defined(_M_ARM64))
 #       define MAZE_ARCH                    MAZE_ARCH_ARM64
 #       define MAZE_ARCH_SUFFIX             arm64
-#   elif (     defined(__ARM_ARCH_9__) \
+#   elif (     defined(__ARM_ARCH_9__)) \
+        || (_M_ARM >= 9)
 #        define MAZE_ARCH                    MAZE_ARCH_ARMV9
 #        define MAZE_ARCH_SUFFIX             armv9
 #   elif (     defined(__ARM_ARCH_8__) \
         ||     defined(__ARM_ARCH_8A) \
-        ||     defined(__ARM_ARCH_8A__) \
+        ||     defined(__ARM_ARCH_8A__)) \
         || (_M_ARM >= 8)
 #        define MAZE_ARCH                    MAZE_ARCH_ARMV8
 #        define MAZE_ARCH_SUFFIX             armv8

@@ -105,7 +105,6 @@ elseif(MAZE_TARGET_PLATFORM_IS_ANDROID)
         PUBLIC ${android-lib}
         PUBLIC native_app_glue)
     
-    target_include_directories(
-        maze-core
+    include_directories(
         PUBLIC ${ANDROID_NDK}/sources/android/native_app_glue)
 endif()

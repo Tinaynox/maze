@@ -86,9 +86,11 @@ namespace Maze
     //////////////////////////////////////////
     bool ContextOpenAL::createALContext()
     {
-        destroyALContext();        
+        destroyALContext();
 
-#if MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN
+        Debug::Log("ContextOpenAL: creating AL context... (mzalcOpenDevice=%x, mzalcCreateContext=%x)", mzalcOpenDevice, mzalcCreateContext);
+
+#if (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN || MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
         m_device = mzalcOpenDevice(nullptr);
         MAZE_WARNING_RETURN_VALUE_IF(!m_device, false, "Failed to open ALC Device!");
         
@@ -106,6 +108,8 @@ namespace Maze
         MAZE_AL_CALL(m_context = mzalcCreateContext(m_device, nullptr));
         MAZE_WARNING_RETURN_VALUE_IF(!m_context, false, "Failed to create ALC Context!");
 #endif
+
+        Debug::Log("ContextOpenAL: created.");
 
         return true;
     }

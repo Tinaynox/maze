@@ -28,10 +28,15 @@ include("${CMAKE_CURRENT_LIST_DIR}/zlib_info.cmake")
 
 
 ##########################################
-set(FT_DISABLE_BZIP2 ON)
-set(FT_DISABLE_PNG ON)
-set(FT_DISABLE_HARFBUZZ ON)
-set(FT_DISABLE_BROTLI ON)
+set(FT_DISABLE_BZIP2 ON  CACHE BOOL "" FORCE)
+set(FT_DISABLE_PNG ON  CACHE BOOL "" FORCE)
+set(FT_DISABLE_HARFBUZZ ON  CACHE BOOL "" FORCE)
+set(FT_DISABLE_BROTLI ON  CACHE BOOL "" FORCE)
+
+if(MAZE_TARGET_PLATFORM_IS_ANDROID)
+    set(FT_DISABLE_HARFBUZZ ON  CACHE BOOL "" FORCE)
+endif()
+
 set(SKIP_INSTALL_ALL ON)
 add_subdirectory("${MAZE_DIR}/third-party/freetype2" "${CMAKE_CURRENT_BINARY_DIR}/third-party/freetype2")
 set_property(TARGET freetype PROPERTY FOLDER "MazeThirdParty")
