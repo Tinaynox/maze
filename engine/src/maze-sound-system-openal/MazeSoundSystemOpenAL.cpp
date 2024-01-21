@@ -158,7 +158,6 @@ namespace Maze
 #if (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN || MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
         assignFunctionsOpenAL(nullptr);
         m_mainContext = createContext(m_defaultDeviceIndex);
-        return true;
 #else
         m_dummyContext = createContext();
         if (!m_dummyContext)
