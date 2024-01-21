@@ -179,6 +179,8 @@ namespace Maze
         }
 #endif
         MAZE_ERROR_RETURN_VALUE_IF(!m_mainContext, false, "Main Context is not created!");
+
+        Debug::Log("SoundSystemOpenAL: making main current... (m_mainContext=%x mzalcMakeContextCurrent=%x)", m_mainContext.get(), mzalcMakeContextCurrent);
         MAZE_ERROR_RETURN_VALUE_IF(!m_mainContext->makeCurrent(), false, "Make main context current failed!");
 
         Debug::Log("Main Audio Context: %s", m_devicesInfo[m_mainContext->getDeviceIndex()].deviceName.c_str());
