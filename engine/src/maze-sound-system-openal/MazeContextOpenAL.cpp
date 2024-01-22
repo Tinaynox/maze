@@ -80,6 +80,7 @@ namespace Maze
             return false;
 
         MAZE_AL_CALL(mzalcMakeContextCurrent(m_context));
+
         return true;
     }
 
@@ -97,6 +98,9 @@ namespace Maze
         m_context = mzalcCreateContext(m_device, nullptr);
         MAZE_WARNING_RETURN_VALUE_IF(!m_context, false, "Failed to create ALC Context!");
         mzalcMakeContextCurrent(m_context);
+
+        MZALenum error = mzalGetError();
+        MAZE_ERROR_IF(error != AL_NO_ERROR, "AL Error - %d!", error);
 #else
         DeviceInfoOpenAL const* deviceInfo = m_soundSystemRaw->getDeviceInfo(m_deviceIndex);
         MAZE_WARNING_RETURN_VALUE_IF(!deviceInfo, false, "DeviceInfo is null!");
@@ -117,6 +121,11 @@ namespace Maze
     //////////////////////////////////////////
     void ContextOpenAL::destroyALContext()
     {
+        if (!m_context && !m_device)
+            return;
+
+        Debug::Log("ContextOpenAL: destroying...");
+
         if (m_context)
         {
             MAZE_AL_CALL(mzalcMakeContextCurrent(nullptr));
@@ -129,6 +138,8 @@ namespace Maze
             MAZE_AL_CALL(mzalcCloseDevice(m_device));
             m_device = nullptr;
         }
+
+        Debug::Log("ContextOpenAL: destroyed");
     }
 
 } // namespace Maze

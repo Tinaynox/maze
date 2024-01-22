@@ -64,6 +64,7 @@ namespace Maze
     //////////////////////////////////////////
     SoundSystemOpenAL::~SoundSystemOpenAL()
     {
+        Debug::Log("~SoundSystemOpenAL()");
         m_mainContext.reset();
         m_dummyContext.reset();
     }
@@ -183,7 +184,8 @@ namespace Maze
         Debug::Log("SoundSystemOpenAL: making main current... (m_mainContext=%x mzalcMakeContextCurrent=%x)", m_mainContext.get(), mzalcMakeContextCurrent);
         MAZE_ERROR_RETURN_VALUE_IF(!m_mainContext->makeCurrent(), false, "Make main context current failed!");
 
-        Debug::Log("Main Audio Context: %s", m_devicesInfo[m_mainContext->getDeviceIndex()].deviceName.c_str());
+        if (m_mainContext->getDeviceIndex() < m_devicesInfo.size())
+            Debug::Log("Main Audio Context: %s", m_devicesInfo[m_mainContext->getDeviceIndex()].deviceName.c_str());
 
         return true;
     }

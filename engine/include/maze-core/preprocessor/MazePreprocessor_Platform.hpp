@@ -270,7 +270,7 @@
 #   define MAZE_ARCH_SUFFIX                 x64
 
 
-#elif (defined(__arm__) || defined(__TARGET_ARCH_ARM) || defined(_M_ARM))
+#elif (defined(__arm__) || defined(__TARGET_ARCH_ARM) || defined(_M_ARM) || defined(__arm64__) || defined(__aarch64__) || defined(_M_ARM64))
 #   if (defined(__arm64__) || defined(__aarch64__) || defined(_M_ARM64))
 #       define MAZE_ARCH                    MAZE_ARCH_ARM64
 #       define MAZE_ARCH_SUFFIX             arm64

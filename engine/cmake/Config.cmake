@@ -150,9 +150,17 @@ if(MAZE_COMPILER_IS_CLANG OR MAZE_COMPILER_IS_EMSCRIPTEN)
 endif()
 
 set(ARCHDETECT_C_CODE "
-#if(defined(__arm__) || defined(__TARGET_ARCH_ARM) || defined(_M_ARM))
+#if(defined(__arm__) || defined(__TARGET_ARCH_ARM) || defined(_M_ARM) || defined(__arm64__) || defined(__aarch64__) || defined(_M_ARM64))
     #if(defined(__arm64__) || defined(__aarch64__) || defined(_M_ARM64))
-        #error cmake_ARCH armv64
+        #error cmake_ARCH arm64
+    #elif (defined(__ARM_ARCH_9__)) \\
+        || (_M_ARM >= 9)
+        #error cmake_ARCH armv9
+    #elif (defined(__ARM_ARCH_8__) \\
+        || defined(__ARM_ARCH_8A) \\
+        || defined(__ARM_ARCH_8A__)) \\
+        || (_M_ARM >= 8)
+        #error cmake_ARCH armv8
     #elif defined(__ARM_ARCH_7__) \\
         || defined(__ARM_ARCH_7A__) \\
         || defined(__ARM_ARCH_7R__) \\
