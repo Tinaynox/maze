@@ -8,7 +8,7 @@ android {
 	buildToolsVersion "29.0.1"
 	defaultConfig {
 		applicationId "com.maze.plugin_profiler_view_test"
-		minSdkVersion 21
+		minSdkVersion 22
 		targetSdkVersion 29
 		versionCode 1
 		versionName "1.0"

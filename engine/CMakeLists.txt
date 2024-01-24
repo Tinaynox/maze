@@ -29,6 +29,10 @@ project(Maze)
 
 
 ##########################################
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
+
+
+##########################################
 include("cmake/Utils.cmake")
 include("cmake/Config.cmake")
 include("cmake/Macros.cmake")
