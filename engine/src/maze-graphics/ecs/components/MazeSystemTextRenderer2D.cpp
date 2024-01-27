@@ -392,7 +392,7 @@ namespace Maze
         AbstractTextRenderer2D::processEntityAwakened();
 
         m_meshRenderer = getEntityRaw()->ensureComponent<MeshRendererInstanced>();
-        m_meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultQuadMesh());
+        m_meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->ensureBuiltinRenderMesh(BuiltinRenderMeshType::Quad));
 
         updateMaterial();
         updateMeshData();

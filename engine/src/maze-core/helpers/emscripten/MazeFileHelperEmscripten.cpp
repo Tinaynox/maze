@@ -118,7 +118,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API Path GetDefaultTemporaryDirectory()
         {
-            return MAZE_EMSCRIPTEN_LOCAL_STORAGE_DIR "/tmp";
+            return MAZE_EMSCRIPTEN_LOCAL_STORAGE_DIR "/.tmp";
         }
 
         //////////////////////////////////////////

@@ -75,7 +75,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API Path GetDefaultLogDirectory()
         {
-            return GetBinaryDirectory() + "/log";
+            return GetBinaryDirectory() + "/.log";
         }
 
 

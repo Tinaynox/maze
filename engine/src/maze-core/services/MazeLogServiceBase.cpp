@@ -60,14 +60,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool LogServiceBase::setLogFile(Path const& _fullPath)
+    bool LogServiceBase::setLogFile(
+        Path const& _fullPath,
+        bool _logError)
     {
         if (m_logFilePath == _fullPath)
             return true;
 
         m_logFilePath = _fullPath;
-
-        logFormatted(c_logPriority_Default, "Log File: %s", m_logFilePath.toUTF8().c_str());
 
         Path logDir = FileHelper::GetDirectoryInPath(m_logFilePath);
         FileHelper::CreateDirectoryRecursive(logDir);
@@ -75,7 +75,8 @@ namespace Maze
         m_logFile.open(m_logFilePath.c_str(), std::ofstream::binary | std::ofstream::trunc);
         if (!m_logFile.is_open())
         {
-            logFormatted(c_logPriority_Error, "Log File cannot be opened!");
+            if (_logError)
+                logFormatted(c_logPriority_Error, "Log File cannot be opened: %s!", m_logFilePath.toUTF8().c_str());
             return false;
         }
 
@@ -86,20 +87,22 @@ namespace Maze
             m_tempLogBuffer.clear();
         }
 
+        logFormatted(c_logPriority_Default, "Log File: %s", m_logFilePath.toUTF8().c_str());
+
         eventLogFileSet(m_logFilePath);
 
         return true;
     }
 
     //////////////////////////////////////////
-    bool LogServiceBase::setLogErrorFile(Path const& _fullPath)
+    bool LogServiceBase::setLogErrorFile(
+        Path const& _fullPath,
+        bool _logError)
     {
         if (m_logErrorFilePath == _fullPath)
             return true;
 
         m_logErrorFilePath = _fullPath;
-
-        logFormatted(c_logPriority_Default, "Log Error File: %s", m_logErrorFilePath.toUTF8().c_str());
 
         Path logDir = FileHelper::GetDirectoryInPath(m_logErrorFilePath);
         FileHelper::CreateDirectoryRecursive(logDir);
@@ -107,7 +110,8 @@ namespace Maze
         m_logErrorFile.open(m_logErrorFilePath.c_str(), std::ofstream::binary | std::ofstream::trunc);
         if (!m_logErrorFile.is_open())
         {
-            logFormatted(c_logPriority_Error, "Log File cannot be opened!");
+            if (_logError)
+                logFormatted(c_logPriority_Error, "Log File cannot be opened: %s!", m_logErrorFilePath.toUTF8().c_str());
             return false;
         }
 
@@ -117,6 +121,8 @@ namespace Maze
             m_logErrorFile.flush();
             m_tempLogErrorBuffer.clear();
         }
+
+        logFormatted(c_logPriority_Default, "Log Error File: %s", m_logErrorFilePath.toUTF8().c_str());
 
         eventLogErrorFileSet(m_logErrorFilePath);
 

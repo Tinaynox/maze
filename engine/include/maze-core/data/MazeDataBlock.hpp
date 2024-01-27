@@ -254,6 +254,9 @@ namespace Maze
         //////////////////////////////////////////
         static MAZE_CONSTEXPR Size MAZE_DATA_BLOCK_INPLACE_PARAM_SIZE = sizeof(decltype(Param::value));
 
+        //////////////////////////////////////////
+        static DataBlock const c_empty;
+
     public:
 
         //////////////////////////////////////////
@@ -320,7 +323,7 @@ namespace Maze
         DataBlock(DataBlock const& _value);
 
         //////////////////////////////////////////
-        DataBlock(DataBlock&& _value);
+        DataBlock(DataBlock&& _value) noexcept;
 
         //////////////////////////////////////////
         ~DataBlock();
@@ -594,6 +597,18 @@ namespace Maze
         //////////////////////////////////////////
         DataBlock const* getDataBlock(DataBlockIndex _index) const;
 
+        //////////////////////////////////////////
+        DataBlock* getDataBlock(HashedCString _name, DataBlock* _defValue);
+
+        //////////////////////////////////////////
+        DataBlock const* getDataBlock(HashedCString _name, DataBlock const* _defValue) const;
+
+        //////////////////////////////////////////
+        DataBlock& getDataBlock(HashedCString _name, DataBlock& _defValue);
+
+        //////////////////////////////////////////
+        DataBlock const& getDataBlock(HashedCString _name, DataBlock const& _defValue) const;
+
 
         //////////////////////////////////////////
         DataBlock& operator[](HashedCString _name);
@@ -602,7 +617,7 @@ namespace Maze
         DataBlock& operator=(DataBlock const& _value);
 
         //////////////////////////////////////////
-        DataBlock& operator=(DataBlock&& _value);
+        DataBlock& operator=(DataBlock&& _value) noexcept;
 
 
         //////////////////////////////////////////

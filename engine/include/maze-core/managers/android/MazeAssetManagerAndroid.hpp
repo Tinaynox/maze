@@ -56,16 +56,31 @@ namespace Maze
         //////////////////////////////////////////
         virtual Path getDefaultAssetsDirectory() MAZE_OVERRIDE;
         
+        //////////////////////////////////////////
+        Path getAssetsHashFullPath() const;
+        
+        //////////////////////////////////////////
+        String readSavedAssetsHash();
+        
+        //////////////////////////////////////////
+        String calculateCurrentAssetsHash();
+        
+        //////////////////////////////////////////
+        Vector<String> getAssetsNames();
+        
+        //////////////////////////////////////////
+        bool extractFileFromAPK(Path const& _assetFilePath, bool _errorNoExists);
+        
+        //////////////////////////////////////////
+        void saveAssetsHash(String const& _hash);
+        
     protected:
         
         //////////////////////////////////////////
         AssetManagerAndroid();
         
         //////////////////////////////////////////
-        virtual bool init() MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        bool extractFileFromAPK(Path const& _assetFilePath, bool _errorNoExists);
+        virtual bool init(DataBlock const& _config) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void extractAssetsFromAPK();

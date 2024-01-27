@@ -48,9 +48,9 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    bool AssetManagerOSX::init()
+    bool AssetManagerOSX::init(DataBlock const& _config)
     {
-        if (!AssetManager::init())
+        if (!AssetManager::init(_config))
             return false;
        
         

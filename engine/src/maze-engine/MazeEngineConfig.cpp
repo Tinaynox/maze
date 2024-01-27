@@ -37,7 +37,6 @@ namespace Maze
     //
     //////////////////////////////////////////
     EngineConfig::EngineConfig()
-        : minFrameDeltaTimeMS(0)
     {
 
     }

@@ -64,13 +64,17 @@ namespace Maze
         
         
         //////////////////////////////////////////
-        virtual bool setLogFile(Path const& _fullPath);
+        virtual bool setLogFile(
+            Path const& _fullPath,
+            bool _logError = true);
         
         //////////////////////////////////////////
         inline std::ofstream const& getLogFile() const { return m_logFile; }
 
         //////////////////////////////////////////
-        virtual bool setLogErrorFile(Path const& _fullPath);
+        virtual bool setLogErrorFile(
+            Path const& _fullPath,
+            bool _logError = true);
 
         //////////////////////////////////////////
         inline std::ofstream const& getLogErrorFile() const { return m_logErrorFile; }

@@ -79,19 +79,19 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API Path GetDocumentsDirectory()
         {
-            return GetInternalDataDirectory();
+            return GetExternalDataDirectory() + "/documents";
         }
 
         //////////////////////////////////////////
         MAZE_CORE_API Path GetDefaultTemporaryDirectory()
         {
-            return GetExternalDataDirectory() + "/tmp";
+            return GetExternalDataDirectory() + "/.tmp";
         }
 
         //////////////////////////////////////////
         MAZE_CORE_API Path GetDefaultLogDirectory()
         {
-            return GetExternalDataDirectory() + "/log";
+            return GetExternalDataDirectory() + "/.log";
         }
 
         //////////////////////////////////////////

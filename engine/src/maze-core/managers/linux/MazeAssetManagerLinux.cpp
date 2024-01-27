@@ -48,9 +48,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool AssetManagerLinux::init()
+    bool AssetManagerLinux::init(DataBlock const& _config)
     {
-        if (!AssetManager::init())
+        if (!AssetManager::init(_config))
             return false;
 
 

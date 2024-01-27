@@ -382,7 +382,7 @@ namespace Maze
             do
             {
                 result *= 10;
-                result += *_str - '0';
+                result += static_cast<TIntType>(*_str - '0');
             }
             while (++_str != _end && std::isdigit(*_str));
             _value = isNegative ? TIntType(-(typename std::make_signed<TIntType>::type)(result)) : TIntType(result);

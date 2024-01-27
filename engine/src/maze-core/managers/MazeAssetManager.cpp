@@ -66,13 +66,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetManager::Initialize(AssetManagerPtr& _assetManager)
+    void AssetManager::Initialize(AssetManagerPtr& _assetManager, DataBlock const& _config)
     {
-        MAZE_CREATE_AND_INIT_OS_OBJECT_SHARED_PTR(AssetManager, _assetManager, init());
+        MAZE_CREATE_AND_INIT_OS_OBJECT_SHARED_PTR(AssetManager, _assetManager, init(_config));
     }
 
     //////////////////////////////////////////
-    bool AssetManager::init()
+    bool AssetManager::init(DataBlock const& _config)
     {    
 
         return true;
@@ -318,7 +318,7 @@ namespace Maze
         {
             Vector<String> words;
             StringHelper::SplitWords(tagsString, words, ',');
-            for (String const& word : words)
+            for (String& word : words)
                 tags.emplace(std::move(word));
         }
 

@@ -136,6 +136,10 @@ namespace Maze
     // DataBlock
     //
     //////////////////////////////////////////
+    DataBlock const DataBlock::c_empty;
+
+
+    //////////////////////////////////////////
     DataBlock* DataBlock::Create()
     {
         return MAZE_NEW(DataBlock);
@@ -191,7 +195,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    DataBlock::DataBlock(DataBlock&& _value)
+    DataBlock::DataBlock(DataBlock&& _value) noexcept
     {
         if (isTopmost())
         {
@@ -840,6 +844,34 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    DataBlock* DataBlock::getDataBlock(HashedCString _name, DataBlock* _defValue)
+    {
+        DataBlock* dataBlock = getDataBlock(_name);
+        return dataBlock ? dataBlock : _defValue;
+    }
+
+    //////////////////////////////////////////
+    DataBlock const* DataBlock::getDataBlock(HashedCString _name, DataBlock const* _defValue) const
+    {
+        DataBlock const* dataBlock = getDataBlock(_name);
+        return dataBlock ? dataBlock : _defValue;
+    }
+
+    //////////////////////////////////////////
+    DataBlock& DataBlock::getDataBlock(HashedCString _name, DataBlock& _defValue)
+    {
+        DataBlock* dataBlock = getDataBlock(_name);
+        return dataBlock ? *dataBlock : _defValue;
+    }
+
+    //////////////////////////////////////////
+    DataBlock const& DataBlock::getDataBlock(HashedCString _name, DataBlock const& _defValue) const
+    {
+        DataBlock const* dataBlock = getDataBlock(_name);
+        return dataBlock ? *dataBlock : _defValue;
+    }
+
+    //////////////////////////////////////////
     DataBlock& DataBlock::operator[](HashedCString _name)
     {
         DataBlock* result = getDataBlock(_name);
@@ -856,7 +888,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    DataBlock& DataBlock::operator=(DataBlock&& _value)
+    DataBlock& DataBlock::operator=(DataBlock&& _value) noexcept
     {
         if (isTopmost() && _value.isTopmost())
         {

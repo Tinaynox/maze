@@ -33,7 +33,9 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
+#include "maze-core/utils/MazeSharedObject.hpp"
 #include "maze-core/containers/MazeStringKeyMap.hpp"
+#include "maze-core/data/MazeDataBlock.hpp"
 #include <tinyxml2/tinyxml2.h>
 
 
@@ -54,6 +56,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_CORE_API AssetManager
+        : public SharedObject<AssetManager>
     {
     public:
 
@@ -61,7 +64,7 @@ namespace Maze
         virtual ~AssetManager();
 
         //////////////////////////////////////////
-        static void Initialize(AssetManagerPtr& _AssetManager);
+        static void Initialize(AssetManagerPtr& _AssetManager, DataBlock const& _config = DataBlock::c_empty);
 
         
         //////////////////////////////////////////
@@ -257,7 +260,7 @@ namespace Maze
         AssetManager();
 
         //////////////////////////////////////////
-        virtual bool init();
+        virtual bool init(DataBlock const& _config);
 
 
         //////////////////////////////////////////

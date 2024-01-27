@@ -72,8 +72,11 @@ namespace Maze
     bool SettingsManager::init(String const& _projectName)
     {
         m_projectName = _projectName;
-
+#if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
+        m_settingsFileFullPath = FileHelper::GetDocumentsDirectory();
+#else
         m_settingsFileFullPath = FileHelper::GetDocumentsDirectory() + "/" + _projectName;
+#endif
 
 #if !(MAZE_PRODUCTION)
         m_settingsFileFullPath += "/.dev";

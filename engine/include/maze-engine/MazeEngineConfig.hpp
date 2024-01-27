@@ -34,6 +34,7 @@
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/utils/MazeDelegate.hpp"
+#include "maze-core/data/MazeDataBlock.hpp"
 
 
 //////////////////////////////////////////
@@ -50,9 +51,11 @@ namespace Maze
 
 
         Vector<Maze::S8 const*> commandLineArguments;
-        U32 minFrameDeltaTimeMS;
+        U32 minFrameDeltaTimeMS = 0u;
 
         String projectName;
+
+        DataBlock params;
 
         Delegate<void> initDelegate;
         Delegate<void> frameDelegate;

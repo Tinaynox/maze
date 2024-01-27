@@ -51,15 +51,13 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    bool AssetManagerAndroid::init()
+    bool AssetManagerAndroid::init(DataBlock const& _config)
     {
-        if (!AssetManager::init())
+        if (!AssetManager::init(_config))
             return false;
 
-        SystemManagerAndroid* systemManagerAndroid = SystemManager::GetInstancePtr()->castRaw<SystemManagerAndroid>();
-        extractAssetsFromAPK();
-
-        addAssetsDirectory(FileHelper::GetUnpackedAssetsDirectory(), true);
+        if (_config.getBool(MAZE_HS("extractAssetsFromAPK"), true))
+            extractAssetsFromAPK();
         
         return true;
     }
@@ -69,7 +67,40 @@ namespace Maze
     {
         return FileHelper::GetDocumentsDirectory();
     }
+    
+    //////////////////////////////////////////
+    Path AssetManagerAndroid::getAssetsHashFullPath() const
+    {
+        return FileHelper::GetUnpackedAssetsDirectory() + "/assets.hash";
+    }
 
+    //////////////////////////////////////////
+    String AssetManagerAndroid::readSavedAssetsHash()
+    {
+        Path const assetsHashFullPath = getAssetsHashFullPath();
+        String unpackedAssetsHash;
+        std::ifstream ifs(assetsHashFullPath.c_str());
+        unpackedAssetsHash.assign((std::istreambuf_iterator<S8>(ifs)),
+                                  (std::istreambuf_iterator<S8>()));
+        ifs.close();
+        
+        return std::move(unpackedAssetsHash);
+    }
+
+    //////////////////////////////////////////
+    String AssetManagerAndroid::calculateCurrentAssetsHash()
+    {
+        SystemManagerAndroid* systemManagerAndroid = SystemManager::GetInstancePtr()->castRaw<SystemManagerAndroid>();
+        return systemManagerAndroid->callActivityMethodString("getAssetsHash");
+    }
+    
+    //////////////////////////////////////////
+    Vector<String> AssetManagerAndroid::getAssetsNames()
+    {
+        SystemManagerAndroid* systemManagerAndroid = SystemManager::GetInstancePtr()->castRaw<SystemManagerAndroid>();
+        return systemManagerAndroid->callActivityMethodStringVector("getAssetsNames");
+    }
+        
     //////////////////////////////////////////
     void AssetManagerAndroid::extractAssetsFromAPK()
     {
@@ -77,14 +108,9 @@ namespace Maze
 
         SystemManagerAndroid* systemManagerAndroid = SystemManager::GetInstancePtr()->castRaw<SystemManagerAndroid>();
 
-        Path assetsHashFullPath = FileHelper::GetUnpackedAssetsDirectory() + "/assets.hash";
-        String unpackedAssetsHash;
-        std::ifstream ifs(assetsHashFullPath.c_str());
-        unpackedAssetsHash.assign(  (std::istreambuf_iterator<S8>(ifs)),
-                                    (std::istreambuf_iterator<S8>()));
-        ifs.close();
-
-        String apkAssetsHash = systemManagerAndroid->callActivityMethodString("getAssetsHash");
+        String unpackedAssetsHash = readSavedAssetsHash();
+        String apkAssetsHash = calculateCurrentAssetsHash();
+        
         Debug::log << "Assets hash: " << apkAssetsHash << endl;
 
         if  (unpackedAssetsHash != apkAssetsHash)
@@ -93,10 +119,7 @@ namespace Maze
 
             FileHelper::DeleteDirectory(FileHelper::GetUnpackedAssetsDirectory().c_str());
 
-
-            AAssetManager* assetManager = systemManagerAndroid->getAssetManager();
-
-            Vector< String > assetsFiles = systemManagerAndroid->callActivityMethodStringVector("getAssetsNames");
+            Vector<String> assetsFiles = getAssetsNames();
             if (assetsFiles.empty())
             {
                 Debug::log << "Assets is empty!" << endl;
@@ -117,15 +140,25 @@ namespace Maze
                 Debug::log << "All assets extracted." << endl;
             }
 
-            std::ofstream ofs(assetsHashFullPath.c_str());
-            ofs << apkAssetsHash;
-            ofs.close();
+            saveAssetsHash(apkAssetsHash);
         }
         else
         {
             Debug::log << "Assets is up to date." << endl;
         }
+        
+        addAssetsDirectory(FileHelper::GetUnpackedAssetsDirectory(), true);
     }
+    
+    //////////////////////////////////////////
+    void AssetManagerAndroid::saveAssetsHash(String const& _hash)
+    {
+        Path const assetsHashFullPath = getAssetsHashFullPath();
+        std::ofstream ofs(assetsHashFullPath.c_str());
+        ofs << _hash;
+        ofs.close();
+    }
+        
 
     //////////////////////////////////////////
     bool AssetManagerAndroid::extractFileFromAPK(Path const& _assetFilePath, bool _errorNoExists)
@@ -139,7 +172,7 @@ namespace Maze
         SystemManagerAndroid* systemManagerAndroid = SystemManager::GetInstancePtr()->castRaw<SystemManagerAndroid>();
         AAssetManager* assetManager = systemManagerAndroid->getAssetManager();
 
-        AAsset* inputFile = AAssetManager_open( assetManager, _assetFilePath.c_str(), AASSET_MODE_BUFFER );
+        AAsset* inputFile = AAssetManager_open(assetManager, _assetFilePath.c_str(), AASSET_MODE_BUFFER);
 
         if (!inputFile)
         {
