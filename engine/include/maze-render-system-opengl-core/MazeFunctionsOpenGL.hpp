@@ -44,7 +44,12 @@
 #    define MAZE_DEBUG_GL (0)
 #   endif
 #else
-#    define MAZE_DEBUG_GL (0)
+#   define MAZE_DEBUG_GL (0)
+#endif
+
+#if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
+#   undef MAZE_DEBUG_GL
+#   define MAZE_DEBUG_GL (1)
 #endif
 
 
