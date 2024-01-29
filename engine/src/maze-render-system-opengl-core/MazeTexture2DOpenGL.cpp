@@ -775,7 +775,9 @@ namespace Maze
     //////////////////////////////////////////
     void Texture2DOpenGL::notifyContextOpenGLContextWillBeDestroyed(ContextOpenGL* _contextOpenGL)
     {
-        m_cachedPixelSheet = readAsPixelSheet();
+        Texture2DLibraryData const* libraryData = m_renderSystem->getTextureManager()->getTexture2DLibraryData(getName().asHashedCString());
+        if (!libraryData || !libraryData->assetFile)
+            m_cachedPixelSheet = readAsPixelSheet();
 
         m_glTexture = 0;
     }
