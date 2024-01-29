@@ -47,3 +47,7 @@ add_library(maze-native-lib
         
 target_link_libraries(maze-native-lib
     ${EXAMPLE_LIB})
+    
+target_include_directories(
+    maze-native-lib
+    PUBLIC ${ANDROID_NDK}/sources/android/native_app_glue)

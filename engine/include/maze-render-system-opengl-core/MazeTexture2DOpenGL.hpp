@@ -206,7 +206,7 @@ namespace Maze
 
         bool m_hasPresetMipmaps;
 
-        Vector<PixelSheet2D> m_pixelSheetsTEMP;
+        PixelSheet2D m_cachedPixelSheet;
     };
 
 } // namespace Maze

@@ -845,5 +845,15 @@ namespace Maze
         *this = downscaledCopy(_scale);
     }
 
+    //////////////////////////////////////////
+    void PixelSheet2D::clear()
+    {
+        m_size = Vec2S::c_zero;
+        m_data.clear();
+        m_format = PixelFormat::None;
+        m_bytesPerPixel = 0;
+        m_bytesPerRow = 0;
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

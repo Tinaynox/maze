@@ -235,8 +235,6 @@ namespace Maze
         if (_pixelSheets.empty())
             return false;
 
-        m_pixelSheetsTEMP = _pixelSheets;
-
         PixelSheet2D const& pixelSheet0 = _pixelSheets[0];
 
         if (_internalPixelFormat == PixelFormat::None)
@@ -777,6 +775,8 @@ namespace Maze
     //////////////////////////////////////////
     void Texture2DOpenGL::notifyContextOpenGLContextWillBeDestroyed(ContextOpenGL* _contextOpenGL)
     {
+        m_cachedPixelSheet = readAsPixelSheet();
+
         m_glTexture = 0;
     }
 
@@ -863,11 +863,13 @@ namespace Maze
             Debug::log << "Texture2DOpenGL<" << getName() << ">: reloaded with id=" << m_glTexture << "." << endl;
         }
         else
-        if (!m_pixelSheetsTEMP.empty())
+        if (m_cachedPixelSheet.getFormat() != PixelFormat::None)
         {
             Debug::log << "Texture2DOpenGL<" << getName() << ">: reloading from pixel sheet..." << endl;
-            loadTexture(m_pixelSheetsTEMP, m_internalPixelFormat);
+            loadTexture(m_cachedPixelSheet, m_internalPixelFormat);
             Debug::log << "Texture2DOpenGL<" << getName() << ">: reloaded with id=" << m_glTexture << "." << endl;
+
+            m_cachedPixelSheet.clear();
         }
         else
         {
