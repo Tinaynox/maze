@@ -403,9 +403,39 @@ namespace Maze
 
         getJavaVM()->DetachCurrentThread();
     }
+    
+    ///////////////////////////////////////
+    void SystemManagerAndroid::callActivityMethod(String const& _methodName, CString _param0)
+    {
+        Debug::log << "SystemManager_android::callActivityMethod: " << _methodName << endl;
+
+        ANativeActivity* activity = getNativeActivity();
+        MAZE_ERROR_RETURN_IF(!activity, "ANativeActivity is null!");
+
+        JNIEnv* jniEnv = getJNIEnv();
+        MAZE_ERROR_RETURN_IF(!jniEnv, "JNIEnv is null!");
+
+        getJavaVM()->AttachCurrentThread(&jniEnv, nullptr);
+
+        jobject activityObject = getAndroidApp()->activity->clazz;
+        jclass activityClass = jniEnv->GetObjectClass(activityObject);
+
+        jmethodID methodId = jniEnv->GetMethodID(
+                activityClass,
+                _methodName.c_str(),
+                "(Ljava/lang/String;)V" );
+
+        MAZE_ERROR_RETURN_IF(!methodId, "Undefined activitiy method: %s", _methodName.c_str());
+
+        jstring javaString = jniEnv->NewStringUTF(_param0);
+        jniEnv->CallVoidMethod(activityObject, methodId, javaString);
+        jniEnv->DeleteLocalRef(javaString);
+
+        getJavaVM()->DetachCurrentThread();
+    }
 
     ///////////////////////////////////////
-    Vector< String > SystemManagerAndroid::callActivityMethodStringVector(String const& _methodName)
+    Vector<String> SystemManagerAndroid::callActivityMethodStringVector(String const& _methodName)
     {
         Debug::log << "SystemManager_android::callActivityMethodStringVector: " << _methodName << endl;
 
@@ -425,7 +455,7 @@ namespace Maze
                 _methodName.c_str(),
                 "()[Ljava/lang/String;");
 
-        MAZE_ERROR_RETURN_VALUE_IF(!methodId, Vector< String >(), "Undefined activitiy method: %s", _methodName.c_str());
+        MAZE_ERROR_RETURN_VALUE_IF(!methodId, Vector<String>(), "Undefined activitiy method: %s", _methodName.c_str());
 
         Vector<String> result;
         jobjectArray methodResult = (jobjectArray)jniEnv->CallObjectMethod(activityObject, methodId);
@@ -448,7 +478,7 @@ namespace Maze
 
 
     ///////////////////////////////////////
-    String SystemManagerAndroid::callActivityMethodString( String const& _methodName )
+    String SystemManagerAndroid::callActivityMethodString(String const& _methodName)
     {
         Debug::log << "SystemManager_android::callActivityMethodString: " << _methodName << endl;
 

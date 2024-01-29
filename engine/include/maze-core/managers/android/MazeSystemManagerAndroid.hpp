@@ -91,6 +91,9 @@ namespace Maze
 
         ///////////////////////////////////////
         void callActivityMethod(String const& _methodName);
+        
+        ///////////////////////////////////////
+        void callActivityMethod(String const& _methodName, CString _param0);
 
         ///////////////////////////////////////
         Vector<String> callActivityMethodStringVector(String const& _methodName);

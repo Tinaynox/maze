@@ -40,8 +40,11 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_CORE_API void OpenURL(Path const& _url)
         {
+            SystemManager* systemManager = SystemManager::GetInstancePtr();
+            MAZE_ERROR_RETURN_IF(!systemManager, "SystemManager is null!");
 
-
+            SystemManagerAndroid* systemManagerAndroid = systemManager->castRaw<SystemManagerAndroid>();
+            systemManagerAndroid->callActivityMethod("openURL", _url.c_str());
         }
         
         //////////////////////////////////////////
