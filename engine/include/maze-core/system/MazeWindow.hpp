@@ -237,6 +237,7 @@ namespace Maze
         MultiDelegate<Window*> eventWindowClosed;
         MultiDelegate<Window*> eventWindowFocusChanged;
         MultiDelegate<Window*> eventWindowModeChanged;
+        MultiDelegate<Window*> eventWindowMinimizedChanged;
         MultiDelegate<Window*> eventDestroyed;
 
     protected:
@@ -274,6 +275,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void processWindowFocusChanged();
+
+        //////////////////////////////////////////
+        void processWindowMinimizedChanged();
 
     protected:
 

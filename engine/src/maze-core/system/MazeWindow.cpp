@@ -198,7 +198,10 @@ namespace Maze
 
         m_params->minimized = _minimized;
 
-        return updateMinimized();
+        updateMinimized();
+        processWindowMinimizedChanged();
+
+        return true;
     }
 
     //////////////////////////////////////////
@@ -261,6 +264,12 @@ namespace Maze
     void Window::processWindowFocusChanged()
     {
         eventWindowFocusChanged(this);
+    }
+
+    //////////////////////////////////////////
+    void Window::processWindowMinimizedChanged()
+    {
+        eventWindowMinimizedChanged(this);
     }
 
 } // namespace Maze
