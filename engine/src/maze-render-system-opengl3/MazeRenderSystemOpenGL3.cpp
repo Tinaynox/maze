@@ -212,10 +212,12 @@ namespace Maze
         {
             MAZE_GL_CALL(mzglGetIntegerv(MAZE_GL_MAX_TEXTURE_SIZE, &m_textureMaxSize));
             MAZE_GL_CALL(mzglGetIntegerv(MAZE_GL_MAX_TEXTURE_IMAGE_UNITS, &m_textureUniformsMaxCount));
+            MAZE_GL_CALL(mzglGetIntegerv(MAZE_GL_MAX_SAMPLES, &m_textureMaxAntialiasingLevelSupport));
         }
 
         Debug::log << "GL_MAX_TEXTURE_SIZE: " << m_textureMaxSize << endl;
         Debug::log << "GL_MAX_TEXTURE_IMAGE_UNITS: " << m_textureUniformsMaxCount << endl;
+        Debug::log << "GL_MAX_SAMPLES: " << m_textureMaxAntialiasingLevelSupport << endl;
 
         if (mzglGetFloatv != nullptr)
         {

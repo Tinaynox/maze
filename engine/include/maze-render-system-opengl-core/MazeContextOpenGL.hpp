@@ -411,7 +411,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline S32 getMaxAntialiasingLevelSupport() const { return m_maxAntialiasingLevelSupport; }
+        inline S32 getWindowMaxAntialiasingLevelSupport() const { return m_windowMaxAntialiasingLevelSupport; }
 
     public:
 
@@ -517,7 +517,7 @@ namespace Maze
 
         ModelMatricesArchitectureOpenGL m_modelMatricesArchitecture;
 
-        S32 m_maxAntialiasingLevelSupport = 0;
+        S32 m_windowMaxAntialiasingLevelSupport = 0;
     };
 
 } // namespace Maze

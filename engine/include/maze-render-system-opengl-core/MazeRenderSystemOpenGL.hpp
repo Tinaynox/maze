@@ -106,13 +106,16 @@ namespace Maze
         virtual bool isTextureFormatSupported(PixelFormat::Enum _pixelFormat) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual S32 getMaxAntialiasingLevelSupport() MAZE_OVERRIDE;
+        virtual S32 getWindowMaxAntialiasingLevelSupport() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual S32 getCurrentAntialiasingLevelSupport() MAZE_OVERRIDE;
+        virtual S32 getWindowCurrentAntialiasingLevelSupport() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         virtual S32 getTextureMaxSize() MAZE_OVERRIDE { return m_textureMaxSize; }
+
+        //////////////////////////////////////////
+        virtual S32 getTextureMaxAntialiasingLevelSupport() MAZE_OVERRIDE { return m_textureMaxAntialiasingLevelSupport; }
 
         //////////////////////////////////////////
         inline void lockGLMutex() { m_glMutex.lock(); }
@@ -256,8 +259,9 @@ namespace Maze
 
         ContextOpenGLPtr m_defaultRenderContext;
 
-        S32 m_textureMaxSize;
-        S32 m_textureUniformsMaxCount;
+        S32 m_textureMaxSize = 0;
+        S32 m_textureUniformsMaxCount = 0;
+        S32 m_textureMaxAntialiasingLevelSupport = 0;
 
         GPUBuffersControllerOpenGLPtr m_GPUBuffersController;
 

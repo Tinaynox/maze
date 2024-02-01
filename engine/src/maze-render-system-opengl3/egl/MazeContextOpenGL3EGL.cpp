@@ -522,11 +522,11 @@ namespace Maze
         m_config.minorVersion = 0;
 #endif
 
-        m_maxAntialiasingLevelSupport = m_config.antialiasingLevel;
+        m_windowMaxAntialiasingLevelSupport = m_config.antialiasingLevel;
         if (m_stateMachine)
         {
-            m_stateMachine->setMultiSampleEnabled(m_maxAntialiasingLevelSupport > 0);
-            m_stateMachine->setAntialiasingLevelSupport(m_maxAntialiasingLevelSupport);
+            m_stateMachine->setMultiSampleEnabled(m_windowMaxAntialiasingLevelSupport > 0);
+            m_stateMachine->setAntialiasingLevelSupport(m_windowMaxAntialiasingLevelSupport);
         }
     }
 

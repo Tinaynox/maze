@@ -113,13 +113,16 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual S32 getMaxAntialiasingLevelSupport() MAZE_ABSTRACT;
+        virtual S32 getWindowMaxAntialiasingLevelSupport() MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual S32 getCurrentAntialiasingLevelSupport() MAZE_ABSTRACT;
+        virtual S32 getWindowCurrentAntialiasingLevelSupport() MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual S32 getTextureMaxSize() MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual S32 getTextureMaxAntialiasingLevelSupport() MAZE_ABSTRACT;
 
 
         //////////////////////////////////////////

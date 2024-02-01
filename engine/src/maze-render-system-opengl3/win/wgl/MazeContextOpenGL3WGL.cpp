@@ -1209,7 +1209,7 @@ namespace Maze
         
         if (m_stateMachine && m_extensions && m_extensions->isLoaded())
         {
-            m_maxAntialiasingLevelSupport = findMaxAntialisingLevelSupport();
+            m_windowMaxAntialiasingLevelSupport = findMaxAntialisingLevelSupport();
 
             if ((m_config.antialiasingLevel > 0) && m_stateMachine->getAntialiasingLevelSupport() > 0)
             {

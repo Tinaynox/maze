@@ -112,7 +112,7 @@ namespace Maze
         virtual bool loadGLExtensionsImpl();
 
     protected:
-        ContextOpenGL* m_context;
+        ContextOpenGL* m_context = nullptr;
 
         Set<String> m_extensions;
 

@@ -73,9 +73,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     RenderSystemOpenGL::RenderSystemOpenGL()
-        : m_textureMaxSize(0)
-        , m_textureUniformsMaxCount(0)
-        , m_renderPassOpenGLPool(this)
+        : m_renderPassOpenGLPool(this)
         , m_materialOpenGLPool(this)
     {
     }
@@ -584,19 +582,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    S32 RenderSystemOpenGL::getMaxAntialiasingLevelSupport()
+    S32 RenderSystemOpenGL::getWindowMaxAntialiasingLevelSupport()
     {
         if (m_defaultRenderContext)
-            return m_defaultRenderContext->getMaxAntialiasingLevelSupport();
+            return m_defaultRenderContext->getWindowMaxAntialiasingLevelSupport();
 
         if (m_dummyContext)
-            return m_dummyContext->getMaxAntialiasingLevelSupport();
+            return m_dummyContext->getWindowMaxAntialiasingLevelSupport();
 
         return 0;
     }
 
     //////////////////////////////////////////
-    S32 RenderSystemOpenGL::getCurrentAntialiasingLevelSupport()
+    S32 RenderSystemOpenGL::getWindowCurrentAntialiasingLevelSupport()
     {
         if (m_defaultRenderContext)
             return m_defaultRenderContext->getStateMachine()->getAntialiasingLevelSupport();
