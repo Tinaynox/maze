@@ -575,7 +575,7 @@ namespace Maze
 
         if (mzglFramebufferTexture2D)
         {
-            MAZE_WARNING_IF(_outputFormat != PixelFormat::RGBA_U8, "Unsupported format - %d", _outputFormat);
+            MAZE_WARNING_IF(_outputFormat != PixelFormat::RGBA_U8, "%s: Unsupported format - %s", getName().c_str(), PixelFormat::ToString(_outputFormat).c_str());
 
             MAZE_GL_CALL(mzglPixelStorei(MAZE_GL_PACK_ALIGNMENT, 1));
 
@@ -777,7 +777,10 @@ namespace Maze
     {
         Texture2DLibraryData const* libraryData = m_renderSystem->getTextureManager()->getTexture2DLibraryData(getName().asHashedCString());
         if (!libraryData || !libraryData->assetFile)
-            m_cachedPixelSheet = readAsPixelSheet();
+        {
+            if (m_internalPixelFormat == PixelFormat::RGBA_U8)
+                m_cachedPixelSheet = readAsPixelSheet();
+        }
 
         m_glTexture = 0;
     }
@@ -867,7 +870,7 @@ namespace Maze
         else
         if (m_cachedPixelSheet.getFormat() != PixelFormat::None)
         {
-            Debug::log << "Texture2DOpenGL<" << getName() << ">: reloading from pixel sheet..." << endl;
+            Debug::log << "Texture2DOpenGL<" << getName() << ">: reloading from pixel sheet... (cachedPixelSheetFormat=" << PixelFormat::ToString(m_cachedPixelSheet.getFormat()) << ", internalPixelFormat=" << PixelFormat::ToString(m_internalPixelFormat) << ")" << endl;
             loadTexture(m_cachedPixelSheet, m_internalPixelFormat);
             Debug::log << "Texture2DOpenGL<" << getName() << ">: reloaded with id=" << m_glTexture << "." << endl;
 

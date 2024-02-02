@@ -160,6 +160,9 @@ namespace Maze
             if (file->getExtension() != "mzshader")
                 continue;
 
+            if (getShaderFromLibrary(file->getFileName()))
+                continue;
+
             ShaderPtr shader = Shader::CreateFromFile(getRenderSystem(), file);
             if (shader)
             {

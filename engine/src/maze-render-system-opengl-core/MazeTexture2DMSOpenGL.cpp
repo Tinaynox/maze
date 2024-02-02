@@ -425,7 +425,7 @@ namespace Maze
             generateGLObjects();
 
         Debug::log << "Texture2DMSOpenGL<" << getName() << ">: reloading empty..." << endl;
-        loadEmpty(m_size, m_internalPixelFormat);
+        loadEmpty(m_size, m_internalPixelFormat, m_samples);
         Debug::log << "Texture2DMSOpenGL<" << getName() << ">: reloaded with id=" << m_glTexture << "." << endl;
     }
     
