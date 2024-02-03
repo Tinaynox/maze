@@ -317,7 +317,11 @@ namespace Maze
     //////////////////////////////////////////
     void SettingsManager::processBackCompatibility()
     {
+#if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
+        Path settingsFileFullPath = FileHelper::GetDocumentsDirectory();
+#else
         Path settingsFileFullPath = FileHelper::GetDocumentsDirectory() + "/" + m_projectName;
+#endif
 
 #if !(MAZE_PRODUCTION)
         settingsFileFullPath += "/.dev";
