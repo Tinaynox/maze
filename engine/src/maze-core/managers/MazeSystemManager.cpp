@@ -79,6 +79,12 @@ namespace Maze
         m_commandLineArguments = _commandLineArguments;
         parseCommandLineArguments();
 
+        CString forceDeviceCategory = getCommandLineArgumentValue(MAZE_HS("device-category"));
+        if (forceDeviceCategory != nullptr)
+        {
+            m_deviceCategory = DeviceCategory::FromString(forceDeviceCategory);
+        }
+
         return true;
     }
 

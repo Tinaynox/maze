@@ -30,6 +30,7 @@
 #include "maze-graphics/MazePixelFormat.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/helpers/MazeSubMeshHelper.hpp"
+#include "maze-core/services/MazeLogStream.hpp"
 
 #undef VOID
 #include <ofbx.h>
@@ -45,7 +46,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    inline ofbx::u16 ConstuctLoadFlags()
+    inline ofbx::u16 ConstructLoadFlags()
     {
         ofbx::LoadFlags flags =
             ofbx::LoadFlags::TRIANGULATE |
@@ -100,6 +101,8 @@ namespace Maze
         auto processCreateSubMesh =
             [&]()
         {
+            Debug::logtemp << "processCreateSubMesh meshName=" << meshName << endl;
+
             if (indices.empty() || positions.empty())
                 return;
 
@@ -190,6 +193,8 @@ namespace Maze
         S32 meshCount = _scene->getMeshCount();
         for (S32 i = 0; i < meshCount; ++i)
         {
+            Debug::logtemp << "Mesh: " << i << endl;
+
             ofbx::Mesh const& mesh = *_scene->getMesh(i);
             ofbx::Geometry const& geom = *mesh.getGeometry();
 
@@ -208,6 +213,7 @@ namespace Maze
 
             // Indices
             S32 indexCount = geom.getIndexCount();
+            Debug::logtemp << "Indices: " << indexCount << endl;
             S32 const* indicesPtr = (S32 const*)geom.getFaceIndices();
             indices.reserve(indices.capacity() + indexCount);
             for (S32 i = 0; i < indexCount; ++i)
@@ -219,6 +225,7 @@ namespace Maze
 
             // Positions
             S32 vertexCount = geom.getVertexCount();
+            Debug::logtemp << "Positions: " << vertexCount << endl;
             ofbx::Vec3 const* verticesPtr = geom.getVertices();
             positions.reserve(positions.capacity() + vertexCount);
             for (S32 i = 0; i < vertexCount; ++i)
@@ -231,6 +238,7 @@ namespace Maze
 
             // Normals
             bool hasNormals = geom.getNormals() != nullptr;
+            Debug::logtemp << "Normals: " << hasNormals << endl;
             if (hasNormals)
             {
                 ofbx::Vec3 const* normalsPtr = geom.getNormals();
@@ -245,6 +253,7 @@ namespace Maze
 
             // Tangents
             bool hasTangents = geom.getTangents() != nullptr;
+            Debug::logtemp << "Tangents: " << hasTangents << endl;
             if (hasTangents)
             {
                 ofbx::Vec3 const* tangentsPtr = geom.getTangents();
@@ -259,6 +268,7 @@ namespace Maze
 
             // UVs
             bool hasUVs = geom.getUVs() != nullptr;
+            Debug::logtemp << "UVs: " << hasUVs << endl;
             if (hasUVs)
             {
                 ofbx::Vec2 const* uvsPtr = geom.getUVs();
@@ -272,6 +282,7 @@ namespace Maze
 
             // Colors
             bool hasColors = geom.getColors() != nullptr;
+            Debug::logtemp << "Colors: " << hasColors << endl;
             if (hasColors)
             {
                 ofbx::Vec4 const* colorsPtr = geom.getColors();
@@ -317,8 +328,10 @@ namespace Maze
             false,
             "File loading error!");
 
-        ofbx::u16 flags = ConstuctLoadFlags();
+        ofbx::u16 flags = ConstructLoadFlags();
+        Debug::logtemp << "Loading FBX mesh from byte buffer..." << endl;
         ofbx::IScene* scene = ofbx::load(_fileData.getData(), (S32)_fileData.getSize(), flags);
+        Debug::logtemp << "FBX mesh loaded. scene=" << scene << endl;
         bool result = LoadFBX(scene, _mesh, _props);
         if (scene)
             scene->destroy();

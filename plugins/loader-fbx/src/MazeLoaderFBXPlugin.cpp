@@ -27,9 +27,13 @@
 #include "MazeLoaderFBXHeader.hpp"
 #include "MazeLoaderFBXPlugin.hpp"
 #include "maze-core/managers/MazePluginManager.hpp"
+#include "maze-core/helpers/MazeStringHelper.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMeshManager.hpp"
 #include "maze-plugin-loader-fbx/loaders/MazeLoaderFBX.hpp"
+
+#undef VOID
+#include <ofbx.h>
 
 
 //////////////////////////////////////////
@@ -79,6 +83,15 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    static void OpenFBXLogFunc(CString _format, ...)
+    {
+        String newText;
+        MAZE_FORMAT_VA_STRING(_format, newText);
+        LogService::GetInstancePtr()->log(c_logPriority_Temp, newText.c_str());
+    }
+
+
+    //////////////////////////////////////////
     // Class LoaderFBXPlugin
     //
     //////////////////////////////////////////
@@ -115,6 +128,8 @@ namespace Maze
     //////////////////////////////////////////
     void LoaderFBXPlugin::install()
     {
+        ofbx::SetLogFunc(OpenFBXLogFunc);
+
         if (MeshManager::GetInstancePtr())
             MeshManager::GetInstancePtr()->registerMeshLoader(
                 c_meshExtension,

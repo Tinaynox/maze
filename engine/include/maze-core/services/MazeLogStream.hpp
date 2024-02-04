@@ -112,6 +112,7 @@ namespace Maze
         MAZE_CORE_API extern LogStream log;
         MAZE_CORE_API extern LogStream logwarn;
         MAZE_CORE_API extern LogStream logerr;
+        MAZE_CORE_API extern LogStream logtemp;
 
     } // namespace Debug
     //////////////////////////////////////////

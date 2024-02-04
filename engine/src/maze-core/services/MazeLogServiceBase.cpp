@@ -52,6 +52,7 @@ namespace Maze
         setPriorityMark(c_logPriority_Warning, 'W');
         setPriorityMark(c_logPriority_Error, 'E');
         setPriorityMark(c_logPriority_Minor, ' ');
+        setPriorityMark(c_logPriority_Temp, 'T');
     }
 
     //////////////////////////////////////////

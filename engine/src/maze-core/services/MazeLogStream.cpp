@@ -116,6 +116,7 @@ namespace Maze
         MAZE_CORE_API LogStream log(c_logPriority_Default);
         MAZE_CORE_API LogStream logwarn(c_logPriority_Warning);
         MAZE_CORE_API LogStream logerr(c_logPriority_Error);
+        MAZE_CORE_API LogStream logtemp(c_logPriority_Temp);
 
     } // namespace Debug
     //////////////////////////////////////////
