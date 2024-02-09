@@ -83,6 +83,8 @@ namespace Maze
         S32 channels = _soundData->getChannels();
         S32 bitsPerSample = _soundData->getBitsPerSample();
 
+        Debug::Log("SoundOpenAL loading started (channels=%d, bps=%d)...", channels, bitsPerSample);
+
         if (channels == 1)
         {
             switch (bitsPerSample)
@@ -160,6 +162,8 @@ namespace Maze
                 if (sourceData.second)
                     sourceData.first->play();
             }
+
+        Debug::Log("SoundOpenAL loading finished.");
 
         return true;
     }
