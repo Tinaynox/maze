@@ -128,7 +128,7 @@ namespace Maze
     //////////////////////////////////////////
     void LoaderFBXPlugin::install()
     {
-        ofbx::SetLogFunc(OpenFBXLogFunc);
+        ofbx::setLogFunc(OpenFBXLogFunc);
 
         if (MeshManager::GetInstancePtr())
             MeshManager::GetInstancePtr()->registerMeshLoader(
