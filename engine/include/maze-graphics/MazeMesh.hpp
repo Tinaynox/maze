@@ -63,6 +63,9 @@ namespace Maze
         static MeshPtr Create();
 
         //////////////////////////////////////////
+        static MeshPtr Create(SubMeshPtr const& _subMesh);
+
+        //////////////////////////////////////////
         virtual ~Mesh();
 
 

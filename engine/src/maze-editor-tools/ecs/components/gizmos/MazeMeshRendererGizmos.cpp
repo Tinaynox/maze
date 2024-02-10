@@ -101,6 +101,7 @@ namespace Maze
         {
             Vector<Vec3F> vertices;
 
+            /*
             Mat4F const& worldTransform = transform3D->getWorldTransform();
             if (meshRenderer->getRenderMesh())
             {
@@ -134,6 +135,7 @@ namespace Maze
                 _drawer->setColor(ColorF128::c_white);
                 _drawer->drawAABB(aabb3D);
             }
+            */
         }
 
     }

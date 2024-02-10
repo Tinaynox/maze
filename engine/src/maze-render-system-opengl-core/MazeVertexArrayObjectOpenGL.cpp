@@ -32,6 +32,7 @@
 #include "maze-render-system-opengl-core/MazeVertexOpenGL.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/utils/MazeProfiler.hpp"
+#include "maze-graphics/MazeSubMesh.hpp"
 
 
 //////////////////////////////////////////
@@ -53,7 +54,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    VertexArrayObjectOpenGLScopeBind::VertexArrayObjectOpenGLScopeBind(VertexArrayObjectOpenGL* _newVAO)
+    VertexArrayObjectOpenGLScopeBind::VertexArrayObjectOpenGLScopeBind(VertexArrayObjectOpenGL const* _newVAO)
         : VertexArrayObjectOpenGLScopeBind(
             _newVAO->getContextOpenGL(),
             _newVAO->getRenderSystemOpenGLRaw(),
@@ -205,7 +206,11 @@ namespace Maze
 
         VertexAttributeSemantic vertexElementSemantic = _description.semantic;
 
-        VertexBufferObjectOpenGLPtr const& vbo = ensureVBO(vertexElementSemantic);
+        VertexBufferObjectOpenGLData& vboData = ensureVBO(vertexElementSemantic);
+        VertexBufferObjectOpenGLPtr& vbo = vboData.vbo;
+        vboData.description = _description;
+        vboData.verticesCount = _verticesCount;
+
         VertexBufferObjectOpenGLScopeBind vboScopedBind(vbo);
 
         Size bytesPerType = GetVertexAttributeTypeSize(_description.type);
@@ -230,6 +235,53 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    SubMeshPtr VertexArrayObjectOpenGL::readAsSubMesh() const
+    {
+        if (m_glEBO == 0 || m_glVAO == 0 || m_indicesCount == 0)
+            return nullptr;
+
+        MAZE_ASSERT(m_indicesType == VertexAttributeType::U32);
+
+        SubMeshPtr subMesh = SubMesh::Create();
+        subMesh->setRenderDrawTopology(m_renderDrawTopology);
+
+        ContextOpenGLScopeBind contextScopedBind(m_context);
+        MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
+        VertexArrayObjectOpenGLScopeBind vaoScopedBind(this);
+
+        ByteBufferPtr const& indicesBuffer = subMesh->allocateIndices(m_indicesType, m_indicesCount);
+
+        // EBO
+        m_context->bindElementArrayBuffer(m_glEBO);
+        MZGLuint const* indicesPtr = nullptr;
+        MAZE_GL_CALL(indicesPtr = (MZGLuint*)mzglMapBuffer(MAZE_GL_ELEMENT_ARRAY_BUFFER, MAZE_GL_READ_ONLY));
+        MAZE_ERROR_RETURN_VALUE_IF(!indicesPtr, nullptr, "Failed to map buffer");
+        memcpy(indicesBuffer->getDataPointer(), indicesPtr, indicesBuffer->getSize());
+        MAZE_GL_CALL(mzglUnmapBuffer(MAZE_GL_ELEMENT_ARRAY_BUFFER));
+
+        // VBO
+        for (VertexAttributeSemantic attribSemantic = VertexAttributeSemantic(0);
+                                     attribSemantic < VertexAttributeSemantic::MAX;
+                                     attribSemantic = VertexAttributeSemantic((S32)attribSemantic + 1))
+        {
+            VertexBufferObjectOpenGLData const& vboData = m_vbos[(Size)attribSemantic];
+            if (vboData.vbo)
+            {
+                VertexBufferObjectOpenGLScopeBind vboScopedBind(vboData.vbo);
+                ByteBufferPtr const& vertexBuffer = subMesh->allocateVertexAttributes(attribSemantic, vboData.description.type, vboData.description.count, vboData.verticesCount, vboData.description.normalized);
+
+                MZGLuint const* vertexPtr;
+                MAZE_GL_CALL(vertexPtr = (MZGLuint*)mzglMapBuffer(MAZE_GL_ARRAY_BUFFER, MAZE_GL_READ_ONLY));
+                MAZE_ERROR_RETURN_VALUE_IF(!indicesPtr, nullptr, "Failed to map buffer");
+                memcpy(vertexBuffer->getDataPointer(), vertexPtr, vertexBuffer->getSize());
+                MAZE_GL_CALL(mzglUnmapBuffer(MAZE_GL_ARRAY_BUFFER));
+            }
+        }
+
+        return subMesh;
+    }
+
+    //////////////////////////////////////////
     void VertexArrayObjectOpenGL::bind()
     {
         ContextOpenGLScopeBind contextScopedBind(m_context);
@@ -239,9 +291,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    VertexBufferObjectOpenGLPtr const& VertexArrayObjectOpenGL::ensureVBO(VertexAttributeSemantic _semantic)
+    VertexArrayObjectOpenGL::VertexBufferObjectOpenGLData& VertexArrayObjectOpenGL::ensureVBO(VertexAttributeSemantic _semantic)
     {
-        VertexBufferObjectOpenGLPtr& vbo = m_vbos[(Size)_semantic];
+        VertexBufferObjectOpenGLData& vboData = m_vbos[(Size)_semantic];
+        VertexBufferObjectOpenGLPtr& vbo = vboData.vbo;
         if (!vbo)
         {
             vbo = VertexBufferObjectOpenGL::Create(
@@ -251,7 +304,7 @@ namespace Maze
                 getContextOpenGL());
         }
 
-        return vbo;
+        return vboData;
     }
 
     //////////////////////////////////////////
@@ -265,13 +318,15 @@ namespace Maze
             attribSemantic < VertexAttributeSemantic::MAX;
             attribSemantic = VertexAttributeSemantic((S32)attribSemantic + 1))
         {
-            m_vbos[(Size)attribSemantic].reset();
+            m_vbos[(Size)attribSemantic].vbo.reset();
         }
     }
 
     //////////////////////////////////////////
     void VertexArrayObjectOpenGL::notifyContextOpenGLContextWillBeDestroyed(ContextOpenGL* _contextOpenGL)
     {
+        m_cachedSubMesh = readAsSubMesh();
+
         m_glVAO = 0;
         m_glEBO = 0;
 
@@ -279,7 +334,7 @@ namespace Maze
                                         attribSemantic < VertexAttributeSemantic::MAX;
                                         attribSemantic = VertexAttributeSemantic((S32)attribSemantic + 1))
         {
-            m_vbos[(Size)attribSemantic].reset();
+            m_vbos[(Size)attribSemantic].vbo.reset();
         }
     }
 
@@ -288,9 +343,10 @@ namespace Maze
     {
         generateGLObjects();
 
-        if (m_subMeshCopy)
+        if (m_cachedSubMesh)
         {
-            setMesh(m_subMeshCopy);
+            setMesh(m_cachedSubMesh);
+            m_cachedSubMesh.reset();
         }
     }
 

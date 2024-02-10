@@ -90,6 +90,9 @@ namespace Maze
             VertexAttributeDescription _description,
             Size _verticesCount) MAZE_ABSTRACT;
 
+        //////////////////////////////////////////
+        virtual SubMeshPtr readAsSubMesh() const MAZE_ABSTRACT;
+
 
         //////////////////////////////////////////
         void setMesh(SubMeshPtr const& _subMesh);
@@ -103,10 +106,7 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void clear() { m_indicesCount = 0; }
-
-        //////////////////////////////////////////
-        inline SubMeshPtr const& getSubMeshCopy() const { return m_subMeshCopy; }
-
+        
 
 #if MAZE_DEBUG
         //////////////////////////////////////////
@@ -134,8 +134,6 @@ namespace Maze
 
         VertexAttributeType m_indicesType;
         Size m_indicesCount;
-
-        SubMeshPtr m_subMeshCopy;
 
 #if MAZE_DEBUG
         String m_debugInfo;

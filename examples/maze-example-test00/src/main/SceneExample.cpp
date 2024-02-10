@@ -198,8 +198,8 @@ namespace Maze
         m_canvas->setClearColor(ColorU32::c_zero);
 
         CanvasScalerPtr canvasScaler = canvasEntity->ensureComponent<CanvasScaler>();
-        canvasScaler->setScaleMode(CanvasScaler::ScaleMode::ScaleWithViewportSize);
-        canvasScaler->setScreenMatchMode(CanvasScaler::ScreenMatchMode::MatchWidthOrHeight);
+        canvasScaler->setScaleMode(CanvasScalerScaleMode::ScaleWithViewportSize);
+        canvasScaler->setScreenMatchMode(CanvasScalerScreenMatchMode::MatchWidthOrHeight);
         canvasScaler->setMatchWidthOrHeight(1.0f);
         canvasScaler->updateCanvasScale();
 
@@ -233,16 +233,19 @@ namespace Maze
 
         // m_world->addSystem("SomeUpdateES", SomeUpdateES, 0);
 
-        EntityPtr objectEntity = createEntity();
-        Transform3DPtr transform = objectEntity->createComponent<Transform3D>();
-        MeshRendererPtr meshRenderer = objectEntity->createComponent<MeshRenderer>();
-        meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultCubeMesh());
-        // meshRenderer->setRenderMesh("DroneLP.obj");
-        meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::SpecularDS));
-        objectEntity->ensureComponent<Name>("Obj");
-        Rotor3DPtr rotor = objectEntity->createComponent<Rotor3D>();
-        rotor->setAxis({0.0f, -0.7071f, -0.7071f });
-        rotor->setSpeed(0.2f);
+        {
+            EntityPtr objectEntity = createEntity();
+            Transform3DPtr transform = objectEntity->createComponent<Transform3D>();
+            transform->setLocalX(2.0f);
+            MeshRendererPtr meshRenderer = objectEntity->createComponent<MeshRenderer>();
+            meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultCubeMesh());
+            meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::SpecularDS));
+            objectEntity->ensureComponent<Name>("Obj");
+            Rotor3DPtr rotor = objectEntity->createComponent<Rotor3D>();
+            rotor->setAxis({ 0.0f, -0.7071f, -0.7071f });
+            rotor->setSpeed(0.2f);
+        }
+        
 
         return true;
     }

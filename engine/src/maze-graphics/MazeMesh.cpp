@@ -57,6 +57,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    MeshPtr Mesh::Create(SubMeshPtr const& _subMesh)
+    {
+        MeshPtr mesh = Create();
+        if (!mesh)
+            return nullptr;
+
+        mesh->addSubMesh(_subMesh);
+        return mesh;
+    }
+
+    //////////////////////////////////////////
     bool Mesh::init()
     {
         return true;

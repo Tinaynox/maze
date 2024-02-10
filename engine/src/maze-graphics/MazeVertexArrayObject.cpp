@@ -73,8 +73,6 @@ namespace Maze
     //////////////////////////////////////////
     void VertexArrayObject::setMesh(SubMeshPtr const& _subMesh)
     {
-        m_subMeshCopy = _subMesh->createCopy();
-
         setRenderDrawTopology(_subMesh->getRenderDrawTopology());
 
         setIndices(

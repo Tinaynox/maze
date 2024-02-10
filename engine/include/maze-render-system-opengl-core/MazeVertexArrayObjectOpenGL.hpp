@@ -61,7 +61,7 @@ namespace Maze
             MZGLuint _newVAO);
 
         //////////////////////////////////////////    
-        VertexArrayObjectOpenGLScopeBind(VertexArrayObjectOpenGL* _newVAO);
+        VertexArrayObjectOpenGLScopeBind(VertexArrayObjectOpenGL const* _newVAO);
 
         //////////////////////////////////////////
         VertexArrayObjectOpenGLScopeBind(VertexArrayObjectOpenGL const& _newVAO);
@@ -87,6 +87,16 @@ namespace Maze
     class MAZE_RENDER_SYSTEM_OPENGL_CORE_API VertexArrayObjectOpenGL
         : public VertexArrayObject
     {
+    public:
+
+        //////////////////////////////////////////
+        struct VertexBufferObjectOpenGLData
+        {
+            VertexBufferObjectOpenGLPtr vbo;
+            VertexAttributeDescription description;
+            Size verticesCount = 0u;
+        };
+
     public:
 
         //////////////////////////////////////////
@@ -117,6 +127,8 @@ namespace Maze
             VertexAttributeDescription _description,
             Size _verticesCount) MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        virtual SubMeshPtr readAsSubMesh() const MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void bind();
@@ -154,7 +166,7 @@ namespace Maze
         void deleteGLObjects();
 
         //////////////////////////////////////////
-        VertexBufferObjectOpenGLPtr const& ensureVBO(VertexAttributeSemantic _semantic);
+        VertexBufferObjectOpenGLData& ensureVBO(VertexAttributeSemantic _semantic);
     
 
         //////////////////////////////////////////
@@ -175,8 +187,9 @@ namespace Maze
         MZGLuint m_glVAO;
         MZGLuint m_glEBO;
 
+        VertexBufferObjectOpenGLData m_vbos[(Size)VertexAttributeSemantic::MAX];
 
-        VertexBufferObjectOpenGLPtr m_vbos[(Size)VertexAttributeSemantic::MAX];
+        SubMeshPtr m_cachedSubMesh;
     };
 
 } // namespace Maze
