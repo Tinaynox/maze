@@ -115,34 +115,26 @@ public class MazeActivity extends NativeActivity
         {
 
         }
+    }
+    
+    @Override
+    protected void onResume()
+    {
+        Log.v(LOG_TAG, "onResume");
 
-		//
+        super.onResume();
 
-        // setContentView(R.layout.activity_main);
+        getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
 
-        // Example of a call to a native method
-        //TextView tv = findViewById(R.id.sample_text);
-        //tv.setText(stringFromJNI());
+    @Override
+    protected void onPause()
+    {
+        Log.v(LOG_TAG, "onPause");
 
+        super.onPause();
 
-        /*
-        try
-        {
-            PackageInfo info = getPackageManager().getPackageInfo( sContext.getPackageName(), PackageManager.GET_SIGNATURES );
-            for( Signature signature : info.signatures )
-            {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-
-                String hash = android.util.Base64.encodeToString( md.digest(), android.util.Base64.DEFAULT );
-                Log.v(LOG_TAG, "hash2=" + hash );
-            }
-        }
-        catch( Exception e )
-        {
-
-        }
-        */
+        getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     @Override
