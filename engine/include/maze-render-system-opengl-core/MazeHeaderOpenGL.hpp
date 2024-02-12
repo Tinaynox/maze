@@ -87,8 +87,13 @@ typedef struct __MZGLsync *MZGLsync;
 
 typedef char MZGLchar;
 
+#if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
+typedef signed long int MZGLintptr;
+typedef signed long int MZGLsizeiptr;
+#else
 typedef ptrdiff_t MZGLintptr;
 typedef ptrdiff_t MZGLsizeiptr;
+#endif
 
 
 #ifdef __cplusplus

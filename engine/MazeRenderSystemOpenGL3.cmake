@@ -59,7 +59,8 @@ elseif((MAZE_TARGET_PLATFORM_IS_ANDROID))
 
     target_link_libraries(
             maze-render-system-opengl3
-            PUBLIC EGL)
+            PUBLIC EGL
+            PUBLIC GLESv3)
     
 endif()
     

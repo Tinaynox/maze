@@ -61,6 +61,7 @@ namespace Maze
     //////////////////////////////////////////
     bool ExtensionsOpenGL::loadGLExtensionsImpl()
     {
+        Debug::Log("loadGLExtensions started...");
         m_extensions.clear();
 
         MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
@@ -84,22 +85,24 @@ namespace Maze
             }
         }
         else
-            if (mzglGetString != nullptr)
-            {
-                CString extList = nullptr;
-                MAZE_GL_CALL(extList = (CString)mzglGetString(MAZE_GL_EXTENSIONS));
+        if (mzglGetString != nullptr)
+        {
+            CString extList = nullptr;
+            MAZE_GL_CALL(extList = (CString)mzglGetString(MAZE_GL_EXTENSIONS));
 
-                if (extList)
-                {
-                    Vector<String> words;
-                    StringHelper::SplitWords(String(extList), words);
-                    for (Size i = 0, in = words.size(); i < in; ++i)
-                        if (!words[i].empty())
-                            m_extensions.insert(std::move(words[i]));
-                }
+            if (extList)
+            {
+                Vector<String> words;
+                StringHelper::SplitWords(String(extList), words);
+                for (Size i = 0, in = words.size(); i < in; ++i)
+                    if (!words[i].empty())
+                        m_extensions.insert(std::move(words[i]));
             }
+        }
 
         saveCommonChecks();
+
+        Debug::Log("loadGLExtensions finished.");
 
         return true;
     }
@@ -237,10 +240,17 @@ namespace Maze
         m_supportFrameBufferObject = isGLES || hasGLExtension("GL_EXT_framebuffer_object");
         m_supportFrameBufferBlit = isGLES || hasGLExtension("GL_EXT_framebuffer_blit");
 
-        MZGLint supportedCompressedTextureFormatsCount = 0;
-        MAZE_GL_CALL(mzglGetIntegerv(MAZE_GL_NUM_COMPRESSED_TEXTURE_FORMATS, &supportedCompressedTextureFormatsCount));
-        m_supportedCompressedTextureFormats.resize(supportedCompressedTextureFormatsCount);
-        MAZE_GL_CALL(mzglGetIntegerv(MAZE_GL_COMPRESSED_TEXTURE_FORMATS, m_supportedCompressedTextureFormats.data()));
+        if (mzglGetIntegerv)
+        {
+            MZGLint supportedCompressedTextureFormatsCount = 0;
+            MAZE_GL_CALL(mzglGetIntegerv(MAZE_GL_NUM_COMPRESSED_TEXTURE_FORMATS, &supportedCompressedTextureFormatsCount));
+            m_supportedCompressedTextureFormats.resize(supportedCompressedTextureFormatsCount);
+            MAZE_GL_CALL(mzglGetIntegerv(MAZE_GL_COMPRESSED_TEXTURE_FORMATS, m_supportedCompressedTextureFormats.data()));
+        }
+        else
+        {
+            m_supportedCompressedTextureFormats.clear();
+        }
     }
 
 

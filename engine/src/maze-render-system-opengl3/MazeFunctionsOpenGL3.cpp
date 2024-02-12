@@ -50,21 +50,14 @@ namespace Maze
                                            : false;
     }
 
-    //////////////////////////////////////////
-    template <typename TGLFunction>
-    inline bool AssignOpenGLFunction(ContextOpenGLPtr const& _renderContext, TGLFunction*& _functionPointer, TGLFunction const* const _glFunctionPointer)
+    //////////////////////////////////////////OpenGL KHR_debug log callback enabled
+    template <typename TGLFunction, typename TGLDirectFunction>
+    inline bool AssignOpenGLFunctionDirect(ContextOpenGLPtr const& _renderContext, TGLFunction& _functionPointer, TGLDirectFunction _glFunctionPointer)
     {
-        _functionPointer = _glFunctionPointer;
+        _functionPointer = static_cast<TGLFunction>(_glFunctionPointer);
         return true;
     }
 
-    //////////////////////////////////////////
-    template <typename TGLFunction>
-    inline bool AssignOpenGLFunction(ContextOpenGLPtr const& _renderContext, TGLFunction*& _functionPointer, nullptr_t)
-    {
-        _functionPointer = nullptr;
-        return true;
-    }
 
     //////////////////////////////////////////
     bool AssignFunctionsOpenGL(ContextOpenGLPtr const& _renderContext)
@@ -74,9 +67,158 @@ namespace Maze
 
     //////////////////////////////////////////
     bool AssignFunctionsOpenGL3(ContextOpenGLPtr const& _renderContext)
-    {        
-    
-//#if (!defined(MAZE_RS_OPENGL_ES))
+    {
+        Debug::Log("AssignFunctionsOpenGL3 started...");
+
+#if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
+        AssignOpenGLFunctionDirect(_renderContext, mzglEnable, glEnable);
+        AssignOpenGLFunctionDirect(_renderContext, mzglDisable, glDisable);
+        AssignOpenGLFunctionDirect(_renderContext, mzglEnablei, nullptr);
+        AssignOpenGLFunctionDirect(_renderContext, mzglDisablei, nullptr);
+        AssignOpenGLFunctionDirect(_renderContext, mzglBlendFunc, glBlendFunc);
+        AssignOpenGLFunctionDirect(_renderContext, mzglBlendFunci, nullptr);
+        AssignOpenGLFunctionDirect(_renderContext, mzglBlendFuncSeparate, glBlendFuncSeparate);
+        AssignOpenGLFunctionDirect(_renderContext, mzglBlendFuncSeparatei, nullptr);
+        AssignOpenGLFunctionDirect(_renderContext, mzglBlendEquation, glBlendEquation);
+        AssignOpenGLFunctionDirect(_renderContext, mzglBlendEquationi, nullptr);
+        AssignOpenGLFunctionDirect(_renderContext, mzglBindRenderbuffer, glBindRenderbuffer);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGenFramebuffers, glGenFramebuffers);
+        AssignOpenGLFunctionDirect(_renderContext, mzglDiscardFramebuffer, nullptr);
+        AssignOpenGLFunctionDirect(_renderContext, mzglDeleteRenderbuffers, glDeleteRenderbuffers);
+        AssignOpenGLFunctionDirect(_renderContext, mzglFramebufferRenderbuffer, glFramebufferRenderbuffer);
+        AssignOpenGLFunctionDirect(_renderContext, mzglBindFramebuffer, glBindFramebuffer);
+        AssignOpenGLFunctionDirect(_renderContext, mzglDrawBuffers, glDrawBuffers);
+        AssignOpenGLFunctionDirect(_renderContext, mzglFramebufferTexture2D, glFramebufferTexture2D);
+        AssignOpenGLFunctionDirect(_renderContext, mzglDeleteFramebuffers, glDeleteFramebuffers);
+        AssignOpenGLFunctionDirect(_renderContext, mzglFlush, glFlush);
+        AssignOpenGLFunctionDirect(_renderContext, mzglFinish, glFinish);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGetError, glGetError);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGetFloatv, glGetFloatv);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGetIntegerv, glGetIntegerv);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGetDoublev, nullptr);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGetBufferParameteriv, glGetBufferParameteriv);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGetProgramiv, glGetProgramiv);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGetUniformLocation, glGetUniformLocation);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGetActiveUniform, glGetActiveUniform);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGetAttribLocation, glGetAttribLocation);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGetShaderiv, glGetShaderiv);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGetUniformfv, glGetUniformfv);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGetShaderInfoLog, glGetShaderInfoLog);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGetProgramInfoLog, glGetProgramInfoLog);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGetString, glGetString);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGetStringi, glGetStringi);
+        AssignOpenGLFunctionDirect(_renderContext, mzglIsEnabled, glIsEnabled);
+        AssignOpenGLFunctionDirect(_renderContext, mzglEnableVertexAttribArray, glEnableVertexAttribArray);
+        AssignOpenGLFunctionDirect(_renderContext, mzglDisableVertexAttribArray, glDisableVertexAttribArray);
+        AssignOpenGLFunctionDirect(_renderContext, mzglViewport, glViewport);
+        AssignOpenGLFunctionDirect(_renderContext, mzglScissor, glScissor);
+        AssignOpenGLFunctionDirect(_renderContext, mzglActiveTexture, glActiveTexture);
+        AssignOpenGLFunctionDirect(_renderContext, mzglBindTexture, glBindTexture);
+        AssignOpenGLFunctionDirect(_renderContext, mzglCreateProgram, glCreateProgram);
+        AssignOpenGLFunctionDirect(_renderContext, mzglCreateShader, glCreateShader);
+        AssignOpenGLFunctionDirect(_renderContext, mzglShaderSource, glShaderSource);
+        AssignOpenGLFunctionDirect(_renderContext, mzglCompileShader, glCompileShader);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUseProgram, glUseProgram);
+        AssignOpenGLFunctionDirect(_renderContext, mzglDeleteProgram, glDeleteProgram);
+        AssignOpenGLFunctionDirect(_renderContext, mzglAttachShader, glAttachShader);
+        AssignOpenGLFunctionDirect(_renderContext, mzglLinkProgram, glLinkProgram);
+        AssignOpenGLFunctionDirect(_renderContext, mzglBindAttribLocation, glBindAttribLocation);
+        AssignOpenGLFunctionDirect(_renderContext, mzglDetachShader, glDetachShader);
+        AssignOpenGLFunctionDirect(_renderContext, mzglDeleteShader, glDeleteShader);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniform1i, glUniform1i);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniform2i, glUniform2i);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniform3i, glUniform3i);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniform4i, glUniform4i);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniform1ui, glUniform1ui);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniform2ui, glUniform2ui);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniform3ui, glUniform3ui);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniform4ui, glUniform4ui);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniform1f, glUniform1f);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniform2f, glUniform2f);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniform3f, glUniform3f);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniform4f, glUniform4f);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniform1fv, glUniform1fv);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniform2fv, glUniform2fv);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniform3fv, glUniform3fv);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniform4fv, glUniform4fv);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniform1iv, glUniform1iv);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniform2iv, glUniform2iv);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniform3iv, glUniform3iv);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniform4iv, glUniform4iv);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniformMatrix3fv, glUniformMatrix3fv);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniformMatrix4fv, glUniformMatrix4fv);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGetVertexAttribiv, glGetVertexAttribiv);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGetVertexAttribPointerv, glGetVertexAttribPointerv);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGenQueries, glGenQueries);
+        AssignOpenGLFunctionDirect(_renderContext, mzglBeginQuery, glBeginQuery);
+        AssignOpenGLFunctionDirect(_renderContext, mzglEndQuery, glEndQuery);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGetQueryObjectuiv, glGetQueryObjectuiv);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGenBuffers, glGenBuffers);
+        AssignOpenGLFunctionDirect(_renderContext, mzglDeleteBuffers, glDeleteBuffers);
+        AssignOpenGLFunctionDirect(_renderContext, mzglClear, glClear);
+        AssignOpenGLFunctionDirect(_renderContext, mzglClearColor, glClearColor);
+        AssignOpenGLFunctionDirect(_renderContext, mzglClearDepth, nullptr);
+        AssignOpenGLFunctionDirect(_renderContext, mzglVertexAttribPointer, glVertexAttribPointer);
+        AssignOpenGLFunctionDirect(_renderContext, mzglBindBuffer, glBindBuffer);
+        AssignOpenGLFunctionDirect(_renderContext, mzglBufferData, glBufferData);
+        AssignOpenGLFunctionDirect(_renderContext, mzglBufferSubData, glBufferSubData);
+        AssignOpenGLFunctionDirect(_renderContext, mzglBufferStorage, nullptr);
+        AssignOpenGLFunctionDirect(_renderContext, mzglDrawElements, glDrawElements);
+        AssignOpenGLFunctionDirect(_renderContext, mzglDrawElementsInstanced, glDrawElementsInstanced);
+        AssignOpenGLFunctionDirect(_renderContext, mzglDrawElementsInstancedBaseVertex, nullptr);
+        AssignOpenGLFunctionDirect(_renderContext, mzglDrawRangeElements, glDrawRangeElements);
+        AssignOpenGLFunctionDirect(_renderContext, mzglDrawRangeElementsBaseVertex, nullptr);
+        AssignOpenGLFunctionDirect(_renderContext, mzglDrawArrays, glDrawArrays);
+        AssignOpenGLFunctionDirect(_renderContext, mzglDrawArraysInstanced, glDrawArraysInstanced);
+        AssignOpenGLFunctionDirect(_renderContext, mzglVertexAttribDivisor, glVertexAttribDivisor);
+        AssignOpenGLFunctionDirect(_renderContext, mzglMapBufferRange, glMapBufferRange);
+        AssignOpenGLFunctionDirect(_renderContext, mzglFlushMappedBufferRange, glFlushMappedBufferRange);
+        AssignOpenGLFunctionDirect(_renderContext, mzglPixelStorei, glPixelStorei);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGenTextures, glGenTextures);
+        AssignOpenGLFunctionDirect(_renderContext, mzglDeleteTextures, glDeleteTextures);
+        AssignOpenGLFunctionDirect(_renderContext, mzglIsTexture, glIsTexture);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGenerateMipmap, glGenerateMipmap);
+        AssignOpenGLFunctionDirect(_renderContext, mzglTexParameteri, glTexParameteri);
+        AssignOpenGLFunctionDirect(_renderContext, mzglCompressedTexImage2D, glCompressedTexImage2D);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGetTexLevelParameteriv, nullptr);
+        AssignOpenGLFunctionDirect(_renderContext, mzglTexImage2D, glTexImage2D);
+        AssignOpenGLFunctionDirect(_renderContext, mzglTexImage2DMultisample, nullptr);
+        AssignOpenGLFunctionDirect(_renderContext, mzglTexStorage2DMultisample, nullptr);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGetTexImage, nullptr);
+        AssignOpenGLFunctionDirect(_renderContext, mzglCheckFramebufferStatus, glCheckFramebufferStatus);
+        AssignOpenGLFunctionDirect(_renderContext, mzglBlitFramebuffer, glBlitFramebuffer);
+        AssignOpenGLFunctionDirect(_renderContext, mzglCopyTexImage2D, glCopyTexImage2D);
+        AssignOpenGLFunctionDirect(_renderContext, mzglTexSubImage2D, glTexSubImage2D);
+        AssignOpenGLFunctionDirect(_renderContext, mzglReadPixels, glReadPixels);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGenVertexArrays, glGenVertexArrays);
+        AssignOpenGLFunctionDirect(_renderContext, mzglBindVertexArray, glBindVertexArray);
+        AssignOpenGLFunctionDirect(_renderContext, mzglDeleteVertexArrays, glDeleteVertexArrays);
+        AssignOpenGLFunctionDirect(_renderContext, mzglGetUniformBlockIndex, glGetUniformBlockIndex);
+        AssignOpenGLFunctionDirect(_renderContext, mzglBindBufferBase, glBindBufferBase);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUniformBlockBinding, glUniformBlockBinding);
+        AssignOpenGLFunctionDirect(_renderContext, mzglMapBuffer, nullptr);
+        AssignOpenGLFunctionDirect(_renderContext, mzglUnmapBuffer, glUnmapBuffer);
+        AssignOpenGLFunctionDirect(_renderContext, mzglDepthFunc, glDepthFunc);
+        AssignOpenGLFunctionDirect(_renderContext, mzglDepthMask, glDepthMask);
+        AssignOpenGLFunctionDirect(_renderContext, mzglCullFace, glCullFace);
+        AssignOpenGLFunctionDirect(_renderContext, mzglFrontFace, glFrontFace);
+        AssignOpenGLFunctionDirect(_renderContext, mzglClipPlane, nullptr);
+
+        AssignOpenGLFunction(_renderContext, mzglDebugMessageControl, "glDebugMessageControl");
+        AssignOpenGLFunction(_renderContext, mzglDebugMessageCallback, "glDebugMessageCallback");
+        AssignOpenGLFunction(_renderContext, mzglDebugMessageControlKHR, "glDebugMessageControlKHR");
+        AssignOpenGLFunction(_renderContext, mzglDebugMessageInsertKHR, "glDebugMessageInsertKHR");
+        AssignOpenGLFunction(_renderContext, mzglDebugMessageCallbackKHR, "glDebugMessageCallbackKHR");
+        AssignOpenGLFunction(_renderContext, mzglGetDebugMessageLogKHR, "glGetDebugMessageLogKHR");
+        AssignOpenGLFunction(_renderContext, mzglPushDebugGroupKHR, "glPushDebugGroupKHR");
+        AssignOpenGLFunction(_renderContext, mzglPopDebugGroupKHR, "glPopDebugGroupKHR");
+        AssignOpenGLFunction(_renderContext, mzglObjectLabelKHR, "glObjectLabelKHR");
+        AssignOpenGLFunction(_renderContext, mzglGetObjectLabelKHR, "glGetObjectLabelKHR");
+        AssignOpenGLFunction(_renderContext, mzglObjectPtrLabelKHR, "glObjectPtrLabelKHR");
+        AssignOpenGLFunction(_renderContext, mzglGetObjectPtrLabelKHR, "glGetObjectPtrLabelKHR");
+        AssignOpenGLFunction(_renderContext, mzglGetPointervKHR, "glGetPointervKHR");
+        AssignOpenGLFunction(_renderContext, mzglPolygonMode, "glPolygonMode");
+#else
         AssignOpenGLFunction(_renderContext, mzglEnable, "glEnable");
         AssignOpenGLFunction(_renderContext, mzglDisable, "glDisable");
         AssignOpenGLFunction(_renderContext, mzglEnablei, "glEnablei");
@@ -162,7 +304,7 @@ namespace Maze
         AssignOpenGLFunction(_renderContext, mzglGenBuffers, "glGenBuffers");
         AssignOpenGLFunction(_renderContext, mzglDeleteBuffers, "glDeleteBuffers");
         AssignOpenGLFunction(_renderContext, mzglClear, "glClear");
-        AssignOpenGLFunction(_renderContext, mzglClearColor, "glClearColor");        
+        AssignOpenGLFunction(_renderContext, mzglClearColor, "glClearColor");
         AssignOpenGLFunction(_renderContext, mzglClearDepth, "glClearDepth");
         AssignOpenGLFunction(_renderContext, mzglVertexAttribPointer, "glVertexAttribPointer");
         AssignOpenGLFunction(_renderContext, mzglBindBuffer, "glBindBuffer");
@@ -224,10 +366,9 @@ namespace Maze
         AssignOpenGLFunction(_renderContext, mzglGetObjectPtrLabelKHR, "glGetObjectPtrLabelKHR");
         AssignOpenGLFunction(_renderContext, mzglGetPointervKHR, "glGetPointervKHR");
         AssignOpenGLFunction(_renderContext, mzglPolygonMode, "glPolygonMode");
+#endif
 
         /*
-#else
-
 #   if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
 
         AssignOpenGLFunction(_renderContext, mzglEnable, "glEnable");
@@ -528,6 +669,9 @@ namespace Maze
         
 #endif
      */
+
+        Debug::Log("AssignFunctionsOpenGL3 finished.");
+
         return true;
     }
 
