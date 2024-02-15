@@ -102,6 +102,33 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void ShaderSystem::addGlobalFeature(CString _name, CString _value)
+    {
+        MAZE_ERROR_RETURN_IF(!_name, "Name is null!");
+
+        m_globalFeatures[_name] = _value;
+        m_globalFeaturesStringDirty = true;
+    }
+
+    //////////////////////////////////////////
+    void ShaderSystem::removeGlobalFeature(CString _name)
+    {
+        auto it = m_globalFeatures.find(_name);
+        if (it != m_globalFeatures.end())
+        {
+            m_globalFeatures.erase(it);
+            m_globalFeaturesStringDirty = true;
+        }
+    }
+
+    //////////////////////////////////////////
+    String const& ShaderSystem::ensureGlobalFeaturesString()
+    {
+        updateGlobalShaderFeaturesString();
+        return m_globalFeaturesString;
+    }
+
+    //////////////////////////////////////////
     ShaderPtr const& ShaderSystem::getShaderFromLibrary(HashedCString _shaderName)
     {
         static ShaderPtr nullShader;
@@ -240,6 +267,27 @@ namespace Maze
         {
             shaderData.second.shader->reload();
         }
+    }
+
+    //////////////////////////////////////////
+    String ShaderSystem::buildGlobalShaderFeatures()
+    {
+        String result;
+
+        for (auto const& globalFeatureData : m_globalFeatures)
+            result += (String)"#define " + globalFeatureData.first + " " + globalFeatureData.second + '\n';
+
+        return result;
+    }
+
+    //////////////////////////////////////////
+    void ShaderSystem::updateGlobalShaderFeaturesString()
+    {
+        if (!m_globalFeaturesStringDirty)
+            return;
+
+        m_globalFeaturesString = buildGlobalShaderFeatures();
+        m_globalFeaturesStringDirty = false;
     }
 
 } // namespace Maze

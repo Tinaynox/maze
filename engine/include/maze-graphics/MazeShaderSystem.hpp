@@ -174,7 +174,18 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void addGlobalFeature(CString _name, CString _value = "");
+
+        //////////////////////////////////////////
+        void removeGlobalFeature(CString _name);
+
+        //////////////////////////////////////////
+        String const& ensureGlobalFeaturesString();
+
+
+        //////////////////////////////////////////
         void reloadShaders();
+
 
     public:
 
@@ -192,6 +203,12 @@ namespace Maze
         //////////////////////////////////////////
         void processSystemInited();
 
+        //////////////////////////////////////////
+        String buildGlobalShaderFeatures();
+
+        //////////////////////////////////////////
+        void updateGlobalShaderFeaturesString();
+
     protected:
         bool m_systemInited;
 
@@ -201,6 +218,10 @@ namespace Maze
         StringKeyMap<ShaderLibraryData> m_shadersLibrary;
 
         ShaderPtr m_builtinShaders[(Size)BuiltinShaderType::MAX];
+
+        StringKeyMap<String> m_globalFeatures;
+        bool m_globalFeaturesStringDirty = false;
+        String m_globalFeaturesString;
     };
 
 } // namespace Maze

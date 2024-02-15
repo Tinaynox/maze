@@ -382,7 +382,10 @@ namespace Maze
         shaderVersion += (currentContext->getModelMatricesArchitecture() == ModelMatricesArchitectureOpenGL::UniformTexture) ? "(1)" : "(0)";
 
 
-        String localShaderFeatures = buildLocalShaderFeatures();
+        String shaderFeatures = 
+            m_renderSystemRaw->getShaderSystem()->ensureGlobalFeaturesString() + '\n' +
+            buildLocalShaderFeatures();
+
 
 
         String vertexExtensionFeatures;
@@ -400,7 +403,7 @@ namespace Maze
             shaderVersion + '\n' +
             c_commonShaderHeader + '\n' +
             vertexExtensionFeatures + '\n' +
-            localShaderFeatures + '\n' +
+            shaderFeatures + '\n' +
             buildMissingShaderDefines(vertexShaderBody) + '\n' +
             vertexShaderBody;
 
@@ -444,7 +447,7 @@ namespace Maze
             shaderVersion + '\n' +
             c_commonShaderHeader + '\n' +
             fragmentExtensionFeatures + '\n' +
-            localShaderFeatures + '\n' +
+            shaderFeatures + '\n' +
             buildMissingShaderDefines(fragmentShaderBody) + '\n' +
             fragmentShaderBody;
 
