@@ -82,6 +82,7 @@ namespace Maze
         bool clearDepthFlag = true;
         bool clearSkyBoxFlag = false;
         bool drawFlag = true;
+        bool clipViewport = true;
         LightingSettingsPtr lightingSettings;
     };
 

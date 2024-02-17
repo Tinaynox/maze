@@ -52,6 +52,7 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, clearDepthFlag, true, getClearDepthFlag, setClearDepthFlag),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, clearSkyBoxFlag, false, getClearSkyBoxFlag, setClearSkyBoxFlag),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, drawFlag, true, getDrawFlag, setDrawFlag),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, clipViewport, false, getClipViewport, setClipViewport),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, renderMask, 0xFFFFFFFF, getRenderMask, setRenderMask),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, sortOrder, 0, getSortOrder, setSortOrder));
 

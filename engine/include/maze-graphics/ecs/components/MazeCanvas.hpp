@@ -132,6 +132,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline bool getClipViewport() const { return m_clipViewport; }
+
+        //////////////////////////////////////////
+        inline void setClipViewport(bool _value) { m_clipViewport = _value; }
+
+
+        //////////////////////////////////////////
         inline S32 getSortOrder() const { return m_sortOrder; }
 
         //////////////////////////////////////////
@@ -202,6 +209,12 @@ namespace Maze
         ColorU32 m_clearColor;
 
         bool m_clearDepthFlag;
+
+#if (MAZE_PLATFORM == MAZE_PLATFORM_WINDOWS)
+        bool m_clipViewport = true;
+#else
+        bool m_clipViewport = false;
+#endif
 
         S32 m_sortOrder;
 

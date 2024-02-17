@@ -144,14 +144,18 @@ namespace Maze
             if (renderTarget && renderTarget->beginDraw())
             {
                 renderQueue->clear();
-                if (canvas == rootCanvas)
+
+                if (canvas->getClipViewport())
                 {
-                    renderQueue->addPushScissorRectCommand(viewport);
-                }
-                else
-                {
-                    Rect2DF p = viewport.intersectedCopy(rootViewport);
-                    renderQueue->addPushScissorRectCommand(p);
+                    if (canvas == rootCanvas)
+                    {
+                        renderQueue->addPushScissorRectCommand(viewport);
+                    }
+                    else
+                    {
+                        Rect2DF p = viewport.intersectedCopy(rootViewport);
+                        renderQueue->addPushScissorRectCommand(p);
+                    }
                 }
 
                 bool clearColorFlag = canvas->getClearColorFlag();
@@ -314,8 +318,10 @@ namespace Maze
                             break;
                     }
                 }
-                                        
-                renderQueue->addPopScissorRectCommand();
+                                     
+                if (canvas->getClipViewport())
+                    renderQueue->addPopScissorRectCommand();
+
                 renderQueue->draw();
                     
                 renderTarget->endDraw();

@@ -137,7 +137,8 @@ namespace Maze
             if (_beginRenderQueueCallback)
                 _beginRenderQueueCallback(renderQueue);
 
-            renderQueue->addPushScissorRectCommand(_params.viewport);
+            if (_params.clipViewport)
+                renderQueue->addPushScissorRectCommand(_params.viewport);
 
             if (_params.clearColorFlag)
                 _renderTarget->setClearColor(_params.clearColor);
@@ -282,7 +283,8 @@ namespace Maze
                     _endDrawCallback(renderQueue);
             }
 
-            renderQueue->addPopScissorRectCommand();
+            if (_params.clipViewport)
+                renderQueue->addPopScissorRectCommand();
 
             if (_endRenderQueueCallback)
                 _endRenderQueueCallback(renderQueue);
@@ -334,6 +336,7 @@ namespace Maze
             params.clearDepthFlag = camera->getClearDepthFlag();
             params.clearSkyBoxFlag = camera->getClearSkyBoxFlag();
             params.drawFlag = camera->getDrawFlag();
+            params.clipViewport = camera->getClipViewport();
             params.lightingSettings = camera->getLightingSettings();
 
             eventPrePass(

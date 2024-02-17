@@ -49,6 +49,7 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, clearColorFlag, true, getClearColorFlag, setClearColorFlag),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ColorU32, clearColor, ColorU32(99, 101, 140, 255), getClearColor, setClearColor),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, clearDepthFlag, true, getClearDepthFlag, setClearDepthFlag),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, clipViewport, false, getClipViewport, setClipViewport),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(S32, sortOrder, 0, getSortOrder, setSortOrder),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(ViewportTransformPolicy, viewportTransformPolicy, ViewportTransformPolicy::ViewportToTransform, getViewportTransformPolicy, setViewportTransformPolicy));
 
