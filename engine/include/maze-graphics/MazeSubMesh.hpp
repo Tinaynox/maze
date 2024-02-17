@@ -112,13 +112,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setIndices(U32 const* _indices, Size _count);
+        void setIndices(U16 const* _indices, Size _count);
 
         //////////////////////////////////////////
         ByteBufferPtr const& allocateIndices(VertexAttributeType _type, Size _count);
 
         //////////////////////////////////////////
-        inline void setIndices(Vector<U32> const& _indices)
+        inline void setIndices(Vector<U16> const& _indices)
         {
             setIndices(&_indices[0], _indices.size());
         }
@@ -268,13 +268,13 @@ namespace Maze
         
         String m_name;
 
-        RenderDrawTopology m_renderDrawTopology;
+        RenderDrawTopology m_renderDrawTopology = RenderDrawTopology::Triangles;
 
         MeshVertexAttributeDescription m_vertexData[(Size)VertexAttributeSemantic::MAX];
 
         ByteBufferPtr m_indicesBuffer;
-        VertexAttributeType m_indicesType;
-        Size m_indicesCount;
+        VertexAttributeType m_indicesType = VertexAttributeType::U16;
+        Size m_indicesCount = 0u;
     };
 
 } // namespace Maze

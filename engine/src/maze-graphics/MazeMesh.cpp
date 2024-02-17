@@ -97,7 +97,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Mesh::setIndices(U32* _indices, Size _count)
+    void Mesh::setIndices(U16* _indices, Size _count)
     {
         SubMeshPtr subMesh = ensureSubMesh();
         subMesh->setIndices(_indices, _count);

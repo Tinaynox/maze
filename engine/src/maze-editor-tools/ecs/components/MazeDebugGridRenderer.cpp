@@ -140,7 +140,7 @@ namespace Maze
         Vector<Vec3F> positions;
         Vector<Vec3F> normals;
         Vector<Vec4F> colors;
-        Vector<U32> indices;
+        Vector<U16> indices;
 
         positions.resize(iterations * 4);
         normals.resize(iterations * 4);
@@ -193,7 +193,7 @@ namespace Maze
         S32 highlightOffsetBitangent = (S32)((startBitangentValue % S32(increment * majorLineIncrement)) / increment);
         
 
-        U32 vertex = 0;
+        U16 vertex = 0;
         U32 index = 0;
 
         for (Size i = 0; i < iterations; ++i)

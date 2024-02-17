@@ -49,7 +49,7 @@ namespace Maze
     {
         //////////////////////////////////////////
         MAZE_GRAPHICS_API bool GenerateTangentsAndBitangents(
-            U32 const* _indices,
+            U16 const* _indices,
             Size _indicesCount,
             Vec3F const* _positions,
             Vec2F const* _uvs,
@@ -61,7 +61,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_GRAPHICS_API void FlipX(
             RenderDrawTopology _drawTopology,
-            Vector<U32>& _indices,
+            Vector<U16>& _indices,
             Vector<Vec3F>* _positions,
             Vector<Vec3F>* _normals,
             Vector<Vec3F>* _tangents);

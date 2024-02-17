@@ -168,7 +168,7 @@ namespace Maze
         Vector<Vec3F> m_positions;
 
         FastVector<Vec4F> m_colors;
-        FastVector<U32> m_indices;
+        FastVector<U16> m_indices;
     };
 
 

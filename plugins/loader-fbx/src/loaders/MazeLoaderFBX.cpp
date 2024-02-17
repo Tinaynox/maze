@@ -90,7 +90,7 @@ namespace Maze
 
         ofbx::GlobalSettings const* sceneGlobalSettings = _scene->getGlobalSettings();
 
-        Vector<U32> indices;
+        Vector<U16> indices;
         Vector<Vec3F> positions;
         Vector<Vec2F> uvs;
         Vector<Vec4F> colors;

@@ -40,10 +40,6 @@ namespace Maze
     //
     //////////////////////////////////////////
     VertexArrayObject::VertexArrayObject()
-        : m_renderSystem(nullptr)
-        , m_renderDrawTopology(RenderDrawTopology::Triangles)
-        , m_indicesType(VertexAttributeType::U32)
-        , m_indicesCount(0)
     {
     }
 

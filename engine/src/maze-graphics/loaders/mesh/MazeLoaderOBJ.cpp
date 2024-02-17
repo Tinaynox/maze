@@ -257,7 +257,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void ProcessVertexTriangluation(
-        Vector<U32>& _outIndices,
+        Vector<U16>& _outIndices,
         Vector<Vec3F> const& _positions,
         Vector<Vec2F> const& _uvs,
         Vector<Vec3F> const& _normals)
@@ -272,9 +272,9 @@ namespace Maze
         // If it is a triangle no need to calculate it
         if (_positions.size() == 3)
         {
-            _outIndices.push_back(0);
-            _outIndices.push_back(1);
-            _outIndices.push_back(2);
+            _outIndices.push_back((U16)0);
+            _outIndices.push_back((U16)1);
+            _outIndices.push_back((U16)2);
             return;
         }
 
@@ -322,13 +322,13 @@ namespace Maze
                     for (S32 j = 0; j < S32(_positions.size()); ++j)
                     {
                         if (_positions[j] == currentPosition)
-                            _outIndices.push_back(j);
+                            _outIndices.push_back((U16)j);
 
                         if (_positions[j] == prevPosition)
-                            _outIndices.push_back(j);
+                            _outIndices.push_back((U16)j);
 
                         if (_positions[j] == nextPosition)
-                            _outIndices.push_back(j);
+                            _outIndices.push_back((U16)j);
                     }
 
                     positions.clear();
@@ -361,13 +361,13 @@ namespace Maze
                     for (S32 j = 0; j < S32(_positions.size()); ++j)
                     {
                         if (_positions[j] == currentPosition)
-                            _outIndices.push_back(j);
+                            _outIndices.push_back((U16)j);
 
                         if (_positions[j] == prevPosition)
-                            _outIndices.push_back(j);
+                            _outIndices.push_back((U16)j);
 
                         if (_positions[j] == nextPosition)
-                            _outIndices.push_back(j);
+                            _outIndices.push_back((U16)j);
                     }
 
                     // Included triangle 
@@ -383,13 +383,13 @@ namespace Maze
                     for (S32 j = 0; j < S32(_positions.size()); ++j)
                     {
                         if (_positions[j] == prevPosition)
-                            _outIndices.push_back(j);
+                            _outIndices.push_back((U16)j);
 
                         if (_positions[j] == nextPosition)
-                            _outIndices.push_back(j);
+                            _outIndices.push_back((U16)j);
 
                         if (_positions[j] == fourthPosition)
-                            _outIndices.push_back(j);
+                            _outIndices.push_back((U16)j);
                     }
 
                     positions.clear();
@@ -429,13 +429,13 @@ namespace Maze
                 for (S32 j = 0; j < S32(_positions.size()); ++j)
                 {
                     if (_positions[j] == currentPosition)
-                        _outIndices.push_back(j);
+                        _outIndices.push_back((U16)j);
 
                     if (_positions[j] == prevPosition)
-                        _outIndices.push_back(j);
+                        _outIndices.push_back((U16)j);
 
                     if (_positions[j] == nextPosition)
-                        _outIndices.push_back(j);
+                        _outIndices.push_back((U16)j);
                 }
 
                 // Delete currentPosition from the list
@@ -477,7 +477,7 @@ namespace Maze
         Vector<Vec2F> uvs;
         Vector<Vec3F> normals;
 
-        Vector<U32> indices;
+        Vector<U16> indices;
         Vector<Vec3F> finalPositions;
         Vector<Vec2F> finalUVs;
         Vector<Vec3F> finalNormals;
@@ -660,7 +660,7 @@ namespace Maze
                     for (Vec3F const& tempNormal : tempNormals)
                         finalNormals.push_back(tempNormal);
 
-                    Vector<U32> tempIndices;
+                    Vector<U16> tempIndices;
                     ProcessVertexTriangluation(
                         tempIndices,
                         tempPositions,
@@ -669,7 +669,7 @@ namespace Maze
 
                     for (S32 i = 0; i < S32(tempIndices.size()); i++)
                     {
-                        U32 indnum = (U32)((finalPositions.size()) - tempPositions.size()) + tempIndices[i];
+                        U16 indnum = (U16)((finalPositions.size()) - tempPositions.size()) + tempIndices[i];
                         indices.push_back(indnum);
                     }
                 }

@@ -270,7 +270,7 @@ namespace Maze
         Vector<Vec3F> normals;
         Vector<Vec4F> colors;
         Vector<Vec2F> uvs0;
-        Vector<U32> indices;
+        Vector<U16> indices;
 
         positions.resize(verticesCount);
         normals.resize(verticesCount);
@@ -401,10 +401,10 @@ namespace Maze
         {
             for (S32 c = 0; c < (S32)m_cellsCount.x; ++c)
             {
-                S32 lb = fetchVertexIndex(r, c);
-                S32 rb = fetchVertexIndex(r, c + 1);
-                S32 rt = fetchVertexIndex(r + 1, c + 1);
-                S32 lt = fetchVertexIndex(r + 1, c);
+                U16 lb = fetchVertexIndex(r, c);
+                U16 rb = fetchVertexIndex(r, c + 1);
+                U16 rt = fetchVertexIndex(r + 1, c + 1);
+                U16 lt = fetchVertexIndex(r + 1, c);
 
                 indices[index++] = lb;
                 indices[index++] = rb;

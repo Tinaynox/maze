@@ -148,12 +148,12 @@ namespace Maze
         for (S32 i = 0, in = positionsCount; i < in; ++i)
         {
             m_colors[i] = m_color.toVec4F32();
-            m_indices[i] = i;
+            m_indices[i] = (U16)i;
         }
 
         m_vao->setVerticesData((U8 const*)&m_positions[0], c_positionDescription, positionsCount);
         m_vao->setVerticesData((U8 const*)&m_colors[0], c_colorDescription, positionsCount);        
-        m_vao->setIndices((U8 const*)&m_indices[0], VertexAttributeType::U32, positionsCount);
+        m_vao->setIndices((U8 const*)&m_indices[0], VertexAttributeType::U16, positionsCount);
     }
 
     //////////////////////////////////////////

@@ -341,7 +341,7 @@ namespace Maze
         m_indices.resize(indicesCount);
         for (S32 i = 0; i < quadsCount; i++)
         {
-            S32 i2 = i * 2;
+            U16 i2 = i * 2;
             m_indices[index++] = 0 + i2;
             m_indices[index++] = 1 + i2;
             m_indices[index++] = 2 + i2;
@@ -350,7 +350,7 @@ namespace Maze
             m_indices[index++] = 2 + i2;
         }
         
-        m_vao->setIndices((U8 const*)&m_indices[0], VertexAttributeType::U32, indicesCount);
+        m_vao->setIndices((U8 const*)&m_indices[0], VertexAttributeType::U16, indicesCount);
 
     }
 

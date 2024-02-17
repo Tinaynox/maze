@@ -128,12 +128,12 @@ namespace Maze
         virtual bool init(RenderSystem* _renderSystem);    
     
     protected:
-        RenderSystem* m_renderSystem;
+        RenderSystem* m_renderSystem = nullptr;
 
-        RenderDrawTopology m_renderDrawTopology;
+        RenderDrawTopology m_renderDrawTopology = RenderDrawTopology::Triangles;
 
-        VertexAttributeType m_indicesType;
-        Size m_indicesCount;
+        VertexAttributeType m_indicesType = VertexAttributeType::U16;
+        Size m_indicesCount = 0u;
 
 #if MAZE_DEBUG
         String m_debugInfo;

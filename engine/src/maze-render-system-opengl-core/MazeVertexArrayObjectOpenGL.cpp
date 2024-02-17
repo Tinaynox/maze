@@ -240,7 +240,7 @@ namespace Maze
         if (m_glEBO == 0 || m_glVAO == 0 || m_indicesCount == 0)
             return nullptr;
 
-        MAZE_ASSERT(m_indicesType == VertexAttributeType::U32);
+        MAZE_ASSERT(m_indicesType == VertexAttributeType::U16);
 
         SubMeshPtr subMesh = SubMesh::Create();
         subMesh->setRenderDrawTopology(m_renderDrawTopology);

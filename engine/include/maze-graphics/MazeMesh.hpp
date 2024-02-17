@@ -77,7 +77,7 @@ namespace Maze
         void setRenderDrawTopology(RenderDrawTopology _renderDrawTopology);
 
         //////////////////////////////////////////
-        void setIndices(U32* _indices, Size _count);
+        void setIndices(U16* _indices, Size _count);
 
         //////////////////////////////////////////
         void setPositions(Vec3F* _positions, Size _count);

@@ -84,7 +84,7 @@ namespace Maze
                 };
                 mesh->setTexCoords(0, uvs0, 4);
 
-                Maze::U32 const indices[] = {
+                Maze::U16 const indices[] = {
                     0, 1, 3,                           // First triangle
                     1, 2, 3                            // Second triangle
                 };
@@ -143,7 +143,7 @@ namespace Maze
                 };
                 mesh->setTexCoords(0, uvs0, 4);
 
-                Maze::U32 indices[] = {
+                Maze::U16 indices[] = {
                     0, 1, 3,                           // First triangle
                     1, 2, 3                            // Second triangle
                 };
@@ -415,7 +415,7 @@ namespace Maze
             };
             mesh->setTexCoords(0, uvs0, sizeof(uvs0) / sizeof(uvs0[0]));
 
-            Maze::U32 indices[] = {
+            Maze::U16 indices[] = {
                 // LB
                 0 + 0, 1 + 0, 3 + 0,                                // First triangle
                 1 + 0, 2 + 0, 3 + 0,                                // Second triangle
@@ -633,7 +633,7 @@ namespace Maze
             };
             mesh->setTexCoords(0, uvs0, sizeof(uvs0) / sizeof(uvs0[0]));
 
-            Maze::U32 indices[] = {
+            Maze::U16 indices[] = {
                 // Front
                 0 + 0, 1 + 0, 3 + 0,
                 1 + 0, 2 + 0, 3 + 0,
@@ -725,7 +725,7 @@ namespace Maze
                 Vec3F(0.0, 0.0, 2.0)
             };
 
-            Vector<U32> indices;
+            Vector<U16> indices;
             Vector<Vec3F> positions;
             Vector<Vec3F> normals;
             Vector<Vec4F> colors;
@@ -809,12 +809,12 @@ namespace Maze
                             S32 c0 = d;
                             S32 d0 = b;
 
-                            indices.emplace_back((U32)a0);
-                            indices.emplace_back((U32)b0);
-                            indices.emplace_back((U32)d0);
-                            indices.emplace_back((U32)b0);
-                            indices.emplace_back((U32)c0);
-                            indices.emplace_back((U32)d0);
+                            indices.emplace_back((U16)a0);
+                            indices.emplace_back((U16)b0);
+                            indices.emplace_back((U16)d0);
+                            indices.emplace_back((U16)b0);
+                            indices.emplace_back((U16)c0);
+                            indices.emplace_back((U16)d0);
                         }
                         else
                         {
@@ -823,12 +823,12 @@ namespace Maze
                             S32 c0 = d;
                             S32 d0 = b;
 
-                            indices.emplace_back((U32)a0);
-                            indices.emplace_back((U32)b0);
-                            indices.emplace_back((U32)c0);
-                            indices.emplace_back((U32)a0);
-                            indices.emplace_back((U32)c0);
-                            indices.emplace_back((U32)d0);
+                            indices.emplace_back((U16)a0);
+                            indices.emplace_back((U16)b0);
+                            indices.emplace_back((U16)c0);
+                            indices.emplace_back((U16)a0);
+                            indices.emplace_back((U16)c0);
+                            indices.emplace_back((U16)d0);
                         }
                     }
                 }
@@ -896,9 +896,9 @@ namespace Maze
                             S32 b0 = a0 + 1;
                             S32 c0 = vertexIndex + v0 + divisions + 1 - j + i;
 
-                            indices.emplace_back((U32)a0);
-                            indices.emplace_back((U32)c0);
-                            indices.emplace_back((U32)b0);
+                            indices.emplace_back((U16)a0);
+                            indices.emplace_back((U16)c0);
+                            indices.emplace_back((U16)b0);
                             
 
                             if (i > 0)
@@ -907,9 +907,9 @@ namespace Maze
                                 S32 b0 = vertexIndex + v0 + divisions + 1 - j + i;
                                 S32 c0 = b0 - 1;
 
-                                indices.emplace_back((U32)a0);
-                                indices.emplace_back((U32)c0);
-                                indices.emplace_back((U32)b0);
+                                indices.emplace_back((U16)a0);
+                                indices.emplace_back((U16)c0);
+                                indices.emplace_back((U16)b0);
                             }
                         }
 
@@ -968,9 +968,9 @@ namespace Maze
                             S32 b0 = vertexIndex + v0 + divisions + 1 - j + i;
                             S32 c0 = a0 + 1;
 
-                            indices.emplace_back((U32)a0);
-                            indices.emplace_back((U32)c0);
-                            indices.emplace_back((U32)b0);
+                            indices.emplace_back((U16)a0);
+                            indices.emplace_back((U16)c0);
+                            indices.emplace_back((U16)b0);
 
                             if (i > 0)
                             {
@@ -978,9 +978,9 @@ namespace Maze
                                 S32 b0 = vertexIndex + v0 + divisions - j + i;
                                 S32 c0 = vertexIndex + v0 + divisions + 1 - j + i;
 
-                                indices.emplace_back((U32)a0);
-                                indices.emplace_back((U32)c0);
-                                indices.emplace_back((U32)b0);
+                                indices.emplace_back((U16)a0);
+                                indices.emplace_back((U16)c0);
+                                indices.emplace_back((U16)b0);
                             }
                             
                         }
@@ -1052,9 +1052,9 @@ namespace Maze
                             S32 b0 = a0 + 1;
                             S32 c0 = vertexIndex + v0 + divisions + 1 - j + i;
 
-                            indices.emplace_back((U32)a0);
-                            indices.emplace_back((U32)b0);
-                            indices.emplace_back((U32)c0);
+                            indices.emplace_back((U16)a0);
+                            indices.emplace_back((U16)b0);
+                            indices.emplace_back((U16)c0);
 
                             if (i > 0)
                             {
@@ -1062,9 +1062,9 @@ namespace Maze
                                 S32 b0 = vertexIndex + v0 + divisions + 1 - j + i;
                                 S32 c0 = b0 - 1;
 
-                                indices.emplace_back((U32)a0);
-                                indices.emplace_back((U32)b0);
-                                indices.emplace_back((U32)c0);
+                                indices.emplace_back((U16)a0);
+                                indices.emplace_back((U16)b0);
+                                indices.emplace_back((U16)c0);
                             }
                         }
 
@@ -1124,9 +1124,9 @@ namespace Maze
                             S32 b0 = vertexIndex + v0 + divisions + 1 - j + i;
                             S32 c0 = a0 + 1;
 
-                            indices.emplace_back((U32)a0);
-                            indices.emplace_back((U32)b0);
-                            indices.emplace_back((U32)c0);
+                            indices.emplace_back((U16)a0);
+                            indices.emplace_back((U16)b0);
+                            indices.emplace_back((U16)c0);
 
                             if (i > 0)
                             {
@@ -1134,9 +1134,9 @@ namespace Maze
                                 S32 b0 = vertexIndex + v0 + divisions - j + i;
                                 S32 c0 = vertexIndex + v0 + divisions + 1 - j + i;
 
-                                indices.emplace_back((U32)a0);
-                                indices.emplace_back((U32)b0);
-                                indices.emplace_back((U32)c0);
+                                indices.emplace_back((U16)a0);
+                                indices.emplace_back((U16)b0);
+                                indices.emplace_back((U16)c0);
                             }
 
                         }
@@ -1197,7 +1197,7 @@ namespace Maze
             SubMeshPtr mesh = SubMesh::Create();
             mesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
 
-            Vector<U32> indices;
+            Vector<U16> indices;
             Vector<Vec3F> positions;
             Vector<Vec3F> normals;
             Vector<Vec4F> colors;
@@ -1240,7 +1240,7 @@ namespace Maze
             uv0.resize(positions.size());
             for (Size i = 0; i < positions.size(); i++)
             {
-                indices[i] = (U32)i;
+                indices[i] = (U16)i;
                 colors[i] = _color;
                 uv0[i] = (Vec2F(positions[i].x / _radius, positions[i].y / _radius) + 1.0f) * 0.5f;
             }
@@ -1293,7 +1293,7 @@ namespace Maze
             SubMeshPtr mesh = SubMesh::Create();
             mesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
 
-            Vector<U32> indices;
+            Vector<U16> indices;
             Vector<Vec3F> positions;
             Vector<Vec3F> normals;
             Vector<Vec4F> colors;
@@ -1346,7 +1346,7 @@ namespace Maze
             uv0.resize(positions.size());
             for (Size i = 0; i < positions.size(); i++)
             {
-                indices[i] = (U32)i;
+                indices[i] = (U16)i;
                 colors[i] = _color;
                 uv0[i] = (Vec2F(positions[i].x / _radius, positions[i].y / _radius) + 1.0f) * 0.5f;
             }
@@ -1401,7 +1401,7 @@ namespace Maze
             SubMeshPtr mesh = SubMesh::Create();
             mesh->setRenderDrawTopology(RenderDrawTopology::Triangles);
 
-            Vector<U32> indices;
+            Vector<U16> indices;
             Vector<Vec3F> positions;
             Vector<Vec3F> normals;
             Vector<Vec4F> colors;
@@ -1473,10 +1473,10 @@ namespace Maze
             {
                 for (S32 j = 0; j < _sides; j++)
                 {
-                    S32 a = i * nextrow + j;
-                    S32 b = (i + 1) * nextrow + j;
-                    S32 c = i * nextrow + j + 1;
-                    S32 d = (i + 1) * nextrow + j + 1;
+                    U16 a = i * nextrow + j;
+                    U16 b = (i + 1) * nextrow + j;
+                    U16 c = i * nextrow + j + 1;
+                    U16 d = (i + 1) * nextrow + j + 1;
 
                     indices[index + 0] = a;
                     indices[index + 1] = b;
@@ -1577,7 +1577,7 @@ namespace Maze
             mesh->setTexCoords(0, uvs0, sizeof(uvs0) / sizeof(uvs0[0]));
 
 
-            Maze::U32 indices[] = {
+            Maze::U16 indices[] = {
                 0, 1,
                 2, 3,
                 4, 5,

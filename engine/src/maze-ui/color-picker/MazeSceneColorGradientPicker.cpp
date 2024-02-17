@@ -427,7 +427,7 @@ namespace Maze
                     Vector<Vec4F> colors;
                     Vector<Vec2F> uvs;
 
-                    Vector<U32> indices;
+                    Vector<U16> indices;
 
                     for (Size i = 0, in = gradientColors.size() - 1; i < in; ++i)
                     {
@@ -476,7 +476,7 @@ namespace Maze
                         uvs.emplace_back(Vec2F(uv.x, uv.y));    // Bottom left
                         uvs.emplace_back(Vec2F(uv.x, uv.w));    // Top left
 
-                        U32 quadStart = (U32)i * 4;
+                        U16 quadStart = (U16)i * 4;
                         indices.emplace_back(0 + quadStart);
                         indices.emplace_back(1 + quadStart);
                         indices.emplace_back(3 + quadStart);

@@ -46,9 +46,6 @@ namespace Maze
 
     //////////////////////////////////////////
     SubMesh::SubMesh()
-        : m_renderDrawTopology(RenderDrawTopology::Triangles)
-        , m_indicesType(VertexAttributeType::U32)
-        , m_indicesCount(0)
     {
     }
 
@@ -119,10 +116,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SubMesh::setIndices(U32 const* _indices, Size _count)
+    void SubMesh::setIndices(U16 const* _indices, Size _count)
     {
         ByteBufferPtr const& indicesBuffer = allocateIndices(
-            VertexAttributeType::U32,
+            VertexAttributeType::U16,
             _count);
         indicesBuffer->copyFrom((U8 const*)_indices, indicesBuffer->getSize());
     }

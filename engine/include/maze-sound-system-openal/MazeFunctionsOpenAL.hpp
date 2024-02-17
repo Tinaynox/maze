@@ -44,7 +44,7 @@
 
 #if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
 #   undef MAZE_DEBUG_AL
-#   define MAZE_DEBUG_AL (1)
+#   define MAZE_DEBUG_AL (0)
 #endif
 
 

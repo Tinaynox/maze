@@ -100,7 +100,7 @@ namespace Maze
             RenderMeshPtr renderMesh;
             FastVector<Vec3F> vertices;
             FastVector<Vec4F> colors;
-            FastVector<U32> indices;
+            FastVector<U16> indices;
         };
 
         //////////////////////////////////////////
