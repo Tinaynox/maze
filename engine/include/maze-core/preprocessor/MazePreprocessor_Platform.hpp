@@ -101,13 +101,20 @@
 
 
 //////////////////////////////////////////
-#if (     (MAZE_PLATFORM == MAZE_PLATFORM_OSX)\
-    ||    (MAZE_PLATFORM == MAZE_PLATFORM_IOS)\
-    ||    (MAZE_PLATFORM == MAZE_PLATFORM_LINUX)\
-    ||    (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)\
-    ||    (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN))
+#if ((MAZE_PLATFORM == MAZE_PLATFORM_OSX)             || \
+     (MAZE_PLATFORM == MAZE_PLATFORM_IOS)             || \
+     (MAZE_PLATFORM == MAZE_PLATFORM_LINUX)           || \
+     (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)         || \
+     (MAZE_PLATFORM == MAZE_PLATFORM_EMSCRIPTEN))
 #    define MAZE_PLATFORM_UNIX_FAMILY (1)
 #endif
+
+//////////////////////////////////////////
+#if ((MAZE_PLATFORM == MAZE_PLATFORM_IOS)             || \
+     (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID))
+#   define MAZE_PLATFORM_MOBILE (1)
+#endif
+
 
 
 //////////////////////////////////////////

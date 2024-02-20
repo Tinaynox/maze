@@ -1396,8 +1396,9 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TString, typename TSearchString, typename TReplaceString>
-        inline void ReplaceSubstring(TString& _s, TSearchString const& _search, TReplaceString const& _replace) noexcept
+        inline S32 ReplaceSubstring(TString& _s, TSearchString const& _search, TReplaceString const& _replace) noexcept
         {
+            S32 count = 0;
             Size searchSize = StringLength(_search);
 
             for (Size pos = 0, l = StringLength(_replace); ; pos += l)
@@ -1410,7 +1411,10 @@ namespace Maze
                 // Replace by erasing and inserting
                 _s.erase(pos, searchSize);
                 _s.insert(pos, _replace);
+                count++;
             }
+
+            return count;
         }
 
         //////////////////////////////////////////
