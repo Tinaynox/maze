@@ -516,49 +516,51 @@ namespace Maze
                     }
                 }
                 glyphData.glyph = &(getFontMaterial()->getFont()->ensureGlyphFromStorage(glyphStorageData, curChar, m_fontSize, *ttfPage));
-
-                // #TODO: Entities size here
-                /*
-                if (glyphStorageData && 
-                    glyphStorageData->type == FontGlyphStorageType::Entity &&
-                    scaleEntitiesToFit &&
-                    (-glyphData.glyph->bounds.position.y > (F32)m_fontSize))
+                if (glyphData.glyph->bounds.size.x > 0.0 && glyphData.glyph->bounds.size.y > 0.0)
                 {
-                    F32 scaleCoef = (F32)m_fontSize / (-glyphData.glyph->bounds.position.y);
-                    glyphData.glyph = &(m_fontMaterial->getFont()->getGlyphFromStorage(glyphStorageData, curChar, U32(m_fontSize * scaleCoef)));
-                }
-                */
 
-                if (m_outlineThickness)
-                    glyphData.outlineThicknessGlyph = &(getFontMaterial()->getFont()->ensureOutlinedGlyphFromStorage(
-                        glyphStorageData, curChar, m_fontSize, m_outlineThickness, *ttfOutlineThicknessPage));
+                    // #TODO: Entities size here
+                    /*
+                    if (glyphStorageData && 
+                        glyphStorageData->type == FontGlyphStorageType::Entity &&
+                        scaleEntitiesToFit &&
+                        (-glyphData.glyph->bounds.position.y > (F32)m_fontSize))
+                    {
+                        F32 scaleCoef = (F32)m_fontSize / (-glyphData.glyph->bounds.position.y);
+                        glyphData.glyph = &(m_fontMaterial->getFont()->getGlyphFromStorage(glyphStorageData, curChar, U32(m_fontSize * scaleCoef)));
+                    }
+                    */
+
+                    if (m_outlineThickness)
+                        glyphData.outlineThicknessGlyph = &(getFontMaterial()->getFont()->ensureOutlinedGlyphFromStorage(
+                            glyphStorageData, curChar, m_fontSize, m_outlineThickness, *ttfOutlineThicknessPage));
 
                 
-                if (glyphData.glyphStorageData)
-                {
-                    switch (glyphData.glyphStorageData->type)
+                    if (glyphData.glyphStorageData)
                     {
-                        case FontGlyphStorageType::TrueTypeFont:
-                            ++quadsCount;
-                            if (m_outlineThickness)
-                                ++outlineQuadsCount;
-                            break;
-                        case FontGlyphStorageType::Sprite:
-                            ++quadsCount;
-                            break;
-                        default:
-                            break;
+                        switch (glyphData.glyphStorageData->type)
+                        {
+                            case FontGlyphStorageType::TrueTypeFont:
+                                ++quadsCount;
+                                if (m_outlineThickness)
+                                    ++outlineQuadsCount;
+                                break;
+                            case FontGlyphStorageType::Sprite:
+                                ++quadsCount;
+                                break;
+                            default:
+                                break;
+                        }
                     }
-                }
-                else
-                {
-                    ++quadsCount;
-                    if (m_outlineThickness)
-                        ++outlineQuadsCount;
+                    else
+                    {
+                        ++quadsCount;
+                        if (m_outlineThickness)
+                            ++outlineQuadsCount;
+                    }
                 }
 
                 glyphs.emplace_back(glyphData);
-
                 x += glyphData.glyph->advance;
             }
             F32 totalLength = x;
@@ -669,17 +671,20 @@ namespace Maze
             }
             else
             {
-                if (m_outlineThickness)
+                if (glyphData.glyph->bounds.size.x > 0.0 && glyphData.glyph->bounds.size.y > 0.0)
                 {
-                    if (!glyphData.glyphStorageData || glyphData.glyphStorageData->type == FontGlyphStorageType::TrueTypeFont)
+                    if (m_outlineThickness)
                     {
-                        setGlyphQuad(curOutlineQuadIndex, Vec2F(glyphX, glyphY), m_outlineColor, (*glyphData.outlineThicknessGlyph));
-                        ++curOutlineQuadIndex;
+                        if (!glyphData.glyphStorageData || glyphData.glyphStorageData->type == FontGlyphStorageType::TrueTypeFont)
+                        {
+                            setGlyphQuad(curOutlineQuadIndex, Vec2F(glyphX, glyphY), m_outlineColor, (*glyphData.outlineThicknessGlyph));
+                            ++curOutlineQuadIndex;
+                        }
                     }
-                }
 
-                setGlyphQuad(outlineQuadsCount + curQuadIndex, Vec2F(glyphX, glyphY), currentGlyphColor, (*glyphData.glyph));
-                ++curQuadIndex;
+                    setGlyphQuad(outlineQuadsCount + curQuadIndex, Vec2F(glyphX, glyphY), currentGlyphColor, (*glyphData.glyph));
+                    ++curQuadIndex;
+                }
             }
 
             x += glyphData.glyph->advance;
