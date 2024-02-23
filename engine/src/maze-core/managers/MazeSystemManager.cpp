@@ -50,7 +50,6 @@ namespace Maze
 
     //////////////////////////////////////////
     SystemManager::SystemManager()
-        : m_deviceCategory(DeviceCategory::None)
     {
         s_instance = this;
     }
@@ -188,6 +187,12 @@ namespace Maze
         }
 
         finishCurrentFlag();
+    }
+
+    //////////////////////////////////////////
+    bool SystemManager::isMobileDeviceCategory() const
+    {
+        return m_deviceCategory == DeviceCategory::Phone || m_deviceCategory == DeviceCategory::Pad;
     }
 
 

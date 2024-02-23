@@ -132,6 +132,10 @@ namespace Maze
         //////////////////////////////////////////
         Vector<CString> const& getCommandLineArgumentValues(HashedCString _key);
 
+
+        //////////////////////////////////////////
+        bool isMobileDeviceCategory() const;
+
     public:
 
         //////////////////////////////////////////
@@ -158,7 +162,7 @@ namespace Maze
 
         UpdateManagerPtr m_updateManager;
 
-        DeviceCategory m_deviceCategory;
+        DeviceCategory m_deviceCategory = DeviceCategory::None;
     };
 
 
