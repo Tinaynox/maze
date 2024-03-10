@@ -68,6 +68,9 @@ namespace Maze
         virtual bool setLogFile(
             Path const& _fullPath,
             bool _logError = true);
+
+        //////////////////////////////////////////
+        inline Path getLogFilePath() const { return m_logFilePath; }
         
         //////////////////////////////////////////
         inline std::ofstream const& getLogFile() const { return m_logFile; }
@@ -76,6 +79,9 @@ namespace Maze
         virtual bool setLogErrorFile(
             Path const& _fullPath,
             bool _logError = true);
+
+        //////////////////////////////////////////
+        inline Path getLogErrorFilePath() const { return m_logErrorFilePath; }
 
         //////////////////////////////////////////
         inline std::ofstream const& getLogErrorFile() const { return m_logErrorFile; }
