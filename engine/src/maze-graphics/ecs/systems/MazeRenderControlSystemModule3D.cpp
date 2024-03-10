@@ -423,6 +423,14 @@ namespace Maze
                                 if (!material || !*material)
                                     material = &m_renderSystem->getMaterialManager()->getErrorMaterial();
 
+#if (MAZE_DEBUG)
+                                if (!(*material)->getFirstRenderPass()->getShader())
+                                {
+                                    Debug::LogError("Mesh(EID: %u): Shader is null!", _entity->getId());
+                                    return;
+                                }
+#endif
+
                                 _renderData.emplace_back(
                                     RenderUnit
                                     {
@@ -455,6 +463,14 @@ namespace Maze
                         Material const* material = _meshRenderer->getMaterial().get();
                         if (!material)
                             material = _renderTarget->getRenderSystem()->getMaterialManager()->getErrorMaterial().get();
+
+#if (MAZE_DEBUG)
+                        if (!material->getFirstRenderPass()->getShader())
+                        {
+                            Debug::LogError("Mesh Instanced(EID: %u): Shader is null!", _entity->getId());
+                            return;
+                        }
+#endif
 
                         Vector<VertexArrayObjectPtr> const& vaos = _meshRenderer->getRenderMesh()->getVertexArrayObjects();
 
@@ -527,6 +543,14 @@ namespace Maze
                                 else
                                     material = &materials[i % materials.size()].getMaterial();
 
+#if (MAZE_DEBUG)
+                                if (!(*material)->getFirstRenderPass()->getShader())
+                                {
+                                    Debug::LogError("Trail(EID: %u): Shader is null!", _entity->getId());
+                                    return;
+                                }
+#endif
+
                                 _renderData.emplace_back(
                                     RenderUnit
                                     {
@@ -572,6 +596,14 @@ namespace Maze
                                 material = &m_renderSystem->getMaterialManager()->getErrorMaterial();
                             else
                                 material = &materials[i % materials.size()].getMaterial();
+
+#if (MAZE_DEBUG)
+                            if (!(*material)->getFirstRenderPass()->getShader())
+                            {
+                                Debug::LogError("Line(EID: %u): Shader is null!", _entity->getId());
+                                return;
+                            }
+#endif
 
                             _renderData.emplace_back(
                                 RenderUnit
