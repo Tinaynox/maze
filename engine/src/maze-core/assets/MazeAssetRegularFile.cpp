@@ -187,14 +187,16 @@ namespace Maze
         fseek(fileHandler, 0, SEEK_SET);
 
         _byteBuffer.resize(size);
-
-        U8* dataPointer = _byteBuffer.getDataPointer();
-        Size totalBytesRead = 0;
-        while (!feof(fileHandler))
+        if (size > 0)
         {
-            Size bytesRead = fread(dataPointer, sizeof(U8), 1024, fileHandler);
-            totalBytesRead += bytesRead;
-            dataPointer += bytesRead;
+            U8* dataPointer = _byteBuffer.getDataPointer();
+            Size totalBytesRead = 0;
+            while (!feof(fileHandler))
+            {
+                Size bytesRead = fread(dataPointer, sizeof(U8), 1024, fileHandler);
+                totalBytesRead += bytesRead;
+                dataPointer += bytesRead;
+            }
         }
 
         fclose(fileHandler);
@@ -212,7 +214,8 @@ namespace Maze
             return false;
 
         _byteBuffer.resize(_size);
-        fread(_byteBuffer.getDataPointer(), sizeof(U8), _size, fileHandler);
+        if (_size > 0)
+            fread(_byteBuffer.getDataPointer(), sizeof(U8), _size, fileHandler);
 
         fclose(fileHandler);
 
