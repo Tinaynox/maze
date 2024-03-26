@@ -170,6 +170,8 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init(String const& _label) MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        void processDataFromUI();
 
     protected:
         PropertyDrawerMaterialPtr m_drawer;

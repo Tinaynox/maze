@@ -198,6 +198,9 @@ namespace Maze
     //////////////////////////////////////////
     void PropertyDrawerRenderMesh::setValue(RenderMeshPtr const& _value)
     {
+        if (m_renderMesh == _value)
+            return;
+
         m_renderMesh = _value;
 
         m_renderMeshIcon->getMeshRenderer()->setEnabled(m_renderMesh != nullptr);
@@ -250,6 +253,9 @@ namespace Maze
     //////////////////////////////////////////
     PropertyDrawerRenderMeshAssetRef::~PropertyDrawerRenderMeshAssetRef()
     {
+        if (m_drawer)
+            m_drawer->eventUIData.unsubscribe(this);
+
         m_drawer.reset();
     }
 
@@ -268,6 +274,7 @@ namespace Maze
             return false;
 
         m_drawer = PropertyDrawerRenderMesh::Create(_label);
+        m_drawer->eventUIData.subscribe(this, &PropertyDrawerRenderMeshAssetRef::processDataFromUI);
 
         return true;
     }
@@ -302,6 +309,12 @@ namespace Maze
     RenderMeshAssetRef PropertyDrawerRenderMeshAssetRef::getValue() const
     {
         return RenderMeshAssetRef(m_drawer->getValue());
+    }
+
+    //////////////////////////////////////////
+    void PropertyDrawerRenderMeshAssetRef::processDataFromUI()
+    {
+        eventUIData();
     }
 
 } // namespace Maze

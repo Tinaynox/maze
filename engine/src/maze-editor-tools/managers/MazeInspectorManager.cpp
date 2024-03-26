@@ -206,7 +206,7 @@ namespace Maze
         registerMetaPropertyDrawer<ColorGradient, MetaPropertyDrawerColorGradient>();
         registerMetaPropertyDrawer<AnimationCurve, MetaPropertyDrawerAnimationCurve>();
         registerMetaPropertyDrawer<MaterialPtr, MetaPropertyDrawerMaterial>();
-        registerMetaPropertyDrawer<MaterialAssetRef, MetaPropertyDrawerMaterial>();
+        registerMetaPropertyDrawer<MaterialAssetRef, MetaPropertyDrawerMaterialAssetRef>();
         registerMetaPropertyDrawer<RenderMeshPtr, MetaPropertyDrawerRenderMesh>();
         registerMetaPropertyDrawer<RenderMeshAssetRef, MetaPropertyDrawerRenderMeshAssetRef>();
         registerMetaPropertyDrawer<Texture2DPtr, MetaPropertyDrawerTexture2D>();
