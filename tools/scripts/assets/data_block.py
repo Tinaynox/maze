@@ -1,6 +1,38 @@
 from enum import Enum
 import os
 
+from typing import Tuple
+
+S32 = int
+S64 = int
+U32 = int
+U64 = int
+F32 = float
+F64 = float
+Bool = bool
+Vec4S8 = Tuple[int, int, int, int]
+Vec4U8 = Tuple[int, int, int, int]
+Vec2S32 = Tuple[int, int]
+Vec3S32 = Tuple[int, int, int]
+Vec4S32 = Tuple[int, int, int, int]
+Vec2U32 = Tuple[int, int]
+Vec3U32 = Tuple[int, int, int]
+Vec4U32 = Tuple[int, int, int, int]
+Vec2F32 = Tuple[float, float]
+Vec3F32 = Tuple[float, float, float]
+Vec4F32 = Tuple[float, float, float, float]
+Vec2B = Tuple[bool, bool]
+Vec3B = Tuple[bool, bool, bool]
+Vec4B = Tuple[bool, bool, bool, bool]
+Mat3F32 = Tuple[float, float, float,
+                float, float, float,
+                float, float, float]
+Mat4F32 = Tuple[float, float, float, float,
+                float, float, float, float,
+                float, float, float, float,
+                float, float, float, float]
+String = str
+
 
 class DataBlockParamType(Enum):
     NONE = 0
@@ -28,6 +60,80 @@ class DataBlockParamType(Enum):
     Mat3F32 = 22
     Mat4F32 = 23
     String = 24
+
+
+class DataBlockParamTypeInfo:
+    def __init__(self, name="", type=S32):
+        self.name = name
+        self.type = type
+
+
+data_block_param_type_info = {
+    DataBlockParamType.NONE: DataBlockParamTypeInfo("unknown", None),
+    DataBlockParamType.S32: DataBlockParamTypeInfo("S32", S32),
+    DataBlockParamType.S64: DataBlockParamTypeInfo("S64", S64),
+    DataBlockParamType.U32: DataBlockParamTypeInfo("U32", U32),
+    DataBlockParamType.U64: DataBlockParamTypeInfo("U64", U64),
+    DataBlockParamType.F32: DataBlockParamTypeInfo("F32", F32),
+    DataBlockParamType.F64: DataBlockParamTypeInfo("F64", F64),
+    DataBlockParamType.Bool: DataBlockParamTypeInfo("Bool", Bool),
+    DataBlockParamType.Vec4S8: DataBlockParamTypeInfo("Vec4S8", Vec4S8),
+    DataBlockParamType.Vec4U8: DataBlockParamTypeInfo("Vec4U8", Vec4U8),
+    DataBlockParamType.Vec2S32: DataBlockParamTypeInfo("Vec2S", Vec2S32),
+    DataBlockParamType.Vec3S32: DataBlockParamTypeInfo("Vec3S", Vec3S32),
+    DataBlockParamType.Vec4S32: DataBlockParamTypeInfo("Vec4S", Vec4S32),
+    DataBlockParamType.Vec2U32: DataBlockParamTypeInfo("Vec2U", Vec2U32),
+    DataBlockParamType.Vec3U32: DataBlockParamTypeInfo("Vec3U", Vec3U32),
+    DataBlockParamType.Vec4U32: DataBlockParamTypeInfo("Vec4U", Vec4U32),
+    DataBlockParamType.Vec2F32: DataBlockParamTypeInfo("Vec2F", Vec2F32),
+    DataBlockParamType.Vec3F32: DataBlockParamTypeInfo("Vec3F", Vec3F32),
+    DataBlockParamType.Vec4F32: DataBlockParamTypeInfo("Vec4F", Vec4F32),
+    DataBlockParamType.Vec2B: DataBlockParamTypeInfo("Vec2B", Vec2B),
+    DataBlockParamType.Vec3B: DataBlockParamTypeInfo("Vec3B", Vec3B),
+    DataBlockParamType.Vec4B: DataBlockParamTypeInfo("Vec4B", Vec4B),
+    DataBlockParamType.Mat3F32: DataBlockParamTypeInfo("Mat3F", Mat3F32),
+    DataBlockParamType.Mat4F32: DataBlockParamTypeInfo("Mat4F", Mat4F32),
+    DataBlockParamType.String: DataBlockParamTypeInfo("String", String)
+}
+
+data_block_param_type_from_string = {
+    "unknown": DataBlockParamType.NONE,
+    "S32": DataBlockParamType.S32,
+    "S64": DataBlockParamType.S64,
+    "U32": DataBlockParamType.U32,
+    "U64": DataBlockParamType.U64,
+    "F32": DataBlockParamType.F32,
+    "F64": DataBlockParamType.F64,
+    "Bool": DataBlockParamType.Bool,
+    "Vec4S8": DataBlockParamType.Vec4S8,
+    "Vec4U8": DataBlockParamType.Vec4U8,
+    "Vec2S32": DataBlockParamType.Vec2S32,
+    "Vec2S": DataBlockParamType.Vec2S32,
+    "Vec3S32": DataBlockParamType.Vec3S32,
+    "Vec3S": DataBlockParamType.Vec3S32,
+    "Vec4S32": DataBlockParamType.Vec4S32,
+    "Vec4S": DataBlockParamType.Vec4S32,
+    "Vec2U32": DataBlockParamType.Vec2U32,
+    "Vec2U": DataBlockParamType.Vec2U32,
+    "Vec3U32": DataBlockParamType.Vec3U32,
+    "Vec3U": DataBlockParamType.Vec3U32,
+    "Vec4U32": DataBlockParamType.Vec4U32,
+    "Vec4U": DataBlockParamType.Vec4U32,
+    "Vec2F32": DataBlockParamType.Vec2F32,
+    "Vec2F": DataBlockParamType.Vec2F32,
+    "Vec3F32": DataBlockParamType.Vec3F32,
+    "Vec3F": DataBlockParamType.Vec3F32,
+    "Vec4F32": DataBlockParamType.Vec4F32,
+    "Vec4F": DataBlockParamType.Vec4F32,
+    "Vec2B": DataBlockParamType.Vec2B,
+    "Vec3B": DataBlockParamType.Vec3B,
+    "Vec4B": DataBlockParamType.Vec4B,
+    "Mat3F32": DataBlockParamType.Mat3F32,
+    "Mat3F": DataBlockParamType.Mat3F32,
+    "Mat4F32": DataBlockParamType.Mat4F32,
+    "Mat4F": DataBlockParamType.Mat4F32,
+    "String": DataBlockParamType.String
+}
 
 
 class DataBlockParam:
@@ -193,7 +299,8 @@ class DataBlock:
     def _save_text_file(self, file, level):
         skip_next_indent = False
 
-        for param in self.params:
+        for i in range(len(self.params)):
+            param = self.params[i]
             name = param.name
             name_is_simple = _is_name_is_simple(name)
 
@@ -222,3 +329,20 @@ class DataBlock:
                 _write_complex_string(file, name)
 
             file.write(":")
+            file.write(data_block_param_type_info[param.type].name)
+            file.write(" = ")
+            file.write(param.value)
+
+            if i + 1 < len(self.params):
+                next_param_name = self.params[i + 1].name
+                if (len(next_param_name) >= 3
+                    and next_param_name.startswith(MAZE_DATA_BLOCK_COMMENT_PREFIX)
+                    and (next_param_name.startswith(MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_C)
+                         or next_param_name.startswith(MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_CPP))):
+                    file.write(" ")
+                    skip_next_indent = True
+                    continue
+                _write_eof(file)
+
+            if len(self.params) > 0 and len(self.data_blocks) > 0:
+                _write_eof(file)
