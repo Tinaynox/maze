@@ -115,44 +115,44 @@ namespace Maze
                 quoteLen = 4;
             }
             else
-if (hasLineBreak)
-{
-    quote = "\"\"\"\n\"\"\"";
-    quoteLen = 4;
-}
-else
-if (hasQuote && !hasTick)
-{
-    quote = "'";
-}
-
-// Opening quote
-_stream.write((U8 const*)quote, quoteLen);
-
-for (CString p = _value; *p; ++p)
-{
-    Char c = *p;
-
-    if (c == '~')
-        _stream.write("~~", 2);
-    else
-        if (c == quote[0] && (quoteLen == 1 || p[1] == c))
-            _stream.write(c == '\"' ? "~\"" : "~\'", 2);
-        else
-            if (c == '\r' && quoteLen == 1)
-                _stream.write("~r", 2);
+            if (hasLineBreak)
+            {
+                quote = "\"\"\"\n\"\"\"";
+                quoteLen = 4;
+            }
             else
+            if (hasQuote && !hasTick)
+            {
+                quote = "'";
+            }
+
+            // Opening quote
+            _stream.write((U8 const*)quote, quoteLen);
+
+            for (CString p = _value; *p; ++p)
+            {
+                Char c = *p;
+
+                if (c == '~')
+                    _stream.write("~~", 2);
+                else
+                if (c == quote[0] && (quoteLen == 1 || p[1] == c))
+                    _stream.write(c == '\"' ? "~\"" : "~\'", 2);
+                else
+                if (c == '\r' && quoteLen == 1)
+                    _stream.write("~r", 2);
+                else
                 if (c == '\n' && quoteLen == 1)
                     _stream.write("~n", 2);
                 else
-                    if (c == '\t')
-                        _stream.write("~t", 2);
-                    else
-                        _stream.write(&c, 1);
-}
+                if (c == '\t')
+                    _stream.write("~t", 2);
+                else
+                    _stream.write(&c, 1);
+            }
 
-// Closing quote
-_stream.write((U8 const*)(quote + quoteLen - 1), quoteLen);
+            // Closing quote
+            _stream.write((U8 const*)(quote + quoteLen - 1), quoteLen);
         };
 
         //////////////////////////////////////////
