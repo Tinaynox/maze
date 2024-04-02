@@ -383,7 +383,7 @@ namespace Maze
                 }
 
                 // Opening bracket
-                _stream.write("\n", 1);
+                writeEndOfLine();
                 if (!_compact && _level > 0)
                     writeIndent(_level * 2);
                 _stream.write("{", 1);

@@ -1,37 +1,5 @@
 from enum import Enum
-import os
-
-from typing import Tuple
-
-S32 = int
-S64 = int
-U32 = int
-U64 = int
-F32 = float
-F64 = float
-Bool = bool
-Vec4S8 = Tuple[int, int, int, int]
-Vec4U8 = Tuple[int, int, int, int]
-Vec2S32 = Tuple[int, int]
-Vec3S32 = Tuple[int, int, int]
-Vec4S32 = Tuple[int, int, int, int]
-Vec2U32 = Tuple[int, int]
-Vec3U32 = Tuple[int, int, int]
-Vec4U32 = Tuple[int, int, int, int]
-Vec2F32 = Tuple[float, float]
-Vec3F32 = Tuple[float, float, float]
-Vec4F32 = Tuple[float, float, float, float]
-Vec2B = Tuple[bool, bool]
-Vec3B = Tuple[bool, bool, bool]
-Vec4B = Tuple[bool, bool, bool, bool]
-Mat3F32 = Tuple[float, float, float,
-                float, float, float,
-                float, float, float]
-Mat4F32 = Tuple[float, float, float, float,
-                float, float, float, float,
-                float, float, float, float,
-                float, float, float, float]
-String = str
+from maze_types import *
 
 
 class DataBlockParamType(Enum):
@@ -187,12 +155,12 @@ def _is_name_is_simple(name):
     return result
 
 
-def _write_eof(file):
+def _write_eol(file):
     file.write("\n")
 
 
 def _write_indent(file, size):
-    for i in size:
+    for _ in range(size):
         file.write(' ')
 
 
@@ -249,6 +217,10 @@ def _write_complex_string(file, string):
     file.write(quote[-quote_len:])
 
 
+def _format_bool(value):
+    return "true" if value else "false"
+
+
 class DataBlock:
     def __init__(self, data_block_name=""):
         assert isinstance(data_block_name, str), "data_block_name must be an str"
@@ -259,6 +231,78 @@ class DataBlock:
     # Params
     def add_param(self, param_name, param_type, param_value):
         self.params.append(DataBlockParam(param_name, param_type, param_value))
+
+    def add_param_s32(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.S32, param_value))
+
+    def add_param_s64(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.S64, param_value))
+
+    def add_param_u32(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.U32, param_value))
+
+    def add_param_u64(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.U64, param_value))
+
+    def add_param_f32(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.F32, param_value))
+
+    def add_param_f64(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.F64, param_value))
+
+    def add_param_bool(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.Bool, param_value))
+
+    def add_param_vec4s8(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.Vec4S8, param_value))
+
+    def add_param_vec4u8(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.Vec4U8, param_value))
+
+    def add_param_vec2s32(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.Vec2S32, param_value))
+
+    def add_param_vec3s32(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.Vec3S32, param_value))
+
+    def add_param_vec4s32(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.Vec4S32, param_value))
+
+    def add_param_vec2u32(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.Vec2U32, param_value))
+
+    def add_param_vec3u32(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.Vec3U32, param_value))
+
+    def add_param_vec4u32(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.Vec4U32, param_value))
+
+    def add_param_vec2f32(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.Vec2F32, param_value))
+
+    def add_param_vec3f32(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.Vec3F32, param_value))
+
+    def add_param_vec4f32(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.Vec4F32, param_value))
+
+    def add_param_vec2b(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.Vec2B, param_value))
+
+    def add_param_vec3b(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.Vec3B, param_value))
+
+    def add_param_vec4b(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.Vec4B, param_value))
+
+    def add_param_mat3f32(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.Mat3F32, param_value))
+
+    def add_param_mat4f32(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.Mat4F32, param_value))
+
+    def add_param_string(self, param_name, param_value):
+        self.params.append(DataBlockParam(param_name, DataBlockParamType.String, param_value))
 
     def get_param(self, param_name):
         return next((x for x in self.params if x.name == param_name), None)
@@ -291,14 +335,19 @@ class DataBlock:
             default_value = DataBlock()
         return next((x for x in self.data_blocks if x.name == data_block_name), default_value)
 
+    # Utils
+    def is_empty(self):
+        return len(self.params) == 0 and len(self.data_blocks) == 0
+
     # Serialization
     def save_text_file(self, file_path):
         with open(file_path, "w") as file:
-            self._save_text_file(file, 0)
+            self.write_to_file(file, 0)
 
-    def _save_text_file(self, file, level):
+    def write_to_file(self, file, level):
         skip_next_indent = False
 
+        # Params
         for i in range(len(self.params)):
             param = self.params[i]
             name = param.name
@@ -316,11 +365,11 @@ class DataBlock:
                     file.write("/*")
                     file.write(param.value)
                     file.write("*/")
-                    _write_eof(file)
+                    _write_eol(file)
                 elif name.startswith(MAZE_DATA_BLOCK_COMMENT_ENDLINE_CPP) or name.startswith(MAZE_DATA_BLOCK_COMMENT_CPP):
                     file.write("//")
                     file.write(param.value)
-                    _write_eof(file)
+                    _write_eol(file)
                 continue
 
             if _is_name_is_simple(name):
@@ -331,18 +380,130 @@ class DataBlock:
             file.write(":")
             file.write(data_block_param_type_info[param.type].name)
             file.write(" = ")
-            file.write(param.value)
+            if param.type == DataBlockParamType.S32:
+                file.write(str(param.value))
+            elif param.type == DataBlockParamType.S64:
+                file.write(str(param.value))
+            elif param.type == DataBlockParamType.U32:
+                file.write(str(param.value))
+            elif param.type == DataBlockParamType.U64:
+                file.write(str(param.value))
+            elif param.type == DataBlockParamType.F32:
+                file.write(str(param.value))
+            elif param.type == DataBlockParamType.F64:
+                file.write(str(param.value))
+            elif param.type == DataBlockParamType.Bool:
+                file.write(_format_bool(param.value))
+            elif param.type == DataBlockParamType.Vec4S8:
+                file.write("{0}, {1}, {2}, {3}".format(param.value.x, param.value.y, param.value.z, param.value.w))
+            elif param.type == DataBlockParamType.Vec4U8:
+                file.write("{0}, {1}, {2}, {3}".format(param.value.x, param.value.y, param.value.z, param.value.w))
+            elif param.type == DataBlockParamType.Vec2S32:
+                file.write("{0}, {1}".format(param.value.x, param.value.y))
+            elif param.type == DataBlockParamType.Vec3S32:
+                file.write("{0}, {1}, {2}".format(param.value.x, param.value.y, param.value.z))
+            elif param.type == DataBlockParamType.Vec4S32:
+                file.write("{0}, {1}, {2}, {3}".format(param.value.x, param.value.y, param.value.z, param.value.w))
+            elif param.type == DataBlockParamType.Vec2U32:
+                file.write("{0}, {1}".format(param.value.x, param.value.y))
+            elif param.type == DataBlockParamType.Vec3U32:
+                file.write("{0}, {1}, {2}".format(param.value.x, param.value.y, param.value.z))
+            elif param.type == DataBlockParamType.Vec4U32:
+                file.write("{0}, {1}, {2}, {3}".format(param.value.x, param.value.y, param.value.z, param.value.w))
+            elif param.type == DataBlockParamType.Vec2F32:
+                file.write("{0}, {1}".format(param.value.x, param.value.y))
+            elif param.type == DataBlockParamType.Vec3F32:
+                file.write("{0}, {1}, {2}".format(param.value.x, param.value.y, param.value.z))
+            elif param.type == DataBlockParamType.Vec4F32:
+                file.write("{0}, {1}, {2}, {3}".format(param.value.x, param.value.y, param.value.z, param.value.w))
+            elif param.type == DataBlockParamType.Vec2B:
+                file.write("{0}, {1}".format(
+                    _format_bool(param.value.x), _format_bool(param.value.y)))
+            elif param.type == DataBlockParamType.Vec3B:
+                file.write("{0}, {1}, {2}".format(
+                    _format_bool(param.value.x), _format_bool(param.value.y),
+                    _format_bool(param.value.z)))
+            elif param.type == DataBlockParamType.Vec4B:
+                file.write("{0}, {1}, {2}, {3}".format(
+                    _format_bool(param.value.x), _format_bool(param.value.y),
+                    _format_bool(param.value.z), _format_bool(param.value.w)))
+            elif param.type == DataBlockParamType.Mat3F32:
+                file.write("[[{0}, {1}, {2}] [{3}, {4}, {5}] [{6}, {7}, {8}]]".format(
+                    param.value.m00, param.value.m01, param.value.m02,
+                    param.value.m10, param.value.m11, param.value.m12,
+                    param.value.m20, param.value.m21, param.value.m22,))
+            elif param.type == DataBlockParamType.Mat4F32:
+                file.write("[[{0}, {1}, {2}, {3}] [{4}, {5}, {6}, {7}] [{8}, {9}, {10}, {11}]]".format(
+                    param.value.m00, param.value.m01, param.value.m02, param.value.m03,
+                    param.value.m10, param.value.m11, param.value.m12, param.value.m13,
+                    param.value.m20, param.value.m21, param.value.m22, param.value.m23,
+                    param.value.m30, param.value.m31, param.value.m32, param.value.m33))
+            elif param.type == DataBlockParamType.String:
+                _write_complex_string(file, param.value)
 
             if i + 1 < len(self.params):
                 next_param_name = self.params[i + 1].name
                 if (len(next_param_name) >= 3
                     and next_param_name.startswith(MAZE_DATA_BLOCK_COMMENT_PREFIX)
-                    and (next_param_name.startswith(MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_C)
-                         or next_param_name.startswith(MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_CPP))):
+                    and (next_param_name.startswith(MAZE_DATA_BLOCK_COMMENT_ENDLINE_C)
+                         or next_param_name.startswith(MAZE_DATA_BLOCK_COMMENT_ENDLINE_CPP))):
                     file.write(" ")
                     skip_next_indent = True
                     continue
-                _write_eof(file)
+            _write_eol(file)
 
-            if len(self.params) > 0 and len(self.data_blocks) > 0:
-                _write_eof(file)
+        if len(self.params) > 0 and len(self.data_blocks) > 0:
+            _write_eol(file)
+
+        for i in range(len(self.data_blocks)):
+            data_block = self.data_blocks[i]
+            name = data_block.name
+
+            name_is_simple = _is_name_is_simple(name)
+
+            if len(name) >= 3 and name.startswith(MAZE_DATA_BLOCK_COMMENT_PREFIX):
+                if level > 0:
+                    _write_indent(file, level * 2)
+
+                if name.startswith(MAZE_DATA_BLOCK_COMMENT_C):
+                    file.write("/*")
+                    file.write(param.value)
+                    file.write("*/")
+                    _write_eol(file)
+                elif name.startswith(MAZE_DATA_BLOCK_COMMENT_CPP):
+                    file.write("//")
+                    file.write(param.value)
+                    _write_eol(file)
+                continue
+
+            # Indent
+            if level > 0:
+                _write_indent(file, level * 2)
+
+            if _is_name_is_simple(name):
+                file.write(name)
+            else:
+                _write_complex_string(file, name)
+
+            if data_block.is_empty():
+                file.write("{}")
+                _write_eol(file)
+                continue
+
+            # Opening bracket
+            _write_eol(file)
+            _write_indent(file, level * 2)
+            file.write("{")
+            _write_eol(file)
+
+            if not data_block.write_to_file(file, level + 1):
+                return False
+
+            # Closing bracket
+            _write_indent(file, level * 2)
+            file.write("}")
+            _write_eol(file)
+            
+            if i != len(self.data_blocks) - 1:
+                _write_eol(file)
+        return True
