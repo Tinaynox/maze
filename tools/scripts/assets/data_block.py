@@ -133,7 +133,7 @@ MAZE_DATA_BLOCK_COMMENT_ENDLINE_CPP = MAZE_DATA_BLOCK_COMMENT_PREFIX + MAZE_DATA
 MAZE_DATA_BLOCK_COMMENT_ENDLINE_C = MAZE_DATA_BLOCK_COMMENT_PREFIX + MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_C
 
 
-def _is_identifier_char(ch):
+def _is_data_block_identifier_char(ch):
     return (('a' <= ch <= 'z') or
             ('A' <= ch <= 'Z') or
             ('0' <= ch <= '9') or
@@ -149,7 +149,7 @@ def _is_name_is_simple(name):
         result = False
 
     for ch in name:
-        result = _is_identifier_char(ch)
+        result = _is_data_block_identifier_char(ch)
         if not result:
             break
     return result
@@ -325,7 +325,7 @@ class DataBlock:
         self.data_blocks.append(data_block)
         return data_block
 
-    def create_data_block(self, data_block_name):
+    def add_new_data_block(self, data_block_name):
         new_data_block = DataBlock(data_block_name)
         self.add_data_block(new_data_block)
         return new_data_block
@@ -366,7 +366,8 @@ class DataBlock:
                     file.write(param.value)
                     file.write("*/")
                     _write_eol(file)
-                elif name.startswith(MAZE_DATA_BLOCK_COMMENT_ENDLINE_CPP) or name.startswith(MAZE_DATA_BLOCK_COMMENT_CPP):
+                elif name.startswith(MAZE_DATA_BLOCK_COMMENT_ENDLINE_CPP) or name.startswith(
+                        MAZE_DATA_BLOCK_COMMENT_CPP):
                     file.write("//")
                     file.write(param.value)
                     _write_eol(file)
@@ -431,7 +432,7 @@ class DataBlock:
                 file.write("[[{0}, {1}, {2}] [{3}, {4}, {5}] [{6}, {7}, {8}]]".format(
                     param.value.m00, param.value.m01, param.value.m02,
                     param.value.m10, param.value.m11, param.value.m12,
-                    param.value.m20, param.value.m21, param.value.m22,))
+                    param.value.m20, param.value.m21, param.value.m22, ))
             elif param.type == DataBlockParamType.Mat4F32:
                 file.write("[[{0}, {1}, {2}, {3}] [{4}, {5}, {6}, {7}] [{8}, {9}, {10}, {11}]]".format(
                     param.value.m00, param.value.m01, param.value.m02, param.value.m03,
@@ -444,9 +445,9 @@ class DataBlock:
             if i + 1 < len(self.params):
                 next_param_name = self.params[i + 1].name
                 if (len(next_param_name) >= 3
-                    and next_param_name.startswith(MAZE_DATA_BLOCK_COMMENT_PREFIX)
-                    and (next_param_name.startswith(MAZE_DATA_BLOCK_COMMENT_ENDLINE_C)
-                         or next_param_name.startswith(MAZE_DATA_BLOCK_COMMENT_ENDLINE_CPP))):
+                        and next_param_name.startswith(MAZE_DATA_BLOCK_COMMENT_PREFIX)
+                        and (next_param_name.startswith(MAZE_DATA_BLOCK_COMMENT_ENDLINE_C)
+                             or next_param_name.startswith(MAZE_DATA_BLOCK_COMMENT_ENDLINE_CPP))):
                     file.write(" ")
                     skip_next_indent = True
                     continue
@@ -503,7 +504,486 @@ class DataBlock:
             _write_indent(file, level * 2)
             file.write("}")
             _write_eol(file)
-            
+
             if i != len(self.data_blocks) - 1:
                 _write_eol(file)
         return True
+
+    @staticmethod
+    def load_text_file(file_path):
+        data_block_text_parser = DataBlockTextParser()
+        return data_block_text_parser.parse(file_path)
+
+
+class DataBlockTextParser:
+    class Statement(Enum):
+        NONE = 0
+        PARAM = 1
+        BLOCK = 2
+
+    class PendingComment:
+        def __init__(self, start_offset=0, end_offset=0, cpp_style=False):
+            self.start_offset = start_offset
+            self.end_offset = end_offset
+            self.cpp_style = cpp_style
+
+    def __init__(self):
+        self.file = None
+        self.file_size = 0
+        self.current_line = 1
+        self.current_line_offset = 0
+        self.was_new_line_after_statement = False
+        self.last_statement = DataBlockTextParser.Statement.NONE
+        self.pending_comments = []
+        self.data_block = None
+
+    def parse(self, file_path):
+        data_block = DataBlock()
+
+        with open(file_path, "r") as file:
+            self.file = file
+
+            current_pos = self.file.tell()
+            self.file.seek(0, 2)
+            self.file_size = file.tell()
+            self.file.seek(current_pos)
+            self._parse_data_block(data_block, True)
+
+        return data_block
+
+    def _parse_data_block(self, data_block, is_topmost):
+
+        self.data_block = data_block
+
+        while True:
+            if not self._skip_white(True):
+                return False
+
+            if self._is_eof():
+                if not is_topmost:
+                    self._process_syntax_error("Unexpected EOF")
+                    return False
+                break
+
+            if self._read_char_no_rewind() == '}':
+                if is_topmost:
+                    self._process_syntax_error("Unexpected '}' in topmost block")
+                    return False
+                self._rewind(1)
+
+                self._flush_pending_comments(data_block, False)
+                break
+
+            start_offset = self.file.tell()
+            name_text = self._parse_identifier()
+            if name_text == "":
+                self._process_syntax_error("Expected identifier")
+                return False
+
+            if not self._skip_white():
+                return False
+
+            if self._is_eof():
+                self._process_syntax_error("Unexpected EOF")
+                return False
+
+            if self._read_char_no_rewind() == '{':
+                self._rewind(1)
+                self.was_new_line_after_statement = False
+                self.last_statement = DataBlockTextParser.Statement.NONE
+                self._flush_pending_comments(data_block, False)
+
+                new_block = data_block.add_new_data_block(name_text)
+                if not self._parse_data_block(new_block, False):
+                    return False
+
+                self.last_statement = DataBlockTextParser.Statement.NONE
+            elif self._read_char_no_rewind() == ':':
+                self._flush_pending_comments(data_block, True)
+
+                self._rewind(1)
+                type_name_text = self._parse_identifier()
+                if type_name_text != "":
+                    self._process_syntax_error("Expected type identifier")
+                    return False
+
+                param_type = data_block_param_type_from_string[type_name_text]
+                if param_type is None or param_type == DataBlockParamType.NONE:
+                    self._process_syntax_error("Unknown type")
+                    return False
+
+                if not self._skip_white():
+                    return False
+
+                if self._is_eof():
+                    self._process_syntax_error("Unexpected EOF")
+                    return False
+
+                if self._read_char() != '=':
+                    self._process_syntax_error("Expected '='")
+                    return False
+
+                if not self._skip_white():
+                    return False
+
+                next_ch = self._read_char_no_rewind()
+                if next_ch == '\r' or next_ch == '\n':
+                    self._process_syntax_error("Unexpected CR/LF")
+                    return False
+
+                if self._is_eof():
+                    self._process_syntax_error("Unexpected EOF")
+                    return False
+
+                value_text = self._parse_value()
+                if value_text == "":
+                    return False
+
+                data_block.add_param(name_text, param_type, value_text)
+
+                self.was_new_line_after_statement = False
+                self.last_statement = DataBlockTextParser.Statement.PARAM
+            elif self._read_char_no_rewind() == '=':
+                print('NOT IMPLEMENTED')
+            else:
+                self._process_syntax_error("Syntax error!")
+                return False
+
+        return True
+
+
+    def _skip_white(self, allow_crlf=True, track_new_line_after_param=False):
+        while True:
+            if self._is_eof():
+                break
+            ch = self._read_char()
+            if ch == ' ' or ch == '\t' or ch == '\x1A' or ch == 0:
+                continue
+
+            if allow_crlf:
+                if ch == '\r':
+                    next_ch = self._read_char_no_rewind()
+                    if not self._is_eof() and next_ch == '\n':
+                        self._rewind(1)
+                        self.inc_current_line()
+                        if track_new_line_after_param:
+                            self.was_new_line_after_statement = True
+                    continue
+                elif ch == '\n':
+                    self.inc_current_line()
+                    if track_new_line_after_param:
+                        self.was_new_line_after_statement = True
+                    continue
+
+            if ch == '/':
+                if not self._is_eof():
+                    next_ch = self._read_char()
+                    if next_ch == '/':
+                        cpp_comment_start_offset = self.file.tell()
+
+                        while not self._is_eof():
+                            next_next_ch = self._read_char()
+                            if next_next_ch == '\r' or next_next_ch == '\n':
+                                break
+
+                        if self.was_new_line_after_statement or self.last_statement == DataBlockTextParser.Statement.NONE:
+                            self.pending_comments.append(DataBlockTextParser.PendingComment(
+                                cpp_comment_start_offset, self.file.tell() - 1, True))
+                        elif self.last_statement == DataBlockTextParser.Statement.PARAM:
+                            self.data_block.add_param_string(
+                                MAZE_DATA_BLOCK_COMMENT_ENDLINE_CPP,
+                                self._read_text(
+                                    cpp_comment_start_offset,
+                                    self.file.tell() - cpp_comment_start_offset - 1))
+                        else:
+                            self.data_block.add_new_data_block(
+                                MAZE_DATA_BLOCK_COMMENT_ENDLINE_CPP).add_param_string(
+                                MAZE_DATA_BLOCK_COMMENT_ENDLINE_CPP,
+                                self._read_text(
+                                    cpp_comment_start_offset,
+                                    self.file.tell() - cpp_comment_start_offset - 1))
+
+                        continue
+                    elif next_ch == '*':
+                        c_comment_start_offset = self.file.tell()
+                        count = 1
+                        while self._can_read_size(2):
+                            next_next_chars = self._read_text_no_rewind(2)
+
+                            if next_next_chars[0] == '/' and next_next_chars[1] == '*':
+                                self._rewind(2)
+                                ++count
+                            elif next_next_chars[0] == '*' and next_next_chars[1] == '/':
+                                self._rewind(2)
+                                if --count <= 0:
+                                    break
+                            else:
+                                self._rewind(1)
+
+                        if count > 0 and not self._can_read_size(2):
+                            self._process_syntax_error("Unexpected EOF inside comment")
+                            return False
+
+                        if self.was_new_line_after_statement or self.last_statement == DataBlockTextParser.Statement.NONE:
+                            self.pending_comments.append(DataBlockTextParser.PendingComment(
+                                c_comment_start_offset, self.file.tell() - 2, False))
+                        elif self.last_statement == DataBlockTextParser.Statement.PARAM:
+                            self.data_block.add_param_string(
+                                MAZE_DATA_BLOCK_COMMENT_ENDLINE_C,
+                                self._read_text(
+                                    c_comment_start_offset,
+                                    self.file.tell() - c_comment_start_offset - 2))
+                        else:
+                            self.data_block.add_new_data_block(
+                                MAZE_DATA_BLOCK_COMMENT_ENDLINE_C).add_param_string(
+                                MAZE_DATA_BLOCK_COMMENT_ENDLINE_C,
+                                self._read_text(
+                                    c_comment_start_offset,
+                                    self.file.tell() - c_comment_start_offset - 1))
+
+                        continue
+                    else:
+                        self._rewind(-1)
+
+                self._rewind(-1)
+                break
+            else:
+                self._rewind(-1)
+                break
+        return True
+
+    def _parse_identifier(self):
+        while True:
+            if not self._skip_white():
+                return ""
+
+            if self._is_eof():
+                break
+
+            ch = self._read_char_no_rewind()
+            if _is_data_block_identifier_char(ch):
+                identifier_offset = self.file.tell()
+                self._rewind(1)
+                while not self._is_eof():
+                    if not _is_data_block_identifier_char(self._read_char_no_rewind()):
+                        break
+                    self._rewind(1)
+
+                identifier_length = self.file.tell() - identifier_offset
+
+                return self._read_text(identifier_offset, identifier_length)
+            elif ch == '"' or ch == '\'':
+                return self._parse_value()
+            else:
+                break
+        return ""
+
+    def _parse_value(self):
+        value = ""
+
+        multi_line_string = False
+
+        quot_ch = 0
+
+        if self._read_char_no_rewind() == '"' or self._read_char_no_rewind() == '\'':
+            quot_ch = self._read_char()
+
+            two_ch = self._read_text_no_rewind(2)
+
+            # Triple quot (MultiLine value prefix like '''\n )
+            if two_ch[0] == quot_ch and two_ch[1] == quot_ch:
+                multi_line_string = True
+                self._rewind(2)
+
+                # Skip first \n (start) of multiline
+                offs = self.file.tell()
+                ch = self._read_char()
+                eol_found = False
+                while ch != 0:
+                    if ch == '\n':
+                        eol_found = True
+                        break
+                    elif ch != ' ' or ch != '\r' or ch != '\t':
+                        break
+
+                if not eol_found:
+                    self.file.seek(offs)
+        multi_line_comment_offset = -1
+        rewind_to_offset = -1
+
+        while True:
+            if self._is_eof():
+                self._process_syntax_error("Unexpected EOF")
+                return ""
+
+            ch = self._read_char_no_rewind(0)
+
+            # MultiLine comment
+            if multi_line_comment_offset != -1:
+                ch2 = self._read_char_no_rewind(1)
+                if ch == '\r':
+                    if ch2 == '\n':
+                        self._rewind(2)
+                        self._inc_current_line()
+                    rewind_to_offset = multi_line_comment_offset
+                    break
+                elif ch == '\n':
+                    self._rewind(1)
+                    self._inc_current_line()
+                    rewind_to_offset = multi_line_comment_offset
+                    break
+                elif ch == 0:
+                    self._process_syntax_error("Unclosed comment")
+                    return ""
+                elif ch == '*' and ch2 == '/':
+                    self._rewind(2)
+                    ch = self._read_char_no_rewind()
+                    if ch == '\r' or ch == '\n':
+                        rewind_to_offset = multi_line_comment_offset
+                    multi_line_comment_offset = -1
+                else:
+                    self._rewind(1)
+                    continue
+
+            if quot_ch != 0:
+                if ch == quot_ch and not multi_line_string:
+                    self._rewind(1)
+                    if not self._skip_white():
+                        return ""
+                    if self._read_char_no_rewind() == ';':
+                        self._rewind(1)
+                    break
+                elif (ch == quot_ch and multi_line_string and
+                      self._read_char_no_rewind(1) == quot_ch and
+                      self._read_char_no_rewind(2) == quot_ch):
+                    # Crop last multiline \n (end)
+                    if len(value) > 1 and value[len(value) - 1] == '\n':
+                        value.erase(len(value) - 1, 1)
+                    self._rewind(3)
+
+                    if not self._skip_white():
+                        return ""
+                    if self._read_char_no_rewind() == ';':
+                        self._rewind(1)
+                    break
+                elif ((ch == '\r' or ch == '\n') and not multi_line_string) or ch == 0:
+                    self._process_syntax_error("Unclosed string")
+                    return ""
+                elif ch == '~':
+                    self._rewind(1)
+
+                    if self._is_eof():
+                        self._process_syntax_error("Unclosed string")
+                        return ""
+
+                    ch = self._read_char_no_rewind()
+                    if ch == 'r':
+                        ch = '\r'
+                    elif ch == 'n':
+                        ch = '\n'
+                    elif ch == 't':
+                        ch = '\t'
+                elif ch == '\r':
+                    self._rewind(1)
+                    continue
+            else:
+                if ch == ';' or ch == '\r' or ch == '\n' or ch == 0 or ch == '}':
+                    if ch == ';':
+                        self._rewind(1)
+                    break
+                elif ch == '/':
+                    next_ch = self._read_char_no_rewind(1)
+
+                    if next_ch == '/':
+                        break
+                    elif next_ch == '*':
+                        multi_line_comment_offset = self.file.tell() - 1
+                        self._rewind(2)
+                        continue
+
+            value = value + ch
+            self._rewind(1)
+
+        if multi_line_comment_offset != -1:
+            while True:
+                ch = self._read_char_no_rewind()
+                if ch == 0:
+                    self._process_syntax_error("Unclosed string")
+                    return ""
+                elif ch == '\r' and self._read_char_no_rewind(1) == '\n':
+                    self._rewind(1)
+                    self._inc_current_line()
+                elif ch == '\n':
+                    self._inc_current_line()
+                elif ch == '*' and self._read_char_no_rewind(1) == '/':
+                    self._rewind(2)
+                    multi_line_comment_offset = -1
+
+                self._rewind(1)
+
+        if quot_ch == 0:
+            i = len(value) - 1
+            while i >= 0:
+                if value[i] != ' ' and value[i] != '\t':
+                    break
+                i = i - 1
+            i = i + 1
+            if i < len(value):
+                value = value[:i]
+
+        if rewind_to_offset != -1:
+            self.file.seek(rewind_to_offset)
+        return value
+
+    def _flush_pending_comments(self, data_block, to_params):
+        for pending_comment in self.pending_comments:
+            comment_key = MAZE_DATA_BLOCK_COMMENT_CPP if pending_comment.cpp_style else MAZE_DATA_BLOCK_COMMENT_C
+
+            comment_text = self._read_text(
+                        pending_comment.start_offset, pending_comment.start_offset - pending_comment.end_offset)
+
+            if to_params:
+                data_block.add_param_string(comment_key, comment_text)
+            else:
+                data_block.add_new_data_block(comment_key).add_param_string(comment_key, comment_text)
+        self.pending_comments.clear()
+
+    def _process_syntax_error(self, text):
+        print("{0} (Line: {1})".format(text, self.current_line))
+        return False
+
+    def _inc_current_line(self):
+        self.current_line = self.current_line + 1
+        self.current_line_offset = self.file.tell()
+
+    def _read_char(self):
+        return self.file.read(1)
+
+    def _read_char_no_rewind(self, index=0):
+        current_pos = self.file.tell()
+        text = self.file.read(3)
+        self.file.seek(current_pos)
+        return text[index]
+
+    def _read_text_no_rewind(self, size):
+        current_pos = self.file.tell()
+        text = self.file.read(size)
+        self.file.seek(current_pos)
+        return text
+
+    def _read_text(self, from_pos, size):
+        current_pos = self.file.tell()
+        self.file.seek(from_pos)
+        text = self.file.read(size)
+        self.file.seek(current_pos)
+        return text
+
+    def _can_read_size(self, size):
+        return (self.file_size - self.file.tell()) >= size
+
+    def _rewind(self, shift):
+        current_pos = self.file.tell()
+        self.file.seek(current_pos + shift)
+
+    def _is_eof(self):
+        return self.file.tell() == self.file_size

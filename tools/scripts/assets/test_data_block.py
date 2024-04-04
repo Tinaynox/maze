@@ -44,9 +44,9 @@ if __name__ == '__main__':
     testBlock.add_param_f64("f64Value", f64Value)
     testBlock.add_param_string(data_block.MAZE_DATA_BLOCK_COMMENT_ENDLINE_CPP, " F64")
 
-    subBlock = testBlock.create_data_block("subBlock")
+    subBlock = testBlock.add_new_data_block("subBlock")
 
-    vectorsBlock = subBlock.create_data_block("vectors")
+    vectorsBlock = subBlock.add_new_data_block("vectors")
     vectorsBlock.add_param_string(data_block.MAZE_DATA_BLOCK_COMMENT_C, " Vectors ")
     vectorsBlock.add_param_vec2b("vec2bValue", vec2bValue)
     vectorsBlock.add_param_vec3b("vec3bValue", vec3bValue)
@@ -61,13 +61,16 @@ if __name__ == '__main__':
     vectorsBlock.add_param_vec3f32("vec3fValue", vec3fValue)
     vectorsBlock.add_param_vec4f32("vec4fValue", vec4fValue)
 
-    stringsBlock = subBlock.create_data_block("strings")
+    stringsBlock = subBlock.add_new_data_block("strings")
     stringsBlock.add_param_string(data_block.MAZE_DATA_BLOCK_COMMENT_C, " Strings ")
     stringsBlock.add_param_string("stringValue", stringValue)
     stringsBlock.add_param_string("stringValue2", stringValue2)
 
-
     current_directory = os.getcwd()
     print("Current working directory:", current_directory)
 
-    testBlock.save_text_file("E:/1/1/123.mzdata")
+    testTextDataBlockFile = "E:/1/1/123.mzdata"
+    testBlock.save_text_file(testTextDataBlockFile)
+
+    readTestBlock = data_block.DataBlock.load_text_file(testTextDataBlockFile)
+    readTestBlock.save_text_file("E:/1/1/456.mzdata")

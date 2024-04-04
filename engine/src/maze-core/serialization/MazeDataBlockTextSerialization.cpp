@@ -481,14 +481,15 @@ namespace Maze
     //////////////////////////////////////////
     bool DataBlockTextParser::parse(DataBlock& _dataBlock)
     {
-        m_dataBlock = &_dataBlock;
-        m_dataBlock->clear();
-        return parseDataBlock(*m_dataBlock, true);
+        _dataBlock.clear();
+        return parseDataBlock(_dataBlock, true);
     }
 
     //////////////////////////////////////////
     bool DataBlockTextParser::parseDataBlock(DataBlock& _dataBlock, Bool _isTopmost)
     {
+        m_dataBlock = &_dataBlock;
+
         String nameText;
         String typeNameText;
         String valueText;
@@ -542,13 +543,11 @@ namespace Maze
             if (readCharNoRewind() == '{')
             {
                 m_readStream.rewind(1);
-                DataBlock* newBlock = nullptr;
-
                 m_wasNewLineAfterStatement = false;
                 m_lastStatement = Statement::None;
                 flushPendingComments(_dataBlock, false);
 
-                newBlock = _dataBlock.addNewDataBlock(HashedString(nameText));
+                DataBlock* newBlock = _dataBlock.addNewDataBlock(HashedString(nameText));
 
                 if (newBlock)
                 {
@@ -589,7 +588,7 @@ namespace Maze
 
                 if (readChar() != '=')
                 {
-                    processSyntaxError("Expected '-'");
+                    processSyntaxError("Expected '='");
                     return false;
                 }
 
@@ -598,7 +597,7 @@ namespace Maze
 
                 if (strchr("\r\n", readCharNoRewind()))
                 {
-                    processSyntaxError("unexpected CR/LF");
+                    processSyntaxError("Unexpected CR/LF");
                     return false;
                 }
 
@@ -705,14 +704,14 @@ namespace Maze
                         if (m_lastStatement == Statement::Param)
                         {
                             m_dataBlock->addString(
-                                MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_CPP),
+                                MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_CPP),
                                 String(m_readStream.getData() + cppCommentStartOffset, m_readStream.getData() + m_readStream.getOffset() - 1));
                         }
                         else
                         {
                             m_dataBlock->addNewDataBlock(
-                                MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_CPP))->addString(
-                                    MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_CPP),
+                                MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_CPP))->addString(
+                                    MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_CPP),
                                     String(m_readStream.getData() + cppCommentStartOffset, m_readStream.getData() + m_readStream.getOffset() - 1));
                         }
 
@@ -758,14 +757,14 @@ namespace Maze
                         if (m_lastStatement == Statement::Param)
                         {
                             m_dataBlock->addString(
-                                MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_C),
+                                MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_C),
                                 String(m_readStream.getData() + cCommentStartOffset, m_readStream.getData() + m_readStream.getOffset() - 2));
                         }
                         else
                         {
                             m_dataBlock->addNewDataBlock(
-                                MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_C))->addString(
-                                    MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_SUFFIX_C),
+                                MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_C))->addString(
+                                    MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_C),
                                     String(m_readStream.getData() + cCommentStartOffset, m_readStream.getData() + m_readStream.getOffset() - 2));
                         }
 
@@ -885,8 +884,7 @@ namespace Maze
             // MultiLine comment
             if (multiLineCommentOffset != Size(-1))
             {
-                Char ch2 = 0;
-                m_readStream.readNoRewind(ch2);
+                Char ch2 = readCharNoRewind(1);
 
                 // CRLF
                 if (ch == '\r')

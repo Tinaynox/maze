@@ -146,7 +146,7 @@ namespace Maze
             Size _size);
 
     private:
-        DataBlock* m_dataBlock;
+        DataBlock* m_dataBlock = nullptr;
         ByteBufferReadStream m_readStream;
         S32 m_currentLine = 1;
         Size m_currentLineOffset = 0;
