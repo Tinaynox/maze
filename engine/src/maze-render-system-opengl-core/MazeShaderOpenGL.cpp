@@ -341,19 +341,7 @@ namespace Maze
 
 
 
-        String version;
-        
-        /*
-        if (currentContext->getConfig().flags & ContextOpenGLFlags::EmbeddedSystems)
-        {
-            version = StringHelper::ToString(300); // <- #TODO:
-        }
-        else
-        {
-            version = StringHelper::ToString(330); // <- #TODO:
-        }
-        */
-        version = StringHelper::ToString(shaderSystem->castRaw<ShaderSystemOpenGL>()->getGLSLVersion());
+        String version = StringHelper::ToString(shaderSystem->castRaw<ShaderSystemOpenGL>()->getGLSLVersion());
 
         String shaderVersion = "#version " + version;
         

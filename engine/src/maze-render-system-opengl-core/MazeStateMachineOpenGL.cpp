@@ -1049,12 +1049,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void StateMachineOpenGL::processContextWillBeDestroyed()
-    {
-        // #TODO: Remove
-    }
-
-    //////////////////////////////////////////
     void StateMachineOpenGL::notifyTextureDestroyed(ClassUID _eventUID, Event* _event)
     {
         if (ClassInfo<TextureDestroyedEvent>::UID() == _eventUID)

@@ -197,9 +197,6 @@ namespace Maze
     //////////////////////////////////////////
     void PropertyDrawerMaterial::setValue(MaterialPtr const& _value)
     {
-        if (m_material == _value)
-            return;
-
         m_material = _value;
 
         m_materialIcon->getMeshRenderer()->setEnabled(m_material != nullptr);

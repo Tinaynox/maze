@@ -168,10 +168,9 @@ namespace Maze
         m_localTransform = _localTransform;
 
         m_localPosition = m_localTransform.getAffineTranslation();
-        //Vec3F eulerAngles = m_localTransform.getAffineRotationEulerAngles();
         Vec3F eulerAngles = Quaternion::GetEuler(m_localTransform);
         m_localRotation.setEulerAngles(eulerAngles);
-        m_localScale = m_localTransform.getAffineScaleSignless();  // #TODO: Signed scale
+        m_localScale = m_localTransform.getAffineScaleSignless();
 
         m_flags &= ~Flags::LocalTransformDirty;
         dirtyWorldTransform();

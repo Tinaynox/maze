@@ -198,9 +198,6 @@ namespace Maze
     //////////////////////////////////////////
     void PropertyDrawerRenderMesh::setValue(RenderMeshPtr const& _value)
     {
-        if (m_renderMesh == _value)
-            return;
-
         m_renderMesh = _value;
 
         m_renderMeshIcon->getMeshRenderer()->setEnabled(m_renderMesh != nullptr);

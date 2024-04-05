@@ -224,8 +224,6 @@ namespace Maze
     //////////////////////////////////////////
     RenderMeshPtr RenderMesh::FromString(String const& _string)
     {
-        // #TODO: REWORK this function!
-
         if (_string.empty())
             return nullptr;
 

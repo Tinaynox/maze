@@ -60,9 +60,10 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename UValue>
-        inline ClassUID GetVectorElementUID(Vector<UValue> const& _vector)
+        inline ClassUID GetVectorElementUID(Vector<UValue> const&)
         {
-            return ClassInfo<UValue>::UID();
+            static ClassUID const s_elementUID = ClassInfo<UValue>::UID();
+            return s_elementUID;
         }
         
 

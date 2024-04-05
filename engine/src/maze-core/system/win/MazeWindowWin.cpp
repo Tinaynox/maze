@@ -644,42 +644,17 @@ namespace Maze
 
             case WM_CREATE:
             {
-                // #TODO:
-                /*
-                InputEventWindowData event;
-                event.type = InputEventWindowType::Create;
-                event.handle = getHandle();
-                inputManager->generateInputEventWindow(event);
-                */
                 break;
             }
 
             case WM_CLOSE:
             {
                 close();
-                // #TODO:
-                /*
-                close();
-
-                InputEventWindowData event;
-                event.type = InputEventWindowType::Close;
-                event.handle = getHandle();
-                inputManager->generateInputEventWindow(event);
-                */
                 return false;
             }
 
             case WM_DESTROY:
             {
-                // #TODO:
-                /*
-                close();
-
-                InputEventWindowData event;
-                event.type = InputEventWindowType::Destroy;
-                event.handle = getHandle();
-                inputManager->generateInputEventWindow(event);
-                */
                 break;
             }
 

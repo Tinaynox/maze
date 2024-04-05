@@ -775,7 +775,6 @@ namespace Maze
     MAZE_GRAPHICS_API bool IsOBJFile(
         AssetFile const& _file)
     {
-        // #TODO:
         return _file.getExtension() == "obj";
     }
 
@@ -783,8 +782,6 @@ namespace Maze
     MAZE_GRAPHICS_API bool IsOBJFile(
         ByteBuffer const& _fileData)
     {
-        // #TODO:
-        MAZE_NOT_IMPLEMENTED;
         return false;
     }
 

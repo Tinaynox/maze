@@ -1056,11 +1056,7 @@ namespace Maze
         template <typename TVector>
         inline typename ::std::enable_if<(IsVector<TVector>::value), ClassUID>::type getVectorElementClassUIDImpl(MetaInstance const& _instance) const
         {
-            TObject* obj = castMetaInstanceObject(_instance);
-            TValue value = (obj->*m_getter)();
-
-            // #TODO: compile-time ClassUID
-            return StdHelper::GetVectorElementUID(value);
+            return ClassInfo<typename TVector::value_type>::UID();
         }
 
         //////////////////////////////////////////

@@ -309,9 +309,6 @@ namespace Maze
         if (!m_ownsOpenGLContext)
             return;
 
-        if (m_stateMachine)
-            m_stateMachine->processContextWillBeDestroyed();
-
         m_modelMatricesArchitecture = ModelMatricesArchitectureOpenGL::None;
 
         eventGLContextWillBeDestroyed(this);

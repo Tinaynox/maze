@@ -758,7 +758,7 @@ namespace Maze
 
         MAZE_GL_CALL(mzglTexSubImage2D(MAZE_GL_TEXTURE_2D, 0, _x, _y, _width, _height, originFormat, dataType, _pixels));
 
-        // #TODO: Brute GPU synchronization
+        // Brute GPU synchronization
         MAZE_GL_CALL(mzglFinish());
 
         generateMipmaps();

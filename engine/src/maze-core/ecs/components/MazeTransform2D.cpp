@@ -272,7 +272,7 @@ namespace Maze
 
         m_localPosition = m_localTransform.getAffineTranslation2D();
         m_localRotation = m_localTransform.getAffineRotation2D();
-        m_localScale = m_localTransform.getAffineScale2DSignless(); // #TODO: Signed scale
+        m_localScale = m_localTransform.getAffineScale2DSignless();
 
         m_flags &= ~Flags::LocalTransformDirty;
         dirtyWorldTransform();

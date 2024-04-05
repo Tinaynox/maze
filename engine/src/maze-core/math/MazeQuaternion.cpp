@@ -91,7 +91,7 @@ namespace Maze
     {
         if (_multInvScale)
         {
-            Vec3F scale = _rotationMatrix.getAffineScaleSignless(); // #TODO: Maybe we need scale sign here?
+            Vec3F scale = _rotationMatrix.getAffineScaleSignless();
             Mat3F unscaledMat = _rotationMatrix * Mat3F::CreateScaleMatrix(1.0f / scale);
             setRotationMatrix(unscaledMat);
         }

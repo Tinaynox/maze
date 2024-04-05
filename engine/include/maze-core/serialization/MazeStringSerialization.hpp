@@ -523,7 +523,10 @@ namespace Maze
     template <typename UValue>
     MAZE_FORCEINLINE void ValueToString(SharedPtr<UValue> const& _value, String& _data)
     {
-        TryValueToString<UValue>(*_value.get(), _data);
+        if (_value)
+            TryValueToString<UValue>(*_value.get(), _data);
+        else
+            _data.clear();
     }
 
     //////////////////////////////////////////

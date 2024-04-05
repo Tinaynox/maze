@@ -270,9 +270,6 @@ namespace Maze
         inline void setPixelBufferSize(Vec2U const& _pixelBufferSize) { m_pixelBufferSize = _pixelBufferSize; }
 
 
-        //////////////////////////////////////////
-        void processContextWillBeDestroyed();
-
     protected:
 
         //////////////////////////////////////////
