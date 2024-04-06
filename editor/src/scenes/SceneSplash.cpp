@@ -159,8 +159,8 @@ namespace Maze
         m_canvas->setSortOrder(1010000);        
 
         CanvasScalerPtr canvasScaler = canvasEntity->ensureComponent<CanvasScaler>();
-        canvasScaler->setScaleMode(CanvasScaler::ScaleMode::ScaleWithViewportSize);
-        canvasScaler->setScreenMatchMode(CanvasScaler::ScreenMatchMode::MatchWidthOrHeight);
+        canvasScaler->setScaleMode(CanvasScalerScaleMode::ScaleWithViewportSize);
+        canvasScaler->setScreenMatchMode(CanvasScalerScreenMatchMode::MatchWidthOrHeight);
         canvasScaler->setMatchWidthOrHeight(1.0f);
         canvasScaler->updateCanvasScale();
 
@@ -298,7 +298,7 @@ namespace Maze
 #endif
 
                 ConsoleService::GetInstancePtr()->registerCommand(
-                    "profile",
+                    MAZE_HS("profile"),
                     [](String* _argv, S32 _argc)
                 {
                     if (_argc > 1)

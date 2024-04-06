@@ -457,6 +457,9 @@ namespace Maze
     bool DataBlock::loadFile(Path const& _path)
     {
         FILE* file = StdHelper::OpenFile(_path, "rb");
+        if (!file)
+            return false;
+
         U8 buff[sizeof(c_mzDataBlockBinaryHeaderMagic)];
         fread(buff, sizeof(c_mzDataBlockBinaryHeaderMagic), 1, file);
         fclose(file);
