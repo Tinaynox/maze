@@ -305,7 +305,7 @@ namespace Maze
                 U32 offset = waveInfo.dataOffset;
 
                 // Read Sample Data
-                U32 bytesRead = _fileData->read(offset, waveInfo.data->getDataPointer(), waveInfo.dataSize);
+                U32 bytesRead = _fileData->read(offset, waveInfo.data->getDataRW(), waveInfo.dataSize);
                 offset += bytesRead;
                 if (bytesRead == waveInfo.dataSize)
                 {

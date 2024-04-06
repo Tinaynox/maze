@@ -59,7 +59,7 @@ namespace Maze
 
             HDC hdc = GetDC(NULL);
             void* bitmapPointer = nullptr;
-            HBITMAP hBitmap = CreateDIBitmap(hdc, &(bitmapInfo.bmiHeader), CBM_INIT, bgraImage.getDataPointer(), &bitmapInfo, DIB_RGB_COLORS);
+            HBITMAP hBitmap = CreateDIBitmap(hdc, &(bitmapInfo.bmiHeader), CBM_INIT, bgraImage.getDataRW(), &bitmapInfo, DIB_RGB_COLORS);
             ReleaseDC(NULL, hdc);
 
             if (hBitmap == NULL)

@@ -254,7 +254,7 @@ namespace Maze
             MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
             Texture2DMSOpenGLScopeBind textureScopedBind(this);
 
-            MAZE_GL_CALL(mzglGetTexImage(MAZE_GL_TEXTURE_2D_MULTISAMPLE, 0, originFormat, dataType, result.getDataPointer()));
+            MAZE_GL_CALL(mzglGetTexImage(MAZE_GL_TEXTURE_2D_MULTISAMPLE, 0, originFormat, dataType, result.getDataRW()));
 
             return result;
         }
@@ -286,7 +286,7 @@ namespace Maze
                     result.getHeight(),
                     MAZE_GL_RGBA,
                     MAZE_GL_UNSIGNED_BYTE,
-                    result.getDataPointer()));
+                    result.getDataRW()));
 
             MAZE_GL_CALL(mzglPixelStorei(MAZE_GL_PACK_ALIGNMENT, 4));
             MAZE_GL_CALL(mzglBindFramebuffer(MAZE_GL_FRAMEBUFFER, currentFBO));
@@ -326,7 +326,7 @@ namespace Maze
 
             MAZE_ERROR_RETURN_VALUE_IF(buffer == 0, result, "Out of memory!");
 
-            memcpy(result.getDataPointer(), buffer, result.getTotalBytesCount());
+            memcpy(result.getDataRW(), buffer, result.getTotalBytesCount());
 
             MZGLboolean mapped;
             MAZE_GL_CALL(mapped = mzglUnmapBuffer(MAZE_GL_PIXEL_PACK_BUFFER));

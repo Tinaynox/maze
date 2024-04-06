@@ -55,7 +55,7 @@ namespace Maze
             S32 bpp = _pixelSheet.getBytesPerPixel();
             MAZE_ERROR_RETURN_VALUE_IF(bpp != 2, false, "Invalid PixelSheet2D!");
 
-            U16* it = (U16*)_pixelSheet.getDataPointer();
+            U16* it = (U16*)_pixelSheet.getDataRW();
             U16* end = it + _pixelSheet.getRowsCount() * _pixelSheet.getColumnsCount();
             for (; it != end; ++it)
             {

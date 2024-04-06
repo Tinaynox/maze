@@ -359,7 +359,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline Vec4F const* getDataPointer() const { return &value; }
+        inline Vec4F const* getDataRW() const { return &value; }
 
     public:
 

@@ -48,7 +48,7 @@ namespace Maze
             if (!file)
                 return false;
 
-            fwrite(_byteBuffer.getData(), _byteBuffer.getSize(), 1, file);
+            fwrite(_byteBuffer.getDataRO(), _byteBuffer.getSize(), 1, file);
             fclose(file);
 
             return true;
@@ -67,14 +67,14 @@ namespace Maze
             {
                 Size prevSize = _byteBuffer.getSize();
                 _byteBuffer.resize(_byteBuffer.getSize() + readSize);
-                memcpy(_byteBuffer.getDataPointer() + prevSize, buff, readSize);
+                memcpy(_byteBuffer.getDataRW() + prevSize, buff, readSize);
 
                 readSize = fread(buff, 1, BUFSIZ, file);
             }
 
             Size prevSize = _byteBuffer.getSize();
             _byteBuffer.resize(_byteBuffer.getSize() + readSize);
-            memcpy(_byteBuffer.getDataPointer() + prevSize, buff, readSize);
+            memcpy(_byteBuffer.getDataRW() + prevSize, buff, readSize);
 
             fclose(file);
 

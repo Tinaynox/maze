@@ -98,7 +98,7 @@ namespace Maze
             MAZE_ERROR_RETURN_VALUE_IF(_fileData.getSize() < PNGSIGSIZE, false, "Corrupted PNG!");
 
             // Check the data is png or not
-            memcpy(header, _fileData.getData(), PNGSIGSIZE);
+            memcpy(header, _fileData.getDataRO(), PNGSIGSIZE);
             MAZE_ERROR_RETURN_VALUE_IF(png_sig_cmp(header, 0, PNGSIGSIZE), false, "This texture is not actually PNG!");
 
             // Init png_struct
@@ -116,7 +116,7 @@ namespace Maze
 
             // Set the read call back function
             ImageSource imageSource;
-            imageSource.data = _fileData.getDataPointer();
+            imageSource.data = _fileData.getDataRW();
             imageSource.size = _fileData.getSize();
             imageSource.offset = 0;
             png_set_read_fn(pngStruct, &imageSource, ReadPNGBlock);
@@ -195,7 +195,7 @@ namespace Maze
 
             for (U32 i = 0; i < height; ++i)
             {
-                rowPointers[i] = pixelSheet.getDataPointer() + i * rowbytes;
+                rowPointers[i] = pixelSheet.getDataRW() + i * rowbytes;
             }
 
             png_read_image(pngStruct, rowPointers);
@@ -236,7 +236,7 @@ namespace Maze
             return false;
 
         // Check the data is png or not
-        memcpy(header, _fileData.getDataPointer(), PNGSIGSIZE);
+        memcpy(header, _fileData.getDataRW(), PNGSIGSIZE);
         if (png_sig_cmp(header, 0, PNGSIGSIZE))
             return false;
 
@@ -277,7 +277,7 @@ namespace Maze
         U8 const** rowPointers = MAZE_NEW_ARRAY(U8 const*, _pixelSheet.getHeight());
         for (S32 i = 0; i < _pixelSheet.getHeight(); i++)
         {
-            U8 const* rowPointer = (_pixelSheet.getDataPointer() + _pixelSheet.getBytesPerRow() * (_pixelSheet.getHeight() - i - 1));
+            U8 const* rowPointer = (_pixelSheet.getDataRW() + _pixelSheet.getBytesPerRow() * (_pixelSheet.getHeight() - i - 1));
             rowPointers[i] = rowPointer;
         }
 

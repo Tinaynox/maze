@@ -471,7 +471,7 @@ namespace Maze
         ByteBufferPtr assetFileHeader = _assetFile->readHeaderAsByteBuffer(6);
         assetFileHeader->setByte(5, 0);
 
-        if (strstr((CString)assetFileHeader->getData(), "xml") != nullptr)
+        if (strstr((CString)assetFileHeader->getDataRO(), "xml") != nullptr)
         {
             Debug::LogWarning("Obsolete Shader format - %s", _assetFile->getFileName().toUTF8().c_str());
             tinyxml2::XMLDocument doc;

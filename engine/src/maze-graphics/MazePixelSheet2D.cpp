@@ -761,15 +761,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    U8* PixelSheet2D::getDataPointer()
+    U8* PixelSheet2D::getDataRW()
     {
-        return m_data.getDataPointer();
+        return m_data.getDataRW();
     }
 
     //////////////////////////////////////////
-    U8 const* PixelSheet2D::getDataPointer() const
+    U8 const* PixelSheet2D::getDataRW() const
     {
-        return m_data.getDataPointer();
+        return m_data.getDataRW();
     }
 
     //////////////////////////////////////////

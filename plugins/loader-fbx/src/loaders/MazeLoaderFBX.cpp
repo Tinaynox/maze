@@ -319,7 +319,7 @@ namespace Maze
             "File loading error!");
 
         ofbx::u16 flags = ConstructLoadFlags();        
-        ofbx::IScene* scene = ofbx::load(_fileData.getData(), (S32)_fileData.getSize(), flags);
+        ofbx::IScene* scene = ofbx::load(_fileData.getDataRO(), (S32)_fileData.getSize(), flags);
         bool result = LoadFBX(scene, _mesh, _props);
         if (scene)
             scene->destroy();
@@ -343,8 +343,8 @@ namespace Maze
         if (_fileData.getSize() < c_fbxHeaderSize)
             return false;
 
-        bool isFBX = (strncmp((CString)_fileData.getData(), c_fbxHeaderTextBinary, strlen(c_fbxHeaderTextBinary)) == 0 ||
-                      strncmp((CString)_fileData.getData(), c_fbxHeaderTextASCII, strlen(c_fbxHeaderTextASCII)) == 0);
+        bool isFBX = (strncmp((CString)_fileData.getDataRO(), c_fbxHeaderTextBinary, strlen(c_fbxHeaderTextBinary)) == 0 ||
+                      strncmp((CString)_fileData.getDataRO(), c_fbxHeaderTextASCII, strlen(c_fbxHeaderTextASCII)) == 0);
         return isFBX;
     }
 

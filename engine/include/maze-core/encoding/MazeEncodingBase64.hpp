@@ -47,7 +47,7 @@ namespace Maze
     MAZE_CORE_API inline String EncodeBase64(Vector<U8> const& _buffer) { return EncodeBase64(&_buffer[0], _buffer.size()); }
 
     //////////////////////////////////////////
-    MAZE_CORE_API inline String EncodeBase64(ByteBuffer const& _buffer) { return EncodeBase64(_buffer.getDataPointer(), _buffer.getSize()); }
+    MAZE_CORE_API inline String EncodeBase64(ByteBuffer const& _buffer) { return EncodeBase64(_buffer.getDataRW(), _buffer.getSize()); }
 
     //////////////////////////////////////////
     MAZE_CORE_API Size GetDecodedBase64Size(CString _text, Size _length);

@@ -140,7 +140,7 @@ namespace Maze
             Debug::LogWarning("Obsolete settings file format - %s", _path.toUTF8().c_str());
 
             tinyxml2::XMLDocument doc;
-            tinyxml2::XMLError loadError = doc.Parse((CString)fileBuffer.getDataPointer(), fileBuffer.getSize());
+            tinyxml2::XMLError loadError = doc.Parse((CString)fileBuffer.getDataRW(), fileBuffer.getSize());
 
             MAZE_ERROR_RETURN_VALUE_IF(
                 tinyxml2::XML_SUCCESS != loadError,

@@ -74,7 +74,7 @@ namespace Maze
         MAZE_ASSERT(m_byteBuffer);
         Size readSize = Math::Min(_size, m_byteBuffer->getSize() - m_offset);
 
-        memcpy(_dst, m_byteBuffer->getData() + m_offset, _size);
+        memcpy(_dst, m_byteBuffer->getDataRO() + m_offset, _size);
         return readSize;
     }
 
@@ -123,10 +123,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    U8 const* ByteBufferReadStream::getData() const
+    U8 const* ByteBufferReadStream::getDataRO() const
     {
         MAZE_ASSERT(m_byteBuffer);
-        return m_byteBuffer->getData();
+        return m_byteBuffer->getDataRO();
     }
 
     //////////////////////////////////////////

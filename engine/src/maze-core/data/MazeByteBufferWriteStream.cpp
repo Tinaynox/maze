@@ -101,7 +101,7 @@ namespace Maze
             m_byteBuffer->resize(requiredSize);
         }
 
-        memcpy(m_byteBuffer->getDataPointer() + m_offset, _src, _size);
+        memcpy(m_byteBuffer->getDataRW() + m_offset, _src, _size);
         m_offset += _size;
     }
 

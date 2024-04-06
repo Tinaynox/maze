@@ -188,7 +188,7 @@ namespace Maze
         {
             ByteBufferPtr const& byteBuffer = _buffers[i];
             PixelSheet2D& pixelSheet = pixelSheets[i];
-            pixelSheet.copyFrom(byteBuffer->getDataPointer(), (Vec2S)_size, _bufferPixelFormat);
+            pixelSheet.copyFrom(byteBuffer->getDataRW(), (Vec2S)_size, _bufferPixelFormat);
         }
 
         return loadTexture(pixelSheets, _pixelFormat);

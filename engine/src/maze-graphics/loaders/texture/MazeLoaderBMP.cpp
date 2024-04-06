@@ -90,13 +90,13 @@ namespace Maze
         
         _BITMAPFILEHEADER bitmapFileHeader;
         U32 bufferShift = 0;
-        memcpy(&bitmapFileHeader, _fileData.getData() + bufferShift, sizeof(_BITMAPFILEHEADER));
+        memcpy(&bitmapFileHeader, _fileData.getDataRO() + bufferShift, sizeof(_BITMAPFILEHEADER));
         bufferShift += sizeof(_BITMAPFILEHEADER);
         MAZE_ERROR_RETURN_VALUE_IF(bitmapFileHeader.bfType != 0x4D42, false, "Is not a valid Bitmap!");
 
         // Information
         _BITMAPINFOHEADER bitmapInfoHeader;
-        memcpy(&bitmapInfoHeader, _fileData.getData() + bufferShift, sizeof(_BITMAPINFOHEADER));
+        memcpy(&bitmapInfoHeader, _fileData.getDataRO() + bufferShift, sizeof(_BITMAPINFOHEADER));
         bufferShift += sizeof(_BITMAPINFOHEADER);
         
         bufferShift = bitmapFileHeader.bfOffBits;
@@ -141,7 +141,7 @@ namespace Maze
 
         MAZE_ERROR_RETURN_VALUE_IF((Size)imageSize > pixelSheet.getDataSize(), false, "Invalid buffer size!");
 
-        memcpy(pixelSheet.getDataPointer(), _fileData.getData() + bufferShift, imageSize);
+        memcpy(pixelSheet.getDataRW(), _fileData.getDataRO() + bufferShift, imageSize);
             
         if (bpp >= 24)
         {
@@ -174,7 +174,7 @@ namespace Maze
         if (_fileData.getSize() < sizeof(_BITMAPFILEHEADER))
             return false;
 
-        memcpy(&bitmapFileHeader, _fileData.getDataPointer(), sizeof(_BITMAPFILEHEADER));
+        memcpy(&bitmapFileHeader, _fileData.getDataRW(), sizeof(_BITMAPFILEHEADER));
     
         if (bitmapFileHeader.bfType != 0x4D42)
             return false;

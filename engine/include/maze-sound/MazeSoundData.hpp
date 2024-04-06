@@ -66,7 +66,7 @@ namespace Maze
         inline void setData(ByteBufferPtr const& _value) { m_data = _value; }
 
         //////////////////////////////////////////
-        inline ByteBufferPtr const& getData() const { return m_data; }
+        inline ByteBufferPtr const& getDataRO() const { return m_data; }
 
 
         //////////////////////////////////////////

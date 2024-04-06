@@ -195,10 +195,10 @@ namespace Maze
         inline U32 getDataSize() const { return m_buffer.getSize(); }
 
         //////////////////////////////////////////
-        inline U8* getDataUnsafe(Size _offs = 0u) { return m_buffer.getDataPointer() + _offs; }
+        inline U8* getDataRW(Size _offs = 0u) { return m_buffer.getDataRW() + _offs; }
 
         //////////////////////////////////////////
-        inline U8 const* getDataUnsafe(Size _offs = 0u) const { return m_buffer.getData() + _offs; }
+        inline U8 const* getDataRO(Size _offs = 0u) const { return m_buffer.getDataRO() + _offs; }
 
         //////////////////////////////////////////
         U8* insertAt(U32 _at, Size _size, U8 const* _data);
@@ -726,13 +726,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Param* getParamsPtr() { return (Param*)getDataBufferData(); }
+        inline Param* getParamsPtr() { return (Param*)getDataBufferDataRW(); }
 
         //////////////////////////////////////////
         inline Param* getParamsEndPtr() { return getParamsPtr() + (Size)getParamsCount(); }
 
         //////////////////////////////////////////
-        inline Param const* getParamsPtr() const { return (Param const*)getDataBufferData(); }
+        inline Param const* getParamsPtr() const { return (Param const*)getDataBufferDataRO(); }
 
         //////////////////////////////////////////
         inline Param const* getParamsEndPtr() const { return getParamsPtr() + (Size)getParamsCount(); }
@@ -763,27 +763,27 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline DataBlock** getDataBlocksPtr() { return (DataBlock**)(getDataBufferData() + getDataBlocksOffset()); }
+        inline DataBlock** getDataBlocksPtr() { return (DataBlock**)(getDataBufferDataRW() + getDataBlocksOffset()); }
 
         //////////////////////////////////////////
-        inline DataBlock const** getDataBlocksPtr() const { return (DataBlock const**)(getDataBufferData() + getDataBlocksOffset()); }
+        inline DataBlock const** getDataBlocksPtr() const { return (DataBlock const**)(getDataBufferDataRO() + getDataBlocksOffset()); }
 
 
     protected:
 
         //////////////////////////////////////////
-        inline U8* getDataBufferData(Size _offs = 0u)
+        inline U8* getDataBufferDataRW(Size _offs = 0u)
         {
-            return ensureDataBuffer()->getDataUnsafe(_offs);
+            return ensureDataBuffer()->getDataRW(_offs);
         }
 
         //////////////////////////////////////////
-        inline U8 const* getDataBufferData(Size _offs = 0u) const
+        inline U8 const* getDataBufferDataRO(Size _offs = 0u) const
         {
             if (!m_dataBuffer)
                 return nullptr;
 
-            return m_dataBuffer->getDataUnsafe(_offs);
+            return m_dataBuffer->getDataRO(_offs);
         }
 
         //////////////////////////////////////////

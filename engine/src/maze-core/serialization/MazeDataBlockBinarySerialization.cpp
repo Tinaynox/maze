@@ -60,7 +60,7 @@ namespace Maze
             _stream << _dataBlock.getParamsCount();
             _stream << complexParamsUsedSize;
             if (paramUsedSize + complexParamsUsedSize > 0)
-                _stream.write(_dataBlock.getDataBuffer()->getDataUnsafe(), paramUsedSize + complexParamsUsedSize);
+                _stream.write(_dataBlock.getDataBuffer()->getDataRO(), paramUsedSize + complexParamsUsedSize);
 
             // Sub blocks
             _stream << _dataBlock.getDataBlocksCount();
@@ -89,7 +89,7 @@ namespace Maze
             if (!_stream.canRead(paramsAndComplexParamsSize))
                 return false;
 
-            _dataBlock.copyParamsFrom(paramsCount, _stream.getData() + _stream.getOffset(), paramsAndComplexParamsSize);
+            _dataBlock.copyParamsFrom(paramsCount, _stream.getDataRO() + _stream.getOffset(), paramsAndComplexParamsSize);
             _stream.setOffset(_stream.getOffset() + paramsAndComplexParamsSize);
 
             // Sub blocks
@@ -141,7 +141,7 @@ namespace Maze
 
             if (_flags & U32(DataBlockBinaryFlags::CheckSumProtection))
             {
-                U32 checkSumHash = Hash::CalculateCRC32(_buffer.getData(), _buffer.getSize());
+                U32 checkSumHash = Hash::CalculateCRC32(_buffer.getDataRO(), _buffer.getSize());
                 writeStream << checkSumHash;
             }
 
@@ -199,7 +199,7 @@ namespace Maze
                 U32 loadedCheckSumHash = 0u;
                 readStream >> loadedCheckSumHash;
 
-                U32 calculatedCheckSumHash = Hash::CalculateCRC32(_buffer.getData(), _buffer.getSize() - sizeof(U32));
+                U32 calculatedCheckSumHash = Hash::CalculateCRC32(_buffer.getDataRO(), _buffer.getSize() - sizeof(U32));
                 
                 if (loadedCheckSumHash != calculatedCheckSumHash)
                 {

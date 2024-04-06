@@ -335,7 +335,7 @@ namespace Maze
             {
                 Size size = c_dataBlockParamTypeInfo[param.type].size;
                 U8 const* paramData = (size <= MAZE_DATA_BLOCK_INPLACE_PARAM_SIZE) ? (U8 const*)&param.value
-                                                                                   : _from->getDataBufferData(_from->getParamsUsedSize() + param.value);
+                                                                                   : _from->getDataBufferDataRO(_from->getParamsUsedSize() + param.value);
                 insertParamAt(
                     (ParamIndex)getParamsCount(),
                     paramNameId,
@@ -471,7 +471,7 @@ namespace Maze
     bool DataBlock::loadFromByteBuffer(ByteBuffer const& _byteBuffer)
     {
         if (_byteBuffer.getSize() >= sizeof(c_mzDataBlockBinaryHeaderMagic) &&
-            memcmp((void*)_byteBuffer.getData(), &c_mzDataBlockBinaryHeaderMagic, sizeof(c_mzDataBlockBinaryHeaderMagic)) == 0)
+            memcmp((void*)_byteBuffer.getDataRO(), &c_mzDataBlockBinaryHeaderMagic, sizeof(c_mzDataBlockBinaryHeaderMagic)) == 0)
         {
             return loadBinary(_byteBuffer);
         }
@@ -507,7 +507,7 @@ namespace Maze
         if (c_dataBlockParamTypeInfo[param.type].size <= MAZE_DATA_BLOCK_INPLACE_PARAM_SIZE)
             return (U8 const*)(&value);
         else
-            return getDataBufferData(getParamsUsedSize() + value);
+            return getDataBufferDataRO(getParamsUsedSize() + value);
     }
 
     //////////////////////////////////////////

@@ -47,7 +47,7 @@ namespace Maze
     MAZE_CORE_API inline String EncodeHex(Vector<U8> const& _buffer) { return EncodeHex(&_buffer[0], _buffer.size()); }
 
     //////////////////////////////////////////
-    MAZE_CORE_API inline String EncodeHex(ByteBuffer const& _buffer) { return EncodeHex(_buffer.getDataPointer(), _buffer.getSize()); }
+    MAZE_CORE_API inline String EncodeHex(ByteBuffer const& _buffer) { return EncodeHex(_buffer.getDataRW(), _buffer.getSize()); }
 
     //////////////////////////////////////////
     MAZE_CORE_API Vector<U8> DecodeHex(CString _text, Size _length);

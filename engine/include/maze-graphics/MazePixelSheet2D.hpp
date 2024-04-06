@@ -271,10 +271,10 @@ namespace Maze
             S32 _verticalAlignment = 0);
         
         //////////////////////////////////////////
-        U8* getDataPointer();
+        U8* getDataRW();
 
         //////////////////////////////////////////
-        U8 const* getDataPointer() const;
+        U8 const* getDataRW() const;
 
         //////////////////////////////////////////
         inline Size getDataSize() { return m_data.getSize(); }

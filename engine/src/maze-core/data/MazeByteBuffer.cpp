@@ -63,7 +63,7 @@ namespace Maze
     ByteBuffer::ByteBuffer(ByteBuffer const& _byteBuffer)
         : ByteBuffer(_byteBuffer.m_size)
     {
-        setData(_byteBuffer.getData(), _byteBuffer.getSize());
+        setData(_byteBuffer.getDataRO(), _byteBuffer.getSize());
     }
 
     //////////////////////////////////////////
@@ -272,7 +272,7 @@ namespace Maze
     {
         Size size = getSize();
         resize(size + _byteBuffer.getSize());
-        memcpy(m_data + size, _byteBuffer.getData(), _byteBuffer.getSize());
+        memcpy(m_data + size, _byteBuffer.getDataRO(), _byteBuffer.getSize());
     }
 
     //////////////////////////////////////////
@@ -289,7 +289,7 @@ namespace Maze
 
         Size size = GetDecodedBase64Size(_data, _count);
         resize(size);
-        DecodeBase64(_data, _count, getDataPointer());
+        DecodeBase64(_data, _count, getDataRW());
     }
 
     //////////////////////////////////////////
@@ -304,7 +304,7 @@ namespace Maze
         SerializeValue(m_size, _data);
         _data += sizeof(m_size);
 
-        memcpy(_data, getData(), m_size);
+        memcpy(_data, getDataRO(), m_size);
     }
 
     //////////////////////////////////////////
@@ -313,7 +313,7 @@ namespace Maze
         DeserializeValue(m_size, _data);
         _data += sizeof(m_size);
 
-        memcpy(getDataPointer(), _data, m_size);
+        memcpy(getDataRW(), _data, m_size);
     }
 
     //////////////////////////////////////////

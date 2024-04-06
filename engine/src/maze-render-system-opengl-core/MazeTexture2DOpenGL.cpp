@@ -288,7 +288,7 @@ namespace Maze
             MZGLint dataType = GetOpenGLDataType(mipmapPixelFormat);
 
             MZGLsizei dataSize = (MZGLsizei)pixelSheet.getTotalBytesCount();
-            U8 const* data = pixelSheet.getDataPointer();
+            U8 const* data = pixelSheet.getDataRW();
 
             if (PixelFormat::IsCompressed(mipmapPixelFormat))
             {
@@ -488,19 +488,19 @@ namespace Maze
             return;
 
         ByteBuffer data(_size.x * _size.y * bytesPerPixel);
-        MAZE_GL_CALL(mzglGetTexImage(MAZE_GL_TEXTURE_2D, 0, originFormat, dataType, data.getDataPointer()));        
+        MAZE_GL_CALL(mzglGetTexImage(MAZE_GL_TEXTURE_2D, 0, originFormat, dataType, data.getDataRW()));        
         U32 bytesPerRow = bytesPerPixel * _size.x;
 
         ByteBuffer tgaData(_size.x * _size.y * 4);
 
-        U8* tgaDataPointer = tgaData.getDataPointer();
+        U8* tgaDataPointer = tgaData.getDataRW();
 
         for (Size r = 0; r < _size.y; ++r)
         {
             for (Size c = 0; c < _size.x; ++c)
             {
                 U32 offset = bytesPerRow * (U32)r + bytesPerPixel * (U32)c;
-                const U8* pixel = data.getDataPointer() + offset;
+                const U8* pixel = data.getDataRW() + offset;
 
                 U8 r = 0;
                 U8 g = 0;
@@ -543,7 +543,7 @@ namespace Maze
 
         std::fstream file(_fileName.c_str(), std::ios::out | std::ios::binary);
         file.write(reinterpret_cast<CString>(header), sizeof(S8) * 18);
-        file.write(reinterpret_cast<CString>(tgaData.getDataPointer()), sizeof(S8) * tgaData.getSize());
+        file.write(reinterpret_cast<CString>(tgaData.getDataRW()), sizeof(S8) * tgaData.getSize());
         file.close();
     }
 
@@ -568,7 +568,7 @@ namespace Maze
             MAZE_GL_MUTEX_SCOPED_LOCK(m_context->getRenderSystemRaw());
             Texture2DOpenGLScopeBind textureScopedBind(this);
 
-            MAZE_GL_CALL(mzglGetTexImage(MAZE_GL_TEXTURE_2D, 0, originFormat, dataType, result.getDataPointer()));
+            MAZE_GL_CALL(mzglGetTexImage(MAZE_GL_TEXTURE_2D, 0, originFormat, dataType, result.getDataRW()));
 
             return result;
         }
@@ -599,7 +599,7 @@ namespace Maze
                     result.getHeight(),
                     MAZE_GL_RGBA,
                     MAZE_GL_UNSIGNED_BYTE,
-                    result.getDataPointer()));
+                    result.getDataRW()));
 
             MAZE_GL_CALL(mzglPixelStorei(MAZE_GL_PACK_ALIGNMENT, 4));
             MAZE_GL_CALL(mzglBindFramebuffer(MAZE_GL_FRAMEBUFFER, currentFBO));
@@ -639,7 +639,7 @@ namespace Maze
 
             MAZE_ERROR_RETURN_VALUE_IF(buffer == 0, result, "Out of memory!");
 
-            memcpy(result.getDataPointer(), buffer, result.getTotalBytesCount());
+            memcpy(result.getDataRW(), buffer, result.getTotalBytesCount());
 
             MZGLboolean mapped;
             MAZE_GL_CALL(mapped = mzglUnmapBuffer(MAZE_GL_PIXEL_PACK_BUFFER));

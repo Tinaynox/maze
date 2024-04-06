@@ -261,7 +261,7 @@ namespace Maze
 
             byteBuffer->resize(bytes);
 
-            S32 readBytes = unzReadCurrentFile(m_zipHandle, byteBuffer->getDataPointer(), (U32)bytes);
+            S32 readBytes = unzReadCurrentFile(m_zipHandle, byteBuffer->getDataRW(), (U32)bytes);
             if (readBytes <= 0)
             {
                 MAZE_ERROR("unzReadCurrentFile isn't OK! error=%d", readBytes);

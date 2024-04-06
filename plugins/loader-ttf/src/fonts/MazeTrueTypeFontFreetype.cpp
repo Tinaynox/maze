@@ -141,7 +141,7 @@ namespace Maze
 
         m_memoryBuffer = _byteBuffer;
         MAZE_ERROR_RETURN_VALUE_IF(FT_Init_FreeType(&m_library) != 0, false, "Failed to load font! Failed to initialize FreeType!");
-        MAZE_ERROR_RETURN_VALUE_IF(FT_New_Memory_Face(m_library, (const FT_Byte*)(m_memoryBuffer.getDataPointer()), (FT_Long)m_memoryBuffer.getSize(), 0, &m_face) != 0, false, "Failed to load font! Failed to create the font face!");
+        MAZE_ERROR_RETURN_VALUE_IF(FT_New_Memory_Face(m_library, (const FT_Byte*)(m_memoryBuffer.getDataRW()), (FT_Long)m_memoryBuffer.getSize(), 0, &m_face) != 0, false, "Failed to load font! Failed to create the font face!");
 
         if (FT_Stroker_New(m_library, &m_stroker) != 0)
         {

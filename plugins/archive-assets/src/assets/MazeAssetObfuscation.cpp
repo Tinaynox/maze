@@ -100,7 +100,7 @@ namespace Maze
                 {
                     Debug::Log("Packing %s...", fileName.toUTF8().c_str());
 
-                    if (zipWriteInFileInZip(zf, byteBuffer->getData(), (U32)byteBuffer->getSize()))
+                    if (zipWriteInFileInZip(zf, byteBuffer->getDataRO(), (U32)byteBuffer->getSize()))
                     {
                         MAZE_WARNING("Can not write file %s into zip archive", fileName.toUTF8().c_str());
                     }

@@ -256,7 +256,7 @@ namespace Maze
         MZGLuint const* indicesPtr = nullptr;
         MAZE_GL_CALL(indicesPtr = (MZGLuint*)mzglMapBufferRange(MAZE_GL_ELEMENT_ARRAY_BUFFER, 0, indicesBuffer->getSize(), MAZE_GL_MAP_READ_BIT));
         MAZE_ERROR_RETURN_VALUE_IF(!indicesPtr, nullptr, "Failed to map buffer");
-        memcpy(indicesBuffer->getDataPointer(), indicesPtr, indicesBuffer->getSize());
+        memcpy(indicesBuffer->getDataRW(), indicesPtr, indicesBuffer->getSize());
         MAZE_GL_CALL(mzglUnmapBuffer(MAZE_GL_ELEMENT_ARRAY_BUFFER));
 
         // VBO
@@ -273,7 +273,7 @@ namespace Maze
                 MZGLuint const* vertexPtr;
                 MAZE_GL_CALL(vertexPtr = (MZGLuint*)mzglMapBufferRange(MAZE_GL_ARRAY_BUFFER, 0, vertexBuffer->getSize(), MAZE_GL_MAP_READ_BIT));
                 MAZE_ERROR_RETURN_VALUE_IF(!vertexPtr, nullptr, "Failed to map buffer");
-                memcpy(vertexBuffer->getDataPointer(), vertexPtr, vertexBuffer->getSize());
+                memcpy(vertexBuffer->getDataRW(), vertexPtr, vertexBuffer->getSize());
                 MAZE_GL_CALL(mzglUnmapBuffer(MAZE_GL_ARRAY_BUFFER));
             }
         }

@@ -127,7 +127,7 @@ namespace Maze
                 {
                     // Raw packet: RLE packet with length (chunkHeader + 1)
                     S32 packetLength = chunkHeader + 1;
-                    bytesRead += _fileData.read(bytesRead, pixelSheet.getDataPointer() + pixelIndex * channels, packetLength * channels);
+                    bytesRead += _fileData.read(bytesRead, pixelSheet.getDataRW() + pixelIndex * channels, packetLength * channels);
                     pixelIndex += packetLength;
                 }
                 else
@@ -139,7 +139,7 @@ namespace Maze
 
                     for (S32 i = 0; i < packetLength; ++i)
                     {
-                        std::copy(pixelData, pixelData + channels, pixelSheet.getDataPointer() + pixelIndex * channels);
+                        std::copy(pixelData, pixelData + channels, pixelSheet.getDataRW() + pixelIndex * channels);
                         pixelIndex++;
                     }
                 }
@@ -147,7 +147,7 @@ namespace Maze
         }
         else
         {
-            bytesRead += _fileData.read(bytesRead, pixelSheet.getDataPointer(), (U32)pixelSheet.getDataSize());
+            bytesRead += _fileData.read(bytesRead, pixelSheet.getDataRW(), (U32)pixelSheet.getDataSize());
         }
 
         if (channels > 2)

@@ -95,10 +95,10 @@ namespace Maze
         static ByteBufferPtr Create(ByteBufferPtr const& _otherBuffer);
 
         //////////////////////////////////////////
-        inline U8 const* getData() const { return m_data; }
+        inline U8 const* getDataRO() const { return m_data; }
 
         //////////////////////////////////////////
-        inline U8* getDataPointer() const { return m_data; }
+        inline U8* getDataRW() const { return m_data; }
 
         //////////////////////////////////////////
         void setData(U8 const* _data, Size _size);
@@ -194,7 +194,7 @@ namespace Maze
         //////////////////////////////////////////
         inline ByteBuffer& operator=(ByteBuffer const& _byteBuffer)
         {
-            setData(_byteBuffer.getData(), _byteBuffer.getSize());
+            setData(_byteBuffer.getDataRO(), _byteBuffer.getSize());
 
             return *this;
         }

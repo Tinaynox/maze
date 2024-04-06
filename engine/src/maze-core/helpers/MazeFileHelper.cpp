@@ -179,7 +179,7 @@ namespace Maze
         
             _byteBuffer.resize((Size)size);
         
-            file.read((S8*)_byteBuffer.getDataPointer(), size);
+            file.read((S8*)_byteBuffer.getDataRW(), size);
         
             return (Size)size;
         }

@@ -305,14 +305,14 @@ namespace Maze
         {
 
             S32 magic = 0;
-            memcpy(&magic, _fileData.getData() + bufferShift, sizeof(S32));
+            memcpy(&magic, _fileData.getDataRO() + bufferShift, sizeof(S32));
             bufferShift += sizeof(S32);
 
             MAZE_ERROR_RETURN_VALUE_IF(magic != MAGIC_DDS, false , "This texture is not actually DDS!");
 
             // Direct3D 9 format
             D3D_SurfaceDesc2 header;
-            memcpy(&header, _fileData.getData() + bufferShift, sizeof(D3D_SurfaceDesc2));
+            memcpy(&header, _fileData.getDataRO() + bufferShift, sizeof(D3D_SurfaceDesc2));
             bufferShift += sizeof(D3D_SurfaceDesc2);
 
             // Remember info for users of this object
@@ -411,7 +411,7 @@ namespace Maze
                 if (format != DDS_FORMAT_RGBA8)
                 {
                     // First read in temp buffer
-                    memcpy(temp, _fileData.getData() + bufferShift, bytes);
+                    memcpy(temp, _fileData.getDataRO() + bufferShift, bytes);
                     bufferShift += bytes;
 
                     // Flip & copy to actual pixel buffer
@@ -422,7 +422,7 @@ namespace Maze
                     U8* d;
                     widBytes = ((w + 3) / 4) * blockSize;
                     s = temp;
-                    d = _pixelSheets[i].getDataPointer() + ((h + 3) / 4 - 1) * widBytes;
+                    d = _pixelSheets[i].getDataRW() + ((h + 3) / 4 - 1) * widBytes;
 
                     for (j = 0; j < (h + 3) / 4; j++)
                     {
@@ -461,13 +461,13 @@ namespace Maze
                         "Failed to read DDS to pixel sheet. PixelSheet size=%d dataSize=%d",
                         (S32)_pixelSheets[i].getDataSize(),
                         bytes);
-                    memcpy(_pixelSheets[i].getDataPointer(), _fileData.getData() + bufferShift, bytes);
+                    memcpy(_pixelSheets[i].getDataRW(), _fileData.getDataRO() + bufferShift, bytes);
                     bufferShift += bytes;
 
                     // RGBA8
                     if (format == DDS_FORMAT_RGBA8)
                     {
-                        ConvertARGB2RGBA(_pixelSheets[i].getDataPointer(), bytes);
+                        ConvertARGB2RGBA(_pixelSheets[i].getDataRW(), bytes);
                     }
                 }
                 // Next level is smaller

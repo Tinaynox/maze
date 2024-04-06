@@ -705,14 +705,14 @@ namespace Maze
                         {
                             m_dataBlock->addString(
                                 MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_CPP),
-                                String(m_readStream.getData() + cppCommentStartOffset, m_readStream.getData() + m_readStream.getOffset() - 1));
+                                String(m_readStream.getDataRO() + cppCommentStartOffset, m_readStream.getDataRO() + m_readStream.getOffset() - 1));
                         }
                         else
                         {
                             m_dataBlock->addNewDataBlock(
                                 MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_CPP))->addString(
                                     MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_CPP),
-                                    String(m_readStream.getData() + cppCommentStartOffset, m_readStream.getData() + m_readStream.getOffset() - 1));
+                                    String(m_readStream.getDataRO() + cppCommentStartOffset, m_readStream.getDataRO() + m_readStream.getOffset() - 1));
                         }
 
                         continue;
@@ -758,14 +758,14 @@ namespace Maze
                         {
                             m_dataBlock->addString(
                                 MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_C),
-                                String(m_readStream.getData() + cCommentStartOffset, m_readStream.getData() + m_readStream.getOffset() - 2));
+                                String(m_readStream.getDataRO() + cCommentStartOffset, m_readStream.getDataRO() + m_readStream.getOffset() - 2));
                         }
                         else
                         {
                             m_dataBlock->addNewDataBlock(
                                 MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_C))->addString(
                                     MAZE_HASHED_CSTRING(MAZE_DATA_BLOCK_COMMENT_ENDLINE_C),
-                                    String(m_readStream.getData() + cCommentStartOffset, m_readStream.getData() + m_readStream.getOffset() - 2));
+                                    String(m_readStream.getDataRO() + cCommentStartOffset, m_readStream.getDataRO() + m_readStream.getOffset() - 2));
                         }
 
                         continue;
@@ -815,7 +815,7 @@ namespace Maze
                 Size identifierLength = m_readStream.getOffset() - identifierOffset;
 
                 _name.resize(identifierLength + 1);
-                memcpy(&_name[0], m_readStream.getData() + identifierOffset, identifierLength);
+                memcpy(&_name[0], m_readStream.getDataRO() + identifierOffset, identifierLength);
                 _name[identifierLength] = 0;
 
                 return true;
@@ -851,12 +851,12 @@ namespace Maze
                 m_readStream.rewind(2);
 
                 // Skip first \n (start) of multiline
-                CString ch = (CString)(m_readStream.getData() + m_readStream.getOffset());
+                CString ch = (CString)(m_readStream.getDataRO() + m_readStream.getOffset());
                 for (CString p = ch; *p; ++p)
                 {
                     if (*p == '\n')
                     {
-                        m_readStream.setOffset((U8*)p - m_readStream.getData() + 1);
+                        m_readStream.setOffset((U8*)p - m_readStream.getDataRO() + 1);
                         break;
                     }
                     else
@@ -1112,11 +1112,11 @@ namespace Maze
             if (_toParams)
                 _dataBlock.addString(
                     commentKey,
-                    String(m_readStream.getData() + pendingComment.startOffset, m_readStream.getData() + pendingComment.endOffset));
+                    String(m_readStream.getDataRO() + pendingComment.startOffset, m_readStream.getDataRO() + pendingComment.endOffset));
             else
                 _dataBlock.addNewDataBlock(commentKey)->addString(
                     commentKey,
-                    String(m_readStream.getData() + pendingComment.startOffset, m_readStream.getData() + pendingComment.endOffset));
+                    String(m_readStream.getDataRO() + pendingComment.startOffset, m_readStream.getDataRO() + pendingComment.endOffset));
         }
         m_pendingComments.clear();
     }

@@ -107,7 +107,7 @@ namespace Maze
         Size rewind(Size _delta);
 
         //////////////////////////////////////////
-        U8 const* getData() const;
+        U8 const* getDataRO() const;
 
         //////////////////////////////////////////
         bool isEndOfBuffer() const;

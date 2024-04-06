@@ -298,7 +298,7 @@ namespace Maze
         assetFileHeader->setByte(5, 0);
 
         bool result = false;
-        if (strstr((CString)assetFileHeader->getData(), "xml") != nullptr)
+        if (strstr((CString)assetFileHeader->getDataRO(), "xml") != nullptr)
         {
             Debug::LogWarning("Obsolete Material format - %s", _assetFile->getFileName().toUTF8().c_str());
             tinyxml2::XMLDocument doc;

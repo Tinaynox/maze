@@ -139,7 +139,7 @@ namespace Maze
                         ByteBufferPtr const& indicesBuffer = subMesh->allocateIndices(
                             type, 
                             elementsCount);
-                        bytesRead += _fileData.read(bytesRead, indicesBuffer->getDataPointer(), U32(elementsCount * GetVertexAttributeTypeSize(type)));
+                        bytesRead += _fileData.read(bytesRead, indicesBuffer->getDataRW(), U32(elementsCount * GetVertexAttributeTypeSize(type)));
                         break;
                     }
                     case MZMESHTag::VertexAttributes:
@@ -159,7 +159,7 @@ namespace Maze
                             attributesCount,
                             elementsCount,
                             false);
-                        bytesRead += _fileData.read(bytesRead, buffer->getDataPointer(), U32(elementsCount * attributesCount * GetVertexAttributeTypeSize(type)));
+                        bytesRead += _fileData.read(bytesRead, buffer->getDataRW(), U32(elementsCount * attributesCount * GetVertexAttributeTypeSize(type)));
 
                         break;
                     }

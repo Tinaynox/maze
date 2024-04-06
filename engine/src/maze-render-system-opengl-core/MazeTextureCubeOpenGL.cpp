@@ -232,7 +232,7 @@ namespace Maze
                 MZGLint dataType = GetOpenGLDataType(mipmapPixelFormat);
 
                 MZGLsizei dataSize = (MZGLsizei)pixelSheet.getTotalBytesCount();
-                U8 const* data = pixelSheet.getDataPointer();
+                U8 const* data = pixelSheet.getDataRW();
 
                 MZGLenum const targets[6] =
                     {

@@ -198,7 +198,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        U8 const* getIndicesData() const { return m_indicesBuffer->getDataPointer(); }
+        U8 const* getIndicesData() const { return m_indicesBuffer->getDataRW(); }
 
         //////////////////////////////////////////
         VertexAttributeType getIndicesType() const { return m_indicesType; }
@@ -213,7 +213,7 @@ namespace Maze
             ByteBufferPtr const& byteBuffer = m_vertexData[(Size)_semantic].byteBuffer;
             if (!byteBuffer)
                 return nullptr;
-            return byteBuffer->getDataPointer();
+            return byteBuffer->getDataRW();
         }
 
         //////////////////////////////////////////
@@ -240,7 +240,7 @@ namespace Maze
             if (!byteBuffer)
                 return false;
 
-            _data = byteBuffer->getData();
+            _data = byteBuffer->getDataRO();
             _description = data.description;
             _count = data.count;
 

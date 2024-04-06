@@ -148,8 +148,8 @@ namespace Maze
             mzalBufferData(
                 m_bufferID,
                 m_bufferFormat,
-                _soundData->getData()->getData(),
-                (MZALsizei)_soundData->getData()->getSize(),
+                _soundData->getDataRO()->getDataRO(),
+                (MZALsizei)_soundData->getDataRO()->getSize(),
                 (MZALsizei)_soundData->getFrequency()));
 
 

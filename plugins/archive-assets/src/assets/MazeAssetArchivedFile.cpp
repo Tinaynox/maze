@@ -135,7 +135,7 @@ namespace Maze
         }
         else
         {
-            tinyxml2::XMLError loadError = _doc.Parse((CString)byteBuffer->getDataPointer(), byteBuffer->getSize());
+            tinyxml2::XMLError loadError = _doc.Parse((CString)byteBuffer->getDataRW(), byteBuffer->getSize());
 
             if (tinyxml2::XML_SUCCESS != loadError)
             {
@@ -155,7 +155,7 @@ namespace Maze
         _byteBuffer.resize(getFileSize());
         return m_archive->readArchivedFileToBuffer(
             m_zipArchiveFilePath,
-            _byteBuffer.getDataPointer(),
+            _byteBuffer.getDataRW(),
             _byteBuffer.getSize());
         return false;
     }
@@ -166,7 +166,7 @@ namespace Maze
         _byteBuffer.resize(_size);
         return m_archive->readArchivedFileToBuffer(
             m_zipArchiveFilePath,
-            _byteBuffer.getDataPointer(),
+            _byteBuffer.getDataRW(),
             _byteBuffer.getSize());
         return false;
     }

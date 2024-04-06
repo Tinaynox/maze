@@ -119,7 +119,7 @@ namespace Maze
         if MAZE_CONSTEXPR14 (sizeof(TValue) <= MAZE_DATA_BLOCK_INPLACE_PARAM_SIZE)
             return castParamValue<TValue, ParamValue>(value);
 
-        return castParamValue<TValue>(getDataBufferData(getParamsUsedSize() + value));
+        return castParamValue<TValue>(getDataBufferDataRO(getParamsUsedSize() + value));
     }
 
     //////////////////////////////////////////
@@ -226,7 +226,7 @@ namespace Maze
         if (sizeof(TValue) <= MAZE_DATA_BLOCK_INPLACE_PARAM_SIZE)
             memcpy(&value, &_value, sizeof(TValue));
         else
-            memcpy(getDataBufferData(getParamsUsedSize() + value), &_value, sizeof(TValue));
+            memcpy(getDataBufferDataRW(getParamsUsedSize() + value), &_value, sizeof(TValue));
 
         return true;
     }
