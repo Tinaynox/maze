@@ -80,6 +80,10 @@ namespace Maze
         //////////////////////////////////////////
         CanvasRendererPtr const& getCanvasRenderer() const { return m_canvasRenderer; }
 
+
+        //////////////////////////////////////////
+        inline Vec2F const& getBoundingSize() const { return m_boundingSize; }
+
     protected:
 
         //////////////////////////////////////////
@@ -104,6 +108,8 @@ namespace Maze
 
         Transform2DPtr m_transform;
         CanvasRendererPtr m_canvasRenderer;
+
+        Vec2F m_boundingSize = Vec2F::c_zero;
     };
 
 

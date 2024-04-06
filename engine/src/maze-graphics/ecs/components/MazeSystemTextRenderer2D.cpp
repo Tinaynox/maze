@@ -217,6 +217,8 @@ namespace Maze
                     ++columnsCount;
                     ++p0;
                 }
+
+                maxColumnsCount = Math::Max(maxColumnsCount, columnsCount);
             }
             else
             {
@@ -264,6 +266,9 @@ namespace Maze
 
             ++p;
         }
+
+        m_boundingSize.x = (F32(maxColumnsCount) * (m_systemFont->charSize.x - m_systemFont->outline) + m_systemFont->outline) * fontScale;
+        m_boundingSize.y = (rowsCount * (m_systemFont->charSize.y - m_systemFont->outline) + m_systemFont->outline) * fontScale;
 
         updateMeshRendererModelMatrices();
         updateMeshRendererColors();

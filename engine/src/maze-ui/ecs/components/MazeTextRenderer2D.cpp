@@ -347,6 +347,8 @@ namespace Maze
     //////////////////////////////////////////
     void TextRenderer2D::updateMeshDataNow()
     {
+        m_boundingSize = Vec2F::c_zero;
+
         if (!m_canvasRenderer)
             return;
         
@@ -699,6 +701,9 @@ namespace Maze
 
         m_lastGlyphOffset.x = x + xAlignOffset + m_outlineThickness;
         m_lastGlyphOffset.y = y;
+
+        m_boundingSize.x = rowLengthMax;
+        m_boundingSize.y = totalTextHeight;
 
         updateMeshRendererModelMatrices();
         updateMeshRendererColors();
