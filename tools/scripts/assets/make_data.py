@@ -471,7 +471,8 @@ if __name__ == '__main__':
     parser.add_argument('--mode', type=str, help='Production mode')
     parser.add_argument('--tags', type=str, help='Build tags')
     parser.add_argument('--max-atlas-size', type=str, help='Max atlas size')
-    parser.add_argument('--mzdata-extensions', nargs='+', help='MZData asset extensions')
+    parser.add_argument('--mzdata-extensions', nargs='+', help='MZData asset extensions',
+                        default='mzdata mzmaterial mzshader mzprefab mzfont mzfontmaterial')
     parsedArgs = parser.parse_args()
     try:
         make = MakeData(parsedArgs)

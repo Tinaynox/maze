@@ -48,7 +48,7 @@
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
-#include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
@@ -153,7 +153,7 @@ namespace Maze
             getEntityRaw()->getECSScene(),
             Vec2F32::c_zero,
             Vec2F32::c_zero);
-        m_bodyBackground->setColor(EditorToolsLayout::c_bodyBackgroundColor);
+        m_bodyBackground->setColor(EditorToolsStyles::GetInstancePtr()->getBodyBackgroundColor());
         m_bodyBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>();
         
 

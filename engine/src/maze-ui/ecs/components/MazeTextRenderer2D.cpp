@@ -301,6 +301,9 @@ namespace Maze
         if (!getFontMaterial())
             return;
 
+        if (!getFontMaterial()->getFont()->getDefaultFont())
+            return;
+
         auto ttfPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFPage(m_fontSize);
         auto ttfOutlineThicknessPage = &getFontMaterial()->getFont()->getDefaultFont()->ensureTTFOutlineThicknessPage(m_fontSize, m_outlineThickness);
 
@@ -357,7 +360,7 @@ namespace Maze
 
         Vec2F const& size = m_transform->getSize();
 
-        if (!getFontMaterial() || m_text.empty())
+        if (!getFontMaterial() || !getFontMaterial()->getFont() || !getFontMaterial()->getFont()->getDefaultFont() || m_text.empty())
         {
             m_meshRenderer->resize(0);
             m_localMatrices.clear();
@@ -754,9 +757,10 @@ namespace Maze
         Size transformCount = m_meshRenderer->getModelMatrices().size();
         MAZE_DEBUG_ERROR_IF(transformCount != m_localMatrices.size(), "Invalid characters count!");
         for (Size i = 0; i < transformCount; ++i)
-            m_meshRenderer->setModelMatrix(
-                i,
-                m_transform->getWorldTransform().concatenatedAffineCopy(m_localMatrices[i]));
+        {
+            Mat4F tm = m_transform->getWorldTransform().concatenatedAffineCopy(m_localMatrices[i]);
+            m_meshRenderer->setModelMatrix(i, tm);
+        }
     }
 
     //////////////////////////////////////////

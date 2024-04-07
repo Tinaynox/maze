@@ -40,7 +40,7 @@
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
-#include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-editor-tools/property-drawers/MazeRadians.hpp"

@@ -55,6 +55,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(ComponentSystem);
     MAZE_USING_SHARED_PTR(MenuListTree2D);
     MAZE_USING_SHARED_PTR(ECSScene);
+    MAZE_USING_SHARED_PTR(EditorToolsStyles);
 
 
     //////////////////////////////////////////
@@ -141,6 +142,7 @@ namespace Maze
     protected:
         static EditorToolsManager* s_instance;
 
+        EditorToolsStylesPtr m_styles;
         SelectionManagerPtr m_selectionManager;
         InspectorManagerPtr m_inspectorManager;
         GizmosManagerPtr m_gizmosManager;

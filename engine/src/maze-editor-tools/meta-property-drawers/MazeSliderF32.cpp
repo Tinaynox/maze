@@ -37,7 +37,7 @@
 #include "maze-ui/ecs/components/MazeSlider2D.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
-#include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 
 

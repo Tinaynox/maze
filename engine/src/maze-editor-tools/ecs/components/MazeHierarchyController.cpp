@@ -52,11 +52,12 @@
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
-#include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/scenes/SceneDebugEditor.hpp"
 #include "maze-editor-tools/ecs/components/MazeHierarchyLine.hpp"
 #include "maze-editor-tools/ecs/components/MazeHierarchyLinePool.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeScrollRect2D.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
@@ -148,42 +149,42 @@ namespace Maze
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
             Vec2F(
                 m_canvas->getTransform()->getSize().x,
-                EditorToolsLayout::c_titleHeight),
+                EditorToolsStyles::GetInstancePtr()->getTitleHeight()),
             Vec2F(0.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_titleTransform,
             getEntityRaw()->getECSScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
-        m_titleBackground->setColor(EditorToolsLayout::c_titleBackgroundColor);
+        m_titleBackground->setColor(EditorToolsStyles::GetInstancePtr()->getTitleBackgroundColor());
         m_titleBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
 
-        SystemTextRenderer2DPtr hierarchyText = SystemUIHelper::CreateSystemText(
+        AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
             "Hierarchy",
-            EditorToolsLayout::c_titleFontSize,
+            EditorToolsStyles::GetInstancePtr()->getTitleFontSize(),
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2F(100, EditorToolsLayout::c_titleHeight),
-            Vec2F(EditorToolsLayout::c_titleLabelShift, 0),            
+            Vec2F(100, EditorToolsStyles::GetInstancePtr()->getTitleHeight()),
+            Vec2F(EditorToolsStyles::GetInstancePtr()->getTitleLabelShift(), 0),
             m_titleBackground->getTransform(),
             getEntityRaw()->getECSScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F(0.0f, 0.5f));
-        hierarchyText->setColor(ColorU32::c_black);
+        titleText->setColor(ColorU32::c_black);
         
         m_bodyBackground = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
             Vec2F(
                 m_titleTransform->getSize().x, 
-                m_titleTransform->getSize().y - EditorToolsLayout::c_titleHeight),
+                m_titleTransform->getSize().y - EditorToolsStyles::GetInstancePtr()->getTitleHeight()),
             Vec2F(0.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_canvas->getTransform(),
             getEntityRaw()->getECSScene(),
             Vec2F::c_zero,
             Vec2F::c_zero);
-        m_bodyBackground->setColor(EditorToolsLayout::c_bodyBackgroundColor);
-        m_bodyBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>()->setSizeDelta(0.0f, -EditorToolsLayout::c_titleHeight);
+        m_bodyBackground->setColor(EditorToolsStyles::GetInstancePtr()->getBodyBackgroundColor());
+        m_bodyBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>()->setSizeDelta(0.0f, -EditorToolsStyles::GetInstancePtr()->getTitleHeight());
 
         ScrollRect2DPtr scrollRect = UIHelper::CreateDefaultScrollRect(
             m_bodyBackground->getTransform()->getSize(),

@@ -52,7 +52,7 @@
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
-#include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
@@ -62,6 +62,7 @@
 #include "maze-editor-tools/preview-inspectors/MazeRenderMeshPreviewInspector.hpp"
 #include "maze-editor-tools/preview-inspectors/MazeDirectoryPreviewInspector.hpp"
 #include "maze-editor-tools/preview-inspectors/MazeFilePreviewInspector.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -210,28 +211,28 @@ namespace Maze
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
             Vec2F(
                 m_canvas->getTransform()->getSize().x,
-                EditorToolsLayout::c_titleHeight),
+                EditorToolsStyles::GetInstancePtr()->getTitleHeight()),
             Vec2F(0.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             canvasTransform,
             getEntityRaw()->getECSScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
-        titleBackground->setColor(EditorToolsLayout::c_titleBackgroundColor);
+        titleBackground->setColor(EditorToolsStyles::GetInstancePtr()->getTitleBackgroundColor());
         titleBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
 
-        SystemTextRenderer2DPtr hierarchyText = SystemUIHelper::CreateSystemText(
+        AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
             "Preview",
-            EditorToolsLayout::c_titleFontSize,
+            EditorToolsStyles::GetInstancePtr()->getTitleFontSize(),
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
-            Vec2F(100, EditorToolsLayout::c_titleHeight),
-            Vec2F(EditorToolsLayout::c_titleLabelShift, 0),
+            Vec2F(100, EditorToolsStyles::GetInstancePtr()->getTitleHeight()),
+            Vec2F(EditorToolsStyles::GetInstancePtr()->getTitleLabelShift(), 0),
             titleBackground->getTransform(),
             getEntityRaw()->getECSScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F(0.0f, 0.5f));
-        hierarchyText->setColor(ColorU32::c_black);
+        titleText->setColor(ColorU32::c_black);
 
         m_bodySprite = Sprite::Create(m_renderBuffer->getColorTexture()->cast<Texture2D>());
         m_bodySprite->setName("PreviewController");
@@ -240,15 +241,15 @@ namespace Maze
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
             Vec2F(
                 canvasTransform->getSize().x, 
-                canvasTransform->getSize().y - EditorToolsLayout::c_titleHeight),
+                canvasTransform->getSize().y - EditorToolsStyles::GetInstancePtr()->getTitleHeight()),
             Vec2F(0.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_canvas->getTransform(),
             getEntityRaw()->getECSScene(),
             Vec2F::c_zero,
             Vec2F::c_zero);
-        m_bodyBackground->setColor(EditorToolsLayout::c_bodyBackgroundColor);
-        m_bodyBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>()->setSizeDelta(0.0f, -EditorToolsLayout::c_titleHeight);
+        m_bodyBackground->setColor(EditorToolsStyles::GetInstancePtr()->getBodyBackgroundColor());
+        m_bodyBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>()->setSizeDelta(0.0f, -EditorToolsStyles::GetInstancePtr()->getTitleHeight());
         m_bodyBackgroundElement = m_bodyBackground->getEntityRaw()->ensureComponent<UIElement2D>();
         m_bodyBackgroundElement->setCaptureCursorHits(true);
         m_bodyBackgroundElement->eventCursorPressIn.subscribe(this, &PreviewController::notifyBodyBackgroundElementCursorPress);
@@ -432,7 +433,7 @@ namespace Maze
         {
             m_bodyBackground->setSprite(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02));
-            m_bodyBackground->setColor(EditorToolsLayout::c_bodyBackgroundColor);
+            m_bodyBackground->setColor(EditorToolsStyles::GetInstancePtr()->getBodyBackgroundColor());
         }
 
         if (m_scene)

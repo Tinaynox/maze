@@ -119,18 +119,18 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        PhysicsMaterial2DLibraryData* addFontToLibrary(
+        PhysicsMaterial2DLibraryData* addMaterialToLibrary(
             HashedCString _physicsMaterial2DName,
             PhysicsMaterial2DPtr const& _physicsMaterial2D);
 
         //////////////////////////////////////////
-        void removeFontFromLibrary(HashedCString _physicsMaterial2DName);
+        void removeMaterialFromLibrary(HashedCString _physicsMaterial2DName);
 
         //////////////////////////////////////////
-        inline void removeFontFromLibrary(CString _physicsMaterial2DName) { removeFontFromLibrary(HashedCString(_physicsMaterial2DName)); }
+        inline void removeMaterialFromLibrary(CString _physicsMaterial2DName) { removeMaterialFromLibrary(HashedCString(_physicsMaterial2DName)); }
 
         //////////////////////////////////////////
-        inline void removeFontFromLibrary(String const& _physicsMaterial2DName) { removeFontFromLibrary(HashedCString(_physicsMaterial2DName.c_str())); }
+        inline void removeMaterialFromLibrary(String const& _physicsMaterial2DName) { removeMaterialFromLibrary(HashedCString(_physicsMaterial2DName.c_str())); }
 
 
         //////////////////////////////////////////

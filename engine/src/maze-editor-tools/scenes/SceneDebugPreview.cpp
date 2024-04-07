@@ -92,7 +92,7 @@
 #include "maze-ui/ecs/systems/MazeInputSystem2D.hpp"
 #include "maze-ui/ecs/systems/MazeUITweenTransitionSystem.hpp"
 #include "maze-physics2d/ecs/systems/MazePhysicsControlSystem2D.hpp"
-#include "layout/MazeEditorToolsLayout.hpp"
+#include "layout/MazeEditorToolsStyles.hpp"
 
 
 //////////////////////////////////////////

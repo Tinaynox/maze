@@ -128,8 +128,7 @@ namespace Maze
     TrueTypeFontPtr TrueTypeFontManager::createTrueTypeFont(
         AssetFilePtr const& _assetFile)
     {
-        if (!m_trueTypeFontLoader.loadTrueTypeFontAssetFileFunc)
-            return nullptr;
+        MAZE_WARNING_RETURN_VALUE_IF(!m_trueTypeFontLoader.loadTrueTypeFontAssetFileFunc, nullptr, "There is no TTF loader. Loading is not possible.");
 
         TrueTypeFontPtr font;
         m_trueTypeFontLoader.loadTrueTypeFontAssetFileFunc(_assetFile, font);

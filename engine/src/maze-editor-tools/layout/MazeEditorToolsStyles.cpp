@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
-#include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
@@ -47,6 +47,7 @@
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
+#include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
@@ -65,6 +66,7 @@
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
+#include "maze-ui/managers/MazeFontMaterialManager.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
@@ -82,24 +84,87 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class EditorToolsLayout
+    // Class EditorToolsStyles
     //
     //////////////////////////////////////////
-    F32 const EditorToolsLayout::c_titleHeight = 20.0f;
+    F32 const EditorToolsStyles::c_titleHeightDefault = 20.0f;
     F32 const topBarHeight = 0.025f;
-    ColorU32 const EditorToolsLayout::c_titleBackgroundColor = ColorU32(203, 203, 203, 255);
-    U32 const EditorToolsLayout::c_titleFontSize = 10;
-    F32 const EditorToolsLayout::c_titleLabelShift = 5.0f;
-    ColorU32 const EditorToolsLayout::c_bodyBackgroundColor = ColorU32(194, 194, 194, 255);
-    ColorU32 const EditorToolsLayout::c_bodySubBackgroundColor = ColorU32(164, 164, 164, 255);
-    U32 const EditorToolsLayout::c_inspectorPropertyFontSize = 8;
-    ColorU32 const EditorToolsLayout::c_inspectorPropertyColor = ColorU32(32, 32, 32, 255);
-    Rect2DF const EditorToolsLayout::c_hierarchyViewport(0.0f, 0.33f, 0.25f, 0.67f - topBarHeight);
-    Rect2DF const EditorToolsLayout::c_inspectorViewport(0.75f, 0.33f, 0.25f, 0.67f - topBarHeight);
-    Rect2DF const EditorToolsLayout::c_assetsViewport(0.0f, 0.0f, 0.5f, 0.33f);
-    Rect2DF const EditorToolsLayout::c_sceneViewport(0.5f, 0.0f, 0.5f, 0.33f);
-    Rect2DF const EditorToolsLayout::c_topBarViewport(0.0f, 0.975f, 1.0f, topBarHeight);
-    
+    ColorU32 const EditorToolsStyles::c_titleBackgroundColorDefault = ColorU32(203, 203, 203, 255);
+    U32 const EditorToolsStyles::c_titleFontSizeDefault = 12;
+    F32 const EditorToolsStyles::c_titleLabelShiftDefault = 5.0f;
+    ColorU32 const EditorToolsStyles::c_bodyBackgroundColorDefault = ColorU32(194, 194, 194, 255);
+    ColorU32 const EditorToolsStyles::c_bodySubBackgroundColorDefault = ColorU32(164, 164, 164, 255);
+    U32 const EditorToolsStyles::c_inspectorPropertyFontSizeDefault = 10;
+    ColorU32 const EditorToolsStyles::c_inspectorPropertyColorDefault = ColorU32(5, 7, 5, 255);
+    Rect2DF const EditorToolsStyles::c_hierarchyViewportDefault(0.0f, 0.33f, 0.25f, 0.67f - topBarHeight);
+    Rect2DF const EditorToolsStyles::c_inspectorViewportDefault(0.75f, 0.33f, 0.25f, 0.67f - topBarHeight);
+    Rect2DF const EditorToolsStyles::c_assetsViewportDefault(0.0f, 0.0f, 0.5f, 0.33f);
+    Rect2DF const EditorToolsStyles::c_sceneViewportDefault(0.5f, 0.0f, 0.5f, 0.33f);
+    Rect2DF const EditorToolsStyles::c_topBarViewportDefault(0.0f, 0.975f, 1.0f, topBarHeight);
+    EditorToolsStyles* EditorToolsStyles::s_instance = nullptr;
+
+
+    //////////////////////////////////////////
+    EditorToolsStyles::EditorToolsStyles()
+        : m_titleHeight(c_titleHeightDefault)
+        , m_titleBackgroundColor(c_titleBackgroundColorDefault)
+        , m_titleFontSize(c_titleFontSizeDefault)
+        , m_titleLabelShift(c_titleLabelShiftDefault)
+        , m_bodyBackgroundColor(c_bodyBackgroundColorDefault)
+        , m_bodySubBackgroundColor(c_bodySubBackgroundColorDefault)
+        , m_inspectorPropertyFontSize(c_inspectorPropertyFontSizeDefault)
+        , m_inspectorPropertyColor(c_inspectorPropertyColorDefault)
+        , m_hierarchyViewport(c_hierarchyViewportDefault)
+        , m_inspectorViewport(c_inspectorViewportDefault)
+        , m_assetsViewport(c_assetsViewportDefault)
+        , m_sceneViewport(c_sceneViewportDefault)
+        , m_topBarViewport(c_topBarViewportDefault)
+    {
+        s_instance = this;
+    }
+
+    //////////////////////////////////////////
+    EditorToolsStyles::~EditorToolsStyles()
+    {
+        s_instance = nullptr;
+    }
+
+    //////////////////////////////////////////
+    void EditorToolsStyles::Initialize(EditorToolsStylesPtr& _editorToolsStyles)
+    {
+        MAZE_CREATE_AND_INIT_SHARED_PTR(EditorToolsStyles, _editorToolsStyles, init());
+    }
+
+    //////////////////////////////////////////
+    bool EditorToolsStyles::init()
+    {
+        return true;
+    }
+
+    //////////////////////////////////////////
+    bool EditorToolsStyles::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        m_defaultFontMaterialName = _dataBlock.getString(MAZE_HS("defaultFontMaterial"));
+
+        m_defaultFontMaterial = FontMaterialManager::GetInstancePtr()->getFontMaterial(m_defaultFontMaterialName);
+
+        return true;
+    }
+
+
+    //////////////////////////////////////////
+    void EditorToolsStyles::loadStyles(Path const& _fileName)
+    {           
+        AssetFilePtr const& stylesAssetFile = AssetManager::GetInstancePtr()->getAssetFile(_fileName);
+        if (stylesAssetFile)
+        {
+            DataBlock dataBlock;
+            ByteBufferPtr byteBuffer = stylesAssetFile->readAsByteBuffer();
+            dataBlock.loadFromByteBuffer(*byteBuffer.get());
+            loadFromDataBlock(dataBlock);
+        }
+    }
+        
 
 } // namespace Maze
 //////////////////////////////////////////

@@ -90,6 +90,20 @@ namespace Maze
             Vec2F const& _spriteSize = Vec2F(14.0f, 14.0f));
 
 
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API AbstractTextRenderer2DPtr CreateText(
+            CString _text,
+            U32 _fontSize,
+            HorizontalAlignment2D _horizontalAlignment,
+            VerticalAlignment2D _verticalAlignment,
+            Vec2F const& _size,
+            Vec2F const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
+
+
     } // namespace EditorToolsUIHelper
     //////////////////////////////////////////
 

@@ -89,7 +89,9 @@
 #include "maze-plugin-profiler-view/settings/MazeProfilerViewSettings.hpp"
 #include "maze-plugin-particles-editor-tools/MazeParticlesEditorToolsPlugin.hpp"
 #include "maze-plugin-physics2d-editor-tools/MazePhysics2DEditorToolsPlugin.hpp"
+#include "maze-plugin-loader-ttf/MazeLoaderTTFPlugin.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "Editor.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "layout/EditorLayout.hpp"
@@ -282,6 +284,11 @@ namespace Maze
             case 10:
             {
                 Editor::GetInstancePtr()->eventCoreEditorResourcesLoaded();
+
+                MAZE_LOAD_PLATFORM_PLUGIN(LoaderTTF);
+
+                EditorToolsStyles::GetInstancePtr()->loadStyles("EditorStyles.mzdata");
+
                 setCurrentProgress(0.85f);
                 break;
             }
@@ -292,6 +299,7 @@ namespace Maze
                 MAZE_LOAD_PLATFORM_PLUGIN(Console);
                 MAZE_LOAD_PLATFORM_PLUGIN(ParticlesEditorTools);
                 MAZE_LOAD_PLATFORM_PLUGIN(Physics2DEditorTools);
+
 #if (MAZE_PLATFORM == MAZE_PLATFORM_ANDROID)
                 if (SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>())
                     SettingsManager::GetInstancePtr()->getSettingsRaw<ProfilerViewSettings>()->setActive(true);

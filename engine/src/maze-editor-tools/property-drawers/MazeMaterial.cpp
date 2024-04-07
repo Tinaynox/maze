@@ -42,8 +42,9 @@
 #include "maze-ui/managers/MazeMaterialPickerManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
-#include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 
 
@@ -117,9 +118,9 @@ namespace Maze
         layout->setAutoWidth(false);
         layout->setExpand(true);
 
-        SystemTextRenderer2DPtr systemText = SystemUIHelper::CreateSystemText(
+        AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
             EditorToolsHelper::BuildPropertyName(m_label.c_str(), _label).c_str(),
-            EditorToolsLayout::c_inspectorPropertyFontSize,
+            EditorToolsStyles::GetInstancePtr()->getInspectorPropertyFontSize(),
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
             Vec2F(8, 18),
@@ -128,7 +129,7 @@ namespace Maze
             _parent->getEntityRaw()->getECSScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F::c_zero);
-        systemText->setColor(EditorToolsLayout::c_inspectorPropertyColor);
+        titleText->setColor(EditorToolsStyles::GetInstancePtr()->getInspectorPropertyColor());
 
 
         m_materialButton = UIHelper::CreateClickButton(

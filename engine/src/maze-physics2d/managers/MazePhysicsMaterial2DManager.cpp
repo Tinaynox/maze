@@ -112,7 +112,7 @@ namespace Maze
             return libraryData->physicsMaterial2D;
 
         PhysicsMaterial2DPtr material = PhysicsMaterial2D::Create(_assetFile);
-        PhysicsMaterial2DLibraryData* data = addFontToLibrary(
+        PhysicsMaterial2DLibraryData* data = addMaterialToLibrary(
             HashedCString(_assetFile->getFileName().toUTF8().c_str()),
             material);
 
@@ -140,7 +140,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    PhysicsMaterial2DLibraryData* PhysicsMaterial2DManager::addFontToLibrary(
+    PhysicsMaterial2DLibraryData* PhysicsMaterial2DManager::addMaterialToLibrary(
         HashedCString _physicsMaterial2DName,
         PhysicsMaterial2DPtr const& _physicsMaterial2D)
     {
@@ -151,7 +151,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PhysicsMaterial2DManager::removeFontFromLibrary(HashedCString _physicsMaterial2DName)
+    void PhysicsMaterial2DManager::removeMaterialFromLibrary(HashedCString _physicsMaterial2DName)
     {
         m_materialsLibrary.erase(_physicsMaterial2DName);
     }

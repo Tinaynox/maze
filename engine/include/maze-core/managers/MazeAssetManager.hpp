@@ -250,6 +250,8 @@ namespace Maze
         inline Set<Path> const& getAssetDirectoryPathes() const { return m_assetDirectoryPathes; }
 
     public:
+        MultiDelegate<Path const&> eventAssetsDirectoryPathAdded;
+        MultiDelegate<Path const&> eventAssetsDirectoryPathRemoved;
         MultiDelegate<AssetFilePtr const&> eventAssetFileAdded;
         MultiDelegate<AssetFilePtr const&> eventAssetFileRemoved;
         MultiDelegate<AssetFilePtr const&, Path const&> eventAssetFileMoved;

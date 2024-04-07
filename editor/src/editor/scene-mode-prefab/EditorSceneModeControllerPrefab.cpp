@@ -81,7 +81,7 @@
 #include "maze-editor-tools/ecs/components/MazeInspectorController.hpp"
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "maze-editor-tools/ecs/components/MazeDebugGridRenderer.hpp"
-#include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "Editor.hpp"
@@ -169,7 +169,7 @@ namespace Maze
             scene.get(),
             Vec2F32(0.0f, 1.0f),
             Vec2F32(0.0f, 1.0f));
-        m_topBarBackground->setColor(EditorToolsLayout::c_bodySubBackgroundColor);
+        m_topBarBackground->setColor(EditorToolsStyles::GetInstancePtr()->getBodySubBackgroundColor());
         m_topBarBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
 
 

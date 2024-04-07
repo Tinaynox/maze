@@ -39,7 +39,7 @@
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
-#include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-plugin-particles-editor-tools/property-drawers/MazeParticleSystemParameterF32.hpp"

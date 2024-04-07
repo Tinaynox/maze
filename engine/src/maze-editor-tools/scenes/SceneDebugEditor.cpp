@@ -88,7 +88,7 @@
 #include "maze-ui/material-picker/MazeSceneMaterialPicker.hpp"
 #include "maze-ui/texture-picker/MazeSceneTexturePicker.hpp"
 #include "maze-ui/render-mesh-picker/MazeSceneRenderMeshPicker.hpp"
-#include "layout/MazeEditorToolsLayout.hpp"
+#include "layout/MazeEditorToolsStyles.hpp"
 
 
 //////////////////////////////////////////
@@ -105,11 +105,11 @@ namespace Maze
 
     //////////////////////////////////////////
     SceneDebugEditor::SceneDebugEditor()
-        : m_hierarchyViewport(EditorToolsLayout::c_hierarchyViewport)
-        , m_inspectorViewport(EditorToolsLayout::c_inspectorViewport)
-        , m_assetsViewport(EditorToolsLayout::c_assetsViewport)
-        , m_topBarViewport(EditorToolsLayout::c_topBarViewport)
-        , m_sceneViewport(EditorToolsLayout::c_sceneViewport)
+        : m_hierarchyViewport(EditorToolsStyles::GetInstancePtr()->getHierarchyViewport())
+        , m_inspectorViewport(EditorToolsStyles::GetInstancePtr()->getInspectorViewport())
+        , m_assetsViewport(EditorToolsStyles::GetInstancePtr()->getAssetsViewport())
+        , m_topBarViewport(EditorToolsStyles::GetInstancePtr()->getTopBarViewport())
+        , m_sceneViewport(EditorToolsStyles::GetInstancePtr()->getSceneViewport())
         , m_yawAngle(0.0f)
         , m_pitchAngle(0.0f)
         , m_cursorPositionLastFrame(Vec2F::c_zero)

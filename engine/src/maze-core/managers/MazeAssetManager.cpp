@@ -83,6 +83,8 @@ namespace Maze
     {
         m_assetDirectoryPathes.insert(_path);
         addAssetsDirectory(_path, true);
+
+        eventAssetsDirectoryPathAdded(_path);
     }
 
     //////////////////////////////////////////
@@ -90,6 +92,8 @@ namespace Maze
     {
         m_assetDirectoryPathes.erase(_path);
         removeAssetsDirectory(_path, true);
+
+        eventAssetsDirectoryPathRemoved(_path);
     }
 
     //////////////////////////////////////////

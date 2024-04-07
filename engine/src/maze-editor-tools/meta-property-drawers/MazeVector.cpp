@@ -41,8 +41,9 @@
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
-#include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 
 
@@ -151,18 +152,18 @@ namespace Maze
         m_expandButton = m_expandButtonSprite->getEntityRaw()->ensureComponent<ClickButton2D>();
         m_expandButton->eventClick.subscribe(this, &MetaPropertyDrawerVector::notifyExpandButtonClick);
 
-        SystemTextRenderer2DPtr systemText = SystemUIHelper::CreateSystemText(
+        AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
             EditorToolsHelper::BuildPropertyName(m_metaProperty->getName(), _label).c_str(),
-            EditorToolsLayout::c_inspectorPropertyFontSize,
+            EditorToolsStyles::GetInstancePtr()->getInspectorPropertyFontSize(),
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
             Vec2F(8, 18),
             Vec2F(0, 0),
-            titleLayout->getTransform(),
+            layout->getTransform(),
             _parent->getEntityRaw()->getECSScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F::c_zero);
-        systemText->setColor(EditorToolsLayout::c_inspectorPropertyColor);
+        titleText->setColor(EditorToolsStyles::GetInstancePtr()->getInspectorPropertyColor());
 
 
         m_bodyLayout = UIHelper::CreateVerticalLayout(

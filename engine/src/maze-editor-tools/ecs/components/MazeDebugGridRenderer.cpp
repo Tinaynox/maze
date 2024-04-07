@@ -48,7 +48,7 @@
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
-#include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 
 

@@ -42,6 +42,7 @@
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/managers/MazeAssetEditorToolsManager.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 
 
 //////////////////////////////////////////
@@ -90,6 +91,10 @@ namespace Maze
     bool EditorToolsManager::init()
     {
         SettingsManager::GetInstancePtr()->registerSettings<EditorToolsSettings>();
+
+        EditorToolsStyles::Initialize(m_styles);
+        if (!m_styles)
+            return false;
 
         SelectionManager::Initialize(m_selectionManager);
         if (!m_selectionManager)

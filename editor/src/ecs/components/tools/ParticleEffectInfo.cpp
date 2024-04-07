@@ -51,7 +51,7 @@
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
-#include "maze-editor-tools/layout/MazeEditorToolsLayout.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/scenes/SceneDebugEditor.hpp"
 #include "maze-editor-tools/ecs/components/MazeHierarchyLine.hpp"
 #include "maze-editor-tools/ecs/components/MazeHierarchyLinePool.hpp"

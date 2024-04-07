@@ -64,9 +64,12 @@
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
+#include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
+#include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
+#include "maze-ui/managers/MazeFontMaterialManager.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
@@ -78,6 +81,7 @@
 #include "maze-editor-tools/ecs/components/MazeHierarchyController.hpp"
 #include "maze-editor-tools/ecs/components/MazeInspectorController.hpp"
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 
 
 //////////////////////////////////////////
@@ -172,6 +176,58 @@ namespace Maze
             sprite->setColor(_spriteColor);
 
             return button;
+        }
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API AbstractTextRenderer2DPtr CreateText(
+            CString _text,
+            U32 _fontSize,
+            HorizontalAlignment2D _horizontalAlignment,
+            VerticalAlignment2D _verticalAlignment,
+            Vec2F const& _size,
+            Vec2F const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2F const& _anchor,
+            Vec2F const& _pivot)
+        {
+            AbstractTextRenderer2DPtr abstractText;
+            
+            FontMaterialPtr const& fontMaterial = EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial();
+            if (fontMaterial)
+            {
+                TextRenderer2DPtr text = UIHelper::CreateText(
+                    _text,
+                    _fontSize,
+                    _horizontalAlignment,
+                    _verticalAlignment,
+                    _size,
+                    _position,
+                    _parent,
+                    _ecsScene,
+                    _anchor,
+                    _pivot);
+                text->setFontMaterial(fontMaterial);
+                abstractText = text;
+            }
+            else
+            if (_fontSize > 2)
+            {
+                SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
+                    _text,
+                    _fontSize - 2,
+                    _horizontalAlignment,
+                    _verticalAlignment,
+                    _size,
+                    _position,
+                    _parent,
+                    _ecsScene,
+                    _anchor,
+                    _pivot);
+                abstractText = text;
+            }
+
+            return abstractText;
         }
 
     } // namespace EditorToolsUIHelper
