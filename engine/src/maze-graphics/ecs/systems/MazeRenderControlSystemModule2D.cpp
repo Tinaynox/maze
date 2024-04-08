@@ -185,12 +185,8 @@ namespace Maze
                     (F32)renderTarget->getRenderTargetHeight() / 2.0f,
                     0.0f);
                     
-                Mat4F canvasCameraTransform = Mat4F::CreateTranslationMatrix(canvasCameraPosition);
-                canvasCameraTransform = Mat4F::c_identity;
-
                 // View matrix
-                Mat4F viewMatrix = canvasCameraTransform.inversedAffineCopy();
-                renderTarget->setViewMatrix(viewMatrix);
+                renderTarget->setViewMatrix(Mat4F::c_identity);
 
                 // View position
                 renderTarget->setViewPosition(canvasCameraPosition);

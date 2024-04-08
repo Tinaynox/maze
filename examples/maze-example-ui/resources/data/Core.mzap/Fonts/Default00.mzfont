@@ -1,0 +1,16 @@
+main
+{
+  file:String = "Roboto-Medium.ttf"
+}
+
+trueType
+{
+  file:String = "KOMIKABG.ttf"
+
+  Symbols
+  {
+    from:U32 = 0x0030
+    to:U32 = 0x0039
+  }
+}
+

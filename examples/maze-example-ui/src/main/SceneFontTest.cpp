@@ -184,6 +184,8 @@ namespace Maze
         m_canvas = canvasEntity->createComponent<Maze::Canvas>();
         m_canvas->setRenderTarget(renderTarget);
         m_canvas->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
+        m_canvas->setClearColor(ColorU32::c_blackSoft);
+        m_canvas->setClearColorFlag(true);
 
         SpriteRenderer2DPtr square = SpriteHelper::CreateSprite(
             ColorU32::c_gray,
