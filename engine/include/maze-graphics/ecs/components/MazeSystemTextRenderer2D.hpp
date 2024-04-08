@@ -166,6 +166,21 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        virtual bool getPixelPerfect() const { return m_pixelPerfect; }
+
+        //////////////////////////////////////////
+        virtual void setPixelPerfect(bool _value)
+        {
+            if (m_pixelPerfect == _value)
+                return;
+
+            m_pixelPerfect = _value;
+
+            updateMeshRendererModelMatrices();
+        }
+
+
+        //////////////////////////////////////////
         void updateMeshData();
 
 
@@ -224,6 +239,7 @@ namespace Maze
 
         HorizontalAlignment2D m_horizontalAlignment;
         VerticalAlignment2D m_verticalAlignment;
+        bool m_pixelPerfect = true;
 
         Vector<Mat4F> m_localMatrices;
     };
