@@ -243,10 +243,10 @@ namespace Maze
                     {
                         RenderCommandPushScissorRect* command = static_cast<RenderCommandPushScissorRect*>(_command);
 
-                        F32 posX = m_renderTarget->getRenderTargetWidth() * command->scissorRect.position.x;
-                        F32 posY = m_renderTarget->getRenderTargetHeight() * command->scissorRect.position.y;
-                        F32 sizeX = m_renderTarget->getRenderTargetWidth() * command->scissorRect.size.x;
-                        F32 sizeY = m_renderTarget->getRenderTargetHeight() * command->scissorRect.size.y;
+                        F32 posX = Math::Round(m_renderTarget->getRenderTargetWidth() * command->scissorRect.position.x);
+                        F32 posY = Math::Round(m_renderTarget->getRenderTargetHeight() * command->scissorRect.position.y);
+                        F32 sizeX = Math::Round(m_renderTarget->getRenderTargetWidth() * command->scissorRect.size.x);
+                        F32 sizeY = Math::Round(m_renderTarget->getRenderTargetHeight() * command->scissorRect.size.y);
 
                         F32 fractX = Math::Fract(posX);
                         F32 fractY = Math::Fract(posY);
@@ -445,10 +445,10 @@ namespace Maze
     {
         m_context->setViewportRect(
             Rect2DS(
-                (S32)(m_renderTarget->getRenderTargetWidth() * m_renderTarget->getViewport().position.x),
-                (S32)(m_renderTarget->getRenderTargetHeight() * m_renderTarget->getViewport().position.y),
-                (S32)(m_renderTarget->getRenderTargetWidth() * m_renderTarget->getViewport().size.x),
-                (S32)(m_renderTarget->getRenderTargetHeight() * m_renderTarget->getViewport().size.y)));
+                (S32)Math::Round(m_renderTarget->getRenderTargetWidth() * m_renderTarget->getViewport().position.x),
+                (S32)Math::Round(m_renderTarget->getRenderTargetHeight() * m_renderTarget->getViewport().position.y),
+                (S32)Math::Round(m_renderTarget->getRenderTargetWidth() * m_renderTarget->getViewport().size.x),
+                (S32)Math::Round(m_renderTarget->getRenderTargetHeight() * m_renderTarget->getViewport().size.y)));
 
         m_instanceStreamModelMatrix->castRaw<InstanceStreamModelMatrixOpenGL>()->processDrawBegin();
         m_instanceStreamColor->castRaw<InstanceStreamColorOpenGL>()->processDrawBegin();

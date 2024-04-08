@@ -79,6 +79,7 @@
 #include "maze-plugin-loader-ttf/MazeLoaderTTFPlugin.hpp"
 #include "main/SceneSystemTextTest.hpp"
 #include "main/SceneFontTest.hpp"
+#include "main/SceneCanvasTest.hpp"
 #include "Example.hpp"
 
 

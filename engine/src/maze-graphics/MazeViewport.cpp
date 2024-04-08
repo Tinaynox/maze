@@ -137,12 +137,12 @@ namespace Maze
         const Vec2U& renderTargetSize = renderTarget->getRenderTargetSize();
 
         m_absoluteRect.position = Vec2U(
-            (U32)Math::Floor(m_relativeRect.position.x * renderTargetSize.x),
-            (U32)Math::Floor(m_relativeRect.position.y * renderTargetSize.y));
+            (U32)Math::Round(m_relativeRect.position.x * renderTargetSize.x),
+            (U32)Math::Round(m_relativeRect.position.y * renderTargetSize.y));
 
         m_absoluteRect.size = Vec2U(
-            (U32)Math::Floor(m_relativeRect.size.x * renderTargetSize.x),
-            (U32)Math::Floor(m_relativeRect.size.y * renderTargetSize.y));
+            (U32)Math::Round(m_relativeRect.size.x * renderTargetSize.x),
+            (U32)Math::Round(m_relativeRect.size.y * renderTargetSize.y));
 
         m_transform = Mat3F::CreateTranslationMatrix((Vec2F)m_absoluteRect.position);
         m_transform = m_transform.concatenatedAffineCopy(m_externalTransform);

@@ -173,12 +173,15 @@ namespace Maze
 
                 renderTarget->setViewport(rootViewport);
 
+                Vec2F viewportSize = (Vec2F)renderTarget->getRenderTargetSize() * rootViewport.size;
+                viewportSize = Math::Round(viewportSize);
+
                 // Projection matrix
                 renderTarget->setProjectionMatrix2D(
                     0.0f,
                     0.0f,
-                    rootViewport.size.x * (F32)renderTarget->getRenderTargetWidth(),
-                    rootViewport.size.y * (F32)renderTarget->getRenderTargetHeight());
+                    viewportSize.x,
+                    viewportSize.y);
                     
                 Vec3F canvasCameraPosition = Vec3F(
                     (F32)renderTarget->getRenderTargetWidth() / 2.0f,
@@ -233,7 +236,7 @@ namespace Maze
 
                                 Mat4F const& worldTransform = transform2D->getWorldTransform();
 
-                                renderQueue->addDrawVAOInstancedCommand(vao, worldTransform);
+                                renderQueue->addDrawVAOInstancedCommand(vao, worldTransform);                                
                             }
 
                             break;

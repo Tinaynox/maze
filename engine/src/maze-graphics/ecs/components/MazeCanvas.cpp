@@ -150,6 +150,8 @@ namespace Maze
         Rect2DF viewportRect = getViewport();
         viewportRect.position *= (Vec2F)getRenderTarget()->getRenderTargetSize();
         viewportRect.size *= (Vec2F)getRenderTarget()->getRenderTargetSize();
+        viewportRect.position = Math::Round(viewportRect.position);
+        viewportRect.size = Math::Round(viewportRect.size);
         return viewportRect;
     }
 
@@ -173,10 +175,10 @@ namespace Maze
 
                 m_transform->setAnchor(Vec2F::c_zero);
                 m_transform->setPivot(Vec2F(0.5f, 0.5f));
-                Vec2F size = (Vec2F)m_renderTarget->getRenderTargetSize() * m_viewport.size;
+                Vec2F size = Math::Round((Vec2F)m_renderTarget->getRenderTargetSize() * m_viewport.size);
                 m_transform->setLocalPosition(size * 0.5f);
 
-                m_originPosition = m_viewport.position * (Vec2F)m_renderTarget->getRenderTargetSize();
+                m_originPosition = Math::Round(m_viewport.position * (Vec2F)m_renderTarget->getRenderTargetSize());
                 MAZE_DEBUG_ERROR_IF(!m_originPosition.isFinite(), "Origin position is not finite!");
 
                 auto canvasScaler = m_canvasScaler.lock();

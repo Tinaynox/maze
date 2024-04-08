@@ -173,6 +173,7 @@ namespace Maze
             return;
 
         Vec2F viewportSize = (Vec2F)m_canvas->getRenderTarget()->getRenderTargetSize() * m_canvas->getViewport().size;
+        viewportSize = Math::Round(viewportSize);
 
         setCanvasScale(1.0f);
         m_canvas->getTransform()->setSize(viewportSize);
@@ -185,6 +186,7 @@ namespace Maze
             return;
 
         Vec2F viewportSize = (Vec2F)m_canvas->getRenderTarget()->getRenderTargetSize() * m_canvas->getViewport().size;
+        viewportSize = Math::Round(viewportSize);
 
         F32 scaleFactor = 0;
         F32 width = 0;
