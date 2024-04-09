@@ -56,8 +56,9 @@ namespace Maze
     // Enum BuiltinMeshType
     //
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_6_API(MAZE_GRAPHICS_API, BuiltinMeshType,
+    MAZE_DECLARE_ENUMCLASS_7_API(MAZE_GRAPHICS_API, BuiltinMeshType,
         Quad,
+        QuadNullPivot,
         Cube,
         Sphere,
         Cone,
@@ -138,6 +139,9 @@ namespace Maze
        
         //////////////////////////////////////////
         inline MeshPtr const& getDefaultQuadMesh() const { return getBuiltinMesh(BuiltinMeshType::Quad); }
+
+        //////////////////////////////////////////
+        inline MeshPtr const& getDefaultQuadNullPivotMesh() const { return getBuiltinMesh(BuiltinMeshType::QuadNullPivot); }
 
         //////////////////////////////////////////
         inline MeshPtr const& getDefaultCubeMesh() const { return getBuiltinMesh(BuiltinMeshType::Cube); }

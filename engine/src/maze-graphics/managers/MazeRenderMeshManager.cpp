@@ -118,6 +118,13 @@ namespace Maze
                     m_renderSystemRaw);
                 break;
             }
+            case BuiltinRenderMeshType::QuadNullPivot:
+            {
+                renderMesh = RenderMesh::Create(
+                    MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::QuadNullPivot),
+                    m_renderSystemRaw);
+                break;
+            }
             case BuiltinRenderMeshType::Cube:
             {
                 renderMesh = RenderMesh::Create(

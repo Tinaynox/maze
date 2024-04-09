@@ -173,6 +173,8 @@ namespace Maze
         U32 _fontSize,
         F32 _outlineThickness)
     {
+        S32 scale = 1;
+
         // The glyph to return
         FontGlyph glyph;
 
@@ -180,7 +182,7 @@ namespace Maze
             return glyph;
 
         // Set the character size
-        if (!selectFTPixelSize(_fontSize))
+        if (!selectFTPixelSize(_fontSize * scale))
             return glyph;
 
         // Load the glyph corresponding to the code point
@@ -208,7 +210,7 @@ namespace Maze
             {
                 FT_Stroker_Set(
                     m_stroker,
-                    static_cast<FT_Fixed>(_outlineThickness * static_cast<F32>(1 << 6)),
+                    static_cast<FT_Fixed>(_outlineThickness * scale * static_cast<F32>(1 << 6)),
                     FT_STROKER_LINECAP_ROUND,
                     FT_STROKER_LINEJOIN_ROUND,
                     0);
@@ -221,7 +223,8 @@ namespace Maze
         FT_Bitmap& bitmap = reinterpret_cast<FT_BitmapGlyph>(glyphDesc)->bitmap;
 
         // Compute the glyph's advance offset
-        glyph.advance = static_cast<F32>(m_face->glyph->metrics.horiAdvance) / static_cast<F32>(1 << 6);
+        F32 invGlyphMetricsDiv = 1.0f / static_cast<F32>(scale * (1 << 6));
+        glyph.advance = static_cast<F32>(m_face->glyph->metrics.horiAdvance) * invGlyphMetricsDiv;
 
         S32 width = bitmap.width;
         S32 height = bitmap.rows;
@@ -253,10 +256,10 @@ namespace Maze
             // Compute the glyph's bounding box
             // The metrics found in face->glyph->metrics are normally expressed in 26.6 pixel format (i.e., 1/64th of pixels),
             // unless you use the FT_LOAD_NO_SCALE flag when calling FT_Load_Glyph or FT_Load_Char
-            glyph.bounds.position.x = static_cast<F32>(m_face->glyph->metrics.horiBearingX) / static_cast<F32>(1 << 6) - _outlineThickness;
-            glyph.bounds.position.y = static_cast<F32>(m_face->glyph->metrics.horiBearingY) / static_cast<F32>(1 << 6) + _outlineThickness;
-            glyph.bounds.size.x = static_cast<F32>(m_face->glyph->metrics.width) / static_cast<F32>(1 << 6) + _outlineThickness * 2;
-            glyph.bounds.size.y = static_cast<F32>(m_face->glyph->metrics.height) / static_cast<F32>(1 << 6) + _outlineThickness * 2;
+            glyph.bounds.position.x = static_cast<F32>(m_face->glyph->metrics.horiBearingX) * invGlyphMetricsDiv - _outlineThickness;
+            glyph.bounds.position.y = static_cast<F32>(m_face->glyph->metrics.horiBearingY) * invGlyphMetricsDiv + _outlineThickness;
+            glyph.bounds.size.x = static_cast<F32>(m_face->glyph->metrics.width) * invGlyphMetricsDiv + _outlineThickness * 2;
+            glyph.bounds.size.y = static_cast<F32>(m_face->glyph->metrics.height) * invGlyphMetricsDiv + _outlineThickness * 2;
             glyph.bounds.position.y -= glyph.bounds.size.y;
 
             // Resize the pixel buffer to the new size and fill it with transparent white pixels

@@ -108,6 +108,11 @@ namespace Maze
                 mesh = MeshHelper::CreateQuadMesh();
                 break;
             }
+            case BuiltinMeshType::QuadNullPivot:
+            {
+                mesh = MeshHelper::CreateQuadMesh(Vec2F::c_one, Vec2F(0.5f));
+                break;
+            }
             case BuiltinMeshType::Cube:
             {
                 mesh = MeshHelper::CreateCubeMesh();

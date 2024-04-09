@@ -276,7 +276,7 @@ namespace Maze
             break;
         }
 
-        return y;
+        return Math::Round(y);
     }
 
     //////////////////////////////////////////
@@ -730,7 +730,7 @@ namespace Maze
         AbstractTextRenderer2D::processEntityAwakened();
 
         m_meshRenderer = getEntityRaw()->ensureComponent<MeshRendererInstanced>();
-        m_meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultQuadMesh());
+        m_meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultQuadNullPivotMesh());
 
         updateMeshData();
     }
@@ -759,6 +759,7 @@ namespace Maze
         for (Size i = 0; i < transformCount; ++i)
         {
             Mat4F tm = m_transform->getWorldTransform().concatenatedAffineCopy(m_localMatrices[i]);
+            tm.setTranslation(Math::Round(tm.getAffineTranslation2D()));
             m_meshRenderer->setModelMatrix(i, tm);
         }
     }
@@ -814,7 +815,7 @@ namespace Maze
         MAZE_ERROR_RETURN_IF(_quadIndex >= m_localColors.size(), "Out of bounds!");
         
         Vec2F sizeV = (Vec2F)_glyph.bounds.size;
-        Vec2F positionShiftV = _position + _glyph.bounds.size * 0.5f + _glyph.bounds.position;
+        Vec2F positionShiftV = _position + _glyph.bounds.position;
 
         Mat4F localTransform = Mat4F::CreateTranslationMatrix(positionShiftV) * Mat4F::CreateScaleMatrix(sizeV);
         m_localMatrices[_quadIndex] = localTransform;
