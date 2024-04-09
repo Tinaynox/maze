@@ -55,7 +55,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Entity);
     MAZE_USING_SHARED_PTR(ComponentEditor);
     MAZE_USING_SHARED_PTR(ToggleButton2D);
-    MAZE_USING_SHARED_PTR(SystemTextRenderer2D);
+    MAZE_USING_SHARED_PTR(AbstractTextRenderer2D);
     MAZE_USING_SHARED_PTR(ECSWorld);
     
 
@@ -129,7 +129,7 @@ namespace Maze
 
         Transform2DPtr m_topBlock;
         ToggleButton2DPtr m_entitiesEnabledToggleButton;
-        SystemTextRenderer2DPtr m_entityIdText;
+        AbstractTextRenderer2DPtr m_entityIdText;
         ClickButton2DPtr m_addComponentButton;
 
         bool m_entitiesPropertiesListDirty;

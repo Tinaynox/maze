@@ -114,6 +114,7 @@ namespace Maze
 
         AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
             m_shaderUniformName.c_str(),
+            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
             EditorToolsStyles::GetInstancePtr()->getInspectorPropertyFontSize(),
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,

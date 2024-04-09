@@ -51,6 +51,8 @@
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerS32.hpp"
 #include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerF32.hpp"
 #include "maze-editor-tools/shader-uniform-variant-drawers/MazeShaderUniformVariantDrawerF64.hpp"
@@ -386,9 +388,10 @@ namespace Maze
             topBlockLayout->setPaddingTop(10.0f);
             topBlockLayout->setSpacing(2.0f);
 
-            SystemUIHelper::CreateSystemText(
+            EditorToolsUIHelper::CreateText(
                 "Uniforms",
-                8,
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                12,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 Vec2F(50.0f, 8.0f),

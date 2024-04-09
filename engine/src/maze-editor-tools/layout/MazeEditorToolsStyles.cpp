@@ -94,7 +94,7 @@ namespace Maze
     F32 const EditorToolsStyles::c_titleLabelShiftDefault = 5.0f;
     ColorU32 const EditorToolsStyles::c_bodyBackgroundColorDefault = ColorU32(194, 194, 194, 255);
     ColorU32 const EditorToolsStyles::c_bodySubBackgroundColorDefault = ColorU32(164, 164, 164, 255);
-    U32 const EditorToolsStyles::c_inspectorPropertyFontSizeDefault = 10;
+    U32 const EditorToolsStyles::c_inspectorPropertyFontSizeDefault = 12;
     ColorU32 const EditorToolsStyles::c_inspectorPropertyColorDefault = ColorU32(5, 7, 5, 255);
     Rect2DF const EditorToolsStyles::c_hierarchyViewportDefault(0.0f, 0.33f, 0.25f, 0.67f - topBarHeight);
     Rect2DF const EditorToolsStyles::c_inspectorViewportDefault(0.75f, 0.33f, 0.25f, 0.67f - topBarHeight);
@@ -145,8 +145,10 @@ namespace Maze
     bool EditorToolsStyles::loadFromDataBlock(DataBlock const& _dataBlock)
     {
         m_defaultFontMaterialName = _dataBlock.getString(MAZE_HS("defaultFontMaterial"));
-
         m_defaultFontMaterial = FontMaterialManager::GetInstancePtr()->getFontMaterial(m_defaultFontMaterialName);
+
+        m_defaultBoldFontMaterialName = _dataBlock.getString(MAZE_HS("defaultBoldFontMaterial"));
+        m_defaultBoldFontMaterial = FontMaterialManager::GetInstancePtr()->getFontMaterial(m_defaultBoldFontMaterialName);
 
         return true;
     }

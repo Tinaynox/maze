@@ -50,7 +50,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Bounds2D);
     MAZE_USING_SHARED_PTR(Canvas);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
-    MAZE_USING_SHARED_PTR(SystemTextRenderer2D);
+    MAZE_USING_SHARED_PTR(AbstractTextRenderer2D);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(ContextMenu2D);
 
@@ -188,7 +188,7 @@ namespace Maze
         Transform2DPtr m_transform;
         SpriteRenderer2DPtr m_dropDownRenderer;
         SpriteRenderer2DPtr m_iconRenderer;
-        SystemTextRenderer2DPtr m_textRenderer;
+        AbstractTextRenderer2DPtr m_textRenderer;
 
         ContextMenu2DPtr m_contextMenu;
     };

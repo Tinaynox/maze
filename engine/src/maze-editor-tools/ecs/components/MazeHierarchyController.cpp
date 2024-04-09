@@ -161,6 +161,7 @@ namespace Maze
 
         AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
             "Hierarchy",
+            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
             EditorToolsStyles::GetInstancePtr()->getTitleFontSize(),
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,

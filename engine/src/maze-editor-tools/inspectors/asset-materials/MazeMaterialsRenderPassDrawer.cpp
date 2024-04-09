@@ -48,6 +48,8 @@
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeMetaPropertyDrawer.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeString.hpp"
 #include "maze-editor-tools/meta-property-drawers/MazeS32.hpp"
@@ -132,9 +134,10 @@ namespace Maze
         topBlockLayout->setPaddingBottom(10.0f);
         topBlockLayout->setSpacing(2.0f);
 
-        SystemUIHelper::CreateSystemText(
+        EditorToolsUIHelper::CreateText(
             ("Render Pass - " + m_renderPassType.toString() + " #" + StringHelper::ToString(m_renderPassIndex)).c_str(),
-            8,
+            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+            12,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
             Vec2F(50.0f, 8.0f),
@@ -157,9 +160,10 @@ namespace Maze
             layout->setExpand(true);
             layout->setAutoWidth(false);
 
-            SystemTextRenderer2DPtr topBlockShaderText = SystemUIHelper::CreateSystemText(
+            AbstractTextRenderer2DPtr topBlockShaderText = EditorToolsUIHelper::CreateText(
                 "Shader",
-                8,
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                12,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 Vec2F(50.0f, 8.0f),
@@ -177,9 +181,10 @@ namespace Maze
                 Vec2F(0.0f, 0.5f),
                 Vec2F(0.0f, 0.5f));
 
-            m_topBlockShaderNameText = SystemUIHelper::CreateSystemText(
+            m_topBlockShaderNameText = EditorToolsUIHelper::CreateText(
                 "",
-                8,
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                12,
                 HorizontalAlignment2D::Center,
                 VerticalAlignment2D::Middle,
                 shaderClickButton->getTransform()->getSize(),

@@ -181,6 +181,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API AbstractTextRenderer2DPtr CreateText(
             CString _text,
+            FontMaterialPtr const& _fontMaterial,
             U32 _fontSize,
             HorizontalAlignment2D _horizontalAlignment,
             VerticalAlignment2D _verticalAlignment,
@@ -193,11 +194,12 @@ namespace Maze
         {
             AbstractTextRenderer2DPtr abstractText;
             
-            FontMaterialPtr const& fontMaterial = EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial();
+            FontMaterialPtr const& fontMaterial = _fontMaterial ? _fontMaterial : EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial();
             if (fontMaterial)
             {
                 TextRenderer2DPtr text = UIHelper::CreateText(
                     _text,
+                    fontMaterial,
                     _fontSize,
                     _horizontalAlignment,
                     _verticalAlignment,
@@ -207,15 +209,13 @@ namespace Maze
                     _ecsScene,
                     _anchor,
                     _pivot);
-                text->setFontMaterial(fontMaterial);
                 abstractText = text;
             }
             else
-            if (_fontSize > 2)
             {
                 SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
                     _text,
-                    _fontSize - 2,
+                    U32(Math::Round(Math::Max(1.0f, F32(_fontSize)/8.0f))) * 8,
                     _horizontalAlignment,
                     _verticalAlignment,
                     _size,

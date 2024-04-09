@@ -1954,6 +1954,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_UI_API TextRenderer2DPtr CreateText(
             CString _text,
+            FontMaterialPtr const& _fontMaterial,
             U32 _fontSize,
             HorizontalAlignment2D _horizontalAlignment,
             VerticalAlignment2D _verticalAlignment,
@@ -1973,8 +1974,8 @@ namespace Maze
             textRenderer->setHorizontalAlignment(_horizontalAlignment);
             textRenderer->setVerticalAlignment(_verticalAlignment);
 
-            if (FontMaterialManager::GetInstancePtr())
-                textRenderer->setFontMaterial(FontMaterialManager::GetInstancePtr()->getDefaultFontMaterial());
+            if (_fontMaterial)
+                textRenderer->setFontMaterial(_fontMaterial);
 
             Transform2DPtr transform = textRendererEntity->ensureComponent<Transform2D>();
             transform->setParent(_parent);
@@ -1984,6 +1985,33 @@ namespace Maze
             transform->setPivot(_pivot);
 
             return textRenderer;
+        }
+
+        //////////////////////////////////////////
+        MAZE_UI_API TextRenderer2DPtr CreateText(
+            CString _text,
+            U32 _fontSize,
+            HorizontalAlignment2D _horizontalAlignment,
+            VerticalAlignment2D _verticalAlignment,
+            Vec2F const& _size,
+            Vec2F const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2F const& _anchor,
+            Vec2F const& _pivot)
+        {
+            return CreateText(
+                _text,
+                FontMaterialManager::GetInstancePtr() ? FontMaterialManager::GetInstancePtr()->getDefaultFontMaterial() : nullptr,
+                _fontSize,
+                _horizontalAlignment,
+                _verticalAlignment,
+                _size,
+                _position,
+                _parent,
+                _ecsScene,
+                _anchor,
+                _pivot);
         }
     
     } // namespace UIHelper

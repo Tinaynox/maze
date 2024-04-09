@@ -112,7 +112,7 @@ namespace Maze
     protected:
         ClickButton2DPtr m_materialButton;
         SpriteRenderer2DPtr m_materialIcon;
-        SystemTextRenderer2DPtr m_materialNameDrawer;
+        AbstractTextRenderer2DPtr m_materialNameDrawer;
         MaterialPtr m_material;
 
         ClickButton2DPtr m_selectAssetButton;

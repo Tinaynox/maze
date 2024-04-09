@@ -275,8 +275,8 @@ namespace Maze
             MAZE_NOT_IMPLEMENTED;
             break;
         }
-
-        return Math::Round(y);
+        
+        return m_pixelPerfect ? Math::Round(y) : y;
     }
 
     //////////////////////////////////////////
@@ -597,6 +597,8 @@ namespace Maze
 
         Size curCharOffset = 0;
         F32 xAlignOffset = calculateXAlignOffset(rowLengths, currentRow);
+        if (m_pixelPerfect)
+            xAlignOffset = Math::Round(xAlignOffset);
 
         S32 glyphIndex = 0;
 
@@ -644,6 +646,8 @@ namespace Maze
             {
                 ++currentRow;
                 xAlignOffset = calculateXAlignOffset(rowLengths, currentRow);
+                if (m_pixelPerfect)
+                    xAlignOffset = Math::Round(xAlignOffset);
 
                 y -= vSpace;
                 x = 0;
@@ -759,7 +763,8 @@ namespace Maze
         for (Size i = 0; i < transformCount; ++i)
         {
             Mat4F tm = m_transform->getWorldTransform().concatenatedAffineCopy(m_localMatrices[i]);
-            tm.setTranslation(Math::Round(tm.getAffineTranslation2D()));
+            if (m_pixelPerfect)
+                tm.setTranslation(Math::Round(tm.getAffineTranslation2D()));
             m_meshRenderer->setModelMatrix(i, tm);
         }
     }

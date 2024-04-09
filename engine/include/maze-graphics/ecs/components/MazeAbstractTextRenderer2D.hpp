@@ -84,6 +84,13 @@ namespace Maze
         //////////////////////////////////////////
         inline Vec2F const& getBoundingSize() const { return m_boundingSize; }
 
+
+        //////////////////////////////////////////
+        virtual bool getPixelPerfect() const MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual void setPixelPerfect(bool _value) MAZE_ABSTRACT;
+
     protected:
 
         //////////////////////////////////////////

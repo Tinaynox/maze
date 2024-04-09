@@ -282,6 +282,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_UI_API TextRenderer2DPtr CreateText(
             CString _text,
+            FontMaterialPtr const& _fontMaterial,
             U32 _fontSize,
             HorizontalAlignment2D _horizontalAlignment,
             VerticalAlignment2D _verticalAlignment,
@@ -291,6 +292,20 @@ namespace Maze
             ECSScene* _ecsScene,
             Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
             Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
+
+        //////////////////////////////////////////
+        MAZE_UI_API TextRenderer2DPtr CreateText(
+            CString _text,
+            U32 _fontSize,
+            HorizontalAlignment2D _horizontalAlignment,
+            VerticalAlignment2D _verticalAlignment,
+            Vec2F const& _size,
+            Vec2F const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
+
 
     } // namespace UIHelper
     //////////////////////////////////////////

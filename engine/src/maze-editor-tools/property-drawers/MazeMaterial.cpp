@@ -120,6 +120,7 @@ namespace Maze
 
         AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
             EditorToolsHelper::BuildPropertyName(m_label.c_str(), _label).c_str(),
+            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
             EditorToolsStyles::GetInstancePtr()->getInspectorPropertyFontSize(),
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
@@ -165,9 +166,10 @@ namespace Maze
                 Vec2F(0.0f, 0.5f),
                 Vec2F(0.5f, 0.5f));
 
-            m_materialNameDrawer = SystemUIHelper::CreateSystemText(
+            m_materialNameDrawer = EditorToolsUIHelper::CreateText(
                 "",
-                8,
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                12,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 Vec2F(160.0f, 0.0f),

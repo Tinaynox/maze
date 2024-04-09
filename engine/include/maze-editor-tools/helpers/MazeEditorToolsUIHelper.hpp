@@ -93,6 +93,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API AbstractTextRenderer2DPtr CreateText(
             CString _text,
+            FontMaterialPtr const& _fontMaterial,
             U32 _fontSize,
             HorizontalAlignment2D _horizontalAlignment,
             VerticalAlignment2D _verticalAlignment,

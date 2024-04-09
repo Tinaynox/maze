@@ -166,10 +166,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual bool getPixelPerfect() const { return m_pixelPerfect; }
+        virtual bool getPixelPerfect() const MAZE_OVERRIDE { return m_pixelPerfect; }
 
         //////////////////////////////////////////
-        virtual void setPixelPerfect(bool _value)
+        virtual void setPixelPerfect(bool _value) MAZE_OVERRIDE
         {
             if (m_pixelPerfect == _value)
                 return;

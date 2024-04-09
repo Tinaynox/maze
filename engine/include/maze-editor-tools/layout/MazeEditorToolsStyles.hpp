@@ -142,6 +142,9 @@ namespace Maze
         //////////////////////////////////////////
         inline FontMaterialPtr const& getDefaultFontMaterial() const { return m_defaultFontMaterial; }
 
+        //////////////////////////////////////////
+        inline FontMaterialPtr const& getDefaultBoldFontMaterial() const { return m_defaultBoldFontMaterial; }
+
 
         //////////////////////////////////////////
         void loadStyles(Path const& _fileName);
@@ -177,6 +180,8 @@ namespace Maze
 
         String m_defaultFontMaterialName;
         FontMaterialPtr m_defaultFontMaterial;
+        String m_defaultBoldFontMaterialName;
+        FontMaterialPtr m_defaultBoldFontMaterial;
 
 
     };

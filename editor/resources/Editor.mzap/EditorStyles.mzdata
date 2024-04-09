@@ -1,1 +1,2 @@
 defaultFontMaterial:String = "Editor00.mzfontmaterial"
+defaultBoldFontMaterial:String = "EditorBold00.mzfontmaterial"

@@ -57,6 +57,7 @@
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 #include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
 
@@ -187,9 +188,10 @@ namespace Maze
 
         updateIcon();
 
-        m_textRenderer = SystemUIHelper::CreateSystemText(
+        m_textRenderer = EditorToolsUIHelper::CreateText(
             "XXX",
-            charSize,
+            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+            12,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
             Vec2F(100, charSize + 6),

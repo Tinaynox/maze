@@ -112,7 +112,7 @@ namespace Maze
     protected:
         ClickButton2DPtr m_renderMeshButton;
         SpriteRenderer2DPtr m_renderMeshIcon;
-        SystemTextRenderer2DPtr m_renderMeshNameDrawer;
+        AbstractTextRenderer2DPtr m_renderMeshNameDrawer;
         RenderMeshPtr m_renderMesh;
 
         ClickButton2DPtr m_selectAssetButton;

@@ -44,6 +44,8 @@
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/inspectors/entities/MazeEntitiesInspector.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 
@@ -179,9 +181,10 @@ namespace Maze
         m_expandButton = m_expandButtonSprite->getEntityRaw()->ensureComponent<ClickButton2D>();
         m_expandButton->eventClick.subscribe(this, &ComponentEditor::notifyExpandButtonClick);
 
-        SystemTextRenderer2DPtr systemText = SystemUIHelper::CreateSystemText(
+        AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
             EditorToolsHelper::BuildComponentName(getComponentMetaClass()->getName()).c_str(),
-            9,
+            EditorToolsStyles::GetInstancePtr()->getDefaultBoldFontMaterial(),
+            12,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
             Vec2F(8, 18),
@@ -190,7 +193,7 @@ namespace Maze
             _parent->getEntityRaw()->getECSScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F(0.0f, 0.5f));
-        systemText->setColor(ColorU32::c_black);
+        titleText->setColor(ColorU32::c_black);
 
         
         m_contextMenu = spriteRenderer->getEntityRaw()->ensureComponent<ContextMenu2D>();

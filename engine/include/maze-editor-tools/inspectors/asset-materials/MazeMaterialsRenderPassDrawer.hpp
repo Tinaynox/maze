@@ -57,7 +57,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Entity);
     MAZE_USING_SHARED_PTR(ComponentEditor);
     MAZE_USING_SHARED_PTR(ToggleButton2D);
-    MAZE_USING_SHARED_PTR(SystemTextRenderer2D);
+    MAZE_USING_SHARED_PTR(AbstractTextRenderer2D);
     MAZE_USING_SHARED_PTR(AssetFile);
     MAZE_USING_SHARED_PTR(Material);
     MAZE_USING_SHARED_PTR(Shader);
@@ -122,8 +122,8 @@ namespace Maze
         S32 m_renderPassIndex;
 
         Transform2DPtr m_topBlock;
-        SystemTextRenderer2DPtr m_topBlockShaderNameText;
-        SystemTextRenderer2DPtr m_topBlockRenderQueueIndexText;
+        AbstractTextRenderer2DPtr m_topBlockShaderNameText;
+        AbstractTextRenderer2DPtr m_topBlockRenderQueueIndexText;
 
         Set<MaterialPtr> m_materials;
 

@@ -262,6 +262,21 @@ namespace Maze
         }
 
 
+        //////////////////////////////////////////
+        virtual bool getPixelPerfect() const MAZE_OVERRIDE { return m_pixelPerfect; }
+
+        //////////////////////////////////////////
+        virtual void setPixelPerfect(bool _value) MAZE_OVERRIDE
+        {
+            if (m_pixelPerfect == _value)
+                return;
+
+            m_pixelPerfect = _value;
+
+            updateMeshRendererModelMatrices();
+        }
+
+
 
         //////////////////////////////////////////
         inline void setSymbolsLimit(U32 _symbolsLimit)
@@ -422,6 +437,8 @@ namespace Maze
 
         HorizontalAlignment2D m_horizontalAlignment = HorizontalAlignment2D::Left;
         VerticalAlignment2D m_verticalAlignment = VerticalAlignment2D::Top;
+
+        bool m_pixelPerfect = true;
 
         U32 m_symbolsLimit = 0u;
         TextRenderer2DSymbolsLimitPolicy m_symbolsLimitPolicy = TextRenderer2DSymbolsLimitPolicy::Crop;

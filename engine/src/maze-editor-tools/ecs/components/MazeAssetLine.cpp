@@ -56,6 +56,7 @@
 #include "maze-editor-tools/scenes/SceneDebugEditor.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
@@ -196,9 +197,10 @@ namespace Maze
         x += (F32)charSize + 4;
 
         String label = FileHelper::GetFileNameWithoutExtension(m_assetFile->getFileName());
-        m_textRenderer = SystemUIHelper::CreateSystemText(
+        m_textRenderer = EditorToolsUIHelper::CreateText(
             label.c_str(),
-            charSize,
+            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+            12,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
             Vec2F(100, charSize + 6),
