@@ -161,6 +161,7 @@ namespace Maze
 
         m_stopButton = UIHelper::CreateDefaultClickButton(
             "Stop",
+            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
             { 62.0f, 18.0f },
             { -65.0f, -40.0f },
             backgroundSprite->getTransform(),
@@ -171,6 +172,7 @@ namespace Maze
 
         m_playButton = UIHelper::CreateDefaultClickButton(
             "Play",
+            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
             { 62.0f, 18.0f },
             { -65.0f, -40.0f },
             backgroundSprite->getTransform(),
@@ -181,6 +183,7 @@ namespace Maze
 
         m_restartButton = UIHelper::CreateDefaultClickButton(
             "Restart",
+            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
             { 62.0f, 18.0f },
             { 0.0f, -40.0f },
             backgroundSprite->getTransform(),
@@ -191,6 +194,7 @@ namespace Maze
 
         m_pauseButton = UIHelper::CreateDefaultClickButton(
             "Pause",
+            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
             { 62.0f, 18.0f },
             { 65.0f, -40.0f },
             backgroundSprite->getTransform(),

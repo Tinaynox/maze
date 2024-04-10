@@ -85,6 +85,7 @@
 #include "maze-plugin-profiler-view/MazeProfilerViewPlugin.hpp"
 #include "maze-plugin-profiler-view/MazeProfilerViewService.hpp"
 #include "maze-plugin-profiler-view/settings/MazeProfilerViewSettings.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "Editor.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "layout/EditorLayout.hpp"
@@ -189,6 +190,7 @@ namespace Maze
         {
             ClickButton2DPtr button = UIHelper::CreateDefaultClickButton(
                 "PROJECT",
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
                 c_buttonSize,
                 Vec2F32::c_zero,
                 layout->getTransform(),
@@ -198,6 +200,7 @@ namespace Maze
         {
             ClickButton2DPtr button = UIHelper::CreateDefaultClickButton(
                 "ASSETS",
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
                 c_buttonSize,
                 Vec2F32::c_zero,
                 layout->getTransform(),

@@ -142,6 +142,7 @@ namespace Maze
         {
             ClickButton2DPtr button = UIHelper::CreateDefaultClickButton(
                 "",
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
                 Vec2F(18.0f, 18.0f),
                 Vec2F::c_zero,
                 _parent,
@@ -192,42 +193,19 @@ namespace Maze
             Vec2F const& _anchor,
             Vec2F const& _pivot)
         {
-            AbstractTextRenderer2DPtr abstractText;
-            
             FontMaterialPtr const& fontMaterial = _fontMaterial ? _fontMaterial : EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial();
-            if (fontMaterial)
-            {
-                TextRenderer2DPtr text = UIHelper::CreateText(
-                    _text,
-                    fontMaterial,
-                    _fontSize,
-                    _horizontalAlignment,
-                    _verticalAlignment,
-                    _size,
-                    _position,
-                    _parent,
-                    _ecsScene,
-                    _anchor,
-                    _pivot);
-                abstractText = text;
-            }
-            else
-            {
-                SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
-                    _text,
-                    U32(Math::Round(Math::Max(1.0f, F32(_fontSize)/8.0f))) * 8,
-                    _horizontalAlignment,
-                    _verticalAlignment,
-                    _size,
-                    _position,
-                    _parent,
-                    _ecsScene,
-                    _anchor,
-                    _pivot);
-                abstractText = text;
-            }
-
-            return abstractText;
+            return UIHelper::CreateTextOrSystemText(
+                _text,
+                fontMaterial,
+                _fontSize,
+                _horizontalAlignment,
+                _verticalAlignment,
+                _size,
+                _position,
+                _parent,
+                _ecsScene,
+                _anchor,
+                _pivot);
         }
 
     } // namespace EditorToolsUIHelper

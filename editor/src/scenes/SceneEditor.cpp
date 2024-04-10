@@ -100,6 +100,7 @@
 #include "maze-ui/material-picker/MazeSceneMaterialPicker.hpp"
 #include "maze-ui/texture-picker/MazeSceneTexturePicker.hpp"
 #include "maze-ui/render-mesh-picker/MazeSceneRenderMeshPicker.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "helpers/EditorHelper.hpp"
 #include "helpers/EditorAssetsModeHelper.hpp"
 #include "helpers/EditorProjectModeHelper.hpp"
@@ -211,6 +212,7 @@ namespace Maze
 
             // Menu Bar
             MenuBar2DPtr menuBar = UIHelper::CreateDefaultMenuBarList(
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
                 Vec2F32((F32)renderWindow->getRenderTargetWidth(), EditorLayout::c_menuBarHeight + 1),
                 Vec2F32::c_zero,
                 m_topMenuBarCanvas->getTransform(),

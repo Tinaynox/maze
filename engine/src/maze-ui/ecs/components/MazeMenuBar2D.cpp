@@ -79,17 +79,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    MenuBar2DPtr MenuBar2D::Create()
+    MenuBar2DPtr MenuBar2D::Create(FontMaterialPtr const& _fontMaterial)
     {
         MenuBar2DPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(MenuBar2D, object, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(MenuBar2D, object, init(_fontMaterial));
         return object;
     }
 
     //////////////////////////////////////////
-    bool MenuBar2D::init()
+    bool MenuBar2D::init(FontMaterialPtr const& _fontMaterial)
     {
-
+        m_fontMaterial = _fontMaterial;
         return true;
     }
 
@@ -106,7 +106,9 @@ namespace Maze
         m_UIElement2D = getEntityRaw()->ensureComponent<UIElement2D>();
         m_UIElement2D->setCaptureCursorHits(true);
 
-        m_contextMenuCanvas = ContextMenuCanvas2D::EnsureContextMenuCanvas(getEntityRaw()->getECSScene());
+        m_contextMenuCanvas = ContextMenuCanvas2D::EnsureContextMenuCanvas(
+            getEntityRaw()->getECSScene(),
+            m_fontMaterial);
         if (m_contextMenuCanvas)
         {
             m_contextMenuCanvas->eventContextMenuClosed.subscribe(this, &MenuBar2D::notifyContextMenuClosed);
@@ -159,7 +161,7 @@ namespace Maze
                 }
             });
 
-        SystemTextRenderer2D* text = optionData.button->getTransform()->findChildComponentRecursive<SystemTextRenderer2D>("Label");
+        AbstractTextRenderer2D* text = optionData.button->getTransform()->findChildComponentInheritedFromRecursive<AbstractTextRenderer2D>("Label");
         text->setText(_menuName);
         F32 buttonWidth = (F32)_menuName.size() * 8 + 16;
         optionData.button->getTransform()->setWidth(buttonWidth);

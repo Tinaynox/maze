@@ -128,6 +128,7 @@ namespace Maze
 
         m_addComponentButton = UIHelper::CreateDefaultClickButton(
             "Add Component",
+            EditorToolsStyles::GetInstancePtr()->getDefaultBoldFontMaterial(),
             Vec2F(120.0f, 18.0f),
             Vec2F(-20.0f, 0.0f),
             m_topBlock,

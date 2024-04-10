@@ -254,6 +254,7 @@ namespace Maze
             {
                 ClickButton2DPtr saveButton = UIHelper::CreateDefaultClickButton(
                     "Save",
+                    EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
                     Vec2F32(42.0f, 18.0f),
                     Vec2F32(-2.0f, -2.0f),
                     m_topBarRightLayout->getTransform(),
@@ -270,6 +271,7 @@ namespace Maze
 
         ClickButton2DPtr closeButton = UIHelper::CreateDefaultClickButton(
             "X",
+            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
             Vec2F32(18.0f, 18.0f),
             Vec2F32(-2.0f, -2.0f),
             m_topBarRightLayout->getTransform(),

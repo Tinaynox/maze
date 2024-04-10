@@ -51,6 +51,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(MenuBar2D);
     MAZE_USING_SHARED_PTR(UIElement2D);
     MAZE_USING_SHARED_PTR(ToggleButton2D);
+    MAZE_USING_SHARED_PTR(FontMaterial);
     MAZE_USING_SHARED_PTR(MenuListTree2D);
     MAZE_USING_SHARED_PTR(ContextMenuCanvas2D);
 
@@ -97,7 +98,7 @@ namespace Maze
         virtual ~MenuBar2D();
 
         //////////////////////////////////////////
-        static MenuBar2DPtr Create();
+        static MenuBar2DPtr Create(FontMaterialPtr const& _fontMaterial = FontMaterialPtr());
 
 
         //////////////////////////////////////////
@@ -206,7 +207,7 @@ namespace Maze
         using Component::init;
         
         //////////////////////////////////////////
-        bool init();
+        bool init(FontMaterialPtr const& _fontMaterial);
 
 
         //////////////////////////////////////////
@@ -233,6 +234,7 @@ namespace Maze
         Map<String, OptionData> m_options;
         String m_currentMenu;
 
+        FontMaterialPtr m_fontMaterial;
 
         ContextMenuCanvas2DPtr m_contextMenuCanvas;
     };

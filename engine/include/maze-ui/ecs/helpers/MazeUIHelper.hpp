@@ -36,6 +36,7 @@
 #include "maze-core/math/MazeAnimationCurve.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeColorGradient.hpp"
+#include "maze-ui/fonts/MazeFontMaterial.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-ui/ecs/components/MazeEditBox2D.hpp"
 #include "maze-ui/ecs/components/MazeColorEdit2D.hpp"
@@ -111,12 +112,26 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_UI_API ClickButton2DPtr CreateDefaultClickButton(
             CString _text,
+            FontMaterialPtr const& _fontMaterial,
             Vec2F const& _size,
             Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
             Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
             Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
+
+        //////////////////////////////////////////
+        inline ClickButton2DPtr CreateDefaultClickButton(
+            CString _text,
+            Vec2F const& _size,
+            Vec2F const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f))
+        {
+            return CreateDefaultClickButton(_text, FontMaterialPtr(), _size, _position, _parent, _ecsScene, _anchor, _pivot);
+        }
 
         //////////////////////////////////////////
         MAZE_UI_API ClickButton2DPtr CreateClickButton(
@@ -175,6 +190,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_UI_API ColorHDREdit2DPtr CreateDefaultColorHDREdit(
             ColorF128 _color,
+            FontMaterialPtr const& _fontMaterial,
             Vec2F const& _size,
             Vec2F const& _position,
             Transform2DPtr const& _parent,
@@ -183,6 +199,21 @@ namespace Maze
             Vec2F const& _pivot = Vec2F(0.5f, 0.5f),
             bool _hdrLabel = true,
             bool _alphaBand = true);
+
+        //////////////////////////////////////////
+        inline ColorHDREdit2DPtr CreateDefaultColorHDREdit(
+            ColorF128 _color,
+            Vec2F const& _size,
+            Vec2F const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f),
+            bool _hdrLabel = true,
+            bool _alphaBand = true)
+        {
+            return CreateDefaultColorHDREdit(_color, FontMaterialPtr(), _size, _position, _parent, _ecsScene, _anchor, _pivot, _hdrLabel, _alphaBand);
+        }
 
         //////////////////////////////////////////
         MAZE_UI_API ColorGradientEdit2DPtr CreateDefaultColorGradientEdit(
@@ -217,6 +248,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_UI_API MenuListItem2DPtr CreateDefaultMenuListItem(
             String const& _name,
+            FontMaterialPtr const& _fontMaterial,
             Vec2F const& _size,
             Vec2F const& _position,
             Transform2DPtr const& _parent,
@@ -226,6 +258,7 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_UI_API MenuList2DPtr CreateDefaultMenuList(
+            FontMaterialPtr const& _fontMaterial,
             Vec2F const& _size,
             Vec2F const& _position,
             Transform2DPtr const& _parent,
@@ -234,7 +267,20 @@ namespace Maze
             Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 
         //////////////////////////////////////////
+        inline MenuList2DPtr CreateDefaultMenuList(
+            Vec2F const& _size,
+            Vec2F const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f))
+        {
+            return CreateDefaultMenuList(FontMaterialPtr(), _size, _position, _parent, _ecsScene, _anchor, _pivot);
+        }
+
+        //////////////////////////////////////////
         MAZE_UI_API MenuListTree2DPtr CreateDefaultMenuListTree(
+            FontMaterialPtr const& _fontMaterial,
             Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
@@ -242,13 +288,37 @@ namespace Maze
             Vec2F const& _pivot = Vec2F(0.0f, 1.0f));
 
         //////////////////////////////////////////
+        inline MenuListTree2DPtr CreateDefaultMenuListTree(            
+            Vec2F const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.0f, 1.0f))
+        {
+            return CreateDefaultMenuListTree(FontMaterialPtr(), _position, _parent, _ecsScene, _anchor, _pivot);
+        }
+
+        //////////////////////////////////////////
         MAZE_UI_API MenuBar2DPtr CreateDefaultMenuBarList(
+            FontMaterialPtr const& _fontMaterial,
             Vec2F const& _size,
             Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
             Vec2F const& _anchor = Vec2F(0.0f, 1.0f),
             Vec2F const& _pivot = Vec2F(0.0f, 1.0f));
+
+        //////////////////////////////////////////
+        inline MenuBar2DPtr CreateDefaultMenuBarList(
+            Vec2F const& _size,
+            Vec2F const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2F const& _anchor = Vec2F(0.0f, 1.0f),
+            Vec2F const& _pivot = Vec2F(0.0f, 1.0f))
+        {
+            return CreateDefaultMenuBarList(FontMaterialPtr(), _size, _position, _parent, _ecsScene, _anchor, _pivot);
+        }
 
         //////////////////////////////////////////
         MAZE_UI_API Scrollbar2DPtr CreateDefaultScrollbarHorizontal(
@@ -296,6 +366,20 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_UI_API TextRenderer2DPtr CreateText(
             CString _text,
+            U32 _fontSize,
+            HorizontalAlignment2D _horizontalAlignment,
+            VerticalAlignment2D _verticalAlignment,
+            Vec2F const& _size,
+            Vec2F const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
+
+        //////////////////////////////////////////
+        MAZE_UI_API AbstractTextRenderer2DPtr CreateTextOrSystemText(
+            CString _text,
+            FontMaterialPtr const& _fontMaterial,
             U32 _fontSize,
             HorizontalAlignment2D _horizontalAlignment,
             VerticalAlignment2D _verticalAlignment,

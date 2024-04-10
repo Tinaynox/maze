@@ -610,6 +610,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_UI_API ClickButton2DPtr CreateDefaultClickButton(
             CString _text,
+            FontMaterialPtr const& _fontMaterial,
             Vec2F const& _size,
             Vec2F const& _position,
             Transform2DPtr const& _parent,
@@ -646,9 +647,10 @@ namespace Maze
 
             if (_text && strcmp(_text, "") != 0)
             {
-                SystemTextRenderer2DPtr textRenderer = SystemUIHelper::CreateSystemText(
+                AbstractTextRenderer2DPtr textRenderer = CreateTextOrSystemText(
                     _text,
-                    8,
+                    _fontMaterial,
+                    12,
                     HorizontalAlignment2D::Center,
                     VerticalAlignment2D::Middle,
                     _size,
@@ -948,6 +950,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_UI_API ColorHDREdit2DPtr CreateDefaultColorHDREdit(
             ColorF128 _color,
+            FontMaterialPtr const& _fontMaterial,
             Vec2F const& _size,
             Vec2F const& _position,
             Transform2DPtr const& _parent,
@@ -984,11 +987,12 @@ namespace Maze
             colorSpriteRenderer->getEntityRaw()->createComponent<SizePolicy2D>()->setSizeDelta(-2.0f, -2.0f);
             colorEdit->setColorRenderer(colorSpriteRenderer);
 
-            SystemTextRenderer2D* itemTextRendererRaw = nullptr;
+            AbstractTextRenderer2D* itemTextRendererRaw = nullptr;
             if (_hdrLabel)
             {
-                SystemTextRenderer2DPtr itemTextRenderer = SystemUIHelper::CreateSystemText(
+                AbstractTextRenderer2DPtr itemTextRenderer = CreateTextOrSystemText(
                     "HDR",
+                    _fontMaterial,
                     8,
                     HorizontalAlignment2D::Center,
                     VerticalAlignment2D::Middle,
@@ -1066,7 +1070,7 @@ namespace Maze
             };
 
             auto updateHDRColor =
-                [](ColorHDREdit2D* _colorEdit, SystemTextRenderer2D* _hdrTextRenderer)
+                [](ColorHDREdit2D* _colorEdit, AbstractTextRenderer2D* _hdrTextRenderer)
                 {
                     Vec3F const luminosityCoeff(0.2125f, 0.7154f, 0.0721f);
                     F32 l = Math::Clamp(luminosityCoeff.dotProduct((Vec3F)_colorEdit->getColor()), 0.0f, 1.0f);
@@ -1413,6 +1417,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_UI_API MenuListItem2DPtr CreateDefaultMenuListItem(
             String const& _name,
+            FontMaterialPtr const& _fontMaterial,
             Vec2F const& _size,
             Vec2F const& _position,
             Transform2DPtr const& _parent,
@@ -1476,8 +1481,9 @@ namespace Maze
             subMenuMarkSprite->setColor(ColorU32::c_black);
             menuListItem->setSubMenuNode(subMenuMarkSprite->getEntity());
 
-            SystemTextRenderer2DPtr itemTextRenderer = SystemUIHelper::CreateSystemText(
+            AbstractTextRenderer2DPtr itemTextRenderer = CreateTextOrSystemText(
                 _name.c_str(),
+                _fontMaterial,
                 8,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
@@ -1498,6 +1504,7 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_UI_API MenuList2DPtr CreateDefaultMenuList(
+            FontMaterialPtr const& _fontMaterial,
             Vec2F const& _size,
             Vec2F const& _position,
             Transform2DPtr const& _parent,
@@ -1561,6 +1568,7 @@ namespace Maze
 
             MenuListItem2DPtr listItemPrefab = CreateDefaultMenuListItem(
                 "",
+                _fontMaterial,
                 Vec2F(_size.x - 4.0f, 16.0f),
                 Vec2F(2.0f, 0.0f),
                 transform,
@@ -1580,6 +1588,7 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_UI_API MenuListTree2DPtr CreateDefaultMenuListTree(
+            FontMaterialPtr const& _fontMaterial,
             Vec2F const& _position,
             Transform2DPtr const& _parent,
             ECSScene* _ecsScene,
@@ -1610,6 +1619,7 @@ namespace Maze
             menuListTree->setItemsListTransform(itemsListTransform);
 
             MenuList2DPtr menuListPrefab = CreateDefaultMenuList(
+                _fontMaterial,
                 Vec2F(200.0f, 150.0f),
                 Vec2F::c_zero,
                 transform,
@@ -1624,6 +1634,7 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_UI_API MenuBar2DPtr CreateDefaultMenuBarList(
+            FontMaterialPtr const& _fontMaterial,
             Vec2F const& _size,
             Vec2F const& _position,
             Transform2DPtr const& _parent,
@@ -1637,7 +1648,7 @@ namespace Maze
             EntityPtr menuListTreeEntity = _ecsScene->createEntity();
             menuListTreeEntity->ensureComponent<Name>("Menu Bar");
 
-            MenuBar2DPtr menuBar = menuListTreeEntity->createComponent<MenuBar2D>();
+            MenuBar2DPtr menuBar = menuListTreeEntity->createComponent<MenuBar2D>(_fontMaterial);
 
             Transform2DPtr const& transform = menuBar->getTransform();
             transform->setParent(_parent);
@@ -1699,8 +1710,9 @@ namespace Maze
                 toggleButtonSpriteRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
                 toggleButton->setTransitionSprite(toggleButtonSpriteRenderer);
 
-                SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
+                AbstractTextRenderer2DPtr text = CreateTextOrSystemText(
                     "File",
+                    _fontMaterial,
                     8,
                     HorizontalAlignment2D::Center,
                     VerticalAlignment2D::Middle,
@@ -1717,6 +1729,7 @@ namespace Maze
 
             {
                 MenuListTree2DPtr menuListTree = CreateDefaultMenuListTree(
+                    _fontMaterial,
                     Vec2F::c_zero,
                     transform,
                     _ecsScene,
@@ -2012,6 +2025,58 @@ namespace Maze
                 _ecsScene,
                 _anchor,
                 _pivot);
+        }
+
+        //////////////////////////////////////////
+        MAZE_UI_API AbstractTextRenderer2DPtr CreateTextOrSystemText(
+            CString _text,
+            FontMaterialPtr const& _fontMaterial,
+            U32 _fontSize,
+            HorizontalAlignment2D _horizontalAlignment,
+            VerticalAlignment2D _verticalAlignment,
+            Vec2F const& _size,
+            Vec2F const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2F const& _anchor,
+            Vec2F const& _pivot)
+        {
+            AbstractTextRenderer2DPtr abstractText;
+
+            FontMaterialPtr const& fontMaterial = _fontMaterial ? _fontMaterial : FontMaterialManager::GetInstancePtr()->getDefaultFontMaterial();
+            if (fontMaterial)
+            {
+                TextRenderer2DPtr text = UIHelper::CreateText(
+                    _text,
+                    fontMaterial,
+                    _fontSize,
+                    _horizontalAlignment,
+                    _verticalAlignment,
+                    _size,
+                    _position,
+                    _parent,
+                    _ecsScene,
+                    _anchor,
+                    _pivot);
+                abstractText = text;
+            }
+            else
+            {
+                SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
+                    _text,
+                    U32(Math::Round(Math::Max(1.0f, F32(_fontSize) / 8.0f))) * 8,
+                    _horizontalAlignment,
+                    _verticalAlignment,
+                    _size,
+                    _position,
+                    _parent,
+                    _ecsScene,
+                    _anchor,
+                    _pivot);
+                abstractText = text;
+            }
+
+            return abstractText;
         }
     
     } // namespace UIHelper

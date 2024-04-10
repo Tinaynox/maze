@@ -154,7 +154,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ContextMenuCanvas2DPtr ContextMenuCanvas2D::EnsureContextMenuCanvas(ECSScene* _scene)
+    ContextMenuCanvas2DPtr ContextMenuCanvas2D::EnsureContextMenuCanvas(
+        ECSScene* _scene,
+        FontMaterialPtr const& _fontMaterial)
     {
         ContextMenuCanvas2DPtr contextMenuCanvas = _scene->findEntityByComponent<ContextMenuCanvas2D>();
         if (!contextMenuCanvas)
@@ -164,6 +166,7 @@ namespace Maze
             contextMenuCanvas = contextMenuCanvasEntity->createComponent<ContextMenuCanvas2D>();
 
             MenuListTree2DPtr menuListTree = UIHelper::CreateDefaultMenuListTree(
+                _fontMaterial,
                 Vec2F(0.0f, 0.0f),
                 contextMenuCanvas->getTransform(),
                 contextMenuCanvas->getEntityRaw()->getECSScene(),
