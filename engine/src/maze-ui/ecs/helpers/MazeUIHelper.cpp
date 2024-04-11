@@ -70,6 +70,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_UI_API EditBox2DPtr CreateDefaultEditBox(
             CString _text,
+            FontMaterialPtr const& _fontMaterial,
             U32 _fontSize,
             Vec2F const& _size,
             Vec2F const& _position,
@@ -138,8 +139,9 @@ namespace Maze
                 updateEditBoxState(_editBox, spriteRendererRaw);
             });
 
-            TextRenderer2DPtr textRenderer = UIHelper::CreateText(
+            AbstractTextRenderer2DPtr textRenderer = UIHelper::CreateTextOrSystemText(
                 "",
+                _fontMaterial,
                 _fontSize,
                 _horizontalAlignment,
                 _verticalAlignment,
@@ -149,8 +151,6 @@ namespace Maze
                 _ecsScene);
             textRenderer->setColor(ColorU32::c_black);
 
-            MAZE_ERROR_RETURN_VALUE_IF(!textRenderer->getFontMaterial(), nullptr, "Text renderer haven't font material!");
-
 
             SizePolicy2DPtr textSizePolicy = textRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
             textSizePolicy->setSizeDelta(-10.0f, 0.0f);
@@ -158,12 +158,24 @@ namespace Maze
             editBox->setTextRenderer(textRenderer->cast<AbstractTextRenderer2D>());
             editBox->setText(_text);
 
-            TrueTypeFontPtr const& ttf = textRenderer->getFontMaterial()->getFont()->getDefaultFont();
+            F32 cursorHeight = 0.0f;
+            F32 ascent = 0.0f;
+            F32 descent = 0.0f;
 
-            F32 ascent = ttf->getAscender(_fontSize);
-            F32 descent = ttf->getDescender(_fontSize);            
+            if (textRenderer->getClassUID() == ClassInfo<TextRenderer2D>::UID())
+            {
+                TrueTypeFontPtr const& ttf = _fontMaterial->getFont()->getDefaultFont();
 
-            F32 cursorHeight = ascent - descent;
+                ascent = ttf->getAscender(_fontSize);
+                descent = ttf->getDescender(_fontSize);
+                cursorHeight = ascent - descent;
+            }
+            else
+            {
+                descent = -(0.5f * (cursorHeight - (F32)_fontSize) - 1.0f);
+                cursorHeight = 8.0f + 4.0f;
+            }
+
             SpriteRenderer2DPtr cursorRenderer = SpriteHelper::CreateSprite(
                 textRenderer->getColor(),
                 Vec2F(1.0f, cursorHeight),

@@ -68,6 +68,8 @@
 #include "maze-render-system-opengl-core/MazeStateMachineOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "Editor.hpp"
 #include "layout/EditorLayout.hpp"
 
@@ -187,9 +189,10 @@ namespace Maze
         MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
 
         String fpsText;
-        m_fpsSystemTextRenderer = SystemUIHelper::CreateSystemText(
+        m_fpsSystemTextRenderer = EditorToolsUIHelper::CreateText(
             fpsText.c_str(),
-            8,
+            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+            12,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Top,
             Vec2F32(300, 300),

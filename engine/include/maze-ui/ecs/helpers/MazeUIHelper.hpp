@@ -67,6 +67,7 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_UI_API EditBox2DPtr CreateDefaultEditBox(
             CString _text,
+            FontMaterialPtr const& _fontMaterial,
             U32 _fontSize,
             Vec2F const& _size,
             Vec2F const& _position,
@@ -76,6 +77,23 @@ namespace Maze
             Vec2F const& _pivot = Vec2F(0.5f, 0.5f),
             HorizontalAlignment2D _horizontalAlignment = HorizontalAlignment2D::Left,
             VerticalAlignment2D _verticalAlignment = VerticalAlignment2D::Middle);
+
+        //////////////////////////////////////////
+        inline EditBox2DPtr CreateDefaultEditBox(
+            CString _text,
+            U32 _fontSize,
+            Vec2F const& _size,
+            Vec2F const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f),
+            HorizontalAlignment2D _horizontalAlignment = HorizontalAlignment2D::Left,
+            VerticalAlignment2D _verticalAlignment = VerticalAlignment2D::Middle)
+        {
+            return CreateDefaultEditBox(
+                _text, FontMaterialPtr(), _fontSize, _size, _position, _parent, _ecsScene, _anchor, _pivot, _horizontalAlignment, _verticalAlignment);
+        }
 
         //////////////////////////////////////////
         MAZE_UI_API Dropdown2DPtr CreateDefaultDropdown(

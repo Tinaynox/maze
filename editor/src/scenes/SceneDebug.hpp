@@ -94,7 +94,7 @@ namespace Maze
         void notifyMainRenderWindowResized(RenderTarget* _renderTarget);
 
     protected:
-        SystemTextRenderer2DPtr m_fpsSystemTextRenderer;
+        AbstractTextRenderer2DPtr m_fpsSystemTextRenderer;
         F32 m_fpsUpdateInterval;
         F32 m_fpsLowest;
         F32 m_fpsAcc;
