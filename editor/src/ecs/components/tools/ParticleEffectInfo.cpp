@@ -56,6 +56,7 @@
 #include "maze-editor-tools/ecs/components/MazeHierarchyLine.hpp"
 #include "maze-editor-tools/ecs/components/MazeHierarchyLinePool.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeScrollRect2D.hpp"
 #include "maze-ui/ecs/components/MazeToggleButton2D.hpp"
@@ -146,9 +147,10 @@ namespace Maze
             { 1.0f, 0.0f });
         backgroundSprite->setColor(255, 255, 255, 140);
     
-        SystemTextRenderer2DPtr titleText = SystemUIHelper::CreateSystemText(
+        AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
             "Particle Effect",
-            8,
+            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+            12,
             HorizontalAlignment2D::Center,
             VerticalAlignment2D::Middle,
             Vec2F32(m_transform->getWidth(), 20.0f),
@@ -208,9 +210,10 @@ namespace Maze
 
         {
             {
-                SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
+                AbstractTextRenderer2DPtr text = EditorToolsUIHelper::CreateText(
                     "Particles",
-                    8,
+                    EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                    12,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
                     Vec2F32(20.0f, 20.0f),
@@ -223,9 +226,10 @@ namespace Maze
             }
 
             {
-                m_particlesValueText = SystemUIHelper::CreateSystemText(
+                m_particlesValueText = EditorToolsUIHelper::CreateText(
                     "0",
-                    8,
+                    EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                    12,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
                     Vec2F32(20.0f, 20.0f),
@@ -240,9 +244,10 @@ namespace Maze
 
         {
             {
-                SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
+                AbstractTextRenderer2DPtr text = EditorToolsUIHelper::CreateText(
                     "Time",
-                    8,
+                    EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                    12,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
                     Vec2F32(20.0f, 20.0f),
@@ -255,9 +260,10 @@ namespace Maze
             }
 
             {
-                m_timeValueText = SystemUIHelper::CreateSystemText(
+                m_timeValueText = EditorToolsUIHelper::CreateText(
                     "0",
-                    8,
+                    EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                    12,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
                     Vec2F32(20.0f, 20.0f),
@@ -272,9 +278,10 @@ namespace Maze
 
         {
             {
-                SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
+                AbstractTextRenderer2DPtr text = EditorToolsUIHelper::CreateText(
                     "Iterations",
-                    8,
+                    EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                    12,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
                     Vec2F32(20.0f, 20.0f),
@@ -287,9 +294,10 @@ namespace Maze
             }
 
             {
-                m_iteractionsValueText = SystemUIHelper::CreateSystemText(
+                m_iteractionsValueText = EditorToolsUIHelper::CreateText(
                     "0",
-                    8,
+                    EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                    12,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
                     Vec2F32(20.0f, 20.0f),
@@ -304,9 +312,10 @@ namespace Maze
 
         {
             {
-                SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
+                AbstractTextRenderer2DPtr text = EditorToolsUIHelper::CreateText(
                     "Recursive",
-                    8,
+                    EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                    12,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
                     Vec2F32(20.0f, 20.0f),

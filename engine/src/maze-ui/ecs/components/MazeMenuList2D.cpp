@@ -186,7 +186,7 @@ namespace Maze
 
                 menuListItem->getTransform()->setParent(m_itemsListTransform);
 
-                SystemTextRenderer2D* labelTextRenderer = menuListItem->getTransform()->findChildComponent<SystemTextRenderer2D>("Label");
+                AbstractTextRenderer2D* labelTextRenderer = menuListItem->getTransform()->findChildComponentInheritedFrom<AbstractTextRenderer2D>("Label");
                 if (labelTextRenderer)
                 {
                     labelTextRenderer->setText(itemText);

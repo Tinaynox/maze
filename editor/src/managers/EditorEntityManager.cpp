@@ -37,6 +37,8 @@
 #include "maze-graphics/ecs/systems/MazeRenderPreparationSystem.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-ui/ecs/systems/MazeInputSystem2D.hpp"
+#include "maze-ui/ecs/systems/MazeUISystem2D.hpp"
+#include "maze-ui/ecs/systems/MazeUITweenTransitionSystem.hpp"
 #include "layout/EditorLayout.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorWorkspaceManager.hpp"
@@ -91,7 +93,10 @@ namespace Maze
         m_workspaceWorld->addSystem(RenderPreparationSystem::Create(renderSystem));
         m_workspaceWorld->addSystem(RenderControlSystem::Create(renderSystem));
         m_workspaceWorld->addSystem(Bounds2DSystem::Create());
+        m_workspaceWorld->addSystem(UISystem2D::Create());
         m_workspaceWorld->addSystem(inputSystem);
+
+        m_workspaceWorld->addSystem(UITweenTransitionSystem::Create());
 
         m_workspaceWorld->addSystem(ParticlesDrawerSystem::Create(renderSystem));
 

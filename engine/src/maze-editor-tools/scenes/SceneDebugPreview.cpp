@@ -91,6 +91,7 @@
 #include "maze-graphics/ecs/systems/MazeRenderPreparationSystem.hpp"
 #include "maze-ui/ecs/systems/MazeInputSystem2D.hpp"
 #include "maze-ui/ecs/systems/MazeUITweenTransitionSystem.hpp"
+#include "maze-ui/ecs/systems/MazeUISystem2D.hpp"
 #include "maze-physics2d/ecs/systems/MazePhysicsControlSystem2D.hpp"
 #include "layout/MazeEditorToolsStyles.hpp"
 
@@ -215,7 +216,10 @@ namespace Maze
         m_previewWorld->addSystem(RenderPreparationSystem::Create(GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()));
         m_previewWorld->addSystem(RenderControlSystem::Create(GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()));
         m_previewWorld->addSystem(Bounds2DSystem::Create());
+        m_previewWorld->addSystem(UISystem2D::Create());
         m_previewWorld->addSystem(InputSystem2D::Create());
+
+        m_previewWorld->addSystem(UITweenTransitionSystem::Create());
     }
 
     //////////////////////////////////////////

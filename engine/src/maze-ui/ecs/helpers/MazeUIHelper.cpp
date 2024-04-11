@@ -1484,7 +1484,7 @@ namespace Maze
             AbstractTextRenderer2DPtr itemTextRenderer = CreateTextOrSystemText(
                 _name.c_str(),
                 _fontMaterial,
-                8,
+                12,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 _size,
@@ -1713,7 +1713,7 @@ namespace Maze
                 AbstractTextRenderer2DPtr text = CreateTextOrSystemText(
                     "File",
                     _fontMaterial,
-                    8,
+                    12,
                     HorizontalAlignment2D::Center,
                     VerticalAlignment2D::Middle,
                     toggleTransform->getSize(),
@@ -2064,7 +2064,7 @@ namespace Maze
             {
                 SystemTextRenderer2DPtr text = SystemUIHelper::CreateSystemText(
                     _text,
-                    U32(Math::Round(Math::Max(1.0f, F32(_fontSize) / 8.0f))) * 8,
+                    U32(Math::Round(Math::Max(1.0f, F32(_fontSize - 2.0f) / 8.0f))) * 8,
                     _horizontalAlignment,
                     _verticalAlignment,
                     _size,
