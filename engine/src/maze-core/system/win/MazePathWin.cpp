@@ -61,6 +61,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    PathWin::operator WString() const
+    {
+        return m_path;
+    }
+
+    //////////////////////////////////////////
     String PathWin::toUTF8() const
     {
         return TextHelper::ConvertUCS2ToUTF8(m_path.c_str());

@@ -96,6 +96,9 @@ namespace Maze
         //////////////////////////////////////////
         operator String() const;
 
+        //////////////////////////////////////////
+        operator WString() const;
+
 
         //////////////////////////////////////////
         virtual String toUTF8() const MAZE_OVERRIDE;
