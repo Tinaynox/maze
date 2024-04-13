@@ -55,7 +55,8 @@ namespace Maze
     // Class AbstractTextRenderer2D
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(AbstractTextRenderer2D, AbstractTextRenderer);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(AbstractTextRenderer2D, AbstractTextRenderer,
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Bool, pixelPerfect, true, getPixelPerfect, setPixelPerfect));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(AbstractTextRenderer2D);
