@@ -31,7 +31,7 @@
 
 //////////////////////////////////////////
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
-#include "maze-ui/MazeUIHeader.hpp"
+#include "maze-editor-tools/MazeEditorToolsHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"

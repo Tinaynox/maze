@@ -38,7 +38,7 @@
 #include "maze-core/settings/MazeSettings.hpp"
 #include "maze-core/math/MazeAnimationCurve.hpp"
 #include "maze-editor-tools/property-drawers/MazePropertyDrawer.hpp"
-#include "maze-ui/ecs/components/MazeAnimationCurveEdit2D.hpp"
+#include "maze-editor-tools/ecs/components/MazeAnimationCurveEdit2D.hpp"
 
 
 //////////////////////////////////////////

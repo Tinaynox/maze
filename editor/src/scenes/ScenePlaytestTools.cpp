@@ -73,7 +73,7 @@
 #include "maze-render-system-opengl-core/MazeStateMachineOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
-#include "maze-ui/managers/MazeColorPickerManager.hpp"
+#include "maze-editor-tools/managers/MazeColorPickerManager.hpp"
 #include "maze-ui/ecs/components/MazeExperimental.hpp"
 #include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
 #include "maze-particles/managers/MazeParticlesManager.hpp"

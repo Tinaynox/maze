@@ -119,7 +119,7 @@ namespace Maze
             Vec2F::c_zero);
         titleText->setColor(EditorToolsStyles::GetInstancePtr()->getInspectorPropertyColor());
 
-        m_colorEdit = UIHelper::CreateDefaultColorHDREdit(
+        m_colorEdit = EditorToolsUIHelper::CreateDefaultColorHDREdit(
             ColorF128::c_white,
             EditorToolsStyles::GetInstancePtr()->getDefaultBoldFontMaterial(),
             Vec2F(60, 18),

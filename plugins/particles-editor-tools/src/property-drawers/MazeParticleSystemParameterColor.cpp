@@ -155,7 +155,7 @@ namespace Maze
         m_layout->setExpand(false);
 
         {
-            m_colorFrom = UIHelper::CreateDefaultColorHDREdit(
+            m_colorFrom = EditorToolsUIHelper::CreateDefaultColorHDREdit(
                 ColorF128::c_white,
                 EditorToolsStyles::GetInstancePtr()->getDefaultBoldFontMaterial(),
                 Vec2F(60, 18),
@@ -166,7 +166,7 @@ namespace Maze
                 Vec2F::c_zero);
             m_colorFrom->eventColorChanged.subscribe(this, &PropertyDrawerParticleSystemParameterColor::notifyColorChanged);
 
-            m_colorTo = UIHelper::CreateDefaultColorHDREdit(
+            m_colorTo = EditorToolsUIHelper::CreateDefaultColorHDREdit(
                 ColorF128::c_white,
                 EditorToolsStyles::GetInstancePtr()->getDefaultBoldFontMaterial(),
                 Vec2F(60, 18),
@@ -179,7 +179,7 @@ namespace Maze
         }
 
         {
-            m_gradientFrom = UIHelper::CreateDefaultColorGradientEdit(
+            m_gradientFrom = EditorToolsUIHelper::CreateDefaultColorGradientEdit(
                 ColorGradient(),
                 Vec2F(60, 18),
                 Vec2F(0, 0),
@@ -189,7 +189,7 @@ namespace Maze
                 Vec2F::c_zero);
             m_gradientFrom->eventGradientChanged.subscribe(this, &PropertyDrawerParticleSystemParameterColor::notifyGradientChanged);
 
-            m_gradientTo = UIHelper::CreateDefaultColorGradientEdit(
+            m_gradientTo = EditorToolsUIHelper::CreateDefaultColorGradientEdit(
                 ColorGradient(),
                 Vec2F(60, 18),
                 Vec2F(0, 0),

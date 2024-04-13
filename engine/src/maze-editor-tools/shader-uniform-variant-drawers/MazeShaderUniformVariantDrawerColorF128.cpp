@@ -35,7 +35,7 @@
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
-#include "maze-ui/ecs/components/MazeColorHDREdit2D.hpp"
+#include "maze-editor-tools/ecs/components/MazeColorHDREdit2D.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
@@ -123,7 +123,7 @@ namespace Maze
             Vec2F::c_zero);
         titleText->setColor(EditorToolsStyles::GetInstancePtr()->getInspectorPropertyColor());
 
-        m_colorEdit = UIHelper::CreateDefaultColorHDREdit(
+        m_colorEdit = EditorToolsUIHelper::CreateDefaultColorHDREdit(
             ColorF128::c_white,
             EditorToolsStyles::GetInstancePtr()->getDefaultBoldFontMaterial(),
             Vec2F(60, 18),

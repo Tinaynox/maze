@@ -186,7 +186,7 @@ namespace Maze
         }
 
         {
-            m_curveFrom = UIHelper::CreateDefaultAnimationCurveEdit(
+            m_curveFrom = EditorToolsUIHelper::CreateDefaultAnimationCurveEdit(
                 AnimationCurve(),
                 Vec2F(60, 18),
                 Vec2F(0, 0),
@@ -196,7 +196,7 @@ namespace Maze
                 Vec2F::c_zero);
             m_curveFrom->eventCurveChanged.subscribe(this, &PropertyDrawerParticleSystemParameterF32::notifyCurveChanged);
 
-            m_curveTo = UIHelper::CreateDefaultAnimationCurveEdit(
+            m_curveTo = EditorToolsUIHelper::CreateDefaultAnimationCurveEdit(
                 AnimationCurve(),
                 Vec2F(60, 18),
                 Vec2F(0, 0),

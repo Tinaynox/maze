@@ -119,7 +119,7 @@ namespace Maze
             Vec2F::c_zero);
         titleText->setColor(EditorToolsStyles::GetInstancePtr()->getInspectorPropertyColor());
 
-        m_colorEdit = UIHelper::CreateDefaultColorGradientEdit(
+        m_colorEdit = EditorToolsUIHelper::CreateDefaultColorGradientEdit(
             ColorGradient(
                 0.0f,
                 Vec4F::c_one,

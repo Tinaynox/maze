@@ -27,7 +27,6 @@
 #include "MazeUIHeader.hpp"
 #include "maze-ui/ecs/components/MazeSlider2D.hpp"
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
-#include "maze-ui/managers/MazeColorPickerManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"

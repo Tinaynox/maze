@@ -38,7 +38,6 @@
 #include "maze-core/settings/MazeSettings.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-editor-tools/property-drawers/MazePropertyDrawer.hpp"
-#include "maze-ui/ecs/components/MazeColorEdit2D.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 
 
@@ -50,6 +49,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(EditBox2D);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(PropertyDrawerMaterialAssetRef);
+    MAZE_USING_SHARED_PTR(AbstractTextRenderer2D);
 
 
     //////////////////////////////////////////

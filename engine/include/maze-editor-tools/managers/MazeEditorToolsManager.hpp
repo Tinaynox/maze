@@ -56,6 +56,12 @@ namespace Maze
     MAZE_USING_SHARED_PTR(MenuListTree2D);
     MAZE_USING_SHARED_PTR(ECSScene);
     MAZE_USING_SHARED_PTR(EditorToolsStyles);
+    MAZE_USING_SHARED_PTR(ColorPickerManager);
+    MAZE_USING_SHARED_PTR(ColorGradientPickerManager);
+    MAZE_USING_SHARED_PTR(AnimationCurveManager);
+    MAZE_USING_SHARED_PTR(MaterialPickerManager);
+    MAZE_USING_SHARED_PTR(RenderMeshPickerManager);
+    MAZE_USING_SHARED_PTR(TexturePickerManager);
 
 
     //////////////////////////////////////////
@@ -141,6 +147,13 @@ namespace Maze
 
     protected:
         static EditorToolsManager* s_instance;
+
+        ColorPickerManagerPtr m_colorPickerManager;
+        ColorGradientPickerManagerPtr m_colorGradientPickerManager;
+        AnimationCurveManagerPtr m_animationCurveManager;
+        MaterialPickerManagerPtr m_materialPickerManager;
+        RenderMeshPickerManagerPtr m_renderMeshPickerManager;
+        TexturePickerManagerPtr m_texturePickerManager;
 
         EditorToolsStylesPtr m_styles;
         SelectionManagerPtr m_selectionManager;

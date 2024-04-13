@@ -39,8 +39,8 @@
 #include "maze-graphics/MazeColorGradient.hpp"
 #include "maze-editor-tools/property-drawers/MazePropertyDrawer.hpp"
 #include "maze-editor-tools/property-drawers/MazeColorGradient.hpp"
-#include "maze-ui/ecs/components/MazeColorGradientEdit2D.hpp"
-#include "maze-ui/ecs/components/MazeColorHDREdit2D.hpp"
+#include "maze-editor-tools/ecs/components/MazeColorGradientEdit2D.hpp"
+#include "maze-editor-tools/ecs/components/MazeColorHDREdit2D.hpp"
 #include "maze-particles/MazeParticleSystemParameterColor.hpp"
 
 

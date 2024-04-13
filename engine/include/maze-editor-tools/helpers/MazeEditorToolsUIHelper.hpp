@@ -54,6 +54,10 @@
 #include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
+#include "maze-editor-tools/ecs/components/MazeColorEdit2D.hpp"
+#include "maze-editor-tools/ecs/components/MazeColorHDREdit2D.hpp"
+#include "maze-editor-tools/ecs/components/MazeColorGradientEdit2D.hpp"
+#include "maze-editor-tools/ecs/components/MazeAnimationCurveEdit2D.hpp"
 
 
 //////////////////////////////////////////
@@ -97,6 +101,64 @@ namespace Maze
             U32 _fontSize,
             HorizontalAlignment2D _horizontalAlignment,
             VerticalAlignment2D _verticalAlignment,
+            Vec2F const& _size,
+            Vec2F const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API ColorEdit2DPtr CreateDefaultColorEdit(
+            ColorU32 _color,
+            Vec2F const& _size,
+            Vec2F const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API ColorHDREdit2DPtr CreateDefaultColorHDREdit(
+            ColorF128 _color,
+            FontMaterialPtr const& _fontMaterial,
+            Vec2F const& _size,
+            Vec2F const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f),
+            bool _hdrLabel = true,
+            bool _alphaBand = true);
+
+        //////////////////////////////////////////
+        inline ColorHDREdit2DPtr CreateDefaultColorHDREdit(
+            ColorF128 _color,
+            Vec2F const& _size,
+            Vec2F const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f),
+            bool _hdrLabel = true,
+            bool _alphaBand = true)
+        {
+            return CreateDefaultColorHDREdit(_color, FontMaterialPtr(), _size, _position, _parent, _ecsScene, _anchor, _pivot, _hdrLabel, _alphaBand);
+        }
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API ColorGradientEdit2DPtr CreateDefaultColorGradientEdit(
+            ColorGradient const& _gradient,
+            Vec2F const& _size,
+            Vec2F const& _position,
+            Transform2DPtr const& _parent,
+            ECSScene* _ecsScene,
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
+
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API AnimationCurveEdit2DPtr CreateDefaultAnimationCurveEdit(
+            AnimationCurve const& _curve,
             Vec2F const& _size,
             Vec2F const& _position,
             Transform2DPtr const& _parent,

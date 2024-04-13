@@ -31,6 +31,8 @@
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/managers/MazeSystemManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
+#include "maze-core/managers/MazeEntityManager.hpp"
+#include "maze-core/ecs/MazeComponentFactory.hpp"
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-editor-tools/scenes/SceneDebugEditor.hpp"
 #include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
@@ -43,6 +45,16 @@
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/managers/MazeAssetEditorToolsManager.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
+#include "maze-editor-tools/managers/MazeColorPickerManager.hpp"
+#include "maze-editor-tools/managers/MazeColorGradientPickerManager.hpp"
+#include "maze-editor-tools/managers/MazeAnimationCurveManager.hpp"
+#include "maze-editor-tools/managers/MazeMaterialPickerManager.hpp"
+#include "maze-editor-tools/managers/MazeRenderMeshPickerManager.hpp"
+#include "maze-editor-tools/managers/MazeTexturePickerManager.hpp"
+#include "maze-editor-tools/ecs/components/MazeColorEdit2D.hpp"
+#include "maze-editor-tools/ecs/components/MazeColorHDREdit2D.hpp"
+#include "maze-editor-tools/ecs/components/MazeColorGradientEdit2D.hpp"
+#include "maze-editor-tools/ecs/components/MazeAnimationCurveEdit2D.hpp"
 
 
 //////////////////////////////////////////
@@ -96,6 +108,31 @@ namespace Maze
         if (!m_styles)
             return false;
 
+
+        ColorPickerManager::Initialize(m_colorPickerManager);
+        if (!m_colorPickerManager)
+            return false;
+
+        ColorGradientPickerManager::Initialize(m_colorGradientPickerManager);
+        if (!m_colorGradientPickerManager)
+            return false;
+
+        AnimationCurveManager::Initialize(m_animationCurveManager);
+        if (!m_animationCurveManager)
+            return false;
+
+        MaterialPickerManager::Initialize(m_materialPickerManager);
+        if (!m_materialPickerManager)
+            return false;
+
+        RenderMeshPickerManager::Initialize(m_renderMeshPickerManager);
+        if (!m_renderMeshPickerManager)
+            return false;
+
+        TexturePickerManager::Initialize(m_texturePickerManager);
+        if (!m_texturePickerManager)
+            return false;
+
         SelectionManager::Initialize(m_selectionManager);
         if (!m_selectionManager)
             return false;
@@ -116,6 +153,12 @@ namespace Maze
 
         EditorToolsSettings* editorToolsSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
         editorToolsSettings->getPauseChangedEvent().subscribe(this, &EditorToolsManager::notifyPauseChanged);
+
+
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<ColorEdit2D>("Editor Tools");
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<ColorHDREdit2D>("Editor Tools");
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<ColorGradientEdit2D>("Editor Tools");
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<AnimationCurveEdit2D>("Editor Tools");
 
         updatePause();
 

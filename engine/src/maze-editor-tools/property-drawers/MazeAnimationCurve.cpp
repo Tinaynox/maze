@@ -119,7 +119,7 @@ namespace Maze
             Vec2F::c_zero);
         titleText->setColor(EditorToolsStyles::GetInstancePtr()->getInspectorPropertyColor());
 
-        m_curveEdit = UIHelper::CreateDefaultAnimationCurveEdit(
+        m_curveEdit = EditorToolsUIHelper::CreateDefaultAnimationCurveEdit(
             AnimationCurve(
                 0.0f,
                 0.0f,

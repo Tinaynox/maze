@@ -29,7 +29,6 @@
 #include "maze-ui/ecs/components/MazeUIElement2D.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
 #include "maze-ui/ecs/components/MazeContextMenuCanvas2D.hpp"
-#include "maze-ui/managers/MazeColorPickerManager.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"

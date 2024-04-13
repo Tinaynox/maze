@@ -33,17 +33,7 @@
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/ecs/MazeComponentFactory.hpp"
 #include "maze-ui/managers/MazeFontManager.hpp"
-#include "maze-ui/managers/MazeColorPickerManager.hpp"
-#include "maze-ui/managers/MazeColorGradientPickerManager.hpp"
-#include "maze-ui/managers/MazeAnimationCurveManager.hpp"
-#include "maze-ui/managers/MazeMaterialPickerManager.hpp"
-#include "maze-ui/managers/MazeRenderMeshPickerManager.hpp"
-#include "maze-ui/managers/MazeTexturePickerManager.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
-#include "maze-ui/ecs/components/MazeColorEdit2D.hpp"
-#include "maze-ui/ecs/components/MazeColorHDREdit2D.hpp"
-#include "maze-ui/ecs/components/MazeColorGradientEdit2D.hpp"
-#include "maze-ui/ecs/components/MazeAnimationCurveEdit2D.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
 #include "maze-ui/ecs/components/MazeContextMenuCanvas2D.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
@@ -150,36 +140,9 @@ namespace Maze
         if (!m_fontManager)
             return false;
 
-        ColorPickerManager::Initialize(m_colorPickerManager);
-        if (!m_colorPickerManager)
-            return false;
-
-        ColorGradientPickerManager::Initialize(m_colorGradientPickerManager);
-        if (!m_colorGradientPickerManager)
-            return false;
-
-        AnimationCurveManager::Initialize(m_animationCurveManager);
-        if (!m_animationCurveManager)
-            return false;
-
-        MaterialPickerManager::Initialize(m_materialPickerManager);
-        if (!m_materialPickerManager)
-            return false;
-
-        RenderMeshPickerManager::Initialize(m_renderMeshPickerManager);
-        if (!m_renderMeshPickerManager)
-            return false;
-
-        TexturePickerManager::Initialize(m_texturePickerManager);
-        if (!m_texturePickerManager)
-            return false;
 
         
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<ClickButton2D>("UI");
-        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<ColorEdit2D>("UI");
-        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<ColorHDREdit2D>("UI");
-        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<ColorGradientEdit2D>("UI");
-        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<AnimationCurveEdit2D>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<ContextMenu2D>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<ContextMenuCanvas2D>("UI");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<HorizontalLayout2D>("UI");
