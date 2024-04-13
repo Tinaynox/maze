@@ -224,8 +224,10 @@ namespace Maze
             Vec2F::c_zero);
         systemText->setColor(ColorU32::c_black);
 
-        EditBox2DPtr editBox = SystemUIHelper::CreateDefaultEditBox(
+        EditBox2DPtr editBox = UIHelper::CreateDefaultEditBox(
             "",
+            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+            12,
             Vec2F(40, 18),
             Vec2F(0, 0),
             layout->getTransform(),

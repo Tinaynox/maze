@@ -121,6 +121,7 @@ namespace Maze
 
         m_colorEdit = UIHelper::CreateDefaultColorHDREdit(
             ColorF128::c_white,
+            EditorToolsStyles::GetInstancePtr()->getDefaultBoldFontMaterial(),
             Vec2F(60, 18),
             Vec2F(0, 0),
             layout->getTransform(),

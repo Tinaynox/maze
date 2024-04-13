@@ -172,8 +172,10 @@ namespace Maze
         m_canvasUIElement->eventCursorReleaseIn.subscribe(this, &SceneRenderMeshPicker::notifyCanvasCursorReleaseIn);
         m_canvasUIElement->eventCursorReleaseOut.subscribe(this, &SceneRenderMeshPicker::notifyCanvasCursorReleaseOut);
 
-        m_filterEditBox = SystemUIHelper::CreateDefaultEditBox(
+        m_filterEditBox = UIHelper::CreateDefaultEditBox(
             "",
+            FontMaterialPtr(),
+            12,
             Vec2F(m_canvas->getTransform()->getSize().x - 10.0f, 18),
             Vec2F(5, -2),
             m_canvas->getTransform(),

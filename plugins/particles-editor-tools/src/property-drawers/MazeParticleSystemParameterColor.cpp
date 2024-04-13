@@ -157,6 +157,7 @@ namespace Maze
         {
             m_colorFrom = UIHelper::CreateDefaultColorHDREdit(
                 ColorF128::c_white,
+                EditorToolsStyles::GetInstancePtr()->getDefaultBoldFontMaterial(),
                 Vec2F(60, 18),
                 Vec2F(0, 0),
                 m_layout->getTransform(),
@@ -167,6 +168,7 @@ namespace Maze
 
             m_colorTo = UIHelper::CreateDefaultColorHDREdit(
                 ColorF128::c_white,
+                EditorToolsStyles::GetInstancePtr()->getDefaultBoldFontMaterial(),
                 Vec2F(60, 18),
                 Vec2F(0, 0),
                 m_layout->getTransform(),
@@ -551,7 +553,7 @@ namespace Maze
                 checkMarkSprite->getEntityRaw()->ensureComponent<Name>()->setName("CheckMark");
                 checkMarkSprite->setColor(ColorU32::c_black);
 
-                SystemTextRenderer2DPtr itemTextRenderer = SystemUIHelper::CreateSystemText(
+                AbstractTextRenderer2DPtr itemTextRenderer = UIHelper::CreateText(
                     "Option 1",
                     8,
                     HorizontalAlignment2D::Left,

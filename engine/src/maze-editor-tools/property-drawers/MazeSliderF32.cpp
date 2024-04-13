@@ -152,8 +152,10 @@ namespace Maze
                 _parent->getEntityRaw()->getECSScene());
             m_slider->eventValueChanged.subscribe(this, &PropertyDrawerSliderF32::notifySliderValueChanged);
 
-            m_editBox = SystemUIHelper::CreateDefaultEditBox(
+            m_editBox = UIHelper::CreateDefaultEditBox(
                 "",
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                12,
                 Vec2F(60, 18),
                 Vec2F(0, 0),
                 sliderLayout->getTransform(),

@@ -158,8 +158,10 @@ namespace Maze
         m_layout->setExpand(false);
 
         {
-            m_editBoxFrom = SystemUIHelper::CreateDefaultEditBox(
+            m_editBoxFrom = UIHelper::CreateDefaultEditBox(
                 "",
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                12,
                 Vec2F(60, 18),
                 Vec2F(0, 0),
                 m_layout->getTransform(),
@@ -169,8 +171,10 @@ namespace Maze
             m_editBoxFrom->eventTextInput.subscribe(this, &PropertyDrawerParticleSystemParameterF32::notifyTextInput);
             m_editBoxFrom->eventSelectedChanged.subscribe(this, &PropertyDrawerParticleSystemParameterF32::notifySelectedChanged);
 
-            m_editBoxTo = SystemUIHelper::CreateDefaultEditBox(
+            m_editBoxTo = UIHelper::CreateDefaultEditBox(
                 "",
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                12,
                 Vec2F(60, 18),
                 Vec2F(0, 0),
                 m_layout->getTransform(),
@@ -599,9 +603,9 @@ namespace Maze
                 checkMarkSprite->getEntityRaw()->ensureComponent<Name>()->setName("CheckMark");
                 checkMarkSprite->setColor(ColorU32::c_black);
 
-                SystemTextRenderer2DPtr itemTextRenderer = SystemUIHelper::CreateSystemText(
+                AbstractTextRenderer2DPtr itemTextRenderer = UIHelper::CreateText(
                     "Option 1",
-                    8,
+                    12,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
                     Vec2F(width, 20.0f),

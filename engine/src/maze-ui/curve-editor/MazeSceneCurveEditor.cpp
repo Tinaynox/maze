@@ -325,8 +325,10 @@ namespace Maze
             m_curveClickButton->getTransitionSprite()->setColor(ColorU32::c_transparent);
 
 
-            m_curveScalarEdit = SystemUIHelper::CreateDefaultEditBox(
+            m_curveScalarEdit = UIHelper::CreateDefaultEditBox(
                 StringHelper::F32ToStringFormatted(curve.getScalar(), 4).c_str(),
+                FontMaterialPtr(),
+                12,
                 Vec2F(30, 12),
                 Vec2F(40 - 3, -25),
                 m_curveRenderer->getTransform(),
@@ -527,8 +529,10 @@ namespace Maze
                     this);
                 label->setColor(ColorU32::c_black);
 
-                m_valueEdit = SystemUIHelper::CreateDefaultEditBox(
+                m_valueEdit = UIHelper::CreateDefaultEditBox(
                     "51.5",
+                    FontMaterialPtr(),
+                    12,
                     Vec2F(80.0f, 18.0f),
                     Vec2F::c_zero,
                     rowLayout->getTransform(),
@@ -561,8 +565,10 @@ namespace Maze
                     this);
                 label->setColor(ColorU32::c_black);
 
-                m_locationEdit = SystemUIHelper::CreateDefaultEditBox(
+                m_locationEdit = UIHelper::CreateDefaultEditBox(
                     "51.5",
+                    FontMaterialPtr(),
+                    12,
                     Vec2F(45.0f, 18.0f),
                     Vec2F::c_zero,
                     rowLayout->getTransform(),
@@ -613,8 +619,10 @@ namespace Maze
                     this);
                 label->setColor(ColorU32::c_black);
 
-                m_inTangentEdit = SystemUIHelper::CreateDefaultEditBox(
+                m_inTangentEdit = UIHelper::CreateDefaultEditBox(
                     "51.5",
+                    FontMaterialPtr(),
+                    12,
                     Vec2F(80.0f, 18.0f),
                     Vec2F::c_zero,
                     rowLayout->getTransform(),
@@ -647,8 +655,10 @@ namespace Maze
                     this);
                 label->setColor(ColorU32::c_black);
 
-                m_outTangentEdit = SystemUIHelper::CreateDefaultEditBox(
+                m_outTangentEdit = UIHelper::CreateDefaultEditBox(
                     "51.5",
+                    FontMaterialPtr(),
+                    12,
                     Vec2F(80.0f, 18.0f),
                     Vec2F::c_zero,
                     rowLayout->getTransform(),

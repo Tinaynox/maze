@@ -81,6 +81,7 @@
 #include "maze-render-system-opengl-core/MazeStateMachineOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 
 
 //////////////////////////////////////////
@@ -268,7 +269,7 @@ namespace Maze
             rowLayout->setAutoWidth(false);
             rowLayout->setSpacing(5.0f);
 
-            SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
+            AbstractTextRenderer2DPtr label = UIHelper::CreateText(
                 "Mode",
                 8,
                 HorizontalAlignment2D::Left,
@@ -279,7 +280,8 @@ namespace Maze
                 this);
             label->setColor(ColorU32::c_black);
 
-            m_modeDropdown = SystemUIHelper::CreateDefaultDropdown(
+            m_modeDropdown = UIHelper::CreateDefaultDropdown(
+                12,
                 Vec2F(158.0f, 18.0f),
                 Vec2F(0.0f, 0.0f),
                 rowLayout->getTransform(),
@@ -554,8 +556,10 @@ namespace Maze
                 this);
             m_alphaSlider->eventValueChanged.subscribe(this, &SceneColorGradientPicker::notifyAlphaSliderValueChanged);
 
-            m_alphaEdit = SystemUIHelper::CreateDefaultEditBox(
+            m_alphaEdit = UIHelper::CreateDefaultEditBox(
                 "255",
+                FontMaterialPtr(),
+                12,
                 Vec2F(30.0f, 18.0f),
                 Vec2F::c_zero,
                 rowLayout->getTransform(),
@@ -585,7 +589,7 @@ namespace Maze
             rowLayout->setExpand(true);
             rowLayout->setAutoWidth(false);
 
-            SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
+            AbstractTextRenderer2DPtr label = UIHelper::CreateText(
                 "Color",
                 8,
                 HorizontalAlignment2D::Left,
@@ -598,6 +602,7 @@ namespace Maze
 
             m_colorEdit = UIHelper::CreateDefaultColorHDREdit(
                 ColorF128::c_red,
+                EditorToolsStyles::GetInstancePtr()->getDefaultBoldFontMaterial(),
                 Vec2F(60.0f, 18.0f),
                 Vec2F::c_zero,
                 rowLayout->getTransform(),
@@ -630,7 +635,7 @@ namespace Maze
             rowLayout->setExpand(true);
             rowLayout->setAutoWidth(false);
 
-            SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
+            AbstractTextRenderer2DPtr label = UIHelper::CreateText(
                 "Location",
                 8,
                 HorizontalAlignment2D::Left,
@@ -641,15 +646,17 @@ namespace Maze
                 this);
             label->setColor(ColorU32::c_black);
 
-            m_locationEdit = SystemUIHelper::CreateDefaultEditBox(
+            m_locationEdit = UIHelper::CreateDefaultEditBox(
                 "51.5",
+                FontMaterialPtr(),
+                12,
                 Vec2F(45.0f, 18.0f),
                 Vec2F::c_zero,
                 rowLayout->getTransform(),
                 this);
             m_locationEdit->eventTextInput.subscribe(this, &SceneColorGradientPicker::notifyLocationEditTextInput);
 
-            SystemTextRenderer2DPtr label2 = SystemUIHelper::CreateSystemText(
+            AbstractTextRenderer2DPtr label2 = UIHelper::CreateText(
                 "%",
                 8,
                 HorizontalAlignment2D::Left,

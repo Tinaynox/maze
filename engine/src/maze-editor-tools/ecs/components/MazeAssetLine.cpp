@@ -211,8 +211,10 @@ namespace Maze
             Vec2F(0.0f, 0.5f));
         m_textRenderer->setColor(ColorU32::c_black);
 
-        m_textEdit = SystemUIHelper::CreateDefaultEditBox(
+        m_textEdit = UIHelper::CreateDefaultEditBox(
             label.c_str(),
+            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+            12,
             Vec2F(200, (F32)charSize + 4.0f),
             Vec2F(x, 0),
             m_mainTransform,

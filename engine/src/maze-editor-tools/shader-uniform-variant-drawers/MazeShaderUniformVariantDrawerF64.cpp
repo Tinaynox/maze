@@ -126,8 +126,10 @@ namespace Maze
             Vec2F::c_zero);
         titleText->setColor(EditorToolsStyles::GetInstancePtr()->getInspectorPropertyColor());
 
-        m_editBox = SystemUIHelper::CreateDefaultEditBox(
+        m_editBox = UIHelper::CreateDefaultEditBox(
             "",
+            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+            12,
             Vec2F(60, 18),
             Vec2F(0, 0),
             layout->getTransform(),

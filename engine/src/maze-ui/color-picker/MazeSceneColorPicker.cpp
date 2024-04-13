@@ -397,7 +397,7 @@ namespace Maze
         rightScaleMarkRenderer->getTransform()->setLocalScale(-1.0f, 1.0f);
 
 
-        m_floatLabel = SystemUIHelper::CreateSystemText(
+        m_floatLabel = UIHelper::CreateText(
             "",
             8,
             HorizontalAlignment2D::Left,
@@ -437,7 +437,7 @@ namespace Maze
             rowLayout->setAutoWidth(false);
 
 
-            SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
+            AbstractTextRenderer2DPtr label = UIHelper::CreateText(
                 "R",
                 8,
                 HorizontalAlignment2D::Left,
@@ -471,8 +471,10 @@ namespace Maze
                 Vec2F(0.0f, 0.0f));
             m_rgbaRenderers[0]->getMaterial()->setUniform(MAZE_HS("u_channel"), 0);
 
-            m_rgbaTextEdits[0] = SystemUIHelper::CreateDefaultEditBox(
+            m_rgbaTextEdits[0] = UIHelper::CreateDefaultEditBox(
                 "255",
+                FontMaterialPtr(),
+                12,
                 Vec2F(45.0f, 18.0f),
                 Vec2F::c_zero,
                 rowLayout->getTransform(),
@@ -493,7 +495,7 @@ namespace Maze
             rowLayout->setExpand(true);
             rowLayout->setAutoWidth(false);
 
-            SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
+            AbstractTextRenderer2DPtr label = UIHelper::CreateText(
                 "G",
                 8,
                 HorizontalAlignment2D::Left,
@@ -527,8 +529,10 @@ namespace Maze
                 Vec2F(0.0f, 0.0f));
             m_rgbaRenderers[1]->getMaterial()->setUniform(MAZE_HS("u_channel"), 1);
 
-            m_rgbaTextEdits[1] = SystemUIHelper::CreateDefaultEditBox(
+            m_rgbaTextEdits[1] = UIHelper::CreateDefaultEditBox(
                 "0",
+                FontMaterialPtr(),
+                12,
                 Vec2F(45.0f, 18.0f),
                 Vec2F::c_zero,
                 rowLayout->getTransform(),
@@ -549,7 +553,7 @@ namespace Maze
             rowLayout->setExpand(true);
             rowLayout->setAutoWidth(false);
 
-            SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
+            AbstractTextRenderer2DPtr label = UIHelper::CreateText(
                 "B",
                 8,
                 HorizontalAlignment2D::Left,
@@ -583,8 +587,10 @@ namespace Maze
                 Vec2F(0.0f, 0.0f));
             m_rgbaRenderers[2]->getMaterial()->setUniform(MAZE_HS("u_channel"), 2);
 
-            m_rgbaTextEdits[2] = SystemUIHelper::CreateDefaultEditBox(
+            m_rgbaTextEdits[2] = UIHelper::CreateDefaultEditBox(
                 "0",
+                FontMaterialPtr(),
+                12,
                 Vec2F(45.0f, 18.0f),
                 Vec2F::c_zero,
                 rowLayout->getTransform(),
@@ -605,7 +611,7 @@ namespace Maze
             rowLayout->setExpand(true);
             rowLayout->setAutoWidth(false);
 
-            SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
+            AbstractTextRenderer2DPtr label = UIHelper::CreateText(
                 "A",
                 8,
                 HorizontalAlignment2D::Left,
@@ -656,8 +662,10 @@ namespace Maze
                 Vec2F(0.0f, 0.0f));
             m_rgbaRenderers[3]->getMaterial()->setUniform(MAZE_HS("u_channel"), 3);
 
-            m_rgbaTextEdits[3] = SystemUIHelper::CreateDefaultEditBox(
+            m_rgbaTextEdits[3] = UIHelper::CreateDefaultEditBox(
                 "255",
+                FontMaterialPtr(),
+                12,
                 Vec2F(45.0f, 18.0f),
                 Vec2F::c_zero,
                 rowLayout->getTransform(),
@@ -678,7 +686,7 @@ namespace Maze
             rowLayout->setExpand(true);
             rowLayout->setAutoWidth(false);
 
-            SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
+            AbstractTextRenderer2DPtr label = UIHelper::CreateText(
                 "Hexadecimal",
                 8,
                 HorizontalAlignment2D::Left,
@@ -689,8 +697,10 @@ namespace Maze
                 this);
             label->setColor(ColorU32::c_black);
 
-            m_hexadecimalTextEdit = SystemUIHelper::CreateDefaultEditBox(
+            m_hexadecimalTextEdit = UIHelper::CreateDefaultEditBox(
                 "#FFFFFF",
+                FontMaterialPtr(),
+                12,
                 Vec2F(80.0f, 18.0f),
                 Vec2F::c_zero,
                 rowLayout->getTransform(),
@@ -740,7 +750,7 @@ namespace Maze
 
             m_intensityEntity = rowLayout->getEntity();
 
-            SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
+            AbstractTextRenderer2DPtr label = UIHelper::CreateText(
                 "I",
                 8,
                 HorizontalAlignment2D::Left,
@@ -759,8 +769,10 @@ namespace Maze
                 this);
             m_intensitySlider->eventValueChanged.subscribe(this, &SceneColorPicker::notifyIntensitySliderValueChanged);
 
-            m_intensityTextEdit = SystemUIHelper::CreateDefaultEditBox(
+            m_intensityTextEdit = UIHelper::CreateDefaultEditBox(
                 "0",
+                FontMaterialPtr(),
+                12,
                 Vec2F(45.0f, 18.0f),
                 Vec2F::c_zero,
                 rowLayout->getTransform(),

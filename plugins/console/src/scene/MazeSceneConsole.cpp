@@ -156,8 +156,10 @@ namespace Maze
         m_consoleText->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefaultOutlined());
         updateLogText();
 
-        m_edit = SystemUIHelper::CreateDefaultEditBox(
+        m_edit = UIHelper::CreateDefaultEditBox(
             "",
+            FontMaterialPtr(),
+            12,
             Vec2F(m_canvas->getTransform()->getWidth(), 18.0f),
             Vec2F(0.0f, 0.0f),
             m_background->getTransform(),
