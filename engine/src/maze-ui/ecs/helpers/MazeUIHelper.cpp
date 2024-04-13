@@ -164,7 +164,10 @@ namespace Maze
 
             if (textRenderer->getClassUID() == ClassInfo<TextRenderer2D>::UID())
             {
-                TrueTypeFontPtr const& ttf = _fontMaterial->getFont()->getDefaultFont();
+                FontMaterialPtr const& fontMaterial = textRenderer->castRaw<TextRenderer2D>()->getFontMaterial();
+                MAZE_ERROR_RETURN_VALUE_IF(!fontMaterial, EditBox2DPtr(), "FontMaterial is null!");
+
+                TrueTypeFontPtr const& ttf = fontMaterial->getFont()->getDefaultFont();
 
                 ascent = ttf->getAscender(_fontSize);
                 descent = ttf->getDescender(_fontSize);
