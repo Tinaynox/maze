@@ -1008,7 +1008,7 @@ namespace Maze
                 AbstractTextRenderer2DPtr itemTextRenderer = CreateTextOrSystemText(
                     "HDR",
                     _fontMaterial,
-                    12,
+                    10,
                     HorizontalAlignment2D::Center,
                     VerticalAlignment2D::Middle,
                     colorSpriteRenderer->getTransform()->getSize(),

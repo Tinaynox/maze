@@ -71,6 +71,7 @@
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
+#include "maze-ui/managers/MazeFontMaterialManager.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
@@ -288,6 +289,7 @@ namespace Maze
                 MAZE_LOAD_PLATFORM_PLUGIN(LoaderTTF);
 
                 EditorToolsStyles::GetInstancePtr()->loadStyles("EditorStyles.mzdata");
+                FontMaterialManager::GetInstancePtr()->setDefaultFontMaterial(EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial());
 
                 setCurrentProgress(0.85f);
                 break;
