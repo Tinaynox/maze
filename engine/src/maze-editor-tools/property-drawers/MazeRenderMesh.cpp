@@ -205,9 +205,7 @@ namespace Maze
 
         m_renderMeshIcon->getMeshRenderer()->setEnabled(m_renderMesh != nullptr);
 
-        String name = m_renderMesh ? m_renderMesh->getName() : "None";
-        name = FileHelper::GetFileNameWithoutExtension(name);
-        m_renderMeshNameDrawer->setText(name);
+        m_renderMeshNameDrawer->setText(FileHelper::GetFileNameWithoutExtension(m_renderMesh ? m_renderMesh->getName() : "None"));
     }
 
     //////////////////////////////////////////

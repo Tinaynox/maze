@@ -92,7 +92,7 @@ namespace Maze
             if (button)
             {
                 button->eventClick.unsubscribe(this);
-                button->eventSingleClick.unsubscribe(this);
+                button->eventCursorPressIn.unsubscribe(this);
                 button->eventDoubleClick.unsubscribe(this);
             }
         }
@@ -103,7 +103,7 @@ namespace Maze
             if (button)
             {
                 button->eventClick.unsubscribe(this);
-                button->eventSingleClick.unsubscribe(this);
+                button->eventCursorPressIn.unsubscribe(this);
                 button->eventDoubleClick.unsubscribe(this);
             }
         }
@@ -226,7 +226,7 @@ namespace Maze
         m_textEdit->getEntityRaw()->setActiveSelf(false);
 
         ClickButton2DPtr textButton = m_mainTransform->getEntityRaw()->ensureComponent<ClickButton2D>();
-        textButton->eventSingleClick.subscribe(this, &AssetLine::notifyLineSingleClick);
+        textButton->eventCursorPressIn.subscribe(this, &AssetLine::notifyLineCursorPressIn);
         textButton->eventDoubleClick.subscribe(this, &AssetLine::notifyLineDoubleClick);
 
         m_contextMenu = m_mainTransform->getEntityRaw()->ensureComponent<ContextMenu2D>();
@@ -265,7 +265,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetLine::notifyLineSingleClick(Button2D* _button, CursorInputEvent const& _inputEvent)
+    void AssetLine::notifyLineCursorPressIn(Button2D* _button, Vec2F const& _pos, CursorInputEvent const& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;

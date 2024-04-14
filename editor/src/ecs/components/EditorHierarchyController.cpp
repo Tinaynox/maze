@@ -89,6 +89,7 @@ namespace Maze
         for (auto& hierarchyLineData : m_hierarchyLinesPerEntity)
         {
             hierarchyLineData.second.line->eventDropDownClick.unsubscribe(this);
+            hierarchyLineData.second.line->eventLineCursorPressIn.unsubscribe(this);
             hierarchyLineData.second.line->eventLineClick.unsubscribe(this);
             hierarchyLineData.second.line->eventLineDoubleClick.unsubscribe(this);
         }
@@ -96,6 +97,7 @@ namespace Maze
         for (auto& hierarchyLineData : m_hierarchyLinesPerScene)
         {
             hierarchyLineData.second.line->eventDropDownClick.unsubscribe(this);
+            hierarchyLineData.second.line->eventLineCursorPressIn.unsubscribe(this);
             hierarchyLineData.second.line->eventLineClick.unsubscribe(this);
             hierarchyLineData.second.line->eventLineDoubleClick.unsubscribe(this);
         }
@@ -568,7 +570,7 @@ namespace Maze
             hierarchyLine->setUserData(reinterpret_cast<void*>((Size)_entityId));
             hierarchyLine->updateIcon();
             hierarchyLine->eventDropDownClick.subscribe(this, &EditorHierarchyController::notifyHierarchyLineDropDownClick);
-            hierarchyLine->eventLineClick.subscribe(this, &EditorHierarchyController::notifyHierarchyLineClick);
+            hierarchyLine->eventLineCursorPressIn.subscribe(this, &EditorHierarchyController::notifyHierarchyLineClick);
             hierarchyLine->eventLineDoubleClick.subscribe(this, &EditorHierarchyController::notifyHierarchyLineDoubleClick);
         }
 
@@ -589,7 +591,7 @@ namespace Maze
             hierarchyLine->setECSWorld(EditorManager::GetInstancePtr()->getMainECSWorld());
             hierarchyLine->setUserData(static_cast<void*>(_scene.get()));
             hierarchyLine->eventDropDownClick.subscribe(this, &EditorHierarchyController::notifyHierarchyLineDropDownClick);
-            hierarchyLine->eventLineClick.subscribe(this, &EditorHierarchyController::notifyHierarchyLineClick);
+            hierarchyLine->eventLineCursorPressIn.subscribe(this, &EditorHierarchyController::notifyHierarchyLineClick);
             hierarchyLine->eventLineDoubleClick.subscribe(this, &EditorHierarchyController::notifyHierarchyLineDoubleClick);
             CString className = _scene->getClassName();
             hierarchyLine->setName(className);
@@ -678,6 +680,7 @@ namespace Maze
         {
             it->second.line->eventDropDownClick.unsubscribe(this);
             it->second.line->eventLineClick.unsubscribe(this);
+            it->second.line->eventLineCursorPressIn.unsubscribe(this);
             it->second.line->eventLineDoubleClick.unsubscribe(this);
             m_hierarchyLinePool->releaseHierarchyLine(it->second.line);
             m_hierarchyLinesPerEntity.erase(it);

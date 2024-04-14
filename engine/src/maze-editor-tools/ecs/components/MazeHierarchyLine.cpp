@@ -88,7 +88,10 @@ namespace Maze
         {
             ClickButton2D* button = m_dropDownRenderer->getEntityRaw()->getComponentRaw<ClickButton2D>();
             if (button)
+            {
                 button->eventClick.unsubscribe(this);
+                button->eventCursorPressIn.unsubscribe(this);
+            }
         }
         
         if (m_textRenderer && m_textRenderer->getEntityRaw())
@@ -97,6 +100,7 @@ namespace Maze
             if (button)
             {
                 button->eventClick.unsubscribe(this);
+                button->eventCursorPressIn.unsubscribe(this);
                 button->eventDoubleClick.unsubscribe(this);
             }
         }
@@ -203,6 +207,7 @@ namespace Maze
         m_textRenderer->setColor(ColorU32::c_black);
         ClickButton2DPtr textButton = m_textRenderer->getEntityRaw()->ensureComponent<ClickButton2D>();
         textButton->eventClick.subscribe(this, &HierarchyLine::notifyLineClick);
+        textButton->eventCursorPressIn.subscribe(this, &HierarchyLine::notifyLineCursorPressIn);
         textButton->eventDoubleClick.subscribe(this, &HierarchyLine::notifyLineDoubleClick);
 
         m_contextMenu = m_textRenderer->getEntityRaw()->ensureComponent<ContextMenu2D>();
@@ -334,6 +339,15 @@ namespace Maze
             return;
 
         eventLineClick(this);
+    }
+
+    //////////////////////////////////////////
+    void HierarchyLine::notifyLineCursorPressIn(Button2D* _button, Vec2F const& _pos, CursorInputEvent const& _inputEvent)
+    {
+        if (_inputEvent.button != 0)
+            return;
+
+        eventLineCursorPressIn(this);
     }
 
     //////////////////////////////////////////

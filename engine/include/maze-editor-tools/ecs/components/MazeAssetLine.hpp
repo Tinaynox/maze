@@ -163,7 +163,7 @@ namespace Maze
         void notifyDropDownClick(Button2D* _button, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
-        void notifyLineSingleClick(Button2D* _button, CursorInputEvent const& _inputEvent);
+        void notifyLineCursorPressIn(Button2D* _button, Vec2F const& _pos, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
         void notifyLineDoubleClick(Button2D* _button, CursorInputEvent const& _inputEvent);

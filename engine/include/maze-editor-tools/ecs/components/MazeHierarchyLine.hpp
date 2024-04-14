@@ -150,6 +150,7 @@ namespace Maze
         MultiDelegate<void*> eventUserDataChanged;
         MultiDelegate<HierarchyLine*> eventDropDownClick;
         MultiDelegate<HierarchyLine*> eventLineClick;
+        MultiDelegate<HierarchyLine*> eventLineCursorPressIn;
         MultiDelegate<HierarchyLine*> eventLineDoubleClick;
 
     protected:
@@ -172,6 +173,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void notifyLineClick(Button2D* _button, CursorInputEvent const& _inputEvent);
+
+        //////////////////////////////////////////
+        void notifyLineCursorPressIn(Button2D* _button, Vec2F const& _pos, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
         void notifyLineDoubleClick(Button2D* _button, CursorInputEvent const& _inputEvent);
