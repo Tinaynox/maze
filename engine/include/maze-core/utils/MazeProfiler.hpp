@@ -43,7 +43,11 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    #define PROFILER_ENABLED (1)
+#if MAZE_RELEASE
+#   define PROFILER_ENABLED (0)
+#else
+#   define PROFILER_ENABLED (1)
+#endif
 
 
     //////////////////////////////////////////

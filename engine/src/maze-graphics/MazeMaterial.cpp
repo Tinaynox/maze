@@ -540,14 +540,11 @@ namespace Maze
     //////////////////////////////////////////
     void Material::applyRenderPassUniforms(RenderPass* _renderPass)
     {
-        for (auto const& uniformVariantData : m_uniforms)
-        {
-            ShaderUniformVariantPtr const& uniformVariant = uniformVariantData;
-            ShaderPtr const& shader = _renderPass->getShader();
-            MAZE_DEBUG_ERROR_IF(!shader, "Render pass has no shader!");
+        ShaderPtr const& shader = _renderPass->getShader();
+        MAZE_DEBUG_ERROR_IF(!shader, "Render pass has no shader!");
 
-            shader->setUniform(*uniformVariant.get());
-        }
+        for (auto const& uniformVariantData : m_uniforms)
+            shader->setUniform(*uniformVariantData.get());
     }
 
     //////////////////////////////////////////
