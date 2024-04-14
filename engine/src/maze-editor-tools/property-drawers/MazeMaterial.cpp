@@ -204,8 +204,7 @@ namespace Maze
 
         m_materialIcon->getMeshRenderer()->setEnabled(m_material != nullptr);
 
-        String name = m_material ? m_material->getName() : "None";
-        name = FileHelper::GetFileNameWithoutExtension(name);
+        String name = FileHelper::GetFileNameWithoutExtension(m_material ? m_material->getName() : "None");
         m_materialNameDrawer->setText(name);
     }
 

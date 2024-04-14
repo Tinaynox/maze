@@ -657,8 +657,11 @@ namespace Maze
                     continue;
             }
 
-            m_modeDropdown->addOption(mode.toString());
+            m_modeDropdown->addOption(mode.toString(), false, false);
         }
+
+        m_modeDropdown->updateCaption();
+        m_modeDropdown->rebuildOptions();
 
         m_modeDropdown->eventValueChanged.subscribe(this, &PropertyDrawerParticleSystemParameterF32::notifyDropdownValueChanged);
     }

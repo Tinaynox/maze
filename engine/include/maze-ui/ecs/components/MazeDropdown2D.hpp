@@ -192,24 +192,46 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void addOption(OptionData const& _optionData);
+        void addOption(
+            OptionData const& _optionData,
+            bool _updateCaption = true,
+            bool _rebuildOptions = true);
 
         //////////////////////////////////////////
-        inline void addOption(String const& _optionData)
+        inline void addOption(
+            String const& _optionData,
+            bool _updateCaption = true,
+            bool _rebuildOptions = true)
         {
-            addOption(OptionData{ _optionData });
+            addOption(
+                OptionData{ _optionData },
+                _updateCaption,
+                _rebuildOptions);
         }
 
         //////////////////////////////////////////
-        void addOptions(Vector<OptionData> const& _options);
+        void addOptions(
+            Vector<OptionData> const& _options,
+            bool _updateCaption = true,
+            bool _rebuildOptions = true);
 
 
         //////////////////////////////////////////
-        void addOptions(Vector<String> const& _options);
+        void addOptions(
+            Vector<String> const& _options,
+            bool _updateCaption = true,
+            bool _rebuildOptions = true);
 
 
         //////////////////////////////////////////
-        void clearOptions();
+        void clearOptions(bool _rebuildOptions = true);
+
+
+        //////////////////////////////////////////
+        void rebuildOptions();
+
+        //////////////////////////////////////////
+        void updateCaption();
 
 
         //////////////////////////////////////////
@@ -303,12 +325,6 @@ namespace Maze
         void updateTextRenderer();
 
 
-        //////////////////////////////////////////
-        void rebuildOptions();
-
-
-        //////////////////////////////////////////
-        void updateCaption();
 
         //////////////////////////////////////////
         void updateSelectedOption();

@@ -232,44 +232,63 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Dropdown2D::addOption(OptionData const& _optionData)
+    void Dropdown2D::addOption(
+        OptionData const& _optionData,
+        bool _updateCaption,
+        bool _rebuildOptions)
     {
         m_options.push_back(_optionData);
 
-        updateCaption();
-        rebuildOptions();
+        if (_updateCaption)
+            updateCaption();
+
+        if (_rebuildOptions)
+            rebuildOptions();
     }
 
     //////////////////////////////////////////
-    void Dropdown2D::addOptions(Vector<OptionData> const& _options)
+    void Dropdown2D::addOptions(
+        Vector<OptionData> const& _options,
+        bool _updateCaption,
+        bool _rebuildOptions)
     {
         m_options.insert(
             m_options.end(),
             _options.begin(),
             _options.end());
 
-        updateCaption();
-        rebuildOptions();
+        if (_updateCaption)
+            updateCaption();
+
+        if (_rebuildOptions)
+            rebuildOptions();
     }
 
     //////////////////////////////////////////
-    void Dropdown2D::addOptions(Vector<String> const& _options)
+    void Dropdown2D::addOptions(
+        Vector<String> const& _options,
+        bool _updateCaption,
+        bool _rebuildOptions)
     {
         for (String const& option : _options)
         {
             m_options.push_back({ option });
         }
 
-        updateCaption();
-        rebuildOptions();
+        if (_updateCaption)
+            updateCaption();
+
+        if (_rebuildOptions)
+            rebuildOptions();
     }
 
     //////////////////////////////////////////
-    void Dropdown2D::clearOptions()
+    void Dropdown2D::clearOptions(bool _rebuildOptions)
     {
         m_options.clear();
 
-        rebuildOptions();
+        if (_rebuildOptions)
+            rebuildOptions();
     }
 
     //////////////////////////////////////////
