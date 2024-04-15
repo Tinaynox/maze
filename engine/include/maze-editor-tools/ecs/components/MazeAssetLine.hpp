@@ -169,7 +169,10 @@ namespace Maze
         void notifyLineDoubleClick(Button2D* _button, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
-        void updateSelectedUI();
+        void notifyLineFocusChanged(Button2D* _button, bool _value);
+
+        //////////////////////////////////////////
+        void updateState();
 
 
         //////////////////////////////////////////
@@ -185,11 +188,14 @@ namespace Maze
         Transform2DPtr m_transform;
 
         Transform2DPtr m_mainTransform;
+        SpriteRenderer2DPtr m_backgroundRenderer;
         VerticalLayout2DPtr m_mainLayout;
         SpriteRenderer2DPtr m_dropDownRenderer;
         SpriteRenderer2DPtr m_iconRenderer;
         AbstractTextRenderer2DPtr m_textRenderer;
         EditBox2DPtr m_textEdit;
+
+        ClickButton2DPtr m_textButton;
 
         ContextMenu2DPtr m_contextMenu;
 

@@ -94,6 +94,7 @@ namespace Maze
                 button->eventClick.unsubscribe(this);
                 button->eventCursorPressIn.unsubscribe(this);
                 button->eventDoubleClick.unsubscribe(this);
+                button->eventFocusChanged.unsubscribe(this);
             }
         }
         
@@ -105,6 +106,7 @@ namespace Maze
                 button->eventClick.unsubscribe(this);
                 button->eventCursorPressIn.unsubscribe(this);
                 button->eventDoubleClick.unsubscribe(this);
+                button->eventFocusChanged.unsubscribe(this);
             }
         }
 
@@ -146,7 +148,7 @@ namespace Maze
 
 
         m_transform = getEntityRaw()->ensureComponent<Transform2D>();
-        m_transform->setSize(Vec2F(100, charSize));
+        m_transform->setSize(Vec2F(100, 14.0f));
         m_transform->setAnchor(Vec2F(0.0f, 1.0f));
         m_transform->setPivot(Vec2F(0.0f, 1.0f));
 
@@ -154,8 +156,8 @@ namespace Maze
         sizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
 
         m_mainLayout = getEntityRaw()->ensureComponent<VerticalLayout2D>();
-        m_mainLayout->setHorizontalAlignment(HorizontalAlignment2D::Right);
-        m_mainLayout->setSpacing(5.0f);
+        m_mainLayout->setHorizontalAlignment(HorizontalAlignment2D::Right);        
+        // m_mainLayout->setSpacing(5.0f);
 
         m_mainTransform = SpriteHelper::CreateTransform2D(
             m_transform->getSize(),
@@ -168,16 +170,25 @@ namespace Maze
         mainLayoutSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
         mainLayoutSizePolicy->setSizeDelta(-10.0f, 0.0f);
 
+        m_backgroundRenderer = SpriteHelper::CreateSprite(
+            ColorU32::c_lightGray,
+            m_transform->getSize(),
+            Vec2F::c_zero,
+            MaterialPtr(),
+            m_mainTransform,
+            getEntityRaw()->getECSScene());
+        m_backgroundRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
+
         F32 x = 0;
 
         m_dropDownRenderer = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::DropDownButtonExpanded),
             Vec2F(charSize, charSize) * 1.5f,
-            Vec2F(x, 0) + Vec2F(charSize * 0.5f, -charSize * 0.5f + 0.5f),
+            Vec2F(x, 0) + Vec2F(charSize * 0.5f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_mainTransform,
             getEntityRaw()->getECSScene(),
-            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 0.5f),
             Vec2F(0.5f, 0.5f));
         m_dropDownRenderer->setColor(ColorU32::c_black);
         ClickButton2DPtr dropDownButton = m_dropDownRenderer->getEntityRaw()->ensureComponent<ClickButton2D>();
@@ -188,11 +199,11 @@ namespace Maze
         m_iconRenderer = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::TextFile),
             Vec2F(charSize, charSize) * 1.5f,
-            Vec2F(x, 0) + Vec2F(charSize, -charSize) * 0.5f,
+            Vec2F(x, 0) + Vec2F(charSize, 0.0f) * 0.5f,
             materialManager->getColorTextureMaterial(),
             m_mainTransform,
             getEntityRaw()->getECSScene(),
-            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 0.5f),
             Vec2F(0.5f, 0.5f));
         x += (F32)charSize + 4;
 
@@ -225,9 +236,10 @@ namespace Maze
         m_textEdit->eventTextInput.subscribe(this, &AssetLine::notifyTextEditInput);
         m_textEdit->getEntityRaw()->setActiveSelf(false);
 
-        ClickButton2DPtr textButton = m_mainTransform->getEntityRaw()->ensureComponent<ClickButton2D>();
-        textButton->eventCursorPressIn.subscribe(this, &AssetLine::notifyLineCursorPressIn);
-        textButton->eventDoubleClick.subscribe(this, &AssetLine::notifyLineDoubleClick);
+        m_textButton = m_mainTransform->getEntityRaw()->ensureComponent<ClickButton2D>();
+        m_textButton->eventCursorPressIn.subscribe(this, &AssetLine::notifyLineCursorPressIn);
+        m_textButton->eventDoubleClick.subscribe(this, &AssetLine::notifyLineDoubleClick);
+        m_textButton->eventFocusChanged.subscribe(this, &AssetLine::notifyLineFocusChanged);
 
         m_contextMenu = m_mainTransform->getEntityRaw()->ensureComponent<ContextMenu2D>();
         
@@ -240,7 +252,7 @@ namespace Maze
             getEntityRaw()->getECSScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
-        m_childrenLayout->setSpacing(5.0f);
+        // m_childrenLayout->setSpacing(5.0f);
         m_childrenTransform = m_childrenLayout->getTransform();
 
         SizePolicy2DPtr childrenLayoutSizePolicy = m_childrenLayout->getEntityRaw()->ensureComponent<SizePolicy2D>();
@@ -250,7 +262,7 @@ namespace Maze
         setExpanded(m_assetsController->getAssetFileExpanded(m_assetFile));
         setEditMode(m_assetsController->getAssetFileRename(m_assetFile));
 
-        updateSelectedUI();
+        updateState();
     }
 
     //////////////////////////////////////////
@@ -273,7 +285,10 @@ namespace Maze
         if (m_selectAssetFileByClick)
         {
             if (SelectionManager::GetInstancePtr()->isObjectSelected(m_assetFile))
-                SelectionManager::GetInstancePtr()->unselectObject(m_assetFile);
+            {
+                // Do nothing
+                // SelectionManager::GetInstancePtr()->unselectObject(m_assetFile);
+            }
             else
                 SelectionManager::GetInstancePtr()->selectObject(m_assetFile);
         }
@@ -294,6 +309,12 @@ namespace Maze
         }
 
         eventLineDoubleClick(this);
+    }
+
+    //////////////////////////////////////////
+    void AssetLine::notifyLineFocusChanged(Button2D* _button, bool _value)
+    {
+        updateState();
     }
 
     //////////////////////////////////////////
@@ -354,7 +375,7 @@ namespace Maze
 
         m_selected = _value;
 
-        updateSelectedUI();
+        updateState();
     }
 
     //////////////////////////////////////////
@@ -370,19 +391,26 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetLine::updateSelectedUI()
+    void AssetLine::updateState()
     {
         if (!m_textRenderer)
             return;
 
         if (m_selected)
         {
-            m_textRenderer->setColor(ColorU32(0, 255, 0, 255));
+            m_textRenderer->setColor(ColorU32(255, 255, 255, 255));
+            m_backgroundRenderer->setColor(ColorU32(78, 134, 206));
         }
         else
         {
             m_textRenderer->setColor(ColorU32(0, 0, 0, 255));
+
+            if (m_textButton->getUIElement()->getFocused())
+                m_backgroundRenderer->setColor(ColorU32(178, 178, 178));
+            else
+                m_backgroundRenderer->setColor(ColorU32(0, 0, 0, 0));
         }
+
     }
 
     //////////////////////////////////////////

@@ -229,7 +229,7 @@ namespace Maze
         m_assetsTreeLayoutTransform->setSize(Vec2F::c_zero);
         VerticalLayout2DPtr assetsTreeLayoutTransformLayout = m_assetsTreeLayoutTransform->getEntityRaw()->ensureComponent<VerticalLayout2D>();
         assetsTreeLayoutTransformLayout->setPadding(0.0f, 0.0f, 4.0f, 4.0f);
-        assetsTreeLayoutTransformLayout->setSpacing(5.0f);
+        // assetsTreeLayoutTransformLayout->setSpacing(5.0f);
         SizePolicy2DPtr assetsTreeLayoutSizePolicy = m_assetsTreeLayoutTransform->getEntityRaw()->ensureComponent<SizePolicy2D>();
         assetsTreeLayoutSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
 
@@ -265,7 +265,7 @@ namespace Maze
         m_selectedAssetsFolderLayoutTransform->setSize(Vec2F::c_zero);
         VerticalLayout2DPtr assetsFolderLayoutTransformLayout = m_selectedAssetsFolderLayoutTransform->getEntityRaw()->ensureComponent<VerticalLayout2D>();
         assetsFolderLayoutTransformLayout->setPadding(0.0f, 0.0f, 4.0f, 4.0f);
-        assetsFolderLayoutTransformLayout->setSpacing(5.0f);
+        // assetsFolderLayoutTransformLayout->setSpacing(5.0f);
         SizePolicy2DPtr assetsFolderLayoutSizePolicy = m_selectedAssetsFolderLayoutTransform->getEntityRaw()->ensureComponent<SizePolicy2D>();
         assetsFolderLayoutSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
 
@@ -455,7 +455,10 @@ namespace Maze
         if (!fullPath.empty())
         {
             if (m_selectedAssetFolder == fullPath)
-                setSelectedAssetFolder(String());
+            {
+                // Do nothing
+                // setSelectedAssetFolder(String());
+            }
             else
                 setSelectedAssetFolder(fullPath);
         }

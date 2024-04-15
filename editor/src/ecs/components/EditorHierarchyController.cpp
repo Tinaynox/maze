@@ -642,7 +642,10 @@ namespace Maze
                 MAZE_WARNING_IF(!entity, "Entity with id=%u is not found in current workspace world!", entityId);
 
                 if (SelectionManager::GetInstancePtr()->isObjectSelected(entity))
-                    SelectionManager::GetInstancePtr()->unselectObject(entity);
+                {
+                    // Do nothing
+                    // SelectionManager::GetInstancePtr()->unselectObject(entity);
+                }
                 else
                     SelectionManager::GetInstancePtr()->selectObject(entity);
 
