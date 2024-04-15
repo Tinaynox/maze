@@ -101,6 +101,13 @@ namespace Maze
     Rect2DF const EditorToolsStyles::c_assetsViewportDefault(0.0f, 0.0f, 0.5f, 0.33f);
     Rect2DF const EditorToolsStyles::c_sceneViewportDefault(0.5f, 0.0f, 0.5f, 0.33f);
     Rect2DF const EditorToolsStyles::c_topBarViewportDefault(0.0f, 0.975f, 1.0f, topBarHeight);
+
+    ColorU32 const EditorToolsStyles::c_listObjectTextColorDefault = ColorU32(0, 0, 0, 255);
+    ColorU32 const EditorToolsStyles::c_listObjectTextColorSelected = ColorU32(255, 255, 255, 255);
+    ColorU32 const EditorToolsStyles::c_listObjectBackgroundColorDefault = ColorU32(0, 0, 0, 0);
+    ColorU32 const EditorToolsStyles::c_listObjectBackgroundColorFocused = ColorU32(178, 178, 178, 255);
+    ColorU32 const EditorToolsStyles::c_listObjectBackgroundColorSelected = ColorU32(78, 134, 206, 255);
+
     EditorToolsStyles* EditorToolsStyles::s_instance = nullptr;
 
 
@@ -119,6 +126,11 @@ namespace Maze
         , m_assetsViewport(c_assetsViewportDefault)
         , m_sceneViewport(c_sceneViewportDefault)
         , m_topBarViewport(c_topBarViewportDefault)
+        , m_listObjectTextColorDefault(c_listObjectTextColorDefault)
+        , m_listObjectTextColorSelected(c_listObjectTextColorSelected)
+        , m_listObjectBackgroundColorDefault(c_listObjectBackgroundColorDefault)
+        , m_listObjectBackgroundColorFocused(c_listObjectBackgroundColorFocused)
+        , m_listObjectBackgroundColorSelected(c_listObjectBackgroundColorSelected)
     {
         s_instance = this;
     }

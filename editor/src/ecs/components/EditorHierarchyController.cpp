@@ -469,6 +469,7 @@ namespace Maze
         hierarchyLine->getTransform()->setParent(m_layoutTransform);
         hierarchyLine->getTransform()->setLocalPosition(_position);
         
+        // #TODO:
         if (SelectionManager::GetInstancePtr()->isObjectSelected(_transform->getEntityRaw()->getSharedPtr()))
         {
             hierarchyLine->setColor(ColorU32(0, 255, 0, 255));

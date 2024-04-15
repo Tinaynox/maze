@@ -398,17 +398,17 @@ namespace Maze
 
         if (m_selected)
         {
-            m_textRenderer->setColor(ColorU32(255, 255, 255, 255));
-            m_backgroundRenderer->setColor(ColorU32(78, 134, 206));
+            m_textRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjectTextColorSelected());
+            m_backgroundRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjecBackgroundColorSelected());
         }
         else
         {
-            m_textRenderer->setColor(ColorU32(0, 0, 0, 255));
+            m_textRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjectTextColorDefault());
 
             if (m_textButton->getUIElement()->getFocused())
-                m_backgroundRenderer->setColor(ColorU32(178, 178, 178));
+                m_backgroundRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjectBackgroundColorFocused());
             else
-                m_backgroundRenderer->setColor(ColorU32(0, 0, 0, 0));
+                m_backgroundRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjectBackgroundColorDefault());
         }
 
     }

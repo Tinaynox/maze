@@ -85,6 +85,12 @@ namespace Maze
         static Rect2DF const c_sceneViewportDefault;
         static Rect2DF const c_topBarViewportDefault;
 
+        static ColorU32 const c_listObjectTextColorDefault;
+        static ColorU32 const c_listObjectTextColorSelected;
+        static ColorU32 const c_listObjectBackgroundColorDefault;
+        static ColorU32 const c_listObjectBackgroundColorFocused;
+        static ColorU32 const c_listObjectBackgroundColorSelected;
+
     public:
         //////////////////////////////////////////
         virtual ~EditorToolsStyles();
@@ -140,6 +146,21 @@ namespace Maze
         inline Rect2DF const& getTopBarViewport() const { return m_topBarViewport; }
 
         //////////////////////////////////////////
+        inline ColorU32 const& getListObjectTextColorDefault() const { return m_listObjectTextColorDefault; }
+
+        //////////////////////////////////////////
+        inline ColorU32 const& getListObjectTextColorSelected() const { return m_listObjectTextColorSelected; }
+
+        //////////////////////////////////////////
+        inline ColorU32 const& getListObjectBackgroundColorDefault() const { return m_listObjectBackgroundColorDefault; }
+
+        //////////////////////////////////////////
+        inline ColorU32 const& getListObjectBackgroundColorFocused() const { return m_listObjectBackgroundColorFocused; }
+
+        //////////////////////////////////////////
+        inline ColorU32 const& getListObjecBackgroundColorSelected() const { return m_listObjectBackgroundColorSelected; }
+
+        //////////////////////////////////////////
         inline FontMaterialPtr const& getDefaultFontMaterial() const { return m_defaultFontMaterial; }
 
         //////////////////////////////////////////
@@ -177,6 +198,12 @@ namespace Maze
         Rect2DF m_assetsViewport;
         Rect2DF m_sceneViewport;
         Rect2DF m_topBarViewport;
+
+        ColorU32 m_listObjectTextColorDefault;
+        ColorU32 m_listObjectTextColorSelected;
+        ColorU32 m_listObjectBackgroundColorDefault;
+        ColorU32 m_listObjectBackgroundColorFocused;
+        ColorU32 m_listObjectBackgroundColorSelected;
 
         String m_defaultFontMaterialName;
         FontMaterialPtr m_defaultFontMaterial;
