@@ -87,6 +87,7 @@ namespace Maze
 
         static ColorU32 const c_listObjectTextColorDefault;
         static ColorU32 const c_listObjectTextColorSelected;
+        static ColorU32 const c_listObjectTextColorInactive;
         static ColorU32 const c_listObjectBackgroundColorDefault;
         static ColorU32 const c_listObjectBackgroundColorFocused;
         static ColorU32 const c_listObjectBackgroundColorSelected;
@@ -152,6 +153,9 @@ namespace Maze
         inline ColorU32 const& getListObjectTextColorSelected() const { return m_listObjectTextColorSelected; }
 
         //////////////////////////////////////////
+        inline ColorU32 const& getListObjectTextColorInactive() const { return m_listObjectTextColorInactive; }
+
+        //////////////////////////////////////////
         inline ColorU32 const& getListObjectBackgroundColorDefault() const { return m_listObjectBackgroundColorDefault; }
 
         //////////////////////////////////////////
@@ -201,6 +205,7 @@ namespace Maze
 
         ColorU32 m_listObjectTextColorDefault;
         ColorU32 m_listObjectTextColorSelected;
+        ColorU32 m_listObjectTextColorInactive;
         ColorU32 m_listObjectBackgroundColorDefault;
         ColorU32 m_listObjectBackgroundColorFocused;
         ColorU32 m_listObjectBackgroundColorSelected;

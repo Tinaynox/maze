@@ -144,6 +144,13 @@ namespace Maze
         //////////////////////////////////////////
         void updateIcon();
 
+
+        //////////////////////////////////////////
+        void setSelected(bool _value);
+
+        //////////////////////////////////////////
+        void setActive(bool _value);
+
     public:
 
         /////////////////////////////////////////
@@ -180,6 +187,12 @@ namespace Maze
         //////////////////////////////////////////
         void notifyLineDoubleClick(Button2D* _button, CursorInputEvent const& _inputEvent);
 
+        //////////////////////////////////////////
+        void notifyLineFocusChanged(Button2D* _button, bool _value);
+
+
+        //////////////////////////////////////////
+        void updateState();
 
     protected:
         ECSWorld* m_world = nullptr;
@@ -190,11 +203,17 @@ namespace Maze
         void* m_userData = nullptr;
 
         Transform2DPtr m_transform;
+        SpriteRenderer2DPtr m_backgroundRenderer;
         SpriteRenderer2DPtr m_dropDownRenderer;
         SpriteRenderer2DPtr m_iconRenderer;
         AbstractTextRenderer2DPtr m_textRenderer;
 
+        ClickButton2DPtr m_textButton;
+
         ContextMenu2DPtr m_contextMenu;
+
+        bool m_selected = true;
+        bool m_active = true;
     };
 
 

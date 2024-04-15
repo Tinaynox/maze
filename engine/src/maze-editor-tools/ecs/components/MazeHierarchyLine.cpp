@@ -102,6 +102,7 @@ namespace Maze
                 button->eventClick.unsubscribe(this);
                 button->eventCursorPressIn.unsubscribe(this);
                 button->eventDoubleClick.unsubscribe(this);
+                button->eventFocusChanged.unsubscribe(this);
             }
         }
     }
@@ -139,20 +140,32 @@ namespace Maze
         S32 const charSize = 8;
 
         m_transform = getEntityRaw()->ensureComponent<Transform2D>();
-        m_transform->setSize(Vec2F(100, charSize));
+        m_transform->setSize(Vec2F(100, 14.0f));
         m_transform->setAnchor(Vec2F(0.0f, 1.0f));
         m_transform->setPivot(Vec2F(0.0f, 1.0f));
+
+        SizePolicy2DPtr sizePolicy = getEntityRaw()->ensureComponent<SizePolicy2D>();
+        sizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
+
+        m_backgroundRenderer = SpriteHelper::CreateSprite(
+            ColorU32::c_lightGray,
+            m_transform->getSize(),
+            Vec2F::c_zero,
+            MaterialPtr(),
+            m_transform,
+            getEntityRaw()->getECSScene());
+        m_backgroundRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
 
         F32 x = 0;
 
         m_dropDownRenderer = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::DropDownButtonExpanded),
             Vec2F(charSize, charSize) * 1.5f,
-            Vec2F(x, 0) + Vec2F(charSize * 0.5f, -charSize * 0.5f + 0.5f),
+            Vec2F(x, 0) + Vec2F(charSize * 0.5f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_transform,
             getEntityRaw()->getECSScene(),
-            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 0.5f),
             Vec2F(0.5f, 0.5f));
         m_dropDownRenderer->setColor(ColorU32::c_black);
         ClickButton2DPtr dropDownButton = m_dropDownRenderer->getEntityRaw()->ensureComponent<ClickButton2D>();
@@ -165,11 +178,11 @@ namespace Maze
             m_iconRenderer = SpriteHelper::CreateSprite(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::EntityObject3D),
                 Vec2F(charSize, charSize) * 1.5f,
-                Vec2F(x, 0) + Vec2F(charSize, -charSize) * 0.5f,
+                Vec2F(x, 0) + Vec2F(charSize, 0.0f) * 0.5f,
                 materialManager->getColorTextureMaterial(),
                 m_transform,
                 getEntityRaw()->getECSScene(),
-                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 0.5f),
                 Vec2F(0.5f, 0.5f));
             m_iconRenderer->setColor(ColorU32::c_black);
             x += (F32)charSize + 4;
@@ -180,11 +193,11 @@ namespace Maze
             m_iconRenderer = SpriteHelper::CreateSprite(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Scene),
                 Vec2F(charSize, charSize) * 1.5f,
-                Vec2F(x, 0) + Vec2F(charSize, -charSize) * 0.5f,
+                Vec2F(x, 0) + Vec2F(charSize, 0.0f) * 0.5f,
                 materialManager->getColorTextureMaterial(),
                 m_transform,
                 getEntityRaw()->getECSScene(),
-                Vec2F(0.0f, 1.0f),
+                Vec2F(0.0f, 0.5f),
                 Vec2F(0.5f, 0.5f));
             m_iconRenderer->setColor(ColorU32::c_black);
             x += (F32)charSize + 4;
@@ -205,10 +218,15 @@ namespace Maze
             Vec2F(0.0f, 0.5f),
             Vec2F(0.0f, 0.5f));
         m_textRenderer->setColor(ColorU32::c_black);
-        ClickButton2DPtr textButton = m_textRenderer->getEntityRaw()->ensureComponent<ClickButton2D>();
-        textButton->eventClick.subscribe(this, &HierarchyLine::notifyLineClick);
-        textButton->eventCursorPressIn.subscribe(this, &HierarchyLine::notifyLineCursorPressIn);
-        textButton->eventDoubleClick.subscribe(this, &HierarchyLine::notifyLineDoubleClick);
+        m_textButton = m_textRenderer->getEntityRaw()->ensureComponent<ClickButton2D>();
+        m_textButton->eventClick.subscribe(this, &HierarchyLine::notifyLineClick);
+        m_textButton->eventCursorPressIn.subscribe(this, &HierarchyLine::notifyLineCursorPressIn);
+        m_textButton->eventDoubleClick.subscribe(this, &HierarchyLine::notifyLineDoubleClick);
+        m_textButton->eventFocusChanged.subscribe(this, &HierarchyLine::notifyLineFocusChanged);
+
+        SizePolicy2DPtr mainLayoutSizePolicy = m_textButton->getEntityRaw()->ensureComponent<SizePolicy2D>();
+        mainLayoutSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
+        mainLayoutSizePolicy->setSizeDelta(-10.0f, 0.0f);
 
         m_contextMenu = m_textRenderer->getEntityRaw()->ensureComponent<ContextMenu2D>();
         m_contextMenu->setCallbackFunction(
@@ -321,6 +339,8 @@ namespace Maze
                     EditorToolsManager::GetInstancePtr()->eventHierarchyLineSceneContextMenu(_menuListTree, ecsScene);
                 }
             });
+
+        updateState();
     }
 
     //////////////////////////////////////////
@@ -357,6 +377,12 @@ namespace Maze
             return;
 
         eventLineDoubleClick(this);
+    }
+
+    //////////////////////////////////////////
+    void HierarchyLine::notifyLineFocusChanged(Button2D* _button, bool _value)
+    {
+        updateState();
     }
 
     //////////////////////////////////////////
@@ -449,6 +475,54 @@ namespace Maze
 
             SpritePtr const&  sprite = UIManager::GetInstancePtr()->getDefaultUISprite(isMainScene ? DefaultUISprite::MainScene : DefaultUISprite::Scene);
             m_iconRenderer->setSprite(sprite);
+        }
+    }
+
+    //////////////////////////////////////////
+    void HierarchyLine::setSelected(bool _value)
+    {
+        if (m_selected == _value)
+            return;
+
+        m_selected = _value;
+
+        updateState();
+    }
+
+    //////////////////////////////////////////
+    void HierarchyLine::setActive(bool _value)
+    {
+        if (m_active == _value)
+            return;
+
+        m_active = _value;
+
+        updateState();
+    }
+
+    //////////////////////////////////////////
+    void HierarchyLine::updateState()
+    {
+        if (!m_textRenderer)
+            return;
+
+        if (m_selected)
+        {
+            if (m_active)
+                m_textRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjectTextColorSelected());
+            else
+                m_textRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjectTextColorSelected());
+
+            m_backgroundRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjecBackgroundColorSelected());
+        }
+        else
+        {
+            m_textRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjectTextColorDefault());
+
+            if (m_textButton->getUIElement()->getFocused())
+                m_backgroundRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjectBackgroundColorFocused());
+            else
+                m_backgroundRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjectBackgroundColorDefault());
         }
     }
     

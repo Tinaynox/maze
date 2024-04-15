@@ -104,6 +104,7 @@ namespace Maze
 
     ColorU32 const EditorToolsStyles::c_listObjectTextColorDefault = ColorU32(0, 0, 0, 255);
     ColorU32 const EditorToolsStyles::c_listObjectTextColorSelected = ColorU32(255, 255, 255, 255);
+    ColorU32 const EditorToolsStyles::c_listObjectTextColorInactive = ColorU32(130, 130, 130, 255);
     ColorU32 const EditorToolsStyles::c_listObjectBackgroundColorDefault = ColorU32(0, 0, 0, 0);
     ColorU32 const EditorToolsStyles::c_listObjectBackgroundColorFocused = ColorU32(178, 178, 178, 255);
     ColorU32 const EditorToolsStyles::c_listObjectBackgroundColorSelected = ColorU32(78, 134, 206, 255);
@@ -128,6 +129,7 @@ namespace Maze
         , m_topBarViewport(c_topBarViewportDefault)
         , m_listObjectTextColorDefault(c_listObjectTextColorDefault)
         , m_listObjectTextColorSelected(c_listObjectTextColorSelected)
+        , m_listObjectTextColorInactive(c_listObjectTextColorInactive)
         , m_listObjectBackgroundColorDefault(c_listObjectBackgroundColorDefault)
         , m_listObjectBackgroundColorFocused(c_listObjectBackgroundColorFocused)
         , m_listObjectBackgroundColorSelected(c_listObjectBackgroundColorSelected)
