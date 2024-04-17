@@ -157,16 +157,21 @@ namespace Maze
 
     }
 
-    //////////////////////////////////////////
-    void PropertyDrawerEnumClass::setString(String const& _value)
+    ////////////////////////////////////////////
+    bool PropertyDrawerEnumClass::toDataBlock(DataBlock& _dataBlock) const
     {
-        setValue(_value);
+        return TryValueToDataBlock<String>(getValue(), _dataBlock);
     }
 
-    //////////////////////////////////////////
-    String PropertyDrawerEnumClass::getString()
+    ////////////////////////////////////////////
+    bool PropertyDrawerEnumClass::setDataBlock(DataBlock const& _dataBlock)
     {
-        return getValue();
+        String value;
+        bool result = TryValueFromDataBlock<String>(value, _dataBlock);
+        if (result)
+            setValue(value);
+
+        return result;
     }
 
     //////////////////////////////////////////

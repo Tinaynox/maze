@@ -86,6 +86,7 @@
 #include "maze-plugin-profiler-view/MazeProfilerViewService.hpp"
 #include "maze-plugin-profiler-view/settings/MazeProfilerViewSettings.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "Editor.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "layout/EditorLayout.hpp"
@@ -175,16 +176,16 @@ namespace Maze
             this);
         layout->setSpacing(5.0f);
 
-        SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
+        AbstractTextRenderer2DPtr label = EditorToolsUIHelper::CreateText(
             "EDITOR MODE",
-            8,
+            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+            12,
             HorizontalAlignment2D::Center,
             VerticalAlignment2D::Middle,
             Vec2F32(frame->getTransform()->getWidth(), 18.0f),
             Vec2F32::c_zero,
             layout->getTransform(),
             this);
-        label->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefaultOutlined());
 
         Vec2F32 const c_buttonSize = Vec2F32(100.0f, 18.0f);
         {

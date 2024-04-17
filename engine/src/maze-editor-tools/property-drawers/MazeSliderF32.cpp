@@ -168,22 +168,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerSliderF32::setString(String const& _value)
-    {
-        F32 value;
-        ValueFromString(value, _value.c_str(), _value.size());
-        setValue(value);
-    }
-
-    //////////////////////////////////////////
-    String PropertyDrawerSliderF32::getString()
-    {
-        String value;
-        ValueToString(getValue(), value);
-        return value;
-    }
-
-    //////////////////////////////////////////
     void PropertyDrawerSliderF32::notifyTextInput(EditBox2D* _editBox)
     {
         eventUIData();

@@ -190,22 +190,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerVec2S32::setString(String const& _value)
-    {
-        Vec2S value;
-        ValueFromString(value, _value.c_str(), _value.size());
-        setValue(value);
-    }
-
-    //////////////////////////////////////////
-    String PropertyDrawerVec2S32::getString()
-    {
-        String value;
-        ValueToString(getValue(), value);
-        return value;
-    }
-
-    //////////////////////////////////////////
     void PropertyDrawerVec2S32::notifyTextInput(EditBox2D* _editBox)
     {
         eventUIData();

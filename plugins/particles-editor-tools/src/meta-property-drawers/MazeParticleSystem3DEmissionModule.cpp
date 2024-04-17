@@ -180,7 +180,9 @@ namespace Maze
             m_emissionPerSecondDrawer->getRootEntity()->setActiveSelf(value.getEnabled());
             m_emissionPerDistanceDrawer->getRootEntity()->setActiveSelf(value.getEnabled());
 
-            m_burstsDrawer->setVector(value.getBursts());
+            DataBlock bursts;
+            ValueToDataBlock(value.getBursts(), bursts);
+            m_burstsDrawer->setDataBlock(bursts);
         }
         m_processingDataToUI = false;
     }
@@ -196,7 +198,13 @@ namespace Maze
         value.setEmissionPerSecond(m_emissionPerSecondDrawer->getValue());
         value.setEmissionPerDistance(m_emissionPerDistanceDrawer->getValue());
 
-        Vector<ParticleSystemBurst> bursts = m_burstsDrawer->getVector<ParticleSystemBurst>();
+
+        DataBlock dataBlock;
+        m_burstsDrawer->toDataBlock(dataBlock);
+
+        Vector<ParticleSystemBurst> bursts;
+        ValueFromDataBlock(bursts, dataBlock);
+
         bool burstsInderectOrder = false;
         for (S32 i = 0, in = (S32)bursts.size(); i < in - 1; ++i)
         {
@@ -217,7 +225,6 @@ namespace Maze
 
         for (MetaInstance const& metaInstance : m_metaInstances)
             m_metaProperty->setValue(metaInstance, &value);
-
     }
 
     //////////////////////////////////////////

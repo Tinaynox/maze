@@ -272,7 +272,7 @@ namespace Maze
 
             AbstractTextRenderer2DPtr label = UIHelper::CreateText(
                 "Mode",
-                8,
+                12,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 80.0f, 18.0f },
@@ -538,9 +538,10 @@ namespace Maze
             rowLayout->setExpand(true);
             rowLayout->setAutoWidth(false);
 
-            SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
+            AbstractTextRenderer2DPtr label = EditorToolsUIHelper::CreateText(
                 "Alpha",
-                8,
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                12,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 8.0f * 5.0f, 18.0f },
@@ -592,7 +593,7 @@ namespace Maze
 
             AbstractTextRenderer2DPtr label = UIHelper::CreateText(
                 "Color",
-                8,
+                12,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 8.0f * 5, 18.0f },
@@ -638,7 +639,7 @@ namespace Maze
 
             AbstractTextRenderer2DPtr label = UIHelper::CreateText(
                 "Location",
-                8,
+                12,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 8.0f * 8.0f, 18.0f },
@@ -659,7 +660,7 @@ namespace Maze
 
             AbstractTextRenderer2DPtr label2 = UIHelper::CreateText(
                 "%",
-                8,
+                12,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 8.0f, 18.0f },

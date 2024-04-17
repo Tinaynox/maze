@@ -196,47 +196,48 @@ namespace Maze
         m_itemsLayout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
     }
 
-    //////////////////////////////////////////
-    void PropertyDrawerVector::setString(String const& _value)
-    {
-        Vector<String> childValues;
-        ValueFromString(childValues, _value.c_str(), _value.size());
-
-        ensureItemDrawers(childValues.size());
-
-        m_vectorSizeDrawer->setValue((S32)childValues.size());
-
-        for (Size i = 0, in = m_itemDrawers.size(); i < in; ++i)
-        {
-            PropertyDrawerPtr const& propertyDrawer = m_itemDrawers[i];
-            String const& childValue = childValues[i];
-
-            propertyDrawer->setString(childValue);
-        }
-    }
-
-    //////////////////////////////////////////
-    String PropertyDrawerVector::getString()
+    ////////////////////////////////////////////
+    bool PropertyDrawerVector::toDataBlock(DataBlock& _dataBlock) const
     {
         S32 vectorSize = (S32)m_vectorSizeDrawer->getValue();
 
-        String value;
-        
-        Vector<String> childValues;
-
         S32 itemDrawersCount = (S32)m_itemDrawers.size();
+
+        _dataBlock.clear();
+
         for (S32 i = 0; i < vectorSize; ++i)
         {
-
             if (i < itemDrawersCount)
-                childValues.emplace_back(m_itemDrawers[i]->getString());
+            {
+                DataBlock* childDataBlock = _dataBlock.addNewDataBlock(MAZE_HS("item"));
+                m_itemDrawers[i]->toDataBlock(*childDataBlock);
+            }
             else
-                childValues.emplace_back(String());
+            {
+                _dataBlock.addNewDataBlock(MAZE_HS("item"));
+            }
         }
 
-        ValueToString(childValues, value);
+        return true;
+    }
 
-        return value;
+    ////////////////////////////////////////////
+    bool PropertyDrawerVector::setDataBlock(DataBlock const& _dataBlock)
+    {
+        S32 vectorSize = (S32)_dataBlock.getDataBlocksCount();
+
+        ensureItemDrawers(vectorSize);
+
+        m_vectorSizeDrawer->setValue((S32)vectorSize);
+
+        for (Size i = 0, in = m_itemDrawers.size(); i < in; ++i)
+        {
+            DataBlock const* childDataBlock = _dataBlock.getDataBlock(DataBlock::DataBlockIndex(i));
+            PropertyDrawerPtr const& propertyDrawer = m_itemDrawers[i];
+            propertyDrawer->setDataBlock(*childDataBlock);
+        }
+
+        return true;
     }
 
     //////////////////////////////////////////

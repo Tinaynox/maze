@@ -89,12 +89,6 @@ namespace Maze
             Transform2DPtr const& _parent,
             CString _label = nullptr) MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        virtual void setString(String const& _value) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual String getString() MAZE_OVERRIDE;
-
     protected:
 
         //////////////////////////////////////////
@@ -155,12 +149,6 @@ namespace Maze
         virtual void buildUI(
             Transform2DPtr const& _parent,
             CString _label = nullptr) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void setString(String const& _value) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual String getString() MAZE_OVERRIDE;
 
     protected:
 

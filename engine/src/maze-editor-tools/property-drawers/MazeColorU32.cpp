@@ -131,22 +131,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerColorU32::setString(String const& _value)
-    {
-        ColorU32 value;
-        ValueFromString(value, _value.c_str(), _value.size());
-        setValue(value);
-    }
-
-    //////////////////////////////////////////
-    String PropertyDrawerColorU32::getString()
-    {
-        String value;
-        ValueToString(getValue(), value);
-        return value;
-    }
-
-    //////////////////////////////////////////
     void PropertyDrawerColorU32::setValue(ColorU32 const& _value)
     {
         m_colorEdit->setColor(_value);

@@ -135,22 +135,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerColorGradient::setString(String const& _value)
-    {
-        ColorGradient value;
-        ValueFromString(value, _value.c_str(), _value.size());
-        setValue(value);
-    }
-
-    //////////////////////////////////////////
-    String PropertyDrawerColorGradient::getString()
-    {
-        String value;
-        ValueToString(getValue(), value);
-        return value;
-    }
-
-    //////////////////////////////////////////
     void PropertyDrawerColorGradient::setValue(ColorGradient const& _value)
     {
         m_colorEdit->setGradient(_value);

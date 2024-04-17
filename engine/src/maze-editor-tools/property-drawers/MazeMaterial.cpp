@@ -182,22 +182,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerMaterial::setString(String const& _value)
-    {
-        MaterialPtr value;
-        ValueFromString(value, _value.c_str(), _value.size());
-        setValue(value);
-    }
-
-    //////////////////////////////////////////
-    String PropertyDrawerMaterial::getString()
-    {
-        String value;
-        ValueToString(getValue(), value);
-        return value;
-    }
-
-    //////////////////////////////////////////
     void PropertyDrawerMaterial::setValue(MaterialPtr const& _value)
     {
         m_material = _value;
@@ -304,18 +288,6 @@ namespace Maze
         CString _label)
     {
         m_drawer->buildUI(_parent, _label);
-    }
-
-    //////////////////////////////////////////
-    void PropertyDrawerMaterialAssetRef::setString(String const& _value)
-    {
-        m_drawer->setValue(MaterialManager::GetCurrentInstance()->getMaterial(_value));
-    }
-
-    //////////////////////////////////////////
-    String PropertyDrawerMaterialAssetRef::getString()
-    {
-        return m_drawer->getString();
     }
 
     //////////////////////////////////////////

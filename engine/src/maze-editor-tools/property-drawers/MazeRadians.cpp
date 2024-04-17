@@ -138,22 +138,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerRadians::setString(String const& _value)
-    {
-        F32 value;
-        ValueFromString(value, _value.c_str(), _value.size());
-        setValue(value);
-    }
-
-    //////////////////////////////////////////
-    String PropertyDrawerRadians::getString()
-    {
-        String value;
-        ValueToString(getValue(), value);
-        return value;
-    }
-
-    //////////////////////////////////////////
     void PropertyDrawerRadians::notifyTextInput(EditBox2D* _editBox)
     {
         eventUIData();

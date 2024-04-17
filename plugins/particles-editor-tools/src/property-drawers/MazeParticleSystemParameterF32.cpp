@@ -213,22 +213,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerParticleSystemParameterF32::setString(String const& _value)
-    {
-        ParticleSystemParameterF32 value;
-        ValueFromString(value, _value.c_str(), _value.size());
-        setValue(value);
-    }
-
-    //////////////////////////////////////////
-    String PropertyDrawerParticleSystemParameterF32::getString()
-    {
-        String value;
-        ValueToString(getValue(), value);
-        return value;
-    }
-
-    //////////////////////////////////////////
     void PropertyDrawerParticleSystemParameterF32::notifyTextInput(EditBox2D* _editBox)
     {
         eventUIData();

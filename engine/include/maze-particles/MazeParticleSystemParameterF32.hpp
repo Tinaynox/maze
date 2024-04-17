@@ -283,40 +283,6 @@ namespace Maze
         AnimationCurve m_curve1;
     };
 
-
-    //////////////////////////////////////////
-    // Serialization
-    //
-    //////////////////////////////////////////
-    inline void ValueToString(ParticleSystemParameterF32 const& _value, String& _data)
-    {
-        _data = _value.toString();
-    }
-
-    //////////////////////////////////////////
-    inline void ValueFromString(ParticleSystemParameterF32& _value, CString _data, Size _count)
-    {
-        _value = ParticleSystemParameterF32::FromString(String(_data, _count));
-    }
-
-    //////////////////////////////////////////
-    inline U32 GetValueSerializationSize(ParticleSystemParameterF32 const& _value)
-    {
-        return sizeof(ParticleSystemParameterF32);
-    }
-
-    //////////////////////////////////////////
-    inline void SerializeValue(ParticleSystemParameterF32 const& _value, U8* _data)
-    {
-        memcpy(_data, (U8 const*)(&_value), sizeof(ParticleSystemParameterF32));
-    }
-
-    //////////////////////////////////////////
-    inline void DeserializeValue(ParticleSystemParameterF32& _value, U8 const* _data)
-    {
-        memcpy((U8*)&_value, _data, sizeof(ParticleSystemParameterF32));
-    }
-
 } // namespace Maze
 //////////////////////////////////////////
 

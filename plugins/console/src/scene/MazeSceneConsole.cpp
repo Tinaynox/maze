@@ -153,7 +153,7 @@ namespace Maze
             Vec2F(0.0f, 0.0f),
             Vec2F(0.0f, 0.0f));
         m_consoleText->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
-        m_consoleText->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefaultOutlined());
+
         updateLogText();
 
         m_edit = UIHelper::CreateDefaultEditBox(
@@ -183,7 +183,7 @@ namespace Maze
             this,
             Vec2F(0.0f, 0.0f),
             Vec2F(0.0f, 1.0f));
-        m_hintText->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefaultOutlined());
+
         updateHintText();
     }
 

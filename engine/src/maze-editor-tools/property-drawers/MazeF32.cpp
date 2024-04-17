@@ -137,22 +137,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerF32::setString(String const& _value)
-    {
-        F32 value;
-        ValueFromString(value, _value.c_str(), _value.size());
-        setValue(value);
-    }
-
-    //////////////////////////////////////////
-    String PropertyDrawerF32::getString()
-    {
-        String value;
-        ValueToString(getValue(), value);
-        return value;
-    }
-
-    //////////////////////////////////////////
     void PropertyDrawerF32::notifyTextInput(EditBox2D* _editBox)
     {
         eventUIData();

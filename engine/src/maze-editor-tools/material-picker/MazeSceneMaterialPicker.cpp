@@ -76,6 +76,8 @@
 #include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-editor-tools/managers/MazeMaterialPickerManager.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
@@ -380,9 +382,10 @@ namespace Maze
 
         materialName = FileHelper::GetFileNameWithoutExtension(materialName);
 
-        data.titleText = SystemUIHelper::CreateSystemText(
+        data.titleText = EditorToolsUIHelper::CreateText(
             materialName.c_str(),
-            8,
+            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+            12,
             HorizontalAlignment2D::Center,
             VerticalAlignment2D::Middle,
             { data.bodyTransform->getWidth(), 10.0f },

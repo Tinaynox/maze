@@ -32,6 +32,8 @@
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/managers/MazeSystemFontManager.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 
 
 //////////////////////////////////////////
@@ -114,9 +116,10 @@ namespace Maze
                 viewData.graph->setColor(ColorF128::c_green);
                 viewData.graph->resizePositions(Profiler::c_samplesCount - 1u);
 
-                viewData.label0 = SystemUIHelper::CreateSystemText(
+                viewData.label0 = EditorToolsUIHelper::CreateText(
                     "PROFILER",
-                    8,
+                    EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                    12,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Top,
                     statsSize,
@@ -125,11 +128,11 @@ namespace Maze
                     this,
                     Vec2F(0.0f, 1.0f),
                     Vec2F(0.0f, 1.0f));
-                viewData.label0->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefaultOutlined());
 
-                viewData.label1 = SystemUIHelper::CreateSystemText(
+                viewData.label1 = EditorToolsUIHelper::CreateText(
                     "",
-                    8,
+                    EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                    12,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Bottom,
                     statsSize,
@@ -138,7 +141,6 @@ namespace Maze
                     this,
                     Vec2F(0.0f, 0.0f),
                     Vec2F(0.0f, 0.0f));
-                viewData.label1->setSystemFont(SystemFontManager::GetCurrentInstancePtr()->getSystemFontDefaultOutlined());
             }
         }
 

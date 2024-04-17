@@ -132,22 +132,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerColorF128::setString(String const& _value)
-    {
-        ColorF128 value;
-        ValueFromString(value, _value.c_str(), _value.size());
-        setValue(value);
-    }
-
-    //////////////////////////////////////////
-    String PropertyDrawerColorF128::getString()
-    {
-        String value;
-        ValueToString(getValue(), value);
-        return value;
-    }
-
-    //////////////////////////////////////////
     void PropertyDrawerColorF128::setValue(ColorF128 const& _value)
     {
         m_colorEdit->setColor(_value);

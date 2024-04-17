@@ -173,24 +173,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerTexture2D::setString(String const& _value)
-    {
-        RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        TextureManagerPtr const& textureManager = renderSystem->getTextureManager();
-
-        setValue(textureManager->getTexture2D(_value));
-    }
-
-    //////////////////////////////////////////
-    String PropertyDrawerTexture2D::getString()
-    {
-        if (m_texture)
-            return m_texture->getName();
-        else
-            return String();
-    }
-
-    //////////////////////////////////////////
     void PropertyDrawerTexture2D::notifySelectAssetClick(Button2D* _button, CursorInputEvent const& _event)
     {
         TexturePickerManager::GetInstancePtr()->openTexturePicker(

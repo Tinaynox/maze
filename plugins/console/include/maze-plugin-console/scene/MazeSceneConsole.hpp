@@ -124,9 +124,9 @@ namespace Maze
 
         SpriteRenderer2DPtr m_background;
         UIElement2DPtr m_backgroundElement;
-        SystemTextRenderer2DPtr m_consoleText;
+        AbstractTextRenderer2DPtr m_consoleText;
         EditBox2DPtr m_edit;
-        SystemTextRenderer2DPtr m_hintText;
+        AbstractTextRenderer2DPtr m_hintText;
 
 
         S32 m_lastCommandIndex = -1;

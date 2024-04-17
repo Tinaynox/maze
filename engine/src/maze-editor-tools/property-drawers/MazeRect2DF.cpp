@@ -229,22 +229,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerRect2DF::setString(String const& _value)
-    {
-        Rect2DF value;
-        ValueFromString(value, _value.c_str(), _value.size());
-        setValue(value);
-    }
-
-    //////////////////////////////////////////
-    String PropertyDrawerRect2DF::getString()
-    {
-        String value;
-        ValueToString(getValue(), value);
-        return value;
-    }
-
-    //////////////////////////////////////////
     void PropertyDrawerRect2DF::notifyTextInput(EditBox2D* _editBox)
     {
         eventUIData();

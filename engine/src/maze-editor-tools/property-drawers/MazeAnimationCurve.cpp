@@ -135,22 +135,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerAnimationCurve::setString(String const& _value)
-    {
-        AnimationCurve value;
-        ValueFromString(value, _value.c_str(), _value.size());
-        setValue(value);
-    }
-
-    //////////////////////////////////////////
-    String PropertyDrawerAnimationCurve::getString()
-    {
-        String value;
-        ValueToString(getValue(), value);
-        return value;
-    }
-
-    //////////////////////////////////////////
     void PropertyDrawerAnimationCurve::setValue(AnimationCurve const& _value)
     {
         m_curveEdit->setCurve(_value);

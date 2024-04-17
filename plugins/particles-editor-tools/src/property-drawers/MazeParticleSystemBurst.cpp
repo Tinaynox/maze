@@ -123,6 +123,7 @@ namespace Maze
         layout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
         layout->setAutoWidth(false);
         layout->setExpand(true);
+        layout->setSpacing(2.0f);
         m_rootEntity = layout->getEntity();
 
         AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
@@ -156,22 +157,6 @@ namespace Maze
         m_editBoxTime = createEdit("Tm", m_layout->getTransform());
         m_editBoxMinCount = createEdit("Mn", m_layout->getTransform());
         m_editBoxMaxCount = createEdit("Mx", m_layout->getTransform());
-    }
-
-    //////////////////////////////////////////
-    void PropertyDrawerParticleSystemBurst::setString(String const& _value)
-    {
-        ParticleSystemBurst value;
-        ValueFromString(value, _value.c_str(), _value.size());
-        setValue(value);
-    }
-
-    //////////////////////////////////////////
-    String PropertyDrawerParticleSystemBurst::getString()
-    {
-        String value;
-        ValueToString(getValue(), value);
-        return value;
     }
 
     //////////////////////////////////////////
@@ -211,9 +196,10 @@ namespace Maze
             _parent->getEntityRaw()->getECSScene());
         layout->setSpacing(2.0f);
 
-        SystemTextRenderer2DPtr systemText = SystemUIHelper::CreateSystemText(
+        AbstractTextRenderer2DPtr systemText = EditorToolsUIHelper::CreateText(
             _name,
-            6,
+            EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+            10,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
             Vec2F(12, 18),

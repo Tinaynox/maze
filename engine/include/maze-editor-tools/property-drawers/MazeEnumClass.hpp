@@ -89,11 +89,12 @@ namespace Maze
             Transform2DPtr const& _parent,
             CString _label = nullptr) MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        virtual void setString(String const& _value) MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        virtual String getString() MAZE_OVERRIDE;
+        ////////////////////////////////////////////
+        virtual bool toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
+
+        ////////////////////////////////////////////
+        virtual bool setDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
 
     protected:
 

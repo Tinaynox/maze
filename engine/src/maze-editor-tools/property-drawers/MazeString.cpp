@@ -137,18 +137,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerString::setString(String const& _value)
-    {
-        setValue(_value);
-    }
-
-    //////////////////////////////////////////
-    String PropertyDrawerString::getString()
-    {
-        return getValue();
-    }
-
-    //////////////////////////////////////////
     void PropertyDrawerString::notifyTextInput(EditBox2D* _editBox)
     {
         eventUIData();

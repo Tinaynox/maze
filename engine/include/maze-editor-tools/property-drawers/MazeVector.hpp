@@ -88,51 +88,14 @@ namespace Maze
             Transform2DPtr const& _parent,
             CString _label = nullptr) MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        virtual void setString(String const& _value) MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        virtual String getString() MAZE_OVERRIDE;
+        ////////////////////////////////////////////
+        virtual bool toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
 
-
-        //////////////////////////////////////////
-        inline Vector<String> getVector()
-        {
-            String string = getString();
-
-            Vector<String> result;
-            ValueFromString(result, string.c_str(), string.size());
-            return result;
-        }
-
-        //////////////////////////////////////////
-        template <typename TVectorChild>
-        inline Vector<TVectorChild> getVector()
-        {
-            String string = getString();
-
-            Vector<TVectorChild> result;
-            ValueFromString(result, string.c_str(), string.size());
-            return result;
-        }
+        ////////////////////////////////////////////
+        virtual bool setDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
 
 
-        //////////////////////////////////////////
-        inline void setVector(Vector<String> const& _vector)
-        {
-            String value;
-            ValueToString(_vector, value);
-            setString(value);
-        }
-
-        //////////////////////////////////////////
-        template <typename TVectorChild>
-        inline void setVector(Vector<TVectorChild> const& _vector)
-        {
-            String value;
-            ValueToString(_vector, value);
-            setString(value);
-        }
         
         //////////////////////////////////////////
         Vector<PropertyDrawerPtr> const& getItemDrawers() const { return m_itemDrawers; }

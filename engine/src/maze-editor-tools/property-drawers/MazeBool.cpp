@@ -131,22 +131,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerBool::setString(String const& _value)
-    {
-        bool value;
-        ValueFromString(value, _value.c_str(), _value.size());
-        setValue(value);
-    }
-
-    //////////////////////////////////////////
-    String PropertyDrawerBool::getString()
-    {
-        String value;
-        ValueToString(getValue(), value);
-        return value;
-    }
-
-    //////////////////////////////////////////
     void PropertyDrawerBool::notifyCheckedChanged(ToggleButton2D* _button, bool _checked)
     {
         eventUIData();

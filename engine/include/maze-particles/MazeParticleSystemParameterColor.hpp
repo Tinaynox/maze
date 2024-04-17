@@ -280,39 +280,6 @@ namespace Maze
     };
 
 
-    //////////////////////////////////////////
-    // Serialization
-    //
-    //////////////////////////////////////////
-    inline void ValueToString(ParticleSystemParameterColor const& _value, String& _data)
-    {
-        _data = _value.toString();
-    }
-
-    //////////////////////////////////////////
-    inline void ValueFromString(ParticleSystemParameterColor& _value, CString _data, Size _count)
-    {
-        _value = ParticleSystemParameterColor::FromString(String(_data, _count));
-    }
-
-    //////////////////////////////////////////
-    inline U32 GetValueSerializationSize(ParticleSystemParameterColor const& _value)
-    {
-        return sizeof(ParticleSystemParameterColor);
-    }
-
-    //////////////////////////////////////////
-    inline void SerializeValue(ParticleSystemParameterColor const& _value, U8* _data)
-    {
-        memcpy(_data, (U8 const*)(&_value), sizeof(ParticleSystemParameterColor));
-    }
-
-    //////////////////////////////////////////
-    inline void DeserializeValue(ParticleSystemParameterColor& _value, U8 const* _data)
-    {
-        memcpy((U8*)&_value, _data, sizeof(ParticleSystemParameterColor));
-    }
-
 } // namespace Maze
 //////////////////////////////////////////
 

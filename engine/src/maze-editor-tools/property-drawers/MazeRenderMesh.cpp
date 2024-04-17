@@ -183,22 +183,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerRenderMesh::setString(String const& _value)
-    {
-        RenderMeshPtr value;
-        ValueFromString(value, _value.c_str(), _value.size());
-        setValue(value);
-    }
-
-    //////////////////////////////////////////
-    String PropertyDrawerRenderMesh::getString()
-    {
-        String value;
-        ValueToString(getValue(), value);
-        return value;
-    }
-
-    //////////////////////////////////////////
     void PropertyDrawerRenderMesh::setValue(RenderMeshPtr const& _value)
     {
         m_renderMesh = _value;
@@ -283,18 +267,6 @@ namespace Maze
         CString _label)
     {
         m_drawer->buildUI(_parent, _label);
-    }
-
-    //////////////////////////////////////////
-    void PropertyDrawerRenderMeshAssetRef::setString(String const& _value)
-    {
-        m_drawer->setString(_value);
-    }
-
-    //////////////////////////////////////////
-    String PropertyDrawerRenderMeshAssetRef::getString()
-    {
-        return m_drawer->getString();
     }
 
     //////////////////////////////////////////

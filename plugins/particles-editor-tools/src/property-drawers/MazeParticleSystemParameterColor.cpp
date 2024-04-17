@@ -206,22 +206,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerParticleSystemParameterColor::setString(String const& _value)
-    {
-        ParticleSystemParameterColor value;
-        ValueFromString(value, _value.c_str(), _value.size());
-        setValue(value);
-    }
-
-    //////////////////////////////////////////
-    String PropertyDrawerParticleSystemParameterColor::getString()
-    {
-        String value;
-        ValueToString(getValue(), value);
-        return value;
-    }
-
-    //////////////////////////////////////////
     void PropertyDrawerParticleSystemParameterColor::notifyColorChanged(ColorHDREdit2D* _edit, ColorF128 const& _color)
     {
         eventUIData();
@@ -555,7 +539,7 @@ namespace Maze
 
                 AbstractTextRenderer2DPtr itemTextRenderer = UIHelper::CreateText(
                     "Option 1",
-                    8,
+                    12,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
                     Vec2F(width, 20.0f),

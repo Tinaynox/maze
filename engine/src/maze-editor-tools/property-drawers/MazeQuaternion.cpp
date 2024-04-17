@@ -152,22 +152,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PropertyDrawerQuaternion::setString(String const& _value)
-    {
-        Quaternion value;
-        ValueFromString(value, _value.c_str(), _value.size());
-        setValue(value);
-    }
-
-    //////////////////////////////////////////
-    String PropertyDrawerQuaternion::getString()
-    {
-        String value;
-        ValueToString(getValue(), value);
-        return value;
-    }
-
-    //////////////////////////////////////////
     EditBox2DPtr PropertyDrawerQuaternion::createF32Edit(
         CString _name,
         Transform2DPtr const& _parent)

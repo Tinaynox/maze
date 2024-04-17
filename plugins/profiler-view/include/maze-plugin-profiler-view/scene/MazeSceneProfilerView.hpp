@@ -70,8 +70,8 @@ namespace Maze
         struct ProfilerViewData
         {
             SpriteRenderer2DPtr background;
-            SystemTextRenderer2DPtr label0;
-            SystemTextRenderer2DPtr label1;
+            AbstractTextRenderer2DPtr label0;
+            AbstractTextRenderer2DPtr label1;
             SimpleLineRenderer2DPtr graph;
         };
 

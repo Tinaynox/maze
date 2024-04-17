@@ -399,7 +399,7 @@ namespace Maze
 
         m_floatLabel = UIHelper::CreateText(
             "",
-            8,
+            12,
             HorizontalAlignment2D::Left,
             VerticalAlignment2D::Middle,
             { 8.0f, 18.0f },
@@ -439,7 +439,7 @@ namespace Maze
 
             AbstractTextRenderer2DPtr label = UIHelper::CreateText(
                 "R",
-                8,
+                12,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 8.0f, 18.0f },
@@ -497,7 +497,7 @@ namespace Maze
 
             AbstractTextRenderer2DPtr label = UIHelper::CreateText(
                 "G",
-                8,
+                12,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 8.0f, 18.0f },
@@ -555,7 +555,7 @@ namespace Maze
 
             AbstractTextRenderer2DPtr label = UIHelper::CreateText(
                 "B",
-                8,
+                12,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 8.0f, 18.0f },
@@ -613,7 +613,7 @@ namespace Maze
 
             AbstractTextRenderer2DPtr label = UIHelper::CreateText(
                 "A",
-                8,
+                12,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 8.0f, 18.0f },
@@ -688,7 +688,7 @@ namespace Maze
 
             AbstractTextRenderer2DPtr label = UIHelper::CreateText(
                 "Hexadecimal",
-                8,
+                12,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 100.0f, 18.0f },
@@ -752,7 +752,7 @@ namespace Maze
 
             AbstractTextRenderer2DPtr label = UIHelper::CreateText(
                 "I",
-                8,
+                12,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 8.0f, 18.0f },

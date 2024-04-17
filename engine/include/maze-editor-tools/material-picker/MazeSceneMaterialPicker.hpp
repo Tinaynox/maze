@@ -90,7 +90,7 @@ namespace Maze
             MaterialPtr material;
             Transform2DPtr bodyTransform;
             ToggleButton2DPtr button;
-            SystemTextRenderer2DPtr titleText;
+            AbstractTextRenderer2DPtr titleText;
         };
 
     public:

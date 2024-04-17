@@ -377,7 +377,8 @@ namespace Maze
                     bool isMultiValue = false;
                     fetchVectorElementValue(i, value, isMultiValue);
 
-                    m_itemDrawers[i]->setString(value);
+                    MAZE_NOT_IMPLEMENTED;
+                    // m_itemDrawers[i]->setString(value);
                 }
 
             }
@@ -400,8 +401,9 @@ namespace Maze
 
         Vector<String> values;
 
-        for (Size i = 0, in = m_itemDrawers.size(); i < in; ++i)
-            values.push_back(m_itemDrawers[i]->getString());
+        MAZE_NOT_IMPLEMENTED;
+        //for (Size i = 0, in = m_itemDrawers.size(); i < in; ++i)
+        //    values.push_back(m_itemDrawers[i]->getString());
 
         String value;
         ValueToString(values, value);

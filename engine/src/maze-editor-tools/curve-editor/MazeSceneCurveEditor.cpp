@@ -74,6 +74,8 @@
 #include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-editor-tools/managers/MazeAnimationCurveManager.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
+#include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
@@ -367,9 +369,10 @@ namespace Maze
             row2Layout->setAutoWidth(false);
             row2Layout->setSpacing(5.0f);
 
-            SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
+            AbstractTextRenderer2DPtr label = EditorToolsUIHelper::CreateText(
                 "Mode",
-                8,
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                12,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 80.0f, 18.0f },
@@ -392,9 +395,10 @@ namespace Maze
             m_modeDropdown->setValue((S32)curve.getMode());
 
 
-            SystemTextRenderer2DPtr label2 = SystemUIHelper::CreateSystemText(
+            AbstractTextRenderer2DPtr label2 = EditorToolsUIHelper::CreateText(
                 "MinMax",
-                8,
+                EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                12,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
                 { 80.0f, 18.0f },
@@ -518,9 +522,10 @@ namespace Maze
                 rowLayout->setExpand(true);
                 rowLayout->setAutoWidth(false);
 
-                SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
+                AbstractTextRenderer2DPtr label = EditorToolsUIHelper::CreateText(
                     "Value",
-                    8,
+                    EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                    12,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
                     { 8.0f * 8.0f, 18.0f },
@@ -554,9 +559,10 @@ namespace Maze
                 rowLayout->setExpand(true);
                 rowLayout->setAutoWidth(false);
 
-                SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
+                AbstractTextRenderer2DPtr label = EditorToolsUIHelper::CreateText(
                     "Location",
-                    8,
+                    EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                    12,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
                     { 8.0f * 8.0f, 18.0f },
@@ -575,9 +581,10 @@ namespace Maze
                     this);
                 m_locationEdit->eventTextInput.subscribe(this, &SceneCurveEditor::notifyLocationEditTextInput);
 
-                SystemTextRenderer2DPtr label2 = SystemUIHelper::CreateSystemText(
+                AbstractTextRenderer2DPtr label2 = EditorToolsUIHelper::CreateText(
                     "%",
-                    8,
+                    EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                    12,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
                     { 8.0f, 18.0f },
@@ -608,9 +615,10 @@ namespace Maze
                 rowLayout->setExpand(true);
                 rowLayout->setAutoWidth(false);
 
-                SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
+                AbstractTextRenderer2DPtr label = EditorToolsUIHelper::CreateText(
                     "In Tan",
-                    8,
+                    EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                    12,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
                     { 8.0f * 8.0f, 18.0f },
@@ -644,9 +652,10 @@ namespace Maze
                 rowLayout->setExpand(true);
                 rowLayout->setAutoWidth(false);
 
-                SystemTextRenderer2DPtr label = SystemUIHelper::CreateSystemText(
+                AbstractTextRenderer2DPtr label = EditorToolsUIHelper::CreateText(
                     "Out Tan",
-                    8,
+                    EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
+                    12,
                     HorizontalAlignment2D::Left,
                     VerticalAlignment2D::Middle,
                     { 8.0f * 8.0f, 18.0f },

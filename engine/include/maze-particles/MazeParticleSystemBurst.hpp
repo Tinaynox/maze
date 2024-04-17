@@ -147,39 +147,6 @@ namespace Maze
     };
 
 
-    //////////////////////////////////////////
-    // Serialization
-    //
-    //////////////////////////////////////////
-    inline void ValueToString(ParticleSystemBurst const& _value, String& _data)
-    {
-        _data = _value.toString();
-    }
-
-    //////////////////////////////////////////
-    inline void ValueFromString(ParticleSystemBurst& _value, CString _data, Size _count)
-    {
-        _value = ParticleSystemBurst::FromString(String(_data, _count));
-    }
-
-    //////////////////////////////////////////
-    inline U32 GetValueSerializationSize(ParticleSystemBurst const& _value)
-    {
-        return sizeof(ParticleSystemBurst);
-    }
-
-    //////////////////////////////////////////
-    inline void SerializeValue(ParticleSystemBurst const& _value, U8* _data)
-    {
-        memcpy(_data, (U8 const*)(&_value), sizeof(ParticleSystemBurst));
-    }
-
-    //////////////////////////////////////////
-    inline void DeserializeValue(ParticleSystemBurst& _value, U8 const* _data)
-    {
-        memcpy((U8*)&_value, _data, sizeof(ParticleSystemBurst));
-    }
-
 } // namespace Maze
 //////////////////////////////////////////
 
