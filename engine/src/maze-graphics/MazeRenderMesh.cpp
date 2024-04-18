@@ -286,7 +286,7 @@ namespace Maze
     {
         if (!m_renderMesh)
         {
-            _dataBlock.clear();
+            _dataBlock.clearData();
             return;
         }
 

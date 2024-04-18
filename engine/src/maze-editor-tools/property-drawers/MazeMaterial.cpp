@@ -188,7 +188,10 @@ namespace Maze
 
         m_materialIcon->getMeshRenderer()->setEnabled(m_material != nullptr);
 
-        m_materialNameDrawer->setText(FileHelper::GetFileNameWithoutExtension(m_material ? m_material->getName() : "None"));
+        if (m_material)
+            m_materialNameDrawer->setText(EditorToolsHelper::GetNameWithoutExtension(m_material->getName()));
+        else
+            m_materialNameDrawer->setText("None");
     }
 
     //////////////////////////////////////////

@@ -207,7 +207,7 @@ namespace Maze
             Vec2F(0.5f, 0.5f));
         x += (F32)charSize + 4;
 
-        String label = FileHelper::GetFileNameWithoutExtension(m_assetFile->getFileName());
+        String label = EditorToolsHelper::GetNameWithoutExtension(m_assetFile->getFileName());
         m_textRenderer = EditorToolsUIHelper::CreateText(
             label.c_str(),
             EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
@@ -427,7 +427,7 @@ namespace Maze
 
         bool cancelRename = true;
 
-        String oldFileName = FileHelper::GetFileNameWithoutExtension(m_assetFile->getFileName());
+        String oldFileName = EditorToolsHelper::GetNameWithoutExtension(m_assetFile->getFileName());
 
         if (!newFileName.empty() && oldFileName != newFileName)
         {

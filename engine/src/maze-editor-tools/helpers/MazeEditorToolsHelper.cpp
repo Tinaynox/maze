@@ -263,6 +263,16 @@ namespace Maze
             return newPath;
         }
 
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API String GetNameWithoutExtension(String const& _name)
+        {
+            Size position = _name.find_last_of('.');
+            if (position == Path::StringType::npos)
+                return _name;
+
+            return _name.substr(0, position);
+        }
+
     } // namespace EditorToolsHelper
     //////////////////////////////////////////
     

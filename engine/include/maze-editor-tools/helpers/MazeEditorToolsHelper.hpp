@@ -84,6 +84,9 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API Path BuildNewAssetFileName(Path const& _fullPath);
 
+        //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API String GetNameWithoutExtension(String const& _name);
+
 
     } // namespace EditorToolsHelper
     //////////////////////////////////////////

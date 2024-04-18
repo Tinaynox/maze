@@ -816,7 +816,7 @@ namespace Maze
     {
         if (!m_material)
         {
-            _dataBlock.clear();
+            _dataBlock.clearData();
             return;
         }
 

@@ -78,6 +78,7 @@
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-render-system-opengl-core/MazeVertexArrayObjectOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeShaderOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeContextOpenGL.hpp"
@@ -380,7 +381,7 @@ namespace Maze
 
         String materialName = _material ? _material->getName() : "None";
 
-        materialName = FileHelper::GetFileNameWithoutExtension(materialName);
+        materialName = EditorToolsHelper::GetNameWithoutExtension(materialName);
 
         data.titleText = EditorToolsUIHelper::CreateText(
             materialName.c_str(),

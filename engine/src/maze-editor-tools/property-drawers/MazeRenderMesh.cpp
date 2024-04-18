@@ -189,7 +189,10 @@ namespace Maze
 
         m_renderMeshIcon->getMeshRenderer()->setEnabled(m_renderMesh != nullptr);
 
-        m_renderMeshNameDrawer->setText(FileHelper::GetFileNameWithoutExtension(m_renderMesh ? m_renderMesh->getName() : "None"));
+        if (m_renderMesh)
+            m_renderMeshNameDrawer->setText(EditorToolsHelper::GetNameWithoutExtension(m_renderMesh->getName()));
+        else
+            m_renderMeshNameDrawer->setText("None");
     }
 
     //////////////////////////////////////////

@@ -30,11 +30,12 @@ namespace Maze
     template <typename TValue>
     MAZE_FORCEINLINE bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, TValue const& _value)
     {
-        DataBlock dataBlock;
-        if (TryValueToDataBlock<TValue>(_value, dataBlock))
+        if MAZE_CONSTEXPR14 (HasValueToDataBlock<TValue>::value)
         {
-            *_dataBlock.addNewDataBlock(_name) = std::move(dataBlock);
-            return true;
+            DataBlock* childBlock = _dataBlock.addNewDataBlock(_name);
+            if (!childBlock)
+                return false;
+            return TryValueToDataBlock<TValue>(_value, *childBlock);
         }
 
         String stringValue;
