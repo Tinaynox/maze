@@ -72,12 +72,6 @@ namespace Maze
             Transform2DPtr const& _parent,
             CString _label = nullptr) MAZE_ABSTRACT;
 
-        ////////////////////////////////////////////
-        //virtual void setString(String const& _value) MAZE_ABSTRACT;
-
-        ////////////////////////////////////////////
-        //virtual String getString() MAZE_ABSTRACT;
-
 
         ////////////////////////////////////////////
         virtual bool toDataBlock(DataBlock& _value) const MAZE_ABSTRACT;
@@ -132,7 +126,15 @@ namespace Maze
         ////////////////////////////////////////////
         virtual bool toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE
         {
-            return TryValueToDataBlock<TProperty>(getValue(), _dataBlock);
+            bool result = TryValueToDataBlock<TProperty>(getValue(), _dataBlock);
+            if (!result)
+            {
+#if MAZE_DEBUG
+                MAZE_NOT_IMPLEMENTED;
+#endif
+            }
+
+            return result;
         }
 
         ////////////////////////////////////////////
@@ -141,7 +143,15 @@ namespace Maze
             TProperty value;
             bool result = TryValueFromDataBlock<TProperty>(value, _dataBlock);
             if (result)
+            {
                 setValue(value);
+            }
+            else
+            {
+#if MAZE_DEBUG
+                MAZE_NOT_IMPLEMENTED;
+#endif
+            }
 
             return result;
         }

@@ -262,31 +262,29 @@ namespace Maze
     //////////////////////////////////////////
     bool MetaPropertyDrawerVector::fetchVectorElementValue(
         Size _index,
-        String& _value,
+        DataBlock& _value,
         bool& _isMultiValue)
     {
         _isMultiValue = false;
 
         if (!m_metaInstances.empty())
         {
-            
-            String serializedList;
-            m_metaProperty->toString(*m_metaInstances.begin(), serializedList);
-            Vector<String> elements;
-            ValueFromString(elements, serializedList.c_str(), serializedList.size());
-            _value = _index < elements.size() ? elements[_index] : "";
+            m_metaProperty->toDataBlock(*m_metaInstances.begin(), m_elements);
 
-            for (Set<MetaInstance>::const_iterator    it = ++m_metaInstances.begin(),
+            if (_index < m_elements.getDataBlocksCount())
+                _value.copyFrom(m_elements.getDataBlock((DataBlock::DataBlockIndex)_index));
+            else
+                _value.clear();
+
+            for (Set<MetaInstance>::const_iterator it = ++m_metaInstances.begin(),
                 end = m_metaInstances.end();
                 it != end;
                 ++it)
             {
-                String serializedList;
-                m_metaProperty->toString(*it, serializedList);
-                ValueFromString(elements, serializedList.c_str(), serializedList.size());
-                String value = _index < elements.size() ? elements[_index] : "";
-
-                if (value != _value)
+                DataBlock elements2;
+                m_metaProperty->toDataBlock(*it, elements2);
+                
+                if (_index < elements2.getDataBlocksCount() && !_value.isEqual(*elements2.getDataBlock((DataBlock::DataBlockIndex)_index)))
                 {
                     _isMultiValue = true;
                     return true;
@@ -373,12 +371,9 @@ namespace Maze
             {
                 for (Size i = 0, in = m_itemDrawers.size(); i < in; ++i)
                 {
-                    String value;
                     bool isMultiValue = false;
-                    fetchVectorElementValue(i, value, isMultiValue);
-
-                    MAZE_NOT_IMPLEMENTED;
-                    // m_itemDrawers[i]->setString(value);
+                    fetchVectorElementValue(i, m_element, isMultiValue);
+                    m_itemDrawers[i]->setDataBlock(m_element);
                 }
 
             }
@@ -399,16 +394,13 @@ namespace Maze
 
         ensureItemDrawers(vectorSize);
 
-        Vector<String> values;
+        m_values.resize(m_itemDrawers.size());
+        for (Size i = 0, in = m_itemDrawers.size(); i < in; ++i)
+            m_itemDrawers[i]->toDataBlock(m_values[i]);
 
-        MAZE_NOT_IMPLEMENTED;
-        //for (Size i = 0, in = m_itemDrawers.size(); i < in; ++i)
-        //    values.push_back(m_itemDrawers[i]->getString());
-
-        String value;
-        ValueToString(values, value);
+        ValueToDataBlock(m_values, m_elements);
         for (MetaInstance const& metaInstance : m_metaInstances)
-            m_metaProperty->setString(metaInstance, value);
+            m_metaProperty->setDataBlock(metaInstance, m_elements);
     }
 
     //////////////////////////////////////////

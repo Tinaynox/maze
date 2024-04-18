@@ -267,6 +267,7 @@ namespace Maze
         TIterator const _last,
         DataBlock& _data)
     {
+        _data.clearData();
         for (TIterator it = _first; it != _last; ++it)
         {
             AddDataToDataBlock(_data, MAZE_HS("item"), (*it));

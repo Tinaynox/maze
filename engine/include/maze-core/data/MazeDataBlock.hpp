@@ -399,6 +399,9 @@ namespace Maze
         //////////////////////////////////////////
         DataBlock* duplicate() const;
 
+        //////////////////////////////////////////
+        bool isEqual(DataBlock const& _value) const;
+
 
         //////////////////////////////////////////
         bool saveBinary(ByteBuffer& _byteBuffer, U32 _flags = 0u) const;

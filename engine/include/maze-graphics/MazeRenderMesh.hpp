@@ -197,6 +197,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_GRAPHICS_API RenderMeshAssetRef
         : public IStringSerializable
+        , public IDataBlockSerializable
     {
     public:
 
@@ -224,6 +225,13 @@ namespace Maze
 
         //////////////////////////////////////////
         inline bool operator!=(RenderMeshAssetRef const& _value) const { return m_renderMesh != _value.getRenderMesh(); }
+
+    public:
+        //////////////////////////////////////////
+        virtual bool loadFromDataBlock(DataBlock const& _dataBlock) MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        virtual void toDataBlock(DataBlock& _dataBlock) const MAZE_OVERRIDE;
 
     private:
         RenderMeshPtr m_renderMesh;

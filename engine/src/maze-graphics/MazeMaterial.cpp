@@ -793,5 +793,36 @@ namespace Maze
         setMaterial(material);
     }
 
+    //////////////////////////////////////////
+    bool MaterialAssetRef::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        CString name = nullptr;
+        ValueFromDataBlock(name, _dataBlock);
+        if (name != nullptr)
+        {
+            MaterialPtr const& material = RenderSystem::GetCurrentInstancePtr()->getMaterialManager()->getMaterial(name);
+            setMaterial(material);
+        }
+        else
+        {
+            setMaterial(MaterialPtr());
+        }
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void MaterialAssetRef::toDataBlock(DataBlock& _dataBlock) const
+    {
+        if (!m_material)
+        {
+            _dataBlock.clear();
+            return;
+        }
+
+        HashedCString name = RenderSystem::GetCurrentInstancePtr()->getMaterialManager()->getMaterialName(m_material.get());
+        ValueToDataBlock(name.str, _dataBlock);
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

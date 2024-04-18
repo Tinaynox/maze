@@ -120,7 +120,7 @@ namespace Maze
         //////////////////////////////////////////
         bool fetchVectorElementValue(
             Size _index,
-            String& _value,
+            DataBlock& _value,
             bool& _isMultiValue);
 
         //////////////////////////////////////////
@@ -142,6 +142,10 @@ namespace Maze
         Vector<PropertyDrawerPtr> m_itemDrawers;
 
         bool m_processingDataToUI = false;
+
+        DataBlock m_elements;
+        DataBlock m_element;
+        Vector<DataBlock> m_values;
     };
 
 

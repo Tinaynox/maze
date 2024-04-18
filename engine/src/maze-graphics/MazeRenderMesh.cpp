@@ -262,6 +262,37 @@ namespace Maze
         RenderMeshPtr const& material = RenderSystem::GetCurrentInstancePtr()->getRenderMeshManager()->getRenderMesh(_data);
         setRenderMesh(material);
     }
+
+    //////////////////////////////////////////
+    bool RenderMeshAssetRef::loadFromDataBlock(DataBlock const& _dataBlock)
+    {
+        CString name = nullptr;
+        ValueFromDataBlock(name, _dataBlock);
+        if (name != nullptr)
+        {
+            RenderMeshPtr const& material = RenderSystem::GetCurrentInstancePtr()->getRenderMeshManager()->getRenderMesh(name);
+            setRenderMesh(material);
+        }
+        else
+        {
+            setRenderMesh(RenderMeshPtr());
+        }
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void RenderMeshAssetRef::toDataBlock(DataBlock& _dataBlock) const
+    {
+        if (!m_renderMesh)
+        {
+            _dataBlock.clear();
+            return;
+        }
+
+        HashedCString name = RenderSystem::GetCurrentInstancePtr()->getRenderMeshManager()->getRenderMeshName(m_renderMesh.get());
+        ValueToDataBlock(name.str, _dataBlock);
+    }
     
 
 } // namespace Maze

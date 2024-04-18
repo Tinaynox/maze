@@ -385,6 +385,50 @@ namespace Maze
         return newBlock;
     }
 
+    //////////////////////////////////////////
+    bool DataBlock::isEqual(DataBlock const& _value) const
+    {
+        if (getParamsCount() != _value.getParamsCount() || getDataBlocksCount() != _value.getDataBlocksCount())
+            return false;
+
+        Param const* param0Ptr = getParamsPtr();
+        Param const* param1Ptr = _value.getParamsPtr();
+        for (ParamIndex i = 0, e = (ParamIndex)getParamsCount(); i < e; ++i, ++param0Ptr, ++param1Ptr)
+        {
+            Param const& param0 = *param0Ptr;
+            Param const& param1 = *param1Ptr;
+
+            if (param0.nameId != param1.nameId || param0.type != param1.type)
+                return false;
+
+            if (param0.type == U32(DataBlockParamType::ParamString))
+            {
+                if (getParamValueString(param0.value) != _value.getParamValueString(param1.value))
+                    return false;
+            }
+            else
+            {
+                Size size = c_dataBlockParamTypeInfo[param0.type].size;
+                U8 const* param0Data = (size <= MAZE_DATA_BLOCK_INPLACE_PARAM_SIZE) ? (U8 const*)&param0.value
+                    : getDataBufferDataRO(getParamsUsedSize() + param0.value);
+                U8 const* param1Data = (size <= MAZE_DATA_BLOCK_INPLACE_PARAM_SIZE) ? (U8 const*)&param1.value
+                    : _value.getDataBufferDataRO(_value.getParamsUsedSize() + param1.value);
+                if (memcmp(param0Data, param1Data, size) != 0)
+                    return false;
+            }
+        }
+
+        for (DataBlockIndex i = 0; i < (DataBlockIndex)getDataBlocksCount(); ++i)
+        {
+            DataBlock const* dataBlock0 = getDataBlock(i);
+            DataBlock const* dataBlock1 = _value.getDataBlock(i);
+
+            if (!dataBlock0->isEqual(*dataBlock1))
+                return false;
+        }
+
+        return true;
+    }
 
     //////////////////////////////////////////
     bool DataBlock::saveBinary(ByteBuffer& _byteBuffer, U32 _flags) const
