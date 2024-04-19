@@ -107,12 +107,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetArchivedFile::updateChildrenAssets(
+    bool AssetArchivedFile::updateChildrenAssets(
         bool _recursive,
         Vector<AssetFilePtr>* _addedFiles,
         Vector<AssetFilePtr>* _removedFiles)
     {
         MAZE_NOT_IMPLEMENTED;
+        return false;
     }
 
     //////////////////////////////////////////

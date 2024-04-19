@@ -72,7 +72,7 @@ namespace Maze
         
         
         //////////////////////////////////////////
-        void addAssetsDirectoryPath(Path const& _path);
+        bool addAssetsDirectoryPath(Path const& _path);
 
         //////////////////////////////////////////
         void removeAssetsDirectoryPath(Path const& _path);
@@ -282,7 +282,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void addAssetsDirectory(Path const& _path, bool _recursive = true);
+        bool addAssetsDirectory(Path const& _path, bool _recursive = true);
 
         //////////////////////////////////////////
         void removeAssetsDirectory(Path const& _path, bool _recursive = true);

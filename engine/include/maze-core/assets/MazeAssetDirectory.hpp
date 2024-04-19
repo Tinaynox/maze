@@ -72,7 +72,7 @@ namespace Maze
         bool move(Path const& _newFullPath, Vector<Pair<Path, AssetFilePtr>>& _movedFiles) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void updateChildrenAssets(
+        virtual bool updateChildrenAssets(
             bool _recursive,
             Vector<AssetFilePtr>* _addedFiles,
             Vector<AssetFilePtr>* _removedFiles) MAZE_OVERRIDE;

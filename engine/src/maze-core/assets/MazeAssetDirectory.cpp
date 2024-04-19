@@ -94,7 +94,7 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    void AssetDirectory::updateChildrenAssets(
+    bool AssetDirectory::updateChildrenAssets(
         bool _recursive,
         Vector<AssetFilePtr>* _addedFiles,
         Vector<AssetFilePtr>* _removedFiles)
@@ -127,7 +127,8 @@ namespace Maze
                     AssetDirectoryPtr directory = AssetDirectory::Create(fileFullPath);
 
                     if (_recursive)
-                        directory->updateChildrenAssets(_recursive, _addedFiles, _removedFiles);
+                        if (!directory->updateChildrenAssets(_recursive, _addedFiles, _removedFiles))
+                            return false;
 
                     file = directory;
                 }
@@ -156,11 +157,16 @@ namespace Maze
                     if (_addedFiles)
                         _addedFiles->push_back(file);
                 }
+                else
+                {
+                    MAZE_ERROR_RETURN_VALUE_IF(!file, "Failed to load file - %s!", fileFullPath.toUTF8().c_str());
+                }
             }
             else
             {
                 if (_recursive)
-                    it->second->updateChildrenAssets(_recursive, _addedFiles, _removedFiles);
+                    if (!it->second->updateChildrenAssets(_recursive, _addedFiles, _removedFiles))
+                        return false;
             }
         }
 
@@ -191,6 +197,8 @@ namespace Maze
                 ++it;
             }
         }
+
+        return true;
     }
 
 } // namespace Maze

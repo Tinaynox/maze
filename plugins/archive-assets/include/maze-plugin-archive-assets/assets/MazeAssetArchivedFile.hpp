@@ -106,7 +106,7 @@ namespace Maze
         virtual UnorderedMap<Path, AssetFilePtr> const* getChildrenAssets() const MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void updateChildrenAssets(
+        virtual bool updateChildrenAssets(
             bool _recursive,
             Vector<AssetFilePtr>* _addedFiles,
             Vector<AssetFilePtr>* _removedFiles) MAZE_OVERRIDE;

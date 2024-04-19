@@ -79,12 +79,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void AssetManager::addAssetsDirectoryPath(Path const& _path)
+    bool AssetManager::addAssetsDirectoryPath(Path const& _path)
     {
         m_assetDirectoryPathes.insert(_path);
-        addAssetsDirectory(_path, true);
+        if (!addAssetsDirectory(_path, true))
+            return false;
 
         eventAssetsDirectoryPathAdded(_path);
+        return true;
     }
 
     //////////////////////////////////////////
@@ -133,7 +135,7 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    void AssetManager::addAssetsDirectory(Path const& _path, bool _recursive)
+    bool AssetManager::addAssetsDirectory(Path const& _path, bool _recursive)
     {
         MAZE_PROFILE_EVENT("AssetManager::addAssetsDirectory");
 
@@ -142,7 +144,7 @@ namespace Maze
 
         Path fullPath = FileHelper::ConvertLocalPathToFullPath(_path);
         
-        MAZE_ERROR_RETURN_IF(!FileHelper::IsDirectory(fullPath), "%s is not a directory!", _path.c_str());
+        MAZE_ERROR_RETURN_VALUE_IF(!FileHelper::IsDirectory(fullPath), false, "%s is not a directory!", _path.c_str());
 
         AssetDirectoryPtr directory;
 
@@ -151,19 +153,20 @@ namespace Maze
         {
             directory = AssetDirectory::Create(fullPath);
             if (!directory)
-                return;
+                return false;
 
             processAddFile(directory);
         }
         else
         {
-            MAZE_ERROR_RETURN_IF(it->second->getClassUID() != ClassInfo<AssetDirectory>::UID(), "%s is not a AssetDirectory!", _path.toUTF8().c_str());
+            MAZE_ERROR_RETURN_VALUE_IF(it->second->getClassUID() != ClassInfo<AssetDirectory>::UID(), false, "%s is not a AssetDirectory!", _path.toUTF8().c_str());
             directory = it->second->cast<AssetDirectory>();
         }
 
         Vector<AssetFilePtr> addedFiles;
         Vector<AssetFilePtr> removedFiles;
-        directory->updateChildrenAssets(_recursive, &addedFiles, &removedFiles);
+        if (!directory->updateChildrenAssets(_recursive, &addedFiles, &removedFiles))
+            return false;
 
         for (AssetFilePtr const& addFile : addedFiles)
             processAddFile(addFile);
@@ -181,6 +184,8 @@ namespace Maze
         }
 
         Debug::Log("Assets directory '%s' added.", pathUTF8.c_str());
+
+        return true;
     }
     
     //////////////////////////////////////////

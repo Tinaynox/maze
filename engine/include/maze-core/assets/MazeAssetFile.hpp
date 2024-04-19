@@ -98,10 +98,13 @@ namespace Maze
         virtual UnorderedMap<Path, AssetFilePtr> const* getChildrenAssets() const;
 
         //////////////////////////////////////////
-        virtual void updateChildrenAssets(
+        virtual bool updateChildrenAssets(
             bool _recursive,
             Vector<AssetFilePtr>* _addedFiles,
-            Vector<AssetFilePtr>* _removedFiles) {};
+            Vector<AssetFilePtr>* _removedFiles)
+        {
+            return true;
+        };
 
         //////////////////////////////////////////
         void getChildrenAssets(
