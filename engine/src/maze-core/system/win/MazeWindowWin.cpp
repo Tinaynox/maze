@@ -649,6 +649,7 @@ namespace Maze
 
             case WM_CLOSE:
             {
+                Debug::Log("Window close request (WM_CLOSE)");
                 close();
                 return false;
             }
@@ -1018,6 +1019,8 @@ namespace Maze
         if (!isOpened())
             return;
 
+        Debug::Log("Window closing...");
+
         m_closing = true;
 
         HWND handle = (HWND)m_handle;
@@ -1041,6 +1044,8 @@ namespace Maze
         processWindowClosed();
 
         m_closing = false;
+
+        Debug::Log("Window closed.");
     }
 
     //////////////////////////////////////////
