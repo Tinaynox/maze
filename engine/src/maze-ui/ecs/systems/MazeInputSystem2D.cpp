@@ -434,18 +434,13 @@ namespace Maze
         _event.canvas = _canvasData.canvas;
         _event.rootCanvas = _canvasData.rootCanvas;
 
-        bool canvasContainsCursor = _canvasData.canvas->getRenderTargetAABB().contains(_renderTargetCoords);
-        if (canvasContainsCursor)
-        {
-            if (_event.rootCanvas)
-                _event.position = _event.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
-            else
-                _event.position = _event.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
-        }
+        //bool canvasContainsCursor = _canvasData.canvas->getRenderTargetAABB().contains(_renderTargetCoords);
+
+        if (_event.rootCanvas)
+            _event.position = _event.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
         else
-        {
-            _event.position = c_outCanvasCursorPosition;
-        }
+            _event.position = _event.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
+
     }
 
 
@@ -847,18 +842,12 @@ namespace Maze
             cursorInputEvent.canvas = canvasData.canvas;
             cursorInputEvent.rootCanvas = canvasData.rootCanvas;
 
-            bool canvasContainsCursor = canvasData.canvas->getRenderTargetAABB().contains(_renderTargetCoords);
-            if (canvasContainsCursor)
-            {
-                if (cursorInputEvent.rootCanvas)
-                    cursorInputEvent.position = cursorInputEvent.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
-                else
-                    cursorInputEvent.position = cursorInputEvent.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
-            }
+            //bool canvasContainsCursor = canvasData.canvas->getRenderTargetAABB().contains(_renderTargetCoords);
+
+            if (cursorInputEvent.rootCanvas)
+                cursorInputEvent.position = cursorInputEvent.rootCanvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
             else
-            {
-                cursorInputEvent.position = c_outCanvasCursorPosition;
-            }
+                cursorInputEvent.position = cursorInputEvent.canvas->convertRenderTargetCoordsToViewportCoords(_renderTargetCoords);
 
             for (Vector<UIElement2D*>::const_reverse_iterator it2 = sortedUIElements2D.rbegin(),
                                                               end2 = sortedUIElements2D.rend();
