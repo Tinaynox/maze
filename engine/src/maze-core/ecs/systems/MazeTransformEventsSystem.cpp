@@ -78,7 +78,7 @@ namespace Maze
     }
         
     //////////////////////////////////////////
-    void TransformEventsSystem::processUpdate(F32 _dt)
+    void TransformEventsSystem::processUpdate(UpdateEvent const* _event)
     {
         MAZE_PROFILE_EVENT("TransformEventsSystem::processUpdate");
 

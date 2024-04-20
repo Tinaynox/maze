@@ -25,77 +25,43 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeBounds2DSystem_hpp_))
-#define _MazeBounds2DSystem_hpp_
+#if (!defined(_MazeECSEvents_hpp_))
+#define _MazeECSEvents_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
-#include "maze-core/ecs/MazeComponentSystem.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-core/ecs/MazeEntitiesSample.hpp"
-#include "maze-core/ecs/components/MazeTransform2D.hpp"
-#include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/math/MazeMat4.hpp"
+#include "maze-core/math/MazeRotation2D.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(EntitiesSample);
-    MAZE_USING_SHARED_PTR(Bounds2DSystem);
-    MAZE_USING_SHARED_PTR(Transform2D);
-    MAZE_USING_SHARED_PTR(Transform3D);
-    MAZE_USING_SHARED_PTR(Bounds2D);
-
-
-    //////////////////////////////////////////
-    // Class Bounds2DSystem
+    // Class UpdateEvent
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API Bounds2DSystem
-        : public ComponentSystem
-        , public MultiDelegateCallbackReceiver
+    class MAZE_CORE_API UpdateEvent
+        : public GenericEvent<UpdateEvent>
     {
     public:
-
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(Bounds2DSystem, ComponentSystem);
-
-        //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(Bounds2DSystem);
-
-        //////////////////////////////////////////
-        friend class Entity;
+        MAZE_DECLARE_METACLASS_WITH_PARENT(UpdateEvent, Event);
 
     public:
 
         //////////////////////////////////////////
-        virtual ~Bounds2DSystem();
+        inline UpdateEvent(F32 _dt = 0.0f)
+            : m_dt(_dt)
+        {}
 
         //////////////////////////////////////////
-        static Bounds2DSystemPtr Create();
+        inline F32 getDt() const { return m_dt; }
 
-
-        //////////////////////////////////////////
-        virtual S32 getOrder() const MAZE_OVERRIDE { return 30000; }
-
-    protected:
-
-        //////////////////////////////////////////
-        Bounds2DSystem();
-
-        //////////////////////////////////////////
-        bool init();
-
-        //////////////////////////////////////////
-        virtual void processSystemAdded() MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void processUpdate(UpdateEvent const* _event) MAZE_OVERRIDE;
-
-    protected:
-        SharedPtr<GenericInclusiveEntitiesSample<Bounds2D>> m_bounds2D;
+    private:
+        F32 m_dt = 0.0f;
     };
 
 
@@ -103,5 +69,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeBounds2DSystem_hpp_
+#endif // _MazeECSEvents_hpp_
 //////////////////////////////////////////

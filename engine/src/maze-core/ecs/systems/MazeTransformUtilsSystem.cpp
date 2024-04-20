@@ -82,25 +82,27 @@ namespace Maze
     }
         
     //////////////////////////////////////////
-    void TransformUtilsSystem::processUpdate(F32 _dt)
+    void TransformUtilsSystem::processUpdate(UpdateEvent const* _event)
     {
         MAZE_PROFILE_EVENT("TransformUtilsSystem::processUpdate");
 
+        F32 dt = _event->getDt();
+
         m_rotors3D->process(
-            [_dt](Entity* entity, Rotor3D* _rotor)
+            [dt](Entity* entity, Rotor3D* _rotor)
             {
-                _rotor->update(_dt);
+                _rotor->update(dt);
             });
 
         m_sinMovements3D->process(
-            [_dt](Entity* entity, SinMovement3D* _sinMovement)
+            [dt](Entity* entity, SinMovement3D* _sinMovement)
             {
-                _sinMovement->update(_dt);
+                _sinMovement->update(dt);
             });
         m_linearMovements3D->process(
-            [_dt](Entity* entity, LinearMovement3D* _linearMovement)
+            [dt](Entity* entity, LinearMovement3D* _linearMovement)
             {
-                _linearMovement->update(_dt);
+                _linearMovement->update(dt);
             });
  
     }

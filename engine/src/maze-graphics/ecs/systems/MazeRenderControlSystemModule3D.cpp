@@ -355,18 +355,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControlSystemModule3D::processUpdate(F32 _dt)
+    void RenderControlSystemModule3D::processUpdate(UpdateEvent const* _event)
     {
+        F32 dt = _event->getDt();
+
         m_trailRendererHiders3DSample->process(
-            [_dt](Entity* _entity, TrailRenderer3DHider* _trailRendererHider, Transform3D* _transform)
+            [dt](Entity* _entity, TrailRenderer3DHider* _trailRendererHider, Transform3D* _transform)
         {
-            _trailRendererHider->update(_dt);
+            _trailRendererHider->update(dt);
         });
 
         m_trailRenderers3DSample->process(
-            [_dt](Entity* _entity, TrailRenderer3D* _trailRenderer, Transform3D* _transform)
+            [dt](Entity* _entity, TrailRenderer3D* _trailRenderer, Transform3D* _transform)
             {
-                _trailRenderer->update(_dt);
+                _trailRenderer->update(dt);
             });
 
         m_systemTextRenderer3DsSample->process(
@@ -378,7 +380,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControlSystemModule3D::processPostUpdate(F32 _dt)
+    void RenderControlSystemModule3D::processPostUpdate(UpdateEvent const* _event)
     {
 
     }

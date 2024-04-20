@@ -128,17 +128,17 @@ namespace Maze
 
     //////////////////////////////////////////
     SIMPLE_COMPONENT_SYSTEM(SomeUpdateES, 100,
-        F32 _dt,
+        UpdateEvent const* _event,
         Entity* _entity,
         Transform3D* _someObject,
         Rotor3D* _rotor)
     {
-        _someObject->translate(Vec3F32::c_unitY * _dt * 0.2f);
+        _someObject->translate(Vec3F32::c_unitY * _event->getDt() * 0.2f);
     }
 
     //////////////////////////////////////////
     SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(SomeEventES, 100,
-        SimpleEvent* _event,
+        SimpleEvent const* _event,
         Entity* _entity,
         Transform3D* _someObject,
         Rotor3D* _rotor)
@@ -231,7 +231,7 @@ namespace Maze
         m_camera3D->setRenderTarget(Example::GetInstancePtr()->getMainRenderWindow());
 
 
-        // m_world->addSystem("SomeUpdateES", SomeUpdateES, 0);
+        // m_world->addSystem(MAZE_HS("SomeUpdateES"), SomeUpdateES, 0);
 
         {
             EntityPtr objectEntity = createEntity();

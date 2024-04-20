@@ -233,7 +233,7 @@ namespace Maze
             HierarchyLinePtr hierarchyLine = createHierarchyLine(scene);
             hierarchyLine->setLabel(scene->getClassName());
             hierarchyLine->getTransform()->setParent(m_layoutTransform);
-            hierarchyLine->getTransform()->setLocalPosition(Vec2F(10 + x * 10, -6 - y * 12));
+            hierarchyLine->getTransform()->setLocalPosition(Vec2F(10 + x * 10, -6 - y * 14));
             hierarchyLine->setColor(ColorU32(30, 125, 0));
 
             if (scene->getEntities().empty())
@@ -279,7 +279,7 @@ namespace Maze
                             HierarchyLinePtr hierarchyLine = createHierarchyElement(
                                 entity,
                                 name.c_str(),
-                                Vec2F(10 + (x + 1) * 10, -6 - y * 12));
+                                Vec2F(10 + (x + 1) * 10, -6 - y * 14));
 
                             ++y;
                         }
@@ -287,7 +287,7 @@ namespace Maze
                 }
             }
 
-            m_layoutTransform->setHeight(y * 12 + 6);
+            m_layoutTransform->setHeight(y * 14 + 6);
             // ++y;
         }
     }
@@ -305,7 +305,7 @@ namespace Maze
         HierarchyLinePtr hierarchyLine = createHierarchyElement(
             _transform2D,
             name.c_str(),
-            Vec2F(10 + _x * 10, -6 - _y * 12));
+            Vec2F(10 + _x * 10, -6 - _y * 14));
 
         if (_transform2D->getChildren().empty())
         {
@@ -343,7 +343,7 @@ namespace Maze
         HierarchyLinePtr hierarchyLine = createHierarchyElement(
             _transform3D,
             name.c_str(),
-            Vec2F(10 + _x * 10, -6 - _y * 12));
+            Vec2F(10 + _x * 10, -6 - _y * 14));
 
         if (_transform3D->getChildren().empty())
         {
@@ -379,6 +379,11 @@ namespace Maze
         hierarchyLine->getTransform()->setParent(m_layoutTransform);
         hierarchyLine->getTransform()->setLocalPosition(_position);
         
+        hierarchyLine->setSelected(
+            SelectionManager::GetInstancePtr()->isObjectSelected(_transform->getEntityRaw()->getSharedPtr()));
+
+        hierarchyLine->setActive(_transform->getEntityRaw()->getActiveInHierarchy());
+        /*
         if (SelectionManager::GetInstancePtr()->isObjectSelected(_transform->getEntityRaw()->getSharedPtr()))
         {
             hierarchyLine->setColor(ColorU32(0, 255, 0, 255));
@@ -397,6 +402,7 @@ namespace Maze
                     hierarchyLine->setColor(ColorU32(0, 0, 0, 85));
             }
         }
+        */
 
         return hierarchyLine;
     }
@@ -414,6 +420,11 @@ namespace Maze
         hierarchyLine->getTransform()->setParent(m_layoutTransform);
         hierarchyLine->getTransform()->setLocalPosition(_position);
 
+        hierarchyLine->setSelected(
+            SelectionManager::GetInstancePtr()->isObjectSelected(_transform->getEntityRaw()->getSharedPtr()));
+
+        hierarchyLine->setActive(_transform->getEntityRaw()->getActiveInHierarchy());
+        /*
         if (SelectionManager::GetInstancePtr()->isObjectSelected(_transform->getEntityRaw()->getSharedPtr()))
         {
             hierarchyLine->setColor(ColorU32(0, 255, 0, 255));
@@ -430,6 +441,7 @@ namespace Maze
                     hierarchyLine->setColor(ColorU32(0, 0, 0, 85));
             }
         }
+        */
 
         return hierarchyLine;
     }
@@ -447,6 +459,11 @@ namespace Maze
         hierarchyLine->getTransform()->setParent(m_layoutTransform);
         hierarchyLine->getTransform()->setLocalPosition(_position);
 
+        hierarchyLine->setSelected(
+            SelectionManager::GetInstancePtr()->isObjectSelected(_entity->getSharedPtr()));
+
+        hierarchyLine->setActive(_entity->getActiveInHierarchy());
+        /*
         if (SelectionManager::GetInstancePtr()->isObjectSelected(_entity->getSharedPtr()))
         {
             hierarchyLine->setColor(ColorU32(0, 255, 0, 255));
@@ -463,6 +480,7 @@ namespace Maze
                     hierarchyLine->setColor(ColorU32(0, 0, 0, 85));
             }
         }
+        */
 
         return hierarchyLine;
     }
@@ -485,6 +503,15 @@ namespace Maze
 
         hierarchyLine->getEntityRaw()->setActiveSelf(true);
 
+        EntityPtr const& entity = m_world->getEntityById(_entityId);
+        if (entity)
+        {
+            hierarchyLine->setSelected(
+                SelectionManager::GetInstancePtr()->isObjectSelected(entity->getSharedPtr()));
+
+            hierarchyLine->setActive(entity->getActiveInHierarchy());
+        }
+
         return hierarchyLine;
     }
 
@@ -506,6 +533,9 @@ namespace Maze
         }
 
         hierarchyLine->getEntityRaw()->setActiveSelf(true);
+
+        hierarchyLine->setSelected(false);
+        hierarchyLine->setActive(true);
 
         return hierarchyLine;
     }

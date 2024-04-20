@@ -199,7 +199,7 @@ namespace Maze
         template<typename ...TComponents>
         inline SimpleComponentSystemPtr addSystem(
             HashedCString _name,
-            void (*_func)(F32, Entity*, TComponents* ...),
+            void (*_func)(UpdateEvent const*, Entity*, TComponents* ...),
             S32 _order = 0)
         {
             SimpleComponentSystemPtr system = SimpleComponentSystem::Create(

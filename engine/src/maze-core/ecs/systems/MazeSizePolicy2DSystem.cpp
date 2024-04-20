@@ -77,7 +77,7 @@ namespace Maze
     }
         
     //////////////////////////////////////////
-    void SizePolicy2DSystem::processUpdate(F32 _dt)
+    void SizePolicy2DSystem::processUpdate(UpdateEvent const* _event)
     {
         MAZE_PROFILE_EVENT("SizePolicy2DSystem::processUpdate");
 

@@ -329,8 +329,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControlSystemModule2D::processUpdate(F32 _dt)
+    void RenderControlSystemModule2D::processUpdate(UpdateEvent const* _event)
     {
+        F32 dt = _event->getDt();
+
         m_transform2Ds->process(
             [&](Entity* _entity, Transform2D* _transform)
             {
@@ -410,13 +412,13 @@ namespace Maze
                 }
             });
 
-        eventPostUpdate(_dt);
+        eventPostUpdate(dt);
 
         updateSortedMeshRenderersList();
     }
 
     //////////////////////////////////////////
-    void RenderControlSystemModule2D::processPostUpdate(F32 _dt)
+    void RenderControlSystemModule2D::processPostUpdate(UpdateEvent const* _event)
     {
         m_canvasGroupsSample->process(
             [](Entity* _entity, CanvasGroup* _canvasGroup)

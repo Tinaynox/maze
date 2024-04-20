@@ -129,7 +129,7 @@ namespace Maze
         template<typename ...TComponents>
         inline SimpleComponentSystemHolder(
             HashedCString _name,
-            void(*_func)(F32, Entity*, TComponents* ...),
+            void(*_func)(UpdateEvent const*, Entity*, TComponents* ...),
             S32 _order = 0)
             : BaseClass(_name, (SimpleComponentSystem::Func)_func, _order)
         {

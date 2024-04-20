@@ -89,26 +89,28 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void UITweenTransitionSystem::processUpdate(F32 _dt)
+    void UITweenTransitionSystem::processUpdate(UpdateEvent const* _event)
     {
         MAZE_PROFILE_EVENT("UITweenTransitionSystem::processUpdate");
 
+        F32 dt = _event->getDt();
+
         m_UITweenTransitionAlphaSample->process(
-            [_dt](Entity* _entity, UITweenTransitionAlpha* _tweenTransition)
+            [dt](Entity* _entity, UITweenTransitionAlpha* _tweenTransition)
             {
-                _tweenTransition->processUpdate(_dt);
+                _tweenTransition->processUpdate(dt);
             });
 
         m_UITweenTransitionScaleSample->process(
-            [_dt](Entity* _entity, UITweenTransitionScale* _tweenTransition)
+            [dt](Entity* _entity, UITweenTransitionScale* _tweenTransition)
             {
-                _tweenTransition->processUpdate(_dt);
+                _tweenTransition->processUpdate(dt);
             });
 
         m_UITweenTransitionTranslationSample->process(
-            [_dt](Entity* _entity, UITweenTransitionTranslation* _tweenTransition)
+            [dt](Entity* _entity, UITweenTransitionTranslation* _tweenTransition)
             {
-                _tweenTransition->processUpdate(_dt);
+                _tweenTransition->processUpdate(dt);
             });
     }
     

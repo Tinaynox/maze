@@ -95,7 +95,7 @@ namespace Maze
         virtual void processSystemAdded() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void processUpdate(F32 _dt) MAZE_OVERRIDE;
+        virtual void processUpdate(UpdateEvent const* _event) MAZE_OVERRIDE;
 
 
     protected:

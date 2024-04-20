@@ -190,24 +190,24 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControlSystem::processUpdate(F32 _dt)
+    void RenderControlSystem::processUpdate(UpdateEvent const* _event)
     {
         MAZE_PROFILER_SCOPED_LOCK(RENDER);
         MAZE_PROFILE_EVENT("RenderControlSystem::processUpdate");
 
-        update(_dt);
+        update(_event);
     }
 
     //////////////////////////////////////////
-    void RenderControlSystem::update(F32 _dt)
+    void RenderControlSystem::update(UpdateEvent const* _event)
     {
-        m_module3D->processUpdate(_dt);
-        m_module2D->processUpdate(_dt);
+        m_module3D->processUpdate(_event);
+        m_module2D->processUpdate(_event);
 
         render();
 
-        m_module3D->processPostUpdate(_dt);
-        m_module2D->processPostUpdate(_dt);
+        m_module3D->processPostUpdate(_event);
+        m_module2D->processPostUpdate(_event);
     }
 
     //////////////////////////////////////////

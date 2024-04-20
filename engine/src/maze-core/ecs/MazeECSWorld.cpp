@@ -97,8 +97,9 @@ namespace Maze
         processChangedEntities();
         processRemovingEntities();
 
+        UpdateEvent updateEvent(_dt);
         for (Size j = 0, jn = m_systems.size(); j < jn; ++j)
-            m_systems[j]->update(_dt);
+            m_systems[j]->update(&updateEvent);
 
         for (Vector<IEntitiesSamplePtr>::const_iterator it = m_samples.begin(),
                                                         end = m_samples.end();

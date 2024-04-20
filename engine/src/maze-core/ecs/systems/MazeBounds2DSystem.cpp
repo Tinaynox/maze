@@ -77,7 +77,7 @@ namespace Maze
     }
             
     //////////////////////////////////////////
-    void Bounds2DSystem::processUpdate(F32 _dt)
+    void Bounds2DSystem::processUpdate(UpdateEvent const* _event)
     {
         MAZE_PROFILE_EVENT("Bounds2DSystem::processUpdate");
 

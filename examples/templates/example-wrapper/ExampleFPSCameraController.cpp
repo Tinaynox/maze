@@ -40,11 +40,11 @@ namespace Maze
 {
     //////////////////////////////////////////
     SIMPLE_COMPONENT_SYSTEM(UpdateExampleFPSCameraControllerES, 100,
-        F32 _dt,
+        UpdateEvent const* _event,
         Entity* _entity,
         ExampleFPSCameraController* _someObject)
     {
-        _someObject->update(_dt);
+        _someObject->update(_event->getDt());
     }
 
 

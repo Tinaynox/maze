@@ -25,63 +25,19 @@
 
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
-#include "maze-core/ecs/MazeComponentSystem.hpp"
-#include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
-#include "maze-core/ecs/MazeEntitiesSample.hpp"
-#include "maze-core/managers/MazeEntityManager.hpp"
+#include "maze-core/ecs/events/MazeECSEvents.hpp"
+
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class ComponentSystem
+    // Class UpdateEvent
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS(ComponentSystem);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UpdateEvent, Event);
 
-    //////////////////////////////////////////
-    ComponentSystem::ComponentSystem()
-        : m_worldRaw(nullptr)
-    {
-
-    }
-
-    //////////////////////////////////////////
-    ComponentSystem::~ComponentSystem()
-    {
-
-    }
-
-    //////////////////////////////////////////
-    void ComponentSystem::update(UpdateEvent const* _event)
-    {
-        processBeginUpdate(_event);
-
-        processUpdate(_event);
-
-        processEndUpdate(_event);
-    }
-
-    //////////////////////////////////////////
-    void ComponentSystem::setWorld(ECSWorldPtr const& _world)
-    {
-        m_world = _world;
-        m_worldRaw = _world.get();
-    }
-
-    //////////////////////////////////////////
-    void ComponentSystem::processSystemAdded()
-    {
-        
-    }
-
-    //////////////////////////////////////////
-    void ComponentSystem::processSystemRemoved()
-    {
-
-    }  
-
+    
 } // namespace Maze
 //////////////////////////////////////////

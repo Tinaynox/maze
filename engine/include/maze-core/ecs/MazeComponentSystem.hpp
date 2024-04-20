@@ -33,6 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/ecs/MazeECSTypes.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
+#include "maze-core/ecs/events/MazeECSEvents.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
@@ -70,7 +71,7 @@ namespace Maze
         virtual ~ComponentSystem();
 
         //////////////////////////////////////////
-        void update(F32 _dt);
+        void update(UpdateEvent const* _event);
 
         //////////////////////////////////////////
         virtual S32 getOrder() const { return 0; }
@@ -88,13 +89,13 @@ namespace Maze
         ComponentSystem();
 
         //////////////////////////////////////////
-        void processBeginUpdate(F32 _dt);
+        void processBeginUpdate(UpdateEvent const* _event) {};
 
         //////////////////////////////////////////
-        virtual void processUpdate(F32 _dt) {}
+        virtual void processUpdate(UpdateEvent const* _event) {}
 
         //////////////////////////////////////////
-        void processEndUpdate(F32 _dt);
+        void processEndUpdate(UpdateEvent const* _event) {};
 
         //////////////////////////////////////////
         void setWorld(ECSWorldPtr const& _world);
@@ -152,9 +153,9 @@ namespace Maze
         {}
 
         //////////////////////////////////////////
-        virtual void processUpdate(F32 _dt) MAZE_OVERRIDE
+        virtual void processUpdate(UpdateEvent const* _event) MAZE_OVERRIDE
         {
-            m_sample->processUpdate(_dt, m_func);
+            m_sample->processUpdate(_event, m_func);
         }
 
         //////////////////////////////////////////

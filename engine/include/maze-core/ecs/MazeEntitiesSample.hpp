@@ -36,6 +36,7 @@
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSTypes.hpp"
+#include "maze-core/ecs/events/MazeECSEvents.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
@@ -97,7 +98,7 @@ namespace Maze
         virtual void process(void (*)()) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual void processUpdate(F32 _dt, void (*)()) MAZE_ABSTRACT;
+        virtual void processUpdate(UpdateEvent const* _event, void (*)()) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual void processEvent(Event* _event, void (*)()) MAZE_ABSTRACT;
@@ -170,7 +171,7 @@ namespace Maze
         { }
 
         //////////////////////////////////////////
-        virtual void processUpdate(F32 _dt, void (*_func)()) MAZE_OVERRIDE
+        virtual void processUpdate(UpdateEvent const* _event, void (*_func)()) MAZE_OVERRIDE
         { }
 
         //////////////////////////////////////////
@@ -222,10 +223,10 @@ namespace Maze
         using ProcessFuncRaw = void(*)(Entity*, TComponents* ..._components);
 
         //////////////////////////////////////////
-        using ProcessUpdateFunc = std::function<void(F32, Entity*, TComponents* ..._components)>;
+        using ProcessUpdateFunc = std::function<void(UpdateEvent const*, Entity*, TComponents* ..._components)>;
 
         //////////////////////////////////////////
-        using ProcessUpdateFuncRaw = void(*)(F32, Entity*, TComponents* ..._components);
+        using ProcessUpdateFuncRaw = void(*)(UpdateEvent const*, Entity*, TComponents* ..._components);
 
         //////////////////////////////////////////
         using ProcessEventFunc = std::function<void(Event*, Entity*, TComponents* ..._components)>;
@@ -347,12 +348,12 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline void processUpdate(F32 _dt, ProcessUpdateFunc _func)
+        inline void processUpdate(UpdateEvent const* _event, ProcessUpdateFunc _func)
         {
             for (EntityData entityData : m_entitiesData)
             {
                 callProcessUpdate(
-                    _dt,
+                    _event,
                     _func,
                     entityData.entity,
                     entityData.components,
@@ -361,10 +362,10 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        virtual void processUpdate(F32 _dt, void (*_func)()) MAZE_OVERRIDE
+        virtual void processUpdate(UpdateEvent const* _event, void (*_func)()) MAZE_OVERRIDE
         {
             ProcessUpdateFuncRaw rawFunc = (ProcessUpdateFuncRaw)_func;
-            processUpdate(_dt, (ProcessUpdateFunc)(rawFunc));
+            processUpdate(_event, (ProcessUpdateFunc)(rawFunc));
         }
 
         //////////////////////////////////////////
@@ -444,13 +445,13 @@ namespace Maze
 
         template<S32 ...Idxs>
         inline void callProcessUpdate(
-            F32 _dt,
+            UpdateEvent const* _event,
             ProcessUpdateFunc _func,
             Entity* _entity,
             std::tuple<TComponents*...>& _components,
             IndexesTuple<Idxs...> const&)
         {
-            _func(_dt, _entity, std::get<Idxs>(_components)...);
+            _func(_event, _entity, std::get<Idxs>(_components)...);
         }
 
         template<S32 ...Idxs>

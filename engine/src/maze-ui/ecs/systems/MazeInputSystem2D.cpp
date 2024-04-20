@@ -160,9 +160,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void InputSystem2D::processUpdate(F32 _dt)
+    void InputSystem2D::processUpdate(UpdateEvent const* _event)
     {
         MAZE_PROFILE_EVENT("InputSystem2D::processUpdate");
+
+        F32 dt = _event->getDt();
 
         if (m_processClick)
         {
@@ -260,19 +262,19 @@ namespace Maze
         m_systemTextEditBoxesSample->process(
             [&](Entity* _entity, EditBox2D* _editBox)
             {
-                _editBox->update(_dt);
+                _editBox->update(dt);
             });
 
         m_systemTextDropdownsSample->process(
             [&](Entity* _entity, Dropdown2D* _dropdown)
             {
-                _dropdown->update(_dt);
+                _dropdown->update(dt);
             });
 
         m_scrollRects2D->process(
             [&](Entity* _entity, ScrollRect2D* _scrollRect)
             {
-                _scrollRect->update(_dt);
+                _scrollRect->update(dt);
             });
     }
 
