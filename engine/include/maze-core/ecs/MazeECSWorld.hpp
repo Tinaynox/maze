@@ -139,6 +139,9 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline Vector<ComponentSystemPtr> const& getSystems() { return m_systems; }
+
+        //////////////////////////////////////////
         template <typename TSystem>
         void removeSystem()
         {

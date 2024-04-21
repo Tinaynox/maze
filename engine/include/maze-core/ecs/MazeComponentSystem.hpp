@@ -78,6 +78,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        virtual CString getName() const { return getClassName(); }
+
+
+        //////////////////////////////////////////
         ECSWorldPtr getWorld() const { return m_world.lock(); }
 
         //////////////////////////////////////////
@@ -137,6 +141,9 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual Maze::ClassUID getClassUID() const MAZE_OVERRIDE { return m_name.hash; }
+
+        //////////////////////////////////////////
+        virtual CString getName() const MAZE_OVERRIDE { return m_name; }
 
     protected:
 
