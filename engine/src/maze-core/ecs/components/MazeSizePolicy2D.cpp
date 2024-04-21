@@ -28,6 +28,7 @@
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
@@ -110,6 +111,17 @@ namespace Maze
             m_transform->dirtyWorldTransform();
     }
     
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM(Size2DSystem, 5000,
+        UpdateEvent const* _event,
+        Entity* _entity,
+        SizePolicy2D* _sizePolicy)
+    {
+        if (_sizePolicy->getTransform()->isWorldTransformChanged())
+            _sizePolicy->updateSize();
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

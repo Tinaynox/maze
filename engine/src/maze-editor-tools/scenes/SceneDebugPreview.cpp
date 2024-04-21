@@ -82,8 +82,6 @@
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "maze-editor-tools/ecs/components/MazeDebugGridRenderer.hpp"
 #include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
-#include "maze-core/ecs/systems/MazeBounds2DSystem.hpp"
-#include "maze-core/ecs/systems/MazeSizePolicy2DSystem.hpp"
 #include "maze-core/ecs/systems/MazeTransformUtilsSystem.hpp"
 #include "maze-editor-tools/ecs/systems/MazeGizmosSystem.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
@@ -209,13 +207,11 @@ namespace Maze
     //////////////////////////////////////////
     void SceneDebugPreview::createSystems()
     {
-        m_previewWorld->addSystem(SizePolicy2DSystem::Create());
         m_previewWorld->addSystem(TransformUtilsSystem::Create());
         m_previewWorld->addSystem(TransformEventsSystem::Create());
         
         m_previewWorld->addSystem(RenderPreparationSystem::Create(GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()));
         m_previewWorld->addSystem(RenderControlSystem::Create(GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()));
-        m_previewWorld->addSystem(Bounds2DSystem::Create());
         m_previewWorld->addSystem(UISystem2D::Create());
         m_previewWorld->addSystem(InputSystem2D::Create());
 

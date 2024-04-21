@@ -49,7 +49,6 @@
 //////////////////////////////////////////
 namespace Maze
 {
-
     //////////////////////////////////////////
     // Class EntityManager
     //
@@ -110,7 +109,6 @@ namespace Maze
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<LinearMovement3D>("3D/Utils");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<SinMovement3D>("3D/Utils");
         EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<AwakeRandomRotation3D>("3D/Utils");
-
 
         EntitySerializationManager::Initialize(m_entitySerializationManager);
         if (!m_entitySerializationManager)

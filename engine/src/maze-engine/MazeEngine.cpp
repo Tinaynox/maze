@@ -56,8 +56,6 @@
 #include "maze-physics2d/managers/MazePhysics2DManager.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
-#include "maze-core/ecs/systems/MazeBounds2DSystem.hpp"
-#include "maze-core/ecs/systems/MazeSizePolicy2DSystem.hpp"
 #include "maze-core/ecs/systems/MazeTransformUtilsSystem.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderPreparationSystem.hpp"
@@ -338,12 +336,10 @@ namespace Maze
         RenderWindowPtr const& _renderWindow,
         RenderSystemPtr const& _renderSystem)
     {
-        _world->addSystem(SizePolicy2DSystem::Create());
         _world->addSystem(TransformUtilsSystem::Create());
         _world->addSystem(TransformEventsSystem::Create());
         _world->addSystem(RenderPreparationSystem::Create(_renderSystem));
         _world->addSystem(RenderControlSystem::Create(_renderSystem));
-        _world->addSystem(Bounds2DSystem::Create());
         _world->addSystem(UISystem2D::Create());
         _world->addSystem(InputSystem2D::Create());
 

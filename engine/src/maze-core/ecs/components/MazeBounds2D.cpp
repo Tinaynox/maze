@@ -29,6 +29,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
@@ -97,6 +98,18 @@ namespace Maze
     {
         m_transform = getEntityRaw()->ensureComponent<Transform2D>();
         dirtyBounds();
+    }
+
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM(Bounds2DSystem, 30000,
+        UpdateEvent const* _event,
+        Entity* _entity,
+        Bounds2D* _bounds)
+    {
+        if (_bounds->getTransform()->isWorldTransformChanged())
+            _bounds->dirtyBounds();
     }
 
     
