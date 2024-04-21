@@ -43,7 +43,6 @@
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/helpers/MazeXMLHelper.hpp"
 #include "maze-core/helpers/MazeDataBlockHelper.hpp"
-#include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"

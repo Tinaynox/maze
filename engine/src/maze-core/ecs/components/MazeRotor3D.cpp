@@ -30,6 +30,7 @@
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
@@ -86,6 +87,17 @@ namespace Maze
     void Rotor3D::processEntityAwakened()
     {
         m_transform = getEntityRaw()->getComponent<Transform3D>();
+    }
+
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM(Rotor3DSystem, -200,
+        UpdateEvent const* _event,
+        Entity* _entity,
+        Rotor3D* _rotor)
+    {
+        _rotor->update(_event->getDt());
     }
     
 } // namespace Maze

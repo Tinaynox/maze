@@ -41,7 +41,6 @@
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
-#include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
@@ -81,8 +80,6 @@
 #include "maze-editor-tools/ecs/components/MazeInspectorController.hpp"
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "maze-editor-tools/ecs/components/MazeDebugGridRenderer.hpp"
-#include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
-#include "maze-core/ecs/systems/MazeTransformUtilsSystem.hpp"
 #include "maze-editor-tools/ecs/systems/MazeGizmosSystem.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
@@ -206,10 +203,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void SceneDebugPreview::createSystems()
-    {
-        m_previewWorld->addSystem(TransformUtilsSystem::Create());
-        m_previewWorld->addSystem(TransformEventsSystem::Create());
-        
+    {        
         m_previewWorld->addSystem(RenderPreparationSystem::Create(GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()));
         m_previewWorld->addSystem(RenderControlSystem::Create(GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()));
         m_previewWorld->addSystem(UISystem2D::Create());

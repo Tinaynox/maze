@@ -28,6 +28,7 @@
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
@@ -416,6 +417,16 @@ namespace Maze
         setLocalTransform(Mat4F::c_identity);
     }
     
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM(Transform3DSystem, 100000,
+        UpdateEvent const* _event,
+        Entity* _entity,
+        Transform3D* _transform3D)
+    {
+        _transform3D->processEndFrame();
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

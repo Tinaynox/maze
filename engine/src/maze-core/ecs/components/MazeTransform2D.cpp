@@ -30,6 +30,7 @@
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/math/MazeMath.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
@@ -576,6 +577,16 @@ namespace Maze
         return s_parentMetaProperty;
     }
         
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM(Transform2DSystem, 100000,
+        UpdateEvent const* _event,
+        Entity* _entity,
+        Transform2D* _transform2D)
+    {
+        _transform2D->processEndFrame();
+    }
     
 } // namespace Maze
 //////////////////////////////////////////
