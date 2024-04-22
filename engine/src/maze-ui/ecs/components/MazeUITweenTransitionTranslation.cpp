@@ -39,6 +39,7 @@
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
@@ -249,6 +250,17 @@ namespace Maze
             m_hideSpeed = m_showSpeed / m_hideKoef;
         else
             m_hideSpeed = m_showSpeed;
+    }
+
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM(UITweenTransitionTranslationSystem, 300,
+        UpdateEvent const& _event,
+        Entity* _entity,
+        UITweenTransitionTranslation* _tweenTransition)
+    {
+        _tweenTransition->processUpdate(_event.getDt());
     }
     
     

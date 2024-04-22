@@ -58,7 +58,6 @@
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-ui/ecs/systems/MazeInputSystem2D.hpp"
 #include "maze-ui/ecs/systems/MazeUISystem2D.hpp"
-#include "maze-ui/ecs/systems/MazeUITweenTransitionSystem.hpp"
 #include "maze-physics2d/ecs/systems/MazePhysicsControlSystem2D.hpp"
 #include "maze-particles/ecs/systems/MazeParticlesDrawerSystem.hpp"
 #include "maze-particles/managers/MazeParticlesManager.hpp"
@@ -336,8 +335,6 @@ namespace Maze
         _world->addSystem(RenderControlSystem::Create(_renderSystem));
         _world->addSystem(UISystem2D::Create());
         _world->addSystem(InputSystem2D::Create());
-
-        _world->addSystem(UITweenTransitionSystem::Create());
     }
 
     //////////////////////////////////////////
