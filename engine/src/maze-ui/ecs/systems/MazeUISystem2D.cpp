@@ -119,7 +119,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void UISystem2D::processUpdate(UpdateEvent const* _event)
+    void UISystem2D::processUpdate(UpdateEvent const& _event)
     {
         
     }

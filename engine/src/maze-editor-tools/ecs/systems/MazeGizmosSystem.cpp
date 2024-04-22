@@ -88,7 +88,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosSystem::processUpdate(UpdateEvent const* _event)
+    void GizmosSystem::processUpdate(UpdateEvent const& _event)
     {
         MAZE_PROFILE_EVENT("GizmosSystem::processUpdate");
 
@@ -100,7 +100,7 @@ namespace Maze
             });
 
         if (haveGizmosMask)
-            drawGizmos(_event->getDt());
+            drawGizmos(_event.getDt());
     }
 
     //////////////////////////////////////////

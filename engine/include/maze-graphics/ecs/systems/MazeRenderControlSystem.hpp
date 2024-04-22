@@ -97,7 +97,7 @@ namespace Maze
         void render();
 
         //////////////////////////////////////////
-        void update(UpdateEvent const* _event);
+        void update(UpdateEvent const& _event);
 
 
         //////////////////////////////////////////
@@ -118,7 +118,7 @@ namespace Maze
         virtual void processSystemAdded() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void processUpdate(UpdateEvent const* _event) MAZE_OVERRIDE;
+        virtual void processUpdate(UpdateEvent const& _event) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void processCanvasEntityAdded(Entity* _entity, Canvas* _canvas);

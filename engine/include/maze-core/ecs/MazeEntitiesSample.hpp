@@ -98,7 +98,7 @@ namespace Maze
         virtual void process(void (*)()) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual void processUpdate(UpdateEvent const* _event, void (*)()) MAZE_ABSTRACT;
+        virtual void processUpdate(UpdateEvent const& _event, void (*)()) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
         virtual void processEvent(Event* _event, void (*)()) MAZE_ABSTRACT;
@@ -171,7 +171,7 @@ namespace Maze
         { }
 
         //////////////////////////////////////////
-        virtual void processUpdate(UpdateEvent const* _event, void (*_func)()) MAZE_OVERRIDE
+        virtual void processUpdate(UpdateEvent const& _event, void (*_func)()) MAZE_OVERRIDE
         { }
 
         //////////////////////////////////////////
@@ -223,16 +223,16 @@ namespace Maze
         using ProcessFuncRaw = void(*)(Entity*, TComponents* ..._components);
 
         //////////////////////////////////////////
-        using ProcessUpdateFunc = std::function<void(UpdateEvent const*, Entity*, TComponents* ..._components)>;
+        using ProcessUpdateFunc = std::function<void(UpdateEvent const&, Entity*, TComponents* ..._components)>;
 
         //////////////////////////////////////////
-        using ProcessUpdateFuncRaw = void(*)(UpdateEvent const*, Entity*, TComponents* ..._components);
+        using ProcessUpdateFuncRaw = void(*)(UpdateEvent const&, Entity*, TComponents* ..._components);
 
         //////////////////////////////////////////
-        using ProcessEventFunc = std::function<void(Event*, Entity*, TComponents* ..._components)>;
+        using ProcessEventFunc = std::function<void(Event&, Entity*, TComponents* ..._components)>;
 
         //////////////////////////////////////////
-        using ProcessEventFuncRaw = void(*)(Event*, Entity*, TComponents* ..._components);
+        using ProcessEventFuncRaw = void(*)(Event&, Entity*, TComponents* ..._components);
 
         //////////////////////////////////////////
         struct EntityData
@@ -348,7 +348,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline void processUpdate(UpdateEvent const* _event, ProcessUpdateFunc _func)
+        inline void processUpdate(UpdateEvent const& _event, ProcessUpdateFunc _func)
         {
             for (EntityData entityData : m_entitiesData)
             {
@@ -362,7 +362,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        virtual void processUpdate(UpdateEvent const* _event, void (*_func)()) MAZE_OVERRIDE
+        virtual void processUpdate(UpdateEvent const& _event, void (*_func)()) MAZE_OVERRIDE
         {
             ProcessUpdateFuncRaw rawFunc = (ProcessUpdateFuncRaw)_func;
             processUpdate(_event, (ProcessUpdateFunc)(rawFunc));
@@ -445,7 +445,7 @@ namespace Maze
 
         template<S32 ...Idxs>
         inline void callProcessUpdate(
-            UpdateEvent const* _event,
+            UpdateEvent const& _event,
             ProcessUpdateFunc _func,
             Entity* _entity,
             std::tuple<TComponents*...>& _components,
@@ -462,7 +462,7 @@ namespace Maze
             std::tuple<TComponents*...>& _components,
             IndexesTuple<Idxs...> const&)
         {
-            _func(_event, _entity, std::get<Idxs>(_components)...);
+            _func(*_event, _entity, std::get<Idxs>(_components)...);
         }
 
 

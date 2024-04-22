@@ -160,11 +160,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void InputSystem2D::processUpdate(UpdateEvent const* _event)
+    void InputSystem2D::processUpdate(UpdateEvent const& _event)
     {
         MAZE_PROFILE_EVENT("InputSystem2D::processUpdate");
 
-        F32 dt = _event->getDt();
+        F32 dt = _event.getDt();
 
         if (m_processClick)
         {

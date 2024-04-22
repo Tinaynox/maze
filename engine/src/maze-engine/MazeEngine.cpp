@@ -56,7 +56,6 @@
 #include "maze-physics2d/managers/MazePhysics2DManager.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderPreparationSystem.hpp"
 #include "maze-ui/ecs/systems/MazeInputSystem2D.hpp"
 #include "maze-ui/ecs/systems/MazeUISystem2D.hpp"
 #include "maze-ui/ecs/systems/MazeUITweenTransitionSystem.hpp"
@@ -334,7 +333,6 @@ namespace Maze
         RenderWindowPtr const& _renderWindow,
         RenderSystemPtr const& _renderSystem)
     {
-        _world->addSystem(RenderPreparationSystem::Create(_renderSystem));
         _world->addSystem(RenderControlSystem::Create(_renderSystem));
         _world->addSystem(UISystem2D::Create());
         _world->addSystem(InputSystem2D::Create());

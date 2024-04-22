@@ -190,7 +190,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControlSystem::processUpdate(UpdateEvent const* _event)
+    void RenderControlSystem::processUpdate(UpdateEvent const& _event)
     {
         MAZE_PROFILER_SCOPED_LOCK(RENDER);
         MAZE_PROFILE_EVENT("RenderControlSystem::processUpdate");
@@ -199,7 +199,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControlSystem::update(UpdateEvent const* _event)
+    void RenderControlSystem::update(UpdateEvent const& _event)
     {
         m_module3D->processUpdate(_event);
         m_module2D->processUpdate(_event);

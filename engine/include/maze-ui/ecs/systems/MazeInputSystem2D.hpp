@@ -147,7 +147,7 @@ namespace Maze
         virtual void processSystemAdded() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void processUpdate(UpdateEvent const* _event) MAZE_OVERRIDE;
+        virtual void processUpdate(UpdateEvent const& _event) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void processCanvasEntityAdded(Entity* _entity, Canvas* _canvas);

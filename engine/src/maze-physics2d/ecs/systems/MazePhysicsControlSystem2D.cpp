@@ -84,7 +84,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PhysicsControlSystem2D::processUpdate(UpdateEvent const* _event)
+    void PhysicsControlSystem2D::processUpdate(UpdateEvent const& _event)
     {
     }
 

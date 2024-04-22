@@ -129,7 +129,7 @@ namespace Maze
         template<typename ...TComponents>
         inline SimpleComponentSystemHolder(
             HashedCString _name,
-            void(*_func)(UpdateEvent const*, Entity*, TComponents* ...),
+            void(*_func)(UpdateEvent const&, Entity*, TComponents* ...),
             S32 _order = 0)
             : BaseClass(_name, (SimpleComponentSystem::Func)_func, _order)
         {
@@ -164,7 +164,7 @@ namespace Maze
         template<typename TEventType, typename ...TComponents>
         inline SimpleComponentSystemEventHandlerHolder(
             HashedCString _name,
-            void(*_func)(TEventType*, Entity*, TComponents* ...),
+            void(*_func)(TEventType&, Entity*, TComponents* ...),
             S32 _order = 0)
             : BaseClass(_name, (SimpleComponentSystem::Func)_func, _order)
         {

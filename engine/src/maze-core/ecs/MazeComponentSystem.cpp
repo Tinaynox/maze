@@ -55,7 +55,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ComponentSystem::update(UpdateEvent const* _event)
+    void ComponentSystem::update(UpdateEvent const& _event)
     {
         processBeginUpdate(_event);
 

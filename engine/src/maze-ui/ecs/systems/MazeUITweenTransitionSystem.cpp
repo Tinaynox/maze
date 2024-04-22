@@ -89,11 +89,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void UITweenTransitionSystem::processUpdate(UpdateEvent const* _event)
+    void UITweenTransitionSystem::processUpdate(UpdateEvent const& _event)
     {
         MAZE_PROFILE_EVENT("UITweenTransitionSystem::processUpdate");
 
-        F32 dt = _event->getDt();
+        F32 dt = _event.getDt();
 
         m_UITweenTransitionAlphaSample->process(
             [dt](Entity* _entity, UITweenTransitionAlpha* _tweenTransition)

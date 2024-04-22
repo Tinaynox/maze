@@ -93,11 +93,11 @@ namespace Maze
 
     //////////////////////////////////////////
     SIMPLE_COMPONENT_SYSTEM(LinearMovement3DSystem, -200,
-        UpdateEvent const* _event,
+        UpdateEvent const& _event,
         Entity* _entity,
         LinearMovement3D* _linearMovement)
     {
-        _linearMovement->update(_event->getDt());
+        _linearMovement->update(_event.getDt());
     }
     
 } // namespace Maze

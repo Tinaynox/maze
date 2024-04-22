@@ -93,11 +93,11 @@ namespace Maze
 
     //////////////////////////////////////////
     SIMPLE_COMPONENT_SYSTEM(Rotor3DSystem, -200,
-        UpdateEvent const* _event,
+        UpdateEvent const& _event,
         Entity* _entity,
         Rotor3D* _rotor)
     {
-        _rotor->update(_event->getDt());
+        _rotor->update(_event.getDt());
     }
     
 } // namespace Maze

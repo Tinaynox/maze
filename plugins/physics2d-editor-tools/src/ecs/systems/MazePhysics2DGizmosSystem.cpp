@@ -86,7 +86,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Physics2DGizmosSystem::processUpdate(UpdateEvent const* _event)
+    void Physics2DGizmosSystem::processUpdate(UpdateEvent const& _event)
     {
         drawGizmos();
     }

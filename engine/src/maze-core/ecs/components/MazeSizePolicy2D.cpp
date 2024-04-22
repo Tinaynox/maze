@@ -115,7 +115,7 @@ namespace Maze
 
     //////////////////////////////////////////
     SIMPLE_COMPONENT_SYSTEM(Size2DSystem, 5000,
-        UpdateEvent const* _event,
+        UpdateEvent const& _event,
         Entity* _entity,
         SizePolicy2D* _sizePolicy)
     {

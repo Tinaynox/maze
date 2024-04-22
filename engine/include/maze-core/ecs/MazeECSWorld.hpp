@@ -202,7 +202,7 @@ namespace Maze
         template<typename ...TComponents>
         inline SimpleComponentSystemPtr addSystem(
             HashedCString _name,
-            void (*_func)(UpdateEvent const*, Entity*, TComponents* ...),
+            void (*_func)(UpdateEvent const&, Entity*, TComponents* ...),
             S32 _order = 0)
         {
             SimpleComponentSystemPtr system = SimpleComponentSystem::Create(
@@ -218,7 +218,7 @@ namespace Maze
         template<typename TEventType, typename ...TComponents>
         inline SimpleComponentSystemEventHandlerPtr addSystemEventHandler(
             HashedCString _name,
-            void (*_func)(TEventType*, Entity*, TComponents* ...),
+            void (*_func)(TEventType&, Entity*, TComponents* ...),
             S32 _order = 0)
         {
             SimpleComponentSystemEventHandlerPtr system = SimpleComponentSystemEventHandler::Create(

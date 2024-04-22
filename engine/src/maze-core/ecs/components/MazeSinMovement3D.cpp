@@ -109,11 +109,11 @@ namespace Maze
 
     //////////////////////////////////////////
     SIMPLE_COMPONENT_SYSTEM(SinMovement3DSystem, -200,
-        UpdateEvent const* _event,
+        UpdateEvent const& _event,
         Entity* _entity,
         SinMovement3D* _sinMovement)
     {
-        _sinMovement->update(_event->getDt());
+        _sinMovement->update(_event.getDt());
     }
     
 } // namespace Maze

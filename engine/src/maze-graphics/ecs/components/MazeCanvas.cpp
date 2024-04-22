@@ -31,6 +31,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
@@ -238,6 +239,15 @@ namespace Maze
         m_canvasScaler = getEntityRaw()->ensureComponent<CanvasScaler>();
     }
     
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM(CanvasPreparationSystem, -50,
+        UpdateEvent const& _event,
+        Entity* _entity,
+        Canvas* _canvas)
+    {
+        _canvas->prepareFrame(_event.getDt());
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

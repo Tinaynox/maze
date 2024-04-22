@@ -71,7 +71,7 @@ namespace Maze
         virtual ~ComponentSystem();
 
         //////////////////////////////////////////
-        void update(UpdateEvent const* _event);
+        void update(UpdateEvent const& _event);
 
         //////////////////////////////////////////
         virtual S32 getOrder() const { return 0; }
@@ -93,13 +93,13 @@ namespace Maze
         ComponentSystem();
 
         //////////////////////////////////////////
-        void processBeginUpdate(UpdateEvent const* _event) {};
+        void processBeginUpdate(UpdateEvent const& _event) {};
 
         //////////////////////////////////////////
-        virtual void processUpdate(UpdateEvent const* _event) {}
+        virtual void processUpdate(UpdateEvent const& _event) {}
 
         //////////////////////////////////////////
-        void processEndUpdate(UpdateEvent const* _event) {};
+        void processEndUpdate(UpdateEvent const& _event) {};
 
         //////////////////////////////////////////
         void setWorld(ECSWorldPtr const& _world);
@@ -160,7 +160,7 @@ namespace Maze
         {}
 
         //////////////////////////////////////////
-        virtual void processUpdate(UpdateEvent const* _event) MAZE_OVERRIDE
+        virtual void processUpdate(UpdateEvent const& _event) MAZE_OVERRIDE
         {
             m_sample->processUpdate(_event, m_func);
         }
