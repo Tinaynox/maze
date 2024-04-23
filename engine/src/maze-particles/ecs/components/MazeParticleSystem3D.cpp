@@ -44,6 +44,7 @@
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-graphics/ecs/MazeECSRenderScene.hpp"
 #include "maze-particles/MazeParticleSystem3DZone.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
@@ -613,6 +614,19 @@ namespace Maze
                 _callback(subParticleSystem);
             }
         }
+    }
+
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM(ParticleSystem3DSystem, 45000,
+        UpdateEvent const& _event,
+        Entity* _entity,
+        ParticleSystem3D* _particleSystem)
+    {
+        MAZE_PROFILE_EVENT("ParticleSystem3DSystem");
+
+        _particleSystem->update(_event.getDt());
     }
     
 } // namespace Maze
