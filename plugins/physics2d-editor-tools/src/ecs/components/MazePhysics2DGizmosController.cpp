@@ -57,6 +57,9 @@ namespace Maze
     {
         if (GizmosManager::GetInstancePtr())
             GizmosManager::GetInstancePtr()->eventGizmosPerComponentClassChanged.unsubscribe(this);
+
+        if (m_renderTarget)
+            m_renderTarget->eventRenderTargetDestroyed.unsubscribe(this);
     }
 
     //////////////////////////////////////////
