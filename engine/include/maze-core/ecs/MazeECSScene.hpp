@@ -158,6 +158,17 @@ namespace Maze
         //////////////////////////////////////////
         Set<Entity*> const getEntities() const { return m_entities; }
 
+
+        //////////////////////////////////////////
+        template <typename TComponent, typename ...TArgs>
+        inline SharedPtr<TComponent> createAndAddEntityWithComponent(
+            CString _name,
+            TArgs... _args)
+        {
+            EntityPtr entity = createEntity(_name);
+            return entity->createComponent<TComponent, TArgs...>(_args...);
+        }
+
         //////////////////////////////////////////
         template <typename TComponent>
         TComponent* findEntityByComponentRaw()

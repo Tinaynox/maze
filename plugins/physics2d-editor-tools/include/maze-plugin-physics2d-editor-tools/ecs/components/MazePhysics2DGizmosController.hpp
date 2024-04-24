@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazePhysics2DGizmosSystem_hpp_))
-#define _MazePhysics2DGizmosSystem_hpp_
+#if (!defined(_MazePhysics2DGizmosController_hpp_))
+#define _MazePhysics2DGizmosController_hpp_
 
 
 //////////////////////////////////////////
@@ -41,57 +41,51 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(Physics2DGizmosSystem);
+    MAZE_USING_SHARED_PTR(Physics2DGizmosController);
     MAZE_USING_SHARED_PTR(ECSWorld);
     MAZE_USING_SHARED_PTR(EntitiesSample);
     MAZE_USING_SHARED_PTR(GizmosDrawer);
 
 
     //////////////////////////////////////////
-    // Class Physics2DGizmosSystem
+    // Class Physics2DGizmosController
     //
     //////////////////////////////////////////
-    class MAZE_PLUGIN_PHYSICS2D_EDITOR_TOOLS_API Physics2DGizmosSystem
-        : public ComponentSystem
+    class MAZE_PLUGIN_PHYSICS2D_EDITOR_TOOLS_API Physics2DGizmosController
+        : public Component
         , public MultiDelegateCallbackReceiver
         , public b2Draw
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(Physics2DGizmosSystem, ComponentSystem);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(Physics2DGizmosController, Component);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(Physics2DGizmosSystem);
+        MAZE_DECLARE_MEMORY_ALLOCATION(Physics2DGizmosController);
 
     public:
 
         //////////////////////////////////////////
-        virtual ~Physics2DGizmosSystem();
+        virtual ~Physics2DGizmosController();
 
         //////////////////////////////////////////
-        static Physics2DGizmosSystemPtr Create(PhysicsWorld2D* _physicsWorld, RenderTarget* _renderTarget);
+        static Physics2DGizmosControllerPtr Create(PhysicsWorld2D* _physicsWorld, RenderTarget* _renderTarget);
 
         //////////////////////////////////////////
         void drawGizmos();
 
 
-        //////////////////////////////////////////
-        virtual S32 getOrder() const MAZE_OVERRIDE { return 40000; }
-
     protected:
 
         //////////////////////////////////////////
-        Physics2DGizmosSystem();
+        Physics2DGizmosController();
 
         //////////////////////////////////////////
         bool init(PhysicsWorld2D* _physicsWorld, RenderTarget* _renderTarget);
 
         //////////////////////////////////////////
-        virtual void processSystemAdded() MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void processUpdate(UpdateEvent const& _event) MAZE_OVERRIDE;
+        virtual void processEntityAwakened() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void notifyRenderTargetDestroyed(RenderTarget* _renderTarget);
@@ -131,5 +125,5 @@ namespace Maze
 //////////////////////////////////////////
  
 
-#endif // _MazePhysics2DGizmosSystem_hpp_
+#endif // _MazePhysics2DGizmosController_hpp_
 //////////////////////////////////////////

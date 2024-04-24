@@ -25,73 +25,69 @@
 
 //////////////////////////////////////////
 #include "MazePhysics2DEditorToolsHeader.hpp"
-#include "maze-plugin-physics2d-editor-tools/ecs/systems/MazePhysics2DGizmosSystem.hpp"
+#include "maze-plugin-physics2d-editor-tools/ecs/components/MazePhysics2DGizmosController.hpp"
 #include "maze-physics2d/helpers/MazeBox2DHelper.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class Physics2DGizmosSystem
+    // Class Physics2DGizmosController
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Physics2DGizmosSystem, ComponentSystem);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Physics2DGizmosController, Component);
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(Physics2DGizmosSystem);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(Physics2DGizmosController);
 
     //////////////////////////////////////////
-    Physics2DGizmosSystem::Physics2DGizmosSystem()
+    Physics2DGizmosController::Physics2DGizmosController()
     {
         
     }
 
     //////////////////////////////////////////
-    Physics2DGizmosSystem::~Physics2DGizmosSystem()
+    Physics2DGizmosController::~Physics2DGizmosController()
     {
         if (GizmosManager::GetInstancePtr())
             GizmosManager::GetInstancePtr()->eventGizmosPerComponentClassChanged.unsubscribe(this);
     }
 
     //////////////////////////////////////////
-    Physics2DGizmosSystemPtr Physics2DGizmosSystem::Create(PhysicsWorld2D* _physicsWorld, RenderTarget* _renderTarget)
+    Physics2DGizmosControllerPtr Physics2DGizmosController::Create(PhysicsWorld2D* _physicsWorld, RenderTarget* _renderTarget)
     {
-        Physics2DGizmosSystemPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(Physics2DGizmosSystem, object, init(_physicsWorld, _renderTarget));
+        Physics2DGizmosControllerPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(Physics2DGizmosController, object, init(_physicsWorld, _renderTarget));
         return object;
     }
 
     //////////////////////////////////////////
-    bool Physics2DGizmosSystem::init(PhysicsWorld2D* _physicsWorld, RenderTarget* _renderTarget)
+    bool Physics2DGizmosController::init(PhysicsWorld2D* _physicsWorld, RenderTarget* _renderTarget)
     {
         m_physicsWorld = _physicsWorld;
         m_physicsWorld->getBox2DWorld()->SetDebugDraw(this);
         SetFlags(e_shapeBit);
 
         m_renderTarget = _renderTarget;
-        m_renderTarget->eventRenderTargetDestroyed.subscribe(this, &Physics2DGizmosSystem::notifyRenderTargetDestroyed);
+        m_renderTarget->eventRenderTargetDestroyed.subscribe(this, &Physics2DGizmosController::notifyRenderTargetDestroyed);
 
         return true;
     }
 
     //////////////////////////////////////////
-    void Physics2DGizmosSystem::processSystemAdded()
+    void Physics2DGizmosController::processEntityAwakened()
     {
-        m_drawer = GizmosDrawer::Create(m_worldRaw, m_renderTarget);
+        m_drawer = GizmosDrawer::Create(getEntityRaw()->getECSWorld(), m_renderTarget);
     }
 
     //////////////////////////////////////////
-    void Physics2DGizmosSystem::processUpdate(UpdateEvent const& _event)
-    {
-        drawGizmos();
-    }
-    //////////////////////////////////////////
-    void Physics2DGizmosSystem::drawGizmos()
+    void Physics2DGizmosController::drawGizmos()
     {
         if (!m_drawer)
             return;
@@ -104,14 +100,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Physics2DGizmosSystem::notifyRenderTargetDestroyed(RenderTarget* _renderTarget)
+    void Physics2DGizmosController::notifyRenderTargetDestroyed(RenderTarget* _renderTarget)
     {
         m_drawer.reset();
-        m_worldRaw->update(0.0f);
+        getEntityRaw()->getECSWorld()->update(0.0f);
     }
 
     //////////////////////////////////////////
-    void Physics2DGizmosSystem::DrawPolygon(b2Vec2 const* _vertices, int32 _vertexCount, b2Color const& _color)
+    void Physics2DGizmosController::DrawPolygon(b2Vec2 const* _vertices, int32 _vertexCount, b2Color const& _color)
     {
         ColorF128 color = Box2DHelper::ToColor128F(_color);
 
@@ -129,7 +125,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Physics2DGizmosSystem::DrawSolidPolygon(b2Vec2 const* _vertices, int32 _vertexCount, b2Color const& _color)
+    void Physics2DGizmosController::DrawSolidPolygon(b2Vec2 const* _vertices, int32 _vertexCount, b2Color const& _color)
     {
         ColorF128 color = Box2DHelper::ToColor128F(_color);
 
@@ -147,7 +143,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Physics2DGizmosSystem::DrawCircle(b2Vec2 const& _center, F32 _radius, b2Color const& _color)
+    void Physics2DGizmosController::DrawCircle(b2Vec2 const& _center, F32 _radius, b2Color const& _color)
     {
         ColorF128 color = Box2DHelper::ToColor128F(_color);
         Vec2F p = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2F32(_center));
@@ -158,7 +154,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Physics2DGizmosSystem::DrawSolidCircle(b2Vec2 const& _center, F32 _radius, b2Vec2 const& _axis, b2Color const& _color)
+    void Physics2DGizmosController::DrawSolidCircle(b2Vec2 const& _center, F32 _radius, b2Vec2 const& _axis, b2Color const& _color)
     {
         ColorF128 color = Box2DHelper::ToColor128F(_color);
         Vec2F p = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2F32(_center));
@@ -169,7 +165,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Physics2DGizmosSystem::DrawSegment(b2Vec2 const& _p1, b2Vec2 const& _p2, b2Color const& _color)
+    void Physics2DGizmosController::DrawSegment(b2Vec2 const& _p1, b2Vec2 const& _p2, b2Color const& _color)
     {
         ColorF128 color = Box2DHelper::ToColor128F(_color);
         Vec2F p1 = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2F32(_p1));
@@ -180,13 +176,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Physics2DGizmosSystem::DrawTransform(b2Transform const& _xf)
+    void Physics2DGizmosController::DrawTransform(b2Transform const& _xf)
     {
 
     }
 
     //////////////////////////////////////////
-    void Physics2DGizmosSystem::DrawPoint(b2Vec2 const& _p, F32 _size, b2Color const& _color)
+    void Physics2DGizmosController::DrawPoint(b2Vec2 const& _p, F32 _size, b2Color const& _color)
     {
         ColorF128 color = Box2DHelper::ToColor128F(_color);
         Vec2F p = m_physicsWorld->convertMetersToUnits(Box2DHelper::ToVec2F32(_p));
@@ -196,6 +192,16 @@ namespace Maze
         m_drawer->drawWireCircle(p, Vec3F::c_negativeUnitZ, r);
     }
 
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM(Physics2DGizmosSystem, 40000,
+        UpdateEvent const& _event,
+        Entity* _entity,
+        Physics2DGizmosController* _controller)
+    {
+        _controller->drawGizmos();
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

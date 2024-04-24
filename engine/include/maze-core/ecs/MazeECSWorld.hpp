@@ -101,6 +101,7 @@ namespace Maze
         //////////////////////////////////////////
         bool removeEntity(EntityPtr const& _entity);
 
+
         //////////////////////////////////////////
         EntityPtr const& getEntityById(EntityId _id) const;
 
@@ -115,7 +116,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TSystem, typename ...TArgs>
-        SharedPtr<TSystem> createAndAddSystem(TArgs... _args)
+        inline SharedPtr<TSystem> createAndAddSystem(TArgs... _args)
         {
             SharedPtr<TSystem> system = TSystem::Create(this->getSharedPtr(), _args...);
             addSystem(system);
@@ -124,7 +125,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TSystem>
-        SharedPtr<TSystem> getSystem()
+        inline SharedPtr<TSystem> getSystem()
         {
             ClassUID uid = ClassInfo<TSystem>::UID();
             for (Size i = 0, in = m_systems.size(); i < in; ++i)
@@ -143,7 +144,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TSystem>
-        void removeSystem()
+        inline void removeSystem()
         {
             ClassUID uid = ClassInfo<TSystem>::UID();
             for (Size i = 0, in = m_systems.size(); i < in; ++i)
@@ -175,7 +176,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template<typename ...TComponents>
-        SharedPtr<GenericInclusiveEntitiesSample<TComponents...>> requestInclusiveSample()
+        inline SharedPtr<GenericInclusiveEntitiesSample<TComponents...>> requestInclusiveSample()
         {
             for (Size i = 0, in = m_samples.size(); i < in; ++i)
             {
