@@ -61,7 +61,6 @@
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
-#include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "Example.hpp"
 

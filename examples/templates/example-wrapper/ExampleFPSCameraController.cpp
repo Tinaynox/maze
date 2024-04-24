@@ -32,6 +32,7 @@
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "Example.hpp"
 
 
@@ -40,11 +41,11 @@ namespace Maze
 {
     //////////////////////////////////////////
     SIMPLE_COMPONENT_SYSTEM(UpdateExampleFPSCameraControllerES, 100,
-        UpdateEvent const* _event,
+        UpdateEvent const& _event,
         Entity* _entity,
         ExampleFPSCameraController* _someObject)
     {
-        _someObject->update(_event->getDt());
+        _someObject->update(_event.getDt());
     }
 
 
