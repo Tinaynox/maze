@@ -66,12 +66,6 @@ namespace Maze
         };
 
         //////////////////////////////////////////
-        static inline void WriteSimpleString(ByteBufferWriteStream& _stream, CString _value)
-        {
-            WriteSimpleString(_stream, _value, strlen(_value));
-        }
-
-        //////////////////////////////////////////
         static inline void WriteComplexString(ByteBufferWriteStream& _stream, CString _value, Size _size)
         {
             if (_size == 0)
@@ -523,7 +517,7 @@ namespace Maze
                 break;
             }
 
-            Size startOffset = m_readStream.getOffset();
+            // Size startOffset = m_readStream.getOffset();
             nameText.clear();
             if (!parseIdentifier(nameText))
             {

@@ -214,7 +214,7 @@ namespace Maze
         {
             Vec3F c = _point - _lineA;
             Vec3F v = _lineB - _lineA;
-            F32 d = v.length();
+            
             v.normalize();
             F32 t = v.dotProduct(c);
 
