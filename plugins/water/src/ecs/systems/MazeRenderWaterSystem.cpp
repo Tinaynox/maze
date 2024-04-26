@@ -108,7 +108,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderWaterSystem::processUpdate(F32 _dt)
+    void RenderWaterSystem::processUpdate(UpdateEvent const& _event)
     {
     }
 
