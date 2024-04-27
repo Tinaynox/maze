@@ -168,7 +168,6 @@ namespace Maze
             return;
 
         U8* prevData = m_data;
-        U32 prevSize = m_size;
 
         if (!reallocate(_capacity))
             return;

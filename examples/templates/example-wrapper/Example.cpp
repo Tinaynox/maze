@@ -259,7 +259,11 @@ namespace Maze
         {
             RenderSystemOpenGLConfig config;
             config.multiContextPolicy = OpenGLMultiContextPolicy::Unified;
+#   if MAZE_PLATFORM == MAZE_PLATFORM_OSX
+            config.useDummyContext = false;
+#   else
             config.useDummyContext = true;
+#   endif
             MAZE_LOAD_PLATFORM_PLUGIN(RenderSystemOpenGL3, config);
         }
 #endif

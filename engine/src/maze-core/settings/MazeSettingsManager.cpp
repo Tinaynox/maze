@@ -306,7 +306,7 @@ namespace Maze
         if (it == m_unregisteredSettings.end())
             return;
 
-        MetaClass* const settingsMetaClass = _settings->getMetaClass();
+        // MetaClass* const settingsMetaClass = _settings->getMetaClass();
         _settings->loadFromDataBlock(it->second);
         //MetaInstance settingsMetaInstance = _settings->getMetaInstance();
         //DataBlockHelper::DeserializeMetaInstanceFromDataBlock(settingsMetaClass, settingsMetaInstance, it->second);

@@ -220,8 +220,6 @@ namespace Maze
             ConstMetaInstance _metaInstance,
             DataBlock& _dataBlock)
         {
-            HashedCString className = _metaClass->getName();
-
             for (MetaClass* metaClass : _metaClass->getAllSuperMetaClasses())
             {
                 for (S32 i = 0; i < metaClass->getPropertiesCount(); ++i)
