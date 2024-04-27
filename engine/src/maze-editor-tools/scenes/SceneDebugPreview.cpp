@@ -85,7 +85,6 @@
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-ui/ecs/systems/MazeInputSystem2D.hpp"
 #include "maze-ui/ecs/systems/MazeUISystem2D.hpp"
-#include "maze-physics2d/ecs/systems/MazePhysicsControlSystem2D.hpp"
 #include "layout/MazeEditorToolsStyles.hpp"
 
 

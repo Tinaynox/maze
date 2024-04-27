@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazePhysicsControlSystem2D_hpp_))
-#define _MazePhysicsControlSystem2D_hpp_
+#if (!defined(_MazePhysicsController2D_hpp_))
+#define _MazePhysicsController2D_hpp_
 
 
 //////////////////////////////////////////
@@ -44,7 +44,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(EntitiesSample);
-    MAZE_USING_SHARED_PTR(PhysicsControlSystem2D);
+    MAZE_USING_SHARED_PTR(PhysicsController2D);
     MAZE_USING_SHARED_PTR(Transform2D);
     MAZE_USING_SHARED_PTR(Rigidbody2D);
     MAZE_USING_SHARED_PTR(PhysicsWorld2D);
@@ -52,20 +52,20 @@ namespace Maze
             
 
     //////////////////////////////////////////
-    // Class PhysicsControlSystem2D
+    // Class PhysicsController2D
     //
     //////////////////////////////////////////
-    class MAZE_PHYSICS2D_API PhysicsControlSystem2D
-        : public ComponentSystem
+    class MAZE_PHYSICS2D_API PhysicsController2D
+        : public Component
         , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(PhysicsControlSystem2D, ComponentSystem);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(PhysicsController2D, Component);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(PhysicsControlSystem2D);
+        MAZE_DECLARE_MEMORY_ALLOCATION(PhysicsController2D);
 
         //////////////////////////////////////////
         friend class Entity;
@@ -73,28 +73,23 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~PhysicsControlSystem2D();
+        virtual ~PhysicsController2D();
 
         //////////////////////////////////////////
-        static PhysicsControlSystem2DPtr Create();
+        static PhysicsController2DPtr Create();
 
-
-        //////////////////////////////////////////
-        virtual S32 getOrder() const MAZE_OVERRIDE { return 500; }
 
     protected:
 
         //////////////////////////////////////////
-        PhysicsControlSystem2D();
+        PhysicsController2D();
 
         //////////////////////////////////////////
         bool init();
 
         //////////////////////////////////////////
-        virtual void processSystemAdded() MAZE_OVERRIDE;
+        virtual void processEntityAwakened() MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        virtual void processUpdate(UpdateEvent const& _event) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void setPhysicsWorld2D(PhysicsWorld2DPtr const& _physicsWorld2D);
@@ -103,13 +98,13 @@ namespace Maze
         void notifyFixedUpdateStart(F32 _dt);
 
         //////////////////////////////////////////
+        void notifyFixedUpdateFinished(F32 _dt);
+
+        //////////////////////////////////////////
         void notifyUpdateFinished(F32 _dt);
 
     protected:
         PhysicsWorld2DPtr m_physicsWorld2D;
-
-        SharedPtr<GenericInclusiveEntitiesSample<Rigidbody2D, Transform3D>> m_rigidbodies;
-        SharedPtr<GenericInclusiveEntitiesSample<PhysicsRotor2D>> m_rotors;
     };
 
 
@@ -117,5 +112,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazePhysicsControlSystem2D_hpp_
+#endif // _MazePhysicsController2D_hpp_
 //////////////////////////////////////////

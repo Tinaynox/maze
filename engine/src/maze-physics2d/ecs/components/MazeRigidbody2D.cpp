@@ -38,6 +38,8 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
+#include "maze-physics2d/ecs/events/MazeECSPhysics2DEvents.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
@@ -415,7 +417,51 @@ namespace Maze
             _circleColliders = m_transform3D->getAllComponentsRaw<CircleCollider2D>(true);
         }
     }
-    
+
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(Rigidbody2DOnFixedUpdateStart, 0,
+        Physics2DFixedUpdateStartEvent const& _event,
+        Entity* _entity,
+        Rigidbody2D* _rigidbody)
+    {
+        _rigidbody->fixedUpdateStart(_event.getDt());
+    }
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(Rigidbody2DOnUpdateFinished, 0,
+        Physics2DUpdateFinishedEvent const& _event,
+        Entity* _entity,
+        Rigidbody2D* _rigidbody,
+        Transform3D* _transform)
+    {
+        if (!_rigidbody->getBody())
+            return;
+
+        if (!_rigidbody->getTransformDirty())
+        {
+            _transform->setLocalPosition(
+                Math::Lerp(
+                    _rigidbody->getFixedUpdateStartPosition(),
+                    _rigidbody->getPosition(),
+                    _event.getAccumulatorRatio()));
+
+            _transform->setLocalRotation(
+                Quaternion(
+                    Math::Lerp(
+                        _rigidbody->getFixedUpdateStartAngle(),
+                        _rigidbody->getAngle(),
+                        _event.getAccumulatorRatio()),
+                    Vec3F::c_unitZ));
+        }
+        else
+        {
+            _transform->setLocalPosition(_rigidbody->getFixedUpdateStartPosition());
+            _transform->setLocalRotation(Quaternion(_rigidbody->getFixedUpdateStartAngle(), Vec3F::c_unitZ));
+        }
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

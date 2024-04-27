@@ -30,6 +30,8 @@
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
+#include "maze-physics2d/ecs/events/MazeECSPhysics2DEvents.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
@@ -83,6 +85,16 @@ namespace Maze
     void PhysicsRotor2D::processEntityAwakened()
     {
         m_rigidbody = getEntityRaw()->getComponent<Rigidbody2D>();
+    }
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(PhysicsRotor2DOnFixedUpdateStart, 0,
+        Physics2DFixedUpdateStartEvent const& _event,
+        Entity* _entity,
+        PhysicsRotor2D* _rotor)
+    {
+        _rotor->update(_event.getDt());
     }
     
 } // namespace Maze

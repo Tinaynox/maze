@@ -224,7 +224,7 @@ namespace Maze
         {
             SimpleComponentSystemEventHandlerPtr system = SimpleComponentSystemEventHandler::Create(
                 _name,
-                ClassInfo<TEventType>::UID(),
+                ClassInfo<typename std::remove_const<TEventType>::type>::UID(),
                 requestInclusiveSample<TComponents...>(),
                 (SimpleComponentSystem::Func)_func,
                 _order);
