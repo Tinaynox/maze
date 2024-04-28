@@ -68,7 +68,7 @@ elseif(MAZE_TARGET_PLATFORM_IS_OSX)
     file(GLOB APPLE_RESOURCES_GLOB "${APPLE_RESOURCES}/*.*")
     list(REMOVE_ITEM APPLE_RESOURCES_GLOB ${APPLE_RESOURCES}/.DS_Store)
 
-    set(APP_RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/../../_otp/prj/resources/resources-x1.0-nc/data)
+    set(APP_RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/../../_otp/prj/${EXAMPLE_NAME}/resources/resources-x1.0-nc/data)
     if(NOT EXISTS ${APP_RESOURCES})
         set(APP_RESOURCES "")
     endif()

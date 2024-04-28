@@ -238,11 +238,11 @@ namespace Maze
                 texture = getSprite()->getTexture();
 
                 if (!texture)
-                    texture = getMaterial()->getRenderSystem()->getTextureManager()->getErrorTexture();
+                    texture = getMaterial()->getRenderSystem()->getTextureManager()->ensureBuiltinTexture2D(BuiltinTexture2DType::Error);
             }
             else
             {
-                texture = getMaterial()->getRenderSystem()->getTextureManager()->getWhiteTexture();
+                texture = getMaterial()->getRenderSystem()->getTextureManager()->ensureBuiltinTexture2D(BuiltinTexture2DType::White);
             }
 
             if (texture)
