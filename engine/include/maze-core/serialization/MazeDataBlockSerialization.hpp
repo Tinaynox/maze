@@ -112,6 +112,28 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Type: String
+    //
+    //////////////////////////////////////////
+    template <typename TValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsString<TValue>::value), void>::type
+        ValueToDataBlock(TValue const& _value, DataBlock& _data)
+    {
+        AddDataToDataBlock<TValue>(_data, MAZE_HS("value"), _value);
+    }
+
+    ////////////////////////////////////////////
+    template <typename TValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsString<TValue>::value), void>::type
+        ValueFromDataBlock(TValue& _value, DataBlock const& _data)
+    {
+        DataBlock::ParamIndex paramIndex = _data.findParamIndex(MAZE_HS("value"));
+        if (paramIndex >= 0)
+            _value = GetDataBlockParam<TValue>(_data, paramIndex);
+    }
+
+
+    //////////////////////////////////////////
     // Type: C++ enum
     //
     //////////////////////////////////////////
