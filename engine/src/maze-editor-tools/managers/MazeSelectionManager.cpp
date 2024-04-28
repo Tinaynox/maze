@@ -34,7 +34,6 @@
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
 #include "maze-editor-tools/scenes/SceneDebugEditor.hpp"
-#include "maze-editor-tools/ecs/systems/MazeGizmosSystem.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"

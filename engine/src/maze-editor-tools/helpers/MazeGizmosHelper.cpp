@@ -28,8 +28,8 @@
 #include "maze-editor-tools/helpers/MazeGizmosHelper.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
-#include "maze-editor-tools/ecs/systems/MazeGizmosSystem.hpp"
 #include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
+#include "maze-editor-tools/ecs/components/MazeGizmosController.hpp"
 
 
 //////////////////////////////////////////
@@ -43,8 +43,8 @@ namespace Maze
         {
             static GizmosDrawerPtr const nullPointer;
             if (EditorToolsManager::GetInstancePtr() &&
-                EditorToolsManager::GetInstancePtr()->getGizmosSystem())
-                return EditorToolsManager::GetInstancePtr()->getGizmosSystem()->getDrawer();
+                EditorToolsManager::GetInstancePtr()->getGizmosController())
+                return EditorToolsManager::GetInstancePtr()->getGizmosController()->getDrawer();
             return nullPointer;
         }
 

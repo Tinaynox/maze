@@ -33,7 +33,6 @@
 #include "maze-plugin-physics2d-editor-tools/MazePhysics2DEditorToolsHeader.hpp"
 #include "maze-physics2d/physics/MazePhysicsWorld2D.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-editor-tools/ecs/systems/MazeGizmosDrawer.hpp"
 #include "maze-core/ecs/MazeComponentSystem.hpp"
 
 
@@ -45,6 +44,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(ECSWorld);
     MAZE_USING_SHARED_PTR(EntitiesSample);
     MAZE_USING_SHARED_PTR(GizmosDrawer);
+    MAZE_USING_SHARED_PTR(RenderTarget);
 
 
     //////////////////////////////////////////

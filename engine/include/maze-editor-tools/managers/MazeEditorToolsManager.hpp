@@ -48,10 +48,10 @@ namespace Maze
     MAZE_USING_SHARED_PTR(AssetEditorToolsManager);
     MAZE_USING_SHARED_PTR(RenderTarget);
     MAZE_USING_SHARED_PTR(ComponentGizmos);
+    MAZE_USING_SHARED_PTR(GizmosController);
     MAZE_USING_SHARED_PTR(GizmosDrawer);
     MAZE_USING_SHARED_PTR(Entity);
     MAZE_USING_SHARED_PTR(Component);
-    MAZE_USING_SHARED_PTR(GizmosSystem);
     MAZE_USING_SHARED_PTR(ComponentSystem);
     MAZE_USING_SHARED_PTR(MenuListTree2D);
     MAZE_USING_SHARED_PTR(ECSScene);
@@ -97,7 +97,7 @@ namespace Maze
         inline AssetEditorToolsManagerPtr const& getAssetEditorToolsManager() const { return m_assetEditorToolsManager; }
 
         //////////////////////////////////////////
-        inline GizmosSystemPtr const& getGizmosSystem() const { return m_gizmosSystem; }
+        inline GizmosController* getGizmosController() const { return m_gizmosController; }
 
         //////////////////////////////////////////
         virtual void update(F32 _dt) MAZE_OVERRIDE;
@@ -120,7 +120,7 @@ namespace Maze
             GizmosDrawer* _drawer);
 
         //////////////////////////////////////////
-        void setGizmosSystem(GizmosSystemPtr const& _gizmosSystem);
+        void setGizmosController(GizmosController* _gizmosController);
 
     public:
 
@@ -161,7 +161,7 @@ namespace Maze
         GizmosManagerPtr m_gizmosManager;
         AssetEditorToolsManagerPtr m_assetEditorToolsManager;
 
-        GizmosSystemPtr m_gizmosSystem;
+        GizmosController* m_gizmosController = nullptr;
 
         bool m_debugEditorActive;
 

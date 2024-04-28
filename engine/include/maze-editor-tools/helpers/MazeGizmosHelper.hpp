@@ -34,7 +34,7 @@
 #include "maze-graphics/MazePixelSheet2D.hpp"
 #include "maze-graphics/MazeSprite.hpp"
 #include "maze-core/assets/MazeAssetFile.hpp"
-#include "maze-editor-tools/ecs/systems/MazeGizmosDrawer.hpp"
+#include "maze-editor-tools/ecs/components/MazeGizmosDrawer.hpp"
 
 
 //////////////////////////////////////////

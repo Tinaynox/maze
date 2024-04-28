@@ -52,7 +52,6 @@
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
-#include "maze-editor-tools/ecs/systems/MazeGizmosSystem.hpp"
 #include "maze-physics2d/managers/MazePhysics2DManager.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
@@ -342,10 +341,6 @@ namespace Maze
         RenderWindowPtr const& _renderWindow,
         RenderSystemPtr const& _renderSystem)
     {
-#if !(MAZE_PRODUCTION)
-        _world->addSystem(GizmosSystem::Create(_renderWindow.get()));
-#endif
-
         _world->addSystem(ParticlesDrawerSystem::Create(_renderSystem));
     }
 

@@ -36,7 +36,6 @@
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-editor-tools/scenes/SceneDebugEditor.hpp"
 #include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
-#include "maze-editor-tools/ecs/systems/MazeGizmosSystem.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
@@ -55,6 +54,7 @@
 #include "maze-editor-tools/ecs/components/MazeColorHDREdit2D.hpp"
 #include "maze-editor-tools/ecs/components/MazeColorGradientEdit2D.hpp"
 #include "maze-editor-tools/ecs/components/MazeAnimationCurveEdit2D.hpp"
+#include "maze-editor-tools/ecs/components/MazeGizmosController.hpp"
 
 
 //////////////////////////////////////////
@@ -78,7 +78,7 @@ namespace Maze
     {
         m_selectionManager.reset();
 
-        setGizmosSystem(nullptr);
+        setGizmosController(nullptr);
 
         EntityManager::GetInstancePtr()->getDefaultWorldRaw()->eventComponentSystemAdded.unsubscribe(this);
 
@@ -210,28 +210,25 @@ namespace Maze
     //////////////////////////////////////////
     void EditorToolsManager::notifyComponentSystemAdded(ComponentSystemPtr const& _componentSystem)
     {
-        if (_componentSystem->getClassUID() == GizmosSystem::GetMetaClass()->getClassUID())
-        {
-            setGizmosSystem(_componentSystem->cast<GizmosSystem>());
-        }
+
     }
 
     //////////////////////////////////////////
-    void EditorToolsManager::setGizmosSystem(GizmosSystemPtr const& _gizmosSystem)
+    void EditorToolsManager::setGizmosController(GizmosController* _gizmosController)
     {
-        if (m_gizmosSystem == _gizmosSystem)
+        if (m_gizmosController == _gizmosController)
             return;
 
-        if (m_gizmosSystem)
+        if (m_gizmosController)
         {
-            m_gizmosSystem->eventDrawGizmosEvent.unsubscribe(this);
+            m_gizmosController->eventDrawGizmosEvent.unsubscribe(this);
         }
 
-        m_gizmosSystem = _gizmosSystem;
+        m_gizmosController = _gizmosController;
 
-        if (m_gizmosSystem)
+        if (m_gizmosController)
         {
-            m_gizmosSystem->eventDrawGizmosEvent.subscribe(this, &EditorToolsManager::notifyDrawGizmos);
+            m_gizmosController->eventDrawGizmosEvent.subscribe(this, &EditorToolsManager::notifyDrawGizmos);
         }
     }
 

@@ -25,92 +25,84 @@
 
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
-#include "maze-editor-tools/ecs/systems/MazeGizmosSystem.hpp"
+#include "maze-editor-tools/ecs/components/MazeGizmosController.hpp"
+#include "maze-editor-tools/ecs/components/MazeGizmosDrawer.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
+#include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class GizmosSystem
+    // Class GizmosController
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(GizmosSystem, ComponentSystem);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(GizmosController, Component);
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(GizmosSystem);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(GizmosController);
 
     //////////////////////////////////////////
-    GizmosSystem::GizmosSystem()
+    GizmosController::GizmosController()
         : m_renderTarget(nullptr)
     {
         
     }
 
     //////////////////////////////////////////
-    GizmosSystem::~GizmosSystem()
+    GizmosController::~GizmosController()
     {
         if (GizmosManager::GetInstancePtr())
             GizmosManager::GetInstancePtr()->eventGizmosPerComponentClassChanged.unsubscribe(this);
+
+        if (EditorToolsManager::GetInstancePtr())
+            EditorToolsManager::GetInstancePtr()->setGizmosController(nullptr);
     }
 
     //////////////////////////////////////////
-    GizmosSystemPtr GizmosSystem::Create(RenderTarget* _renderTarget)
+    GizmosControllerPtr GizmosController::Create(RenderTarget* _renderTarget)
     {
-        GizmosSystemPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(GizmosSystem, object, init(_renderTarget));
+        GizmosControllerPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(GizmosController, object, init(_renderTarget));
         return object;
     }
 
     //////////////////////////////////////////
-    bool GizmosSystem::init(RenderTarget* _renderTarget)
+    bool GizmosController::init(RenderTarget* _renderTarget)
     {
         m_renderTarget = _renderTarget;
-        m_renderTarget->eventRenderTargetDestroyed.subscribe(this, &GizmosSystem::notifyRenderTargetDestroyed);
+        m_renderTarget->eventRenderTargetDestroyed.subscribe(this, &GizmosController::notifyRenderTargetDestroyed);
 
-        GizmosManager::GetInstancePtr()->eventGizmosPerComponentClassChanged.subscribe(this, &GizmosSystem::notifyGizmosPerComponentClass);        
+        GizmosManager::GetInstancePtr()->eventGizmosPerComponentClassChanged.subscribe(this, &GizmosController::notifyGizmosPerComponentClass);        
+
+        EditorToolsManager::GetInstancePtr()->setGizmosController(this);
 
         return true;
     }
 
     //////////////////////////////////////////
-    void GizmosSystem::processSystemAdded()
+    void GizmosController::processEntityAwakened()
     {
-        m_drawer = GizmosDrawer::Create(m_worldRaw, m_renderTarget);
-        m_canvasesSample = m_worldRaw->requestInclusiveSample<Canvas>();
-        m_cameras3DSample = m_worldRaw->requestInclusiveSample<Camera3D>();
+        m_drawer = GizmosDrawer::Create(getEntityRaw()->getECSScene()->getWorld(), m_renderTarget);
+        m_canvasesSample = getEntityRaw()->getECSScene()->getWorld()->requestInclusiveSample<Canvas>();
+        m_cameras3DSample = getEntityRaw()->getECSScene()->getWorld()->requestInclusiveSample<Camera3D>();
 
         updateGizmosSamples();
     }
 
     //////////////////////////////////////////
-    void GizmosSystem::processUpdate(UpdateEvent const& _event)
-    {
-        MAZE_PROFILE_EVENT("GizmosSystem::processUpdate");
-
-        bool haveGizmosMask = false;
-        m_cameras3DSample->process(
-            [&haveGizmosMask](Entity* _entity, Camera3D* _camera)
-            {
-                haveGizmosMask |= (bool)(_camera->getRenderMask() & S32(DefaultRenderMask::Gizmos));
-            });
-
-        if (haveGizmosMask)
-            drawGizmos(_event.getDt());
-    }
-
-    //////////////////////////////////////////
-    void GizmosSystem::notifyGizmosPerComponentClass()
+    void GizmosController::notifyGizmosPerComponentClass()
     {
         updateGizmosSamples();
     }
 
     //////////////////////////////////////////
-    void GizmosSystem::updateGizmosSamples()
+    void GizmosController::updateGizmosSamples()
     {
         m_samples.clear();
 
@@ -119,7 +111,7 @@ namespace Maze
         {
             GizmosSample gizmosSample;
             gizmosSample.componentClassUID = gizmoPerComponentClass.first;
-            gizmosSample.sample = m_worldRaw->requestCommonSample(
+            gizmosSample.sample = getEntityRaw()->getECSScene()->getWorld()->requestCommonSample(
                 EntityAspect(
                     EntityAspectType::HaveAllOfComponents,
                     { gizmosSample.componentClassUID }));
@@ -130,7 +122,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosSystem::drawGizmos(F32 _dt)
+    void GizmosController::drawGizmos(F32 _dt)
     {
         if (!m_drawer)
             return;
@@ -155,11 +147,30 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosSystem::notifyRenderTargetDestroyed(RenderTarget* _renderTarget)
+    void GizmosController::notifyRenderTargetDestroyed(RenderTarget* _renderTarget)
     {
         m_samples.clear();
         m_drawer.reset();
-        m_worldRaw->update(0.0f);
+        getEntityRaw()->getECSScene()->getWorld()->update(0.0f);
+    }
+
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM(GizmosSystem, 40000,
+        UpdateEvent const& _event,
+        Entity* _entity,
+        GizmosController* _gizmosController)
+    {
+        bool haveGizmosMask = false;
+        _gizmosController->getCameras3DSample()->process(
+            [&haveGizmosMask](Entity* _entity, Camera3D* _camera)
+        {
+            haveGizmosMask |= (bool)(_camera->getRenderMask() & S32(DefaultRenderMask::Gizmos));
+        });
+
+        if (haveGizmosMask)
+            _gizmosController->drawGizmos(_event.getDt());
     }
 
     

@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeGizmosSystem_hpp_))
-#define _MazeGizmosSystem_hpp_
+#if (!defined(_MazeGizmosController_hpp_))
+#define _MazeGizmosController_hpp_
 
 
 //////////////////////////////////////////
@@ -42,7 +42,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(GizmosSystem);
+    MAZE_USING_SHARED_PTR(GizmosController);
     MAZE_USING_SHARED_PTR(ECSWorld);
     MAZE_USING_SHARED_PTR(EntitiesSample);
     MAZE_USING_SHARED_PTR(ComponentGizmos);
@@ -50,20 +50,20 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class GizmosSystem
+    // Class GizmosController
     //
     //////////////////////////////////////////
-    class MAZE_EDITOR_TOOLS_API GizmosSystem
-        : public ComponentSystem
+    class MAZE_EDITOR_TOOLS_API GizmosController
+        : public Component
         , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(GizmosSystem, ComponentSystem);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(GizmosController, Component);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(GizmosSystem);
+        MAZE_DECLARE_MEMORY_ALLOCATION(GizmosController);
 
     public:
 
@@ -78,10 +78,10 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~GizmosSystem();
+        virtual ~GizmosController();
 
         //////////////////////////////////////////
-        static GizmosSystemPtr Create(RenderTarget* _renderTarget);
+        static GizmosControllerPtr Create(RenderTarget* _renderTarget);
 
         //////////////////////////////////////////
         void drawGizmos(F32 _dt);
@@ -92,7 +92,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual S32 getOrder() const MAZE_OVERRIDE { return 40000; }
+        inline SharedPtr<GenericInclusiveEntitiesSample<Camera3D>> const& getCameras3DSample() const { return m_cameras3DSample; }
 
     public:
 
@@ -102,16 +102,16 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        GizmosSystem();
+        GizmosController();
 
         //////////////////////////////////////////
         bool init(RenderTarget* _renderTarget);
 
         //////////////////////////////////////////
-        virtual void processSystemAdded() MAZE_OVERRIDE;
+        virtual void processEntityAwakened() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        virtual void processUpdate(UpdateEvent const& _event) MAZE_OVERRIDE;
+        // virtual void processUpdate(UpdateEvent const& _event) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void notifyGizmosPerComponentClass();
@@ -138,5 +138,5 @@ namespace Maze
 //////////////////////////////////////////
  
 
-#endif // _MazeGizmosSystem_hpp_
+#endif // _MazeGizmosController_hpp_
 //////////////////////////////////////////
