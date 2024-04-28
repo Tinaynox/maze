@@ -33,7 +33,6 @@
 #include "maze-core/managers/MazeInputManager.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
-#include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
@@ -135,7 +134,6 @@ bool SceneExample::init()
     Maze::ECSWorldPtr const& world = entityManager->getDefaultWorld();
 
     world->addSystem(Maze::RenderControlSystem::Create(renderSystem));
-    world->addSystem(Maze::TransformEventsSystem::Create());
 
     for (int i = 0; i < 4; ++i)
     {
@@ -144,6 +142,7 @@ bool SceneExample::init()
         m_cameraTransform3D->setLocalPosition(Maze::Vec3F32(0.0f, 0.0f, -3.0f));
         Maze::Camera3DPtr camera3D = cameraEntity->createComponent<Maze::Camera3D>();
         camera3D->setRenderTarget(g_defaultRenderTarget);
+        camera3D->setClipViewport(true);
 
         camera3D->setClearColor(Maze::ColorU32::Random());
 

@@ -123,7 +123,6 @@ namespace Maze
 
             // Vertex blocks
             bool subMeshFinished = false;
-            U32 indicesCount = 0u;
             do
             {
                 bytesRead += _fileData.read(bytesRead, &tag, sizeof(tag));
@@ -300,7 +299,6 @@ namespace Maze
                  s = VertexAttributeSemantic((S32)s + 1))
             {
                 VertexAttributeDescription const& desc = subMesh->getVertexDescription(s);
-                U32 elementSize = U32(GetVertexAttributeTypeSize(desc.type) * desc.count);
 
                 SaveMZMESHSubMeshVertexAttributes(
                     outputFile,

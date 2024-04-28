@@ -255,7 +255,6 @@ namespace Maze
         if (!byteBuffer)
             return;
 
-        Size typeSize = GetVertexAttributeTypeSize(data.description.type);
         switch (data.description.type)
         {
             case VertexAttributeType::F32:

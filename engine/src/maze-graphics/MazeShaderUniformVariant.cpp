@@ -1012,8 +1012,6 @@ namespace Maze
     //////////////////////////////////////////
     void ShaderUniformVariant::toDataBlock(DataBlock& _dataBlock) const
     {
-        CString className = ClassInfo<ShaderUniformVariant>::Name();
-
         _dataBlock.setString(MAZE_HS("name"), m_name);
         _dataBlock.setCString(MAZE_HS("type"), m_type.toCString());
 

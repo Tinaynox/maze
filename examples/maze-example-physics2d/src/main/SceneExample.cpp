@@ -69,6 +69,7 @@
 #include "maze-physics2d/ecs/components/MazeBoxCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeCircleCollider2D.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
+#include "maze-physics2d/ecs/components/MazePhysicsController2D.hpp"
 #include "maze-plugin-profiler-view/MazeProfilerViewPlugin.hpp"
 #include "maze-plugin-loader-png/MazeLoaderPNGPlugin.hpp"
 #include "maze-plugin-physics2d-editor-tools/MazePhysics2DEditorToolsPlugin.hpp"
@@ -144,6 +145,9 @@ namespace Maze
     {
         if (!ECSRenderScene::init(Example::GetInstancePtr()->getMainRenderWindow()))
             return false;
+        
+        
+        createAndAddEntityWithComponent<PhysicsController2D>("PhysicsController2D");
 
 
         S32 p0 = EntityManager::GetInstancePtr()->getComponentPriority<Transform3D>();
