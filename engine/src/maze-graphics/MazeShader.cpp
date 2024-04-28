@@ -722,7 +722,6 @@ namespace Maze
         Vector<ShaderUniformVariant> uniformsData;
 
         AssetManager* assetManager = AssetManager::GetInstancePtr();
-        TextureManagerPtr const& textureManager = getRenderSystemRaw()->getTextureManager();
 
         for (DataBlock::DataBlockIndex i = 0; i < _dataBlock.getDataBlocksCount(); ++i)
         {

@@ -209,7 +209,6 @@ namespace Maze
                 Math::Max(_size.y - _sliceBorder.bottom - _sliceBorder.top, 0.0f));
 
             Vec2F halfSize = _size/2.0f;
-            Vec2F centerHalfSize = centerSize/2.0f;
 
             //Vec2F centerPositionLB = -centerHalfSize;
             Vec2F centerPositionLB = Vec2F(_sliceBorder.left, _sliceBorder.bottom) - halfSize;
