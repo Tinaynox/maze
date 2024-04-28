@@ -57,7 +57,6 @@
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
 #include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
-#include "maze-physics2d/ecs/systems/MazePhysicsControlSystem2D.hpp"
 #include "maze-particles/managers/MazeParticlesManager.hpp"
 #include "maze-sound/managers/MazeSoundManager.hpp"
 

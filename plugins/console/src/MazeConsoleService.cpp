@@ -49,6 +49,17 @@ namespace Maze
     //////////////////////////////////////////
     ConsoleService::~ConsoleService()
     {
+        setRenderSystem(nullptr);
+        
+        if (GraphicsManager::GetInstancePtr())
+        {
+            GraphicsManager::GetInstancePtr()->eventDefaultRenderSystemWillBeChanged.unsubscribe(this);
+            GraphicsManager::GetInstancePtr()->eventDefaultRenderSystemChanged.unsubscribe(this);
+        }
+        
+        if (InputManager::GetInstancePtr())
+            InputManager::GetInstancePtr()->eventKeyboard.unsubscribe(this);
+        
         LogService::GetInstancePtr()->eventLog.unsubscribe(this);
     }
 
