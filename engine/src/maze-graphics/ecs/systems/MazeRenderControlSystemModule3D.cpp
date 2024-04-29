@@ -83,17 +83,9 @@ namespace Maze
         m_world = _world.get();
         m_renderSystem = _renderSystem;
 
-        m_meshRenderers = _world->requestInclusiveSample<MeshRenderer, Transform3D>();
-        m_meshRenderersInstancedSample = _world->requestInclusiveSample<MeshRendererInstanced, Transform3D>();
-        m_trailRenderers3DSample = _world->requestInclusiveSample<TrailRenderer3D, Transform3D>();
-        m_trailRendererHiders3DSample = _world->requestInclusiveSample<TrailRenderer3DHider, Transform3D>();
-        m_lineRenderers3DSample = _world->requestInclusiveSample<LineRenderer3D, Transform3D>();
         m_cameras3DSample = _world->requestInclusiveSample<Camera3D>();
         m_lights3DSample = _world->requestInclusiveSample<Light3D>();
-        m_systemTextRenderer3DsSample = _world->requestInclusiveSample<SystemTextRenderer3D>();
         
-        eventGatherRenderUnits.subscribe(this, &RenderControlSystemModule3D::notifyGatherRenderUnits);
-
         return true;
     }
 
@@ -199,7 +191,7 @@ namespace Maze
             {
                 {
                     MAZE_PROFILE_EVENT("3D GatherRenderUnits");
-                    eventGatherRenderUnits(_renderTarget, _params, renderData);
+                    m_world->sendEventImmediate<Render3DDefaultPassGatherRenderUnitsEvent>(_renderTarget, &_params, &renderData);
                 }
 
                 S32 renderDataSize = (S32)renderData.size();
@@ -339,17 +331,13 @@ namespace Maze
             params.clipViewport = camera->getClipViewport();
             params.lightingSettings = camera->getLightingSettings();
 
-            eventPrePass(
-                _renderTarget,
-                params);
+            m_world->sendEventImmediate<Render3DDefaultPrePassEvent>(_renderTarget, &params);
 
             drawDefaultPass(
                 _renderTarget,
                 params);
 
-            eventPostPass(
-                _renderTarget,
-                params);
+            m_world->sendEventImmediate<Render3DDefaultPostPassEvent>(_renderTarget, &params);
                 
         }
     }
@@ -357,271 +345,12 @@ namespace Maze
     //////////////////////////////////////////
     void RenderControlSystemModule3D::processUpdate(UpdateEvent const& _event)
     {
-        F32 dt = _event.getDt();
-
-        m_trailRendererHiders3DSample->process(
-            [dt](Entity* _entity, TrailRenderer3DHider* _trailRendererHider, Transform3D* _transform)
-        {
-            _trailRendererHider->update(dt);
-        });
-
-        m_trailRenderers3DSample->process(
-            [dt](Entity* _entity, TrailRenderer3D* _trailRenderer, Transform3D* _transform)
-            {
-                _trailRenderer->update(dt);
-            });
-
-        m_systemTextRenderer3DsSample->process(
-            [](Entity* _entity, SystemTextRenderer3D* _systemTextRenderer3D)
-        {
-            if (_systemTextRenderer3D->getTransform()->isWorldTransformChanged())
-                _systemTextRenderer3D->updateMeshRendererModelMatrices();
-        });
     }
 
     //////////////////////////////////////////
     void RenderControlSystemModule3D::processPostUpdate(UpdateEvent const& _event)
     {
 
-    }
-    
-    //////////////////////////////////////////
-    void RenderControlSystemModule3D::notifyGatherRenderUnits(
-        RenderTarget* _renderTarget,
-        DefaultPassParams const& _params,
-        Vector<RenderUnit>& _renderData)
-    {
-        // Meshes
-        {
-            MAZE_PROFILE_EVENT("RenderControlSystemModule3D::notifyGatherRenderUnits (Meshes)");
-            m_meshRenderers->process(
-                [&](Entity* _entity, MeshRenderer* _meshRenderer, Transform3D* _transform3D)
-                {
-                    if (!_meshRenderer->getEnabled())
-                        return;
-
-                    if (_meshRenderer->getRenderMask() && _meshRenderer->getRenderMask()->getMask() & _params.renderMask)
-                    {
-                        if (_meshRenderer->getRenderMesh())
-                        {
-                            Vector<MaterialAssetRef> const& materials = _meshRenderer->getMaterialRefs();
-                            Vector<VertexArrayObjectPtr> const& vaos = _meshRenderer->getRenderMesh()->getVertexArrayObjects();
-
-                            if (vaos.empty())
-                                return;
-
-                            Size c = Math::Max(vaos.size(), materials.size());
-
-                            for (Size i = 0, in = c; i < in; ++i)
-                            {
-                                VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
-
-                                MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
-
-                                MaterialPtr const* material = nullptr;
-                                if (!materials.empty())
-                                    material = &materials[i % materials.size()].getMaterial();
-
-                                if (!material || !*material)
-                                    material = &m_renderSystem->getMaterialManager()->getErrorMaterial();
-
-#if (MAZE_DEBUG)
-                                if (!(*material)->getFirstRenderPass()->getShader())
-                                {
-                                    Debug::LogError("Mesh(EID: %u): Shader is null!", _entity->getId());
-                                    return;
-                                }
-#endif
-
-                                _renderData.emplace_back(
-                                    RenderUnit
-                                    {
-                                        (*material)->getFirstRenderPass(),
-                                        vao,
-                                        _transform3D->getWorldPosition(),
-                                        1,
-                                        &_transform3D->getWorldTransform()
-                                    });
-
-                            }
-                        }
-                    }
-                });
-        }
-
-        // Mesh Instances
-        {
-            MAZE_PROFILE_EVENT("RenderControlSystemModule3D::notifyGatherRenderUnits (MeshInstanced)");
-            m_meshRenderersInstancedSample->process(
-                [&](Entity* _entity, MeshRendererInstanced* _meshRenderer, Transform3D* _transform3D)
-            {
-                if (!_meshRenderer->getEnabled())
-                    return;
-
-                if (_meshRenderer->getRenderMask() && _meshRenderer->getRenderMask()->getMask() & _params.renderMask)
-                {
-                    if (_meshRenderer->getRenderMesh())
-                    {
-                        Material const* material = _meshRenderer->getMaterial().get();
-                        if (!material)
-                            material = _renderTarget->getRenderSystem()->getMaterialManager()->getErrorMaterial().get();
-
-#if (MAZE_DEBUG)
-                        if (!material->getFirstRenderPass()->getShader())
-                        {
-                            Debug::LogError("Mesh Instanced(EID: %u): Shader is null!", _entity->getId());
-                            return;
-                        }
-#endif
-
-                        Vector<VertexArrayObjectPtr> const& vaos = _meshRenderer->getRenderMesh()->getVertexArrayObjects();
-
-                        if (vaos.empty())
-                            return;
-
-                        S32 count = (S32)_meshRenderer->getModelMatrices().size();
-                        if (count > 0)
-                        {
-                            for (Size i = 0, in = vaos.size(); i < in; ++i)
-                            {
-                                VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
-
-                                MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
-
-                                Vec4F const* uvStreams[MAZE_UV_CHANNELS_MAX];
-                                memset(uvStreams, 0, sizeof(uvStreams));
-                                uvStreams[0] = _meshRenderer->getUV0Data();
-                                uvStreams[1] = _meshRenderer->getUV1Data();
-
-                                _renderData.emplace_back(
-                                    RenderUnit
-                                    (
-                                        material->getFirstRenderPass(),
-                                        vao,
-                                        _transform3D->getWorldPosition(),
-                                        count,
-                                        _meshRenderer->getModelMatricesData(),
-                                        _meshRenderer->getColorsData(),
-                                        uvStreams
-                                    ));
-                            }
-
-                        }
-                    }
-                }
-            });
-        }
-
-        // Trails
-        {
-            MAZE_PROFILE_EVENT("RenderControlSystemModule3D::notifyGatherRenderUnits (Trails)");
-            m_trailRenderers3DSample->process(
-                [&](Entity* _entity, TrailRenderer3D* _trailRenderer, Transform3D* _transform3D)
-                {
-                    if (_trailRenderer->getEdgesCount() == 0)
-                        return;
-
-                    if (_trailRenderer->getRenderMask()->getMask() & _params.renderMask)
-                    {
-                        if (_trailRenderer->getRenderMesh())
-                        {
-                            Vector<MaterialAssetRef> const& materials = _trailRenderer->getMaterialRefs();
-                            Vector<VertexArrayObjectPtr> const& vaos = _trailRenderer->getRenderMesh()->getVertexArrayObjects();
-
-                            if (vaos.empty())
-                                return;
-
-                            Size c = Math::Max(vaos.size(), materials.size());
-
-                            for (Size i = 0, in = c; i < in; ++i)
-                            {
-                                VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
-
-                                MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
-
-                                MaterialPtr const* material = nullptr;
-                                if (materials.empty() || !materials[i % materials.size()].getMaterial())
-                                    material = &m_renderSystem->getMaterialManager()->getErrorMaterial();
-                                else
-                                    material = &materials[i % materials.size()].getMaterial();
-
-#if (MAZE_DEBUG)
-                                if (!(*material)->getFirstRenderPass()->getShader())
-                                {
-                                    Debug::LogError("Trail(EID: %u): Shader is null!", _entity->getId());
-                                    return;
-                                }
-#endif
-
-                                _renderData.emplace_back(
-                                    RenderUnit
-                                    {
-                                        (*material)->getFirstRenderPass(),
-                                        vao,
-                                        _trailRenderer->getWorldPosition(),
-                                        1,
-                                        &Mat4F::c_identity
-                                    });
-
-                            }
-                        }
-                    }
-                });
-            }
-
-        // Lines
-        {
-            MAZE_PROFILE_EVENT("RenderControlSystemModule3D::notifyGatherRenderUnits (Lines)");
-            m_lineRenderers3DSample->process(
-                [&](Entity* _entity, LineRenderer3D* _lineRenderer, Transform3D* _transform3D)
-            {
-                if (_lineRenderer->getRenderMask()->getMask() & _params.renderMask)
-                {
-                    if (_lineRenderer->getRenderMesh())
-                    {
-                        Vector<MaterialAssetRef> const& materials = _lineRenderer->getMaterialRefs();
-                        Vector<VertexArrayObjectPtr> const& vaos = _lineRenderer->getRenderMesh()->getVertexArrayObjects();
-
-                        if (vaos.empty())
-                            return;
-
-                        Size c = Math::Max(vaos.size(), materials.size());
-
-                        for (Size i = 0, in = c; i < in; ++i)
-                        {
-                            VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
-
-                            MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
-
-                            MaterialPtr const* material = nullptr;
-                            if (materials.empty() || !materials[i % materials.size()].getMaterial())
-                                material = &m_renderSystem->getMaterialManager()->getErrorMaterial();
-                            else
-                                material = &materials[i % materials.size()].getMaterial();
-
-#if (MAZE_DEBUG)
-                            if (!(*material)->getFirstRenderPass()->getShader())
-                            {
-                                Debug::LogError("Line(EID: %u): Shader is null!", _entity->getId());
-                                return;
-                            }
-#endif
-
-                            _renderData.emplace_back(
-                                RenderUnit
-                                {
-                                    (*material)->getFirstRenderPass(),
-                                    vao,
-                                    _transform3D->getWorldPosition(),
-                                    1,
-                                    &_transform3D->getWorldTransform()
-                                });
-
-                        }
-                    }
-                }
-            });
-        }
     }
     
 } // namespace Maze

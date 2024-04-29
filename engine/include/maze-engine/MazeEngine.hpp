@@ -62,6 +62,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(RenderWindow);
     MAZE_USING_SHARED_PTR(RenderSystem);
     MAZE_USING_SHARED_PTR(SoundManager);
+    MAZE_USING_SHARED_PTR(SceneEngine);
 
 
     //////////////////////////////////////////
@@ -193,8 +194,7 @@ namespace Maze
             RenderSystemPtr const& _renderSystem);
 
         //////////////////////////////////////////
-        virtual void createSecondaryECSWorldSystems(
-            ECSWorldPtr const& _world,
+        virtual SceneEnginePtr createEngineScene(
             RenderWindowPtr const& _renderWindow,
             RenderSystemPtr const& _renderSystem);
 

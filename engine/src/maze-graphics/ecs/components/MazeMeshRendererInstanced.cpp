@@ -30,6 +30,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
@@ -38,10 +39,13 @@
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
+#include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-graphics/ecs/events/MazeECSGraphicsEvents.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
@@ -187,6 +191,71 @@ namespace Maze
         m_colors.resize(_count);
         m_uv0.resize(_count);
         m_uv1.resize(_count);
+    }
+
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(MeshRendererInstancedSystem, 0,
+        Render3DDefaultPassGatherRenderUnitsEvent& _event,
+        Entity* _entity,
+        MeshRendererInstanced* _meshRenderer,
+        Transform3D* _transform3D)
+    {
+        if (!_meshRenderer->getEnabled())
+            return;
+
+        if (_meshRenderer->getRenderMask() && _meshRenderer->getRenderMask()->getMask() & _event.getPassParams()->renderMask)
+        {
+            if (_meshRenderer->getRenderMesh())
+            {
+                Material const* material = _meshRenderer->getMaterial().get();
+                if (!material)
+                    material = _event.getRenderTarget()->getRenderSystem()->getMaterialManager()->getErrorMaterial().get();
+
+#if (MAZE_DEBUG)
+                if (!material->getFirstRenderPass()->getShader())
+                {
+                    Debug::LogError("Mesh Instanced(EID: %u): Shader is null!", _entity->getId());
+                    return;
+                }
+#endif
+
+                Vector<VertexArrayObjectPtr> const& vaos = _meshRenderer->getRenderMesh()->getVertexArrayObjects();
+
+                if (vaos.empty())
+                    return;
+
+                S32 count = (S32)_meshRenderer->getModelMatrices().size();
+                if (count > 0)
+                {
+                    for (Size i = 0, in = vaos.size(); i < in; ++i)
+                    {
+                        VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
+
+                        MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
+
+                        Vec4F const* uvStreams[MAZE_UV_CHANNELS_MAX];
+                        memset(uvStreams, 0, sizeof(uvStreams));
+                        uvStreams[0] = _meshRenderer->getUV0Data();
+                        uvStreams[1] = _meshRenderer->getUV1Data();
+
+                        _event.getRenderUnits()->emplace_back(
+                            RenderUnit
+                            (
+                                material->getFirstRenderPass(),
+                                vao,
+                                _transform3D->getWorldPosition(),
+                                count,
+                                _meshRenderer->getModelMatricesData(),
+                                _meshRenderer->getColorsData(),
+                                uvStreams
+                            ));
+                    }
+
+                }
+            }
+        }
     }
     
     

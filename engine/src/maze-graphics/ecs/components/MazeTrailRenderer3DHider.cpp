@@ -37,6 +37,7 @@
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
@@ -114,6 +115,17 @@ namespace Maze
         ColorGradient color = m_color;
         color.multiplyAlpha(progress);
         m_trailRenderer->setColor(color);
+    }
+
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM(TrailRenderer3DHiderSystem, 0,
+        UpdateEvent const& _event,
+        Entity* _entity,
+        TrailRenderer3DHider* _trailRendererHider)
+    {
+        _trailRendererHider->update(_event.getDt());
     }
     
 } // namespace Maze

@@ -57,9 +57,9 @@
 #include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-ui/ecs/systems/MazeInputSystem2D.hpp"
 #include "maze-ui/ecs/systems/MazeUISystem2D.hpp"
-#include "maze-particles/ecs/systems/MazeParticlesDrawerSystem.hpp"
 #include "maze-particles/managers/MazeParticlesManager.hpp"
 #include "maze-sound/managers/MazeSoundManager.hpp"
+#include "maze-engine/ecs/scenes/MazeSceneEngine.hpp"
 
 
 //////////////////////////////////////////
@@ -336,12 +336,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Engine::createSecondaryECSWorldSystems(
-        ECSWorldPtr const& _world,
+    SceneEnginePtr Engine::createEngineScene(
         RenderWindowPtr const& _renderWindow,
         RenderSystemPtr const& _renderSystem)
     {
-        _world->addSystem(ParticlesDrawerSystem::Create(_renderSystem));
+        return m_sceneManager->loadScene<SceneEngine>(true, _renderWindow, _renderSystem);
     }
 
 } // namespace Maze

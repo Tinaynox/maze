@@ -76,6 +76,10 @@ namespace Maze
         //////////////////////////////////////////
         static LineRenderer3DPtr Create(RenderSystem* _renderSystem = nullptr);
 
+
+        //////////////////////////////////////////
+        inline RenderSystem* getRenderSystem() const { return m_renderSystem; }
+
         
         //////////////////////////////////////////
         RenderMeshPtr const& getRenderMesh() const { return m_renderMesh; }

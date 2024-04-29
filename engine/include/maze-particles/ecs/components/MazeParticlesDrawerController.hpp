@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeParticlesDrawerSystem_hpp_))
-#define _MazeParticlesDrawerSystem_hpp_
+#if (!defined(_MazeParticlesDrawerController_hpp_))
+#define _MazeParticlesDrawerController_hpp_
 
 
 //////////////////////////////////////////
@@ -44,27 +44,27 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(RenderSystem);
-    MAZE_USING_SHARED_PTR(ParticlesDrawerSystem);
+    MAZE_USING_SHARED_PTR(ParticlesDrawerController);
     MAZE_USING_SHARED_PTR(RenderControlSystem);
     MAZE_USING_SHARED_PTR(ParticleSystem2D);
     MAZE_USING_SHARED_PTR(ParticleSystem3D);
     
 
     //////////////////////////////////////////
-    // Class ParticlesDrawerSystem
+    // Class ParticlesDrawerController
     //
     //////////////////////////////////////////
-    class MAZE_PARTICLES_API ParticlesDrawerSystem
-        : public ComponentSystem
+    class MAZE_PARTICLES_API ParticlesDrawerController
+        : public Component
         , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(ParticlesDrawerSystem, ComponentSystem);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(ParticlesDrawerController, Component);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(ParticlesDrawerSystem);
+        MAZE_DECLARE_MEMORY_ALLOCATION(ParticlesDrawerController);
 
         //////////////////////////////////////////
         friend class Entity;
@@ -72,35 +72,26 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~ParticlesDrawerSystem();
+        virtual ~ParticlesDrawerController();
 
         //////////////////////////////////////////
-        static ParticlesDrawerSystemPtr Create(RenderSystemPtr const& _renderSystem);
+        static ParticlesDrawerControllerPtr Create(RenderSystemPtr const& _renderSystem);
+
 
         //////////////////////////////////////////
-        virtual S32 getOrder() const MAZE_OVERRIDE { return 45000; }
-
+        inline SharedPtr<GenericInclusiveEntitiesSample<ParticleSystem3D>> const& getParticleSystem3DSample() const { return m_particleSystem3DSample; }
         
     protected:
 
         //////////////////////////////////////////
-        ParticlesDrawerSystem();
+        ParticlesDrawerController();
 
         //////////////////////////////////////////
         bool init(RenderSystemPtr const& _renderSystem);
 
         //////////////////////////////////////////
-        virtual void processSystemAdded() MAZE_OVERRIDE;
+        virtual void processEntityAwakened() MAZE_OVERRIDE;
 
-
-        //////////////////////////////////////////
-        virtual void processUpdate(UpdateEvent const& _event) MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        void notifyGatherRenderUnits(
-            RenderTarget* _renderTarget,
-            DefaultPassParams const& _params,
-            Vector<RenderUnit>& _renderData);
 
     protected:
         RenderSystemPtr m_renderSystem;
@@ -115,5 +106,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeParticlesDrawerSystem_hpp_
+#endif // _MazeParticlesDrawerController_hpp_
 //////////////////////////////////////////

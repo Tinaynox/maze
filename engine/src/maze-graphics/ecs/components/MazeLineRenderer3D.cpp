@@ -36,12 +36,15 @@
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
+#include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/MazeECSRenderScene.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-graphics/ecs/events/MazeECSGraphicsEvents.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
@@ -343,6 +346,62 @@ namespace Maze
     {
         m_positions.clear();
         m_vao->clear();        
+    }
+
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(LineRenderer3DSystem, 0,
+        Render3DDefaultPassGatherRenderUnitsEvent& _event,
+        Entity* _entity,
+        LineRenderer3D* _lineRenderer,
+        Transform3D* _transform3D)
+    {
+        if (_lineRenderer->getRenderMask()->getMask() & _event.getPassParams()->renderMask)
+        {
+            if (_lineRenderer->getRenderMesh())
+            {
+                Vector<MaterialAssetRef> const& materials = _lineRenderer->getMaterialRefs();
+                Vector<VertexArrayObjectPtr> const& vaos = _lineRenderer->getRenderMesh()->getVertexArrayObjects();
+
+                if (vaos.empty())
+                    return;
+
+                Size c = Math::Max(vaos.size(), materials.size());
+
+                for (Size i = 0, in = c; i < in; ++i)
+                {
+                    VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
+
+                    MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
+
+                    MaterialPtr const* material = nullptr;
+                    if (materials.empty() || !materials[i % materials.size()].getMaterial())
+                        material = &_lineRenderer->getRenderSystem()->getMaterialManager()->getErrorMaterial();
+                    else
+                        material = &materials[i % materials.size()].getMaterial();
+
+#if (MAZE_DEBUG)
+                    if (!(*material)->getFirstRenderPass()->getShader())
+                    {
+                        Debug::LogError("Line(EID: %u): Shader is null!", _entity->getId());
+                        return;
+                    }
+#endif
+
+                    _event.getRenderUnits()->emplace_back(
+                        RenderUnit
+                        {
+                            (*material)->getFirstRenderPass(),
+                            vao,
+                            _transform3D->getWorldPosition(),
+                            1,
+                            &_transform3D->getWorldTransform()
+                        });
+
+                }
+            }
+        }
     }
 
 } // namespace Maze

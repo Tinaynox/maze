@@ -41,6 +41,7 @@
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer3D.hpp"
+#include "maze-graphics/ecs/events/MazeECSGraphicsEvents.hpp"
 #include "maze-graphics/config/MazeGraphicsConfig.hpp"
 #include <functional>
 
@@ -62,92 +63,6 @@ namespace Maze
     MAZE_USING_SHARED_PTR(RenderPass);
     MAZE_USING_SHARED_PTR(VertexArrayObject);
     MAZE_USING_SHARED_PTR(LightingSettings);
-
-
-    //////////////////////////////////////////
-    // Struct
-    //
-    //////////////////////////////////////////
-    struct MAZE_GRAPHICS_API DefaultPassParams
-    {
-        S32 renderMask = 0;
-        Mat4F cameraTransform = Mat4F::c_identity;
-        Mat4F projectionMatrix = Mat4F::c_identity;
-        Rect2DF viewport = Rect2DF(0.0f, 0.0f, 1.0f, 1.0f);
-        F32 nearZ = 0.001f;
-        F32 farZ = 100.0f;
-        F32 fieldOfViewY = Math::DegreesToRadians(30.0f);
-        bool clearColorFlag = true;
-        ColorU32 clearColor = ColorU32::c_green;
-        bool clearDepthFlag = true;
-        bool clearSkyBoxFlag = false;
-        bool drawFlag = true;
-        bool clipViewport = true;
-        LightingSettingsPtr lightingSettings;
-    };
-
-
-    //////////////////////////////////////////
-    // Struct
-    //
-    //////////////////////////////////////////
-    struct MAZE_GRAPHICS_API RenderUnit
-    {
-        //////////////////////////////////////////
-        RenderUnit()
-        {
-            memset(uvStreams, 0, sizeof(uvStreams));
-        }
-
-        //////////////////////////////////////////
-        RenderUnit(
-            RenderPassPtr const& _renderPass,
-            VertexArrayObjectPtr const& _vao,
-            Vec3F const& _worldPosition,
-            S32 _count,
-            Mat4F const* _modelMatricies,
-            Vec4F const* _colorStream,
-            Vec4F const* _uvs[MAZE_UV_CHANNELS_MAX])
-            : renderPass(_renderPass)
-            , vao(_vao)
-            , worldPosition(_worldPosition)
-            , count(_count)
-            , modelMatricies(_modelMatricies)
-            , colorStream(_colorStream)
-        {
-            memcpy(uvStreams, _uvs, sizeof(uvStreams));
-        }
-
-        //////////////////////////////////////////
-        RenderUnit(
-            RenderPassPtr const& _renderPass,
-            VertexArrayObjectPtr const& _vao,
-            Vec3F const& _worldPosition,
-            S32 _count,
-            Mat4F const* _modelMatricies,
-            Vec4F const* _colorStream = nullptr,
-            Vec4F const* _uv0 = nullptr)
-            : renderPass(_renderPass)
-            , vao(_vao)
-            , worldPosition(_worldPosition)
-            , count(_count)
-            , modelMatricies(_modelMatricies)
-            , colorStream(_colorStream)
-        {
-            memset(uvStreams, 0, sizeof(uvStreams));
-            uvStreams[0] = _uv0;
-        }
-
-        RenderPassPtr renderPass;
-        VertexArrayObjectPtr vao;
-        Vec3F worldPosition;
-        S32 count = 0;
-        Mat4F const* modelMatricies = nullptr;
-        Vec4F const* colorStream = nullptr;
-        Vec4F const* uvStreams[MAZE_UV_CHANNELS_MAX] = { nullptr };
-
-        F32 sqrDistanceToCamera;
-    };
 
 
     //////////////////////////////////////////
@@ -186,13 +101,6 @@ namespace Maze
         //////////////////////////////////////////
         void processPostUpdate(UpdateEvent const& _event);
 
-    public:
-
-
-        //////////////////////////////////////////
-        MultiDelegate<RenderTarget*, DefaultPassParams const&> eventPrePass;
-        MultiDelegate<RenderTarget*, DefaultPassParams const&, Vector<RenderUnit>&> eventGatherRenderUnits;
-        MultiDelegate<RenderTarget*, DefaultPassParams const&> eventPostPass;
 
     protected:
 
@@ -205,24 +113,12 @@ namespace Maze
             RenderSystemPtr const& _renderSystem);
 
 
-        //////////////////////////////////////////
-        void notifyGatherRenderUnits(
-            RenderTarget* _renderTarget,
-            DefaultPassParams const& _params,
-            Vector<RenderUnit>& _renderData);
-
     protected:
         ECSWorld* m_world = nullptr;
         RenderSystemPtr m_renderSystem;
 
-        SharedPtr<GenericInclusiveEntitiesSample<MeshRenderer, Transform3D>> m_meshRenderers;
-        SharedPtr<GenericInclusiveEntitiesSample<MeshRendererInstanced, Transform3D>> m_meshRenderersInstancedSample;
-        SharedPtr<GenericInclusiveEntitiesSample<TrailRenderer3D, Transform3D>> m_trailRenderers3DSample;
-        SharedPtr<GenericInclusiveEntitiesSample<TrailRenderer3DHider, Transform3D>> m_trailRendererHiders3DSample;
-        SharedPtr<GenericInclusiveEntitiesSample<LineRenderer3D, Transform3D>> m_lineRenderers3DSample;
         SharedPtr<GenericInclusiveEntitiesSample<Camera3D>> m_cameras3DSample;
         SharedPtr<GenericInclusiveEntitiesSample<Light3D>> m_lights3DSample;
-        SharedPtr<GenericInclusiveEntitiesSample<SystemTextRenderer3D>> m_systemTextRenderer3DsSample;
     };
 
 

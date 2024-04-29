@@ -46,6 +46,7 @@
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
@@ -421,6 +422,18 @@ namespace Maze
             m_meshRenderer->setModelMatrix(
                 i,
                 m_transform->getWorldTransform().concatenatedAffineCopy(m_localMatrices[i]));
+    }
+
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM(SystemTextRenderer3DSystem, 0,
+        UpdateEvent const& _event,
+        Entity* _entity,
+        SystemTextRenderer3D* _systemTextRenderer3D)
+    {
+        if (_systemTextRenderer3D->getTransform()->isWorldTransformChanged())
+            _systemTextRenderer3D->updateMeshRendererModelMatrices();
     }
             
     

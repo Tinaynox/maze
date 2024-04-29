@@ -72,6 +72,10 @@ namespace Maze
         //////////////////////////////////////////
         static MeshRendererPtr Create(RenderSystem* _renderSystem = nullptr);
 
+
+        //////////////////////////////////////////
+        inline RenderSystem* getRenderSystem() const { return m_renderSystem; }
+
         
         //////////////////////////////////////////
         inline RenderMeshAssetRef const& getRenderMeshRef() const { return m_renderMeshRef; }

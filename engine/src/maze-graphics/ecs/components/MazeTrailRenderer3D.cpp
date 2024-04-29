@@ -36,12 +36,15 @@
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/loaders/mesh/MazeLoaderOBJ.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
+#include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/MazeECSRenderScene.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-graphics/ecs/events/MazeECSGraphicsEvents.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
@@ -408,6 +411,75 @@ namespace Maze
         m_edges.clear();
         m_vao->clear();
         m_timer = 0.0f;
+    }
+
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM(TrailRenderer3DSystem, 0,
+        UpdateEvent const& _event,
+        Entity* _entity,
+        TrailRenderer3D* _trailRenderer)
+    {
+        _trailRenderer->update(_event.getDt());
+    }
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(TrailRenderer3DGatherSystem, 0,
+        Render3DDefaultPassGatherRenderUnitsEvent& _event,
+        Entity* _entity,
+        TrailRenderer3D* _trailRenderer,
+        Transform3D* _transform3D)
+    {
+        if (_trailRenderer->getEdgesCount() == 0)
+            return;
+
+        if (_trailRenderer->getRenderMask()->getMask() & _event.getPassParams()->renderMask)
+        {
+            if (_trailRenderer->getRenderMesh())
+            {
+                Vector<MaterialAssetRef> const& materials = _trailRenderer->getMaterialRefs();
+                Vector<VertexArrayObjectPtr> const& vaos = _trailRenderer->getRenderMesh()->getVertexArrayObjects();
+
+                if (vaos.empty())
+                    return;
+
+                Size c = Math::Max(vaos.size(), materials.size());
+
+                for (Size i = 0, in = c; i < in; ++i)
+                {
+                    VertexArrayObjectPtr const& vao = vaos[i % vaos.size()];
+
+                    MAZE_DEBUG_WARNING_IF(vao == nullptr, "VAO is null!");
+
+                    MaterialPtr const* material = nullptr;
+                    if (materials.empty() || !materials[i % materials.size()].getMaterial())
+                        material = &_trailRenderer->getRenderSystem()->getMaterialManager()->getErrorMaterial();
+                    else
+                        material = &materials[i % materials.size()].getMaterial();
+
+#if (MAZE_DEBUG)
+                    if (!(*material)->getFirstRenderPass()->getShader())
+                    {
+                        Debug::LogError("Trail(EID: %u): Shader is null!", _entity->getId());
+                        return;
+                    }
+#endif
+
+                    _event.getRenderUnits()->emplace_back(
+                        RenderUnit
+                        {
+                            (*material)->getFirstRenderPass(),
+                            vao,
+                            _trailRenderer->getWorldPosition(),
+                            1,
+                            &Mat4F::c_identity
+                        });
+
+                }
+            }
+        }
     }
 
 } // namespace Maze
