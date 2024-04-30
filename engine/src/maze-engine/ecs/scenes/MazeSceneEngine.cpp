@@ -28,6 +28,7 @@
 #include "maze-engine/ecs/scenes/MazeSceneEngine.hpp"
 #include "maze-graphics/ecs/components/MazeRenderController.hpp"
 #include "maze-particles/ecs/components/MazeParticlesDrawerController.hpp"
+#include "maze-ui/ecs/components/MazeInputSystem2D.hpp"
 
 
 //////////////////////////////////////////
@@ -70,9 +71,14 @@ namespace Maze
         if (!ECSRenderScene::init(_renderTarget))
             return false;
 
+        // Render
         createAndAddEntityWithComponent<RenderController>("RenderController", _renderSystem);
 
+        // Particles
         createAndAddEntityWithComponent<ParticlesDrawerController>("ParticlesDrawerController", _renderSystem);
+
+        // 2D Input
+        createAndAddEntityWithComponent<InputSystem2D>("InputSystem2D");
         
         return true;
     }

@@ -54,7 +54,6 @@
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-physics2d/managers/MazePhysics2DManager.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
-#include "maze-ui/ecs/systems/MazeInputSystem2D.hpp"
 #include "maze-particles/managers/MazeParticlesManager.hpp"
 #include "maze-sound/managers/MazeSoundManager.hpp"
 #include "maze-engine/ecs/scenes/MazeSceneEngine.hpp"
@@ -328,7 +327,7 @@ namespace Maze
         RenderWindowPtr const& _renderWindow,
         RenderSystemPtr const& _renderSystem)
     {
-        _world->addSystem(InputSystem2D::Create());
+        
     }
 
     //////////////////////////////////////////

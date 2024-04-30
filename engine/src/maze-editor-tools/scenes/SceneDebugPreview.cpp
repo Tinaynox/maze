@@ -80,7 +80,6 @@
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "maze-editor-tools/ecs/components/MazeDebugGridRenderer.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
-#include "maze-ui/ecs/systems/MazeInputSystem2D.hpp"
 #include "layout/MazeEditorToolsStyles.hpp"
 
 
@@ -197,7 +196,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneDebugPreview::createSystems()
     {        
-        m_previewWorld->addSystem(InputSystem2D::Create());
+        
     }
 
     //////////////////////////////////////////

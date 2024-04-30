@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeUIHeader.hpp"
-#include "maze-ui/ecs/systems/MazeInputSystem2D.hpp"
+#include "maze-ui/ecs/components/MazeInputSystem2D.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
@@ -47,6 +47,7 @@
 #include "maze-ui/ecs/components/MazeDropdown2D.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
@@ -93,7 +94,7 @@ namespace Maze
     // Class InputSystem2D
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(InputSystem2D, ComponentSystem);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(InputSystem2D, Component);
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(InputSystem2D);
@@ -137,32 +138,32 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void InputSystem2D::processSystemAdded()
+    void InputSystem2D::processEntityAwakened()
     {
-        m_canvasesSample = m_worldRaw->requestInclusiveSample<Canvas>();
+        m_canvasesSample = getEntityRaw()->getECSWorld()->requestInclusiveSample<Canvas>();
         m_canvasesSample->eventEntityAdded.subscribe(this, &InputSystem2D::processCanvasEntityAdded);
         m_canvasesSample->eventEntityRemoved.subscribe(this, &InputSystem2D::processCanvasEntityRemoved);
         updateSortedCanvasesList();
 
-        m_canvasScalersSample = m_worldRaw->requestInclusiveSample<CanvasScaler>();
+        m_canvasScalersSample = getEntityRaw()->getECSWorld()->requestInclusiveSample<CanvasScaler>();
 
 
-        m_UIElements2DSample = m_worldRaw->requestInclusiveSample<UIElement2D>();
+        m_UIElements2DSample = getEntityRaw()->getECSWorld()->requestInclusiveSample<UIElement2D>();
         m_UIElements2DSample->eventEntityAdded.subscribe(this, &InputSystem2D::processUIElement2DEntityAdded);
         m_UIElements2DSample->eventEntityRemoved.subscribe(this, &InputSystem2D::processUIElement2DEntityRemoved);
 
-        m_systemTextEditBoxesSample = m_worldRaw->requestInclusiveSample<EditBox2D>();
-        m_systemTextDropdownsSample = m_worldRaw->requestInclusiveSample<Dropdown2D>();
-        m_horizontalLayouts2D = m_worldRaw->requestInclusiveSample<HorizontalLayout2D>();
-        m_verticalLayouts2D = m_worldRaw->requestInclusiveSample<VerticalLayout2D>();
-        m_sizePolicy2D = m_worldRaw->requestInclusiveSample<SizePolicy2D>();
-        m_scrollRects2D = m_worldRaw->requestInclusiveSample<ScrollRect2D>();
+        m_systemTextEditBoxesSample = getEntityRaw()->getECSWorld()->requestInclusiveSample<EditBox2D>();
+        m_systemTextDropdownsSample = getEntityRaw()->getECSWorld()->requestInclusiveSample<Dropdown2D>();
+        m_horizontalLayouts2D = getEntityRaw()->getECSWorld()->requestInclusiveSample<HorizontalLayout2D>();
+        m_verticalLayouts2D = getEntityRaw()->getECSWorld()->requestInclusiveSample<VerticalLayout2D>();
+        m_sizePolicy2D = getEntityRaw()->getECSWorld()->requestInclusiveSample<SizePolicy2D>();
+        m_scrollRects2D = getEntityRaw()->getECSWorld()->requestInclusiveSample<ScrollRect2D>();
     }
 
     //////////////////////////////////////////
-    void InputSystem2D::processUpdate(UpdateEvent const& _event)
+    void InputSystem2D::update(UpdateEvent const& _event)
     {
-        MAZE_PROFILE_EVENT("InputSystem2D::processUpdate");
+        MAZE_PROFILE_EVENT("InputSystem2D::update");
 
         F32 dt = _event.getDt();
 
@@ -920,6 +921,16 @@ namespace Maze
         m_sortedUIElements2DDirty = false;
     }
     
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM(InputSystem2DSystem, 20000,
+        UpdateEvent const& _event,
+        Entity* _entity,
+        InputSystem2D* _inputSystem2D)
+    {
+        _inputSystem2D->update(_event);
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

@@ -68,13 +68,13 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_UI_API InputSystem2D
-        : public ComponentSystem
+        : public Component
         , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(InputSystem2D, ComponentSystem);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(InputSystem2D, Component);
 
         //////////////////////////////////////////
         MAZE_DECLARE_MEMORY_ALLOCATION(InputSystem2D);
@@ -128,9 +128,9 @@ namespace Maze
         static InputSystem2DPtr Create();
 
 
-
         //////////////////////////////////////////
-        virtual S32 getOrder() const MAZE_OVERRIDE { return 20000; }
+        void update(UpdateEvent const& _event);
+
 
         //////////////////////////////////////////
         inline void setCoordsConverter(std::function<Vec2F(Vec2F const&)> const& _coordsConverter) { m_coordsConverter = _coordsConverter; }
@@ -144,10 +144,7 @@ namespace Maze
         bool init();
 
         //////////////////////////////////////////
-        virtual void processSystemAdded() MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void processUpdate(UpdateEvent const& _event) MAZE_OVERRIDE;
+        virtual void processEntityAwakened() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void processCanvasEntityAdded(Entity* _entity, Canvas* _canvas);
