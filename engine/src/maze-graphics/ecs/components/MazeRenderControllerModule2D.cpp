@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystemModule2D.hpp"
+#include "maze-graphics/ecs/components/MazeRenderControllerModule2D.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-core/utils/MazeProfiler.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
@@ -43,6 +43,7 @@
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
+#include "maze-graphics/ecs/events/MazeECSGraphicsEvents.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
@@ -53,16 +54,16 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class RenderControlSystemModule2D
+    // Class RenderControllerModule2D
     //
     //////////////////////////////////////////
-    RenderControlSystemModule2D::RenderControlSystemModule2D()
+    RenderControllerModule2D::RenderControllerModule2D()
         : m_sortedMeshRenderersDirty(false)
     {
     }
 
     //////////////////////////////////////////
-    RenderControlSystemModule2D::~RenderControlSystemModule2D()
+    RenderControllerModule2D::~RenderControllerModule2D()
     {
         m_canvasesSample->eventEntityAdded.unsubscribe(this);
         m_canvasesSample->eventEntityRemoved.unsubscribe(this);
@@ -75,17 +76,17 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    RenderControlSystemModule2DPtr RenderControlSystemModule2D::Create(
+    RenderControllerModule2DPtr RenderControllerModule2D::Create(
         ECSWorldPtr const& _world,
         RenderSystemPtr const& _renderSystem)
     {
-        RenderControlSystemModule2DPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(RenderControlSystemModule2D, object, init(_world, _renderSystem));
+        RenderControllerModule2DPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(RenderControllerModule2D, object, init(_world, _renderSystem));
         return object;
     }
 
     //////////////////////////////////////////
-    bool RenderControlSystemModule2D::init(
+    bool RenderControllerModule2D::init(
         ECSWorldPtr const& _world,
         RenderSystemPtr const& _renderSystem)
     {
@@ -105,14 +106,14 @@ namespace Maze
 
         m_sizePolicy2D = _world->requestInclusiveSample<SizePolicy2D>();
 
-        m_canvasesSample->eventEntityAdded.subscribe(this, &RenderControlSystemModule2D::processCanvasEntityAdded);
-        m_canvasesSample->eventEntityRemoved.subscribe(this, &RenderControlSystemModule2D::processCanvasEntityRemoved);
+        m_canvasesSample->eventEntityAdded.subscribe(this, &RenderControllerModule2D::processCanvasEntityAdded);
+        m_canvasesSample->eventEntityRemoved.subscribe(this, &RenderControllerModule2D::processCanvasEntityRemoved);
 
-        m_meshRenderersSample->eventEntityAdded.subscribe(this, &RenderControlSystemModule2D::processMeshRendererEntityAdded);
-        m_meshRenderersSample->eventEntityRemoved.subscribe(this, &RenderControlSystemModule2D::processMeshRendererEntityRemoved);
+        m_meshRenderersSample->eventEntityAdded.subscribe(this, &RenderControllerModule2D::processMeshRendererEntityAdded);
+        m_meshRenderersSample->eventEntityRemoved.subscribe(this, &RenderControllerModule2D::processMeshRendererEntityRemoved);
 
-        m_meshRenderersInstancedSample->eventEntityAdded.subscribe(this, &RenderControlSystemModule2D::processMeshRendererEntityAdded);
-        m_meshRenderersInstancedSample->eventEntityRemoved.subscribe(this, &RenderControlSystemModule2D::processMeshRendererEntityRemoved);
+        m_meshRenderersInstancedSample->eventEntityAdded.subscribe(this, &RenderControllerModule2D::processMeshRendererEntityAdded);
+        m_meshRenderersInstancedSample->eventEntityRemoved.subscribe(this, &RenderControllerModule2D::processMeshRendererEntityRemoved);
 
         updateSortedCanvasesList();
 
@@ -120,10 +121,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControlSystemModule2D::draw(RenderTarget* _renderTarget)
+    void RenderControllerModule2D::draw(RenderTarget* _renderTarget)
     {
         MAZE_PROFILER_SCOPED_LOCK(2D);
-        MAZE_PROFILE_EVENT("RenderControlSystemModule2D::draw");
+        MAZE_PROFILE_EVENT("RenderControllerModule2D::draw");
 
         for (auto& canvasRenderData : m_sortedCanvasRenderData)
         {
@@ -329,7 +330,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControlSystemModule2D::processUpdate(UpdateEvent const& _event)
+    void RenderControllerModule2D::processUpdate(UpdateEvent const& _event)
     {
         F32 dt = _event.getDt();
 
@@ -412,13 +413,13 @@ namespace Maze
                 }
             });
 
-        eventPostUpdate(dt);
+        m_world->sendEventImmediate<Render2DPostUpdateEvent>(dt);
 
         updateSortedMeshRenderersList();
     }
 
     //////////////////////////////////////////
-    void RenderControlSystemModule2D::processPostUpdate(UpdateEvent const& _event)
+    void RenderControllerModule2D::processPostUpdate(UpdateEvent const& _event)
     {
         m_canvasGroupsSample->process(
             [](Entity* _entity, CanvasGroup* _canvasGroup)
@@ -428,43 +429,43 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControlSystemModule2D::processCanvasEntityAdded(Entity* _entity, Canvas* _canvas)
+    void RenderControllerModule2D::processCanvasEntityAdded(Entity* _entity, Canvas* _canvas)
     {
         updateSortedCanvasesList();
     }
 
     //////////////////////////////////////////
-    void RenderControlSystemModule2D::processCanvasEntityRemoved(Entity* _entity, Canvas* _canvas)
+    void RenderControllerModule2D::processCanvasEntityRemoved(Entity* _entity, Canvas* _canvas)
     {
         updateSortedCanvasesList();
     }
 
     //////////////////////////////////////////
-    void RenderControlSystemModule2D::processMeshRendererEntityAdded(Entity* _entity, MeshRenderer* _meshRenderer, Transform2D* _transform2D)
+    void RenderControllerModule2D::processMeshRendererEntityAdded(Entity* _entity, MeshRenderer* _meshRenderer, Transform2D* _transform2D)
     {
         m_sortedMeshRenderersDirty = true;
     }
 
     //////////////////////////////////////////
-    void RenderControlSystemModule2D::processMeshRendererEntityRemoved(Entity* _entity, MeshRenderer* _meshRenderer, Transform2D* _transform2D)
+    void RenderControllerModule2D::processMeshRendererEntityRemoved(Entity* _entity, MeshRenderer* _meshRenderer, Transform2D* _transform2D)
     {
         m_sortedMeshRenderersDirty = true;
     }
 
     //////////////////////////////////////////
-    void RenderControlSystemModule2D::processMeshRendererEntityAdded(Entity* _entity, MeshRendererInstanced* _meshRenderer, Transform2D* _transform2D)
+    void RenderControllerModule2D::processMeshRendererEntityAdded(Entity* _entity, MeshRendererInstanced* _meshRenderer, Transform2D* _transform2D)
     {
         m_sortedMeshRenderersDirty = true;
     }
 
     //////////////////////////////////////////
-    void RenderControlSystemModule2D::processMeshRendererEntityRemoved(Entity* _entity, MeshRendererInstanced* _meshRenderer, Transform2D* _transform2D)
+    void RenderControllerModule2D::processMeshRendererEntityRemoved(Entity* _entity, MeshRendererInstanced* _meshRenderer, Transform2D* _transform2D)
     {
         m_sortedMeshRenderersDirty = true;
     }
 
     //////////////////////////////////////////
-    void RenderControlSystemModule2D::updateSortedCanvasesList()
+    void RenderControllerModule2D::updateSortedCanvasesList()
     {
         m_sortedCanvases.clear();
 
@@ -485,7 +486,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControlSystemModule2D::updateSortedMeshRenderersList()
+    void RenderControllerModule2D::updateSortedMeshRenderersList()
     {
         if (!m_sortedMeshRenderersDirty)
             return;

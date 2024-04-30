@@ -36,7 +36,6 @@
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystemModule3D.hpp"
 
 
 //////////////////////////////////////////

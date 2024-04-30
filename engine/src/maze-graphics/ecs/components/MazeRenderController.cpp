@@ -25,13 +25,13 @@
 
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
+#include "maze-graphics/ecs/components/MazeRenderController.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-core/utils/MazeProfiler.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystemModule2D.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystemModule3D.hpp"
+#include "maze-graphics/ecs/components/MazeRenderControllerModule2D.hpp"
+#include "maze-graphics/ecs/components/MazeRenderControllerModule3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-graphics/MazeRenderQueue.hpp"
@@ -42,28 +42,29 @@
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class RenderControlSystem
+    // Class RenderController
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(RenderControlSystem, ComponentSystem);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(RenderController, Component);
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(RenderControlSystem);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(RenderController);
 
     //////////////////////////////////////////
-    RenderControlSystem::RenderControlSystem()
+    RenderController::RenderController()
         : m_renderTargetsDirty(true)
     {
     }
 
     //////////////////////////////////////////
-    RenderControlSystem::~RenderControlSystem()
+    RenderController::~RenderController()
     {
         for (Camera3D* camera : m_cameras3D)
             camera->eventRenderTargetChanged.unsubscribe(this);
@@ -75,29 +76,29 @@ namespace Maze
         
         if (m_canvasesSample)
         {
-            m_canvasesSample->eventEntityAdded.unsubscribe(this, &RenderControlSystem::processCanvasEntityAdded);
-            m_canvasesSample->eventEntityRemoved.unsubscribe(this, &RenderControlSystem::processCanvasEntityRemoved);
+            m_canvasesSample->eventEntityAdded.unsubscribe(this, &RenderController::processCanvasEntityAdded);
+            m_canvasesSample->eventEntityRemoved.unsubscribe(this, &RenderController::processCanvasEntityRemoved);
         }
 
         if (m_cameras3DSample)
         {
-            m_cameras3DSample->eventEntityAdded.unsubscribe(this, &RenderControlSystem::processCameraEntityAdded);
-            m_cameras3DSample->eventEntityRemoved.unsubscribe(this, &RenderControlSystem::processCameraEntityRemoved);
+            m_cameras3DSample->eventEntityAdded.unsubscribe(this, &RenderController::processCameraEntityAdded);
+            m_cameras3DSample->eventEntityRemoved.unsubscribe(this, &RenderController::processCameraEntityRemoved);
         }
 
         clearRenderTargets();
     }
 
     //////////////////////////////////////////
-    RenderControlSystemPtr RenderControlSystem::Create(RenderSystemPtr const& _renderSystem)
+    RenderControllerPtr RenderController::Create(RenderSystemPtr const& _renderSystem)
     {
-        RenderControlSystemPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(RenderControlSystem, object, init(_renderSystem));
+        RenderControllerPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(RenderController, object, init(_renderSystem));
         return object;
     }
 
     //////////////////////////////////////////
-    bool RenderControlSystem::init(RenderSystemPtr const& _renderSystem)
+    bool RenderController::init(RenderSystemPtr const& _renderSystem)
     {
         m_renderSystem = _renderSystem;
 
@@ -107,22 +108,22 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControlSystem::processSystemAdded()
+    void RenderController::processEntityAwakened()
     {
-        m_canvasesSample = m_worldRaw->requestInclusiveSample<Canvas>();
-        m_canvasesSample->eventEntityAdded.subscribe(this, &RenderControlSystem::processCanvasEntityAdded);
-        m_canvasesSample->eventEntityRemoved.subscribe(this, &RenderControlSystem::processCanvasEntityRemoved);
+        m_canvasesSample = getEntityRaw()->getECSWorld()->requestInclusiveSample<Canvas>();
+        m_canvasesSample->eventEntityAdded.subscribe(this, &RenderController::processCanvasEntityAdded);
+        m_canvasesSample->eventEntityRemoved.subscribe(this, &RenderController::processCanvasEntityRemoved);
 
-        m_cameras3DSample = m_worldRaw->requestInclusiveSample<Camera3D>();
-        m_cameras3DSample->eventEntityAdded.subscribe(this, &RenderControlSystem::processCameraEntityAdded);
-        m_cameras3DSample->eventEntityRemoved.subscribe(this, &RenderControlSystem::processCameraEntityRemoved);
+        m_cameras3DSample = getEntityRaw()->getECSWorld()->requestInclusiveSample<Camera3D>();
+        m_cameras3DSample->eventEntityAdded.subscribe(this, &RenderController::processCameraEntityAdded);
+        m_cameras3DSample->eventEntityRemoved.subscribe(this, &RenderController::processCameraEntityRemoved);
 
-        m_module3D = RenderControlSystemModule3D::Create(getWorld(), m_renderSystem);
-        m_module2D = RenderControlSystemModule2D::Create(getWorld(), m_renderSystem);
+        m_module3D = RenderControllerModule3D::Create(getEntityRaw()->getECSWorld()->cast<ECSWorld>(), m_renderSystem);
+        m_module2D = RenderControllerModule2D::Create(getEntityRaw()->getECSWorld()->cast<ECSWorld>(), m_renderSystem);
     }
 
     //////////////////////////////////////////
-    void RenderControlSystem::updateRenderTargets()
+    void RenderController::updateRenderTargets()
     {
         clearRenderTargets();
 
@@ -146,15 +147,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControlSystem::processCanvasEntityAdded(Entity* _entity, Canvas* _canvas)
+    void RenderController::processCanvasEntityAdded(Entity* _entity, Canvas* _canvas)
     {
         m_renderTargetsDirty = true;
         m_canvases.insert(_canvas);
-        _canvas->eventRenderTargetChanged.subscribe(this, &RenderControlSystem::processCanvasRenderTargetChanged);
+        _canvas->eventRenderTargetChanged.subscribe(this, &RenderController::processCanvasRenderTargetChanged);
     }
 
     //////////////////////////////////////////
-    void RenderControlSystem::processCanvasEntityRemoved(Entity* _entity, Canvas* _canvas)
+    void RenderController::processCanvasEntityRemoved(Entity* _entity, Canvas* _canvas)
     {
         m_renderTargetsDirty = true;
         _canvas->eventRenderTargetChanged.unsubscribe(this);
@@ -162,21 +163,21 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControlSystem::processCanvasRenderTargetChanged(Canvas* _canvas, RenderTargetPtr const& _renderTarget)
+    void RenderController::processCanvasRenderTargetChanged(Canvas* _canvas, RenderTargetPtr const& _renderTarget)
     {
         m_renderTargetsDirty = true;
     }
 
     //////////////////////////////////////////
-    void RenderControlSystem::processCameraEntityAdded(Entity* _entity, Camera3D* _camera3D)
+    void RenderController::processCameraEntityAdded(Entity* _entity, Camera3D* _camera3D)
     {
         m_renderTargetsDirty = true;
         m_cameras3D.insert(_camera3D);
-        _camera3D->eventRenderTargetChanged.subscribe(this, &RenderControlSystem::processCameraRenderTargetChanged);
+        _camera3D->eventRenderTargetChanged.subscribe(this, &RenderController::processCameraRenderTargetChanged);
     }
 
     //////////////////////////////////////////
-    void RenderControlSystem::processCameraEntityRemoved(Entity* _entity, Camera3D* _camera3D)
+    void RenderController::processCameraEntityRemoved(Entity* _entity, Camera3D* _camera3D)
     {
         m_renderTargetsDirty = true;
         _camera3D->eventRenderTargetChanged.unsubscribe(this);
@@ -184,22 +185,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControlSystem::processCameraRenderTargetChanged(Camera3D* _camera3D, RenderTargetPtr const& _renderTarget)
+    void RenderController::processCameraRenderTargetChanged(Camera3D* _camera3D, RenderTargetPtr const& _renderTarget)
     {
         m_renderTargetsDirty = true;
     }
 
-    //////////////////////////////////////////
-    void RenderControlSystem::processUpdate(UpdateEvent const& _event)
-    {
-        MAZE_PROFILER_SCOPED_LOCK(RENDER);
-        MAZE_PROFILE_EVENT("RenderControlSystem::processUpdate");
-
-        update(_event);
-    }
 
     //////////////////////////////////////////
-    void RenderControlSystem::update(UpdateEvent const& _event)
+    void RenderController::update(UpdateEvent const& _event)
     {
         m_module3D->processUpdate(_event);
         m_module2D->processUpdate(_event);
@@ -211,7 +204,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControlSystem::render()
+    void RenderController::render()
     {
         if (m_renderTargetsDirty)
             updateRenderTargets();
@@ -226,7 +219,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControlSystem::addRenderTarget(RenderTarget* _renderTarget)
+    void RenderController::addRenderTarget(RenderTarget* _renderTarget)
     {
         auto it = std::find(
             m_renderTargets.begin(),
@@ -238,12 +231,12 @@ namespace Maze
 
         m_renderTargets.push_back(_renderTarget);
 
-        _renderTarget->eventRenderTargetOrderChanged.subscribe(this, &RenderControlSystem::notifyRenderTargetOrderChanged);
-        _renderTarget->eventRenderTargetDestroyed.subscribe(this, &RenderControlSystem::notifyRenderTargetDestroyed);
+        _renderTarget->eventRenderTargetOrderChanged.subscribe(this, &RenderController::notifyRenderTargetOrderChanged);
+        _renderTarget->eventRenderTargetDestroyed.subscribe(this, &RenderController::notifyRenderTargetDestroyed);
     }
 
     //////////////////////////////////////////
-    void RenderControlSystem::removeRenderTarget(RenderTarget* _renderTarget)
+    void RenderController::removeRenderTarget(RenderTarget* _renderTarget)
     {
         auto it = std::find(
             m_renderTargets.begin(),
@@ -253,27 +246,27 @@ namespace Maze
         if (it == m_renderTargets.end())
             return;
 
-        (*it)->eventRenderTargetOrderChanged.unsubscribe(this, &RenderControlSystem::notifyRenderTargetOrderChanged);
-        (*it)->eventRenderTargetDestroyed.unsubscribe(this, &RenderControlSystem::notifyRenderTargetDestroyed);
+        (*it)->eventRenderTargetOrderChanged.unsubscribe(this, &RenderController::notifyRenderTargetOrderChanged);
+        (*it)->eventRenderTargetDestroyed.unsubscribe(this, &RenderController::notifyRenderTargetDestroyed);
 
         m_renderTargets.erase(it);
     }
 
     //////////////////////////////////////////
-    void RenderControlSystem::clearRenderTargets()
+    void RenderController::clearRenderTargets()
     {
         while (!m_renderTargets.empty())
         {
             RenderTarget* renderTarget = m_renderTargets.back();
-            renderTarget->eventRenderTargetOrderChanged.unsubscribe(this, &RenderControlSystem::notifyRenderTargetOrderChanged);
-            renderTarget->eventRenderTargetDestroyed.unsubscribe(this, &RenderControlSystem::notifyRenderTargetDestroyed);
+            renderTarget->eventRenderTargetOrderChanged.unsubscribe(this, &RenderController::notifyRenderTargetOrderChanged);
+            renderTarget->eventRenderTargetDestroyed.unsubscribe(this, &RenderController::notifyRenderTargetDestroyed);
 
             m_renderTargets.pop_back();
         }
     }
 
     //////////////////////////////////////////
-    void RenderControlSystem::sortRenderTargets()
+    void RenderController::sortRenderTargets()
     {
         std::sort(
             m_renderTargets.begin(),
@@ -285,15 +278,26 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControlSystem::notifyRenderTargetOrderChanged(RenderTarget* _renderTarget, S32 _order)
+    void RenderController::notifyRenderTargetOrderChanged(RenderTarget* _renderTarget, S32 _order)
     {
         sortRenderTargets();
     }
 
     //////////////////////////////////////////
-    void RenderControlSystem::notifyRenderTargetDestroyed(RenderTarget* _renderTarget)
+    void RenderController::notifyRenderTargetDestroyed(RenderTarget* _renderTarget)
     {
         removeRenderTarget(_renderTarget);
+    }
+
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM(RenderControllerSystem, 50000,
+        UpdateEvent const& _event,
+        Entity* _entity,
+        RenderController* _renderController)
+    {
+        _renderController->update(_event);
     }
     
     

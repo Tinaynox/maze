@@ -26,6 +26,7 @@
 //////////////////////////////////////////
 #include "MazeEngineHeader.hpp"
 #include "maze-engine/ecs/scenes/MazeSceneEngine.hpp"
+#include "maze-graphics/ecs/components/MazeRenderController.hpp"
 #include "maze-particles/ecs/components/MazeParticlesDrawerController.hpp"
 
 
@@ -68,6 +69,8 @@ namespace Maze
 
         if (!ECSRenderScene::init(_renderTarget))
             return false;
+
+        createAndAddEntityWithComponent<RenderController>("RenderController", _renderSystem);
 
         createAndAddEntityWithComponent<ParticlesDrawerController>("ParticlesDrawerController", _renderSystem);
         

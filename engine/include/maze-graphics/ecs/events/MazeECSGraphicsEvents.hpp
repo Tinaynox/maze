@@ -235,6 +235,33 @@ namespace Maze
     };
 
 
+
+    //////////////////////////////////////////
+    // Class Render2DPostUpdateEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_GRAPHICS_API Render2DPostUpdateEvent
+        : public GenericEvent<Render2DPostUpdateEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(Render2DPostUpdateEvent, Event);
+
+    public:
+
+        //////////////////////////////////////////
+        inline Render2DPostUpdateEvent(
+            F32 _dt = 0.0f)
+            : m_dt(_dt)
+        {}
+
+        //////////////////////////////////////////
+        inline F32 getDt() const { return m_dt; }
+
+    private:
+        F32 m_dt = 0.0f;
+    };
+
 } // namespace Maze
 //////////////////////////////////////////
 

@@ -41,7 +41,6 @@
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeLight3D.hpp"
@@ -81,9 +80,7 @@
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "maze-editor-tools/ecs/components/MazeDebugGridRenderer.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-ui/ecs/systems/MazeInputSystem2D.hpp"
-#include "maze-ui/ecs/systems/MazeUISystem2D.hpp"
 #include "layout/MazeEditorToolsStyles.hpp"
 
 
@@ -200,8 +197,6 @@ namespace Maze
     //////////////////////////////////////////
     void SceneDebugPreview::createSystems()
     {        
-        m_previewWorld->addSystem(RenderControlSystem::Create(GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()));
-        m_previewWorld->addSystem(UISystem2D::Create());
         m_previewWorld->addSystem(InputSystem2D::Create());
     }
 

@@ -41,6 +41,11 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Render3DDefaultPostPassEvent, Event);
 
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(Render2DPostUpdateEvent, Event);
+    
+
     
 } // namespace Maze
 //////////////////////////////////////////

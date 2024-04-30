@@ -43,8 +43,10 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
+#include "maze-graphics/ecs/events/MazeECSGraphicsEvents.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/helpers/MazeTextHelper.hpp"
 
@@ -854,6 +856,27 @@ namespace Maze
     {
         updateMaterial();
     }
+
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(TextRenderer2DSystem, 0,
+        Render2DPostUpdateEvent& _event,
+        Entity* _entity,
+        TextRenderer2D* _textRenderer2D)
+    {
+        if (_textRenderer2D->getTransform()->isSizeChanged())
+            _textRenderer2D->updateMeshData();
+        else
+        {
+            if (_textRenderer2D->getTransform()->isWorldTransformChanged())
+                _textRenderer2D->updateMeshRendererModelMatrices();
+
+            if (_textRenderer2D->getCanvasRenderer()->isAlphaDirty())
+                _textRenderer2D->updateMeshRendererColors();
+        }
+    }
+    
             
     
 } // namespace Maze

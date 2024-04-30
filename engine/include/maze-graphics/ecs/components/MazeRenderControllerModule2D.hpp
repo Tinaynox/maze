@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeRenderControlSystemModule2D_hpp_))
-#define _MazeRenderControlSystemModule2D_hpp_
+#if (!defined(_MazeRenderControllerModule2D_hpp_))
+#define _MazeRenderControllerModule2D_hpp_
 
 
 //////////////////////////////////////////
@@ -52,7 +52,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(EntitiesSample);
-    MAZE_USING_SHARED_PTR(RenderControlSystemModule2D);
+    MAZE_USING_SHARED_PTR(RenderControllerModule2D);
     MAZE_USING_SHARED_PTR(Camera3D);
     MAZE_USING_SHARED_PTR(MeshRenderer);
     MAZE_USING_SHARED_PTR(Transform2D);
@@ -61,10 +61,10 @@ namespace Maze
             
 
     //////////////////////////////////////////
-    // Class RenderControlSystemModule2D
+    // Class RenderControllerModule2D
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API RenderControlSystemModule2D
+    class MAZE_GRAPHICS_API RenderControllerModule2D
         : public MultiDelegateCallbackReceiver
     {
     protected:
@@ -122,10 +122,10 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~RenderControlSystemModule2D();
+        virtual ~RenderControllerModule2D();
 
         //////////////////////////////////////////
-        static RenderControlSystemModule2DPtr Create(
+        static RenderControllerModule2DPtr Create(
             ECSWorldPtr const& _world,
             RenderSystemPtr const& _renderSystem);
 
@@ -146,12 +146,12 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        MultiDelegate<F32> eventPostUpdate;
+        // MultiDelegate<F32> eventPostUpdate;
 
     protected:
 
         //////////////////////////////////////////
-        RenderControlSystemModule2D();
+        RenderControllerModule2D();
 
         //////////////////////////////////////////
         bool init(
@@ -209,5 +209,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeRenderControlSystemModule2D_hpp_
+#endif // _MazeRenderControllerModule2D_hpp_
 //////////////////////////////////////////

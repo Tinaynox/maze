@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeRenderControlSystem_hpp_))
-#define _MazeRenderControlSystem_hpp_
+#if (!defined(_MazeRenderController_hpp_))
+#define _MazeRenderController_hpp_
 
 
 //////////////////////////////////////////
@@ -44,29 +44,29 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(RenderSystem);
     MAZE_USING_SHARED_PTR(EntitiesSample);
-    MAZE_USING_SHARED_PTR(RenderControlSystem);
+    MAZE_USING_SHARED_PTR(RenderController);
     MAZE_USING_SHARED_PTR(Camera3D);
     MAZE_USING_SHARED_PTR(MeshRenderer);
     MAZE_USING_SHARED_PTR(Transform3D);
-    MAZE_USING_SHARED_PTR(RenderControlSystemModule3D);
-    MAZE_USING_SHARED_PTR(RenderControlSystemModule2D);
+    MAZE_USING_SHARED_PTR(RenderControllerModule3D);
+    MAZE_USING_SHARED_PTR(RenderControllerModule2D);
 
 
     //////////////////////////////////////////
-    // Class RenderControlSystem
+    // Class RenderController
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API RenderControlSystem
-        : public ComponentSystem
+    class MAZE_GRAPHICS_API RenderController
+        : public Component
         , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(RenderControlSystem, ComponentSystem);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(RenderController, Component);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(RenderControlSystem);
+        MAZE_DECLARE_MEMORY_ALLOCATION(RenderController);
 
         //////////////////////////////////////////
         friend class Entity;
@@ -74,20 +74,17 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~RenderControlSystem();
+        virtual ~RenderController();
 
         //////////////////////////////////////////
-        static RenderControlSystemPtr Create(RenderSystemPtr const& _renderSystem);
-
-        //////////////////////////////////////////
-        virtual S32 getOrder() const MAZE_OVERRIDE { return 50000; }
+        static RenderControllerPtr Create(RenderSystemPtr const& _renderSystem);
 
 
         //////////////////////////////////////////
-        RenderControlSystemModule3DPtr const& getModule3D() const { return m_module3D; }
+        RenderControllerModule3DPtr const& getModule3D() const { return m_module3D; }
 
         //////////////////////////////////////////
-        RenderControlSystemModule2DPtr const getModule2D() const { return m_module2D; }
+        RenderControllerModule2DPtr const getModule2D() const { return m_module2D; }
 
 
         //////////////////////////////////////////
@@ -109,16 +106,13 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        RenderControlSystem();
+        RenderController();
 
         //////////////////////////////////////////
         bool init(RenderSystemPtr const& _renderSystem);
 
         //////////////////////////////////////////
-        virtual void processSystemAdded() MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void processUpdate(UpdateEvent const& _event) MAZE_OVERRIDE;
+        virtual void processEntityAwakened() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void processCanvasEntityAdded(Entity* _entity, Canvas* _canvas);
@@ -161,8 +155,9 @@ namespace Maze
     protected:
         RenderSystemPtr m_renderSystem;
 
-        RenderControlSystemModule3DPtr m_module3D;
-        RenderControlSystemModule2DPtr m_module2D;
+        // #TODO: Refactor as separate systems
+        RenderControllerModule3DPtr m_module3D;
+        RenderControllerModule2DPtr m_module2D;
 
         SharedPtr<GenericInclusiveEntitiesSample<Canvas>> m_canvasesSample;
         Set<Canvas*> m_canvases;
@@ -178,5 +173,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeRenderControlSystem_hpp_
+#endif // _MazeRenderController_hpp_
 //////////////////////////////////////////

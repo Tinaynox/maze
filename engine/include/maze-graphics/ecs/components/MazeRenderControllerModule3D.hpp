@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeRenderControlSystemModule3D_hpp_))
-#define _MazeRenderControlSystemModule3D_hpp_
+#if (!defined(_MazeRenderControllerModule3D_hpp_))
+#define _MazeRenderControllerModule3D_hpp_
 
 
 //////////////////////////////////////////
@@ -51,7 +51,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(EntitiesSample);
-    MAZE_USING_SHARED_PTR(RenderControlSystemModule3D);
+    MAZE_USING_SHARED_PTR(RenderControllerModule3D);
     MAZE_USING_SHARED_PTR(Camera3D);
     MAZE_USING_SHARED_PTR(Light3D);
     MAZE_USING_SHARED_PTR(MeshRenderer);
@@ -66,19 +66,19 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class RenderControlSystemModule3D
+    // Class RenderControllerModule3D
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API RenderControlSystemModule3D
+    class MAZE_GRAPHICS_API RenderControllerModule3D
         : public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        virtual ~RenderControlSystemModule3D();
+        virtual ~RenderControllerModule3D();
 
         //////////////////////////////////////////
-        static RenderControlSystemModule3DPtr Create(
+        static RenderControllerModule3DPtr Create(
             ECSWorldPtr const& _world,
             RenderSystemPtr const& _renderSystem);
 
@@ -105,7 +105,7 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        RenderControlSystemModule3D();
+        RenderControllerModule3D();
 
         //////////////////////////////////////////
         bool init(
@@ -126,5 +126,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeRenderControlSystemModule3D_hpp_
+#endif // _MazeRenderControllerModule3D_hpp_
 //////////////////////////////////////////

@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystemModule3D.hpp"
+#include "maze-graphics/ecs/components/MazeRenderControllerModule3D.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-core/utils/MazeProfiler.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
@@ -52,31 +52,31 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class RenderControlSystemModule3D
+    // Class RenderControllerModule3D
     //
     //////////////////////////////////////////
-    RenderControlSystemModule3D::RenderControlSystemModule3D()
+    RenderControllerModule3D::RenderControllerModule3D()
         : m_world(nullptr)
     {
     }
 
     //////////////////////////////////////////
-    RenderControlSystemModule3D::~RenderControlSystemModule3D()
+    RenderControllerModule3D::~RenderControllerModule3D()
     {
     }
 
     //////////////////////////////////////////
-    RenderControlSystemModule3DPtr RenderControlSystemModule3D::Create(
+    RenderControllerModule3DPtr RenderControllerModule3D::Create(
         ECSWorldPtr const& _world,
         RenderSystemPtr const& _renderSystem)
     {
-        RenderControlSystemModule3DPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(RenderControlSystemModule3D, object, init(_world, _renderSystem));
+        RenderControllerModule3DPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(RenderControllerModule3D, object, init(_world, _renderSystem));
         return object;
     }
 
     //////////////////////////////////////////
-    bool RenderControlSystemModule3D::init(
+    bool RenderControllerModule3D::init(
         ECSWorldPtr const& _world,
         RenderSystemPtr const& _renderSystem)
     {
@@ -90,7 +90,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControlSystemModule3D::drawDefaultPass(
+    void RenderControllerModule3D::drawDefaultPass(
         RenderTarget* _renderTarget,
         DefaultPassParams const& _params,
         std::function<void(RenderQueuePtr const&)> _beginRenderQueueCallback,
@@ -291,10 +291,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControlSystemModule3D::draw(RenderTarget* _renderTarget)
+    void RenderControllerModule3D::draw(RenderTarget* _renderTarget)
     {
         MAZE_PROFILER_SCOPED_LOCK(3D);
-        MAZE_PROFILE_EVENT("RenderControlSystemModule3D::draw");
+        MAZE_PROFILE_EVENT("RenderControllerModule3D::draw");
 
         Vector<Camera3D*> cameras;
         m_cameras3DSample->process(
@@ -343,12 +343,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControlSystemModule3D::processUpdate(UpdateEvent const& _event)
+    void RenderControllerModule3D::processUpdate(UpdateEvent const& _event)
     {
     }
 
     //////////////////////////////////////////
-    void RenderControlSystemModule3D::processPostUpdate(UpdateEvent const& _event)
+    void RenderControllerModule3D::processPostUpdate(UpdateEvent const& _event)
     {
 
     }
