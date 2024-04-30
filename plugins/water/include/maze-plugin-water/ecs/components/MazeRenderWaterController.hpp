@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeRenderWaterSystem_hpp_))
-#define _MazeRenderWaterSystem_hpp_
+#if (!defined(_MazeRenderWaterController_hpp_))
+#define _MazeRenderWaterController_hpp_
 
 
 //////////////////////////////////////////
@@ -37,8 +37,8 @@
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeWaterRenderer3D.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystemModule3D.hpp"
+#include "maze-graphics/ecs/events/MazeECSGraphicsEvents.hpp"
+#include "maze-graphics/ecs/components/MazeRenderController.hpp"
 
 
 //////////////////////////////////////////
@@ -47,27 +47,27 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(RenderSystem);
     MAZE_USING_SHARED_PTR(EntitiesSample);
-    MAZE_USING_SHARED_PTR(RenderWaterSystem);
+    MAZE_USING_SHARED_PTR(RenderWaterController);
     MAZE_USING_SHARED_PTR(Camera3D);
     MAZE_USING_SHARED_PTR(MeshRenderer);
     MAZE_USING_SHARED_PTR(Transform3D);
     
 
     //////////////////////////////////////////
-    // Class RenderWaterSystem
+    // Class RenderWaterController
     //
     //////////////////////////////////////////
-    class MAZE_PLUGIN_WATER_API RenderWaterSystem
-        : public ComponentSystem
+    class MAZE_PLUGIN_WATER_API RenderWaterController
+        : public Component
         , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(RenderWaterSystem, ComponentSystem);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(RenderWaterController, ComponentSystem);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(RenderWaterSystem);
+        MAZE_DECLARE_MEMORY_ALLOCATION(RenderWaterController);
 
         //////////////////////////////////////////
         friend class Entity;
@@ -75,13 +75,10 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~RenderWaterSystem();
+        virtual ~RenderWaterController();
 
         //////////////////////////////////////////
-        static RenderWaterSystemPtr Create();
-
-        //////////////////////////////////////////
-        virtual S32 getOrder() const MAZE_OVERRIDE { return 46000; }
+        static RenderWaterControllerPtr Create();
 
 
         //////////////////////////////////////////
@@ -97,6 +94,11 @@ namespace Maze
         //////////////////////////////////////////
         inline RenderBufferPtr const& getRefractionBuffer() const { return m_refractionBuffer; }
 
+        
+        //////////////////////////////////////////
+        void processPrePass(
+            RenderTarget* _renderTarget,
+            DefaultPassParams const& _params);
 
         //////////////////////////////////////////
         void resizeBuffers(Vec2U32 const& _size);
@@ -104,25 +106,14 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        RenderWaterSystem();
+        RenderWaterController();
 
         //////////////////////////////////////////
         bool init();
 
         //////////////////////////////////////////
-        virtual void processSystemAdded() MAZE_OVERRIDE;
+        virtual void processEntityAwakened() MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        virtual void processSystemRemoved() MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void processUpdate(UpdateEvent const& _event) MAZE_OVERRIDE;
-
-
-        //////////////////////////////////////////
-        void notifyRenderPrePass(
-            RenderTarget* _renderTarget,
-            DefaultPassParams const& _params);
 
 
         //////////////////////////////////////////
@@ -134,8 +125,7 @@ namespace Maze
 
     protected:
         SharedPtr<GenericInclusiveEntitiesSample<WaterRenderer3D>> m_waterRenderersSample;
-
-        RenderControlSystemPtr m_renderControlSystem;
+        SharedPtr<GenericInclusiveEntitiesSample<RenderController>> m_renderControllerSample;
 
         bool m_enabled = true;
         RenderBufferPtr m_reflectionBuffer;
@@ -147,5 +137,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeRenderWaterSystem_hpp_
+#endif // _MazeRenderWaterController_hpp_
 //////////////////////////////////////////

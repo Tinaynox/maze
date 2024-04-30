@@ -42,7 +42,6 @@
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-engine/MazeEngine.hpp"
 
 

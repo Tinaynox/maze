@@ -41,7 +41,7 @@
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
+#include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/MazeECSRenderScene.hpp"
 #include "ExampleSettings.hpp"
 
@@ -61,6 +61,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(CanvasGroup);
     MAZE_USING_SHARED_PTR(TerrainMesh3D);
+    MAZE_USING_SHARED_PTR(RenderWaterController);
 
 
     //////////////////////////////////////////
@@ -140,6 +141,8 @@ namespace Maze
     protected:
         CanvasPtr m_canvas;
         Camera3DPtr m_camera3D;
+        
+        RenderWaterControllerPtr m_renderWaterController;
 
         SpriteRenderer2DPtr m_renderColorSprite;
         SpriteRenderer2DPtr m_renderDepthSprite;

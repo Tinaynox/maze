@@ -31,7 +31,6 @@
 #include "maze-core/ecs/MazeECSWorld.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
-#include "maze-plugin-water/ecs/systems/MazeRenderWaterSystem.hpp"
 
 
 //////////////////////////////////////////
@@ -114,17 +113,13 @@ namespace Maze
     //////////////////////////////////////////
     void WaterPlugin::install()
     {
-        if (EntityManager::GetInstancePtr() &&
-            EntityManager::GetInstancePtr()->getDefaultWorldRaw())
-            EntityManager::GetInstancePtr()->getDefaultWorldRaw()->addSystem(RenderWaterSystem::Create());
+        
     }
 
     //////////////////////////////////////////
     void WaterPlugin::uninstall()
     {
-        if (EntityManager::GetInstancePtr() &&
-            EntityManager::GetInstancePtr()->getDefaultWorldRaw())
-            EntityManager::GetInstancePtr()->getDefaultWorldRaw()->removeSystem<RenderWaterSystem>();
+        
     }
 
 } // namespace Maze

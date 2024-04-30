@@ -39,7 +39,6 @@
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeLight3D.hpp"
 #include "maze-graphics/ecs/components/MazeTerrainMesh3D.hpp"
@@ -92,7 +91,7 @@
 #include "maze-plugin-profiler-view/settings/MazeProfilerViewSettings.hpp"
 #include "maze-plugin-loader-png/MazeLoaderPNGPlugin.hpp"
 #include "maze-plugin-water/MazeWaterPlugin.hpp"
-#include "maze-plugin-water/ecs/systems/MazeRenderWaterSystem.hpp"
+#include "maze-plugin-water/ecs/components/MazeRenderWaterController.hpp"
 #include "main/LevelBloomController.hpp"
 #include "maze-plugin-console/MazeConsoleService.hpp"
 #include "ExampleSettings.hpp"
@@ -175,8 +174,8 @@ namespace Maze
         m_renderBuffer->getColorTexture2D()->setMagFilter(TextureFilter::Linear);
 
 
-        RenderWaterSystemPtr waterSystem = m_world->getSystem<RenderWaterSystem>();
-        waterSystem->resizeBuffers(renderBufferSize);
+        m_renderWaterController = createAndAddEntityWithComponent<RenderWaterController>("RenderWaterController");
+        m_renderWaterController->resizeBuffers(renderBufferSize);
 
 
         EntityPtr canvasEntity = createEntity("Canvas");
@@ -584,11 +583,10 @@ namespace Maze
         
         if (m_testSprite1 && m_testSprite2)
         {
-            RenderWaterSystemPtr waterSystem = m_world->getSystem<RenderWaterSystem>();
-            if (waterSystem && waterSystem->getReflectionBuffer() && waterSystem->getRefractionBuffer())
+            if (m_renderWaterController && m_renderWaterController->getReflectionBuffer() && m_renderWaterController->getRefractionBuffer())
             {
-                Texture2DPtr reflectionTexture = waterSystem->getReflectionBuffer()->getColorTexture2D();
-                Texture2DPtr refractionTexture = waterSystem->getRefractionBuffer()->getColorTexture2D();
+                Texture2DPtr reflectionTexture = m_renderWaterController->getReflectionBuffer()->getColorTexture2D();
+                Texture2DPtr refractionTexture = m_renderWaterController->getRefractionBuffer()->getColorTexture2D();
 
                 if (!m_testSprite1->getSprite() || m_testSprite1->getSprite()->getTexture() != reflectionTexture)
                     m_testSprite1->setSprite(Sprite::Create(reflectionTexture));
@@ -882,8 +880,7 @@ namespace Maze
     {
         ExampleSettings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>();
 
-        RenderWaterSystemPtr waterSystem = m_world->getSystem<RenderWaterSystem>();
-        waterSystem->setEnabled(exampleSettings->getWaterEnabled());
+        m_renderWaterController->setEnabled(exampleSettings->getWaterEnabled());
 
         m_waterRenderer->getEntityRaw()->setActiveSelf(exampleSettings->getWaterEnabled());
 

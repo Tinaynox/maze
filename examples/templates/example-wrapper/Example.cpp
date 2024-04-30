@@ -50,7 +50,6 @@
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-ui/ecs/systems/MazeInputSystem2D.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
@@ -364,8 +363,10 @@ namespace Maze
 
         Debug::Log("Example Init - 6 [%ums]", getTime());
 
+        createEngineScene(m_mainRenderWindow, m_graphicsManager->getDefaultRenderSystem());
+        
         Debug::Log("Example Init - 7 [%ums]", getTime());
-
+        
         LoadFirstExampleScene(m_sceneManager.get());
 
         return true;
@@ -487,10 +488,6 @@ namespace Maze
             renderSystem->getTextureManager()->loadAllAssetTextures();
             renderSystem->getMaterialManager()->loadAllAssetMaterials();
         }
-
-        EntityManager* entityManager = EntityManager::GetInstancePtr();
-        ECSWorldPtr const& world = entityManager->getDefaultWorld();
-        createSecondaryECSWorldSystems(world, m_mainRenderWindow, m_graphicsManager->getDefaultRenderSystem());
 
         updateDebugEditor();
         m_debugEditorProgress = m_editorToolsManager->getDebugEditorActive() ? 1.0f : 0.0f;

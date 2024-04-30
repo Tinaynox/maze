@@ -76,9 +76,6 @@ namespace Maze
         SceneEngine();
 
         //////////////////////////////////////////
-        using ECSRenderScene::init;
-
-        //////////////////////////////////////////
         virtual bool init(
             RenderTargetPtr const& _renderTarget,
             RenderSystemPtr const& _renderSystem);
