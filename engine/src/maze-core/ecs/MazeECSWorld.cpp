@@ -464,7 +464,7 @@ namespace Maze
             m_systems.end(),
             [](ComponentSystemPtr const& _system0, ComponentSystemPtr const& _system1) -> bool
             {
-                return _system0->getOrder() < _system1->getOrder();
+                return _system0->getOrderOBSOLETE() < _system1->getOrderOBSOLETE();
             });
 
         _system->setWorld(getSharedPtr());
@@ -495,16 +495,48 @@ namespace Maze
     {
         ClassUID eventUID = _system->getEventUID();
         Vector<SimpleComponentSystemEventHandlerPtr>& eventHandlers = m_eventHandlers[eventUID];
-        eventHandlers.emplace_back(_system);
+        
+        S32 arrSize = (S32)eventHandlers.size();
+        S32 afterIndex = -1;
+        S32 beforeIndex = arrSize;
 
-        std::sort(
-            eventHandlers.begin(),
-            eventHandlers.end(),
-            [](SimpleComponentSystemEventHandlerPtr const& _system0,
-               SimpleComponentSystemEventHandlerPtr const& _system1) -> bool
+        for (S32 i = 0; i < arrSize; ++i)
         {
-            return _system0->getOrder() < _system1->getOrder();
-        });
+            SimpleComponentSystemEventHandlerPtr const& system = eventHandlers[i];
+            if (system->getOrder().after.count(_system->getName()) || _system->getOrder().before.count(system->getName()))
+            {
+                beforeIndex = i;
+                break;
+            }
+        }
+
+        for (S32 i = arrSize - 1; i > -1; --i)
+        {
+            SimpleComponentSystemEventHandlerPtr const& system = eventHandlers[i];
+            if (system->getOrder().before.count(_system->getName()) || _system->getOrder().after.count(system->getName()))
+            {
+                afterIndex = i;
+                break;
+            }
+        }
+
+        if (afterIndex < beforeIndex || afterIndex == -1)
+        {
+            eventHandlers.insert(eventHandlers.begin() + beforeIndex, _system);
+        }
+        else
+        if (beforeIndex == arrSize)
+        {
+            eventHandlers.insert(eventHandlers.begin() + afterIndex + 1, _system);
+        }
+        else
+        {
+            MAZE_ERROR(
+                "Failed to place '%s' (after='%s' before='%s')!",
+                _system->getName().c_str(),
+                (afterIndex >= 0 && afterIndex < arrSize) ? eventHandlers[afterIndex]->getName().c_str() : "NONE",
+                (beforeIndex >= 0 && beforeIndex < arrSize) ? eventHandlers[beforeIndex]->getName().c_str() : "NONE");
+        }
     }
 
     //////////////////////////////////////////
@@ -516,9 +548,7 @@ namespace Maze
         {
             if (eventHandlers[i] == _system)
             {
-                SimpleComponentSystemEventHandlerPtr system = _system;
                 eventHandlers.erase(eventHandlers.begin() + i);
-
                 return;
             }
         }

@@ -37,11 +37,9 @@
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/components/MazeRotor3D.hpp"
-#include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
 #include "maze-core/data/MazeDataBlock.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeLight3D.hpp"
 #include "maze-graphics/ecs/components/MazeTerrainMesh3D.hpp"
@@ -90,6 +88,80 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    class TestObj
+    {
+    public:
+
+        //////////////////////////////////////////
+        TestObj(
+            HashedCString _name,
+            ComponentSystemOrder const& _order)
+            : m_name(_name)
+            , m_order(_order)
+        {
+
+        }
+
+        //////////////////////////////////////////
+        inline HashedString const& getName() const { return m_name; }
+
+        //////////////////////////////////////////
+        inline ComponentSystemOrder const& getOrder() const { return m_order; }
+
+    private:
+        HashedString m_name;
+        ComponentSystemOrder m_order;
+    };
+
+    //////////////////////////////////////////
+    void AddTestObj(Vector<TestObj>& _arr, TestObj const& _obj)
+    {
+        S32 arrSize = (S32)_arr.size();
+        S32 afterIndex = -1;
+        S32 beforeIndex = arrSize;
+
+        for (S32 i = 0; i < arrSize; ++i)
+        {
+            TestObj const& obj = _arr[i];
+            if (obj.getOrder().after.count(_obj.getName()) || _obj.getOrder().before.count(obj.getName()))
+            {
+                beforeIndex = i;
+                break;
+            }
+        }
+
+        for (S32 i = arrSize - 1; i > -1; --i)
+        {
+            TestObj const& obj = _arr[i];
+            if (obj.getOrder().before.count(_obj.getName()) || _obj.getOrder().after.count(obj.getName()))
+            {
+                afterIndex = i;
+                break;
+            }
+        }
+
+        if (afterIndex < beforeIndex || afterIndex == -1)
+        {
+            _arr.insert(_arr.begin() + beforeIndex, _obj);
+        }
+        else
+        if (beforeIndex == arrSize)
+        {
+            _arr.insert(_arr.begin() + afterIndex + 1, _obj);
+        }
+        else
+        {
+            MAZE_ERROR(
+                "Failed to place '%s' (after='%s' before='%s')!",
+                _obj.getName().c_str(),
+                (afterIndex >= 0 && afterIndex < arrSize) ? _arr[afterIndex].getName().c_str() : "NONE",
+                (beforeIndex >= 0 && beforeIndex < arrSize) ? _arr[beforeIndex].getName().c_str() : "NONE");
+        }
+    }
+
+
+
+    //////////////////////////////////////////
     String GetExampleName()
     {
         return "Test00";
@@ -128,17 +200,17 @@ namespace Maze
 
     //////////////////////////////////////////
     SIMPLE_COMPONENT_SYSTEM(SomeUpdateES, 100,
-        UpdateEvent const* _event,
+        UpdateEvent const& _event,
         Entity* _entity,
         Transform3D* _someObject,
         Rotor3D* _rotor)
     {
-        _someObject->translate(Vec3F32::c_unitY * _event->getDt() * 0.2f);
+        _someObject->translate(Vec3F32::c_unitY * _event.getDt() * 0.2f);
     }
 
     //////////////////////////////////////////
     SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(SomeEventES, 100,
-        SimpleEvent const* _event,
+        SimpleEvent const& _event,
         Entity* _entity,
         Transform3D* _someObject,
         Rotor3D* _rotor)
@@ -156,6 +228,22 @@ namespace Maze
     //////////////////////////////////////////
     SceneExample::SceneExample()
     {
+        Vector<TestObj> objs;
+
+        AddTestObj(objs, TestObj(MAZE_HS("c"), ComponentSystemOrder(
+            Set<HashedString>{HashedString(MAZE_HS("b"))},
+            {}
+        ))); 
+        AddTestObj(objs, TestObj(MAZE_HS("b"), ComponentSystemOrder(
+            Set<HashedString>{HashedString(MAZE_HS("a"))},
+            {}
+        )));
+        AddTestObj(objs, TestObj(MAZE_HS("a"), ComponentSystemOrder(
+            {},
+            Set<HashedString>{HashedString(MAZE_HS("b"))}
+        )));
+
+        int a = 0;
     }
 
     //////////////////////////////////////////

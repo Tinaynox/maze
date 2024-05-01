@@ -54,6 +54,33 @@ namespace Maze
 
 
     //////////////////////////////////////////
+    // Class ComponentSystemOrder
+    //
+    //////////////////////////////////////////
+    struct MAZE_CORE_API ComponentSystemOrder
+    {
+        //////////////////////////////////////////
+        ComponentSystemOrder(
+            Set<HashedString> const& _after = Set<HashedString>(),
+            Set<HashedString> const& _before = Set<HashedString>())
+            : after(_after)
+            , before(_before)
+        {}
+
+        //////////////////////////////////////////
+        ComponentSystemOrder(
+            Set<HashedString>&& _after,
+            Set<HashedString>&& _before)
+            : after(std::move(_after))
+            , before(std::move(_before))
+        {}
+
+        Set<HashedString> after;
+        Set<HashedString> before;
+    };
+
+
+    //////////////////////////////////////////
     class MAZE_CORE_API ComponentSystem
         : public SharedObject<ComponentSystem>
     {
@@ -74,11 +101,12 @@ namespace Maze
         void update(UpdateEvent const& _event);
 
         //////////////////////////////////////////
-        virtual S32 getOrder() const { return 0; }
+        virtual S32 getOrderOBSOLETE() const { return 0; }
 
 
         //////////////////////////////////////////
         virtual CString getName() const { return getClassName(); }
+
 
 
         //////////////////////////////////////////
@@ -156,7 +184,7 @@ namespace Maze
             : m_name(_name)
             , m_sample(_sample)
             , m_func(_func)
-            , m_order(_order)
+            , m_orderOBSOLETE(_order)
         {}
 
         //////////////////////////////////////////
@@ -166,13 +194,13 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        virtual S32 getOrder() const MAZE_OVERRIDE { return m_order; }
+        virtual S32 getOrderOBSOLETE() const MAZE_OVERRIDE { return m_orderOBSOLETE; }
 
     protected:
         HashedCString m_name;
         IEntitiesSamplePtr m_sample;
         Func m_func = nullptr;
-        S32 m_order = 0;
+        S32 m_orderOBSOLETE = 0;
     };
 
 
@@ -211,10 +239,20 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline HashedString const& getName() const { return m_name; }
+
+        //////////////////////////////////////////
         inline ClassUID getEventUID() const { return m_eventUID; }
 
         //////////////////////////////////////////
-        inline S32 getOrder() const { return m_order; }
+        inline S32 getOrderOBSOLETE() const { return m_orderOBSOLETE; }
+
+
+        //////////////////////////////////////////
+        inline ComponentSystemOrder const& getOrder() const { return m_order; }
+
+        //////////////////////////////////////////
+        inline void setOrder(ComponentSystemOrder const& _order) { m_order = _order; }
 
     protected:
 
@@ -229,15 +267,17 @@ namespace Maze
             , m_eventUID(_eventUID)
             , m_sample(_sample)
             , m_func(_func)
-            , m_order(_order)
+            , m_orderOBSOLETE(_order)
         {}
 
     protected:
-        HashedCString m_name;
+        HashedString m_name;
         ClassUID m_eventUID = 0;
         IEntitiesSamplePtr m_sample;
         Func m_func = nullptr;
-        S32 m_order = 0;
+        S32 m_orderOBSOLETE = 0;
+
+        ComponentSystemOrder m_order;
     };
 
 

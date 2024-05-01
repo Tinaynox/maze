@@ -50,7 +50,6 @@
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
-#include "maze-ui/ecs/systems/MazeInputSystem2D.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
