@@ -134,10 +134,10 @@ namespace Maze
         void draw(RenderTarget* _renderTarget);
 
         //////////////////////////////////////////
-        void processUpdate(UpdateEvent const& _event);
+        void processUpdate(F32 _dt);
 
         //////////////////////////////////////////
-        void processPostUpdate(UpdateEvent const& _event);
+        void processPostUpdate(F32 _dt);
 
 
         //////////////////////////////////////////

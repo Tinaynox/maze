@@ -420,12 +420,12 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM(Transform3DSystem, 100000,
-        UpdateEvent const& _event,
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(Transform3DSystem, 100000,
+        PreUpdateEvent const& _event,
         Entity* _entity,
         Transform3D* _transform3D)
     {
-        _transform3D->processEndFrame();
+        _transform3D->processPreUpdate();
     }
     
 } // namespace Maze

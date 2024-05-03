@@ -580,12 +580,12 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM(Transform2DSystem, 100000,
-        UpdateEvent const& _event,
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(Transform2DSystem, 100000,
+        PreUpdateEvent const& _event,
         Entity* _entity,
         Transform2D* _transform2D)
     {
-        _transform2D->processEndFrame();
+        _transform2D->processPreUpdate();
     }
     
 } // namespace Maze

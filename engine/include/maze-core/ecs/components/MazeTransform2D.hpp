@@ -304,7 +304,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline void processEndFrame()
+        inline void processPreUpdate()
         {
             S32 flags = m_flags;
 

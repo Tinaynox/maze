@@ -192,15 +192,15 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    void RenderController::update(UpdateEvent const& _event)
+    void RenderController::update(F32 _dt)
     {
-        m_module3D->processUpdate(_event);
-        m_module2D->processUpdate(_event);
+        m_module3D->processUpdate(_dt);
+        m_module2D->processUpdate(_dt);
 
         render();
 
-        m_module3D->processPostUpdate(_event);
-        m_module2D->processPostUpdate(_event);
+        m_module3D->processPostUpdate(_dt);
+        m_module2D->processPostUpdate(_dt);
     }
 
     //////////////////////////////////////////
@@ -292,12 +292,12 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM(RenderControllerSystem, 50000,
-        UpdateEvent const& _event,
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(RenderControllerSystem, 0,
+        PostUpdateEvent const& _event,
         Entity* _entity,
         RenderController* _renderController)
     {
-        _renderController->update(_event);
+        _renderController->update(_event.getDt());
     }
     
     

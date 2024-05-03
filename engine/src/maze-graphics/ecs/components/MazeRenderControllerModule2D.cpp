@@ -330,9 +330,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControllerModule2D::processUpdate(UpdateEvent const& _event)
+    void RenderControllerModule2D::processUpdate(F32 _dt)
     {
-        F32 dt = _event.getDt();
+        F32 dt = _dt;
 
         m_transform2Ds->process(
             [&](Entity* _entity, Transform2D* _transform)
@@ -419,7 +419,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControllerModule2D::processPostUpdate(UpdateEvent const& _event)
+    void RenderControllerModule2D::processPostUpdate(F32 _dt)
     {
         m_canvasGroupsSample->process(
             [](Entity* _entity, CanvasGroup* _canvasGroup)

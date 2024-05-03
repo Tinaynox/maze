@@ -94,7 +94,7 @@ namespace Maze
         void render();
 
         //////////////////////////////////////////
-        void update(UpdateEvent const& _event);
+        void update(F32 _dt);
 
 
         //////////////////////////////////////////

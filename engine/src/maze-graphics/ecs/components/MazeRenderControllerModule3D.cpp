@@ -343,12 +343,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControllerModule3D::processUpdate(UpdateEvent const& _event)
+    void RenderControllerModule3D::processUpdate(F32 _dt)
     {
     }
 
     //////////////////////////////////////////
-    void RenderControllerModule3D::processPostUpdate(UpdateEvent const& _event)
+    void RenderControllerModule3D::processPostUpdate(F32 _dt)
     {
 
     }

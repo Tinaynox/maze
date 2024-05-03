@@ -33,10 +33,13 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class UpdateEvent
-    //
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PreUpdateEvent, Event);
+
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UpdateEvent, Event);
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PostUpdateEvent, Event);
 
     
 } // namespace Maze

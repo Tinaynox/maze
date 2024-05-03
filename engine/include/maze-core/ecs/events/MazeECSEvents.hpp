@@ -40,6 +40,32 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    // Class PreUpdateEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API PreUpdateEvent
+        : public GenericEvent<PreUpdateEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(PreUpdateEvent, Event);
+
+    public:
+
+        //////////////////////////////////////////
+        inline PreUpdateEvent(F32 _dt = 0.0f)
+            : m_dt(_dt)
+        {}
+
+        //////////////////////////////////////////
+        inline F32 getDt() const { return m_dt; }
+
+    private:
+        F32 m_dt = 0.0f;
+    };
+
+
+    //////////////////////////////////////////
     // Class UpdateEvent
     //
     //////////////////////////////////////////
@@ -54,6 +80,32 @@ namespace Maze
 
         //////////////////////////////////////////
         inline UpdateEvent(F32 _dt = 0.0f)
+            : m_dt(_dt)
+        {}
+
+        //////////////////////////////////////////
+        inline F32 getDt() const { return m_dt; }
+
+    private:
+        F32 m_dt = 0.0f;
+    };
+
+
+    //////////////////////////////////////////
+    // Class PostUpdateEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API PostUpdateEvent
+        : public GenericEvent<PostUpdateEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(PostUpdateEvent, Event);
+
+    public:
+
+        //////////////////////////////////////////
+        inline PostUpdateEvent(F32 _dt = 0.0f)
             : m_dt(_dt)
         {}
 
