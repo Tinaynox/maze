@@ -762,11 +762,22 @@ namespace Maze
 
         Size transformCount = m_meshRenderer->getModelMatrices().size();
         MAZE_DEBUG_ERROR_IF(transformCount != m_localMatrices.size(), "Invalid characters count!");
+        if (transformCount == 0)
+            return;
+
+        Vec2F pixelPerfectShift = Vec2F::c_zero;
+        if (m_pixelPerfect)
+        {
+            Mat4F initTm = m_transform->getWorldTransform().concatenatedAffineCopy(m_localMatrices[0]);
+            Vec2F translation = initTm.getAffineTranslation2D();
+            pixelPerfectShift = Math::Round(translation) - translation;
+        }
+
         for (Size i = 0; i < transformCount; ++i)
         {
             Mat4F tm = m_transform->getWorldTransform().concatenatedAffineCopy(m_localMatrices[i]);
             if (m_pixelPerfect)
-                tm.setTranslation(Math::Round(tm.getAffineTranslation2D()));
+                tm.setTranslation(tm.getAffineTranslation2D() + pixelPerfectShift);
             m_meshRenderer->setModelMatrix(i, tm);
         }
     }
