@@ -103,18 +103,18 @@ namespace Maze
     //////////////////////////////////////////
     bool ParticleSystemParameterF32::loadFromDataBlock(DataBlock const& _dataBlock)
     {
-        m_const0 = _dataBlock.getF32(MAZE_HS("const0"));
-        m_const1 = _dataBlock.getF32(MAZE_HS("const1"));
+        m_const0 = _dataBlock.getF32(MAZE_HCS("const0"));
+        m_const1 = _dataBlock.getF32(MAZE_HCS("const1"));
 
-        DataBlock const* curve0Block = _dataBlock.getDataBlock(MAZE_HS("curve0"));
+        DataBlock const* curve0Block = _dataBlock.getDataBlock(MAZE_HCS("curve0"));
         if (curve0Block)
             ValueFromDataBlock(m_curve0, *curve0Block);
 
-        DataBlock const* curve1Block = _dataBlock.getDataBlock(MAZE_HS("curve1"));
+        DataBlock const* curve1Block = _dataBlock.getDataBlock(MAZE_HCS("curve1"));
         if (curve1Block)
             ValueFromDataBlock(m_curve1, *curve1Block);
 
-        setSamplingMode(ParticleSystemParameterF32SamplingMode(_dataBlock.getS32(MAZE_HS("mode"))));
+        setSamplingMode(ParticleSystemParameterF32SamplingMode(_dataBlock.getS32(MAZE_HCS("mode"))));
 
         return true;
     }
@@ -126,27 +126,27 @@ namespace Maze
         {
             case ParticleSystemParameterF32SamplingMode::Constant:
             {
-                _dataBlock.setF32(MAZE_HS("const0"), m_const0);
+                _dataBlock.setF32(MAZE_HCS("const0"), m_const0);
                 break;
             }
             case ParticleSystemParameterF32SamplingMode::Curve:
             {
-                DataBlock& curve0Block = _dataBlock[MAZE_HS("curve0")];
+                DataBlock& curve0Block = _dataBlock[MAZE_HCS("curve0")];
                 ValueToDataBlock(m_curve0, curve0Block);
                 break;
             }
             case ParticleSystemParameterF32SamplingMode::RandomBetweenConstants:
             {
-                _dataBlock.setF32(MAZE_HS("const0"), m_const0);
-                _dataBlock.setF32(MAZE_HS("const1"), m_const1);
+                _dataBlock.setF32(MAZE_HCS("const0"), m_const0);
+                _dataBlock.setF32(MAZE_HCS("const1"), m_const1);
                 break;
             }
             case ParticleSystemParameterF32SamplingMode::RandomBetweenCurves:
             {
-                DataBlock& curve0Block = _dataBlock[MAZE_HS("curve0")];
+                DataBlock& curve0Block = _dataBlock[MAZE_HCS("curve0")];
                 ValueToDataBlock(m_curve0, curve0Block);
 
-                DataBlock& curve1Block = _dataBlock[MAZE_HS("curve1")];
+                DataBlock& curve1Block = _dataBlock[MAZE_HCS("curve1")];
                 ValueToDataBlock(m_curve1, curve1Block);
                 break;
             }
@@ -157,7 +157,7 @@ namespace Maze
             }
         }
 
-        _dataBlock.setS32(MAZE_HS("mode"), (S32)m_mode);
+        _dataBlock.setS32(MAZE_HCS("mode"), (S32)m_mode);
     }
 
     //////////////////////////////////////////

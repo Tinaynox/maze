@@ -274,9 +274,9 @@ namespace Maze
         for (DataBlock::DataBlockIndex i = 0; i < _dataBlock.getDataBlocksCount(); ++i)
         {
             DataBlock const* subBlock = _dataBlock.getDataBlock(i);
-            if (subBlock->getName() == MAZE_HS("main"))
+            if (subBlock->getName() == MAZE_HCS("main"))
             {
-                CString fileStr = subBlock->getCString(MAZE_HS("file"));
+                CString fileStr = subBlock->getCString(MAZE_HCS("file"));
                 if (fileStr)
                 {
                     m_defaultGlyphsData.type = FontGlyphStorageType::TrueTypeFont;
@@ -284,9 +284,9 @@ namespace Maze
                 }
             }
             else
-            if (subBlock->getName() == MAZE_HS("trueType"))
+            if (subBlock->getName() == MAZE_HCS("trueType"))
             {
-                CString fileStr = subBlock->getCString(MAZE_HS("file"));
+                CString fileStr = subBlock->getCString(MAZE_HCS("file"));
                 if (fileStr)
                 {
                     const TrueTypeFontPtr& trueTypeFont = TrueTypeFontManager::GetInstancePtr()->getTrueTypeFont(fileStr);
@@ -296,10 +296,10 @@ namespace Maze
                         {
                             DataBlock const* symbolsBlock = subBlock->getDataBlock(j);
 
-                            if (symbolsBlock->isParamExists(MAZE_HS("from")) && symbolsBlock->isParamExists(MAZE_HS("to")))
+                            if (symbolsBlock->isParamExists(MAZE_HCS("from")) && symbolsBlock->isParamExists(MAZE_HCS("to")))
                             {
-                                U32 from = symbolsBlock->getU32(MAZE_HS("from"));
-                                U32 to = symbolsBlock->getU32(MAZE_HS("to"));
+                                U32 from = symbolsBlock->getU32(MAZE_HCS("from"));
+                                U32 to = symbolsBlock->getU32(MAZE_HCS("to"));
 
                                 FontGlyphStorageData glyphsData;
                                 glyphsData.fromCodePoints = from;
@@ -314,12 +314,12 @@ namespace Maze
                 }
             }
             else
-            if (subBlock->getName() == MAZE_HS("sprite"))
+            if (subBlock->getName() == MAZE_HCS("sprite"))
             {
-                if (subBlock->isParamExists(MAZE_HS("symbol")) && subBlock->isParamExists(MAZE_HS("sprite")))
+                if (subBlock->isParamExists(MAZE_HCS("symbol")) && subBlock->isParamExists(MAZE_HCS("sprite")))
                 {
-                    U32 symbol = subBlock->getU32(MAZE_HS("symbol"));
-                    CString spriteStr = subBlock->getCString(MAZE_HS("sprite"));
+                    U32 symbol = subBlock->getU32(MAZE_HCS("symbol"));
+                    CString spriteStr = subBlock->getCString(MAZE_HCS("sprite"));
 
                     SpritePtr const& sprite = SpriteManager::GetCurrentInstance()->getSprite(spriteStr);
                     if (sprite)
@@ -328,10 +328,10 @@ namespace Maze
                         glyphsData.fromCodePoints = symbol;
                         glyphsData.toCodePoints = symbol;
                         glyphsData.type = FontGlyphStorageType::Sprite;
-                        glyphsData.spriteData.spriteGlyphFontSize = subBlock->getU32(MAZE_HS("fontSize"));
-                        glyphsData.spriteData.spriteGlyph.advance = subBlock->getF32(MAZE_HS("advance"));
+                        glyphsData.spriteData.spriteGlyphFontSize = subBlock->getU32(MAZE_HCS("fontSize"));
+                        glyphsData.spriteData.spriteGlyph.advance = subBlock->getF32(MAZE_HCS("advance"));
 
-                        glyphsData.spriteData.spriteGlyph.bounds.position = sprite->getColorOffset() + subBlock->getVec2F(MAZE_HS("boundsPosition"));
+                        glyphsData.spriteData.spriteGlyph.bounds.position = sprite->getColorOffset() + subBlock->getVec2F(MAZE_HCS("boundsPosition"));
                         glyphsData.spriteData.spriteGlyph.bounds.size = sprite->getColorSize();
                         glyphsData.spriteData.spriteGlyph.texture = sprite->getTexture();
 
@@ -343,12 +343,12 @@ namespace Maze
                 }
             }
             else
-            if (subBlock->getName() == MAZE_HS("entity"))
+            if (subBlock->getName() == MAZE_HCS("entity"))
             {
-                if (subBlock->isParamExists(MAZE_HS("symbol")) && subBlock->isParamExists(MAZE_HS("prefab")))
+                if (subBlock->isParamExists(MAZE_HCS("symbol")) && subBlock->isParamExists(MAZE_HCS("prefab")))
                 {
-                    U32 symbol = subBlock->getU32(MAZE_HS("symbol"));
-                    CString prefabStr = subBlock->getCString(MAZE_HS("prefab"));
+                    U32 symbol = subBlock->getU32(MAZE_HCS("symbol"));
+                    CString prefabStr = subBlock->getCString(MAZE_HCS("prefab"));
 
                     FontGlyphStorageData glyphsData;
                     glyphsData.fromCodePoints = symbol;
@@ -356,10 +356,10 @@ namespace Maze
                     glyphsData.type = FontGlyphStorageType::Entity;
                     glyphsData.entityData.prefabName = prefabStr;
                     glyphsData.entityData.prefab = nullptr; // prefabStr
-                    glyphsData.entityData.prefabGlyphFontSize = subBlock->getU32(MAZE_HS("fontSize"));
-                    glyphsData.entityData.prefabGlyph.advance = subBlock->getF32(MAZE_HS("advance"));
-                    glyphsData.entityData.prefabGlyph.bounds.position = subBlock->getVec2F(MAZE_HS("boundsPosition"));
-                    glyphsData.entityData.prefabGlyph.bounds.size = subBlock->getVec2F(MAZE_HS("boundsSize"));
+                    glyphsData.entityData.prefabGlyphFontSize = subBlock->getU32(MAZE_HCS("fontSize"));
+                    glyphsData.entityData.prefabGlyph.advance = subBlock->getF32(MAZE_HCS("advance"));
+                    glyphsData.entityData.prefabGlyph.bounds.position = subBlock->getVec2F(MAZE_HCS("boundsPosition"));
+                    glyphsData.entityData.prefabGlyph.bounds.size = subBlock->getVec2F(MAZE_HCS("boundsSize"));
                     m_glyphsData.push_back(glyphsData);
                     m_glyphsMap.clear();
                 }
@@ -607,7 +607,7 @@ namespace Maze
         }
         else
         {
-            _value = fontManager->getFont(MAZE_HS(_data));
+            _value = fontManager->getFont(MAZE_HCS(_data));
         }
     }
 

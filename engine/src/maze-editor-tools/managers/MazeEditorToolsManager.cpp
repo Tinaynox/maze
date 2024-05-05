@@ -80,7 +80,7 @@ namespace Maze
 
         setGizmosController(nullptr);
 
-        EntityManager::GetInstancePtr()->getDefaultWorldRaw()->eventComponentSystemAdded.unsubscribe(this);
+        // EntityManager::GetInstancePtr()->getDefaultWorldRaw()->eventComponentSystemAdded.unsubscribe(this);
 
         if (SettingsManager::GetInstancePtr())
         {
@@ -149,8 +149,6 @@ namespace Maze
         if (!m_assetEditorToolsManager)
             return false;
 
-        EntityManager::GetInstancePtr()->getDefaultWorldRaw()->eventComponentSystemAdded.subscribe(this, &EditorToolsManager::notifyComponentSystemAdded);
-
         EditorToolsSettings* editorToolsSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<EditorToolsSettings>();
         editorToolsSettings->getPauseChangedEvent().subscribe(this, &EditorToolsManager::notifyPauseChanged);
 
@@ -205,12 +203,6 @@ namespace Maze
         {
             _gizmos->drawGizmosSelected(_entity, _component, _drawer);
         }
-    }
-
-    //////////////////////////////////////////
-    void EditorToolsManager::notifyComponentSystemAdded(ComponentSystemPtr const& _componentSystem)
-    {
-
     }
 
     //////////////////////////////////////////

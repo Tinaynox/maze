@@ -202,6 +202,12 @@ namespace Maze
         _o << _v.c_str();
         return _o;
     }
+
+
+    //////////////////////////////////////////
+    #define MAZE_HASHED_STRING(DText)    Maze::HashedString(MAZE_HASHED_CSTRING(DText))
+    #define MAZE_HASHED_STRING_CT(DText) Maze::HashedString(MAZE_HASHED_CSTRING_CT(DText))
+    #define MAZE_HS(DText) MAZE_HASHED_STRING(DText)
    
 
 } // namespace Maze

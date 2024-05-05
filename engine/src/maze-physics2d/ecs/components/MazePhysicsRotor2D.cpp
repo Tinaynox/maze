@@ -89,7 +89,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(PhysicsRotor2DOnFixedUpdateStart, 0,
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(PhysicsRotor2DOnFixedUpdateStart, {},
         Physics2DFixedUpdateStartEvent const& _event,
         Entity* _entity,
         PhysicsRotor2D* _rotor)

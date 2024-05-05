@@ -520,7 +520,7 @@ namespace Maze
                 transform,
                 _ecsScene);
             transparentBackSpriteRenderer->getMaterial()->setUniform(
-                MAZE_HS("u_baseMapST"),
+                MAZE_HCS("u_baseMapST"),
                 Vec4F(
                     transparentBackSpriteRenderer->getTransform()->getWidth() / 8.0f,
                     transparentBackSpriteRenderer->getTransform()->getHeight() / 8.0f,

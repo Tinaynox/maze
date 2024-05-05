@@ -251,43 +251,43 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_FORCEINLINE void ValueToDataBlock(Rect2DS const& _value, DataBlock& _data)
     {
-        _data.setVec2S(MAZE_HS("point"), _value.getPosition());
-        _data.setVec2S(MAZE_HS("direction"), _value.getSize());
+        _data.setVec2S(MAZE_HCS("point"), _value.getPosition());
+        _data.setVec2S(MAZE_HCS("direction"), _value.getSize());
     }
 
     //////////////////////////////////////////
     MAZE_FORCEINLINE void ValueFromDataBlock(Rect2DS& _value, DataBlock const& _data)
     {
-        _value.setPosition(_data.getVec2S(MAZE_HS("point")));
-        _value.setSize(_data.getVec2S(MAZE_HS("direction")));
+        _value.setPosition(_data.getVec2S(MAZE_HCS("point")));
+        _value.setSize(_data.getVec2S(MAZE_HCS("direction")));
     }
 
     //////////////////////////////////////////
     MAZE_FORCEINLINE void ValueToDataBlock(Rect2DU const& _value, DataBlock& _data)
     {
-        _data.setVec2U(MAZE_HS("point"), _value.getPosition());
-        _data.setVec2U(MAZE_HS("direction"), _value.getSize());
+        _data.setVec2U(MAZE_HCS("point"), _value.getPosition());
+        _data.setVec2U(MAZE_HCS("direction"), _value.getSize());
     }
 
     //////////////////////////////////////////
     MAZE_FORCEINLINE void ValueFromDataBlock(Rect2DU& _value, DataBlock const& _data)
     {
-        _value.setPosition(_data.getVec2U(MAZE_HS("point")));
-        _value.setSize(_data.getVec2U(MAZE_HS("direction")));
+        _value.setPosition(_data.getVec2U(MAZE_HCS("point")));
+        _value.setSize(_data.getVec2U(MAZE_HCS("direction")));
     }
 
     //////////////////////////////////////////
     MAZE_FORCEINLINE void ValueToDataBlock(Rect2DF const& _value, DataBlock& _data)
     {
-        _data.setVec2F(MAZE_HS("point"), _value.getPosition());
-        _data.setVec2F(MAZE_HS("direction"), _value.getSize());
+        _data.setVec2F(MAZE_HCS("point"), _value.getPosition());
+        _data.setVec2F(MAZE_HCS("direction"), _value.getSize());
     }
 
     //////////////////////////////////////////
     MAZE_FORCEINLINE void ValueFromDataBlock(Rect2DF& _value, DataBlock const& _data)
     {
-        _value.setPosition(_data.getVec2F(MAZE_HS("point")));
-        _value.setSize(_data.getVec2F(MAZE_HS("direction")));
+        _value.setPosition(_data.getVec2F(MAZE_HCS("point")));
+        _value.setSize(_data.getVec2F(MAZE_HCS("direction")));
     }
 
 

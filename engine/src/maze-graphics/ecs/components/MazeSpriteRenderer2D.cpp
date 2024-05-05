@@ -229,7 +229,7 @@ namespace Maze
 
         if (getMaterial())
         {
-            getMaterial()->setUniform(MAZE_HS("u_color"), m_color.toVec4F32());
+            getMaterial()->setUniform(MAZE_HCS("u_color"), m_color.toVec4F32());
 
             Texture2DPtr texture;
 
@@ -247,8 +247,8 @@ namespace Maze
 
             if (texture)
             {
-                getMaterial()->setUniform(MAZE_HS("u_baseMap"), texture);
-                getMaterial()->setUniform(MAZE_HS("u_baseMapTexelSize"), 1.0f / (Vec2F)texture->getSize());
+                getMaterial()->setUniform(MAZE_HCS("u_baseMap"), texture);
+                getMaterial()->setUniform(MAZE_HCS("u_baseMapTexelSize"), 1.0f / (Vec2F)texture->getSize());
             }
         }
     }

@@ -46,8 +46,6 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(Entity);
-    MAZE_USING_SHARED_PTR(ComponentSystem);
-    MAZE_USING_SHARED_PTR(SimpleComponentSystem);
     MAZE_USING_SHARED_PTR(SimpleComponentSystemEventHandler);
     MAZE_USING_SHARED_PTR(ECSWorld);
     MAZE_USING_SHARED_PTR(IEntitiesSample);
@@ -81,127 +79,10 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    class MAZE_CORE_API ComponentSystem
-        : public SharedObject<ComponentSystem>
-    {
-    public:
+    #define MAZE_ECS_ORDER_AFTER(...) Set<HashedString>{__VA_ARGS__}
+    #define MAZE_ECS_ORDER_BEFORE(...) Set<HashedString>{__VA_ARGS__}
+    #define MAZE_ECS_ORDER(DAfter, DBefore) ComponentSystemOrder(DAfter, DBefore)
 
-        //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS(ComponentSystem);
-
-        //////////////////////////////////////////
-        friend class ECSWorld;
-
-    public:
-
-        //////////////////////////////////////////
-        virtual ~ComponentSystem();
-
-        //////////////////////////////////////////
-        void update(UpdateEvent const& _event);
-
-        //////////////////////////////////////////
-        virtual S32 getOrderOBSOLETE() const { return 0; }
-
-
-        //////////////////////////////////////////
-        virtual CString getName() const { return getClassName(); }
-
-
-
-        //////////////////////////////////////////
-        ECSWorldPtr getWorld() const { return m_world.lock(); }
-
-        //////////////////////////////////////////
-        ECSWorld* getWorldRaw() const { return m_worldRaw; }
-
-    protected:
-
-        //////////////////////////////////////////
-        ComponentSystem();
-
-        //////////////////////////////////////////
-        void processBeginUpdate(UpdateEvent const& _event) {};
-
-        //////////////////////////////////////////
-        virtual void processUpdate(UpdateEvent const& _event) {}
-
-        //////////////////////////////////////////
-        void processEndUpdate(UpdateEvent const& _event) {};
-
-        //////////////////////////////////////////
-        void setWorld(ECSWorldPtr const& _world);
-
-        //////////////////////////////////////////
-        virtual void processSystemAdded();
-
-        //////////////////////////////////////////
-        virtual void processSystemRemoved();
-
-
-    protected:
-        ECSWorldWPtr m_world;
-        ECSWorld* m_worldRaw;
-    };
-
-
-    //////////////////////////////////////////
-    // Class SimpleComponentSystem
-    //
-    //////////////////////////////////////////
-    class MAZE_CORE_API SimpleComponentSystem
-        : public ComponentSystem
-    {
-    public:
-
-        //////////////////////////////////////////
-        using Func = void (*)();
-
-        //////////////////////////////////////////
-        static inline SimpleComponentSystemPtr Create(
-            HashedCString _name,
-            IEntitiesSamplePtr _sample,
-            Func _func,
-            S32 _order = 0)
-        {
-            return MAZE_CREATE_SHARED_PTR_WITH_ARGS(SimpleComponentSystem, _name, _sample, _func, _order);
-        }
-
-        //////////////////////////////////////////
-        virtual Maze::ClassUID getClassUID() const MAZE_OVERRIDE { return m_name.hash; }
-
-        //////////////////////////////////////////
-        virtual CString getName() const MAZE_OVERRIDE { return m_name; }
-
-    protected:
-
-        //////////////////////////////////////////
-        SimpleComponentSystem(
-            HashedCString _name = HashedCString(),
-            IEntitiesSamplePtr _sample = nullptr,
-            Func _func = nullptr,
-            S32 _order = 0)
-            : m_name(_name)
-            , m_sample(_sample)
-            , m_func(_func)
-            , m_orderOBSOLETE(_order)
-        {}
-
-        //////////////////////////////////////////
-        virtual void processUpdate(UpdateEvent const& _event) MAZE_OVERRIDE
-        {
-            m_sample->processUpdate(_event, m_func);
-        }
-
-        //////////////////////////////////////////
-        virtual S32 getOrderOBSOLETE() const MAZE_OVERRIDE { return m_orderOBSOLETE; }
-
-    protected:
-        HashedCString m_name;
-        IEntitiesSamplePtr m_sample;
-        Func m_func = nullptr;
-        S32 m_orderOBSOLETE = 0;
-    };
 
 
     //////////////////////////////////////////
@@ -221,7 +102,7 @@ namespace Maze
             ClassUID _eventUID,
             IEntitiesSamplePtr _sample,
             Func _func,
-            S32 _order = 0)
+            ComponentSystemOrder const& _order = ComponentSystemOrder())
         {
             return MAZE_CREATE_SHARED_PTR_WITH_ARGS(SimpleComponentSystemEventHandler, _name, _eventUID, _sample, _func, _order);
         }
@@ -244,9 +125,6 @@ namespace Maze
         //////////////////////////////////////////
         inline ClassUID getEventUID() const { return m_eventUID; }
 
-        //////////////////////////////////////////
-        inline S32 getOrderOBSOLETE() const { return m_orderOBSOLETE; }
-
 
         //////////////////////////////////////////
         inline ComponentSystemOrder const& getOrder() const { return m_order; }
@@ -262,20 +140,20 @@ namespace Maze
             ClassUID _eventUID,
             IEntitiesSamplePtr _sample = nullptr,
             Func _func = nullptr,
-            S32 _order = 0)
+            ComponentSystemOrder const& _order = ComponentSystemOrder())
             : m_name(_name)
             , m_eventUID(_eventUID)
             , m_sample(_sample)
             , m_func(_func)
-            , m_orderOBSOLETE(_order)
-        {}
+            , m_order(_order)
+        {
+        }
 
     protected:
         HashedString m_name;
         ClassUID m_eventUID = 0;
         IEntitiesSamplePtr m_sample;
         Func m_func = nullptr;
-        S32 m_orderOBSOLETE = 0;
 
         ComponentSystemOrder m_order;
     };

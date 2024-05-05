@@ -96,7 +96,7 @@ namespace Maze
         !std::is_class<TValue>::value && !std::is_enum<TValue>::value), void>::type
         ValueToDataBlock(TValue const& _value, DataBlock& _data)
     {
-        AddDataToDataBlock<TValue>(_data, MAZE_HS("value"), _value);
+        AddDataToDataBlock<TValue>(_data, MAZE_HCS("value"), _value);
     }
 
     ////////////////////////////////////////////
@@ -105,7 +105,7 @@ namespace Maze
         !std::is_class<TValue>::value && !std::is_enum<TValue>::value), void>::type
         ValueFromDataBlock(TValue& _value, DataBlock const& _data)
     {
-        DataBlock::ParamIndex paramIndex = _data.findParamIndex(MAZE_HS("value"));
+        DataBlock::ParamIndex paramIndex = _data.findParamIndex(MAZE_HCS("value"));
         if (paramIndex >= 0)
             _value = GetDataBlockParam<TValue>(_data, paramIndex);
     }
@@ -119,7 +119,7 @@ namespace Maze
     MAZE_FORCEINLINE typename ::std::enable_if<(IsString<TValue>::value), void>::type
         ValueToDataBlock(TValue const& _value, DataBlock& _data)
     {
-        AddDataToDataBlock<TValue>(_data, MAZE_HS("value"), _value);
+        AddDataToDataBlock<TValue>(_data, MAZE_HCS("value"), _value);
     }
 
     ////////////////////////////////////////////
@@ -127,7 +127,7 @@ namespace Maze
     MAZE_FORCEINLINE typename ::std::enable_if<(IsString<TValue>::value), void>::type
         ValueFromDataBlock(TValue& _value, DataBlock const& _data)
     {
-        DataBlock::ParamIndex paramIndex = _data.findParamIndex(MAZE_HS("value"));
+        DataBlock::ParamIndex paramIndex = _data.findParamIndex(MAZE_HCS("value"));
         if (paramIndex >= 0)
             _value = GetDataBlockParam<TValue>(_data, paramIndex);
     }
@@ -142,7 +142,7 @@ namespace Maze
         !std::is_class<TValue>::value && std::is_enum<TValue>::value), void>::type
         ValueToDataBlock(TValue const& _value, DataBlock& _data)
     {
-        AddDataToDataBlock<S32>(_data, MAZE_HS("value"), static_cast<S32>(_value));
+        AddDataToDataBlock<S32>(_data, MAZE_HCS("value"), static_cast<S32>(_value));
     }
 
     ////////////////////////////////////////////
@@ -151,7 +151,7 @@ namespace Maze
         !std::is_class<TValue>::value && std::is_enum<TValue>::value), void>::type
         ValueFromDataBlock(TValue& _value, DataBlock const& _data)
     {
-        DataBlock::ParamIndex paramIndex = _data.findParamIndex(MAZE_HS("value"));
+        DataBlock::ParamIndex paramIndex = _data.findParamIndex(MAZE_HCS("value"));
         if (paramIndex >= 0)
             _value = static_cast<TValue>(GetDataBlockParam<S32>(_data, paramIndex));
     }
@@ -179,14 +179,14 @@ namespace Maze
     //////////////////////////////////////////
     inline void ValueToDataBlock(Rotation2D const& _value, DataBlock& _data)
     {
-        _data.setF32(MAZE_HS("s"), _value.getSin());
-        _data.setF32(MAZE_HS("c"), _value.getCos());
+        _data.setF32(MAZE_HCS("s"), _value.getSin());
+        _data.setF32(MAZE_HCS("c"), _value.getCos());
     }
 
     //////////////////////////////////////////
     inline void ValueFromDataBlock(Rotation2D& _value, DataBlock const& _data)
     {
-        _value = Rotation2D(_data.getF32(MAZE_HS("s")), _data.getF32(MAZE_HS("c")));
+        _value = Rotation2D(_data.getF32(MAZE_HCS("s")), _data.getF32(MAZE_HCS("c")));
     }
 
 
@@ -196,15 +196,15 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_FORCEINLINE void ValueToDataBlock(Plane const& _value, DataBlock& _data)
     {
-        _data.setVec3F(MAZE_HS("point"), _value.getPoint());
-        _data.setVec3F(MAZE_HS("normal"), _value.getNormal());
+        _data.setVec3F(MAZE_HCS("point"), _value.getPoint());
+        _data.setVec3F(MAZE_HCS("normal"), _value.getNormal());
     }
 
     //////////////////////////////////////////
     MAZE_FORCEINLINE void ValueFromDataBlock(Plane& _value, DataBlock const& _data)
     {
-        _value.setPoint(_data.getVec3F(MAZE_HS("point")));
-        _value.setNormal(_data.getVec3F(MAZE_HS("normal")));
+        _value.setPoint(_data.getVec3F(MAZE_HCS("point")));
+        _value.setNormal(_data.getVec3F(MAZE_HCS("normal")));
     }
 
 
@@ -214,13 +214,13 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_FORCEINLINE void ValueToDataBlock(Quaternion const& _value, DataBlock& _data)
     {
-        _data.setVec4F(MAZE_HS("value"), _value.toVec4F());
+        _data.setVec4F(MAZE_HCS("value"), _value.toVec4F());
     }
 
     //////////////////////////////////////////
     MAZE_FORCEINLINE void ValueFromDataBlock(Quaternion& _value, DataBlock const& _data)
     {
-        _value.setVec4F(_data.getVec4F(MAZE_HS("value")));
+        _value.setVec4F(_data.getVec4F(MAZE_HCS("value")));
     }
 
 
@@ -230,15 +230,15 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_FORCEINLINE void ValueToDataBlock(Ray const& _value, DataBlock& _data)
     {
-        _data.setVec3F(MAZE_HS("point"), _value.getPoint());
-        _data.setVec3F(MAZE_HS("direction"), _value.getDirection());
+        _data.setVec3F(MAZE_HCS("point"), _value.getPoint());
+        _data.setVec3F(MAZE_HCS("direction"), _value.getDirection());
     }
 
     //////////////////////////////////////////
     MAZE_FORCEINLINE void ValueFromDataBlock(Ray& _value, DataBlock const& _data)
     {
-        _value.setPoint(_data.getVec3F(MAZE_HS("point")));
-        _value.setDirection(_data.getVec3F(MAZE_HS("direction")));
+        _value.setPoint(_data.getVec3F(MAZE_HCS("point")));
+        _value.setDirection(_data.getVec3F(MAZE_HCS("direction")));
     }
 
 
@@ -292,7 +292,7 @@ namespace Maze
         _data.clearData();
         for (TIterator it = _first; it != _last; ++it)
         {
-            AddDataToDataBlock(_data, MAZE_HS("item"), (*it));
+            AddDataToDataBlock(_data, MAZE_HCS("item"), (*it));
         }
     }
 

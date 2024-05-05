@@ -103,7 +103,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM(Bounds2DSystem, 30000,
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(Bounds2DSystem, {},
         UpdateEvent const& _event,
         Entity* _entity,
         Bounds2D* _bounds)

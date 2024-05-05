@@ -196,7 +196,7 @@ namespace Maze
                 color.g,
                 color.b);
 
-            m_colorRenderer->getMaterial()->setUniform(MAZE_HS("u_intensity"), intensity);
+            m_colorRenderer->getMaterial()->setUniform(MAZE_HCS("u_intensity"), intensity);
         }
 
         if (m_alphaRenderer)

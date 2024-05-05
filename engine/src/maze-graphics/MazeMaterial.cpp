@@ -611,14 +611,14 @@ namespace Maze
         {
             DataBlock const* subBlock = _dataBlock.getDataBlock(i);
 
-            if (subBlock->getName() == MAZE_HS("renderPass"))
+            if (subBlock->getName() == MAZE_HCS("renderPass"))
             {
-                RenderPassType renderPassType = RenderPassType::FromString(subBlock->getCString(MAZE_HS("passType")));
+                RenderPassType renderPassType = RenderPassType::FromString(subBlock->getCString(MAZE_HCS("passType")));
                 RenderPassPtr renderPass = createRenderPass(renderPassType);
                 renderPass->loadFromDataBlock(*subBlock);
             }
             else
-            if (subBlock->getName() == MAZE_HS("uniform"))
+            if (subBlock->getName() == MAZE_HCS("uniform"))
             {
                 ShaderUniformVariant shaderUniformVariant(m_renderSystem);
                 shaderUniformVariant.loadFromDataBlock(*subBlock);
@@ -634,14 +634,14 @@ namespace Maze
     {
         for (ShaderUniformVariantPtr const& uniformVariant : m_uniforms)
         {
-            uniformVariant->toDataBlock(*_dataBlock.addNewDataBlock(MAZE_HS("shaderUniformVariant")));
+            uniformVariant->toDataBlock(*_dataBlock.addNewDataBlock(MAZE_HCS("shaderUniformVariant")));
         }
 
         for (RenderPassType passType = RenderPassType(1); passType < RenderPassType::MAX; ++passType)
         {
             for (RenderPassPtr const& renderPass : m_passes[passType])
             {
-                renderPass->toDataBlock(*_dataBlock.addNewDataBlock(MAZE_HS("renderPass")));
+                renderPass->toDataBlock(*_dataBlock.addNewDataBlock(MAZE_HCS("renderPass")));
             }
         }
     }
@@ -730,7 +730,7 @@ namespace Maze
         }
         else
         {
-            _value = materialManager->getMaterial(MAZE_HS(_data));
+            _value = materialManager->getMaterial(MAZE_HCS(_data));
         }
     }
 

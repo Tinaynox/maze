@@ -61,7 +61,6 @@ namespace Maze
     MAZE_USING_SHARED_PTR(ECSScene);
     MAZE_USING_SHARED_PTR(ECSWorld);
     MAZE_USING_SHARED_PTR(ComponentECSSceneLinker);
-    MAZE_USING_SHARED_PTR(ComponentSystem);
 
 
     //////////////////////////////////////////
@@ -141,15 +140,6 @@ namespace Maze
         //////////////////////////////////////////
         void destroyAllEntitiesExcept(EntityPtr const& _value);
 
-
-        //////////////////////////////////////////
-        void addSystem(ComponentSystemPtr const& _system);
-
-        //////////////////////////////////////////
-        void removeSystem(ComponentSystemPtr const& _system);
-
-        //////////////////////////////////////////
-        void removeAllSystems();
 
         //////////////////////////////////////////
         inline ECSWorld* getWorld() const { return m_world; }
@@ -249,7 +239,6 @@ namespace Maze
         S32 m_flags;
 
         Set<Entity*> m_entities;
-        Vector<ComponentSystemPtr> m_systems;
 
         ECSWorld* m_world = nullptr;
     };

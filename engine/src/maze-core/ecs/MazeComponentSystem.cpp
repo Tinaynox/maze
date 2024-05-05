@@ -39,6 +39,7 @@ namespace Maze
     // Class ComponentSystem
     //
     //////////////////////////////////////////
+    /*
     MAZE_IMPLEMENT_METACLASS(ComponentSystem);
 
     //////////////////////////////////////////
@@ -82,6 +83,7 @@ namespace Maze
     {
 
     }  
+    */
 
 } // namespace Maze
 //////////////////////////////////////////

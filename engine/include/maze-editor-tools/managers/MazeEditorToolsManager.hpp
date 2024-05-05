@@ -52,7 +52,6 @@ namespace Maze
     MAZE_USING_SHARED_PTR(GizmosDrawer);
     MAZE_USING_SHARED_PTR(Entity);
     MAZE_USING_SHARED_PTR(Component);
-    MAZE_USING_SHARED_PTR(ComponentSystem);
     MAZE_USING_SHARED_PTR(MenuListTree2D);
     MAZE_USING_SHARED_PTR(ECSScene);
     MAZE_USING_SHARED_PTR(EditorToolsStyles);
@@ -135,9 +134,6 @@ namespace Maze
 
         //////////////////////////////////////////
         bool init();
-
-        //////////////////////////////////////////
-        void notifyComponentSystemAdded(ComponentSystemPtr const& _componentSystem);
 
         //////////////////////////////////////////
         void notifyPauseChanged(bool const& _value);

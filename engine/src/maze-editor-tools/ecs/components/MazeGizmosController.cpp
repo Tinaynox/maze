@@ -160,17 +160,20 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM(GizmosSystem, 40000,
-        UpdateEvent const& _event,
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(GizmosSystem,
+        MAZE_ECS_ORDER(
+            MAZE_ECS_ORDER_AFTER(),
+            MAZE_ECS_ORDER_BEFORE(MAZE_HS("RenderControllerSystem"))),
+        PostUpdateEvent const& _event,
         Entity* _entity,
         GizmosController* _gizmosController)
     {
         bool haveGizmosMask = false;
         _gizmosController->getCameras3DSample()->process(
             [&haveGizmosMask](Entity* _entity, Camera3D* _camera)
-        {
-            haveGizmosMask |= (bool)(_camera->getRenderMask() & S32(DefaultRenderMask::Gizmos));
-        });
+            {
+                haveGizmosMask |= (bool)(_camera->getRenderMask() & S32(DefaultRenderMask::Gizmos));
+            });
 
         if (haveGizmosMask)
             _gizmosController->drawGizmos(_event.getDt());

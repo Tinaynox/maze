@@ -924,7 +924,10 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM(InputSystem2DSystem, 20000,
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(InputSystem2DSystem,
+        MAZE_ECS_ORDER(
+            MAZE_ECS_ORDER_AFTER(),
+            MAZE_ECS_ORDER_BEFORE(MAZE_HS("Bounds2DSystem"))),
         UpdateEvent const& _event,
         Entity* _entity,
         InputSystem2D* _inputSystem2D)

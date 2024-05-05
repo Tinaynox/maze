@@ -1067,18 +1067,18 @@ namespace Maze
 
                     if (gizmoBillboardData.sprite)
                     {
-                        material->setUniform(MAZE_HS("u_baseMap"), gizmoBillboardData.sprite->getTexture());
-                        material->setUniform(MAZE_HS("u_uv0"), gizmoBillboardData.sprite->getTextureCoordLB());
-                        material->setUniform(MAZE_HS("u_uv1"), gizmoBillboardData.sprite->getTextureCoordRT());
+                        material->setUniform(MAZE_HCS("u_baseMap"), gizmoBillboardData.sprite->getTexture());
+                        material->setUniform(MAZE_HCS("u_uv0"), gizmoBillboardData.sprite->getTextureCoordLB());
+                        material->setUniform(MAZE_HCS("u_uv1"), gizmoBillboardData.sprite->getTextureCoordRT());
                     }
                     else
                     {
-                        material->setUniform(MAZE_HS("u_baseMap"), renderSystem->getTextureManager()->getErrorTexture());
-                        material->setUniform(MAZE_HS("u_uv0"), Vec2F::c_zero);
-                        material->setUniform(MAZE_HS("u_uv1"), Vec2F::c_one);
+                        material->setUniform(MAZE_HCS("u_baseMap"), renderSystem->getTextureManager()->getErrorTexture());
+                        material->setUniform(MAZE_HCS("u_uv0"), Vec2F::c_zero);
+                        material->setUniform(MAZE_HCS("u_uv1"), Vec2F::c_one);
                     }
 
-                    material->setUniform(MAZE_HS("u_color"), gizmoBillboardData.color.value);
+                    material->setUniform(MAZE_HCS("u_color"), gizmoBillboardData.color.value);
 
                     Mat4F mat = Mat4F::CreateLookAtMatrix(
                         gizmoBillboardData.point,

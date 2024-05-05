@@ -122,18 +122,18 @@ namespace Maze
     //////////////////////////////////////////
     bool ParticleSystemParameterColor::loadFromDataBlock(DataBlock const& _dataBlock)
     {
-        m_color0 = _dataBlock.getVec4F(MAZE_HS("color0"));
-        m_color1 = _dataBlock.getVec4F(MAZE_HS("color1"));
+        m_color0 = _dataBlock.getVec4F(MAZE_HCS("color0"));
+        m_color1 = _dataBlock.getVec4F(MAZE_HCS("color1"));
 
-        DataBlock const* gradient0Block = _dataBlock.getDataBlock(MAZE_HS("gradient0"));
+        DataBlock const* gradient0Block = _dataBlock.getDataBlock(MAZE_HCS("gradient0"));
         if (gradient0Block)
             ValueFromDataBlock(m_gradient0, *gradient0Block);
 
-        DataBlock const* gradient1Block = _dataBlock.getDataBlock(MAZE_HS("gradient1"));
+        DataBlock const* gradient1Block = _dataBlock.getDataBlock(MAZE_HCS("gradient1"));
         if (gradient1Block)
             ValueFromDataBlock(m_gradient1, *gradient1Block);
 
-        setSamplingMode(ParticleSystemParameterColorSamplingMode(_dataBlock.getS32(MAZE_HS("mode"))));
+        setSamplingMode(ParticleSystemParameterColorSamplingMode(_dataBlock.getS32(MAZE_HCS("mode"))));
 
         return true;
     }
@@ -145,27 +145,27 @@ namespace Maze
         {
             case ParticleSystemParameterColorSamplingMode::Color:
             {
-                _dataBlock.setVec4F(MAZE_HS("color0"), m_color0);
+                _dataBlock.setVec4F(MAZE_HCS("color0"), m_color0);
                 break;
             }
             case ParticleSystemParameterColorSamplingMode::Gradient:
             {
-                DataBlock& gradient0Block = _dataBlock[MAZE_HS("gradient0")];
+                DataBlock& gradient0Block = _dataBlock[MAZE_HCS("gradient0")];
                 ValueToDataBlock(m_gradient0, gradient0Block);
                 break;
             }
             case ParticleSystemParameterColorSamplingMode::RandomBetweenColors:
             {
-                _dataBlock.setVec4F(MAZE_HS("color0"), m_color0);
-                _dataBlock.setVec4F(MAZE_HS("color1"), m_color1);
+                _dataBlock.setVec4F(MAZE_HCS("color0"), m_color0);
+                _dataBlock.setVec4F(MAZE_HCS("color1"), m_color1);
                 break;
             }
             case ParticleSystemParameterColorSamplingMode::RandomBetweenGradients:
             {
-                DataBlock& gradient0Block = _dataBlock[MAZE_HS("gradient0")];
+                DataBlock& gradient0Block = _dataBlock[MAZE_HCS("gradient0")];
                 ValueToDataBlock(m_gradient0, gradient0Block);
 
-                DataBlock& gradient1Block = _dataBlock[MAZE_HS("gradient1")];
+                DataBlock& gradient1Block = _dataBlock[MAZE_HCS("gradient1")];
                 ValueToDataBlock(m_gradient1, gradient1Block);
 
                 break;
@@ -177,7 +177,7 @@ namespace Maze
             }
         }
 
-        _dataBlock.setS32(MAZE_HS("mode"), (S32)m_mode);
+        _dataBlock.setS32(MAZE_HCS("mode"), (S32)m_mode);
     }
     
 } // namespace Maze

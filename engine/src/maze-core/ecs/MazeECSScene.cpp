@@ -58,7 +58,7 @@ namespace Maze
     ECSScene::~ECSScene()
     {
         destroyAllEntities();
-        removeAllSystems();
+        // removeAllSystems();
 
         ECSWorld* world = m_world;
         if (world)
@@ -124,7 +124,7 @@ namespace Maze
         Debug::Log("%s::processSceneWillBeDestroyed started...", static_cast<CString>(getMetaClass()->getName()));
 
         destroyAllEntities();
-        removeAllSystems();
+        // removeAllSystems();
 
         ECSWorld* world = m_world;
         if (world)
@@ -166,36 +166,36 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ECSScene::addSystem(ComponentSystemPtr const& _system)
-    {
-        ECSWorld* world = m_world;
+    //void ECSScene::addSystem(ComponentSystemPtr const& _system)
+    //{
+    //    ECSWorld* world = m_world;
 
-        m_systems.push_back(_system);
-        world->addSystem(_system);
-    }
-
-    //////////////////////////////////////////
-    void ECSScene::removeSystem(ComponentSystemPtr const& _system)
-    {
-        ECSWorld* world = m_world;
-
-        auto systemIt = std::find(m_systems.begin(), m_systems.end(), _system);
-        if (systemIt != m_systems.end())
-            m_systems.erase(systemIt);
-
-        world->removeSystem(_system);
-    }
+    //    m_systems.push_back(_system);
+    //    world->addSystem(_system);
+    //}
 
     //////////////////////////////////////////
-    void ECSScene::removeAllSystems()
-    {
-        ECSWorld* world = m_world;
+    //void ECSScene::removeSystem(ComponentSystemPtr const& _system)
+    //{
+    //    ECSWorld* world = m_world;
 
-        for (ComponentSystemPtr const& system : m_systems)
-            world->removeSystem(system);
+    //    auto systemIt = std::find(m_systems.begin(), m_systems.end(), _system);
+    //    if (systemIt != m_systems.end())
+    //        m_systems.erase(systemIt);
 
-        m_systems.clear();
-    }
+    //    world->removeSystem(_system);
+    //}
+
+    //////////////////////////////////////////
+    //void ECSScene::removeAllSystems()
+    //{
+    //    ECSWorld* world = m_world;
+
+    //    for (ComponentSystemPtr const& system : m_systems)
+    //        world->removeSystem(system);
+
+    //    m_systems.clear();
+    //}
 
     //////////////////////////////////////////
     void ECSScene::load()

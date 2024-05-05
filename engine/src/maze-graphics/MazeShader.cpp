@@ -621,19 +621,19 @@ namespace Maze
     //////////////////////////////////////////
     void Shader::assignDefaultUniforms()
     {
-        m_clipDistance0Uniform = ensureUniform(MAZE_HS("u_clipDistance0"));
-        m_clipDistanceEnableUniform = ensureUniform(MAZE_HS("u_clipDistanceEnable"));
-        m_projectionMatrixUniform = ensureUniform(MAZE_HS("u_projectionMatrix"));
-        m_projectionParamsUniform = ensureUniform(MAZE_HS("u_projectionParams"));
-        m_viewMatrixUniform = ensureUniform(MAZE_HS("u_viewMatrix"));
-        m_modelMatricesUniform = ensureUniform(MAZE_HS("u_modelMatrices"));
-        m_modelMatricesTextureUniform = ensureUniform(MAZE_HS("u_modelMatricesTexture"));
-        m_modelMatricesTextureSizeUniform = ensureUniform(MAZE_HS("u_modelMatricesTextureSize"));
-        m_modelMatriciesOffsetUniform = ensureUniform(MAZE_HS("u_modelMatriciesOffset"));
-        m_viewPositionUniform = ensureUniform(MAZE_HS("u_viewPosition"));
-        m_timeUniform = ensureUniform(MAZE_HS("u_time"));
-        m_mainLightColorUniform = ensureUniform(MAZE_HS("u_mainLightColor"));
-        m_mainLightDirectionUniform = ensureUniform(MAZE_HS("u_mainLightDirection"));
+        m_clipDistance0Uniform = ensureUniform(MAZE_HCS("u_clipDistance0"));
+        m_clipDistanceEnableUniform = ensureUniform(MAZE_HCS("u_clipDistanceEnable"));
+        m_projectionMatrixUniform = ensureUniform(MAZE_HCS("u_projectionMatrix"));
+        m_projectionParamsUniform = ensureUniform(MAZE_HCS("u_projectionParams"));
+        m_viewMatrixUniform = ensureUniform(MAZE_HCS("u_viewMatrix"));
+        m_modelMatricesUniform = ensureUniform(MAZE_HCS("u_modelMatrices"));
+        m_modelMatricesTextureUniform = ensureUniform(MAZE_HCS("u_modelMatricesTexture"));
+        m_modelMatricesTextureSizeUniform = ensureUniform(MAZE_HCS("u_modelMatricesTextureSize"));
+        m_modelMatriciesOffsetUniform = ensureUniform(MAZE_HCS("u_modelMatriciesOffset"));
+        m_viewPositionUniform = ensureUniform(MAZE_HCS("u_viewPosition"));
+        m_timeUniform = ensureUniform(MAZE_HCS("u_time"));
+        m_mainLightColorUniform = ensureUniform(MAZE_HCS("u_mainLightColor"));
+        m_mainLightDirectionUniform = ensureUniform(MAZE_HCS("u_mainLightDirection"));
     }
 
     //////////////////////////////////////////
@@ -727,28 +727,28 @@ namespace Maze
         {
             DataBlock const* subBlock = _dataBlock.getDataBlock(i);
 
-            if (subBlock->getName() == MAZE_HS("feature"))
+            if (subBlock->getName() == MAZE_HCS("feature"))
             {
-                CString name = subBlock->getCString(MAZE_HS("name"));
+                CString name = subBlock->getCString(MAZE_HCS("name"));
 
                 if (name)
                 {
-                    CString value = subBlock->getCString(MAZE_HS("value"));
+                    CString value = subBlock->getCString(MAZE_HCS("value"));
                     addLocalFeature(name, value ? value : "(1)");
                 }
             }
             else
             if (strcmp(subBlock->getName(), getLanguage()) == 0)
             {
-                CString shaderFileName = subBlock->getCString(MAZE_HS("shader"));
+                CString shaderFileName = subBlock->getCString(MAZE_HCS("shader"));
                 if (shaderFileName)
                 {
                     shaderFile = assetManager->getAssetFileByFileName(Path(shaderFileName));
                 }
                 else
                 {
-                    CString vertexShaderFileName = subBlock->getCString(MAZE_HS("vertex"));
-                    CString fragmentShaderFileName = subBlock->getCString(MAZE_HS("fragment"));
+                    CString vertexShaderFileName = subBlock->getCString(MAZE_HCS("vertex"));
+                    CString fragmentShaderFileName = subBlock->getCString(MAZE_HCS("fragment"));
 
                     vertexShaderFile = vertexShaderFileName ? assetManager->getAssetFileByFileName(Path(vertexShaderFileName)) : AssetFilePtr();
                     fragmentShaderFile = fragmentShaderFileName ? assetManager->getAssetFileByFileName(Path(fragmentShaderFileName)) : AssetFilePtr();
@@ -758,7 +758,7 @@ namespace Maze
                 }
             }
             else
-            if (subBlock->getName() == MAZE_HS("uniform"))
+            if (subBlock->getName() == MAZE_HCS("uniform"))
             {
                 ShaderUniformVariant uniformData(m_renderSystemRaw);
                 uniformData.loadFromDataBlock(*subBlock);

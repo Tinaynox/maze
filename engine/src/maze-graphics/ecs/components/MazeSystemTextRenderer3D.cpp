@@ -427,7 +427,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM(SystemTextRenderer3DSystem, 0,
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(SystemTextRenderer3DSystem, {},
         UpdateEvent const& _event,
         Entity* _entity,
         SystemTextRenderer3D* _systemTextRenderer3D)

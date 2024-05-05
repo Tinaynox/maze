@@ -153,8 +153,8 @@ namespace Maze
     //////////////////////////////////////////
     bool FontMaterial::loadFromDataBlock(DataBlock const& _dataBlock)
     {
-        CString font = _dataBlock.getCString(MAZE_HS("font"));
-        CString assetMaterial = _dataBlock.getCString(MAZE_HS("assetMaterial"));
+        CString font = _dataBlock.getCString(MAZE_HCS("font"));
+        CString assetMaterial = _dataBlock.getCString(MAZE_HCS("assetMaterial"));
 
         setFont(font ? FontManager::GetInstancePtr()->getFont(font) : FontPtr());
         setAssetMaterial(assetMaterial ? MaterialManager::GetCurrentInstance()->getMaterial(assetMaterial) : MaterialPtr());

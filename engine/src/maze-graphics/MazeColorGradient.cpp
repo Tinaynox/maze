@@ -60,16 +60,16 @@ namespace Maze
     //////////////////////////////////////////
     bool ColorGradient::KeyframeRGB::loadFromDataBlock(DataBlock const& _dataBlock)
     {
-        time = _dataBlock.getF32(MAZE_HS("time"));
-        value = _dataBlock.getVec3F(MAZE_HS("value"));
+        time = _dataBlock.getF32(MAZE_HCS("time"));
+        value = _dataBlock.getVec3F(MAZE_HCS("value"));
         return true;
     }
 
     //////////////////////////////////////////
     void ColorGradient::KeyframeRGB::toDataBlock(DataBlock& _dataBlock) const
     {
-        _dataBlock.setF32(MAZE_HS("time"), time);
-        _dataBlock.setVec3F(MAZE_HS("value"), value);
+        _dataBlock.setF32(MAZE_HCS("time"), time);
+        _dataBlock.setVec3F(MAZE_HCS("value"), value);
     }
 
     //////////////////////////////////////////
@@ -92,16 +92,16 @@ namespace Maze
     //////////////////////////////////////////
     bool ColorGradient::KeyframeAlpha::loadFromDataBlock(DataBlock const& _dataBlock)
     {
-        time = _dataBlock.getF32(MAZE_HS("time"));
-        value = _dataBlock.getF32(MAZE_HS("value"));
+        time = _dataBlock.getF32(MAZE_HCS("time"));
+        value = _dataBlock.getF32(MAZE_HCS("value"));
         return true;
     }
 
     //////////////////////////////////////////
     void ColorGradient::KeyframeAlpha::toDataBlock(DataBlock& _dataBlock) const
     {
-        _dataBlock.setF32(MAZE_HS("time"), time);
-        _dataBlock.setF32(MAZE_HS("value"), value);
+        _dataBlock.setF32(MAZE_HCS("time"), time);
+        _dataBlock.setF32(MAZE_HCS("value"), value);
     }
 
     //////////////////////////////////////////
@@ -280,7 +280,7 @@ namespace Maze
     bool ColorGradient::loadFromDataBlock(DataBlock const& _dataBlock)
     {
         m_keyframesRGB.clear();
-        DataBlock const* keyframesRGBDataBlock = _dataBlock.getDataBlock(MAZE_HS("keyframesRGB"));
+        DataBlock const* keyframesRGBDataBlock = _dataBlock.getDataBlock(MAZE_HCS("keyframesRGB"));
         if (keyframesRGBDataBlock)
         {
             ValueFromDataBlock(m_keyframesRGB, *keyframesRGBDataBlock);
@@ -288,14 +288,14 @@ namespace Maze
         }
 
         m_keyframesAlpha.clear();
-        DataBlock const* keyframesAlphaDataBlock = _dataBlock.getDataBlock(MAZE_HS("keyframesAlpha"));
+        DataBlock const* keyframesAlphaDataBlock = _dataBlock.getDataBlock(MAZE_HCS("keyframesAlpha"));
         if (keyframesAlphaDataBlock)
         {
             ValueFromDataBlock(m_keyframesAlpha, *keyframesAlphaDataBlock);
             sortKeyframesAlpha();
         }
 
-        setMode(EvaluateMode(_dataBlock.getS32(MAZE_HS("mode"))));
+        setMode(EvaluateMode(_dataBlock.getS32(MAZE_HCS("mode"))));
 
         return true;
     }
@@ -303,13 +303,13 @@ namespace Maze
     //////////////////////////////////////////
     void ColorGradient::toDataBlock(DataBlock& _dataBlock) const
     {
-        DataBlock& keyframesRGBDataBlock = _dataBlock[MAZE_HS("keyframesRGB")];
+        DataBlock& keyframesRGBDataBlock = _dataBlock[MAZE_HCS("keyframesRGB")];
         ValueToDataBlock(m_keyframesRGB, keyframesRGBDataBlock);
 
-        DataBlock& keyframesAlphaDataBlock = _dataBlock[MAZE_HS("keyframesAlpha")];
+        DataBlock& keyframesAlphaDataBlock = _dataBlock[MAZE_HCS("keyframesAlpha")];
         ValueToDataBlock(m_keyframesAlpha, keyframesAlphaDataBlock);
 
-        _dataBlock.setS32(MAZE_HS("mode"), (S32)m_mode);
+        _dataBlock.setS32(MAZE_HCS("mode"), (S32)m_mode);
     }
 
     

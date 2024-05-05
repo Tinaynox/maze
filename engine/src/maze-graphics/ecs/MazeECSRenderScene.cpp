@@ -56,7 +56,7 @@ namespace Maze
     ECSRenderScene::~ECSRenderScene()
     {
         destroyAllEntities();
-        removeAllSystems();
+        // removeAllSystems();
 
         if (EntityManager::GetInstancePtr())
         {

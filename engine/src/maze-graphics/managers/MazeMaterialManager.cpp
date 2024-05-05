@@ -235,7 +235,7 @@ namespace Maze
                 renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
                 renderPass->setCullMode(CullMode::Off);
                 renderPass->setRenderQueueIndex(3000);
-                material->setUniform(MAZE_HS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
+                material->setUniform(MAZE_HCS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
                 break;
             }
             case BuiltinMaterialType::ColorTexture:
@@ -249,9 +249,9 @@ namespace Maze
                 renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
                 renderPass->setCullMode(CullMode::Off);
                 renderPass->setRenderQueueIndex(3000);
-                material->setUniform(MAZE_HS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
-                material->setUniform(MAZE_HS("u_baseMap"), m_renderSystemRaw->getTextureManager()->getWhiteTexture());
-                material->setUniform(MAZE_HS("u_baseMapST"), Vec4F(1.0f, 1.0f, 0.0f, 0.0f));
+                material->setUniform(MAZE_HCS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
+                material->setUniform(MAZE_HCS("u_baseMap"), m_renderSystemRaw->getTextureManager()->getWhiteTexture());
+                material->setUniform(MAZE_HCS("u_baseMapST"), Vec4F(1.0f, 1.0f, 0.0f, 0.0f));
                 break;
             }
             case BuiltinMaterialType::ColorTextureCustomUV:
@@ -265,8 +265,8 @@ namespace Maze
                 renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
                 renderPass->setCullMode(CullMode::Off);
                 renderPass->setRenderQueueIndex(3000);
-                material->setUniform(MAZE_HS("u_baseMap"), m_renderSystemRaw->getTextureManager()->getWhiteTexture());
-                material->setUniform(MAZE_HS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
+                material->setUniform(MAZE_HCS("u_baseMap"), m_renderSystemRaw->getTextureManager()->getWhiteTexture());
+                material->setUniform(MAZE_HCS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
                 break;
             }
             case BuiltinMaterialType::ColorTextureAdditive:
@@ -304,8 +304,8 @@ namespace Maze
                 renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
                 renderPass->setCullMode(CullMode::Off);
                 renderPass->setRenderQueueIndex(3000);
-                material->setUniform(MAZE_HS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
-                material->setUniform(MAZE_HS("u_intensity"), 0.0f);
+                material->setUniform(MAZE_HCS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
+                material->setUniform(MAZE_HCS("u_intensity"), 0.0f);
                 break;
             }
             case BuiltinMaterialType::HSVRect:
@@ -346,7 +346,7 @@ namespace Maze
                 renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
                 renderPass->setCullMode(CullMode::Off);
                 renderPass->setRenderQueueIndex(2998);
-                material->setUniform(MAZE_HS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
+                material->setUniform(MAZE_HCS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
                 break;
             }
             case BuiltinMaterialType::DebugAxis:
@@ -361,7 +361,7 @@ namespace Maze
                 renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
                 renderPass->setCullMode(CullMode::Off);
                 renderPass->setRenderQueueIndex(2999);
-                material->setUniform(MAZE_HS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
+                material->setUniform(MAZE_HCS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
                 break;
             }
             case BuiltinMaterialType::Skybox:
@@ -375,8 +375,8 @@ namespace Maze
                 renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
                 renderPass->setCullMode(CullMode::Back);
                 renderPass->setRenderQueueIndex(1000);
-                material->setUniform(MAZE_HS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
-                material->setUniform(MAZE_HS("u_baseMap"), m_renderSystemRaw->getTextureManager()->getWhiteCubeTexture());
+                material->setUniform(MAZE_HCS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
+                material->setUniform(MAZE_HCS("u_baseMap"), m_renderSystemRaw->getTextureManager()->getWhiteCubeTexture());
                 break;
             }
             case BuiltinMaterialType::Specular:
@@ -390,12 +390,12 @@ namespace Maze
                 renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
                 renderPass->setCullMode(CullMode::Back);
                 renderPass->setRenderQueueIndex(2000);
-                material->setUniform(MAZE_HS("u_baseMapST"), Vec4F(1.0f, 1.0f, 0.0f, 0.0f));
-                material->setUniform(MAZE_HS("u_baseMap"), m_renderSystemRaw->getTextureManager()->getWhiteTexture());
-                material->setUniform(MAZE_HS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
-                material->setUniform(MAZE_HS("u_ambientLightColor"), ColorF128(0.1f, 0.1f, 0.1f, 1.0f));
-                material->setUniform(MAZE_HS("u_shininess"), 0.65f);
-                material->setUniform(MAZE_HS("u_specularColor"), ColorF128(0.3f, 0.3f, 0.3f, 1.0f));
+                material->setUniform(MAZE_HCS("u_baseMapST"), Vec4F(1.0f, 1.0f, 0.0f, 0.0f));
+                material->setUniform(MAZE_HCS("u_baseMap"), m_renderSystemRaw->getTextureManager()->getWhiteTexture());
+                material->setUniform(MAZE_HCS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
+                material->setUniform(MAZE_HCS("u_ambientLightColor"), ColorF128(0.1f, 0.1f, 0.1f, 1.0f));
+                material->setUniform(MAZE_HCS("u_shininess"), 0.65f);
+                material->setUniform(MAZE_HCS("u_specularColor"), ColorF128(0.3f, 0.3f, 0.3f, 1.0f));
                 break;
             }
             case BuiltinMaterialType::SpecularDS:
@@ -420,12 +420,12 @@ namespace Maze
                 renderPass->setDepthTestCompareFunction(CompareFunction::LessEqual);
                 renderPass->setCullMode(CullMode::Off);
                 renderPass->setRenderQueueIndex(2000);
-                material->setUniform(MAZE_HS("u_baseMapST"), Vec4F(1.0f, 1.0f, 0.0f, 0.0f));
-                material->setUniform(MAZE_HS("u_baseMap"), m_renderSystemRaw->getTextureManager()->getWhiteTexture());
-                material->setUniform(MAZE_HS("u_color"), ColorF128(0.77f, 0.77f, 0.77f, 1.0f));
-                material->setUniform(MAZE_HS("u_ambientLightColor"), ColorF128(0.1f, 0.1f, 0.1f, 1.0f));
-                material->setUniform(MAZE_HS("u_shininess"), 0.65f);
-                material->setUniform(MAZE_HS("u_specularColor"), ColorF128(0.3f, 0.3f, 0.3f, 1.0f));
+                material->setUniform(MAZE_HCS("u_baseMapST"), Vec4F(1.0f, 1.0f, 0.0f, 0.0f));
+                material->setUniform(MAZE_HCS("u_baseMap"), m_renderSystemRaw->getTextureManager()->getWhiteTexture());
+                material->setUniform(MAZE_HCS("u_color"), ColorF128(0.77f, 0.77f, 0.77f, 1.0f));
+                material->setUniform(MAZE_HCS("u_ambientLightColor"), ColorF128(0.1f, 0.1f, 0.1f, 1.0f));
+                material->setUniform(MAZE_HCS("u_shininess"), 0.65f);
+                material->setUniform(MAZE_HCS("u_specularColor"), ColorF128(0.3f, 0.3f, 0.3f, 1.0f));
 
                 break;
             }
@@ -440,8 +440,8 @@ namespace Maze
                 renderPass->setDepthTestCompareFunction(CompareFunction::Disabled);
                 renderPass->setCullMode(CullMode::Off);
                 renderPass->setRenderQueueIndex(3000);
-                material->setUniform(MAZE_HS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
-                material->setUniform(MAZE_HS("u_baseMap"), m_renderSystemRaw->getTextureManager()->getWhiteTexture());
+                material->setUniform(MAZE_HCS("u_color"), ColorF128(1.0f, 1.0f, 1.0f, 1.0f));
+                material->setUniform(MAZE_HCS("u_baseMap"), m_renderSystemRaw->getTextureManager()->getWhiteTexture());
                 break;
             }
             default:

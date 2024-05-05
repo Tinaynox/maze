@@ -227,8 +227,8 @@ namespace Maze
         systemFont->offset = _offset;
 
         systemFont->material = MaterialManager::GetCurrentInstance()->getColorTextureMaterial()->createCopy();
-        systemFont->material->ensureUniform(MAZE_HS("u_baseMap"))->set(systemFont->texture);
-        systemFont->material->ensureUniform(MAZE_HS("u_baseMapTexelSize"))->set(1.0f / (Vec2F)systemFont->texture->getSize());
+        systemFont->material->ensureUniform(MAZE_HCS("u_baseMap"))->set(systemFont->texture);
+        systemFont->material->ensureUniform(MAZE_HCS("u_baseMapTexelSize"))->set(1.0f / (Vec2F)systemFont->texture->getSize());
 
         RenderPassPtr const& renderPass = systemFont->material->getFirstRenderPass();
         renderPass->setRenderQueueIndex(3000);

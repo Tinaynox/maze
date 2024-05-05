@@ -209,12 +209,12 @@ namespace Maze
         {
             if (i < itemDrawersCount)
             {
-                DataBlock* childDataBlock = _dataBlock.addNewDataBlock(MAZE_HS("item"));
+                DataBlock* childDataBlock = _dataBlock.addNewDataBlock(MAZE_HCS("item"));
                 m_itemDrawers[i]->toDataBlock(*childDataBlock);
             }
             else
             {
-                _dataBlock.addNewDataBlock(MAZE_HS("item"));
+                _dataBlock.addNewDataBlock(MAZE_HCS("item"));
             }
         }
 

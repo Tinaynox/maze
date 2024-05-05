@@ -137,10 +137,10 @@ namespace Maze
         SelectionManager::GetInstancePtr()->eventSelectionChanged.subscribe(this, &PreviewController::notifySelectionChanged);
         UpdateManager::GetInstancePtr()->addUpdatable(this);
 
-        registerPreviewInspectorByExtension<MaterialsPreviewInspector>(MAZE_HS("mzmaterial"));
+        registerPreviewInspectorByExtension<MaterialsPreviewInspector>(MAZE_HCS("mzmaterial"));
         registerPreviewInspectorByClassUID<MaterialsPreviewInspector, Material>();
         
-        registerPreviewInspectorByExtension<Texture2DPreviewInspector>(MAZE_HS("mztexture"));
+        registerPreviewInspectorByExtension<Texture2DPreviewInspector>(MAZE_HCS("mztexture"));
         registerPreviewInspectorByClassUID<Texture2DPreviewInspector, Texture2D>();
 
         TextureManager::GetCurrentInstancePtr()->eventTextureLoaderAdded.subscribe(
@@ -148,9 +148,9 @@ namespace Maze
 
         Vector<String> textureExtensions = TextureManager::GetCurrentInstancePtr()->getTextureLoaderExtensions();
         for (String const& textureExtension : textureExtensions)
-            registerPreviewInspectorByExtension<Texture2DPreviewInspector>(MAZE_HS(textureExtension.c_str()));
+            registerPreviewInspectorByExtension<Texture2DPreviewInspector>(MAZE_HCS(textureExtension.c_str()));
 
-        registerPreviewInspectorByExtension<RenderMeshPreviewInspector>(MAZE_HS("obj"));
+        registerPreviewInspectorByExtension<RenderMeshPreviewInspector>(MAZE_HCS("obj"));
         registerPreviewInspectorByClassUID<RenderMeshPreviewInspector, RenderMesh>();
 
         AssetManager::GetInstancePtr()->eventAssetFileRemoved.subscribe(this, &PreviewController::notifyAssetFileRemoved);

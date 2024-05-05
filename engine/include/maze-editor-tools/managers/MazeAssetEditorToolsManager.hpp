@@ -53,7 +53,6 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Entity);
     MAZE_USING_SHARED_PTR(Component);
     MAZE_USING_SHARED_PTR(GizmosSystem);
-    MAZE_USING_SHARED_PTR(ComponentSystem);
     MAZE_USING_SHARED_PTR(Sprite);
     MAZE_USING_SHARED_PTR(AssetFile);
     MAZE_USING_SHARED_PTR(RenderSystem);

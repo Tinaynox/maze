@@ -385,7 +385,7 @@ namespace Maze
                 Vec2F(0.0f, 0.0f),
                 Vec2F(0.0f, 0.0f));
             chessRenderer->getMaterial()->setUniform(
-                MAZE_HS("u_baseMapST"),
+                MAZE_HCS("u_baseMapST"),
                 Vec4F(
                     chessRenderer->getTransform()->getWidth() / 8.0f,
                     chessRenderer->getTransform()->getHeight() / 8.0f,

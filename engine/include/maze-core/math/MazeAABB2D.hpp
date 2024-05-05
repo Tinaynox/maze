@@ -410,15 +410,15 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_FORCEINLINE void ValueToDataBlock(AABB2D const& _value, DataBlock& _data)
     {
-        _data.setVec2F(MAZE_HS("min"), _value.getMin());
-        _data.setVec2F(MAZE_HS("max"), _value.getMax());
+        _data.setVec2F(MAZE_HCS("min"), _value.getMin());
+        _data.setVec2F(MAZE_HCS("max"), _value.getMax());
     }
 
     //////////////////////////////////////////
     MAZE_FORCEINLINE void ValueFromDataBlock(AABB2D& _value, DataBlock const& _data)
     {
-        _value.setMin(_data.getVec2F(MAZE_HS("min")));
-        _value.setMax(_data.getVec2F(MAZE_HS("max")));
+        _value.setMin(_data.getVec2F(MAZE_HCS("min")));
+        _value.setMax(_data.getVec2F(MAZE_HCS("max")));
     }
 
 

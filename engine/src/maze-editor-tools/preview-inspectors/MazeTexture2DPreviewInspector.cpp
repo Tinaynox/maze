@@ -161,7 +161,7 @@ namespace Maze
                 Vec2F(0.5f, 0.5f),
                 Vec2F(1.0f, 0.5f));
             spriteHolder->getMaterial()->setUniform(
-                MAZE_HS("u_baseMapST"),
+                MAZE_HCS("u_baseMapST"),
                 Vec4F(
                     spriteHolder->getTransform()->getWidth() / 16.0f,
                     spriteHolder->getTransform()->getHeight() / 16.0f,

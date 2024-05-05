@@ -37,6 +37,152 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    SimpleComponentSystemEventHandlerPtr const& FindSystem(
+        Vector<SimpleComponentSystemEventHandlerPtr> const& _eventHandlers,
+        HashedString const& _name)
+    {
+        static SimpleComponentSystemEventHandlerPtr nullPointer;
+
+        auto it = std::find_if(
+            _eventHandlers.begin(),
+            _eventHandlers.end(),
+            [&_name](SimpleComponentSystemEventHandlerPtr const& _system) {
+                return _system->getName() == _name;
+            });
+        if (it == _eventHandlers.end())
+            return nullPointer;
+
+        return *it;
+    }
+
+
+    //////////////////////////////////////////
+    void CalculateAfterAndBeforeIndices(
+        Vector<SimpleComponentSystemEventHandlerPtr> const& _eventHandlers,
+        SimpleComponentSystemEventHandlerPtr const& _system,
+        S32& afterIndex,
+        S32& beforeIndex)
+    {
+        S32 arrSize = (S32)_eventHandlers.size();
+        afterIndex = -1;
+        beforeIndex = arrSize;
+
+        for (S32 i = 0; i < arrSize; ++i)
+        {
+            SimpleComponentSystemEventHandlerPtr const& system = _eventHandlers[i];
+            if (system == _system)
+                continue;
+
+            if (system->getOrder().after.count(_system->getName()) || _system->getOrder().before.count(system->getName()))
+            {
+                beforeIndex = i;
+                break;
+            }
+        }
+
+        for (S32 i = arrSize - 1; i > -1; --i)
+        {
+            SimpleComponentSystemEventHandlerPtr const& system = _eventHandlers[i];
+            if (system == _system)
+                continue;
+
+            if (system->getOrder().before.count(_system->getName()) || _system->getOrder().after.count(system->getName()))
+            {
+                afterIndex = i;
+                break;
+            }
+        }
+    }
+
+
+    //////////////////////////////////////////
+    bool AddSystemEventHandler(
+        Vector<SimpleComponentSystemEventHandlerPtr>& _eventHandlers,
+        SimpleComponentSystemEventHandlerPtr const& _system,
+        bool _rearrangeAvailable = true)
+    {
+        S32 arrSize = (S32)_eventHandlers.size();
+        S32 afterIndex = -1;
+        S32 beforeIndex = arrSize;
+        CalculateAfterAndBeforeIndices(_eventHandlers, _system, afterIndex, beforeIndex);
+
+        if (afterIndex < beforeIndex || afterIndex == -1)
+        {
+            _eventHandlers.insert(_eventHandlers.begin() + beforeIndex, _system);
+            return true;
+        }
+        else
+        if (beforeIndex == arrSize)
+        {
+            _eventHandlers.insert(_eventHandlers.begin() + (afterIndex + 1), _system);
+            return true;
+        }
+        else
+        {
+            if (_rearrangeAvailable)
+            {
+                Vector<SimpleComponentSystemEventHandlerPtr> shouldBeBeforeNewSystem;
+                Vector<SimpleComponentSystemEventHandlerPtr> shouldBeAfterNewSystem;
+
+                for (SimpleComponentSystemEventHandlerPtr const& s : _eventHandlers)
+                {
+                    if (s->getOrder().before.count(_system->getName()) || _system->getOrder().after.count(s->getName()))
+                        shouldBeBeforeNewSystem.push_back(s);
+                    else
+                    if (s->getOrder().after.count(_system->getName()) || _system->getOrder().before.count(s->getName()))
+                        shouldBeAfterNewSystem.push_back(s);
+                }
+
+                for (SimpleComponentSystemEventHandlerPtr s : shouldBeAfterNewSystem)
+                {
+                    auto it = std::find(_eventHandlers.begin(), _eventHandlers.end(), s);
+                    MAZE_ASSERT(it != _eventHandlers.end());
+                    _eventHandlers.erase(it);
+
+                    S32 sAfterIndex = -1;
+                    S32 sBeforeIndex = arrSize;
+                    CalculateAfterAndBeforeIndices(_eventHandlers, s, sAfterIndex, sBeforeIndex);
+                    
+                    _eventHandlers.insert(_eventHandlers.begin() + sBeforeIndex, s);
+                }
+
+                for (SimpleComponentSystemEventHandlerPtr s : shouldBeBeforeNewSystem)
+                {
+                    auto it = std::find(_eventHandlers.begin(), _eventHandlers.end(), s);
+                    MAZE_ASSERT(it != _eventHandlers.end());
+                    _eventHandlers.erase(it);
+
+                    S32 sAfterIndex = -1;
+                    S32 sBeforeIndex = arrSize;
+                    CalculateAfterAndBeforeIndices(_eventHandlers, s, sAfterIndex, sBeforeIndex);
+                    
+                    _eventHandlers.insert(_eventHandlers.begin() + (sAfterIndex + 1), s);
+                }
+
+                AddSystemEventHandler(_eventHandlers, _system, false);
+
+                return true;
+            }
+            else
+            {
+                Debug::LogError("Systems list:");
+                for (SimpleComponentSystemEventHandlerPtr const& s : _eventHandlers)
+                {
+                    Debug::LogError("%s", s->getName().c_str());
+                }
+
+                MAZE_ERROR(
+                    "Failed to place '%s' (after='%s' before='%s')!",
+                    _system->getName().c_str(),
+                    (afterIndex >= 0 && afterIndex < arrSize) ? _eventHandlers[afterIndex]->getName().c_str() : "NONE",
+                    (beforeIndex >= 0 && beforeIndex < arrSize) ? _eventHandlers[beforeIndex]->getName().c_str() : "NONE");
+                return false;
+            }
+        }
+    }
+
+
+    //////////////////////////////////////////
     // Class ECSWorld
     //
     //////////////////////////////////////////
@@ -54,7 +200,7 @@ namespace Maze
     //////////////////////////////////////////
     ECSWorld::~ECSWorld()
     {
-        m_systems.clear();
+        // m_systems.clear();
         m_samples.clear();
 
         m_entitiesMap.clear();
@@ -104,8 +250,9 @@ namespace Maze
 
         {
             UpdateEvent updateEvent(_dt);
-            for (Size j = 0, jn = m_systems.size(); j < jn; ++j)
-                m_systems[j]->update(updateEvent);
+            sendEventImmediate<UpdateEvent>(updateEvent);
+            /*for (Size j = 0, jn = m_systems.size(); j < jn; ++j)
+                m_systems[j]->update(updateEvent);*/
         }
 
         {
@@ -458,7 +605,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ECSWorld::addSystem(ComponentSystemPtr const& _system)
+    /*void ECSWorld::addSystem(ComponentSystemPtr const& _system)
     {
 #if (MAZE_DEBUG)
         for (Size i = 0, in = m_systems.size(); i < in; ++i)
@@ -483,10 +630,10 @@ namespace Maze
         _system->processSystemAdded();
 
         eventComponentSystemAdded(_system);
-    }
+    }*/
 
     //////////////////////////////////////////
-    void ECSWorld::removeSystem(ComponentSystemPtr const& _system)
+    /*void ECSWorld::removeSystem(ComponentSystemPtr const& _system)
     {
         for (Size i = 0, in = m_systems.size(); i < in; ++i)
         {
@@ -500,7 +647,7 @@ namespace Maze
                 return;
             }
         }
-    }
+    }*/
 
     //////////////////////////////////////////
     void ECSWorld::addSystemEventHandler(SimpleComponentSystemEventHandlerPtr const& _system)
@@ -508,47 +655,7 @@ namespace Maze
         ClassUID eventUID = _system->getEventUID();
         Vector<SimpleComponentSystemEventHandlerPtr>& eventHandlers = m_eventHandlers[eventUID];
         
-        S32 arrSize = (S32)eventHandlers.size();
-        S32 afterIndex = -1;
-        S32 beforeIndex = arrSize;
-
-        for (S32 i = 0; i < arrSize; ++i)
-        {
-            SimpleComponentSystemEventHandlerPtr const& system = eventHandlers[i];
-            if (system->getOrder().after.count(_system->getName()) || _system->getOrder().before.count(system->getName()))
-            {
-                beforeIndex = i;
-                break;
-            }
-        }
-
-        for (S32 i = arrSize - 1; i > -1; --i)
-        {
-            SimpleComponentSystemEventHandlerPtr const& system = eventHandlers[i];
-            if (system->getOrder().before.count(_system->getName()) || _system->getOrder().after.count(system->getName()))
-            {
-                afterIndex = i;
-                break;
-            }
-        }
-
-        if (afterIndex < beforeIndex || afterIndex == -1)
-        {
-            eventHandlers.insert(eventHandlers.begin() + beforeIndex, _system);
-        }
-        else
-        if (beforeIndex == arrSize)
-        {
-            eventHandlers.insert(eventHandlers.begin() + afterIndex + 1, _system);
-        }
-        else
-        {
-            MAZE_ERROR(
-                "Failed to place '%s' (after='%s' before='%s')!",
-                _system->getName().c_str(),
-                (afterIndex >= 0 && afterIndex < arrSize) ? eventHandlers[afterIndex]->getName().c_str() : "NONE",
-                (beforeIndex >= 0 && beforeIndex < arrSize) ? eventHandlers[beforeIndex]->getName().c_str() : "NONE");
-        }
+        AddSystemEventHandler(eventHandlers, _system, true);
     }
 
     //////////////////////////////////////////

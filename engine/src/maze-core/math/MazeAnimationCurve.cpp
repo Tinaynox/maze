@@ -81,20 +81,20 @@ namespace Maze
     //////////////////////////////////////////
     bool AnimationCurve::Keyframe::loadFromDataBlock(DataBlock const& _dataBlock)
     {
-        time = _dataBlock.getF32(MAZE_HS("time"));
-        value = _dataBlock.getF32(MAZE_HS("value"));
-        inTangent = _dataBlock.getF32(MAZE_HS("inTangent"));
-        outTangent = _dataBlock.getF32(MAZE_HS("outTangent"));
+        time = _dataBlock.getF32(MAZE_HCS("time"));
+        value = _dataBlock.getF32(MAZE_HCS("value"));
+        inTangent = _dataBlock.getF32(MAZE_HCS("inTangent"));
+        outTangent = _dataBlock.getF32(MAZE_HCS("outTangent"));
         return true;
     }
 
     //////////////////////////////////////////
     void AnimationCurve::Keyframe::toDataBlock(DataBlock& _dataBlock) const
     {
-        _dataBlock.setF32(MAZE_HS("time"), time);
-        _dataBlock.setF32(MAZE_HS("value"), value);
-        _dataBlock.setF32(MAZE_HS("inTangent"), inTangent);
-        _dataBlock.setF32(MAZE_HS("outTangent"), outTangent);
+        _dataBlock.setF32(MAZE_HCS("time"), time);
+        _dataBlock.setF32(MAZE_HCS("value"), value);
+        _dataBlock.setF32(MAZE_HCS("inTangent"), inTangent);
+        _dataBlock.setF32(MAZE_HCS("outTangent"), outTangent);
     }
 
 
@@ -188,16 +188,16 @@ namespace Maze
     bool AnimationCurve::loadFromDataBlock(DataBlock const& _dataBlock)
     {
         m_keyframes.clear();
-        DataBlock const* keyframesDataBlock = _dataBlock.getDataBlock(MAZE_HS("keyframes"));
+        DataBlock const* keyframesDataBlock = _dataBlock.getDataBlock(MAZE_HCS("keyframes"));
         if (keyframesDataBlock)
         {
             ValueFromDataBlock(m_keyframes, *keyframesDataBlock);
             sortKeyframes();
         }
             
-        m_scalar = _dataBlock.getF32(MAZE_HS("scalar"));
-        setMode(EvaluateMode(_dataBlock.getS32(MAZE_HS("mode"))));
-        setMinMaxMode(AnimationCurveMinMaxMode(_dataBlock.getS32(MAZE_HS("minMaxMode"))));
+        m_scalar = _dataBlock.getF32(MAZE_HCS("scalar"));
+        setMode(EvaluateMode(_dataBlock.getS32(MAZE_HCS("mode"))));
+        setMinMaxMode(AnimationCurveMinMaxMode(_dataBlock.getS32(MAZE_HCS("minMaxMode"))));
 
         return true;
     }
@@ -207,13 +207,13 @@ namespace Maze
     {
         if (!m_keyframes.empty())
         {
-            DataBlock& keyframesDataBlock = _dataBlock[MAZE_HS("keyframes")];
+            DataBlock& keyframesDataBlock = _dataBlock[MAZE_HCS("keyframes")];
             ValueToDataBlock(m_keyframes, keyframesDataBlock);
         }
 
-        _dataBlock.setF32(MAZE_HS("scalar"), m_scalar);
-        _dataBlock.setS32(MAZE_HS("mode"), (S32)m_mode);
-        _dataBlock.setS32(MAZE_HS("minMaxMode"), (S32)m_minMaxMode);
+        _dataBlock.setF32(MAZE_HCS("scalar"), m_scalar);
+        _dataBlock.setS32(MAZE_HCS("mode"), (S32)m_mode);
+        _dataBlock.setS32(MAZE_HCS("minMaxMode"), (S32)m_minMaxMode);
     }
 
     //////////////////////////////////////////

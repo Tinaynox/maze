@@ -416,7 +416,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM(TrailRenderer3DSystem, 0,
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(TrailRenderer3DSystem, {},
         UpdateEvent const& _event,
         Entity* _entity,
         TrailRenderer3D* _trailRenderer)
@@ -426,7 +426,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(TrailRenderer3DGatherSystem, 0,
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(TrailRenderer3DGatherSystem, {},
         Render3DDefaultPassGatherRenderUnitsEvent& _event,
         Entity* _entity,
         TrailRenderer3D* _trailRenderer,

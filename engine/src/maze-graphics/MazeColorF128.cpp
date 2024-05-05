@@ -164,14 +164,14 @@ namespace Maze
     //////////////////////////////////////////
     bool ColorF128::loadFromDataBlock(DataBlock const& _dataBlock)
     {
-        value = _dataBlock.getVec4F32(MAZE_HS("value"));
+        value = _dataBlock.getVec4F32(MAZE_HCS("value"));
         return true;
     }
 
     //////////////////////////////////////////
     void ColorF128::toDataBlock(DataBlock& _dataBlock) const
     {
-        _dataBlock.setVec4F32(MAZE_HS("value"), toVec4F32());
+        _dataBlock.setVec4F32(MAZE_HCS("value"), toVec4F32());
     }
 
 } // namespace Maze

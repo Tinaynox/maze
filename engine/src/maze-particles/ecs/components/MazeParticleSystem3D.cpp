@@ -619,13 +619,11 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM(ParticleSystem3DSystem, 45000,
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(ParticleSystem3DSystem, {},
         UpdateEvent const& _event,
         Entity* _entity,
         ParticleSystem3D* _particleSystem)
     {
-        MAZE_PROFILE_EVENT("ParticleSystem3DSystem");
-
         _particleSystem->update(_event.getDt());
     }
     

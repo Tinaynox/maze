@@ -54,8 +54,6 @@ namespace Maze
     MAZE_USING_SHARED_PTR(ECSWorld);
     MAZE_USING_SHARED_PTR(ComponentEntityLinker);
     MAZE_USING_SHARED_PTR(IEntitiesSample);
-    MAZE_USING_SHARED_PTR(EntitiesSample);
-    MAZE_USING_SHARED_PTR(ComponentSystem);
 
 
     //////////////////////////////////////////
@@ -113,57 +111,6 @@ namespace Maze
         void processEntityComponentsChanged(Entity* _entity);
 
 
-
-        //////////////////////////////////////////
-        template <typename TSystem, typename ...TArgs>
-        inline SharedPtr<TSystem> createAndAddSystem(TArgs... _args)
-        {
-            SharedPtr<TSystem> system = TSystem::Create(this->getSharedPtr(), _args...);
-            addSystem(system);
-            return system;
-        }
-
-        //////////////////////////////////////////
-        template <typename TSystem>
-        inline SharedPtr<TSystem> getSystem()
-        {
-            ClassUID uid = ClassInfo<TSystem>::UID();
-            for (Size i = 0, in = m_systems.size(); i < in; ++i)
-            {
-                if (m_systems[i]->getClassUID() == uid)
-                {
-                    return m_systems[i]->cast<TSystem>();
-                }
-            }
-
-            return SharedPtr<TSystem>();
-        }
-
-        //////////////////////////////////////////
-        inline Vector<ComponentSystemPtr> const& getSystems() { return m_systems; }
-
-        //////////////////////////////////////////
-        template <typename TSystem>
-        inline void removeSystem()
-        {
-            ClassUID uid = ClassInfo<TSystem>::UID();
-            for (Size i = 0, in = m_systems.size(); i < in; ++i)
-            {
-                if (m_systems[i]->getClassUID() == uid)
-                {
-                    m_systems.erase(m_systems.begin() + i);
-                    return;
-                }
-            }
-        }
-
-        //////////////////////////////////////////
-        void addSystem(ComponentSystemPtr const& _system);
-
-        //////////////////////////////////////////
-        void removeSystem(ComponentSystemPtr const& _system);
-
-
         //////////////////////////////////////////
         void addSystemEventHandler(SimpleComponentSystemEventHandlerPtr const& _system);
 
@@ -200,33 +147,17 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        template<typename ...TComponents>
-        inline SimpleComponentSystemPtr addSystem(
-            HashedCString _name,
-            void (*_func)(UpdateEvent const&, Entity*, TComponents* ...),
-            S32 _order = 0)
-        {
-            SimpleComponentSystemPtr system = SimpleComponentSystem::Create(
-                _name,
-                requestInclusiveSample<TComponents...>(),
-                (SimpleComponentSystem::Func)_func,
-                _order);
-            addSystem(system);
-            return system;
-        }
-
-        //////////////////////////////////////////
         template<typename TEventType, typename ...TComponents>
         inline SimpleComponentSystemEventHandlerPtr addSystemEventHandler(
             HashedCString _name,
             void (*_func)(TEventType&, Entity*, TComponents* ...),
-            S32 _order = 0)
+            ComponentSystemOrder const& _order = ComponentSystemOrder())
         {
             SimpleComponentSystemEventHandlerPtr system = SimpleComponentSystemEventHandler::Create(
                 _name,
                 ClassInfo<typename std::remove_const<TEventType>::type>::UID(),
                 requestInclusiveSample<TComponents...>(),
-                (SimpleComponentSystem::Func)_func,
+                (SimpleComponentSystemEventHandler::Func)_func,
                 _order);
             addSystemEventHandler(system);
             return system;
@@ -253,6 +184,19 @@ namespace Maze
                 "Event %s has wrong metadata!",
                 ClassInfo<TEvent>::Name());
             processEvent(&evt);
+        }
+
+        //////////////////////////////////////////
+        template <typename TEventType>
+        inline Vector<SimpleComponentSystemEventHandlerPtr> const& getSystems()
+        {
+            static Vector<SimpleComponentSystemEventHandlerPtr> nullValue;
+
+            ClassUID eventUID = ClassInfo<typename std::remove_const<TEventType>::type>::UID();
+            auto it = m_eventHandlers.find(eventUID);
+            if (it == m_eventHandlers.end())
+                return nullValue;
+            return it->second;
         }
 
         //////////////////////////////////////////
@@ -286,8 +230,6 @@ namespace Maze
         MultiDelegate<EntityPtr const&> eventEntityAdded;
         MultiDelegate<Entity*> eventEntityChanged;
         MultiDelegate<EntityPtr const&> eventEntityRemoved;
-        MultiDelegate<ComponentSystemPtr const&> eventComponentSystemAdded;
-        MultiDelegate<ComponentSystemPtr const&> eventComponentSystemRemoved;
 
     protected:
 
@@ -328,7 +270,6 @@ namespace Maze
         EntityId m_entitiesIdCounter;
 
         Vector<IEntitiesSamplePtr> m_samples;
-        Vector<ComponentSystemPtr> m_systems;
 
         UnorderedMap<ClassUID, Vector<SimpleComponentSystemEventHandlerPtr>> m_eventHandlers;
     };

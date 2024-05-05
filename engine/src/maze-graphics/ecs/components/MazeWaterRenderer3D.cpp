@@ -150,9 +150,9 @@ namespace Maze
         MaterialPtr const& material = m_meshRenderer->getMaterial();
         if (material)
         {
-            material->setUniform(MAZE_HS("u_reflectionMap"), m_reflectionBuffer->getColorTexture());
-            material->setUniform(MAZE_HS("u_refractionMap"), m_refractionBuffer->getColorTexture());
-            material->setUniform(MAZE_HS("u_depthMap"), m_refractionBuffer->getDepthTexture());
+            material->setUniform(MAZE_HCS("u_reflectionMap"), m_reflectionBuffer->getColorTexture());
+            material->setUniform(MAZE_HCS("u_refractionMap"), m_refractionBuffer->getColorTexture());
+            material->setUniform(MAZE_HCS("u_depthMap"), m_refractionBuffer->getDepthTexture());
         }
     }
             

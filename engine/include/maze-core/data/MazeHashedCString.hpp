@@ -154,7 +154,7 @@ namespace Maze
                                           }
 
     //////////////////////////////////////////
-    #define MAZE_HS(DText) MAZE_HASHED_CSTRING(DText)
+    #define MAZE_HCS(DText) MAZE_HASHED_CSTRING(DText)
 
 
     //////////////////////////////////////////
