@@ -53,7 +53,6 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PLUGIN_PROFILER_VIEW_API SceneProfilerView
         : public ECSRenderScene
-        , public MultiDelegateCallbackReceiver
         , public Updatable
     {
     public:
