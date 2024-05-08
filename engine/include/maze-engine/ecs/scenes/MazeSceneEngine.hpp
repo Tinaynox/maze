@@ -41,6 +41,24 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(SceneEngine);
     MAZE_USING_SHARED_PTR(RenderTarget);
+    MAZE_USING_SHARED_PTR(RenderController);
+    MAZE_USING_SHARED_PTR(ParticlesDrawerController);
+    MAZE_USING_SHARED_PTR(InputSystem2D);
+
+
+    //////////////////////////////////////////
+    // Struct SceneEngineInitConfig
+    //
+    //////////////////////////////////////////
+    struct SceneEngineInitConfig
+    {
+        RenderTargetPtr renderTarget;
+        RenderSystemPtr renderSystem;
+
+        bool createRenderController = true;
+        bool createParticlesDrawerController = true;
+        bool createInputSystem2D = true;
+    };
 
 
     //////////////////////////////////////////
@@ -49,7 +67,6 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_ENGINE_API SceneEngine
         : public ECSRenderScene
-        , public MultiDelegateCallbackReceiver
     {
     public:
 
@@ -59,9 +76,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        static SceneEnginePtr Create(
-            RenderTargetPtr const& _renderTarget,
-            RenderSystemPtr const& _renderSystem);
+        static SceneEnginePtr Create(SceneEngineInitConfig const& _config);
     
         //////////////////////////////////////////
         virtual ~SceneEngine();
@@ -70,18 +85,28 @@ namespace Maze
         virtual void update(F32 _dt) MAZE_OVERRIDE;
 
 
+        //////////////////////////////////////////
+        inline RenderControllerPtr const& getRenderController() const { return m_renderController; }
+
+        //////////////////////////////////////////
+        inline ParticlesDrawerControllerPtr const& getParticlesDrawerController() const { return m_particlesDrawerController; }
+
+        //////////////////////////////////////////
+        inline InputSystem2DPtr const& getInputSystem2D() const { return m_inputSystem2D; }
+
     protected:
 
         //////////////////////////////////////////
         SceneEngine();
 
         //////////////////////////////////////////
-        virtual bool init(
-            RenderTargetPtr const& _renderTarget,
-            RenderSystemPtr const& _renderSystem);
+        virtual bool init(SceneEngineInitConfig const& _config);
 
 
     protected:
+        RenderControllerPtr m_renderController;
+        ParticlesDrawerControllerPtr m_particlesDrawerController;
+        InputSystem2DPtr m_inputSystem2D;
     };
 
 

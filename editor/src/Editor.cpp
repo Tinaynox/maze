@@ -44,28 +44,19 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-core/ecs/MazeECSWorld.hpp"
-#include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
-#include "maze-core/ecs/systems/MazeBounds2DSystem.hpp"
-#include "maze-core/ecs/systems/MazeSizePolicy2DSystem.hpp"
-#include "maze-core/ecs/systems/MazeTransformUtilsSystem.hpp"
 #include "maze-core/math/MazePlane.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderPreparationSystem.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-ui/ecs/systems/MazeInputSystem2D.hpp"
-#include "maze-ui/ecs/systems/MazeUITweenTransitionSystem.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"
 #include "maze-editor-tools/settings/MazeEditorToolsSettings.hpp"
-#include "maze-physics2d/ecs/systems/MazePhysicsControlSystem2D.hpp"
 #include "maze-physics2d/managers/MazePhysics2DManager.hpp"
 #include "maze-particles/managers/MazeParticlesManager.hpp"
 #include "maze-plugin-loader-png/MazeLoaderPNGPlugin.hpp"
@@ -310,6 +301,11 @@ namespace Maze
         ECSWorldPtr const& world = entityManager->getDefaultWorld();
         createPrimaryECSWorldSystems(world, m_mainRenderWindow, m_graphicsManager->getDefaultRenderSystem());
 
+        SceneEngineInitConfig sceneEngineInitConfig;
+        sceneEngineInitConfig.renderTarget = m_mainRenderWindow;
+        sceneEngineInitConfig.renderSystem = m_graphicsManager->getDefaultRenderSystem();
+        createEngineScene(sceneEngineInitConfig);
+
         m_sceneManager->loadScene<SceneSplash>();
 
         return true;
@@ -346,12 +342,6 @@ namespace Maze
     //////////////////////////////////////////
     void Editor::notifyCoreEditorResourcesLoaded()
     {
-        RenderSystemPtr const& renderSystem = m_graphicsManager->getDefaultRenderSystem();
-        ShaderSystemPtr const& shaderSystem = renderSystem->getShaderSystem();
-
-        EntityManager* entityManager = EntityManager::GetInstancePtr();
-        ECSWorldPtr const& world = entityManager->getDefaultWorld();
-        createSecondaryECSWorldSystems(world, m_mainRenderWindow, m_graphicsManager->getDefaultRenderSystem());
     }
 
 } // namespace Maze

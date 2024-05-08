@@ -45,7 +45,6 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "editor/EditorSceneMode.hpp"
 #include "editor/EditorMode.hpp"
 #include "managers/EditorPrefabManager.hpp"

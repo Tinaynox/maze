@@ -75,7 +75,6 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_EDITOR_TOOLS_API SceneRenderMeshPicker
         : public ECSRenderScene
-        , public MultiDelegateCallbackReceiver
     {
     public:
 

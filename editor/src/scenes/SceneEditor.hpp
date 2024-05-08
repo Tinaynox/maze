@@ -41,7 +41,6 @@
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/MazeECSRenderScene.hpp"
 #include "editor/EditorSceneMode.hpp"
 
@@ -67,7 +66,6 @@ namespace Maze
     //////////////////////////////////////////
     class SceneEditor
         : public ECSRenderScene
-        , public MultiDelegateCallbackReceiver
     {
     public:
 

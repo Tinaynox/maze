@@ -81,6 +81,8 @@
 #include "maze-editor-tools/ecs/components/MazeDebugGridRenderer.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "layout/MazeEditorToolsStyles.hpp"
+#include "maze-graphics/ecs/components/MazeRenderController.hpp"
+#include "maze-ui/ecs/components/MazeInputSystem2D.hpp"
 
 
 //////////////////////////////////////////
@@ -143,7 +145,8 @@ namespace Maze
         _dt = UpdateManager::GetInstancePtr()->getUnscaledDeltaTime();
 
         m_camera3D->getTransform()->setLocalRotation(Quaternion(m_pitchAngle, m_yawAngle, 0.0f));
-        m_previewWorld->update(_dt);
+        if (m_previewWorld)
+            m_previewWorld->update(_dt);
     }
 
     //////////////////////////////////////////
@@ -152,6 +155,7 @@ namespace Maze
         // Preview node
         EntityPtr previewNodeEntity = createEntity();
         m_previewNodeTransform = previewNodeEntity->createComponent<Transform3D>();
+
 
         // Camera
         EntityPtr cameraEntity = createEntity();
@@ -196,13 +200,25 @@ namespace Maze
     //////////////////////////////////////////
     void SceneDebugPreview::createSystems()
     {        
-        
+        // RenderController
+        {
+            EntityPtr entity = m_previewWorld->createEntity();
+            entity->createComponent<Name>("RenderController");
+            m_renderController = entity->createComponent<RenderController>(m_renderTarget->getRenderSystem()->cast<RenderSystem>());
+        }
+
+        // 2D Input
+        {
+            EntityPtr entity = m_previewWorld->createEntity();
+            entity->createComponent<Name>("InputSystem2D");
+            m_inputSystem2D = entity->createComponent<InputSystem2D>();
+        }
     }
 
     //////////////////////////////////////////
     ECSWorld* SceneDebugPreview::assignWorld()
     {
-        m_previewWorld = ECSWorld::Create();
+        m_previewWorld = ECSWorld::Create(MAZE_HS("Preview"), 0, true);
         return m_previewWorld.get();
     }
 

@@ -91,9 +91,9 @@ namespace Maze
     //////////////////////////////////////////
     void GizmosController::processEntityAwakened()
     {
-        m_drawer = GizmosDrawer::Create(getEntityRaw()->getECSScene()->getWorld(), m_renderTarget);
-        m_canvasesSample = getEntityRaw()->getECSScene()->getWorld()->requestInclusiveSample<Canvas>();
-        m_cameras3DSample = getEntityRaw()->getECSScene()->getWorld()->requestInclusiveSample<Camera3D>();
+        m_drawer = GizmosDrawer::Create(getEntityRaw()->getECSWorld(), m_renderTarget);
+        m_canvasesSample = getEntityRaw()->getECSWorld()->requestInclusiveSample<Canvas>();
+        m_cameras3DSample = getEntityRaw()->getECSWorld()->requestInclusiveSample<Camera3D>();
 
         updateGizmosSamples();
     }
@@ -114,7 +114,7 @@ namespace Maze
         {
             GizmosSample gizmosSample;
             gizmosSample.componentClassUID = gizmoPerComponentClass.first;
-            gizmosSample.sample = getEntityRaw()->getECSScene()->getWorld()->requestCommonSample(
+            gizmosSample.sample = getEntityRaw()->getECSWorld()->requestCommonSample(
                 EntityAspect(
                     EntityAspectType::HaveAllOfComponents,
                     { gizmosSample.componentClassUID }));
@@ -152,9 +152,12 @@ namespace Maze
     //////////////////////////////////////////
     void GizmosController::notifyRenderTargetDestroyed(RenderTarget* _renderTarget)
     {
+        m_renderTarget = nullptr;
+
         m_samples.clear();
         m_drawer.reset();
-        getEntityRaw()->getECSScene()->getWorld()->update(0.0f);
+        if (getEntityRaw()->getECSWorld())
+            getEntityRaw()->getECSWorld()->update(0.0f);
     }
 
 

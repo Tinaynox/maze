@@ -44,8 +44,6 @@
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
-#include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
@@ -137,8 +135,8 @@ namespace Maze
 
         for (DataBlock const* subBlock : dataBlock)
         {
-            String key = subBlock->getString(MAZE_HS("key"));
-            String value = subBlock->getString(MAZE_HS("value"));
+            String key = subBlock->getString(MAZE_HCS("key"));
+            String value = subBlock->getString(MAZE_HCS("value"));
 
             m_configs[key] = value;
         }

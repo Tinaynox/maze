@@ -67,12 +67,7 @@ namespace Maze
         s_instance = nullptr;
         m_libraryWorld.reset();
 
-        if (m_defaultWorld)
-        {
-            // SimpleComponentSystemHolder::Detach(m_defaultWorld.get());
-            SimpleComponentSystemEventHandlerHolder::Detach(m_defaultWorld.get());
-            m_defaultWorld.reset();
-        }
+        m_defaultWorld.reset();
     }
 
     //////////////////////////////////////////
@@ -84,11 +79,9 @@ namespace Maze
     //////////////////////////////////////////
     bool EntityManager::init()
     {
-        m_defaultWorld = ECSWorld::Create(0);
-        // SimpleComponentSystemHolder::Attach(m_defaultWorld.get());
-        SimpleComponentSystemEventHandlerHolder::Attach(m_defaultWorld.get());
+        m_defaultWorld = ECSWorld::Create(MAZE_HS("Default"), 0);
 
-        m_libraryWorld = ECSWorld::Create(100000000);
+        m_libraryWorld = ECSWorld::Create(MAZE_HS("Library"), 100000000, false);
         
         m_componentFactory = ComponentFactory::Create();
 

@@ -163,7 +163,7 @@ namespace Maze
     {
         MAZE_PROFILE_EVENT("PreviewController::update");
 
-        if (m_canvas && m_renderBuffer)
+        if (m_canvas && m_renderBuffer && m_bodyBackground)
         {
             Vec2U size = (Vec2U)m_bodyBackground->getTransform()->getSize();
             if (size.x != 0u && size.y != 0u)
@@ -205,8 +205,7 @@ namespace Maze
         m_renderBuffer->getColorTexture2D()->setMagFilter(TextureFilter::Nearest);
 
         m_scene = SceneManager::GetInstancePtr()->loadScene<SceneDebugPreview>(true, m_renderBuffer);
-
-        
+                
         SpriteRenderer2DPtr titleBackground = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
             Vec2F(
@@ -220,7 +219,7 @@ namespace Maze
             Vec2F(0.0f, 1.0f));
         titleBackground->setColor(EditorToolsStyles::GetInstancePtr()->getTitleBackgroundColor());
         titleBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
-
+        
         AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
             "Preview",
             EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial(),
@@ -234,7 +233,7 @@ namespace Maze
             Vec2F(0.0f, 0.5f),
             Vec2F(0.0f, 0.5f));
         titleText->setColor(ColorU32::c_black);
-
+        
         m_bodySprite = Sprite::Create(m_renderBuffer->getColorTexture()->cast<Texture2D>());
         m_bodySprite->setName("PreviewController");
         m_bodyBackground = SpriteHelper::CreateSprite(
@@ -267,7 +266,6 @@ namespace Maze
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         SizePolicy2DPtr layoutSizePolicy = m_layout->getEntityRaw()->ensureComponent<SizePolicy2D>();
-
     }        
 
     //////////////////////////////////////////

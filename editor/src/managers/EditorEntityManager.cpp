@@ -27,22 +27,16 @@
 #include "EditorEntityManager.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
-#include "maze-core/ecs/systems/MazeBounds2DSystem.hpp"
-#include "maze-core/ecs/systems/MazeSizePolicy2DSystem.hpp"
-#include "maze-core/ecs/systems/MazeTransformUtilsSystem.hpp"
-#include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
-#include "maze-editor-tools/ecs/systems/MazeGizmosSystem.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderPreparationSystem.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
-#include "maze-ui/ecs/systems/MazeInputSystem2D.hpp"
-#include "maze-ui/ecs/systems/MazeUISystem2D.hpp"
-#include "maze-ui/ecs/systems/MazeUITweenTransitionSystem.hpp"
+#include "maze-graphics/ecs/components/MazeRenderController.hpp"
+#include "maze-ui/ecs/components/MazeInputSystem2D.hpp"
+#include "maze-editor-tools/ecs/components/MazeGizmosController.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
+#include "maze-particles/ecs/components/MazeParticlesDrawerController.hpp"
 #include "layout/EditorLayout.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorWorkspaceManager.hpp"
-#include "maze-particles/ecs/systems/MazeParticlesDrawerSystem.hpp"
 
 
 //////////////////////////////////////////
@@ -66,6 +60,8 @@ namespace Maze
     EditorEntityManager::~EditorEntityManager()
     {
         s_instance = nullptr;
+
+        m_workspaceWorld.reset();
     }
 
     //////////////////////////////////////////
@@ -77,29 +73,37 @@ namespace Maze
     //////////////////////////////////////////
     bool EditorEntityManager::init()
     {
-        m_workspaceWorld = ECSWorld::Create();
+        m_workspaceWorld = ECSWorld::Create(MAZE_HS("Workspace"));
 
         RenderSystemPtr renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
-        InputSystem2DPtr inputSystem = InputSystem2D::Create();
-        inputSystem->setCoordsConverter(
-            [](Vec2F32 const& _coords)
+        // RenderController
+        {
+            EntityPtr entity = m_workspaceWorld->createEntity();
+            entity->createComponent<Name>("RenderController");
+            m_renderController = entity->createComponent<RenderController>(renderSystem);
+        }
+
+        // Particles
+        {
+            EntityPtr entity = m_workspaceWorld->createEntity();
+            entity->createComponent<Name>("ParticlesDrawerController");
+            m_particlesDrawerController = entity->createComponent<ParticlesDrawerController>(renderSystem);
+        }
+
+        // 2D Input
+        {
+            EntityPtr entity = m_workspaceWorld->createEntity();
+            entity->createComponent<Name>("InputSystem2D");
+            m_inputSystem2D = entity->createComponent<InputSystem2D>();
+            m_inputSystem2D->setCoordsConverter(
+                [](Vec2F32 const& _coords)
             {
                 return EditorLayout::ConvertRenderWindowCoordsToWorkspaceViewport(_coords);
             });
+        }
 
-        m_workspaceWorld->addSystem(SizePolicy2DSystem::Create());
-        m_workspaceWorld->addSystem(TransformEventsSystem::Create());
-        m_workspaceWorld->addSystem(RenderPreparationSystem::Create(renderSystem));
-        m_workspaceWorld->addSystem(RenderControlSystem::Create(renderSystem));
-        m_workspaceWorld->addSystem(Bounds2DSystem::Create());
-        m_workspaceWorld->addSystem(UISystem2D::Create());
-        m_workspaceWorld->addSystem(inputSystem);
-
-        m_workspaceWorld->addSystem(UITweenTransitionSystem::Create());
-
-        m_workspaceWorld->addSystem(ParticlesDrawerSystem::Create(renderSystem));
-
+        
 
         UpdateManager::GetInstancePtr()->addUpdatable(this);
 
@@ -109,8 +113,14 @@ namespace Maze
     //////////////////////////////////////////
     void EditorEntityManager::start()
     {
-        RenderBufferPtr const& renderBuffer = EditorWorkspaceManager::GetInstancePtr()->getWorkspaceRenderBuffer();
-        m_workspaceWorld->addSystem(GizmosSystem::Create(renderBuffer.get()));
+        // GizmosController
+        {
+            RenderBufferPtr const& renderBuffer = EditorWorkspaceManager::GetInstancePtr()->getWorkspaceRenderBuffer();
+
+            EntityPtr entity = m_workspaceWorld->createEntity();
+            entity->createComponent<Name>("GizmosController");
+            m_gizmosController = entity->createComponent<GizmosController>(renderBuffer.get());
+        }
     }
 
     //////////////////////////////////////////

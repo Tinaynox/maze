@@ -62,7 +62,10 @@ namespace Maze
 
         ECSWorld* world = m_world;
         if (world)
+        {
             world->update(0.0f);
+            world->eventOnDestroy.unsubscribe(this);
+        }
     }
 
     //////////////////////////////////////////
@@ -70,6 +73,7 @@ namespace Maze
     {
         m_world = assignWorld();
         MAZE_ERROR_RETURN_VALUE_IF(!m_world, false, "World is null!");
+        m_world->eventOnDestroy.subscribe(this, &ECSScene::notifyECSWorldOnDestroy);
 
         return true;
     }
@@ -208,9 +212,8 @@ namespace Maze
     {
         EntityPtr entity = Entity::Create();
         entity->setECSScene(this);
-
         m_world->addEntity(entity);
-
+        
         return entity;
     }
 
@@ -289,6 +292,16 @@ namespace Maze
     ECSWorld* ECSScene::assignWorld()
     {
         return EntityManager::GetInstancePtr()->getDefaultWorldRaw();
+    }
+
+    //////////////////////////////////////////
+    void ECSScene::notifyECSWorldOnDestroy(ECSWorld* _world)
+    {
+        if (_world && m_world == _world)
+        {
+            m_world->eventOnDestroy.unsubscribe(this);
+            m_world = nullptr;
+        }
     }
 
 } // namespace Maze

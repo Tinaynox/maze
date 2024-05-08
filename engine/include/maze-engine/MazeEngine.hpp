@@ -34,6 +34,7 @@
 #include "maze-engine/MazeEngineConfig.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
+#include "maze-engine/ecs/scenes/MazeSceneEngine.hpp"
 #include "maze-physics2d/physics/MazePhysicsWorld2D.hpp"
 
 
@@ -194,9 +195,7 @@ namespace Maze
             RenderSystemPtr const& _renderSystem);
 
         //////////////////////////////////////////
-        virtual SceneEnginePtr createEngineScene(
-            RenderWindowPtr const& _renderWindow,
-            RenderSystemPtr const& _renderSystem);
+        virtual SceneEnginePtr createEngineScene(SceneEngineInitConfig const& _config);
 
         //////////////////////////////////////////
         virtual S32 getUpdatableOrder() const MAZE_OVERRIDE { return 10000; }

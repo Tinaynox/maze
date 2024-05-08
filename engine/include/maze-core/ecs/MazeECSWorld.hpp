@@ -80,7 +80,10 @@ namespace Maze
         virtual ~ECSWorld();
 
         //////////////////////////////////////////
-        static ECSWorldPtr Create(EntityId _entitiesIdCounter = 0);
+        static ECSWorldPtr Create(
+            HashedString const& _name,
+            EntityId _entitiesIdCounter = 0,
+            bool _attachSystems = true);
 
         //////////////////////////////////////////
         static ECSWorld* GetDefaultWorldRaw();
@@ -98,6 +101,10 @@ namespace Maze
 
         //////////////////////////////////////////
         bool removeEntity(EntityPtr const& _entity);
+
+
+        //////////////////////////////////////////
+        inline HashedString const& getName() const { return m_name; }
 
 
         //////////////////////////////////////////
@@ -227,9 +234,14 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        MultiDelegate<ECSWorld*> eventOnDestroy;
         MultiDelegate<EntityPtr const&> eventEntityAdded;
         MultiDelegate<Entity*> eventEntityChanged;
         MultiDelegate<EntityPtr const&> eventEntityRemoved;
+
+
+        //////////////////////////////////////////
+        void _validateDontHave(Entity* _ptr);
 
     protected:
 
@@ -237,7 +249,10 @@ namespace Maze
         ECSWorld();
 
         //////////////////////////////////////////
-        bool init(EntityId _entitiesIdCounter);
+        bool init(
+            HashedString const& _name,
+            EntityId _entitiesIdCounter,
+            bool _attachSystems);
 
         //////////////////////////////////////////
         void processStartedEntities();
@@ -255,7 +270,11 @@ namespace Maze
         //////////////////////////////////////////
         void processEntityActiveChanged(Entity* _entity);
 
+        
+
     protected:
+        HashedString m_name;
+
         UnorderedMap<EntityId, EntityPtr> m_entitiesMap;
 
         Deque<Entity*> m_addingEntities;

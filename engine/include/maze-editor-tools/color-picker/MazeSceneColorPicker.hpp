@@ -70,7 +70,6 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_EDITOR_TOOLS_API SceneColorPicker
         : public ECSRenderScene
-        , public MultiDelegateCallbackReceiver
     {
     public:
 

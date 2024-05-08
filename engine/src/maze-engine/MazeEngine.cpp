@@ -331,11 +331,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SceneEnginePtr Engine::createEngineScene(
-        RenderWindowPtr const& _renderWindow,
-        RenderSystemPtr const& _renderSystem)
+    SceneEnginePtr Engine::createEngineScene(SceneEngineInitConfig const& _config)
     {
-        return m_sceneManager->loadScene<SceneEngine>(true, _renderWindow, _renderSystem);
+        return m_sceneManager->loadScene<SceneEngine>(true, _config);
     }
 
 } // namespace Maze

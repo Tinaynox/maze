@@ -43,8 +43,6 @@
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
-#include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
@@ -84,7 +82,6 @@
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
 #include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
-#include "maze-editor-tools/ecs/systems/MazeGizmosSystem.hpp"
 #include "settings/MazeEditorSettings.hpp"
 #include "Editor.hpp"
 #include "managers/EditorAssetsManager.hpp"
@@ -247,8 +244,6 @@ namespace Maze
         m_editorEntityManager->start();
 
         SceneManager::GetInstancePtr()->setMainScene(getSceneMain());
-
-        EditorToolsManager::GetInstancePtr()->setGizmosSystem(getMainECSWorld()->getSystem<GizmosSystem>());
     }
 
     //////////////////////////////////////////
@@ -296,8 +291,6 @@ namespace Maze
         }
 
         SceneManager::GetInstancePtr()->setMainScene(getSceneMain());
-
-        EditorToolsManager::GetInstancePtr()->setGizmosSystem(getMainECSWorld()->getSystem<GizmosSystem>());
 
         if (m_editorPrefabManager->getPrefabAssetFile())
             m_editorPrefabManager->updatePrefabAssetFile();

@@ -69,6 +69,7 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_CORE_API ECSScene
         : public SharedObject<ECSScene>
+        , public MultiDelegateCallbackReceiver
     {
     public:
 
@@ -207,6 +208,9 @@ namespace Maze
             else
                 m_flags &= ~_flag;
         }
+
+        //////////////////////////////////////////
+        void notifyECSWorldOnDestroy(ECSWorld* _world);
 
     private:
 

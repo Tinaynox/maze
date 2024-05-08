@@ -40,19 +40,18 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class GenericSimpleComponentSystemHolder
+    // Class SimpleComponentSystemHolder
     //
     //////////////////////////////////////////
-    template <typename TSimpleComponentSystem>
-    class MAZE_CORE_API GenericSimpleComponentSystemHolder
+    class MAZE_CORE_API SimpleComponentSystemHolder
     {
     protected:
 
         //////////////////////////////////////////
-        static Set<GenericSimpleComponentSystemHolder*>& GetSimpleSystemHolders()
+        static Set<SimpleComponentSystemHolder*>& GetSimpleSystemHolders()
         {
             //////////////////////////////////////////
-            static Set<GenericSimpleComponentSystemHolder*> s_simpleSystemHolders;
+            static Set<SimpleComponentSystemHolder*> s_simpleSystemHolders;
             return s_simpleSystemHolders;
         }
 
@@ -61,77 +60,30 @@ namespace Maze
         //////////////////////////////////////////
         static inline void Attach(ECSWorld* _world)
         {
-            for (GenericSimpleComponentSystemHolder* holder : GetSimpleSystemHolders())
+            for (SimpleComponentSystemHolder* holder : GetSimpleSystemHolders())
                 holder->attach(_world);
         }
 
         //////////////////////////////////////////
         static inline void Detach(ECSWorld* _world)
         {
-            for (GenericSimpleComponentSystemHolder* holder : GetSimpleSystemHolders())
+            for (SimpleComponentSystemHolder* holder : GetSimpleSystemHolders())
                 holder->detach(_world);
         }
 
         //////////////////////////////////////////
-        using AddSystemFunc = SharedPtr<TSimpleComponentSystem>(ECSWorld::*)(HashedCString, typename TSimpleComponentSystem::Func, ComponentSystemOrder const&);
-
-        //////////////////////////////////////////
-        template<typename ...TComponents>
-        inline GenericSimpleComponentSystemHolder(
-            HashedCString _name,
-            SimpleComponentSystemEventHandler::Func _func,
-            ComponentSystemOrder const& _order = ComponentSystemOrder())
-            : m_name(_name)
-            , m_func(_func)
-            , m_order(_order)
-        {
-
-        }
-
-        //////////////////////////////////////////
-        inline ~GenericSimpleComponentSystemHolder()
-        {
-            GetSimpleSystemHolders().erase(this);
-        }
-        
-        //////////////////////////////////////////
-        inline void attach(ECSWorld* _world)
-        {
-            m_system = (_world->*m_addSystemFunc)(m_name, m_func, m_order);
-        }
-
-        //////////////////////////////////////////
-        virtual void detach(ECSWorld* _world) MAZE_ABSTRACT;
-
-    protected:
-        HashedCString m_name;
-        typename TSimpleComponentSystem::Func m_func;
-        ComponentSystemOrder m_order;
-        AddSystemFunc m_addSystemFunc;
-        WeakPtr<TSimpleComponentSystem> m_system;
-    };
-
-
-    //////////////////////////////////////////
-    // Class SimpleComponentSystemHolder
-    //
-    //////////////////////////////////////////
-    class MAZE_CORE_API SimpleComponentSystemEventHandlerHolder
-        : public GenericSimpleComponentSystemHolder<SimpleComponentSystemEventHandler>
-    {
-    public:
-
-        //////////////////////////////////////////
-        using BaseClass = GenericSimpleComponentSystemHolder<SimpleComponentSystemEventHandler>;
+        using AddSystemFunc = SharedPtr<SimpleComponentSystemEventHandler>(ECSWorld::*)(HashedCString, typename SimpleComponentSystemEventHandler::Func, ComponentSystemOrder const&);
 
 
         //////////////////////////////////////////
         template<typename TEventType, typename ...TComponents>
-        inline SimpleComponentSystemEventHandlerHolder(
+        inline SimpleComponentSystemHolder(
             HashedCString _name,
             void(*_func)(TEventType&, Entity*, TComponents* ...),
             ComponentSystemOrder const& _order = ComponentSystemOrder())
-            : BaseClass(_name, (SimpleComponentSystemEventHandler::Func)_func, _order)
+            : m_name(_name)
+            , m_func((SimpleComponentSystemEventHandler::Func)_func)
+            , m_order(_order)
         {
             auto address = &ECSWorld::addSystemEventHandler<TEventType, TComponents...>;
             m_addSystemFunc = (AddSystemFunc)(address);
@@ -140,17 +92,36 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        virtual void detach(ECSWorld* _world) MAZE_OVERRIDE
+        inline ~SimpleComponentSystemHolder()
         {
-            _world->removeSystemEventHandler(m_system.lock());
+            GetSimpleSystemHolders().erase(this);
         }
+        
+        //////////////////////////////////////////
+        inline void attach(ECSWorld* _world)
+        {
+            m_systems[_world] = (_world->*m_addSystemFunc)(m_name, m_func, m_order);
+        }
+
+        //////////////////////////////////////////
+        inline void detach(ECSWorld* _world)
+        {
+            _world->removeSystemEventHandler(m_systems[_world].lock());
+        }
+
+    protected:
+        HashedCString m_name;
+        typename SimpleComponentSystemEventHandler::Func m_func;
+        ComponentSystemOrder m_order;
+        AddSystemFunc m_addSystemFunc;
+        Map<ECSWorld*, WeakPtr<SimpleComponentSystemEventHandler>> m_systems;
     };
 
 
     //////////////////////////////////////////
     #define SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(TName, TOrder, ...) \
         void TName(__VA_ARGS__); \
-        static SimpleComponentSystemEventHandlerHolder TName##_holder(MAZE_HCS(#TName), TName, TOrder); \
+        static SimpleComponentSystemHolder TName##_holder(MAZE_HCS(#TName), TName, TOrder); \
         void TName(__VA_ARGS__)
         
 

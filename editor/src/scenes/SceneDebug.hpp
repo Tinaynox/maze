@@ -60,7 +60,6 @@ namespace Maze
     //////////////////////////////////////////
     class SceneDebug
         : public ECSRenderScene
-        , public MultiDelegateCallbackReceiver
     {
     public:
 

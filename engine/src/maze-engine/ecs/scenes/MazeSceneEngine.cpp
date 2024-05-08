@@ -52,33 +52,32 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SceneEnginePtr SceneEngine::Create(
-        RenderTargetPtr const& _renderTarget,
-        RenderSystemPtr const& _renderSystem)
+    SceneEnginePtr SceneEngine::Create(SceneEngineInitConfig const& _config)
     {
         SceneEnginePtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(SceneEngine, object, init(_renderTarget, _renderSystem));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(SceneEngine, object, init(_config));
         return object;
     }
 
     //////////////////////////////////////////
-    bool SceneEngine::init(
-        RenderTargetPtr const& _renderTarget,
-        RenderSystemPtr const& _renderSystem)
+    bool SceneEngine::init(SceneEngineInitConfig const& _config)
     {
         MAZE_PROFILE_EVENT("SceneEngine::init");
 
-        if (!ECSRenderScene::init(_renderTarget))
+        if (!ECSRenderScene::init(_config.renderTarget))
             return false;
 
         // Render
-        createAndAddEntityWithComponent<RenderController>("RenderController", _renderSystem);
+        if (_config.createRenderController)
+            m_renderController = createAndAddEntityWithComponent<RenderController>("RenderController", _config.renderSystem);
 
         // Particles
-        createAndAddEntityWithComponent<ParticlesDrawerController>("ParticlesDrawerController", _renderSystem);
+        if (_config.createParticlesDrawerController)
+            m_particlesDrawerController = createAndAddEntityWithComponent<ParticlesDrawerController>("ParticlesDrawerController", _config.renderSystem);
 
         // 2D Input
-        createAndAddEntityWithComponent<InputSystem2D>("InputSystem2D");
+        if (_config.createInputSystem2D)
+            m_inputSystem2D = createAndAddEntityWithComponent<InputSystem2D>("InputSystem2D");
         
         return true;
     }

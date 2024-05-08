@@ -55,7 +55,6 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_PLUGIN_CONSOLE_API SceneConsole
         : public ECSRenderScene
-        , public MultiDelegateCallbackReceiver
     {
     public:
 

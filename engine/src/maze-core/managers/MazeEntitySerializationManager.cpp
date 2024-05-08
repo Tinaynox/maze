@@ -126,7 +126,7 @@ namespace Maze
         Map<String, EntityPtr> identityPrefabs;
         ECSWorldPtr identityPrefabsWorld;
         if (!prefabs.empty())
-            identityPrefabsWorld = ECSWorld::Create();
+            identityPrefabsWorld = ECSWorld::Create(MAZE_HS("PrefabSerialization"), 0, false);
 
         for (PrefabInstance* prefabInstance : prefabs)
         {

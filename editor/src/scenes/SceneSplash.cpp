@@ -38,7 +38,6 @@
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
-#include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
 #include "maze-core/settings/MazeSettingsManager.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-core/helpers/MazeSystemDialogHelper.hpp"
@@ -46,7 +45,6 @@
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasScaler.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-core/math/MazeMath.hpp"
@@ -308,7 +306,7 @@ namespace Maze
 #endif
 
                 ConsoleService::GetInstancePtr()->registerCommand(
-                    MAZE_HS("profile"),
+                    MAZE_HCS("profile"),
                     [](String* _argv, S32 _argc)
                 {
                     if (_argc > 1)

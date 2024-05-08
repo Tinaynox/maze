@@ -43,6 +43,10 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(EditorEntityManager);
+    MAZE_USING_SHARED_PTR(InputSystem2D);
+    MAZE_USING_SHARED_PTR(GizmosController);
+    MAZE_USING_SHARED_PTR(RenderController);
+    MAZE_USING_SHARED_PTR(ParticlesDrawerController);
 
 
     //////////////////////////////////////////
@@ -81,6 +85,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline InputSystem2DPtr const& getInputSystem2D() const { return m_inputSystem2D; }
+
+        //////////////////////////////////////////
+        inline GizmosControllerPtr const& getGizmosController() const { return m_gizmosController; }
+
+
+        //////////////////////////////////////////
         void start();
 
     protected:
@@ -95,6 +106,11 @@ namespace Maze
         static EditorEntityManager* s_instance;
 
         ECSWorldPtr m_workspaceWorld;
+
+        InputSystem2DPtr m_inputSystem2D;
+        GizmosControllerPtr m_gizmosController;
+        RenderControllerPtr m_renderController;
+        ParticlesDrawerControllerPtr m_particlesDrawerController;
     };
 
 } // namespace Maze

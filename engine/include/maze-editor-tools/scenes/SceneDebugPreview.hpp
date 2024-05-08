@@ -60,6 +60,8 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(SceneDebugPreview);
+    MAZE_USING_SHARED_PTR(InputSystem2D);
+    MAZE_USING_SHARED_PTR(RenderController);
 
 
     //////////////////////////////////////////
@@ -68,7 +70,6 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_EDITOR_TOOLS_API SceneDebugPreview
         : public ECSRenderScene
-        , public MultiDelegateCallbackReceiver
     {
     public:
 
@@ -147,6 +148,9 @@ namespace Maze
         bool m_cursorDrag;
 
         ECSWorldPtr m_previewWorld;
+
+        InputSystem2DPtr m_inputSystem2D;
+        RenderControllerPtr m_renderController;        
     };
 
 

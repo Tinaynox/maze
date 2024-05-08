@@ -68,7 +68,6 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_EDITOR_TOOLS_API SceneDebugEditor
         : public ECSRenderScene
-        , public MultiDelegateCallbackReceiver
     {
     public:
 

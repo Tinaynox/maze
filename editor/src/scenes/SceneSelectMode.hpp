@@ -61,7 +61,6 @@ namespace Maze
     //////////////////////////////////////////
     class SceneSelectMode
         : public ECSRenderScene
-        , public MultiDelegateCallbackReceiver
     {
     public:
 

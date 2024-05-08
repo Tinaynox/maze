@@ -464,7 +464,8 @@ namespace Maze
 
             child->destroyAllChildren();
 
-            childEntity->getECSWorld()->removeEntity(childEntity);
+            ECSWorld* world = childEntity->getECSWorld();
+            world->removeEntity(childEntity);
         }
     }
 

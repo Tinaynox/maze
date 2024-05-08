@@ -74,7 +74,6 @@ namespace Maze
     //////////////////////////////////////////
     class MAZE_EDITOR_TOOLS_API SceneColorGradientPicker
         : public ECSRenderScene
-        , public MultiDelegateCallbackReceiver
     {
     public:
 
