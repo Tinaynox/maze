@@ -40,7 +40,7 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM(UpdateExampleFPSCameraControllerES, 100,
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(UpdateExampleFPSCameraControllerES, {},
         UpdateEvent const& _event,
         Entity* _entity,
         ExampleFPSCameraController* _someObject)

@@ -120,9 +120,6 @@ namespace Maze
         void createBuffers(Vec2U32 const& _size);
 
 
-        //////////////////////////////////////////
-        void notifyComponentSystemAdded(ComponentSystemPtr const& _system);
-
     protected:
         SharedPtr<GenericInclusiveEntitiesSample<WaterRenderer3D>> m_waterRenderersSample;
         SharedPtr<GenericInclusiveEntitiesSample<RenderController>> m_renderControllerSample;

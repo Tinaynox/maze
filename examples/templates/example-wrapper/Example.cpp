@@ -362,7 +362,10 @@ namespace Maze
 
         Debug::Log("Example Init - 6 [%ums]", getTime());
 
-        createEngineScene(m_mainRenderWindow, m_graphicsManager->getDefaultRenderSystem());
+        SceneEngineInitConfig sceneEngineInitConfig;
+        sceneEngineInitConfig.renderTarget = m_mainRenderWindow;
+        sceneEngineInitConfig.renderSystem = m_graphicsManager->getDefaultRenderSystem();
+        createEngineScene(sceneEngineInitConfig);
         
         Debug::Log("Example Init - 7 [%ums]", getTime());
         

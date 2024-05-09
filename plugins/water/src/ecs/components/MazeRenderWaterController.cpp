@@ -208,7 +208,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(RenderWaterControllerRenderPrePass, 0,
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(RenderWaterControllerRenderPrePass, {},
         Render3DDefaultPrePassEvent& _event,
         Entity* _entity,
         RenderWaterController* _renderWaterController)
