@@ -254,7 +254,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneProfilerView::updateUI()
     {
-        if (m_state == ECSSceneState::Destroy)
+        if (getState() == ECSSceneState::Destroy)
             return;
 
 

@@ -40,6 +40,7 @@
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
+#include "maze-core/utils/MazeIdWithGeneration.hpp"
 
 
 //////////////////////////////////////////
@@ -47,6 +48,10 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(SceneManager);
+
+
+    //////////////////////////////////////////
+    using EcsSceneId = IdWithGeneration<S32, 8>;
 
 
     //////////////////////////////////////////
@@ -87,8 +92,7 @@ namespace Maze
         //////////////////////////////////////////
         enum Flags
         {
-            PausedInBackground = MAZE_BIT(0),
-            IsSystemScene = MAZE_BIT(1)
+            IsSystemScene = MAZE_BIT(0)
         };
 
     public:
@@ -99,15 +103,13 @@ namespace Maze
         //////////////////////////////////////////
         virtual void update(F32 _dt);
 
-        //////////////////////////////////////////
-        ECSSceneState getState() const { return m_state; }
-
 
         //////////////////////////////////////////
-        inline bool getPausedInBackground() const { return m_flags & Flags::PausedInBackground; }
+        inline EcsSceneId getId() const { return m_id; }
 
         //////////////////////////////////////////
-        inline void setPausedInBackground() { setFlag(Flags::PausedInBackground, true); }
+        inline ECSSceneState getState() const { return m_state; }
+
 
 
         //////////////////////////////////////////
@@ -218,6 +220,9 @@ namespace Maze
         void setState(ECSSceneState _state);
 
         //////////////////////////////////////////
+        inline void setId(EcsSceneId _id) { m_id = _id; }
+
+        //////////////////////////////////////////
         virtual void processSceneStateChanged(ECSSceneState _state) {}
 
         //////////////////////////////////////////
@@ -238,13 +243,15 @@ namespace Maze
         virtual ECSWorld* assignWorld();
 
     protected:
-        ECSSceneState m_state;
-
-        S32 m_flags;
+        S32 m_flags = 0;
 
         Set<Entity*> m_entities;
 
         ECSWorld* m_world = nullptr;
+
+    private:
+        EcsSceneId m_id;
+        ECSSceneState m_state = ECSSceneState::None;
     };
 
 

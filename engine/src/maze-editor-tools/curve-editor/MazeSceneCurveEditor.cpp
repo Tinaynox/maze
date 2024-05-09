@@ -686,7 +686,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneCurveEditor::updateUI()
     {
-        if (m_state == ECSSceneState::Destroy)
+        if (getState() == ECSSceneState::Destroy)
             return;
 
         processCurve();

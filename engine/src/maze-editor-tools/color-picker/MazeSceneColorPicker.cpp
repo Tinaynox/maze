@@ -813,7 +813,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneColorPicker::updateUI()
     {
-        if (m_state == ECSSceneState::Destroy)
+        if (getState() == ECSSceneState::Destroy)
             return;
 
         ColorU32 color = ColorHelper::ConvertHSVToRGB(m_hsv);

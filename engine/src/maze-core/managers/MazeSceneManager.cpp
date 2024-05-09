@@ -73,11 +73,18 @@ namespace Maze
     //////////////////////////////////////////
     void SceneManager::destroyScene(ECSScenePtr const& _scene)
     {
-        if (_scene->getState() == ECSSceneState::Destroy)
+        if (!_scene || _scene->getState() == ECSSceneState::Destroy)
             return;
 
         Debug::log << "Destroying Scene '" << static_cast<CString>(_scene->getMetaClass()->getName()) << "'..." << endl;
         _scene->setState(ECSSceneState::Destroy);        
+    }
+
+    //////////////////////////////////////////
+    void SceneManager::destroyScene(EcsSceneId _sceneId)
+    {
+        if (_sceneId.getIndex() < m_scenes.size())
+            destroyScene(m_scenes[_sceneId.getIndex()].scene);
     }
 
     //////////////////////////////////////////
@@ -93,75 +100,58 @@ namespace Maze
 
         m_deadScenes.clear();
 
-
-        if (!m_newScenes.empty())
+        if (m_newScenesWereAdded)
         {
             for (Size i = 0, in = m_scenes.size(); i < in; ++i)
             {
-                ECSScenePtr const& scene = m_scenes[i];
-                if (scene->getPausedInBackground() &&
-                    scene->getState() == ECSSceneState::Active)
-                {
-                    m_scenes[i]->setState(ECSSceneState::Paused);
-                }
+                auto& sceneData = m_scenes[i];
+                if (sceneData.scene && sceneData.scene->getState() == ECSSceneState::Created)
+                    m_scenes[i].scene->setState(ECSSceneState::Active);
             }
-
-            m_scenes.insert(
-                m_scenes.end(),
-                m_newScenes.begin(),
-                m_newScenes.end());
-
-            m_newScenes.clear();
         }
 
-        for (ScenesList::iterator   it = m_scenes.begin(),
-                                    end = m_scenes.end();
-                                    it != end;)
+        Size scenesCount = m_scenes.size();
+        for (Size i = 0; i < scenesCount; ++i)
         {
-            ECSScenePtr const& scene = (*it);
+            SceneData& sceneData = m_scenes[i];
+            if (!sceneData.scene)
+                continue;
 
-            if (ECSSceneState::None == scene->getState())
+            if (ECSSceneState::None == sceneData.scene->getState())
             {
-                ++it;
                 continue;
             }
             else
-            if (ECSSceneState::Created == scene->getState())
+            if (ECSSceneState::Active == sceneData.scene->getState())
             {
-                scene->setState(ECSSceneState::Active);
+                sceneData.scene->update(_dt);
             }
             else
-            if (ECSSceneState::Destroy == scene->getState())
+            if (ECSSceneState::Destroy == sceneData.scene->getState())
             {
-                ECSScenePtr scenePointerCopy = scene;
+                ECSScenePtr scenePointerCopy = sceneData.scene;
 
                 scenePointerCopy->processSceneWillBeDestroyed();
 
                 m_deadScenes.push_back(scenePointerCopy);
-
-                it = m_scenes.erase(it);
-                end = m_scenes.end();
+                m_freeSceneIndices.push(sceneData.id.getIndex());
+                sceneData.id.incrementGeneration();
+                sceneData.scene.reset();
 
                 if (scenePointerCopy == m_mainScene)
                     setMainScene(findNewMainScene());
 
-                if (!m_scenes.empty())
-                {
-                    if (m_scenes.back()->getState() == ECSSceneState::Paused)
-                        m_scenes.back()->setState(ECSSceneState::Active);
-                }
-
                 continue;
             }
-
-            (*it)->update(_dt);
-            ++it;
         }
     }
 
     //////////////////////////////////////////
     bool SceneManager::isGoodMainScene(ECSScenePtr const& _scene)
     {
+        if (!_scene)
+            return false;
+
         if (_scene->getState() == ECSSceneState::Destroy)
             return false;
 
@@ -176,9 +166,9 @@ namespace Maze
     {
         static ECSScenePtr const nullPointer;
 
-        for (ScenesList::reverse_iterator it = m_scenes.rbegin(), end = m_scenes.rend(); it != end; ++it)
+        for (Vector<SceneData>::reverse_iterator it = m_scenes.rbegin(), end = m_scenes.rend(); it != end; ++it)
         {
-            ECSScenePtr const& scene = *it;
+            ECSScenePtr const& scene = it->scene;
             if (!isGoodMainScene(scene))
                 continue;
 
@@ -188,6 +178,22 @@ namespace Maze
         return nullPointer;
     }
 
+    //////////////////////////////////////////
+    EcsSceneId SceneManager::generateNewEcsSceneId()
+    {
+        if (!m_freeSceneIndices.empty())
+        {
+            S32 index = m_freeSceneIndices.top();
+            m_freeSceneIndices.pop();
+            MAZE_ASSERT(index < m_scenes.size() && !m_scenes[index].scene);
+            return m_scenes[index].id;
+        }
+
+        SceneData sceneData;
+        sceneData.id = EcsSceneId((S32)m_scenes.size(), 0);
+        m_scenes.push_back(sceneData);
+        return sceneData.id;
+    }
 
 } // namespace Maze
 //////////////////////////////////////////

@@ -61,6 +61,13 @@ namespace Maze
         //////////////////////////////////////////
         using ScenesList = Vector<ECSScenePtr>;
 
+        //////////////////////////////////////////
+        struct SceneData
+        {
+            EcsSceneId id;
+            ECSScenePtr scene;
+        };
+
     public:
 
         //////////////////////////////////////////
@@ -75,6 +82,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void destroyScene(ECSScenePtr const& _scene);
+
+        //////////////////////////////////////////
+        void destroyScene(EcsSceneId _sceneId);
 
 
         //////////////////////////////////////////
@@ -98,33 +108,35 @@ namespace Maze
             {
                 for (Size i = 0; i < m_scenes.size(); ++i)
                 {
-                    if (m_scenes[i]->getIsSystemScene())
+                    if (!m_scenes[i].scene || m_scenes[i].scene->getIsSystemScene())
                         continue;
 
-                    destroyScene(m_scenes[i]);
-                }
-
-                for (Size i = 0; i < m_newScenes.size(); ++i)
-                {
-                    if (m_newScenes[i]->getIsSystemScene())
-                        continue;
-
-                    destroyScene(m_newScenes[i]);
+                    destroyScene(m_scenes[i].scene);
                 }
             }
 
             {
+                
+                
                 Debug::log << "Creating Scene '" << ClassInfo<TScene>::Name() << "'..." << endl;
+
                 ECSScenePtr scene = std::static_pointer_cast<ECSScene>(TScene::Create(_args...));
                 MAZE_RETURN_VALUE_IF(!scene, nullPointer);
 
                 MAZE_DEBUG_BP_IF(scene->getClassUID() != ClassInfo<TScene>::UID());
-                scene->setState(ECSSceneState::Created);
-                m_newScenes.push_back(scene);
+
+                EcsSceneId sceneId = generateNewEcsSceneId();
+                MAZE_ASSERT(sceneId.getIndex() < m_scenes.size() && !m_scenes[sceneId.getIndex()].scene);
+                m_scenes[sceneId.getIndex()].id = sceneId;
+                m_scenes[sceneId.getIndex()].scene = scene;
+
+                scene->setId(sceneId);
+                scene->setState(ECSSceneState::Created);                
 
                 if (!m_mainScene && isGoodMainScene(scene))
                     setMainScene(scene);
 
+                m_newScenesWereAdded = true;
                 return scene->cast<TScene>();
             }
         }
@@ -141,12 +153,8 @@ namespace Maze
         SharedPtr<TScene> getScene()
         {
             for (Size i = 0; i < m_scenes.size(); ++i)
-                if (m_scenes[i]->getClassUID() == ClassInfo<TScene>::UID())
-                    return m_scenes[i]->cast<TScene>();
-
-            for (Size i = 0; i < m_newScenes.size(); ++i)
-                if (m_newScenes[i]->getClassUID() == ClassInfo<TScene>::UID())
-                    return m_newScenes[i]->cast<TScene>();
+                if (m_scenes[i].scene && m_scenes[i].scene->getClassUID() == ClassInfo<TScene>::UID())
+                    return m_scenes[i].scene->cast<TScene>();
 
             return nullptr;
         }
@@ -162,7 +170,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        ScenesList const& getScenes() const { return m_scenes; }
+        Vector<SceneData> const& getScenes() const { return m_scenes; }
     
 
         //////////////////////////////////////////
@@ -196,12 +204,18 @@ namespace Maze
         //////////////////////////////////////////
         ECSScenePtr const& findNewMainScene();
 
+        //////////////////////////////////////////
+        EcsSceneId generateNewEcsSceneId();
+
     private:
         static SceneManager* s_instance;
 
-        ScenesList m_scenes;
+        Vector<SceneData> m_scenes;
+        Stack<S32> m_freeSceneIndices;
+        bool m_newScenesWereAdded = false;
+        bool m_newScenesWereDestroyed = false;
+
         ScenesList m_deadScenes;
-        ScenesList m_newScenes;
 
         ECSScenePtr m_mainScene;
     };

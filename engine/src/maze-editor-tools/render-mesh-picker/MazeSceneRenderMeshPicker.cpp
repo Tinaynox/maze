@@ -272,7 +272,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneRenderMeshPicker::updateUI()
     {
-        if (m_state == ECSSceneState::Destroy)
+        if (getState() == ECSSceneState::Destroy)
             return;
 
         RenderMeshPtr const& currentRenderMesh = RenderMeshPickerManager::GetInstancePtr()->getRenderMesh();

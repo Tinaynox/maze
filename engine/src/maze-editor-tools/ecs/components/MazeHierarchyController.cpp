@@ -219,9 +219,13 @@ namespace Maze
         F32 x = 0;
         F32 y = 0;
 
-        Vector<ECSScenePtr> scenes = sceneManager->getScenes();
-        for (ECSScenePtr const& scene : scenes)
+        Vector<SceneManager::SceneData> const& scenes = sceneManager->getScenes();
+        for (SceneManager::SceneData const& sceneData : scenes)
         {
+            ECSScenePtr const& scene = sceneData.scene;
+            if (!scene)
+                continue;
+
             ClassUID sceneUID = scene->getClassUID();
             if (sceneUID == getEntityRaw()->getECSScene()->getClassUID())
                 continue;
