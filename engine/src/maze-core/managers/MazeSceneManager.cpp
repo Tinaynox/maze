@@ -83,7 +83,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneManager::destroyScene(EcsSceneId _sceneId)
     {
-        if (_sceneId.getIndex() < m_scenes.size())
+        if (_sceneId.getIndex() < (S32)m_scenes.size())
             destroyScene(m_scenes[_sceneId.getIndex()].scene);
     }
 
@@ -185,7 +185,7 @@ namespace Maze
         {
             S32 index = m_freeSceneIndices.top();
             m_freeSceneIndices.pop();
-            MAZE_ASSERT(index < m_scenes.size() && !m_scenes[index].scene);
+            MAZE_ASSERT(index < (S32)m_scenes.size() && !m_scenes[index].scene);
             return m_scenes[index].id;
         }
 
