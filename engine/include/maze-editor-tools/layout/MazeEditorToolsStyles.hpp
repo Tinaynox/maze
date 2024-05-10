@@ -31,7 +31,7 @@
 
 //////////////////////////////////////////
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/utils/MazeDelegate.hpp"

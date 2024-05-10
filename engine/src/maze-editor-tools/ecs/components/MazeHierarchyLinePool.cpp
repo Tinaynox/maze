@@ -92,7 +92,7 @@ namespace Maze
                 new SharedObjectPool<HierarchyLine>(
                     [this, type]() -> HierarchyLinePtr
                     {
-                        EntityPtr entity = this->getEntityRaw()->getECSScene()->createEntity();
+                        EntityPtr entity = this->getEntityRaw()->getEcsScene()->createEntity();
                         HierarchyLinePtr hierarchyLine = entity->createComponent<HierarchyLine>(type);
                         return hierarchyLine;
                     },
@@ -108,7 +108,7 @@ namespace Maze
                     [](HierarchyLinePtr const& _hierarchyLine)
                     {
                         if (_hierarchyLine->getEntityRaw())
-                            _hierarchyLine->getEntityRaw()->removeFromECSWorld();
+                            _hierarchyLine->getEntityRaw()->removeFromEcsWorld();
                     }));
         }
 

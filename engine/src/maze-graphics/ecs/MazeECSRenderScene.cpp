@@ -25,11 +25,11 @@
 
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-graphics/MazeRenderTarget.hpp"
 
@@ -38,29 +38,28 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class ECSRenderScene
+    // Class EcsRenderScene
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(ECSRenderScene, ECSScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EcsRenderScene, EcsScene);
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_DEFAULT(ECSRenderScene);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_DEFAULT(EcsRenderScene);
 
     //////////////////////////////////////////
-    ECSRenderScene::ECSRenderScene()
+    EcsRenderScene::EcsRenderScene()
     {
 
     }
 
     //////////////////////////////////////////
-    ECSRenderScene::~ECSRenderScene()
+    EcsRenderScene::~EcsRenderScene()
     {
         destroyAllEntities();
-        // removeAllSystems();
 
         if (EntityManager::GetInstancePtr())
         {
-            ECSWorld* world = EntityManager::GetInstancePtr()->getDefaultWorldRaw();
+            EcsWorld* world = EntityManager::GetInstancePtr()->getDefaultWorldRaw();
             if (world)
                 world->update(0.0f);
         }
@@ -69,9 +68,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ECSRenderScene::init(RenderTargetPtr const& _renderTarget)
+    bool EcsRenderScene::init(RenderTargetPtr const& _renderTarget)
     {
-        if (!ECSScene::init())
+        if (!EcsScene::init())
             return false;
 
         m_renderTarget = _renderTarget;

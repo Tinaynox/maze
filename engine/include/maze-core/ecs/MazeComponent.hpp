@@ -31,7 +31,7 @@
 
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
-#include "maze-core/ecs/MazeECSTypes.hpp"
+#include "maze-core/ecs/MazeEcsTypes.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
@@ -44,7 +44,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(Component);
     MAZE_USING_SHARED_PTR(Entity);
-    MAZE_USING_SHARED_PTR(ECSWorld);
+    MAZE_USING_SHARED_PTR(EcsWorld);
     MAZE_USING_SHARED_PTR(ComponentEntityLinker);
 
 
@@ -155,12 +155,12 @@ namespace Maze
         //////////////////////////////////////////
         ComponentPtr Create(
             Component* _component,
-            ECSWorld* _world = nullptr,
+            EcsWorld* _world = nullptr,
             EntityCopyData _copyData = EntityCopyData());
 
         //////////////////////////////////////////
         inline ComponentPtr createCopy(
-            ECSWorld* _world = nullptr,
+            EcsWorld* _world = nullptr,
             EntityCopyData _copyData = EntityCopyData())
         {
             return Create(this, _world, _copyData);
@@ -238,7 +238,7 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool init(
             Component* _component,
-            ECSWorld* _world,
+            EcsWorld* _world,
             EntityCopyData _copyData = EntityCopyData());
 
         //////////////////////////////////////////

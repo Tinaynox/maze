@@ -27,7 +27,7 @@
 #include "MazeCoreHeader.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
@@ -97,7 +97,7 @@ namespace Maze
     //////////////////////////////////////////
     bool Transform2D::init(
         Component* _component,
-        ECSWorld* _world,
+        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         if (!Component::init(_component, _world, _copyData))
@@ -348,8 +348,8 @@ namespace Maze
                     this));
 
         MAZE_DEBUG_ERROR_IF(
-            getEntityRaw() && getEntityRaw()->getECSWorld() && _parent && _parent->getEntityRaw() && _parent->getEntityRaw()->getECSWorld() &&
-            getEntityRaw()->getECSWorld() != _parent->getEntityRaw()->getECSWorld(), "It's forbidden to connect entities from different worlds!");
+            getEntityRaw() && getEntityRaw()->getEcsWorld() && _parent && _parent->getEntityRaw() && _parent->getEntityRaw()->getEcsWorld() &&
+            getEntityRaw()->getEcsWorld() != _parent->getEntityRaw()->getEcsWorld(), "It's forbidden to connect entities from different worlds!");
 
         m_parent = _parent;
 
@@ -464,7 +464,7 @@ namespace Maze
 
             child->destroyAllChildren();
 
-            ECSWorld* world = childEntity->getECSWorld();
+            EcsWorld* world = childEntity->getEcsWorld();
             world->removeEntity(childEntity);
         }
     }

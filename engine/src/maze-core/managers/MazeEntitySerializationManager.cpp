@@ -28,7 +28,7 @@
 #include "maze-core/managers/MazeEntitySerializationManager.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
@@ -124,9 +124,9 @@ namespace Maze
         }
 
         Map<String, EntityPtr> identityPrefabs;
-        ECSWorldPtr identityPrefabsWorld;
+        EcsWorldPtr identityPrefabsWorld;
         if (!prefabs.empty())
-            identityPrefabsWorld = ECSWorld::Create(MAZE_HS("PrefabSerialization"), 0, false);
+            identityPrefabsWorld = EcsWorld::Create(MAZE_HS("PrefabSerialization"), 0, false);
 
         for (PrefabInstance* prefabInstance : prefabs)
         {
@@ -328,8 +328,8 @@ namespace Maze
     //////////////////////////////////////////
     EntityPtr EntitySerializationManager::loadPrefab(
         AssetFilePtr const& _assetFile,
-        ECSWorld* _world,
-        ECSScene* _scene) const
+        EcsWorld* _world,
+        EcsScene* _scene) const
     {
         DataBlock dataBlock;
         ByteBufferPtr byteBuffer = _assetFile->readAsByteBuffer();
@@ -344,8 +344,8 @@ namespace Maze
     //////////////////////////////////////////
     EntityPtr EntitySerializationManager::loadPrefab(
         Path const& _assetFileName,
-        ECSWorld* _world,
-        ECSScene* _scene) const
+        EcsWorld* _world,
+        EcsScene* _scene) const
     {
         AssetFilePtr const& assetFile = AssetManager::GetInstancePtr()->getAssetFile(_assetFileName);
         if (!assetFile)
@@ -357,8 +357,8 @@ namespace Maze
     //////////////////////////////////////////
     EntityPtr EntitySerializationManager::loadPrefabOBSOLETE(
         DataBlock const& _dataBlock,
-        ECSWorld* _world,
-        ECSScene* _scene) const
+        EcsWorld* _world,
+        EcsScene* _scene) const
     {
         MAZE_PROFILE_EVENT("EntitySerializationManager::loadPrefabOBSOLETE");
 
@@ -371,10 +371,10 @@ namespace Maze
         if (rootIndexAttribute == nullptr)
             return nullPointer;
 
-        ECSScene* scene = _scene ? _scene
+        EcsScene* scene = _scene ? _scene
             : (_world ? nullptr : SceneManager::GetInstancePtr()->getMainScene().get());
 
-        ECSWorld* world = _world ? _world
+        EcsWorld* world = _world ? _world
             : (scene ? scene->getWorld() : nullptr);
 
         Map<S32, EntityPtr> entities;
@@ -671,7 +671,7 @@ namespace Maze
             if (!entityData.second)
                 continue;
 
-            entityData.second->setECSScene(scene);
+            entityData.second->setEcsScene(scene);
         }
 
         // Awake
@@ -691,17 +691,17 @@ namespace Maze
     //////////////////////////////////////////
     EntityPtr EntitySerializationManager::loadPrefab(
         DataBlock const& _dataBlock,
-        ECSWorld* _world,
-        ECSScene* _scene) const
+        EcsWorld* _world,
+        EcsScene* _scene) const
     {
         MAZE_PROFILE_EVENT("EntitySerializationManager::loadPrefab");
 
         static EntityPtr const nullPointer;
 
-        ECSScene* scene = _scene ? _scene
+        EcsScene* scene = _scene ? _scene
             : (_world ? nullptr : SceneManager::GetInstancePtr()->getMainScene().get());
 
-        ECSWorld* world = _world ? _world
+        EcsWorld* world = _world ? _world
             : (scene ? scene->getWorld() : nullptr);
 
         Map<S32, EntityPtr> entities;
@@ -1041,7 +1041,7 @@ namespace Maze
             if (!entityData.second)
                 continue;
 
-            entityData.second->setECSScene(scene);
+            entityData.second->setEcsScene(scene);
         }
 
         // Awake

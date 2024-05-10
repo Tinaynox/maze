@@ -53,7 +53,7 @@
 #include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-physics2d/managers/MazePhysics2DManager.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-particles/managers/MazeParticlesManager.hpp"
 #include "maze-sound/managers/MazeSoundManager.hpp"
 #include "maze-engine/ecs/scenes/MazeSceneEngine.hpp"
@@ -322,8 +322,8 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Engine::createPrimaryECSWorldSystems(
-        ECSWorldPtr const& _world,
+    void Engine::createPrimaryEcsWorldSystems(
+        EcsWorldPtr const& _world,
         RenderWindowPtr const& _renderWindow,
         RenderSystemPtr const& _renderSystem)
     {

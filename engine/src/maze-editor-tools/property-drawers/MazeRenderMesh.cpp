@@ -112,7 +112,7 @@ namespace Maze
             Vec2F(_parent->getWidth(), 18),
             Vec2F(0, 0),
             _parent,
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         layout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
@@ -128,7 +128,7 @@ namespace Maze
             Vec2F(8, 18),
             Vec2F(0, 0),
             layout->getTransform(),
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F::c_zero);
         titleText->setColor(EditorToolsStyles::GetInstancePtr()->getInspectorPropertyColor());
@@ -140,7 +140,7 @@ namespace Maze
             Vec2F(180, 18),
             Vec2F::c_zero,
             layout->getTransform(),
-            _parent->getEntityRaw()->getECSScene());
+            _parent->getEntityRaw()->getEcsScene());
         m_renderMeshButton->eventClick.subscribe(this, &PropertyDrawerRenderMesh::notifyRenderMeshButtonClick);
 
         m_selectAssetButton = UIHelper::CreateClickButton(
@@ -148,7 +148,7 @@ namespace Maze
             Vec2F(18, 18),
             Vec2F(-9.0f, 0.0f),
             m_renderMeshButton->getTransform(),
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(1.0f, 0.5f),
             Vec2F(0.5f, 0.5f));
         m_selectAssetButton->setNormalColor(ColorU32{ 50, 50, 50 });
@@ -163,7 +163,7 @@ namespace Maze
             Vec2F(9.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_renderMeshButton->getTransform(),
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F(0.5f, 0.5f));
 
@@ -176,7 +176,7 @@ namespace Maze
             Vec2F(160.0f, 0.0f),
             Vec2F(18.0f, 0.0f),
             m_renderMeshButton->getTransform(),
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F(0.0f, 0.5f));
         m_renderMeshNameDrawer->setColor(ColorU32::c_black);

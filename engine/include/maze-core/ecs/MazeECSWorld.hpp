@@ -25,14 +25,14 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeECSWorld_hpp_))
-#define _MazeECSWorld_hpp_
+#if (!defined(_MazeEcsWorld_hpp_))
+#define _MazeEcsWorld_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
-#include "maze-core/ecs/MazeECSTypes.hpp"
+#include "maze-core/ecs/MazeEcsTypes.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/ecs/MazeComponentSystem.hpp"
 #include "maze-core/ecs/MazeEntityAspect.hpp"
@@ -51,25 +51,25 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(Entity);
-    MAZE_USING_SHARED_PTR(ECSWorld);
+    MAZE_USING_SHARED_PTR(EcsWorld);
     MAZE_USING_SHARED_PTR(ComponentEntityLinker);
     MAZE_USING_SHARED_PTR(IEntitiesSample);
 
 
     //////////////////////////////////////////
-    // Class ECSWorld
+    // Class EcsWorld
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API ECSWorld
-        : public SharedObject<ECSWorld>
+    class MAZE_CORE_API EcsWorld
+        : public SharedObject<EcsWorld>
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS(ECSWorld);
+        MAZE_DECLARE_METACLASS(EcsWorld);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(ECSWorld);
+        MAZE_DECLARE_MEMORY_ALLOCATION(EcsWorld);
 
         //////////////////////////////////////////
         friend class Entity;
@@ -77,16 +77,16 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~ECSWorld();
+        virtual ~EcsWorld();
 
         //////////////////////////////////////////
-        static ECSWorldPtr Create(
+        static EcsWorldPtr Create(
             HashedString const& _name,
             EntityId _entitiesIdCounter = 0,
             bool _attachSystems = true);
 
         //////////////////////////////////////////
-        static ECSWorld* GetDefaultWorldRaw();
+        static EcsWorld* GetDefaultWorldRaw();
 
 
         //////////////////////////////////////////
@@ -234,7 +234,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        MultiDelegate<ECSWorld*> eventOnDestroy;
+        MultiDelegate<EcsWorld*> eventOnDestroy;
         MultiDelegate<EntityPtr const&> eventEntityAdded;
         MultiDelegate<Entity*> eventEntityChanged;
         MultiDelegate<EntityPtr const&> eventEntityRemoved;
@@ -246,7 +246,7 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        ECSWorld();
+        EcsWorld();
 
         //////////////////////////////////////////
         bool init(
@@ -298,5 +298,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeECSWorld_hpp_
+#endif // _MazeEcsWorld_hpp_
 //////////////////////////////////////////

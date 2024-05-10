@@ -26,8 +26,8 @@
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/events/MazeEvent.hpp"
 
 
@@ -62,7 +62,7 @@ namespace Maze
     //////////////////////////////////////////
     Entity::~Entity()
     {
-        setECSScene(nullptr);
+        setEcsScene(nullptr);
         m_componentUIDs.clear();
 
         while (!m_components.empty())
@@ -83,7 +83,7 @@ namespace Maze
     //////////////////////////////////////////
     EntityPtr Entity::Create(
         Entity* _entity,
-        ECSWorld* _world,
+        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         EntityPtr object;
@@ -94,7 +94,7 @@ namespace Maze
     //////////////////////////////////////////
     EntityPtr const& Entity::GetEntity(EntityId _eid)
     {
-        return ECSWorld::GetDefaultWorldRaw()->getEntityById(_eid);
+        return EcsWorld::GetDefaultWorldRaw()->getEntityById(_eid);
     }
 
     //////////////////////////////////////////
@@ -106,7 +106,7 @@ namespace Maze
     //////////////////////////////////////////
     bool Entity::init(
         Entity* _entity,
-        ECSWorld* _world,
+        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         m_transitionFlags |= static_cast<U8>(TransitionFlags::AwakeForbidden);
@@ -114,7 +114,7 @@ namespace Maze
         _copyData.pushStackDepth();
         _copyData.getEntities()[_entity] = this;
 
-        setECSScene(_entity->m_scene);
+        setEcsScene(_entity->m_scene);
 
         setFlags(_entity->m_flags);
 
@@ -303,7 +303,7 @@ namespace Maze
             componentRef->processEntityAwakened();
         }
 
-        if (getECSScene())
+        if (getEcsScene())
             componentRef->processSceneSet();
 
         return componentRef;
@@ -361,7 +361,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Entity::setECSWorld(ECSWorld* _world)
+    void Entity::setEcsWorld(EcsWorld* _world)
     {
         if (m_world == _world)
             return;
@@ -379,7 +379,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Entity::setECSScene(ECSScene* _scene)
+    void Entity::setEcsScene(EcsScene* _scene)
     {
         if (m_scene == _scene)
             return;
@@ -405,7 +405,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Entity::removeFromECSWorld()
+    void Entity::removeFromEcsWorld()
     {
         if (!m_world)
             return;
@@ -457,7 +457,7 @@ namespace Maze
     //////////////////////////////////////////
     void Entity::processEvent(Event* _event)
     {
-        if (!getECSWorld())
+        if (!getEcsWorld())
             return;
 
         for (auto const& componentData : m_components)

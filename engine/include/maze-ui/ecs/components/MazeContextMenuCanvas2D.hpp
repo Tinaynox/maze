@@ -52,7 +52,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(ClickButton2D);
     MAZE_USING_SHARED_PTR(MeshRenderer);
     MAZE_USING_SHARED_PTR(Canvas);
-    MAZE_USING_SHARED_PTR(ECSScene);
+    MAZE_USING_SHARED_PTR(EcsScene);
     MAZE_USING_SHARED_PTR(FontMaterial);
 
 
@@ -79,7 +79,7 @@ namespace Maze
 
         //////////////////////////////////////////
         static ContextMenuCanvas2DPtr EnsureContextMenuCanvas(
-            ECSScene* _scene,
+            EcsScene* _scene,
             FontMaterialPtr const& _fontMaterial = FontMaterialPtr());
 
     public:

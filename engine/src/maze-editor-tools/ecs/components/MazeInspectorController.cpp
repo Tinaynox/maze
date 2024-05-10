@@ -168,7 +168,7 @@ namespace Maze
             m_canvas->getTransform()->getSize(),
             Vec2F(0.0f, 0.0f),
             m_canvas->getTransform(),
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F::c_zero,
             Vec2F::c_zero);
         canvasTransform->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>();
@@ -181,7 +181,7 @@ namespace Maze
             Vec2F(0.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             canvasTransform,
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         titleBackground->setColor(EditorToolsStyles::GetInstancePtr()->getTitleBackgroundColor());
@@ -196,7 +196,7 @@ namespace Maze
             Vec2F(100, EditorToolsStyles::GetInstancePtr()->getTitleHeight()),
             Vec2F(EditorToolsStyles::GetInstancePtr()->getTitleLabelShift(), 0),
             titleBackground->getTransform(),
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F(0.0f, 0.5f));
         titleText->setColor(ColorU32::c_black);
@@ -210,7 +210,7 @@ namespace Maze
             Vec2F(0.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_canvas->getTransform(),
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F::c_zero,
             Vec2F::c_zero);
         m_bodyBackground->setColor(EditorToolsStyles::GetInstancePtr()->getBodyBackgroundColor());
@@ -221,7 +221,7 @@ namespace Maze
             m_bodyBackground->getTransform()->getSize(),
             Vec2F::c_zero,
             m_bodyBackground->getTransform(),
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f),
             false,

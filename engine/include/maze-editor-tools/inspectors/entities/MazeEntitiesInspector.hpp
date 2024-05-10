@@ -56,7 +56,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(ComponentEditor);
     MAZE_USING_SHARED_PTR(ToggleButton2D);
     MAZE_USING_SHARED_PTR(AbstractTextRenderer2D);
-    MAZE_USING_SHARED_PTR(ECSWorld);
+    MAZE_USING_SHARED_PTR(EcsWorld);
     
 
     //////////////////////////////////////////
@@ -120,7 +120,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setECSWorld(ECSWorld* _world);
+        void setEcsWorld(EcsWorld* _world);
 
     protected:
         Map<ClassUID, ComponentEditorPtr> m_componentEditors;
@@ -134,7 +134,7 @@ namespace Maze
 
         bool m_entitiesPropertiesListDirty;
 
-        ECSWorld* m_world = nullptr;
+        EcsWorld* m_world = nullptr;
     };
 
 

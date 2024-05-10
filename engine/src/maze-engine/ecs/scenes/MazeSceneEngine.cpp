@@ -38,7 +38,7 @@ namespace Maze
     // Class SceneEngine
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneEngine, ECSRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneEngine, EcsRenderScene);
 
     //////////////////////////////////////////
     SceneEngine::SceneEngine()
@@ -64,7 +64,7 @@ namespace Maze
     {
         MAZE_PROFILE_EVENT("SceneEngine::init");
 
-        if (!ECSRenderScene::init(_config.renderTarget))
+        if (!EcsRenderScene::init(_config.renderTarget))
             return false;
 
         // Render

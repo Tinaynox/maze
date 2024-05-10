@@ -25,14 +25,14 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeECSScene_hpp_))
-#define _MazeECSScene_hpp_
+#if (!defined(_MazeEcsScene_hpp_))
+#define _MazeEcsScene_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
-#include "maze-core/ecs/MazeECSTypes.hpp"
+#include "maze-core/ecs/MazeEcsTypes.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
@@ -55,7 +55,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_4_API(MAZE_CORE_API, ECSSceneState,
+    MAZE_DECLARE_ENUMCLASS_4_API(MAZE_CORE_API, EcsSceneState,
         Created,
         Active,
         Paused,
@@ -63,29 +63,29 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(ECSScene);
-    MAZE_USING_SHARED_PTR(ECSWorld);
-    MAZE_USING_SHARED_PTR(ComponentECSSceneLinker);
+    MAZE_USING_SHARED_PTR(EcsScene);
+    MAZE_USING_SHARED_PTR(EcsWorld);
+    MAZE_USING_SHARED_PTR(ComponentEcsSceneLinker);
 
 
     //////////////////////////////////////////
-    // Class ECSScene
+    // Class EcsScene
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API ECSScene
-        : public SharedObject<ECSScene>
+    class MAZE_CORE_API EcsScene
+        : public SharedObject<EcsScene>
         , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS(ECSScene);
+        MAZE_DECLARE_METACLASS(EcsScene);
 
         //////////////////////////////////////////
         friend SceneManager;
 
         //////////////////////////////////////////
-        friend void Entity::setECSScene(ECSScene*);
+        friend void Entity::setEcsScene(EcsScene*);
 
     protected:
 
@@ -98,7 +98,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~ECSScene();
+        virtual ~EcsScene();
         
         //////////////////////////////////////////
         virtual void update(F32 _dt);
@@ -108,7 +108,7 @@ namespace Maze
         inline EcsSceneId getId() const { return m_id; }
 
         //////////////////////////////////////////
-        inline ECSSceneState getState() const { return m_state; }
+        inline EcsSceneState getState() const { return m_state; }
 
 
 
@@ -145,7 +145,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline ECSWorld* getWorld() const { return m_world; }
+        inline EcsWorld* getWorld() const { return m_world; }
 
 
         //////////////////////////////////////////
@@ -196,7 +196,7 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        ECSScene();
+        EcsScene();
 
         //////////////////////////////////////////
         virtual bool init();
@@ -212,18 +212,18 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        void notifyECSWorldOnDestroy(ECSWorld* _world);
+        void notifyEcsWorldOnDestroy(EcsWorld* _world);
 
     private:
 
         //////////////////////////////////////////
-        void setState(ECSSceneState _state);
+        void setState(EcsSceneState _state);
 
         //////////////////////////////////////////
         inline void setId(EcsSceneId _id) { m_id = _id; }
 
         //////////////////////////////////////////
-        virtual void processSceneStateChanged(ECSSceneState _state) {}
+        virtual void processSceneStateChanged(EcsSceneState _state) {}
 
         //////////////////////////////////////////
         void processSceneWillBeDestroyed();
@@ -240,18 +240,18 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual ECSWorld* assignWorld();
+        virtual EcsWorld* assignWorld();
 
     protected:
         S32 m_flags = 0;
 
         Set<Entity*> m_entities;
 
-        ECSWorld* m_world = nullptr;
+        EcsWorld* m_world = nullptr;
 
     private:
         EcsSceneId m_id;
-        ECSSceneState m_state = ECSSceneState::None;
+        EcsSceneState m_state = EcsSceneState::None;
     };
 
 
@@ -259,5 +259,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeECSScene_hpp_
+#endif // _MazeEcsScene_hpp_
 //////////////////////////////////////////

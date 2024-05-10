@@ -41,7 +41,7 @@
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRendererInstanced.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer3D.hpp"
-#include "maze-graphics/ecs/events/MazeECSGraphicsEvents.hpp"
+#include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
 #include "maze-graphics/config/MazeGraphicsConfig.hpp"
 #include <functional>
 
@@ -79,7 +79,7 @@ namespace Maze
 
         //////////////////////////////////////////
         static RenderControllerModule3DPtr Create(
-            ECSWorldPtr const& _world,
+            EcsWorldPtr const& _world,
             RenderSystemPtr const& _renderSystem);
 
 
@@ -109,12 +109,12 @@ namespace Maze
 
         //////////////////////////////////////////
         bool init(
-            ECSWorldPtr const& _world,
+            EcsWorldPtr const& _world,
             RenderSystemPtr const& _renderSystem);
 
 
     protected:
-        ECSWorld* m_world = nullptr;
+        EcsWorld* m_world = nullptr;
         RenderSystemPtr m_renderSystem;
 
         SharedPtr<GenericInclusiveEntitiesSample<Camera3D>> m_cameras3DSample;

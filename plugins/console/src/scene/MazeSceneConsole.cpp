@@ -51,7 +51,7 @@ namespace Maze
     // Class SceneConsole
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneConsole, ECSRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneConsole, EcsRenderScene);
 
     //////////////////////////////////////////
     SceneConsole::SceneConsole()
@@ -93,7 +93,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SceneConsole::init(RenderTargetPtr const& _renderTarget)
     {
-        if (!ECSRenderScene::init(_renderTarget))
+        if (!EcsRenderScene::init(_renderTarget))
             return false;
 
         m_renderTarget->eventRenderTargetResized.subscribe(this, &SceneConsole::notifyRenderTargetResized);

@@ -26,7 +26,7 @@
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/ecs/components/MazeRenderController.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/utils/MazeProfiler.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
@@ -110,16 +110,16 @@ namespace Maze
     //////////////////////////////////////////
     void RenderController::processEntityAwakened()
     {
-        m_canvasesSample = getEntityRaw()->getECSWorld()->requestInclusiveSample<Canvas>();
+        m_canvasesSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<Canvas>();
         m_canvasesSample->eventEntityAdded.subscribe(this, &RenderController::processCanvasEntityAdded);
         m_canvasesSample->eventEntityRemoved.subscribe(this, &RenderController::processCanvasEntityRemoved);
 
-        m_cameras3DSample = getEntityRaw()->getECSWorld()->requestInclusiveSample<Camera3D>();
+        m_cameras3DSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<Camera3D>();
         m_cameras3DSample->eventEntityAdded.subscribe(this, &RenderController::processCameraEntityAdded);
         m_cameras3DSample->eventEntityRemoved.subscribe(this, &RenderController::processCameraEntityRemoved);
 
-        m_module3D = RenderControllerModule3D::Create(getEntityRaw()->getECSWorld()->cast<ECSWorld>(), m_renderSystem);
-        m_module2D = RenderControllerModule2D::Create(getEntityRaw()->getECSWorld()->cast<ECSWorld>(), m_renderSystem);
+        m_module3D = RenderControllerModule3D::Create(getEntityRaw()->getEcsWorld()->cast<EcsWorld>(), m_renderSystem);
+        m_module2D = RenderControllerModule2D::Create(getEntityRaw()->getEcsWorld()->cast<EcsWorld>(), m_renderSystem);
     }
 
     //////////////////////////////////////////

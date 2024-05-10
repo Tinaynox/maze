@@ -28,7 +28,7 @@
 #include "MazeParticlesEditorToolsPlugin.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazePluginManager.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
 #include "maze-editor-tools/managers/MazeInspectorManager.hpp"

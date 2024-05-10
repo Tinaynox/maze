@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
@@ -37,26 +37,26 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_ENUMCLASS(ECSSceneState);
+    MAZE_IMPLEMENT_ENUMCLASS(EcsSceneState);
 
     //////////////////////////////////////////
-    // Class ECSScene
+    // Class EcsScene
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS(ECSScene);
+    MAZE_IMPLEMENT_METACLASS(EcsScene);
 
     //////////////////////////////////////////
-    ECSScene::ECSScene()
+    EcsScene::EcsScene()
     {
 
     }
 
     //////////////////////////////////////////
-    ECSScene::~ECSScene()
+    EcsScene::~EcsScene()
     {
         destroyAllEntities();
 
-        ECSWorld* world = m_world;
+        EcsWorld* world = m_world;
         if (world)
         {
             world->update(0.0f);
@@ -65,28 +65,28 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ECSScene::init()
+    bool EcsScene::init()
     {
         m_world = assignWorld();
         MAZE_ERROR_RETURN_VALUE_IF(!m_world, false, "World is null!");
-        m_world->eventOnDestroy.subscribe(this, &ECSScene::notifyECSWorldOnDestroy);
+        m_world->eventOnDestroy.subscribe(this, &EcsScene::notifyEcsWorldOnDestroy);
 
         return true;
     }
 
     //////////////////////////////////////////
-    void ECSScene::setState(ECSSceneState _state)
+    void EcsScene::setState(EcsSceneState _state)
     {
         if (m_state == _state)
             return;
 
-        ECSSceneState prevState = m_state;
+        EcsSceneState prevState = m_state;
 
         m_state = _state;
 
         switch (m_state)
         {
-            case ECSSceneState::Active:
+            case EcsSceneState::Active:
             {
                 load();
                 break;
@@ -99,19 +99,19 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ECSScene::update(F32 _dt)
+    void EcsScene::update(F32 _dt)
     {
         
     }
 
     //////////////////////////////////////////
-    void ECSScene::processSceneWillBeDestroyed()
+    void EcsScene::processSceneWillBeDestroyed()
     {
         Debug::Log("%s::processSceneWillBeDestroyed started...", static_cast<CString>(getMetaClass()->getName()));
 
         destroyAllEntities();
 
-        ECSWorld* world = m_world;
+        EcsWorld* world = m_world;
         if (world)
         {
             Debug::Log("%s::processSceneWillBeDestroyed world update started", static_cast<CString>(getMetaClass()->getName()));
@@ -122,18 +122,18 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ECSScene::destroyAllEntities()
+    void EcsScene::destroyAllEntities()
     {
         while (!m_entities.empty())
         {
             Entity* entity =(*m_entities.begin());
-            entity->setECSScene(nullptr);
-            entity->removeFromECSWorld();
+            entity->setEcsScene(nullptr);
+            entity->removeFromEcsWorld();
         }
     }
 
     //////////////////////////////////////////
-    void ECSScene::destroyAllEntitiesExcept(EntityPtr const& _value)
+    void EcsScene::destroyAllEntitiesExcept(EntityPtr const& _value)
     {
         while (m_entities.size() > 1)
         {
@@ -144,30 +144,30 @@ namespace Maze
             if (it != m_entities.end())
             {
                 Entity* entity = (*it);
-                entity->setECSScene(nullptr);
-                entity->removeFromECSWorld();
+                entity->setEcsScene(nullptr);
+                entity->removeFromEcsWorld();
             }
         }
     }
 
     //////////////////////////////////////////
-    void ECSScene::load()
+    void EcsScene::load()
     {
         
     }
 
     //////////////////////////////////////////
-    EntityPtr ECSScene::createEntity()
+    EntityPtr EcsScene::createEntity()
     {
         EntityPtr entity = Entity::Create();
-        entity->setECSScene(this);
+        entity->setEcsScene(this);
         m_world->addEntity(entity);
         
         return entity;
     }
 
     //////////////////////////////////////////
-    EntityPtr ECSScene::createEntity(String const& _name)
+    EntityPtr EcsScene::createEntity(String const& _name)
     {
         EntityPtr entity = createEntity();
         entity->createComponent<Name>(_name);
@@ -175,7 +175,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    EntityPtr ECSScene::createEntity(CString _name)
+    EntityPtr EcsScene::createEntity(CString _name)
     {
         EntityPtr entity = createEntity();
 
@@ -186,7 +186,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    EntityPtr ECSScene::ensureEntity(String const& _name)
+    EntityPtr EcsScene::ensureEntity(String const& _name)
     {
         EntityPtr entity = findEntity(_name.c_str());
         if (entity)
@@ -195,7 +195,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    EntityPtr ECSScene::ensureEntity(CString _name)
+    EntityPtr EcsScene::ensureEntity(CString _name)
     {
         EntityPtr entity = findEntity(_name);
         if (entity)
@@ -204,7 +204,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    EntityPtr ECSScene::findEntity(CString _name)
+    EntityPtr EcsScene::findEntity(CString _name)
     {
         if (!_name)
             return nullptr;
@@ -220,31 +220,31 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ECSScene::processEntityAdded(Entity* _entity)
+    void EcsScene::processEntityAdded(Entity* _entity)
     {
         m_entities.emplace(_entity);
     }
 
     //////////////////////////////////////////
-    void ECSScene::processEntityRemoved(Entity* _entity)
+    void EcsScene::processEntityRemoved(Entity* _entity)
     {
         m_entities.erase(_entity);
     }
 
     //////////////////////////////////////////
-    void ECSScene::makeMainScene()
+    void EcsScene::makeMainScene()
     {
         SceneManager::GetInstancePtr()->setMainScene(getSharedPtr());
     }
 
     //////////////////////////////////////////
-    ECSWorld* ECSScene::assignWorld()
+    EcsWorld* EcsScene::assignWorld()
     {
         return EntityManager::GetInstancePtr()->getDefaultWorldRaw();
     }
 
     //////////////////////////////////////////
-    void ECSScene::notifyECSWorldOnDestroy(ECSWorld* _world)
+    void EcsScene::notifyEcsWorldOnDestroy(EcsWorld* _world)
     {
         if (_world && m_world == _world)
         {

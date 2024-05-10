@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeComponentSystem.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
@@ -188,22 +188,22 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class ECSWorld
+    // Class EcsWorld
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS(ECSWorld);
+    MAZE_IMPLEMENT_METACLASS(EcsWorld);
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(ECSWorld);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(EcsWorld);
 
     //////////////////////////////////////////
-    ECSWorld::ECSWorld()
+    EcsWorld::EcsWorld()
         : m_entitiesIdCounter(0)
     {
     }
 
     //////////////////////////////////////////
-    ECSWorld::~ECSWorld()
+    EcsWorld::~EcsWorld()
     {
         SimpleComponentSystemHolder::Detach(this);
 
@@ -220,24 +220,24 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ECSWorldPtr ECSWorld::Create(
+    EcsWorldPtr EcsWorld::Create(
         HashedString const& _name,
         EntityId _entitiesIdCounter,
         bool _attachSystems)
     {
-        ECSWorldPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(ECSWorld, object, init(_name, _entitiesIdCounter, _attachSystems));
+        EcsWorldPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(EcsWorld, object, init(_name, _entitiesIdCounter, _attachSystems));
         return object;
     }
 
     //////////////////////////////////////////
-    ECSWorld* ECSWorld::GetDefaultWorldRaw()
+    EcsWorld* EcsWorld::GetDefaultWorldRaw()
     {
         return EntityManager::GetInstancePtr()->getDefaultWorldRaw();
     }
 
     //////////////////////////////////////////
-    bool ECSWorld::init(
+    bool EcsWorld::init(
         HashedString const& _name,
         EntityId _entitiesIdCounter,
         bool _attachSystems)
@@ -254,9 +254,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ECSWorld::update(F32 _dt)
+    void EcsWorld::update(F32 _dt)
     {
-        MAZE_PROFILE_EVENT("ECSWorld::update");
+        MAZE_PROFILE_EVENT("EcsWorld::update");
 
         processStartedEntities();
         processAddingEntities();
@@ -291,7 +291,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    EntityPtr ECSWorld::createEntity()
+    EntityPtr EcsWorld::createEntity()
     {
         EntityPtr entity = Entity::Create();
         addEntity(entity);
@@ -299,9 +299,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ECSWorld::addEntity(EntityPtr const& _entity)
+    bool EcsWorld::addEntity(EntityPtr const& _entity)
     {
-        MAZE_DEBUG_BP_IF(!_entity->getRemoving() && _entity->getECSWorld());
+        MAZE_DEBUG_BP_IF(!_entity->getRemoving() && _entity->getEcsWorld());
         MAZE_DEBUG_BP_IF(_entity->getAdding());
 
         // Generate id
@@ -326,7 +326,7 @@ namespace Maze
                 }
             }
 
-            _entity->setECSWorld(this);
+            _entity->setEcsWorld(this);
             return true;
         }
 
@@ -334,7 +334,7 @@ namespace Maze
 
         m_addingEntities.push_back(_entity.get());
 
-        _entity->setECSWorld(this);
+        _entity->setEcsWorld(this);
 
 
         if (_entity->getActiveInHierarchy())
@@ -350,7 +350,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ECSWorld::removeEntity(EntityPtr const& _entity)
+    bool EcsWorld::removeEntity(EntityPtr const& _entity)
     {
         Entity* entityRaw = _entity.get();
 
@@ -419,8 +419,8 @@ namespace Maze
                 }
             }
 
-            _entity->setECSScene(nullptr);
-            _entity->setECSWorld(nullptr);
+            _entity->setEcsScene(nullptr);
+            _entity->setEcsWorld(nullptr);
 
             m_entitiesMap.erase(_entity->getId());
 #if (MAZE_ECS_EXTENSIVE_CHECKS)
@@ -439,7 +439,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    EntityPtr const& ECSWorld::getEntityById(EntityId _id) const
+    EntityPtr const& EcsWorld::getEntityById(EntityId _id) const
     {
         static EntityPtr const nullPointer;
         
@@ -461,13 +461,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Size ECSWorld::getEntitiesCount()
+    Size EcsWorld::getEntitiesCount()
     {
         return m_entitiesMap.size();
     }
 
     //////////////////////////////////////////
-    void ECSWorld::processStartedEntities()
+    void EcsWorld::processStartedEntities()
     {
         auto& startedEntities = m_startedEntities.switchContainer();
 
@@ -478,7 +478,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ECSWorld::processAddingEntities()
+    void EcsWorld::processAddingEntities()
     {
         while (!m_addingEntities.empty())
         {
@@ -498,15 +498,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ECSWorld::processRemovingEntities()
+    void EcsWorld::processRemovingEntities()
     {
         while (!m_removingEntities.empty())
         {
             Entity* entity = m_removingEntities.front();
             m_removingEntities.pop_front();
             
-            entity->setECSScene(nullptr);
-            entity->setECSWorld(nullptr);
+            entity->setEcsScene(nullptr);
+            entity->setEcsWorld(nullptr);
             entity->setRemoving(false);
 
             if (entity->getComponentsChanged())
@@ -561,9 +561,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ECSWorld::processChangedEntities()
+    void EcsWorld::processChangedEntities()
     {
-        MAZE_PROFILE_EVENT("ECSWorld::processChangedEntities");
+        MAZE_PROFILE_EVENT("EcsWorld::processChangedEntities");
 
         while (!m_componentsChangedEntities.empty())
         {
@@ -579,7 +579,7 @@ namespace Maze
         {
             Entity* entity = m_activeChangedEntities.front();
 
-            MAZE_DEBUG_ERROR_IF(entity->getECSWorld() != this, "Entity from different world");
+            MAZE_DEBUG_ERROR_IF(entity->getEcsWorld() != this, "Entity from different world");
 
             entity->setActiveChanged(false);
             m_activeChangedEntities.pop_front();
@@ -611,9 +611,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ECSWorld::processEntityComponentsChanged(Entity* _entity)
+    void EcsWorld::processEntityComponentsChanged(Entity* _entity)
     {
-        MAZE_DEBUG_ERROR_IF(_entity->getECSWorld() != this, "Entity from different world");
+        MAZE_DEBUG_ERROR_IF(_entity->getEcsWorld() != this, "Entity from different world");
 
         if (_entity->getComponentsChanged())
             return;
@@ -625,7 +625,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ECSWorld::processEntityActiveChanged(Entity* _entity)
+    void EcsWorld::processEntityActiveChanged(Entity* _entity)
     {
         _entity->setActiveChanged(true);
         
@@ -633,7 +633,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ECSWorld::addSystemEventHandler(SimpleComponentSystemEventHandlerPtr const& _system)
+    void EcsWorld::addSystemEventHandler(SimpleComponentSystemEventHandlerPtr const& _system)
     {
         if (!_system)
             return;
@@ -645,7 +645,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ECSWorld::removeSystemEventHandler(SimpleComponentSystemEventHandlerPtr const& _system)
+    void EcsWorld::removeSystemEventHandler(SimpleComponentSystemEventHandlerPtr const& _system)
     {
         if (!_system)
             return;
@@ -663,7 +663,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    EntitiesSamplePtr ECSWorld::requestCommonSample(EntityAspect const& _aspect)
+    EntitiesSamplePtr EcsWorld::requestCommonSample(EntityAspect const& _aspect)
     {
         for (Size i = 0, in = m_samples.size(); i < in; ++i)
         {
@@ -687,7 +687,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ECSWorld::_validateDontHave(Entity* _ptr)
+    void EcsWorld::_validateDontHave(Entity* _ptr)
     {
         {
             Deque<Entity*>::iterator it = std::find(m_addingEntities.begin(), m_addingEntities.end(), _ptr);

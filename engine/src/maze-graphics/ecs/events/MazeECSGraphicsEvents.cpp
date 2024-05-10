@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
-#include "maze-graphics/ecs/events/MazeECSGraphicsEvents.hpp"
+#include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
 
 
 

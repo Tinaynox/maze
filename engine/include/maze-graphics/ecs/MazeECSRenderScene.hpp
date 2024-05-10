@@ -25,14 +25,14 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeECSRenderScene_hpp_))
-#define _MazeECSRenderScene_hpp_
+#if (!defined(_MazeEcsRenderScene_hpp_))
+#define _MazeEcsRenderScene_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
 #include "maze-graphics/MazeColorU32.hpp"
 #include "maze-graphics/ecs/MazeLightingSettings.hpp"
@@ -43,24 +43,24 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(RenderTarget);
-    MAZE_USING_SHARED_PTR(ECSRenderScene);
+    MAZE_USING_SHARED_PTR(EcsRenderScene);
     MAZE_USING_SHARED_PTR(Transform3D);
 
 
     //////////////////////////////////////////
-    // Class ECSRenderScene
+    // Class EcsRenderScene
     //
     //////////////////////////////////////////
-    class MAZE_GRAPHICS_API ECSRenderScene
-        : public ECSScene
+    class MAZE_GRAPHICS_API EcsRenderScene
+        : public EcsScene
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(ECSRenderScene, ECSScene);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EcsRenderScene, EcsScene);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(ECSRenderScene);
+        MAZE_DECLARE_MEMORY_ALLOCATION(EcsRenderScene);
 
         //////////////////////////////////////////
         friend class Entity;
@@ -68,7 +68,7 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~ECSRenderScene();
+        virtual ~EcsRenderScene();
 
         //////////////////////////////////////////
         inline RenderTargetPtr const& getRenderTarget() const { return m_renderTarget; }
@@ -79,7 +79,7 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        ECSRenderScene();
+        EcsRenderScene();
         
         //////////////////////////////////////////
         bool init(RenderTargetPtr const& _renderTarget);
@@ -87,7 +87,7 @@ namespace Maze
     private:
 
         //////////////////////////////////////////
-        using ECSScene::init;
+        using EcsScene::init;
 
     protected:
         RenderTargetPtr m_renderTarget;
@@ -100,5 +100,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeECSRenderScene_hpp_
+#endif // _MazeEcsRenderScene_hpp_
 //////////////////////////////////////////

@@ -218,7 +218,7 @@ namespace Maze
         }
 
         for (auto prevListItemData : prevListItems)
-            prevListItemData.second->getEntity()->removeFromECSWorld();
+            prevListItemData.second->getEntity()->removeFromEcsWorld();
         prevListItems.clear();
 
         updateListSize();

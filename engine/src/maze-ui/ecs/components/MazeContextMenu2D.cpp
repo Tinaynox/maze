@@ -31,10 +31,10 @@
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-graphics/MazeMesh.hpp"
@@ -109,7 +109,7 @@ namespace Maze
 
         if (_inputEvent.button == m_cursorButtonIndex)
         {
-            ContextMenuCanvas2DPtr contextMenuCanvas = ContextMenuCanvas2D::EnsureContextMenuCanvas(getEntityRaw()->getECSScene());
+            ContextMenuCanvas2DPtr contextMenuCanvas = ContextMenuCanvas2D::EnsureContextMenuCanvas(getEntityRaw()->getEcsScene());
             
             Canvas* canvas = m_transform->getFirstTrunkComponent<Canvas>();
             Vec2F positionRTS = canvas->convertViewportCoordsToRenderTargetCoords(_inputEvent.position);    

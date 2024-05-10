@@ -43,7 +43,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(EntityManager);
-    MAZE_USING_SHARED_PTR(ECSWorld);
+    MAZE_USING_SHARED_PTR(EcsWorld);
     MAZE_USING_SHARED_PTR(ComponentFactory);
     MAZE_USING_SHARED_PTR(EntitySerializationManager);
 
@@ -86,17 +86,17 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline ECSWorldPtr const& getDefaultWorld() const { return m_defaultWorld; }
+        inline EcsWorldPtr const& getDefaultWorld() const { return m_defaultWorld; }
 
         //////////////////////////////////////////
-        inline ECSWorld* getDefaultWorldRaw() const { return m_defaultWorld.get(); }
+        inline EcsWorld* getDefaultWorldRaw() const { return m_defaultWorld.get(); }
 
 
         //////////////////////////////////////////
-        inline ECSWorldPtr const& getLibraryWorld() const { return m_libraryWorld; }
+        inline EcsWorldPtr const& getLibraryWorld() const { return m_libraryWorld; }
 
         //////////////////////////////////////////
-        inline ECSWorld* getLibraryWorldRaw() const { return m_libraryWorld.get(); }
+        inline EcsWorld* getLibraryWorldRaw() const { return m_libraryWorld.get(); }
 
 
         //////////////////////////////////////////
@@ -118,8 +118,8 @@ namespace Maze
     private:
         static EntityManager* s_instance;
 
-        ECSWorldPtr m_defaultWorld;
-        ECSWorldPtr m_libraryWorld;
+        EcsWorldPtr m_defaultWorld;
+        EcsWorldPtr m_libraryWorld;
 
         ComponentFactoryPtr m_componentFactory;
 

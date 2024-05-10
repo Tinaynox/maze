@@ -53,7 +53,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Entity);
     MAZE_USING_SHARED_PTR(Component);
     MAZE_USING_SHARED_PTR(MenuListTree2D);
-    MAZE_USING_SHARED_PTR(ECSScene);
+    MAZE_USING_SHARED_PTR(EcsScene);
     MAZE_USING_SHARED_PTR(EditorToolsStyles);
     MAZE_USING_SHARED_PTR(ColorPickerManager);
     MAZE_USING_SHARED_PTR(ColorGradientPickerManager);
@@ -125,7 +125,7 @@ namespace Maze
 
         //////////////////////////////////////////
         MultiDelegate<MenuListTree2DPtr const&, Entity*> eventHierarchyLineEntityContextMenu;
-        MultiDelegate<MenuListTree2DPtr const&, ECSScene*> eventHierarchyLineSceneContextMenu;
+        MultiDelegate<MenuListTree2DPtr const&, EcsScene*> eventHierarchyLineSceneContextMenu;
 
     protected:
 

@@ -27,8 +27,8 @@
 #include "MazeGraphicsHeader.hpp"
 #include "maze-core/ecs/MazeEntityAspect.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
@@ -60,7 +60,7 @@ namespace Maze
             Vec2F const& _size, 
             Vec2F const& _position,
             Transform2DPtr const& _parent,
-            ECSScene* _ecsScene,
+            EcsScene* _ecsScene,
             Vec2F const& _anchor,
             Vec2F const& _pivot)
         {

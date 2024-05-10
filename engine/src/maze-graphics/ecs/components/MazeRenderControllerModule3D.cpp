@@ -26,7 +26,7 @@
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/ecs/components/MazeRenderControllerModule3D.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/utils/MazeProfiler.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeLight3D.hpp"
@@ -35,7 +35,7 @@
 #include "maze-graphics/ecs/components/MazeTrailRenderer3D.hpp"
 #include "maze-graphics/ecs/components/MazeTrailRenderer3DHider.hpp"
 #include "maze-graphics/ecs/components/MazeLineRenderer3D.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-graphics/MazeRenderQueue.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
@@ -67,7 +67,7 @@ namespace Maze
 
     //////////////////////////////////////////
     RenderControllerModule3DPtr RenderControllerModule3D::Create(
-        ECSWorldPtr const& _world,
+        EcsWorldPtr const& _world,
         RenderSystemPtr const& _renderSystem)
     {
         RenderControllerModule3DPtr object;
@@ -77,7 +77,7 @@ namespace Maze
 
     //////////////////////////////////////////
     bool RenderControllerModule3D::init(
-        ECSWorldPtr const& _world,
+        EcsWorldPtr const& _world,
         RenderSystemPtr const& _renderSystem)
     {
         m_world = _world.get();

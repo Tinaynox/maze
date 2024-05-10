@@ -25,14 +25,14 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeECSGraphicsEvents_hpp_))
-#define _MazeECSGraphicsEvents_hpp_
+#if (!defined(_MazeEcsGraphicsEvents_hpp_))
+#define _MazeEcsGraphicsEvents_hpp_
 
 
 //////////////////////////////////////////
 #include "maze-graphics/MazeGraphicsHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-core/ecs/events/MazeECSEvents.hpp"
+#include "maze-core/ecs/events/MazeEcsEvents.hpp"
 #include "maze-core/math/MazeRect2D.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-graphics/MazeColorU32.hpp"
@@ -266,5 +266,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeECSGraphicsEvents_hpp_
+#endif // _MazeEcsGraphicsEvents_hpp_
 //////////////////////////////////////////

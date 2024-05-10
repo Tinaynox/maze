@@ -30,7 +30,7 @@
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/MazeComponentFactory.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
@@ -79,9 +79,9 @@ namespace Maze
     //////////////////////////////////////////
     bool EntityManager::init()
     {
-        m_defaultWorld = ECSWorld::Create(MAZE_HS("Default"), 0);
+        m_defaultWorld = EcsWorld::Create(MAZE_HS("Default"), 0);
 
-        m_libraryWorld = ECSWorld::Create(MAZE_HS("Library"), 100000000, false);
+        m_libraryWorld = EcsWorld::Create(MAZE_HS("Library"), 100000000, false);
         
         m_componentFactory = ComponentFactory::Create();
 

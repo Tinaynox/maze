@@ -150,7 +150,7 @@ namespace Maze
             m_canvas->getTransform()->getSize(),
             Vec2F(0.0f, 0.0f),
             m_canvas->getTransform(),
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F::c_zero,
             Vec2F::c_zero);
         canvasTransform->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>();
@@ -163,7 +163,7 @@ namespace Maze
             Vec2F(0.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             canvasTransform,
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         titleBackground->setColor(EditorToolsStyles::GetInstancePtr()->getTitleBackgroundColor());
@@ -178,7 +178,7 @@ namespace Maze
             Vec2F(100, EditorToolsStyles::GetInstancePtr()->getTitleHeight()),
             Vec2F(EditorToolsStyles::GetInstancePtr()->getTitleLabelShift(), 0),
             titleBackground->getTransform(),
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F(0.0f, 0.5f));
         titleText->setColor(ColorU32::c_black);
@@ -191,7 +191,7 @@ namespace Maze
             Vec2F(0.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_canvas->getTransform(),
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F::c_zero,
             Vec2F::c_zero);
         m_bodyBackground->setColor(EditorToolsStyles::GetInstancePtr()->getBodyBackgroundColor());
@@ -203,7 +203,7 @@ namespace Maze
             m_bodyBackground->getTransform()->getSize(),
             Vec2F::c_zero,
             m_bodyBackground->getTransform(),
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         m_layout->setExpand(true);
@@ -215,7 +215,7 @@ namespace Maze
             Vec2F(m_bodyBackground->getTransform()->getWidth() / 2.0f, m_bodyBackground->getTransform()->getHeight()),
             Vec2F::c_zero,
             m_layout->getTransform(),
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f),
             true,
@@ -237,7 +237,7 @@ namespace Maze
             Vec2F(m_bodyBackground->getTransform()->getWidth() / 2.0f, m_bodyBackground->getTransform()->getHeight()),
             Vec2F(m_bodyBackground->getTransform()->getWidth() / 2.0f, 0.0f),
             m_layout->getTransform(),
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f),
             true,
@@ -356,7 +356,7 @@ namespace Maze
 
             Transform2DPtr lineParent = m_assetsTreeLayoutTransform;
 
-            EntityPtr assetLineObject = getEntityRaw()->getECSScene()->createEntity();
+            EntityPtr assetLineObject = getEntityRaw()->getEcsScene()->createEntity();
             AssetLinePtr line = assetLineObject->ensureComponent<AssetLine>(this, assetFile);
 
             Size fullPathLastSlashPosition = fullPath.getPath().find_last_of('/');
@@ -537,7 +537,7 @@ namespace Maze
 
             Transform2DPtr lineParent = m_selectedAssetsFolderLayoutTransform;
 
-            EntityPtr assetLineObject = getEntityRaw()->getECSScene()->createEntity();
+            EntityPtr assetLineObject = getEntityRaw()->getEcsScene()->createEntity();
             AssetLinePtr line = assetLineObject->ensureComponent<AssetLine>(this, assetFile);
 
             line->getTransform()->setParent(lineParent);

@@ -28,7 +28,7 @@
 #include "maze-editor-tools/scenes/SceneDebugEditor.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
@@ -96,7 +96,7 @@ namespace Maze
     // Class SceneDebugEditor
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneDebugEditor, ECSRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneDebugEditor, EcsRenderScene);
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_DEFAULT(SceneDebugEditor);
@@ -143,7 +143,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SceneDebugEditor::init(RenderTargetPtr const& _renderTarget)
     {
-        if (!ECSRenderScene::init(_renderTarget))
+        if (!EcsRenderScene::init(_renderTarget))
             return false;
 
         InputManager* inputManager = InputManager::GetInstancePtr();

@@ -131,7 +131,7 @@ namespace Maze
             m_canvas->getTransform()->getSize(),
             Vec2F(0.0f, 0.0f),
             m_canvas->getTransform(),
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F::c_zero,
             Vec2F::c_zero);
         canvasTransform->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>();
@@ -144,7 +144,7 @@ namespace Maze
             Vec2F(0.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_canvas->getTransform(),
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F::c_zero,
             Vec2F::c_zero);
         m_bodyBackground->setColor(EditorToolsStyles::GetInstancePtr()->getBodyBackgroundColor());
@@ -156,7 +156,7 @@ namespace Maze
             m_bodyBackground->getTransform()->getSize(),
             Vec2F::c_zero,
             m_bodyBackground->getTransform(),
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F::c_zero,
             Vec2F::c_zero);
         m_leftLayout->setAutoWidth(false);
@@ -176,7 +176,7 @@ namespace Maze
                 gizmoToolsSprites[tool],
                 ColorU32(85, 85, 85),
                 m_leftLayout->getTransform(),
-                getEntityRaw()->getECSScene(),
+                getEntityRaw()->getEcsScene(),
                 Vec2F(16.0f, 16.0f));
             m_gizmoToolButtons[tool]->setCheckByClick(false);
             m_gizmoToolButtons[tool]->eventClick.subscribe(
@@ -194,7 +194,7 @@ namespace Maze
             m_bodyBackground->getTransform()->getSize(),
             Vec2F::c_zero,
             m_bodyBackground->getTransform(),
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F::c_zero,
             Vec2F::c_zero);
         m_layout->setAutoWidth(false);
@@ -204,7 +204,7 @@ namespace Maze
 
         m_pauseButton = EditorToolsUIHelper::CreateDefaultToggleButton(
             m_layout->getTransform(),
-            getEntityRaw()->getECSScene());
+            getEntityRaw()->getEcsScene());
         m_pauseButton->setCheckByClick(false);
         m_pauseButton->eventClick.subscribe(
             [](Button2D* _button, CursorInputEvent const& _event)
@@ -218,11 +218,11 @@ namespace Maze
             Vec2F::c_zero,
             MaterialManager::GetCurrentInstance()->getColorTextureMaterial(),
             m_pauseButton->getTransform(),
-            getEntityRaw()->getECSScene())->setColor(85, 85, 85);
+            getEntityRaw()->getEcsScene())->setColor(85, 85, 85);
 
         m_stepButton = EditorToolsUIHelper::CreateDefaultClickButton(
             m_layout->getTransform(),
-            getEntityRaw()->getECSScene());
+            getEntityRaw()->getEcsScene());
         m_stepButton->eventClick.subscribe(
             [](Button2D* _button, CursorInputEvent const& _event)
             {
@@ -238,7 +238,7 @@ namespace Maze
             Vec2F::c_zero,
             MaterialManager::GetCurrentInstance()->getColorTextureMaterial(),
             m_stepButton->getTransform(),
-            getEntityRaw()->getECSScene())->setColor(85, 85, 85);
+            getEntityRaw()->getEcsScene())->setColor(85, 85, 85);
 
         updateUI();
 

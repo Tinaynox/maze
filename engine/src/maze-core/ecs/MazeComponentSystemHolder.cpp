@@ -27,7 +27,7 @@
 #include "MazeCoreHeader.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 

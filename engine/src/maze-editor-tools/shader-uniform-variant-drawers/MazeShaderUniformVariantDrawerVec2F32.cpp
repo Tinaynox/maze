@@ -111,7 +111,7 @@ namespace Maze
             Vec2F(_parent->getWidth(), 18),
             Vec2F(0, 0),
             _parent,
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         layout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
@@ -127,7 +127,7 @@ namespace Maze
             Vec2F(8, 18),
             Vec2F(0, 0),
             layout->getTransform(),
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F::c_zero);
         titleText->setColor(EditorToolsStyles::GetInstancePtr()->getInspectorPropertyColor());
@@ -140,7 +140,7 @@ namespace Maze
                 Vec2F(200, 18),
                 Vec2F(0, 0),
                 layout->getTransform(),
-                _parent->getEntityRaw()->getECSScene());
+                _parent->getEntityRaw()->getEcsScene());
             layout2->setSpacing(2.0f);
 
             m_editBoxX = createF32Edit("X", layout2->getTransform());
@@ -159,7 +159,7 @@ namespace Maze
             Vec2F(53, 18),
             Vec2F(0, 0),
             _parent,
-            _parent->getEntityRaw()->getECSScene());
+            _parent->getEntityRaw()->getEcsScene());
         layout->setSpacing(1.0f);
 
         AbstractTextRenderer2DPtr titleText = EditorToolsUIHelper::CreateText(
@@ -171,7 +171,7 @@ namespace Maze
             Vec2F(6, 18),
             Vec2F(0, 0),            
             layout->getTransform(),
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F::c_zero);
         titleText->setColor(ColorU32::c_black);
@@ -183,7 +183,7 @@ namespace Maze
             Vec2F(60, 18),
             Vec2F(0, 0),
             layout->getTransform(),
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.5f, 0.5f),
             Vec2F::c_zero);
         editBox->eventTextInput.subscribe(this, &ShaderUniformVariantDrawerVec2F32::notifyTextInput);

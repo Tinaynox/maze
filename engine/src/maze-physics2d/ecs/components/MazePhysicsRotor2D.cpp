@@ -27,10 +27,10 @@
 #include "MazePhysics2DHeader.hpp"
 #include "maze-physics2d/ecs/components/MazePhysicsRotor2D.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
 #include "maze-physics2d/ecs/components/MazeRigidbody2D.hpp"
-#include "maze-physics2d/ecs/events/MazeECSPhysics2DEvents.hpp"
+#include "maze-physics2d/ecs/events/MazeEcsPhysics2DEvents.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 

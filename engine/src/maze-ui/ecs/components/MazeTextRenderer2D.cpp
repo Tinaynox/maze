@@ -43,7 +43,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/helpers/MazeMeshHelper.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
-#include "maze-graphics/ecs/events/MazeECSGraphicsEvents.hpp"
+#include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
@@ -141,7 +141,7 @@ namespace Maze
     //////////////////////////////////////////
     bool TextRenderer2D::init(
         Component* _component,
-        ECSWorld* _world,
+        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         if (!AbstractTextRenderer2D::init(

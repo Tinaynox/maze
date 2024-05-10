@@ -29,7 +29,7 @@
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"

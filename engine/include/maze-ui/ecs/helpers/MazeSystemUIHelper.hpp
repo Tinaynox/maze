@@ -32,7 +32,7 @@
 //////////////////////////////////////////
 #include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/math/MazeAnimationCurve.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/MazeColorGradient.hpp"
@@ -65,7 +65,7 @@ namespace Maze
             Vec2F const& _size,
             Vec2F const& _position,
             Transform2DPtr const& _parent,
-            ECSScene* _ecsScene,
+            EcsScene* _ecsScene,
             Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
             Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 
@@ -74,7 +74,7 @@ namespace Maze
             Vec2F const& _size,
             Vec2F const& _position,
             Transform2DPtr const& _parent,
-            ECSScene* _ecsScene,
+            EcsScene* _ecsScene,
             Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
             Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 

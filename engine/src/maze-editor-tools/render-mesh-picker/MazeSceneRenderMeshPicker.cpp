@@ -28,7 +28,7 @@
 #include "maze-editor-tools/render-mesh-picker/MazeSceneRenderMeshPicker.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
@@ -96,7 +96,7 @@ namespace Maze
     // Class SceneRenderMeshPicker
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneRenderMeshPicker, ECSRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneRenderMeshPicker, EcsRenderScene);
 
     //////////////////////////////////////////
     SceneRenderMeshPicker::SceneRenderMeshPicker()
@@ -134,7 +134,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SceneRenderMeshPicker::init(RenderTargetPtr const& _renderTarget)
     {
-        if (!ECSRenderScene::init(_renderTarget))
+        if (!EcsRenderScene::init(_renderTarget))
             return false;
 
         create2D();
@@ -179,7 +179,7 @@ namespace Maze
             Vec2F(m_canvas->getTransform()->getSize().x - 10.0f, 18),
             Vec2F(5, -2),
             m_canvas->getTransform(),
-            m_canvas->getEntityRaw()->getECSScene(),
+            m_canvas->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         m_filterEditBox->eventTextInput.subscribe(this, &SceneRenderMeshPicker::notifyFilterTextInput);
@@ -193,7 +193,7 @@ namespace Maze
             m_canvas->getTransform()->getSize() - Vec2F(0.0f, topOffset),
             Vec2F(0.0f, -topOffset),
             m_canvas->getTransform(),
-            m_canvas->getEntityRaw()->getECSScene(),
+            m_canvas->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f),
             false,
@@ -248,7 +248,7 @@ namespace Maze
 
             if (!horizontalLayout)
             {
-                EntityPtr horizontalLayoutObject = m_layout->getEntityRaw()->getECSScene()->createEntity();
+                EntityPtr horizontalLayoutObject = m_layout->getEntityRaw()->getEcsScene()->createEntity();
                 Transform2DPtr horizontalLayoutTransform = horizontalLayoutObject->ensureComponent<Transform2D>();
                 horizontalLayoutTransform->setParent(m_layout->getTransform());
                 horizontalLayoutTransform->setWidth(m_layout->getTransform()->getWidth());
@@ -272,7 +272,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneRenderMeshPicker::updateUI()
     {
-        if (getState() == ECSSceneState::Destroy)
+        if (getState() == EcsSceneState::Destroy)
             return;
 
         RenderMeshPtr const& currentRenderMesh = RenderMeshPickerManager::GetInstancePtr()->getRenderMesh();
@@ -314,7 +314,7 @@ namespace Maze
             { 94.0f, 110.0f },
             Vec2F::c_zero,
             nullptr,
-            m_layout->getEntityRaw()->getECSScene());
+            m_layout->getEntityRaw()->getEcsScene());
         data.bodyTransform->getEntityRaw()->ensureComponent<ScissorMask2D>();
 
         data.button = UIHelper::CreateToggleButton(
@@ -322,7 +322,7 @@ namespace Maze
             { data.bodyTransform->getWidth(), data.bodyTransform->getWidth() },
             Vec2F::c_zero,
             data.bodyTransform,
-            data.bodyTransform->getEntityRaw()->getECSScene(),
+            data.bodyTransform->getEntityRaw()->getEcsScene(),
             { 0.0f, 1.0f },
             { 0.0f, 1.0f });
         data.button->setCheckByClick(false);
@@ -333,7 +333,7 @@ namespace Maze
             Vec2F::c_zero,
             GraphicsManager::GetInstancePtr()->getDefaultRenderSystem()->getMaterialManager()->getColorTextureMaterial(),
             data.button->getTransform(),
-            data.bodyTransform->getEntityRaw()->getECSScene());
+            data.bodyTransform->getEntityRaw()->getEcsScene());
 
         String renderMeshName = _material ? _material->getName() : "None";
         renderMeshName = FileHelper::GetFileNameWithoutExtension(renderMeshName);
@@ -347,7 +347,7 @@ namespace Maze
             { data.bodyTransform->getWidth(), 10.0f },
             { 0.0f, -105.0f },
             data.bodyTransform,
-            data.bodyTransform->getEntityRaw()->getECSScene(),
+            data.bodyTransform->getEntityRaw()->getEcsScene(),
             { 0.5f, 1.0f },
             { 0.5f, 0.5f });
         data.titleText->setColor(ColorU32::c_black);

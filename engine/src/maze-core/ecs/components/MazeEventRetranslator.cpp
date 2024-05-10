@@ -27,7 +27,7 @@
 #include "MazeCoreHeader.hpp"
 #include "maze-core/ecs/components/MazeEventRetranslator.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 
 
 //////////////////////////////////////////
@@ -69,7 +69,7 @@ namespace Maze
     //////////////////////////////////////////
     void EventRetranslator::processEvent(Event* _event)
     {
-        getEntityRaw()->getECSWorld()->sendEventImmediate(getEntityId(), _event);
+        getEntityRaw()->getEcsWorld()->sendEventImmediate(getEntityId(), _event);
     }
 
     

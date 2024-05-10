@@ -39,11 +39,11 @@
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
-#include "maze-graphics/ecs/events/MazeECSGraphicsEvents.hpp"
+#include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
@@ -137,7 +137,7 @@ namespace Maze
     //////////////////////////////////////////
     bool TrailRenderer3D::init(
         Component* _component,
-        ECSWorld* _world,
+        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         m_renderSystem = _component->castRaw<TrailRenderer3D>()->m_renderSystem;
@@ -368,13 +368,13 @@ namespace Maze
     void TrailRenderer3D::processSceneSet()
     {
         MAZE_ERROR_RETURN_IF(!getEntityRaw(), "Entity is null");
-        MAZE_ERROR_RETURN_IF(!getEntityRaw()->getECSScene(), "Entity Scene is null");
+        MAZE_ERROR_RETURN_IF(!getEntityRaw()->getEcsScene(), "Entity Scene is null");
 
 #if (MAZE_DEBUG)
-        MAZE_ERROR_RETURN_IF(!getEntityRaw()->getECSScene()->getMetaClass()->isInheritedFrom<ECSRenderScene>(), "Entity Scene is not Render Scene");
+        MAZE_ERROR_RETURN_IF(!getEntityRaw()->getEcsScene()->getMetaClass()->isInheritedFrom<EcsRenderScene>(), "Entity Scene is not Render Scene");
 #endif
 
-        RenderTargetPtr const& renderTarget = getEntityRaw()->getECSScene()->castRaw<ECSRenderScene>()->getRenderTarget();
+        RenderTargetPtr const& renderTarget = getEntityRaw()->getEcsScene()->castRaw<EcsRenderScene>()->getRenderTarget();
 
         m_vao = VertexArrayObject::Create(m_renderSystem);
         m_renderMesh = renderTarget->createRenderMeshFromPool(1);

@@ -126,7 +126,7 @@ namespace Maze
 
         //////////////////////////////////////////
         static RenderControllerModule2DPtr Create(
-            ECSWorldPtr const& _world,
+            EcsWorldPtr const& _world,
             RenderSystemPtr const& _renderSystem);
 
 
@@ -155,7 +155,7 @@ namespace Maze
 
         //////////////////////////////////////////
         bool init(
-            ECSWorldPtr const& _world,
+            EcsWorldPtr const& _world,
             RenderSystemPtr const& _renderSystem);
 
         //////////////////////////////////////////
@@ -183,7 +183,7 @@ namespace Maze
         void updateSortedMeshRenderersList();
 
     protected:
-        ECSWorld* m_world = nullptr;
+        EcsWorld* m_world = nullptr;
         RenderSystemPtr m_renderSystem;
 
         SharedPtr<GenericInclusiveEntitiesSample<Transform2D>> m_transform2Ds;

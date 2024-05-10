@@ -111,7 +111,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SpriteRenderer2D::init(
         Component* _component,
-        ECSWorld* _world,
+        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         if (!Component::init(_component, _world, _copyData))
@@ -259,7 +259,7 @@ namespace Maze
         if (!m_canvasRenderer)
             return;
 
-        if (!getEntityRaw() || !getEntityRaw()->getECSScene())
+        if (!getEntityRaw() || !getEntityRaw()->getEcsScene())
             return;
 
         Vec2F const& size = m_transform->getSize();

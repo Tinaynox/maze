@@ -32,7 +32,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeComponentFactory.hpp"
@@ -241,7 +241,7 @@ namespace Maze
     void MaterialsInspector::clearRenderPassDrawers()
     {
         for (MaterialsRenderPassDrawerPtr const& drawer : m_renderPassDrawers)
-            drawer->getEntityRaw()->removeFromECSWorld();
+            drawer->getEntityRaw()->removeFromEcsWorld();
 
         m_renderPassDrawers.clear();
     }
@@ -263,7 +263,7 @@ namespace Maze
                 Size renderPassesCount = material->getRenderPassesCount(renderPassType);
                 for (Size i = 0; i < renderPassesCount; ++i)
                 {
-                    EntityPtr renderPassDrawerObject = m_parent->getEntityRaw()->getECSScene()->createEntity();
+                    EntityPtr renderPassDrawerObject = m_parent->getEntityRaw()->getEcsScene()->createEntity();
                     MaterialsRenderPassDrawerPtr renderPassDrawer = renderPassDrawerObject->createComponent<MaterialsRenderPassDrawer>(renderPassType, (S32)i);
                     renderPassDrawer->getTransform()->setParent(m_parent);
                     m_renderPassDrawers.emplace_back(renderPassDrawer);
@@ -280,14 +280,14 @@ namespace Maze
         if (m_shaderUniformVariantsRoot)
         {
             if (m_shaderUniformVariantsRoot->getEntityRaw())
-                m_shaderUniformVariantsRoot->getEntityRaw()->removeFromECSWorld();
+                m_shaderUniformVariantsRoot->getEntityRaw()->removeFromEcsWorld();
             m_shaderUniformVariantsRoot.reset();
         }
 
         if (m_shaderUniformVariantsLayout)
         {
             if (m_shaderUniformVariantsLayout->getEntityRaw())
-                m_shaderUniformVariantsLayout->getEntityRaw()->removeFromECSWorld();
+                m_shaderUniformVariantsLayout->getEntityRaw()->removeFromEcsWorld();
             m_shaderUniformVariantsLayout.reset();
         }
 
@@ -352,7 +352,7 @@ namespace Maze
                 Vec2F(m_parent->getWidth(), 0.0f),
                 Vec2F::c_zero,
                 m_parent,
-                m_parent->getEntityRaw()->getECSScene(),
+                m_parent->getEntityRaw()->getEcsScene(),
                 Vec2F(0.0f, 1.0f),
                 Vec2F(0.0f, 1.0f));
             SizePolicy2DPtr sizePolicy = m_shaderUniformVariantsRoot->getEntityRaw()->ensureComponent<SizePolicy2D>();
@@ -368,7 +368,7 @@ namespace Maze
                 Vec2F(0, 0),
                 renderSystem->getMaterialManager()->getColorMaterial(),
                 m_shaderUniformVariantsRoot,
-                m_shaderUniformVariantsRoot->getEntityRaw()->getECSScene(),
+                m_shaderUniformVariantsRoot->getEntityRaw()->getEcsScene(),
                 Vec2F(0.0f, 1.0f),
                 Vec2F(0.0f, 1.0f));
             lineRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
@@ -377,7 +377,7 @@ namespace Maze
                 Vec2F(m_parent->getWidth() - 16.0f, 50.0f),
                 Vec2F(8.0f, 0.0f),
                 m_shaderUniformVariantsRoot,
-                m_shaderUniformVariantsRoot->getEntityRaw()->getECSScene());
+                m_shaderUniformVariantsRoot->getEntityRaw()->getEcsScene());
             SizePolicy2DPtr topBlockSizePolicy = m_shaderUniformVariantsLayout->getEntityRaw()->ensureComponent<SizePolicy2D>();
             topBlockSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
             topBlockSizePolicy->setSizeDelta(-16.0f, 0.0f);
@@ -397,7 +397,7 @@ namespace Maze
                 Vec2F(50.0f, 8.0f),
                 Vec2F::c_zero,
                 m_shaderUniformVariantsLayout,
-                m_parent->getEntityRaw()->getECSScene())->setColor(ColorU32::c_black);
+                m_parent->getEntityRaw()->getEcsScene())->setColor(ColorU32::c_black);
 
             for (ShaderUniformVariantDrawerPtr const& drawer : m_shaderUniformVariantsDrawers)
                 drawer->buildUI(m_shaderUniformVariantsLayout);
@@ -409,7 +409,7 @@ namespace Maze
     {
         if (m_saveMaterialButtonRoot)
         {
-            m_saveMaterialButtonRoot->getEntityRaw()->removeFromECSWorld();
+            m_saveMaterialButtonRoot->getEntityRaw()->removeFromEcsWorld();
             m_saveMaterialButtonRoot.reset();
         }
     }
@@ -439,7 +439,7 @@ namespace Maze
                     Vec2F(m_parent->getWidth(), 22.0f),
                     Vec2F::c_zero,
                     m_parent,
-                    m_parent->getEntityRaw()->getECSScene(),
+                    m_parent->getEntityRaw()->getEcsScene(),
                     Vec2F(0.0f, 1.0f),
                     Vec2F(0.0f, 1.0f));
                 SizePolicy2DPtr sizePolicy = m_saveMaterialButtonRoot->getEntityRaw()->ensureComponent<SizePolicy2D>();
@@ -450,7 +450,7 @@ namespace Maze
                     Vec2F(250, 18),
                     Vec2F::c_zero,
                     m_saveMaterialButtonRoot,
-                    m_parent->getEntityRaw()->getECSScene());
+                    m_parent->getEntityRaw()->getEcsScene());
 
                 button->eventClick.subscribe(
                     [assetFileName, assetFileFullPath](Button2D* _button, CursorInputEvent const& _event)

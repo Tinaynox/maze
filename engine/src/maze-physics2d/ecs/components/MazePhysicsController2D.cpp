@@ -26,7 +26,7 @@
 //////////////////////////////////////////
 #include "MazePhysics2DHeader.hpp"
 #include "maze-physics2d/ecs/components/MazePhysicsController2D.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
@@ -35,7 +35,7 @@
 #include "maze-physics2d/helpers/MazeBox2DHelper.hpp"
 #include "maze-physics2d/managers/MazePhysics2DManager.hpp"
 #include "maze-physics2d/physics/MazePhysicsWorld2D.hpp"
-#include "maze-physics2d/ecs/events/MazeECSPhysics2DEvents.hpp"
+#include "maze-physics2d/ecs/events/MazeEcsPhysics2DEvents.hpp"
 
 
 //////////////////////////////////////////
@@ -108,20 +108,20 @@ namespace Maze
     //////////////////////////////////////////
     void PhysicsController2D::notifyFixedUpdateStart(F32 _dt)
     {
-        getEntityRaw()->getECSWorld()->sendEventImmediate<Physics2DFixedUpdateStartEvent>(_dt);
+        getEntityRaw()->getEcsWorld()->sendEventImmediate<Physics2DFixedUpdateStartEvent>(_dt);
     }
 
     //////////////////////////////////////////
     void PhysicsController2D::notifyFixedUpdateFinished(F32 _dt)
     {
-        getEntityRaw()->getECSWorld()->sendEventImmediate<Physics2DFixedUpdateFinishedEvent>(_dt);
+        getEntityRaw()->getEcsWorld()->sendEventImmediate<Physics2DFixedUpdateFinishedEvent>(_dt);
     }
 
     //////////////////////////////////////////
     void PhysicsController2D::notifyUpdateFinished(F32 _dt)
     {
         F32 accumulatorRatio = m_physicsWorld2D->getAccumulatorRatio();
-        getEntityRaw()->getECSWorld()->sendEventImmediate<Physics2DUpdateFinishedEvent>(_dt, accumulatorRatio);
+        getEntityRaw()->getEcsWorld()->sendEventImmediate<Physics2DUpdateFinishedEvent>(_dt, accumulatorRatio);
     }
     
 } // namespace Maze

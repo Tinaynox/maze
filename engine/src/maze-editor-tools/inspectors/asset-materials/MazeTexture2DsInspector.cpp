@@ -32,7 +32,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeComponentFactory.hpp"
@@ -226,7 +226,7 @@ namespace Maze
         {
             Texture2DPtr const& texture = *textures.begin();
 
-            EntityPtr drawerObject = m_parent->getEntityRaw()->getECSScene()->createEntity();
+            EntityPtr drawerObject = m_parent->getEntityRaw()->getEcsScene()->createEntity();
             Transform2DPtr transform = drawerObject->ensureComponent<Transform2D>();
             transform->setParent(m_parent);
             SizePolicy2DPtr sizePolicy = drawerObject->ensureComponent<SizePolicy2D>();

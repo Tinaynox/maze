@@ -27,7 +27,7 @@
 #include "MazeCoreHeader.hpp"
 #include "maze-core/ecs/MazeComponentSystem.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 
@@ -66,7 +66,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ComponentSystem::setWorld(ECSWorldPtr const& _world)
+    void ComponentSystem::setWorld(EcsWorldPtr const& _world)
     {
         m_world = _world;
         m_worldRaw = _world.get();

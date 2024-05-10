@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeECSEvents_hpp_))
-#define _MazeECSEvents_hpp_
+#if (!defined(_MazeEcsEvents_hpp_))
+#define _MazeEcsEvents_hpp_
 
 
 //////////////////////////////////////////
@@ -121,5 +121,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeECSEvents_hpp_
+#endif // _MazeEcsEvents_hpp_
 //////////////////////////////////////////

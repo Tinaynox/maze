@@ -32,7 +32,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/ecs/MazeComponentFactory.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
@@ -122,7 +122,7 @@ namespace Maze
             Vec2F(m_transform->getWidth() - 16.0f, 50.0f),
             Vec2F(8.0f, 0.0f),
             m_transform,
-            m_transform->getEntityRaw()->getECSScene());
+            m_transform->getEntityRaw()->getEcsScene());
         SizePolicy2DPtr topBlockSizePolicy = m_topBlock->getEntityRaw()->ensureComponent<SizePolicy2D>();
         topBlockSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
         topBlockSizePolicy->setSizeDelta(-16.0f, 0.0f);
@@ -143,7 +143,7 @@ namespace Maze
             Vec2F(50.0f, 8.0f),
             Vec2F::c_zero,
             m_topBlock,
-            m_transform->getEntityRaw()->getECSScene())->setColor(ColorU32::c_black);
+            m_transform->getEntityRaw()->getEcsScene())->setColor(ColorU32::c_black);
 
         // Shader
         {
@@ -153,7 +153,7 @@ namespace Maze
                 Vec2F(m_transform->getWidth(), 25.0f),
                 Vec2F::c_zero,
                 m_topBlock,
-                m_transform->getEntityRaw()->getECSScene());
+                m_transform->getEntityRaw()->getEcsScene());
             SizePolicy2DPtr topBlockShaderSizePolicy = layout->getEntityRaw()->ensureComponent<SizePolicy2D>();
             topBlockShaderSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
 
@@ -169,7 +169,7 @@ namespace Maze
                 Vec2F(50.0f, 8.0f),
                 Vec2F::c_zero,
                 layout->getTransform(),
-                m_transform->getEntityRaw()->getECSScene());
+                m_transform->getEntityRaw()->getEcsScene());
             topBlockShaderText->setColor(ColorU32::c_black);
 
             ClickButton2DPtr shaderClickButton = UIHelper::CreateDefaultClickButton(
@@ -177,7 +177,7 @@ namespace Maze
                 Vec2F(200.0f, 18.0f),
                 Vec2F(0, 0),
                 layout->getTransform(),
-                m_transform->getEntityRaw()->getECSScene(),
+                m_transform->getEntityRaw()->getEcsScene(),
                 Vec2F(0.0f, 0.5f),
                 Vec2F(0.0f, 0.5f));
 
@@ -190,7 +190,7 @@ namespace Maze
                 shaderClickButton->getTransform()->getSize(),
                 Vec2F::c_zero,
                 shaderClickButton->getTransform(),
-                m_transform->getEntityRaw()->getECSScene());
+                m_transform->getEntityRaw()->getEcsScene());
             m_topBlockShaderNameText->setColor(ColorU32::c_black);
 
             ScissorMask2DPtr shaderPanelBackgroundScissorMask = m_topBlockShaderNameText->getEntityRaw()->ensureComponent<ScissorMask2D>();

@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeECSTypes_hpp_))
-#define _MazeECSTypes_hpp_
+#if (!defined(_MazeEcsTypes_hpp_))
+#define _MazeEcsTypes_hpp_
 
 
 //////////////////////////////////////////
@@ -47,5 +47,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeECSTypes_hpp_
+#endif // _MazeEcsTypes_hpp_
 //////////////////////////////////////////

@@ -43,7 +43,7 @@
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeRenderPass.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
@@ -73,15 +73,15 @@ namespace Maze
         for (S32 renderMode = 0; renderMode < (S32)MeshRenderMode::MAX; ++renderMode)
         {
             if (m_lines[renderMode].entity)
-                m_lines[renderMode].entity->removeFromECSWorld();
+                m_lines[renderMode].entity->removeFromEcsWorld();
 
             if (m_triangles[renderMode].entity)
-                m_triangles[renderMode].entity->removeFromECSWorld();
+                m_triangles[renderMode].entity->removeFromEcsWorld();
         }
     }
 
     //////////////////////////////////////////
-    GizmosDrawerPtr GizmosDrawer::Create(ECSWorld* _world, RenderTarget* _renderTarget)
+    GizmosDrawerPtr GizmosDrawer::Create(EcsWorld* _world, RenderTarget* _renderTarget)
     {
         GizmosDrawerPtr object;
         MAZE_CREATE_AND_INIT_SHARED_PTR(GizmosDrawer, object, init(_world, _renderTarget));
@@ -89,7 +89,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool GizmosDrawer::init(ECSWorld* _world, RenderTarget* _renderTarget)
+    bool GizmosDrawer::init(EcsWorld* _world, RenderTarget* _renderTarget)
     {
         m_world = _world;
 
@@ -200,7 +200,7 @@ namespace Maze
                 [](GizmoBillboard3DPtr const& _gizmoBillboard)
                 {
                     if (_gizmoBillboard->getEntityRaw())
-                        _gizmoBillboard->getEntityRaw()->removeFromECSWorld();
+                        _gizmoBillboard->getEntityRaw()->removeFromEcsWorld();
                 }));
 
         return true;

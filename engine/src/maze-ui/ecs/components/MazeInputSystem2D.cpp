@@ -26,7 +26,7 @@
 //////////////////////////////////////////
 #include "MazeUIHeader.hpp"
 #include "maze-ui/ecs/components/MazeInputSystem2D.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
@@ -140,24 +140,24 @@ namespace Maze
     //////////////////////////////////////////
     void InputSystem2D::processEntityAwakened()
     {
-        m_canvasesSample = getEntityRaw()->getECSWorld()->requestInclusiveSample<Canvas>();
+        m_canvasesSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<Canvas>();
         m_canvasesSample->eventEntityAdded.subscribe(this, &InputSystem2D::processCanvasEntityAdded);
         m_canvasesSample->eventEntityRemoved.subscribe(this, &InputSystem2D::processCanvasEntityRemoved);
         updateSortedCanvasesList();
 
-        m_canvasScalersSample = getEntityRaw()->getECSWorld()->requestInclusiveSample<CanvasScaler>();
+        m_canvasScalersSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<CanvasScaler>();
 
 
-        m_UIElements2DSample = getEntityRaw()->getECSWorld()->requestInclusiveSample<UIElement2D>();
+        m_UIElements2DSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<UIElement2D>();
         m_UIElements2DSample->eventEntityAdded.subscribe(this, &InputSystem2D::processUIElement2DEntityAdded);
         m_UIElements2DSample->eventEntityRemoved.subscribe(this, &InputSystem2D::processUIElement2DEntityRemoved);
 
-        m_systemTextEditBoxesSample = getEntityRaw()->getECSWorld()->requestInclusiveSample<EditBox2D>();
-        m_systemTextDropdownsSample = getEntityRaw()->getECSWorld()->requestInclusiveSample<Dropdown2D>();
-        m_horizontalLayouts2D = getEntityRaw()->getECSWorld()->requestInclusiveSample<HorizontalLayout2D>();
-        m_verticalLayouts2D = getEntityRaw()->getECSWorld()->requestInclusiveSample<VerticalLayout2D>();
-        m_sizePolicy2D = getEntityRaw()->getECSWorld()->requestInclusiveSample<SizePolicy2D>();
-        m_scrollRects2D = getEntityRaw()->getECSWorld()->requestInclusiveSample<ScrollRect2D>();
+        m_systemTextEditBoxesSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<EditBox2D>();
+        m_systemTextDropdownsSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<Dropdown2D>();
+        m_horizontalLayouts2D = getEntityRaw()->getEcsWorld()->requestInclusiveSample<HorizontalLayout2D>();
+        m_verticalLayouts2D = getEntityRaw()->getEcsWorld()->requestInclusiveSample<VerticalLayout2D>();
+        m_sizePolicy2D = getEntityRaw()->getEcsWorld()->requestInclusiveSample<SizePolicy2D>();
+        m_scrollRects2D = getEntityRaw()->getEcsWorld()->requestInclusiveSample<ScrollRect2D>();
     }
 
     //////////////////////////////////////////

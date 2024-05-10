@@ -31,7 +31,7 @@
 
 //////////////////////////////////////////
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/utils/MazeDelegate.hpp"
@@ -73,13 +73,13 @@ namespace Maze
         MAZE_EDITOR_TOOLS_API String BuildComponentName(CString _componentName, CString _label = nullptr);
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity(CString _entityName, ECSScene* _scene = nullptr);
+        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity(CString _entityName, EcsScene* _scene = nullptr);
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity2D(CString _entityName, ECSScene* _scene = nullptr);
+        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity2D(CString _entityName, EcsScene* _scene = nullptr);
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity3D(CString _entityName, ECSScene* _scene = nullptr);
+        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity3D(CString _entityName, EcsScene* _scene = nullptr);
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API Path BuildNewAssetFileName(Path const& _fullPath);

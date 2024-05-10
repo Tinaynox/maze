@@ -33,7 +33,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -49,7 +49,7 @@
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-ui/ecs/components/MazeEditBox2D.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
@@ -73,7 +73,7 @@ namespace Maze
             Vec2F const& _size,
             Vec2F const& _position,
             Transform2DPtr const& _parent,
-            ECSScene* _ecsScene,
+            EcsScene* _ecsScene,
             Vec2F const& _anchor,
             Vec2F const& _pivot)
         {
@@ -174,7 +174,7 @@ namespace Maze
             Vec2F const& _size,
             Vec2F const& _position,
             Transform2DPtr const& _parent,
-            ECSScene* _ecsScene,
+            EcsScene* _ecsScene,
             Vec2F const& _anchor,
             Vec2F const& _pivot)
         {
@@ -278,7 +278,7 @@ namespace Maze
                 Vec2F(-5.0f, 0.0f),
                 renderSystem->getMaterialManager()->getColorTextureMaterial(),
                 transform,
-                spriteRenderer->getEntityRaw()->getECSScene(),
+                spriteRenderer->getEntityRaw()->getEcsScene(),
                 Vec2F(1.0f, 0.5f),
                 Vec2F(1.0f, 0.5f));
             expandButtonSprite->setColor(ColorU32::c_black);
@@ -347,7 +347,7 @@ namespace Maze
                         Vec2F(10.0f, 10.0f),
                         renderSystem->getMaterialManager()->getColorTextureMaterial(),
                         itemPrefabTransform,
-                        spriteRenderer->getEntityRaw()->getECSScene(),
+                        spriteRenderer->getEntityRaw()->getEcsScene(),
                         Vec2F(0.0f, 0.0f),
                         Vec2F(0.5f, 0.5f));
                     checkMarkSprite->getEntityRaw()->ensureComponent<Name>()->setName("CheckMark");

@@ -32,7 +32,7 @@
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
-#include "maze-core/ecs/MazeECSTypes.hpp"
+#include "maze-core/ecs/MazeEcsTypes.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
@@ -46,8 +46,8 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(Entity);
-    MAZE_USING_SHARED_PTR(ECSWorld);
-    MAZE_USING_SHARED_PTR(ECSScene);
+    MAZE_USING_SHARED_PTR(EcsWorld);
+    MAZE_USING_SHARED_PTR(EcsScene);
     MAZE_USING_SHARED_PTR(ComponentEntityLinker);
 
 
@@ -74,7 +74,7 @@ namespace Maze
         static EntityId const c_invalidEntityId;
 
         //////////////////////////////////////////
-        friend class ECSWorld;
+        friend class EcsWorld;
         friend class Component;
 
         //////////////////////////////////////////
@@ -113,13 +113,13 @@ namespace Maze
         //////////////////////////////////////////
         static EntityPtr Create(
             Entity* _entity,
-            ECSWorld* _world = nullptr,
+            EcsWorld* _world = nullptr,
             EntityCopyData _copyData = EntityCopyData());
 
         //////////////////////////////////////////
         inline static EntityPtr Create(
             EntityPtr const& _entity,
-            ECSWorld* _world = nullptr,
+            EcsWorld* _world = nullptr,
             EntityCopyData _copyData = EntityCopyData())
         {
             return Create(_entity.get(), _world, _copyData);
@@ -130,7 +130,7 @@ namespace Maze
 
         //////////////////////////////////////////
         inline EntityPtr createCopy(
-            ECSWorld* _world = nullptr,
+            EcsWorld* _world = nullptr,
             EntityCopyData _copyData = EntityCopyData())
         {
             return Create(this, _world, _copyData);
@@ -144,16 +144,16 @@ namespace Maze
         
        
         //////////////////////////////////////////
-        inline ECSWorld* getECSWorld() const { return m_world; }
+        inline EcsWorld* getEcsWorld() const { return m_world; }
 
         //////////////////////////////////////////
-        void setECSScene(ECSScene* _scene);
+        void setEcsScene(EcsScene* _scene);
 
         //////////////////////////////////////////
-        inline ECSScene* getECSScene() { return m_scene; }
+        inline EcsScene* getEcsScene() { return m_scene; }
 
         //////////////////////////////////////////
-        void removeFromECSWorld();
+        void removeFromEcsWorld();
 
 
         //////////////////////////////////////////
@@ -359,7 +359,7 @@ namespace Maze
         //////////////////////////////////////////
         bool init(
             Entity* _entity,
-            ECSWorld* _world,
+            EcsWorld* _world,
             EntityCopyData _copyData = EntityCopyData());
 
         
@@ -394,7 +394,7 @@ namespace Maze
         
         
         //////////////////////////////////////////
-        void setECSWorld(ECSWorld* _world);
+        void setEcsWorld(EcsWorld* _world);
 
 
         //////////////////////////////////////////
@@ -417,8 +417,8 @@ namespace Maze
         inline bool getActiveInHierarchyPrevFrame() const { return getFlag(Flags::ActiveInHierarchyPrevFrame); }
 
     protected:
-        ECSWorld* m_world = nullptr;
-        ECSScene* m_scene = nullptr;
+        EcsWorld* m_world = nullptr;
+        EcsScene* m_scene = nullptr;
         EntityId m_id;
         ComponentsContainer m_components;
         Set<ClassUID> m_componentUIDs;

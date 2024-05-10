@@ -43,7 +43,7 @@ namespace Maze
     // Class SceneProfilerView
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneProfilerView, ECSRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneProfilerView, EcsRenderScene);
 
     //////////////////////////////////////////
     SceneProfilerView::SceneProfilerView()
@@ -68,7 +68,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SceneProfilerView::init(RenderTargetPtr const& _renderTarget)
     {
-        if (!ECSRenderScene::init(_renderTarget))
+        if (!EcsRenderScene::init(_renderTarget))
             return false;
 
         create2D();
@@ -254,7 +254,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneProfilerView::updateUI()
     {
-        if (getState() == ECSSceneState::Destroy)
+        if (getState() == EcsSceneState::Destroy)
             return;
 
 

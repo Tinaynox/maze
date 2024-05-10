@@ -110,7 +110,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SystemTextRenderer3D::init(
         Component* _component,
-        ECSWorld* _world,
+        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         if (!AbstractTextRenderer::init(

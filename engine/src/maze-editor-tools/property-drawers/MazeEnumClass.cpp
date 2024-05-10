@@ -31,7 +31,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-graphics/ecs/helpers/MazeSpriteHelper.hpp"
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
@@ -109,7 +109,7 @@ namespace Maze
             Vec2F(_parent->getWidth(), 18),
             Vec2F(0, 0),
             _parent,
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         layout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
@@ -125,7 +125,7 @@ namespace Maze
             Vec2F(8, 18),
             Vec2F(0, 0),
             layout->getTransform(),
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F::c_zero);
         titleText->setColor(EditorToolsStyles::GetInstancePtr()->getInspectorPropertyColor());
@@ -137,7 +137,7 @@ namespace Maze
             Vec2F(0, 0),
             renderSystem->getMaterialManager()->getColorTextureMaterial(),
             layout->getTransform(),
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.5f, 0.5f),
             Vec2F::c_zero);
         spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
@@ -149,7 +149,7 @@ namespace Maze
             Vec2F(180, 18),
             Vec2F(0, 0),
             spriteRenderer->getTransform(),
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F(0.0f, 0.5f));
         m_dropdown->addOptions(m_enumValues);

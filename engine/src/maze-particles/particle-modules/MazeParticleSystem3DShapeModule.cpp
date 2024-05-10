@@ -29,7 +29,7 @@
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/math/MazeRandom.hpp"
 #include "maze-graphics/MazeMesh.hpp"
@@ -42,7 +42,7 @@
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 
 
 //////////////////////////////////////////

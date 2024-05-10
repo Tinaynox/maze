@@ -36,7 +36,7 @@
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/helpers/MazeFileHelper.hpp"
 #include "maze-graphics/MazeMesh.hpp"
@@ -163,7 +163,7 @@ namespace Maze
             m_transform->getSize(),
             Vec2F(10.0f, 0.0f),
             m_transform,
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         SizePolicy2DPtr mainLayoutSizePolicy = m_mainTransform->getEntityRaw()->ensureComponent<SizePolicy2D>();
@@ -176,7 +176,7 @@ namespace Maze
             Vec2F::c_zero,
             MaterialPtr(),
             m_mainTransform,
-            getEntityRaw()->getECSScene());
+            getEntityRaw()->getEcsScene());
         m_backgroundRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
 
         F32 x = 0;
@@ -187,7 +187,7 @@ namespace Maze
             Vec2F(x, 0) + Vec2F(charSize * 0.5f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_mainTransform,
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F(0.5f, 0.5f));
         m_dropDownRenderer->setColor(ColorU32::c_black);
@@ -202,7 +202,7 @@ namespace Maze
             Vec2F(x, 0) + Vec2F(charSize, 0.0f) * 0.5f,
             materialManager->getColorTextureMaterial(),
             m_mainTransform,
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F(0.5f, 0.5f));
         x += (F32)charSize + 4;
@@ -217,7 +217,7 @@ namespace Maze
             Vec2F(100, charSize + 6),
             Vec2F(x, 0),
             m_mainTransform,
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F(0.0f, 0.5f));
         m_textRenderer->setColor(ColorU32::c_black);
@@ -229,7 +229,7 @@ namespace Maze
             Vec2F(200, (F32)charSize + 4.0f),
             Vec2F(x, 0),
             m_mainTransform,
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F(0.0f, 0.5f));
         m_textEdit->eventSelectedChanged.subscribe(this, &AssetLine::notifyTextEditSelectedChanged);
@@ -249,7 +249,7 @@ namespace Maze
             Vec2F::c_zero,
             Vec2F(10.0f, 0.0f),
             m_transform,
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         // m_childrenLayout->setSpacing(5.0f);

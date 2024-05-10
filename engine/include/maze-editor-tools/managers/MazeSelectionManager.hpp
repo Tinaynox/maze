@@ -171,12 +171,12 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setECSWorld(ECSWorld* _world);
+        void setEcsWorld(EcsWorld* _world);
 
     protected:
         static SelectionManager* s_instance;
 
-        ECSWorld* m_world = nullptr;
+        EcsWorld* m_world = nullptr;
 
         SelectionType m_selectionType;
 

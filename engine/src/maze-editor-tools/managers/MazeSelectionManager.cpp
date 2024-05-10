@@ -36,7 +36,7 @@
 #include "maze-editor-tools/scenes/SceneDebugEditor.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 
 
 //////////////////////////////////////////
@@ -66,7 +66,7 @@ namespace Maze
             }
         }
 
-        setECSWorld(nullptr);
+        setEcsWorld(nullptr);
         
         if (AssetManager::GetInstancePtr())
             AssetManager::GetInstancePtr()->eventAssetFileRemoved.unsubscribe(this);
@@ -83,7 +83,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SelectionManager::init()
     {
-        setECSWorld(EntityManager::GetInstancePtr()->getDefaultWorldRaw());
+        setEcsWorld(EntityManager::GetInstancePtr()->getDefaultWorldRaw());
         AssetManager::GetInstancePtr()->eventAssetFileRemoved.subscribe(this, &SelectionManager::notifyAssetFileRemoved);
 
         return true;
@@ -174,7 +174,7 @@ namespace Maze
 
         m_selectedEntities.insert(_object);
 
-        setECSWorld(_object->getECSWorld());
+        setEcsWorld(_object->getEcsWorld());
 
         setSelectionType(SelectionType::Entities);
 
@@ -329,7 +329,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SelectionManager::setECSWorld(ECSWorld* _world)
+    void SelectionManager::setEcsWorld(EcsWorld* _world)
     {
         if (m_world == _world)
             return;

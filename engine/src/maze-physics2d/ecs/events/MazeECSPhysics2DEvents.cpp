@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazePhysics2DHeader.hpp"
-#include "maze-physics2d/ecs/events/MazeECSPhysics2DEvents.hpp"
+#include "maze-physics2d/ecs/events/MazeEcsPhysics2DEvents.hpp"
 
 
 //////////////////////////////////////////

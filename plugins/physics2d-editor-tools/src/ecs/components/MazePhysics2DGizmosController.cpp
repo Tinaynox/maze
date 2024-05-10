@@ -29,7 +29,7 @@
 #include "maze-physics2d/helpers/MazeBox2DHelper.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
@@ -86,7 +86,7 @@ namespace Maze
     //////////////////////////////////////////
     void Physics2DGizmosController::processEntityAwakened()
     {
-        m_drawer = GizmosDrawer::Create(getEntityRaw()->getECSWorld(), m_renderTarget);
+        m_drawer = GizmosDrawer::Create(getEntityRaw()->getEcsWorld(), m_renderTarget);
     }
 
     //////////////////////////////////////////
@@ -106,7 +106,7 @@ namespace Maze
     void Physics2DGizmosController::notifyRenderTargetDestroyed(RenderTarget* _renderTarget)
     {
         m_drawer.reset();
-        getEntityRaw()->getECSWorld()->update(0.0f);
+        getEntityRaw()->getEcsWorld()->update(0.0f);
     }
 
     //////////////////////////////////////////

@@ -35,7 +35,7 @@
 #include "maze-editor-tools/scenes/SceneDebugEditor.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-editor-tools/property-drawers/MazeBool.hpp"
 #include "maze-editor-tools/property-drawers/MazeS32.hpp"
 #include "maze-editor-tools/property-drawers/MazeF32.hpp"

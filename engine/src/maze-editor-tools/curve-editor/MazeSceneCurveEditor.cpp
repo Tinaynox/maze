@@ -28,7 +28,7 @@
 #include "maze-editor-tools/curve-editor/MazeSceneCurveEditor.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
@@ -99,7 +99,7 @@ namespace Maze
     // Class SceneCurveEditor
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneCurveEditor, ECSRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneCurveEditor, EcsRenderScene);
 
     //////////////////////////////////////////
     SceneCurveEditor::SceneCurveEditor()
@@ -162,7 +162,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SceneCurveEditor::init(RenderTargetPtr const& _renderTarget)
     {
-        if (!ECSRenderScene::init(_renderTarget))
+        if (!EcsRenderScene::init(_renderTarget))
             return false;
 
 
@@ -686,7 +686,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneCurveEditor::updateUI()
     {
-        if (getState() == ECSSceneState::Destroy)
+        if (getState() == EcsSceneState::Destroy)
             return;
 
         processCurve();

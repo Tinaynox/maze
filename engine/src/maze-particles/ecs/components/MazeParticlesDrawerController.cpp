@@ -26,7 +26,7 @@
 //////////////////////////////////////////
 #include "MazeParticlesHeader.hpp"
 #include "maze-particles/ecs/components/MazeParticlesDrawerController.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
@@ -39,7 +39,7 @@
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
-#include "maze-graphics/ecs/events/MazeECSGraphicsEvents.hpp"
+#include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
 #include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
@@ -89,7 +89,7 @@ namespace Maze
     //////////////////////////////////////////
     void ParticlesDrawerController::processEntityAwakened()
     {
-        m_particleSystem3DSample = getEntityRaw()->getECSWorld()->requestInclusiveSample<ParticleSystem3D>();
+        m_particleSystem3DSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<ParticleSystem3D>();
     }
 
 

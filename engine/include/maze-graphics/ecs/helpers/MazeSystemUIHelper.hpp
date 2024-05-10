@@ -31,7 +31,7 @@
 
 //////////////////////////////////////////
 #include "maze-graphics/MazeGraphicsHeader.hpp"
-#include "maze-core/ecs/MazeECSTypes.hpp"
+#include "maze-core/ecs/MazeEcsTypes.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
@@ -50,8 +50,8 @@ namespace Maze
     MAZE_USING_SHARED_PTR(LineRenderer2D);
     MAZE_USING_SHARED_PTR(SimpleLineRenderer2D);
     MAZE_USING_SHARED_PTR(Transform2D);
-    MAZE_USING_SHARED_PTR(ECSWorld);
-    MAZE_USING_SHARED_PTR(ECSScene);
+    MAZE_USING_SHARED_PTR(EcsWorld);
+    MAZE_USING_SHARED_PTR(EcsScene);
     MAZE_USING_SHARED_PTR(Sprite);
 
     //////////////////////////////////////////
@@ -66,7 +66,7 @@ namespace Maze
             Vec2F const& _size, 
             Vec2F const& _position,
             Transform2DPtr const& _parent,
-            ECSScene* _ecsScene,
+            EcsScene* _ecsScene,
             Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
             Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 

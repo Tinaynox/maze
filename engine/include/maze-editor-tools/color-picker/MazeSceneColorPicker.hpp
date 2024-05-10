@@ -31,7 +31,7 @@
 
 //////////////////////////////////////////
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/utils/MazeDelegate.hpp"
@@ -48,7 +48,7 @@
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
@@ -69,12 +69,12 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_EDITOR_TOOLS_API SceneColorPicker
-        : public ECSRenderScene
+        : public EcsRenderScene
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneColorPicker, ECSRenderScene);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneColorPicker, EcsRenderScene);
 
     public:
 
@@ -97,7 +97,7 @@ namespace Maze
         SceneColorPicker();
 
         //////////////////////////////////////////
-        // using ECSRenderScene::init;
+        // using EcsRenderScene::init;
 
         //////////////////////////////////////////
         virtual bool init(RenderTargetPtr const& _renderTarget);

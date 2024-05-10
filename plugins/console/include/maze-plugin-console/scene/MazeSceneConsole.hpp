@@ -32,7 +32,7 @@
 //////////////////////////////////////////
 #include "maze-plugin-console/MazeConsoleHeader.hpp"
 #include "maze-core/system/MazeInputEvent.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
@@ -54,12 +54,12 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_PLUGIN_CONSOLE_API SceneConsole
-        : public ECSRenderScene
+        : public EcsRenderScene
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneConsole, ECSRenderScene);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneConsole, EcsRenderScene);
 
     public:
 

@@ -31,7 +31,7 @@
 
 //////////////////////////////////////////
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/utils/MazeDelegate.hpp"
@@ -70,27 +70,27 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API ToggleButton2DPtr CreateDefaultToggleButton(
             Transform2DPtr const& _parent,
-            ECSScene* _ecsScene);
+            EcsScene* _ecsScene);
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API ToggleButton2DPtr CreateDefaultToggleButton(
             SpritePtr const& _sprite,
             ColorU32 const& _spriteColor,
             Transform2DPtr const& _parent,
-            ECSScene* _ecsScene,
+            EcsScene* _ecsScene,
             Vec2F const& _spriteSize = Vec2F(14.0f, 14.0f));
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API ClickButton2DPtr CreateDefaultClickButton(
             Transform2DPtr const& _parent,
-            ECSScene* _ecsScene);
+            EcsScene* _ecsScene);
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API ClickButton2DPtr CreateDefaultClickButton(
             SpritePtr const& _sprite,
             ColorU32 const& _spriteColor,
             Transform2DPtr const& _parent,
-            ECSScene* _ecsScene,
+            EcsScene* _ecsScene,
             Vec2F const& _spriteSize = Vec2F(14.0f, 14.0f));
 
 
@@ -104,7 +104,7 @@ namespace Maze
             Vec2F const& _size,
             Vec2F const& _position,
             Transform2DPtr const& _parent,
-            ECSScene* _ecsScene,
+            EcsScene* _ecsScene,
             Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
             Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 
@@ -114,7 +114,7 @@ namespace Maze
             Vec2F const& _size,
             Vec2F const& _position,
             Transform2DPtr const& _parent,
-            ECSScene* _ecsScene,
+            EcsScene* _ecsScene,
             Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
             Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 
@@ -125,7 +125,7 @@ namespace Maze
             Vec2F const& _size,
             Vec2F const& _position,
             Transform2DPtr const& _parent,
-            ECSScene* _ecsScene,
+            EcsScene* _ecsScene,
             Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
             Vec2F const& _pivot = Vec2F(0.5f, 0.5f),
             bool _hdrLabel = true,
@@ -137,7 +137,7 @@ namespace Maze
             Vec2F const& _size,
             Vec2F const& _position,
             Transform2DPtr const& _parent,
-            ECSScene* _ecsScene,
+            EcsScene* _ecsScene,
             Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
             Vec2F const& _pivot = Vec2F(0.5f, 0.5f),
             bool _hdrLabel = true,
@@ -152,7 +152,7 @@ namespace Maze
             Vec2F const& _size,
             Vec2F const& _position,
             Transform2DPtr const& _parent,
-            ECSScene* _ecsScene,
+            EcsScene* _ecsScene,
             Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
             Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 
@@ -162,7 +162,7 @@ namespace Maze
             Vec2F const& _size,
             Vec2F const& _position,
             Transform2DPtr const& _parent,
-            ECSScene* _ecsScene,
+            EcsScene* _ecsScene,
             Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
             Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
 

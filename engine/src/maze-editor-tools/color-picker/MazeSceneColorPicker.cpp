@@ -28,7 +28,7 @@
 #include "maze-editor-tools/color-picker/MazeSceneColorPicker.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
@@ -91,7 +91,7 @@ namespace Maze
     // Class SceneColorPicker
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneColorPicker, ECSRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneColorPicker, EcsRenderScene);
 
     //////////////////////////////////////////
     SceneColorPicker::SceneColorPicker()
@@ -154,7 +154,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SceneColorPicker::init(RenderTargetPtr const& _renderTarget)
     {
-        if (!ECSRenderScene::init(_renderTarget))
+        if (!EcsRenderScene::init(_renderTarget))
             return false;
 
         create2D();
@@ -813,7 +813,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneColorPicker::updateUI()
     {
-        if (getState() == ECSSceneState::Destroy)
+        if (getState() == EcsSceneState::Destroy)
             return;
 
         ColorU32 color = ColorHelper::ConvertHSVToRGB(m_hsv);

@@ -28,7 +28,7 @@
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
@@ -198,9 +198,9 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity(CString _entityName, ECSScene* _scene)
+        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity(CString _entityName, EcsScene* _scene)
         {
-            ECSScene* mainScene = _scene ? _scene : SceneManager::GetInstancePtr()->getMainScene().get();
+            EcsScene* mainScene = _scene ? _scene : SceneManager::GetInstancePtr()->getMainScene().get();
             MAZE_ERROR_RETURN_VALUE_IF(!mainScene, nullptr, "MainScene is null!");
 
             EntityPtr entity = mainScene->createEntity(_entityName);
@@ -208,9 +208,9 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity2D(CString _entityName, ECSScene* _scene)
+        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity2D(CString _entityName, EcsScene* _scene)
         {
-            ECSScene* mainScene = _scene ? _scene : SceneManager::GetInstancePtr()->getMainScene().get();
+            EcsScene* mainScene = _scene ? _scene : SceneManager::GetInstancePtr()->getMainScene().get();
             MAZE_ERROR_RETURN_VALUE_IF(!mainScene, nullptr, "MainScene is null!");
 
             Transform2DPtr transform = SpriteHelper::CreateTransform2D(
@@ -226,7 +226,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity3D(CString _entityName, ECSScene* _scene)
+        MAZE_EDITOR_TOOLS_API EntityPtr CreateEntity3D(CString _entityName, EcsScene* _scene)
         {
             EntityPtr entity = CreateEntity(_entityName, _scene);
 

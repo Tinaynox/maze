@@ -31,7 +31,7 @@
 
 //////////////////////////////////////////
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/utils/MazeDelegate.hpp"
@@ -49,7 +49,7 @@
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeCanvasGroup.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionAlpha.hpp"
 #include "maze-ui/ecs/components/MazeUITweenTransitionScale.hpp"
@@ -69,12 +69,12 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_EDITOR_TOOLS_API SceneDebugPreview
-        : public ECSRenderScene
+        : public EcsRenderScene
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneDebugPreview, ECSRenderScene);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneDebugPreview, EcsRenderScene);
 
         //////////////////////////////////////////
         MAZE_DECLARE_MEMORY_ALLOCATION(SceneDebugPreview);
@@ -134,7 +134,7 @@ namespace Maze
         void createSystems();
 
         //////////////////////////////////////////
-        virtual ECSWorld* assignWorld() MAZE_OVERRIDE;
+        virtual EcsWorld* assignWorld() MAZE_OVERRIDE;
 
     protected:
         Transform3DPtr m_previewNodeTransform;
@@ -147,7 +147,7 @@ namespace Maze
         Vec2F m_cursorPositionLastFrame;
         bool m_cursorDrag;
 
-        ECSWorldPtr m_previewWorld;
+        EcsWorldPtr m_previewWorld;
 
         InputSystem2DPtr m_inputSystem2D;
         RenderControllerPtr m_renderController;        

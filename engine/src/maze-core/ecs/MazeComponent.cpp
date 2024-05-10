@@ -58,7 +58,7 @@ namespace Maze
     //////////////////////////////////////////
     ComponentPtr Component::Create(
         Component* _component,
-        ECSWorld* _world,
+        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         MetaClass* metaClass = _component->getMetaClass();
@@ -73,7 +73,7 @@ namespace Maze
     //////////////////////////////////////////
     bool Component::init(
         Component* _component,
-        ECSWorld* _world,
+        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         _copyData.getComponents()[_component] = this;

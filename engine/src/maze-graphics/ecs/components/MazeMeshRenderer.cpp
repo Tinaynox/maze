@@ -29,7 +29,7 @@
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-graphics/MazeMesh.hpp"
@@ -43,8 +43,8 @@
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
-#include "maze-graphics/ecs/events/MazeECSGraphicsEvents.hpp"
+#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
+#include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
@@ -103,7 +103,7 @@ namespace Maze
     //////////////////////////////////////////
     bool MeshRenderer::init(
         Component* _component,
-        ECSWorld* _world,
+        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         m_renderSystem = _component->castRaw<MeshRenderer>()->m_renderSystem;
@@ -138,10 +138,10 @@ namespace Maze
         MAZE_ERROR_RETURN_IF(!m_renderSystem, "Render system is null");
 
         MAZE_ERROR_RETURN_IF(!getEntityRaw(), "Entity is null");
-        MAZE_ERROR_RETURN_IF(!getEntityRaw()->getECSScene(), "Entity Scene is null");
+        MAZE_ERROR_RETURN_IF(!getEntityRaw()->getEcsScene(), "Entity Scene is null");
 
 #if (MAZE_DEBUG)
-        MAZE_ERROR_RETURN_IF(!getEntityRaw()->getECSScene()->getMetaClass()->isInheritedFrom<ECSRenderScene>(), "Entity Scene is not Render Scene");
+        MAZE_ERROR_RETURN_IF(!getEntityRaw()->getEcsScene()->getMetaClass()->isInheritedFrom<EcsRenderScene>(), "Entity Scene is not Render Scene");
 #endif
 
         if (!_mesh)
@@ -150,7 +150,7 @@ namespace Maze
             return;
         }
 
-        RenderTargetPtr const& renderTarget = getEntityRaw()->getECSScene()->castRaw<ECSRenderScene>()->getRenderTarget();
+        RenderTargetPtr const& renderTarget = getEntityRaw()->getEcsScene()->castRaw<EcsRenderScene>()->getRenderTarget();
 
         if (!m_renderMeshRef.getRenderMesh())
             m_renderMeshRef.setRenderMesh(renderTarget->createRenderMeshFromPool((S32)_mesh->getSubMeshesCount()));

@@ -38,7 +38,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
-#include "maze-physics2d/ecs/events/MazeECSPhysics2DEvents.hpp"
+#include "maze-physics2d/ecs/events/MazeEcsPhysics2DEvents.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
@@ -127,7 +127,7 @@ namespace Maze
     //////////////////////////////////////////
     bool Rigidbody2D::init(
         Component* _component,
-        ECSWorld* _world,
+        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         if (!Component::init(_component, _world, _copyData))

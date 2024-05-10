@@ -41,7 +41,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(Physics2DGizmosController);
-    MAZE_USING_SHARED_PTR(ECSWorld);
+    MAZE_USING_SHARED_PTR(EcsWorld);
     MAZE_USING_SHARED_PTR(EntitiesSample);
     MAZE_USING_SHARED_PTR(GizmosDrawer);
     MAZE_USING_SHARED_PTR(RenderTarget);

@@ -32,7 +32,7 @@
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 
 
 //////////////////////////////////////////
@@ -110,11 +110,11 @@ namespace Maze
     {
         static LightingSettingsPtr const nullPointer;
 
-        ECSScene* cameraScene = getEntityRaw()->getECSScene();
+        EcsScene* cameraScene = getEntityRaw()->getEcsScene();
         if (cameraScene)
         {
-            MAZE_DEBUG_ERROR_IF(!cameraScene->getMetaClass()->isInheritedFrom<ECSRenderScene>(), "It is not a render scene!");
-            ECSRenderScene* renderScene = cameraScene->castRaw<ECSRenderScene>();
+            MAZE_DEBUG_ERROR_IF(!cameraScene->getMetaClass()->isInheritedFrom<EcsRenderScene>(), "It is not a render scene!");
+            EcsRenderScene* renderScene = cameraScene->castRaw<EcsRenderScene>();
 
             LightingSettingsPtr const& lightingSettings = renderScene->getLightingSettings();
             return lightingSettings;

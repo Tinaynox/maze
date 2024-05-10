@@ -122,7 +122,7 @@ namespace Maze
             Vec2F(_parent->getWidth(), 18),
             Vec2F(0, 0),
             _parent,
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         layout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
@@ -139,7 +139,7 @@ namespace Maze
             Vec2F(8, 18),
             Vec2F(0, 0),
             layout->getTransform(),
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F::c_zero);
         titleText->setColor(EditorToolsStyles::GetInstancePtr()->getInspectorPropertyColor());
@@ -150,7 +150,7 @@ namespace Maze
             Vec2F(_parent->getWidth(), 18),
             Vec2F(0, 0),
             layout->getTransform(),
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         m_layout->setAutoWidth(true);
@@ -165,7 +165,7 @@ namespace Maze
                 Vec2F(60, 18),
                 Vec2F(0, 0),
                 m_layout->getTransform(),
-                _parent->getEntityRaw()->getECSScene(),
+                _parent->getEntityRaw()->getEcsScene(),
                 Vec2F(0.5f, 0.5f),
                 Vec2F::c_zero);
             m_editBoxFrom->eventTextInput.subscribe(this, &PropertyDrawerParticleSystemParameterF32::notifyTextInput);
@@ -178,7 +178,7 @@ namespace Maze
                 Vec2F(60, 18),
                 Vec2F(0, 0),
                 m_layout->getTransform(),
-                _parent->getEntityRaw()->getECSScene(),
+                _parent->getEntityRaw()->getEcsScene(),
                 Vec2F(0.5f, 0.5f),
                 Vec2F::c_zero);
             m_editBoxTo->eventTextInput.subscribe(this, &PropertyDrawerParticleSystemParameterF32::notifyTextInput);
@@ -191,7 +191,7 @@ namespace Maze
                 Vec2F(60, 18),
                 Vec2F(0, 0),
                 m_layout->getTransform(),
-                _parent->getEntityRaw()->getECSScene(),
+                _parent->getEntityRaw()->getEcsScene(),
                 Vec2F(0.5f, 0.5f),
                 Vec2F::c_zero);
             m_curveFrom->eventCurveChanged.subscribe(this, &PropertyDrawerParticleSystemParameterF32::notifyCurveChanged);
@@ -201,7 +201,7 @@ namespace Maze
                 Vec2F(60, 18),
                 Vec2F(0, 0),
                 m_layout->getTransform(),
-                _parent->getEntityRaw()->getECSScene(),
+                _parent->getEntityRaw()->getEcsScene(),
                 Vec2F(0.5f, 0.5f),
                 Vec2F::c_zero);
             m_curveTo->eventCurveChanged.subscribe(this, &PropertyDrawerParticleSystemParameterF32::notifyCurveChanged);
@@ -439,7 +439,7 @@ namespace Maze
     {
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
-        EntityPtr dropdownEntity = m_layout->getEntityRaw()->getECSScene()->createEntity();
+        EntityPtr dropdownEntity = m_layout->getEntityRaw()->getEcsScene()->createEntity();
         dropdownEntity->ensureComponent<Name>("Dropdown");
 
         m_modeDropdown = dropdownEntity->createComponent<Dropdown2D>();
@@ -511,7 +511,7 @@ namespace Maze
             Vec2F(0.0f, 0.0f),
             renderSystem->getMaterialManager()->getColorTextureMaterial(),
             transform,
-            spriteRenderer->getEntityRaw()->getECSScene(),
+            spriteRenderer->getEntityRaw()->getEcsScene(),
             Vec2F(0.5f, 0.5f),
             Vec2F(0.5f, 0.5f));
         expandButtonSprite->setColor(ColorU32::c_black);
@@ -528,7 +528,7 @@ namespace Maze
                 Vec2F::c_zero,
                 renderSystem->getMaterialManager()->getColorTextureMaterial(),
                 transform,
-                m_layout->getEntityRaw()->getECSScene(),
+                m_layout->getEntityRaw()->getEcsScene(),
                 Vec2F(1.0f, 0.0f),
                 Vec2F(1.0f, 1.0f));
             listTemplateSpriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
@@ -555,7 +555,7 @@ namespace Maze
                     Vec2F(width - 2.0f, 20.0f),
                     Vec2F(1.0f, 0.0f),
                     transform,
-                    m_layout->getEntityRaw()->getECSScene(),
+                    m_layout->getEntityRaw()->getEcsScene(),
                     Vec2F(0.0f, 1.0f),
                     Vec2F(0.0f, 1.0f));
 
@@ -571,7 +571,7 @@ namespace Maze
                     Vec2F(0.0f, 2.0f),
                     renderSystem->getMaterialManager()->getColorTextureMaterial(),
                     itemPrefabTransform,
-                    m_layout->getEntityRaw()->getECSScene());
+                    m_layout->getEntityRaw()->getEcsScene());
                 backgroundSpriteRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Background");
                 backgroundSpriteRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
 
@@ -581,7 +581,7 @@ namespace Maze
                     Vec2F(10.0f, 10.0f),
                     renderSystem->getMaterialManager()->getColorTextureMaterial(),
                     itemPrefabTransform,
-                    spriteRenderer->getEntityRaw()->getECSScene(),
+                    spriteRenderer->getEntityRaw()->getEcsScene(),
                     Vec2F(0.0f, 0.0f),
                     Vec2F(0.5f, 0.5f));
                 checkMarkSprite->getEntityRaw()->ensureComponent<Name>()->setName("CheckMark");
@@ -595,7 +595,7 @@ namespace Maze
                     Vec2F(width, 20.0f),
                     Vec2F(20.0f, 0.0f),
                     itemPrefabTransform,
-                    m_layout->getEntityRaw()->getECSScene(),
+                    m_layout->getEntityRaw()->getEcsScene(),
                     Vec2F::c_zero,
                     Vec2F::c_zero);
                 itemTextRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Label");

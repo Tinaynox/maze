@@ -108,7 +108,7 @@ namespace Maze
             Vec2F(_parent->getWidth(), 18),
             Vec2F(0, 0),
             _parent,
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         layout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
@@ -124,7 +124,7 @@ namespace Maze
             Vec2F(8, 18),
             Vec2F(0, 0),
             layout->getTransform(),
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F::c_zero);
         titleText->setColor(EditorToolsStyles::GetInstancePtr()->getInspectorPropertyColor());
@@ -136,7 +136,7 @@ namespace Maze
             Vec2F(_parent->getWidth(), 18),
             Vec2F(0, 0),
             layout->getTransform(),
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         textureBlockLayout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
@@ -148,7 +148,7 @@ namespace Maze
             Vec2F(18, 18),
             Vec2F::c_zero,
             textureBlockLayout->getTransform(),
-            _parent->getEntityRaw()->getECSScene());
+            _parent->getEntityRaw()->getEcsScene());
         m_selectAssetButton->setNormalColor(ColorU32{ 50, 50, 50 });
         m_selectAssetButton->setFocusedColor(ColorU32{ 100, 100, 100 });
         m_selectAssetButton->setSelectedColor(ColorU32{ 150, 150, 150 });
@@ -161,7 +161,7 @@ namespace Maze
             Vec2F::c_zero,
             materialManager->getColorMaterial(),
             textureBlockLayout->getTransform(),
-            _parent->getEntityRaw()->getECSScene());
+            _parent->getEntityRaw()->getEcsScene());
         textureHolder->setColor(ColorU32(50, 50, 50));
         
         m_sprite = Sprite::Create();
@@ -173,7 +173,7 @@ namespace Maze
             Vec2F::c_zero,
             materialManager->getColorTextureMaterial(),
             textureHolder->getTransform(),
-            _parent->getEntityRaw()->getECSScene());
+            _parent->getEntityRaw()->getEcsScene());
     }
 
     //////////////////////////////////////////

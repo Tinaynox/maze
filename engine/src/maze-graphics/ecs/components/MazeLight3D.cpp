@@ -98,7 +98,7 @@ namespace Maze
     //////////////////////////////////////////
     bool Light3D::init(
         Component* _component,
-        ECSWorld* _world,
+        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         m_renderSystem = _component->castRaw<Light3D>()->m_renderSystem;

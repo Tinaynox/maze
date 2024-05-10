@@ -36,7 +36,7 @@
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/utils/MazeClassInfo.hpp"
 #include "maze-core/system/MazeTimer.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 
 
@@ -46,7 +46,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(SceneManager);
-    MAZE_USING_SHARED_PTR(ECSScene);
+    MAZE_USING_SHARED_PTR(EcsScene);
 
 
     //////////////////////////////////////////
@@ -59,13 +59,13 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        using ScenesList = Vector<ECSScenePtr>;
+        using ScenesList = Vector<EcsScenePtr>;
 
         //////////////////////////////////////////
         struct SceneData
         {
             EcsSceneId id;
-            ECSScenePtr scene;
+            EcsScenePtr scene;
         };
 
     public:
@@ -81,17 +81,17 @@ namespace Maze
         virtual void update(F32 _dt) MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        void destroyScene(ECSScenePtr const& _scene);
+        void destroyScene(EcsScenePtr const& _scene);
 
         //////////////////////////////////////////
         void destroyScene(EcsSceneId _sceneId);
 
 
         //////////////////////////////////////////
-        void setMainScene(ECSScenePtr const& _value);
+        void setMainScene(EcsScenePtr const& _value);
 
         //////////////////////////////////////////
-        ECSScenePtr const& getMainScene() const { return m_mainScene; }
+        EcsScenePtr const& getMainScene() const { return m_mainScene; }
 
 
         //////////////////////////////////////////
@@ -120,7 +120,7 @@ namespace Maze
                 
                 Debug::log << "Creating Scene '" << ClassInfo<TScene>::Name() << "'..." << endl;
 
-                ECSScenePtr scene = std::static_pointer_cast<ECSScene>(TScene::Create(_args...));
+                EcsScenePtr scene = std::static_pointer_cast<EcsScene>(TScene::Create(_args...));
                 MAZE_RETURN_VALUE_IF(!scene, nullPointer);
 
                 MAZE_DEBUG_BP_IF(scene->getClassUID() != ClassInfo<TScene>::UID());
@@ -131,7 +131,7 @@ namespace Maze
                 m_scenes[sceneId.getIndex()].scene = scene;
 
                 scene->setId(sceneId);
-                scene->setState(ECSSceneState::Created);                
+                scene->setState(EcsSceneState::Created);                
 
                 if (!m_mainScene && isGoodMainScene(scene))
                     setMainScene(scene);
@@ -199,10 +199,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        bool isGoodMainScene(ECSScenePtr const& _scene);
+        bool isGoodMainScene(EcsScenePtr const& _scene);
 
         //////////////////////////////////////////
-        ECSScenePtr const& findNewMainScene();
+        EcsScenePtr const& findNewMainScene();
 
         //////////////////////////////////////////
         EcsSceneId generateNewEcsSceneId();
@@ -217,7 +217,7 @@ namespace Maze
 
         ScenesList m_deadScenes;
 
-        ECSScenePtr m_mainScene;
+        EcsScenePtr m_mainScene;
     };
 
 

@@ -30,7 +30,7 @@
 #include "maze-ui/ecs/components/MazeClickButton2D.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
@@ -92,7 +92,7 @@ namespace Maze
         m_transform = getEntityRaw()->ensureComponent<Transform2D>();
         m_canvas = getEntityRaw()->ensureComponent<Canvas>();
 
-        RenderTargetPtr const& renderTarget = getEntityRaw()->getECSScene()->cast<ECSRenderScene>()->getRenderTarget();
+        RenderTargetPtr const& renderTarget = getEntityRaw()->getEcsScene()->cast<EcsRenderScene>()->getRenderTarget();
         m_canvas->setRenderTarget(renderTarget);
     }
 
@@ -105,7 +105,7 @@ namespace Maze
             return;
 
         m_menuListTree->eventEnabledInHierarchyChanged.unsubscribe(this);
-        m_menuListTree->getEntityRaw()->removeFromECSWorld();
+        m_menuListTree->getEntityRaw()->removeFromEcsWorld();
         m_menuListTree = nullptr;
     }
 
@@ -154,7 +154,7 @@ namespace Maze
 
     //////////////////////////////////////////
     ContextMenuCanvas2DPtr ContextMenuCanvas2D::EnsureContextMenuCanvas(
-        ECSScene* _scene,
+        EcsScene* _scene,
         FontMaterialPtr const& _fontMaterial)
     {
         ContextMenuCanvas2DPtr contextMenuCanvas = _scene->findEntityByComponent<ContextMenuCanvas2D>();
@@ -168,7 +168,7 @@ namespace Maze
                 _fontMaterial,
                 Vec2F(0.0f, 0.0f),
                 contextMenuCanvas->getTransform(),
-                contextMenuCanvas->getEntityRaw()->getECSScene(),
+                contextMenuCanvas->getEntityRaw()->getEcsScene(),
                 Vec2F(0.0f, 0.0f),
                 Vec2F(0.0f, 1.0f));
             menuListTree->getEntityRaw()->setActiveSelf(false);

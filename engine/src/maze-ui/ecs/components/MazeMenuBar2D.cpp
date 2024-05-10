@@ -106,7 +106,7 @@ namespace Maze
         m_UIElement2D->setCaptureCursorHits(true);
 
         m_contextMenuCanvas = ContextMenuCanvas2D::EnsureContextMenuCanvas(
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             m_fontMaterial);
         if (m_contextMenuCanvas)
         {

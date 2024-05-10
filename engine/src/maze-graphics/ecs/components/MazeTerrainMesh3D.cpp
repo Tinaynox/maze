@@ -102,7 +102,7 @@ namespace Maze
     //////////////////////////////////////////
     bool TerrainMesh3D::init(
         Component* _component,
-        ECSWorld* _world,
+        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         m_renderSystem = _component->castRaw<TerrainMesh3D>()->m_renderSystem;

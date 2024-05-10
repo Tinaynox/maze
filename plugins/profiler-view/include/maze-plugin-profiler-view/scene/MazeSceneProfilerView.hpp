@@ -31,7 +31,7 @@
 
 //////////////////////////////////////////
 #include "maze-plugin-profiler-view/MazeProfilerViewHeader.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
@@ -52,13 +52,13 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_PLUGIN_PROFILER_VIEW_API SceneProfilerView
-        : public ECSRenderScene
+        : public EcsRenderScene
         , public Updatable
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneProfilerView, ECSRenderScene);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneProfilerView, EcsRenderScene);
 
     public:
 

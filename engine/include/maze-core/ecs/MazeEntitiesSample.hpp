@@ -35,8 +35,8 @@
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSTypes.hpp"
-#include "maze-core/ecs/events/MazeECSEvents.hpp"
+#include "maze-core/ecs/MazeEcsTypes.hpp"
+#include "maze-core/ecs/events/MazeEcsEvents.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
@@ -54,7 +54,7 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(IEntitiesSample);
     MAZE_USING_SHARED_PTR(EntitiesSample);
-    MAZE_USING_SHARED_PTR(ECSWorld);
+    MAZE_USING_SHARED_PTR(EcsWorld);
 
 
     //////////////////////////////////////////
@@ -113,12 +113,12 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool init(
-            ECSWorldPtr const& _ecs,
+            EcsWorldPtr const& _ecs,
             EntityAspect const& _aspect);
 
     protected:
-        ECSWorldWPtr m_world;
-        ECSWorld* m_worldRaw;
+        EcsWorldWPtr m_world;
+        EcsWorld* m_worldRaw;
         EntityAspect m_aspect;
     };
 
@@ -142,7 +142,7 @@ namespace Maze
 
         //////////////////////////////////////////
         static EntitiesSamplePtr Create(
-            ECSWorldPtr const& _ecs,
+            EcsWorldPtr const& _ecs,
             EntityAspect const& _aspect)
         {
             EntitiesSamplePtr object;
@@ -195,7 +195,7 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool init(
-            ECSWorldPtr const& _ecs,
+            EcsWorldPtr const& _ecs,
             EntityAspect const& _aspect) MAZE_OVERRIDE;
 
     protected:
@@ -251,7 +251,7 @@ namespace Maze
 
         //////////////////////////////////////////
         static inline SharedPtr<GenericInclusiveEntitiesSample> Create(
-            ECSWorldPtr const& _ecs)
+            EcsWorldPtr const& _ecs)
         {
             SharedPtr<GenericInclusiveEntitiesSample> object;
             EntityAspect aspect = EntityAspect::HaveAllOfComponents<TComponents...>();
@@ -295,7 +295,7 @@ namespace Maze
             typename UnorderedMap<EntityId, Size>::iterator it = m_entityIndices.find(_entity->getId());
 
             bool intersects;
-            if (!_entity->getActiveInHierarchy() || !_entity->getECSWorld() || _entity->getRemoving())
+            if (!_entity->getActiveInHierarchy() || !_entity->getEcsWorld() || _entity->getRemoving())
                 intersects = false;
             else
                 intersects = m_aspect.hasIntersection(_entity);
@@ -480,7 +480,7 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual bool init(
-            ECSWorldPtr const& _ecs,
+            EcsWorldPtr const& _ecs,
             EntityAspect const& _aspect) MAZE_OVERRIDE
         {
             if (!IEntitiesSample::init(_ecs, _aspect))

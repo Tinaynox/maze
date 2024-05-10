@@ -47,7 +47,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(GizmosDrawer);
-    MAZE_USING_SHARED_PTR(ECSWorld);
+    MAZE_USING_SHARED_PTR(EcsWorld);
     MAZE_USING_SHARED_PTR(VertexArrayObject);
     MAZE_USING_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(Sprite);
@@ -117,7 +117,7 @@ namespace Maze
         virtual ~GizmosDrawer();
 
         //////////////////////////////////////////
-        static GizmosDrawerPtr Create(ECSWorld* _world, RenderTarget* _renderTarget);
+        static GizmosDrawerPtr Create(EcsWorld* _world, RenderTarget* _renderTarget);
 
 
         //////////////////////////////////////////
@@ -600,7 +600,7 @@ namespace Maze
         GizmosDrawer();
 
         //////////////////////////////////////////
-        bool init(ECSWorld* _world, RenderTarget* _renderTarget);
+        bool init(EcsWorld* _world, RenderTarget* _renderTarget);
 
         //////////////////////////////////////////
         Vec3F transformPoint(Vec3F const& _p);
@@ -609,7 +609,7 @@ namespace Maze
         ColorF128 m_color;
         Stack<Mat4F> m_transformStack;
 
-        ECSWorld* m_world = nullptr;
+        EcsWorld* m_world = nullptr;
 
         MaterialPtr m_materials[(Size)MeshRenderMode::MAX];
         MeshData m_lines[(Size)MeshRenderMode::MAX];

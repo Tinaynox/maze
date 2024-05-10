@@ -136,7 +136,7 @@ namespace Maze
             Vec2F::c_zero,
             renderSystem->getMaterialManager()->getColorTextureMaterial(),
             _parent,
-            _parent->getEntity()->getECSScene());
+            _parent->getEntity()->getEcsScene());
         sprite->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Flags::Height, false);
         VerticalLayout2DPtr spriteLayout = sprite->getEntityRaw()->ensureComponent<VerticalLayout2D>();
         spriteLayout->setAutoWidth(false);
@@ -151,7 +151,7 @@ namespace Maze
             Vec2F(sprite->getTransform()->getWidth() - 8, sprite->getTransform()->getHeight() - 8),
             Vec2F(4, 4),
             sprite->getTransform(),
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         SizePolicy2DPtr sizePolicy = verticalLayout->getEntityRaw()->ensureComponent<SizePolicy2D>();

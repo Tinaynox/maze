@@ -37,7 +37,7 @@
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
@@ -124,7 +124,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void HierarchyLine::setECSWorld(ECSWorld* _world)
+    void HierarchyLine::setEcsWorld(EcsWorld* _world)
     {
         m_world = _world;
 
@@ -153,7 +153,7 @@ namespace Maze
             Vec2F::c_zero,
             MaterialPtr(),
             m_transform,
-            getEntityRaw()->getECSScene());
+            getEntityRaw()->getEcsScene());
         m_backgroundRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
 
         F32 x = 0;
@@ -164,7 +164,7 @@ namespace Maze
             Vec2F(x, 0) + Vec2F(charSize * 0.5f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_transform,
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F(0.5f, 0.5f));
         m_dropDownRenderer->setColor(ColorU32::c_black);
@@ -181,7 +181,7 @@ namespace Maze
                 Vec2F(x, 0) + Vec2F(charSize, 0.0f) * 0.5f,
                 materialManager->getColorTextureMaterial(),
                 m_transform,
-                getEntityRaw()->getECSScene(),
+                getEntityRaw()->getEcsScene(),
                 Vec2F(0.0f, 0.5f),
                 Vec2F(0.5f, 0.5f));
             m_iconRenderer->setColor(ColorU32::c_black);
@@ -196,7 +196,7 @@ namespace Maze
                 Vec2F(x, 0) + Vec2F(charSize, 0.0f) * 0.5f,
                 materialManager->getColorTextureMaterial(),
                 m_transform,
-                getEntityRaw()->getECSScene(),
+                getEntityRaw()->getEcsScene(),
                 Vec2F(0.0f, 0.5f),
                 Vec2F(0.5f, 0.5f));
             m_iconRenderer->setColor(ColorU32::c_black);
@@ -214,7 +214,7 @@ namespace Maze
             Vec2F(100, charSize + 6),
             Vec2F(x, 0),            
             m_transform,
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F(0.0f, 0.5f));
         m_textRenderer->setColor(ColorU32::c_black);
@@ -253,7 +253,7 @@ namespace Maze
                             EntityPtr entity = entityWeak.lock();
                             if (entity)
                             {
-                                entity->removeFromECSWorld();
+                                entity->removeFromEcsWorld();
                             }
                         });
 
@@ -318,7 +318,7 @@ namespace Maze
                 else
                 if (m_type == HierarchyLineType::Scene)
                 {
-                    ECSScene* ecsScene = static_cast<ECSScene*>(getUserData());
+                    EcsScene* ecsScene = static_cast<EcsScene*>(getUserData());
 
                     _menuListTree->addItem(
                         "Add Child/3D/Empty",
@@ -468,9 +468,9 @@ namespace Maze
         else
         if (m_type == HierarchyLineType::Scene)
         {
-            ECSScene* ecsScene = static_cast<ECSScene*>(getUserData());
+            EcsScene* ecsScene = static_cast<EcsScene*>(getUserData());
 
-            ECSScene* mainScene = SceneManager::GetInstancePtr()->getMainScene().get();
+            EcsScene* mainScene = SceneManager::GetInstancePtr()->getMainScene().get();
             bool isMainScene = (mainScene == ecsScene);
 
             SpritePtr const&  sprite = UIManager::GetInstancePtr()->getDefaultUISprite(isMainScene ? DefaultUISprite::MainScene : DefaultUISprite::Scene);

@@ -32,7 +32,7 @@
 //////////////////////////////////////////
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/ecs/MazeComponentSystem.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 
 
@@ -58,21 +58,21 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        static inline void Attach(ECSWorld* _world)
+        static inline void Attach(EcsWorld* _world)
         {
             for (SimpleComponentSystemHolder* holder : GetSimpleSystemHolders())
                 holder->attach(_world);
         }
 
         //////////////////////////////////////////
-        static inline void Detach(ECSWorld* _world)
+        static inline void Detach(EcsWorld* _world)
         {
             for (SimpleComponentSystemHolder* holder : GetSimpleSystemHolders())
                 holder->detach(_world);
         }
 
         //////////////////////////////////////////
-        using AddSystemFunc = SharedPtr<SimpleComponentSystemEventHandler>(ECSWorld::*)(HashedCString, typename SimpleComponentSystemEventHandler::Func, ComponentSystemOrder const&);
+        using AddSystemFunc = SharedPtr<SimpleComponentSystemEventHandler>(EcsWorld::*)(HashedCString, typename SimpleComponentSystemEventHandler::Func, ComponentSystemOrder const&);
 
 
         //////////////////////////////////////////
@@ -85,7 +85,7 @@ namespace Maze
             , m_func((SimpleComponentSystemEventHandler::Func)_func)
             , m_order(_order)
         {
-            auto address = &ECSWorld::addSystemEventHandler<TEventType, TComponents...>;
+            auto address = &EcsWorld::addSystemEventHandler<TEventType, TComponents...>;
             m_addSystemFunc = (AddSystemFunc)(address);
 
             GetSimpleSystemHolders().insert(this);
@@ -98,13 +98,13 @@ namespace Maze
         }
         
         //////////////////////////////////////////
-        inline void attach(ECSWorld* _world)
+        inline void attach(EcsWorld* _world)
         {
             m_systems[_world] = (_world->*m_addSystemFunc)(m_name, m_func, m_order);
         }
 
         //////////////////////////////////////////
-        inline void detach(ECSWorld* _world)
+        inline void detach(EcsWorld* _world)
         {
             _world->removeSystemEventHandler(m_systems[_world].lock());
         }
@@ -114,7 +114,7 @@ namespace Maze
         typename SimpleComponentSystemEventHandler::Func m_func;
         ComponentSystemOrder m_order;
         AddSystemFunc m_addSystemFunc;
-        Map<ECSWorld*, WeakPtr<SimpleComponentSystemEventHandler>> m_systems;
+        Map<EcsWorld*, WeakPtr<SimpleComponentSystemEventHandler>> m_systems;
     };
 
 

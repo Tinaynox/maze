@@ -31,8 +31,8 @@
 
 //////////////////////////////////////////
 #include "maze-engine/MazeEngineHeader.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
+#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 
 
 //////////////////////////////////////////
@@ -66,12 +66,12 @@ namespace Maze
     //
     //////////////////////////////////////////
     class MAZE_ENGINE_API SceneEngine
-        : public ECSRenderScene
+        : public EcsRenderScene
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneEngine, ECSRenderScene);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneEngine, EcsRenderScene);
 
     public:
 

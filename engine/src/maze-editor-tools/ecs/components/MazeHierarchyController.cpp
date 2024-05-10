@@ -37,7 +37,7 @@
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -95,7 +95,7 @@ namespace Maze
             hierarchyLineData.second.line->eventLineClick.unsubscribe(this);
         }
 
-        setECSWorld(nullptr);
+        setEcsWorld(nullptr);
     }
 
     //////////////////////////////////////////
@@ -111,7 +111,7 @@ namespace Maze
     {
         UpdateManager::GetInstancePtr()->addUpdatable(this);
 
-        setECSWorld(EntityManager::GetInstancePtr()->getDefaultWorldRaw());
+        setEcsWorld(EntityManager::GetInstancePtr()->getDefaultWorldRaw());
 
         m_canvas = _canvas;
 
@@ -140,7 +140,7 @@ namespace Maze
             m_canvas->getTransform()->getSize(),
             Vec2F(0.0f, 0.0f),
             m_canvas->getTransform(),
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F::c_zero,
             Vec2F::c_zero);
         m_titleTransform->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>();
@@ -153,7 +153,7 @@ namespace Maze
             Vec2F(0.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_titleTransform,
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         m_titleBackground->setColor(EditorToolsStyles::GetInstancePtr()->getTitleBackgroundColor());
@@ -168,7 +168,7 @@ namespace Maze
             Vec2F(100, EditorToolsStyles::GetInstancePtr()->getTitleHeight()),
             Vec2F(EditorToolsStyles::GetInstancePtr()->getTitleLabelShift(), 0),
             m_titleBackground->getTransform(),
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F(0.0f, 0.5f));
         titleText->setColor(ColorU32::c_black);
@@ -181,7 +181,7 @@ namespace Maze
             Vec2F(0.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_canvas->getTransform(),
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F::c_zero,
             Vec2F::c_zero);
         m_bodyBackground->setColor(EditorToolsStyles::GetInstancePtr()->getBodyBackgroundColor());
@@ -191,7 +191,7 @@ namespace Maze
             m_bodyBackground->getTransform()->getSize(),
             Vec2F::c_zero,
             m_bodyBackground->getTransform(),
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f),
             false,
@@ -222,12 +222,12 @@ namespace Maze
         Vector<SceneManager::SceneData> const& scenes = sceneManager->getScenes();
         for (SceneManager::SceneData const& sceneData : scenes)
         {
-            ECSScenePtr const& scene = sceneData.scene;
+            EcsScenePtr const& scene = sceneData.scene;
             if (!scene)
                 continue;
 
             ClassUID sceneUID = scene->getClassUID();
-            if (sceneUID == getEntityRaw()->getECSScene()->getClassUID())
+            if (sceneUID == getEntityRaw()->getEcsScene()->getClassUID())
                 continue;
 
             if (m_ignoreScenes.find(sceneUID) != m_ignoreScenes.end())
@@ -498,7 +498,7 @@ namespace Maze
         if (!hierarchyLine)
         {
             hierarchyLine = m_hierarchyLinePool->createHierarchyLine(HierarchyLineType::Entity);
-            hierarchyLine->setECSWorld(m_world);
+            hierarchyLine->setEcsWorld(m_world);
             hierarchyLine->setUserData(reinterpret_cast<void*>((Size)_entityId));
             hierarchyLine->updateIcon();
             hierarchyLine->eventDropDownClick.subscribe(this, &HierarchyController::notifyHierarchyLineDropDownClick);
@@ -520,7 +520,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    HierarchyLinePtr HierarchyController::createHierarchyLine(ECSScenePtr const& _scene)
+    HierarchyLinePtr HierarchyController::createHierarchyLine(EcsScenePtr const& _scene)
     {
         HierarchyLineSceneData& hierarchyLineData = m_hierarchyLinesPerScene[_scene.get()];
         HierarchyLinePtr& hierarchyLine = hierarchyLineData.line;
@@ -528,7 +528,7 @@ namespace Maze
         if (!hierarchyLine)
         {
             hierarchyLine = m_hierarchyLinePool->createHierarchyLine(HierarchyLineType::Scene);
-            hierarchyLine->setECSWorld(m_world);
+            hierarchyLine->setEcsWorld(m_world);
             hierarchyLine->setUserData(static_cast<void*>(_scene.get()));
             hierarchyLine->eventDropDownClick.subscribe(this, &HierarchyController::notifyHierarchyLineDropDownClick);
             hierarchyLine->eventLineClick.subscribe(this, &HierarchyController::notifyHierarchyLineClick);
@@ -551,7 +551,7 @@ namespace Maze
         {
             case HierarchyLineType::Scene:
             {
-                ECSScene* ecsScene = static_cast<ECSScene*>(_hierarchyLine->getUserData());
+                EcsScene* ecsScene = static_cast<EcsScene*>(_hierarchyLine->getUserData());
                 HierarchyLineSceneData& hierarchyLineData = m_hierarchyLinesPerScene[ecsScene];
                 hierarchyLineData.expanded = !hierarchyLineData.expanded;
                 break;
@@ -619,7 +619,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void HierarchyController::setECSWorld(ECSWorld* _world)
+    void HierarchyController::setEcsWorld(EcsWorld* _world)
     {
         if (m_world == _world)
             return;

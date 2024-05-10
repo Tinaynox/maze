@@ -100,7 +100,7 @@ namespace Maze
             Vec2F(_parent->getWidth(), 18),
             Vec2F(0, 0),
             _parent,
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         m_layout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
@@ -116,7 +116,7 @@ namespace Maze
             Vec2F(8, 18),
             Vec2F(0, 0),
             m_layout->getTransform(),
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F::c_zero);
         titleText->setColor(EditorToolsStyles::GetInstancePtr()->getInspectorPropertyColor());
@@ -124,7 +124,7 @@ namespace Maze
         m_toggleButton = UIHelper::CreateDefaultToggleButton(
             Vec2F(0, 0),
             m_layout->getTransform(),
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.5f, 0.5f),
             Vec2F::c_zero);
         m_toggleButton->eventCheckedChanged.subscribe(this, &PropertyDrawerBool::notifyCheckedChanged);

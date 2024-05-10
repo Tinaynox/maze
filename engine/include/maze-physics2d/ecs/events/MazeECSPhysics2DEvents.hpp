@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeECSPhysics2DEvents_hpp_))
-#define _MazeECSPhysics2DEvents_hpp_
+#if (!defined(_MazeEcsPhysics2DEvents_hpp_))
+#define _MazeEcsPhysics2DEvents_hpp_
 
 
 //////////////////////////////////////////
@@ -125,5 +125,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeECSPhysics2DEvents_hpp_
+#endif // _MazeEcsPhysics2DEvents_hpp_
 //////////////////////////////////////////

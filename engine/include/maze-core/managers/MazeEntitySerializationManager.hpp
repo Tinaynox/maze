@@ -30,7 +30,7 @@
 
 
 //////////////////////////////////////////
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
@@ -79,27 +79,27 @@ namespace Maze
         //////////////////////////////////////////
         EntityPtr loadPrefab(
             AssetFilePtr const& _assetFile,
-            ECSWorld* _world = nullptr,
-            ECSScene* _scene = nullptr) const;
+            EcsWorld* _world = nullptr,
+            EcsScene* _scene = nullptr) const;
 
         //////////////////////////////////////////
         EntityPtr loadPrefab(
             Path const& _assetFileName,
-            ECSWorld* _world = nullptr,
-            ECSScene* _scene = nullptr) const;
+            EcsWorld* _world = nullptr,
+            EcsScene* _scene = nullptr) const;
 
         //////////////////////////////////////////
         EntityPtr loadPrefabOBSOLETE(
             DataBlock const& _dataBlock,
-            ECSWorld* _world = nullptr,
-            ECSScene* _scene = nullptr) const;
+            EcsWorld* _world = nullptr,
+            EcsScene* _scene = nullptr) const;
 
 
         //////////////////////////////////////////
         EntityPtr loadPrefab(
             DataBlock const& _dataBlock,
-            ECSWorld* _world = nullptr,
-            ECSScene* _scene = nullptr) const;
+            EcsWorld* _world = nullptr,
+            EcsScene* _scene = nullptr) const;
 
 
         //////////////////////////////////////////

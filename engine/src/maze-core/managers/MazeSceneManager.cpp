@@ -29,7 +29,7 @@
 #include "maze-core/preprocessor/MazePreprocessor_Memory.hpp"
 #include "maze-core/memory/MazeMemory.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 
 
@@ -71,13 +71,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneManager::destroyScene(ECSScenePtr const& _scene)
+    void SceneManager::destroyScene(EcsScenePtr const& _scene)
     {
-        if (!_scene || _scene->getState() == ECSSceneState::Destroy)
+        if (!_scene || _scene->getState() == EcsSceneState::Destroy)
             return;
 
         Debug::log << "Destroying Scene '" << static_cast<CString>(_scene->getMetaClass()->getName()) << "'..." << endl;
-        _scene->setState(ECSSceneState::Destroy);        
+        _scene->setState(EcsSceneState::Destroy);        
     }
 
     //////////////////////////////////////////
@@ -88,7 +88,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SceneManager::setMainScene(ECSScenePtr const& _value)
+    void SceneManager::setMainScene(EcsScenePtr const& _value)
     {
         m_mainScene = _value;
     }
@@ -105,8 +105,8 @@ namespace Maze
             for (Size i = 0, in = m_scenes.size(); i < in; ++i)
             {
                 auto& sceneData = m_scenes[i];
-                if (sceneData.scene && sceneData.scene->getState() == ECSSceneState::Created)
-                    m_scenes[i].scene->setState(ECSSceneState::Active);
+                if (sceneData.scene && sceneData.scene->getState() == EcsSceneState::Created)
+                    m_scenes[i].scene->setState(EcsSceneState::Active);
             }
         }
 
@@ -117,19 +117,19 @@ namespace Maze
             if (!sceneData.scene)
                 continue;
 
-            if (ECSSceneState::None == sceneData.scene->getState())
+            if (EcsSceneState::None == sceneData.scene->getState())
             {
                 continue;
             }
             else
-            if (ECSSceneState::Active == sceneData.scene->getState())
+            if (EcsSceneState::Active == sceneData.scene->getState())
             {
                 sceneData.scene->update(_dt);
             }
             else
-            if (ECSSceneState::Destroy == sceneData.scene->getState())
+            if (EcsSceneState::Destroy == sceneData.scene->getState())
             {
-                ECSScenePtr scenePointerCopy = sceneData.scene;
+                EcsScenePtr scenePointerCopy = sceneData.scene;
 
                 scenePointerCopy->processSceneWillBeDestroyed();
 
@@ -147,12 +147,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool SceneManager::isGoodMainScene(ECSScenePtr const& _scene)
+    bool SceneManager::isGoodMainScene(EcsScenePtr const& _scene)
     {
         if (!_scene)
             return false;
 
-        if (_scene->getState() == ECSSceneState::Destroy)
+        if (_scene->getState() == EcsSceneState::Destroy)
             return false;
 
         if (_scene->getIsSystemScene())
@@ -162,13 +162,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ECSScenePtr const& SceneManager::findNewMainScene()
+    EcsScenePtr const& SceneManager::findNewMainScene()
     {
-        static ECSScenePtr const nullPointer;
+        static EcsScenePtr const nullPointer;
 
         for (Vector<SceneData>::reverse_iterator it = m_scenes.rbegin(), end = m_scenes.rend(); it != end; ++it)
         {
-            ECSScenePtr const& scene = it->scene;
+            EcsScenePtr const& scene = it->scene;
             if (!isGoodMainScene(scene))
                 continue;
 

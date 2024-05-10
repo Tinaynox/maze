@@ -94,7 +94,7 @@ namespace Maze
     //////////////////////////////////////////
     bool GizmoBillboard3D::init(
         Component* _component,
-        ECSWorld* _world,
+        EcsWorld* _world,
         EntityCopyData _copyData)
     {
         m_renderSystem = _component->castRaw<GizmoBillboard3D>()->m_renderSystem;

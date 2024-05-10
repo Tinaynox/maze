@@ -30,7 +30,7 @@
 #include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
 #include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
@@ -91,9 +91,9 @@ namespace Maze
     //////////////////////////////////////////
     void GizmosController::processEntityAwakened()
     {
-        m_drawer = GizmosDrawer::Create(getEntityRaw()->getECSWorld(), m_renderTarget);
-        m_canvasesSample = getEntityRaw()->getECSWorld()->requestInclusiveSample<Canvas>();
-        m_cameras3DSample = getEntityRaw()->getECSWorld()->requestInclusiveSample<Camera3D>();
+        m_drawer = GizmosDrawer::Create(getEntityRaw()->getEcsWorld(), m_renderTarget);
+        m_canvasesSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<Canvas>();
+        m_cameras3DSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<Camera3D>();
 
         updateGizmosSamples();
     }
@@ -114,7 +114,7 @@ namespace Maze
         {
             GizmosSample gizmosSample;
             gizmosSample.componentClassUID = gizmoPerComponentClass.first;
-            gizmosSample.sample = getEntityRaw()->getECSWorld()->requestCommonSample(
+            gizmosSample.sample = getEntityRaw()->getEcsWorld()->requestCommonSample(
                 EntityAspect(
                     EntityAspectType::HaveAllOfComponents,
                     { gizmosSample.componentClassUID }));
@@ -156,8 +156,8 @@ namespace Maze
 
         m_samples.clear();
         m_drawer.reset();
-        if (getEntityRaw()->getECSWorld())
-            getEntityRaw()->getECSWorld()->update(0.0f);
+        if (getEntityRaw()->getEcsWorld())
+            getEntityRaw()->getEcsWorld()->update(0.0f);
     }
 
 

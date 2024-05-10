@@ -26,7 +26,7 @@
 //////////////////////////////////////////
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/ecs/components/MazeRenderControllerModule2D.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/utils/MazeProfiler.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
@@ -43,7 +43,7 @@
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-graphics/MazeRenderMesh.hpp"
 #include "maze-graphics/managers/MazeMaterialManager.hpp"
-#include "maze-graphics/ecs/events/MazeECSGraphicsEvents.hpp"
+#include "maze-graphics/ecs/events/MazeEcsGraphicsEvents.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
@@ -77,7 +77,7 @@ namespace Maze
 
     //////////////////////////////////////////
     RenderControllerModule2DPtr RenderControllerModule2D::Create(
-        ECSWorldPtr const& _world,
+        EcsWorldPtr const& _world,
         RenderSystemPtr const& _renderSystem)
     {
         RenderControllerModule2DPtr object;
@@ -87,7 +87,7 @@ namespace Maze
 
     //////////////////////////////////////////
     bool RenderControllerModule2D::init(
-        ECSWorldPtr const& _world,
+        EcsWorldPtr const& _world,
         RenderSystemPtr const& _renderSystem)
     {
         m_world = _world.get();

@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
-#include "maze-core/ecs/events/MazeECSEvents.hpp"
+#include "maze-core/ecs/events/MazeEcsEvents.hpp"
 
 
 

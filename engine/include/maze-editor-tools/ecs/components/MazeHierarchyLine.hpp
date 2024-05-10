@@ -128,10 +128,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline ECSWorld* getECSWorld() const { return m_world; }
+        inline EcsWorld* getEcsWorld() const { return m_world; }
 
         //////////////////////////////////////////
-        void setECSWorld(ECSWorld* _world);
+        void setEcsWorld(EcsWorld* _world);
 
 
         //////////////////////////////////////////
@@ -195,7 +195,7 @@ namespace Maze
         void updateState();
 
     protected:
-        ECSWorld* m_world = nullptr;
+        EcsWorld* m_world = nullptr;
 
         String m_name;
         HierarchyLineType m_type;

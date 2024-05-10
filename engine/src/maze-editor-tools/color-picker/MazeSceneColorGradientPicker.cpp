@@ -28,7 +28,7 @@
 #include "maze-editor-tools/color-picker/MazeSceneColorGradientPicker.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
@@ -90,7 +90,7 @@ namespace Maze
     // Class SceneColorGradientPicker
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneColorGradientPicker, ECSRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneColorGradientPicker, EcsRenderScene);
 
     //////////////////////////////////////////
     SceneColorGradientPicker::SceneColorGradientPicker()
@@ -111,7 +111,7 @@ namespace Maze
                 m_alphaTags.back()->getToggleButton()->eventPressedChanged.unsubscribe(this);
                 m_alphaTags.back()->getToggleButton()->eventCursorPressIn.unsubscribe(this);
 
-                m_alphaTags.back()->getEntityRaw()->removeFromECSWorld();
+                m_alphaTags.back()->getEntityRaw()->removeFromEcsWorld();
             }
 
             m_alphaTags.pop_back();
@@ -125,7 +125,7 @@ namespace Maze
                 m_colorTags.back()->getToggleButton()->eventPressedChanged.unsubscribe(this);
                 m_colorTags.back()->getToggleButton()->eventCursorPressIn.unsubscribe(this);
 
-                m_colorTags.back()->getEntityRaw()->removeFromECSWorld();
+                m_colorTags.back()->getEntityRaw()->removeFromEcsWorld();
             }
 
             m_colorTags.pop_back();
@@ -172,7 +172,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SceneColorGradientPicker::init(RenderTargetPtr const& _renderTarget)
     {
-        if (!ECSRenderScene::init(_renderTarget))
+        if (!EcsRenderScene::init(_renderTarget))
             return false;
 
         create2D();
@@ -681,7 +681,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneColorGradientPicker::updateUI()
     {
-        if (getState() == ECSSceneState::Destroy)
+        if (getState() == EcsSceneState::Destroy)
             return;
 
         m_gradientRenderer->updateMesh();
@@ -766,7 +766,7 @@ namespace Maze
             m_alphaTags.back()->getToggleButton()->eventClick.unsubscribe(this);
             m_alphaTags.back()->getToggleButton()->eventPressedChanged.unsubscribe(this);
             m_alphaTags.back()->getToggleButton()->eventCursorPressIn.unsubscribe(this);
-            m_alphaTags.back()->getEntityRaw()->removeFromECSWorld();
+            m_alphaTags.back()->getEntityRaw()->removeFromEcsWorld();
             m_alphaTags.pop_back();
         }
 
@@ -805,7 +805,7 @@ namespace Maze
             m_colorTags.back()->getToggleButton()->eventClick.unsubscribe(this);
             m_colorTags.back()->getToggleButton()->eventPressedChanged.unsubscribe(this);
             m_colorTags.back()->getToggleButton()->eventCursorPressIn.unsubscribe(this);
-            m_colorTags.back()->getEntityRaw()->removeFromECSWorld();
+            m_colorTags.back()->getEntityRaw()->removeFromEcsWorld();
             m_colorTags.pop_back();
         }
 

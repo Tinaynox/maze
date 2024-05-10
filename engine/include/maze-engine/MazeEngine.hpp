@@ -189,8 +189,8 @@ namespace Maze
         virtual bool initMainManagers();
 
         //////////////////////////////////////////
-        virtual void createPrimaryECSWorldSystems(
-            ECSWorldPtr const& _world,
+        virtual void createPrimaryEcsWorldSystems(
+            EcsWorldPtr const& _world,
             RenderWindowPtr const& _renderWindow,
             RenderSystemPtr const& _renderSystem);
 

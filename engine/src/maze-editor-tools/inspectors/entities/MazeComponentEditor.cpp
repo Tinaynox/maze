@@ -31,7 +31,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/managers/MazeEntitySerializationManager.hpp"
 #include "maze-core/managers/MazeSystemManager.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
@@ -105,7 +105,7 @@ namespace Maze
             return;
 
         m_editorRoot->resetParent();
-        m_editorRoot->getEntityRaw()->removeFromECSWorld();
+        m_editorRoot->getEntityRaw()->removeFromEcsWorld();
         m_editorRoot.reset();
 
         m_propertyDrawers.clear();
@@ -120,7 +120,7 @@ namespace Maze
             Vec2F(_parent->getWidth(), 100.0f),
             Vec2F(0, 0),
             _parent,
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         layout->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
@@ -141,7 +141,7 @@ namespace Maze
             Vec2F(0, 0),
             materialManager->getColorTextureMaterial(),
             _parent,
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         spriteRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
@@ -152,7 +152,7 @@ namespace Maze
             Vec2F(0, 0),
             materialManager->getColorTextureMaterial(),
             spriteRenderer->getTransform(),
-            spriteRenderer->getEntityRaw()->getECSScene(),
+            spriteRenderer->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         lineRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
@@ -163,7 +163,7 @@ namespace Maze
             Vec2F(0, 0),
             materialManager->getColorTextureMaterial(),
             spriteRenderer->getTransform(),
-            spriteRenderer->getEntityRaw()->getECSScene(),
+            spriteRenderer->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.0f),
             Vec2F(0.0f, 0.0f));
         lineRenderer2->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
@@ -174,7 +174,7 @@ namespace Maze
             Vec2F(10, 1),
             materialManager->getColorTextureMaterial(),
             spriteRenderer->getTransform(),
-            spriteRenderer->getEntityRaw()->getECSScene(),
+            spriteRenderer->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F(0.5f, 0.5f));
         m_expandButtonSprite->setColor(ColorU32::c_black);
@@ -190,7 +190,7 @@ namespace Maze
             Vec2F(8, 18),
             Vec2F(20, 0),            
             spriteRenderer->getTransform(),
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F(0.0f, 0.5f));
         titleText->setColor(ColorU32::c_black);
@@ -304,7 +304,7 @@ namespace Maze
             Vec2F(_parent->getWidth() - paddingLeft - paddingRight, 0.0f),
             Vec2F(paddingLeft, 0),
             _parent,
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 1.0f),
             Vec2F(0.0f, 1.0f));
         SizePolicy2DPtr layoutSizePolicy = layout->getEntityRaw()->ensureComponent<SizePolicy2D>();

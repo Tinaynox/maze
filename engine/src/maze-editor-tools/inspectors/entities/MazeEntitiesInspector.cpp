@@ -32,7 +32,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/ecs/MazeComponentFactory.hpp"
 #include "maze-core/utils/MazeProfiler.hpp"
@@ -80,7 +80,7 @@ namespace Maze
         if (m_addComponentButton)
             m_addComponentButton->eventClick.unsubscribe(this);
 
-        setECSWorld(nullptr);
+        setEcsWorld(nullptr);
     }
 
     //////////////////////////////////////////
@@ -101,13 +101,13 @@ namespace Maze
             Vec2F(_parent->getWidth(), 50.0f),
             Vec2F::c_zero,
             _parent,
-            _parent->getEntityRaw()->getECSScene());
+            _parent->getEntityRaw()->getEcsScene());
         m_topBlock->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Flags::Height, false);
 
         m_entitiesEnabledToggleButton = UIHelper::CreateDefaultToggleButton(
             Vec2F(5, 0),
             m_topBlock,
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F(0.0f, 0.5f));
         m_entitiesEnabledToggleButton->eventCheckedChanged.subscribe(this, &EntitiesInspector::notifyEntitiesEnabledToggleCheckedChanged);
@@ -121,7 +121,7 @@ namespace Maze
             Vec2F(16.0f, 10.0f),
             Vec2F(35.0f, 0.0f),
             m_topBlock,
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F(0.0f, 0.5f));
         m_entityIdText->setColor(ColorU32::c_black);
@@ -132,7 +132,7 @@ namespace Maze
             Vec2F(120.0f, 18.0f),
             Vec2F(-20.0f, 0.0f),
             m_topBlock,
-            _parent->getEntityRaw()->getECSScene(),
+            _parent->getEntityRaw()->getEcsScene(),
             Vec2F(1.0f, 0.5f),
             Vec2F(1.0f, 0.5f));
         m_addComponentButton->eventClick.subscribe(this, &EntitiesInspector::notifyAddComponentButton);
@@ -159,9 +159,9 @@ namespace Maze
         m_entities = _entities;
 
         if (_entities.size())
-            setECSWorld((*_entities.begin())->getECSWorld());
+            setEcsWorld((*_entities.begin())->getEcsWorld());
         else
-            setECSWorld(nullptr);
+            setEcsWorld(nullptr);
 
         m_entitiesPropertiesListDirty = true;
     }
@@ -279,7 +279,7 @@ namespace Maze
     //////////////////////////////////////////
     void EntitiesInspector::notifyAddComponentButton(Button2D* _button, CursorInputEvent const& _inputEvent)
     {
-        ContextMenuCanvas2DPtr contextMenuCanvas = ContextMenuCanvas2D::EnsureContextMenuCanvas(_button->getEntityRaw()->getECSScene());
+        ContextMenuCanvas2DPtr contextMenuCanvas = ContextMenuCanvas2D::EnsureContextMenuCanvas(_button->getEntityRaw()->getEcsScene());
 
         Canvas* canvas = _button->getTransform()->getFirstTrunkComponent<Canvas>();
         Vec2F positionRTS = canvas->convertViewportCoordsToRenderTargetCoords(_inputEvent.position);
@@ -332,7 +332,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EntitiesInspector::setECSWorld(ECSWorld* _world)
+    void EntitiesInspector::setEcsWorld(EcsWorld* _world)
     {
         if (m_world == _world)
             return;
