@@ -167,7 +167,7 @@ namespace Maze
     //////////////////////////////////////////
     void ExampleFPSCameraController::createElements()
     {
-        EntityPtr cameraEntity = getEntityRaw()->getECSScene()->createEntity();
+        EntityPtr cameraEntity = getEntityRaw()->getEcsScene()->createEntity();
         Transform3DPtr cameraTransform =  cameraEntity->ensureComponent<Transform3D>();
         cameraTransform->setLocalY(1.5f);
         cameraTransform->setParent(m_transform);

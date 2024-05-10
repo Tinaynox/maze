@@ -30,7 +30,7 @@
 
 
 //////////////////////////////////////////
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
@@ -43,7 +43,7 @@
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "maze-engine/MazeEngine.hpp"
 
 
@@ -66,7 +66,7 @@ namespace Maze
 
         //////////////////////////////////////////
         EntityPtr CreateBox(
-            ECSRenderScene* _scene,
+            EcsRenderScene* _scene,
             Vec3F32 const& _position,
             Vec3F32 const& _scale,
             MaterialPtr const& _material = nullptr,
@@ -74,7 +74,7 @@ namespace Maze
 
         //////////////////////////////////////////
         void BuildSimpleLevel(
-            ECSRenderScene* _scene,
+            EcsRenderScene* _scene,
             Vec2F32 const& _levelSize = Vec2F32(50.0f, 50.0f),
             SimpleLevelConfig config = SimpleLevelConfig());
 

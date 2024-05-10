@@ -27,7 +27,7 @@
 #include "SceneExample.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
@@ -105,7 +105,7 @@ namespace Maze
     // Class SceneExample
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneExample, ECSRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneExample, EcsRenderScene);
 
     //////////////////////////////////////////
     SceneExample::SceneExample()
@@ -147,7 +147,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SceneExample::init()
     {
-        if (!ECSRenderScene::init(Example::GetInstancePtr()->getMainRenderWindow()))
+        if (!EcsRenderScene::init(Example::GetInstancePtr()->getMainRenderWindow()))
             return false;
 
         ExampleSettings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>();
@@ -550,7 +550,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneExample::update(F32 _dt)
     {
-        ECSRenderScene::update(_dt);
+        EcsRenderScene::update(_dt);
 
         ExampleSettings* exampleSettings = SettingsManager::GetInstancePtr()->getSettingsRaw<ExampleSettings>();
 

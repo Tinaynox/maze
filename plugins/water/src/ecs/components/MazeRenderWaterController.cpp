@@ -26,7 +26,7 @@
 //////////////////////////////////////////
 #include "MazeWaterHeader.hpp"
 #include "maze-plugin-water/ecs/components/MazeRenderWaterController.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
@@ -88,9 +88,9 @@ namespace Maze
     //////////////////////////////////////////
     void RenderWaterController::processEntityAwakened()
     {
-        m_waterRenderersSample = getEntityRaw()->getECSWorld()->requestInclusiveSample<WaterRenderer3D>();
+        m_waterRenderersSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<WaterRenderer3D>();
         m_renderControllerSample =
-            getEntityRaw()->getECSWorld()->requestInclusiveSample<RenderController>();
+            getEntityRaw()->getEcsWorld()->requestInclusiveSample<RenderController>();
     }
 
     //////////////////////////////////////////

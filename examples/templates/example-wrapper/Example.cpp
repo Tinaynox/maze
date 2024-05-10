@@ -49,7 +49,7 @@
 #include "maze-graphics/managers/MazeRenderMeshManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-ui/ecs/components/MazeHorizontalLayout2D.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-editor-tools/managers/MazeGizmosManager.hpp"
@@ -357,8 +357,8 @@ namespace Maze
         AssetManager::GetInstancePtr()->addAssetsDirectoryPath(AssetManager::GetInstancePtr()->getDefaultAssetsDirectory());
 
         EntityManager* entityManager = EntityManager::GetInstancePtr();
-        ECSWorldPtr const& world = entityManager->getDefaultWorld();
-        createPrimaryECSWorldSystems(world, m_mainRenderWindow, m_graphicsManager->getDefaultRenderSystem());
+        EcsWorldPtr const& world = entityManager->getDefaultWorld();
+        createPrimaryEcsWorldSystems(world, m_mainRenderWindow, m_graphicsManager->getDefaultRenderSystem());
 
         Debug::Log("Example Init - 6 [%ums]", getTime());
 
