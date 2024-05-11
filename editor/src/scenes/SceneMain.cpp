@@ -27,7 +27,7 @@
 #include "SceneMain.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
@@ -85,7 +85,7 @@ namespace Maze
     // Class SceneMain
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneMain, ECSRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneMain, EcsRenderScene);
 
     //////////////////////////////////////////
     SceneMain::SceneMain()
@@ -102,7 +102,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SceneMain::init(RenderTargetPtr const& _renderTarget)
     {
-        if (!ECSRenderScene::init(_renderTarget))
+        if (!EcsRenderScene::init(_renderTarget))
             return false;
 
         return true;

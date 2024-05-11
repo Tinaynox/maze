@@ -33,6 +33,7 @@
 #include "maze-core/MazeCoreHeader.hpp"
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/utils/MazeClassInfo.hpp"
+#include "maze-core/utils/MazeIdWithGeneration.hpp"
 
 
 //////////////////////////////////////////
@@ -40,10 +41,31 @@ namespace Maze
 {
     //////////////////////////////////////////
     using ComponentIndex = ClassUID;
-    using EntityId = U32;
+    using EntityId = IdWithGeneration<S32, 8>;
     using EntityIds = Set<EntityId>;
 
+    //////////////////////////////////////////
+    static const EntityId c_invalidEntityId = EntityId();
+
 } // namespace Maze
+//////////////////////////////////////////
+
+
+//////////////////////////////////////////
+namespace std
+{
+    //////////////////////////////////////////
+    template<>
+    struct hash<Maze::EntityId>
+    {
+        inline size_t operator()(Maze::EntityId const& _id) const noexcept
+        {
+            return static_cast<size_t>(_id.getId());
+        }
+    };
+
+
+} // namespace std
 //////////////////////////////////////////
 
 

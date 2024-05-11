@@ -27,7 +27,7 @@
 #include "EditorSceneModeControllerPrefab.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
@@ -290,13 +290,13 @@ namespace Maze
     {
         if (m_canvasNode)
         {
-            m_canvasNode->getEntityRaw()->removeFromECSWorld();
+            m_canvasNode->getEntityRaw()->removeFromEcsWorld();
             m_canvasNode.reset();
         }
 
         if (m_mainNode)
         {
-            m_mainNode->getEntityRaw()->removeFromECSWorld();
+            m_mainNode->getEntityRaw()->removeFromEcsWorld();
             m_mainNode.reset();
         }
     }

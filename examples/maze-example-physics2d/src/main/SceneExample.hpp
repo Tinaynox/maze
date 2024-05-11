@@ -41,7 +41,6 @@
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/MazeECSRenderScene.hpp"
 
 
@@ -60,13 +59,12 @@ namespace Maze
     //
     //////////////////////////////////////////
     class SceneExample
-        : public ECSRenderScene
-        , public MultiDelegateCallbackReceiver
+        : public EcsRenderScene
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneExample, ECSRenderScene);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneExample, EcsRenderScene);
 
     public:
 

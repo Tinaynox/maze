@@ -27,7 +27,7 @@
 #include "ScenePlaytestTools.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
@@ -141,7 +141,7 @@ namespace Maze
         MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
 
         EntityManager* entityManager = EntityManager::GetInstancePtr();
-        ECSWorldPtr const& world = entityManager->getDefaultWorld();
+        EcsWorldPtr const& world = entityManager->getDefaultWorld();
 
         Editor::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &ScenePlaytestTools::notifyMainRenderWindowResized);
 
@@ -333,7 +333,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ECSWorld* ScenePlaytestTools::assignWorld()
+    EcsWorld* ScenePlaytestTools::assignWorld()
     {
         return EntityManager::GetInstancePtr()->getDefaultWorld().get();
     }
@@ -351,9 +351,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void ScenePlaytestTools::processSceneStateChanged(ECSSceneState _state)
+    void ScenePlaytestTools::processSceneStateChanged(EcsSceneState _state)
     {
-        if (_state == ECSSceneState::Destroy)
+        if (_state == EcsSceneState::Destroy)
         {
             if (m_camera3D == GizmosManager::GetInstancePtr()->getCamera())
                 GizmosManager::GetInstancePtr()->setCamera(nullptr);

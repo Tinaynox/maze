@@ -218,7 +218,7 @@ namespace Maze
     //////////////////////////////////////////
     EcsWorld* SceneDebugPreview::assignWorld()
     {
-        m_previewWorld = EcsWorld::Create(MAZE_HS("Preview"), 0, true);
+        m_previewWorld = EcsWorld::Create(MAZE_HS("Preview"), true);
         return m_previewWorld.get();
     }
 

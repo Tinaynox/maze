@@ -98,7 +98,7 @@ namespace Maze
         for (S32 renderMode = 0; renderMode < (S32)MeshRenderMode::MAX; ++renderMode)
         {
             MaterialPtr& material = m_materials[renderMode];
-            material = Material::Create(renderSystem->getMaterialManager()->getColorMaterial());
+            material = Material::Create(renderSystem->getMaterialManager()->ensureBuiltinMaterial(BuiltinMaterialType::Color));
             switch (MeshRenderMode(renderMode))
             {
                 case MeshRenderMode::Opaque:
@@ -176,7 +176,7 @@ namespace Maze
                     entity->ensureComponent<Name>("Gizmo Billboard");
 
                     MaterialPtr material = Material::Create(
-                        GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getBuiltinMaterial(BuiltinMaterialType::ColorTextureCustomUV));
+                        GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->ensureBuiltinMaterial(BuiltinMaterialType::ColorTextureCustomUV));
                     material->getFirstRenderPass()->setRenderQueueIndex(4800);
 
                     MeshRendererPtr meshRenderer = entity->createComponent<MeshRenderer>();

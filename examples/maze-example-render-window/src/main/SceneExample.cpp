@@ -27,7 +27,7 @@
 #include "SceneExample.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
@@ -35,11 +35,9 @@
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystemModule2D.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystemModule3D.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeLight3D.hpp"
+#include "maze-graphics/ecs/components/MazeRenderController.hpp"
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-core/math/MazeMathGeometry.hpp"
@@ -78,7 +76,7 @@ extern Maze::RenderTargetPtr g_defaultRenderTarget;
 // Class SceneExample
 //
 //////////////////////////////////////////
-MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneExample, Maze::ECSRenderScene);
+MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneExample, Maze::EcsRenderScene);
 
 //////////////////////////////////////////
 SceneExample::SceneExample()
@@ -114,7 +112,7 @@ SceneExamplePtr SceneExample::Create()
 //////////////////////////////////////////
 bool SceneExample::init()
 {
-    if (!Maze::ECSRenderScene::init(g_defaultRenderTarget))
+    if (!Maze::EcsRenderScene::init(g_defaultRenderTarget))
         return false;
 
     Maze::S32 p0 = Maze::EntityManager::GetInstancePtr()->getComponentPriority<Maze::Transform3D>();
@@ -131,9 +129,9 @@ bool SceneExample::init()
     Maze::SpriteManagerPtr const& spriteManager = renderSystem->getSpriteManager();
 
     Maze::EntityManager* entityManager = Maze::EntityManager::GetInstancePtr();
-    Maze::ECSWorldPtr const& world = entityManager->getDefaultWorld();
+    Maze::EcsWorldPtr const& world = entityManager->getDefaultWorld();
 
-    world->addSystem(Maze::RenderControlSystem::Create(renderSystem));
+    createAndAddEntityWithComponent<Maze::RenderController>(MAZE_HCS("RenderController"),renderSystem);
 
     for (int i = 0; i < 4; ++i)
     {
@@ -291,7 +289,7 @@ void SceneExample::update(Maze::F32 _dt)
         m_renderTarget->castRaw<Maze::RenderWindowOpenGL>()->getContext()->setWireframeRender(false);
     }
 
-    Maze::ECSScene::update(_dt);
+    Maze::EcsScene::update(_dt);
 
     m_timer += _dt;
 
@@ -342,7 +340,7 @@ void SceneExample::update(Maze::F32 _dt)
         m_cameraTransform3D->setLocalRotation(Maze::Quaternion(m_pitchAngle, m_yawAngle, 0.0f));
         
         Maze::EntityManager* entityManager = Maze::EntityManager::GetInstancePtr();
-        Maze::ECSWorldPtr const& world = entityManager->getDefaultWorld();
+        Maze::EcsWorldPtr const& world = entityManager->getDefaultWorld();
         
         world->requestInclusiveSample<Maze::MeshRenderer, Maze::Transform3D>()->process(
             [&](Maze::Entity* _entity, Maze::MeshRenderer* _meshRenderer, Maze::Transform3D* _transform)

@@ -30,7 +30,7 @@
 
 
 //////////////////////////////////////////
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/MazeBaseTypes.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
@@ -44,7 +44,7 @@
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/ecs/components/MazeSystemTextRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "scenes/SceneMainTools.hpp"
 
 
@@ -94,14 +94,14 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual ECSWorld* assignWorld() MAZE_OVERRIDE;
+        virtual EcsWorld* assignWorld() MAZE_OVERRIDE;
 
 
         //////////////////////////////////////////
         void notifyMainRenderWindowResized(RenderTarget* _renderTarget);
 
         //////////////////////////////////////////
-        virtual void processSceneStateChanged(ECSSceneState _state) MAZE_OVERRIDE;
+        virtual void processSceneStateChanged(EcsSceneState _state) MAZE_OVERRIDE;
 
     protected:
     };

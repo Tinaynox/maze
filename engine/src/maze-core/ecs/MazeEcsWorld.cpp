@@ -198,7 +198,6 @@ namespace Maze
 
     //////////////////////////////////////////
     EcsWorld::EcsWorld()
-        : m_entitiesIdCounter(0)
     {
     }
 
@@ -209,7 +208,7 @@ namespace Maze
 
         m_samples.clear();
 
-        m_entitiesMap.clear();
+        m_entities.clear();
         m_addingEntities.clear();
         m_removingEntities.clear();
         m_componentsChangedEntities.clear();        
@@ -222,11 +221,10 @@ namespace Maze
     //////////////////////////////////////////
     EcsWorldPtr EcsWorld::Create(
         HashedString const& _name,
-        EntityId _entitiesIdCounter,
         bool _attachSystems)
     {
         EcsWorldPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(EcsWorld, object, init(_name, _entitiesIdCounter, _attachSystems));
+        MAZE_CREATE_AND_INIT_SHARED_PTR(EcsWorld, object, init(_name, _attachSystems));
         return object;
     }
 
@@ -239,11 +237,9 @@ namespace Maze
     //////////////////////////////////////////
     bool EcsWorld::init(
         HashedString const& _name,
-        EntityId _entitiesIdCounter,
         bool _attachSystems)
     {
         m_name = _name;
-        m_entitiesIdCounter = _entitiesIdCounter;
 
         if (_attachSystems)
         {
@@ -251,6 +247,21 @@ namespace Maze
         }
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    EntityPtr const& EcsWorld::getEntity(EntityId _id) const
+    {
+        static EntityPtr const nullValue;
+
+        S32 index = convertEntityIdToIndex(_id);
+        if (index >= 0 && index < (S32)m_entities.size())
+        {
+            EntityData const& entityData = m_entities[index];
+            if (entityData.id == _id)
+                return entityData.entity;
+        }
+        return nullValue;
     }
 
     //////////////////////////////////////////
@@ -305,14 +316,13 @@ namespace Maze
         MAZE_DEBUG_BP_IF(_entity->getAdding());
 
         // Generate id
-        if (_entity->getId() == 0)
-        {
-            _entity->setId(++m_entitiesIdCounter);
-        }
+        EntityId entityId = generateNewEntityId();
+        _entity->setId(entityId);
 
-        MAZE_DEBUG_BP_IF(getEntityById(_entity->getId()) != nullptr);
+        MAZE_DEBUG_BP_IF(getEntity(_entity->getId()) != nullptr);
 
-        m_entitiesMap[_entity->getId()] = _entity;
+        S32 index = convertEntityIdToIndex(entityId);
+        m_entities[index].entity = _entity;
 
         if (_entity->getRemoving())
         {
@@ -422,7 +432,8 @@ namespace Maze
             _entity->setEcsScene(nullptr);
             _entity->setEcsWorld(nullptr);
 
-            m_entitiesMap.erase(_entity->getId());
+            removeEntityNow(_entity->getId());
+
 #if (MAZE_ECS_EXTENSIVE_CHECKS)
             _validateDontHave(entityRaw);
 #endif
@@ -439,31 +450,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    EntityPtr const& EcsWorld::getEntityById(EntityId _id) const
+    Size EcsWorld::calculateEntitiesCount()
     {
-        static EntityPtr const nullPointer;
-        
-        if (_id == 0)
-            return nullPointer;
-        
-        {
-            UnorderedMap<EntityId, EntityPtr>::const_iterator it = m_entitiesMap.find(_id);
-            if (it != m_entitiesMap.end())
-            {
-                if (it->second->getRemoving())
-                    return nullPointer;
-
-                return it->second;
-            }
-        }
-
-        return nullPointer;
-    }
-
-    //////////////////////////////////////////
-    Size EcsWorld::getEntitiesCount()
-    {
-        return m_entitiesMap.size();
+        Size count = 0;
+        for (EntityData const& entityData : m_entities)
+            if (entityData.entity)
+                ++count;
+        return count;
     }
 
     //////////////////////////////////////////
@@ -551,7 +544,7 @@ namespace Maze
             for (Size i = 0, in = m_samples.size(); i < in; ++i)
                 m_samples[i]->processEntity(entity);
 
-            m_entitiesMap.erase(entity->getId());
+            removeEntityNow(entity->getId());
 #if (MAZE_ECS_EXTENSIVE_CHECKS)
             _validateDontHave(entity);
 #endif
@@ -743,6 +736,41 @@ namespace Maze
                 MAZE_ERROR("m_activeEntities");
             }
         }
+    }
+
+    //////////////////////////////////////////
+    EntityId EcsWorld::generateNewEntityId()
+    {
+        if (!m_freeEntityIndices.empty())
+        {
+            S32 index = m_freeEntityIndices.top();
+            m_freeEntityIndices.pop();
+            MAZE_ASSERT(index < (S32)m_entities.size() && !m_entities[index].entity);
+            return m_entities[index].id;
+        }
+
+        EntityData entityData;
+        entityData.id = EntityId((S32)m_entities.size() + 1, 0);
+        m_entities.push_back(entityData);
+        return entityData.id;
+    }
+
+    //////////////////////////////////////////
+    S32 EcsWorld::convertEntityIdToIndex(EntityId _id) const
+    {
+        return _id.getIndex() - 1;
+    }
+
+    //////////////////////////////////////////
+    void EcsWorld::removeEntityNow(EntityId _id)
+    {
+        S32 index = convertEntityIdToIndex(_id);
+        MAZE_ASSERT(index >= 0 && index < (S32)m_entities.size());
+        EntityData const& entityData = m_entities[index];
+        MAZE_ASSERT(entityData.entity);
+        MAZE_ASSERT(entityData.id == _id);
+        m_freeEntityIndices.push(index);
+        m_entities[index].entity.reset();
     }
 
 } // namespace Maze

@@ -129,6 +129,7 @@ namespace Maze
     //////////////////////////////////////////
     MaterialPtr Material::Create(MaterialPtr const& _material)
     {
+        MAZE_ERROR_RETURN_VALUE_IF(!_material, nullptr, "Null material!");
         return _material->createCopy();
     }
 

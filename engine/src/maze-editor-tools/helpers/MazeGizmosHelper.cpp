@@ -51,25 +51,34 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void SetColor(ColorF128 const& _color)
         {
-            GetDrawer()->setColor(_color);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->setColor(_color);
         }
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API ColorF128 const& GetColor()
         {
-            return GetDrawer()->getColor();
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                return drawer->getColor();
+            return ColorF128::c_black;
         }
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void PushTransform(Mat4F const& _mat)
         {
-            GetDrawer()->pushTransform(_mat);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->pushTransform(_mat);
         }
 
         //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API void PopTransform()
         {
-            GetDrawer()->popTransform();
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->popTransform();
         }
 
         //////////////////////////////////////////
@@ -79,7 +88,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawLine(_point0, _point1, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawLine(_point0, _point1, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -91,7 +102,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawLine(_x0, _y0, _x1, _y1, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawLine(_x0, _y0, _x1, _y1, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -101,7 +114,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawLine(_point0, _point1, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawLine(_point0, _point1, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -115,7 +130,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawLine(_x0, _y0, _z0, _x1, _y1, _z1, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawLine(_x0, _y0, _z0, _x1, _y1, _z1, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -125,7 +142,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawRay(_point, _delta, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawRay(_point, _delta, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -138,7 +157,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawWireQuad(_position, _forward, _up, _scale, _color, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawWireQuad(_position, _forward, _up, _scale, _color, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -149,7 +170,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawWireCircle(_position, _direction, _radius, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawWireCircle(_position, _direction, _radius, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -161,7 +184,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawWireHemicircle(_position, _forward, _up, _radius, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawWireHemicircle(_position, _forward, _up, _radius, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -174,7 +199,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawWireCube(_position, _forward, _up, _scale, _color, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawWireCube(_position, _forward, _up, _scale, _color, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -185,7 +212,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawWireSphere(_position, _radius, _color, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawWireSphere(_position, _radius, _color, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -197,7 +226,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawWireHemisphere(_position, _direction, _radius, _color, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawWireHemisphere(_position, _direction, _radius, _color, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -209,7 +240,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawWireCylinder(_start, _end, _radius, _color, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawWireCylinder(_start, _end, _radius, _color, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -221,7 +254,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawWireCone(_position, _direction, _angle, _color, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawWireCone(_position, _direction, _angle, _color, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -234,7 +269,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawWireTruncatedCone(_position, _direction, _radius, _angle, _color, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawWireTruncatedCone(_position, _direction, _radius, _angle, _color, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -247,7 +284,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawWireTorus(_position, _direction, _radius, _torusRadius, _color, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawWireTorus(_position, _direction, _radius, _torusRadius, _color, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -258,7 +297,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawWireArrow(_position, _direction, _color, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawWireArrow(_position, _direction, _color, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -270,7 +311,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawWireCapsule(_start, _end, _radius, _color, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawWireCapsule(_start, _end, _radius, _color, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -279,7 +322,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawAABB(_aabb, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawAABB(_aabb, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -288,7 +333,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawAABB(_aabb, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawAABB(_aabb, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -299,7 +346,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawTriangle(_point0, _point1, _point2, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawTriangle(_point0, _point1, _point2, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -312,7 +361,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawQuad(
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawQuad(
                 _position, _forward, _up, _scale, _color, _duration, _renderMode);
         }
 
@@ -326,7 +377,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawCube(
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawCube(
                 _position, _forward, _up, _scale, _color, _duration, _renderMode);
         }
 
@@ -338,7 +391,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawSphere(_position, _radius, _color, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawSphere(_position, _radius, _color, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -352,7 +407,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawCone(_position, _forward, _up, _radius, _height, _color, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawCone(_position, _forward, _up, _radius, _height, _color, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -366,7 +423,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawCylinder(_position, _forward, _up, _radius, _height, _color, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawCylinder(_position, _forward, _up, _radius, _height, _color, _duration, _renderMode);
         }
 
         //////////////////////////////////////////
@@ -378,7 +437,9 @@ namespace Maze
             F32 _duration,
             GizmosDrawer::MeshRenderMode _renderMode)
         {
-            GetDrawer()->drawTorus(_position, _forward, _radius, _color, _duration, _renderMode);
+            GizmosDrawerPtr const& drawer = GetDrawer();
+            if (drawer)
+                drawer->drawTorus(_position, _forward, _radius, _color, _duration, _renderMode);
         }
 
 

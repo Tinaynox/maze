@@ -27,7 +27,7 @@
 #include "SceneDebug.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
@@ -79,7 +79,7 @@ namespace Maze
     // Class SceneDebug
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneDebug, ECSRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneDebug, EcsRenderScene);
 
     //////////////////////////////////////////
     SceneDebug::SceneDebug()
@@ -122,7 +122,7 @@ namespace Maze
     bool SceneDebug::init()
     {
         RenderWindowPtr const& renderWindow = Editor::GetInstancePtr()->getMainRenderWindow();
-        if (!ECSRenderScene::init(renderWindow))
+        if (!EcsRenderScene::init(renderWindow))
             return false;
 
         Editor::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &SceneDebug::notifyMainRenderWindowResized);
@@ -158,7 +158,7 @@ namespace Maze
 
             fpsText += "FPS: " + StringHelper::ToString((S32)Math::Round(fps)) + " (Min: " + StringHelper::ToString((S32)Math::Round(m_fpsLowest)) + ")\n";
             fpsText += "DIP: " + StringHelper::ToString(GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getDrawCalls()) + "\n";
-            fpsText += "WE: " + StringHelper::ToString((U32)EntityManager::GetInstancePtr()->getDefaultWorldRaw()->getEntitiesCount());
+            fpsText += "WE: " + StringHelper::ToString((U32)EntityManager::GetInstancePtr()->getDefaultWorldRaw()->calculateEntitiesCount());
 
             m_fpsTimeLeft = m_fpsUpdateInterval;
             m_fpsAcc = 0.0f;

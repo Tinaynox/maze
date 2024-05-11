@@ -71,9 +71,6 @@ namespace Maze
         using ComponentsContainer = Map<ClassUID, ComponentPtr>;
 
         //////////////////////////////////////////
-        static EntityId const c_invalidEntityId;
-
-        //////////////////////////////////////////
         friend class EcsWorld;
         friend class Component;
 
@@ -441,7 +438,7 @@ namespace Maze
     inline typename ::std::enable_if<(IsSharedPtr<EntityPtr>::value), void>::type
         ValueToString(EntityPtr const& _value, String& _data)
     {
-        _data = _value ? StringHelper::ToString(_value->getId()) : StringHelper::ToString(Entity::c_invalidEntityId);
+        _data = _value ? StringHelper::S32ToString(_value->getId()) : StringHelper::S32ToString(c_invalidEntityId);
     }
 
     //////////////////////////////////////////
@@ -449,7 +446,7 @@ namespace Maze
     inline typename ::std::enable_if<(IsSharedPtr<EntityPtr>::value), void>::type
         ValueFromString(EntityPtr& _value, CString _data, Size _count)
     {
-        EntityId eid = StringHelper::StringToU32(_data);
+        EntityId eid = EntityId(StringHelper::StringToS32(_data));
         _value = Entity::GetEntity(eid);
     }
 

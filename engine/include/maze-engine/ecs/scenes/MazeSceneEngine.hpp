@@ -44,6 +44,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(RenderController);
     MAZE_USING_SHARED_PTR(ParticlesDrawerController);
     MAZE_USING_SHARED_PTR(InputSystem2D);
+    MAZE_USING_SHARED_PTR(GizmosController);
 
 
     //////////////////////////////////////////
@@ -58,6 +59,7 @@ namespace Maze
         bool createRenderController = true;
         bool createParticlesDrawerController = true;
         bool createInputSystem2D = true;
+        bool createGizmosController = true;
     };
 
 
@@ -107,6 +109,7 @@ namespace Maze
         RenderControllerPtr m_renderController;
         ParticlesDrawerControllerPtr m_particlesDrawerController;
         InputSystem2DPtr m_inputSystem2D;
+        GizmosControllerPtr m_gizmosController;
     };
 
 

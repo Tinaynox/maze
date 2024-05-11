@@ -27,7 +27,7 @@
 #include "EditorPrefabManager.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
@@ -150,7 +150,7 @@ namespace Maze
     {
         if (m_prefabAssetFile)
         {
-            ECSScenePtr const& scene = EditorManager::GetInstancePtr()->getSceneMain();
+            EcsScenePtr const& scene = EditorManager::GetInstancePtr()->getSceneMain();
 
             EntityPtr entity = EntitySerializationManager::GetInstancePtr()->loadPrefab(
                 m_prefabAssetFile,

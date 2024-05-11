@@ -27,7 +27,7 @@
 #include "EditorManager.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeEntitySerializationManager.hpp"
@@ -322,7 +322,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ECSWorld* EditorManager::getMainECSWorld() const
+    EcsWorld* EditorManager::getMainEcsWorld() const
     {
         if (m_playtestModeEnabled)
             return EntityManager::GetInstancePtr()->getDefaultWorldRaw();

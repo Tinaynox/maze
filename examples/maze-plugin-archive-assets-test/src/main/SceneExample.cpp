@@ -38,10 +38,8 @@
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/components/MazeRotor3D.hpp"
-#include "maze-core/ecs/systems/MazeTransformEventsSystem.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeLight3D.hpp"
 #include "maze-graphics/ecs/components/MazeTerrainMesh3D.hpp"
@@ -122,7 +120,7 @@ namespace Maze
     // Class SceneExample
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneExample, ECSRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneExample, EcsRenderScene);
 
     //////////////////////////////////////////
     SceneExample::SceneExample()
@@ -154,7 +152,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SceneExample::init()
     {
-        if (!ECSRenderScene::init(Example::GetInstancePtr()->getMainRenderWindow()))
+        if (!EcsRenderScene::init(Example::GetInstancePtr()->getMainRenderWindow()))
             return false;
 
         InputManager* inputManager = InputManager::GetInstancePtr();
@@ -169,8 +167,8 @@ namespace Maze
         m_canvas->setClearColor(ColorU32::c_zero);
 
         CanvasScalerPtr canvasScaler = canvasEntity->ensureComponent<CanvasScaler>();
-        canvasScaler->setScaleMode(CanvasScaler::ScaleMode::ScaleWithViewportSize);
-        canvasScaler->setScreenMatchMode(CanvasScaler::ScreenMatchMode::MatchWidthOrHeight);
+        canvasScaler->setScaleMode(CanvasScalerScaleMode::ScaleWithViewportSize);
+        canvasScaler->setScreenMatchMode(CanvasScalerScreenMatchMode::MatchWidthOrHeight);
         canvasScaler->setMatchWidthOrHeight(1.0f);
         canvasScaler->updateCanvasScale();
 
@@ -237,7 +235,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneExample::update(F32 _dt)
     {
-        ECSRenderScene::update(_dt);
+        EcsRenderScene::update(_dt);
 
         Quaternion q = Quaternion::Slerp(
             24.0f * _dt,

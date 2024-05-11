@@ -69,7 +69,7 @@ namespace Maze
         jerr.error_exit = ProcessJPGError;
         
         jpeg_create_decompress(&cinfo);
-        jpeg_mem_src(&cinfo, _fileData.getDataPointer(), (U32)_fileData.getSize());
+        jpeg_mem_src(&cinfo, const_cast<U8*>(_fileData.getDataRO()), (U32)_fileData.getSize());
 
         // Read JPEG header
         S32 readHeaderRes = jpeg_read_header(&cinfo, TRUE);
@@ -105,7 +105,7 @@ namespace Maze
         {
             jpeg_read_scanlines(&cinfo, buffer, 1);
             
-            memcpy(pixelSheet.getDataPointer() + (row * width * channels), buffer[0], width * channels);
+            memcpy(pixelSheet.getDataRW() + (row * width * channels), buffer[0], width * channels);
             row--;
         }
 

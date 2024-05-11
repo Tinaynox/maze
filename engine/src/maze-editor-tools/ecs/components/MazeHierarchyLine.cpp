@@ -237,9 +237,9 @@ namespace Maze
                     if (!m_world)
                         return;
 
-                    EntityId entityId = (EntityId)(reinterpret_cast<Size>(getUserData()));
+                    EntityId entityId = (EntityId)((S32)reinterpret_cast<Size>(getUserData()));
 
-                    EntityPtr const& entity = m_world->getEntityById(entityId);
+                    EntityPtr const& entity = m_world->getEntity(entityId);
 
                     if (!entity)
                         return;
@@ -444,9 +444,9 @@ namespace Maze
             if (!m_world)
                 return;
 
-            EntityId entityId = (EntityId)(reinterpret_cast<Size>(getUserData()));
+            EntityId entityId = (EntityId)((S32)reinterpret_cast<Size>(getUserData()));
 
-            EntityPtr const& entity = m_world->getEntityById(entityId);
+            EntityPtr const& entity = m_world->getEntity(entityId);
             if (!entity)
                 return;
 

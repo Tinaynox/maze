@@ -27,7 +27,7 @@
 #include "SceneEditor.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
@@ -121,7 +121,7 @@ namespace Maze
     // Class SceneEditor
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneEditor, ECSRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneEditor, EcsRenderScene);
 
     //////////////////////////////////////////
     SceneEditor::SceneEditor()
@@ -160,7 +160,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SceneEditor::init()
     {
-        if (!ECSRenderScene::init(Editor::GetInstancePtr()->getMainRenderWindow()))
+        if (!EcsRenderScene::init(Editor::GetInstancePtr()->getMainRenderWindow()))
             return false;
 
         Editor::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &SceneEditor::notifyMainRenderWindowResized);
@@ -345,7 +345,7 @@ namespace Maze
 
             // Hierarchy line - Scene
             EditorToolsManager::GetInstancePtr()->eventHierarchyLineSceneContextMenu.subscribe(
-                [](MenuListTree2DPtr const& _menuListTree, ECSScene* _scene)
+                [](MenuListTree2DPtr const& _menuListTree, EcsScene* _scene)
                 {
                     _menuListTree->addItem(
                         "Add Child/3D/Light/Directional",

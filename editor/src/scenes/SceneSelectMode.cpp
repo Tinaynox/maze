@@ -27,7 +27,7 @@
 #include "SceneSelectMode.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
@@ -101,7 +101,7 @@ namespace Maze
     // Class SceneSelectMode
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneSelectMode, ECSRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneSelectMode, EcsRenderScene);
 
     //////////////////////////////////////////
     SceneSelectMode::SceneSelectMode()
@@ -139,7 +139,7 @@ namespace Maze
     bool SceneSelectMode::init()
     {
         RenderWindowPtr const& renderWindow = Editor::GetInstancePtr()->getMainRenderWindow();
-        if (!ECSRenderScene::init(renderWindow))
+        if (!EcsRenderScene::init(renderWindow))
             return false;
 
         EntityPtr canvasEntity = createEntity("Canvas");

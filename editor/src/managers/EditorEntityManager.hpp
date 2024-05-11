@@ -35,7 +35,7 @@
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeTimer.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 
 
 //////////////////////////////////////////
@@ -70,7 +70,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline ECSWorldPtr const& getWorkspaceWorld() const { return m_workspaceWorld; }
+        inline EcsWorldPtr const& getWorkspaceWorld() const { return m_workspaceWorld; }
 
 
         //////////////////////////////////////////
@@ -105,7 +105,7 @@ namespace Maze
     private:
         static EditorEntityManager* s_instance;
 
-        ECSWorldPtr m_workspaceWorld;
+        EcsWorldPtr m_workspaceWorld;
 
         InputSystem2DPtr m_inputSystem2D;
         GizmosControllerPtr m_gizmosController;

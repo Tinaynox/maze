@@ -499,7 +499,7 @@ namespace Maze
         {
             hierarchyLine = m_hierarchyLinePool->createHierarchyLine(HierarchyLineType::Entity);
             hierarchyLine->setEcsWorld(m_world);
-            hierarchyLine->setUserData(reinterpret_cast<void*>((Size)_entityId));
+            hierarchyLine->setUserData(reinterpret_cast<void*>((Size)(S32)_entityId));
             hierarchyLine->updateIcon();
             hierarchyLine->eventDropDownClick.subscribe(this, &HierarchyController::notifyHierarchyLineDropDownClick);
             hierarchyLine->eventLineClick.subscribe(this, &HierarchyController::notifyHierarchyLineClick);
@@ -507,7 +507,7 @@ namespace Maze
 
         hierarchyLine->getEntityRaw()->setActiveSelf(true);
 
-        EntityPtr const& entity = m_world->getEntityById(_entityId);
+        EntityPtr const& entity = m_world->getEntity(_entityId);
         if (entity)
         {
             hierarchyLine->setSelected(
@@ -558,7 +558,7 @@ namespace Maze
             }
             case HierarchyLineType::Entity:
             {
-                EntityId entityId = (EntityId)(reinterpret_cast<Size>(_hierarchyLine->getUserData()));
+                EntityId entityId = (EntityId)((S32)reinterpret_cast<Size>(_hierarchyLine->getUserData()));
                 HierarchyLineEntityData& hierarchyLineData = m_hierarchyLinesPerEntity[entityId];
                 hierarchyLineData.expanded = !hierarchyLineData.expanded;
                 break;
@@ -577,9 +577,9 @@ namespace Maze
         {
             case HierarchyLineType::Entity:
             {
-                EntityId entityId = (EntityId)(reinterpret_cast<Size>(_hierarchyLine->getUserData()));
+                EntityId entityId = (EntityId)((S32)reinterpret_cast<Size>(_hierarchyLine->getUserData()));
 
-                EntityPtr const& entity = EntityManager::GetInstancePtr()->getDefaultWorldRaw()->getEntityById(entityId);
+                EntityPtr const& entity = EntityManager::GetInstancePtr()->getDefaultWorldRaw()->getEntity(entityId);
 
                 if (SelectionManager::GetInstancePtr()->isObjectSelected(entity))
                     SelectionManager::GetInstancePtr()->unselectObject(entity);

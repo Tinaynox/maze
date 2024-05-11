@@ -41,7 +41,7 @@
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 
 
 //////////////////////////////////////////
@@ -53,13 +53,12 @@ MAZE_USING_SHARED_PTR(SceneExample);
 //
 //////////////////////////////////////////
 class SceneExample
-    : public Maze::ECSRenderScene
-    , public Maze::MultiDelegateCallbackReceiver
+    : public Maze::EcsRenderScene
 {
 public:
 
     //////////////////////////////////////////
-    MAZE_DECLARE_METACLASS_WITH_PARENT(SceneExample, Maze::ECSRenderScene);
+    MAZE_DECLARE_METACLASS_WITH_PARENT(SceneExample, Maze::EcsRenderScene);
 
 public:
 

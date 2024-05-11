@@ -74,6 +74,11 @@ namespace Maze
         {}
 
         //////////////////////////////////////////
+        explicit IdWithGeneration(TIdType _id)
+            : m_id(_id)
+        {}
+
+        //////////////////////////////////////////
         inline void operator=(IdWithGeneration const& _value)
         {
             m_id = _value.m_id;

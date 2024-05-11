@@ -74,6 +74,13 @@ namespace Maze
         //////////////////////////////////////////
         friend class Entity;
 
+        //////////////////////////////////////////
+        struct EntityData
+        {
+            EntityId id;
+            EntityPtr entity;
+        };
+
     public:
 
         //////////////////////////////////////////
@@ -82,12 +89,14 @@ namespace Maze
         //////////////////////////////////////////
         static EcsWorldPtr Create(
             HashedString const& _name,
-            EntityId _entitiesIdCounter = 0,
             bool _attachSystems = true);
 
         //////////////////////////////////////////
         static EcsWorld* GetDefaultWorldRaw();
 
+
+        //////////////////////////////////////////
+        EntityPtr const& getEntity(EntityId _id) const;
 
         //////////////////////////////////////////
         void update(F32 _dt);
@@ -107,11 +116,9 @@ namespace Maze
         inline HashedString const& getName() const { return m_name; }
 
 
-        //////////////////////////////////////////
-        EntityPtr const& getEntityById(EntityId _id) const;
 
         //////////////////////////////////////////
-        Size getEntitiesCount();
+        Size calculateEntitiesCount();
 
 
         //////////////////////////////////////////
@@ -251,7 +258,6 @@ namespace Maze
         //////////////////////////////////////////
         bool init(
             HashedString const& _name,
-            EntityId _entitiesIdCounter,
             bool _attachSystems);
 
         //////////////////////////////////////////
@@ -271,11 +277,20 @@ namespace Maze
         void processEntityActiveChanged(Entity* _entity);
 
         
+        //////////////////////////////////////////
+        EntityId generateNewEntityId();
+
+        //////////////////////////////////////////
+        S32 convertEntityIdToIndex(EntityId _id) const;
+
+        //////////////////////////////////////////
+        void removeEntityNow(EntityId _id);
 
     protected:
         HashedString m_name;
 
-        UnorderedMap<EntityId, EntityPtr> m_entitiesMap;
+        FastVector<EntityData> m_entities;
+        Stack<S32> m_freeEntityIndices;
 
         Deque<Entity*> m_addingEntities;
         Deque<Entity*> m_removingEntities;
@@ -285,8 +300,6 @@ namespace Maze
         FastVector<Entity*> m_activeEntities;
 
         SwitchableContainer<FastVector<Entity*>> m_startedEntities;
-
-        EntityId m_entitiesIdCounter;
 
         Vector<IEntitiesSamplePtr> m_samples;
 

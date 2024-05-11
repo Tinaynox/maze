@@ -39,20 +39,16 @@ namespace Maze
     //
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS(Entity,
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(EntityId, id, 0, getId, setId),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(EntityId, id, c_invalidEntityId, getId, setId),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(U8, flags, U8(Entity::Flags::ActiveSelf), getFlags, setFlags));
 
     //////////////////////////////////////////
     MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(Entity);
 
     //////////////////////////////////////////
-    EntityId const Entity::c_invalidEntityId = 0;
-
-    //////////////////////////////////////////
     Entity::Entity()
         : m_world(nullptr)
         , m_scene(nullptr)
-        , m_id(0)
         , m_flags(U8(Flags::ActiveSelf) | U8(Flags::ActiveInHierarchyPrevFrame) | U8(Flags::ComponentsMaskDirty))
         , m_componentsMask(0)
         , m_transitionFlags(0)
@@ -94,7 +90,7 @@ namespace Maze
     //////////////////////////////////////////
     EntityPtr const& Entity::GetEntity(EntityId _eid)
     {
-        return EcsWorld::GetDefaultWorldRaw()->getEntityById(_eid);
+        return EcsWorld::GetDefaultWorldRaw()->getEntity(_eid);
     }
 
     //////////////////////////////////////////

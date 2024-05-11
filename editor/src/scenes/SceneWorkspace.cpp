@@ -27,7 +27,7 @@
 #include "SceneWorkspace.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
@@ -130,7 +130,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    ECSWorld* SceneWorkspace::assignWorld()
+    EcsWorld* SceneWorkspace::assignWorld()
     {
         return EditorEntityManager::GetInstancePtr()->getWorkspaceWorld().get();
     }

@@ -29,6 +29,7 @@
 #include "maze-graphics/ecs/components/MazeRenderController.hpp"
 #include "maze-particles/ecs/components/MazeParticlesDrawerController.hpp"
 #include "maze-ui/ecs/components/MazeInputSystem2D.hpp"
+#include "maze-editor-tools/ecs/components/MazeGizmosController.hpp"
 
 
 //////////////////////////////////////////
@@ -78,6 +79,10 @@ namespace Maze
         // 2D Input
         if (_config.createInputSystem2D)
             m_inputSystem2D = createAndAddEntityWithComponent<InputSystem2D>("InputSystem2D");
+
+        // Gizmos Controller
+        if (_config.createGizmosController)
+            m_gizmosController = createAndAddEntityWithComponent<GizmosController>("GizmosController", _config.renderTarget.get());
         
         return true;
     }

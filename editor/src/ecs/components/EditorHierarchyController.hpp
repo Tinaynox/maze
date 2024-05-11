@@ -51,7 +51,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(HierarchyLinePool);
     MAZE_USING_SHARED_PTR(HierarchyLine);
-    MAZE_USING_SHARED_PTR(ECSScene);
+    MAZE_USING_SHARED_PTR(EcsScene);
 
 
     //////////////////////////////////////////
@@ -174,7 +174,7 @@ namespace Maze
         HierarchyLinePtr createHierarchyLine(EntityId _entityId);
 
         //////////////////////////////////////////
-        HierarchyLinePtr createHierarchyLine(ECSScenePtr const& _scene);
+        HierarchyLinePtr createHierarchyLine(EcsScenePtr const& _scene);
 
         //////////////////////////////////////////
         void notifyHierarchyLineDropDownClick(HierarchyLine* _hierarchyLine);
@@ -209,7 +209,7 @@ namespace Maze
         void notifySelectionChanged();
 
         //////////////////////////////////////////
-        void setECSWorld(ECSWorld* _world);
+        void setEcsWorld(EcsWorld* _world);
 
         //////////////////////////////////////////
         void expandEntity(EntityPtr const& _entity);
@@ -227,7 +227,7 @@ namespace Maze
         Transform2DPtr m_titleTransform;
         SpriteRenderer2DPtr m_titleBackground;
 
-        ECSWorld* m_world = nullptr;
+        EcsWorld* m_world = nullptr;
 
         Map<EntityId, EditorHierarchyLineEntityData> m_hierarchyLinesPerEntity;
         UnorderedMap<String, EditorHierarchyLineSceneData> m_hierarchyLinesPerScene;

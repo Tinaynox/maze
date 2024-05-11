@@ -30,7 +30,7 @@
 
 
 //////////////////////////////////////////
-#include "maze-core/ecs/MazeECSScene.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
@@ -41,7 +41,7 @@
 #include "maze-graphics/MazeRenderPass.hpp"
 #include "maze-graphics/MazeRenderTarget.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
-#include "maze-graphics/ecs/MazeECSRenderScene.hpp"
+#include "maze-graphics/ecs/MazeEcsRenderScene.hpp"
 #include "editor/EditorSceneMode.hpp"
 
 
@@ -65,12 +65,12 @@ namespace Maze
     //
     //////////////////////////////////////////
     class SceneEditor
-        : public ECSRenderScene
+        : public EcsRenderScene
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneEditor, ECSRenderScene);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneEditor, EcsRenderScene);
 
     public:
 

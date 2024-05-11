@@ -154,7 +154,7 @@ namespace Maze
     //////////////////////////////////////////
     EntityId Component::getEntityId() const 
     { 
-        return m_entityRaw ? m_entityRaw->getId() : 0;
+        return m_entityRaw ? m_entityRaw->getId() : c_invalidEntityId;
     }
 
     //////////////////////////////////////////

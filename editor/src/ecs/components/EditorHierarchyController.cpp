@@ -36,7 +36,7 @@
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -102,7 +102,7 @@ namespace Maze
             hierarchyLineData.second.line->eventLineDoubleClick.unsubscribe(this);
         }
 
-        setECSWorld(nullptr);
+        setEcsWorld(nullptr);
 
         if (EditorManager::GetInstancePtr())
         {
@@ -130,7 +130,7 @@ namespace Maze
     {
         UpdateManager::GetInstancePtr()->addUpdatable(this);
 
-        setECSWorld(EditorEntityManager::GetInstancePtr()->getWorkspaceWorld().get());
+        setEcsWorld(EditorEntityManager::GetInstancePtr()->getWorkspaceWorld().get());
 
         m_canvas = _canvas;
 
@@ -164,7 +164,7 @@ namespace Maze
             m_canvas->getTransform()->getSize(),
             Vec2F32(0.0f, 0.0f),
             m_canvas->getTransform(),
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F32::c_zero,
             Vec2F32::c_zero);
         m_titleTransform->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>();
@@ -177,7 +177,7 @@ namespace Maze
             Vec2F32(0.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_titleTransform,
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F32(0.0f, 1.0f),
             Vec2F32(0.0f, 1.0f));
         m_titleBackground->setColor(EditorToolsStyles::GetInstancePtr()->getTitleBackgroundColor());
@@ -192,7 +192,7 @@ namespace Maze
             Vec2F(100, EditorToolsStyles::GetInstancePtr()->getTitleHeight()),
             Vec2F(EditorToolsStyles::GetInstancePtr()->getTitleLabelShift(), 0),
             m_titleBackground->getTransform(),
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F(0.0f, 0.5f),
             Vec2F(0.0f, 0.5f));
         titleText->setColor(ColorU32::c_black);
@@ -205,7 +205,7 @@ namespace Maze
             Vec2F32(0.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_canvas->getTransform(),
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F32::c_zero,
             Vec2F32::c_zero);
         m_bodyBackground->setColor(EditorToolsStyles::GetInstancePtr()->getBodyBackgroundColor());
@@ -215,7 +215,7 @@ namespace Maze
             m_bodyBackground->getTransform()->getSize(),
             Vec2F32::c_zero,
             m_bodyBackground->getTransform(),
-            getEntityRaw()->getECSScene(),
+            getEntityRaw()->getEcsScene(),
             Vec2F32(0.0f, 1.0f),
             Vec2F32(0.0f, 1.0f),
             false,
@@ -261,14 +261,16 @@ namespace Maze
         F32 x = 0;
         F32 y = 0;
 
-        Vector<ECSScenePtr> scenes = sceneManager->getScenes();
-        for (ECSScenePtr const& scene : scenes)
+        Vector<SceneManager::SceneData> scenesData = sceneManager->getScenes();
+        for (SceneManager::SceneData const& sceneData : scenesData)
         {
+            EcsScenePtr const& scene = sceneData.scene;
+
             ClassUID sceneUID = scene->getClassUID();
             if (scene->getIsSystemScene())
                 continue;
 
-            if (sceneUID == getEntityRaw()->getECSScene()->getClassUID())
+            if (sceneUID == getEntityRaw()->getEcsScene()->getClassUID())
                 continue;
 
             if (m_ignoreScenes.find(sceneUID) != m_ignoreScenes.end())
@@ -587,8 +589,8 @@ namespace Maze
         if (!hierarchyLine)
         {
             hierarchyLine = m_hierarchyLinePool->createHierarchyLine(HierarchyLineType::Entity);
-            hierarchyLine->setECSWorld(EditorManager::GetInstancePtr()->getMainECSWorld());
-            hierarchyLine->setUserData(reinterpret_cast<void*>((Size)_entityId));
+            hierarchyLine->setEcsWorld(EditorManager::GetInstancePtr()->getMainEcsWorld());
+            hierarchyLine->setUserData(reinterpret_cast<void*>((Size)(S32)_entityId));
             hierarchyLine->updateIcon();
             hierarchyLine->eventDropDownClick.subscribe(this, &EditorHierarchyController::notifyHierarchyLineDropDownClick);
             hierarchyLine->eventLineCursorPressIn.subscribe(this, &EditorHierarchyController::notifyHierarchyLineClick);
@@ -601,7 +603,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    HierarchyLinePtr EditorHierarchyController::createHierarchyLine(ECSScenePtr const& _scene)
+    HierarchyLinePtr EditorHierarchyController::createHierarchyLine(EcsScenePtr const& _scene)
     {
         EditorHierarchyLineSceneData& hierarchyLineData = m_hierarchyLinesPerScene[_scene->getClassName()];
         HierarchyLinePtr& hierarchyLine = hierarchyLineData.line;
@@ -609,7 +611,7 @@ namespace Maze
         if (!hierarchyLine)
         {
             hierarchyLine = m_hierarchyLinePool->createHierarchyLine(HierarchyLineType::Scene);
-            hierarchyLine->setECSWorld(EditorManager::GetInstancePtr()->getMainECSWorld());
+            hierarchyLine->setEcsWorld(EditorManager::GetInstancePtr()->getMainEcsWorld());
             hierarchyLine->setUserData(static_cast<void*>(_scene.get()));
             hierarchyLine->eventDropDownClick.subscribe(this, &EditorHierarchyController::notifyHierarchyLineDropDownClick);
             hierarchyLine->eventLineCursorPressIn.subscribe(this, &EditorHierarchyController::notifyHierarchyLineClick);
@@ -630,14 +632,14 @@ namespace Maze
         {
             case HierarchyLineType::Scene:
             {
-                ECSScene* ecsScene = static_cast<ECSScene*>(_hierarchyLine->getUserData());
+                EcsScene* ecsScene = static_cast<EcsScene*>(_hierarchyLine->getUserData());
                 EditorHierarchyLineSceneData& hierarchyLineData = m_hierarchyLinesPerScene[ecsScene->getClassName()];
                 hierarchyLineData.expanded = !hierarchyLineData.expanded;
                 break;
             }
             case HierarchyLineType::Entity:
             {
-                EntityId entityId = (EntityId)(reinterpret_cast<Size>(_hierarchyLine->getUserData()));
+                EntityId entityId = (EntityId)((S32)reinterpret_cast<Size>(_hierarchyLine->getUserData()));
                 EditorHierarchyLineEntityData& hierarchyLineData = m_hierarchyLinesPerEntity[entityId];
                 hierarchyLineData.expanded = !hierarchyLineData.expanded;
                 break;
@@ -656,11 +658,11 @@ namespace Maze
         {
             case HierarchyLineType::Entity:
             {
-                EntityId entityId = (EntityId)(reinterpret_cast<Size>(_hierarchyLine->getUserData()));
+                EntityId entityId = (EntityId)((S32)reinterpret_cast<Size>(_hierarchyLine->getUserData()));
 
-                ECSWorld* world = EditorManager::GetInstancePtr()->getSceneMain()->getWorld();
-                EntityPtr const& entity = world->getEntityById(entityId);
-                MAZE_WARNING_IF(!entity, "Entity with id=%u is not found in current workspace world!", entityId);
+                EcsWorld* world = EditorManager::GetInstancePtr()->getSceneMain()->getWorld();
+                EntityPtr const& entity = world->getEntity(entityId);
+                MAZE_WARNING_IF(!entity, "Entity with id=%d is not found in current workspace world!", (S32)entityId);
 
                 if (SelectionManager::GetInstancePtr()->isObjectSelected(entity))
                 {
@@ -720,7 +722,7 @@ namespace Maze
     //////////////////////////////////////////
     void EditorHierarchyController::notifyPlaytestModeEnabled(bool _value)
     {
-        setECSWorld(EditorManager::GetInstancePtr()->getMainECSWorld());
+        setEcsWorld(EditorManager::GetInstancePtr()->getMainEcsWorld());
     }
 
     //////////////////////////////////////////
@@ -730,7 +732,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EditorHierarchyController::setECSWorld(ECSWorld* _world)
+    void EditorHierarchyController::setEcsWorld(EcsWorld* _world)
     {
         if (m_world == _world)
             return;

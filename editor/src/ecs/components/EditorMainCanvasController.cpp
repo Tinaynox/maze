@@ -36,7 +36,7 @@
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -117,7 +117,7 @@ namespace Maze
         m_transform = getEntityRaw()->ensureComponent<Transform2D>();
 
 
-        EntityPtr particleEffectInfoEntity = getEntityRaw()->getECSScene()->createEntity();
+        EntityPtr particleEffectInfoEntity = getEntityRaw()->getEcsScene()->createEntity();
         ParticleEffectInfoPtr particleEffectInfo = particleEffectInfoEntity->createComponent<ParticleEffectInfo>();
         particleEffectInfo->getTransform()->setParent(m_canvas->getTransform());
     }

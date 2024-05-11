@@ -38,7 +38,6 @@
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
-#include "maze-graphics/ecs/systems/MazeRenderControlSystem.hpp"
 #include "maze-graphics/ecs/components/MazeSpriteRenderer2D.hpp"
 #include "maze-graphics/ecs/components/MazeLight3D.hpp"
 #include "maze-core/math/MazeMath.hpp"
@@ -117,7 +116,7 @@ namespace Maze
     // Class SceneExample
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneExample, ECSRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneExample, EcsRenderScene);
 
     //////////////////////////////////////////
     SceneExample::SceneExample()
@@ -147,7 +146,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SceneExample::init()
     {
-        if (!ECSRenderScene::init(Example::GetInstancePtr()->getMainRenderWindow()))
+        if (!EcsRenderScene::init(Example::GetInstancePtr()->getMainRenderWindow()))
             return false;
 
         create2D();
@@ -164,7 +163,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneExample::update(F32 _dt)
     {
-        ECSRenderScene::update(_dt);
+        EcsRenderScene::update(_dt);
 
     }
 

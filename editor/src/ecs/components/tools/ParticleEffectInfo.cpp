@@ -36,7 +36,7 @@
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -142,7 +142,7 @@ namespace Maze
             Vec2F32::c_zero,
             GraphicsManager::GetInstancePtr()->getDefaultRenderSystemRaw()->getMaterialManager()->getColorTextureMaterial(),
             m_transform,
-            m_transform->getEntityRaw()->getECSScene(),
+            m_transform->getEntityRaw()->getEcsScene(),
             { 1.0f, 0.0f },
             { 1.0f, 0.0f });
         backgroundSprite->setColor(255, 255, 255, 140);
@@ -156,7 +156,7 @@ namespace Maze
             Vec2F32(m_transform->getWidth(), 20.0f),
             Vec2F32::c_zero,
             backgroundSprite->getTransform(),
-            m_transform->getEntityRaw()->getECSScene(),
+            m_transform->getEntityRaw()->getEcsScene(),
             { 0.0f, 1.0f },
             { 0.0f, 1.0f });
         titleText->setColor(ColorU32::c_black);
@@ -167,7 +167,7 @@ namespace Maze
             { 62.0f, 18.0f },
             { -65.0f, -40.0f },
             backgroundSprite->getTransform(),
-            m_transform->getEntityRaw()->getECSScene(),
+            m_transform->getEntityRaw()->getEcsScene(),
             { 0.5f, 1.0f },
             { 0.5f, 0.0f });
         m_stopButton->eventClick.subscribe(this, &ParticleEffectInfo::notifyStopButtonClick);
@@ -178,7 +178,7 @@ namespace Maze
             { 62.0f, 18.0f },
             { -65.0f, -40.0f },
             backgroundSprite->getTransform(),
-            m_transform->getEntityRaw()->getECSScene(),
+            m_transform->getEntityRaw()->getEcsScene(),
             { 0.5f, 1.0f },
             { 0.5f, 0.0f });
         m_playButton->eventClick.subscribe(this, &ParticleEffectInfo::notifyPlayButtonClick);
@@ -189,7 +189,7 @@ namespace Maze
             { 62.0f, 18.0f },
             { 0.0f, -40.0f },
             backgroundSprite->getTransform(),
-            m_transform->getEntityRaw()->getECSScene(),
+            m_transform->getEntityRaw()->getEcsScene(),
             { 0.5f, 1.0f },
             { 0.5f, 0.0f });
         m_restartButton->eventClick.subscribe(this, &ParticleEffectInfo::notifyRestartButtonClick);
@@ -200,7 +200,7 @@ namespace Maze
             { 62.0f, 18.0f },
             { 65.0f, -40.0f },
             backgroundSprite->getTransform(),
-            m_transform->getEntityRaw()->getECSScene(),
+            m_transform->getEntityRaw()->getEcsScene(),
             { 0.5f, 1.0f },
             { 0.5f, 0.0f });
         m_pauseButton->eventClick.subscribe(this, &ParticleEffectInfo::notifyPauseButtonClick);
@@ -219,7 +219,7 @@ namespace Maze
                     Vec2F32(20.0f, 20.0f),
                     Vec2F32(8.0f, yStart + textGap * 0),
                     backgroundSprite->getTransform(),
-                    m_transform->getEntityRaw()->getECSScene(),
+                    m_transform->getEntityRaw()->getEcsScene(),
                     { 0.0f, 1.0f },
                     { 0.0f, 1.0f });
                 text->setColor(ColorU32::c_black);
@@ -235,7 +235,7 @@ namespace Maze
                     Vec2F32(20.0f, 20.0f),
                     Vec2F32(108.0f, yStart + textGap * 0),
                     backgroundSprite->getTransform(),
-                    m_transform->getEntityRaw()->getECSScene(),
+                    m_transform->getEntityRaw()->getEcsScene(),
                     { 0.0f, 1.0f },
                     { 0.0f, 1.0f });
                 m_particlesValueText->setColor(ColorU32::c_black);
@@ -253,7 +253,7 @@ namespace Maze
                     Vec2F32(20.0f, 20.0f),
                     Vec2F32(8.0f, yStart + textGap * 1),
                     backgroundSprite->getTransform(),
-                    m_transform->getEntityRaw()->getECSScene(),
+                    m_transform->getEntityRaw()->getEcsScene(),
                     { 0.0f, 1.0f },
                     { 0.0f, 1.0f });
                 text->setColor(ColorU32::c_black);
@@ -269,7 +269,7 @@ namespace Maze
                     Vec2F32(20.0f, 20.0f),
                     Vec2F32(108.0f, yStart + textGap * 1),
                     backgroundSprite->getTransform(),
-                    m_transform->getEntityRaw()->getECSScene(),
+                    m_transform->getEntityRaw()->getEcsScene(),
                     { 0.0f, 1.0f },
                     { 0.0f, 1.0f });
                 m_timeValueText->setColor(ColorU32::c_black);
@@ -287,7 +287,7 @@ namespace Maze
                     Vec2F32(20.0f, 20.0f),
                     Vec2F32(8.0f, yStart + textGap * 2),
                     backgroundSprite->getTransform(),
-                    m_transform->getEntityRaw()->getECSScene(),
+                    m_transform->getEntityRaw()->getEcsScene(),
                     { 0.0f, 1.0f },
                     { 0.0f, 1.0f });
                 text->setColor(ColorU32::c_black);
@@ -303,7 +303,7 @@ namespace Maze
                     Vec2F32(20.0f, 20.0f),
                     Vec2F32(108.0f, yStart + textGap * 2),
                     backgroundSprite->getTransform(),
-                    m_transform->getEntityRaw()->getECSScene(),
+                    m_transform->getEntityRaw()->getEcsScene(),
                     { 0.0f, 1.0f },
                     { 0.0f, 1.0f });
                 m_iteractionsValueText->setColor(ColorU32::c_black);
@@ -321,7 +321,7 @@ namespace Maze
                     Vec2F32(20.0f, 20.0f),
                     Vec2F32(8.0f, yStart + textGap * 3.5f),
                     backgroundSprite->getTransform(),
-                    m_transform->getEntityRaw()->getECSScene(),
+                    m_transform->getEntityRaw()->getEcsScene(),
                     { 0.0f, 1.0f },
                     { 0.0f, 1.0f });
                 text->setColor(ColorU32::c_black);
@@ -331,7 +331,7 @@ namespace Maze
                 m_recursiveButton = UIHelper::CreateDefaultToggleButton(
                     { 108.0f, yStart + textGap * 3.5f },
                     backgroundSprite->getTransform(),
-                    m_transform->getEntityRaw()->getECSScene(),
+                    m_transform->getEntityRaw()->getEcsScene(),
                     { 0.0f, 1.0f },
                     { 0.0f, 1.0f });
                 m_recursiveButton->setChecked(true);

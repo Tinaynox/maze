@@ -27,7 +27,7 @@
 #include "SceneSplash.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeInputManager.hpp"
@@ -109,7 +109,7 @@ namespace Maze
     // Class SceneSplash
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneSplash, ECSRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneSplash, EcsRenderScene);
 
     //////////////////////////////////////////
     SceneSplash::SceneSplash()
@@ -147,7 +147,7 @@ namespace Maze
     bool SceneSplash::init()
     {
         RenderWindowPtr const& renderWindow = Editor::GetInstancePtr()->getMainRenderWindow();
-        if (!ECSRenderScene::init(renderWindow))
+        if (!EcsRenderScene::init(renderWindow))
             return false;
 
         Editor::GetInstancePtr()->getMainRenderWindow()->eventRenderTargetResized.subscribe(this, &SceneSplash::notifyMainRenderWindowResized);

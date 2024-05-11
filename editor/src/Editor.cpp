@@ -43,7 +43,7 @@
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/settings/MazeSettingsManager.hpp"
-#include "maze-core/ecs/MazeECSWorld.hpp"
+#include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-core/math/MazePlane.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/MazeShaderSystem.hpp"
@@ -298,8 +298,8 @@ namespace Maze
         
 
         EntityManager* entityManager = EntityManager::GetInstancePtr();
-        ECSWorldPtr const& world = entityManager->getDefaultWorld();
-        createPrimaryECSWorldSystems(world, m_mainRenderWindow, m_graphicsManager->getDefaultRenderSystem());
+        EcsWorldPtr const& world = entityManager->getDefaultWorld();
+        createPrimaryEcsWorldSystems(world, m_mainRenderWindow, m_graphicsManager->getDefaultRenderSystem());
 
         SceneEngineInitConfig sceneEngineInitConfig;
         sceneEngineInitConfig.renderTarget = m_mainRenderWindow;

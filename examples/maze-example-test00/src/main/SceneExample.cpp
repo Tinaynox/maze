@@ -112,54 +112,7 @@ namespace Maze
         HashedString m_name;
         ComponentSystemOrder m_order;
     };
-
-    //////////////////////////////////////////
-    void AddTestObj(Vector<TestObj>& _arr, TestObj const& _obj)
-    {
-        S32 arrSize = (S32)_arr.size();
-        S32 afterIndex = -1;
-        S32 beforeIndex = arrSize;
-
-        for (S32 i = 0; i < arrSize; ++i)
-        {
-            TestObj const& obj = _arr[i];
-            if (obj.getOrder().after.count(_obj.getName()) || _obj.getOrder().before.count(obj.getName()))
-            {
-                beforeIndex = i;
-                break;
-            }
-        }
-
-        for (S32 i = arrSize - 1; i > -1; --i)
-        {
-            TestObj const& obj = _arr[i];
-            if (obj.getOrder().before.count(_obj.getName()) || _obj.getOrder().after.count(obj.getName()))
-            {
-                afterIndex = i;
-                break;
-            }
-        }
-
-        if (afterIndex < beforeIndex || afterIndex == -1)
-        {
-            _arr.insert(_arr.begin() + beforeIndex, _obj);
-        }
-        else
-        if (beforeIndex == arrSize)
-        {
-            _arr.insert(_arr.begin() + afterIndex + 1, _obj);
-        }
-        else
-        {
-            MAZE_ERROR(
-                "Failed to place '%s' (after='%s' before='%s')!",
-                _obj.getName().c_str(),
-                (afterIndex >= 0 && afterIndex < arrSize) ? _arr[afterIndex].getName().c_str() : "NONE",
-                (beforeIndex >= 0 && beforeIndex < arrSize) ? _arr[beforeIndex].getName().c_str() : "NONE");
-        }
-    }
-
-
+    
 
     //////////////////////////////////////////
     String GetExampleName()
@@ -199,7 +152,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM(SomeUpdateES, 100,
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(SomeUpdateES, {},
         UpdateEvent const& _event,
         Entity* _entity,
         Transform3D* _someObject,
@@ -209,7 +162,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(SomeEventES, 100,
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(SomeEventES, {},
         SimpleEvent const& _event,
         Entity* _entity,
         Transform3D* _someObject,
@@ -222,28 +175,12 @@ namespace Maze
     // Class SceneExample
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneExample, ECSRenderScene);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneExample, EcsRenderScene);
 
 
     //////////////////////////////////////////
     SceneExample::SceneExample()
     {
-        Vector<TestObj> objs;
-
-        AddTestObj(objs, TestObj(MAZE_HS("c"), ComponentSystemOrder(
-            Set<HashedString>{HashedString(MAZE_HS("b"))},
-            {}
-        ))); 
-        AddTestObj(objs, TestObj(MAZE_HS("b"), ComponentSystemOrder(
-            Set<HashedString>{HashedString(MAZE_HS("a"))},
-            {}
-        )));
-        AddTestObj(objs, TestObj(MAZE_HS("a"), ComponentSystemOrder(
-            {},
-            Set<HashedString>{HashedString(MAZE_HS("b"))}
-        )));
-
-        int a = 0;
     }
 
     //////////////////////////////////////////
@@ -271,7 +208,7 @@ namespace Maze
     //////////////////////////////////////////
     bool SceneExample::init()
     {
-        if (!ECSRenderScene::init(Example::GetInstancePtr()->getMainRenderWindow()))
+        if (!EcsRenderScene::init(Example::GetInstancePtr()->getMainRenderWindow()))
             return false;
 
         InputManager* inputManager = InputManager::GetInstancePtr();
@@ -359,7 +296,7 @@ namespace Maze
     //////////////////////////////////////////
     void SceneExample::update(F32 _dt)
     {
-        ECSRenderScene::update(_dt);
+        EcsRenderScene::update(_dt);
 
         Quaternion q = Quaternion::Slerp(
             24.0f * _dt,

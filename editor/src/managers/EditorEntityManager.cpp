@@ -73,7 +73,7 @@ namespace Maze
     //////////////////////////////////////////
     bool EditorEntityManager::init()
     {
-        m_workspaceWorld = ECSWorld::Create(MAZE_HS("Workspace"));
+        m_workspaceWorld = EcsWorld::Create(MAZE_HS("Workspace"));
 
         RenderSystemPtr renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 

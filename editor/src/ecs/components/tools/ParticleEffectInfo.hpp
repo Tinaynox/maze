@@ -51,7 +51,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
     MAZE_USING_SHARED_PTR(HierarchyLinePool);
     MAZE_USING_SHARED_PTR(HierarchyLine);
-    MAZE_USING_SHARED_PTR(ECSScene);
+    MAZE_USING_SHARED_PTR(EcsScene);
     MAZE_USING_SHARED_PTR(ClickButton2D);
     MAZE_USING_SHARED_PTR(ToggleButton2D);
     MAZE_USING_SHARED_PTR(AbstractTextRenderer2D);
