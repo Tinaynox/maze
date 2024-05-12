@@ -98,9 +98,6 @@ namespace Maze
         virtual void process(void (*)()) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual void processUpdate(UpdateEvent const& _event, void (*)()) MAZE_ABSTRACT;
-
-        //////////////////////////////////////////
         virtual void processEvent(Event* _event, void (*)()) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
@@ -170,9 +167,6 @@ namespace Maze
         virtual void process(void (*_func)()) MAZE_OVERRIDE
         { }
 
-        //////////////////////////////////////////
-        virtual void processUpdate(UpdateEvent const& _event, void (*_func)()) MAZE_OVERRIDE
-        { }
 
         //////////////////////////////////////////
         virtual void processEvent(Event* _event, void (*_func)()) MAZE_OVERRIDE
@@ -347,26 +341,6 @@ namespace Maze
             process((ProcessFunc)(rawFunc));
         }
 
-        //////////////////////////////////////////
-        inline void processUpdate(UpdateEvent const& _event, ProcessUpdateFunc _func)
-        {
-            for (EntityData entityData : m_entitiesData)
-            {
-                callProcessUpdate(
-                    _event,
-                    _func,
-                    entityData.entity,
-                    entityData.components,
-                    typename Indices::Indexes());
-            }
-        }
-
-        //////////////////////////////////////////
-        virtual void processUpdate(UpdateEvent const& _event, void (*_func)()) MAZE_OVERRIDE
-        {
-            ProcessUpdateFuncRaw rawFunc = (ProcessUpdateFuncRaw)_func;
-            processUpdate(_event, (ProcessUpdateFunc)(rawFunc));
-        }
 
         //////////////////////////////////////////
         inline void processEvent(Event* _event, ProcessEventFunc _func)
@@ -441,17 +415,6 @@ namespace Maze
             IndexesTuple<Idxs...> const&)
         {
             _func(_entity, std::get<Idxs>(_components)...);
-        }
-
-        template<S32 ...Idxs>
-        inline void callProcessUpdate(
-            UpdateEvent const& _event,
-            ProcessUpdateFunc _func,
-            Entity* _entity,
-            std::tuple<TComponents*...>& _components,
-            IndexesTuple<Idxs...> const&)
-        {
-            _func(_event, _entity, std::get<Idxs>(_components)...);
         }
 
         template<S32 ...Idxs>
