@@ -86,34 +86,7 @@
 
 //////////////////////////////////////////
 namespace Maze
-{
-    //////////////////////////////////////////
-    class TestObj
-    {
-    public:
-
-        //////////////////////////////////////////
-        TestObj(
-            HashedCString _name,
-            ComponentSystemOrder const& _order)
-            : m_name(_name)
-            , m_order(_order)
-        {
-
-        }
-
-        //////////////////////////////////////////
-        inline HashedString const& getName() const { return m_name; }
-
-        //////////////////////////////////////////
-        inline ComponentSystemOrder const& getOrder() const { return m_order; }
-
-    private:
-        HashedString m_name;
-        ComponentSystemOrder m_order;
-    };
-    
-
+{  
     //////////////////////////////////////////
     String GetExampleName()
     {
@@ -169,6 +142,16 @@ namespace Maze
         Rotor3D* _rotor)
     {
         _someObject->translate(Vec3F32::c_unitX * 1.0f);
+    }
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(SomeStartedES, {},
+        EntityStartedEvent const& _event,
+        Entity* _entity,
+        Transform3D* _someObject,
+        Rotor3D* _rotor)
+    {
+        Debug::Log("Started!");
     }
 
     //////////////////////////////////////////
@@ -256,17 +239,16 @@ namespace Maze
         m_camera3D->setRenderTarget(Example::GetInstancePtr()->getMainRenderWindow());
 
 
-        // m_world->addSystem(MAZE_HS("SomeUpdateES"), SomeUpdateES, 0);
 
         {
-            EntityPtr objectEntity = createEntity();
-            Transform3DPtr transform = objectEntity->createComponent<Transform3D>();
+            m_objectEntity = createEntity();
+            Transform3DPtr transform = m_objectEntity->createComponent<Transform3D>();
             transform->setLocalX(2.0f);
-            MeshRendererPtr meshRenderer = objectEntity->createComponent<MeshRenderer>();
+            MeshRendererPtr meshRenderer = m_objectEntity->createComponent<MeshRenderer>();
             meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultCubeMesh());
             meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::SpecularDS));
-            objectEntity->ensureComponent<Name>("Obj");
-            Rotor3DPtr rotor = objectEntity->createComponent<Rotor3D>();
+            m_objectEntity->ensureComponent<Name>("Obj");
+            Rotor3DPtr rotor = m_objectEntity->createComponent<Rotor3D>();
             rotor->setAxis({ 0.0f, -0.7071f, -0.7071f });
             rotor->setSpeed(0.2f);
         }
@@ -347,7 +329,7 @@ namespace Maze
                 else
                 if (_data.buttonId == 2)
                 {
-                    m_world->sendEventImmediate<SimpleEvent>();
+                    m_world->sendEventImmediate<SimpleEvent>(m_objectEntity->getId());
                 }
                 break;
             }

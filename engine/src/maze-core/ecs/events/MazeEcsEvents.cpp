@@ -34,12 +34,10 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PreUpdateEvent, Event);
-
-    //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UpdateEvent, Event);
-
-    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UpdateEvent, Event);    
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PostUpdateEvent, Event);
+    // MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EntityAwakenedEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EntityStartedEvent, Event);
 
     
 } // namespace Maze

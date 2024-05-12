@@ -108,20 +108,20 @@ namespace Maze
     //////////////////////////////////////////
     void PhysicsController2D::notifyFixedUpdateStart(F32 _dt)
     {
-        getEntityRaw()->getEcsWorld()->sendEventImmediate<Physics2DFixedUpdateStartEvent>(_dt);
+        getEntityRaw()->getEcsWorld()->broadcastEventImmediate<Physics2DFixedUpdateStartEvent>(_dt);
     }
 
     //////////////////////////////////////////
     void PhysicsController2D::notifyFixedUpdateFinished(F32 _dt)
     {
-        getEntityRaw()->getEcsWorld()->sendEventImmediate<Physics2DFixedUpdateFinishedEvent>(_dt);
+        getEntityRaw()->getEcsWorld()->broadcastEventImmediate<Physics2DFixedUpdateFinishedEvent>(_dt);
     }
 
     //////////////////////////////////////////
     void PhysicsController2D::notifyUpdateFinished(F32 _dt)
     {
         F32 accumulatorRatio = m_physicsWorld2D->getAccumulatorRatio();
-        getEntityRaw()->getEcsWorld()->sendEventImmediate<Physics2DUpdateFinishedEvent>(_dt, accumulatorRatio);
+        getEntityRaw()->getEcsWorld()->broadcastEventImmediate<Physics2DUpdateFinishedEvent>(_dt, accumulatorRatio);
     }
     
 } // namespace Maze

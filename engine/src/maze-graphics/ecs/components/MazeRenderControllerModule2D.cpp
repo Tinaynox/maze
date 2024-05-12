@@ -413,7 +413,7 @@ namespace Maze
                 }
             });
 
-        m_world->sendEventImmediate<Render2DPostUpdateEvent>(dt);
+        m_world->broadcastEventImmediate<Render2DPostUpdateEvent>(dt);
 
         updateSortedMeshRenderersList();
     }

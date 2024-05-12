@@ -272,8 +272,6 @@ namespace Maze
         //////////////////////////////////////////
         virtual void processEntityAwakened();
 
-        //////////////////////////////////////////
-        virtual void processEntityStarted();
 
     protected:
         Entity* m_entityRaw;

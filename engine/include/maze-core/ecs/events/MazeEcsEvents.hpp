@@ -117,6 +117,19 @@ namespace Maze
     };
 
 
+    //////////////////////////////////////////
+    // Class EntityStartedEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API EntityStartedEvent
+        : public GenericEvent<EntityStartedEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EntityStartedEvent, Event);
+    };
+
+
 } // namespace Maze
 //////////////////////////////////////////
 

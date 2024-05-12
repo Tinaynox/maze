@@ -114,6 +114,9 @@ namespace Maze
         //////////////////////////////////////////
         void update(F32 _dt);
 
+        //////////////////////////////////////////
+        void processEntityStarted();
+
 
         //////////////////////////////////////////
         inline bool getHorizontalScroll() const { return m_horizontalScroll; }
@@ -303,8 +306,6 @@ namespace Maze
         //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        virtual void processEntityStarted() MAZE_OVERRIDE;
         
         //////////////////////////////////////////
         void notifyHorizontalScrollbarValueChanged(Scrollbar2D* _scrollbar, F32 _value);

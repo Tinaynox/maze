@@ -107,6 +107,8 @@ namespace Maze
         CanvasPtr m_canvas;
         Camera3DPtr m_camera3D;
 
+        EntityPtr m_objectEntity;
+
         F32 m_yawAngle = -2.565f;
         F32 m_pitchAngle = 0.253f;
         Vec2F32 m_cursorPositionLastFrame = Vec2F32::c_zero;

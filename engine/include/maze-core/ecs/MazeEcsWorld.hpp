@@ -202,7 +202,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TEvent>
-        inline void processEvent(TEvent* _event)
+        inline void broadcastEventImmediate(TEvent* _event)
         {
             ClassUID eventUID = _event->getClassUID();
             Vector<SimpleComponentSystemEventHandlerPtr> const& eventHandlers = m_eventHandlers[eventUID];
@@ -213,14 +213,14 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TEvent, typename ...TArgs>
-        inline void sendEventImmediate(TArgs... _args)
+        inline void broadcastEventImmediate(TArgs... _args)
         {
             TEvent evt(_args...);
             MAZE_DEBUG_ERROR_BP_IF(
                 evt.getClassUID() != ClassInfo<TEvent>::UID(),
                 "Event %s has wrong metadata!",
                 ClassInfo<TEvent>::Name());
-            processEvent(&evt);
+            broadcastEventImmediate(&evt);
         }
 
         //////////////////////////////////////////
@@ -238,7 +238,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TEvent>
-        inline void processEvent(EntityId _entityId, TEvent* _event)
+        inline void sendEventImmediate(EntityId _entityId, TEvent* _event)
         {
             ClassUID eventUID = _event->getClassUID();
             Vector<SimpleComponentSystemEventHandlerPtr> const& eventHandlers = m_eventHandlers[eventUID];
@@ -246,19 +246,13 @@ namespace Maze
             for (SimpleComponentSystemEventHandlerPtr const& _eventHandler : eventHandlers)
                 _eventHandler->processEvent(_entityId, _event);
         }
-
-        //////////////////////////////////////////
-        inline void sendEventImmediate(EntityId _entityId, Event* _event)
-        {
-            processEvent(_entityId, _event);
-        }
-
+        
         //////////////////////////////////////////
         template <typename TEvent, typename ...TArgs>
         inline void sendEventImmediate(EntityId _entityId, TArgs... _args)
         {
             TEvent evt(_args...);
-            processEvent(_entityId, &evt);
+            sendEventImmediate(_entityId, &evt);
         }
 
     public:

@@ -228,12 +228,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Component::processEntityStarted()
-    {
-
-    }
-
-    //////////////////////////////////////////
     S32 Component::getPriority() const
     {
         return EntityManager::GetInstancePtr()->getComponentPriority(getClassUID());

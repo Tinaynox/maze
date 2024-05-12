@@ -191,7 +191,7 @@ namespace Maze
             {
                 {
                     MAZE_PROFILE_EVENT("3D GatherRenderUnits");
-                    m_world->sendEventImmediate<Render3DDefaultPassGatherRenderUnitsEvent>(_renderTarget, &_params, &renderData);
+                    m_world->broadcastEventImmediate<Render3DDefaultPassGatherRenderUnitsEvent>(_renderTarget, &_params, &renderData);
                 }
 
                 S32 renderDataSize = (S32)renderData.size();
@@ -331,13 +331,13 @@ namespace Maze
             params.clipViewport = camera->getClipViewport();
             params.lightingSettings = camera->getLightingSettings();
 
-            m_world->sendEventImmediate<Render3DDefaultPrePassEvent>(_renderTarget, &params);
+            m_world->broadcastEventImmediate<Render3DDefaultPrePassEvent>(_renderTarget, &params);
 
             drawDefaultPass(
                 _renderTarget,
                 params);
 
-            m_world->sendEventImmediate<Render3DDefaultPostPassEvent>(_renderTarget, &params);
+            m_world->broadcastEventImmediate<Render3DDefaultPostPassEvent>(_renderTarget, &params);
                 
         }
     }

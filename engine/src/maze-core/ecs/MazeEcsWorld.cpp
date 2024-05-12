@@ -39,10 +39,6 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // #define MAZE_ECS_EXTENSIVE_CHECKS (1)
-
-
-    //////////////////////////////////////////
     SimpleComponentSystemEventHandlerPtr const& FindSystem(
         Vector<SimpleComponentSystemEventHandlerPtr> const& _eventHandlers,
         HashedString const& _name)
@@ -280,15 +276,15 @@ namespace Maze
 
         {
             PreUpdateEvent updateEvent(_dt);
-            sendEventImmediate<PreUpdateEvent>(updateEvent);
+            broadcastEventImmediate<PreUpdateEvent>(updateEvent);
         }
         {
             UpdateEvent updateEvent(_dt);
-            sendEventImmediate<UpdateEvent>(updateEvent);
+            broadcastEventImmediate<UpdateEvent>(updateEvent);
         }
         {
             PostUpdateEvent updateEvent(_dt);
-            sendEventImmediate<PostUpdateEvent>(updateEvent);
+            broadcastEventImmediate<PostUpdateEvent>(updateEvent);
         }
         
         for (Vector<IEntitiesSamplePtr>::const_iterator it = m_samples.begin(),

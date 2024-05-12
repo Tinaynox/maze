@@ -37,6 +37,7 @@
 #include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
@@ -574,6 +575,17 @@ namespace Maze
                 -(m_verticalScrollbar->getTransform()->getWidth()),
                 viewTransformSizePolicy->getSizeDelta().y);
         }
+    }
+
+
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(ScrollRect2DStarted, {},
+        EntityStartedEvent const& _event,
+        Entity* _entity,
+        ScrollRect2D* _scrollRect2D)
+    {
+        _scrollRect2D->processEntityStarted();
     }
 
 } // namespace Maze

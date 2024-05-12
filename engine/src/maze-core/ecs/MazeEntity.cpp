@@ -338,6 +338,7 @@ namespace Maze
 
         m_transitionFlags |= static_cast<U8>(TransitionFlags::Awakened);
 
+        // #TODO: Remove
         for (auto const& componentData : m_components)
             componentData.second->processEntityAwakened();
     }
@@ -350,10 +351,7 @@ namespace Maze
 
         m_transitionFlags |= static_cast<U8>(TransitionFlags::Started);
 
-        for (auto const& componentData : m_components)
-        {
-            componentData.second->processEntityStarted();
-        }
+        m_world->sendEventImmediate<EntityStartedEvent>(getId());
     }
 
     //////////////////////////////////////////
