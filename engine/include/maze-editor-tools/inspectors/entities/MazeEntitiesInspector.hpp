@@ -116,7 +116,7 @@ namespace Maze
         void notifyAddComponentButton(Button2D* _button, CursorInputEvent const& _inputEvent);
 
         //////////////////////////////////////////
-        void notifyEntityChanged(Entity* _entity);
+        void notifyEntityChanged(EntityPtr const& _entity);
 
 
         //////////////////////////////////////////

@@ -77,6 +77,25 @@ namespace Maze
         //////////////////////////////////////////
         struct EntityData
         {
+            //////////////////////////////////////////
+            EntityData() {}
+
+            //////////////////////////////////////////
+            EntityData(
+                EntityId _id,
+                EntityPtr const& _entity)
+                : id(_id)
+                , entity(_entity)
+            {}
+
+            //////////////////////////////////////////
+            EntityData(
+                EntityId _id,
+                EntityPtr&& _entity)
+                : id(_id)
+                , entity(std::move(_entity))
+            {}
+
             EntityId id;
             EntityPtr entity;
         };
@@ -96,11 +115,14 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void update(F32 _dt);
+
+
+        //////////////////////////////////////////
         EntityPtr const& getEntity(EntityId _id) const;
 
         //////////////////////////////////////////
-        void update(F32 _dt);
-
+        inline bool isEntityExists(EntityId _id) const { return getEntity(_id) != nullptr; }
 
         //////////////////////////////////////////
         EntityPtr createEntity();
@@ -122,7 +144,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void processEntityComponentsChanged(Entity* _entity);
+        void processEntityComponentsChanged(EntityId _id);
 
 
         //////////////////////////////////////////
@@ -151,11 +173,12 @@ namespace Maze
             SharedPtr<GenericInclusiveEntitiesSample<TComponents...>> sample = GenericInclusiveEntitiesSample<TComponents...>::Create(getSharedPtr());
             m_samples.push_back(sample);
 
-            for (Size i = 0, in = m_activeEntities.size(); i < in; ++i)
-                sample->processEntity(m_activeEntities[i]);
+            for (Size i = 0, in = m_entities.size(); i < in; ++i)
+                if (m_entities[i].entity)
+                    sample->processEntity(m_entities[i].entity.get());
 
             for (Size i = 0, in = m_addingEntities.size(); i < in; ++i)
-                sample->processEntity(m_addingEntities[i]);
+                sample->processEntity(m_addingEntities[i].get());
 
             return sample;
         }
@@ -243,12 +266,12 @@ namespace Maze
         //////////////////////////////////////////
         MultiDelegate<EcsWorld*> eventOnDestroy;
         MultiDelegate<EntityPtr const&> eventEntityAdded;
-        MultiDelegate<Entity*> eventEntityChanged;
+        MultiDelegate<EntityPtr const&> eventEntityChanged;
         MultiDelegate<EntityPtr const&> eventEntityRemoved;
 
 
         //////////////////////////////////////////
-        void _validateDontHave(Entity* _ptr);
+        // void _validateDontHave(Entity* _ptr);
 
     protected:
 
@@ -274,7 +297,7 @@ namespace Maze
 
         
         //////////////////////////////////////////
-        void processEntityActiveChanged(Entity* _entity);
+        void processEntityActiveChanged(EntityId _id);
 
         
         //////////////////////////////////////////
@@ -292,18 +315,27 @@ namespace Maze
         FastVector<EntityData> m_entities;
         Stack<S32> m_freeEntityIndices;
 
-        Deque<Entity*> m_addingEntities;
-        Deque<Entity*> m_removingEntities;
-        Deque<Entity*> m_componentsChangedEntities;
-        Deque<Entity*> m_activeChangedEntities;
+        
+        Deque<EntityId> m_componentsChangedEntities;
+        Deque<EntityId> m_activeChangedEntities;
 
-        FastVector<Entity*> m_activeEntities;
 
-        SwitchableContainer<FastVector<Entity*>> m_startedEntities;
+        SwitchableContainer<FastVector<EntityId>> m_startedEntities;
 
         Vector<IEntitiesSamplePtr> m_samples;
 
         UnorderedMap<ClassUID, Vector<SimpleComponentSystemEventHandlerPtr>> m_eventHandlers;
+
+    private:
+        bool m_updatingNow = false;
+
+        // Adding entities utils
+        S32 m_newEntityIdsCount = 0;
+        Deque<EntityPtr> m_addingEntities;
+        FastVector<EntityId> m_newEntitiesAdded;
+
+        // Removing entities utils
+        Deque<EntityId> m_removingEntities;
     };
 
 

@@ -30,6 +30,7 @@
 #include "maze-core/ecs/MazeComponentSystem.hpp"
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeComponentSystemHolder.hpp"
+#include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 
@@ -65,12 +66,12 @@ namespace Maze
     void CalculateAfterAndBeforeIndices(
         Vector<SimpleComponentSystemEventHandlerPtr> const& _eventHandlers,
         SimpleComponentSystemEventHandlerPtr const& _system,
-        S32& afterIndex,
-        S32& beforeIndex)
+        S32& _afterIndex,
+        S32& _beforeIndex)
     {
         S32 arrSize = (S32)_eventHandlers.size();
-        afterIndex = -1;
-        beforeIndex = arrSize;
+        _afterIndex = -1;
+        _beforeIndex = arrSize;
 
         for (S32 i = 0; i < arrSize; ++i)
         {
@@ -80,7 +81,7 @@ namespace Maze
 
             if (system->getOrder().after.count(_system->getName()) || _system->getOrder().before.count(system->getName()))
             {
-                beforeIndex = i;
+                _beforeIndex = i;
                 break;
             }
         }
@@ -93,7 +94,7 @@ namespace Maze
 
             if (system->getOrder().before.count(_system->getName()) || _system->getOrder().after.count(system->getName()))
             {
-                afterIndex = i;
+                _afterIndex = i;
                 break;
             }
         }
@@ -213,7 +214,6 @@ namespace Maze
         m_removingEntities.clear();
         m_componentsChangedEntities.clear();        
         m_activeChangedEntities.clear();
-        m_activeEntities.clear();
 
         eventOnDestroy(this);
     }
@@ -267,6 +267,10 @@ namespace Maze
     //////////////////////////////////////////
     void EcsWorld::update(F32 _dt)
     {
+        MAZE_ASSERT(!m_updatingNow);
+
+        m_updatingNow = true;
+
         MAZE_PROFILE_EVENT("EcsWorld::update");
 
         processStartedEntities();
@@ -299,6 +303,8 @@ namespace Maze
             else
                 ++it;
         }
+
+        m_updatingNow = false;
     }
 
     //////////////////////////////////////////
@@ -315,46 +321,22 @@ namespace Maze
         MAZE_DEBUG_BP_IF(!_entity->getRemoving() && _entity->getEcsWorld());
         MAZE_DEBUG_BP_IF(_entity->getAdding());
 
-        // Generate id
         EntityId entityId = generateNewEntityId();
         _entity->setId(entityId);
-
-        MAZE_DEBUG_BP_IF(getEntity(_entity->getId()) != nullptr);
-
-        S32 index = convertEntityIdToIndex(entityId);
-        m_entities[index].entity = _entity;
 
         if (_entity->getRemoving())
         {
             _entity->setRemoving(false);
-
-            {
-                Deque<Entity*>::iterator it = std::find(m_removingEntities.begin(), m_removingEntities.end(), _entity.get());
-                if (it != m_removingEntities.end())
-                {
-                    m_removingEntities.erase(it);
-                }
-            }
-
             _entity->setEcsWorld(this);
+            
             return true;
         }
 
         _entity->setAdding(true);
-
-        m_addingEntities.push_back(_entity.get());
-
         _entity->setEcsWorld(this);
 
-
-        if (_entity->getActiveInHierarchy())
-        {
-            m_activeEntities.emplace_back(_entity.get());
-        }
-
-        _entity->setActiveInHierarchyPrevFrame(_entity->getActiveInHierarchy());
-
-        m_startedEntities.current().emplace_back(_entity.get());
+        m_addingEntities.push_back(_entity);
+        m_startedEntities.current().emplace_back(entityId);
 
         return true;
     }
@@ -365,86 +347,21 @@ namespace Maze
         Entity* entityRaw = _entity.get();
 
         if (_entity->getRemoving())
-        {
             return false;
-        }
+
+        _entity->setRemoving(true);
 
         if (_entity->getAdding())
         {
             _entity->setAdding(false);
-            
-            {
-                Deque<Entity*>::iterator it = std::find(m_addingEntities.begin(), m_addingEntities.end(), entityRaw);
-                if (it != m_addingEntities.end())
-                {
-                    m_addingEntities.erase(it);
-                }
-            }
-
-            if (_entity->getComponentsChanged())
-            {
-                Deque<Entity*>::iterator it = std::find(m_componentsChangedEntities.begin(), m_componentsChangedEntities.end(), entityRaw);
-                if (it != m_componentsChangedEntities.end())
-                {
-                    m_componentsChangedEntities.erase(it);
-                }
-
-                _entity->setComponentsChanged(false);
-            }
-
-            if (_entity->getActiveChanged())
-            {
-                Deque<Entity*>::iterator startIt = m_activeChangedEntities.begin();
-                Deque<Entity*>::iterator it = std::find(startIt, m_activeChangedEntities.end(), entityRaw);
-                while (it != m_activeChangedEntities.end())
-                {
-                    startIt = m_activeChangedEntities.erase(it);
-                    it = std::find(startIt, m_activeChangedEntities.end(), entityRaw);
-                }
-
-                _entity->setActiveChanged(false);
-            }
-
-            // if (_entity->getActiveInHierarchy())
-            {
-                auto it = m_activeEntities.find(entityRaw);
-                if (it != m_activeEntities.end())
-                {
-                    m_activeEntities.eraseUnordered(it);
-                }
-            }
-
-            if (!_entity->getTransitionFlag(Entity::TransitionFlags::Started))
-            {
-                {
-                    auto it = m_startedEntities.current().find(entityRaw);
-                    if (it != m_startedEntities.current().end())
-                        m_startedEntities.current().erase(it);
-                }
-
-                {
-                    auto it = m_startedEntities.other().find(entityRaw);
-                    if (it != m_startedEntities.other().end())
-                        m_startedEntities.other().erase(it);
-                }
-            }
-
-            _entity->setEcsScene(nullptr);
             _entity->setEcsWorld(nullptr);
-
-            removeEntityNow(_entity->getId());
-
-#if (MAZE_ECS_EXTENSIVE_CHECKS)
-            _validateDontHave(entityRaw);
-#endif
 
             return true;
         }
        
-        _entity->setRemoving(true);
-        m_removingEntities.push_back(entityRaw);
+        m_removingEntities.push_back(_entity->getId());
 
-        processEntityComponentsChanged(entityRaw);
+        processEntityComponentsChanged(_entity->getId());
 
         return true;
     }
@@ -464,8 +381,12 @@ namespace Maze
     {
         auto& startedEntities = m_startedEntities.switchContainer();
 
-        for (Entity* entity : startedEntities)
-            entity->tryStart();
+        for (EntityId entityId : startedEntities)
+        {
+            EntityPtr const& entity = getEntity(entityId);
+            if (entity)
+                entity->tryStart();
+        }
 
         startedEntities.clear();
     }
@@ -473,21 +394,52 @@ namespace Maze
     //////////////////////////////////////////
     void EcsWorld::processAddingEntities()
     {
-        while (!m_addingEntities.empty())
+        for (EntityPtr& entity : m_addingEntities)
         {
-            Entity* entity = m_addingEntities.front();
-            m_addingEntities.pop_front();
+            EntityId entityId = entity->getId();
+            S32 index = convertEntityIdToIndex(entityId);
+            if (index >= 0 && index < (S32)m_entities.size())
+            {
+                if (entity->getRemoving())
+                    continue;
 
+                EntityData& entityData = m_entities[index];
+                MAZE_ASSERT(!entityData.entity);
+
+                entityData.id = entityId;
+                entityData.entity = std::move(entity);
+            }
+            else
+            {
+                MAZE_ASSERT(index == (S32)m_entities.size());
+
+                if (entity->getRemoving())
+                {
+                    // Adding an empty slot to keep ids sequence consistent
+                    m_entities.emplace_back(EntityData(entityId, EntityPtr()));
+                    continue;
+                }
+
+                m_entities.emplace_back(EntityData(entityId, std::move(entity)));
+            }
+
+            m_newEntitiesAdded.push_back(entityId);
+        }
+
+        m_newEntityIdsCount = 0;
+        m_addingEntities.clear();
+
+        for (EntityId entityId : m_newEntitiesAdded)
+        {
+            EntityPtr const& entity = getEntity(entityId);
             entity->setAdding(false);
-            
-            processEntityComponentsChanged(entity);
+            entity->setActiveInHierarchyPrevFrame(entity->getActiveInHierarchy());
+            processEntityComponentsChanged(entityId);
 
             if (!eventEntityAdded.empty())
-            {
-                EntityPtr entityShared = entity->getSharedPtr();
-                eventEntityAdded(entityShared);
-            }
+                eventEntityAdded(entity);
         }
+        m_newEntitiesAdded.clear();
     }
 
     //////////////////////////////////////////
@@ -495,61 +447,27 @@ namespace Maze
     {
         while (!m_removingEntities.empty())
         {
-            Entity* entity = m_removingEntities.front();
+            EntityId entityId = m_removingEntities.front();
             m_removingEntities.pop_front();
-            
-            entity->setEcsScene(nullptr);
-            entity->setEcsWorld(nullptr);
-            entity->setRemoving(false);
-
-            if (entity->getComponentsChanged())
+            EntityPtr const& entity = getEntity(entityId);
+            if (entity)
             {
-                Deque<Entity*>::iterator it = std::find(m_componentsChangedEntities.begin(), m_componentsChangedEntities.end(), entity);
-                if (it != m_componentsChangedEntities.end())
-                {
-                    m_componentsChangedEntities.erase(it);
-                }
+                if (!entity->getRemoving())
+                    continue;
 
-                entity->setComponentsChanged(false);
+                entity->setEcsWorld(nullptr);
+                entity->setRemoving(false);
+
+                if (!eventEntityRemoved.empty())
+                    eventEntityRemoved(entity);
+
+                for (Size i = 0, in = m_samples.size(); i < in; ++i)
+                    m_samples[i]->processEntity(entity.get());
+
+                removeEntityNow(entity->getId());
+
+                processChangedEntities();
             }
-
-            if (entity->getActiveChanged())
-            {
-                Deque<Entity*>::iterator startIt = m_activeChangedEntities.begin();
-                Deque<Entity*>::iterator it = std::find(startIt, m_activeChangedEntities.end(), entity);
-                while (it != m_activeChangedEntities.end())
-                {
-                    startIt = m_activeChangedEntities.erase(it);
-                    it = std::find(startIt, m_activeChangedEntities.end(), entity);
-                }
-
-                entity->setActiveChanged(false);
-            }
-
-            if (!eventEntityRemoved.empty())
-            {
-                EntityPtr entityShared = entity->getSharedPtr();
-                eventEntityRemoved(entityShared);            
-            }
-
-            // if (entity->getActiveInHierarchy())
-            {
-                auto it = m_activeEntities.find(entity);
-                if (it != m_activeEntities.end())
-                {
-                    m_activeEntities.eraseUnordered(it);
-                }
-            }
-
-            for (Size i = 0, in = m_samples.size(); i < in; ++i)
-                m_samples[i]->processEntity(entity);
-
-            removeEntityNow(entity->getId());
-#if (MAZE_ECS_EXTENSIVE_CHECKS)
-            _validateDontHave(entity);
-#endif
-
-            processChangedEntities();
         }
     }
 
@@ -560,69 +478,69 @@ namespace Maze
 
         while (!m_componentsChangedEntities.empty())
         {
-            Entity* entity = m_componentsChangedEntities.front();
-            entity->setComponentsChanged(false);
+            EntityId entityId = m_componentsChangedEntities.front();
             m_componentsChangedEntities.pop_front();
 
-            for (Size i = 0, in = m_samples.size(); i < in; ++i) 
-                m_samples[i]->processEntity(entity);
+            EntityPtr const& entity = getEntity(entityId);
+            if (entity)
+            {
+                entity->setComponentsChanged(false);
+
+                for (Size i = 0, in = m_samples.size(); i < in; ++i)
+                    m_samples[i]->processEntity(entity.get());
+            }
         }
 
         while (!m_activeChangedEntities.empty())
         {
-            Entity* entity = m_activeChangedEntities.front();
-
-            MAZE_DEBUG_ERROR_IF(entity->getEcsWorld() != this, "Entity from different world");
-
-            entity->setActiveChanged(false);
+            EntityId entityId = m_activeChangedEntities.front();
             m_activeChangedEntities.pop_front();
-
-            if (entity->getActiveInHierarchy() == entity->getActiveInHierarchyPrevFrame())
-                continue;
-
-            entity->setActiveInHierarchyPrevFrame(entity->getActiveInHierarchy());
-
-
-            if (entity->getActiveInHierarchy())
+            EntityPtr const& entity = getEntity(entityId);
+            if (entity)
             {
-                // MAZE_DEBUG_ERROR_IF(m_activeEntities.find(entity) != m_activeEntities.end(), "activeEntities array is not synchronized");
-                m_activeEntities.emplace_back(entity);
-            }
-            else
-            {
-                auto it = m_activeEntities.find(entity);
-                if (it != m_activeEntities.end())
-                {
-                    m_activeEntities.eraseUnordered(it);
-                }
-            }
+                MAZE_DEBUG_ERROR_IF(entity->getEcsWorld() != this, "Entity from different world");
 
-            for (Size i = 0, in = m_samples.size(); i < in; ++i)
-                m_samples[i]->processEntity(entity);
+                entity->setActiveChanged(false);
+
+                if (entity->getActiveInHierarchy() == entity->getActiveInHierarchyPrevFrame())
+                    continue;
+
+                entity->setActiveInHierarchyPrevFrame(entity->getActiveInHierarchy());
+
+                for (Size i = 0, in = m_samples.size(); i < in; ++i)
+                    m_samples[i]->processEntity(entity.get());
+            }
         }
 
     }
 
     //////////////////////////////////////////
-    void EcsWorld::processEntityComponentsChanged(Entity* _entity)
+    void EcsWorld::processEntityComponentsChanged(EntityId _id)
     {
-        MAZE_DEBUG_ERROR_IF(_entity->getEcsWorld() != this, "Entity from different world");
-
-        if (_entity->getComponentsChanged())
+        EntityPtr const& entity = getEntity(_id);
+        if (!entity)
             return;
 
-        _entity->setComponentsChanged(true);
-        m_componentsChangedEntities.push_back(_entity);
+        MAZE_DEBUG_ERROR_IF(entity->getEcsWorld() != this, "Entity from different world");
 
-        eventEntityChanged(_entity);
+        if (entity->getComponentsChanged())
+            return;
+
+        entity->setComponentsChanged(true);
+        m_componentsChangedEntities.push_back(_id);
+
+        eventEntityChanged(entity);
     }
 
     //////////////////////////////////////////
-    void EcsWorld::processEntityActiveChanged(Entity* _entity)
+    void EcsWorld::processEntityActiveChanged(EntityId _id)
     {
-        _entity->setActiveChanged(true);
-        
-        m_activeChangedEntities.push_back(_entity);
+        EntityPtr const& entity = getEntity(_id);
+        if (!entity)
+            return;
+
+        entity->setActiveChanged(true);
+        m_activeChangedEntities.push_back(_id);
     }
 
     //////////////////////////////////////////
@@ -670,72 +588,14 @@ namespace Maze
         EntitiesSamplePtr sample = EntitiesSample::Create(getSharedPtr(), _aspect);
         m_samples.push_back(sample);
 
-        for (Size i = 0, in = m_activeEntities.size(); i < in; ++i)
-            sample->processEntity(m_activeEntities[i]);
+        for (Size i = 0, in = m_entities.size(); i < in; ++i)
+            if (m_entities[i].entity)
+                sample->processEntity(m_entities[i].entity.get());
 
         for (Size i = 0, in = m_addingEntities.size(); i < in; ++i)
-            sample->processEntity(m_addingEntities[i]);
+            sample->processEntity(m_addingEntities[i].get());
 
         return sample;
-    }
-
-    //////////////////////////////////////////
-    void EcsWorld::_validateDontHave(Entity* _ptr)
-    {
-        {
-            Deque<Entity*>::iterator it = std::find(m_addingEntities.begin(), m_addingEntities.end(), _ptr);
-            if (it != m_addingEntities.end())
-            {
-                MAZE_ERROR("m_addingEntities");
-            }
-        }
-
-        {
-            Deque<Entity*>::iterator it = std::find(m_removingEntities.begin(), m_removingEntities.end(), _ptr);
-            if (it != m_removingEntities.end())
-            {
-                MAZE_ERROR("m_removingEntities");
-            }
-        }
-
-        {
-            Deque<Entity*>::iterator it = std::find(m_componentsChangedEntities.begin(), m_componentsChangedEntities.end(), _ptr);
-            if (it != m_componentsChangedEntities.end())
-            {
-                MAZE_ERROR("m_componentsChangedEntities");
-            }
-        }
-
-        {
-            Deque<Entity*>::iterator it = std::find(m_activeChangedEntities.begin(), m_activeChangedEntities.end(), _ptr);
-            if (it != m_activeChangedEntities.end())
-            {
-                MAZE_ERROR("m_activeChangedEntities");
-            }
-        }
-
-        {
-            FastVector<Entity*>::iterator it = std::find(m_activeEntities.begin(), m_activeEntities.end(), _ptr);
-            if (it != m_activeEntities.end())
-            {
-                MAZE_ERROR("m_activeEntities");
-            }
-        }
-
-        {
-            FastVector<Entity*>::iterator it = std::find(m_startedEntities.current().begin(), m_startedEntities.current().end(), _ptr);
-            if (it != m_startedEntities.current().end())
-            {
-                MAZE_ERROR("m_activeEntities");
-            }
-        }
-        {
-            FastVector<Entity*>::iterator it = std::find(m_startedEntities.other().begin(), m_startedEntities.other().end(), _ptr);
-            if (it != m_startedEntities.other().end())
-            {
-                MAZE_ERROR("m_activeEntities");
-            }
-        }
     }
 
     //////////////////////////////////////////
@@ -749,10 +609,7 @@ namespace Maze
             return m_entities[index].id;
         }
 
-        EntityData entityData;
-        entityData.id = EntityId((S32)m_entities.size() + 1, 0);
-        m_entities.push_back(entityData);
-        return entityData.id;
+        return EntityId((S32)m_entities.size() + (++m_newEntityIdsCount), 0);
     }
 
     //////////////////////////////////////////
@@ -769,6 +626,7 @@ namespace Maze
         EntityData const& entityData = m_entities[index];
         MAZE_ASSERT(entityData.entity);
         MAZE_ASSERT(entityData.id == _id);
+        entityData.entity->setEcsScene(nullptr);
         m_freeEntityIndices.push(index);
         m_entities[index].entity.reset();
     }

@@ -287,7 +287,7 @@ namespace Maze
         {
             componentRef->processEntityAdded();
 
-            m_world->processEntityComponentsChanged(this);
+            m_world->processEntityComponentsChanged(getId());
         }
 
 
@@ -321,7 +321,7 @@ namespace Maze
             
         if (m_world)
         {
-            m_world->processEntityComponentsChanged(this);
+            m_world->processEntityComponentsChanged(getId());
         }
 
         return true;
@@ -433,7 +433,7 @@ namespace Maze
 
                 if (prevActiveInHierarchy != currentActiveInHierarchy)
                 {
-                    m_world->processEntityActiveChanged(this);
+                    m_world->processEntityActiveChanged(getId());
 
                     if (currentActiveInHierarchy)
                     {

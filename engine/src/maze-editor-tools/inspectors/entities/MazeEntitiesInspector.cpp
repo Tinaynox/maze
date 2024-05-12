@@ -322,7 +322,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EntitiesInspector::notifyEntityChanged(Entity* _entity)
+    void EntitiesInspector::notifyEntityChanged(EntityPtr const& _entity)
     {
         if (!m_entitiesPropertiesListDirty)
         {

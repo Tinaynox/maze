@@ -600,9 +600,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void HierarchyController::notifyEntityChanged(Entity* _entity)
+    void HierarchyController::notifyEntityChanged(EntityPtr const& _entity)
     {
-        removeHierarchyLine(_entity->getSharedPtr());
+        removeHierarchyLine(_entity);
     }
 
     //////////////////////////////////////////
