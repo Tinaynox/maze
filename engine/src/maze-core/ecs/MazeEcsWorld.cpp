@@ -269,7 +269,6 @@ namespace Maze
 
         MAZE_PROFILE_EVENT("EcsWorld::update");
 
-        processStartedEntities();
         processAddingEntities();
         processChangedEntities();
         processRemovingEntities();
@@ -332,7 +331,6 @@ namespace Maze
         _entity->setEcsWorld(this);
 
         m_addingEntities.push_back(_entity);
-        m_startedEntities.current().emplace_back(entityId);
 
         return true;
     }
@@ -371,22 +369,7 @@ namespace Maze
                 ++count;
         return count;
     }
-
-    //////////////////////////////////////////
-    void EcsWorld::processStartedEntities()
-    {
-        auto& startedEntities = m_startedEntities.switchContainer();
-
-        for (EntityId entityId : startedEntities)
-        {
-            EntityPtr const& entity = getEntity(entityId);
-            if (entity)
-                entity->tryStart();
-        }
-
-        startedEntities.clear();
-    }
-
+    
     //////////////////////////////////////////
     void EcsWorld::processAddingEntities()
     {
@@ -434,6 +417,11 @@ namespace Maze
 
             if (!eventEntityAdded.empty())
                 eventEntityAdded(entity);
+
+            for (Size i = 0, in = m_samples.size(); i < in; ++i)
+                m_samples[i]->processEntity(entity.get());
+
+            sendEventImmediate<EntityAddedEvent>(entityId);
         }
         m_newEntitiesAdded.clear();
     }
@@ -450,6 +438,8 @@ namespace Maze
             {
                 if (!entity->getRemoving())
                     continue;
+
+                sendEventImmediate<EntityRemovedEvent>(entityId);
 
                 entity->setEcsWorld(nullptr);
                 entity->setRemoving(false);

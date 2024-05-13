@@ -141,17 +141,29 @@ namespace Maze
         Transform3D* _someObject,
         Rotor3D* _rotor)
     {
-        _someObject->translate(Vec3F32::c_unitX * 1.0f);
+        // _someObject->translate(Vec3F32::c_unitX * 1.0f);
+
+        _entity->removeFromEcsWorld();
     }
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(SomeStartedES, {},
-        EntityStartedEvent const& _event,
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(SomeAddedES, {},
+        EntityAddedEvent const& _event,
         Entity* _entity,
         Transform3D* _someObject,
         Rotor3D* _rotor)
     {
-        Debug::Log("Started!");
+        Debug::Log("Added!");
+    }
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(SomeRemovedES, {},
+        EntityRemovedEvent const& _event,
+        Entity* _entity,
+        Transform3D* _someObject,
+        Rotor3D* _rotor)
+    {
+        Debug::Log("Removed!");
     }
 
     //////////////////////////////////////////
@@ -240,18 +252,7 @@ namespace Maze
 
 
 
-        {
-            m_objectEntity = createEntity();
-            Transform3DPtr transform = m_objectEntity->createComponent<Transform3D>();
-            transform->setLocalX(2.0f);
-            MeshRendererPtr meshRenderer = m_objectEntity->createComponent<MeshRenderer>();
-            meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultCubeMesh());
-            meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::SpecularDS));
-            m_objectEntity->ensureComponent<Name>("Obj");
-            Rotor3DPtr rotor = m_objectEntity->createComponent<Rotor3D>();
-            rotor->setAxis({ 0.0f, -0.7071f, -0.7071f });
-            rotor->setSpeed(0.2f);
-        }
+        
         
 
         return true;
@@ -309,6 +310,23 @@ namespace Maze
             }
             case InputEventMouseType::ButtonDown:
             {
+                if (_data.buttonId == 0)
+                {
+                    if (!m_objectEntity || !m_objectEntity->getEcsWorld())
+                    {
+                        m_objectEntity = createEntity();
+                        Transform3DPtr transform = m_objectEntity->createComponent<Transform3D>();
+                        transform->setLocalX(2.0f);
+                        MeshRendererPtr meshRenderer = m_objectEntity->createComponent<MeshRenderer>();
+                        meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultCubeMesh());
+                        meshRenderer->setMaterial(MaterialManager::GetCurrentInstance()->getBuiltinMaterial(BuiltinMaterialType::SpecularDS));
+                        m_objectEntity->ensureComponent<Name>("Obj");
+                        Rotor3DPtr rotor = m_objectEntity->createComponent<Rotor3D>();
+                        rotor->setAxis({ 0.0f, -0.7071f, -0.7071f });
+                        rotor->setSpeed(0.2f);
+                    }
+                }
+                else
                 if (_data.buttonId == 1)
                 {
                     Vec2F32 cursorPosition = Vec2F32((F32)_data.x, (F32)_data.y);
@@ -329,7 +347,8 @@ namespace Maze
                 else
                 if (_data.buttonId == 2)
                 {
-                    m_world->sendEventImmediate<SimpleEvent>(m_objectEntity->getId());
+                    if (m_objectEntity)
+                        m_world->sendEventImmediate<SimpleEvent>(m_objectEntity->getId());
                 }
                 break;
             }

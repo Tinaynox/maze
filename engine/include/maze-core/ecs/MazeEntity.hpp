@@ -96,7 +96,6 @@ namespace Maze
             ActiveChanged = MAZE_BIT(3),
             AwakeForbidden = MAZE_BIT(4),
             Awakened = MAZE_BIT(5),
-            Started = MAZE_BIT(6),
         };
 
     public:
@@ -380,8 +379,6 @@ namespace Maze
         void setAdding(bool _value) { setTransitionFlag(TransitionFlags::Adding, _value); }
         
 
-        //////////////////////////////////////////
-        void tryStart();
 
         //////////////////////////////////////////
         void setComponentsChanged(bool _value) { setTransitionFlag(TransitionFlags::ComponentsChanged, _value); }

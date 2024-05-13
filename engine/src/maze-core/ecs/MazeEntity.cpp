@@ -344,17 +344,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Entity::tryStart()
-    {
-        if (m_transitionFlags & static_cast<U8>(TransitionFlags::Started))
-            return;
-
-        m_transitionFlags |= static_cast<U8>(TransitionFlags::Started);
-
-        m_world->sendEventImmediate<EntityStartedEvent>(getId());
-    }
-
-    //////////////////////////////////////////
     void Entity::setEcsWorld(EcsWorld* _world)
     {
         if (m_world == _world)

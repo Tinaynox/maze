@@ -289,7 +289,7 @@ namespace Maze
             typename UnorderedMap<EntityId, Size>::iterator it = m_entityIndices.find(_entity->getId());
 
             bool intersects;
-            if (!_entity->getActiveInHierarchy() || !_entity->getEcsWorld() || _entity->getRemoving())
+            if (!_entity->getActiveInHierarchy() || !_entity->getEcsWorld())
                 intersects = false;
             else
                 intersects = m_aspect.hasIntersection(_entity);

@@ -109,7 +109,7 @@ namespace Maze
             _entity);
 
         bool intersects;
-        if (!_entity->getActiveInHierarchy() || !_entity->getEcsWorld() || _entity->getRemoving())
+        if (!_entity->getActiveInHierarchy() || !_entity->getEcsWorld())
             intersects = false;
         else
             intersects = m_aspect.hasIntersection(_entity);            

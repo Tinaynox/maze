@@ -264,9 +264,6 @@ namespace Maze
         MultiDelegate<EntityPtr const&> eventEntityRemoved;
 
 
-        //////////////////////////////////////////
-        // void _validateDontHave(Entity* _ptr);
-
     protected:
 
         //////////////////////////////////////////
@@ -312,9 +309,6 @@ namespace Maze
         
         Deque<EntityId> m_componentsChangedEntities;
         Deque<EntityId> m_activeChangedEntities;
-
-
-        SwitchableContainer<FastVector<EntityId>> m_startedEntities;
 
         Vector<IEntitiesSamplePtr> m_samples;
 
