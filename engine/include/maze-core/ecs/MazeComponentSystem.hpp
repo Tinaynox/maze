@@ -94,6 +94,23 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
+        struct AddedOrRemovedEntity
+        {
+            //////////////////////////////////////////
+            inline AddedOrRemovedEntity(
+                EntityId _entityId = c_invalidEntityId,
+                bool _added = false)
+                : entityId(_entityId)
+                , added(_added)
+            {}
+
+            EntityId entityId = c_invalidEntityId;
+            bool added = false;
+        };
+
+    public:
+
+        //////////////////////////////////////////
         using Func = void (*)();
 
         //////////////////////////////////////////
@@ -104,19 +121,20 @@ namespace Maze
             Func _func,
             ComponentSystemOrder const& _order = ComponentSystemOrder())
         {
-            return MAZE_CREATE_SHARED_PTR_WITH_ARGS(SimpleComponentSystemEventHandler, _name, _eventUID, _sample, _func, _order);
+            return MAZE_CREATE_SHARED_PTR_WITH_ARGS(
+                SimpleComponentSystemEventHandler, _name, _eventUID, _sample, _func, _order);
         }
 
         //////////////////////////////////////////
-        inline void processEvent(Event* _event)
+        inline void processEvent(Event* _event, EcsEventParams _params = EcsEventParams())
         {
-            m_sample->processEvent(_event, m_func);
+            m_sample->processEvent(_event, _params, m_func);
         }
 
         //////////////////////////////////////////
-        inline void processEvent(EntityId _entityId, Event* _event)
+        inline void processEvent(EntityId _entityId, Event* _event, EcsEventParams _params = EcsEventParams())
         {
-            m_sample->processEvent(_entityId, _event, m_func);
+            m_sample->processEvent(_entityId, _event, _params, m_func);
         }
 
         //////////////////////////////////////////
@@ -131,6 +149,10 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void setOrder(ComponentSystemOrder const& _order) { m_order = _order; }
+
+
+        //////////////////////////////////////////
+        void processAddedOrRemovedEntityEvents();
 
     protected:
 

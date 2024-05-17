@@ -147,10 +147,10 @@ namespace Maze
         virtual void processEntityAwakened() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        void processCanvasEntityAdded(Entity* _entity, Canvas* _canvas);
+        void processCanvasEntityAdded(Entity* _entity);
 
         //////////////////////////////////////////
-        void processCanvasEntityRemoved(Entity* _entity, Canvas* _canvas);
+        void processCanvasEntityRemoved(Entity* _entity);
 
         //////////////////////////////////////////
         void updateSortedCanvasesList();
@@ -165,10 +165,10 @@ namespace Maze
         void notifyVirtualCursor(InputEventVirtualCursorData const& _virtualCursorData);
 
         //////////////////////////////////////////
-        void processUIElement2DEntityAdded(Entity* _entity, UIElement2D* _UIElement2D);
+        void processUIElement2DEntityAdded(Entity* _entity);
 
         //////////////////////////////////////////
-        void processUIElement2DEntityRemoved(Entity* _entity, UIElement2D* _UIElement2D);
+        void processUIElement2DEntityRemoved(Entity* _entity);
 
         //////////////////////////////////////////
         void updateSortedUIElements2DList();

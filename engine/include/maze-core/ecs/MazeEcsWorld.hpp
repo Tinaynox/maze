@@ -238,15 +238,23 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TEvent>
-        inline void sendEventImmediate(EntityId _entityId, TEvent* _event)
+        inline void sendEventImmediate(EntityId _entityId, TEvent* _event, EcsEventParams _params = EcsEventParams())
         {
             ClassUID eventUID = _event->getClassUID();
             Vector<SimpleComponentSystemEventHandlerPtr> const& eventHandlers = m_eventHandlers[eventUID];
 
             for (SimpleComponentSystemEventHandlerPtr const& _eventHandler : eventHandlers)
-                _eventHandler->processEvent(_entityId, _event);
+                _eventHandler->processEvent(_entityId, _event, _params);
         }
         
+        //////////////////////////////////////////
+        template <typename TEvent, typename ...TArgs>
+        inline void sendEventImmediate(EntityId _entityId, EcsEventParams _params, TArgs... _args)
+        {
+            TEvent evt(_args...);
+            sendEventImmediate(_entityId, &evt, _params);
+        }
+
         //////////////////////////////////////////
         template <typename TEvent, typename ...TArgs>
         inline void sendEventImmediate(EntityId _entityId, TArgs... _args)

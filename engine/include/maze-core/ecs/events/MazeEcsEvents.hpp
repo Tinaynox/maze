@@ -40,6 +40,23 @@
 namespace Maze
 {
     //////////////////////////////////////////
+    // Struct EcsEventParams
+    //
+    //////////////////////////////////////////
+    struct MAZE_CORE_API EcsEventParams
+    {
+        //////////////////////////////////////////
+        EcsEventParams(bool _ignoreRemoving = true)
+            : ignoreRemoving(_ignoreRemoving)
+        {
+
+        }
+
+        bool ignoreRemoving = true;
+    };
+
+
+    //////////////////////////////////////////
     // Class PreUpdateEvent
     //
     //////////////////////////////////////////
@@ -140,6 +157,32 @@ namespace Maze
     public:
         //////////////////////////////////////////
         MAZE_DECLARE_METACLASS_WITH_PARENT(EntityRemovedEvent, Event);
+    };
+
+
+    //////////////////////////////////////////
+    // Class EntityAddedToSample
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API EntityAddedToSample
+        : public GenericEvent<EntityAddedToSample>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EntityAddedToSample, Event);
+    };
+
+
+    //////////////////////////////////////////
+    // Class EntityRemovedFromSample
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API EntityRemovedFromSample
+        : public GenericEvent<EntityRemovedFromSample>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EntityRemovedFromSample, Event);
     };
 
 

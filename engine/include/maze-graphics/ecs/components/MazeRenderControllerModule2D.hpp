@@ -159,22 +159,22 @@ namespace Maze
             RenderSystemPtr const& _renderSystem);
 
         //////////////////////////////////////////
-        void processCanvasEntityAdded(Entity* _entity, Canvas* _canvas);
+        void processCanvasEntityAdded(Entity* _entity);
 
         //////////////////////////////////////////
-        void processCanvasEntityRemoved(Entity* _entity, Canvas* _canvas);
+        void processCanvasEntityRemoved(Entity* _entity);
 
         //////////////////////////////////////////
-        void processMeshRendererEntityAdded(Entity* _entity, MeshRenderer* _meshRenderer, Transform2D* _transform2D);
+        void processMeshRendererEntityAdded(Entity* _entity);
 
         //////////////////////////////////////////
-        void processMeshRendererEntityRemoved(Entity* _entity, MeshRenderer* _meshRenderer, Transform2D* _transform2D);
+        void processMeshRendererEntityRemoved(Entity* _entity);
 
         //////////////////////////////////////////
-        void processMeshRendererEntityAdded(Entity* _entity, MeshRendererInstanced* _meshRenderer, Transform2D* _transform2D);
+        void processMeshRendererInstancedEntityAdded(Entity* _entity);
 
         //////////////////////////////////////////
-        void processMeshRendererEntityRemoved(Entity* _entity, MeshRendererInstanced* _meshRenderer, Transform2D* _transform2D);
+        void processMeshRendererInstancedEntityRemoved(Entity* _entity);
 
         //////////////////////////////////////////
         void updateSortedCanvasesList();

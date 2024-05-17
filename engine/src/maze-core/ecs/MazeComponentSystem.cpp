@@ -35,55 +35,6 @@
 //////////////////////////////////////////
 namespace Maze
 {
-    //////////////////////////////////////////
-    // Class ComponentSystem
-    //
-    //////////////////////////////////////////
-    /*
-    MAZE_IMPLEMENT_METACLASS(ComponentSystem);
-
-    //////////////////////////////////////////
-    ComponentSystem::ComponentSystem()
-        : m_worldRaw(nullptr)
-    {
-
-    }
-
-    //////////////////////////////////////////
-    ComponentSystem::~ComponentSystem()
-    {
-
-    }
-
-    //////////////////////////////////////////
-    void ComponentSystem::update(UpdateEvent const& _event)
-    {
-        processBeginUpdate(_event);
-
-        processUpdate(_event);
-
-        processEndUpdate(_event);
-    }
-
-    //////////////////////////////////////////
-    void ComponentSystem::setWorld(EcsWorldPtr const& _world)
-    {
-        m_world = _world;
-        m_worldRaw = _world.get();
-    }
-
-    //////////////////////////////////////////
-    void ComponentSystem::processSystemAdded()
-    {
-        
-    }
-
-    //////////////////////////////////////////
-    void ComponentSystem::processSystemRemoved()
-    {
-
-    }  
-    */
 
 } // namespace Maze
 //////////////////////////////////////////

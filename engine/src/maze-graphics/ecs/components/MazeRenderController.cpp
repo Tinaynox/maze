@@ -76,14 +76,14 @@ namespace Maze
         
         if (m_canvasesSample)
         {
-            m_canvasesSample->eventEntityAdded.unsubscribe(this, &RenderController::processCanvasEntityAdded);
-            m_canvasesSample->eventEntityRemoved.unsubscribe(this, &RenderController::processCanvasEntityRemoved);
+            m_canvasesSample->eventEntityWithComponentsAdded.unsubscribe(this, &RenderController::processCanvasEntityAdded);
+            m_canvasesSample->eventEntityWithComponentsRemoved.unsubscribe(this, &RenderController::processCanvasEntityRemoved);
         }
 
         if (m_cameras3DSample)
         {
-            m_cameras3DSample->eventEntityAdded.unsubscribe(this, &RenderController::processCameraEntityAdded);
-            m_cameras3DSample->eventEntityRemoved.unsubscribe(this, &RenderController::processCameraEntityRemoved);
+            m_cameras3DSample->eventEntityWithComponentsAdded.unsubscribe(this, &RenderController::processCameraEntityAdded);
+            m_cameras3DSample->eventEntityWithComponentsRemoved.unsubscribe(this, &RenderController::processCameraEntityRemoved);
         }
 
         clearRenderTargets();
@@ -111,12 +111,12 @@ namespace Maze
     void RenderController::processEntityAwakened()
     {
         m_canvasesSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<Canvas>();
-        m_canvasesSample->eventEntityAdded.subscribe(this, &RenderController::processCanvasEntityAdded);
-        m_canvasesSample->eventEntityRemoved.subscribe(this, &RenderController::processCanvasEntityRemoved);
+        m_canvasesSample->eventEntityWithComponentsAdded.subscribe(this, &RenderController::processCanvasEntityAdded);
+        m_canvasesSample->eventEntityWithComponentsRemoved.subscribe(this, &RenderController::processCanvasEntityRemoved);
 
         m_cameras3DSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<Camera3D>();
-        m_cameras3DSample->eventEntityAdded.subscribe(this, &RenderController::processCameraEntityAdded);
-        m_cameras3DSample->eventEntityRemoved.subscribe(this, &RenderController::processCameraEntityRemoved);
+        m_cameras3DSample->eventEntityWithComponentsAdded.subscribe(this, &RenderController::processCameraEntityAdded);
+        m_cameras3DSample->eventEntityWithComponentsRemoved.subscribe(this, &RenderController::processCameraEntityRemoved);
 
         m_module3D = RenderControllerModule3D::Create(getEntityRaw()->getEcsWorld()->cast<EcsWorld>(), m_renderSystem);
         m_module2D = RenderControllerModule2D::Create(getEntityRaw()->getEcsWorld()->cast<EcsWorld>(), m_renderSystem);

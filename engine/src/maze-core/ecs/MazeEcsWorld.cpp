@@ -439,7 +439,7 @@ namespace Maze
                 if (!entity->getRemoving())
                     continue;
 
-                sendEventImmediate<EntityRemovedEvent>(entityId);
+                sendEventImmediate<EntityRemovedEvent>(entityId, EcsEventParams(false));
 
                 entity->setEcsWorld(nullptr);
                 entity->setRemoving(false);

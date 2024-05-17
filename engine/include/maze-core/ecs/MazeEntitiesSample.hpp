@@ -98,10 +98,16 @@ namespace Maze
         virtual void process(void (*)()) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual void processEvent(Event* _event, void (*)()) MAZE_ABSTRACT;
+        virtual void processEvent(Event* _event, EcsEventParams _params, void (*)()) MAZE_ABSTRACT;
 
         //////////////////////////////////////////
-        virtual void processEvent(EntityId _entityId, Event* _event, void (*)()) MAZE_ABSTRACT;
+        virtual void processEvent(EntityId _entityId, Event* _event, EcsEventParams _params, void (*)()) MAZE_ABSTRACT;
+
+    public:
+
+        //////////////////////////////////////////
+        MultiDelegate<Entity*> eventEntityAdded;
+        MultiDelegate<Entity*> eventEntityRemoved;
 
     protected:
 
@@ -169,18 +175,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual void processEvent(Event* _event, void (*_func)()) MAZE_OVERRIDE
+        virtual void processEvent(Event* _event, EcsEventParams _params, void (*_func)()) MAZE_OVERRIDE
         { }
 
         //////////////////////////////////////////
-        virtual void processEvent(EntityId _entityId, Event* _event, void (*_func)()) MAZE_OVERRIDE
+        virtual void processEvent(EntityId _entityId, Event* _event, EcsEventParams _params, void (*_func)()) MAZE_OVERRIDE
         { }
 
-    public:
-    
-        //////////////////////////////////////////
-        MultiDelegate<Entity*> eventEntityAdded;
-        MultiDelegate<Entity*> eventEntityRemoved;
 
     protected:
 
@@ -343,10 +344,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void processEvent(Event* _event, ProcessEventFunc _func)
+        inline void processEvent(Event* _event, EcsEventParams _params, ProcessEventFunc _func)
         {
             for (EntityData entityData : m_entitiesData)
             {
+                if (entityData.entity->getRemoving() && _params.ignoreRemoving)
+                    continue;
+
                 callProcessEvent(
                     _event,
                     _func,
@@ -357,14 +361,14 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        virtual void processEvent(Event* _event, void (*_func)()) MAZE_OVERRIDE
+        virtual void processEvent(Event* _event, EcsEventParams _params, void (*_func)()) MAZE_OVERRIDE
         {
             ProcessEventFuncRaw rawFunc = (ProcessEventFuncRaw)_func;
-            processEvent(_event, (ProcessEventFunc)(rawFunc));
+            processEvent(_event, _params, (ProcessEventFunc)(rawFunc));
         }
 
         //////////////////////////////////////////
-        inline void processEvent(EntityId _entityId, Event* _event, ProcessEventFunc _func)
+        inline void processEvent(EntityId _entityId, Event* _event, EcsEventParams _params, ProcessEventFunc _func)
         {
             UnorderedMap<EntityId, Size>::iterator it = m_entityIndices.find(_entityId);
 
@@ -372,6 +376,9 @@ namespace Maze
             {
                 EntityData& entityData = m_entitiesData[it->second];
 
+                if (entityData.entity->getRemoving() && _params.ignoreRemoving)
+                    return;
+
                 callProcessEvent(
                     _event,
                     _func,
@@ -382,10 +389,10 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        virtual void processEvent(EntityId _entityId, Event* _event, void (*_func)()) MAZE_OVERRIDE
+        virtual void processEvent(EntityId _entityId, Event* _event, EcsEventParams _params, void (*_func)()) MAZE_OVERRIDE
         {
             ProcessEventFuncRaw rawFunc = (ProcessEventFuncRaw)_func;
-            processEvent(_entityId, _event, (ProcessEventFunc)(rawFunc));
+            processEvent(_entityId, _event, _params,(ProcessEventFunc)(rawFunc));
         }
 
     protected:
@@ -430,8 +437,8 @@ namespace Maze
 
 
     public:
-        MultiDelegate<Entity*, TComponents* ...> eventEntityAdded;
-        MultiDelegate<Entity*, TComponents* ...> eventEntityRemoved;
+        MultiDelegate<Entity*, TComponents* ...> eventEntityWithComponentsAdded;
+        MultiDelegate<Entity*, TComponents* ...> eventEntityWithComponentsRemoved;
 
     protected:
 
@@ -458,7 +465,8 @@ namespace Maze
             EntityData const& _entityData,
             IndexesTuple<Idxs...> const&)
         {
-            eventEntityAdded(_entityData.entity, std::get<Idxs>(_entityData.components)...);
+            eventEntityAdded(_entityData.entity);
+            eventEntityWithComponentsAdded(_entityData.entity, std::get<Idxs>(_entityData.components)...);
         }
 
         //////////////////////////////////////////
@@ -467,7 +475,8 @@ namespace Maze
             EntityData const& _entityData,
             IndexesTuple<Idxs...> const&)
         {
-            eventEntityRemoved(_entityData.entity, std::get<Idxs>(_entityData.components)...);
+            eventEntityRemoved(_entityData.entity);
+            eventEntityWithComponentsRemoved(_entityData.entity, std::get<Idxs>(_entityData.components)...);
         }
 
     protected:

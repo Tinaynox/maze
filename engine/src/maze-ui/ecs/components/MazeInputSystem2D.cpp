@@ -280,25 +280,25 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void InputSystem2D::processCanvasEntityAdded(Entity* _entity, Canvas* _canvas)
+    void InputSystem2D::processCanvasEntityAdded(Entity* _entity)
     {
         updateSortedCanvasesList();
     }
 
     //////////////////////////////////////////
-    void InputSystem2D::processCanvasEntityRemoved(Entity* _entity, Canvas* _canvas)
+    void InputSystem2D::processCanvasEntityRemoved(Entity* _entity)
     {
         updateSortedCanvasesList();
     }
 
     //////////////////////////////////////////
-    void InputSystem2D::processUIElement2DEntityAdded(Entity* _entity, UIElement2D* _UIElement2D)
+    void InputSystem2D::processUIElement2DEntityAdded(Entity* _entity)
     {
         m_sortedUIElements2DDirty = true;
     }
 
     //////////////////////////////////////////
-    void InputSystem2D::processUIElement2DEntityRemoved(Entity* _entity, UIElement2D* _UIElement2D)
+    void InputSystem2D::processUIElement2DEntityRemoved(Entity* _entity)
     {
         m_sortedUIElements2DDirty = true;
     }

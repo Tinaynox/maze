@@ -121,7 +121,17 @@ namespace Maze
     };
 
     //////////////////////////////////////////
+    class SimpleBroadcastEvent : public Event
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS(SimpleBroadcastEvent);
+    };
+
+
+    //////////////////////////////////////////
     MAZE_IMPLEMENT_METACLASS(SimpleEvent);
+    MAZE_IMPLEMENT_METACLASS(SimpleBroadcastEvent);
 
 
     //////////////////////////////////////////
@@ -141,9 +151,18 @@ namespace Maze
         Transform3D* _someObject,
         Rotor3D* _rotor)
     {
-        // _someObject->translate(Vec3F32::c_unitX * 1.0f);
-
+        Debug::Log("SimpleEvent!");
         _entity->removeFromEcsWorld();
+    }
+
+    //////////////////////////////////////////
+    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(SomeBroadcastEventES, {},
+        SimpleBroadcastEvent const& _event,
+        Entity* _entity,
+        Transform3D* _someObject,
+        Rotor3D* _rotor)
+    {
+        Debug::Log("SimpleBroadcastEvent!");
     }
 
     //////////////////////////////////////////
@@ -165,6 +184,7 @@ namespace Maze
     {
         Debug::Log("Removed!");
     }
+
 
     //////////////////////////////////////////
     // Class SceneExample
@@ -348,7 +368,11 @@ namespace Maze
                 if (_data.buttonId == 2)
                 {
                     if (m_objectEntity)
+                    {
                         m_world->sendEventImmediate<SimpleEvent>(m_objectEntity->getId());
+                        m_world->sendEventImmediate<SimpleEvent>(m_objectEntity->getId());
+                        m_world->broadcastEventImmediate<SimpleBroadcastEvent>();
+                    }
                 }
                 break;
             }

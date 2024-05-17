@@ -112,8 +112,8 @@ namespace Maze
         m_meshRenderersSample->eventEntityAdded.subscribe(this, &RenderControllerModule2D::processMeshRendererEntityAdded);
         m_meshRenderersSample->eventEntityRemoved.subscribe(this, &RenderControllerModule2D::processMeshRendererEntityRemoved);
 
-        m_meshRenderersInstancedSample->eventEntityAdded.subscribe(this, &RenderControllerModule2D::processMeshRendererEntityAdded);
-        m_meshRenderersInstancedSample->eventEntityRemoved.subscribe(this, &RenderControllerModule2D::processMeshRendererEntityRemoved);
+        m_meshRenderersInstancedSample->eventEntityAdded.subscribe(this, &RenderControllerModule2D::processMeshRendererInstancedEntityAdded);
+        m_meshRenderersInstancedSample->eventEntityRemoved.subscribe(this, &RenderControllerModule2D::processMeshRendererInstancedEntityRemoved);
 
         updateSortedCanvasesList();
 
@@ -429,37 +429,37 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControllerModule2D::processCanvasEntityAdded(Entity* _entity, Canvas* _canvas)
+    void RenderControllerModule2D::processCanvasEntityAdded(Entity* _entity)
     {
         updateSortedCanvasesList();
     }
 
     //////////////////////////////////////////
-    void RenderControllerModule2D::processCanvasEntityRemoved(Entity* _entity, Canvas* _canvas)
+    void RenderControllerModule2D::processCanvasEntityRemoved(Entity* _entity)
     {
         updateSortedCanvasesList();
     }
 
     //////////////////////////////////////////
-    void RenderControllerModule2D::processMeshRendererEntityAdded(Entity* _entity, MeshRenderer* _meshRenderer, Transform2D* _transform2D)
+    void RenderControllerModule2D::processMeshRendererEntityAdded(Entity* _entity)
     {
         m_sortedMeshRenderersDirty = true;
     }
 
     //////////////////////////////////////////
-    void RenderControllerModule2D::processMeshRendererEntityRemoved(Entity* _entity, MeshRenderer* _meshRenderer, Transform2D* _transform2D)
+    void RenderControllerModule2D::processMeshRendererEntityRemoved(Entity* _entity)
     {
         m_sortedMeshRenderersDirty = true;
     }
 
     //////////////////////////////////////////
-    void RenderControllerModule2D::processMeshRendererEntityAdded(Entity* _entity, MeshRendererInstanced* _meshRenderer, Transform2D* _transform2D)
+    void RenderControllerModule2D::processMeshRendererInstancedEntityAdded(Entity* _entity)
     {
         m_sortedMeshRenderersDirty = true;
     }
 
     //////////////////////////////////////////
-    void RenderControllerModule2D::processMeshRendererEntityRemoved(Entity* _entity, MeshRendererInstanced* _meshRenderer, Transform2D* _transform2D)
+    void RenderControllerModule2D::processMeshRendererInstancedEntityRemoved(Entity* _entity)
     {
         m_sortedMeshRenderersDirty = true;
     }
