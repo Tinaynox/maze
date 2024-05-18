@@ -161,28 +161,28 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class EntityAddedToSample
+    // Class EntityAddedToSampleEvent
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API EntityAddedToSample
-        : public GenericEvent<EntityAddedToSample>
+    class MAZE_CORE_API EntityAddedToSampleEvent
+        : public GenericEvent<EntityAddedToSampleEvent>
     {
     public:
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(EntityAddedToSample, Event);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EntityAddedToSampleEvent, Event);
     };
 
 
     //////////////////////////////////////////
-    // Class EntityRemovedFromSample
+    // Class EntityRemovedFromSampleEvent
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API EntityRemovedFromSample
-        : public GenericEvent<EntityRemovedFromSample>
+    class MAZE_CORE_API EntityRemovedFromSampleEvent
+        : public GenericEvent<EntityRemovedFromSampleEvent>
     {
     public:
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(EntityRemovedFromSample, Event);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EntityRemovedFromSampleEvent, Event);
     };
 
 
