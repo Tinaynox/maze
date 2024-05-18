@@ -161,9 +161,7 @@ namespace Maze
                     _eventHandlers.insert(_eventHandlers.begin() + (sAfterIndex + 1), s);
                 }
 
-                AddSystemEventHandler(_eventHandlers, _system, false);
-
-                return true;
+                return AddSystemEventHandler(_eventHandlers, _system, false);
             }
             else
             {
@@ -338,8 +336,6 @@ namespace Maze
     //////////////////////////////////////////
     bool EcsWorld::removeEntity(EntityPtr const& _entity)
     {
-        Entity* entityRaw = _entity.get();
-
         if (_entity->getRemoving())
             return false;
 
@@ -452,6 +448,7 @@ namespace Maze
 
                 removeEntityNow(entity->getId());
 
+                // #TODO: Recheck if we need it here
                 processChangedEntities();
             }
         }
@@ -462,6 +459,7 @@ namespace Maze
     {
         MAZE_PROFILE_EVENT("EcsWorld::processChangedEntities");
 
+        // #TODO: OBSOLETE, remove it later
         while (!m_componentsChangedEntities.empty())
         {
             EntityId entityId = m_componentsChangedEntities.front();
@@ -476,6 +474,14 @@ namespace Maze
                     m_samples[i]->processEntity(entity.get());
             }
         }
+
+        // Process EntityAddedToSampleEvent
+        for (Size i = 0, in = (Size)m_entityAddedToSampleEventHandlers.size(); i != in; ++i)
+        {
+            ComponentSystemEntityAddedToSampleEventHandlerPtr const& handler = m_entityAddedToSampleEventHandlers[i];
+            handler->processEntitiesAddedToSample();
+        }
+
 
         while (!m_activeChangedEntities.empty())
         {
@@ -538,7 +544,20 @@ namespace Maze
         ClassUID eventUID = _system->getEventUID();
         Vector<ComponentSystemEventHandlerPtr>& eventHandlers = m_eventHandlers[eventUID];
         
-        AddSystemEventHandler(eventHandlers, _system, true);
+        if (!AddSystemEventHandler(eventHandlers, _system, true))
+            return;
+
+        if (eventUID == ClassInfo<EntityAddedToSampleEvent>::UID())
+        {
+            m_entityAddedToSampleEventHandlers.push_back(
+                ComponentSystemEntityAddedToSampleEventHandler::Create(_system));
+        }
+        else
+        if (eventUID == ClassInfo<EntityRemovedFromSampleEvent>::UID())
+        {
+            m_entityRemovedFromSampleEventHandlers.push_back(
+                ComponentSystemEntityRemovedFromSampleEventHandler::Create(_system));
+        }
     }
 
     //////////////////////////////////////////

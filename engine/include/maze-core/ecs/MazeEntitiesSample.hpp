@@ -107,6 +107,7 @@ namespace Maze
 
         //////////////////////////////////////////
         MultiDelegate<Entity*> eventEntityAdded;
+        MultiDelegate<Entity*> eventEntityWillBeRemoved;
         MultiDelegate<Entity*> eventEntityRemoved;
 
     protected:
@@ -277,7 +278,10 @@ namespace Maze
         virtual void clear() MAZE_OVERRIDE
         {
             for (EntityData const& entityData : m_entitiesData)
+            {
+                eventEntityWillBeRemoved(entityData.entity);
                 invokeEntityRemoved(entityData, typename Indices::Indexes());
+            }
 
             m_entitiesData.clear();
             m_entityIndices.clear();
@@ -312,12 +316,16 @@ namespace Maze
             else
             if (it != m_entityIndices.end() && !intersects)
             {
+                eventEntityWillBeRemoved(_entity);
+
                 Size index = it->second;
                 EntityData entityData = m_entitiesData[index];
+                
                 m_entityIndices.erase(it);
                 m_entitiesData.eraseUnordered(m_entitiesData.begin() + index);
                 if (index < m_entitiesData.size())
                     m_entityIndices[m_entitiesData[index].entity->getId()] = index;
+
                 invokeEntityRemoved(entityData, typename Indices::Indexes());
             }
         }
@@ -348,7 +356,10 @@ namespace Maze
         {
             for (EntityData entityData : m_entitiesData)
             {
-                if (entityData.entity->getRemoving() && _params.ignoreRemoving)
+                if (entityData.entity->getRemoving() && _params.ignoreRemovingEntity)
+                    continue;
+
+                if (!entityData.entity->getEcsWorld())
                     continue;
 
                 callProcessEvent(
@@ -376,7 +387,10 @@ namespace Maze
             {
                 EntityData& entityData = m_entitiesData[it->second];
 
-                if (entityData.entity->getRemoving() && _params.ignoreRemoving)
+                if (entityData.entity->getRemoving() && _params.ignoreRemovingEntity)
+                    return;
+
+                if (!entityData.entity->getEcsWorld())
                     return;
 
                 callProcessEvent(

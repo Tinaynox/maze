@@ -162,19 +162,19 @@ namespace Maze
         void processCanvasEntityAdded(Entity* _entity);
 
         //////////////////////////////////////////
-        void processCanvasEntityRemoved(Entity* _entity);
+        void processCanvasEntityWillBeRemoved(Entity* _entity);
 
         //////////////////////////////////////////
         void processMeshRendererEntityAdded(Entity* _entity);
 
         //////////////////////////////////////////
-        void processMeshRendererEntityRemoved(Entity* _entity);
+        void processMeshRendererEntityWillBeRemoved(Entity* _entity);
 
         //////////////////////////////////////////
         void processMeshRendererInstancedEntityAdded(Entity* _entity);
 
         //////////////////////////////////////////
-        void processMeshRendererInstancedEntityRemoved(Entity* _entity);
+        void processMeshRendererInstancedEntityWillBeRemoved(Entity* _entity);
 
         //////////////////////////////////////////
         void updateSortedCanvasesList();

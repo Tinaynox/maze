@@ -67,15 +67,15 @@ namespace Maze
         //////////////////////////////////////////
         inline TContainer& other()
         {
-            TContainer& currentContainer = m_containers[m_isFirst ? 1 : 0];
-            return currentContainer;
+            TContainer& otherContainer = m_containers[m_isFirst ? 1 : 0];
+            return otherContainer;
         }
 
         //////////////////////////////////////////
         inline TContainer& switchContainer()
         {
             m_isFirst = !m_isFirst;
-            return m_containers[m_isFirst ? 0 : 1];
+            return other();
         }
 
     protected:

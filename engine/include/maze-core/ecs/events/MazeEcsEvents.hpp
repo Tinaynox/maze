@@ -46,13 +46,13 @@ namespace Maze
     struct MAZE_CORE_API EcsEventParams
     {
         //////////////////////////////////////////
-        EcsEventParams(bool _ignoreRemoving = true)
-            : ignoreRemoving(_ignoreRemoving)
+        EcsEventParams(bool _ignoreRemovingEntity = true)
+            : ignoreRemovingEntity(_ignoreRemovingEntity)
         {
 
         }
 
-        bool ignoreRemoving = true;
+        bool ignoreRemovingEntity = true;
     };
 
 

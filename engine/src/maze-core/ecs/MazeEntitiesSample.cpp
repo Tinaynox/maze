@@ -95,9 +95,12 @@ namespace Maze
     void EntitiesSample::clear()
     {
         for (Entity* entity : m_entities)
-            eventEntityRemoved(entity);
+            eventEntityWillBeRemoved(entity);
 
         m_entities.clear();
+
+        for (Entity* entity : m_entities)
+            eventEntityRemoved(entity);
     }
 
     //////////////////////////////////////////
@@ -122,8 +125,9 @@ namespace Maze
         else
         if (it != m_entities.end() && !intersects)
         {
-            eventEntityRemoved(_entity);
+            eventEntityWillBeRemoved(_entity);
             m_entities.erase(it);
+            eventEntityRemoved(_entity);
         }
     }
 

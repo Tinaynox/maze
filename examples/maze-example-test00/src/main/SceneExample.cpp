@@ -185,6 +185,26 @@ namespace Maze
         Debug::Log("Removed!");
     }
 
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(SomeEntityAddedToSampleES, {},
+        EntityAddedToSampleEvent const& _event,
+        Entity* _entity,
+        Transform3D* _someObject,
+        Rotor3D* _rotor)
+    {
+        Debug::Log("EntityAddedToSample!");
+    }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(SomeEntityRemovedFromSampleES, {},
+        EntityRemovedFromSampleEvent const& _event,
+        Entity* _entity,
+        Transform3D* _someObject,
+        Rotor3D* _rotor)
+    {
+        Debug::Log("EntityRemovedFromSample!");
+    }
+
 
     //////////////////////////////////////////
     // Class SceneExample
@@ -344,6 +364,15 @@ namespace Maze
                         Rotor3DPtr rotor = m_objectEntity->createComponent<Rotor3D>();
                         rotor->setAxis({ 0.0f, -0.7071f, -0.7071f });
                         rotor->setSpeed(0.2f);
+                    }
+                    else
+                    {
+                        if (m_objectEntity)
+                        {
+                            Rotor3DPtr rotor = m_objectEntity->ensureComponent<Rotor3D>();
+                            rotor->setAxis({ 0.0f, -0.7071f, -0.7071f });
+                            rotor->setSpeed(0.2f);
+                        }
                     }
                 }
                 else

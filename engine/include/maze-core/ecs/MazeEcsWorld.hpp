@@ -191,6 +191,7 @@ namespace Maze
             ComponentSystemOrder const& _order = ComponentSystemOrder())
         {
             ComponentSystemEventHandlerPtr system = ComponentSystemEventHandler::Create(
+                this,
                 _name,
                 ClassInfo<typename std::remove_const<TEventType>::type>::UID(),
                 requestInclusiveSample<TComponents...>(),
@@ -321,6 +322,8 @@ namespace Maze
         Vector<IEntitiesSamplePtr> m_samples;
 
         UnorderedMap<ClassUID, Vector<ComponentSystemEventHandlerPtr>> m_eventHandlers;
+        FastVector<ComponentSystemEntityAddedToSampleEventHandlerPtr> m_entityAddedToSampleEventHandlers;
+        FastVector<ComponentSystemEntityRemovedFromSampleEventHandlerPtr> m_entityRemovedFromSampleEventHandlers;
 
     private:
         bool m_updatingNow = false;

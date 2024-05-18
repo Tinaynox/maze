@@ -35,6 +35,82 @@
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    // Class ComponentSystemEntityAddedToSampleEventHandler
+    //
+    //////////////////////////////////////////
+    ComponentSystemEntityAddedToSampleEventHandler::ComponentSystemEntityAddedToSampleEventHandler()
+    {
+
+    }
+
+    //////////////////////////////////////////
+    ComponentSystemEntityAddedToSampleEventHandler::~ComponentSystemEntityAddedToSampleEventHandler()
+    {
+        m_eventHandler->getSample()->eventEntityAdded.unsubscribe(this);
+    }
+
+    //////////////////////////////////////////
+    bool ComponentSystemEntityAddedToSampleEventHandler::init(ComponentSystemEventHandlerPtr const& _eventHandler)
+    {
+        m_eventHandler = _eventHandler;
+
+        m_eventHandler->getSample()->eventEntityAdded.subscribe(this, &ComponentSystemEntityAddedToSampleEventHandler::notifyEntityAdded);
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void ComponentSystemEntityAddedToSampleEventHandler::notifyEntityAdded(Entity* _entity)
+    {
+        m_addedEntities.current().push_back(_entity->getId());
+    }
+
+    //////////////////////////////////////////
+    void ComponentSystemEntityAddedToSampleEventHandler::processEntitiesAddedToSample()
+    {
+        FastVector<EntityId>& addedEntities = m_addedEntities.switchContainer();
+        for (EntityId entityId : addedEntities)
+        {
+            EntityAddedToSampleEvent event;
+            m_eventHandler->processEvent(entityId, &event);
+        }
+        addedEntities.clear();
+    }
+
+
+    //////////////////////////////////////////
+    // Class ComponentSystemEntityRemovedFromSampleEventHandler
+    //
+    //////////////////////////////////////////
+    ComponentSystemEntityRemovedFromSampleEventHandler::ComponentSystemEntityRemovedFromSampleEventHandler()
+    {
+
+    }
+
+    //////////////////////////////////////////
+    ComponentSystemEntityRemovedFromSampleEventHandler::~ComponentSystemEntityRemovedFromSampleEventHandler()
+    {
+        m_eventHandler->getSample()->eventEntityWillBeRemoved.unsubscribe(this);
+    }
+
+    //////////////////////////////////////////
+    bool ComponentSystemEntityRemovedFromSampleEventHandler::init(ComponentSystemEventHandlerPtr const& _eventHandler)
+    {
+        m_eventHandler = _eventHandler;
+
+        m_eventHandler->getSample()->eventEntityWillBeRemoved.subscribe(this, &ComponentSystemEntityRemovedFromSampleEventHandler::notifyEntityWillBeRemoved);
+
+        return true;
+    }
+
+    //////////////////////////////////////////
+    void ComponentSystemEntityRemovedFromSampleEventHandler::notifyEntityWillBeRemoved(Entity* _entity)
+    {
+        EntityRemovedFromSampleEvent event;
+        m_eventHandler->processEvent(_entity->getId(), &event, EcsEventParams(false));
+    }
+
 
 } // namespace Maze
 //////////////////////////////////////////

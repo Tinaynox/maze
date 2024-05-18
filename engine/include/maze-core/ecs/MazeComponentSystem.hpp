@@ -47,6 +47,8 @@ namespace Maze
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(Entity);
     MAZE_USING_SHARED_PTR(ComponentSystemEventHandler);
+    MAZE_USING_SHARED_PTR(ComponentSystemEntityAddedToSampleEventHandler);
+    MAZE_USING_SHARED_PTR(ComponentSystemEntityRemovedFromSampleEventHandler);
     MAZE_USING_SHARED_PTR(EcsWorld);
     MAZE_USING_SHARED_PTR(IEntitiesSample);
 
@@ -98,6 +100,7 @@ namespace Maze
 
         //////////////////////////////////////////
         static inline ComponentSystemEventHandlerPtr Create(
+            EcsWorld* _world,
             HashedCString _name,
             ClassUID _eventUID,
             IEntitiesSamplePtr _sample,
@@ -105,7 +108,7 @@ namespace Maze
             ComponentSystemOrder const& _order = ComponentSystemOrder())
         {
             return MAZE_CREATE_SHARED_PTR_WITH_ARGS(
-                ComponentSystemEventHandler, _name, _eventUID, _sample, _func, _order);
+                ComponentSystemEventHandler, _world, _name, _eventUID, _sample, _func, _order);
         }
 
         //////////////////////////////////////////
@@ -119,6 +122,14 @@ namespace Maze
         {
             m_sample->processEvent(_entityId, _event, _params, m_func);
         }
+
+
+        //////////////////////////////////////////
+        inline EcsWorld* getWorld() const { return m_world; }
+
+        //////////////////////////////////////////
+        inline IEntitiesSamplePtr const& getSample() const { return m_sample; }
+
 
         //////////////////////////////////////////
         inline HashedString const& getName() const { return m_name; }
@@ -138,12 +149,14 @@ namespace Maze
 
         //////////////////////////////////////////
         ComponentSystemEventHandler(
+            EcsWorld* _world,
             HashedCString _name,
             ClassUID _eventUID,
             IEntitiesSamplePtr _sample = nullptr,
             Func _func = nullptr,
             ComponentSystemOrder const& _order = ComponentSystemOrder())
-            : m_name(_name)
+            : m_world(_world)
+            , m_name(_name)
             , m_eventUID(_eventUID)
             , m_sample(_sample)
             , m_func(_func)
@@ -152,6 +165,7 @@ namespace Maze
         }
 
     protected:
+        EcsWorld* m_world = nullptr;
         HashedString m_name;
         ClassUID m_eventUID = 0;
         IEntitiesSamplePtr m_sample;
@@ -160,6 +174,86 @@ namespace Maze
         ComponentSystemOrder m_order;
     };
 
+
+    //////////////////////////////////////////
+    // Class ComponentSystemEntityAddedToSampleEventHandler
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API ComponentSystemEntityAddedToSampleEventHandler
+        : public MultiDelegateCallbackReceiver
+    {
+    public:
+
+        //////////////////////////////////////////
+        static inline ComponentSystemEntityAddedToSampleEventHandlerPtr Create(
+            ComponentSystemEventHandlerPtr const& _eventHandler)
+        {
+            ComponentSystemEntityAddedToSampleEventHandlerPtr object;
+            MAZE_CREATE_AND_INIT_SHARED_PTR(ComponentSystemEntityAddedToSampleEventHandler, object, init(_eventHandler));
+            return object;
+        }
+
+        //////////////////////////////////////////
+        ~ComponentSystemEntityAddedToSampleEventHandler();
+
+
+        //////////////////////////////////////////
+        void processEntitiesAddedToSample();
+
+    protected:
+
+        //////////////////////////////////////////
+        ComponentSystemEntityAddedToSampleEventHandler();
+
+        //////////////////////////////////////////
+        bool init(ComponentSystemEventHandlerPtr const& _eventHandler);
+
+        //////////////////////////////////////////
+        void notifyEntityAdded(Entity* _entity);
+
+    protected:
+        ComponentSystemEventHandlerPtr m_eventHandler;
+        SwitchableContainer<FastVector<EntityId>> m_addedEntities;
+    };
+
+
+    //////////////////////////////////////////
+    // Class ComponentSystemEntityRemovedFromSampleEventHandler
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API ComponentSystemEntityRemovedFromSampleEventHandler
+        : public MultiDelegateCallbackReceiver
+    {
+    public:
+
+        //////////////////////////////////////////
+        static inline ComponentSystemEntityRemovedFromSampleEventHandlerPtr Create(
+            ComponentSystemEventHandlerPtr const& _eventHandler)
+        {
+            ComponentSystemEntityRemovedFromSampleEventHandlerPtr object;
+            MAZE_CREATE_AND_INIT_SHARED_PTR(ComponentSystemEntityRemovedFromSampleEventHandler, object, init(_eventHandler));
+            return object;
+        }
+
+        //////////////////////////////////////////
+        ~ComponentSystemEntityRemovedFromSampleEventHandler();
+
+
+    protected:
+
+        //////////////////////////////////////////
+        ComponentSystemEntityRemovedFromSampleEventHandler();
+
+        //////////////////////////////////////////
+        bool init(ComponentSystemEventHandlerPtr const& _eventHandler);
+
+        //////////////////////////////////////////
+        void notifyEntityWillBeRemoved(Entity* _entity);
+
+    protected:
+        ComponentSystemEventHandlerPtr m_eventHandler;
+        SwitchableContainer<FastVector<EntityId>> m_removedEntities;
+    };
 
 
 } // namespace Maze

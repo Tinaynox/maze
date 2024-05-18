@@ -78,8 +78,7 @@ namespace Maze
 
         m_update = true;
 
-        m_mainThreadTasks.switchContainer();
-        FastVector<SharedPtr<TaskDelegate>>& mainThreadTasks = m_mainThreadTasks.other();
+        FastVector<SharedPtr<TaskDelegate>>& mainThreadTasks = m_mainThreadTasks.switchContainer();
         for (SharedPtr<TaskDelegate>& mainThreadTask : mainThreadTasks)
             mainThreadTask->run();
         m_mainThreadTasks.other().clear();
