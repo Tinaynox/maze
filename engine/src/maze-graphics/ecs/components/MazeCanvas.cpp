@@ -241,7 +241,7 @@ namespace Maze
     
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(CanvasPreparationSystem, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(CanvasPreparationSystem, {},
         UpdateEvent const& _event,
         Entity* _entity,
         Canvas* _canvas)

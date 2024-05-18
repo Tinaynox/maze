@@ -46,7 +46,7 @@ namespace Maze
 {
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(Entity);
-    MAZE_USING_SHARED_PTR(SimpleComponentSystemEventHandler);
+    MAZE_USING_SHARED_PTR(ComponentSystemEventHandler);
     MAZE_USING_SHARED_PTR(EcsWorld);
     MAZE_USING_SHARED_PTR(IEntitiesSample);
 
@@ -86,35 +86,18 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class SimpleComponentSystemEventHandler
+    // Class ComponentSystemEventHandler
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API SimpleComponentSystemEventHandler
+    class MAZE_CORE_API ComponentSystemEventHandler
     {
-    public:
-
-        //////////////////////////////////////////
-        struct AddedOrRemovedEntity
-        {
-            //////////////////////////////////////////
-            inline AddedOrRemovedEntity(
-                EntityId _entityId = c_invalidEntityId,
-                bool _added = false)
-                : entityId(_entityId)
-                , added(_added)
-            {}
-
-            EntityId entityId = c_invalidEntityId;
-            bool added = false;
-        };
-
     public:
 
         //////////////////////////////////////////
         using Func = void (*)();
 
         //////////////////////////////////////////
-        static inline SimpleComponentSystemEventHandlerPtr Create(
+        static inline ComponentSystemEventHandlerPtr Create(
             HashedCString _name,
             ClassUID _eventUID,
             IEntitiesSamplePtr _sample,
@@ -122,7 +105,7 @@ namespace Maze
             ComponentSystemOrder const& _order = ComponentSystemOrder())
         {
             return MAZE_CREATE_SHARED_PTR_WITH_ARGS(
-                SimpleComponentSystemEventHandler, _name, _eventUID, _sample, _func, _order);
+                ComponentSystemEventHandler, _name, _eventUID, _sample, _func, _order);
         }
 
         //////////////////////////////////////////
@@ -150,14 +133,11 @@ namespace Maze
         //////////////////////////////////////////
         inline void setOrder(ComponentSystemOrder const& _order) { m_order = _order; }
 
-
-        //////////////////////////////////////////
-        void processAddedOrRemovedEntityEvents();
-
+        
     protected:
 
         //////////////////////////////////////////
-        SimpleComponentSystemEventHandler(
+        ComponentSystemEventHandler(
             HashedCString _name,
             ClassUID _eventUID,
             IEntitiesSamplePtr _sample = nullptr,

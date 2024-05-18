@@ -148,10 +148,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void addSystemEventHandler(SimpleComponentSystemEventHandlerPtr const& _system);
+        void addSystemEventHandler(ComponentSystemEventHandlerPtr const& _system);
 
         //////////////////////////////////////////
-        void removeSystemEventHandler(SimpleComponentSystemEventHandlerPtr const& _system);
+        void removeSystemEventHandler(ComponentSystemEventHandlerPtr const& _system);
 
 
         //////////////////////////////////////////
@@ -185,16 +185,16 @@ namespace Maze
 
         //////////////////////////////////////////
         template<typename TEventType, typename ...TComponents>
-        inline SimpleComponentSystemEventHandlerPtr addSystemEventHandler(
+        inline ComponentSystemEventHandlerPtr addSystemEventHandler(
             HashedCString _name,
             void (*_func)(TEventType&, Entity*, TComponents* ...),
             ComponentSystemOrder const& _order = ComponentSystemOrder())
         {
-            SimpleComponentSystemEventHandlerPtr system = SimpleComponentSystemEventHandler::Create(
+            ComponentSystemEventHandlerPtr system = ComponentSystemEventHandler::Create(
                 _name,
                 ClassInfo<typename std::remove_const<TEventType>::type>::UID(),
                 requestInclusiveSample<TComponents...>(),
-                (SimpleComponentSystemEventHandler::Func)_func,
+                (ComponentSystemEventHandler::Func)_func,
                 _order);
             addSystemEventHandler(system);
             return system;
@@ -205,9 +205,9 @@ namespace Maze
         inline void broadcastEventImmediate(TEvent* _event)
         {
             ClassUID eventUID = _event->getClassUID();
-            Vector<SimpleComponentSystemEventHandlerPtr> const& eventHandlers = m_eventHandlers[eventUID];
+            Vector<ComponentSystemEventHandlerPtr> const& eventHandlers = m_eventHandlers[eventUID];
 
-            for (SimpleComponentSystemEventHandlerPtr const& _eventHandler : eventHandlers)
+            for (ComponentSystemEventHandlerPtr const& _eventHandler : eventHandlers)
                 _eventHandler->processEvent(_event);
         }
 
@@ -225,9 +225,9 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TEventType>
-        inline Vector<SimpleComponentSystemEventHandlerPtr> const& getSystems()
+        inline Vector<ComponentSystemEventHandlerPtr> const& getSystems()
         {
-            static Vector<SimpleComponentSystemEventHandlerPtr> nullValue;
+            static Vector<ComponentSystemEventHandlerPtr> nullValue;
 
             ClassUID eventUID = ClassInfo<typename std::remove_const<TEventType>::type>::UID();
             auto it = m_eventHandlers.find(eventUID);
@@ -241,9 +241,9 @@ namespace Maze
         inline void sendEventImmediate(EntityId _entityId, TEvent* _event, EcsEventParams _params = EcsEventParams())
         {
             ClassUID eventUID = _event->getClassUID();
-            Vector<SimpleComponentSystemEventHandlerPtr> const& eventHandlers = m_eventHandlers[eventUID];
+            Vector<ComponentSystemEventHandlerPtr> const& eventHandlers = m_eventHandlers[eventUID];
 
-            for (SimpleComponentSystemEventHandlerPtr const& _eventHandler : eventHandlers)
+            for (ComponentSystemEventHandlerPtr const& _eventHandler : eventHandlers)
                 _eventHandler->processEvent(_entityId, _event, _params);
         }
         
@@ -320,7 +320,7 @@ namespace Maze
 
         Vector<IEntitiesSamplePtr> m_samples;
 
-        UnorderedMap<ClassUID, Vector<SimpleComponentSystemEventHandlerPtr>> m_eventHandlers;
+        UnorderedMap<ClassUID, Vector<ComponentSystemEventHandlerPtr>> m_eventHandlers;
 
     private:
         bool m_updatingNow = false;

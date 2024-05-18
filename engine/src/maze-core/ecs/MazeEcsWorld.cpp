@@ -39,16 +39,16 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    SimpleComponentSystemEventHandlerPtr const& FindSystem(
-        Vector<SimpleComponentSystemEventHandlerPtr> const& _eventHandlers,
+    ComponentSystemEventHandlerPtr const& FindSystem(
+        Vector<ComponentSystemEventHandlerPtr> const& _eventHandlers,
         HashedString const& _name)
     {
-        static SimpleComponentSystemEventHandlerPtr nullPointer;
+        static ComponentSystemEventHandlerPtr nullPointer;
 
         auto it = std::find_if(
             _eventHandlers.begin(),
             _eventHandlers.end(),
-            [&_name](SimpleComponentSystemEventHandlerPtr const& _system) {
+            [&_name](ComponentSystemEventHandlerPtr const& _system) {
                 return _system->getName() == _name;
             });
         if (it == _eventHandlers.end())
@@ -60,8 +60,8 @@ namespace Maze
 
     //////////////////////////////////////////
     void CalculateAfterAndBeforeIndices(
-        Vector<SimpleComponentSystemEventHandlerPtr> const& _eventHandlers,
-        SimpleComponentSystemEventHandlerPtr const& _system,
+        Vector<ComponentSystemEventHandlerPtr> const& _eventHandlers,
+        ComponentSystemEventHandlerPtr const& _system,
         S32& _afterIndex,
         S32& _beforeIndex)
     {
@@ -71,7 +71,7 @@ namespace Maze
 
         for (S32 i = 0; i < arrSize; ++i)
         {
-            SimpleComponentSystemEventHandlerPtr const& system = _eventHandlers[i];
+            ComponentSystemEventHandlerPtr const& system = _eventHandlers[i];
             if (system == _system)
                 continue;
 
@@ -84,7 +84,7 @@ namespace Maze
 
         for (S32 i = arrSize - 1; i > -1; --i)
         {
-            SimpleComponentSystemEventHandlerPtr const& system = _eventHandlers[i];
+            ComponentSystemEventHandlerPtr const& system = _eventHandlers[i];
             if (system == _system)
                 continue;
 
@@ -99,8 +99,8 @@ namespace Maze
 
     //////////////////////////////////////////
     bool AddSystemEventHandler(
-        Vector<SimpleComponentSystemEventHandlerPtr>& _eventHandlers,
-        SimpleComponentSystemEventHandlerPtr const& _system,
+        Vector<ComponentSystemEventHandlerPtr>& _eventHandlers,
+        ComponentSystemEventHandlerPtr const& _system,
         bool _rearrangeAvailable = true)
     {
         S32 arrSize = (S32)_eventHandlers.size();
@@ -123,10 +123,10 @@ namespace Maze
         {
             if (_rearrangeAvailable)
             {
-                Vector<SimpleComponentSystemEventHandlerPtr> shouldBeBeforeNewSystem;
-                Vector<SimpleComponentSystemEventHandlerPtr> shouldBeAfterNewSystem;
+                Vector<ComponentSystemEventHandlerPtr> shouldBeBeforeNewSystem;
+                Vector<ComponentSystemEventHandlerPtr> shouldBeAfterNewSystem;
 
-                for (SimpleComponentSystemEventHandlerPtr const& s : _eventHandlers)
+                for (ComponentSystemEventHandlerPtr const& s : _eventHandlers)
                 {
                     if (s->getOrder().before.count(_system->getName()) || _system->getOrder().after.count(s->getName()))
                         shouldBeBeforeNewSystem.push_back(s);
@@ -135,7 +135,7 @@ namespace Maze
                         shouldBeAfterNewSystem.push_back(s);
                 }
 
-                for (SimpleComponentSystemEventHandlerPtr s : shouldBeAfterNewSystem)
+                for (ComponentSystemEventHandlerPtr s : shouldBeAfterNewSystem)
                 {
                     auto it = std::find(_eventHandlers.begin(), _eventHandlers.end(), s);
                     MAZE_ASSERT(it != _eventHandlers.end());
@@ -148,7 +148,7 @@ namespace Maze
                     _eventHandlers.insert(_eventHandlers.begin() + sBeforeIndex, s);
                 }
 
-                for (SimpleComponentSystemEventHandlerPtr s : shouldBeBeforeNewSystem)
+                for (ComponentSystemEventHandlerPtr s : shouldBeBeforeNewSystem)
                 {
                     auto it = std::find(_eventHandlers.begin(), _eventHandlers.end(), s);
                     MAZE_ASSERT(it != _eventHandlers.end());
@@ -168,7 +168,7 @@ namespace Maze
             else
             {
                 Debug::LogError("Systems list:");
-                for (SimpleComponentSystemEventHandlerPtr const& s : _eventHandlers)
+                for (ComponentSystemEventHandlerPtr const& s : _eventHandlers)
                 {
                     Debug::LogError("%s", s->getName().c_str());
                 }
@@ -201,7 +201,7 @@ namespace Maze
     //////////////////////////////////////////
     EcsWorld::~EcsWorld()
     {
-        SimpleComponentSystemHolder::Detach(this);
+        ComponentSystemHolder::Detach(this);
 
         m_samples.clear();
 
@@ -239,7 +239,7 @@ namespace Maze
 
         if (_attachSystems)
         {
-            SimpleComponentSystemHolder::Attach(this);
+            ComponentSystemHolder::Attach(this);
         }
 
         return true;
@@ -530,25 +530,25 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EcsWorld::addSystemEventHandler(SimpleComponentSystemEventHandlerPtr const& _system)
+    void EcsWorld::addSystemEventHandler(ComponentSystemEventHandlerPtr const& _system)
     {
         if (!_system)
             return;
 
         ClassUID eventUID = _system->getEventUID();
-        Vector<SimpleComponentSystemEventHandlerPtr>& eventHandlers = m_eventHandlers[eventUID];
+        Vector<ComponentSystemEventHandlerPtr>& eventHandlers = m_eventHandlers[eventUID];
         
         AddSystemEventHandler(eventHandlers, _system, true);
     }
 
     //////////////////////////////////////////
-    void EcsWorld::removeSystemEventHandler(SimpleComponentSystemEventHandlerPtr const& _system)
+    void EcsWorld::removeSystemEventHandler(ComponentSystemEventHandlerPtr const& _system)
     {
         if (!_system)
             return;
 
         ClassUID eventUID = _system->getEventUID();
-        Vector<SimpleComponentSystemEventHandlerPtr>& eventHandlers = m_eventHandlers[eventUID];
+        Vector<ComponentSystemEventHandlerPtr>& eventHandlers = m_eventHandlers[eventUID];
         for (Size i = 0, in = eventHandlers.size(); i < in; ++i)
         {
             if (eventHandlers[i] == _system)

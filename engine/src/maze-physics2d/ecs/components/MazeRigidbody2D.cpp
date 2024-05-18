@@ -421,7 +421,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(Rigidbody2DOnFixedUpdateStart, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(Rigidbody2DOnFixedUpdateStart, {},
         Physics2DFixedUpdateStartEvent const& _event,
         Entity* _entity,
         Rigidbody2D* _rigidbody)
@@ -431,7 +431,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(Rigidbody2DOnUpdateFinished, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(Rigidbody2DOnUpdateFinished, {},
         Physics2DUpdateFinishedEvent const& _event,
         Entity* _entity,
         Rigidbody2D* _rigidbody,

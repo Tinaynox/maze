@@ -95,7 +95,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(ParticlesDrawerControllerSystem, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(ParticlesDrawerControllerSystem, {},
         Render3DDefaultPassGatherRenderUnitsEvent const& _event,
         Entity* _entity,
         ParticlesDrawerController* _particlesDrawerController)

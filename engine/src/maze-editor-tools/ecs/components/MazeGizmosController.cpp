@@ -163,7 +163,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(GizmosSystem,
+    COMPONENT_SYSTEM_EVENT_HANDLER(GizmosSystem,
         MAZE_ECS_ORDER(
             MAZE_ECS_ORDER_AFTER(),
             MAZE_ECS_ORDER_BEFORE(MAZE_HS("RenderControllerSystem"))),

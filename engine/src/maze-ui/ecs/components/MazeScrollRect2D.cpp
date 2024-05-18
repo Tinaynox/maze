@@ -580,7 +580,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(ScrollRect2DAdded, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(ScrollRect2DAdded, {},
         EntityAddedEvent const& _event,
         Entity* _entity,
         ScrollRect2D* _scrollRect2D)

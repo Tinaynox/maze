@@ -92,7 +92,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(Rotor3DSystem, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(Rotor3DSystem, {},
         UpdateEvent const& _event,
         Entity* _entity,
         Rotor3D* _rotor)

@@ -135,7 +135,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(SomeUpdateES, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(SomeUpdateES, {},
         UpdateEvent const& _event,
         Entity* _entity,
         Transform3D* _someObject,
@@ -145,7 +145,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(SomeEventES, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(SomeEventES, {},
         SimpleEvent const& _event,
         Entity* _entity,
         Transform3D* _someObject,
@@ -156,7 +156,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(SomeBroadcastEventES, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(SomeBroadcastEventES, {},
         SimpleBroadcastEvent const& _event,
         Entity* _entity,
         Transform3D* _someObject,
@@ -166,7 +166,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(SomeAddedES, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(SomeAddedES, {},
         EntityAddedEvent const& _event,
         Entity* _entity,
         Transform3D* _someObject,
@@ -176,7 +176,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(SomeRemovedES, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(SomeRemovedES, {},
         EntityRemovedEvent const& _event,
         Entity* _entity,
         Transform3D* _someObject,

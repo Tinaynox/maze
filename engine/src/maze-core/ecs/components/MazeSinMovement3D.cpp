@@ -108,7 +108,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(SinMovement3DSystem, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(SinMovement3DSystem, {},
         UpdateEvent const& _event,
         Entity* _entity,
         SinMovement3D* _sinMovement)

@@ -420,7 +420,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(Transform3DSystem, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(Transform3DSystem, {},
         PreUpdateEvent const& _event,
         Entity* _entity,
         Transform3D* _transform3D)

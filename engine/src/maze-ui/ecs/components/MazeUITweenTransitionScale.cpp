@@ -263,7 +263,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(UITweenTransitionScaleSystem,
+    COMPONENT_SYSTEM_EVENT_HANDLER(UITweenTransitionScaleSystem,
         MAZE_ECS_ORDER(
             MAZE_ECS_ORDER_AFTER(),
             MAZE_ECS_ORDER_BEFORE(MAZE_HS("InputSystem2DSystem"))),
