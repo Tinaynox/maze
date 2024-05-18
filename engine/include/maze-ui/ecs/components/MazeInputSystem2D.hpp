@@ -150,7 +150,7 @@ namespace Maze
         void processCanvasEntityAdded(Entity* _entity);
 
         //////////////////////////////////////////
-        void processCanvasEntityWillBeRemoved(Entity* _entity);
+        void processCanvasEntityRemoved(Entity* _entity);
 
         //////////////////////////////////////////
         void updateSortedCanvasesList();
@@ -168,7 +168,7 @@ namespace Maze
         void processUIElement2DEntityAdded(Entity* _entity);
 
         //////////////////////////////////////////
-        void processUIElement2DEntityWillBeRemoved(Entity* _entity);
+        void processUIElement2DEntityRemoved(Entity* _entity);
 
         //////////////////////////////////////////
         void updateSortedUIElements2DList();

@@ -109,10 +109,10 @@ namespace Maze
     InputSystem2D::~InputSystem2D()
     {
         m_canvasesSample->eventEntityAdded.unsubscribe(this);
-        m_canvasesSample->eventEntityWillBeRemoved.unsubscribe(this);
+        m_canvasesSample->eventEntityRemoved.unsubscribe(this);
 
         m_UIElements2DSample->eventEntityAdded.unsubscribe(this);
-        m_UIElements2DSample->eventEntityWillBeRemoved.unsubscribe(this);
+        m_UIElements2DSample->eventEntityRemoved.unsubscribe(this);
 
         InputManager::GetInstancePtr()->eventMouse.unsubscribe(this);
         InputManager::GetInstancePtr()->eventTouch.unsubscribe(this);
@@ -142,7 +142,7 @@ namespace Maze
     {
         m_canvasesSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<Canvas>();
         m_canvasesSample->eventEntityAdded.subscribe(this, &InputSystem2D::processCanvasEntityAdded);
-        m_canvasesSample->eventEntityWillBeRemoved.subscribe(this, &InputSystem2D::processCanvasEntityWillBeRemoved);
+        m_canvasesSample->eventEntityRemoved.subscribe(this, &InputSystem2D::processCanvasEntityRemoved);
         updateSortedCanvasesList();
 
         m_canvasScalersSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<CanvasScaler>();
@@ -150,7 +150,7 @@ namespace Maze
 
         m_UIElements2DSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<UIElement2D>();
         m_UIElements2DSample->eventEntityAdded.subscribe(this, &InputSystem2D::processUIElement2DEntityAdded);
-        m_UIElements2DSample->eventEntityWillBeRemoved.subscribe(this, &InputSystem2D::processUIElement2DEntityWillBeRemoved);
+        m_UIElements2DSample->eventEntityRemoved.subscribe(this, &InputSystem2D::processUIElement2DEntityRemoved);
 
         m_systemTextEditBoxesSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<EditBox2D>();
         m_systemTextDropdownsSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<Dropdown2D>();
@@ -286,7 +286,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void InputSystem2D::processCanvasEntityWillBeRemoved(Entity* _entity)
+    void InputSystem2D::processCanvasEntityRemoved(Entity* _entity)
     {
         updateSortedCanvasesList();
     }
@@ -298,7 +298,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void InputSystem2D::processUIElement2DEntityWillBeRemoved(Entity* _entity)
+    void InputSystem2D::processUIElement2DEntityRemoved(Entity* _entity)
     {
         m_sortedUIElements2DDirty = true;
     }

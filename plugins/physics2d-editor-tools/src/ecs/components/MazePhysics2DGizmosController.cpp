@@ -198,7 +198,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(Physics2DGizmosSystem,
+    COMPONENT_SYSTEM_EVENT_HANDLER(Physics2DGizmosSystem,
         MAZE_ECS_ORDER(
             MAZE_ECS_ORDER_AFTER(MAZE_HS("GizmosSystem")),
             MAZE_ECS_ORDER_BEFORE(MAZE_HS("RenderControllerSystem"))),

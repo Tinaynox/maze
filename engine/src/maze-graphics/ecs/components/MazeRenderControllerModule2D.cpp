@@ -66,13 +66,13 @@ namespace Maze
     RenderControllerModule2D::~RenderControllerModule2D()
     {
         m_canvasesSample->eventEntityAdded.unsubscribe(this);
-        m_canvasesSample->eventEntityWillBeRemoved.unsubscribe(this);
+        m_canvasesSample->eventEntityRemoved.unsubscribe(this);
 
         m_meshRenderersSample->eventEntityAdded.unsubscribe(this);
-        m_meshRenderersSample->eventEntityWillBeRemoved.unsubscribe(this);
+        m_meshRenderersSample->eventEntityRemoved.unsubscribe(this);
 
         m_meshRenderersInstancedSample->eventEntityAdded.unsubscribe(this);
-        m_meshRenderersInstancedSample->eventEntityWillBeRemoved.unsubscribe(this);
+        m_meshRenderersInstancedSample->eventEntityRemoved.unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -107,13 +107,13 @@ namespace Maze
         m_sizePolicy2D = _world->requestInclusiveSample<SizePolicy2D>();
 
         m_canvasesSample->eventEntityAdded.subscribe(this, &RenderControllerModule2D::processCanvasEntityAdded);
-        m_canvasesSample->eventEntityWillBeRemoved.subscribe(this, &RenderControllerModule2D::processCanvasEntityWillBeRemoved);
+        m_canvasesSample->eventEntityRemoved.subscribe(this, &RenderControllerModule2D::processCanvasEntityRemoved);
 
         m_meshRenderersSample->eventEntityAdded.subscribe(this, &RenderControllerModule2D::processMeshRendererEntityAdded);
-        m_meshRenderersSample->eventEntityWillBeRemoved.subscribe(this, &RenderControllerModule2D::processMeshRendererEntityWillBeRemoved);
+        m_meshRenderersSample->eventEntityRemoved.subscribe(this, &RenderControllerModule2D::processMeshRendererEntityRemoved);
 
         m_meshRenderersInstancedSample->eventEntityAdded.subscribe(this, &RenderControllerModule2D::processMeshRendererInstancedEntityAdded);
-        m_meshRenderersInstancedSample->eventEntityWillBeRemoved.subscribe(this, &RenderControllerModule2D::processMeshRendererInstancedEntityWillBeRemoved);
+        m_meshRenderersInstancedSample->eventEntityRemoved.subscribe(this, &RenderControllerModule2D::processMeshRendererInstancedEntityRemoved);
 
         updateSortedCanvasesList();
 
@@ -435,7 +435,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControllerModule2D::processCanvasEntityWillBeRemoved(Entity* _entity)
+    void RenderControllerModule2D::processCanvasEntityRemoved(Entity* _entity)
     {
         updateSortedCanvasesList();
     }
@@ -447,7 +447,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControllerModule2D::processMeshRendererEntityWillBeRemoved(Entity* _entity)
+    void RenderControllerModule2D::processMeshRendererEntityRemoved(Entity* _entity)
     {
         m_sortedMeshRenderersDirty = true;
     }
@@ -459,7 +459,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void RenderControllerModule2D::processMeshRendererInstancedEntityWillBeRemoved(Entity* _entity)
+    void RenderControllerModule2D::processMeshRendererInstancedEntityRemoved(Entity* _entity)
     {
         m_sortedMeshRenderersDirty = true;
     }
