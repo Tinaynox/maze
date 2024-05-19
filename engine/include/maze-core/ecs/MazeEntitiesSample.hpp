@@ -359,7 +359,7 @@ namespace Maze
                 if (entityData.entity->getRemoving() && _params.ignoreRemovingEntity)
                     continue;
 
-                if (!entityData.entity->getEcsWorld())
+                if (!entityData.entity->getEcsWorld() && _params.ignoreNullWorldEntity)
                     continue;
 
                 callProcessEvent(
@@ -390,7 +390,7 @@ namespace Maze
                 if (entityData.entity->getRemoving() && _params.ignoreRemovingEntity)
                     return;
 
-                if (!entityData.entity->getEcsWorld())
+                if (!entityData.entity->getEcsWorld() && _params.ignoreNullWorldEntity)
                     return;
 
                 callProcessEvent(

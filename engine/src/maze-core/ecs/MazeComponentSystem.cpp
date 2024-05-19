@@ -108,7 +108,7 @@ namespace Maze
     void ComponentSystemEntityRemovedFromSampleEventHandler::notifyEntityWillBeRemoved(Entity* _entity)
     {
         EntityRemovedFromSampleEvent event;
-        m_eventHandler->processEvent(_entity->getId(), &event, EcsEventParams(false));
+        m_eventHandler->processEvent(_entity->getId(), &event, EcsEventParams(false, false));
     }
 
 
