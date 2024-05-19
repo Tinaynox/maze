@@ -76,28 +76,18 @@ namespace Maze
         return true;
     }
 
-    //////////////////////////////////////////
-    void LinearMovement3D::update(F32 _dt)
-    {
-        if (m_active)
-            m_transform->translate(m_axis * m_speed * _dt);
-    }
 
     //////////////////////////////////////////
-    void LinearMovement3D::processEntityAwakened()
-    {
-        m_transform = getEntityRaw()->getComponent<Transform3D>();
-    }
-
-
-
-    //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(LinearMovement3DSystem, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(LinearMovement3DSystem,
+        MAZE_ECS_TAGS(MAZE_HS("default")),
+        {},
         UpdateEvent const& _event,
         Entity* _entity,
-        LinearMovement3D* _linearMovement)
+        LinearMovement3D* _linearMovement,
+        Transform3D* _transform)
     {
-        _linearMovement->update(_event.getDt());
+        if (_linearMovement->getActive())
+            _transform->translate(_linearMovement->getAxis() * _linearMovement->getSpeed() * _event.getDt());
     }
     
 } // namespace Maze

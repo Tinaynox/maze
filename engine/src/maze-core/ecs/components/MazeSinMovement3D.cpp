@@ -88,32 +88,45 @@ namespace Maze
         return true;
     }
 
-    //////////////////////////////////////////
-    void SinMovement3D::update(F32 _dt)
-    {
-        m_timer += _dt;
 
-        F32 value = m_amplitude * Math::Sin(m_frequency * m_timer);
-        m_transform->setLocalPosition(m_startPosition + m_axis * value);
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(SinMovement3DAppear,
+        MAZE_ECS_TAGS(MAZE_HS("default")),
+        {},
+        EntityAddedToSampleEvent const& _event,
+        Entity* _entity,
+        SinMovement3D* _sinMovement,
+        Transform3D* _transform)
+    {
+        _sinMovement->setStartPosition(_transform->getLocalPosition());
     }
 
     //////////////////////////////////////////
-    void SinMovement3D::processEntityAwakened()
+    COMPONENT_SYSTEM_EVENT_HANDLER(SinMovement3DDisappear,
+        MAZE_ECS_TAGS(MAZE_HS("default")),
+        {},
+        EntityRemovedFromSampleEvent const& _event,
+        Entity* _entity,
+        SinMovement3D* _sinMovement,
+        Transform3D* _transform)
     {
-        m_transform = getEntityRaw()->getComponent<Transform3D>();
-
-        m_startPosition = m_transform->getLocalPosition();
+        if (_sinMovement && _transform)
+            _transform->setLocalPosition(_sinMovement->getStartPosition());
     }
 
-
-
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(SinMovement3DSystem, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(SinMovement3DSystem,
+        MAZE_ECS_TAGS(MAZE_HS("default")), 
+        {},
         UpdateEvent const& _event,
         Entity* _entity,
-        SinMovement3D* _sinMovement)
+        SinMovement3D* _sinMovement,
+        Transform3D* _transform)
     {
-        _sinMovement->update(_event.getDt());
+        _sinMovement->setTimer(_sinMovement->getTimer() + _event.getDt());
+        F32 value = _sinMovement->getAmplitude() * Math::Sin(_sinMovement->getFrequency() * _sinMovement->getTimer());
+        _transform->setLocalPosition(_sinMovement->getStartPosition() + _sinMovement->getAxis() * value);
     }
     
 } // namespace Maze

@@ -341,7 +341,9 @@ namespace Maze
 
             child->destroyAllChildren();
 
-            childEntity->getEcsWorld()->removeEntity(childEntity);
+            EcsWorld* world = childEntity->getEcsWorld();
+            if (world)
+                world->removeEntity(childEntity);
         }
     }
 
@@ -363,23 +365,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Transform3D::processComponentAdded()
-    {
-    }
-
-    //////////////////////////////////////////
     void Transform3D::processComponentRemoved()
     {
         setParent(Transform3DPtr());
         removeAllChildren();
     }
 
-    //////////////////////////////////////////
-    void Transform3D::processEntityRemoved()
-    {
-        setParent(Transform3DPtr());
-        destroyAllChildren();
-    }
 
     //////////////////////////////////////////
     void Transform3D::processEntityEnabled()
@@ -418,9 +409,25 @@ namespace Maze
     }
     
 
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(Transform3DSystemRemoved,
+        {},
+        {},
+        EntityRemovedEvent const& _event,
+        Entity* _entity,
+        Transform3D* _transform3D)
+    {
+        if (_transform3D)
+        {
+            _transform3D->setParent(Transform3DPtr());
+            _transform3D->destroyAllChildren();
+        }
+    }
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(Transform3DSystem, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(Transform3DSystem,
+        {},
+        {},
         PreUpdateEvent const& _event,
         Entity* _entity,
         Transform3D* _transform3D)

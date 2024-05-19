@@ -237,7 +237,7 @@ namespace Maze
         SharedPtr<GenericInclusiveEntitiesSample<Dropdown2D>> m_systemTextDropdownsSample;
         SharedPtr<GenericInclusiveEntitiesSample<HorizontalLayout2D>> m_horizontalLayouts2D;
         SharedPtr<GenericInclusiveEntitiesSample<VerticalLayout2D>> m_verticalLayouts2D;
-        SharedPtr<GenericInclusiveEntitiesSample<SizePolicy2D>> m_sizePolicy2D;
+        SharedPtr<GenericInclusiveEntitiesSample<SizePolicy2D, Transform2D>> m_sizePolicy2D;
         SharedPtr<GenericInclusiveEntitiesSample<ScrollRect2D>> m_scrollRects2D;
 
         Vector<Canvas*> m_sortedCanvases;

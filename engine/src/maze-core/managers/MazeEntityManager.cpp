@@ -79,9 +79,14 @@ namespace Maze
     //////////////////////////////////////////
     bool EntityManager::init()
     {
-        m_defaultWorld = EcsWorld::Create(MAZE_HS("Default"));
+        m_defaultWorld = EcsWorld::Create(
+            MAZE_HS("Default"),
+            true,
+            MAZE_ECS_TAGS(MAZE_HS("default"), MAZE_HS("render")));
 
-        m_libraryWorld = EcsWorld::Create(MAZE_HS("Library"), false);
+        m_libraryWorld = EcsWorld::Create(
+            MAZE_HS("Library"),
+            false);
         
         m_componentFactory = ComponentFactory::Create();
 

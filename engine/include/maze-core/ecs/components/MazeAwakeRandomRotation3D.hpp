@@ -88,9 +88,6 @@ namespace Maze
         //////////////////////////////////////////
         bool init(Vec3B const& _axes = Vec3B::c_true);
 
-        //////////////////////////////////////////
-        virtual void processEntityAwakened() MAZE_OVERRIDE;
-
     protected:
         Vec3B m_axes = Vec3B::c_true;
     };

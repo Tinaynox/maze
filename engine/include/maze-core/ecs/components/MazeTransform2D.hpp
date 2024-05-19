@@ -637,8 +637,6 @@ namespace Maze
         //////////////////////////////////////////
         void processComponentRemoved() MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        void processEntityRemoved() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void processEntityEnabled() MAZE_OVERRIDE;

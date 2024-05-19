@@ -292,7 +292,9 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(RenderControllerSystem, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(RenderControllerSystem,
+        MAZE_ECS_TAGS(MAZE_HS("render")),
+        {},
         PostUpdateEvent const& _event,
         Entity* _entity,
         RenderController* _renderController)

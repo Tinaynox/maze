@@ -74,15 +74,16 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void SizePolicy2D::processEntityAwakened()
+    void SizePolicy2D::processInit(Transform2D* _transform)
     {
-        m_transform = getEntityRaw()->ensureComponent<Transform2D>();
+        m_transform = _transform->cast<Transform2D>();
+        updateSize();
     }
 
     //////////////////////////////////////////
     void SizePolicy2D::updateSize()
     {
-        if (!m_transform->getParent())
+        if (!m_transform || !m_transform->getParent())
             return;
 
         bool affectWidth = m_flags & Flags::Width;
@@ -112,14 +113,28 @@ namespace Maze
     }
     
 
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(Size2DSystemAppear,
+        {},
+        {},
+        EntityAddedToSampleEvent const& _event,
+        Entity* _entity,
+        SizePolicy2D* _sizePolicy,
+        Transform2D* _transform)
+    {
+        _sizePolicy->processInit(_transform);
+    }
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(Size2DSystem, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(Size2DSystemUpdate,
+        {},
+        {},
         UpdateEvent const& _event,
         Entity* _entity,
-        SizePolicy2D* _sizePolicy)
+        SizePolicy2D* _sizePolicy,
+        Transform2D* _transform)
     {
-        if (_sizePolicy->getTransform()->isWorldTransformChanged())
+        if (_transform->isWorldTransformChanged())
             _sizePolicy->updateSize();
     }
     

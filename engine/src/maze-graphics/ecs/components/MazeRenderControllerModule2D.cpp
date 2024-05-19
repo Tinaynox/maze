@@ -104,7 +104,7 @@ namespace Maze
         m_systemTextRenderer2DsSample =  _world->requestInclusiveSample<SystemTextRenderer2D>();
         m_lineRenderers2DSample = _world->requestInclusiveSample<LineRenderer2D, Transform2D>();
 
-        m_sizePolicy2D = _world->requestInclusiveSample<SizePolicy2D>();
+        m_sizePolicy2D = _world->requestInclusiveSample<SizePolicy2D, Transform2D>();
 
         m_canvasesSample->eventEntityAdded.subscribe(this, &RenderControllerModule2D::processCanvasEntityAdded);
         m_canvasesSample->eventEntityRemoved.subscribe(this, &RenderControllerModule2D::processCanvasEntityRemoved);
@@ -350,9 +350,9 @@ namespace Maze
             });            
 
         m_sizePolicy2D->process(
-            [](Entity* entity, SizePolicy2D* _sizePolicy)
+            [](Entity* entity, SizePolicy2D* _sizePolicy, Transform2D* _transform)
             {
-                if (_sizePolicy->getTransform()->isWorldTransformChanged())
+                if (_transform->isWorldTransformChanged())
                     _sizePolicy->updateSize();
             });
         

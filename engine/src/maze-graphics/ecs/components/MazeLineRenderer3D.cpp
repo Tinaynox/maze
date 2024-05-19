@@ -351,7 +351,9 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(LineRenderer3DSystem, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(LineRenderer3DSystem,
+        MAZE_ECS_TAGS(MAZE_HS("render")),
+        {},
         Render3DDefaultPassGatherRenderUnitsEvent& _event,
         Entity* _entity,
         LineRenderer3D* _lineRenderer,

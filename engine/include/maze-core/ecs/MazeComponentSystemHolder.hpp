@@ -72,7 +72,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        using AddSystemFunc = SharedPtr<ComponentSystemEventHandler>(EcsWorld::*)(HashedCString, typename ComponentSystemEventHandler::Func, ComponentSystemOrder const&);
+        using AddSystemFunc = SharedPtr<ComponentSystemEventHandler>(EcsWorld::*)(HashedCString, typename ComponentSystemEventHandler::Func, Set<HashedString> const&, ComponentSystemOrder const&);
 
 
         //////////////////////////////////////////
@@ -80,9 +80,11 @@ namespace Maze
         inline ComponentSystemHolder(
             HashedCString _name,
             void(*_func)(TEventType&, Entity*, TComponents* ...),
+            Set<HashedString> _tags = Set<HashedString>(),
             ComponentSystemOrder const& _order = ComponentSystemOrder())
             : m_name(_name)
             , m_func((ComponentSystemEventHandler::Func)_func)
+            , m_tags(_tags)
             , m_order(_order)
         {
             auto address = &EcsWorld::addSystemEventHandler<TEventType, TComponents...>;
@@ -100,7 +102,7 @@ namespace Maze
         //////////////////////////////////////////
         inline void attach(EcsWorld* _world)
         {
-            m_systems[_world] = (_world->*m_addSystemFunc)(m_name, m_func, m_order);
+            m_systems[_world] = (_world->*m_addSystemFunc)(m_name, m_func, m_tags, m_order);
         }
 
         //////////////////////////////////////////
@@ -111,6 +113,7 @@ namespace Maze
 
     protected:
         HashedCString m_name;
+        Set<HashedString> m_tags;
         typename ComponentSystemEventHandler::Func m_func;
         ComponentSystemOrder m_order;
         AddSystemFunc m_addSystemFunc;
@@ -119,9 +122,9 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    #define COMPONENT_SYSTEM_EVENT_HANDLER(TName, TOrder, ...) \
+    #define COMPONENT_SYSTEM_EVENT_HANDLER(TName, TTags, TOrder, ...) \
         void TName(__VA_ARGS__); \
-        static ComponentSystemHolder TName##_holder(MAZE_HCS(#TName), TName, TOrder); \
+        static ComponentSystemHolder TName##_holder(MAZE_HCS(#TName), TName, TTags, TOrder); \
         void TName(__VA_ARGS__)
         
 

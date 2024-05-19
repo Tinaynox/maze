@@ -31,6 +31,7 @@
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
 #include "maze-core/math/MazeRandom.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
@@ -72,12 +73,18 @@ namespace Maze
         return true;
     }
 
+
     //////////////////////////////////////////
-    void AwakeRandomRotation3D::processEntityAwakened()
+    COMPONENT_SYSTEM_EVENT_HANDLER(AwakeRandomRotation3DInit,
+        MAZE_ECS_TAGS(MAZE_HS("default")),
+        {},
+        EntityAddedToSampleEvent const& _event,
+        Entity* _entity,
+        AwakeRandomRotation3D* _awakeRandomRotation)
     {
-        if (m_axes == Vec3B::c_true)
+        if (_awakeRandomRotation->getAxes() == Vec3B::c_true)
         {
-            getEntityRaw()->ensureComponent<Transform3D>()->setLocalRotation(
+            _entity->ensureComponent<Transform3D>()->setLocalRotation(
                 Quaternion(
                     Vec3F::c_unitZ,
                     Vec3F::RandomDirection()));
@@ -86,9 +93,9 @@ namespace Maze
         {
             Vec3F angles = Vec3F::c_zero;
             for (Size i = 0; i < 3; ++i)
-                if (m_axes[i])
+                if (_awakeRandomRotation->getAxes()[i])
                     angles[i] = Random::RangeRandom(-Math::c_pi, Math::c_pi);
-            getEntityRaw()->ensureComponent<Transform3D>()->setLocalRotation(angles);
+            _entity->ensureComponent<Transform3D>()->setLocalRotation(angles);
         }
     }
     

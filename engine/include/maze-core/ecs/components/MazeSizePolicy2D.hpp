@@ -77,6 +77,10 @@ namespace Maze
         static SizePolicy2DPtr Create();
 
         //////////////////////////////////////////
+        void processInit(Transform2D* _transform);
+
+
+        //////////////////////////////////////////
         Transform2DPtr const& getTransform() const { return m_transform; }
 
 
@@ -125,9 +129,6 @@ namespace Maze
         
         //////////////////////////////////////////
         bool init();
-
-        //////////////////////////////////////////
-        virtual void processEntityAwakened() MAZE_OVERRIDE;
 
     protected:
         Transform2DPtr m_transform;

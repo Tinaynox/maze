@@ -92,6 +92,10 @@ namespace Maze
         //////////////////////////////////////////
         inline bool isDirty() const { return m_flags & Flags::BoundsDirty; }
 
+
+        //////////////////////////////////////////
+        void processInit(Transform2D* _transform);
+
     public:
 
         //////////////////////////////////////////
@@ -111,8 +115,6 @@ namespace Maze
         //////////////////////////////////////////
         AABB2D const& calculateBounds();
 
-        //////////////////////////////////////////
-        void processEntityAwakened() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         inline void setBounds(AABB2D const& _bounds) { m_bounds = _bounds; }

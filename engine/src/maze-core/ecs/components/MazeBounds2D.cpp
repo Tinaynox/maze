@@ -85,6 +85,9 @@ namespace Maze
     //////////////////////////////////////////
     AABB2D const& Bounds2D::calculateBounds()
     {
+        if (!m_transform)
+            return AABB2D::c_zero;
+
         m_bounds = m_transform->calculateWorldAABB();
         m_flags &= ~BoundsDirty;
 
@@ -94,21 +97,36 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Bounds2D::processEntityAwakened()
+    void Bounds2D::processInit(Transform2D* _transform)
     {
-        m_transform = getEntityRaw()->ensureComponent<Transform2D>();
+        m_transform = _transform->cast<Transform2D>();
         dirtyBounds();
     }
 
 
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(Bounds2DSystemInit,
+        {},
+        {},
+        EntityAddedToSampleEvent const& _event,
+        Entity* _entity,
+        Bounds2D* _bounds,
+        Transform2D* _transform)
+    {
+        _bounds->processInit(_transform);
+    }
+
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(Bounds2DSystem, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(Bounds2DSystemUpdate,
+        {},
+        {},
         UpdateEvent const& _event,
         Entity* _entity,
-        Bounds2D* _bounds)
+        Bounds2D* _bounds,
+        Transform2D* _transform)
     {
-        if (_bounds->getTransform()->isWorldTransformChanged())
+        if (_transform->isWorldTransformChanged())
             _bounds->dirtyBounds();
     }
 

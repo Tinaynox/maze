@@ -196,7 +196,9 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(MeshRendererInstancedSystem, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(MeshRendererInstancedSystem,
+        MAZE_ECS_TAGS(MAZE_HS("render")),
+        {},
         Render3DDefaultPassGatherRenderUnitsEvent& _event,
         Entity* _entity,
         MeshRendererInstanced* _meshRenderer,

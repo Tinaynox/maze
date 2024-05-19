@@ -465,7 +465,8 @@ namespace Maze
             child->destroyAllChildren();
 
             EcsWorld* world = childEntity->getEcsWorld();
-            world->removeEntity(childEntity);
+            if (world)
+                world->removeEntity(childEntity);
         }
     }
 
@@ -537,12 +538,6 @@ namespace Maze
         removeAllChildren();
     }
 
-    //////////////////////////////////////////
-    void Transform2D::processEntityRemoved()
-    {
-        setParent(Transform2DPtr());
-        destroyAllChildren();
-    }
 
     //////////////////////////////////////////
     void Transform2D::processEntityEnabled()
@@ -579,9 +574,25 @@ namespace Maze
     }
         
 
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(Transform2DSystemRemoved,
+        {},
+        {},
+        EntityRemovedEvent const& _event,
+        Entity* _entity,
+        Transform2D* _transform2D)
+    {
+        if (_transform2D)
+        {
+            _transform2D->setParent(Transform2DPtr());
+            _transform2D->destroyAllChildren();
+        }
+    }
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(Transform2DSystem, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(Transform2DSystem,
+        {},
+        {},
         PreUpdateEvent const& _event,
         Entity* _entity,
         Transform2D* _transform2D)

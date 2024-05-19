@@ -120,7 +120,9 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(TrailRenderer3DHiderSystem, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(TrailRenderer3DHiderSystem,
+        MAZE_ECS_TAGS(MAZE_HS("render")),
+        {},
         UpdateEvent const& _event,
         Entity* _entity,
         TrailRenderer3DHider* _trailRendererHider)

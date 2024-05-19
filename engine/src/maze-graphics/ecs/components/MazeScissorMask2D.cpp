@@ -100,25 +100,28 @@ namespace Maze
     //////////////////////////////////////////
     AABB2D const& ScissorMask2D::getScissorBounds()
     {
-        if (m_scissorBoundsDirty || m_bounds->isDirty())
+        if (m_bounds && m_bounds->getTransform())
         {
-            m_bounds->getBounds();
+            if (m_scissorBoundsDirty || m_bounds->isDirty())
+            {
+                m_bounds->getBounds();
 
-            Vec2F const& size = m_transform->getSize();
-            Mat4F const& worldTransform = m_transform->getWorldTransform();
-            Vec2F lb = worldTransform.transformAffine(Vec2F(m_paddingLeft, m_paddingBottom));
-            Vec2F rb = worldTransform.transformAffine(Vec2F(size.x - m_paddingRight, m_paddingBottom));
-            Vec2F rt = worldTransform.transformAffine(Vec2F(size.x - m_paddingRight, size.y - m_paddingTop));
-            Vec2F lt = worldTransform.transformAffine(Vec2F(m_paddingLeft, size.y - m_paddingTop));
+                Vec2F const& size = m_transform->getSize();
+                Mat4F const& worldTransform = m_transform->getWorldTransform();
+                Vec2F lb = worldTransform.transformAffine(Vec2F(m_paddingLeft, m_paddingBottom));
+                Vec2F rb = worldTransform.transformAffine(Vec2F(size.x - m_paddingRight, m_paddingBottom));
+                Vec2F rt = worldTransform.transformAffine(Vec2F(size.x - m_paddingRight, size.y - m_paddingTop));
+                Vec2F lt = worldTransform.transformAffine(Vec2F(m_paddingLeft, size.y - m_paddingTop));
 
-            F32 minX = Math::Min(lb.x, rb.x, rt.x, lt.x);
-            F32 maxX = Math::Max(lb.x, rb.x, rt.x, lt.x);
-            F32 minY = Math::Min(lb.y, rb.y, rt.y, lt.y);
-            F32 maxY = Math::Max(lb.y, rb.y, rt.y, lt.y);
+                F32 minX = Math::Min(lb.x, rb.x, rt.x, lt.x);
+                F32 maxX = Math::Max(lb.x, rb.x, rt.x, lt.x);
+                F32 minY = Math::Min(lb.y, rb.y, rt.y, lt.y);
+                F32 maxY = Math::Max(lb.y, rb.y, rt.y, lt.y);
 
-            m_scissorBounds = AABB2D(minX, minY, maxX, maxY);
+                m_scissorBounds = AABB2D(minX, minY, maxX, maxY);
 
-            m_scissorBoundsDirty = false;
+                m_scissorBoundsDirty = false;
+            }
         }
 
         return m_scissorBounds;

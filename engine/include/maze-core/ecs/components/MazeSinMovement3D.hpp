@@ -74,9 +74,6 @@ namespace Maze
             F32 _amplitude = 1.0f);
 
 
-        //////////////////////////////////////////
-        void update(F32 _dt);
-
 
         //////////////////////////////////////////
         inline Vec3F const& getAxis() const { return m_axis; }
@@ -98,6 +95,20 @@ namespace Maze
         //////////////////////////////////////////
         inline void setAmplitude(F32 _amplitude) { m_amplitude = _amplitude; }
 
+
+        //////////////////////////////////////////
+        inline Vec3F const& getStartPosition() const { return m_startPosition; }
+
+        //////////////////////////////////////////
+        inline void setStartPosition(Vec3F const& _startPosition) { m_startPosition = _startPosition; }
+
+
+        //////////////////////////////////////////
+        inline F32 getTimer() const { return m_timer; }
+
+        //////////////////////////////////////////
+        inline void setTimer(F32 _timer) { m_timer = _timer; }
+
     protected:
 
         //////////////////////////////////////////
@@ -111,9 +122,6 @@ namespace Maze
             Vec3F const& _axis = Vec3F::c_unitY,
             F32 _frequency = 2.0f,
             F32 _amplitude = 1.0f);
-
-        //////////////////////////////////////////
-        virtual void processEntityAwakened() MAZE_OVERRIDE;
 
     protected:
         Vec3F m_axis;

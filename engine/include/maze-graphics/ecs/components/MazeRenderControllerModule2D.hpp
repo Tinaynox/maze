@@ -196,7 +196,7 @@ namespace Maze
         SharedPtr<GenericInclusiveEntitiesSample<SpriteRenderer2D>> m_spriteRenderer2DsSample;
         SharedPtr<GenericInclusiveEntitiesSample<SystemTextRenderer2D>> m_systemTextRenderer2DsSample;
         SharedPtr<GenericInclusiveEntitiesSample<LineRenderer2D, Transform2D>> m_lineRenderers2DSample;
-        SharedPtr<GenericInclusiveEntitiesSample<SizePolicy2D>> m_sizePolicy2D;
+        SharedPtr<GenericInclusiveEntitiesSample<SizePolicy2D, Transform2D>> m_sizePolicy2D;
 
         Vector<Canvas*> m_sortedCanvases;
 

@@ -108,7 +108,8 @@ namespace Maze
         //////////////////////////////////////////
         static EcsWorldPtr Create(
             HashedString const& _name,
-            bool _attachSystems = true);
+            bool _attachSystems = true,
+            Set<HashedString> const& _tags = Set<HashedString>());
 
         //////////////////////////////////////////
         static EcsWorld* GetDefaultWorldRaw();
@@ -136,6 +137,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline HashedString const& getName() const { return m_name; }
+
+        //////////////////////////////////////////
+        inline Set<HashedString> const& getTags() const { return m_tags; }
 
 
 
@@ -188,6 +192,7 @@ namespace Maze
         inline ComponentSystemEventHandlerPtr addSystemEventHandler(
             HashedCString _name,
             void (*_func)(TEventType&, Entity*, TComponents* ...),
+            Set<HashedString> const& _tags = Set<HashedString>(),
             ComponentSystemOrder const& _order = ComponentSystemOrder())
         {
             ComponentSystemEventHandlerPtr system = ComponentSystemEventHandler::Create(
@@ -196,6 +201,7 @@ namespace Maze
                 ClassInfo<typename std::remove_const<TEventType>::type>::UID(),
                 requestInclusiveSample<TComponents...>(),
                 (ComponentSystemEventHandler::Func)_func,
+                _tags,
                 _order);
             addSystemEventHandler(system);
             return system;
@@ -281,7 +287,8 @@ namespace Maze
         //////////////////////////////////////////
         bool init(
             HashedString const& _name,
-            bool _attachSystems);
+            bool _attachSystems,
+            Set<HashedString> const& _tags);
 
         //////////////////////////////////////////
         void processStartedEntities();
@@ -311,6 +318,7 @@ namespace Maze
 
     protected:
         HashedString m_name;
+        Set<HashedString> m_tags;
 
         FastVector<EntityData> m_entities;
         Stack<S32> m_freeEntityIndices;

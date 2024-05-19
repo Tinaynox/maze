@@ -871,7 +871,9 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(TextRenderer2DSystem, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(TextRenderer2DSystem,
+        MAZE_ECS_TAGS(MAZE_HS("render")),
+        {},
         Render2DPostUpdateEvent& _event,
         Entity* _entity,
         TextRenderer2D* _textRenderer2D)

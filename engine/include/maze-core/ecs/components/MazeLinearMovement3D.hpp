@@ -71,9 +71,6 @@ namespace Maze
         static LinearMovement3DPtr Create(Vec3F const& _axis = Vec3F::c_unitY, F32 _speed = 5.0f);
 
 
-        //////////////////////////////////////////
-        void update(F32 _dt);
-
 
         //////////////////////////////////////////
         inline bool getActive() const { return m_active; }
@@ -106,8 +103,6 @@ namespace Maze
         //////////////////////////////////////////
         bool init(Vec3F const& _axis = Vec3F::c_unitY, F32 _speed = 5.0f);
 
-        //////////////////////////////////////////
-        virtual void processEntityAwakened() MAZE_OVERRIDE;
 
     protected:
         bool m_active = true;

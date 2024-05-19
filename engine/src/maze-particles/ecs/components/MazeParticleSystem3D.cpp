@@ -619,7 +619,9 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(ParticleSystem3DSystem, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(ParticleSystem3DSystem,
+        MAZE_ECS_TAGS(MAZE_HS("default")),
+        {},
         UpdateEvent const& _event,
         Entity* _entity,
         ParticleSystem3D* _particleSystem)

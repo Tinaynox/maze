@@ -72,10 +72,6 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void update(F32 _dt);
-
-
-        //////////////////////////////////////////
         inline bool getActive() const { return m_active; }
 
         //////////////////////////////////////////
@@ -106,15 +102,10 @@ namespace Maze
         //////////////////////////////////////////
         bool init(Vec3F const& _axis = Vec3F::c_unitY, F32 _speed = 5.0f);
 
-        //////////////////////////////////////////
-        virtual void processEntityAwakened() MAZE_OVERRIDE;
-
     protected:
         bool m_active = true;
         Vec3F m_axis = Vec3F::c_unitY;
         F32 m_speed = 5.0f;
-
-        Transform3DPtr m_transform;
     };
 
 

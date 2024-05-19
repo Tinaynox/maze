@@ -85,6 +85,8 @@ namespace Maze
     #define MAZE_ECS_ORDER_BEFORE(...) Set<HashedString>{__VA_ARGS__}
     #define MAZE_ECS_ORDER(DAfter, DBefore) ComponentSystemOrder(DAfter, DBefore)
 
+    //////////////////////////////////////////
+    #define MAZE_ECS_TAGS(...) Set<HashedString>{__VA_ARGS__}
 
 
     //////////////////////////////////////////
@@ -105,10 +107,11 @@ namespace Maze
             ClassUID _eventUID,
             IEntitiesSamplePtr _sample,
             Func _func,
+            Set<HashedString> const& _tags = Set<HashedString>(),
             ComponentSystemOrder const& _order = ComponentSystemOrder())
         {
             return MAZE_CREATE_SHARED_PTR_WITH_ARGS(
-                ComponentSystemEventHandler, _world, _name, _eventUID, _sample, _func, _order);
+                ComponentSystemEventHandler, _world, _name, _eventUID, _sample, _func, _tags, _order);
         }
 
         //////////////////////////////////////////
@@ -139,6 +142,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline Set<HashedString> const& getTags() const { return m_tags; }
+
+        //////////////////////////////////////////
+        inline void setTags(Set<HashedString> const& _tags) { m_tags = _tags; }
+
+
+        //////////////////////////////////////////
         inline ComponentSystemOrder const& getOrder() const { return m_order; }
 
         //////////////////////////////////////////
@@ -154,12 +164,14 @@ namespace Maze
             ClassUID _eventUID,
             IEntitiesSamplePtr _sample = nullptr,
             Func _func = nullptr,
+            Set<HashedString> const& _tags = Set<HashedString>(),
             ComponentSystemOrder const& _order = ComponentSystemOrder())
             : m_world(_world)
             , m_name(_name)
             , m_eventUID(_eventUID)
             , m_sample(_sample)
             , m_func(_func)
+            , m_tags(_tags)
             , m_order(_order)
         {
         }
@@ -171,6 +183,7 @@ namespace Maze
         IEntitiesSamplePtr m_sample;
         Func m_func = nullptr;
 
+        Set<HashedString> m_tags;
         ComponentSystemOrder m_order;
     };
 

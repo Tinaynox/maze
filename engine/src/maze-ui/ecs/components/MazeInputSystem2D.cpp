@@ -156,7 +156,7 @@ namespace Maze
         m_systemTextDropdownsSample = getEntityRaw()->getEcsWorld()->requestInclusiveSample<Dropdown2D>();
         m_horizontalLayouts2D = getEntityRaw()->getEcsWorld()->requestInclusiveSample<HorizontalLayout2D>();
         m_verticalLayouts2D = getEntityRaw()->getEcsWorld()->requestInclusiveSample<VerticalLayout2D>();
-        m_sizePolicy2D = getEntityRaw()->getEcsWorld()->requestInclusiveSample<SizePolicy2D>();
+        m_sizePolicy2D = getEntityRaw()->getEcsWorld()->requestInclusiveSample<SizePolicy2D, Transform2D>();
         m_scrollRects2D = getEntityRaw()->getEcsWorld()->requestInclusiveSample<ScrollRect2D>();
     }
 
@@ -251,9 +251,9 @@ namespace Maze
             });
 
         m_sizePolicy2D->process(
-            [](Entity* entity, SizePolicy2D* _sizePolicy)
+            [](Entity* entity, SizePolicy2D* _sizePolicy, Transform2D* _transform)
             {
-                if (_sizePolicy->getTransform()->isWorldTransformChanged())
+                if (_transform->isWorldTransformChanged())
                     _sizePolicy->updateSize();
             });
 
@@ -925,9 +925,10 @@ namespace Maze
 
     //////////////////////////////////////////
     COMPONENT_SYSTEM_EVENT_HANDLER(InputSystem2DSystem,
+        {},
         MAZE_ECS_ORDER(
             MAZE_ECS_ORDER_AFTER(),
-            MAZE_ECS_ORDER_BEFORE(MAZE_HS("Bounds2DSystem"))),
+            MAZE_ECS_ORDER_BEFORE(MAZE_HS("Bounds2DSystemUpdate"))),
         UpdateEvent const& _event,
         Entity* _entity,
         InputSystem2D* _inputSystem2D)

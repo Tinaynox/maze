@@ -76,28 +76,18 @@ namespace Maze
         return true;
     }
 
-    //////////////////////////////////////////
-    void Rotor3D::update(F32 _dt)
-    {
-        if (m_active)
-            m_transform->rotate(m_axis.normalizedCopy(), m_speed * _dt);
-    }
 
     //////////////////////////////////////////
-    void Rotor3D::processEntityAwakened()
-    {
-        m_transform = getEntityRaw()->getComponent<Transform3D>();
-    }
-
-
-
-    //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(Rotor3DSystem, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(Rotor3DSystem,
+        MAZE_ECS_TAGS(MAZE_HS("default")),
+        {},
         UpdateEvent const& _event,
         Entity* _entity,
-        Rotor3D* _rotor)
+        Rotor3D* _rotor,
+        Transform3D* _transform)
     {
-        _rotor->update(_event.getDt());
+        if (_rotor->getActive())
+            _transform->rotate(_rotor->getAxis().normalizedCopy(), _rotor->getSpeed() * _event.getDt());
     }
     
 } // namespace Maze

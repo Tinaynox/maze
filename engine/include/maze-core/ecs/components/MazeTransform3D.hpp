@@ -451,14 +451,10 @@ namespace Maze
                 transform->_dirtyWorldTransformRecursive(_flags);
         }
 
-        //////////////////////////////////////////
-        void processComponentAdded() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void processComponentRemoved() MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        void processEntityRemoved() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void processEntityEnabled() MAZE_OVERRIDE;
