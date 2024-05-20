@@ -81,6 +81,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void processEntityRemoved();
+
+
+        //////////////////////////////////////////
         void update(F32 _dt);
 
 
@@ -225,9 +229,7 @@ namespace Maze
         //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        virtual void processEntityRemoved() MAZE_OVERRIDE;
-        
+       
 
         //////////////////////////////////////////
         S32 updateEmitter(F32 _dt, const Vec3F& _position);

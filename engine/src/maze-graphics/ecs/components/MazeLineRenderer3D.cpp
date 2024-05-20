@@ -406,5 +406,17 @@ namespace Maze
         }
     }
 
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(LineRenderer3DEntityRemoved,
+        MAZE_ECS_TAGS(MAZE_HS("default")),
+        {},
+        EntityRemovedEvent const& _event,
+        Entity* _entity,
+        LineRenderer3D* _lineRenderer3D)
+    {
+        _lineRenderer3D->processEntityRemoved();
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

@@ -628,6 +628,17 @@ namespace Maze
     {
         _particleSystem->update(_event.getDt());
     }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(ParticleSystem3DEntityRemoved,
+        MAZE_ECS_TAGS(MAZE_HS("default")),
+        {},
+        EntityRemovedEvent const& _event,
+        Entity* _entity,
+        ParticleSystem3D* _particleSystem3D)
+    {
+        _particleSystem3D->processEntityRemoved();
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

@@ -72,6 +72,10 @@ namespace Maze
         //////////////////////////////////////////
         static MeshRendererInstancedPtr Create(RenderSystem* _renderSystem = nullptr);
 
+
+        //////////////////////////////////////////
+        void processEntityRemoved();
+
         
         //////////////////////////////////////////
         inline RenderMeshAssetRef const& getRenderMeshRef() const { return m_renderMeshRef; }
@@ -196,8 +200,6 @@ namespace Maze
         //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        virtual void processEntityRemoved() MAZE_OVERRIDE;
 
     protected:
         RenderSystem* m_renderSystem;

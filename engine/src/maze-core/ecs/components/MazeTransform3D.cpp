@@ -410,7 +410,7 @@ namespace Maze
     
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(Transform3DSystemRemoved,
+    COMPONENT_SYSTEM_EVENT_HANDLER(Transform3DEntityRemoved,
         {},
         {},
         EntityRemovedEvent const& _event,
@@ -425,7 +425,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(Transform3DSystem,
+    COMPONENT_SYSTEM_EVENT_HANDLER(Transform3DPreUpdate,
         {},
         {},
         PreUpdateEvent const& _event,

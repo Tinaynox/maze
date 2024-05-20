@@ -251,11 +251,6 @@ namespace Maze
         //////////////////////////////////////////
         virtual void processComponentRemoved();
 
-        //////////////////////////////////////////
-        virtual void processEntityAdded();
-
-        //////////////////////////////////////////
-        virtual void processEntityRemoved();
 
         //////////////////////////////////////////
         virtual void processSceneSet();

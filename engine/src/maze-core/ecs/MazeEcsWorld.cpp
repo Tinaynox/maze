@@ -271,6 +271,14 @@ namespace Maze
         MAZE_PROFILE_EVENT("EcsWorld::update");
 
         processAddingEntities();
+
+        // Process EntityAddedToSampleEvent
+        for (Size i = 0, in = (Size)m_entityAddedToSampleEventHandlers.size(); i != in; ++i)
+        {
+            ComponentSystemEntityAddedToSampleEventHandlerPtr const& handler = m_entityAddedToSampleEventHandlers[i];
+            handler->processEntitiesAddedToSample();
+        }
+
         processChangedEntities();
         processRemovingEntities();
 
@@ -478,14 +486,6 @@ namespace Maze
             }
         }
 
-        // Process EntityAddedToSampleEvent
-        for (Size i = 0, in = (Size)m_entityAddedToSampleEventHandlers.size(); i != in; ++i)
-        {
-            ComponentSystemEntityAddedToSampleEventHandlerPtr const& handler = m_entityAddedToSampleEventHandlers[i];
-            handler->processEntitiesAddedToSample();
-        }
-
-
         while (!m_activeChangedEntities.empty())
         {
             EntityId entityId = m_activeChangedEntities.front();
@@ -536,6 +536,8 @@ namespace Maze
 
         entity->setActiveChanged(true);
         m_activeChangedEntities.push_back(_id);
+
+        sendEventImmediate<EntityActiveChangedEvent>(_id, entity->getActiveInHierarchy());
     }
 
     //////////////////////////////////////////

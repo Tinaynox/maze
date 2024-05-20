@@ -486,5 +486,17 @@ namespace Maze
         }
     }
 
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(TrailRenderer3DEntityRemoved,
+        MAZE_ECS_TAGS(MAZE_HS("default")),
+        {},
+        EntityRemovedEvent const& _event,
+        Entity* _entity,
+        TrailRenderer3D* _trailRenderer3D)
+    {
+        _trailRenderer3D->processEntityRemoved();
+    }
+
 } // namespace Maze
 //////////////////////////////////////////

@@ -285,7 +285,7 @@ namespace Maze
 
         if (m_world)
         {
-            componentRef->processEntityAdded();
+            // componentRef->processEntityAdded();
 
             m_world->processEntityComponentsChanged(getId());
         }
@@ -455,8 +455,8 @@ namespace Maze
     //////////////////////////////////////////
     void Entity::processAdded()
     {
-        for (auto const& componentData : m_components)
-            componentData.second->processEntityAdded();
+        //for (auto const& componentData : m_components)
+        //    componentData.second->processEntityAdded();
 
         tryAwake();
     }
@@ -464,8 +464,8 @@ namespace Maze
     //////////////////////////////////////////
     void Entity::processRemoved()
     {
-        for (auto const& componentData : m_components)
-            componentData.second->processEntityRemoved();
+        //for (auto const& componentData : m_components)
+        //    componentData.second->processEntityRemoved();
     }
     
     //////////////////////////////////////////

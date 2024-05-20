@@ -248,6 +248,18 @@ namespace Maze
             }
         }
     }
+
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(MeshRendererEntityRemoved,
+        MAZE_ECS_TAGS(MAZE_HS("default")),
+        {},
+        EntityRemovedEvent const& _event,
+        Entity* _entity,
+        MeshRenderer* _meshRenderer)
+    {
+        _meshRenderer->processEntityRemoved();
+    }
     
 } // namespace Maze
 //////////////////////////////////////////

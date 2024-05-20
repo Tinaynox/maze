@@ -34,6 +34,7 @@
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-core/assets/MazeAssetDirectory.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
 #include "maze-graphics/MazeTexture2D.hpp"
@@ -178,7 +179,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void PreviewController::processEntityAwakened()
+    void PreviewController::processInit()
     {
         m_transform = getEntityRaw()->ensureComponent<Transform2D>();
 
@@ -267,12 +268,6 @@ namespace Maze
             Vec2F(0.0f, 1.0f));
         SizePolicy2DPtr layoutSizePolicy = m_layout->getEntityRaw()->ensureComponent<SizePolicy2D>();
     }        
-
-    //////////////////////////////////////////
-    void PreviewController::processEntityAdded()
-    {
-        
-    }
 
     //////////////////////////////////////////
     void PreviewController::processEntityRemoved()
@@ -476,6 +471,29 @@ namespace Maze
     void PreviewController::notifyAssetFileRemoved(AssetFilePtr const& _file)
     {
         m_inspectorsDirty = true;
+    }
+
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(PreviewControllerAppear,
+        MAZE_ECS_TAGS(MAZE_HS("default")),
+        {},
+        EntityAddedToSampleEvent const& _event,
+        Entity* _entity,
+        PreviewController* _previewController)
+    {
+        _previewController->processInit();
+    }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(PreviewControllerEntityRemoved,
+        MAZE_ECS_TAGS(MAZE_HS("default")),
+        {},
+        EntityRemovedEvent const& _event,
+        Entity* _entity,
+        PreviewController* _previewController)
+    {
+        _previewController->processInit();
     }
 
 } // namespace Maze

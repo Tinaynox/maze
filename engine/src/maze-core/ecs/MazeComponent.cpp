@@ -191,16 +191,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Component::processEntityAdded()
-    {
-    }
-
-    //////////////////////////////////////////
-    void Component::processEntityRemoved()
-    {
-    }
-
-    //////////////////////////////////////////
     void Component::processSceneSet()
     {
 

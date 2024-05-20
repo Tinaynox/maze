@@ -190,6 +190,32 @@ namespace Maze
     };
 
 
+    //////////////////////////////////////////
+    // Class EntityActiveChangedEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API EntityActiveChangedEvent
+        : public GenericEvent<EntityActiveChangedEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EntityActiveChangedEvent, Event);
+
+    public:
+
+        //////////////////////////////////////////
+        inline EntityActiveChangedEvent(bool _value = false)
+            : m_activeInHierarchy(_value)
+        {}
+
+        //////////////////////////////////////////
+        inline bool getActiveInHierarchy() const { return m_activeInHierarchy; }
+
+    private:
+        bool m_activeInHierarchy = false;
+    };
+
+
 } // namespace Maze
 //////////////////////////////////////////
 

@@ -29,6 +29,7 @@
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
 #include "maze-core/utils/MazeProfiler.hpp"
 #include "maze-graphics/MazeMesh.hpp"
@@ -196,6 +197,19 @@ namespace Maze
     {
         m_positions.clear();
         m_vao->clear();        
+    }
+
+
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(SimpleLineRenderer2DEntityRemoved,
+        MAZE_ECS_TAGS(MAZE_HS("default")),
+        {},
+        EntityRemovedEvent const& _event,
+        Entity* _entity,
+        SimpleLineRenderer2D* _simpleLineRenderer2D)
+    {
+        _simpleLineRenderer2D->processEntityRemoved();
     }
 
 } // namespace Maze

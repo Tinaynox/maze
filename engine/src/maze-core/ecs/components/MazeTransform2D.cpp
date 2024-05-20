@@ -538,7 +538,6 @@ namespace Maze
         removeAllChildren();
     }
 
-
     //////////////////////////////////////////
     void Transform2D::processEntityEnabled()
     {
@@ -575,7 +574,7 @@ namespace Maze
         
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(Transform2DSystemRemoved,
+    COMPONENT_SYSTEM_EVENT_HANDLER(Transform2DEntityRemoved,
         {},
         {},
         EntityRemovedEvent const& _event,
@@ -590,7 +589,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(Transform2DSystem,
+    COMPONENT_SYSTEM_EVENT_HANDLER(Transform2DPreUpdate,
         {},
         {},
         PreUpdateEvent const& _event,

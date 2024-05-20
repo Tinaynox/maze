@@ -98,6 +98,13 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void processInit();
+
+        //////////////////////////////////////////
+        void processEntityRemoved();
+
+
+        //////////////////////////////////////////
         template <typename TInspector>
         inline SharedPtr<TInspector> setupInspector()
         {
@@ -179,17 +186,7 @@ namespace Maze
 
         //////////////////////////////////////////
         void udpateInspectors();
-        
-
-        //////////////////////////////////////////
-        virtual void processEntityAwakened() MAZE_OVERRIDE;
-        
-        //////////////////////////////////////////
-        virtual void processEntityAdded() MAZE_OVERRIDE;
-
-        //////////////////////////////////////////
-        virtual void processEntityRemoved() MAZE_OVERRIDE;
-
+                
 
         //////////////////////////////////////////
         void setSceneVisibleSettings(bool _camera, bool _canvas);

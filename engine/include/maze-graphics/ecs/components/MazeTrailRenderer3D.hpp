@@ -99,6 +99,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        void processEntityRemoved();
+
+
+        //////////////////////////////////////////
         inline RenderSystem* getRenderSystem() const { return m_renderSystem; }
 
         
@@ -215,8 +219,6 @@ namespace Maze
         //////////////////////////////////////////
         virtual void processSceneSet() MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        virtual void processEntityRemoved() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
         void rebuildMesh();

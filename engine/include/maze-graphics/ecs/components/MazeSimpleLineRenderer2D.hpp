@@ -76,6 +76,10 @@ namespace Maze
         //////////////////////////////////////////
         static SimpleLineRenderer2DPtr Create(RenderSystem* _renderSystem = nullptr);
 
+
+        //////////////////////////////////////////
+        void processEntityRemoved();
+
         
         //////////////////////////////////////////
         RenderMeshPtr const& getRenderMesh() const { return m_renderMesh; }
@@ -149,8 +153,6 @@ namespace Maze
         //////////////////////////////////////////
         virtual void processSceneSet() MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        virtual void processEntityRemoved() MAZE_OVERRIDE;
 
 
     protected:

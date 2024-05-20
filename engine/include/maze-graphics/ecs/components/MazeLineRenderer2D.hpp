@@ -76,6 +76,10 @@ namespace Maze
         //////////////////////////////////////////
         static LineRenderer2DPtr Create(RenderSystem* _renderSystem = nullptr);
 
+
+        //////////////////////////////////////////
+        void processEntityRemoved();
+
         
         //////////////////////////////////////////
         RenderMeshPtr const& getRenderMesh() const { return m_renderMesh; }
@@ -161,8 +165,7 @@ namespace Maze
         //////////////////////////////////////////
         virtual void processSceneSet() MAZE_OVERRIDE;
 
-        //////////////////////////////////////////
-        virtual void processEntityRemoved() MAZE_OVERRIDE;
+        
 
         //////////////////////////////////////////
         F32 getTrailWidth(F32 _progress);

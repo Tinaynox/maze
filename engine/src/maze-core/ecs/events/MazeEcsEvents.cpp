@@ -40,6 +40,7 @@ namespace Maze
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EntityRemovedEvent, Event);
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EntityAddedToSampleEvent, Event);
     MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EntityRemovedFromSampleEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EntityActiveChangedEvent, Event);
 
     
 } // namespace Maze
