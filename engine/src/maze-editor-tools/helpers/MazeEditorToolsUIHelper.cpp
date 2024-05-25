@@ -210,6 +210,29 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        MAZE_EDITOR_TOOLS_API Dropdown2DPtr CreateDefaultDropdown(
+            FontMaterialPtr const& _fontMaterial,
+            U32 _fontSize,
+            Vec2F const& _size,
+            Vec2F const& _position,
+            Transform2DPtr const& _parent,
+            EcsScene* _ecsScene,
+            Vec2F const& _anchor,
+            Vec2F const& _pivot)
+        {
+            FontMaterialPtr const& fontMaterial = _fontMaterial ? _fontMaterial : EditorToolsStyles::GetInstancePtr()->getDefaultFontMaterial();
+            return UIHelper::CreateDefaultDropdown(
+                fontMaterial,
+                _fontSize,
+                _size,
+                _position,
+                _parent,
+                _ecsScene,
+                _anchor,
+                _pivot);
+        }
+
+        //////////////////////////////////////////
         MAZE_EDITOR_TOOLS_API ColorEdit2DPtr CreateDefaultColorEdit(
             ColorU32 _color,
             Vec2F const& _size,

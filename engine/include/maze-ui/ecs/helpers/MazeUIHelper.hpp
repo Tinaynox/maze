@@ -93,6 +93,7 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_UI_API Dropdown2DPtr CreateDefaultDropdown(
+            FontMaterialPtr const& _fontMaterial,
             U32 _fontSize,
             Vec2F const& _size,
             Vec2F const& _position,
@@ -100,6 +101,27 @@ namespace Maze
             EcsScene* _ecsScene,
             Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
             Vec2F const& _pivot = Vec2F(0.5f, 0.5f));
+
+        //////////////////////////////////////////
+        inline Dropdown2DPtr CreateDefaultDropdown(
+            U32 _fontSize,
+            Vec2F const& _size,
+            Vec2F const& _position,
+            Transform2DPtr const& _parent,
+            EcsScene* _ecsScene,
+            Vec2F const& _anchor = Vec2F(0.5f, 0.5f),
+            Vec2F const& _pivot = Vec2F(0.5f, 0.5f))
+        {
+            return CreateDefaultDropdown(
+                FontMaterialPtr(),
+                _fontSize,
+                _size,
+                _position,
+                _parent,
+                _ecsScene,
+                _anchor,
+                _pivot);
+        }
 
         //////////////////////////////////////////
         MAZE_UI_API HorizontalLayout2DPtr CreateHorizontalLayout(

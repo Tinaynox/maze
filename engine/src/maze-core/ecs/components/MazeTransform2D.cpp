@@ -538,6 +538,7 @@ namespace Maze
         removeAllChildren();
     }
 
+    /*
     //////////////////////////////////////////
     void Transform2D::processEntityEnabled()
     {
@@ -554,6 +555,24 @@ namespace Maze
 
         for (Transform2D* transform : m_children)
             transform->getEntityRaw()->setDisabledByHierarchy(true);
+    }
+    */
+
+    //////////////////////////////////////////
+    void Transform2D::processActiveChanged()
+    {
+        m_flags |= EntityActiveChangedCurrentFrame;
+
+        if (getEntityRaw()->getActiveInHierarchy())
+        {
+            for (Transform2D* transform : m_children)
+                transform->getEntityRaw()->setDisabledByHierarchy(false);
+        }
+        else
+        {
+            for (Transform2D* transform : m_children)
+                transform->getEntityRaw()->setDisabledByHierarchy(true);
+        }
     }
 
     //////////////////////////////////////////
@@ -586,6 +605,18 @@ namespace Maze
             _transform2D->setParent(Transform2DPtr());
             _transform2D->destroyAllChildren();
         }
+    }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(Transform2DActiveChangedEvent,
+        {},
+        {},
+        EntityActiveChangedEvent const& _event,
+        Entity* _entity,
+        Transform2D* _transform2D)
+    {
+        if (_transform2D)
+            _transform2D->processActiveChanged();
     }
 
     //////////////////////////////////////////

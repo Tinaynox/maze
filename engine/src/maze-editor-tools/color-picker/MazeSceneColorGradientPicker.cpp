@@ -279,7 +279,7 @@ namespace Maze
                 this);
             label->setColor(ColorU32::c_black);
 
-            m_modeDropdown = UIHelper::CreateDefaultDropdown(
+            m_modeDropdown = EditorToolsUIHelper::CreateDefaultDropdown(
                 12,
                 Vec2F(158.0f, 18.0f),
                 Vec2F(0.0f, 0.0f),
