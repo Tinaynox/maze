@@ -511,19 +511,25 @@ namespace Maze
             if (m_active)
                 m_textRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjectTextColorSelected());
             else
-                m_textRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjectTextColorSelected());
+                m_textRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjectTextColorInactive());
 
             m_backgroundRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjecBackgroundColorSelected());
         }
         else
         {
-            m_textRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjectTextColorDefault());
+            if (m_active)
+                m_textRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjectTextColorDefault());
+            else
+                m_textRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjectTextColorInactive());
 
             if (m_textButton->getUIElement()->getFocused())
                 m_backgroundRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjectBackgroundColorFocused());
             else
                 m_backgroundRenderer->setColor(EditorToolsStyles::GetInstancePtr()->getListObjectBackgroundColorDefault());
         }
+
+        if (m_iconRenderer)
+            m_iconRenderer->setColor(m_textRenderer->getColor());
     }
     
 } // namespace Maze
