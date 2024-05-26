@@ -594,6 +594,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual bool isMetaPropertyCopyable(MetaProperty* _metaProperty) MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        void processActiveChanged();
+
     protected:
 
         //////////////////////////////////////////
@@ -639,10 +642,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void processEntityEnabled() MAZE_OVERRIDE;
+        // void processEntityEnabled() MAZE_OVERRIDE;
 
         //////////////////////////////////////////
-        void processEntityDisabled() MAZE_OVERRIDE;
+        // void processEntityDisabled() MAZE_OVERRIDE;
 
 
     public:

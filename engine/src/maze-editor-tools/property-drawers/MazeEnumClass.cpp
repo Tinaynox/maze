@@ -144,7 +144,7 @@ namespace Maze
         spriteRenderer->setColor(ColorU32::c_gray);
 
 
-        m_dropdown = UIHelper::CreateDefaultDropdown(
+        m_dropdown = EditorToolsUIHelper::CreateDefaultDropdown(
             12,
             Vec2F(180, 18),
             Vec2F(0, 0),

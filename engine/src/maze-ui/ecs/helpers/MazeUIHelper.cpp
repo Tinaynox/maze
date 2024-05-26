@@ -196,6 +196,7 @@ namespace Maze
 
         //////////////////////////////////////////
         MAZE_UI_API Dropdown2DPtr CreateDefaultDropdown(
+            FontMaterialPtr const& _fontMaterial,
             U32 _fontSize,
             Vec2F const& _size,
             Vec2F const& _position,
@@ -282,6 +283,7 @@ namespace Maze
 
             TextRenderer2DPtr textRenderer = UIHelper::CreateText(
                 "Dropdown",
+                _fontMaterial,
                 _fontSize,
                 HorizontalAlignment2D::Left,
                 VerticalAlignment2D::Middle,
@@ -381,6 +383,7 @@ namespace Maze
 
                     TextRenderer2DPtr itemTextRenderer = UIHelper::CreateText(
                         "Option 1",
+                        _fontMaterial,
                         _fontSize,
                         HorizontalAlignment2D::Left,
                         VerticalAlignment2D::Middle,

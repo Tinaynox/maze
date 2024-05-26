@@ -497,13 +497,20 @@ namespace Maze
 
                 entity->setActiveChanged(false);
 
-                if (entity->getActiveInHierarchy() == entity->getActiveInHierarchyPrevFrame())
+                bool value = entity->getActiveInHierarchy();
+                if (value == entity->getActiveInHierarchyPrevFrame())
                     continue;
 
                 entity->setActiveInHierarchyPrevFrame(entity->getActiveInHierarchy());
 
+                if (!value)
+                    sendEventImmediate<EntityActiveChangedEvent>(entity->getId(), value);
+
                 for (Size i = 0, in = m_samples.size(); i < in; ++i)
                     m_samples[i]->processEntity(entity.get());
+
+                if (value)
+                    sendEventImmediate<EntityActiveChangedEvent>(entity->getId(), value);
             }
         }
 

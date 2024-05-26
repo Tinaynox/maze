@@ -379,7 +379,7 @@ namespace Maze
             transform->getEntityRaw()->setDisabledByHierarchy(false);
     }
 
-    //////////////////////////////////////////
+    ////////////////////////////////////////////
     void Transform3D::processEntityDisabled()
     {
         for (Transform3D* transform : m_children)
@@ -407,6 +407,21 @@ namespace Maze
     {
         setLocalTransform(Mat4F::c_identity);
     }
+
+    //////////////////////////////////////////
+    void Transform3D::processActiveChanged()
+    {
+        if (getEntityRaw()->getActiveInHierarchy())
+        {
+            for (Transform3D* transform : m_children)
+                transform->getEntityRaw()->setDisabledByHierarchy(false);
+        }
+        else
+        {
+            for (Transform3D* transform : m_children)
+                transform->getEntityRaw()->setDisabledByHierarchy(true);
+        }
+    }
     
 
     //////////////////////////////////////////
@@ -422,6 +437,32 @@ namespace Maze
             _transform3D->setParent(Transform3DPtr());
             _transform3D->destroyAllChildren();
         }
+    }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(Transform3DAppear,
+        {},
+        {},
+        EntityAddedToSampleEvent const& _event,
+        Entity* _entity,
+        Transform3D* _transform3D)
+    {
+        if (_transform3D->getParent() &&
+            _transform3D->getParent()->getEntityRaw() &&
+            !_transform3D->getParent()->getEntityRaw()->getActiveInHierarchy())
+            _transform3D->getEntityRaw()->setDisabledByHierarchy(true);
+    }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(Transform3DActiveChangedEvent,
+        {},
+        {},
+        EntityActiveChangedEvent const& _event,
+        Entity* _entity,
+        Transform3D* _transform3D)
+    {
+        //if (_transform3D)
+        //    _transform3D->processActiveChanged();
     }
 
     //////////////////////////////////////////
