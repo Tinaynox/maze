@@ -99,6 +99,7 @@ namespace Maze
 
         //////////////////////////////////////////
         using Func = void (*)();
+        using GlobalFunc = void(*)(Event&);
 
         //////////////////////////////////////////
         static inline ComponentSystemEventHandlerPtr Create(
@@ -110,20 +111,45 @@ namespace Maze
             Set<HashedString> const& _tags = Set<HashedString>(),
             ComponentSystemOrder const& _order = ComponentSystemOrder())
         {
+            MAZE_ASSERT(_sample);
             return MAZE_CREATE_SHARED_PTR_WITH_ARGS(
                 ComponentSystemEventHandler, _world, _name, _eventUID, _sample, _func, _tags, _order);
         }
 
         //////////////////////////////////////////
+        static inline ComponentSystemEventHandlerPtr Create(
+            EcsWorld* _world,
+            HashedCString _name,
+            ClassUID _eventUID,
+            GlobalFunc _func,
+            Set<HashedString> const& _tags = Set<HashedString>(),
+            ComponentSystemOrder const& _order = ComponentSystemOrder())
+        {
+            return MAZE_CREATE_SHARED_PTR_WITH_ARGS(
+                ComponentSystemEventHandler, _world, _name, _eventUID, nullptr, (Func)_func, _tags, _order);
+        }
+
+        //////////////////////////////////////////
         inline void processEvent(Event* _event, EcsEventParams _params = EcsEventParams())
         {
-            m_sample->processEvent(_event, _params, m_func);
+            if (m_sample)
+            {
+                m_sample->processEvent(_event, _params, m_func);
+            }
+            else
+            {
+                GlobalFunc rawFunc = (GlobalFunc)m_func;
+                rawFunc(*_event);
+            }
         }
 
         //////////////////////////////////////////
         inline void processEvent(EntityId _entityId, Event* _event, EcsEventParams _params = EcsEventParams())
         {
-            m_sample->processEvent(_entityId, _event, _params, m_func);
+            if (m_sample)
+            {
+                m_sample->processEvent(_entityId, _event, _params, m_func);
+            }
         }
 
 

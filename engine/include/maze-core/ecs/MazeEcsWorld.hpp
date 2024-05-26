@@ -208,6 +208,25 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        template<typename TEventType, typename ...TComponents>
+        inline ComponentSystemEventHandlerPtr addSystemEventHandlerGlobal(
+            HashedCString _name,
+            void(*_func)(TEventType&),
+            Set<HashedString> const& _tags = Set<HashedString>(),
+            ComponentSystemOrder const& _order = ComponentSystemOrder())
+        {
+            ComponentSystemEventHandlerPtr system = ComponentSystemEventHandler::Create(
+                this,
+                _name,
+                ClassInfo<typename std::remove_const<TEventType>::type>::UID(),
+                (ComponentSystemEventHandler::GlobalFunc)_func,
+                _tags,
+                _order);
+            addSystemEventHandler(system);
+            return system;
+        }
+
+        //////////////////////////////////////////
         template <typename TEvent>
         inline void broadcastEventImmediate(TEvent* _event)
         {

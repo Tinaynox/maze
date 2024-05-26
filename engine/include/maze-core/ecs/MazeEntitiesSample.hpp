@@ -218,11 +218,6 @@ namespace Maze
         //////////////////////////////////////////
         using ProcessFuncRaw = void(*)(Entity*, TComponents* ..._components);
 
-        //////////////////////////////////////////
-        using ProcessUpdateFunc = std::function<void(UpdateEvent const&, Entity*, TComponents* ..._components)>;
-
-        //////////////////////////////////////////
-        using ProcessUpdateFuncRaw = void(*)(UpdateEvent const&, Entity*, TComponents* ..._components);
 
         //////////////////////////////////////////
         using ProcessEventFunc = std::function<void(Event&, Entity*, TComponents* ..._components)>;

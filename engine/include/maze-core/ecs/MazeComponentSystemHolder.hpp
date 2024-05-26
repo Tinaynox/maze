@@ -94,6 +94,24 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        template<typename TEventType>
+        inline ComponentSystemHolder(
+            HashedCString _name,
+            void(*_func)(TEventType&),
+            Set<HashedString> _tags = Set<HashedString>(),
+            ComponentSystemOrder const& _order = ComponentSystemOrder())
+            : m_name(_name)
+            , m_func((ComponentSystemEventHandler::Func)_func)
+            , m_tags(_tags)
+            , m_order(_order)
+        {
+            auto address = &EcsWorld::addSystemEventHandlerGlobal<TEventType>;
+            m_addSystemFunc = (AddSystemFunc)(address);
+
+            GetSimpleSystemHolders().insert(this);
+        }
+
+        //////////////////////////////////////////
         inline ~ComponentSystemHolder()
         {
             GetSimpleSystemHolders().erase(this);

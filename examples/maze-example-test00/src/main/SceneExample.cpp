@@ -220,6 +220,17 @@ namespace Maze
     }
 
 
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(SomeBroadcastEventES2,
+        {},
+        {},
+        SimpleBroadcastEvent const& _event)
+    {
+        Debug::Log("SomeBroadcastEventES2!");
+    }
+
+
     //////////////////////////////////////////
     // Class SceneExample
     //
