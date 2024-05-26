@@ -135,7 +135,9 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(SomeUpdateES, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(SomeUpdateES,
+        {},
+        {},
         UpdateEvent const& _event,
         Entity* _entity,
         Transform3D* _someObject,
@@ -145,7 +147,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(SomeEventES, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(SomeEventES,
+        {},
+        {},
         SimpleEvent const& _event,
         Entity* _entity,
         Transform3D* _someObject,
@@ -156,7 +160,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(SomeBroadcastEventES, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(SomeBroadcastEventES,
+        {},
+        {},
         SimpleBroadcastEvent const& _event,
         Entity* _entity,
         Transform3D* _someObject,
@@ -166,7 +172,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(SomeAddedES, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(SomeAddedES,
+        {},
+        {},
         EntityAddedEvent const& _event,
         Entity* _entity,
         Transform3D* _someObject,
@@ -176,7 +184,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(SomeRemovedES, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(SomeRemovedES,
+        {},
+        {},
         EntityRemovedEvent const& _event,
         Entity* _entity,
         Transform3D* _someObject,
@@ -186,7 +196,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(SomeEntityAddedToSampleES, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(SomeEntityAddedToSampleES,
+        {},
+        {},
         EntityAddedToSampleEvent const& _event,
         Entity* _entity,
         Transform3D* _someObject,
@@ -196,7 +208,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    COMPONENT_SYSTEM_EVENT_HANDLER(SomeEntityRemovedFromSampleES, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(SomeEntityRemovedFromSampleES,
+        {},
+        {},
         EntityRemovedFromSampleEvent const& _event,
         Entity* _entity,
         Transform3D* _someObject,
