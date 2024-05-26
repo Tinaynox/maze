@@ -37,6 +37,35 @@
 //////////////////////////////////////////
 namespace Maze
 {
+    //////////////////////////////////////////
+    class SceneDebugEditor;
+
+
+    //////////////////////////////////////////
+    // Class SceneDebugEditorInitEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API SceneDebugEditorInitEvent
+        : public GenericEvent<SceneDebugEditorInitEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(SceneDebugEditorInitEvent, Event);
+
+    public:
+
+        //////////////////////////////////////////
+        inline SceneDebugEditorInitEvent(SceneDebugEditor* _scene = nullptr)
+            : m_scene(_scene)
+        {}
+
+        //////////////////////////////////////////
+        inline SceneDebugEditor* getScene() const { return m_scene; }
+
+    private:
+        SceneDebugEditor* m_scene = nullptr;
+    };
+
 
 } // namespace Maze
 //////////////////////////////////////////

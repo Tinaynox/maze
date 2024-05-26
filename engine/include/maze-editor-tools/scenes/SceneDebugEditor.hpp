@@ -89,6 +89,9 @@ namespace Maze
         virtual void update(F32 _dt) MAZE_OVERRIDE;
 
 
+        //////////////////////////////////////////
+        inline CanvasPtr const& getMainCanvas() const { return m_mainCanvas; }
+
     protected:
 
         //////////////////////////////////////////

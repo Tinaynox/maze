@@ -28,6 +28,8 @@
 #include "MazeParticlesEditorToolsPlugin.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
 #include "maze-core/managers/MazePluginManager.hpp"
+#include "maze-core/managers/MazeEntityManager.hpp"
+#include "maze-core/ecs/MazeComponentFactory.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-graphics/managers/MazeTextureManager.hpp"
@@ -43,6 +45,7 @@
 #include "maze-plugin-particles-editor-tools/meta-property-drawers/MazeParticleSystem3DShapeModule.hpp"
 #include "maze-plugin-particles-editor-tools/meta-property-drawers/MazeParticleSystem3DZoneData.hpp"
 #include "maze-plugin-particles-editor-tools/ecs/components/gizmos/MazeParticleSystem3DGizmos.hpp"
+#include "maze-plugin-particles-editor-tools/ecs/components/tools/ParticleEffectInfo.hpp"
 
 
 //////////////////////////////////////////
@@ -194,6 +197,8 @@ namespace Maze
 
         if (GizmosManager::GetInstancePtr())
             GizmosManager::GetInstancePtr()->registerGizmos<ParticleSystem3D, ParticleSystem3DGizmos>();
+
+        EntityManager::GetInstancePtr()->getComponentFactory()->registerComponent<ParticleEffectInfo>("EditorTools");
     }
 
     //////////////////////////////////////////

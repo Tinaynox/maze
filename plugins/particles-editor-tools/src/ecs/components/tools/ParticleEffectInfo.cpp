@@ -38,6 +38,7 @@
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -58,6 +59,7 @@
 #include "maze-editor-tools/ecs/components/MazeHierarchyLinePool.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
+#include "maze-editor-tools/ecs/events/MazeEcsEditorToolsEvents.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeScrollRect2D.hpp"
 #include "maze-ui/ecs/components/MazeToggleButton2D.hpp"
@@ -449,6 +451,20 @@ namespace Maze
                 particleSystem->pause(m_recursiveButton->getChecked());
             }
         }
+    }
+
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(ParticleEffectInfoOnSceneDebugEditorInit,
+        MAZE_ECS_TAGS(MAZE_HS("default")),
+        {},
+        SceneDebugEditorInitEvent const& _event)
+    {
+        SceneDebugEditor* scene = _event.getScene();
+
+        EntityPtr particleEffectInfoEntity = scene->createEntity();
+        ParticleEffectInfoPtr particleEffectInfo = particleEffectInfoEntity->createComponent<ParticleEffectInfo>();
+        particleEffectInfo->getTransform()->setParent(scene->getMainCanvas()->getTransform());
     }
 
 } // namespace Maze

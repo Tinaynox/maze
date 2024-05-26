@@ -32,8 +32,7 @@
 //////////////////////////////////////////
 namespace Maze
 {
-    //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SceneDebugEditorInitEvent, Event);
+    
 
     
 } // namespace Maze
