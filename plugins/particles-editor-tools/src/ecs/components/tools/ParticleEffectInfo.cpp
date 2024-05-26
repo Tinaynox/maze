@@ -24,7 +24,8 @@
 
 
 //////////////////////////////////////////
-#include "ecs/components/tools/ParticleEffectInfo.hpp"
+#include "MazeParticlesEditorToolsHeader.hpp"
+#include "maze-plugin-particles-editor-tools/ecs/components/tools/ParticleEffectInfo.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
@@ -62,8 +63,6 @@
 #include "maze-ui/ecs/components/MazeToggleButton2D.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "maze-particles/ecs/components/MazeParticleSystem3D.hpp"
-#include "managers/EditorManager.hpp"
-#include "managers/EditorPrefabManager.hpp"
 
 
 //////////////////////////////////////////

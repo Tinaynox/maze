@@ -60,7 +60,7 @@
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorPrefabManager.hpp"
-#include "ecs/components/tools/ParticleEffectInfo.hpp"
+#include "maze-plugin-particles-editor-tools/ecs/components/tools/ParticleEffectInfo.hpp"
 
 
 //////////////////////////////////////////

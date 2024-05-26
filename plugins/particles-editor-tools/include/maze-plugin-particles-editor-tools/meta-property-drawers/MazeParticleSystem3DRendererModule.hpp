@@ -30,7 +30,7 @@
 
 
 //////////////////////////////////////////
-#include "maze-particles/MazeParticlesHeader.hpp"
+#include "maze-plugin-particles-editor-tools/MazeParticlesEditorToolsHeader.hpp"
 #include "maze-core/utils/MazeMultiDelegate.hpp"
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/system/MazeTimer.hpp"

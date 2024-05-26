@@ -30,7 +30,7 @@
 
 
 //////////////////////////////////////////
-#include "maze-graphics/MazeGraphicsHeader.hpp"
+#include "maze-plugin-particles-editor-tools/MazeParticlesEditorToolsHeader.hpp"
 #include "maze-editor-tools/ecs/components/gizmos/MazeComponentGizmos.hpp"
 
 
