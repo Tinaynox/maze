@@ -150,7 +150,7 @@ namespace Maze
                     m_textureChangedTimer -= _dt;
                     if (m_textureChangedTimer <= 0.0f)
                     {
-                        EventManager::GetInstancePtr()->generateEvent<EditorToolsTexture2DChangedEvent>(texture->getName());
+                        EventManager::GetInstancePtr()->broadcastEvent<EditorToolsTexture2DChangedEvent>(texture->getName());
                     }
                 }
             }
@@ -216,7 +216,7 @@ namespace Maze
     {
         Set<Texture2DPtr> const& textures = getTextures();
         if (m_textureCopy && m_textureChangedTimer > 0.0f)
-            EventManager::GetInstancePtr()->generateEvent<EditorToolsTexture2DChangedEvent>(m_textureCopy->getName());
+            EventManager::GetInstancePtr()->broadcastEvent<EditorToolsTexture2DChangedEvent>(m_textureCopy->getName());
 
         m_parent->destroyAllChildren();
 

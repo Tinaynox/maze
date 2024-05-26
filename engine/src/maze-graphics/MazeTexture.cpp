@@ -74,7 +74,7 @@ namespace Maze
             s_instancesList = m_instancesListPrev;
 
         if (EventManager::GetInstancePtr())
-            EventManager::GetInstancePtr()->generateEventImmediate<TextureDestroyedEvent>(this);
+            EventManager::GetInstancePtr()->broadcastEventImmediate<TextureDestroyedEvent>(this);
     }
 
     //////////////////////////////////////////

@@ -77,7 +77,7 @@ namespace Maze
             s_instancesList = m_instancesListPrev;
 
         if (EventManager::GetInstancePtr())
-            EventManager::GetInstancePtr()->generateEventImmediate<ShaderDestroyedEvent>(this);
+            EventManager::GetInstancePtr()->broadcastEventImmediate<ShaderDestroyedEvent>(this);
     }
 
     //////////////////////////////////////////

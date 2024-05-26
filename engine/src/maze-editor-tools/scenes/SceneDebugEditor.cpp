@@ -86,6 +86,7 @@
 #include "maze-editor-tools/material-picker/MazeSceneMaterialPicker.hpp"
 #include "maze-editor-tools/texture-picker/MazeSceneTexturePicker.hpp"
 #include "maze-editor-tools/render-mesh-picker/MazeSceneRenderMeshPicker.hpp"
+#include "maze-editor-tools/events/MazeEditorToolsEvents.hpp"
 #include "layout/MazeEditorToolsStyles.hpp"
 
 
@@ -153,6 +154,8 @@ namespace Maze
         create3D();
         create2D();
         createSystems();
+
+        EventManager::GetInstancePtr()->broadcastEventImmediate<SceneDebugEditorInitEvent>(this);
 
         return true;
     }

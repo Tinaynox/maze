@@ -59,7 +59,7 @@ namespace Maze
     RenderBuffer::~RenderBuffer()
     {
         if (EventManager::GetInstancePtr())
-            EventManager::GetInstancePtr()->generateEventImmediate<RenderBufferDestroyedEvent>(this);
+            EventManager::GetInstancePtr()->broadcastEventImmediate<RenderBufferDestroyedEvent>(this);
     }
 
     //////////////////////////////////////////

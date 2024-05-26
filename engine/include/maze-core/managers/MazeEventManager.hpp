@@ -91,7 +91,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TEvent, typename ...TArgs>
-        inline UniquePtr<TEvent, Maze::DefaultDelete<TEvent>> generateAndSendEventImmediate(
+        inline UniquePtr<TEvent, Maze::DefaultDelete<TEvent>> sendEventImmediate(
             IEventReceiver* _receiver,
             TArgs... _args)
         {
@@ -102,18 +102,18 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TEvent, typename ...TArgs>
-        inline UniquePtr<TEvent, Maze::DefaultDelete<TEvent>> generateAndSendEventImmediate(
+        inline UniquePtr<TEvent, Maze::DefaultDelete<TEvent>> sendEventImmediate(
             IEventReceiverPtr const& _receiver,
             TArgs... _args)
         {
-            return generateAndSendEventImmediate<TEvent, TArgs...>(
+            return sendEventImmediate<TEvent, TArgs...>(
                 _receiver.get(),
                 _args...);
         }
 
         //////////////////////////////////////////
         template <typename TEvent, typename ...TArgs>
-        inline void generateEvent(TArgs... _args)
+        inline void broadcastEvent(TArgs... _args)
         {
             Map<ClassUID, Vector<SharedPtr<Event>>>& allEvents = m_events.current();
             Vector<SharedPtr<Event>>& events = allEvents[ClassInfo<TEvent>::UID()];
@@ -122,7 +122,7 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename TEvent, typename ...TArgs>
-        inline void generateEventImmediate(TArgs... _args)
+        inline void broadcastEventImmediate(TArgs... _args)
         {
             TEvent evt(_args...);
             auto& cb = getEventCallbacks<TEvent>();

@@ -277,7 +277,7 @@ namespace Maze
         if (rigidbodyA && rigidbodyA->getEntityRaw())
         {
             auto evt =
-                EventManager::GetInstancePtr()->generateAndSendEventImmediate<AllowContactEvent>(
+                EventManager::GetInstancePtr()->sendEventImmediate<AllowContactEvent>(
                     rigidbodyA->getEntityRaw(),
                     rigidbodyA,
                     rigidbodyB,
@@ -294,7 +294,7 @@ namespace Maze
         if (rigidbodyB && rigidbodyB->getEntityRaw())
         {
             auto evt =
-                EventManager::GetInstancePtr()->generateAndSendEventImmediate<AllowContactEvent>(
+                EventManager::GetInstancePtr()->sendEventImmediate<AllowContactEvent>(
                     rigidbodyB->getEntityRaw(),
                     rigidbodyB,
                     rigidbodyA,
@@ -310,7 +310,7 @@ namespace Maze
 
         if (rigidbodyA && rigidbodyA->getEntityRaw())
         {
-            EventManager::GetInstancePtr()->generateAndSendEventImmediate<BeginContactEvent>(
+            EventManager::GetInstancePtr()->sendEventImmediate<BeginContactEvent>(
                 rigidbodyA->getEntityRaw(),
                 rigidbodyA,
                 rigidbodyB,
@@ -320,7 +320,7 @@ namespace Maze
 
         if (rigidbodyB && rigidbodyB->getEntityRaw())
         {
-            EventManager::GetInstancePtr()->generateAndSendEventImmediate<BeginContactEvent>(
+            EventManager::GetInstancePtr()->sendEventImmediate<BeginContactEvent>(
                 rigidbodyB->getEntityRaw(),
                 rigidbodyB,
                 rigidbodyA,
@@ -347,7 +347,7 @@ namespace Maze
         if (rigidbodyA && rigidbodyA->getEntityRaw())
         {
             auto evt =
-                EventManager::GetInstancePtr()->generateAndSendEventImmediate<AllowContactEvent>(
+                EventManager::GetInstancePtr()->sendEventImmediate<AllowContactEvent>(
                     rigidbodyA->getEntityRaw(),
                     rigidbodyA,
                     rigidbodyB,
@@ -364,7 +364,7 @@ namespace Maze
         if (rigidbodyB && rigidbodyB->getEntityRaw())
         {
             auto evt =
-                EventManager::GetInstancePtr()->generateAndSendEventImmediate<AllowContactEvent>(
+                EventManager::GetInstancePtr()->sendEventImmediate<AllowContactEvent>(
                     rigidbodyB->getEntityRaw(),
                     rigidbodyB,
                     rigidbodyA,
@@ -380,7 +380,7 @@ namespace Maze
 
         if (rigidbodyA && rigidbodyA->getEntityRaw())
         {
-            EventManager::GetInstancePtr()->generateAndSendEventImmediate<PreSolveContactEvent>(
+            EventManager::GetInstancePtr()->sendEventImmediate<PreSolveContactEvent>(
                 rigidbodyA->getEntityRaw(),
                 rigidbodyA,
                 rigidbodyB,
@@ -390,7 +390,7 @@ namespace Maze
 
         if (rigidbodyB && rigidbodyB->getEntityRaw())
         {
-            EventManager::GetInstancePtr()->generateAndSendEventImmediate<PreSolveContactEvent>(
+            EventManager::GetInstancePtr()->sendEventImmediate<PreSolveContactEvent>(
                 rigidbodyB->getEntityRaw(),
                 rigidbodyB,
                 rigidbodyA,
@@ -422,7 +422,7 @@ namespace Maze
 
             if (rigidbodyA && rigidbodyA->getEntityRaw())
             {
-                EventManager::GetInstancePtr()->generateAndSendEventImmediate<PostSolveContactEvent>(
+                EventManager::GetInstancePtr()->sendEventImmediate<PostSolveContactEvent>(
                     rigidbodyA->getEntityRaw(),
                     rigidbodyA,
                     rigidbodyB,
@@ -433,7 +433,7 @@ namespace Maze
 
             if (rigidbodyB && rigidbodyB->getEntityRaw())
             {
-                EventManager::GetInstancePtr()->generateAndSendEventImmediate<PostSolveContactEvent>(
+                EventManager::GetInstancePtr()->sendEventImmediate<PostSolveContactEvent>(
                     rigidbodyB->getEntityRaw(),
                     rigidbodyB,
                     rigidbodyA,
@@ -461,7 +461,7 @@ namespace Maze
 
         if (rigidbodyA && rigidbodyA->getEntityRaw())
         {
-            EventManager::GetInstancePtr()->generateAndSendEventImmediate<EndContactEvent>(
+            EventManager::GetInstancePtr()->sendEventImmediate<EndContactEvent>(
                 rigidbodyA->getEntityRaw(),
                 rigidbodyA,
                 rigidbodyB,
@@ -471,7 +471,7 @@ namespace Maze
 
         if (rigidbodyB && rigidbodyB->getEntityRaw())
         {
-            EventManager::GetInstancePtr()->generateAndSendEventImmediate<EndContactEvent>(
+            EventManager::GetInstancePtr()->sendEventImmediate<EndContactEvent>(
                 rigidbodyB->getEntityRaw(),
                 rigidbodyB,
                 rigidbodyA,

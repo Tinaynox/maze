@@ -805,7 +805,7 @@ namespace Maze
                 if (_wParam == 0x0007) // DBT_DEVNODES_CHANGED
                 {
                     if (EventManager::GetInstancePtr())
-                        EventManager::GetInstancePtr()->generateEvent<SystemDevicesChangedEvent>();
+                        EventManager::GetInstancePtr()->broadcastEvent<SystemDevicesChangedEvent>();
                 }
                 
                 break;

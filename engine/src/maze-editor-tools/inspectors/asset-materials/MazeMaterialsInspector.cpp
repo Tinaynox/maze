@@ -162,7 +162,7 @@ namespace Maze
                     m_materialChangedTimer -= _dt;
                     if (m_materialChangedTimer <= 0.0f)
                     {
-                        EventManager::GetInstancePtr()->generateEvent<EditorToolsMaterialChangedEvent>(material->getName());
+                        EventManager::GetInstancePtr()->broadcastEvent<EditorToolsMaterialChangedEvent>(material->getName());
                     }
                 }
             }
@@ -214,7 +214,7 @@ namespace Maze
     {
         Set<MaterialPtr> const& materials = getMaterials();
         if (m_materialCopy && m_materialChangedTimer > 0.0f)
-            EventManager::GetInstancePtr()->generateEvent<EditorToolsMaterialChangedEvent>(m_materialCopy->getName());
+            EventManager::GetInstancePtr()->broadcastEvent<EditorToolsMaterialChangedEvent>(m_materialCopy->getName());
 
         m_parent->removeAllChildren();
 
