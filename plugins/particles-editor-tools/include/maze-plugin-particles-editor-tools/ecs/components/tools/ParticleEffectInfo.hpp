@@ -30,12 +30,11 @@
 
 
 //////////////////////////////////////////
-#include "maze-editor-tools/MazeEditorToolsHeader.hpp"
+#include "maze-plugin-particles-editor-tools/MazeParticlesEditorToolsHeader.hpp"
 #include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
-#include "editor/EditorSceneMode.hpp"
 
 
 //////////////////////////////////////////
@@ -52,6 +51,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(HierarchyLinePool);
     MAZE_USING_SHARED_PTR(HierarchyLine);
     MAZE_USING_SHARED_PTR(EcsScene);
+    MAZE_USING_SHARED_PTR(Button2D);
     MAZE_USING_SHARED_PTR(ClickButton2D);
     MAZE_USING_SHARED_PTR(ToggleButton2D);
     MAZE_USING_SHARED_PTR(AbstractTextRenderer2D);
@@ -61,7 +61,7 @@ namespace Maze
     // Class ParticleEffectInfo
     //
     //////////////////////////////////////////
-    class ParticleEffectInfo
+    class MAZE_PLUGIN_PARTICLES_EDITOR_TOOLS_API ParticleEffectInfo
         : public Component
         , public Updatable
         , public MultiDelegateCallbackReceiver

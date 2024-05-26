@@ -143,6 +143,9 @@ namespace Maze
         //////////////////////////////////////////
         void clearInspector();
 
+        //////////////////////////////////////////
+        inline void dirtyInspectors() { m_inspectorsDirty = true; }
+
 
         //////////////////////////////////////////
         template <typename TInspector>

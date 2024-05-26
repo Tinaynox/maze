@@ -189,7 +189,7 @@ namespace Maze
         void notifyEntityRemoved(EntityPtr const& _entity);
 
         //////////////////////////////////////////
-        void notifyEntityChanged(Entity* _entity);
+        void notifyEntityChanged(EntityPtr const& _entity);
 
 
         //////////////////////////////////////////
