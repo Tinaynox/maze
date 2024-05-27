@@ -124,8 +124,8 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        MultiDelegate<MenuListTree2DPtr const&, Entity*> eventHierarchyLineEntityContextMenu;
-        MultiDelegate<MenuListTree2DPtr const&, EcsScene*> eventHierarchyLineSceneContextMenu;
+        MultiDelegate<MenuListTree2DPtr const&, Entity*> eventHierarchyLineOBSOLETEEntityContextMenu;
+        MultiDelegate<MenuListTree2DPtr const&, EcsScene*> eventHierarchyLineOBSOLETESceneContextMenu;
 
     protected:
 

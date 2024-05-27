@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeHierarchyLine_hpp_))
-#define _MazeHierarchyLine_hpp_
+#if (!defined(_MazeHierarchyLineOBSOLETE_hpp_))
+#define _MazeHierarchyLineOBSOLETE_hpp_
 
 
 //////////////////////////////////////////
@@ -46,7 +46,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Transform3D);
     MAZE_USING_SHARED_PTR(ClickButton2D);
     MAZE_USING_SHARED_PTR(Button2D);
-    MAZE_USING_SHARED_PTR(HierarchyLine);
+    MAZE_USING_SHARED_PTR(HierarchyLineOBSOLETE);
     MAZE_USING_SHARED_PTR(Bounds2D);
     MAZE_USING_SHARED_PTR(Canvas);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
@@ -56,7 +56,7 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    enum class HierarchyLineType
+    enum class HierarchyLineOBSOLETEType
     {
         Scene,
         Entity,
@@ -65,7 +65,7 @@ namespace Maze
     };
 
     //////////////////////////////////////////
-    enum class HierarchyLineDropDownState
+    enum class HierarchyLineOBSOLETEDropDownState
     {
         None,
         Collapsed,
@@ -74,29 +74,29 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class HierarchyLine
+    // Class HierarchyLineOBSOLETE
     //
     //////////////////////////////////////////
-    class MAZE_EDITOR_TOOLS_API HierarchyLine
+    class MAZE_EDITOR_TOOLS_API HierarchyLineOBSOLETE
         : public Component
         , public MultiDelegateCallbackReceiver
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(HierarchyLine, Component);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(HierarchyLineOBSOLETE, Component);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(HierarchyLine);
+        MAZE_DECLARE_MEMORY_ALLOCATION(HierarchyLineOBSOLETE);
 
     public:
 
         //////////////////////////////////////////
-        virtual ~HierarchyLine();
+        virtual ~HierarchyLineOBSOLETE();
 
         //////////////////////////////////////////
-        static HierarchyLinePtr Create(
-            HierarchyLineType _type);
+        static HierarchyLineOBSOLETEPtr Create(
+            HierarchyLineOBSOLETEType _type);
 
 
         //////////////////////////////////////////
@@ -110,10 +110,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        void setDropDownState(HierarchyLineDropDownState _value);
+        void setDropDownState(HierarchyLineOBSOLETEDropDownState _value);
 
         //////////////////////////////////////////
-        inline HierarchyLineDropDownState getDropDownState() const { return m_dropDownState; }
+        inline HierarchyLineOBSOLETEDropDownState getDropDownState() const { return m_dropDownState; }
 
 
         //////////////////////////////////////////
@@ -124,7 +124,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline HierarchyLineType getType() const { return m_type; }
+        inline HierarchyLineOBSOLETEType getType() const { return m_type; }
 
 
         //////////////////////////////////////////
@@ -155,22 +155,22 @@ namespace Maze
 
         /////////////////////////////////////////
         MultiDelegate<void*> eventUserDataChanged;
-        MultiDelegate<HierarchyLine*> eventDropDownClick;
-        MultiDelegate<HierarchyLine*> eventLineClick;
-        MultiDelegate<HierarchyLine*> eventLineCursorPressIn;
-        MultiDelegate<HierarchyLine*> eventLineDoubleClick;
+        MultiDelegate<HierarchyLineOBSOLETE*> eventDropDownClick;
+        MultiDelegate<HierarchyLineOBSOLETE*> eventLineClick;
+        MultiDelegate<HierarchyLineOBSOLETE*> eventLineCursorPressIn;
+        MultiDelegate<HierarchyLineOBSOLETE*> eventLineDoubleClick;
 
     protected:
 
         //////////////////////////////////////////
-        HierarchyLine();
+        HierarchyLineOBSOLETE();
 
         //////////////////////////////////////////
         using Component::init;
         
         //////////////////////////////////////////
         bool init(
-            HierarchyLineType _type);
+            HierarchyLineOBSOLETEType _type);
 
         //////////////////////////////////////////
         void processEntityAwakened() MAZE_OVERRIDE;
@@ -198,8 +198,8 @@ namespace Maze
         EcsWorld* m_world = nullptr;
 
         String m_name;
-        HierarchyLineType m_type;
-        HierarchyLineDropDownState m_dropDownState;
+        HierarchyLineOBSOLETEType m_type;
+        HierarchyLineOBSOLETEDropDownState m_dropDownState;
         void* m_userData = nullptr;
 
         Transform2DPtr m_transform;
@@ -221,5 +221,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeHierarchyLine_hpp_
+#endif // _MazeHierarchyLineOBSOLETE_hpp_
 //////////////////////////////////////////

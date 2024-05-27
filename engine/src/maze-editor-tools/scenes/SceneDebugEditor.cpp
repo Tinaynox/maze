@@ -74,7 +74,7 @@
 #include "maze-render-system-opengl-core/MazeStateMachineOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
-#include "maze-editor-tools/ecs/components/MazeHierarchyController.hpp"
+#include "maze-editor-tools/ecs/components/MazeHierarchyControllerOBSOLETE.hpp"
 #include "maze-editor-tools/ecs/components/MazeInspectorController.hpp"
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "maze-editor-tools/ecs/components/MazeTopBarController.hpp"
@@ -324,7 +324,7 @@ namespace Maze
             m_hierarchyCanvas->setSortOrder(-1000000);
 
             EntityPtr hierarchyControllerEntity = createEntity();
-            HierarchyControllerPtr hierarchyController = HierarchyController::Create(m_hierarchyCanvas.get());
+            HierarchyControllerOBSOLETEPtr hierarchyController = HierarchyControllerOBSOLETE::Create(m_hierarchyCanvas.get());
             hierarchyControllerEntity->addComponent(hierarchyController);
 
             hierarchyController->addIgnoreScene(SceneColorPicker::GetMetaClass()->getClassUID());

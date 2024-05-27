@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
-#include "maze-editor-tools/ecs/components/MazeHierarchyLinePool.hpp"
+#include "maze-editor-tools/ecs/components/MazeHierarchyLinePoolOBSOLETE.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
@@ -49,63 +49,63 @@
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
 #include "maze-editor-tools/scenes/SceneDebugEditor.hpp"
-#include "maze-editor-tools/ecs/components/MazeHierarchyLine.hpp"
+#include "maze-editor-tools/ecs/components/MazeHierarchyLineOBSOLETE.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class HierarchyLinePool
+    // Class HierarchyLinePoolOBSOLETE
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(HierarchyLinePool, Component);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(HierarchyLinePoolOBSOLETE, Component);
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(HierarchyLinePool);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(HierarchyLinePoolOBSOLETE);
 
     //////////////////////////////////////////
-    HierarchyLinePool::HierarchyLinePool()
+    HierarchyLinePoolOBSOLETE::HierarchyLinePoolOBSOLETE()
     {
     }
 
     //////////////////////////////////////////
-    HierarchyLinePool::~HierarchyLinePool()
+    HierarchyLinePoolOBSOLETE::~HierarchyLinePoolOBSOLETE()
     {
 
     }
 
     //////////////////////////////////////////
-    HierarchyLinePoolPtr HierarchyLinePool::Create()
+    HierarchyLinePoolOBSOLETEPtr HierarchyLinePoolOBSOLETE::Create()
     {
-        HierarchyLinePoolPtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(HierarchyLinePool, object, init());
+        HierarchyLinePoolOBSOLETEPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(HierarchyLinePoolOBSOLETE, object, init());
         return object;
     }
 
     //////////////////////////////////////////
-    bool HierarchyLinePool::init()
+    bool HierarchyLinePoolOBSOLETE::init()
     {
-        for (HierarchyLineType type = HierarchyLineType(0); type < HierarchyLineType::MAX; type = HierarchyLineType((S32)type + 1))
+        for (HierarchyLineOBSOLETEType type = HierarchyLineOBSOLETEType(0); type < HierarchyLineOBSOLETEType::MAX; type = HierarchyLineOBSOLETEType((S32)type + 1))
         {
-            m_pools[(Size)type] = SharedPtr<SharedObjectPool<HierarchyLine>>(
-                new SharedObjectPool<HierarchyLine>(
-                    [this, type]() -> HierarchyLinePtr
+            m_pools[(Size)type] = SharedPtr<SharedObjectPool<HierarchyLineOBSOLETE>>(
+                new SharedObjectPool<HierarchyLineOBSOLETE>(
+                    [this, type]() -> HierarchyLineOBSOLETEPtr
                     {
                         EntityPtr entity = this->getEntityRaw()->getEcsScene()->createEntity();
-                        HierarchyLinePtr hierarchyLine = entity->createComponent<HierarchyLine>(type);
+                        HierarchyLineOBSOLETEPtr hierarchyLine = entity->createComponent<HierarchyLineOBSOLETE>(type);
                         return hierarchyLine;
                     },
-                    [](HierarchyLinePtr const& _hierarchyLine)
+                    [](HierarchyLineOBSOLETEPtr const& _hierarchyLine)
                     {
                         _hierarchyLine->getEntityRaw()->setActiveSelf(true);
                     },
-                    [](HierarchyLinePtr const& _hierarchyLine)
+                    [](HierarchyLineOBSOLETEPtr const& _hierarchyLine)
                     {
                         _hierarchyLine->getEntityRaw()->setActiveSelf(false);
                         _hierarchyLine->setUserData(nullptr);
                     },
-                    [](HierarchyLinePtr const& _hierarchyLine)
+                    [](HierarchyLineOBSOLETEPtr const& _hierarchyLine)
                     {
                         if (_hierarchyLine->getEntityRaw())
                             _hierarchyLine->getEntityRaw()->removeFromEcsWorld();
@@ -116,13 +116,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    HierarchyLinePtr HierarchyLinePool::createHierarchyLine(HierarchyLineType _type)
+    HierarchyLineOBSOLETEPtr HierarchyLinePoolOBSOLETE::createHierarchyLineOBSOLETE(HierarchyLineOBSOLETEType _type)
     {
         return m_pools[(Size)_type]->fetch();
     }
 
     //////////////////////////////////////////
-    void HierarchyLinePool::releaseHierarchyLine(HierarchyLinePtr const& _hierarchyLine)
+    void HierarchyLinePoolOBSOLETE::releaseHierarchyLineOBSOLETE(HierarchyLineOBSOLETEPtr const& _hierarchyLine)
     {
         m_pools[(Size)_hierarchyLine->getType()]->release(_hierarchyLine);
     }

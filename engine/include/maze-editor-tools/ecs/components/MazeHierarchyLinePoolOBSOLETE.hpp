@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeHierarchyLinePool_hpp_))
-#define _MazeHierarchyLinePool_hpp_
+#if (!defined(_MazeHierarchyLinePoolOBSOLETE_hpp_))
+#define _MazeHierarchyLinePoolOBSOLETE_hpp_
 
 
 //////////////////////////////////////////
@@ -36,7 +36,7 @@
 #include "maze-core/utils/MazeSharedObjectPool.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
-#include "maze-editor-tools/ecs/components/MazeHierarchyLine.hpp"
+#include "maze-editor-tools/ecs/components/MazeHierarchyLineOBSOLETE.hpp"
 
 
 //////////////////////////////////////////
@@ -46,47 +46,47 @@ namespace Maze
     MAZE_USING_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(Transform2D);
     MAZE_USING_SHARED_PTR(Transform3D);
-    MAZE_USING_SHARED_PTR(HierarchyLinePool);
+    MAZE_USING_SHARED_PTR(HierarchyLinePoolOBSOLETE);
     MAZE_USING_SHARED_PTR(Bounds2D);
     MAZE_USING_SHARED_PTR(Canvas);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
-    MAZE_USING_SHARED_PTR(HierarchyLine);
+    MAZE_USING_SHARED_PTR(HierarchyLineOBSOLETE);
 
 
     //////////////////////////////////////////
-    // Class HierarchyLinePool
+    // Class HierarchyLinePoolOBSOLETE
     //
     //////////////////////////////////////////
-    class MAZE_EDITOR_TOOLS_API HierarchyLinePool
+    class MAZE_EDITOR_TOOLS_API HierarchyLinePoolOBSOLETE
         : public Component
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(HierarchyLinePool, Component);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(HierarchyLinePoolOBSOLETE, Component);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(HierarchyLinePool);
+        MAZE_DECLARE_MEMORY_ALLOCATION(HierarchyLinePoolOBSOLETE);
 
     public:
 
         //////////////////////////////////////////
-        virtual ~HierarchyLinePool();
+        virtual ~HierarchyLinePoolOBSOLETE();
 
         //////////////////////////////////////////
-        static HierarchyLinePoolPtr Create();
+        static HierarchyLinePoolOBSOLETEPtr Create();
 
 
         //////////////////////////////////////////
-        HierarchyLinePtr createHierarchyLine(HierarchyLineType _type);
+        HierarchyLineOBSOLETEPtr createHierarchyLineOBSOLETE(HierarchyLineOBSOLETEType _type);
 
         //////////////////////////////////////////
-        void releaseHierarchyLine(HierarchyLinePtr const& _hierarchyLine);
+        void releaseHierarchyLineOBSOLETE(HierarchyLineOBSOLETEPtr const& _hierarchyLine);
 
     protected:
 
         //////////////////////////////////////////
-        HierarchyLinePool();
+        HierarchyLinePoolOBSOLETE();
 
         //////////////////////////////////////////
         using Component::init;
@@ -95,7 +95,7 @@ namespace Maze
         bool init();
 
     protected:
-        SharedPtr<SharedObjectPool<HierarchyLine>> m_pools[(Size)HierarchyLineType::MAX];
+        SharedPtr<SharedObjectPool<HierarchyLineOBSOLETE>> m_pools[(Size)HierarchyLineOBSOLETEType::MAX];
     };
 
 
@@ -103,5 +103,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeHierarchyLinePool_hpp_
+#endif // _MazeHierarchyLinePoolOBSOLETE_hpp_
 //////////////////////////////////////////

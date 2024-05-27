@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeHierarchyController_hpp_))
-#define _MazeHierarchyController_hpp_
+#if (!defined(_MazeHierarchyControllerOBSOLETE_hpp_))
+#define _MazeHierarchyControllerOBSOLETE_hpp_
 
 
 //////////////////////////////////////////
@@ -44,7 +44,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(Transform2D);
     MAZE_USING_SHARED_PTR(Transform3D);
-    MAZE_USING_SHARED_PTR(HierarchyController);
+    MAZE_USING_SHARED_PTR(HierarchyControllerOBSOLETE);
     MAZE_USING_SHARED_PTR(Bounds2D);
     MAZE_USING_SHARED_PTR(Canvas);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
@@ -54,10 +54,10 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    struct HierarchyLineOBSOLETEEntityData
+    struct HierarchyLineOBSOLETEEntityDataOBSOLETE
     {
         //////////////////////////////////////////
-        HierarchyLineOBSOLETEEntityData()
+        HierarchyLineOBSOLETEEntityDataOBSOLETE()
             : expanded(false)
         {
         }
@@ -68,10 +68,10 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    struct HierarchyLineOBSOLETESceneData
+    struct HierarchyLineSceneDataOBSOLETE
     {
         //////////////////////////////////////////
-        HierarchyLineOBSOLETESceneData()
+        HierarchyLineSceneDataOBSOLETE()
             : expanded(false)
         {
         }
@@ -82,10 +82,10 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    // Class HierarchyController
+    // Class HierarchyControllerOBSOLETE
     //
     //////////////////////////////////////////
-    class MAZE_EDITOR_TOOLS_API HierarchyController
+    class MAZE_EDITOR_TOOLS_API HierarchyControllerOBSOLETE
         : public Component
         , public Updatable
         , public MultiDelegateCallbackReceiver
@@ -93,10 +93,10 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(HierarchyController, Component);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(HierarchyControllerOBSOLETE, Component);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(HierarchyController);
+        MAZE_DECLARE_MEMORY_ALLOCATION(HierarchyControllerOBSOLETE);
 
         //////////////////////////////////////////
         friend class Entity;
@@ -105,10 +105,10 @@ namespace Maze
     public:
 
         //////////////////////////////////////////
-        virtual ~HierarchyController();
+        virtual ~HierarchyControllerOBSOLETE();
 
         //////////////////////////////////////////
-        static HierarchyControllerPtr Create(Canvas* _canvas);
+        static HierarchyControllerOBSOLETEPtr Create(Canvas* _canvas);
 
 
         //////////////////////////////////////////
@@ -129,7 +129,7 @@ namespace Maze
     protected:
 
         //////////////////////////////////////////
-        HierarchyController();
+        HierarchyControllerOBSOLETE();
 
         //////////////////////////////////////////
         using Component::init;
@@ -140,6 +140,54 @@ namespace Maze
         //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
         
+        //////////////////////////////////////////
+        void updateHierarchy();
+
+        //////////////////////////////////////////
+        void updateHierarchyElement(Transform2D* _transform2D, F32 _x, F32& _y);
+
+        //////////////////////////////////////////
+        void updateHierarchyElement(Transform3D* _transform3D, F32 _x, F32& _y);
+
+        //////////////////////////////////////////
+        HierarchyLineOBSOLETEPtr createHierarchyElement(
+            Transform2D* _transform,
+            CString _name,
+            Vec2F const& _position);
+
+        //////////////////////////////////////////
+        HierarchyLineOBSOLETEPtr createHierarchyElement(
+            Transform3D* _transform,
+            CString _name,
+            Vec2F const& _position);
+
+        //////////////////////////////////////////
+        HierarchyLineOBSOLETEPtr createHierarchyElement(
+            Entity* _entity,
+            CString _name,
+            Vec2F const& _position);
+
+        //////////////////////////////////////////
+        HierarchyLineOBSOLETEPtr createHierarchyLineOBSOLETE(EntityId _entityId);
+
+        //////////////////////////////////////////
+        HierarchyLineOBSOLETEPtr createHierarchyLineOBSOLETE(EcsScenePtr const& _scene);
+
+        //////////////////////////////////////////
+        void notifyHierarchyLineOBSOLETEDropDownClick(HierarchyLineOBSOLETE* _hierarchyLine);
+
+        //////////////////////////////////////////
+        void notifyHierarchyLineOBSOLETEClick(HierarchyLineOBSOLETE* _hierarchyLine);
+
+        //////////////////////////////////////////
+        void notifyEntityRemoved(EntityPtr const& _entity);
+
+        //////////////////////////////////////////
+        void notifyEntityChanged(EntityPtr const& _entity);
+
+
+        //////////////////////////////////////////
+        void removeHierarchyLineOBSOLETE(EntityPtr const& _entity);
 
     protected:
         Canvas* m_canvas = nullptr;
@@ -156,6 +204,9 @@ namespace Maze
 
         EcsWorld* m_world = nullptr;
 
+        Map<EntityId, HierarchyLineOBSOLETEEntityDataOBSOLETE> m_hierarchyLinesPerEntity;
+        UnorderedMap<EcsScene*, HierarchyLineSceneDataOBSOLETE> m_hierarchyLinesPerScene;
+
         Set<ClassUID> m_ignoreScenes;
     };
 
@@ -164,5 +215,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeHierarchyController_hpp_
+#endif // _MazeHierarchyControllerOBSOLETE_hpp_
 //////////////////////////////////////////

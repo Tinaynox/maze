@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////
 #include "MazeEditorToolsHeader.hpp"
-#include "maze-editor-tools/ecs/components/MazeHierarchyLine.hpp"
+#include "maze-editor-tools/ecs/components/MazeHierarchyLineOBSOLETE.hpp"
 #include "maze-graphics/managers/MazeGraphicsManager.hpp"
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/managers/MazeSceneManager.hpp"
@@ -66,23 +66,23 @@
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class HierarchyLine
+    // Class HierarchyLineOBSOLETE
     //
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(HierarchyLine, Component);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(HierarchyLineOBSOLETE, Component);
 
     //////////////////////////////////////////
-    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(HierarchyLine);
+    MAZE_IMPLEMENT_MEMORY_ALLOCATION_BLOCK(HierarchyLineOBSOLETE);
 
     //////////////////////////////////////////
-    HierarchyLine::HierarchyLine()
-        : m_type(HierarchyLineType::Entity)
-        , m_dropDownState(HierarchyLineDropDownState::None)
+    HierarchyLineOBSOLETE::HierarchyLineOBSOLETE()
+        : m_type(HierarchyLineOBSOLETEType::Entity)
+        , m_dropDownState(HierarchyLineOBSOLETEDropDownState::None)
     {
     }
 
     //////////////////////////////////////////
-    HierarchyLine::~HierarchyLine()
+    HierarchyLineOBSOLETE::~HierarchyLineOBSOLETE()
     {
         if (m_dropDownRenderer && m_dropDownRenderer->getEntityRaw())
         {
@@ -108,15 +108,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    HierarchyLinePtr HierarchyLine::Create(HierarchyLineType _type)
+    HierarchyLineOBSOLETEPtr HierarchyLineOBSOLETE::Create(HierarchyLineOBSOLETEType _type)
     {
-        HierarchyLinePtr object;
-        MAZE_CREATE_AND_INIT_SHARED_PTR(HierarchyLine, object, init(_type));
+        HierarchyLineOBSOLETEPtr object;
+        MAZE_CREATE_AND_INIT_SHARED_PTR(HierarchyLineOBSOLETE, object, init(_type));
         return object;
     }
 
     //////////////////////////////////////////
-    bool HierarchyLine::init(HierarchyLineType _type)
+    bool HierarchyLineOBSOLETE::init(HierarchyLineOBSOLETEType _type)
     {
         m_type = _type;
 
@@ -124,7 +124,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void HierarchyLine::setEcsWorld(EcsWorld* _world)
+    void HierarchyLineOBSOLETE::setEcsWorld(EcsWorld* _world)
     {
         m_world = _world;
 
@@ -132,7 +132,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void HierarchyLine::processEntityAwakened()
+    void HierarchyLineOBSOLETE::processEntityAwakened()
     {
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
         MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
@@ -169,11 +169,11 @@ namespace Maze
             Vec2F(0.5f, 0.5f));
         m_dropDownRenderer->setColor(ColorU32::c_black);
         ClickButton2DPtr dropDownButton = m_dropDownRenderer->getEntityRaw()->ensureComponent<ClickButton2D>();
-        dropDownButton->eventClick.subscribe(this, &HierarchyLine::notifyDropDownClick);
+        dropDownButton->eventClick.subscribe(this, &HierarchyLineOBSOLETE::notifyDropDownClick);
         m_dropDownRenderer->getEntityRaw()->setActiveSelf(false);
         x += (F32)charSize + 4;
 
-        if (m_type == HierarchyLineType::Entity)
+        if (m_type == HierarchyLineOBSOLETEType::Entity)
         {
             m_iconRenderer = SpriteHelper::CreateSprite(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::EntityObject3D),
@@ -188,7 +188,7 @@ namespace Maze
             x += (F32)charSize + 4;
         }
         else
-        if (m_type == HierarchyLineType::Scene)
+        if (m_type == HierarchyLineOBSOLETEType::Scene)
         {
             m_iconRenderer = SpriteHelper::CreateSprite(
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Scene),
@@ -219,10 +219,10 @@ namespace Maze
             Vec2F(0.0f, 0.5f));
         m_textRenderer->setColor(ColorU32::c_black);
         m_textButton = m_textRenderer->getEntityRaw()->ensureComponent<ClickButton2D>();
-        m_textButton->eventClick.subscribe(this, &HierarchyLine::notifyLineClick);
-        m_textButton->eventCursorPressIn.subscribe(this, &HierarchyLine::notifyLineCursorPressIn);
-        m_textButton->eventDoubleClick.subscribe(this, &HierarchyLine::notifyLineDoubleClick);
-        m_textButton->eventFocusChanged.subscribe(this, &HierarchyLine::notifyLineFocusChanged);
+        m_textButton->eventClick.subscribe(this, &HierarchyLineOBSOLETE::notifyLineClick);
+        m_textButton->eventCursorPressIn.subscribe(this, &HierarchyLineOBSOLETE::notifyLineCursorPressIn);
+        m_textButton->eventDoubleClick.subscribe(this, &HierarchyLineOBSOLETE::notifyLineDoubleClick);
+        m_textButton->eventFocusChanged.subscribe(this, &HierarchyLineOBSOLETE::notifyLineFocusChanged);
 
         SizePolicy2DPtr mainLayoutSizePolicy = m_textButton->getEntityRaw()->ensureComponent<SizePolicy2D>();
         mainLayoutSizePolicy->setFlag(SizePolicy2D::Flags::Height, false);
@@ -232,7 +232,7 @@ namespace Maze
         m_contextMenu->setCallbackFunction(
             [this](MenuListTree2DPtr const& _menuListTree)
             {
-                if (m_type == HierarchyLineType::Entity)
+                if (m_type == HierarchyLineOBSOLETEType::Entity)
                 {
                     if (!m_world)
                         return;
@@ -313,10 +313,10 @@ namespace Maze
                         }
                     }
                 
-                    EditorToolsManager::GetInstancePtr()->eventHierarchyLineEntityContextMenu(_menuListTree, entity.get());
+                    EditorToolsManager::GetInstancePtr()->eventHierarchyLineOBSOLETEEntityContextMenu(_menuListTree, entity.get());
                 }
                 else
-                if (m_type == HierarchyLineType::Scene)
+                if (m_type == HierarchyLineOBSOLETEType::Scene)
                 {
                     EcsScene* ecsScene = static_cast<EcsScene*>(getUserData());
 
@@ -336,7 +336,7 @@ namespace Maze
                             newEntity->ensureComponent<Transform2D>();
                         });
 
-                    EditorToolsManager::GetInstancePtr()->eventHierarchyLineSceneContextMenu(_menuListTree, ecsScene);
+                    EditorToolsManager::GetInstancePtr()->eventHierarchyLineOBSOLETESceneContextMenu(_menuListTree, ecsScene);
                 }
             });
 
@@ -344,7 +344,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void HierarchyLine::notifyDropDownClick(Button2D* _button, CursorInputEvent const& _inputEvent)
+    void HierarchyLineOBSOLETE::notifyDropDownClick(Button2D* _button, CursorInputEvent const& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
@@ -353,7 +353,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void HierarchyLine::notifyLineClick(Button2D* _button, CursorInputEvent const& _inputEvent)
+    void HierarchyLineOBSOLETE::notifyLineClick(Button2D* _button, CursorInputEvent const& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
@@ -362,7 +362,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void HierarchyLine::notifyLineCursorPressIn(Button2D* _button, Vec2F const& _pos, CursorInputEvent const& _inputEvent)
+    void HierarchyLineOBSOLETE::notifyLineCursorPressIn(Button2D* _button, Vec2F const& _pos, CursorInputEvent const& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
@@ -371,7 +371,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void HierarchyLine::notifyLineDoubleClick(Button2D* _button, CursorInputEvent const& _inputEvent)
+    void HierarchyLineOBSOLETE::notifyLineDoubleClick(Button2D* _button, CursorInputEvent const& _inputEvent)
     {
         if (_inputEvent.button != 0)
             return;
@@ -380,13 +380,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void HierarchyLine::notifyLineFocusChanged(Button2D* _button, bool _value)
+    void HierarchyLineOBSOLETE::notifyLineFocusChanged(Button2D* _button, bool _value)
     {
         updateState();
     }
 
     //////////////////////////////////////////
-    void HierarchyLine::setDropDownState(HierarchyLineDropDownState _value)
+    void HierarchyLineOBSOLETE::setDropDownState(HierarchyLineOBSOLETEDropDownState _value)
     {
         if (!m_dropDownRenderer)
             return;
@@ -396,26 +396,26 @@ namespace Maze
 
         m_dropDownState = _value;    
 
-        if (m_dropDownState == HierarchyLineDropDownState::None)
+        if (m_dropDownState == HierarchyLineOBSOLETEDropDownState::None)
             m_dropDownRenderer->getEntityRaw()->setActiveSelf(false);
         else
             m_dropDownRenderer->getEntityRaw()->setActiveSelf(true);
 
-        if (m_dropDownState == HierarchyLineDropDownState::Collapsed)
+        if (m_dropDownState == HierarchyLineOBSOLETEDropDownState::Collapsed)
             m_dropDownRenderer->setSprite(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::DropDownButtonCollapsed));
         else
-        if (m_dropDownState == HierarchyLineDropDownState::Expanded)
+        if (m_dropDownState == HierarchyLineOBSOLETEDropDownState::Expanded)
             m_dropDownRenderer->setSprite(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::DropDownButtonExpanded));
     }
 
     //////////////////////////////////////////
-    void HierarchyLine::setLabel(String const& _label)
+    void HierarchyLineOBSOLETE::setLabel(String const& _label)
     {
         m_textRenderer->setText(_label);
     }
 
     //////////////////////////////////////////
-    void HierarchyLine::setColor(ColorU32 const& _color)
+    void HierarchyLineOBSOLETE::setColor(ColorU32 const& _color)
     {
         m_textRenderer->setColor(_color);
 
@@ -424,7 +424,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void HierarchyLine::setUserData(void* _userData)
+    void HierarchyLineOBSOLETE::setUserData(void* _userData)
     {
         if (m_userData == _userData)
             return;
@@ -437,9 +437,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void HierarchyLine::updateIcon()
+    void HierarchyLineOBSOLETE::updateIcon()
     {
-        if (m_type == HierarchyLineType::Entity)
+        if (m_type == HierarchyLineOBSOLETEType::Entity)
         {
             if (!m_world)
                 return;
@@ -466,7 +466,7 @@ namespace Maze
             m_iconRenderer->setSprite(sprite);
         }
         else
-        if (m_type == HierarchyLineType::Scene)
+        if (m_type == HierarchyLineOBSOLETEType::Scene)
         {
             EcsScene* ecsScene = static_cast<EcsScene*>(getUserData());
 
@@ -479,7 +479,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void HierarchyLine::setSelected(bool _value)
+    void HierarchyLineOBSOLETE::setSelected(bool _value)
     {
         if (m_selected == _value)
             return;
@@ -490,7 +490,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void HierarchyLine::setActive(bool _value)
+    void HierarchyLineOBSOLETE::setActive(bool _value)
     {
         if (m_active == _value)
             return;
@@ -501,7 +501,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void HierarchyLine::updateState()
+    void HierarchyLineOBSOLETE::updateState()
     {
         if (!m_textRenderer)
             return;
