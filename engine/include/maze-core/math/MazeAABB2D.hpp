@@ -73,13 +73,13 @@ namespace Maze
         
         
         //////////////////////////////////////////
-        inline AABB2D(Vec2F const& _point0, Vec2F const& _point1)
+        inline explicit AABB2D(Vec2F const& _point0, Vec2F const& _point1)
         {
             set(_point0, _point1);
         }
 
         //////////////////////////////////////////
-        inline AABB2D(Vec2F const& _point)
+        inline explicit AABB2D(Vec2F const& _point)
         {
             set(_point, _point);
         }
