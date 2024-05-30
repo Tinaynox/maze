@@ -31,7 +31,7 @@
 #include "maze-core/managers/MazeSystemManager.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/managers/MazeEventManager.hpp"
-#include "maze-core/events/MazeSystemEvents.hpp"
+#include "maze-core/events/MazeCoreEvents.hpp"
 #include "maze-gamepad/gamepad/MazeGamepad.hpp"
 #include "maze-gamepad/providers/MazeGamepadProvider.hpp"
 

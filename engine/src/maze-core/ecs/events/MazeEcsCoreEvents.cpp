@@ -25,18 +25,24 @@
 
 //////////////////////////////////////////
 #include "MazeCoreHeader.hpp"
-#include "maze-core/events/MazeSystemEvents.hpp"
+#include "maze-core/ecs/events/MazeEcsCoreEvents.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    // Class SystemDevicesChangedEvent
-    //
-    //////////////////////////////////////////
-    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(SystemDevicesChangedEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PreUpdateEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(UpdateEvent, Event);    
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(PostUpdateEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EntityAddedEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EntityRemovedEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EntityAddedToSampleEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EntityRemovedFromSampleEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EntityActiveChangedEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EcsEntityActiveChangedEvent, Event);
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EcsSceneStateChangedEvent, Event);
 
-
+    
 } // namespace Maze
 //////////////////////////////////////////

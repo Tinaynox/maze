@@ -149,6 +149,10 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        EcsScenePtr const& getScene(EcsSceneId _sceneId);
+
+
+        //////////////////////////////////////////
         template <class TScene>
         SharedPtr<TScene> getScene()
         {

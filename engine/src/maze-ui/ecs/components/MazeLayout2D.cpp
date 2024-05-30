@@ -92,7 +92,6 @@ namespace Maze
     void Layout2D::processEntityAwakened()
     {
         m_transform = getEntityRaw()->ensureComponent<Transform2D>();
-
     }
 
     //////////////////////////////////////////

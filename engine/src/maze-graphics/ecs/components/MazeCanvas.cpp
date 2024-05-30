@@ -205,22 +205,25 @@ namespace Maze
                 Vec2F lbRenderTargetSpace = canvas->convertViewportCoordsToRenderTargetCoords(lbCanvasSpace);
                 Vec2F rtRenderTargetSpace = canvas->convertViewportCoordsToRenderTargetCoords(rtCanvasSpace);
 
-                F32 renderTargetWidth = (F32)canvas->getRenderTarget()->getRenderTargetWidth();
-                F32 renderTargetHeight = (F32)canvas->getRenderTarget()->getRenderTargetHeight();
-
-                if (renderTargetWidth > 0.0f && renderTargetHeight > 0.0f)
+                if (canvas->getRenderTarget())
                 {
-                    Rect2DF listVieport(
-                        lbRenderTargetSpace.x / renderTargetWidth,
-                        lbRenderTargetSpace.y / renderTargetHeight,
-                        (rtRenderTargetSpace.x - lbRenderTargetSpace.x) / renderTargetWidth,
-                        (rtRenderTargetSpace.y - lbRenderTargetSpace.y) / renderTargetHeight);
+                    F32 renderTargetWidth = (F32)canvas->getRenderTarget()->getRenderTargetWidth();
+                    F32 renderTargetHeight = (F32)canvas->getRenderTarget()->getRenderTargetHeight();
 
-                    setViewport(listVieport);
+                    if (renderTargetWidth > 0.0f && renderTargetHeight > 0.0f)
+                    {
+                        Rect2DF listVieport(
+                            lbRenderTargetSpace.x / renderTargetWidth,
+                            lbRenderTargetSpace.y / renderTargetHeight,
+                            (rtRenderTargetSpace.x - lbRenderTargetSpace.x) / renderTargetWidth,
+                            (rtRenderTargetSpace.y - lbRenderTargetSpace.y) / renderTargetHeight);
+
+                        setViewport(listVieport);
+                    }
+
+                    if (canvas != this)
+                        setRenderTarget(canvas->getRenderTarget());
                 }
-
-                if (canvas != this)
-                    setRenderTarget(canvas->getRenderTarget());
                 
 
                 break;

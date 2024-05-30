@@ -445,6 +445,11 @@ namespace Maze
 
                         break;
                     }
+                    case KeyCode::Number0:
+                    {
+                        LoadFirstExampleScene(m_sceneManager.get());
+                        break;
+                    }
                     default:
                     {
                         break;

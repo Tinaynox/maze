@@ -32,7 +32,9 @@
 //////////////////////////////////////////
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
+#include "maze-editor-tools/ecs/components/MazeHierarchyLine.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
 
@@ -48,37 +50,9 @@ namespace Maze
     MAZE_USING_SHARED_PTR(Bounds2D);
     MAZE_USING_SHARED_PTR(Canvas);
     MAZE_USING_SHARED_PTR(SpriteRenderer2D);
-    MAZE_USING_SHARED_PTR(HierarchyLinePoolOBSOLETE);
-    MAZE_USING_SHARED_PTR(HierarchyLineOBSOLETE);
+    MAZE_USING_SHARED_PTR(HierarchyLinePool);
+    MAZE_USING_SHARED_PTR(HierarchyLine);
     MAZE_USING_SHARED_PTR(EcsScene);
-
-
-    //////////////////////////////////////////
-    struct HierarchyLineOBSOLETEEntityData
-    {
-        //////////////////////////////////////////
-        HierarchyLineOBSOLETEEntityData()
-            : expanded(false)
-        {
-        }
-
-        HierarchyLineOBSOLETEPtr line;
-        bool expanded;
-    };
-
-
-    //////////////////////////////////////////
-    struct HierarchyLineOBSOLETESceneData
-    {
-        //////////////////////////////////////////
-        HierarchyLineOBSOLETESceneData()
-            : expanded(false)
-        {
-        }
-
-        HierarchyLineOBSOLETEPtr line;
-        bool expanded;
-    };
 
 
     //////////////////////////////////////////
@@ -126,6 +100,12 @@ namespace Maze
         //////////////////////////////////////////
         void setEcsWorld(EcsWorld* _world);
 
+
+        //////////////////////////////////////////
+        void processEcsSceneStateChanged(
+            EcsSceneId _sceneId,
+            EcsSceneState _state);
+
     protected:
 
         //////////////////////////////////////////
@@ -141,22 +121,96 @@ namespace Maze
         virtual void processEntityAwakened() MAZE_OVERRIDE;
         
 
+        //////////////////////////////////////////
+        HierarchyLinePtr addEcsScene(EcsScenePtr const& _scene);
+
+        //////////////////////////////////////////
+        void removeEcsScene(EcsSceneId _sceneId);
+
+
+
+        //////////////////////////////////////////
+        HierarchyLinePtr addEntity(EntityPtr const& _entity);
+
+        //////////////////////////////////////////
+        void removeEntity(EntityId _entityId);
+
+        //////////////////////////////////////////
+        void updateEntity(EntityPtr const& _entity);
+
+        //////////////////////////////////////////
+        void updateEntity(HierarchyLinePtr const& hierarchyLine, EntityPtr const& _entity);
+
+        //////////////////////////////////////////
+        void updateEntityName(EntityPtr const& _entity);
+
+
+
+        //////////////////////////////////////////
+        HierarchyLinePtr createHierarchyLine(HierarchyLineType _type);
+
+        //////////////////////////////////////////
+        void subscribeHierarchyLine(HierarchyLine* _line);
+
+        //////////////////////////////////////////
+        void unsubscribeHierarchyLine(HierarchyLine* _line);
+
+        //////////////////////////////////////////
+        void removeHierarchyLine(HierarchyLine* _line);
+
+
+        //////////////////////////////////////////
+        void notifyHierarchyLineDoubleClick(HierarchyLine* _hierarchyLine);
+
+        //////////////////////////////////////////
+        void notifyHierarchyLineClick(HierarchyLine* _hierarchyLine);
+
+        //////////////////////////////////////////
+        void notifyHierarchyLineCursorPressIn(HierarchyLine* _hierarchyLine);
+
+        //////////////////////////////////////////
+        void notifyEventManagerEvent(
+            ClassUID _classUID,
+            Event* _event);
+
+        //////////////////////////////////////////
+        void notifySelectionChanged();
+
+
+        //////////////////////////////////////////
+        void notifyEntityAdded(EntityPtr const& _entity);
+
+        //////////////////////////////////////////
+        void notifyEntityRemoved(EntityPtr const& _entity);
+
+        //////////////////////////////////////////
+        void notifyEntityChanged(EntityPtr const& _entity);
+
+        //////////////////////////////////////////
+        void notifyHierarchyLineRelease(HierarchyLine* _hierarchyLine);
+
     protected:
         Canvas* m_canvas = nullptr;
 
         Transform2DPtr m_transform;
 
         SpriteRenderer2DPtr m_bodyBackground;
-        Transform2DPtr m_layoutTransform;
 
-        HierarchyLinePoolOBSOLETEPtr m_hierarchyLinePool;
+        HierarchyLinePoolPtr m_hierarchyLinePool;
 
         Transform2DPtr m_titleTransform;
         SpriteRenderer2DPtr m_titleBackground;
 
+        Transform2DPtr m_hierarchyMainLayoutEntity;
+
         EcsWorld* m_world = nullptr;
 
         Set<ClassUID> m_ignoreScenes;
+
+
+
+        UnorderedMap<EcsSceneId, HierarchyLinePtr> m_sceneLines;
+        UnorderedMap<EntityId, HierarchyLinePtr> m_entityLines;
     };
 
 

@@ -75,6 +75,7 @@
 #include "maze-render-system-opengl-core/MazeRenderQueueOpenGL.hpp"
 #include "maze-render-system-opengl-core/MazeRenderWindowOpenGL.hpp"
 #include "maze-editor-tools/ecs/components/MazeHierarchyControllerOBSOLETE.hpp"
+#include "maze-editor-tools/ecs/components/MazeHierarchyController.hpp"
 #include "maze-editor-tools/ecs/components/MazeInspectorController.hpp"
 #include "maze-editor-tools/ecs/components/MazeAssetsController.hpp"
 #include "maze-editor-tools/ecs/components/MazeTopBarController.hpp"
@@ -313,6 +314,7 @@ namespace Maze
             GizmosManager::GetInstancePtr()->setCanvas(m_mainCanvas);
         }
 
+        /*
         {
             EntityPtr hierarchyCanvasEntity = createEntity();
             m_hierarchyCanvas = hierarchyCanvasEntity->createComponent<Canvas>();
@@ -325,6 +327,29 @@ namespace Maze
 
             EntityPtr hierarchyControllerEntity = createEntity();
             HierarchyControllerOBSOLETEPtr hierarchyController = HierarchyControllerOBSOLETE::Create(m_hierarchyCanvas.get());
+            hierarchyControllerEntity->addComponent(hierarchyController);
+
+            hierarchyController->addIgnoreScene(SceneColorPicker::GetMetaClass()->getClassUID());
+            hierarchyController->addIgnoreScene(SceneColorGradientPicker::GetMetaClass()->getClassUID());
+            hierarchyController->addIgnoreScene(SceneCurveEditor::GetMetaClass()->getClassUID());
+            hierarchyController->addIgnoreScene(SceneMaterialPicker::GetMetaClass()->getClassUID());
+            hierarchyController->addIgnoreScene(SceneTexturePicker::GetMetaClass()->getClassUID());
+            hierarchyController->addIgnoreScene(SceneRenderMeshPicker::GetMetaClass()->getClassUID());
+        }
+        */
+
+        {
+            EntityPtr hierarchyCanvasEntity = createEntity();
+            m_hierarchyCanvas = hierarchyCanvasEntity->createComponent<Canvas>();
+            m_hierarchyCanvas->setClearColorFlag(false);
+            m_hierarchyCanvas->setClearColor(ColorU32::c_zero);
+            Rect2DF hierarchyCanvasViewport = m_hierarchyViewport;
+            m_hierarchyCanvas->setViewport(hierarchyCanvasViewport);
+            m_hierarchyCanvas->setRenderTarget(m_renderTarget);
+            m_hierarchyCanvas->setSortOrder(-1000000);
+
+            EntityPtr hierarchyControllerEntity = createEntity();
+            HierarchyControllerPtr hierarchyController = HierarchyController::Create(m_hierarchyCanvas.get());
             hierarchyControllerEntity->addComponent(hierarchyController);
 
             hierarchyController->addIgnoreScene(SceneColorPicker::GetMetaClass()->getClassUID());

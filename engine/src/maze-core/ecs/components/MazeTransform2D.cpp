@@ -608,6 +608,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(Transform2DAppear,
+        {},
+        {},
+        EntityAddedToSampleEvent const& _event,
+        Entity* _entity,
+        Transform2D* _transform2D)
+    {
+        if (_transform2D->getParent() &&
+            _transform2D->getParent()->getEntityRaw() &&
+            !_transform2D->getParent()->getEntityRaw()->getActiveInHierarchy())
+            _transform2D->getEntityRaw()->setDisabledByHierarchy(true);
+    }
+
+    //////////////////////////////////////////
     COMPONENT_SYSTEM_EVENT_HANDLER(Transform2DActiveChangedEvent,
         {},
         {},

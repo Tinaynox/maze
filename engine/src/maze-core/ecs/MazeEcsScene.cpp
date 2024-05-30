@@ -95,6 +95,9 @@ namespace Maze
                 break;
         }
 
+        m_world->broadcastEventImmediate<EcsSceneStateChangedEvent>(m_id, m_state);
+        EventManager::GetInstancePtr()->broadcastEvent<EcsSceneStateChangedEvent>(m_id, m_state);
+
         processSceneStateChanged(m_state);
     }
 

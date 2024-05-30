@@ -50,6 +50,7 @@
 #include "maze-graphics/ecs/helpers/MazeSystemUIHelper.hpp"
 #include "maze-graphics/managers/MazeSpriteManager.hpp"
 #include "maze-editor-tools/layout/MazeEditorToolsStyles.hpp"
+#include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
 #include "maze-editor-tools/managers/MazeAssetEditorToolsManager.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"

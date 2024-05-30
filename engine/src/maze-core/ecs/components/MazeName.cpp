@@ -28,6 +28,7 @@
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 
 
 //////////////////////////////////////////
@@ -67,6 +68,39 @@ namespace Maze
         setName(_name);
 
         return true;
+    }
+
+    //////////////////////////////////////////
+    void Name::setName(String const& _name)
+    {
+        if (m_name == _name)
+            return;
+
+        m_name = _name;
+
+        if (getEntityRaw() && getEntityRaw()->getEcsWorld())
+            getEntityRaw()->getEcsWorld()->sendEventImmediate<NameChangedEvent>(getEntityId());
+    }
+
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(NameChangedEvent, Event);
+
+    //////////////////////////////////////////
+    MAZE_IMPLEMENT_METACLASS_WITH_PARENT(EntityNameChangedEvent, Event);
+
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(NameChanged,
+        {},
+        {},
+        NameChangedEvent const& _event,
+        Entity* _entity,
+        Name* _name)
+    {
+        EventManager::GetInstancePtr()->broadcastEvent<EntityNameChangedEvent>(
+            _entity->getEcsWorld(),
+            _entity->getId());
     }
 
     

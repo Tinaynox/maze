@@ -511,6 +511,9 @@ namespace Maze
 
                 if (value)
                     sendEventImmediate<EntityActiveChangedEvent>(entity->getId(), value);
+
+                EventManager::GetInstancePtr()->broadcastEvent<EcsEntityActiveChangedEvent>(
+                    this, entityId, value);
             }
         }
 

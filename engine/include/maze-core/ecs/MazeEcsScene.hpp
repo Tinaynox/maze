@@ -55,10 +55,9 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_4_API(MAZE_CORE_API, EcsSceneState,
+    MAZE_DECLARE_ENUMCLASS_3_API(MAZE_CORE_API, EcsSceneState,
         Created,
         Active,
-        Paused,
         Destroy);
 
 

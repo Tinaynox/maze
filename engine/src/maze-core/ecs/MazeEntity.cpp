@@ -289,10 +289,7 @@ namespace Maze
 
             m_world->processEntityComponentsChanged(getId());
         }
-
-
-        processComponentAdded(componentRef);
-        
+                
 
         if (m_transitionFlags & static_cast<U8>(TransitionFlags::Awakened))
         {
@@ -312,8 +309,6 @@ namespace Maze
         if (it == m_components.end())
             return false;
         
-        processComponentWillBeRemoved(it->second);
-
         it->second->setEntity(nullptr);
         m_componentUIDs.erase(it->second->getClassUID());
         m_components.erase(it);
@@ -338,6 +333,7 @@ namespace Maze
 
         m_transitionFlags |= static_cast<U8>(TransitionFlags::Awakened);
 
+
         // #TODO: Remove
         for (auto const& componentData : m_components)
             componentData.second->processEntityAwakened();
@@ -353,11 +349,7 @@ namespace Maze
 
         if (_world)
         {
-            processAdded();
-        }
-        else
-        {
-            processRemoved();
+            tryAwake();
         }
     }
 
@@ -451,35 +443,7 @@ namespace Maze
                 break;
         }
     }
-
-    //////////////////////////////////////////
-    void Entity::processAdded()
-    {
-        //for (auto const& componentData : m_components)
-        //    componentData.second->processEntityAdded();
-
-        tryAwake();
-    }
-
-    //////////////////////////////////////////
-    void Entity::processRemoved()
-    {
-        //for (auto const& componentData : m_components)
-        //    componentData.second->processEntityRemoved();
-    }
     
-    //////////////////////////////////////////
-    void Entity::processComponentAdded(ComponentPtr const& _component)
-    {
-        
-    }
-
-    //////////////////////////////////////////
-    void Entity::processComponentWillBeRemoved(ComponentPtr const& _component)
-    {
-        
-    }
-
     
 } // namespace Maze
 //////////////////////////////////////////

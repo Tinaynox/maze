@@ -36,7 +36,7 @@
 #include "maze-core/math/MazeVec2.hpp"
 #include "maze-core/system/win/MazeSystemCursorWin.hpp"
 #include "maze-core/system/MazeDisplay.hpp"
-#include "maze-core/events/MazeSystemEvents.hpp"
+#include "maze-core/events/MazeCoreEvents.hpp"
 #include <utf8/utf8.h>
 #include <dwmapi.h>
 #include <WinUser.h>

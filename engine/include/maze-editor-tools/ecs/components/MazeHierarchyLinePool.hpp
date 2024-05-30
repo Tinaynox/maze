@@ -25,117 +25,82 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeName_hpp_))
-#define _MazeName_hpp_
+#if (!defined(_MazeHierarchyLinePool_hpp_))
+#define _MazeHierarchyLinePool_hpp_
 
 
 //////////////////////////////////////////
-#include "maze-core/MazeCoreHeader.hpp"
+#include "maze-editor-tools/MazeEditorToolsHeader.hpp"
+#include "maze-editor-tools/MazeEditorToolsHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-core/math/MazeMat4.hpp"
-#include "maze-core/math/MazeRotation2D.hpp"
+#include "maze-core/utils/MazeComponentPool.hpp"
+#include "maze-core/utils/MazeSharedObjectPool.hpp"
+#include "maze-graphics/MazeRenderSystem.hpp"
+#include "maze-ui/MazeCursorInputEvent.hpp"
+#include "maze-editor-tools/ecs/components/MazeHierarchyLine.hpp"
 
 
 //////////////////////////////////////////
 namespace Maze
 {
     //////////////////////////////////////////
-    MAZE_USING_SHARED_PTR(Name);
+    MAZE_USING_SHARED_PTR(RenderMesh);
+    MAZE_USING_SHARED_PTR(Transform2D);
+    MAZE_USING_SHARED_PTR(Transform3D);
+    MAZE_USING_SHARED_PTR(HierarchyLinePool);
+    MAZE_USING_SHARED_PTR(Bounds2D);
+    MAZE_USING_SHARED_PTR(Canvas);
+    MAZE_USING_SHARED_PTR(SpriteRenderer2D);
+    MAZE_USING_SHARED_PTR(HierarchyLine);
 
 
     //////////////////////////////////////////
-    // Class Name
+    template class MAZE_EDITOR_TOOLS_API ComponentPoolObject<HierarchyLine>;
+
+
+    //////////////////////////////////////////
+    // Class HierarchyLinePool
     //
     //////////////////////////////////////////
-    class MAZE_CORE_API Name
+    class MAZE_EDITOR_TOOLS_API HierarchyLinePool
         : public Component
     {
     public:
 
         //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(Name, Component);
+        MAZE_DECLARE_METACLASS_WITH_PARENT(HierarchyLinePool, Component);
 
         //////////////////////////////////////////
-        MAZE_DECLARE_MEMORY_ALLOCATION(Name);
-
-        //////////////////////////////////////////
-        friend class Entity;
+        MAZE_DECLARE_MEMORY_ALLOCATION(HierarchyLinePool);
 
     public:
 
         //////////////////////////////////////////
-        virtual ~Name();
+        virtual ~HierarchyLinePool();
 
         //////////////////////////////////////////
-        static NamePtr Create(String const& _name = String());
+        static HierarchyLinePoolPtr Create();
 
 
         //////////////////////////////////////////
-        inline String const& getName() const { return m_name; }
+        HierarchyLinePtr createHierarchyLine(HierarchyLineType _type);
 
         //////////////////////////////////////////
-        void setName(String const& _name);
+        void releaseHierarchyLine(HierarchyLinePtr const& _hierarchyLine);
 
     protected:
 
         //////////////////////////////////////////
-        Name();
+        HierarchyLinePool();
 
         //////////////////////////////////////////
         using Component::init;
         
         //////////////////////////////////////////
-        bool init(String const& _name);
+        bool init();
 
     protected:
-        String m_name;
-    };
-
-
-    //////////////////////////////////////////
-    // Class NameChangedEvent
-    //
-    //////////////////////////////////////////
-    class MAZE_CORE_API NameChangedEvent
-        : public GenericEvent<NameChangedEvent>
-    {
-    public:
-        //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(NameChangedEvent, Event);
-    };
-
-
-    //////////////////////////////////////////
-    // Class EcsEntityNameChangedEvent
-    //
-    //////////////////////////////////////////
-    class MAZE_CORE_API EntityNameChangedEvent
-        : public GenericEvent<EntityNameChangedEvent>
-    {
-    public:
-        //////////////////////////////////////////
-        MAZE_DECLARE_METACLASS_WITH_PARENT(EntityNameChangedEvent, Event);
-
-    public:
-
-        //////////////////////////////////////////
-        inline EntityNameChangedEvent(
-            EcsWorld* _world = nullptr,
-            EntityId _entityId = c_invalidEntityId)
-            : m_world(_world)
-            , m_entityId(_entityId)
-        {}
-
-        //////////////////////////////////////////
-        inline EcsWorld* getWorld() const { return m_world; }
-
-        //////////////////////////////////////////
-        inline EntityId getEntityId() const { return m_entityId; }
-
-
-    private:
-        EcsWorld* m_world = nullptr;
-        EntityId m_entityId;
+        SharedPtr<SharedObjectPool<HierarchyLine>> m_pools[(Size)HierarchyLineType::MAX];
     };
 
 
@@ -143,5 +108,5 @@ namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeName_hpp_
+#endif // _MazeHierarchyLinePool_hpp_
 //////////////////////////////////////////

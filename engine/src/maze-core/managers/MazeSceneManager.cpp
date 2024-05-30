@@ -92,6 +92,17 @@ namespace Maze
     {
         m_mainScene = _value;
     }
+
+    //////////////////////////////////////////
+    EcsScenePtr const& SceneManager::getScene(EcsSceneId _sceneId)
+    {
+        static EcsScenePtr const nullPointer;
+
+        if (_sceneId.getIndex() < (S32)m_scenes.size())
+            return m_scenes[_sceneId.getIndex()].scene;
+
+        return nullPointer;
+    }
     
     //////////////////////////////////////////
     void SceneManager::update(F32 _dt)

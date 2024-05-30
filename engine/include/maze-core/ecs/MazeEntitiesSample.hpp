@@ -36,7 +36,7 @@
 #include "maze-core/ecs/MazeEntitiesSample.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/MazeEcsTypes.hpp"
-#include "maze-core/ecs/events/MazeEcsEvents.hpp"
+#include "maze-core/ecs/events/MazeEcsCoreEvents.hpp"
 #include "maze-core/utils/MazeSharedObject.hpp"
 #include "maze-core/reflection/MazeMetaClass.hpp"
 #include "maze-core/memory/MazeMemory.hpp"

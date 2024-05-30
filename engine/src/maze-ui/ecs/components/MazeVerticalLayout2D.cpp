@@ -31,6 +31,7 @@
 #include "maze-core/managers/MazeAssetManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
 #include "maze-graphics/MazeVertexArrayObject.hpp"
@@ -229,6 +230,18 @@ namespace Maze
             });
 
         m_dirty = false;
+    }
+
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(VerticalLayout2DActiveChanged,
+        {},
+        {},
+        EntityActiveChangedEvent const& _event,
+        Entity* _entity,
+        VerticalLayout2D* _verticalLayout2D)
+    {
+        _verticalLayout2D->dirty();
     }
     
     

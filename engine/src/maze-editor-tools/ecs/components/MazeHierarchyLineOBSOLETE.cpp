@@ -313,7 +313,7 @@ namespace Maze
                         }
                     }
                 
-                    EditorToolsManager::GetInstancePtr()->eventHierarchyLineOBSOLETEEntityContextMenu(_menuListTree, entity.get());
+                    EditorToolsManager::GetInstancePtr()->eventHierarchyLineEntityContextMenu(_menuListTree, entity.get());
                 }
                 else
                 if (m_type == HierarchyLineOBSOLETEType::Scene)
@@ -336,7 +336,7 @@ namespace Maze
                             newEntity->ensureComponent<Transform2D>();
                         });
 
-                    EditorToolsManager::GetInstancePtr()->eventHierarchyLineOBSOLETESceneContextMenu(_menuListTree, ecsScene);
+                    EditorToolsManager::GetInstancePtr()->eventHierarchyLineSceneContextMenu(_menuListTree, ecsScene);
                 }
             });
 

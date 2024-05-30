@@ -1439,9 +1439,13 @@ namespace Maze
                     if (scrollRect)
                     {
                         F32 value = scrollRect->getNormalizedPosition(1);
-                        scrollRect->setNormalizedPosition(
-                            Math::Clamp(value - 0.001f * _event.deltaWheel, 0.0f, 1.0f),
-                            1);
+                        F32 height = scrollRect->getContentTransform()->getHeight();
+                        if (height > 0.0f)
+                        {
+                            scrollRect->setNormalizedPosition(
+                                Math::Clamp(value - _event.deltaWheel / height, 0.0f, 1.0f),
+                                1);
+                        }
                     }
                 });
 

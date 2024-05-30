@@ -392,19 +392,6 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual void processAdded();
-
-        //////////////////////////////////////////
-        virtual void processRemoved();
-
-        //////////////////////////////////////////
-        void processComponentAdded(ComponentPtr const& _component);
-
-        //////////////////////////////////////////
-        void processComponentWillBeRemoved(ComponentPtr const& _component);
-
-
-        //////////////////////////////////////////
         inline void setActiveInHierarchyPrevFrame(bool _active) { setFlag(Flags::ActiveInHierarchyPrevFrame, _active); }
 
         //////////////////////////////////////////

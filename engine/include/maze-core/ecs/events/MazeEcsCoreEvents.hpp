@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////
 #pragma once
-#if (!defined(_MazeEcsEvents_hpp_))
-#define _MazeEcsEvents_hpp_
+#if (!defined(_MazeEcsCoreEvents_hpp_))
+#define _MazeEcsCoreEvents_hpp_
 
 
 //////////////////////////////////////////
@@ -34,6 +34,7 @@
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/math/MazeRotation2D.hpp"
+#include "maze-core/ecs/MazeEcsScene.hpp"
 
 
 //////////////////////////////////////////
@@ -216,9 +217,80 @@ namespace Maze
     };
 
 
+    //////////////////////////////////////////
+    // Class EcsEntityActiveChangedEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API EcsEntityActiveChangedEvent
+        : public GenericEvent<EcsEntityActiveChangedEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EcsEntityActiveChangedEvent, Event);
+
+    public:
+
+        //////////////////////////////////////////
+        inline EcsEntityActiveChangedEvent(
+            EcsWorld* _world = nullptr,
+            EntityId _entityId = c_invalidEntityId,
+            bool _value = false)
+            : m_world(_world)
+            , m_entityId(_entityId)
+            , m_activeInHierarchy(_value)
+        {}
+
+        //////////////////////////////////////////
+        inline EcsWorld* getWorld() const { return m_world; }
+
+        //////////////////////////////////////////
+        inline EntityId getEntityId() const { return m_entityId; }
+
+        //////////////////////////////////////////
+        inline bool getActiveInHierarchy() const { return m_activeInHierarchy; }
+
+    private:
+        EcsWorld* m_world = nullptr;
+        EntityId m_entityId = c_invalidEntityId;
+        bool m_activeInHierarchy = false;
+    };
+
+
+    //////////////////////////////////////////
+    // Class EcsSceneStateChangedEvent
+    //
+    //////////////////////////////////////////
+    class MAZE_CORE_API EcsSceneStateChangedEvent
+        : public GenericEvent<EcsSceneStateChangedEvent>
+    {
+    public:
+        //////////////////////////////////////////
+        MAZE_DECLARE_METACLASS_WITH_PARENT(EcsSceneStateChangedEvent, Event);
+
+    public:
+
+        //////////////////////////////////////////
+        inline EcsSceneStateChangedEvent(
+            EcsSceneId _sceneId = EcsSceneId(),
+            EcsSceneState _state = EcsSceneState())
+            : m_sceneId(_sceneId)
+            , m_state(_state)
+        {}
+
+        //////////////////////////////////////////
+        inline EcsSceneId getSceneId() const { return m_sceneId; }
+
+        //////////////////////////////////////////
+        inline EcsSceneState getState() const { return m_state; }
+
+    private:
+        EcsSceneId m_sceneId;
+        EcsSceneState m_state = EcsSceneState::None;
+    };
+
 } // namespace Maze
 //////////////////////////////////////////
 
 
-#endif // _MazeEcsEvents_hpp_
+#endif // _MazeEcsCoreEvents_hpp_
 //////////////////////////////////////////

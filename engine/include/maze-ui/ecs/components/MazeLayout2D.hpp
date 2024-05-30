@@ -85,6 +85,10 @@ namespace Maze
 
 
         //////////////////////////////////////////
+        inline void dirty() { m_dirty = true; }
+
+
+        //////////////////////////////////////////
         inline F32 getPaddingLeft() const { return m_paddingLeft; }
 
         //////////////////////////////////////////
@@ -95,7 +99,7 @@ namespace Maze
 
             m_paddingLeft = _paddingLeft;
 
-            m_dirty = true;
+            dirty();
         }
 
         //////////////////////////////////////////
@@ -109,7 +113,7 @@ namespace Maze
 
             m_paddingRight = _paddingRight;
 
-            m_dirty = true;
+            dirty();
         }
 
         //////////////////////////////////////////
@@ -123,7 +127,7 @@ namespace Maze
 
             m_paddingTop = _paddingTop;
 
-            m_dirty = true;
+            dirty();
         }
 
         //////////////////////////////////////////
@@ -137,7 +141,7 @@ namespace Maze
 
             m_paddingBottom = _paddingBottom;
 
-            m_dirty = true;
+            dirty();
         }
 
         //////////////////////////////////////////
@@ -165,7 +169,7 @@ namespace Maze
 
             m_horizontalAlignment = _value;
 
-            m_dirty = true;
+            dirty();
         }
 
         //////////////////////////////////////////
@@ -179,7 +183,7 @@ namespace Maze
 
             m_verticalAlignment = _value;
 
-            m_dirty = true;
+            dirty();
         }
 
 
@@ -194,7 +198,7 @@ namespace Maze
 
             m_reverseOrder = _value;
 
-            m_dirty = true;
+            dirty();
         }
 
 
@@ -209,7 +213,7 @@ namespace Maze
 
             m_autoWidth = _value;
 
-            m_dirty = true;
+            dirty();
         }
 
         //////////////////////////////////////////
@@ -223,7 +227,7 @@ namespace Maze
 
             m_autoHeight = _value;
 
-            m_dirty = true;
+            dirty();
         }
 
     protected:
