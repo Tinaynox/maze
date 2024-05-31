@@ -111,24 +111,7 @@ namespace Maze
     {
         UpdateManager::GetInstancePtr()->addUpdatable(this);
 
-        setEcsWorld(EntityManager::GetInstancePtr()->getDefaultWorldRaw());
-
         m_canvas = _canvas;
-
-        EventManager::GetInstancePtr()->subscribeEvent<EcsSceneStateChangedEvent>(
-            this,
-            &HierarchyController::notifyEventManagerEvent);
-
-        EventManager::GetInstancePtr()->subscribeEvent<EntityNameChangedEvent>(
-            this,
-            &HierarchyController::notifyEventManagerEvent);
-        EventManager::GetInstancePtr()->subscribeEvent<EcsEntityActiveChangedEvent>(
-            this,
-            &HierarchyController::notifyEventManagerEvent);
-
-        SelectionManager::GetInstancePtr()->eventSelectionChanged.subscribe(
-            this,
-            &HierarchyController::notifySelectionChanged);
 
         return true;
     }
@@ -145,6 +128,7 @@ namespace Maze
         m_transform = getEntityRaw()->ensureComponent<Transform2D>();
 
         m_hierarchyLinePool = getEntityRaw()->ensureComponent<HierarchyLinePool>();
+
 
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
         MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
@@ -224,6 +208,23 @@ namespace Maze
         hierarchyMainLayout->setHorizontalAlignment(HorizontalAlignment2D::Left);
         hierarchyMainLayout->setAutoHeight(true);
 
+
+
+        setEcsWorld(EntityManager::GetInstancePtr()->getDefaultWorldRaw());
+        EventManager::GetInstancePtr()->subscribeEvent<EcsSceneStateChangedEvent>(
+            this,
+            &HierarchyController::notifyEventManagerEvent);
+
+        EventManager::GetInstancePtr()->subscribeEvent<EntityNameChangedEvent>(
+            this,
+            &HierarchyController::notifyEventManagerEvent);
+        EventManager::GetInstancePtr()->subscribeEvent<EcsEntityActiveChangedEvent>(
+            this,
+            &HierarchyController::notifyEventManagerEvent);
+
+        SelectionManager::GetInstancePtr()->eventSelectionChanged.subscribe(
+            this,
+            &HierarchyController::notifySelectionChanged);
     }
     
     //////////////////////////////////////////

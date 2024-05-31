@@ -216,6 +216,18 @@ namespace Maze
                 EntityPtr const& hierarchyLineEntity = createEntity();
                 HierarchyLinePtr hierarchyLine = hierarchyLineEntity->createComponent<HierarchyLine>(_type);
                 hierarchyLineEntity->ensureComponent<Name>("HIERARCHY LINE");
+
+                hierarchyLine->getContextMenu()->setCallbackFunction(
+                    [](MenuListTree2DPtr const& _menuListTree)
+                    {
+                        _menuListTree->addItem(
+                            "Hello!",
+                            [](String const& _text)
+                            {
+                                Debug::Log(_text.c_str());
+                            });
+                    });
+
                 return hierarchyLine;
             };
 
