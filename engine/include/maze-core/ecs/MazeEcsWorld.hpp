@@ -342,10 +342,6 @@ namespace Maze
         FastVector<EntityData> m_entities;
         Stack<S32> m_freeEntityIndices;
 
-        
-        Deque<EntityId> m_componentsChangedEntities;
-        Deque<EntityId> m_activeChangedEntities;
-
         Vector<IEntitiesSamplePtr> m_samples;
 
         UnorderedMap<ClassUID, Vector<ComponentSystemEventHandlerPtr>> m_eventHandlers;
@@ -354,6 +350,9 @@ namespace Maze
 
     private:
         bool m_updatingNow = false;
+
+        Deque<EntityId> m_componentsChangedEntities;
+        Deque<EntityId> m_activeChangedEntities;
 
         // Adding entities utils
         S32 m_newEntityIdsCount = 0;
