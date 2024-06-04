@@ -69,6 +69,9 @@ namespace Maze
         //////////////////////////////////////////
         void release(SharedPtr<TComponent> const& _component);
 
+        //////////////////////////////////////////
+        inline bool isPoolExists() const { return !m_pool.expired(); }
+
     protected:
 
         //////////////////////////////////////////

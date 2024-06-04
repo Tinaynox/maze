@@ -69,28 +69,28 @@ namespace Maze
     //////////////////////////////////////////
     Size ByteBufferWriteStream::getBufferSize() const
     {
-        MAZE_ASSERT(m_byteBuffer);
+        MAZE_DEBUG_ASSERT(m_byteBuffer);
         return m_byteBuffer->getSize();
     }
 
     //////////////////////////////////////////
     Size ByteBufferWriteStream::getBufferCapacity() const
     {
-        MAZE_ASSERT(m_byteBuffer);
+        MAZE_DEBUG_ASSERT(m_byteBuffer);
         return m_byteBuffer->getSize();
     }
 
     //////////////////////////////////////////
     void ByteBufferWriteStream::reserve(Size _size)
     {
-        MAZE_ASSERT(m_byteBuffer);
+        MAZE_DEBUG_ASSERT(m_byteBuffer);
         m_byteBuffer->reserve(_size);
     }
 
     //////////////////////////////////////////
     void ByteBufferWriteStream::write(U8 const* _src, Size _size)
     {
-        MAZE_ASSERT(m_byteBuffer);
+        MAZE_DEBUG_ASSERT(m_byteBuffer);
 
         Size requiredSize = m_offset + _size;
         if (m_byteBuffer->getSize() < requiredSize)

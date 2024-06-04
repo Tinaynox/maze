@@ -249,7 +249,10 @@ namespace Maze
                     continue;
                 }
 
-                hierarchyLine->release();
+                if (hierarchyLine->getEntityRaw())
+                    hierarchyLine->release();
+                else
+                    m_entityLines.erase(it);
             }
 
             while (!m_sceneLines.empty())
@@ -262,7 +265,10 @@ namespace Maze
                     continue;
                 }
 
-                hierarchyLine->release();
+                if (hierarchyLine->getEntityRaw())
+                    hierarchyLine->release();
+                else
+                    m_entityLines.erase(it);
             }
         }
 
@@ -275,7 +281,7 @@ namespace Maze
             m_world->eventEntityChanged.subscribe(this, &HierarchyController::notifyEntityChanged);
 
             for (SceneManager::SceneData const& sceneData : SceneManager::GetInstancePtr()->getScenes())
-                if (sceneData.scene->getState() == EcsSceneState::Active)
+                if (sceneData.scene && sceneData.scene->getState() == EcsSceneState::Active)
                     addEcsScene(sceneData.scene);
         }
     }
@@ -306,7 +312,13 @@ namespace Maze
     //////////////////////////////////////////
     HierarchyLinePtr HierarchyController::addEcsScene(EcsScenePtr const& _scene)
     {
+        if (!getEntityRaw() || !getEntityRaw()->getEcsScene())
+            return nullptr;
+
         if (!_scene)
+            return nullptr;
+
+        if (_scene->getIsSystemScene())
             return nullptr;
 
         if (_scene->getWorld() != m_world)
@@ -352,7 +364,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    EntityId GetEntityParentId(EntityPtr const& _entity)
+    static EntityId GetEntityParentId(EntityPtr const& _entity)
     {
         EntityId parentId = c_invalidEntityId;
 

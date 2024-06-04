@@ -54,6 +54,7 @@ namespace Maze
     MAZE_USING_SHARED_PTR(EcsWorld);
     MAZE_USING_SHARED_PTR(ComponentEntityLinker);
     MAZE_USING_SHARED_PTR(IEntitiesSample);
+    MAZE_USING_SHARED_PTR(EcsWorldEventsQueue);
 
 
     //////////////////////////////////////////
@@ -73,6 +74,7 @@ namespace Maze
 
         //////////////////////////////////////////
         friend class Entity;
+        friend class EcsWorldEventsQueue;
 
         //////////////////////////////////////////
         struct EntityData
@@ -134,6 +136,16 @@ namespace Maze
         //////////////////////////////////////////
         bool removeEntity(EntityPtr const& _entity);
 
+        //////////////////////////////////////////
+        void processEntityAddedToSample(
+            ComponentSystemEventHandlerPtr const& _handler,
+            EntityId _id);
+
+        //////////////////////////////////////////
+        void processEntityRemovedFromSample(
+            ComponentSystemEventHandlerPtr const& _handler,
+            EntityId _id);
+
 
         //////////////////////////////////////////
         inline HashedString const& getName() const { return m_name; }
@@ -149,6 +161,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void processEntityComponentsChanged(EntityId _id);
+
+        //////////////////////////////////////////
+        void processEntityActiveChanged(EntityId _id);
 
 
         //////////////////////////////////////////
@@ -180,10 +195,7 @@ namespace Maze
             for (Size i = 0, in = m_entities.size(); i < in; ++i)
                 if (m_entities[i].entity)
                     sample->processEntity(m_entities[i].entity.get());
-
-            for (Size i = 0, in = m_addingEntities.size(); i < in; ++i)
-                sample->processEntity(m_addingEntities[i].get());
-
+            
             return sample;
         }
 
@@ -289,6 +301,9 @@ namespace Maze
             sendEventImmediate(_entityId, &evt);
         }
 
+        //////////////////////////////////////////
+        void processEntityForSamples(Entity* _entity);
+
     public:
 
         //////////////////////////////////////////
@@ -309,28 +324,16 @@ namespace Maze
             bool _attachSystems,
             Set<HashedString> const& _tags);
 
-        //////////////////////////////////////////
-        void processStartedEntities();
-
-        //////////////////////////////////////////
-        void processAddingEntities();
-
-        //////////////////////////////////////////
-        void processRemovingEntities();
-
-        //////////////////////////////////////////
-        void processChangedEntities();
-
-        
-        //////////////////////////////////////////
-        void processEntityActiveChanged(EntityId _id);
-
-        
+                
         //////////////////////////////////////////
         EntityId generateNewEntityId();
 
         //////////////////////////////////////////
         S32 convertEntityIdToIndex(EntityId _id) const;
+
+
+        //////////////////////////////////////////
+        void addEntityNow(EntityPtr const& _entity);
 
         //////////////////////////////////////////
         void removeEntityNow(EntityId _id);
@@ -350,17 +353,8 @@ namespace Maze
 
     private:
         bool m_updatingNow = false;
-
-        Deque<EntityId> m_componentsChangedEntities;
-        Deque<EntityId> m_activeChangedEntities;
-
-        // Adding entities utils
         S32 m_newEntityIdsCount = 0;
-        Deque<EntityPtr> m_addingEntities;
-        FastVector<EntityId> m_newEntitiesAdded;
-
-        // Removing entities utils
-        Deque<EntityId> m_removingEntities;
+        SwitchableContainer<EcsWorldEventsQueuePtr> m_eventHolders;
     };
 
 

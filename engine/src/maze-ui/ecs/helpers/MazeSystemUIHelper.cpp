@@ -80,7 +80,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr editBoxEntity = _ecsScene->createEntity();
-            editBoxEntity->ensureComponent<Name>("EdidBox");
+            editBoxEntity->ensureComponent<Name>("EditBox");
 
             EditBox2DPtr editBox = editBoxEntity->createComponent<EditBox2D>();
 
@@ -154,6 +154,7 @@ namespace Maze
             editBox->setText(_text);
 
             F32 cursorHeight = 8.0f + 4.0f;
+            F32 descent = (0.5f * (cursorHeight - (F32)textRenderer->getFontSize()) - 1);
             SpriteRenderer2DPtr cursorRenderer = SpriteHelper::CreateSprite(
                 textRenderer->getColor(),
                 Vec2F(1.0f, cursorHeight),
@@ -162,7 +163,7 @@ namespace Maze
                 textRenderer->getTransform(),
                 _ecsScene,
                 Vec2F::c_zero,
-                Vec2F(0.0f, (0.5f * (cursorHeight - (F32)textRenderer->getFontSize()) - 1) / cursorHeight));
+                Vec2F(0.0f, descent / cursorHeight));
 
             editBox->setCursorRenderer(cursorRenderer);
 

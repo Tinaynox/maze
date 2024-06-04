@@ -69,7 +69,7 @@ namespace Maze
         //////////////////////////////////////////
         EntityAspect(
             EntityAspectType _type = EntityAspectType::None,
-            Set<ClassUID> const& _componentUIDs = Set<ClassUID>());
+            Vector<ClassUID> const& _componentUIDs = Vector<ClassUID>());
 
         //////////////////////////////////////////
         virtual ~EntityAspect();
@@ -78,7 +78,7 @@ namespace Maze
         template <typename ...TComponents>
         static inline EntityAspect Construct(EntityAspectType _type)
         {
-            EntityAspect aspect(_type, Set<ClassUID>());
+            EntityAspect aspect(_type, Vector<ClassUID>());
             ExpandComponentUIDs<TComponents...>(aspect.m_componentUIDs);
             aspect.updateComponentsMask();
             return aspect;
@@ -88,7 +88,7 @@ namespace Maze
         template <typename ...TComponents>
         static inline EntityAspect HaveAllOfComponents()
         {
-            EntityAspect aspect(EntityAspectType::HaveAllOfComponents, Set<ClassUID>());
+            EntityAspect aspect(EntityAspectType::HaveAllOfComponents, Vector<ClassUID>());
             ExpandComponentUIDs<TComponents...>(aspect.m_componentUIDs);
             aspect.updateComponentsMask();
             return aspect;
@@ -98,7 +98,7 @@ namespace Maze
         template <typename ...TComponents>
         static inline EntityAspect HaveAnyOfComponents()
         {
-            EntityAspect aspect(EntityAspectType::HaveAnyOfComponents, Set<ClassUID>());
+            EntityAspect aspect(EntityAspectType::HaveAnyOfComponents, Vector<ClassUID>());
             ExpandComponentUIDs<TComponents...>(aspect.m_componentUIDs);
             aspect.updateComponentsMask();
             return aspect;
@@ -108,7 +108,7 @@ namespace Maze
         template <typename ...TComponents>
         static inline EntityAspect ExcludeOfComponents()
         {
-            EntityAspect aspect(EntityAspectType::ExcludeOfComponents, Set<ClassUID>());
+            EntityAspect aspect(EntityAspectType::ExcludeOfComponents, Vector<ClassUID>());
             ExpandComponentUIDs< TComponents... >(aspect.m_componentUIDs);
             aspect.updateComponentsMask();
             return aspect;
@@ -124,7 +124,7 @@ namespace Maze
             if (sizeof...(TComponents) != m_componentUIDs.size())
                 return false;
 
-            Set<ClassUID> const& componentUIDs = GetComponentUIDs<TComponents...>();
+            Vector<ClassUID> const& componentUIDs = GetComponentUIDs<TComponents...>();
 
             return equal(componentUIDs.begin(), componentUIDs.end(), m_componentUIDs.begin());
         }
@@ -145,7 +145,7 @@ namespace Maze
         EntityAspectType const& getType() const { return m_type; }
 
         //////////////////////////////////////////
-        Set<ClassUID> const& getComponentUIDs() const { return m_componentUIDs; }
+        Vector<ClassUID> const& getComponentUIDs() const { return m_componentUIDs; }
 
         //////////////////////////////////////////
         bool hasIntersection(Entity* _entity) const;
@@ -163,18 +163,18 @@ namespace Maze
 
         //////////////////////////////////////////
         template <typename ...TComponents>
-        inline static void ExpandComponentUIDs(Set<ClassUID>& _result)
+        inline static void ExpandComponentUIDs(Vector<ClassUID>& _result)
         {
             ClassUID uids[] = { ClassInfo<TComponents>::UID()... };
             for (S32 i = 0, n = sizeof(uids) / sizeof(uids[0]); i < n; i++)
-                _result.insert(uids[i]);
+                _result.push_back(uids[i]);
         }
 
         //////////////////////////////////////////
         template <typename ...TComponents>
-        inline static Set<ClassUID> const& GetComponentUIDs()
+        inline static Vector<ClassUID> const& GetComponentUIDs()
         {
-            static Set<ClassUID> s_componentUIDs;
+            static Vector<ClassUID> s_componentUIDs;
             if (s_componentUIDs.empty())                
                 ExpandComponentUIDs<TComponents...>(s_componentUIDs);
                 
@@ -191,7 +191,7 @@ namespace Maze
 
     protected:
         EntityAspectType m_type;
-        Set<ClassUID> m_componentUIDs;
+        Vector<ClassUID> m_componentUIDs;
 
         S64 m_componentsMask;
     };

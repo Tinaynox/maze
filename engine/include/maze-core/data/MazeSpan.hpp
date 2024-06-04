@@ -100,28 +100,28 @@ namespace Maze
         //////////////////////////////////////////
         MAZE_FORCEINLINE TValue const& operator[](Size _i) const
         {
-            MAZE_ASSERT(_i < m_size);
+            MAZE_DEBUG_ASSERT(_i < m_size);
             return m_ptr[_i];
         }
 
         //////////////////////////////////////////
         MAZE_FORCEINLINE TValue& operator[](Size _i)
         {
-            MAZE_ASSERT(_i < m_size);
+            MAZE_DEBUG_ASSERT(_i < m_size);
             return m_ptr[_i];
         }
 
         //////////////////////////////////////////
         inline TValue const& at(Size _i) const
         {
-            MAZE_ASSERT(_i < m_size);
+            MAZE_DEBUG_ASSERT(_i < m_size);
             return m_ptr[_i];
         }
 
         //////////////////////////////////////////
         inline TValue& at(Size _i)
         {
-            MAZE_ASSERT(_i < m_size);
+            MAZE_DEBUG_ASSERT(_i < m_size);
             return m_ptr[_i];
         }
 

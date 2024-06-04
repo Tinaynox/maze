@@ -105,7 +105,7 @@ namespace Maze
         //////////////////////////////////////////
         inline TIdType set(TIdType _index, TIdType _generation)
         {
-            MAZE_ASSERT(_generation <= c_maxGenerationValue);
+            MAZE_DEBUG_ASSERT(_generation <= c_maxGenerationValue);
             m_id = (_index << TGenerationBitsCount) | static_cast<TIdType>(_generation);
             return m_id;
         }

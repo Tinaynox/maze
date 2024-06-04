@@ -293,7 +293,7 @@ namespace Maze
                 Vec2F(0.0f, 0.0f),
                 Vec2F(0.0f, 0.0f));
             SizePolicy2DPtr alphaSizePolicy = alphaSpriteRenderer->getEntityRaw()->createComponent<SizePolicy2D>();
-            // alphaSizePolicy->setFlag(SizePolicy2D::Width, false);
+            alphaSizePolicy->setFlag(SizePolicy2D::Width, false);
             colorEdit->setAlphaRenderer(alphaSpriteRenderer);
 
 
@@ -430,6 +430,7 @@ namespace Maze
                     Vec2F(0.0f, 0.0f),
                     Vec2F(0.0f, 0.0f));
                 SizePolicy2DPtr alphaSizePolicy = alphaSpriteRenderer->getEntityRaw()->createComponent<SizePolicy2D>();
+                alphaSizePolicy->setFlag(SizePolicy2D::Width, false);
                 colorEdit->setAlphaRenderer(alphaSpriteRenderer);
             }
 

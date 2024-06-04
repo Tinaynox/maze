@@ -77,6 +77,7 @@
 #include "main/SceneSystemTextTest.hpp"
 #include "main/SceneFontTest.hpp"
 #include "main/SceneCanvasTest.hpp"
+#include "main/SceneExample.hpp"
 #include "main/SceneEditorToolsTest.hpp"
 #include "Example.hpp"
 
@@ -94,8 +95,8 @@ namespace Maze
     void LoadFirstExampleScene(SceneManager* _sceneManager)
     {
         Example::GetInstancePtr()->loadCoreGameAssets();
-        if (!_sceneManager->getScene<SceneEditorToolsTest>())
-            _sceneManager->loadScene<SceneEditorToolsTest>();
+        if (!_sceneManager->getScene<SceneExample>())
+            _sceneManager->loadScene<SceneExample>();
     }
     
     //////////////////////////////////////////

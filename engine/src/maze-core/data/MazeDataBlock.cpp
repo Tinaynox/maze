@@ -259,7 +259,7 @@ namespace Maze
     //////////////////////////////////////////
     void DataBlock::setName(HashedCString _name)
     {
-        MAZE_ASSERT(!_name.empty());
+        MAZE_DEBUG_ASSERT(!_name.empty());
         if (!_name.empty())
             m_nameIdAndFlags = addSharedString(_name) | (m_nameIdAndFlags & U32(DataBlockFlags::TopmostBlock));
     }
@@ -532,14 +532,14 @@ namespace Maze
     //////////////////////////////////////////
     DataBlock::Param& DataBlock::getParam(ParamIndex _index)
     {
-        MAZE_ASSERT(_index >= 0 && _index < (ParamIndex)getParamsCount());
+        MAZE_DEBUG_ASSERT(_index >= 0 && _index < (ParamIndex)getParamsCount());
         return getParamsPtr()[_index];
     }
 
     //////////////////////////////////////////
     DataBlock::Param const& DataBlock::getParam(ParamIndex _index) const
     {
-        MAZE_ASSERT(_index >= 0 && _index < (ParamIndex)getParamsCount());
+        MAZE_DEBUG_ASSERT(_index >= 0 && _index < (ParamIndex)getParamsCount());
         return getParamsPtr()[_index];
     }
 
@@ -600,7 +600,7 @@ namespace Maze
     //////////////////////////////////////////
     void DataBlock::createDataBuffer()
     {
-        MAZE_ASSERT(!m_dataBuffer);
+        MAZE_DEBUG_ASSERT(!m_dataBuffer);
         if (m_shared)
             m_dataBuffer = new(m_shared->allocateDataBuffer()) DataBlockDataBuffer();
     }
@@ -610,7 +610,7 @@ namespace Maze
     {
         if (m_dataBuffer)
         {
-            MAZE_ASSERT(m_shared);
+            MAZE_DEBUG_ASSERT(m_shared);
             m_dataBuffer->~DataBlockDataBuffer();
             m_shared->freeDataBuffer(m_dataBuffer);
             m_dataBuffer = nullptr;

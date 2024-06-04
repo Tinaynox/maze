@@ -42,7 +42,7 @@ namespace Maze
     //
     //////////////////////////////////////////
     EntityAspect::EntityAspect(
-        EntityAspectType _type, Set<ClassUID> const& _componentUIDs)
+        EntityAspectType _type, Vector<ClassUID> const& _componentUIDs)
         : m_type(_type)
         , m_componentUIDs(_componentUIDs)
     {
@@ -63,21 +63,33 @@ namespace Maze
             case EntityAspectType::HaveAllOfComponents:
             {
                 if (!(_entity->getComponentsMask() & m_componentsMask))
-                    return false;
+                    return false;                
 
+                /*
+                // Unstrict order
                 return std::includes(
                     _entity->getComponentUIDs().begin(),
                     _entity->getComponentUIDs().end(),
                     getComponentUIDs().begin(),
                     getComponentUIDs().end());
+                */
+
+                // Strict order
+                for (Vector<ClassUID>::const_iterator it = getComponentUIDs().begin(),
+                                                           end = getComponentUIDs().end();
+                                                           it != end;
+                                                           ++it)
+                {                    if (_entity->getComponentUIDs().find((*it)) == _entity->getComponentUIDs().end())
+                        return false;
+                }
             }
 
             case EntityAspectType::HaveAnyOfComponents:
             {
-                for (Set<ClassUID>::iterator    it = getComponentUIDs().begin(),
-                                                end = getComponentUIDs().end();
-                                                it != end;
-                                                ++it)
+                for (Vector<ClassUID>::const_iterator it = getComponentUIDs().begin(),
+                                                      end = getComponentUIDs().end();
+                                                      it != end;
+                                                      ++it)
                 {
                     if (_entity->getComponentUIDs().find((*it)) != _entity->getComponentUIDs().end())
                         return true;

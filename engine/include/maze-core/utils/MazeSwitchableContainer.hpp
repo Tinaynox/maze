@@ -65,9 +65,23 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline TContainer const& current() const
+        {
+            TContainer const& currentContainer = m_containers[m_isFirst ? 0 : 1];
+            return currentContainer;
+        }
+
+        //////////////////////////////////////////
         inline TContainer& other()
         {
             TContainer& otherContainer = m_containers[m_isFirst ? 1 : 0];
+            return otherContainer;
+        }
+
+        //////////////////////////////////////////
+        inline TContainer const& other() const
+        {
+            TContainer const& otherContainer = m_containers[m_isFirst ? 1 : 0];
             return otherContainer;
         }
 

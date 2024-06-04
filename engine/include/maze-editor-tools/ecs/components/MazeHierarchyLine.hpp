@@ -232,8 +232,6 @@ namespace Maze
         void updateDropDownRenderer();
 
     protected:
-        EcsWorld* m_world = nullptr;
-
         String m_text;
         HierarchyLineType m_type = HierarchyLineType::Entity;
         void* m_userData = nullptr;

@@ -72,6 +72,7 @@ namespace Maze
 
         //////////////////////////////////////////
         friend class EcsWorld;
+        friend class EcsWorldEventsQueue;
         friend class Component;
 
         //////////////////////////////////////////

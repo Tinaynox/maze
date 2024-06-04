@@ -320,8 +320,8 @@ namespace Maze
         Size _size,
         U8 const* _data)
     {
-        MAZE_ASSERT(_type != DataBlockParamType::None);
-        MAZE_ASSERT(_type != DataBlockParamType::ParamString);
+        MAZE_DEBUG_ASSERT(_type != DataBlockParamType::None);
+        MAZE_DEBUG_ASSERT(_type != DataBlockParamType::ParamString);
 
         Param param;
         param.nameId = (U32)_nameId;

@@ -111,7 +111,7 @@ namespace Maze
             Set<HashedString> const& _tags = Set<HashedString>(),
             ComponentSystemOrder const& _order = ComponentSystemOrder())
         {
-            MAZE_ASSERT(_sample);
+            MAZE_DEBUG_ASSERT(_sample);
             return MAZE_CREATE_SHARED_PTR_WITH_ARGS(
                 ComponentSystemEventHandler, _world, _name, _eventUID, _sample, _func, _tags, _order);
         }
@@ -225,10 +225,11 @@ namespace Maze
 
         //////////////////////////////////////////
         static inline ComponentSystemEntityAddedToSampleEventHandlerPtr Create(
+            EcsWorld* _world,
             ComponentSystemEventHandlerPtr const& _eventHandler)
         {
             ComponentSystemEntityAddedToSampleEventHandlerPtr object;
-            MAZE_CREATE_AND_INIT_SHARED_PTR(ComponentSystemEntityAddedToSampleEventHandler, object, init(_eventHandler));
+            MAZE_CREATE_AND_INIT_SHARED_PTR(ComponentSystemEntityAddedToSampleEventHandler, object, init(_world, _eventHandler));
             return object;
         }
 
@@ -236,23 +237,22 @@ namespace Maze
         ~ComponentSystemEntityAddedToSampleEventHandler();
 
 
-        //////////////////////////////////////////
-        void processEntitiesAddedToSample();
-
     protected:
 
         //////////////////////////////////////////
         ComponentSystemEntityAddedToSampleEventHandler();
 
         //////////////////////////////////////////
-        bool init(ComponentSystemEventHandlerPtr const& _eventHandler);
+        bool init(
+            EcsWorld* _world,
+            ComponentSystemEventHandlerPtr const& _eventHandler);
 
         //////////////////////////////////////////
         void notifyEntityAdded(Entity* _entity);
 
     protected:
+        EcsWorld* m_world = nullptr;
         ComponentSystemEventHandlerPtr m_eventHandler;
-        SwitchableContainer<FastVector<EntityId>> m_addedEntities;
     };
 
 
@@ -267,10 +267,11 @@ namespace Maze
 
         //////////////////////////////////////////
         static inline ComponentSystemEntityRemovedFromSampleEventHandlerPtr Create(
+            EcsWorld* _world,
             ComponentSystemEventHandlerPtr const& _eventHandler)
         {
             ComponentSystemEntityRemovedFromSampleEventHandlerPtr object;
-            MAZE_CREATE_AND_INIT_SHARED_PTR(ComponentSystemEntityRemovedFromSampleEventHandler, object, init(_eventHandler));
+            MAZE_CREATE_AND_INIT_SHARED_PTR(ComponentSystemEntityRemovedFromSampleEventHandler, object, init(_world, _eventHandler));
             return object;
         }
 
@@ -284,14 +285,16 @@ namespace Maze
         ComponentSystemEntityRemovedFromSampleEventHandler();
 
         //////////////////////////////////////////
-        bool init(ComponentSystemEventHandlerPtr const& _eventHandler);
+        bool init(
+            EcsWorld* _world,
+            ComponentSystemEventHandlerPtr const& _eventHandler);
 
         //////////////////////////////////////////
         void notifyEntityWillBeRemoved(Entity* _entity);
 
     protected:
+        EcsWorld* m_world = nullptr;
         ComponentSystemEventHandlerPtr m_eventHandler;
-        SwitchableContainer<FastVector<EntityId>> m_removedEntities;
     };
 
 

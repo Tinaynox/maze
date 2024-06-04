@@ -335,9 +335,9 @@
 //
 //////////////////////////////////////////
 #if (MAZE_DEBUG)
-#    define MAZE_ASSERT(__condition)        assert(__condition)
+#    define MAZE_DEBUG_ASSERT(__condition)        assert(__condition)
 #else
-#    define MAZE_ASSERT(__condition)
+#    define MAZE_DEBUG_ASSERT(__condition)
 #endif
 
 

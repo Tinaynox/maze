@@ -337,7 +337,8 @@ namespace Maze
         m_transform2Ds->process(
             [&](Entity* _entity, Transform2D* _transform)
             {
-                if (_transform->updateChildrenOrder())
+                if (_transform->updateChildrenOrder() || !_transform->getEntityRaw()->getActiveInHierarchy() ||
+                    _transform->getEntityRaw()->getAdding() || _transform->getEntityRaw()->getRemoving())
                 {
                     m_sortedMeshRenderersDirty = true;
                 }
@@ -507,7 +508,7 @@ namespace Maze
                 [&](Transform2D* _transform)
                 {
                     Entity* entity = _transform->getEntityRaw();
-                    if (!entity->getActiveInHierarchy())
+                    if (!entity->getActiveInHierarchy() || entity->getAdding() || entity->getRemoving())
                         return;
 
                     if (_transform->getParent())

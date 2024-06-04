@@ -761,7 +761,7 @@ namespace Maze
         //////////////////////////////////////////
         inline Size getDataBlocksOffset() const
         {
-            MAZE_ASSERT(m_dataBuffer);
+            MAZE_DEBUG_ASSERT(m_dataBuffer);
             return m_dataBuffer->getDataSize() - getDataBlocksCount() * sizeof(DataBlock*);
         }
 

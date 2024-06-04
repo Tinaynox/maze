@@ -30,12 +30,14 @@
 #include "maze-core/managers/MazeSceneManager.hpp"
 #include "maze-core/managers/MazeUpdateManager.hpp"
 #include "maze-core/managers/MazeEntityManager.hpp"
+#include "maze-core/managers/MazeEntitySerializationManager.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform2D.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/ecs/components/MazeBounds2D.hpp"
 #include "maze-core/ecs/components/MazeSizePolicy2D.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-core/ecs/MazeEcsWorld.hpp"
 #include "maze-graphics/MazeMesh.hpp"
 #include "maze-graphics/MazeSubMesh.hpp"
@@ -56,9 +58,13 @@
 #include "maze-editor-tools/ecs/components/MazeHierarchyLine.hpp"
 #include "maze-editor-tools/ecs/components/MazeHierarchyLinePool.hpp"
 #include "maze-editor-tools/managers/MazeSelectionManager.hpp"
+#include "maze-editor-tools/managers/MazeEditorToolsManager.hpp"
+#include "maze-editor-tools/managers/MazeAssetEditorToolsManager.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
 #include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "maze-ui/managers/MazeUIManager.hpp"
 #include "maze-ui/ecs/components/MazeScrollRect2D.hpp"
+#include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
 #include "maze-ui/ecs/helpers/MazeUIHelper.hpp"
 #include "managers/EditorManager.hpp"
 #include "managers/EditorPrefabManager.hpp"
@@ -79,28 +85,17 @@ namespace Maze
 
     //////////////////////////////////////////
     EditorHierarchyController::EditorHierarchyController()
-        : m_canvas(nullptr)
     {
     }
 
     //////////////////////////////////////////
     EditorHierarchyController::~EditorHierarchyController()
     {
-        for (auto& hierarchyLineData : m_hierarchyLinesPerEntity)
-        {
-            hierarchyLineData.second.line->eventDropDownClick.unsubscribe(this);
-            hierarchyLineData.second.line->eventLineCursorPressIn.unsubscribe(this);
-            hierarchyLineData.second.line->eventLineClick.unsubscribe(this);
-            hierarchyLineData.second.line->eventLineDoubleClick.unsubscribe(this);
-        }
+        EventManager::GetInstancePtr()->unsubscribeEvent<EcsSceneStateChangedEvent>(this);
+        EventManager::GetInstancePtr()->unsubscribeEvent<EntityNameChangedEvent>(this);
+        EventManager::GetInstancePtr()->unsubscribeEvent<EcsEntityActiveChangedEvent>(this);
 
-        for (auto& hierarchyLineData : m_hierarchyLinesPerScene)
-        {
-            hierarchyLineData.second.line->eventDropDownClick.unsubscribe(this);
-            hierarchyLineData.second.line->eventLineCursorPressIn.unsubscribe(this);
-            hierarchyLineData.second.line->eventLineClick.unsubscribe(this);
-            hierarchyLineData.second.line->eventLineDoubleClick.unsubscribe(this);
-        }
+        SelectionManager::GetInstancePtr()->eventSelectionChanged.unsubscribe(this);
 
         setEcsWorld(nullptr);
 
@@ -112,9 +107,6 @@ namespace Maze
 
         if (EditorPrefabManager::GetInstancePtr())
             EditorPrefabManager::GetInstancePtr()->eventPrefabEntityChanged.unsubscribe(this);
-
-        if (SelectionManager::GetInstancePtr())
-            SelectionManager::GetInstancePtr()->eventSelectionChanged.unsubscribe(this);
     }
 
     //////////////////////////////////////////
@@ -130,15 +122,11 @@ namespace Maze
     {
         UpdateManager::GetInstancePtr()->addUpdatable(this);
 
-        setEcsWorld(EditorEntityManager::GetInstancePtr()->getWorkspaceWorld().get());
-
         m_canvas = _canvas;
 
         EditorManager::GetInstancePtr()->eventSceneModeChanged.subscribe(this, &EditorHierarchyController::notifyEditorSceneModeChanged);
         EditorManager::GetInstancePtr()->eventPlaytestModeEnabledChanged.subscribe(this, &EditorHierarchyController::notifyPlaytestModeEnabled);
         EditorPrefabManager::GetInstancePtr()->eventPrefabEntityChanged.subscribe(this, &EditorHierarchyController::notifyPrefabEntityChanged);
-
-        SelectionManager::GetInstancePtr()->eventSelectionChanged.subscribe(this, &EditorHierarchyController::notifySelectionChanged);
 
         return true;
     }
@@ -146,7 +134,7 @@ namespace Maze
     //////////////////////////////////////////
     void EditorHierarchyController::update(F32 _dt)
     {
-        updateHierarchy();
+        
     }
 
     //////////////////////////////////////////
@@ -156,30 +144,30 @@ namespace Maze
 
         m_hierarchyLinePool = getEntityRaw()->ensureComponent<HierarchyLinePool>();
 
+
         RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
-        SpriteManagerPtr const& spriteManager = renderSystem->getSpriteManager();
         MaterialManagerPtr const& materialManager = renderSystem->getMaterialManager();
 
         m_titleTransform = SpriteHelper::CreateTransform2D(
             m_canvas->getTransform()->getSize(),
-            Vec2F32(0.0f, 0.0f),
+            Vec2F(0.0f, 0.0f),
             m_canvas->getTransform(),
             getEntityRaw()->getEcsScene(),
-            Vec2F32::c_zero,
-            Vec2F32::c_zero);
+            Vec2F::c_zero,
+            Vec2F::c_zero);
         m_titleTransform->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>();
 
         m_titleBackground = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
-            Vec2F32(
+            Vec2F(
                 m_canvas->getTransform()->getSize().x,
                 EditorToolsStyles::GetInstancePtr()->getTitleHeight()),
-            Vec2F32(0.0f, 0.0f),
+            Vec2F(0.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_titleTransform,
             getEntityRaw()->getEcsScene(),
-            Vec2F32(0.0f, 1.0f),
-            Vec2F32(0.0f, 1.0f));
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f));
         m_titleBackground->setColor(EditorToolsStyles::GetInstancePtr()->getTitleBackgroundColor());
         m_titleBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>()->setFlag(SizePolicy2D::Height, false);
 
@@ -199,456 +187,487 @@ namespace Maze
         
         m_bodyBackground = SpriteHelper::CreateSprite(
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel02),
-            Vec2F32(
+            Vec2F(
                 m_titleTransform->getSize().x, 
                 m_titleTransform->getSize().y - EditorToolsStyles::GetInstancePtr()->getTitleHeight()),
-            Vec2F32(0.0f, 0.0f),
+            Vec2F(0.0f, 0.0f),
             materialManager->getColorTextureMaterial(),
             m_canvas->getTransform(),
             getEntityRaw()->getEcsScene(),
-            Vec2F32::c_zero,
-            Vec2F32::c_zero);
+            Vec2F::c_zero,
+            Vec2F::c_zero);
         m_bodyBackground->setColor(EditorToolsStyles::GetInstancePtr()->getBodyBackgroundColor());
         m_bodyBackground->getEntityRaw()->ensureComponent<Maze::SizePolicy2D>()->setSizeDelta(0.0f, -EditorToolsStyles::GetInstancePtr()->getTitleHeight());
 
         ScrollRect2DPtr scrollRect = UIHelper::CreateDefaultScrollRect(
             m_bodyBackground->getTransform()->getSize(),
-            Vec2F32::c_zero,
+            Vec2F::c_zero,
             m_bodyBackground->getTransform(),
             getEntityRaw()->getEcsScene(),
-            Vec2F32(0.0f, 1.0f),
-            Vec2F32(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f),
+            Vec2F(0.0f, 1.0f),
             false,
             true);
         scrollRect->getViewportTransform()->getEntityRaw()->getComponent<ScissorMask2D>()->setPadding(0, 0, 0, 0);
         scrollRect->getEntityRaw()->ensureComponent<SizePolicy2D>();
         scrollRect->getEntityRaw()->getComponent<MeshRenderer>()->setEnabled(false);
 
-        m_layoutTransform = scrollRect->getContentTransform();
-        
-        updateHierarchy();
+        m_hierarchyMainLayoutEntity = scrollRect->getContentTransform();
+
+        SizePolicy2DPtr hierarchyMainLayoutSizePolicy = m_hierarchyMainLayoutEntity->getEntityRaw()->ensureComponent<SizePolicy2D>();
+        hierarchyMainLayoutSizePolicy->setFlag(SizePolicy2D::Height, false);
+
+        VerticalLayout2DPtr hierarchyMainLayout = m_hierarchyMainLayoutEntity->getEntityRaw()->ensureComponent<VerticalLayout2D>();
+        hierarchyMainLayout->setPaddingTop(2.0f);
+        hierarchyMainLayout->setVerticalAlignment(VerticalAlignment2D::Top);
+        hierarchyMainLayout->setHorizontalAlignment(HorizontalAlignment2D::Left);
+        hierarchyMainLayout->setAutoHeight(true);
+
+
+
+        setEcsWorld(EditorManager::GetInstancePtr()->getMainEcsWorld());
+        EventManager::GetInstancePtr()->subscribeEvent<EcsSceneStateChangedEvent>(
+            this,
+            &EditorHierarchyController::notifyEventManagerEvent);
+
+        EventManager::GetInstancePtr()->subscribeEvent<EntityNameChangedEvent>(
+            this,
+            &EditorHierarchyController::notifyEventManagerEvent);
+        EventManager::GetInstancePtr()->subscribeEvent<EcsEntityActiveChangedEvent>(
+            this,
+            &EditorHierarchyController::notifyEventManagerEvent);
+
+        SelectionManager::GetInstancePtr()->eventSelectionChanged.subscribe(
+            this,
+            &EditorHierarchyController::notifySelectionChanged);
+    }
+    
+    //////////////////////////////////////////
+    void EditorHierarchyController::setEcsWorld(EcsWorld* _world)
+    {
+        if (m_world == _world)
+            return;
+
+        if (m_world)
+        {
+            m_world->eventEntityAdded.unsubscribe(this);
+            m_world->eventEntityRemoved.unsubscribe(this);
+            m_world->eventEntityChanged.unsubscribe(this);
+
+            while (!m_entityLines.empty())
+            {
+                auto it = m_entityLines.begin();
+                HierarchyLinePtr const& hierarchyLine = it->second;
+                if (!hierarchyLine)
+                {
+                    m_entityLines.erase(it);
+                    continue;
+                }
+
+                if (hierarchyLine->getEntityRaw())
+                    hierarchyLine->release();
+                else
+                    m_entityLines.erase(it);
+            }
+
+            while (!m_sceneLines.empty())
+            {
+                auto it = m_sceneLines.begin();
+                HierarchyLinePtr const& hierarchyLine = it->second;
+                if (!hierarchyLine)
+                {
+                    m_sceneLines.erase(it);
+                    continue;
+                }
+
+                if (hierarchyLine->getEntityRaw())
+                    hierarchyLine->release();
+                else
+                    m_entityLines.erase(it);
+            }
+        }
+
+        m_world = _world;
+
+        if (m_world)
+        {
+            m_world->eventEntityAdded.subscribe(this, &EditorHierarchyController::notifyEntityAdded);
+            m_world->eventEntityRemoved.subscribe(this, &EditorHierarchyController::notifyEntityRemoved);
+            m_world->eventEntityChanged.subscribe(this, &EditorHierarchyController::notifyEntityChanged);
+
+            for (SceneManager::SceneData const& sceneData : SceneManager::GetInstancePtr()->getScenes())
+                if (sceneData.scene && sceneData.scene->getState() == EcsSceneState::Active)
+                    addEcsScene(sceneData.scene);
+        }
     }
 
     //////////////////////////////////////////
-    void EditorHierarchyController::updateHierarchy()
+    void EditorHierarchyController::processEcsSceneStateChanged(
+        EcsSceneId _sceneId,
+        EcsSceneState _state)
     {
-        for (auto& hierarchyLineData : m_hierarchyLinesPerEntity)
-            if (hierarchyLineData.second.line->getEntityRaw())
-                hierarchyLineData.second.line->getEntityRaw()->setActiveSelf(false);
-
-        for (auto& hierarchyLineData : m_hierarchyLinesPerScene)
-            if (hierarchyLineData.second.line->getEntityRaw())
-                hierarchyLineData.second.line->getEntityRaw()->setActiveSelf(false);
-
-        
-        switch (EditorManager::GetInstancePtr()->getSceneMode())
+        switch (_state)
         {
-            case EditorSceneMode::Scene:
-                updateHierarchyScenes();
+            case EcsSceneState::Created:
+            {
+                EcsScenePtr const& scene = SceneManager::GetInstancePtr()->getScene(_sceneId);
+                addEcsScene(scene);
                 break;
-            case EditorSceneMode::Prefab:
-                updateHierarchyPrefab();
+            }
+            case EcsSceneState::Destroy:
+            {
+                removeEcsScene(_sceneId);
+                break;
+            }
+            default:
                 break;
         }
-        
     }
 
     //////////////////////////////////////////
-    void EditorHierarchyController::updateHierarchyScenes()
+    HierarchyLinePtr EditorHierarchyController::addEcsScene(EcsScenePtr const& _scene)
     {
-        SceneManager* sceneManager = SceneManager::GetInstancePtr();
+        if (!getEntityRaw() || !getEntityRaw()->getEcsScene())
+            return nullptr;
 
-        F32 x = 0;
-        F32 y = 0;
+        if (!_scene)
+            return nullptr;
 
-        Vector<SceneManager::SceneData> scenesData = sceneManager->getScenes();
-        for (SceneManager::SceneData const& sceneData : scenesData)
+        if (_scene->getIsSystemScene())
+            return nullptr;
+
+        if (_scene->getWorld() != m_world)
+            return nullptr;
+
+        ClassUID sceneUID = _scene->getClassUID();
+        if (sceneUID == getEntityRaw()->getEcsScene()->getClassUID())
+            return nullptr;
+
+        if (m_ignoreScenes.find(sceneUID) != m_ignoreScenes.end())
+            return nullptr;
+
+        auto it = m_sceneLines.find(_scene->getId());
+        if (it != m_sceneLines.end())
+            return it->second;
+
+        HierarchyLinePtr hierarchyLine = createHierarchyLine(HierarchyLineType::Scene);
+        hierarchyLine->setText(_scene->getMetaClass()->getName().str);
+        hierarchyLine->getTransform()->setParent(m_hierarchyMainLayoutEntity);
+        hierarchyLine->setUserData(reinterpret_cast<void*>((Size)(S32)_scene->getId()));
+
+        m_sceneLines[_scene->getId()] = hierarchyLine;
+
+        for (Entity* entity : _scene->getEntities())
         {
-            EcsScenePtr const& scene = sceneData.scene;
-
-            ClassUID sceneUID = scene->getClassUID();
-            if (scene->getIsSystemScene())
+            if (entity->getAdding() || entity->getRemoving())
                 continue;
 
-            if (sceneUID == getEntityRaw()->getEcsScene()->getClassUID())
-                continue;
+            addEntity(entity->cast<Entity>());
+        }
 
-            if (m_ignoreScenes.find(sceneUID) != m_ignoreScenes.end())
-                continue;
+        return hierarchyLine;
+    }
 
-            EditorHierarchyLineSceneData& hierarchyLineData = m_hierarchyLinesPerScene[scene->getClassName()];
-            HierarchyLinePtr hierarchyLine = createHierarchyLine(scene);
-            hierarchyLine->setLabel(scene->getClassName());
-            hierarchyLine->getTransform()->setParent(m_layoutTransform);
-            hierarchyLine->getTransform()->setLocalPosition(Vec2F32(10 + x * 10, -6 - y * 14));
-            hierarchyLine->setColor(ColorU32(30, 125, 0));
+    //////////////////////////////////////////
+    void EditorHierarchyController::removeEcsScene(EcsSceneId _sceneId)
+    {
+        auto sceneHierarchyLineIt = m_sceneLines.find(_sceneId);
+        if (sceneHierarchyLineIt == m_sceneLines.end())
+            return;
 
-            if (scene->getEntities().empty())
+        sceneHierarchyLineIt->second->release();
+    }
+
+    //////////////////////////////////////////
+    static EntityId GetEntityParentId(EntityPtr const& _entity)
+    {
+        EntityId parentId = c_invalidEntityId;
+
+        Transform2D* transform2D = _entity->getComponentRaw<Transform2D>();
+        if (transform2D && transform2D->getParent())
+            parentId = transform2D->getParent()->getEntityId();
+        else
+        {
+            Transform3D* transform3D = _entity->getComponentRaw<Transform3D>();
+            if (transform3D && transform3D->getParent())
+                parentId = transform3D->getParent()->getEntityId();
+        }
+        return parentId;
+    }
+
+    //////////////////////////////////////////
+    HierarchyLinePtr EditorHierarchyController::addEntity(EntityPtr const& _entity)
+    {
+        if (!_entity)
+            return nullptr;
+
+        if (_entity->getEcsWorld() != m_world)
+            return nullptr;
+
+        auto it = m_entityLines.find(_entity->getId());
+        if (it != m_entityLines.end())
+            return it->second;
+
+        if (!_entity->getEcsScene())
+            return nullptr;
+
+        EntityId parentId = GetEntityParentId(_entity);
+
+        HierarchyLinePtr parentLine;
+        if (parentId)
+        {
+            EntityPtr const& parentEntity = m_world->getEntity(parentId);
+            MAZE_ERROR_RETURN_VALUE_IF(!parentEntity, nullptr, "Parent entity not found!");
+            parentLine = addEntity(parentEntity);
+        }
+        else
+        {
+            auto sceneIt = m_sceneLines.find(_entity->getEcsScene()->getId());
+            MAZE_ERROR_RETURN_VALUE_IF(sceneIt == m_sceneLines.end(), nullptr, "Undefined scene");
+            parentLine = sceneIt->second;
+        }
+
+        MAZE_ERROR_RETURN_VALUE_IF(!parentLine, nullptr, "Parent line is not found!");
+
+        HierarchyLinePtr hierarchyLine = createHierarchyLine(HierarchyLineType::Entity);
+        hierarchyLine->setUserData(reinterpret_cast<void*>((Size)(S32)_entity->getId()));
+
+        parentLine->addChild(hierarchyLine);
+
+        m_entityLines[_entity->getId()] = hierarchyLine;
+        updateEntityName(_entity);
+        updateEntity(hierarchyLine, _entity);
+
+        return hierarchyLine;
+    }
+
+    //////////////////////////////////////////
+    void EditorHierarchyController::removeEntity(EntityId _entityId)
+    {
+        auto entityHierarchyLineIt = m_entityLines.find(_entityId);
+        if (entityHierarchyLineIt == m_entityLines.end())
+            return;
+
+        entityHierarchyLineIt->second->release();
+    }
+
+    //////////////////////////////////////////
+    void EditorHierarchyController::updateEntity(EntityPtr const& _entity)
+    {
+        if (!_entity)
+            return;
+
+        auto it = m_entityLines.find(_entity->getId());
+        if (it == m_entityLines.end())
+            return;
+
+        HierarchyLinePtr const& hierarchyLine = it->second;
+        updateEntity(hierarchyLine, _entity);
+    }
+
+    //////////////////////////////////////////
+    void EditorHierarchyController::updateEntity(
+        HierarchyLinePtr const& hierarchyLine,
+        EntityPtr const& _entity)
+    {
+        hierarchyLine->setSelected(
+            SelectionManager::GetInstancePtr()->isObjectSelected(_entity));
+
+        hierarchyLine->setActive(
+            _entity->getActiveInHierarchy());
+    }
+
+    //////////////////////////////////////////
+    void EditorHierarchyController::updateEntityName(EntityPtr const& _entity)
+    {
+        auto it = m_entityLines.find(_entity->getId());
+        if (it == m_entityLines.end())
+            return;
+
+        HierarchyLinePtr const& hierarchyLine = it->second;
+
+        Name* name = _entity->getComponentRaw<Name>();
+        hierarchyLine->setText(name ? name->getName() : "Unnamed");
+    }
+
+    //////////////////////////////////////////
+    HierarchyLinePtr EditorHierarchyController::createHierarchyLine(HierarchyLineType _type)
+    {
+        HierarchyLinePtr hierarchyLine = m_hierarchyLinePool->createHierarchyLine(_type);
+        subscribeHierarchyLine(hierarchyLine.get());
+
+        HierarchyLineWPtr hierarchyLineWeak = hierarchyLine;
+        hierarchyLine->getContextMenu()->setCallbackFunction(
+            [hierarchyLineWeak](MenuListTree2DPtr const& _menuListTree)
             {
-                hierarchyLine->setDropDownState(HierarchyLineDropDownState::None);
-            }
-            else
-            {
-                if (hierarchyLineData.expanded)
-                    hierarchyLine->setDropDownState(HierarchyLineDropDownState::Expanded);
-                else
-                    hierarchyLine->setDropDownState(HierarchyLineDropDownState::Collapsed);
-            }
+                HierarchyLinePtr hierarchyLine = hierarchyLineWeak.lock();
 
-            ++y;
-
-            if (hierarchyLineData.expanded)
-            {
-                for (Entity* entity : scene->getEntities())
+                if (hierarchyLine->getType() == HierarchyLineType::Entity)
                 {
+                    if (!hierarchyLine->getEntityRaw()->getEcsWorld())
+                        return;
+
+                    EntityId entityId = (EntityId)((S32)reinterpret_cast<Size>(hierarchyLine->getUserData()));
+
+                    EntityPtr const& entity = hierarchyLine->getEntityRaw()->getEcsWorld()->getEntity(entityId);
+
+                    if (!entity)
+                        return;
+
+                    EntityWPtr entityWeak = entity;
+
+                    _menuListTree->addItem(
+                        "Delete",
+                        [entityWeak](String const& _text)
+                    {
+                        EntityPtr entity = entityWeak.lock();
+                        if (entity)
+                        {
+                            entity->removeFromEcsWorld();
+                        }
+                    });
+
+                    _menuListTree->addItem(
+                        "Save To DataBlock",
+                        [entityWeak](String const& _text)
+                    {
+                        EntityPtr entity = entityWeak.lock();
+                        if (entity)
+                        {
+                            Name* name = entity->getComponentRaw<Name>();
+                            String filename = name ? name->getName() : "Unnamed";
+                            EntitySerializationManager::GetInstancePtr()->savePrefabToDataBlockFile(entity, filename + ".mzdata");
+                        }
+                    });
+
                     Transform3D* transform3D = entity->getComponentRaw<Transform3D>();
                     if (transform3D)
                     {
-                        if (!transform3D->getParent())
-                            updateHierarchyElement(transform3D, x + 1, y);
+                        _menuListTree->addItem(
+                            "Duplicate",
+                            [entityWeak](String const& _text)
+                        {
+                            EntityPtr entity = entityWeak.lock();
+                            if (entity)
+                            {
+                                EntityPtr entityCopy = entity->createCopy();
+                                entityCopy->ensureComponent<Transform3D>()->setParent(
+                                    entity->ensureComponent<Transform3D>()->getParent());
+                            }
+                        });
+
+                        _menuListTree->addItem(
+                            "Add Child/3D/Empty",
+                            [transform3D](String const& _text)
+                        {
+                            EntityPtr newEntity = EditorToolsHelper::CreateEntity3D("Entity");
+                            Transform3DPtr newEntityTransform = newEntity->getComponent<Transform3D>();
+
+                            newEntityTransform->setParent(transform3D->cast<Transform3D>());
+                        });
                     }
                     else
                     {
                         Transform2D* transform2D = entity->getComponentRaw<Transform2D>();
                         if (transform2D)
                         {
-                            if (!transform2D->getParent())
-                                updateHierarchyElement(transform2D, x + 1, y);
-                        }
-                        else
-                        {
-                            String name = "Unnamed";
+                            _menuListTree->addItem(
+                                "Add Child/2D/Empty",
+                                [transform2D](String const& _text)
+                            {
+                                EntityPtr newEntity = EditorToolsHelper::CreateEntity2D("Entity");
+                                Transform2DPtr newEntityTransform = newEntity->getComponent<Transform2D>();
 
-                            Name* componentName = entity->getComponentRaw<Name>();
-                            if (componentName)
-                                name = componentName->getName();
-
-                            EditorHierarchyLineEntityData& hierarchyLineData = m_hierarchyLinesPerEntity[entity->getId()];
-                            HierarchyLinePtr hierarchyLine = createHierarchyElement(
-                                entity,
-                                name.c_str(),
-                                Vec2F32(10 + (x + 1) * 10, -6 - y * 14));
-
-                            ++y;
+                                newEntityTransform->setParent(transform2D->cast<Transform2D>());
+                            });
                         }
                     }
+
+                    EditorToolsManager::GetInstancePtr()->eventHierarchyLineEntityContextMenu(_menuListTree, entity.get());
                 }
-            }
-
-            m_layoutTransform->setHeight(y * 14 + 6);
-        }
-    }
-
-    //////////////////////////////////////////
-    void EditorHierarchyController::updateHierarchyPrefab()
-    {
-        EntityPtr const& prefabEntity = EditorPrefabManager::GetInstancePtr()->getPrefabEntity();
-        if (!prefabEntity)
-            return;
-
-        F32 x = 0;
-        F32 y = 0;
-
-        Transform3D* transform3D = prefabEntity->getComponentRaw<Transform3D>();
-        if (transform3D)
-        {
-            if (!transform3D->getParent())
-                updateHierarchyElement(transform3D, x + 1, y);
-        }
-        else
-        {
-            Transform2D* transform2D = prefabEntity->getComponentRaw<Transform2D>();
-            if (transform2D)
-            {
-                if (!transform2D->getParent())
-                    updateHierarchyElement(transform2D, x + 1, y);
-            }
-            else
-            {
-                String name = "Unnamed";
-
-                Name* componentName = prefabEntity->getComponentRaw<Name>();
-                if (componentName)
-                    name = componentName->getName();
-
-                EditorHierarchyLineEntityData& hierarchyLineData = m_hierarchyLinesPerEntity[prefabEntity->getId()];
-                HierarchyLinePtr hierarchyLine = createHierarchyElement(
-                    prefabEntity.get(),
-                    name.c_str(),
-                    Vec2F32(10 + (x + 1) * 10, -6 - y * 14));
-
-                ++y;
-            }
-        }
-
-        m_layoutTransform->setHeight(y * 14 + 6);
-    }
-
-    //////////////////////////////////////////
-    void EditorHierarchyController::updateHierarchyElement(Transform2D* _transform2D, F32 _x, F32& _y)
-    {
-        String name = "Unnamed 2D";
-
-        Name* componentName = _transform2D->getEntityRaw()->getComponentRaw<Name>();
-        if (componentName)
-            name = componentName->getName();
-
-        EditorHierarchyLineEntityData& hierarchyLineData = m_hierarchyLinesPerEntity[_transform2D->getEntityId()];
-        HierarchyLinePtr hierarchyLine = createHierarchyElement(
-            _transform2D,
-            name.c_str(),
-            Vec2F32(10 + _x * 10, -6 - _y * 14));
-
-        if (_transform2D->getChildren().empty())
-        {
-            hierarchyLine->setDropDownState(HierarchyLineDropDownState::None);
-        }
-        else
-        {
-            if (hierarchyLineData.expanded)
-                hierarchyLine->setDropDownState(HierarchyLineDropDownState::Expanded);
-            else
-                hierarchyLine->setDropDownState(HierarchyLineDropDownState::Collapsed);
-        }
-
-        ++_y;
-
-        if (hierarchyLineData.expanded)
-        {
-            for (Transform2D* childTransform : _transform2D->getChildren())
-            {
-                updateHierarchyElement(childTransform, _x + 1, _y);
-            }
-        }
-    }
-
-    //////////////////////////////////////////
-    void EditorHierarchyController::updateHierarchyElement(Transform3D* _transform3D, F32 _x, F32& _y)
-    {
-        String name = "Unnamed 3D";
-
-        Name* componentName = _transform3D->getEntityRaw()->getComponentRaw<Name>();
-        if (componentName)
-            name = componentName->getName();
-
-        EditorHierarchyLineEntityData& hierarchyLineData = m_hierarchyLinesPerEntity[_transform3D->getEntityId()];
-        HierarchyLinePtr hierarchyLine = createHierarchyElement(
-            _transform3D,
-            name.c_str(),
-            Vec2F32(10 + _x * 10, -6 - _y * 14));
-
-        if (_transform3D->getChildren().empty())
-        {
-            hierarchyLine->setDropDownState(HierarchyLineDropDownState::None);
-        }
-        else
-        {
-            if (hierarchyLineData.expanded)
-                hierarchyLine->setDropDownState(HierarchyLineDropDownState::Expanded);
-            else
-                hierarchyLine->setDropDownState(HierarchyLineDropDownState::Collapsed);
-        }
-
-        ++_y;
-
-        if (hierarchyLineData.expanded)
-        {
-            for (Transform3D* childTransform : _transform3D->getChildren())
-            {
-                updateHierarchyElement(childTransform, _x + 1, _y);
-            }
-        }
-    }
-
-    //////////////////////////////////////////
-    HierarchyLinePtr EditorHierarchyController::createHierarchyElement(
-        Transform2D* _transform,
-        CString _name,
-        Vec2F32 const& _position)
-    {
-        HierarchyLinePtr hierarchyLine = createHierarchyLine(_transform->getEntityId());        
-        hierarchyLine->setLabel(_name);
-        hierarchyLine->getTransform()->setParent(m_layoutTransform);
-        hierarchyLine->getTransform()->setLocalPosition(_position);
-        
-        hierarchyLine->setSelected(
-            SelectionManager::GetInstancePtr()->isObjectSelected(_transform->getEntityRaw()->getSharedPtr()));
-
-        hierarchyLine->setActive(_transform->getEntityRaw()->getActiveInHierarchy());
-
-        // #TODO:
-        /*
-        if (SelectionManager::GetInstancePtr()->isObjectSelected(_transform->getEntityRaw()->getSharedPtr()))
-        {
-            hierarchyLine->setColor(ColorU32(0, 255, 0, 255));
-        }
-        else
-        {
-            if (_transform->getEntityRaw()->getActiveInHierarchy())
-            {
-                hierarchyLine->setColor(ColorU32(0, 0, 0, 255));
-            }
-            else
-            {
-                if (_transform->getEntityRaw()->getActiveSelf())
-                    hierarchyLine->setColor(ColorU32(0, 0, 0, 50));
                 else
-                    hierarchyLine->setColor(ColorU32(0, 0, 0, 85));
-            }
-        }
-        */
+                if (hierarchyLine->getType() == HierarchyLineType::Scene)
+                {
+                    EcsScene* ecsScene = static_cast<EcsScene*>(hierarchyLine->getUserData());
+
+                    _menuListTree->addItem(
+                        "Add Child/3D/Empty",
+                        [ecsScene](String const& _text)
+                    {
+                        EntityPtr newEntity = ecsScene->createEntity("Entity");
+                        newEntity->ensureComponent<Transform3D>();
+                    });
+
+                    _menuListTree->addItem(
+                        "Add Child/2D/Empty",
+                        [ecsScene](String const& _text)
+                    {
+                        EntityPtr newEntity = ecsScene->createEntity("Entity");
+                        newEntity->ensureComponent<Transform2D>();
+                    });
+
+                    EditorToolsManager::GetInstancePtr()->eventHierarchyLineSceneContextMenu(_menuListTree, ecsScene);
+                }
+            });
 
         return hierarchyLine;
     }
 
     //////////////////////////////////////////
-    HierarchyLinePtr EditorHierarchyController::createHierarchyElement(
-        Transform3D* _transform,
-        CString _name,
-        Vec2F32 const& _position)
+    void EditorHierarchyController::subscribeHierarchyLine(HierarchyLine* _hierarchyLine)
     {
-        
-        HierarchyLinePtr hierarchyLine = createHierarchyLine(_transform->getEntityId());
-        
-        hierarchyLine->setLabel(_name);
-        hierarchyLine->getTransform()->setParent(m_layoutTransform);
-        hierarchyLine->getTransform()->setLocalPosition(_position);
-
-        hierarchyLine->setSelected(
-            SelectionManager::GetInstancePtr()->isObjectSelected(_transform->getEntityRaw()->getSharedPtr()));
-
-        hierarchyLine->setActive(_transform->getEntityRaw()->getActiveInHierarchy());
-        /*
-        if (SelectionManager::GetInstancePtr()->isObjectSelected(_transform->getEntityRaw()->getSharedPtr()))
-        {
-            hierarchyLine->setColor(ColorU32(0, 255, 0, 255));
-        }
-        else
-        {
-            if (_transform->getEntityRaw()->getActiveInHierarchy())
-                hierarchyLine->setColor(ColorU32(0, 0, 0, 255));
-            else
-            {
-                if (_transform->getEntityRaw()->getActiveSelf())
-                    hierarchyLine->setColor(ColorU32(0, 0, 0, 50));
-                else
-                    hierarchyLine->setColor(ColorU32(0, 0, 0, 85));
-            }
-        }
-        */
-
-        return hierarchyLine;
+        _hierarchyLine->eventRelease.subscribe(
+            this,
+            &EditorHierarchyController::notifyHierarchyLineRelease);
+        _hierarchyLine->eventLineDoubleClick.subscribe(
+            this,
+            &EditorHierarchyController::notifyHierarchyLineDoubleClick);
+        _hierarchyLine->eventLineClick.subscribe(
+            this,
+            &EditorHierarchyController::notifyHierarchyLineClick);
+        _hierarchyLine->eventLineCursorPressIn.subscribe(
+            this,
+            &EditorHierarchyController::notifyHierarchyLineCursorPressIn);
     }
 
     //////////////////////////////////////////
-    HierarchyLinePtr EditorHierarchyController::createHierarchyElement(
-        Entity* _entity,
-        CString _name,
-        Vec2F32 const& _position)
+    void EditorHierarchyController::unsubscribeHierarchyLine(HierarchyLine* _hierarchyLine)
     {
-
-        HierarchyLinePtr hierarchyLine = createHierarchyLine(_entity->getId());
-
-        hierarchyLine->setLabel(_name);
-        hierarchyLine->getTransform()->setParent(m_layoutTransform);
-        hierarchyLine->getTransform()->setLocalPosition(_position);
-
-        hierarchyLine->setSelected(
-            SelectionManager::GetInstancePtr()->isObjectSelected(_entity->getSharedPtr()));
-
-        hierarchyLine->setActive(_entity->getActiveInHierarchy());
-
-        /*
-        if (SelectionManager::GetInstancePtr()->isObjectSelected(_entity->getSharedPtr()))
-        {
-            hierarchyLine->setColor(ColorU32(0, 255, 0, 255));
-        }
-        else
-        {
-            if (_entity->getActiveInHierarchy())
-                hierarchyLine->setColor(ColorU32(0, 0, 0, 255));
-            else
-            {
-                if (_entity->getActiveSelf())
-                    hierarchyLine->setColor(ColorU32(0, 0, 0, 50));
-                else
-                    hierarchyLine->setColor(ColorU32(0, 0, 0, 85));
-            }
-        }
-        */
-
-        return hierarchyLine;
+        _hierarchyLine->eventRelease.unsubscribe(this);
+        _hierarchyLine->eventLineClick.unsubscribe(this);
+        _hierarchyLine->eventLineCursorPressIn.unsubscribe(this);
+        _hierarchyLine->eventLineDoubleClick.unsubscribe(this);
     }
 
     //////////////////////////////////////////
-    HierarchyLinePtr EditorHierarchyController::createHierarchyLine(EntityId _entityId)
+    void EditorHierarchyController::removeHierarchyLine(HierarchyLine* _hierarchyLine)
     {
-        EditorHierarchyLineEntityData& hierarchyLineData = m_hierarchyLinesPerEntity[_entityId];
-        HierarchyLinePtr& hierarchyLine = hierarchyLineData.line;
+        unsubscribeHierarchyLine(_hierarchyLine);
 
-        if (!hierarchyLine)
-        {
-            hierarchyLine = m_hierarchyLinePool->createHierarchyLine(HierarchyLineType::Entity);
-            hierarchyLine->setEcsWorld(EditorManager::GetInstancePtr()->getMainEcsWorld());
-            hierarchyLine->setUserData(reinterpret_cast<void*>((Size)(S32)_entityId));
-            hierarchyLine->updateIcon();
-            hierarchyLine->eventDropDownClick.subscribe(this, &EditorHierarchyController::notifyHierarchyLineDropDownClick);
-            hierarchyLine->eventLineCursorPressIn.subscribe(this, &EditorHierarchyController::notifyHierarchyLineClick);
-            hierarchyLine->eventLineDoubleClick.subscribe(this, &EditorHierarchyController::notifyHierarchyLineDoubleClick);
-        }
-
-        hierarchyLine->getEntityRaw()->setActiveSelf(true);
-
-        return hierarchyLine;
-    }
-
-    //////////////////////////////////////////
-    HierarchyLinePtr EditorHierarchyController::createHierarchyLine(EcsScenePtr const& _scene)
-    {
-        EditorHierarchyLineSceneData& hierarchyLineData = m_hierarchyLinesPerScene[_scene->getClassName()];
-        HierarchyLinePtr& hierarchyLine = hierarchyLineData.line;
-
-        if (!hierarchyLine)
-        {
-            hierarchyLine = m_hierarchyLinePool->createHierarchyLine(HierarchyLineType::Scene);
-            hierarchyLine->setEcsWorld(EditorManager::GetInstancePtr()->getMainEcsWorld());
-            hierarchyLine->setUserData(static_cast<void*>(_scene.get()));
-            hierarchyLine->eventDropDownClick.subscribe(this, &EditorHierarchyController::notifyHierarchyLineDropDownClick);
-            hierarchyLine->eventLineCursorPressIn.subscribe(this, &EditorHierarchyController::notifyHierarchyLineClick);
-            hierarchyLine->eventLineDoubleClick.subscribe(this, &EditorHierarchyController::notifyHierarchyLineDoubleClick);
-            CString className = _scene->getClassName();
-            hierarchyLine->setName(className);
-        }
-
-        hierarchyLine->getEntityRaw()->setActiveSelf(true);
-
-        return hierarchyLine;
-    }
-
-    //////////////////////////////////////////
-    void EditorHierarchyController::notifyHierarchyLineDropDownClick(HierarchyLine* _hierarchyLine)
-    {
         switch (_hierarchyLine->getType())
         {
-            case HierarchyLineType::Scene:
-            {
-                EcsScene* ecsScene = static_cast<EcsScene*>(_hierarchyLine->getUserData());
-                EditorHierarchyLineSceneData& hierarchyLineData = m_hierarchyLinesPerScene[ecsScene->getClassName()];
-                hierarchyLineData.expanded = !hierarchyLineData.expanded;
-                break;
-            }
             case HierarchyLineType::Entity:
             {
                 EntityId entityId = (EntityId)((S32)reinterpret_cast<Size>(_hierarchyLine->getUserData()));
-                EditorHierarchyLineEntityData& hierarchyLineData = m_hierarchyLinesPerEntity[entityId];
-                hierarchyLineData.expanded = !hierarchyLineData.expanded;
+                m_entityLines.erase(m_entityLines.find(entityId));
+                break;
+            }
+            case HierarchyLineType::Scene:
+            {
+                EcsSceneId sceneId = (EcsSceneId)((S32)reinterpret_cast<Size>(_hierarchyLine->getUserData()));
+                m_sceneLines.erase(m_sceneLines.find(sceneId));
                 break;
             }
             default:
-            {
                 break;
-            }
         }
+    }
+
+    //////////////////////////////////////////
+    void EditorHierarchyController::notifyHierarchyLineDoubleClick(HierarchyLine* _hierarchyLine)
+    {
+        if (_hierarchyLine->hasChildren())
+            _hierarchyLine->setExpanded(!_hierarchyLine->getExpanded());
     }
 
     //////////////////////////////////////////
@@ -660,17 +679,14 @@ namespace Maze
             {
                 EntityId entityId = (EntityId)((S32)reinterpret_cast<Size>(_hierarchyLine->getUserData()));
 
-                EcsWorld* world = EditorManager::GetInstancePtr()->getSceneMain()->getWorld();
-                EntityPtr const& entity = world->getEntity(entityId);
-                MAZE_WARNING_IF(!entity, "Entity with id=%d is not found in current workspace world!", (S32)entityId);
-
-                if (SelectionManager::GetInstancePtr()->isObjectSelected(entity))
+                EntityPtr const& entity = EntityManager::GetInstancePtr()->getDefaultWorldRaw()->getEntity(entityId);
+                if (entity)
                 {
-                    // Do nothing
-                    // SelectionManager::GetInstancePtr()->unselectObject(entity);
+                    if (SelectionManager::GetInstancePtr()->isObjectSelected(entity))
+                        SelectionManager::GetInstancePtr()->unselectObject(entity);
+                    else
+                        SelectionManager::GetInstancePtr()->selectObject(entity);
                 }
-                else
-                    SelectionManager::GetInstancePtr()->selectObject(entity);
 
                 break;
             }
@@ -680,39 +696,85 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EditorHierarchyController::notifyHierarchyLineDoubleClick(HierarchyLine* _hierarchyLine)
+    void EditorHierarchyController::notifyHierarchyLineCursorPressIn(HierarchyLine* _hierarchyLine)
     {
-        if (_hierarchyLine->getDropDownState() != HierarchyLineDropDownState::None)
-            notifyHierarchyLineDropDownClick(_hierarchyLine);
+
+    }
+
+    //////////////////////////////////////////
+    void EditorHierarchyController::notifyEventManagerEvent(
+        ClassUID _eventUID,
+        Event* _event)
+    {
+        if (_eventUID == ClassInfo<EcsSceneStateChangedEvent>::UID())
+        {
+            EcsSceneStateChangedEvent* evt = _event->castRaw<EcsSceneStateChangedEvent>();
+            processEcsSceneStateChanged(evt->getSceneId(), evt->getState());
+        }
+        else
+        if (_eventUID == ClassInfo<EntityNameChangedEvent>::UID())
+        {
+            EntityNameChangedEvent* evt = _event->castRaw<EntityNameChangedEvent>();
+
+            if (m_world == evt->getWorld())
+            {
+                updateEntityName(m_world->getEntity(evt->getEntityId()));
+            }
+        }
+        else
+        if (_eventUID == ClassInfo<EcsEntityActiveChangedEvent>::UID())
+        {
+            EcsEntityActiveChangedEvent* evt = _event->castRaw<EcsEntityActiveChangedEvent>();
+
+            if (m_world == evt->getWorld())
+            {
+                updateEntity(m_world->getEntity(evt->getEntityId()));
+            }
+        }
+    }
+
+
+    //////////////////////////////////////////
+    void EditorHierarchyController::notifySelectionChanged()
+    {
+        for (auto it : m_entityLines)
+        {
+            EntityPtr entity = m_world->getEntity(it.first);
+            if (entity)
+                updateEntity(it.second, entity);
+        }
+    }
+
+    //////////////////////////////////////////
+    void EditorHierarchyController::notifyEntityAdded(EntityPtr const& _entity)
+    {
+        if (!_entity->getEcsScene())
+            return;
+        
+        if (!addEcsScene(_entity->getEcsScene()->cast<EcsScene>()))
+            return;
+
+        addEntity(_entity);
     }
 
     //////////////////////////////////////////
     void EditorHierarchyController::notifyEntityRemoved(EntityPtr const& _entity)
     {
-        removeHierarchyLine(_entity);
+        removeEntity(_entity->getId());
     }
 
     //////////////////////////////////////////
     void EditorHierarchyController::notifyEntityChanged(EntityPtr const& _entity)
     {
-        removeHierarchyLine(_entity->getSharedPtr());
+        updateEntity(_entity);
     }
 
     //////////////////////////////////////////
-    void EditorHierarchyController::removeHierarchyLine(EntityPtr const& _entity)
+    void EditorHierarchyController::notifyHierarchyLineRelease(HierarchyLine* _hierarchyLine)
     {
-        auto it = m_hierarchyLinesPerEntity.find(_entity->getId());
-        if (it != m_hierarchyLinesPerEntity.end())
-        {
-            it->second.line->eventDropDownClick.unsubscribe(this);
-            it->second.line->eventLineClick.unsubscribe(this);
-            it->second.line->eventLineCursorPressIn.unsubscribe(this);
-            it->second.line->eventLineDoubleClick.unsubscribe(this);
-            m_hierarchyLinePool->releaseHierarchyLine(it->second.line);
-            m_hierarchyLinesPerEntity.erase(it);
-        }
+        removeHierarchyLine(_hierarchyLine);
     }
-    
+
     //////////////////////////////////////////
     void EditorHierarchyController::notifyEditorSceneModeChanged(EditorSceneMode _mode)
     {
@@ -731,63 +793,6 @@ namespace Maze
 
     }
 
-    //////////////////////////////////////////
-    void EditorHierarchyController::setEcsWorld(EcsWorld* _world)
-    {
-        if (m_world == _world)
-            return;
-
-        if (m_world)
-        {
-            m_world->eventEntityRemoved.unsubscribe(this);
-            m_world->eventEntityChanged.unsubscribe(this);
-        }
-
-        m_world = _world;
-
-        if (m_world)
-        {
-            m_world->eventEntityRemoved.subscribe(this, &EditorHierarchyController::notifyEntityRemoved);
-            m_world->eventEntityChanged.subscribe(this, &EditorHierarchyController::notifyEntityChanged);
-        }
-    }
-
-    //////////////////////////////////////////
-    void EditorHierarchyController::notifySelectionChanged()
-    {
-        Set<EntityPtr> const& selectedEntities = SelectionManager::GetInstancePtr()->getSelectedEntities();
-        if (selectedEntities.size() == 1)
-        {
-            expandEntity(*selectedEntities.begin());
-            updateHierarchy();
-        }
-    }
-
-    //////////////////////////////////////////
-    void EditorHierarchyController::expandEntity(EntityPtr const& _entity)
-    {
-        if (!_entity)
-            return;
-
-        EntityId eid = _entity->getId();
-        auto it = m_hierarchyLinesPerEntity.find(eid);
-        if (it != m_hierarchyLinesPerEntity.end())
-            it->second.expanded = true;
-
-        Transform3D* transform3D = _entity->getComponentRaw<Transform3D>();
-        if (transform3D)
-        {
-            if (transform3D->getParent())
-                expandEntity(transform3D->getParent()->getEntity());
-        }
-
-        Transform2D* transform2D = _entity->getComponentRaw<Transform2D>();
-        if (transform2D)
-        {
-            if (transform2D->getParent())
-                expandEntity(transform2D->getParent()->getEntity());
-        }
-    }
-
+    
 } // namespace Maze
 //////////////////////////////////////////

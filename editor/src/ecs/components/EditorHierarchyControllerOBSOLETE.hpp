@@ -31,9 +31,8 @@
 
 //////////////////////////////////////////
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
-#include "maze-editor-tools/ecs/components/MazeHierarchyLine.hpp"
+#include "maze-ui/MazeUIHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
-#include "maze-core/ecs/MazeEcsScene.hpp"
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-ui/MazeCursorInputEvent.hpp"
 #include "editor/EditorSceneMode.hpp"
@@ -42,6 +41,8 @@
 //////////////////////////////////////////
 namespace Maze
 {
+    /*
+* 
     //////////////////////////////////////////
     MAZE_USING_SHARED_PTR(RenderMesh);
     MAZE_USING_SHARED_PTR(Transform2D);
@@ -54,6 +55,33 @@ namespace Maze
     MAZE_USING_SHARED_PTR(HierarchyLine);
     MAZE_USING_SHARED_PTR(EcsScene);
 
+
+    //////////////////////////////////////////
+    struct EditorHierarchyLineEntityData
+    {
+        //////////////////////////////////////////
+        EditorHierarchyLineEntityData()
+            : expanded(false)
+        {
+        }
+
+        HierarchyLinePtr line;
+        bool expanded;
+    };
+
+
+    //////////////////////////////////////////
+    struct EditorHierarchyLineSceneData
+    {
+        //////////////////////////////////////////
+        EditorHierarchyLineSceneData()
+            : expanded(false)
+        {
+        }
+
+        HierarchyLinePtr line;
+        bool expanded;
+    };
 
     //////////////////////////////////////////
     // Class EditorHierarchyController
@@ -97,15 +125,6 @@ namespace Maze
         inline void addIgnoreScene(ClassUID _classUID) { m_ignoreScenes.insert(_classUID); }
 
 
-        //////////////////////////////////////////
-        void setEcsWorld(EcsWorld* _world);
-
-
-        //////////////////////////////////////////
-        void processEcsSceneStateChanged(
-            EcsSceneId _sceneId,
-            EcsSceneState _state);
-
     protected:
 
         //////////////////////////////////////////
@@ -120,65 +139,53 @@ namespace Maze
         //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
         
+        //////////////////////////////////////////
+        void updateHierarchy();
 
         //////////////////////////////////////////
-        HierarchyLinePtr addEcsScene(EcsScenePtr const& _scene);
+        void updateHierarchyScenes();
 
         //////////////////////////////////////////
-        void removeEcsScene(EcsSceneId _sceneId);
-
-
+        void updateHierarchyPrefab();
 
         //////////////////////////////////////////
-        HierarchyLinePtr addEntity(EntityPtr const& _entity);
+        void updateHierarchyElement(Transform2D* _transform2D, F32 _x, F32& _y);
 
         //////////////////////////////////////////
-        void removeEntity(EntityId _entityId);
+        void updateHierarchyElement(Transform3D* _transform3D, F32 _x, F32& _y);
 
         //////////////////////////////////////////
-        void updateEntity(EntityPtr const& _entity);
+        HierarchyLinePtr createHierarchyElement(
+            Transform2D* _transform,
+            CString _name,
+            Vec2F32 const& _position);
 
         //////////////////////////////////////////
-        void updateEntity(HierarchyLinePtr const& hierarchyLine, EntityPtr const& _entity);
+        HierarchyLinePtr createHierarchyElement(
+            Transform3D* _transform,
+            CString _name,
+            Vec2F32 const& _position);
 
         //////////////////////////////////////////
-        void updateEntityName(EntityPtr const& _entity);
-
-
-
-        //////////////////////////////////////////
-        HierarchyLinePtr createHierarchyLine(HierarchyLineType _type);
+        HierarchyLinePtr createHierarchyElement(
+            Entity* _entity,
+            CString _name,
+            Vec2F32 const& _position);
 
         //////////////////////////////////////////
-        void subscribeHierarchyLine(HierarchyLine* _line);
+        HierarchyLinePtr createHierarchyLine(EntityId _entityId);
 
         //////////////////////////////////////////
-        void unsubscribeHierarchyLine(HierarchyLine* _line);
+        HierarchyLinePtr createHierarchyLine(EcsScenePtr const& _scene);
 
         //////////////////////////////////////////
-        void removeHierarchyLine(HierarchyLine* _line);
-
-
-        //////////////////////////////////////////
-        void notifyHierarchyLineDoubleClick(HierarchyLine* _hierarchyLine);
+        void notifyHierarchyLineDropDownClick(HierarchyLine* _hierarchyLine);
 
         //////////////////////////////////////////
         void notifyHierarchyLineClick(HierarchyLine* _hierarchyLine);
 
         //////////////////////////////////////////
-        void notifyHierarchyLineCursorPressIn(HierarchyLine* _hierarchyLine);
-
-        //////////////////////////////////////////
-        void notifyEventManagerEvent(
-            ClassUID _classUID,
-            Event* _event);
-
-        //////////////////////////////////////////
-        void notifySelectionChanged();
-
-
-        //////////////////////////////////////////
-        void notifyEntityAdded(EntityPtr const& _entity);
+        void notifyHierarchyLineDoubleClick(HierarchyLine* _hierarchyLine);
 
         //////////////////////////////////////////
         void notifyEntityRemoved(EntityPtr const& _entity);
@@ -186,8 +193,9 @@ namespace Maze
         //////////////////////////////////////////
         void notifyEntityChanged(EntityPtr const& _entity);
 
+
         //////////////////////////////////////////
-        void notifyHierarchyLineRelease(HierarchyLine* _hierarchyLine);
+        void removeHierarchyLine(EntityPtr const& _entity);
 
 
         //////////////////////////////////////////
@@ -199,29 +207,37 @@ namespace Maze
         //////////////////////////////////////////
         void notifyPrefabEntityChanged(EntityPtr const& _entity);
 
+        //////////////////////////////////////////
+        void notifySelectionChanged();
+
+        //////////////////////////////////////////
+        void setEcsWorld(EcsWorld* _world);
+
+        //////////////////////////////////////////
+        void expandEntity(EntityPtr const& _entity);
+
     protected:
-        Canvas* m_canvas = nullptr;
+        Canvas* m_canvas;
 
         Transform2DPtr m_transform;
 
         SpriteRenderer2DPtr m_bodyBackground;
+        Transform2DPtr m_layoutTransform;
 
         HierarchyLinePoolPtr m_hierarchyLinePool;
 
         Transform2DPtr m_titleTransform;
         SpriteRenderer2DPtr m_titleBackground;
 
-        Transform2DPtr m_hierarchyMainLayoutEntity;
-
         EcsWorld* m_world = nullptr;
 
+        Map<EntityId, EditorHierarchyLineEntityData> m_hierarchyLinesPerEntity;
+        UnorderedMap<String, EditorHierarchyLineSceneData> m_hierarchyLinesPerScene;
+
         Set<ClassUID> m_ignoreScenes;
-
-
-
-        UnorderedMap<EcsSceneId, HierarchyLinePtr> m_sceneLines;
-        UnorderedMap<EntityId, HierarchyLinePtr> m_entityLines;
     };
+
+    */
 
 
 } // namespace Maze

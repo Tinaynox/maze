@@ -249,7 +249,7 @@ namespace Maze
                     default: break;
                 }
                     
-                positionShift += 0.5f * m_systemFont->charSize.y * fontScale;
+                // positionShift += 0.5f * m_systemFont->charSize.y * fontScale;
 
                 Vec2F sizeV = (Vec2F)m_systemFont->charSize * fontScale;
                 Vec2F positionShiftV = Vec2F((F32)sx, (F32)sy) * fontScale + positionShift;
@@ -354,12 +354,12 @@ namespace Maze
             default: break;
         }
 
-        positionShift += 0.5f * m_systemFont->charSize.x * fontScale;
+        // positionShift += 0.5f * m_systemFont->charSize.x * fontScale;
 
         Vec2F sizeV = (Vec2F)m_systemFont->charSize * fontScale;
         Vec2F positionShiftV = Vec2F((F32)sx, (F32)sy) * fontScale + positionShift;
 
-        return Vec2F(-0.5f + columnsCount, -0.5f) * sizeV + positionShiftV;
+        return Vec2F(0.0f + columnsCount, 0.0f) * sizeV + positionShiftV;
     }
 
     //////////////////////////////////////////
@@ -397,7 +397,7 @@ namespace Maze
         AbstractTextRenderer2D::processEntityAwakened();
 
         m_meshRenderer = getEntityRaw()->ensureComponent<MeshRendererInstanced>();
-        m_meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->ensureBuiltinRenderMesh(BuiltinRenderMeshType::Quad));
+        m_meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultQuadNullPivotMesh());
 
         updateMaterial();
         updateMeshData();

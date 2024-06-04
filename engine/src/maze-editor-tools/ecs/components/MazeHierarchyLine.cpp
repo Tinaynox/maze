@@ -330,7 +330,8 @@ namespace Maze
     void HierarchyLine::release()
     {
         ComponentPoolObject<HierarchyLine>* poolObject = getEntityRaw()->getComponentRaw<ComponentPoolObject<HierarchyLine>>();
-        poolObject->release(cast<HierarchyLine>());
+        if (poolObject->isPoolExists())
+            poolObject->release(cast<HierarchyLine>());
     }
 
     //////////////////////////////////////////
@@ -449,7 +450,7 @@ namespace Maze
     //////////////////////////////////////////
     void HierarchyLine::updateDropDownRenderer()
     {
-        if (!m_childrenLayout)
+        if (!getEntityRaw() || !m_childrenLayout || !m_childrenLayout->getEntityRaw())
             return;
 
         if (!m_dropDownRenderer)
@@ -481,6 +482,18 @@ namespace Maze
         ComponentPoolObject<HierarchyLine>* _poolObject)
     {
         _hierarchyLine->processAwake(_poolObject);
+    }
+
+    //////////////////////////////////////////
+    COMPONENT_SYSTEM_EVENT_HANDLER(HierarchyLineRemoved,
+        {},
+        {},
+        EntityRemovedEvent const& _event,
+        Entity* _entity,
+        HierarchyLine* _hierarchyLine,
+        ComponentPoolObject<HierarchyLine>* _poolObject)
+    {
+        _hierarchyLine->release();
     }
 
 } // namespace Maze

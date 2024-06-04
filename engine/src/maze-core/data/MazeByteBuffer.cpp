@@ -191,7 +191,7 @@ namespace Maze
     //////////////////////////////////////////
     U8* ByteBuffer::insert(U32 _at, Size _size)
     {
-        MAZE_ASSERT(_at <= m_size);
+        MAZE_DEBUG_ASSERT(_at <= m_size);
 
         U32 requiredSize = m_size + (U32)_size;
 
@@ -226,7 +226,7 @@ namespace Maze
         if (_size == 0)
             return;
 
-        MAZE_ASSERT(_at < m_size && _at + _size <= m_size);
+        MAZE_DEBUG_ASSERT(_at < m_size && _at + _size <= m_size);
 
         memmove(m_data + _at, m_data + _at + _size, m_size - (_at +_size));
         m_size -= (U32)_size;

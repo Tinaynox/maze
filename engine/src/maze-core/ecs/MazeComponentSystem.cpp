@@ -51,8 +51,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ComponentSystemEntityAddedToSampleEventHandler::init(ComponentSystemEventHandlerPtr const& _eventHandler)
+    bool ComponentSystemEntityAddedToSampleEventHandler::init(
+        EcsWorld* _world,
+        ComponentSystemEventHandlerPtr const& _eventHandler)
     {
+        m_world = _world;
         m_eventHandler = _eventHandler;
 
         m_eventHandler->getSample()->eventEntityAdded.subscribe(this, &ComponentSystemEntityAddedToSampleEventHandler::notifyEntityAdded);
@@ -63,21 +66,9 @@ namespace Maze
     //////////////////////////////////////////
     void ComponentSystemEntityAddedToSampleEventHandler::notifyEntityAdded(Entity* _entity)
     {
-        m_addedEntities.current().push_back(_entity->getId());
+        m_world->processEntityAddedToSample(m_eventHandler, _entity->getId());
     }
-
-    //////////////////////////////////////////
-    void ComponentSystemEntityAddedToSampleEventHandler::processEntitiesAddedToSample()
-    {
-        FastVector<EntityId>& addedEntities = m_addedEntities.switchContainer();
-        for (EntityId entityId : addedEntities)
-        {
-            EntityAddedToSampleEvent event;
-            m_eventHandler->processEvent(entityId, &event);
-        }
-        addedEntities.clear();
-    }
-
+    
 
     //////////////////////////////////////////
     // Class ComponentSystemEntityRemovedFromSampleEventHandler
@@ -95,8 +86,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    bool ComponentSystemEntityRemovedFromSampleEventHandler::init(ComponentSystemEventHandlerPtr const& _eventHandler)
+    bool ComponentSystemEntityRemovedFromSampleEventHandler::init(
+        EcsWorld* _world,
+        ComponentSystemEventHandlerPtr const& _eventHandler)
     {
+        m_world = _world;
         m_eventHandler = _eventHandler;
 
         m_eventHandler->getSample()->eventEntityWillBeRemoved.subscribe(this, &ComponentSystemEntityRemovedFromSampleEventHandler::notifyEntityWillBeRemoved);
@@ -107,8 +101,7 @@ namespace Maze
     //////////////////////////////////////////
     void ComponentSystemEntityRemovedFromSampleEventHandler::notifyEntityWillBeRemoved(Entity* _entity)
     {
-        EntityRemovedFromSampleEvent event;
-        m_eventHandler->processEvent(_entity->getId(), &event, EcsEventParams(false, false));
+        m_world->processEntityRemovedFromSample(m_eventHandler, _entity->getId());
     }
 
 

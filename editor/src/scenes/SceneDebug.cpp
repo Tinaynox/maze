@@ -89,6 +89,7 @@ namespace Maze
         , m_framesCount(0)
         , m_fpsTimeLeft(0.0f)
     {
+        setIsSystemScene();
     }
 
     //////////////////////////////////////////

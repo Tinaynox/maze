@@ -84,7 +84,7 @@ namespace Maze
             RenderSystemPtr const& renderSystem = GraphicsManager::GetInstancePtr()->getDefaultRenderSystem();
 
             EntityPtr editBoxEntity = _ecsScene->createEntity();
-            editBoxEntity->ensureComponent<Name>("EdidBox");
+            editBoxEntity->ensureComponent<Name>("EditBox");
 
             EditBox2DPtr editBox = editBoxEntity->createComponent<EditBox2D>();
 
@@ -175,8 +175,8 @@ namespace Maze
             }
             else
             {
-                descent = -(0.5f * (cursorHeight - (F32)_fontSize) - 1.0f);
                 cursorHeight = 8.0f + 4.0f;
+                descent = -(0.5f * (cursorHeight - (F32)_fontSize) - 1.0f);
             }
 
             SpriteRenderer2DPtr cursorRenderer = SpriteHelper::CreateSprite(
@@ -281,7 +281,7 @@ namespace Maze
             };
 
 
-            TextRenderer2DPtr textRenderer = UIHelper::CreateText(
+            AbstractTextRenderer2DPtr textRenderer = UIHelper::CreateTextOrSystemText(
                 "Dropdown",
                 _fontMaterial,
                 _fontSize,
@@ -297,7 +297,7 @@ namespace Maze
             SizePolicy2DPtr textSizePolicy = textRenderer->getEntityRaw()->ensureComponent<SizePolicy2D>();
             textSizePolicy->setSizeDelta(-10.0f, 0.0f);
 
-            dropdown->setTextRenderer(textRenderer->cast<AbstractTextRenderer2D>());
+            dropdown->setTextRenderer(textRenderer);
 
 
             SpriteRenderer2DPtr expandButtonSprite = SpriteHelper::CreateSprite(
@@ -381,7 +381,7 @@ namespace Maze
                     checkMarkSprite->getEntityRaw()->ensureComponent<Name>()->setName("CheckMark");
                     checkMarkSprite->setColor(ColorU32::c_black);
 
-                    TextRenderer2DPtr itemTextRenderer = UIHelper::CreateText(
+                    AbstractTextRenderer2DPtr itemTextRenderer = UIHelper::CreateTextOrSystemText(
                         "Option 1",
                         _fontMaterial,
                         _fontSize,

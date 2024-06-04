@@ -1082,7 +1082,7 @@ namespace Maze
     //////////////////////////////////////////
     Char DataBlockTextParser::readCharNoRewind(Size _index)
     {
-        MAZE_ASSERT(_index < 3 && "Index is out of bounds");
+        MAZE_DEBUG_ASSERT(_index < 3 && "Index is out of bounds");
         Char ch[3] = {0, 0, 0};
         m_readStream.readNoRewind((U8*)ch, 3);
         return ch[_index];

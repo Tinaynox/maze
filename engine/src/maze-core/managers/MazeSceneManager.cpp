@@ -196,7 +196,7 @@ namespace Maze
         {
             S32 index = m_freeSceneIndices.top();
             m_freeSceneIndices.pop();
-            MAZE_ASSERT(index < (S32)m_scenes.size() && !m_scenes[index].scene);
+            MAZE_DEBUG_ASSERT(index < (S32)m_scenes.size() && !m_scenes[index].scene);
             return m_scenes[index].id;
         }
 

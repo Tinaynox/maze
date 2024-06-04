@@ -74,6 +74,8 @@
 #include "maze-ui/ecs/components/MazeVerticalLayout2D.hpp"
 #include "maze-ui/ecs/components/MazeContextMenu2D.hpp"
 #include "maze-ui/ecs/helpers/MazeSystemUIHelper.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsHelper.hpp"
+#include "maze-editor-tools/helpers/MazeEditorToolsUIHelper.hpp"
 #include "Example.hpp"
 
 
@@ -196,6 +198,7 @@ namespace Maze
         m_canvas->setRenderTarget(renderTarget);
         m_canvas->setViewport(Example::GetInstancePtr()->getMainRenderWindowViewport());
 
+        /*
         SystemUIHelper::CreateSystemText(
             "SOME TEST TEXT",
             8,
@@ -217,6 +220,8 @@ namespace Maze
             this,
             { 0.5f, 0.5f },
             { 0.5f, 0.5f });
+        */
+
         /*
         Maze::SpritePtr sprite = spriteManager->getSprite("Panel00.mztexture");
         sprite->setSliceBorder(
@@ -379,20 +384,20 @@ namespace Maze
         //menuListTree->addItem("Option 1", [](String const& _option) { Log("Option 1"); });
         
         /*
-        ColorEdit2DPtr colorEdit = UIHelper::CreateDefaultColorEdit(
+        ColorEdit2DPtr colorEdit = EditorToolsUIHelper::CreateDefaultColorEdit(
             ColorU32::c_red,
             Vec2F32(150, 18),
             Vec2F32(270, 300),
-            panel00->getTransform(),
+            m_canvas->getTransform(),
             this,
             Vec2F32(0.0f, 0.0f),
             Vec2F32::c_zero);
 
-        ColorHDREdit2DPtr colorHDREdit = UIHelper::CreateDefaultColorHDREdit(
+        ColorHDREdit2DPtr colorHDREdit = EditorToolsUIHelper::CreateDefaultColorHDREdit(
             ColorF128::c_green,
             Vec2F32(150, 18),
             Vec2F32(270, 270),
-            panel00->getTransform(),
+            m_canvas->getTransform(),
             this,
             Vec2F32(0.0f, 0.0f),
             Vec2F32::c_zero);
@@ -533,26 +538,28 @@ namespace Maze
         */
 
 
-        /*
+        
         UIHelper::CreateDefaultEditBox(
-            "123456",
+            "Tinaynox!",
+            FontMaterialPtr(),
+            8,
             Vec2F32(182, 18),
             Vec2F32(-90, 0),
-            panel00->getTransform(),
+            m_canvas->getTransform(),
             this,
             Vec2F32(0.5f, 0.5f),
             Vec2F32::c_zero);
 
-        SystemTextEditBox2DPtr editBox = UIHelper::CreateDefaultEditBox(
+        EditBox2DPtr editBox = SystemUIHelper::CreateDefaultEditBox(
             "EditBox2",
-            Vec2F32(100, 18),
+            Vec2F32(182, 18),
             Vec2F32(-90, -20),
-            panel00->getTransform(),
+            m_canvas->getTransform(),
             this,
             Vec2F32(0.5f, 0.5f),
             Vec2F32::c_zero);
         editBox->setText("Tinaynox!");
-        */
+        
     }
 
     //////////////////////////////////////////

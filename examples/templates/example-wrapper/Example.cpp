@@ -447,7 +447,8 @@ namespace Maze
                     }
                     case KeyCode::Number0:
                     {
-                        LoadFirstExampleScene(m_sceneManager.get());
+                        if (_data.isControlDown() && _data.isShiftDown())
+                            LoadFirstExampleScene(m_sceneManager.get());
                         break;
                     }
                     default:

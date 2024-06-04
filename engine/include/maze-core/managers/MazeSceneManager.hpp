@@ -126,7 +126,7 @@ namespace Maze
                 MAZE_DEBUG_BP_IF(scene->getClassUID() != ClassInfo<TScene>::UID());
 
                 EcsSceneId sceneId = generateNewEcsSceneId();
-                MAZE_ASSERT(sceneId.getIndex() < (S32)m_scenes.size() && !m_scenes[sceneId.getIndex()].scene);
+                MAZE_DEBUG_ASSERT(sceneId.getIndex() < (S32)m_scenes.size() && !m_scenes[sceneId.getIndex()].scene);
                 m_scenes[sceneId.getIndex()].id = sceneId;
                 m_scenes[sceneId.getIndex()].scene = scene;
 

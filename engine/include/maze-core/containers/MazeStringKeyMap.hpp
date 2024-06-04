@@ -412,7 +412,7 @@ namespace Maze
         inline TValue const& operator[](String const& _key) const
         {
             TValue const* value = tryGet(_key);
-            MAZE_ASSERT(value != nullptr);
+            MAZE_DEBUG_ASSERT(value != nullptr);
             return *value;
         }
 
@@ -420,7 +420,7 @@ namespace Maze
         inline TValue const& operator[](CString _key) const
         {
             TValue const* value = tryGet(_key);
-            MAZE_ASSERT(value != nullptr);
+            MAZE_DEBUG_ASSERT(value != nullptr);
             return *value;
         }
 
@@ -434,7 +434,7 @@ namespace Maze
         inline TValue const& operator[](HashedCString _key) const
         {
             TValue const* value = tryGet(_key);
-            MAZE_ASSERT(value != nullptr);
+            MAZE_DEBUG_ASSERT(value != nullptr);
             return *value;
         }
 
