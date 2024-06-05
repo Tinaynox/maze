@@ -36,6 +36,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/MazeColorF128.hpp"
+#include "maze-core/ecs/events/MazeEcsCoreEvents.hpp"
 
 
 //////////////////////////////////////////
@@ -67,6 +68,7 @@ namespace Maze
 
         //////////////////////////////////////////
         friend class Entity;
+        friend void SimpleLineRenderer2DEntityRemoved(EntityRemovedEvent const&, Entity*, SimpleLineRenderer2D*);
 
     public:
 

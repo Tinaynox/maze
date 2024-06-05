@@ -366,6 +366,19 @@ namespace Maze
         MAZE_NOT_IMPLEMENTED
     }
 
+    //////////////////////////////////////////
+    void EcsWorldEventsQueue::clear()
+    {
+        MAZE_DEBUG_ASSERT(!m_processingEvents);
+
+        m_eventTypes.clear();
+        m_addingEntities.clear();
+        while (!m_removingEntities.empty()) { m_removingEntities.pop(); }
+        while (!m_componentsChangedEntities.empty()) { m_componentsChangedEntities.pop(); }
+        while (!m_activeChangedEntities.empty()) { m_activeChangedEntities.pop(); }
+        while (!m_usualEvents.empty()) { m_usualEvents.pop(); }
+    }
+
 
 } // namespace Maze
 //////////////////////////////////////////

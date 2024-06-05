@@ -203,12 +203,14 @@ namespace Maze
         ComponentSystemHolder::Detach(this);
 
         m_samples.clear();
+        
+        m_eventHolders.other()->clear();
+        m_eventHolders.current()->clear();
 
         m_entities.clear();
 
-        m_eventHolders.current().reset();
         m_eventHolders.other().reset();
-
+        m_eventHolders.current().reset();
 
         eventOnDestroy(this);
     }

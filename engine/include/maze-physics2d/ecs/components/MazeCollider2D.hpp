@@ -100,9 +100,6 @@ namespace Maze
         //////////////////////////////////////////
         bool init();
 
-        //////////////////////////////////////////
-        virtual void processComponentAdded() MAZE_OVERRIDE;
-
     protected:
         bool m_isSensor = false;
         PhysicsMaterial2DAssetRef m_physicsMaterialRef;

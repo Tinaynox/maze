@@ -83,9 +83,6 @@ namespace Maze
         //////////////////////////////////////////
         bool init();
 
-        //////////////////////////////////////////
-        virtual void processComponentAdded() MAZE_OVERRIDE;
-
     };
 
 

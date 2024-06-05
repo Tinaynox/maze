@@ -409,7 +409,8 @@ namespace Maze
     void TrailRenderer3D::clear()
     {
         m_edges.clear();
-        m_vao->clear();
+        if (m_vao)
+            m_vao->clear();
         m_timer = 0.0f;
     }
 
@@ -497,6 +498,7 @@ namespace Maze
     {
         _trailRenderer3D->processEntityRemoved();
     }
+
 
 } // namespace Maze
 //////////////////////////////////////////

@@ -77,11 +77,6 @@ namespace Maze
         return true;
     }
 
-    //////////////////////////////////////////
-    void CircleCollider2D::processComponentAdded()
-    {
-        Collider2D::processComponentAdded();
-    }
 
 
 } // namespace Maze

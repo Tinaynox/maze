@@ -36,6 +36,7 @@
 #include "maze-graphics/MazeRenderSystem.hpp"
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/MazeColorF128.hpp"
+#include "maze-core/ecs/events/MazeEcsCoreEvents.hpp"
 
 
 //////////////////////////////////////////
@@ -67,6 +68,7 @@ namespace Maze
 
         //////////////////////////////////////////
         friend class Entity;
+        friend void LineRenderer2DEntityRemoved(EntityRemovedEvent const&, Entity*, LineRenderer2D*);
 
     public:
 
@@ -76,9 +78,6 @@ namespace Maze
         //////////////////////////////////////////
         static LineRenderer2DPtr Create(RenderSystem* _renderSystem = nullptr);
 
-
-        //////////////////////////////////////////
-        void processEntityRemoved();
 
         
         //////////////////////////////////////////
@@ -161,6 +160,9 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        void processEntityRemoved();
 
         //////////////////////////////////////////
         virtual void processSceneSet() MAZE_OVERRIDE;

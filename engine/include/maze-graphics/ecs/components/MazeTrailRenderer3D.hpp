@@ -36,6 +36,7 @@
 #include "maze-graphics/ecs/components/MazeMeshRenderer.hpp"
 #include "maze-graphics/MazeColorF128.hpp"
 #include "maze-graphics/MazeColorGradient.hpp"
+#include "maze-core/ecs/events/MazeEcsCoreEvents.hpp"
 
 
 //////////////////////////////////////////
@@ -67,6 +68,7 @@ namespace Maze
 
         //////////////////////////////////////////
         friend class Entity;
+        friend void TrailRenderer3DEntityRemoved(EntityRemovedEvent const&, Entity*, TrailRenderer3D*);
 
     public:
 
@@ -96,10 +98,6 @@ namespace Maze
 
         //////////////////////////////////////////
         static TrailRenderer3DPtr Create(RenderSystem* _renderSystem = nullptr);
-
-
-        //////////////////////////////////////////
-        void processEntityRemoved();
 
 
         //////////////////////////////////////////
@@ -215,6 +213,9 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual void processEntityAwakened() MAZE_OVERRIDE;
+
+        //////////////////////////////////////////
+        void processEntityRemoved();
 
         //////////////////////////////////////////
         virtual void processSceneSet() MAZE_OVERRIDE;

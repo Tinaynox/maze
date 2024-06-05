@@ -89,13 +89,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void VerticalLayout2D::processComponentAdded()
-    {
-        Layout2D::processComponentAdded();
-
-    }
-
-    //////////////////////////////////////////
     void VerticalLayout2D::alignChildren()
     {
         Size childrenCount = getActiveChildrenCount();

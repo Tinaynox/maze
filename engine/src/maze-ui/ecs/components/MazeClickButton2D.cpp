@@ -79,11 +79,6 @@ namespace Maze
         return true;
     }
 
-    //////////////////////////////////////////
-    void ClickButton2D::processComponentAdded()
-    {
-        Button2D::processComponentAdded();
-    }
     
     
 } // namespace Maze

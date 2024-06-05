@@ -181,43 +181,6 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Component::processComponentAdded()
-    {
-    }
-
-    //////////////////////////////////////////
-    void Component::processComponentRemoved()
-    {
-    }
-
-    //////////////////////////////////////////
-    void Component::processSceneSet()
-    {
-
-    }
-
-    //////////////////////////////////////////
-    void Component::processSceneReset()
-    {
-
-    }
-    
-    //////////////////////////////////////////
-    void Component::processEntityEnabled()
-    {
-    }
-
-    //////////////////////////////////////////
-    void Component::processEntityDisabled()
-    {
-    }
-
-    //////////////////////////////////////////
-    void Component::processEntityAwakened()
-    {
-    }
-
-    //////////////////////////////////////////
     S32 Component::getPriority() const
     {
         return EntityManager::GetInstancePtr()->getComponentPriority(getClassUID());

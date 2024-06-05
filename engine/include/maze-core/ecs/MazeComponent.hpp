@@ -246,26 +246,26 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        virtual void processComponentAdded();
+        virtual void processComponentAdded() {}
 
         //////////////////////////////////////////
-        virtual void processComponentRemoved();
+        virtual void processComponentRemoved() {}
 
 
         //////////////////////////////////////////
-        virtual void processSceneSet();
+        virtual void processSceneSet() {}
 
         //////////////////////////////////////////
-        virtual void processSceneReset();
+        virtual void processSceneReset() {}
 
         //////////////////////////////////////////
-        virtual void processEntityEnabled();
+        virtual void processEntityEnabled() {}
 
         //////////////////////////////////////////
-        virtual void processEntityDisabled();
+        virtual void processEntityDisabled() {}
         
         //////////////////////////////////////////
-        virtual void processEntityAwakened();
+        virtual void processEntityAwakened() {}
 
 
     protected:

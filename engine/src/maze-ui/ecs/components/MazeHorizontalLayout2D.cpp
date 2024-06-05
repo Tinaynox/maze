@@ -87,13 +87,6 @@ namespace Maze
         return true;
     }
 
-    //////////////////////////////////////////
-    void HorizontalLayout2D::processComponentAdded()
-    {
-        Layout2D::processComponentAdded();
-
-    }
-
 
     //////////////////////////////////////////
     void HorizontalLayout2D::alignChildren()

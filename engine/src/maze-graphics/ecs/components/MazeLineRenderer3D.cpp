@@ -345,7 +345,8 @@ namespace Maze
     void LineRenderer3D::clear()
     {
         m_positions.clear();
-        m_vao->clear();        
+        if (m_vao)
+            m_vao->clear();        
     }
 
 

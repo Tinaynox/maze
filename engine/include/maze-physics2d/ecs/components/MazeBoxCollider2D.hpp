@@ -96,8 +96,6 @@ namespace Maze
         //////////////////////////////////////////
         bool init();
 
-        //////////////////////////////////////////
-        virtual void processComponentAdded() MAZE_OVERRIDE;
 
     protected:
         Vec2F m_offset;

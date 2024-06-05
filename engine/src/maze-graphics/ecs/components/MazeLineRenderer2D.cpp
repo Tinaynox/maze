@@ -329,7 +329,8 @@ namespace Maze
     void LineRenderer2D::clear()
     {
         m_positions.clear();
-        m_vao->clear();        
+        if (m_vao)
+            m_vao->clear();        
     }
 
 
@@ -343,6 +344,7 @@ namespace Maze
     {
         _lineRenderer2D->processEntityRemoved();
     }
+
 
 } // namespace Maze
 //////////////////////////////////////////
