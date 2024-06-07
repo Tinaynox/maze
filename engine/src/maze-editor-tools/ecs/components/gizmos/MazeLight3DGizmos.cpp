@@ -107,9 +107,7 @@ namespace Maze
         Vec3F const& position = transform3D->getWorldPosition();
 
         Mat4F mat = transform3D->getWorldTransform();
-        mat[0][3] = 0.0f;
-        mat[1][3] = 0.0f;
-        mat[2][3] = 0.0f;
+        mat.setTranslation(Vec3F(0.0f, 0.0f, 0.0f));
 
         Vec3F directionForward = mat.transformAffine(Vec3F::c_unitZ).normalizedCopy();
 

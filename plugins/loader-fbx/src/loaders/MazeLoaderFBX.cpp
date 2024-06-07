@@ -71,10 +71,10 @@ namespace Maze
     inline Mat4F ConvertOpenFBXMatrixToMat4F32(ofbx::Matrix const& _mat)
     {
         return Mat4F(
-            (F32)_mat.m[0], (F32)_mat.m[4], (F32)_mat.m[8], (F32)_mat.m[12],
-            (F32)_mat.m[1], (F32)_mat.m[5], (F32)_mat.m[9], (F32)_mat.m[13],
-            (F32)_mat.m[2], (F32)_mat.m[6], (F32)_mat.m[10], (F32)_mat.m[14],
-            (F32)_mat.m[3], (F32)_mat.m[7], (F32)_mat.m[11], (F32)_mat.m[15]);
+            (F32)_mat.m[0], (F32)_mat.m[1], (F32)_mat.m[2], (F32)_mat.m[3],
+            (F32)_mat.m[4], (F32)_mat.m[5], (F32)_mat.m[6], (F32)_mat.m[7],
+            (F32)_mat.m[8], (F32)_mat.m[9], (F32)_mat.m[10], (F32)_mat.m[11],
+            (F32)_mat.m[12], (F32)_mat.m[13], (F32)_mat.m[14], (F32)_mat.m[15]);
     }
 
     //////////////////////////////////////////
@@ -200,7 +200,7 @@ namespace Maze
             Mat4F meshGeometricTransformMat = ConvertOpenFBXMatrixToMat4F32(meshGeometricTransform);
             Mat4F meshGlobalTransformMat = ConvertOpenFBXMatrixToMat4F32(meshGlobalTransform);
 
-            Mat4F transformMat = fixOrientationMat * meshGeometricTransformMat * meshGlobalTransformMat;
+            Mat4F transformMat = fixOrientationMat.concatenatedAffineCopy(meshGeometricTransformMat).concatenatedAffineCopy(meshGlobalTransformMat);
 
 
             

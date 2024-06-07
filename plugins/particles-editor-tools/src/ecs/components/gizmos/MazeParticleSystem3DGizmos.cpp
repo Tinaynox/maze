@@ -135,8 +135,8 @@ namespace Maze
                 case ParticleSystem3DZoneType::Sphere:
                 {
                     _drawer->pushTransform(
-                        Mat4F::CreateTranslationMatrix(zoneData.sphere.position) *
-                        Mat4F::CreateScaleMatrix(zoneData.sphere.scale));
+                        Mat4F::CreateTranslationMatrix(zoneData.sphere.position).concatenatedAffineCopy(
+                            Mat4F::CreateScaleMatrix(zoneData.sphere.scale)));
                     _drawer->drawWireSphere(
                         Vec3F::c_zero,
                         zoneData.sphere.radius,
@@ -147,8 +147,8 @@ namespace Maze
                 case ParticleSystem3DZoneType::Hemisphere:
                 {
                     _drawer->pushTransform(
-                        Mat4F::CreateTranslationMatrix(zoneData.hemisphere.position) *
-                        Mat4F::CreateScaleMatrix(zoneData.hemisphere.scale));
+                        Mat4F::CreateTranslationMatrix(zoneData.hemisphere.position).concatenatedAffineCopy(
+                            Mat4F::CreateScaleMatrix(zoneData.hemisphere.scale)));
                     _drawer->drawWireHemisphere(
                         Vec3F::c_zero,
                         Vec3F::c_unitZ,
@@ -160,8 +160,8 @@ namespace Maze
                 case ParticleSystem3DZoneType::Cone:
                 {
                     _drawer->pushTransform(
-                        Mat4F::CreateTranslationMatrix(zoneData.cone.position) *
-                        Mat4F::CreateScaleMatrix(zoneData.cone.scale));
+                        Mat4F::CreateTranslationMatrix(zoneData.cone.position).concatenatedAffineCopy(
+                            Mat4F::CreateScaleMatrix(zoneData.cone.scale)));
                     _drawer->drawWireTruncatedCone(
                         Vec3F::c_zero,
                         Vec3F::c_unitZ * zoneData.cone.length,
@@ -174,8 +174,8 @@ namespace Maze
                 case ParticleSystem3DZoneType::Torus:
                 {
                     _drawer->pushTransform(
-                        Mat4F::CreateTranslationMatrix(zoneData.torus.position) *
-                        Mat4F::CreateScaleMatrix(zoneData.torus.scale));
+                        Mat4F::CreateTranslationMatrix(zoneData.torus.position).concatenatedAffineCopy(
+                            Mat4F::CreateScaleMatrix(zoneData.torus.scale)));
                     _drawer->drawWireTorus(
                         Vec3F::c_zero,
                         Vec3F::c_unitZ,
@@ -224,8 +224,8 @@ namespace Maze
                 case ParticleSystem3DZoneType::Circle:
                 {
                     _drawer->pushTransform(
-                        Mat4F::CreateTranslationMatrix(zoneData.circle.position) *
-                        Mat4F::CreateScaleMatrix(zoneData.circle.scale));
+                        Mat4F::CreateTranslationMatrix(zoneData.circle.position).concatenatedAffineCopy(
+                            Mat4F::CreateScaleMatrix(zoneData.circle.scale)));
                     _drawer->setColor(color);
                     _drawer->drawWireCircle(
                         Vec3F::c_zero,

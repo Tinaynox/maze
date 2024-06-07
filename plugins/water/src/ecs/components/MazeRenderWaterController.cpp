@@ -32,6 +32,7 @@
 #include "maze-graphics/ecs/components/MazeCanvas.hpp"
 #include "maze-graphics/ecs/components/MazeRenderMask.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
+#include "maze-core/ecs/MazeComponentSystemHolder.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
 #include "maze-graphics/MazeRenderQueue.hpp"
 #include "maze-graphics/MazeMaterial.hpp"
@@ -130,7 +131,7 @@ namespace Maze
             createBuffers(_renderTarget->getRenderTargetSize());
         }
 
-        Vec3F32 cameraPosition = _params.cameraTransform.getAffineTranslation();
+        Vec3F cameraPosition = _params.cameraTransform.getAffineTranslation();
 
         m_renderControllerSample->process(
             [&](Entity* _entity, RenderController* _renderController)
@@ -164,16 +165,16 @@ namespace Maze
                         F32 cameraTranslation = 2.0f * (cameraPosition.y - waterY);
                         cameraPosition.y -= cameraTranslation;
                     
-                        Vec3F32 cameraRotation = Quaternion::GetEuler(params.cameraTransform);
-                        Vec3F32 cameraScale = params.cameraTransform.getAffineScaleSignless();
+                        Vec3F cameraRotation = Quaternion::GetEuler(params.cameraTransform);
+                        Vec3F cameraScale = params.cameraTransform.getAffineScaleSignless();
 
                         cameraRotation.x = -cameraRotation.x;
                                         
-                        params.cameraTransform = Mat4F32::CreateTranslationMatrix(cameraPosition);
-                        params.cameraTransform = params.cameraTransform *
-                            //Quaternion(cameraRotation).toRotationMatrix();
-                            Mat4F32::CreateRotationMatrix(cameraRotation);
-                        params.cameraTransform = params.cameraTransform * Mat4F32::CreateScaleMatrix(cameraScale);
+                        params.cameraTransform = Mat4F::CreateTranslationMatrix(cameraPosition);
+                        params.cameraTransform = params.cameraTransform.concatenatedAffineCopy(
+                            Mat4F::CreateRotationMatrix(cameraRotation));
+                        params.cameraTransform = params.cameraTransform.concatenatedAffineCopy(
+                            Mat4F::CreateScaleMatrix(cameraScale));
                         
                         // Reflection buffer (Above the water level)
                         _renderController->getModule3D()->drawDefaultPass(
@@ -208,7 +209,9 @@ namespace Maze
 
 
     //////////////////////////////////////////
-    SIMPLE_COMPONENT_SYSTEM_EVENT_HANDLER(RenderWaterControllerRenderPrePass, {},
+    COMPONENT_SYSTEM_EVENT_HANDLER(RenderWaterControllerRenderPrePass,
+        {},
+        {},
         Render3DDefaultPrePassEvent& _event,
         Entity* _entity,
         RenderWaterController* _renderWaterController)

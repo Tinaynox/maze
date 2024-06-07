@@ -835,7 +835,8 @@ namespace Maze
         Vec2F sizeV = (Vec2F)_glyph.bounds.size;
         Vec2F positionShiftV = _position + _glyph.bounds.position;
 
-        Mat4F localTransform = Mat4F::CreateTranslationMatrix(positionShiftV) * Mat4F::CreateScaleMatrix(sizeV);
+        Mat4F localTransform = Mat4F::CreateTranslationMatrix(positionShiftV).concatenatedAffineCopy(
+            Mat4F::CreateScaleMatrix(sizeV));
         m_localMatrices[_quadIndex] = localTransform;
         m_localColors[_quadIndex] = _color.toVec4F32();
 

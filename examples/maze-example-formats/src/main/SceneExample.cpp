@@ -258,7 +258,6 @@ namespace Maze
             levelSize,
             config);
 
-
         // BMP
         addTexturePreview("SP3DLogo_16.bmp");
         addTexturePreview("SP3DLogo_24.bmp");
@@ -305,7 +304,6 @@ namespace Maze
         addMeshPreview("TestBox.obj", "TestBox.mzmaterial", testBoxScale);
         addMeshPreview("TestBox.fbx", "TestBox.mzmaterial", testBoxScale);
         addMeshPreview("TestBox.mzmesh", "TestBox.mzmaterial", testBoxScale);
-
 
         return true;
     }

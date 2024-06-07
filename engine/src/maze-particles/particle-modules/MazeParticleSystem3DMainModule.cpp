@@ -123,9 +123,7 @@ namespace Maze
         Mat4F const& _particleSystemWorldTransform)
     {
         Mat4F invParticleSystemWorldTransform = _particleSystemWorldTransform.inversedAffineCopy();
-        invParticleSystemWorldTransform[0][3] = 0.0f;
-        invParticleSystemWorldTransform[1][3] = 0.0f;
-        invParticleSystemWorldTransform[2][3] = 0.0f;
+        invParticleSystemWorldTransform.setTranslation(Vec3F::c_zero);
         Vec3F gravityVector = invParticleSystemWorldTransform.transformAffine(Vec3F::c_unitY);
         
         // Life

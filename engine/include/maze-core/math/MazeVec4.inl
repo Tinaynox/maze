@@ -578,7 +578,7 @@ namespace Maze
     template <class TValue>
     inline MAZE_CONSTEXPR TValue Vec4<TValue>::length() const
     {
-        return Sqrt(x * x + y * y + z * z + w * w);
+        return Math::Sqrt(x * x + y * y + z * z + w * w);
     }
 
     //////////////////////////////////////////

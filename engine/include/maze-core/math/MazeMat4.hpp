@@ -47,12 +47,17 @@ namespace Maze
     //////////////////////////////////////////
     // Class Mat4
     //
+    // [ m[0][0]  m[0][1]  m[0][2]  m[0][3] ]
+    // | m[1][0]  m[1][1]  m[1][2]  m[1][3] |
+    // | m[2][0]  m[2][1]  m[2][2]  m[2][3] |
+    // [ m[3][0]  m[3][1]  m[3][2]  m[3][3] ]
     //
-    // [ m[0][0]  m[0][1]  m[0][2]  m[0][3] ]   {x}
-    // | m[1][0]  m[1][1]  m[1][2]  m[1][3] | * {y}
-    // | m[2][0]  m[2][1]  m[2][2]  m[2][3] |   {z}
-    // [ m[3][0]  m[3][1]  m[3][2]  m[3][3] ]   {1}
-    //
+    // Affine scheme:
+    // [ RX RY RZ RW ]
+    // | UX UY UZ UW |
+    // | FX FY FZ FW |
+    // [ TX TY TZ TW ]
+    // R - right, U - up, F - front, T - translation
     //
     //////////////////////////////////////////
     template <class TValue = F32>
@@ -94,7 +99,7 @@ namespace Maze
             TValue _value30, TValue _value31, TValue _value32, TValue _value33);
 
         //////////////////////////////////////////
-        static inline MAZE_CONSTEXPR Mat4 CreateChangeOfBasisMatrix(
+        static inline MAZE_CONSTEXPR Mat4 CreateBasisMatrix(
             Vec3<TValue> const& _xBasis,
             Vec3<TValue> const& _yBasis,
             Vec3<TValue> const& _zBasis);
@@ -190,6 +195,12 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void swap(Mat4<TValue>& _other);
+
+        //////////////////////////////////////////
+        inline Vec4<TValue> getRow(Size _row) const;
+
+        //////////////////////////////////////////
+        inline void setRow(Size _row, Vec4<TValue> const& _vec);
 
         //////////////////////////////////////////
         inline TValue* operator[](Size _row) const;
@@ -312,15 +323,9 @@ namespace Maze
         //////////////////////////////////////////
         inline void getMat3(Mat3<TValue>& _mat) const
         {
-            _mat.m[0][0] = m[0][0];
-            _mat.m[0][1] = m[0][1];
-            _mat.m[0][2] = m[0][2];
-            _mat.m[1][0] = m[1][0];
-            _mat.m[1][1] = m[1][1];
-            _mat.m[1][2] = m[1][2];
-            _mat.m[2][0] = m[2][0];
-            _mat.m[2][1] = m[2][1];
-            _mat.m[2][2] = m[2][2];
+            _mat.m[0][0] = m[0][0]; _mat.m[0][1] = m[0][1]; _mat.m[0][2] = m[0][2];
+            _mat.m[1][0] = m[1][0]; _mat.m[1][1] = m[1][1]; _mat.m[1][2] = m[1][2];
+            _mat.m[2][0] = m[2][0]; _mat.m[2][1] = m[2][1]; _mat.m[2][2] = m[2][2];
         }
 
 
@@ -420,9 +425,9 @@ namespace Maze
         Mat4<TValue> const& _mat)
     {
         _o << "Mat4(" << _mat[0][0] << ", " << _mat[0][1] << ", " << _mat[0][2] << ", " << _mat[0][3] << ", "
-                       << _mat[1][0] << ", " << _mat[1][1] << ", " << _mat[1][2] << ", " << _mat[1][3] << ", "
-                       << _mat[2][0] << ", " << _mat[2][1] << ", " << _mat[2][2] << ", " << _mat[2][3] << ", "
-                       << _mat[3][0] << ", " << _mat[3][1] << ", " << _mat[3][2] << ", " << _mat[3][3] << ")";
+                      << _mat[1][0] << ", " << _mat[1][1] << ", " << _mat[1][2] << ", " << _mat[1][3] << ", "
+                      << _mat[2][0] << ", " << _mat[2][1] << ", " << _mat[2][2] << ", " << _mat[2][3] << ", "
+                      << _mat[3][0] << ", " << _mat[3][1] << ", " << _mat[3][2] << ", " << _mat[3][3] << ")";
         return _o;
     }
 

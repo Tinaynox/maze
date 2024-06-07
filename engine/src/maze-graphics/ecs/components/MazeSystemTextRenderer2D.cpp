@@ -254,7 +254,8 @@ namespace Maze
                 Vec2F sizeV = (Vec2F)m_systemFont->charSize * fontScale;
                 Vec2F positionShiftV = Vec2F((F32)sx, (F32)sy) * fontScale + positionShift;
 
-                Mat4F localTransform = Mat4F::CreateTranslationMatrix(positionShiftV) * Mat4F::CreateScaleMatrix(sizeV);
+                Mat4F localTransform = Mat4F::CreateTranslationMatrix(positionShiftV).concatenatedAffineCopy(
+                    Mat4F::CreateScaleMatrix(sizeV));
                 m_localMatrices[charIndex] = localTransform;
 
                 m_meshRenderer->setUV0(charIndex, uv);

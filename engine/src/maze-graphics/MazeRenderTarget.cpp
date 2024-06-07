@@ -173,10 +173,10 @@ namespace Maze
             renderQueue->addDrawVAOInstancedCommand(
                 vao, 
                 Mat4F(
-                    viewportWidth,   0.0f,                0.0f,    viewportWidth * 0.5f,
-                    0.0f,            viewportHeight,      0.0f,    viewportHeight * 0.5f,
-                    0.0f,            0.0f,                0.0f,    0.0f,
-                    0.0f,            0.0f,                0.0f,    1.0f));
+                    viewportWidth,        0.0f,                  0.0f, 0.0f,
+                    0.0f,                 viewportHeight,        0.0f, 0.0f,
+                    0.0f,                 0.0f,                  0.0f, 0.0f,
+                    viewportWidth * 0.5f, viewportHeight * 0.5f, 0.0f, 1.0f));
             
 
             renderQueue->addPopScissorRectCommand();

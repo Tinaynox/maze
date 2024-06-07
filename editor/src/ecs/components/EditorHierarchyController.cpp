@@ -91,11 +91,15 @@ namespace Maze
     //////////////////////////////////////////
     EditorHierarchyController::~EditorHierarchyController()
     {
-        EventManager::GetInstancePtr()->unsubscribeEvent<EcsSceneStateChangedEvent>(this);
-        EventManager::GetInstancePtr()->unsubscribeEvent<EntityNameChangedEvent>(this);
-        EventManager::GetInstancePtr()->unsubscribeEvent<EcsEntityActiveChangedEvent>(this);
+        if (EventManager::GetInstancePtr())
+        {
+            EventManager::GetInstancePtr()->unsubscribeEvent<EcsSceneStateChangedEvent>(this);
+            EventManager::GetInstancePtr()->unsubscribeEvent<EntityNameChangedEvent>(this);
+            EventManager::GetInstancePtr()->unsubscribeEvent<EcsEntityActiveChangedEvent>(this);
+        }
 
-        SelectionManager::GetInstancePtr()->eventSelectionChanged.unsubscribe(this);
+        if (SelectionManager::GetInstancePtr())
+            SelectionManager::GetInstancePtr()->eventSelectionChanged.unsubscribe(this);
 
         setEcsWorld(nullptr);
 
@@ -679,7 +683,7 @@ namespace Maze
             {
                 EntityId entityId = (EntityId)((S32)reinterpret_cast<Size>(_hierarchyLine->getUserData()));
 
-                EntityPtr const& entity = EntityManager::GetInstancePtr()->getDefaultWorldRaw()->getEntity(entityId);
+                EntityPtr const& entity = m_world->getEntity(entityId);
                 if (entity)
                 {
                     if (SelectionManager::GetInstancePtr()->isObjectSelected(entity))

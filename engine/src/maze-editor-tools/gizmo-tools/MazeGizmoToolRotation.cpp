@@ -67,22 +67,19 @@ namespace Maze
 
         Vec3F const& cameraWorldPosition = camera->getTransform()->getWorldPosition();
 
-        Vec3F right = { mat[0][0], mat[1][0], mat[2][0] };
-        Vec3F up = { mat[0][1], mat[1][1], mat[2][1] };
-        Vec3F forward = { mat[0][2], mat[1][2], mat[2][2] };
-        Vec3F pos = { mat[0][3], mat[1][3], mat[2][3] };
+        Vec3F right = { mat[0][0], mat[0][1], mat[0][2] };
+        Vec3F up = { mat[1][0], mat[1][1], mat[1][2] };
+        Vec3F forward = { mat[2][0], mat[2][1], mat[2][2] };
+        Vec3F pos = { mat[3][0], mat[3][1], mat[3][2] };
 
         Vec3F affineScale = entityTransform->getWorldScale();
 
         F32 cameraDistance = (pos - camera->getTransform()->getLocalPosition()).length();
         F32 scale = cameraDistance * GizmoToolConfig::c_cameraScalePerDistance;
-        Mat4F transform =
-            mat *
-            Mat4F::CreateScaleMatrix(scale / affineScale);
+        Mat4F transform = mat.concatenatedAffineCopy(
+            Mat4F::CreateScaleMatrix(scale / affineScale));
         Mat4F basisTransform = transform;
-        basisTransform[0][3] = 0.0f;
-        basisTransform[1][3] = 0.0f;
-        basisTransform[2][3] = 0.0f;
+        basisTransform.setTranslation(Vec3F::c_zero);
 
         GizmosDrawer::MeshRenderMode const renderMode = GizmosDrawer::MeshRenderMode::TransparentTop;
 
@@ -254,9 +251,7 @@ namespace Maze
 
                         Mat4F parentWorldTransform = entityTransform->getParent() ? entityTransform->getParent()->getWorldTransform()
                                                                                    : Mat4F::c_identity;
-                        parentWorldTransform[0][3] = 0.0f;
-                        parentWorldTransform[1][3] = 0.0f;
-                        parentWorldTransform[2][3] = 0.0f;
+                        parentWorldTransform.setTranslation(Vec3F::c_zero);
 
                         Quaternion newLocalRotation = Quaternion(
                             parentWorldTransform.inversedAffineCopy().transformAffine(m_startVector).normalizedCopy(),

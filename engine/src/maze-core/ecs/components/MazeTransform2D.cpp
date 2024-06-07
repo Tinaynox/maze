@@ -321,7 +321,7 @@ namespace Maze
             Mat4F anchorMatrix = Mat4F::CreateTranslationMatrix(m_parent->getSize() * getAnchor());
 
             m_parent->getWorldTransform().concatenateAffine(
-                anchorMatrix * getLocalTransform(),
+                anchorMatrix.concatenatedAffineCopy(getLocalTransform()),
                 m_worldTransform);
         }
         else

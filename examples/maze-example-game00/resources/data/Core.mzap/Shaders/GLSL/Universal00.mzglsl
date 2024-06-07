@@ -45,16 +45,16 @@ void main()
     mat4 modelMatrix = GetModelMatrix(instanceId);
 
     vec4 positionOS = vec4(a_position, 1.0);
-    vec4 positionWS = positionOS * modelMatrix;
+    vec4 positionWS = modelMatrix * positionOS;
     MAZE_CLIP_DISTANCE_VERTEX(positionWS);
-    vec4 positionVS = positionWS * u_viewMatrix;
-    vec4 positionCS = positionVS * u_projectionMatrix;
+    vec4 positionVS = u_viewMatrix * positionWS;
+    vec4 positionCS = u_projectionMatrix * positionVS;
     
     vec4 normalOS = vec4(a_normal, 1.0);
     vec4 tangentOS = vec4(a_tangent, 1.0);
     vec4 bitangentOS = vec4(a_bitangent, 1.0);
     
-    mat3 normalMatrix = mat3(transpose(MAZE_INVERSE(modelMatrix)));
+    mat3 normalMatrix = mat3(MAZE_INVERSE(modelMatrix));
     
     
         

@@ -193,9 +193,9 @@ namespace Maze
         m_localRotation.toRotationMatrix(rotationMatrix);
 
         m_localTransform = 
-            Mat4F::CreateTranslationMatrix(m_localPosition) *
-            rotationMatrix *
-            Mat4F::CreateScaleMatrix(m_localScale);
+            Mat4F::CreateTranslationMatrix(m_localPosition).concatenatedAffineCopy(
+                rotationMatrix).concatenatedAffineCopy(
+                    Mat4F::CreateScaleMatrix(m_localScale));
 
         m_flags &= ~Flags::LocalTransformDirty;
         m_flags |= Flags::WorldTransformDirty;

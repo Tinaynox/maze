@@ -47,6 +47,16 @@ namespace Maze
     //////////////////////////////////////////
     // Class Mat3
     //
+    // [ m[0][0]  m[0][1]  m[0][2] ]
+    // | m[1][0]  m[1][1]  m[1][2] |
+    // [ m[2][0]  m[2][1]  m[2][2] ]
+    // 
+    // Affine scheme:
+    // [ RX RY RZ ]
+    // | UX UY UZ |
+    // [ FX FY FZ ]
+    // R - right, U - up, F - front
+    // 
     //////////////////////////////////////////
     template <class TValue = F32>
     class Mat3
@@ -90,8 +100,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void setAffine(
-            TValue _value00, TValue _value01, TValue _value02,
-            TValue _value10, TValue _value11, TValue _value12);
+            TValue _value00, TValue _value01,
+            TValue _value10, TValue _value11,
+            TValue _x, TValue _y);
 
         //////////////////////////////////////////
         static inline MAZE_CONSTEXPR Mat3 CreateTranslationMatrix(TValue _x, TValue _y);
@@ -142,6 +153,12 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void swap(Mat3& _other);
+
+        //////////////////////////////////////////
+        inline Vec3<TValue> getRow(Size _row) const;
+
+        //////////////////////////////////////////
+        inline void setRow(Size _row, Vec3<TValue> const& _vec);
 
         //////////////////////////////////////////
         inline TValue* operator[](Size _row) const;
@@ -199,8 +216,9 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void concatenateAffine(
-            TValue _value00, TValue _value01, TValue _value02,
-            TValue _value10, TValue _value11, TValue _value12,
+            TValue _value00, TValue _value01,
+            TValue _value10, TValue _value11,
+            TValue _x, TValue _y,
             Mat3<TValue>& _out) const;
 
         //////////////////////////////////////////
@@ -291,9 +309,6 @@ namespace Maze
 
         //////////////////////////////////////////
         TValue determinant() const;
-
-        //////////////////////////////////////////
-        void orthonormalize();
 
 
         //////////////////////////////////////////
@@ -394,9 +409,9 @@ namespace Maze
         Vec2<TValue> prod;
         for (Size r = 0; r < 2; r++)
         {
-            prod[r] =
-                _vec[0] * _matrix.m[0][r] +
-                _vec[1] * _matrix.m[1][r];
+            prod[c] =
+                _vec[0] * _matrix.m[r][0] +
+                _vec[1] * _matrix.m[r][1];
         }
         return prod;
     }
@@ -411,9 +426,9 @@ namespace Maze
         for (Size r = 0; r < 3; r++)
         {
             prod[r] =
-                _vec[0] * _matrix.m[0][r] +
-                _vec[1] * _matrix.m[1][r] +
-                _vec[2] * _matrix.m[2][r];
+                _vec[0] * _matrix.m[r][0] +
+                _vec[1] * _matrix.m[r][1] +
+                _vec[2] * _matrix.m[r][2];
         }
         return prod;
     }
@@ -440,8 +455,8 @@ namespace Maze
         Mat3<TValue> const& _mat)
     {
         _o << "Mat3(" << _mat[0][0] << ", " << _mat[0][1] << ", " << _mat[0][2] << ", " 
-                       << _mat[1][0] << ", " << _mat[1][1] << ", " << _mat[1][2] << ", " 
-                       << _mat[2][0] << ", " << _mat[2][1] << ", " << _mat[2][2] << ")";
+                      << _mat[1][0] << ", " << _mat[1][1] << ", " << _mat[1][2] << ", " 
+                      << _mat[2][0] << ", " << _mat[2][1] << ", " << _mat[2][2] << ")";
         return _o;
     }
 

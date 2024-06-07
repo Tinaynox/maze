@@ -98,9 +98,10 @@ namespace Maze
         Entity* _entity,
         Name* _name)
     {
-        EventManager::GetInstancePtr()->broadcastEvent<EntityNameChangedEvent>(
-            _entity->getEcsWorld(),
-            _entity->getId());
+        if (EventManager::GetInstancePtr())
+            EventManager::GetInstancePtr()->broadcastEvent<EntityNameChangedEvent>(
+                _entity->getEcsWorld(),
+                _entity->getId());
     }
 
     

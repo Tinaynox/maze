@@ -104,9 +104,7 @@ namespace Maze
     {
         Vec3F cameraPosition = _event.getPassParams()->cameraTransform.getAffineTranslation();
         Mat4F cameraTransform = _event.getPassParams()->cameraTransform;
-        cameraTransform[0][3] = 0.0f;
-        cameraTransform[1][3] = 0.0f;
-        cameraTransform[2][3] = 0.0f;
+        cameraTransform.setTranslation(Vec3F::c_zero);
         Vec3F cameraForward = (cameraTransform.transformAffine(Vec3F::c_unitZ)).normalizedCopy();
         Vec3F cameraUp = (cameraTransform.transformAffine(Vec3F::c_unitY)).normalizedCopy();
 

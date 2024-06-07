@@ -57,9 +57,9 @@ namespace Maze
             // 1/(4w)
             root = 0.5f / root;  
 
-            x = (_rotationMatrix[2][1] - _rotationMatrix[1][2]) * root;
-            y = (_rotationMatrix[0][2] - _rotationMatrix[2][0]) * root;
-            z = (_rotationMatrix[1][0] - _rotationMatrix[0][1]) * root;
+            x = (_rotationMatrix[1][2] - _rotationMatrix[2][1]) * root;
+            y = (_rotationMatrix[2][0] - _rotationMatrix[0][2]) * root;
+            z = (_rotationMatrix[0][1] - _rotationMatrix[1][0]) * root;
         }
         // |w| <= 1/2
         else
@@ -80,9 +80,9 @@ namespace Maze
             F32* apkQuat[3] = { &x, &y, &z };
             *apkQuat[i] = 0.5f * root;
             root = 0.5f / root;
-            w = (_rotationMatrix[k][j] - _rotationMatrix[j][k]) * root;
-            *apkQuat[j] = (_rotationMatrix[j][i] + _rotationMatrix[i][j]) * root;
-            *apkQuat[k] = (_rotationMatrix[k][i] + _rotationMatrix[i][k]) * root;
+            w = (_rotationMatrix[j][k] - _rotationMatrix[k][j]) * root;
+            *apkQuat[j] = (_rotationMatrix[i][j] + _rotationMatrix[j][i]) * root;
+            *apkQuat[k] = (_rotationMatrix[i][k] + _rotationMatrix[k][i]) * root;
         }
     }
 
@@ -92,7 +92,7 @@ namespace Maze
         if (_multInvScale)
         {
             Vec3F scale = _rotationMatrix.getAffineScaleSignless();
-            Mat3F unscaledMat = _rotationMatrix * Mat3F::CreateScaleMatrix(1.0f / scale);
+            Mat3F unscaledMat = Mat3F::CreateScaleMatrix(1.0f / scale) * _rotationMatrix;
             setRotationMatrix(unscaledMat);
         }
         else
@@ -118,13 +118,15 @@ namespace Maze
         F32 tzz = tz * z;
 
         _rotationMatrix[0][0] = 1.0f - (tyy + tzz);
-        _rotationMatrix[0][1] = txy - twz;
-        _rotationMatrix[0][2] = txz + twy;
-        _rotationMatrix[1][0] = txy + twz;
+        _rotationMatrix[0][1] = txy + twz;
+        _rotationMatrix[0][2] = txz - twy;
+
+        _rotationMatrix[1][0] = txy - twz;
         _rotationMatrix[1][1] = 1.0f - (txx + tzz);
-        _rotationMatrix[1][2] = tyz - twx;
-        _rotationMatrix[2][0] = txz - twy;
-        _rotationMatrix[2][1] = tyz + twx;
+        _rotationMatrix[1][2] = tyz + twx;
+
+        _rotationMatrix[2][0] = txz + twy;
+        _rotationMatrix[2][1] = tyz - twx;
         _rotationMatrix[2][2] = 1.0f - (txx + tyy);
     }
 
@@ -137,6 +139,7 @@ namespace Maze
         _rotationMatrix[0][3] = 0;
         _rotationMatrix[1][3] = 0;
         _rotationMatrix[2][3] = 0;
+
         _rotationMatrix[3][0] = 0;
         _rotationMatrix[3][1] = 0;
         _rotationMatrix[3][2] = 0;
@@ -184,11 +187,11 @@ namespace Maze
     {
         Mat3F rotationMatrix;
 
-        for (Size c = 0; c < 3; c++)
+        for (Size r = 0; r < 3; r++)
         {
-            rotationMatrix[0][c] = _axis[c].x;
-            rotationMatrix[1][c] = _axis[c].y;
-            rotationMatrix[2][c] = _axis[c].z;
+            rotationMatrix[r][0] = _axis[r].x;
+            rotationMatrix[r][1] = _axis[r].y;
+            rotationMatrix[r][2] = _axis[r].z;
         }
 
         setRotationMatrix(rotationMatrix);
@@ -239,11 +242,11 @@ namespace Maze
 
         toRotationMatrix(rotationMatrix);
 
-        for (Size c = 0; c < 3; c++)
+        for (Size r = 0; r < 3; r++)
         {
-            _axes[c].x = rotationMatrix[0][c];
-            _axes[c].y = rotationMatrix[1][c];
-            _axes[c].z = rotationMatrix[2][c];
+            _axes[r].x = rotationMatrix[r][0];
+            _axes[r].y = rotationMatrix[r][1];
+            _axes[r].z = rotationMatrix[r][2];
         }
     }
 
@@ -305,15 +308,15 @@ namespace Maze
         toRotationMatrix(rotationMatrix);
 
         _xAxis.x = rotationMatrix[0][0];
-        _xAxis.y = rotationMatrix[1][0];
-        _xAxis.z = rotationMatrix[2][0];
+        _xAxis.y = rotationMatrix[0][1];
+        _xAxis.z = rotationMatrix[0][2];
 
-        _yAxis.x = rotationMatrix[0][1];
+        _yAxis.x = rotationMatrix[1][0];
         _yAxis.y = rotationMatrix[1][1];
-        _yAxis.z = rotationMatrix[2][1];
+        _yAxis.z = rotationMatrix[1][2];
 
-        _zAxis.x = rotationMatrix[0][2];
-        _zAxis.y = rotationMatrix[1][2];
+        _zAxis.x = rotationMatrix[2][0];
+        _zAxis.y = rotationMatrix[2][1];
         _zAxis.z = rotationMatrix[2][2];
     }
 

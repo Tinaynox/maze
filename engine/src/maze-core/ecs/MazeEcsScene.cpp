@@ -96,7 +96,8 @@ namespace Maze
         }
 
         m_world->broadcastEventImmediate<EcsSceneStateChangedEvent>(m_id, m_state);
-        EventManager::GetInstancePtr()->broadcastEvent<EcsSceneStateChangedEvent>(m_id, m_state);
+        if (EventManager::GetInstancePtr())
+            EventManager::GetInstancePtr()->broadcastEvent<EcsSceneStateChangedEvent>(m_id, m_state);
 
         processSceneStateChanged(m_state);
     }

@@ -174,16 +174,16 @@ namespace Maze
             return Ray();
 
         Mat4F const& cameraTransform = getTransform()->getWorldTransform();
-        Vec3F cameraPosition = Vec3F(cameraTransform[0][3], cameraTransform[1][3], cameraTransform[2][3]);
+        Vec3F cameraPosition = cameraTransform.getAffineTranslation();
         Mat4F projectionMatrix = calculateProjectionMatrix(getRenderTarget());
 
         Vec2F p = _positionV / ((Vec2F)renderTargetSize * getViewport().size);
         Vec4F positionNDC = Vec4F((p * 2.0f - 1.0f), -1.0f, 1.0f);
         Vec4F positionCS = positionNDC;
 
-        Vec4F positionVS = projectionMatrix.inversedCopy() * positionCS;
+        Vec4F positionVS = projectionMatrix.inversedCopy().transformAffine(positionCS);
         positionVS.w = 1.0;
-        Vec4F positionWS = cameraTransform * positionVS;
+        Vec4F positionWS = cameraTransform.transformAffine(positionVS);
 
         Ray ray;
         ray.setDirection((positionWS.xyz() - cameraPosition).normalizedCopy());

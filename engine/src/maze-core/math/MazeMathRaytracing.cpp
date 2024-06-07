@@ -71,9 +71,8 @@ namespace Maze
             F32& _dist)
         {
             Vec3F cubeRight = _cubeUp.crossProduct(_cubeForward).normalizedCopy();
-            Mat4F cubeTransform =
-                Mat4F::CreateChangeOfBasisMatrix(cubeRight, _cubeUp, _cubeForward) *
-                Mat4F::CreateScaleMatrix(_cubeScale * 0.5f);
+            Mat4F cubeTransform = Mat4F::CreateBasisMatrix(cubeRight, _cubeUp, _cubeForward).concatenatedAffineCopy(
+                Mat4F::CreateScaleMatrix(_cubeScale * 0.5f));
             cubeTransform = cubeTransform.inversedAffineCopy();
 
             Ray localRay(
@@ -204,7 +203,7 @@ namespace Maze
 
             Vec3F _cylinderUp = _cylinderForward.perpendicular();
             Vec3F cylinderRight = _cylinderUp.crossProduct(_cylinderForward).normalizedCopy();
-            Mat4F cylinderTransform = Mat4F::CreateChangeOfBasisMatrix(cylinderRight, _cylinderUp, _cylinderForward).inversedAffineCopy();
+            Mat4F cylinderTransform = Mat4F::CreateBasisMatrix(cylinderRight, _cylinderUp, _cylinderForward).inversedAffineCopy();
 
             Ray localRay(
                 cylinderTransform.transformAffine(_rayPoint - _cylinderCenter),
@@ -287,8 +286,8 @@ namespace Maze
             Vec3F coneUp = _coneForward.perpendicular();
             Vec3F coneRight = coneUp.crossProduct(_coneForward).normalizedCopy();
             Mat4F coneTransform =
-                Mat4F::CreateChangeOfBasisMatrix(coneRight, coneUp, _coneForward) *
-                Mat4F::CreateScaleMatrix(_coneRadius, _coneRadius, _coneHeight);
+                Mat4F::CreateBasisMatrix(coneRight, coneUp, _coneForward).concatenatedAffineCopy(
+                    Mat4F::CreateScaleMatrix(_coneRadius, _coneRadius, _coneHeight));
             coneTransform = coneTransform.inversedAffineCopy();
 
             Ray localRay(
@@ -360,7 +359,7 @@ namespace Maze
         {
             Vec3F torusUp = _torusForward.perpendicular();
             Vec3F torusRight = torusUp.crossProduct(_torusForward).normalizedCopy();
-            Mat4F torusTransform = Mat4F::CreateChangeOfBasisMatrix(torusRight, torusUp, _torusForward);
+            Mat4F torusTransform = Mat4F::CreateBasisMatrix(torusRight, torusUp, _torusForward);
             torusTransform = torusTransform.inversedAffineCopy();
 
             Ray localRay(

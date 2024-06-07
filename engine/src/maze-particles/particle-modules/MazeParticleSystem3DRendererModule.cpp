@@ -295,7 +295,9 @@ namespace Maze
         Mat4F localTransformMatrix;
         if (_transformPolicy == ParticleSystemSimulationSpace::Local)
         {
-            localTransformMatrix = (particleSystemWorldTranslatonMatrix * particleSystemWorldRotationMatrix * scaleMatrix);
+            localTransformMatrix = (particleSystemWorldTranslatonMatrix.concatenatedAffineCopy(
+                particleSystemWorldRotationMatrix).concatenatedAffineCopy(
+                    scaleMatrix));
         }
 
 
@@ -327,7 +329,7 @@ namespace Maze
             Mat4F mat = Mat4F::CreateTranslationMatrix(position);
 
             // Apply world scale
-            mat = mat * scaleMatrix;
+            mat = mat.concatenatedAffineCopy(scaleMatrix);
 
 
             // Render Alignment
@@ -337,15 +339,13 @@ namespace Maze
                     position,
                     position - _cameraForward,
                     _cameraUp);
-                lookAtViewMat[0][3] = 0.0f;
-                lookAtViewMat[1][3] = 0.0f;
-                lookAtViewMat[2][3] = 0.0f;
-                mat = mat * lookAtViewMat;
+                lookAtViewMat.setTranslation(Vec3F::c_zero);
+                mat = mat.concatenatedAffineCopy(lookAtViewMat);
             }
             else
             if (renderAlignment == ParticleSystemRenderAlignment::Local)
             {
-                mat = mat * particleSystemWorldRotationMatrix;
+                mat = mat.concatenatedAffineCopy(particleSystemWorldRotationMatrix);
             }
            
 
@@ -353,16 +353,18 @@ namespace Maze
             F32 c = cosf(rotationCurrent);
             F32 s = sinf(rotationCurrent);
 
-            mat = mat * Mat4F(
-                c, -s, 0.0f, 0.0f,
-                s, c, 0.0f, 0.0f,
-                0.0f, 0.0f, 1.0f, 0.0f,
-                0.0f, 0.0f, 0.0f, 1.0f);
+            mat = mat.concatenatedAffineCopy(
+                Mat4F(
+                    c, s, 0.0f, 0.0f,
+                    -s, c, 0.0f, 0.0f,
+                    0.0f, 0.0f, 1.0f, 0.0f,
+                    0.0f, 0.0f, 0.0f, 1.0f));
             
 
             // Apply particle size
 #if 0
-            mat = mat * Mat4F32::CreateScaleMatrix(size.current);
+            mat = mat.concatenatedAffineCopy(
+                Mat4F32::CreateScaleMatrix(size.current));
 #else
             mat[0][0] *= sizeCurrent;
             mat[0][1] *= sizeCurrent;

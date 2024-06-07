@@ -174,10 +174,10 @@ namespace Maze
                         F32 skyboxScale = (2.0f * _params.farZ / Math::Sqrt(3.0f)) - 1.0f;
 
                         Mat4F skyboxTransform = Mat4F(
-                            skyboxScale, 0, 0, cameraPosition.x,
-                            0, skyboxScale, 0, cameraPosition.y,
-                            0, 0, skyboxScale, cameraPosition.z,
-                            0, 0, 0, 1);
+                            skyboxScale, 0, 0, 0,
+                            0, skyboxScale, 0, 0,
+                            0, 0, skyboxScale, 0,
+                            cameraPosition.x, cameraPosition.y, cameraPosition.z, 1);
                         renderQueue->addDrawVAOInstancedCommand(
                             vaos[0],
                             1,

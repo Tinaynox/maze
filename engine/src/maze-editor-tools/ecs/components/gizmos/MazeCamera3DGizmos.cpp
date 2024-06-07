@@ -113,9 +113,7 @@ namespace Maze
         Transform3DPtr const& transform3D = camera3D->getTransform();
 
         Mat4F mat = transform3D->getWorldTransform();
-        mat[0][3] = 0.0f;
-        mat[1][3] = 0.0f;
-        mat[2][3] = 0.0f;
+        mat.setTranslation(Vec3F(0.0f, 0.0f, 0.0f));
 
         _drawer->setColor(ColorF128::c_lightGray);
 

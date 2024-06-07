@@ -108,9 +108,7 @@ namespace Maze
             if (_scalingMode == ParticleSystemScalingMode::Hierarchy)
             {
                 directionTransformMat = _particleSystemWorldTransform;
-                directionTransformMat[0][3] = 0.0f;
-                directionTransformMat[1][3] = 0.0f;
-                directionTransformMat[2][3] = 0.0f;
+                directionTransformMat.setTranslation(Vec3F::c_zero);
             }
             else
             {

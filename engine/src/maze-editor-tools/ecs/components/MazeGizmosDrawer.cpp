@@ -313,7 +313,7 @@ namespace Maze
         Vec3F up = forward.perpendicular();
         Vec3F right = up.crossProduct(forward).normalizedCopy() * _radius;
 
-        Mat4F matrix = Mat4F::CreateChangeOfBasisMatrix(right, up, forward);
+        Mat4F matrix = Mat4F::CreateBasisMatrix(right, up, forward);
         Vec3F lastPoint = _position + matrix.transformAffine(Vec3F(Math::Cos(0.0f), Math::Sin(0.0f), 0.0f));
         Vec3F nextPoint = Vec3F::c_zero;
 
@@ -343,7 +343,7 @@ namespace Maze
         Vec3F up = _up.normalizedCopy() * _radius;
         Vec3F right = up.crossProduct(forward).normalizedCopy() * _radius;
 
-        Mat4F matrix = Mat4F::CreateChangeOfBasisMatrix(right, up, forward);
+        Mat4F matrix = Mat4F::CreateBasisMatrix(right, up, forward);
         Vec3F lastPoint = _position + matrix.transformAffine(Vec3F(Math::Cos(0.0f), Math::Sin(0.0f), 0.0f));
         Vec3F nextPoint = Vec3F::c_zero;
 
@@ -815,9 +815,9 @@ namespace Maze
         Vec3F right = _up.crossProduct(_forward).normalizedCopy();
 
         pushTransform(
-            Mat4F::CreateTranslationMatrix(_position) *
-            Mat4F::CreateChangeOfBasisMatrix(right, _up, _forward) *
-            Mat4F::CreateScaleMatrix(_scale.x, _scale.y, 1.0f));
+            Mat4F::CreateTranslationMatrix(_position).concatenatedAffineCopy(
+                Mat4F::CreateBasisMatrix(right, _up, _forward)).concatenatedAffineCopy(
+                    Mat4F::CreateScaleMatrix(_scale.x, _scale.y, 1.0f)));
 
         MeshPtr const& mesh = MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Quad);
         drawMesh(mesh, Vec3F::c_zero, _color, _duration, _renderMode);
@@ -838,9 +838,9 @@ namespace Maze
         Vec3F right = _up.crossProduct(_forward).normalizedCopy();
 
         pushTransform(
-            Mat4F::CreateTranslationMatrix(_position) *
-            Mat4F::CreateChangeOfBasisMatrix(right, _up, _forward) *
-            Mat4F::CreateScaleMatrix(_scale));
+            Mat4F::CreateTranslationMatrix(_position).concatenatedAffineCopy(
+                Mat4F::CreateBasisMatrix(right, _up, _forward)).concatenatedAffineCopy(
+                    Mat4F::CreateScaleMatrix(_scale)));
 
         MeshPtr const& mesh = MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cube);
         drawMesh(mesh, Vec3F::c_zero, _color, _duration, _renderMode);
@@ -857,8 +857,8 @@ namespace Maze
         MeshRenderMode _renderMode)
     {
         pushTransform(
-            Mat4F::CreateTranslationMatrix(_position) *
-            Mat4F::CreateScaleMatrix(_radius * 2.0f));
+            Mat4F::CreateTranslationMatrix(_position).concatenatedAffineCopy(
+                Mat4F::CreateScaleMatrix(_radius * 2.0f)));
 
         MeshPtr const& mesh = MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Sphere);
         drawMesh(mesh, Vec3F::c_zero, _color, _duration, _renderMode);
@@ -880,9 +880,9 @@ namespace Maze
         Vec3F right = _up.crossProduct(_forward).normalizedCopy();
 
         pushTransform(
-            Mat4F::CreateTranslationMatrix(_position) *
-            Mat4F::CreateChangeOfBasisMatrix(right, _forward, _up) *
-            Mat4F::CreateScaleMatrix(_radius * 2.0f, _height, _radius * 2.0f));
+            Mat4F::CreateTranslationMatrix(_position).concatenatedAffineCopy(
+                Mat4F::CreateBasisMatrix(right, _forward, _up)).concatenatedAffineCopy(
+                    Mat4F::CreateScaleMatrix(_radius * 2.0f, _height, _radius * 2.0f)));
 
         MeshPtr const& mesh = MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cone);
         drawMesh(mesh, Vec3F::c_zero, _color, _duration, _renderMode);
@@ -904,9 +904,9 @@ namespace Maze
         Vec3F right = _up.crossProduct(_forward).normalizedCopy();
 
         pushTransform(
-            Mat4F::CreateTranslationMatrix(_position) *
-            Mat4F::CreateChangeOfBasisMatrix(right, _forward, _up) *
-            Mat4F::CreateScaleMatrix(_radius * 2.0f, _height, _radius * 2.0f));
+            Mat4F::CreateTranslationMatrix(_position).concatenatedAffineCopy(
+                Mat4F::CreateBasisMatrix(right, _forward, _up)).concatenatedAffineCopy(
+                    Mat4F::CreateScaleMatrix(_radius * 2.0f, _height, _radius * 2.0f)));
 
         MeshPtr const& mesh = MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cylinder);
         drawMesh(mesh, Vec3F::c_zero, _color, _duration, _renderMode);
@@ -927,9 +927,9 @@ namespace Maze
         Vec3F right = up.crossProduct(_forward).normalizedCopy();
 
         pushTransform(
-            Mat4F::CreateTranslationMatrix(_position) *
-            Mat4F::CreateChangeOfBasisMatrix(right, _forward, up) *
-            Mat4F::CreateScaleMatrix(_radius * 2.0f));
+            Mat4F::CreateTranslationMatrix(_position).concatenatedAffineCopy(
+                Mat4F::CreateBasisMatrix(right, _forward, up)).concatenatedAffineCopy(
+                    Mat4F::CreateScaleMatrix(_radius * 2.0f)));
 
         MeshPtr const& mesh = MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Torus);
         drawMesh(mesh, Vec3F::c_zero, _color, _duration, _renderMode);
@@ -956,7 +956,7 @@ namespace Maze
     void GizmosDrawer::pushTransform(Mat4F const& _tm)
     {
         if (!m_transformStack.empty())
-            m_transformStack.push(m_transformStack.top() * _tm);
+            m_transformStack.push(m_transformStack.top().concatenatedAffineCopy(_tm));
         else
             m_transformStack.push(_tm);
     }

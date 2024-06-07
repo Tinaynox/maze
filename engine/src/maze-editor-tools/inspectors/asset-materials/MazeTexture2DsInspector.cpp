@@ -150,7 +150,8 @@ namespace Maze
                     m_textureChangedTimer -= _dt;
                     if (m_textureChangedTimer <= 0.0f)
                     {
-                        EventManager::GetInstancePtr()->broadcastEvent<EditorToolsTexture2DChangedEvent>(texture->getName());
+                        if (EventManager::GetInstancePtr())
+                            EventManager::GetInstancePtr()->broadcastEvent<EditorToolsTexture2DChangedEvent>(texture->getName());
                     }
                 }
             }

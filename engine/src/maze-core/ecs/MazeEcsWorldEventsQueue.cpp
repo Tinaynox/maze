@@ -353,8 +353,9 @@ namespace Maze
         if (value)
             m_world->sendEventImmediate<EntityActiveChangedEvent>(entity->getId(), value);
 
-        EventManager::GetInstancePtr()->broadcastEvent<EcsEntityActiveChangedEvent>(
-            m_world, entityId, value);
+        if (EventManager::GetInstancePtr())
+            EventManager::GetInstancePtr()->broadcastEvent<EcsEntityActiveChangedEvent>(
+                m_world, entityId, value);
     }
 
     //////////////////////////////////////////
