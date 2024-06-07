@@ -417,6 +417,21 @@ namespace Maze
         return prod;
     }
 
+    //////////////////////////////////////////
+    template <class TValue = F32>
+    inline Vec2<TValue> operator*(
+        Vec2<TValue> const& _vec,
+        Mat3<TValue> const& _matrix)
+    {
+        Vec2<TValue> prod;
+        for (Size c = 0; c < 2; c++)
+        {
+            prod[c] =
+                _vec[0] * _matrix.m[0][c] +
+                _vec[1] * _matrix.m[1][c];
+        }
+        return prod;
+    }
     
 
     //////////////////////////////////////////
@@ -435,6 +450,23 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    template <class TValue = F32>
+    inline Vec3<TValue> operator*(
+        Vec3<TValue> const& _vec,
+        Mat3<TValue> const& _matrix)
+    {
+        Vec3<TValue> prod;
+        for (Size c = 0; c < 3; c++)
+        {
+            prod[c] =
+                _vec[0] * _matrix.m[0][c] +
+                _vec[1] * _matrix.m[1][c] +
+                _vec[2] * _matrix.m[2][c];
+        }
+        return prod;
+    }
+
+    //////////////////////////////////////////
     template <class TValue>
     inline Mat3<TValue> Mat3<TValue>::operator*(TValue _value) const
     {
@@ -442,11 +474,25 @@ namespace Maze
         for (Size r = 0; r < 3; r++)
         {
             for (Size c = 0; c < 3; c++)
-                prod[r][c] = _value * m[r][c];
+                prod[r][c] = m[r][c] * _value;
         }
         return prod;
     }
     
+    //////////////////////////////////////////
+    template <class TValue = F32>
+    inline Mat3<TValue> operator*(
+        TValue _value,
+        Mat3<TValue> const& _matrix)
+    {
+        Mat3<TValue> prod;
+        for (Size r = 0; r < 3; r++)
+        {
+            for (Size c = 0; c < 3; c++)
+                prod[r][c] = _value * _matrix.m[r][c];
+        }
+        return prod;
+    }
 
     //////////////////////////////////////////
     template <class TValue>

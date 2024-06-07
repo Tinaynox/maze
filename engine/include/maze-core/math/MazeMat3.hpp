@@ -402,54 +402,6 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue = F32>
-    inline Vec2<TValue> operator*(
-        Vec2<TValue> const& _vec,
-        Mat3<TValue> const& _matrix)
-    {
-        Vec2<TValue> prod;
-        for (Size r = 0; r < 2; r++)
-        {
-            prod[c] =
-                _vec[0] * _matrix.m[r][0] +
-                _vec[1] * _matrix.m[r][1];
-        }
-        return prod;
-    }
-
-    //////////////////////////////////////////
-    template <class TValue = F32>
-    inline Vec3<TValue> operator*(
-        Vec3<TValue> const& _vec,
-        Mat3<TValue> const& _matrix)
-    {
-        Vec3<TValue> prod;
-        for (Size r = 0; r < 3; r++)
-        {
-            prod[r] =
-                _vec[0] * _matrix.m[r][0] +
-                _vec[1] * _matrix.m[r][1] +
-                _vec[2] * _matrix.m[r][2];
-        }
-        return prod;
-    }
-
-    //////////////////////////////////////////
-    template <class TValue = F32>
-    inline Mat3<TValue> operator*(
-        TValue _value,
-        Mat3<TValue> const& _matrix)
-    {
-        Mat3<TValue> prod;
-        for (Size r = 0; r < 3; r++)
-        {
-            for (Size c = 0; c < 3; c++)
-                prod[r][c] = _value * _matrix.m[r][c];
-        }
-        return prod;
-    }
-
-    //////////////////////////////////////////
-    template <class TValue = F32>
     inline std::ostream& operator<<(
         std::ostream& _o,
         Mat3<TValue> const& _mat)

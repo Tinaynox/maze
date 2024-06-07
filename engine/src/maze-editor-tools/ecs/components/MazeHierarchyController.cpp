@@ -342,12 +342,15 @@ namespace Maze
 
         m_sceneLines[_scene->getId()] = hierarchyLine;
 
+        Size entitiesAdded = 0u;
         for (Entity* entity : _scene->getEntities())
         {
             if (entity->getAdding() || entity->getRemoving())
                 continue;
 
             addEntity(entity->cast<Entity>());
+
+            ++entitiesAdded;
         }
 
         return hierarchyLine;

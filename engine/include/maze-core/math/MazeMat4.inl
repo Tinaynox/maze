@@ -546,6 +546,21 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
+    inline Vec3<TValue> operator*(Vec3<TValue> const& _v, Mat4<TValue> const& _mat)
+    {
+        Vec3<TValue> r;
+
+        F32 invW = 1.0f / (_mat[3][0] * _v.x + _mat[3][1] * _v.y + _mat[3][2] * _v.z + _mat[3][3]);
+
+        r.x = TValue((_mat[0][0] * _v.x + _mat[0][1] * _v.y + _mat[0][2] * _v.z + _mat[0][3]) * invW);
+        r.y = TValue((_mat[1][0] * _v.x + _mat[1][1] * _v.y + _mat[1][2] * _v.z + _mat[1][3]) * invW);
+        r.z = TValue((_mat[2][2] * _v.x + _mat[2][1] * _v.y + _mat[2][2] * _v.z + _mat[2][3]) * invW);
+
+        return r;
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
     inline Vec4<TValue> Mat4<TValue>::operator*(Vec4<TValue> const& _v) const
     {
         return Vec4<TValue>(
@@ -553,6 +568,17 @@ namespace Maze
             m[1][0] * _v.x + m[1][1] * _v.y + m[1][2] * _v.z + m[1][3] * _v.w,
             m[2][0] * _v.x + m[2][1] * _v.y + m[2][2] * _v.z + m[2][3] * _v.w,
             m[3][0] * _v.x + m[3][1] * _v.y + m[3][2] * _v.z + m[3][3] * _v.w);
+    }
+
+    //////////////////////////////////////////
+    template <class TValue>
+    inline Vec4<TValue> operator*(Vec4<TValue> const& _v, Mat4<TValue> const& _mat)
+    {
+        return Vec4<TValue>(
+            _mat[0][0] * _v.x + _mat[1][0] * _v.y + _mat[2][0] * _v.z + _mat[3][0] * _v.w,
+            _mat[0][1] * _v.x + _mat[1][1] * _v.y + _mat[2][1] * _v.z + _mat[3][1] * _v.w,
+            _mat[0][2] * _v.x + _mat[1][2] * _v.y + _mat[2][2] * _v.z + _mat[3][2] * _v.w,
+            _mat[0][3] * _v.x + _mat[1][3] * _v.y + _mat[2][3] * _v.z + _mat[3][3] * _v.w);
     }
 
     //////////////////////////////////////////
