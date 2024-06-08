@@ -63,7 +63,7 @@ namespace Maze
         if (!entityTransform)
             return;
 
-        Mat4F mat = entityTransform->getWorldTransform();
+        TMat mat = entityTransform->getWorldTransform();
 
         Vec3F const& cameraWorldPosition = camera->getTransform()->getWorldPosition();
 
@@ -76,9 +76,9 @@ namespace Maze
 
         F32 cameraDistance = (pos - camera->getTransform()->getLocalPosition()).length();
         F32 scale = cameraDistance * GizmoToolConfig::c_cameraScalePerDistance;
-        Mat4F transform = mat.transformAffine(
-            Mat4F::CreateAffineScale(scale / affineScale));
-        Mat4F basisTransform = transform;
+        TMat transform = mat.transform(
+            TMat::CreateScale(scale / affineScale));
+        TMat basisTransform = transform;
         basisTransform.setTranslation(Vec3F::c_zero);
 
         GizmosDrawer::MeshRenderMode const renderMode = GizmosDrawer::MeshRenderMode::TransparentTop;
@@ -127,8 +127,8 @@ namespace Maze
             if (Math::RaycastTorus(
                 ray.getPoint(),
                 ray.getDirection(),
-                transform.transformAffine(Vec3F::c_zero),
-                basisTransform.transformAffine(_axis).normalizedCopy(),
+                transform.transform(Vec3F::c_zero),
+                basisTransform.transform(_axis).normalizedCopy(),
                 scale * GizmoToolConfig::c_transformGizmoToolRotationRadius,
                 scale * 0.2f,
                 dist))
@@ -183,7 +183,7 @@ namespace Maze
         {
             Vec3F axis;
             if (m_useRequest)
-                axis = basisTransform.transformAffine(getWorldAxis(m_usingAxis)).normalizedCopy();
+                axis = basisTransform.transform(getWorldAxis(m_usingAxis)).normalizedCopy();
             else
                 axis = m_startAxis;
 
@@ -249,13 +249,13 @@ namespace Maze
                         Quaternion parentWorldRotation = entityTransform->getParent() ? entityTransform->getParent()->getWorldRotation()
                                                                                       : Quaternion::c_identity;
 
-                        Mat4F parentWorldTransform = entityTransform->getParent() ? entityTransform->getParent()->getWorldTransform()
-                                                                                   : Mat4F::c_identity;
+                        TMat parentWorldTransform = entityTransform->getParent() ? entityTransform->getParent()->getWorldTransform()
+                                                                                 : TMat::c_identity;
                         parentWorldTransform.setTranslation(Vec3F::c_zero);
 
                         Quaternion newLocalRotation = Quaternion(
-                            parentWorldTransform.inversedAffine().transformAffine(m_startVector).normalizedCopy(),
-                            parentWorldTransform.inversedAffine().transformAffine(vector).normalizedCopy());
+                            parentWorldTransform.inversed().transform(m_startVector).normalizedCopy(),
+                            parentWorldTransform.inversed().transform(vector).normalizedCopy());
                         entityTransform->setLocalRotation(newLocalRotation * m_startRotation);
                     }
                 }

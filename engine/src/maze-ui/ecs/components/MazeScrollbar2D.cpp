@@ -258,7 +258,7 @@ namespace Maze
         if (m_handleTransform)
         {
             Transform2DPtr const& handleSlideArea = m_handleTransform->getParent();
-            Vec2F handleSlideAreaPositionOS = handleSlideArea->getWorldTransform().inversedAffine().transformAffine(_positionWS);
+            Vec2F handleSlideAreaPositionOS = handleSlideArea->getWorldTransform().inversed().transform(_positionWS);
 
             switch (m_direction)
             {

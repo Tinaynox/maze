@@ -127,7 +127,7 @@ namespace Maze
         //////////////////////////////////////////
         inline void addDrawVAOInstancedCommand(
             VertexArrayObject* _vao,
-            Mat4F const& _modelMatrix = Mat4F::c_identity,
+            TMat const& _modelMatrix = TMat::c_identity,
             Vec4F const* _color = nullptr,
             Vec4F const* _uvs[MAZE_UV_CHANNELS_MAX] = nullptr)
         {
@@ -163,7 +163,7 @@ namespace Maze
         inline void addDrawVAOInstancedCommand(
             VertexArrayObject* _vao,
             S32 _count,
-            Mat4F const* _modelMatricies,
+            TMat const* _modelMatricies,
             Vec4F const* _colors = nullptr,
             Vec4F const* _uvs[MAZE_UV_CHANNELS_MAX] = nullptr)
         {
@@ -237,7 +237,7 @@ namespace Maze
         //////////////////////////////////////////
         inline void addDrawVAOInstancedCommand(
             VertexArrayObjectPtr const& _vao,
-            Mat4F const& _modelMatrix = Mat4F::c_identity,
+            TMat const& _modelMatrix = TMat::c_identity,
             Vec4F const* _color = nullptr)
         {
             addDrawVAOInstancedCommand(_vao.get(), _modelMatrix, _color);
@@ -247,7 +247,7 @@ namespace Maze
         inline void addDrawVAOInstancedCommand(
             VertexArrayObjectPtr const& _vao,
             S32 _count,
-            Mat4F const* _modelMatricies,
+            TMat const* _modelMatricies,
             Vec4F const* _colors = nullptr,
             Vec4F const* _uvs[MAZE_UV_CHANNELS_MAX] = nullptr)
         {
@@ -323,11 +323,11 @@ namespace Maze
 
         //////////////////////////////////////////
         void pushInstanceModelMatrix(
-            Mat4F const& _modelMatrix);
+            TMat const& _modelMatrix);
 
         //////////////////////////////////////////
         void pushInstanceModelMatricies(
-            Mat4F const* _modelMatricies,
+            TMat const* _modelMatricies,
             S32 _count);
 
 

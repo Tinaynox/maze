@@ -71,13 +71,13 @@ namespace Maze
             F32& _dist)
         {
             Vec3F cubeRight = _cubeUp.crossProduct(_cubeForward).normalizedCopy();
-            Mat4F cubeTransform = Mat4F::CreateAffineBasis(cubeRight, _cubeUp, _cubeForward).transformAffine(
-                Mat4F::CreateAffineScale(_cubeScale * 0.5f));
-            cubeTransform = cubeTransform.inversedAffine();
+            TMat cubeTransform = TMat::CreateBasis(cubeRight, _cubeUp, _cubeForward).transform(
+                TMat::CreateScale(_cubeScale * 0.5f));
+            cubeTransform = cubeTransform.inversed();
 
             Ray localRay(
-                cubeTransform.transformAffine(_rayPoint - _cubeCenter),
-                cubeTransform.transformAffine(_rayDirection));
+                cubeTransform.transform(_rayPoint - _cubeCenter),
+                cubeTransform.transform(_rayDirection));
 
             Vec3F const& a = localRay.getPoint();
             Vec3F const& k = localRay.getDirection();
@@ -203,11 +203,11 @@ namespace Maze
 
             Vec3F _cylinderUp = _cylinderForward.perpendicular();
             Vec3F cylinderRight = _cylinderUp.crossProduct(_cylinderForward).normalizedCopy();
-            Mat4F cylinderTransform = Mat4F::CreateAffineBasis(cylinderRight, _cylinderUp, _cylinderForward).inversedAffine();
+            TMat cylinderTransform = TMat::CreateBasis(cylinderRight, _cylinderUp, _cylinderForward).inversed();
 
             Ray localRay(
-                cylinderTransform.transformAffine(_rayPoint - _cylinderCenter),
-                cylinderTransform.transformAffine(_rayDirection));
+                cylinderTransform.transform(_rayPoint - _cylinderCenter),
+                cylinderTransform.transform(_rayDirection));
 
             F32 a = localRay.getDirection().x * localRay.getDirection().x + localRay.getDirection().y * localRay.getDirection().y;
             F32 b = 2.0f * (localRay.getPoint().x * localRay.getDirection().x + localRay.getPoint().y * localRay.getDirection().y);
@@ -285,14 +285,14 @@ namespace Maze
         {
             Vec3F coneUp = _coneForward.perpendicular();
             Vec3F coneRight = coneUp.crossProduct(_coneForward).normalizedCopy();
-            Mat4F coneTransform =
-                Mat4F::CreateAffineBasis(coneRight, coneUp, _coneForward).transformAffine(
-                    Mat4F::CreateAffineScale(_coneRadius, _coneRadius, _coneHeight));
-            coneTransform = coneTransform.inversedAffine();
+            TMat coneTransform =
+                TMat::CreateBasis(coneRight, coneUp, _coneForward).transform(
+                    TMat::CreateScale(_coneRadius, _coneRadius, _coneHeight));
+            coneTransform = coneTransform.inversed();
 
             Ray localRay(
-                coneTransform.transformAffine(_rayPoint - _coneOrigin) - Vec3F::c_unitZ,
-                coneTransform.transformAffine(_rayDirection));
+                coneTransform.transform(_rayPoint - _coneOrigin) - Vec3F::c_unitZ,
+                coneTransform.transform(_rayDirection));
 
             F32 a = localRay.getDirection().x * localRay.getDirection().x + localRay.getDirection().y * localRay.getDirection().y - localRay.getDirection().z * localRay.getDirection().z;
             F32 b = 2.0f * (localRay.getPoint().x * localRay.getDirection().x + localRay.getPoint().y * localRay.getDirection().y - localRay.getPoint().z * localRay.getDirection().z);
@@ -359,12 +359,12 @@ namespace Maze
         {
             Vec3F torusUp = _torusForward.perpendicular();
             Vec3F torusRight = torusUp.crossProduct(_torusForward).normalizedCopy();
-            Mat4F torusTransform = Mat4F::CreateAffineBasis(torusRight, torusUp, _torusForward);
-            torusTransform = torusTransform.inversedAffine();
+            TMat torusTransform = TMat::CreateBasis(torusRight, torusUp, _torusForward);
+            torusTransform = torusTransform.inversed();
 
             Ray localRay(
-                torusTransform.transformAffine(_rayPoint - _torusOrigin),
-                torusTransform.transformAffine(_rayDirection));
+                torusTransform.transform(_rayPoint - _torusOrigin),
+                torusTransform.transform(_rayDirection));
 
             F32 ox = localRay.getPoint().x;
             F32 oy = localRay.getPoint().y;

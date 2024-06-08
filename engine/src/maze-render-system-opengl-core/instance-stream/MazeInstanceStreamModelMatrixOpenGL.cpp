@@ -89,14 +89,14 @@ namespace Maze
             {
                 m_maxInstancesPerDrawCall = 16384;
 
-                // Matrix4x4 (4 * Vec4F) per instance
+                // Matrix4x3 (4 * Vec3F) per instance
                 U32 textureBufferSize = (U32)Math::Ceil(sqrt(m_maxInstancesPerDrawCall * 4));
                 textureBufferSize = Math::GetNextPowerOfTwo(textureBufferSize);
 
                 m_bufferInfo.buffer = _rs->createGPUTextureBuffer(
                     _contextOpenGL,
                     Vec2U(textureBufferSize),
-                    PixelFormat::RGBA_F32,
+                    PixelFormat::RGB_F32,
                     GPUByteBufferAccessType::DynamicPersistent,
                     nullptr);
 
@@ -169,7 +169,7 @@ namespace Maze
                 memcpy(
                     (U8*)m_bufferInfo.mappedPointer,
                     &m_data[0],
-                    m_dataOffset * sizeof(Mat4F));
+                    m_dataOffset * sizeof(TMat));
 
                 m_bufferInfo.buffer->unmap(
                     GPUByteBufferUnmapOptions::KeepPersistent,

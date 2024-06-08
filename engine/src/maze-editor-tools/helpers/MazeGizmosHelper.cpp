@@ -66,7 +66,7 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        MAZE_EDITOR_TOOLS_API void PushTransform(Mat4F const& _mat)
+        MAZE_EDITOR_TOOLS_API void PushTransform(TMat const& _mat)
         {
             GizmosDrawerPtr const& drawer = GetDrawer();
             if (drawer)

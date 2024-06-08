@@ -115,10 +115,10 @@ namespace Maze
         void translate(Vec2F const& _offset);
 
         //////////////////////////////////////////
-        inline Vec3F getWorldPosition() { return getWorldTransform().getAffineTranslation(); }
+        inline Vec3F getWorldPosition() { return getWorldTransform().getTranslation(); }
 
         //////////////////////////////////////////
-        inline Vec3F getWorldPosition(Vec3F const& _localPoint) { return getWorldTransform().transformAffine(_localPoint); }
+        inline Vec3F getWorldPosition(Vec3F const& _localPoint) { return getWorldTransform().transform(_localPoint); }
 
 
         //////////////////////////////////////////
@@ -185,7 +185,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        Mat4F const& getLocalTransform();
+        TMat const& getLocalTransform();
 
         //////////////////////////////////////////
         inline bool isLocalTransformDirty() { return m_flags & Flags::LocalTransformDirty; }
@@ -200,17 +200,17 @@ namespace Maze
         inline bool isLocalTransformChanged() { return isLocalTransformChangedCurrentFrame() || isLocalTransformChangedPreviousFrame(); }
 
         //////////////////////////////////////////
-        Mat4F const& calculateLocalTransform();
+        TMat const& calculateLocalTransform();
 
         //////////////////////////////////////////
-        void setLocalTransform(Mat4F const& _localTransform);
+        void setLocalTransform(TMat const& _localTransform);
 
 
         //////////////////////////////////////////
-        Mat4F const& getWorldTransform();
+        TMat const& getWorldTransform();
 
         //////////////////////////////////////////
-        void setWorldTransform(Mat4F const& _worldTransform);
+        void setWorldTransform(TMat const& _worldTransform);
 
         //////////////////////////////////////////
         inline bool isWorldTransformDirty() { return m_flags & Flags::WorldTransformDirty; }
@@ -225,7 +225,7 @@ namespace Maze
         inline bool isWorldTransformChanged() { return isWorldTransformChangedCurrentFrame() || isWorldTransformChangedPreviousFrame(); }
 
         //////////////////////////////////////////
-        Mat4F const& calculateWorldTransform();
+        TMat const& calculateWorldTransform();
 
         //////////////////////////////////////////
         Quaternion getWorldRotation() const;
@@ -237,25 +237,25 @@ namespace Maze
         //////////////////////////////////////////
         inline Vec3F getWorldForwardDirection()
         {
-            Mat4F mat = getWorldTransform();
-            mat.setRow(3, Vec4F(0, 0, 0, 1));
-            return (mat.transformAffine(Vec3F::c_unitZ)).normalizedCopy();
+            TMat mat = getWorldTransform();
+            mat.setTranslation(Vec3F::c_zero);
+            return (mat.transform(Vec3F::c_unitZ)).normalizedCopy();
         } 
 
         //////////////////////////////////////////
         inline Vec3F getWorldUpDirection()
         {
-            Mat4F mat = getWorldTransform();
-            mat.setRow(3, Vec4F(0, 0, 0, 1));
-            return (mat.transformAffine(Vec3F::c_unitY)).normalizedCopy();
+            TMat mat = getWorldTransform();
+            mat.setTranslation(Vec3F::c_zero);
+            return (mat.transform(Vec3F::c_unitY)).normalizedCopy();
         }
 
         //////////////////////////////////////////
         inline Vec3F getWorldRightDirection()
         {
-            Mat4F mat = getWorldTransform(); 
-            mat.setRow(3, Vec4F(0, 0, 0, 1));
-            return (mat.transformAffine(Vec3F::c_unitX)).normalizedCopy();
+            TMat mat = getWorldTransform();
+            mat.setTranslation(Vec3F::c_zero);
+            return (mat.transform(Vec3F::c_unitX)).normalizedCopy();
         }
 
 
@@ -482,8 +482,8 @@ namespace Maze
         Vec3F m_localScale;
 
         S32 m_flags;
-        Mat4F m_localTransform;
-        Mat4F m_worldTransform;
+        TMat m_localTransform;
+        TMat m_worldTransform;
 
         Transform3DPtr m_parent;
         Vector<Transform3D*> m_children;

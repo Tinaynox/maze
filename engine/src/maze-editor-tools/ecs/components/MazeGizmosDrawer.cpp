@@ -815,9 +815,9 @@ namespace Maze
         Vec3F right = _up.crossProduct(_forward).normalizedCopy();
 
         pushTransform(
-            Mat4F::CreateAffineTranslation(_position).transformAffine(
-                Mat4F::CreateAffineBasis(right, _up, _forward)).transformAffine(
-                    Mat4F::CreateAffineScale(_scale.x, _scale.y, 1.0f)));
+            TMat::CreateTranslation(_position).transform(
+                TMat::CreateBasis(right, _up, _forward)).transform(
+                    TMat::CreateScale(_scale.x, _scale.y, 1.0f)));
 
         MeshPtr const& mesh = MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Quad);
         drawMesh(mesh, Vec3F::c_zero, _color, _duration, _renderMode);
@@ -838,9 +838,9 @@ namespace Maze
         Vec3F right = _up.crossProduct(_forward).normalizedCopy();
 
         pushTransform(
-            Mat4F::CreateAffineTranslation(_position).transformAffine(
-                Mat4F::CreateAffineBasis(right, _up, _forward)).transformAffine(
-                    Mat4F::CreateAffineScale(_scale)));
+            TMat::CreateTranslation(_position).transform(
+                TMat::CreateBasis(right, _up, _forward)).transform(
+                    TMat::CreateScale(_scale)));
 
         MeshPtr const& mesh = MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cube);
         drawMesh(mesh, Vec3F::c_zero, _color, _duration, _renderMode);
@@ -857,8 +857,8 @@ namespace Maze
         MeshRenderMode _renderMode)
     {
         pushTransform(
-            Mat4F::CreateAffineTranslation(_position).transformAffine(
-                Mat4F::CreateAffineScale(_radius * 2.0f)));
+            TMat::CreateTranslation(_position).transform(
+                TMat::CreateScale(_radius * 2.0f)));
 
         MeshPtr const& mesh = MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Sphere);
         drawMesh(mesh, Vec3F::c_zero, _color, _duration, _renderMode);
@@ -880,9 +880,9 @@ namespace Maze
         Vec3F right = _up.crossProduct(_forward).normalizedCopy();
 
         pushTransform(
-            Mat4F::CreateAffineTranslation(_position).transformAffine(
-                Mat4F::CreateAffineBasis(right, _forward, _up)).transformAffine(
-                    Mat4F::CreateAffineScale(_radius * 2.0f, _height, _radius * 2.0f)));
+            TMat::CreateTranslation(_position).transform(
+                TMat::CreateBasis(right, _forward, _up)).transform(
+                    TMat::CreateScale(_radius * 2.0f, _height, _radius * 2.0f)));
 
         MeshPtr const& mesh = MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cone);
         drawMesh(mesh, Vec3F::c_zero, _color, _duration, _renderMode);
@@ -904,9 +904,9 @@ namespace Maze
         Vec3F right = _up.crossProduct(_forward).normalizedCopy();
 
         pushTransform(
-            Mat4F::CreateAffineTranslation(_position).transformAffine(
-                Mat4F::CreateAffineBasis(right, _forward, _up)).transformAffine(
-                    Mat4F::CreateAffineScale(_radius * 2.0f, _height, _radius * 2.0f)));
+            TMat::CreateTranslation(_position).transform(
+                TMat::CreateBasis(right, _forward, _up)).transform(
+                    TMat::CreateScale(_radius * 2.0f, _height, _radius * 2.0f)));
 
         MeshPtr const& mesh = MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cylinder);
         drawMesh(mesh, Vec3F::c_zero, _color, _duration, _renderMode);
@@ -927,9 +927,9 @@ namespace Maze
         Vec3F right = up.crossProduct(_forward).normalizedCopy();
 
         pushTransform(
-            Mat4F::CreateAffineTranslation(_position).transformAffine(
-                Mat4F::CreateAffineBasis(right, _forward, up)).transformAffine(
-                    Mat4F::CreateAffineScale(_radius * 2.0f)));
+            TMat::CreateTranslation(_position).transform(
+                TMat::CreateBasis(right, _forward, up)).transform(
+                    TMat::CreateScale(_radius * 2.0f)));
 
         MeshPtr const& mesh = MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Torus);
         drawMesh(mesh, Vec3F::c_zero, _color, _duration, _renderMode);
@@ -953,10 +953,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void GizmosDrawer::pushTransform(Mat4F const& _tm)
+    void GizmosDrawer::pushTransform(TMat const& _tm)
     {
         if (!m_transformStack.empty())
-            m_transformStack.push(m_transformStack.top().transformAffine(_tm));
+            m_transformStack.push(m_transformStack.top().transform(_tm));
         else
             m_transformStack.push(_tm);
     }
@@ -1080,7 +1080,7 @@ namespace Maze
 
                     material->setUniform(MAZE_HCS("u_color"), gizmoBillboardData.color.value);
 
-                    Mat4F mat = Mat4F::CreateAffineLookAt(
+                    TMat mat = TMat::CreateLookAt(
                         gizmoBillboardData.point,
                         gizmoBillboardData.point - camera3D->getTransform()->getWorldForwardDirection(),
                         camera3D->getTransform()->getWorldUpDirection());
@@ -1105,7 +1105,7 @@ namespace Maze
         if (m_transformStack.empty())
             return _p;
         else
-            return m_transformStack.top().transformAffine(_p);
+            return m_transformStack.top().transform(_p);
     }
 
     

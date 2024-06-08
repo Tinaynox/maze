@@ -106,10 +106,10 @@ namespace Maze
 
         Vec3F const& position = transform3D->getWorldPosition();
 
-        Mat4F mat = transform3D->getWorldTransform();
+        TMat mat = transform3D->getWorldTransform();
         mat.setTranslation(Vec3F(0.0f, 0.0f, 0.0f));
 
-        Vec3F directionForward = mat.transformAffine(Vec3F::c_unitZ).normalizedCopy();
+        Vec3F directionForward = mat.transform(Vec3F::c_unitZ).normalizedCopy();
 
         _drawer->setColor(light3D->getColor());
 

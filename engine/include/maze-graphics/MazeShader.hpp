@@ -157,6 +157,9 @@ namespace Maze
         //////////////////////////////////////////
         void setUniform(HashedCString _uniformName, Mat4F const& _matrix, bool _warningIfNotExists = false);
 
+        //////////////////////////////////////////
+        void setUniform(HashedCString _uniformName, TMat const& _matrix, bool _warningIfNotExists = false);
+
 
         //////////////////////////////////////////
         void setUniform(ShaderUniformVariant const& _variant, bool _warningIfNotExists = false);
@@ -167,6 +170,9 @@ namespace Maze
 
         //////////////////////////////////////////
         void setUniform(HashedCString _uniformName, Mat4F* _matrices, Size _count, bool _warningIfNotExists = false);
+
+        //////////////////////////////////////////
+        void setUniform(HashedCString _uniformName, TMat* _matrices, Size _count, bool _warningIfNotExists = false);
 
 
         //////////////////////////////////////////

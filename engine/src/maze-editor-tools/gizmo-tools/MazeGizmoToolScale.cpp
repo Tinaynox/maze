@@ -62,7 +62,7 @@ namespace Maze
         if (!entityTransform)
             return;
 
-        Mat4F mat = entityTransform->getWorldTransform();
+        TMat mat = entityTransform->getWorldTransform();
 
         Vec3F const& cameraWorldPosition = camera->getTransform()->getWorldPosition();
 
@@ -76,9 +76,9 @@ namespace Maze
 
         F32 cameraDistance = (pos - camera->getTransform()->getLocalPosition()).length();
         F32 scale = cameraDistance * GizmoToolConfig::c_cameraScalePerDistance;
-        Mat4F transform = mat.transformAffine(
-            Mat4F::CreateAffineScale(scale / affineScale));
-        Mat4F basisTransform = transform;
+        TMat transform = mat.transform(
+            TMat::CreateScale(scale / affineScale));
+        TMat basisTransform = transform;
         basisTransform.setTranslation(Vec3F::c_zero);
 
         GizmosDrawer::MeshRenderMode const renderMode = GizmosDrawer::MeshRenderMode::TransparentTop;
@@ -157,17 +157,17 @@ namespace Maze
             if (!Math::RaycastCube(
                 ray.getPoint(),
                 ray.getDirection(),
-                transform.transformAffine(Vec3F::c_zero),
-                basisTransform.transformAffine(Vec3F::c_unitZ).normalizedCopy(),
-                basisTransform.transformAffine(Vec3F::c_unitY).normalizedCopy(),
+                transform.transform(Vec3F::c_zero),
+                basisTransform.transform(Vec3F::c_unitZ).normalizedCopy(),
+                basisTransform.transform(Vec3F::c_unitY).normalizedCopy(),
                 Vec3F(scale * GizmoToolConfig::c_transformGizmoToolArrowCenterCubeSize),
                 dist))
             {
                 if (Math::RaycastCylinder(
                     ray.getPoint(),
                     ray.getDirection(),
-                    transform.transformAffine(_axis * length * 0.5f),
-                    basisTransform.transformAffine(_axis).normalizedCopy(),
+                    transform.transform(_axis * length * 0.5f),
+                    basisTransform.transform(_axis).normalizedCopy(),
                     scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius,
                     scale * length,
                     dist))
@@ -177,9 +177,9 @@ namespace Maze
             if (Math::RaycastCube(
                 ray.getPoint(),
                 ray.getDirection(),
-                transform.transformAffine(_axis * (length + GizmoToolConfig::c_transformGizmoToolArrowCubeSize * 0.5f)),
-                basisTransform.transformAffine(_axis).normalizedCopy(),
-                basisTransform.transformAffine(_axis.perpendicular()).normalizedCopy(),
+                transform.transform(_axis * (length + GizmoToolConfig::c_transformGizmoToolArrowCubeSize * 0.5f)),
+                basisTransform.transform(_axis).normalizedCopy(),
+                basisTransform.transform(_axis.perpendicular()).normalizedCopy(),
                 Vec3F(scale * GizmoToolConfig::c_transformGizmoToolArrowCubeSize * 2.0f),
                 dist))
                 return true;
@@ -192,9 +192,9 @@ namespace Maze
             if (Math::RaycastCube(
                 ray.getPoint(),
                 ray.getDirection(),
-                transform.transformAffine(Vec3F::c_zero),
-                basisTransform.transformAffine(Vec3F::c_unitZ).normalizedCopy(),
-                basisTransform.transformAffine(Vec3F::c_unitY).normalizedCopy(),
+                transform.transform(Vec3F::c_zero),
+                basisTransform.transform(Vec3F::c_unitZ).normalizedCopy(),
+                basisTransform.transform(Vec3F::c_unitY).normalizedCopy(),
                 Vec3F(scale * GizmoToolConfig::c_transformGizmoToolArrowCenterCubeSize * 2.0f),
                 dist))
                 return true;
@@ -261,7 +261,7 @@ namespace Maze
                     if (m_usingAxis == i)
                         continue;
 
-                    Vec3F crossAxis = basisTransform.transformAffine(getWorldAxis(i)).normalizedCopy();
+                    Vec3F crossAxis = basisTransform.transform(getWorldAxis(i)).normalizedCopy();
                     F32 dot = crossAxis.dotProduct(camera->getTransform()->getWorldForwardDirection());
                     if (Math::Abs(dot) > d)
                     {
@@ -280,7 +280,7 @@ namespace Maze
 
                 if (m_usingAxis < 3)
                 {
-                    axis = basisTransform.transformAffine(getWorldAxis(m_usingAxis)).normalizedCopy();
+                    axis = basisTransform.transform(getWorldAxis(m_usingAxis)).normalizedCopy();
                     point = Math::ClosestPointOnLine(pos, pos + axis, point);
                     
                 }

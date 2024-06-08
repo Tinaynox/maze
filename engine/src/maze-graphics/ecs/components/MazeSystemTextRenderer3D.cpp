@@ -251,9 +251,9 @@ namespace Maze
                 Vec2F sizeV = (Vec2F)m_systemFont->charSize * fontScale;
                 Vec2F positionShiftV = Vec2F((F32)sx, (F32)sy) * fontScale + positionShift;
 
-                Mat4F localTransform = Mat4F::CreateAffineScale(0.01f).transformAffine(
-                    Mat4F::CreateAffineTranslation(positionShiftV)).transformAffine(
-                        Mat4F::CreateAffineScale(sizeV));
+                TMat localTransform = TMat::CreateScale(0.01f).transform(
+                    TMat::CreateTranslation(positionShiftV)).transform(
+                        TMat::CreateScale(sizeV));
                 m_localMatrices[charIndex] = localTransform;
 
                 m_meshRenderer->setUV0(charIndex, uv);
@@ -423,7 +423,7 @@ namespace Maze
         for (Size i = 0; i < transformCount; ++i)
             m_meshRenderer->setModelMatrix(
                 i,
-                m_transform->getWorldTransform().transformAffine(m_localMatrices[i]));
+                m_transform->getWorldTransform().transform(m_localMatrices[i]));
     }
 
 

@@ -35,6 +35,7 @@
 #include "maze-core/ecs/MazeComponent.hpp"
 #include "maze-core/ecs/components/MazeName.hpp"
 #include "maze-core/math/MazeMat4.hpp"
+#include "maze-core/math/MazeTMat.hpp"
 #include "maze-core/math/MazeRotation2D.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
 #include <functional>
@@ -123,7 +124,7 @@ namespace Maze
         void translate(Vec2F const& _offset);
 
         //////////////////////////////////////////
-        inline Vec2F getWorldPosition() { return getWorldTransform().transformAffine(Vec2F::c_zero); }
+        inline Vec2F getWorldPosition() { return getWorldTransform().transform(Vec2F::c_zero); }
 
 
         //////////////////////////////////////////
@@ -213,7 +214,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        Mat4F const& getLocalTransform();
+        TMat const& getLocalTransform();
 
         //////////////////////////////////////////
         inline bool isLocalTransformDirty() { return m_flags & Flags::LocalTransformDirty; }
@@ -228,14 +229,14 @@ namespace Maze
         inline bool isLocalTransformChanged() { return isLocalTransformChangedCurrentFrame() || isLocalTransformChangedPreviousFrame(); }
 
         //////////////////////////////////////////
-        Mat4F const& calculateLocalTransform();
+        TMat const& calculateLocalTransform();
 
         //////////////////////////////////////////
-        void setLocalTransform(Mat4F const& _localTransform);
+        void setLocalTransform(TMat const& _localTransform);
 
 
         //////////////////////////////////////////
-        Mat4F const& getWorldTransform();
+        TMat const& getWorldTransform();
 
         //////////////////////////////////////////
         inline bool isWorldTransformDirty() { return m_flags & Flags::WorldTransformDirty; }
@@ -250,7 +251,7 @@ namespace Maze
         inline bool isWorldTransformChanged() { return isWorldTransformChangedCurrentFrame() || isWorldTransformChangedPreviousFrame(); }
 
         //////////////////////////////////////////
-        Mat4F const& calculateWorldTransform();
+        TMat const& calculateWorldTransform();
 
 
         //////////////////////////////////////////
@@ -665,8 +666,8 @@ namespace Maze
         Vec2F m_anchor;
 
         S32 m_flags;
-        Mat4F m_localTransform;
-        Mat4F m_worldTransform;
+        TMat m_localTransform;
+        TMat m_worldTransform;
 
         Transform2DPtr m_parent;
         Vector<Transform2D*> m_children;

@@ -213,7 +213,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Mat4F& accessRenderTransform(S32 _index) { return m_renderTransforms[_index]; }
+        inline TMat& accessRenderTransform(S32 _index) { return m_renderTransforms[_index]; }
 
         //////////////////////////////////////////
         inline Vec4F& accessRenderColor(S32 _index) { return m_renderColors[_index]; }
@@ -227,7 +227,7 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline Mat4F const* getRenderTransforms() const { return m_renderTransforms.begin(); }
+        inline TMat const* getRenderTransforms() const { return m_renderTransforms.begin(); }
 
         //////////////////////////////////////////
         inline Vec4F const* getRenderColors() const { return m_renderColors.begin(); }
@@ -253,7 +253,7 @@ namespace Maze
 
         FastVector<F32> m_sqrDistanceToCamera;
 
-        FastVector<Mat4F> m_renderTransforms;
+        FastVector<TMat> m_renderTransforms;
         FastVector<Vec4F> m_renderColors;
         FastVector<Vec4F> m_renderUVs;
 

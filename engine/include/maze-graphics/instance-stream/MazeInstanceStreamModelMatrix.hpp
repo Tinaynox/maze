@@ -74,18 +74,18 @@ namespace Maze
         inline Size getDataSize() const { return m_data.size(); }
 
         //////////////////////////////////////////
-        inline void setData(Size _index, Mat4F const& _value) { m_data[_index] = _value; }
+        inline void setData(Size _index, TMat const& _value) { m_data[_index] = _value; }
 
         //////////////////////////////////////////
         inline void setData(
             Size _index,
-            Mat4F const* _value,
+            TMat const* _value,
             S32 _count)
         {
             memcpy(
                 m_data.begin() + _index,
                 _value,
-                sizeof(Mat4F) * _count);
+                sizeof(TMat) * _count);
         }
 
     protected:
@@ -97,7 +97,7 @@ namespace Maze
         bool init();
 
     protected:
-        FastVector<Mat4F> m_data;
+        FastVector<TMat> m_data;
         S32 m_dataOffset = 0;
     };
 

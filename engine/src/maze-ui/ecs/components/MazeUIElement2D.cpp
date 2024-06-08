@@ -110,7 +110,7 @@ namespace Maze
                 return;
             }
 
-            Vec2F positionOS = m_transform->getWorldTransform().inversedAffine().transformAffine(positionWS);
+            Vec2F positionOS = m_transform->getWorldTransform().inversed().transform(positionWS);
 
             if (positionOS.x < 0 || positionOS.y < 0 ||
                 positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
@@ -144,7 +144,7 @@ namespace Maze
             if (!m_bounds->getBounds().contains(positionWS))
                 return;
 
-            Vec2F positionOS = m_transform->getWorldTransform().inversedAffine().transformAffine(positionWS);
+            Vec2F positionOS = m_transform->getWorldTransform().inversed().transform(positionWS);
 
             if (positionOS.x < 0 || positionOS.y < 0 ||
                 positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
@@ -171,7 +171,7 @@ namespace Maze
             if (!m_bounds->getBounds().contains(positionWS))
                 return;
 
-            Vec2F positionOS = m_transform->getWorldTransform().inversedAffine().transformAffine(positionWS);
+            Vec2F positionOS = m_transform->getWorldTransform().inversed().transform(positionWS);
 
             if (positionOS.x < 0 || positionOS.y < 0 ||
                 positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
@@ -207,7 +207,7 @@ namespace Maze
                 return;
             }
 
-            Vec2F positionOS = m_transform->getWorldTransform().inversedAffine().transformAffine(positionWS);
+            Vec2F positionOS = m_transform->getWorldTransform().inversed().transform(positionWS);
 
             if (positionOS.x < 0 || positionOS.y < 0 ||
                 positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
@@ -253,7 +253,7 @@ namespace Maze
                 return;
             }
 
-            Vec2F positionOS = m_transform->getWorldTransform().inversedAffine().transformAffine(positionWS);
+            Vec2F positionOS = m_transform->getWorldTransform().inversed().transform(positionWS);
 
             if (positionOS.x < 0 || positionOS.y < 0 ||
                 positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
@@ -295,7 +295,7 @@ namespace Maze
                 return;
             }
 
-            Vec2F positionOS = m_transform->getWorldTransform().inversedAffine().transformAffine(positionWS);
+            Vec2F positionOS = m_transform->getWorldTransform().inversed().transform(positionWS);
 
             if (positionOS.x < 0 || positionOS.y < 0 ||
                 positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
@@ -326,7 +326,7 @@ namespace Maze
             if (!m_bounds->getBounds().contains(positionWS))
                 return;
 
-            Vec2F positionOS = m_transform->getWorldTransform().inversedAffine().transformAffine(positionWS);
+            Vec2F positionOS = m_transform->getWorldTransform().inversed().transform(positionWS);
             if (positionOS.x < 0 || positionOS.y < 0 ||
                 positionOS.x >= m_transform->getSize().x || positionOS.y >= m_transform->getSize().y)
             {

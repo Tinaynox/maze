@@ -190,7 +190,7 @@ namespace Maze
                     0.0f);
                     
                 // View matrix
-                renderTarget->setViewMatrix(Mat4F::c_identity);
+                renderTarget->setViewMatrix(TMat::c_identity);
 
                 // View position
                 renderTarget->setViewPosition(canvasCameraPosition);
@@ -235,7 +235,7 @@ namespace Maze
 
                                 renderQueue->addSelectRenderPassCommand((*material)->getFirstRenderPass());
 
-                                Mat4F const& worldTransform = transform2D->getWorldTransform();
+                                TMat const& worldTransform = transform2D->getWorldTransform();
 
                                 renderQueue->addDrawVAOInstancedCommand(vao, worldTransform);                                
                             }

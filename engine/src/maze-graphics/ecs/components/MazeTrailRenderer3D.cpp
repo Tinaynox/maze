@@ -479,7 +479,7 @@ namespace Maze
                             vao,
                             _trailRenderer->getWorldPosition(),
                             1,
-                            &Mat4F::c_identity
+                            &TMat::c_identity
                         });
 
                 }

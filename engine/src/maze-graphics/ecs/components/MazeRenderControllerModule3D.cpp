@@ -98,7 +98,7 @@ namespace Maze
         std::function<void(RenderQueuePtr const&)> _endDrawCallback,
         std::function<void(RenderQueuePtr const&)> _endRenderQueueCallback)
     {
-        Vec3F cameraPosition = _params.cameraTransform.getAffineTranslation();
+        Vec3F cameraPosition = _params.cameraTransform.getTranslation();
 
         Vector<Light3D*> lights3D;
         Light3D* mainLight = nullptr;
@@ -150,7 +150,7 @@ namespace Maze
             _renderTarget->setFar(_params.farZ);
 
             // View matrix
-            Mat4F viewMatrix = _params.cameraTransform.inversedAffine();
+            TMat viewMatrix = _params.cameraTransform.inversed();
             _renderTarget->setViewMatrix(viewMatrix);
 
             // View position
@@ -173,11 +173,11 @@ namespace Maze
 
                         F32 skyboxScale = (2.0f * _params.farZ / Math::Sqrt(3.0f)) - 1.0f;
 
-                        Mat4F skyboxTransform = Mat4F(
-                            skyboxScale, 0, 0, 0,
-                            0, skyboxScale, 0, 0,
-                            0, 0, skyboxScale, 0,
-                            cameraPosition.x, cameraPosition.y, cameraPosition.z, 1);
+                        TMat skyboxTransform = TMat(
+                            skyboxScale, 0, 0,
+                            0, skyboxScale, 0,
+                            0, 0, skyboxScale,
+                            cameraPosition.x, cameraPosition.y, cameraPosition.z);
                         renderQueue->addDrawVAOInstancedCommand(
                             vaos[0],
                             1,

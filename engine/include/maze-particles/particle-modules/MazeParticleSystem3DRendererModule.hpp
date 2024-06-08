@@ -224,8 +224,8 @@ namespace Maze
             Particles3D& _particles,
             ParticleSystemSimulationSpace _transformPolicy,
             ParticleSystemScalingMode _scalingMode,
-            Mat4F const& _particleSystemLocalTransform,
-            Mat4F const& _particleSystemWorldTransform,
+            TMat const& _particleSystemLocalTransform,
+            TMat const& _particleSystemWorldTransform,
             Vec3F const& _cameraPosition,
             Vec3F const& _cameraForward,
             Vec3F const& _cameraUp);

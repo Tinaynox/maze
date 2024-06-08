@@ -288,8 +288,8 @@ namespace Maze
         if (m_transform2D)
         {
             position = m_transform2D->getWorldPosition();
-            angle = m_transform2D->getWorldTransform().transformAffine(Vec2F::c_unitX).toAngle();
-            scale = m_transform2D->getWorldTransform().getAffineScale2DSignless();
+            angle = m_transform2D->getWorldTransform().transform(Vec2F::c_unitX).toAngle();
+            scale = m_transform2D->getWorldTransform().getScale2DSignless();
         }
         else
         if (m_transform3D)
@@ -298,7 +298,7 @@ namespace Maze
             position = { worldPosition.x, worldPosition.y };
             // angle = m_transform3D->getWorldTransform().getAffineRotationEulerAngles().z;
             angle = Quaternion::GetEuler(m_transform3D->getWorldTransform()).z;
-            scale = m_transform3D->getWorldTransform().getAffineScale2DSignless();
+            scale = m_transform3D->getWorldTransform().getScale2DSignless();
         }
         else
         {

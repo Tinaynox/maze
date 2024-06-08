@@ -185,7 +185,7 @@ namespace Maze
         inline S32 getAliveParticles() const { return m_particles.getAliveCount(); }
 
         //////////////////////////////////////////
-        inline Mat4F const* getRenderTransforms() const { return m_particles.getRenderTransforms(); }
+        inline TMat const* getRenderTransforms() const { return m_particles.getRenderTransforms(); }
 
         //////////////////////////////////////////
         inline Vec4F const* getRenderColors() const { return m_particles.getRenderColors(); }

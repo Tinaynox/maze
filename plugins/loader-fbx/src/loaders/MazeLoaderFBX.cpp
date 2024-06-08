@@ -68,13 +68,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    inline Mat4F ConvertOpenFBXMatrixToMat4F32(ofbx::Matrix const& _mat)
+    inline TMat ConvertOpenFBXMatrixToTMat(ofbx::Matrix const& _mat)
     {
-        return Mat4F(
-            (F32)_mat.m[0], (F32)_mat.m[1], (F32)_mat.m[2], (F32)_mat.m[3],
-            (F32)_mat.m[4], (F32)_mat.m[5], (F32)_mat.m[6], (F32)_mat.m[7],
-            (F32)_mat.m[8], (F32)_mat.m[9], (F32)_mat.m[10], (F32)_mat.m[11],
-            (F32)_mat.m[12], (F32)_mat.m[13], (F32)_mat.m[14], (F32)_mat.m[15]);
+        return TMat(
+            (F32)_mat.m[0], (F32)_mat.m[1], (F32)_mat.m[2],
+            (F32)_mat.m[4], (F32)_mat.m[5], (F32)_mat.m[6],
+            (F32)_mat.m[8], (F32)_mat.m[9], (F32)_mat.m[10],
+            (F32)_mat.m[12], (F32)_mat.m[13], (F32)_mat.m[14]);
     }
 
     //////////////////////////////////////////
@@ -173,16 +173,16 @@ namespace Maze
             indices.clear();
         };
 
-        Mat4F fixOrientationMat = Mat4F::c_identity;
+        TMat fixOrientationMat = TMat::c_identity;
 
         // Fix orientation for LHCS
         if (sceneGlobalSettings->CoordAxis == ofbx::CoordSystem::CoordSystem_RightHanded)
         {
             if (sceneGlobalSettings->UpAxis == ofbx::UpVector::UpVector_AxisY && sceneGlobalSettings->CoordAxisSign < 0)
-                fixOrientationMat = Mat4F::CreateAffineRotationY(Math::c_pi);
+                fixOrientationMat = TMat::CreateRotationY(Math::c_pi);
             else
             if (sceneGlobalSettings->UpAxis == ofbx::UpVector::UpVector_AxisZ && sceneGlobalSettings->CoordAxisSign > 0)
-                fixOrientationMat = Mat4F::CreateAffineRotationX(-Math::c_halfPi);
+                fixOrientationMat = TMat::CreateRotationX(-Math::c_halfPi);
 
         }
 
@@ -197,10 +197,10 @@ namespace Maze
             ofbx::Matrix meshGeometricTransform = mesh.getGeometricMatrix();
             ofbx::Matrix meshGlobalTransform = mesh.getGlobalTransform();
 
-            Mat4F meshGeometricTransformMat = ConvertOpenFBXMatrixToMat4F32(meshGeometricTransform);
-            Mat4F meshGlobalTransformMat = ConvertOpenFBXMatrixToMat4F32(meshGlobalTransform);
+            TMat meshGeometricTransformMat = ConvertOpenFBXMatrixToTMat(meshGeometricTransform);
+            TMat meshGlobalTransformMat = ConvertOpenFBXMatrixToTMat(meshGlobalTransform);
 
-            Mat4F transformMat = fixOrientationMat.transformAffine(meshGeometricTransformMat).transformAffine(meshGlobalTransformMat);
+            TMat transformMat = fixOrientationMat.transform(meshGeometricTransformMat).transform(meshGlobalTransformMat);
 
 
             
@@ -225,7 +225,7 @@ namespace Maze
             for (S32 i = 0; i < vertexCount; ++i)
             {
                 Vec3F pos = Vec3F((F32)verticesPtr[i].x, (F32)verticesPtr[i].y, (F32)verticesPtr[i].z);
-                pos = transformMat.transformAffine(pos);
+                pos = transformMat.transform(pos);
                 positions.push_back(pos);
             }
             transformMat.setTranslation(Vec3F::c_zero);
@@ -239,7 +239,7 @@ namespace Maze
                 for (S32 i = 0; i < vertexCount; ++i)
                 {
                     Vec3F normal = Vec3F((F32)normalsPtr[i].x, (F32)normalsPtr[i].y, (F32)normalsPtr[i].z);
-                    normal = transformMat.transformAffine(normal);
+                    normal = transformMat.transform(normal);
                     normals.push_back(normal.normalizedCopy());
                 }
             }
@@ -253,7 +253,7 @@ namespace Maze
                 for (S32 i = 0; i < vertexCount; ++i)
                 {
                     Vec3F tangent = Vec3F((F32)tangentsPtr[i].x, (F32)tangentsPtr[i].y, (F32)tangentsPtr[i].z);
-                    tangent = transformMat.transformAffine(tangent);
+                    tangent = transformMat.transform(tangent);
                     tangents.push_back(tangent.normalizedCopy());
                 }
             }

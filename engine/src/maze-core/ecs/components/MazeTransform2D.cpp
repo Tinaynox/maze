@@ -64,8 +64,8 @@ namespace Maze
         , m_size(Vec2F(100.0f, 100.0f))
         , m_anchor(Vec2F(0.5f, 0.5f))
         , m_flags(0)
-        , m_localTransform(Mat4F::c_identity)
-        , m_worldTransform(Mat4F::c_identity)
+        , m_localTransform(TMat::c_identity)
+        , m_worldTransform(TMat::c_identity)
         , m_z(0)
         , m_orderOfArrival(0)
     {
@@ -140,11 +140,11 @@ namespace Maze
     void Transform2D::calculateLocalCorners(Vec2F _corners[4])
     {
         Vec2F const& size = getSize();
-        Mat4F const& localTransform = getLocalTransform();
-        Vec2F lb = localTransform.transformAffine(Vec2F::c_zero);
-        Vec2F rb = localTransform.transformAffine(Vec2F(size.x, 0.0f));
-        Vec2F rt = localTransform.transformAffine(Vec2F(size.x, size.y));
-        Vec2F lt = localTransform.transformAffine(Vec2F(0.0f, size.y));
+        TMat const& localTransform = getLocalTransform();
+        Vec2F lb = localTransform.transform(Vec2F::c_zero);
+        Vec2F rb = localTransform.transform(Vec2F(size.x, 0.0f));
+        Vec2F rt = localTransform.transform(Vec2F(size.x, size.y));
+        Vec2F lt = localTransform.transform(Vec2F(0.0f, size.y));
 
         _corners[0] = lb;
         _corners[1] = rb;
@@ -175,11 +175,11 @@ namespace Maze
     void Transform2D::calculateWorldCorners(Vec2F _corners[4])
     {
         Vec2F const& size = getSize();
-        Mat4F const& worldTransform = getWorldTransform();
-        Vec2F lb = worldTransform.transformAffine(Vec2F::c_zero);
-        Vec2F rb = worldTransform.transformAffine(Vec2F(size.x, 0.0f));
-        Vec2F rt = worldTransform.transformAffine(Vec2F(size.x, size.y));
-        Vec2F lt = worldTransform.transformAffine(Vec2F(0.0f, size.y));
+        TMat const& worldTransform = getWorldTransform();
+        Vec2F lb = worldTransform.transform(Vec2F::c_zero);
+        Vec2F rb = worldTransform.transform(Vec2F(size.x, 0.0f));
+        Vec2F rt = worldTransform.transform(Vec2F(size.x, size.y));
+        Vec2F lt = worldTransform.transform(Vec2F(0.0f, size.y));
 
         _corners[0] = lb;
         _corners[1] = rb;
@@ -264,23 +264,23 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Transform2D::setLocalTransform(Mat4F const& _localTransform)
+    void Transform2D::setLocalTransform(TMat const& _localTransform)
     {
         if (m_localTransform == _localTransform)
             return;
 
         m_localTransform = _localTransform;
 
-        m_localPosition = m_localTransform.getAffineTranslation2D();
-        m_localRotation = m_localTransform.getAffineRotation2D();
-        m_localScale = m_localTransform.getAffineScale2DSignless();
+        m_localPosition = m_localTransform.getTranslation2D();
+        m_localRotation = m_localTransform.getRotation2D();
+        m_localScale = m_localTransform.getScale2DSignless();
 
         m_flags &= ~Flags::LocalTransformDirty;
         dirtyWorldTransform();
     }
 
     //////////////////////////////////////////
-    Mat4F const& Transform2D::getLocalTransform()
+    TMat const& Transform2D::getLocalTransform()
     {
         if (m_flags & Flags::LocalTransformDirty)
             return calculateLocalTransform();
@@ -289,9 +289,9 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Mat4F const& Transform2D::calculateLocalTransform()
+    TMat const& Transform2D::calculateLocalTransform()
     {
-        m_localTransform = Mat4F::CreateAffineTransform(
+        m_localTransform = TMat::CreateTransform(
             m_localPosition,
             m_localRotation,
             m_localScale,
@@ -305,7 +305,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Mat4F const& Transform2D::getWorldTransform()
+    TMat const& Transform2D::getWorldTransform()
     {
         if (m_flags & Flags::WorldTransformDirty)
             return calculateWorldTransform();
@@ -314,14 +314,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Mat4F const& Transform2D::calculateWorldTransform()
+    TMat const& Transform2D::calculateWorldTransform()
     {
         if (m_parent)
         {
-            Mat4F anchorMatrix = Mat4F::CreateAffineTranslation(m_parent->getSize() * getAnchor());
+            TMat anchorMatrix = TMat::CreateTranslation(m_parent->getSize() * getAnchor());
 
-            m_parent->getWorldTransform().transformAffine(
-                anchorMatrix.transformAffine(getLocalTransform()),
+            m_parent->getWorldTransform().transform(
+                anchorMatrix.transform(getLocalTransform()),
                 m_worldTransform);
         }
         else

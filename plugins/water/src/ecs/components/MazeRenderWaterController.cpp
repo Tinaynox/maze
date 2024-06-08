@@ -131,7 +131,7 @@ namespace Maze
             createBuffers(_renderTarget->getRenderTargetSize());
         }
 
-        Vec3F cameraPosition = _params.cameraTransform.getAffineTranslation();
+        Vec3F cameraPosition = _params.cameraTransform.getTranslation();
 
         m_renderControllerSample->process(
             [&](Entity* _entity, RenderController* _renderController)
@@ -166,15 +166,15 @@ namespace Maze
                         cameraPosition.y -= cameraTranslation;
                     
                         Vec3F cameraRotation = Quaternion::GetEuler(params.cameraTransform);
-                        Vec3F cameraScale = params.cameraTransform.getAffineScaleSignless();
+                        Vec3F cameraScale = params.cameraTransform.getScaleSignless();
 
                         cameraRotation.x = -cameraRotation.x;
                                         
-                        params.cameraTransform = Mat4F::CreateTranslationMatrix(cameraPosition);
-                        params.cameraTransform = params.cameraTransform.concatenatedAffineCopy(
-                            Mat4F::CreateRotationMatrix(cameraRotation));
-                        params.cameraTransform = params.cameraTransform.concatenatedAffineCopy(
-                            Mat4F::CreateScaleMatrix(cameraScale));
+                        params.cameraTransform = TMat::CreateTranslation(cameraPosition);
+                        params.cameraTransform = params.cameraTransform.transform(
+                            TMat::CreateRotation(cameraRotation));
+                        params.cameraTransform = params.cameraTransform.transform(
+                            TMat::CreateScale(cameraScale));
                         
                         // Reflection buffer (Above the water level)
                         _renderController->getModule3D()->drawDefaultPass(

@@ -59,7 +59,7 @@ namespace Maze
         MAZE_IMPLEMENT_METACLASS_PROPERTY(RenderMeshAssetRef, renderMesh, RenderMeshAssetRef(), getRenderMeshRef, setRenderMeshRef),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(MaterialAssetRef, material, MaterialAssetRef(), getMaterialRef, setMaterialRef),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(bool, enabled, true, getEnabled, setEnabled),
-        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Mat4F>, modelMatricies, Vector<Mat4F>(), getModelMatrices, setModelMatrices),
+        MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<TMat>, modelMatricies, Vector<TMat>(), getModelMatrices, setModelMatrices),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Vec4F>, colors, Vector<Vec4F>(), getColors, setColors),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Vec4F>, uv0, Vector<Vec4F>(), getUV0, setUV0),
         MAZE_IMPLEMENT_METACLASS_PROPERTY(Vector<Vec4F>, uv1, Vector<Vec4F>(), getUV1, setUV1));

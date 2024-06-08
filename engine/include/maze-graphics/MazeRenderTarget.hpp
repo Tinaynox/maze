@@ -182,10 +182,10 @@ namespace Maze
         inline void setViewPosition(Vec3F const& _viewPosition) { m_viewPosition = _viewPosition; }
 
         //////////////////////////////////////////
-        inline Mat4F const& getViewMatrix() const { return m_viewMatrix; }
+        inline TMat const& getViewMatrix() const { return m_viewMatrix; }
 
         //////////////////////////////////////////
-        inline void setViewMatrix(Mat4F const& _viewMatrix) { m_viewMatrix = _viewMatrix; }
+        inline void setViewMatrix(TMat const& _viewMatrix) { m_viewMatrix = _viewMatrix; }
 
         //////////////////////////////////////////
         inline Mat4F const& getProjectionMatrix() const { return m_projectionMatrix; }
@@ -261,7 +261,7 @@ namespace Maze
 
         Rect2DF m_viewport;
         Vec3F m_viewPosition;
-        Mat4F m_viewMatrix;
+        TMat m_viewMatrix;
 
         Mat4F m_projectionMatrix;
         F32 m_near;

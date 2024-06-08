@@ -224,10 +224,10 @@ namespace Maze
                         transform->getWidth(),
                         transform->getHeight());
 
-                    Vec2F positionWS = transform->getWorldTransform().transformAffine(positionOS);
+                    Vec2F positionWS = transform->getWorldTransform().transform(positionOS);
                     positionWS.y = Math::Clamp(positionWS.y, transform->getHeight(), rootSize.y);
 
-                    Vec2F menuListPositionOS = transform->getParent()->getWorldTransform().inversedAffine().transformAffine(positionWS);
+                    Vec2F menuListPositionOS = transform->getParent()->getWorldTransform().inversed().transform(positionWS);
 
                     transform->setPivot(1.0f, 1.0f);
                     transform->setAnchor(0.0f, 0.0f);

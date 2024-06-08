@@ -101,6 +101,7 @@ namespace Maze
         {
             Vector<Vec3F> vertices;
 
+            // #TODO: Rework or clean
             /*
             Mat4F const& worldTransform = transform3D->getWorldTransform();
             if (meshRenderer->getRenderMesh())

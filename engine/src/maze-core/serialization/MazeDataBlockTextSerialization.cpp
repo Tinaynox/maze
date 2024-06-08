@@ -301,7 +301,7 @@ namespace Maze
                             snprintf(
                                 buff,
                                 sizeof(buff),
-                                "[[%g, %g, %g, %g] [%g, %g, %g, %g] [%g, %g, %g, %g]]",
+                                "[[%g, %g, %g] [%g, %g, %g] [%g, %g, %g] [%g, %g, %g]]",
                                 paramDataF32[0], paramDataF32[1], paramDataF32[2],
                                 paramDataF32[3], paramDataF32[4], paramDataF32[5],
                                 paramDataF32[6], paramDataF32[7], paramDataF32[8],

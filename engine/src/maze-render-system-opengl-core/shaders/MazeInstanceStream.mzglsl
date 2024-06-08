@@ -20,19 +20,24 @@ R"(
             ivec2 pos3 = ivec2(c + 3, r);
         
             return mat4( 
-                texelFetch(u_modelMatricesTexture, pos0, 0).xyzw,
-                texelFetch(u_modelMatricesTexture, pos1, 0).xyzw,
-                texelFetch(u_modelMatricesTexture, pos2, 0).xyzw,
-                texelFetch(u_modelMatricesTexture, pos3, 0).xyzw);
+                vec4(texelFetch(u_modelMatricesTexture, pos0, 0).xyz, 0.0),
+                vec4(texelFetch(u_modelMatricesTexture, pos1, 0).xyz, 0.0),
+                vec4(texelFetch(u_modelMatricesTexture, pos2, 0).xyz, 0.0),
+                vec4(texelFetch(u_modelMatricesTexture, pos3, 0).xyz, 1.0));
         }
     
     #elif (MAZE_MODEL_MATRICES_VIA_ARRAY)
-        uniform mat4 u_modelMatrices[32];
+        uniform vec3 u_modelMatrices[32 * 4];
 
         //////////////////////////////////////////
         mat4 GetModelMatrix(int instanceId)
         {
-            return u_modelMatrices[instanceId];
+			int modelMatrixIndex = instanceId * 4;
+            return mat4(
+				vec4(u_modelMatrices[modelMatrixIndex + 0], 0.0),
+				vec4(u_modelMatrices[modelMatrixIndex + 1], 0.0),
+				vec4(u_modelMatrices[modelMatrixIndex + 2], 0.0),
+				vec4(u_modelMatrices[modelMatrixIndex + 3], 1.0));
         }
 
     #endif

@@ -403,6 +403,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void Shader::setUniform(HashedCString _uniformName, TMat const& _matrix, bool _warningIfNotExists)
+    {
+        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+
+        if (!uniform)
+        {
+            MAZE_WARNING_IF(_warningIfNotExists, "Undefined Shader Uniform with name '%s'!", _uniformName.str);
+            return;
+        }
+
+        uniform->set(_matrix);
+    }
+
+    //////////////////////////////////////////
     void Shader::setUniform(ShaderUniformVariant const& _variant, bool _warningIfNotExists)
     {
         const ShaderUniformPtr& uniform = ensureUniform(_variant.getName());
@@ -432,6 +446,20 @@ namespace Maze
 
     //////////////////////////////////////////
     void Shader::setUniform(HashedCString _uniformName, Mat4F* _matrices, Size _count, bool _warningIfNotExists)
+    {
+        const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
+
+        if (!uniform)
+        {
+            MAZE_WARNING_IF(_warningIfNotExists, "Undefined Shader Uniform with name '%s'!", _uniformName.str);
+            return;
+        }
+
+        uniform->upload(_matrices, _count);
+    }
+
+    //////////////////////////////////////////
+    void Shader::setUniform(HashedCString _uniformName, TMat* _matrices, Size _count, bool _warningIfNotExists)
     {
         const ShaderUniformPtr& uniform = ensureUniform(_uniformName);
 

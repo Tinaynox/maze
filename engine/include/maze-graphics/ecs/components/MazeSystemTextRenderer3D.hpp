@@ -242,7 +242,7 @@ namespace Maze
         HorizontalAlignment2D m_horizontalAlignment;
         VerticalAlignment2D m_verticalAlignment;
 
-        Vector<Mat4F> m_localMatrices;
+        Vector<TMat> m_localMatrices;
     };
 
 

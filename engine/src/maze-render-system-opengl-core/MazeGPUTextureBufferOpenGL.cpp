@@ -66,10 +66,17 @@ namespace Maze
     {
         Texture2DOpenGLPtr texture = Texture2D::Create()->cast<Texture2DOpenGL>();
 
-        PixelSheet2D pixelSheet2D(_size, _pixelFormat);
-        F32 value[] = { 128.0, 0.0f, 128.0f, 128.0f };
-        pixelSheet2D.fill(value, 4);
-        texture->loadTexture(pixelSheet2D);
+        if (PixelFormat::GetBytesPerPixel(_pixelFormat) == sizeof(F32) * 4)
+        {
+            PixelSheet2D pixelSheet2D(_size, _pixelFormat);
+            F32 value[] = { 128.0, 0.0f, 128.0f, 128.0f };
+            pixelSheet2D.fill(value, 4);
+            texture->loadTexture(pixelSheet2D);
+        }
+        else
+        {
+            texture->loadEmpty(_size, _pixelFormat);
+        }
 
         m_texture = texture;
 

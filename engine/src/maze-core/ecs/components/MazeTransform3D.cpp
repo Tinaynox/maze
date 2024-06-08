@@ -53,8 +53,8 @@ namespace Maze
         , m_localRotation(Quaternion::c_identity)
         , m_localScale(Vec3F::c_one)
         , m_flags(0)
-        , m_localTransform(Mat4F::c_identity)
-        , m_worldTransform(Mat4F::c_identity)
+        , m_localTransform(TMat::c_identity)
+        , m_worldTransform(TMat::c_identity)
     {
     }
 
@@ -161,24 +161,24 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Transform3D::setLocalTransform(Mat4F const& _localTransform)
+    void Transform3D::setLocalTransform(TMat const& _localTransform)
     {
         if (m_localTransform == _localTransform)
             return;
 
         m_localTransform = _localTransform;
 
-        m_localPosition = m_localTransform.getAffineTranslation();
+        m_localPosition = m_localTransform.getTranslation();
         Vec3F eulerAngles = Quaternion::GetEuler(m_localTransform);
         m_localRotation.setEulerAngles(eulerAngles);
-        m_localScale = m_localTransform.getAffineScaleSignless();
+        m_localScale = m_localTransform.getScaleSignless();
 
         m_flags &= ~Flags::LocalTransformDirty;
         dirtyWorldTransform();
     }
 
     //////////////////////////////////////////
-    Mat4F const& Transform3D::getLocalTransform()
+    TMat const& Transform3D::getLocalTransform()
     {
         if (m_flags & Flags::LocalTransformDirty)
             return calculateLocalTransform();
@@ -187,15 +187,15 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Mat4F const& Transform3D::calculateLocalTransform()
+    TMat const& Transform3D::calculateLocalTransform()
     {
-        Mat4F rotationMatrix;
+        TMat rotationMatrix;
         m_localRotation.toRotationMatrix(rotationMatrix);
 
         m_localTransform = 
-            Mat4F::CreateAffineTranslation(m_localPosition).transformAffine(
-                rotationMatrix).transformAffine(
-                    Mat4F::CreateAffineScale(m_localScale));
+            TMat::CreateTranslation(m_localPosition).transform(
+                rotationMatrix).transform(
+                    TMat::CreateScale(m_localScale));
 
         m_flags &= ~Flags::LocalTransformDirty;
         m_flags |= Flags::WorldTransformDirty;
@@ -204,7 +204,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Mat4F const& Transform3D::getWorldTransform()
+    TMat const& Transform3D::getWorldTransform()
     {
         if (m_flags & Flags::WorldTransformDirty)
             return calculateWorldTransform();
@@ -213,11 +213,11 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void Transform3D::setWorldTransform(Mat4F const& _transform)
+    void Transform3D::setWorldTransform(TMat const& _transform)
     {
         if (m_parent)
         {
-            Mat4F localTransform = m_parent->getWorldTransform().inversedAffine() * _transform;
+            TMat localTransform = m_parent->getWorldTransform().inversed() * _transform;
             setLocalTransform(localTransform);
         }
         else
@@ -227,10 +227,10 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    Mat4F const& Transform3D::calculateWorldTransform()
+    TMat const& Transform3D::calculateWorldTransform()
     {
         if (m_parent)
-            m_parent->getWorldTransform().transformAffine(getLocalTransform(), m_worldTransform);
+            m_parent->getWorldTransform().transform(getLocalTransform(), m_worldTransform);
         else
             m_worldTransform = getLocalTransform();
 
@@ -405,7 +405,7 @@ namespace Maze
     //////////////////////////////////////////
     void Transform3D::resetTransform()
     {
-        setLocalTransform(Mat4F::c_identity);
+        setLocalTransform(TMat::c_identity);
     }
 
     //////////////////////////////////////////

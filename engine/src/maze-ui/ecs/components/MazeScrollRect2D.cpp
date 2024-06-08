@@ -351,14 +351,14 @@ namespace Maze
         if (!viewTransform)
             return AABB2D::c_zero;
 
-        Mat4F worldToViewMatrix = viewTransform->getWorldTransform().inversedAffine();
+        TMat worldToViewMatrix = viewTransform->getWorldTransform().inversed();
 
-        Vec2F p = worldToViewMatrix.transformAffine(corners[0]);
+        Vec2F p = worldToViewMatrix.transform(corners[0]);
         AABB2D bounds(p);
 
         for (Size i = 1; i < 4; ++i)
         {
-            p = worldToViewMatrix.transformAffine(corners[i]);
+            p = worldToViewMatrix.transform(corners[i]);
             bounds.applyUnion(p);
         }
 

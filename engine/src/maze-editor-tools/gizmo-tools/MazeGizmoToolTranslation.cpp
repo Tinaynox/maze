@@ -62,7 +62,7 @@ namespace Maze
         if (!entityTransform)
             return;
 
-        Mat4F mat = entityTransform->getWorldTransform();
+        TMat mat = entityTransform->getWorldTransform();
 
         Vec3F const& cameraWorldPosition = camera->getTransform()->getWorldPosition();
 
@@ -76,9 +76,9 @@ namespace Maze
 
         F32 cameraDistance = (pos - camera->getTransform()->getLocalPosition()).length();
         F32 scale = cameraDistance * GizmoToolConfig::c_cameraScalePerDistance;
-        Mat4F transform = mat.transformAffine(
-            Mat4F::CreateAffineScale(scale / affineScale));
-        Mat4F basisTransform = transform;
+        TMat transform = mat.transform(
+            TMat::CreateScale(scale / affineScale));
+        TMat basisTransform = transform;
         basisTransform.setTranslation(Vec3F::c_zero);
 
         GizmosDrawer::MeshRenderMode const renderMode = GizmosDrawer::MeshRenderMode::TransparentTop;
@@ -138,8 +138,8 @@ namespace Maze
             if (Math::RaycastCylinder(
                 ray.getPoint(),
                 ray.getDirection(),
-                transform.transformAffine(_axis * length * 0.5f),
-                basisTransform.transformAffine(_axis).normalizedCopy(),
+                transform.transform(_axis * length * 0.5f),
+                basisTransform.transform(_axis).normalizedCopy(),
                 scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius,
                 scale * length,
                 dist))
@@ -147,8 +147,8 @@ namespace Maze
             if (Math::RaycastCone(
                 ray.getPoint(),
                 ray.getDirection(),
-                transform.transformAffine(_axis * length),
-                basisTransform.transformAffine(_axis).normalizedCopy(),
+                transform.transform(_axis * length),
+                basisTransform.transform(_axis).normalizedCopy(),
                 scale * GizmoToolConfig::c_transformGizmoToolArrowConeRadius * 4.0f,
                 scale * GizmoToolConfig::c_transformGizmoToolArrowConeHeight * 2.0f,
                 dist))
@@ -200,7 +200,7 @@ namespace Maze
 
         if (m_usingAxis >= 0)
         {
-            Vec3F axis = basisTransform.transformAffine(getWorldAxis(m_usingAxis)).normalizedCopy();
+            Vec3F axis = basisTransform.transform(getWorldAxis(m_usingAxis)).normalizedCopy();
 
             Vec3F norm;
             F32 d = 0.0f;
@@ -209,7 +209,7 @@ namespace Maze
                 if (m_usingAxis == i)
                     continue;
 
-                Vec3F crossAxis = basisTransform.transformAffine(getWorldAxis(i)).normalizedCopy();
+                Vec3F crossAxis = basisTransform.transform(getWorldAxis(i)).normalizedCopy();
                 F32 dot = crossAxis.dotProduct(camera->getTransform()->getWorldForwardDirection());
                 if (Math::Abs(dot) > d)
                 {
@@ -235,9 +235,9 @@ namespace Maze
                     Vec3F delta = point - m_startPoint;
                     Vec3F newWorldPosition = m_startPosition + delta;
 
-                    Mat4F parentWorldScale = entityTransform->getParent() ? entityTransform->getParent()->getWorldTransform()
-                                                                           : Mat4F::c_identity;
-                    entityTransform->setLocalPosition(parentWorldScale.inversedAffine().transformAffine(newWorldPosition));
+                    TMat parentWorldScale = entityTransform->getParent() ? entityTransform->getParent()->getWorldTransform()
+                                                                           : TMat::c_identity;
+                    entityTransform->setLocalPosition(parentWorldScale.inversed().transform(newWorldPosition));
                 }
             }
         }

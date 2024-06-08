@@ -241,7 +241,7 @@ namespace Maze
         VerticalAlignment2D m_verticalAlignment;
         bool m_pixelPerfect = true;
 
-        Vector<Mat4F> m_localMatrices;
+        Vector<TMat> m_localMatrices;
     };
 
 

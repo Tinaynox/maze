@@ -119,8 +119,8 @@ namespace Maze
             F32 _emitterTimePercent,
             ParticleSystemSimulationSpace _simulationSpace,
             ParticleSystemScalingMode _scalingMode,
-            Mat4F const& _particleSystemLocalTransform,
-            Mat4F const& _particleSystemWorldTransform);
+            TMat const& _particleSystemLocalTransform,
+            TMat const& _particleSystemWorldTransform);
 
 
         //////////////////////////////////////////

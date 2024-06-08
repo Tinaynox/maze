@@ -35,6 +35,7 @@
 #include "maze-core/MazeTypes.hpp"
 #include "maze-core/math/MazeMath.hpp"
 #include "maze-core/math/MazeVec3.hpp"
+#include "maze-core/math/MazeTMat.hpp"
 
 
 //////////////////////////////////////////

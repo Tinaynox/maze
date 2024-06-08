@@ -96,12 +96,12 @@ namespace Maze
         F32 _emitterTimePercent,
         ParticleSystemSimulationSpace _transformPolicy,
         ParticleSystemScalingMode _scalingMode,
-        Mat4F const& _particleSystemLocalTransform,
-        Mat4F const& _particleSystemWorldTransform)
+        TMat const& _particleSystemLocalTransform,
+        TMat const& _particleSystemWorldTransform)
     {
         ParticleSystem3DZoneEmissionPoint point;
 
-        Mat4F directionTransformMat;
+        TMat directionTransformMat;
 
         if (_transformPolicy == ParticleSystemSimulationSpace::World)
         {
@@ -114,7 +114,7 @@ namespace Maze
             {
                 //Vec3F rotation = _particleSystemWorldTransform.getAffineRotationEulerAngles();
                 Vec3F rotation = Quaternion::GetEuler(_particleSystemWorldTransform);
-                directionTransformMat = Mat4F::CreateAffineRotation(rotation);
+                directionTransformMat = TMat::CreateRotation(rotation);
             }
             
             
@@ -139,7 +139,7 @@ namespace Maze
                 {
                     generateRandomPoint(point, _emitterPosition);
                     _particles.accessPosition(i) = point.position;
-                    _particles.accessDirection(i) = directionTransformMat.transformAffine(point.direction).normalizedCopy();
+                    _particles.accessDirection(i) = directionTransformMat.transform(point.direction).normalizedCopy();
                     _particles.accessSeed(i) = rand() % c_particleSystemParametersCount;
                 }
                 break;

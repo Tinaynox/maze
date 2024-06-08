@@ -39,11 +39,12 @@ void main()
     int instanceId = gl_InstanceID;
     
     mat4 modelMatrix = GetModelMatrix(instanceId);
+    mat4 viewMatrix = GetViewMatrix();
 
     vec4 positionOS = vec4(a_position, 1.0);
     vec4 positionWS = modelMatrix * positionOS;
     MAZE_CLIP_DISTANCE_VERTEX(positionWS);
-    vec4 positionVS = u_viewMatrix * positionWS;
+    vec4 positionVS = viewMatrix * positionWS;
     vec4 positionCS = u_projectionMatrix * positionVS;
     
     vec4 normalOS = vec4(a_normal, 1.0);

@@ -265,7 +265,7 @@ namespace Maze
             "Paste Transform",
             [](Entity* _entity, Transform3D* _component)
             {
-                _component->setLocalTransform(Mat4F::FromString(SystemManager::GetInstancePtr()->getClipboardAsString()));
+                _component->setLocalTransform(TMat::FromString(SystemManager::GetInstancePtr()->getClipboardAsString()));
             });
 
         return true;

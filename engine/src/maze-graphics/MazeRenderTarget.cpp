@@ -54,7 +54,7 @@ namespace Maze
         , m_clearDepth(1.0f)
         , m_viewport(Rect2DF(0.0f, 0.0f, 1.0f, 1.0f))
         , m_viewPosition(Vec3F::c_zero)
-        , m_viewMatrix(Mat4F::c_identity)
+        , m_viewMatrix(TMat::c_identity)
         , m_projectionMatrix(Mat4F::c_identity)
         , m_near(0.0f)
         , m_far(0.0f)
@@ -162,7 +162,7 @@ namespace Maze
                 0.0f);
                     
             // View matrix
-            renderTarget->setViewMatrix(Mat4F::c_identity);
+            renderTarget->setViewMatrix(TMat::c_identity);
 
             // View position
             renderTarget->setViewPosition(canvasCameraPosition);
@@ -172,11 +172,11 @@ namespace Maze
             renderQueue->addSelectRenderPassCommand(_material->getRenderPass(RenderPassType::Default, _renderPassIndex));
             renderQueue->addDrawVAOInstancedCommand(
                 vao, 
-                Mat4F(
-                    viewportWidth,        0.0f,                  0.0f, 0.0f,
-                    0.0f,                 viewportHeight,        0.0f, 0.0f,
-                    0.0f,                 0.0f,                  0.0f, 0.0f,
-                    viewportWidth * 0.5f, viewportHeight * 0.5f, 0.0f, 1.0f));
+                TMat(
+                    viewportWidth,        0.0f,                  0.0f,
+                    0.0f,                 viewportHeight,        0.0f,
+                    0.0f,                 0.0f,                  0.0f,
+                    viewportWidth * 0.5f, viewportHeight * 0.5f, 0.0f));
             
 
             renderQueue->addPopScissorRectCommand();

@@ -114,7 +114,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void RenderQueue::pushInstanceModelMatrix(
-        Mat4F const& _modelMatrix)
+        TMat const& _modelMatrix)
     {
         S32 offset = m_instanceStreamModelMatrix->getOffset();
 
@@ -126,7 +126,7 @@ namespace Maze
 
     //////////////////////////////////////////
     void RenderQueue::pushInstanceModelMatricies(
-        Mat4F const* _modelMatricies,
+        TMat const* _modelMatricies,
         S32 _count)
     {
         S32 offset = m_instanceStreamModelMatrix->getOffset();

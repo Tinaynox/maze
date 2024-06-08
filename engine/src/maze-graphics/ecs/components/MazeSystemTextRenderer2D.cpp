@@ -254,8 +254,8 @@ namespace Maze
                 Vec2F sizeV = (Vec2F)m_systemFont->charSize * fontScale;
                 Vec2F positionShiftV = Vec2F((F32)sx, (F32)sy) * fontScale + positionShift;
 
-                Mat4F localTransform = Mat4F::CreateAffineTranslation(positionShiftV).transformAffine(
-                    Mat4F::CreateAffineScale(sizeV));
+                TMat localTransform = TMat::CreateTranslation(positionShiftV).transform(
+                    TMat::CreateScale(sizeV));
                 m_localMatrices[charIndex] = localTransform;
 
                 m_meshRenderer->setUV0(charIndex, uv);
@@ -431,16 +431,16 @@ namespace Maze
         Vec2F pixelPerfectShift = Vec2F::c_zero;
         if (m_pixelPerfect)
         {
-            Mat4F initTm = m_transform->getWorldTransform().transformAffine(m_localMatrices[0]);
-            Vec2F translation = initTm.getAffineTranslation2D();
+            TMat initTm = m_transform->getWorldTransform().transform(m_localMatrices[0]);
+            Vec2F translation = initTm.getTranslation2D();
             pixelPerfectShift = Math::Round(translation) - translation;
         }
 
         for (Size i = 0; i < transformCount; ++i)
         {
-            Mat4F tm = m_transform->getWorldTransform().transformAffine(m_localMatrices[i]);
+            TMat tm = m_transform->getWorldTransform().transform(m_localMatrices[i]);
             if (m_pixelPerfect)
-                tm.setTranslation(tm.getAffineTranslation2D() + pixelPerfectShift);
+                tm.setTranslation(tm.getTranslation2D() + pixelPerfectShift);
             m_meshRenderer->setModelMatrix(i, tm);
         }
     }

@@ -130,16 +130,16 @@ namespace Maze
         void resize(S32 _count);
 
         //////////////////////////////////////////
-        inline Mat4F const* getModelMatricesData() const { return &m_modelMatricies[0]; }
+        inline TMat const* getModelMatricesData() const { return &m_modelMatricies[0]; }
 
         //////////////////////////////////////////
-        inline Vector<Mat4F> const& getModelMatrices() const { return m_modelMatricies; }
+        inline Vector<TMat> const& getModelMatrices() const { return m_modelMatricies; }
 
         //////////////////////////////////////////
-        inline void setModelMatrices(Vector<Mat4F> const& _value) { m_modelMatricies = _value; }
+        inline void setModelMatrices(Vector<TMat> const& _value) { m_modelMatricies = _value; }
 
         //////////////////////////////////////////
-        inline void setModelMatrix(Size _index, Mat4F const& _value) { m_modelMatricies[_index] = _value; }
+        inline void setModelMatrix(Size _index, TMat const& _value) { m_modelMatricies[_index] = _value; }
 
         //////////////////////////////////////////
         inline Vec4F const* getColorsData() const { return &m_colors[0]; }
@@ -209,7 +209,7 @@ namespace Maze
         
         RenderMaskPtr m_renderMask;
 
-        Vector<Mat4F> m_modelMatricies;
+        Vector<TMat> m_modelMatricies;
         Vector<Vec4F> m_colors;
         Vector<Vec4F> m_uv0;
         Vector<Vec4F> m_uv1;

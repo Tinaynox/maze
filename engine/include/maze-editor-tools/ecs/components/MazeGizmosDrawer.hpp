@@ -32,6 +32,7 @@
 //////////////////////////////////////////
 #include "maze-editor-tools/MazeEditorToolsHeader.hpp"
 #include "maze-core/ecs/MazeComponent.hpp"
+#include "maze-core/math/MazeTMat.hpp"
 #include "maze-core/math/MazeAABB2D.hpp"
 #include "maze-core/math/MazeAABB3D.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
@@ -582,7 +583,7 @@ namespace Maze
         inline ColorF128 const& getColor() const { return m_color; }
 
         //////////////////////////////////////////
-        void pushTransform(Mat4F const& _tm);
+        void pushTransform(TMat const& _tm);
 
         //////////////////////////////////////////
         void popTransform();
@@ -607,7 +608,7 @@ namespace Maze
 
     protected:
         ColorF128 m_color;
-        Stack<Mat4F> m_transformStack;
+        Stack<TMat> m_transformStack;
 
         EcsWorld* m_world = nullptr;
 

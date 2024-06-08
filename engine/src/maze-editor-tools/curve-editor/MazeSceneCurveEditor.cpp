@@ -1116,7 +1116,7 @@ namespace Maze
                     Vec2F const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
 
                     Vec2F cursorPositionCurveSpace;
-                    m_curveRenderer->getTransform()->getWorldTransform().inversedAffine().transformAffine(
+                    m_curveRenderer->getTransform()->getWorldTransform().inversed().transform(
                         cursorPosition,
                         cursorPositionCurveSpace);
 
@@ -1280,7 +1280,7 @@ namespace Maze
         Vec2F const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
 
         Vec2F cursorPositionCurveSpace;
-        m_curveRenderer->getTransform()->getWorldTransform().inversedAffine().transformAffine(
+        m_curveRenderer->getTransform()->getWorldTransform().inversed().transform(
             cursorPosition,
             cursorPositionCurveSpace);
 
@@ -1413,7 +1413,7 @@ namespace Maze
         
 
         Vec2F cursorPositionCurveSpace;
-        m_curveRenderer->getTransform()->getWorldTransform().inversedAffine().transformAffine(
+        m_curveRenderer->getTransform()->getWorldTransform().inversed().transform(
             cursorPosition,
             cursorPositionCurveSpace);
 
@@ -1499,7 +1499,7 @@ namespace Maze
 
         Vec2F const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
 
-        m_curveRenderer->getTransform()->getWorldTransform().inversedAffine().transformAffine(
+        m_curveRenderer->getTransform()->getWorldTransform().inversed().transform(
             cursorPosition,
             m_draggingPrevCursorPositionCurveSpace);
     }

@@ -448,7 +448,7 @@ namespace Maze
         ColorU32 m_outlineColor = ColorU32::c_white;
 
     private:
-        Vector<Mat4F> m_localMatrices;
+        Vector<TMat> m_localMatrices;
         Vector<Vec4F> m_localColors;
 
         Vec2F m_lastGlyphOffset = Vec2F::c_zero;

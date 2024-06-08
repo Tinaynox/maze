@@ -487,6 +487,7 @@ namespace Maze
             case ShaderUniformType::UniformVec4B:         return set(_variant.getVec4B());
             case ShaderUniformType::UniformMat3F32:         return set(_variant.getMat3F32());
             case ShaderUniformType::UniformMat4F32:         return set(_variant.getMat4F32());
+            case ShaderUniformType::UniformTMat:         return set(_variant.getTMat());
             case ShaderUniformType::UniformColorF128:      return set(_variant.getColorF128());
             default:
             {

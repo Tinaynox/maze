@@ -120,11 +120,11 @@ namespace Maze
         S32 _first,
         S32 _last,
         F32 _emitterTimePercent,
-        Mat4F const& _particleSystemWorldTransform)
+        TMat const& _particleSystemWorldTransform)
     {
-        Mat4F invParticleSystemWorldTransform = _particleSystemWorldTransform.inversedAffine();
+        TMat invParticleSystemWorldTransform = _particleSystemWorldTransform.inversed();
         invParticleSystemWorldTransform.setTranslation(Vec3F::c_zero);
-        Vec3F gravityVector = invParticleSystemWorldTransform.transformAffine(Vec3F::c_unitY);
+        Vec3F gravityVector = invParticleSystemWorldTransform.transform(Vec3F::c_unitY);
         
         // Life
         {

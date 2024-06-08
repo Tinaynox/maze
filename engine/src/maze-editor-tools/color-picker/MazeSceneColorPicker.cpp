@@ -899,7 +899,7 @@ namespace Maze
     {
         if (m_hsvRectButton->getPressed())
         {
-            Vec2F positionOS = m_hsvRectButton->getTransform()->getWorldTransform().inversedAffine().transformAffine(_inputEvent.position);
+            Vec2F positionOS = m_hsvRectButton->getTransform()->getWorldTransform().inversed().transform(_inputEvent.position);
             processHSVRectPick(positionOS);
         }
     }
@@ -935,7 +935,7 @@ namespace Maze
     {
         if (m_hsvBandButton->getPressed())
         {
-            Vec2F positionOS = m_hsvBandButton->getTransform()->getWorldTransform().inversedAffine().transformAffine(_inputEvent.position);
+            Vec2F positionOS = m_hsvBandButton->getTransform()->getWorldTransform().inversed().transform(_inputEvent.position);
             processHSVBandPick(positionOS);
         }
     }
@@ -996,7 +996,7 @@ namespace Maze
         if (channel != -1)
         {
             SpriteRenderer2DPtr rgbBandRenderer = m_rgbaRenderers[channel];
-            Vec2F positionOS = rgbBandRenderer->getTransform()->getWorldTransform().inversedAffine().transformAffine(_inputEvent.position);
+            Vec2F positionOS = rgbBandRenderer->getTransform()->getWorldTransform().inversed().transform(_inputEvent.position);
             processRGBBandPick(channel, positionOS);
         }
     }

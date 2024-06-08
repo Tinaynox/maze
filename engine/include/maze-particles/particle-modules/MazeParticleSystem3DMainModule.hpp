@@ -706,7 +706,7 @@ namespace Maze
             S32 _first,
             S32 _last,
             F32 _emitterTimePercent,
-            Mat4F const& _particleSystemWorldTransform);
+            TMat const& _particleSystemWorldTransform);
 
         //////////////////////////////////////////
         void updateLifetime(

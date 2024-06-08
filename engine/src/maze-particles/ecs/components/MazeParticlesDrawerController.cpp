@@ -102,11 +102,11 @@ namespace Maze
         Entity* _entity,
         ParticlesDrawerController* _particlesDrawerController)
     {
-        Vec3F cameraPosition = _event.getPassParams()->cameraTransform.getAffineTranslation();
-        Mat4F cameraTransform = _event.getPassParams()->cameraTransform;
+        Vec3F cameraPosition = _event.getPassParams()->cameraTransform.getTranslation();
+        TMat cameraTransform = _event.getPassParams()->cameraTransform;
         cameraTransform.setTranslation(Vec3F::c_zero);
-        Vec3F cameraForward = (cameraTransform.transformAffine(Vec3F::c_unitZ)).normalizedCopy();
-        Vec3F cameraUp = (cameraTransform.transformAffine(Vec3F::c_unitY)).normalizedCopy();
+        Vec3F cameraForward = (cameraTransform.transform(Vec3F::c_unitZ)).normalizedCopy();
+        Vec3F cameraUp = (cameraTransform.transform(Vec3F::c_unitY)).normalizedCopy();
 
         RenderTarget* renderTarget = _event.getRenderTarget();
 

@@ -27,6 +27,7 @@
 #include "MazeGraphicsHeader.hpp"
 #include "maze-graphics/ecs/components/MazeCamera3D.hpp"
 #include "maze-core/math/MazeMathAlgebra.hpp"
+#include "maze-core/math/MazeMat4.hpp"
 #include "maze-core/ecs/MazeEntity.hpp"
 #include "maze-core/ecs/components/MazeTransform3D.hpp"
 #include "maze-core/services/MazeLogStream.hpp"
@@ -129,10 +130,10 @@ namespace Maze
         if (!m_renderTarget)
             return Vec2F::c_zero;
 
-        Mat4F const& cameraTransform = getTransform()->getWorldTransform();
+        TMat const& cameraTransform = getTransform()->getWorldTransform();
         Mat4F projectionMatrix = calculateProjectionMatrix(getRenderTarget());
 
-        Vec4F positionVS = cameraTransform.inversedAffine().transformAffine(_positionWS);
+        Vec4F positionVS = cameraTransform.inversed().transform(_positionWS);
         Vec4F positionCS = positionVS * projectionMatrix;
 
         Vec2F positionNDC = Vec2F(positionCS.x, positionCS.y) / positionCS.w;
@@ -150,7 +151,7 @@ namespace Maze
             getViewport().size.x == 0.0f || getViewport().size.y == 0.0f)
             return Vec3F::c_zero;
 
-        Mat4F const& cameraTransform = getTransform()->getWorldTransform();
+        TMat const& cameraTransform = getTransform()->getWorldTransform();
         Mat4F projectionMatrix = calculateProjectionMatrix(getRenderTarget());
 
         Vec2F p = _positionV / ((Vec2F)renderTargetSize * getViewport().size);
@@ -160,7 +161,7 @@ namespace Maze
         
         Vec4F positionVS = positionCS * projectionMatrix.inversed();
         positionVS.w = 1.0;
-        Vec4F positionWS = cameraTransform * positionVS;
+        Vec4F positionWS = cameraTransform.transform(positionVS);
 
         return positionWS.xyz();
     }
@@ -173,8 +174,8 @@ namespace Maze
             getViewport().size.x == 0.0f || getViewport().size.y == 0.0f)
             return Ray();
 
-        Mat4F const& cameraTransform = getTransform()->getWorldTransform();
-        Vec3F cameraPosition = cameraTransform.getAffineTranslation();
+        TMat const& cameraTransform = getTransform()->getWorldTransform();
+        Vec3F cameraPosition = cameraTransform.getTranslation();
         Mat4F projectionMatrix = calculateProjectionMatrix(getRenderTarget());
 
         Vec2F p = _positionV / ((Vec2F)renderTargetSize * getViewport().size);
@@ -183,7 +184,7 @@ namespace Maze
 
         Vec4F positionVS = positionCS * projectionMatrix.inversed();
         positionVS.w = 1.0;
-        Vec4F positionWS = cameraTransform.transformAffine(positionVS);
+        Vec4F positionWS = cameraTransform.transform(positionVS);
 
         Ray ray;
         ray.setDirection((positionWS.xyz() - cameraPosition).normalizedCopy());

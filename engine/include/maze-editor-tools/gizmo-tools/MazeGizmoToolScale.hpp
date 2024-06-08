@@ -89,7 +89,7 @@ namespace Maze
 
         bool m_useRequest = false;
         Vec3F m_startScale = Vec3F::c_zero;
-        Mat4F m_startTransform = Mat4F::c_identity;
+        TMat m_startTransform = TMat::c_identity;
         Vec3F m_startPoint = Vec3F::c_zero;
         F32 m_deltaLength = 0.0f;
     };

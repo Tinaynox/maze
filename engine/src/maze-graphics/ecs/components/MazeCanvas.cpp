@@ -199,8 +199,8 @@ namespace Maze
 
                 Vec2F const& size = m_transform->getSize();
 
-                Vec2F lbCanvasSpace = m_transform->getWorldTransform().transformAffine(Vec2F::c_zero);
-                Vec2F rtCanvasSpace = m_transform->getWorldTransform().transformAffine(size);
+                Vec2F lbCanvasSpace = m_transform->getWorldTransform().transform(Vec2F::c_zero);
+                Vec2F rtCanvasSpace = m_transform->getWorldTransform().transform(size);
 
                 Vec2F lbRenderTargetSpace = canvas->convertViewportCoordsToRenderTargetCoords(lbCanvasSpace);
                 Vec2F rtRenderTargetSpace = canvas->convertViewportCoordsToRenderTargetCoords(rtCanvasSpace);

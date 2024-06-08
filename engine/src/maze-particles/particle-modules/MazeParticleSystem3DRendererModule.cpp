@@ -122,8 +122,8 @@ namespace Maze
         Particles3D& _particles,
         ParticleSystemSimulationSpace _transformPolicy,
         ParticleSystemScalingMode _scalingMode,
-        Mat4F const& _particleSystemLocalTransform,
-        Mat4F const& _particleSystemWorldTransform,
+        TMat const& _particleSystemLocalTransform,
+        TMat const& _particleSystemWorldTransform,
         Vec3F const& _cameraPosition,
         Vec3F const& _cameraForward,
         Vec3F const& _cameraUp)
@@ -149,7 +149,7 @@ namespace Maze
                     Vec3F position = _particles.accessPosition(i);
                     F32& sqrDistanceToCamera = _particles.accessSqrDistanceToCamera(i);
 
-                    Vec3F positionWS = _particleSystemWorldTransform.transformAffine(position);
+                    Vec3F positionWS = _particleSystemWorldTransform.transform(position);
 
                     sqrDistanceToCamera = (positionWS - _cameraPosition).squaredLength();
                 }
@@ -188,17 +188,17 @@ namespace Maze
 
         /*
         // Render transform callback
-        std::function<Mat4F(Mat4F const& _lookAtMatrix)> renderTransformCallback;
+        std::function<TMat(TMat const& _lookAtMatrix)> renderTransformCallback;
         switch (_transformPolicy)
         {
             case ParticleSystemSimulationSpace::Local:
             {
-                renderTransformCallback = [&_particleSystemWorldTransform](Mat4F const& _lookAtMatrix) { return _lookAtMatrix; };
+                renderTransformCallback = [&_particleSystemWorldTransform](TMat const& _lookAtMatrix) { return _lookAtMatrix; };
                 break;
             }
             case ParticleSystemSimulationSpace::World:
             {
-                renderTransformCallback = [](Mat4F const& _lookAtMatrix) { return _lookAtMatrix; };
+                renderTransformCallback = [](TMat const& _lookAtMatrix) { return _lookAtMatrix; };
                 break;
             }
             default:
@@ -244,13 +244,13 @@ namespace Maze
         
 
         // PS Translation
-        Vec3F particleSystemWorldTranslation = _particleSystemWorldTransform.getAffineTranslation();
-        Mat4F particleSystemWorldTranslatonMatrix = Mat4F::CreateAffineTranslation(particleSystemWorldTranslation);
+        Vec3F particleSystemWorldTranslation = _particleSystemWorldTransform.getTranslation();
+        TMat particleSystemWorldTranslatonMatrix = TMat::CreateTranslation(particleSystemWorldTranslation);
 
         // PS Rotation
         //Vec3F particleSystemWorldRotation = _particleSystemWorldTransform.getAffineRotationEulerAngles();
         Vec3F particleSystemWorldRotation = Quaternion::GetEuler(_particleSystemWorldTransform);
-        Mat4F particleSystemWorldRotationMatrix = Mat4F::CreateAffineRotation(particleSystemWorldRotation);
+        TMat particleSystemWorldRotationMatrix = TMat::CreateRotation(particleSystemWorldRotation);
         /*
         F32 cx = cosf(particleSystemWorldRotation.x);
         F32 sx = sinf(particleSystemWorldRotation.x);
@@ -261,42 +261,42 @@ namespace Maze
         F32 cz = cosf(particleSystemWorldRotation.z);
         F32 sz = sinf(particleSystemWorldRotation.z);
 
-        Mat4F particleSystemWorldRotationMatrix = 
-            Mat4F(
+        TMat particleSystemWorldRotationMatrix = 
+            TMat(
                 (F32)cz, (F32)-sz, (F32)0, (F32)0,
                 (F32)sz, (F32)cz, (F32)0, (F32)0,
                 (F32)0, (F32)0, (F32)1, (F32)0,
                 (F32)0, (F32)0, (F32)0, (F32)1) *
-            Mat4F(
+            TMat(
                 (F32)cy, (F32)0, (F32)sy, (F32)0,
                 (F32)0, (F32)1, (F32)0, (F32)0,
                 (F32)-sy, (F32)0, (F32)cy, (F32)0,
                 (F32)0, (F32)0, (F32)0, (F32)1) *
-            Mat4F(
+            TMat(
                 (F32)1, (F32)0, (F32)0, (F32)0,
                 (F32)0, (F32)cx, (F32)-sx, (F32)0,
                 (F32)0, (F32)sx, (F32)cx, (F32)0,
                 (F32)0, (F32)0, (F32)0, (F32)1);*/
 
         // PS Scale
-        Vec3F particleSystemWorldScale = _particleSystemWorldTransform.getAffineScaleSignless();
+        Vec3F particleSystemWorldScale = _particleSystemWorldTransform.getScaleSignless();
 
-        Mat4F scaleMatrix;
+        TMat scaleMatrix;
         if (_scalingMode == ParticleSystemScalingMode::Local)
         {
-            Vec3F particleSystemLocalScale = _particleSystemLocalTransform.getAffineScaleSignless();
-            scaleMatrix = Mat4F::CreateAffineScale(particleSystemLocalScale);
+            Vec3F particleSystemLocalScale = _particleSystemLocalTransform.getScaleSignless();
+            scaleMatrix = TMat::CreateScale(particleSystemLocalScale);
         }
         else
         {
-            scaleMatrix = Mat4F::CreateAffineScale(particleSystemWorldScale);
+            scaleMatrix = TMat::CreateScale(particleSystemWorldScale);
         }
 
-        Mat4F localTransformMatrix;
+        TMat localTransformMatrix;
         if (_transformPolicy == ParticleSystemSimulationSpace::Local)
         {
-            localTransformMatrix = (particleSystemWorldTranslatonMatrix.transformAffine(
-                particleSystemWorldRotationMatrix).transformAffine(
+            localTransformMatrix = (particleSystemWorldTranslatonMatrix.transform(
+                particleSystemWorldRotationMatrix).transform(
                     scaleMatrix));
         }
 
@@ -314,7 +314,7 @@ namespace Maze
             Particles3D::ParticleRotation const& rotation = _particles.accessRotation(index);
             F32 rotationCurrent = rotation.current;
 
-            Mat4F& renderTransform = _particles.accessRenderTransform(i);
+            TMat& renderTransform = _particles.accessRenderTransform(i);
             Vec4F& renderColor = _particles.accessRenderColor(i);
             Vec4F& renderUV = _particles.accessRenderUV(i);
 
@@ -322,49 +322,41 @@ namespace Maze
             // #TODO: Optimize if
             if (_transformPolicy == ParticleSystemSimulationSpace::Local)
             {
-                position = localTransformMatrix.transformAffine(position);
+                position = localTransformMatrix.transform(position);
             }
             
             // Translation
-            Mat4F mat = Mat4F::CreateAffineTranslation(position);
+            TMat mat = TMat::CreateTranslation(position);
 
             // Apply world scale
-            mat = mat.transformAffine(scaleMatrix);
+            mat = mat.transform(scaleMatrix);
 
 
             // Render Alignment
             if (renderAlignment == ParticleSystemRenderAlignment::View)
             {
-                Mat4F lookAtViewMat = Mat4F::CreateAffineLookAt(
+                TMat lookAtViewMat = TMat::CreateLookAt(
                     position,
                     position - _cameraForward,
                     _cameraUp);
                 lookAtViewMat.setTranslation(Vec3F::c_zero);
-                mat = mat.transformAffine(lookAtViewMat);
+                mat = mat.transform(lookAtViewMat);
             }
             else
             if (renderAlignment == ParticleSystemRenderAlignment::Local)
             {
-                mat = mat.transformAffine(particleSystemWorldRotationMatrix);
+                mat = mat.transform(particleSystemWorldRotationMatrix);
             }
            
 
             // Apply particle rotation
-            F32 c = cosf(rotationCurrent);
-            F32 s = sinf(rotationCurrent);
-
-            mat = mat.transformAffine(
-                Mat4F(
-                    c, s, 0.0f, 0.0f,
-                    -s, c, 0.0f, 0.0f,
-                    0.0f, 0.0f, 1.0f, 0.0f,
-                    0.0f, 0.0f, 0.0f, 1.0f));
+            mat = mat.transform(TMat::CreateRotationZ(rotationCurrent));
             
 
             // Apply particle size
 #if 0
             mat = mat.transformAffine(
-                Mat4F32::CreateAffineScale(size.current));
+                TMat32::CreateAffineScale(size.current));
 #else
             mat[0][0] *= sizeCurrent;
             mat[0][1] *= sizeCurrent;

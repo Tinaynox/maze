@@ -112,7 +112,7 @@ namespace Maze
 
         Transform3DPtr const& transform3D = camera3D->getTransform();
 
-        Mat4F mat = transform3D->getWorldTransform();
+        TMat mat = transform3D->getWorldTransform();
         mat.setTranslation(Vec3F(0.0f, 0.0f, 0.0f));
 
         _drawer->setColor(ColorF128::c_lightGray);
@@ -126,17 +126,17 @@ namespace Maze
 
         F32 halfNearH = tanHalfFOVY * camera3D->getNearZ();
         F32 halfNearW = tanHalfFOVX * camera3D->getNearZ();
-        Vec3F nearLB = transform3D->getWorldTransform().transformAffine(Vec3F(-halfNearW, -halfNearH, camera3D->getNearZ()));
-        Vec3F nearLT = transform3D->getWorldTransform().transformAffine(Vec3F(-halfNearW, +halfNearH, camera3D->getNearZ()));
-        Vec3F nearRT = transform3D->getWorldTransform().transformAffine(Vec3F(+halfNearW, +halfNearH, camera3D->getNearZ()));
-        Vec3F nearRB = transform3D->getWorldTransform().transformAffine(Vec3F(+halfNearW, -halfNearH, camera3D->getNearZ()));
+        Vec3F nearLB = transform3D->getWorldTransform().transform(Vec3F(-halfNearW, -halfNearH, camera3D->getNearZ()));
+        Vec3F nearLT = transform3D->getWorldTransform().transform(Vec3F(-halfNearW, +halfNearH, camera3D->getNearZ()));
+        Vec3F nearRT = transform3D->getWorldTransform().transform(Vec3F(+halfNearW, +halfNearH, camera3D->getNearZ()));
+        Vec3F nearRB = transform3D->getWorldTransform().transform(Vec3F(+halfNearW, -halfNearH, camera3D->getNearZ()));
 
         F32 halfFarH = tanHalfFOVY * camera3D->getFarZ();
         F32 halfFarW = tanHalfFOVX * camera3D->getFarZ();
-        Vec3F farLB = transform3D->getWorldTransform().transformAffine(Vec3F(-halfFarW, -halfFarH, camera3D->getFarZ()));
-        Vec3F farLT = transform3D->getWorldTransform().transformAffine(Vec3F(-halfFarW, +halfFarH, camera3D->getFarZ()));
-        Vec3F farRT = transform3D->getWorldTransform().transformAffine(Vec3F(+halfFarW, +halfFarH, camera3D->getFarZ()));
-        Vec3F farRB = transform3D->getWorldTransform().transformAffine(Vec3F(+halfFarW, -halfFarH, camera3D->getFarZ()));
+        Vec3F farLB = transform3D->getWorldTransform().transform(Vec3F(-halfFarW, -halfFarH, camera3D->getFarZ()));
+        Vec3F farLT = transform3D->getWorldTransform().transform(Vec3F(-halfFarW, +halfFarH, camera3D->getFarZ()));
+        Vec3F farRT = transform3D->getWorldTransform().transform(Vec3F(+halfFarW, +halfFarH, camera3D->getFarZ()));
+        Vec3F farRB = transform3D->getWorldTransform().transform(Vec3F(+halfFarW, -halfFarH, camera3D->getFarZ()));
 
         _drawer->drawLine(nearLB, nearLT);
         _drawer->drawLine(nearLT, nearRT);

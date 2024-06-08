@@ -51,7 +51,7 @@ namespace Maze
     struct MAZE_GRAPHICS_API DefaultPassParams
     {
         S32 renderMask = 0;
-        Mat4F cameraTransform = Mat4F::c_identity;
+        TMat cameraTransform = TMat::c_identity;
         Mat4F projectionMatrix = Mat4F::c_identity;
         Rect2DF viewport = Rect2DF(0.0f, 0.0f, 1.0f, 1.0f);
         F32 nearZ = 0.001f;
@@ -85,7 +85,7 @@ namespace Maze
             VertexArrayObjectPtr const& _vao,
             Vec3F const& _worldPosition,
             S32 _count,
-            Mat4F const* _modelMatricies,
+            TMat const* _modelMatricies,
             Vec4F const* _colorStream,
             Vec4F const* _uvs[MAZE_UV_CHANNELS_MAX])
             : renderPass(_renderPass)
@@ -104,7 +104,7 @@ namespace Maze
             VertexArrayObjectPtr const& _vao,
             Vec3F const& _worldPosition,
             S32 _count,
-            Mat4F const* _modelMatricies,
+            TMat const* _modelMatricies,
             Vec4F const* _colorStream = nullptr,
             Vec4F const* _uv0 = nullptr)
             : renderPass(_renderPass)
@@ -122,7 +122,7 @@ namespace Maze
         VertexArrayObjectPtr vao;
         Vec3F worldPosition;
         S32 count = 0;
-        Mat4F const* modelMatricies = nullptr;
+        TMat const* modelMatricies = nullptr;
         Vec4F const* colorStream = nullptr;
         Vec4F const* uvStreams[MAZE_UV_CHANNELS_MAX] = { nullptr };
 
