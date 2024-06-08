@@ -17,12 +17,13 @@ R"(
             ivec2 pos0 = ivec2(c + 0, r);
             ivec2 pos1 = ivec2(c + 1, r);
             ivec2 pos2 = ivec2(c + 2, r);
+            ivec2 pos3 = ivec2(c + 3, r);
         
             return mat4( 
                 texelFetch(u_modelMatricesTexture, pos0, 0).xyzw,
                 texelFetch(u_modelMatricesTexture, pos1, 0).xyzw,
                 texelFetch(u_modelMatricesTexture, pos2, 0).xyzw,
-                vec4(0, 0, 0, 1 ));
+                texelFetch(u_modelMatricesTexture, pos3, 0).xyzw);
         }
     
     #elif (MAZE_MODEL_MATRICES_VIA_ARRAY)
