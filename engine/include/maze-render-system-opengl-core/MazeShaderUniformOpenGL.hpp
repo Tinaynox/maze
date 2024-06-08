@@ -97,6 +97,9 @@ namespace Maze
         //////////////////////////////////////////
         virtual void upload(Mat4F const* _matrices, Size _count) MAZE_OVERRIDE;
 
+        //////////////////////////////////////////
+        virtual void upload(TMat const* _matrices, Size _count) MAZE_OVERRIDE;
+
     protected:
 
         //////////////////////////////////////////

@@ -192,6 +192,13 @@ namespace Maze
                 _dataBlock.setMat4F32(_propertyName, value);
             }
             else
+            if (valueClassUID == ClassInfo<TMat>::UID())
+            {
+                TMat value;
+                _metaProperty->getValue<TMat>(_metaInstance, value);
+                _dataBlock.setTMat(_propertyName, value);
+            }
+            else
             if (_metaProperty->isDataBlockSerializable(_metaInstance))
             {
                 DataBlock& childBlock = _dataBlock[_propertyName];
@@ -364,6 +371,12 @@ namespace Maze
                 if (valueClassUID == ClassInfo<Mat4F32>::UID())
                 {
                     Mat4F32 value = _dataBlock.getMat4F32(_propertyName);
+                    _metaProperty->setValue(_metaInstance, &value);
+                }
+                else
+                if (valueClassUID == ClassInfo<TMat>::UID())
+                {
+                    TMat value = _dataBlock.getTMat(_propertyName);
                     _metaProperty->setValue(_metaInstance, &value);
                 }
                 else

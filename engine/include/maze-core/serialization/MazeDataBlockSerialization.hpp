@@ -40,6 +40,7 @@
 #include "maze-core/math/MazeVec4.hpp"
 #include "maze-core/math/MazeMat3.hpp"
 #include "maze-core/math/MazeMat4.hpp"
+#include "maze-core/math/MazeTMat.hpp"
 #include "maze-core/math/MazeRotation2D.hpp"
 #include "maze-core/math/MazePlane.hpp"
 #include "maze-core/math/MazeQuaternion.hpp"
@@ -136,6 +137,29 @@ namespace Maze
     MAZE_FORCEINLINE typename ::std::enable_if<(
         IsVec2<TValue>::value || IsVec3<TValue>::value || IsVec4<TValue>::value ||
         IsMat3<TValue>::value || IsMat4<TValue>::value), void>::type
+        ValueFromDataBlock(TValue& _value, DataBlock const& _data)
+    {
+        DataBlock::ParamIndex paramIndex = _data.findParamIndex(MAZE_HCS("value"));
+        if (paramIndex >= 0)
+            _value = GetDataBlockParam<TValue>(_data, paramIndex);
+    }
+
+
+    //////////////////////////////////////////
+    // Type: TMat
+    //
+    //////////////////////////////////////////
+    template <typename TValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsTMat<TValue>::value), void>::type
+        ValueToDataBlock(TValue const& _value, DataBlock& _data)
+    {
+        _data.clearData();
+        AddDataToDataBlock<TValue>(_data, MAZE_HCS("value"), _value);
+    }
+
+    ////////////////////////////////////////////
+    template <typename TValue>
+    MAZE_FORCEINLINE typename ::std::enable_if<(IsTMat<TValue>::value), void>::type
         ValueFromDataBlock(TValue& _value, DataBlock const& _data)
     {
         DataBlock::ParamIndex paramIndex = _data.findParamIndex(MAZE_HCS("value"));

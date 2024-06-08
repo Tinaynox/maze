@@ -107,6 +107,8 @@ namespace Maze
     template <>
     MAZE_FORCEINLINE bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, Mat4F32 const& _value) { _dataBlock.addMat4F32(_name, _value); return true; }
     template <>
+    MAZE_FORCEINLINE bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, TMat const& _value) { _dataBlock.addTMat(_name, _value); return true; }
+    template <>
     MAZE_FORCEINLINE bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, String const& _value) { _dataBlock.addString(_name, _value); return true; }
     template <>
     MAZE_FORCEINLINE bool AddDataToDataBlock(DataBlock& _dataBlock, HashedCString _name, CString const& _value) { _dataBlock.addCString(_name, _value); return true; }
@@ -171,6 +173,8 @@ namespace Maze
     MAZE_FORCEINLINE Mat3F32 GetDataBlockParam(DataBlock const& _data, DataBlock::ParamIndex _i) { return _data.getMat3F32(_i); }
     template <>
     MAZE_FORCEINLINE Mat4F32 GetDataBlockParam(DataBlock const& _data, DataBlock::ParamIndex _i) { return _data.getMat4F32(_i); }
+    template <>
+    MAZE_FORCEINLINE TMat GetDataBlockParam(DataBlock const& _data, DataBlock::ParamIndex _i) { return _data.getTMat(_i); }
     template <>
     MAZE_FORCEINLINE CString GetDataBlockParam(DataBlock const& _data, DataBlock::ParamIndex _i) { return _data.getCString(_i); }
     template <>

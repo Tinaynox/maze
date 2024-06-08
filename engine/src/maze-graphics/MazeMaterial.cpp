@@ -493,6 +493,13 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void Material::setUniform(HashedCString _uniformName, TMat const& _matrix)
+    {
+        ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);
+        uniformVariant->set(_matrix);
+    }
+
+    //////////////////////////////////////////
     void Material::setUniform(HashedCString _uniformName, ColorF128 const& _color)
     {
         ShaderUniformVariantPtr const& uniformVariant = ensureUniform(_uniformName);

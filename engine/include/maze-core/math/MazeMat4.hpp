@@ -86,17 +86,17 @@ namespace Maze
 
         //////////////////////////////////////////
         inline Mat4(    
-            TValue _value00, TValue _value01, TValue _value02, TValue _value03,
-            TValue _value10, TValue _value11, TValue _value12, TValue _value13,
-            TValue _value20, TValue _value21, TValue _value22, TValue _value23,
-            TValue _value30, TValue _value31, TValue _value32, TValue _value33);
+            TValue _m00, TValue _m01, TValue _m02, TValue _m03,
+            TValue _m10, TValue _m11, TValue _m12, TValue _m13,
+            TValue _m20, TValue _m21, TValue _m22, TValue _m23,
+            TValue _m30, TValue _m31, TValue _m32, TValue _m33);
 
         //////////////////////////////////////////
         inline void set(    
-            TValue _value00, TValue _value01, TValue _value02, TValue _value03,
-            TValue _value10, TValue _value11, TValue _value12, TValue _value13,
-            TValue _value20, TValue _value21, TValue _value22, TValue _value23,
-            TValue _value30, TValue _value31, TValue _value32, TValue _value33);
+            TValue _m00, TValue _m01, TValue _m02, TValue _m03,
+            TValue _m10, TValue _m11, TValue _m12, TValue _m13,
+            TValue _m20, TValue _m21, TValue _m22, TValue _m23,
+            TValue _m30, TValue _m31, TValue _m32, TValue _m33);
 
         //////////////////////////////////////////
         static inline MAZE_CONSTEXPR Mat4 CreateAffineBasis(

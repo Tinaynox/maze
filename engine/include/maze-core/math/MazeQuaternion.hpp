@@ -37,6 +37,7 @@
 #include "maze-core/math/MazeVec4.hpp"
 #include "maze-core/math/MazeMat3.hpp"
 #include "maze-core/math/MazeMat4.hpp"
+#include "maze-core/math/MazeTMat.hpp"
 #include "maze-core/math/MazeRotation2D.hpp"
 #include <ostream>
 
@@ -77,6 +78,9 @@ namespace Maze
         explicit inline Quaternion(Mat4F const& _rotationMatrix);
 
         //////////////////////////////////////////
+        explicit inline Quaternion(TMat const& _rotationMatrix);
+
+        //////////////////////////////////////////
         inline Quaternion(F32 const& _angle, Vec3F const& _axis);
 
         //////////////////////////////////////////
@@ -106,6 +110,9 @@ namespace Maze
 
         //////////////////////////////////////////
         static inline Vec3F GetEuler(Mat4F const& _rotationMatrix) { return Quaternion(_rotationMatrix).getEuler(); }
+
+        //////////////////////////////////////////
+        static inline Vec3F GetEuler(TMat const& _rotationMatrix) { return Quaternion(_rotationMatrix).getEuler(); }
 
 
         //////////////////////////////////////////
@@ -153,10 +160,21 @@ namespace Maze
         }
 
         //////////////////////////////////////////
+        inline void setRotationMatrix(TMat const& _rotationMatrix, bool _multInvScale = true)
+        {
+            Mat3F mat;
+            _rotationMatrix.getMat3(mat);
+            setRotationMatrix(mat, _multInvScale);
+        }
+
+        //////////////////////////////////////////
         void toRotationMatrix(Mat3F& _rotationMatrix) const;
 
         //////////////////////////////////////////
         void toRotationMatrix(Mat4F& _rotationMatrix) const;
+
+        //////////////////////////////////////////
+        void toRotationMatrix(TMat& _rotationMatrix) const;
 
         //////////////////////////////////////////
         inline Mat4F toRotationMatrix() const

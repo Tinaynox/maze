@@ -56,6 +56,7 @@
 #include "maze-core/math/MazeVec4B.hpp"
 #include "maze-core/math/MazeMat3.hpp"
 #include "maze-core/math/MazeMat4.hpp"
+#include "maze-core/math/MazeTMat.hpp"
 #include "maze-core/data/MazeHashedCString.hpp"
 #include "maze-core/data/MazeHashedString.hpp"
 #include "maze-core/utils/MazeClassInfo.hpp"
@@ -110,6 +111,7 @@ namespace Maze
         ParamVec4B,
         ParamMat3F32,
         ParamMat4F32,
+        ParamTMat,
         ParamString,
         
         MAX
@@ -159,6 +161,7 @@ namespace Maze
         DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Vec4B"), sizeof(Vec4B)),
         DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Mat3F"), sizeof(Mat3F)),
         DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("Mat4F"), sizeof(Mat4F)),
+        DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("TMat"), sizeof(TMat)),
         DataBlockParamTypeInfo(MAZE_HASHED_CSTRING("String"), 0u)
     };
 
@@ -505,6 +508,7 @@ namespace Maze
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Mat3F, Mat3F);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Mat4F32, Mat4F32);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(Mat4F, Mat4F);
+        MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(TMat, TMat);
         MAZE_DECLARE_DATA_BLOCK_GET_SET_API_REF(CString, CString);
 
 #undef MAZE_DECLARE_DATA_BLOCK_GET_SET_API_BASE

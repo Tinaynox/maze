@@ -166,6 +166,9 @@ namespace Maze
         //////////////////////////////////////////
         inline Mat4F const& getMat4F32() const { return m_value.getMat4F32(); }
 
+        //////////////////////////////////////////
+        inline TMat const& getTMat() const { return m_value.getTMat(); }
+
         
         
         
@@ -250,30 +253,13 @@ namespace Maze
         
         //////////////////////////////////////////
         bool set(Mat4F const& _matrix);
+
+        //////////////////////////////////////////
+        bool set(TMat const& _matrix);
        
         //////////////////////////////////////////
         bool set(ShaderUniformVariant const& _variant);
-        
-
-        /*
-        //////////////////////////////////////////
-        bool set(F32 const* _values, Size _count);
-
-        //////////////////////////////////////////
-        bool set(Vec2F const* _vectors, Size _count);
-
-        //////////////////////////////////////////
-        bool set(Vec3F const* _vectors, Size _count);
-
-        //////////////////////////////////////////
-        bool set(Vec4F const* _vectors, Size _count);
-
-        //////////////////////////////////////////
-        bool set(Mat3F const* _matrices, Size _count);
-
-        //////////////////////////////////////////
-        bool set(Mat4F const* _matrices, Size _count);
-        */
+       
 
         //////////////////////////////////////////
         virtual void upload(F32 const* _value, Size _count) MAZE_ABSTRACT;
@@ -294,6 +280,9 @@ namespace Maze
 
         //////////////////////////////////////////
         virtual void upload(Mat4F const* _matrices, Size _count) MAZE_ABSTRACT;
+
+        //////////////////////////////////////////
+        virtual void upload(TMat const* _matrices, Size _count) MAZE_ABSTRACT;
         
         
         //////////////////////////////////////////

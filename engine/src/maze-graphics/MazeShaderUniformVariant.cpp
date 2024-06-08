@@ -248,6 +248,14 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, TMat const& _value)
+        : m_renderSystem(_renderSystem)
+        , m_type(ShaderUniformType::UniformTMat)
+        , m_matrixT(_value)
+    {
+    }
+
+    //////////////////////////////////////////
     ShaderUniformVariant::ShaderUniformVariant(RenderSystem* _renderSystem, ColorF128 const& _value)
         : m_renderSystem(_renderSystem)
         , m_type(ShaderUniformType::UniformColorF128)
@@ -433,6 +441,11 @@ namespace Maze
                 return Hash::CalculateCRC32((const S8*)&m_matrix4DF, sizeof(Mat4F), _seed);
                 break;
             }
+            case ShaderUniformType::UniformTMat:
+            {
+                return Hash::CalculateCRC32((const S8*)&m_matrixT, sizeof(TMat), _seed);
+                break;
+            }
             case ShaderUniformType::UniformColorF128:
             {
                 return Hash::CalculateCRC32((const S8*)&m_vectorF, sizeof(Vec4F), _seed);
@@ -592,6 +605,13 @@ namespace Maze
                 set(value);
                 return;
             }
+            case ShaderUniformType::UniformTMat:
+            {
+                TMat value;
+                ValueFromString(value, _data, _count);
+                set(value);
+                return;
+            }
             case ShaderUniformType::UniformColorF128:
             {
                 Vec4F value;
@@ -713,6 +733,11 @@ namespace Maze
             case ShaderUniformType::UniformMat4F32:
             {
                 ValueToString(getMat4F32(), data);
+                return data;
+            }
+            case ShaderUniformType::UniformTMat:
+            {
+                ValueToString(getTMat(), data);
                 return data;
             }
             case ShaderUniformType::UniformColorF128:
@@ -857,6 +882,11 @@ namespace Maze
                 return m_matrix4DF == _variant.m_matrix4DF;
                 break;
             }
+            case ShaderUniformType::UniformTMat:
+            {
+                return m_matrixT == _variant.m_matrixT;
+                break;
+            }
             case ShaderUniformType::UniformColorF128:
             {
                 return    (m_vectorF.x == _variant.m_vectorF.x)
@@ -909,6 +939,7 @@ namespace Maze
             case ShaderUniformType::UniformVec4B:         set(_variant.getVec4B()); break;
             case ShaderUniformType::UniformMat3F32:         set(_variant.getMat3F32()); break;
             case ShaderUniformType::UniformMat4F32:         set(_variant.getMat4F32()); break;
+            case ShaderUniformType::UniformTMat:         set(_variant.getTMat()); break;
             case ShaderUniformType::UniformColorF128:      set(_variant.getColorF128()); break;
             default:
             {
@@ -986,6 +1017,7 @@ namespace Maze
             case DataBlockParamType::ParamVec4B:        set(_dataBlock.getVec4B(valueParamIndex)); break;
             case DataBlockParamType::ParamMat3F32:      set(_dataBlock.getMat3F32(valueParamIndex)); break;
             case DataBlockParamType::ParamMat4F32:      set(_dataBlock.getMat4F32(valueParamIndex)); break;
+            case DataBlockParamType::ParamTMat:         set(_dataBlock.getTMat(valueParamIndex)); break;
             default:
             {
                 CString type = _dataBlock.getCString(MAZE_HCS("type"));
@@ -1037,6 +1069,7 @@ namespace Maze
             case ShaderUniformType::UniformVec4B:               _dataBlock.setVec4B(MAZE_HCS("value"), getVec4B()); break;
             case ShaderUniformType::UniformMat3F32:             _dataBlock.setMat3F32(MAZE_HCS("value"), getMat3F32()); break;
             case ShaderUniformType::UniformMat4F32:             _dataBlock.setMat4F32(MAZE_HCS("value"), getMat4F32()); break;
+            case ShaderUniformType::UniformTMat:                _dataBlock.setTMat(MAZE_HCS("value"), getTMat()); break;
             case ShaderUniformType::UniformColorF128:           _dataBlock.setVec4F32(MAZE_HCS("value"), getVec4F32()); break;
             default:
                 Debug::LogError("Unsupported ShaderUniformType - %s", m_type.toCString());

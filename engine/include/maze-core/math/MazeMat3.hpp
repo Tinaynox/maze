@@ -88,20 +88,20 @@ namespace Maze
 
         //////////////////////////////////////////
         inline Mat3(
-            TValue _value00, TValue _value01, TValue _value02,
-            TValue _value10, TValue _value11, TValue _value12,
-            TValue _value20, TValue _value21, TValue _value22);
+            TValue _m00, TValue _m01, TValue _m02,
+            TValue _m10, TValue _m11, TValue _m12,
+            TValue _m20, TValue _m21, TValue _m22);
 
         //////////////////////////////////////////
         inline void set(
-            TValue _value00, TValue _value01, TValue _value02,
-            TValue _value10, TValue _value11, TValue _value12,
-            TValue _value20, TValue _value21, TValue _value22);
+            TValue _m00, TValue _m01, TValue _m02,
+            TValue _m10, TValue _m11, TValue _m12,
+            TValue _m20, TValue _m21, TValue _m22);
 
         //////////////////////////////////////////
         inline void setAffine(
-            TValue _value00, TValue _value01,
-            TValue _value10, TValue _value11,
+            TValue _m00, TValue _m01,
+            TValue _m10, TValue _m11,
             TValue _x, TValue _y);
 
         //////////////////////////////////////////
@@ -211,8 +211,8 @@ namespace Maze
 
         //////////////////////////////////////////
         inline void transformAffine(
-            TValue _value00, TValue _value01,
-            TValue _value10, TValue _value11,
+            TValue _m00, TValue _m01,
+            TValue _m10, TValue _m11,
             TValue _x, TValue _y,
             Mat3<TValue>& _out) const;
 

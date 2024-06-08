@@ -429,55 +429,21 @@ namespace Maze
         return true;
     }
 
-    /*
     //////////////////////////////////////////
-    bool ShaderUniform::set(F32 const* _values, Size _count)
+    bool ShaderUniform::set(TMat const& _matrix)
     {
-        m_value.reset();
-        uploadArrayUniform(_values, _count);
-        return true;
-    }
+        if (getTMat() == _matrix &&
+            getType() == ShaderUniformType::UniformTMat)
+            return false;
 
-    //////////////////////////////////////////
-    bool ShaderUniform::set(Vec2F const* _vectors, Size _count)
-    {
-        m_value.reset();
-        uploadArrayUniform(_vectors, _count);
-        return true;
-    }
+        processUniformWillBeChanged();
 
-    //////////////////////////////////////////
-    bool ShaderUniform::set(Vec3F const* _vectors, Size _count)
-    {
-        m_value.reset();
-        uploadArrayUniform(_vectors, _count);
-        return true;
-    }
+        m_value.set(_matrix);
 
-    //////////////////////////////////////////
-    bool ShaderUniform::set(Vec4F const* _vectors, Size _count)
-    {
-        m_value.reset();
-        uploadArrayUniform(_vectors, _count);
-        return true;
-    }
+        processSimpleUniformChanged();
 
-    //////////////////////////////////////////
-    bool ShaderUniform::set(Mat3F const* _matrices, Size _count)
-    {
-        m_value.reset();
-        uploadArrayUniform(_matrices, _count);
         return true;
     }
-
-    //////////////////////////////////////////
-    bool ShaderUniform::set(Mat4F const* _matrices, Size _count)
-    {
-        m_value.reset();
-        uploadArrayUniform(_matrices, _count);
-        return true;
-    }
-    */
 
     //////////////////////////////////////////
     bool ShaderUniform::set(ColorF128 const& _value)

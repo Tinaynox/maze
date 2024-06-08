@@ -145,6 +145,14 @@ namespace Maze
         _rotationMatrix[3][2] = 0;
         _rotationMatrix[3][3] = 1;
     }
+
+    //////////////////////////////////////////
+    void Quaternion::toRotationMatrix(TMat& _rotationMatrix) const
+    {
+        Mat3F m;
+        toRotationMatrix(m);
+        _rotationMatrix = m;
+    }
     
     //////////////////////////////////////////
     void Quaternion::setAngleAxis(F32 const& _angle, Vec3F const& _axis)

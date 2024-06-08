@@ -68,7 +68,7 @@ namespace Maze
     
 
     //////////////////////////////////////////
-    MAZE_DECLARE_ENUMCLASS_22_API(MAZE_GRAPHICS_API, ShaderUniformType,
+    MAZE_DECLARE_ENUMCLASS_23_API(MAZE_GRAPHICS_API, ShaderUniformType,
         UniformS32,
         UniformF32,
         UniformF64,
@@ -90,6 +90,7 @@ namespace Maze
         UniformVec4B,
         UniformMat3F32,
         UniformMat4F32,
+        UniformTMat,
         UniformColorF128);
 
 
@@ -187,6 +188,9 @@ namespace Maze
 
         //////////////////////////////////////////
         ShaderUniformVariant(RenderSystem* _renderSystem, Mat4F const& _value);
+
+        //////////////////////////////////////////
+        ShaderUniformVariant(RenderSystem* _renderSystem, TMat const& _value);
 
 
         //////////////////////////////////////////
@@ -296,6 +300,9 @@ namespace Maze
         //////////////////////////////////////////
         inline Mat4F const& getMat4F32() const { return m_matrix4DF; }
 
+        //////////////////////////////////////////
+        inline TMat const& getTMat() const { return m_matrixT; }
+
 
         //////////////////////////////////////////
         inline ColorF128 getColorF128() const { return ColorF128(m_vectorF); }
@@ -376,6 +383,9 @@ namespace Maze
                 
         //////////////////////////////////////////
         inline void set(Mat4F const& _matrix) { m_matrix4DF = _matrix; m_type = ShaderUniformType::UniformMat4F32; }
+
+        //////////////////////////////////////////
+        inline void set(TMat const& _matrix) { m_matrixT = _matrix; m_type = ShaderUniformType::UniformTMat; }
         
 
         //////////////////////////////////////////
@@ -478,6 +488,7 @@ namespace Maze
             Vec4B m_vectorB;
             Mat3F m_matrix3DF;
             Mat4F m_matrix4DF;
+            TMat m_matrixT;
         };
         
         HashedString m_name;

@@ -213,6 +213,12 @@ namespace Maze
                 break;
             }
 
+            case ShaderUniformType::UniformTMat:
+            {
+                // 4 * Vec3F
+                MAZE_GL_CALL(mzglUniform3fv((MZGLint)m_location, (MZGLsizei)4, (MZGLfloat const*) getTMat().getPlaneMatrix()));
+                break;
+            }
 
             case ShaderUniformType::UniformColorF128:
             {
@@ -235,6 +241,7 @@ namespace Maze
         
         MAZE_GL_MUTEX_SCOPED_LOCK(getRenderSystemOpenGLRaw());
         
+        // #TODO: Clean this mess
         switch (getType())
         {
             case ShaderUniformType::UniformS32:
@@ -355,6 +362,12 @@ namespace Maze
                 break;
             }
 
+            case ShaderUniformType::UniformTMat:
+            {
+
+                break;
+            }
+
             case ShaderUniformType::UniformColorF128:
             {
 
@@ -402,6 +415,13 @@ namespace Maze
     void ShaderUniformOpenGL::upload(Mat4F const* _matrices, Size _count)
     {
         MAZE_GL_CALL(mzglUniformMatrix4fv((MZGLint)m_location, (MZGLsizei)_count, MAZE_GL_FALSE, _matrices[0].getPlaneMatrix()));
+    }
+
+    //////////////////////////////////////////
+    void ShaderUniformOpenGL::upload(TMat const* _matrices, Size _count)
+    {
+        // 4 * Vec3F
+        MAZE_GL_CALL(mzglUniform3fv((MZGLint)m_location, (MZGLsizei)_count * 4, (MZGLfloat const*)_matrices));
     }
 
 

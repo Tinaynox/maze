@@ -297,6 +297,16 @@ namespace Maze
                                 paramDataF32[8], paramDataF32[9], paramDataF32[10], paramDataF32[11],
                                 paramDataF32[12], paramDataF32[13], paramDataF32[14], paramDataF32[15]);
                             break;
+                        case DataBlockParamType::ParamTMat:
+                            snprintf(
+                                buff,
+                                sizeof(buff),
+                                "[[%g, %g, %g, %g] [%g, %g, %g, %g] [%g, %g, %g, %g]]",
+                                paramDataF32[0], paramDataF32[1], paramDataF32[2],
+                                paramDataF32[3], paramDataF32[4], paramDataF32[5],
+                                paramDataF32[6], paramDataF32[7], paramDataF32[8],
+                                paramDataF32[9], paramDataF32[10], paramDataF32[11]);
+                            break;
                         default:
                             MAZE_WARNING("Undefined data block param type: %d", (S32)param.type);
                             break;
@@ -1396,6 +1406,17 @@ namespace Maze
                         return false;
                     }
                     _dataBlock.addMat4F32(_name, value);
+                    break;
+                }
+                case DataBlockParamType::ParamTMat:
+                {
+                    TMat value = TMat::c_zero;
+                    if (!TMat::ParseStringPretty(_value, _size, value, ','))
+                    {
+                        processSyntaxError("Syntax error");
+                        return false;
+                    }
+                    _dataBlock.addTMat(_name, value);
                     break;
                 }
                 default:

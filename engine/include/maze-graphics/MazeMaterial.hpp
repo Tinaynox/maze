@@ -199,6 +199,9 @@ namespace Maze
         void setUniform(HashedCString _uniformName, Mat4F const& _matrix);
 
         //////////////////////////////////////////
+        void setUniform(HashedCString _uniformName, TMat const& _matrix);
+
+        //////////////////////////////////////////
         void setUniform(HashedCString _uniformName, ColorF128 const& _color);
 
         //////////////////////////////////////////

@@ -82,6 +82,8 @@ namespace Maze
     template <>
     struct DataBlock::TypeOf<Mat4F> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamMat4F32; };
     template <>
+    struct DataBlock::TypeOf<TMat> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamTMat; };
+    template <>
     struct DataBlock::TypeOf<CString> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamString; };
     template <>
     struct DataBlock::TypeOf<String> { static MAZE_CONSTEXPR DataBlockParamType type = DataBlockParamType::ParamString; };
