@@ -285,17 +285,6 @@ namespace Maze
         inline MAZE_CONSTEXPR Vec4 operator*(TValue const _value) const;
 
         //////////////////////////////////////////
-        template <class UValue>
-        inline MAZE_CONSTEXPR Vec4 operator*(UValue const _value) const
-        {
-            return Vec4(
-                static_cast<TValue>(x * _value),
-                static_cast<TValue>(y * _value),
-                static_cast<TValue>(z * _value),
-                static_cast<TValue>(w * _value));
-        }
-
-        //////////////////////////////////////////
         inline MAZE_CONSTEXPR Vec4 operator*(Vec4 const& _vec) const;
 
         //////////////////////////////////////////

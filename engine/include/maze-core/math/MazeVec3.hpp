@@ -190,16 +190,6 @@ namespace Maze
         inline MAZE_CONSTEXPR Vec3 operator*(TValue const _value) const;
 
         //////////////////////////////////////////
-        template <class UValue>
-        inline MAZE_CONSTEXPR Vec3 operator*(UValue const _value) const
-        {
-            return Vec3(
-                static_cast<TValue>(x * _value),
-                static_cast<TValue>(y * _value),
-                static_cast<TValue>(z * _value));
-        }
-
-        //////////////////////////////////////////
         inline MAZE_CONSTEXPR Vec3 operator*(Vec3 const& _vec) const;
 
         //////////////////////////////////////////

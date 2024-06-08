@@ -198,8 +198,8 @@ namespace Maze
 
         for (Size i = 0; i < iterations; ++i)
         {
-            Vec3F a = start + tangent * i * increment;
-            Vec3F b = start + bitangent * i * increment;
+            Vec3F a = start + tangent * (F32)i * increment;
+            Vec3F b = start + bitangent * (F32)i * increment;
 
             positions[vertex + 0] = a;
             positions[vertex + 1] = a + bitangent * length;

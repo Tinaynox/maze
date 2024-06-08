@@ -313,8 +313,8 @@ namespace Maze
         Vec3F up = forward.perpendicular();
         Vec3F right = up.crossProduct(forward).normalizedCopy() * _radius;
 
-        Mat4F matrix = Mat4F::CreateAffineBasis(right, up, forward);
-        Vec3F lastPoint = _position + matrix.transformAffine(Vec3F(Math::Cos(0.0f), Math::Sin(0.0f), 0.0f));
+        TMat matrix = TMat::CreateBasis(right, up, forward);
+        Vec3F lastPoint = _position + matrix.transform(Vec3F(Math::Cos(0.0f), Math::Sin(0.0f), 0.0f));
         Vec3F nextPoint = Vec3F::c_zero;
 
         for (S32 i = 0; i < 91; i++)
@@ -323,7 +323,7 @@ namespace Maze
             nextPoint.y = Math::Sin(Math::DegreesToRadians(i * 4.0f));
             nextPoint.z = 0;
 
-            nextPoint = _position + matrix.transformAffine(nextPoint);
+            nextPoint = _position + matrix.transform(nextPoint);
 
             drawLine(lastPoint, nextPoint, _duration, _renderMode);
             lastPoint = nextPoint;
@@ -343,8 +343,8 @@ namespace Maze
         Vec3F up = _up.normalizedCopy() * _radius;
         Vec3F right = up.crossProduct(forward).normalizedCopy() * _radius;
 
-        Mat4F matrix = Mat4F::CreateAffineBasis(right, up, forward);
-        Vec3F lastPoint = _position + matrix.transformAffine(Vec3F(Math::Cos(0.0f), Math::Sin(0.0f), 0.0f));
+        TMat matrix = TMat::CreateBasis(right, up, forward);
+        Vec3F lastPoint = _position + matrix.transform(Vec3F(Math::Cos(0.0f), Math::Sin(0.0f), 0.0f));
         Vec3F nextPoint = Vec3F::c_zero;
 
         for (S32 i = 0; i < 46; i++)
@@ -353,7 +353,7 @@ namespace Maze
             nextPoint.y = Math::Sin(Math::DegreesToRadians(i * 4.0f));
             nextPoint.z = 0;
 
-            nextPoint = _position + matrix.transformAffine(nextPoint);
+            nextPoint = _position + matrix.transform(nextPoint);
 
             drawLine(lastPoint, nextPoint, _duration, _renderMode);
             lastPoint = nextPoint;
