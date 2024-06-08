@@ -42,7 +42,7 @@ using namespace Maze;
 #define CONVERTER_MODE_BINALIZER (2)
 
 //////////////////////////////////////////
-#define CONVERTER_MODE CONVERTER_MODE_BINALIZER
+#define CONVERTER_MODE CONVERTER_MODE_DEFAULT
 
 
 //////////////////////////////////////////
