@@ -121,6 +121,7 @@ namespace Maze
         m_eventTypes.clear();
 
         MAZE_DEBUG_ASSERT(m_addingEntities.empty());
+        MAZE_DEBUG_ASSERT(m_addingEntitiesMap.empty());
         MAZE_DEBUG_ASSERT(m_removingEntities.empty());
         MAZE_DEBUG_ASSERT(m_componentsChangedEntities.empty());
         MAZE_DEBUG_ASSERT(m_activeChangedEntities.empty());
@@ -144,6 +145,7 @@ namespace Maze
         _entity->setEcsWorld(m_world);
 
         m_addingEntities.push_back(_entity);
+        m_addingEntitiesMap[_entity->getId()] = _entity;
         m_eventTypes.push_back(EcsWorldEventType::AddingEntity);
 
         processEntityComponentsChanged(entityId);
@@ -228,9 +230,9 @@ namespace Maze
     {
         static EntityPtr nullPointer;
 
-        for (EntityPtr const& entity : m_addingEntities)
-            if (entity->getId() == _id)
-                return entity;
+        auto it = m_addingEntitiesMap.find(_id);
+        if (it != m_addingEntitiesMap.end())
+            return it->second;
 
         return nullPointer;
     }
@@ -240,6 +242,7 @@ namespace Maze
     {
         EntityPtr entity = m_addingEntities.front();
         m_addingEntities.pop_front();
+        m_addingEntitiesMap.erase(entity->getId());
 
         m_world->addEntityNow(entity);
         
@@ -374,6 +377,7 @@ namespace Maze
 
         m_eventTypes.clear();
         m_addingEntities.clear();
+        m_addingEntitiesMap.clear();
         while (!m_removingEntities.empty()) { m_removingEntities.pop(); }
         while (!m_componentsChangedEntities.empty()) { m_componentsChangedEntities.pop(); }
         while (!m_activeChangedEntities.empty()) { m_activeChangedEntities.pop(); }
