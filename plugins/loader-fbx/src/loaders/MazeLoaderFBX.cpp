@@ -179,10 +179,10 @@ namespace Maze
         if (sceneGlobalSettings->CoordAxis == ofbx::CoordSystem::CoordSystem_RightHanded)
         {
             if (sceneGlobalSettings->UpAxis == ofbx::UpVector::UpVector_AxisY && sceneGlobalSettings->CoordAxisSign < 0)
-                fixOrientationMat = Mat4F::CreateRotationYMatrix(Math::c_pi);
+                fixOrientationMat = Mat4F::CreateAffineRotationY(Math::c_pi);
             else
             if (sceneGlobalSettings->UpAxis == ofbx::UpVector::UpVector_AxisZ && sceneGlobalSettings->CoordAxisSign > 0)
-                fixOrientationMat = Mat4F::CreateRotationXMatrix(-Math::c_halfPi);
+                fixOrientationMat = Mat4F::CreateAffineRotationX(-Math::c_halfPi);
 
         }
 
@@ -200,7 +200,7 @@ namespace Maze
             Mat4F meshGeometricTransformMat = ConvertOpenFBXMatrixToMat4F32(meshGeometricTransform);
             Mat4F meshGlobalTransformMat = ConvertOpenFBXMatrixToMat4F32(meshGlobalTransform);
 
-            Mat4F transformMat = fixOrientationMat.concatenatedAffineCopy(meshGeometricTransformMat).concatenatedAffineCopy(meshGlobalTransformMat);
+            Mat4F transformMat = fixOrientationMat.transformAffine(meshGeometricTransformMat).transformAffine(meshGlobalTransformMat);
 
 
             

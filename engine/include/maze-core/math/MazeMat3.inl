@@ -71,57 +71,57 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    inline Mat3<TValue>::Mat3(Mat3 const& _matrix)
+    inline Mat3<TValue>::Mat3(Mat3 const& _m)
     {
-        memcpy(m, _matrix.m, 9 * sizeof(TValue));
+        memcpy(m, _m.m, 9 * sizeof(TValue));
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline Mat3<TValue>::Mat3(Mat3&& _matrix)
+    inline Mat3<TValue>::Mat3(Mat3&& _m)
     {
-        memcpy(m, _matrix.m, 9 * sizeof(TValue));
+        memcpy(m, _m.m, 9 * sizeof(TValue));
     }
 
     //////////////////////////////////////////
     template <class TValue>
     inline Mat3<TValue>::Mat3(    
-        TValue _value00, TValue _value01, TValue _value02,
-        TValue _value10, TValue _value11, TValue _value12,
-        TValue _value20, TValue _value21, TValue _value22)
+        TValue _m00, TValue _m01, TValue _m02,
+        TValue _m10, TValue _m11, TValue _m12,
+        TValue _m20, TValue _m21, TValue _m22)
     {
-        set(_value00, _value01, _value02,
-            _value10, _value11, _value12,
-            _value20, _value21, _value22);
+        set(_m00, _m01, _m02,
+            _m10, _m11, _m12,
+            _m20, _m21, _m22);
     }
 
     //////////////////////////////////////////
     template <class TValue>
     inline void Mat3<TValue>::set(    
-        TValue _value00, TValue _value01, TValue _value02,
-        TValue _value10, TValue _value11, TValue _value12,
-        TValue _value20, TValue _value21, TValue _value22)
+        TValue _m00, TValue _m01, TValue _m02,
+        TValue _m10, TValue _m11, TValue _m12,
+        TValue _m20, TValue _m21, TValue _m22)
     {
-        m[0][0] = _value00; m[0][1] = _value01; m[0][2] = _value02;
-        m[1][0] = _value10; m[1][1] = _value11; m[1][2] = _value12;
-        m[2][0] = _value20; m[2][1] = _value21; m[2][2] = _value22;
+        m[0][0] = _m00; m[0][1] = _m01; m[0][2] = _m02;
+        m[1][0] = _m10; m[1][1] = _m11; m[1][2] = _m12;
+        m[2][0] = _m20; m[2][1] = _m21; m[2][2] = _m22;
     }
 
     //////////////////////////////////////////
     template <class TValue>
     inline void Mat3<TValue>::setAffine(    
-        TValue _value00, TValue _value01,
-        TValue _value10, TValue _value11,
+        TValue _m00, TValue _m01,
+        TValue _m10, TValue _m11,
         TValue _x, TValue _y)
     {
-        m[0][0] = _value00; m[0][1] = _value01; m[0][2] = 0;
-        m[1][0] = _value10; m[1][1] = _value11; m[1][2] = 0;
-        m[2][0] = _x;       m[2][1] = _y;       m[2][2] = 1;
+        m[0][0] = _m00; m[0][1] = _m01; m[0][2] = 0;
+        m[1][0] = _m10; m[1][1] = _m11; m[1][2] = 0;
+        m[2][0] = _x;   m[2][1] = _y;   m[2][2] = 1;
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR Mat3<TValue> Mat3<TValue>::CreateTranslationMatrix(TValue _x, TValue _y)
+    inline MAZE_CONSTEXPR Mat3<TValue> Mat3<TValue>::CreateAffineTranslation(TValue _x, TValue _y)
     {
         return Mat3<TValue>(
             1,  0,  0,
@@ -131,15 +131,15 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR Mat3<TValue> Mat3<TValue>::CreateTranslationMatrix(
-        Vec2<TValue> const& _vector)
+    inline MAZE_CONSTEXPR Mat3<TValue> Mat3<TValue>::CreateAffineTranslation(
+        Vec2<TValue> const& _v)
     {
-        return CreateTranslationMatrix(_vector.x, _vector.y);
+        return CreateAffineTranslation(_v.x, _v.y);
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR Mat3<TValue> Mat3<TValue>::CreateRotationMatrix(F32 _s, F32 _c)
+    inline MAZE_CONSTEXPR Mat3<TValue> Mat3<TValue>::CreateAffineRotation(F32 _s, F32 _c)
     {
         return Mat3<TValue>(
                 (TValue)_c,  (TValue)_s, (TValue)0,
@@ -149,14 +149,14 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR Mat3<TValue> Mat3<TValue>::CreateRotationMatrix(F32 _angle)
+    inline MAZE_CONSTEXPR Mat3<TValue> Mat3<TValue>::CreateAffineRotation(F32 _angle)
     {
-        return CreateRotationMatrix(sinf(_angle), cosf(_angle));
+        return CreateAffineRotation(sinf(_angle), cosf(_angle));
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR Mat3<TValue> Mat3<TValue>::CreateScaleMatrix(TValue _x, TValue _y)
+    inline MAZE_CONSTEXPR Mat3<TValue> Mat3<TValue>::CreateAffineScale(TValue _x, TValue _y)
     {
         return Mat3<TValue>(
             _x, 0,  0,
@@ -166,7 +166,7 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR Mat3<TValue> Mat3<TValue>::CreateScaleMatrix(TValue _x, TValue _y, TValue _z)
+    inline MAZE_CONSTEXPR Mat3<TValue> Mat3<TValue>::CreateAffineScale(TValue _x, TValue _y, TValue _z)
     {
         return Mat3<TValue>(
             _x, 0, 0,
@@ -176,23 +176,23 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR Mat3<TValue> Mat3<TValue>::CreateScaleMatrix(
-        Vec2<TValue> const& _vector)
+    inline MAZE_CONSTEXPR Mat3<TValue> Mat3<TValue>::CreateAffineScale(
+        Vec2<TValue> const& _v)
     {
-        return CreateScaleMatrix(_vector.x, _vector.y);
+        return CreateAffineScale(_v.x, _v.y);
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR Mat3<TValue> Mat3<TValue>::CreateScaleMatrix(
-        Vec3<TValue> const& _vector)
+    inline MAZE_CONSTEXPR Mat3<TValue> Mat3<TValue>::CreateAffineScale(
+        Vec3<TValue> const& _v)
     {
-        return CreateScaleMatrix(_vector.x, _vector.y, _vector.z);
+        return CreateAffineScale(_v.x, _v.y, _v.z);
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR Mat3<TValue> Mat3<TValue>::CreateAffineTransformMatrix(
+    inline MAZE_CONSTEXPR Mat3<TValue> Mat3<TValue>::CreateAffineTransform(
         const Vec2F& _pos,
         const Rotation2D& _rotation,
         const Vec2F& _scale)
@@ -205,17 +205,17 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    inline MAZE_CONSTEXPR Mat3<TValue> Mat3<TValue>::CreateAffineTransformMatrix(
+    inline MAZE_CONSTEXPR Mat3<TValue> Mat3<TValue>::CreateAffineTransform(
         const Vec2F& _pos,
         F32 _angle,
         const Vec2F& _scale)
     {
-        return CreateAffineTransformMatrix(_pos, Rotation2D(_angle), _scale);
+        return CreateAffineTransform(_pos, Rotation2D(_angle), _scale);
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline Mat3<TValue> Mat3<TValue>::CreateAffineTransformMatrix(
+    inline Mat3<TValue> Mat3<TValue>::CreateAffineTransform(
         const Vec2F& _pos,
         const Rotation2D& _rotation,
         const Vec2F& _scale,
@@ -236,15 +236,11 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    inline const TValue* Mat3<TValue>::getPlaneMatrix() const { return planeMatrix; }
-
-    //////////////////////////////////////////
-    template <class TValue>
-    inline void Mat3<TValue>::swap(Mat3<TValue>& _other)
+    inline void Mat3<TValue>::swap(Mat3<TValue>& _m)
     {
-        std::swap(m[0][0], _other.m[0][0]); std::swap(m[0][1], _other.m[0][1]); std::swap(m[0][2], _other.m[0][2]);
-        std::swap(m[1][0], _other.m[1][0]); std::swap(m[1][1], _other.m[1][1]); std::swap(m[1][2], _other.m[1][2]);
-        std::swap(m[2][0], _other.m[2][0]); std::swap(m[2][1], _other.m[2][1]); std::swap(m[2][2], _other.m[2][2]);
+        std::swap(m[0][0], _m[0][0]); std::swap(m[0][1], _m[0][1]); std::swap(m[0][2], _m[0][2]);
+        std::swap(m[1][0], _m[1][0]); std::swap(m[1][1], _m[1][1]); std::swap(m[1][2], _m[1][2]);
+        std::swap(m[2][0], _m[2][0]); std::swap(m[2][1], _m[2][1]); std::swap(m[2][2], _m[2][2]);
     }
 
     //////////////////////////////////////////
@@ -256,9 +252,9 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    inline void Mat3<TValue>::setRow(Size _row, Vec3<TValue> const& _vec)
+    inline void Mat3<TValue>::setRow(Size _row, Vec3<TValue> const& _v)
     {
-        *(Vec3<TValue>*)m[_row] = _vec;
+        *(Vec3<TValue>*)m[_row] = _v;
     }
 
     //////////////////////////////////////////
@@ -277,221 +273,236 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    inline void Mat3<TValue>::setColumn(Size _column, Vec3<TValue> const& _vec)
+    inline void Mat3<TValue>::setColumn(Size _column, Vec3<TValue> const& _v)
     {
-        m[0][_column] = _vec.x;
-        m[1][_column] = _vec.y;
-        m[2][_column] = _vec.z;
+        m[0][_column] = _v.x;
+        m[1][_column] = _v.y;
+        m[2][_column] = _v.z;
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline void Mat3<TValue>::setAxes(
-        const Vec3<TValue>& _xAxis,
-        const Vec3<TValue>& _yAxis,
-        const Vec3<TValue>& _zAxis)
+    inline Mat3<TValue>& Mat3<TValue>::operator=(Mat3<TValue> const& _m)
     {
-        setRow(0, _xAxis);
-        setRow(1, _yAxis);
-        setRow(2, _zAxis);
-    }
-
-    //////////////////////////////////////////
-    template <class TValue>
-    inline Mat3<TValue>& Mat3<TValue>::operator=(Mat3<TValue> const& _matrix)
-    {
-        memcpy(m, _matrix.m, 9 * sizeof(TValue));
+        memcpy(m, _m.m, 9 * sizeof(TValue));
         return *this;
     }
         
     //////////////////////////////////////////
     template <class TValue>
-    inline Mat3<TValue>& Mat3<TValue>::operator=(Mat3<TValue>&& _matrix)
+    inline Mat3<TValue>& Mat3<TValue>::operator=(Mat3<TValue>&& _m)
     {
-        memcpy(m, _matrix.m, 9 * sizeof(TValue));
+        memcpy(m, _m.m, 9 * sizeof(TValue));
         return *this;
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline bool Mat3<TValue>::operator==(Mat3<TValue> const& _m2) const
+    inline bool Mat3<TValue>::operator==(Mat3<TValue> const& _m) const
     {
-        if (
-           m[0][0] != _m2.m[0][0] || m[0][1] != _m2.m[0][1] || m[0][2] != _m2.m[0][2] ||
-           m[1][0] != _m2.m[1][0] || m[1][1] != _m2.m[1][1] || m[1][2] != _m2.m[1][2] ||
-           m[2][0] != _m2.m[2][0] || m[2][1] != _m2.m[2][1] || m[2][2] != _m2.m[2][2])
+        if (m[0][0] != _m[0][0] || m[0][1] != _m[0][1] || m[0][2] != _m[0][2] ||
+            m[1][0] != _m[1][0] || m[1][1] != _m[1][1] || m[1][2] != _m[1][2] ||
+            m[2][0] != _m[2][0] || m[2][1] != _m[2][1] || m[2][2] != _m[2][2])
             return false;
-
         return true;
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline bool Mat3<TValue>::operator!=(Mat3<TValue> const& _m2) const
+    inline bool Mat3<TValue>::operator!=(Mat3<TValue> const& _m) const
     {
-        if (
-            m[0][0] != _m2.m[0][0] || m[0][1] != _m2.m[0][1] || m[0][2] != _m2.m[0][2] ||
-            m[1][0] != _m2.m[1][0] || m[1][1] != _m2.m[1][1] || m[1][2] != _m2.m[1][2] ||
-            m[2][0] != _m2.m[2][0] || m[2][1] != _m2.m[2][1] || m[2][2] != _m2.m[2][2])
+        if (m[0][0] != _m[0][0] || m[0][1] != _m[0][1] || m[0][2] != _m[0][2] ||
+            m[1][0] != _m[1][0] || m[1][1] != _m[1][1] || m[1][2] != _m[1][2] ||
+            m[2][0] != _m[2][0] || m[2][1] != _m[2][1] || m[2][2] != _m[2][2])
             return true;
         return false;
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline Mat3<TValue> Mat3<TValue>::operator+(Mat3<TValue> const& _matrix) const
+    inline Mat3<TValue> Mat3<TValue>::operator+(Mat3<TValue> const& _m) const
     {
-        Mat3<TValue> sum;
+        Mat3<TValue> res;
         for (Size r = 0; r < 3; r++)
-        {
             for (Size c = 0; c < 3; c++)
-            {
-                sum.m[r][c] = m[r][c] + _matrix.m[r][c];
-            }
-        }
-        return sum;
+                res[r][c] = m[r][c] + _m[r][c];
+        return res;
     }
         
     //////////////////////////////////////////
     template <class TValue>
-    inline Mat3<TValue> Mat3<TValue>::operator-(Mat3<TValue> const& _matrix) const
+    inline Mat3<TValue> Mat3<TValue>::operator-(Mat3<TValue> const& _m) const
     {
-        Mat3<TValue> diff;
+        Mat3<TValue> res;
         for (Size r = 0; r < 3; r++)
-        {
             for (Size c = 0; c < 3; c++)
-            {
-                diff.m[r][c] = m[r][c] - _matrix.m[r][c];
-            }
-        }
-        return diff;
+                res[r][c] = m[r][c] - _m[r][c];
+        return res;
     }
         
     //////////////////////////////////////////
+    //
+    // [ m[0][0] m[0][1] m[0][2] ]   [ _m[0][0] _m[0][1] _m[0][2] ]
+    // | m[1][0] m[1][1] m[1][2] | * | _m[1][0] _m[1][1] _m[1][2] |
+    // [ m[2][0] m[2][1] m[2][2] ]   [ _m[2][0] _m[2][1] _m[2][2] ]
+    // 
+    //////////////////////////////////////////
     template <class TValue>
-    inline Mat3<TValue> Mat3<TValue>::operator*(Mat3<TValue> const& _matrix) const
+    inline Mat3<TValue> Mat3<TValue>::operator*(Mat3<TValue> const& _m) const
     {
-        Mat3<TValue> prod;
+        Mat3<TValue> res;
         for (Size r = 0; r < 3; r++)
         {
             for (Size c = 0; c < 3; c++)
             {
-                prod.m[r][c] =
-                    m[r][0] * _matrix.m[0][c] +
-                    m[r][1] * _matrix.m[1][c] +
-                    m[r][2] * _matrix.m[2][c];
+                res[r][c] =
+                    m[r][0] * _m[0][c] +
+                    m[r][1] * _m[1][c] +
+                    m[r][2] * _m[2][c];
             }
         }
-        return prod;
+        return res;
     }
         
     //////////////////////////////////////////
     template <class TValue>
     inline Mat3<TValue> Mat3<TValue>::operator-() const
     {
-        #pragma warning(push)
-        #pragma warning(disable : 4146)
+#pragma warning(push)
+#pragma warning(disable : 4146)
 
-        Mat3<TValue> neg;
+        Mat3<TValue> res;
         for (Size r = 0; r < 3; r++)
         {
             for (Size c = 0; c < 3; c++)
-                neg[r][c] = -m[r][c];
+                res[r][c] = -m[r][c];
         }
-        return neg;
+        return res;
 
-        #pragma warning(pop)
+#pragma warning(pop)
     }
 
     //////////////////////////////////////////
+    //
+    // [ m[0][0] m[0][1] 0 ]   [ _v.x ]
+    // | m[1][0] m[1][1] 0 | * | _v.y |
+    // [ m[2][0] m[2][1] 1 ]   [   0  ]
+    // 
+    //////////////////////////////////////////
     template <class TValue>
-    inline Vec2<TValue> Mat3<TValue>::operator*(Vec2<TValue> const& _vec) const
+    inline Vec2<TValue> Mat3<TValue>::operator*(Vec2<TValue> const& _v) const
     {
-        Vec2<TValue> prod;
+        Vec2<TValue> res;
         for (Size r = 0; r < 2; r++)
         {
-            prod[r] =
-                m[r][0] * _vec[0] +
-                m[r][1] * _vec[1];
+            res[r] =
+                m[r][0] * _v.x +
+                m[r][1] * _v.y;
         }
-        return prod;
+        return res;
     }
 
+    //////////////////////////////////////////
+    //
+    //                   [ m[0][0] m[0][1] m[0][2] ]
+    // [ _v.x _v.y 0 ] * | m[1][0] m[1][1] m[1][2] |
+    //                   [ m[2][0] m[2][1] m[2][2] ]
+    // 
     //////////////////////////////////////////
     template <class TValue = F32>
     inline Vec2<TValue> operator*(
-        Vec2<TValue> const& _vec,
-        Mat3<TValue> const& _matrix)
+        Vec2<TValue> const& _v,
+        Mat3<TValue> const& _m)
     {
-        Vec2<TValue> prod;
+        Vec2<TValue> res;
         for (Size c = 0; c < 2; c++)
         {
-            prod[c] =
-                _vec[0] * _matrix.m[0][c] +
-                _vec[1] * _matrix.m[1][c];
+            res[c] =
+                _v[0] * _m[0][c] +
+                _v[1] * _m[1][c];
         }
-        return prod;
+        return res;
     }
     
 
     //////////////////////////////////////////
+    //
+    // [ m[0][0] m[0][1] m[0][2] ]   [ _v.x ]
+    // | m[1][0] m[1][1] m[1][2] | * | _v.y |
+    // [ m[2][0] m[2][1] m[2][2] ]   [ _v.z ]
+    // 
+    //////////////////////////////////////////
     template <class TValue>
-    inline Vec3<TValue> Mat3<TValue>::operator*(Vec3<TValue> const& _vec) const
+    inline Vec3<TValue> Mat3<TValue>::operator*(Vec3<TValue> const& _v) const
     {
-        Vec3<TValue> prod;
+        Vec3<TValue> res;
         for (Size r = 0; r < 3; r++)
         {
-            prod[r] =
-                m[r][0] * _vec[0] +
-                m[r][1] * _vec[1] +
-                m[r][2] * _vec[2];
+            res[r] =
+                m[r][0] * _v[0] +
+                m[r][1] * _v[1] +
+                m[r][2] * _v[2];
         }
-        return prod;
+        return res;
     }
 
     //////////////////////////////////////////
+    //
+    //                      [ m[0][0] m[0][1] m[0][2] ]
+    // [ _v.x _v.y _v.z ] * | m[1][0] m[1][1] m[1][2] |
+    //                      [ m[2][0] m[2][1] m[2][2] ]
+    // 
+    //////////////////////////////////////////
     template <class TValue = F32>
     inline Vec3<TValue> operator*(
-        Vec3<TValue> const& _vec,
-        Mat3<TValue> const& _matrix)
+        Vec3<TValue> const& _v,
+        Mat3<TValue> const& _m)
     {
-        Vec3<TValue> prod;
+        Vec3<TValue> res;
         for (Size c = 0; c < 3; c++)
         {
-            prod[c] =
-                _vec[0] * _matrix.m[0][c] +
-                _vec[1] * _matrix.m[1][c] +
-                _vec[2] * _matrix.m[2][c];
+            res[c] =
+                _v[0] * _m[0][c] +
+                _v[1] * _m[1][c] +
+                _v[2] * _m[2][c];
         }
-        return prod;
+        return res;
     }
 
+    //////////////////////////////////////////
+    //
+    // [ m[0][0] m[0][1] m[0][2] ]   
+    // | m[1][0] m[1][1] m[1][2] | * _value
+    // [ m[2][0] m[2][1] m[2][2] ]   
+    // 
     //////////////////////////////////////////
     template <class TValue>
     inline Mat3<TValue> Mat3<TValue>::operator*(TValue _value) const
     {
-        Mat3 prod;
+        Mat3 res;
         for (Size r = 0; r < 3; r++)
-        {
             for (Size c = 0; c < 3; c++)
-                prod[r][c] = m[r][c] * _value;
-        }
-        return prod;
+                res[r][c] = m[r][c] * _value;
+        return res;
     }
     
+    //////////////////////////////////////////
+    //
+    //          [ m[0][0] m[0][1] m[0][2] ]
+    // _value * | m[1][0] m[1][1] m[1][2] |
+    //          [ m[2][0] m[2][1] m[2][2] ]
+    // 
     //////////////////////////////////////////
     template <class TValue = F32>
     inline Mat3<TValue> operator*(
         TValue _value,
-        Mat3<TValue> const& _matrix)
+        Mat3<TValue> const& _m)
     {
-        Mat3<TValue> prod;
+        Mat3<TValue> res;
         for (Size r = 0; r < 3; r++)
-        {
             for (Size c = 0; c < 3; c++)
-                prod[r][c] = _value * _matrix.m[r][c];
-        }
-        return prod;
+                res[r][c] = _value * _m[r][c];
+        return res;
     }
 
     //////////////////////////////////////////
@@ -502,38 +513,50 @@ namespace Maze
     }
         
     //////////////////////////////////////////
+    //
+    // [ m[0][0] m[0][1] 0 ]   [ _m[0][0] _m[0][1] 0 ]
+    // | m[1][0] m[1][1] 0 | * | _m[1][0] _m[1][1] 0 |
+    // [ m[2][0] m[2][1] 1 ]   [ _m[2][0] _m[2][1] 1 ]
+    // 
+    //////////////////////////////////////////
     template <class TValue>
-    inline void Mat3<TValue>::concatenateAffine(
-        Mat3<TValue> const& _m2,
+    inline void Mat3<TValue>::transformAffine(
+        Mat3<TValue> const& _m,
         Mat3<TValue>& _out) const
     {
-        _out[0][0] = m[0][0] * _m2.m[0][0] + m[1][0] * _m2.m[0][1];
-        _out[0][1] = m[0][1] * _m2.m[0][0] + m[1][1] * _m2.m[0][1];
+        _out[0][0] = m[0][0] * _m[0][0] + m[1][0] * _m[0][1];
+        _out[0][1] = m[0][1] * _m[0][0] + m[1][1] * _m[0][1];
         _out[0][2] = 0;
 
-        _out[1][0] = m[0][0] * _m2.m[1][0] + m[1][0] * _m2.m[1][1];
-        _out[1][1] = m[0][1] * _m2.m[1][0] + m[1][1] * _m2.m[1][1];
+        _out[1][0] = m[0][0] * _m[1][0] + m[1][0] * _m[1][1];
+        _out[1][1] = m[0][1] * _m[1][0] + m[1][1] * _m[1][1];
         _out[1][2] = 0;
 
-        _out[2][0] = m[0][0] * _m2.m[2][0] + m[1][0] * _m2.m[2][1] + m[2][0];     
-        _out[2][1] = m[0][1] * _m2.m[2][0] + m[1][1] * _m2.m[2][1] + m[2][1];
+        _out[2][0] = m[0][0] * _m[2][0] + m[1][0] * _m[2][1] + m[2][0];     
+        _out[2][1] = m[0][1] * _m[2][0] + m[1][1] * _m[2][1] + m[2][1];
         _out[2][2] = 1;
     }
         
     //////////////////////////////////////////
+    //
+    // [ m[0][0] m[0][1] 0 ]   [ _m00 _m01 0 ]
+    // | m[1][0] m[1][1] 0 | * | _m10 _m11 0 |
+    // [ m[2][0] m[2][1] 1 ]   [ _x   _y   1 ]
+    // 
+    //////////////////////////////////////////
     template <class TValue>
-    inline void Mat3<TValue>::concatenateAffine(
-        TValue _value00, TValue _value01,
-        TValue _value10, TValue _value11,
+    inline void Mat3<TValue>::transformAffine(
+        TValue _m00, TValue _m01,
+        TValue _m10, TValue _m11,
         TValue _x, TValue _y,
         Mat3<TValue>& _out) const
     {
-        _out[0][0] = m[0][0] * _value00 + m[1][0] * _value01;
-        _out[0][1] = m[0][1] * _value00 + m[1][1] * _value01;
+        _out[0][0] = m[0][0] * _m00 + m[1][0] * _m01;
+        _out[0][1] = m[0][1] * _m00 + m[1][1] * _m01;
         _out[0][2] = 0;
 
-        _out[1][0] = m[0][0] * _value10 + m[1][0] * _value11;
-        _out[1][1] = m[0][1] * _value10 + m[1][1] * _value11;
+        _out[1][0] = m[0][0] * _m10 + m[1][0] * _m11;
+        _out[1][1] = m[0][1] * _m10 + m[1][1] * _m11;
         _out[1][2] = 0;
 
         _out[2][0] = m[0][0] * _x + m[1][0] * _y + m[2][0];
@@ -543,10 +566,10 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    inline Mat3<TValue> Mat3<TValue>::concatenatedAffineCopy(Mat3<TValue> const& _m2) const
+    inline Mat3<TValue> Mat3<TValue>::transformAffine(Mat3<TValue> const& _m) const
     {
         Mat3<TValue> res;
-        concatenateAffine(_m2, res);
+        transformAffine(_m, res);
         return res;
     }
 
@@ -628,20 +651,20 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    //
-    //                     [ m[0][0] m[0][1] m[0][2] ]
-    // [_v.x, _v.y, 1.0] * | m[1][0] m[1][1] m[1][2] |
-    //                     [ m[2][0] m[2][1] m[2][2] ]
-    // 
-    //////////////////////////////////////////
     template <class TValue>
     inline Vec2<TValue> Mat3<TValue>::transformAffine(Vec2<TValue> const& _v) const
     {
-        return Vec2<TValue>(
-                _v.x * m[0][0] + _v.y * m[1][0] + m[2][0],
-                _v.x * m[0][1] + _v.y * m[1][1] + m[2][1]);
+        Vec2<TValue> res;
+        transformAffine(_v.x, _v.y, res.x, res.y);
+        return res;
     }
         
+    //////////////////////////////////////////
+    //
+    //                   [ m[0][0] m[0][1] 0 ]
+    // [_inX, _inY, 0] * | m[1][0] m[1][1] 0 |
+    //                   [ m[2][0] m[2][1] 1 ]
+    // 
     //////////////////////////////////////////
     template <class TValue>
     inline void Mat3<TValue>::transformAffine(
@@ -655,6 +678,12 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    //
+    //                [ m[0][0] m[0][1] 0 ]
+    // [_inX, 0, 0] * | m[1][0] m[1][1] 0 |
+    //                [ m[2][0] m[2][1] 1 ]
+    // 
+    //////////////////////////////////////////
     template <class TValue>
     inline void Mat3<TValue>::transformAffineX(
         TValue const& _inX, 
@@ -665,6 +694,12 @@ namespace Maze
         _outY = _inX * m[0][1] + m[2][1];
     }
 
+    //////////////////////////////////////////
+    //
+    //                [ m[0][0] m[0][1] 0 ]
+    // [0, _inY, 0] * | m[1][0] m[1][1] 0 |
+    //                [ m[2][0] m[2][1] 1 ]
+    // 
     //////////////////////////////////////////
     template <class TValue>
     inline void Mat3<TValue>::transformAffineY(
@@ -697,12 +732,11 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    inline bool Mat3<TValue>::compareAffine(Mat3 const& _m2) const
+    inline bool Mat3<TValue>::compareAffine(Mat3 const& _m) const
     {
-        if (
-            !Math::Equal<TValue>(m[0][0], _m2.m[0][0], c_epsilon) || !Math::Equal<TValue>(m[0][1], _m2.m[0][1], c_epsilon) ||
-            !Math::Equal<TValue>(m[1][0], _m2.m[1][0], c_epsilon) || !Math::Equal<TValue>(m[1][1], _m2.m[1][1], c_epsilon) ||
-            !Math::Equal<TValue>(m[2][0], _m2.m[2][0], c_epsilon) || !Math::Equal<TValue>(m[2][1], _m2.m[2][1], c_epsilon))
+        if (!Math::Equal<TValue>(m[0][0], _m[0][0], c_epsilon) || !Math::Equal<TValue>(m[0][1], _m[0][1], c_epsilon) ||
+            !Math::Equal<TValue>(m[1][0], _m[1][0], c_epsilon) || !Math::Equal<TValue>(m[1][1], _m[1][1], c_epsilon) ||
+            !Math::Equal<TValue>(m[2][0], _m[2][0], c_epsilon) || !Math::Equal<TValue>(m[2][1], _m[2][1], c_epsilon))
             return false;
         return true;
     }
@@ -712,31 +746,31 @@ namespace Maze
     template <class TValue>
     Mat3<TValue> Mat3<TValue>::transpose() const
     {
-        Mat3<TValue> transposedMat;
+        Mat3<TValue> res;
         for (Size r = 0; r < 3; r++)
             for (Size c = 0; c < 3; c++)
-                transposedMat[r][c] = m[c][r];
-        return transposedMat;
+                res[r][c] = m[c][r];
+        return res;
     }
     
     //////////////////////////////////////////
     template <class TValue>
-    bool Mat3<TValue>::inverse(Mat3<TValue>& _matrix, TValue _tolerance) const
+    bool Mat3<TValue>::inverse(Mat3<TValue>& _out, TValue _tolerance) const
     {
-        _matrix[0][0] = m[1][1] * m[2][2] - m[1][2] * m[2][1];
-        _matrix[0][1] = m[0][2] * m[2][1] - m[0][1] * m[2][2];
-        _matrix[0][2] = m[0][1] * m[1][2] - m[0][2] * m[1][1];
-        _matrix[1][0] = m[1][2] * m[2][0] - m[1][0] * m[2][2];
-        _matrix[1][1] = m[0][0] * m[2][2] - m[0][2] * m[2][0];
-        _matrix[1][2] = m[0][2] * m[1][0] - m[0][0] * m[1][2];
-        _matrix[2][0] = m[1][0] * m[2][1] - m[1][1] * m[2][0];
-        _matrix[2][1] = m[0][1] * m[2][0] - m[0][0] * m[2][1];
-        _matrix[2][2] = m[0][0] * m[1][1] - m[0][1] * m[1][0];
+        _out[0][0] = m[1][1] * m[2][2] - m[1][2] * m[2][1];
+        _out[0][1] = m[0][2] * m[2][1] - m[0][1] * m[2][2];
+        _out[0][2] = m[0][1] * m[1][2] - m[0][2] * m[1][1];
+        _out[1][0] = m[1][2] * m[2][0] - m[1][0] * m[2][2];
+        _out[1][1] = m[0][0] * m[2][2] - m[0][2] * m[2][0];
+        _out[1][2] = m[0][2] * m[1][0] - m[0][0] * m[1][2];
+        _out[2][0] = m[1][0] * m[2][1] - m[1][1] * m[2][0];
+        _out[2][1] = m[0][1] * m[2][0] - m[0][0] * m[2][1];
+        _out[2][2] = m[0][0] * m[1][1] - m[0][1] * m[1][0];
         
         TValue det =
-            m[0][0] * _matrix[0][0] +
-            m[0][1] * _matrix[1][0] +
-            m[0][2] * _matrix[2][0];
+            m[0][0] * _out[0][0] +
+            m[0][1] * _out[1][0] +
+            m[0][2] * _out[2][0];
         
         if (Math::Abs(det) <= _tolerance)
             return false;
@@ -744,7 +778,7 @@ namespace Maze
         TValue invDet = 1 / det;
         for (Size r = 0; r < 3; r++)
             for (Size c = 0; c < 3; c++)
-                _matrix[r][c] *= invDet;
+                _out[r][c] *= invDet;
         
         return true;
     }
@@ -753,17 +787,17 @@ namespace Maze
     template <class TValue>
     Mat3<TValue> Mat3<TValue>::inverse(TValue _tolerance) const
     {
-        Mat3 matrix;
-        inverse(matrix, _tolerance);
-        return matrix;
+        Mat3 res;
+        inverse(res, _tolerance);
+        return res;
     }
     
     //////////////////////////////////////////
     template <class TValue>
     Mat3<TValue> Mat3<TValue>::inverseAffine() const
     {
-        #pragma warning(push)
-        #pragma warning(disable : 4146)
+#pragma warning(push)
+#pragma warning(disable : 4146)
         
         Mat3<TValue> matrix;
         
@@ -789,7 +823,7 @@ namespace Maze
         
         return matrix;
         
-        #pragma warning(pop)
+#pragma warning(pop)
     }
     
     //////////////////////////////////////////
@@ -828,25 +862,25 @@ namespace Maze
 
     //////////////////////////////////////////
     template <class TValue>
-    inline CString Mat3<TValue>::ParseString(CString _string, Size _size, Mat3& _result, Char _separator)
+    inline CString Mat3<TValue>::ParseString(CString _string, Size _size, Mat3& _out, Char _separator)
     {
         CString end = _string + _size;
 
         S32 i = 0;
         for (; i < 8; ++i)
         {
-            _string = StringHelper::ParseNumber<TValue>(_string, end, _result.planeMatrix[i]);
+            _string = StringHelper::ParseNumber<TValue>(_string, end, _out.planeMatrix[i]);
             _string = StringHelper::SkipChar(_string, end, ' ');
             _string = StringHelper::SkipChar(_string, end, _separator);
             _string = StringHelper::SkipChar(_string, end, ' ');
         }
-        _string = StringHelper::ParseNumber<TValue>(_string, end, _result.planeMatrix[i]);
+        _string = StringHelper::ParseNumber<TValue>(_string, end, _out.planeMatrix[i]);
         return _string;
     }
 
     //////////////////////////////////////////
     template <class TValue>
-    inline CString Mat3<TValue>::ParseStringPretty(CString _string, Size _size, Mat3& _result, Char _separator)
+    inline CString Mat3<TValue>::ParseStringPretty(CString _string, Size _size, Mat3& _out, Char _separator)
     {
         TValue v;
 
@@ -859,17 +893,17 @@ namespace Maze
             _string = StringHelper::SkipChar(_string, end, ' ');
 
             _string = StringHelper::ParseNumber<TValue>(_string, end, v);
-            _result[i][0] = v;
+            _out[i][0] = v;
             _string = StringHelper::SkipChar(_string, end, ' ');
             _string = StringHelper::ExpectSkipChar(_string, end, _separator);
             _string = StringHelper::SkipChar(_string, end, ' ');
             _string = StringHelper::ParseNumber<TValue>(_string, end, v);
-            _result[i][1] = v;
+            _out[i][1] = v;
             _string = StringHelper::SkipChar(_string, end, ' ');
             _string = StringHelper::ExpectSkipChar(_string, end, _separator);
             _string = StringHelper::SkipChar(_string, end, ' ');
             _string = StringHelper::ParseNumber<TValue>(_string, end, v);
-            _result[i][2] = v;
+            _out[i][2] = v;
 
             _string = StringHelper::SkipChar(_string, end, ' ');
             _string = StringHelper::ExpectSkipChar(_string, end, ']', 1);

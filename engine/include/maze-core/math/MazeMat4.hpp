@@ -79,7 +79,7 @@ namespace Maze
         inline explicit Mat4(TValue const _arr[4][4]);
 
         //////////////////////////////////////////
-        inline Mat4(Mat4 const& _matrix);
+        inline Mat4(Mat4 const& _m);
 
         //////////////////////////////////////////
         inline Mat4(Mat3<TValue> const& _mat3);
@@ -99,64 +99,64 @@ namespace Maze
             TValue _value30, TValue _value31, TValue _value32, TValue _value33);
 
         //////////////////////////////////////////
-        static inline MAZE_CONSTEXPR Mat4 CreateBasisMatrix(
-            Vec3<TValue> const& _xBasis,
-            Vec3<TValue> const& _yBasis,
-            Vec3<TValue> const& _zBasis);
+        static inline MAZE_CONSTEXPR Mat4 CreateAffineBasis(
+            Vec3<TValue> const& _right,
+            Vec3<TValue> const& _up,
+            Vec3<TValue> const& _forward);
 
         //////////////////////////////////////////
-        static inline MAZE_CONSTEXPR Mat4 CreateTranslationMatrix(TValue _x, TValue _y, TValue _z = 0);
+        static inline MAZE_CONSTEXPR Mat4 CreateAffineTranslation(TValue _x, TValue _y, TValue _z = 0);
 
         //////////////////////////////////////////
-        static inline MAZE_CONSTEXPR Mat4 CreateTranslationMatrix(Vec2<TValue> const& _vector);
+        static inline MAZE_CONSTEXPR Mat4 CreateAffineTranslation(Vec2<TValue> const& _v);
 
         //////////////////////////////////////////
-        static inline MAZE_CONSTEXPR Mat4 CreateTranslationMatrix(Vec3<TValue> const& _vector);
+        static inline MAZE_CONSTEXPR Mat4 CreateAffineTranslation(Vec3<TValue> const& _v);
 
         //////////////////////////////////////////
-        static inline MAZE_CONSTEXPR Mat4 CreateRotationZMatrix(Rotation2D const& _rotation);
+        static inline MAZE_CONSTEXPR Mat4 CreateAffineRotationZ(Rotation2D const& _rotation);
 
         //////////////////////////////////////////
-        static inline Mat4 CreateRotationXMatrix(F32 _angle);
+        static inline Mat4 CreateAffineRotationX(F32 _angle);
 
         //////////////////////////////////////////
-        static inline Mat4 CreateRotationYMatrix(F32 _angle);
+        static inline Mat4 CreateAffineRotationY(F32 _angle);
 
         //////////////////////////////////////////
-        static inline Mat4 CreateRotationZMatrix(F32 _angle);
+        static inline Mat4 CreateAffineRotationZ(F32 _angle);
 
         //////////////////////////////////////////
-        static inline Mat4 CreateRotationMatrix(F32 _angleX, F32 _angleY, F32 _angleZ);
+        static inline Mat4 CreateAffineRotation(F32 _angleX, F32 _angleY, F32 _angleZ);
 
         //////////////////////////////////////////
-        static inline Mat4 CreateRotationMatrix(Vec3F const& _angles)
+        static inline Mat4 CreateAffineRotation(Vec3F const& _angles)
         {
-            return CreateRotationMatrix(_angles.x, _angles.y, _angles.z);
+            return CreateAffineRotation(_angles.x, _angles.y, _angles.z);
         }
 
         //////////////////////////////////////////
-        static inline MAZE_CONSTEXPR Mat4 CreateScaleMatrix(TValue _x, TValue _y, TValue _z = 1);
+        static inline MAZE_CONSTEXPR Mat4 CreateAffineScale(TValue _x, TValue _y, TValue _z = 1);
 
         //////////////////////////////////////////
-        static inline MAZE_CONSTEXPR Mat4 CreateScaleMatrix(Vec2<TValue> const& _vector);
+        static inline MAZE_CONSTEXPR Mat4 CreateAffineScale(Vec2<TValue> const& _v);
 
         //////////////////////////////////////////
-        static inline MAZE_CONSTEXPR Mat4 CreateScaleMatrix(Vec3<TValue> const& _vector);
+        static inline MAZE_CONSTEXPR Mat4 CreateAffineScale(Vec3<TValue> const& _v);
 
         //////////////////////////////////////////
-        static inline MAZE_CONSTEXPR Mat4 CreateScaleMatrix(TValue _value)
+        static inline MAZE_CONSTEXPR Mat4 CreateAffineScale(TValue _value)
         {
-            return CreateScaleMatrix(_value, _value, _value);
+            return CreateAffineScale(_value, _value, _value);
         }
 
         //////////////////////////////////////////
-        static inline MAZE_CONSTEXPR Mat4 CreateAffineTansformMatrix(
+        static inline MAZE_CONSTEXPR Mat4 CreateAffineTransform(
             Vec2<TValue> const& _pos,
             Rotation2D& _rotation,
             Vec2<TValue> const& _scale);
 
         //////////////////////////////////////////
-        static inline Mat4 CreateAffineTransformMatrix(
+        static inline Mat4 CreateAffineTransform(
             Vec2<TValue> const& _pos,
             Rotation2D& _rotation,
             Vec2<TValue> const& _scale,
@@ -185,7 +185,7 @@ namespace Maze
             F32 _h);
 
         //////////////////////////////////////////
-        static inline Mat4 CreateLookAtMatrix(
+        static inline Mat4 CreateAffineLookAt(
             Vec3<TValue> const& _from,
             Vec3<TValue> const& _to,
             Vec3<TValue> const& _up = Vec3<TValue>(0, 1, 0));
@@ -200,7 +200,7 @@ namespace Maze
         inline Vec4<TValue> getRow(Size _row) const;
 
         //////////////////////////////////////////
-        inline void setRow(Size _row, Vec4<TValue> const& _vec);
+        inline void setRow(Size _row, Vec4<TValue> const& _v);
 
         //////////////////////////////////////////
         inline TValue* operator[](Size _row) const;
@@ -209,37 +209,34 @@ namespace Maze
         inline Vec4<TValue> getColumn(Size _column) const;
 
         //////////////////////////////////////////
-        inline void setColumn(Size _column, Vec4<TValue> const& _vec);
+        inline void setColumn(Size _column, Vec4<TValue> const& _v);
 
         //////////////////////////////////////////
-        inline Mat4& operator=(Mat4 const& _matrix);
+        inline Mat4& operator=(Mat4 const& _m);
 
         //////////////////////////////////////////
-        inline bool operator==(Mat4 const& _m2) const;
+        inline bool operator==(Mat4 const& _m) const;
 
         //////////////////////////////////////////
-        inline bool operator!=(Mat4 const& _m2) const;
+        inline bool operator!=(Mat4 const& _m) const;
 
         //////////////////////////////////////////
-        inline void concatenate(Mat4 const& _m2);
+        inline void multiply(Mat4 const& _m);
 
         //////////////////////////////////////////
-        inline Mat4 concatenatedCopy(Mat4 const& _m2) const;
+        inline Mat4 multiplied(Mat4 const& _m) const;
 
         //////////////////////////////////////////
-        inline Mat4 operator*(Mat4 const& _m2) const;
-
-        //////////////////////////////////////////
-        inline Vec3<TValue> operator*(Vec3<TValue> const& _v) const;
+        inline Mat4 operator*(Mat4 const& _m) const;
 
         //////////////////////////////////////////
         inline Vec4<TValue> operator*(Vec4<TValue> const& _v) const;
 
         //////////////////////////////////////////
-        inline Mat4 operator+(Mat4 const& _m2) const;
+        inline Mat4 operator+(Mat4 const& _m) const;
 
         //////////////////////////////////////////
-        inline Mat4 operator-(Mat4 const& _m2) const;
+        inline Mat4 operator-(Mat4 const& _m) const;
 
         //////////////////////////////////////////
         inline void operator=(Mat3<TValue> const& _mat3);
@@ -260,25 +257,22 @@ namespace Maze
         inline MAZE_CONSTEXPR Vec2<TValue> getAffineTranslation2D() const;
 
         //////////////////////////////////////////
-        // inline MAZE_CONSTEXPR14 Vec3<TValue> getAffineRotationEulerAngles() const;
-
-        //////////////////////////////////////////
         inline MAZE_CONSTEXPR Mat4 operator*(F32 _scalar) const;
 
         //////////////////////////////////////////
         inline MAZE_CONSTEXPR bool isAffine() const;
 
         //////////////////////////////////////////
-        Mat4 inversedCopy() const;
+        Mat4 inversed() const;
 
         //////////////////////////////////////////
-        Mat4 inversedAffineCopy() const;
+        Mat4 inversedAffine() const;
 
         //////////////////////////////////////////
-        inline Mat4 concatenatedAffineCopy(Mat4 const& _m2) const;
+        inline Mat4 transformAffine(Mat4 const& _m) const;
 
         //////////////////////////////////////////
-        inline void concatenateAffine(Mat4 const& _m2, Mat4& _out) const;
+        inline void transformAffine(Mat4 const& _m, Mat4& _out) const;
 
         //////////////////////////////////////////
         inline Vec2<TValue> transformAffine(Vec2<TValue> const& _v) const;
@@ -296,10 +290,10 @@ namespace Maze
         inline Vec4<TValue> transformAffine(Vec4<TValue> const& _v) const;
 
         //////////////////////////////////////////
-        inline bool compareAffine(Mat3<TValue> const& _m2) const;
+        inline bool compareAffine(Mat3<TValue> const& _m) const;
 
         //////////////////////////////////////////
-        inline bool compareAffine(Mat4 const& _m2) const;
+        inline bool compareAffine(Mat4 const& _m) const;
 
         //////////////////////////////////////////
         inline MAZE_CONSTEXPR TValue getAffineScaleXSignless() const;
@@ -321,23 +315,17 @@ namespace Maze
 
 
         //////////////////////////////////////////
-        inline void getMat3(Mat3<TValue>& _mat) const
-        {
-            _mat.m[0][0] = m[0][0]; _mat.m[0][1] = m[0][1]; _mat.m[0][2] = m[0][2];
-            _mat.m[1][0] = m[1][0]; _mat.m[1][1] = m[1][1]; _mat.m[1][2] = m[1][2];
-            _mat.m[2][0] = m[2][0]; _mat.m[2][1] = m[2][1]; _mat.m[2][2] = m[2][2];
-        }
-
+        inline void getMat3(Mat3<TValue>& _mat) const;
 
 
         //////////////////////////////////////////
         inline String toString(Char _separator = ',') const;
 
         //////////////////////////////////////////
-        static inline CString ParseString(CString _string, Size _size, Mat4& _result, Char _separator = ',');
+        static inline CString ParseString(CString _string, Size _size, Mat4& _out, Char _separator = ',');
 
         //////////////////////////////////////////
-        static inline CString ParseStringPretty(CString _string, Size _size, Mat4& _result, Char _separator = ',');
+        static inline CString ParseStringPretty(CString _string, Size _size, Mat4& _out, Char _separator = ',');
 
         //////////////////////////////////////////
         static inline Mat4 FromString(CString _string, Size _size, Char _separator = ',');

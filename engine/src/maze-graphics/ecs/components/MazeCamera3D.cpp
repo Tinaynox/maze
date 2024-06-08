@@ -132,7 +132,7 @@ namespace Maze
         Mat4F const& cameraTransform = getTransform()->getWorldTransform();
         Mat4F projectionMatrix = calculateProjectionMatrix(getRenderTarget());
 
-        Vec4F positionVS = cameraTransform.inversedAffineCopy().transformAffine(_positionWS);
+        Vec4F positionVS = cameraTransform.inversedAffine().transformAffine(_positionWS);
         Vec4F positionCS = positionVS * projectionMatrix;
 
         Vec2F positionNDC = Vec2F(positionCS.x, positionCS.y) / positionCS.w;
@@ -158,7 +158,7 @@ namespace Maze
 
         Vec4F positionCS = positionNDC;
         
-        Vec4F positionVS = positionCS * projectionMatrix.inversedCopy();
+        Vec4F positionVS = positionCS * projectionMatrix.inversed();
         positionVS.w = 1.0;
         Vec4F positionWS = cameraTransform * positionVS;
 
@@ -181,7 +181,7 @@ namespace Maze
         Vec4F positionNDC = Vec4F((p * 2.0f - 1.0f), -1.0f, 1.0f);
         Vec4F positionCS = positionNDC;
 
-        Vec4F positionVS = positionCS * projectionMatrix.inversedCopy();
+        Vec4F positionVS = positionCS * projectionMatrix.inversed();
         positionVS.w = 1.0;
         Vec4F positionWS = cameraTransform.transformAffine(positionVS);
 

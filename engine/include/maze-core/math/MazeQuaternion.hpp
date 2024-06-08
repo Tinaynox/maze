@@ -228,7 +228,7 @@ namespace Maze
         Quaternion operator*(Quaternion const& _q) const;
 
         //////////////////////////////////////////
-        Quaternion inversedCopy() const;
+        Quaternion inversed() const;
 
         //////////////////////////////////////////
         Quaternion inversedUnitCopy() const;

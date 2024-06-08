@@ -71,9 +71,9 @@ namespace Maze
             F32& _dist)
         {
             Vec3F cubeRight = _cubeUp.crossProduct(_cubeForward).normalizedCopy();
-            Mat4F cubeTransform = Mat4F::CreateBasisMatrix(cubeRight, _cubeUp, _cubeForward).concatenatedAffineCopy(
-                Mat4F::CreateScaleMatrix(_cubeScale * 0.5f));
-            cubeTransform = cubeTransform.inversedAffineCopy();
+            Mat4F cubeTransform = Mat4F::CreateAffineBasis(cubeRight, _cubeUp, _cubeForward).transformAffine(
+                Mat4F::CreateAffineScale(_cubeScale * 0.5f));
+            cubeTransform = cubeTransform.inversedAffine();
 
             Ray localRay(
                 cubeTransform.transformAffine(_rayPoint - _cubeCenter),
@@ -203,7 +203,7 @@ namespace Maze
 
             Vec3F _cylinderUp = _cylinderForward.perpendicular();
             Vec3F cylinderRight = _cylinderUp.crossProduct(_cylinderForward).normalizedCopy();
-            Mat4F cylinderTransform = Mat4F::CreateBasisMatrix(cylinderRight, _cylinderUp, _cylinderForward).inversedAffineCopy();
+            Mat4F cylinderTransform = Mat4F::CreateAffineBasis(cylinderRight, _cylinderUp, _cylinderForward).inversedAffine();
 
             Ray localRay(
                 cylinderTransform.transformAffine(_rayPoint - _cylinderCenter),
@@ -286,9 +286,9 @@ namespace Maze
             Vec3F coneUp = _coneForward.perpendicular();
             Vec3F coneRight = coneUp.crossProduct(_coneForward).normalizedCopy();
             Mat4F coneTransform =
-                Mat4F::CreateBasisMatrix(coneRight, coneUp, _coneForward).concatenatedAffineCopy(
-                    Mat4F::CreateScaleMatrix(_coneRadius, _coneRadius, _coneHeight));
-            coneTransform = coneTransform.inversedAffineCopy();
+                Mat4F::CreateAffineBasis(coneRight, coneUp, _coneForward).transformAffine(
+                    Mat4F::CreateAffineScale(_coneRadius, _coneRadius, _coneHeight));
+            coneTransform = coneTransform.inversedAffine();
 
             Ray localRay(
                 coneTransform.transformAffine(_rayPoint - _coneOrigin) - Vec3F::c_unitZ,
@@ -359,8 +359,8 @@ namespace Maze
         {
             Vec3F torusUp = _torusForward.perpendicular();
             Vec3F torusRight = torusUp.crossProduct(_torusForward).normalizedCopy();
-            Mat4F torusTransform = Mat4F::CreateBasisMatrix(torusRight, torusUp, _torusForward);
-            torusTransform = torusTransform.inversedAffineCopy();
+            Mat4F torusTransform = Mat4F::CreateAffineBasis(torusRight, torusUp, _torusForward);
+            torusTransform = torusTransform.inversedAffine();
 
             Ray localRay(
                 torusTransform.transformAffine(_rayPoint - _torusOrigin),

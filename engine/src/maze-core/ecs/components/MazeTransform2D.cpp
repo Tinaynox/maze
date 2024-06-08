@@ -291,7 +291,7 @@ namespace Maze
     //////////////////////////////////////////
     Mat4F const& Transform2D::calculateLocalTransform()
     {
-        m_localTransform = Mat4F::CreateAffineTransformMatrix(
+        m_localTransform = Mat4F::CreateAffineTransform(
             m_localPosition,
             m_localRotation,
             m_localScale,
@@ -318,10 +318,10 @@ namespace Maze
     {
         if (m_parent)
         {
-            Mat4F anchorMatrix = Mat4F::CreateTranslationMatrix(m_parent->getSize() * getAnchor());
+            Mat4F anchorMatrix = Mat4F::CreateAffineTranslation(m_parent->getSize() * getAnchor());
 
-            m_parent->getWorldTransform().concatenateAffine(
-                anchorMatrix.concatenatedAffineCopy(getLocalTransform()),
+            m_parent->getWorldTransform().transformAffine(
+                anchorMatrix.transformAffine(getLocalTransform()),
                 m_worldTransform);
         }
         else

@@ -193,9 +193,9 @@ namespace Maze
         m_localRotation.toRotationMatrix(rotationMatrix);
 
         m_localTransform = 
-            Mat4F::CreateTranslationMatrix(m_localPosition).concatenatedAffineCopy(
-                rotationMatrix).concatenatedAffineCopy(
-                    Mat4F::CreateScaleMatrix(m_localScale));
+            Mat4F::CreateAffineTranslation(m_localPosition).transformAffine(
+                rotationMatrix).transformAffine(
+                    Mat4F::CreateAffineScale(m_localScale));
 
         m_flags &= ~Flags::LocalTransformDirty;
         m_flags |= Flags::WorldTransformDirty;
@@ -217,7 +217,7 @@ namespace Maze
     {
         if (m_parent)
         {
-            Mat4F localTransform = m_parent->getWorldTransform().inversedAffineCopy() * _transform;
+            Mat4F localTransform = m_parent->getWorldTransform().inversedAffine() * _transform;
             setLocalTransform(localTransform);
         }
         else
@@ -230,7 +230,7 @@ namespace Maze
     Mat4F const& Transform3D::calculateWorldTransform()
     {
         if (m_parent)
-            m_parent->getWorldTransform().concatenateAffine(getLocalTransform(), m_worldTransform);
+            m_parent->getWorldTransform().transformAffine(getLocalTransform(), m_worldTransform);
         else
             m_worldTransform = getLocalTransform();
 

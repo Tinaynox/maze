@@ -114,7 +114,7 @@ namespace Maze
             {
                 //Vec3F rotation = _particleSystemWorldTransform.getAffineRotationEulerAngles();
                 Vec3F rotation = Quaternion::GetEuler(_particleSystemWorldTransform);
-                directionTransformMat = Mat4F::CreateRotationMatrix(rotation);
+                directionTransformMat = Mat4F::CreateAffineRotation(rotation);
             }
             
             

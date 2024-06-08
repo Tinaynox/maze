@@ -76,8 +76,8 @@ namespace Maze
 
         F32 cameraDistance = (pos - camera->getTransform()->getLocalPosition()).length();
         F32 scale = cameraDistance * GizmoToolConfig::c_cameraScalePerDistance;
-        Mat4F transform = mat.concatenatedAffineCopy(
-            Mat4F::CreateScaleMatrix(scale / affineScale));
+        Mat4F transform = mat.transformAffine(
+            Mat4F::CreateAffineScale(scale / affineScale));
         Mat4F basisTransform = transform;
         basisTransform.setTranslation(Vec3F::c_zero);
 
@@ -254,8 +254,8 @@ namespace Maze
                         parentWorldTransform.setTranslation(Vec3F::c_zero);
 
                         Quaternion newLocalRotation = Quaternion(
-                            parentWorldTransform.inversedAffineCopy().transformAffine(m_startVector).normalizedCopy(),
-                            parentWorldTransform.inversedAffineCopy().transformAffine(vector).normalizedCopy());
+                            parentWorldTransform.inversedAffine().transformAffine(m_startVector).normalizedCopy(),
+                            parentWorldTransform.inversedAffine().transformAffine(vector).normalizedCopy());
                         entityTransform->setLocalRotation(newLocalRotation * m_startRotation);
                     }
                 }

@@ -386,7 +386,7 @@ namespace Maze
                 positionWS = parentListItem->getTransform()->getWorldTransform().transformAffine(positionOS);
                 positionWS.y = Math::Clamp(positionWS.y, menuList->getTransform()->getHeight(), rootSize.y);
 
-                Vec2F menuListPositionOS = m_itemsListTransform->getWorldTransform().inversedAffineCopy().transformAffine(positionWS);
+                Vec2F menuListPositionOS = m_itemsListTransform->getWorldTransform().inversedAffine().transformAffine(positionWS);
 
                 menuList->getTransform()->setPivot(0.0f, 1.0f);
                 menuList->getTransform()->setAnchor(0.0f, 0.0f);

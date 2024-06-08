@@ -144,8 +144,8 @@ namespace Maze
             (U32)Math::Round(m_relativeRect.size.x * renderTargetSize.x),
             (U32)Math::Round(m_relativeRect.size.y * renderTargetSize.y));
 
-        m_transform = Mat3F::CreateTranslationMatrix((Vec2F)m_absoluteRect.position);
-        m_transform = m_transform.concatenatedAffineCopy(m_externalTransform);
+        m_transform = Mat3F::CreateAffineTranslation((Vec2F)m_absoluteRect.position);
+        m_transform = m_transform.transformAffine(m_externalTransform);
 
         eventViewportRectChanged(getSharedPtr());
     }

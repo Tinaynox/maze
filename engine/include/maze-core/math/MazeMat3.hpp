@@ -81,10 +81,10 @@ namespace Maze
         inline explicit Mat3(TValue const _arr[3][3]);
 
         //////////////////////////////////////////
-        inline Mat3(Mat3 const& _matrix);
+        inline Mat3(Mat3 const& _m);
         
         //////////////////////////////////////////
-        inline Mat3(Mat3&& _matrix);
+        inline Mat3(Mat3&& _m);
 
         //////////////////////////////////////////
         inline Mat3(
@@ -105,43 +105,43 @@ namespace Maze
             TValue _x, TValue _y);
 
         //////////////////////////////////////////
-        static inline MAZE_CONSTEXPR Mat3 CreateTranslationMatrix(TValue _x, TValue _y);
+        static inline MAZE_CONSTEXPR Mat3 CreateAffineTranslation(TValue _x, TValue _y);
 
         //////////////////////////////////////////
-        static inline MAZE_CONSTEXPR Mat3 CreateTranslationMatrix(Vec2<TValue> const& _vector);
+        static inline MAZE_CONSTEXPR Mat3 CreateAffineTranslation(Vec2<TValue> const& _v);
 
         //////////////////////////////////////////
-        static inline MAZE_CONSTEXPR Mat3 CreateRotationMatrix(F32 _s, F32 _c);
+        static inline MAZE_CONSTEXPR Mat3 CreateAffineRotation(F32 _s, F32 _c);
 
         //////////////////////////////////////////
-        static inline MAZE_CONSTEXPR Mat3 CreateRotationMatrix(F32 _angle);
+        static inline MAZE_CONSTEXPR Mat3 CreateAffineRotation(F32 _angle);
 
         //////////////////////////////////////////
-        static inline MAZE_CONSTEXPR Mat3 CreateScaleMatrix(TValue _x, TValue _y);
+        static inline MAZE_CONSTEXPR Mat3 CreateAffineScale(TValue _x, TValue _y);
 
         //////////////////////////////////////////
-        static inline MAZE_CONSTEXPR Mat3 CreateScaleMatrix(TValue _x, TValue _y, TValue _z);
+        static inline MAZE_CONSTEXPR Mat3 CreateAffineScale(TValue _x, TValue _y, TValue _z);
 
         //////////////////////////////////////////
-        static inline MAZE_CONSTEXPR Mat3 CreateScaleMatrix(Vec2<TValue> const& _vector);
+        static inline MAZE_CONSTEXPR Mat3 CreateAffineScale(Vec2<TValue> const& _v);
 
         //////////////////////////////////////////
-        static inline MAZE_CONSTEXPR Mat3 CreateScaleMatrix(Vec3<TValue> const& _vector);
+        static inline MAZE_CONSTEXPR Mat3 CreateAffineScale(Vec3<TValue> const& _v);
 
         //////////////////////////////////////////
-        static inline MAZE_CONSTEXPR Mat3 CreateAffineTransformMatrix(
+        static inline MAZE_CONSTEXPR Mat3 CreateAffineTransform(
             const Vec2F& _pos,
             const Rotation2D& _rotation,
             const Vec2F& _scale);
 
         //////////////////////////////////////////
-        static inline MAZE_CONSTEXPR Mat3 CreateAffineTransformMatrix(
+        static inline MAZE_CONSTEXPR Mat3 CreateAffineTransform(
             const Vec2F& _pos,
             F32 _angle,
             const Vec2F& _scale);
 
         //////////////////////////////////////////
-        static inline Mat3 CreateAffineTransformMatrix(
+        static inline Mat3 CreateAffineTransform(
             const Vec2F& _pos,
             const Rotation2D& _rotation,
             const Vec2F& _scale,
@@ -149,7 +149,7 @@ namespace Maze
             const Vec2F& _size);
 
         //////////////////////////////////////////
-        inline const TValue* getPlaneMatrix() const;
+        inline const TValue* getPlaneMatrix() const { return planeMatrix; }
 
         //////////////////////////////////////////
         inline void swap(Mat3& _other);
@@ -158,7 +158,7 @@ namespace Maze
         inline Vec3<TValue> getRow(Size _row) const;
 
         //////////////////////////////////////////
-        inline void setRow(Size _row, Vec3<TValue> const& _vec);
+        inline void setRow(Size _row, Vec3<TValue> const& _v);
 
         //////////////////////////////////////////
         inline TValue* operator[](Size _row) const;
@@ -167,43 +167,38 @@ namespace Maze
         inline Vec3<TValue> getColumn(Size _column) const;
 
         //////////////////////////////////////////
-        inline void setColumn(Size column, Vec3<TValue> const& _vec);
+        inline void setColumn(Size column, Vec3<TValue> const& _v);
+
 
         //////////////////////////////////////////
-        inline void setAxes(
-            Vec3<TValue> const& _yAxis,
-            Vec3<TValue> const& _xAxis,
-            Vec3<TValue> const& _zAxis);
+        inline Mat3& operator=(Mat3 const& _m);
 
         //////////////////////////////////////////
-        inline Mat3& operator=(Mat3 const& _matrix);
+        inline Mat3<TValue>& operator=(Mat3<TValue>&& _m);
 
         //////////////////////////////////////////
-        inline Mat3<TValue>& operator=(Mat3<TValue>&& _matrix);
+        inline bool operator==(Mat3<TValue> const& _m) const;
 
         //////////////////////////////////////////
-        inline bool operator==(Mat3<TValue> const& _m2) const;
+        inline bool operator!=(Mat3<TValue> const& _m) const;
 
         //////////////////////////////////////////
-        inline bool operator!=(Mat3<TValue> const& _m2) const;
+        inline Mat3<TValue> operator+(Mat3<TValue> const& _m) const;
 
         //////////////////////////////////////////
-        inline Mat3<TValue> operator+(Mat3<TValue> const& _matrix) const;
+        inline Mat3<TValue> operator-(Mat3<TValue> const& _m) const;
 
         //////////////////////////////////////////
-        inline Mat3<TValue> operator-(Mat3<TValue> const& _matrix) const;
-
-        //////////////////////////////////////////
-        inline Mat3<TValue> operator*(Mat3<TValue> const& _matrix) const;
+        inline Mat3<TValue> operator*(Mat3<TValue> const& _m) const;
 
         //////////////////////////////////////////
         inline Mat3<TValue> operator-() const;
 
         //////////////////////////////////////////
-        inline Vec2<TValue> operator*(Vec2<TValue> const& _vec) const;
+        inline Vec2<TValue> operator*(Vec2<TValue> const& _v) const;
 
         //////////////////////////////////////////
-        inline Vec3<TValue> operator*(Vec3<TValue> const& _vec) const;
+        inline Vec3<TValue> operator*(Vec3<TValue> const& _v) const;
 
         //////////////////////////////////////////
         inline Mat3<TValue> operator*(TValue _value) const;
@@ -212,17 +207,17 @@ namespace Maze
         inline MAZE_CONSTEXPR bool isAffine() const;
 
         //////////////////////////////////////////
-        inline void concatenateAffine(Mat3<TValue> const& _m2, Mat3<TValue>& _out) const;
+        inline void transformAffine(Mat3<TValue> const& _m, Mat3<TValue>& _out) const;
 
         //////////////////////////////////////////
-        inline void concatenateAffine(
+        inline void transformAffine(
             TValue _value00, TValue _value01,
             TValue _value10, TValue _value11,
             TValue _x, TValue _y,
             Mat3<TValue>& _out) const;
 
         //////////////////////////////////////////
-        inline Mat3<TValue> concatenatedAffineCopy(Mat3<TValue> const& _m2) const;
+        inline Mat3<TValue> transformAffine(Mat3<TValue> const& _m) const;
 
         //////////////////////////////////////////
         inline MAZE_CONSTEXPR TValue getAffineTranslation2DX() const;
@@ -291,7 +286,7 @@ namespace Maze
             Vec2<TValue>& _out) const;
         
         //////////////////////////////////////////
-        inline bool compareAffine(Mat3 const& _m2) const;
+        inline bool compareAffine(Mat3 const& _m) const;
 
 
 
@@ -299,7 +294,7 @@ namespace Maze
         Mat3<TValue> transpose() const;
 
         //////////////////////////////////////////
-        bool inverse(Mat3<TValue>& _matrix, TValue _tolerance = 1e-06) const;
+        bool inverse(Mat3<TValue>& _out, TValue _tolerance = 1e-06) const;
 
         //////////////////////////////////////////
         Mat3<TValue> inverse(TValue _tolerance = 1e-06) const;
@@ -315,10 +310,10 @@ namespace Maze
         inline String toString(Char _separator = ',') const;
 
         //////////////////////////////////////////
-        static inline CString ParseString(CString _string, Size _size, Mat3& _result, Char _separator = ',');
+        static inline CString ParseString(CString _string, Size _size, Mat3& _out, Char _separator = ',');
 
         //////////////////////////////////////////
-        static inline CString ParseStringPretty(CString _string, Size _size, Mat3& _result, Char _separator = ',');
+        static inline CString ParseStringPretty(CString _string, Size _size, Mat3& _out, Char _separator = ',');
 
         //////////////////////////////////////////
         static inline Mat3 FromString(CString _string, Size _size, Char _separator = ',');

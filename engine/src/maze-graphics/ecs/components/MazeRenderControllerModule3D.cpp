@@ -150,7 +150,7 @@ namespace Maze
             _renderTarget->setFar(_params.farZ);
 
             // View matrix
-            Mat4F viewMatrix = _params.cameraTransform.inversedAffineCopy();
+            Mat4F viewMatrix = _params.cameraTransform.inversedAffine();
             _renderTarget->setViewMatrix(viewMatrix);
 
             // View position

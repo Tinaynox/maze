@@ -122,7 +122,7 @@ namespace Maze
         F32 _emitterTimePercent,
         Mat4F const& _particleSystemWorldTransform)
     {
-        Mat4F invParticleSystemWorldTransform = _particleSystemWorldTransform.inversedAffineCopy();
+        Mat4F invParticleSystemWorldTransform = _particleSystemWorldTransform.inversedAffine();
         invParticleSystemWorldTransform.setTranslation(Vec3F::c_zero);
         Vec3F gravityVector = invParticleSystemWorldTransform.transformAffine(Vec3F::c_unitY);
         

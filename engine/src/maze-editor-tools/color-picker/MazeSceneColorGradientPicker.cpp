@@ -198,7 +198,7 @@ namespace Maze
                 Vec2F const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
 
                 Vec2F cursorPositionGradientSpace;
-                m_gradientRenderer->getTransform()->getWorldTransform().inversedAffineCopy().transformAffine(
+                m_gradientRenderer->getTransform()->getWorldTransform().inversedAffine().transformAffine(
                     cursorPosition,
                     cursorPositionGradientSpace);
 
@@ -213,7 +213,7 @@ namespace Maze
                     {
                         if (m_colorTagIndex < gradient.getKeysAlpha().size())
                         {
-                            Vec2F localPosition = m_gradientRenderer->getTransform()->getWorldTransform().inversedCopy().transformAffine(cursorPosition);
+                            Vec2F localPosition = m_gradientRenderer->getTransform()->getWorldTransform().inversed().transformAffine(cursorPosition);
 
                             F32 t = Math::Clamp01(localPosition.x / m_gradientRenderer->getTransform()->getWidth());
                             changeCurrentAlphaTagTime(t);
@@ -224,7 +224,7 @@ namespace Maze
                     {
                         if (m_colorTagIndex < gradient.getKeysRGB().size())
                         {
-                            Vec2F localPosition = m_gradientRenderer->getTransform()->getWorldTransform().inversedCopy().transformAffine(cursorPosition);
+                            Vec2F localPosition = m_gradientRenderer->getTransform()->getWorldTransform().inversed().transformAffine(cursorPosition);
 
                             F32 t = Math::Clamp01(localPosition.x / m_gradientRenderer->getTransform()->getWidth());
                             changeCurrentColorTagTime(t);
@@ -914,7 +914,7 @@ namespace Maze
 
             Vec2F const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
 
-            m_gradientRenderer->getTransform()->getWorldTransform().inversedAffineCopy().transformAffine(
+            m_gradientRenderer->getTransform()->getWorldTransform().inversedAffine().transformAffine(
                 cursorPosition,
                 m_draggingTagPrevCursorPositionGradientSpace);
         }
@@ -954,7 +954,7 @@ namespace Maze
 
             Vec2F const& cursorPosition = InputManager::GetInstancePtr()->getCursorPosition(0);
 
-            m_gradientRenderer->getTransform()->getWorldTransform().inversedAffineCopy().transformAffine(
+            m_gradientRenderer->getTransform()->getWorldTransform().inversedAffine().transformAffine(
                 cursorPosition,
                 m_draggingTagPrevCursorPositionGradientSpace);
         }
@@ -1241,7 +1241,7 @@ namespace Maze
             {
                 ColorGradient gradient = ColorGradientPickerManager::GetInstancePtr()->getGradient();
 
-                Vec2F localPosition = m_gradientRenderer->getTransform()->getWorldTransform().inversedCopy().transformAffine(_event.position);
+                Vec2F localPosition = m_gradientRenderer->getTransform()->getWorldTransform().inversed().transformAffine(_event.position);
 
                 F32 t = Math::Clamp01(localPosition.x / m_gradientRenderer->getTransform()->getWidth());
 

@@ -92,7 +92,7 @@ namespace Maze
         if (_multInvScale)
         {
             Vec3F scale = _rotationMatrix.getAffineScaleSignless();
-            Mat3F unscaledMat = Mat3F::CreateScaleMatrix(1.0f / scale) * _rotationMatrix;
+            Mat3F unscaledMat = Mat3F::CreateAffineScale(1.0f / scale) * _rotationMatrix;
             setRotationMatrix(unscaledMat);
         }
         else
@@ -204,8 +204,9 @@ namespace Maze
         Vec3F const& _zAxis)
     {
         Mat3F rotationMatrix;
-
-        rotationMatrix.setAxes(_xAxis, _yAxis, _zAxis);
+        rotationMatrix.setRow(0, _xAxis);
+        rotationMatrix.setRow(1, _yAxis);
+        rotationMatrix.setRow(2, _zAxis);
 
         setRotationMatrix(rotationMatrix);
     }
@@ -348,7 +349,7 @@ namespace Maze
     }
     
     //////////////////////////////////////////
-    Quaternion Quaternion::inversedCopy() const
+    Quaternion Quaternion::inversed() const
     {
         F32 norm = w * w + x * x + y * y + z * z;
         if (norm > 0.0)
