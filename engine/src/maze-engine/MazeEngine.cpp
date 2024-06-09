@@ -279,11 +279,15 @@ namespace Maze
         if (!m_sceneManager)
             return false;
 
-        AssetManager::Initialize(m_assetManager, m_config.params.getDataBlock(MAZE_HCS("assetConfig"), DataBlock::c_empty));
+        AssetManager::Initialize(
+            m_assetManager,
+            m_config.params.getDataBlock(MAZE_HCS("assetConfig"), DataBlock::c_empty));
         if (!m_assetManager)
             return false;
 
-        EntityManager::Initialize(m_entityManager);
+        EntityManager::Initialize(
+            m_entityManager,
+            m_config.params.getDataBlock(MAZE_HCS("entityConfig"), DataBlock::c_empty));
         if (!m_entityManager)
             return false;
 

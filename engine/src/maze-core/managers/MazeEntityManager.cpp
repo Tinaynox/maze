@@ -71,22 +71,28 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    void EntityManager::Initialize(EntityManagerPtr& _entityManager)
+    void EntityManager::Initialize(
+        EntityManagerPtr& _entityManager,
+        DataBlock const& _config)
     {
-        MAZE_CREATE_AND_INIT_SHARED_PTR(EntityManager, _entityManager, init());
+        MAZE_CREATE_AND_INIT_SHARED_PTR(EntityManager, _entityManager, init(_config));
     }
 
     //////////////////////////////////////////
-    bool EntityManager::init()
+    bool EntityManager::init(DataBlock const& _config)
     {
         m_defaultWorld = EcsWorld::Create(
             MAZE_HS("Default"),
             true,
             MAZE_ECS_TAGS(MAZE_HS("default"), MAZE_HS("render")));
+        m_defaultWorld->reserveEntityIndices(
+            _config.getS32(MAZE_HCS("defaultReserveIndices"), 3000));
 
         m_libraryWorld = EcsWorld::Create(
             MAZE_HS("Library"),
             false);
+        m_libraryWorld->reserveEntityIndices(
+            _config.getS32(MAZE_HCS("libraryReserveIndices"), 0));
         
         m_componentFactory = ComponentFactory::Create();
 

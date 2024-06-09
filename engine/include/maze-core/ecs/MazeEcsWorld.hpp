@@ -116,6 +116,9 @@ namespace Maze
         //////////////////////////////////////////
         static EcsWorld* GetDefaultWorldRaw();
 
+        //////////////////////////////////////////
+        void reserveEntityIndices(Size _count);
+
 
         //////////////////////////////////////////
         void update(F32 _dt);
@@ -326,10 +329,13 @@ namespace Maze
 
                 
         //////////////////////////////////////////
-        EntityId generateNewEntityId();
+        EntityId generateNewEntityId(EntityPtr const& _entity);
 
         //////////////////////////////////////////
         S32 convertEntityIdToIndex(EntityId _id) const;
+
+        //////////////////////////////////////////
+        S32 convertIndexToEntityIdIndex(S32 _index) const;
 
 
         //////////////////////////////////////////

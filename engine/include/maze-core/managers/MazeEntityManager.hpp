@@ -35,6 +35,7 @@
 #include "maze-core/utils/MazeEnumClass.hpp"
 #include "maze-core/utils/MazeUpdater.hpp"
 #include "maze-core/system/MazeTimer.hpp"
+#include "maze-core/data/MazeDataBlock.hpp"
 
 
 
@@ -61,7 +62,9 @@ namespace Maze
         virtual ~EntityManager();
 
         //////////////////////////////////////////
-        static void Initialize(EntityManagerPtr& _entityManager);
+        static void Initialize(
+            EntityManagerPtr& _entityManager,
+            DataBlock const& _config = DataBlock::c_empty);
 
     
         //////////////////////////////////////////
@@ -112,7 +115,7 @@ namespace Maze
         EntityManager();
 
         //////////////////////////////////////////
-        virtual bool init();
+        virtual bool init(DataBlock const& _config);
 
 
     private:

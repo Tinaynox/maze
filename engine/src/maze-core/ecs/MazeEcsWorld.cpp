@@ -279,6 +279,23 @@ namespace Maze
     }
 
     //////////////////////////////////////////
+    void EcsWorld::reserveEntityIndices(Size _count)
+    {
+        S32 startIndex = (S32)m_entities.size();
+        
+        m_entities.resize(m_entities.size() + _count);
+        
+        for (S32 i = 0; i < (S32)_count; ++i)
+        {
+            S32 index = startIndex + i;
+            
+            m_entities[index].id = EntityId(
+                convertIndexToEntityIdIndex(index), 0);
+            m_freeEntityIndices.push(index);
+        }
+    }
+
+    //////////////////////////////////////////
     void EcsWorld::update(F32 _dt)
     {
         MAZE_DEBUG_ASSERT(!m_updatingNow);
@@ -449,7 +466,7 @@ namespace Maze
     }
 
     //////////////////////////////////////////
-    EntityId EcsWorld::generateNewEntityId()
+    EntityId EcsWorld::generateNewEntityId(EntityPtr const& _entity)
     {
         if (!m_freeEntityIndices.empty())
         {
@@ -459,13 +476,20 @@ namespace Maze
             return m_entities[index].id;
         }
 
-        return EntityId((S32)m_entities.size() + (++m_newEntityIdsCount), 0);
+        return EntityId(
+            convertIndexToEntityIdIndex((S32)m_entities.size() + (m_newEntityIdsCount++)), 0);
     }
 
     //////////////////////////////////////////
     S32 EcsWorld::convertEntityIdToIndex(EntityId _id) const
     {
         return _id.getIndex() - 1;
+    }
+
+    //////////////////////////////////////////
+    S32 EcsWorld::convertIndexToEntityIdIndex(S32 _index) const
+    {
+        return _index + 1;
     }
 
     //////////////////////////////////////////
@@ -476,10 +500,8 @@ namespace Maze
         if (index >= 0 && index < (S32)m_entities.size())
         {
             EcsWorld::EntityData& entityData = m_entities[index];
-            MAZE_DEBUG_ASSERT(!entityData.entity);
-
-            entityData.id = entityId;
-            entityData.entity = _entity;
+            MAZE_DEBUG_ASSERT(entityData.id == entityId);
+            MAZE_DEBUG_ASSERT(entityData.entity == _entity);
         }
         else
         {

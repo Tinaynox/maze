@@ -55,55 +55,55 @@ namespace Maze
         static const MAZE_CONSTEXPR TIdType c_maxGenerationValue = ((1 << TGenerationBitsCount) - 1);
 
         //////////////////////////////////////////
-        inline IdWithGeneration() {}
+        MAZE_FORCEINLINE IdWithGeneration() {}
 
         //////////////////////////////////////////
-        inline IdWithGeneration(TIdType _index, TIdType _generation)
+        MAZE_FORCEINLINE IdWithGeneration(TIdType _index, TIdType _generation)
         {
             set(_index, _generation);
         }
 
         //////////////////////////////////////////
-        inline IdWithGeneration(IdWithGeneration const& _value)
+        MAZE_FORCEINLINE IdWithGeneration(IdWithGeneration const& _value)
             : m_id(_value)
         {}
 
         //////////////////////////////////////////
-        inline IdWithGeneration(IdWithGeneration&& _value)
+        MAZE_FORCEINLINE IdWithGeneration(IdWithGeneration&& _value)
             : m_id(std::move(_value))
         {}
 
         //////////////////////////////////////////
-        explicit IdWithGeneration(TIdType _id)
+        MAZE_FORCEINLINE explicit IdWithGeneration(TIdType _id)
             : m_id(_id)
         {}
 
         //////////////////////////////////////////
-        inline void operator=(IdWithGeneration const& _value)
+        MAZE_FORCEINLINE void operator=(IdWithGeneration const& _value)
         {
             m_id = _value.m_id;
         }
 
         //////////////////////////////////////////
-        inline void operator=(IdWithGeneration&& _value)
+        MAZE_FORCEINLINE void operator=(IdWithGeneration&& _value)
         {
             m_id = std::move(_value.m_id);
         }
 
         //////////////////////////////////////////
-        inline bool operator==(IdWithGeneration const& _value) const
+        MAZE_FORCEINLINE bool operator==(IdWithGeneration const& _value) const
         {
             return m_id == _value.m_id;
         }
 
         //////////////////////////////////////////
-        inline bool operator!=(IdWithGeneration const& _value) const
+        MAZE_FORCEINLINE bool operator!=(IdWithGeneration const& _value) const
         {
             return m_id != _value.m_id;
         }
 
         //////////////////////////////////////////
-        inline TIdType set(TIdType _index, TIdType _generation)
+        MAZE_FORCEINLINE TIdType set(TIdType _index, TIdType _generation)
         {
             MAZE_DEBUG_ASSERT(_generation <= c_maxGenerationValue);
             m_id = (_index << TGenerationBitsCount) | static_cast<TIdType>(_generation);
@@ -111,19 +111,19 @@ namespace Maze
         }
 
         //////////////////////////////////////////
-        inline TIdType getId() const { return m_id; }
+        MAZE_FORCEINLINE TIdType getId() const { return m_id; }
 
         //////////////////////////////////////////
-        inline operator TIdType() const { return m_id; }
+        MAZE_FORCEINLINE operator TIdType() const { return m_id; }
 
         //////////////////////////////////////////
-        inline TIdType getIndex() const { return m_id >> TGenerationBitsCount; }
+        MAZE_FORCEINLINE TIdType getIndex() const { return m_id >> TGenerationBitsCount; }
 
         //////////////////////////////////////////
-        inline TIdType getGeneration() const { return m_id & c_maxGenerationValue; }
+        MAZE_FORCEINLINE TIdType getGeneration() const { return m_id & c_maxGenerationValue; }
 
         //////////////////////////////////////////
-        inline TIdType incrementGeneration()
+        MAZE_FORCEINLINE TIdType incrementGeneration()
         {
             TIdType generation = getGeneration();
             if (generation != c_maxGenerationValue)

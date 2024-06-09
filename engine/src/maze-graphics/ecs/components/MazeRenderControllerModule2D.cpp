@@ -342,7 +342,7 @@ namespace Maze
                 {
                     m_sortedMeshRenderersDirty = true;
                 }
-            });
+            }); 
 
         m_canvasScalersSample->process(
             [&](Entity* _entity, CanvasScaler* _canvasScaler)
