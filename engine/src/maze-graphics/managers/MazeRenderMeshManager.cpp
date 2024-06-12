@@ -114,49 +114,49 @@ namespace Maze
             case BuiltinRenderMeshType::Quad:
             {
                 renderMesh = RenderMesh::Create(
-                    MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Quad),
+                    MeshManager::GetInstancePtr()->ensureBuiltinMesh(BuiltinMeshType::Quad),
                     m_renderSystemRaw);
                 break;
             }
             case BuiltinRenderMeshType::QuadNullPivot:
             {
                 renderMesh = RenderMesh::Create(
-                    MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::QuadNullPivot),
+                    MeshManager::GetInstancePtr()->ensureBuiltinMesh(BuiltinMeshType::QuadNullPivot),
                     m_renderSystemRaw);
                 break;
             }
             case BuiltinRenderMeshType::Cube:
             {
                 renderMesh = RenderMesh::Create(
-                    MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cube),
+                    MeshManager::GetInstancePtr()->ensureBuiltinMesh(BuiltinMeshType::Cube),
                     m_renderSystemRaw);
                 break;
             }
             case BuiltinRenderMeshType::Sphere:
             {
                 renderMesh = RenderMesh::Create(
-                    MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Sphere),
+                    MeshManager::GetInstancePtr()->ensureBuiltinMesh(BuiltinMeshType::Sphere),
                     m_renderSystemRaw);
                 break;
             }
             case BuiltinRenderMeshType::Cone:
             {
                 renderMesh = RenderMesh::Create(
-                    MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cone),
+                    MeshManager::GetInstancePtr()->ensureBuiltinMesh(BuiltinMeshType::Cone),
                     m_renderSystemRaw);
                 break;
             }
             case BuiltinRenderMeshType::Cylinder:
             {
                 renderMesh = RenderMesh::Create(
-                    MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Cylinder),
+                    MeshManager::GetInstancePtr()->ensureBuiltinMesh(BuiltinMeshType::Cylinder),
                     m_renderSystemRaw);
                 break;
             }
             case BuiltinRenderMeshType::Torus:
             {
                 renderMesh = RenderMesh::Create(
-                    MeshManager::GetInstancePtr()->getBuiltinMesh(BuiltinMeshType::Torus),
+                    MeshManager::GetInstancePtr()->ensureBuiltinMesh(BuiltinMeshType::Torus),
                     m_renderSystemRaw);
                 break;
             }

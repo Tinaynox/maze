@@ -102,7 +102,7 @@ namespace Maze
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
             Vec2F(_parent->getWidth(), 18),
             Vec2F::c_zero,
-            renderSystem->getMaterialManager()->getColorTextureMaterial(),
+            renderSystem->getMaterialManager()->getSpriteMaterial(),
             _parent,
             _parent->getEntity()->getEcsScene());
         sprite->getEntityRaw()->ensureComponent<SizePolicy2D>()->setFlag(SizePolicy2D::Flags::Height, false);

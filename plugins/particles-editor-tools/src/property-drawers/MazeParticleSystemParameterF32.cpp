@@ -452,7 +452,7 @@ namespace Maze
         SpriteRenderer2D* spriteRendererRaw = spriteRenderer.get();
         spriteRenderer->setSprite(UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default));
         spriteRenderer->setMaterialCopy(
-            renderSystem->getMaterialManager()->getColorTextureMaterial());
+            renderSystem->getMaterialManager()->getSpriteMaterial());
         spriteRenderer->setRenderMode(SpriteRenderMode::Sliced);
         spriteRenderer->setColor(ColorU32(250, 250, 250, 100));
 
@@ -509,7 +509,7 @@ namespace Maze
             UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::DropDownButtonExpanded),
             Vec2F(8.0f, 8.0f) * 1.75f,
             Vec2F(0.0f, 0.0f),
-            renderSystem->getMaterialManager()->getColorTextureMaterial(),
+            renderSystem->getMaterialManager()->getSpriteMaterial(),
             transform,
             spriteRenderer->getEntityRaw()->getEcsScene(),
             Vec2F(0.5f, 0.5f),
@@ -526,7 +526,7 @@ namespace Maze
                 UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::Panel00Default),
                 Vec2F(width, 140.0f),
                 Vec2F::c_zero,
-                renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                renderSystem->getMaterialManager()->getSpriteMaterial(),
                 transform,
                 m_layout->getEntityRaw()->getEcsScene(),
                 Vec2F(1.0f, 0.0f),
@@ -569,7 +569,7 @@ namespace Maze
                     ColorU32::c_white,
                     Vec2F(width, 20.0f - 4.0f),
                     Vec2F(0.0f, 2.0f),
-                    renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                    renderSystem->getMaterialManager()->getSpriteMaterial(),
                     itemPrefabTransform,
                     m_layout->getEntityRaw()->getEcsScene());
                 backgroundSpriteRenderer->getEntityRaw()->ensureComponent<Name>()->setName("Background");
@@ -579,7 +579,7 @@ namespace Maze
                     UIManager::GetInstancePtr()->getDefaultUISprite(DefaultUISprite::CheckMark),
                     Vec2F(8.0f, 8.0f) * 1.75f,
                     Vec2F(10.0f, 10.0f),
-                    renderSystem->getMaterialManager()->getColorTextureMaterial(),
+                    renderSystem->getMaterialManager()->getSpriteMaterial(),
                     itemPrefabTransform,
                     spriteRenderer->getEntityRaw()->getEcsScene(),
                     Vec2F(0.0f, 0.0f),

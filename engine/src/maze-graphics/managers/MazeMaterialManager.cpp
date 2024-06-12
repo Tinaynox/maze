@@ -329,6 +329,18 @@ namespace Maze
                 }
                 break;
             }
+            case BuiltinMaterialType::SpriteAdditivePA:
+            {
+                MaterialPtr const& originMaterial = ensureBuiltinMaterial(BuiltinMaterialType::Sprite);
+                if (originMaterial)
+                {
+                    material = originMaterial->createCopy();
+                    material->getFirstRenderPass()->setBlendSrcFactor(BlendFactor::SrcAlpha);
+                    material->getFirstRenderPass()->setBlendDestFactor(BlendFactor::One);
+                }
+
+                break;
+            }
             case BuiltinMaterialType::HSVRect:
             {
                 material = Material::Create(m_renderSystemRaw);

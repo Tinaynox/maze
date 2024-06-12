@@ -232,14 +232,14 @@ namespace Maze
 
                     return Vec4F(
                         x,
-                        x + invTiles.x,
                         y,
+                        x + invTiles.x,
                         y + invTiles.y);
                 };
         }
         else
         {
-            renderUVCallback = [](S32 _index) { return Vec4F(0.0f, 1.0f, 0.0f, 1.0f); };
+            renderUVCallback = [](S32 _index) { return Vec4F(0.0f, 0.0f, 1.0f, 1.0f); };
         }
         
 

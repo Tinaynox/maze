@@ -499,7 +499,9 @@ namespace Maze
         m_canvasRenderer = getEntityRaw()->ensureComponent<CanvasRenderer>();
 
         
-        m_meshRenderer->setRenderMesh(RenderMeshManager::GetCurrentInstancePtr()->getDefaultQuadNullPivotMesh());
+        m_meshRenderer->setRenderMesh(
+            RenderMeshManager::GetCurrentInstancePtr()->ensureBuiltinRenderMesh(
+                BuiltinRenderMeshType::QuadNullPivot));
 
         enableFlag(SpriteRenderer2D::Flags::MeshDataDirty);
         enableFlag(SpriteRenderer2D::Flags::ModelMatricesDirty);
